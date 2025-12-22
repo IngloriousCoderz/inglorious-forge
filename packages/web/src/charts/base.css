@@ -1,0 +1,109 @@
+.iw-chart {
+  position: relative;
+  display: inline-block;
+}
+
+.iw-chart-svg {
+  display: block;
+  background-color: #fff;
+  border-radius: 8px;
+}
+
+.iw-chart-line {
+  transition: stroke-width 0.2s ease;
+  cursor: pointer;
+}
+
+.iw-chart-line:hover {
+  stroke-width: 3.5;
+  filter: brightness(1.1);
+}
+
+.iw-chart-point {
+  cursor: pointer;
+  transition: r 0.2s ease, fill 0.2s ease;
+}
+
+.iw-chart-point:hover {
+  r: 6;
+  filter: brightness(1.2);
+}
+
+.iw-chart-bar {
+  cursor: pointer;
+  transition: opacity 0.2s ease, filter 0.2s ease;
+}
+
+.iw-chart-bar:hover {
+  opacity: 0.9;
+  filter: brightness(1.1);
+}
+
+.iw-chart-pie-slice,
+.iw-chart-donut-slice {
+  cursor: pointer;
+  transition: opacity 0.2s ease, filter 0.2s ease;
+}
+
+.iw-chart-pie-slice:hover,
+.iw-chart-donut-slice:hover {
+  opacity: 0.9;
+  filter: brightness(1.15);
+}
+
+.iw-chart-tooltip {
+  pointer-events: none;
+}
+
+.iw-chart-modal {
+  position: absolute;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  pointer-events: none;
+  z-index: 1000;
+  min-width: 140px;
+  font-size: 13px;
+}
+
+.iw-chart-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.iw-chart-modal-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.iw-chart-modal-label {
+  font-weight: 600;
+  color: #111827;
+  font-size: 13px;
+}
+
+.iw-chart-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.iw-chart-modal-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.iw-chart-modal-percentage {
+  font-size: 12px;
+  color: #6b7280;
+}
+
