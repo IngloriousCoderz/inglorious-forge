@@ -52,7 +52,9 @@
     "./table/base.css": "./src/table/base.css",
     "./table/theme.css": "./src/table/theme.css",
     "./select/base.css": "./src/select/base.css",
-    "./select/theme.css": "./src/select/theme.css"
+    "./select/theme.css": "./src/select/theme.css",
+    "./charts/base.css": "./src/charts/base.css",
+    "./charts/theme.css": "./src/charts/theme.css"
   },
   "files": [
     "src",
@@ -75,6 +77,11 @@
     "@inglorious/store": "workspace:*",
     "@inglorious/utils": "workspace:*",
     "@lit-labs/ssr-client": "^1.1.8",
+    "d3-array": "^3.2.4",
+    "d3-format": "^3.1.0",
+    "d3-scale": "^4.0.2",
+    "d3-shape": "^3.2.0",
+    "d3-time-format": "^4.1.0",
     "lit-html": "^3.3.1"
   },
   "devDependencies": {
