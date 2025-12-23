@@ -24,7 +24,7 @@ export function renderAxisLines(entity) {
       x2=${width - padding.right}
       y2=${height - padding.bottom}
       stroke="#ddd"
-      stroke-width="1"
+      stroke-width="0.0625em"
     />
     <!-- Eixo Y -->
     <line
@@ -33,7 +33,7 @@ export function renderAxisLines(entity) {
       x2=${padding.left}
       y2=${height - padding.bottom}
       stroke="#ddd"
-      stroke-width="1"
+      stroke-width="0.0625em"
     />
   `
 }
@@ -62,13 +62,13 @@ export function renderXAxis(entity, xScale) {
             x2=${x}
             y2=${height - padding.bottom + 5}
             stroke="#ccc"
-            stroke-width="1"
+            stroke-width="0.0625em"
           />
           <text
             x=${x}
             y=${height - padding.bottom + 20}
             text-anchor="middle"
-            font-size="11"
+            font-size="0.6875em"
             fill="#777"
           >${label}</text>
         </g>
@@ -97,13 +97,13 @@ export function renderYAxis(entity, yScale) {
             x2=${padding.left - 5}
             y2=${y}
             stroke="#ccc"
-            stroke-width="1"
+            stroke-width="0.0625em"
           />
           <text
             x=${padding.left - 10}
             y=${y + 4}
             text-anchor="end"
-            font-size="11"
+            font-size="0.6875em"
             fill="#777"
           >${formatNumber(t)}</text>
         </g>
@@ -175,3 +175,62 @@ export function renderYGrid(entity, yScale) {
     )}
   `
 }
+
+// Render legend for multi-series charts
+export function renderLegend(entity, series) {
+  if (!entity.showLegend || !series || series.length === 0) return ""
+
+  const { width, padding } = entity
+  const legendY = padding.top / 2
+  const squareSize = 12
+  const gap = 8
+  const itemGap = 40
+
+  const totalWidth = series.reduce((acc, s) => {
+    const label = s.name || s.label || `Series ${series.indexOf(s) + 1}`
+
+    return acc + squareSize + gap + label.length * 6 + itemGap
+  }, 0)
+
+  const startX = (width - totalWidth) / 2
+  let currentX = startX
+
+  return svg`
+    <g class="iw-chart-legend">
+      ${repeat(
+        series,
+        (s, i) => i,
+        (s, i) => {
+          const color = s.color || entity.colors[i % entity.colors.length]
+          const label = s.name || s.label || `Series ${i + 1}`
+
+          const item = svg`
+            <g class="iw-chart-legend-item">
+              <rect
+                x=${currentX}
+                y=${legendY - squareSize / 2}
+                width=${squareSize}
+                height=${squareSize}
+                fill=${color}
+                rx="0.125em"
+                ry="0.125em"
+              />
+              <text
+                x=${currentX + squareSize + gap}
+                y=${legendY + 4}
+                text-anchor="start"
+                font-size="0.75em"
+                fill="#333"
+              >
+                ${label}
+              </text>
+            </g>
+          `
+          currentX += squareSize + gap + label.length * 6 + itemGap
+          return item
+        },
+      )}
+    </g>
+  `
+}
+
