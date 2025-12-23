@@ -162,4 +162,3 @@ export declare const charts: {
    */
   render(entity: ChartEntity, api: Api): TemplateResult
 }
-

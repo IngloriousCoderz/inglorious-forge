@@ -233,4 +233,3 @@ export function renderLegend(entity, series) {
     </g>
   `
 }
-
