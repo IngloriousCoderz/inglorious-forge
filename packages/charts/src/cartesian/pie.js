@@ -35,7 +35,7 @@ export const pie = {
     if (!entity.data || entity.data.length === 0) {
       return svg`
         <svg width=${entity.width} height=${entity.height}>
-          <text x="50%" y="50%" text-anchor="middle" fill="#999" font-size="14">
+          <text x="50%" y="50%" text-anchor="middle" fill="#999" font-size="0.875em">
             No data
           </text>
         </svg>
@@ -95,9 +95,9 @@ export const pie = {
 
           return svg`
             <g>
-              <line x1=${startX} y1=${startY} x2=${endX} y2=${endY} stroke="#999" stroke-width="1"/>
-              <text x=${textX} y=${endY - 6} text-anchor=${anchor} font-size="12" fill="#333" font-weight="500">${label}</text>
-              <text x=${textX} y=${endY + 8} text-anchor=${anchor} font-size="10" fill="#777">${formatNumber(percentage)}%</text>
+              <line x1=${startX} y1=${startY} x2=${endX} y2=${endY} stroke="#999" stroke-width="0.0625em"/>
+              <text x=${textX} y=${endY - 6} text-anchor=${anchor} font-size="0.75em" fill="#333" font-weight="500">${label}</text>
+              <text x=${textX} y=${endY + 8} text-anchor=${anchor} font-size="0.625em" fill="#777">${formatNumber(percentage)}%</text>
             </g>
           `
         }
@@ -112,8 +112,8 @@ export const pie = {
 
           return svg`
             <g>
-              <text x=${x} y=${y} text-anchor="middle" font-size="12" fill="#333" font-weight="500">${label}</text>
-              <text x=${x} y=${y + 14} text-anchor="middle" font-size="10" fill=${percentageColor} font-weight="500">${formatNumber(percentage)}%</text>
+              <text x=${x} y=${y} text-anchor="middle" font-size="0.75em" fill="#333" font-weight="500">${label}</text>
+              <text x=${x} y=${y + 14} text-anchor="middle" font-size="0.625em" fill=${percentageColor} font-weight="500">${formatNumber(percentage)}%</text>
             </g>
           `
         }
@@ -129,7 +129,7 @@ export const pie = {
               fill=${color}
               class="iw-chart-pie-slice"
               stroke="#fff"
-              stroke-width="2"
+              stroke-width="0.125em"
               data-slice-index=${i}
               @mouseenter=${(e) => {
                 if (!shouldShowTooltip) return
