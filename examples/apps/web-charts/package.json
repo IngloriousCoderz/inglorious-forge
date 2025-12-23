@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@inglorious/charts": "workspace:*",
     "@inglorious/web": "workspace:*"
   },
   "devDependencies": {

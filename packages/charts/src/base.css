@@ -1,0 +1,68 @@
+.iw-chart {
+  position: relative;
+  display: inline-block;
+
+  .iw-chart-svg {
+    display: block;
+  }
+
+  .iw-chart-line {
+    transition: stroke-width 0.2s ease;
+    cursor: pointer;
+  }
+
+  .iw-chart-point {
+    cursor: pointer;
+    transition: r 0.2s ease, fill 0.2s ease;
+  }
+
+  .iw-chart-bar {
+    cursor: pointer;
+    transition: opacity 0.2s ease, filter 0.2s ease;
+  }
+
+  .iw-chart-area {
+    cursor: pointer;
+    transition: opacity 0.2s ease, filter 0.2s ease;
+  }
+
+  .iw-chart-pie-slice,
+  .iw-chart-donut-slice {
+    cursor: pointer;
+    transition: opacity 0.2s ease, filter 0.2s ease;
+  }
+
+  .iw-chart-tooltip {
+    pointer-events: none;
+  }
+
+  .iw-chart-modal {
+    position: absolute;
+    pointer-events: none;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+
+    .iw-chart-modal-header {
+      display: flex;
+      align-items: center;
+    }
+
+    .iw-chart-modal-color {
+      flex-shrink: 0;
+    }
+
+    .iw-chart-modal-body {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  .iw-chart-legend {
+    pointer-events: none;
+  }
+
+  .iw-chart-legend-item {
+    cursor: default;
+  }
+}
