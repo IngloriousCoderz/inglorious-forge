@@ -7,4 +7,3 @@ export const areaChart = {
   ...rendering,
   ...area,
 }
-

@@ -19,8 +19,20 @@ export const area = {
     if (!entity.data || entity.data.length === 0) {
       return html`
         <div class="iw-chart">
-          <svg width=${entity.width} height=${entity.height} viewBox="0 0 ${entity.width} ${entity.height}">
-            <text x="50%" y="50%" text-anchor="middle" fill="#999" font-size="0.875em">No data</text>
+          <svg
+            width=${entity.width}
+            height=${entity.height}
+            viewBox="0 0 ${entity.width} ${entity.height}"
+          >
+            <text
+              x="50%"
+              y="50%"
+              text-anchor="middle"
+              fill="#999"
+              font-size="0.875em"
+            >
+              No data
+            </text>
           </svg>
         </div>
       `
@@ -42,9 +54,7 @@ export const area = {
     const isMultiSeries = Array.isArray(entity.data[0]?.values)
 
     // legend
-    const legend = isMultiSeries
-      ? renderLegend(entity, entity.data)
-      : ""
+    const legend = isMultiSeries ? renderLegend(entity, entity.data) : ""
 
     const areas = isMultiSeries
       ? entity.data.map((series, seriesIndex) => {
@@ -155,11 +165,6 @@ export const area = {
       </svg>
     `
 
-    return html`
-      <div class="iw-chart">
-        ${svgContent}
-      </div>
-    `
+    return html` <div class="iw-chart">${svgContent}</div> `
   },
 }
-

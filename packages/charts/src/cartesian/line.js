@@ -46,9 +46,7 @@ export const line = {
     const isMultiSeries = Array.isArray(entity.data[0]?.values)
 
     // Legenda (apenas para múltiplas séries)
-    const legend = isMultiSeries
-      ? renderLegend(entity, entity.data)
-      : ""
+    const legend = isMultiSeries ? renderLegend(entity, entity.data) : ""
 
     const paths = isMultiSeries
       ? entity.data.map((series, seriesIndex) => {
@@ -145,10 +143,6 @@ export const line = {
       </svg>
     `
 
-    return html`
-      <div class="iw-chart">
-        ${svgContent}
-      </div>
-    `
+    return html` <div class="iw-chart">${svgContent}</div> `
   },
 }
