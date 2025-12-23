@@ -1,10 +1,16 @@
 import { createStore } from "@inglorious/web"
-import { line, bar, pie, donut } from "@inglorious/web"
+import { areaChart, barChart, donutChart, lineChart, pieChart } from "@inglorious/charts"
 import { entities } from "./entities.js"
 import { middlewares } from "./middlewares.js"
 
 export const store = createStore({
-  types: { line, bar, pie, donut },
+  types: {
+    area: areaChart,
+    line: lineChart,
+    bar: barChart,
+    pie: pieChart,
+    donut: donutChart,
+  },
   entities,
   middlewares,
 })

@@ -10,8 +10,11 @@ export function createYScale(data, height, padding) {
       : [d.y ?? d.value ?? 0],
   )
   const [minVal, maxVal] = extent(values)
+  // Sempre começar em 0 para evitar distorções visuais
+  const min = Math.min(0, minVal ?? 0)
+  const max = maxVal ?? 100
   return scaleLinear()
-    .domain([minVal ?? 0, maxVal ?? 100])
+    .domain([min, max])
     .range([height - padding.bottom, padding.top])
 }
 

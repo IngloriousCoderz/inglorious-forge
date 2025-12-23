@@ -1,0 +1,86 @@
+.iw-chart {
+  .iw-chart-svg {
+    background-color: white;
+    border-radius: 0.5em;
+  }
+
+  .iw-chart-line {
+    &:hover {
+      stroke-width: 0.21875em;
+      filter: brightness(1.1);
+    }
+  }
+
+  .iw-chart-point {
+    &:hover {
+      r: 0.375em;
+      filter: brightness(1.2);
+    }
+  }
+
+  .iw-chart-bar {
+    &:hover {
+      opacity: 0.9;
+      filter: brightness(1.1);
+    }
+  }
+
+  .iw-chart-area {
+    &:hover {
+      opacity: 0.9;
+      filter: brightness(1.1);
+    }
+  }
+
+  .iw-chart-pie-slice,
+  .iw-chart-donut-slice {
+    &:hover {
+      opacity: 0.9;
+      filter: brightness(1.15);
+    }
+  }
+
+  .iw-chart-modal {
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 0.5em;
+    padding: 0.75em;
+    box-shadow: 0 0.125em 0.5em rgba(0, 0, 0, 0.15);
+    min-width: 8.75em;
+    font-size: 0.8125em;
+
+    .iw-chart-modal-header {
+      gap: 0.5em;
+      margin-bottom: 0.5em;
+      padding-bottom: 0.5em;
+      border-bottom: 1px solid #eee;
+    }
+
+    .iw-chart-modal-color {
+      width: 0.75em;
+      height: 0.75em;
+      border-radius: 0.125em;
+    }
+
+    .iw-chart-modal-label {
+      font-weight: 600;
+      color: #333;
+      font-size: 0.8125em;
+    }
+
+    .iw-chart-modal-body {
+      gap: 0.25em;
+    }
+
+    .iw-chart-modal-value {
+      font-size: 1em;
+      font-weight: 700;
+      color: #333;
+    }
+
+    .iw-chart-modal-percentage {
+      font-size: 0.75em;
+      color: #999;
+    }
+  }
+}

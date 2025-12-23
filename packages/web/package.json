@@ -52,9 +52,7 @@
     "./table/base.css": "./src/table/base.css",
     "./table/theme.css": "./src/table/theme.css",
     "./select/base.css": "./src/select/base.css",
-    "./select/theme.css": "./src/select/theme.css",
-    "./charts/base.css": "./src/charts/base.css",
-    "./charts/theme.css": "./src/charts/theme.css"
+    "./select/theme.css": "./src/select/theme.css"
   },
   "files": [
     "src",

@@ -1,0 +1,67 @@
+{
+  "name": "@inglorious/charts",
+  "version": "1.0.0",
+  "description": "Chart components for Inglorious Web, inspired by Recharts",
+  "author": "IceOnFire <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IngloriousCoderz/inglorious-forge.git",
+    "directory": "packages/charts"
+  },
+  "bugs": {
+    "url": "https://github.com/IngloriousCoderz/inglorious-forge/issues"
+  },
+  "keywords": [
+    "charts",
+    "visualization",
+    "svg",
+    "recharts",
+    "inglorious"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./types/index.d.ts",
+      "import": "./src/index.js"
+    },
+    "./base.css": "./src/base.css",
+    "./theme.css": "./src/theme.css"
+  },
+  "files": [
+    "src",
+    "types"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "format": "prettier --write '**/*.{js,jsx}'",
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "test:watch": "vitest",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@inglorious/web": "workspace:*",
+    "d3-array": "^3.2.4",
+    "d3-format": "^3.1.0",
+    "d3-scale": "^4.0.2",
+    "d3-shape": "^3.2.0",
+    "d3-time-format": "^4.1.0",
+    "lit-html": "^3.3.1"
+  },
+  "peerDependencies": {
+    "@inglorious/web": "workspace:*"
+  },
+  "devDependencies": {
+    "@inglorious/eslint-config": "workspace:*",
+    "prettier": "^3.6.2",
+    "vite": "^7.1.3",
+    "vitest": "^4.0.15"
+  },
+  "packageManager": "pnpm@10.15.0",
+  "engines": {
+    "node": ">= 22"
+  }
+}
+

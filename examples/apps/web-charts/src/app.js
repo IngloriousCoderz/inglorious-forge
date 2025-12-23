@@ -6,7 +6,7 @@ export const app = {
       <div class="app">
         <header>
           <h1>Charts Examples</h1>
-          <p>Examples of Line, Bar, Pie, and Donut charts</p>
+          <p>Examples of Line, Area, Bar, Pie, and Donut charts</p>
         </header>
 
         <main>
@@ -18,6 +18,16 @@ export const app = {
           <section class="chart-section">
             <h2>Line Chart - Multiple Series</h2>
             ${api.render("multiSeriesLineChart")}
+          </section>
+
+          <section class="chart-section">
+            <h2>Area Chart - Simple</h2>
+            ${api.render("salesAreaChart")}
+          </section>
+
+          <section class="chart-section">
+            <h2>Area Chart - Multiple Series</h2>
+            ${api.render("multiSeriesAreaChart")}
           </section>
 
           <section class="chart-section">
