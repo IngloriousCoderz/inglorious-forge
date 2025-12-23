@@ -1,5 +1,11 @@
 import { createStore } from "@inglorious/web"
-import { areaChart, barChart, donutChart, lineChart, pieChart } from "@inglorious/charts"
+import {
+  areaChart,
+  barChart,
+  donutChart,
+  lineChart,
+  pieChart,
+} from "@inglorious/charts"
 import { entities } from "./entities.js"
 import { middlewares } from "./middlewares.js"
 

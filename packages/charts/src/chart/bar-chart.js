@@ -7,4 +7,3 @@ export const barChart = {
   ...rendering,
   ...bar,
 }
-

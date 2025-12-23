@@ -91,11 +91,7 @@ export const bar = {
       </svg>
     `
 
-    return html`
-      <div class="iw-chart">
-        ${svgContent}
-      </div>
-    `
+    return html` <div class="iw-chart">${svgContent}</div> `
   },
 }
 

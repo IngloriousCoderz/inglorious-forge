@@ -7,4 +7,3 @@ export const donutChart = {
   ...rendering,
   ...donut,
 }
-

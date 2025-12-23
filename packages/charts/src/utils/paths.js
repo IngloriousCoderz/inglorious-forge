@@ -10,7 +10,13 @@ export function generateLinePath(data, xScale, yScale, curveType = "linear") {
 }
 
 /* eslint-disable no-magic-numbers */
-export function generateAreaPath(data, xScale, yScale, baseValue = 0, curveType = "linear") {
+export function generateAreaPath(
+  data,
+  xScale,
+  yScale,
+  baseValue = 0,
+  curveType = "linear",
+) {
   const curve = curveType === "monotone" ? curveMonotoneX : curveLinear
   const areaGenerator = area()
     .x((d) => xScale(d.x ?? d.date))
