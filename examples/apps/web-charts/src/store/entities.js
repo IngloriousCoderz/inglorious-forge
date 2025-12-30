@@ -158,7 +158,6 @@ export const entities = {
       { label: "Category D", value: 10 },
       { label: "Category E", value: 10 },
       { label: "Category F", value: 25 },
-     
     ],
     width: 500,
     height: 400,

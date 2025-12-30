@@ -1,12 +1,6 @@
 /* eslint-disable no-magic-numbers */
 
-const DEFAULT_COLORS = [
-  "#3b82f6",
-  "#ef4444",
-  "#10b981",
-  "#f59e0b",
-  "#8b5cf6",
-]
+const DEFAULT_COLORS = ["#3b82f6", "#ef4444", "#10b981", "#f59e0b", "#8b5cf6"]
 
 const EXTENDED_COLORS = [
   "#3b82f6",
@@ -62,7 +56,7 @@ export function generateColors(count, customColors = null) {
     const g = parseInt(hex.substr(2, 2), 16)
     const b = parseInt(hex.substr(4, 2), 16)
 
-    const factor = 0.7 + (variation * 0.1)
+    const factor = 0.7 + variation * 0.1
     const newR = Math.min(255, Math.floor(r * factor))
     const newG = Math.min(255, Math.floor(g * factor))
     const newB = Math.min(255, Math.floor(b * factor))
@@ -88,4 +82,3 @@ export function getDefaultColors() {
 export function getExtendedColors() {
   return [...EXTENDED_COLORS]
 }
-

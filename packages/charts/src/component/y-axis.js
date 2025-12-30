@@ -45,4 +45,3 @@ export function renderYAxis({ yScale, padding }) {
     )}
   `
 }
-
