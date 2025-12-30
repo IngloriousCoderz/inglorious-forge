@@ -1,18 +1,5 @@
-import { areaChart } from "./chart/area-chart.js"
-import { barChart } from "./chart/bar-chart.js"
-import { donutChart } from "./chart/donut-chart.js"
-import { lineChart } from "./chart/line-chart.js"
-import { pieChart } from "./chart/pie-chart.js"
 import { logic } from "./logic.js"
-import { registerChartType } from "./registry.js"
 import { rendering } from "./rendering.js"
-
-// Register chart types
-registerChartType("area", areaChart)
-registerChartType("bar", barChart)
-registerChartType("donut", donutChart)
-registerChartType("line", lineChart)
-registerChartType("pie", pieChart)
 
 // Export charts
 export { areaChart } from "./chart/area-chart.js"
