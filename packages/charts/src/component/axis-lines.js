@@ -43,4 +43,3 @@ export function renderAxisLines({ width, height, padding, yScale }) {
     />
   `
 }
-

@@ -16,18 +16,19 @@ export const pie = {
     const pieData = calculatePieData(entity.data)
     const sliceCount = entity.data.length
 
-    let labelPosition = entity.labelPosition === "auto" || !entity.labelPosition 
-      ? "outside" 
-      : entity.labelPosition
+    let labelPosition =
+      entity.labelPosition === "auto" || !entity.labelPosition
+        ? "outside"
+        : entity.labelPosition
 
     const canShowOutsideLabels =
       labelPosition === "outside" &&
       (sliceCount <= 15 || Math.min(entity.width, entity.height) >= 500)
 
-    const effectiveLabelPosition = canShowOutsideLabels 
-      ? "outside" 
-      : labelPosition === "outside" 
-        ? "tooltip" 
+    const effectiveLabelPosition = canShowOutsideLabels
+      ? "outside"
+      : labelPosition === "outside"
+        ? "tooltip"
         : labelPosition
     labelPosition = effectiveLabelPosition
 
@@ -59,7 +60,7 @@ export const pie = {
       height: entity.height,
       onSliceEnter: (slice, index, event) => {
         if (!entity.showTooltip) return
-        
+
         const path = event.target
         const svgEl = path.closest("svg")
         const rect = svgEl.getBoundingClientRect()
@@ -68,13 +69,15 @@ export const pie = {
         const labelRadius = radius * 1.1
         const x = centerX + Math.cos(angleOffset) * labelRadius
         const y = centerY + Math.sin(angleOffset) * labelRadius
-        const percentage = ((slice.endAngle - slice.startAngle) / (2 * Math.PI)) * 100
+        const percentage =
+          ((slice.endAngle - slice.startAngle) / (2 * Math.PI)) * 100
 
         api.notify(`#${entity.id}:showTooltip`, {
           label: slice.data.label || slice.data.name || "",
           percentage,
           value: slice.value,
-          color: slice.data.color || entity.colors[index % entity.colors.length],
+          color:
+            slice.data.color || entity.colors[index % entity.colors.length],
           x: rect.left + x,
           y: rect.top + y,
         })
@@ -115,7 +118,9 @@ export const pie = {
                   class="iw-chart-modal-color"
                   style="background-color: ${entity.tooltip.color};"
                 ></span>
-                <span class="iw-chart-modal-label">${entity.tooltip.label}</span>
+                <span class="iw-chart-modal-label"
+                  >${entity.tooltip.label}</span
+                >
               </div>
               <div class="iw-chart-modal-body">
                 <div class="iw-chart-modal-percentage">

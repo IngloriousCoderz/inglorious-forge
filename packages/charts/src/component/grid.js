@@ -60,4 +60,3 @@ export function renderGrid({ xScale, yScale, width, height, padding }) {
     )}
   `
 }
-

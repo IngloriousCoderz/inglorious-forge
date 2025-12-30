@@ -36,4 +36,3 @@ export function createChartContext(entity, chartType) {
     entity,
   }
 }
-

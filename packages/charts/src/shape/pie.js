@@ -19,9 +19,10 @@ export function renderPie({
   width,
   height,
 }) {
-  const labelPositions = labelPosition === "outside" 
-    ? calculateLabelPositions(pieData, radius, width, height)
-    : null
+  const labelPositions =
+    labelPosition === "outside"
+      ? calculateLabelPositions(pieData, radius, width, height)
+      : null
 
   return svg`
     ${repeat(
@@ -62,7 +63,7 @@ function renderPieSlice({
 }) {
   const sliceSize = slice.endAngle - slice.startAngle
   const percentage = (sliceSize / (2 * Math.PI)) * 100
-  
+
   // Ajusta minPercentage baseado no número de slices
   // Mais slices = maior threshold para evitar sobreposição
   const minPercentage = pieData.length > 15 ? 5 : pieData.length > 10 ? 3 : 2
@@ -78,20 +79,22 @@ function renderPieSlice({
         @mouseenter=${(e) => onSliceEnter?.(slice, index, e)}
         @mouseleave=${() => onSliceLeave?.()}
       />
-      ${shouldShowLabel
-        ? renderLabel({
-            slice,
-            radius,
-            percentage,
-            labelPosition,
-            pieData,
-            index,
-            color,
-            labelPositions,
-            width: centerX * 2,
-            height: centerY * 2,
-          })
-        : ""}
+      ${
+        shouldShowLabel
+          ? renderLabel({
+              slice,
+              radius,
+              percentage,
+              labelPosition,
+              pieData,
+              index,
+              color,
+              labelPositions,
+              width: centerX * 2,
+              height: centerY * 2,
+            })
+          : ""
+      }
     </g>
   `
 }
@@ -102,17 +105,16 @@ function renderPieSlice({
 
 function renderLabel(params) {
   const { labelPosition } = params
-  
+
   // Se for "tooltip", não mostra label (só tooltip)
   if (labelPosition === "tooltip") return svg``
-  
+
   // Se for "inside", mostra label interno
   if (labelPosition === "inside") return renderInsideLabel(params)
-  
+
   // Para "outside", "auto" ou qualquer outro valor, mostra label externo (padrão)
   return renderOutsideLabel(params)
 }
-
 
 /**
  * Calcula posições Y ordenadas para labels externos, evitando sobreposição
@@ -167,11 +169,11 @@ function calculateLabelPositions(pieData, radius, width, height) {
   return positions
 }
 
-function renderOutsideLabel({ 
-  slice, 
-  radius, 
-  percentage, 
-  index, 
+function renderOutsideLabel({
+  slice,
+  radius,
+  percentage,
+  index,
   labelPositions,
   width,
   height,
@@ -182,10 +184,10 @@ function renderOutsideLabel({
   const startX = Math.cos(angle) * radius
   const startY = Math.sin(angle) * radius
   const midX = Math.cos(angle) * (radius + 15)
-  
+
   const baseMidY = Math.sin(angle) * (radius + 15)
   const midY = labelPositions?.get(index) ?? baseMidY
-  
+
   const endX = midX + side * 25
   const endY = midY
 

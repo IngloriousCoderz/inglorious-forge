@@ -10,7 +10,6 @@ import { renderYAxis } from "../component/y-axis.js"
 import { createChartContext } from "../context/chart-context.js"
 import { renderArea } from "../shape/area.js"
 
-
 export const area = {
   renderChart(entity) {
     if (!entity.data || entity.data.length === 0) {

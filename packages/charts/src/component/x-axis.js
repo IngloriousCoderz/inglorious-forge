@@ -88,4 +88,3 @@ export function renderXAxis({ entity, xScale, yScale, height, padding }) {
     )}
   `
 }
-

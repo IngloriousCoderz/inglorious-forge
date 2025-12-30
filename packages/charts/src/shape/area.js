@@ -53,14 +53,15 @@ export function renderArea({
               stroke-width="0.15625em"
               class="iw-chart-line"
             />
-            ${showPoints
-              ? repeat(
-                  values,
-                  (d, i) => i,
-                  (d) => {
-                    const x = xScale(d.x ?? d.date ?? 0)
-                    const y = yScale(d.y ?? d.value ?? 0)
-                    return svg`
+            ${
+              showPoints
+                ? repeat(
+                    values,
+                    (d, i) => i,
+                    (d) => {
+                      const x = xScale(d.x ?? d.date ?? 0)
+                      const y = yScale(d.y ?? d.value ?? 0)
+                      return svg`
                       <circle
                         cx=${x}
                         cy=${y}
@@ -71,9 +72,10 @@ export function renderArea({
                         class="iw-chart-point"
                       />
                     `
-                  },
-                )
-              : ""}
+                    },
+                  )
+                : ""
+            }
           </g>
         `
       })}
@@ -99,14 +101,15 @@ export function renderArea({
         stroke-width="0.15625em"
         class="iw-chart-line"
       />
-      ${showPoints
-        ? repeat(
-            data,
-            (d, i) => i,
-            (d) => {
-              const x = xScale(d.x ?? d.date ?? 0)
-              const y = yScale(d.y ?? d.value ?? 0)
-              return svg`
+      ${
+        showPoints
+          ? repeat(
+              data,
+              (d, i) => i,
+              (d) => {
+                const x = xScale(d.x ?? d.date ?? 0)
+                const y = yScale(d.y ?? d.value ?? 0)
+                return svg`
                 <circle
                   cx=${x}
                   cy=${y}
@@ -117,10 +120,10 @@ export function renderArea({
                   class="iw-chart-point"
                 />
               `
-            },
-          )
-        : ""}
+              },
+            )
+          : ""
+      }
     </g>
   `
 }
-
