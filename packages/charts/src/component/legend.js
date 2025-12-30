@@ -70,4 +70,3 @@ export function renderLegend({ series, colors, width, padding }) {
     </g>
   `
 }
-

@@ -15,7 +15,13 @@ import { generateLinePath } from "../utils/paths.js"
  * @param {boolean} params.showPoints
  * @returns {import('lit-html').TemplateResult}
  */
-export function renderLine({ data, xScale, yScale, colors, showPoints = true }) {
+export function renderLine({
+  data,
+  xScale,
+  yScale,
+  colors,
+  showPoints = true,
+}) {
   if (!data || data.length === 0) {
     return svg``
   }
@@ -38,14 +44,15 @@ export function renderLine({ data, xScale, yScale, colors, showPoints = true }) 
               stroke-width="0.15625em"
               class="iw-chart-line"
             />
-            ${showPoints
-              ? repeat(
-                  values,
-                  (d, i) => i,
-                  (d) => {
-                    const x = xScale(d.x ?? d.date ?? 0)
-                    const y = yScale(d.y ?? d.value ?? 0)
-                    return svg`
+            ${
+              showPoints
+                ? repeat(
+                    values,
+                    (d, i) => i,
+                    (d) => {
+                      const x = xScale(d.x ?? d.date ?? 0)
+                      const y = yScale(d.y ?? d.value ?? 0)
+                      return svg`
                       <circle
                         cx=${x}
                         cy=${y}
@@ -56,9 +63,10 @@ export function renderLine({ data, xScale, yScale, colors, showPoints = true }) 
                         class="iw-chart-point"
                       />
                     `
-                  },
-                )
-              : ""}
+                    },
+                  )
+                : ""
+            }
           </g>
         `
       })}
@@ -77,14 +85,15 @@ export function renderLine({ data, xScale, yScale, colors, showPoints = true }) 
         stroke-width="0.15625em"
         class="iw-chart-line"
       />
-      ${showPoints
-        ? repeat(
-            data,
-            (d, i) => i,
-            (d) => {
-              const x = xScale(d.x ?? d.date ?? 0)
-              const y = yScale(d.y ?? d.value ?? 0)
-              return svg`
+      ${
+        showPoints
+          ? repeat(
+              data,
+              (d, i) => i,
+              (d) => {
+                const x = xScale(d.x ?? d.date ?? 0)
+                const y = yScale(d.y ?? d.value ?? 0)
+                return svg`
                 <circle
                   cx=${x}
                   cy=${y}
@@ -95,10 +104,10 @@ export function renderLine({ data, xScale, yScale, colors, showPoints = true }) 
                   class="iw-chart-point"
                 />
               `
-            },
-          )
-        : ""}
+              },
+            )
+          : ""
+      }
     </g>
   `
 }
-
