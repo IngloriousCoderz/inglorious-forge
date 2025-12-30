@@ -4,15 +4,10 @@ import { html, svg } from "lit-html"
 import { repeat } from "lit-html/directives/repeat.js"
 import { when } from "lit-html/directives/when.js"
 
-import { logic } from "../logic.js"
-import { rendering } from "../rendering.js"
 import { formatNumber } from "../utils/format.js"
 import { calculatePieData, generateArcPath } from "../utils/paths.js"
 
 export const donut = {
-  ...logic,
-  ...rendering,
-
   renderChart(entity, api) {
     if (!entity.data || entity.data.length === 0) {
       return svg`
@@ -91,7 +86,6 @@ export const donut = {
       },
     )
 
-    // Texto central
     const centerText = entity.centerText
       ? svg`
       <text
