@@ -1,25 +1,16 @@
 /* eslint-disable no-magic-numbers */
 
 import { html, svg } from "lit-html"
-import { repeat } from "lit-html/directives/repeat.js"
 
-import {
-  getSeriesValues,
-  renderAxisLines,
-  renderGrid,
-  renderLegend,
-  renderXAxis,
-  renderYAxis,
-} from "../component/chart-helpers.js"
-import { logic } from "../logic.js"
-import { rendering } from "../rendering.js"
-import { generateLinePath } from "../utils/paths.js"
-import { createScales } from "../utils/scales.js"
+import { renderAxisLines } from "../component/axis-lines.js"
+import { renderGrid } from "../component/grid.js"
+import { renderLegend } from "../component/legend.js"
+import { renderXAxis } from "../component/x-axis.js"
+import { renderYAxis } from "../component/y-axis.js"
+import { createChartContext } from "../context/chart-context.js"
+import { renderLine } from "../shape/line.js"
 
 export const line = {
-  ...logic,
-  ...rendering,
-
   renderChart(entity) {
     if (!entity.data || entity.data.length === 0) {
       return svg`
@@ -29,116 +20,76 @@ export const line = {
       `
     }
 
-    const { xScale, yScale } = createScales(entity, "line")
+    // Create context with scales and dimensions
+    const context = createChartContext(entity, "line")
+    const { xScale, yScale, dimensions } = context
+    const { width, height, padding } = dimensions
 
-    // Grid
-    const grid = entity.showGrid ? renderGrid(entity, xScale, yScale) : ""
-
-    // Eixos
-    const axes = svg`
-      ${renderAxisLines(entity, yScale)}
-      ${renderXAxis(entity, xScale, yScale)}
-      ${renderYAxis(entity, yScale)}
-    `
-
-    // Render das linhas
-    // Se data[0] tem .values, é múltiplas séries, senão é uma série simples
-    const isMultiSeries = Array.isArray(entity.data[0]?.values)
-
-    // Legenda (apenas para múltiplas séries)
-    const legend = isMultiSeries ? renderLegend(entity, entity.data) : ""
-
-    const paths = isMultiSeries
-      ? entity.data.map((series, seriesIndex) => {
-          const values = getSeriesValues(series)
-          const pathData = generateLinePath(values, xScale, yScale)
-          const color =
-            series.color || entity.colors[seriesIndex % entity.colors.length]
-
-          const points = repeat(
-            values,
-            (d, i) => i,
-            (d) => {
-              const x = xScale(d.x ?? d.date ?? 0)
-              const y = yScale(d.y ?? d.value ?? 0)
-              return svg`
-                <circle
-                  cx=${x}
-                  cy=${y}
-                  r="0.25em"
-                  fill=${color}
-                  stroke="white"
-                  stroke-width="0.125em"
-                  class="iw-chart-point"
-                />
-              `
-            },
-          )
-
-          return svg`
-            <g>
-              <path
-                d=${pathData}
-                stroke=${color}
-                fill="none"
-                stroke-width="0.15625em"
-                class="iw-chart-line"
-              />
-              ${points}
-            </g>
-          `
+    // Independent components - declarative composition
+    const grid = entity.showGrid
+      ? renderGrid({
+          xScale,
+          yScale,
+          width,
+          height,
+          padding,
         })
-      : [
-          // Uma série simples
-          (() => {
-            const pathData = generateLinePath(entity.data, xScale, yScale)
-            const color = entity.colors[0]
+      : ""
 
-            const points = repeat(
-              entity.data,
-              (d, i) => i,
-              (d) => {
-                const x = xScale(d.x ?? d.date ?? 0)
-                const y = yScale(d.y ?? d.value ?? 0)
-                return svg`
-                  <circle
-                    cx=${x}
-                    cy=${y}
-                    r="0.25em"
-                    fill=${color}
-                    stroke="white"
-                    stroke-width="0.125em"
-                    class="iw-chart-point"
-                  />
-                `
-              },
-            )
+    const axisLines = renderAxisLines({
+      width,
+      height,
+      padding,
+      yScale,
+    })
 
-            return svg`
-              <g>
-                <path
-                  d=${pathData}
-                  stroke=${color}
-                  fill="none"
-                  stroke-width="0.15625em"
-                  class="iw-chart-line"
-                />
-                ${points}
-              </g>
-            `
-          })(),
-        ]
+    const xAxis = renderXAxis({
+      entity,
+      xScale,
+      yScale,
+      height,
+      padding,
+    })
 
+    const yAxis = renderYAxis({
+      yScale,
+      padding,
+    })
+
+    // Line shape - just draws paths
+    const lines = renderLine({
+      data: entity.data,
+      xScale,
+      yScale,
+      colors: entity.colors,
+      showPoints: entity.showPoints !== false,
+    })
+
+    // Legend - only for multiple series
+    const isMultiSeries = Array.isArray(entity.data[0]?.values)
+    const legend =
+      isMultiSeries && entity.showLegend
+        ? renderLegend({
+            series: entity.data,
+            colors: entity.colors,
+            width,
+            padding,
+          })
+        : ""
+
+    // SVG container
     const svgContent = svg`
       <svg
-        width=${entity.width}
-        height=${entity.height}
-        viewBox="0 0 ${entity.width} ${entity.height}"
+        width=${width}
+        height=${height}
+        viewBox="0 0 ${width} ${height}"
         class="iw-chart-svg"
       >
         ${grid}
-        ${axes}
-        ${paths}
+        ${axisLines}
+        ${xAxis}
+        ${yAxis}
+        ${lines}
         ${legend}
       </svg>
     `

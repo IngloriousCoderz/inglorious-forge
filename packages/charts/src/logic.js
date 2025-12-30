@@ -1,5 +1,6 @@
 /* eslint-disable no-magic-numbers */
 
+import { generateColors, getDefaultColors } from "./utils/colors.js"
 import { calculatePadding } from "./utils/padding.js"
 
 /**
@@ -87,7 +88,14 @@ function initChart(entity) {
   entity.height ??= 400
   entity.padding ??= calculatePadding(entity.width, entity.height)
   entity.data ??= []
-  entity.colors ??= ["#3b82f6", "#ef4444", "#10b981", "#f59e0b", "#8b5cf6"]
+  
+  if (!entity.colors) {
+    const dataCount = entity.data?.length || 0
+    entity.colors = dataCount > 5 
+      ? generateColors(dataCount) 
+      : getDefaultColors()
+  }
+  
   entity.showLegend ??= true
   entity.showGrid ??= true
   entity.showTooltip ??= true
@@ -97,7 +105,6 @@ function initChart(entity) {
   // labelPosition: "inside" | "outside" | "tooltip" | "auto" (default)
   entity.labelPosition ??= "auto"
 
-  // Detecção automática de xAxisType se não fornecido
   if (!entity.xAxisType && entity.data?.length > 0) {
     const hasDates = entity.data.some(
       (d) => d.date || (d.values && d.values.some((v) => v.date)),
