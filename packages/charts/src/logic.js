@@ -88,14 +88,13 @@ function initChart(entity) {
   entity.height ??= 400
   entity.padding ??= calculatePadding(entity.width, entity.height)
   entity.data ??= []
-  
+
   if (!entity.colors) {
     const dataCount = entity.data?.length || 0
-    entity.colors = dataCount > 5 
-      ? generateColors(dataCount) 
-      : getDefaultColors()
+    entity.colors =
+      dataCount > 5 ? generateColors(dataCount) : getDefaultColors()
   }
-  
+
   entity.showLegend ??= true
   entity.showGrid ??= true
   entity.showTooltip ??= true

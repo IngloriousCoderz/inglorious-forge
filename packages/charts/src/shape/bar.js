@@ -54,8 +54,9 @@ export function renderBar({
               rx="0.25em"
               ry="0.25em"
             />
-            ${showLabel
-              ? svg`
+            ${
+              showLabel
+                ? svg`
                 <text
                   x=${x + barWidth / 2}
                   y=${y - 5}
@@ -67,11 +68,11 @@ export function renderBar({
                   ${formatNumber(d.value)}
                 </text>
               `
-              : ""}
+                : ""
+            }
           </g>
         `
       },
     )}
   `
 }
-
