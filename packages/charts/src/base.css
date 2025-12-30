@@ -1,9 +1,11 @@
 .iw-chart {
   position: relative;
   display: inline-block;
+  overflow: visible;
 
   .iw-chart-svg {
     display: block;
+    overflow: visible;
   }
 
   .iw-chart-line {
