@@ -36,11 +36,7 @@ export const pie = {
 
     const outerPadding =
       entity.outerPadding ??
-      (labelPosition === "tooltip"
-        ? 50
-        : labelPosition === "inside"
-          ? 20
-          : 60)
+      (labelPosition === "tooltip" ? 50 : labelPosition === "inside" ? 20 : 60)
 
     // outerRadius: like Recharts (default calculated from dimensions)
     const outerRadius =
@@ -164,4 +160,3 @@ export const pie = {
     `
   },
 }
-
