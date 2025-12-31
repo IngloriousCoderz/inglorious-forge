@@ -101,8 +101,24 @@ function initChart(entity) {
   entity.tooltip ??= null
   entity.tooltipX ??= 0
   entity.tooltipY ??= 0
-  // labelPosition: "inside" | "outside" | "tooltip" | "auto" (default)
-  entity.labelPosition ??= "auto"
+  // labelPosition: "inside" | "outside" | "tooltip" | "auto"
+  entity.labelPosition ??= "outside"
+  entity.showLabel ??= true
+  entity.outerPadding ??= undefined
+  entity.outerRadius ??= undefined
+  entity.innerRadius ??= undefined
+  entity.offsetRadius ??= 20
+  entity.minLabelPercentage ??= 2
+  entity.labelOverflowMargin ??= 20
+  entity.cx ??= undefined
+  entity.cy ??= undefined
+  entity.startAngle ??= undefined
+  entity.endAngle ??= undefined
+  entity.paddingAngle ??= undefined
+  entity.minAngle ??= undefined
+  entity.cornerRadius ??= undefined
+  entity.dataKey ??= undefined
+  entity.nameKey ??= undefined
 
   if (!entity.xAxisType && entity.data?.length > 0) {
     const hasDates = entity.data.some(

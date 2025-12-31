@@ -4,6 +4,7 @@ import { svg } from "lit-html"
 import { repeat } from "lit-html/directives/repeat.js"
 
 import { formatDate, formatNumber } from "../utils/format.js"
+import { calculateXTicks } from "../utils/scales.js"
 
 /**
  * @param {Object} params
@@ -47,11 +48,15 @@ export function renderXAxis({ entity, xScale, yScale, height, padding }) {
     `
   }
 
-  const ticks = xScale.ticks ? xScale.ticks(5) : xScale.domain()
+  // Calculate ticks using helper function
+  const ticks = xScale.bandwidth
+    ? xScale.domain()
+    : calculateXTicks(entity.data, xScale)
+
   let xAxisY = height - padding.bottom
   if (yScale) {
-    const domain = yScale.domain()
-    if (domain[0] < 0) {
+    const yDomain = yScale.domain()
+    if (yDomain[0] < 0) {
       xAxisY = yScale(0)
     }
   }
