@@ -25,7 +25,9 @@ export function renderGrid({ entity, xScale, yScale, width, height, padding }) {
     ? xScale.domain()
     : data && data.length > 0
       ? calculateXTicks(data, xScale)
-      : xScale.ticks ? xScale.ticks(5) : xScale.domain()
+      : xScale.ticks
+        ? xScale.ticks(5)
+        : xScale.domain()
   const yTicks = yScale.ticks(5)
 
   return svg`

@@ -36,11 +36,7 @@ export const donut = {
 
     const outerPadding =
       entity.outerPadding ??
-      (labelPosition === "tooltip"
-        ? 50
-        : labelPosition === "inside"
-          ? 20
-          : 60)
+      (labelPosition === "tooltip" ? 50 : labelPosition === "inside" ? 20 : 60)
 
     // outerRadius: like Recharts (default calculated from dimensions)
     const outerRadius =
@@ -49,8 +45,7 @@ export const donut = {
 
     // innerRadius: for donut, use innerRadiusRatio if provided, otherwise default to 0.6
     const innerRadius =
-      entity.innerRadius ??
-      outerRadius * (entity.innerRadiusRatio ?? 0.6)
+      entity.innerRadius ?? outerRadius * (entity.innerRadiusRatio ?? 0.6)
 
     const offsetRadius = entity.offsetRadius ?? 20
 
@@ -160,8 +155,7 @@ export const donut = {
             })
           }}
         >
-          ${slices}
-          ${centerText}
+          ${slices} ${centerText}
         </svg>
 
         ${when(
@@ -192,4 +186,3 @@ export const donut = {
     `
   },
 }
-
