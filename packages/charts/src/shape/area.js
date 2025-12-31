@@ -44,27 +44,27 @@ export function renderArea({
 
       // Render all areas and lines first
       const areasAndLines = data.map((series, seriesIndex) => {
-      const values = getSeriesValues(series)
-      // Use stacked data for this series
-      const seriesStackedData = stackedData[seriesIndex] || []
-      const areaPath = generateStackedAreaPath(
-        values,
-        xScale,
-        yScale,
-        seriesStackedData,
-      )
-      // Line path uses top of stacked area (y1 values)
-      const linePath = generateLinePath(
-        values.map((d, i) => ({
-          ...d,
-          y: seriesStackedData[i]?.[1] ?? d.y ?? d.value,
-        })),
-        xScale,
-        yScale,
-      )
-      const color = series.color || colors[seriesIndex % colors.length]
+        const values = getSeriesValues(series)
+        // Use stacked data for this series
+        const seriesStackedData = stackedData[seriesIndex] || []
+        const areaPath = generateStackedAreaPath(
+          values,
+          xScale,
+          yScale,
+          seriesStackedData,
+        )
+        // Line path uses top of stacked area (y1 values)
+        const linePath = generateLinePath(
+          values.map((d, i) => ({
+            ...d,
+            y: seriesStackedData[i]?.[1] ?? d.y ?? d.value,
+          })),
+          xScale,
+          yScale,
+        )
+        const color = series.color || colors[seriesIndex % colors.length]
 
-      return svg`
+        return svg`
         <g>
           <path
             d=${areaPath}
@@ -81,23 +81,25 @@ export function renderArea({
           />
         </g>
       `
-    })
+      })
 
-    // Render all points last (so they appear on top)
-    const points = showPoints
-      ? data.map((series, seriesIndex) => {
-          const values = getSeriesValues(series)
-          const seriesStackedData = stackedData[seriesIndex] || []
-          const color = series.color || colors[seriesIndex % colors.length]
+      // Render all points last (so they appear on top)
+      const points = showPoints
+        ? data.map((series, seriesIndex) => {
+            const values = getSeriesValues(series)
+            const seriesStackedData = stackedData[seriesIndex] || []
+            const color = series.color || colors[seriesIndex % colors.length]
 
-          return repeat(
-            values,
-            (d, i) => `${seriesIndex}-${i}`,
-            (d, i) => {
-              const x = xScale(d.x ?? d.date ?? 0)
-              // Use stacked y1 value for point position
-              const y = yScale(seriesStackedData[i]?.[1] ?? d.y ?? d.value ?? 0)
-              return svg`
+            return repeat(
+              values,
+              (d, i) => `${seriesIndex}-${i}`,
+              (d, i) => {
+                const x = xScale(d.x ?? d.date ?? 0)
+                // Use stacked y1 value for point position
+                const y = yScale(
+                  seriesStackedData[i]?.[1] ?? d.y ?? d.value ?? 0,
+                )
+                return svg`
                 <circle
                   cx=${x}
                   cy=${y}
@@ -108,17 +110,16 @@ export function renderArea({
                   class="iw-chart-point"
                 />
               `
-            },
-          )
-        })
-      : []
+              },
+            )
+          })
+        : []
 
       return svg`
         ${areasAndLines}
         ${points}
       `
     } else {
-      // Non-stacked: render each series independently (like line chart but with fill)
       // Render in reverse order to match stacked visual order (first series on bottom, last on top)
       // But keep original color indices to maintain correct colors
       const areasAndLines = data

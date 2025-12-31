@@ -90,7 +90,7 @@ export function createOrdinalScale(categories, width, padding) {
 export function createScales(entity, chartType) {
   // Area charts use stacked scale only if entity.stacked is true
   // Default to false (non-stacked) for area charts
-  const isStacked = chartType === "area" && (entity.stacked === true)
+  const isStacked = chartType === "area" && entity.stacked === true
   const yScale = createYScale(
     entity.data,
     entity.height,

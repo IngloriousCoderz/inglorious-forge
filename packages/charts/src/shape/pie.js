@@ -27,7 +27,13 @@ export function renderPie({
 }) {
   const labelPositions =
     labelPosition === "outside"
-      ? calculateLabelPositions(pieData, outerRadius, width, height, offsetRadius)
+      ? calculateLabelPositions(
+          pieData,
+          outerRadius,
+          width,
+          height,
+          offsetRadius,
+        )
       : null
 
   return svg`
@@ -152,7 +158,13 @@ function renderLabel(params) {
  * @param {number} offsetRadius
  * @returns {Map<number, number>} Map<index, adjustedY>
  */
-function calculateLabelPositions(pieData, outerRadius, width, height, offsetRadius) {
+function calculateLabelPositions(
+  pieData,
+  outerRadius,
+  width,
+  height,
+  offsetRadius,
+) {
   const positions = new Map()
   const minSpacing = 14
   const maxY = height / 2 - 10

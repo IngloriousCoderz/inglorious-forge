@@ -1,4 +1,12 @@
-import { arc, area, curveLinear, curveMonotoneX, line, pie, stack } from "d3-shape"
+import {
+  arc,
+  area,
+  curveLinear,
+  curveMonotoneX,
+  line,
+  pie,
+  stack,
+} from "d3-shape"
 
 export function generateLinePath(data, xScale, yScale, curveType = "linear") {
   const curve = curveType === "monotone" ? curveMonotoneX : curveLinear
@@ -96,9 +104,7 @@ export function calculateStackedData(
   const stacked = stackGenerator(data)
 
   // Transform to array of [y0, y1] tuples for each series
-  return stacked.map((series) =>
-    series.map((point) => [point[0], point[1]]),
-  )
+  return stacked.map((series) => series.map((point) => [point[0], point[1]]))
 }
 
 /**
@@ -160,9 +166,7 @@ export function calculatePieData(
       const isZero = val === 0 || typeof val !== "number"
 
       const percent = isZero ? 0 : val / sum
-      const sliceAngle = isZero
-        ? 0
-        : minAngleRad + percent * realTotalAngle
+      const sliceAngle = isZero ? 0 : minAngleRad + percent * realTotalAngle
 
       const sliceStartAngle = currentAngle
       const sliceEndAngle = currentAngle + sign * sliceAngle
