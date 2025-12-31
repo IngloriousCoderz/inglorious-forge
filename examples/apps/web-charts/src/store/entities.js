@@ -25,37 +25,37 @@ export const entities = {
       {
         name: "Product A",
         values: [
-          { x: 0, y: 100 },
-          { x: 1, y: 150 },
-          { x: 2, y: 120 },
-          { x: 3, y: 180 },
+          { x: 0, y: 10 },
+          { x: 1, y: 250 },
+          { x: 2, y: 320 },
+          { x: 3, y: 280 },
         ],
       },
       {
         name: "Product B",
         values: [
-          { x: 0, y: 80 },
+          { x: 0, y: 280 },
           { x: 1, y: 120 },
-          { x: 2, y: 140 },
-          { x: 3, y: 160 },
+          { x: 2, y: 600 },
+          { x: 3, y: 460 },
         ],
       },
       {
         name: "Product C",
         values: [
-          { x: 0, y: 60 },
+          { x: 0, y: 160 },
           { x: 1, y: 90 },
-          { x: 2, y: 110 },
-          { x: 3, y: 130 },
+          { x: 2, y: 210 },
+          { x: 3, y: 230 },
         ],
       },
       {
         name: "Product D",
         values: [
-          { x: 0, y: 120 },
-          { x: 1, y: 45 },
-          { x: 2, y: 150 },
-          { x: 3, y: 85 },
+          { x: 0, y: 230 },
+          { x: 1, y: 145 },
+          { x: 2, y: 190 },
+          { x: 3, y: 400 },
         ],
       },
     ],
@@ -91,10 +91,49 @@ export const entities = {
       {
         name: "Revenue",
         values: [
+          { x: 0, y: 20 },
+          { x: 1, y: 30 },
+          { x: 2, y: 25 },
+          { x: 3, y: 20 },
+          { x: 4, y: 50 },
+        ],
+      },
+      {
+        name: "Expenses",
+        values: [
+          { x: 0, y: 80 },
+          { x: 1, y: 120 },
+          { x: 2, y: 90 },
+          { x: 3, y: 140 },
+          { x: 4, y: 150 },
+        ],
+      },
+      {
+        name: "Profit",
+        values: [
           { x: 0, y: 100 },
-          { x: 0.5, y: 110 },
           { x: 1, y: 150 },
-          { x: 1.5, y: 160 },
+          { x: 2, y: 120 },
+          { x: 3, y: 180 },
+          { x: 4, y: 200 },
+        ],
+      },
+    ],
+    width: 800,
+    height: 400,
+    showGrid: true,
+    showTooltip: true,
+  },
+
+  // Area Chart with multiple series stacked
+  multiSeriesAreaChartStacked: {
+    type: "area",
+    data: [
+      {
+        name: "Revenue",
+        values: [
+          { x: 0, y: 100 },
+          { x: 1, y: 150 },
           { x: 2, y: 120 },
           { x: 3, y: 180 },
           { x: 4, y: 200 },
@@ -104,11 +143,9 @@ export const entities = {
         name: "Expenses",
         values: [
           { x: 0, y: 80 },
-          { x: 0.5, y: 100 },
           { x: 1, y: 120 },
-          { x: 1.5, y: 130 },
-          { x: 2, y: 140 },
-          { x: 3, y: 160 },
+          { x: 2, y: 90 },
+          { x: 3, y: 140 },
           { x: 4, y: 150 },
         ],
       },
@@ -116,9 +153,7 @@ export const entities = {
         name: "Profit",
         values: [
           { x: 0, y: 20 },
-          { x: 0.5, y: 10 },
           { x: 1, y: 30 },
-          { x: 1.5, y: 20 },
           { x: 2, y: 25 },
           { x: 3, y: 20 },
           { x: 4, y: 50 },
@@ -129,6 +164,7 @@ export const entities = {
     height: 400,
     showGrid: true,
     showTooltip: true,
+    stacked: true,
   },
 
   // Bar Chart
@@ -177,6 +213,117 @@ export const entities = {
     height: 400,
     centerText: "Total",
     innerRadiusRatio: 0.6,
+    showTooltip: true,
+  },
+
+  // Pie Chart with custom position (cx, cy)
+  pieCustomPosition: {
+    type: "pie",
+    data: [
+      { label: "North", value: 30 },
+      { label: "South", value: 25 },
+      { label: "East", value: 20 },
+      { label: "West", value: 25 },
+    ],
+    width: 500,
+    height: 400,
+    cx: "35%", // Custom X position
+    cy: "35%", // Custom Y position
+    showTooltip: true,
+  },
+
+  // Pie Chart with partial angle (startAngle, endAngle)
+  piePartial: {
+    type: "pie",
+    data: [
+      { label: "Q1", value: 25 },
+      { label: "Q2", value: 30 },
+      { label: "Q3", value: 20 },
+      { label: "Q4", value: 25 },
+    ],
+    width: 500,
+    height: 400,
+    startAngle: 180, // Start at 180° (left)
+    endAngle: 0, // End at 0° (right) - creates half circle
+    showTooltip: true,
+  },
+
+  // Pie Chart with padding between sectors (paddingAngle)
+  pieWithPadding: {
+    type: "pie",
+    data: [
+      { label: "Red", value: 30 },
+      { label: "Blue", value: 25 },
+      { label: "Green", value: 20 },
+      { label: "Yellow", value: 25 },
+    ],
+    width: 500,
+    height: 400,
+    paddingAngle: 5, // 5 degrees gap between sectors
+    showTooltip: true,
+  },
+
+  // Pie Chart with minimum angle (minAngle)
+  pieMinAngle: {
+    type: "pie",
+    data: [
+      { label: "Large", value: 50 },
+      { label: "Medium", value: 30 },
+      { label: "Small", value: 5 }, // Very small, but will be at least minAngle
+      { label: "Tiny", value: 3 }, // Very small, but will be at least minAngle
+      { label: "Other", value: 12 },
+    ],
+    width: 500,
+    height: 400,
+    minAngle: 10, // Each sector has at least 10 degrees
+    showTooltip: true,
+  },
+
+  // Pie Chart with rounded corners (cornerRadius)
+  pieRounded: {
+    type: "pie",
+    data: [
+      { label: "Option A", value: 30 },
+      { label: "Option B", value: 25 },
+      { label: "Option C", value: 20 },
+      { label: "Option D", value: 25 },
+    ],
+    width: 500,
+    height: 400,
+    cornerRadius: 10, // Rounded edges
+    showTooltip: true,
+  },
+
+  // Pie Chart with custom data structure (dataKey, nameKey)
+  pieCustomData: {
+    type: "pie",
+    data: [
+      { product: "Laptop", sales: 150 },
+      { product: "Phone", sales: 200 },
+      { product: "Tablet", sales: 100 },
+      { product: "Watch", sales: 80 },
+    ],
+    width: 500,
+    height: 400,
+    dataKey: (d) => d.sales, // Extract value from "sales"
+    nameKey: (d) => d.product, // Extract label from "product"
+    showTooltip: true,
+  },
+
+  // Pie Chart combining multiple features
+  pieAdvanced: {
+    type: "pie",
+    data: [
+      { label: "Team A", value: 40 },
+      { label: "Team B", value: 30 },
+      { label: "Team C", value: 20 },
+      { label: "Team D", value: 10 },
+    ],
+    width: 500,
+    height: 400,
+    paddingAngle: 3, // Space between sectors
+    cornerRadius: 8, // Rounded edges
+    minAngle: 5, // Minimum angle per sector
     showTooltip: true,
   },
 }

@@ -13,49 +13,75 @@ export const pie = {
       return svg`<svg>...</svg>`
     }
 
-    const pieData = calculatePieData(entity.data)
-    const sliceCount = entity.data.length
+    // dataKey and nameKey: like Recharts (flexible data access)
+    const dataKey = entity.dataKey ?? ((d) => d.value)
+    const nameKey = entity.nameKey ?? ((d) => d.label || d.name || "")
 
-    let labelPosition =
-      entity.labelPosition === "auto" || !entity.labelPosition
-        ? "outside"
-        : entity.labelPosition
+    // startAngle, endAngle, paddingAngle, minAngle: like Recharts
+    const startAngle = entity.startAngle ?? 0
+    const endAngle = entity.endAngle ?? 360
+    const paddingAngle = entity.paddingAngle ?? 0
+    const minAngle = entity.minAngle ?? 0
 
-    const canShowOutsideLabels =
-      labelPosition === "outside" &&
-      (sliceCount <= 15 || Math.min(entity.width, entity.height) >= 500)
+    const pieData = calculatePieData(
+      entity.data,
+      dataKey,
+      startAngle,
+      endAngle,
+      paddingAngle,
+      minAngle,
+    )
 
-    const effectiveLabelPosition = canShowOutsideLabels
-      ? "outside"
-      : labelPosition === "outside"
-        ? "tooltip"
-        : labelPosition
-    labelPosition = effectiveLabelPosition
+    const labelPosition = entity.labelPosition ?? "outside"
 
-    const dynamicOuterPadding =
-      labelPosition === "tooltip"
+    const outerPadding =
+      entity.outerPadding ??
+      (labelPosition === "tooltip"
         ? 50
         : labelPosition === "inside"
           ? 20
-          : Math.min(
-              Math.max(sliceCount * 6, 60), // cresce com nº de slices (mínimo 60px)
-              Math.min(entity.width, entity.height) / 2 - 20, // nunca maior que metade do SVG menos 20px
-            )
+          : 60)
 
-    const radius =
-      Math.min(entity.width, entity.height) / 2 - dynamicOuterPadding
+    // outerRadius: like Recharts (default calculated from dimensions)
+    const outerRadius =
+      entity.outerRadius ??
+      Math.min(entity.width, entity.height) / 2 - outerPadding
 
-    const centerX = entity.width / 2
-    const centerY = entity.height / 2
+    // innerRadius: like Recharts (default 0 for pie chart)
+    const innerRadius = entity.innerRadius ?? 0
+
+    const offsetRadius = entity.offsetRadius ?? 20
+
+    // cx and cy: like Recharts (custom center position)
+    const centerX = entity.cx
+      ? typeof entity.cx === "string"
+        ? (parseFloat(entity.cx) / 100) * entity.width
+        : entity.cx
+      : entity.width / 2
+
+    const centerY = entity.cy
+      ? typeof entity.cy === "string"
+        ? (parseFloat(entity.cy) / 100) * entity.height
+        : entity.cy
+      : entity.height / 2
+
+    // cornerRadius: like Recharts (rounded edges)
+    const cornerRadius = entity.cornerRadius ?? 0
 
     const slices = renderPie({
       pieData,
-      radius,
+      outerRadius,
+      innerRadius,
       centerX,
       centerY,
       colors: entity.colors,
       labelPosition,
-      showLabel: true,
+      showLabel: entity.showLabel ?? true,
+      offsetRadius,
+      minLabelPercentage: entity.minLabelPercentage,
+      labelOverflowMargin: entity.labelOverflowMargin,
+      cornerRadius,
+      nameKey,
       width: entity.width,
       height: entity.height,
       onSliceEnter: (slice, index, event) => {
@@ -66,14 +92,18 @@ export const pie = {
         const rect = svgEl.getBoundingClientRect()
         const angle = (slice.startAngle + slice.endAngle) / 2
         const angleOffset = angle - Math.PI / 2
-        const labelRadius = radius * 1.1
+        const labelRadius = outerRadius * 1.1
         const x = centerX + Math.cos(angleOffset) * labelRadius
         const y = centerY + Math.sin(angleOffset) * labelRadius
+        // Use absolute value to handle both clockwise and counter-clockwise slices
         const percentage =
-          ((slice.endAngle - slice.startAngle) / (2 * Math.PI)) * 100
+          (Math.abs(slice.endAngle - slice.startAngle) / (2 * Math.PI)) * 100
+
+        // Use nameKey to get label
+        const label = nameKey(slice.data)
 
         api.notify(`#${entity.id}:showTooltip`, {
-          label: slice.data.label || slice.data.name || "",
+          label,
           percentage,
           value: slice.value,
           color:
@@ -134,3 +164,4 @@ export const pie = {
     `
   },
 }
+

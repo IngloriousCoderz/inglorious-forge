@@ -31,6 +31,11 @@ export const app = {
           </section>
 
           <section class="chart-section">
+            <h2>Area Chart - Multiple Series Stacked</h2>
+            ${api.render("multiSeriesAreaChartStacked")}
+          </section>
+
+          <section class="chart-section">
             <h2>Bar Chart</h2>
             ${api.render("salesBarChart")}
           </section>
@@ -43,6 +48,48 @@ export const app = {
           <section class="chart-section">
             <h2>Donut Chart</h2>
             ${api.render("categoryDonutChart")}
+          </section>
+
+          <section class="chart-section">
+            <h2>Pie Chart - Custom Position (cx, cy)</h2>
+            ${api.render("pieCustomPosition")}
+            <p>Pie chart positioned at 35% from top-left</p>
+          </section>
+
+          <section class="chart-section">
+            <h2>Pie Chart - Partial (startAngle, endAngle)</h2>
+            <p>Half circle pie chart (180° to 0°)</p>
+            ${api.render("piePartial")}
+          </section>
+
+          <section class="chart-section">
+            <h2>Pie Chart - With Padding (paddingAngle)</h2>
+            <p>5 degrees gap between each sector</p>
+            ${api.render("pieWithPadding")}
+          </section>
+
+          <section class="chart-section">
+            <h2>Pie Chart - Minimum Angle (minAngle)</h2>
+            <p>Each sector has at least 10 degrees</p>
+            ${api.render("pieMinAngle")}
+          </section>
+
+          <section class="chart-section">
+            <h2>Pie Chart - Rounded Corners (cornerRadius)</h2>
+            <p>Rounded edges with 10px corner radius</p>
+            ${api.render("pieRounded")}
+          </section>
+
+          <section class="chart-section">
+            <h2>Pie Chart - Custom Data Keys (dataKey, nameKey)</h2>
+            <p>Using custom data structure with product/sales fields</p>
+            ${api.render("pieCustomData")}
+          </section>
+
+          <section class="chart-section">
+            <h2>Pie Chart - Advanced (Combined Features)</h2>
+            <p>Combining paddingAngle, cornerRadius, and minAngle</p>
+            ${api.render("pieAdvanced")}
           </section>
         </main>
       </div>

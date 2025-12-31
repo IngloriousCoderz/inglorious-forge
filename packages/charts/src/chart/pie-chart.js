@@ -1,5 +1,5 @@
-import { pie } from "../cartesian/pie.js"
 import { logic } from "../logic.js"
+import { pie } from "../polar/pie.js"
 import { rendering } from "../rendering.js"
 
 export const pieChart = {
