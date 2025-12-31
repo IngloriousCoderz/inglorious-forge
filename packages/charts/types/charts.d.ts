@@ -96,6 +96,38 @@ export interface ChartEntity {
   tooltipY: number
   /** Label position for pie/donut charts. */
   labelPosition: LabelPosition
+  /** Whether to show labels (equivalent to Recharts label prop). */
+  showLabel?: boolean
+  /** Outer padding for pie charts (user-controlled). */
+  outerPadding?: number
+  /** Outer radius (like Recharts outerRadius). */
+  outerRadius?: number
+  /** Inner radius (like Recharts innerRadius, default: 0 for pie). */
+  innerRadius?: number
+  /** Offset radius for external labels (default: 20px, like Recharts). */
+  offsetRadius?: number
+  /** Minimum percentage threshold to show label (default: 2). */
+  minLabelPercentage?: number
+  /** Margin for label overflow validation (default: 20px). */
+  labelOverflowMargin?: number
+  /** X-coordinate of center (like Recharts cx, default: 50% or width/2). */
+  cx?: number | string
+  /** Y-coordinate of center (like Recharts cy, default: 50% or height/2). */
+  cy?: number | string
+  /** Start angle in degrees (like Recharts startAngle, default: 0). */
+  startAngle?: number
+  /** End angle in degrees (like Recharts endAngle, default: 360). */
+  endAngle?: number
+  /** Padding angle between sectors in degrees (like Recharts paddingAngle, default: 0). */
+  paddingAngle?: number
+  /** Minimum angle for each sector in degrees (like Recharts minAngle, default: 0). */
+  minAngle?: number
+  /** Corner radius for rounded edges (like Recharts cornerRadius, default: 0). */
+  cornerRadius?: number
+  /** Function to extract value from data (like Recharts dataKey, default: d => d.value). */
+  dataKey?: (d: any) => number
+  /** Function to extract name/label from data (like Recharts nameKey, default: d => d.label || d.name). */
+  nameKey?: (d: any) => string
   /** X-axis type (time or linear). */
   xAxisType?: XAxisType
 }

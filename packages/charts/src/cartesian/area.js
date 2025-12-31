@@ -35,13 +35,14 @@ export const area = {
     }
 
     // Create context with scales and dimensions
-    const context = createChartContext(entity, "line")
+    const context = createChartContext(entity, "area")
     const { xScale, yScale, dimensions } = context
     const { width, height, padding } = dimensions
 
     // Independent components - declarative composition
     const grid = entity.showGrid
       ? renderGrid({
+          entity,
           xScale,
           yScale,
           width,
@@ -71,6 +72,7 @@ export const area = {
     })
 
     // Area shape - just draws paths
+    // Default to non-stacked (stacked = false) for independent series
     const areas = renderArea({
       data: entity.data,
       xScale,
@@ -78,6 +80,7 @@ export const area = {
       baseValue: 0,
       colors: entity.colors,
       showPoints: entity.showPoints !== false,
+      stacked: entity.stacked === true, // Only stack if explicitly set to true
     })
 
     // Legend - only for multiple series

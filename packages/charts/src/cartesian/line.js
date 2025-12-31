@@ -28,6 +28,7 @@ export const line = {
     // Independent components - declarative composition
     const grid = entity.showGrid
       ? renderGrid({
+          entity,
           xScale,
           yScale,
           width,
