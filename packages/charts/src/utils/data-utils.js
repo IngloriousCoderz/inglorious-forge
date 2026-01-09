@@ -1,0 +1,98 @@
+/* eslint-disable no-magic-numbers */
+
+/**
+ * Data utilities
+ * Functions for data manipulation and formatting
+ */
+
+import { format } from "d3-format"
+import { timeFormat } from "d3-time-format"
+
+/**
+ * Format a number with the specified format
+ * @param {number} value - Number to format
+ * @param {string} [fmt=",.2f"] - Format string (d3-format syntax)
+ * @returns {string} Formatted number string
+ */
+export function formatNumber(value, fmt = ",.2f") {
+  return format(fmt)(value)
+}
+
+/**
+ * Format a date with the specified format
+ * @param {Date|string|number} date - Date to format
+ * @param {string} [fmt="%Y-%m-%d"] - Format string (d3-time-format syntax)
+ * @returns {string} Formatted date string
+ */
+export function formatDate(date, fmt = "%Y-%m-%d") {
+  return timeFormat(fmt)(new Date(date))
+}
+
+/**
+ * Gets values from a series object
+ * @param {any} series - Series object that may have a values array or be a single value
+ * @returns {any[]} Array of values
+ */
+export function getSeriesValues(series) {
+  return Array.isArray(series.values) ? series.values : [series]
+}
+
+/**
+ * Checks if the data represents multiple series
+ * @param {any[]} data - Chart data array
+ * @returns {boolean} True if data represents multiple series (has values array)
+ */
+export function isMultiSeries(data) {
+  return (
+    Array.isArray(data) && data.length > 0 && Array.isArray(data[0]?.values)
+  )
+}
+
+/**
+ * Gets the X coordinate value from a data point
+ * @param {any} d - Data point object
+ * @param {any} [fallback=0] - Fallback value if x/date is not found
+ * @returns {any} X coordinate value (x, date, or fallback)
+ */
+export function getDataPointX(d, fallback = 0) {
+  return d?.x ?? d?.date ?? fallback
+}
+
+/**
+ * Gets the Y coordinate value from a data point
+ * @param {any} d - Data point object
+ * @param {any} [fallback=0] - Fallback value if y/value is not found
+ * @returns {any} Y coordinate value (y, value, or fallback)
+ */
+export function getDataPointY(d, fallback = 0) {
+  return d?.y ?? d?.value ?? fallback
+}
+
+/**
+ * Gets the label from a data point
+ * @param {any} d - Data point object
+ * @param {string} [fallback="Value"] - Fallback label if x/date is not found
+ * @returns {string} Label value (x, date, or fallback)
+ */
+export function getDataPointLabel(d, fallback = "Value") {
+  return d?.x ?? d?.date ?? fallback
+}
+
+/**
+ * Checks if a value is a valid number (not NaN and finite)
+ * @param {any} value - Value to check
+ * @returns {boolean} True if value is a valid number
+ */
+export function isValidNumber(value) {
+  return typeof value === "number" && !isNaN(value) && isFinite(value)
+}
+
+/**
+ * Ensures a value is a valid number, returning a fallback if not
+ * @param {any} value - Value to validate
+ * @param {number} [fallback=0] - Fallback value if validation fails
+ * @returns {number} Valid number value
+ */
+export function ensureValidNumber(value, fallback = 0) {
+  return isValidNumber(value) ? value : fallback
+}

@@ -4,8 +4,8 @@ import { svg } from "lit-html"
 import { repeat } from "lit-html/directives/repeat.js"
 
 /**
- * Legend Component - renderiza legenda independente
- * Recebe dados e cores, não decide layout
+ * Legend Component - renders independent legend
+ * Receives data and colors, does not decide layout
  *
  * @param {Object} params
  * @param {any[]} params.series
@@ -33,7 +33,7 @@ export function renderLegend({ series, colors, width, padding }) {
   let currentX = startX
 
   return svg`
-    <g class="iw-chart-legend">
+    <g class="iw-chart-legend-wrapper">
       ${repeat(
         series,
         (s, i) => i,
@@ -58,6 +58,7 @@ export function renderLegend({ series, colors, width, padding }) {
                 text-anchor="start"
                 font-size="0.75em"
                 fill="#333"
+                class="iw-chart-legend-item-text"
               >
                 ${label}
               </text>

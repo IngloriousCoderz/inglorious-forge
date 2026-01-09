@@ -3,12 +3,14 @@
  */
 import { describe, expect, it, vi } from "vitest"
 
-import { areaChart } from "./chart/area-chart.js"
-import { barChart } from "./chart/bar-chart.js"
-import { donutChart } from "./chart/donut-chart.js"
-import { lineChart } from "./chart/line-chart.js"
-import { pieChart } from "./chart/pie-chart.js"
 import { charts } from "./index.js"
+import {
+  areaChart,
+  barChart,
+  donutChart,
+  lineChart,
+  pieChart,
+} from "./utils/chart-utils.js"
 
 const sampleBarData = [
   { label: "Jan", value: 100 },
@@ -56,7 +58,7 @@ describe("charts", () => {
         expect(entity.tooltip).toBe(null)
         expect(entity.tooltipX).toBe(0)
         expect(entity.tooltipY).toBe(0)
-        expect(entity.labelPosition).toBe("auto")
+        expect(entity.labelPosition).toBe("outside")
       })
 
       it("should preserve existing values", () => {
