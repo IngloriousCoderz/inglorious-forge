@@ -75,10 +75,3 @@ export function generateColors(count, customColors = null) {
 export function getDefaultColors() {
   return [...DEFAULT_COLORS]
 }
-
-/**
- * @returns {string[]}
- */
-export function getExtendedColors() {
-  return [...EXTENDED_COLORS]
-}

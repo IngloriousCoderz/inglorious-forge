@@ -3,11 +3,11 @@
 import { extent } from "d3-array"
 import { scaleBand, scaleLinear, scaleTime } from "d3-scale"
 
-export function createYScale(data, height, padding, isStacked = false) {
-  const isMultiSeries = Array.isArray(data[0]?.values)
+import { getDataPointX, getDataPointY, isMultiSeries } from "./data-utils.js"
 
+export function createYScale(data, height, padding, isStacked = false) {
   let values
-  if (isMultiSeries) {
+  if (isMultiSeries(data)) {
     if (isStacked) {
       // For stacked areas, calculate the sum of all series at each point
       const allSeriesValues = data.map((series) =>
@@ -37,7 +37,7 @@ export function createYScale(data, height, padding, isStacked = false) {
     }
   } else {
     // Single series: extract directly
-    values = data.map((d) => d.y ?? d.value ?? 0)
+    values = data.map((d) => getDataPointY(d))
   }
 
   const [minVal, maxVal] = extent(values)
@@ -51,16 +51,15 @@ export function createYScale(data, height, padding, isStacked = false) {
 
 export function createXScale(data, width, padding) {
   // Handle multi-series data (array of series with values)
-  const isMultiSeries = Array.isArray(data[0]?.values)
   let values
-  if (isMultiSeries) {
+  if (isMultiSeries(data)) {
     // Extract all x values from all series
     values = data.flatMap((series) =>
       series.values ? series.values.map((v) => v.x ?? v.date) : [],
     )
   } else {
     // Single series: extract directly
-    values = data.map((d, i) => d.x ?? d.date ?? i)
+    values = data.map((d, i) => getDataPointX(d, i))
   }
   const [minVal, maxVal] = extent(values)
   return scaleLinear()
@@ -84,8 +83,8 @@ export function createOrdinalScale(categories, width, padding) {
 }
 
 /**
- * Helper para criar escalas baseado no tipo de chart
- * Retorna { xScale, yScale }
+ * Helper to create scales based on chart type
+ * Returns { xScale, yScale }
  */
 export function createScales(entity, chartType) {
   // Area charts use stacked scale only if entity.stacked is true
@@ -103,7 +102,7 @@ export function createScales(entity, chartType) {
     const categories = entity.data.map((d) => d.label || d.name || d.category)
     xScale = createOrdinalScale(categories, entity.width, entity.padding)
   } else {
-    // line chart ou outros que usam escala linear/time
+    // Line chart or others that use linear/time scale
     xScale =
       entity.xAxisType === "time"
         ? createTimeScale(entity.data, entity.width, entity.padding)
@@ -111,6 +110,38 @@ export function createScales(entity, chartType) {
   }
 
   return { xScale, yScale }
+}
+
+/**
+ * @typedef {Object} CartesianContext
+ * @property {import('d3-scale').ScaleBand|import('d3-scale').ScaleLinear|import('d3-scale').ScaleTime} xScale
+ * @property {import('d3-scale').ScaleLinear} yScale
+ * @property {Object} dimensions
+ * @property {number} dimensions.width
+ * @property {number} dimensions.height
+ * @property {Object} dimensions.padding
+ * @property {any} entity
+ */
+
+/**
+ * Create cartesian context with scales, dimensions, and entity
+ * @param {any} entity
+ * @param {string} chartType
+ * @returns {CartesianContext}
+ */
+export function createCartesianContext(entity, chartType) {
+  const { xScale, yScale } = createScales(entity, chartType)
+
+  return {
+    xScale,
+    yScale,
+    dimensions: {
+      width: entity.width,
+      height: entity.height,
+      padding: entity.padding,
+    },
+    entity,
+  }
 }
 
 /**
@@ -127,11 +158,9 @@ export function calculateXTicks(data, xScale) {
     return xScale.ticks ? xScale.ticks(5) : xScale.domain()
   }
 
-  const isMultiSeries = Array.isArray(data[0]?.values)
-
   // Extract all unique x values from data
   const allXValues = []
-  if (isMultiSeries) {
+  if (isMultiSeries(data)) {
     // Multi-series: extract from values arrays
     data.forEach((series) => {
       if (series.values) {
@@ -146,7 +175,7 @@ export function calculateXTicks(data, xScale) {
   } else {
     // Single series: extract directly
     data.forEach((d) => {
-      const xVal = d.x ?? d.date
+      const xVal = getDataPointX(d, null)
       if (xVal != null && !allXValues.includes(xVal)) {
         allXValues.push(xVal)
       }

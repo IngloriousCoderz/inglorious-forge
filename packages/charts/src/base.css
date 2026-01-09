@@ -18,7 +18,13 @@
     transition: r 0.2s ease, fill 0.2s ease;
   }
 
-  .iw-chart-bar {
+  .iw-chart-dot {
+    cursor: pointer;
+    transition: r 0.2s ease, fill 0.2s ease;
+  }
+
+  .iw-chart-bar,
+  .iw-chart-bar-rectangle {
     cursor: pointer;
     transition: opacity 0.2s ease, filter 0.2s ease;
   }
