@@ -8,11 +8,13 @@ import {
   stack,
 } from "d3-shape"
 
+import { getDataPointX, getDataPointY } from "./data-utils.js"
+
 export function generateLinePath(data, xScale, yScale, curveType = "linear") {
   const curve = curveType === "monotone" ? curveMonotoneX : curveLinear
   const lineGenerator = line()
-    .x((d) => xScale(d.x ?? d.date))
-    .y((d) => yScale(d.y ?? d.value))
+    .x((d) => xScale(getDataPointX(d, null)))
+    .y((d) => yScale(getDataPointY(d)))
     .curve(curve)
   return lineGenerator(data)
 }
@@ -27,9 +29,9 @@ export function generateAreaPath(
 ) {
   const curve = curveType === "monotone" ? curveMonotoneX : curveLinear
   const areaGenerator = area()
-    .x((d) => xScale(d.x ?? d.date))
+    .x((d) => xScale(getDataPointX(d, null)))
     .y0(() => yScale(baseValue))
-    .y1((d) => yScale(d.y ?? d.value))
+    .y1((d) => yScale(getDataPointY(d)))
     .curve(curve)
   return areaGenerator(data)
 }
@@ -52,7 +54,7 @@ export function generateStackedAreaPath(
 ) {
   const curve = curveType === "monotone" ? curveMonotoneX : curveLinear
   const areaGenerator = area()
-    .x((d) => xScale(d.x ?? d.date))
+    .x((d) => xScale(getDataPointX(d, null)))
     .y0((d, i) => yScale(stackedData[i]?.[0] ?? 0))
     .y1((d, i) => yScale(stackedData[i]?.[1] ?? 0))
     .curve(curve)
@@ -68,7 +70,7 @@ export function generateStackedAreaPath(
  */
 export function calculateStackedData(
   seriesData,
-  valueAccessor = (d) => d.y ?? d.value ?? 0,
+  valueAccessor = (d) => getDataPointY(d),
 ) {
   if (!seriesData || seriesData.length === 0) {
     return []
