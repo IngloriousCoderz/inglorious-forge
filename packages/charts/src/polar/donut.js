@@ -3,9 +3,9 @@
 import { html, svg } from "lit-html"
 import { when } from "lit-html/directives/when.js"
 
-import { renderPie } from "../shape/pie.js"
-import { formatNumber } from "../utils/format.js"
+import { formatNumber } from "../utils/data-utils.js"
 import { calculatePieData } from "../utils/paths.js"
+import { renderPieSectors } from "./pie.js"
 
 export const donut = {
   renderChart(entity, api) {
@@ -65,7 +65,7 @@ export const donut = {
     // cornerRadius: like Recharts (rounded edges)
     const cornerRadius = entity.cornerRadius ?? 0
 
-    const slices = renderPie({
+    const slices = renderPieSectors({
       pieData,
       outerRadius,
       innerRadius,
@@ -81,6 +81,7 @@ export const donut = {
       nameKey,
       width: entity.width,
       height: entity.height,
+      labelPositions: null,
       onSliceEnter: (slice, index, event) => {
         if (!entity.showTooltip) return
 
