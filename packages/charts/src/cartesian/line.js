@@ -1,16 +1,11 @@
 /* eslint-disable no-magic-numbers */
 
-import { html, svg } from "lit-html"
+import { svg } from "lit-html"
 import { repeat } from "lit-html/directives/repeat.js"
 
-import { renderEmptyState } from "../component/empty-state.js"
-import { renderGrid } from "../component/grid.js"
-import { renderLegend } from "../component/legend.js"
-import { renderTooltip } from "../component/tooltip.js"
-import { renderXAxis } from "../component/x-axis.js"
-import { renderYAxis } from "../component/y-axis.js"
 import { renderCurve } from "../shape/curve.js"
 import { renderDot } from "../shape/dot.js"
+import { renderCartesianLayout } from "../utils/cartesian-layout.js"
 import {
   getDataPointLabel,
   getDataPointX,
@@ -20,94 +15,23 @@ import {
 } from "../utils/data-utils.js"
 import { generateLinePath } from "../utils/paths.js"
 import { createCartesianContext } from "../utils/scales.js"
-import {
-  createTooltipHandlers,
-  createTooltipMoveHandler,
-} from "../utils/tooltip-handlers.js"
+import { createTooltipHandlers } from "../utils/tooltip-handlers.js"
 
 export const line = {
   renderChart(entity, api) {
-    if (!entity.data || entity.data.length === 0) {
-      return renderEmptyState({
-        width: entity.width,
-        height: entity.height,
-      })
-    }
-
-    // Create context with scales and dimensions
-    const context = createCartesianContext(entity, "line")
-    const { xScale, yScale, dimensions } = context
-    const { width, height, padding } = dimensions
-
-    // Independent components - declarative composition
-    const grid = entity.showGrid
-      ? renderGrid({
-          entity,
-          xScale,
-          yScale,
-          width,
-          height,
-          padding,
-        })
-      : ""
-
-    const xAxis = renderXAxis({
-      entity,
-      xScale,
-      yScale,
-      width,
-      height,
-      padding,
-    })
-
-    const yAxis = renderYAxis({
-      yScale,
-      height,
-      padding,
-    })
-
-    // Line curves - uses Curve and Dot primitives (like Recharts Line component)
+    // Line curves - uses Curve and Dot primitives
     const lines = renderLineCurves({
       data: entity.data,
-      xScale,
-      yScale,
-      colors: entity.colors,
-      showPoints: entity.showPoints !== false,
       entity,
       api,
     })
 
-    // Legend - only for multiple series
-    const legend =
-      isMultiSeries(entity.data) && entity.showLegend
-        ? renderLegend({
-            series: entity.data,
-            colors: entity.colors,
-            width,
-            padding,
-          })
-        : ""
-
-    // SVG container
-    const svgContent = svg`
-      <svg
-        width=${width}
-        height=${height}
-        viewBox="0 0 ${width} ${height}"
-        class="iw-chart-svg"
-        @mousemove=${createTooltipMoveHandler({ entity, api })}
-      >
-        ${grid}
-        ${xAxis}
-        ${yAxis}
-        ${lines}
-        ${legend}
-      </svg>
-    `
-
-    return html`
-      <div class="iw-chart">${svgContent} ${renderTooltip(entity)}</div>
-    `
+    return renderCartesianLayout({
+      entity,
+      api,
+      chartType: "line",
+      chartContent: lines,
+    })
   },
 }
 
@@ -115,18 +39,16 @@ export const line = {
  * Renders line curves using Curve and Dot primitives
  * Similar to Recharts Line component
  */
-function renderLineCurves({
-  data,
-  xScale,
-  yScale,
-  colors,
-  showPoints = true,
-  entity,
-  api,
-}) {
+function renderLineCurves({ data, entity, api }) {
   if (!data || data.length === 0) {
     return svg``
   }
+
+  // Create context with scales and dimensions
+  const context = createCartesianContext(entity, "line")
+  const { xScale, yScale } = context
+  const colors = entity.colors
+  const showPoints = entity.showPoints !== false
 
   if (isMultiSeries(data)) {
     return svg`
