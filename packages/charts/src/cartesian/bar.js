@@ -1,94 +1,30 @@
 /* eslint-disable no-magic-numbers */
 
-import { html, svg } from "lit-html"
+import { svg } from "lit-html"
 import { repeat } from "lit-html/directives/repeat.js"
 
-import { renderEmptyState } from "../component/empty-state.js"
-import { renderGrid } from "../component/grid.js"
-import { renderTooltip } from "../component/tooltip.js"
-import { renderXAxis } from "../component/x-axis.js"
-import { renderYAxis } from "../component/y-axis.js"
 import { renderRectangle } from "../shape/rectangle.js"
+import { renderCartesianLayout } from "../utils/cartesian-layout.js"
 import { formatNumber } from "../utils/data-utils.js"
 import { createCartesianContext } from "../utils/scales.js"
-import {
-  createTooltipHandlers,
-  createTooltipMoveHandler,
-} from "../utils/tooltip-handlers.js"
+import { createTooltipHandlers } from "../utils/tooltip-handlers.js"
 
 export const bar = {
   renderChart(entity, api) {
-    if (!entity.data || entity.data.length === 0) {
-      return renderEmptyState({
-        width: entity.width,
-        height: entity.height,
-      })
-    }
-
-    // Create context with scales and dimensions
-    const context = createCartesianContext(entity, "bar")
-    const { xScale, yScale, dimensions } = context
-    const { width, height, padding } = dimensions
-
-    // Independent components - declarative composition
-    const grid = entity.showGrid
-      ? renderGrid({
-          entity,
-          xScale,
-          yScale,
-          width,
-          height,
-          padding,
-        })
-      : ""
-
-    const xAxis = renderXAxis({
-      entity,
-      xScale,
-      yScale,
-      width,
-      height,
-      padding,
-    })
-
-    const yAxis = renderYAxis({
-      yScale,
-      height,
-      padding,
-    })
-
     // Bar rectangles - uses Rectangle primitives (like Recharts BarRectangles)
     const bars = renderBarRectangles({
       data: entity.data,
-      xScale,
-      yScale,
-      height,
-      padding,
-      colors: entity.colors,
-      showLabel: entity.showLabel !== false,
       entity,
       api,
     })
 
-    // SVG container
-    const svgContent = svg`
-      <svg
-        width=${width}
-        height=${height}
-        viewBox="0 0 ${width} ${height}"
-        class="iw-chart-svg"
-        @mousemove=${createTooltipMoveHandler({ entity, api })}
-      >
-        ${grid}
-        ${xAxis}
-        ${yAxis}
-        ${bars}
-      </svg>
-    `
-
-    return html`
-      <div class="iw-chart">${svgContent} ${renderTooltip(entity)}</div>
-    `
+    return renderCartesianLayout({
+      entity,
+      api,
+      chartType: "bar",
+      chartContent: bars,
+      showLegend: false, // Bar charts don't show legend
+    })
   },
 }
 
@@ -96,20 +32,17 @@ export const bar = {
  * Renders bar rectangles using Rectangle primitives
  * Similar to Recharts BarRectangles function
  */
-function renderBarRectangles({
-  data,
-  xScale,
-  yScale,
-  height,
-  padding,
-  colors,
-  showLabel = true,
-  entity,
-  api,
-}) {
+function renderBarRectangles({ data, entity, api }) {
   if (!data || data.length === 0) {
     return svg``
   }
+
+  // Create context with scales and dimensions
+  const context = createCartesianContext(entity, "bar")
+  const { xScale, yScale, dimensions } = context
+  const { height, padding } = dimensions
+  const colors = entity.colors
+  const showLabel = entity.showLabel !== false
 
   const barWidth = xScale.bandwidth()
 
