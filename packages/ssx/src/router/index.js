@@ -18,9 +18,10 @@ const SCORE_MULTIPLIER = 0.1
  *
  * @param {string} pagesDir - The directory containing page files.
  * @param {Function} [loader] - Optional loader function (e.g. vite.ssrLoadModule).
+ * @param {Object} [i18n] - i18n configuration { defaultLocale, locales }.
  * @returns {Promise<Array<Object>>} A list of page objects with metadata.
  */
-export async function getPages(pagesDir = "pages", loader) {
+export async function getPages(pagesDir = "pages", loader, i18n) {
   const routes = await getRoutes(pagesDir)
   const pages = []
   const load = loader || ((p) => import(pathToFileURL(path.resolve(p))))
@@ -45,14 +46,18 @@ export async function getPages(pagesDir = "pages", loader) {
 
             const params = extractParams(route, path)
 
-            pages.push({
-              pattern: route.pattern,
-              path,
-              params,
-              moduleName,
-              modulePath: route.modulePath,
-              filePath: route.filePath,
-            })
+            addLocalizedPages(
+              pages,
+              {
+                pattern: route.pattern,
+                path,
+                params,
+                moduleName,
+                modulePath: route.modulePath,
+                filePath: route.filePath,
+              },
+              i18n,
+            )
           }
         } else {
           console.warn(
@@ -81,23 +86,62 @@ export async function getPages(pagesDir = "pages", loader) {
   return pages
 }
 
+function addLocalizedPages(pages, pageData, i18n) {
+  if (!i18n?.locales?.length) {
+    pages.push(pageData)
+    return
+  }
+
+  for (const locale of i18n.locales) {
+    const isDefault = locale === i18n.defaultLocale
+    const prefix = isDefault ? "" : `/${locale}`
+
+    let localizedPath = prefix + pageData.path
+    // Handle root path: / -> / (default), /fr (fr)
+    if (pageData.path === "/" && !isDefault) {
+      localizedPath = prefix
+    }
+
+    pages.push({
+      ...pageData,
+      path: localizedPath,
+      locale,
+    })
+  }
+}
+
 /**
  * Resolves a URL to a specific page file and extracts route parameters.
  * This is primarily used by the development server for on-demand rendering.
  *
  * @param {string} url - The URL to resolve (e.g., "/posts/hello").
  * @param {string} pagesDir - The directory containing page files.
+ * @param {Object} [i18n] - i18n configuration.
  * @returns {Promise<{filePath: string, params: Object}|null>} The resolved page info or null if not found.
  */
-export async function resolvePage(url, pagesDir = "pages") {
+export async function resolvePage(url, pagesDir = "pages", i18n) {
   const routes = await getRoutes(pagesDir)
 
   // Normalize URL (remove query string and hash)
   const [fullPath] = url.split("?")
   const [normalizedUrl] = fullPath.split("#")
 
+  let locale = i18n?.defaultLocale
+  let pathUrl = normalizedUrl
+
+  // Handle i18n prefixes (e.g. /fr/about -> /about)
+  if (i18n?.locales) {
+    const segments = normalizedUrl.split("/").filter(Boolean)
+    if (segments.length > 0 && i18n.locales.includes(segments[0])) {
+      locale = segments[0]
+      pathUrl = "/" + segments.slice(1).join("/")
+    } else if (normalizedUrl === "/") {
+      // Root is default locale
+    }
+  }
+
   for (const route of routes) {
-    const match = route.regex.exec(normalizedUrl)
+    const match = route.regex.exec(pathUrl)
 
     if (match) {
       const params = {}
@@ -108,6 +152,7 @@ export async function resolvePage(url, pagesDir = "pages") {
       return {
         filePath: route.filePath,
         params,
+        locale,
       }
     }
   }
