@@ -1,7 +1,13 @@
 import { html } from "@inglorious/web"
 
 export const app = {
-  render(chart) {
+  render(api) {
+    // Get charts object from store for composition methods
+    const chart = api.getType("chart")
+    
+    // Create bound methods for productChart (reduces repetition)
+    const productChart = chart.forEntity("productChart", api)
+    
     return html`
       <div class="app">
         <header>
@@ -10,86 +16,100 @@ export const app = {
         </header>
 
         <main>
+          <!-- Recharts-style composition example -->
           <section class="chart-section">
-            <h2>Line Chart - Simple</h2>
-            ${chart.render("salesLineChart")}
+            <h2>Line Chart - Recharts Style (Composition)</h2>
+            ${productChart.renderLineChart(
+              [
+                productChart.renderCartesianGrid({ stroke: '#eee', strokeDasharray: '5 5' }),
+                productChart.renderXAxis({ dataKey: 'name' }),
+                productChart.renderYAxis({ width: 'auto' }),
+                productChart.renderLine({ dataKey: 'uv', stroke: '#8884d8' }),
+                productChart.renderLine({ dataKey: 'pv', stroke: '#82ca9d' }),
+              ],
+              {
+                width: 800,
+                height: 400,
+                dataKeys: ['uv', 'pv'], // Specify which dataKeys are used for Y scale calculation
+              }
+            )}
           </section>
 
           <section class="chart-section">
             <h2>Line Chart - Multiple Series</h2>
-            ${chart.render("multiSeriesLineChart")}
+            ${api.render("multiSeriesLineChart")}
           </section>
 
           <section class="chart-section">
             <h2>Area Chart - Simple</h2>
-            ${chart.render("salesAreaChart")}
+            ${api.render("salesAreaChart")}
           </section>
 
           <section class="chart-section">
             <h2>Area Chart - Multiple Series</h2>
-            ${chart.render("multiSeriesAreaChart")}
+            ${api.render("multiSeriesAreaChart")}
           </section>
 
           <section class="chart-section">
             <h2>Area Chart - Multiple Series Stacked</h2>
-            ${chart.render("multiSeriesAreaChartStacked")}
+            ${api.render("multiSeriesAreaChartStacked")}
           </section>
 
           <section class="chart-section">
             <h2>Bar Chart</h2>
-            ${chart.render("salesBarChart")}
+            ${api.render("salesBarChart")}
           </section>
 
           <section class="chart-section">
             <h2>Pie Chart</h2>
-            ${chart.render("categoryPieChart")}
+            ${api.render("categoryPieChart")}
           </section>
 
           <section class="chart-section">
             <h2>Donut Chart</h2>
-            ${chart.render("categoryDonutChart")}
+            ${api.render("categoryDonutChart")}
           </section>
 
           <section class="chart-section">
             <h2>Pie Chart - Custom Position (cx, cy)</h2>
-            ${chart.render("pieCustomPosition")}
+            ${api.render("pieCustomPosition")}
             <p>Pie chart positioned at 35% from top-left</p>
           </section>
 
           <section class="chart-section">
             <h2>Pie Chart - Partial (startAngle, endAngle)</h2>
             <p>Half circle pie chart (180° to 0°)</p>
-            ${chart.render("piePartial")}
+            ${api.render("piePartial")}
           </section>
 
           <section class="chart-section">
             <h2>Pie Chart - With Padding (paddingAngle)</h2>
             <p>5 degrees gap between each sector</p>
-            ${chart.render("pieWithPadding")}
+            ${api.render("pieWithPadding")}
           </section>
 
           <section class="chart-section">
             <h2>Pie Chart - Minimum Angle (minAngle)</h2>
             <p>Each sector has at least 10 degrees</p>
-            ${chart.render("pieMinAngle")}
+            ${api.render("pieMinAngle")}
           </section>
 
           <section class="chart-section">
             <h2>Pie Chart - Rounded Corners (cornerRadius)</h2>
             <p>Rounded edges with 10px corner radius</p>
-            ${chart.render("pieRounded")}
+            ${api.render("pieRounded")}
           </section>
 
           <section class="chart-section">
             <h2>Pie Chart - Custom Data Keys (dataKey, nameKey)</h2>
             <p>Using custom data structure with product/sales fields</p>
-            ${chart.render("pieCustomData")}
+            ${api.render("pieCustomData")}
           </section>
 
           <section class="chart-section">
             <h2>Pie Chart - Advanced (Combined Features)</h2>
             <p>Combining paddingAngle, cornerRadius, and minAngle</p>
-            ${chart.render("pieAdvanced")}
+            ${api.render("pieAdvanced")}
           </section>
         </main>
       </div>
