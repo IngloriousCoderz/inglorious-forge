@@ -19,7 +19,15 @@ import { calculateXTicks } from "../utils/scales.js"
  * @param {Object} params.padding
  * @returns {import('lit-html').TemplateResult}
  */
-export function renderGrid({ entity, xScale, yScale, width, height, padding, customYTicks }) {
+export function renderGrid({
+  entity,
+  xScale,
+  yScale,
+  width,
+  height,
+  padding,
+  customYTicks,
+}) {
   // Use entity.data if available, otherwise fallback to scale ticks
   const data = entity?.data
   const xTicks = xScale.bandwidth
@@ -30,7 +38,8 @@ export function renderGrid({ entity, xScale, yScale, width, height, padding, cus
         ? xScale.ticks(5)
         : xScale.domain()
   // Use custom Y ticks if provided, otherwise use scale ticks
-  const yTicks = customYTicks && Array.isArray(customYTicks) ? customYTicks : yScale.ticks(5)
+  const yTicks =
+    customYTicks && Array.isArray(customYTicks) ? customYTicks : yScale.ticks(5)
 
   return svg`
     <g class="iw-chart-cartesian-grid">

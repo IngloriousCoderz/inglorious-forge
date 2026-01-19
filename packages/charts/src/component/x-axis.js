@@ -132,11 +132,12 @@ export function renderXAxis({
             return svg``
           }
           // Use custom labels if available, otherwise format the tick value
-          const label = useLabels && entity.xLabels[i] !== undefined
-            ? entity.xLabels[i]
-            : entity.xAxisType === "time"
-              ? formatDate(t)
-              : formatNumber(t)
+          const label =
+            useLabels && entity.xLabels[i] !== undefined
+              ? entity.xLabels[i]
+              : entity.xAxisType === "time"
+                ? formatDate(t)
+                : formatNumber(t)
 
           return svg`
             <g class="iw-chart-xAxis-tick">

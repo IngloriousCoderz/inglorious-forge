@@ -4,10 +4,10 @@ export const app = {
   render(api) {
     // Get charts object from store for composition methods
     const chart = api.getType("chart")
-    
+
     // Create bound methods for productChart (reduces repetition)
     const productChart = chart.forEntity("productChart", api)
-    
+
     return html`
       <div class="app">
         <header>
@@ -21,17 +21,20 @@ export const app = {
             <h2>Line Chart - Recharts Style (Composition)</h2>
             ${productChart.renderLineChart(
               [
-                productChart.renderCartesianGrid({ stroke: '#eee', strokeDasharray: '5 5' }),
-                productChart.renderXAxis({ dataKey: 'name' }),
-                productChart.renderYAxis({ width: 'auto' }),
-                productChart.renderLine({ dataKey: 'uv', stroke: '#8884d8' }),
-                productChart.renderLine({ dataKey: 'pv', stroke: '#82ca9d' }),
+                productChart.renderCartesianGrid({
+                  stroke: "#eee",
+                  strokeDasharray: "5 5",
+                }),
+                productChart.renderXAxis({ dataKey: "name" }),
+                productChart.renderYAxis({ width: "auto" }),
+                productChart.renderLine({ dataKey: "uv", stroke: "#8884d8" }),
+                productChart.renderLine({ dataKey: "pv", stroke: "#82ca9d" }),
               ],
               {
                 width: 800,
                 height: 400,
-                dataKeys: ['uv', 'pv'], // Specify which dataKeys are used for Y scale calculation
-              }
+                dataKeys: ["uv", "pv"], // Specify which dataKeys are used for Y scale calculation
+              },
             )}
           </section>
 
