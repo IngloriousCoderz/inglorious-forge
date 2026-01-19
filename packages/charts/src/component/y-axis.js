@@ -14,7 +14,8 @@ import { formatNumber, isValidNumber } from "../utils/data-utils.js"
  */
 export function renderYAxis({ yScale, height, padding, customTicks }) {
   // Use custom ticks if provided, otherwise use scale ticks
-  const ticks = customTicks && Array.isArray(customTicks) ? customTicks : yScale.ticks(5)
+  const ticks =
+    customTicks && Array.isArray(customTicks) ? customTicks : yScale.ticks(5)
 
   // Ensure height and padding are valid numbers
   const axisLineY2 = height - padding.bottom
