@@ -109,7 +109,7 @@ export function renderCartesianLayout({
   `
 
   return html`
-    <div class="iw-chart">${svgContent} ${renderTooltip(entity)}</div>
+    <div class="iw-chart" style="display: block; margin: 0; padding: 0; position: relative; width: 100%; box-sizing: border-box;">${svgContent} ${renderTooltip(entity)}</div>
   `
 }
 
