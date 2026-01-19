@@ -3,12 +3,12 @@ export const entities = {
   productChart: {
     type: "line",
     data: [
-      { name: 'A', uv: 400, pv: 240 },
-      { name: 'B', uv: 300, pv: 456 },
-      { name: 'C', uv: 300, pv: 139 },
-      { name: 'D', uv: 200, pv: 980 },
-      { name: 'E', uv: 278, pv: 390 },
-      { name: 'F', uv: 189, pv: 480 },
+      { name: "A", uv: 400, pv: 240 },
+      { name: "B", uv: 300, pv: 456 },
+      { name: "C", uv: 300, pv: 139 },
+      { name: "D", uv: 200, pv: 980 },
+      { name: "E", uv: 278, pv: 390 },
+      { name: "F", uv: 189, pv: 480 },
     ],
   },
 
@@ -35,13 +35,13 @@ export const entities = {
   salesLineChartRecharts: {
     type: "line",
     data: [
-      { name: 'Day 1', value: 50 },
-      { name: 'Day 2', value: 150 },
-      { name: 'Day 3', value: 120 },
-      { name: 'Day 4', value: 180 },
-      { name: 'Day 5', value: 25 },
-      { name: 'Day 6', value: 160 },
-      { name: 'Day 7', value: 190 },
+      { name: "Day 1", value: 50 },
+      { name: "Day 2", value: 150 },
+      { name: "Day 3", value: 120 },
+      { name: "Day 4", value: 180 },
+      { name: "Day 5", value: 25 },
+      { name: "Day 6", value: 160 },
+      { name: "Day 7", value: 190 },
     ],
   },
 
