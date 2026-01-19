@@ -2,6 +2,7 @@ import { createStore } from "@inglorious/web"
 import {
   areaChart,
   barChart,
+  charts,
   donutChart,
   lineChart,
   pieChart,
@@ -16,6 +17,8 @@ export const store = createStore({
     bar: barChart,
     pie: pieChart,
     donut: donutChart,
+    // Add charts object for composition methods
+    chart: charts,
   },
   entities,
   middlewares,

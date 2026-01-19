@@ -107,6 +107,9 @@ export function renderXAxis({
     xAxisY = ensureValidNumber(fallbackY, height || 0)
   }
 
+  // If entity has xLabels, use them for display (for categorical data)
+  const useLabels = entity.xLabels && Array.isArray(entity.xLabels)
+
   return svg`
     <g class="iw-chart-xAxis">
       <!-- X Axis Line -->
@@ -122,14 +125,18 @@ export function renderXAxis({
       ${repeat(
         ticks,
         (t) => t,
-        (t) => {
+        (t, i) => {
           const x = xScale(t)
           // Ensure x is a valid number
           if (!isValidNumber(x)) {
             return svg``
           }
-          const label =
-            entity.xAxisType === "time" ? formatDate(t) : formatNumber(t)
+          // Use custom labels if available, otherwise format the tick value
+          const label = useLabels && entity.xLabels[i] !== undefined
+            ? entity.xLabels[i]
+            : entity.xAxisType === "time"
+              ? formatDate(t)
+              : formatNumber(t)
 
           return svg`
             <g class="iw-chart-xAxis-tick">

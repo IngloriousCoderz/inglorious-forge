@@ -1,5 +1,18 @@
 export const entities = {
-  // Line Chart
+  // Product Chart - for Recharts-style composition (only data, no width/height)
+  productChart: {
+    type: "line",
+    data: [
+      { name: 'A', uv: 400, pv: 240 },
+      { name: 'B', uv: 300, pv: 456 },
+      { name: 'C', uv: 300, pv: 139 },
+      { name: 'D', uv: 200, pv: 980 },
+      { name: 'E', uv: 278, pv: 390 },
+      { name: 'F', uv: 189, pv: 480 },
+    ],
+  },
+
+  // Line Chart - Config-first style
   salesLineChart: {
     type: "line",
     data: [
@@ -16,6 +29,20 @@ export const entities = {
     showGrid: true,
     showLegend: false,
     showTooltip: true,
+  },
+
+  // Line Chart - Recharts-style composition (same data, different approach)
+  salesLineChartRecharts: {
+    type: "line",
+    data: [
+      { name: 'Day 1', value: 50 },
+      { name: 'Day 2', value: 150 },
+      { name: 'Day 3', value: 120 },
+      { name: 'Day 4', value: 180 },
+      { name: 'Day 5', value: 25 },
+      { name: 'Day 6', value: 160 },
+      { name: 'Day 7', value: 190 },
+    ],
   },
 
   // Line Chart with multiple series

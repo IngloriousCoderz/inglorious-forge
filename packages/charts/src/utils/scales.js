@@ -46,6 +46,7 @@ export function createYScale(data, height, padding, isStacked = false) {
   const max = maxVal ?? 100
   return scaleLinear()
     .domain([min, max])
+    .nice() // Make domain "nice" (round to nice numbers like 1000 instead of 980)
     .range([height - padding.bottom, padding.top])
 }
 
