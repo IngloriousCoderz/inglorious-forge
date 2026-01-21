@@ -120,7 +120,10 @@ export const area = {
       .join("; ")
 
     return html`
-      <div class="iw-chart" style="display: block; margin: 0; padding: 0; position: relative; width: 100%; box-sizing: border-box;">
+      <div
+        class="iw-chart"
+        style="display: block; margin: 0; padding: 0; position: relative; width: 100%; box-sizing: border-box;"
+      >
         <svg
           width=${width}
           height=${height}
@@ -281,7 +284,13 @@ export const area = {
     const { xScale, yScale } = context
     const baseValue = 0
 
-    const areaPath = generateAreaPath(data, xScale, yScale, baseValue, curveType)
+    const areaPath = generateAreaPath(
+      data,
+      xScale,
+      yScale,
+      baseValue,
+      curveType,
+    )
     const linePath = stroke
       ? generateLinePath(data, xScale, yScale, curveType)
       : null
