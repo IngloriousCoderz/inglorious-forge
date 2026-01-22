@@ -1,13 +1,8 @@
 import { html } from "@inglorious/web"
+import { chart } from "@inglorious/charts"
 
 export const app = {
   render(api) {
-    // Get charts object from store for composition methods
-    const chart = api.getType("chart")
-
-    // Create bound methods for productChart (reduces repetition)
-    const productChart = chart.forEntity("productChart", api)
-
     return html`
       <div class="app">
         <header>
@@ -16,31 +11,59 @@ export const app = {
         </header>
 
         <main>
-          <!-- Recharts-style composition example -->
           <section class="chart-section">
             <h2>Line Chart - Recharts Style (Composition)</h2>
-            ${productChart.renderLineChart(
-              [
-                productChart.renderCartesianGrid({
-                  stroke: "#eee",
-                  strokeDasharray: "5 5",
-                }),
-                productChart.renderXAxis({ dataKey: "name" }),
-                productChart.renderYAxis({ width: "auto" }),
-                productChart.renderLine({ dataKey: "uv", stroke: "#8884d8" }),
-                productChart.renderLine({ dataKey: "pv", stroke: "#82ca9d" }),
-              ],
-              {
-                width: 800,
-                height: 400,
-                dataKeys: ["uv", "pv"], // Specify which dataKeys are used for Y scale calculation
-              },
+            ${chart(api, "productChart", (c) =>
+              c.renderLineChart(
+                [
+                  c.renderCartesianGrid({
+                    stroke: "#eee",
+                    strokeDasharray: "5 5",
+                  }),
+                  c.renderXAxis({ dataKey: "name" }),
+                  c.renderYAxis({ width: "auto" }),
+                  c.renderLine({ dataKey: "uv", stroke: "#8884d8" }),
+                  c.renderLine({ dataKey: "pv", stroke: "#82ca9d" }),
+                  c.renderTooltip({}),
+                ],
+                { width: 800, height: 400, dataKeys: ["uv", "pv"] },
+              ),
             )}
           </section>
 
           <section class="chart-section">
             <h2>Line Chart - Multiple Series</h2>
             ${api.render("multiSeriesLineChart")}
+          </section>
+
+          <section class="chart-section">
+            <h2>Area Chart - Recharts Style (Composition)</h2>
+            ${chart(api, "productChart", (c) =>
+              c.renderAreaChart(
+                [
+                  c.renderCartesianGrid({
+                    stroke: "#eee",
+                    strokeDasharray: "5 5",
+                  }),
+                  c.renderXAxis({ dataKey: "name" }),
+                  c.renderYAxis({ width: "auto" }),
+                  c.renderArea({
+                    dataKey: "uv",
+                    fill: "#8884d8",
+                    fillOpacity: "0.6",
+                    stroke: "#8884d8",
+                  }),
+                  c.renderArea({
+                    dataKey: "pv",
+                    fill: "#82ca9d",
+                    fillOpacity: "0.6",
+                    stroke: "#82ca9d",
+                  }),
+                  c.renderTooltip({}),
+                ],
+                { width: 800, height: 400, dataKeys: ["uv", "pv"] },
+              ),
+            )}
           </section>
 
           <section class="chart-section">
@@ -56,6 +79,26 @@ export const app = {
           <section class="chart-section">
             <h2>Area Chart - Multiple Series Stacked</h2>
             ${api.render("multiSeriesAreaChartStacked")}
+          </section>
+
+          <section class="chart-section">
+            <h2>Bar Chart - Recharts Style (Composition)</h2>
+            ${chart(api, "productChart", (c) =>
+              c.renderBarChart(
+                [
+                  c.renderCartesianGrid({
+                    stroke: "#eee",
+                    strokeDasharray: "3 3",
+                  }),
+                  c.renderXAxis({ dataKey: "name" }),
+                  c.renderYAxis({ width: "auto" }),
+                  c.renderBar({ dataKey: "pv", fill: "#8884d8" }),
+                  c.renderBar({ dataKey: "uv", fill: "#82ca9d" }),
+                  c.renderTooltip({}),
+                ],
+                { width: 800, height: 400, dataKeys: ["pv", "uv"] },
+              ),
+            )}
           </section>
 
           <section class="chart-section">

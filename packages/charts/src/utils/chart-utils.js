@@ -30,3 +30,15 @@ export const barChart = createChart(bar)
 export const lineChart = createChart(line)
 export const pieChart = createChart(pie)
 export const donutChart = createChart(donut)
+
+/**
+ * Helper to facilitate use in render(api)
+ * @param {Object} api - The api coming from the render
+ * @param {String} entity - The name of the entity (ex: "productChart")
+ * @param {Function} callback - The function that receives the instance and returns the template
+ */
+export const chart = (api, entity, callback) => {
+  const chartType = api.getType("chart")
+  const instance = chartType.forEntity(entity, api)
+  return callback(instance)
+}
