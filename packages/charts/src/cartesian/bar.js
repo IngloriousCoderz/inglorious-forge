@@ -33,7 +33,11 @@ export const bar = {
       entity.showGrid !== false ? this.renderCartesianGrid({}) : null,
       this.renderXAxis({}, entity.id, chartApi),
       this.renderYAxis({}, entity.id, chartApi),
-      this.renderBar({ dataKey: "value", multiColor: true }, entity.id, chartApi),
+      this.renderBar(
+        { dataKey: "value", multiColor: true },
+        entity.id,
+        chartApi,
+      ),
     ].filter(Boolean)
 
     const chartContent = this.renderBarChart(entity.id, children, chartApi, {
