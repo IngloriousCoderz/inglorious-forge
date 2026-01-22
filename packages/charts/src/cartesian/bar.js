@@ -23,24 +23,16 @@ function calculatePadding(width = 800, height = 400) {
 
 export const bar = {
   renderChart(entity, api) {
-    // Create a minimal api adapter if not provided (for direct renderChart calls in tests)
-    const chartApi = api || {
-      getEntity: (id) => (id === entity.id ? entity : null),
-      getType: () => null,
-    }
-
     const children = [
-      entity.showGrid !== false ? this.renderCartesianGrid({}) : null,
-      this.renderXAxis({}, entity.id, chartApi),
-      this.renderYAxis({}, entity.id, chartApi),
-      this.renderBar(
-        { dataKey: "value", multiColor: true },
-        entity.id,
-        chartApi,
-      ),
+      entity.showGrid !== false
+        ? bar.renderCartesianGrid({}, entity.id, api)
+        : null,
+      bar.renderXAxis({}, entity.id, api),
+      bar.renderYAxis({}, entity.id, api),
+      bar.renderBar({ dataKey: "value", multiColor: true }, entity.id, api),
     ].filter(Boolean)
 
-    const chartContent = this.renderBarChart(entity.id, children, chartApi, {
+    const chartContent = bar.renderBarChart(entity.id, children, api, {
       width: entity.width,
       height: entity.height,
       isRawSVG: true,
@@ -48,7 +40,7 @@ export const bar = {
 
     return renderCartesianLayout({
       entity,
-      api: chartApi,
+      api,
       chartType: "bar",
       chartContent,
       showLegend: false,
@@ -78,6 +70,9 @@ export const bar = {
           const lazyResult = child()
           if (typeof lazyResult === "function" && lazyResult.isBar) {
             barComponents.push(lazyResult)
+            processedChildren.push(lazyResult)
+          } else if (typeof lazyResult === "function" && lazyResult.isXAxis) {
+            // X-axis function: keep it for later processing with context
             processedChildren.push(lazyResult)
           } else {
             processedChildren.push(lazyResult)
@@ -192,7 +187,7 @@ export const bar = {
 
     return html`
       <div class="iw-chart" style="position: relative;">
-        ${svgContent} ${this.renderTooltip({}, entityId, api)(context)}
+        ${svgContent} ${bar.renderTooltip({}, entityId, api)(context)}
       </div>
     `
   },
@@ -271,7 +266,6 @@ export const bar = {
     const renderFn = (ctx) => {
       const entity = api?.getEntity ? api.getEntity(entityId) : null
       if (!entity) return svg``
-      // Here we ensure that renderXAxis receives the centered scale
       return renderXAxis({
         entity,
         xScale: ctx.xScale,
@@ -309,15 +303,19 @@ export const bar = {
       })
   },
 
-  renderCartesianGrid(config) {
-    return (ctx) =>
-      renderGrid({
+  renderCartesianGrid(config, entityId, api) {
+    return (ctx) => {
+      const entity = api?.getEntity ? api.getEntity(entityId) : null
+      if (!entity) return svg``
+      return renderGrid({
+        entity,
         ...ctx.dimensions,
         xScale: ctx.xScale,
         yScale: ctx.yScale,
         stroke: config.stroke || "#eee",
         strokeDasharray: config.strokeDasharray || "5 5",
       })
+    }
   },
 
   renderTooltip(_, entityId, api) {

@@ -31,26 +31,34 @@ export const charts = {
     return svg``
   },
   renderCartesianGrid(config, entityId, api) {
-    const entity = api.getEntity(entityId)
-    if (!entity) return svg``
-    // Use composition chart type if available, otherwise fallback to entity type
-    const chartTypeName = compositionChartType.get(entityId) || entity.type
-    const chartType = api.getType(chartTypeName)
-    if (chartType?.renderCartesianGrid) {
-      return chartType.renderCartesianGrid(config, entityId, api)
+    // Return a lazy function to prevent lit-html from evaluating it prematurely
+    // This function will be called by renderBarChart with the correct context
+    return () => {
+      const entity = api.getEntity(entityId)
+      if (!entity) return svg``
+      // Use composition chart type if available, otherwise fallback to entity type
+      const chartTypeName = compositionChartType.get(entityId) || entity.type
+      const chartType = api.getType(chartTypeName)
+      if (chartType?.renderCartesianGrid) {
+        return chartType.renderCartesianGrid(config, entityId, api)
+      }
+      return svg``
     }
-    return svg``
   },
   renderXAxis(config, entityId, api) {
-    const entity = api.getEntity(entityId)
-    if (!entity) return svg``
-    // Use composition chart type if available, otherwise fallback to entity type
-    const chartTypeName = compositionChartType.get(entityId) || entity.type
-    const chartType = api.getType(chartTypeName)
-    if (chartType?.renderXAxis) {
-      return chartType.renderXAxis(config, entityId, api)
+    // Return a lazy function to prevent lit-html from evaluating it prematurely
+    // This function will be called by renderBarChart with the correct context
+    return () => {
+      const entity = api.getEntity(entityId)
+      if (!entity) return svg``
+      // Use composition chart type if available, otherwise fallback to entity type
+      const chartTypeName = compositionChartType.get(entityId) || entity.type
+      const chartType = api.getType(chartTypeName)
+      if (chartType?.renderXAxis) {
+        return chartType.renderXAxis(config, entityId, api)
+      }
+      return svg``
     }
-    return svg``
   },
   renderYAxis(config, entityId, api) {
     const entity = api.getEntity(entityId)
