@@ -30,7 +30,12 @@ export function renderXAxis({
   padding,
 }) {
   if (xScale.bandwidth) {
-    const categories = entity.data.map((d) => d.label || d.name || d.category)
+    // Following Recharts logic: for scaleBand, use the domain directly
+    // and calculate the center as scale(category) + bandwidth() / 2
+    const categories = xScale.domain()
+    if (categories.length === 0) {
+      return svg`<g class="iw-chart-xAxis"></g>`
+    }
     let xAxisY = height - padding.bottom
     if (yScale) {
       const domain = yScale.domain()
@@ -46,6 +51,16 @@ export function renderXAxis({
       const fallbackY = height - (padding?.bottom || 0)
       xAxisY = ensureValidNumber(fallbackY, height || 0)
     }
+
+    // Offset for scaleBand: bandwidth() / 2 (as in Recharts)
+    // bandwidth() returns the available band width (without internal padding)
+    // Following Recharts logic exactly: offsetForBand = bandwidth() / 2
+    const bandwidth = xScale.bandwidth()
+    if (!isValidNumber(bandwidth) || bandwidth <= 0) {
+      // If bandwidth is not valid, don't render the axis
+      return svg`<g class="iw-chart-xAxis"></g>`
+    }
+    const offsetForBand = bandwidth / 2
 
     return svg`
     <g class="iw-chart-xAxis">
@@ -63,22 +78,42 @@ export function renderXAxis({
         categories,
         (cat) => cat,
         (cat) => {
-          const x = xScale(cat) + xScale.bandwidth() / 2
-          // Ensure x is a valid number
-          if (!isValidNumber(x)) {
+          // Following Recharts: coordinate = scale(category) + offset
+          // where offset = bandwidth() / 2 for scaleBand
+          // xScale(cat) returns the initial position of the band (including external padding)
+          // We add bandwidth() / 2 to get the center of the band
+          const scaled = xScale(cat)
+          if (scaled == null || !isValidNumber(scaled)) {
+            return svg``
+          }
+          const coordinate = scaled + offsetForBand
+          // Ensure coordinate is a valid number
+          if (!isValidNumber(coordinate)) {
             return svg``
           }
           return svg`
-            <text
-              x=${x}
-              y=${xAxisY + 20}
-              text-anchor="middle"
-              font-size="0.6875em"
-              fill="#777"
-              class="iw-chart-xAxis-tick-label"
-            >
-              ${cat}
-            </text>
+            <g class="iw-chart-xAxis-tick">
+              <!-- Tick line (traço vertical) - usa a mesma coordinate -->
+              <line
+                x1=${coordinate}
+                y1=${xAxisY}
+                x2=${coordinate}
+                y2=${xAxisY + 5}
+                stroke="#ccc"
+                stroke-width="0.0625em"
+              />
+              <!-- Label - usa a mesma coordinate -->
+              <text
+                x=${coordinate}
+                y=${xAxisY + 20}
+                text-anchor="middle"
+                font-size="0.6875em"
+                fill="#777"
+                class="iw-chart-xAxis-tick-label"
+              >
+                ${cat}
+              </text>
+            </g>
           `
         },
       )}
