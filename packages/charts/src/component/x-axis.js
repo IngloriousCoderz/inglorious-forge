@@ -93,7 +93,7 @@ export function renderXAxis({
           }
           return svg`
             <g class="iw-chart-xAxis-tick">
-              <!-- Tick line (traço vertical) - usa a mesma coordinate -->
+              <!-- Tick line (vertical line) - uses the same coordinate -->
               <line
                 x1=${coordinate}
                 y1=${xAxisY}
