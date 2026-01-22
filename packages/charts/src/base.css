@@ -15,29 +15,39 @@
 
   .iw-chart-point {
     cursor: pointer;
-    transition: r 0.2s ease, fill 0.2s ease;
+    transition:
+      r 0.2s ease,
+      fill 0.2s ease;
   }
 
   .iw-chart-dot {
     cursor: pointer;
-    transition: r 0.2s ease, fill 0.2s ease;
+    transition:
+      r 0.2s ease,
+      fill 0.2s ease;
   }
 
   .iw-chart-bar,
   .iw-chart-bar-rectangle {
     cursor: pointer;
-    transition: opacity 0.2s ease, filter 0.2s ease;
+    transition:
+      opacity 0.2s ease,
+      filter 0.2s ease;
   }
 
   .iw-chart-area {
     cursor: pointer;
-    transition: opacity 0.2s ease, filter 0.2s ease;
+    transition:
+      opacity 0.2s ease,
+      filter 0.2s ease;
   }
 
   .iw-chart-pie-slice,
   .iw-chart-donut-slice {
     cursor: pointer;
-    transition: opacity 0.2s ease, filter 0.2s ease;
+    transition:
+      opacity 0.2s ease,
+      filter 0.2s ease;
   }
 
   .iw-chart-tooltip {
