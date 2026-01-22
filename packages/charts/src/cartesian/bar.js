@@ -23,14 +23,20 @@ function calculatePadding(width = 800, height = 400) {
 
 export const bar = {
   renderChart(entity, api) {
+    // Create a minimal api adapter if not provided (for direct renderChart calls in tests)
+    const chartApi = api || {
+      getEntity: (id) => (id === entity.id ? entity : null),
+      getType: () => null,
+    }
+
     const children = [
       entity.showGrid !== false ? this.renderCartesianGrid({}) : null,
-      this.renderXAxis({}, entity.id, api),
-      this.renderYAxis({}, entity.id, api),
-      this.renderBar({ dataKey: "value", multiColor: true }, entity.id, api),
+      this.renderXAxis({}, entity.id, chartApi),
+      this.renderYAxis({}, entity.id, chartApi),
+      this.renderBar({ dataKey: "value", multiColor: true }, entity.id, chartApi),
     ].filter(Boolean)
 
-    const chartContent = this.renderBarChart(entity.id, children, api, {
+    const chartContent = this.renderBarChart(entity.id, children, chartApi, {
       width: entity.width,
       height: entity.height,
       isRawSVG: true,
@@ -38,7 +44,7 @@ export const bar = {
 
     return renderCartesianLayout({
       entity,
-      api,
+      api: chartApi,
       chartType: "bar",
       chartContent,
       showLegend: false,
@@ -46,7 +52,7 @@ export const bar = {
   },
 
   renderBarChart(entityId, children, api, config = {}) {
-    const entity = api.getEntity(entityId)
+    const entity = api?.getEntity ? api.getEntity(entityId) : null
     if (!entity) return html`<div>Entity ${entityId} not found</div>`
 
     const width = config.width || entity.width || 800
@@ -189,7 +195,8 @@ export const bar = {
 
   renderBar(config, entityId, api) {
     const drawFn = (ctx, barIndex, totalBars) => {
-      const entity = api.getEntity(entityId)
+      const entity = api?.getEntity ? api.getEntity(entityId) : null
+      if (!entity) return svg``
       const { dataKey = "value", fill, multiColor = false } = config
       const entityColors = entity.colors || [
         "#8884d8",
@@ -258,7 +265,8 @@ export const bar = {
     // Return a function that preserves the original object
     // This prevents lit-html from evaluating the function before passing it
     const renderFn = (ctx) => {
-      const entity = api.getEntity(entityId)
+      const entity = api?.getEntity ? api.getEntity(entityId) : null
+      if (!entity) return svg``
       // Here we ensure that renderXAxis receives the centered scale
       return renderXAxis({
         entity,
@@ -310,7 +318,7 @@ export const bar = {
 
   renderTooltip(_, entityId, api) {
     return () => {
-      const entity = api.getEntity(entityId)
+      const entity = api?.getEntity ? api.getEntity(entityId) : null
       return entity ? renderTooltip(entity) : svg``
     }
   },
