@@ -111,6 +111,36 @@ export const area = {
       ...style,
     }
 
+    // Process children to handle lazy functions
+    const childrenArray = (
+      Array.isArray(children) ? children : [children]
+    ).filter(Boolean)
+
+    const processedChildren = []
+    for (const child of childrenArray) {
+      if (typeof child === "function" && !child.isXAxis) {
+        // Lazy function: call to get the real component
+        try {
+          const lazyResult = child()
+          if (typeof lazyResult === "function") {
+            // Keep as function for later processing with context
+            processedChildren.push(lazyResult)
+          } else {
+            processedChildren.push(lazyResult)
+          }
+        } catch {
+          // If it fails, keep as is
+          processedChildren.push(child)
+        }
+      } else {
+        processedChildren.push(child)
+      }
+    }
+
+    // Create context with scales
+    const context = area._createSharedContext(entity, entityId)
+    context.dimensions = { width, height, padding }
+
     const styleString = Object.entries(svgStyle)
       .filter(([, value]) => value != null)
       .map(([key, value]) => {
@@ -131,7 +161,23 @@ export const area = {
           class="iw-chart-svg"
           style=${styleString || undefined}
         >
-          ${children}
+          ${processedChildren.map((child) => {
+            // If it's a function, call it with context
+            if (typeof child === "function") {
+              if (child.isXAxis) {
+                return child(context)
+              }
+              try {
+                // Call the function with context (for renderCartesianGrid, renderXAxis, etc.)
+                return child(context)
+              } catch {
+                // If it fails, return empty
+                return svg``
+              }
+            }
+            // If it's an object (TemplateResult), render as is
+            return child
+          })}
         </svg>
       </div>
     `
@@ -198,24 +244,31 @@ export const area = {
   },
 
   renderCartesianGrid(config, entityId, api) {
-    const entity = api.getEntity(entityId)
-    if (!entity) return svg``
-
-    const { stroke = "#eee", strokeDasharray = "5 5" } = config
-    const context = this._createSharedContext(entity, entityId)
-    const { xScale, yScale, dimensions } = context
-    const transformedData = entity.data.map((d, i) => ({ x: i, y: 0 }))
-    const ticks = yScale.ticks ? yScale.ticks(5) : yScale.domain()
-
-    return renderGrid({
-      entity: { ...entity, data: transformedData },
-      xScale,
-      yScale,
-      customYTicks: ticks,
-      ...dimensions,
-      stroke,
-      strokeDasharray,
-    })
+    // Return a lazy function to prevent lit-html from evaluating it prematurely
+    // This function will be called by renderAreaChart with the correct context
+    return () => {
+      const entity = api?.getEntity ? api.getEntity(entityId) : null
+      if (!entity) return svg``
+      const { stroke = "#eee", strokeDasharray = "5 5" } = config
+      // Use shared context with correct Y scale (all values)
+      // The scale already uses .nice() to round domain to nice numbers
+      const context = area._createSharedContext(entity, entityId)
+      const { xScale, yScale, dimensions } = context
+      // For grid, we still need data with indices for X scale
+      const transformedData = entity.data.map((d, i) => ({ x: i, y: 0 }))
+      // Use same ticks as renderYAxis for consistency (Recharts approach)
+      // Recharts uses tickCount: 5 by default, which calls scale.ticks(5)
+      const ticks = yScale.ticks ? yScale.ticks(5) : yScale.domain()
+      return renderGrid({
+        entity: { ...entity, data: transformedData },
+        xScale,
+        yScale,
+        customYTicks: ticks,
+        ...dimensions,
+        stroke,
+        strokeDasharray,
+      })
+    }
   },
 
   renderXAxis(config, entityId, api) {
@@ -223,7 +276,7 @@ export const area = {
     if (!entity) return svg``
 
     const { dataKey } = config
-    const context = this._createSharedContext(entity, entityId)
+    const context = area._createSharedContext(entity, entityId)
     const { xScale, yScale, dimensions } = context
     const labels = entity.data.map(
       (d, i) => d[dataKey] || d.name || d.x || d.date || String(i),
@@ -246,7 +299,7 @@ export const area = {
     const entity = api.getEntity(entityId)
     if (!entity) return svg``
 
-    const context = this._createSharedContext(entity, entityId)
+    const context = area._createSharedContext(entity, entityId)
     const { yScale, dimensions } = context
     const ticks = yScale.ticks ? yScale.ticks(5) : yScale.domain()
 
@@ -277,10 +330,10 @@ export const area = {
       compositionDataKeys.get(entityId).add(dataKey)
     }
 
-    const data = this._getTransformedData(entity, dataKey)
+    const data = area._getTransformedData(entity, dataKey)
     if (!data || data.length === 0) return svg``
 
-    const context = this._createSharedContext(entity, entityId)
+    const context = area._createSharedContext(entity, entityId)
     const { xScale, yScale } = context
     const baseValue = 0
 

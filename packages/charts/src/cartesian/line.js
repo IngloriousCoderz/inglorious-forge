@@ -113,6 +113,36 @@ export const line = {
       ...style,
     }
 
+    // Process children to handle lazy functions
+    const childrenArray = (
+      Array.isArray(children) ? children : [children]
+    ).filter(Boolean)
+
+    const processedChildren = []
+    for (const child of childrenArray) {
+      if (typeof child === "function" && !child.isXAxis) {
+        // Lazy function: call to get the real component
+        try {
+          const lazyResult = child()
+          if (typeof lazyResult === "function") {
+            // Keep as function for later processing with context
+            processedChildren.push(lazyResult)
+          } else {
+            processedChildren.push(lazyResult)
+          }
+        } catch {
+          // If it fails, keep as is
+          processedChildren.push(child)
+        }
+      } else {
+        processedChildren.push(child)
+      }
+    }
+
+    // Create context with scales
+    const context = line._createSharedContext(entity, entityId)
+    context.dimensions = { width, height, padding }
+
     // Build style string
     const styleString = Object.entries(svgStyle)
       .filter(([, value]) => value != null)
@@ -132,7 +162,26 @@ export const line = {
           class="iw-chart-svg"
           style=${styleString || undefined}
         >
-          ${children}
+          ${processedChildren.map((child) => {
+            // If it's a function, call it with context
+            if (typeof child === "function") {
+              if (child.isXAxis) {
+                return child(context)
+              }
+              try {
+                return child(context)
+              } catch {
+                // If it fails with context, try without context
+                try {
+                  return child()
+                } catch {
+                  return svg``
+                }
+              }
+            }
+            // If it's an object (TemplateResult), render as is
+            return child
+          })}
         </svg>
       </div>
     `
@@ -229,32 +278,32 @@ export const line = {
   },
 
   renderCartesianGrid(config, entityId, api) {
-    const entity = api.getEntity(entityId)
-    if (!entity) return svg``
-
-    const { stroke = "#eee", strokeDasharray = "5 5" } = config
-
-    // Use shared context with correct Y scale (all values)
-    // The scale already uses .nice() to round domain to nice numbers
-    const context = this._createSharedContext(entity, entityId)
-    const { xScale, yScale, dimensions } = context
-
-    // For grid, we still need data with indices for X scale
-    const transformedData = entity.data.map((d, i) => ({ x: i, y: 0 }))
-
-    // Use same ticks as renderYAxis for consistency (Recharts approach)
-    // Recharts uses tickCount: 5 by default, which calls scale.ticks(5)
-    const ticks = yScale.ticks ? yScale.ticks(5) : yScale.domain()
-
-    return renderGrid({
-      entity: { ...entity, data: transformedData },
-      xScale,
-      yScale,
-      customYTicks: ticks,
-      ...dimensions,
-      stroke,
-      strokeDasharray,
-    })
+    // Return a lazy function to prevent lit-html from evaluating it prematurely
+    // This function will be called by renderLineChart with the correct context
+    // eslint-disable-next-line no-unused-vars
+    return (ctx) => {
+      const entity = api?.getEntity ? api.getEntity(entityId) : null
+      if (!entity) return svg``
+      const { stroke = "#eee", strokeDasharray = "5 5" } = config
+      // Use shared context with correct Y scale (all values)
+      // The scale already uses .nice() to round domain to nice numbers
+      const context = line._createSharedContext(entity, entityId)
+      const { xScale, yScale, dimensions } = context
+      // For grid, we still need data with indices for X scale
+      const transformedData = entity.data.map((d, i) => ({ x: i, y: 0 }))
+      // Use same ticks as renderYAxis for consistency (Recharts approach)
+      // Recharts uses tickCount: 5 by default, which calls scale.ticks(5)
+      const ticks = yScale.ticks ? yScale.ticks(5) : yScale.domain()
+      return renderGrid({
+        entity: { ...entity, data: transformedData },
+        xScale,
+        yScale,
+        customYTicks: ticks,
+        ...dimensions,
+        stroke,
+        strokeDasharray,
+      })
+    }
   },
 
   renderXAxis(config, entityId, api) {
@@ -264,7 +313,7 @@ export const line = {
     const { dataKey } = config
 
     // Use shared context (same scales as grid, Y axis, and lines)
-    const context = this._createSharedContext(entity, entityId)
+    const context = line._createSharedContext(entity, entityId)
     const { xScale, yScale, dimensions } = context
 
     // Create labels map: index -> label (use original entity data)
@@ -293,7 +342,7 @@ export const line = {
 
     // Use shared context with correct Y scale (all values)
     // The scale already uses .nice() to round domain to nice numbers
-    const context = this._createSharedContext(entity, entityId)
+    const context = line._createSharedContext(entity, entityId)
     const { yScale, dimensions } = context
 
     // Use d3-scale's ticks() method like Recharts does
@@ -323,11 +372,11 @@ export const line = {
     }
 
     // Extract data based on dataKey for this line
-    const data = this._getTransformedData(entity, dataKey)
+    const data = line._getTransformedData(entity, dataKey)
     if (!data || data.length === 0) return svg``
 
     // Use shared context with correct Y scale (only used dataKeys) - same as grid and Y axis
-    const context = this._createSharedContext(entity, entityId)
+    const context = line._createSharedContext(entity, entityId)
     const { xScale, yScale } = context
 
     // Generate path using the line-specific data but shared scales
