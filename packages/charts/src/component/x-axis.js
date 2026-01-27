@@ -24,7 +24,9 @@ import { calculateXTicks } from "../utils/scales.js"
  */
 
 // eslint-disable-next-line no-unused-vars
-export function renderXAxis(entity, { xScale, yScale, width, height, padding }, api) {
+export function renderXAxis(entity, props, api) {
+  const { xScale, yScale, width, height, padding } = props
+
   if (xScale.bandwidth) {
     // Following Recharts logic: for scaleBand, use the domain directly
     // and calculate the center as scale(category) + bandwidth() / 2

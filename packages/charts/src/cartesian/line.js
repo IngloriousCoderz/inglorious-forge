@@ -31,10 +31,14 @@ export const line = {
     // Line curves - uses Curve and Dot primitives
     const lines = renderLineCurves(entity, {}, api)
 
-    return renderCartesianLayout(entity, {
-      chartType: "line",
-      chartContent: lines,
-    }, api)
+    return renderCartesianLayout(
+      entity,
+      {
+        chartType: "line",
+        chartContent: lines,
+      },
+      api,
+    )
   },
 
   // Composition methods (Recharts-style)
@@ -119,7 +123,7 @@ export const line = {
         // Try to get the actual function (may be wrapped)
         let actualFn = child
         let isLegend = false
-        
+
         // Check if the function itself is marked as legend
         if (child.isLegend === true) {
           isLegend = true
@@ -148,7 +152,7 @@ export const line = {
             continue
           }
         }
-        
+
         // If we identified it as a legend, render it immediately
         if (isLegend) {
           try {
@@ -340,7 +344,7 @@ export const line = {
           stroke,
           strokeDasharray,
         },
-        api
+        api,
       )
     }
   },
@@ -373,7 +377,7 @@ export const line = {
         yScale,
         ...dimensions,
       },
-      api
+      api,
     )
   },
 
@@ -394,11 +398,15 @@ export const line = {
     // The d3-scale algorithm automatically chooses "nice" intervals
     const ticks = yScale.ticks ? yScale.ticks(5) : yScale.domain()
 
-    return renderYAxis(entity, {
-      yScale,
-      customTicks: ticks,
-      ...dimensions,
-    }, api)
+    return renderYAxis(
+      entity,
+      {
+        yScale,
+        customTicks: ticks,
+        ...dimensions,
+      },
+      api,
+    )
   },
 
   renderLine(entity, { config = {}, context = null }, api) {
@@ -414,9 +422,9 @@ export const line = {
       lineContext = line._activeContexts.get(contextKey)
     }
 
-    const { 
-      dataKey, 
-      stroke = "#8884d8", 
+    const {
+      dataKey,
+      stroke = "#8884d8",
       type: curveType = "linear",
       showDots = false,
       dotFill,
@@ -454,16 +462,18 @@ export const line = {
             const dotLabel = d.name || dataKey || "Value"
             const dotValue = d.y
 
-            const { onMouseEnter: dotOnMouseEnter, onMouseLeave: dotOnMouseLeave } =
-              createTooltipHandlers({
-                entity,
-                api,
-                tooltipData: {
-                  label: dotLabel,
-                  value: dotValue,
-                  color: dotFill || stroke,
-                },
-              })
+            const {
+              onMouseEnter: dotOnMouseEnter,
+              onMouseLeave: dotOnMouseLeave,
+            } = createTooltipHandlers({
+              entity,
+              api,
+              tooltipData: {
+                label: dotLabel,
+                value: dotValue,
+                color: dotFill || stroke,
+              },
+            })
 
             return renderDot({
               cx: x,
@@ -562,10 +572,12 @@ export const line = {
       // Create series from dataKeys
       const series = (dataKeys || []).map((dataKey, index) => {
         // Use custom label if provided, otherwise format dataKey (e.g., "productA" -> "Product A")
-        const label = labels?.[index] || dataKey
-          .replace(/([A-Z])/g, " $1")
-          .replace(/^./, (str) => str.toUpperCase())
-          .trim()
+        const label =
+          labels?.[index] ||
+          dataKey
+            .replace(/([A-Z])/g, " $1")
+            .replace(/^./, (str) => str.toUpperCase())
+            .trim()
 
         return {
           name: label,
@@ -574,15 +586,28 @@ export const line = {
       })
 
       // Default colors if not provided
-      const defaultColors = ["#8884d8", "#82ca9d", "#ffc658", "#ff7300", "#0088fe", "#00c49f", "#ffbb28", "#ff8042"]
+      const defaultColors = [
+        "#8884d8",
+        "#82ca9d",
+        "#ffc658",
+        "#ff7300",
+        "#0088fe",
+        "#00c49f",
+        "#ffbb28",
+        "#ff8042",
+      ]
       const legendColors = colors || defaultColors
 
-      return renderLegend(entity, {
-        series,
-        colors: legendColors,
-        width,
-        padding,
-      }, api)
+      return renderLegend(
+        entity,
+        {
+          series,
+          colors: legendColors,
+          width,
+          padding,
+        },
+        api,
+      )
     }
     // Mark as legend for identification during processing
     legendFn.isLegend = true

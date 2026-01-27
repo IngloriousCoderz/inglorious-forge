@@ -64,13 +64,19 @@ export function createTooltipHandlers({ entity, api, tooltipData }) {
     if (!entity.showTooltip) return
     const svgElement = e.currentTarget.closest("svg")
     const svgRect = svgElement.getBoundingClientRect()
-    const containerElement = svgElement.closest(".iw-chart") || svgElement.parentElement
+    const containerElement =
+      svgElement.closest(".iw-chart") || svgElement.parentElement
     const containerRect = containerElement.getBoundingClientRect()
 
     const relativeX = e.clientX - svgRect.left
     const relativeY = e.clientY - svgRect.top
 
-    const { x, y } = calculateTooltipPosition(relativeX, relativeY, svgRect, containerRect)
+    const { x, y } = calculateTooltipPosition(
+      relativeX,
+      relativeY,
+      svgRect,
+      containerRect,
+    )
 
     api.notify(`#${entity.id}:showTooltip`, {
       label: tooltipData.label,
@@ -101,13 +107,19 @@ export function createTooltipMoveHandler({ entity, api }) {
     if (!entity.tooltip) return
     const svgElement = e.currentTarget
     const svgRect = svgElement.getBoundingClientRect()
-    const containerElement = svgElement.closest(".iw-chart") || svgElement.parentElement
+    const containerElement =
+      svgElement.closest(".iw-chart") || svgElement.parentElement
     const containerRect = containerElement.getBoundingClientRect()
 
     const relativeX = e.clientX - svgRect.left
     const relativeY = e.clientY - svgRect.top
 
-    const { x, y } = calculateTooltipPosition(relativeX, relativeY, svgRect, containerRect)
+    const { x, y } = calculateTooltipPosition(
+      relativeX,
+      relativeY,
+      svgRect,
+      containerRect,
+    )
 
     api.notify(`#${entity.id}:moveTooltip`, {
       x,

@@ -32,10 +32,14 @@ export function renderCartesianLayout(entity, props, api) {
   if (!entity.data || entity.data.length === 0) {
     return html`
       <div class="iw-chart">
-        ${renderEmptyState(entity, {
-          width: entity.width,
-          height: entity.height,
-        }, api)}
+        ${renderEmptyState(
+          entity,
+          {
+            width: entity.width,
+            height: entity.height,
+          },
+          api,
+        )}
       </div>
     `
   }
@@ -47,28 +51,40 @@ export function renderCartesianLayout(entity, props, api) {
 
   // Independent components - declarative composition
   const grid = entity.showGrid
-    ? renderGrid(entity, {
-        xScale,
-        yScale,
-        width,
-        height,
-        padding,
-      }, api)
+    ? renderGrid(
+        entity,
+        {
+          xScale,
+          yScale,
+          width,
+          height,
+          padding,
+        },
+        api,
+      )
     : svg``
 
-  const xAxis = renderXAxis(entity, {
-    xScale,
-    yScale,
-    width,
-    height,
-    padding,
-  }, api)
+  const xAxis = renderXAxis(
+    entity,
+    {
+      xScale,
+      yScale,
+      width,
+      height,
+      padding,
+    },
+    api,
+  )
 
-  const yAxis = renderYAxis(entity, {
-    yScale,
-    height,
-    padding,
-  }, api)
+  const yAxis = renderYAxis(
+    entity,
+    {
+      yScale,
+      height,
+      padding,
+    },
+    api,
+  )
 
   // Legend - only for multiple series
   const shouldShowLegend =
@@ -76,12 +92,16 @@ export function renderCartesianLayout(entity, props, api) {
       ? showLegend
       : isMultiSeries(entity.data) && entity.showLegend
   const legend = shouldShowLegend
-    ? renderLegend(entity, {
-        series: entity.data,
-        colors: entity.colors,
-        width,
-        padding,
-      }, api)
+    ? renderLegend(
+        entity,
+        {
+          series: entity.data,
+          colors: entity.colors,
+          width,
+          padding,
+        },
+        api,
+      )
     : svg``
 
   // SVG container
