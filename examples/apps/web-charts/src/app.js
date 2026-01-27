@@ -56,14 +56,40 @@ export const app = {
                     c.renderXAxis({ dataKey: "name" }),
                     c.renderYAxis({ width: "auto" }),
                     c.renderLegend({
-                      dataKeys: ["productA", "productB", "productC", "productD"],
-                      labels: ["Product A", "Product B", "Product C", "Product D"],
+                      dataKeys: [
+                        "productA",
+                        "productB",
+                        "productC",
+                        "productD",
+                      ],
+                      labels: [
+                        "Product A",
+                        "Product B",
+                        "Product C",
+                        "Product D",
+                      ],
                       colors: ["#8884d8", "#82ca9d", "#ffc658", "#ff7300"],
                     }),
-                    c.renderLine({ dataKey: "productA", stroke: "#8884d8", showDots: true }),
-                    c.renderLine({ dataKey: "productB", stroke: "#82ca9d", showDots: true }),
-                    c.renderLine({ dataKey: "productC", stroke: "#ffc658", showDots: true }),
-                    c.renderLine({ dataKey: "productD", stroke: "#ff7300", showDots: true }),
+                    c.renderLine({
+                      dataKey: "productA",
+                      stroke: "#8884d8",
+                      showDots: true,
+                    }),
+                    c.renderLine({
+                      dataKey: "productB",
+                      stroke: "#82ca9d",
+                      showDots: true,
+                    }),
+                    c.renderLine({
+                      dataKey: "productC",
+                      stroke: "#ffc658",
+                      showDots: true,
+                    }),
+                    c.renderLine({
+                      dataKey: "productD",
+                      stroke: "#ff7300",
+                      showDots: true,
+                    }),
                     c.renderTooltip({}),
                   ],
                   {
