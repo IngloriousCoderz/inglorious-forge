@@ -4,11 +4,14 @@
     border-radius: 0.5em;
   }
 
-  .iw-chart-line {
-    &:hover {
-      stroke-width: 0.21875em;
-      filter: brightness(1.1);
-    }
+  .iw-chart-svg {
+    isolation: isolate;
+  }
+
+  /* Generic hover styles for lines and curves */
+  .iw-chart-line:hover,
+  .iw-chart-curve:hover {
+    stroke-width: 0.21875em;
   }
 
   .iw-chart-point {
