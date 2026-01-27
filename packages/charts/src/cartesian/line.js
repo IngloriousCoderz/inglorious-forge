@@ -16,12 +16,14 @@ import {
   getDataPointX,
   getDataPointY,
   getSeriesValues,
+  getTransformedData,
   isMultiSeries,
   parseDimension,
 } from "../utils/data-utils.js"
 import { calculatePadding } from "../utils/padding.js"
 import { generateLinePath } from "../utils/paths.js"
 import { createCartesianContext } from "../utils/scales.js"
+import { createSharedContext } from "../utils/shared-context.js"
 import { createTooltipHandlers } from "../utils/tooltip-handlers.js"
 
 // Removed global Maps - now using local context to avoid interference between charts
@@ -95,24 +97,23 @@ export const line = {
     // Create context with scales - pass composition info directly
     // The dataKeysSet is populated from config.dataKeys (passed explicitly)
     // Use entityWithData to support config.data override
-    const context = line._createSharedContext(entityWithData, {
-      width,
-      height,
-      padding,
-      usedDataKeys: dataKeysSet,
-    })
+    const context = createSharedContext(
+      entityWithData,
+      {
+        width,
+        height,
+        padding,
+        usedDataKeys: dataKeysSet,
+        chartType: "line",
+      },
+      api,
+    )
     context.dimensions = { width, height, padding }
     // Store entityWithData in context so renderLine can use the overridden data
     context.entity = entityWithData
     // Store api in context for tooltip handlers
     context.api = api
-    // Store context temporarily for renderLine to access
-    // Use a composite key (entityId + chartType) to avoid interference between different chart types
-    if (!line._activeContexts) {
-      line._activeContexts = new Map()
-    }
-    const contextKey = `${entity.id}:line`
-    line._activeContexts.set(contextKey, context)
+    // Context is now passed directly to renderLine, no need for global cache
 
     // Separate legend from other children and process legend immediately
     const legendContent = []
@@ -217,14 +218,7 @@ export const line = {
 
     const tooltipResult = line.renderTooltip(entityWithData, {}, api)(context)
 
-    // Clear active context after rendering to avoid memory leaks
-    // Use setTimeout to ensure rendering is complete
-    setTimeout(() => {
-      if (line._activeContexts) {
-        const contextKey = `${entity.id}:line`
-        line._activeContexts.delete(contextKey)
-      }
-    }, 0)
+    // No need to clear context - it's passed directly, not stored globally
 
     return html`
       <div class="iw-chart" style="position: relative;">
@@ -233,90 +227,7 @@ export const line = {
     `
   },
 
-  // Helper to get transformed data (used by all composition methods)
-  _getTransformedData(entity, dataKey) {
-    if (!entity || !entity.data) return null
-
-    // Transform data to use indices for x (like Recharts does with categorical data)
-    return entity.data.map((d, i) => ({
-      x: i, // Use index for positioning
-      y: d[dataKey] !== undefined ? d[dataKey] : d.y || d.value || 0,
-      name: d[dataKey] || d.name || d.x || d.date || i, // Keep name for labels
-    }))
-  },
-
-  // Helper to get all numeric values from entity data (for Y scale calculation)
-  _getAllNumericValues(entity) {
-    const allValues = []
-    entity.data.forEach((d) => {
-      Object.keys(d).forEach((key) => {
-        if (
-          key !== "name" &&
-          key !== "x" &&
-          key !== "date" &&
-          typeof d[key] === "number"
-        ) {
-          allValues.push(d[key])
-        }
-      })
-    })
-    return allValues
-  },
-
-  // Helper to create shared context with correct Y scale (all values)
-  // Now receives composition info directly instead of using global Maps
-  _createSharedContext(entity, compositionInfo = null) {
-    // Get dimensions from composition context if available
-    const width = compositionInfo?.width || entity.width || 800
-    const height = compositionInfo?.height || entity.height || 400
-    const padding = compositionInfo?.padding || calculatePadding(width, height)
-    const usedDataKeys = compositionInfo?.usedDataKeys
-
-    // Create data with values for Y scale calculation
-    // If in composition mode, only use values from dataKeys that are actually used in lines
-    // Otherwise, use all numeric values (for config-first approach)
-    const dataForScale = entity.data.map((d, i) => {
-      let maxValue = 0
-
-      if (usedDataKeys && usedDataKeys.size > 0) {
-        // Composition mode: only use values from dataKeys used in lines
-        usedDataKeys.forEach((dataKey) => {
-          const value = d[dataKey]
-          if (typeof value === "number" && value > maxValue) {
-            maxValue = value
-          }
-        })
-      } else {
-        // Config-first mode: use all numeric values (excluding name, x, date)
-        const numericValues = Object.entries(d)
-          .filter(
-            ([key, value]) =>
-              key !== "name" &&
-              key !== "x" &&
-              key !== "date" &&
-              typeof value === "number",
-          )
-          .map(([, value]) => value)
-        maxValue = numericValues.length > 0 ? Math.max(...numericValues) : 0
-      }
-
-      return {
-        x: i,
-        y: maxValue,
-      }
-    })
-
-    // Merge dimensions into entity for scale creation
-    const entityWithDimensions = {
-      ...entity,
-      data: dataForScale,
-      width,
-      height,
-      padding,
-    }
-
-    return createCartesianContext(entityWithDimensions, "line")
-  },
+  // Helper functions moved to utils/data-utils.js as pure functions
 
   renderCartesianGrid(entity, { config = {} }, api) {
     // Return a lazy function to prevent lit-html from evaluating it prematurely
@@ -327,7 +238,7 @@ export const line = {
       const { stroke = "#eee", strokeDasharray = "5 5" } = config
       // Use shared context with correct Y scale (all values)
       // The scale already uses .nice() to round domain to nice numbers
-      const context = line._createSharedContext(entity, null)
+      const context = createSharedContext(entity, { chartType: "line" }, api)
       const { xScale, yScale, dimensions } = context
       // For grid, we still need data with indices for X scale
       const transformedData = entity.data.map((d, i) => ({ x: i, y: 0 }))
@@ -355,7 +266,7 @@ export const line = {
     const { dataKey } = config
 
     // Use shared context (same scales as grid, Y axis, and lines)
-    const context = line._createSharedContext(entity, null)
+    const context = createSharedContext(entity, { chartType: "line" }, api)
     const { xScale, yScale, dimensions } = context
 
     // Create labels map: index -> label (use original entity data)
@@ -390,7 +301,7 @@ export const line = {
     // The scale already uses .nice() to round domain to nice numbers
     // In composition mode, this is called with context from renderLineChart
     // In config-first mode, pass null to use all numeric values
-    const context = line._createSharedContext(entity, null)
+    const context = createSharedContext(entity, { chartType: "line" }, api)
     const { yScale, dimensions } = context
 
     // Use d3-scale's ticks() method like Recharts does
@@ -412,15 +323,10 @@ export const line = {
   renderLine(entity, { config = {}, context = null }, api) {
     if (!entity || !entity.data) return svg``
 
-    // Use provided context if available (from renderLineChart), otherwise try to get from active contexts
-    // In composition mode, context should be passed or available in activeContexts
-    // In config-first mode, create new context using all numeric values
-    // Use composite key to avoid interference with other chart types
-    const contextKey = `${entity.id}:line`
+    // Use provided context if available (from renderLineChart)
+    // In composition mode, context is passed from renderLineChart
+    // In config-first mode, create new context
     let lineContext = context
-    if (!lineContext && line._activeContexts) {
-      lineContext = line._activeContexts.get(contextKey)
-    }
 
     const {
       dataKey,
@@ -434,12 +340,12 @@ export const line = {
     } = config
 
     // Extract data based on dataKey for this line
-    const data = line._getTransformedData(entity, dataKey)
+    const data = getTransformedData(entity, dataKey)
     if (!data || data.length === 0) return svg``
 
     // Use the context we already retrieved above
     if (!lineContext) {
-      lineContext = line._createSharedContext(entity, null)
+      lineContext = createSharedContext(entity, { chartType: "line" }, api)
     }
     const { xScale, yScale } = lineContext
 
@@ -521,7 +427,7 @@ export const line = {
         strokeWidth = "0.125em",
       } = config
 
-      const data = line._getTransformedData(entityFromContext, dataKey)
+      const data = getTransformedData(entityFromContext, dataKey)
       if (!data || data.length === 0) return svg``
 
       return svg`
