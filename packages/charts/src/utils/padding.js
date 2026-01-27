@@ -14,4 +14,3 @@ export function calculatePadding(width = 800, height = 400) {
     left: Math.max(50, width * 0.1),
   }
 }
-

@@ -131,7 +131,6 @@ export const entities = {
     ],
   },
 
-
   // Area Chart - Simple
   salesAreaChart: {
     type: "area",
