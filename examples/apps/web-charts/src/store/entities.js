@@ -1,7 +1,35 @@
 export const entities = {
-  // Product Chart - for Recharts-style composition (only data, no width/height)
-  productChart: {
+  // Product Chart - for Line Chart Recharts-style composition (same data as salesLineChart)
+  productLineChart: {
     type: "line",
+    data: [
+      { name: "0", uv: 50 },
+      { name: "1", uv: 150 },
+      { name: "2", uv: 120 },
+      { name: "3", uv: 180 },
+      { name: "4", uv: 25 },
+      { name: "5", uv: 160 },
+      { name: "6", uv: 190 },
+    ],
+  },
+
+  // Product Chart - for Area Chart Recharts-style composition (same data as salesAreaChart)
+  productAreaChart: {
+    type: "area",
+    data: [
+      { name: "0", uv: 50 },
+      { name: "1", uv: 150 },
+      { name: "2", uv: 120 },
+      { name: "3", uv: 180 },
+      { name: "4", uv: 25 },
+      { name: "5", uv: 160 },
+      { name: "6", uv: 190 },
+    ],
+  },
+
+  // Product Chart - for Bar Chart Recharts-style composition
+  productBarChart: {
+    type: "bar",
     data: [
       { name: "A", uv: 400, pv: 240 },
       { name: "B", uv: 300, pv: 456 },
@@ -45,7 +73,7 @@ export const entities = {
     ],
   },
 
-  // Line Chart with multiple series
+  // Line Chart with multiple series - Config style
   multiSeriesLineChart: {
     type: "line",
     data: [
@@ -91,6 +119,18 @@ export const entities = {
     showGrid: true,
     showTooltip: true,
   },
+
+  // Line Chart with multiple series - Recharts Style (Composition)
+  multiSeriesLineChartComposition: {
+    type: "line",
+    data: [
+      { name: "0", productA: 10, productB: 280, productC: 160, productD: 230 },
+      { name: "1", productA: 250, productB: 120, productC: 90, productD: 145 },
+      { name: "2", productA: 320, productB: 600, productC: 210, productD: 190 },
+      { name: "3", productA: 280, productB: 460, productC: 230, productD: 400 },
+    ],
+  },
+
 
   // Area Chart - Simple
   salesAreaChart: {

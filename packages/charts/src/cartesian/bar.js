@@ -9,47 +9,39 @@ import { renderXAxis } from "../component/x-axis.js"
 import { renderYAxis } from "../component/y-axis.js"
 import { renderRectangle } from "../shape/rectangle.js"
 import { renderCartesianLayout } from "../utils/cartesian-layout.js"
+import { calculatePadding } from "../utils/padding.js"
 import { createCartesianContext } from "../utils/scales.js"
 import { createTooltipHandlers } from "../utils/tooltip-handlers.js"
-
-function calculatePadding(width = 800, height = 400) {
-  return {
-    top: Math.max(20, height * 0.05),
-    right: Math.max(20, width * 0.05),
-    bottom: Math.max(40, height * 0.1),
-    left: Math.max(50, width * 0.1),
-  }
-}
 
 export const bar = {
   renderChart(entity, api) {
     const children = [
       entity.showGrid !== false
-        ? bar.renderCartesianGrid({}, entity.id, api)
+        ? bar.renderCartesianGrid(entity, {}, api)
         : null,
-      bar.renderXAxis({}, entity.id, api),
-      bar.renderYAxis({}, entity.id, api),
-      bar.renderBar({ dataKey: "value", multiColor: true }, entity.id, api),
+      bar.renderXAxis(entity, {}, api),
+      bar.renderYAxis(entity, {}, api),
+      bar.renderBar(entity, { dataKey: "value", multiColor: true }, api),
     ].filter(Boolean)
 
-    const chartContent = bar.renderBarChart(entity.id, children, api, {
+    const chartContent = bar.renderBarChart(entity, { children, config: {
       width: entity.width,
       height: entity.height,
       isRawSVG: true,
-    })
+    } }, api)
 
-    return renderCartesianLayout({
-      entity,
-      api,
+    return renderCartesianLayout(entity, {
       chartType: "bar",
       chartContent,
       showLegend: false,
-    })
+    }, api)
   },
 
-  renderBarChart(entityId, children, api, config = {}) {
-    const entity = api?.getEntity ? api.getEntity(entityId) : null
-    if (!entity) return html`<div>Entity ${entityId} not found</div>`
+  renderBarChart(entity, { children, config = {} }, api) {
+    if (!entity) return html`<div>Entity not found</div>`
+    if (!entity.data || !Array.isArray(entity.data)) {
+      return html`<div>Entity data is missing or invalid</div>`
+    }
 
     const width = config.width || entity.width || 800
     const height = config.height || entity.height || 400
@@ -187,15 +179,15 @@ export const bar = {
 
     return html`
       <div class="iw-chart" style="position: relative;">
-        ${svgContent} ${bar.renderTooltip({}, entityId, api)(context)}
+        ${svgContent} ${bar.renderTooltip(entity, {}, api)(context)}
       </div>
     `
   },
 
-  renderBar(config, entityId, api) {
+  renderBar(entity, { config = {} }, api) {
     const drawFn = (ctx, barIndex, totalBars) => {
-      const entity = api?.getEntity ? api.getEntity(entityId) : null
-      if (!entity) return svg``
+      const entityFromContext = ctx.entity || entity
+      if (!entityFromContext) return svg``
       const { dataKey = "value", fill, multiColor = false } = config
       const entityColors = entity.colors || [
         "#8884d8",
@@ -223,7 +215,7 @@ export const bar = {
       }
 
       return svg`
-        ${entity.data.map((d, i) => {
+        ${entityFromContext.data.map((d, i) => {
           const category = d.label || d.name || d.category || String(i)
           const value = d[dataKey] ?? 0
           const bandStart = xScale(category)
@@ -238,7 +230,7 @@ export const bar = {
             : fill || d.color || entityColors[barIndex % entityColors.length]
 
           const { onMouseEnter, onMouseLeave } = createTooltipHandlers({
-            entity,
+            entity: entityFromContext,
             api,
             tooltipData: { label: category, value, color },
           })
@@ -260,25 +252,27 @@ export const bar = {
     return drawFn
   },
 
-  renderXAxis(config, entityId, api) {
+  renderXAxis(entity, { config = {} }, api) {
     // Return a function that preserves the original object
     // This prevents lit-html from evaluating the function before passing it
     const renderFn = (ctx) => {
-      const entity = api?.getEntity ? api.getEntity(entityId) : null
-      if (!entity) return svg``
-      return renderXAxis({
-        entity,
-        xScale: ctx.xScale,
-        yScale: ctx.yScale,
-        padding: ctx.dimensions.padding,
-        width: ctx.dimensions.width,
-        height: ctx.dimensions.height,
-      })
+      const entityFromContext = ctx.entity || entity
+      if (!entityFromContext) return svg``
+      return renderXAxis(
+        entityFromContext,
+        {
+          xScale: ctx.xScale,
+          yScale: ctx.yScale,
+          padding: ctx.dimensions.padding,
+          width: ctx.dimensions.width,
+          height: ctx.dimensions.height,
+        },
+        api
+      )
     }
     // Mark as X-axis function for identification
     renderFn.isXAxis = true
     renderFn.config = config
-    renderFn.entityId = entityId
     renderFn.api = api
     // Add a special property to prevent lit-html from rendering directly
     // This makes the function be treated as a lit-html "directive"
@@ -292,36 +286,45 @@ export const bar = {
     return renderFn
   },
 
-  renderYAxis() {
-    return (ctx) =>
-      renderYAxis({
-        yScale: ctx.yScale,
-        ...ctx.dimensions,
-        customTicks: ctx.yScale.ticks
-          ? ctx.yScale.ticks(5)
-          : ctx.yScale.domain(),
-      })
-  },
-
-  renderCartesianGrid(config, entityId, api) {
+  renderYAxis(entity, props, api) {
     return (ctx) => {
-      const entity = api?.getEntity ? api.getEntity(entityId) : null
-      if (!entity) return svg``
-      return renderGrid({
-        entity,
-        ...ctx.dimensions,
-        xScale: ctx.xScale,
-        yScale: ctx.yScale,
-        stroke: config.stroke || "#eee",
-        strokeDasharray: config.strokeDasharray || "5 5",
-      })
+      const entityFromContext = ctx.entity || entity
+      return renderYAxis(
+        entityFromContext,
+        {
+          yScale: ctx.yScale,
+          ...ctx.dimensions,
+          customTicks: ctx.yScale.ticks
+            ? ctx.yScale.ticks(5)
+            : ctx.yScale.domain(),
+        },
+        api
+      )
     }
   },
 
-  renderTooltip(_, entityId, api) {
-    return () => {
-      const entity = api?.getEntity ? api.getEntity(entityId) : null
-      return entity ? renderTooltip(entity) : svg``
+  renderCartesianGrid(entity, { config = {} }, api) {
+    return (ctx) => {
+      const entityFromContext = ctx.entity || entity
+      if (!entityFromContext) return svg``
+      return renderGrid(
+        entityFromContext,
+        {
+          ...ctx.dimensions,
+          xScale: ctx.xScale,
+          yScale: ctx.yScale,
+          stroke: config.stroke || "#eee",
+          strokeDasharray: config.strokeDasharray || "5 5",
+        },
+        api
+      )
+    }
+  },
+
+  renderTooltip(entity, props, api) {
+    return (ctx) => {
+      const entityFromContext = ctx.entity || entity
+      return entityFromContext ? renderTooltip(entityFromContext, {}, api) : svg``
     }
   },
 }
