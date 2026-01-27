@@ -24,17 +24,28 @@ export const bar = {
       bar.renderBar(entity, { dataKey: "value", multiColor: true }, api),
     ].filter(Boolean)
 
-    const chartContent = bar.renderBarChart(entity, { children, config: {
-      width: entity.width,
-      height: entity.height,
-      isRawSVG: true,
-    } }, api)
+    const chartContent = bar.renderBarChart(
+      entity,
+      {
+        children,
+        config: {
+          width: entity.width,
+          height: entity.height,
+          isRawSVG: true,
+        },
+      },
+      api,
+    )
 
-    return renderCartesianLayout(entity, {
-      chartType: "bar",
-      chartContent,
-      showLegend: false,
-    }, api)
+    return renderCartesianLayout(
+      entity,
+      {
+        chartType: "bar",
+        chartContent,
+        showLegend: false,
+      },
+      api,
+    )
   },
 
   renderBarChart(entity, { children, config = {} }, api) {
@@ -267,7 +278,7 @@ export const bar = {
           width: ctx.dimensions.width,
           height: ctx.dimensions.height,
         },
-        api
+        api,
       )
     }
     // Mark as X-axis function for identification
@@ -298,7 +309,7 @@ export const bar = {
             ? ctx.yScale.ticks(5)
             : ctx.yScale.domain(),
         },
-        api
+        api,
       )
     }
   },
@@ -316,7 +327,7 @@ export const bar = {
           stroke: config.stroke || "#eee",
           strokeDasharray: config.strokeDasharray || "5 5",
         },
-        api
+        api,
       )
     }
   },
@@ -324,7 +335,9 @@ export const bar = {
   renderTooltip(entity, props, api) {
     return (ctx) => {
       const entityFromContext = ctx.entity || entity
-      return entityFromContext ? renderTooltip(entityFromContext, {}, api) : svg``
+      return entityFromContext
+        ? renderTooltip(entityFromContext, {}, api)
+        : svg``
     }
   },
 }

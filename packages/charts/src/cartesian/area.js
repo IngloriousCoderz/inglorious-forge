@@ -99,10 +99,14 @@ export const area = {
   renderChart(entity, api) {
     const areas = renderAreaCurves(entity, {}, api)
 
-    return renderCartesianLayout(entity, {
-      chartType: "area",
-      chartContent: areas,
-    }, api)
+    return renderCartesianLayout(
+      entity,
+      {
+        chartType: "area",
+        chartContent: areas,
+      },
+      api,
+    )
   },
 
   /**
@@ -112,7 +116,9 @@ export const area = {
   renderAreaChart(entity, { children, config = {} }, api) {
     if (!entity) return svg`<text>Entity not found</text>`
 
-    const entityWithData = config.data ? { ...entity, data: config.data } : entity
+    const entityWithData = config.data
+      ? { ...entity, data: config.data }
+      : entity
     const context = createSharedContext(entityWithData, config)
     // Store api in context for tooltip handlers
     context.api = api
@@ -146,7 +152,10 @@ export const area = {
     }
 
     return html`
-      <div class="iw-chart" style="display: block; position: relative; width: 100%; box-sizing: border-box;">
+      <div
+        class="iw-chart"
+        style="display: block; position: relative; width: 100%; box-sizing: border-box;"
+      >
         <svg
           width=${context.dimensions.width}
           height=${context.dimensions.height}
@@ -165,7 +174,10 @@ export const area = {
       const { xScale, yScale, dimensions } = ctx
       const entityFromContext = ctx.entity || entity
       const { stroke = "#eee", strokeDasharray = "5 5" } = config
-      const transformedData = entityFromContext.data.map((d, i) => ({ x: i, y: 0 }))
+      const transformedData = entityFromContext.data.map((d, i) => ({
+        x: i,
+        y: 0,
+      }))
       const ticks = yScale.ticks ? yScale.ticks(5) : yScale.domain()
 
       return renderGrid(
@@ -178,7 +190,7 @@ export const area = {
           stroke,
           strokeDasharray,
         },
-        api
+        api,
       )
     }
   },
@@ -189,9 +201,12 @@ export const area = {
       const entityFromContext = ctx.entity || entity
       const { dataKey } = config
       const labels = entityFromContext.data.map(
-        (d, i) => d[dataKey] || d.name || d.x || d.date || String(i)
+        (d, i) => d[dataKey] || d.name || d.x || d.date || String(i),
       )
-      const transformedData = entityFromContext.data.map((d, i) => ({ x: i, y: 0 }))
+      const transformedData = entityFromContext.data.map((d, i) => ({
+        x: i,
+        y: 0,
+      }))
 
       return renderXAxis(
         { ...entityFromContext, data: transformedData, xLabels: labels },
@@ -200,7 +215,7 @@ export const area = {
           yScale,
           ...dimensions,
         },
-        api
+        api,
       )
     }
   },
@@ -210,7 +225,11 @@ export const area = {
       const { yScale, dimensions } = ctx
       const entityFromContext = ctx.entity || entity
       const ticks = yScale.ticks ? yScale.ticks(5) : yScale.domain()
-      return renderYAxis(entityFromContext, { yScale, customTicks: ticks, ...dimensions }, api)
+      return renderYAxis(
+        entityFromContext,
+        { yScale, customTicks: ticks, ...dimensions },
+        api,
+      )
     }
   },
 
@@ -231,7 +250,9 @@ export const area = {
       if (!data) return svg``
 
       const areaPath = generateAreaPath(data, xScale, yScale, 0, curveType)
-      const linePath = stroke ? generateLinePath(data, xScale, yScale, curveType) : null
+      const linePath = stroke
+        ? generateLinePath(data, xScale, yScale, curveType)
+        : null
 
       return svg`
         <g class="iw-chart-area">
@@ -242,12 +263,16 @@ export const area = {
             className: "iw-chart-area-fill",
             entityId: entityFromContext.id,
           })}
-          ${linePath ? renderCurve({
-                d: linePath,
-                stroke: stroke || fill,
-                className: "iw-chart-area-line",
-                entityId: entityFromContext.id,
-              }) : ""}
+          ${
+            linePath
+              ? renderCurve({
+                  d: linePath,
+                  stroke: stroke || fill,
+                  className: "iw-chart-area-line",
+                  entityId: entityFromContext.id,
+                })
+              : ""
+          }
         </g>
       `
     }
@@ -330,48 +355,80 @@ function renderAreaCurves(entity, props, api) {
     const processData = stacked ? calculateStackedData(data) : data
 
     // Logic for rendering stacked or independent series
-    const areasAndLines = (stacked ? data : [...data].reverse()).map((series, idx) => {
-      const originalIdx = stacked ? idx : data.length - 1 - idx
-      const values = getSeriesValues(series)
-      const color = series.color || colors[originalIdx % colors.length]
-      
-      let areaPath, linePath
-      if (stacked) {
-        const seriesStack = processData[idx] || []
-        areaPath = generateStackedAreaPath(values, xScale, yScale, seriesStack)
-        linePath = generateLinePath(values.map((d, i) => ({ ...d, y: seriesStack[i]?.[1] ?? d.y })), xScale, yScale)
-      } else {
-        areaPath = generateAreaPath(values, xScale, yScale, 0)
-        linePath = generateLinePath(values, xScale, yScale)
-      }
+    const areasAndLines = (stacked ? data : [...data].reverse()).map(
+      (series, idx) => {
+        const originalIdx = stacked ? idx : data.length - 1 - idx
+        const values = getSeriesValues(series)
+        const color = series.color || colors[originalIdx % colors.length]
 
-      return svg`
+        let areaPath, linePath
+        if (stacked) {
+          const seriesStack = processData[idx] || []
+          areaPath = generateStackedAreaPath(
+            values,
+            xScale,
+            yScale,
+            seriesStack,
+          )
+          linePath = generateLinePath(
+            values.map((d, i) => ({ ...d, y: seriesStack[i]?.[1] ?? d.y })),
+            xScale,
+            yScale,
+          )
+        } else {
+          areaPath = generateAreaPath(values, xScale, yScale, 0)
+          linePath = generateLinePath(values, xScale, yScale)
+        }
+
+        return svg`
         <g class="iw-chart-area-series">
           ${renderCurve({ d: areaPath, fill: color, fillOpacity: "0.6", entityId: entity.id })}
           ${renderCurve({ d: linePath, stroke: color, entityId: entity.id })}
         </g>
       `
-    })
+      },
+    )
 
-    const points = showPoints ? (stacked ? data : [...data].reverse()).map((series, idx) => {
-      const originalIdx = stacked ? idx : data.length - 1 - idx
-      const values = getSeriesValues(series)
-      const color = series.color || colors[originalIdx % colors.length]
-      const seriesStackedData = stacked ? processData[idx] : null
+    const points = showPoints
+      ? (stacked ? data : [...data].reverse()).map((series, idx) => {
+          const originalIdx = stacked ? idx : data.length - 1 - idx
+          const values = getSeriesValues(series)
+          const color = series.color || colors[originalIdx % colors.length]
+          const seriesStackedData = stacked ? processData[idx] : null
 
-      return repeat(values, (d, i) => `${originalIdx}-${i}`, (d, i) => {
-        const x = xScale(getDataPointX(d))
-        const y = yScale(stacked ? seriesStackedData[i]?.[1] : getDataPointY(d))
-        const value = stacked ? seriesStackedData[i]?.[1] : getDataPointY(d)
-        const label = getDataPointLabel(d, series.name || `Series ${originalIdx + 1}`)
+          return repeat(
+            values,
+            (d, i) => `${originalIdx}-${i}`,
+            (d, i) => {
+              const x = xScale(getDataPointX(d))
+              const y = yScale(
+                stacked ? seriesStackedData[i]?.[1] : getDataPointY(d),
+              )
+              const value = stacked
+                ? seriesStackedData[i]?.[1]
+                : getDataPointY(d)
+              const label = getDataPointLabel(
+                d,
+                series.name || `Series ${originalIdx + 1}`,
+              )
 
-        const { onMouseEnter, onMouseLeave } = createTooltipHandlers({
-          entity, api, tooltipData: { label, value, color },
+              const { onMouseEnter, onMouseLeave } = createTooltipHandlers({
+                entity,
+                api,
+                tooltipData: { label, value, color },
+              })
+
+              return renderDot({
+                cx: x,
+                cy: y,
+                fill: color,
+                onMouseEnter,
+                onMouseLeave,
+              })
+            },
+          )
         })
-
-        return renderDot({ cx: x, cy: y, fill: color, onMouseEnter, onMouseLeave })
-      })
-    }) : []
+      : []
 
     return svg`${areasAndLines}${points}`
   }
@@ -385,12 +442,32 @@ function renderAreaCurves(entity, props, api) {
     <g class="iw-chart-area-single">
       ${renderCurve({ d: areaPath, fill: color, fillOpacity: "0.6", entityId: entity.id })}
       ${renderCurve({ d: linePath, stroke: color, entityId: entity.id })}
-      ${showPoints ? repeat(data, (d, i) => i, (d) => {
-        const { onMouseEnter, onMouseLeave } = createTooltipHandlers({
-          entity, api, tooltipData: { label: getDataPointLabel(d), value: getDataPointY(d), color },
-        })
-        return renderDot({ cx: xScale(getDataPointX(d)), cy: yScale(getDataPointY(d)), fill: color, onMouseEnter, onMouseLeave })
-      }) : ""}
+      ${
+        showPoints
+          ? repeat(
+              data,
+              (d, i) => i,
+              (d) => {
+                const { onMouseEnter, onMouseLeave } = createTooltipHandlers({
+                  entity,
+                  api,
+                  tooltipData: {
+                    label: getDataPointLabel(d),
+                    value: getDataPointY(d),
+                    color,
+                  },
+                })
+                return renderDot({
+                  cx: xScale(getDataPointX(d)),
+                  cy: yScale(getDataPointY(d)),
+                  fill: color,
+                  onMouseEnter,
+                  onMouseLeave,
+                })
+              },
+            )
+          : ""
+      }
     </g>
   `
 }
