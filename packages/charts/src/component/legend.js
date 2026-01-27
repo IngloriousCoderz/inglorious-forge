@@ -7,14 +7,18 @@ import { repeat } from "lit-html/directives/repeat.js"
  * Legend Component - renders independent legend
  * Receives data and colors, does not decide layout
  *
- * @param {Object} params
- * @param {any[]} params.series
- * @param {string[]} params.colors
- * @param {number} params.width
- * @param {Object} params.padding
+ * @param {any} entity
+ * @param {Object} props
+ * @param {any[]} props.series
+ * @param {string[]} props.colors
+ * @param {number} props.width
+ * @param {Object} props.padding
+ * @param {any} api
  * @returns {import('lit-html').TemplateResult}
  */
-export function renderLegend({ series, colors, width, padding }) {
+// eslint-disable-next-line no-unused-vars
+export function renderLegend(entity, props, api) {
+  const { series, colors, width, padding } = props
   if (!series || series.length === 0) {
     return svg``
   }
