@@ -98,6 +98,25 @@ export function ensureValidNumber(value, fallback = 0) {
 }
 
 /**
+ * Transforms entity data to standardized format with x, y, and name properties.
+ * Used for rendering lines and areas in composition mode.
+ *
+ * @param {any} entity - Chart entity with data
+ * @param {string} dataKey - Data key to extract values from
+ * @returns {Array|null} Transformed data array or null if entity/data is invalid
+ */
+export function getTransformedData(entity, dataKey) {
+  if (!entity || !entity.data) return null
+
+  // Transform data to use indices for x (like Recharts does with categorical data)
+  return entity.data.map((d, i) => ({
+    x: i, // Use index for positioning
+    y: d[dataKey] !== undefined ? d[dataKey] : d.y || d.value || 0,
+    name: d[dataKey] || d.name || d.x || d.date || i, // Keep name for labels
+  }))
+}
+
+/**
  * Parses a dimension value (width/height) from config or entity
  * Returns numeric value if possible, undefined otherwise
  * @param {number|string|undefined} value - Dimension value to parse
