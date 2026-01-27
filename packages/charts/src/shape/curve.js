@@ -22,9 +22,22 @@ export function renderCurve({
   fillOpacity,
   strokeWidth = "0.15625em",
   className = "iw-chart-curve",
+  entityId,
   onMouseEnter,
   onMouseLeave,
 }) {
+  const wrappedOnMouseEnter = onMouseEnter
+    ? (e) => {
+        onMouseEnter(e)
+      }
+    : undefined
+
+  const wrappedOnMouseLeave = onMouseLeave
+    ? (e) => {
+        onMouseLeave(e)
+      }
+    : undefined
+
   return svg`
     <path
       d=${d}
@@ -33,8 +46,10 @@ export function renderCurve({
       fill-opacity=${fillOpacity}
       stroke-width=${strokeWidth}
       class=${className}
-      @mouseenter=${onMouseEnter}
-      @mouseleave=${onMouseLeave}
+      data-entity-id=${entityId || undefined}
+      style=${stroke ? `stroke: ${stroke} !important;` : undefined}
+      @mouseenter=${wrappedOnMouseEnter}
+      @mouseleave=${wrappedOnMouseLeave}
     />
   `
 }

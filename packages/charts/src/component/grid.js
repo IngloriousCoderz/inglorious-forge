@@ -10,24 +10,20 @@ import { calculateXTicks } from "../utils/scales.js"
  * Grid Component - renders independent grid
  * Receives scales from context, does not decide layout
  *
- * @param {Object} params
- * @param {any} params.entity - Chart entity with data
- * @param {import('d3-scale').ScaleBand|import('d3-scale').ScaleLinear|import('d3-scale').ScaleTime} params.xScale
- * @param {import('d3-scale').ScaleLinear} params.yScale
- * @param {number} params.width
- * @param {number} params.height
- * @param {Object} params.padding
+ * @param {any} entity - Chart entity with data
+ * @param {Object} props
+ * @param {import('d3-scale').ScaleBand|import('d3-scale').ScaleLinear|import('d3-scale').ScaleTime} props.xScale
+ * @param {import('d3-scale').ScaleLinear} props.yScale
+ * @param {number} props.width
+ * @param {number} props.height
+ * @param {Object} props.padding
+ * @param {Array} props.customYTicks
+ * @param {any} api
  * @returns {import('lit-html').TemplateResult}
  */
-export function renderGrid({
-  entity,
-  xScale,
-  yScale,
-  width,
-  height,
-  padding,
-  customYTicks,
-}) {
+// eslint-disable-next-line no-unused-vars
+export function renderGrid(entity, props, api) {
+  const { xScale, yScale, width, height, padding, customYTicks } = props
   // Use entity.data if available, otherwise fallback to scale ticks
   const data = entity?.data
   const xTicks = xScale.bandwidth

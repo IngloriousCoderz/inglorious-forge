@@ -96,3 +96,21 @@ export function isValidNumber(value) {
 export function ensureValidNumber(value, fallback = 0) {
   return isValidNumber(value) ? value : fallback
 }
+
+/**
+ * Parses a dimension value (width/height) from config or entity
+ * Returns numeric value if possible, undefined otherwise
+ * @param {number|string|undefined} value - Dimension value to parse
+ * @returns {number|undefined} Parsed numeric value or undefined
+ */
+export function parseDimension(value) {
+  if (typeof value === "number") return value
+  if (typeof value === "string") {
+    // Try to parse as number (e.g., "800" -> 800)
+    const num = parseFloat(value)
+    if (!isNaN(num) && !value.includes("%") && !value.includes("px")) {
+      return num
+    }
+  }
+  return undefined
+}

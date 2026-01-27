@@ -12,23 +12,19 @@ import {
 import { calculateXTicks } from "../utils/scales.js"
 
 /**
- * @param {Object} params
- * @param {any} params.entity
- * @param {import('d3-scale').ScaleBand|import('d3-scale').ScaleLinear|import('d3-scale').ScaleTime} params.xScale
- * @param {import('d3-scale').ScaleLinear} params.yScale
- * @param {number} params.width
- * @param {number} params.height
- * @param {Object} params.padding
+ * @param {any} entity
+ * @param {Object} props
+ * @param {import('d3-scale').ScaleBand|import('d3-scale').ScaleLinear|import('d3-scale').ScaleTime} props.xScale
+ * @param {import('d3-scale').ScaleLinear} props.yScale
+ * @param {number} props.width
+ * @param {number} props.height
+ * @param {Object} props.padding
+ * @param {any} api
  * @returns {import('lit-html').TemplateResult}
  */
-export function renderXAxis({
-  entity,
-  xScale,
-  yScale,
-  width,
-  height,
-  padding,
-}) {
+
+// eslint-disable-next-line no-unused-vars
+export function renderXAxis(entity, { xScale, yScale, width, height, padding }, api) {
   if (xScale.bandwidth) {
     // Following Recharts logic: for scaleBand, use the domain directly
     // and calculate the center as scale(category) + bandwidth() / 2

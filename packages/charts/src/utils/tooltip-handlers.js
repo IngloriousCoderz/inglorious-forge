@@ -5,6 +5,48 @@
 
 // Tooltip offset from cursor position
 const TOOLTIP_OFFSET = 15
+// Estimated tooltip width (can be adjusted based on actual tooltip size)
+const TOOLTIP_ESTIMATED_WIDTH = 140
+// Estimated tooltip height
+const TOOLTIP_ESTIMATED_HEIGHT = 60
+
+/**
+ * Calculates tooltip position, adjusting if it would be cut off
+ * @param {number} x - X position relative to SVG
+ * @param {number} y - Y position relative to SVG
+ * @param {DOMRect} svgRect - SVG bounding rect
+ * @param {DOMRect} containerRect - Container bounding rect (for overflow check)
+ * @returns {{ x: number, y: number }}
+ */
+function calculateTooltipPosition(x, y, svgRect, containerRect) {
+  let tooltipX = x + TOOLTIP_OFFSET
+  let tooltipY = y - TOOLTIP_OFFSET
+
+  // Check if tooltip would be cut off on the right side
+  const tooltipRightEdge = svgRect.left + tooltipX + TOOLTIP_ESTIMATED_WIDTH
+  const containerRightEdge = containerRect.right
+
+  if (tooltipRightEdge > containerRightEdge) {
+    // Position tooltip to the left of cursor instead
+    tooltipX = x - TOOLTIP_ESTIMATED_WIDTH - TOOLTIP_OFFSET
+    // Ensure it doesn't go negative
+    const MIN_X_POSITION = 0
+    if (tooltipX < MIN_X_POSITION) {
+      tooltipX = TOOLTIP_OFFSET
+    }
+  }
+
+  // Check if tooltip would be cut off on the bottom
+  const tooltipBottomEdge = svgRect.top + tooltipY + TOOLTIP_ESTIMATED_HEIGHT
+  const containerBottomEdge = containerRect.bottom
+
+  if (tooltipBottomEdge > containerBottomEdge) {
+    // Position tooltip above cursor
+    tooltipY = y - TOOLTIP_ESTIMATED_HEIGHT - TOOLTIP_OFFSET
+  }
+
+  return { x: tooltipX, y: tooltipY }
+}
 
 /**
  * Creates tooltip event handlers for chart elements
@@ -20,13 +62,22 @@ const TOOLTIP_OFFSET = 15
 export function createTooltipHandlers({ entity, api, tooltipData }) {
   const onMouseEnter = (e) => {
     if (!entity.showTooltip) return
-    const rect = e.currentTarget.closest("svg").getBoundingClientRect()
+    const svgElement = e.currentTarget.closest("svg")
+    const svgRect = svgElement.getBoundingClientRect()
+    const containerElement = svgElement.closest(".iw-chart") || svgElement.parentElement
+    const containerRect = containerElement.getBoundingClientRect()
+
+    const relativeX = e.clientX - svgRect.left
+    const relativeY = e.clientY - svgRect.top
+
+    const { x, y } = calculateTooltipPosition(relativeX, relativeY, svgRect, containerRect)
+
     api.notify(`#${entity.id}:showTooltip`, {
       label: tooltipData.label,
       value: tooltipData.value,
       color: tooltipData.color,
-      x: e.clientX - rect.left + TOOLTIP_OFFSET,
-      y: e.clientY - rect.top - TOOLTIP_OFFSET,
+      x,
+      y,
     })
   }
 
@@ -48,10 +99,19 @@ export function createTooltipHandlers({ entity, api, tooltipData }) {
 export function createTooltipMoveHandler({ entity, api }) {
   return (e) => {
     if (!entity.tooltip) return
-    const rect = e.currentTarget.getBoundingClientRect()
+    const svgElement = e.currentTarget
+    const svgRect = svgElement.getBoundingClientRect()
+    const containerElement = svgElement.closest(".iw-chart") || svgElement.parentElement
+    const containerRect = containerElement.getBoundingClientRect()
+
+    const relativeX = e.clientX - svgRect.left
+    const relativeY = e.clientY - svgRect.top
+
+    const { x, y } = calculateTooltipPosition(relativeX, relativeY, svgRect, containerRect)
+
     api.notify(`#${entity.id}:moveTooltip`, {
-      x: e.clientX - rect.left + TOOLTIP_OFFSET,
-      y: e.clientY - rect.top - TOOLTIP_OFFSET,
+      x,
+      y,
     })
   }
 }

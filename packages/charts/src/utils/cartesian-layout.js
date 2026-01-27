@@ -17,30 +17,25 @@ import { createTooltipMoveHandler } from "./tooltip-handlers.js"
 
 /**
  * Renders the common cartesian chart layout
- * @param {Object} params
- * @param {any} params.entity - Chart entity
- * @param {import('@inglorious/web').Api} params.api - Web API instance
- * @param {string} params.chartType - Chart type ("area", "line", "bar")
- * @param {import('lit-html').TemplateResult} params.chartContent - Chart-specific content (areas, lines, bars)
- * @param {boolean} [params.showLegend] - Whether to show legend (defaults to entity.showLegend for multi-series)
+ * @param {any} entity - Chart entity
+ * @param {Object} props
+ * @param {string} props.chartType - Chart type ("area", "line", "bar")
+ * @param {import('lit-html').TemplateResult} props.chartContent - Chart-specific content (areas, lines, bars)
+ * @param {boolean} [props.showLegend] - Whether to show legend (defaults to entity.showLegend for multi-series)
+ * @param {import('@inglorious/web').Api} api - Web API instance
  * @returns {import('lit-html').TemplateResult} Complete chart HTML
  */
-export function renderCartesianLayout({
-  entity,
-  api,
-  chartType,
-  chartContent,
-  showLegend = undefined,
-}) {
+export function renderCartesianLayout(entity, props, api) {
+  const { chartType, chartContent, showLegend = undefined } = props || {}
   // Check for empty state
   // eslint-disable-next-line no-magic-numbers
   if (!entity.data || entity.data.length === 0) {
     return html`
       <div class="iw-chart">
-        ${renderEmptyState({
+        ${renderEmptyState(entity, {
           width: entity.width,
           height: entity.height,
-        })}
+        }, api)}
       </div>
     `
   }
@@ -52,30 +47,28 @@ export function renderCartesianLayout({
 
   // Independent components - declarative composition
   const grid = entity.showGrid
-    ? renderGrid({
-        entity,
+    ? renderGrid(entity, {
         xScale,
         yScale,
         width,
         height,
         padding,
-      })
+      }, api)
     : svg``
 
-  const xAxis = renderXAxis({
-    entity,
+  const xAxis = renderXAxis(entity, {
     xScale,
     yScale,
     width,
     height,
     padding,
-  })
+  }, api)
 
-  const yAxis = renderYAxis({
+  const yAxis = renderYAxis(entity, {
     yScale,
     height,
     padding,
-  })
+  }, api)
 
   // Legend - only for multiple series
   const shouldShowLegend =
@@ -83,12 +76,12 @@ export function renderCartesianLayout({
       ? showLegend
       : isMultiSeries(entity.data) && entity.showLegend
   const legend = shouldShowLegend
-    ? renderLegend({
+    ? renderLegend(entity, {
         series: entity.data,
         colors: entity.colors,
         width,
         padding,
-      })
+      }, api)
     : svg``
 
   // SVG container
@@ -113,7 +106,7 @@ export function renderCartesianLayout({
       class="iw-chart"
       style="display: block; margin: 0; padding: 0; position: relative; width: 100%; box-sizing: border-box;"
     >
-      ${svgContent} ${renderTooltip(entity)}
+      ${svgContent} ${renderTooltip(entity, {}, api)}
     </div>
   `
 }

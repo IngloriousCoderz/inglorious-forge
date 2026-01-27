@@ -7,10 +7,13 @@ import { formatNumber } from "../utils/data-utils.js"
  * Reused by cartesian charts (line, area, bar).
  *
  * @param {import('../types/charts').ChartEntity} entity
+ * @param {Object} props
+ * @param {any} api
  * @returns {import('lit-html').TemplateResult}
  */
-export function renderTooltip(entity) {
-  if (!entity.tooltip) {
+// eslint-disable-next-line no-unused-vars
+export function renderTooltip(entity, props, api) {
+  if (!entity?.tooltip) {
     return html``
   }
 

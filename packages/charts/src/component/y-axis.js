@@ -6,13 +6,18 @@ import { repeat } from "lit-html/directives/repeat.js"
 import { formatNumber, isValidNumber } from "../utils/data-utils.js"
 
 /**
- * @param {Object} params
- * @param {import('d3-scale').ScaleLinear} params.yScale
- * @param {number} params.height
- * @param {Object} params.padding
+ * @param {any} entity
+ * @param {Object} props
+ * @param {import('d3-scale').ScaleLinear} props.yScale
+ * @param {number} props.height
+ * @param {Object} props.padding
+ * @param {Array} props.customTicks
+ * @param {any} api
  * @returns {import('lit-html').TemplateResult}
  */
-export function renderYAxis({ yScale, height, padding, customTicks }) {
+// eslint-disable-next-line no-unused-vars
+export function renderYAxis(entity, props, api) {
+  const { yScale, height, padding, customTicks } = props
   // Use custom ticks if provided, otherwise use scale ticks
   const ticks =
     customTicks && Array.isArray(customTicks) ? customTicks : yScale.ticks(5)

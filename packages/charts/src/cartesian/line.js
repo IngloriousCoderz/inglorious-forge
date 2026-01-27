@@ -4,6 +4,8 @@ import { html, svg } from "lit-html"
 import { repeat } from "lit-html/directives/repeat.js"
 
 import { renderGrid } from "../component/grid.js"
+import { renderLegend } from "../component/legend.js"
+import { renderTooltip } from "../component/tooltip.js"
 import { renderXAxis } from "../component/x-axis.js"
 import { renderYAxis } from "../component/y-axis.js"
 import { renderCurve } from "../shape/curve.js"
@@ -15,75 +17,46 @@ import {
   getDataPointY,
   getSeriesValues,
   isMultiSeries,
+  parseDimension,
 } from "../utils/data-utils.js"
+import { calculatePadding } from "../utils/padding.js"
 import { generateLinePath } from "../utils/paths.js"
 import { createCartesianContext } from "../utils/scales.js"
 import { createTooltipHandlers } from "../utils/tooltip-handlers.js"
 
-// Store dimensions for composition methods (keyed by entityId)
-const compositionDimensions = new Map()
-// Store dataKeys used in lines (keyed by entityId)
-const compositionDataKeys = new Map()
-
-// Calculate padding based on chart dimensions (same as logic.js)
-function calculatePadding(width = 800, height = 400) {
-  return {
-    top: Math.max(20, height * 0.05),
-    right: Math.max(20, width * 0.05),
-    bottom: Math.max(40, height * 0.1),
-    left: Math.max(50, width * 0.1),
-  }
-}
+// Removed global Maps - now using local context to avoid interference between charts
 
 export const line = {
   renderChart(entity, api) {
     // Line curves - uses Curve and Dot primitives
-    const lines = renderLineCurves({
-      data: entity.data,
-      entity,
-      api,
-    })
+    const lines = renderLineCurves(entity, {}, api)
 
-    return renderCartesianLayout({
-      entity,
-      api,
+    return renderCartesianLayout(entity, {
       chartType: "line",
       chartContent: lines,
-    })
+    }, api)
   },
 
   // Composition methods (Recharts-style)
-  renderLineChart(entityId, children, api, config = {}) {
-    const entity = api.getEntity(entityId)
+  renderLineChart(entity, { children, config = {} }, api) {
     if (!entity) {
-      return svg`<text>Entity ${entityId} not found</text>`
+      return svg`<text>Entity not found</text>`
     }
 
-    // ---- composition dataKeys (mantém como está) ----
+    // Allow config.data to override entity.data for this specific chart instance
+    const entityWithData = config.data
+      ? { ...entity, data: config.data }
+      : entity
+
+    // Use local variables instead of global Maps
     const dataKeysSet = new Set()
     if (config.dataKeys && Array.isArray(config.dataKeys)) {
       config.dataKeys.forEach((key) => dataKeysSet.add(key))
     }
-    compositionDataKeys.set(entityId, dataKeysSet)
 
     // Extract dimensions from config (like Recharts style prop)
     // Support both style object and direct width/height props
     const style = config.style || {}
-
-    // Parse width/height from style (can be string like "100%" or number)
-    // For SVG, we need numeric values for width/height attributes
-    // CSS percentage/auto will be handled by the style attribute
-    const parseDimension = (value) => {
-      if (typeof value === "number") return value
-      if (typeof value === "string") {
-        // Try to parse as number (e.g., "800" -> 800)
-        const num = parseFloat(value)
-        if (!isNaN(num) && !value.includes("%") && !value.includes("px")) {
-          return num
-        }
-      }
-      return undefined
-    }
 
     // Get numeric dimensions for SVG attributes
     // CSS dimensions (like "100%") will be in style
@@ -97,9 +70,6 @@ export const line = {
       400
     // Always calculate padding based on current dimensions (same as config-first approach)
     const padding = calculatePadding(width, height)
-
-    // Store dimensions for composition methods to access
-    compositionDimensions.set(entityId, { width, height, padding })
 
     // Merge style attributes
     const svgStyle = {
@@ -118,30 +88,82 @@ export const line = {
       Array.isArray(children) ? children : [children]
     ).filter(Boolean)
 
+    // Create context with scales - pass composition info directly
+    // The dataKeysSet is populated from config.dataKeys (passed explicitly)
+    // Use entityWithData to support config.data override
+    const context = line._createSharedContext(entityWithData, {
+      width,
+      height,
+      padding,
+      usedDataKeys: dataKeysSet,
+    })
+    context.dimensions = { width, height, padding }
+    // Store entityWithData in context so renderLine can use the overridden data
+    context.entity = entityWithData
+    // Store api in context for tooltip handlers
+    context.api = api
+    // Store context temporarily for renderLine to access
+    // Use a composite key (entityId + chartType) to avoid interference between different chart types
+    if (!line._activeContexts) {
+      line._activeContexts = new Map()
+    }
+    const contextKey = `${entity.id}:line`
+    line._activeContexts.set(contextKey, context)
+
+    // Separate legend from other children and process legend immediately
+    const legendContent = []
     const processedChildren = []
+
     for (const child of childrenArray) {
       if (typeof child === "function" && !child.isXAxis) {
-        // Lazy function: call to get the real component
-        try {
-          const lazyResult = child()
-          if (typeof lazyResult === "function") {
-            // Keep as function for later processing with context
-            processedChildren.push(lazyResult)
-          } else {
-            processedChildren.push(lazyResult)
+        // Try to get the actual function (may be wrapped)
+        let actualFn = child
+        let isLegend = false
+        
+        // Check if the function itself is marked as legend
+        if (child.isLegend === true) {
+          isLegend = true
+          actualFn = child
+        } else {
+          // Try calling it to get the wrapped function
+          try {
+            const lazyResult = child()
+            if (typeof lazyResult === "function") {
+              if (lazyResult.isLegend === true) {
+                isLegend = true
+                actualFn = lazyResult
+              } else {
+                // Not a legend, keep for later processing
+                processedChildren.push(lazyResult)
+                continue
+              }
+            } else {
+              // Not a function, keep as is
+              processedChildren.push(lazyResult)
+              continue
+            }
+          } catch {
+            // If it fails, keep as is
+            processedChildren.push(child)
+            continue
           }
-        } catch {
-          // If it fails, keep as is
-          processedChildren.push(child)
+        }
+        
+        // If we identified it as a legend, render it immediately
+        if (isLegend) {
+          try {
+            const renderedLegend = actualFn(context)
+            if (renderedLegend) {
+              legendContent.push(renderedLegend)
+            }
+          } catch {
+            // If it fails, continue without legend
+          }
         }
       } else {
         processedChildren.push(child)
       }
     }
-
-    // Create context with scales
-    const context = line._createSharedContext(entity, entityId)
-    context.dimensions = { width, height, padding }
 
     // Build style string
     const styleString = Object.entries(svgStyle)
@@ -153,36 +175,56 @@ export const line = {
       })
       .join("; ")
 
+    // Process all children for SVG rendering
+    const svgChildren = processedChildren.map((child) => {
+      // If it's a function, call it with context
+      if (typeof child === "function") {
+        if (child.isXAxis) {
+          return child(context)
+        }
+        try {
+          return child(context)
+        } catch {
+          // If it fails with context, try without context
+          try {
+            return child()
+          } catch {
+            return svg``
+          }
+        }
+      }
+      // If it's an object (TemplateResult), render as is
+      return child
+    })
+
+    const svgContent = svg`
+      <svg
+        width=${width}
+        height=${height}
+        viewBox="0 0 ${width} ${height}"
+        class="iw-chart-svg"
+        data-entity-id=${entity.id}
+        style=${styleString || undefined}
+      >
+        ${legendContent}
+        ${svgChildren}
+      </svg>
+    `
+
+    const tooltipResult = line.renderTooltip(entityWithData, {}, api)(context)
+
+    // Clear active context after rendering to avoid memory leaks
+    // Use setTimeout to ensure rendering is complete
+    setTimeout(() => {
+      if (line._activeContexts) {
+        const contextKey = `${entity.id}:line`
+        line._activeContexts.delete(contextKey)
+      }
+    }, 0)
+
     return html`
-      <div class="iw-chart">
-        <svg
-          width=${width}
-          height=${height}
-          viewBox="0 0 ${width} ${height}"
-          class="iw-chart-svg"
-          style=${styleString || undefined}
-        >
-          ${processedChildren.map((child) => {
-            // If it's a function, call it with context
-            if (typeof child === "function") {
-              if (child.isXAxis) {
-                return child(context)
-              }
-              try {
-                return child(context)
-              } catch {
-                // If it fails with context, try without context
-                try {
-                  return child()
-                } catch {
-                  return svg``
-                }
-              }
-            }
-            // If it's an object (TemplateResult), render as is
-            return child
-          })}
-        </svg>
+      <div class="iw-chart" style="position: relative;">
+        ${svgContent} ${tooltipResult}
       </div>
     `
   },
@@ -218,14 +260,13 @@ export const line = {
   },
 
   // Helper to create shared context with correct Y scale (all values)
-  _createSharedContext(entity, entityId) {
+  // Now receives composition info directly instead of using global Maps
+  _createSharedContext(entity, compositionInfo = null) {
     // Get dimensions from composition context if available
-    const storedDimensions = entityId
-      ? compositionDimensions.get(entityId)
-      : null
-
-    // Get dataKeys used in lines (if in composition mode)
-    const usedDataKeys = entityId ? compositionDataKeys.get(entityId) : null
+    const width = compositionInfo?.width || entity.width || 800
+    const height = compositionInfo?.height || entity.height || 400
+    const padding = compositionInfo?.padding || calculatePadding(width, height)
+    const usedDataKeys = compositionInfo?.usedDataKeys
 
     // Create data with values for Y scale calculation
     // If in composition mode, only use values from dataKeys that are actually used in lines
@@ -262,10 +303,6 @@ export const line = {
     })
 
     // Merge dimensions into entity for scale creation
-    const width = storedDimensions?.width || entity.width || 800
-    const height = storedDimensions?.height || entity.height || 400
-    // Always use padding from storedDimensions (calculated in renderLineChart) or calculate it
-    const padding = storedDimensions?.padding || calculatePadding(width, height)
     const entityWithDimensions = {
       ...entity,
       data: dataForScale,
@@ -277,43 +314,44 @@ export const line = {
     return createCartesianContext(entityWithDimensions, "line")
   },
 
-  renderCartesianGrid(config, entityId, api) {
+  renderCartesianGrid(entity, { config = {} }, api) {
     // Return a lazy function to prevent lit-html from evaluating it prematurely
     // This function will be called by renderLineChart with the correct context
     // eslint-disable-next-line no-unused-vars
     return (ctx) => {
-      const entity = api?.getEntity ? api.getEntity(entityId) : null
       if (!entity) return svg``
       const { stroke = "#eee", strokeDasharray = "5 5" } = config
       // Use shared context with correct Y scale (all values)
       // The scale already uses .nice() to round domain to nice numbers
-      const context = line._createSharedContext(entity, entityId)
+      const context = line._createSharedContext(entity, null)
       const { xScale, yScale, dimensions } = context
       // For grid, we still need data with indices for X scale
       const transformedData = entity.data.map((d, i) => ({ x: i, y: 0 }))
       // Use same ticks as renderYAxis for consistency (Recharts approach)
       // Recharts uses tickCount: 5 by default, which calls scale.ticks(5)
       const ticks = yScale.ticks ? yScale.ticks(5) : yScale.domain()
-      return renderGrid({
-        entity: { ...entity, data: transformedData },
-        xScale,
-        yScale,
-        customYTicks: ticks,
-        ...dimensions,
-        stroke,
-        strokeDasharray,
-      })
+      return renderGrid(
+        { ...entity, data: transformedData },
+        {
+          xScale,
+          yScale,
+          customYTicks: ticks,
+          ...dimensions,
+          stroke,
+          strokeDasharray,
+        },
+        api
+      )
     }
   },
 
-  renderXAxis(config, entityId, api) {
-    const entity = api.getEntity(entityId)
+  renderXAxis(entity, { config = {} }, api) {
     if (!entity) return svg``
 
     const { dataKey } = config
 
     // Use shared context (same scales as grid, Y axis, and lines)
-    const context = line._createSharedContext(entity, entityId)
+    const context = line._createSharedContext(entity, null)
     const { xScale, yScale, dimensions } = context
 
     // Create labels map: index -> label (use original entity data)
@@ -324,25 +362,31 @@ export const line = {
     // Create transformed data with indices for x (needed by renderXAxis)
     const transformedData = entity.data.map((d, i) => ({ x: i, y: 0 }))
 
-    return renderXAxis({
-      entity: {
+    return renderXAxis(
+      {
         ...entity,
         data: transformedData,
         xLabels: labels, // Pass labels for display
       },
-      xScale,
-      yScale,
-      ...dimensions,
-    })
+      {
+        xScale,
+        yScale,
+        ...dimensions,
+      },
+      api
+    )
   },
 
-  renderYAxis(config, entityId, api) {
-    const entity = api.getEntity(entityId)
+  renderYAxis(entity, { config = {} }, api) {
+    // eslint-disable-next-line no-unused-vars
+    const _config = config
     if (!entity) return svg``
 
     // Use shared context with correct Y scale (all values)
     // The scale already uses .nice() to round domain to nice numbers
-    const context = line._createSharedContext(entity, entityId)
+    // In composition mode, this is called with context from renderLineChart
+    // In config-first mode, pass null to use all numeric values
+    const context = line._createSharedContext(entity, null)
     const { yScale, dimensions } = context
 
     // Use d3-scale's ticks() method like Recharts does
@@ -350,34 +394,46 @@ export const line = {
     // The d3-scale algorithm automatically chooses "nice" intervals
     const ticks = yScale.ticks ? yScale.ticks(5) : yScale.domain()
 
-    return renderYAxis({
+    return renderYAxis(entity, {
       yScale,
       customTicks: ticks,
       ...dimensions,
-    })
+    }, api)
   },
 
-  renderLine(config, entityId, api) {
-    const entity = api.getEntity(entityId)
+  renderLine(entity, { config = {}, context = null }, api) {
     if (!entity || !entity.data) return svg``
 
-    const { dataKey, stroke = "#8884d8", type: curveType = "linear" } = config
-
-    // Register this dataKey as used (for Y scale calculation)
-    if (entityId && dataKey) {
-      if (!compositionDataKeys.has(entityId)) {
-        compositionDataKeys.set(entityId, new Set())
-      }
-      compositionDataKeys.get(entityId).add(dataKey)
+    // Use provided context if available (from renderLineChart), otherwise try to get from active contexts
+    // In composition mode, context should be passed or available in activeContexts
+    // In config-first mode, create new context using all numeric values
+    // Use composite key to avoid interference with other chart types
+    const contextKey = `${entity.id}:line`
+    let lineContext = context
+    if (!lineContext && line._activeContexts) {
+      lineContext = line._activeContexts.get(contextKey)
     }
+
+    const { 
+      dataKey, 
+      stroke = "#8884d8", 
+      type: curveType = "linear",
+      showDots = false,
+      dotFill,
+      dotR = "0.25em",
+      dotStroke = "white",
+      dotStrokeWidth = "0.125em",
+    } = config
 
     // Extract data based on dataKey for this line
     const data = line._getTransformedData(entity, dataKey)
     if (!data || data.length === 0) return svg``
 
-    // Use shared context with correct Y scale (only used dataKeys) - same as grid and Y axis
-    const context = line._createSharedContext(entity, entityId)
-    const { xScale, yScale } = context
+    // Use the context we already retrieved above
+    if (!lineContext) {
+      lineContext = line._createSharedContext(entity, null)
+    }
+    const { xScale, yScale } = lineContext
 
     // Generate path using the line-specific data but shared scales
     const path = generateLinePath(data, xScale, yScale, curveType)
@@ -387,15 +443,158 @@ export const line = {
       return svg``
     }
 
-    return svg`
-      <path
-        class="iw-chart-line"
-        d=${path}
-        stroke=${stroke}
-        fill="none"
-        stroke-width="2"
-      />
+    // Render dots if showDots is true
+    const dots = showDots
+      ? repeat(
+          data,
+          (d, i) => `${dataKey}-${i}`,
+          (d) => {
+            const x = xScale(d.x)
+            const y = yScale(d.y)
+            const dotLabel = d.name || dataKey || "Value"
+            const dotValue = d.y
+
+            const { onMouseEnter: dotOnMouseEnter, onMouseLeave: dotOnMouseLeave } =
+              createTooltipHandlers({
+                entity,
+                api,
+                tooltipData: {
+                  label: dotLabel,
+                  value: dotValue,
+                  color: dotFill || stroke,
+                },
+              })
+
+            return renderDot({
+              cx: x,
+              cy: y,
+              r: dotR,
+              fill: dotFill || stroke,
+              stroke: dotStroke,
+              strokeWidth: dotStrokeWidth,
+              className: "iw-chart-dot",
+              onMouseEnter: dotOnMouseEnter,
+              onMouseLeave: dotOnMouseLeave,
+            })
+          },
+        )
+      : ""
+
+    const pathElement = svg`
+      <g class="iw-chart-line-group" data-data-key=${dataKey}>
+        <path
+          class="iw-chart-line"
+          data-entity-id=${entity.id}
+          data-data-key=${dataKey}
+          d=${path}
+          stroke=${stroke}
+          fill="none"
+          stroke-width="2"
+          style="stroke: ${stroke} !important;"
+        />
+        ${dots}
+      </g>
     `
+
+    return pathElement
+  },
+
+  renderDots(entity, { config = {} }, api) {
+    return (ctx) => {
+      const { xScale, yScale } = ctx
+      const entityFromContext = ctx.entity || entity
+      const {
+        dataKey,
+        fill = "#8884d8",
+        r = "0.25em",
+        stroke = "white",
+        strokeWidth = "0.125em",
+      } = config
+
+      const data = line._getTransformedData(entityFromContext, dataKey)
+      if (!data || data.length === 0) return svg``
+
+      return svg`
+        <g class="iw-chart-dots" data-data-key=${dataKey}>
+          ${repeat(
+            data,
+            (d, i) => `${dataKey}-${i}`,
+            (d) => {
+              const x = xScale(d.x)
+              const y = yScale(d.y)
+              const label = d.name || dataKey || "Value"
+              const value = d.y
+
+              const { onMouseEnter, onMouseLeave } = createTooltipHandlers({
+                entity: entityFromContext,
+                api: ctx.api || api,
+                tooltipData: {
+                  label,
+                  value,
+                  color: fill,
+                },
+              })
+
+              return renderDot({
+                cx: x,
+                cy: y,
+                r,
+                fill,
+                stroke,
+                strokeWidth,
+                className: "iw-chart-dot",
+                onMouseEnter,
+                onMouseLeave,
+              })
+            },
+          )}
+        </g>
+      `
+    }
+  },
+
+  renderLegend(entity, { config = {} }, api) {
+    const legendFn = (ctx) => {
+      const { dimensions } = ctx
+      const { width, padding } = dimensions
+      const { dataKeys, labels, colors } = config
+
+      // Create series from dataKeys
+      const series = (dataKeys || []).map((dataKey, index) => {
+        // Use custom label if provided, otherwise format dataKey (e.g., "productA" -> "Product A")
+        const label = labels?.[index] || dataKey
+          .replace(/([A-Z])/g, " $1")
+          .replace(/^./, (str) => str.toUpperCase())
+          .trim()
+
+        return {
+          name: label,
+          color: colors?.[index],
+        }
+      })
+
+      // Default colors if not provided
+      const defaultColors = ["#8884d8", "#82ca9d", "#ffc658", "#ff7300", "#0088fe", "#00c49f", "#ffbb28", "#ff8042"]
+      const legendColors = colors || defaultColors
+
+      return renderLegend(entity, {
+        series,
+        colors: legendColors,
+        width,
+        padding,
+      }, api)
+    }
+    // Mark as legend for identification during processing
+    legendFn.isLegend = true
+    return legendFn
+  },
+
+  renderTooltip(entity, props, api) {
+    // eslint-disable-next-line no-unused-vars
+    return (ctx) => {
+      if (!entity) return html``
+      return renderTooltip(entity, {}, api)
+    }
   },
 }
 
@@ -403,7 +602,8 @@ export const line = {
  * Renders line curves using Curve and Dot primitives
  * Similar to Recharts Line component
  */
-function renderLineCurves({ data, entity, api }) {
+function renderLineCurves(entity, props, api) {
+  const data = entity?.data
   if (!data || data.length === 0) {
     return svg``
   }
@@ -424,11 +624,12 @@ function renderLineCurves({ data, entity, api }) {
           series.name || series.label || `Series ${seriesIndex + 1}`
 
         return svg`
-          <g class="iw-chart-line">
+          <g class="iw-chart-line" data-entity-id=${entity.id}>
             ${renderCurve({
               d: pathData,
               stroke: color,
               className: "iw-chart-line",
+              entityId: entity.id,
             })}
             ${
               showPoints
@@ -474,11 +675,12 @@ function renderLineCurves({ data, entity, api }) {
   const color = colors[0]
 
   return svg`
-    <g class="iw-chart-line">
+    <g class="iw-chart-line" data-entity-id=${entity.id}>
       ${renderCurve({
         d: pathData,
         stroke: color,
         className: "iw-chart-line",
+        entityId: entity.id,
       })}
       ${
         showPoints

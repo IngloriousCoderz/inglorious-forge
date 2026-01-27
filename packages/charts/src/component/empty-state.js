@@ -2,13 +2,17 @@ import { svg } from "lit-html"
 
 /**
  * Renders an empty state message when there's no data
- * @param {Object} params
- * @param {number} params.width - Chart width
- * @param {number} params.height - Chart height
- * @param {string} [params.message="No data"] - Message to display
+ * @param {any} entity
+ * @param {Object} props
+ * @param {number} props.width - Chart width
+ * @param {number} props.height - Chart height
+ * @param {string} [props.message="No data"] - Message to display
+ * @param {any} api
  * @returns {import('lit-html').TemplateResult}
  */
-export function renderEmptyState({ width, height, message = "No data" }) {
+// eslint-disable-next-line no-unused-vars
+export function renderEmptyState(entity, props, api) {
+  const { width, height, message = "No data" } = props
   return svg`
     <svg
       width=${width}

@@ -1,5 +1,4 @@
 /* eslint-disable no-magic-numbers */
-
 import { html, svg } from "lit-html"
 import { repeat } from "lit-html/directives/repeat.js"
 
@@ -16,7 +15,9 @@ import {
   getDataPointY,
   getSeriesValues,
   isMultiSeries,
+  parseDimension,
 } from "../utils/data-utils.js"
+import { calculatePadding } from "../utils/padding.js"
 import {
   calculateStackedData,
   generateAreaPath,
@@ -26,594 +27,370 @@ import {
 import { createCartesianContext } from "../utils/scales.js"
 import { createTooltipHandlers } from "../utils/tooltip-handlers.js"
 
-// Store dimensions for composition methods (keyed by entityId)
-const compositionDimensions = new Map()
-// Store dataKeys used in areas (keyed by entityId)
-const compositionDataKeys = new Map()
+/**
+ * PURE INTERNAL UTILITIES
+ * These functions do not rely on external state or 'this' context.
+ */
 
-// Calculate padding based on chart dimensions (same as logic.js)
-function calculatePadding(width = 800, height = 400) {
+/**
+ * Standardizes data into x, y, and name properties for rendering
+ */
+const getTransformedData = (entity, dataKey) => {
+  if (!entity || !entity.data) return null
+  return entity.data.map((d, i) => ({
+    x: i,
+    y: d[dataKey] !== undefined ? d[dataKey] : d.y || d.value || 0,
+    name: d[dataKey] || d.name || d.x || d.date || i,
+  }))
+}
+
+/**
+ * Calculates the maximum value (extent) from entity data.
+ * If dataKeys are provided, only considers those keys; otherwise considers all numeric values.
+ */
+const getExtent = (data, keys) => {
+  const values = data.flatMap((d) =>
+    keys && keys.size > 0
+      ? Array.from(keys).map((k) => d[k] || 0)
+      : Object.entries(d)
+          .filter(
+            ([key, value]) =>
+              !["name", "x", "date"].includes(key) && typeof value === "number",
+          )
+          .map(([, value]) => value),
+  )
+  return values.length > 0 ? Math.max(...values) : 0
+}
+
+/**
+ * Calculates scales and dimensions based on provided entity and configuration.
+ * Returns a stateless context object for child components.
+ */
+const createSharedContext = (entity, config = {}) => {
+  const width = parseDimension(config.width) || entity.width || 800
+  const height = parseDimension(config.height) || entity.height || 400
+  const padding = config.padding || calculatePadding(width, height)
+  const usedDataKeys = config.dataKeys ? new Set(config.dataKeys) : null
+
+  // Calculate maximum value for Y-axis scaling (global max across all data)
+  const maxValue = getExtent(entity.data, usedDataKeys)
+
+  // Create data structure for scale calculation
+  // Keep all points with indices for xScale domain, but use global max for yScale
+  // This ensures xScale has correct domain [0, data.length-1] and yScale has [0, maxValue]
+  const dataForScale = entity.data.map((d, i) => ({ x: i, y: maxValue }))
+
+  const context = createCartesianContext(
+    { ...entity, data: dataForScale, width, height, padding },
+    "area",
+  )
+
   return {
-    top: Math.max(20, height * 0.05),
-    right: Math.max(20, width * 0.05),
-    bottom: Math.max(40, height * 0.1),
-    left: Math.max(50, width * 0.1),
+    ...context,
+    dimensions: { width, height, padding },
+    entity,
   }
 }
 
 export const area = {
+  /**
+   * Traditional render mode using entity configuration
+   */
   renderChart(entity, api) {
-    // Area curves - uses Curve and Dot primitives (like Recharts Area component)
-    // Default to non-stacked (stacked = false) for independent series
-    const areas = renderAreaCurves({
-      data: entity.data,
-      entity,
-      api,
-    })
+    const areas = renderAreaCurves(entity, {}, api)
 
-    return renderCartesianLayout({
-      entity,
-      api,
+    return renderCartesianLayout(entity, {
       chartType: "area",
       chartContent: areas,
-    })
+    }, api)
   },
 
-  // Composition methods (Recharts-style)
-  renderAreaChart(entityId, children, api, config = {}) {
-    const entity = api.getEntity(entityId)
-    if (!entity) {
-      return svg`<text>Entity ${entityId} not found</text>`
-    }
+  /**
+   * Compositional render mode (Recharts-style).
+   * Acts as a context provider for all nested functional children.
+   */
+  renderAreaChart(entity, { children, config = {} }, api) {
+    if (!entity) return svg`<text>Entity not found</text>`
 
-    // Store composition dataKeys
-    const dataKeysSet = new Set()
-    if (config.dataKeys && Array.isArray(config.dataKeys)) {
-      config.dataKeys.forEach((key) => dataKeysSet.add(key))
-    }
-    compositionDataKeys.set(entityId, dataKeysSet)
+    const entityWithData = config.data ? { ...entity, data: config.data } : entity
+    const context = createSharedContext(entityWithData, config)
+    // Store api in context for tooltip handlers
+    context.api = api
+    const childrenArray = Array.isArray(children) ? children : [children]
 
-    // Extract dimensions from config
-    const style = config.style || {}
-    const parseDimension = (value) => {
-      if (typeof value === "number") return value
-      if (typeof value === "string") {
-        const num = parseFloat(value)
-        if (!isNaN(num) && !value.includes("%") && !value.includes("px")) {
-          return num
-        }
-      }
-      return undefined
-    }
-
-    const width =
-      parseDimension(config.width || style.width) ||
-      parseDimension(entity.width) ||
-      800
-    const height =
-      parseDimension(config.height || style.height) ||
-      parseDimension(entity.height) ||
-      400
-    const padding = calculatePadding(width, height)
-
-    // Store dimensions for composition methods to access
-    compositionDimensions.set(entityId, { width, height, padding })
-
-    // Merge style attributes
-    const svgStyle = {
-      width: style.width || (typeof width === "number" ? `${width}px` : width),
-      height:
-        style.height || (typeof height === "number" ? `${height}px` : height),
-      maxWidth: style.maxWidth,
-      maxHeight: style.maxHeight,
-      aspectRatio: style.aspectRatio,
-      margin: style.margin,
-      ...style,
-    }
-
-    // Process children to handle lazy functions
-    const childrenArray = (
-      Array.isArray(children) ? children : [children]
-    ).filter(Boolean)
-
+    // Process children to handle lazy functions (like renderDots from index.js)
     const processedChildren = []
     for (const child of childrenArray) {
-      if (typeof child === "function" && !child.isXAxis) {
-        // Lazy function: call to get the real component
+      if (typeof child === "function") {
         try {
+          // First call: get the lazy function (for renderDots from index.js)
           const lazyResult = child()
           if (typeof lazyResult === "function") {
-            // Keep as function for later processing with context
-            processedChildren.push(lazyResult)
+            // Second call: call the lazy function with context
+            processedChildren.push(lazyResult(context))
           } else {
+            // Direct result
             processedChildren.push(lazyResult)
           }
         } catch {
-          // If it fails, keep as is
-          processedChildren.push(child)
+          // If it fails, try calling directly with context
+          try {
+            processedChildren.push(child(context))
+          } catch {
+            processedChildren.push(child)
+          }
         }
       } else {
         processedChildren.push(child)
       }
     }
 
-    // Create context with scales
-    const context = area._createSharedContext(entity, entityId)
-    context.dimensions = { width, height, padding }
-
-    const styleString = Object.entries(svgStyle)
-      .filter(([, value]) => value != null)
-      .map(([key, value]) => {
-        const kebabKey = key.replace(/([A-Z])/g, "-$1").toLowerCase()
-        return `${kebabKey}: ${value}`
-      })
-      .join("; ")
-
     return html`
-      <div
-        class="iw-chart"
-        style="display: block; margin: 0; padding: 0; position: relative; width: 100%; box-sizing: border-box;"
-      >
+      <div class="iw-chart" style="display: block; position: relative; width: 100%; box-sizing: border-box;">
         <svg
-          width=${width}
-          height=${height}
-          viewBox="0 0 ${width} ${height}"
+          width=${context.dimensions.width}
+          height=${context.dimensions.height}
+          viewBox="0 0 ${context.dimensions.width} ${context.dimensions.height}"
           class="iw-chart-svg"
-          style=${styleString || undefined}
         >
-          ${processedChildren.map((child) => {
-            // If it's a function, call it with context
-            if (typeof child === "function") {
-              if (child.isXAxis) {
-                return child(context)
-              }
-              try {
-                // Call the function with context (for renderCartesianGrid, renderXAxis, etc.)
-                return child(context)
-              } catch {
-                // If it fails, return empty
-                return svg``
-              }
-            }
-            // If it's an object (TemplateResult), render as is
-            return child
-          })}
+          ${processedChildren}
         </svg>
+        ${renderTooltip(entityWithData, {}, api)}
       </div>
     `
   },
 
-  // Helper to get transformed data
-  _getTransformedData(entity, dataKey) {
-    if (!entity || !entity.data) return null
-    return entity.data.map((d, i) => ({
-      x: i,
-      y: d[dataKey] !== undefined ? d[dataKey] : d.y || d.value || 0,
-      name: d[dataKey] || d.name || d.x || d.date || i,
-    }))
-  },
-
-  // Helper to create shared context
-  _createSharedContext(entity, entityId) {
-    const storedDimensions = entityId
-      ? compositionDimensions.get(entityId)
-      : null
-    const usedDataKeys = entityId ? compositionDataKeys.get(entityId) : null
-
-    const dataForScale = entity.data.map((d, i) => {
-      let maxValue = 0
-
-      if (usedDataKeys && usedDataKeys.size > 0) {
-        usedDataKeys.forEach((dataKey) => {
-          const value = d[dataKey]
-          if (typeof value === "number" && value > maxValue) {
-            maxValue = value
-          }
-        })
-      } else {
-        const numericValues = Object.entries(d)
-          .filter(
-            ([key, value]) =>
-              key !== "name" &&
-              key !== "x" &&
-              key !== "date" &&
-              typeof value === "number",
-          )
-          .map(([, value]) => value)
-        maxValue = numericValues.length > 0 ? Math.max(...numericValues) : 0
-      }
-
-      return {
-        x: i,
-        y: maxValue,
-      }
-    })
-
-    const width = storedDimensions?.width || entity.width || 800
-    const height = storedDimensions?.height || entity.height || 400
-    const padding = storedDimensions?.padding || calculatePadding(width, height)
-    const entityWithDimensions = {
-      ...entity,
-      data: dataForScale,
-      width,
-      height,
-      padding,
-    }
-
-    return createCartesianContext(entityWithDimensions, "area")
-  },
-
-  renderCartesianGrid(config, entityId, api) {
-    // Return a lazy function to prevent lit-html from evaluating it prematurely
-    // This function will be called by renderAreaChart with the correct context
-    return () => {
-      const entity = api?.getEntity ? api.getEntity(entityId) : null
-      if (!entity) return svg``
+  renderCartesianGrid(entity, { config = {} }, api) {
+    return (ctx) => {
+      const { xScale, yScale, dimensions } = ctx
+      const entityFromContext = ctx.entity || entity
       const { stroke = "#eee", strokeDasharray = "5 5" } = config
-      // Use shared context with correct Y scale (all values)
-      // The scale already uses .nice() to round domain to nice numbers
-      const context = area._createSharedContext(entity, entityId)
-      const { xScale, yScale, dimensions } = context
-      // For grid, we still need data with indices for X scale
-      const transformedData = entity.data.map((d, i) => ({ x: i, y: 0 }))
-      // Use same ticks as renderYAxis for consistency (Recharts approach)
-      // Recharts uses tickCount: 5 by default, which calls scale.ticks(5)
+      const transformedData = entityFromContext.data.map((d, i) => ({ x: i, y: 0 }))
       const ticks = yScale.ticks ? yScale.ticks(5) : yScale.domain()
-      return renderGrid({
-        entity: { ...entity, data: transformedData },
-        xScale,
-        yScale,
-        customYTicks: ticks,
-        ...dimensions,
+
+      return renderGrid(
+        { ...entityFromContext, data: transformedData },
+        {
+          xScale,
+          yScale,
+          customYTicks: ticks,
+          ...dimensions,
+          stroke,
+          strokeDasharray,
+        },
+        api
+      )
+    }
+  },
+
+  renderXAxis(entity, { config = {} }, api) {
+    return (ctx) => {
+      const { xScale, yScale, dimensions } = ctx
+      const entityFromContext = ctx.entity || entity
+      const { dataKey } = config
+      const labels = entityFromContext.data.map(
+        (d, i) => d[dataKey] || d.name || d.x || d.date || String(i)
+      )
+      const transformedData = entityFromContext.data.map((d, i) => ({ x: i, y: 0 }))
+
+      return renderXAxis(
+        { ...entityFromContext, data: transformedData, xLabels: labels },
+        {
+          xScale,
+          yScale,
+          ...dimensions,
+        },
+        api
+      )
+    }
+  },
+
+  renderYAxis(entity, props, api) {
+    return (ctx) => {
+      const { yScale, dimensions } = ctx
+      const entityFromContext = ctx.entity || entity
+      const ticks = yScale.ticks ? yScale.ticks(5) : yScale.domain()
+      return renderYAxis(entityFromContext, { yScale, customTicks: ticks, ...dimensions }, api)
+    }
+  },
+
+  // eslint-disable-next-line no-unused-vars
+  renderArea(entity, { config = {} }, api) {
+    return (ctx) => {
+      const { xScale, yScale } = ctx
+      const entityFromContext = ctx.entity || entity
+      const {
+        dataKey,
+        fill = "#8884d8",
+        fillOpacity = "0.6",
         stroke,
-        strokeDasharray,
-      })
-    }
-  },
+        type: curveType = "linear",
+      } = config
 
-  renderXAxis(config, entityId, api) {
-    const entity = api.getEntity(entityId)
-    if (!entity) return svg``
+      const data = getTransformedData(entityFromContext, dataKey)
+      if (!data) return svg``
 
-    const { dataKey } = config
-    const context = area._createSharedContext(entity, entityId)
-    const { xScale, yScale, dimensions } = context
-    const labels = entity.data.map(
-      (d, i) => d[dataKey] || d.name || d.x || d.date || String(i),
-    )
-    const transformedData = entity.data.map((d, i) => ({ x: i, y: 0 }))
+      const areaPath = generateAreaPath(data, xScale, yScale, 0, curveType)
+      const linePath = stroke ? generateLinePath(data, xScale, yScale, curveType) : null
 
-    return renderXAxis({
-      entity: {
-        ...entity,
-        data: transformedData,
-        xLabels: labels,
-      },
-      xScale,
-      yScale,
-      ...dimensions,
-    })
-  },
-
-  renderYAxis(config, entityId, api) {
-    const entity = api.getEntity(entityId)
-    if (!entity) return svg``
-
-    const context = area._createSharedContext(entity, entityId)
-    const { yScale, dimensions } = context
-    const ticks = yScale.ticks ? yScale.ticks(5) : yScale.domain()
-
-    return renderYAxis({
-      yScale,
-      customTicks: ticks,
-      ...dimensions,
-    })
-  },
-
-  renderArea(config, entityId, api) {
-    const entity = api.getEntity(entityId)
-    if (!entity || !entity.data) return svg``
-
-    const {
-      dataKey,
-      fill = "#8884d8",
-      fillOpacity = "0.6",
-      stroke,
-      type: curveType = "linear",
-    } = config
-
-    // Register this dataKey as used
-    if (entityId && dataKey) {
-      if (!compositionDataKeys.has(entityId)) {
-        compositionDataKeys.set(entityId, new Set())
-      }
-      compositionDataKeys.get(entityId).add(dataKey)
-    }
-
-    const data = area._getTransformedData(entity, dataKey)
-    if (!data || data.length === 0) return svg``
-
-    const context = area._createSharedContext(entity, entityId)
-    const { xScale, yScale } = context
-    const baseValue = 0
-
-    const areaPath = generateAreaPath(
-      data,
-      xScale,
-      yScale,
-      baseValue,
-      curveType,
-    )
-    const linePath = stroke
-      ? generateLinePath(data, xScale, yScale, curveType)
-      : null
-
-    if (!areaPath || areaPath.includes("NaN")) {
-      return svg``
-    }
-
-    return svg`
-      <g class="iw-chart-area">
-        ${renderCurve({
-          d: areaPath,
-          fill,
-          fillOpacity,
-          className: "iw-chart-area-fill",
-        })}
-        ${
-          linePath
-            ? renderCurve({
+      return svg`
+        <g class="iw-chart-area">
+          ${renderCurve({
+            d: areaPath,
+            fill,
+            fillOpacity,
+            className: "iw-chart-area-fill",
+            entityId: entityFromContext.id,
+          })}
+          ${linePath ? renderCurve({
                 d: linePath,
                 stroke: stroke || fill,
                 className: "iw-chart-area-line",
-              })
-            : ""
-        }
-      </g>
-    `
+                entityId: entityFromContext.id,
+              }) : ""}
+        </g>
+      `
+    }
   },
 
-  renderTooltip(config, entityId, api) {
-    const entity = api.getEntity(entityId)
-    if (!entity) return svg``
-    return renderTooltip(entity)
+  renderDots(entity, { config = {} }, api) {
+    return (ctx) => {
+      const { xScale, yScale } = ctx
+      const entityFromContext = ctx.entity || entity
+      const {
+        dataKey,
+        fill = "#8884d8",
+        r = "0.25em",
+        stroke = "white",
+        strokeWidth = "0.125em",
+      } = config
+
+      const data = getTransformedData(entityFromContext, dataKey)
+      if (!data || data.length === 0) return svg``
+
+      return svg`
+        <g class="iw-chart-dots" data-data-key=${dataKey}>
+          ${repeat(
+            data,
+            (d, i) => `${dataKey}-${i}`,
+            (d) => {
+              const x = xScale(d.x)
+              const y = yScale(d.y)
+              const label = d.name || dataKey || "Value"
+              const value = d.y
+
+              const { onMouseEnter, onMouseLeave } = createTooltipHandlers({
+                entity: entityFromContext,
+                api: ctx.api || api,
+                tooltipData: {
+                  label,
+                  value,
+                  color: fill,
+                },
+              })
+
+              return renderDot({
+                cx: x,
+                cy: y,
+                r,
+                fill,
+                stroke,
+                strokeWidth,
+                className: "iw-chart-dot",
+                onMouseEnter,
+                onMouseLeave,
+              })
+            },
+          )}
+        </g>
+      `
+    }
+  },
+
+  renderTooltip(entity, props, api) {
+    return (ctx) => renderTooltip(ctx.entity || entity, {}, api)
   },
 }
 
 /**
- * Renders area curves using Curve and Dot primitives
- * Similar to Recharts Area component
+ * INTERNAL COMPONENT: Renders multi-series area curves with points and interactions
  */
-function renderAreaCurves({ data, entity, api }) {
-  if (!data || data.length === 0) {
-    return svg``
-  }
+function renderAreaCurves(entity, props, api) {
+  const data = entity?.data
+  if (!data || data.length === 0) return svg``
 
-  // Create context with scales and dimensions
+  // Standard context for the automatic render mode
   const context = createCartesianContext(entity, "area")
   const { xScale, yScale } = context
-  const baseValue = 0
-  const colors = entity.colors
+  const colors = entity.colors || ["#8884d8", "#82ca9d", "#ffc658", "#ff8042"]
   const showPoints = entity.showPoints !== false
-  const stacked = entity.stacked === true // Only stack if explicitly set to true
+  const stacked = entity.stacked === true
 
   if (isMultiSeries(data)) {
-    if (stacked) {
-      // Calculate stacked data for all series
-      const stackedData = calculateStackedData(data)
+    const processData = stacked ? calculateStackedData(data) : data
 
-      // Render all areas and lines first
-      const areasAndLines = data.map((series, seriesIndex) => {
-        const values = getSeriesValues(series)
-        // Use stacked data for this series
-        const seriesStackedData = stackedData[seriesIndex] || []
-        const areaPath = generateStackedAreaPath(
-          values,
-          xScale,
-          yScale,
-          seriesStackedData,
-        )
-        // Line path uses top of stacked area (y1 values)
-        const linePath = generateLinePath(
-          values.map((d, i) => ({
-            ...d,
-            y: seriesStackedData[i]?.[1] ?? d.y ?? d.value,
-          })),
-          xScale,
-          yScale,
-        )
-        const color = series.color || colors[seriesIndex % colors.length]
-
-        return svg`
-          <g class="iw-chart-area">
-            ${renderCurve({
-              d: areaPath,
-              fill: color,
-              fillOpacity: "0.6",
-              className: "iw-chart-area-fill",
-            })}
-            ${renderCurve({
-              d: linePath,
-              stroke: color,
-              className: "iw-chart-area-line",
-            })}
-          </g>
-        `
-      })
-
-      // Render all points last (so they appear on top)
-      const points = showPoints
-        ? data.map((series, seriesIndex) => {
-            const values = getSeriesValues(series)
-            const seriesStackedData = stackedData[seriesIndex] || []
-            const color = series.color || colors[seriesIndex % colors.length]
-
-            return repeat(
-              values,
-              (d, i) => `${seriesIndex}-${i}`,
-              (d, i) => {
-                const x = xScale(getDataPointX(d))
-                // Use stacked y1 value for point position
-                const y = yScale(seriesStackedData[i]?.[1] ?? getDataPointY(d))
-                const seriesName =
-                  series.name || series.label || `Series ${seriesIndex + 1}`
-                const label = getDataPointLabel(d, seriesName)
-                const value = seriesStackedData[i]?.[1] ?? getDataPointY(d)
-
-                const { onMouseEnter, onMouseLeave } = createTooltipHandlers({
-                  entity,
-                  api,
-                  tooltipData: {
-                    label,
-                    value,
-                    color,
-                  },
-                })
-
-                return renderDot({
-                  cx: x,
-                  cy: y,
-                  fill: color,
-                  className: "iw-chart-dot",
-                  onMouseEnter,
-                  onMouseLeave,
-                })
-              },
-            )
-          })
-        : []
+    // Logic for rendering stacked or independent series
+    const areasAndLines = (stacked ? data : [...data].reverse()).map((series, idx) => {
+      const originalIdx = stacked ? idx : data.length - 1 - idx
+      const values = getSeriesValues(series)
+      const color = series.color || colors[originalIdx % colors.length]
+      
+      let areaPath, linePath
+      if (stacked) {
+        const seriesStack = processData[idx] || []
+        areaPath = generateStackedAreaPath(values, xScale, yScale, seriesStack)
+        linePath = generateLinePath(values.map((d, i) => ({ ...d, y: seriesStack[i]?.[1] ?? d.y })), xScale, yScale)
+      } else {
+        areaPath = generateAreaPath(values, xScale, yScale, 0)
+        linePath = generateLinePath(values, xScale, yScale)
+      }
 
       return svg`
-        ${areasAndLines}
-        ${points}
+        <g class="iw-chart-area-series">
+          ${renderCurve({ d: areaPath, fill: color, fillOpacity: "0.6", entityId: entity.id })}
+          ${renderCurve({ d: linePath, stroke: color, entityId: entity.id })}
+        </g>
       `
-    } else {
-      // Non-stacked: render each series independently
-      // Render in reverse order to ensure larger areas are drawn on top
-      const reversedData = [...data].reverse()
+    })
 
-      const areasAndLines = reversedData.map((series, seriesIndex) => {
-        const originalIndex = data.length - 1 - seriesIndex // Get original index for color
-        const values = getSeriesValues(series)
-        const areaPath = generateAreaPath(values, xScale, yScale, baseValue)
-        const linePath = generateLinePath(values, xScale, yScale)
-        const color = series.color || colors[originalIndex % colors.length]
+    const points = showPoints ? (stacked ? data : [...data].reverse()).map((series, idx) => {
+      const originalIdx = stacked ? idx : data.length - 1 - idx
+      const values = getSeriesValues(series)
+      const color = series.color || colors[originalIdx % colors.length]
+      const seriesStackedData = stacked ? processData[idx] : null
 
-        return svg`
-          <g class="iw-chart-area">
-            ${renderCurve({
-              d: areaPath,
-              fill: color,
-              fillOpacity: "0.6",
-              className: "iw-chart-area-fill",
-            })}
-            ${renderCurve({
-              d: linePath,
-              stroke: color,
-              className: "iw-chart-area-line",
-            })}
-          </g>
-        `
+      return repeat(values, (d, i) => `${originalIdx}-${i}`, (d, i) => {
+        const x = xScale(getDataPointX(d))
+        const y = yScale(stacked ? seriesStackedData[i]?.[1] : getDataPointY(d))
+        const value = stacked ? seriesStackedData[i]?.[1] : getDataPointY(d)
+        const label = getDataPointLabel(d, series.name || `Series ${originalIdx + 1}`)
+
+        const { onMouseEnter, onMouseLeave } = createTooltipHandlers({
+          entity, api, tooltipData: { label, value, color },
+        })
+
+        return renderDot({ cx: x, cy: y, fill: color, onMouseEnter, onMouseLeave })
       })
+    }) : []
 
-      // Render all points last (so they appear on top)
-      const points = showPoints
-        ? reversedData.map((series, seriesIndex) => {
-            const originalIndex = data.length - 1 - seriesIndex
-            const values = getSeriesValues(series)
-            const color = series.color || colors[originalIndex % colors.length]
-
-            return repeat(
-              values,
-              (d, i) => `${originalIndex}-${i}`,
-              (d) => {
-                const x = xScale(getDataPointX(d))
-                const y = yScale(getDataPointY(d))
-                const seriesName =
-                  series.name || series.label || `Series ${originalIndex + 1}`
-                const label = getDataPointLabel(d, seriesName)
-                const value = getDataPointY(d)
-
-                const { onMouseEnter, onMouseLeave } = createTooltipHandlers({
-                  entity,
-                  api,
-                  tooltipData: {
-                    label,
-                    value,
-                    color,
-                  },
-                })
-
-                return renderDot({
-                  cx: x,
-                  cy: y,
-                  fill: color,
-                  className: "iw-chart-dot",
-                  onMouseEnter,
-                  onMouseLeave,
-                })
-              },
-            )
-          })
-        : []
-
-      return svg`
-        ${areasAndLines}
-        ${points}
-      `
-    }
+    return svg`${areasAndLines}${points}`
   }
 
-  const areaPath = generateAreaPath(data, xScale, yScale, baseValue)
+  // Single series logic
+  const areaPath = generateAreaPath(data, xScale, yScale, 0)
   const linePath = generateLinePath(data, xScale, yScale)
   const color = colors[0]
 
   return svg`
-    <g class="iw-chart-area">
-      ${renderCurve({
-        d: areaPath,
-        fill: color,
-        fillOpacity: "0.6",
-        className: "iw-chart-area-area",
-      })}
-      ${renderCurve({
-        d: linePath,
-        stroke: color,
-        className: "iw-chart-area-curve",
-      })}
-      ${
-        showPoints
-          ? repeat(
-              data,
-              (d, i) => i,
-              (d) => {
-                const x = xScale(getDataPointX(d))
-                const y = yScale(getDataPointY(d))
-                const label = getDataPointLabel(d)
-                const value = getDataPointY(d)
-
-                const { onMouseEnter, onMouseLeave } = createTooltipHandlers({
-                  entity,
-                  api,
-                  tooltipData: {
-                    label,
-                    value,
-                    color,
-                  },
-                })
-
-                return renderDot({
-                  cx: x,
-                  cy: y,
-                  fill: color,
-                  className: "iw-chart-dot",
-                  onMouseEnter,
-                  onMouseLeave,
-                })
-              },
-            )
-          : ""
-      }
+    <g class="iw-chart-area-single">
+      ${renderCurve({ d: areaPath, fill: color, fillOpacity: "0.6", entityId: entity.id })}
+      ${renderCurve({ d: linePath, stroke: color, entityId: entity.id })}
+      ${showPoints ? repeat(data, (d, i) => i, (d) => {
+        const { onMouseEnter, onMouseLeave } = createTooltipHandlers({
+          entity, api, tooltipData: { label: getDataPointLabel(d), value: getDataPointY(d), color },
+        })
+        return renderDot({ cx: xScale(getDataPointX(d)), cy: yScale(getDataPointY(d)), fill: color, onMouseEnter, onMouseLeave })
+      }) : ""}
     </g>
   `
 }
