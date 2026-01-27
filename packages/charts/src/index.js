@@ -22,24 +22,22 @@ export const charts = {
   ...logic,
   ...rendering,
   // Composition methods - delegate to chart types
-  renderLineChart(entityId, children, api, config) {
-    const entity = api.getEntity(entityId)
+  renderLineChart(entity, { children, config = {} }, api) {
     if (!entity) return svg``
-    compositionChartType.set(entityId, "line")
+    compositionChartType.set(entity.id, "line")
     const lineType = api.getType("line")
     if (lineType?.renderLineChart) {
       return lineType.renderLineChart(entity, { children, config }, api)
     }
     return svg``
   },
-  renderCartesianGrid(config, entityId, api) {
+  renderCartesianGrid(entity, { config = {} }, api) {
     // Return a lazy function to prevent lit-html from evaluating it prematurely
     // This function will be called by renderBarChart with the correct context
     return () => {
-      const entity = api.getEntity(entityId)
       if (!entity) return svg``
       // Use composition chart type if available, otherwise fallback to entity type
-      const chartTypeName = compositionChartType.get(entityId) || entity.type
+      const chartTypeName = compositionChartType.get(entity.id) || entity.type
       const chartType = api.getType(chartTypeName)
       if (chartType?.renderCartesianGrid) {
         return chartType.renderCartesianGrid(entity, { config }, api)
@@ -47,14 +45,13 @@ export const charts = {
       return svg``
     }
   },
-  renderXAxis(config, entityId, api) {
+  renderXAxis(entity, { config = {} }, api) {
     // Return a lazy function to prevent lit-html from evaluating it prematurely
     // This function will be called by renderBarChart with the correct context
     return () => {
-      const entity = api.getEntity(entityId)
       if (!entity) return svg``
       // Use composition chart type if available, otherwise fallback to entity type
-      const chartTypeName = compositionChartType.get(entityId) || entity.type
+      const chartTypeName = compositionChartType.get(entity.id) || entity.type
       const chartType = api.getType(chartTypeName)
       if (chartType?.renderXAxis) {
         return chartType.renderXAxis(entity, { config }, api)
@@ -62,19 +59,17 @@ export const charts = {
       return svg``
     }
   },
-  renderYAxis(config, entityId, api) {
-    const entity = api.getEntity(entityId)
+  renderYAxis(entity, { config = {} }, api) {
     if (!entity) return svg``
     // Use composition chart type if available, otherwise fallback to entity type
-    const chartTypeName = compositionChartType.get(entityId) || entity.type
+    const chartTypeName = compositionChartType.get(entity.id) || entity.type
     const chartType = api.getType(chartTypeName)
     if (chartType?.renderYAxis) {
       return chartType.renderYAxis(entity, { config }, api)
     }
     return svg``
   },
-  renderLine(config, entityId, api) {
-    const entity = api.getEntity(entityId)
+  renderLine(entity, { config = {} }, api) {
     if (!entity) return svg``
     const lineType = api.getType("line")
     if (lineType?.renderLine) {
@@ -82,18 +77,16 @@ export const charts = {
     }
     return svg``
   },
-  renderAreaChart(entityId, children, api, config) {
-    const entity = api.getEntity(entityId)
+  renderAreaChart(entity, { children, config = {} }, api) {
     if (!entity) return svg``
-    compositionChartType.set(entityId, "area")
+    compositionChartType.set(entity.id, "area")
     const areaType = api.getType("area")
     if (areaType?.renderAreaChart) {
       return areaType.renderAreaChart(entity, { children, config }, api)
     }
     return svg``
   },
-  renderArea(config, entityId, api) {
-    const entity = api.getEntity(entityId)
+  renderArea(entity, { config = {} }, api) {
     if (!entity) return svg``
     const areaType = api.getType("area")
     if (areaType?.renderArea) {
@@ -101,18 +94,16 @@ export const charts = {
     }
     return svg``
   },
-  renderBarChart(entityId, children, api, config) {
-    const entity = api.getEntity(entityId)
+  renderBarChart(entity, { children, config = {} }, api) {
     if (!entity) return svg``
-    compositionChartType.set(entityId, "bar")
+    compositionChartType.set(entity.id, "bar")
     const barType = api.getType("bar")
     if (barType?.renderBarChart) {
       return barType.renderBarChart(entity, { children, config }, api)
     }
     return svg``
   },
-  renderBar(config, entityId, api) {
-    const entity = api.getEntity(entityId)
+  renderBar(entity, { config = {} }, api) {
     if (!entity) return svg``
     const barType = api.getType("bar")
     if (barType?.renderBar) {
@@ -120,11 +111,10 @@ export const charts = {
     }
     return svg``
   },
-  renderTooltip(config, entityId, api) {
-    const entity = api.getEntity(entityId)
+  renderTooltip(entity, { config = {} }, api) {
     if (!entity) return svg``
     // Use composition chart type if available, otherwise fallback to entity type
-    const chartTypeName = compositionChartType.get(entityId) || entity.type
+    const chartTypeName = compositionChartType.get(entity.id) || entity.type
     const chartType = api.getType(chartTypeName)
     if (chartType?.renderTooltip) {
       return chartType.renderTooltip(entity, { config }, api)
@@ -132,34 +122,50 @@ export const charts = {
     return svg``
   },
   // Helper to create bound methods (reduces repetition)
+  // Does entity lookup once and passes entity to all methods
   forEntity(entityId, api) {
+    const entity = api.getEntity(entityId)
+    if (!entity) {
+      // Return empty functions if entity not found
+      const emptyFn = () => svg``
+      return {
+        renderLineChart: () => svg``,
+        renderAreaChart: () => svg``,
+        renderBarChart: () => svg``,
+        renderCartesianGrid: () => emptyFn,
+        renderXAxis: () => emptyFn,
+        renderYAxis: () => svg``,
+        renderLegend: () => emptyFn,
+        renderLine: () => svg``,
+        renderArea: () => svg``,
+        renderBar: () => svg``,
+        renderDots: () => emptyFn,
+        renderTooltip: () => svg``,
+      }
+    }
+
     return {
       renderLineChart(children, config) {
-        return charts.renderLineChart(entityId, children, api, config)
+        return charts.renderLineChart(entity, { children, config }, api)
       },
       renderAreaChart(children, config) {
-        return charts.renderAreaChart(entityId, children, api, config)
+        return charts.renderAreaChart(entity, { children, config }, api)
       },
       renderBarChart(children, config) {
-        return charts.renderBarChart(entityId, children, api, config)
+        return charts.renderBarChart(entity, { children, config }, api)
       },
       renderCartesianGrid(config) {
-        return charts.renderCartesianGrid(config, entityId, api)
+        return charts.renderCartesianGrid(entity, { config }, api)
       },
       renderXAxis(config) {
-        return charts.renderXAxis(config, entityId, api)
+        return charts.renderXAxis(entity, { config }, api)
       },
       renderYAxis(config) {
-        return charts.renderYAxis(config, entityId, api)
+        return charts.renderYAxis(entity, { config }, api)
       },
       renderLegend(config) {
-        const entity = api.getEntity(entityId)
-        if (!entity) {
-          const emptyFn = () => svg``
-          return emptyFn
-        }
         // Try to get chart type from compositionChartType, or fallback to entity.type
-        const chartTypeName = compositionChartType.get(entityId) || entity.type
+        const chartTypeName = compositionChartType.get(entity.id) || entity.type
         if (chartTypeName) {
           const chartType = api.getType(chartTypeName)
           if (chartType?.renderLegend) {
@@ -176,22 +182,20 @@ export const charts = {
         return emptyFn
       },
       renderLine(config) {
-        return charts.renderLine(config, entityId, api)
+        return charts.renderLine(entity, { config }, api)
       },
       renderArea(config) {
-        return charts.renderArea(config, entityId, api)
+        return charts.renderArea(entity, { config }, api)
       },
       renderBar(config) {
-        return charts.renderBar(config, entityId, api)
+        return charts.renderBar(entity, { config }, api)
       },
       renderDots(config) {
-        const entity = api.getEntity(entityId)
-        if (!entity) return () => svg``
         // Return a function that will be called by renderLineChart/renderAreaChart
         // to get the actual lazy function that receives context
         return () => {
           // Check compositionChartType when this function is called (after renderLineChart sets it)
-          const chartTypeName = compositionChartType.get(entityId)
+          const chartTypeName = compositionChartType.get(entity.id)
           if (chartTypeName) {
             const chartType = api.getType(chartTypeName)
             if (chartType?.renderDots) {
@@ -203,7 +207,7 @@ export const charts = {
         }
       },
       renderTooltip(config) {
-        return charts.renderTooltip(config, entityId, api)
+        return charts.renderTooltip(entity, { config }, api)
       },
     }
   },
