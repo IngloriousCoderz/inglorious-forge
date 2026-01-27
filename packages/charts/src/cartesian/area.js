@@ -14,10 +14,9 @@ import {
   getDataPointX,
   getDataPointY,
   getSeriesValues,
+  getTransformedData,
   isMultiSeries,
-  parseDimension,
 } from "../utils/data-utils.js"
-import { calculatePadding } from "../utils/padding.js"
 import {
   calculateStackedData,
   generateAreaPath,
@@ -25,72 +24,10 @@ import {
   generateStackedAreaPath,
 } from "../utils/paths.js"
 import { createCartesianContext } from "../utils/scales.js"
+import { createSharedContext } from "../utils/shared-context.js"
 import { createTooltipHandlers } from "../utils/tooltip-handlers.js"
 
-/**
- * PURE INTERNAL UTILITIES
- * These functions do not rely on external state or 'this' context.
- */
-
-/**
- * Standardizes data into x, y, and name properties for rendering
- */
-const getTransformedData = (entity, dataKey) => {
-  if (!entity || !entity.data) return null
-  return entity.data.map((d, i) => ({
-    x: i,
-    y: d[dataKey] !== undefined ? d[dataKey] : d.y || d.value || 0,
-    name: d[dataKey] || d.name || d.x || d.date || i,
-  }))
-}
-
-/**
- * Calculates the maximum value (extent) from entity data.
- * If dataKeys are provided, only considers those keys; otherwise considers all numeric values.
- */
-const getExtent = (data, keys) => {
-  const values = data.flatMap((d) =>
-    keys && keys.size > 0
-      ? Array.from(keys).map((k) => d[k] || 0)
-      : Object.entries(d)
-          .filter(
-            ([key, value]) =>
-              !["name", "x", "date"].includes(key) && typeof value === "number",
-          )
-          .map(([, value]) => value),
-  )
-  return values.length > 0 ? Math.max(...values) : 0
-}
-
-/**
- * Calculates scales and dimensions based on provided entity and configuration.
- * Returns a stateless context object for child components.
- */
-const createSharedContext = (entity, config = {}) => {
-  const width = parseDimension(config.width) || entity.width || 800
-  const height = parseDimension(config.height) || entity.height || 400
-  const padding = config.padding || calculatePadding(width, height)
-  const usedDataKeys = config.dataKeys ? new Set(config.dataKeys) : null
-
-  // Calculate maximum value for Y-axis scaling (global max across all data)
-  const maxValue = getExtent(entity.data, usedDataKeys)
-
-  // Create data structure for scale calculation
-  // Keep all points with indices for xScale domain, but use global max for yScale
-  // This ensures xScale has correct domain [0, data.length-1] and yScale has [0, maxValue]
-  const dataForScale = entity.data.map((d, i) => ({ x: i, y: maxValue }))
-
-  const context = createCartesianContext(
-    { ...entity, data: dataForScale, width, height, padding },
-    "area",
-  )
-
-  return {
-    ...context,
-    dimensions: { width, height, padding },
-    entity,
-  }
-}
+// Helper functions are now imported from utils as pure functions
 
 export const area = {
   /**
@@ -119,7 +56,17 @@ export const area = {
     const entityWithData = config.data
       ? { ...entity, data: config.data }
       : entity
-    const context = createSharedContext(entityWithData, config)
+    const context = createSharedContext(
+      entityWithData,
+      {
+        width: config.width,
+        height: config.height,
+        padding: config.padding,
+        usedDataKeys: config.dataKeys ? new Set(config.dataKeys) : null,
+        chartType: "area",
+      },
+      api,
+    )
     // Store api in context for tooltip handlers
     context.api = api
     const childrenArray = Array.isArray(children) ? children : [children]
