@@ -255,8 +255,7 @@ export const line = {
         class="iw-chart"
         style="display: block; position: relative; width: 100%; box-sizing: border-box;"
       >
-        ${svgContent}
-        ${renderTooltip(entityWithData, {}, api)}
+        ${svgContent} ${renderTooltip(entityWithData, {}, api)}
       </div>
     `
   },

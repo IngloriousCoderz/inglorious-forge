@@ -21,7 +21,11 @@ export const bar = {
         : null,
       bar.renderXAxis(entity, {}, api),
       bar.renderYAxis(entity, {}, api),
-      bar.renderBar(entity, { config: { dataKey: "value", multiColor: false } }, api),
+      bar.renderBar(
+        entity,
+        { config: { dataKey: "value", multiColor: false } },
+        api,
+      ),
     ].filter(Boolean)
 
     const chartContent = bar.renderBarChart(
@@ -178,12 +182,7 @@ export const bar = {
       }
 
       // If it's a marked component (isGrid, isBar, isAxis, etc), it expects context directly
-      if (
-        child.isGrid ||
-        child.isAxis ||
-        child.isBar ||
-        child.isTooltip
-      ) {
+      if (child.isGrid || child.isAxis || child.isBar || child.isTooltip) {
         // For bars, also pass barIndex and totalBars
         if (child.isBar) {
           const barIndex = barComponents.indexOf(child)
@@ -221,8 +220,7 @@ export const bar = {
         class="iw-chart"
         style="display: block; position: relative; width: 100%; box-sizing: border-box;"
       >
-        ${svgContent}
-        ${renderTooltip(entity, {}, api)}
+        ${svgContent} ${renderTooltip(entity, {}, api)}
       </div>
     `
   },
@@ -370,5 +368,4 @@ export const bar = {
     gridFn.isGrid = true
     return gridFn
   },
-
 }

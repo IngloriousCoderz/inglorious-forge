@@ -205,8 +205,7 @@ export const pie = {
       const calculatedOuterRadius =
         outerRadius !== undefined
           ? typeof outerRadius === "string"
-            ? (parseFloat(outerRadius) / 100) *
-              Math.min(ctx.width, ctx.height)
+            ? (parseFloat(outerRadius) / 100) * Math.min(ctx.width, ctx.height)
             : outerRadius
           : Math.min(ctx.width, ctx.height) / 2 - 60
 
@@ -240,8 +239,7 @@ export const pie = {
         outerRadius: calculatedOuterRadius,
         innerRadius:
           typeof innerRadius === "string"
-            ? (parseFloat(innerRadius) / 100) *
-              Math.min(ctx.width, ctx.height)
+            ? (parseFloat(innerRadius) / 100) * Math.min(ctx.width, ctx.height)
             : innerRadius,
         centerX,
         centerY,
