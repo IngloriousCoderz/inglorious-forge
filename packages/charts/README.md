@@ -131,7 +131,7 @@ export const app = {
             width: 800,
             height: 400,
             dataKeys: ["value"], // Required to sync Y-axis scale across multiple series
-            stacked: false,      // Set to true to automatically sum values (Area/Bar)
+            stacked: false, // Set to true to automatically sum values (Area/Bar)
           },
         ),
       )}
@@ -151,7 +151,7 @@ c.renderLineChart(
     width: 800,
     height: 400,
     dataKeys: ["value"], // Required to sync Y-axis scale across multiple series
-    stacked: false,      // Set to true to automatically sum values (Area/Bar)
+    stacked: false, // Set to true to automatically sum values (Area/Bar)
     data: [
       { name: "Jan", value: 400 },
       { name: "Feb", value: 300 },
