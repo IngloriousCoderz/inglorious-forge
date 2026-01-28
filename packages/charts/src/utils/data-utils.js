@@ -11,11 +11,18 @@ import { timeFormat } from "d3-time-format"
 /**
  * Format a number with the specified format
  * @param {number} value - Number to format
- * @param {string} [fmt=",.2f"] - Format string (d3-format syntax)
+ * @param {string} [fmt] - Format string (d3-format syntax). If not provided, uses smart formatting (integers without decimals)
  * @returns {string} Formatted number string
  */
-export function formatNumber(value, fmt = ",.2f") {
-  return format(fmt)(value)
+export function formatNumber(value, fmt) {
+  if (fmt) {
+    return format(fmt)(value)
+  }
+  // Smart formatting: if integer, show without decimals; otherwise show 2 decimals
+  if (Number.isInteger(value)) {
+    return format(",")(value) // No decimals for integers
+  }
+  return format(",.2f")(value) // 2 decimals for non-integers
 }
 
 /**
@@ -109,11 +116,24 @@ export function getTransformedData(entity, dataKey) {
   if (!entity || !entity.data) return null
 
   // Transform data to use indices for x (like Recharts does with categorical data)
-  return entity.data.map((d, i) => ({
-    x: i, // Use index for positioning
-    y: d[dataKey] !== undefined ? d[dataKey] : d.y || d.value || 0,
-    name: d[dataKey] || d.name || d.x || d.date || i, // Keep name for labels
-  }))
+  // Ensure y is always a valid number (handles negatives, NaN, etc.)
+  return entity.data.map((d, i) => {
+    const yValue =
+      d[dataKey] !== undefined
+        ? d[dataKey]
+        : d.y !== undefined
+          ? d.y
+          : d.value !== undefined
+            ? d.value
+            : 0
+    const y = typeof yValue === "number" && !isNaN(yValue) ? yValue : 0
+
+    return {
+      x: i, // Use index for positioning
+      y,
+      name: d[dataKey] || d.name || d.x || d.date || i, // Keep name for labels
+    }
+  })
 }
 
 /**
