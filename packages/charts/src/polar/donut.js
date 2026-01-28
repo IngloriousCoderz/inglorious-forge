@@ -159,8 +159,7 @@ export const donut = {
             })
           }}
         >
-          ${slices}
-          ${centerText}
+          ${slices} ${centerText}
         </svg>
 
         ${renderTooltip(entity, {}, api)}
