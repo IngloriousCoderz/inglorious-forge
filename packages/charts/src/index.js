@@ -3,10 +3,6 @@ import { svg } from "lit-html"
 import { logic } from "./logic.js"
 import { rendering } from "./rendering.js"
 
-// Store chart type for composition methods (keyed by entityId)
-// This allows renderCartesianGrid, renderXAxis, renderYAxis to know which chart type to use
-const compositionChartType = new Map()
-
 // Export charts
 export {
   areaChart,
@@ -24,7 +20,6 @@ export const charts = {
   // Composition methods - delegate to chart types
   renderLineChart(entity, { children, config = {} }, api) {
     if (!entity) return svg``
-    compositionChartType.set(entity.id, "line")
     const lineType = api.getType("line")
     if (lineType?.renderLineChart) {
       return lineType.renderLineChart(entity, { children, config }, api)
@@ -33,11 +28,12 @@ export const charts = {
   },
   renderCartesianGrid(entity, { config = {} }, api) {
     // Return a lazy function to prevent lit-html from evaluating it prematurely
-    // This function will be called by renderBarChart with the correct context
-    return () => {
+    // This function will be called by renderBarChart/renderAreaChart with the correct context
+    // The context will contain chartType, so we can read it from there
+    return (ctx) => {
       if (!entity) return svg``
-      // Use composition chart type if available, otherwise fallback to entity type
-      const chartTypeName = compositionChartType.get(entity.id) || entity.type
+      // Read chartType from context if available (composition mode), otherwise use entity.type
+      const chartTypeName = ctx?.chartType || entity.type
       const chartType = api.getType(chartTypeName)
       if (chartType?.renderCartesianGrid) {
         return chartType.renderCartesianGrid(entity, { config }, api)
@@ -47,11 +43,11 @@ export const charts = {
   },
   renderXAxis(entity, { config = {} }, api) {
     // Return a lazy function to prevent lit-html from evaluating it prematurely
-    // This function will be called by renderBarChart with the correct context
-    return () => {
+    // This function will be called by renderBarChart/renderAreaChart with the correct context
+    return (ctx) => {
       if (!entity) return svg``
-      // Use composition chart type if available, otherwise fallback to entity type
-      const chartTypeName = compositionChartType.get(entity.id) || entity.type
+      // Read chartType from context if available (composition mode), otherwise use entity.type
+      const chartTypeName = ctx?.chartType || entity.type
       const chartType = api.getType(chartTypeName)
       if (chartType?.renderXAxis) {
         return chartType.renderXAxis(entity, { config }, api)
@@ -61,8 +57,9 @@ export const charts = {
   },
   renderYAxis(entity, { config = {} }, api) {
     if (!entity) return svg``
-    // Use composition chart type if available, otherwise fallback to entity type
-    const chartTypeName = compositionChartType.get(entity.id) || entity.type
+    // For YAxis, we can't rely on context since it's not always passed
+    // Use entity.type as fallback (works for config-first mode)
+    const chartTypeName = entity.type
     const chartType = api.getType(chartTypeName)
     if (chartType?.renderYAxis) {
       return chartType.renderYAxis(entity, { config }, api)
@@ -79,7 +76,6 @@ export const charts = {
   },
   renderAreaChart(entity, { children, config = {} }, api) {
     if (!entity) return svg``
-    compositionChartType.set(entity.id, "area")
     const areaType = api.getType("area")
     if (areaType?.renderAreaChart) {
       return areaType.renderAreaChart(entity, { children, config }, api)
@@ -96,7 +92,6 @@ export const charts = {
   },
   renderBarChart(entity, { children, config = {} }, api) {
     if (!entity) return svg``
-    compositionChartType.set(entity.id, "bar")
     const barType = api.getType("bar")
     if (barType?.renderBarChart) {
       return barType.renderBarChart(entity, { children, config }, api)
@@ -113,11 +108,26 @@ export const charts = {
   },
   renderTooltip(entity, { config = {} }, api) {
     if (!entity) return svg``
-    // Use composition chart type if available, otherwise fallback to entity type
-    const chartTypeName = compositionChartType.get(entity.id) || entity.type
-    const chartType = api.getType(chartTypeName)
+    // Use entity.type (works for both config-first and composition modes)
+    const chartType = api.getType(entity.type)
     if (chartType?.renderTooltip) {
       return chartType.renderTooltip(entity, { config }, api)
+    }
+    return svg``
+  },
+  renderPieChart(entity, { children, config = {} }, api) {
+    if (!entity) return svg``
+    const pieType = api.getType("pie")
+    if (pieType?.renderPieChart) {
+      return pieType.renderPieChart(entity, { children, config }, api)
+    }
+    return svg``
+  },
+  renderPie(entity, { config = {} }, api) {
+    if (!entity) return svg``
+    const pieType = api.getType("pie")
+    if (pieType?.renderPie) {
+      return pieType.renderPie(entity, { config }, api)
     }
     return svg``
   },
@@ -132,6 +142,7 @@ export const charts = {
         renderLineChart: () => svg``,
         renderAreaChart: () => svg``,
         renderBarChart: () => svg``,
+        renderPieChart: () => svg``,
         renderCartesianGrid: () => emptyFn,
         renderXAxis: () => emptyFn,
         renderYAxis: () => svg``,
@@ -139,6 +150,7 @@ export const charts = {
         renderLine: () => svg``,
         renderArea: () => svg``,
         renderBar: () => svg``,
+        renderPie: () => svg``,
         renderDots: () => emptyFn,
         renderTooltip: () => svg``,
       }
@@ -154,6 +166,9 @@ export const charts = {
       renderBarChart(children, config) {
         return charts.renderBarChart(entity, { children, config }, api)
       },
+      renderPieChart(children, config) {
+        return charts.renderPieChart(entity, { children, config }, api)
+      },
       renderCartesianGrid(config) {
         return charts.renderCartesianGrid(entity, { config }, api)
       },
@@ -164,19 +179,16 @@ export const charts = {
         return charts.renderYAxis(entity, { config }, api)
       },
       renderLegend(config) {
-        // Try to get chart type from compositionChartType, or fallback to entity.type
-        const chartTypeName = compositionChartType.get(entity.id) || entity.type
-        if (chartTypeName) {
-          const chartType = api.getType(chartTypeName)
-          if (chartType?.renderLegend) {
-            // Return the legend function directly - it already has isLegend = true
-            const legendFn = chartType.renderLegend(entity, { config }, api)
-            // Ensure the mark is preserved
-            if (legendFn && typeof legendFn === "function") {
-              legendFn.isLegend = true
-            }
-            return legendFn
+        // Use entity.type (works for both config-first and composition modes)
+        const chartType = api.getType(entity.type)
+        if (chartType?.renderLegend) {
+          // Return the legend function directly - it already has isLegend = true
+          const legendFn = chartType.renderLegend(entity, { config }, api)
+          // Ensure the mark is preserved
+          if (legendFn && typeof legendFn === "function") {
+            legendFn.isLegend = true
           }
+          return legendFn
         }
         const emptyFn = () => svg``
         return emptyFn
@@ -190,17 +202,18 @@ export const charts = {
       renderBar(config) {
         return charts.renderBar(entity, { config }, api)
       },
+      renderPie(config) {
+        return charts.renderPie(entity, { config }, api)
+      },
       renderDots(config) {
         // Return a function that will be called by renderLineChart/renderAreaChart
         // to get the actual lazy function that receives context
-        return () => {
-          // Check compositionChartType when this function is called (after renderLineChart sets it)
-          const chartTypeName = compositionChartType.get(entity.id)
-          if (chartTypeName) {
-            const chartType = api.getType(chartTypeName)
-            if (chartType?.renderDots) {
-              return chartType.renderDots(entity, { config }, api)
-            }
+        return (ctx) => {
+          // Read chartType from context if available (composition mode), otherwise use entity.type
+          const chartTypeName = ctx?.chartType || entity.type
+          const chartType = api.getType(chartTypeName)
+          if (chartType?.renderDots) {
+            return chartType.renderDots(entity, { config }, api)
           }
           // Return empty function if chart type doesn't support dots
           return () => svg``

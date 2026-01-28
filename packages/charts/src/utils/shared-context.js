@@ -13,13 +13,23 @@ import { createCartesianContext } from "./scales.js"
  * @param {Set<string>|null} usedDataKeys - Set of data keys to consider (composition mode)
  * @returns {number} Maximum value found
  */
-function getExtent(data, usedDataKeys) {
+function getExtent(data, usedDataKeys, stacked = false) {
   if (!data || data.length === 0) return 0
 
   const values = data.flatMap((d) => {
     if (usedDataKeys && usedDataKeys.size > 0) {
       // Composition mode: only use values from dataKeys used in lines/areas
-      return Array.from(usedDataKeys)
+      // If stacked, use the sum across keys per datum to determine max Y.
+      const keys = Array.from(usedDataKeys)
+      if (stacked) {
+        const sum = keys.reduce((acc, dataKey) => {
+          const value = d[dataKey]
+          return acc + (typeof value === "number" ? value : 0)
+        }, 0)
+        return [sum].filter((v) => v > 0)
+      }
+
+      return keys
         .map((dataKey) => {
           const value = d[dataKey]
           return typeof value === "number" ? value : 0
@@ -69,6 +79,7 @@ export function createSharedContext(entity, props = {}, api) {
     padding: configPadding,
     usedDataKeys: configDataKeys,
     chartType = "line",
+    stacked = false,
   } = props
 
   // Calculate dimensions
@@ -87,7 +98,7 @@ export function createSharedContext(entity, props = {}, api) {
         : null
 
   // Calculate maximum value for Y-axis scaling (global max across all data)
-  const maxValue = getExtent(entity.data, usedDataKeys)
+  const maxValue = getExtent(entity.data, usedDataKeys, stacked)
 
   // Create data structure for scale calculation
   // Keep all points with indices for xScale domain, but use global max for yScale
@@ -114,5 +125,6 @@ export function createSharedContext(entity, props = {}, api) {
     ...context,
     dimensions: { width, height, padding },
     entity, // Keep reference to original entity (not transformed data)
+    chartType, // Include chartType in context for lazy components
   }
 }
