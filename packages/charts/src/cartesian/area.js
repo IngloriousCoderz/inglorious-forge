@@ -64,39 +64,140 @@ export const area = {
         padding: config.padding,
         usedDataKeys: config.dataKeys ? new Set(config.dataKeys) : null,
         chartType: "area",
+        stacked: config.stacked === true,
       },
       api,
     )
     // Store api in context for tooltip handlers
     context.api = api
+    // Local (per-render) stack state for composition stacking (no globals)
+    if (config.stacked === true) {
+      context.stack = {
+        sumsByStackId: new Map(), // stackId -> number[] running sums (y0 for next series)
+        computedByKey: new Map(), // `${stackId}:${dataKey}` -> [y0,y1][]
+      }
+    }
     const childrenArray = Array.isArray(children) ? children : [children]
 
-    // Process children to handle lazy functions (like renderDots from index.js)
-    const processedChildren = []
+    // When not stacked, reverse order of Area components so first series renders on top
+    // This matches the behavior of config-first mode and prevents last area from covering others
+    // Dots should always render on top (after all areas) - both stacked and non-stacked
+    const isStacked = config.stacked === true
+    let childrenToProcess = childrenArray
+
+    // Separate components using stable flags (survives minification)
+    // First, we need to process lazy functions from index.js to identify their real types
+    const grid = []
+    const axes = []
+    const areas = []
+    const dots = []
+    const tooltip = []
+    const others = []
+
     for (const child of childrenArray) {
+      // Use stable flags instead of string matching (survives minification)
       if (typeof child === "function") {
-        try {
-          // First call: get the lazy function (for renderDots from index.js)
-          const lazyResult = child()
-          if (typeof lazyResult === "function") {
-            // Second call: call the lazy function with context
-            processedChildren.push(lazyResult(context))
-          } else {
-            // Direct result
-            processedChildren.push(lazyResult)
-          }
-        } catch {
-          // If it fails, try calling directly with context
+        // If it's already marked, add to the correct bucket
+        if (child.isGrid) {
+          grid.push(child)
+        } else if (child.isAxis) {
+          axes.push(child)
+        } else if (child.isArea) {
+          areas.push(child)
+        } else if (child.isDots) {
+          dots.push(child)
+        } else if (child.isTooltip) {
+          tooltip.push(child)
+        } else {
+          // It's a lazy function from index.js - process it to identify its real type
+          // Use the real context (already created) to peek at what it returns
           try {
-            processedChildren.push(child(context))
+            const result = child(context)
+            // If the result is a marked function, use its type
+            if (typeof result === "function") {
+              if (result.isGrid) {
+                grid.push(child) // Keep the original lazy function
+              } else if (result.isAxis) {
+                axes.push(child)
+              } else if (result.isArea) {
+                areas.push(child)
+              } else if (result.isDots) {
+                dots.push(child)
+              } else if (result.isTooltip) {
+                tooltip.push(child)
+              } else {
+                others.push(child)
+              }
+            } else {
+              others.push(child)
+            }
           } catch {
-            processedChildren.push(child)
+            // If processing fails, add to others (will be processed later)
+            others.push(child)
           }
         }
       } else {
-        processedChildren.push(child)
+        others.push(child)
       }
     }
+
+    if (isStacked) {
+      // Stacked: render areas in order, then all dots on top
+      // Render order: Grid -> Areas -> Axes -> Dots -> Tooltip -> Others
+      childrenToProcess = [
+        ...grid,
+        ...areas,
+        ...axes,
+        ...dots,
+        ...tooltip,
+        ...others,
+      ]
+    } else {
+      // Non-stacked: reverse areas so first series renders on top
+      // Render order: Grid -> Reversed Areas -> Axes -> Dots -> Tooltip -> Others
+      childrenToProcess = [
+        ...grid,
+        ...areas.reverse(),
+        ...axes,
+        ...dots,
+        ...tooltip,
+        ...others,
+      ]
+    }
+
+    // Process children to handle lazy functions (like renderDots from index.js)
+    // Flow:
+    // 1. renderCartesianGrid/renderXAxis from index.js return (ctx) => { return chartType.renderCartesianGrid(...) }
+    // 2. chartType.renderCartesianGrid (from area.js) returns gridFn which is (ctx) => { return svg... }
+    // 3. So we need: child(context) -> gridFn, then gridFn(context) -> svg
+    // Simplified deterministic approach: all functions from index.js return (ctx) => ..., so we can safely call with context
+    const processedChildren = childrenToProcess.map((child) => {
+      // Non-function children are passed through as-is
+      if (typeof child !== "function") {
+        return child
+      }
+
+      // If it's a marked component (isGrid, isArea, etc), it expects context directly
+      if (
+        child.isGrid ||
+        child.isAxis ||
+        child.isArea ||
+        child.isDots ||
+        child.isTooltip
+      ) {
+        return child(context)
+      }
+
+      // If it's a function from index.js (renderCartesianGrid, etc),
+      // it returns another function that also expects context
+      const result = child(context)
+      // If the result is a function (marked component), call it with context
+      if (typeof result === "function") {
+        return result(context)
+      }
+      // Otherwise, return the result directly (already SVG or TemplateResult)
+      return result
+    })
 
     return html`
       <div
@@ -117,7 +218,7 @@ export const area = {
   },
 
   renderCartesianGrid(entity, { config = {} }, api) {
-    return (ctx) => {
+    const gridFn = (ctx) => {
       const { xScale, yScale, dimensions } = ctx
       const entityFromContext = ctx.entity || entity
       const { stroke = "#eee", strokeDasharray = "5 5" } = config
@@ -140,10 +241,13 @@ export const area = {
         api,
       )
     }
+    // Mark as grid component for stable identification
+    gridFn.isGrid = true
+    return gridFn
   },
 
   renderXAxis(entity, { config = {} }, api) {
-    return (ctx) => {
+    const axisFn = (ctx) => {
       const { xScale, yScale, dimensions } = ctx
       const entityFromContext = ctx.entity || entity
       const { dataKey } = config
@@ -165,10 +269,13 @@ export const area = {
         api,
       )
     }
+    // Mark as axis component for stable identification
+    axisFn.isAxis = true
+    return axisFn
   },
 
   renderYAxis(entity, props, api) {
-    return (ctx) => {
+    const axisFn = (ctx) => {
       const { yScale, dimensions } = ctx
       const entityFromContext = ctx.entity || entity
       const ticks = yScale.ticks ? yScale.ticks(5) : yScale.domain()
@@ -178,11 +285,14 @@ export const area = {
         api,
       )
     }
+    // Mark as axis component for stable identification
+    axisFn.isAxis = true
+    return axisFn
   },
 
   // eslint-disable-next-line no-unused-vars
   renderArea(entity, { config = {} }, api) {
-    return (ctx) => {
+    const areaFn = (ctx) => {
       const { xScale, yScale } = ctx
       const entityFromContext = ctx.entity || entity
       const {
@@ -191,15 +301,56 @@ export const area = {
         fillOpacity = "0.6",
         stroke,
         type: curveType = "linear",
+        stackId,
       } = config
 
       const data = getTransformedData(entityFromContext, dataKey)
       if (!data) return svg``
 
-      const areaPath = generateAreaPath(data, xScale, yScale, 0, curveType)
-      const linePath = stroke
-        ? generateLinePath(data, xScale, yScale, curveType)
-        : null
+      // Stacked (Recharts-like): if stackId is provided and chart is configured as stacked
+      const isStacked = Boolean(stackId) && Boolean(ctx.stack)
+
+      let areaPath
+      let linePath
+
+      if (isStacked) {
+        const stackKey = String(stackId)
+        const sums =
+          ctx.stack.sumsByStackId.get(stackKey) ||
+          Array.from({ length: data.length }, () => 0)
+
+        const seriesStack = data.map((d, i) => {
+          const y0 = sums[i] || 0
+          const y1 = y0 + (typeof d.y === "number" ? d.y : 0)
+          return [y0, y1]
+        })
+
+        ctx.stack.sumsByStackId.set(
+          stackKey,
+          seriesStack.map((pair) => pair[1]),
+        )
+        ctx.stack.computedByKey.set(`${stackKey}:${dataKey}`, seriesStack)
+
+        areaPath = generateStackedAreaPath(
+          data,
+          xScale,
+          yScale,
+          seriesStack,
+          curveType,
+        )
+        // Line sits on top of the stack (y1)
+        linePath = generateLinePath(
+          data.map((d, i) => ({ ...d, y: seriesStack[i]?.[1] ?? d.y })),
+          xScale,
+          yScale,
+          curveType,
+        )
+      } else {
+        areaPath = generateAreaPath(data, xScale, yScale, 0, curveType)
+        linePath = stroke
+          ? generateLinePath(data, xScale, yScale, curveType)
+          : null
+      }
 
       return svg`
         <g class="iw-chart-area">
@@ -223,10 +374,13 @@ export const area = {
         </g>
       `
     }
+    // Mark as area component for stable identification (survives minification)
+    areaFn.isArea = true
+    return areaFn
   },
 
   renderDots(entity, { config = {} }, api) {
-    return (ctx) => {
+    const dotsFn = (ctx) => {
       const { xScale, yScale } = ctx
       const entityFromContext = ctx.entity || entity
       const {
@@ -235,20 +389,34 @@ export const area = {
         r = "0.25em",
         stroke = "white",
         strokeWidth = "0.125em",
+        stackId,
       } = config
 
       const data = getTransformedData(entityFromContext, dataKey)
       if (!data || data.length === 0) return svg``
+
+      const isStacked = Boolean(stackId) && Boolean(ctx.stack)
+      const stackKey = isStacked ? String(stackId) : null
+      const seriesStack =
+        isStacked && stackKey
+          ? ctx.stack.computedByKey.get(`${stackKey}:${dataKey}`)
+          : null
 
       return svg`
         <g class="iw-chart-dots" data-data-key=${dataKey}>
           ${repeat(
             data,
             (d, i) => `${dataKey}-${i}`,
-            (d) => {
+            (d, i) => {
               const x = xScale(d.x)
-              const y = yScale(d.y)
-              const label = d.name || dataKey || "Value"
+              const y = yScale(
+                isStacked && seriesStack ? seriesStack[i]?.[1] : d.y,
+              )
+              // Use the X-axis label (point index) as label, like config mode
+              // Get the original data point to access the name/label from X-axis
+              const originalDataPoint = entityFromContext.data[i]
+              const xAxisLabel = originalDataPoint?.name || originalDataPoint?.label || String(d.x)
+              const label = xAxisLabel // Use X-axis point as label (consistent with config mode)
               const value = d.y
 
               const { onMouseEnter, onMouseLeave } = createTooltipHandlers({
@@ -277,10 +445,16 @@ export const area = {
         </g>
       `
     }
+    // Mark as dots component for stable identification (survives minification)
+    dotsFn.isDots = true
+    return dotsFn
   },
 
   renderTooltip(entity, props, api) {
-    return (ctx) => renderTooltip(ctx.entity || entity, {}, api)
+    const tooltipFn = (ctx) => renderTooltip(ctx.entity || entity, {}, api)
+    // Mark as tooltip component for stable identification
+    tooltipFn.isTooltip = true
+    return tooltipFn
   },
 }
 

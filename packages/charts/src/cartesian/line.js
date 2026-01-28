@@ -24,7 +24,10 @@ import { calculatePadding } from "../utils/padding.js"
 import { generateLinePath } from "../utils/paths.js"
 import { createCartesianContext } from "../utils/scales.js"
 import { createSharedContext } from "../utils/shared-context.js"
-import { createTooltipHandlers } from "../utils/tooltip-handlers.js"
+import {
+  createTooltipHandlers,
+  createTooltipMoveHandler,
+} from "../utils/tooltip-handlers.js"
 
 // Removed global Maps - now using local context to avoid interference between charts
 
@@ -115,60 +118,78 @@ export const line = {
     context.api = api
     // Context is now passed directly to renderLine, no need for global cache
 
-    // Separate legend from other children and process legend immediately
-    const legendContent = []
-    const processedChildren = []
+    // Separate components using stable flags (survives minification)
+    // This ensures correct Z-index ordering: Grid -> Lines -> Axes -> Dots
+    const grid = []
+    const axes = []
+    const lines = []
+    const dots = []
+    const tooltip = []
+    const legend = []
+    const others = []
 
     for (const child of childrenArray) {
-      if (typeof child === "function" && !child.isXAxis) {
-        // Try to get the actual function (may be wrapped)
-        let actualFn = child
-        let isLegend = false
-
-        // Check if the function itself is marked as legend
-        if (child.isLegend === true) {
-          isLegend = true
-          actualFn = child
+      // Use stable flags instead of string matching (survives minification)
+      if (typeof child === "function") {
+        // If it's already marked, add to the correct bucket
+        if (child.isGrid) {
+          grid.push(child)
+        } else if (child.isAxis) {
+          axes.push(child)
+        } else if (child.isLine) {
+          lines.push(child)
+        } else if (child.isDots) {
+          dots.push(child)
+        } else if (child.isTooltip) {
+          tooltip.push(child)
+        } else if (child.isLegend) {
+          legend.push(child)
         } else {
-          // Try calling it to get the wrapped function
+          // It's a lazy function from index.js - process it to identify its real type
+          // Use the real context (already created) to peek at what it returns
           try {
-            const lazyResult = child()
-            if (typeof lazyResult === "function") {
-              if (lazyResult.isLegend === true) {
-                isLegend = true
-                actualFn = lazyResult
+            const result = child(context)
+            // If the result is a marked function, use its type
+            if (typeof result === "function") {
+              if (result.isGrid) {
+                grid.push(child) // Keep the original lazy function
+              } else if (result.isAxis) {
+                axes.push(child)
+              } else if (result.isLine) {
+                lines.push(child)
+              } else if (result.isDots) {
+                dots.push(child)
+              } else if (result.isTooltip) {
+                tooltip.push(child)
+              } else if (result.isLegend) {
+                legend.push(child)
               } else {
-                // Not a legend, keep for later processing
-                processedChildren.push(lazyResult)
-                continue
+                others.push(child)
               }
             } else {
-              // Not a function, keep as is
-              processedChildren.push(lazyResult)
-              continue
+              others.push(child)
             }
           } catch {
-            // If it fails, keep as is
-            processedChildren.push(child)
-            continue
-          }
-        }
-
-        // If we identified it as a legend, render it immediately
-        if (isLegend) {
-          try {
-            const renderedLegend = actualFn(context)
-            if (renderedLegend) {
-              legendContent.push(renderedLegend)
-            }
-          } catch {
-            // If it fails, continue without legend
+            // If processing fails, add to others (will be processed later)
+            others.push(child)
           }
         }
       } else {
-        processedChildren.push(child)
+        others.push(child)
       }
     }
+
+    // Reorder children for correct Z-index: Grid -> Lines -> Axes -> Dots -> Tooltip -> Legend -> Others
+    // This ensures grid is behind, lines are in the middle, and axes are on top
+    const childrenToProcess = [
+      ...grid,
+      ...lines,
+      ...axes,
+      ...dots,
+      ...tooltip,
+      ...legend,
+      ...others,
+    ]
 
     // Build style string
     const styleString = Object.entries(svgStyle)
@@ -180,26 +201,39 @@ export const line = {
       })
       .join("; ")
 
-    // Process all children for SVG rendering
-    const svgChildren = processedChildren.map((child) => {
-      // If it's a function, call it with context
-      if (typeof child === "function") {
-        if (child.isXAxis) {
-          return child(context)
-        }
-        try {
-          return child(context)
-        } catch {
-          // If it fails with context, try without context
-          try {
-            return child()
-          } catch {
-            return svg``
-          }
-        }
+    // Process children to handle lazy functions (like renderDots from index.js)
+    // Flow:
+    // 1. renderCartesianGrid/renderXAxis from index.js return (ctx) => { return chartType.renderCartesianGrid(...) }
+    // 2. chartType.renderCartesianGrid (from line.js) returns gridFn which is (ctx) => { return svg... }
+    // 3. So we need: child(context) -> gridFn, then gridFn(context) -> svg
+    // Simplified deterministic approach: all functions from index.js return (ctx) => ..., so we can safely call with context
+    const processedChildren = childrenToProcess.map((child) => {
+      // Non-function children are passed through as-is
+      if (typeof child !== "function") {
+        return child
       }
-      // If it's an object (TemplateResult), render as is
-      return child
+
+      // If it's a marked component (isGrid, isLine, etc), it expects context directly
+      if (
+        child.isGrid ||
+        child.isAxis ||
+        child.isLine ||
+        child.isDots ||
+        child.isTooltip ||
+        child.isLegend
+      ) {
+        return child(context)
+      }
+
+      // If it's a function from index.js (renderCartesianGrid, etc),
+      // it returns another function that also expects context
+      const result = child(context)
+      // If the result is a function (marked component), call it with context
+      if (typeof result === "function") {
+        return result(context)
+      }
+      // Otherwise, return the result directly (already SVG or TemplateResult)
+      return result
     })
 
     const svgContent = svg`
@@ -210,19 +244,19 @@ export const line = {
         class="iw-chart-svg"
         data-entity-id=${entity.id}
         style=${styleString || undefined}
+        @mousemove=${createTooltipMoveHandler({ entity: entityWithData, api })}
       >
-        ${legendContent}
-        ${svgChildren}
+        ${processedChildren}
       </svg>
     `
 
-    const tooltipResult = line.renderTooltip(entityWithData, {}, api)(context)
-
-    // No need to clear context - it's passed directly, not stored globally
-
     return html`
-      <div class="iw-chart" style="position: relative;">
-        ${svgContent} ${tooltipResult}
+      <div
+        class="iw-chart"
+        style="display: block; position: relative; width: 100%; box-sizing: border-box;"
+      >
+        ${svgContent}
+        ${renderTooltip(entityWithData, {}, api)}
       </div>
     `
   },
@@ -230,23 +264,20 @@ export const line = {
   // Helper functions moved to utils/data-utils.js as pure functions
 
   renderCartesianGrid(entity, { config = {} }, api) {
-    // Return a lazy function to prevent lit-html from evaluating it prematurely
-    // This function will be called by renderLineChart with the correct context
-    // eslint-disable-next-line no-unused-vars
-    return (ctx) => {
-      if (!entity) return svg``
+    const gridFn = (ctx) => {
+      const { xScale, yScale, dimensions } = ctx
+      const entityFromContext = ctx.entity || entity
       const { stroke = "#eee", strokeDasharray = "5 5" } = config
-      // Use shared context with correct Y scale (all values)
-      // The scale already uses .nice() to round domain to nice numbers
-      const context = createSharedContext(entity, { chartType: "line" }, api)
-      const { xScale, yScale, dimensions } = context
       // For grid, we still need data with indices for X scale
-      const transformedData = entity.data.map((d, i) => ({ x: i, y: 0 }))
+      const transformedData = entityFromContext.data.map((d, i) => ({
+        x: i,
+        y: 0,
+      }))
       // Use same ticks as renderYAxis for consistency (Recharts approach)
       // Recharts uses tickCount: 5 by default, which calls scale.ticks(5)
       const ticks = yScale.ticks ? yScale.ticks(5) : yScale.domain()
       return renderGrid(
-        { ...entity, data: transformedData },
+        { ...entityFromContext, data: transformedData },
         {
           xScale,
           yScale,
@@ -258,165 +289,171 @@ export const line = {
         api,
       )
     }
+    // Mark as grid component for stable identification
+    gridFn.isGrid = true
+    return gridFn
   },
 
   renderXAxis(entity, { config = {} }, api) {
-    if (!entity) return svg``
-
-    const { dataKey } = config
-
-    // Use shared context (same scales as grid, Y axis, and lines)
-    const context = createSharedContext(entity, { chartType: "line" }, api)
-    const { xScale, yScale, dimensions } = context
-
-    // Create labels map: index -> label (use original entity data)
-    const labels = entity.data.map(
-      (d, i) => d[dataKey] || d.name || d.x || d.date || String(i),
-    )
-
-    // Create transformed data with indices for x (needed by renderXAxis)
-    const transformedData = entity.data.map((d, i) => ({ x: i, y: 0 }))
-
-    return renderXAxis(
-      {
-        ...entity,
-        data: transformedData,
-        xLabels: labels, // Pass labels for display
-      },
-      {
-        xScale,
-        yScale,
-        ...dimensions,
-      },
-      api,
-    )
+    const axisFn = (ctx) => {
+      const { xScale, yScale, dimensions } = ctx
+      const entityFromContext = ctx.entity || entity
+      const { dataKey } = config
+      // Create labels map: index -> label (use original entity data)
+      const labels = entityFromContext.data.map(
+        (d, i) => d[dataKey] || d.name || d.x || d.date || String(i),
+      )
+      // Create transformed data with indices for x (needed by renderXAxis)
+      const transformedData = entityFromContext.data.map((d, i) => ({
+        x: i,
+        y: 0,
+      }))
+      return renderXAxis(
+        {
+          ...entityFromContext,
+          data: transformedData,
+          xLabels: labels, // Pass labels for display
+        },
+        {
+          xScale,
+          yScale,
+          ...dimensions,
+        },
+        api,
+      )
+    }
+    // Mark as axis component for stable identification
+    axisFn.isAxis = true
+    return axisFn
   },
 
   renderYAxis(entity, { config = {} }, api) {
     // eslint-disable-next-line no-unused-vars
     const _config = config
-    if (!entity) return svg``
-
-    // Use shared context with correct Y scale (all values)
-    // The scale already uses .nice() to round domain to nice numbers
-    // In composition mode, this is called with context from renderLineChart
-    // In config-first mode, pass null to use all numeric values
-    const context = createSharedContext(entity, { chartType: "line" }, api)
-    const { yScale, dimensions } = context
-
-    // Use d3-scale's ticks() method like Recharts does
-    // Recharts uses tickCount: 5 by default, which calls scale.ticks(5)
-    // The d3-scale algorithm automatically chooses "nice" intervals
-    const ticks = yScale.ticks ? yScale.ticks(5) : yScale.domain()
-
-    return renderYAxis(
-      entity,
-      {
-        yScale,
-        customTicks: ticks,
-        ...dimensions,
-      },
-      api,
-    )
+    const axisFn = (ctx) => {
+      const { yScale, dimensions } = ctx
+      const entityFromContext = ctx.entity || entity
+      // Use d3-scale's ticks() method like Recharts does
+      // Recharts uses tickCount: 5 by default, which calls scale.ticks(5)
+      // The d3-scale algorithm automatically chooses "nice" intervals
+      const ticks = yScale.ticks ? yScale.ticks(5) : yScale.domain()
+      return renderYAxis(
+        entityFromContext,
+        {
+          yScale,
+          customTicks: ticks,
+          ...dimensions,
+        },
+        api,
+      )
+    }
+    // Mark as axis component for stable identification
+    axisFn.isAxis = true
+    return axisFn
   },
 
-  renderLine(entity, { config = {}, context = null }, api) {
-    if (!entity || !entity.data) return svg``
+  renderLine(entity, { config = {} }, api) {
+    const lineFn = (ctx) => {
+      const entityFromContext = ctx.entity || entity
+      if (!entityFromContext || !entityFromContext.data) return svg``
 
-    // Use provided context if available (from renderLineChart)
-    // In composition mode, context is passed from renderLineChart
-    // In config-first mode, create new context
-    let lineContext = context
+      // Use context from parent (renderLineChart)
+      const {
+        dataKey,
+        stroke = "#8884d8",
+        type: curveType = "linear",
+        showDots = false,
+        dotFill,
+        dotR = "0.25em",
+        dotStroke = "white",
+        dotStrokeWidth = "0.125em",
+      } = config
 
-    const {
-      dataKey,
-      stroke = "#8884d8",
-      type: curveType = "linear",
-      showDots = false,
-      dotFill,
-      dotR = "0.25em",
-      dotStroke = "white",
-      dotStrokeWidth = "0.125em",
-    } = config
+      // Extract data based on dataKey for this line
+      const data = getTransformedData(entityFromContext, dataKey)
+      if (!data || data.length === 0) return svg``
 
-    // Extract data based on dataKey for this line
-    const data = getTransformedData(entity, dataKey)
-    if (!data || data.length === 0) return svg``
+      const { xScale, yScale } = ctx
 
-    // Use the context we already retrieved above
-    if (!lineContext) {
-      lineContext = createSharedContext(entity, { chartType: "line" }, api)
+      // Generate path using the line-specific data but shared scales
+      const path = generateLinePath(data, xScale, yScale, curveType)
+
+      // If path is null or empty, return empty
+      if (!path || path.includes("NaN")) {
+        return svg``
+      }
+
+      // Render dots if showDots is true
+      const dots = showDots
+        ? repeat(
+            data,
+            (d, i) => `${dataKey}-${i}`,
+            (d, i) => {
+              const x = xScale(d.x)
+              const y = yScale(d.y)
+              // Use the X-axis label (point index) as label, like config mode
+              // Get the original data point to access the name/label from X-axis
+              const originalDataPoint = entityFromContext.data[i]
+              const xAxisLabel =
+                originalDataPoint?.name ||
+                originalDataPoint?.label ||
+                String(d.x)
+              const dotLabel = xAxisLabel // Use X-axis point as label (consistent with config mode)
+              const dotValue = d.y
+
+              const {
+                onMouseEnter: dotOnMouseEnter,
+                onMouseLeave: dotOnMouseLeave,
+              } = createTooltipHandlers({
+                entity: entityFromContext,
+                api: ctx.api || api,
+                tooltipData: {
+                  label: dotLabel,
+                  value: dotValue,
+                  color: dotFill || stroke,
+                },
+              })
+
+              return renderDot({
+                cx: x,
+                cy: y,
+                r: dotR,
+                fill: dotFill || stroke,
+                stroke: dotStroke,
+                strokeWidth: dotStrokeWidth,
+                className: "iw-chart-dot",
+                onMouseEnter: dotOnMouseEnter,
+                onMouseLeave: dotOnMouseLeave,
+              })
+            },
+          )
+        : ""
+
+      const pathElement = svg`
+        <g class="iw-chart-line-group" data-data-key=${dataKey}>
+          <path
+            class="iw-chart-line"
+            data-entity-id=${entityFromContext.id}
+            data-data-key=${dataKey}
+            d=${path}
+            stroke=${stroke}
+            fill="none"
+            stroke-width="2"
+            style="stroke: ${stroke} !important;"
+          />
+          ${dots}
+        </g>
+      `
+
+      return pathElement
     }
-    const { xScale, yScale } = lineContext
-
-    // Generate path using the line-specific data but shared scales
-    const path = generateLinePath(data, xScale, yScale, curveType)
-
-    // If path is null or empty, return empty
-    if (!path || path.includes("NaN")) {
-      return svg``
-    }
-
-    // Render dots if showDots is true
-    const dots = showDots
-      ? repeat(
-          data,
-          (d, i) => `${dataKey}-${i}`,
-          (d) => {
-            const x = xScale(d.x)
-            const y = yScale(d.y)
-            const dotLabel = d.name || dataKey || "Value"
-            const dotValue = d.y
-
-            const {
-              onMouseEnter: dotOnMouseEnter,
-              onMouseLeave: dotOnMouseLeave,
-            } = createTooltipHandlers({
-              entity,
-              api,
-              tooltipData: {
-                label: dotLabel,
-                value: dotValue,
-                color: dotFill || stroke,
-              },
-            })
-
-            return renderDot({
-              cx: x,
-              cy: y,
-              r: dotR,
-              fill: dotFill || stroke,
-              stroke: dotStroke,
-              strokeWidth: dotStrokeWidth,
-              className: "iw-chart-dot",
-              onMouseEnter: dotOnMouseEnter,
-              onMouseLeave: dotOnMouseLeave,
-            })
-          },
-        )
-      : ""
-
-    const pathElement = svg`
-      <g class="iw-chart-line-group" data-data-key=${dataKey}>
-        <path
-          class="iw-chart-line"
-          data-entity-id=${entity.id}
-          data-data-key=${dataKey}
-          d=${path}
-          stroke=${stroke}
-          fill="none"
-          stroke-width="2"
-          style="stroke: ${stroke} !important;"
-        />
-        ${dots}
-      </g>
-    `
-
-    return pathElement
+    // Mark as line component for stable identification
+    lineFn.isLine = true
+    return lineFn
   },
 
   renderDots(entity, { config = {} }, api) {
-    return (ctx) => {
+    const dotsFn = (ctx) => {
       const { xScale, yScale } = ctx
       const entityFromContext = ctx.entity || entity
       const {
@@ -435,10 +472,17 @@ export const line = {
           ${repeat(
             data,
             (d, i) => `${dataKey}-${i}`,
-            (d) => {
+            (d, i) => {
               const x = xScale(d.x)
               const y = yScale(d.y)
-              const label = d.name || dataKey || "Value"
+              // Use the X-axis label (point index) as label, like config mode
+              // Get the original data point to access the name/label from X-axis
+              const originalDataPoint = entityFromContext.data[i]
+              const xAxisLabel =
+                originalDataPoint?.name ||
+                originalDataPoint?.label ||
+                String(d.x)
+              const label = xAxisLabel // Use X-axis point as label (consistent with config mode)
               const value = d.y
 
               const { onMouseEnter, onMouseLeave } = createTooltipHandlers({
@@ -467,6 +511,9 @@ export const line = {
         </g>
       `
     }
+    // Mark as dots component for stable identification
+    dotsFn.isDots = true
+    return dotsFn
   },
 
   renderLegend(entity, { config = {} }, api) {
@@ -521,11 +568,13 @@ export const line = {
   },
 
   renderTooltip(entity, props, api) {
-    // eslint-disable-next-line no-unused-vars
-    return (ctx) => {
-      if (!entity) return html``
-      return renderTooltip(entity, {}, api)
+    const tooltipFn = (ctx) => {
+      const entityFromContext = ctx.entity || entity
+      return renderTooltip(entityFromContext, {}, api)
     }
+    // Mark as tooltip component for stable identification
+    tooltipFn.isTooltip = true
+    return tooltipFn
   },
 }
 

@@ -1,8 +1,8 @@
 /* eslint-disable no-magic-numbers */
 
 import { html, svg } from "lit-html"
-import { when } from "lit-html/directives/when.js"
 
+import { renderTooltip } from "../component/tooltip.js"
 import { formatNumber } from "../utils/data-utils.js"
 import { calculatePieData } from "../utils/paths.js"
 import { renderPieSectors } from "./pie.js"
@@ -116,27 +116,30 @@ export const donut = {
     })
 
     // Center text for donut (optional feature)
+    // Wrapped in <g> for better organization and potential future composition
     const centerText = entity.centerText
       ? svg`
-          <text
-            x=${centerX}
-            y=${centerY - 5}
-            text-anchor="middle"
-            font-size="1.125em"
-            font-weight="bold"
-            fill="#333"
-          >
-            ${entity.centerText}
-          </text>
-          <text
-            x=${centerX}
-            y=${centerY + 15}
-            text-anchor="middle"
-            font-size="0.75em"
-            fill="#777"
-          >
-            ${formatNumber(pieData.reduce((sum, d) => sum + d.value, 0))}
-          </text>
+          <g class="iw-chart-center-text">
+            <text
+              x=${centerX}
+              y=${centerY - 5}
+              text-anchor="middle"
+              font-size="1.125em"
+              font-weight="bold"
+              fill="#333"
+            >
+              ${entity.centerText}
+            </text>
+            <text
+              x=${centerX}
+              y=${centerY + 15}
+              text-anchor="middle"
+              font-size="0.75em"
+              fill="#777"
+            >
+              ${formatNumber(pieData.reduce((sum, d) => sum + d.value, 0))}
+            </text>
+          </g>
         `
       : ""
 
@@ -156,33 +159,11 @@ export const donut = {
             })
           }}
         >
-          ${slices} ${centerText}
+          ${slices}
+          ${centerText}
         </svg>
 
-        ${when(
-          entity.tooltip,
-          () => html`
-            <div
-              class="iw-chart-modal"
-              style="left:${entity.tooltipX}px; top:${entity.tooltipY}px"
-            >
-              <div class="iw-chart-modal-header">
-                <span
-                  class="iw-chart-modal-color"
-                  style="background-color: ${entity.tooltip.color};"
-                ></span>
-                <span class="iw-chart-modal-label"
-                  >${entity.tooltip.label}</span
-                >
-              </div>
-              <div class="iw-chart-modal-body">
-                <div class="iw-chart-modal-percentage">
-                  ${formatNumber(entity.tooltip.percentage)}%
-                </div>
-              </div>
-            </div>
-          `,
-        )}
+        ${renderTooltip(entity, {}, api)}
       </div>
     `
   },
