@@ -12,6 +12,8 @@ A powerful, declarative charting library for Inglorious Web, inspired by Rechart
 - 🎨 **Customizable Styling**: Full control over colors, sizes, and appearance
 - 📱 **Responsive**: Works seamlessly across different screen sizes
 - 🔧 **Type-Safe**: Built with TypeScript definitions
+- 🛡️ **Memory-Safe**: No global caches or Singletons, preventing memory leaks in complex SPAs
+- 🚀 **Deterministic Rendering**: Optimized rendering engine that avoids expensive try/catch operations and ensures visual stability
 
 ## Installation
 
@@ -125,7 +127,12 @@ export const app = {
             }),
             c.renderTooltip({}),
           ],
-          { width: 800, height: 400, dataKeys: ["value"] },
+          {
+            width: 800,
+            height: 400,
+            dataKeys: ["value"], // Required to sync Y-axis scale across multiple series
+            stacked: false,      // Set to true to automatically sum values (Area/Bar)
+          },
         ),
       )}
     `
@@ -143,7 +150,8 @@ c.renderLineChart(
   {
     width: 800,
     height: 400,
-    dataKeys: ["value"],
+    dataKeys: ["value"], // Required to sync Y-axis scale across multiple series
+    stacked: false,      // Set to true to automatically sum values (Area/Bar)
     data: [
       { name: "Jan", value: 400 },
       { name: "Feb", value: 300 },
@@ -151,6 +159,8 @@ c.renderLineChart(
   },
 )
 ```
+
+💡 **Smart Layering**: The library uses an internal flag system (`isGrid`, `isAxis`, etc.) to ensure elements are rendered in the correct visual order (Z-index). The Grid will always be at the back and Axes always at the front, regardless of the order you declare them in the array.
 
 ## Chart Types
 
@@ -383,6 +393,33 @@ Renders the tooltip overlay.
 c.renderTooltip({})
 ```
 
+## Data Formats
+
+Inglorious Charts supports two data formats:
+
+**Wide Format (Recharts Style)**: Useful for composition. A single object contains multiple keys.
+
+```javascript
+{
+  name: "Jan",
+  productA: 100,
+  productB: 200,
+  productC: 150,
+}
+```
+
+**Long Format (Config Style)**: Ideal for dynamic APIs. Separate series with their own arrays.
+
+```javascript
+{
+  name: "Product A",
+  values: [
+    { x: 0, y: 100 },
+    { x: 1, y: 200 },
+  ],
+}
+```
+
 ## Multiple Series
 
 ### Config Mode
@@ -434,7 +471,8 @@ ${chart(api, "multiSeriesChart", (c) =>
   ], {
     width: 800,
     height: 400,
-    dataKeys: ["productA", "productB"], // Important: Syncs Y-axis scale across all series
+    dataKeys: ["productA", "productB"], // Required to sync Y-axis scale across multiple series
+    stacked: false,                     // Set to true to automatically sum values (Area/Bar)
   })
 )}
 ```
@@ -456,7 +494,7 @@ Or customize using CSS variables and classes:
 - `.iw-chart-area` - Area elements
 - `.iw-chart-bar` - Bar elements
 - `.iw-chart-dot` - Dot elements
-- `.iw-chart-modal` - Tooltip element
+- `.iw-chart-modal` - Tooltip element. Rendered as absolute HTML outside the SVG, giving you full freedom to use shadows, border-radius, and CSS transitions without SVG limitations.
 - `.iw-chart-legend` - Legend element
 
 ## API Reference
