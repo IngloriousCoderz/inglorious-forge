@@ -21,7 +21,7 @@ export const bar = {
         : null,
       bar.renderXAxis(entity, {}, api),
       bar.renderYAxis(entity, {}, api),
-      bar.renderBar(entity, { dataKey: "value", multiColor: true }, api),
+      bar.renderBar(entity, { config: { dataKey: "value", multiColor: false } }, api),
     ].filter(Boolean)
 
     const chartContent = bar.renderBarChart(
@@ -62,36 +62,38 @@ export const bar = {
       Array.isArray(children) ? children : [children]
     ).filter(Boolean)
 
-    // 1. Process lazy children first to identify barComponents
-    const processedChildren = []
-    const barComponents = []
+    // Separate components using stable flags (survives minification)
+    // This ensures correct Z-index ordering: Grid -> Bars -> Axes
+    const grid = []
+    const axes = []
+    const bars = []
+    const tooltip = []
+    const others = []
 
     for (const child of childrenArray) {
-      if (typeof child === "function" && !child.isBar && !child.isXAxis) {
-        // Lazy function: call to get the real component
-        try {
-          const lazyResult = child()
-          if (typeof lazyResult === "function" && lazyResult.isBar) {
-            barComponents.push(lazyResult)
-            processedChildren.push(lazyResult)
-          } else if (typeof lazyResult === "function" && lazyResult.isXAxis) {
-            // X-axis function: keep it for later processing with context
-            processedChildren.push(lazyResult)
-          } else {
-            processedChildren.push(lazyResult)
-          }
-        } catch {
-          // If it fails, keep as is
-          processedChildren.push(child)
+      // Use stable flags instead of string matching (survives minification)
+      if (typeof child === "function") {
+        // If it's already marked, add to the correct bucket
+        if (child.isGrid) {
+          grid.push(child)
+        } else if (child.isAxis) {
+          axes.push(child)
+        } else if (child.isBar) {
+          bars.push(child)
+        } else if (child.isTooltip) {
+          tooltip.push(child)
+        } else {
+          // It's a lazy function from index.js - we'll identify its type during processing
+          // For now, add to others - it will be processed correctly in the final loop
+          others.push(child)
         }
       } else {
-        // Already a direct component
-        if (typeof child === "function" && child.isBar) {
-          barComponents.push(child)
-        }
-        processedChildren.push(child)
+        others.push(child)
       }
     }
+
+    // Store barComponents for Y-axis calculation
+    const barComponents = bars
 
     // 2. FUNDAMENTAL SCALE - Crucial for alignment
     const categories = entity.data.map(
@@ -108,6 +110,7 @@ export const bar = {
     )
     context.xScale = xScale
     context.dimensions = { width, height, padding }
+    context.chartType = "bar" // Include chartType for lazy components
 
     // 3. Identify data keys for Y-axis
     const dataKeys =
@@ -121,86 +124,116 @@ export const bar = {
       context.yScale.domain([Math.min(0, minVal), maxVal]).nice()
     }
 
+    // 4. Process children from 'others' to identify their real types (lazy functions from index.js)
+    // This ensures grid/axes from index.js are placed in the correct buckets
+    const identifiedGrid = []
+    const identifiedAxes = []
+    const remainingOthers = []
+
+    for (const child of others) {
+      if (typeof child === "function") {
+        try {
+          const result = child(context)
+          if (typeof result === "function") {
+            if (result.isGrid) {
+              identifiedGrid.push(child) // Keep the original lazy function
+            } else if (result.isAxis) {
+              identifiedAxes.push(child)
+            } else {
+              remainingOthers.push(child)
+            }
+          } else {
+            remainingOthers.push(child)
+          }
+        } catch {
+          remainingOthers.push(child)
+        }
+      } else {
+        remainingOthers.push(child)
+      }
+    }
+
+    // Reorder children for correct Z-index: Grid -> Bars -> Axes -> Tooltip -> Others
+    // This ensures grid is behind, bars are in the middle, and axes are on top
+    const childrenToProcess = [
+      ...grid,
+      ...identifiedGrid, // Grids identified from others
+      ...bars,
+      ...axes,
+      ...identifiedAxes, // Axes identified from others
+      ...tooltip,
+      ...remainingOthers,
+    ]
+
+    // Process children to handle lazy functions (like renderCartesianGrid from index.js)
+    // Flow:
+    // 1. renderCartesianGrid/renderXAxis from index.js return (ctx) => { return chartType.renderCartesianGrid(...) }
+    // 2. chartType.renderCartesianGrid (from bar.js) returns gridFn which is (ctx) => { return svg... }
+    // 3. So we need: child(context) -> gridFn, then gridFn(context) -> svg
+    // Simplified deterministic approach: all functions from index.js return (ctx) => ..., so we can safely call with context
+    const processedChildren = childrenToProcess.map((child) => {
+      // Non-function children are passed through as-is
+      if (typeof child !== "function") {
+        return child
+      }
+
+      // If it's a marked component (isGrid, isBar, isAxis, etc), it expects context directly
+      if (
+        child.isGrid ||
+        child.isAxis ||
+        child.isBar ||
+        child.isTooltip
+      ) {
+        // For bars, also pass barIndex and totalBars
+        if (child.isBar) {
+          const barIndex = barComponents.indexOf(child)
+          return child(context, barIndex, barComponents.length)
+        }
+        return child(context)
+      }
+
+      // If it's a function from index.js (renderCartesianGrid, etc),
+      // it returns another function that also expects context
+      const result = child(context)
+      // If the result is a function (marked component), call it with context
+      if (typeof result === "function") {
+        // For bars, also pass barIndex and totalBars
+        if (result.isBar) {
+          const barIndex = barComponents.indexOf(result)
+          return result(context, barIndex, barComponents.length)
+        }
+        return result(context)
+      }
+      // Otherwise, return the result directly (already SVG or TemplateResult)
+      return result
+    })
+
     const svgContent = svg`
       <svg width=${width} height=${height} viewBox="0 0 ${width} ${height}">
-        ${processedChildren.map((child) => {
-          // If it's a "lazy" function (returns the component), call it first
-          // But only if it hasn't been processed yet (not isBar or isXAxis)
-          if (typeof child === "function" && !child.isBar && !child.isXAxis) {
-            // Try calling as lazy function first
-            try {
-              const lazyResult = child()
-              // If it returned a marked function, process with context
-              if (typeof lazyResult === "function") {
-                if (lazyResult.isBar) {
-                  const barIndex = barComponents.indexOf(lazyResult)
-                  return lazyResult(context, barIndex, barComponents.length)
-                }
-                if (lazyResult.isXAxis) {
-                  return lazyResult(context)
-                }
-                // Generic function: try with context first, if it fails, without context
-                try {
-                  return lazyResult(context)
-                } catch {
-                  // If it fails with context, try without context
-                  try {
-                    return lazyResult()
-                  } catch {
-                    // If it also fails without context, return empty
-                    return svg``
-                  }
-                }
-              }
-              // If it returned an object, process as object
-              child = lazyResult
-            } catch {
-              // If it fails, treat as normal function (may already be a function that needs context)
-              // Do nothing, let it fall through to the next if
-            }
-          }
-          // If it's an object marked as X-axis, process it
-          if (child && typeof child === "object" && child.isXAxis) {
-            return child.render(context)
-          }
-          // If it's a function, inject the context (Composition and Config-first modes)
-          if (typeof child === "function") {
-            if (child.isBar) {
-              const barIndex = barComponents.indexOf(child)
-              return child(context, barIndex, barComponents.length)
-            }
-            if (child.isXAxis) {
-              return child(context)
-            }
-            return child(context)
-          }
-          // If it's an object (TemplateResult), render as is
-          // This can happen when lit-html evaluates the function before passing it
-          if (child && typeof child === "object" && child._$litType$) {
-            // For now, render as is (but this won't work correctly)
-            return child
-          }
-          // If it's a static object, render as is (but ideally it should be a function)
-          return child
-        })}
+        ${processedChildren}
       </svg>
     `
 
     if (config.isRawSVG) return svgContent
 
     return html`
-      <div class="iw-chart" style="position: relative;">
-        ${svgContent} ${bar.renderTooltip(entity, {}, api)(context)}
+      <div
+        class="iw-chart"
+        style="display: block; position: relative; width: 100%; box-sizing: border-box;"
+      >
+        ${svgContent}
+        ${renderTooltip(entity, {}, api)}
       </div>
     `
   },
 
   renderBar(entity, { config = {} }, api) {
+    // Preserve config values in closure
+    const { dataKey = "value", fill, multiColor = false } = config
     const drawFn = (ctx, barIndex, totalBars) => {
       const entityFromContext = ctx.entity || entity
       if (!entityFromContext) return svg``
-      const { dataKey = "value", fill, multiColor = false } = config
-      const entityColors = entity.colors || [
+      const entityColors = entityFromContext.colors || [
         "#8884d8",
         "#82ca9d",
         "#ffc658",
@@ -281,8 +314,8 @@ export const bar = {
         api,
       )
     }
-    // Mark as X-axis function for identification
-    renderFn.isXAxis = true
+    // Mark as axis component for stable identification (consistent with area.js)
+    renderFn.isAxis = true
     renderFn.config = config
     renderFn.api = api
     // Add a special property to prevent lit-html from rendering directly
@@ -298,7 +331,7 @@ export const bar = {
   },
 
   renderYAxis(entity, props, api) {
-    return (ctx) => {
+    const axisFn = (ctx) => {
       const entityFromContext = ctx.entity || entity
       return renderYAxis(
         entityFromContext,
@@ -312,10 +345,13 @@ export const bar = {
         api,
       )
     }
+    // Mark as axis component for stable identification (consistent with area.js)
+    axisFn.isAxis = true
+    return axisFn
   },
 
   renderCartesianGrid(entity, { config = {} }, api) {
-    return (ctx) => {
+    const gridFn = (ctx) => {
       const entityFromContext = ctx.entity || entity
       if (!entityFromContext) return svg``
       return renderGrid(
@@ -330,14 +366,9 @@ export const bar = {
         api,
       )
     }
+    // Mark as grid component for stable identification (consistent with area.js)
+    gridFn.isGrid = true
+    return gridFn
   },
 
-  renderTooltip(entity, props, api) {
-    return (ctx) => {
-      const entityFromContext = ctx.entity || entity
-      return entityFromContext
-        ? renderTooltip(entityFromContext, {}, api)
-        : svg``
-    }
-  },
 }
