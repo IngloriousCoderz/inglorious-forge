@@ -415,7 +415,10 @@ export const area = {
               // Use the X-axis label (point index) as label, like config mode
               // Get the original data point to access the name/label from X-axis
               const originalDataPoint = entityFromContext.data[i]
-              const xAxisLabel = originalDataPoint?.name || originalDataPoint?.label || String(d.x)
+              const xAxisLabel =
+                originalDataPoint?.name ||
+                originalDataPoint?.label ||
+                String(d.x)
               const label = xAxisLabel // Use X-axis point as label (consistent with config mode)
               const value = d.y
 
