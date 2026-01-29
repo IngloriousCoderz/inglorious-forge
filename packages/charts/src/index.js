@@ -19,7 +19,9 @@ export const charts = {
   ...rendering,
   // Composition methods - delegate to chart types
   renderLineChart(entity, { children, config = {} }, api) {
-    if (!entity) return svg``
+    if (!entity) {
+      return svg``
+    }
     const lineType = api.getType("line")
     if (lineType?.renderLineChart) {
       return lineType.renderLineChart(entity, { children, config }, api)
