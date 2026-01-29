@@ -524,7 +524,7 @@ function renderAreaCurves(entity, props, api) {
             values,
             (d, i) => `${originalIdx}-${i}`,
             (d, i) => {
-              const x = xScale(getDataPointX(d))
+              const x = xScale(getDataPointX(d, i))
               const y = yScale(
                 stacked ? seriesStackedData[i]?.[1] : getDataPointY(d),
               )
@@ -571,7 +571,7 @@ function renderAreaCurves(entity, props, api) {
           ? repeat(
               data,
               (d, i) => i,
-              (d) => {
+              (d, i) => {
                 const { onMouseEnter, onMouseLeave } = createTooltipHandlers({
                   entity,
                   api,
@@ -582,7 +582,7 @@ function renderAreaCurves(entity, props, api) {
                   },
                 })
                 return renderDot({
-                  cx: xScale(getDataPointX(d)),
+                  cx: xScale(getDataPointX(d, i)),
                   cy: yScale(getDataPointY(d)),
                   fill: color,
                   onMouseEnter,

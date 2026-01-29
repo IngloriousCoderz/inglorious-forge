@@ -10,11 +10,46 @@ import {
 
 import { getDataPointX, getDataPointY } from "./data-utils.js"
 
+// Fallback Y value when scale returns NaN
+const FALLBACK_Y_VALUE = 0
+
 export function generateLinePath(data, xScale, yScale, curveType = "linear") {
   const curve = curveType === "monotone" ? curveMonotoneX : curveLinear
   const lineGenerator = line()
-    .x((d) => xScale(getDataPointX(d, null)))
-    .y((d) => yScale(getDataPointY(d)))
+    .x((d, i) => {
+      // Always pass index as fallback to ensure we have a valid x value
+      const xVal = getDataPointX(d, i)
+      const scaled = xScale(xVal)
+      if (isNaN(scaled)) {
+        console.warn("[generateLinePath] NaN x value:", {
+          d,
+          i,
+          xVal,
+          scaled,
+          xScaleDomain: xScale.domain(),
+          xScaleRange: xScale.range(),
+        })
+        // Fallback to index if scaled is NaN
+        return xScale(i)
+      }
+      return scaled
+    })
+    .y((d) => {
+      const yVal = getDataPointY(d)
+      const scaled = yScale(yVal)
+      if (isNaN(scaled)) {
+        console.warn("[generateLinePath] NaN y value:", {
+          d,
+          yVal,
+          scaled,
+          yScaleDomain: yScale.domain(),
+          yScaleRange: yScale.range(),
+        })
+        // Fallback to 0 if scaled is NaN
+        return yScale(FALLBACK_Y_VALUE)
+      }
+      return scaled
+    })
     .curve(curve)
   return lineGenerator(data)
 }
@@ -29,9 +64,26 @@ export function generateAreaPath(
 ) {
   const curve = curveType === "monotone" ? curveMonotoneX : curveLinear
   const areaGenerator = area()
-    .x((d) => xScale(getDataPointX(d, null)))
+    .x((d, i) => {
+      // Always pass index as fallback to ensure we have a valid x value
+      const xVal = getDataPointX(d, i)
+      const scaled = xScale(xVal)
+      if (isNaN(scaled)) {
+        // Fallback to index if scaled is NaN
+        return xScale(i)
+      }
+      return scaled
+    })
     .y0(() => yScale(baseValue))
-    .y1((d) => yScale(getDataPointY(d)))
+    .y1((d) => {
+      const yVal = getDataPointY(d)
+      const scaled = yScale(yVal)
+      if (isNaN(scaled)) {
+        // Fallback to 0 if scaled is NaN
+        return yScale(0)
+      }
+      return scaled
+    })
     .curve(curve)
   return areaGenerator(data)
 }

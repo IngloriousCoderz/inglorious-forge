@@ -250,14 +250,17 @@ export const line = {
       </svg>
     `
 
-    return html`
+    const tooltipResult = renderTooltip(entityWithData, {}, api)
+
+    const finalResult = html`
       <div
         class="iw-chart"
         style="display: block; position: relative; width: 100%; box-sizing: border-box;"
       >
-        ${svgContent} ${renderTooltip(entityWithData, {}, api)}
+        ${svgContent} ${tooltipResult}
       </div>
     `
+    return finalResult
   },
 
   // Helper functions moved to utils/data-utils.js as pure functions
@@ -615,8 +618,8 @@ function renderLineCurves(entity, props, api) {
                 ? repeat(
                     values,
                     (d, i) => i,
-                    (d) => {
-                      const x = xScale(getDataPointX(d))
+                    (d, i) => {
+                      const x = xScale(getDataPointX(d, i))
                       const y = yScale(getDataPointY(d))
                       const label = getDataPointLabel(d, seriesName)
                       const value = getDataPointY(d)
@@ -666,8 +669,8 @@ function renderLineCurves(entity, props, api) {
           ? repeat(
               data,
               (d, i) => i,
-              (d) => {
-                const x = xScale(getDataPointX(d))
+              (d, i) => {
+                const x = xScale(getDataPointX(d, i))
                 const y = yScale(getDataPointY(d))
                 const label = getDataPointLabel(d)
                 const value = getDataPointY(d)

@@ -62,7 +62,30 @@ export function createXScale(data, width, padding) {
     // Single series: extract directly
     values = data.map((d, i) => getDataPointX(d, i))
   }
-  const [minVal, maxVal] = extent(values)
+
+  // Filter out null/undefined values and ensure we have valid numbers
+  const validValues = values.filter((v) => v != null && !isNaN(v))
+
+  if (validValues.length === 0) {
+    console.warn(
+      "[createXScale] No valid x values found, using default domain [0, data.length-1]",
+    )
+    return scaleLinear()
+      .domain([0, data.length - 1])
+      .range([padding.left, width - padding.right])
+  }
+
+  const [minVal, maxVal] = extent(validValues)
+  if (minVal == null || maxVal == null || isNaN(minVal) || isNaN(maxVal)) {
+    console.warn(
+      "[createXScale] Invalid extent, using default domain [0, data.length-1]",
+      { minVal, maxVal, values, validValues },
+    )
+    return scaleLinear()
+      .domain([0, data.length - 1])
+      .range([padding.left, width - padding.right])
+  }
+
   return scaleLinear()
     .domain([minVal, maxVal])
     .range([padding.left, width - padding.right])
@@ -159,40 +182,44 @@ export function calculateXTicks(data, xScale) {
     return xScale.ticks ? xScale.ticks(5) : xScale.domain()
   }
 
-  // Extract all unique x values from data
-  const allXValues = []
+  // Extract all unique x values from data using Set for O(n) performance
+  // This avoids O(n²) complexity from includes() in a loop
+  const uniqueXValues = new Set()
   if (isMultiSeries(data)) {
     // Multi-series: extract from values arrays
     data.forEach((series) => {
       if (series.values) {
         series.values.forEach((v) => {
           const xVal = v.x ?? v.date
-          if (xVal != null && !allXValues.includes(xVal)) {
-            allXValues.push(xVal)
+          if (xVal != null) {
+            uniqueXValues.add(xVal)
           }
         })
       }
     })
   } else {
     // Single series: extract directly
-    data.forEach((d) => {
-      const xVal = getDataPointX(d, null)
-      if (xVal != null && !allXValues.includes(xVal)) {
-        allXValues.push(xVal)
+    // Use index as fallback when x/date is not present (for categorical data)
+    data.forEach((d, i) => {
+      const xVal = getDataPointX(d, i)
+      if (xVal != null) {
+        uniqueXValues.add(xVal)
       }
     })
   }
 
-  // Sort values
-  allXValues.sort((a, b) => a - b)
+  // Convert Set to sorted array
+  const allXValues = Array.from(uniqueXValues).sort((a, b) => a - b)
 
   // If we have few data points (≤15), show all actual x values
-  // Otherwise use ticks
+  // Otherwise use D3's automatic tick calculation (like Recharts)
   if (xScale.ticks && allXValues.length <= 15) {
     return allXValues
   }
   if (xScale.ticks) {
-    return xScale.ticks(Math.min(10, data.length))
+    // Let D3 automatically choose optimal ticks (default behavior, like Recharts)
+    // D3 will choose nice intervals automatically based on the scale
+    return xScale.ticks()
   }
   return xScale.domain()
 }
