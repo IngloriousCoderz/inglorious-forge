@@ -257,10 +257,16 @@ export const pie = {
         onSliceEnter: (slice, index, event) => {
           const path = event.target
           const svgEl = path.closest("svg")
-          const rect = svgEl.getBoundingClientRect()
+          const svgRect = svgEl.getBoundingClientRect()
+          // Get container element (.iw-chart) for relative positioning
+          const containerElement =
+            svgEl.closest(".iw-chart") || svgEl.parentElement
+          const containerRect = containerElement.getBoundingClientRect()
+
           const angle = (slice.startAngle + slice.endAngle) / 2
           const angleOffset = angle - Math.PI / 2
           const labelRadius = calculatedOuterRadius * 1.1
+          // x and y are relative to SVG
           const x = centerX + Math.cos(angleOffset) * labelRadius
           const y = centerY + Math.sin(angleOffset) * labelRadius
           const percentage =
@@ -270,13 +276,18 @@ export const pie = {
           const color =
             slice.data.color || colors[index % colors.length] || fill
 
+          // Calculate position relative to container (not absolute page position)
+          // SVG position relative to container + tooltip position relative to SVG
+          const tooltipX = svgRect.left - containerRect.left + x
+          const tooltipY = svgRect.top - containerRect.top + y
+
           ctx.api.notify(`#${entityFromContext.id}:showTooltip`, {
             label,
             percentage,
             value: slice.value,
             color,
-            x: rect.left + x,
-            y: rect.top + y,
+            x: tooltipX,
+            y: tooltipY,
           })
         },
         onSliceLeave: () => {
@@ -367,10 +378,16 @@ export const pie = {
 
         const path = event.target
         const svgEl = path.closest("svg")
-        const rect = svgEl.getBoundingClientRect()
+        const svgRect = svgEl.getBoundingClientRect()
+        // Get container element (.iw-chart) for relative positioning
+        const containerElement =
+          svgEl.closest(".iw-chart") || svgEl.parentElement
+        const containerRect = containerElement.getBoundingClientRect()
+
         const angle = (slice.startAngle + slice.endAngle) / 2
         const angleOffset = angle - Math.PI / 2
         const labelRadius = outerRadius * 1.1
+        // x and y are relative to SVG
         const x = centerX + Math.cos(angleOffset) * labelRadius
         const y = centerY + Math.sin(angleOffset) * labelRadius
         // Use absolute value to handle both clockwise and counter-clockwise slices
@@ -380,14 +397,19 @@ export const pie = {
         // Use nameKey to get label
         const label = nameKey(slice.data)
 
+        // Calculate position relative to container (not absolute page position)
+        // SVG position relative to container + tooltip position relative to SVG
+        const tooltipX = svgRect.left - containerRect.left + x
+        const tooltipY = svgRect.top - containerRect.top + y
+
         api.notify(`#${entity.id}:showTooltip`, {
           label,
           percentage,
           value: slice.value,
           color:
             slice.data.color || entity.colors[index % entity.colors.length],
-          x: rect.left + x,
-          y: rect.top + y,
+          x: tooltipX,
+          y: tooltipY,
         })
       },
       onSliceLeave: () => {
