@@ -1,5 +1,12 @@
 # inglorious-pong
 
+## 1.0.27
+
+### Patch Changes
+
+- @inglorious/engine@17.0.0
+- @inglorious/renderer-2d@16.0.0
+
 ## 1.0.26
 
 ### Patch Changes

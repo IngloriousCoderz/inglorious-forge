@@ -1,5 +1,12 @@
 # web-todomvc-ts
 
+## 0.2.10
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/web@4.1.1
+
 ## 0.2.9
 
 ### Patch Changes

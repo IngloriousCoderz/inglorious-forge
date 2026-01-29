@@ -1,0 +1,28 @@
+{
+  "name": "web-todomvc-ace",
+  "private": true,
+  "version": "0.1.1",
+  "type": "module",
+  "author": "IceOnFire <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
+  "license": "MIT",
+  "scripts": {
+    "format": "prettier --write .",
+    "lint": "eslint .",
+    "test:watch": "vitest",
+    "test": "vitest run",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@inglorious/web": "workspace:*"
+  },
+  "devDependencies": {
+    "@inglorious/eslint-config": "workspace:*",
+    "eslint": "^9.39.1",
+    "prettier": "^3.6.2",
+    "rollup-plugin-minify-template-literals": "^1.1.7",
+    "vite": "^7.1.6",
+    "vitest": "^4.0.16"
+  }
+}
