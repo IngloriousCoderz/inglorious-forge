@@ -261,12 +261,24 @@ export const bar = {
           const category = d.label || d.name || d.category || String(i)
           const value = d[dataKey] ?? 0
           const bandStart = xScale(category)
+
+          // Skip if bandStart is undefined or NaN (invalid category)
+          if (bandStart == null || isNaN(bandStart)) {
+            return svg``
+          }
+
           const x = bandStart + xOffset
           const y = yScale(value)
-          const barHeight = Math.max(
-            0,
-            dimensions.height - dimensions.padding.bottom - y,
-          )
+
+          // Calculate bar height: distance from top (y) to bottom of chart area
+          const chartBottom = dimensions.height - dimensions.padding.bottom
+          const barHeight = Math.max(0, chartBottom - y)
+
+          // Skip if bar has no height or invalid dimensions
+          if (barHeight <= 0 || isNaN(barHeight) || isNaN(x) || isNaN(y)) {
+            return svg``
+          }
+
           const color = multiColor
             ? d.color || entityColors[i % entityColors.length]
             : fill || d.color || entityColors[barIndex % entityColors.length]
