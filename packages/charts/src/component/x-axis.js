@@ -30,10 +30,24 @@ export function renderXAxis(entity, props, api) {
   if (xScale.bandwidth) {
     // Following Recharts logic: for scaleBand, use the domain directly
     // and calculate the center as scale(category) + bandwidth() / 2
-    const categories = xScale.domain()
-    if (categories.length === 0) {
+    const allCategories = xScale.domain()
+    if (allCategories.length === 0) {
       return svg`<g class="iw-chart-xAxis"></g>`
     }
+
+    // Limit number of ticks to avoid overlapping labels
+    // Similar to Recharts behavior: show fewer ticks when there are many categories
+    let categories = allCategories
+    if (allCategories.length > 20) {
+      // Calculate optimal number of ticks based on available width
+      // Estimate ~60px per label to avoid overlap
+      const availableWidth =
+        (width || 800) - (padding?.left || 0) - (padding?.right || 0)
+      const maxTicks = Math.max(5, Math.floor(availableWidth / 60))
+      const step = Math.ceil(allCategories.length / maxTicks)
+      categories = allCategories.filter((_, i) => i % step === 0)
+    }
+
     let xAxisY = height - padding.bottom
     if (yScale) {
       const domain = yScale.domain()

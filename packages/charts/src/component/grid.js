@@ -26,13 +26,33 @@ export function renderGrid(entity, props, api) {
   const { xScale, yScale, width, height, padding, customYTicks } = props
   // Use entity.data if available, otherwise fallback to scale ticks
   const data = entity?.data
-  const xTicks = xScale.bandwidth
-    ? xScale.domain()
-    : data && data.length > 0
-      ? calculateXTicks(data, xScale)
-      : xScale.ticks
-        ? xScale.ticks(5)
-        : xScale.domain()
+
+  // For band scales (bar charts), limit ticks to match X-axis behavior
+  let xTicks
+  if (xScale.bandwidth) {
+    const allCategories = xScale.domain()
+    // Apply same limiting logic as renderXAxis to match grid with axis ticks
+    if (allCategories.length > 20) {
+      // Calculate optimal number of ticks based on available width
+      // Estimate ~60px per label to avoid overlap (same as X-axis)
+      const availableWidth =
+        (width || 800) - (padding?.left || 0) - (padding?.right || 0)
+      const maxTicks = Math.max(5, Math.floor(availableWidth / 60))
+      const step = Math.ceil(allCategories.length / maxTicks)
+      xTicks = allCategories.filter((_, i) => i % step === 0)
+    } else {
+      xTicks = allCategories
+    }
+  } else {
+    // For linear/time scales, use calculateXTicks (same as X-axis)
+    xTicks =
+      data && data.length > 0
+        ? calculateXTicks(data, xScale)
+        : xScale.ticks
+          ? xScale.ticks(5)
+          : xScale.domain()
+  }
+
   // Use custom Y ticks if provided, otherwise use scale ticks
   const yTicks =
     customYTicks && Array.isArray(customYTicks) ? customYTicks : yScale.ticks(5)
