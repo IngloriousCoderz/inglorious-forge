@@ -39,6 +39,12 @@ export const donutChart = createChart(donut)
  */
 export const chart = (api, entity, callback) => {
   const chartType = api.getType("chart")
+  if (!chartType) {
+    return null
+  }
   const instance = chartType.forEntity(entity, api)
+  if (!instance) {
+    return null
+  }
   return callback(instance)
 }
