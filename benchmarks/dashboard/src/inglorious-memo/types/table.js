@@ -1,9 +1,19 @@
 import { html, repeat } from "@inglorious/web"
 
-import { MAX_VALUE, ROWS_TO_UPDATE, updateData } from "../../utils"
+import {
+  generateData,
+  MAX_VALUE,
+  ROWS_TO_GENERATE,
+  ROWS_TO_UPDATE,
+  updateData,
+} from "../../utils"
 import { row } from "./row"
 
 export const table = {
+  init(entity) {
+    entity.data = generateData(ROWS_TO_GENERATE)
+  },
+
   randomUpdate(entity) {
     entity.data = updateData(entity.data, ROWS_TO_UPDATE)
   },

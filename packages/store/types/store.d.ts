@@ -53,6 +53,7 @@ export interface StoreConfig<
   entities?: TState
   systems?: System<TState>[]
   middlewares?: Middleware<TEntity, TState>[]
+  autoCreateEntities?: boolean
   mode?: "eager" | "batched"
 }
 

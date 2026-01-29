@@ -1474,6 +1474,73 @@ This hybrid approach gives you the best of both worlds: architectural consistenc
 
 ---
 
+## Simplifying Entity Setup with `autoCreateEntities`
+
+Let's be real: in a web app you very rarely need to create more than one entity for each type, and juggling between the types file and the entities file is annoying. That's why you can initialize the store with the `autoCreateEntities` flag, which will automatically create an entity with the same id as the type name.
+
+```javascript
+const types = {
+  app: {
+    render(entity, api) {
+      return html`
+        <div class="app">${api.render("header")} ${api.render("content")}</div>
+      `
+    },
+  },
+
+  header: {
+    render(entity, api) {
+      return html`<header>${entity.title}</header>`
+    },
+  },
+
+  content: {
+    render(entity, api) {
+      return html`<main>${entity.text}</main>`
+    },
+  },
+}
+
+// Without autoCreateEntities - you need to define every entity
+const entities = {
+  app: { type: "app" },
+  header: { type: "header", title: "Welcome" },
+  content: { type: "content", text: "Hello World" },
+}
+
+// With autoCreateEntities - entities are created automatically
+const store = createStore({
+  types,
+  entities: {}, // Can be empty!
+  autoCreateEntities: true,
+})
+```
+
+If you want to initialize an entity with specific data, you can use the `init()` event handler:
+
+```javascript
+const header = {
+  init(entity) {
+    entity.title = "Welcome"
+  },
+
+  render(entity, api) {
+    return html`<header>${entity.title}</header>`
+  },
+}
+```
+
+The `init()` handler runs once when the entity is first created, making it perfect for setting up default values. This pattern works great for web apps where most entities are singletons that behave more like components than game objects.
+
+**When to use `autoCreateEntities` in web apps:**
+
+- ✅ Single-page applications with singleton services
+- ✅ Component-like entities (headers, footers, navigation)
+- ✅ Rapid prototyping where structure matters more than initial state
+- ✅ Apps where you want to focus on behavior, not boilerplate
+
+---
+
 ## API Reference
 
 **`mount(store, renderFn, element)`**

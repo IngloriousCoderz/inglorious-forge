@@ -1,5 +1,12 @@
 # @inglorious/ssx
 
+## 1.5.8
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/web@4.1.1
+
 ## 1.5.7
 
 ### Patch Changes

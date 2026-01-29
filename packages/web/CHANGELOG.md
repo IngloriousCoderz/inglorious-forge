@@ -1,5 +1,13 @@
 # @inglorious/react-store
 
+## 4.1.1
+
+### Patch Changes
+
+- Add `autoCreateEntities` config option to store
+- Updated dependencies
+  - @inglorious/store@9.2.0
+
 ## 4.1.0
 
 ### Minor Changes

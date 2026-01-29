@@ -1,5 +1,11 @@
 # @inglorious/store
 
+## 9.2.0
+
+### Minor Changes
+
+- Add `autoCreateEntities` config option to store
+
 ## 9.1.0
 
 ### Minor Changes

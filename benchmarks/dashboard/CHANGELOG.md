@@ -1,5 +1,13 @@
 # dashboard-benchmark
 
+## 0.1.7
+
+### Patch Changes
+
+- Add `autoCreateEntities` config option to store
+- Updated dependencies
+  - @inglorious/web@4.1.1
+
 ## 0.1.6
 
 ### Patch Changes

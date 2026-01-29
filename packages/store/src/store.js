@@ -13,6 +13,7 @@ import { augmentType, augmentTypes } from "./types.js"
  * @param {Object} [config.entities] - The initial entities configuration.
  * @param {Array} [config.systems] - The initial systems configuration.
  * @param {Array} [config.middlewares] - The initial middlewares configuration.
+ * @param {boolean} [config.autoCreateEntities] - Creates entities if not defined in `config.entities`.
  * @param {"auto" | "manual"} [config.updateMode] - The update mode (defaults to "auto").
  * @returns {Object} The store with methods to interact with state and events.
  */
@@ -21,6 +22,7 @@ export function createStore({
   entities: originalEntities = {},
   systems = [],
   middlewares = [],
+  autoCreateEntities = false,
   updateMode = "auto",
 } = {}) {
   const listeners = new Set()
@@ -220,8 +222,25 @@ export function createStore({
     const oldEntities = state ?? {}
     const newEntities = augmentEntities(nextState)
 
+    if (autoCreateEntities) {
+      for (const typeName of Object.keys(types)) {
+        // Check if entity already exists
+        const hasEntity = Object.values(newEntities).some(
+          (entity) => entity.type === typeName,
+        )
+
+        if (!hasEntity) {
+          // No entity for this type → auto-create minimal entity
+          newEntities[typeName] = {
+            id: typeName,
+            type: typeName,
+          }
+        }
+      }
+    }
+
     state = newEntities
-    eventMap = new EventMap(types, nextState)
+    eventMap = new EventMap(types, newEntities)
     incomingEvents = []
     isProcessing = false
 

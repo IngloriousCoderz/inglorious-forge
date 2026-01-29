@@ -176,3 +176,30 @@ test("it should change an entity's behavior via setType", () => {
     bug: { id: "bug", type: "bug", isFull: true, hasFlown: true },
   })
 })
+
+test("it should auto-create entities when autoCreateEntities is enabled", () => {
+  const config = {
+    types: {
+      game: {},
+      player: {},
+    },
+    entities: {
+      player1: { type: "player" },
+    },
+    autoCreateEntities: true,
+  }
+
+  const store = createStore(config)
+  const state = store.getState()
+
+  expect(state.game).toStrictEqual({
+    id: "game",
+    type: "game",
+  })
+
+  expect(state.player).toBeUndefined()
+  expect(state.player1).toStrictEqual({
+    id: "player1",
+    type: "player",
+  })
+})

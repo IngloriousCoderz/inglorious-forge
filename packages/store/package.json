@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/store",
-  "version": "9.1.0",
+  "version": "9.2.0",
   "description": "A state manager for real-time, collaborative apps, inspired by game development patterns and compatible with Redux.",
   "author": "IceOnFire <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",

@@ -12,6 +12,7 @@ const ONE_SECOND = 1000
 export const store = createStore({
   types: { metrics, chart, table },
   entities,
+  autoCreateEntities: true,
 })
 
 // FPS Counter

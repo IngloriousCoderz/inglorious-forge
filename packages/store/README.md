@@ -794,11 +794,74 @@ const store = createStore({
   types, // Object: entity type definitions
   entities, // Object: initial entities
   systems, // Array (optional): global state handlers
+  autoCreateEntities, // Boolean (optional): false (default) or true
   updateMode, // String (optional): 'auto' (default) or 'manual'
 })
 ```
 
 **Returns:** A Redux-compatible store
+
+**Options:**
+
+- **`types`** (required) - Object defining entity type behaviors
+- **`entities`** (required) - Object containing initial entity instances
+- **`systems`** (optional) - Array of global state handlers
+- **`autoCreateEntities`** (optional) - Automatically create singleton entities for types not defined in `entities`:
+  - `false` (default) - Only use explicitly defined entities
+  - `true` - Auto-create entities matching their type name
+- **`updateMode`** (optional) - Controls when React components re-render:
+  - `'auto'` (default) - Automatic updates after each event
+  - `'manual'` - Manual control via `api.update()`
+
+#### Auto-Create Entities
+
+When `autoCreateEntities: true`, the store automatically creates singleton entities for any type that doesn't have a corresponding entity defined. This is particularly useful for singleton-type entities that behave like components, eliminating the need to switch between type definitions and entity declarations.
+
+```javascript
+const types = {
+  settings: {
+    setTheme(entity, theme) {
+      entity.theme = theme
+    },
+  },
+  analytics: {
+    track(entity, event) {
+      entity.events.push(event)
+    },
+  },
+}
+
+// Without autoCreateEntities (default)
+const entities = {
+  settings: { type: "settings", theme: "dark" },
+  analytics: { type: "analytics", events: [] },
+}
+
+// With autoCreateEntities: true
+const entities = {
+  // settings and analytics will be auto-created as:
+  // settings: { type: "settings" }
+  // analytics: { type: "analytics" }
+}
+
+const store = createStore({
+  types,
+  entities,
+  autoCreateEntities: true,
+})
+
+// Both approaches work the same way
+store.notify("settings:setTheme", "light")
+store.notify("analytics:track", { action: "click" })
+```
+
+**When to use `autoCreateEntities`:**
+
+- ✅ Building web applications with singleton services (settings, auth, analytics)
+- ✅ Component-like entities that only need one instance
+- ✅ Rapid prototyping where you want to add types without ceremony
+- ❌ Game development with multiple entity instances (players, enemies, items)
+- ❌ When you need fine control over initial entity state
 
 ### Types Definition
 
