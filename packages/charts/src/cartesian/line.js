@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 
-import { html, repeat,svg } from "@inglorious/web"
+import { html, repeat, svg } from "@inglorious/web"
 
 import { renderGrid } from "../component/grid.js"
 import { renderLegend } from "../component/legend.js"
