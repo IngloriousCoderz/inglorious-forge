@@ -1,4 +1,4 @@
-import { svg } from "lit-html"
+import { svg } from "@inglorious/web"
 
 import { logic } from "./logic.js"
 import { rendering } from "./rendering.js"

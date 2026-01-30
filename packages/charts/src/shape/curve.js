@@ -1,4 +1,4 @@
-import { svg } from "lit-html"
+import { svg } from "@inglorious/web"
 
 /**
  * Renders a single curve/path (primitive shape)

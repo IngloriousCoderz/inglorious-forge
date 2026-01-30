@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 
-import { html, svg } from "lit-html"
+import { html, svg } from "@inglorious/web"
 
 import { renderTooltip } from "../component/tooltip.js"
 import { formatNumber } from "../utils/data-utils.js"

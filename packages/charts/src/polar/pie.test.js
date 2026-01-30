@@ -1,7 +1,7 @@
 /**
  * @vitest-environment jsdom
  */
-import { render } from "lit-html"
+import { render } from "@inglorious/web/test"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
 import { pie } from "./pie.js"

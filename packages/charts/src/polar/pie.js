@@ -1,7 +1,6 @@
 /* eslint-disable no-magic-numbers */
 
-import { html, svg } from "lit-html"
-import { repeat } from "lit-html/directives/repeat.js"
+import { html, repeat,svg } from "@inglorious/web"
 
 import { renderTooltip } from "../component/tooltip.js"
 import { renderSector } from "../shape/sector.js"

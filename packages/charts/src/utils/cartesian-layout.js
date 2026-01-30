@@ -3,7 +3,7 @@
  * Common layout logic for cartesian charts (area, line, bar)
  */
 
-import { html, svg } from "lit-html"
+import { html, svg } from "@inglorious/web"
 
 import { renderEmptyState } from "../component/empty-state.js"
 import { renderGrid } from "../component/grid.js"

@@ -1,7 +1,7 @@
 /* eslint-disable no-magic-numbers */
+import { html, svg } from "@inglorious/web"
 import { extent } from "d3-array"
 import { scaleBand } from "d3-scale"
-import { html, svg } from "lit-html"
 
 import { renderGrid } from "../component/grid.js"
 import { renderTooltip } from "../component/tooltip.js"
