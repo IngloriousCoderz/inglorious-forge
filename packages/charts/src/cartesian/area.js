@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { html, repeat,svg } from "@inglorious/web"
+import { html, repeat, svg } from "@inglorious/web"
 
 import { renderGrid } from "../component/grid.js"
 import { renderTooltip } from "../component/tooltip.js"

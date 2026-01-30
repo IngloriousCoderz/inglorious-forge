@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 
-import { repeat,svg } from "@inglorious/web"
+import { repeat, svg } from "@inglorious/web"
 
 import {
   ensureValidNumber,
