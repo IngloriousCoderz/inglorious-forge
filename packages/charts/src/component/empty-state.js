@@ -1,4 +1,4 @@
-import { svg } from "lit-html"
+import { svg } from "@inglorious/web"
 
 /**
  * Renders an empty state message when there's no data

@@ -1,7 +1,8 @@
 /**
  * @vitest-environment jsdom
  */
-import { html, render, svg } from "lit-html"
+import { html, svg } from "@inglorious/web"
+import { render } from "@inglorious/web/test"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
 import { area } from "./area.js"

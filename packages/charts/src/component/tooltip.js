@@ -1,4 +1,4 @@
-import { html } from "lit-html"
+import { html } from "@inglorious/web"
 
 import { formatNumber } from "../utils/data-utils.js"
 

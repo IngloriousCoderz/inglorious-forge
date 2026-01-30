@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 
-import { svg } from "lit-html"
+import { svg } from "@inglorious/web"
 
 import { generateArcPath } from "../utils/paths.js"
 

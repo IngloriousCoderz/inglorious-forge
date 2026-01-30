@@ -1,7 +1,8 @@
 /**
  * @vitest-environment jsdom
  */
-import { render, svg } from "lit-html"
+import { svg } from "@inglorious/web"
+import { render } from "@inglorious/web/test"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
 import { renderLegend } from "./legend.js"

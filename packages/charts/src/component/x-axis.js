@@ -1,7 +1,6 @@
 /* eslint-disable no-magic-numbers */
 
-import { svg } from "lit-html"
-import { repeat } from "lit-html/directives/repeat.js"
+import { repeat,svg } from "@inglorious/web"
 
 import {
   ensureValidNumber,

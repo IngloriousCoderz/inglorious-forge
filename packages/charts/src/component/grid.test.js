@@ -1,7 +1,7 @@
 /**
  * @vitest-environment jsdom
  */
-import { render } from "lit-html"
+import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
 import { renderGrid } from "./grid.js"
