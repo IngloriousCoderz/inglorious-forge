@@ -1,5 +1,11 @@
 # @inglorious/logo
 
+## 2.0.24
+
+### Patch Changes
+
+- @inglorious/web@4.1.2
+
 ## 2.0.23
 
 ### Patch Changes

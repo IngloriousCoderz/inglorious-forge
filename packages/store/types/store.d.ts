@@ -146,3 +146,15 @@ export function createApi<
   store: Store<TEntity, TState>,
   extras?: Record<string, any>,
 ): Api<TEntity, TState>
+
+/**
+ * Helper to create a set of handlers for an async operation
+ */
+export function handleAsync<
+  TEntity extends BaseEntity = BaseEntity,
+  TPayload = any,
+  TResult = any,
+>(
+  type: string,
+  handlers: AsyncHandlers<TEntity, TPayload, TResult>,
+): EntityType<TEntity>

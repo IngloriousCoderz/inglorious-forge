@@ -1,5 +1,11 @@
 # web-todomvc-ts
 
+## 0.2.11
+
+### Patch Changes
+
+- @inglorious/web@4.1.2
+
 ## 0.2.10
 
 ### Patch Changes

@@ -498,6 +498,192 @@ Notice: you don't need pending/fulfilled/rejected actions. You stay in control o
 
 All events triggered via `api.notify()` enter the queue and process together, maintaining predictability and testability.
 
+### `handleAsync`
+
+The `handleAsync` helper generates a set of event handlers representing the lifecycle of an async operation.
+
+```ts
+handleAsync(type, handlers, options?)
+```
+
+Example:
+
+```ts
+handleAsync("fetchTodos", {
+  async run(payload) {
+    const res = await fetch("/api/todos")
+    return res.json()
+  },
+
+  success(entity, todos) {
+    entity.todos = todos
+  },
+
+  error(entity, error) {
+    entity.error = error.message
+  },
+
+  finally(entity) {
+    entity.loading = false
+  },
+})
+```
+
+---
+
+### Lifecycle events
+
+Triggering `fetchTodos` emits the following events:
+
+```
+fetchTodos
+fetchTodosRun
+fetchTodosSuccess | fetchTodosError
+fetchTodosFinally
+```
+
+Each step is an **event handler**, not an implicit callback.
+
+---
+
+### Optional `start` handler
+
+Use `start` for synchronous setup (loading flags, resets, optimistic state):
+
+```ts
+handleAsync("save", {
+  start(entity) {
+    entity.loading = true
+  },
+  async run(payload) {
+    return api.save(payload)
+  },
+})
+```
+
+If omitted, no `Start` event is generated.
+
+---
+
+### Event scoping
+
+By default, lifecycle events are **scoped to the triggering entity**:
+
+```
+#entityId:fetchTodosSuccess
+```
+
+You can override this behavior:
+
+```ts
+handleAsync("bootstrap", handlers, { scope: "global" })
+```
+
+Available scopes:
+
+- `"entity"` (default)
+- `"type"`
+- `"global"`
+
+---
+
+> **Key rule:** Async code must not access entities after `await`. All updates happen in event handlers.
+
+---
+
+## 🧩 Migrating from Redux Toolkit (RTK)
+
+Inglorious Store now provides utilities to **gradually migrate from RTK slices and thunks**, leveraging `handleAsync` to simplify async logic.
+
+### Converting Async Thunks
+
+```javascript
+import { convertAsyncThunk } from "@inglorious/store/rtk"
+
+const fetchTodos = async (userId) => {
+  const res = await fetch(`/api/users/${userId}/todos`)
+  return res.json()
+}
+
+const todoHandlers = convertAsyncThunk("fetchTodos", fetchTodos, {
+  onPending: (entity) => {
+    entity.status = "loading"
+  },
+  onFulfilled: (entity, todos) => {
+    entity.status = "success"
+    entity.todos = todos
+  },
+  onRejected: (entity, error) => {
+    entity.status = "error"
+    entity.error = error.message
+  },
+})
+```
+
+```javascript
+const todoList = {
+  init(entity) {
+    entity.todos = []
+    entity.status = "idle"
+  },
+  ...todoHandlers,
+}
+```
+
+### Converting Slices
+
+```javascript
+import { convertSlice } from "@inglorious/store/rtk"
+
+const todoListType = convertSlice(todosSlice, {
+  asyncThunks: {
+    fetchTodos: {
+      onPending: (entity) => {
+        entity.status = "loading"
+      },
+      onFulfilled: (entity, todos) => {
+        entity.items = todos
+      },
+      onRejected: (entity, error) => {
+        entity.error = error.message
+      },
+    },
+  },
+})
+```
+
+- Reducers become event handlers automatically.
+- Async thunks become `handleAsync` events.
+- Initial state is applied via an `init` handler.
+- Extra handlers can be added if needed.
+
+---
+
+### RTK-Style Dispatch Compatibility
+
+```javascript
+const dispatch = createRTKCompatDispatch(api, "todos")
+dispatch({ type: "todos/addTodo", payload: "Buy milk" })
+// becomes: api.notify('#todos:addTodo', 'Buy milk')
+```
+
+> Thunks are **not supported** in compat mode; convert them using `convertAsyncThunk`.
+
+---
+
+### Migration Guide
+
+```javascript
+import { createMigrationGuide } from "@inglorious/store/rtk"
+
+const guide = createMigrationGuide(todosSlice)
+console.log(guide)
+```
+
+Outputs a readable guide mapping RTK calls to Inglorious events.
+
+---
+
 ### 🧪 Testing
 
 Event handlers are pure functions (or can be treated as such), making them easy to test in isolation, much like Redux reducers. The `@inglorious/store/test` module provides utility functions to make this even simpler.

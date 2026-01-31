@@ -1,5 +1,13 @@
 # todomvc-cs
 
+## 1.2.19
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/store@9.3.0
+  - @inglorious/react-store@14.0.0
+
 ## 1.2.18
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @inglorious/store
 
+## 9.3.0
+
+### Minor Changes
+
+- Add functions for migration from RTK
+
 ## 9.2.0
 
 ### Minor Changes
