@@ -1,5 +1,11 @@
 # web-todomvc-jsx
 
+## 0.2.9
+
+### Patch Changes
+
+- Allow JSX syntax when scaffolding app
+
 ## 0.2.8
 
 ### Patch Changes

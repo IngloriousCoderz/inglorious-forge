@@ -1,15 +1,14 @@
 {
-  "name": "web-todomvc-tsx",
-  "private": true,
-  "version": "0.2.9",
+  "name": "js-template",
+  "version": "0.1.0",
   "type": "module",
-  "author": "IceOnFire <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
+  "private": true,
+  "description": "A new app created with @inglorious/create-app",
+  "author": "",
   "license": "MIT",
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint .",
-    "test:watch": "vitest",
-    "test": "vitest run",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
@@ -19,15 +18,17 @@
   },
   "devDependencies": {
     "@inglorious/eslint-config": "workspace:*",
-    "@inglorious/jsx": "workspace:*",
     "@inglorious/vite-plugin-jsx": "workspace:*",
-    "@types/node": "^24.8.0",
     "eslint": "^9.39.1",
     "prettier": "^3.6.2",
     "rollup-plugin-minify-template-literals": "^1.1.7",
-    "typescript": "~5.9.3",
-    "vite": "^7.1.6",
-    "vitest": "^4.0.16",
-    "vite-plugin-image-optimizer": "^2.0.3"
+    "sharp": "^0.34.5",
+    "svgo": "^4.0.0",
+    "vite-plugin-image-optimizer": "^2.0.3",
+    "vite": "^7.1.6"
+  },
+  "packageManager": "pnpm@10.15.0",
+  "engines": {
+    "node": ">= 22"
   }
 }

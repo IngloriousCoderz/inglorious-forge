@@ -21,7 +21,7 @@ async function main() {
     return false
   }
 
-  const { projectName, template } = await prompts(
+  const { projectName, baseTemplate } = await prompts(
     [
       {
         type: "text",
@@ -31,7 +31,7 @@ async function main() {
       },
       {
         type: "select",
-        name: "template",
+        name: "baseTemplate",
         message: "Select a template",
         choices: [
           {
@@ -70,11 +70,56 @@ async function main() {
     return
   }
 
+  let renderer = "lit-html"
+
+  // Ask about renderer for non-minimal templates
+  if (baseTemplate !== "minimal") {
+    const { selectedRenderer } = await prompts(
+      {
+        type: "select",
+        name: "selectedRenderer",
+        message: "Select a rendering syntax",
+        choices: [
+          {
+            title: "lit-html (default)",
+            description: "Tagged template literals (html`<div>...</div>`)",
+            value: "lit-html",
+          },
+          {
+            title: "JSX",
+            description: "JSX/TSX syntax (<div>...</div>)",
+            value: "jsx",
+          },
+          // {
+          //   title: "Vue",
+          //   description: "Vue SFC-style templates",
+          //   value: "vue",
+          // },
+        ],
+      },
+      { onCancel },
+    )
+
+    if (canceled) {
+      console.log("Operation canceled.")
+      return
+    }
+
+    renderer = selectedRenderer
+  }
+
   const spinner = ora(`Creating project "${projectName}"...`).start()
 
   try {
     const targetDir = path.join(process.cwd(), projectName)
-    const templateDir = path.join(templatesRoot, template)
+
+    // Determine the actual template directory based on base template and renderer
+    let templateName = baseTemplate
+    if (baseTemplate !== "minimal" && renderer !== "lit-html") {
+      templateName = `${baseTemplate}-${renderer}`
+    }
+
+    const templateDir = path.join(templatesRoot, templateName)
 
     // Create project directory and copy template files
     copyDir(templateDir, targetDir)
@@ -87,7 +132,7 @@ async function main() {
       fs.writeFileSync(readmePath, readme)
     }
 
-    if (template === "minimal") {
+    if (baseTemplate === "minimal") {
       spinner.succeed(`Created ${projectName} at ${targetDir}`)
       console.log(`\nNext steps:`)
       console.log(`  cd ${projectName}`)
