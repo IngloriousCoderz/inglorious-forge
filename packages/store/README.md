@@ -433,6 +433,26 @@ store.notify("toggle", "todo1")
 // Each list's toggle handler runs; only the one with todo1 actually updates
 ```
 
+Alternatively, you can use the **targeted notification syntax** to filter events at the dispatch level:
+
+- `notify("type:event")`: notifies only entities of a specific type.
+- `notify("#id:event")`: notifies only a specific entity by ID.
+- `notify("type#id:event")`: notifies a specific entity of a specific type.
+
+```javascript
+const types = {
+  todoList: {
+    toggle(entity) {
+      const todo = entity.todos.find((t) => t.id === entity.id)
+      if (todo) todo.completed = !todo.completed
+    },
+  },
+}
+
+// Notify only the entity with ID 'work'
+store.notify("#todo1:toggle")
+```
+
 ### ⚡ Async Operations
 
 In **Redux/RTK**, logic should be written inside pure functions as much as possible — specifically in reducers, not action creators. But what if I need to access some other part of the state that is not visible to the reducer? What if I need to combine async behavior with sync behavior? This is where the choice of "where does my logic live?" matters.

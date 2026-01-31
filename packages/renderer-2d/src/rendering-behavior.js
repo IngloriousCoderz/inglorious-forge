@@ -82,9 +82,7 @@ export function rendering(canvas) {
       canvas.addEventListener("touchend", _onTouchEnd)
     },
 
-    destroy(entity, id) {
-      if (id !== entity.id) return
-
+    destroy() {
       if (_onMouseMove) {
         canvas.removeEventListener("mousemove", _onMouseMove)
       }

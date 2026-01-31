@@ -1516,11 +1516,11 @@ const store = createStore({
 })
 ```
 
-If you want to initialize an entity with specific data, you can use the `init()` event handler:
+If you want to initialize an entity with specific data, you can use the `create()` event handler:
 
 ```javascript
 const header = {
-  init(entity) {
+  create(entity) {
     entity.title = "Welcome"
   },
 
@@ -1530,7 +1530,7 @@ const header = {
 }
 ```
 
-The `init()` handler runs once when the entity is first created, making it perfect for setting up default values. This pattern works great for web apps where most entities are singletons that behave more like components than game objects.
+The `create()` handler runs for each entity of that type is first created, making it perfect for setting up default values. This pattern works great for web apps where most entities are singletons that behave more like components than game objects.
 
 **When to use `autoCreateEntities` in web apps:**
 

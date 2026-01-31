@@ -8,7 +8,7 @@ const LAST_TASK = 1
 const NEXT_ID = 1
 
 export const list = {
-  init(entity) {
+  create(entity) {
     entity.tasks = []
   },
 

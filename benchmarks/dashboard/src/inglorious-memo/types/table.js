@@ -10,7 +10,7 @@ import {
 import { row } from "./row"
 
 export const table = {
-  init(entity) {
+  create(entity) {
     entity.data = generateData(ROWS_TO_GENERATE)
   },
 

@@ -1,7 +1,7 @@
 import { html } from "@inglorious/web"
 
 export const form = {
-  init(entity) {
+  create(entity) {
     entity.value = ""
   },
 

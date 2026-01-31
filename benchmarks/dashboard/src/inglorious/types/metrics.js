@@ -4,7 +4,7 @@ const ERROR_FPS = 30
 const WARN_FPS = 50
 
 export const metrics = {
-  init(entity) {
+  create(entity) {
     entity.fps = 60
     entity.renderTime = 0
     entity.updateCount = 0
