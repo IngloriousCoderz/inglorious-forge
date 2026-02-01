@@ -1,5 +1,5 @@
 {
-  "name": "my-app",
+  "name": "js-template",
   "version": "0.1.0",
   "type": "module",
   "private": true,
@@ -14,18 +14,20 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@inglorious/web": "^4.1.2"
+    "@inglorious/web": "workspace:*"
   },
   "devDependencies": {
-    "@inglorious/eslint-config": "^1.1.1",
-    "@inglorious/vite-plugin-vue": "^0.2.0",
+    "@inglorious/eslint-config": "workspace:*",
+    "@inglorious/vite-plugin-vue": "workspace:*",
+    "@types/node": "^25.0.9",
     "eslint": "^9.39.1",
     "prettier": "^3.6.2",
     "rollup-plugin-minify-template-literals": "^1.1.7",
     "sharp": "^0.34.5",
     "svgo": "^4.0.0",
-    "vite-plugin-image-optimizer": "^2.0.3",
-    "vite": "^7.1.6"
+    "typescript": "^5.9.2",
+    "vite": "^7.1.6",
+    "vite-plugin-image-optimizer": "^2.0.3"
   },
   "packageManager": "pnpm@10.15.0",
   "engines": {

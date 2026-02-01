@@ -1,4 +1,6 @@
-export const entities = {
+import type { AppState } from "../../types"
+
+export const entities: AppState = {
   message1: {
     type: "message",
     who: "world",

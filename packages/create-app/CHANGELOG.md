@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 0.5.0
+
+### Minor Changes
+
+- Add Vue support in app scaffolder
+
 ## 0.4.0
 
 ### Minor Changes
