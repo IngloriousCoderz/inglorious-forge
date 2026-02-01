@@ -1,0 +1,97 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`@inglorious/vite-plugin-vue > basic behavior > transforms a simple template 1`] = `
+"import { html } from "@inglorious/web";
+
+export const testComponent = {
+  render(entity, api) {
+    return html\`<div>Hello World</div>\`;
+  }
+};
+"
+`;
+
+exports[`@inglorious/vite-plugin-vue > bindings > handles property and event bindings 1`] = `
+"import { html } from "@inglorious/web";
+
+export const testComponent = {
+  render(entity, api) {
+    return html\`<input type="text" .value="\${entity.text}" .maxlength="\${entity.maxLength}" @input="\${(e) => onInput(entity, e)}"></input>\`;
+  }
+};
+"
+`;
+
+exports[`@inglorious/vite-plugin-vue > complex component > handles a realistic component 1`] = `
+"import { html, when, repeat } from "@inglorious/web";
+
+export const testComponent = {
+  create(entity) {
+    entity.todos = []
+  },
+
+  render(entity, api) {
+    return html\`<div>
+    \${when(entity.todos.length, () => html\`<ul>
+      \${repeat(entity.todos, todo => todo.id, todo => html\`<li>
+        \${entity.todo.text}
+      </li>\`)}
+    </ul>\`, () => html\`<p>No todos</p>\`)}
+    html\`<p>No todos</p>\`
+  </div>\`;
+  }
+};
+"
+`;
+
+exports[`@inglorious/vite-plugin-vue > conditionals > handles v-if / v-else 1`] = `
+"import { html, when } from "@inglorious/web";
+
+export const testComponent = {
+  render(entity, api) {
+    return html\`\${when(entity.show, () => html\`<div>Yes</div>\`, () => html\`<div>No</div>\`)}
+  html\`<div>No</div>\`\`;
+  }
+};
+"
+`;
+
+exports[`@inglorious/vite-plugin-vue > interpolations > handles interpolation 1`] = `
+"import { html } from "@inglorious/web";
+
+export const testComponent = {
+  render(entity, api) {
+    return html\`<p>Hello \${entity.name}!</p>\`;
+  }
+};
+"
+`;
+
+exports[`@inglorious/vite-plugin-vue > loops > handles v-for 1`] = `
+"import { html, repeat } from "@inglorious/web";
+
+export const testComponent = {
+  render(entity, api) {
+    return \${repeat(entity.items, item => item.id, item => html\`<li>
+    \${entity.item.name}
+  </li>\`)};
+  }
+};
+"
+`;
+
+exports[`@inglorious/vite-plugin-vue > script section > includes script content verbatim 1`] = `
+"import { html } from "@inglorious/web";
+
+export const testComponent = {
+  create(entity) {
+    entity.value = 0
+    entity.increment = (entity) => entity.value++
+  },
+
+  render(entity, api) {
+    return html\`<div @click="\${(e) => increment(entity, e)}">\${entity.entity.value}</div>\`;
+  }
+};
+"
+`;
