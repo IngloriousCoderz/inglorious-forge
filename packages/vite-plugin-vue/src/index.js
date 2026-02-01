@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { transformAsync } from "@babel/core"
 import generate from "@babel/generator"
 import * as babelParser from "@babel/parser"
@@ -295,8 +296,10 @@ function extractValue(node, source) {
 function parseTemplate(html) {
   const handler = new DomHandler()
   const parser = new htmlparser2.Parser(handler, {
+    xmlMode: true,
     lowerCaseAttributeNames: false, // Preserve camelCase attributes like maxLength
     lowerCaseTags: false,
+    recognizeSelfClosing: true,
   })
   parser.write(html)
   parser.end()
@@ -391,7 +394,7 @@ function transformTextNode(node, imports, context) {
  * @returns {string} Generated code.
  */
 function transformElementNode(node, imports, methodNames, context) {
-  const { name, attribs = {}, children = [] } = node
+  const { attribs = {} } = node
 
   // Check for v-if, v-else-if, v-else
   if (attribs["v-if"]) {
