@@ -1,0 +1,34 @@
+{
+  "name": "my-app",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "description": "A new app created with @inglorious/create-app",
+  "author": "",
+  "license": "MIT",
+  "scripts": {
+    "format": "prettier --write .",
+    "lint": "eslint .",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@inglorious/web": "^4.1.2"
+  },
+  "devDependencies": {
+    "@inglorious/eslint-config": "^1.1.1",
+    "@inglorious/vite-plugin-vue": "latest",
+    "eslint": "^9.39.1",
+    "prettier": "^3.6.2",
+    "rollup-plugin-minify-template-literals": "^1.1.7",
+    "sharp": "^0.34.5",
+    "svgo": "^4.0.0",
+    "vite-plugin-image-optimizer": "^2.0.3",
+    "vite": "^7.1.6"
+  },
+  "packageManager": "pnpm@10.15.0",
+  "engines": {
+    "node": ">= 22"
+  }
+}

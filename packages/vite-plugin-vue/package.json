@@ -1,0 +1,49 @@
+{
+  "name": "@inglorious/vite-plugin-vue",
+  "version": "0.1.0",
+  "description": "A Vite plugin that transforms Vue-like template syntax into lit-html templates.",
+  "author": "IceOnFire <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
+  "license": "MIT",
+  "type": "module",
+  "main": "./src/index.js",
+  "homepage": "https://github.com/IngloriousCoderz/inglorious-forge/tree/main/packages/vite-plugin-vue#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/IngloriousCoderz/inglorious-forge.git",
+    "directory": "packages/vite-plugin-vue"
+  },
+  "bugs": {
+    "url": "https://github.com/IngloriousCoderz/inglorious-forge/issues"
+  },
+  "keywords": [
+    "vite",
+    "vite-plugin",
+    "inglorious",
+    "vue",
+    "lit-html"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "format": "prettier --write .",
+    "lint": "eslint .",
+    "test:watch": "vitest",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@babel/core": "^7.28.5",
+    "@babel/parser": "^7.29.0",
+    "@babel/plugin-syntax-typescript": "^7.28.6",
+    "@babel/types": "^7.29.0",
+    "domhandler": "^5.0.3",
+    "htmlparser2": "^10.1.0"
+  },
+  "devDependencies": {
+    "@inglorious/eslint-config": "workspace:*",
+    "vitest": "^2.0.4"
+  },
+  "engines": {
+    "node": ">= 22"
+  }
+}

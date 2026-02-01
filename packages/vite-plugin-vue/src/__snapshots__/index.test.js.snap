@@ -1,0 +1,425 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`@inglorious/vite-plugin-vue > TypeScript support > handles TypeScript script sections 1`] = `
+"import { html } from "@inglorious/web";
+export const testComponent = {
+  create(entity) {
+    entity.message = "Hello";
+  },
+  greet(entity) {
+    console.log(entity.message);
+  },
+  render(entity, api) {
+    return html\`<div>\${entity.message}</div>\`;
+  }
+};"
+`;
+
+exports[`@inglorious/vite-plugin-vue > basic behavior > transforms a simple template 1`] = `
+"import { html } from "@inglorious/web";
+
+export const testComponent = {
+  render(entity, api) {
+    return html\`<div>Hello World</div>\`;
+  }
+};
+"
+`;
+
+exports[`@inglorious/vite-plugin-vue > bindings > handles property and event bindings 1`] = `
+"import { html } from "@inglorious/web";
+
+export const testComponent = {
+  render(entity, api) {
+    return html\`<input type="text" .value="\${entity.text}" .maxLength="\${entity.maxLength}" @input="\${onInput}"></input>\`;
+  }
+};
+"
+`;
+
+exports[`@inglorious/vite-plugin-vue > complex component > handles a realistic component 1`] = `
+"import { html, when, repeat } from "@inglorious/web";
+
+export const testComponent = {
+  create(entity) {
+    entity.todos = []
+  },
+
+  render(entity, api) {
+    return html\`<div>
+    \${when(entity.todos.length, () => html\`<ul>
+      \${repeat(entity.todos, todo => todo.id, (todo) => html\`<li>
+        \${todo.text}
+      </li>\`)}
+    </ul>\`, () => html\`<p>No todos</p>\`)}
+    html\`<p>No todos</p>\`
+  </div>\`;
+  }
+};
+"
+`;
+
+exports[`@inglorious/vite-plugin-vue > complex component > handles complete todo app 1`] = `
+"import { html, when, repeat } from "@inglorious/web";
+
+export const testComponent = {
+  create(entity) {
+    entity.todos = []
+    entity.newTodo = ''
+  },
+
+  addTodo(entity, e) {
+    e.preventDefault()
+      if (!entity.newTodo.trim()) return
+      entity.todos.push({
+        id: Date.now(),
+        text: entity.newTodo,
+        done: false
+      })
+      entity.newTodo = ''
+  },
+
+  updateNewTodo(entity, e) {
+    entity.newTodo = e.target.value
+  },
+
+  toggleTodo(entity, id) {
+    const todo = entity.todos.find(t => t.id === id)
+      if (todo) todo.done = !todo.done
+  },
+
+  removeTodo(entity, id) {
+    entity.todos = entity.todos.filter(t => t.id !== id)
+  },
+
+  render(entity, api) {
+    return html\`<div class="todos">
+    html\`<form @submit="\${() => api.notify(\`#\${entity.id}:addTodo\`)}">
+      html\`<input .value="\${entity.newTodo}" @input="\${() => api.notify(\`#\${entity.id}:updateNewTodo\`)}"></input>\`
+      html\`<button type="submit">Add</button>\`
+    </form>\`
+    \${when(entity.todos.length > 0, () => html\`<ul>
+      \${repeat(entity.todos, todo => todo.id, (todo) => html\`<li>
+        html\`<input type="checkbox" .checked="\${todo.done}" @change="\${() => api.notify(\`#\${entity.id}:toggleTodo\`, todo.id)}"></input>\`
+        html\`<span>\${todo.text}</span>\`
+        html\`<button @click="\${() => api.notify(\`#\${entity.id}:removeTodo\`, todo.id)}">×</button>\`
+      </li>\`)}
+    </ul>\`, () => html\`<p>No todos yet!</p>\`)}
+    html\`<p>No todos yet!</p>\`
+  </div>\`;
+  }
+};
+"
+`;
+
+exports[`@inglorious/vite-plugin-vue > component references > renders PascalCase component inside conditionals 1`] = `
+"import { html, when } from "@inglorious/web";
+
+export const testComponent = {
+  render(entity, api) {
+    return \${when(entity.visible, () => \${api.render("message1")})};
+  }
+};
+"
+`;
+
+exports[`@inglorious/vite-plugin-vue > component references > renders PascalCase component inside loops 1`] = `
+"import { html, repeat } from "@inglorious/web";
+
+export const testComponent = {
+  render(entity, api) {
+    return \${repeat(entity.items, (item) => \${api.render("message1")})};
+  }
+};
+"
+`;
+
+exports[`@inglorious/vite-plugin-vue > component references > renders PascalCase component without props 1`] = `
+"export const testComponent = {
+  render(entity, api) {
+    return \${api.render("message1")};
+  }
+};
+"
+`;
+
+exports[`@inglorious/vite-plugin-vue > component references > renders multiple PascalCase components 1`] = `
+"import { html } from "@inglorious/web";
+
+export const testComponent = {
+  render(entity, api) {
+    return html\`<div>
+    \${api.render("header")}</div>\`;
+  }
+};
+"
+`;
+
+exports[`@inglorious/vite-plugin-vue > component references > renders nested PascalCase components 1`] = `
+"export const testComponent = {
+  render(entity, api) {
+    return \${api.render("section")};
+  }
+};
+"
+`;
+
+exports[`@inglorious/vite-plugin-vue > conditionals > handles nested v-if 1`] = `
+"import { html, when } from "@inglorious/web";
+
+export const testComponent = {
+  render(entity, api) {
+    return \${when(entity.outer, () => html\`<div>
+    \${when(entity.inner, () => html\`<span>Nested</span>\`)}
+  </div>\`)};
+  }
+};
+"
+`;
+
+exports[`@inglorious/vite-plugin-vue > conditionals > handles v-if / v-else 1`] = `
+"import { html, when } from "@inglorious/web";
+
+export const testComponent = {
+  render(entity, api) {
+    return html\`\${when(entity.show, () => html\`<div>Yes</div>\`, () => html\`<div>No</div>\`)}
+  html\`<div>No</div>\`\`;
+  }
+};
+"
+`;
+
+exports[`@inglorious/vite-plugin-vue > conditionals > handles v-if / v-else-if / v-else 1`] = `
+"import { html, when } from "@inglorious/web";
+
+export const testComponent = {
+  render(entity, api) {
+    return html\`\${when(entity.status === 'loading', () => html\`<div>Loading</div>\`, () => when(entity.status === 'error', () => html\`<div>Error</div>\`, () => html\`<div>Success</div>\`))}
+  html\`<div>Error</div>\`
+  html\`<div>Success</div>\`\`;
+  }
+};
+"
+`;
+
+exports[`@inglorious/vite-plugin-vue > edge cases > handles self-closing tags 1`] = `
+"import { html } from "@inglorious/web";
+
+export const testComponent = {
+  render(entity, api) {
+    return html\`<div>
+    html\`<input type="text"></input>\`
+    html\`<br></br>\`
+  </div>\`;
+  }
+};
+"
+`;
+
+exports[`@inglorious/vite-plugin-vue > event handlers > handles multiple event types 1`] = `
+"import { html } from "@inglorious/web";
+
+export const testComponent = {
+  onInput(entity) {
+    
+  },
+
+  onBlur(entity) {
+    
+  },
+
+  onFocus(entity) {
+    
+  },
+
+  render(entity, api) {
+    return html\`<input @input="\${() => api.notify(\`#\${entity.id}:onInput\`)}" @blur="\${() => api.notify(\`#\${entity.id}:onBlur\`)}" @focus="\${() => api.notify(\`#\${entity.id}:onFocus\`)}"></input>\`;
+  }
+};
+"
+`;
+
+exports[`@inglorious/vite-plugin-vue > event handlers > transforms method references to api.notify 1`] = `
+"import { html } from "@inglorious/web";
+
+export const testComponent = {
+  increment(entity) {
+    entity.count++
+  },
+
+  render(entity, api) {
+    return html\`<button @click="\${() => api.notify(\`#\${entity.id}:increment\`)}">+</button>\`;
+  }
+};
+"
+`;
+
+exports[`@inglorious/vite-plugin-vue > interpolations > handles interpolation 1`] = `
+"import { html } from "@inglorious/web";
+
+export const testComponent = {
+  render(entity, api) {
+    return html\`<p>Hello \${entity.name}!</p>\`;
+  }
+};
+"
+`;
+
+exports[`@inglorious/vite-plugin-vue > interpolations > handles multiple interpolations 1`] = `
+"import { html } from "@inglorious/web";
+
+export const testComponent = {
+  render(entity, api) {
+    return html\`<p>\${entity.x} + \${entity.y} = \${entity.x + y}</p>\`;
+  }
+};
+"
+`;
+
+exports[`@inglorious/vite-plugin-vue > loops > handles v-for 1`] = `
+"import { html, repeat } from "@inglorious/web";
+
+export const testComponent = {
+  render(entity, api) {
+    return \${repeat(entity.items, item => item.id, (item) => html\`<li>
+    \${item.name}
+  </li>\`)};
+  }
+};
+"
+`;
+
+exports[`@inglorious/vite-plugin-vue > loops > handles v-for with index 1`] = `
+"import { html, repeat } from "@inglorious/web";
+
+export const testComponent = {
+  render(entity, api) {
+    return \${repeat(entity.items, item => item.id, (item, index) => html\`<li>
+    \${entity.index}: \${item.name}
+  </li>\`)};
+  }
+};
+"
+`;
+
+exports[`@inglorious/vite-plugin-vue > loops > handles v-for without :key 1`] = `
+"import { html, repeat } from "@inglorious/web";
+
+export const testComponent = {
+  render(entity, api) {
+    return \${repeat(entity.items, (item) => html\`<li>
+    \${item.name}
+  </li>\`)};
+  }
+};
+"
+`;
+
+exports[`@inglorious/vite-plugin-vue > script section > handles arrow function methods 1`] = `
+"import { html } from "@inglorious/web";
+
+export const testComponent = {
+  create(entity) {
+    entity.count = 0
+  },
+
+  increment(entity) {
+    entity.count++
+  },
+
+  render(entity, api) {
+    return html\`<div @click="\${() => api.notify(\`#\${entity.id}:increment\`)}">\${entity.count}</div>\`;
+  }
+};
+"
+`;
+
+exports[`@inglorious/vite-plugin-vue > script section > handles multi-line function bodies 1`] = `
+"import { html } from "@inglorious/web";
+
+export const testComponent = {
+  save(entity) {
+    const data = entity.formData
+      console.log('Saving', data)
+      entity.saved = true
+  },
+
+  render(entity, api) {
+    return html\`<button @click="\${() => api.notify(\`#\${entity.id}:save\`)}">Save</button>\`;
+  }
+};
+"
+`;
+
+exports[`@inglorious/vite-plugin-vue > script section > handles regular function declarations 1`] = `
+"import { html } from "@inglorious/web";
+
+export const testComponent = {
+  create(entity) {
+    entity.count = 0
+  },
+
+  increment(entity) {
+    entity.count++
+  },
+
+  render(entity, api) {
+    return html\`<div @click="\${() => api.notify(\`#\${entity.id}:increment\`)}">\${entity.count}</div>\`;
+  }
+};
+"
+`;
+
+exports[`@inglorious/vite-plugin-vue > script section > includes script content verbatim 1`] = `
+"import { html } from "@inglorious/web";
+
+export const testComponent = {
+  create(entity) {
+    entity.value = 0
+  },
+
+  increment(entity) {
+    entity.value++
+  },
+
+  render(entity, api) {
+    return html\`<div @click="\${() => api.notify(\`#\${entity.id}:increment\`)}">\${entity.value}</div>\`;
+  }
+};
+"
+`;
+
+exports[`@inglorious/vite-plugin-vue > script section > separates state variables from methods 1`] = `
+"import { html } from "@inglorious/web";
+
+export const testComponent = {
+  create(entity) {
+    entity.count = 0
+    entity.items = []
+  },
+
+  increment(entity) {
+    entity.count++
+  },
+
+  addItem(entity, item) {
+    entity.items.push(item)
+  },
+
+  render(entity, api) {
+    return html\`<div>\${entity.count}</div>\`;
+  }
+};
+"
+`;
+
+exports[`@inglorious/vite-plugin-vue > script section > works without script section 1`] = `
+"import { html } from "@inglorious/web";
+
+export const testComponent = {
+  render(entity, api) {
+    return html\`<div>Static content</div>\`;
+  }
+};
+"
+`;
