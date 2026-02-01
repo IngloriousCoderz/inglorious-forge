@@ -34,14 +34,14 @@ describe("@inglorious/vite-plugin-vue", () => {
 
     it("generates correct component name from filename", async () => {
       const code = `<template><div>Test</div></template>`
-      const result = await transform(code, "my-component.vue")
-      expect(result).toContain("export const myComponent")
+      const result = await transform(code, "MyComponent.vue")
+      expect(result).toMatchSnapshot()
     })
 
     it("converts kebab-case to camelCase", async () => {
       const code = `<template><div>Test</div></template>`
       const result = await transform(code, "user-profile.vue")
-      expect(result).toContain("export const userProfile")
+      expect(result).toMatchSnapshot()
     })
   })
 
@@ -642,7 +642,6 @@ const greet = (entity: any): void => {
 </script>
 `
       const result = await transform(code)
-      expect(result).toBeDefined()
       expect(result).toMatchSnapshot()
     })
 

@@ -1157,6 +1157,9 @@ importers:
         specifier: ^10.1.0
         version: 10.1.0
     devDependencies:
+      "@babel/generator":
+        specifier: ^7.29.0
+        version: 7.29.0
       "@inglorious/eslint-config":
         specifier: workspace:*
         version: link:../eslint-config
@@ -1250,17 +1253,17 @@ packages:
       }
     engines: { node: ">=6.9.0" }
 
-  "@babel/generator@7.28.3":
-    resolution:
-      {
-        integrity: sha512-3lSpxGgvnmZznmBkCRnVREPUFJv2wrv9iAoFDvADJc0ypmdOxdUtcLeBgBJ6zE0PMeTKnxeQzyk0xTBq4Ep7zw==,
-      }
-    engines: { node: ">=6.9.0" }
-
   "@babel/generator@7.28.5":
     resolution:
       {
         integrity: sha512-3EwLFhZ38J4VyIP6WNtt2kUdW9dokXA9Cr4IVIFHuCpZ3H8/YFOl5JjZHisrn1fATPBmKKqXzDFvh9fUwHz6CQ==,
+      }
+    engines: { node: ">=6.9.0" }
+
+  "@babel/generator@7.29.0":
+    resolution:
+      {
+        integrity: sha512-vSH118/wwM/pLR38g/Sgk05sNtro6TlTJKuiMXDaZqPUfjTFcudpCOt00IhOfj+1BFAX+UFAlzCU+6WXr3GLFQ==,
       }
     engines: { node: ">=6.9.0" }
 
@@ -10731,7 +10734,7 @@ snapshots:
     dependencies:
       "@ampproject/remapping": 2.3.0
       "@babel/code-frame": 7.27.1
-      "@babel/generator": 7.28.3
+      "@babel/generator": 7.28.5
       "@babel/helper-compilation-targets": 7.27.2
       "@babel/helper-module-transforms": 7.28.3(@babel/core@7.28.3)
       "@babel/helpers": 7.28.3
@@ -10750,7 +10753,7 @@ snapshots:
   "@babel/core@7.28.4":
     dependencies:
       "@babel/code-frame": 7.27.1
-      "@babel/generator": 7.28.3
+      "@babel/generator": 7.28.5
       "@babel/helper-compilation-targets": 7.27.2
       "@babel/helper-module-transforms": 7.28.3(@babel/core@7.28.4)
       "@babel/helpers": 7.28.4
@@ -10770,7 +10773,7 @@ snapshots:
   "@babel/core@7.28.5":
     dependencies:
       "@babel/code-frame": 7.27.1
-      "@babel/generator": 7.28.5
+      "@babel/generator": 7.29.0
       "@babel/helper-compilation-targets": 7.27.2
       "@babel/helper-module-transforms": 7.28.3(@babel/core@7.28.5)
       "@babel/helpers": 7.28.4
@@ -10787,7 +10790,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  "@babel/generator@7.28.3":
+  "@babel/generator@7.28.5":
     dependencies:
       "@babel/parser": 7.28.5
       "@babel/types": 7.29.0
@@ -10795,7 +10798,7 @@ snapshots:
       "@jridgewell/trace-mapping": 0.3.30
       jsesc: 3.1.0
 
-  "@babel/generator@7.28.5":
+  "@babel/generator@7.29.0":
     dependencies:
       "@babel/parser": 7.29.0
       "@babel/types": 7.29.0
@@ -10928,7 +10931,7 @@ snapshots:
   "@babel/traverse@7.28.3":
     dependencies:
       "@babel/code-frame": 7.27.1
-      "@babel/generator": 7.28.3
+      "@babel/generator": 7.28.5
       "@babel/helper-globals": 7.28.0
       "@babel/parser": 7.28.5
       "@babel/template": 7.27.2
@@ -10940,7 +10943,7 @@ snapshots:
   "@babel/traverse@7.28.4":
     dependencies:
       "@babel/code-frame": 7.27.1
-      "@babel/generator": 7.28.3
+      "@babel/generator": 7.28.5
       "@babel/helper-globals": 7.28.0
       "@babel/parser": 7.28.5
       "@babel/template": 7.27.2
@@ -10952,7 +10955,7 @@ snapshots:
   "@babel/traverse@7.28.5":
     dependencies:
       "@babel/code-frame": 7.27.1
-      "@babel/generator": 7.28.5
+      "@babel/generator": 7.29.0
       "@babel/helper-globals": 7.28.0
       "@babel/parser": 7.29.0
       "@babel/template": 7.27.2

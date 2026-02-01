@@ -1,5 +1,5 @@
-/* eslint-disable no-magic-numbers */
 import { transformAsync } from "@babel/core"
+import generate from "@babel/generator"
 import * as babelParser from "@babel/parser"
 import syntaxTs from "@babel/plugin-syntax-typescript"
 import * as t from "@babel/types"
@@ -170,7 +170,10 @@ function parseScript(script, lang) {
           ) {
             // It's a method - extract the params and body
             const params = extractParams(init)
-            const body = extractFunctionBody(init, script)
+            const body =
+              lang === "ts" || lang === "typescript"
+                ? extractFunctionBodyFromAST(init)
+                : extractFunctionBody(init, script)
             methods.push({ name, params, body })
           } else {
             // It's a state variable - extract the value
@@ -183,7 +186,10 @@ function parseScript(script, lang) {
       else if (t.isFunctionDeclaration(node)) {
         const name = node.id.name
         const params = extractParams(node)
-        const body = extractFunctionBody(node, script)
+        const body =
+          lang === "ts" || lang === "typescript"
+            ? extractFunctionBodyFromAST(node)
+            : extractFunctionBody(node, script)
         methods.push({ name, params, body })
       }
       // Handle export default (ignore for now, we're building our own export)
@@ -216,6 +222,33 @@ function extractParams(node) {
   })
 
   return params.join(", ")
+}
+
+/**
+ * Extract function body from AST node (for TypeScript - strips type annotations)
+ */
+function extractFunctionBodyFromAST(node) {
+  // Clone the body to avoid mutating the original
+  const body = t.cloneNode(node.body, true)
+
+  if (t.isBlockStatement(body)) {
+    // Generate code from AST (this automatically strips TS annotations)
+    const { code } = generate(body, { retainLines: false, concise: false })
+
+    // Remove the outer braces and indent
+    const lines = code
+      .slice(1, -1) // Remove { and }
+      .trim()
+      .split("\n")
+      .map((line) => `    ${line}`)
+      .join("\n")
+
+    return lines + "\n"
+  } else {
+    // Arrow function with expression body
+    const { code } = generate(body, { retainLines: false, concise: true })
+    return `    ${code}\n`
+  }
 }
 
 /**
@@ -358,7 +391,7 @@ function transformTextNode(node, imports, context) {
  * @returns {string} Generated code.
  */
 function transformElementNode(node, imports, methodNames, context) {
-  const { attribs = {} } = node
+  const { name, attribs = {}, children = [] } = node
 
   // Check for v-if, v-else-if, v-else
   if (attribs["v-if"]) {
@@ -443,7 +476,7 @@ function buildElement(node, imports, methodNames, context) {
 
   // Check if this is a custom component (starts with uppercase)
   if (/^[A-Z]/.test(name)) {
-    // Convert component name to kebab-case for the entity ID
+    // Convert component name to camelCase for the entity ID
     const componentId = toCamelCase(name)
 
     return `\${api.render("${componentId}")}`

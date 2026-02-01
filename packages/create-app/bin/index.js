@@ -90,11 +90,11 @@ async function main() {
             description: "JSX/TSX syntax (<div>...</div>)",
             value: "jsx",
           },
-          // {
-          //   title: "Vue",
-          //   description: "Vue SFC-style templates",
-          //   value: "vue",
-          // },
+          {
+            title: "Vue",
+            description: "Vue SFC-style templates",
+            value: "vue",
+          },
         ],
       },
       { onCancel },

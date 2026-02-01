@@ -18,7 +18,7 @@
   },
   "devDependencies": {
     "@inglorious/eslint-config": "^1.1.1",
-    "@inglorious/vite-plugin-vue": "latest",
+    "@inglorious/vite-plugin-vue": "^0.2.0",
     "eslint": "^9.39.1",
     "prettier": "^3.6.2",
     "rollup-plugin-minify-template-literals": "^1.1.7",

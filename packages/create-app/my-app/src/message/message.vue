@@ -1,5 +1,8 @@
 <template>
-  <span @click="click">Hello ${message}</span>
+  <span @click="click"
+    >Hello
+    {{ entity.isUpperCase ? entity.who.toUpperCase() : entity.who }}</span
+  >
 </template>
 
 <script>

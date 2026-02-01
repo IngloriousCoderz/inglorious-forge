@@ -15,6 +15,28 @@ export const testComponent = {
 };"
 `;
 
+exports[`@inglorious/vite-plugin-vue > basic behavior > converts kebab-case to camelCase 1`] = `
+"import { html } from "@inglorious/web";
+
+export const userProfile = {
+  render(entity, api) {
+    return html\`<div>Test</div>\`;
+  }
+};
+"
+`;
+
+exports[`@inglorious/vite-plugin-vue > basic behavior > generates correct component name from filename 1`] = `
+"import { html } from "@inglorious/web";
+
+export const myComponent = {
+  render(entity, api) {
+    return html\`<div>Test</div>\`;
+  }
+};
+"
+`;
+
 exports[`@inglorious/vite-plugin-vue > basic behavior > transforms a simple template 1`] = `
 "import { html } from "@inglorious/web";
 

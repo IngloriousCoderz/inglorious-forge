@@ -40,6 +40,7 @@
     "htmlparser2": "^10.1.0"
   },
   "devDependencies": {
+    "@babel/generator": "^7.29.0",
     "@inglorious/eslint-config": "workspace:*",
     "vitest": "^2.0.4"
   },
