@@ -712,6 +712,195 @@ See the plugin documentation for full details on control flow, attributes, and e
 
 ---
 
+## Vue Template Support
+
+If you prefer **Vue Single-File Component–style templates**, you can use
+**`@inglorious/vite-plugin-vue`** to write Vue-like `<template>` syntax and compile it into optimized `lit-html` render functions for **@inglorious/web**.
+
+This plugin is **not Vue** and does **not implement Vue’s reactivity model**.
+Instead, it provides a **template-only compatibility layer** that maps a well-defined subset of Vue template syntax onto Inglorious Web’s entity-based rendering model.
+
+### What This Is (and Is Not)
+
+✔ **Is:**
+
+- A Vue-like _template syntax_ compiler
+- Zero-runtime, compile-time transformation
+- Direct output to `lit-html`
+- Fully compatible with Inglorious entities and store-driven rendering
+
+❌ **Is NOT:**
+
+- Vue runtime
+- Vue reactivity (no proxies, refs, watchers)
+- Vue SFC compiler
+- A drop-in replacement for Vue apps
+
+Think of it as **“Vue templates as a syntax convenience”**, not Vue itself.
+
+---
+
+### Supported Syntax
+
+The plugin supports the most common and useful Vue template features:
+
+#### Templates
+
+```vue
+<template>
+  <div class="counter">
+    <span>{{ value }}</span>
+    <button @click="increment">+</button>
+  </div>
+</template>
+```
+
+#### Interpolations
+
+- `{{ value }}`
+- Automatically prefixed with `entity.` when appropriate
+
+#### Conditionals
+
+- `v-if`
+- `v-else-if`
+- `v-else`
+
+Compiled using `lit-html`’s `when()` directive.
+
+#### Loops
+
+- `v-for="item in items"`
+- `v-for="(item, index) in items"`
+- Optional `:key`
+
+Compiled using `lit-html`’s `repeat()` directive.
+
+#### Bindings
+
+- `:prop="expr"`
+- `v-bind:prop="expr"`
+- Static attributes
+- Correct handling of property vs attribute bindings
+
+#### Events
+
+- `@click="method"`
+- `@click="() => method(entity, arg)"`
+- `v-on:event="handler"`
+
+Method references are automatically translated to `api.notify(...)` calls.
+
+#### Components
+
+- PascalCase components are treated as entity renders:
+
+```vue
+<Message />
+```
+
+```js
+api.render("message")
+```
+
+---
+
+### Script Sections
+
+Both JavaScript and TypeScript are supported:
+
+```vue
+<script lang="ts">
+const message: string = "Hello"
+
+const greet = (entity: any): void => {
+  console.log(entity.message)
+}
+</script>
+```
+
+The plugin automatically:
+
+- Separates **state variables** from **methods**
+- Strips TypeScript annotations
+- Emits clean JavaScript output
+- Generates entity-compatible methods
+
+---
+
+### Example
+
+**Vue-style input:**
+
+```vue
+<template>
+  <div>
+    <h1>{{ title }}</h1>
+    <TodoItem v-for="todo in todos" :key="todo.id" />
+  </div>
+</template>
+
+<script>
+const title = "Todos"
+</script>
+```
+
+**Generated output (simplified):**
+
+```js
+export const app = {
+  create(entity) {
+    entity.title = "Todos"
+  },
+
+  render(entity, api) {
+    return html`
+      <div>
+        <h1>${entity.title}</h1>
+        ${repeat(entity.todos, (todo) => api.render("todoItem"))}
+      </div>
+    `
+  },
+}
+```
+
+---
+
+### Design Philosophy
+
+This plugin exists to support developers who:
+
+- Like Vue’s **template ergonomics**
+- Want to migrate incrementally from Vue
+- Prefer HTML-like syntax over JS mixed with tags
+- Still want **Inglorious Web’s explicit, predictable architecture**
+
+It deliberately avoids:
+
+- Hidden reactivity
+- Magic bindings
+- Lifecycle hooks
+- Framework-level state
+
+Everything still flows through **entities, events, and full-tree renders**.
+
+---
+
+### When to Use Native lit-html vs Vue Templates vs JSX
+
+| Choose this if you…           | Use             |
+| ----------------------------- | --------------- |
+| Like HTML templates           | lit-html or Vue |
+| Want JSX ergonomics           | JSX             |
+| Prefer JavaScript-only syntax | lit-html        |
+| Prefer declarative templates  | lit-html or Vue |
+| Are migrating from Vue        | Vue templates   |
+| Want maximal explicitness     | lit-html or JSX |
+
+Both plugins generate **the same runtime model**.
+
+---
+
 ## Redux DevTools Integration
 
 `@inglorious/web` ships with first-class support for the **Redux DevTools Extension**, allowing you to:
@@ -1411,25 +1600,25 @@ Inglorious Web works seamlessly with any Web Component library, such as Shoelace
 
 **Use Inglorious Web's built-in components when:**
 
-✅ You want full architectural consistency
-✅ You need fine-grained control over behavior
-✅ You want to compose behaviors via type composition
-✅ You need time-travel debugging of component state
-✅ You want minimal bundle size
-✅ You're building a core pattern used throughout your app
-✅ You want the simplest possible tests
-✅ You need custom behavior that third-party components don't provide
-✅ You're using SSX for static site generation
+- ✅ You want full architectural consistency
+- ✅ You need fine-grained control over behavior
+- ✅ You want to compose behaviors via type composition
+- ✅ You need time-travel debugging of component state
+- ✅ You want minimal bundle size
+- ✅ You're building a core pattern used throughout your app
+- ✅ You want the simplest possible tests
+- ✅ You need custom behavior that third-party components don't provide
+- ✅ You're using SSX for static site generation
 
 **Use Web Components (like Shoelace) when:**
 
-✅ You need complex, battle-tested UI (date pickers, rich text editors)
-✅ You want a comprehensive design system out of the box
-✅ Speed of development matters more than architectural purity
-✅ You need features you don't want to build yourself (color pickers, tree views)
-✅ The component is isolated or used infrequently
-✅ You're okay with some state living outside the store
-✅ You're building a client-only application (not using SSX)
+- ✅ You need complex, battle-tested UI (date pickers, rich text editors)
+- ✅ You want a comprehensive design system out of the box
+- ✅ Speed of development matters more than architectural purity
+- ✅ You need features you don't want to build yourself (color pickers, tree views)
+- ✅ The component is isolated or used infrequently
+- ✅ You're okay with some state living outside the store
+- ✅ You're building a client-only application (not using SSX)
 
 ### Example: Hybrid Approach
 

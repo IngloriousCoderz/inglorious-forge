@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 4.1.3
+
+### Patch Changes
+
+- Document Vue plugin on Web
+
 ## 4.1.2
 
 ### Patch Changes
