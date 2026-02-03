@@ -37,3 +37,29 @@ export function renderTooltip(entity, props, api) {
     </div>
   `
 }
+
+/**
+ * Creates a tooltip component for composition mode (Recharts-style)
+ * This factory function returns a component function that can be used in chart composition
+ *
+ * @returns {Function} Component function that accepts (entity, props, api) and returns a composition function
+ *
+ * @example
+ * // In line.js, area.js, bar.js:
+ * import { createTooltipComponent } from "../component/tooltip.js"
+ *
+ * export const line = {
+ *   renderTooltip: createTooltipComponent(),
+ * }
+ */
+export function createTooltipComponent() {
+  return (entity, props, api) => {
+    const tooltipFn = (ctx) => {
+      const entityFromContext = ctx.entity || entity
+      return renderTooltip(entityFromContext, {}, api)
+    }
+    // Mark as tooltip component for stable identification during processing
+    tooltipFn.isTooltip = true
+    return tooltipFn
+  }
+}

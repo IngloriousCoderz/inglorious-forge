@@ -1,8 +1,9 @@
 /* eslint-disable no-magic-numbers */
 import { html, repeat, svg } from "@inglorious/web"
 
+import { createBrushComponent } from "../component/brush.js"
 import { renderGrid } from "../component/grid.js"
-import { renderTooltip } from "../component/tooltip.js"
+import { createTooltipComponent, renderTooltip } from "../component/tooltip.js"
 import { renderXAxis } from "../component/x-axis.js"
 import { renderYAxis } from "../component/y-axis.js"
 import { renderCurve } from "../shape/curve.js"
@@ -452,12 +453,9 @@ export const area = {
     return dotsFn
   },
 
-  renderTooltip(entity, props, api) {
-    const tooltipFn = (ctx) => renderTooltip(ctx.entity || entity, {}, api)
-    // Mark as tooltip component for stable identification
-    tooltipFn.isTooltip = true
-    return tooltipFn
-  },
+  renderTooltip: createTooltipComponent(),
+
+  renderBrush: createBrushComponent(),
 }
 
 /**
