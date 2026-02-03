@@ -4,7 +4,7 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**"]
+      "outputs": ["dist/**", "docs/.vitepress/dist"]
     },
     "lint": {
       "dependsOn": ["^lint"]

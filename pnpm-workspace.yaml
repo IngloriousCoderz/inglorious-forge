@@ -1,6 +1,6 @@
 packages:
   - benchmarks/*
-  - docs
+  - docs/*
   - examples/apps/*
   - examples/games/*
   - packages/*

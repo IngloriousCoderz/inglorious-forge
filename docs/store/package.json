@@ -1,0 +1,21 @@
+{
+  "name": "store-docs",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vitepress dev docs",
+    "build": "vitepress build docs && mkdir -p docs/.vitepress/dist-temp/store && mv docs/.vitepress/dist/* docs/.vitepress/dist-temp/store/ && rm -rf docs/.vitepress/dist && mv docs/.vitepress/dist-temp docs/.vitepress/dist",
+    "serve": "vitepress serve docs"
+  },
+  "devDependencies": {
+    "vue": "3.2.44",
+    "vitepress": "1.0.0-alpha.28"
+  },
+  "pnpm": {
+    "peerDependencyRules": {
+      "ignoreMissing": [
+        "@algolia/client-search"
+      ]
+    }
+  }
+}
