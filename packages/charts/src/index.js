@@ -117,6 +117,20 @@ export const charts = {
     }
     return svg``
   },
+  renderBrush(entity, { config = {} }, api) {
+    // Return a lazy function to prevent lit-html from evaluating it prematurely
+    // This function will be called by renderLineChart/renderAreaChart with the correct context
+    return (ctx) => {
+      if (!entity) return svg``
+      // Read chartType from context if available (composition mode), otherwise use entity.type
+      const chartTypeName = ctx?.chartType || entity.type
+      const chartType = api.getType(chartTypeName)
+      if (chartType?.renderBrush) {
+        return chartType.renderBrush(entity, { config }, api)
+      }
+      return svg``
+    }
+  },
   renderPieChart(entity, { children, config = {} }, api) {
     if (!entity) return svg``
     const pieType = api.getType("pie")
@@ -223,6 +237,9 @@ export const charts = {
       },
       renderTooltip(config) {
         return charts.renderTooltip(entity, { config }, api)
+      },
+      renderBrush(config) {
+        return charts.renderBrush(entity, { config }, api)
       },
     }
   },
