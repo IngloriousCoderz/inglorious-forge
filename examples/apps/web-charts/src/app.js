@@ -40,6 +40,33 @@ export const app = {
 
           <div class="charts-comparison">
             <section class="chart-section">
+              <h2>Line Chart with Brush - Zoom & Pan</h2>
+              <p>
+                Use the brush below the chart to zoom and pan through the data.
+                Drag the handles to resize, or drag the middle to pan.
+              </p>
+              ${chart(api, "lineChartWithBrush", (c) =>
+                c.renderLineChart(
+                  [
+                    c.renderCartesianGrid({
+                      stroke: "#eee",
+                      strokeDasharray: "5 5",
+                    }),
+                    c.renderXAxis({ dataKey: "name" }),
+                    c.renderYAxis({ width: "auto" }),
+                    c.renderLine({ dataKey: "value", stroke: "#8884d8" }),
+                    c.renderDots({ dataKey: "value", fill: "#8884d8" }),
+                    c.renderTooltip({}),
+                    c.renderBrush({ dataKey: "name", height: 30 }),
+                  ],
+                  { width: 800, height: 400, dataKeys: ["value"] },
+                ),
+              )}
+            </section>
+          </div>
+
+          <div class="charts-comparison">
+            <section class="chart-section">
               <h2>Line Chart - Multiple Series (Config Style)</h2>
               ${api.render("multiSeriesLineChart")}
             </section>

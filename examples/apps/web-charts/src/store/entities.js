@@ -40,6 +40,16 @@ export const entities = {
     ],
   },
 
+  // Line Chart with Brush - for testing zoom and pan functionality
+  // Large dataset to demonstrate brush functionality
+  lineChartWithBrush: {
+    type: "line",
+    data: Array.from({ length: 100 }, (_, i) => ({
+      name: `Point ${i}`,
+      value: Math.floor(Math.random() * 1000) + 100,
+    })),
+  },
+
   // Line Chart - Config-first style
   salesLineChart: {
     type: "line",
