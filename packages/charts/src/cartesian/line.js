@@ -2,9 +2,10 @@
 
 import { html, repeat, svg } from "@inglorious/web"
 
+import { createBrushComponent } from "../component/brush.js"
 import { renderGrid } from "../component/grid.js"
 import { renderLegend } from "../component/legend.js"
-import { renderTooltip } from "../component/tooltip.js"
+import { createTooltipComponent, renderTooltip } from "../component/tooltip.js"
 import { renderXAxis } from "../component/x-axis.js"
 import { renderYAxis } from "../component/y-axis.js"
 import { renderCurve } from "../shape/curve.js"
@@ -51,39 +52,42 @@ export const line = {
       return svg`<text>Entity not found</text>`
     }
 
-    // Allow config.data to override entity.data for this specific chart instance
-    const entityWithData = config.data
-      ? { ...entity, data: config.data }
-      : entity
+    // 1. Define the data
+    let entityData = config.data || entity.data
+    const entityWithData = { ...entity, data: entityData }
 
-    // Use local variables instead of global Maps
+    // 2. Extract dimensions and local variables (removed duplicate block with error here)
     const dataKeysSet = new Set()
     if (config.dataKeys && Array.isArray(config.dataKeys)) {
       config.dataKeys.forEach((key) => dataKeysSet.add(key))
     }
 
-    // Extract dimensions from config (like Recharts style prop)
-    // Support both style object and direct width/height props
     const style = config.style || {}
-
-    // Get numeric dimensions for SVG attributes
-    // CSS dimensions (like "100%") will be in style
     const width =
       parseDimension(config.width || style.width) ||
       parseDimension(entity.width) ||
       800
-    const height =
+    let height =
       parseDimension(config.height || style.height) ||
       parseDimension(entity.height) ||
       400
-    // Always calculate padding based on current dimensions (same as config-first approach)
     const padding = calculatePadding(width, height)
 
-    // Merge style attributes
+    const childrenArray = (
+      Array.isArray(children) ? children : [children]
+    ).filter(Boolean)
+    const hasBrush = childrenArray.some(
+      (child) => typeof child === "function" && child.isBrush,
+    )
+    const brushHeight = hasBrush ? 60 : 0
+    const chartHeight = height
+    const totalHeight = chartHeight + brushHeight
+
     const svgStyle = {
       width: style.width || (typeof width === "number" ? `${width}px` : width),
       height:
-        style.height || (typeof height === "number" ? `${height}px` : height),
+        style.height ||
+        (typeof totalHeight === "number" ? `${totalHeight}px` : totalHeight),
       maxWidth: style.maxWidth,
       maxHeight: style.maxHeight,
       aspectRatio: style.aspectRatio,
@@ -91,40 +95,42 @@ export const line = {
       ...style,
     }
 
-    // Process children to handle lazy functions
-    const childrenArray = (
-      Array.isArray(children) ? children : [children]
-    ).filter(Boolean)
-
-    // Create context with scales - pass composition info directly
-    // The dataKeysSet is populated from config.dataKeys (passed explicitly)
-    // Use entityWithData to support config.data override
+    // 3. Create the UNIQUE context
     const context = createSharedContext(
       entityWithData,
       {
         width,
-        height,
+        height: chartHeight,
         padding,
         usedDataKeys: dataKeysSet,
         chartType: "line",
       },
       api,
     )
-    context.dimensions = { width, height, padding }
-    // Store entityWithData in context so renderLine can use the overridden data
+
+    // 4. APPLY ZOOM
+    if (entity.brush?.enabled && entity.brush.startIndex !== undefined) {
+      const { startIndex, endIndex } = entity.brush
+      context.xScale.domain([startIndex, endIndex])
+    }
+
+    context.dimensions = { width, height: chartHeight, padding }
+    context.totalHeight = totalHeight
     context.entity = entityWithData
-    // Store api in context for tooltip handlers
+    context.fullEntity = entity
     context.api = api
+
     // Context is now passed directly to renderLine, no need for global cache
 
     // Separate components using stable flags (survives minification)
-    // This ensures correct Z-index ordering: Grid -> Lines -> Axes -> Dots
+    // This ensures correct Z-index ordering: Grid -> Lines -> Axes -> Dots -> Brush
     const grid = []
     const axes = []
     const lines = []
     const dots = []
     const tooltip = []
     const legend = []
+    const brush = []
     const others = []
 
     for (const child of childrenArray) {
@@ -162,6 +168,8 @@ export const line = {
                 tooltip.push(child)
               } else if (result.isLegend) {
                 legend.push(child)
+              } else if (result.isBrush) {
+                brush.push(child)
               } else {
                 others.push(child)
               }
@@ -178,8 +186,8 @@ export const line = {
       }
     }
 
-    // Reorder children for correct Z-index: Grid -> Lines -> Axes -> Dots -> Tooltip -> Legend -> Others
-    // This ensures grid is behind, lines are in the middle, and axes are on top
+    // Reorder children for correct Z-index: Grid -> Lines -> Axes -> Dots -> Tooltip -> Legend -> Brush -> Others
+    // This ensures grid is behind, lines are in the middle, and axes are on top, brush is at the bottom
     const childrenToProcess = [
       ...grid,
       ...lines,
@@ -187,6 +195,7 @@ export const line = {
       ...dots,
       ...tooltip,
       ...legend,
+      ...brush,
       ...others,
     ]
 
@@ -238,13 +247,23 @@ export const line = {
     const svgContent = svg`
       <svg
         width=${width}
-        height=${height}
-        viewBox="0 0 ${width} ${height}"
+        height=${totalHeight}
+        viewBox="0 0 ${width} ${totalHeight}"
         class="iw-chart-svg"
         data-entity-id=${entity.id}
         style=${styleString || undefined}
         @mousemove=${createTooltipMoveHandler({ entity: entityWithData, api })}
       >
+      <defs>
+          <clipPath id="chart-clip-${entity.id}">
+            <rect 
+              x=${padding.left} 
+              y=${padding.top} 
+              width=${width - padding.left - padding.right} 
+              height=${height - padding.top - padding.bottom} 
+            />
+          </clipPath>
+        </defs>
         ${processedChildren}
       </svg>
     `
@@ -298,33 +317,41 @@ export const line = {
   renderXAxis(entity, { config = {} }, api) {
     const axisFn = (ctx) => {
       const { xScale, yScale, dimensions } = ctx
+
       const entityFromContext = ctx.entity || entity
+
       const { dataKey } = config
-      // Create labels map: index -> label (use original entity data)
+
       const labels = entityFromContext.data.map(
         (d, i) => d[dataKey] || d.name || d.x || d.date || String(i),
       )
-      // Create transformed data with indices for x (needed by renderXAxis)
-      const transformedData = entityFromContext.data.map((d, i) => ({
-        x: i,
-        y: 0,
-      }))
+
+      const axisScale = (val) => xScale(val)
+
+      axisScale.bandwidth = () => 0.0001
+      axisScale.domain = () => xScale.domain() // Use the [start, end] domain from context
+      axisScale.range = () => xScale.range()
+      axisScale.copy = () => axisScale
+
       return renderXAxis(
         {
           ...entityFromContext,
-          data: transformedData,
-          xLabels: labels, // Pass labels for display
+          data: entityFromContext.data.map((_, i) => ({ x: i, y: 0 })),
+          xLabels: labels,
         },
+
         {
-          xScale,
+          xScale: axisScale,
           yScale,
           ...dimensions,
         },
+
         api,
       )
     }
-    // Mark as axis component for stable identification
+
     axisFn.isAxis = true
+
     return axisFn
   },
 
@@ -431,13 +458,17 @@ export const line = {
         : ""
 
       const pathElement = svg`
-        <g class="iw-chart-line-group" data-data-key=${dataKey}>
+        <g 
+          class="iw-chart-line-group" 
+          data-data-key="${dataKey}"
+          clip-path="url(#chart-clip-${entityFromContext.id})"
+        >
           <path
             class="iw-chart-line"
-            data-entity-id=${entityFromContext.id}
-            data-data-key=${dataKey}
-            d=${path}
-            stroke=${stroke}
+            data-entity-id="${entityFromContext.id}"
+            data-data-key="${dataKey}"
+            d="${path}"
+            stroke="${stroke}"
             fill="none"
             stroke-width="2"
             style="stroke: ${stroke} !important;"
@@ -469,7 +500,7 @@ export const line = {
       if (!data || data.length === 0) return svg``
 
       return svg`
-        <g class="iw-chart-dots" data-data-key=${dataKey}>
+        <g class="iw-chart-dots" data-data-key=${dataKey} clip-path="url(#chart-clip-${ctx.entity.id})">
           ${repeat(
             data,
             (d, i) => `${dataKey}-${i}`,
@@ -568,15 +599,9 @@ export const line = {
     return legendFn
   },
 
-  renderTooltip(entity, props, api) {
-    const tooltipFn = (ctx) => {
-      const entityFromContext = ctx.entity || entity
-      return renderTooltip(entityFromContext, {}, api)
-    }
-    // Mark as tooltip component for stable identification
-    tooltipFn.isTooltip = true
-    return tooltipFn
-  },
+  renderTooltip: createTooltipComponent(),
+
+  renderBrush: createBrushComponent(),
 }
 
 /**

@@ -3,6 +3,7 @@ import { html, svg } from "@inglorious/web"
 import { extent } from "d3-array"
 import { scaleBand } from "d3-scale"
 
+import { createBrushComponent } from "../component/brush.js"
 import { renderGrid } from "../component/grid.js"
 import { renderTooltip } from "../component/tooltip.js"
 import { renderXAxis } from "../component/x-axis.js"
@@ -380,4 +381,6 @@ export const bar = {
     gridFn.isGrid = true
     return gridFn
   },
+
+  renderBrush: createBrushComponent(),
 }
