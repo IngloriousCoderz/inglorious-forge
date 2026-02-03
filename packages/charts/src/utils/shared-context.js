@@ -2,7 +2,7 @@
 
 import { parseDimension } from "./data-utils.js"
 import { calculatePadding } from "./padding.js"
-import { createCartesianContext } from "./scales.js"
+import { createCartesianContext, getFilteredData } from "./scales.js"
 
 /**
  * Calculates the maximum value (extent) from entity data.
@@ -97,13 +97,17 @@ export function createSharedContext(entity, props = {}, api) {
         ? new Set(configDataKeys)
         : null
 
-  // Calculate maximum value for Y-axis scaling (global max across all data)
-  const maxValue = getExtent(entity.data, usedDataKeys, stacked)
+  // Get filtered data if brush is enabled
+  const dataForExtent = getFilteredData(entity)
+
+  // Calculate maximum value for Y-axis scaling (global max across filtered data)
+  const maxValue = getExtent(dataForExtent, usedDataKeys, stacked)
 
   // Create data structure for scale calculation
   // Keep all points with indices for xScale domain, but use global max for yScale
   // This ensures xScale has correct domain [0, data.length-1] and yScale has [0, maxValue]
-  const dataForScale = entity.data.map((d, i) => ({
+  // Use filtered data for scale calculation
+  const dataForScale = dataForExtent.map((d, i) => ({
     x: i,
     y: maxValue,
   }))

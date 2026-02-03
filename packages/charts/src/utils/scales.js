@@ -107,15 +107,35 @@ export function createOrdinalScale(categories, width, padding) {
 }
 
 /**
+ * Get filtered data based on brush state
+ * @param {any} entity - Chart entity
+ * @returns {any[]} Filtered data array
+ */
+export function getFilteredData(entity) {
+  if (!entity.brush?.enabled || !entity.data) {
+    return entity.data
+  }
+
+  const startIndex = entity.brush.startIndex ?? 0
+  const endIndex = entity.brush.endIndex ?? entity.data.length - 1
+
+  return entity.data.slice(startIndex, endIndex + 1)
+}
+
+/**
  * Helper to create scales based on chart type
  * Returns { xScale, yScale }
  */
 export function createScales(entity, chartType) {
+  // Use filtered data if brush is enabled
+  const isZoomable = chartType === "line" || chartType === "area"
+  const dataForScales = isZoomable ? entity.data : getFilteredData(entity)
+
   // Area charts use stacked scale only if entity.stacked is true
   // Default to false (non-stacked) for area charts
   const isStacked = chartType === "area" && entity.stacked === true
   const yScale = createYScale(
-    entity.data,
+    dataForScales,
     entity.height,
     entity.padding,
     isStacked,
@@ -123,14 +143,14 @@ export function createScales(entity, chartType) {
 
   let xScale
   if (chartType === "bar") {
-    const categories = entity.data.map((d) => d.label || d.name || d.category)
+    const categories = dataForScales.map((d) => d.label || d.name || d.category)
     xScale = createOrdinalScale(categories, entity.width, entity.padding)
   } else {
     // Line chart or others that use linear/time scale
     xScale =
       entity.xAxisType === "time"
-        ? createTimeScale(entity.data, entity.width, entity.padding)
-        : createXScale(entity.data, entity.width, entity.padding)
+        ? createTimeScale(dataForScales, entity.width, entity.padding)
+        : createXScale(dataForScales, entity.width, entity.padding)
   }
 
   return { xScale, yScale }

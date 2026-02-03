@@ -27,6 +27,15 @@ export const logic = {
    */
   updateData(entity, data) {
     entity.data = data
+
+    if (entity.brush?.enabled) {
+      const maxIndex = Math.max(0, (data?.length || 0) - 1)
+      entity.brush.startIndex = Math.min(entity.brush.startIndex || 0, maxIndex)
+      entity.brush.endIndex = Math.min(
+        entity.brush.endIndex || maxIndex,
+        maxIndex,
+      )
+    }
   },
 
   /**
@@ -74,6 +83,30 @@ export const logic = {
     if (!entity.tooltip) return
     entity.tooltipX = position.x
     entity.tooltipY = position.y
+  },
+
+  /**
+   * Handles brush change event (zoom/pan).
+   * This is called automatically when brush selection changes.
+   * @param {ChartEntity} entity
+   * @param {{ startIndex: number; endIndex: number }} payload
+   */
+  brushChange(entity, payload) {
+    if (!entity.brush) entity.brush = { enabled: true }
+
+    const { startIndex, endIndex } = payload
+    const dataLength = entity.data?.length || 0
+
+    entity.brush.startIndex = Math.max(0, Math.min(startIndex, dataLength - 1))
+    entity.brush.endIndex = Math.max(
+      entity.brush.startIndex,
+      Math.min(endIndex, dataLength - 1),
+    )
+
+    if (entity.brush.startIndex === entity.brush.endIndex && dataLength > 1) {
+      if (entity.brush.endIndex < dataLength - 1) entity.brush.endIndex++
+      else if (entity.brush.startIndex > 0) entity.brush.startIndex--
+    }
   },
 }
 
