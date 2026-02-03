@@ -142,9 +142,10 @@ export function renderBrush(entity, props, api) {
       } else if (action === "pan") {
         // 1. Calculate movement in indices based on pixel delta
         // Use Math.max(1, ...) to avoid division by zero
-        const pixelsPerIndex = brushAreaWidth / Math.max(1, brushData.length - 1)
+        const pixelsPerIndex =
+          brushAreaWidth / Math.max(1, brushData.length - 1)
         const indexDelta = Math.round(deltaX / pixelsPerIndex)
-        
+
         // 2. Calculate candidate new indices
         let nextStart = startBrushStartIndex + indexDelta
         let nextEnd = startBrushEndIndex + indexDelta
@@ -155,7 +156,7 @@ export function renderBrush(entity, props, api) {
           nextEnd = nextEnd - nextStart // maintain original size
           nextStart = 0
         }
-        
+
         // If hitting the right edge (max)
         if (nextEnd >= brushData.length) {
           nextStart = nextStart - (nextEnd - (brushData.length - 1))
@@ -164,9 +165,10 @@ export function renderBrush(entity, props, api) {
 
         // 4. Ensure indices are valid and there was a change
         if (
-          nextStart >= 0 && 
-          nextEnd < brushData.length && 
-          (nextStart !== entity.brush.startIndex || nextEnd !== entity.brush.endIndex)
+          nextStart >= 0 &&
+          nextEnd < brushData.length &&
+          (nextStart !== entity.brush.startIndex ||
+            nextEnd !== entity.brush.endIndex)
         ) {
           entity.brush.startIndex = nextStart
           entity.brush.endIndex = nextEnd
@@ -311,23 +313,31 @@ export function renderBrush(entity, props, api) {
       />
       
       <!-- Mini chart preview (optional - shows data preview in brush area) -->
-      ${brushData.length > 0
-        ? svg`
+      ${
+        brushData.length > 0
+          ? svg`
           <g class="iw-chart-brush-preview" style="pointer-events: none;">
             <path
-              d="${brushData.map((d, i) => {
-                const x = getXPosition(i);
-                const value = d.value ?? d.y ?? 0;
-                const maxValue = Math.max(...brushData.map(dd => dd.value ?? dd.y ?? 0)) || 1;
-                const y = brushAreaHeight - 2 - (value / maxValue) * (brushAreaHeight - 4);
-                return `M${x},${brushAreaHeight - 2} L${x},${y}`;
-              }).join(' ')}"
+              d="${brushData
+                .map((d, i) => {
+                  const x = getXPosition(i)
+                  const value = d.value ?? d.y ?? 0
+                  const maxValue =
+                    Math.max(...brushData.map((dd) => dd.value ?? dd.y ?? 0)) ||
+                    1
+                  const y =
+                    brushAreaHeight -
+                    2 -
+                    (value / maxValue) * (brushAreaHeight - 4)
+                  return `M${x},${brushAreaHeight - 2} L${x},${y}`
+                })
+                .join(" ")}"
               stroke="#8884d8"
               stroke-width="1"
               opacity="0.4"
             />
           </g>`
-        : svg``
+          : svg``
       }
     </g>
   `
