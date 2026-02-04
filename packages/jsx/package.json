@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/jsx",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A shim for JSX syntax, to please the TypeScript gods.",
   "author": "IceOnFire <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -21,6 +21,7 @@
   "publishConfig": {
     "access": "public"
   },
+  "sideEffects": false,
   "exports": {
     "./jsx-dev-runtime": {
       "types": "./types/jsx.d.ts",

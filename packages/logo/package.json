@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/logo",
-  "version": "2.0.25",
+  "version": "2.0.26",
   "description": "The Inglorious Coderz logo, remade to be compatible with Inglorious Web.",
   "author": "IceOnFire <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -40,6 +40,9 @@
   "publishConfig": {
     "access": "public"
   },
+  "sideEffects": [
+    "**/*.css"
+  ],
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint .",

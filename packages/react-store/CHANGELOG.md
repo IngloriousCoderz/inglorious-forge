@@ -1,5 +1,13 @@
 # @inglorious/react-store
 
+## 14.0.1
+
+### Patch Changes
+
+- Decrease bundles size
+- Updated dependencies
+  - @inglorious/store@9.3.1
+
 ## 14.0.0
 
 ### Patch Changes

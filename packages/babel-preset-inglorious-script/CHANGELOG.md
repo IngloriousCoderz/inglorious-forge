@@ -1,5 +1,13 @@
 # @inglorious/babel-preset-inglorious-script
 
+## 1.0.6
+
+### Patch Changes
+
+- Decrease bundles size
+- Updated dependencies
+  - @inglorious/babel-plugin-inglorious-script@1.4.1
+
 ## 1.0.5
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @inglorious/eslint-config
 
+## 1.1.2
+
+### Patch Changes
+
+- Decrease bundles size
+
 ## 1.1.1
 
 ### Patch Changes

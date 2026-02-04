@@ -1,5 +1,11 @@
 # web-select
 
+## 0.2.20
+
+### Patch Changes
+
+- @inglorious/web@4.1.4
+
 ## 0.2.19
 
 ### Patch Changes

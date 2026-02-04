@@ -1,5 +1,12 @@
 # @inglorious/ssx
 
+## 1.5.11
+
+### Patch Changes
+
+- Decrease bundles size
+  - @inglorious/web@4.1.4
+
 ## 1.5.10
 
 ### Patch Changes

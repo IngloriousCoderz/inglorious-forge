@@ -1,5 +1,13 @@
 # @inglorious/store
 
+## 9.3.1
+
+### Patch Changes
+
+- Decrease bundles size
+- Updated dependencies
+  - @inglorious/utils@3.7.3
+
 ## 9.3.0
 
 ### Minor Changes

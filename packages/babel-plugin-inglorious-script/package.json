@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/babel-plugin-inglorious-script",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "A Babel plugin for the IngloriousScript language.",
   "author": "IceOnFire <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -30,6 +30,7 @@
   "publishConfig": {
     "access": "public"
   },
+  "sideEffects": false,
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint .",

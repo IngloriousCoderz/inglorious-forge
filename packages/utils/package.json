@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/utils",
-  "version": "3.7.2",
+  "version": "3.7.3",
   "description": "A set of general-purpose utility functions designed with functional programming principles in mind.",
   "author": "IceOnFire <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -39,6 +39,7 @@
   "publishConfig": {
     "access": "public"
   },
+  "sideEffects": false,
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint .",

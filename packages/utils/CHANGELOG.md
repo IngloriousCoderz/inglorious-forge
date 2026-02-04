@@ -1,5 +1,11 @@
 # @inglorious/utils
 
+## 3.7.3
+
+### Patch Changes
+
+- Decrease bundles size
+
 ## 3.7.2
 
 ### Patch Changes

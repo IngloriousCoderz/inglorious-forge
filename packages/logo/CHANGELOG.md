@@ -1,5 +1,12 @@
 # @inglorious/logo
 
+## 2.0.26
+
+### Patch Changes
+
+- Decrease bundles size
+  - @inglorious/web@4.1.4
+
 ## 2.0.25
 
 ### Patch Changes

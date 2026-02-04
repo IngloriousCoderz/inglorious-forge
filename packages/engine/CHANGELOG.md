@@ -1,5 +1,14 @@
 # @inglorious/engine
 
+## 18.0.1
+
+### Patch Changes
+
+- Decrease bundles size
+- Updated dependencies
+  - @inglorious/store@9.3.1
+  - @inglorious/utils@3.7.3
+
 ## 18.0.0
 
 ### Patch Changes
