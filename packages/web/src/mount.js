@@ -1,4 +1,3 @@
-import { hydrate } from "@lit-labs/ssr-client"
 import { html, render } from "lit-html"
 
 /**
@@ -8,25 +7,27 @@ import { html, render } from "lit-html"
  * @param {HTMLElement | DocumentFragment} element - The DOM element to mount the template to.
  * @returns {() => void} An unsubscribe function
  */
-export function mount(store, renderFn, element) {
+export async function mount(store, renderFn, element) {
   const api = { ...store._api }
   api.render = createRender(api)
 
   let shouldHydrate = element.hasChildNodes()
 
+  // If we need to hydrate, load the heavy lifting only now
+  if (shouldHydrate) {
+    const { hydrate } = await import("@lit-labs/ssr-client")
+    const template = renderFn(api)
+    hydrate(template, element)
+    shouldHydrate = false
+  }
+
   const unsubscribe = store.subscribe(() => {
     const template = renderFn(api)
-
-    if (shouldHydrate) {
-      hydrate(template, element)
-      shouldHydrate = false
-    } else {
-      render(template, element)
-    }
+    // Standard render is already in the main bundle (it's small)
+    render(template, element)
   })
 
   store.notify("init")
-
   return unsubscribe
 }
 

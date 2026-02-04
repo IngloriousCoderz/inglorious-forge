@@ -1,5 +1,12 @@
 # web-select
 
+## 0.2.21
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/web@4.1.5
+
 ## 0.2.20
 
 ### Patch Changes

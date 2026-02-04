@@ -1,7 +1,7 @@
 {
   "name": "web-table",
   "private": true,
-  "version": "0.1.31",
+  "version": "0.1.32",
   "type": "module",
   "author": "IceOnFire <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",

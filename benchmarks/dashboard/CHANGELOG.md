@@ -1,5 +1,12 @@
 # dashboard-benchmark
 
+## 0.1.11
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/web@4.1.5
+
 ## 0.1.10
 
 ### Patch Changes

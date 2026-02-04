@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 4.1.5
+
+### Patch Changes
+
+- Further decrease bundle size by dynamically importing SSR
+
 ## 4.1.4
 
 ### Patch Changes
