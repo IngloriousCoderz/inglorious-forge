@@ -7,7 +7,7 @@ import {
   ROWS_TO_UPDATE,
   UPDATE_FREQUENCY,
   updateData,
-} from "../utils"
+} from "../data"
 import { Chart } from "./chart"
 import { MetricsDisplay } from "./metrics"
 import { Table } from "./table"

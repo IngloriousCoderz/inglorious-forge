@@ -14,7 +14,7 @@ How Inglorious Web stacks up against popular alternatives.
 | **Concept**           | Component-based         | Entity-based        |
 | **Rendering**         | Virtual DOM             | Full-tree re-render |
 | **State**             | Component state + Redux | Single entity store |
-| **Bundle Size**       | 22.6KB (gzipped)        | 16.4KB (gzipped)    |
+| **Bundle Size**       | 60.4KB (gzipped)        | 15.4KB (gzipped)    |
 | **Learning Curve**    | Medium                  | Low                 |
 | **Hooks**             | Required                | Not needed          |
 | **Testing**           | Complex (mount, act)    | Trivial (trigger)   |
@@ -81,7 +81,7 @@ const counter = {
 | **Concept**        | Component-based    | Entity-based                   |
 | **Rendering**      | Virtual DOM        | Full-tree                      |
 | **Reactivity**     | Signals (Vue 3)    | Immutable mutations            |
-| **Bundle Size**    | 47.2KB (gzipped)   | 16.4KB (gzipped)               |
+| **Bundle Size**    | 47.2KB (gzipped)   | 15.4KB (gzipped)               |
 | **Learning Curve** | Low                | Very low                       |
 | **Templates**      | Vue templates      | lit-html + optional Vue plugin |
 | **Testing**        | Mount + assertions | Trigger + assertions           |
@@ -161,17 +161,17 @@ const form = {
 
 ## vs Solid
 
-| Feature            | Solid         | Inglorious Web   |
-| ------------------ | ------------- | ---------------- |
-| **Concept**        | Signal-based  | Entity-based     |
-| **Reactivity**     | Fine-grained  | Full-tree        |
-| **Bundle Size**    | 7KB (gzipped) | 16.4KB (gzipped) |
-| **Performance**    | Excellent     | Great            |
-| **Learning Curve** | Medium        | Very low         |
-| **JSX**            | Required      | Optional         |
-| **Testing**        | Moderate      | Trivial          |
-| **Signals**        | ✅ Yes        | ❌ No            |
-| **Full-tree**      | ❌ No         | ✅ Yes           |
+| Feature            | Solid           | Inglorious Web   |
+| ------------------ | --------------- | ---------------- |
+| **Concept**        | Signal-based    | Entity-based     |
+| **Reactivity**     | Fine-grained    | Full-tree        |
+| **Bundle Size**    | 8.5KB (gzipped) | 15.4KB (gzipped) |
+| **Performance**    | Excellent       | Great            |
+| **Learning Curve** | Medium          | Very low         |
+| **JSX**            | Required        | Optional         |
+| **Testing**        | Moderate        | Trivial          |
+| **Signals**        | ✅ Yes          | ❌ No            |
+| **Full-tree**      | ❌ No           | ✅ Yes           |
 
 ### Example: List
 
@@ -224,7 +224,7 @@ render(entity, api) {
 | ------------------ | --------------------------------- | --------------------- |
 | **Concept**        | Compiler-based components         | Entity-based          |
 | **Syntax**         | Custom (Svelte)                   | JavaScript + lit-html |
-| **Bundle Size**    | 15KB (gzipped)                    | 16.4KB (gzipped)      |
+| **Bundle Size**    | 15KB (gzipped)                    | 15.4KB (gzipped)      |
 | **Learning Curve** | Medium                            | Very low              |
 | **Compiler**       | Required                          | No                    |
 | **Reactivity**     | Signals-like (labeled statements) | Full-tree             |
@@ -341,16 +341,18 @@ const toggle = {
 
 All frameworks side-by-side:
 
-| Metric               | React  | Vue      | Solid     | Svelte    | Inglorious Web |
-| -------------------- | ------ | -------- | --------- | --------- | -------------- |
-| **Bundle (gzipped)** | 22.6KB | 47.2KB   | 7KB       | 15KB      | 16.4KB         |
-| **Performance**      | Great  | Good     | Excellent | Excellent | Great          |
-| **Learning Curve**   | Medium | Low      | Medium    | Medium    | Very Low       |
-| **Testing**          | Hard   | Medium   | Medium    | Medium    | **Trivial**    |
-| **Component Model**  | ✅     | ✅       | ✅        | ✅        | Entities       |
-| **Signals**          | No     | Yes (v3) | Yes       | Yes       | No             |
-| **Full-tree Render** | No     | No       | No        | No        | **Yes**        |
-| **Job Market**       | Huge   | Large    | Small     | Medium    | Tiny           |
+| Metric             | Inglorious Web   | React            | Vue              | Svelte          | Solid           |
+| ------------------ | ---------------- | ---------------- | ---------------- | --------------- | --------------- |
+| Bundle (gzipped)   | 15.4KB           | 60.4KB           | 47.2KB           | 15KB            | 8.5KB           |
+| Performance        | Excellent        | Great            | Great            | Excellent       | Excellent       |
+| JSX                | Optional         | Yes              | Optional         | No              | Optional        |
+| Batteries included | Yes              | No               | No               | Yes             | No              |
+| Reactivity         | Full tree render | useState         | Refs             | Signals         | Signals         |
+| State Management   | Built-in         | Multiple choices | Multiple choices | Built-in        | Built-in        |
+| Learning Curve     | Very Low         | Medium           | Low              | Medium          | Medium          |
+| Testing            | Easy             | Hard             | Medium           | Medium          | Medium          |
+| Model              | Entity-based     | Component-based  | Component-based  | Component-based | Component-based |
+| Job Market         | Tiny             | Huge             | Large            | Medium          | Small           |
 
 ## Philosophy Comparison
 

@@ -304,19 +304,15 @@ const debounced = (type) => {
 
 All sizes below are gzipped and intended as a high-level comparison.
 
-| Package / Bundle                 | Size (gzipped) |
-| -------------------------------- | -------------- |
-| @inglorious/web (runtime + core) | ~16.4 KB       |
-| **Total (Inglorious Web)**       | ~16.4 KB       |
-
-Fair comparison including a common state library (Redux Toolkit):
-
-| Package                 | Size (gzipped) |
-| ----------------------- | -------------- |
-| react                   | 3.32 KB        |
-| react-dom               | 4.39 KB        |
-| @reduxjs/toolkit (RTK)  | 14.9 KB        |
-| **Total (React + RTK)** | ~22.6 KB       |
+| Package / Bundle | Size (gzipped) |
+| ---------------- | -------------- |
+| React + RTK      | 74.9 KB        |
+| Vue + Pinia      | 73.9 KB        |
+| React            | 60.4 KB        |
+| Vue              | 47.2 KB        |
+| Inglorious Web   | 15.4 KB        |
+| Svelte           | 15 KB          |
+| Solid            | 8.5 KB         |
 
 To reduce bundle size further:
 

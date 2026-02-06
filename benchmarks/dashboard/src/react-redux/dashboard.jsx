@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 
-import { UPDATE_FREQUENCY } from "../utils"
+import { UPDATE_FREQUENCY } from "../data"
 import { Chart } from "./chart"
 import { MetricsDisplay } from "./metrics"
 import { setFilter, setSort, updateRandomRows } from "./store/data.slice"

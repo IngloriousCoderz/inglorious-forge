@@ -567,13 +567,11 @@ expect(entity.theme).toBe("dark")
 
 ### Bundle Sizes (Gzipped)
 
-| Package                    | Size     |
-| -------------------------- | -------- |
-| @inglorious/web (runtime)  | ~16.4 KB |
-| **React**                  | 3.32 KB  |
-| **react-dom**              | 4.39 KB  |
-| **@reduxjs/toolkit (RTK)** | 14.9 KB  |
-| **React + RTK Total**      | ~22.6 KB |
+| Package                   | Size    |
+| ------------------------- | ------- |
+| @inglorious/web (runtime) | 15.4 KB |
+| **React**                 | 60.4 KB |
+| **React + RTK**           | 74.9 KB |
 
 > Sizes shown are individual package gzip sizes, not full application bundles.
 

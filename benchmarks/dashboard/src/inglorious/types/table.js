@@ -6,7 +6,7 @@ import {
   ROWS_TO_GENERATE,
   ROWS_TO_UPDATE,
   updateData,
-} from "../../utils"
+} from "../../data"
 import { row } from "./row"
 
 export const table = {

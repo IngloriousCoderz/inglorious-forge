@@ -1,10 +1,10 @@
 import { createStore } from "@inglorious/web"
 
-import { UPDATE_FREQUENCY } from "../../utils.js"
-import { chart } from "../types/chart.js"
-import { metrics } from "../types/metrics.js"
-import { table } from "../types/table.js"
-import { entities } from "./entities.js"
+import { UPDATE_FREQUENCY } from "../../data"
+import { chart } from "../types/chart"
+import { metrics } from "../types/metrics"
+import { table } from "../types/table"
+import { entities } from "./entities"
 
 const RESET = 0
 const ONE_SECOND = 1000
