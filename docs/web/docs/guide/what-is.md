@@ -68,33 +68,35 @@ const renderApp = (api) => html`
 
 ## ECS Inspiration
 
-Inglorious Web (like Inglorious Store) is inspired by **Entity-Component-System** (ECS) architecture, common in game engines.
+Inglorious Web (like Inglorious Store) takes architectural inspiration from **Entity-Component-System** (ECS) patterns, common in game engines, but adapts them for web UI development.
 
 ### What We Took from ECS
 
-✅ **Entities** — Objects with state (like game objects)  
-✅ **Types** — Behaviors grouped by entity type (like components in ECS)  
-✅ **Events** — Pub/sub for decoupled communication (like ECS systems)  
-✅ **Composition** — Behaviors stack on entities (like ECS archetypes)
+✅ **Entities** — Objects that hold state (like game entities)  
+✅ **Separation of data and behavior** — Entities contain data, types define behavior  
+✅ **Systems** — For cross-cutting operations (validation, analytics, logging)  
+✅ **Events** — Pub/sub for decoupled communication
 
 ### What We Didn't Take
 
-❌ **Systems** — We don't have separate systems loop (React/Vue work differently)  
-❌ **Sparse data** — Our entity storage is flat, not sparse  
-❌ **Archetype optimization** — We optimize for UI, not 1M entities
+❌ **Components (in ECS sense)** — No separate component storage pattern  
+❌ **Data-oriented design** — Entities stored as objects, not contiguous arrays by type  
+❌ **Archetype optimization** — We optimize for UI patterns, not cache locality  
+❌ **Sparse data structures** — Our entity storage is flat and simple
 
-### Why ECS-Inspired?
+### Why ECS-Inspired (Not ECS)?
 
-ECS solves a different problem (game loops, massive parallelism), but its core insight applies to UI:
+ECS solves a different problem (game loops, massive parallelism, cache efficiency), but its core insight applies to UI:
 
 > **"Decouple data from behavior through explicit messaging."**
 
 In Inglorious Web:
 
 - **Entities** = UI state (user, header, form, etc.)
-- **Types** = UI behaviors (render, event handlers, lifecycle)
-- **Events** = State transitions (notify, dispatch, etc.)
-- **Composition** = Type arrays for guards, logging, analytics
+- **Types** = UI behaviors (render, event handlers)
+- **Systems** = Cross-cutting concerns (validation, guards, middleware)
+- **Events** = State transitions (notify, dispatch)
+- **Composition** = Type arrays for stacking behaviors
 
 This makes your UI:
 
@@ -152,21 +154,21 @@ store.subscribe(() => {
 ✅ **Perfect For:**
 
 - **Predictable, deterministic UIs** — Forms, dashboards, admin tools
-- **Small to medium apps** — Where simplicity beats ecosystem size
+- **Apps of any size** — Predictability and testability scale better than ecosystem size
 - **Apps that value debuggability** — Redux DevTools support, time-travel
 - **Teams that want pure JavaScript** — No JSX, no compiler, no magic
 - **Hybrid UI/game contexts** — Shares architecture with @inglorious/engine
-- **Component libraries** — Types are more customizable than React components
+- **Component libraries** — Types are more customizable than traditional components
 - **Learning frameworks** — Simple mental model, excellent for teaching
 - **Performance-sensitive apps** — No framework overhead, no signal graph complexity
 - **Testing-first development** — Pure handlers, simple triggers, no setup
+- **Large dynamic lists** — lit-html performs excellently with list entities (not entity-per-item)
 
 ❌ **Not Best For:**
 
-- **Apps heavily dependent on ecosystem** — React has more libraries
-- **Very large dynamic lists** — Though we have virtual list support
-- **Teams deeply invested in React/Vue** — Migration cost outweighs benefits
-- **Projects requiring server-side rendering** — (Use @inglorious/ssx for SSG)
+- **Apps heavily dependent on React/Vue ecosystem** — Inglorious Web has a smaller ecosystem
+- **Teams deeply invested in React/Vue** — Migration cost may outweigh benefits
+- **Cross-framework component distribution** — Use Web Components for framework-agnostic components
 
 ## Perfect Use Cases
 
@@ -179,9 +181,9 @@ store.subscribe(() => {
 
 ### 2. Component Design Systems
 
-- Types are more customizable than React components
+- Types are more customizable than traditional components
 - Composition without wrapper hell
-- Testing is trivial (no `@testing-library`)
+- Testing is trivial (no complex test library setup)
 - Documentation and storybook integration easy
 
 ### 3. Real-time Applications
@@ -205,30 +207,25 @@ store.subscribe(() => {
 - UI re-renders in sync with game state
 - Perfect for game menus, HUDs, inventory screens
 
+### 6. Content-Heavy Sites with SEO Requirements
+
+- Use @inglorious/ssx for static site generation
+- Super lean hydration thanks to lit-labs/ssr
+- Full SEO support with pre-rendered HTML
+- Perfect for marketing sites, blogs, documentation
+
 ## Perfect NOT-For Use Cases
 
 ### 1. Framework-Agnostic Component Distribution
 
 - Inglorious Web types only work in Inglorious stores
-- Use Web Components or React if you need cross-framework components
+- Use Web Components if you need cross-framework components
 
-### 2. Marketing Sites with Heavy SEO
+### 2. Teams Invested in React/Vue Ecosystem
 
-- Static sites use @inglorious/ssx (SSG)
-- Client-only apps won't pre-render HTML for SEO
-- Use Next.js, Astro, or Hugo if SEO is critical
-
-### 3. Teams Invested in React Ecosystem
-
-- Thousands of libraries built for React
+- Thousands of libraries built for React/Vue
 - Migration cost is high
-- Use React if your team knows it well
-
-### 4. Real-time Rendering of 10,000+ Items
-
-- Full-tree render still has overhead
-- We have virtual list support, but Solid would be faster
-- Use Solid if peak performance matters more than simplicity
+- Use React/Vue if your team knows it well and depends on the ecosystem
 
 ## Why Choose Inglorious Web?
 
@@ -247,12 +244,16 @@ Everything is explicit JavaScript. No framework magic, no hidden dependencies, n
 ```javascript
 // That's it. No special setup, no decorators, no refs.
 const counter = {
+  create(entity) {
+    entity.count = 0
+  },
+
   increment(entity) {
     entity.count++
   },
 
   render(entity, api) {
-    return html`<button @click=${() => api.notify("#counter:increment")}>
+    return html`<button @click=${() => api.notify("increment")}>
       ${entity.count}
     </button>`
   },
@@ -261,11 +262,23 @@ const counter = {
 
 ### 3. **Testing**
 
-Pure functions. Call them directly. No setup needed.
+You can test handlers directly as impure functions:
 
 ```javascript
-const { entity } = trigger({ count: 0 }, counter.increment)
+const entity = { count: 0 }
+counter.increment(entity)
 expect(entity.count).toBe(1)
+```
+
+Or use `trigger()` to test them as pure functions (using Mutative.js under the hood):
+
+```javascript
+import { trigger } from "@inglorious/web/test"
+
+const entityBefore = { count: 0 }
+const { entity } = trigger(entityBefore, counter.increment)
+expect(entity.count).toBe(1)
+expect(entityBefore.count).toBe(0) // Original entity unchanged
 ```
 
 ### 4. **Composition**
@@ -290,7 +303,7 @@ Redux DevTools shows every event and every state change. Time-travel through you
 
 ### 7. **Performance**
 
-lit-html's diffing is fast. Smaller bundle than React. No framework overhead.
+lit-html's diffing is fast. Smaller bundle than React. No framework overhead. Large lists perform excellently when you structure entities correctly (list entities, not entity-per-item).
 
 ## Philosophy Statement
 

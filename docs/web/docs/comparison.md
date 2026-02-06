@@ -43,6 +43,10 @@ function Counter() {
 
 ```javascript
 const counter = {
+  create(entity) {
+    entity.count = 0
+  },
+
   increment(entity) {
     entity.count++
   },
