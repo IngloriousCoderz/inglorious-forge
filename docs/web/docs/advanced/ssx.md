@@ -246,7 +246,7 @@ netlify deploy --prod --dir=dist
 ## Related
 
 - **[Inglorious Web](../guide/getting-started.md)** — Learn the entity-based patterns
-- **[Components](../components/overview.md)** — Use all Inglorious Web components in SSX
+- **[Featured types](../featured/overview.md)** — Use all Inglorious Web's featured types in SSX
 - **[@inglorious/ssx Docs](https://npmjs.com/@inglorious/ssx)** — Full SSX documentation
 
 ## Next Steps

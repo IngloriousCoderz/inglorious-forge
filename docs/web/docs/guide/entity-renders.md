@@ -98,15 +98,17 @@ const user = {
 ### Using lit-html's when() Directive
 
 ```javascript
-import { when } from "lit-html"
+import { when } from "@inglorious/web"
 
 const user = {
   render(entity, api) {
-    return when(
-      entity.isLoggedIn,
-      () => html`<p>Welcome, ${entity.name}!</p>`,
-      () => html`<p><a href="/login">Please log in</a></p>`,
-    )
+    return html`
+      ${when(
+        entity.isLoggedIn,
+        () => html`<p>Welcome, ${entity.name}!</p>`,
+        () => html`<p><a href="/login">Please log in</a></p>`,
+      )}
+    `
   },
 }
 ```
@@ -120,7 +122,7 @@ const todoList = {
   render(entity, api) {
     return html`
       <ul>
-        ${entity.todos.map((todo) => html` <li>${todo.title}</li> `)}
+        ${entity.todos.map((todo) => html`<li>${todo.title}</li>`)}
       </ul>
     `
   },
@@ -132,7 +134,7 @@ const todoList = {
 The `repeat()` directive helps lit-html track which item is which:
 
 ```javascript
-import { repeat } from "lit-html"
+import { repeat } from "@inglorious/web"
 
 const todoList = {
   render(entity, api) {
@@ -176,7 +178,7 @@ render(entity, api) {
   return html`
     <input
       type="text"
-      value="${entity.name}"
+      .value=${entity.name}
       @input=${(e) => api.notify('#myEntity:setName', e.target.value)}
     />
   `
@@ -220,14 +222,14 @@ render(entity, api) {
 ### Class Binding
 
 ```javascript
-import { classMap } from 'lit-html'
+import { classMap } from "@inglorious/web"
 
 render(entity, api) {
   return html`
     <div class=${classMap({
-      'item': true,
-      'active': entity.isActive,
-      'disabled': entity.isDisabled,
+      item: true,
+      active: entity.isActive,
+      disabled: entity.isDisabled,
     })}>
       Content
     </div>
@@ -238,7 +240,7 @@ render(entity, api) {
 ### Style Binding
 
 ```javascript
-import { styleMap } from 'lit-html'
+import { styleMap } from "@inglorious/web"
 
 render(entity, api) {
   return html`
@@ -296,14 +298,14 @@ const child = {
 }
 ```
 
-### Passing Context Through API
+### Accessing Other Entity State
 
-Since `api` is passed through the entire render tree, children can access parent state and trigger parent events:
+Since `api` is passed through the entire render tree, entities can access other entity state and trigger events:
 
 ```javascript
 const parent = {
   render(entity, api) {
-    return html` <div class="parent">${api.render("child")}</div> `
+    return html`<div class="parent">${api.render("child")}</div>`
   },
 }
 
@@ -325,36 +327,141 @@ const child = {
 
 ## Async Operations
 
-### Loading State
+### Important: Entity Proxy Limitations
+
+**Critical:** You cannot access the `entity` parameter after an `await` in async event handlers. The Mutative.js proxy is released by then, and attempting to read or write will fail.
+
+```javascript
+// ❌ WRONG - Don't access entity after await
+async fetchData(entity, api) {
+  entity.loading = true
+  const data = await fetch('/api/data')
+  entity.data = data  // ERROR: Proxy is gone!
+}
+
+// ✅ CORRECT - Only access entity before await
+async fetchData(entity, api) {
+  entity.loading = true
+  const data = await fetch('/api/data')
+  api.notify('#myEntity:setData', data)  // Use events after await
+}
+
+// ✅ CORRECT - Need dynamic entity ID? Store it before await
+async fetchData(entity, api) {
+  const entityId = entity.id
+  entity.loading = true
+  const data = await fetch('/api/data')
+  api.notify(`#${entityId}:setData`, data)  // No problem!
+}
+```
+
+### Using handleAsync (Recommended)
+
+The `handleAsync` helper makes async operations safe and easy:
+
+```javascript
+import { handleAsync } from "@inglorious/web"
+
+const myType = {
+  ...handleAsync("fetch", {
+    // All lifecycle hooks are optional except 'run'
+
+    start(entity) {
+      // Called before the async operation
+      entity.isLoading = true
+      entity.error = null
+    },
+
+    async run(payload, api) {
+      // The actual async work - returns the result
+      const response = await fetch(`/api/data/${payload.id}`)
+      return response.json()
+    },
+
+    success(entity, result) {
+      // Called with the resolved value
+      entity.data = result
+    },
+
+    error(entity, error) {
+      // Called if run() throws or rejects
+      entity.error = error.message
+    },
+
+    finally(entity) {
+      // Always called after success or error
+      entity.isLoading = false
+    },
+  }),
+
+  render(entity, api) {
+    if (entity.isLoading) {
+      return html`<p>Loading...</p>`
+    }
+
+    if (entity.error) {
+      return html`<p>Error: ${entity.error}</p>`
+    }
+
+    return html`
+      <div>
+        <button @click=${() => api.notify("#myEntity:fetch", { id: 123 })}>
+          Load Data
+        </button>
+        ${entity.data
+          ? html`<pre>${JSON.stringify(entity.data, null, 2)}</pre>`
+          : null}
+      </div>
+    `
+  },
+}
+```
+
+**How it works:**
+
+1. Trigger with `api.notify("#myEntity:fetch", payload)`
+2. `start(entity)` runs synchronously (entity proxy available)
+3. `run(payload, api)` executes the async operation
+4. `success(entity, result)` or `error(entity, error)` runs (entity proxy available again)
+5. `finally(entity)` runs regardless of success/error
+
+This pattern ensures you never touch the entity after an `await`.
+
+### Manual Async Pattern (Alternative)
+
+If you prefer not to use `handleAsync`, follow this pattern:
 
 ```javascript
 const dataFetcher = {
-  // Keep state updates before await, notify events after
-  async fetchData(entity, api) {
+  async fetchData(entity, payload, api) {
+    // Synchronous state updates BEFORE await
     entity.isLoading = true
     entity.error = null
 
     try {
       const response = await fetch("/api/data")
       const data = await response.json()
-      // After await, notify event instead of updating entity
+      // AFTER await: use events, not entity
       api.notify("#dataFetcher:loadSuccess", data)
     } catch (err) {
-      // Notify error event
       api.notify("#dataFetcher:loadError", err.message)
+    } finally {
+      api.notify("#dataFetcher:loadFinally")
     }
   },
 
   loadSuccess(entity, data) {
-    entity.isLoading = false
     entity.data = data
     entity.error = null
   },
 
   loadError(entity, error) {
-    entity.isLoading = false
     entity.error = error
     entity.data = null
+  },
+
+  loadFinally(entity) {
+    entity.isLoading = false
   },
 
   render(entity, api) {
@@ -366,53 +473,91 @@ const dataFetcher = {
       return html`<p>Error: ${entity.error}</p>`
     }
 
-    return html` <div>${entity.data.map((item) => html`<p>${item}</p>`)}</div> `
+    return html`<div>${entity.data?.map((item) => html`<p>${item}</p>`)}</div>`
   },
 }
 ```
 
 ## Advanced Patterns
 
-### Memoization
+### Memoization with compute()
+
+For expensive computations that should only run when dependencies change, use `compute()`:
 
 ```javascript
-import { compute } from '@inglorious/store'
+import { compute } from "@inglorious/web"
 
-const expensiveComputation = compute(
-  (items) => {
-    // This runs only when items changes
-    return items
-      .filter(x => x > 0)
-      .map(x => x * 2)
-      .reduce((a, b) => a + b, 0)
+const dashboard = {
+  render(entity, api) {
+    // This computation only runs when entities.list.items changes
+    const totalValue = compute(
+      (items) => {
+        console.log("Computing total...") // Only logs when items change
+        return items
+          .filter((x) => x.value > 0)
+          .map((x) => x.value * 2)
+          .reduce((a, b) => a + b, 0)
+      },
+      [() => api.getEntity("list").items],
+    )
+
+    return html`<p>Total: ${totalValue()}</p>`
   },
-  [() => api.getEntity('list').items]
-)
-
-render(entity, api) {
-  return html`<p>Total: ${expensiveComputation()}</p>`
 }
 ```
 
-### Ref Binding (for DOM Access)
+**How it works:**
+
+- `compute()` takes a computation function and an array of dependency functions
+- The computation only re-runs when the dependencies return different values (shallow comparison)
+- Call the returned function with `()` to get the memoized value
+
+**Common pattern with selectors:**
 
 ```javascript
-import { ref } from "lit-html"
+// In your selectors file
+import { compute } from "@inglorious/web"
+
+export const selectTotalValue = compute(
+  (items) => {
+    return items
+      .filter((x) => x.value)
+      .map((x) => x.value * 2)
+      .reduce((a, b) => a + b)
+  },
+  [(entities) => entities.list.items],
+)
+
+// In your render
+render(entity, api) {
+  const total = selectTotalValue(api.getEntities())
+  return html`<p>Total: ${total}</p>`
+}
+```
+
+This pattern keeps your expensive computations from running on every render.
+
+### Ref Binding (for DOM Access)
+
+Use refs when you need direct DOM access (use sparingly):
+
+```javascript
+import { ref, createRef } from "@inglorious/web"
 
 const canvas = {
-  setup(entity) {
-    // Optional: setup hook (not part of render)
+  create(entity) {
+    entity.canvasRef = createRef()
   },
 
   render(entity, api) {
-    const canvasRef = ref()
-
     return html`
       <canvas
-        ${canvasRef}
+        ${ref(entity.canvasRef)}
         @click=${() => {
-          const ctx = canvasRef.value.getContext("2d")
-          ctx.fillRect(0, 0, 100, 100)
+          const ctx = entity.canvasRef.value?.getContext("2d")
+          if (ctx) {
+            ctx.fillRect(0, 0, 100, 100)
+          }
         }}
       ></canvas>
     `
@@ -431,7 +576,7 @@ const types = {
       return html`
         <div class="app">
           <nav>${api.render("navigation")}</nav>
-          <sidebar>${api.render("sidebar")}</sidebar>
+          <aside>${api.render("sidebar")}</aside>
           <main>${api.render("content")}</main>
         </div>
       `
@@ -458,7 +603,7 @@ const types = {
 }
 ```
 
-Each entity is independent but composed together through the `app` entity. Changes to any part re-render only that part (thanks to lit-html's diffing).
+Each entity is independent but composed together through the `app` entity. Changes to any part trigger a full re-render, but lit-html only updates the changed DOM nodes.
 
 ## Best Practices
 
@@ -468,12 +613,16 @@ Each entity is independent but composed together through the `app` entity. Chang
 - Use `repeat()` for lists with keys
 - Use `classMap` and `styleMap` for complex bindings
 - Break large renders into multiple entities
-- Cache expensive computations with `compute()`
+- Use `handleAsync` for async operations
+- Use `compute()` for expensive computations
+- Use property binding (`.prop`) for properties, attribute binding for attributes
+- Store entity ID in a variable before `await` if you need it after
 
 ❌ **Don't:**
 
 - Make API calls in render
-- Create new objects/arrays in render
+- Access `entity` after `await` in async handlers
+- Create new objects/arrays in render without memoization
 - Manually manipulate the DOM
 - Store state outside the entity
 - Use refs unless absolutely necessary

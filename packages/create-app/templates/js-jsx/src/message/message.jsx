@@ -4,11 +4,9 @@ export const message = {
   },
 
   render(entity, api) {
-    const message = entity.isUpperCase ? entity.who.toUpperCase() : entity.who
+    const who = entity.isUpperCase ? entity.who.toUpperCase() : entity.who
     return (
-      <span onClick={() => api.notify(`#${entity.id}:click`)}>
-        Hello {message}
-      </span>
+      <span onClick={() => api.notify(`#${entity.id}:click`)}>Hello {who}</span>
     )
   },
 }

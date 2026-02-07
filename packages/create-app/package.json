@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/create-app",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "A scaffolding tool to quickly create a new app with Inglorious Web.",
   "author": "IceOnFire <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",

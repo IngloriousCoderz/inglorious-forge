@@ -13,7 +13,7 @@ An **entity** is a JavaScript object that represents a piece of your UI state. E
 
 - **`id`** — Unique identifier
 - **`type`** — Reference to the type definition (behavior + render)
-- **`state`** — Custom properties (title, count, isOpen, etc.)
+- **Custom properties** — Any state your entity needs (title, count, isOpen, etc.)
 
 ```javascript
 // Entity example
@@ -34,15 +34,15 @@ const userEntity = {
 | Identity       | No persistent identity      | Persistent `id`       |
 | Lifecycle      | Mounted/Unmounted           | Create/Destroy events |
 | Props          | Passed from parent          | In entity properties  |
-| Testing        | Requires `@testing-library` | Just trigger events   |
+| Testing        | Requires test library setup | Just trigger events   |
 
 ## Types
 
-A **type** defines the behavior and (optional) rendering for entities of that type. Types are plain JavaScript objects with methods:
+A **type** defines the behavior and (optionally) rendering for entities of that type. Types are plain JavaScript objects with methods that act as event handlers — they get triggered when an event with the same name is notified:
 
 ```javascript
 const user = {
-  // Event handlers (methods)
+  // Event handlers
   login(entity, { email, password }) {
     // Mutate entity state
     entity.isLoggedIn = true
@@ -53,7 +53,7 @@ const user = {
     entity.isLoggedIn = false
   },
 
-  // Render method (required)
+  // Render method (optional)
   render(entity, api) {
     if (entity.isLoggedIn) {
       return html`
@@ -67,16 +67,28 @@ const user = {
 }
 ```
 
-### Method Signatures
+Think of types as classes and entities as instances of those classes. But you never invoke methods directly—instead, you notify events.
 
-Event handlers receive three parameters:
+### Types vs Redux Slices
+
+If you're familiar with Redux or Redux Toolkit, types are similar to slices with their reducers, while entities are like their `initialState`. Key differences:
+
+- ✅ Easier to have multiple instances of the same type
+- ✅ Can add and remove instances at runtime
+- ✅ Can notify other events from event handlers (unlike reducers)
+
+An event queue ensures that notifying events remains deterministic.
+
+### Event Handler Signature
+
+Event handlers receive up to three parameters:
 
 ```javascript
 myType = {
   someEvent(entity, payload, api) {
     // entity: The entity being updated
-    // payload: Data passed with the event
-    // api: The store API (optional, for triggering more events)
+    // payload: Optional data passed with the event
+    // api: The store API (for triggering more events or accessing state)
   },
 }
 ```
@@ -86,29 +98,29 @@ For simpler events, you can omit unused parameters:
 ```javascript
 const counter = {
   increment(entity) {
-    // If you only need the entity
+    // Only need the entity
     entity.count++
   },
 
   set(entity, newValue) {
-    // If you need payload
+    // Need entity and payload
     entity.count = newValue
   },
 
-  log(entity, payload, api) {
-    // If you need all three
-    console.log(`Entity ${entity.id} with payload:`, payload)
+  reset(entity, _, api) {
+    // Need all three
+    api.notify("set", 0)
   },
 }
 ```
 
-Please note that, although they look like methods, they should never be invoked directly. Event handlers respond to an event that was notified.
-
 ## Render Methods
 
-Every type that wants to be rendered needs a `render(entity, api)` method that returns a lit-html template:
+Types are not necessarily components — they're just collections of behavior. A type that wants to be rendered provides a `render(entity, api)` method that returns a lit-html template:
 
 ```javascript
+import { html } from "@inglorious/web"
+
 const greeting = {
   render(entity, api) {
     return html`
@@ -123,13 +135,61 @@ const greeting = {
 
 The render method is called whenever:
 
-1. The store subscribes (initial render)
+1. The store is subscribed to (initial render)
 2. Any state change occurs (full-tree re-render)
-3. The component is explicitly re-rendered
+3. The render method is explicitly invoked
 
-### Using the API in Render
+## Render Composition
 
-The `api` parameter provides access to store methods:
+Render methods are just pure functions. You can invoke them directly:
+
+```javascript
+import { html } from "@inglorious/web"
+
+const app = {
+  render(entity, api) {
+    return html`<header>${header.render({ title: "Hello" }, api)}</header>`
+  },
+}
+```
+
+This is similar to passing props to a component.
+
+If there's an entity of that type in the store, you can retrieve it with the `api` object:
+
+```javascript
+import { html } from "@inglorious/web"
+
+const app = {
+  render(entity, api) {
+    const headerEntity = api.getEntity("header")
+    return html`<header>${header.render(headerEntity, api)}</header>`
+  },
+}
+```
+
+The `api` object provides a convenience method to do this more concisely:
+
+```javascript
+import { html } from "@inglorious/web"
+
+const app = {
+  render(entity, api) {
+    return html`<header>${api.render("header")}</header>`
+  },
+}
+```
+
+This pattern is incredibly clean because:
+
+- ✅ No prop drilling
+- ✅ No parent/child coupling
+- ✅ Entities communicate through events
+- ✅ All state is visible in the store (no hidden state)
+
+### Using the `api` Object
+
+The `api` parameter provides access to store methods in both event handlers and render methods:
 
 ```javascript
 const page = {
@@ -143,8 +203,8 @@ const page = {
     // Render another entity
     const childUI = api.render("header")
 
-    // Trigger an event
-    const handleClick = () => api.notify("#page:clicked", { x: 100, y: 50 })
+    // Notify of an event
+    const handleClick = () => api.notify("click", { x: 100, y: 50 })
 
     return html`
       <div @click=${handleClick}>
@@ -165,13 +225,16 @@ The store provides these methods:
 Dispatch an event to trigger state changes:
 
 ```javascript
-// Broadcast event
+// Broadcast event to all entities
 api.notify("globalEvent")
 
-// Target specific entity
+// Target specific entity by ID
 api.notify("#user:login", { email: "alice@example.com" })
 
-// Redux-compatible
+// Target all entities of a type
+api.notify("todo:toggle")
+
+// Redux-compatible dispatch
 api.dispatch({ type: "#user:login", payload: { email: "alice@example.com" } })
 ```
 
@@ -186,7 +249,7 @@ console.log(user.name)
 
 ### `getEntities()`
 
-Get all entities:
+Get all entities as an object (keyed by ID):
 
 ```javascript
 const all = api.getEntities()
@@ -203,81 +266,45 @@ const template = api.render("user")
 
 ## Events and Handlers
 
-When you dispatch an event, the store looks up the appropriate handler and calls it:
+When you notify an event, the store looks up the appropriate handlers and calls them:
 
 ```javascript
-// Dispatch
+api.notify("increment", 5)
+
+// 1. Store checks which entities listen to "increment"
+// 2. For each entity, finds its type definition
+// 3. Calls: increment(entity, 5, api)
+
 api.notify("#counter:increment", 5)
 
-// Store finds:
-// 1. Entity with id "counter"
-// 2. Type definition for that entity
-// 3. Handler "increment" on the type
-// 4. Calls: counter.increment(entity, 5, api)
+// 1. Store finds entity with id "counter"
+// 2. Finds type definition for that entity
+// 3. Calls: increment(entity, 5, api)
 ```
 
-### Event Types
+> **Implementation note:** The store maintains an event map that tracks which entities listen to each event, so there's no lookup cost at runtime.
+
+### Event Targeting
 
 Events can target:
 
-1. **Broadcast** — All entities of a type
+1. **Broadcast** — All entities that define the handler
 
-   ```javascript
-   api.notify("refresh") // All entities listen
-   ```
+```javascript
+api.notify("refresh") // All entities with a "refresh" handler
+```
 
 2. **By ID** — Specific entity
 
-   ```javascript
-   api.notify("#user:logout")
-   ```
-
-3. **By Type** — All of one type
-
-   ```javascript
-   api.notify("todo:toggle") // All todos listen
-   ```
-
-4. **By Type and ID** — Not really useful
-   ```javascript
-   api.notify("todo#myTodo:toggle")
-   ```
-
-## The Render Method and API Object Pattern
-
-The most powerful pattern in Inglorious Web is passing the `api` object through render functions:
-
 ```javascript
-// Parent render
-const parent = {
-  render(entity, api) {
-    return html`
-      <div class="parent">
-        ${api.render("header")}
-        <!-- Render child -->
-      </div>
-    `
-  },
-}
-
-// Child can use the same API
-const header = {
-  render(entity, api) {
-    return html`
-      <header @click=${() => api.notify("#page:refresh")}>
-        <!-- Child can trigger parent events -->
-      </header>
-    `
-  },
-}
+api.notify("#user:logout") // Only the "user" entity
 ```
 
-This pattern is incredibly clean because:
+3. **By Type** — All entities of one type
 
-- ✅ No prop drilling
-- ✅ No parent/child coupling
-- ✅ Components can communicate through events
-- ✅ All state is visible in store (no hidden state)
+```javascript
+api.notify("todo:toggle") // All entities of type "todo"
+```
 
 ## State Mutations (via Mutative.js)
 
@@ -288,7 +315,7 @@ const todo = {
   toggle(entity) {
     // Looks like mutation
     entity.completed = !entity.completed
-    // But is actually immutable under the hood
+    // But produces immutable result under the hood
   },
 
   setTitle(entity, newTitle) {
@@ -301,31 +328,37 @@ const todo = {
 Mutative.js handles the immutability for you, so:
 
 - ✅ Time-travel debugging works
-- ✅ React re-renders when needed
-- ✅ Shallow comparison works for memoization
+- ✅ Shallow comparison works for optimization
 - ✅ State changes are detectable
+- ✅ Redux DevTools integration works seamlessly
 
-## Composition Pattern
+## Type Composition
 
-Types can be composed as arrays of behaviors. This is incredibly powerful for:
+So far we've seen types defined as objects. These are actually **behaviors**. In their simplest form, types are just behaviors. But types can also be:
 
-- **Guards** (check authentication before allowing navigation)
-- **Logging** (log every event on an entity)
-- **Analytics** (track user interactions)
-- **Middleware** (intercept and modify events)
+- **Functions** that wrap other types
+- **Arrays of behaviors** for composition
+
+This is incredibly powerful for:
+
+- **Guards** — Check authentication before allowing actions
+- **Logging** — Log every event on an entity
+- **Analytics** — Track user interactions
+- **Middleware** — Intercept and modify events
 
 ```javascript
-// Base type
+// Base behavior
 const page = {
   navigate(entity, route) {
     entity.currentRoute = route
   },
+
   render(entity, api) {
     return html`<div>Current route: ${entity.currentRoute}</div>`
   },
 }
 
-// Guard behavior
+// Guard behavior (function wrapper)
 const requireAuth = (type) => ({
   navigate(entity, route, api) {
     if (!isAuthenticated()) {
@@ -335,9 +368,12 @@ const requireAuth = (type) => ({
     // Pass through to wrapped type
     type.navigate(entity, route, api)
   },
+
+  // Pass through other methods
+  render: type.render,
 })
 
-// Compose them
+// Compose them as an array
 const types = {
   protectedPage: [page, requireAuth],
 }
@@ -345,11 +381,12 @@ const types = {
 
 When you dispatch `navigate` on a `protectedPage`:
 
-1. `requireAuth` checks authentication
-2. If authenticated, it calls the original `page.navigate`
-3. If not, it redirects to login
+1. The store processes behaviors from right to left (like middleware)
+2. `requireAuth` checks authentication first
+3. If authenticated, it calls the original `page.navigate`
+4. If not, it redirects to login and stops
 
-This is much cleaner than HOCs or wrapper components!
+This is much cleaner than HOCs or wrapper components! It's the Decorator pattern implemented through function composition.
 
 ## Next Steps
 

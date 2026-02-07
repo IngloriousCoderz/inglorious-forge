@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 0.5.1
+
+### Patch Changes
+
+- Improve scaffolded apps and docs
+
 ## 0.5.0
 
 ### Minor Changes

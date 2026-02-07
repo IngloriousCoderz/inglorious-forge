@@ -1,218 +1,365 @@
 ---
 title: Getting Started
-description: Installation and your first Inglorious Web counter app in under 5 minutes
+description: Build your first Inglorious Web app in under 5 minutes
 ---
 
 # Getting Started
 
 Welcome to Inglorious Web! Let's build your first app in under 5 minutes.
 
-## Installation
+## Quick Start with Scaffolding
 
-Install Inglorious Web using your favorite package manager:
-
-```bash
-npm install @inglorious/store
-# or
-yarn add @inglorious/store
-# or
-pnpm add @inglorious/store
-```
-
-## Your First App: A Counter
-
-### 1. Create Your Store and Entity Type
-
-First, define an entity type with a behavior (event handler) and a render method:
-
-```javascript
-// store.js
-import { createStore, html } from "@inglorious/web"
-
-const types = {
-  counter: {
-    // Event handler: mutate entity state
-    increment(entity) {
-      entity.value++
-    },
-
-    decrement(entity) {
-      entity.value--
-    },
-
-    // Render method: return a lit-html template
-    render(entity, api) {
-      return html`
-        <div class="counter">
-          <h2>Count: ${entity.value}</h2>
-          <button @click=${() => api.notify("increment")}>+1</button>
-          <button @click=${() => api.notify("decrement")}>-1</button>
-        </div>
-      `
-    },
-  },
-}
-
-const entities = {
-  counter: { type: "counter", value: 0 },
-}
-
-export const store = createStore({ types, entities })
-```
-
-### 2. Mount Your App
-
-```javascript
-// main.js
-import { mount, html } from "@inglorious/web"
-import { store } from "./store.js"
-
-// Root render function receives the API object
-const renderApp = (api) => {
-  return html`
-    <div class="app">
-      <h1>My Counter App</h1>
-      ${api.render("counter")}
-    </div>
-  `
-}
-
-// Mount the app to the DOM
-mount(store, renderApp, document.getElementById("root"))
-```
-
-### 3. Add Some CSS
-
-```css
-body {
-  font-family: sans-serif;
-  padding: 2rem;
-}
-
-.app {
-  max-width: 500px;
-  margin: 0 auto;
-}
-
-.counter {
-  border: 1px solid #ccc;
-  padding: 2rem;
-  border-radius: 8px;
-  text-align: center;
-}
-
-button {
-  margin: 0.5rem;
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-  cursor: pointer;
-  background: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-}
-
-button:hover {
-  background: #0056b3;
-}
-```
-
-### 4. Run Your App
-
-If you're using Vite:
+The fastest way to get started is with the official scaffolding tool:
 
 ```bash
+npm create @inglorious/app@latest my-first-app
+```
+
+Follow the prompts:
+
+- Choose a template (select **js** for this tutorial)
+- Install dependencies
+
+Then start developing:
+
+```bash
+cd my-first-app
+npm install
 npm run dev
 ```
 
-That's it! You now have a fully functional counter app.
+Open your browser to `http://localhost:5173` and you'll see "Hello world, Hello wide, Hello web!" (try clicking the words!)
+
+> **Want more control?** See the [Installation](./installation.md) guide for manual setup options (no build step, Vite, TypeScript).
+
+## Understanding the Starter Code
+
+The scaffolding created a simple app that demonstrates Inglorious Web's key strength: **multiple instances sharing the same behavior**.
+
+### The Entity Type (`src/message/message.js`)
+
+```javascript
+import { html } from "@inglorious/web"
+
+export const message = {
+  click(entity) {
+    entity.isUpperCase = !entity.isUpperCase
+  },
+
+  render(entity, api) {
+    const who = entity.isUpperCase ? entity.who.toUpperCase() : entity.who
+    return html`<span @click=${() => api.notify(`#${entity.id}:click`)}
+      >Hello ${who}</span
+    >`
+  },
+}
+```
+
+This defines the **behavior** for all `message` entities:
+
+- Click handler toggles between uppercase/lowercase
+- Render method displays "Hello {who}"
+
+### The Entity Instances (`src/store/entities.js`)
+
+```javascript
+export const entities = {
+  message1: {
+    type: "message",
+    who: "world",
+  },
+  message2: {
+    type: "message",
+    who: "wide",
+  },
+  message3: {
+    type: "message",
+    who: "web",
+  },
+}
+```
+
+Here we create **three separate instances** of the `message` type, each with different data.
+
+This is where Inglorious Web shines - creating multiple instances is just declaring more objects!
+
+### The App (`src/app.js`)
+
+```javascript
+import { html } from "@inglorious/web"
+
+export const app = {
+  render(api) {
+    return html`<h1>
+      ${api.render("message1")}, ${api.render("message2")},
+      ${api.render("message3")}!
+    </h1>`
+  },
+}
+```
+
+The app renders all three message instances. Each one:
+
+- Shares the same behavior (click to toggle)
+- Maintains independent state (uppercase/lowercase)
+- Updates independently when clicked
+
+**Try it:** Click on different words - each maintains its own state!
+
+## How It Works
+
+Here's what happens when you click "world":
+
+1. **Event triggered** — `@click` calls `api.notify("#message1:click")`
+2. **Handler runs** — `message.click(entity)` toggles `message1.isUpperCase`
+3. **Store notifies subscribers** — Your render function is called
+4. **Full template re-renders** — `app.render(api)` runs completely
+5. **lit-html diffs** — Only the changed text node updates
+6. **Browser updates** — You see "world" → "WORLD" (or vice versa)
+
+Only `message1` changed, but the entire template ran - lit-html was smart enough to update only that one word.
 
 ## Key Concepts
 
+### Entities
+
+Entities are plain JavaScript objects representing UI state:
+
+```javascript
+{
+  id: "message1",     // From the entities object key
+  type: "message",    // References the type definition
+  who: "world",       // Your custom state
+  isUpperCase: true   // Added by the click handler
+}
+```
+
+### Types
+
+Types define **shared behavior** for entities:
+
+```javascript
+const message = {
+  // Event handler
+  click(entity) {
+    entity.isUpperCase = !entity.isUpperCase
+  },
+
+  // Render method
+  render(entity, api) {
+    return html`<span>${entity.who}</span>`
+  },
+}
+```
+
+Think of types as **classes** and entities as **instances**. Just remember: you'll never invoke event handlers directly — they respond to events that are notified.
+
+### Multiple Instances
+
+This is where Inglorious Web differs from traditional component frameworks:
+
+**React/Vue way:**
+
+```jsx
+<Message who="world" />
+<Message who="wide" />
+<Message who="web" />
+```
+
+Props passed at render time, instances managed by framework.
+
+**Inglorious Web way:**
+
+```javascript
+// Declare instances explicitly
+entities: {
+  message1: { type: "message", who: "world" },
+  message2: { type: "message", who: "wide" },
+  message3: { type: "message", who: "web" },
+}
+
+// Render by ID
+html`${api.render("message1")} ${api.render("message2")}`
+```
+
+Benefits:
+
+- ✅ All state visible in one place (the store)
+- ✅ Easy to serialize/persist entire app state
+- ✅ Time-travel debugging works perfectly
+- ✅ Can add/remove instances dynamically
+
+> **Most components are singletons:** In real apps, you typically only need one instance of most entities (header, footer, nav, etc.). For these cases, you can use the `autoCreateEntities` flag to automatically create singleton entities without explicitly declaring them. See [Auto-Create Entities](../advanced/auto-create.md) for details. The explicit approach shown here is useful when you genuinely need multiple instances with different data.
+
 ### The `api` Object
 
-The `api` object is your connection to the store. It provides:
+Your connection to the store:
 
 - **`api.render(id)`** — Render an entity by ID
-- **`api.notify(event, payload)`** — Dispatch an event
-- **`api.getEntity(id)`** — Read an entity's current state
+- **`api.notify(event, payload?)`** — Trigger an event
+- **`api.getEntity(id)`** — Read entity state
 - **`api.getEntities()`** — Read all entities
-- **`api.update(id, fn)`** — Sync update an entity
-- **`api.dispatch(action)`** — For Redux compatibility
 
 ### Events
 
-Events are how you trigger state changes. The event name format is:
-
-```
-[[typeName][#entityId]:][eventType]
-```
-
-Examples:
+Events trigger state changes. Base format: `[#entityId:]eventName`
 
 ```javascript
-// Broadcast event to all entities
-api.notify("increment")
+// Target specific entity
+api.notify("#message1:click")
 
-// Broadcast event to all entities of type "counter"
-api.notify("counter:increment")
+// Broadcast to all entities with this handler
+api.notify("click")
 
-// Target a specific entity
-api.notify("#counter1:increment")
-
-// Target a specific entity of type "counter" (not really useful)
-api.notify("counter#counter1:increment")
-
-// Include a payload
-api.notify("#user:setName", "Alice")
-
-// Redux-compatible
-api.dispatch({ type: "#user:setName", payload: "Alice" })
+// With payload
+api.notify("#message1:setText", "hello")
 ```
 
-### The Render Method
+## Try It Yourself
 
-Every entity type that wants to be rendered should have a `render(entity, api)` method that returns a lit-html template:
+Let's add a "reset all" feature.
+
+**1. Add a reset handler to the message type** (`src/message/message.js`):
 
 ```javascript
-const myType = {
+export const message = {
+  click(entity) {
+    entity.isUpperCase = !entity.isUpperCase
+  },
+
+  // Add this handler
+  resetAll(entity) {
+    entity.isUpperCase = false
+  },
+
   render(entity, api) {
-    // `entity` is the current state of this entity
-    // `api` is the store API for triggering events and rendering other entities
+    const who = entity.isUpperCase ? entity.who.toUpperCase() : entity.who
+    return html`<span @click=${() => api.notify(`#${entity.id}:click`)}
+      >Hello ${who}</span
+    >`
+  },
+}
+```
 
+**2. Add a button in the app** (`src/app.js`):
+
+```javascript
+export const app = {
+  render(api) {
     return html`
-      <div class="my-component">
-        <h2>${entity.title}</h2>
-        <button @click=${() => api.notify(`#${entity.id}:edit`)}>Edit</button>
+      <div>
+        <h1>
+          ${api.render("message1")}, ${api.render("message2")},
+          ${api.render("message3")}!
+        </h1>
+        <button @click=${() => api.notify("resetAll")}>Reset All</button>
       </div>
     `
   },
 }
 ```
 
-## Understanding the Rendering Loop
+Save and watch it update! Now clicking "Reset All" broadcasts the `resetAll` event to **all three message entities**.
 
-Here's what happens when you change state:
+Notice:
 
-1. **Event triggered** — `api.notify("#counter:increment")`
-2. **Handler runs** — `counter.increment(entity)` mutates entity state (via Mutative.js)
-3. **Store notifies subscribers** — Your mount function is called
-4. **Template re-renders** — `renderApp(api)` runs completely
-5. **lit-html diffs** — Only changed DOM nodes update
-6. **Browser displays change** — User sees the new UI
+- We didn't specify entity IDs in the button's `notify()`
+- The event broadcasts to **all entities** that have a `resetAll` handler
+- Each message entity receives the event and resets independently
 
-This loop repeats for every state change.
+## Building Without Tools (Optional)
+
+Want to skip the build step? Create a single HTML file:
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Inglorious Web Demo</title>
+    <script type="importmap">
+      {
+        "imports": {
+          "mutative": "https://unpkg.com/mutative@latest/dist/mutative.esm.mjs",
+          "lit-html": "https://unpkg.com/lit-html@latest/lit-html.js",
+          "lit-html/": "https://unpkg.com/lit-html@latest/",
+          "@inglorious/utils/": "https://unpkg.com/@inglorious%2Futils@latest/src/",
+          "@inglorious/store": "https://unpkg.com/@inglorious%2Fstore@latest/src/store.js",
+          "@inglorious/store/": "https://unpkg.com/@inglorious%2Fstore@latest/src/",
+          "@inglorious/web": "https://unpkg.com/@inglorious%2Fweb@latest/src/index.js"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module">
+      import { createStore, mount, html } from "@inglorious/web"
+
+      const types = {
+        message: {
+          click(entity) {
+            entity.isUpperCase = !entity.isUpperCase
+          },
+
+          render(entity, api) {
+            const who = entity.isUpperCase
+              ? entity.who.toUpperCase()
+              : entity.who
+            return html`<span @click=${() => api.notify(`#${entity.id}:click`)}>
+              Hello ${who}
+            </span>`
+          },
+        },
+      }
+
+      const entities = {
+        message1: { type: "message", who: "world" },
+        message2: { type: "message", who: "wide" },
+        message3: { type: "message", who: "web" },
+      }
+
+      const store = createStore({ types, entities })
+
+      const renderApp = (api) =>
+        html`<h1>
+          ${api.render("message1")}, ${api.render("message2")},
+          ${api.render("message3")}!
+        </h1>`
+
+      mount(store, renderApp, document.getElementById("root"))
+    </script>
+  </body>
+</html>
+```
+
+Open this file in a browser - no build step needed!
+
+## What Makes This Different?
+
+Coming from React or Vue? Here's what's different:
+
+| Concept               | React/Vue                       | Inglorious Web                 |
+| --------------------- | ------------------------------- | ------------------------------ |
+| Component instances   | Created implicitly at render    | Declared explicitly in store   |
+| State location        | Inside components (hooks/data)  | In the store (all visible)     |
+| Multiple instances    | Render component N times        | Declare N entities in store    |
+| Instance identity     | Managed by framework            | You control via entity IDs     |
+| State serialization   | Complex (spread across tree)    | Simple (it's just the store)   |
+| Time-travel debugging | Requires special setup          | Built-in (Redux DevTools)      |
+| Re-render strategy    | Selective (optimize re-renders) | Full-tree (lit-html optimizes) |
+
+The trade-off: **Explicit instance management** for **predictable state management**.
 
 ## Next Steps
 
-Ready to dive deeper? Here are some great next topics:
+Now that you have a working app, explore these topics:
 
-- **[Core Concepts](./core-concepts.md)** — Understand entities, types, and composition
-- **[Rendering Model](./rendering-model.md)** — Deep dive into how full-tree rendering works
-- **[Event System](./event-system.md)** — Master the event and notification system
-- **[Entity Render Methods](./entity-renders.md)** — Learn advanced rendering patterns
-- **[Components Overview](../components/overview.md)** — Built-in form, table, router, and more
-- **[Type Composition](../advanced/type-composition.md)** — Compose behaviors for guards, logging, analytics
-- **[Testing](../advanced/testing.md)** — How to test your Inglorious Web app (spoiler: it's easy)
+- **[Core Concepts](./core-concepts.md)** — Deep dive into entities, types, and the `api` object
+- **[Rendering Model](./rendering-model.md)** — Understanding full-tree re-renders
+- **[Event System](./event-system.md)** — Master event targeting and broadcasting
+- **[Auto-Create Entities](../advanced/auto-create.md)** — Simplify singleton entity management
+- **[Featured Types Overview](../featured/overview.md)** — Built-in router, forms, tables, and more
+- **[Type Composition](../advanced/type-composition.md)** — Compose behaviors for guards and middleware
+- **[Testing](../advanced/testing.md)** — How to test your app (spoiler: it's trivial)
 
 Happy building! 🚀

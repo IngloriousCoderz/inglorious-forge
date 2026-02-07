@@ -355,7 +355,7 @@ test("logging logs events", () => {
 ## Next Steps
 
 - **[Testing](./testing.md)** — Comprehensive testing strategies
-- **[Route Guards](../components/router.md)** — Use type composition for advanced routing
+- **[Route Guards](../featured/router.md)** — Use type composition for advanced routing
 - **[Type Composition in Store](https://docs.inglorious.dev/store/advanced/type-composition)** — Full documentation in Store docs
 
 Happy composing! 🎯

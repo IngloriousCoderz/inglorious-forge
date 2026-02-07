@@ -11,7 +11,7 @@ description: Philosophy, design principles, ECS inspiration, and use cases
 
 ## What It Is
 
-- **A state-driven web framework** built on `@inglorious/store` (entity-based state management)
+- **A state-driven web framework** built on [`@inglorious/store`](https://inglorious.dev/store/) (entity-based state management)
 - **Pure JavaScript** — no JSX required, no DSL, no compiler
 - **Entity-based rendering** — each entity type defines its own `render(entity, api)` method
 - **Full-tree re-renders** with DOM diffing via lit-html
@@ -21,7 +21,7 @@ description: Philosophy, design principles, ECS inspiration, and use cases
 - **No signals** — no hidden reactivity graph, no automatic tracking
 - **No subscriptions** — no cleanup needed, no memory leaks
 - **No lifecycle hooks** — no special methods to manage
-- **Built-in components** — router, forms, tables, virtual lists, select dropdowns
+- **Built-in features** — router, forms, tables, virtual lists, select dropdowns
 
 ## What It Isn't
 
@@ -31,7 +31,6 @@ description: Philosophy, design principles, ECS inspiration, and use cases
 - **Not a minimalist library** — it's more structured than Alpine or HTMX
 - **Not an observable-based framework** — no RxJS-style reactivity
 - **Not a database** — it's a frontend state manager, not a query engine
-- **Not a framework that forces a specific language** — works with JavaScript, TypeScript, JSX, Vue templates, etc.
 
 ## The Core Philosophy
 
@@ -62,19 +61,19 @@ const renderApp = (api) => html`
 | ------------------------------- | ------------------------------------------ |
 | Complex reactivity graphs       | Full-tree render. Lit-html diffs it. Done. |
 | Memory leaks from subscriptions | No subscriptions. No cleanup. No overhead. |
-| Hidden dependencies             | Explicit: state changes → events → render  |
+| Hidden dependencies             | Explicit: events → state changes → render  |
 | Framework magic                 | Transparent: just JavaScript functions     |
 | Steep learning curve            | Simple model: entities, events, renders    |
 
 ## ECS Inspiration
 
-Inglorious Web (like Inglorious Store) takes architectural inspiration from **Entity-Component-System** (ECS) patterns, common in game engines, but adapts them for web UI development.
+Inglorious Web (like [Inglorious Store](https://inglorious.dev/store/)) takes architectural inspiration from **Entity-Component-System** (ECS) architecture, common in game engines, but adapts it for web UI development.
 
 ### What We Took from ECS
 
-✅ **Entities** — Objects that hold state (like game entities)  
+✅ **Entities** — Objects that hold state (like game objects)  
 ✅ **Separation of data and behavior** — Entities contain data, types define behavior  
-✅ **Systems** — For cross-cutting operations (validation, analytics, logging)  
+✅ **Systems** — For cross-cutting concerns (validation, analytics, logging)  
 ✅ **Events** — Pub/sub for decoupled communication
 
 ### What We Didn't Take
@@ -90,7 +89,7 @@ ECS solves a different problem (game loops, massive parallelism, cache efficienc
 
 > **"Decouple data from behavior through explicit messaging."**
 
-In Inglorious Web:
+[Inglorious Store](https://inglorious.dev/store/) is like ECS and Redux had a baby. Inglorious Web adds rendering capabilities on top, so:
 
 - **Entities** = UI state (user, header, form, etc.)
 - **Types** = UI behaviors (render, event handlers)
@@ -140,12 +139,12 @@ store.subscribe(() => {
 
 ### Performance Trade-off
 
-| Metric             | Inglorious              | React                        | Vue                             |
-| ------------------ | ----------------------- | ---------------------------- | ------------------------------- |
-| Template execution | Fast (always full)      | Medium (selective re-render) | Medium (proxy tracking)         |
-| DOM updates        | Fast (lit-html diffing) | Medium (VDOM diff)           | Fast (fine-grained)             |
-| Memory overhead    | Minimal                 | High (VDOM, hooks, closures) | Medium (proxies, subscriptions) |
-| Learning curve     | Very low                | Medium/High                  | Medium                          |
+| Metric             | Inglorious Web          | React                            | Vue                             |
+| ------------------ | ----------------------- | -------------------------------- | ------------------------------- |
+| Template execution | Fast (always full)      | Medium (selective re-render)     | Medium (proxy tracking)         |
+| DOM updates        | Fast (lit-html diffing) | Medium (VDOM diff)               | Fast (fine-grained)             |
+| Memory overhead    | Minimal                 | High (VDOM, hooks, memoizations) | Medium (proxies, subscriptions) |
+| Learning curve     | Very low                | Medium/High                      | Medium                          |
 
 **In practice:** Inglorious Web is plenty fast for most UIs. The full-tree re-render overhead is negligible compared to DOM update overhead.
 
@@ -184,7 +183,7 @@ store.subscribe(() => {
 - Types are more customizable than traditional components
 - Composition without wrapper hell
 - Testing is trivial (no complex test library setup)
-- Documentation and storybook integration easy
+- Documentation and Storybook integration easy
 
 ### 3. Real-time Applications
 
@@ -209,7 +208,7 @@ store.subscribe(() => {
 
 ### 6. Content-Heavy Sites with SEO Requirements
 
-- Use @inglorious/ssx for static site generation
+- Use [@inglorious/ssx](../advanced/ssx.md) for static site generation
 - Super lean hydration thanks to lit-labs/ssr
 - Full SEO support with pre-rendered HTML
 - Perfect for marketing sites, blogs, documentation
@@ -260,6 +259,8 @@ const counter = {
 }
 ```
 
+Look at this code — it's almost identical to Vue 2's Options API. But it's a different creature under the hood.
+
 ### 3. **Testing**
 
 You can test handlers directly as impure functions:
@@ -270,7 +271,7 @@ counter.increment(entity)
 expect(entity.count).toBe(1)
 ```
 
-Or use `trigger()` to test them as pure functions (using Mutative.js under the hood):
+Or use `trigger()` to test them as pure functions (using [Mutative.js](https://mutative.js.org) under the hood):
 
 ```javascript
 import { trigger } from "@inglorious/web/test"
@@ -286,7 +287,7 @@ expect(entityBefore.count).toBe(0) // Original entity unchanged
 Types as arrays. No wrapper hell, no HOCs.
 
 ```javascript
-const protected = [basePage, requireAuth, requireAdmin]
+const protectedPage = [basePage, requireAuth, requireAdmin]
 ```
 
 ### 5. **Predictability**

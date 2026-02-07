@@ -417,7 +417,7 @@ See [CHANGELOG.md](https://github.com/ingloriouscode/inglorious-web/blob/main/CH
 ## Related
 
 - **[Guide](../guide/getting-started.md)** — Getting started guide
-- **[Components](../components/overview.md)** — Component documentation
+- **[Featured Types](../featured/overview.md)** — Built-in types documentation
 - **[Advanced](../advanced/type-composition.md)** — Advanced patterns
 
 Need help? [Report an issue](https://github.com/ingloriouscode/inglorious-web/issues) or [ask on discussions](https://github.com/ingloriouscode/inglorious-web/discussions).
