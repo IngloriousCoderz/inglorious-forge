@@ -18,8 +18,7 @@ test("api.select runs selectors against current state", () => {
   }
 
   const api = createApi(store)
-  const selectTotal = (entities) =>
-    entities.alpha.value + entities.beta.value
+  const selectTotal = (entities) => entities.alpha.value + entities.beta.value
 
   expect(api.select(selectTotal)).toBe(7)
 

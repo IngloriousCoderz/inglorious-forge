@@ -48,11 +48,12 @@ export interface ListType {
   formSubmit: (entity: ListEntity, value: string) => void
   toggleClick: (entity: ListEntity, id: number) => void
   deleteClick: (entity: ListEntity, id: number) => void
-  clearClick: (entity: ListEntity, _payload: void) => void
+  clearClick: (entity: ListEntity) => void
   render: (entity: ListEntity, api: Api) => TemplateResult | null
 }
 
 export interface FooterType {
   filterClick: (entity: FooterEntity, id: Filter) => void
+  clearClick: (entity: FooterEntity) => void
   render: (entity: FooterEntity, api: Api) => TemplateResult | null
 }
