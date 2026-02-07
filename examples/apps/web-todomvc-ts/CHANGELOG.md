@@ -1,5 +1,12 @@
 # web-todomvc-ts
 
+## 0.2.15
+
+### Patch Changes
+
+- Add api.select()
+  - @inglorious/web@4.1.6
+
 ## 0.2.14
 
 ### Patch Changes

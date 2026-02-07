@@ -1,16 +1,16 @@
 import { compute } from "@inglorious/web"
 
-export const selectValue = (entities) => entities.form.value
-export const selectTasks = (entities) => entities.list.tasks
+export const value = (entities) => entities.form.value
+export const tasks = (entities) => entities.list.tasks
 
-export const selectTasksCount = (filter) =>
-  compute((tasks) => getTasks(tasks, filter).length, [selectTasks])
+export const tasksCount = (filter) =>
+  compute((tasks) => getTasks(tasks, filter).length, [tasks])
 
-export const selectActiveFilter = (entities) => entities.footer.activeFilter
+export const activeFilter = (entities) => entities.footer.activeFilter
 
-export const selectFilteredTasks = compute(
+export const filteredTasks = compute(
   (tasks, activeFilter) => getTasks(tasks, activeFilter),
-  [selectTasks, selectActiveFilter],
+  [tasks, activeFilter],
 )
 
 function getTasks(tasks, filter) {

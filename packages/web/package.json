@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/web",
-  "version": "4.1.5",
+  "version": "4.1.6",
   "description": "A new web framework that leverages the power of the Inglorious Store combined with the performance and simplicity of lit-html.",
   "author": "IceOnFire <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",

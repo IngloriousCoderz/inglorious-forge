@@ -1,5 +1,12 @@
 # dashboard-benchmark
 
+## 0.1.12
+
+### Patch Changes
+
+- Add api.select()
+  - @inglorious/web@4.1.6
+
 ## 0.1.11
 
 ### Patch Changes

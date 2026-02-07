@@ -1,12 +1,13 @@
 import { compute } from "@inglorious/web"
 
 const SAME = 0
+const DEFAULT_AVG = 0
 
-export const selectRows = (entities) => entities.table.data
-const selectFilter = (entities) => entities.metrics.filter
-const selectSortBy = (entities) => entities.metrics.sortBy
+export const rows = (entities) => entities.table.data
+const filter = (entities) => entities.metrics.filter
+const sortBy = (entities) => entities.metrics.sortBy
 
-export const selectFilteredRows = compute(
+export const filteredRows = compute(
   (rows, filter, sortBy) =>
     rows
       .filter((row) => {
@@ -21,16 +22,18 @@ export const selectFilteredRows = compute(
         if (sortBy === "progress") return b.progress - a.progress
         return SAME
       }),
-  [selectRows, selectFilter, selectSortBy],
+  [rows, filter, sortBy],
 )
 
-export const selectChartData = (start, end) =>
+export const chartData = (start, end) =>
   compute(
     (rows) => {
       const values = rows.slice(start, end).map((r) => r.value)
       const max = Math.max(...values)
-      const avg = Math.floor(values.reduce((a, b) => a + b) / values.length)
+      const avg = values.length
+        ? Math.floor(values.reduce((a, b) => a + b) / values.length)
+        : DEFAULT_AVG
       return { values, max, avg }
     },
-    [selectFilteredRows],
+    [filteredRows],
   )

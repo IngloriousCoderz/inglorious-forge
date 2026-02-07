@@ -47,6 +47,10 @@ export const types: AppTypes = {
       if (entity.type !== "footer") return
       entity.activeFilter = id
     },
+
+    clearClick(entity) {
+      entity.activeFilter = "all"
+    },
   },
 }
 

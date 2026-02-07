@@ -69,5 +69,9 @@ export const types = {
     filterClick(entity, id) {
       entity.activeFilter = id
     },
+
+    clearClick(entity) {
+      entity.activeFilter = "all"
+    },
   },
 }

@@ -1,6 +1,6 @@
 import { classMap } from "@inglorious/web"
 
-import { selectFilteredTasks } from "../store/selectors"
+import { filteredTasks } from "../store/selectors"
 
 const TASKS_TO_REMOVE = 1
 const DEFAULT_ID = 1
@@ -27,11 +27,11 @@ export const list = {
   },
 
   render(entity, api) {
-    const filteredTasks = selectFilteredTasks(api.getEntities())
+    const tasks = api.select(filteredTasks)
 
     return (
       <ul className="list">
-        {filteredTasks.map((task) => (
+        {tasks.map((task) => (
           <li key={task.id}>
             <span
               className={classMap({ completed: task.completed })}

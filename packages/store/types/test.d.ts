@@ -1,3 +1,5 @@
+import type { BaseEntity, EntitiesState } from "./store"
+
 /**
  * Mock API for testing (subset of full API)
  */
@@ -7,6 +9,7 @@ export interface MockApi<
 > {
   getEntities: () => TState
   getEntity: (id: string) => TEntity | undefined
+  select: <TResult>(selector: (state: TState) => TResult) => TResult
   dispatch: (event: Event) => void
   notify: (type: string, payload?: any) => void
   getEvents: () => Event[]

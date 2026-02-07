@@ -2,12 +2,15 @@ import { memo, useMemo } from "react"
 
 const VALUE_TO_PX = 100
 const VALUE_TO_HSL = 120
+const DEFAULT_AVG = 0
 
 export const Chart = memo(({ data, title }) => {
   const { values, max, avg } = useMemo(() => {
     const values = data.map((r) => r.value)
     const max = Math.max(...values)
-    const avg = Math.floor(values.reduce((a, b) => a + b) / values.length)
+    const avg = values.length
+      ? Math.floor(values.reduce((a, b) => a + b) / values.length)
+      : DEFAULT_AVG
     return { values, max, avg }
   }, [data])
 

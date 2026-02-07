@@ -1,7 +1,7 @@
 import { classMap, html } from "@inglorious/web"
 
-import type { AppState, FooterType } from "../../types"
-import { selectTasksCount } from "../store/selectors"
+import type { FooterType } from "../../types"
+import { tasksCount } from "../store/selectors"
 
 const SINGLE_TASK = 1
 
@@ -10,14 +10,16 @@ export const footer: FooterType = {
     entity.activeFilter = id
   },
 
+  clearClick(entity) {
+    entity.activeFilter = "all"
+  },
+
   render(entity, api) {
-    const entities = api.getEntities() as AppState
+    const allTasksCount = api.select(tasksCount())
+    const completedTasksCount = api.select(tasksCount("completed"))
+    const activeTasksCount = api.select(tasksCount("active"))
 
-    const tasksCount = selectTasksCount()(entities)
-    const completedTasksCount = selectTasksCount("completed")(entities)
-    const activeTasksCount = selectTasksCount("active")(entities)
-
-    if (!tasksCount) return null
+    if (!allTasksCount) return null
 
     return html`<footer>
       <span>

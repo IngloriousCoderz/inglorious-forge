@@ -1,5 +1,14 @@
 # todomvc-cs
 
+## 1.2.21
+
+### Patch Changes
+
+- Add api.select()
+- Updated dependencies
+  - @inglorious/store@9.4.0
+  - @inglorious/react-store@15.0.0
+
 ## 1.2.20
 
 ### Patch Changes

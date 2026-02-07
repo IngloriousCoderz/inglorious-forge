@@ -4,11 +4,11 @@ import { compute } from "./select"
 
 describe("compute() function", () => {
   it("computes the result on first call", () => {
-    const selectA = (state) => state.a
-    const selectB = (state) => state.b
+    const a = (state) => state.a
+    const b = (state) => state.b
 
     const resultFn = vi.fn((a, b) => a + b)
-    const selector = compute(resultFn, [selectA, selectB])
+    const selector = compute(resultFn, [a, b])
 
     const state = { a: 1, b: 2 }
 
@@ -17,11 +17,11 @@ describe("compute() function", () => {
   })
 
   it("returns the cached result if inputs have not changed", () => {
-    const selectA = (state) => state.a
-    const selectB = (state) => state.b
+    const a = (state) => state.a
+    const b = (state) => state.b
 
     const resultFn = vi.fn((a, b) => ({ sum: a + b }))
-    const selector = compute(resultFn, [selectA, selectB])
+    const selector = compute(resultFn, [a, b])
 
     const state = { a: 1, b: 2 }
 
@@ -33,11 +33,11 @@ describe("compute() function", () => {
   })
 
   it("recomputes when an input selector result changes", () => {
-    const selectA = (state) => state.a
-    const selectB = (state) => state.b
+    const a = (state) => state.a
+    const b = (state) => state.b
 
     const resultFn = vi.fn((a, b) => a + b)
-    const selector = compute(resultFn, [selectA, selectB])
+    const selector = compute(resultFn, [a, b])
 
     const state1 = { a: 1, b: 2 }
     const state2 = { a: 1, b: 3 }
@@ -48,10 +48,10 @@ describe("compute() function", () => {
   })
 
   it("uses referential equality for input comparison", () => {
-    const selectObj = (state) => state.obj
+    const obj = (state) => state.obj
 
     const resultFn = vi.fn((obj) => obj.value)
-    const selector = compute(resultFn, [selectObj])
+    const selector = compute(resultFn, [obj])
 
     const state1 = { obj: { value: 1 } }
     const state2 = { obj: { value: 1 } } // same shape, different reference
@@ -63,10 +63,10 @@ describe("compute() function", () => {
   })
 
   it("works with a single input selector", () => {
-    const selectCount = (state) => state.count
+    const count = (state) => state.count
 
     const resultFn = vi.fn((count) => count * 2)
-    const selector = compute(resultFn, [selectCount])
+    const selector = compute(resultFn, [count])
 
     expect(selector({ count: 2 })).toBe(4)
     expect(selector({ count: 2 })).toBe(4)
@@ -83,11 +83,11 @@ describe("compute() function", () => {
   })
 
   it("memoizes per selector instance", () => {
-    const selectA = (state) => state.a
+    const a = (state) => state.a
     const resultFn = vi.fn((a) => a)
 
-    const selector1 = compute(resultFn, [selectA])
-    const selector2 = compute(resultFn, [selectA])
+    const selector1 = compute(resultFn, [a])
+    const selector2 = compute(resultFn, [a])
 
     selector1({ a: 1 })
     selector2({ a: 1 })
@@ -96,10 +96,10 @@ describe("compute() function", () => {
   })
 
   it("only calls resultFunc when inputs change", () => {
-    const select = (state) => state.value
+    const value = (state) => state.value
     const resultFn = vi.fn((v) => v)
 
-    const selector = compute(resultFn, [select])
+    const selector = compute(resultFn, [value])
 
     selector({ value: 1 })
     selector({ value: 1 })

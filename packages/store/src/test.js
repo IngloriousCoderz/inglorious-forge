@@ -13,6 +13,7 @@ import { create } from "mutative"
  * @returns {Object} A mock API object with methods:
  *   - `getEntities()`: Returns all entities (frozen)
  *   - `getEntity(id)`: Returns a specific entity by ID (frozen)
+ *   - `select(selector)`: Runs a selector against the entities
  *   - `dispatch(event)`: Records an event (for assertions)
  *   - `notify(type, payload)`: Convenience method that calls dispatch
  *   - `getEvents()`: Returns all events that were dispatched
@@ -41,6 +42,9 @@ export function createMockApi(entities) {
     },
     getEntity(id) {
       return frozenEntities[id]
+    },
+    select(selector) {
+      return selector(frozenEntities)
     },
     dispatch(event) {
       events.push(event)

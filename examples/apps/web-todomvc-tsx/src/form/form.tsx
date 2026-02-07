@@ -1,4 +1,6 @@
-export const form = {
+import type { FormType } from "../../types"
+
+export const form: FormType = {
   inputChange(entity, value) {
     entity.value = value
   },

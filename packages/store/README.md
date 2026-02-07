@@ -207,6 +207,7 @@ const types = {
     increment(counter, value, api) {
       api.getEntities() // access the whole state in read-only mode
       api.getEntity(id) // access some other entity in read-only mode
+      api.select(selector) // run a selector against the whole state
       api.notify(type, payload) // similar to dispatch. Yes, you can dispatch inside of a reducer!
       api.dispatch(action) // optional, if you prefer Redux-style dispatching
     },
@@ -491,6 +492,7 @@ Notice: you don't need pending/fulfilled/rejected actions. You stay in control o
 
 - **`api.getEntities()`** - read entire state
 - **`api.getEntity(id)`** - read one entity
+- **`api.select(selector)`** - run a selector against the state
 - **`api.notify(type, payload)`** - trigger other events (queued, not immediate)
 - **`api.dispatch(action)`** - optional, if you prefer Redux-style dispatching
 - **`api.getTypes()`** - access type definitions (mainly for middleware/plugins)
@@ -748,6 +750,7 @@ The mock API provides:
 
 - `getEntities()`: Returns all entities (frozen).
 - `getEntity(id)`: Returns a specific entity by ID (frozen).
+- `select(selector)`: Runs a selector against the entities.
 - `dispatch(event)`: Records an event for later assertions.
 - `notify(type, payload)`: A convenience wrapper around `dispatch`.
 - `getEvents()`: Returns all events that were dispatched.
@@ -880,7 +883,7 @@ const selectResult = compute(
 The returned function is a standard selector:
 
 ```js
-const result = selectResult(api.getEntities())
+const result = api.select(selectResult)
 ```
 
 And it works seamlessly with `react-redux` or `@inglorious/react-store`:
@@ -1101,6 +1104,7 @@ Each handler receives three arguments:
 - **`api`** - access to store methods:
   - `getEntities()` - entire state (read-only)
   - `getEntity(id)` - single entity (read-only)
+  - `select(selector)` - run a selector against the state
   - `notify(type, payload)` - trigger other events
   - `dispatch(action)` - optional, if you prefer Redux-style dispatching
   - `getTypes()` - type definitions (for middleware)

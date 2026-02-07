@@ -1,5 +1,11 @@
 # @inglorious/store
 
+## 9.4.0
+
+### Minor Changes
+
+- Add api.select()
+
 ## 9.3.1
 
 ### Patch Changes

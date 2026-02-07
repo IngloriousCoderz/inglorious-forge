@@ -1,7 +1,7 @@
 import { classMap, html } from "@inglorious/web"
 
-import type { AppState, ListType, Task } from "../../types"
-import { selectFilteredTasks } from "../store/selectors"
+import type { ListType, Task } from "../../types"
+import { filteredTasks } from "../store/selectors"
 
 const TASKS_TO_REMOVE = 1
 const DEFAULT_ID = 1
@@ -29,10 +29,10 @@ export const list: ListType = {
   },
 
   render(_, api) {
-    const filteredTasks = selectFilteredTasks(api.getEntities() as AppState)
+    const tasks = api.select(filteredTasks)
 
     return html`<ul class="list">
-      ${filteredTasks.map(
+      ${tasks.map(
         (task) =>
           html`<li>
             <span

@@ -518,7 +518,7 @@ const dashboard = {
 // In your selectors file
 import { compute } from "@inglorious/web"
 
-export const selectTotalValue = compute(
+export const totalValue = compute(
   (items) => {
     return items
       .filter((x) => x.value)
@@ -530,7 +530,7 @@ export const selectTotalValue = compute(
 
 // In your render
 render(entity, api) {
-  const total = selectTotalValue(api.getEntities())
+  const total = api.select(totalValue)
   return html`<p>Total: ${total}</p>`
 }
 ```

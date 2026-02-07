@@ -1,16 +1,14 @@
 import { html, repeat } from "@inglorious/web"
 
-import { selectChartData } from "../store/select"
+import { chartData } from "../store/select"
 
 const VALUE_TO_PX = 100
 const VALUE_TO_HSL = 120
 
 export const chart = {
   render(entity, api) {
-    const { values, max, avg } = selectChartData(
-      api.getEntities(),
-      entity.rangeStart,
-      entity.rangeEnd,
+    const { values, max, avg } = api.select(
+      chartData(entity.rangeStart, entity.rangeEnd),
     )
 
     return html`

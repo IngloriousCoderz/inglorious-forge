@@ -285,6 +285,15 @@ const user = api.getEntity("user")
 const userId = user.id
 ```
 
+#### `api.select(selector)`
+
+Run a selector against the current state:
+
+```javascript
+const activeFilter = (state) => state.toolbar.activeFilter
+const filter = api.select(activeFilter)
+```
+
 #### `api.notify(eventType, payload)`
 
 Trigger another event (queued with current event):

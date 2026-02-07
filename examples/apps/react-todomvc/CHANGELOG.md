@@ -1,5 +1,13 @@
 # todomvc
 
+## 1.1.20
+
+### Patch Changes
+
+- Add api.select()
+- Updated dependencies
+  - @inglorious/store@9.4.0
+
 ## 1.1.19
 
 ### Patch Changes

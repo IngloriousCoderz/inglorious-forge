@@ -121,6 +121,15 @@ Get all entities.
 const todos = api.getEntities()
 ```
 
+#### `select(selector)`
+
+Run a selector against the current state.
+
+```javascript
+const activeFilter = (state) => state.toolbar.activeFilter
+const filter = api.select(activeFilter)
+```
+
 #### `notify(event, payload)`
 
 Dispatch an event.

@@ -67,6 +67,7 @@ The mock API provides:
 
 - `getEntities()`: Returns all entities (frozen).
 - `getEntity(id)`: Returns a specific entity by ID (frozen).
+- `select(selector)`: Runs a selector against the entities.
 - `dispatch(event)`: Records an event for later assertions.
 - `notify(type, payload)`: A convenience wrapper around `dispatch`.
 - `getEvents()`: Returns all events that were dispatched.

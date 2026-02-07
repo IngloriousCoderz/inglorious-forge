@@ -10,6 +10,7 @@ describe("createMockApi", () => {
 
     expect(api.getEntities).toBeDefined()
     expect(api.getEntity).toBeDefined()
+    expect(api.select).toBeDefined()
     expect(api.dispatch).toBeDefined()
     expect(api.notify).toBeDefined()
     expect(api.getEvents).toBeDefined()

@@ -1,5 +1,12 @@
 # lit-todomvc
 
+## 0.0.26
+
+### Patch Changes
+
+- Add api.select()
+  - @inglorious/web@4.1.6
+
 ## 0.0.25
 
 ### Patch Changes

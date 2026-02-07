@@ -256,6 +256,15 @@ const all = api.getEntities()
 Object.values(all).forEach((entity) => console.log(entity.id))
 ```
 
+### `select(selector)`
+
+Run a selector against the current state:
+
+```javascript
+const activeFilter = (state) => state.toolbar.activeFilter
+const filter = api.select(activeFilter)
+```
+
 ### `render(id)`
 
 Render an entity by ID:

@@ -46,10 +46,11 @@ export interface AppTypes {
     formSubmit: (entity: ListEntity, value: string) => void
     toggleClick: (entity: ListEntity, id: number) => void
     deleteClick: (entity: ListEntity, id: number) => void
-    clearClick: (entity: ListEntity, _payload: void) => void
+    clearClick: (entity: ListEntity) => void
   }
 
   footer: {
     filterClick: (entity: FooterEntity, id: Filter) => void
+    clearClick: (entity: FooterEntity) => void
   }
 }

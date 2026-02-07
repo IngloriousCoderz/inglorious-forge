@@ -1,19 +1,17 @@
 import { classMap, html } from "@inglorious/web"
 
-import { selectTasksCount } from "@/store/selectors"
+import { tasksCount } from "@/store/selectors"
 
 import classes from "./footer.module.css"
 
 const SINGLE_TASK = 1
 
 export function render(entity, api) {
-  const entities = api.getEntities()
+  const allTasksCount = api.select(tasksCount())
+  const completedTasksCount = api.select(tasksCount("completed"))
+  const activeTasksCount = api.select(tasksCount("active"))
 
-  const tasksCount = selectTasksCount()(entities)
-  const completedTasksCount = selectTasksCount("completed")(entities)
-  const activeTasksCount = selectTasksCount("active")(entities)
-
-  if (!tasksCount) return null
+  if (!allTasksCount) return null
 
   return html`<footer class=${classes.footer}>
     <span>

@@ -7,6 +7,7 @@ import {
   ROWS_TO_UPDATE,
   updateData,
 } from "../../data"
+import { filteredRows } from "../store/select"
 import { row } from "./row"
 
 export const table = {
@@ -24,6 +25,8 @@ export const table = {
   },
 
   render(entity, api) {
+    const rows = api.select(filteredRows)
+
     return html`
       <table>
         <thead>
@@ -41,7 +44,7 @@ export const table = {
         </thead>
         <tbody>
           ${repeat(
-            entity.data,
+            rows,
             (r) => r.id,
             (r) => html`${row.render(r, api)}`,
           )}

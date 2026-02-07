@@ -771,16 +771,12 @@ api.notify("add", { id: "todo3", type: "todo", text: "Ship" })
 ```javascript
 import { compute } from "@inglorious/store"
 
-const selectCompleted = (state) =>
-  Object.values(state).filter((e) => e.completed)
+const completed = (state) => Object.values(state).filter((e) => e.completed)
 
-const selectCompletedCount = compute(
-  (completed) => completed.length,
-  [selectCompleted],
-)
+const completedCount = compute((completed) => completed.length, [completed])
 
 // Use with react-redux or @inglorious/react-store
-const count = useSelector(selectCompletedCount)
+const count = useSelector(completedCount)
 ```
 
 ### Systems for Global Logic
