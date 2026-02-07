@@ -14,3 +14,12 @@ body {
   align-items: center;
   gap: 4rem;
 }
+
+.frame {
+  border: 1px solid black;
+  aspect-ratio: 1/1;
+
+  .iw-logo {
+    margin-top: -12.5%;
+  }
+}
