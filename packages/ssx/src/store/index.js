@@ -47,5 +47,7 @@ export async function generateStore(pages = [], options = {}, loader) {
     }
   }
 
-  return createStore({ types, entities, autoCreateEntities: true })
+  const store = createStore({ types, entities, autoCreateEntities: true })
+  store.update() // let the create() handlers run
+  return store
 }

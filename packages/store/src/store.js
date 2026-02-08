@@ -30,6 +30,7 @@ export function createStore({
   const types = augmentTypes(originalTypes)
 
   let state, eventMap, incomingEvents, isProcessing
+  reset()
 
   const baseStore = {
     subscribe,
@@ -49,7 +50,6 @@ export function createStore({
     : baseStore
   const api = createApi(store, store.extras)
   store._api = api
-  reset()
   return store
 
   /**
@@ -93,24 +93,12 @@ export function createStore({
 
         // Handle special system events
         if (event.type === "add") {
-          const { id, ...entity } = event.payload
-          draft[id] = augmentEntity(id, entity)
-          const type = types[entity.type]
-
-          eventMap.addEntity(id, type, entity.type)
-          incomingEvents.unshift({ type: `#${id}:create` })
+          addEntity(draft, event.payload)
           continue
         }
 
         if (event.type === "remove") {
-          const id = event.payload
-          const entity = draft[id]
-          const type = types[entity.type]
-          const typeName = entity.type
-          delete draft[id]
-
-          eventMap.removeEntity(id, type, typeName)
-          incomingEvents.unshift({ type: `#${id}:destroy` })
+          removeEntity(draft, event.payload)
           continue
         }
 
@@ -245,12 +233,12 @@ export function createStore({
     isProcessing = false
 
     entitiesToDestroy.forEach((id) => {
-      notify("remove", id)
+      removeEntity(state, id)
     })
 
     entitiesToCreate.forEach((id) => {
       const entity = newEntities[id]
-      notify("add", { id, ...entity })
+      addEntity(state, { id, ...entity })
     })
 
     if (autoCreateEntities) {
@@ -260,10 +248,7 @@ export function createStore({
         )
 
         if (!hasEntity) {
-          notify("add", {
-            id: typeName,
-            type: typeName,
-          })
+          addEntity(state, { id: typeName, type: typeName })
         }
       }
     }
@@ -274,5 +259,25 @@ export function createStore({
    */
   function reset() {
     setState(originalEntities)
+  }
+
+  function addEntity(draft, payload) {
+    const { id, ...entity } = payload
+    draft[id] = augmentEntity(id, entity)
+    const type = types[entity.type]
+
+    eventMap.addEntity(id, type, entity.type)
+    incomingEvents.unshift({ type: `#${id}:create` })
+  }
+
+  function removeEntity(draft, payload) {
+    const id = payload
+    const entity = draft[id]
+    const type = types[entity.type]
+    const typeName = entity.type
+    delete draft[id]
+
+    eventMap.removeEntity(id, type, typeName)
+    incomingEvents.unshift({ type: `#${id}:destroy` })
   }
 }

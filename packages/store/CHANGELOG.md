@@ -1,5 +1,11 @@
 # @inglorious/store
 
+## 9.5.1
+
+### Patch Changes
+
+- Initialize state directly instead of notifying events
+
 ## 9.5.0
 
 ### Minor Changes

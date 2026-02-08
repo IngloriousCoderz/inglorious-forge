@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/server",
-  "version": "18.0.0",
+  "version": "18.0.1",
   "description": "A real-time, lightweight server designed to enable multiplayer experiences for games built with the Inglorious Engine.",
   "author": "IceOnFire <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",

@@ -1,5 +1,11 @@
 # dashboard-benchmark
 
+## 0.2.2
+
+### Patch Changes
+
+- @inglorious/web@4.2.2
+
 ## 0.2.1
 
 ### Patch Changes

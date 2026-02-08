@@ -1,5 +1,12 @@
 # @inglorious/server
 
+## 18.0.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/store@9.5.1
+
 ## 18.0.0
 
 ### Patch Changes

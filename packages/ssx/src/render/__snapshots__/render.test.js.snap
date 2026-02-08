@@ -1,8 +1,27 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`renderPage > should render a dynamic page 1`] = `"<!--lit-part--><!--/lit-part-->"`;
+exports[`renderPage > should render a dynamic page 1`] = `
+"<!--lit-part fhjks9LHkq4=--><h1><!--lit-part-->First Post<!--/lit-part--></h1>
+      <!--lit-part BboTokvP/FE=--><nav>
+      <a href="/">Home</a> | <a href="/about">About</a> |
+      <a href="/blog">Blog</a>
+    </nav><!--/lit-part-->
+      <div><!--lit-part-->2026-01-04<!--/lit-part--></div>
+      <div class="markdown-body"><!--lit-part D+r+tS5HYEU=-->Hello world!<!--/lit-part--></div><!--/lit-part-->"
+`;
 
-exports[`renderPage > should render a page with entity 1`] = `"<!--lit-part--><!--/lit-part-->"`;
+exports[`renderPage > should render a page with entity 1`] = `
+"<!--lit-part /KZqpgKMp6U=--><h1>
+        About
+        <!--lit-node 1--><span 
+          ><!--lit-part-->Us<!--/lit-part--></span
+        >
+      </h1>
+      <!--lit-part BboTokvP/FE=--><nav>
+      <a href="/">Home</a> | <a href="/about">About</a> |
+      <a href="/blog">Blog</a>
+    </nav><!--/lit-part--><?><!--/lit-part-->"
+`;
 
 exports[`renderPage > should render a page with metadata 1`] = `
 "<!DOCTYPE html>
@@ -16,7 +35,16 @@ exports[`renderPage > should render a page with metadata 1`] = `
         
       </head>
       <body>
-        <div id="root"><!--lit-part--><!--/lit-part--></div>
+        <div id="root"><!--lit-part /KZqpgKMp6U=--><h1>
+        About
+        <!--lit-node 1--><span 
+          ><!--lit-part-->Us<!--/lit-part--></span
+        >
+      </h1>
+      <!--lit-part BboTokvP/FE=--><nav>
+      <a href="/">Home</a> | <a href="/about">About</a> |
+      <a href="/blog">Blog</a>
+    </nav><!--/lit-part--><?><!--/lit-part--></div>
         
         <script type="module" src="/main.js"></script>
         <script type="module" src="./ga.js"></script>
@@ -24,6 +52,21 @@ exports[`renderPage > should render a page with metadata 1`] = `
     </html>"
 `;
 
-exports[`renderPage > should render a page with pre-fetched data 1`] = `"<!--lit-part--><!--/lit-part-->"`;
+exports[`renderPage > should render a page with pre-fetched data 1`] = `
+"<!--lit-part eP0n7ioVzug=--><h1><!--lit-part-->Antony<!--/lit-part-->'s Blog</h1>
+      <!--lit-part BboTokvP/FE=--><nav>
+      <a href="/">Home</a> | <a href="/about">About</a> |
+      <a href="/blog">Blog</a>
+    </nav><!--/lit-part-->
+      <ul>
+        <!--lit-part--><!--lit-part o9clfAH/ixU=--><li>
+              <!--lit-node 1--><a href="/posts/1"><!--lit-part--><!--/lit-part--> - <!--lit-part-->First Post<!--/lit-part--></a>
+            </li><!--/lit-part--><!--lit-part o9clfAH/ixU=--><li>
+              <!--lit-node 1--><a href="/posts/2"><!--lit-part--><!--/lit-part--> - <!--lit-part-->Second Post<!--/lit-part--></a>
+            </li><!--/lit-part--><!--lit-part o9clfAH/ixU=--><li>
+              <!--lit-node 1--><a href="/posts/3"><!--lit-part--><!--/lit-part--> - <!--lit-part-->Third Post<!--/lit-part--></a>
+            </li><!--/lit-part--><!--/lit-part-->
+      </ul><!--/lit-part-->"
+`;
 
 exports[`renderPage > should render a static page fragment 1`] = `"<!--lit-part--><!--/lit-part-->"`;

@@ -1,5 +1,11 @@
 # web-todomvc-ace
 
+## 0.1.9
+
+### Patch Changes
+
+- @inglorious/web@4.2.2
+
 ## 0.1.8
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # web-todomvc-jsx
 
+## 0.1.19
+
+### Patch Changes
+
+- @inglorious/web@4.2.2
+
 ## 0.1.18
 
 ### Patch Changes
