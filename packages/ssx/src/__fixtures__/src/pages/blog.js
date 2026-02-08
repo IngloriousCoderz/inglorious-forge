@@ -4,6 +4,11 @@ import { data } from "../api/posts.js"
 import { nav } from "../components/nav.js"
 
 export const blog = {
+  create(entity) {
+    entity.name = "Matteo Antony"
+    entity.posts = []
+  },
+
   async routeChange(entity, payload, api) {
     if (payload.route !== entity.type) return
     if (entity.posts && entity.posts.length) return

@@ -1,3 +1,4 @@
+import { existsSync } from "node:fs"
 import path from "node:path"
 
 import { describe, expect, it, vi } from "vitest"
@@ -6,6 +7,8 @@ import { generateStore } from "."
 
 const ROOT_DIR = path.join(import.meta.dirname, "..", "__fixtures__")
 const PAGES_DIR = path.join(ROOT_DIR, "src", "pages")
+
+vi.mock("node:fs")
 
 describe("generateStore", () => {
   it("should generate the proper types and entities from a static page", async () => {
@@ -55,25 +58,32 @@ describe("generateStore", () => {
     expect(store.getState()).not.toHaveProperty("about")
   })
 
-  it("should attempt to load entities.js and entities.ts", async () => {
+  it("should check for entities.js and entities.ts and load them if they exist", async () => {
+    vi.mocked(existsSync).mockReturnValue(true)
+
     const loader = vi.fn(async (p) => {
-      // Mock a successful page load
-      if (p.endsWith("index.js")) {
-        return { index: { render: () => {} } }
+      if (p.includes("index.js")) {
+        return {
+          index: { render: () => "" },
+        }
       }
-      // Mock entity files not being found
-      throw new Error("MODULE_NOT_FOUND")
+
+      if (p.includes("entities.js") || p.includes("entities.ts")) {
+        return {
+          entities: {},
+        }
+      }
+
+      return {}
     })
 
     const page = { filePath: path.join(PAGES_DIR, "index.js") }
-    await generateStore([page], { rootDir: "." }, loader)
+
+    await generateStore([page], { rootDir: ROOT_DIR }, loader)
 
     expect(loader).toHaveBeenCalledWith(page.filePath)
     expect(loader).toHaveBeenCalledWith(
-      path.join("src", "store", "entities.js"),
-    )
-    expect(loader).toHaveBeenCalledWith(
-      path.join("src", "store", "entities.ts"),
+      path.join(ROOT_DIR, "src", "store", "entities.js"),
     )
   })
 })

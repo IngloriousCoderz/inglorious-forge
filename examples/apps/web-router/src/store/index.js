@@ -27,4 +27,5 @@ export const store = createStore({
   },
   entities,
   middlewares,
+  autoCreateEntities: true,
 })

@@ -1,5 +1,11 @@
 # @inglorious/store
 
+## 9.5.0
+
+### Minor Changes
+
+- Remove allowTypes flag in favor of entity auto-creation
+
 ## 9.4.0
 
 ### Minor Changes

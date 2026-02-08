@@ -2,21 +2,11 @@
 
 exports[`generateStore > should generate the proper types and entities from a page that has metadata 1`] = `
 {
-  "about": {
-    "id": "about",
-    "name": "Us",
-    "type": "about",
-  },
   "blog": {
     "id": "blog",
     "name": "Matteo Antony",
     "posts": [],
     "type": "blog",
-  },
-  "post": {
-    "id": "post",
-    "post": null,
-    "type": "post",
   },
 }
 `;
@@ -28,37 +18,14 @@ exports[`generateStore > should generate the proper types and entities from a pa
     "name": "Us",
     "type": "about",
   },
-  "blog": {
-    "id": "blog",
-    "name": "Matteo Antony",
-    "posts": [],
-    "type": "blog",
-  },
-  "post": {
-    "id": "post",
-    "post": null,
-    "type": "post",
-  },
 }
 `;
 
 exports[`generateStore > should generate the proper types and entities from a static page 1`] = `
 {
-  "about": {
-    "id": "about",
-    "name": "Us",
-    "type": "about",
-  },
-  "blog": {
-    "id": "blog",
-    "name": "Matteo Antony",
-    "posts": [],
-    "type": "blog",
-  },
-  "post": {
-    "id": "post",
-    "post": null,
-    "type": "post",
+  "index": {
+    "id": "index",
+    "type": "index",
   },
 }
 `;

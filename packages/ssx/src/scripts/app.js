@@ -56,7 +56,7 @@ const module = await getRoute(page.pattern)()
 const type = module[page.moduleName]
 types[page.moduleName] = type
 
-const store = createStore({ types, entities, middlewares })
+const store = createStore({ types, entities, middlewares, autoCreateEntities: true })
 
 const root = document.getElementById("root")
 

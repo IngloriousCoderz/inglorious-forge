@@ -30,7 +30,6 @@ export function createStore({
   const types = augmentTypes(originalTypes)
 
   let state, eventMap, incomingEvents, isProcessing
-  reset()
 
   const baseStore = {
     subscribe,
@@ -50,6 +49,7 @@ export function createStore({
     : baseStore
   const api = createApi(store, store.extras)
   store._api = api
+  reset()
   return store
 
   /**
@@ -203,6 +203,13 @@ export function createStore({
         eventMap.addEntity(id, newType, typeName)
       }
     }
+
+    if (autoCreateEntities && !state[typeName]) {
+      notify("add", {
+        id: typeName,
+        type: typeName,
+      })
+    }
   }
 
   /**
@@ -220,29 +227,7 @@ export function createStore({
    */
   function setState(nextState) {
     const oldEntities = state ?? {}
-    const newEntities = augmentEntities(nextState)
-
-    if (autoCreateEntities) {
-      for (const typeName of Object.keys(types)) {
-        // Check if entity already exists
-        const hasEntity = Object.values(newEntities).some(
-          (entity) => entity.type === typeName,
-        )
-
-        if (!hasEntity) {
-          // No entity for this type → auto-create minimal entity
-          newEntities[typeName] = {
-            id: typeName,
-            type: typeName,
-          }
-        }
-      }
-    }
-
-    state = newEntities
-    eventMap = new EventMap(types, newEntities)
-    incomingEvents = []
-    isProcessing = false
+    let newEntities = augmentEntities(nextState)
 
     const oldEntityIds = new Set(Object.keys(oldEntities))
     const newEntityIds = new Set(Object.keys(newEntities))
@@ -254,13 +239,34 @@ export function createStore({
       (id) => !newEntityIds.has(id),
     )
 
-    entitiesToCreate.forEach((id) => {
-      incomingEvents.push({ type: `#${id}:create` })
-    })
+    state = oldEntities
+    eventMap = new EventMap(types, oldEntities)
+    incomingEvents = []
+    isProcessing = false
 
     entitiesToDestroy.forEach((id) => {
-      incomingEvents.push({ type: `#${id}:destroy` })
+      notify("remove", id)
     })
+
+    entitiesToCreate.forEach((id) => {
+      const entity = newEntities[id]
+      notify("add", { id, ...entity })
+    })
+
+    if (autoCreateEntities) {
+      for (const typeName of Object.keys(types)) {
+        const hasEntity = Object.values(state).some(
+          (entity) => entity.type === typeName,
+        )
+
+        if (!hasEntity) {
+          notify("add", {
+            id: typeName,
+            type: typeName,
+          })
+        }
+      }
+    }
   }
 
   /**

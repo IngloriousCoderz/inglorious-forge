@@ -20,6 +20,7 @@ describe("renderPage", () => {
       types: { index: module.index },
       updateMode: "manual",
     })
+    store.update()
 
     const html = await renderPage(store, page, undefined, DEFAULT_OPTIONS)
 

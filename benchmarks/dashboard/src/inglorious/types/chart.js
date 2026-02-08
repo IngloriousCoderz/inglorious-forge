@@ -7,9 +7,7 @@ const VALUE_TO_HSL = 120
 
 export const chart = {
   render(entity, api) {
-    const { values, max, avg } = api.select(
-      chartData(entity.rangeStart, entity.rangeEnd),
-    )
+    const { values, max, avg } = api.select(chartData(entity))
 
     return html`
       <div class="chart">

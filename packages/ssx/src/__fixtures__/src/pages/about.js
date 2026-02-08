@@ -3,6 +3,10 @@ import { html } from "@inglorious/web"
 import { nav } from "../components/nav.js"
 
 export const about = {
+  create(entity) {
+    entity.name = "Us"
+  },
+
   click(entity) {
     entity.name += "!"
   },

@@ -1,5 +1,12 @@
 # web-todomvc-ace
 
+## 0.1.7
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/web@4.2.0
+
 ## 0.1.6
 
 ### Patch Changes

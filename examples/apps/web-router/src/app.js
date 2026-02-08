@@ -28,7 +28,7 @@ export const app = {
           )}
           ${when(router.isLoading, () => html`<div>Loading...</div>`)}
           ${when(!router.error && !router.isLoading, () =>
-            api.render(router.route, { allowType: true }),
+            api.render(router.route),
           )}
         </main>
       </div>

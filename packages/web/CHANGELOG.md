@@ -1,5 +1,16 @@
 # @inglorious/react-store
 
+## 4.2.0
+
+### Minor Changes
+
+- Remove allowTypes flag in favor of entity auto-creation
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/store@9.5.0
+
 ## 4.1.6
 
 ### Patch Changes

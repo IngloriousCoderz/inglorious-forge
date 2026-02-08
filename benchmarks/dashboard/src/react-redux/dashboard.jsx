@@ -92,10 +92,25 @@ export default function Dashboard() {
       </div>
 
       <div className="charts">
-        <Chart start={0} end={20} type="bar" title="Progress Overview" />
-        <Chart start={20} end={40} type="bar" title="Value Distribution" />
-        <Chart start={40} end={60} type="bar" title="Live Updates" />
-        <Chart start={60} end={80} type="bar" title="Status Breakdown" />
+        <Chart
+          rangeStart={0}
+          rangeEnd={20}
+          type="bar"
+          title="Progress Overview"
+        />
+        <Chart
+          rangeStart={20}
+          rangeEnd={40}
+          type="bar"
+          title="Value Distribution"
+        />
+        <Chart rangeStart={40} rangeEnd={60} type="bar" title="Live Updates" />
+        <Chart
+          rangeStart={60}
+          rangeEnd={80}
+          type="bar"
+          title="Status Breakdown"
+        />
       </div>
 
       <div className="table-container">

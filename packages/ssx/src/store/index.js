@@ -1,3 +1,4 @@
+import { existsSync } from "node:fs"
 import path from "node:path"
 import { pathToFileURL } from "node:url"
 
@@ -33,14 +34,18 @@ export async function generateStore(pages = [], options = {}, loader) {
   const extensions = ["js", "ts"]
 
   for (const ext of extensions) {
-    try {
-      const module = await load(path.join(srcDir, "store", `entities.${ext}`))
-      entities = module.entities
-      break
-    } catch {
-      // ignore and try next extension
+    const fullPath = path.join(srcDir, "store", `entities.${ext}`)
+
+    if (existsSync(fullPath)) {
+      try {
+        const module = await load(fullPath)
+        entities = module.entities
+        break
+      } catch {
+        // ignore and try next extension
+      }
     }
   }
 
-  return createStore({ types, entities, updateMode: "manual" })
+  return createStore({ types, entities, autoCreateEntities: true })
 }

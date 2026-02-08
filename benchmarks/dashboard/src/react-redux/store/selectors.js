@@ -26,9 +26,9 @@ export const selectFilteredRows = createSelector(
   },
 )
 
-export const selectChartData = (start, end) =>
+export const selectChartData = ({ rangeStart, rangeEnd }) =>
   createSelector([selectFilteredRows], (rows) => {
-    const values = rows.slice(start, end).map((r) => r.value)
+    const values = rows.slice(rangeStart, rangeEnd).map((r) => r.value)
     const max = Math.max(...values)
     const avg = values.length
       ? Math.floor(values.reduce((a, b) => a + b) / values.length)

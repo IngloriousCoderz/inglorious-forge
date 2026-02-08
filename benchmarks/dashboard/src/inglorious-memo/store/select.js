@@ -25,10 +25,10 @@ export const filteredRows = compute(
   [rows, filter, sortBy],
 )
 
-export const chartData = (start, end) =>
+export const chartData = ({ rangeStart, rangeEnd }) =>
   compute(
     (rows) => {
-      const values = rows.slice(start, end).map((r) => r.value)
+      const values = rows.slice(rangeStart, rangeEnd).map((r) => r.value)
       const max = Math.max(...values)
       const avg = values.length
         ? Math.floor(values.reduce((a, b) => a + b) / values.length)

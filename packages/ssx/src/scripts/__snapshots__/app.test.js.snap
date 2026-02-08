@@ -22,20 +22,8 @@ const entities = {
     route: page.moduleName,
   },
 
-  "about": {
-    "type": "about",
-    "name": "Us",
-    "id": "about"
-  },
-  "blog": {
-    "type": "blog",
-    "name": "Matteo Antony",
-    "posts": [],
-    "id": "blog"
-  },
   "post": {
     "type": "post",
-    "post": null,
     "id": "post"
   }
 
@@ -54,7 +42,7 @@ const module = await getRoute(page.pattern)()
 const type = module[page.moduleName]
 types[page.moduleName] = type
 
-const store = createStore({ types, entities, middlewares })
+const store = createStore({ types, entities, middlewares, autoCreateEntities: true })
 
 const root = document.getElementById("root")
 
@@ -87,21 +75,11 @@ const entities = {
     route: page.moduleName,
   },
 
-  "about": {
-    "type": "about",
-    "name": "Us",
-    "id": "about"
-  },
   "blog": {
     "type": "blog",
+    "id": "blog",
     "name": "Matteo Antony",
-    "posts": [],
-    "id": "blog"
-  },
-  "post": {
-    "type": "post",
-    "post": null,
-    "id": "post"
+    "posts": []
   }
 
 }
@@ -119,7 +97,7 @@ const module = await getRoute(page.pattern)()
 const type = module[page.moduleName]
 types[page.moduleName] = type
 
-const store = createStore({ types, entities, middlewares })
+const store = createStore({ types, entities, middlewares, autoCreateEntities: true })
 
 const root = document.getElementById("root")
 
@@ -154,19 +132,8 @@ const entities = {
 
   "about": {
     "type": "about",
-    "name": "Us",
-    "id": "about"
-  },
-  "blog": {
-    "type": "blog",
-    "name": "Matteo Antony",
-    "posts": [],
-    "id": "blog"
-  },
-  "post": {
-    "type": "post",
-    "post": null,
-    "id": "post"
+    "id": "about",
+    "name": "Us"
   }
 
 }
@@ -184,7 +151,7 @@ const module = await getRoute(page.pattern)()
 const type = module[page.moduleName]
 types[page.moduleName] = type
 
-const store = createStore({ types, entities, middlewares })
+const store = createStore({ types, entities, middlewares, autoCreateEntities: true })
 
 const root = document.getElementById("root")
 
@@ -217,21 +184,9 @@ const entities = {
     route: page.moduleName,
   },
 
-  "about": {
-    "type": "about",
-    "name": "Us",
-    "id": "about"
-  },
-  "blog": {
-    "type": "blog",
-    "name": "Matteo Antony",
-    "posts": [],
-    "id": "blog"
-  },
-  "post": {
-    "type": "post",
-    "post": null,
-    "id": "post"
+  "index": {
+    "type": "index",
+    "id": "index"
   }
 
 }
@@ -249,7 +204,7 @@ const module = await getRoute(page.pattern)()
 const type = module[page.moduleName]
 types[page.moduleName] = type
 
-const store = createStore({ types, entities, middlewares })
+const store = createStore({ types, entities, middlewares, autoCreateEntities: true })
 
 const root = document.getElementById("root")
 

@@ -1,5 +1,16 @@
 # @inglorious/ssx
 
+## 1.6.0
+
+### Minor Changes
+
+- Remove allowTypes flag in favor of entity auto-creation
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/web@4.2.0
+
 ## 1.5.13
 
 ### Patch Changes

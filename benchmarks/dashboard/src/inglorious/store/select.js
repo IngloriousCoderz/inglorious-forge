@@ -25,12 +25,14 @@ export const filteredRows = (entities) => {
     })
 }
 
-export const chartData = (start, end) => (entities) => {
-  const rows = filteredRows(entities)
-  const values = rows.slice(start, end).map((r) => r.value)
-  const max = Math.max(...values)
-  const avg = values.length
-    ? Math.floor(values.reduce((a, b) => a + b) / values.length)
-    : DEFAULT_AVG
-  return { values, max, avg }
-}
+export const chartData =
+  ({ rangeStart, rangeEnd }) =>
+  (entities) => {
+    const rows = filteredRows(entities)
+    const values = rows.slice(rangeStart, rangeEnd).map((r) => r.value)
+    const max = Math.max(...values)
+    const avg = values.length
+      ? Math.floor(values.reduce((a, b) => a + b) / values.length)
+      : DEFAULT_AVG
+    return { values, max, avg }
+  }

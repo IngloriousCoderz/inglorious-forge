@@ -5,8 +5,10 @@ import { selectChartData } from "./store/selectors"
 const VALUE_TO_PX = 100
 const VALUE_TO_HSL = 120
 
-export const Chart = ({ title, start, end }) => {
-  const { values, max, avg } = useSelector(selectChartData(start, end))
+export const Chart = ({ title, rangeStart, rangeEnd }) => {
+  const { values, max, avg } = useSelector(
+    selectChartData({ rangeStart, rangeEnd }),
+  )
 
   return (
     <div className="chart">

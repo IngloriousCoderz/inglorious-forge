@@ -1,3 +1,7 @@
+/** @typedef {import('lit-html').TemplateResult} TemplateResult */
+/** @typedef {import('@inglorious/store').Store} Store */
+/** @typedef {import('@inglorious/web').Api} Api */
+
 import { html } from "@inglorious/web"
 import { render as ssrRender } from "@lit-labs/ssr"
 import { collectResult } from "@lit-labs/ssr/lib/render-result.js"
@@ -8,8 +12,8 @@ import { layout as defaultLayout } from "./layout.js"
  * Renders a page or component to HTML using the store state.
  * It handles SSR rendering of Lit templates and optional HTML wrapping.
  *
- * @param {Object} store - The application store instance.
- * @param {Function} renderFn - A function that returns a Lit template. Receives `api` as argument.
+ * @param {Store} store - The application store instance.
+ * @param {(api: Api) => TemplateResult | null} renderFn - The root render function.
  * @param {Object} [options] - Rendering options.
  * @param {boolean} [options.wrap=false] - Whether to wrap the output in a full HTML document.
  * @param {Function} [options.layout] - Custom layout function.
@@ -52,26 +56,17 @@ function stripLitMarkers(html) {
 
 // TODO: this was copied from @inglorious/web, maybe expose it?
 /**
- * Creates a render function bound to the store API.
- * This mimics the `api.render` behavior but for SSR context.
- *
- * @param {Object} api - The store API.
- * @returns {Function} The render function.
+ * Creates a render function for the mount API.
+ * @param {Api} api - The mount API.
+ * @returns {Api['render']} A `render` function that can render an entity or a type by its ID.
+ * @private
  */
 function createRender(api) {
-  return function (id, options = {}) {
+  return function (id) {
     const entity = api.getEntity(id)
 
     if (!entity) {
-      const { allowType } = options
-      if (!allowType) return ""
-
-      const type = api.getType(id)
-      if (!type?.render) {
-        console.warn(`No entity or type found: ${id}`)
-        return html`<div>Not found: ${id}</div>`
-      }
-      return type.render(api)
+      return ""
     }
 
     const type = api.getType(entity.type)
