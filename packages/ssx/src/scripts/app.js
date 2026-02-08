@@ -62,7 +62,7 @@ const root = document.getElementById("root")
 
 mount(store, (api) => {
   const { route } = api.getEntity("router")
-  return api.render(route, { allowType: true })
+  return api.render(route)
 }, root)
 `
 }

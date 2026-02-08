@@ -42,7 +42,7 @@ export async function renderPage(store, page, entity, options = {}) {
     ...getPageOption("scripts", DEFAULT_OPTIONS),
   ]
 
-  return toHTML(store, (api) => api.render(moduleName, { allowType: true }), {
+  return toHTML(store, (api) => api.render(moduleName), {
     ...options,
     lang,
     charset,

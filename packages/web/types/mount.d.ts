@@ -5,13 +5,9 @@ export type Api = StoreApi & {
   /**
    * Renders an entity or a type component by its ID.
    * @param id The ID of the entity or type to render.
-   * @param options Rendering options.
    * @returns The rendered template or an empty string if not found.
    */
-  render: (
-    id: string,
-    options?: { allowType?: boolean },
-  ) => TemplateResult | string
+  render: (id: string) => TemplateResult | string
 }
 
 /**

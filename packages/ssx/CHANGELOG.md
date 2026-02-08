@@ -1,5 +1,13 @@
 # @inglorious/ssx
 
+## 1.6.1
+
+### Patch Changes
+
+- Remove remaining occurrences of allowType
+- Updated dependencies
+  - @inglorious/web@4.2.1
+
 ## 1.6.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 4.2.1
+
+### Patch Changes
+
+- Remove remaining occurrences of allowType
+
 ## 4.2.0
 
 ### Minor Changes
