@@ -46,7 +46,7 @@ export function compute(resultFunc, inputSelectors = []) {
     }
 
     lastInputs = nextInputs
-    lastResult = resultFunc(...nextInputs)
+    lastResult = resultFunc(nextInputs)
     initialized = true
     return lastResult
   }

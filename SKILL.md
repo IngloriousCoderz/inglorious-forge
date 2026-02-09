@@ -1,799 +1,501 @@
 ---
-name: inglorious-web
-description: >
-  Explains when and how to use Inglorious Web’s entity-based UI/state system. 
-  Includes guidance to help agents decide whether Inglorious Web is appropriate 
-  before generating code or suggestions.
-license: MIT
-compatibility: Skills-compatible agent ecosystems
+name: inglorious-forge
+description: Build web apps and 2D games using the Inglorious ecosystem. Includes entity-based state management (@inglorious/store), lit-html rendering (@inglorious/web), and a functional game engine (@inglorious/engine). Use this skill to architect ECS-based applications, manage reactive state without proxies, and implement declarative charts or static sites.
 metadata:
-  author: Matteo Antony Mistretta
-  version: "0.1.0"
+  version: "1.0.0"
 ---
 
-# Building with Inglorious Store & Web
+# Inglorious Forge
 
-This guide teaches agents and developers how to build software using **@inglorious/store** and **@inglorious/web**.
+A collection of small, focused JavaScript tools. Entity-based state management, lit-html rendering, functional game engine, and more. No signals, proxies, or complex abstractions.
 
-**@inglorious/store** is a Redux-compatible, ECS-inspired state library that makes state management as elegant as game logic. It works with `react-redux` and Redux DevTools. Borrows concepts from Entity-Component-System architectures and Functional Programming to provide an environment where you can write simple, predictable, and testable code.
+## Core Philosophy
 
-**@inglorious/web** is a lightweight, reactive-enough web framework built on **pure JavaScript**, the entity-based state management provided by **@inglorious/store**, and the DOM-diffing efficiency of **lit-html**. Unlike modern frameworks that expose signals, proxies, or compilers as part of the programming model, **@inglorious/web embraces plain JavaScript** and a transparent architecture. It re-exports many primitives from both @inglorious/store and lit-html.
+- **Plain JavaScript first** - Prefer standard JS over custom languages and DSLs
+- **Simple, transparent, modular** - Keep modules small and understandable
+- **Avoid build-time magic** - Let developers understand what happens under the hood
+- **Composition over hierarchy** - Favor composition patterns
+- **Small surface area** - Predictable, focused APIs
 
-## When to Use Inglorious Web
+## Architecture Overview
 
-- You want predictable, centralized state behavior
-- You prefer explicit state transitions
-- You want to avoid complex reactive graphs
-- You want UI to be fully controlled by your entity-based store
-- You want to stay entirely in **JavaScript**, without DSLs or compilers
-- You want **React-like declarative UI** but without the runtime and architectural overhead of React
-- You want to build **static sites with SSX** — same entity patterns, pre-rendered HTML, and client hydration
+```
+@inglorious/web            → lit-html rendering + built-in components
+@inglorious/ssx            → Static Site Generator (SSG) with hydration
+@inglorious/vite-plugin-vue → Vue template syntax → lit-html
+@inglorious/renderer-react-dom → React DOM renderer for engine
+@inglorious/vite-plugin-jsx → JSX → lit-html compiler
+@inglorious/charts         → Declarative charting library (Recharts-inspired)
+@inglorious/store          → Entity state management (ECS-inspired, Redux-compatible)
+@inglorious/utils          → Shared utility functions
+@inglorious/engine         → Functional game engine (data-oriented)
+@inglorious/react-store    → React bindings for store
+@inglorious/renderer-2d    → 2D Canvas renderer for engine
+@inglorious/create-app     → App scaffolding tool
+@inglorious/create-game    → Game scaffolding tool
+```
 
-This framework is ideal for both small apps and large business UIs.
+**Core principle:** Re-render everything → lit-html/React updates only changed DOM.
 
-## When NOT to Use Inglorious Web
+## Entity Pattern
 
-- You're frequently mutating thousands of items without virtualization (though our `list` component handles this elegantly)
-- You need framework-agnostic components for users who might not use Inglorious (use Web Components instead)
-- Your team is already deeply invested in React/Vue/Angular and migration costs outweigh benefits
+Every entity has `type` + `id`. Types define behavior:
 
-## When Inglorious Web Excels
+```javascript
+const types = {
+  typeName: {
+    create(entity) { /* init */ },
+    destroy(entity) { /* cleanup */ },
+    eventName(entity, payload, api) { /* handler */ },
+    render(entity, api) { return html`...` },
+  },
+}
+```
 
-- Building **internal component libraries** - Types are more customizable than React components
-- Creating **design systems** - Spread, override, and compose behaviors freely
-- Building **pattern libraries** - Ship pre-configured entity types that users can adapt
-- Apps where **predictable state flow** matters more than ecosystem size
+**Event targeting:**
+```javascript
+api.notify("event")           // All entities
+api.notify("type:event")      // Only this type
+api.notify("#id:event")       // Only this id
+api.notify("type#id:event")   // Specific type and id
+```
 
----
+**Type composition:**
+```javascript
+// Single behavior
+const counter = {
+  increment(entity) { entity.value++ },
+}
 
-## Quick Start
+// Multiple behaviors (array)
+const types = {
+  counter: [counter, withLogging, withValidation],
+}
 
-### Install
+// Decorator pattern
+const withLogging = (type) => ({
+  render(entity, api) {
+    console.log(`Rendering ${entity.id}`)
+    return type.render(entity, api)
+  },
+})
+```
+
+## @inglorious/store
+
+Redux-compatible, ECS-inspired state library. Entity-based architecture eliminates boilerplate.
+
+**Quick example:**
+```javascript
+import { createStore } from "@inglorious/store"
+
+const types = {
+  counter: {
+    increment(entity) { entity.value++ },
+    decrement(entity) { entity.value-- },
+  },
+}
+
+const entities = {
+  counter1: { type: "counter", value: 0 },
+  counter2: { type: "counter", value: 0 },
+}
+
+const store = createStore({ types, entities })
+
+// Event targeting
+store.notify("increment")              // All entities
+store.notify("counter:increment")      // Only counter type
+store.notify("#counter1:increment")    // Only specific entity
+```
+
+**Key features:**
+- Redux-compatible API (works with `react-redux` and Redux DevTools)
+- Entity-based state (multiple instances without code changes)
+- Lifecycle events (`create`, `destroy`)
+- Async handlers with event queue
+- Systems for global logic
+- Behavior composition (decorator pattern)
+- Uses Mutative for immutable updates (faster than Immer)
+
+**Redux Compatibility:**
+- ✅ Compatible with `react-redux` Provider/useSelector/useDispatch
+- ✅ Compatible with Redux DevTools
+- ✅ Compatible with Redux-style `dispatch({ type, payload })`
+- ⚠️ Redux middlewares (Redux-Saga, Redux-Thunk) may require adaptation
+- ⚠️ Use `api.notify()` for event-driven updates (preferred over `dispatch`)
+
+**📖 Complete reference:** [Store API](references/store.md) - State management, async operations, systems, testing
+
+## @inglorious/web
+
+Small view layer built around `lit-html` and the entity store. No components, no lifecycles — just functions that return templates.
+
+**Quick example:**
+```javascript
+import { createStore, mount, html } from "@inglorious/web"
+
+const types = {
+  counter: {
+    increment(entity) { entity.value++ },
+    render(entity, api) {
+      return html`
+        <button @click=${() => api.notify(`#${entity.id}:increment`)}>
+          Count: ${entity.value}
+        </button>
+      `
+    },
+  },
+}
+
+const entities = { counter1: { type: "counter", value: 0 } }
+const store = createStore({ types, entities })
+
+mount(store, (api) => api.render("counter1"), document.getElementById("root"))
+```
+
+**Built-in components:**
+- `form` - Forms with validation
+- `table` - Data tables
+- `select` - Dropdowns
+- `list` - Virtualized lists
+- `router` - Client-side routing
+
+**📖 Complete reference:** [Web Component API](references/web.md) - Rendering, components, testing, API reference
+
+## @inglorious/engine
+
+Modular game engine built on the same entity model as the store. Designed for 2D games with a focus on simplicity and composability.
+
+**Quick example:**
+```javascript
+import { Engine } from "@inglorious/engine/core/engine"
+import { createRenderer } from "@inglorious/renderer-2d"
+
+const game = {
+  types: {
+    player: {
+      update(entity, deltaTime) {
+        entity.position.x += entity.velocity.x * deltaTime
+        entity.position.y += entity.velocity.y * deltaTime
+      },
+    },
+  },
+  entities: {
+    player1: {
+      type: "player",
+      position: { x: 0, y: 0 },
+      velocity: { x: 100, y: 0 },
+    },
+  },
+}
+
+const canvas = document.getElementById("canvas")
+const renderer = createRenderer(canvas)
+const engine = new Engine(renderer, game)
+
+await engine.init()
+engine.start()
+```
+
+**Key features:**
+- Functional & data-oriented (single immutable state)
+- Composable behaviors (composition over inheritance)
+- Renderer agnostic (Canvas2D, React, HTML)
+- Zero build step option
+- Entity pooling for performance
+- Optional IngloriousScript for vector math (requires Babel plugin)
+
+**Rules:**
+- Use `update` event handler for frame-based logic (receives `deltaTime`)
+- Entity mutations in handlers are safe (store uses Mutative)
+- Use `api.notify()` to trigger events between entities
+- Systems run after all entity handlers for global coordination
+
+**📖 Complete reference:** [Engine API](references/engine.md) - Game engine, renderers, entity pooling, IngloriousScript
+
+## @inglorious/charts
+
+Declarative charting library for Inglorious Web, inspired by Recharts. Supports two rendering modes: Config-first (declarative) and Composition (Recharts-style).
+
+**Config-first mode:**
+```javascript
+import { lineChart } from "@inglorious/charts"
+
+const types = { line: lineChart }
+const entities = {
+  myChart: {
+    type: "line",
+    data: [
+      { name: "Jan", value: 400 },
+      { name: "Feb", value: 300 },
+    ],
+    width: 800,
+    height: 400,
+    showGrid: true,
+    showTooltip: true,
+  },
+}
+```
+
+**Composition mode (Recharts-style):**
+```javascript
+import { chart, charts } from "@inglorious/charts"
+
+// Register chart type in store
+const store = createStore({
+  types: {
+    line: lineChart,
+    chart: charts, // Required for chart() helper
+  },
+  entities,
+})
+
+// Use in component
+${chart(api, "myChart", (c) =>
+  c.renderLineChart([
+    c.renderCartesianGrid({ stroke: "#eee" }),
+    c.renderXAxis({ dataKey: "name" }),
+    c.renderYAxis({ width: "auto" }),
+    c.renderLine({ dataKey: "value", stroke: "#8884d8" }),
+    c.renderTooltip({}),
+  ], { width: 800, height: 400, dataKeys: ["value"] })
+)}
+```
+
+**Chart types:** Line, Area, Bar, Pie, Donut
+
+**CRITICAL Rules for Composition Mode:**
+1. **Sub-components MUST use `ctx` (CartesianContext)** - Never access `entity.data` directly
+2. **Use `ctx.displayData` for rendering** - Contains filtered data when Zoom/Brush is active
+3. **Use `ctx.xScale` and `ctx.yScale` for positioning** - Already configured with correct domains
+4. **Brush requires full `entity.data` for preview** - But chart rendering uses `ctx.displayData`
+5. **Config mode handles filtering automatically** - Composition mode requires explicit context usage
+
+**📖 Complete reference:** [Charts API](references/charts.md) - Chart types, composition components, context usage, brush
+
+## @inglorious/ssx
+
+Static Site Generator for `@inglorious/web`. Includes server-side rendering, client-side hydration, and file-based routing.
+
+**Quick example:**
+```javascript
+// src/pages/index.js
+import { html } from "@inglorious/web"
+
+export const index = {
+  render() {
+    return html`
+      <div>
+        <h1>Welcome to SSX!</h1>
+        <p>This page was pre-rendered at build time.</p>
+      </div>
+    `
+  },
+}
+
+export const metadata = {
+  title: "Home",
+  meta: { description: "Welcome" },
+}
+```
+
+**Features:**
+- Pre-rendered HTML (SSG)
+- Client-side hydration with lit-html
+- File-based routing
+- Automatic code splitting
+- Markdown support
+- Image optimization
+- Sitemap & RSS generation
+
+**Rules:**
+- Pages are files in `src/pages/` directory
+- Dynamic routes use underscore prefix: `_id.js`, `_slug.js`
+- Export `load()` function for data loading at build time
+- Export `staticPaths()` for dynamic route generation
+- Export `metadata` for page metadata (can be function or object)
+
+**📖 Complete reference:** [SSX API](references/ssx.md) - File-based routing, data loading, markdown, deployment
+
+## Build Tools
+
+### @inglorious/vite-plugin-vue
+
+Transform Vue-like template syntax into lit-html templates. **Not Vue.js** - compiles to lit-html, no Vue runtime.
+
+**CRITICAL:** The plugin compiles template expressions and event handlers to use `api.notify()` automatically. Direct mutations in `<script>` are compiled to event handlers that update state through the store.
+
+```javascript
+// vite.config.js
+import vue from "@inglorious/vite-plugin-vue"
+export default { plugins: [vue()] }
+```
+
+```vue
+<template>
+  <div>
+    <span>{{ count }}</span>
+    <button @click="increment">+</button>
+  </div>
+</template>
+
+<script>
+// Variables become entity properties via create() lifecycle
+let count = 0
+
+// Functions become event handlers that use api.notify()
+// The plugin compiles this to: api.notify(`#${entity.id}:increment`)
+const increment = (entity) => { 
+  entity.count++ // This mutation is wrapped in store's immutability system
+}
+</script>
+```
+
+**Rule:** Always use event handlers for state changes. The plugin compiles `@click="increment"` to `api.notify(\`#${entity.id}:increment\`)`, ensuring reactivity through the store.
+
+**📖 Complete reference:** [Vue Plugin](references/vue-plugin.md) - Template syntax, compilation details, examples
+
+### @inglorious/vite-plugin-jsx
+
+Compiles standard JSX/TSX into optimized `lit-html` templates. Requires proper Vite configuration.
+
+### @inglorious/babel-plugin-inglorious-script
+
+**Optional:** IngloriousScript adds vector operators for 2D game development. Requires Babel configuration.
+
+**WARNING:** Only use IngloriousScript if the plugin is properly configured. Without the plugin, vector operators (`position + velocity`) will cause runtime errors.
+
+```javascript
+// Without IngloriousScript (standard JavaScript)
+const newPosition = mod(add(position, scale(velocity, dt)), worldSize)
+
+// With IngloriousScript (requires babel-plugin-inglorious-script)
+const newPosition = (position + velocity * dt) % worldSize
+```
+
+**Rule:** Always verify Babel configuration before using IngloriousScript operators. Use standard vector math functions if the plugin is not available.
+
+## Renderers
+
+### @inglorious/renderer-2d
+
+2D renderer using HTML5 Canvas Context2D API. Exports `createRenderer(canvas)` which returns renderer configuration:
+
+```javascript
+import { createRenderer } from "@inglorious/renderer-2d"
+
+const canvas = document.getElementById("canvas")
+const renderer = createRenderer(canvas)
+// Returns { types, entities, systems } to pass to Engine
+```
+
+### @inglorious/renderer-react-dom
+
+React DOM renderer, allowing React components as renderers for the game engine.
+
+## CLI Tools
+
+### @inglorious/create-app
+
+Scaffolding tool for web applications:
 
 ```bash
 npm create @inglorious/app@latest
 ```
 
-Available templates: `minimal`, `js`, `ts`, `ssx-js`, `ssx-ts`
+Templates: minimal, JS (Vite), TS (Vite + TypeScript), SSX (static site)
 
-### Hello World
+### @inglorious/create-game
 
-```javascript
-// store.js
-import { createStore, html } from "@inglorious/web"
+Scaffolding tool for game projects:
 
-const types = {
-  counter: {
-    render: (entity, api) => html`
-      <div>
-        <p>Count: ${entity.value}</p>
-        <button @click="${() => api.notify("#counter:increment")}">+</button>
-      </div>
-    `,
-    increment: (entity) => {
-      entity.value++
-    },
-  },
-}
-
-const entities = {
-  counter: { type: "counter", value: 0 },
-}
-
-export const store = createStore({ types, entities })
+```bash
+npm create @inglorious/game@latest
 ```
 
-```javascript
-// main.js
-import { mount } from "@inglorious/web"
-import { store } from "./store.js"
+Templates: minimal, JS, TS, IJS (IngloriousScript), ITS (IngloriousScript + TypeScript)
 
-mount(store, (api) => api.render("counter"), document.getElementById("root"))
-```
+## React Integration
 
----
+### @inglorious/react-store
 
-## Exposed Capabilities
-
-This repository enables agents to:
-
-- Create and mutate application state via event notifications
-- Render UI declaratively using entity-based templates
-- Model async workflows safely without post-await mutation
-- Compose behaviors using type composition and guards
-- Batch and control rendering with manual update modes
-- Test event handlers and renders deterministically
-
----
-
-## Core Mental Model
-
-### Entities and Types
-
-Everything in Inglorious is built on **entities** (instances) with **types** (behavior definitions).
-
-Think of a **type** like a class and an **entity** like an instance:
+Official React bindings for `@inglorious/store`:
 
 ```javascript
-import { html } from "@inglorious/web"
+import { createStore } from "@inglorious/store"
+import { createReactStore } from "@inglorious/react-store"
 
-const types = {
-  todo: {
-    // Every todo has this behavior
-    toggle: (entity) => {
-      entity.completed = !entity.completed
-    },
-    render: (entity) =>
-      html`<li class="${entity.completed ? "done" : ""}">${entity.text}</li>`,
-  },
-}
+const store = createStore({ types, entities })
+export const { Provider, useSelector, useNotify } = createReactStore(store)
 
-const entities = {
-  todo1: { type: "todo", text: "Learn Inglorious", completed: false },
-  todo2: { type: "todo", text: "Build something", completed: false },
-  todo3: { type: "todo", text: "Ship it", completed: false },
-}
-```
-
-**Key insight:** Add as many entities as you need—no extra code needed. Just add an entry to `entities`.
-
----
-
-### The Render Model
-
-`@inglorious/web` re-renders the **entire template tree** whenever state changes.
-
-The DOM itself is **not recreated**—only the template function reruns. `lit-html`'s efficient diffing updates only changed DOM nodes.
-
-```javascript
-import { html } from "@inglorious/web"
-
-const renderApp = (api) => {
-  // This runs EVERY time the store updates
-  const todos = Object.values(api.getEntities()).filter(
-    (e) => e.type === "todo",
+function App() {
+  return (
+    <Provider>
+      <Counter />
+    </Provider>
   )
+}
 
-  return html`
+function Counter() {
+  const notify = useNotify()
+  const count = useSelector((state) => state.counter1.value)
+  return (
     <div>
-      <h1>Todos</h1>
-      ${todos.map((todo) => api.render(todo.id))}
+      <p>{count}</p>
+      <button onClick={() => notify("increment")}>+</button>
     </div>
-  `
-}
-
-mount(store, renderApp, document.getElementById("root"))
-```
-
-**Benefit:** No signals, no dependency tracking, no subscriptions—just predictable re-renders.
-
----
-
-### Events and Event Handlers
-
-All state changes happen through **events**. Event handlers are like Redux reducers, but simpler:
-
-```javascript
-import { html } from "@inglorious/web"
-
-const types = {
-  counter: {
-    // Event handler: receives entity, payload, and api
-    increment: (entity, payload, api) => {
-      entity.value += payload.amount || 1
-    },
-
-    // The render method is also an event handler
-    render: (entity, api) => html`...`,
-  },
-}
-
-// Dispatch an event
-api.notify("increment", { amount: 5 })
-api.notify("#counter1:increment", { amount: 5 }) // Target a specific entity
-```
-
-**Key rule:** Handlers can mutate `entity` freely (Mutative.js ensures immutability).
-
----
-
-## Best Practices & Patterns
-
-### ✅ DO: Use Event Notifications
-
-```javascript
-// Good: Clear, explicit event dispatch
-api.notify("#user:logout")
-```
-
-### ❌ DON'T: Use Redux-style dispatch
-
-```javascript
-// Avoid: verbose and unclear
-api.dispatch({ type: "logout", payload: {} })
-```
-
----
-
-### ✅ DO: Async Pattern (Event Notification After Await)
-
-When doing async work, **set state before await, await external data, then notify events afterward**:
-
-```javascript
-const types = {
-  dataFetcher: {
-    // WRONG: accessing entity after await ❌
-    badFetch: async (entity, payload, api) => {
-      entity.loading = true
-      const data = await fetch(payload.url).then((r) => r.json())
-      entity.data = data // ❌ DON'T ACCESS entity AFTER await
-      entity.loading = false
-    },
-
-    // RIGHT: notify events after await ✅
-    goodFetch: async (entity, payload, api) => {
-      entity.loading = true
-      const data = await fetch(payload.url).then((r) => r.json())
-      api.notify("#dataFetcher:loadSuccess", data) // ✅ Queue event
-    },
-
-    loadSuccess: (entity, data, api) => {
-      entity.data = data
-      entity.loading = false
-    },
-
-    loadError: (entity, error, api) => {
-      entity.error = error.message
-      entity.loading = false
-    },
-  },
+  )
 }
 ```
 
-**Why:** Mutative proxies only guarantee safe mutations during the synchronous execution of a handler.
+**Redux Compatibility:**
+- Works with `react-redux` Provider/useSelector/useDispatch hooks
+- Compatible with Redux DevTools
+- Supports Redux-style `dispatch({ type, payload })` for migration
+- Prefer `api.notify()` for new code (cleaner API)
 
----
+## Other Packages
 
-### ✅ DO: Use `handleAsync` for Complex Async Flows
+- **@inglorious/utils** - Shared utility functions (vector math, data manipulation)
+- **@inglorious/logo** - Logo component library
+- **@inglorious/server** - Simple WebSocket server for realtime state sync
+- **@inglorious/editor** - Graphical UI for Inglorious Engine (experimental)
+- **@inglorious/jsx** - JSX runtime
+- **@inglorious/eslint-config** - Shared ESLint configuration
+
+## Common Patterns
+
+### Async Operations
 
 ```javascript
-import { handleAsync } from "@inglorious/store"
-
 const types = {
   todos: {
-    ...handleAsync("fetchTodos", {
-      async run(payload, api) {
-        const response = await fetch("/api/todos")
-        return response.json()
-      },
-      success(entity, todos, api) {
-        entity.todos = todos
-        entity.error = null
-      },
-      error(entity, error, api) {
-        entity.error = error.message
-      },
-    }),
-  },
-}
-```
-
-**Lifecycle events emitted:**
-
-- `fetchTodos` (start)
-- `fetchTodosSuccess` (on success)
-- `fetchTodosError` (on error)
-- `fetchTodosFinally` (always, even if error)
-
----
-
-### ✅ DO: Use `updateMode: "manual"` for Batching
-
-In high-frequency scenarios (games, animations), batch updates:
-
-```javascript
-const store = createStore({
-  types,
-  entities,
-  updateMode: "manual", // Disable automatic re-renders
-})
-
-// Add events to the queue
-api.notify("playerMoved", { x: 100 })
-api.notify("enemyAttacked", { damage: 10 })
-api.notify("particleCreated", { type: "explosion" })
-
-// Process all at once
-store.update()
-```
-
-**Benefit:** Single re-render instead of three.
-
----
-
-### ❌ DON'T: Access `entity` After Await
-
-```javascript
-// ❌ WRONG: Accessing entity after await
-const types = {
-  form: {
-    async submit(entity, data, api) {
-      const response = await fetch("/api/submit", {
-        body: JSON.stringify(data),
-      })
-      entity.result = await response.json() // ❌ NOT SAFE
+    async loadItems(entity, _, api) {
+      entity.loading = true
+      const response = await fetch("/api/todos")
+      const data = await response.json()
+      api.notify("itemsLoaded", data)
     },
-  },
-}
-
-// ✅ RIGHT: Notify event instead
-const types = {
-  form: {
-    async submit(entity, data, api) {
-      const response = await fetch("/api/submit", {
-        body: JSON.stringify(data),
-      })
-      const result = await response.json()
-      api.notify("#form:submitSuccess", result) // ✅ Queue event
-    },
-    submitSuccess(entity, result, api) {
-      entity.result = result
+    itemsLoaded(entity, items) {
+      entity.items = items
+      entity.loading = false
     },
   },
 }
 ```
 
----
-
-### ✅ DO: Use Lifecycle Events (create / destroy)
-
-```javascript
-const types = {
-  player: {
-    create(entity, api) {
-      // Runs when this entity is added via api.notify("add", ...)
-      entity.health = 100
-      entity.position = { x: 0, y: 0 }
-    },
-    destroy(entity, api) {
-      // Runs when this entity is removed via api.notify("remove", ...)
-      console.log(`${entity.id} has been destroyed`)
-    },
-  },
-}
-
-// Add a new player
-api.notify("add", { id: "player2", type: "player" })
-
-// Remove the player
-api.notify("remove", { id: "player2" })
-```
-
-**Note:** `create` and `destroy` are scoped to the entity itself—other entities don't see them.
-
----
-
-### ✅ DO: Use Type Composition for Cross-Cutting Concerns
-
-```javascript
-// Base behavior
-const authenticatable = {
-  login: (entity, credentials, api) => {
-    entity.isLoggedIn = true
-    entity.user = credentials.email
-  },
-}
-
-// Guard behavior: wraps another behavior
-const requireAuth = (type) => ({
-  logout: (entity, payload, api) => {
-    // Can check state before allowing logout
-    if (!entity.isLoggedIn) return // Block action
-
-    // Otherwise, pass through to next behavior (if it exists)
-    entity.isLoggedIn = false
-    entity.user = null
-  },
-})
-
-// Compose them
-const types = {
-  auth: [authenticatable, requireAuth],
-}
-```
-
-**Use cases:**
-
-- Route guards
-- Authorization checks
-- Logging/analytics
-- Error handling
-- Loading states
-
----
-
-### ✅ DO: Use Route Guards with Type Composition
-
-```javascript
-// guard/require-auth.js
-export const requireAuth = (type) => ({
-  routeChange(entity, to, api) {
-    const isLoggedIn = localStorage.getItem("token")
-
-    if (!isLoggedIn && isProtectedRoute(to)) {
-      api.notify("navigate", "/login")
-      return // Block navigation
-    }
-
-    // Otherwise, pass through (route change proceeds)
-  },
-})
-
-// store.js
-const types = {
-  adminPage: [adminPageBase, requireAuth],
-  loginPage: [loginPageBase],
-}
-
-setRoutes({
-  "/admin": "adminPage",
-  "/login": "loginPage",
-})
-```
-
----
-
-### ❌ DON'T: Use autoQueue (Hallucinated Feature)
-
-**This does not exist.** The correct approach is:
-
-```javascript
-// ❌ WRONG: autoQueue is not real
-const store = createStore({
-  types,
-  entities,
-  autoQueue: false, // ❌ This does nothing
-})
-
-// ✅ RIGHT: Use updateMode instead
-const store = createStore({
-  types,
-  entities,
-  updateMode: "manual",
-})
-
-// Then manually batch
-api.notify("event1")
-api.notify("event2")
-store.update()
-```
-
----
-
-### ✅ DO: Use Custom Filter Functions for DevTools
-
-DevTools offers three filtering methods that can be combined:
-
-```javascript
-const devtools = createDevtools({
-  filters: {
-    updateMode: "auto", // Only log when updateMode is 'auto'
-    blacklist: ["#internal:tick"], // Exclude noisy events
-    whitelist: ["#user:login", "#user:logout"], // Only include specific events
-    filter: (event) => event.payload?.userId === currentUserId, // Custom logic
-  },
-})
-```
-
-**How filters combine:**
-
-1. Check `updateMode` is `"auto"` (skip if not)
-2. Check entity doesn't match `blacklist`
-3. Check entity matches `whitelist` (if non-empty)
-4. Check custom `filter` predicate returns `true`
-
-All conditions are ANDed together.
-
----
-
-## Testing Patterns
-
-### Test Event Handlers
-
-Use `trigger()` from `@inglorious/web/test`:
-
-```javascript
-import { trigger } from "@inglorious/web/test"
-import { todo } from "./types/todo.js"
-
-test("toggle changes completed status", () => {
-  const { entity, events } = trigger(
-    { type: "todo", id: "todo1", text: "Learn", completed: false },
-    todo.toggle,
-  )
-
-  expect(entity.completed).toBe(true)
-  expect(events).toEqual([])
-})
-
-test("delete dispatches remove event", () => {
-  const { events } = trigger(
-    { type: "todo", id: "todo1", text: "Learn", completed: false },
-    todo.delete,
-  )
-
-  expect(events).toEqual([{ type: "#todoList:removeTodo", payload: "todo1" }])
-})
-```
-
-### Test Render Output
-
-Use `render()` from `@inglorious/web/test`:
-
-```javascript
-import { render } from "@inglorious/web/test"
-import { todo } from "./types/todo.js"
-
-test("completed todo has done class", () => {
-  const entity = { type: "todo", id: "todo1", text: "Learn", completed: true }
-  const html = render(todo.render(entity))
-
-  expect(html).toContain('class="done"')
-})
-```
-
-### Test with Mock API
-
-```javascript
-import { createMockApi, trigger } from "@inglorious/web/test"
-
-const api = createMockApi({
-  settings: { type: "settings", theme: "dark" },
-})
-
-const { entity } = trigger(
-  { type: "form", id: "form1" },
-  form.applyTheme,
-  null,
-  api,
-)
-
-expect(entity.theme).toBe("dark")
-```
-
----
-
-## Performance Tips
-
-### Bundle Sizes (Gzipped)
-
-| Package                   | Size    |
-| ------------------------- | ------- |
-| @inglorious/web (runtime) | 15.4 KB |
-| **React**                 | 60.4 KB |
-| **React + RTK**           | 74.9 KB |
-
-> Sizes shown are individual package gzip sizes, not full application bundles.
-
-**Inglorious Web is smaller than React + Redux together.**
-
-### Optimization Strategies
-
-1. **Use tree-shaking:**
-
-   ```javascript
-   import { form } from "@inglorious/web/form"  // Good
-   import * from "@inglorious/web"              // Bad
-   ```
-
-2. **Lazy-load routes:**
-
-   ```javascript
-   setRoutes({
-     "/": "homePage",
-     "/admin": () => import("./pages/admin.js"),
-   })
-   ```
-
-3. **Use virtual lists for large datasets:**
-
-   ```javascript
-   import { html } from "@inglorious/web"
-
-   const types = {
-     list: {
-       render: (entity, api) => html`
-         <div class="list">
-           ${repeat(
-             entity.items,
-             (item) => item.id,
-             (item) => api.render(item.id),
-           )}
-         </div>
-       `,
-     },
-   }
-   ```
-
-4. **Use `compute()` for memoized selectors:**
-
-   ```javascript
-   import { compute } from "@inglorious/store"
-
-   const selectFilteredTodos = compute(
-     (todos, filter) => todos.filter((t) => t.status === filter),
-     [selectTodos, selectFilter],
-   )
-   ```
-
-5. **Batch updates in manual mode for games/animations:**
-   ```javascript
-   store.update() // Process queued events and re-render once
-   ```
-
----
-
-## DevTools Setup
-
-### Enable Redux DevTools Integration
-
-```javascript
-// middlewares.js
-import { createDevtools } from "@inglorious/web"
-
-export const middlewares = []
-
-if (import.meta.env.DEV) {
-  middlewares.push(createDevtools().middleware)
-}
-```
-
-```javascript
-// store.js
-import { createStore } from "@inglorious/web"
-import { middlewares } from "./middlewares.js"
-
-export const store = createStore({
-  types,
-  entities,
-  middlewares,
-})
-```
-
-### Filter Events with Precision
-
-```javascript
-const devtools = createDevtools({
-  filters: {
-    blacklist: ["#internal:heartbeat", "#metrics:tick"], // Hide noise
-    whitelist: ["#user:login", "#router:navigate"], // Show only these
-    filter: (event) => {
-      // Custom predicate
-      return event.payload?.duration > 100 // Only slow events
-    },
-  },
-})
-```
-
----
-
-## Common Mistakes
-
-### ❌ Mistake 1: Accessing Entity After Await
-
-```javascript
-// ❌ WRONG
-async handler(entity, payload, api) {
-  const response = await fetch(url)
-  entity.data = response // ❌ NOT SAFE
-}
-
-// ✅ RIGHT
-async handler(entity, payload, api) {
-  const response = await fetch(url)
-  api.notify("#type:success", response) // ✅ Queue event
-}
-success(entity, data, api) {
-  entity.data = data
-}
-```
-
-### ❌ Mistake 2: Forgetting to notify events
-
-```javascript
-// ❌ WRONG: Handler modifies related entities directly
-increment(entity, api) {
-  entity.count++
-  // Forgot to notify listeners that count changed
-}
-
-// ✅ RIGHT: Notify interested entities
-increment(entity, api) {
-  entity.count++
-  api.notify("countChanged", entity.count)
-}
-```
-
-### ❌ Mistake 3: Using `updateMode: "manual"` incorrectly
-
-```javascript
-// ❌ WRONG: Forgetting to call update()
-store.notify("event1")
-store.notify("event2")
-// Forgot to call store.update() — UI doesn't change!
-
-// ✅ RIGHT: Always call update() when done
-store.notify("event1")
-store.notify("event2")
-store.update() // UI re-renders once
-```
-
-### ❌ Mistake 4: Using hallucinated features
-
-```javascript
-// ❌ WRONG: autoQueue is not real
-const store = createStore({ types, entities, autoQueue: false })
-
-// ✅ RIGHT: Use updateMode
-const store = createStore({ types, entities, updateMode: "manual" })
-```
-
-### ❌ Mistake 5: Trying to use autoCreateEntities for dynamic data
-
-```javascript
-// ❌ WRONG: Trying to auto-create a list of todos
-const store = createStore({
-  types,
-  entities: { list: { type: "todoList" } },
-  autoCreateEntities: true, // Won't create todos
-})
-
-// ✅ RIGHT: Add todos explicitly or via api.notify("add", ...)
-const store = createStore({
-  types,
-  entities: {
-    list: { type: "todoList" },
-    todo1: { type: "todo", text: "Learn" },
-    todo2: { type: "todo", text: "Build" },
-  },
-})
-
-// Or add them dynamically
-api.notify("add", { id: "todo3", type: "todo", text: "Ship" })
-```
-
----
-
-## Advanced Patterns
-
-### Using compute() for Derived State
-
-```javascript
-import { compute } from "@inglorious/store"
-
-const completed = (state) => Object.values(state).filter((e) => e.completed)
-
-const completedCount = compute((completed) => completed.length, [completed])
-
-// Use with react-redux or @inglorious/react-store
-const count = useSelector(completedCount)
-```
-
-### Systems for Global Logic
-
-Systems run after all entity handlers and have write access to entire state:
+### Systems (Global Logic)
 
 ```javascript
 const systems = [
   {
-    name: "syncComputedValues",
-    handle(state, events) {
-      const todos = Object.values(state).filter((e) => e.type === "todo")
-      const summary = Object.values(state).find((e) => e.type === "summary")
-      if (summary) {
-        summary.totalTodos = todos.length
-        summary.completedTodos = todos.filter((t) => t.completed).length
-      }
+    taskCompleted(state, taskId) {
+      const allTodos = Object.values(state)
+        .filter((e) => e.type === "todoList")
+        .flatMap((e) => e.todos)
+      state.stats.total = allTodos.length
+      state.stats.completed = allTodos.filter((t) => t.completed).length
     },
   },
 ]
@@ -801,301 +503,148 @@ const systems = [
 const store = createStore({ types, entities, systems })
 ```
 
-### Behavior Decorators
+### Derived State
 
 ```javascript
-// Validate input before allowing state change
-const validated = (type) => ({
-  submit(entity, data, api) {
-    if (!isValid(data)) {
-      api.notify("#form:validationError", { errors: validate(data) })
-      return
-    }
-    // Pass through to next behavior
-  },
-})
+import { compute } from "@inglorious/store"
 
-// Add loading state before async operation
-const withLoading = (type) => ({
-  fetchData(entity, payload, api) {
-    entity.loading = true
-  },
-})
+const selectResult = compute(
+  (count, multiplier) => count * multiplier,
+  [
+    (state) => state.counter1.value,
+    (state) => state.settings.multiplier,
+  ],
+)
+```
 
-// Combine them
-const types = {
-  form: [formBase, validated, withLoading],
+## Testing
+
+```javascript
+import { trigger } from "@inglorious/store/test"
+
+const { entity, events } = trigger(
+  { type: "counter", id: "counter1", value: 10 },
+  increment,
+  { amount: 5 },
+)
+expect(entity.value).toBe(15)
+```
+
+## Rules & Constraints
+
+### State Management Rules
+
+1. **ALWAYS use `api.notify()` for state changes** - Direct mutations outside event handlers will not trigger re-renders
+2. **NEVER mutate state outside event handlers** - State changes must go through the store's event system
+3. **Event handlers receive `(entity, payload, api)`** - Use `api` to access other entities or trigger events
+4. **Entity mutations inside handlers are safe** - The store uses Mutative for immutability, so `entity.value++` is fine inside handlers
+5. **Use lifecycle events (`create`, `destroy`) for setup/cleanup** - Not for regular state updates
+
+### Charts Rules
+
+1. **In Composition mode, sub-components MUST use `ctx` (CartesianContext)** - Never access `entity.data` directly
+2. **Use `ctx.displayData` for rendering** - This contains filtered data when Zoom/Brush is active
+3. **Use `ctx.xScale` and `ctx.yScale` for positioning** - These are already configured with correct domains
+4. **Brush requires full `entity.data` for preview** - But chart rendering uses `ctx.displayData`
+5. **Config mode handles filtering automatically** - Composition mode requires explicit context usage
+
+### Vue Plugin Rules
+
+1. **Template expressions compile to entity properties** - `{{ count }}` becomes `${entity.count}`
+2. **Event handlers compile to `api.notify()`** - `@click="increment"` becomes `api.notify(\`#${entity.id}:increment\`)`
+3. **Script variables become entity properties** - `let count = 0` becomes `entity.count = 0` in `create()`
+4. **Functions become event handlers** - Must accept `(entity, payload, api)` signature
+5. **Mutations in handlers are safe** - The plugin wraps them in the store's immutability system
+
+### Redux Compatibility Rules
+
+1. **Use `react-redux` Provider/useSelector/useDispatch** - Works as expected
+2. **Redux DevTools work** - Store is Redux-compatible
+3. **Redux middlewares may need adaptation** - Redux-Saga, Redux-Thunk may require wrapper
+4. **Prefer `api.notify()` over `dispatch()`** - Cleaner API, same functionality
+5. **Store state shape is flat** - Entities are top-level keys, not nested reducers
+
+## Common Pitfalls
+
+### ❌ Wrong: Direct mutation outside handler
+```javascript
+// This will NOT trigger re-render
+const entity = api.getEntity("counter1")
+entity.value++ // Wrong - no re-render
+```
+
+### ✅ Correct: Use api.notify()
+```javascript
+api.notify("#counter1:increment") // Correct - triggers re-render
+```
+
+### ❌ Wrong: Using entity.data directly in Charts Composition
+```javascript
+c.renderLineChart([
+  c.renderLine({ 
+    dataKey: "value",
+    // Wrong - uses entity.data directly, breaks Zoom/Brush
+  }),
+])
+```
+
+### ✅ Correct: Use ctx.displayData from context
+```javascript
+// The chart component automatically provides ctx with displayData
+// Sub-components receive ctx and use ctx.displayData
+c.renderLineChart([
+  c.renderLine({ 
+    dataKey: "value",
+    // Correct - uses ctx.displayData from parent context
+  }),
+])
+```
+
+### ❌ Wrong: IngloriousScript without plugin
+```javascript
+// This will crash if babel-plugin-inglorious-script is not configured
+const pos = position + velocity * dt // Error: + operator not defined for objects
+```
+
+### ✅ Correct: Use standard vector functions
+```javascript
+import { add, scale, mod } from "@inglorious/utils"
+const pos = mod(add(position, scale(velocity, dt)), worldSize)
+```
+
+### ❌ Wrong: Vue template with local variables
+```vue
+<script>
+let count = 0 // This becomes entity.count, not a local variable
+const increment = () => {
+  count++ // Wrong - this won't work as expected
 }
+</script>
 ```
 
----
-
-## Common Patterns by Use Case
-
-### Real-Time Collaboration
-
-```javascript
-const types = {
-  document: {
-    init(entity) {
-      entity.content = ""
-      entity.peers = []
-    },
-
-    async contentChanged(entity, newContent, api) {
-      entity.content = newContent
-
-      // Broadcast to peers
-      const response = await fetch("/api/sync", {
-        method: "POST",
-        body: JSON.stringify({ content: newContent }),
-      })
-
-      api.notify("#document:broadcastToPeers", await response.json())
-    },
-
-    broadcastToPeers(entity, update, api) {
-      // Update our peers list, trigger UI update
-      entity.peers = update.peers
-    },
-  },
+### ✅ Correct: Vue template with entity mutations
+```vue
+<script>
+let count = 0 // Becomes entity.count in create()
+const increment = (entity) => {
+  entity.count++ // Correct - mutation in handler
 }
+</script>
 ```
 
-### Game Loop
+## References
 
-```javascript
-const store = createStore({
-  types,
-  entities,
-  updateMode: "manual",
-})
+- [Store API](references/store.md) - Complete state management reference
+- [Web Component API](references/web.md) - Complete rendering and components reference
+- [Engine API](references/engine.md) - Complete game engine reference
+- [Charts API](references/charts.md) - Complete charting library reference
+- [SSX API](references/ssx.md) - Complete static site generator reference
+- [Vue Plugin](references/vue-plugin.md) - Complete template syntax and compilation reference
 
-function gameLoop() {
-  // Update physics
-  store._api.notify("updatePhysics", { deltaTime: 16 })
+## Philosophy
 
-  // Check collisions
-  store._api.notify("checkCollisions", {})
-
-  // Render entities
-  store._api.notify("render", {})
-
-  // Single batch update
-  store.update()
-
-  requestAnimationFrame(gameLoop)
-}
-```
-
-### Form Submission with Validation
-
-```javascript
-const types = {
-  form: {
-    submit(entity, data, api) {
-      const errors = validate(data)
-      if (errors.length > 0) {
-        api.notify("#form:validationFailed", { errors })
-        return
-      }
-
-      api.notify("#form:submitAsync", data)
-    },
-
-    validationFailed(entity, { errors }, api) {
-      entity.errors = errors
-      entity.submitted = false
-    },
-
-    async submitAsync(entity, data, api) {
-      entity.submitting = true
-
-      const response = await fetch("/api/submit", {
-        method: "POST",
-        body: JSON.stringify(data),
-      })
-
-      if (response.ok) {
-        api.notify("#form:submitSuccess", { id: response.id })
-      } else {
-        api.notify("#form:submitError", { message: await response.text() })
-      }
-    },
-
-    submitSuccess(entity, { id }, api) {
-      entity.submitting = false
-      entity.submitted = true
-      entity.id = id
-      entity.errors = []
-    },
-
-    submitError(entity, { message }, api) {
-      entity.submitting = false
-      entity.error = message
-    },
-  },
-}
-```
-
-### Multi-Entity Coordination
-
-```javascript
-const types = {
-  list: {
-    selectAll(entity, payload, api) {
-      const items = Object.values(api.getEntities()).filter(
-        (e) => e.type === "item" && e.listId === entity.id,
-      )
-
-      items.forEach((item) => {
-        api.notify(`#${item.id}:select`)
-      })
-    },
-  },
-
-  item: {
-    select(entity) {
-      entity.selected = true
-    },
-  },
-}
-```
-
----
-
-## File Organization Best Practices
-
-```
-src/
-  store/
-    index.js           # Store creation
-    types/
-      counter.js
-      form.js
-      router.js
-    middlewares.js     # DevTools setup
-  pages/
-    home.js
-    admin.js
-    login.js
-  guards/
-    require-auth.js
-  main.js             # App entry point
-```
-
-### Example store/types/todo.js
-
-```javascript
-import { html } from "@inglorious/web"
-
-export const todo = {
-  render(entity, api) {
-    return html`
-      <li class="${entity.completed ? "done" : ""}">
-        <input
-          type="checkbox"
-          .checked="${entity.completed}"
-          @change="${() => api.notify(`#${entity.id}:toggle`)}"
-        />
-        ${entity.text}
-      </li>
-    `
-  },
-
-  toggle(entity) {
-    entity.completed = !entity.completed
-  },
-
-  delete(entity, payload, api) {
-    api.notify("#todoList:removeTodo", entity.id)
-  },
-}
-```
-
----
-
-## Quick Reference
-
-### Core APIs
-
-```javascript
-// Notify: Cleaner than dispatch
-api.notify("eventName", payload)
-api.notify("#entityId:eventName", payload)
-api.notify("type:eventName", payload)
-
-// State access
-api.getEntities() // All entities (read-only)
-api.getEntity("id") // One entity (read-only)
-api.getType("typeName") // Type definition
-api.getTypes() // All types
-
-// Rendering
-api.render("entityId") // Get entity's render template
-
-// Lifecycle
-api.notify("add", { id, type, ...initialData })
-api.notify("remove", { id })
-
-// Manual updates (when updateMode: "manual")
-store.update()
-```
-
-### createStore Options
-
-```javascript
-const store = createStore({
-  types, // Required: type definitions
-  entities, // Required: initial entities
-  middlewares: [], // Optional: middleware functions
-  systems: [], // Optional: global state handlers
-  updateMode: "auto", // Optional: "auto" or "manual"
-  autoCreateEntities: false, // Optional: auto-create singleton entities
-})
-```
-
-### createDevtools Options
-
-```javascript
-const devtools = createDevtools({
-  name: "My App",
-  filters: {
-    updateMode: "auto",
-    blacklist: [],
-    whitelist: [],
-    filter: null,
-  },
-})
-```
-
----
-
-## Further Reading
-
-**Official Documentation:**
-
-- **[@inglorious/store Docs](https://inglorious.dev/store/)** — Full store API, patterns, and examples
-- **[@inglorious/web Docs](https://inglorious.dev/web/)** — Framework guide, components, and best practices
-- **[Store README (GitHub)](https://raw.githubusercontent.com/IngloriousCoderz/inglorious-forge/refs/heads/main/packages/store/README.md)** — Detailed reference
-- **[Web README (GitHub)](https://raw.githubusercontent.com/IngloriousCoderz/inglorious-forge/refs/heads/main/packages/web/README.md)** — Detailed reference
-
-**In This Repository:**
-
-- **[Redux DevTools Integration Guide](./docs/web/docs/advanced/devtools.md)** — Debugging strategies
-- **[Store Package](./packages/store/)** — Source code
-- **[Web Package](./packages/web/)** — Source code
-- **[Apps](./examples/apps/)** - App examples
-
----
-
-## TL;DR Rules
-
-1. **Async Pattern:** Set state before `await`, notify events after `await`.
-2. **No entity access after await:** Use `api.notify()` to trigger handler that mutates entity.
-3. **Type Composition:** Use arrays of behaviors for guards and cross-cutting concerns.
-4. **Batching:** Use `updateMode: "manual"` + `store.update()` for high-frequency updates.
-5. **DevTools Filtering:** Combine `updateMode`, `blacklist`/`whitelist`, and `filter` for precision.
-6. **No autoQueue:** Use `updateMode: "manual"` instead.
-7. **Testing:** Use `trigger()` and `render()` from `@inglorious/web/test`.
-8. **Performance:** Tree-shake imports, lazy-load routes, batch updates.
+- **Clarity over cleverness**
+- **Plain JavaScript first**
+- **Minimal abstractions**
+- **Small, focused modules**
+- **Opt into complexity only when needed**
