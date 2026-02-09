@@ -40,7 +40,7 @@ const store = createStore({ types, entities })
 
 ## Event Handlers
 
-Handlers receive: `entity`, `payload`, `api`
+Handlers are called with: `entity`, `payload`, `api` (you can omit unused parameters in the function definition)
 
 ```javascript
 const types = {
@@ -108,27 +108,43 @@ const types = {
 ```javascript
 import { handleAsync } from "@inglorious/store"
 
-handleAsync("fetchTodos", {
-  start(entity) {
-    entity.loading = true
-  }
-  async run(payload) {
-    const res = await fetch("/api/todos")
-    return res.json()
+const types = {
+  todos: {
+    ...handleAsync("fetchTodos", {
+      start(entity, payload, api) {
+        entity.loading = true
+      },
+      async run(payload, api) {
+        const res = await fetch("/api/todos")
+        return res.json()
+      },
+      success(entity, todos, api) {
+        entity.todos = todos
+      },
+      error(entity, error, api) {
+        entity.error = error.message
+      },
+      finally(entity, api) {
+        entity.loading = false
+      },
+    }),
   },
-  success(entity, todos) {
-    entity.todos = todos
-  },
-  error(entity, error) {
-    entity.error = error.message
-  },
-  finally(entity) {
-    entity.loading = false
-  },
-})
+}
 ```
 
-Lifecycle: `fetchTodos` → `fetchTodosRun` → `fetchTodosSuccess|fetchTodosError` → `fetchTodosFinally`
+**Lifecycle events:**
+- `fetchTodos` → triggers the operation
+- `fetchTodosStart` → (if `start` handler provided) executes synchronously
+- `fetchTodosRun` → executes async operation
+- `fetchTodosSuccess` → (on success) executes success handler
+- `fetchTodosError` → (on error) executes error handler
+- `fetchTodosFinally` → (always) executes finally handler
+
+**Important notes:**
+- Use `...handleAsync(...)` to spread handlers into the type
+- `run` receives `(payload, api)` - **NOT** `entity`. Entity state should be modified in other handlers
+- All handlers receive `api` as the last parameter
+- `start` is optional - if omitted, no `Start` event is generated
 
 ## Systems
 
@@ -137,7 +153,7 @@ Global logic that runs after all handlers:
 ```javascript
 const systems = [
   {
-    taskCompleted(state, taskId) {
+    taskCompleted(state, taskId, api) {
       const allTodos = Object.values(state)
         .filter((e) => e.type === "todoList")
         .flatMap((e) => e.todos)
@@ -202,17 +218,42 @@ store.update() // Process batch
 
 ## Derived State
 
+**Using `compute` (for memoized selectors):**
 ```javascript
 import { compute } from "@inglorious/store"
 
-const selectValue = (entities) => entities.counter1.value
-const selectMultiplier = (entities) => entities.settings.multiplier
+const value = (entities) => entities.counter1.value
+const multiplier = (entities) => entities.settings.multiplier
 
-const selectResult = compute(
-  ([count, multiplier]) => count * multiplier,
-  [selectValue, selectMultiplier],
+const result = compute(
+  ([count, mult]) => count * mult,
+  [value, multiplier],
 )
 ```
+
+**Using `api.select()` (simpler, for direct selectors):**
+```javascript
+// Define selectors (can be named anything, not just "selectThing")
+const value = (state) => state.counter1.value
+const multiplier = (state) => state.settings.multiplier
+
+// Use in handlers
+const types = {
+  page: {
+    render(entity, api) {
+      const count = api.select(value)
+      const mult = api.select(multiplier)
+      
+      return html`<div>Result: ${count * mult}</div>`
+    },
+  },
+}
+```
+
+**Benefits of `api.select()`:**
+- Simpler than `value(api.getEntities())`
+- Selectors can be named `value` instead of `selectValue`
+- Cleaner API: `api.select(value)`
 
 ## API Reference
 
@@ -233,6 +274,7 @@ const store = createStore({
 
 - `getEntities()` - Read all state (read-only)
 - `getEntity(id)` - Read entity (read-only)
+- `select(selector)` - Run selector function against current state
 - `notify(type, payload)` - Trigger events (preferred over dispatch)
 - `dispatch(action)` - Redux-style dispatch (for compatibility)
 - `getTypes()` - Access type definitions

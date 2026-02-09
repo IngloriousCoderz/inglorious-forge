@@ -18,7 +18,7 @@ npm install @inglorious/web
 
 - ALWAYS use `api.notify()` for state changes - Direct mutations won't trigger re-renders
 - NEVER store state in component closures - All state must be in entities
-- Event handlers in types receive `(entity, payload, api)` signature
+- Event handlers are called with `(entity, payload, api)` - You can omit unused parameters in the function definition
 - Mutations inside handlers are safe - Store uses Mutative for immutability
 
 ## Basic Setup
@@ -30,9 +30,21 @@ import { createStore, html } from "@inglorious/web"
 
 const types = {
   counter: {
+    // Handler with only entity (payload and api are passed but can be omitted)
     increment(entity) {
       entity.value++
     },
+    
+    // Handler with entity and payload
+    set(entity, newValue) {
+      entity.value = newValue
+    },
+    
+    // Handler with all three parameters
+    reset(entity, _, api) {
+      api.notify("set", 0)
+    },
+    
     render(entity, api) {
       return html`
         <div>
@@ -223,6 +235,39 @@ const types = {
 }
 ```
 
+## Selectors
+
+Use `api.select(selector)` to run selector functions against the current state. This allows selectors to be named naturally and facilitates access to data from any entity during render.
+
+```javascript
+// 1. Define selectors (pure functions)
+const count = (state) => state.counter1.value
+const userRole = (state) => state.session.role // Accessing a different entity ('session')
+
+// 2. Use in render
+const page = {
+  render(entity, api) {
+    const currentCount = api.select(count)
+    const role = api.select(userRole)
+    
+    return html`
+      <div>
+        <p>Count: ${currentCount}</p>
+        
+        ${role === 'admin' 
+          ? html`<button @click=${() => api.notify("admin:action")}>Admin Panel</button>` 
+          : html`<span>Standard User</span>`}
+      </div>
+    `
+  },
+}
+```
+
+**Benefits:**
+- Simpler API: `api.select(value)` instead of `value(api.getEntities())`
+- Natural naming: Selectors can be named `value` instead of `selectValue`
+- Cleaner code: Less verbose than manually calling selectors with state
+
 ## Testing
 
 ```javascript
@@ -285,6 +330,7 @@ Connect store to DOM. Returns unsubscribe function.
 - `api.render(id, options?)` - Render entity by id
 - `api.getEntity(id)` - Get entity state (read-only snapshot)
 - `api.getEntities()` - Get all entities (read-only snapshot)
+- `api.select(selector)` - Run selector function against current state
 - `api.notify(event, payload)` - Dispatch event (preferred method)
 - `api.getTypes()` - Get all type definitions
 - `api.getType(name)` - Get specific type

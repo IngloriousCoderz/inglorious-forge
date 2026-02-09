@@ -11,10 +11,10 @@ npm install @inglorious/vite-plugin-vue
 ```javascript
 // vite.config.js
 import { defineConfig } from "vite"
-import ingloriousVue from "@inglorious/vite-plugin-vue"
+import vue from "@inglorious/vite-plugin-vue"
 
 export default defineConfig({
-  plugins: [ingloriousVue()],
+  plugins: [vue()],
 })
 ```
 
@@ -108,8 +108,9 @@ const increment = (entity, api) => {
   entity.count++ // Safe: mutation inside event handler uses store's immutability
 }
 
-const reset = (entity, api) => {
-  entity.count = 0 // Safe: mutation inside event handler
+const resetWithDefault = (entity, api) => {
+  const defaultValue = api.select(state => state.settings.defaultCount)
+  entity.count = defaultValue
 }
 </script>
 ```
@@ -289,7 +290,7 @@ export const store = createStore({ types, entities })
 
 1. **No Vue Runtime** - This is NOT Vue.js. No reactivity system, no Vue lifecycle hooks.
 2. **Entity-based** - All state lives in entities, not component state.
-3. **Handler Signature** - Functions always receive `(entity, payload, api)`.
+3. **Handler Signature** - Functions are called with `(entity, payload, api)` but can be defined with fewer parameters if not needed (e.g., `increment(entity)` or `set(entity, value)`).
 4. **Compiles to lit-html** - Output uses `html` tagged templates from lit-html.
 5. **State Changes** - All mutations in functions are wrapped in the store's immutability system. The plugin ensures `@click="increment"` compiles to `api.notify()`, triggering proper re-renders.
 
