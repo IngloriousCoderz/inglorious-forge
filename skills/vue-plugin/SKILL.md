@@ -109,7 +109,7 @@ const increment = (entity, api) => {
 }
 
 const resetWithDefault = (entity, api) => {
-  const defaultValue = api.select(state => state.settings.defaultCount)
+  const defaultValue = api.select((state) => state.settings.defaultCount)
   entity.count = defaultValue
 }
 </script>

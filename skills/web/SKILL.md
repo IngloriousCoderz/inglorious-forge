@@ -34,17 +34,17 @@ const types = {
     increment(entity) {
       entity.value++
     },
-    
+
     // Handler with entity and payload
     set(entity, newValue) {
       entity.value = newValue
     },
-    
+
     // Handler with all three parameters
     reset(entity, _, api) {
       api.notify("set", 0)
     },
-    
+
     render(entity, api) {
       return html`
         <div>
@@ -249,13 +249,15 @@ const page = {
   render(entity, api) {
     const currentCount = api.select(count)
     const role = api.select(userRole)
-    
+
     return html`
       <div>
         <p>Count: ${currentCount}</p>
-        
-        ${role === 'admin' 
-          ? html`<button @click=${() => api.notify("admin:action")}>Admin Panel</button>` 
+
+        ${role === "admin"
+          ? html`<button @click=${() => api.notify("admin:action")}>
+              Admin Panel
+            </button>`
           : html`<span>Standard User</span>`}
       </div>
     `
@@ -264,6 +266,7 @@ const page = {
 ```
 
 **Benefits:**
+
 - Simpler API: `api.select(value)` instead of `value(api.getEntities())`
 - Natural naming: Selectors can be named `value` instead of `selectValue`
 - Cleaner code: Less verbose than manually calling selectors with state

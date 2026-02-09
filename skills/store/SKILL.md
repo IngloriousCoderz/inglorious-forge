@@ -133,6 +133,7 @@ const types = {
 ```
 
 **Lifecycle events:**
+
 - `fetchTodos` → triggers the operation
 - `fetchTodosStart` → (if `start` handler provided) executes synchronously
 - `fetchTodosRun` → executes async operation
@@ -141,6 +142,7 @@ const types = {
 - `fetchTodosFinally` → (always) executes finally handler
 
 **Important notes:**
+
 - Use `...handleAsync(...)` to spread handlers into the type
 - `run` receives `(payload, api)` - **NOT** `entity`. Entity state should be modified in other handlers
 - All handlers receive `api` as the last parameter
@@ -219,19 +221,18 @@ store.update() // Process batch
 ## Derived State
 
 **Using `compute` (for memoized selectors):**
+
 ```javascript
 import { compute } from "@inglorious/store"
 
 const value = (entities) => entities.counter1.value
 const multiplier = (entities) => entities.settings.multiplier
 
-const result = compute(
-  ([count, mult]) => count * mult,
-  [value, multiplier],
-)
+const result = compute(([count, mult]) => count * mult, [value, multiplier])
 ```
 
 **Using `api.select()` (simpler, for direct selectors):**
+
 ```javascript
 // Define selectors (can be named anything, not just "selectThing")
 const value = (state) => state.counter1.value
@@ -243,7 +244,7 @@ const types = {
     render(entity, api) {
       const count = api.select(value)
       const mult = api.select(multiplier)
-      
+
       return html`<div>Result: ${count * mult}</div>`
     },
   },
@@ -251,6 +252,7 @@ const types = {
 ```
 
 **Benefits of `api.select()`:**
+
 - Simpler than `value(api.getEntities())`
 - Selectors can be named `value` instead of `selectValue`
 - Cleaner API: `api.select(value)`
