@@ -42,7 +42,7 @@ const types = {
 
     // Handler with all three parameters
     reset(entity, _, api) {
-      api.notify("set", 0)
+      api.notify(`#${entity.id}:set`, 0)
     },
 
     render(entity, api) {
@@ -65,6 +65,20 @@ const entities = {
 export const store = createStore({ types, entities })
 ```
 
+## Event Scopes
+
+Event names determine which entities receive a handler:
+
+- `"event"` - broadcast to all entities with that handler
+- `"type:event"` - only entities of that type
+- `"#entityId:event"` - only the entity with that id
+
+```javascript
+api.notify("save") // broadcast
+api.notify("chart:refresh") // only chart entities
+api.notify("#chart1:refresh") // only chart1
+```
+
 ### Mounting
 
 ```javascript
@@ -79,6 +93,41 @@ const renderApp = (api) => {
 }
 
 mount(store, renderApp, document.getElementById("root"))
+```
+
+## Auto-Creating Entities
+
+`autoCreateEntities: true` creates one entity per type automatically, so you can omit the `entities` object for most apps. Optional initialization happens in the `create()` handler.
+
+```javascript
+const types = {
+  header: {
+    create(entity) {
+      entity.title = "Welcome"
+    },
+    render(entity) {
+      return html`<header>${entity.title}</header>`
+    },
+  },
+}
+
+const store = createStore({
+  types,
+  autoCreateEntities: true,
+})
+```
+
+If you need multiple instances of the same component (e.g., four charts), define them explicitly in `entities`:
+
+```javascript
+const entities = {
+  chart1: { type: "chart" },
+  chart2: { type: "chart" },
+  chart3: { type: "chart" },
+  chart4: { type: "chart" },
+}
+
+const store = createStore({ types, entities })
 ```
 
 ## Type Composition
@@ -120,11 +169,13 @@ const entities = {
 
 **Events:**
 
-- `#<id>:fieldChange` - Set field value
-- `#<id>:fieldBlur` - Mark field touched
-- `#<id>:validate` - Sync validation
-- `#<id>:validateAsync` - Async validation
-- `#<id>:submit` - Submit form
+- `#<id>:fieldChange` - Set field value (payload: `{ path, value, validate? }`)
+- `#<id>:fieldBlur` - Mark field touched (payload: `{ path, validate? }`)
+- `#<id>:fieldArrayAppend|fieldArrayRemove|fieldArrayInsert|fieldArrayMove` - Manipulate array fields
+- `#<id>:reset` - Reset to `initialValues`
+- `#<id>:validate` - Sync validation (payload: `{ validate }`)
+- `#<id>:validateAsync` - Async validation (payload: `{ validate }`)
+- `#<id>:submit` - Typically handled by your own `submit` handler (if you add one)
 
 ### Table
 
@@ -211,8 +262,8 @@ const renderApp = (api) => {
 }
 
 // Navigation
-api.notify("navigate", "/users/456")
-api.notify("navigate", { to: "/users/456", replace: true })
+api.notify("#router:navigate", "/users/456")
+api.notify("#router:navigate", { to: "/users/456", replace: true })
 ```
 
 ### Route Guards
@@ -223,7 +274,7 @@ const requireAuth = (type) => ({
     if (payload.route !== entity.type) return
     const user = localStorage.getItem("user")
     if (!user) {
-      api.notify("navigate", { to: "/login", replace: true })
+      api.notify("#router:navigate", { to: "/login", replace: true })
       return
     }
     type.routeChange?.(entity, payload, api)
@@ -274,7 +325,17 @@ const page = {
 ## Testing
 
 ```javascript
+import { html } from "@inglorious/web"
 import { trigger, render } from "@inglorious/web/test"
+
+const counter = {
+  increment(entity, payload) {
+    entity.value += payload.amount
+  },
+  render(entity) {
+    return html`<div>Count: ${entity.value}</div>`
+  },
+}
 
 // Test handlers
 const { entity, events } = trigger(
@@ -285,9 +346,13 @@ const { entity, events } = trigger(
 expect(entity.value).toBe(15)
 
 // Test rendering
-const template = counter.render(entity, { notify: jest.fn() })
-const html = render(template)
-expect(html).toContain("Count: 42")
+const template = counter.render(
+  { id: "counter1", value: 42 },
+  { notify: jest.fn() },
+)
+const root = document.createElement("div")
+render(template, root)
+expect(root.textContent).toContain("Count: 42")
 ```
 
 ## Redux DevTools
@@ -303,25 +368,6 @@ if (import.meta.env.DEV) {
 export const store = createStore({ types, entities, middlewares })
 ```
 
-## Auto-Creating Entities
-
-```javascript
-const types = {
-  header: {
-    create(entity) {
-      entity.title = "Welcome"
-    },
-    render: (entity, api) => html`<header>${entity.title}</header>`,
-  },
-}
-
-const store = createStore({
-  types,
-  entities: {},
-  autoCreateEntities: true,
-})
-```
-
 ## API Reference
 
 ### `mount(store, renderFn, element)`
@@ -330,11 +376,12 @@ Connect store to DOM. Returns unsubscribe function.
 
 ### `api` Object Methods
 
-- `api.render(id, options?)` - Render entity by id
+- `api.render(id)` - Render entity by id
 - `api.getEntity(id)` - Get entity state (read-only snapshot)
 - `api.getEntities()` - Get all entities (read-only snapshot)
 - `api.select(selector)` - Run selector function against current state
 - `api.notify(event, payload)` - Dispatch event (preferred method)
+- `api.dispatch(action)` - Dispatch raw event object (Redux-compatible)
 - `api.getTypes()` - Get all type definitions
 - `api.getType(name)` - Get specific type
 
@@ -352,6 +399,7 @@ import {
   createStore,
   createDevtools,
   compute, // store
+  createSelector, // store, Redux-compatible
   mount,
   html,
   svg, // lit-html

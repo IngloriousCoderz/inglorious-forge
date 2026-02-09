@@ -8,7 +8,7 @@ npm install @inglorious/store
 
 ## Core Concepts
 
-Redux-compatible, ECS-inspired state library. Eliminates boilerplate while providing entity lifecycle management.
+A Redux-compatible, ECS-inspired state library that eliminates boilerplate while keeping state transitions explicit and predictable.
 
 **Redux Compatibility:**
 
@@ -40,7 +40,7 @@ const store = createStore({ types, entities })
 
 ## Event Handlers
 
-Handlers are called with: `entity`, `payload`, `api` (you can omit unused parameters in the function definition)
+Handlers are called with: `entity`, `payload`, `api` (you can omit unused parameters).
 
 ```javascript
 const types = {
@@ -58,10 +58,10 @@ const types = {
 ```javascript
 const types = {
   logger: {
-    create(entity, _, api) {
+    create(entity) {
       entity.startTime = Date.now()
     },
-    destroy(entity, _, api) {
+    destroy(entity) {
       entity.endTime = Date.now()
     },
   },
@@ -111,20 +111,20 @@ import { handleAsync } from "@inglorious/store"
 const types = {
   todos: {
     ...handleAsync("fetchTodos", {
-      start(entity, payload, api) {
+      start(entity) {
         entity.loading = true
       },
       async run(payload, api) {
         const res = await fetch("/api/todos")
         return res.json()
       },
-      success(entity, todos, api) {
+      success(entity, todos) {
         entity.todos = todos
       },
-      error(entity, error, api) {
+      error(entity, error) {
         entity.error = error.message
       },
-      finally(entity, api) {
+      finally(entity) {
         entity.loading = false
       },
     }),
@@ -132,33 +132,34 @@ const types = {
 }
 ```
 
-**Lifecycle events:**
+**Lifecycle events generated:**
 
 - `fetchTodos` → triggers the operation
-- `fetchTodosStart` → (if `start` handler provided) executes synchronously
+- `fetchTodosStart` → (if `start` handler provided)
 - `fetchTodosRun` → executes async operation
-- `fetchTodosSuccess` → (on success) executes success handler
-- `fetchTodosError` → (on error) executes error handler
-- `fetchTodosFinally` → (always) executes finally handler
+- `fetchTodosSuccess` → on success
+- `fetchTodosError` → on error
+- `fetchTodosFinally` → always
 
 **Important notes:**
 
 - Use `...handleAsync(...)` to spread handlers into the type
-- `run` receives `(payload, api)` - **NOT** `entity`. Entity state should be modified in other handlers
+- `run` receives `(payload, api)` — **not** `entity`
 - All handlers receive `api` as the last parameter
-- `start` is optional - if omitted, no `Start` event is generated
+- `start` is optional
 
 ## Systems
 
-Global logic that runs after all handlers:
+Global logic that runs after all entity handlers for the same event:
 
 ```javascript
 const systems = [
   {
-    taskCompleted(state, taskId, api) {
+    taskCompleted(state, taskId) {
       const allTodos = Object.values(state)
         .filter((e) => e.type === "todoList")
         .flatMap((e) => e.todos)
+
       state.stats.total = allTodos.length
       state.stats.completed = allTodos.filter((t) => t.completed).length
     },
@@ -220,42 +221,36 @@ store.update() // Process batch
 
 ## Derived State
 
-**Using `compute` (for memoized selectors):**
+**Using `compute` (memoized selectors):**
 
 ```javascript
 import { compute } from "@inglorious/store"
 
-const value = (entities) => entities.counter1.value
-const multiplier = (entities) => entities.settings.multiplier
-
-const result = compute((count, mult) => count * mult, [value, multiplier])
-```
-
-**Using `api.select()` (simpler, for direct selectors):**
-
-```javascript
-// Define selectors (can be named anything, not just "selectThing")
 const value = (state) => state.counter1.value
 const multiplier = (state) => state.settings.multiplier
 
-// Use in handlers
+const result = compute((count, mult) => count * mult, [value, multiplier])
+
+// Later:
+const total = result(store.getState())
+```
+
+**Using `api.select()` (direct selectors):**
+
+```javascript
+const value = (state) => state.counter1.value
+const multiplier = (state) => state.settings.multiplier
+
 const types = {
-  page: {
-    render(entity, api) {
+  stats: {
+    recalc(entity, _, api) {
       const count = api.select(value)
       const mult = api.select(multiplier)
-
-      return html`<div>Result: ${count * mult}</div>`
+      entity.result = count * mult
     },
   },
 }
 ```
-
-**Benefits of `api.select()`:**
-
-- Simpler than `value(api.getEntities())`
-- Selectors can be named `value` instead of `selectValue`
-- Cleaner API: `api.select(value)`
 
 ## API Reference
 
@@ -276,7 +271,7 @@ const store = createStore({
 
 - `getEntities()` - Read all state (read-only)
 - `getEntity(id)` - Read entity (read-only)
-- `select(selector)` - Run selector function against current state
+- `select(selector)` - Run selector against current state
 - `notify(type, payload)` - Trigger events (preferred over dispatch)
 - `dispatch(action)` - Redux-style dispatch (for compatibility)
 - `getTypes()` - Access type definitions
@@ -285,8 +280,7 @@ const store = createStore({
 
 **Rules:**
 
-- ALWAYS use `api.notify()` for state changes - Direct mutations outside handlers won't trigger re-renders
-- Mutations inside handlers are safe - The store uses Mutative for immutability
+- Mutations inside handlers are safe (store uses Mutative)
 - `api.getEntity()` and `api.getEntities()` return read-only snapshots
 - Events triggered via `api.notify()` are queued and processed in order
 
@@ -301,17 +295,19 @@ const store = createStore({
 import { trigger, createMockApi } from "@inglorious/store/test"
 
 // Test handlers
-const { entity, events } = trigger({ type: "counter", value: 99 }, increment, {
-  amount: 5,
-})
+const { entity, events } = trigger(
+  { type: "counter", id: "counter1", value: 99 },
+  increment,
+  { amount: 5 },
+)
 expect(entity.value).toBe(104)
 
 // With mock API
 const api = createMockApi({
   counter1: { type: "counter", value: 10 },
 })
-const { entity } = trigger(
-  { type: "counter", value: 20 },
+const { entity: copied } = trigger(
+  { id: "counter2", type: "counter", value: 20 },
   copyValue,
   { sourceId: "counter1" },
   api,
@@ -350,17 +346,15 @@ const store = createStore<TodoListEntity, TodoListState>({
 ### ❌ Wrong: Direct mutation outside handler
 
 ```javascript
-// This will NOT trigger re-render
 const entity = store.getState().counter1
-entity.value++ // Wrong - no re-render
+entity.value++ // Wrong - no event
 ```
 
 ### ✅ Correct: Use notify() or dispatch()
 
 ```javascript
-store.notify("#counter1:increment") // Correct - triggers re-render
-// or
-store.dispatch({ type: "increment", payload: null }) // Also works
+store.notify("#counter1:increment")
+store.dispatch({ type: "increment", payload: null })
 ```
 
 ### ❌ Wrong: Mutating read-only entity from api.getEntity()
@@ -370,7 +364,7 @@ const types = {
   counter: {
     increment(entity, _, api) {
       const other = api.getEntity("counter2")
-      other.value++ // Wrong - read-only, mutation won't work
+      other.value++ // Wrong - read-only
     },
   },
 }
@@ -382,7 +376,7 @@ const types = {
 const types = {
   counter: {
     increment(entity, _, api) {
-      api.notify("#counter2:increment") // Correct - triggers handler
+      api.notify("#counter2:increment")
     },
   },
 }

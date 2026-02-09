@@ -8,18 +8,16 @@ npm install @inglorious/ssx @inglorious/web
 
 ## Core Concepts
 
-Static Site Generator for `@inglorious/web`. Generates pre-rendered HTML with client-side hydration using lit-html.
+Static Site Xecution (SSX) builds pre-rendered HTML for @inglorious/web apps, then hydrates on the client with lit-html.
 
 **Architecture:**
 
-- File-based routing (pages in `src/pages/`)
+- File-based routing from `src/pages/`
 - Server-side rendering at build time
-- Client-side hydration with lit-html
-- Entity-based state (same as @inglorious/web)
+- Client-side hydration via @inglorious/web
+- Entity-based state (same model as @inglorious/web)
 
 ## Quick Start
-
-### Create Project
 
 ```bash
 npx @inglorious/create-app my-site --template ssx-js
@@ -27,34 +25,9 @@ cd my-site
 npm run dev
 ```
 
-### Basic Page
-
-```javascript
-// src/pages/index.js
-import { html } from "@inglorious/web"
-
-export const index = {
-  render() {
-    return html`
-      <div>
-        <h1>Welcome to SSX!</h1>
-        <p>This page was pre-rendered at build time.</p>
-      </div>
-    `
-  },
-}
-
-export const metadata = {
-  title: "Home",
-  meta: {
-    description: "Welcome to our site",
-  },
-}
-```
-
 ## File-Based Routing
 
-Pages are files in `src/pages/`:
+Pages live in `src/pages/` (relative to the SSX root directory):
 
 ```
 src/pages/
@@ -65,15 +38,18 @@ src/pages/
     └── _slug.js      → /posts/:slug
 ```
 
-**Dynamic routes** use underscore prefix: `_id.js`, `_slug.js`, etc.
+**Dynamic routes** use an underscore prefix: `_id.js`, `_slug.js`.
+**Catch-all routes** use double underscores: `__path.js` → `*`.
 
 ## Page Exports
 
 ### `render(entity, api)`
 
-Required. Returns lit-html template:
+Required. Returns a lit-html template.
 
 ```javascript
+import { html } from "@inglorious/web"
+
 export const index = {
   render(entity, api) {
     return html`<h1>${entity.title}</h1>`
@@ -83,10 +59,9 @@ export const index = {
 
 ### `metadata`
 
-Optional. Page metadata for HTML `<head>`:
+Optional. Controls the HTML `<head>`.
 
 ```javascript
-// Static metadata
 export const metadata = {
   title: "Home",
   meta: {
@@ -95,7 +70,6 @@ export const metadata = {
   },
 }
 
-// Dynamic metadata (function)
 export const metadata = (entity) => ({
   title: `${entity.user.name}'s Profile`,
   meta: {
@@ -106,7 +80,7 @@ export const metadata = (entity) => ({
 
 ### `load(entity, page)`
 
-Optional. Load data at build time (SSR):
+Optional. Runs at build time for SSR data loading.
 
 ```javascript
 export async function load(entity, page) {
@@ -115,10 +89,9 @@ export async function load(entity, page) {
 }
 ```
 
-For dynamic routes, `page.params` contains route parameters:
+For dynamic routes, use `page.params`:
 
 ```javascript
-// src/pages/posts/_slug.js
 export async function load(entity, page) {
   const response = await fetch(
     `https://api.example.com/posts/${page.params.slug}`,
@@ -129,13 +102,13 @@ export async function load(entity, page) {
 
 ### `staticPaths()`
 
-Required for dynamic routes. Returns array of paths to generate:
+Required for dynamic routes. Returns the paths to generate.
 
 ```javascript
 export async function staticPaths() {
-  const response = await fetch("https://api.example.com/posts")
-  const posts = await response.json()
-
+  const posts = await fetch("https://api.example.com/posts").then((r) =>
+    r.json(),
+  )
   return posts.map((post) => ({
     params: { slug: post.slug },
     path: `/posts/${post.slug}`,
@@ -145,7 +118,7 @@ export async function staticPaths() {
 
 ## Entity-Based State
 
-Pages can use entity-based state like regular @inglorious/web:
+Pages can use entity state like @inglorious/web:
 
 ```javascript
 // src/pages/about.js
@@ -155,7 +128,6 @@ export const about = {
   click(entity) {
     entity.count++
   },
-
   render(entity, api) {
     return html`
       <h1>About</h1>
@@ -171,47 +143,34 @@ export const about = {
 ```javascript
 // src/store/entities.js
 export const entities = {
-  about: {
-    type: "about",
-    count: 0,
-  },
+  about: { type: "about", count: 0 },
 }
 ```
 
-## Client-Side Navigation
+## Client-Side Hydration & Navigation
 
-After hydration, navigation is instant:
+SSX hydrates the pre-rendered HTML and wires up the @inglorious/web router.
 
 ```javascript
-// Links navigate without page reload
-;<a href="/about">About</a>
-
 // Programmatic navigation
-api.notify("navigate", "/posts")
-api.notify("navigate", { to: "/posts/123", replace: true })
+api.notify("#router:navigate", "/posts")
+api.notify("#router:navigate", { to: "/posts/123", replace: true })
 ```
-
-Routes are lazy-loaded on demand.
 
 ## Site Configuration
 
-Configure SSX in `src/site.config.js`:
+Configure SSX in `site.config.js` (or `site.config.ts`) at the project root:
 
 ```javascript
 export default {
-  // Basic metadata
   title: "My Site",
-  meta: {
-    description: "A site built with SSX",
-  },
+  meta: { description: "A site built with SSX" },
 
-  // Sitemap configuration
   sitemap: {
     hostname: "https://mysite.com",
     filter: (page) => !page.path.startsWith("/admin"),
   },
 
-  // RSS configuration
   rss: {
     title: "My Blog",
     description: "Latest posts",
@@ -220,16 +179,17 @@ export default {
     filter: (page) => page.path.startsWith("/posts"),
   },
 
-  // Markdown configuration
   markdown: {
-    theme: "github-dark", // Syntax highlighting theme
+    theme: "github-dark",
   },
 }
 ```
 
 ## Markdown Pages
 
-SSX treats `.md` files as pages:
+`.md` files in `src/pages/` become pages. Frontmatter becomes `metadata`.
+
+Example:
 
 ```markdown
 ---
@@ -241,19 +201,15 @@ title: My Post
 This is a markdown page.
 ```
 
-**Features:**
+Features:
 
-- Frontmatter exported as `metadata`
 - Code highlighting with `highlight.js`
-- LaTeX math support via `katex`
-- Mermaid diagrams (requires client-side mermaid.js)
+- LaTeX math via `katex`
+- Mermaid diagrams (requires client-side mermaid)
 
 ## Image Optimization
 
-SSX includes built-in image optimization:
-
-- Automatic compression (PNG, JPEG, GIF, SVG, WebP, AVIF)
-- Configurable via Vite config in `site.config.js`
+SSX integrates `vite-plugin-image-optimizer` with `sharp`/`svgo` to compress static images at build time.
 
 ## CLI Commands
 
@@ -261,31 +217,27 @@ SSX includes built-in image optimization:
 
 ```bash
 npm run dev
-# or
-pnpm ssx dev
 ```
 
 Options:
 
-- `-c, --config <file>` - Config file (default: "site.config.js")
-- `-r, --root <dir>` - Source root (default: "src")
-- `-p, --port <port>` - Dev server port (default: 3000)
+- `-c, --config <file>` (default: `site.config.js`)
+- `-r, --root <dir>` (default: `.`)
+- `-p, --port <port>` (default: `3000`)
 
 ### Build
 
 ```bash
 npm run build
-# or
-pnpm ssx build
 ```
 
 Options:
 
-- `-c, --config <file>` - Config file
-- `-r, --root <dir>` - Source root
-- `-o, --out <dir>` - Output directory (default: "dist")
-- `-i, --incremental` - Enable incremental builds (default: true)
-- `-f, --force` - Force clean build
+- `-c, --config <file>`
+- `-r, --root <dir>`
+- `-o, --out <dir>` (default: `dist`)
+- `-i, --incremental` (default: `true`)
+- `-f, --force` (default: `false`)
 
 ### Preview
 
@@ -293,80 +245,12 @@ Options:
 npm run preview
 ```
 
-Serves built static site on port 3000.
-
-## Deployment
-
-Deploy `dist/` directory to:
-
-- **Vercel** - Zero config
-- **Netlify** - Drop folder
-- **GitHub Pages** - Push and done
-- **Cloudflare Pages** - Instant edge
-- **Any CDN** - It's just static files
+Serves `dist/` using `serve`.
 
 ## Rules & Constraints
 
-1. **Pages MUST export `render` function** - Returns lit-html template
-2. **Metadata can be object or function** - Function receives entity for dynamic metadata
-3. **`load` runs at build time** - Not on client, use for SSR data fetching
-4. **`staticPaths` required for dynamic routes** - Returns array of paths to generate
-5. **Entity state works same as @inglorious/web** - Use `api.notify()` for state changes
-6. **Navigation is client-side after hydration** - Links use client-side routing
-7. **Markdown frontmatter becomes metadata** - YAML frontmatter in `.md` files
-
-## Common Pitfalls
-
-### ❌ Wrong: Using load() for client-side data
-
-```javascript
-export async function load(entity) {
-  // Wrong - load() runs at build time, not on client
-  const data = await fetch("/api/data") // This won't work on client
-  entity.data = data
-}
-```
-
-### ✅ Correct: Use load() for build-time data, handlers for client data
-
-```javascript
-// Build-time data
-export async function load(entity) {
-  const data = await fetch("https://api.example.com/data")
-  entity.data = await data.json()
-}
-
-// Client-side data
-export const page = {
-  async refreshData(entity, _, api) {
-    const data = await fetch("/api/data")
-    entity.data = await data.json()
-  },
-}
-```
-
-### ❌ Wrong: Missing staticPaths for dynamic route
-
-```javascript
-// src/pages/posts/_slug.js
-export const post = {
-  render(entity) {
-    return html`<h1>${entity.post.title}</h1>`
-  },
-}
-// Wrong - missing staticPaths(), route won't be generated
-```
-
-### ✅ Correct: Export staticPaths()
-
-```javascript
-export async function staticPaths() {
-  const posts = await fetch("https://api.example.com/posts").then((r) =>
-    r.json(),
-  )
-  return posts.map((post) => ({
-    params: { slug: post.slug },
-    path: `/posts/${post.slug}`,
-  }))
-}
-```
+1. **Pages MUST export `render`.**
+2. **`load` runs at build time**, not in the browser.
+3. **Dynamic routes require `staticPaths()`.**
+4. **Entity state works the same as @inglorious/web.**
+5. **Pages live in `src/pages/` under the root dir.**

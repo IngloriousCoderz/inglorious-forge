@@ -7,61 +7,91 @@ description: Ecosystem for web apps and 2D games. Entity-based state (@ingloriou
 
 Simple, modular JavaScript tools. No proxies, no signals, plain JS focus.
 
-## Core Architecture (The Entity Pattern)
+## Core Principles
 
-Every object is an entity with `type` + `id`. Behavior is defined in types:
-
-- `api.notify("type:event", payload)`: Triggers updates.
-- `api.select(selector)`: Reads state (New API).
-- **Composition:** Types can be arrays `[behaviorA, behaviorB]` or decorators.
-
----
+- Pure functions
+- Separation of data and behavior
+- Simplicity
 
 ## 🛠 Modules & Skills
+
+### [@inglorious/utils](skills/utils/SKILL.md)
+
+**The Enabler.** Pure functions for common problems.
+
+- **Math:** Vector operations, trigonometry, random numbers.
+- **Physics:** Velocity, acceleration, friction.
+- **Functions:** Composition, piping.
+- **Data Structures:** Trees, heaps, grids.
+- **Algorithms:** Decision trees, pathfinding.
 
 ### [@inglorious/store](skills/store/SKILL.md)
 
 **The Brain.** Redux-compatible, ECS-inspired state management.
 
-- **Key Concept:** Immutable updates via Mutative in event handlers.
-- **New API:** `api.select(thing)` replaces manual state passing.
-- **Async:** `handleAsync` manages Start -> Run -> Success/Error lifecycles.
+- **Entity-Based:** Entities hold data, types hold behavior.
+- **Event-Driven:** Handlers triggered by notified events.
+- **Event Queue:** Determinism ensured by queuing events.
+- **Test Utilities:** Easy unit testing.
+- **Middleware:** Enhance store capabilities.
+- **Multiplayer:** Special middleware for collaborative apps and multiplayer games.
+- **Compatible With `react-redux`:** Redux-compatible API.
+- **Redux DevTools Integration:** Drop-in replacement for Redux.
+
+### [@inglorious/server](skills/server/SKILL.md)
+
+**The Orchestrator.** Real-time server for Inglorious apps and games.
+
+- **Based on Inglorious Store:** Uses same state manager as clients.
+- **Real-time Communication:** Synchronizes entities and events through WebSockets.
+
+### [@inglorious/react-store](skills/react-store/SKILL.md)
+
+**The Diplomat.** Seamlessly wires Inglorious Store to React apps.
+
+- **Simplified Provider:** No need to pass the store
+- **Simplified API:** `useEntity` instead of `useSelector`, `useNotify` instead of `useDispatch`.
 
 ### [@inglorious/web](skills/web/SKILL.md)
 
-**The View.** `lit-html` rendering without component overhead.
+**The Designer.** Inglorious Store as state manager, lit-html as renderer.
 
-- **Key Concept:** Functions return templates; `api.render(id)` mounts entities.
-- **Components:** Built-in form, table, list, and router.
-
-### [@inglorious/engine](skills/engine/SKILL.md)
-
-**The Action.** Functional 2D game engine.
-
-- **Key Concept:** Frame-based `update(entity, dt)` handlers and entity pooling.
-- **IngloriousScript:** Optional vector math operators via Babel.
+- **Types Can Render:** `render(entity, api)`
+- **Whole-tree Re-rendering:** Leverages lit-html’s surgical DOM updates.
+- **Test Utilities:** Easy unit testing and component testing.
+- **Components:** Built-in form, table, list, select, and router.
 
 ### [@inglorious/charts](skills/charts/SKILL.md)
 
-**The Data.** Declarative charts (Config-first or Composition mode).
+**The Data Scientist.** Declarative SVG charts.
 
-- **CRITICAL:** Composition mode MUST use `ctx.displayData` for Zoom/Brush support.
+- **Recharts-inspired:** Declarative, composable, performant, SSR-friendly charts.
+- **Configuration-based:** Customize charts through entity properties.
+- **Composition API:** Ability to compose charts as primitives.
 
 ### [@inglorious/ssx](skills/ssx/SKILL.md)
 
-**The Web.** SSG with hydration and file-based routing.
+**The SEO Expert.** SSG with hydration and file-based routing.
+
+- **Dev Server:** Hot Module Replacement (HMR).
+- **Optimized Build:** Uses Vite for building and bundling.
+- **Markdown Support:** With code highlight, LaTeX math and Mermaid charts.
+- **SEO Tools:** Sitemaps, manifests, metadata.
+- **Fast Hydration:** Uses [`@lit-labs/ssr`](https://lit.dev/docs/ssr/overview/) to rewire event listeners on the client.
+
+### [@inglorious/engine](skills/engine/SKILL.md)
+
+**The Player.** Functional 2D game engine.
+
+- **Game Loop:** Frame-based `update(entity, dt)` handlers.
+- **Entity Pool:** Special middleware for frequent updates.
+- **IngloriousScript:** Optional native vector math operators via Babel.
 
 ---
 
 ## 🚀 Build & Integration
 
-- **Vue Plugin:** Compiles Vue-like syntax to lit-html/store events.
-- **React Store:** Official bindings (`useSelector`, `useNotify`).
-- **CLI:** `create-app` and `create-game` for quick starts.
-
-## ⚠️ Critical Rules (Quick Ref)
-
-1. **Never mutate state outside handlers.** Use `api.notify()`.
-2. **Handlers signature:** `(entity, payload, api)`.
-3. **Async Run:** `run(payload, api)` does NOT receive `entity`.
-4. **Select:** Use `api.select(selector)` for all state reads.
+- **[JSX Vite Plugin](skills/vite-plugin-jsx/SKILL.md):** Allows using JSX syntax instead of `lit-html` templates.
+- **[Vue Vite Plugin](skills/vite-plugin-vue/SKILL.md):** Allows using Vue-like template syntax instead of `lit-html`.
+- **[Create App](skills/create-app/SKILL.md):** Easy scaffolding of Inglorious Web apps.
+- **[Create Game](skills/create-game/SKILL.md):** Easy scaffolding of Inglorious Engine games.
