@@ -1,5 +1,11 @@
 # @inglorious/store
 
+## 9.5.2
+
+### Patch Changes
+
+- Auto-update once after store initialization
+
 ## 9.5.1
 
 ### Patch Changes

@@ -50,6 +50,11 @@ export function createStore({
     : baseStore
   const api = createApi(store, store.extras)
   store._api = api
+
+  if (updateMode === "auto" && incomingEvents.length) {
+    update()
+  }
+
   return store
 
   /**

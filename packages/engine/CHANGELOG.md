@@ -1,5 +1,12 @@
 # @inglorious/engine
 
+## 20.0.2
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/store@9.5.2
+
 ## 20.0.1
 
 ### Patch Changes

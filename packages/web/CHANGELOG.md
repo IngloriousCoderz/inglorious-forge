@@ -1,5 +1,12 @@
 # @inglorious/react-store
 
+## 4.2.3
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/store@9.5.2
+
 ## 4.2.2
 
 ### Patch Changes

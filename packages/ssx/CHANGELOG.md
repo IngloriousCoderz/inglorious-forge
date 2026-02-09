@@ -1,5 +1,12 @@
 # @inglorious/ssx
 
+## 1.6.3
+
+### Patch Changes
+
+- Auto-update once after store initialization
+  - @inglorious/web@4.2.3
+
 ## 1.6.2
 
 ### Patch Changes
