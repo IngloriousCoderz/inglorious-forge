@@ -44,17 +44,23 @@ export function renderBrush(entity, props, api) {
   let brushXScale = xScale
   if (!xScale.bandwidth) {
     const hasDates = brushData.some((d) => d.date || d.x instanceof Date)
-    brushXScale = hasDates ? createTimeScale(brushData, width, padding) : createXScale(brushData, width, padding)
+    brushXScale = hasDates
+      ? createTimeScale(brushData, width, padding)
+      : createXScale(brushData, width, padding)
   }
 
   /** Maps data index to pixel X coordinate */
   const getXPosition = (index) => {
     const safeIndex = Math.max(0, Math.min(index, brushData.length - 1))
     if (brushXScale.bandwidth) {
-      const category = brushData[safeIndex]?.[dataKey] || brushData[safeIndex]?.name || String(safeIndex)
+      const category =
+        brushData[safeIndex]?.[dataKey] ||
+        brushData[safeIndex]?.name ||
+        String(safeIndex)
       return brushXScale(category) + brushXScale.bandwidth() / 2
     }
-    const value = brushData[safeIndex]?.x ?? brushData[safeIndex]?.date ?? safeIndex
+    const value =
+      brushData[safeIndex]?.x ?? brushData[safeIndex]?.date ?? safeIndex
     return brushXScale(value)
   }
 
@@ -62,7 +68,7 @@ export function renderBrush(entity, props, api) {
   const endX = getXPosition(entity.brush.endIndex)
 
   if (!isValidNumber(startX) || !isValidNumber(endX)) return svg``
-  
+
   // Visual width of the selection area
   const brushWidth = endX - startX
 
@@ -75,7 +81,7 @@ export function renderBrush(entity, props, api) {
 
     const svgRect = svgElement.getBoundingClientRect()
     const startMouseX = e.clientX - svgRect.left
-    
+
     // Snapshots: Capture current state at the start of interaction to prevent "drifting"
     const initialStartIndex = entity.brush.startIndex
     const initialEndIndex = entity.brush.endIndex
@@ -87,36 +93,52 @@ export function renderBrush(entity, props, api) {
     const handleMouseMove = (moveEvent) => {
       const currentMouseX = moveEvent.clientX - svgRect.left
       const deltaX = currentMouseX - startMouseX
-      
+
       // index-to-pixel ratio used for consistent panning
       const pixelsPerIndex = brushAreaWidth / Math.max(1, totalDataCount)
 
       if (action === "pan") {
         const indexDelta = Math.round(deltaX / pixelsPerIndex)
         let nextStart = initialStartIndex + indexDelta
-        
+
         // Bounds clamping: keep selection within data limits
         if (nextStart < 0) nextStart = 0
-        if (nextStart + selectionSize > totalDataCount) nextStart = totalDataCount - selectionSize
+        if (nextStart + selectionSize > totalDataCount)
+          nextStart = totalDataCount - selectionSize
         let nextEnd = nextStart + selectionSize
 
         // Only notify if indices actually changed to optimize rendering
-        if (nextStart !== entity.brush.startIndex || nextEnd !== entity.brush.endIndex) {
+        if (
+          nextStart !== entity.brush.startIndex ||
+          nextEnd !== entity.brush.endIndex
+        ) {
           entity.brush.startIndex = nextStart
           entity.brush.endIndex = nextEnd
           api.notify(`#${entity.id}:update`)
         }
       } else if (action === "resize-left") {
-        const newX = Math.max(brushAreaX, Math.min(initialStartX + deltaX, initialEndX - 5))
+        const newX = Math.max(
+          brushAreaX,
+          Math.min(initialStartX + deltaX, initialEndX - 5),
+        )
         const newIndex = findClosestIndex(newX, brushData, brushXScale, dataKey)
-        if (newIndex !== entity.brush.startIndex && newIndex < entity.brush.endIndex) {
+        if (
+          newIndex !== entity.brush.startIndex &&
+          newIndex < entity.brush.endIndex
+        ) {
           entity.brush.startIndex = newIndex
           api.notify(`#${entity.id}:update`)
         }
       } else if (action === "resize-right") {
-        const newX = Math.min(brushAreaX + brushAreaWidth, Math.max(initialEndX + deltaX, initialStartX + 5))
+        const newX = Math.min(
+          brushAreaX + brushAreaWidth,
+          Math.max(initialEndX + deltaX, initialStartX + 5),
+        )
         const newIndex = findClosestIndex(newX, brushData, brushXScale, dataKey)
-        if (newIndex !== entity.brush.endIndex && newIndex > entity.brush.startIndex) {
+        if (
+          newIndex !== entity.brush.endIndex &&
+          newIndex > entity.brush.startIndex
+        ) {
           entity.brush.endIndex = newIndex
           api.notify(`#${entity.id}:update`)
         }
@@ -137,13 +159,16 @@ export function renderBrush(entity, props, api) {
       
       <g class="iw-chart-brush-preview" style="pointer-events: none;">
         <path
-          d="${brushData.map((d, i) => {
-            const x = getXPosition(i)
-            const value = d.value ?? d.y ?? 0
-            const maxValue = Math.max(...brushData.map((dd) => dd.value ?? dd.y ?? 0)) || 1
-            const y = brushHeight - 2 - (value / maxValue) * (brushHeight - 4)
-            return `M${x},${brushHeight - 2} L${x},${y}`
-          }).join(" ")}"
+          d="${brushData
+            .map((d, i) => {
+              const x = getXPosition(i)
+              const value = d.value ?? d.y ?? 0
+              const maxValue =
+                Math.max(...brushData.map((dd) => dd.value ?? dd.y ?? 0)) || 1
+              const y = brushHeight - 2 - (value / maxValue) * (brushHeight - 4)
+              return `M${x},${brushHeight - 2} L${x},${y}`
+            })
+            .join(" ")}"
           stroke="#8884d8" stroke-width="1" opacity="0.3"
         />
       </g>
@@ -185,12 +210,16 @@ export function createBrushComponent(defaultConfig = {}) {
     const brushFn = (ctx) => {
       const entityFromContext = ctx.fullEntity || ctx.entity || entity
       const config = { ...defaultConfig, ...(props.config || {}) }
-      return renderBrush(entityFromContext, {
-        xScale: ctx.xScale,
-        ...ctx.dimensions,
-        dataKey: config.dataKey || entityFromContext.dataKey || "name",
-        brushHeight: config.height || 30,
-      }, api)
+      return renderBrush(
+        entityFromContext,
+        {
+          xScale: ctx.xScale,
+          ...ctx.dimensions,
+          dataKey: config.dataKey || entityFromContext.dataKey || "name",
+          brushHeight: config.height || 30,
+        },
+        api,
+      )
     }
     brushFn.isBrush = true
     return brushFn
