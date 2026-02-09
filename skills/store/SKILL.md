@@ -228,7 +228,7 @@ import { compute } from "@inglorious/store"
 const value = (entities) => entities.counter1.value
 const multiplier = (entities) => entities.settings.multiplier
 
-const result = compute(([count, mult]) => count * mult, [value, multiplier])
+const result = compute((count, mult) => count * mult, [value, multiplier])
 ```
 
 **Using `api.select()` (simpler, for direct selectors):**
