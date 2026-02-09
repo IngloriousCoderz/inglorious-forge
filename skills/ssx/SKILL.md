@@ -11,6 +11,7 @@ npm install @inglorious/ssx @inglorious/web
 Static Site Generator for `@inglorious/web`. Generates pre-rendered HTML with client-side hydration using lit-html.
 
 **Architecture:**
+
 - File-based routing (pages in `src/pages/`)
 - Server-side rendering at build time
 - Client-side hydration with lit-html
@@ -120,7 +121,7 @@ For dynamic routes, `page.params` contains route parameters:
 // src/pages/posts/_slug.js
 export async function load(entity, page) {
   const response = await fetch(
-    `https://api.example.com/posts/${page.params.slug}`
+    `https://api.example.com/posts/${page.params.slug}`,
   )
   entity.post = await response.json()
 }
@@ -134,7 +135,7 @@ Required for dynamic routes. Returns array of paths to generate:
 export async function staticPaths() {
   const response = await fetch("https://api.example.com/posts")
   const posts = await response.json()
-  
+
   return posts.map((post) => ({
     params: { slug: post.slug },
     path: `/posts/${post.slug}`,
@@ -154,7 +155,7 @@ export const about = {
   click(entity) {
     entity.count++
   },
-  
+
   render(entity, api) {
     return html`
       <h1>About</h1>
@@ -183,7 +184,7 @@ After hydration, navigation is instant:
 
 ```javascript
 // Links navigate without page reload
-<a href="/about">About</a>
+;<a href="/about">About</a>
 
 // Programmatic navigation
 api.notify("navigate", "/posts")
@@ -203,13 +204,13 @@ export default {
   meta: {
     description: "A site built with SSX",
   },
-  
+
   // Sitemap configuration
   sitemap: {
     hostname: "https://mysite.com",
     filter: (page) => !page.path.startsWith("/admin"),
   },
-  
+
   // RSS configuration
   rss: {
     title: "My Blog",
@@ -218,7 +219,7 @@ export default {
     feedPath: "/feed.xml",
     filter: (page) => page.path.startsWith("/posts"),
   },
-  
+
   // Markdown configuration
   markdown: {
     theme: "github-dark", // Syntax highlighting theme
@@ -241,6 +242,7 @@ This is a markdown page.
 ```
 
 **Features:**
+
 - Frontmatter exported as `metadata`
 - Code highlighting with `highlight.js`
 - LaTeX math support via `katex`
@@ -264,6 +266,7 @@ pnpm ssx dev
 ```
 
 Options:
+
 - `-c, --config <file>` - Config file (default: "site.config.js")
 - `-r, --root <dir>` - Source root (default: "src")
 - `-p, --port <port>` - Dev server port (default: 3000)
@@ -277,6 +280,7 @@ pnpm ssx build
 ```
 
 Options:
+
 - `-c, --config <file>` - Config file
 - `-r, --root <dir>` - Source root
 - `-o, --out <dir>` - Output directory (default: "dist")
@@ -314,6 +318,7 @@ Deploy `dist/` directory to:
 ## Common Pitfalls
 
 ### ❌ Wrong: Using load() for client-side data
+
 ```javascript
 export async function load(entity) {
   // Wrong - load() runs at build time, not on client
@@ -323,6 +328,7 @@ export async function load(entity) {
 ```
 
 ### ✅ Correct: Use load() for build-time data, handlers for client data
+
 ```javascript
 // Build-time data
 export async function load(entity) {
@@ -340,6 +346,7 @@ export const page = {
 ```
 
 ### ❌ Wrong: Missing staticPaths for dynamic route
+
 ```javascript
 // src/pages/posts/_slug.js
 export const post = {
@@ -351,13 +358,15 @@ export const post = {
 ```
 
 ### ✅ Correct: Export staticPaths()
+
 ```javascript
 export async function staticPaths() {
-  const posts = await fetch("https://api.example.com/posts").then(r => r.json())
-  return posts.map(post => ({
+  const posts = await fetch("https://api.example.com/posts").then((r) =>
+    r.json(),
+  )
+  return posts.map((post) => ({
     params: { slug: post.slug },
     path: `/posts/${post.slug}`,
   }))
 }
 ```
-

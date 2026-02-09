@@ -11,6 +11,7 @@ npm install @inglorious/charts
 Declarative charting library for Inglorious Web, inspired by Recharts. Supports two rendering modes: Config-first (declarative) and Composition (Recharts-style).
 
 **Architecture:**
+
 - Pure functions for predictable rendering
 - No global caches or Singletons
 - Context-based data flow in Composition mode
@@ -86,6 +87,7 @@ ${chart(api, "myChart", (c) =>
 ### Line Chart
 
 **Config mode:**
+
 ```javascript
 {
   type: "line",
@@ -98,6 +100,7 @@ ${chart(api, "myChart", (c) =>
 ```
 
 **Config mode with Brush (Zoom & Pan):**
+
 ```javascript
 {
   type: "line",
@@ -117,6 +120,7 @@ ${chart(api, "myChart", (c) =>
 ```
 
 The brush allows users to zoom and pan through large datasets. When enabled:
+
 - Brush appears below the main chart
 - Drag handles to resize the visible range
 - Drag the middle area to pan through data
@@ -124,6 +128,7 @@ The brush allows users to zoom and pan through large datasets. When enabled:
 - Only the rendered data is filtered based on brush selection
 
 **Composition mode:**
+
 ```javascript
 c.renderLineChart([
   c.renderLine({ dataKey: "value", stroke: "#8884d8", showDots: true }),
@@ -133,6 +138,7 @@ c.renderLineChart([
 ### Area Chart
 
 **Config mode:**
+
 ```javascript
 {
   type: "area",
@@ -145,6 +151,7 @@ c.renderLineChart([
 ```
 
 **Composition mode:**
+
 ```javascript
 c.renderAreaChart([
   c.renderArea({
@@ -159,6 +166,7 @@ c.renderAreaChart([
 ### Bar Chart
 
 **Config mode:**
+
 ```javascript
 {
   type: "bar",
@@ -170,10 +178,9 @@ c.renderAreaChart([
 ```
 
 **Composition mode:**
+
 ```javascript
-c.renderBarChart([
-  c.renderBar({ dataKey: "value", fill: "#8884d8" }),
-])
+c.renderBarChart([c.renderBar({ dataKey: "value", fill: "#8884d8" })])
 ```
 
 ### Pie Chart
@@ -445,6 +452,7 @@ c.renderLineChart([
 ```
 
 **Brush Rules:**
+
 - Brush uses full `entity.data` for preview scale
 - Chart uses `ctx.displayData` (filtered data) for rendering
 - Brush updates `entity.brush.startIndex` and `endIndex`
@@ -460,6 +468,7 @@ import "@inglorious/charts/theme.css"
 ```
 
 CSS classes:
+
 - `.iw-chart` - Main chart container
 - `.iw-chart-svg` - SVG element
 - `.iw-chart-line` - Line elements
@@ -492,6 +501,7 @@ chart(api, "myChart", (c) => c.renderLineChart([...], config))
 ```
 
 **Parameters:**
+
 - `api` - Inglorious Web API instance
 - `entityId` - Entity ID string (e.g., `"myChart"`)
 - `renderFn` - Callback that receives chart methods and returns template
@@ -520,9 +530,10 @@ import {
 ## Common Pitfalls
 
 ### ❌ Wrong: Using entity.data directly in Composition
+
 ```javascript
 c.renderLineChart([
-  c.renderLine({ 
+  c.renderLine({
     dataKey: "value",
     // Wrong - uses entity.data directly, breaks Zoom/Brush
   }),
@@ -530,10 +541,11 @@ c.renderLineChart([
 ```
 
 ### ✅ Correct: Use ctx.displayData from context
+
 ```javascript
 // Context is automatically provided by parent chart component
 c.renderLineChart([
-  c.renderLine({ 
+  c.renderLine({
     dataKey: "value",
     // Correct - uses ctx.displayData from parent context
   }),
@@ -541,10 +553,9 @@ c.renderLineChart([
 ```
 
 ### ❌ Wrong: Missing dataKeys in Composition
+
 ```javascript
-c.renderLineChart([
-  c.renderLine({ dataKey: "value" }),
-], {
+c.renderLineChart([c.renderLine({ dataKey: "value" })], {
   width: 800,
   height: 400,
   // Wrong - missing dataKeys, Y-axis won't sync
@@ -552,13 +563,11 @@ c.renderLineChart([
 ```
 
 ### ✅ Correct: Specify dataKeys
+
 ```javascript
-c.renderLineChart([
-  c.renderLine({ dataKey: "value" }),
-], {
+c.renderLineChart([c.renderLine({ dataKey: "value" })], {
   width: 800,
   height: 400,
   dataKeys: ["value"], // Correct - Y-axis syncs correctly
 })
 ```
-

@@ -44,27 +44,39 @@ Every entity has `type` + `id`. Types define behavior:
 ```javascript
 const types = {
   typeName: {
-    create(entity) { /* init */ },
-    destroy(entity) { /* cleanup */ },
-    eventName(entity, payload, api) { /* handler */ },
-    render(entity, api) { return html`...` },
+    create(entity) {
+      /* init */
+    },
+    destroy(entity) {
+      /* cleanup */
+    },
+    eventName(entity, payload, api) {
+      /* handler */
+    },
+    render(entity, api) {
+      return html`...`
+    },
   },
 }
 ```
 
 **Event targeting:**
+
 ```javascript
-api.notify("event")           // All entities
-api.notify("type:event")      // Only this type
-api.notify("#id:event")       // Only this id
-api.notify("type#id:event")   // Specific type and id
+api.notify("event") // All entities
+api.notify("type:event") // Only this type
+api.notify("#id:event") // Only this id
+api.notify("type#id:event") // Specific type and id
 ```
 
 **Type composition:**
+
 ```javascript
 // Single behavior
 const counter = {
-  increment(entity) { entity.value++ },
+  increment(entity) {
+    entity.value++
+  },
 }
 
 // Multiple behaviors (array)
@@ -86,13 +98,18 @@ const withLogging = (type) => ({
 Redux-compatible, ECS-inspired state library. Entity-based architecture eliminates boilerplate.
 
 **Quick example:**
+
 ```javascript
 import { createStore } from "@inglorious/store"
 
 const types = {
   counter: {
-    increment(entity) { entity.value++ },
-    decrement(entity) { entity.value-- },
+    increment(entity) {
+      entity.value++
+    },
+    decrement(entity) {
+      entity.value--
+    },
   },
 }
 
@@ -104,12 +121,13 @@ const entities = {
 const store = createStore({ types, entities })
 
 // Event targeting
-store.notify("increment")              // All entities
-store.notify("counter:increment")      // Only counter type
-store.notify("#counter1:increment")    // Only specific entity
+store.notify("increment") // All entities
+store.notify("counter:increment") // Only counter type
+store.notify("#counter1:increment") // Only specific entity
 ```
 
 **Key features:**
+
 - Redux-compatible API (works with `react-redux` and Redux DevTools)
 - Entity-based state (multiple instances without code changes)
 - Lifecycle events (`create`, `destroy`)
@@ -119,6 +137,7 @@ store.notify("#counter1:increment")    // Only specific entity
 - Uses Mutative for immutable updates (faster than Immer)
 
 **Redux Compatibility:**
+
 - ✅ Compatible with `react-redux` Provider/useSelector/useDispatch
 - ✅ Compatible with Redux DevTools
 - ✅ Compatible with Redux-style `dispatch({ type, payload })`
@@ -132,12 +151,15 @@ store.notify("#counter1:increment")    // Only specific entity
 Small view layer built around `lit-html` and the entity store. No components, no lifecycles — just functions that return templates.
 
 **Quick example:**
+
 ```javascript
 import { createStore, mount, html } from "@inglorious/web"
 
 const types = {
   counter: {
-    increment(entity) { entity.value++ },
+    increment(entity) {
+      entity.value++
+    },
     render(entity, api) {
       return html`
         <button @click=${() => api.notify(`#${entity.id}:increment`)}>
@@ -155,6 +177,7 @@ mount(store, (api) => api.render("counter1"), document.getElementById("root"))
 ```
 
 **Built-in components:**
+
 - `form` - Forms with validation
 - `table` - Data tables
 - `select` - Dropdowns
@@ -168,6 +191,7 @@ mount(store, (api) => api.render("counter1"), document.getElementById("root"))
 Modular game engine built on the same entity model as the store. Designed for 2D games with a focus on simplicity and composability.
 
 **Quick example:**
+
 ```javascript
 import { Engine } from "@inglorious/engine/core/engine"
 import { createRenderer } from "@inglorious/renderer-2d"
@@ -199,6 +223,7 @@ engine.start()
 ```
 
 **Key features:**
+
 - Functional & data-oriented (single immutable state)
 - Composable behaviors (composition over inheritance)
 - Renderer agnostic (Canvas2D, React, HTML)
@@ -207,6 +232,7 @@ engine.start()
 - Optional IngloriousScript for vector math (requires Babel plugin)
 
 **Rules:**
+
 - Use `update` event handler for frame-based logic (receives `deltaTime`)
 - Entity mutations in handlers are safe (store uses Mutative)
 - Use `api.notify()` to trigger events between entities
@@ -219,6 +245,7 @@ engine.start()
 Declarative charting library for Inglorious Web, inspired by Recharts. Supports two rendering modes: Config-first (declarative) and Composition (Recharts-style).
 
 **Config-first mode:**
+
 ```javascript
 import { lineChart } from "@inglorious/charts"
 
@@ -239,6 +266,7 @@ const entities = {
 ```
 
 **Composition mode (Recharts-style):**
+
 ```javascript
 import { chart, charts } from "@inglorious/charts"
 
@@ -266,6 +294,7 @@ ${chart(api, "myChart", (c) =>
 **Chart types:** Line, Area, Bar, Pie, Donut
 
 **CRITICAL Rules for Composition Mode:**
+
 1. **Sub-components MUST use `ctx` (CartesianContext)** - Never access `entity.data` directly
 2. **Use `ctx.displayData` for rendering** - Contains filtered data when Zoom/Brush is active
 3. **Use `ctx.xScale` and `ctx.yScale` for positioning** - Already configured with correct domains
@@ -279,6 +308,7 @@ ${chart(api, "myChart", (c) =>
 Static Site Generator for `@inglorious/web`. Includes server-side rendering, client-side hydration, and file-based routing.
 
 **Quick example:**
+
 ```javascript
 // src/pages/index.js
 import { html } from "@inglorious/web"
@@ -301,6 +331,7 @@ export const metadata = {
 ```
 
 **Features:**
+
 - Pre-rendered HTML (SSG)
 - Client-side hydration with lit-html
 - File-based routing
@@ -310,6 +341,7 @@ export const metadata = {
 - Sitemap & RSS generation
 
 **Rules:**
+
 - Pages are files in `src/pages/` directory
 - Dynamic routes use underscore prefix: `_id.js`, `_slug.js`
 - Export `load()` function for data loading at build time
@@ -346,7 +378,7 @@ let count = 0
 
 // Functions become event handlers that use api.notify()
 // The plugin compiles this to: api.notify(`#${entity.id}:increment`)
-const increment = (entity) => { 
+const increment = (entity) => {
   entity.count++ // This mutation is wrapped in store's immutability system
 }
 </script>
@@ -450,6 +482,7 @@ function Counter() {
 ```
 
 **Redux Compatibility:**
+
 - Works with `react-redux` Provider/useSelector/useDispatch hooks
 - Compatible with Redux DevTools
 - Supports Redux-style `dispatch({ type, payload })` for migration
@@ -510,10 +543,7 @@ import { compute } from "@inglorious/store"
 
 const selectResult = compute(
   (count, multiplier) => count * multiplier,
-  [
-    (state) => state.counter1.value,
-    (state) => state.settings.multiplier,
-  ],
+  [(state) => state.counter1.value, (state) => state.settings.multiplier],
 )
 ```
 
@@ -567,6 +597,7 @@ expect(entity.value).toBe(15)
 ## Common Pitfalls
 
 ### ❌ Wrong: Direct mutation outside handler
+
 ```javascript
 // This will NOT trigger re-render
 const entity = api.getEntity("counter1")
@@ -574,14 +605,16 @@ entity.value++ // Wrong - no re-render
 ```
 
 ### ✅ Correct: Use api.notify()
+
 ```javascript
 api.notify("#counter1:increment") // Correct - triggers re-render
 ```
 
 ### ❌ Wrong: Using entity.data directly in Charts Composition
+
 ```javascript
 c.renderLineChart([
-  c.renderLine({ 
+  c.renderLine({
     dataKey: "value",
     // Wrong - uses entity.data directly, breaks Zoom/Brush
   }),
@@ -589,11 +622,12 @@ c.renderLineChart([
 ```
 
 ### ✅ Correct: Use ctx.displayData from context
+
 ```javascript
 // The chart component automatically provides ctx with displayData
 // Sub-components receive ctx and use ctx.displayData
 c.renderLineChart([
-  c.renderLine({ 
+  c.renderLine({
     dataKey: "value",
     // Correct - uses ctx.displayData from parent context
   }),
@@ -601,18 +635,21 @@ c.renderLineChart([
 ```
 
 ### ❌ Wrong: IngloriousScript without plugin
+
 ```javascript
 // This will crash if babel-plugin-inglorious-script is not configured
 const pos = position + velocity * dt // Error: + operator not defined for objects
 ```
 
 ### ✅ Correct: Use standard vector functions
+
 ```javascript
 import { add, scale, mod } from "@inglorious/utils"
 const pos = mod(add(position, scale(velocity, dt)), worldSize)
 ```
 
 ### ❌ Wrong: Vue template with local variables
+
 ```vue
 <script>
 let count = 0 // This becomes entity.count, not a local variable
@@ -623,6 +660,7 @@ const increment = () => {
 ```
 
 ### ✅ Correct: Vue template with entity mutations
+
 ```vue
 <script>
 let count = 0 // Becomes entity.count in create()

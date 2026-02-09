@@ -11,6 +11,7 @@ npm install @inglorious/engine
 Functional game engine built on entity-based state management. Uses the same entity model as `@inglorious/store` but optimized for game development with frame-based updates.
 
 **Architecture:**
+
 - Single immutable state object (source of truth)
 - Event-driven updates via event queue
 - Frame-based `update` event with `deltaTime`
@@ -65,9 +66,15 @@ Use multi-word `camelCase` names for custom events to avoid conflicts:
 ```javascript
 const types = {
   player: {
-    playerJump(entity) { /* ... */ },
-    itemCollect(entity, itemId) { /* ... */ },
-    enemyDestroy(entity, enemyId) { /* ... */ },
+    playerJump(entity) {
+      /* ... */
+    },
+    itemCollect(entity, itemId) {
+      /* ... */
+    },
+    enemyDestroy(entity, enemyId) {
+      /* ... */
+    },
   },
 }
 ```
@@ -101,7 +108,7 @@ const types = {
       // Movement based on time, not frame rate
       entity.position.x += entity.velocity.x * deltaTime
       entity.position.y += entity.velocity.y * deltaTime
-      
+
       // Boundary checking
       if (entity.position.x > 800) {
         entity.position.x = 0
@@ -112,6 +119,7 @@ const types = {
 ```
 
 **Rules:**
+
 - Always use `deltaTime` for time-based calculations
 - Never assume fixed frame rate
 - `deltaTime` is in seconds (typically 0.016 for 60fps)
@@ -125,14 +133,14 @@ const types = {
       entity.createdAt = Date.now()
       entity.lifetime = 2000 // 2 seconds
     },
-    
+
     update(entity, deltaTime) {
       entity.lifetime -= deltaTime * 1000
       if (entity.lifetime <= 0) {
         api.notify("remove", { id: entity.id })
       }
     },
-    
+
     destroy(entity) {
       // Cleanup: remove from pools, cancel timers, etc.
       console.log(`Bullet ${entity.id} destroyed`)
@@ -215,7 +223,7 @@ const types = {
       api.notify("add", bullet)
     },
   },
-  
+
   bullet: {
     update(entity, deltaTime) {
       entity.y -= 200 * deltaTime
@@ -252,11 +260,11 @@ const systems = [
   {
     update(state, deltaTime) {
       // Collision detection across all entities
-      const players = Object.values(state).filter(e => e.type === "player")
-      const enemies = Object.values(state).filter(e => e.type === "enemy")
-      
-      players.forEach(player => {
-        enemies.forEach(enemy => {
+      const players = Object.values(state).filter((e) => e.type === "player")
+      const enemies = Object.values(state).filter((e) => e.type === "enemy")
+
+      players.forEach((player) => {
+        enemies.forEach((enemy) => {
           if (checkCollision(player, enemy)) {
             api.notify("playerHit", { playerId: player.id, enemyId: enemy.id })
           }
@@ -276,9 +284,15 @@ const engine = new Engine({ types, entities, systems })
 ```javascript
 const renderer = createRenderer(canvas)
 const game = {
-  types: { /* entity behaviors */ },
-  entities: { /* initial entities */ },
-  systems: [ /* optional: global handlers */ ],
+  types: {
+    /* entity behaviors */
+  },
+  entities: {
+    /* initial entities */
+  },
+  systems: [
+    /* optional: global handlers */
+  ],
 }
 
 const engine = new Engine(renderer, game)
@@ -287,6 +301,7 @@ engine.start()
 ```
 
 **Parameters:**
+
 - `renderer` - Renderer configuration from `createRenderer(canvas)` (contains `types`, `entities`, `systems`)
 - `game` - Game configuration object with `types`, `entities`, and optional `systems`
 
@@ -319,6 +334,7 @@ engine.start()
 ## Common Pitfalls
 
 ### ❌ Wrong: Fixed frame rate assumption
+
 ```javascript
 const types = {
   player: {
@@ -330,6 +346,7 @@ const types = {
 ```
 
 ### ✅ Correct: Use deltaTime
+
 ```javascript
 const types = {
   player: {
@@ -341,6 +358,7 @@ const types = {
 ```
 
 ### ❌ Wrong: Immediate event processing
+
 ```javascript
 const types = {
   enemy: {
@@ -357,6 +375,7 @@ const types = {
 ```
 
 ### ✅ Correct: Queue events for next frame
+
 ```javascript
 const types = {
   enemy: {
@@ -374,4 +393,3 @@ const types = {
   },
 }
 ```
-

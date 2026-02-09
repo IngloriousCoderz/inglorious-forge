@@ -15,6 +15,7 @@ npm install @inglorious/web
 - All state lives in the store, never in components
 
 **Rules:**
+
 - ALWAYS use `api.notify()` for state changes - Direct mutations won't trigger re-renders
 - NEVER store state in component closures - All state must be in entities
 - Event handlers in types receive `(entity, payload, api)` signature
@@ -36,7 +37,9 @@ const types = {
       return html`
         <div>
           <span>Count: ${entity.value}</span>
-          <button @click=${() => api.notify(`#${entity.id}:increment`)}>+1</button>
+          <button @click=${() => api.notify(`#${entity.id}:increment`)}>
+            +1
+          </button>
         </div>
       `
     },
@@ -88,7 +91,12 @@ const types = {
 ### Form
 
 ```javascript
-import { form, getFieldValue, getFieldError, isFieldTouched } from "@inglorious/web/form"
+import {
+  form,
+  getFieldValue,
+  getFieldError,
+  isFieldTouched,
+} from "@inglorious/web/form"
 
 const entities = {
   myForm: {
@@ -99,6 +107,7 @@ const entities = {
 ```
 
 **Events:**
+
 - `#<id>:fieldChange` - Set field value
 - `#<id>:fieldBlur` - Mark field touched
 - `#<id>:validate` - Sync validation
@@ -251,8 +260,10 @@ export const store = createStore({ types, entities, middlewares })
 ```javascript
 const types = {
   header: {
-    create(entity) { entity.title = "Welcome" },
-    render: (entity, api) => html`<header>${entity.title}</header>`
+    create(entity) {
+      entity.title = "Welcome"
+    },
+    render: (entity, api) => html`<header>${entity.title}</header>`,
   },
 }
 
@@ -279,6 +290,7 @@ Connect store to DOM. Returns unsubscribe function.
 - `api.getType(name)` - Get specific type
 
 **Rules:**
+
 - ALWAYS use `api.notify()` for state changes - Format: `api.notify("#id:event", payload)`
 - `api.getEntity()` returns read-only - Mutations won't trigger re-renders
 - Event targeting: `"event"` (all), `"type:event"` (type), `"#id:event"` (specific entity)
@@ -288,14 +300,28 @@ Connect store to DOM. Returns unsubscribe function.
 
 ```javascript
 import {
-  createStore, createDevtools, compute,  // store
-  mount, html, svg,                       // lit-html
-  choose, classMap, ref, repeat,          // directives
-  styleMap, unsafeHTML, when,
+  createStore,
+  createDevtools,
+  compute, // store
+  mount,
+  html,
+  svg, // lit-html
+  choose,
+  classMap,
+  ref,
+  repeat, // directives
+  styleMap,
+  unsafeHTML,
+  when,
 } from "@inglorious/web"
 
 // Subpath imports
-import { form, getFieldError, getFieldValue, isFieldTouched } from "@inglorious/web/form"
+import {
+  form,
+  getFieldError,
+  getFieldValue,
+  isFieldTouched,
+} from "@inglorious/web/form"
 import { list } from "@inglorious/web/list"
 import { router } from "@inglorious/web/router"
 import { select } from "@inglorious/web/select"
@@ -306,6 +332,7 @@ import { render, trigger } from "@inglorious/web/test"
 ## Common Pitfalls
 
 ### ❌ Wrong: Direct mutation outside handler
+
 ```javascript
 const types = {
   counter: {
@@ -319,6 +346,7 @@ const types = {
 ```
 
 ### ✅ Correct: Use api.notify() in event handlers
+
 ```javascript
 const types = {
   counter: {
@@ -336,6 +364,7 @@ const types = {
 ```
 
 ### ❌ Wrong: Storing state in closures
+
 ```javascript
 // Wrong - state in closure, not in entity
 let count = 0
@@ -349,6 +378,7 @@ const types = {
 ```
 
 ### ✅ Correct: Store state in entities
+
 ```javascript
 const entities = {
   counter1: { type: "counter", value: 0 }, // Correct - state in entity

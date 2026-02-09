@@ -153,11 +153,7 @@ const decrement = (entity, api) => {
   <div class="todo-list">
     <ul>
       <li v-for="todo in todos" :key="todo.id">
-        <input
-          type="checkbox"
-          :checked="todo.done"
-          @change="toggle"
-        />
+        <input type="checkbox" :checked="todo.done" @change="toggle" />
         <span>{{ todo.text }}</span>
         <button @click="remove">×</button>
       </li>
@@ -169,12 +165,12 @@ const decrement = (entity, api) => {
 let todos = []
 
 const toggle = (entity, todoId, api) => {
-  const todo = entity.todos.find(t => t.id === todoId)
+  const todo = entity.todos.find((t) => t.id === todoId)
   if (todo) todo.done = !todo.done
 }
 
 const remove = (entity, todoId, api) => {
-  entity.todos = entity.todos.filter(t => t.id !== todoId)
+  entity.todos = entity.todos.filter((t) => t.id !== todoId)
 }
 
 const add = (entity, text, api) => {
@@ -300,6 +296,7 @@ export const store = createStore({ types, entities })
 ## Common Pitfalls
 
 ### ❌ Wrong: Trying to use local variables for state
+
 ```vue
 <script>
 let count = 0 // This becomes entity.count, not a local variable
@@ -310,6 +307,7 @@ const increment = () => {
 ```
 
 ### ✅ Correct: Mutate entity in handlers
+
 ```vue
 <script>
 let count = 0 // Becomes entity.count in create()
@@ -320,6 +318,7 @@ const increment = (entity) => {
 ```
 
 ### ❌ Wrong: Mutating outside handlers
+
 ```vue
 <script>
 let count = 0
@@ -329,6 +328,7 @@ count = 10
 ```
 
 ### ✅ Correct: Use handlers for all state changes
+
 ```vue
 <script>
 let count = 0

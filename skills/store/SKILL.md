@@ -11,6 +11,7 @@ npm install @inglorious/store
 Redux-compatible, ECS-inspired state library. Eliminates boilerplate while providing entity lifecycle management.
 
 **Redux Compatibility:**
+
 - ✅ Compatible with `react-redux` Provider/useSelector/useDispatch
 - ✅ Compatible with Redux DevTools
 - ✅ Compatible with Redux-style `dispatch({ type, payload })`
@@ -70,10 +71,10 @@ const types = {
 ## Event Targeting
 
 ```javascript
-store.notify("event")              // All entities with handler
-store.notify("type:event")         // Only entities of type
-store.notify("#id:event")          // Only entity with id
-store.notify("type#id:event")      // Specific type and id
+store.notify("event") // All entities with handler
+store.notify("type:event") // Only entities of type
+store.notify("#id:event") // Only entity with id
+store.notify("type#id:event") // Specific type and id
 ```
 
 ## Dynamic Entities
@@ -153,11 +154,15 @@ const store = createStore({ types, entities, systems })
 
 ```javascript
 const incrementable = {
-  increment(entity) { entity.value++ },
+  increment(entity) {
+    entity.value++
+  },
 }
 
 const resettable = {
-  reset(entity) { entity.value = 0 },
+  reset(entity) {
+    entity.value = 0
+  },
 }
 
 const types = {
@@ -177,7 +182,7 @@ const withValidation = (type) => ({
 })
 
 const types = {
-  form: [withValidation]
+  form: [withValidation],
 }
 ```
 
@@ -187,7 +192,7 @@ const types = {
 const store = createStore({
   types,
   entities,
-  updateMode: "manual"
+  updateMode: "manual",
 })
 
 store.notify("playerMoved", { x: 100, y: 50 })
@@ -200,13 +205,13 @@ store.update() // Process batch
 ```javascript
 import { compute } from "@inglorious/store"
 
-const selectValue = (entities) => entities.counter1.value;
-const selectMultiplier = (entities) => entities.settings.multiplier;
+const selectValue = (entities) => entities.counter1.value
+const selectMultiplier = (entities) => entities.settings.multiplier
 
 const selectResult = compute(
   ([count, multiplier]) => count * multiplier,
-  [selectValue, selectMultiplier]
-);
+  [selectValue, selectMultiplier],
+)
 ```
 
 ## API Reference
@@ -215,12 +220,12 @@ const selectResult = compute(
 
 ```javascript
 const store = createStore({
-  types,                // Entity behaviors
-  entities,             // Initial entities
-  systems,              // Optional: global handlers
-  autoCreateEntities,   // Optional: boolean (default false)
-  updateMode,           // Optional: 'auto' | 'manual'
-  middlewares,          // Optional: middleware array
+  types, // Entity behaviors
+  entities, // Initial entities
+  systems, // Optional: global handlers
+  autoCreateEntities, // Optional: boolean (default false)
+  updateMode, // Optional: 'auto' | 'manual'
+  middlewares, // Optional: middleware array
 })
 ```
 
@@ -235,6 +240,7 @@ const store = createStore({
 - `setType(name, type)` - Modify type
 
 **Rules:**
+
 - ALWAYS use `api.notify()` for state changes - Direct mutations outside handlers won't trigger re-renders
 - Mutations inside handlers are safe - The store uses Mutative for immutability
 - `api.getEntity()` and `api.getEntities()` return read-only snapshots
@@ -251,11 +257,9 @@ const store = createStore({
 import { trigger, createMockApi } from "@inglorious/store/test"
 
 // Test handlers
-const { entity, events } = trigger(
-  { type: "counter", value: 99 },
-  increment,
-  { amount: 5 },
-)
+const { entity, events } = trigger({ type: "counter", value: 99 }, increment, {
+  amount: 5,
+})
 expect(entity.value).toBe(104)
 
 // With mock API
@@ -282,8 +286,12 @@ interface TodoListTypes {
 
 export const types: TodoListTypes = {
   form: {
-    inputChange(entity, value) { /* ... */ },
-    formSubmit(entity) { /* ... */ },
+    inputChange(entity, value) {
+      /* ... */
+    },
+    formSubmit(entity) {
+      /* ... */
+    },
   },
 }
 
@@ -296,6 +304,7 @@ const store = createStore<TodoListEntity, TodoListState>({
 ## Common Pitfalls
 
 ### ❌ Wrong: Direct mutation outside handler
+
 ```javascript
 // This will NOT trigger re-render
 const entity = store.getState().counter1
@@ -303,6 +312,7 @@ entity.value++ // Wrong - no re-render
 ```
 
 ### ✅ Correct: Use notify() or dispatch()
+
 ```javascript
 store.notify("#counter1:increment") // Correct - triggers re-render
 // or
@@ -310,6 +320,7 @@ store.dispatch({ type: "increment", payload: null }) // Also works
 ```
 
 ### ❌ Wrong: Mutating read-only entity from api.getEntity()
+
 ```javascript
 const types = {
   counter: {
@@ -322,6 +333,7 @@ const types = {
 ```
 
 ### ✅ Correct: Notify event to target entity
+
 ```javascript
 const types = {
   counter: {
