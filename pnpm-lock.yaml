@@ -376,10 +376,10 @@ importers:
 
   examples/apps/web-charts:
     dependencies:
-      '@inglorious/charts':
+      "@inglorious/charts":
         specifier: workspace:*
         version: link:../../../packages/charts
-      '@inglorious/web':
+      "@inglorious/web":
         specifier: workspace:*
         version: link:../../../packages/web
     devDependencies:
@@ -791,7 +791,7 @@ importers:
 
   packages/charts:
     dependencies:
-      '@inglorious/web':
+      "@inglorious/web":
         specifier: workspace:*
         version: link:../web
       d3-array:
@@ -810,7 +810,7 @@ importers:
         specifier: ^4.1.0
         version: 4.1.0
     devDependencies:
-      '@inglorious/eslint-config':
+      "@inglorious/eslint-config":
         specifier: workspace:*
         version: link:../eslint-config
       prettier:
