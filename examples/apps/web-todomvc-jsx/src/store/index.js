@@ -1,13 +1,13 @@
 import { createStore } from "@inglorious/web"
 
-import { footer } from "../footer/footer"
-import { form } from "../form/form"
-import { list } from "../list/list"
-import { entities } from "./entities"
+import { footer } from "@/components/footer"
+import { form } from "@/components/form"
+import { list } from "@/components/list"
+
 import { middlewares } from "./middlewares"
 
 export const store = createStore({
   types: { form, list, footer },
-  entities,
   middlewares,
+  autoCreateEntities: true,
 })

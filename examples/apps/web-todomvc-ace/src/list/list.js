@@ -1,6 +1,6 @@
 import { classMap, html } from "@inglorious/web"
 
-import { filteredTasks } from "../store/selectors"
+import { filteredTasks } from "../store/select"
 
 const TASKS_TO_REMOVE = 1
 const DEFAULT_ID = 1

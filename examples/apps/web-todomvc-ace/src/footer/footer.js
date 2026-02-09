@@ -1,6 +1,6 @@
 import { classMap, html } from "@inglorious/web"
 
-import { tasksCount } from "../store/selectors"
+import { tasksCount } from "../store/select"
 
 const SINGLE_TASK = 1
 

@@ -1,6 +1,6 @@
 import { classMap, html } from "@inglorious/web"
 
-import { tasksCount } from "@/store/selectors"
+import { tasksCount } from "@/store/select"
 
 import classes from "./footer.module.css"
 

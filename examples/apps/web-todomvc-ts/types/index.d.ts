@@ -39,12 +39,14 @@ export interface AppState extends EntitiesState<AppEntity> {
 
 // Types configuration
 export interface FormType {
+  create: (entity: FormEntity) => void
   inputChange: (entity: FormEntity, value: string) => void
   formSubmit: (entity: FormEntity) => void
   render: (entity: FormEntity, api: Api) => TemplateResult | null
 }
 
 export interface ListType {
+  create: (entity: ListEntity) => void
   formSubmit: (entity: ListEntity, value: string) => void
   toggleClick: (entity: ListEntity, id: number) => void
   deleteClick: (entity: ListEntity, id: number) => void
@@ -53,6 +55,7 @@ export interface ListType {
 }
 
 export interface FooterType {
+  create: (entity: FooterEntity) => void
   filterClick: (entity: FooterEntity, id: Filter) => void
   clearClick: (entity: FooterEntity) => void
   render: (entity: FooterEntity, api: Api) => TemplateResult | null

@@ -1,13 +1,13 @@
 import { classMap, html } from "@inglorious/web"
 
-import { filteredTasks } from "@/store/selectors"
+import { filteredTasks } from "@/store/select"
 
 import classes from "./list.module.css"
 
 export function render(entity, api) {
   const tasks = api.select(filteredTasks)
 
-  return html`<ul class="list">
+  return html`<ul>
     ${tasks.map(
       (task) =>
         html`<li>

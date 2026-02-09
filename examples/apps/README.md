@@ -14,10 +14,11 @@ Available demos:
 - [web-router](./web-router/README.md) — router demo (entity based client-side routing)
 - [web-select](./web-select/README.md) — select type demo (single selection, multi, remote options)
 - [web-todomvc](./web-todomvc/README.md) — TodoMVC client-only demo with `@inglorious/web` (start here!)
+- [web-todomvc](./web-todomvc-ace/README.md) — TodoMVC client-only demo with the `autoCreateEntities` flag on
 - [web-todomvc-cs](./web-todomvc-cs/README.md) — TodoMVC client-server demo with `@inglorious/web` and json-server
 - [web-todomvc-jsx](./web-todomvc-jsx/README.md) — TodoMVC client-only demo in JSX with `@inglorious/web`
 - [web-todomvc-ts](./web-todomvc-ts/README.md) — TodoMVC client-only demo in TypeScript with `@inglorious/web`
-- [web-todomvc-tsx](./web-todomvc-jsx/README.md) — TodoMVC client-only demo in TSX with `@inglorious/web`
+- [web-todomvc-tsx](./web-todomvc-tsx/README.md) — TodoMVC client-only demo in TSX with `@inglorious/web`
 
 Quick start (from repo root):
 
