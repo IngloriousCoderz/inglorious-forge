@@ -19,7 +19,12 @@ Use either subpath imports (preferred) or the namespace exports.
 ```javascript
 import { v } from "@inglorious/utils/v.js"
 import { pipe, compose } from "@inglorious/utils/functions/functions.js"
-import { get, set, clone, produce } from "@inglorious/utils/data-structures/object.js"
+import {
+  get,
+  set,
+  clone,
+  produce,
+} from "@inglorious/utils/data-structures/object.js"
 import { magnitude } from "@inglorious/utils/math/vector.js"
 import { sum } from "@inglorious/utils/math/vectors.js"
 import { findPath } from "@inglorious/utils/algorithms/path-finding.js"
@@ -27,7 +32,14 @@ import { applyVelocity } from "@inglorious/utils/physics/velocity.js"
 ```
 
 ```javascript
-import { algorithms, dataStructures, functions, math, physics, v } from "@inglorious/utils"
+import {
+  algorithms,
+  dataStructures,
+  functions,
+  math,
+  physics,
+  v,
+} from "@inglorious/utils"
 ```
 
 ## Functions
@@ -61,7 +73,11 @@ isFunction(123) // false
 ### Arrays
 
 ```javascript
-import { ensureArray, contains, remove } from "@inglorious/utils/data-structures/array.js"
+import {
+  ensureArray,
+  contains,
+  remove,
+} from "@inglorious/utils/data-structures/array.js"
 
 ensureArray(1) // [1]
 contains([1, 2, 3], 2) // true
@@ -71,7 +87,12 @@ remove([1, 2, 3], 2) // [1, 3]
 ### Objects
 
 ```javascript
-import { get, set, clone, produce } from "@inglorious/utils/data-structures/object.js"
+import {
+  get,
+  set,
+  clone,
+  produce,
+} from "@inglorious/utils/data-structures/object.js"
 
 const obj = { a: { b: [{ c: 3 }] } }
 
@@ -88,7 +109,11 @@ const deepCopy = clone(next)
 ### Deep Merge
 
 ```javascript
-import { extend, merge, defaults } from "@inglorious/utils/data-structures/objects.js"
+import {
+  extend,
+  merge,
+  defaults,
+} from "@inglorious/utils/data-structures/objects.js"
 
 const base = { a: { b: 1 }, list: [1] }
 const update = { a: { c: 2 }, list: [2] }
@@ -102,7 +127,10 @@ const withDefaults = defaults({ a: null }, { a: 1, b: 2 })
 ### Board Utilities
 
 ```javascript
-import { createBoard, toString } from "@inglorious/utils/data-structures/board.js"
+import {
+  createBoard,
+  toString,
+} from "@inglorious/utils/data-structures/board.js"
 
 const board = createBoard([2, 3], (row, col) => `${row}:${col}`)
 const text = toString(board, [2, 3])
@@ -137,7 +165,11 @@ const asVector = ensureV(arr)
 import { clamp, mod, snap } from "@inglorious/utils/math/numbers.js"
 import { lerp } from "@inglorious/utils/math/linear-interpolation.js"
 import { random } from "@inglorious/utils/math/rng.js"
-import { toRange, toRadians, toDegrees } from "@inglorious/utils/math/trigonometry.js"
+import {
+  toRange,
+  toRadians,
+  toDegrees,
+} from "@inglorious/utils/math/trigonometry.js"
 
 clamp(12, 0, 10) // 10
 lerp(0, 10, 0.5) // 5
@@ -200,14 +232,20 @@ import { v } from "@inglorious/utils/v.js"
 let position = v(0, 0, 0)
 let velocity = v(10, 0, 0)
 
-;({ position, velocity } = applyVelocity({ position, velocity, maxSpeed: 12 }, 0.016))
+;({ position, velocity } = applyVelocity(
+  { position, velocity, maxSpeed: 12 },
+  0.016,
+))
 velocity = applyFriction({ velocity, friction: 1 }, 0.016)
 
-const gravityStep = applyGravity({
-  position,
-  vy: 0,
-  maxJump: 2,
-  maxLeap: 4,
-  maxSpeed: 5,
-}, 0.016)
+const gravityStep = applyGravity(
+  {
+    position,
+    vy: 0,
+    maxJump: 2,
+    maxLeap: 4,
+    maxSpeed: 5,
+  },
+  0.016,
+)
 ```

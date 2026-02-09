@@ -15,7 +15,7 @@ Simple, modular JavaScript tools. No proxies, no signals, plain JS focus.
 
 ## 🛠 Modules & Skills
 
-### [@inglorious/utils](skills/utils/SKILL.md)
+### [@inglorious/utils](skills/utils.md)
 
 **The Enabler.** Pure functions for common problems.
 
@@ -25,7 +25,7 @@ Simple, modular JavaScript tools. No proxies, no signals, plain JS focus.
 - **Data Structures:** Trees, heaps, grids.
 - **Algorithms:** Decision trees, pathfinding.
 
-### [@inglorious/store](skills/store/SKILL.md)
+### [@inglorious/store](skills/store.md)
 
 **The Brain.** Redux-compatible, ECS-inspired state management.
 
@@ -38,21 +38,21 @@ Simple, modular JavaScript tools. No proxies, no signals, plain JS focus.
 - **Compatible With `react-redux`:** Redux-compatible API.
 - **Redux DevTools Integration:** Drop-in replacement for Redux.
 
-### [@inglorious/server](skills/server/SKILL.md)
+### [@inglorious/server](skills/server.md)
 
 **The Orchestrator.** Real-time server for Inglorious apps and games.
 
 - **Based on Inglorious Store:** Uses same state manager as clients.
 - **Real-time Communication:** Synchronizes entities and events through WebSockets.
 
-### [@inglorious/react-store](skills/react-store/SKILL.md)
+### [@inglorious/react-store](skills/react-store.md)
 
 **The Diplomat.** Seamlessly wires Inglorious Store to React apps.
 
 - **Simplified Provider:** No need to pass the store
 - **Simplified API:** `useEntity` instead of `useSelector`, `useNotify` instead of `useDispatch`.
 
-### [@inglorious/web](skills/web/SKILL.md)
+### [@inglorious/web](skills/web.md)
 
 **The Designer.** Inglorious Store as state manager, lit-html as renderer.
 
@@ -61,7 +61,7 @@ Simple, modular JavaScript tools. No proxies, no signals, plain JS focus.
 - **Test Utilities:** Easy unit testing and component testing.
 - **Components:** Built-in form, table, list, select, and router.
 
-### [@inglorious/charts](skills/charts/SKILL.md)
+### [@inglorious/charts](skills/charts.md)
 
 **The Data Scientist.** Declarative SVG charts.
 
@@ -69,7 +69,7 @@ Simple, modular JavaScript tools. No proxies, no signals, plain JS focus.
 - **Configuration-based:** Customize charts through entity properties.
 - **Composition API:** Ability to compose charts as primitives.
 
-### [@inglorious/ssx](skills/ssx/SKILL.md)
+### [@inglorious/ssx](skills/ssx.md)
 
 **The SEO Expert.** SSG with hydration and file-based routing.
 
@@ -79,7 +79,7 @@ Simple, modular JavaScript tools. No proxies, no signals, plain JS focus.
 - **SEO Tools:** Sitemaps, manifests, metadata.
 - **Fast Hydration:** Uses [`@lit-labs/ssr`](https://lit.dev/docs/ssr/overview/) to rewire event listeners on the client.
 
-### [@inglorious/engine](skills/engine/SKILL.md)
+### [@inglorious/engine](skills/engine.md)
 
 **The Player.** Functional 2D game engine.
 
@@ -91,7 +91,7 @@ Simple, modular JavaScript tools. No proxies, no signals, plain JS focus.
 
 ## 🚀 Build & Integration
 
-- **[JSX Vite Plugin](skills/vite-plugin-jsx/SKILL.md):** Allows using JSX syntax instead of `lit-html` templates.
-- **[Vue Vite Plugin](skills/vite-plugin-vue/SKILL.md):** Allows using Vue-like template syntax instead of `lit-html`.
-- **[Create App](skills/create-app/SKILL.md):** Easy scaffolding of Inglorious Web apps.
-- **[Create Game](skills/create-game/SKILL.md):** Easy scaffolding of Inglorious Engine games.
+- **[JSX Vite Plugin](skills/vite-plugin-jsx.md):** Allows using JSX syntax instead of `lit-html` templates.
+- **[Vue Vite Plugin](skills/vite-plugin-vue.md):** Allows using Vue-like template syntax instead of `lit-html`.
+- **[Create App](skills/create-app.md):** Easy scaffolding of Inglorious Web apps.
+- **[Create Game](skills/create-game.md):** Easy scaffolding of Inglorious Engine games.
