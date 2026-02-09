@@ -50,6 +50,23 @@ export const entities = {
     })),
   },
 
+  // Line Chart with Brush - Config Style
+  lineChartWithBrushConfig: {
+    type: "line",
+    data: Array.from({ length: 100 }, (_, i) => ({
+      name: `${i}`,
+      value: Math.floor(Math.random() * 1000) + 100,
+    })),
+    width: 800,
+    height: 400,
+    showGrid: true,
+    showTooltip: true,
+    brush: {
+      enabled: true,
+      height: 30,
+    },
+  },
+
   // Line Chart - Config-first style
   salesLineChart: {
     type: "line",

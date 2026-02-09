@@ -22,7 +22,7 @@ import {
 } from "../utils/data-utils.js"
 import { calculatePadding } from "../utils/padding.js"
 import { generateLinePath } from "../utils/paths.js"
-import { createCartesianContext } from "../utils/scales.js"
+import { createCartesianContext, getFilteredData } from "../utils/scales.js"
 import { createSharedContext } from "../utils/shared-context.js"
 import {
   createTooltipHandlers,
@@ -33,11 +33,19 @@ import {
 
 export const line = {
   renderChart(entity, api) {
+    // Apply data filtering if brush is enabled
+    const entityData = entity.brush?.enabled
+      ? getFilteredData(entity)
+      : entity.data
+
+    // Create entity with filtered data for rendering
+    const entityWithFilteredData = { ...entity, data: entityData }
+
     // Line curves - uses Curve and Dot primitives
-    const lines = renderLineCurves(entity, {}, api)
+    const lines = renderLineCurves(entityWithFilteredData, {}, api)
 
     return renderCartesianLayout(
-      entity,
+      entityWithFilteredData,
       {
         chartType: "line",
         chartContent: lines,

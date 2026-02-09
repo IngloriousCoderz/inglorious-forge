@@ -40,10 +40,21 @@ export const app = {
 
           <div class="charts-comparison">
             <section class="chart-section">
-              <h2>Line Chart with Brush - Zoom & Pan</h2>
+              <h2>Line Chart with Brush - Config Style</h2>
               <p>
-                Use the brush below the chart to zoom and pan through the data.
-                Drag the handles to resize, or drag the middle to pan.
+                Config-first approach: Enable brush by setting
+                <code>brush.enabled: true</code> in entity. Drag the handles to
+                resize, or drag the middle to pan.
+              </p>
+              ${api.render("lineChartWithBrushConfig")}
+            </section>
+
+            <section class="chart-section">
+              <h2>Line Chart with Brush - Composition Style</h2>
+              <p>
+                Recharts-style composition: Use <code>c.renderBrush()</code> in
+                children array. Drag the handles to resize, or drag the middle
+                to pan.
               </p>
               ${chart(api, "lineChartWithBrush", (c) =>
                 c.renderLineChart(

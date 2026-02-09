@@ -5,6 +5,7 @@
 
 import { html, svg } from "@inglorious/web"
 
+import { renderBrush } from "../component/brush.js"
 import { renderEmptyState } from "../component/empty-state.js"
 import { renderGrid } from "../component/grid.js"
 import { renderLegend } from "../component/legend.js"
@@ -44,10 +45,23 @@ export function renderCartesianLayout(entity, props, api) {
     `
   }
 
+  // Check if brush is enabled and adjust height accordingly
+  // eslint-disable-next-line no-magic-numbers
+  const brushHeight = entity.brush?.enabled ? 60 : 0
+  // eslint-disable-next-line no-magic-numbers
+  const chartHeight = entity.height || 400
+  const totalHeight = chartHeight + brushHeight
+
   // Create context with scales and dimensions
   const context = createCartesianContext(entity, chartType)
-  const { xScale, yScale, dimensions } = context
+  let { xScale, yScale, dimensions } = context
   const { width, height, padding } = dimensions
+
+  // Apply zoom if brush is enabled (similar to composition mode)
+  if (entity.brush?.enabled && entity.brush.startIndex !== undefined) {
+    const { startIndex, endIndex } = entity.brush
+    xScale = xScale.copy().domain([startIndex, endIndex])
+  }
 
   // Independent components - declarative composition
   const grid = entity.showGrid
@@ -104,12 +118,29 @@ export function renderCartesianLayout(entity, props, api) {
       )
     : svg``
 
+  // Brush - render if enabled in config mode
+  const brush = entity.brush?.enabled
+    ? renderBrush(
+        entity,
+        {
+          xScale,
+          width,
+          height,
+          padding,
+          // eslint-disable-next-line no-magic-numbers
+          brushHeight: entity.brush.height || 30,
+          dataKey: entity.dataKey || "name",
+        },
+        api,
+      )
+    : svg``
+
   // SVG container
   const svgContent = svg`
     <svg
       width=${width}
-      height=${height}
-      viewBox="0 0 ${width} ${height}"
+      height=${totalHeight}
+      viewBox="0 0 ${width} ${totalHeight}"
       class="iw-chart-svg"
       @mousemove=${createTooltipMoveHandler({ entity, api })}
     >
@@ -118,6 +149,7 @@ export function renderCartesianLayout(entity, props, api) {
       ${yAxis}
       ${chartContent}
       ${legend}
+      ${brush}
     </svg>
   `
 
