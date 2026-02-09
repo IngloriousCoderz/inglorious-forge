@@ -104,11 +104,11 @@ create(entity) {
 
 ```vue
 <script>
-const increment = (entity, api) => {
+const increment = (entity, payload, api) => {
   entity.count++ // Safe: mutation inside event handler uses store's immutability
 }
 
-const resetWithDefault = (entity, api) => {
+const resetWithDefault = (entity, payload, api) => {
   const defaultValue = api.select((state) => state.settings.defaultCount)
   entity.count = defaultValue
 }
