@@ -50,7 +50,7 @@ const SLICE_PLUS_ACTION = 2
  *
  * // Use in type
  * const todoList = {
- *   init(entity) { entity.todos = []; entity.status = 'idle' },
+ *   create(entity) { entity.todos = []; entity.status = 'idle' },
  *   ...todoHandlers
  * }
  */
@@ -74,8 +74,16 @@ export function convertAsyncThunk(name, payloadCreator, options = {}) {
 
       run: async (payload, api) => {
         // RTK payloadCreator signature: (arg, thunkAPI)
-        // We need to adapt it to our simpler signature
-        return await payloadCreator(payload, { dispatch: api.notify })
+        // Use dispatch for action compatibility, with notify fallback in tests/minimal APIs.
+        const dispatch = api.dispatch
+          ? api.dispatch.bind(api)
+          : (action) => {
+              if (typeof action === "object" && action !== null) {
+                api.notify(action.type, action.payload)
+              }
+            }
+
+        return await payloadCreator(payload, { dispatch })
       },
 
       success: onFulfilled
@@ -159,8 +167,8 @@ export function convertSlice(slice, options = {}) {
   const { asyncThunks = {}, extraHandlers = {} } = options
 
   const type = {
-    // Convert initialState to init handler
-    init(entity) {
+    // Convert initialState to create handler
+    create(entity) {
       const initialState = slice.getInitialState()
       Object.assign(entity, initialState)
     },

@@ -156,7 +156,7 @@ export interface InglorisousType<TEntity extends BaseEntity = BaseEntity> {
   /**
    * Initialization handler
    */
-  init?: (entity: TEntity, payload?: any, api?: Api) => void
+  create?: (entity: TEntity, payload?: any, api?: Api) => void
 
   /**
    * Other event handlers

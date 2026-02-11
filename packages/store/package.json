@@ -69,6 +69,7 @@
   },
   "devDependencies": {
     "@inglorious/eslint-config": "workspace:*",
+    "@reduxjs/toolkit": "^2.11.2",
     "prettier": "^3.6.2",
     "vite": "^7.1.3",
     "vitest": "^1.6.1"

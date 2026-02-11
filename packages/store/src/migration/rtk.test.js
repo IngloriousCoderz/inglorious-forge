@@ -1,3 +1,4 @@
+import { createSlice } from "@reduxjs/toolkit"
 import { describe, expect, it, vi } from "vitest"
 
 import { createMockApi, trigger } from "../test"
@@ -91,41 +92,59 @@ describe("RTK Adapter", () => {
       // Should not have start since onPending not provided
       expect(handlers.fetchStart).toBeUndefined()
     })
+
+    it("should provide thunkAPI.dispatch to payloadCreator", async () => {
+      const payloadCreator = vi.fn(async (_, thunkAPI) => {
+        thunkAPI.dispatch({ type: "todos/addTodo", payload: "Buy milk" })
+        return { ok: true }
+      })
+
+      const handlers = convertAsyncThunk("fetchTodos", payloadCreator)
+      const entity = { type: "todos", id: "todos1" }
+      const api = createMockApi({ todos1: entity })
+
+      await handlers.fetchTodosRun(entity, null, api)
+
+      expect(payloadCreator).toHaveBeenCalled()
+      expect(api.getEvents()).toContainEqual({
+        type: "todos/addTodo",
+        payload: "Buy milk",
+      })
+    })
   })
 
   describe("convertSlice", () => {
     it("should convert a simple RTK slice to Inglorious type", () => {
-      // Mock RTK slice
-      const todosSlice = {
+      const todosSlice = createSlice({
         name: "todos",
-        getInitialState: () => ({
+        initialState: {
           items: [],
           filter: "all",
-        }),
-        caseReducers: {
-          addTodo: (state, action) => {
+        },
+        reducers: {
+          addTodo(state, action) {
             state.items.push({
               id: Date.now(),
               text: action.payload,
               completed: false,
             })
           },
-          toggleTodo: (state, action) => {
+          toggleTodo(state, action) {
             const todo = state.items.find((t) => t.id === action.payload)
             if (todo) {
               todo.completed = !todo.completed
             }
           },
-          setFilter: (state, action) => {
+          setFilter(state, action) {
             state.filter = action.payload
           },
         },
-      }
+      })
 
       const todoType = convertSlice(todosSlice)
 
-      // Should have init
-      expect(todoType.init).toBeDefined()
+      // Should have create
+      expect(todoType.create).toBeDefined()
 
       // Should have all reducers as handlers
       expect(todoType.addTodo).toBeDefined()
@@ -134,39 +153,44 @@ describe("RTK Adapter", () => {
     })
 
     it("should initialize entity with initialState", () => {
-      const counterSlice = {
+      const counterSlice = createSlice({
         name: "counter",
-        getInitialState: () => ({
+        initialState: {
           value: 0,
           step: 1,
-        }),
-        caseReducers: {},
-      }
+        },
+        reducers: {},
+      })
 
       const counterType = convertSlice(counterSlice)
 
       const entity = { type: "counter", id: "counter1" }
       const api = createMockApi({ counter1: entity })
 
-      const { entity: initialized } = trigger(entity, counterType.init, {}, api)
+      const { entity: initialized } = trigger(
+        entity,
+        counterType.create,
+        {},
+        api,
+      )
 
       expect(initialized.value).toBe(0)
       expect(initialized.step).toBe(1)
     })
 
     it("should execute reducers as event handlers", () => {
-      const counterSlice = {
+      const counterSlice = createSlice({
         name: "counter",
-        getInitialState: () => ({ value: 0 }),
-        caseReducers: {
-          increment: (state, action) => {
+        initialState: { value: 0 },
+        reducers: {
+          increment(state, action) {
             state.value += action.payload || 1
           },
-          decrement: (state) => {
+          decrement(state) {
             state.value -= 1
           },
         },
-      }
+      })
 
       const counterType = convertSlice(counterSlice)
 
@@ -188,15 +212,15 @@ describe("RTK Adapter", () => {
     })
 
     it("should convert async thunks", () => {
-      const todosSlice = {
+      const todosSlice = createSlice({
         name: "todos",
-        getInitialState: () => ({ items: [], status: "idle" }),
-        caseReducers: {
-          addTodo: (state, action) => {
+        initialState: { items: [], status: "idle" },
+        reducers: {
+          addTodo(state, action) {
             state.items.push(action.payload)
           },
         },
-      }
+      })
 
       const todoType = convertSlice(todosSlice, {
         asyncThunks: {
@@ -280,33 +304,32 @@ describe("RTK Adapter", () => {
 
   describe("Real-world migration example", () => {
     it("should migrate a complete RTK slice to Inglorious", async () => {
-      // Original RTK slice
-      const todosSlice = {
+      const todosSlice = createSlice({
         name: "todos",
-        getInitialState: () => ({
+        initialState: {
           items: [],
           status: "idle",
           error: null,
-        }),
-        caseReducers: {
-          addTodo: (state, action) => {
+        },
+        reducers: {
+          addTodo(state, action) {
             state.items.push({
               id: Date.now(),
               text: action.payload,
               completed: false,
             })
           },
-          toggleTodo: (state, action) => {
+          toggleTodo(state, action) {
             const todo = state.items.find((t) => t.id === action.payload)
             if (todo) {
               todo.completed = !todo.completed
             }
           },
-          removeTodo: (state, action) => {
+          removeTodo(state, action) {
             state.items = state.items.filter((t) => t.id !== action.payload)
           },
         },
-      }
+      })
 
       // Convert to Inglorious
       const todoList = convertSlice(todosSlice, {
@@ -338,8 +361,8 @@ describe("RTK Adapter", () => {
       let entity = { type: "todoList", id: "todos" }
       const api = createMockApi({ todos: entity })
 
-      // Init
-      const { entity: entity1 } = trigger(entity, todoList.init, {}, api)
+      // Create
+      const { entity: entity1 } = trigger(entity, todoList.create, {}, api)
       expect(entity1.items).toEqual([])
       expect(entity1.status).toBe("idle")
 
