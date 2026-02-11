@@ -1,8 +1,16 @@
-import { createSlice } from "@reduxjs/toolkit"
+import {
+  asyncThunkCreator,
+  buildCreateSlice,
+  createSlice,
+} from "@reduxjs/toolkit"
 import { describe, expect, it, vi } from "vitest"
 
 import { createMockApi, trigger } from "../test"
 import { convertAsyncThunk, convertSlice, createRTKCompatDispatch } from "./rtk"
+
+const createAppSlice = buildCreateSlice({
+  creators: { asyncThunk: asyncThunkCreator },
+})
 
 describe("RTK Adapter", () => {
   describe("convertAsyncThunk", () => {
@@ -247,6 +255,125 @@ describe("RTK Adapter", () => {
       expect(todoType.fetchTodosStart).toBeDefined()
       expect(todoType.fetchTodosRun).toBeDefined()
       expect(todoType.fetchTodosSuccess).toBeDefined()
+    })
+
+    it("should convert create.asyncThunk lifecycle reducers", () => {
+      const todosSlice = createAppSlice({
+        name: "todos",
+        initialState: {
+          loading: false,
+          todos: [],
+        },
+        reducers: (create) => ({
+          deleteTodo: create.reducer((state, action) => {
+            state.todos.splice(action.payload, 1)
+          }),
+          addTodo: create.preparedReducer(
+            (text) => ({ payload: { id: "id-1", text } }),
+            (state, action) => {
+              state.todos.push(action.payload)
+            },
+          ),
+          fetchTodo: create.asyncThunk(
+            async (id) => ({ id, text: `todo-${id}` }),
+            {
+              pending: (state) => {
+                state.loading = true
+              },
+              rejected: (state) => {
+                state.loading = false
+              },
+              fulfilled: (state, action) => {
+                state.loading = false
+                state.todos.push(action.payload)
+              },
+            },
+          ),
+        }),
+      })
+
+      const todoType = convertSlice(todosSlice)
+      expect(todoType.addTodo).toBeDefined()
+      expect(todoType.fetchTodoPending).toBeDefined()
+      expect(todoType.fetchTodoFulfilled).toBeDefined()
+      expect(todoType.fetchTodoRejected).toBeDefined()
+
+      const api = createMockApi({ todos: { type: "todoList", id: "todos" } })
+      const { entity: e1 } = trigger(
+        { type: "todoList", id: "todos", loading: false, todos: [] },
+        todoType.fetchTodoPending,
+        "1",
+        api,
+      )
+      expect(e1.loading).toBe(true)
+
+      const { entity: e2 } = trigger(
+        e1,
+        todoType.fetchTodoFulfilled,
+        { id: "1", text: "todo-1" },
+        api,
+      )
+      expect(e2.loading).toBe(false)
+      expect(e2.todos).toEqual([{ id: "1", text: "todo-1" }])
+    })
+
+    it("should run create.asyncThunk with payloadCreator override", async () => {
+      const fetchTodoPayloadCreator = async (id) => ({ id, text: `todo-${id}` })
+      const todosSlice = createAppSlice({
+        name: "todos",
+        initialState: {
+          loading: false,
+          todos: [],
+        },
+        reducers: (create) => ({
+          fetchTodo: create.asyncThunk(fetchTodoPayloadCreator, {
+            pending: (state) => {
+              state.loading = true
+            },
+            rejected: (state) => {
+              state.loading = false
+            },
+            fulfilled: (state, action) => {
+              state.loading = false
+              state.todos.push(action.payload)
+            },
+          }),
+        }),
+      })
+
+      const todoType = convertSlice(todosSlice, {
+        asyncThunks: {
+          fetchTodo: {
+            payloadCreator: fetchTodoPayloadCreator,
+          },
+        },
+      })
+
+      expect(todoType.fetchTodo).toBeDefined()
+      expect(todoType.fetchTodoStart).toBeDefined()
+      expect(todoType.fetchTodoRun).toBeDefined()
+      expect(todoType.fetchTodoSuccess).toBeDefined()
+
+      const api = createMockApi({ todos: { type: "todoList", id: "todos" } })
+
+      const { entity: e1 } = trigger(
+        { type: "todoList", id: "todos", loading: false, todos: [] },
+        todoType.fetchTodoStart,
+        "1",
+        api,
+      )
+      expect(e1.loading).toBe(true)
+
+      await todoType.fetchTodoRun(e1, "1", api)
+
+      const { entity: e2 } = trigger(
+        e1,
+        todoType.fetchTodoSuccess,
+        { id: "1", text: "todo-1" },
+        api,
+      )
+      expect(e2.loading).toBe(false)
+      expect(e2.todos).toEqual([{ id: "1", text: "todo-1" }])
     })
   })
 

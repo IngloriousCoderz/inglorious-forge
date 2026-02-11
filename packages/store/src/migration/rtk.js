@@ -10,6 +10,7 @@ import { handleAsync } from "../async"
 const SEP_LENGTH = 50
 const INDENT_SPACES = 2
 const SLICE_PLUS_ACTION = 2
+const THUNK_STAGES = ["pending", "fulfilled", "rejected", "settled"]
 
 /**
  * Converts an RTK createAsyncThunk to Inglorious handleAsync handlers
@@ -176,6 +177,62 @@ export function convertSlice(slice, options = {}) {
 
   // Convert each reducer to an event handler
   for (const [actionName, reducer] of Object.entries(slice.caseReducers)) {
+    const thunkConfig = asyncThunks[actionName]
+    const isAsyncThunkReducer =
+      reducer &&
+      typeof reducer === "object" &&
+      THUNK_STAGES.some((stage) => typeof reducer[stage] === "function")
+
+    if (isAsyncThunkReducer) {
+      const pending = toLifecycleHandler(
+        slice.name,
+        actionName,
+        "pending",
+        reducer.pending,
+      )
+      const fulfilled = toLifecycleHandler(
+        slice.name,
+        actionName,
+        "fulfilled",
+        reducer.fulfilled,
+      )
+      const rejected = toLifecycleHandler(
+        slice.name,
+        actionName,
+        "rejected",
+        reducer.rejected,
+      )
+      const settled = toLifecycleHandler(
+        slice.name,
+        actionName,
+        "settled",
+        reducer.settled,
+      )
+
+      if (thunkConfig?.payloadCreator) {
+        const asyncHandlers = convertAsyncThunk(
+          actionName,
+          thunkConfig.payloadCreator,
+          {
+            onPending: thunkConfig.onPending || pending,
+            onFulfilled: thunkConfig.onFulfilled || fulfilled,
+            onRejected: thunkConfig.onRejected || rejected,
+            onSettled: thunkConfig.onSettled || settled,
+            scope: thunkConfig.scope,
+          },
+        )
+
+        Object.assign(type, asyncHandlers)
+      } else {
+        if (pending) type[`${actionName}Pending`] = pending
+        if (fulfilled) type[`${actionName}Fulfilled`] = fulfilled
+        if (rejected) type[`${actionName}Rejected`] = rejected
+        if (settled) type[`${actionName}Settled`] = settled
+      }
+
+      continue
+    }
+
     type[actionName] = (entity, payload) => {
       // Create a mock action object for the RTK reducer
       const action = { type: `${slice.name}/${actionName}`, payload }
@@ -187,21 +244,23 @@ export function convertSlice(slice, options = {}) {
     }
   }
 
-  // Convert async thunks
+  // Convert explicitly configured async thunks that are not embedded in slice reducers.
   for (const [thunkName, thunkHandlers] of Object.entries(asyncThunks)) {
-    const asyncHandlers = convertAsyncThunk(
-      thunkName,
-      thunkHandlers.payloadCreator || (async () => {}),
-      {
-        onPending: thunkHandlers.onPending,
-        onFulfilled: thunkHandlers.onFulfilled,
-        onRejected: thunkHandlers.onRejected,
-        onSettled: thunkHandlers.onSettled,
-        scope: thunkHandlers.scope,
-      },
-    )
+    if (thunkHandlers?.payloadCreator && !type[thunkName]) {
+      const asyncHandlers = convertAsyncThunk(
+        thunkName,
+        thunkHandlers.payloadCreator,
+        {
+          onPending: thunkHandlers.onPending,
+          onFulfilled: thunkHandlers.onFulfilled,
+          onRejected: thunkHandlers.onRejected,
+          onSettled: thunkHandlers.onSettled,
+          scope: thunkHandlers.scope,
+        },
+      )
 
-    Object.assign(type, asyncHandlers)
+      Object.assign(type, asyncHandlers)
+    }
   }
 
   // Add any extra handlers
@@ -330,5 +389,31 @@ export function createRTKCompatDispatch(api, entityId) {
       // Fallback for non-standard action types
       api.notify(`#${entityId}:${type}`, payload)
     }
+  }
+}
+
+function createActionObject(sliceName, actionName, stage, payload) {
+  const action = {
+    type: `${sliceName}/${actionName}/${stage}`,
+    payload,
+    meta: { arg: payload },
+  }
+
+  if (stage === "pending") {
+    action.payload = undefined
+  }
+
+  if (stage === "rejected") {
+    action.error = payload
+  }
+
+  return action
+}
+
+function toLifecycleHandler(sliceName, actionName, stage, reducer) {
+  if (typeof reducer !== "function") return undefined
+
+  return (entity, payload) => {
+    reducer(entity, createActionObject(sliceName, actionName, stage, payload))
   }
 }
