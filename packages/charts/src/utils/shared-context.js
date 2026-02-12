@@ -2,7 +2,7 @@
 
 import { parseDimension } from "./data-utils.js"
 import { calculatePadding } from "./padding.js"
-import { createCartesianContext, getFilteredData } from "./scales.js"
+import { createScales } from "./scales.js"
 
 /**
  * Calculates the maximum value (extent) from entity data.
@@ -97,32 +97,64 @@ export function createSharedContext(entity, props = {}, api) {
         ? new Set(configDataKeys)
         : null
 
-  // Get filtered data if brush is enabled
-  const dataForExtent = getFilteredData(entity)
+  // CRITICAL: Y scale should ALWAYS use original (unfiltered) data
+  // The brush zoom should only affect X-axis, not Y-axis
+  // This ensures consistent Y-axis scale regardless of brush selection
+  // Use original entity data for Y scale calculation (not filtered)
+  const dataForYExtent = entity.data
 
-  // Calculate maximum value for Y-axis scaling (global max across filtered data)
-  const maxValue = getExtent(dataForExtent, usedDataKeys, stacked)
+  // Calculate maximum value for Y-axis scaling (global max across ALL data)
+  const maxValue = getExtent(dataForYExtent, usedDataKeys, stacked)
 
   // Create data structure for scale calculation
-  // Keep all points with indices for xScale domain, but use global max for yScale
-  // This ensures xScale has correct domain [0, data.length-1] and yScale has [0, maxValue]
-  // Use filtered data for scale calculation
-  const dataForScale = dataForExtent.map((d, i) => ({
+  // For X scale: use original data (not filtered) to preserve original x/date values
+  // For Y scale: use maxValue calculated from ALL data (not filtered)
+  // This ensures xScale has correct domain based on original data, and yScale has [0, maxValue]
+  // The brush zoom will be applied later by adjusting xScale.domain([startIndex, endIndex])
+  // Note: dataForYScale is just a placeholder structure for createYScale
+  const dataForYScale = dataForYExtent.map((d, i) => ({
     x: i,
     y: maxValue,
   }))
 
-  // Create entity with transformed data and dimensions for scale creation
-  const entityWithDimensions = {
+  // Create entities with correct data for each scale
+  // X scale uses original data to preserve x/date values
+  const entityForXScale = {
     ...entity,
-    data: dataForScale,
+    data: entity.data, // Use original data for X scale
     width,
     height,
     padding,
   }
 
-  // Create cartesian context with scales
-  const context = createCartesianContext(entityWithDimensions, chartType)
+  // Y scale uses transformed data with maxValue
+  const entityForYScale = {
+    ...entity,
+    data: dataForYScale,
+    width,
+    height,
+    padding,
+  }
+
+  // Create scales separately: X scale uses original data, Y scale uses transformed data
+  // For X scale, we need to ensure it uses original data even if brush is enabled
+  // So we temporarily disable brush filtering for X scale creation
+  const entityForXScaleNoBrush = {
+    ...entityForXScale,
+    brush: entityForXScale.brush
+      ? { ...entityForXScale.brush, enabled: false }
+      : undefined,
+  }
+  const { xScale } = createScales(entityForXScaleNoBrush, chartType)
+  const { yScale } = createScales(entityForYScale, chartType)
+
+  // Create context with the correct scales
+  const context = {
+    xScale,
+    yScale,
+    dimensions: { width, height, padding },
+    entity,
+  }
 
   // Return enhanced context with original entity reference
   return {

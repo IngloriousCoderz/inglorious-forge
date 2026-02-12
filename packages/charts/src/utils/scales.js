@@ -60,18 +60,23 @@ export function createXScale(data, width, padding) {
     )
   } else {
     // Single series: extract directly
-    values = data.map((d, i) => getDataPointX(d, i))
+    // getDataPointX returns d.x ?? d.date ?? fallback (index)
+    // So if data has no x/date, it will use index as fallback
+    values = data.map((d, i) => {
+      const xVal = getDataPointX(d, i)
+      // If getDataPointX returns the fallback (index), ensure it's a valid number
+      return xVal != null && !isNaN(xVal) ? xVal : i
+    })
   }
 
   // Filter out null/undefined values and ensure we have valid numbers
   const validValues = values.filter((v) => v != null && !isNaN(v))
 
   if (validValues.length === 0) {
-    console.warn(
-      "[createXScale] No valid x values found, using default domain [0, data.length-1]",
-    )
+    // If no valid values found, use index-based domain
+    // This happens when data has no x/date fields and getDataPointX fails
     return scaleLinear()
-      .domain([0, data.length - 1])
+      .domain([0, Math.max(0, data.length - 1)])
       .range([padding.left, width - padding.right])
   }
 
