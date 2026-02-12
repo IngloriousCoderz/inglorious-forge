@@ -3,7 +3,7 @@
  */
 import { describe, expect, it, vi } from "vitest"
 
-import { charts } from "./index.js"
+import { chart } from "./index.js"
 import {
   areaChart,
   barChart,
@@ -30,7 +30,7 @@ const samplePieData = [
   { label: "Category C", value: 15 },
 ]
 
-describe("charts", () => {
+describe("chart", () => {
   describe("logic", () => {
     describe("create()", () => {
       it("should initialize with default state", () => {
@@ -39,7 +39,7 @@ describe("charts", () => {
           type: "bar",
         }
 
-        charts.create(entity)
+        chart.create(entity)
 
         expect(entity.width).toBe(800)
         expect(entity.height).toBe(400)
@@ -70,7 +70,7 @@ describe("charts", () => {
           data: sampleBarData,
         }
 
-        charts.create(entity)
+        chart.create(entity)
 
         expect(entity.width).toBe(1000)
         expect(entity.height).toBe(500)
@@ -84,7 +84,7 @@ describe("charts", () => {
           data: [{ date: "2024-01-01", value: 100 }],
         }
 
-        charts.create(entity)
+        chart.create(entity)
 
         expect(entity.xAxisType).toBe("time")
       })
@@ -96,7 +96,7 @@ describe("charts", () => {
           data: sampleLineData,
         }
 
-        charts.create(entity)
+        chart.create(entity)
 
         expect(entity.xAxisType).toBe("linear")
       })
@@ -110,9 +110,9 @@ describe("charts", () => {
           data: sampleBarData,
         }
 
-        charts.create(entity)
+        chart.create(entity)
         const newData = [{ label: "Apr", value: 200 }]
-        charts.updateData(entity, newData)
+        chart.updateData(entity, newData)
 
         expect(entity.data).toEqual(newData)
       })
@@ -125,8 +125,8 @@ describe("charts", () => {
           type: "bar",
         }
 
-        charts.create(entity)
-        charts.resize(entity, 1200, 600)
+        chart.create(entity)
+        chart.resize(entity, 1200, 600)
 
         expect(entity.width).toBe(1200)
         expect(entity.height).toBe(600)
@@ -141,8 +141,8 @@ describe("charts", () => {
           type: "bar",
         }
 
-        charts.create(entity)
-        charts.showTooltip(entity, {
+        chart.create(entity)
+        chart.showTooltip(entity, {
           label: "Jan",
           value: 100,
           color: "#3b82f6",
@@ -165,8 +165,8 @@ describe("charts", () => {
           type: "pie",
         }
 
-        charts.create(entity)
-        charts.showTooltip(entity, {
+        chart.create(entity)
+        chart.showTooltip(entity, {
           label: "Category A",
           value: 20,
           percentage: 25,
@@ -191,15 +191,15 @@ describe("charts", () => {
           type: "bar",
         }
 
-        charts.create(entity)
-        charts.showTooltip(entity, {
+        chart.create(entity)
+        chart.showTooltip(entity, {
           label: "Jan",
           value: 100,
           color: "#3b82f6",
           x: 100,
           y: 200,
         })
-        charts.hideTooltip(entity)
+        chart.hideTooltip(entity)
 
         expect(entity.tooltip).toBe(null)
       })
@@ -212,15 +212,15 @@ describe("charts", () => {
           type: "bar",
         }
 
-        charts.create(entity)
-        charts.showTooltip(entity, {
+        chart.create(entity)
+        chart.showTooltip(entity, {
           label: "Jan",
           value: 100,
           color: "#3b82f6",
           x: 100,
           y: 200,
         })
-        charts.moveTooltip(entity, { x: 150, y: 250 })
+        chart.moveTooltip(entity, { x: 150, y: 250 })
 
         expect(entity.tooltipX).toBe(150)
         expect(entity.tooltipY).toBe(250)
@@ -232,8 +232,8 @@ describe("charts", () => {
           type: "bar",
         }
 
-        charts.create(entity)
-        charts.moveTooltip(entity, { x: 150, y: 250 })
+        chart.create(entity)
+        chart.moveTooltip(entity, { x: 150, y: 250 })
 
         expect(entity.tooltipX).toBe(0)
         expect(entity.tooltipY).toBe(0)
@@ -252,13 +252,13 @@ describe("charts", () => {
           height: 400,
         }
 
-        charts.create(entity)
+        chart.create(entity)
 
         const mockApi = {
           getType: vi.fn(() => barChart),
         }
 
-        const result = charts.render(entity, mockApi)
+        const result = chart.render(entity, mockApi)
 
         expect(mockApi.getType).toHaveBeenCalledWith("bar")
         expect(result).toBeDefined()
@@ -270,13 +270,13 @@ describe("charts", () => {
           type: "unknown",
         }
 
-        charts.create(entity)
+        chart.create(entity)
 
         const mockApi = {
           getType: vi.fn(() => null),
         }
 
-        const result = charts.render(entity, mockApi)
+        const result = chart.render(entity, mockApi)
 
         expect(mockApi.getType).toHaveBeenCalledWith("unknown")
         expect(result).toBeDefined()
@@ -360,7 +360,7 @@ describe("charts", () => {
           height: 400,
         }
 
-        charts.create(entity)
+        chart.create(entity)
         const result = areaChart.renderChart(entity)
 
         expect(result).toBeDefined()

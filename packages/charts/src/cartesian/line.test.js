@@ -27,6 +27,10 @@ describe("line", () => {
 
     api = {
       getEntity: vi.fn((id) => (id === "test-line" ? entity : null)),
+      getType: vi.fn((type) => {
+        if (type === "line") return line
+        return null
+      }),
       notify: vi.fn(),
     }
   })
