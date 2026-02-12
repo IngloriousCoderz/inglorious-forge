@@ -8,21 +8,18 @@ import { renderLegend } from "../component/legend.js"
 import { createTooltipComponent, renderTooltip } from "../component/tooltip.js"
 import { renderXAxis } from "../component/x-axis.js"
 import { renderYAxis } from "../component/y-axis.js"
-import { renderCurve } from "../shape/curve.js"
+import { chart } from "../index.js"
 import { renderDot } from "../shape/dot.js"
-import { renderCartesianLayout } from "../utils/cartesian-layout.js"
 import {
-  getDataPointLabel,
-  getDataPointX,
-  getDataPointY,
-  getSeriesValues,
   getTransformedData,
   isMultiSeries,
   parseDimension,
 } from "../utils/data-utils.js"
+import { extractDataKeysFromChildren } from "../utils/extract-data-keys.js"
 import { calculatePadding } from "../utils/padding.js"
 import { generateLinePath } from "../utils/paths.js"
-import { createCartesianContext, getFilteredData } from "../utils/scales.js"
+import { processDeclarativeChild } from "../utils/process-declarative-child.js"
+import { getFilteredData } from "../utils/scales.js"
 import { createSharedContext } from "../utils/shared-context.js"
 import {
   createTooltipHandlers,
@@ -31,7 +28,112 @@ import {
 
 // Removed global Maps - now using local context to avoid interference between charts
 
+/**
+ * Builds declarative children from entity config for renderChart (config style)
+ * Converts entity configuration into children objects that renderLineChart can process
+ */
+function buildChildrenFromConfig(entity) {
+  const children = []
+
+  // Grid
+  if (entity.showGrid !== false) {
+    children.push(
+      chart.CartesianGrid({ stroke: "#eee", strokeDasharray: "5 5" }),
+    )
+  }
+
+  // XAxis - determine dataKey from entity or data structure
+  let xAxisDataKey = entity.dataKey
+  if (!xAxisDataKey && entity.data && entity.data.length > 0) {
+    const firstItem = entity.data[0]
+    xAxisDataKey = firstItem.name || firstItem.x || firstItem.date || "name"
+  }
+  if (!xAxisDataKey) {
+    xAxisDataKey = "name"
+  }
+  children.push(chart.XAxis({ dataKey: xAxisDataKey }))
+
+  // YAxis
+  children.push(chart.YAxis({ width: "auto" }))
+
+  // Extract dataKeys from entity data
+  let dataKeys = []
+  if (isMultiSeries(entity.data)) {
+    // Multi-series: use series names as dataKeys
+    dataKeys = entity.data.map((series, idx) => {
+      // Try to get dataKey from series, or use index
+      return series.dataKey || series.name || series.label || `series${idx}`
+    })
+  } else {
+    // Single series: use "y" or "value" as dataKey
+    dataKeys = ["y", "value"].filter(
+      (key) =>
+        entity.data &&
+        entity.data.length > 0 &&
+        entity.data[0][key] !== undefined,
+    )
+    if (dataKeys.length === 0) {
+      dataKeys = ["value"] // Default fallback
+    }
+  }
+
+  // Lines (one per dataKey)
+  const colors = entity.colors || ["#8884d8", "#82ca9d", "#ffc658", "#ff8042"]
+  dataKeys.forEach((dataKey, index) => {
+    children.push(
+      chart.Line({
+        dataKey,
+        stroke: colors[index % colors.length],
+        showDots: entity.showPoints !== false,
+      }),
+    )
+  })
+
+  // Dots (if showPoints is true)
+  if (entity.showPoints !== false && dataKeys.length > 0) {
+    dataKeys.forEach((dataKey, index) => {
+      children.push(
+        chart.Dots({
+          dataKey,
+          fill: colors[index % colors.length],
+        }),
+      )
+    })
+  }
+
+  // Tooltip
+  if (entity.showTooltip !== false) {
+    children.push(chart.Tooltip({}))
+  }
+
+  // Legend
+  if (entity.showLegend && isMultiSeries(entity.data)) {
+    children.push(
+      chart.Legend({
+        dataKeys,
+        labels: entity.labels || dataKeys,
+        colors: entity.colors,
+      }),
+    )
+  }
+
+  // Brush
+  if (entity.brush?.enabled) {
+    children.push(
+      chart.Brush({
+        dataKey: xAxisDataKey,
+        height: entity.brush.height || 30,
+      }),
+    )
+  }
+
+  return children
+}
+
 export const line = {
+  /**
+   * CONFIG MODE
+   */
   renderChart(entity, api) {
     // Apply data filtering if brush is enabled
     const entityData = entity.brush?.enabled
@@ -41,20 +143,46 @@ export const line = {
     // Create entity with filtered data for rendering
     const entityWithFilteredData = { ...entity, data: entityData }
 
-    // Line curves - uses Curve and Dot primitives
-    const lines = renderLineCurves(entityWithFilteredData, {}, api)
+    // Convert entity config to declarative children
+    const children = buildChildrenFromConfig(entityWithFilteredData)
 
-    return renderCartesianLayout(
+    // Extract dataKeys for config
+    let dataKeys = []
+    if (isMultiSeries(entityWithFilteredData.data)) {
+      dataKeys = entityWithFilteredData.data.map(
+        (series, idx) =>
+          series.dataKey || series.name || series.label || `series${idx}`,
+      )
+    } else {
+      dataKeys = ["y", "value"].filter(
+        (key) =>
+          entityWithFilteredData.data &&
+          entityWithFilteredData.data.length > 0 &&
+          entityWithFilteredData.data[0][key] !== undefined,
+      )
+      if (dataKeys.length === 0) {
+        dataKeys = ["value"]
+      }
+    }
+
+    // Use the unified motor (renderLineChart)
+    return line.renderLineChart(
       entityWithFilteredData,
       {
-        chartType: "line",
-        chartContent: lines,
+        children,
+        config: {
+          width: entityWithFilteredData.width,
+          height: entityWithFilteredData.height,
+          dataKeys,
+        },
       },
       api,
     )
   },
 
-  // Composition methods (Recharts-style)
+  /**
+   * COMPOSITION MODE
+   */
   renderLineChart(entity, { children, config = {} }, api) {
     if (!entity) {
       return svg`<text>Entity not found</text>`
@@ -64,10 +192,14 @@ export const line = {
     let entityData = config.data || entity.data
     const entityWithData = { ...entity, data: entityData }
 
-    // 2. Extract dimensions and local variables (removed duplicate block with error here)
+    // 2. Extract dataKeys from config or auto-extract from children
     const dataKeysSet = new Set()
     if (config.dataKeys && Array.isArray(config.dataKeys)) {
       config.dataKeys.forEach((key) => dataKeysSet.add(key))
+    } else if (children) {
+      // Auto-extract dataKeys from children
+      const autoDataKeys = extractDataKeysFromChildren(children)
+      autoDataKeys.forEach((key) => dataKeysSet.add(key))
     }
 
     const style = config.style || {}
@@ -84,7 +216,15 @@ export const line = {
     const childrenArray = (
       Array.isArray(children) ? children : [children]
     ).filter(Boolean)
-    const hasBrush = childrenArray.some(
+
+    // Process declarative children before creating the context
+    const processedChildrenArray = childrenArray
+      .map((child) =>
+        processDeclarativeChild(child, entityWithData, "line", api),
+      )
+      .filter(Boolean)
+
+    const hasBrush = processedChildrenArray.some(
       (child) => typeof child === "function" && child.isBrush,
     )
     const brushHeight = hasBrush ? 60 : 0
@@ -141,7 +281,7 @@ export const line = {
     const brush = []
     const others = []
 
-    for (const child of childrenArray) {
+    for (const child of processedChildrenArray) {
       // Use stable flags instead of string matching (survives minification)
       if (typeof child === "function") {
         // If it's already marked, add to the correct bucket
@@ -489,6 +629,8 @@ export const line = {
     }
     // Mark as line component for stable identification
     lineFn.isLine = true
+    // Expose dataKey for automatic extraction
+    lineFn.dataKey = config.dataKey
     return lineFn
   },
 
@@ -553,6 +695,8 @@ export const line = {
     }
     // Mark as dots component for stable identification
     dotsFn.isDots = true
+    // Expose dataKey for automatic extraction
+    dotsFn.dataKey = config.dataKey
     return dotsFn
   },
 
@@ -610,125 +754,4 @@ export const line = {
   renderTooltip: createTooltipComponent(),
 
   renderBrush: createBrushComponent(),
-}
-
-/**
- * Renders line curves using Curve and Dot primitives
- * Similar to Recharts Line component
- */
-function renderLineCurves(entity, props, api) {
-  const data = entity?.data
-  if (!data || data.length === 0) {
-    return svg``
-  }
-
-  // Create context with scales and dimensions
-  const context = createCartesianContext(entity, "line")
-  const { xScale, yScale } = context
-  const colors = entity.colors
-  const showPoints = entity.showPoints !== false
-
-  if (isMultiSeries(data)) {
-    return svg`
-      ${data.map((series, seriesIndex) => {
-        const values = getSeriesValues(series)
-        const pathData = generateLinePath(values, xScale, yScale)
-        const color = series.color || colors[seriesIndex % colors.length]
-        const seriesName =
-          series.name || series.label || `Series ${seriesIndex + 1}`
-
-        return svg`
-          <g class="iw-chart-line" data-entity-id=${entity.id}>
-            ${renderCurve({
-              d: pathData,
-              stroke: color,
-              className: "iw-chart-line",
-              entityId: entity.id,
-            })}
-            ${
-              showPoints
-                ? repeat(
-                    values,
-                    (d, i) => i,
-                    (d, i) => {
-                      const x = xScale(getDataPointX(d, i))
-                      const y = yScale(getDataPointY(d))
-                      const label = getDataPointLabel(d, seriesName)
-                      const value = getDataPointY(d)
-
-                      const { onMouseEnter, onMouseLeave } =
-                        createTooltipHandlers({
-                          entity,
-                          api,
-                          tooltipData: {
-                            label,
-                            value,
-                            color,
-                          },
-                        })
-
-                      return renderDot({
-                        cx: x,
-                        cy: y,
-                        fill: color,
-                        className: "iw-chart-dot",
-                        onMouseEnter,
-                        onMouseLeave,
-                      })
-                    },
-                  )
-                : ""
-            }
-          </g>
-        `
-      })}
-    `
-  }
-
-  const pathData = generateLinePath(data, xScale, yScale)
-  const color = colors[0]
-
-  return svg`
-    <g class="iw-chart-line" data-entity-id=${entity.id}>
-      ${renderCurve({
-        d: pathData,
-        stroke: color,
-        className: "iw-chart-line",
-        entityId: entity.id,
-      })}
-      ${
-        showPoints
-          ? repeat(
-              data,
-              (d, i) => i,
-              (d, i) => {
-                const x = xScale(getDataPointX(d, i))
-                const y = yScale(getDataPointY(d))
-                const label = getDataPointLabel(d)
-                const value = getDataPointY(d)
-
-                const { onMouseEnter, onMouseLeave } = createTooltipHandlers({
-                  entity,
-                  api,
-                  tooltipData: {
-                    label,
-                    value,
-                    color,
-                  },
-                })
-
-                return renderDot({
-                  cx: x,
-                  cy: y,
-                  fill: color,
-                  className: "iw-chart-dot",
-                  onMouseEnter,
-                  onMouseLeave,
-                })
-              },
-            )
-          : ""
-      }
-    </g>
-  `
 }

@@ -11,10 +11,14 @@ import { renderYAxis } from "../component/y-axis.js"
 import { renderRectangle } from "../shape/rectangle.js"
 import { renderCartesianLayout } from "../utils/cartesian-layout.js"
 import { calculatePadding } from "../utils/padding.js"
+import { processDeclarativeChild } from "../utils/process-declarative-child.js"
 import { createCartesianContext } from "../utils/scales.js"
 import { createTooltipHandlers } from "../utils/tooltip-handlers.js"
 
 export const bar = {
+  /**
+   * CONFIG MODE
+   */
   renderChart(entity, api) {
     const children = [
       entity.showGrid !== false
@@ -53,6 +57,9 @@ export const bar = {
     )
   },
 
+  /**
+   * COMPOSITION MODE
+   */
   renderBarChart(entity, { children, config = {} }, api) {
     if (!entity) return html`<div>Entity not found</div>`
     if (!entity.data || !Array.isArray(entity.data)) {
@@ -67,6 +74,10 @@ export const bar = {
       Array.isArray(children) ? children : [children]
     ).filter(Boolean)
 
+    const processedChildrenArray = childrenArray
+      .map((child) => processDeclarativeChild(child, entity, "bar", api))
+      .filter(Boolean)
+
     // Separate components using stable flags (survives minification)
     // This ensures correct Z-index ordering: Grid -> Bars -> Axes
     const grid = []
@@ -75,7 +86,7 @@ export const bar = {
     const tooltip = []
     const others = []
 
-    for (const child of childrenArray) {
+    for (const child of processedChildrenArray) {
       // Use stable flags instead of string matching (survives minification)
       if (typeof child === "function") {
         // If it's already marked, add to the correct bucket
