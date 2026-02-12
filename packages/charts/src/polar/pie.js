@@ -6,14 +6,41 @@ import { renderTooltip } from "../component/tooltip.js"
 import { renderSector } from "../shape/sector.js"
 import { formatNumber } from "../utils/data-utils.js"
 import { calculatePieData } from "../utils/paths.js"
+import { processDeclarativeChild } from "../utils/process-declarative-child.js"
 
 export const pie = {
   /**
    * Compositional render mode (Recharts-style).
    * Acts as a context provider for nested Pie components.
    */
-  renderPieChart(entity, { children, config = {} }, api) {
+  renderPieChart(entity, params, api) {
     if (!entity) return html`<div>Entity not found</div>`
+
+    // Handle both { children, config } and { children, ...config } formats
+    let children, config
+    if (params && Array.isArray(params.children)) {
+      // Format: { children: [...], config: {...} } or { children: [...], ...config }
+      children = params.children
+      const existingConfig = params.config || {}
+      // If params has other properties (like width, height), merge them into config
+      const restParams = { ...params }
+      delete restParams.children
+      delete restParams.config
+      config = { ...restParams, ...existingConfig }
+    } else if (Array.isArray(params)) {
+      // Format: [children] (legacy)
+      children = params
+      config = {}
+    } else {
+      // Format: { children, config } or just config properties
+      children = params?.children || []
+      const existingConfig = params?.config || {}
+      // If params has other properties, merge them into config
+      const restParams = params ? { ...params } : {}
+      delete restParams.children
+      delete restParams.config
+      config = { ...restParams, ...existingConfig }
+    }
 
     const entityWithData = config.data
       ? { ...entity, data: config.data }
@@ -54,7 +81,13 @@ export const pie = {
       ],
     }
 
-    const childrenArray = Array.isArray(children) ? children : [children]
+    const childrenArray = (Array.isArray(children) ? children : [children]).filter(Boolean)
+
+    // Process declarative children before categorizing
+    // This converts { type: 'Pie', config } into rendered functions
+    const processedChildrenArray = childrenArray
+      .map((child) => processDeclarativeChild(child, entityWithData, "pie", api))
+      .filter(Boolean)
 
     // Separate components using stable flags (survives minification)
     // This ensures correct Z-index ordering: Slices -> Labels -> Tooltip
@@ -63,7 +96,7 @@ export const pie = {
     const tooltip = []
     const others = []
 
-    for (const child of childrenArray) {
+    for (const child of processedChildrenArray) {
       // Use stable flags instead of string matching (survives minification)
       if (typeof child === "function") {
         // If it's already marked, add to the correct bucket
