@@ -166,6 +166,7 @@ export const line = {
     }
 
     // Use the unified motor (renderLineChart)
+    // Pass original entity in config so brush can access unfiltered data
     return line.renderLineChart(
       entityWithFilteredData,
       {
@@ -174,6 +175,7 @@ export const line = {
           width: entityWithFilteredData.width,
           height: entityWithFilteredData.height,
           dataKeys,
+          originalEntity: entity, // Pass original entity for brush
         },
       },
       api,
@@ -218,17 +220,44 @@ export const line = {
     ).filter(Boolean)
 
     // Process declarative children before creating the context
+    // For brush, use original entity data (if available) to ensure correct positioning
+    const entityForBrush = config.originalEntity || entityWithData
     const processedChildrenArray = childrenArray
-      .map((child) =>
-        processDeclarativeChild(child, entityWithData, "line", api),
-      )
+      .map((child) => {
+        // If this is a Brush component, use original entity data
+        if (child && typeof child === "object" && child.type === "Brush") {
+          return processDeclarativeChild(child, entityForBrush, "line", api)
+        }
+        return processDeclarativeChild(child, entityWithData, "line", api)
+      })
       .filter(Boolean)
 
+    const chartHeight = height
+
+    // For X scale creation, use original entity data if available (config mode with brush)
+    // Otherwise use entityWithData (composition mode)
+    // This ensures X scale always has access to original data with valid x/date values
+    const entityForXScale = config.originalEntity || entityWithData
+
+    const context = createSharedContext(
+      entityForXScale,
+      {
+        width,
+        height: chartHeight,
+        padding,
+        usedDataKeys: dataKeysSet,
+        chartType: "line",
+        // Pass filtered entity for Y scale calculation (uses filtered data for maxValue)
+        filteredEntity: entityWithData,
+      },
+      api,
+    )
+
+    // Simplified check: processDeclarativeChild now guarantees the flag is set
     const hasBrush = processedChildrenArray.some(
-      (child) => typeof child === "function" && child.isBrush,
+      (child) => child && child.isBrush,
     )
     const brushHeight = hasBrush ? 60 : 0
-    const chartHeight = height
     const totalHeight = chartHeight + brushHeight
 
     const svgStyle = {
@@ -243,19 +272,6 @@ export const line = {
       ...style,
     }
 
-    // 3. Create the UNIQUE context
-    const context = createSharedContext(
-      entityWithData,
-      {
-        width,
-        height: chartHeight,
-        padding,
-        usedDataKeys: dataKeysSet,
-        chartType: "line",
-      },
-      api,
-    )
-
     // 4. APPLY ZOOM
     if (entity.brush?.enabled && entity.brush.startIndex !== undefined) {
       const { startIndex, endIndex } = entity.brush
@@ -265,7 +281,9 @@ export const line = {
     context.dimensions = { width, height: chartHeight, padding }
     context.totalHeight = totalHeight
     context.entity = entityWithData
-    context.fullEntity = entity
+    // Use originalEntity from config if available (for brush in config mode)
+    // Otherwise use entity (for composition mode)
+    context.fullEntity = config.originalEntity || entity
     context.api = api
 
     // Context is now passed directly to renderLine, no need for global cache
@@ -281,54 +299,18 @@ export const line = {
     const brush = []
     const others = []
 
+    // Simplified categorization: processDeclarativeChild now guarantees flags are set
     for (const child of processedChildrenArray) {
-      // Use stable flags instead of string matching (survives minification)
       if (typeof child === "function") {
-        // If it's already marked, add to the correct bucket
-        if (child.isGrid) {
-          grid.push(child)
-        } else if (child.isAxis) {
-          axes.push(child)
-        } else if (child.isLine) {
-          lines.push(child)
-        } else if (child.isDots) {
-          dots.push(child)
-        } else if (child.isTooltip) {
-          tooltip.push(child)
-        } else if (child.isLegend) {
-          legend.push(child)
-        } else {
-          // It's a lazy function from index.js - process it to identify its real type
-          // Use the real context (already created) to peek at what it returns
-          try {
-            const result = child(context)
-            // If the result is a marked function, use its type
-            if (typeof result === "function") {
-              if (result.isGrid) {
-                grid.push(child) // Keep the original lazy function
-              } else if (result.isAxis) {
-                axes.push(child)
-              } else if (result.isLine) {
-                lines.push(child)
-              } else if (result.isDots) {
-                dots.push(child)
-              } else if (result.isTooltip) {
-                tooltip.push(child)
-              } else if (result.isLegend) {
-                legend.push(child)
-              } else if (result.isBrush) {
-                brush.push(child)
-              } else {
-                others.push(child)
-              }
-            } else {
-              others.push(child)
-            }
-          } catch {
-            // If processing fails, add to others (will be processed later)
-            others.push(child)
-          }
-        }
+        // Flags MUST exist now thanks to processDeclarativeChild
+        if (child.isGrid) grid.push(child)
+        else if (child.isAxis) axes.push(child)
+        else if (child.isLine) lines.push(child)
+        else if (child.isDots) dots.push(child)
+        else if (child.isTooltip) tooltip.push(child)
+        else if (child.isLegend) legend.push(child)
+        else if (child.isBrush) brush.push(child)
+        else others.push(child)
       } else {
         others.push(child)
       }
@@ -376,7 +358,8 @@ export const line = {
         child.isLine ||
         child.isDots ||
         child.isTooltip ||
-        child.isLegend
+        child.isLegend ||
+        child.isBrush
       ) {
         return child(context)
       }
@@ -551,8 +534,19 @@ export const line = {
 
       const { xScale, yScale } = ctx
 
-      // Generate path using the line-specific data but shared scales
-      const path = generateLinePath(data, xScale, yScale, curveType)
+      // CRITICAL: Preserve original index for filtered data
+      // When brush is enabled, entity.data is filtered (e.g., indices 31-99)
+      // But getTransformedData creates data with x: 0, 1, 2... (reset indices)
+      // We need to map these back to their original positions in the full dataset
+      // This ensures the line is drawn at the correct X position matching the xScale domain
+      const startIndex = entityFromContext.brush?.startIndex || 0
+      const chartData = data.map((d, i) => ({
+        ...d,
+        x: startIndex + i, // The 'x' must be the real position in the total series
+      }))
+
+      // Generate path using the corrected data with original indices
+      const path = generateLinePath(chartData, xScale, yScale, curveType)
 
       // If path is null or empty, return empty
       if (!path || path.includes("NaN")) {
@@ -560,9 +554,10 @@ export const line = {
       }
 
       // Render dots if showDots is true
+      // Use chartData (with corrected indices) instead of data
       const dots = showDots
         ? repeat(
-            data,
+            chartData,
             (d, i) => `${dataKey}-${i}`,
             (d, i) => {
               const x = xScale(d.x)
@@ -649,10 +644,20 @@ export const line = {
       const data = getTransformedData(entityFromContext, dataKey)
       if (!data || data.length === 0) return svg``
 
+      // CRITICAL: Preserve original index for filtered data (same as renderLine)
+      // When brush is enabled, entity.data is filtered (e.g., indices 31-99)
+      // But getTransformedData creates data with x: 0, 1, 2... (reset indices)
+      // We need to map these back to their original positions in the full dataset
+      const startIndex = entityFromContext.brush?.startIndex || 0
+      const chartData = data.map((d, i) => ({
+        ...d,
+        x: startIndex + i, // The 'x' must be the real position in the total series
+      }))
+
       return svg`
         <g class="iw-chart-dots" data-data-key=${dataKey} clip-path="url(#chart-clip-${ctx.entity.id})">
           ${repeat(
-            data,
+            chartData,
             (d, i) => `${dataKey}-${i}`,
             (d, i) => {
               const x = xScale(d.x)
