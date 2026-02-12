@@ -115,20 +115,20 @@ export function renderBrush(entity, props, api) {
 
     const handleMouseMove = (moveEvent) => {
       const currentMouseX = moveEvent.clientX - svgRect.left
-      // Importante: deltaX é o movimento em pixels desde o início do arrasto
+      // Important: deltaX is the mouse movement in pixels since the start of drag
       const deltaX = currentMouseX - startMouseX
 
       if (action === "pan") {
-        // 1. Descobre quanto o mouse moveu em pixels
-        // 2. Transforma pixels de movimento em "delta de índices" usando a proporção real
-        // Usa porcentagem de deslocamento em relação à área total do Brush
-        // Isso é matematicamente mais estável que pixelsPerIndex
+        // 1. Calculate how much the mouse moved in pixels
+        // 2. Transform pixel movement into "index delta" using the real proportion
+        // Uses percentage of displacement relative to the total Brush area
+        // This is mathematically more stable than pixelsPerIndex
         const indexDelta = Math.round((deltaX / brushAreaWidth) * totalIndices)
-
+        
         let nextStart = initialStartIndex + indexDelta
         let nextEnd = initialEndIndex + indexDelta
 
-        // 3. Clamping (Trava os limites)
+        // 3. Clamping (lock the limits)
         if (nextStart < 0) {
           nextStart = 0
           nextEnd = selectionSize
@@ -148,16 +148,16 @@ export function renderBrush(entity, props, api) {
           api.notify(`#${entity.id}:update`)
         }
       } else if (action === "resize-left" || action === "resize-right") {
-        // Para resize, usamos a mesma lógica de proporção do pan
-        // Isso evita "pulos" de índice quando o usuário clica no handle
-        // Calcula o delta de movimento em índices e aplica ao índice inicial
+        // For resize, we use the same proportion logic as pan
+        // This avoids index "jumps" when the user clicks on the handle
+        // Calculates the movement delta in indices and applies it to the initial index
         const indexDelta = Math.round((deltaX / brushAreaWidth) * totalIndices)
-
+        
         if (action === "resize-left") {
-          // Mantém o endIndex fixo e move apenas o startIndex
+          // Keep endIndex fixed and move only startIndex
           let nextStart = initialStartIndex + indexDelta
-
-          // Clamping: não pode ser menor que 0 nem maior que endIndex
+          
+          // Clamping: cannot be less than 0 nor greater than endIndex
           if (nextStart < 0) {
             nextStart = 0
           } else if (nextStart >= initialEndIndex) {
@@ -169,10 +169,10 @@ export function renderBrush(entity, props, api) {
             api.notify(`#${entity.id}:update`)
           }
         } else {
-          // resize-right: mantém o startIndex fixo e move apenas o endIndex
+          // resize-right: keep startIndex fixed and move only endIndex
           let nextEnd = initialEndIndex + indexDelta
-
-          // Clamping: não pode ser maior que totalIndices nem menor que startIndex
+          
+          // Clamping: cannot be greater than totalIndices nor less than startIndex
           if (nextEnd > totalIndices) {
             nextEnd = totalIndices
           } else if (nextEnd <= initialStartIndex) {

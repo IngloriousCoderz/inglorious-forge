@@ -26,8 +26,8 @@ export function processDeclarativeChild(child, entity, chartTypeName, api) {
         api,
       )
 
-      // Injeta a flag baseada no TYPE do objeto declarativo
-      // Isso garante que a função retornada tenha a flag correta para identificação
+      // Inject flag based on the declarative object TYPE
+      // This ensures the returned function has the correct flag for identification
       if (typeof rendered === "function") {
         if (child.type === "Brush") rendered.isBrush = true
         if (child.type === "XAxis" || child.type === "YAxis")
