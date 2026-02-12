@@ -124,7 +124,7 @@ export function renderBrush(entity, props, api) {
         // Uses percentage of displacement relative to the total Brush area
         // This is mathematically more stable than pixelsPerIndex
         const indexDelta = Math.round((deltaX / brushAreaWidth) * totalIndices)
-        
+
         let nextStart = initialStartIndex + indexDelta
         let nextEnd = initialEndIndex + indexDelta
 
@@ -152,11 +152,11 @@ export function renderBrush(entity, props, api) {
         // This avoids index "jumps" when the user clicks on the handle
         // Calculates the movement delta in indices and applies it to the initial index
         const indexDelta = Math.round((deltaX / brushAreaWidth) * totalIndices)
-        
+
         if (action === "resize-left") {
           // Keep endIndex fixed and move only startIndex
           let nextStart = initialStartIndex + indexDelta
-          
+
           // Clamping: cannot be less than 0 nor greater than endIndex
           if (nextStart < 0) {
             nextStart = 0
@@ -171,7 +171,7 @@ export function renderBrush(entity, props, api) {
         } else {
           // resize-right: keep startIndex fixed and move only endIndex
           let nextEnd = initialEndIndex + indexDelta
-          
+
           // Clamping: cannot be greater than totalIndices nor less than startIndex
           if (nextEnd > totalIndices) {
             nextEnd = totalIndices

@@ -81,12 +81,16 @@ export const pie = {
       ],
     }
 
-    const childrenArray = (Array.isArray(children) ? children : [children]).filter(Boolean)
+    const childrenArray = (
+      Array.isArray(children) ? children : [children]
+    ).filter(Boolean)
 
     // Process declarative children before categorizing
     // This converts { type: 'Pie', config } into rendered functions
     const processedChildrenArray = childrenArray
-      .map((child) => processDeclarativeChild(child, entityWithData, "pie", api))
+      .map((child) =>
+        processDeclarativeChild(child, entityWithData, "pie", api),
+      )
       .filter(Boolean)
 
     // Separate components using stable flags (survives minification)
