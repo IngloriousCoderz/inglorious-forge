@@ -2,7 +2,7 @@
 import { svg } from "@inglorious/web"
 
 import { isValidNumber } from "../utils/data-utils.js"
-import { createTimeScale, createXScale } from "../utils/scales.js"
+import { createXScale } from "../utils/scales.js"
 
 /**
  * Brush Component - allows zooming and panning on cartesian charts
@@ -20,7 +20,16 @@ import { createTimeScale, createXScale } from "../utils/scales.js"
  * @returns {import('lit-html').TemplateResult}
  */
 export function renderBrush(entity, props, api) {
-  const { xScale, width, height, padding, brushHeight = 30, dataKey } = props
+  // Note: xScale from props is not used - we create our own brushXScale
+  // to ensure it always represents the full unfiltered data
+  const { width, height, padding, brushHeight = 30 } = props
+
+  // CRITICAL: Use original entity data for brush calculations
+  // In Config mode, entity may have filtered data, but brush needs original data
+  // The createBrushComponent already passes ctx.fullEntity which has original data
+  // But we need to ensure entity.brush is on the correct entity (the one with original data)
+  // For brush state management, we need to use the entity that has the brush state
+  // This is typically the original entity, not the filtered one
 
   // Initialize state: ensures we have a valid selection range on first render
   if (!entity.brush) {
@@ -31,43 +40,59 @@ export function renderBrush(entity, props, api) {
     }
   }
 
+  // Ensure brush.enabled is true if brush exists
+  if (entity.brush && entity.brush.enabled === undefined) {
+    entity.brush.enabled = true
+  }
+
+  // Ensure startIndex and endIndex are defined
+  if (
+    entity.brush.startIndex === undefined ||
+    entity.brush.endIndex === undefined
+  ) {
+    entity.brush.startIndex = 0
+    entity.brush.endIndex = entity.data ? entity.data.length - 1 : 0
+  }
+
   if (!entity.brush.enabled || !entity.data || entity.data.length === 0) {
     return svg``
   }
 
+  // Use entity.data directly - this should be original data from ctx.fullEntity
   const brushData = entity.data
   const brushAreaWidth = width - padding.left - padding.right
   const brushAreaX = padding.left
-  const brushY = height - padding.bottom + 25
 
-  // Scale synchronization: ensures brush uses original data range for positioning
-  let brushXScale = xScale
-  if (!xScale.bandwidth) {
-    const hasDates = brushData.some((d) => d.date || d.x instanceof Date)
-    brushXScale = hasDates
-      ? createTimeScale(brushData, width, padding)
-      : createXScale(brushData, width, padding)
-  }
+  // Refined positioning: ensure it stays below the main chart area
+  // Position brush at the bottom of the SVG, just below the main chart
+  // The main chart ends at `height`, so brush should start right after it
+  // Use height (chart height) as the base, not totalHeight
+  const brushY = height
+
+  // CRITICAL: Create a "clean" fixed scale for the Brush based on TOTAL data
+  // The xScale from props may have a filtered domain (zoom applied)
+  // The Brush always needs a scale that represents the full unfiltered data
+  // This prevents the Brush from "jumping" when the chart is zoomed
+  // Always use index-based scale for brush (simpler and more reliable)
+  const brushXScale = createXScale(brushData, width, padding)
+  // IMPORTANT: Force domain to always be the full index range [0, length-1]
+  // This ensures the Brush scale is completely independent of the chart's zoom
+  brushXScale.domain([0, brushData.length - 1])
 
   /** Maps data index to pixel X coordinate */
+  // Simplified: since brushXScale.domain is always [0, length-1], we can directly use the index
   const getXPosition = (index) => {
     const safeIndex = Math.max(0, Math.min(index, brushData.length - 1))
-    if (brushXScale.bandwidth) {
-      const category =
-        brushData[safeIndex]?.[dataKey] ||
-        brushData[safeIndex]?.name ||
-        String(safeIndex)
-      return brushXScale(category) + brushXScale.bandwidth() / 2
-    }
-    const value =
-      brushData[safeIndex]?.x ?? brushData[safeIndex]?.date ?? safeIndex
-    return brushXScale(value)
+    // brushXScale is always linear with domain [0, length-1], so we can use index directly
+    return brushXScale(safeIndex)
   }
 
   const startX = getXPosition(entity.brush.startIndex)
   const endX = getXPosition(entity.brush.endIndex)
 
-  if (!isValidNumber(startX) || !isValidNumber(endX)) return svg``
+  if (!isValidNumber(startX) || !isValidNumber(endX)) {
+    return svg``
+  }
 
   // Visual width of the selection area
   const brushWidth = endX - startX
@@ -85,27 +110,33 @@ export function renderBrush(entity, props, api) {
     // Snapshots: Capture current state at the start of interaction to prevent "drifting"
     const initialStartIndex = entity.brush.startIndex
     const initialEndIndex = entity.brush.endIndex
-    const initialStartX = startX
-    const initialEndX = endX
     const selectionSize = initialEndIndex - initialStartIndex
-    const totalDataCount = brushData.length - 1
+    const totalIndices = brushData.length - 1
 
     const handleMouseMove = (moveEvent) => {
       const currentMouseX = moveEvent.clientX - svgRect.left
+      // Importante: deltaX é o movimento em pixels desde o início do arrasto
       const deltaX = currentMouseX - startMouseX
 
-      // index-to-pixel ratio used for consistent panning
-      const pixelsPerIndex = brushAreaWidth / Math.max(1, totalDataCount)
-
       if (action === "pan") {
-        const indexDelta = Math.round(deltaX / pixelsPerIndex)
-        let nextStart = initialStartIndex + indexDelta
+        // 1. Descobre quanto o mouse moveu em pixels
+        // 2. Transforma pixels de movimento em "delta de índices" usando a proporção real
+        // Usa porcentagem de deslocamento em relação à área total do Brush
+        // Isso é matematicamente mais estável que pixelsPerIndex
+        const indexDelta = Math.round((deltaX / brushAreaWidth) * totalIndices)
 
-        // Bounds clamping: keep selection within data limits
-        if (nextStart < 0) nextStart = 0
-        if (nextStart + selectionSize > totalDataCount)
-          nextStart = totalDataCount - selectionSize
-        let nextEnd = nextStart + selectionSize
+        let nextStart = initialStartIndex + indexDelta
+        let nextEnd = initialEndIndex + indexDelta
+
+        // 3. Clamping (Trava os limites)
+        if (nextStart < 0) {
+          nextStart = 0
+          nextEnd = selectionSize
+        }
+        if (nextEnd > totalIndices) {
+          nextEnd = totalIndices
+          nextStart = totalIndices - selectionSize
+        }
 
         // Only notify if indices actually changed to optimize rendering
         if (
@@ -116,31 +147,42 @@ export function renderBrush(entity, props, api) {
           entity.brush.endIndex = nextEnd
           api.notify(`#${entity.id}:update`)
         }
-      } else if (action === "resize-left") {
-        const newX = Math.max(
-          brushAreaX,
-          Math.min(initialStartX + deltaX, initialEndX - 5),
-        )
-        const newIndex = findClosestIndex(newX, brushData, brushXScale, dataKey)
-        if (
-          newIndex !== entity.brush.startIndex &&
-          newIndex < entity.brush.endIndex
-        ) {
-          entity.brush.startIndex = newIndex
-          api.notify(`#${entity.id}:update`)
-        }
-      } else if (action === "resize-right") {
-        const newX = Math.min(
-          brushAreaX + brushAreaWidth,
-          Math.max(initialEndX + deltaX, initialStartX + 5),
-        )
-        const newIndex = findClosestIndex(newX, brushData, brushXScale, dataKey)
-        if (
-          newIndex !== entity.brush.endIndex &&
-          newIndex > entity.brush.startIndex
-        ) {
-          entity.brush.endIndex = newIndex
-          api.notify(`#${entity.id}:update`)
+      } else if (action === "resize-left" || action === "resize-right") {
+        // Para resize, usamos a mesma lógica de proporção do pan
+        // Isso evita "pulos" de índice quando o usuário clica no handle
+        // Calcula o delta de movimento em índices e aplica ao índice inicial
+        const indexDelta = Math.round((deltaX / brushAreaWidth) * totalIndices)
+
+        if (action === "resize-left") {
+          // Mantém o endIndex fixo e move apenas o startIndex
+          let nextStart = initialStartIndex + indexDelta
+
+          // Clamping: não pode ser menor que 0 nem maior que endIndex
+          if (nextStart < 0) {
+            nextStart = 0
+          } else if (nextStart >= initialEndIndex) {
+            nextStart = initialEndIndex - 1
+          }
+
+          if (nextStart !== entity.brush.startIndex) {
+            entity.brush.startIndex = nextStart
+            api.notify(`#${entity.id}:update`)
+          }
+        } else {
+          // resize-right: mantém o startIndex fixo e move apenas o endIndex
+          let nextEnd = initialEndIndex + indexDelta
+
+          // Clamping: não pode ser maior que totalIndices nem menor que startIndex
+          if (nextEnd > totalIndices) {
+            nextEnd = totalIndices
+          } else if (nextEnd <= initialStartIndex) {
+            nextEnd = initialStartIndex + 1
+          }
+
+          if (nextEnd !== entity.brush.endIndex) {
+            entity.brush.endIndex = nextEnd
+            api.notify(`#${entity.id}:update`)
+          }
         }
       }
     }
@@ -153,7 +195,7 @@ export function renderBrush(entity, props, api) {
     document.addEventListener("mouseup", handleMouseUp)
   }
 
-  return svg`
+  const result = svg`
     <g class="iw-chart-brush" transform="translate(0, ${brushY})">
       <rect x=${brushAreaX} y=0 width=${brushAreaWidth} height=${brushHeight} fill="#f5f5f5" stroke="#ddd" />
       
@@ -181,46 +223,41 @@ export function renderBrush(entity, props, api) {
       <rect x=${endX - 4} y=0 width=8 height=${brushHeight} fill="#8884d8" stroke="#fff" 
             style="cursor: ew-resize;" @mousedown=${(e) => handleMouseDown(e, "resize-right")} />
     </g>`
+
+  // Add identification flag to the result object
+  result.isBrush = true
+  return result
 }
 
-/** Finds the nearest data index for a given pixel coordinate */
-function findClosestIndex(x, data, xScale, dataKey) {
-  if (!data || data.length === 0) return 0
-  let minDistance = Infinity
-  let closestIndex = 0
-  data.forEach((d, i) => {
-    let dataX
-    if (xScale.bandwidth) {
-      const category = d[dataKey] || d.name || String(i)
-      dataX = xScale(category) + xScale.bandwidth() / 2
-    } else {
-      dataX = xScale(d.x ?? d.date ?? i)
-    }
-    const distance = Math.abs(x - dataX)
-    if (distance < minDistance) {
-      minDistance = distance
-      closestIndex = i
-    }
-  })
-  return closestIndex
-}
-
+/**
+ * Creates the Brush component function
+ * * @param {Object} defaultConfig
+ * @returns {Function}
+ */
 export function createBrushComponent(defaultConfig = {}) {
   return (entity, props, api) => {
     const brushFn = (ctx) => {
       const entityFromContext = ctx.fullEntity || ctx.entity || entity
       const config = { ...defaultConfig, ...(props.config || {}) }
-      return renderBrush(
+
+      const result = renderBrush(
         entityFromContext,
         {
           xScale: ctx.xScale,
           ...ctx.dimensions,
+          totalHeight: ctx.totalHeight,
           dataKey: config.dataKey || entityFromContext.dataKey || "name",
           brushHeight: config.height || 30,
         },
         api,
       )
+
+      // Ensure the returned TemplateResult also carries the flag
+      if (result) result.isBrush = true
+      return result
     }
+
+    // Crucial for identification in Config Style mode
     brushFn.isBrush = true
     return brushFn
   }
