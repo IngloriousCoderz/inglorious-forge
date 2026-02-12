@@ -340,7 +340,14 @@ describe("chart", () => {
         }
 
         lineChart.create(entity)
-        const result = lineChart.renderChart(entity)
+        const mockApi = {
+          getType: vi.fn((type) => {
+            if (type === "line") return lineChart
+            return null
+          }),
+          notify: vi.fn(),
+        }
+        const result = lineChart.renderChart(entity, mockApi)
 
         expect(result).toBeDefined()
       })
@@ -361,7 +368,14 @@ describe("chart", () => {
         }
 
         chart.create(entity)
-        const result = areaChart.renderChart(entity)
+        const mockApi = {
+          getType: vi.fn((type) => {
+            if (type === "area") return areaChart
+            return null
+          }),
+          notify: vi.fn(),
+        }
+        const result = areaChart.renderChart(entity, mockApi)
 
         expect(result).toBeDefined()
       })
