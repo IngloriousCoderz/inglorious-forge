@@ -86,22 +86,9 @@ export const entities = {
     showTooltip: true,
   },
 
-  // Line Chart - Recharts-style composition (same data, different approach)
-  salesLineChartRecharts: {
-    type: "line",
-    data: [
-      { name: "Day 1", value: 50 },
-      { name: "Day 2", value: 150 },
-      { name: "Day 3", value: 120 },
-      { name: "Day 4", value: 180 },
-      { name: "Day 5", value: 25 },
-      { name: "Day 6", value: 160 },
-      { name: "Day 7", value: 190 },
-    ],
-  },
-
   // Line Chart - Composition (same data as salesLineChart)
   salesLineChartComposition: {
+    type: "line",
     data: [
       { name: "0", value: 50 },
       { name: "1", value: 150 },

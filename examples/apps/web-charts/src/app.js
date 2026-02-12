@@ -175,6 +175,41 @@ export const app = {
               )}
             </section>
           </div>
+
+          <div class="charts-comparison">
+            <section class="chart-section">
+              <h2>Line Chart with Brush - Config Style</h2>
+              ${api.render("lineChartWithBrushConfig")}
+            </section>
+
+            <section class="chart-section">
+              <h2>
+                Line Chart with Brush - Recharts Style (Composition with
+                api.getEntity)
+              </h2>
+              ${chart.renderLineChart(
+                api.getEntity("lineChartWithBrush"),
+                {
+                  width: 800,
+                  height: 400,
+                  dataKeys: ["value"],
+                  children: [
+                    chart.CartesianGrid({
+                      stroke: "#eee",
+                      strokeDasharray: "5 5",
+                    }),
+                    chart.XAxis({ dataKey: "name" }),
+                    chart.YAxis({ width: "auto" }),
+                    chart.Line({ dataKey: "value", stroke: "#8884d8" }),
+                    chart.Dots({ dataKey: "value", fill: "#8884d8" }),
+                    chart.Tooltip({}),
+                    chart.Brush({ height: 30 }),
+                  ],
+                },
+                api,
+              )}
+            </section>
+          </div>
         </main>
       </div>
     `
