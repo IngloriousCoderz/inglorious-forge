@@ -102,7 +102,6 @@ export const entities = {
 
   // Line Chart - Composition (same data as salesLineChart)
   salesLineChartComposition: {
-    type: "line",
     data: [
       { name: "0", value: 50 },
       { name: "1", value: 150 },
@@ -587,3 +586,14 @@ export const entities = {
     showTooltip: true,
   },
 }
+
+// Export data arrays for direct use with createChart
+export const salesLineChartData = [
+  { name: "0", value: 50 },
+  { name: "1", value: 150 },
+  { name: "2", value: 120 },
+  { name: "3", value: 180 },
+  { name: "4", value: 25 },
+  { name: "5", value: 160 },
+  { name: "6", value: 190 },
+]
