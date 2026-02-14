@@ -1,0 +1,51 @@
+body {
+  display: flex;
+  justify-content: center;
+  font-family: Roboto, Arial;
+
+  #root {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    & > * {
+      width: 35rem;
+      /* text-align: center; */
+    }
+  }
+}
+
+input,
+button,
+a {
+  padding: 0.25rem 0.5rem;
+}
+
+button,
+a {
+  cursor: pointer;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+.completed {
+  opacity: 0.5;
+  text-decoration: line-through;
+}
+
+footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .filters {
+    display: flex;
+    gap: 1rem;
+
+    a.selected {
+      border: 1px solid red;
+    }
+  }
+}

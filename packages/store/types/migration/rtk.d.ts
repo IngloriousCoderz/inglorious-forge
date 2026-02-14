@@ -147,6 +147,12 @@ export interface ConvertSliceOptions<TEntity extends BaseEntity = BaseEntity> {
     string,
     (entity: TEntity, payload?: any, api?: Api) => void
   >
+
+  /**
+   * Additional RTK actions to map (useful for createAction + extraReducers).
+   * Accepts action creators (with a `type` field) or raw action type strings.
+   */
+  extraActions?: Array<string | { type: string }>
 }
 
 /**

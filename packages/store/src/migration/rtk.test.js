@@ -1,6 +1,7 @@
 import {
   asyncThunkCreator,
   buildCreateSlice,
+  createAction,
   createSlice,
 } from "@reduxjs/toolkit"
 import { describe, expect, it, vi } from "vitest"
@@ -186,6 +187,40 @@ describe("RTK Adapter", () => {
       expect(initialized.step).toBe(1)
     })
 
+    it("should preserve preloaded fields when create runs", () => {
+      const todosSlice = createSlice({
+        name: "todos",
+        initialState: {
+          items: [],
+          filter: "all",
+        },
+        reducers: {},
+      })
+
+      const todoType = convertSlice(todosSlice)
+      const api = createMockApi({
+        todos: {
+          type: "todoList",
+          id: "todos",
+          items: [{ id: 1, text: "Keep me" }],
+        },
+      })
+
+      const { entity } = trigger(
+        {
+          type: "todoList",
+          id: "todos",
+          items: [{ id: 1, text: "Keep me" }],
+        },
+        todoType.create,
+        undefined,
+        api,
+      )
+
+      expect(entity.items).toEqual([{ id: 1, text: "Keep me" }])
+      expect(entity.filter).toBe("all")
+    })
+
     it("should execute reducers as event handlers", () => {
       const counterSlice = createSlice({
         name: "counter",
@@ -217,6 +252,83 @@ describe("RTK Adapter", () => {
         api,
       )
       expect(entity2.value).toBe(7)
+    })
+
+    it("should expose RTK action-type aliases for reducers", () => {
+      const counterSlice = createSlice({
+        name: "counter",
+        initialState: { value: 0 },
+        reducers: {
+          increment(state, action) {
+            state.value += action.payload || 1
+          },
+        },
+      })
+
+      const counterType = convertSlice(counterSlice)
+      const api = createMockApi({
+        counter1: { type: "counter", id: "counter1", value: 1 },
+      })
+
+      const { entity } = trigger(
+        { type: "counter", id: "counter1", value: 1 },
+        counterType["counter/increment"],
+        2,
+        api,
+      )
+      expect(entity.value).toBe(3)
+    })
+
+    it("should map createAction + extraReducers via extraActions option", () => {
+      const formSubmit = createAction("formSubmit")
+      const clearClick = createAction("clearClick")
+
+      const listSlice = createSlice({
+        name: "list",
+        initialState: { tasks: [] },
+        reducers: {},
+        extraReducers: (builder) => {
+          builder
+            .addCase(formSubmit, (state, action) => {
+              state.tasks.push({ id: 1, text: action.payload })
+            })
+            .addCase(clearClick, (state) => {
+              state.tasks = state.tasks.filter((task) => !task.completed)
+            })
+        },
+      })
+
+      const listType = convertSlice(listSlice, {
+        extraActions: [formSubmit, clearClick],
+      })
+      const api = createMockApi({
+        list1: { type: "list", id: "list1", tasks: [] },
+      })
+
+      const { entity: entity1 } = trigger(
+        { type: "list", id: "list1", tasks: [] },
+        listType.formSubmit,
+        "Buy milk",
+        api,
+      )
+      expect(entity1.tasks).toEqual([{ id: 1, text: "Buy milk" }])
+
+      const { entity: entity2 } = trigger(
+        {
+          type: "list",
+          id: "list1",
+          tasks: [
+            { id: 1, text: "Buy milk", completed: true },
+            { id: 2, text: "Walk dog", completed: false },
+          ],
+        },
+        listType.clearClick,
+        undefined,
+        api,
+      )
+      expect(entity2.tasks).toEqual([
+        { id: 2, text: "Walk dog", completed: false },
+      ])
     })
 
     it("should convert async thunks", () => {
@@ -315,6 +427,14 @@ describe("RTK Adapter", () => {
       )
       expect(e2.loading).toBe(false)
       expect(e2.todos).toEqual([{ id: "1", text: "todo-1" }])
+
+      const { entity: e3 } = trigger(
+        { type: "todoList", id: "todos", loading: false, todos: [] },
+        todoType["todos/fetchTodo/pending"],
+        "1",
+        api,
+      )
+      expect(e3.loading).toBe(true)
     })
 
     it("should run create.asyncThunk with payloadCreator override", async () => {

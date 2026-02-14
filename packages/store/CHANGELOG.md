@@ -1,5 +1,11 @@
 # @inglorious/store
 
+## 9.5.3
+
+### Patch Changes
+
+- Fix state init in RTK migration
+
 ## 9.5.2
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/pong",
-  "version": "1.0.33",
+  "version": "1.0.34",
   "type": "module",
   "private": true,
   "description": "A Pong clone, re-implemented with the Inglorious Engine.",

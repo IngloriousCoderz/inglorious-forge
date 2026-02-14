@@ -1,5 +1,11 @@
 # @inglorious/ssx
 
+## 1.6.4
+
+### Patch Changes
+
+- @inglorious/web@4.2.4
+
 ## 1.6.3
 
 ### Patch Changes

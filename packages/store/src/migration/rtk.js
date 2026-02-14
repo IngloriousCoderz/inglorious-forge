@@ -5,6 +5,8 @@
  * Inglorious types, enabling gradual migration from RTK to Inglorious Store.
  */
 
+import { extend } from "@inglorious/utils/data-structures/objects.js"
+
 import { handleAsync } from "../async"
 
 const SEP_LENGTH = 50
@@ -165,13 +167,14 @@ export function convertAsyncThunk(name, payloadCreator, options = {}) {
  * })
  */
 export function convertSlice(slice, options = {}) {
-  const { asyncThunks = {}, extraHandlers = {} } = options
+  const { asyncThunks = {}, extraHandlers = {}, extraActions = [] } = options
 
   const type = {
-    // Convert initialState to create handler
+    // Convert initialState to create handler.
+    // Preserve explicitly preloaded fields from entities (common in tests/SSR hydration).
     create(entity) {
       const initialState = slice.getInitialState()
-      Object.assign(entity, initialState)
+      Object.assign(entity, extend(initialState, entity))
     },
   }
 
@@ -224,16 +227,28 @@ export function convertSlice(slice, options = {}) {
 
         Object.assign(type, asyncHandlers)
       } else {
-        if (pending) type[`${actionName}Pending`] = pending
-        if (fulfilled) type[`${actionName}Fulfilled`] = fulfilled
-        if (rejected) type[`${actionName}Rejected`] = rejected
-        if (settled) type[`${actionName}Settled`] = settled
+        if (pending) {
+          type[`${actionName}Pending`] = pending
+          type[`${slice.name}/${actionName}/pending`] = pending
+        }
+        if (fulfilled) {
+          type[`${actionName}Fulfilled`] = fulfilled
+          type[`${slice.name}/${actionName}/fulfilled`] = fulfilled
+        }
+        if (rejected) {
+          type[`${actionName}Rejected`] = rejected
+          type[`${slice.name}/${actionName}/rejected`] = rejected
+        }
+        if (settled) {
+          type[`${actionName}Settled`] = settled
+          type[`${slice.name}/${actionName}/settled`] = settled
+        }
       }
 
       continue
     }
 
-    type[actionName] = (entity, payload) => {
+    const handler = (entity, payload) => {
       // Create a mock action object for the RTK reducer
       const action = { type: `${slice.name}/${actionName}`, payload }
 
@@ -242,6 +257,11 @@ export function convertSlice(slice, options = {}) {
       // So we can call the reducer directly on the entity
       reducer(entity, action)
     }
+
+    // Expose both Inglorious-style event names and RTK action-type aliases.
+    // This enables direct dispatch of RTK slice actions without extra bridge wiring.
+    type[actionName] = handler
+    type[`${slice.name}/${actionName}`] = handler
   }
 
   // Convert explicitly configured async thunks that are not embedded in slice reducers.
@@ -260,6 +280,18 @@ export function convertSlice(slice, options = {}) {
       )
 
       Object.assign(type, asyncHandlers)
+    }
+  }
+
+  // Register additional RTK action types (e.g. createAction + extraReducers).
+  // RTK does not expose extraReducers through slice.caseReducers, so callers can
+  // provide the action creators/types explicitly and we route them through slice.reducer.
+  for (const action of extraActions) {
+    const actionType = typeof action === "string" ? action : action?.type
+    if (typeof actionType !== "string" || type[actionType]) continue
+
+    type[actionType] = (entity, payload) => {
+      applySliceReducer(entity, slice, actionType, payload)
     }
   }
 
@@ -416,4 +448,19 @@ function toLifecycleHandler(sliceName, actionName, stage, reducer) {
   return (entity, payload) => {
     reducer(entity, createActionObject(sliceName, actionName, stage, payload))
   }
+}
+
+function applySliceReducer(entity, slice, actionType, payload) {
+  const action = { type: actionType, payload }
+  const nextState = slice.reducer(toPlainState(entity), action)
+
+  for (const key of Object.keys(entity)) {
+    delete entity[key]
+  }
+
+  Object.assign(entity, nextState)
+}
+
+function toPlainState(entity) {
+  return JSON.parse(JSON.stringify(entity))
 }
