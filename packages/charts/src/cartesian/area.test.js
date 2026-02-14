@@ -33,15 +33,13 @@ describe("area", () => {
     api = {
       getEntity: vi.fn((id) => (id === "test-area" ? entity : null)),
       notify: vi.fn(),
-      getType: vi.fn().mockReturnValue({
-        renderTooltip: () => "",
-      }),
+      getType: vi.fn((type) => (type === "area" ? area : null)),
     }
   })
 
-  describe("renderChart()", () => {
+  describe("render()", () => {
     it("should render area chart with data", () => {
-      const result = area.renderChart(entity, api)
+      const result = area.render(entity, api)
       const container = document.createElement("div")
       render(result, container)
 
@@ -52,7 +50,7 @@ describe("area", () => {
     it("should handle empty data gracefully", () => {
       entity.data = []
 
-      const result = area.renderChart(entity, api)
+      const result = area.render(entity, api)
       const container = document.createElement("div")
       render(result, container)
 
@@ -328,7 +326,7 @@ describe("area", () => {
       )
 
       expect(api.notify).toHaveBeenCalledWith(
-        `#${entity.id}:showTooltip`,
+        `#${entity.id}:tooltipShow`,
         expect.objectContaining({
           label: "Jan",
           value: 50,
@@ -337,7 +335,7 @@ describe("area", () => {
       )
 
       circle.dispatchEvent(new MouseEvent("mouseleave", { bubbles: true }))
-      expect(api.notify).toHaveBeenCalledWith(`#${entity.id}:hideTooltip`)
+      expect(api.notify).toHaveBeenCalledWith(`#${entity.id}:tooltipHide`)
     })
   })
 

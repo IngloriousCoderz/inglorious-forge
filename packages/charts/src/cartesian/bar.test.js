@@ -30,15 +30,13 @@ describe("bar", () => {
     api = {
       getEntity: vi.fn((id) => (id === "test-bar" ? entity : null)),
       notify: vi.fn(),
-      getType: vi.fn().mockReturnValue({
-        renderTooltip: () => "",
-      }),
+      getType: vi.fn((type) => (type === "bar" ? bar : null)),
     }
   })
 
-  describe("renderChart()", () => {
+  describe("render()", () => {
     it("should render bar chart with data", () => {
-      const result = bar.renderChart(entity, api)
+      const result = bar.render(entity, api)
       const container = document.createElement("div")
       render(result, container)
 
@@ -49,7 +47,7 @@ describe("bar", () => {
     it("should handle empty data gracefully", () => {
       entity.data = []
 
-      const result = bar.renderChart(entity, api)
+      const result = bar.render(entity, api)
       const container = document.createElement("div")
       render(result, container)
 
@@ -60,7 +58,7 @@ describe("bar", () => {
     it("should render grid when showGrid is true", () => {
       entity.showGrid = true
 
-      const result = bar.renderChart(entity, api)
+      const result = bar.render(entity, api)
       const container = document.createElement("div")
       render(result, container)
 
@@ -71,7 +69,7 @@ describe("bar", () => {
     it("should not render grid when showGrid is false", () => {
       entity.showGrid = false
 
-      const result = bar.renderChart(entity, api)
+      const result = bar.render(entity, api)
       const container = document.createElement("div")
       render(result, container)
 

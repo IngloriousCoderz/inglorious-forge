@@ -11,6 +11,86 @@ const TOOLTIP_ESTIMATED_WIDTH = 140
 const TOOLTIP_ESTIMATED_HEIGHT = 60
 
 /**
+ * Creates tooltip event handlers for chart elements
+ * @param {Object} params
+ * @param {any} params.entity - Chart entity
+ * @param {import('@inglorious/web').Api} params.api - Web API instance
+ * @param {Object} params.tooltipData - Tooltip data
+ * @param {string} params.tooltipData.label - Tooltip label
+ * @param {number} params.tooltipData.value - Tooltip value
+ * @param {string} params.tooltipData.color - Tooltip color
+ * @returns {{ onMouseEnter: Function, onMouseLeave: Function }}
+ */
+export function createTooltipHandlers({ entity, api, tooltipData }) {
+  const onMouseEnter = (e) => {
+    if (!entity.showTooltip) return
+    const svgElement = e.currentTarget.closest("svg")
+    const svgRect = svgElement.getBoundingClientRect()
+    const containerElement =
+      svgElement.closest(".iw-chart") || svgElement.parentElement
+    const containerRect = containerElement.getBoundingClientRect()
+
+    const relativeX = e.clientX - svgRect.left
+    const relativeY = e.clientY - svgRect.top
+
+    const { x, y } = calculateTooltipPosition(
+      relativeX,
+      relativeY,
+      svgRect,
+      containerRect,
+    )
+
+    api.notify(`#${entity.id}:tooltipShow`, {
+      label: tooltipData.label,
+      value: tooltipData.value,
+      color: tooltipData.color,
+      x,
+      y,
+    })
+  }
+
+  const onMouseLeave = () => {
+    if (!entity.showTooltip) return
+    api.notify(`#${entity.id}:tooltipHide`)
+  }
+
+  return { onMouseEnter, onMouseLeave }
+}
+
+/**
+ * Creates a mouse move handler for tooltip positioning
+ * @param {Object} params
+ * @param {any} params.entity - Chart entity
+ * @param {import('@inglorious/web').Api} params.api - Web API instance
+ * @returns {Function} Mouse move event handler
+ */
+export function createTooltipMoveHandler({ entity, api }) {
+  return (e) => {
+    if (!entity.tooltip) return
+    const svgElement = e.currentTarget
+    const svgRect = svgElement.getBoundingClientRect()
+    const containerElement =
+      svgElement.closest(".iw-chart") || svgElement.parentElement
+    const containerRect = containerElement.getBoundingClientRect()
+
+    const relativeX = e.clientX - svgRect.left
+    const relativeY = e.clientY - svgRect.top
+
+    const { x, y } = calculateTooltipPosition(
+      relativeX,
+      relativeY,
+      svgRect,
+      containerRect,
+    )
+
+    api.notify(`#${entity.id}:tooltipMove`, {
+      x,
+      y,
+    })
+  }
+}
+
+/**
  * Calculates tooltip position, adjusting if it would be cut off
  * @param {number} x - X position relative to SVG
  * @param {number} y - Y position relative to SVG
@@ -46,84 +126,4 @@ function calculateTooltipPosition(x, y, svgRect, containerRect) {
   }
 
   return { x: tooltipX, y: tooltipY }
-}
-
-/**
- * Creates tooltip event handlers for chart elements
- * @param {Object} params
- * @param {any} params.entity - Chart entity
- * @param {import('@inglorious/web').Api} params.api - Web API instance
- * @param {Object} params.tooltipData - Tooltip data
- * @param {string} params.tooltipData.label - Tooltip label
- * @param {number} params.tooltipData.value - Tooltip value
- * @param {string} params.tooltipData.color - Tooltip color
- * @returns {{ onMouseEnter: Function, onMouseLeave: Function }}
- */
-export function createTooltipHandlers({ entity, api, tooltipData }) {
-  const onMouseEnter = (e) => {
-    if (!entity.showTooltip) return
-    const svgElement = e.currentTarget.closest("svg")
-    const svgRect = svgElement.getBoundingClientRect()
-    const containerElement =
-      svgElement.closest(".iw-chart") || svgElement.parentElement
-    const containerRect = containerElement.getBoundingClientRect()
-
-    const relativeX = e.clientX - svgRect.left
-    const relativeY = e.clientY - svgRect.top
-
-    const { x, y } = calculateTooltipPosition(
-      relativeX,
-      relativeY,
-      svgRect,
-      containerRect,
-    )
-
-    api.notify(`#${entity.id}:showTooltip`, {
-      label: tooltipData.label,
-      value: tooltipData.value,
-      color: tooltipData.color,
-      x,
-      y,
-    })
-  }
-
-  const onMouseLeave = () => {
-    if (!entity.showTooltip) return
-    api.notify(`#${entity.id}:hideTooltip`)
-  }
-
-  return { onMouseEnter, onMouseLeave }
-}
-
-/**
- * Creates a mouse move handler for tooltip positioning
- * @param {Object} params
- * @param {any} params.entity - Chart entity
- * @param {import('@inglorious/web').Api} params.api - Web API instance
- * @returns {Function} Mouse move event handler
- */
-export function createTooltipMoveHandler({ entity, api }) {
-  return (e) => {
-    if (!entity.tooltip) return
-    const svgElement = e.currentTarget
-    const svgRect = svgElement.getBoundingClientRect()
-    const containerElement =
-      svgElement.closest(".iw-chart") || svgElement.parentElement
-    const containerRect = containerElement.getBoundingClientRect()
-
-    const relativeX = e.clientX - svgRect.left
-    const relativeY = e.clientY - svgRect.top
-
-    const { x, y } = calculateTooltipPosition(
-      relativeX,
-      relativeY,
-      svgRect,
-      containerRect,
-    )
-
-    api.notify(`#${entity.id}:moveTooltip`, {
-      x,
-      y,
-    })
-  }
 }

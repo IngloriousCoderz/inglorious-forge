@@ -5,7 +5,7 @@ import { scaleBand } from "d3-scale"
 
 import { createBrushComponent } from "../component/brush.js"
 import { renderGrid } from "../component/grid.js"
-import { renderTooltip } from "../component/tooltip.js"
+import { createTooltipComponent, renderTooltip } from "../component/tooltip.js"
 import { renderXAxis } from "../component/x-axis.js"
 import { renderYAxis } from "../component/y-axis.js"
 import { renderRectangle } from "../shape/rectangle.js"
@@ -17,23 +17,29 @@ import { createTooltipHandlers } from "../utils/tooltip-handlers.js"
 
 export const bar = {
   /**
-   * CONFIG MODE
+   * Config-based rendering entry point.
+   * Builds default composition children from entity options and delegates to
+   * `renderBarChart`.
+   * @param {import('../types/charts').ChartEntity} entity
+   * @param {import('@inglorious/web').Api} api
+   * @returns {import('lit-html').TemplateResult}
    */
-  renderChart(entity, api) {
+  render(entity, api) {
+    const type = api.getType(entity.type)
     const children = [
       entity.showGrid !== false
-        ? bar.renderCartesianGrid(entity, {}, api)
+        ? type.renderCartesianGrid(entity, {}, api)
         : null,
-      bar.renderXAxis(entity, {}, api),
-      bar.renderYAxis(entity, {}, api),
-      bar.renderBar(
+      type.renderXAxis(entity, {}, api),
+      type.renderYAxis(entity, {}, api),
+      type.renderBar(
         entity,
         { config: { dataKey: "value", multiColor: false } },
         api,
       ),
     ].filter(Boolean)
 
-    const chartContent = bar.renderBarChart(
+    const chartContent = type.renderBarChart(
       entity,
       {
         children,
@@ -58,7 +64,11 @@ export const bar = {
   },
 
   /**
-   * COMPOSITION MODE
+   * Composition rendering entry point for bar charts.
+   * @param {import('../types/charts').ChartEntity} entity
+   * @param {{ children: any[]|any, config?: Record<string, any> }} params
+   * @param {import('@inglorious/web').Api} api
+   * @returns {import('lit-html').TemplateResult}
    */
   renderBarChart(entity, { children, config = {} }, api) {
     if (!entity) return html`<div>Entity not found</div>`
@@ -237,6 +247,13 @@ export const bar = {
     `
   },
 
+  /**
+   * Composition sub-render for bars.
+   * @param {import('../types/charts').ChartEntity} entity
+   * @param {{ config?: Record<string, any> }} params
+   * @param {import('@inglorious/web').Api} api
+   * @returns {(ctx: Record<string, any>, barIndex: number, totalBars: number) => import('lit-html').TemplateResult}
+   */
   renderBar(entity, { config = {} }, api) {
     // Preserve config values in closure
     const { dataKey = "value", fill, multiColor = false } = config
@@ -318,6 +335,13 @@ export const bar = {
     return drawFn
   },
 
+  /**
+   * Composition sub-render for X axis.
+   * @param {import('../types/charts').ChartEntity} entity
+   * @param {{ config?: Record<string, any> }} params
+   * @param {import('@inglorious/web').Api} api
+   * @returns {(ctx: Record<string, any>) => import('lit-html').TemplateResult}
+   */
   renderXAxis(entity, { config = {} }, api) {
     // Return a function that preserves the original object
     // This prevents lit-html from evaluating the function before passing it
@@ -352,6 +376,13 @@ export const bar = {
     return renderFn
   },
 
+  /**
+   * Composition sub-render for Y axis.
+   * @param {import('../types/charts').ChartEntity} entity
+   * @param {{ config?: Record<string, any> }} params
+   * @param {import('@inglorious/web').Api} api
+   * @returns {(ctx: Record<string, any>) => import('lit-html').TemplateResult}
+   */
   renderYAxis(entity, props, api) {
     const axisFn = (ctx) => {
       const entityFromContext = ctx.entity || entity
@@ -372,6 +403,13 @@ export const bar = {
     return axisFn
   },
 
+  /**
+   * Composition sub-render for cartesian grid.
+   * @param {import('../types/charts').ChartEntity} entity
+   * @param {{ config?: Record<string, any> }} params
+   * @param {import('@inglorious/web').Api} api
+   * @returns {(ctx: Record<string, any>) => import('lit-html').TemplateResult}
+   */
   renderCartesianGrid(entity, { config = {} }, api) {
     const gridFn = (ctx) => {
       const entityFromContext = ctx.entity || entity
@@ -393,5 +431,15 @@ export const bar = {
     return gridFn
   },
 
+  /**
+   * Composition sub-render for tooltip overlay.
+   * @type {(entity: import('../types/charts').ChartEntity, params: { config?: Record<string, any> }, api: import('@inglorious/web').Api) => (ctx: Record<string, any>) => import('lit-html').TemplateResult}
+   */
+  renderTooltip: createTooltipComponent(),
+
+  /**
+   * Composition sub-render for brush control.
+   * @type {(entity: import('../types/charts').ChartEntity, params: { config?: Record<string, any> }, api: import('@inglorious/web').Api) => (ctx: Record<string, any>) => import('lit-html').TemplateResult}
+   */
   renderBrush: createBrushComponent(),
 }

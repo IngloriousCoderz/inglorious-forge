@@ -35,9 +35,9 @@ describe("line", () => {
     }
   })
 
-  describe("renderChart", () => {
+  describe("render", () => {
     it("should render line chart with data", () => {
-      const result = line.renderChart(entity, api)
+      const result = line.render(entity, api)
       const container = document.createElement("div")
       render(result, container)
 
@@ -48,9 +48,9 @@ describe("line", () => {
     it("should handle empty data gracefully", () => {
       entity.data = []
 
-      const result = line.renderChart(entity, api)
+      const result = line.render(entity, api)
       expect(result).toBeDefined()
-      // renderChart may return empty template or handle empty state internally
+      // render may return empty template or handle empty state internally
     })
   })
 

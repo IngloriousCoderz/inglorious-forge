@@ -19,83 +19,20 @@ import { processDeclarativeChild } from "../utils/process-declarative-child.js"
 import { createSharedContext } from "../utils/shared-context.js"
 import { createTooltipHandlers } from "../utils/tooltip-handlers.js"
 
-/**
- * Builds declarative children from entity config for renderChart (config style)
- * Converts entity configuration into children objects that renderAreaChart can process
- */
-function buildChildrenFromConfig(entity) {
-  const children = []
-
-  if (entity.showGrid !== false) {
-    children.push(
-      chart.CartesianGrid({ stroke: "#eee", strokeDasharray: "5 5" }),
-    )
-  }
-
-  let xAxisDataKey = entity.dataKey
-  if (!xAxisDataKey && entity.data && entity.data.length > 0) {
-    const firstItem = entity.data[0]
-    xAxisDataKey = firstItem.name || firstItem.x || firstItem.date || "name"
-  }
-  children.push(chart.XAxis({ dataKey: xAxisDataKey || "name" }))
-  children.push(chart.YAxis({ width: "auto" }))
-
-  let dataKeys = []
-  if (isMultiSeries(entity.data)) {
-    dataKeys = entity.data.map(
-      (series, idx) => series.dataKey || series.name || `series${idx}`,
-    )
-  } else {
-    dataKeys = ["y", "value"].filter(
-      (key) =>
-        entity.data &&
-        entity.data.length > 0 &&
-        entity.data[0][key] !== undefined,
-    )
-    if (dataKeys.length === 0) dataKeys = ["value"]
-  }
-
-  const colors = entity.colors || ["#8884d8", "#82ca9d", "#ffc658", "#ff8042"]
-  const isStacked = entity.stacked === true
-
-  dataKeys.forEach((dataKey, index) => {
-    children.push(
-      chart.Area({
-        dataKey,
-        fill: colors[index % colors.length],
-        fillOpacity: "0.6",
-        stroke: colors[index % colors.length],
-        stackId: isStacked ? "1" : undefined,
-      }),
-    )
-  })
-
-  if (entity.showPoints !== false) {
-    dataKeys.forEach((dataKey, index) => {
-      children.push(
-        chart.Dots({
-          dataKey,
-          fill: colors[index % colors.length],
-          stackId: isStacked ? "1" : undefined,
-        }),
-      )
-    })
-  }
-
-  if (entity.showTooltip !== false) children.push(chart.Tooltip({}))
-
-  return children
-}
-
 export const area = {
   /**
-   * CONFIG MODE
+   * Config-based rendering entry point.
+   * Builds default composition children from entity options and delegates to
+   * `renderAreaChart`.
+   * @param {import('../types/charts').ChartEntity} entity
+   * @param {import('@inglorious/web').Api} api
+   * @returns {import('lit-html').TemplateResult}
    */
-  renderChart(entity, api) {
-    if (!entity) return svg``
+  render(entity, api) {
+    const type = api.getType(entity.type)
     const children = buildChildrenFromConfig(entity)
 
-    return area.renderAreaChart(
+    return type.renderAreaChart(
       entity,
       {
         children,
@@ -110,7 +47,11 @@ export const area = {
   },
 
   /**
-   * COMPOSITION MODE
+   * Composition rendering entry point for area charts.
+   * @param {import('../types/charts').ChartEntity} entity
+   * @param {{ children: any[]|any, config?: Record<string, any> }} params
+   * @param {import('@inglorious/web').Api} api
+   * @returns {import('lit-html').TemplateResult}
    */
   renderAreaChart(entity, { children, config = {} }, api) {
     if (!entity) return svg`<text>Entity not found</text>`
@@ -199,6 +140,13 @@ export const area = {
     `
   },
 
+  /**
+   * Composition sub-render for cartesian grid.
+   * @param {import('../types/charts').ChartEntity} entity
+   * @param {{ config?: Record<string, any> }} params
+   * @param {import('@inglorious/web').Api} api
+   * @returns {(ctx: Record<string, any>) => import('lit-html').TemplateResult}
+   */
   renderCartesianGrid(entity, { config = {} }, api) {
     const gridFn = (ctx) => {
       const { xScale, yScale, dimensions } = ctx
@@ -212,6 +160,13 @@ export const area = {
     return gridFn
   },
 
+  /**
+   * Composition sub-render for X axis.
+   * @param {import('../types/charts').ChartEntity} entity
+   * @param {{ config?: Record<string, any> }} params
+   * @param {import('@inglorious/web').Api} api
+   * @returns {(ctx: Record<string, any>) => import('lit-html').TemplateResult}
+   */
   renderXAxis(entity, { config = {} }, api) {
     const axisFn = (ctx) => {
       const { xScale, yScale, dimensions } = ctx
@@ -229,6 +184,13 @@ export const area = {
     return axisFn
   },
 
+  /**
+   * Composition sub-render for Y axis.
+   * @param {import('../types/charts').ChartEntity} entity
+   * @param {{ config?: Record<string, any> }} params
+   * @param {import('@inglorious/web').Api} api
+   * @returns {(ctx: Record<string, any>) => import('lit-html').TemplateResult}
+   */
   renderYAxis(entity, props, api) {
     const axisFn = (ctx) => {
       const { yScale, dimensions } = ctx
@@ -237,6 +199,14 @@ export const area = {
     axisFn.isAxis = true
     return axisFn
   },
+
+  /**
+   * Composition sub-render for area paths.
+   * @param {import('../types/charts').ChartEntity} entity
+   * @param {{ config?: Record<string, any> }} params
+   * @param {import('@inglorious/web').Api} api
+   * @returns {(ctx: Record<string, any>) => import('lit-html').TemplateResult}
+   */
   // eslint-disable-next-line no-unused-vars
   renderArea(entity, { config = {} }, api) {
     const areaFn = (ctx) => {
@@ -285,6 +255,13 @@ export const area = {
     return areaFn
   },
 
+  /**
+   * Composition sub-render for area dots.
+   * @param {import('../types/charts').ChartEntity} entity
+   * @param {{ config?: Record<string, any> }} params
+   * @param {import('@inglorious/web').Api} api
+   * @returns {(ctx: Record<string, any>) => import('lit-html').TemplateResult}
+   */
   renderDots(entity, { config = {} }, api) {
     const dotsFn = (ctx) => {
       const { xScale, yScale } = ctx
@@ -333,6 +310,83 @@ export const area = {
     return dotsFn
   },
 
+  /**
+   * Composition sub-render for tooltip overlay.
+   * @type {(entity: import('../types/charts').ChartEntity, params: { config?: Record<string, any> }, api: import('@inglorious/web').Api) => (ctx: Record<string, any>) => import('lit-html').TemplateResult}
+   */
   renderTooltip: createTooltipComponent(),
+
+  /**
+   * Composition sub-render for brush control.
+   * @type {(entity: import('../types/charts').ChartEntity, params: { config?: Record<string, any> }, api: import('@inglorious/web').Api) => (ctx: Record<string, any>) => import('lit-html').TemplateResult}
+   */
   renderBrush: createBrushComponent(),
+}
+
+/**
+ * Builds declarative children from entity config for render (config style)
+ * Converts entity configuration into children objects that renderAreaChart can process
+ */
+function buildChildrenFromConfig(entity) {
+  const children = []
+
+  if (entity.showGrid !== false) {
+    children.push(
+      chart.CartesianGrid({ stroke: "#eee", strokeDasharray: "5 5" }),
+    )
+  }
+
+  let xAxisDataKey = entity.dataKey
+  if (!xAxisDataKey && entity.data && entity.data.length > 0) {
+    const firstItem = entity.data[0]
+    xAxisDataKey = firstItem.name || firstItem.x || firstItem.date || "name"
+  }
+  children.push(chart.XAxis({ dataKey: xAxisDataKey || "name" }))
+  children.push(chart.YAxis({ width: "auto" }))
+
+  let dataKeys = []
+  if (isMultiSeries(entity.data)) {
+    dataKeys = entity.data.map(
+      (series, idx) => series.dataKey || series.name || `series${idx}`,
+    )
+  } else {
+    dataKeys = ["y", "value"].filter(
+      (key) =>
+        entity.data &&
+        entity.data.length > 0 &&
+        entity.data[0][key] !== undefined,
+    )
+    if (dataKeys.length === 0) dataKeys = ["value"]
+  }
+
+  const colors = entity.colors || ["#8884d8", "#82ca9d", "#ffc658", "#ff8042"]
+  const isStacked = entity.stacked === true
+
+  dataKeys.forEach((dataKey, index) => {
+    children.push(
+      chart.Area({
+        dataKey,
+        fill: colors[index % colors.length],
+        fillOpacity: "0.6",
+        stroke: colors[index % colors.length],
+        stackId: isStacked ? "1" : undefined,
+      }),
+    )
+  })
+
+  if (entity.showPoints !== false) {
+    dataKeys.forEach((dataKey, index) => {
+      children.push(
+        chart.Dots({
+          dataKey,
+          fill: colors[index % colors.length],
+          stackId: isStacked ? "1" : undefined,
+        }),
+      )
+    })
+  }
+
+  if (entity.showTooltip !== false) children.push(chart.Tooltip({}))
+
+  return children
 }

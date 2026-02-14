@@ -2,13 +2,19 @@
 
 import { html, svg } from "@inglorious/web"
 
-import { renderTooltip } from "../component/tooltip.js"
+import { createTooltipComponent, renderTooltip } from "../component/tooltip.js"
 import { formatNumber } from "../utils/data-utils.js"
 import { calculatePieData } from "../utils/paths.js"
 import { renderPieSectors } from "./pie.js"
 
 export const donut = {
-  renderChart(entity, api) {
+  /**
+   * Top-level rendering entry point for donut charts.
+   * @param {import('../types/charts').ChartEntity} entity
+   * @param {import('@inglorious/web').Api} api
+   * @returns {import('lit-html').TemplateResult}
+   */
+  render(entity, api) {
     if (!entity.data || entity.data.length === 0) {
       return svg`<svg>...</svg>`
     }
@@ -100,7 +106,7 @@ export const donut = {
         // Use nameKey to get label
         const label = nameKey(slice.data)
 
-        api.notify(`#${entity.id}:showTooltip`, {
+        api.notify(`#${entity.id}:tooltipShow`, {
           label,
           percentage,
           value: slice.value,
@@ -111,7 +117,7 @@ export const donut = {
         })
       },
       onSliceLeave: () => {
-        api.notify(`#${entity.id}:hideTooltip`)
+        api.notify(`#${entity.id}:tooltipHide`)
       },
     })
 
@@ -153,7 +159,7 @@ export const donut = {
           @mousemove=${(e) => {
             if (!entity.tooltip) return
             const rect = e.currentTarget.getBoundingClientRect()
-            api.notify(`#${entity.id}:moveTooltip`, {
+            api.notify(`#${entity.id}:tooltipMove`, {
               x: e.clientX - rect.left + 15,
               y: e.clientY - rect.top - 15,
             })
@@ -166,4 +172,10 @@ export const donut = {
       </div>
     `
   },
+
+  /**
+   * Composition sub-render for tooltip overlay.
+   * @type {(entity: import('../types/charts').ChartEntity, params: { config?: Record<string, any> }, api: import('@inglorious/web').Api) => (ctx: Record<string, any>) => import('lit-html').TemplateResult}
+   */
+  renderTooltip: createTooltipComponent(),
 }

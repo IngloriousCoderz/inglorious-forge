@@ -28,113 +28,18 @@ import {
 
 // Removed global Maps - now using local context to avoid interference between charts
 
-/**
- * Builds declarative children from entity config for renderChart (config style)
- * Converts entity configuration into children objects that renderLineChart can process
- */
-function buildChildrenFromConfig(entity) {
-  const children = []
-
-  // Grid
-  if (entity.showGrid !== false) {
-    children.push(
-      chart.CartesianGrid({ stroke: "#eee", strokeDasharray: "5 5" }),
-    )
-  }
-
-  // XAxis - determine dataKey from entity or data structure
-  let xAxisDataKey = entity.dataKey
-  if (!xAxisDataKey && entity.data && entity.data.length > 0) {
-    const firstItem = entity.data[0]
-    xAxisDataKey = firstItem.name || firstItem.x || firstItem.date || "name"
-  }
-  if (!xAxisDataKey) {
-    xAxisDataKey = "name"
-  }
-  children.push(chart.XAxis({ dataKey: xAxisDataKey }))
-
-  // YAxis
-  children.push(chart.YAxis({ width: "auto" }))
-
-  // Extract dataKeys from entity data
-  let dataKeys = []
-  if (isMultiSeries(entity.data)) {
-    // Multi-series: use series names as dataKeys
-    dataKeys = entity.data.map((series, idx) => {
-      // Try to get dataKey from series, or use index
-      return series.dataKey || series.name || series.label || `series${idx}`
-    })
-  } else {
-    // Single series: use "y" or "value" as dataKey
-    dataKeys = ["y", "value"].filter(
-      (key) =>
-        entity.data &&
-        entity.data.length > 0 &&
-        entity.data[0][key] !== undefined,
-    )
-    if (dataKeys.length === 0) {
-      dataKeys = ["value"] // Default fallback
-    }
-  }
-
-  // Lines (one per dataKey)
-  const colors = entity.colors || ["#8884d8", "#82ca9d", "#ffc658", "#ff8042"]
-  dataKeys.forEach((dataKey, index) => {
-    children.push(
-      chart.Line({
-        dataKey,
-        stroke: colors[index % colors.length],
-        showDots: entity.showPoints !== false,
-      }),
-    )
-  })
-
-  // Dots (if showPoints is true)
-  if (entity.showPoints !== false && dataKeys.length > 0) {
-    dataKeys.forEach((dataKey, index) => {
-      children.push(
-        chart.Dots({
-          dataKey,
-          fill: colors[index % colors.length],
-        }),
-      )
-    })
-  }
-
-  // Tooltip
-  if (entity.showTooltip !== false) {
-    children.push(chart.Tooltip({}))
-  }
-
-  // Legend
-  if (entity.showLegend && isMultiSeries(entity.data)) {
-    children.push(
-      chart.Legend({
-        dataKeys,
-        labels: entity.labels || dataKeys,
-        colors: entity.colors,
-      }),
-    )
-  }
-
-  // Brush
-  if (entity.brush?.enabled) {
-    children.push(
-      chart.Brush({
-        dataKey: xAxisDataKey,
-        height: entity.brush.height || 30,
-      }),
-    )
-  }
-
-  return children
-}
-
 export const line = {
   /**
-   * CONFIG MODE
+   * Config-based rendering entry point.
+   * Builds default composition children from entity options and delegates to
+   * `renderLineChart`.
+   * @param {import('../types/charts').ChartEntity} entity
+   * @param {import('@inglorious/web').Api} api
+   * @returns {import('lit-html').TemplateResult}
    */
-  renderChart(entity, api) {
+  render(entity, api) {
+    const type = api.getType(entity.type)
+
     // Apply data filtering if brush is enabled
     const entityData = entity.brush?.enabled
       ? getFilteredData(entity)
@@ -167,7 +72,7 @@ export const line = {
 
     // Use the unified motor (renderLineChart)
     // Pass original entity in config so brush can access unfiltered data
-    return line.renderLineChart(
+    return type.renderLineChart(
       entityWithFilteredData,
       {
         children,
@@ -183,7 +88,11 @@ export const line = {
   },
 
   /**
-   * COMPOSITION MODE
+   * Composition rendering entry point for line charts.
+   * @param {import('../types/charts').ChartEntity} entity
+   * @param {{ children: any[]|any, config?: Record<string, any> }} params
+   * @param {import('@inglorious/web').Api} api
+   * @returns {import('lit-html').TemplateResult}
    */
   renderLineChart(entity, { children, config = {} }, api) {
     if (!entity) {
@@ -414,6 +323,13 @@ export const line = {
 
   // Helper functions moved to utils/data-utils.js as pure functions
 
+  /**
+   * Composition sub-render for cartesian grid.
+   * @param {import('../types/charts').ChartEntity} entity
+   * @param {{ config?: Record<string, any> }} params
+   * @param {import('@inglorious/web').Api} api
+   * @returns {(ctx: Record<string, any>) => import('lit-html').TemplateResult}
+   */
   renderCartesianGrid(entity, { config = {} }, api) {
     const gridFn = (ctx) => {
       const { xScale, yScale, dimensions } = ctx
@@ -445,6 +361,13 @@ export const line = {
     return gridFn
   },
 
+  /**
+   * Composition sub-render for X axis.
+   * @param {import('../types/charts').ChartEntity} entity
+   * @param {{ config?: Record<string, any> }} params
+   * @param {import('@inglorious/web').Api} api
+   * @returns {(ctx: Record<string, any>) => import('lit-html').TemplateResult}
+   */
   renderXAxis(entity, { config = {} }, api) {
     const axisFn = (ctx) => {
       const { xScale, yScale, dimensions } = ctx
@@ -486,6 +409,13 @@ export const line = {
     return axisFn
   },
 
+  /**
+   * Composition sub-render for Y axis.
+   * @param {import('../types/charts').ChartEntity} entity
+   * @param {{ config?: Record<string, any> }} params
+   * @param {import('@inglorious/web').Api} api
+   * @returns {(ctx: Record<string, any>) => import('lit-html').TemplateResult}
+   */
   renderYAxis(entity, { config = {} }, api) {
     // eslint-disable-next-line no-unused-vars
     const _config = config
@@ -511,6 +441,13 @@ export const line = {
     return axisFn
   },
 
+  /**
+   * Composition sub-render for line paths.
+   * @param {import('../types/charts').ChartEntity} entity
+   * @param {{ config?: Record<string, any> }} params
+   * @param {import('@inglorious/web').Api} api
+   * @returns {(ctx: Record<string, any>) => import('lit-html').TemplateResult}
+   */
   renderLine(entity, { config = {} }, api) {
     const lineFn = (ctx) => {
       const entityFromContext = ctx.entity || entity
@@ -629,6 +566,13 @@ export const line = {
     return lineFn
   },
 
+  /**
+   * Composition sub-render for line dots.
+   * @param {import('../types/charts').ChartEntity} entity
+   * @param {{ config?: Record<string, any> }} params
+   * @param {import('@inglorious/web').Api} api
+   * @returns {(ctx: Record<string, any>) => import('lit-html').TemplateResult}
+   */
   renderDots(entity, { config = {} }, api) {
     const dotsFn = (ctx) => {
       const { xScale, yScale } = ctx
@@ -705,6 +649,13 @@ export const line = {
     return dotsFn
   },
 
+  /**
+   * Composition sub-render for legend.
+   * @param {import('../types/charts').ChartEntity} entity
+   * @param {{ config?: Record<string, any> }} params
+   * @param {import('@inglorious/web').Api} api
+   * @returns {(ctx: Record<string, any>) => import('lit-html').TemplateResult}
+   */
   renderLegend(entity, { config = {} }, api) {
     const legendFn = (ctx) => {
       const { dimensions } = ctx
@@ -756,7 +707,117 @@ export const line = {
     return legendFn
   },
 
+  /**
+   * Composition sub-render for tooltip overlay.
+   * @type {(entity: import('../types/charts').ChartEntity, params: { config?: Record<string, any> }, api: import('@inglorious/web').Api) => (ctx: Record<string, any>) => import('lit-html').TemplateResult}
+   */
   renderTooltip: createTooltipComponent(),
 
+  /**
+   * Composition sub-render for brush control.
+   * @type {(entity: import('../types/charts').ChartEntity, params: { config?: Record<string, any> }, api: import('@inglorious/web').Api) => (ctx: Record<string, any>) => import('lit-html').TemplateResult}
+   */
   renderBrush: createBrushComponent(),
+}
+
+/**
+ * Builds declarative children from entity config for renderChart (config style)
+ * Converts entity configuration into children objects that renderLineChart can process
+ */
+function buildChildrenFromConfig(entity) {
+  const children = []
+
+  // Grid
+  if (entity.showGrid !== false) {
+    children.push(
+      chart.CartesianGrid({ stroke: "#eee", strokeDasharray: "5 5" }),
+    )
+  }
+
+  // XAxis - determine dataKey from entity or data structure
+  let xAxisDataKey = entity.dataKey
+  if (!xAxisDataKey && entity.data && entity.data.length > 0) {
+    const firstItem = entity.data[0]
+    xAxisDataKey = firstItem.name || firstItem.x || firstItem.date || "name"
+  }
+  if (!xAxisDataKey) {
+    xAxisDataKey = "name"
+  }
+  children.push(chart.XAxis({ dataKey: xAxisDataKey }))
+
+  // YAxis
+  children.push(chart.YAxis({ width: "auto" }))
+
+  // Extract dataKeys from entity data
+  let dataKeys = []
+  if (isMultiSeries(entity.data)) {
+    // Multi-series: use series names as dataKeys
+    dataKeys = entity.data.map((series, idx) => {
+      // Try to get dataKey from series, or use index
+      return series.dataKey || series.name || series.label || `series${idx}`
+    })
+  } else {
+    // Single series: use "y" or "value" as dataKey
+    dataKeys = ["y", "value"].filter(
+      (key) =>
+        entity.data &&
+        entity.data.length > 0 &&
+        entity.data[0][key] !== undefined,
+    )
+    if (dataKeys.length === 0) {
+      dataKeys = ["value"] // Default fallback
+    }
+  }
+
+  // Lines (one per dataKey)
+  const colors = entity.colors || ["#8884d8", "#82ca9d", "#ffc658", "#ff8042"]
+  dataKeys.forEach((dataKey, index) => {
+    children.push(
+      chart.Line({
+        dataKey,
+        stroke: colors[index % colors.length],
+        showDots: entity.showPoints !== false,
+      }),
+    )
+  })
+
+  // Dots (if showPoints is true)
+  if (entity.showPoints !== false && dataKeys.length > 0) {
+    dataKeys.forEach((dataKey, index) => {
+      children.push(
+        chart.Dots({
+          dataKey,
+          fill: colors[index % colors.length],
+        }),
+      )
+    })
+  }
+
+  // Tooltip
+  if (entity.showTooltip !== false) {
+    children.push(chart.Tooltip({}))
+  }
+
+  // Legend
+  if (entity.showLegend && isMultiSeries(entity.data)) {
+    children.push(
+      chart.Legend({
+        dataKeys,
+        labels: entity.labels || dataKeys,
+        colors: entity.colors,
+      }),
+    )
+  }
+
+  // Brush
+  if (entity.brush?.enabled) {
+    children.push(
+      chart.Brush({
+        dataKey: xAxisDataKey,
+        height: entity.brush.height || 30,
+      }),
+    )
+  }
+
+  return children
 }

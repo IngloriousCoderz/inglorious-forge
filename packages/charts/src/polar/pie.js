@@ -2,7 +2,7 @@
 
 import { html, repeat, svg } from "@inglorious/web"
 
-import { renderTooltip } from "../component/tooltip.js"
+import { createTooltipComponent, renderTooltip } from "../component/tooltip.js"
 import { renderSector } from "../shape/sector.js"
 import { formatNumber } from "../utils/data-utils.js"
 import { calculatePieData } from "../utils/paths.js"
@@ -10,8 +10,159 @@ import { processDeclarativeChild } from "../utils/process-declarative-child.js"
 
 export const pie = {
   /**
-   * Compositional render mode (Recharts-style).
-   * Acts as a context provider for nested Pie components.
+   * Top-level rendering entry point for pie charts.
+   * @param {import('../types/charts').ChartEntity} entity
+   * @param {import('@inglorious/web').Api} api
+   * @returns {import('lit-html').TemplateResult}
+   */
+  render(entity, api) {
+    if (!entity.data || entity.data.length === 0) {
+      return svg`<svg>...</svg>`
+    }
+
+    // dataKey and nameKey: like Recharts (flexible data access)
+    const dataKey = entity.dataKey ?? ((d) => d.value)
+    const nameKey = entity.nameKey ?? ((d) => d.label || d.name || "")
+
+    // startAngle, endAngle, paddingAngle, minAngle: like Recharts
+    const startAngle = entity.startAngle ?? 0
+    const endAngle = entity.endAngle ?? 360
+    const paddingAngle = entity.paddingAngle ?? 0
+    const minAngle = entity.minAngle ?? 0
+
+    const pieData = calculatePieData(
+      entity.data,
+      dataKey,
+      startAngle,
+      endAngle,
+      paddingAngle,
+      minAngle,
+    )
+
+    const labelPosition = entity.labelPosition ?? "outside"
+
+    const outerPadding =
+      entity.outerPadding ??
+      (labelPosition === "tooltip" ? 50 : labelPosition === "inside" ? 20 : 60)
+
+    // outerRadius: like Recharts (default calculated from dimensions)
+    const outerRadius =
+      entity.outerRadius ??
+      Math.min(entity.width, entity.height) / 2 - outerPadding
+
+    // innerRadius: like Recharts (default 0 for pie chart)
+    const innerRadius = entity.innerRadius ?? 0
+
+    const offsetRadius = entity.offsetRadius ?? 20
+
+    // cx and cy: like Recharts (custom center position)
+    const centerX = entity.cx
+      ? typeof entity.cx === "string"
+        ? (parseFloat(entity.cx) / 100) * entity.width
+        : entity.cx
+      : entity.width / 2
+
+    const centerY = entity.cy
+      ? typeof entity.cy === "string"
+        ? (parseFloat(entity.cy) / 100) * entity.height
+        : entity.cy
+      : entity.height / 2
+
+    // cornerRadius: like Recharts (rounded edges)
+    const cornerRadius = entity.cornerRadius ?? 0
+
+    const slices = renderPieSectors({
+      pieData,
+      outerRadius,
+      innerRadius,
+      centerX,
+      centerY,
+      colors: entity.colors,
+      labelPosition,
+      showLabel: entity.showLabel ?? true,
+      offsetRadius,
+      minLabelPercentage: entity.minLabelPercentage,
+      labelOverflowMargin: entity.labelOverflowMargin,
+      cornerRadius,
+      nameKey,
+      width: entity.width,
+      height: entity.height,
+      labelPositions: null,
+      onSliceEnter: (slice, index, event) => {
+        if (!entity.showTooltip) return
+
+        const path = event.target
+        const svgEl = path.closest("svg")
+        const svgRect = svgEl.getBoundingClientRect()
+        // Get container element (.iw-chart) for relative positioning
+        const containerElement =
+          svgEl.closest(".iw-chart") || svgEl.parentElement
+        const containerRect = containerElement.getBoundingClientRect()
+
+        const angle = (slice.startAngle + slice.endAngle) / 2
+        const angleOffset = angle - Math.PI / 2
+        const labelRadius = outerRadius * 1.1
+        // x and y are relative to SVG
+        const x = centerX + Math.cos(angleOffset) * labelRadius
+        const y = centerY + Math.sin(angleOffset) * labelRadius
+        // Use absolute value to handle both clockwise and counter-clockwise slices
+        const percentage =
+          (Math.abs(slice.endAngle - slice.startAngle) / (2 * Math.PI)) * 100
+
+        // Use nameKey to get label
+        const label = nameKey(slice.data)
+
+        // Calculate position relative to container (not absolute page position)
+        // SVG position relative to container + tooltip position relative to SVG
+        const tooltipX = svgRect.left - containerRect.left + x
+        const tooltipY = svgRect.top - containerRect.top + y
+
+        api.notify(`#${entity.id}:tooltipShow`, {
+          label,
+          percentage,
+          value: slice.value,
+          color:
+            slice.data.color || entity.colors[index % entity.colors.length],
+          x: tooltipX,
+          y: tooltipY,
+        })
+      },
+      onSliceLeave: () => {
+        api.notify(`#${entity.id}:tooltipHide`)
+      },
+    })
+
+    return html`
+      <div class="iw-chart">
+        <svg
+          width=${entity.width}
+          height=${entity.height}
+          viewBox="0 0 ${entity.width} ${entity.height}"
+          class="iw-chart-svg"
+          @mousemove=${(e) => {
+            if (!entity.tooltip) return
+            const rect = e.currentTarget.getBoundingClientRect()
+            api.notify(`#${entity.id}:tooltipMove`, {
+              x: e.clientX - rect.left + 15,
+              y: e.clientY - rect.top - 15,
+            })
+          }}
+        >
+          ${slices}
+        </svg>
+
+        ${renderTooltip(entity, {}, api)}
+      </div>
+    `
+  },
+
+  /**
+   * Composition rendering entry point for pie charts.
+   * Acts as a context provider for nested `renderPie` components.
+   * @param {import('../types/charts').ChartEntity} entity
+   * @param {{ children?: any[]|any, config?: Record<string, any> }|any[]} params
+   * @param {import('@inglorious/web').Api} api
+   * @returns {import('lit-html').TemplateResult}
    */
   renderPieChart(entity, params, api) {
     if (!entity) return html`<div>Entity not found</div>`
@@ -191,8 +342,11 @@ export const pie = {
   },
 
   /**
-   * Renders a Pie component (setores do gráfico).
-   * Similar to Recharts <Pie> component.
+   * Composition sub-render for pie slices.
+   * @param {import('../types/charts').ChartEntity} entity
+   * @param {{ config?: Record<string, any> }} params
+   * @param {import('@inglorious/web').Api} api
+   * @returns {(ctx: Record<string, any>) => import('lit-html').TemplateResult}
    */
   // eslint-disable-next-line no-unused-vars
   renderPie(entity, { config = {} }, api) {
@@ -317,7 +471,7 @@ export const pie = {
           const tooltipX = svgRect.left - containerRect.left + x
           const tooltipY = svgRect.top - containerRect.top + y
 
-          ctx.api.notify(`#${entityFromContext.id}:showTooltip`, {
+          ctx.api.notify(`#${entityFromContext.id}:tooltipShow`, {
             label,
             percentage,
             value: slice.value,
@@ -327,7 +481,7 @@ export const pie = {
           })
         },
         onSliceLeave: () => {
-          ctx.api.notify(`#${entityFromContext.id}:hideTooltip`)
+          ctx.api.notify(`#${entityFromContext.id}:tooltipHide`)
         },
       })
     }
@@ -336,146 +490,11 @@ export const pie = {
     return pieFn
   },
 
-  renderChart(entity, api) {
-    if (!entity.data || entity.data.length === 0) {
-      return svg`<svg>...</svg>`
-    }
-
-    // dataKey and nameKey: like Recharts (flexible data access)
-    const dataKey = entity.dataKey ?? ((d) => d.value)
-    const nameKey = entity.nameKey ?? ((d) => d.label || d.name || "")
-
-    // startAngle, endAngle, paddingAngle, minAngle: like Recharts
-    const startAngle = entity.startAngle ?? 0
-    const endAngle = entity.endAngle ?? 360
-    const paddingAngle = entity.paddingAngle ?? 0
-    const minAngle = entity.minAngle ?? 0
-
-    const pieData = calculatePieData(
-      entity.data,
-      dataKey,
-      startAngle,
-      endAngle,
-      paddingAngle,
-      minAngle,
-    )
-
-    const labelPosition = entity.labelPosition ?? "outside"
-
-    const outerPadding =
-      entity.outerPadding ??
-      (labelPosition === "tooltip" ? 50 : labelPosition === "inside" ? 20 : 60)
-
-    // outerRadius: like Recharts (default calculated from dimensions)
-    const outerRadius =
-      entity.outerRadius ??
-      Math.min(entity.width, entity.height) / 2 - outerPadding
-
-    // innerRadius: like Recharts (default 0 for pie chart)
-    const innerRadius = entity.innerRadius ?? 0
-
-    const offsetRadius = entity.offsetRadius ?? 20
-
-    // cx and cy: like Recharts (custom center position)
-    const centerX = entity.cx
-      ? typeof entity.cx === "string"
-        ? (parseFloat(entity.cx) / 100) * entity.width
-        : entity.cx
-      : entity.width / 2
-
-    const centerY = entity.cy
-      ? typeof entity.cy === "string"
-        ? (parseFloat(entity.cy) / 100) * entity.height
-        : entity.cy
-      : entity.height / 2
-
-    // cornerRadius: like Recharts (rounded edges)
-    const cornerRadius = entity.cornerRadius ?? 0
-
-    const slices = renderPieSectors({
-      pieData,
-      outerRadius,
-      innerRadius,
-      centerX,
-      centerY,
-      colors: entity.colors,
-      labelPosition,
-      showLabel: entity.showLabel ?? true,
-      offsetRadius,
-      minLabelPercentage: entity.minLabelPercentage,
-      labelOverflowMargin: entity.labelOverflowMargin,
-      cornerRadius,
-      nameKey,
-      width: entity.width,
-      height: entity.height,
-      labelPositions: null,
-      onSliceEnter: (slice, index, event) => {
-        if (!entity.showTooltip) return
-
-        const path = event.target
-        const svgEl = path.closest("svg")
-        const svgRect = svgEl.getBoundingClientRect()
-        // Get container element (.iw-chart) for relative positioning
-        const containerElement =
-          svgEl.closest(".iw-chart") || svgEl.parentElement
-        const containerRect = containerElement.getBoundingClientRect()
-
-        const angle = (slice.startAngle + slice.endAngle) / 2
-        const angleOffset = angle - Math.PI / 2
-        const labelRadius = outerRadius * 1.1
-        // x and y are relative to SVG
-        const x = centerX + Math.cos(angleOffset) * labelRadius
-        const y = centerY + Math.sin(angleOffset) * labelRadius
-        // Use absolute value to handle both clockwise and counter-clockwise slices
-        const percentage =
-          (Math.abs(slice.endAngle - slice.startAngle) / (2 * Math.PI)) * 100
-
-        // Use nameKey to get label
-        const label = nameKey(slice.data)
-
-        // Calculate position relative to container (not absolute page position)
-        // SVG position relative to container + tooltip position relative to SVG
-        const tooltipX = svgRect.left - containerRect.left + x
-        const tooltipY = svgRect.top - containerRect.top + y
-
-        api.notify(`#${entity.id}:showTooltip`, {
-          label,
-          percentage,
-          value: slice.value,
-          color:
-            slice.data.color || entity.colors[index % entity.colors.length],
-          x: tooltipX,
-          y: tooltipY,
-        })
-      },
-      onSliceLeave: () => {
-        api.notify(`#${entity.id}:hideTooltip`)
-      },
-    })
-
-    return html`
-      <div class="iw-chart">
-        <svg
-          width=${entity.width}
-          height=${entity.height}
-          viewBox="0 0 ${entity.width} ${entity.height}"
-          class="iw-chart-svg"
-          @mousemove=${(e) => {
-            if (!entity.tooltip) return
-            const rect = e.currentTarget.getBoundingClientRect()
-            api.notify(`#${entity.id}:moveTooltip`, {
-              x: e.clientX - rect.left + 15,
-              y: e.clientY - rect.top - 15,
-            })
-          }}
-        >
-          ${slices}
-        </svg>
-
-        ${renderTooltip(entity, {}, api)}
-      </div>
-    `
-  },
+  /**
+   * Composition sub-render for tooltip overlay.
+   * @type {(entity: import('../types/charts').ChartEntity, params: { config?: Record<string, any> }, api: import('@inglorious/web').Api) => (ctx: Record<string, any>) => import('lit-html').TemplateResult}
+   */
+  renderTooltip: createTooltipComponent(),
 }
 
 /**

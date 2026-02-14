@@ -35,9 +35,9 @@ describe("pie", () => {
     }
   })
 
-  describe("renderChart()", () => {
+  describe("render()", () => {
     it("should render pie chart with data", () => {
-      const result = pie.renderChart(entity, api)
+      const result = pie.render(entity, api)
       const container = document.createElement("div")
       render(result, container)
 
@@ -48,7 +48,7 @@ describe("pie", () => {
     it("should handle empty data gracefully", () => {
       entity.data = []
 
-      const result = pie.renderChart(entity, api)
+      const result = pie.render(entity, api)
       const container = document.createElement("div")
       render(result, container)
 

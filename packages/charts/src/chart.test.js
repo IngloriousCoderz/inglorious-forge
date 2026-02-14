@@ -102,7 +102,7 @@ describe("chart", () => {
       })
     })
 
-    describe("updateData()", () => {
+    describe("dataUpdate()", () => {
       it("should update chart data", () => {
         const entity = {
           id: "test-chart",
@@ -112,13 +112,13 @@ describe("chart", () => {
 
         chart.create(entity)
         const newData = [{ label: "Apr", value: 200 }]
-        chart.updateData(entity, newData)
+        chart.dataUpdate(entity, newData)
 
         expect(entity.data).toEqual(newData)
       })
     })
 
-    describe("resize()", () => {
+    describe("sizeUpdate()", () => {
       it("should update width and height", () => {
         const entity = {
           id: "test-chart",
@@ -126,7 +126,7 @@ describe("chart", () => {
         }
 
         chart.create(entity)
-        chart.resize(entity, 1200, 600)
+        chart.sizeUpdate(entity, 1200, 600)
 
         expect(entity.width).toBe(1200)
         expect(entity.height).toBe(600)
@@ -134,7 +134,7 @@ describe("chart", () => {
       })
     })
 
-    describe("showTooltip()", () => {
+    describe("tooltipShow()", () => {
       it("should set tooltip data and position", () => {
         const entity = {
           id: "test-chart",
@@ -142,7 +142,7 @@ describe("chart", () => {
         }
 
         chart.create(entity)
-        chart.showTooltip(entity, {
+        chart.tooltipShow(entity, {
           label: "Jan",
           value: 100,
           color: "#3b82f6",
@@ -166,7 +166,7 @@ describe("chart", () => {
         }
 
         chart.create(entity)
-        chart.showTooltip(entity, {
+        chart.tooltipShow(entity, {
           label: "Category A",
           value: 20,
           percentage: 25,
@@ -184,7 +184,7 @@ describe("chart", () => {
       })
     })
 
-    describe("hideTooltip()", () => {
+    describe("tooltipHide()", () => {
       it("should clear tooltip", () => {
         const entity = {
           id: "test-chart",
@@ -192,20 +192,20 @@ describe("chart", () => {
         }
 
         chart.create(entity)
-        chart.showTooltip(entity, {
+        chart.tooltipShow(entity, {
           label: "Jan",
           value: 100,
           color: "#3b82f6",
           x: 100,
           y: 200,
         })
-        chart.hideTooltip(entity)
+        chart.tooltipHide(entity)
 
         expect(entity.tooltip).toBe(null)
       })
     })
 
-    describe("moveTooltip()", () => {
+    describe("tooltipMove()", () => {
       it("should update tooltip position", () => {
         const entity = {
           id: "test-chart",
@@ -213,14 +213,14 @@ describe("chart", () => {
         }
 
         chart.create(entity)
-        chart.showTooltip(entity, {
+        chart.tooltipShow(entity, {
           label: "Jan",
           value: 100,
           color: "#3b82f6",
           x: 100,
           y: 200,
         })
-        chart.moveTooltip(entity, { x: 150, y: 250 })
+        chart.tooltipMove(entity, { x: 150, y: 250 })
 
         expect(entity.tooltipX).toBe(150)
         expect(entity.tooltipY).toBe(250)
@@ -233,7 +233,7 @@ describe("chart", () => {
         }
 
         chart.create(entity)
-        chart.moveTooltip(entity, { x: 150, y: 250 })
+        chart.tooltipMove(entity, { x: 150, y: 250 })
 
         expect(entity.tooltipX).toBe(0)
         expect(entity.tooltipY).toBe(0)
@@ -286,10 +286,10 @@ describe("chart", () => {
 
   describe("chart types", () => {
     describe("barChart", () => {
-      it("should have create, render, and renderChart methods", () => {
+      it("should have create, render, and render methods", () => {
         expect(barChart.create).toBeDefined()
         expect(barChart.render).toBeDefined()
-        expect(barChart.renderChart).toBeDefined()
+        expect(barChart.render).toBeDefined()
       })
 
       it("should render chart with data", () => {
@@ -302,7 +302,14 @@ describe("chart", () => {
         }
 
         barChart.create(entity)
-        const result = barChart.renderChart(entity)
+        const mockApi = {
+          getType: vi.fn((type) => {
+            if (type === "bar") return barChart
+            return null
+          }),
+          notify: vi.fn(),
+        }
+        const result = barChart.render(entity, mockApi)
 
         expect(result).toBeDefined()
       })
@@ -317,17 +324,24 @@ describe("chart", () => {
         }
 
         barChart.create(entity)
-        const result = barChart.renderChart(entity)
+        const mockApi = {
+          getType: vi.fn((type) => {
+            if (type === "bar") return barChart
+            return null
+          }),
+          notify: vi.fn(),
+        }
+        const result = barChart.render(entity, mockApi)
 
         expect(result).toBeDefined()
       })
     })
 
     describe("lineChart", () => {
-      it("should have create, render, and renderChart methods", () => {
+      it("should have create, render, and render methods", () => {
         expect(lineChart.create).toBeDefined()
         expect(lineChart.render).toBeDefined()
-        expect(lineChart.renderChart).toBeDefined()
+        expect(lineChart.render).toBeDefined()
       })
 
       it("should render chart with data", () => {
@@ -347,15 +361,15 @@ describe("chart", () => {
           }),
           notify: vi.fn(),
         }
-        const result = lineChart.renderChart(entity, mockApi)
+        const result = lineChart.render(entity, mockApi)
 
         expect(result).toBeDefined()
       })
     })
 
     describe("areaChart", () => {
-      it("should have renderChart method", () => {
-        expect(areaChart.renderChart).toBeDefined()
+      it("should have render method", () => {
+        expect(areaChart.render).toBeDefined()
       })
 
       it("should render chart with data", () => {
@@ -375,17 +389,17 @@ describe("chart", () => {
           }),
           notify: vi.fn(),
         }
-        const result = areaChart.renderChart(entity, mockApi)
+        const result = areaChart.render(entity, mockApi)
 
         expect(result).toBeDefined()
       })
     })
 
     describe("pieChart", () => {
-      it("should have create, render, and renderChart methods", () => {
+      it("should have create, render, and render methods", () => {
         expect(pieChart.create).toBeDefined()
         expect(pieChart.render).toBeDefined()
-        expect(pieChart.renderChart).toBeDefined()
+        expect(pieChart.render).toBeDefined()
       })
 
       it("should render chart with data", () => {
@@ -398,17 +412,17 @@ describe("chart", () => {
         }
 
         pieChart.create(entity)
-        const result = pieChart.renderChart(entity, {})
+        const result = pieChart.render(entity, {})
 
         expect(result).toBeDefined()
       })
     })
 
     describe("donutChart", () => {
-      it("should have create, render, and renderChart methods", () => {
+      it("should have create, render, and render methods", () => {
         expect(donutChart.create).toBeDefined()
         expect(donutChart.render).toBeDefined()
-        expect(donutChart.renderChart).toBeDefined()
+        expect(donutChart.render).toBeDefined()
       })
 
       it("should render chart with data", () => {
@@ -421,7 +435,7 @@ describe("chart", () => {
         }
 
         donutChart.create(entity)
-        const result = donutChart.renderChart(entity, {})
+        const result = donutChart.render(entity, {})
 
         expect(result).toBeDefined()
       })

@@ -1,7 +1,7 @@
 import { svg } from "@inglorious/web"
 
-import { logic } from "./logic.js"
-import { rendering } from "./rendering.js"
+import * as handlers from "./handlers.js"
+import { render } from "./template.js"
 import { extractDataKeysFromChildren } from "./utils/extract-data-keys.js"
 
 // Export chart types for config style
@@ -13,111 +13,9 @@ export {
   pieChart,
 } from "./utils/chart-utils.js"
 
-const empty = () => svg``
-const emptyLazy = () => empty
-
-/**
- * Create a delegator function for a specific chart type
- */
-function createDelegator(typeKey) {
-  const firstCharIndex = 0
-  const restStartIndex = 1
-  const firstChar = typeKey.charAt(firstCharIndex)
-  const rest = typeKey.slice(restStartIndex)
-  const methodName = `render${firstChar.toUpperCase() + rest}Chart`
-
-  return (entity, params, api) => {
-    if (!entity) return svg``
-    const chartType = api.getType(typeKey)
-    return chartType?.[methodName]
-      ? chartType[methodName](entity, params, api)
-      : svg``
-  }
-}
-
-/**
- * Create a lazy renderer that receives context from parent chart
- */
-function createLazyRenderer(entity, api, methodName) {
-  return (ctx) => {
-    if (!entity) return svg``
-    const chartTypeName = ctx?.chartType || entity.type
-    const chartType = api.getType(chartTypeName)
-    return chartType?.[methodName]
-      ? chartType[methodName](entity, { config: ctx?.config || {} }, api)
-      : svg``
-  }
-}
-
-/**
- * Create a generic renderer for components (Line, Bar, etc)
- */
-const createComponentRenderer =
-  (methodName, typeOverride = null) =>
-  (entity, { config = {} }, api) => {
-    if (!entity) return svg``
-    const type = api.getType(typeOverride || entity.type)
-    return type?.[methodName]
-      ? type[methodName](entity, { config }, api)
-      : svg``
-  }
-
-/**
- * Resolve entity for inline mode (avoids repetition in Pie and Factories)
- */
-const resolveInlineContext = (current, config, defaultType) => {
-  const resolvedData = config.data ?? current.data
-  return {
-    ...current,
-    type: config.type || defaultType,
-    ...(resolvedData ? { data: resolvedData } : null),
-    width: config.width || current.width,
-    height: config.height || current.height,
-  }
-}
-
-/**
- * Get empty instance when entity is not found
- */
-function getEmptyInstance() {
-  return {
-    renderLineChart: empty,
-    renderAreaChart: empty,
-    renderBarChart: empty,
-    renderPieChart: empty,
-    renderCartesianGrid: emptyLazy,
-    renderXAxis: emptyLazy,
-    renderYAxis: empty,
-    renderLegend: emptyLazy,
-    renderLine: empty,
-    renderArea: empty,
-    renderBar: empty,
-    renderPie: empty,
-    renderDots: emptyLazy,
-    renderTooltip: empty,
-    renderBrush: emptyLazy,
-    // Composition Style
-    LineChart: empty,
-    AreaChart: empty,
-    BarChart: empty,
-    PieChart: empty,
-    CartesianGrid: emptyLazy,
-    XAxis: emptyLazy,
-    YAxis: empty,
-    Line: empty,
-    Area: empty,
-    Bar: empty,
-    Pie: empty,
-    Dots: emptyLazy,
-    Tooltip: empty,
-    Brush: emptyLazy,
-    Legend: emptyLazy,
-  }
-}
-
 export const chart = {
-  ...logic,
-  ...rendering,
+  ...handlers,
+  render,
 
   // Chart Delegators
   renderLineChart: createDelegator("line"),
@@ -158,7 +56,7 @@ export const chart = {
   // Helper to create bound methods (reduces repetition)
   forEntity(entityId, api) {
     const entity = api.getEntity(entityId)
-    return entity ? chart.createInstance(entity, api) : getEmptyInstance()
+    return entity ? createInstance(entity, api) : getEmptyInstance()
   },
 
   // Create instance for inline charts (no entityId needed)
@@ -172,102 +70,195 @@ export const chart = {
     const preserveShowTooltip =
       tempEntity?.showTooltip !== undefined ? tempEntity.showTooltip : undefined
     // Initialize entity manually since it doesn't go through the store's create handler
-    chart.create(entity)
+    handlers.create(entity)
     // Restore showTooltip if it was explicitly set
     if (preserveShowTooltip !== undefined) {
       entity.showTooltip = preserveShowTooltip
     }
-    return chart.createInstance(entity, api, true) // true = inline mode
+    return createInstance(entity, api, true) // true = inline mode
   },
 
-  createInstance(entity, api, isInline = false) {
-    let currentEntity = entity
+  createInstance,
+}
 
-    const setCurrentEntity = (nextEntity) => {
-      if (nextEntity) currentEntity = nextEntity
-    }
+function createInstance(entity, api, isInline = false) {
+  let currentEntity = entity
 
-    const createChartFactory =
-      (chartType, renderMethod, forceStandard = false) =>
-      (arg1 = {}, arg2 = []) => {
-        const isLegacy = !forceStandard && Array.isArray(arg1)
-        const config = isLegacy ? arg2 || {} : arg1
-        const children = isLegacy ? arg1 : arg2
+  const createChartFactory =
+    (chartType, renderMethod, forceStandard = false) =>
+    (arg1 = {}, arg2 = []) => {
+      const isLegacy = !forceStandard && Array.isArray(arg1)
+      const config = isLegacy ? arg2 || {} : arg1
+      const children = isLegacy ? arg1 : arg2
 
-        if (isInline) {
-          currentEntity = resolveInlineContext(currentEntity, config, chartType)
-          setCurrentEntity(currentEntity)
+      if (isInline) {
+        const resolvedData = config.data ?? currentEntity.data
+        currentEntity = {
+          ...currentEntity,
+          type: config.type || chartType,
+          ...(resolvedData ? { data: resolvedData } : null),
+          width: config.width || currentEntity.width,
+          height: config.height || currentEntity.height,
         }
-
-        const finalConfig = {
-          ...config,
-          data:
-            config.data ||
-            (!isInline && currentEntity.data ? currentEntity.data : undefined),
-          // PieChart usually doesn't need dataKeys, but the extractor handles it
-          dataKeys:
-            chartType !== "pie"
-              ? config.dataKeys || extractDataKeysFromChildren(children)
-              : undefined,
-        }
-
-        return chart[renderMethod](
-          currentEntity,
-          {
-            children: Array.isArray(children) ? children : [children],
-            config: finalConfig,
-          },
-          api,
-        )
       }
 
-    // baseMethods return intention objects (don't render directly)
+      const finalConfig = {
+        ...config,
+        data:
+          config.data ||
+          (!isInline && currentEntity.data ? currentEntity.data : undefined),
+        // PieChart usually doesn't need dataKeys, but the extractor handles it
+        dataKeys:
+          chartType !== "pie"
+            ? config.dataKeys || extractDataKeysFromChildren(children)
+            : undefined,
+      }
+
+      return renderMethodOnType(
+        currentEntity,
+        renderMethod,
+        {
+          children: Array.isArray(children) ? children : [children],
+          config: finalConfig,
+        },
+        api,
+      )
+    }
+
+  // baseMethods return intention objects (don't render directly)
+  // Processing happens in renderXxxChart which receives the children
+  const baseMethods = {
+    CartesianGrid: (cfg = {}) => ({ type: "CartesianGrid", config: cfg }),
+    XAxis: (cfg = {}) => ({ type: "XAxis", config: cfg }),
+    YAxis: (cfg = {}) => ({ type: "YAxis", config: cfg }),
+    Tooltip: (cfg = {}) => ({ type: "Tooltip", config: cfg }),
+    Brush: (cfg = {}) => ({ type: "Brush", config: cfg }),
+    Line: (cfg = {}) => ({ type: "Line", config: cfg }),
+    Area: (cfg = {}) => ({ type: "Area", config: cfg }),
+    Bar: (cfg = {}) => ({ type: "Bar", config: cfg }),
+    Pie: (cfg = {}) => ({ type: "Pie", config: cfg }),
+  }
+
+  const instance = {
+    LineChart: createChartFactory("line", "renderLineChart", true),
+    AreaChart: createChartFactory("area", "renderAreaChart", true),
+    BarChart: createChartFactory("bar", "renderBarChart", true),
+    PieChart: createChartFactory("pie", "renderPieChart", true),
+
+    ...baseMethods,
+
+    // Aliases for compatibility (renderX)
+    renderLineChart: createChartFactory("line", "renderLineChart", false),
+    renderAreaChart: createChartFactory("area", "renderAreaChart", false),
+    renderBarChart: createChartFactory("bar", "renderBarChart", false),
+    renderPieChart: createChartFactory("pie", "renderPieChart", false),
+    renderCartesianGrid: baseMethods.CartesianGrid,
+    renderXAxis: baseMethods.XAxis,
+    renderYAxis: baseMethods.YAxis,
+    renderLine: baseMethods.Line,
+    renderArea: baseMethods.Area,
+    renderBar: baseMethods.Bar,
+    renderPie: baseMethods.Pie,
+    renderTooltip: baseMethods.Tooltip,
+    renderBrush: baseMethods.Brush,
+
+    // Dots and Legend also return intention objects
     // Processing happens in renderXxxChart which receives the children
-    const baseMethods = {
-      CartesianGrid: (cfg = {}) => ({ type: "CartesianGrid", config: cfg }),
-      XAxis: (cfg = {}) => ({ type: "XAxis", config: cfg }),
-      YAxis: (cfg = {}) => ({ type: "YAxis", config: cfg }),
-      Tooltip: (cfg = {}) => ({ type: "Tooltip", config: cfg }),
-      Brush: (cfg = {}) => ({ type: "Brush", config: cfg }),
-      Line: (cfg = {}) => ({ type: "Line", config: cfg }),
-      Area: (cfg = {}) => ({ type: "Area", config: cfg }),
-      Bar: (cfg = {}) => ({ type: "Bar", config: cfg }),
-      Pie: (cfg = {}) => ({ type: "Pie", config: cfg }),
-    }
+    renderDots: (config = {}) => ({ type: "Dots", config }),
+    renderLegend: (config = {}) => ({ type: "Legend", config }),
+  }
 
-    const instance = {
-      LineChart: createChartFactory("line", "renderLineChart", true),
-      AreaChart: createChartFactory("area", "renderAreaChart", true),
-      BarChart: createChartFactory("bar", "renderBarChart", true),
-      PieChart: createChartFactory("pie", "renderPieChart", true),
+  // Synchronize PascalCase names with camelCase aliases
+  instance.Dots = instance.renderDots
+  instance.Legend = instance.renderLegend
 
-      ...baseMethods,
+  return instance
+}
 
-      // Aliases for compatibility (renderX)
-      renderLineChart: createChartFactory("line", "renderLineChart", false),
-      renderAreaChart: createChartFactory("area", "renderAreaChart", false),
-      renderBarChart: createChartFactory("bar", "renderBarChart", false),
-      renderPieChart: createChartFactory("pie", "renderPieChart", false),
-      renderCartesianGrid: baseMethods.CartesianGrid,
-      renderXAxis: baseMethods.XAxis,
-      renderYAxis: baseMethods.YAxis,
-      renderLine: baseMethods.Line,
-      renderArea: baseMethods.Area,
-      renderBar: baseMethods.Bar,
-      renderPie: baseMethods.Pie,
-      renderTooltip: baseMethods.Tooltip,
-      renderBrush: baseMethods.Brush,
+function createDelegator(typeKey) {
+  const firstCharIndex = 0
+  const restStartIndex = 1
+  const firstChar = typeKey.charAt(firstCharIndex)
+  const rest = typeKey.slice(restStartIndex)
+  const methodName = `render${firstChar.toUpperCase() + rest}Chart`
 
-      // Dots and Legend also return intention objects
-      // Processing happens in renderXxxChart which receives the children
-      renderDots: (config = {}) => ({ type: "Dots", config }),
-      renderLegend: (config = {}) => ({ type: "Legend", config }),
-    }
+  return function delegateToChartType(entity, params, api) {
+    if (!entity) return renderEmptyTemplate()
+    const chartType = api.getType(typeKey)
+    return chartType?.[methodName]
+      ? chartType[methodName](entity, params, api)
+      : renderEmptyTemplate()
+  }
+}
 
-    // Synchronize PascalCase names with camelCase aliases
-    instance.Dots = instance.renderDots
-    instance.Legend = instance.renderLegend
+function createLazyRenderer(entity, api, methodName) {
+  return function renderLazy(ctx) {
+    if (!entity) return renderEmptyTemplate()
+    const chartTypeName = ctx?.chartType || entity.type
+    const chartType = api.getType(chartTypeName)
+    return chartType?.[methodName]
+      ? chartType[methodName](entity, { config: ctx?.config || {} }, api)
+      : renderEmptyTemplate()
+  }
+}
 
-    return instance
-  },
+function createComponentRenderer(methodName, typeOverride = null) {
+  return function renderComponent(entity, { config = {} }, api) {
+    if (!entity) return renderEmptyTemplate()
+    const type = api.getType(typeOverride || entity.type)
+    return type?.[methodName]
+      ? type[methodName](entity, { config }, api)
+      : renderEmptyTemplate()
+  }
+}
+
+function renderMethodOnType(entity, methodName, params, api) {
+  const type = api.getType(entity.type)
+  return type?.[methodName]
+    ? type[methodName](entity, params, api)
+    : renderEmptyTemplate()
+}
+
+function renderEmptyTemplate() {
+  return svg``
+}
+
+function renderEmptyLazyTemplate() {
+  return renderEmptyTemplate
+}
+
+function getEmptyInstance() {
+  return {
+    renderLineChart: renderEmptyTemplate,
+    renderAreaChart: renderEmptyTemplate,
+    renderBarChart: renderEmptyTemplate,
+    renderPieChart: renderEmptyTemplate,
+    renderCartesianGrid: renderEmptyLazyTemplate,
+    renderXAxis: renderEmptyLazyTemplate,
+    renderYAxis: renderEmptyTemplate,
+    renderLegend: renderEmptyLazyTemplate,
+    renderLine: renderEmptyTemplate,
+    renderArea: renderEmptyTemplate,
+    renderBar: renderEmptyTemplate,
+    renderPie: renderEmptyTemplate,
+    renderDots: renderEmptyLazyTemplate,
+    renderTooltip: renderEmptyTemplate,
+    renderBrush: renderEmptyLazyTemplate,
+    // Composition Style
+    LineChart: renderEmptyTemplate,
+    AreaChart: renderEmptyTemplate,
+    BarChart: renderEmptyTemplate,
+    PieChart: renderEmptyTemplate,
+    CartesianGrid: renderEmptyLazyTemplate,
+    XAxis: renderEmptyLazyTemplate,
+    YAxis: renderEmptyTemplate,
+    Line: renderEmptyTemplate,
+    Area: renderEmptyTemplate,
+    Bar: renderEmptyTemplate,
+    Pie: renderEmptyTemplate,
+    Dots: renderEmptyLazyTemplate,
+    Tooltip: renderEmptyTemplate,
+    Brush: renderEmptyLazyTemplate,
+    Legend: renderEmptyLazyTemplate,
+  }
 }
