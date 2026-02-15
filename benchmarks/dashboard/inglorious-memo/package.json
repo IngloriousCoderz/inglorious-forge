@@ -1,0 +1,22 @@
+{
+  "name": "@benchmarks/dashboard-inglorious-memo",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "author": "IceOnFire <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@benchmarks/dashboard-shared": "workspace:*",
+    "@inglorious/store": "workspace:*",
+    "@inglorious/web": "workspace:*"
+  },
+  "devDependencies": {
+    "rollup-plugin-minify-template-literals": "^1.1.7",
+    "vite": "^7.1.7"
+  }
+}

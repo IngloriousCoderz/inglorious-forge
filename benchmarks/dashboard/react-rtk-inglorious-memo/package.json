@@ -1,0 +1,25 @@
+{
+  "name": "@benchmarks/dashboard-react-rtk-inglorious-memo",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "author": "IceOnFire <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@benchmarks/dashboard-shared": "workspace:*",
+    "@inglorious/store": "workspace:*",
+    "@reduxjs/toolkit": "^2.11.2",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-redux": "^9.2.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.0.4",
+    "vite": "^7.1.7"
+  }
+}
