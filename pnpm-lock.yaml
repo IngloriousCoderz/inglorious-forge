@@ -95,6 +95,9 @@ importers:
 
   benchmarks/dashboard:
     dependencies:
+      "@inglorious/store":
+        specifier: workspace:*
+        version: link:../../packages/store
       "@inglorious/web":
         specifier: workspace:*
         version: link:../../packages/web

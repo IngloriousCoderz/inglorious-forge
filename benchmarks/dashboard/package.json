@@ -13,6 +13,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@inglorious/store": "workspace:*",
     "@inglorious/web": "workspace:*",
     "@reduxjs/toolkit": "^2.11.2",
     "react": "^19.2.0",

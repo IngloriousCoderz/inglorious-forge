@@ -21,8 +21,9 @@ const slice = createSlice({
   },
 })
 
-export default slice.reducer
 export const { setFilter } = slice.actions
+
+export default slice.reducer
 
 export const footer = convertSlice(slice, {
   extraActions: [clearClick],

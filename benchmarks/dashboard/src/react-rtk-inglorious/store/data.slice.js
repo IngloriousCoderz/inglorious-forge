@@ -1,3 +1,4 @@
+import { convertSlice } from "@inglorious/store/migration/rtk"
 import { createSlice } from "@reduxjs/toolkit"
 
 import {
@@ -10,11 +11,13 @@ import {
 
 const slice = createSlice({
   name: "data",
+
   initialState: {
     rows: generateData(ROWS_TO_GENERATE),
     filter: "",
     sortBy: "id",
   },
+
   reducers: {
     updateRandomRows: (state) => {
       state.rows = updateData(state.rows, ROWS_TO_UPDATE)
@@ -34,14 +37,8 @@ const slice = createSlice({
   },
 })
 
-export const {
-  updateRandomRows,
-  updateRow,
-  setFilter,
-  setSort,
-  setFPS,
-  incrementUpdate,
-  setRenderTime,
-} = slice.actions
+export const { updateRandomRows, updateRow, setFilter, setSort } = slice.actions
 
 export default slice.reducer
+
+export const data = convertSlice(slice)

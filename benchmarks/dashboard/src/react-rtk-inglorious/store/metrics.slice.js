@@ -1,3 +1,4 @@
+import { convertSlice } from "@inglorious/store/migration/rtk"
 import { createSlice } from "@reduxjs/toolkit"
 
 const slice = createSlice({
@@ -23,3 +24,5 @@ const slice = createSlice({
 export const { setFPS, incrementUpdate, setRenderTime } = slice.actions
 
 export default slice.reducer
+
+export const metrics = convertSlice(slice)

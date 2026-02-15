@@ -18,13 +18,15 @@ This simulates real-world scenarios like factory monitoring dashboards, stock ti
 
 Benchmark with **1000 rows**, **10ms update interval** (100 updates/second):
 
-| Implementation            | FPS (dev) | FPS (prod) | Bundle Size | Mental Overhead | Testability |
-| ------------------------- | --------- | ---------- | ----------- | --------------- | ----------- |
-| 🐌 React Naive            | 43        | 100        | 62.32kB     | Low             | 😱 Hard     |
-| 🏃 React Memoized         | 97        | 100        | 62.48kB     | High            | 😱 Hard     |
-| 🐢 React + Redux          | 26        | 92         | 72.20kB     | Very High       | 😊 Good     |
-| 🚀 Inglorious (no memo)   | 100       | 100        | 15.21kB     | Low             | 🎉 Easy     |
-| 🚀 Inglorious (with memo) | 100       | 100        | 15.37kB     | Low             | 🎉 Easy     |
+| Implementation              | FPS (dev) | FPS (prod) | Bundle Size | Mental Overhead | Testability |
+| --------------------------- | --------- | ---------- | ----------- | --------------- | ----------- |
+| 🐌 React Naive              | 43        | 112        | 62.34kB     | Low             | 😱 Hard     |
+| 🏃 React Memoized           | 107       | 119        | 62.49kB     | High            | 😱 Hard     |
+| 🐢 React + RTK              | 26        | 94         | 72.23kB     | Very High       | 😊 Good     |
+| 🧩 React + RTK + Inglorious | 27        | 92         | 79.18kB     | Very High       | 😊 Good     |
+| ⚛️ React + Inglorious Store | 27        | 90         | 72.11kB     | Medium          | 😊 Good     |
+| 🚀 Inglorious (no memo)     | 110       | 118        | 14.64kB     | Low             | 🎉 Easy     |
+| 🚀 Inglorious (with memo)   | 110       | 119        | 14.70kB     | Low             | 🎉 Easy     |
 
 ### Key Findings
 
@@ -32,8 +34,14 @@ Benchmark with **1000 rows**, **10ms update interval** (100 updates/second):
 ✅ **Bundle size advantage** - Inglorious is **4-5x smaller** (15KB vs 62-72KB)  
 ✅ **Production parity** - Both hit 100 FPS in prod, but Inglorious gets there with less code  
 ✅ **Memoization overhead** - React memoization adds complexity with minimal prod benefit  
-✅ **Redux tax** - RTK adds 10KB+ and slower dev performance for "best practices"  
+✅ **RTK tax** - RTK adds 10KB+ and slower dev performance for "best practices"  
 ✅ **Testing simplicity** - Inglorious components and types are trivially testable, React hooks require special tooling
+
+### Interpretation Of The Current Numbers
+
+1. The main slowdown is unlikely to be only RTK store middleware. `react-rtk-inglorious` keeps RTK slices but swaps the runtime store to Inglorious, and it stays close to RTK baseline performance. That points to RTK slice/reducer machinery (including Immer-based updates) as a major cost center.
+2. Adapter-based migration adds overhead (slightly lower FPS and larger bundle), but this is a reasonable tradeoff for incremental migration toward native Inglorious types with lower rewrite risk.
+3. Memoization has limited impact in this benchmark. The dominant bottleneck appears to be frequent DOM updates/rendering pressure, not full-tree re-render mechanics alone.
 
 ## 🎯 What This Means
 
@@ -42,7 +50,7 @@ Benchmark with **1000 rows**, **10ms update interval** (100 updates/second):
 During development, when you're iterating rapidly:
 
 - **React Naive:** Sluggish (43 FPS) - forces you to optimize early
-- **React + Redux:** Painful (26 FPS) - constant lag while coding
+- **React + RTK:** Painful (26 FPS) - constant lag while coding
 - **Inglorious:** Smooth (100 FPS) - write code, see results instantly
 
 ### For Production
@@ -87,7 +95,9 @@ npm install
 <!-- Uncomment ONE of these: -->
 <script type="module" src="/src/react/main.jsx"></script>
 <!-- <script type="module" src="/src/react-memo/main.jsx"></script> -->
-<!-- <script type="module" src="/src/react-redux/main.jsx"></script> -->
+<!-- <script type="module" src="/src/react-rtk/main.jsx"></script> -->
+<!-- <script type="module" src="/src/react-rtk-inglorious/main.jsx"></script> -->
+<!-- <script type="module" src="/src/react-inglorious/main.jsx"></script> -->
 <!-- <script type="module" src="/src/inglorious/main.js"></script> -->
 <!-- <script type="module" src="/src/inglorious-memo/main.js"></script> -->
 ```
@@ -153,13 +163,27 @@ export const UPDATE_FREQUENCY = 10
 - **Same prod performance** - 100 FPS (minimal gain for all the effort)
 - **The tradeoff:** Hours of optimization work for 3 FPS dev improvement
 
-### React + Redux (`/src/react-redux/`)
+### React + RTK (`/src/react-rtk/`)
 
 - **"Best practices"** - Redux Toolkit with `createSelector`
 - **Most boilerplate** - slices, actions, reducers, selectors
 - **Worst dev performance** - 26 FPS (slower than naive!)
 - **Larger bundle** - 72KB vs 62KB for plain React
 - **The reality:** More code, worse results, painful dev experience
+
+### React + RTK + Inglorious Store (`/src/react-rtk-inglorious/`)
+
+- **Hybrid migration path** - RTK slices converted with `convertSlice()`
+- **Same React ergonomics** - `react-redux` hooks and RTK action creators still work
+- **Inglorious runtime** - state updates run through Inglorious Store internals
+- **The tradeoff:** Useful for migration, but still carries RTK-style ceremony
+
+### React + Inglorious Store (`/src/react-inglorious/`)
+
+- **React UI, native Inglorious store** - no RTK slices and no migration adapters
+- **Same integration style** - still uses `react-redux` hooks and Provider
+- **Cleaner update path** - direct entity/type handlers with Mutative under the hood
+- **The point:** isolates RTK/adapters overhead while keeping React rendering comparable
 
 ### Inglorious (no memo) (`/src/inglorious/`)
 
@@ -237,7 +261,7 @@ jest.mock("./useCustomHook", () => ({
 - ❌ Must render entire component tree to test logic
 - ❌ Async testing is particularly painful
 
-### React + Redux: Much Better 😊
+### React + RTK: Much Better 😊
 
 ```javascript
 // Redux makes testing easier - logic is separate from components
@@ -445,17 +469,17 @@ That's it. Two utilities, zero complexity.
 
 ### Testing Comparison Summary
 
-| Aspect             | React Hooks            | React + Redux | Inglorious                |
-| ------------------ | ---------------------- | ------------- | ------------------------- |
-| Unit test setup    | Complex                | Medium        | Trivial                   |
-| Dependencies       | @testing-library/react | redux, jest   | None (just a test runner) |
-| Mocking complexity | High                   | Medium        | Low                       |
-| Test speed         | Slow (DOM)             | Medium        | Fast (pure functions)     |
-| Learning curve     | Steep                  | Medium        | Shallow                   |
-| Async testing      | Painful                | Medium        | Easy                      |
-| Pure functions     | No                     | Yes           | Yes (via Mutative)        |
-| Event testing      | Hard                   | Medium        | Easy (`trigger()`)        |
-| Render testing     | DOM queries            | DOM queries   | String assertions         |
+| Aspect             | React Hooks            | React + RTK | Inglorious                |
+| ------------------ | ---------------------- | ----------- | ------------------------- |
+| Unit test setup    | Complex                | Medium      | Trivial                   |
+| Dependencies       | @testing-library/react | redux, jest | None (just a test runner) |
+| Mocking complexity | High                   | Medium      | Low                       |
+| Test speed         | Slow (DOM)             | Medium      | Fast (pure functions)     |
+| Learning curve     | Steep                  | Medium      | Shallow                   |
+| Async testing      | Painful                | Medium      | Easy                      |
+| Pure functions     | No                     | Yes         | Yes (via Mutative)        |
+| Event testing      | Hard                   | Medium      | Easy (`trigger()`)        |
+| Render testing     | DOM queries            | DOM queries | String assertions         |
 
 ### Real-World Impact
 
