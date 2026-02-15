@@ -1,10 +1,10 @@
 import { useCallback, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 
+import { CHARTS } from "../charts"
 import { UPDATE_FREQUENCY } from "../data"
 import { Chart } from "./chart"
 import { MetricsDisplay } from "./metrics"
-import { randomUpdate } from "./store/data.slice"
 import { setFilter, setFPS, setSort } from "./store/metrics.slice"
 import { selectFilter, selectSortBy } from "./store/selectors"
 import { Table } from "./table"
@@ -44,7 +44,7 @@ export default function Dashboard() {
   // Live data updates (single event, like the inglorious variant)
   useEffect(() => {
     const interval = setInterval(() => {
-      dispatch(randomUpdate())
+      dispatch({ type: "randomUpdate" })
     }, UPDATE_FREQUENCY)
 
     return () => clearInterval(interval)
@@ -86,10 +86,9 @@ export default function Dashboard() {
       </div>
 
       <div className="charts">
-        <Chart chartId="chart1" />
-        <Chart chartId="chart2" />
-        <Chart chartId="chart3" />
-        <Chart chartId="chart4" />
+        {Object.keys(CHARTS).map((chartId) => (
+          <Chart key={chartId} chartId={chartId} />
+        ))}
       </div>
 
       <div className="table-container">

@@ -1,11 +1,13 @@
 import { useCallback, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 
-import { UPDATE_FREQUENCY } from "../data"
+import { CHARTS } from "@/charts"
+import { UPDATE_FREQUENCY } from "@/data"
+
 import { Chart } from "./chart"
 import { MetricsDisplay } from "./metrics"
-import { setFilter, setSort, updateRandomRows } from "./store/data.slice"
-import { incrementUpdate, setFPS, setRenderTime } from "./store/metrics.slice"
+import { randomUpdate } from "./store/events"
+import { setFilter, setFPS, setSort } from "./store/metrics.slice"
 import { selectFilter, selectSortBy } from "./store/selectors"
 import { Table } from "./table"
 
@@ -18,7 +20,6 @@ export default function Dashboard() {
   const filter = useSelector(selectFilter)
   const sortBy = useSelector(selectSortBy)
 
-  // FPS Counter
   useEffect(() => {
     let frameCount = 0
     let lastTime = performance.now()
@@ -39,22 +40,15 @@ export default function Dashboard() {
 
     const rafId = requestAnimationFrame(countFPS)
     return () => cancelAnimationFrame(rafId)
-  }, [])
+  }, [dispatch])
 
-  // Live data updates
   useEffect(() => {
     const interval = setInterval(() => {
-      const start = performance.now()
-
-      dispatch(updateRandomRows())
-      dispatch(incrementUpdate())
-
-      const end = performance.now()
-      dispatch(setRenderTime(Math.round(end - start)))
+      dispatch(randomUpdate())
     }, UPDATE_FREQUENCY)
 
     return () => clearInterval(interval)
-  }, [])
+  }, [dispatch])
 
   const handleFilterChange = useCallback(
     (e) => {
@@ -92,25 +86,9 @@ export default function Dashboard() {
       </div>
 
       <div className="charts">
-        <Chart
-          rangeStart={0}
-          rangeEnd={20}
-          type="bar"
-          title="Progress Overview"
-        />
-        <Chart
-          rangeStart={20}
-          rangeEnd={40}
-          type="bar"
-          title="Value Distribution"
-        />
-        <Chart rangeStart={40} rangeEnd={60} type="bar" title="Live Updates" />
-        <Chart
-          rangeStart={60}
-          rangeEnd={80}
-          type="bar"
-          title="Status Breakdown"
-        />
+        {Object.keys(CHARTS).map((chartId) => (
+          <Chart key={chartId} chartId={chartId} />
+        ))}
       </div>
 
       <div className="table-container">
@@ -118,9 +96,8 @@ export default function Dashboard() {
       </div>
 
       <div className="info">
-        ✅ RTK + OPTIMIZED: createSelector, React.memo, useMemo, useCallback
-        everywhere. Look at all this boilerplate just to match Inglorious&apos;s
-        default behavior!
+        ✅ RTK + OPTIMIZED: Same business logic model as the Inglorious variant,
+        with RTK slices and React selector plumbing.
       </div>
     </div>
   )

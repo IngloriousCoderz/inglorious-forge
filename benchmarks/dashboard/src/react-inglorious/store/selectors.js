@@ -27,7 +27,7 @@ export const selectFilteredRows = createSelector(
   },
 )
 
-export const selectChartData = (chartId) =>
+export const makeSelectChartData = (chartId) =>
   createSelector(
     [selectFilteredRows, (state) => state[chartId]],
     (rows, chart) => {

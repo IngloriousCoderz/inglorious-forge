@@ -14,7 +14,13 @@ export default defineConfig({
   // @see https://github.com/vitejs/vite/issues/1973
   define: { "process.env": {} },
 
-  plugins: [minifyTemplateLiterals(), ViteImageOptimizer(), vue()],
+  plugins: [ViteImageOptimizer(), vue()],
+
+  build: {
+    rollupOptions: {
+      plugins: [minifyTemplateLiterals()],
+    },
+  },
 
   resolve: {
     alias: {

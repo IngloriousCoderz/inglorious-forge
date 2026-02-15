@@ -1,8 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit"
 
-import data from "./data.slice"
+import charts from "./charts.slice"
+import table from "./data.slice"
 import metrics from "./metrics.slice"
 
 export const store = configureStore({
-  reducer: { data, metrics },
+  reducer: { table, metrics, charts },
 })

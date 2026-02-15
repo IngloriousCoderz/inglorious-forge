@@ -7,38 +7,32 @@ import {
   ROWS_TO_GENERATE,
   ROWS_TO_UPDATE,
   updateData,
-} from "../../data"
+} from "@/data"
 
-const slice = createSlice({
-  name: "data",
+import { randomUpdate } from "./events"
 
+const tableSlice = createSlice({
+  name: "table",
   initialState: {
-    rows: generateData(ROWS_TO_GENERATE),
-    filter: "",
-    sortBy: "id",
+    data: generateData(ROWS_TO_GENERATE),
   },
-
   reducers: {
-    updateRandomRows: (state) => {
-      state.rows = updateData(state.rows, ROWS_TO_UPDATE)
-    },
-    updateRow: (state, action) => {
-      const row = state.rows.find((r) => r.id === action.payload)
+    tableClick(state, action) {
+      const row = state.data.find((r) => r.id === action.payload)
       if (row) {
         row.value = Math.floor(Math.random() * MAX_VALUE)
       }
     },
-    setFilter: (state, action) => {
-      state.filter = action.payload
-    },
-    setSort: (state, action) => {
-      state.sortBy = action.payload
-    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(randomUpdate, (state) => {
+      state.data = updateData(state.data, ROWS_TO_UPDATE)
+    })
   },
 })
 
-export const { updateRandomRows, updateRow, setFilter, setSort } = slice.actions
+export const { tableClick } = tableSlice.actions
 
-export default slice.reducer
-
-export const data = convertSlice(slice)
+export const table = convertSlice(tableSlice, {
+  extraActions: [randomUpdate],
+})

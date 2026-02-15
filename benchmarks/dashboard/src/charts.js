@@ -1,20 +1,4 @@
-import { generateData, ROWS_TO_GENERATE } from "../../data"
-
-export const entities = {
-  table: {
-    id: "table",
-    type: "table",
-    data: generateData(ROWS_TO_GENERATE),
-  },
-  metrics: {
-    id: "metrics",
-    type: "metrics",
-    fps: 60,
-    renderTime: 0,
-    updateCount: 0,
-    filter: "",
-    sortBy: "id",
-  },
+export const CHARTS = {
   chart1: {
     id: "chart1",
     type: "chart",

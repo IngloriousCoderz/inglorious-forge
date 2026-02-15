@@ -1,29 +1,36 @@
 import { createSlice } from "@reduxjs/toolkit"
 
-const slice = createSlice({
-  name: "metrics",
+import { randomUpdate } from "./events"
 
+const metricsSlice = createSlice({
+  name: "metrics",
   initialState: {
     fps: 60,
     renderTime: 0,
     updateCount: 0,
+    filter: "",
+    sortBy: "id",
   },
-
   reducers: {
-    setFPS: (state, action) => {
+    setFPS(state, action) {
       state.fps = action.payload
     },
-
-    incrementUpdate: (state) => {
+    setFilter(state, action) {
+      state.filter = action.payload
+    },
+    setSort(state, action) {
+      state.sortBy = action.payload
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(randomUpdate, (state) => {
+      const start = performance.now()
       state.updateCount += 1
-    },
-
-    setRenderTime: (state, action) => {
-      state.renderTime = action.payload
-    },
+      state.renderTime = Math.round(performance.now() - start)
+    })
   },
 })
 
-export const { setFPS, incrementUpdate, setRenderTime } = slice.actions
+export const { setFPS, setFilter, setSort } = metricsSlice.actions
 
-export default slice.reducer
+export default metricsSlice.reducer

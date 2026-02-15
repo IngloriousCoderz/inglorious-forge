@@ -1,17 +1,18 @@
 import { createStore } from "@inglorious/web"
 
+import { CHARTS } from "@/charts"
+
 import { UPDATE_FREQUENCY } from "../../data"
 import { chart } from "../types/chart"
 import { metrics } from "../types/metrics"
 import { table } from "../types/table"
-import { entities } from "./entities"
 
 const RESET = 0
 const ONE_SECOND = 1000
 
 export const store = createStore({
   types: { metrics, chart, table },
-  entities,
+  entities: CHARTS,
   autoCreateEntities: true,
 })
 

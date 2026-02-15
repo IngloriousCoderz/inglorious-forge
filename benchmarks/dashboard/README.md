@@ -20,13 +20,13 @@ Benchmark with **1000 rows**, **10ms update interval** (100 updates/second):
 
 | Implementation              | FPS (dev) | FPS (prod) | Bundle Size | Mental Overhead | Testability |
 | --------------------------- | --------- | ---------- | ----------- | --------------- | ----------- |
-| 🐌 React Naive              | 43        | 112        | 62.34kB     | Low             | 😱 Hard     |
-| 🏃 React Memoized           | 107       | 119        | 62.49kB     | High            | 😱 Hard     |
-| 🐢 React + RTK              | 26        | 94         | 72.23kB     | Very High       | 😊 Good     |
-| 🧩 React + RTK + Inglorious | 27        | 92         | 79.18kB     | Very High       | 😊 Good     |
-| ⚛️ React + Inglorious Store | 27        | 90         | 72.11kB     | Medium          | 😊 Good     |
-| 🚀 Inglorious (no memo)     | 110       | 118        | 14.64kB     | Low             | 🎉 Easy     |
-| 🚀 Inglorious (with memo)   | 110       | 119        | 14.70kB     | Low             | 🎉 Easy     |
+| 🐌 React Naive              | 45        | 111        | 62.41kB     | Low             | 😱 Hard     |
+| 🏃 React Memoized           | 103       | 120        | 62.61kB     | High            | 😱 Hard     |
+| 🐢 React + RTK              | 28        | 92         | 72.29kB     | Very High       | 😊 Good     |
+| 🧩 React + RTK + Inglorious | 25        | 74         | 79.28kB     | Very High       | 😊 Good     |
+| ⚛️ React + Inglorious Store | 28        | 92         | 72.07kB     | Medium          | 😊 Good     |
+| 🚀 Inglorious (no memo)     | 105       | 120        | 14.58kB     | Low             | 🎉 Easy     |
+| 🚀 Inglorious (with memo)   | 110       | 120        | 14.65kB     | Low             | 🎉 Easy     |
 
 ### Key Findings
 

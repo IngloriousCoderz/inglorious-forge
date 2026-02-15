@@ -2,7 +2,8 @@ import { useCallback } from "react"
 import { useDispatch, useSelector } from "react-redux"
 
 import { TableRow } from "./row"
-import { setSort, updateRow } from "./store/data.slice"
+import { tableClick } from "./store/data.slice"
+import { setSort } from "./store/metrics.slice"
 import { selectFilteredRows } from "./store/selectors"
 
 export const Table = () => {
@@ -21,7 +22,7 @@ export const Table = () => {
 
   const handleRowClick = useCallback(
     (id) => {
-      dispatch(updateRow(id))
+      dispatch(tableClick(id))
     },
     [dispatch],
   )

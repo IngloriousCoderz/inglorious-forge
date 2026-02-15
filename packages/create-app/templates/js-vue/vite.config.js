@@ -11,7 +11,13 @@ const __dirname = path.dirname(__filename)
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [minifyTemplateLiterals(), ViteImageOptimizer(), vue()],
+  plugins: [ViteImageOptimizer(), vue()],
+
+  build: {
+    rollupOptions: {
+      plugins: [minifyTemplateLiterals()],
+    },
+  },
 
   resolve: {
     alias: {

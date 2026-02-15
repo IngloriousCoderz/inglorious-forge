@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 
+import { CHARTS } from "../charts"
 import {
   generateData,
   MAX_VALUE,
@@ -15,18 +16,21 @@ import { Table } from "./table"
 const SAME = 0
 const RESET = 0
 const ONE_SECOND = 1000
+const NEXT_UPDATE = 1
 
 export default function Dashboard() {
-  const [data, setData] = useState(() => generateData(ROWS_TO_GENERATE))
-  const [filter, setFilter] = useState("")
-  const [sortBy, setSortBy] = useState("id")
+  const [tableData, setTableData] = useState(() =>
+    generateData(ROWS_TO_GENERATE),
+  )
+  const [charts] = useState(CHARTS)
   const [metrics, setMetrics] = useState({
     fps: 60,
     renderTime: 0,
     updateCount: 0,
+    filter: "",
+    sortBy: "id",
   })
 
-  // FPS Counter
   useEffect(() => {
     let frameCount = 0
     let lastTime = performance.now()
@@ -49,40 +53,38 @@ export default function Dashboard() {
     return () => cancelAnimationFrame(rafId)
   }, [])
 
-  // Live data updates
   useEffect(() => {
     const interval = setInterval(() => {
       const start = performance.now()
 
-      setData((prev) => updateData(prev, ROWS_TO_UPDATE))
+      setTableData((prev) => updateData(prev, ROWS_TO_UPDATE))
 
       const end = performance.now()
       setMetrics((prev) => ({
         ...prev,
+        updateCount: prev.updateCount + NEXT_UPDATE,
         renderTime: Math.round(end - start),
-        updateCount: prev.updateCount + 1,
       }))
     }, UPDATE_FREQUENCY)
 
     return () => clearInterval(interval)
   }, [])
 
-  // Filter and sort data
-  const filteredData = data
+  const filteredRows = tableData
     .filter(
       (row) =>
-        row.name.toLowerCase().includes(filter.toLowerCase()) ||
-        row.status.toLowerCase().includes(filter.toLowerCase()),
+        row.name.toLowerCase().includes(metrics.filter.toLowerCase()) ||
+        row.status.toLowerCase().includes(metrics.filter.toLowerCase()),
     )
     .sort((a, b) => {
-      if (sortBy === "id") return a.id - b.id
-      if (sortBy === "value") return b.value - a.value
-      if (sortBy === "progress") return b.progress - a.progress
+      if (metrics.sortBy === "id") return a.id - b.id
+      if (metrics.sortBy === "value") return b.value - a.value
+      if (metrics.sortBy === "progress") return b.progress - a.progress
       return SAME
     })
 
-  const handleRowClick = (id) => {
-    setData((prev) =>
+  const handleTableClick = (id) => {
+    setTableData((prev) =>
       prev.map((row) =>
         row.id === id
           ? { ...row, value: Math.floor(Math.random() * MAX_VALUE) }
@@ -92,21 +94,18 @@ export default function Dashboard() {
   }
 
   const handleFilterChange = (e) => {
-    setFilter(e.target.value)
+    setMetrics((prev) => ({ ...prev, filter: e.target.value }))
   }
 
   const handleSortChange = (e) => {
-    setSortBy(e.target.value)
+    setMetrics((prev) => ({ ...prev, sortBy: e.target.value }))
   }
 
-  const handleSortById = () => setSortBy("id")
-  const handleSortByValue = () => setSortBy("value")
-  const handleSortByProgress = () => setSortBy("progress")
-
-  const chartData1 = filteredData.slice(0, 20)
-  const chartData2 = filteredData.slice(20, 40)
-  const chartData3 = filteredData.slice(40, 60)
-  const chartData4 = filteredData.slice(60, 80)
+  const handleSortById = () => setMetrics((prev) => ({ ...prev, sortBy: "id" }))
+  const handleSortByValue = () =>
+    setMetrics((prev) => ({ ...prev, sortBy: "value" }))
+  const handleSortByProgress = () =>
+    setMetrics((prev) => ({ ...prev, sortBy: "progress" }))
 
   return (
     <div className="dashboard">
@@ -119,10 +118,10 @@ export default function Dashboard() {
         <input
           type="text"
           placeholder="Filter by name or status..."
-          value={filter}
+          value={metrics.filter}
           onChange={handleFilterChange}
         />
-        <select value={sortBy} onChange={handleSortChange}>
+        <select value={metrics.sortBy} onChange={handleSortChange}>
           <option value="id">Sort by ID</option>
           <option value="value">Sort by Value</option>
           <option value="progress">Sort by Progress</option>
@@ -130,26 +129,25 @@ export default function Dashboard() {
       </div>
 
       <div className="charts">
-        <Chart data={chartData1} type="bar" title="Progress Overview" />
-        <Chart data={chartData2} type="bar" title="Value Distribution" />
-        <Chart data={chartData3} type="bar" title="Live Updates" />
-        <Chart data={chartData4} type="bar" title="Status Breakdown" />
+        {Object.values(charts).map((chart) => {
+          const chartRows = filteredRows.slice(chart.rangeStart, chart.rangeEnd)
+          return <Chart key={chart.id} data={chartRows} title={chart.title} />
+        })}
       </div>
 
       <div className="table-container">
         <Table
-          data={filteredData}
+          data={filteredRows}
           onSortById={handleSortById}
           onSortByValue={handleSortByValue}
           onSortByProgress={handleSortByProgress}
-          onRowClick={handleRowClick}
+          onRowClick={handleTableClick}
         />
       </div>
 
       <div className="info">
-        ⚠️ NAIVE IMPLEMENTATION: No memoization, no optimization. Every state
-        change re-renders everything. Watch the FPS drop as the app struggles
-        with updates.
+        ⚠️ NAIVE IMPLEMENTATION: Same business model as the other variants, but
+        without memoization or selector optimization.
       </div>
     </div>
   )

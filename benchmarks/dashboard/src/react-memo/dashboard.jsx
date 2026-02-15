@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
 
+import { CHARTS } from "../charts"
 import {
   generateData,
   MAX_VALUE,
@@ -15,18 +16,21 @@ import { Table } from "./table"
 const SAME = 0
 const RESET = 0
 const ONE_SECOND = 1000
+const NEXT_UPDATE = 1
 
 export default function Dashboard() {
-  const [data, setData] = useState(() => generateData(ROWS_TO_GENERATE))
-  const [filter, setFilter] = useState("")
-  const [sortBy, setSortBy] = useState("id")
+  const [tableData, setTableData] = useState(() =>
+    generateData(ROWS_TO_GENERATE),
+  )
+  const [charts] = useState(CHARTS)
   const [metrics, setMetrics] = useState({
     fps: 60,
     renderTime: 0,
     updateCount: 0,
+    filter: "",
+    sortBy: "id",
   })
 
-  // FPS Counter
   useEffect(() => {
     let frameCount = 0
     let lastTime = performance.now()
@@ -49,43 +53,42 @@ export default function Dashboard() {
     return () => cancelAnimationFrame(rafId)
   }, [])
 
-  // Live data updates
   useEffect(() => {
     const interval = setInterval(() => {
       const start = performance.now()
 
-      setData((prev) => updateData(prev, ROWS_TO_UPDATE))
+      setTableData((prev) => updateData(prev, ROWS_TO_UPDATE))
 
       const end = performance.now()
       setMetrics((prev) => ({
         ...prev,
+        updateCount: prev.updateCount + NEXT_UPDATE,
         renderTime: Math.round(end - start),
-        updateCount: prev.updateCount + 1,
       }))
     }, UPDATE_FREQUENCY)
 
     return () => clearInterval(interval)
   }, [])
 
-  // Memoized filter and sort
-  const filteredData = useMemo(() => {
-    return data
+  const filteredRows = useMemo(() => {
+    const normalizedFilter = metrics.filter.toLowerCase()
+
+    return tableData
       .filter(
         (row) =>
-          row.name.toLowerCase().includes(filter.toLowerCase()) ||
-          row.status.toLowerCase().includes(filter.toLowerCase()),
+          row.name.toLowerCase().includes(normalizedFilter) ||
+          row.status.toLowerCase().includes(normalizedFilter),
       )
       .sort((a, b) => {
-        if (sortBy === "id") return a.id - b.id
-        if (sortBy === "value") return b.value - a.value
-        if (sortBy === "progress") return b.progress - a.progress
+        if (metrics.sortBy === "id") return a.id - b.id
+        if (metrics.sortBy === "value") return b.value - a.value
+        if (metrics.sortBy === "progress") return b.progress - a.progress
         return SAME
       })
-  }, [data, filter, sortBy])
+  }, [tableData, metrics.filter, metrics.sortBy])
 
-  // Memoized callback for row clicks
-  const handleRowClick = useCallback((id) => {
-    setData((prev) =>
+  const handleTableClick = useCallback((id) => {
+    setTableData((prev) =>
       prev.map((row) =>
         row.id === id
           ? { ...row, value: Math.floor(Math.random() * MAX_VALUE) }
@@ -94,24 +97,33 @@ export default function Dashboard() {
     )
   }, [])
 
-  // Memoized callbacks for controls
   const handleFilterChange = useCallback((e) => {
-    setFilter(e.target.value)
+    setMetrics((prev) => ({ ...prev, filter: e.target.value }))
   }, [])
 
   const handleSortChange = useCallback((e) => {
-    setSortBy(e.target.value)
+    setMetrics((prev) => ({ ...prev, sortBy: e.target.value }))
   }, [])
 
-  const handleSortById = useCallback(() => setSortBy("id"), [])
-  const handleSortByValue = useCallback(() => setSortBy("value"), [])
-  const handleSortByProgress = useCallback(() => setSortBy("progress"), [])
+  const handleSortById = useCallback(
+    () => setMetrics((prev) => ({ ...prev, sortBy: "id" })),
+    [],
+  )
+  const handleSortByValue = useCallback(
+    () => setMetrics((prev) => ({ ...prev, sortBy: "value" })),
+    [],
+  )
+  const handleSortByProgress = useCallback(
+    () => setMetrics((prev) => ({ ...prev, sortBy: "progress" })),
+    [],
+  )
 
-  // Memoized chart data slices
-  const chartData1 = useMemo(() => filteredData.slice(0, 20), [filteredData])
-  const chartData2 = useMemo(() => filteredData.slice(20, 40), [filteredData])
-  const chartData3 = useMemo(() => filteredData.slice(40, 60), [filteredData])
-  const chartData4 = useMemo(() => filteredData.slice(60, 80), [filteredData])
+  const chartRows = useMemo(() => {
+    return Object.values(charts).reduce((acc, chart) => {
+      acc[chart.id] = filteredRows.slice(chart.rangeStart, chart.rangeEnd)
+      return acc
+    }, {})
+  }, [charts, filteredRows])
 
   return (
     <div className="dashboard">
@@ -124,10 +136,10 @@ export default function Dashboard() {
         <input
           type="text"
           placeholder="Filter by name or status..."
-          value={filter}
+          value={metrics.filter}
           onChange={handleFilterChange}
         />
-        <select value={sortBy} onChange={handleSortChange}>
+        <select value={metrics.sortBy} onChange={handleSortChange}>
           <option value="id">Sort by ID</option>
           <option value="value">Sort by Value</option>
           <option value="progress">Sort by Progress</option>
@@ -135,26 +147,28 @@ export default function Dashboard() {
       </div>
 
       <div className="charts">
-        <Chart data={chartData1} type="bar" title="Value Distribution" />
-        <Chart data={chartData2} type="bar" title="Progress Overview" />
-        <Chart data={chartData3} type="bar" title="Live Updates" />
-        <Chart data={chartData4} type="bar" title="Status Breakdown" />
+        {Object.values(charts).map((chart) => (
+          <Chart
+            key={chart.id}
+            data={chartRows[chart.id]}
+            title={chart.title}
+          />
+        ))}
       </div>
 
       <div className="table-container">
         <Table
-          data={filteredData}
+          data={filteredRows}
           onSortById={handleSortById}
           onSortByValue={handleSortByValue}
           onSortByProgress={handleSortByProgress}
-          onRowClick={handleRowClick}
+          onRowClick={handleTableClick}
         />
       </div>
 
       <div className="info">
-        ✅ OPTIMIZED IMPLEMENTATION: React.memo, useMemo, useCallback
-        everywhere. Better performance, but look at all that boilerplate! Every
-        optimization requires mental overhead.
+        ✅ OPTIMIZED IMPLEMENTATION: Same business model as other variants, with
+        React memoization (`memo`, `useMemo`, `useCallback`).
       </div>
     </div>
   )

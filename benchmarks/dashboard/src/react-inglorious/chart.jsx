@@ -1,12 +1,14 @@
+import { useMemo } from "react"
 import { useSelector } from "react-redux"
 
-import { selectChartData } from "./store/selectors"
+import { makeSelectChartData } from "./store/selectors"
 
 const VALUE_TO_PX = 100
 const VALUE_TO_HSL = 120
 
 export const Chart = ({ chartId }) => {
-  const { title, values, max, avg } = useSelector(selectChartData(chartId))
+  const selectChartData = useMemo(() => makeSelectChartData(chartId), [chartId])
+  const { title, values, max, avg } = useSelector(selectChartData)
 
   return (
     <div className="chart">

@@ -1,5 +1,7 @@
 import { html } from "@inglorious/web"
 
+import { CHARTS } from "@/charts"
+
 export const app = {
   render(api) {
     const { filter, sortBy } = api.getEntity("metrics")
@@ -28,10 +30,7 @@ export const app = {
           </select>
         </div>
 
-        <div class="charts">
-          ${api.render("chart1")} ${api.render("chart2")}
-          ${api.render("chart3")} ${api.render("chart4")}
-        </div>
+        <div class="charts">${Object.keys(CHARTS).map(api.render)}</div>
 
         <div class="table-container">${api.render("table")}</div>
 
