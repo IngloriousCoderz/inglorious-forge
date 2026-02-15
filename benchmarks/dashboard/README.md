@@ -18,30 +18,34 @@ This simulates real-world scenarios like factory monitoring dashboards, stock ti
 
 Benchmark with **1000 rows**, **10ms update interval** (100 updates/second):
 
-| Implementation              | FPS (dev) | FPS (prod) | Bundle Size | Mental Overhead | Testability |
-| --------------------------- | --------- | ---------- | ----------- | --------------- | ----------- |
-| 🐌 React Naive              | 45        | 111        | 62.41kB     | Low             | 😱 Hard     |
-| 🏃 React Memoized           | 103       | 120        | 62.61kB     | High            | 😱 Hard     |
-| 🐢 React + RTK              | 28        | 92         | 72.29kB     | Very High       | 😊 Good     |
-| 🧩 React + RTK + Inglorious | 25        | 74         | 79.28kB     | Very High       | 😊 Good     |
-| ⚛️ React + Inglorious Store | 28        | 92         | 72.07kB     | Medium          | 😊 Good     |
-| 🚀 Inglorious (no memo)     | 105       | 120        | 14.58kB     | Low             | 🎉 Easy     |
-| 🚀 Inglorious (with memo)   | 110       | 120        | 14.65kB     | Low             | 🎉 Easy     |
+| Implementation                         | FPS (dev) | FPS (prod) | Bundle Size | Mental Overhead | Testability |
+| -------------------------------------- | --------- | ---------- | ----------- | --------------- | ----------- |
+| 🐌 React Naive                         | 52        | 113        | 62.39kB     | Low             | 😱 Hard     |
+| 🏃 React Memoized                      | 112       | 120        | 62.58kB     | High            | 😱 Hard     |
+| 🐢 React + RTK                         | 32        | 92         | 72.21kB     | Very High       | 😊 Good     |
+| 🐢⚡ React + RTK Memoized              | 87        | 118        | 72.30kB     | Very High       | 😊 Good     |
+| 🧩 React + RTK + Inglorious            | 29        | 74         | 79.18kB     | Very High       | 😊 Good     |
+| 🧩⚡ React + RTK + Inglorious Memoized | 69        | 93         | 79.29kB     | Very High       | 😊 Good     |
+| ⚛️ React + Inglorious Store            | 33        | 95         | 71.98kB     | Medium          | 😊 Good     |
+| ⚛️⚡ React + Inglorious Store Memoized | 87        | 120        | 72.05kB     | Medium          | 😊 Good     |
+| 🚀 Inglorious (no memo)                | 105       | 120        | 16.29kB     | Low             | 🎉 Easy     |
+| 🚀 Inglorious (with memo)              | 110       | 120        | 16.35kB     | Low             | 🎉 Easy     |
 
 ### Key Findings
 
-✅ **Development experience matters** - Inglorious maintains 100 FPS in dev mode, React struggles (26-43 FPS)  
-✅ **Bundle size advantage** - Inglorious is **4-5x smaller** (15KB vs 62-72KB)  
-✅ **Production parity** - Both hit 100 FPS in prod, but Inglorious gets there with less code  
-✅ **Memoization overhead** - React memoization adds complexity with minimal prod benefit  
-✅ **RTK tax** - RTK adds 10KB+ and slower dev performance for "best practices"  
-✅ **Testing simplicity** - Inglorious components and types are trivially testable, React hooks require special tooling
+✅ **Development experience still favors Inglorious defaults** - Inglorious Web is ~105 FPS in dev without memoization; non-memo React/store variants stay much lower (29-52 FPS).  
+✅ **Bundle size advantage** - Inglorious Web is roughly **4-5x smaller** (16.29-16.35kB vs 62.39-79.29kB).  
+✅ **Memoization is decisive on React integrations** - adding memoization lifts dev FPS substantially (for example `react-rtk` 32 -> 87, `react-inglorious` 33 -> 87).  
+✅ **RTK + adapter path remains the slowest React branch** - even memoized, `react-rtk-inglorious` trails the other memoized React variants.  
+✅ **StrictMode was not the main culprit** - removing it improved little compared to the gains from render memoization.  
+✅ **Testing simplicity** - Inglorious Web types are trivially testable, React hooks require special tooling
 
 ### Interpretation Of The Current Numbers
 
-1. The main slowdown is unlikely to be only RTK store middleware. `react-rtk-inglorious` keeps RTK slices but swaps the runtime store to Inglorious, and it stays close to RTK baseline performance. That points to RTK slice/reducer machinery (including Immer-based updates) as a major cost center.
-2. Adapter-based migration adds overhead (slightly lower FPS and larger bundle), but this is a reasonable tradeoff for incremental migration toward native Inglorious types with lower rewrite risk.
-3. Memoization has limited impact in this benchmark. The dominant bottleneck appears to be frequent DOM updates/rendering pressure, not full-tree re-render mechanics alone.
+1. The largest performance lever in React variants is render strategy, not only store choice. Memoized variants consistently outperform their non-memo counterparts.
+2. RTK slices add noticeable cost versus plain React/in native Inglorious Store integration, especially in dev mode and bundle size.
+3. Migration adapters introduce additional overhead on top of RTK slices (`react-rtk-inglorious` is the weakest React branch in both baseline and memoized modes), but this can be considered a reasonable tradeoff for incremental migration toward native Inglorious types with lower rewrite risk
+4. Native Inglorious Web remains fast by default and barely benefits from optional memoization, which suggests its default update model is already efficient for this workload.
 
 ## 🎯 What This Means
 
@@ -49,32 +53,32 @@ Benchmark with **1000 rows**, **10ms update interval** (100 updates/second):
 
 During development, when you're iterating rapidly:
 
-- **React Naive:** Sluggish (43 FPS) - forces you to optimize early
-- **React + RTK:** Painful (26 FPS) - constant lag while coding
-- **Inglorious:** Smooth (100 FPS) - write code, see results instantly
+- **React Naive / store baselines:** Sluggish (29-52 FPS) unless you add memoization
+- **React memoized integrations:** Much better (69-112 FPS), but require extra render discipline
+- **Inglorious Web:** Smooth by default (105-110 FPS), with or without memoization
 
 ### For Production
 
-Both frameworks hit 100 FPS, BUT:
+Several variants reach ~120 FPS in prod, but not equally:
 
-- **React:** Achieved through compiler optimizations, memoization tricks, larger bundle
-- **Inglorious:** Achieved through architecture, 4x smaller bundle, simpler code
+- **React:** Can match top FPS when memoized, but with larger bundles and more optimization ceremony
+- **Inglorious:** Reaches top FPS out of the box with much smaller bundles and simpler baseline code
 
 ### The Real Cost of React
 
-Even though React catches up in production:
+Even when React can catch up in production:
 
-1. **You spent hours adding memoization** that barely helped prod performance
-2. **Your bundle is 62-72KB** vs Inglorious's 15KB (slower page loads globally)
-3. **Your dev experience was frustrating** (26-43 FPS vs 100 FPS)
+1. **You still need explicit memoization discipline** across components/selectors to get competitive numbers
+2. **Your bundle is 62-79KB** vs Inglorious Web's ~16KB (slower page loads globally)
+3. **Baseline dev experience is significantly slower** (29-52 FPS vs 105+ FPS)
 4. **Your code is more complex** (dependency arrays, memo wrappers, etc.)
 5. **Junior devs will struggle** - memoization is a minefield
 
 ### The Inglorious Advantage
 
-- ✅ **Fast from day one** - 100 FPS in dev and prod
-- ✅ **Tiny bundle** - 15KB means faster loads on 3G/4G globally
-- ✅ **Simple code** - No memoization required, ever
+- ✅ **Fast from day one** - 105+ FPS in dev with no memoization requirements
+- ✅ **Tiny bundle** - ~16KB means faster loads on 3G/4G globally
+- ✅ **Simple code** - No component memoization required, ever
 - ✅ **Better DX** - Code without friction, iterate quickly
 - ✅ **Junior-friendly** - Naive code is performant code
 
@@ -96,8 +100,11 @@ npm install
 <script type="module" src="/src/react/main.jsx"></script>
 <!-- <script type="module" src="/src/react-memo/main.jsx"></script> -->
 <!-- <script type="module" src="/src/react-rtk/main.jsx"></script> -->
+<!-- <script type="module" src="/src/react-rtk-memo/main.jsx"></script> -->
 <!-- <script type="module" src="/src/react-rtk-inglorious/main.jsx"></script> -->
+<!-- <script type="module" src="/src/react-rtk-inglorious-memo/main.jsx"></script> -->
 <!-- <script type="module" src="/src/react-inglorious/main.jsx"></script> -->
+<!-- <script type="module" src="/src/react-inglorious-memo/main.jsx"></script> -->
 <!-- <script type="module" src="/src/inglorious/main.js"></script> -->
 <!-- <script type="module" src="/src/inglorious-memo/main.js"></script> -->
 ```
@@ -127,7 +134,7 @@ npm run preview
 - Optimized reconciliation
 - RTK dev middleware removed
 
-Inglorious production build is similar in size because the dev build is already optimized.
+Inglorious Web's production build is similar in size because the dev build is already optimized.
 
 ### Testing on Slower Machines
 
@@ -137,7 +144,7 @@ For more dramatic differences, test on:
 - Chrome DevTools with CPU throttling (6x slowdown)
 - Mobile devices
 
-Or increase the stress by editing the parameters in the `./src/utils.js` file:
+Or increase the stress by editing the parameters in the `./src/data.js` file:
 
 ```javascript
 export const ROWS_TO_GENERATE = 1000
@@ -151,25 +158,31 @@ export const UPDATE_FREQUENCY = 10
 
 - **No optimization** - Every state change re-renders everything
 - **Simple code** - Easy to understand
-- **Poor dev performance** - 43 FPS during development
-- **Production saves it** - 100 FPS in prod build
+- **Poor dev performance** - ~52 FPS during development
+- **Decent production result** - ~113 FPS in prod build
 - **The problem:** Painful dev experience, Virtual DOM overhead
 
 ### React Memoized (`/src/react-memo/`)
 
 - **Fully optimized** - `React.memo`, `useMemo`, `useCallback` everywhere
 - **Complex code** - Dependency arrays, custom comparators
-- **Better dev performance** - 97 FPS
-- **Same prod performance** - 100 FPS (minimal gain for all the effort)
-- **The tradeoff:** Hours of optimization work for 3 FPS dev improvement
+- **Better dev performance** - ~112 FPS
+- **Top prod performance** - ~120 FPS
+- **The tradeoff:** strong gains, but with extra memoization discipline and complexity
 
 ### React + RTK (`/src/react-rtk/`)
 
 - **"Best practices"** - Redux Toolkit with `createSelector`
 - **Most boilerplate** - slices, actions, reducers, selectors
-- **Worst dev performance** - 26 FPS (slower than naive!)
-- **Larger bundle** - 72KB vs 62KB for plain React
+- **Slow dev baseline** - ~32 FPS
+- **Larger bundle** - ~72KB vs ~62KB for plain React
 - **The reality:** More code, worse results, painful dev experience
+
+### React + RTK (Memo) (`/src/react-rtk-memo/`)
+
+- **Same RTK architecture** with memoized React components
+- **Use case:** compare render memoization impact without changing store model
+- **The point:** isolates React render optimization from RTK slice/store costs
 
 ### React + RTK + Inglorious Store (`/src/react-rtk-inglorious/`)
 
@@ -178,6 +191,12 @@ export const UPDATE_FREQUENCY = 10
 - **Inglorious runtime** - state updates run through Inglorious Store internals
 - **The tradeoff:** Useful for migration, but still carries RTK-style ceremony
 
+### React + RTK + Inglorious Store (Memo) (`/src/react-rtk-inglorious-memo/`)
+
+- **Same migration architecture** with memoized React components
+- **Use case:** measure adapter + RTK costs with render memoization enabled
+- **The point:** keeps migration path comparable to other memoized React variants
+
 ### React + Inglorious Store (`/src/react-inglorious/`)
 
 - **React UI, native Inglorious store** - no RTK slices and no migration adapters
@@ -185,19 +204,25 @@ export const UPDATE_FREQUENCY = 10
 - **Cleaner update path** - direct entity/type handlers with Mutative under the hood
 - **The point:** isolates RTK/adapters overhead while keeping React rendering comparable
 
+### React + Inglorious Store (Memo) (`/src/react-inglorious-memo/`)
+
+- **Same native Inglorious store integration** with memoized React components
+- **Use case:** isolate React memoization gains while keeping non-RTK store logic
+- **The point:** direct baseline-vs-memo comparison for this integration style
+
 ### Inglorious (no memo) (`/src/inglorious/`)
 
 - **No memoization** - Straightforward entity-based architecture
 - **Clean code** - Separation of data (entities) and behavior (types)
-- **Peak performance** - 100 FPS in dev and prod
-- **Tiny bundle** - 15KB
+- **Peak baseline performance** - ~105 FPS in dev and ~120 FPS in prod
+- **Tiny bundle** - ~16.3KB
 - **The point:** Fast by default, no tricks needed
 
 ### Inglorious (with memo) (`/src/inglorious-memo/`)
 
 - **Optional memoization** - Uses `compute()` for derived state
-- **Same performance** - Still 100 FPS
-- **Same bundle size** - 15KB (negligible difference)
+- **Similar performance** - ~110 FPS dev and ~120 FPS prod
+- **Same bundle class** - ~16.3KB (negligible difference)
 - **The lesson:** Memoization is a convenience, not a requirement
 
 ## 💡 Key Concepts Demonstrated
@@ -206,20 +231,20 @@ export const UPDATE_FREQUENCY = 10
 
 1. **Virtual DOM overhead** - Dev builds include extra checks and warnings
 2. **Cascade re-renders** - Parent updates trigger children unnecessarily
-3. **RTK middleware** - Redux dev tools add significant overhead
+3. **Store integration + slice pipeline costs** - RTK slice updates and adapter conversion paths add work, especially at high update frequency
 4. **Framework complexity** - Lifecycle hooks, dependency tracking
 
 ### Why Inglorious Web Excels
 
 1. **No Virtual DOM** - Direct DOM updates via lit-html
-2. **Entity-Component-System** - Clean separation of concerns
+2. **Data Orientation** - Clean separation of concerns
 3. **Fast by default** - No optimization tricks required
 4. **Optimized from the start** - Dev and prod builds are similar
 5. **Simple mental model** - Mutate state, framework handles the rest
 
 ### Bundle Size Impact
 
-- **15KB vs 62KB** = 47KB savings
+- **~16KB vs 62-79KB** = large transfer savings
 - On 3G: ~500ms faster load time
 - Critical for global audiences (India, Brazil, Africa, rural areas)
 - Better Core Web Vitals scores out of the box
@@ -543,15 +568,21 @@ Your results may vary based on hardware. Test on multiple devices!
 
 ## ❓ FAQ
 
-**Q: Why is Redux slower than naive React in development?**  
-A: Redux adds dev middleware for time-travel debugging, immutability checks, and state serialization. These are helpful for debugging but add significant overhead during development.
+**Q: Why are RTK variants slower than plain React in this benchmark?**  
+A: The data suggests it's not mainly middleware. The strongest signal is:
 
-**Q: React hits 100 FPS in production. Doesn't that mean it's just as good?**  
+- RTK slice/update machinery is costlier under this update rate
+- React render strategy (memoized vs non-memoized) has a large effect
+- Adapter-based conversion (`react-rtk-inglorious`) adds extra overhead on top of RTK slices
+
+Dev middleware can contribute in development, but it does not explain the full gap, especially because the adapter path is slower even with a different runtime store.
+
+**Q: React hits 120 FPS in production. Doesn't that mean it's just as good?**  
 A: Production parity doesn't tell the full story:
 
-- Your dev experience was painful (26-43 FPS vs 100 FPS)
-- You shipped 4x more JavaScript (62-72KB vs 15KB)
-- You spent hours adding memoization that barely helped
+- Baseline dev experience is still much slower (29-52 FPS vs 105+ FPS)
+- You shipped far more JavaScript (62-79KB vs ~16KB)
+- You still need explicit memoization to approach top numbers
 - Your code is more complex and harder to maintain
 - Junior devs will struggle with the optimization burden
 
@@ -594,7 +625,7 @@ We'd love to see comparisons with other frameworks. Our expectations:
 - ✅ No compilation required (can run directly in browsers via import maps)
 - ✅ No lifecycle events (components are pure render functions)
 - ✅ Predictable, explicit behavior (no magic reactivity tracking)
-- ✅ "Good enough" is enough (100 FPS without build tools beats 105 FPS with webpack/vite/rollup)
+- ✅ "Good enough" is enough (105+ FPS without build-tool-dependent optimization games)
 
 If you value **architectural clarity and zero build complexity** over squeezing out the last 5% of performance, Inglorious Web wins. If you need every millisecond, Svelte might edge ahead - but you'll pay for it in tooling complexity.
 

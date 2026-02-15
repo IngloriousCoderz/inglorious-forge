@@ -67,7 +67,7 @@ export default function Dashboard() {
   return (
     <div className="dashboard">
       <div className="header">
-        <div className="title">🐢 REACT + RTK (OPTIMIZED) BENCHMARK</div>
+        <div className="title">🐢 REACT + RTK BENCHMARK</div>
         <MetricsDisplay />
       </div>
 
@@ -96,8 +96,7 @@ export default function Dashboard() {
       </div>
 
       <div className="info">
-        ✅ RTK + OPTIMIZED: Same business logic model as the Inglorious variant,
-        with RTK slices and React selector plumbing.
+        ✅ RTK baseline integration using slices and React selector plumbing.
       </div>
     </div>
   )

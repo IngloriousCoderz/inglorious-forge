@@ -96,8 +96,7 @@ export default function Dashboard() {
       </div>
 
       <div className="info">
-        ✅ React components on top of native Inglorious Store types and
-        selectors, without RTK slices or adapters.
+        ✅ React + native Inglorious Store baseline (no component memoization).
       </div>
     </div>
   )

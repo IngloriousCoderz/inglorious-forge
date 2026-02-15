@@ -5,7 +5,6 @@ import { CHARTS } from "../charts"
 import { UPDATE_FREQUENCY } from "../data"
 import { Chart } from "./chart"
 import { MetricsDisplay } from "./metrics"
-import { randomUpdate } from "./store/events"
 import { setFilter, setFPS, setSort } from "./store/metrics.slice"
 import { selectFilter, selectSortBy } from "./store/selectors"
 import { Table } from "./table"
@@ -19,6 +18,7 @@ export default function Dashboard() {
   const filter = useSelector(selectFilter)
   const sortBy = useSelector(selectSortBy)
 
+  // FPS Counter
   useEffect(() => {
     let frameCount = 0
     let lastTime = performance.now()
@@ -41,9 +41,10 @@ export default function Dashboard() {
     return () => cancelAnimationFrame(rafId)
   }, [dispatch])
 
+  // Live data updates (single event, like the inglorious variant)
   useEffect(() => {
     const interval = setInterval(() => {
-      dispatch(randomUpdate())
+      dispatch({ type: "randomUpdate" })
     }, UPDATE_FREQUENCY)
 
     return () => clearInterval(interval)
@@ -66,7 +67,9 @@ export default function Dashboard() {
   return (
     <div className="dashboard">
       <div className="header">
-        <div className="title">🧩 REACT + RTK + INGLORIOUS STORE BENCHMARK</div>
+        <div className="title">
+          ⚛️ REACT + INGLORIOUS STORE (MEMO) BENCHMARK
+        </div>
         <MetricsDisplay />
       </div>
 
@@ -95,8 +98,7 @@ export default function Dashboard() {
       </div>
 
       <div className="info">
-        ✅ RTK slices converted via migration adapters (baseline, no component
-        memoization).
+        ✅ React + native Inglorious Store with memoized React components.
       </div>
     </div>
   )

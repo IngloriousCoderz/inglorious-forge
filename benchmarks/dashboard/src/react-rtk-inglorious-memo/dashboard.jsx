@@ -66,7 +66,9 @@ export default function Dashboard() {
   return (
     <div className="dashboard">
       <div className="header">
-        <div className="title">🧩 REACT + RTK + INGLORIOUS STORE BENCHMARK</div>
+        <div className="title">
+          🧩 REACT + RTK + INGLORIOUS (MEMO) BENCHMARK
+        </div>
         <MetricsDisplay />
       </div>
 
@@ -95,8 +97,8 @@ export default function Dashboard() {
       </div>
 
       <div className="info">
-        ✅ RTK slices converted via migration adapters (baseline, no component
-        memoization).
+        ✅ RTK slices converted via migration adapters with memoized React
+        components.
       </div>
     </div>
   )

@@ -1,8 +1,9 @@
 import { useCallback, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 
-import { CHARTS } from "../charts"
-import { UPDATE_FREQUENCY } from "../data"
+import { CHARTS } from "@/charts"
+import { UPDATE_FREQUENCY } from "@/data"
+
 import { Chart } from "./chart"
 import { MetricsDisplay } from "./metrics"
 import { randomUpdate } from "./store/events"
@@ -66,7 +67,7 @@ export default function Dashboard() {
   return (
     <div className="dashboard">
       <div className="header">
-        <div className="title">🧩 REACT + RTK + INGLORIOUS STORE BENCHMARK</div>
+        <div className="title">🐢 REACT + RTK (MEMO) BENCHMARK</div>
         <MetricsDisplay />
       </div>
 
@@ -95,8 +96,7 @@ export default function Dashboard() {
       </div>
 
       <div className="info">
-        ✅ RTK slices converted via migration adapters (baseline, no component
-        memoization).
+        ✅ RTK integration with memoized React components and selector usage.
       </div>
     </div>
   )
