@@ -5,7 +5,7 @@ import { scaleBand, scaleLinear, scaleTime } from "d3-scale"
 
 import { getDataPointX, getDataPointY, isMultiSeries } from "./data-utils.js"
 
-export function createYScale(data, height, padding, isStacked = false) {
+export function createYScale(data, height, padding, isStacked = false, dataKeys = null) {
   let values
   if (isMultiSeries(data)) {
     if (isStacked) {
@@ -46,13 +46,17 @@ export function createYScale(data, height, padding, isStacked = false) {
           typeof firstItem[key] === "number",
       )
 
-      if (numericKeys.length > 1) {
+      // Use provided dataKeys if available (composition mode), otherwise use all numeric keys
+      const keysToUse =
+        dataKeys && dataKeys.length > 0 ? dataKeys : numericKeys
+
+      if (keysToUse.length > 0 && numericKeys.length > 1) {
         // Wide format: data is [{ name: "0", Revenue: 20, Expenses: 80, ... }]
         if (isStacked) {
           // For stacked, calculate sum of all numeric values per point
           values = data.map((d) => {
             let sum = 0
-            numericKeys.forEach((key) => {
+            keysToUse.forEach((key) => {
               const value = d[key]
               if (typeof value === "number") {
                 sum += value
@@ -61,14 +65,20 @@ export function createYScale(data, height, padding, isStacked = false) {
             return sum
           })
         } else {
-          // For non-stacked, extract all individual values from all keys
+          // For non-stacked, extract all individual values from specified keys
           values = data.flatMap((d) =>
-            numericKeys.map((key) => {
+            keysToUse.map((key) => {
               const value = d[key]
               return typeof value === "number" ? value : 0
             }),
           )
         }
+      } else if (keysToUse.length > 0 && numericKeys.length === 1) {
+        // Single key specified, extract only that key
+        values = data.map((d) => {
+          const value = d[keysToUse[0]]
+          return typeof value === "number" ? value : 0
+        })
       } else {
         // Single series: extract directly
         values = data.map((d) => getDataPointY(d))
@@ -182,6 +192,7 @@ export function createScales(entity, chartType) {
     entity.height,
     entity.padding,
     isStacked,
+    entity.dataKeys, // Pass dataKeys if available
   )
 
   let xScale
