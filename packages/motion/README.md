@@ -15,22 +15,18 @@ pnpm add @inglorious/motion @inglorious/web
 Composes a type with a motion lifecycle driven by WAAPI.
 
 - Adds `motionVariantChange(entity, variant)` handler.
-- Adds `requestRemove(entity, payload, api)` handler (plays exit variant, then removes entity).
+- Adds `removeWithMotion(entity, payload, api)` handler (plays exit variant, then removes entity).
 - Wraps your render with a motion host and applies lifecycle classes:
   - `${classPrefix}--start`
   - `${classPrefix}--active`
   - `${classPrefix}--end`
   - `${classPrefix}--variant-<name>`
 
-### `removeWithMotion(api, entityId, payload?)`
-
-Convenience helper that dispatches `#<entityId>:requestRemove`.
-
 ## Example
 
 ```js
 import { html } from "@inglorious/web"
-import { removeWithMotion, withMotion } from "@inglorious/motion"
+import { withMotion } from "@inglorious/motion"
 
 const card = {
   render(entity, api) {
@@ -42,7 +38,9 @@ const card = {
         >
           Hide
         </button>
-        <button @click=${() => removeWithMotion(api, entity.id)}>Remove</button>
+        <button @click=${() => api.notify(`#${entity.id}:removeWithMotion`)}>
+          Remove
+        </button>
       </article>
     `
   },

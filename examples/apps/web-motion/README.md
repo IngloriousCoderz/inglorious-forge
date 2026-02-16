@@ -6,7 +6,7 @@ This app demonstrates:
 
 - Variant transitions (`visible` / `hidden`) driven by store events.
 - Motion phase classes (`start`, `active`, `end`) on the host node.
-- Exit animation before removal with `removeWithMotion`.
+- Exit animation before removal via `api.notify(#id:removeWithMotion)`.
 
 Quick start:
 

@@ -5,6 +5,7 @@
 ### Patch Changes
 
 - @inglorious/web@4.2.5
+- Prefer event-first remove flow (`#id:removeWithMotion`) over helper function export.
 
 ## 0.1.0
 
