@@ -12,6 +12,7 @@ Available demos:
 - [web-form](./web-form/README.md) — form type demo (validation, arrays, field helpers)
 - [web-list](./web-list/README.md) — virtualized list demo (extends `list` and uses `renderItem`)
 - [web-logo](./web-logo/README.md) — interactive logo manipulation
+- [web-motion](./web-motion/README.md) — motion lifecycle demo using `@inglorious/motion`
 - [web-router](./web-router/README.md) — router demo (entity based client-side routing)
 - [web-select](./web-select/README.md) — select type demo (single selection, multi, remote options)
 - [web-todomvc](./web-todomvc/README.md) — TodoMVC client-only demo with `@inglorious/web` (start here!)

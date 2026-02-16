@@ -1,0 +1,26 @@
+{
+  "name": "web-motion",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "author": "IceOnFire <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
+  "license": "MIT",
+  "scripts": {
+    "format": "prettier --write .",
+    "lint": "eslint .",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@inglorious/motion": "workspace:*",
+    "@inglorious/web": "workspace:*"
+  },
+  "devDependencies": {
+    "@inglorious/eslint-config": "workspace:*",
+    "eslint": "^9.39.1",
+    "prettier": "^3.6.2",
+    "rollup-plugin-minify-template-literals": "^1.1.7",
+    "vite": "^7.1.6"
+  }
+}

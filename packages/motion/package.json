@@ -1,0 +1,54 @@
+{
+  "name": "@inglorious/motion",
+  "version": "0.1.0",
+  "description": "CSS-first motion helpers for Inglorious Web type composition.",
+  "author": "IceOnFire <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IngloriousCoderz/inglorious-forge.git",
+    "directory": "packages/motion"
+  },
+  "bugs": {
+    "url": "https://github.com/IngloriousCoderz/inglorious-forge/issues"
+  },
+  "keywords": [
+    "motion",
+    "animation",
+    "waapi",
+    "inglorious-web"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./types/index.d.ts",
+      "import": "./src/index.js"
+    }
+  },
+  "files": [
+    "src",
+    "types"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "format": "prettier --write .",
+    "lint": "eslint .",
+    "test": "echo \"No tests yet\""
+  },
+  "dependencies": {
+    "@inglorious/web": "workspace:*"
+  },
+  "peerDependencies": {
+    "@inglorious/web": "workspace:*"
+  },
+  "devDependencies": {
+    "@inglorious/eslint-config": "workspace:*",
+    "prettier": "^3.6.2"
+  },
+  "packageManager": "pnpm@10.15.0",
+  "engines": {
+    "node": ">= 22"
+  }
+}

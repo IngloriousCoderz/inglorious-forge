@@ -1,0 +1,105 @@
+:root {
+  --bg: #f4f6ef;
+  --paper: #ffffff;
+  --ink: #1f2933;
+  --line: #cad4db;
+  --accent: #176087;
+  --accent-ink: #eaf5fb;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 20% 0%, #e4f1f6, transparent 40%),
+    radial-gradient(circle at 90% 100%, #f0ead6, transparent 35%), var(--bg);
+}
+
+#root {
+  max-width: 56rem;
+  margin: 0 auto;
+  padding: 2rem 1rem 3rem;
+}
+
+.app-shell {
+  display: grid;
+  gap: 1rem;
+}
+
+header h1 {
+  margin: 0;
+  font-size: clamp(1.8rem, 4vw, 2.7rem);
+}
+
+header p {
+  margin: 0.35rem 0 0;
+  opacity: 0.85;
+}
+
+.card,
+.stack {
+  padding: 1rem;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 0.9rem;
+  box-shadow: 0 8px 22px color-mix(in srgb, #99afbc 22%, transparent);
+}
+
+button {
+  border: 0;
+  border-radius: 0.55rem;
+  background: var(--accent);
+  color: var(--accent-ink);
+  padding: 0.45rem 0.8rem;
+  cursor: pointer;
+}
+
+.toast-list {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 0.75rem;
+}
+
+.toast {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.7rem 0.8rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--line);
+  background: #fbfdff;
+}
+
+.toast p {
+  margin: 0.2rem 0 0;
+  font-size: 0.92rem;
+}
+
+.demo-motion--start,
+.demo-toast--start {
+  outline: 1px dashed #89a6b7;
+}
+
+.demo-motion--active,
+.demo-toast--active {
+  outline: 2px solid #4f8aa8;
+}
+
+.demo-motion--end,
+.demo-toast--end {
+  outline: 1px solid transparent;
+}
+
+@media (max-width: 640px) {
+  .toast {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
