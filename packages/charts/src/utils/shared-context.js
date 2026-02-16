@@ -16,7 +16,6 @@ import { createScales } from "./scales.js"
  * @param {number|string} [props.width] - Chart width (overrides entity.width)
  * @param {number|string} [props.height] - Chart height (overrides entity.height)
  * @param {Object} [props.padding] - Chart padding (overrides calculated padding)
- * @param {Set<string>|string[]|null} [props.usedDataKeys] - Data keys to use for Y-scale calculation (composition mode)
  * @param {string} [props.chartType="line"] - Chart type ("line", "area", "bar")
  * @param {any} api - Web API instance (not used, but follows standard signature)
  * @returns {Object} Context object with xScale, yScale, dimensions, and entity
@@ -32,7 +31,6 @@ export function createSharedContext(entity, props = {}, api) {
     width: configWidth,
     height: configHeight,
     padding: configPadding,
-    usedDataKeys: configDataKeys,
     chartType = "line",
     stacked = false,
   } = props
@@ -44,54 +42,33 @@ export function createSharedContext(entity, props = {}, api) {
     parseDimension(configHeight) || parseDimension(entity.height) || 400
   const padding = configPadding || calculatePadding(width, height)
 
-  // Convert dataKeys array to Set if needed
-  const usedDataKeys =
-    configDataKeys instanceof Set
-      ? configDataKeys
-      : Array.isArray(configDataKeys)
-        ? new Set(configDataKeys)
-        : null
-
-  // CRITICAL: Y scale should ALWAYS use original (unfiltered) data
+  // Create entities with correct data for each scale
+  // CRITICAL: Both X and Y scales use original (unfiltered) data
   // The brush zoom should only affect X-axis, not Y-axis
   // This ensures consistent Y-axis scale regardless of brush selection
-  // Use original entity data for Y scale calculation (not filtered)
-  const dataForYExtent = entity.data
-
-  // Calculate maximum value for Y-axis scaling (global max across ALL data)
-  const maxValue = getExtent(dataForYExtent, usedDataKeys, stacked)
-
-  // Create data structure for scale calculation
-  // For X scale: use original data (not filtered) to preserve original x/date values
-  // For Y scale: use maxValue calculated from ALL data (not filtered)
-  // This ensures xScale has correct domain based on original data, and yScale has [0, maxValue]
-  // The brush zoom will be applied later by adjusting xScale.domain([startIndex, endIndex])
-  // Note: dataForYScale is just a placeholder structure for createYScale
-  const dataForYScale = dataForYExtent.map((d, i) => ({
-    x: i,
-    y: maxValue,
-  }))
-
-  // Create entities with correct data for each scale
   // X scale uses original data to preserve x/date values
   const entityForXScale = {
     ...entity,
-    data: entity.data, // Use original data for X scale
+    data: entity.data,
     width,
     height,
     padding,
+    stacked: stacked ? true : undefined, // Pass stacked flag for X scale (not needed but for consistency)
   }
 
-  // Y scale uses transformed data with maxValue
+  // Y scale entity - pass stacked flag so createYScale calculates correctly
+  // IMPORTANT: Use entity.stacked if available, otherwise use the stacked prop
+  const entityStacked = entity.stacked !== undefined ? entity.stacked : stacked
   const entityForYScale = {
     ...entity,
-    data: dataForYScale,
+    data: entity.data,
     width,
     height,
     padding,
+    stacked: entityStacked ? true : undefined, // Pass stacked flag for Y scale calculation
   }
 
-  // Create scales separately: X scale uses original data, Y scale uses transformed data
+  // Create scales separately: X scale uses original data, Y scale uses original data with stacked flag
   // For X scale, we need to ensure it uses original data even if brush is enabled
   // So we temporarily disable brush filtering for X scale creation
   const entityForXScaleNoBrush = {
