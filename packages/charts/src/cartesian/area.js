@@ -3,6 +3,7 @@ import { html, repeat, svg } from "@inglorious/web"
 
 import { createBrushComponent } from "../component/brush.js"
 import { renderGrid } from "../component/grid.js"
+import { renderLegend } from "../component/legend.js"
 import { createTooltipComponent, renderTooltip } from "../component/tooltip.js"
 import { renderXAxis } from "../component/x-axis.js"
 import { renderYAxis } from "../component/y-axis.js"
@@ -59,6 +60,26 @@ export const area = {
     const entityWithData = config.data
       ? { ...entity, data: config.data }
       : entity
+
+    // Auto-detect stacked mode: if config.stacked is not explicitly set,
+    // check if any Area component has a stackId
+    let isStacked = config.stacked === true
+    if (config.stacked === undefined) {
+      const childrenArray = Array.isArray(children) ? children : [children]
+      const hasStackId = childrenArray.some(
+        (child) =>
+          child &&
+          typeof child === "object" &&
+          child.type === "Area" &&
+          child.config &&
+          child.config.stackId !== undefined,
+      )
+      if (hasStackId) {
+        isStacked = true
+        config.stacked = true
+      }
+    }
+
     const context = createSharedContext(
       entityWithData,
       {
@@ -66,13 +87,13 @@ export const area = {
         height: config.height,
         padding: config.padding,
         chartType: "area",
-        stacked: config.stacked === true,
+        stacked: isStacked,
       },
       api,
     )
     context.api = api
 
-    if (config.stacked === true) {
+    if (isStacked) {
       context.stack = {
         sumsByStackId: new Map(),
         computedByKey: new Map(),
@@ -92,6 +113,7 @@ export const area = {
       areas = [],
       dots = [],
       tooltip = [],
+      legend = [],
       others = []
 
     for (const child of processedChildrenArray) {
@@ -101,19 +123,20 @@ export const area = {
         else if (child.isArea) areas.push(child)
         else if (child.isDots) dots.push(child)
         else if (child.isTooltip) tooltip.push(child)
+        else if (child.isLegend) legend.push(child)
         else others.push(child)
       } else {
         others.push(child)
       }
     }
 
-    const isStacked = config.stacked === true
     const sortedChildren = [
       ...grid,
       ...(isStacked ? areas : [...areas].reverse()),
       ...axes,
       ...dots,
       ...tooltip,
+      ...legend,
       ...others,
     ]
 
@@ -316,6 +339,36 @@ export const area = {
    */
   renderTooltip: createTooltipComponent(),
 
+  renderLegend(entity, { config = {} }, api) {
+    const legendFn = (ctx) => {
+      const { dimensions } = ctx
+      const { dataKeys, colors } = config
+
+      if (!dataKeys || dataKeys.length === 0) {
+        return svg``
+      }
+
+      // Convert dataKeys and colors to series format expected by renderLegend
+      const series = dataKeys.map((dataKey, index) => ({
+        name: dataKey,
+        color: colors && colors[index] ? colors[index] : undefined,
+      }))
+
+      return renderLegend(
+        ctx.entity || entity,
+        {
+          series,
+          colors: colors || [],
+          width: dimensions.width,
+          padding: dimensions.padding,
+        },
+        api,
+      )
+    }
+    legendFn.isLegend = true
+    return legendFn
+  },
+
   /**
    * Composition sub-render for brush control.
    * @type {(entity: import('../types/charts').ChartEntity, params: { config?: Record<string, any> }, api: import('@inglorious/web').Api) => (ctx: Record<string, any>) => import('lit-html').TemplateResult}
@@ -387,6 +440,23 @@ function buildChildrenFromConfig(entity) {
   }
 
   if (entity.showTooltip !== false) children.push(chart.Tooltip({}))
+
+  if (entity.showLegend === true) {
+    children.push(
+      chart.Legend({
+        dataKeys,
+        colors: colors.slice(0, dataKeys.length),
+      }),
+    )
+  }
+  
+  if (entity.brush?.enabled) {
+    children.push(
+      chart.Brush({
+        dataKey: xAxisDataKey || "name",
+      }),
+    )
+  }
 
   return children
 }
