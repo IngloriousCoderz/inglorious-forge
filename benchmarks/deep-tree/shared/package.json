@@ -1,0 +1,12 @@
+{
+  "name": "@benchmarks/deep-tree-shared",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "author": "IceOnFire <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
+  "license": "MIT",
+  "exports": {
+    ".": "./src/index.js",
+    "./style.css": "./src/style.css"
+  }
+}

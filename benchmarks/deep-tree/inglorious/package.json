@@ -1,0 +1,19 @@
+{
+  "name": "@benchmarks/deep-tree-inglorious",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@benchmarks/deep-tree-shared": "workspace:*",
+    "@inglorious/web": "workspace:*"
+  },
+  "devDependencies": {
+    "rollup-plugin-minify-template-literals": "^1.1.7",
+    "vite": "^7.1.7"
+  }
+}

@@ -3,7 +3,8 @@
 ## Suites
 
 1. Unified dashboard suite: `benchmarks/dashboard`
-2. Charts suite: `benchmarks/charts`
+2. Deep tree sparse-update suite: `benchmarks/deep-tree`
+3. Charts suite: `benchmarks/charts`
 
 Use this file as the top-level index for benchmark suites.
 
@@ -39,6 +40,24 @@ pnpm -C benchmarks/dashboard/inglorious-memo dev
 ### Results and docs
 
 - `benchmarks/dashboard/README.md`
+
+## Deep Tree Sparse-Update Benchmark
+
+- Purpose: evaluate deep hierarchy behavior under low-frequency, sparse leaf updates
+- Shared business logic: `@benchmarks/deep-tree-shared`
+
+### Run
+
+```bash
+pnpm -C benchmarks/deep-tree/react dev
+pnpm -C benchmarks/deep-tree/vue dev
+pnpm -C benchmarks/deep-tree/svelte dev
+pnpm -C benchmarks/deep-tree/inglorious dev
+```
+
+### Results and docs
+
+- `benchmarks/deep-tree/README.md`
 
 ## Charts Benchmark
 

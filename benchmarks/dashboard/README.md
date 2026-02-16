@@ -76,23 +76,23 @@ pnpm -C benchmarks/dashboard/inglorious-memo dev
 
 ## Results
 
-| Variant                           | FPS(avg10) Dev | FPS(avg10) Prod | Bundle Size |
-| --------------------------------- | -------------- | --------------- | ----------- |
-| React                             | 52             | 113             | 62.39kB     |
-| React Memoized                    | 112            | 120             | 62.58kB     |
-| React + RTK                       | 32             | 92              | 72.21kB     |
-| React + RTK Memoized              | 87             | 118             | 72.30kB     |
-| React + RTK + Inglorious          | 29             | 74              | 79.18kB     |
-| React + RTK + Inglorious Memoized | 69             | 93              | 79.29kB     |
-| React + Inglorious Store          | 33             | 95              | 71.98kB     |
-| React + Inglorious Store Memoized | 87             | 120             | 72.05kB     |
-| Vue                               | 116            | 117             | 26.80kB     |
-| Vue + Pinia                       | 117            | 117             | 28.56kB     |
-| Svelte                            | 112            | 119             | 16.02kB     |
-| Svelte + Store                    | 110            | 119             | 16.04kB     |
-| Svelte + Runes                    | 102            | 118             | 14.13kB     |
-| Inglorious                        | 105            | 120             | 16.29kB     |
-| Inglorious Memoized               | 110            | 120             | 16.35kB     |
+| Variant                           | FPS(avg10) Dev | FPS(avg10) Prod | Bundle Size (kB) |
+| --------------------------------- | -------------- | --------------- | ---------------- |
+| React                             | 52             | 113             | 62.39            |
+| React Memoized                    | 112            | 120             | 62.58            |
+| React + RTK                       | 32             | 92              | 72.21            |
+| React + RTK Memoized              | 87             | 118             | 72.30            |
+| React + RTK + Inglorious          | 29             | 74              | 79.18            |
+| React + RTK + Inglorious Memoized | 69             | 93              | 79.29            |
+| React + Inglorious Store          | 33             | 95              | 71.98            |
+| React + Inglorious Store Memoized | 87             | 120             | 72.05            |
+| Vue                               | 116            | 117             | 26.80            |
+| Vue + Pinia                       | 117            | 117             | 28.56            |
+| Svelte                            | 112            | 119             | 16.02            |
+| Svelte + Store                    | 110            | 119             | 16.04            |
+| Svelte + Runes                    | 102            | 118             | 14.13            |
+| Inglorious                        | 105            | 120             | 16.29            |
+| Inglorious Memoized               | 110            | 120             | 16.35            |
 
 ### Considerations
 

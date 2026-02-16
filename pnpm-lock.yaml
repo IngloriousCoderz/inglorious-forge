@@ -404,6 +404,75 @@ importers:
         specifier: ^7.1.7
         version: 7.3.0(@types/node@24.8.0)(jiti@2.5.1)(lightningcss@1.30.1)(sass@1.91.0)(terser@5.44.1)
 
+  benchmarks/deep-tree/inglorious:
+    dependencies:
+      "@benchmarks/deep-tree-shared":
+        specifier: workspace:*
+        version: link:../shared
+      "@inglorious/web":
+        specifier: workspace:*
+        version: link:../../../packages/web
+    devDependencies:
+      rollup-plugin-minify-template-literals:
+        specifier: ^1.1.7
+        version: 1.1.7(rollup@4.50.0)
+      vite:
+        specifier: ^7.1.7
+        version: 7.3.0(@types/node@24.8.0)(jiti@2.5.1)(lightningcss@1.30.1)(sass@1.91.0)(terser@5.44.1)
+
+  benchmarks/deep-tree/react:
+    dependencies:
+      "@benchmarks/deep-tree-shared":
+        specifier: workspace:*
+        version: link:../shared
+      react:
+        specifier: ^19.2.0
+        version: 19.2.0
+      react-dom:
+        specifier: ^19.2.0
+        version: 19.2.0(react@19.2.0)
+    devDependencies:
+      "@vitejs/plugin-react":
+        specifier: ^5.0.4
+        version: 5.1.2(vite@7.3.0(@types/node@24.8.0)(jiti@2.5.1)(lightningcss@1.30.1)(sass@1.91.0)(terser@5.44.1))
+      vite:
+        specifier: ^7.1.7
+        version: 7.3.0(@types/node@24.8.0)(jiti@2.5.1)(lightningcss@1.30.1)(sass@1.91.0)(terser@5.44.1)
+
+  benchmarks/deep-tree/shared: {}
+
+  benchmarks/deep-tree/svelte:
+    dependencies:
+      "@benchmarks/deep-tree-shared":
+        specifier: workspace:*
+        version: link:../shared
+      svelte:
+        specifier: ^5.0.0
+        version: 5.51.2
+    devDependencies:
+      "@sveltejs/vite-plugin-svelte":
+        specifier: ^6.0.0
+        version: 6.2.4(svelte@5.51.2)(vite@7.3.0(@types/node@24.8.0)(jiti@2.5.1)(lightningcss@1.30.1)(sass@1.91.0)(terser@5.44.1))
+      vite:
+        specifier: ^7.1.7
+        version: 7.3.0(@types/node@24.8.0)(jiti@2.5.1)(lightningcss@1.30.1)(sass@1.91.0)(terser@5.44.1)
+
+  benchmarks/deep-tree/vue:
+    dependencies:
+      "@benchmarks/deep-tree-shared":
+        specifier: workspace:*
+        version: link:../shared
+      vue:
+        specifier: ^3.5.0
+        version: 3.5.28(typescript@5.9.3)
+    devDependencies:
+      "@vitejs/plugin-vue":
+        specifier: ^6.0.4
+        version: 6.0.4(vite@7.3.0(@types/node@24.8.0)(jiti@2.5.1)(lightningcss@1.30.1)(sass@1.91.0)(terser@5.44.1))(vue@3.5.28(typescript@5.9.3))
+      vite:
+        specifier: ^7.1.7
+        version: 7.3.0(@types/node@24.8.0)(jiti@2.5.1)(lightningcss@1.30.1)(sass@1.91.0)(terser@5.44.1)
+
   docs/engine:
     dependencies:
       "@inglorious/engine":

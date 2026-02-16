@@ -1,0 +1,91 @@
+:root {
+  --bg: #0f172a;
+  --panel: #111827;
+  --text: #e5e7eb;
+  --muted: #94a3b8;
+  --accent: #22d3ee;
+  --warn: #f59e0b;
+  --danger: #ef4444;
+  --leaf: #22c55e;
+  --node: #334155;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  background: radial-gradient(circle at 20% 0%, #1f2937, var(--bg) 60%);
+  color: var(--text);
+}
+
+#app,
+#root {
+  min-height: 100vh;
+}
+
+.app {
+  padding: 20px;
+}
+
+.header {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.metric {
+  background: var(--panel);
+  border: 1px solid #1f2937;
+  border-radius: 8px;
+  padding: 8px 10px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.metric.warning {
+  color: var(--warn);
+}
+
+.metric.error {
+  color: var(--danger);
+}
+
+.tree-container {
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid #1f2937;
+  border-radius: 12px;
+  padding: 14px;
+  overflow: auto;
+  max-height: calc(100vh - 180px);
+}
+
+.node {
+  margin-left: 12px;
+  border-left: 1px dashed rgba(148, 163, 184, 0.2);
+  padding-left: 10px;
+}
+
+.node-label {
+  color: var(--node);
+  font-size: 11px;
+}
+
+.leaf {
+  color: var(--leaf);
+  font-size: 11px;
+}
