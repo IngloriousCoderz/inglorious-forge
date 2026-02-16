@@ -60,7 +60,8 @@ export const line = {
     const entityWithData = {
       ...entity,
       data: entityData,
-      dataKey: entity.dataKey || (transformedData[0]?.x !== undefined ? "x" : "name"),
+      dataKey:
+        entity.dataKey || (transformedData[0]?.x !== undefined ? "x" : "name"),
     }
 
     // Convert entity config to declarative children
@@ -72,7 +73,8 @@ export const line = {
         const first = entityWithData.data[0]
         dataKeys = Object.keys(first).filter(
           (key) =>
-            !["name", "x", "date"].includes(key) && typeof first[key] === "number",
+            !["name", "x", "date"].includes(key) &&
+            typeof first[key] === "number",
         )
         if (dataKeys.length === 0) {
           dataKeys = ["y", "value"].filter((k) => first[k] !== undefined)
@@ -129,7 +131,9 @@ export const line = {
     const context = createSharedContext(
       entityForBrush,
       {
-        width, height, padding,
+        width,
+        height,
+        padding,
         usedDataKeys: dataKeysSet,
         chartType: "line",
         filteredEntity: entityWithData,
@@ -153,15 +157,27 @@ export const line = {
     context.api = api
 
     // Process children (Grid, Line, XAxis, etc)
-    const processedChildrenArray = (Array.isArray(children) ? children : [children])
+    const processedChildrenArray = (
+      Array.isArray(children) ? children : [children]
+    )
       .filter(Boolean)
       .map((child) => {
-        const targetEntity = child && child.type === "Brush" ? entityForBrush : entityWithData
+        const targetEntity =
+          child && child.type === "Brush" ? entityForBrush : entityWithData
         return processDeclarativeChild(child, targetEntity, "line", api)
       })
       .filter(Boolean)
 
-    const cat = { grid: [], axes: [], lines: [], dots: [], tooltip: [], legend: [], brush: [], others: [] }
+    const cat = {
+      grid: [],
+      axes: [],
+      lines: [],
+      dots: [],
+      tooltip: [],
+      legend: [],
+      brush: [],
+      others: [],
+    }
     for (const child of processedChildrenArray) {
       if (typeof child === "function") {
         if (child.isGrid) cat.grid.push(child)
@@ -176,21 +192,38 @@ export const line = {
     }
 
     const processedChildren = [
-      ...cat.grid, ...cat.lines, ...cat.axes, ...cat.dots, 
-      ...cat.tooltip, ...cat.legend, ...cat.brush, ...cat.others
+      ...cat.grid,
+      ...cat.lines,
+      ...cat.axes,
+      ...cat.dots,
+      ...cat.tooltip,
+      ...cat.legend,
+      ...cat.brush,
+      ...cat.others,
     ].map((child) => (typeof child === "function" ? child(context) : child))
 
     return html`
-      <div class="iw-chart" style="display: block; position: relative; width: 100%; box-sizing: border-box;">
+      <div
+        class="iw-chart"
+        style="display: block; position: relative; width: 100%; box-sizing: border-box;"
+      >
         <svg
           width=${width}
           height=${height + (cat.brush.length ? 60 : 0)}
           viewBox="0 0 ${width} ${height + (cat.brush.length ? 60 : 0)}"
-          @mousemove=${createTooltipMoveHandler({ entity: entityWithData, api })}
+          @mousemove=${createTooltipMoveHandler({
+            entity: entityWithData,
+            api,
+          })}
         >
           <defs>
             <clipPath id="chart-clip-${entity.id}">
-              <rect x=${padding.left} y=${padding.top} width=${width - padding.left - padding.right} height=${height - padding.top - padding.bottom} />
+              <rect
+                x=${padding.left}
+                y=${padding.top}
+                width=${width - padding.left - padding.right}
+                height=${height - padding.top - padding.bottom}
+              />
             </clipPath>
           </defs>
           ${processedChildren}
@@ -212,13 +245,24 @@ export const line = {
       const { xScale, yScale, dimensions } = ctx
       const [start, end] = xScale.domain()
       const ticks = []
-      for (let i = Math.ceil(start); i <= Math.floor(end); i++) { ticks.push(i) }
+      for (let i = Math.ceil(start); i <= Math.floor(end); i++) {
+        ticks.push(i)
+      }
 
       const customXScale = Object.assign(xScale.copy(), { ticks: () => ticks })
 
-      return renderGrid(ctx.entity, { 
-        ...dimensions, ...config, yScale, xScale: customXScale, ticks: ticks, customXTicks: ticks 
-      }, api)
+      return renderGrid(
+        ctx.entity,
+        {
+          ...dimensions,
+          ...config,
+          yScale,
+          xScale: customXScale,
+          ticks: ticks,
+          customXTicks: ticks,
+        },
+        api,
+      )
     }
     gridFn.isGrid = true
     return gridFn
@@ -237,28 +281,36 @@ export const line = {
       const [viewStart, viewEnd] = xScale.domain()
 
       const scaleTicks = []
-      for (let i = Math.ceil(viewStart); i <= Math.floor(viewEnd); i++) { scaleTicks.push(i) }
+      for (let i = Math.ceil(viewStart); i <= Math.floor(viewEnd); i++) {
+        scaleTicks.push(i)
+      }
 
       const labels = scaleTicks.map((tick) => {
-        const dataForLabels = ctx.fullEntity === ctx.entity ? ctx.entity.data : currentEntity.data
+        const dataForLabels =
+          ctx.fullEntity === ctx.entity ? ctx.entity.data : currentEntity.data
         const item = dataForLabels[tick]
         return item?.[config.dataKey] || item?.name || item?.x || String(tick)
       })
 
-      const customXScaleForAxis = Object.assign(xScale.copy(), { ticks: () => scaleTicks })
+      const customXScaleForAxis = Object.assign(xScale.copy(), {
+        ticks: () => scaleTicks,
+      })
 
       return renderXAxis(
         { ...currentEntity, xLabels: labels },
         {
-          ...dimensions, yScale, xScale: customXScaleForAxis,
-          customTicks: scaleTicks, tickValues: scaleTicks,
+          ...dimensions,
+          yScale,
+          xScale: customXScaleForAxis,
+          customTicks: scaleTicks,
+          tickValues: scaleTicks,
           tickFormat: (d) => {
             const idx = Math.round(d)
             const labelIdx = scaleTicks.indexOf(idx)
             return labelIdx !== -1 ? labels[labelIdx] : ""
           },
         },
-        api
+        api,
       )
     }
     axisFn.isAxis = true
@@ -276,7 +328,11 @@ export const line = {
   renderYAxis(entity, { config = {} }, api) {
     const axisFn = (ctx) => {
       const ticks = ctx.yScale.ticks ? ctx.yScale.ticks(5) : ctx.yScale.domain()
-      return renderYAxis(ctx.entity, { yScale: ctx.yScale, customTicks: ticks, ...ctx.dimensions }, api)
+      return renderYAxis(
+        ctx.entity,
+        { yScale: ctx.yScale, customTicks: ticks, ...ctx.dimensions },
+        api,
+      )
     }
     axisFn.isAxis = true
     return axisFn
@@ -292,7 +348,12 @@ export const line = {
   renderLine(entity, { config = {} }, api) {
     const lineFn = (ctx) => {
       const { xScale, yScale, entity: e } = ctx
-      const { dataKey, stroke = "#8884d8", type = "linear", showDots = false } = config
+      const {
+        dataKey,
+        stroke = "#8884d8",
+        type = "linear",
+        showDots = false,
+      } = config
       const data = getTransformedData(e, dataKey)
       const chartData = data.map((d, i) => ({ ...d, x: i }))
 
@@ -324,13 +385,25 @@ export const line = {
       if (!data || data.length === 0) return svg``
       return svg`
         <g class="iw-chart-dots" clip-path="url(#chart-clip-${e.id})">
-          ${repeat(data, (d, i) => `${dataKey}-${i}`, (d, i) => {
-            const { onMouseEnter, onMouseLeave } = createTooltipHandlers({
-              entity: e, api: ctx.api || api,
-              tooltipData: { label: String(i), value: d.y, color: fill },
-            })
-            return renderDot({ cx: xScale(i), cy: yScale(d.y), r, fill, onMouseEnter, onMouseLeave })
-          })}
+          ${repeat(
+            data,
+            (d, i) => `${dataKey}-${i}`,
+            (d, i) => {
+              const { onMouseEnter, onMouseLeave } = createTooltipHandlers({
+                entity: e,
+                api: ctx.api || api,
+                tooltipData: { label: String(i), value: d.y, color: fill },
+              })
+              return renderDot({
+                cx: xScale(i),
+                cy: yScale(d.y),
+                r,
+                fill,
+                onMouseEnter,
+                onMouseLeave,
+              })
+            },
+          )}
         </g>`
     }
     dotsFn.isDots = true
@@ -413,7 +486,8 @@ function buildChildrenFromConfig(entity, providedDataKeys = null) {
       const first = entity.data[0]
       dataKeys = Object.keys(first).filter(
         (key) =>
-          !["name", "x", "date"].includes(key) && typeof first[key] === "number",
+          !["name", "x", "date"].includes(key) &&
+          typeof first[key] === "number",
       )
       if (dataKeys.length === 0) {
         dataKeys = ["y", "value"].filter((k) => first[k] !== undefined)
@@ -495,6 +569,8 @@ function transformMultiSeriesToWide(multiSeriesData) {
   })
 
   return Array.from(dataMap.values()).sort((a, b) => {
-    return typeof a.x === "number" ? a.x - b.x : String(a.x).localeCompare(String(b.x))
+    return typeof a.x === "number"
+      ? a.x - b.x
+      : String(a.x).localeCompare(String(b.x))
   })
 }
