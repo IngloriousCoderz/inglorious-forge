@@ -5,7 +5,13 @@ import { scaleBand, scaleLinear, scaleTime } from "d3-scale"
 
 import { getDataPointX, getDataPointY, isMultiSeries } from "./data-utils.js"
 
-export function createYScale(data, height, padding, isStacked = false, dataKeys = null) {
+export function createYScale(
+  data,
+  height,
+  padding,
+  isStacked = false,
+  dataKeys = null,
+) {
   let values
   if (isMultiSeries(data)) {
     if (isStacked) {
@@ -47,8 +53,7 @@ export function createYScale(data, height, padding, isStacked = false, dataKeys 
       )
 
       // Use provided dataKeys if available (composition mode), otherwise use all numeric keys
-      const keysToUse =
-        dataKeys && dataKeys.length > 0 ? dataKeys : numericKeys
+      const keysToUse = dataKeys && dataKeys.length > 0 ? dataKeys : numericKeys
 
       if (keysToUse.length > 0 && numericKeys.length > 1) {
         // Wide format: data is [{ name: "0", Revenue: 20, Expenses: 80, ... }]
