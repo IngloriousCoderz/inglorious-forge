@@ -11,6 +11,7 @@ import { chart } from "../index.js"
 import { renderCurve } from "../shape/curve.js"
 import { renderDot } from "../shape/dot.js"
 import { getTransformedData, isMultiSeries } from "../utils/data-utils.js"
+import { extractDataKeysFromChildren } from "../utils/extract-data-keys.js"
 import {
   generateAreaPath,
   generateLinePath,
@@ -123,6 +124,15 @@ export const area = {
       }
     }
 
+    // Collect data keys (used for scales and legends)
+    const dataKeysSet = new Set()
+    if (config.dataKeys && Array.isArray(config.dataKeys)) {
+      config.dataKeys.forEach((key) => dataKeysSet.add(key))
+    } else if (children) {
+      const autoDataKeys = extractDataKeysFromChildren(children)
+      autoDataKeys.forEach((key) => dataKeysSet.add(key))
+    }
+
     const context = createSharedContext(
       entityWithData,
       {
@@ -131,6 +141,8 @@ export const area = {
         padding: config.padding,
         chartType: "area",
         stacked: isStacked,
+        usedDataKeys: dataKeysSet,
+        filteredEntity: entityWithData,
       },
       api,
     )
@@ -465,7 +477,8 @@ function buildChildrenFromConfig(entity, providedDataKeys = null) {
       const first = entity.data[0]
       dataKeys = Object.keys(first).filter(
         (key) =>
-          !["name", "x", "date"].includes(key) && typeof first[key] === "number",
+          !["name", "x", "date"].includes(key) &&
+          typeof first[key] === "number",
       )
       if (dataKeys.length === 0) {
         dataKeys = ["y", "value"].filter((k) => first[k] !== undefined)
