@@ -31,16 +31,59 @@ export const area = {
    */
   render(entity, api) {
     const type = api.getType(entity.type)
-    const children = buildChildrenFromConfig(entity)
+
+    // Transform multi-series data to wide format if needed
+    let transformedData = entity.data
+    let dataKeys = []
+
+    if (isMultiSeries(entity.data)) {
+      // Extract dataKeys before transformation
+      dataKeys = entity.data.map(
+        (series, idx) =>
+          series.dataKey || series.name || series.label || `series${idx}`,
+      )
+      // Transform to wide format for rendering
+      transformedData = transformMultiSeriesToWide(entity.data)
+    }
+
+    // Create entity with transformed data
+    const entityWithData = {
+      ...entity,
+      data: transformedData,
+      dataKey:
+        entity.dataKey || (transformedData[0]?.x !== undefined ? "x" : "name"),
+    }
+
+    // Convert entity config to declarative children
+    const children = buildChildrenFromConfig(entityWithData, dataKeys)
+
+    // Extract dataKeys for config if not already extracted
+    if (dataKeys.length === 0) {
+      if (entityWithData.data && entityWithData.data.length > 0) {
+        const first = entityWithData.data[0]
+        dataKeys = Object.keys(first).filter(
+          (key) =>
+            !["name", "x", "date"].includes(key) &&
+            typeof first[key] === "number",
+        )
+        if (dataKeys.length === 0) {
+          dataKeys = ["y", "value"].filter((k) => first[k] !== undefined)
+        }
+        if (dataKeys.length === 0) {
+          dataKeys = ["value"]
+        }
+      }
+    }
 
     return type.renderAreaChart(
-      entity,
+      entityWithData,
       {
         children,
         config: {
-          width: entity.width,
-          height: entity.height,
+          width: entityWithData.width,
+          height: entityWithData.height,
           stacked: entity.stacked === true,
+          dataKeys: dataKeys.length > 0 ? dataKeys : undefined,
         },
       },
       api,
@@ -214,7 +257,15 @@ export const area = {
    * @param {import('@inglorious/web').Api} api
    * @returns {(ctx: Record<string, any>) => import('lit-html').TemplateResult}
    */
-  renderYAxis(entity, props, api) {
+  /**
+   * Composition sub-render for Y axis.
+   * @param {import('../types/charts').ChartEntity} entity
+   * @param {{ config?: Record<string, any> }} params
+   * @param {import('@inglorious/web').Api} api
+   * @returns {(ctx: Record<string, any>) => import('lit-html').TemplateResult}
+   */
+  // eslint-disable-next-line no-unused-vars
+  renderYAxis(entity, { config = {} }, api) {
     const axisFn = (ctx) => {
       const { yScale, dimensions } = ctx
       return renderYAxis(ctx.entity || entity, { yScale, ...dimensions }, api)
@@ -379,73 +430,115 @@ export const area = {
 /**
  * Builds declarative children from entity config for render (config style)
  * Converts entity configuration into children objects that renderAreaChart can process
+ * @param {import('../types/charts').ChartEntity} entity
+ * @param {string[]} [providedDataKeys] - Optional dataKeys if already extracted (e.g., from multi-series before transformation)
  */
-function buildChildrenFromConfig(entity) {
+function buildChildrenFromConfig(entity, providedDataKeys = null) {
   const children = []
 
   if (entity.showGrid !== false) {
-    children.push(chart.CartesianGrid({ stroke: "#eee", strokeDasharray: "5 5" }))
+    children.push(
+      chart.CartesianGrid({ stroke: "#eee", strokeDasharray: "5 5" }),
+    )
   }
 
-  // 1. Sua lógica de XAxis mais robusta
+  // XAxis - determine dataKey from entity or data structure
   let xAxisDataKey = entity.dataKey
   if (!xAxisDataKey && entity.data?.length > 0) {
     const first = entity.data[0]
-    xAxisDataKey = first.x !== undefined ? "x" : (first.name || first.date || "name")
+    xAxisDataKey = first.name || first.x || first.date || "name"
   }
-  children.push(chart.XAxis({ dataKey: xAxisDataKey || "name" }))
+  if (!xAxisDataKey) {
+    xAxisDataKey = "name"
+  }
+  children.push(chart.XAxis({ dataKey: xAxisDataKey }))
   children.push(chart.YAxis({ width: "auto" }))
 
-  // 2. Sua detecção de dataKeys inteligente (pega qualquer coluna numérica)
-  let dataKeys = []
-  if (isMultiSeries(entity.data)) {
-    dataKeys = entity.data.map((s, i) => s.dataKey || s.name || `series${i}`)
-  } else if (entity.data?.length > 0) {
-    const first = entity.data[0]
-    dataKeys = Object.keys(first).filter(
-      (key) => !["name", "x", "date"].includes(key) && typeof first[key] === "number"
-    )
-    if (dataKeys.length === 0) {
-      dataKeys = ["y", "value"].filter((k) => first[k] !== undefined)
-      if (dataKeys.length === 0) dataKeys = ["value"]
+  // Extract dataKeys from entity data or use provided ones
+  let dataKeys = providedDataKeys
+  if (!dataKeys || dataKeys.length === 0) {
+    if (isMultiSeries(entity.data)) {
+      // Multi-series: use series names as dataKeys
+      dataKeys = entity.data.map((s, i) => s.dataKey || s.name || `series${i}`)
+    } else if (entity.data?.length > 0) {
+      // Wide format: extract numeric keys
+      const first = entity.data[0]
+      dataKeys = Object.keys(first).filter(
+        (key) =>
+          !["name", "x", "date"].includes(key) && typeof first[key] === "number",
+      )
+      if (dataKeys.length === 0) {
+        dataKeys = ["y", "value"].filter((k) => first[k] !== undefined)
+      }
+      if (dataKeys.length === 0) {
+        dataKeys = ["value"]
+      }
+    } else {
+      dataKeys = ["value"]
     }
-  } else {
-    dataKeys = ["value"]
   }
 
   const colors = entity.colors || ["#8884d8", "#82ca9d", "#ffc658", "#ff8042"]
   const isStacked = entity.stacked === true
 
   dataKeys.forEach((key, i) => {
-    children.push(chart.Area({
-      dataKey: key,
-      fill: colors[i % colors.length],
-      fillOpacity: "0.6",
-      stroke: colors[i % colors.length],
-      stackId: isStacked ? "1" : undefined,
-    }))
+    children.push(
+      chart.Area({
+        dataKey: key,
+        fill: colors[i % colors.length],
+        fillOpacity: "0.6",
+        stroke: colors[i % colors.length],
+        stackId: isStacked ? "1" : undefined,
+      }),
+    )
   })
 
   if (entity.showPoints !== false) {
     dataKeys.forEach((key, i) => {
-      children.push(chart.Dots({
-        dataKey: key,
-        fill: colors[i % colors.length],
-        stackId: isStacked ? "1" : undefined,
-      }))
+      children.push(
+        chart.Dots({
+          dataKey: key,
+          fill: colors[i % colors.length],
+          stackId: isStacked ? "1" : undefined,
+        }),
+      )
     })
   }
 
   if (entity.showTooltip !== false) children.push(chart.Tooltip({}))
 
-  // 3. Sua trava de segurança para Legenda
-  if (entity.showLegend === true) {
-    children.push(chart.Legend({ dataKeys, colors: colors.slice(0, dataKeys.length) }))
+  // Legend
+  if (entity.showLegend === true && dataKeys.length > 1) {
+    children.push(
+      chart.Legend({ dataKeys, colors: colors.slice(0, dataKeys.length) }),
+    )
   }
-  
+
   if (entity.brush?.enabled) {
     children.push(chart.Brush({ dataKey: xAxisDataKey || "name" }))
   }
 
   return children
+}
+
+function transformMultiSeriesToWide(multiSeriesData) {
+  if (!isMultiSeries(multiSeriesData)) return null
+  const dataMap = new Map()
+  const seriesKeys = multiSeriesData.map((s) => s.dataKey || s.name || "series")
+
+  multiSeriesData.forEach((series, seriesIdx) => {
+    const key = seriesKeys[seriesIdx]
+    const values = Array.isArray(series.values) ? series.values : [series]
+    values.forEach((point, index) => {
+      const xVal = point?.x ?? index
+      if (!dataMap.has(xVal)) dataMap.set(xVal, { x: xVal, name: String(xVal) })
+      dataMap.get(xVal)[key] = point?.y ?? point?.value ?? 0
+    })
+  })
+
+  return Array.from(dataMap.values()).sort((a, b) => {
+    return typeof a.x === "number"
+      ? a.x - b.x
+      : String(a.x).localeCompare(String(b.x))
+  })
 }
