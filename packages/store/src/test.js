@@ -12,6 +12,7 @@ import { create } from "mutative"
  *
  * @returns {Object} A mock API object with methods:
  *   - `getEntities()`: Returns all entities (frozen)
+ *   - `getEntities(typeName)`: Returns entities matching that type (frozen array)
  *   - `getEntity(id)`: Returns a specific entity by ID (frozen)
  *   - `select(selector)`: Runs a selector against the entities
  *   - `dispatch(event)`: Records an event (for assertions)
@@ -37,8 +38,14 @@ export function createMockApi(entities) {
   const events = []
 
   return {
-    getEntities() {
-      return frozenEntities
+    getEntities(typeName) {
+      if (typeName == null) {
+        return frozenEntities
+      }
+
+      return Object.values(frozenEntities).filter(
+        (entity) => entity.type === typeName,
+      )
     },
     getEntity(id) {
       return frozenEntities[id]

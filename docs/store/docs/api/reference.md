@@ -267,13 +267,17 @@ async fetchData(entity, userId, api) {
 
 ### API Methods
 
-#### `api.getEntities()`
+#### `api.getEntities(typeName?)`
 
-Returns the entire current state (read-only):
+Returns entities from current state (read-only):
 
 ```javascript
+// Full entities map (keyed by id)
 const allEntities = api.getEntities()
 const workTodos = allEntities.workTodos
+
+// Filter by entity type (array)
+const todos = api.getEntities("todo")
 ```
 
 #### `api.getEntity(id)`

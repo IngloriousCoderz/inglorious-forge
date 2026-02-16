@@ -38,6 +38,7 @@ export const types = {
 Notice: you don't need pending/fulfilled/rejected actions. You stay in control of the flow — no hidden action chains. The `api` object passed to handlers provides:
 
 - **`api.getEntities()`** - read entire state
+- **`api.getEntities(typeName)`** - read entities by type
 - **`api.getEntity(id)`** - read one entity
 - **`api.notify(type, payload)`** - trigger other events (queued, not immediate)
 - **`api.dispatch(action)`** - optional, if you prefer Redux-style dispatching

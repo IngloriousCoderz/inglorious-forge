@@ -44,6 +44,7 @@ render(entity, api) {
   // Other entities
   const user = api.getEntity('user')
   const allEntities = api.getEntities()
+  const todos = api.getEntities('todo')
 
   return html`<div>${myValue} (user: ${user.name})</div>`
 }

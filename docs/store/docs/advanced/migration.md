@@ -283,6 +283,7 @@ const types = {
       // Read from other entities
       const user = api.getEntity("user")
       const allEntities = api.getEntities()
+      const allTodoLists = api.getEntities("todoList")
 
       // Make API call
       const todos = await fetch(`/api/users/${userId}/todos`).then((r) =>

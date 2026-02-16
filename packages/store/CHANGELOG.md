@@ -1,5 +1,11 @@
 # @inglorious/store
 
+## 9.6.0
+
+### Minor Changes
+
+- Allow getting all entities by type
+
 ## 9.5.3
 
 ### Patch Changes

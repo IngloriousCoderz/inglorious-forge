@@ -17,7 +17,10 @@ export interface Api<
   getTypes: () => TypesConfig<TEntity>
   getType: (typeName: string) => EntityType<TEntity>
   setType: (typeName: string, type: EntityType<TEntity>) => void
-  getEntities: () => TState
+  getEntities: {
+    (): TState
+    (typeName: string): TEntity[]
+  }
   getEntity: (id: string) => TEntity | undefined
   select: <TResult>(selector: (state: TState) => TResult) => TResult
   dispatch: (event: Event) => void

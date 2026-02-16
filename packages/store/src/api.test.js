@@ -29,3 +29,26 @@ test("api.select runs selectors against current state", () => {
 
   expect(api.select(selectTotal)).toBe(7)
 })
+
+test("api.getEntities supports optional type filtering", () => {
+  const state = {
+    alpha: { type: "test", value: 2 },
+    beta: { type: "other", value: 5 },
+    gamma: { type: "test", value: 8 },
+  }
+
+  const store = {
+    getTypes: () => ({}),
+    getType: () => ({}),
+    setType: () => {},
+    getState: () => state,
+    dispatch: () => {},
+    notify: () => {},
+  }
+
+  const api = createApi(store)
+
+  expect(api.getEntities()).toBe(state)
+  expect(api.getEntities("test")).toEqual([state.alpha, state.gamma])
+  expect(api.getEntities("missing")).toEqual([])
+})

@@ -7,7 +7,10 @@ export interface MockApi<
   TEntity extends BaseEntity = BaseEntity,
   TState extends EntitiesState<TEntity> = EntitiesState<TEntity>,
 > {
-  getEntities: () => TState
+  getEntities: {
+    (): TState
+    (typeName: string): TEntity[]
+  }
   getEntity: (id: string) => TEntity | undefined
   select: <TResult>(selector: (state: TState) => TResult) => TResult
   dispatch: (event: Event) => void

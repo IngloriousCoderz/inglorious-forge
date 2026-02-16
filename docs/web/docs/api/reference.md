@@ -28,6 +28,7 @@ interface StoreConfig {
 interface Store {
   entities: Record<string, Entity>
   getEntity(id: string): Entity | undefined
+  getEntities(): Record<string, Entity>
   getEntities(type: string): Entity[]
   render(entity: string | Entity): TemplateResult
   notify(event: string, payload?: any): void
@@ -113,12 +114,16 @@ Get entity by ID.
 const user = api.getEntity("user")
 ```
 
-#### `getEntities()`
+#### `getEntities(type?)`
 
-Get all entities.
+Get entities from state.
 
 ```javascript
-const todos = api.getEntities()
+// Full entities map
+const allEntities = api.getEntities()
+
+// Filter by type
+const todos = api.getEntities("todo")
 ```
 
 #### `select(selector)`

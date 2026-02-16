@@ -19,10 +19,22 @@ export function createApi(store, extras) {
      */
     setType: store.setType,
     /**
-     * Retrieves the full entities state.
-     * @returns {Object}
+     * Retrieves entities.
+     * If `typeName` is omitted, returns the full entities state object.
+     * If `typeName` is provided, returns an array of entities of that type.
+     * @param {string} [typeName]
+     * @returns {Object|Object[]}
      */
-    getEntities: store.getState,
+    getEntities: (typeName) => {
+      const entities = store.getState()
+      if (typeName == null) {
+        return entities
+      }
+
+      return Object.values(entities).filter(
+        (entity) => entity.type === typeName,
+      )
+    },
     /**
      * Retrieves a single entity by ID.
      * @param {string} id

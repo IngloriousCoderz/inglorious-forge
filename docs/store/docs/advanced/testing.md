@@ -66,6 +66,7 @@ expect(entity.value).toBe(10)
 The mock API provides:
 
 - `getEntities()`: Returns all entities (frozen).
+- `getEntities(typeName)`: Returns entities by type (frozen array).
 - `getEntity(id)`: Returns a specific entity by ID (frozen).
 - `select(selector)`: Runs a selector against the entities.
 - `dispatch(event)`: Records an event for later assertions.

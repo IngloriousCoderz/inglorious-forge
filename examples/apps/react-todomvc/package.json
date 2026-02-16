@@ -1,7 +1,7 @@
 {
   "name": "react-todomvc",
   "private": true,
-  "version": "1.1.24",
+  "version": "1.1.25",
   "type": "module",
   "author": "IceOnFire <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",

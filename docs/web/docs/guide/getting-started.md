@@ -199,6 +199,7 @@ Your connection to the store:
 - **`api.notify(event, payload?)`** — Trigger an event
 - **`api.getEntity(id)`** — Read entity state
 - **`api.getEntities()`** — Read all entities
+- **`api.getEntities(typeName)`** — Read entities by type
 
 ### Events
 

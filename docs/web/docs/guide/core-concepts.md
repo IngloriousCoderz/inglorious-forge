@@ -247,13 +247,16 @@ const user = api.getEntity("user")
 console.log(user.name)
 ```
 
-### `getEntities()`
+### `getEntities(typeName?)`
 
 Get all entities as an object (keyed by ID):
 
 ```javascript
 const all = api.getEntities()
 Object.values(all).forEach((entity) => console.log(entity.id))
+
+const todos = api.getEntities("todo")
+todos.forEach((todo) => console.log(todo.id))
 ```
 
 ### `select(selector)`

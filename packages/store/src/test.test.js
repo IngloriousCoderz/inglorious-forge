@@ -27,6 +27,22 @@ describe("createMockApi", () => {
     expect(api.getEntities()).toEqual(entities)
   })
 
+  it("should filter entities by type via getEntities(typeName)", () => {
+    const entities = {
+      counter1: { type: "counter", value: 5 },
+      status1: { type: "status", value: "ok" },
+      counter2: { type: "counter", value: 10 },
+    }
+
+    const api = createMockApi(entities)
+
+    expect(api.getEntities("counter")).toEqual([
+      entities.counter1,
+      entities.counter2,
+    ])
+    expect(api.getEntities("missing")).toEqual([])
+  })
+
   it("should return a specific entity via getEntity()", () => {
     const entities = {
       counter1: { type: "counter", value: 5 },

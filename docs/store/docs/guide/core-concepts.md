@@ -134,6 +134,7 @@ const types = {
 
       // Read entire state
       const allEntities = api.getEntities()
+      const allNotifications = api.getEntities("notification")
 
       // Read specific entity
       const user = api.getEntity("user")
