@@ -36,8 +36,46 @@ export function createYScale(data, height, padding, isStacked = false) {
       )
     }
   } else {
-    // Single series: extract directly
-    values = data.map((d) => getDataPointY(d))
+    // Single series or wide format: extract directly
+    if (data.length > 0) {
+      // Check if data is in wide format (has multiple numeric keys besides name/x/date)
+      const firstItem = data[0]
+      const numericKeys = Object.keys(firstItem).filter(
+        (key) =>
+          !["name", "x", "date"].includes(key) &&
+          typeof firstItem[key] === "number",
+      )
+
+      if (numericKeys.length > 1) {
+        // Wide format: data is [{ name: "0", Revenue: 20, Expenses: 80, ... }]
+        if (isStacked) {
+          // For stacked, calculate sum of all numeric values per point
+          values = data.map((d) => {
+            let sum = 0
+            numericKeys.forEach((key) => {
+              const value = d[key]
+              if (typeof value === "number") {
+                sum += value
+              }
+            })
+            return sum
+          })
+        } else {
+          // For non-stacked, extract all individual values from all keys
+          values = data.flatMap((d) =>
+            numericKeys.map((key) => {
+              const value = d[key]
+              return typeof value === "number" ? value : 0
+            }),
+          )
+        }
+      } else {
+        // Single series: extract directly
+        values = data.map((d) => getDataPointY(d))
+      }
+    } else {
+      values = [0]
+    }
   }
 
   const [minVal, maxVal] = extent(values)
