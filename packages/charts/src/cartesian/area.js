@@ -384,78 +384,67 @@ function buildChildrenFromConfig(entity) {
   const children = []
 
   if (entity.showGrid !== false) {
-    children.push(
-      chart.CartesianGrid({ stroke: "#eee", strokeDasharray: "5 5" }),
-    )
+    children.push(chart.CartesianGrid({ stroke: "#eee", strokeDasharray: "5 5" }))
   }
 
+  // 1. Sua lógica de XAxis mais robusta
   let xAxisDataKey = entity.dataKey
-  if (!xAxisDataKey && entity.data && entity.data.length > 0) {
-    const firstItem = entity.data[0]
-    xAxisDataKey = firstItem.name || firstItem.x || firstItem.date || "name"
+  if (!xAxisDataKey && entity.data?.length > 0) {
+    const first = entity.data[0]
+    xAxisDataKey = first.x !== undefined ? "x" : (first.name || first.date || "name")
   }
   children.push(chart.XAxis({ dataKey: xAxisDataKey || "name" }))
   children.push(chart.YAxis({ width: "auto" }))
 
+  // 2. Sua detecção de dataKeys inteligente (pega qualquer coluna numérica)
   let dataKeys = []
   if (isMultiSeries(entity.data)) {
-    dataKeys = entity.data.map(
-      (series, idx) => series.dataKey || series.name || `series${idx}`,
+    dataKeys = entity.data.map((s, i) => s.dataKey || s.name || `series${i}`)
+  } else if (entity.data?.length > 0) {
+    const first = entity.data[0]
+    dataKeys = Object.keys(first).filter(
+      (key) => !["name", "x", "date"].includes(key) && typeof first[key] === "number"
     )
+    if (dataKeys.length === 0) {
+      dataKeys = ["y", "value"].filter((k) => first[k] !== undefined)
+      if (dataKeys.length === 0) dataKeys = ["value"]
+    }
   } else {
-    dataKeys = ["y", "value"].filter(
-      (key) =>
-        entity.data &&
-        entity.data.length > 0 &&
-        entity.data[0][key] !== undefined,
-    )
-    if (dataKeys.length === 0) dataKeys = ["value"]
+    dataKeys = ["value"]
   }
 
   const colors = entity.colors || ["#8884d8", "#82ca9d", "#ffc658", "#ff8042"]
   const isStacked = entity.stacked === true
 
-  dataKeys.forEach((dataKey, index) => {
-    children.push(
-      chart.Area({
-        dataKey,
-        fill: colors[index % colors.length],
-        fillOpacity: "0.6",
-        stroke: colors[index % colors.length],
-        stackId: isStacked ? "1" : undefined,
-      }),
-    )
+  dataKeys.forEach((key, i) => {
+    children.push(chart.Area({
+      dataKey: key,
+      fill: colors[i % colors.length],
+      fillOpacity: "0.6",
+      stroke: colors[i % colors.length],
+      stackId: isStacked ? "1" : undefined,
+    }))
   })
 
   if (entity.showPoints !== false) {
-    dataKeys.forEach((dataKey, index) => {
-      children.push(
-        chart.Dots({
-          dataKey,
-          fill: colors[index % colors.length],
-          stackId: isStacked ? "1" : undefined,
-        }),
-      )
+    dataKeys.forEach((key, i) => {
+      children.push(chart.Dots({
+        dataKey: key,
+        fill: colors[i % colors.length],
+        stackId: isStacked ? "1" : undefined,
+      }))
     })
   }
 
   if (entity.showTooltip !== false) children.push(chart.Tooltip({}))
 
+  // 3. Sua trava de segurança para Legenda
   if (entity.showLegend === true) {
-    children.push(
-      chart.Legend({
-        dataKeys,
-        colors: colors.slice(0, dataKeys.length),
-      }),
-    )
+    children.push(chart.Legend({ dataKeys, colors: colors.slice(0, dataKeys.length) }))
   }
   
   if (entity.brush?.enabled) {
-    children.push(
-      chart.Brush({
-        dataKey: xAxisDataKey || "name",
-      }),
-    )
+    children.push(chart.Brush({ dataKey: xAxisDataKey || "name" }))
   }
 
   return children
