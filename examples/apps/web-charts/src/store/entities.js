@@ -1,73 +1,9 @@
 export const entities = {
-  // Product Chart - for Line Chart Recharts-style composition (same data as salesLineChart)
-  productLineChart: {
-    type: "line",
-    data: [
-      { name: "0", uv: 50 },
-      { name: "1", uv: 150 },
-      { name: "2", uv: 120 },
-      { name: "3", uv: 180 },
-      { name: "4", uv: 25 },
-      { name: "5", uv: 160 },
-      { name: "6", uv: 190 },
-    ],
-  },
+  // ============================================
+  // LINE CHARTS
+  // ============================================
 
-  // Product Chart - for Area Chart Recharts-style composition (same data as salesAreaChart)
-  productAreaChart: {
-    type: "area",
-    data: [
-      { name: "0", uv: 50 },
-      { name: "1", uv: 150 },
-      { name: "2", uv: 120 },
-      { name: "3", uv: 180 },
-      { name: "4", uv: 25 },
-      { name: "5", uv: 160 },
-      { name: "6", uv: 190 },
-    ],
-  },
-
-  // Product Chart - for Bar Chart Recharts-style composition
-  productBarChart: {
-    type: "bar",
-    data: [
-      { name: "A", uv: 400, pv: 240 },
-      { name: "B", uv: 300, pv: 456 },
-      { name: "C", uv: 300, pv: 139 },
-      { name: "D", uv: 200, pv: 980 },
-      { name: "E", uv: 278, pv: 390 },
-      { name: "F", uv: 189, pv: 480 },
-    ],
-  },
-
-  // Line Chart with Brush - for testing zoom and pan functionality
-  // Large dataset to demonstrate brush functionality
-  lineChartWithBrush: {
-    type: "line",
-    data: Array.from({ length: 100 }, (_, i) => ({
-      name: `Point ${i}`,
-      value: Math.floor(Math.random() * 1000) + 100,
-    })),
-  },
-
-  // Line Chart with Brush - Config Style
-  lineChartWithBrushConfig: {
-    type: "line",
-    data: Array.from({ length: 100 }, (_, i) => ({
-      name: `${i}`,
-      value: Math.floor(Math.random() * 1000) + 100,
-    })),
-    width: 800,
-    height: 400,
-    showGrid: true,
-    showTooltip: true,
-    brush: {
-      enabled: true,
-      height: 30,
-    },
-  },
-
-  // Line Chart - Config-first style
+  // Line Chart - Config Style
   salesLineChart: {
     type: "line",
     data: [
@@ -86,7 +22,7 @@ export const entities = {
     showTooltip: true,
   },
 
-  // Line Chart - Composition (same data as salesLineChart)
+  // Line Chart - Composition Style
   salesLineChartComposition: {
     type: "line",
     data: [
@@ -100,7 +36,33 @@ export const entities = {
     ],
   },
 
-  // Line Chart with multiple series - Config style
+  // Line Chart with Brush - Config Style
+  lineChartWithBrushConfig: {
+    type: "line",
+    data: Array.from({ length: 30 }, (_, i) => ({
+      name: `${i}`,
+      value: Math.floor(Math.random() * 1000) + 100,
+    })),
+    width: 800,
+    height: 400,
+    showGrid: true,
+    showTooltip: true,
+    brush: {
+      enabled: true,
+      height: 30,
+    },
+  },
+
+  // Line Chart with Brush - Composition Style
+  lineChartWithBrush: {
+    type: "line",
+    data: Array.from({ length: 30 }, (_, i) => ({
+      name: `${i}`,
+      value: Math.floor(Math.random() * 1000) + 100,
+    })),
+  },
+
+  // Line Chart with multiple series - Config Style
   multiSeriesLineChart: {
     type: "line",
     data: [
@@ -147,7 +109,7 @@ export const entities = {
     showTooltip: true,
   },
 
-  // Line Chart with multiple series - Recharts Style (Composition)
+  // Line Chart with multiple series - Composition Style
   multiSeriesLineChartComposition: {
     type: "line",
     data: [
@@ -158,7 +120,11 @@ export const entities = {
     ],
   },
 
-  // Area Chart - Simple
+  // ============================================
+  // AREA CHARTS
+  // ============================================
+
+  // Area Chart - Config Style
   salesAreaChart: {
     type: "area",
     data: [
@@ -177,7 +143,7 @@ export const entities = {
     showTooltip: true,
   },
 
-  // Area Chart - Composition (same data as salesAreaChart)
+  // Area Chart - Composition Style
   salesAreaChartComposition: {
     type: "area",
     data: [
@@ -191,7 +157,7 @@ export const entities = {
     ],
   },
 
-  // Area Chart with multiple series
+  // Area Chart with multiple series - Config Style
   multiSeriesAreaChart: {
     type: "area",
     data: [
@@ -232,20 +198,19 @@ export const entities = {
     showTooltip: true,
   },
 
-  // Area Chart with multiple series - Recharts Style (Composition)
-  // Wide data format (like Recharts): each datum has multiple keys
+  // Area Chart with multiple series - Composition Style
   multiSeriesAreaChartComposition: {
     type: "area",
     data: [
-      { name: "0", uv: 20, pv: 80, amt: 100 },
-      { name: "1", uv: 30, pv: 120, amt: 150 },
-      { name: "2", uv: 25, pv: 90, amt: 120 },
-      { name: "3", uv: 20, pv: 140, amt: 180 },
-      { name: "4", uv: 50, pv: 150, amt: 200 },
+      { name: "0", Revenue: 20, Expenses: 80, Profit: 100 },
+      { name: "1", Revenue: 30, Expenses: 120, Profit: 150 },
+      { name: "2", Revenue: 25, Expenses: 90, Profit: 120 },
+      { name: "3", Revenue: 20, Expenses: 140, Profit: 180 },
+      { name: "4", Revenue: 50, Expenses: 150, Profit: 200 },
     ],
   },
 
-  // Area Chart with multiple series stacked
+  // Area Chart with multiple series stacked - Config Style
   multiSeriesAreaChartStacked: {
     type: "area",
     data: [
@@ -287,19 +252,25 @@ export const entities = {
     stacked: true,
   },
 
-  // Area Chart with multiple series stacked - Recharts Style (Composition)
+  // Area Chart with multiple series stacked - Composition Style
+  // Note: Order matters for stacked! Revenue (base), Expenses (middle), Profit (top)
+  // Using same x values as Config to match X-axis labels
   multiSeriesAreaChartStackedComposition: {
     type: "area",
     data: [
-      { name: "0", uv: 100, pv: 80, amt: 20 },
-      { name: "1", uv: 150, pv: 120, amt: 30 },
-      { name: "2", uv: 120, pv: 90, amt: 25 },
-      { name: "3", uv: 180, pv: 140, amt: 20 },
-      { name: "4", uv: 200, pv: 150, amt: 50 },
+      { name: "0", x: 0, Revenue: 100, Expenses: 80, Profit: 20 },
+      { name: "1", x: 1, Revenue: 150, Expenses: 120, Profit: 30 },
+      { name: "2", x: 2, Revenue: 120, Expenses: 90, Profit: 25 },
+      { name: "3", x: 3, Revenue: 180, Expenses: 140, Profit: 20 },
+      { name: "4", x: 4, Revenue: 200, Expenses: 150, Profit: 50 },
     ],
   },
 
-  // Bar Chart
+  // ============================================
+  // BAR CHARTS
+  // ============================================
+
+  // Bar Chart - Config Style
   salesBarChart: {
     type: "bar",
     data: [
@@ -316,6 +287,7 @@ export const entities = {
     showTooltip: true,
   },
 
+  // Bar Chart - Composition Style
   salesBarChartComposition: {
     type: "bar",
     data: [
@@ -328,7 +300,11 @@ export const entities = {
     ],
   },
 
-  // Pie Chart - Config style
+  // ============================================
+  // PIE CHARTS
+  // ============================================
+
+  // Pie Chart - Config Style
   categoryPieChart: {
     type: "pie",
     data: [
@@ -344,7 +320,7 @@ export const entities = {
     showTooltip: true,
   },
 
-  // Pie Chart - Recharts Style (Composition)
+  // Pie Chart - Composition Style
   categoryPieChartComposition: {
     type: "pie",
     data: [
@@ -357,112 +333,7 @@ export const entities = {
     ],
   },
 
-  // Donut Chart - Recharts Style (Composition)
-  categoryDonutChartComposition: {
-    type: "pie",
-    data: [
-      { name: "Desktop", value: 45 },
-      { name: "Mobile", value: 30 },
-      { name: "Tablet", value: 15 },
-      { name: "Other", value: 10 },
-    ],
-  },
-
-  // Pie Chart with custom position - Recharts Style (Composition)
-  pieCustomPositionComposition: {
-    type: "pie",
-    data: [
-      { name: "North", value: 30 },
-      { name: "South", value: 25 },
-      { name: "East", value: 20 },
-      { name: "West", value: 25 },
-    ],
-  },
-
-  // Pie Chart partial - Recharts Style (Composition)
-  piePartialComposition: {
-    type: "pie",
-    data: [
-      { name: "Q1", value: 25 },
-      { name: "Q2", value: 30 },
-      { name: "Q3", value: 20 },
-      { name: "Q4", value: 25 },
-    ],
-  },
-
-  // Pie Chart with padding - Recharts Style (Composition)
-  pieWithPaddingComposition: {
-    type: "pie",
-    data: [
-      { name: "Red", value: 30 },
-      { name: "Blue", value: 25 },
-      { name: "Green", value: 20 },
-      { name: "Yellow", value: 25 },
-    ],
-  },
-
-  // Pie Chart with minimum angle - Recharts Style (Composition)
-  pieMinAngleComposition: {
-    type: "pie",
-    data: [
-      { name: "Large", value: 50 },
-      { name: "Medium", value: 30 },
-      { name: "Small", value: 5 },
-      { name: "Tiny", value: 3 },
-      { name: "Other", value: 12 },
-    ],
-  },
-
-  // Pie Chart with rounded corners - Recharts Style (Composition)
-  pieRoundedComposition: {
-    type: "pie",
-    data: [
-      { name: "Option A", value: 30 },
-      { name: "Option B", value: 25 },
-      { name: "Option C", value: 20 },
-      { name: "Option D", value: 25 },
-    ],
-  },
-
-  // Pie Chart with custom data keys - Recharts Style (Composition)
-  pieCustomDataComposition: {
-    type: "pie",
-    data: [
-      { product: "Laptop", sales: 150 },
-      { product: "Phone", sales: 200 },
-      { product: "Tablet", sales: 100 },
-      { product: "Watch", sales: 80 },
-    ],
-  },
-
-  // Pie Chart advanced - Recharts Style (Composition)
-  pieAdvancedComposition: {
-    type: "pie",
-    data: [
-      { name: "Team A", value: 40 },
-      { name: "Team B", value: 30 },
-      { name: "Team C", value: 20 },
-      { name: "Team D", value: 10 },
-    ],
-  },
-
-  // Donut Chart
-  categoryDonutChart: {
-    type: "donut",
-    data: [
-      { label: "Desktop", value: 45 },
-      { label: "Mobile", value: 30 },
-      { label: "Tablet", value: 15 },
-      { label: "Other", value: 10 },
-    ],
-    width: 500,
-    height: 400,
-    centerText: "Total",
-    innerRadiusRatio: 0.6,
-    showTooltip: true,
-  },
-
-  // Pie Chart with custom position (cx, cy)
+  // Pie Chart with custom position - Config Style
   pieCustomPosition: {
     type: "pie",
     data: [
@@ -478,7 +349,18 @@ export const entities = {
     showTooltip: true,
   },
 
-  // Pie Chart with partial angle (startAngle, endAngle)
+  // Pie Chart with custom position - Composition Style
+  pieCustomPositionComposition: {
+    type: "pie",
+    data: [
+      { name: "North", value: 30 },
+      { name: "South", value: 25 },
+      { name: "East", value: 20 },
+      { name: "West", value: 25 },
+    ],
+  },
+
+  // Pie Chart with partial angle - Config Style
   piePartial: {
     type: "pie",
     data: [
@@ -494,7 +376,18 @@ export const entities = {
     showTooltip: true,
   },
 
-  // Pie Chart with padding between sectors (paddingAngle)
+  // Pie Chart with partial angle - Composition Style
+  piePartialComposition: {
+    type: "pie",
+    data: [
+      { name: "Q1", value: 25 },
+      { name: "Q2", value: 30 },
+      { name: "Q3", value: 20 },
+      { name: "Q4", value: 25 },
+    ],
+  },
+
+  // Pie Chart with padding - Config Style
   pieWithPadding: {
     type: "pie",
     data: [
@@ -509,7 +402,18 @@ export const entities = {
     showTooltip: true,
   },
 
-  // Pie Chart with minimum angle (minAngle)
+  // Pie Chart with padding - Composition Style
+  pieWithPaddingComposition: {
+    type: "pie",
+    data: [
+      { name: "Red", value: 30 },
+      { name: "Blue", value: 25 },
+      { name: "Green", value: 20 },
+      { name: "Yellow", value: 25 },
+    ],
+  },
+
+  // Pie Chart with minimum angle - Config Style
   pieMinAngle: {
     type: "pie",
     data: [
@@ -525,7 +429,19 @@ export const entities = {
     showTooltip: true,
   },
 
-  // Pie Chart with rounded corners (cornerRadius)
+  // Pie Chart with minimum angle - Composition Style
+  pieMinAngleComposition: {
+    type: "pie",
+    data: [
+      { name: "Large", value: 50 },
+      { name: "Medium", value: 30 },
+      { name: "Small", value: 5 },
+      { name: "Tiny", value: 3 },
+      { name: "Other", value: 12 },
+    ],
+  },
+
+  // Pie Chart with rounded corners - Config Style
   pieRounded: {
     type: "pie",
     data: [
@@ -540,7 +456,18 @@ export const entities = {
     showTooltip: true,
   },
 
-  // Pie Chart with custom data structure (dataKey, nameKey)
+  // Pie Chart with rounded corners - Composition Style
+  pieRoundedComposition: {
+    type: "pie",
+    data: [
+      { name: "Option A", value: 30 },
+      { name: "Option B", value: 25 },
+      { name: "Option C", value: 20 },
+      { name: "Option D", value: 25 },
+    ],
+  },
+
+  // Pie Chart with custom data structure - Config Style
   pieCustomData: {
     type: "pie",
     data: [
@@ -556,7 +483,18 @@ export const entities = {
     showTooltip: true,
   },
 
-  // Pie Chart combining multiple features
+  // Pie Chart with custom data structure - Composition Style
+  pieCustomDataComposition: {
+    type: "pie",
+    data: [
+      { product: "Laptop", sales: 150 },
+      { product: "Phone", sales: 200 },
+      { product: "Tablet", sales: 100 },
+      { product: "Watch", sales: 80 },
+    ],
+  },
+
+  // Pie Chart combining multiple features - Config Style
   pieAdvanced: {
     type: "pie",
     data: [
@@ -572,15 +510,91 @@ export const entities = {
     minAngle: 5, // Minimum angle per sector
     showTooltip: true,
   },
-}
 
-// Export data arrays for direct use with createChart
-export const salesLineChartData = [
-  { name: "0", value: 50 },
-  { name: "1", value: 150 },
-  { name: "2", value: 120 },
-  { name: "3", value: 180 },
-  { name: "4", value: 25 },
-  { name: "5", value: 160 },
-  { name: "6", value: 190 },
-]
+  // Pie Chart combining multiple features - Composition Style
+  pieAdvancedComposition: {
+    type: "pie",
+    data: [
+      { name: "Team A", value: 40 },
+      { name: "Team B", value: 30 },
+      { name: "Team C", value: 20 },
+      { name: "Team D", value: 10 },
+    ],
+  },
+
+  // ============================================
+  // DONUT CHARTS
+  // ============================================
+
+  // Donut Chart - Config Style
+  categoryDonutChart: {
+    type: "donut",
+    data: [
+      { label: "Desktop", value: 45 },
+      { label: "Mobile", value: 30 },
+      { label: "Tablet", value: 15 },
+      { label: "Other", value: 10 },
+    ],
+    width: 500,
+    height: 400,
+    centerText: "Total",
+    innerRadiusRatio: 0.6,
+    showTooltip: true,
+  },
+
+  // Donut Chart - Composition Style
+  categoryDonutChartComposition: {
+    type: "pie",
+    data: [
+      { name: "Desktop", value: 45 },
+      { name: "Mobile", value: 30 },
+      { name: "Tablet", value: 15 },
+      { name: "Other", value: 10 },
+    ],
+  },
+
+  // ============================================
+  // HELPER ENTITIES (for Composition examples)
+  // ============================================
+
+  // Product Chart - for Line Chart Recharts-style composition
+  productLineChart: {
+    type: "line",
+    data: [
+      { name: "0", uv: 50 },
+      { name: "1", uv: 150 },
+      { name: "2", uv: 120 },
+      { name: "3", uv: 180 },
+      { name: "4", uv: 25 },
+      { name: "5", uv: 160 },
+      { name: "6", uv: 190 },
+    ],
+  },
+
+  // Product Chart - for Area Chart Recharts-style composition
+  productAreaChart: {
+    type: "area",
+    data: [
+      { name: "0", uv: 50 },
+      { name: "1", uv: 150 },
+      { name: "2", uv: 120 },
+      { name: "3", uv: 180 },
+      { name: "4", uv: 25 },
+      { name: "5", uv: 160 },
+      { name: "6", uv: 190 },
+    ],
+  },
+
+  // Product Chart - for Bar Chart Recharts-style composition
+  productBarChart: {
+    type: "bar",
+    data: [
+      { name: "A", uv: 400, pv: 240 },
+      { name: "B", uv: 300, pv: 456 },
+      { name: "C", uv: 300, pv: 139 },
+      { name: "D", uv: 200, pv: 980 },
+      { name: "E", uv: 278, pv: 390 },
+      { name: "F", uv: 189, pv: 480 },
+    ],
+  },
+}
