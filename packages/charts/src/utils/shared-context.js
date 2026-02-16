@@ -5,7 +5,7 @@ import { createScales } from "./scales.js"
 
 /**
  * Creates a shared context for composition mode charts.
- *  * Calculates scales, dimensions, and provides a context object for child components.
+ * Calculates scales, dimensions, and provides a context object for child components.
  *
  * This function unifies the context creation logic for line, area, and bar charts.
  * Follows the standard signature pattern: render<Sub>(entity, props, api)
