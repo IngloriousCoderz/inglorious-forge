@@ -6,6 +6,7 @@
 
 - @inglorious/web@4.2.5
 - Prefer event-first remove flow (`#id:removeWithMotion`) over helper function export.
+- Add layout FLIP, presence wait groups, and shared layout (`motionLayoutId`) support.
 
 ## 0.1.0
 

@@ -11,6 +11,9 @@ export const toast = [
     classPrefix: "demo-toast",
     initial: "visible",
     exitVariant: "exit",
+    presence: {
+      mode: "wait",
+    },
     variants: {
       visible: {
         frames: [

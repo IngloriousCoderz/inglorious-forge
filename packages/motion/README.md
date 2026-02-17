@@ -16,6 +16,9 @@ Composes a type with a motion lifecycle driven by WAAPI.
 
 - Adds `motionVariantChange(entity, variant)` handler.
 - Adds `removeWithMotion(entity, payload, api)` handler (plays exit variant, then removes entity).
+- Supports layout FLIP with `layout: true` (or custom timing).
+- Supports shared layout transitions with `motionLayoutId`.
+- Supports presence groups with `presence: { mode: "wait" }`.
 - Wraps your render with a motion host and applies lifecycle classes:
   - `${classPrefix}--start`
   - `${classPrefix}--active`
@@ -38,7 +41,9 @@ const card = {
         >
           Hide
         </button>
-        <button @click=${() => api.notify(`#${entity.id}:removeWithMotion`)}>
+        <button
+          @click=${() => api.notify(`#${entity.id}:removeWithMotion`, "exit")}
+        >
           Remove
         </button>
       </article>
@@ -50,6 +55,8 @@ const motionCard = [
   card,
   withMotion({
     initial: "visible",
+    layout: true,
+    presence: { mode: "wait" },
     variants: {
       visible: {
         frames: [

@@ -17,6 +17,9 @@ import { createMotionRuntime } from "./motion-runtime.js"
  * @param {string} [config.classPrefix="ig-motion"]
  * @param {number} [config.fallbackBufferMs=50]
  * @param {boolean} [config.animateOnMount=true]
+ * @param {boolean | { duration?: number, easing?: string }} [config.layout=false]
+ * @param {string} [config.layoutIdKey="motionLayoutId"]
+ * @param {{ mode?: "sync" | "wait", groupKey?: string }} [config.presence]
  * @returns {(type: object) => object}
  */
 export function withMotion({
@@ -26,11 +29,17 @@ export function withMotion({
   classPrefix = "ig-motion",
   fallbackBufferMs = DEFAULT_BUFFER_MS,
   animateOnMount = true,
+  layout = false,
+  layoutIdKey = "motionLayoutId",
+  presence = undefined,
 } = {}) {
   const runtime = createMotionRuntime({
     animateOnMount,
     classPrefix,
     fallbackBufferMs,
+    layout,
+    layoutIdKey,
+    presence,
     variants,
   })
 
@@ -42,29 +51,40 @@ export function withMotion({
           ? payload
           : payload.exitVariant || exitVariant
       const controller = runtime.ensureController(entityId)
-
-      if (!variants[targetExitVariant]) {
-        runtime.cleanupController(entityId)
-        if (api.getEntity(entityId)) {
-          api.notify("remove", entityId)
-        }
+      runtime.ensureControllerMeta(controller, entity)
+      if (
+        controller.targetVariant === targetExitVariant ||
+        controller.variant === targetExitVariant
+      ) {
         return
       }
 
-      entity.motionVariant = targetExitVariant
-      controller.nextVariant = targetExitVariant
       controller.targetVariant = targetExitVariant
 
-      await runtime.runMotion(controller, targetExitVariant).finally(() => {
-        if (controller.targetVariant === targetExitVariant) {
-          controller.targetVariant = null
-        }
-      })
+      await runtime
+        .completeRemoveWithMotion(controller, async () => {
+          if (!variants[targetExitVariant]) {
+            runtime.cleanupController(entityId)
+            if (api.getEntity(entityId)) {
+              api.notify("remove", entityId)
+            }
+            return
+          }
 
-      if (api.getEntity(entityId)) {
-        api.notify("remove", entityId)
-      }
-      runtime.cleanupController(entityId)
+          api.notify(`#${entityId}:motionVariantChange`, targetExitVariant)
+          controller.nextVariant = targetExitVariant
+          await runtime.runMotion(controller, targetExitVariant)
+
+          if (api.getEntity(entityId)) {
+            api.notify("remove", entityId)
+          }
+          runtime.cleanupController(entityId)
+        })
+        .finally(() => {
+          if (controller.targetVariant === targetExitVariant) {
+            controller.targetVariant = null
+          }
+        })
     }
 
     return {
@@ -81,6 +101,8 @@ export function withMotion({
         const controller = runtime.ensureController(entity.id)
         const variant = entity.motionVariant || initial
         const content = type.render?.(entity, api) ?? ""
+        runtime.captureLayoutBeforeRender(controller)
+        runtime.ensureControllerMeta(controller, entity)
         controller.nextVariant = variant
         runtime.maybeStartMotion(controller)
 

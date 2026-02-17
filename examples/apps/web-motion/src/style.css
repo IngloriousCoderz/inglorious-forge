@@ -82,18 +82,84 @@ button {
   font-size: 0.92rem;
 }
 
+.layout-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin-top: 0.75rem;
+}
+
+.layout-card {
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--line);
+  background: var(--card, #f5f8fb);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.layout-card button {
+  font-size: 0.8rem;
+}
+
+.shared-scene {
+  margin-top: 0.75rem;
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: 1fr;
+}
+
+.shared-small,
+.shared-large {
+  border: 1px dashed var(--line);
+  border-radius: 0.8rem;
+  min-height: 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+}
+
+.shared-large {
+  min-height: 8rem;
+}
+
+.shared-placeholder {
+  opacity: 0.45;
+}
+
+.shared-pill {
+  border-radius: 999px;
+  padding: 0.55rem 1rem;
+  font-weight: 600;
+  border: 1px solid #76a2ba;
+  background: linear-gradient(110deg, #e5f2f8, #f5f9fb);
+}
+
+.shared-pill.expanded {
+  font-size: 1.2rem;
+  padding: 0.9rem 1.4rem;
+}
+
 .demo-motion--start,
-.demo-toast--start {
+.demo-toast--start,
+.demo-layout-card--start,
+.demo-shared--start {
   outline: 1px dashed #89a6b7;
 }
 
 .demo-motion--active,
-.demo-toast--active {
+.demo-toast--active,
+.demo-layout-card--active,
+.demo-shared--active {
   outline: 2px solid #4f8aa8;
 }
 
 .demo-motion--end,
-.demo-toast--end {
+.demo-toast--end,
+.demo-layout-card--end,
+.demo-shared--end {
   outline: 1px solid transparent;
 }
 
@@ -101,5 +167,9 @@ button {
   .toast {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .layout-grid {
+    grid-template-columns: 1fr;
   }
 }

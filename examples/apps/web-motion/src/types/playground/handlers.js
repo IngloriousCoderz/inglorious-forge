@@ -6,7 +6,8 @@ export function addToast(entity, _payload, api) {
     id: `toast-${next}`,
     type: "toast",
     title: `Toast #${next}`,
-    message: "Exit waits for animation end before remove.",
+    message: "Presence mode=wait queues exits in this group.",
     motionVariant: "visible",
+    motionPresenceGroup: "toasts",
   })
 }

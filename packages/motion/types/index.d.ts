@@ -13,6 +13,12 @@ export type WithMotionConfig = {
   classPrefix?: string
   fallbackBufferMs?: number
   animateOnMount?: boolean
+  layout?: boolean | { duration?: number; easing?: string }
+  layoutIdKey?: string
+  presence?: {
+    mode?: "sync" | "wait"
+    groupKey?: string
+  }
 }
 
 export function withMotion(config?: WithMotionConfig): (type: object) => object
