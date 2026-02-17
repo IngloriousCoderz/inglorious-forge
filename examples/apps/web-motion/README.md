@@ -17,3 +17,21 @@ cd examples/apps/web-motion
 pnpm install
 pnpm dev
 ```
+
+Run Playwright E2E:
+
+```bash
+pnpm test:e2e
+```
+
+Open Playwright UI:
+
+```bash
+pnpm test:e2e:ui
+```
+
+If you want to actually watch the browser while tests run:
+
+```bash
+pnpm test:e2e:ui:headed
+```

@@ -10,13 +10,17 @@
     "lint": "eslint .",
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:ui:headed": "playwright test --ui --headed"
   },
   "dependencies": {
     "@inglorious/motion": "workspace:*",
     "@inglorious/web": "workspace:*"
   },
   "devDependencies": {
+    "@playwright/test": "^1.55.0",
     "@inglorious/eslint-config": "workspace:*",
     "eslint": "^9.39.1",
     "prettier": "^3.6.2",
