@@ -1,5 +1,11 @@
 # @inglorious/motion
 
+## 0.2.0
+
+### Minor Changes
+
+- Add base Inglorious Motion implementation
+
 ## 0.1.1
 
 ### Patch Changes

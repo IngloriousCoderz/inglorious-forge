@@ -1,5 +1,16 @@
 # web-motion
 
+## 0.2.0
+
+### Minor Changes
+
+- Add base Inglorious Motion implementation
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/motion@0.2.0
+
 ## 0.1.1
 
 ### Patch Changes
