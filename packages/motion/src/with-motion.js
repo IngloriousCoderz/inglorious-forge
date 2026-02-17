@@ -17,7 +17,7 @@ const DEFAULT_LAYOUT_ID_KEY = "motionLayoutId"
  * @param {Object.<string, {frames?: Keyframe[] | PropertyIndexedKeyframes, keyframes?: Keyframe[] | PropertyIndexedKeyframes, options?: KeyframeAnimationOptions}>} config.variants
  * @param {string} [config.initial="visible"]
  * @param {string} [config.exitVariant="exit"]
- * @param {string} [config.classPrefix="ig-motion"]
+ * @param {string} [config.classPrefix="iw-motion"]
  * @param {number} [config.fallbackBufferMs=50]
  * @param {boolean} [config.animateOnMount=true]
  * @param {boolean | { duration?: number, easing?: string }} [config.layout=false]
@@ -29,7 +29,7 @@ export function withMotion({
   variants = {},
   initial = "visible",
   exitVariant = "exit",
-  classPrefix = "ig-motion",
+  classPrefix = "iw-motion",
   fallbackBufferMs = DEFAULT_BUFFER_MS,
   animateOnMount = true,
   layout = false,
