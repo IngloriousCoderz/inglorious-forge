@@ -3,7 +3,7 @@ import { entities } from "./entities.js"
 import { middlewares } from "./middlewares.js"
 
 export const store = createStore({
-  types: { "grid": agGrid },
+  types: { grid: agGrid },
   entities,
   middlewares,
 })

@@ -1,34 +1,31 @@
 class MyCellComponent {
+  eGui
+  eButton
+  eventListener
 
-  eGui;
-  eButton;
-  eventListener;
-  
   init(params) {
     this.eGui = document.createElement("div")
-    this.eGui.innerHTML = `
+    this.eGui.innerHTML =
+      `
       <button>+</button>
-    ` + params.value;
-    this.eButton = this.eGui.querySelector("button");
+    ` + params.value
+    this.eButton = this.eGui.querySelector("button")
     this.eventListener = () => alert(`Value: ${params.value}`)
     this.eButton.addEventListener("click", this.eventListener)
   }
 
   getGui() {
-    return this.eGui;
+    return this.eGui
   }
 
   refresh(params) {
-    return true;
+    return true
   }
 
   destroy() {
     this.eButton.removeEventListener("click", this.eventListener)
   }
-
 }
-
-
 
 export const entities = {
   agGrid: {
@@ -41,13 +38,13 @@ export const entities = {
     columnDefs: [
       { field: "id", maxWidth: 100 },
       { field: "product", cellRenderer: MyCellComponent },
-      { field: "category"},
+      { field: "category" },
       { field: "country" },
       {
         field: "revenue",
-        valueFormatter: p => "€" + p.value.toLocaleString(),
+        valueFormatter: (p) => "€" + p.value.toLocaleString(),
       },
-      { field: "price", valueFormatter: p => "€" + p.value.toLocaleString() },
+      { field: "price", valueFormatter: (p) => "€" + p.value.toLocaleString() },
       { field: "rating" },
       { field: "growth", valueFormatter: ({ value }) => `${value}%` },
     ],

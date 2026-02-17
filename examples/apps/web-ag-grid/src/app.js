@@ -22,9 +22,7 @@ export const app = {
           <button @click=${() => api.notify("#agGrid:bumpPrices")}>
             Bump Prices
           </button>
-          <button @click=${() => api.notify("#agGrid:addRow")}>
-            Add Row
-          </button>
+          <button @click=${() => api.notify("#agGrid:addRow")}>Add Row</button>
           <button @click=${() => api.notify("#agGrid:toggleColumnSet")}>
             Toggle Column Set
           </button>

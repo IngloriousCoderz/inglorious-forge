@@ -1,4 +1,8 @@
-import { AllCommunityModule, ModuleRegistry, createGrid } from "ag-grid-community"
+import {
+  AllCommunityModule,
+  ModuleRegistry,
+  createGrid,
+} from "ag-grid-community"
 import { html } from "lit-html"
 import { ref } from "lit-html/directives/ref.js"
 
@@ -43,7 +47,11 @@ export const agGrid = {
           <span><b>Entity:</b> ${entity.id}</span>
           <span><b>Render Tick:</b> ${entity.tickCount}</span>
           <span><b>Grid API ID:</b> ${apiId}</span>
-          <span><b>Status:</b> ${instance ? "mounted (reused)" : "initializing"}</span>
+          <span
+            ><b>Status:</b> ${instance
+              ? "mounted (reused)"
+              : "initializing"}</span
+          >
         </div>
 
         <div
