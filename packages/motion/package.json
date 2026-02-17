@@ -35,7 +35,8 @@
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint .",
-    "test": "echo \"No tests yet\""
+    "test:watch": "vitest",
+    "test": "vitest run"
   },
   "dependencies": {
     "@inglorious/web": "workspace:*"
@@ -45,7 +46,8 @@
   },
   "devDependencies": {
     "@inglorious/eslint-config": "workspace:*",
-    "prettier": "^3.6.2"
+    "prettier": "^3.6.2",
+    "vitest": "^1.6.1"
   },
   "packageManager": "pnpm@10.15.0",
   "engines": {

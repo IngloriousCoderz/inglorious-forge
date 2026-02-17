@@ -1,4 +1,17 @@
-import { PHASES } from "./constants.js"
+import { PHASES, ZERO } from "./constants.js"
+import {
+  computeLayoutDelta,
+  hasLayoutMovement,
+  UNIT_SCALE,
+} from "./layout-math.js"
+import {
+  getLayoutId,
+  getPresenceGroup,
+  resolveLayoutOptions,
+  resolvePresenceOptions,
+} from "./motion-options.js"
+import { createPresenceGroupRegistry } from "./registries/presence-groups.js"
+import { createSharedLayoutRegistry } from "./registries/shared-layout.js"
 import {
   commitFinalFrame,
   getAnimationTimeoutMs,
@@ -6,15 +19,41 @@ import {
   sanitizeClassPart,
 } from "./utils.js"
 
-const SHARED_SNAPSHOT_TTL_MS = 1200
-const DEFAULT_LAYOUT_DURATION_MS = 260
-const DEFAULT_LAYOUT_EASING = "cubic-bezier(0.22, 1, 0.36, 1)"
-const LAYOUT_MIN_POSITION_DELTA = 0.5
-const LAYOUT_MIN_SCALE_DELTA = 0.01
-const UNIT_SCALE = 1
-const sharedLayoutSnapshots = new Map()
-const presenceGroups = new Map()
+const sharedLayoutRegistry = createSharedLayoutRegistry()
+const presenceRegistry = createPresenceGroupRegistry()
 
+/**
+ * @typedef {Object} MotionController
+ * @property {Animation | null} animation
+ * @property {HTMLElement | null} element
+ * @property {string} id
+ * @property {string} phase
+ * @property {number | null} layoutFrameId
+ * @property {Animation | null} layoutAnimation
+ * @property {DOMRect | null} layoutRect
+ * @property {DOMRect | null} pendingLayoutRect
+ * @property {string | null} layoutId
+ * @property {string | null} nextVariant
+ * @property {string | null} presenceGroup
+ * @property {string | null} targetVariant
+ * @property {ReturnType<typeof setTimeout> | null} timeoutId
+ * @property {string | undefined} variant
+ * @property {string} variantClass
+ * @property {(element: HTMLElement | null) => void} handleRef
+ */
+
+/**
+ * Creates runtime helpers used by `withMotion`.
+ *
+ * @param {Object} config
+ * @param {boolean} config.animateOnMount
+ * @param {string} config.classPrefix
+ * @param {number} config.fallbackBufferMs
+ * @param {boolean | { duration?: number, easing?: string }} config.layout
+ * @param {string} config.layoutIdKey
+ * @param {{ mode?: "sync" | "wait", groupKey?: string } | undefined} config.presence
+ * @param {Record<string, {frames?: Keyframe[] | PropertyIndexedKeyframes, keyframes?: Keyframe[] | PropertyIndexedKeyframes, options?: KeyframeAnimationOptions}>} config.variants
+ */
 export function createMotionRuntime({
   animateOnMount,
   classPrefix,
@@ -38,6 +77,10 @@ export function createMotionRuntime({
     runMotion,
   }
 
+  /**
+   * @param {string} entityId
+   * @returns {MotionController}
+   */
   function ensureController(entityId) {
     if (!controllers.has(entityId)) {
       const controller = {
@@ -58,7 +101,7 @@ export function createMotionRuntime({
         variantClass: "",
         handleRef(element) {
           if (controller.element && !element) {
-            storeSharedSnapshot(controller)
+            sharedLayoutRegistry.storeSnapshot(controller)
             controller.pendingLayoutRect = null
           }
 
@@ -68,17 +111,13 @@ export function createMotionRuntime({
               controller.layoutRect = element.getBoundingClientRect()
             }
 
-            if (controller.layoutFrameId !== null) {
-              cancelAnimationFrame(controller.layoutFrameId)
-            }
-
-            controller.layoutFrameId = requestAnimationFrame(() => {
+            cancelScheduledFrame(controller)
+            controller.layoutFrameId = scheduleFrame(() => {
               controller.layoutFrameId = null
               maybeStartLayoutMotion(controller)
             })
-          } else if (controller.layoutFrameId !== null) {
-            cancelAnimationFrame(controller.layoutFrameId)
-            controller.layoutFrameId = null
+          } else {
+            cancelScheduledFrame(controller)
           }
 
           maybeStartMotion(controller)
@@ -91,6 +130,9 @@ export function createMotionRuntime({
     return controllers.get(entityId)
   }
 
+  /**
+   * @param {string} entityId
+   */
   function cleanupController(entityId) {
     const controller = controllers.get(entityId)
     if (!controller) {
@@ -99,9 +141,7 @@ export function createMotionRuntime({
 
     controller.animation?.cancel()
     controller.layoutAnimation?.cancel()
-    if (controller.layoutFrameId !== null) {
-      cancelAnimationFrame(controller.layoutFrameId)
-    }
+    cancelScheduledFrame(controller)
     if (controller.timeoutId !== null) {
       clearTimeout(controller.timeoutId)
     }
@@ -109,6 +149,9 @@ export function createMotionRuntime({
     controllers.delete(entityId)
   }
 
+  /**
+   * @param {MotionController} controller
+   */
   function maybeStartMotion(controller) {
     const variant = controller.nextVariant
 
@@ -137,6 +180,10 @@ export function createMotionRuntime({
     })
   }
 
+  /**
+   * @param {MotionController} controller
+   * @param {object} entity
+   */
   function ensureControllerMeta(controller, entity) {
     controller.layoutId = getLayoutId(entity, layoutIdKey)
     controller.presenceGroup = getPresenceGroup(
@@ -145,6 +192,11 @@ export function createMotionRuntime({
     )
   }
 
+  /**
+   * Captures pre-render rect used for FLIP animations.
+   *
+   * @param {MotionController} controller
+   */
   function captureLayoutBeforeRender(controller) {
     if (!layoutOptions || !controller.element) {
       return
@@ -153,32 +205,38 @@ export function createMotionRuntime({
     controller.pendingLayoutRect = controller.element.getBoundingClientRect()
   }
 
+  /**
+   * Serializes remove operations for wait-mode presence groups.
+   *
+   * @param {MotionController} controller
+   * @param {() => Promise<void>} runRemove
+   */
   async function completeRemoveWithMotion(controller, runRemove) {
     if (presenceOptions.mode !== "wait" || !controller.presenceGroup) {
       await runRemove()
       return
     }
 
-    const state = ensurePresenceGroup(controller.presenceGroup)
-    await acquirePresenceSlot(state)
+    await presenceRegistry.acquire(controller.presenceGroup)
 
     try {
       await runRemove()
     } finally {
-      releasePresenceSlot(state)
+      presenceRegistry.release(controller.presenceGroup)
     }
   }
 
+  /**
+   * Runs a variant animation on the controller element.
+   *
+   * @param {MotionController} controller
+   * @param {string} variant
+   */
   async function runMotion(controller, variant) {
     const definition = variants[variant]
     const element = controller.element
 
-    if (!element) {
-      controller.variant = variant
-      return
-    }
-
-    if (!definition) {
+    if (!element || !definition) {
       controller.variant = variant
       return
     }
@@ -213,7 +271,7 @@ export function createMotionRuntime({
     }
 
     await new Promise((resolve) => {
-      requestAnimationFrame(() => {
+      scheduleFrame(() => {
         if (controller.element !== element) {
           resolve()
           return
@@ -231,8 +289,7 @@ export function createMotionRuntime({
           }
           settled = true
 
-          const isCurrentAnimation = controller.animation === animation
-          if (isCurrentAnimation) {
+          if (controller.animation === animation) {
             commitFinalFrame(element, definition)
             setPhase(controller, PHASES.END)
             controller.variant = variant
@@ -256,14 +313,18 @@ export function createMotionRuntime({
     })
   }
 
+  /**
+   * @param {MotionController} controller
+   */
   function maybeStartLayoutMotion(controller) {
     if (!layoutOptions || !controller.element) {
       return
     }
 
     const toRect = controller.element.getBoundingClientRect()
-    const sharedRect = getSharedSnapshotRect(controller)
-    const fromRect = sharedRect || controller.pendingLayoutRect
+    const fromRect =
+      sharedLayoutRegistry.getSnapshotRect(controller) ||
+      controller.pendingLayoutRect
     controller.pendingLayoutRect = null
     controller.layoutRect = toRect
 
@@ -271,17 +332,8 @@ export function createMotionRuntime({
       return
     }
 
-    const deltaX = fromRect.left - toRect.left
-    const deltaY = fromRect.top - toRect.top
-    const scaleX = toRect.width ? fromRect.width / toRect.width : UNIT_SCALE
-    const scaleY = toRect.height ? fromRect.height / toRect.height : UNIT_SCALE
-    const hasMovement =
-      Math.abs(deltaX) > LAYOUT_MIN_POSITION_DELTA ||
-      Math.abs(deltaY) > LAYOUT_MIN_POSITION_DELTA ||
-      Math.abs(scaleX - UNIT_SCALE) > LAYOUT_MIN_SCALE_DELTA ||
-      Math.abs(scaleY - UNIT_SCALE) > LAYOUT_MIN_SCALE_DELTA
-
-    if (!hasMovement) {
+    const delta = computeLayoutDelta(fromRect, toRect)
+    if (!hasLayoutMovement(delta)) {
       return
     }
 
@@ -289,7 +341,7 @@ export function createMotionRuntime({
     controller.layoutAnimation = controller.element.animate(
       [
         {
-          transform: `translate(${deltaX}px, ${deltaY}px) scale(${scaleX}, ${scaleY})`,
+          transform: `translate(${delta.deltaX}px, ${delta.deltaY}px) scale(${delta.scaleX}, ${delta.scaleY})`,
           transformOrigin: "top left",
         },
         {
@@ -304,47 +356,10 @@ export function createMotionRuntime({
     )
   }
 
-  function getSharedSnapshotRect(controller) {
-    if (!controller.layoutId) {
-      return null
-    }
-
-    const snapshot = sharedLayoutSnapshots.get(controller.layoutId)
-    if (!snapshot) {
-      return null
-    }
-
-    if (Date.now() - snapshot.at > SHARED_SNAPSHOT_TTL_MS) {
-      sharedLayoutSnapshots.delete(controller.layoutId)
-      return null
-    }
-
-    if (snapshot.entityId === controller.id) {
-      return null
-    }
-
-    sharedLayoutSnapshots.delete(controller.layoutId)
-    return snapshot.rect
-  }
-
-  function storeSharedSnapshot(controller) {
-    if (!layoutOptions || !controller.layoutId) {
-      return
-    }
-
-    const snapshotRect =
-      controller.element?.getBoundingClientRect() || controller.layoutRect
-    if (!snapshotRect) {
-      return
-    }
-
-    sharedLayoutSnapshots.set(controller.layoutId, {
-      at: Date.now(),
-      entityId: controller.id,
-      rect: snapshotRect,
-    })
-  }
-
+  /**
+   * @param {MotionController} controller
+   * @param {string} variant
+   */
   function setVariantClass(controller, variant) {
     if (!controller.element) {
       return
@@ -359,6 +374,10 @@ export function createMotionRuntime({
     controller.variantClass = nextVariantClass
   }
 
+  /**
+   * @param {MotionController} controller
+   * @param {string} phase
+   */
   function setPhase(controller, phase) {
     controller.phase = phase
 
@@ -377,84 +396,38 @@ export function createMotionRuntime({
       element.classList.add(`${classPrefix}--${phase}`)
     }
   }
+}
 
-  function ensurePresenceGroup(groupId) {
-    if (!presenceGroups.has(groupId)) {
-      presenceGroups.set(groupId, {
-        active: false,
-        queue: [],
-      })
-    }
-
-    return presenceGroups.get(groupId)
-  }
-
-  function acquirePresenceSlot(state) {
-    if (!state.active) {
-      state.active = true
-      return Promise.resolve()
-    }
-
-    return new Promise((resolve) => {
-      state.queue.push(resolve)
-    })
-  }
-
-  function releasePresenceSlot(state) {
-    const next = state.queue.shift()
-    if (next) {
-      next()
-      return
-    }
-
-    state.active = false
+/**
+ * @param {MotionController} controller
+ */
+function cancelScheduledFrame(controller) {
+  if (controller.layoutFrameId !== null) {
+    cancelFrame(controller.layoutFrameId)
+    controller.layoutFrameId = null
   }
 }
 
-function resolveLayoutOptions(layout) {
-  if (!layout) {
-    return null
+/**
+ * @param {() => void} callback
+ * @returns {number}
+ */
+function scheduleFrame(callback) {
+  if (typeof requestAnimationFrame === "function") {
+    return requestAnimationFrame(callback)
   }
 
-  if (layout === true) {
-    return {
-      duration: DEFAULT_LAYOUT_DURATION_MS,
-      easing: DEFAULT_LAYOUT_EASING,
-    }
-  }
-
-  return {
-    duration: layout.duration ?? DEFAULT_LAYOUT_DURATION_MS,
-    easing: layout.easing ?? DEFAULT_LAYOUT_EASING,
-  }
+  return setTimeout(callback, ZERO)
 }
 
-function resolvePresenceOptions(presence) {
-  if (!presence) {
-    return {
-      groupKey: "motionPresenceGroup",
-      mode: "sync",
-    }
+/**
+ * @param {number} frameId
+ */
+function cancelFrame(frameId) {
+  if (typeof cancelAnimationFrame === "function") {
+    cancelAnimationFrame(frameId)
+    return
   }
 
-  return {
-    groupKey: presence.groupKey ?? "motionPresenceGroup",
-    mode: presence.mode ?? "sync",
-  }
-}
-
-function getLayoutId(entity, layoutIdKey) {
-  if (!layoutIdKey) {
-    return null
-  }
-
-  return entity[layoutIdKey] ?? null
-}
-
-function getPresenceGroup(entity, groupKey) {
-  if (!groupKey) {
-    return null
-  }
-
-  return entity[groupKey] ?? null
+  clearTimeout(frameId)
 }
