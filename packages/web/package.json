@@ -26,6 +26,10 @@
       "types": "./types/index.d.ts",
       "import": "./src/index.js"
     },
+    "./ag-grid": {
+      "types": "./types/ag-grid.d.ts",
+      "import": "./src/ag-grid/index.js"
+    },
     "./form": {
       "types": "./types/form.d.ts",
       "import": "./src/form/index.js"
@@ -51,6 +55,10 @@
     },
     "./table/base.css": "./src/table/base.css",
     "./table/theme.css": "./src/table/theme.css",
+    "./ag-grid/base.css": "./src/ag-grid/base.css",
+    "./ag-grid/theme.css": "./src/ag-grid/theme.css",
+    "./ag-grid/quartz.css": "./src/ag-grid/quartz.css",
+    "./ag-grid/alpine.css": "./src/ag-grid/alpine.css",
     "./select/base.css": "./src/select/base.css",
     "./select/theme.css": "./src/select/theme.css"
   },
@@ -75,6 +83,7 @@
     "@inglorious/store": "workspace:*",
     "@inglorious/utils": "workspace:*",
     "@lit-labs/ssr-client": "^1.1.8",
+    "ag-grid-community": "^34.3.1",
     "d3-array": "^3.2.4",
     "d3-format": "^3.1.0",
     "d3-scale": "^4.0.2",
