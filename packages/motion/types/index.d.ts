@@ -6,6 +6,20 @@ export type MotionVariantDefinition = {
 
 export type MotionVariants = Record<string, MotionVariantDefinition>
 
+export type MotionLayoutOptions =
+  | boolean
+  | {
+      duration?: number
+      easing?: string
+    }
+
+export type MotionPresenceOptions = {
+  mode?: "sync" | "wait"
+  groupKey?: string
+}
+
+export type RemoveWithMotionPayload = string | { exitVariant?: string }
+
 export type WithMotionConfig = {
   variants: MotionVariants
   initial?: string
@@ -13,12 +27,9 @@ export type WithMotionConfig = {
   classPrefix?: string
   fallbackBufferMs?: number
   animateOnMount?: boolean
-  layout?: boolean | { duration?: number; easing?: string }
+  layout?: MotionLayoutOptions
   layoutIdKey?: string
-  presence?: {
-    mode?: "sync" | "wait"
-    groupKey?: string
-  }
+  presence?: MotionPresenceOptions
 }
 
 export function withMotion(config?: WithMotionConfig): (type: object) => object

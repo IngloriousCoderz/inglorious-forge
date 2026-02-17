@@ -25,6 +25,30 @@ Composes a type with a motion lifecycle driven by WAAPI.
   - `${classPrefix}--end`
   - `${classPrefix}--variant-<name>`
 
+## Stability
+
+- Stable:
+  - Variant lifecycle (`motionVariantChange`, `removeWithMotion`)
+  - Class phases (`--start`, `--active`, `--end`, `--variant-*`)
+  - Presence `mode: "wait"` semantics (queue exits per group)
+- Experimental:
+  - Shared-layout behavior driven by `motionLayoutId`
+  - Internal FLIP heuristics and thresholds
+
+## Migration policy
+
+- Patch versions: bug fixes and non-breaking behavior improvements.
+- Minor versions: additive config and handlers; no required app changes.
+- Major versions: breaking semantics or API shape changes.
+- Deprecated behavior keeps a compatibility alias for at least one minor release when feasible.
+
+## Browser support and fallbacks
+
+- Primary engine: WAAPI (`Element.animate`).
+- If WAAPI is unavailable, motion still updates final styles and lifecycle classes (no smooth tween).
+- `prefers-reduced-motion: reduce` is honored by skipping tweening and committing end state.
+- For robust visual guarantees across browsers, use Playwright E2E (unit tests cover deterministic logic only).
+
 ## Example
 
 ```js

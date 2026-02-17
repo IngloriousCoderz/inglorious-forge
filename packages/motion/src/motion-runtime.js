@@ -18,6 +18,7 @@ import {
   isReducedMotion,
   sanitizeClassPart,
 } from "./utils.js"
+import { warnOnce } from "./warnings.js"
 
 const sharedLayoutRegistry = createSharedLayoutRegistry()
 const presenceRegistry = createPresenceGroupRegistry()
@@ -190,6 +191,20 @@ export function createMotionRuntime({
       entity,
       presenceOptions.groupKey,
     )
+
+    if (controller.layoutId && !layoutOptions) {
+      warnOnce(
+        `layout-id-without-layout:${controller.layoutId}`,
+        `Entity '${controller.id}' provides '${layoutIdKey}', but layout is disabled. Enable 'layout: true' to animate shared/layout transitions.`,
+      )
+    }
+
+    if (presenceOptions.mode === "wait" && !controller.presenceGroup) {
+      warnOnce(
+        `wait-without-group:${controller.id}`,
+        `Entity '${controller.id}' uses presence mode 'wait' without a '${presenceOptions.groupKey}' value. Falling back to sync behavior for this entity.`,
+      )
+    }
   }
 
   /**

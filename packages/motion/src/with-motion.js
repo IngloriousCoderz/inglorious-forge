@@ -2,6 +2,9 @@ import { html, ref } from "@inglorious/web"
 
 import { DEFAULT_BUFFER_MS } from "./constants.js"
 import { createMotionRuntime } from "./motion-runtime.js"
+import { warnOnce } from "./warnings.js"
+
+const DEFAULT_LAYOUT_ID_KEY = "motionLayoutId"
 
 /**
  * Composes a type with a minimal motion lifecycle powered by WAAPI.
@@ -30,9 +33,16 @@ export function withMotion({
   fallbackBufferMs = DEFAULT_BUFFER_MS,
   animateOnMount = true,
   layout = false,
-  layoutIdKey = "motionLayoutId",
+  layoutIdKey = DEFAULT_LAYOUT_ID_KEY,
   presence = undefined,
 } = {}) {
+  if (!Object.keys(variants).length) {
+    warnOnce(
+      `empty-variants:${classPrefix}`,
+      `withMotion('${classPrefix}') has no variants. Motion handlers will be no-ops.`,
+    )
+  }
+
   const runtime = createMotionRuntime({
     animateOnMount,
     classPrefix,
@@ -64,6 +74,10 @@ export function withMotion({
       await runtime
         .completeRemoveWithMotion(controller, async () => {
           if (!variants[targetExitVariant]) {
+            warnOnce(
+              `missing-exit-variant:${classPrefix}:${targetExitVariant}`,
+              `removeWithMotion requested variant '${targetExitVariant}' but it is not defined. Falling back to immediate remove.`,
+            )
             runtime.cleanupController(entityId)
             if (api.getEntity(entityId)) {
               api.notify("remove", entityId)
