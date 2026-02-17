@@ -120,11 +120,9 @@ const slice = createSlice({
 **Inglorious Store:**
 
 ```javascript
-const types = {
-  todoList: {
-    addTodo(entity, text) {
-      entity.todos.push({ text })
-    },
+const todoList = {
+  addTodo(entity, text) {
+    entity.todos.push({ text })
   },
 }
 ```
@@ -134,16 +132,15 @@ const types = {
 Entities have automatic lifecycle events:
 
 ```javascript
-const types = {
-  user: {
-    create(entity) {
-      // Runs when entity is added
-      entity.createdAt = Date.now()
-    },
-    destroy(entity) {
-      // Runs when entity is removed
-      saveToDatabase(entity)
-    },
+const user = {
+  create(entity) {
+    // Runs when entity is added
+    entity.createdAt = Date.now()
+  },
+
+  destroy(entity) {
+    // Runs when entity is removed
+    saveToDatabase(entity)
   },
 }
 ```
@@ -253,6 +250,8 @@ frame
   .notify("particleCreated", { type: "explosion" })
 frame.update() // Single re-render
 ```
+
+All events in Inglorious Store are appended to an event queue as well.
 
 ### 3. Batch Updates
 
