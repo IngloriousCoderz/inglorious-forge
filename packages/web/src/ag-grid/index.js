@@ -29,17 +29,19 @@ export const agGrid = {
     entity.title ??= "Data Grid"
     entity.tickCount ??= 0
     entity.rowIdField ??= "id"
-    entity.compactColumns ??= false
     entity.themeClass ??= DEFAULT_THEME_CLASS
     entity.defaultColDef = {
       ...DEFAULT_COL_DEF,
       ...(entity.defaultColDef || {}),
     }
+    entity.gridApiId ??= null
+    entity.gridStatus ??= "mounting"
   },
 
-  render(entity) {
+  render(entity, api) {
     const instance = gridInstances.get(entity.id)
-    const apiId = instance ? getApiId(instance.api) : "not-mounted"
+    const apiId =
+      entity.gridApiId ?? (instance ? getApiId(instance.api) : "pending")
 
     return html`
       <section class="iw-ag-grid">
@@ -47,18 +49,14 @@ export const agGrid = {
           <span><b>Entity:</b> ${entity.id}</span>
           <span><b>Render Tick:</b> ${entity.tickCount}</span>
           <span><b>Grid API ID:</b> ${apiId}</span>
-          <span
-            ><b>Status:</b> ${instance
-              ? "mounted (reused)"
-              : "initializing"}</span
-          >
+          <span><b>Status:</b> ${entity.gridStatus}</span>
         </div>
 
         <div
           class="${entity.themeClass} iw-ag-grid-host"
           ${ref((el) => {
             if (!el) return
-            mountOrUpdateGrid(entity, el)
+            mountOrUpdateGrid(entity, el, api)
           })}
         ></div>
       </section>
@@ -108,11 +106,9 @@ export const agGrid = {
     ]
   },
 
-  toggleColumnSet(entity) {
-    entity.compactColumns = !entity.compactColumns
-    entity.columnDefs = entity.compactColumns
-      ? getCompactColumns()
-      : getDefaultColumns()
+  gridMounted(entity, payload) {
+    entity.gridApiId = payload?.gridApiId ?? entity.gridApiId
+    entity.gridStatus = "mounted (reused)"
   },
 
   destroy(entity) {
@@ -124,7 +120,7 @@ export const agGrid = {
   },
 }
 
-function mountOrUpdateGrid(entity, element) {
+function mountOrUpdateGrid(entity, element, api) {
   registerModulesOnce()
 
   const existing = gridInstances.get(entity.id)
@@ -135,16 +131,25 @@ function mountOrUpdateGrid(entity, element) {
       gridInstances.delete(entity.id)
     }
 
-    const api = createGrid(element, buildGridOptions(entity))
+    const gridApi = createGrid(element, buildGridOptions(entity))
 
     gridInstances.set(entity.id, {
-      api,
+      api: gridApi,
       element,
+      lastColumnDefs: entity.columnDefs,
+      lastRowData: entity.rowData,
+      lastDefaultColDef: entity.defaultColDef,
+    })
+
+    queueMicrotask(() => {
+      api.notify(`#${entity.id}:gridMounted`, {
+        gridApiId: getApiId(gridApi),
+      })
     })
     return
   }
 
-  syncGrid(existing.api, entity)
+  syncGrid(existing, entity)
 }
 
 function registerModulesOnce() {
@@ -163,12 +168,23 @@ function buildGridOptions(entity) {
   }
 }
 
-function syncGrid(api, entity) {
-  api.updateGridOptions({
+function syncGrid(instance, entity) {
+  const hasChanges =
+    instance.lastDefaultColDef !== entity.defaultColDef ||
+    instance.lastRowData !== entity.rowData ||
+    instance.lastColumnDefs !== entity.columnDefs
+
+  if (!hasChanges) return
+
+  instance.api.updateGridOptions({
     defaultColDef: entity.defaultColDef,
     rowData: entity.rowData,
     columnDefs: entity.columnDefs,
   })
+
+  instance.lastDefaultColDef = entity.defaultColDef
+  instance.lastRowData = entity.rowData
+  instance.lastColumnDefs = entity.columnDefs
 }
 
 function getApiId(api) {
@@ -178,32 +194,4 @@ function getApiId(api) {
   }
 
   return apiIds.get(api)
-}
-
-function getDefaultColumns() {
-  return [
-    { field: "id", maxWidth: 100 },
-    { field: "product" },
-    { field: "category" },
-    { field: "country" },
-    {
-      field: "revenue",
-      valueFormatter: ({ value }) => `$${value.toLocaleString("en-US")}`,
-    },
-    { field: "price", valueFormatter: ({ value }) => `$${value}` },
-    { field: "rating" },
-    { field: "growth", valueFormatter: ({ value }) => `${value}%` },
-  ]
-}
-
-function getCompactColumns() {
-  return [
-    { field: "id", maxWidth: 100 },
-    { field: "product" },
-    {
-      field: "revenue",
-      valueFormatter: ({ value }) => `$${value.toLocaleString("en-US")}`,
-    },
-    { field: "growth", valueFormatter: ({ value }) => `${value}%` },
-  ]
 }

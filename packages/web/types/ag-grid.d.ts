@@ -5,6 +5,6 @@ export const agGrid: {
   shuffleRows(entity: Record<string, any>): void
   bumpPrices(entity: Record<string, any>): void
   addRow(entity: Record<string, any>): void
-  toggleColumnSet(entity: Record<string, any>): void
+  gridMounted(entity: Record<string, any>, payload?: any): void
   destroy(entity: Record<string, any>): void
 }

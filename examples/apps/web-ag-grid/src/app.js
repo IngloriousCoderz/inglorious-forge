@@ -23,9 +23,6 @@ export const app = {
             Bump Prices
           </button>
           <button @click=${() => api.notify("#agGrid:addRow")}>Add Row</button>
-          <button @click=${() => api.notify("#agGrid:toggleColumnSet")}>
-            Toggle Column Set
-          </button>
         </section>
 
         <main class="demo-main">${api.render("agGrid")}</main>

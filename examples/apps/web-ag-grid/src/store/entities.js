@@ -34,7 +34,6 @@ export const entities = {
     tickCount: 0,
     rowIdField: "id",
     themeClass: "ag-theme-quartz",
-    compactColumns: false,
     columnDefs: [
       { field: "id", maxWidth: 100 },
       { field: "product", cellRenderer: MyCellComponent },
