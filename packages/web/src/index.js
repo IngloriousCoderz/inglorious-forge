@@ -1,5 +1,4 @@
 export { mount } from "./mount.js"
-export { agGrid } from "./ag-grid/index.js"
 export { createStore } from "@inglorious/store"
 export { createDevtools } from "@inglorious/store/client/devtools.js"
 export { compute } from "@inglorious/store/select.js"

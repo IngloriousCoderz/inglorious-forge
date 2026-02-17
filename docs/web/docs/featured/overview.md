@@ -184,8 +184,10 @@ Inglorious Web plays nicely with:
 - **Web Components** — Shoelace, Material Web Components, etc.
 - **Design Systems** — Any CSS framework
 - **Specialized Libraries** — Date pickers, rich editors, etc.
+- **Data Grids** — AG Grid can be integrated directly (no adapter required)
 
 **[Learn more →](./web-components.md)**
+**[AG Grid recipe (no adapter) →](./ag-grid-no-adapter.md)**
 
 ## Ecosystem Packages
 

@@ -18,7 +18,7 @@ class MyCellComponent {
     return this.eGui
   }
 
-  refresh(params) {
+  refresh() {
     return true
   }
 
@@ -34,6 +34,7 @@ export const entities = {
     tickCount: 0,
     rowIdField: "id",
     themeClass: "ag-theme-quartz",
+    height: 520,
     columnDefs: [
       { field: "id", maxWidth: 100 },
       { field: "product", cellRenderer: MyCellComponent },

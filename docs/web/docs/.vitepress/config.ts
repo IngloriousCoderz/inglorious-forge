@@ -75,6 +75,10 @@ export default defineConfig({
           text: "Integration",
           items: [
             { text: "Component Libraries", link: "/featured/libraries" },
+            {
+              text: "AG Grid (No Adapter)",
+              link: "/featured/ag-grid-no-adapter",
+            },
             { text: "Web Components", link: "/featured/web-components" },
             { text: "JSX Support", link: "/featured/jsx" },
             { text: "Vue Templates", link: "/featured/vue-templates" },

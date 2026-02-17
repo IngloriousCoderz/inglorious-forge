@@ -52,3 +52,18 @@ body {
 .controls button:hover {
   background: #f9fafb;
 }
+
+.demo-main {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.iw-ag-grid-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 10px;
+  font-size: 14px;
+}

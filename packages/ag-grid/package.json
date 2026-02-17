@@ -1,0 +1,56 @@
+{
+  "name": "@inglorious/ag-grid",
+  "version": "0.1.0",
+  "description": "AG Grid integration for Inglorious Web.",
+  "author": "IceOnFire <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IngloriousCoderz/inglorious-forge.git",
+    "directory": "packages/ag-grid"
+  },
+  "bugs": {
+    "url": "https://github.com/IngloriousCoderz/inglorious-forge/issues"
+  },
+  "keywords": [
+    "ag-grid",
+    "data-grid",
+    "inglorious-web"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./types/index.d.ts",
+      "import": "./src/index.js"
+    }
+  },
+  "files": [
+    "src",
+    "types"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "format": "prettier --write .",
+    "lint": "eslint .",
+    "test:watch": "vitest",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@inglorious/web": "workspace:*"
+  },
+  "peerDependencies": {
+    "@inglorious/web": "workspace:*",
+    "ag-grid-community": "^34.3.1"
+  },
+  "devDependencies": {
+    "@inglorious/eslint-config": "workspace:*",
+    "prettier": "^3.6.2",
+    "vitest": "^4.0.15"
+  },
+  "packageManager": "pnpm@10.15.0",
+  "engines": {
+    "node": ">= 22"
+  }
+}

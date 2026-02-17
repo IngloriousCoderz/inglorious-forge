@@ -2,6 +2,8 @@ import { html } from "@inglorious/web"
 
 export const app = {
   render(api) {
+    const grid = api.getEntity("agGrid")
+
     return html`
       <div class="app-shell">
         <header class="app-header">
@@ -25,7 +27,15 @@ export const app = {
           <button @click=${() => api.notify("#agGrid:addRow")}>Add Row</button>
         </section>
 
-        <main class="demo-main">${api.render("agGrid")}</main>
+        <main class="demo-main">
+          <div class="iw-ag-grid-meta">
+            <span><b>Entity:</b> ${grid.id}</span>
+            <span><b>Render Tick:</b> ${grid.tickCount}</span>
+            <span><b>Grid API ID:</b> ${grid.gridApiId ?? "pending"}</span>
+            <span><b>Status:</b> ${grid.gridStatus}</span>
+          </div>
+          ${api.render("agGrid")}
+        </main>
       </div>
     `
   },
