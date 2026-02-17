@@ -30,7 +30,7 @@ features:
   - title: Zero Component State
     details: All state lives in the store. No refs, no lifecycle hooks, no framework-level memory leaks.
   - title: Built-in Components
-    details: Router, forms, tables, select dropdowns, virtual lists—and ecosystem packages like Inglorious Motion and Inglorious Charts.
+    details: Router, forms, tables, select dropdowns, virtual lists—all entity-based, all customizable, all testable.
   - title: Transparent Architecture
     details: Pure JavaScript. No JSX required (though supported). No compiler. No magic. Just functions and events.
 ---

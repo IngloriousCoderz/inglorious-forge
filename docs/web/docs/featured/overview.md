@@ -187,6 +187,15 @@ Inglorious Web plays nicely with:
 
 **[Learn more →](./web-components.md)**
 
+## Ecosystem Packages
+
+The Inglorious ecosystem also includes:
+
+- **Inglorious Motion** — animation primitives for Inglorious Web entities  
+  Docs: [https://inglorious.dev/motion/](https://inglorious.dev/motion/)
+- **Inglorious Charts** — declarative chart types and chart composition helpers  
+  Docs: [https://inglorious.dev/charts/](https://inglorious.dev/charts/)
+
 ## Advanced Customization
 
 All built-in components use type composition. This means you can:

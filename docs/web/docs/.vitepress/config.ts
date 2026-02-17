@@ -27,6 +27,13 @@ export default defineConfig({
         ],
       },
       { text: "Featured Types", link: "/featured/overview" },
+      {
+        text: "Ecosystem",
+        items: [
+          { text: "Inglorious Motion", link: "https://inglorious.dev/motion/" },
+          { text: "Inglorious Charts", link: "https://inglorious.dev/charts/" },
+        ],
+      },
       { text: "API Reference", link: "/api/reference" },
       { text: "Comparison", link: "/comparison" },
     ],

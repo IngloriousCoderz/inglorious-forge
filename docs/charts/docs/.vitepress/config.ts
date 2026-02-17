@@ -18,6 +18,7 @@ export default defineConfig({
       { text: "Examples", link: "/examples/config-mode" },
       { text: "API", link: "/api/reference" },
       { text: "Advanced", link: "/advanced/testing" },
+      { text: "Inglorious Web", link: "https://inglorious.dev/web/" },
     ],
 
     sidebar: {

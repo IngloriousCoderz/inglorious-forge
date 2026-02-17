@@ -18,6 +18,7 @@ export default defineConfig({
       { text: "Examples", link: "/examples/web-motion" },
       { text: "API", link: "/api/reference" },
       { text: "Stability", link: "/advanced/stability" },
+      { text: "Inglorious Web", link: "https://inglorious.dev/web/" },
     ],
 
     sidebar: {

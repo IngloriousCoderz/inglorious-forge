@@ -23,6 +23,21 @@ description: Philosophy, design principles, ECS inspiration, and use cases
 - **No lifecycle hooks** — no special methods to manage
 - **Built-in features** — router, forms, tables, virtual lists, select dropdowns
 
+## Built-in Features and Ecosystem
+
+### Built-in features
+
+- **Table** — [/web/featured/table/](https://inglorious.dev/web/featured/table/)
+- **Form** — [/web/featured/form/](https://inglorious.dev/web/featured/form/)
+- **Router** — [/web/featured/router/](https://inglorious.dev/web/featured/router/)
+- **Select** — [/web/featured/select/](https://inglorious.dev/web/featured/select/)
+- **Virtual List** — [/web/featured/list/](https://inglorious.dev/web/featured/list/)
+
+### Ecosystem packages
+
+- **Inglorious Motion** — [/motion/](https://inglorious.dev/motion/)
+- **Inglorious Charts** — [/charts/](https://inglorious.dev/charts/)
+
 ## What It Isn't
 
 - **Not a reactive proxy system** — Vue's proxy approach is elegant but complex; Inglorious prefers explicit events
