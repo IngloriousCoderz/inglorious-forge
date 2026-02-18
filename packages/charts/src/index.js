@@ -3,6 +3,8 @@ import { svg } from "@inglorious/web"
 import * as handlers from "./handlers.js"
 import { render } from "./template.js"
 import { extractDataKeysFromChildren } from "./utils/extract-data-keys.js"
+export { createRealtimeStreamSystem } from "./systems/realtime-stream.js"
+export { streamSlide } from "./utils/stream-slide.js"
 
 // Export chart types for config style
 export {

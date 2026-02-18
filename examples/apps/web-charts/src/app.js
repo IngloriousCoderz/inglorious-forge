@@ -153,6 +153,40 @@ export const app = {
             </section>
           </div>
 
+          <div class="charts-comparison">
+            <section class="chart-section">
+              <h2>Realtime Line Chart - Config Style (1 point/second)</h2>
+              ${api.render("realtimeLineChartConfig")}
+            </section>
+
+            <section class="chart-section">
+              <h2>
+                Realtime Line Chart - Recharts Style (Composition, 1
+                point/second)
+              </h2>
+              ${chart.renderLineChart(
+                api.getEntity("realtimeLineChart"),
+                {
+                  width: 800,
+                  height: 400,
+                  dataKeys: ["value"],
+                  children: [
+                    chart.CartesianGrid({
+                      stroke: "#eee",
+                      strokeDasharray: "5 5",
+                    }),
+                    chart.XAxis({ dataKey: "name" }),
+                    chart.YAxis({ width: "auto" }),
+                    chart.Line({ dataKey: "value", stroke: "#2563eb" }),
+                    chart.Dots({ dataKey: "value", fill: "#2563eb" }),
+                    chart.Tooltip({}),
+                  ],
+                },
+                api,
+              )}
+            </section>
+          </div>
+
           <!-- AREA CHARTS -->
           <div class="charts-comparison">
             <section class="chart-section">
