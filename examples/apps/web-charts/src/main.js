@@ -3,6 +3,12 @@ import "@inglorious/charts/base.css"
 import "@inglorious/charts/theme.css"
 
 import { app } from "./app.js"
-import { store } from "./store/index.js"
+import { store, stopRealtimeStreamSystem } from "./store/index.js"
 
 mount(store, app.render, document.getElementById("root"))
+
+if (import.meta.hot) {
+  import.meta.hot.dispose(() => {
+    stopRealtimeStreamSystem()
+  })
+}
