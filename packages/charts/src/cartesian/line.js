@@ -389,10 +389,18 @@ export const line = {
             data,
             (d, i) => `${dataKey}-${i}`,
             (d, i) => {
+              const originalDataPoint = e.data?.[i]
+              const label =
+                originalDataPoint?.name ??
+                originalDataPoint?.label ??
+                originalDataPoint?.x ??
+                originalDataPoint?.date ??
+                String(d.x)
+
               const { onMouseEnter, onMouseLeave } = createTooltipHandlers({
                 entity: e,
                 api: ctx.api || api,
-                tooltipData: { label: String(i), value: d.y, color: fill },
+                tooltipData: { label: String(label), value: d.y, color: fill },
               })
               return renderDot({
                 cx: xScale(i),

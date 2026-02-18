@@ -105,6 +105,17 @@ export function ensureValidNumber(value, fallback = 0) {
 }
 
 /**
+ * Coerces a value to number and guarantees a finite result.
+ * @param {any} value - Value to coerce
+ * @param {number} [fallback=0] - Fallback value if coercion fails
+ * @returns {number} Finite number
+ */
+export function ensureFiniteNumber(value, fallback = 0) {
+  const parsed = Number(value)
+  return Number.isFinite(parsed) ? parsed : fallback
+}
+
+/**
  * Transforms entity data to standardized format with x, y, and name properties.
  * Used for rendering lines and areas in composition mode.
  *

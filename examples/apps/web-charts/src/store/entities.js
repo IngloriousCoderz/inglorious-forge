@@ -1,5 +1,20 @@
 export const entities = {
   // ============================================
+  // REALTIME STREAM CONTROLLER
+  // ============================================
+
+  realtimeStreamController: {
+    type: "realtimeStream",
+    targets: ["realtimeLineChart", "realtimeLineChartConfig"],
+    intervalMs: 1000,
+    windowSize: 30,
+    min: -80,
+    max: 220,
+    variation: 25,
+    currentValue: 220,
+  },
+
+  // ============================================
   // LINE CHARTS
   // ============================================
 
@@ -118,6 +133,39 @@ export const entities = {
       { name: "2", productA: 320, productB: 600, productC: 210, productD: 190 },
       { name: "3", productA: 280, productB: 460, productC: 230, productD: 400 },
     ],
+  },
+
+  // Realtime Line Chart - Sliding Window (Config Style)
+  realtimeLineChartConfig: {
+    type: "line",
+    streamIndex: 29,
+    streamXKey: "name",
+    streamYKey: "value",
+    streamWindow: 30,
+    data: Array.from({ length: 30 }, (_, i) => ({
+      name: `${i}`,
+      value:
+        200 + Math.round(Math.sin(i / 3) * 40) + Math.floor(Math.random() * 20),
+    })),
+    width: 800,
+    height: 400,
+    showGrid: true,
+    showLegend: false,
+    showTooltip: true,
+  },
+
+  // Realtime Line Chart - Sliding Window (Composition Style)
+  realtimeLineChart: {
+    type: "line",
+    streamIndex: 29,
+    streamXKey: "name",
+    streamYKey: "value",
+    streamWindow: 30,
+    data: Array.from({ length: 30 }, (_, i) => ({
+      name: `${i}`,
+      value:
+        200 + Math.round(Math.sin(i / 3) * 40) + Math.floor(Math.random() * 20),
+    })),
   },
 
   // ============================================
