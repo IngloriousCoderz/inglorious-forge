@@ -3,6 +3,14 @@ import { chart } from "@inglorious/charts"
 
 export const app = {
   render(api) {
+    const realtimeController = api.getEntity("realtimeStreamController")
+    const isRealtimeConfigPaused = Boolean(
+      realtimeController?.pausedTargets?.realtimeLineChartConfig,
+    )
+    const isRealtimeCompositionPaused = Boolean(
+      realtimeController?.pausedTargets?.realtimeLineChart,
+    )
+
     return html`
       <div class="app">
         <header>
@@ -156,6 +164,28 @@ export const app = {
           <div class="charts-comparison">
             <section class="chart-section">
               <h2>Realtime Line Chart - Config Style (1 point/second)</h2>
+              <p>
+                Stream: ${isRealtimeConfigPaused ? "paused" : "running"}. Use
+                Brush to inspect history.
+              </p>
+              <button
+                @click=${() =>
+                  api.notify("#realtimeStreamController:streamPlay", {
+                    targetId: "realtimeLineChartConfig",
+                  })}
+                ?disabled=${!isRealtimeConfigPaused}
+              >
+                Play
+              </button>
+              <button
+                @click=${() =>
+                  api.notify("#realtimeStreamController:streamPause", {
+                    targetId: "realtimeLineChartConfig",
+                  })}
+                ?disabled=${isRealtimeConfigPaused}
+              >
+                Pause
+              </button>
               ${api.render("realtimeLineChartConfig")}
             </section>
 
@@ -164,6 +194,28 @@ export const app = {
                 Realtime Line Chart - Recharts Style (Composition, 1
                 point/second)
               </h2>
+              <p>
+                Stream: ${isRealtimeCompositionPaused ? "paused" : "running"}.
+                Use Brush to inspect history.
+              </p>
+              <button
+                @click=${() =>
+                  api.notify("#realtimeStreamController:streamPlay", {
+                    targetId: "realtimeLineChart",
+                  })}
+                ?disabled=${!isRealtimeCompositionPaused}
+              >
+                Play
+              </button>
+              <button
+                @click=${() =>
+                  api.notify("#realtimeStreamController:streamPause", {
+                    targetId: "realtimeLineChart",
+                  })}
+                ?disabled=${isRealtimeCompositionPaused}
+              >
+                Pause
+              </button>
               ${chart.renderLineChart(
                 api.getEntity("realtimeLineChart"),
                 {
@@ -180,6 +232,9 @@ export const app = {
                     chart.Line({ dataKey: "value", stroke: "#2563eb" }),
                     chart.Dots({ dataKey: "value", fill: "#2563eb" }),
                     chart.Tooltip({}),
+                    ...(isRealtimeCompositionPaused
+                      ? [chart.Brush({ height: 30 })]
+                      : []),
                   ],
                 },
                 api,

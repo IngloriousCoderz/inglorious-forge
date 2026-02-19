@@ -7,11 +7,12 @@ export const entities = {
     type: "realtimeStream",
     targets: ["realtimeLineChart", "realtimeLineChartConfig"],
     intervalMs: 1000,
-    windowSize: 30,
+    visibleWindow: 30,
     min: -80,
     max: 220,
     variation: 25,
     currentValue: 220,
+    pausedTargets: {},
   },
 
   // ============================================
@@ -141,7 +142,6 @@ export const entities = {
     streamIndex: 29,
     streamXKey: "name",
     streamYKey: "value",
-    streamWindow: 30,
     data: Array.from({ length: 30 }, (_, i) => ({
       name: `${i}`,
       value:
@@ -152,6 +152,11 @@ export const entities = {
     showGrid: true,
     showLegend: false,
     showTooltip: true,
+    brush: {
+      enabled: true,
+      visible: false,
+      height: 30,
+    },
   },
 
   // Realtime Line Chart - Sliding Window (Composition Style)
@@ -160,12 +165,16 @@ export const entities = {
     streamIndex: 29,
     streamXKey: "name",
     streamYKey: "value",
-    streamWindow: 30,
     data: Array.from({ length: 30 }, (_, i) => ({
       name: `${i}`,
       value:
         200 + Math.round(Math.sin(i / 3) * 40) + Math.floor(Math.random() * 20),
     })),
+    brush: {
+      enabled: true,
+      visible: false,
+      height: 30,
+    },
   },
 
   // ============================================

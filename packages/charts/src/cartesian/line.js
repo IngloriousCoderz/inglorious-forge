@@ -549,7 +549,7 @@ function buildChildrenFromConfig(entity, providedDataKeys = null) {
   }
 
   // Brush
-  if (entity.brush?.enabled) {
+  if (entity.brush?.enabled && entity.brush?.visible !== false) {
     children.push(
       chart.Brush({
         dataKey: xAxisDataKey,
