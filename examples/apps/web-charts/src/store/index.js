@@ -17,6 +17,41 @@ const line = {
   seriesSlide: streamSlide,
 }
 
+function syncBrushToLiveWindow(controller, chartEntity) {
+  if (!Array.isArray(chartEntity?.data)) return
+
+  chartEntity.brush ??= { enabled: true, height: 30 }
+  chartEntity.brush.enabled = true
+
+  const lastIndex = Math.max(0, chartEntity.data.length - 1)
+  const visibleCount = Math.max(
+    1,
+    controller.visibleWindow ?? chartEntity.streamWindow ?? 30,
+  )
+  const startIndex = Math.max(0, lastIndex - (visibleCount - 1))
+
+  chartEntity.brush.startIndex = startIndex
+  chartEntity.brush.endIndex = lastIndex
+}
+
+function isTargetPaused(controller, targetId) {
+  return Boolean(controller.pausedTargets?.[targetId])
+}
+
+function setTargetPaused(controller, targetId, paused) {
+  controller.pausedTargets ??= {}
+  controller.pausedTargets[targetId] = paused
+}
+
+function toggleTargetBrush(api, targetId, visible) {
+  const chartEntity = api.getEntity(targetId)
+  if (!chartEntity) return
+
+  chartEntity.brush ??= { enabled: true, height: 30 }
+  chartEntity.brush.enabled = true
+  chartEntity.brush.visible = visible
+}
+
 const realtimeStream = {
   streamTick(entity, _payload, api) {
     const min = Number.isFinite(entity.min) ? entity.min : 80
@@ -33,10 +68,63 @@ const realtimeStream = {
     if (!Array.isArray(entity.targets)) return
 
     entity.targets.forEach((targetId) => {
-      api.notify(`#${targetId}:seriesSlide`, {
-        value: nextValue,
-        windowSize: entity.windowSize,
-      })
+      if (isTargetPaused(entity, targetId)) {
+        toggleTargetBrush(api, targetId, true)
+        return
+      }
+
+      const payload = { value: nextValue }
+      if (Number.isFinite(entity.windowSize) && entity.windowSize > 0) {
+        payload.windowSize = entity.windowSize
+      }
+      api.notify(`#${targetId}:seriesSlide`, payload)
+
+      const chartEntity = api.getEntity(targetId)
+      if (!chartEntity) return
+
+      chartEntity.brush ??= { enabled: true, height: 30 }
+      chartEntity.brush.visible = false
+      syncBrushToLiveWindow(entity, chartEntity)
+    })
+  },
+
+  streamPause(entity, _payload, api) {
+    const targetId = _payload?.targetId
+
+    if (targetId) {
+      setTargetPaused(entity, targetId, true)
+      toggleTargetBrush(api, targetId, true)
+      return
+    }
+
+    if (!Array.isArray(entity.targets)) return
+    entity.targets.forEach((id) => {
+      setTargetPaused(entity, id, true)
+      toggleTargetBrush(api, id, true)
+    })
+  },
+
+  streamPlay(entity, _payload, api) {
+    const targetId = _payload?.targetId
+
+    if (targetId) {
+      setTargetPaused(entity, targetId, false)
+      toggleTargetBrush(api, targetId, false)
+
+      const chartEntity = api.getEntity(targetId)
+      if (!chartEntity?.brush || !Array.isArray(chartEntity.data)) return
+      syncBrushToLiveWindow(entity, chartEntity)
+      return
+    }
+
+    if (!Array.isArray(entity.targets)) return
+    entity.targets.forEach((id) => {
+      setTargetPaused(entity, id, false)
+      toggleTargetBrush(api, id, false)
+
+      const chartEntity = api.getEntity(id)
+      if (!chartEntity?.brush || !Array.isArray(chartEntity.data)) return
+      syncBrushToLiveWindow(entity, chartEntity)
     })
   },
 }

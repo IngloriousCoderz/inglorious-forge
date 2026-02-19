@@ -22,11 +22,16 @@ export function streamSlide(entity, payload) {
     ensureFiniteNumber(entity.streamIndex, entity.data.length - ONE) + ONE
   const nextValue = ensureFiniteNumber(payload?.value, ZERO)
   const nextPoint = payload?.point || buildPoint(entity, nextIndex, nextValue)
-  const windowSize = Math.max(
-    ONE,
-    payload?.windowSize ?? entity.streamWindow ?? entity.data.length,
-  )
+  const configuredWindowSize = payload?.windowSize ?? entity.streamWindow
+  const hasWindowSize =
+    Number.isFinite(configuredWindowSize) && configuredWindowSize > ZERO
 
   entity.streamIndex = nextIndex
+  if (!hasWindowSize) {
+    entity.data = [...entity.data, nextPoint]
+    return
+  }
+
+  const windowSize = Math.max(ONE, configuredWindowSize)
   entity.data = [...entity.data.slice(-(windowSize - ONE)), nextPoint]
 }
