@@ -1,11 +1,9 @@
+/* eslint-disable no-magic-numbers */
 import { ensureFiniteNumber } from "./data-utils.js"
 
-const ZERO = 0
-const ONE = 1
-
 function buildPoint(entity, nextIndex, nextValue) {
-  const xKey = entity.streamXKey
-  const yKey = entity.streamYKey
+  const xKey = entity.streamXKey ?? "name"
+  const yKey = entity.streamYKey ?? "value"
   const indexValue = entity.streamIndexAsNumber ? nextIndex : `${nextIndex}`
 
   return {
@@ -16,22 +14,31 @@ function buildPoint(entity, nextIndex, nextValue) {
 
 export function streamSlide(entity, payload) {
   if (!Array.isArray(entity.data) || !entity.data.length) return
-  if (!entity.streamXKey || !entity.streamYKey) return
 
   const nextIndex =
-    ensureFiniteNumber(entity.streamIndex, entity.data.length - ONE) + ONE
-  const nextValue = ensureFiniteNumber(payload?.value, ZERO)
+    ensureFiniteNumber(entity.streamIndex, entity.data.length - 1) + 1
+  const nextValue = ensureFiniteNumber(payload?.value, 0)
   const nextPoint = payload?.point || buildPoint(entity, nextIndex, nextValue)
   const configuredWindowSize = payload?.windowSize ?? entity.streamWindow
+  const configuredMaxHistory = payload?.maxHistory ?? entity.maxHistory
   const hasWindowSize =
-    Number.isFinite(configuredWindowSize) && configuredWindowSize > ZERO
+    Number.isFinite(configuredWindowSize) && configuredWindowSize > 0
+  const hasMaxHistory =
+    Number.isFinite(configuredMaxHistory) && configuredMaxHistory > 0
 
   entity.streamIndex = nextIndex
+
+  let nextData
   if (!hasWindowSize) {
-    entity.data = [...entity.data, nextPoint]
-    return
+    nextData = [...entity.data, nextPoint]
+  } else {
+    const windowSize = Math.max(1, configuredWindowSize)
+    nextData = [...entity.data.slice(-(windowSize - 1)), nextPoint]
   }
 
-  const windowSize = Math.max(ONE, configuredWindowSize)
-  entity.data = [...entity.data.slice(-(windowSize - ONE)), nextPoint]
+  if (hasMaxHistory && nextData.length > configuredMaxHistory) {
+    nextData = nextData.slice(-configuredMaxHistory)
+  }
+
+  entity.data = nextData
 }
