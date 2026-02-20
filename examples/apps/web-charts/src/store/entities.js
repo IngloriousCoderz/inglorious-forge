@@ -1,21 +1,5 @@
 export const entities = {
   // ============================================
-  // REALTIME STREAM CONTROLLER
-  // ============================================
-
-  realtimeStreamController: {
-    type: "realtimeStream",
-    targets: ["realtimeLineChart", "realtimeLineChartConfig"],
-    intervalMs: 1000,
-    visibleWindow: 30,
-    min: -80,
-    max: 220,
-    variation: 25,
-    currentValue: 220,
-    pausedTargets: {},
-  },
-
-  // ============================================
   // LINE CHARTS
   // ============================================
 
@@ -139,41 +123,25 @@ export const entities = {
   // Realtime Line Chart - Sliding Window (Config Style)
   realtimeLineChartConfig: {
     type: "line",
-    streamIndex: 29,
-    streamXKey: "name",
-    streamYKey: "value",
-    data: Array.from({ length: 30 }, (_, i) => ({
-      name: `${i}`,
-      value:
-        200 + Math.round(Math.sin(i / 3) * 40) + Math.floor(Math.random() * 20),
-    })),
+    realtime: {
+      enabled: true,
+      // override example:
+      // intervalMs: 500,
+    },
     width: 800,
     height: 400,
     showGrid: true,
     showLegend: false,
     showTooltip: true,
-    brush: {
-      enabled: true,
-      visible: false,
-      height: 30,
-    },
   },
 
   // Realtime Line Chart - Sliding Window (Composition Style)
   realtimeLineChart: {
     type: "line",
-    streamIndex: 29,
-    streamXKey: "name",
-    streamYKey: "value",
-    data: Array.from({ length: 30 }, (_, i) => ({
-      name: `${i}`,
-      value:
-        200 + Math.round(Math.sin(i / 3) * 40) + Math.floor(Math.random() * 20),
-    })),
-    brush: {
+    realtime: {
       enabled: true,
-      visible: false,
-      height: 30,
+      // override example:
+      // intervalMs: 500,
     },
   },
 
