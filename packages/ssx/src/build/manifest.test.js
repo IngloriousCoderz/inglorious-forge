@@ -144,7 +144,12 @@ describe("manifest", () => {
     it("should rebuild all if runtime hash changed", async () => {
       const pages = [{ path: "/" }]
       const manifest = { entities: "hash", runtime: "old-rt" }
-      const result = await determineRebuildPages(pages, manifest, "hash", "new-rt")
+      const result = await determineRebuildPages(
+        pages,
+        manifest,
+        "hash",
+        "new-rt",
+      )
 
       expect(result.pagesToBuild).toEqual(pages)
       expect(result.pagesToSkip).toEqual([])

@@ -87,11 +87,17 @@ describe("generateApp", () => {
     expect(app).toContain(`"/it/hello": () => import("@/pages/hello.js")`)
     expect(app).toContain(`"/pt/hello": () => import("@/pages/hello.js")`)
     expect(app).toContain(`const isDev = false`)
-    expect(app).toContain(`import { getLocaleFromPath } from "@inglorious/ssx/i18n"`)
+    expect(app).toContain(
+      `import { getLocaleFromPath } from "@inglorious/ssx/i18n"`,
+    )
     expect(app).toContain(`const systems = []`)
     expect(app).toContain(`routeChange(state, payload)`)
-    expect(app).toContain(`entity.locale = getLocaleFromPath(payload.path, i18n)`)
-    expect(app).toContain(`const path = normalizeRoutePath(window.location.pathname)`)
+    expect(app).toContain(
+      `entity.locale = getLocaleFromPath(payload.path, i18n)`,
+    )
+    expect(app).toContain(
+      `const path = normalizeRoutePath(window.location.pathname)`,
+    )
     expect(app).toContain(
       `const page = pages.find((page) => normalizeRoutePath(page.path) === path)`,
     )
