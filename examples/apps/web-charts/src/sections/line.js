@@ -143,21 +143,26 @@ export function renderLineSections(api, status) {
       <section class="chart-section">
         <h2>Realtime Line Chart - Config Style (1 point/second)</h2>
         <p>
-          Stream: ${isRealtimeConfigPaused ? "paused" : "running"}. Use Brush to
-          inspect history.
+          ${isRealtimeConfigPaused
+            ? "Stream: paused. Brush is visible for history inspection."
+            : "Stream: running. Pause to show Brush and inspect history."}
         </p>
-        <button
-          @click=${() => api.notify("#realtimeLineChartConfig:streamPlay")}
-          ?disabled=${!isRealtimeConfigPaused}
-        >
-          Play
-        </button>
-        <button
-          @click=${() => api.notify("#realtimeLineChartConfig:streamPause")}
-          ?disabled=${isRealtimeConfigPaused}
-        >
-          Pause
-        </button>
+        <div class="stream-controls">
+          <button
+            class="stream-btn play"
+            @click=${() => api.notify("#realtimeLineChartConfig:streamPlay")}
+            ?disabled=${!isRealtimeConfigPaused}
+          >
+            Play
+          </button>
+          <button
+            class="stream-btn pause"
+            @click=${() => api.notify("#realtimeLineChartConfig:streamPause")}
+            ?disabled=${isRealtimeConfigPaused}
+          >
+            Pause
+          </button>
+        </div>
         ${api.render("realtimeLineChartConfig")}
       </section>
 
@@ -166,21 +171,26 @@ export function renderLineSections(api, status) {
           Realtime Line Chart - Recharts Style (Composition, 1 point/second)
         </h2>
         <p>
-          Stream: ${isRealtimeCompositionPaused ? "paused" : "running"}. Use
-          Brush to inspect history.
+          ${isRealtimeCompositionPaused
+            ? "Stream: paused. Brush is visible for history inspection."
+            : "Stream: running. Pause to show Brush and inspect history."}
         </p>
-        <button
-          @click=${() => api.notify("#realtimeLineChart:streamPlay")}
-          ?disabled=${!isRealtimeCompositionPaused}
-        >
-          Play
-        </button>
-        <button
-          @click=${() => api.notify("#realtimeLineChart:streamPause")}
-          ?disabled=${isRealtimeCompositionPaused}
-        >
-          Pause
-        </button>
+        <div class="stream-controls">
+          <button
+            class="stream-btn play"
+            @click=${() => api.notify("#realtimeLineChart:streamPlay")}
+            ?disabled=${!isRealtimeCompositionPaused}
+          >
+            Play
+          </button>
+          <button
+            class="stream-btn pause"
+            @click=${() => api.notify("#realtimeLineChart:streamPause")}
+            ?disabled=${isRealtimeCompositionPaused}
+          >
+            Pause
+          </button>
+        </div>
         ${chart.renderLineChart(
           api.getEntity("realtimeLineChart"),
           {
