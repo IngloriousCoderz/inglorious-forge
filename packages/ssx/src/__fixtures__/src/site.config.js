@@ -64,6 +64,7 @@ export default {
             <nav>
               <a href="/">Home</a>
               <a href="/about">About</a>
+              <a href="/hello">Hello</a>
               <a href="/blog">Blog</a>
             </nav>
           </header>
@@ -157,5 +158,10 @@ export default {
     onPageBuild: async (page) => {
       console.log(`Built ${page.path}`)
     },
+  },
+
+  i18n: {
+    defaultLocale: "en",
+    locales: ["en", "it", "pt"],
   },
 }

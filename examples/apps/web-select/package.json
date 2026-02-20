@@ -1,7 +1,7 @@
 {
   "name": "web-select",
   "private": true,
-  "version": "0.2.28",
+  "version": "0.2.29",
   "type": "module",
   "author": "IceOnFire <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",

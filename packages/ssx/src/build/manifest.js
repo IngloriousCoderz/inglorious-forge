@@ -3,6 +3,13 @@ import fs from "node:fs/promises"
 import path from "node:path"
 
 const MANIFEST_FILE = ".ssx-manifest.json"
+const RUNTIME_FILES = [
+  "../scripts/app.js",
+  "./pages.js",
+  "../utils/i18n.js",
+  "../router/index.js",
+  "../render/index.js",
+]
 
 /**
  * Loads the build manifest from the previous build.
@@ -18,7 +25,7 @@ export async function loadManifest(outDir) {
     return JSON.parse(content)
   } catch {
     // No manifest exists (first build or clean build)
-    return { pages: {}, entities: null, buildTime: null }
+    return { pages: {}, entities: null, runtime: null, buildTime: null }
   }
 }
 
@@ -62,18 +69,48 @@ export async function hashEntities(rootDir) {
 }
 
 /**
+ * Computes a hash for SSX runtime internals.
+ * When this changes, page HTML should be regenerated even if source pages did not change.
+ *
+ * @returns {Promise<string>} Hash of runtime internals.
+ */
+export async function hashRuntime() {
+  const root = import.meta.dirname
+  const contents = await Promise.all(
+    RUNTIME_FILES.map(async (relativePath) => {
+      const filePath = path.resolve(root, relativePath)
+      const content = await fs.readFile(filePath, "utf-8")
+      return `${relativePath}:${content}`
+    }),
+  )
+
+  return crypto.createHash("md5").update(contents.join("\n")).digest("hex")
+}
+
+/**
  * Determines which pages need to be rebuilt.
  * Compares current file hashes against the manifest.
  *
  * @param {Array<Object>} pages - All pages to potentially build.
  * @param {Object} manifest - Previous build manifest.
  * @param {string} entitiesHash - Current entities hash.
+ * @param {string} runtimeHash - Current SSX runtime hash.
  * @returns {Promise<{pagesToBuild: Array<Object>, pagesToSkip: Array<Object>}>} Object with pagesToBuild and pagesSkipped.
  */
-export async function determineRebuildPages(pages, manifest, entitiesHash) {
+export async function determineRebuildPages(
+  pages,
+  manifest,
+  entitiesHash,
+  runtimeHash,
+) {
   // If entities changed, rebuild all pages
   if (manifest.entities !== entitiesHash) {
     console.log("📦 Entities changed, rebuilding all pages\n")
+    return { pagesToBuild: pages, pagesToSkip: [] }
+  }
+
+  if (manifest.runtime !== runtimeHash) {
+    console.log("🔁 SSX runtime changed, rebuilding all pages\n")
     return { pagesToBuild: pages, pagesToSkip: [] }
   }
 
@@ -99,9 +136,10 @@ export async function determineRebuildPages(pages, manifest, entitiesHash) {
  *
  * @param {Array<Object>} renderedPages - All rendered pages.
  * @param {string} entitiesHash - Hash of entities file.
+ * @param {string} runtimeHash - Hash of SSX runtime internals.
  * @returns {Promise<Object>} New manifest.
  */
-export async function createManifest(renderedPages, entitiesHash) {
+export async function createManifest(renderedPages, entitiesHash, runtimeHash) {
   const pages = {}
 
   for (const page of renderedPages) {
@@ -115,6 +153,7 @@ export async function createManifest(renderedPages, entitiesHash) {
   return {
     pages,
     entities: entitiesHash,
+    runtime: runtimeHash,
     buildTime: new Date().toISOString(),
   }
 }

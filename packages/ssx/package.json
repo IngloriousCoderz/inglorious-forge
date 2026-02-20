@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/ssx",
-  "version": "1.6.5",
+  "version": "1.7.0",
   "description": "Server-Side-X. Xecution? Xperience? Who knows.",
   "author": "IceOnFire <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -27,7 +27,11 @@
   },
   "exports": {
     ".": "./types/index.d.ts",
-    "./markdown": "./src/utils/markdown.js"
+    "./markdown": "./src/utils/markdown.js",
+    "./i18n": {
+      "types": "./types/i18n.d.ts",
+      "import": "./src/utils/i18n.js"
+    }
   },
   "files": [
     "bin",

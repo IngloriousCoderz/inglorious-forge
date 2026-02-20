@@ -80,4 +80,54 @@ describe("generatePages", () => {
     expect(renderPage).toHaveBeenCalled()
     expect(extractPageMetadata).not.toHaveBeenCalled()
   })
+
+  it("should set entity.locale from page.locale even without load()", async () => {
+    const entity = {}
+    const store = { _api: { getEntity: vi.fn(() => entity) } }
+    const pages = [
+      {
+        path: "/it/p4",
+        filePath: "virtual-page.js",
+        moduleName: "p4",
+        locale: "it",
+      },
+    ]
+    const loader = vi.fn(async () => ({ render: () => {} }))
+
+    vi.clearAllMocks()
+    renderPage.mockResolvedValue("<html></html>")
+    extractPageMetadata.mockReturnValue({})
+
+    await generatePages(store, pages, {}, loader)
+
+    expect(entity.locale).toBe("it")
+  })
+
+  it("should overwrite entity.locale for each localized page render", async () => {
+    const entity = { locale: "en" }
+    const store = { _api: { getEntity: vi.fn(() => entity) } }
+    const pages = [
+      {
+        path: "/it/p5",
+        filePath: "virtual-page.js",
+        moduleName: "p5",
+        locale: "it",
+      },
+      {
+        path: "/pt/p5",
+        filePath: "virtual-page.js",
+        moduleName: "p5",
+        locale: "pt",
+      },
+    ]
+    const loader = vi.fn(async () => ({ render: () => {} }))
+
+    vi.clearAllMocks()
+    renderPage.mockResolvedValue("<html></html>")
+    extractPageMetadata.mockReturnValue({})
+
+    await generatePages(store, pages, {}, loader)
+
+    expect(entity.locale).toBe("pt")
+  })
 })

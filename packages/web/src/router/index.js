@@ -116,6 +116,13 @@ export const router = {
       }
 
       updateRouter(entity, route)
+
+      api.notify("routeChange", {
+        route: entity.route,
+        params: entity.params,
+        query: entity.query,
+        path: entity.path,
+      })
     }
   },
 

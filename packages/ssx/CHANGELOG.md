@@ -1,5 +1,16 @@
 # @inglorious/ssx
 
+## 1.7.0
+
+### Minor Changes
+
+- Add i18n to SSX
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/web@4.3.0
+
 ## 1.6.5
 
 ### Patch Changes

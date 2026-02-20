@@ -11,6 +11,7 @@ import { nav } from "../../components/nav.js"
 export const post = {
   async routeChange(entity, payload, api) {
     if (payload.route !== entity.type) return
+
     const id = payload.params.slug
     if (entity.post?.id === id) return
 

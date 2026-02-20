@@ -51,7 +51,7 @@ export async function dev(options = {}) {
       }
 
       // Get all pages on each request (in dev mode, pages might be added/removed)
-      const pages = await getPages(pagesDir, loader)
+      const pages = await getPages(pagesDir, mergedOptions, loader)
 
       // Find matching page
       const page = pages.find((p) => matchRoute(p.path, url))
@@ -64,12 +64,16 @@ export async function dev(options = {}) {
       const store = await generateStore(pages, mergedOptions, loader)
 
       const entity = store._api.getEntity(page.moduleName)
+      if (page.locale) {
+        entity.locale = page.locale
+      }
+
       if (module.load) {
         await module.load(entity, page)
       }
 
       // Generate and update the virtual app file BEFORE rendering
-      const app = generateApp(store, pages)
+      const app = generateApp(store, pages, { ...mergedOptions, isDev: true })
       virtualFiles.set("/main.js", app)
 
       // Invalidate the virtual module to ensure Vite picks up changes

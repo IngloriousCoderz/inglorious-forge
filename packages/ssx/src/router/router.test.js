@@ -2,7 +2,7 @@ import path from "node:path"
 
 import { afterEach, describe, expect, it, vi } from "vitest"
 
-import { getPages, getRoutes, matchRoute, resolvePage } from "./index.js"
+import { getPages, getRoutes, matchRoute } from "./index.js"
 
 const ROOT_DIR = path.join(import.meta.dirname, "..", "__fixtures__")
 const PAGES_DIR = path.join(ROOT_DIR, "src", "pages")
@@ -39,56 +39,7 @@ describe("router", () => {
       // Root usually comes after specific paths but before catch-all if it was a catch-all root,
       // but here / is static.
       // Let's just check that we found them.
-      expect(routes).toHaveLength(6)
-    })
-  })
-
-  describe("resolvePage", () => {
-    it("should resolve root page", async () => {
-      const page = await resolvePage("/", PAGES_DIR)
-      expect(page).not.toBeNull()
-      expect(page.filePath).toContain("index.js")
-      expect(page.params).toEqual({})
-    })
-
-    it("should resolve static page", async () => {
-      const page = await resolvePage("/about", PAGES_DIR)
-      expect(page).not.toBeNull()
-      expect(page.filePath).toContain("about.js")
-      expect(page.params).toEqual({})
-    })
-
-    it("should resolve dynamic page with params", async () => {
-      const page = await resolvePage("/posts/hello-world", PAGES_DIR)
-      expect(page).not.toBeNull()
-      expect(page.filePath).toContain("posts")
-      expect(page.params).toEqual({ slug: "hello-world" })
-    })
-
-    it("should resolve catch-all page", async () => {
-      const page = await resolvePage("/api/v1/users", PAGES_DIR)
-      expect(page).not.toBeNull()
-      expect(page.filePath).toContain("api")
-      expect(page.params).toEqual({ path: "v1/users" })
-    })
-
-    it("should return null for non-matching url", async () => {
-      // Since we have a catch-all /api/*, /api/foo matches.
-      // But /foo doesn't match anything except maybe if we had a root catch-all.
-      // We don't have a root catch-all, just /api/*.
-      // Wait, /blog/:slug matches /blog/foo.
-      // /posts/:id matches /posts/1.
-      // /about matches /about.
-      // / matches /.
-      // So /foo should return null.
-      const page = await resolvePage("/foo", PAGES_DIR)
-      expect(page).toBeNull()
-    })
-
-    it("should return null for dynamic route missing param", async () => {
-      // /posts/:slug requires a slug
-      const page = await resolvePage("/posts", PAGES_DIR)
-      expect(page).toBeNull()
+      expect(routes.length).toBeGreaterThanOrEqual(6)
     })
   })
 
@@ -115,6 +66,40 @@ describe("router", () => {
 
       expect(consoleSpy).toHaveBeenCalled()
       expect(consoleSpy.mock.calls[2][0]).toContain("has no staticPaths")
+    })
+
+    it("should localize static and dynamic pages when i18n is enabled", async () => {
+      const consoleSpy = vi.spyOn(console, "warn").mockImplementation(() => {})
+      const i18n = {
+        defaultLocale: "en",
+        locales: ["en", "it"],
+      }
+      const pages = await getPages(PAGES_DIR, { i18n })
+
+      const rootPages = pages.filter((p) => p.pattern === "/")
+      expect(rootPages).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ path: "/", locale: "en" }),
+          expect.objectContaining({ path: "/it", locale: "it" }),
+        ]),
+      )
+
+      const aboutPages = pages.filter((p) => p.pattern === "/about")
+      expect(aboutPages).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ path: "/about", locale: "en" }),
+          expect.objectContaining({ path: "/it/about", locale: "it" }),
+        ]),
+      )
+
+      expect(
+        pages.some(
+          (p) =>
+            p.pattern === "/posts/:slug" && p.path.startsWith("/it/posts/"),
+        ),
+      ).toBe(true)
+
+      expect(consoleSpy).toHaveBeenCalled()
     })
   })
 

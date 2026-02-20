@@ -64,4 +64,36 @@ describe("generateApp", () => {
 
     expect(app).toMatchSnapshot()
   })
+
+  it("should include localized client routes when i18n pages are provided", async () => {
+    const page = {
+      pattern: "/hello",
+      path: "/hello",
+      modulePath: "hello.js",
+      filePath: path.join(PAGES_DIR, "hello.js"),
+      moduleName: "hello",
+      locale: "en",
+    }
+    const localizedPages = [
+      page,
+      { ...page, path: "/it/hello", locale: "it" },
+      { ...page, path: "/pt/hello", locale: "pt" },
+    ]
+    const store = await generateStore([page], { rootDir: ROOT_DIR })
+
+    const app = generateApp(store, localizedPages)
+
+    expect(app).toContain(`"/hello": () => import("@/pages/hello.js")`)
+    expect(app).toContain(`"/it/hello": () => import("@/pages/hello.js")`)
+    expect(app).toContain(`"/pt/hello": () => import("@/pages/hello.js")`)
+    expect(app).toContain(`const isDev = false`)
+    expect(app).toContain(`import { getLocaleFromPath } from "@inglorious/ssx/i18n"`)
+    expect(app).toContain(`const systems = []`)
+    expect(app).toContain(`routeChange(state, payload)`)
+    expect(app).toContain(`entity.locale = getLocaleFromPath(payload.path, i18n)`)
+    expect(app).toContain(`const path = normalizeRoutePath(window.location.pathname)`)
+    expect(app).toContain(
+      `const page = pages.find((page) => normalizeRoutePath(page.path) === path)`,
+    )
+  })
 })

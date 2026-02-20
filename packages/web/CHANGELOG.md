@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 4.3.0
+
+### Minor Changes
+
+- Add i18n to SSX
+
 ## 4.2.5
 
 ### Patch Changes

@@ -11,6 +11,7 @@ import {
   createManifest,
   determineRebuildPages,
   hashEntities,
+  hashRuntime,
   loadManifest,
   saveManifest,
 } from "./manifest.js"
@@ -52,13 +53,14 @@ export async function build(options = {}) {
   // Create a temporary Vite server to load modules (supports TS)
   const vite = await createServer({
     ...createViteConfig(mergedOptions),
+    mode: "production",
     server: { middlewareMode: true, hmr: false },
     appType: "custom",
   })
   const loader = (p) => vite.ssrLoadModule(p)
 
   // 0. Get all pages to build (Fail fast if source is broken)
-  const allPages = await getPages(pagesDir, loader, config.i18n)
+  const allPages = await getPages(pagesDir, mergedOptions, loader)
   console.log(`📄 Found ${allPages.length} pages\n`)
 
   // Load previous build manifest
@@ -75,15 +77,21 @@ export async function build(options = {}) {
   }
 
   // 2. Copy public assets before generating pages (could be useful if need to read `public/data.json`)
-  await copyPublicDir(options)
+  await copyPublicDir(mergedOptions)
 
   // Determine which pages need rebuilding
   const entitiesHash = await hashEntities(rootDir)
+  const runtimeHash = await hashRuntime()
   let pagesToChange = allPages
   let pagesToSkip = []
 
   if (manifest) {
-    const result = await determineRebuildPages(allPages, manifest, entitiesHash)
+    const result = await determineRebuildPages(
+      allPages,
+      manifest,
+      entitiesHash,
+      runtimeHash,
+    )
     pagesToChange = result.pagesToBuild
     pagesToSkip = result.pagesToSkip
 
@@ -129,7 +137,7 @@ export async function build(options = {}) {
   // 8. Always regenerate client-side JavaScript (it's cheap and ensures consistency)
   console.log("\n📝 Generating client scripts...\n")
 
-  const app = generateApp(store, allPages)
+  const app = generateApp(store, allPages, { ...mergedOptions, isDev: false })
   await fs.writeFile(path.join(outDir, "main.js"), app, "utf-8")
   console.log(`  ✓ main.js\n`)
 
@@ -147,7 +155,10 @@ export async function build(options = {}) {
 
   // 11. Bundle with Vite
   console.log("\n📦 Bundling with Vite...\n")
-  const viteConfig = createViteConfig(mergedOptions)
+  const viteConfig = {
+    ...createViteConfig(mergedOptions),
+    mode: "production",
+  }
   await viteBuild(viteConfig)
 
   await vite.close()
@@ -156,7 +167,11 @@ export async function build(options = {}) {
 
   // 13. Save manifest for next build
   if (incremental) {
-    const newManifest = await createManifest(allGeneratedPages, entitiesHash)
+    const newManifest = await createManifest(
+      allGeneratedPages,
+      entitiesHash,
+      runtimeHash,
+    )
     await saveManifest(outDir, newManifest)
   }
 

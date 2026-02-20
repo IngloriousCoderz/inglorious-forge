@@ -202,6 +202,61 @@ src/pages/
 
 Dynamic routes use underscore prefix: `_id.js`, `_slug.js`, etc.
 
+### 🌍 Internationalization (i18n)
+
+Configure locales in `src/site.config.js`:
+
+```javascript
+export default {
+  i18n: {
+    defaultLocale: "en",
+    locales: ["en", "it", "pt"],
+  },
+}
+```
+
+SSX generates localized variants for both static and dynamic pages:
+
+- Static page `src/pages/about.js`:
+  - `/about` (default locale)
+  - `/it/about`
+  - `/pt/about`
+- Dynamic page `src/pages/posts/_slug.js` with `staticPaths()`:
+  - `/posts/hello-world`
+  - `/it/posts/hello-world`
+  - `/pt/posts/hello-world`
+
+On the client, SSX automatically keeps `entity.locale` in sync on navigation (`routeChange`), so pages can usually just render from `entity.locale`:
+
+```javascript
+const messages = {
+  en: "Hello world!",
+  it: "Ciao mondo!",
+  pt: "Olá mundo!",
+}
+
+export const hello = {
+  render(entity) {
+    return html`<h1>${messages[entity.locale] ?? messages.en}</h1>`
+  },
+}
+```
+
+SSX automatically injects `page.locale` into `entity.locale` during server-side build/render too, so `load` is optional for locale initialization.
+
+If you need custom behavior, you can still override it in `load`:
+
+```javascript
+export async function load(entity, page) {
+  entity.locale = page.locale || "en"
+}
+```
+
+Notes:
+
+- The default locale is not prefixed (`/about`, not `/en/about`).
+- Locale-prefixed routes are handled in both build output and client-side navigation.
+
 ### ⚛️ Entity-Based State and Behavior
 
 ```javascript
@@ -552,6 +607,12 @@ export default {
     scrollBehavior: "smooth",
   },
 
+  // i18n routing
+  i18n: {
+    defaultLocale: "en",
+    locales: ["en", "it", "pt"],
+  },
+
   // Vite config passthrough
   vite: {
     server: {
@@ -693,9 +754,9 @@ Check out these example projects:
 
 - [x] TypeScript support
 - [x] Image optimization
-- [ ] API routes (serverless functions)
 - [x] Markdown support
-- [ ] i18n helpers
+- [x] i18n routing and locale-aware client navigation
+- [ ] API routes (serverless functions)
 
 ---
 

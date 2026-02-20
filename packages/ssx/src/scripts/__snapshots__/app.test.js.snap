@@ -3,6 +3,16 @@
 exports[`generateApp > should generate the app script for a dynamic page 1`] = `
 "import { createDevtools, createStore, mount } from "@inglorious/web"
 import { getRoute, router, setRoutes } from "@inglorious/web/router"
+import { getLocaleFromPath } from "@inglorious/ssx/i18n"
+
+const normalizePathname = (path = "/") => path.split("?")[0].split("#")[0]
+const normalizeRoutePath = (path = "/") => {
+  const pathname = normalizePathname(path)
+  if (pathname.length > 1 && pathname.endsWith("/")) {
+    return pathname.slice(0, -1)
+  }
+  return pathname
+}
 
 const pages = [
   {
@@ -10,16 +20,23 @@ const pages = [
     "path": "/posts/my-first-post"
   }
 ]
-const path = window.location.pathname + window.location.search + window.location.hash
-const page = pages.find((page) => page.path === path)
+const path = normalizeRoutePath(window.location.pathname)
+const page = pages.find((page) => normalizeRoutePath(page.path) === path)
 
 const types = { router }
+
+const i18n = {}
+const isDev = false
 
 const entities = {
   router: {
     type: "router",
-    path: page.path,
-    route: page.moduleName,
+    path,
+    route: page?.moduleName,
+  },
+  i18n: {
+    type: "i18n",
+    ...i18n,
   },
 
   "post": {
@@ -30,8 +47,23 @@ const entities = {
 }
 
 const middlewares = []
-if (import.meta.env.DEV) {
+if (isDev) {
   middlewares.push(createDevtools().middleware)
+}
+
+const systems = []
+if (i18n.defaultLocale && i18n.locales?.length) {
+  systems.push({
+    routeChange(state, payload) {
+      const routeType = payload?.route
+      if (!routeType) return
+
+      const entity = state[routeType]
+      if (!entity) return
+
+      entity.locale = getLocaleFromPath(payload.path, i18n)
+    },
+  })
 }
 
 setRoutes({
@@ -42,7 +74,7 @@ const module = await getRoute(page.pattern)()
 const type = module[page.moduleName]
 types[page.moduleName] = type
 
-const store = createStore({ types, entities, middlewares, autoCreateEntities: true })
+const store = createStore({ types, entities, middlewares, systems, autoCreateEntities: true })
 
 const root = document.getElementById("root")
 
@@ -56,6 +88,16 @@ mount(store, (api) => {
 exports[`generateApp > should generate the app script for a page that has metadata 1`] = `
 "import { createDevtools, createStore, mount } from "@inglorious/web"
 import { getRoute, router, setRoutes } from "@inglorious/web/router"
+import { getLocaleFromPath } from "@inglorious/ssx/i18n"
+
+const normalizePathname = (path = "/") => path.split("?")[0].split("#")[0]
+const normalizeRoutePath = (path = "/") => {
+  const pathname = normalizePathname(path)
+  if (pathname.length > 1 && pathname.endsWith("/")) {
+    return pathname.slice(0, -1)
+  }
+  return pathname
+}
 
 const pages = [
   {
@@ -63,16 +105,23 @@ const pages = [
     "path": "/blog"
   }
 ]
-const path = window.location.pathname + window.location.search + window.location.hash
-const page = pages.find((page) => page.path === path)
+const path = normalizeRoutePath(window.location.pathname)
+const page = pages.find((page) => normalizeRoutePath(page.path) === path)
 
 const types = { router }
+
+const i18n = {}
+const isDev = false
 
 const entities = {
   router: {
     type: "router",
-    path: page.path,
-    route: page.moduleName,
+    path,
+    route: page?.moduleName,
+  },
+  i18n: {
+    type: "i18n",
+    ...i18n,
   },
 
   "blog": {
@@ -85,8 +134,23 @@ const entities = {
 }
 
 const middlewares = []
-if (import.meta.env.DEV) {
+if (isDev) {
   middlewares.push(createDevtools().middleware)
+}
+
+const systems = []
+if (i18n.defaultLocale && i18n.locales?.length) {
+  systems.push({
+    routeChange(state, payload) {
+      const routeType = payload?.route
+      if (!routeType) return
+
+      const entity = state[routeType]
+      if (!entity) return
+
+      entity.locale = getLocaleFromPath(payload.path, i18n)
+    },
+  })
 }
 
 setRoutes({
@@ -97,7 +161,7 @@ const module = await getRoute(page.pattern)()
 const type = module[page.moduleName]
 types[page.moduleName] = type
 
-const store = createStore({ types, entities, middlewares, autoCreateEntities: true })
+const store = createStore({ types, entities, middlewares, systems, autoCreateEntities: true })
 
 const root = document.getElementById("root")
 
@@ -111,6 +175,16 @@ mount(store, (api) => {
 exports[`generateApp > should generate the app script for a page with an entity 1`] = `
 "import { createDevtools, createStore, mount } from "@inglorious/web"
 import { getRoute, router, setRoutes } from "@inglorious/web/router"
+import { getLocaleFromPath } from "@inglorious/ssx/i18n"
+
+const normalizePathname = (path = "/") => path.split("?")[0].split("#")[0]
+const normalizeRoutePath = (path = "/") => {
+  const pathname = normalizePathname(path)
+  if (pathname.length > 1 && pathname.endsWith("/")) {
+    return pathname.slice(0, -1)
+  }
+  return pathname
+}
 
 const pages = [
   {
@@ -118,16 +192,23 @@ const pages = [
     "path": "/about"
   }
 ]
-const path = window.location.pathname + window.location.search + window.location.hash
-const page = pages.find((page) => page.path === path)
+const path = normalizeRoutePath(window.location.pathname)
+const page = pages.find((page) => normalizeRoutePath(page.path) === path)
 
 const types = { router }
+
+const i18n = {}
+const isDev = false
 
 const entities = {
   router: {
     type: "router",
-    path: page.path,
-    route: page.moduleName,
+    path,
+    route: page?.moduleName,
+  },
+  i18n: {
+    type: "i18n",
+    ...i18n,
   },
 
   "about": {
@@ -139,8 +220,23 @@ const entities = {
 }
 
 const middlewares = []
-if (import.meta.env.DEV) {
+if (isDev) {
   middlewares.push(createDevtools().middleware)
+}
+
+const systems = []
+if (i18n.defaultLocale && i18n.locales?.length) {
+  systems.push({
+    routeChange(state, payload) {
+      const routeType = payload?.route
+      if (!routeType) return
+
+      const entity = state[routeType]
+      if (!entity) return
+
+      entity.locale = getLocaleFromPath(payload.path, i18n)
+    },
+  })
 }
 
 setRoutes({
@@ -151,7 +247,7 @@ const module = await getRoute(page.pattern)()
 const type = module[page.moduleName]
 types[page.moduleName] = type
 
-const store = createStore({ types, entities, middlewares, autoCreateEntities: true })
+const store = createStore({ types, entities, middlewares, systems, autoCreateEntities: true })
 
 const root = document.getElementById("root")
 
@@ -165,6 +261,16 @@ mount(store, (api) => {
 exports[`generateApp > should generate the app script for a static page 1`] = `
 "import { createDevtools, createStore, mount } from "@inglorious/web"
 import { getRoute, router, setRoutes } from "@inglorious/web/router"
+import { getLocaleFromPath } from "@inglorious/ssx/i18n"
+
+const normalizePathname = (path = "/") => path.split("?")[0].split("#")[0]
+const normalizeRoutePath = (path = "/") => {
+  const pathname = normalizePathname(path)
+  if (pathname.length > 1 && pathname.endsWith("/")) {
+    return pathname.slice(0, -1)
+  }
+  return pathname
+}
 
 const pages = [
   {
@@ -172,16 +278,23 @@ const pages = [
     "path": "/"
   }
 ]
-const path = window.location.pathname + window.location.search + window.location.hash
-const page = pages.find((page) => page.path === path)
+const path = normalizeRoutePath(window.location.pathname)
+const page = pages.find((page) => normalizeRoutePath(page.path) === path)
 
 const types = { router }
+
+const i18n = {}
+const isDev = false
 
 const entities = {
   router: {
     type: "router",
-    path: page.path,
-    route: page.moduleName,
+    path,
+    route: page?.moduleName,
+  },
+  i18n: {
+    type: "i18n",
+    ...i18n,
   },
 
   "index": {
@@ -192,8 +305,23 @@ const entities = {
 }
 
 const middlewares = []
-if (import.meta.env.DEV) {
+if (isDev) {
   middlewares.push(createDevtools().middleware)
+}
+
+const systems = []
+if (i18n.defaultLocale && i18n.locales?.length) {
+  systems.push({
+    routeChange(state, payload) {
+      const routeType = payload?.route
+      if (!routeType) return
+
+      const entity = state[routeType]
+      if (!entity) return
+
+      entity.locale = getLocaleFromPath(payload.path, i18n)
+    },
+  })
 }
 
 setRoutes({
@@ -204,7 +332,7 @@ const module = await getRoute(page.pattern)()
 const type = module[page.moduleName]
 types[page.moduleName] = type
 
-const store = createStore({ types, entities, middlewares, autoCreateEntities: true })
+const store = createStore({ types, entities, middlewares, systems, autoCreateEntities: true })
 
 const root = document.getElementById("root")
 

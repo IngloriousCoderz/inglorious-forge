@@ -148,6 +148,31 @@ describe("router", () => {
     })
   })
 
+  describe("popstate()", () => {
+    it("should update entity and emit routeChange for browser back/forward", async () => {
+      vi.spyOn(window, "location", "get").mockReturnValue({
+        pathname: "/users/789",
+        search: "",
+        hash: "",
+        origin: "http://localhost:3000",
+      })
+
+      await router.popstate(entity, undefined, api)
+
+      expect(entity.path).toBe("/users/789")
+      expect(entity.route).toBe("userPage")
+      expect(entity.params).toEqual({ id: "789" })
+      expect(api.notify).toHaveBeenCalledWith(
+        "routeChange",
+        expect.objectContaining({
+          route: "userPage",
+          path: "/users/789",
+          params: { id: "789" },
+        }),
+      )
+    })
+  })
+
   describe("lazy route loading", () => {
     it("should load a lazy route and dispatch routeLoadSuccess then navigate", async () => {
       const mockModule = { lazyPage: { render: () => {} } }

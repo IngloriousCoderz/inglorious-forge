@@ -7,6 +7,7 @@ import {
   determineRebuildPages,
   hashEntities,
   hashFile,
+  hashRuntime,
   loadManifest,
   saveManifest,
 } from "./manifest"
@@ -37,7 +38,12 @@ describe("manifest", () => {
       fs.readFile.mockRejectedValue(new Error("ENOENT"))
 
       const result = await loadManifest("dist")
-      expect(result).toEqual({ pages: {}, entities: null, buildTime: null })
+      expect(result).toEqual({
+        pages: {},
+        entities: null,
+        runtime: null,
+        buildTime: null,
+      })
     })
   })
 
@@ -80,11 +86,20 @@ describe("manifest", () => {
     })
   })
 
+  describe("hashRuntime", () => {
+    it("should hash SSX runtime files", async () => {
+      fs.readFile.mockResolvedValue("runtime")
+      const hash = await hashRuntime()
+      expect(typeof hash).toBe("string")
+      expect(hash.length).toBe(32)
+    })
+  })
+
   describe("determineRebuildPages", () => {
     it("should rebuild all if entities hash changed", async () => {
       const pages = [{ path: "/" }]
       const manifest = { entities: "old" }
-      const result = await determineRebuildPages(pages, manifest, "new")
+      const result = await determineRebuildPages(pages, manifest, "new", "rt")
 
       expect(result.pagesToBuild).toEqual(pages)
       expect(result.pagesToSkip).toEqual([])
@@ -113,12 +128,29 @@ describe("manifest", () => {
         return ""
       })
 
-      const result = await determineRebuildPages(pages, manifest, "hash")
+      const result = await determineRebuildPages(
+        pages,
+        { ...manifest, runtime: "same-rt" },
+        "hash",
+        "same-rt",
+      )
 
       expect(result.pagesToBuild).toHaveLength(1)
       expect(result.pagesToBuild[0].path).toBe("/changed")
       expect(result.pagesToSkip).toHaveLength(1)
       expect(result.pagesToSkip[0].path).toBe("/same")
+    })
+
+    it("should rebuild all if runtime hash changed", async () => {
+      const pages = [{ path: "/" }]
+      const manifest = { entities: "hash", runtime: "old-rt" }
+      const result = await determineRebuildPages(pages, manifest, "hash", "new-rt")
+
+      expect(result.pagesToBuild).toEqual(pages)
+      expect(result.pagesToSkip).toEqual([])
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringContaining("runtime changed"),
+      )
     })
   })
 
@@ -129,6 +161,7 @@ describe("manifest", () => {
         { path: "/about", filePath: "about.js" },
       ]
       const entitiesHash = "entities-hash"
+      const runtimeHash = "runtime-hash"
 
       fs.readFile.mockImplementation(async (path) => {
         if (path === "index.js") return "index content"
@@ -136,9 +169,14 @@ describe("manifest", () => {
         return ""
       })
 
-      const manifest = await createManifest(renderedPages, entitiesHash)
+      const manifest = await createManifest(
+        renderedPages,
+        entitiesHash,
+        runtimeHash,
+      )
 
       expect(manifest.entities).toBe(entitiesHash)
+      expect(manifest.runtime).toBe(runtimeHash)
       expect(manifest.buildTime).toBeDefined()
       expect(manifest.pages["/"]).toEqual({
         hash: "176b689259e8d68ef0aa869fd3b3be45",
