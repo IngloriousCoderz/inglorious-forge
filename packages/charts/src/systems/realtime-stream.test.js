@@ -45,7 +45,10 @@ describe("createRealtimeStreamSystem", () => {
 
     expect(getEntity).toHaveBeenCalledWith("realtimeStreamController")
     expect(notify).toHaveBeenCalledTimes(2)
-    expect(notify).toHaveBeenNthCalledWith(1, "#realtimeStreamController:streamTick")
+    expect(notify).toHaveBeenNthCalledWith(
+      1,
+      "#realtimeStreamController:streamTick",
+    )
     runtime.stop()
   })
 
