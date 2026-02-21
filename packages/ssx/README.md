@@ -721,7 +721,7 @@ await build({
   outDir: "dist",
   configFile: "site.config.js",
   incremental: true,
-  clean: false,
+  force: false,
 })
 ```
 

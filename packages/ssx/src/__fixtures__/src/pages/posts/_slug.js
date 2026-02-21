@@ -33,7 +33,7 @@ export const post = {
     if (typeof window !== "undefined") {
       setTimeout(() => {
         mermaid.run({ querySelector: ".mermaid" })
-      }, 0)
+      })
     }
 
     return html`<h1>${entity.post.title}</h1>

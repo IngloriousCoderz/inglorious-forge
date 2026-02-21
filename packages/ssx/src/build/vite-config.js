@@ -1,5 +1,6 @@
 import path from "node:path"
 
+import { minifyTemplateLiterals } from "rollup-plugin-minify-template-literals"
 import { mergeConfig } from "vite"
 import { ViteImageOptimizer } from "vite-plugin-image-optimizer"
 
@@ -21,6 +22,7 @@ export function createViteConfig(options = {}) {
       root: process.cwd(),
       publicDir: publicDir,
       plugins: [
+        minifyTemplateLiterals(),
         ViteImageOptimizer({
           // Options can be overridden by the user in site.config.js via the `vite` property
         }),
@@ -44,9 +46,6 @@ export function createViteConfig(options = {}) {
               }
             },
           },
-          plugins: [
-            // minifyTemplateLiterals(), // TODO: minification breaks hydration. The footprint difference is minimal after all
-          ],
         },
       },
       resolve: {

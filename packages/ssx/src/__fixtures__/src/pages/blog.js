@@ -6,7 +6,7 @@ import { nav } from "../components/nav.js"
 export const blog = {
   create(entity) {
     entity.name = "Matteo Antony"
-    entity.posts = []
+    entity.posts ??= []
   },
 
   async routeChange(entity, payload, api) {

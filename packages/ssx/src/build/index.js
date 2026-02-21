@@ -28,12 +28,15 @@ import { createViteConfig } from "./vite-config.js"
  * @param {string} [options.rootDir="src"] - Source directory.
  * @param {string} [options.outDir="dist"] - Output directory.
  * @param {boolean} [options.incremental=true] - Whether to use incremental builds.
- * @param {boolean} [options.clean=false] - Whether to clean the output directory before building.
+ * @param {boolean} [options.force=false] - Whether to force a clean output directory before building.
  * @param {Object} [options.sitemap] - Sitemap configuration.
  * @param {Object} [options.rss] - RSS configuration.
  * @returns {Promise<{changed: number, skipped: number}>} Build statistics.
  */
 export async function build(options = {}) {
+  const previousNodeEnv = process.env.NODE_ENV
+  process.env.NODE_ENV = "production"
+
   const config = await loadConfig(options)
 
   const mergedOptions = { ...config, ...options }
@@ -41,7 +44,7 @@ export async function build(options = {}) {
     rootDir = ".",
     outDir = "dist",
     incremental = true,
-    clean = false,
+    force = false,
     sitemap,
     rss,
   } = mergedOptions
@@ -64,10 +67,10 @@ export async function build(options = {}) {
   console.log(`📄 Found ${allPages.length} pages\n`)
 
   // Load previous build manifest
-  const manifest = incremental && !clean ? await loadManifest(outDir) : null
+  const manifest = incremental && !force ? await loadManifest(outDir) : null
 
   // 1. Clean and create output directory
-  if (clean || !manifest) {
+  if (force || !manifest) {
     // Clean output directory if forced or first build
     await fs.rm(outDir, { recursive: true, force: true })
     await fs.mkdir(outDir, { recursive: true })
@@ -177,10 +180,18 @@ export async function build(options = {}) {
 
   console.log("\n✨ Build complete!\n")
 
-  return {
+  const result = {
     changed: changedPages.length,
     skipped: skippedPages.length,
   }
+
+  if (previousNodeEnv == null) {
+    delete process.env.NODE_ENV
+  } else {
+    process.env.NODE_ENV = previousNodeEnv
+  }
+
+  return result
 }
 
 /**

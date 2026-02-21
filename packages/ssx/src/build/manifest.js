@@ -6,6 +6,7 @@ const MANIFEST_FILE = ".ssx-manifest.json"
 const RUNTIME_FILES = [
   "../scripts/app.js",
   "./pages.js",
+  "./vite-config.js",
   "../utils/i18n.js",
   "../router/index.js",
   "../render/index.js",
