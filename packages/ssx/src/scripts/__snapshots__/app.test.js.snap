@@ -28,6 +28,8 @@ const types = { router }
 const i18n = {}
 const isDev = false
 
+const ssxEntity = JSON.parse(document.getElementById("__SSX_ENTITY__").textContent)
+
 const entities = {
   router: {
     type: "router",
@@ -38,12 +40,7 @@ const entities = {
     type: "i18n",
     ...i18n,
   },
-
-  "post": {
-    "type": "post",
-    "id": "post"
-  }
-
+  ...ssxEntity,
 }
 
 const middlewares = []
@@ -113,6 +110,8 @@ const types = { router }
 const i18n = {}
 const isDev = false
 
+const ssxEntity = JSON.parse(document.getElementById("__SSX_ENTITY__").textContent)
+
 const entities = {
   router: {
     type: "router",
@@ -123,14 +122,7 @@ const entities = {
     type: "i18n",
     ...i18n,
   },
-
-  "blog": {
-    "type": "blog",
-    "id": "blog",
-    "name": "Matteo Antony",
-    "posts": []
-  }
-
+  ...ssxEntity,
 }
 
 const middlewares = []
@@ -200,6 +192,8 @@ const types = { router }
 const i18n = {}
 const isDev = false
 
+const ssxEntity = JSON.parse(document.getElementById("__SSX_ENTITY__").textContent)
+
 const entities = {
   router: {
     type: "router",
@@ -210,13 +204,7 @@ const entities = {
     type: "i18n",
     ...i18n,
   },
-
-  "about": {
-    "type": "about",
-    "id": "about",
-    "name": "Us"
-  }
-
+  ...ssxEntity,
 }
 
 const middlewares = []
@@ -286,6 +274,8 @@ const types = { router }
 const i18n = {}
 const isDev = false
 
+const ssxEntity = JSON.parse(document.getElementById("__SSX_ENTITY__").textContent)
+
 const entities = {
   router: {
     type: "router",
@@ -296,12 +286,7 @@ const entities = {
     type: "i18n",
     ...i18n,
   },
-
-  "index": {
-    "type": "index",
-    "id": "index"
-  }
-
+  ...ssxEntity,
 }
 
 const middlewares = []

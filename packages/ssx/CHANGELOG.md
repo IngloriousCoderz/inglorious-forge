@@ -1,5 +1,11 @@
 # @inglorious/ssx
 
+## 1.7.1
+
+### Patch Changes
+
+- Fix current post hydration in SSX
+
 ## 1.7.0
 
 ### Minor Changes

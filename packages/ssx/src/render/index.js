@@ -52,5 +52,6 @@ export async function renderPage(store, page, entity, options = {}) {
     styles,
     head,
     scripts,
+    ssxEntity: { [moduleName]: entity },
   })
 }

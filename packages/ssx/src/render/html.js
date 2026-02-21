@@ -18,6 +18,7 @@ import { layout as defaultLayout } from "./layout.js"
  * @param {boolean} [options.wrap=false] - Whether to wrap the output in a full HTML document.
  * @param {Function} [options.layout] - Custom layout function.
  * @param {boolean} [options.stripLitMarkers=false] - Whether to remove Lit hydration markers (for static output).
+ * @param {Object} [options.ssxEntity] - Per-page entity state for client hydration.
  * @returns {Promise<string>} The generated HTML string.
  */
 export async function toHTML(store, renderFn, options = {}) {
@@ -38,7 +39,16 @@ export async function toHTML(store, renderFn, options = {}) {
   if (!options.wrap) return finalHTML
 
   const layout = options.layout ?? defaultLayout
-  return layout(finalHTML, options)
+  let html = layout(finalHTML, options)
+
+  if (options.ssxEntity) {
+    html = html.replace(
+      /<body[^>]*>/,
+      `$&<script type="application/json" id="__SSX_ENTITY__">${JSON.stringify(options.ssxEntity)}</script>`,
+    )
+  }
+
+  return html
 }
 
 /**

@@ -2,7 +2,6 @@ import path from "node:path"
 
 import { describe, expect, it } from "vitest"
 
-import { generateStore } from "../store"
 import { generateApp } from "./app"
 
 const ROOT_DIR = path.join(import.meta.dirname, "..", "__fixtures__")
@@ -16,9 +15,8 @@ describe("generateApp", () => {
       modulePath: "index.js",
       filePath: PAGES_DIR,
     }
-    const store = await generateStore([page], { rootDir: ROOT_DIR })
 
-    const app = generateApp(store, [page])
+    const app = generateApp([page])
 
     expect(app).toMatchSnapshot()
   })
@@ -30,9 +28,8 @@ describe("generateApp", () => {
       modulePath: "about.js",
       filePath: path.join(PAGES_DIR, "about.js"),
     }
-    const store = await generateStore([page], { rootDir: ROOT_DIR })
 
-    const app = generateApp(store, [page])
+    const app = generateApp([page])
 
     expect(app).toMatchSnapshot()
   })
@@ -44,9 +41,8 @@ describe("generateApp", () => {
       modulePath: "blog.js",
       filePath: path.join(PAGES_DIR, "blog.js"),
     }
-    const store = await generateStore([page], { rootDir: ROOT_DIR })
 
-    const app = generateApp(store, [page])
+    const app = generateApp([page])
 
     expect(app).toMatchSnapshot()
   })
@@ -58,9 +54,8 @@ describe("generateApp", () => {
       modulePath: "post.js",
       filePath: path.join(PAGES_DIR, "posts", "_slug.js"),
     }
-    const store = await generateStore([page], { rootDir: ROOT_DIR })
 
-    const app = generateApp(store, [page])
+    const app = generateApp([page])
 
     expect(app).toMatchSnapshot()
   })
@@ -79,9 +74,8 @@ describe("generateApp", () => {
       { ...page, path: "/it/hello", locale: "it" },
       { ...page, path: "/pt/hello", locale: "pt" },
     ]
-    const store = await generateStore([page], { rootDir: ROOT_DIR })
 
-    const app = generateApp(store, localizedPages)
+    const app = generateApp(localizedPages)
 
     expect(app).toContain(`"/hello": () => import("@/pages/hello.js")`)
     expect(app).toContain(`"/it/hello": () => import("@/pages/hello.js")`)

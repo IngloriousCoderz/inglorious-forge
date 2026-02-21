@@ -2,12 +2,11 @@
  * Generates the client-side entry point script.
  * This script hydrates the store with the initial state (entities) and sets up the router.
  *
- * @param {Object} store - The server-side store instance containing the initial state.
  * @param {Array<Object>} pages - List of page objects to generate routes for.
  * @param {Object} [options] - Runtime options.
  * @returns {string} The generated JavaScript code for the client entry point.
  */
-export function generateApp(store, pages, options = {}) {
+export function generateApp(pages, options = {}) {
   const i18n = options.i18n || inferI18nFromPages(pages)
   const isDev = Boolean(options.isDev)
 
@@ -54,6 +53,8 @@ const types = { router }
 const i18n = ${JSON.stringify(i18n, null, 2)}
 const isDev = ${JSON.stringify(isDev)}
 
+const ssxEntity = JSON.parse(document.getElementById("__SSX_ENTITY__").textContent)
+
 const entities = {
   router: {
     type: "router",
@@ -64,7 +65,7 @@ const entities = {
     type: "i18n",
     ...i18n,
   },
-${JSON.stringify(store.getState(), null, 2).slice(1, -1)}
+  ...ssxEntity,
 }
 
 const middlewares = []

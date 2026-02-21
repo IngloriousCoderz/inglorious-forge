@@ -140,7 +140,7 @@ export async function build(options = {}) {
   // 8. Always regenerate client-side JavaScript (it's cheap and ensures consistency)
   console.log("\n📝 Generating client scripts...\n")
 
-  const app = generateApp(store, allPages, { ...mergedOptions, isDev: false })
+  const app = generateApp(allPages, { ...mergedOptions, isDev: false })
   await fs.writeFile(path.join(outDir, "main.js"), app, "utf-8")
   console.log(`  ✓ main.js\n`)
 

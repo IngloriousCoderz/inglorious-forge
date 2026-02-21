@@ -36,7 +36,7 @@ exports[`renderPage > should render a page with metadata 1`] = `
         <link rel="stylesheet" href="./style.css">
         
       </head>
-      <body>
+      <body><script type="application/json" id="__SSX_ENTITY__">{"about":{"about":{},"metadata":{"title":"About","meta":{"description":"About page"},"styles":["./style.css"],"scripts":["./ga.js"]}}}</script>
         <div id="root"><!--lit-part /KZqpgKMp6U=--><h1>
         About
         <!--lit-node 1--><span 
