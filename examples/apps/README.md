@@ -21,6 +21,7 @@ Available demos:
 - [web-todomvc-jsx](./web-todomvc-jsx/README.md) — TodoMVC client-only demo in JSX with `@inglorious/web`
 - [web-todomvc-ts](./web-todomvc-ts/README.md) — TodoMVC client-only demo in TypeScript with `@inglorious/web`
 - [web-todomvc-tsx](./web-todomvc-tsx/README.md) — TodoMVC client-only demo in TSX with `@inglorious/web`
+- [web-components](./web-components/README.md) — web component preservation demo (Material Web, Shoelace)
 
 Quick start (from repo root):
 

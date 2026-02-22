@@ -1,0 +1,25 @@
+{
+  "name": "web-components",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "author": "IceOnFire <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@inglorious/web": "workspace:*",
+    "@material/web": "^2.3.0",
+    "@shoelace-style/shoelace": "^2.20.1"
+  },
+  "devDependencies": {
+    "vite": "^7.1.6"
+  },
+  "packageManager": "pnpm@10.15.0",
+  "engines": {
+    "node": ">= 22"
+  }
+}
