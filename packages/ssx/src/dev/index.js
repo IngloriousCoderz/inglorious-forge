@@ -8,6 +8,7 @@ import { getPages, matchRoute } from "../router/index.js"
 import { generateApp } from "../scripts/app.js"
 import { generateStore } from "../store/index.js"
 import { loadConfig } from "../utils/config.js"
+import { createApiMiddleware } from "./api.js"
 import { createViteConfig, virtualFiles } from "./vite-config.js"
 
 /**
@@ -36,6 +37,11 @@ export async function dev(options = {}) {
   const connectServer = connect()
   connectServer.use(viteServer.middlewares)
 
+  const apiMiddleware = createApiMiddleware(rootDir, loader, (error) =>
+    viteServer.ssrFixStacktrace(error),
+  )
+  connectServer.use(apiMiddleware)
+
   // Add SSR middleware
   connectServer.use(async (req, res, next) => {
     const [url] = req.url.split("?")
@@ -44,6 +50,7 @@ export async function dev(options = {}) {
       // Skip special routes, static files, AND public assets
       if (
         url.startsWith("/@") ||
+        url.startsWith("/api/") ||
         url.includes(".") || // Vite handles static files
         url === "/favicon.ico"
       ) {
@@ -73,7 +80,7 @@ export async function dev(options = {}) {
       }
 
       // Generate and update the virtual app file BEFORE rendering
-      const app = generateApp(store, pages, { ...mergedOptions, isDev: true })
+      const app = generateApp(pages, { ...mergedOptions, isDev: true })
       virtualFiles.set("/main.js", app)
 
       // Invalidate the virtual module to ensure Vite picks up changes

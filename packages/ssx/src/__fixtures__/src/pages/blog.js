@@ -1,6 +1,5 @@
 import { html } from "@inglorious/web"
 
-import { data } from "../api/posts.js"
 import { nav } from "../components/nav.js"
 
 export const blog = {
@@ -14,7 +13,8 @@ export const blog = {
     if (entity.posts && entity.posts.length) return
 
     const entityId = entity.id
-    const posts = await fetchPosts()
+    const response = await fetch("/api/posts")
+    const posts = await response.json()
     api.notify(`#${entityId}:dataFetchSuccess`, posts)
   },
 
@@ -37,11 +37,8 @@ export const blog = {
 }
 
 export async function load(entity) {
-  entity.posts = await fetchPosts()
-}
-
-async function fetchPosts() {
-  return await data
+  const { data } = await import("../api/posts.js")
+  entity.posts = data
 }
 
 export const metadata = (entity) => ({

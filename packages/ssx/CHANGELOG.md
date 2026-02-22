@@ -1,5 +1,11 @@
 # @inglorious/ssx
 
+## 1.8.0
+
+### Minor Changes
+
+- Add serverless functions
+
 ## 1.7.1
 
 ### Patch Changes

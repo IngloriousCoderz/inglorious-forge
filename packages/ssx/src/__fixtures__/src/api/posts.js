@@ -427,6 +427,22 @@ graph LR
     C --> D[lit-html Hydrates]
     D --> E[Events Attached]
     E --> F[Interactive!]
-\`\`\``,
+    \`\`\``,
   },
 ]
+
+export async function GET(request) {
+  const url = new URL(request.url)
+  const segments = url.pathname.split("/").filter(Boolean)
+  const id = segments[2] // /api/posts/:id
+
+  if (id) {
+    const post = data.find((post) => post.id === id)
+    if (!post) {
+      return Response.json({ error: "Post not found" }, { status: 404 })
+    }
+    return Response.json(post)
+  }
+
+  return Response.json(data)
+}

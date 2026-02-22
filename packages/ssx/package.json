@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/ssx",
-  "version": "1.7.1",
+  "version": "1.8.0",
   "description": "Server-Side-X. Xecution? Xperience? Who knows.",
   "author": "IceOnFire <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -27,6 +27,9 @@
   },
   "exports": {
     ".": "./types/index.d.ts",
+    "./dev": "./src/dev/index.js",
+    "./build": "./src/build/index.js",
+    "./serve": "./src/serve/index.js",
     "./markdown": "./src/utils/markdown.js",
     "./i18n": {
       "types": "./types/i18n.d.ts",
@@ -51,7 +54,7 @@
     "test": "vitest run",
     "dev": "node ./bin/ssx.js dev -r ./src/__fixtures__",
     "build": "node ./bin/ssx.js build -r ./src/__fixtures__",
-    "preview": "serve dist"
+    "preview": "node ./bin/ssx.js serve -r ./src/__fixtures__"
   },
   "dependencies": {
     "@inglorious/web": "workspace:*",
@@ -75,7 +78,6 @@
   "devDependencies": {
     "@inglorious/eslint-config": "workspace:*",
     "prettier": "^3.6.2",
-    "serve": "^14.2.1",
     "vitest": "^1.6.1"
   },
   "packageManager": "pnpm@10.15.0",

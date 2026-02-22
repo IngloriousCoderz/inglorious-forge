@@ -8,6 +8,7 @@ import { Command } from "commander"
 
 import { build } from "../src/build/index.js"
 import { dev } from "../src/dev/index.js"
+import { serve } from "../src/serve/index.js"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -83,6 +84,37 @@ program
       // }
     } catch (error) {
       console.error("Build failed:", error)
+      process.exit(1)
+    }
+  })
+
+program
+  .command("serve")
+  .description("Serve production build with API routes")
+  .option("-c, --config <file>", "config file name", "site.config.js")
+  .option("-r, --root <dir>", "root directory", ".")
+  .option("-o, --out <dir>", "output directory", "dist")
+  .option("-p, --port <port>", "server port", 3000)
+  .action(async (options) => {
+    const cwd = process.cwd()
+    const rootDir = path.resolve(cwd, options.root)
+    const configPath = resolveConfigFile(rootDir, options.config)
+    const outDir = path.resolve(cwd, options.out)
+    const port = Number(options.port)
+
+    try {
+      await serve({
+        ...options,
+        config: undefined,
+        root: undefined,
+        out: undefined,
+        configPath,
+        rootDir,
+        outDir,
+        port,
+      })
+    } catch (error) {
+      console.error("Server failed:", error)
       process.exit(1)
     }
   })

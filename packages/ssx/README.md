@@ -40,6 +40,7 @@ SSX takes your entity-based web apps and generates optimized static HTML with fu
 - **Optimized builds** - Minified, tree-shaken output
 - **Source maps** - Debug production like development
 - **Error boundaries** - Graceful failure handling
+- **Serverless functions** - API routes with Web Fetch API
 
 ---
 
@@ -128,11 +129,17 @@ npm run build
 # → Static site in dist/
 ```
 
-### Deploy
+### Preview
 
 ```bash
 npm run preview
-# → Preview production build
+# → Production server at http://localhost:3000 (serves static files + API routes)
+```
+
+Or use the CLI directly:
+
+```bash
+npx ssx serve
 ```
 
 Deploy `dist/` to:
@@ -486,6 +493,121 @@ title: My Post
 This is a markdown page.
 ```
 
+### ⚡ Serverless Functions (API Routes)
+
+SSX supports serverless functions for dynamic API endpoints. Create files in `src/api/` that export HTTP method handlers:
+
+```
+src/api/
+├── posts.js        → /api/posts
+├── posts/
+│   └── [id].js     → /api/posts/:id (alternative structure)
+└── users.js        → /api/users
+```
+
+#### Basic Example
+
+```javascript
+// src/api/posts.js
+export async function GET(request) {
+  const posts = [
+    { id: 1, title: "Hello World" },
+    { id: 2, title: "My Second Post" },
+  ]
+
+  return Response.json(posts)
+}
+
+export async function POST(request) {
+  const body = await request.json()
+  // Save to database...
+  return Response.json({ created: body }, { status: 201 })
+}
+```
+
+#### Dynamic Routes
+
+For routes like `/api/posts/:id`, export a single handler that parses the URL:
+
+```javascript
+// src/api/posts.js
+import { data } from "./posts-data.js"
+
+export async function GET(request) {
+  const url = new URL(request.url)
+  const segments = url.pathname.split("/").filter(Boolean)
+  const id = segments[1] // /api/posts/:id
+
+  if (id) {
+    const post = data.find((post) => post.id === id)
+    if (!post) {
+      return Response.json({ error: "Not found" }, { status: 404 })
+    }
+    return Response.json(post)
+  }
+
+  return Response.json(data)
+}
+```
+
+#### Using with Pages
+
+Fetch from your API in `routeChange` for client-side navigation, and use direct imports in `load` for build-time:
+
+```javascript
+// src/pages/posts/_slug.js
+import { html } from "@inglorious/web"
+
+export const post = {
+  async routeChange(entity, { route, params }, api) {
+    if (route !== entity.type) return
+
+    const entityId = entity.id
+    const response = await fetch(`/api/posts/${params.slug}`)
+    const post = await response.json()
+    post.body = renderMarkdown(post.body)
+    api.notify(`#${entityId}:dataFetchSuccess`, post)
+  },
+
+  dataFetchSuccess(entity, post) {
+    entity.post = post
+  },
+
+  render(entity) {
+    return html`<h1>${entity.post?.title}</h1>`
+  },
+}
+
+// Build-time: import directly (no HTTP overhead)
+export async function load(entity, page) {
+  const { data } = await import("../../api/posts.js")
+  entity.post = data.find((p) => p.id === page.params.slug)
+}
+```
+
+#### Request/Response API
+
+Handlers receive a standard Web `Request` object and should return a `Response`:
+
+```javascript
+export async function GET(request) {
+  // Access request properties
+  const url = new URL(request.url)
+  const search = url.searchParams.get("q")
+  const headers = request.headers.get("authorization")
+
+  // Return JSON response
+  return Response.json({ results: [] })
+
+  // Or custom response
+  return new Response("Not found", { status: 404 })
+}
+```
+
+#### Supported Methods
+
+Export any of these HTTP methods: `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `HEAD`, `OPTIONS`.
+
 ---
 
 ## CLI
@@ -520,12 +642,18 @@ Options:
   -p, --port <port>    Dev server port (default: 3000)
 ```
 
-### `preview`
+### `ssx serve`
 
-Serves the built static site on port 3000 through the `serve` NPM package:
+Serves the production build with static files and API routes:
 
 ```bash
-pnpm preview
+pnpm ssx serve [options]
+
+Options:
+  -c, --config <file>  Config file (default: "site.config.js")
+  -r, --root <dir>     Source root directory (default: ".")
+  -o, --out <dir>      Output directory (default: "dist")
+  -p, --port <port>    Server port (default: 3000)
 ```
 
 ---
@@ -541,6 +669,8 @@ my-site/
 │   │   └── posts/
 │   │       ├── index.js    # /posts
 │   │       └── _id.js      # /posts/:id
+│   ├── api/            # Serverless functions
+│   │   └── posts.js    # /api/posts
 │   ├── store/          # Store configuration
 │   │   └── entities.js     # Entity definitions
 │   └── types/          # Custom entity types (optional)
@@ -737,6 +867,19 @@ await dev({
 })
 ```
 
+### Production Server API
+
+```javascript
+import { serve } from "@inglorious/ssx/serve"
+
+await serve({
+  rootDir: ".",
+  outDir: "dist",
+  port: 3000,
+  configFile: "site.config.js",
+})
+```
+
 ---
 
 <!-- ## Examples
@@ -756,7 +899,7 @@ Check out these example projects:
 - [x] Image optimization
 - [x] Markdown support
 - [x] i18n routing and locale-aware client navigation
-- [ ] API routes (serverless functions)
+- [x] API routes (serverless functions)
 
 ---
 

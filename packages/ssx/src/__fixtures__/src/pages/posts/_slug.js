@@ -5,19 +5,15 @@ import { renderMarkdown } from "@inglorious/ssx/markdown"
 import { html, unsafeHTML } from "@inglorious/web"
 import mermaid from "mermaid"
 
-import { data } from "../../api/posts.js"
 import { nav } from "../../components/nav.js"
 
 export const post = {
-  async routeChange(entity, payload, api) {
-    if (payload.route !== entity.type) return
-
-    const id = payload.params.slug
-    if (entity.post?.id === id) return
+  async routeChange(entity, { route, params }, api) {
+    if (route !== entity.type) return
 
     const entityId = entity.id
-    const post = await fetchPost(id)
-    // Simulate fetching markdown content
+    const response = await fetch(`/api/posts/${params.slug}`)
+    const post = await response.json()
     post.body = renderMarkdown(post.body)
     api.notify(`#${entityId}:dataFetchSuccess`, post)
   },
@@ -44,18 +40,15 @@ export const post = {
 }
 
 export async function staticPaths() {
+  const { data } = await import("../../api/posts.js")
   return data.map((post) => `/posts/${post.id}`)
 }
 
 export async function load(entity, page) {
   const id = page.params.slug
-  entity.post = await fetchPost(id)
-  // Render markdown during build time
+  const { data } = await import("../../api/posts.js")
+  entity.post = data.find((post) => post.id === id)
   entity.post.body = renderMarkdown(entity.post.body)
-}
-
-async function fetchPost(id) {
-  return await data.find((post) => post.id === id)
 }
 
 export const metadata = (entity) => ({
