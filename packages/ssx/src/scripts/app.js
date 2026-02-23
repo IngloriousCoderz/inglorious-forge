@@ -22,7 +22,8 @@ export function generateApp(pages, options = {}) {
   }
   const routes = [...routesByPattern.values()]
 
-  return `import { createDevtools, createStore, mount } from "@inglorious/web"
+  return `import "@inglorious/web/hydrate"
+import { createDevtools, createStore, mount } from "@inglorious/web"
 import { getRoute, router, setRoutes } from "@inglorious/web/router"
 import { getLocaleFromPath } from "@inglorious/ssx/i18n"
 

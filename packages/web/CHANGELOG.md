@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 4.4.0
+
+### Minor Changes
+
+- Support web component hydration in SSX
+
 ## 4.3.0
 
 ### Minor Changes

@@ -884,6 +884,22 @@ importers:
         specifier: ^7.1.6
         version: 7.3.0(@types/node@24.8.0)(jiti@2.5.1)(lightningcss@1.30.1)(sass@1.91.0)(terser@5.44.1)(yaml@2.8.2)
 
+  examples/apps/web-components-ssx:
+    dependencies:
+      "@inglorious/ssx":
+        specifier: workspace:*
+        version: link:../../../packages/ssx
+      "@inglorious/web":
+        specifier: workspace:*
+        version: link:../../../packages/web
+      "@material/web":
+        specifier: ^2.3.0
+        version: 2.4.1
+    devDependencies:
+      vite:
+        specifier: ^7.1.6
+        version: 7.3.0(@types/node@24.8.0)(jiti@2.5.1)(lightningcss@1.30.1)(sass@1.91.0)(terser@5.44.1)(yaml@2.8.2)
+
   examples/apps/web-form:
     dependencies:
       "@inglorious/web":
