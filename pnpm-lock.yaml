@@ -895,6 +895,9 @@ importers:
       "@material/web":
         specifier: ^2.3.0
         version: 2.4.1
+      "@shoelace-style/shoelace":
+        specifier: ^2.20.1
+        version: 2.20.1(@floating-ui/utils@0.2.10)(@types/react@19.2.2)
     devDependencies:
       vite:
         specifier: ^7.1.6

@@ -1,5 +1,11 @@
 # web-components-ssx
 
+## 0.1.1
+
+### Patch Changes
+
+- 217e578: Fix Shoelace SSX rendering
+
 ## 0.1.0
 
 ### Minor Changes
