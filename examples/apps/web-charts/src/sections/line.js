@@ -141,7 +141,7 @@ export function renderLineSections(api, status) {
 
     <div class="charts-comparison">
       <section class="chart-section">
-        <h2>Realtime Line Chart - Config Style (1 point/second)</h2>
+        <h2>Realtime Line Chart - Config Style</h2>
         <p>
           ${isRealtimeConfigPaused
             ? "Stream: paused. Brush is visible for history inspection."
@@ -167,9 +167,7 @@ export function renderLineSections(api, status) {
       </section>
 
       <section class="chart-section">
-        <h2>
-          Realtime Line Chart - Recharts Style (Composition, 1 point/second)
-        </h2>
+        <h2>Realtime Line Chart - Recharts Style</h2>
         <p>
           ${isRealtimeCompositionPaused
             ? "Stream: paused. Brush is visible for history inspection."
