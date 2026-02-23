@@ -1,7 +1,4 @@
-import { logic } from "./logic.js"
-import { rendering } from "./rendering.js"
+import * as handlers from "./handlers.js"
+import * as renderers from "./template.js"
 
-export const list = {
-  ...logic,
-  ...rendering,
-}
+export const list = { ...handlers, ...renderers }

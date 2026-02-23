@@ -9,7 +9,6 @@ vi.mock("./filters.js", () => ({
   filters: { render: () => html`` },
 }))
 
-import { table } from "."
 import {
   getPaginationInfo,
   getRows,
@@ -17,7 +16,8 @@ import {
   getTotalRows,
   isAllSelected,
   isSomeSelected,
-} from "./logic.js"
+  table,
+} from "."
 
 const sampleData = [
   { id: 1, name: "Charlie", age: 35, active: true, role: "Admin" },

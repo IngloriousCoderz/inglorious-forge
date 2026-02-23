@@ -1,0 +1,121 @@
+:root {
+  /* ========================================
+     BOOTSTRAP THEME - Bootstrap Inspired
+     ======================================== */
+
+  /* Semantic Colors */
+  --iw-color-bg: var(--iw-color-white);
+  --iw-color-bg-secondary: var(--iw-color-gray-100);
+  --iw-color-bg-tertiary: var(--iw-color-gray-200);
+  --iw-color-surface: var(--iw-color-white);
+  --iw-color-surface-hover: var(--iw-color-gray-100);
+  --iw-color-surface-active: var(--iw-color-gray-200);
+
+  --iw-color-text: #212529;
+  --iw-color-text-secondary: #495057;
+  --iw-color-text-muted: #6c757d;
+
+  --iw-color-border: #dee2e6;
+  --iw-color-border-focus: #86b7fe;
+
+  --iw-color-primary: #0d6efd;
+  --iw-color-primary-hover: #0b5ed7;
+  --iw-color-primary-active: #0a58ca;
+  --iw-color-primary-text: var(--iw-color-white);
+
+  --iw-color-accent: #6f42c1;
+  --iw-color-accent-hover: #5a32a3;
+  --iw-color-accent-active: #4328a4;
+
+  /* ========================================
+     COMPONENT TOKENS
+     ======================================== */
+
+  /* Button */
+  --iw-button-bg: var(--iw-color-primary);
+  --iw-button-bg-hover: var(--iw-color-primary-hover);
+  --iw-button-bg-active: var(--iw-color-primary-active);
+  --iw-button-text: var(--iw-color-primary-text);
+  --iw-button-border: var(--iw-color-primary);
+  --iw-button-radius: var(--iw-radius-md);
+  --iw-button-shadow: none;
+  --iw-button-shadow-hover: none;
+  --iw-button-shadow-active: none;
+
+  --iw-button-outline-bg: transparent;
+  --iw-button-outline-bg-hover: var(--iw-color-primary);
+  --iw-button-outline-text: var(--iw-color-primary);
+  --iw-button-outline-text-hover: var(--iw-color-white);
+  --iw-button-outline-border: var(--iw-color-primary);
+
+  --iw-button-ghost-bg: transparent;
+  --iw-button-ghost-bg-hover: var(--iw-color-gray-100);
+  --iw-button-ghost-text: var(--iw-color-text);
+  --iw-button-ghost-border: transparent;
+
+  /* Input */
+  --iw-input-bg: var(--iw-color-white);
+  --iw-input-bg-hover: var(--iw-color-white);
+  --iw-input-bg-focus: var(--iw-color-white);
+  --iw-input-text: var(--iw-color-text);
+  --iw-input-text-placeholder: var(--iw-color-text-muted);
+  --iw-input-border: #ced4da;
+  --iw-input-border-hover: #ced4da;
+  --iw-input-border-focus: var(--iw-color-border-focus);
+  --iw-input-radius: var(--iw-radius-md);
+  --iw-input-shadow-focus: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+
+  /* Card */
+  --iw-card-bg: var(--iw-color-surface);
+  --iw-card-border: var(--iw-color-border);
+  --iw-card-radius: var(--iw-radius-lg);
+  --iw-card-shadow: none;
+  --iw-card-shadow-hover: none;
+
+  /* Badge */
+  --iw-badge-radius: var(--iw-radius-md);
+
+  /* Alert */
+  --iw-alert-radius: var(--iw-radius-md);
+  --iw-alert-shadow: none;
+}
+
+.iw-theme-bootstrap {
+  color-scheme: light;
+}
+
+/* Dark variant */
+.iw-theme-bootstrap.iw-theme-dark {
+  color-scheme: dark;
+
+  --iw-color-bg: #212529;
+  --iw-color-bg-secondary: #2c3036;
+  --iw-color-bg-tertiary: #343a40;
+  --iw-color-surface: #2c3036;
+  --iw-color-surface-hover: #343a40;
+  --iw-color-surface-active: #3d4450;
+  --iw-color-text: #f8f9fa;
+  --iw-color-text-secondary: #dee2e6;
+  --iw-color-text-muted: #adb5bd;
+  --iw-color-border: #495057;
+
+  --iw-color-primary: #5897fb;
+  --iw-color-primary-hover: #4a8bf7;
+  --iw-color-primary-active: #3c7ff3;
+  --iw-color-primary-text: var(--iw-color-black);
+
+  --iw-color-border-focus: #5897fb;
+
+  --iw-input-bg: #2c3036;
+  --iw-input-bg-hover: #2c3036;
+  --iw-input-bg-focus: #2c3036;
+  --iw-input-border: #495057;
+  --iw-input-border-hover: #5a6268;
+  --iw-input-border-focus: var(--iw-color-primary);
+  --iw-input-shadow-focus: 0 0 0 0.25rem rgba(88, 151, 251, 0.25);
+
+  --iw-button-outline-text: var(--iw-color-primary);
+  --iw-button-outline-border: var(--iw-color-primary);
+  --iw-button-ghost-bg-hover: #343a40;
+  --iw-button-ghost-text: var(--iw-color-text);
+}

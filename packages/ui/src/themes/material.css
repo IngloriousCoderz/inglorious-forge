@@ -1,0 +1,127 @@
+:root {
+  /* ========================================
+     MATERIAL THEME - Material Design Inspired
+     ======================================== */
+
+  /* Semantic Colors */
+  --iw-color-bg: var(--iw-color-gray-50);
+  --iw-color-bg-secondary: var(--iw-color-white);
+  --iw-color-bg-tertiary: var(--iw-color-gray-100);
+  --iw-color-surface: var(--iw-color-white);
+  --iw-color-surface-hover: var(--iw-color-gray-50);
+  --iw-color-surface-active: var(--iw-color-gray-100);
+
+  --iw-color-text: var(--iw-color-gray-900);
+  --iw-color-text-secondary: var(--iw-color-gray-700);
+  --iw-color-text-muted: var(--iw-color-gray-500);
+
+  --iw-color-border: var(--iw-color-gray-300);
+  --iw-color-border-focus: #1a73e8;
+
+  --iw-color-primary: #1a73e8;
+  --iw-color-primary-hover: #1557b0;
+  --iw-color-primary-active: #0d47a1;
+  --iw-color-primary-text: var(--iw-color-white);
+
+  --iw-color-accent: #e91e63;
+  --iw-color-accent-hover: #c2185b;
+  --iw-color-accent-active: #ad1457;
+
+  /* ========================================
+     COMPONENT TOKENS
+     ======================================== */
+
+  /* Button */
+  --iw-button-bg: var(--iw-color-primary);
+  --iw-button-bg-hover: var(--iw-color-primary-hover);
+  --iw-button-bg-active: var(--iw-color-primary-active);
+  --iw-button-text: var(--iw-color-primary-text);
+  --iw-button-border: var(--iw-color-primary);
+  --iw-button-radius: var(--iw-radius-full);
+  --iw-button-shadow:
+    0 1px 2px rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+  --iw-button-shadow-hover:
+    0 1px 2px rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
+  --iw-button-shadow-active: 0 1px 3px rgba(60, 64, 67, 0.4);
+
+  --iw-button-outline-bg: transparent;
+  --iw-button-outline-bg-hover: rgba(26, 115, 232, 0.08);
+  --iw-button-outline-text: var(--iw-color-primary);
+  --iw-button-outline-text-hover: var(--iw-color-primary);
+  --iw-button-outline-border: transparent;
+
+  --iw-button-ghost-bg: transparent;
+  --iw-button-ghost-bg-hover: rgba(0, 0, 0, 0.04);
+  --iw-button-ghost-text: var(--iw-color-primary);
+  --iw-button-ghost-border: transparent;
+
+  /* Input */
+  --iw-input-bg: var(--iw-color-bg-secondary);
+  --iw-input-bg-hover: var(--iw-color-bg-secondary);
+  --iw-input-bg-focus: var(--iw-color-bg-secondary);
+  --iw-input-text: var(--iw-color-text);
+  --iw-input-text-placeholder: var(--iw-color-text-muted);
+  --iw-input-border: var(--iw-color-border);
+  --iw-input-border-hover: var(--iw-color-border);
+  --iw-input-border-focus: var(--iw-color-primary);
+  --iw-input-radius: var(--iw-radius-xs);
+  --iw-input-shadow-focus: none;
+
+  /* Card */
+  --iw-card-bg: var(--iw-color-surface);
+  --iw-card-border: transparent;
+  --iw-card-radius: var(--iw-radius-lg);
+  --iw-card-shadow:
+    0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+  --iw-card-shadow-hover:
+    0 1px 3px 0 rgba(60, 64, 67, 0.3), 0 4px 8px 3px rgba(60, 64, 67, 0.15);
+
+  /* Badge */
+  --iw-badge-radius: var(--iw-radius-sm);
+
+  /* Alert */
+  --iw-alert-radius: var(--iw-radius-md);
+  --iw-alert-shadow: none;
+}
+
+.iw-theme-material {
+  color-scheme: light;
+}
+
+/* Dark variant */
+.iw-theme-material.iw-theme-dark {
+  color-scheme: dark;
+
+  --iw-color-bg: #121212;
+  --iw-color-bg-secondary: #1e1e1e;
+  --iw-color-bg-tertiary: #2d2d2d;
+  --iw-color-surface: #1e1e1e;
+  --iw-color-surface-hover: #2d2d2d;
+  --iw-color-surface-active: #3d3d3d;
+  --iw-color-text: var(--iw-color-gray-100);
+  --iw-color-text-secondary: var(--iw-color-gray-300);
+  --iw-color-text-muted: var(--iw-color-gray-400);
+  --iw-color-border: var(--iw-color-gray-700);
+
+  --iw-color-primary: #8ab4f8;
+  --iw-color-primary-hover: #aecbfa;
+  --iw-color-primary-active: #669df6;
+  --iw-color-primary-text: var(--iw-color-black);
+
+  --iw-color-border-focus: #8ab4f8;
+
+  --iw-input-bg: var(--iw-color-bg-secondary);
+  --iw-input-bg-hover: var(--iw-color-bg-secondary);
+  --iw-input-bg-focus: var(--iw-color-bg-secondary);
+  --iw-input-border: var(--iw-color-gray-600);
+  --iw-input-border-hover: var(--iw-color-gray-500);
+  --iw-input-border-focus: var(--iw-color-primary);
+
+  --iw-button-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 3px 1px rgba(0, 0, 0, 0.15);
+  --iw-button-shadow-hover:
+    0 1px 2px rgba(0, 0, 0, 0.3), 0 2px 6px 2px rgba(0, 0, 0, 0.15);
+
+  --iw-card-shadow:
+    0 1px 2px 0 rgba(0, 0, 0, 0.3), 0 1px 3px 1px rgba(0, 0, 0, 0.15);
+}

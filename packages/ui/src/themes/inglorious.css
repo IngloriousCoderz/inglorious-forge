@@ -1,0 +1,110 @@
+:root {
+  /* ========================================
+     INGLORIOUS THEME - Neon Videogame Aesthetic
+     ======================================== */
+
+  /* Semantic Colors */
+  --iw-color-bg: var(--iw-color-gray-900);
+  --iw-color-bg-secondary: var(--iw-color-gray-800);
+  --iw-color-bg-tertiary: var(--iw-color-black);
+  --iw-color-surface: var(--iw-color-gray-800);
+  --iw-color-surface-hover: var(--iw-color-gray-700);
+  --iw-color-surface-active: var(--iw-color-gray-600);
+
+  --iw-color-text: var(--iw-color-gray-100);
+  --iw-color-text-secondary: var(--iw-color-gray-400);
+  --iw-color-text-muted: var(--iw-color-gray-500);
+
+  --iw-color-border: var(--iw-color-gray-700);
+  --iw-color-border-focus: var(--iw-color-primary-500);
+
+  --iw-color-primary: var(--iw-color-primary-500);
+  --iw-color-primary-hover: var(--iw-color-primary-400);
+  --iw-color-primary-active: var(--iw-color-primary-300);
+  --iw-color-primary-text: var(--iw-color-black);
+
+  --iw-color-accent: #ff00ff;
+  --iw-color-accent-hover: #ff33ff;
+  --iw-color-accent-active: #ff66ff;
+
+  /* ========================================
+     COMPONENT TOKENS
+     ======================================== */
+
+  /* Button */
+  --iw-button-bg: var(--iw-color-primary);
+  --iw-button-bg-hover: var(--iw-color-primary-hover);
+  --iw-button-bg-active: var(--iw-color-primary-active);
+  --iw-button-text: var(--iw-color-primary-text);
+  --iw-button-border: var(--iw-color-primary);
+  --iw-button-radius: var(--iw-radius-none);
+  --iw-button-shadow: none;
+  --iw-button-shadow-hover:
+    0 0 10px var(--iw-color-primary), 0 0 20px var(--iw-color-primary);
+  --iw-button-shadow-active: 0 0 5px var(--iw-color-primary);
+
+  --iw-button-outline-bg: transparent;
+  --iw-button-outline-bg-hover: var(--iw-color-primary);
+  --iw-button-outline-text: var(--iw-color-primary);
+  --iw-button-outline-text-hover: var(--iw-color-black);
+  --iw-button-outline-border: var(--iw-color-primary);
+
+  --iw-button-ghost-bg: transparent;
+  --iw-button-ghost-bg-hover: rgba(0, 255, 136, 0.1);
+  --iw-button-ghost-text: var(--iw-color-primary);
+  --iw-button-ghost-border: transparent;
+
+  /* Input */
+  --iw-input-bg: var(--iw-color-bg-tertiary);
+  --iw-input-bg-hover: var(--iw-color-bg-secondary);
+  --iw-input-bg-focus: var(--iw-color-bg-tertiary);
+  --iw-input-text: var(--iw-color-text);
+  --iw-input-text-placeholder: var(--iw-color-text-muted);
+  --iw-input-border: var(--iw-color-border);
+  --iw-input-border-hover: var(--iw-color-gray-600);
+  --iw-input-border-focus: var(--iw-color-primary);
+  --iw-input-radius: var(--iw-radius-none);
+  --iw-input-shadow-focus:
+    0 0 0 1px var(--iw-color-primary), 0 0 10px rgba(0, 255, 136, 0.3);
+
+  /* Card */
+  --iw-card-bg: var(--iw-color-surface);
+  --iw-card-border: var(--iw-color-border);
+  --iw-card-radius: var(--iw-radius-none);
+  --iw-card-shadow: var(--iw-shadow-lg);
+  --iw-card-shadow-hover: var(--iw-shadow-xl), 0 0 15px rgba(0, 255, 136, 0.1);
+
+  /* Badge */
+  --iw-badge-radius: var(--iw-radius-none);
+
+  /* Alert */
+  --iw-alert-radius: var(--iw-radius-none);
+  --iw-alert-shadow: 0 0 10px currentColor;
+}
+
+/* Dark mode is default for Inglorious theme */
+.iw-theme-inglorious {
+  color-scheme: dark;
+}
+
+/* Light variant */
+.iw-theme-inglorious.iw-theme-light {
+  --iw-color-bg: var(--iw-color-white);
+  --iw-color-bg-secondary: var(--iw-color-gray-50);
+  --iw-color-bg-tertiary: var(--iw-color-gray-100);
+  --iw-color-surface: var(--iw-color-white);
+  --iw-color-surface-hover: var(--iw-color-gray-50);
+  --iw-color-surface-active: var(--iw-color-gray-100);
+  --iw-color-text: var(--iw-color-gray-900);
+  --iw-color-text-secondary: var(--iw-color-gray-600);
+  --iw-color-text-muted: var(--iw-color-gray-500);
+  --iw-color-border: var(--iw-color-gray-300);
+  --iw-color-primary-text: var(--iw-color-black);
+
+  --iw-input-bg: var(--iw-color-white);
+  --iw-input-bg-hover: var(--iw-color-gray-50);
+  --iw-input-bg-focus: var(--iw-color-white);
+
+  --iw-button-shadow-hover: 0 0 10px var(--iw-color-primary);
+  --iw-card-shadow-hover: var(--iw-shadow-xl), 0 0 15px rgba(0, 255, 136, 0.2);
+}
