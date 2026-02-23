@@ -12,7 +12,12 @@ import { ref } from "lit-html/directives/ref.js"
 import { repeat } from "lit-html/directives/repeat.js"
 
 import { filters } from "./filters.js"
-import { getPaginationInfo, getRows, getSortDirection } from "./helpers.js"
+import {
+  getPaginationInfo,
+  getRowKeyValue,
+  getRows,
+  getSortDirection,
+} from "./helpers.js"
 
 const DIVISOR = 2
 const FIRST_PAGE = 0
@@ -138,7 +143,7 @@ export function renderBody(entity, api) {
   return html`<div class="iw-table-body">
     ${repeat(
       getRows(entity),
-      (row) => row.id,
+      (row) => getRowKeyValue(entity, row),
       (row, index) => type.renderRow(entity, { row, index }, api),
     )}
   </div>`
@@ -155,7 +160,7 @@ export function renderBody(entity, api) {
  */
 export function renderRow(entity, { row, index }, api) {
   const type = api.getType(entity.type)
-  const rowId = row[entity.rowId ?? "id"]
+  const rowId = getRowKeyValue(entity, row)
 
   return html`<div
     @click=${() => api.notify(`#${entity.id}:rowToggle`, rowId)}

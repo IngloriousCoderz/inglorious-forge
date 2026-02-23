@@ -5,7 +5,7 @@
  * @typedef {import('../../types/table').TableColumn} TableColumn
  */
 
-import { getRows, getTotalRows } from "./helpers.js"
+import { getRowKeyValue, getRows, getTotalRows } from "./helpers.js"
 
 /**
  * Resets the table entity with default state.
@@ -190,19 +190,23 @@ export function rowToggle(entity, rowId) {
  */
 export function rowsToggleAll(entity) {
   const rows = getRows(entity)
-  const allSelected = rows.every((row) => entity.selection.includes(row.id))
+  const allSelected = rows.every((row) =>
+    entity.selection.includes(getRowKeyValue(entity, row)),
+  )
 
   if (allSelected) {
     // Deselect all visible
     rows.forEach((row) => {
-      const index = entity.selection.indexOf(row.id)
+      const rowId = getRowKeyValue(entity, row)
+      const index = entity.selection.indexOf(rowId)
       if (index !== -1) entity.selection.splice(index, 1)
     })
   } else {
     // Select all visible
     rows.forEach((row) => {
-      if (!entity.selection.includes(row.id)) {
-        entity.selection.push(row.id)
+      const rowId = getRowKeyValue(entity, row)
+      if (!entity.selection.includes(rowId)) {
+        entity.selection.push(rowId)
       }
     })
   }
@@ -215,8 +219,9 @@ export function rowsToggleAll(entity) {
 export function rowsSelectAll(entity) {
   const rows = getRows(entity)
   rows.forEach((row) => {
-    if (!entity.selection.includes(row.id)) {
-      entity.selection.push(row.id)
+    const rowId = getRowKeyValue(entity, row)
+    if (!entity.selection.includes(rowId)) {
+      entity.selection.push(rowId)
     }
   })
 }
@@ -235,6 +240,7 @@ export function selectionClear(entity) {
  */
 function initTable(entity) {
   entity.data ??= []
+  entity.rowId ??= "id"
 
   // Auto-generate columns from first data item if not provided
   if (!entity.columns && entity.data.length) {
@@ -278,6 +284,8 @@ function initTable(entity) {
   if (entity.pagination) {
     entity.pagination.page ??= 0
   }
+
+  assertRowKeys(entity)
 }
 
 /**
@@ -328,4 +336,29 @@ function getDefaultColumnWidth(filterType) {
 function capitalize(str) {
   const [firstChar, ...rest] = str
   return [firstChar.toUpperCase(), ...rest].join("")
+}
+
+/**
+ * Ensures all rows have unique and stable keys.
+ * @param {TableEntity} entity
+ */
+function assertRowKeys(entity) {
+  if (!entity.data.length) return
+
+  const seen = new Set()
+  entity.data.forEach((row, index) => {
+    const rowKey = getRowKeyValue(entity, row)
+    const isValidType = typeof rowKey === "string" || typeof rowKey === "number"
+    if (!isValidType) {
+      throw new Error(
+        `[table] Invalid row key at row ${index} for field "${entity.rowId}". Keys must be string or number. Set entity.rowId to a stable key field.`,
+      )
+    }
+    if (seen.has(rowKey)) {
+      throw new Error(
+        `[table] Duplicate row key "${rowKey}" for field "${entity.rowId}". Keys must be unique.`,
+      )
+    }
+    seen.add(rowKey)
+  })
 }

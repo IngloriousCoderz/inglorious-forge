@@ -1,4 +1,15 @@
 /* eslint-disable no-magic-numbers */
+
+/**
+ * Gets the row key value based on table rowId.
+ * @param {TableEntity} entity
+ * @param {any} row
+ * @returns {string|number}
+ */
+export function getRowKeyValue(entity, row) {
+  return row?.[entity.rowId]
+}
+
 /**
  * Gets the processed rows (filtered, searched, sorted, paginated).
  * @param {TableEntity} entity
@@ -100,7 +111,10 @@ export function isRowSelected(entity, rowId) {
  */
 export function isAllSelected(entity) {
   const rows = getRows(entity)
-  return rows.length && rows.every((row) => entity.selection.includes(row.id))
+  return (
+    rows.length &&
+    rows.every((row) => entity.selection.includes(getRowKeyValue(entity, row)))
+  )
 }
 
 /**
@@ -111,7 +125,7 @@ export function isAllSelected(entity) {
 export function isSomeSelected(entity) {
   const rows = getRows(entity)
   const selectedCount = rows.filter((row) =>
-    entity.selection.includes(row.id),
+    entity.selection.includes(getRowKeyValue(entity, row)),
   ).length
   return selectedCount && selectedCount < rows.length
 }

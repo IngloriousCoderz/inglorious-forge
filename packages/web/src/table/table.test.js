@@ -75,6 +75,39 @@ describe("table", () => {
         expect(newEntity.columns[0].id).toBe("id")
         expect(newEntity.columns[0].title).toBe("Id")
       })
+
+      it("should throw when rows do not have a valid default id key", () => {
+        const newEntity = {
+          data: [{ name: "No id" }],
+        }
+        expect(() => table.create(newEntity)).toThrow(
+          'for field "id". Keys must be string or number',
+        )
+      })
+
+      it("should throw when row keys are duplicated", () => {
+        const newEntity = {
+          rowId: "uuid",
+          data: [
+            { uuid: "same", name: "A" },
+            { uuid: "same", name: "B" },
+          ],
+        }
+        expect(() => table.create(newEntity)).toThrow(
+          'Duplicate row key "same" for field "uuid"',
+        )
+      })
+
+      it("should support custom rowId", () => {
+        const newEntity = {
+          rowId: "uuid",
+          data: [
+            { uuid: "a1", name: "A" },
+            { uuid: "b1", name: "B" },
+          ],
+        }
+        expect(() => table.create(newEntity)).not.toThrow()
+      })
     })
 
     describe("sortChange()", () => {
@@ -201,6 +234,23 @@ describe("table", () => {
         table.rowsToggleAll(entity)
         expect(entity.selection).toEqual([])
       })
+
+      it("rowsToggleAll: should use custom rowId keys", () => {
+        const customEntity = {
+          id: "custom-table",
+          type: "table",
+          rowId: "uuid",
+          data: [
+            { uuid: "u1", name: "Alice" },
+            { uuid: "u2", name: "Bob" },
+          ],
+          columns: [{ id: "name", title: "Name", isFilterable: false }],
+          pagination: { page: 0, pageSize: 10 },
+        }
+        table.create(customEntity)
+        table.rowsToggleAll(customEntity)
+        expect(customEntity.selection).toEqual(["u1", "u2"])
+      })
     })
 
     describe("getters and selectors", () => {
@@ -257,6 +307,26 @@ describe("table", () => {
         expect(isSomeSelected(entity)).toBe(true)
         entity.selection = [1, 2]
         expect(isSomeSelected(entity)).toBe(false) // All are selected
+      })
+
+      it("isAllSelected/isSomeSelected: should use custom rowId keys", () => {
+        const customEntity = {
+          id: "custom-table",
+          type: "table",
+          rowId: "uuid",
+          data: [
+            { uuid: "u1", name: "Alice" },
+            { uuid: "u2", name: "Bob" },
+          ],
+          columns: [{ id: "name", title: "Name", isFilterable: false }],
+          pagination: { page: 0, pageSize: 10 },
+          selection: ["u1"],
+        }
+        table.create(customEntity)
+        expect(isSomeSelected(customEntity)).toBe(true)
+
+        customEntity.selection = ["u1", "u2"]
+        expect(isAllSelected(customEntity)).toBe(true)
       })
     })
   })
