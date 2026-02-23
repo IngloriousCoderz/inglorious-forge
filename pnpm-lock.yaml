@@ -1659,6 +1659,9 @@ importers:
 
   packages/ssx:
     dependencies:
+      "@inglorious/logo":
+        specifier: ^2.0.36
+        version: 2.0.36
       "@inglorious/web":
         specifier: workspace:*
         version: link:../web
@@ -3466,6 +3469,36 @@ packages:
     engines: { node: ^18.17.0 || ^20.3.0 || >=21.0.0 }
     cpu: [x64]
     os: [win32]
+
+  "@inglorious/logo@2.0.36":
+    resolution:
+      {
+        integrity: sha512-0vWahsL30YYk7w/avco9vdv2tbbLyWaNbi668maExrpwy0MPUEGfRpU/1D9Cg/P9Eh2sUUUAp9aJnPde616DEA==,
+      }
+    engines: { node: ">= 22" }
+
+  "@inglorious/store@9.6.0":
+    resolution:
+      {
+        integrity: sha512-kiwV9GeGXBYY3Wyy9CiEsbtkZolHaXzSqi+OKEXTjviMUQCyGiqxB3oopTkKHBPu8yltwaAw0A3P0HRESvGlmQ==,
+      }
+    engines: { node: ">= 22" }
+    peerDependencies:
+      "@inglorious/utils": 3.7.3
+
+  "@inglorious/utils@3.7.3":
+    resolution:
+      {
+        integrity: sha512-m1cBmc0FM9L3sQ1M1wnt7AlyDh4/3FV1AA1Nl6QVfMhR5iAXHxnOKF8SoGAtZBa9bkEvdCAlXqiesi6dT97vFg==,
+      }
+    engines: { node: ">= 22" }
+
+  "@inglorious/web@4.4.0":
+    resolution:
+      {
+        integrity: sha512-2GLVGkrTaenuUwbFuhhp7suPQI/Y3dtsxRSgXA08kXGmmZKUFFB12X3MPWYAQvEWi2tDVJmVRSySOgNplkrhUQ==,
+      }
+    engines: { node: ">= 22" }
 
   "@inquirer/external-editor@1.0.3":
     resolution:
@@ -12534,6 +12567,29 @@ snapshots:
 
   "@img/sharp-win32-x64@0.34.5":
     optional: true
+
+  "@inglorious/logo@2.0.36":
+    dependencies:
+      "@inglorious/web": 4.4.0
+
+  "@inglorious/store@9.6.0(@inglorious/utils@3.7.3)":
+    dependencies:
+      "@inglorious/utils": 3.7.3
+      mutative: 1.3.0
+
+  "@inglorious/utils@3.7.3": {}
+
+  "@inglorious/web@4.4.0":
+    dependencies:
+      "@inglorious/store": 9.6.0(@inglorious/utils@3.7.3)
+      "@inglorious/utils": 3.7.3
+      "@lit-labs/ssr-client": 1.1.8
+      d3-array: 3.2.4
+      d3-format: 3.1.0
+      d3-scale: 4.0.2
+      d3-shape: 3.2.0
+      d3-time-format: 4.1.0
+      lit-html: 3.3.1
 
   "@inquirer/external-editor@1.0.3(@types/node@24.8.0)":
     dependencies:

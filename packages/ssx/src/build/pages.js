@@ -14,11 +14,16 @@ import { extractPageMetadata } from "./metadata.js"
  * @param {Object} [options] - Generation options.
  * @param {boolean} [options.shouldGenerateHtml=true] - Whether to generate HTML.
  * @param {boolean} [options.shouldGenerateMetadata=true] - Whether to generate metadata.
+ * @param {Object} [options.originalEntities] - Original entities from entities.js.
  * @param {Function} [loader] - Optional loader function.
  * @returns {Promise<Array<Object>>} The processed pages with `html` and `metadata` properties added.
  */
 export async function generatePages(store, pages, options = {}, loader) {
-  const { shouldGenerateHtml = true, shouldGenerateMetadata = true } = options
+  const {
+    shouldGenerateHtml = true,
+    shouldGenerateMetadata = true,
+    originalEntities = {},
+  } = options
   const load = loader || ((p) => import(pathToFileURL(path.resolve(p))))
 
   const api = store._api
@@ -43,6 +48,7 @@ export async function generatePages(store, pages, options = {}, loader) {
     if (shouldGenerateHtml) {
       const html = await renderPage(store, page, entity, {
         ...options,
+        originalEntities,
         wrap: true,
       })
       page.html = html

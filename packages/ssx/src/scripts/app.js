@@ -1,14 +1,23 @@
+import { getStoreStuff } from "../store/stuff.js"
+
 /**
  * Generates the client-side entry point script.
  * This script hydrates the store with the initial state (entities) and sets up the router.
  *
  * @param {Array<Object>} pages - List of page objects to generate routes for.
  * @param {Object} [options] - Runtime options.
+ * @param {boolean} [options.hasTypesFile] - Whether src/store/types.js exists.
+ * @param {boolean} [options.hasEntitiesFile] - Whether src/store/entities.js exists.
  * @returns {string} The generated JavaScript code for the client entry point.
  */
-export function generateApp(pages, options = {}) {
+export async function generateApp(pages, options = {}, loader) {
   const i18n = options.i18n || inferI18nFromPages(pages)
   const isDev = Boolean(options.isDev)
+
+  const types = await getStoreStuff("types", options, loader)
+  const hasTypesFile = Object.keys(types).length
+  const entities = await getStoreStuff("entities", options, loader)
+  const hasEntitiesFile = Object.keys(entities).length
 
   // Build client route map, including localized patterns (e.g. /it/about).
   const routesByPattern = new Map()
@@ -22,10 +31,29 @@ export function generateApp(pages, options = {}) {
   }
   const routes = [...routesByPattern.values()]
 
+  const typesImport = hasTypesFile
+    ? `import { types as additionalTypes } from "@/store/types.js"`
+    : ""
+
+  const entitiesImport = hasEntitiesFile
+    ? `import { entities as additionalEntities } from "@/store/entities.js"`
+    : ""
+
+  const typesAssignment = hasTypesFile
+    ? `Object.assign(types, additionalTypes)`
+    : ""
+
+  const entitiesAssignment = hasEntitiesFile
+    ? `Object.assign(entities, additionalEntities)`
+    : ""
+
   return `import "@inglorious/web/hydrate"
 import { createDevtools, createStore, mount } from "@inglorious/web"
 import { getRoute, router, setRoutes } from "@inglorious/web/router"
 import { getLocaleFromPath } from "@inglorious/ssx/i18n"
+
+${typesImport}
+${entitiesImport}
 
 const normalizePathname = (path = "/") => path.split("?")[0].split("#")[0]
 const normalizeRoutePath = (path = "/") => {
@@ -50,24 +78,18 @@ const path = normalizeRoutePath(window.location.pathname)
 const page = pages.find((page) => normalizeRoutePath(page.path) === path)
 
 const types = { router }
+${typesAssignment}
 
 const i18n = ${JSON.stringify(i18n, null, 2)}
 const isDev = ${JSON.stringify(isDev)}
 
-const ssxEntity = JSON.parse(document.getElementById("__SSX_ENTITY__").textContent)
-
 const entities = {
-  router: {
-    type: "router",
-    path,
-    route: page?.moduleName,
-  },
-  i18n: {
-    type: "i18n",
-    ...i18n,
-  },
-  ...ssxEntity,
+  router: { type: "router", path, route: page?.moduleName },
+  i18n: { type: "i18n", ...i18n },
 }
+${entitiesAssignment}
+Object.assign(entities, JSON.parse(document.getElementById("__SSX_PAGE__").textContent))
+
 
 const middlewares = []
 if (isDev) {

@@ -1,5 +1,5 @@
 /**
- * @typedef {import("./render").LogoEntity} LogoEntity
+ * @typedef {import("./template.js").LogoEntity} LogoEntity
  *
  * @typedef {Object} Api
  * @property {(id: string) => LogoEntity} getEntity

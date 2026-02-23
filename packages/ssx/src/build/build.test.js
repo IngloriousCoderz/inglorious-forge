@@ -56,7 +56,12 @@ describe("build", () => {
     loadManifest.mockResolvedValue(null) // First build
     getPages.mockResolvedValue([{ path: "/" }])
     hashEntities.mockResolvedValue("hash")
-    generateStore.mockResolvedValue({})
+    generateStore.mockResolvedValue({
+      store: {},
+      entities: {},
+      hasTypesFile: false,
+      hasEntitiesFile: false,
+    })
     generatePages
       .mockResolvedValueOnce([{ path: "/", html: "<html></html>" }])
       .mockResolvedValueOnce([])

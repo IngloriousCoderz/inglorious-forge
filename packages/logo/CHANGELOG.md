@@ -1,5 +1,11 @@
 # @inglorious/logo
 
+## 2.1.0
+
+### Minor Changes
+
+- Allow for custom types and entities in SSX
+
 ## 2.0.36
 
 ### Patch Changes

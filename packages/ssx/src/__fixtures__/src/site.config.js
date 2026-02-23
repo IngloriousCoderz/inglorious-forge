@@ -143,6 +143,10 @@ export default {
       port: 3000,
       open: true, // Open browser on start
     },
+
+    ssr: {
+      noExternal: ["@inglorious/logo"], // Force Vite to process this package
+    },
   },
 
   markdown: {

@@ -41,10 +41,10 @@ export async function toHTML(store, renderFn, options = {}) {
   const layout = options.layout ?? defaultLayout
   let html = layout(finalHTML, options)
 
-  if (options.ssxEntity) {
+  if (options.ssxPage) {
     html = html.replace(
       /<body[^>]*>/,
-      `$&<script type="application/json" id="__SSX_ENTITY__">${JSON.stringify(options.ssxEntity)}</script>`,
+      `$&<script type="application/json" id="__SSX_PAGE__">${JSON.stringify(options.ssxPage)}</script>`,
     )
   }
 

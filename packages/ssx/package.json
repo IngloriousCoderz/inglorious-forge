@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/ssx",
-  "version": "1.9.0",
+  "version": "1.10.0",
   "description": "Server-Side-X. Xecution? Xperience? Who knows.",
   "author": "IceOnFire <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -57,6 +57,7 @@
     "preview": "node ./bin/ssx.js serve -r ./src/__fixtures__"
   },
   "dependencies": {
+    "@inglorious/logo": "^2.1.0",
     "@inglorious/web": "workspace:*",
     "@lit-labs/ssr": "^4.0.0",
     "commander": "^14.0.2",

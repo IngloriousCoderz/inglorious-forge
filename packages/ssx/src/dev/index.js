@@ -80,7 +80,11 @@ export async function dev(options = {}) {
       }
 
       // Generate and update the virtual app file BEFORE rendering
-      const app = generateApp(pages, { ...mergedOptions, isDev: true })
+      const app = await generateApp(
+        pages,
+        { ...mergedOptions, isDev: true },
+        loader,
+      )
       virtualFiles.set("/main.js", app)
 
       // Invalidate the virtual module to ensure Vite picks up changes

@@ -75,7 +75,7 @@ describe("generateApp", () => {
       { ...page, path: "/pt/hello", locale: "pt" },
     ]
 
-    const app = generateApp(localizedPages)
+    const app = await generateApp(localizedPages)
 
     expect(app).toContain(`"/hello": () => import("@/pages/hello.js")`)
     expect(app).toContain(`"/it/hello": () => import("@/pages/hello.js")`)
