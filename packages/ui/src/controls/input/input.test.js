@@ -1,16 +1,19 @@
+import { augmentType } from "@inglorious/store/types"
 import { createMockApi, render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
 import { input } from "."
 
 describe("input", () => {
+  const type = augmentType(input)
+
   describe("render", () => {
     it("renders label and input", () => {
       const entity = { id: "email", name: "email", label: "Email" }
       const api = createMockApi({ [entity.id]: entity })
       const container = document.createElement("div")
 
-      render(input.render(entity, api), container)
+      render(type.render(entity, api), container)
 
       const labelElement = container.querySelector("label")
       const inputElement = container.querySelector("input")
@@ -23,7 +26,7 @@ describe("input", () => {
       const api = createMockApi({ [entity.id]: entity })
       const container = document.createElement("div")
 
-      render(input.render(entity, api), container)
+      render(type.render(entity, api), container)
 
       const inputElement = container.querySelector("input")
       expect(inputElement.classList.contains("iw-input-sm")).toBe(true)
@@ -34,7 +37,7 @@ describe("input", () => {
       const api = createMockApi({ [entity.id]: entity })
       const container = document.createElement("div")
 
-      render(input.render(entity, api), container)
+      render(type.render(entity, api), container)
 
       const inputElement = container.querySelector("input")
       const errorElement = container.querySelector(".iw-input-error-message")
@@ -47,7 +50,7 @@ describe("input", () => {
       const api = createMockApi({ [entity.id]: entity })
       const container = document.createElement("div")
 
-      render(input.render(entity, api), container)
+      render(type.render(entity, api), container)
 
       const icons = container.querySelectorAll(".iw-input-icon")
       expect(icons.length).toBe(2)
@@ -61,7 +64,7 @@ describe("input", () => {
       const api = createMockApi({ [entity.id]: entity })
       const container = document.createElement("div")
 
-      render(input.render(entity, api), container)
+      render(type.render(entity, api), container)
 
       const inputElement = container.querySelector("input")
       inputElement.value = "abc"

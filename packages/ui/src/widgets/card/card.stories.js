@@ -1,12 +1,17 @@
 import { html } from "@inglorious/web"
-import { createMockApi, render } from "@inglorious/web/test"
 
+import {
+  makeStoryRender,
+  notifyActionArgType,
+} from "../../stories/notifyStory.js"
 import { card } from "."
 
 export default {
   title: "Widgets/Card",
   tags: ["autodocs"],
+  render: makeStoryRender(card, "story-card"),
   argTypes: {
+    ...notifyActionArgType,
     title: { control: "text" },
     subtitle: { control: "text" },
     hoverable: { control: "boolean" },
@@ -19,16 +24,7 @@ export default {
     },
   },
 }
-
-const Template = (args) => {
-  const container = document.createElement("div")
-  const entity = { id: "story-card", ...args }
-  const api = createMockApi(entity)
-  render(card.render(entity, api), container)
-  return container
-}
-
-export const Default = Template.bind({})
+export const Default = {}
 Default.args = {
   title: "Card Title",
   subtitle: "This is a card subtitle",
@@ -37,64 +33,82 @@ Default.args = {
   fullWidth: false,
 }
 
-export const Hoverable = Template.bind({})
+export const Hoverable = {}
 Hoverable.args = {
   ...Default.args,
   hoverable: true,
 }
 
-export const Clickable = Template.bind({})
+export const Clickable = {}
 Clickable.args = {
   ...Default.args,
   hoverable: true,
   clickable: true,
 }
 
-export const WithFooter = () => {
-  const container = document.createElement("div")
-  const entity = {
-    id: "card-footer",
-    title: "Card with Footer",
-    subtitle: "This card has a footer section",
-    footer: html`<div style="display: flex; gap: 0.5rem;">
-      <button class="iw-button iw-button-sm iw-button-ghost">Cancel</button>
-      <button class="iw-button iw-button-sm">Save</button>
-    </div>`,
-  }
-  const api = createMockApi(entity)
-  render(card.render(entity, api), container)
-  return container
+const cardWithFooter = [
+  ...card,
+  {
+    renderFooter(entity, api) {
+      return html`<div
+        class="iw-card-footer"
+        style="display: flex; gap: 0.5rem;"
+      >
+        ${entity.footerActions?.map(
+          (action) =>
+            html`<button
+              class="iw-button iw-button-sm ${action.variant === "ghost"
+                ? "iw-button-ghost"
+                : ""}"
+              @click=${() => api.notify(`#${entity.id}:${action.event}`)}
+            >
+              ${action.label}
+            </button>`,
+        )}
+      </div>`
+    },
+  },
+]
+
+export const WithFooter = {}
+WithFooter.render = makeStoryRender(cardWithFooter, "card-footer", {
+  resolveByEntityType: true,
+})
+WithFooter.args = {
+  type: "cardWithFooter",
+  title: "Card with Footer",
+  subtitle: "This card has a footer section",
+  footerActions: [
+    { label: "Cancel", event: "cancel", variant: "ghost" },
+    { label: "Save", event: "save" },
+  ],
 }
 
-export const NoHeader = Template.bind({})
+export const NoHeader = {}
 NoHeader.args = {
   title: null,
   subtitle: null,
 }
 
-export const FullWidth = Template.bind({})
+export const FullWidth = {}
 FullWidth.args = {
   ...Default.args,
   fullWidth: true,
 }
 
-export const CardGrid = () => {
-  const container = document.createElement("div")
-  container.style.display = "grid"
-  container.style.gridTemplateColumns = "repeat(auto-fit, minmax(250px, 1fr))"
-  container.style.gap = "1rem"
-
-  const cards = [
-    { title: "Card 1", subtitle: "First card" },
-    { title: "Card 2", subtitle: "Second card", hoverable: true },
-    { title: "Card 3", subtitle: "Third card", clickable: true },
-  ]
-
-  cards.forEach((cardData, index) => {
-    const entity = { id: `grid-card-${index}`, ...cardData }
-    const api = createMockApi(entity)
-    render(card.render(entity, api), container)
-  })
-
-  return container
+export const Interactive = {}
+Interactive.render = makeStoryRender(cardWithFooter, "card-interactive", {
+  resolveByEntityType: true,
+})
+Interactive.args = {
+  type: "cardWithFooter",
+  title: "Interactive Card",
+  subtitle: "Hover, click, and trigger footer actions",
+  hoverable: true,
+  clickable: true,
+  fullWidth: false,
+  footerActions: [
+    { label: "Details", event: "details", variant: "ghost" },
+    { label: "Open", event: "open" },
+  ],
 }

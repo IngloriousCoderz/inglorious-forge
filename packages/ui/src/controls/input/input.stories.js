@@ -1,11 +1,15 @@
-import { createMockApi, render } from "@inglorious/web/test"
-
+import {
+  makeStoryRender,
+  notifyActionArgType,
+} from "../../stories/notifyStory.js"
 import { input } from "."
 
 export default {
   title: "Controls/Input",
   tags: ["autodocs"],
+  render: makeStoryRender(input, "story-input"),
   argTypes: {
+    ...notifyActionArgType,
     label: { control: "text" },
     placeholder: { control: "text" },
     name: { control: "text" },
@@ -26,16 +30,7 @@ export default {
     fullWidth: { control: "boolean" },
   },
 }
-
-const Template = (args) => {
-  const container = document.createElement("div")
-  const entity = { id: "story-input", ...args }
-  const api = createMockApi(entity)
-  render(input.render(entity, api), container)
-  return container
-}
-
-export const Default = Template.bind({})
+export const Default = {}
 Default.args = {
   label: "Username",
   placeholder: "Enter your username",
@@ -51,7 +46,7 @@ Default.args = {
   fullWidth: false,
 }
 
-export const WithHint = Template.bind({})
+export const WithHint = {}
 WithHint.args = {
   ...Default.args,
   label: "Email",
@@ -60,7 +55,7 @@ WithHint.args = {
   hint: "We'll never share your email",
 }
 
-export const WithError = Template.bind({})
+export const WithError = {}
 WithError.args = {
   ...Default.args,
   label: "Email",
@@ -69,7 +64,7 @@ WithError.args = {
   error: "Please enter a valid email address",
 }
 
-export const Required = Template.bind({})
+export const Required = {}
 Required.args = {
   ...Default.args,
   label: "Password",
@@ -78,7 +73,7 @@ Required.args = {
   required: true,
 }
 
-export const Disabled = Template.bind({})
+export const Disabled = {}
 Disabled.args = {
   ...Default.args,
   label: "Disabled Input",
@@ -86,7 +81,7 @@ Disabled.args = {
   value: "Cannot edit",
 }
 
-export const Readonly = Template.bind({})
+export const Readonly = {}
 Readonly.args = {
   ...Default.args,
   label: "Readonly Input",
@@ -94,21 +89,21 @@ Readonly.args = {
   value: "Read-only value",
 }
 
-export const Small = Template.bind({})
+export const Small = {}
 Small.args = {
   ...Default.args,
   label: "Small Input",
   size: "sm",
 }
 
-export const Large = Template.bind({})
+export const Large = {}
 Large.args = {
   ...Default.args,
   label: "Large Input",
   size: "lg",
 }
 
-export const FullWidth = Template.bind({})
+export const FullWidth = {}
 FullWidth.args = {
   ...Default.args,
   label: "Full Width Input",

@@ -1,11 +1,15 @@
-import { createMockApi, render } from "@inglorious/web/test"
-
+import {
+  makeStoryRender,
+  notifyActionArgType,
+} from "../../stories/notifyStory.js"
 import { button } from "."
 
 export default {
   title: "Controls/Button",
   tags: ["autodocs"],
+  render: makeStoryRender(button, "story-button"),
   argTypes: {
+    ...notifyActionArgType,
     label: { control: "text" },
     variant: {
       control: "select",
@@ -32,16 +36,7 @@ export default {
     },
   },
 }
-
-const Template = (args) => {
-  const container = document.createElement("div")
-  const entity = { id: "story-button", ...args }
-  const api = createMockApi(entity)
-  render(button.render(entity, api), container)
-  return container
-}
-
-export const Default = Template.bind({})
+export const Default = {}
 Default.args = {
   label: "Button",
   variant: "default",
@@ -52,49 +47,49 @@ Default.args = {
   type: "button",
 }
 
-export const Outline = Template.bind({})
+export const Outline = {}
 Outline.args = {
   ...Default.args,
   variant: "outline",
 }
 
-export const Ghost = Template.bind({})
+export const Ghost = {}
 Ghost.args = {
   ...Default.args,
   variant: "ghost",
 }
 
-export const Small = Template.bind({})
+export const Small = {}
 Small.args = {
   ...Default.args,
   size: "sm",
 }
 
-export const Large = Template.bind({})
+export const Large = {}
 Large.args = {
   ...Default.args,
   size: "lg",
 }
 
-export const Secondary = Template.bind({})
+export const Secondary = {}
 Secondary.args = {
   ...Default.args,
   color: "secondary",
 }
 
-export const Success = Template.bind({})
+export const Success = {}
 Success.args = {
   ...Default.args,
   color: "success",
 }
 
-export const Disabled = Template.bind({})
+export const Disabled = {}
 Disabled.args = {
   ...Default.args,
   disabled: true,
 }
 
-export const FullWidth = Template.bind({})
+export const FullWidth = {}
 FullWidth.args = {
   ...Default.args,
   label: "Full Width Button",

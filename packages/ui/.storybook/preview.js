@@ -6,8 +6,14 @@ import "@inglorious/ui/button.css"
 import "@inglorious/ui/input.css"
 import "@inglorious/ui/card.css"
 
+export default {
+  tags: ["autodocs"],
+}
+
 export const parameters = {
-  actions: { argTypesRegex: "^on[A-Z].*" },
+  actions: {
+    argTypesRegex: "^on[A-Z].*",
+  },
   controls: {
     matchers: {
       color: /(background|color)$/i,

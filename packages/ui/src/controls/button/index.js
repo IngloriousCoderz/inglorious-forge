@@ -1,3 +1,4 @@
-import { render } from "./template.js"
+import { withRenderValidation } from "../../shared/withRenderValidation.js"
+import * as renderers from "./template.js"
 
-export const button = { render }
+export const button = [{ ...renderers }, withRenderValidation]

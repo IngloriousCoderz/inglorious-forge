@@ -5,6 +5,7 @@ import { defineMain } from "@storybook/web-components-vite/node"
 
 export default defineMain({
   stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
+  addons: ["@storybook/addon-docs"],
   framework: {
     name: getAbsolutePath("@storybook/web-components-vite"),
     options: {
