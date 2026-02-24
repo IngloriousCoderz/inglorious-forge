@@ -16,6 +16,7 @@ export interface InputEntity {
   fullWidth?: boolean
   icon?: string
   iconAfter?: string
+  [key: string]: unknown
 }
 
 export interface InputType {

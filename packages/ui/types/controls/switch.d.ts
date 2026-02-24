@@ -7,6 +7,7 @@ export interface SwitchEntity {
   checked?: boolean
   disabled?: boolean
   size?: "sm" | "md" | "lg"
+  [key: string]: unknown
 }
 
 export interface SwitchType {

@@ -9,6 +9,7 @@ export interface FabEntity {
   type?: "button" | "submit" | "reset" | "menu"
   extended?: boolean
   ariaLabel?: string
+  [key: string]: unknown
 }
 
 export interface FabType {

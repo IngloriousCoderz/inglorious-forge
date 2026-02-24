@@ -4,7 +4,8 @@
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
-import { classMap, html } from "@inglorious/web"
+import { classMap, html, ref } from "@inglorious/web"
+import { applyElementProps } from "../../shared/applyElementProps.js"
 
 import { buttonPrimitive as button } from "../button/index.js"
 
@@ -26,6 +27,7 @@ export function render(entity, api) {
     variant = "default",
     color = "primary",
     disabled = false,
+    ...rest
   } = entity
 
   const groupClasses = {
@@ -40,10 +42,28 @@ export function render(entity, api) {
     : null
 
   return html`
-    <div class=${classMap(groupClasses)} role="group">
+    <div
+      class=${classMap(groupClasses)}
+      role="group"
+      ${ref((element) => applyElementProps(element, rest))}
+    >
       ${buttons.map((item, index) => {
-        const childId = `${entity.id}-btn-${item.id ?? index}`
-        const itemValue = item.value ?? item.id
+        const {
+          id: itemId,
+          value: explicitValue,
+          label,
+          children,
+          disabled: itemDisabled,
+          variant: itemVariant,
+          color: itemColor,
+          size: itemSize,
+          icon,
+          iconAfter,
+          ...itemRest
+        } = item
+
+        const childId = `${entity.id}-btn-${itemId ?? index}`
+        const itemValue = explicitValue ?? itemId
         const pressed = multiple
           ? selectedValues.has(itemValue)
           : value != null
@@ -74,21 +94,20 @@ export function render(entity, api) {
           {
             id: childId,
             children: html`
-              ${item.icon
-                ? html`<span class="iw-button-icon">${item.icon}</span>`
-                : null}
-              ${item.children ?? item.label}
-              ${item.iconAfter
-                ? html`<span class="iw-button-icon">${item.iconAfter}</span>`
+              ${icon ? html`<span class="iw-button-icon">${icon}</span>` : null}
+              ${children ?? label}
+              ${iconAfter
+                ? html`<span class="iw-button-icon">${iconAfter}</span>`
                 : null}
             `,
-            variant: item.variant ?? variant,
-            color: item.color ?? color,
-            size: item.size ?? size,
-            disabled: disabled || !!item.disabled,
+            variant: itemVariant ?? variant,
+            color: itemColor ?? color,
+            size: itemSize ?? size,
+            disabled: disabled || !!itemDisabled,
             ariaPressed: pressed ? true : undefined,
             className: pressed ? "iw-button-pressed" : "",
             type: "button",
+            ...itemRest,
           },
           childApi,
         )

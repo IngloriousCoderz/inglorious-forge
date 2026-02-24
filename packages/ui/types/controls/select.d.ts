@@ -35,6 +35,7 @@ export interface SelectEntity {
 
   fullWidth?: boolean
   size?: "sm" | "md" | "lg"
+  [key: string]: unknown
 }
 
 export interface SelectType {

@@ -11,6 +11,7 @@ export interface ButtonGroupItem {
   size?: "sm" | "md" | "lg"
   icon?: string
   iconAfter?: string
+  [key: string]: unknown
 }
 
 export interface ButtonGroupEntity {
@@ -24,6 +25,7 @@ export interface ButtonGroupEntity {
   variant?: "default" | "outline" | "ghost"
   color?: "primary" | "secondary" | "success" | "warning" | "error" | "info"
   disabled?: boolean
+  [key: string]: unknown
 }
 
 export interface ButtonGroupType {

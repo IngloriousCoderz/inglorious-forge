@@ -146,6 +146,23 @@ describe("button", () => {
       expect(buttonElement.textContent.trim()).toBe("Custom")
       expect(buttonElement.querySelector(".content")).not.toBeNull()
     })
+
+    it("passes arbitrary attributes to native button", () => {
+      const entity = {
+        id: "btn",
+        children: "Custom attrs",
+        "data-testid": "primary-cta",
+        title: "Primary action",
+      }
+      const api = createMockApi({ [entity.id]: entity })
+      const container = document.createElement("div")
+
+      render(type.render(entity, api), container)
+
+      const buttonElement = container.querySelector("button")
+      expect(buttonElement.getAttribute("data-testid")).toBe("primary-cta")
+      expect(buttonElement.getAttribute("title")).toBe("Primary action")
+    })
   })
 
   describe("click handler", () => {

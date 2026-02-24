@@ -67,6 +67,10 @@
       }
     }
 
+    &.iw-input-number {
+      text-align: right;
+    }
+
     &.iw-input-sm {
       padding: var(--iw-space-1) var(--iw-space-2);
       font-size: var(--iw-font-size-sm);

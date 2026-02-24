@@ -4,6 +4,7 @@ export interface RadioOption {
   label: string
   value: string
   disabled?: boolean
+  [key: string]: unknown
 }
 
 export interface RadioGroupEntity {
@@ -14,6 +15,7 @@ export interface RadioGroupEntity {
   options?: RadioOption[]
   direction?: "column" | "row"
   disabled?: boolean
+  [key: string]: unknown
 }
 
 export interface RadioGroupType {

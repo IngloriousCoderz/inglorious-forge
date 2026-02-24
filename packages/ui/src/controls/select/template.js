@@ -6,6 +6,7 @@
  */
 
 import { classMap, html, ref, repeat, when } from "@inglorious/web"
+import { applyElementProps } from "../../shared/applyElementProps.js"
 
 import {
   filterOptions,
@@ -66,6 +67,7 @@ export function renderControl(entity, api) {
         entity.selectedValue.length,
     })}"
     @click=${() => !entity.isDisabled && api.notify(`#${entity.id}:toggle`)}
+    ${ref((element) => applyElementProps(element, entity.controlProps ?? {}))}
   >
     ${when(
       entity.isMulti,
@@ -372,6 +374,9 @@ function handleKeyDown(entity, event, api) {
  */
 function ensureDefaults(entity) {
   const isMulti = entity.isMulti ?? false
+  const controlProps = Object.fromEntries(
+    Object.entries(entity).filter(([key]) => !KNOWN_SELECT_KEYS.has(key)),
+  )
 
   return {
     ...entity,
@@ -391,5 +396,28 @@ function ensureDefaults(entity) {
     size: entity.size ?? "md",
     fullWidth: entity.fullWidth ?? false,
     label: entity.label ?? "",
+    controlProps,
   }
 }
+
+const KNOWN_SELECT_KEYS = new Set([
+  "id",
+  "type",
+  "label",
+  "options",
+  "isOpen",
+  "searchTerm",
+  "focusedIndex",
+  "isMulti",
+  "selectedValue",
+  "isLoading",
+  "isDisabled",
+  "isSearchable",
+  "isClearable",
+  "placeholder",
+  "noOptionsMessage",
+  "loadingMessage",
+  "fullWidth",
+  "size",
+  "controlProps",
+])

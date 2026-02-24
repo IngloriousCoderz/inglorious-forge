@@ -56,6 +56,39 @@ describe("input", () => {
       expect(icons.length).toBe(2)
       expect(icons[1].classList.contains("iw-input-icon-after")).toBe(true)
     })
+
+    it("applies number class for numeric fields", () => {
+      const entity = { id: "amount", type: "number", value: "42" }
+      const api = createMockApi({ [entity.id]: entity })
+      const container = document.createElement("div")
+
+      render(type.render(entity, api), container)
+
+      const inputElement = container.querySelector("input")
+      expect(inputElement.classList.contains("iw-input-number")).toBe(true)
+    })
+
+    it("passes arbitrary attributes to native input", () => {
+      const entity = {
+        id: "amount",
+        type: "number",
+        value: "42",
+        min: "0",
+        max: "100",
+        step: "0.5",
+        "data-testid": "amount-input",
+      }
+      const api = createMockApi({ [entity.id]: entity })
+      const container = document.createElement("div")
+
+      render(type.render(entity, api), container)
+
+      const inputElement = container.querySelector("input")
+      expect(inputElement.getAttribute("min")).toBe("0")
+      expect(inputElement.getAttribute("max")).toBe("100")
+      expect(inputElement.getAttribute("step")).toBe("0.5")
+      expect(inputElement.getAttribute("data-testid")).toBe("amount-input")
+    })
   })
 
   describe("events", () => {

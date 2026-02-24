@@ -8,6 +8,7 @@ export interface CheckboxEntity {
   disabled?: boolean
   required?: boolean
   size?: "sm" | "md" | "lg"
+  [key: string]: unknown
 }
 
 export interface CheckboxType {

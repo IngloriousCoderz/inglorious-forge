@@ -11,6 +11,7 @@ export interface SliderEntity {
   disabled?: boolean
   showValue?: boolean
   fullWidth?: boolean
+  [key: string]: unknown
 }
 
 export interface SliderType {

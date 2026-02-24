@@ -4,7 +4,9 @@
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
-import { classMap, html } from "@inglorious/web"
+import { classMap, html, ref } from "@inglorious/web"
+
+import { applyElementProps } from "../../shared/applyElementProps.js"
 
 /**
  * Checkbox control for boolean values.
@@ -21,6 +23,7 @@ export function render(entity, api) {
     disabled = false,
     required = false,
     size = "md",
+    ...rest
   } = entity
 
   const inputId = entity.id || name
@@ -43,6 +46,7 @@ export function render(entity, api) {
         ?required=${required}
         @change=${(event) =>
           api.notify(`#${entity.id}:change`, event.target.checked)}
+        ${ref((element) => applyElementProps(element, rest))}
       />
       <span class="iw-checkbox-label">${label}</span>
     </label>

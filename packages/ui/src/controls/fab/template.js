@@ -4,7 +4,9 @@
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
-import { classMap, html } from "@inglorious/web"
+import { classMap, html, ref } from "@inglorious/web"
+
+import { applyElementProps } from "../../shared/applyElementProps.js"
 
 /**
  * Floating action button for primary contextual actions.
@@ -22,6 +24,7 @@ export function render(entity, api) {
     type = "button",
     extended = false,
     ariaLabel,
+    ...rest
   } = entity
 
   const classes = {
@@ -38,6 +41,7 @@ export function render(entity, api) {
       class=${classMap(classes)}
       ?disabled=${disabled}
       @click=${() => api.notify(`#${entity.id}:click`)}
+      ${ref((element) => applyElementProps(element, rest))}
     >
       ${children}
     </button>

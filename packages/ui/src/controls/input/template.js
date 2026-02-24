@@ -4,7 +4,9 @@
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
-import { classMap, html } from "@inglorious/web"
+import { classMap, html, ref } from "@inglorious/web"
+
+import { applyElementProps } from "../../shared/applyElementProps.js"
 
 /**
  * Input component for Inglorious Web.
@@ -38,6 +40,7 @@ export function render(entity, api) {
     fullWidth = false,
     icon,
     iconAfter,
+    ...rest
   } = entity
 
   const inputId = entity.id || name
@@ -55,6 +58,7 @@ export function render(entity, api) {
     "iw-input": true,
     [`iw-input-${size}`]: size !== "md",
     "iw-input-error": !!error,
+    "iw-input-number": type === "number",
   }
 
   return html`
@@ -87,6 +91,7 @@ export function render(entity, api) {
             api.notify(`#${entity.id}:change`, event.target.value)}
           @blur=${() => api.notify(`#${entity.id}:blur`)}
           @focus=${() => api.notify(`#${entity.id}:focus`)}
+          ${ref((element) => applyElementProps(element, rest))}
         />
 
         ${iconAfter

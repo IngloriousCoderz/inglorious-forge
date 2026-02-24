@@ -4,7 +4,9 @@
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
-import { classMap, html } from "@inglorious/web"
+import { classMap, html, ref } from "@inglorious/web"
+
+import { applyElementProps } from "../../shared/applyElementProps.js"
 
 /**
  * Button type for Inglorious Web.
@@ -34,6 +36,7 @@ export function render(entity, api) {
     ariaLabel = "",
     ariaPressed = false,
     className = "",
+    ...rest
   } = entity
 
   const extraClasses = Object.fromEntries(
@@ -61,6 +64,7 @@ export function render(entity, api) {
       class=${classMap(classes)}
       ?disabled=${disabled}
       @click=${() => api.notify(`#${entity.id}:click`)}
+      ${ref((element) => applyElementProps(element, rest))}
     >
       ${children}
     </button>

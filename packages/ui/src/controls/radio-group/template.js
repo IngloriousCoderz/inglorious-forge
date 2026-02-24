@@ -4,7 +4,9 @@
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
-import { classMap, html } from "@inglorious/web"
+import { classMap, html, ref } from "@inglorious/web"
+
+import { applyElementProps } from "../../shared/applyElementProps.js"
 
 /**
  * Radio group control for selecting one option.
@@ -21,6 +23,7 @@ export function render(entity, api) {
     options = [],
     direction = "column",
     disabled = false,
+    ...rest
   } = entity
 
   const rootClasses = {
@@ -30,27 +33,39 @@ export function render(entity, api) {
   }
 
   return html`
-    <fieldset class=${classMap(rootClasses)} ?disabled=${disabled}>
+    <fieldset
+      class=${classMap(rootClasses)}
+      ?disabled=${disabled}
+      ${ref((element) => applyElementProps(element, rest))}
+    >
       ${label
         ? html`<legend class="iw-radio-group-label">${label}</legend>`
         : null}
-      ${options.map(
-        (option) => html`
+      ${options.map((option) => {
+        const {
+          label: optionLabel,
+          value: optionValue,
+          disabled: optionDisabled = false,
+          ...optionRest
+        } = option
+
+        return html`
           <label class="iw-radio-option">
             <input
               class="iw-radio"
               type="radio"
               name=${name}
-              value=${option.value}
-              .checked=${value === option.value}
-              ?disabled=${disabled || !!option.disabled}
+              value=${optionValue}
+              .checked=${value === optionValue}
+              ?disabled=${disabled || optionDisabled}
               @change=${(event) =>
                 api.notify(`#${entity.id}:change`, event.target.value)}
+              ${ref((element) => applyElementProps(element, optionRest))}
             />
-            <span>${option.label}</span>
+            <span>${optionLabel}</span>
           </label>
-        `,
-      )}
+        `
+      })}
     </fieldset>
   `
 }

@@ -12,6 +12,7 @@ export interface ButtonEntity {
   ariaLabel?: string
   ariaPressed?: boolean
   className?: string
+  [key: string]: unknown
 }
 
 export interface ButtonType {

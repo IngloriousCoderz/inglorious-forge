@@ -4,7 +4,9 @@
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
-import { classMap, html } from "@inglorious/web"
+import { classMap, html, ref } from "@inglorious/web"
+
+import { applyElementProps } from "../../shared/applyElementProps.js"
 
 /**
  * Slider control based on native range input.
@@ -24,6 +26,7 @@ export function render(entity, api) {
     disabled = false,
     showValue = true,
     fullWidth = false,
+    ...rest
   } = entity
 
   const inputId = entity.id || name
@@ -56,6 +59,7 @@ export function render(entity, api) {
         ?disabled=${disabled}
         @input=${(event) =>
           api.notify(`#${entity.id}:change`, Number(event.target.value))}
+        ${ref((element) => applyElementProps(element, rest))}
       />
     </div>
   `

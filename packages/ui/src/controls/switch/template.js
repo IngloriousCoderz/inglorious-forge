@@ -4,7 +4,9 @@
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
-import { classMap, html } from "@inglorious/web"
+import { classMap, html, ref } from "@inglorious/web"
+
+import { applyElementProps } from "../../shared/applyElementProps.js"
 
 /**
  * Switch control implemented with a checkbox input.
@@ -20,6 +22,7 @@ export function render(entity, api) {
     checked = false,
     disabled = false,
     size = "md",
+    ...rest
   } = entity
 
   const inputId = entity.id || name
@@ -41,6 +44,7 @@ export function render(entity, api) {
         ?disabled=${disabled}
         @change=${(event) =>
           api.notify(`#${entity.id}:change`, event.target.checked)}
+        ${ref((element) => applyElementProps(element, rest))}
       />
       <span class="iw-switch-track" aria-hidden="true">
         <span class="iw-switch-thumb"></span>

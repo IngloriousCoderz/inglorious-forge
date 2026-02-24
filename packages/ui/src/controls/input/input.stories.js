@@ -27,6 +27,20 @@ export default {
       options: ["text", "email", "password", "number", "tel", "url", "search"],
       description: "Native HTML input type.",
     },
+    inputmode: {
+      control: "select",
+      options: [
+        "none",
+        "text",
+        "decimal",
+        "numeric",
+        "tel",
+        "search",
+        "email",
+        "url",
+      ],
+      description: "Native inputmode hint for virtual keyboards.",
+    },
     value: {
       control: "text",
       description: "Current input value.",
@@ -149,4 +163,18 @@ FullWidth.args = {
   label: "Full Width Input",
   placeholder: "This input takes full width",
   fullWidth: true,
+}
+
+export const Number = {}
+Number.args = {
+  ...Default.args,
+  label: "Amount",
+  type: "number",
+  value: "1234.56",
+  placeholder: "0.00",
+  min: "0",
+  max: "10000",
+  step: "0.01",
+  inputmode: "decimal",
+  "data-testid": "amount-input",
 }
