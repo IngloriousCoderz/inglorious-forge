@@ -6,7 +6,7 @@
  */
 
 import { classMap, html, ref, repeat, when } from "@inglorious/web"
-import { applyElementProps } from "../../shared/applyElementProps.js"
+import { applyElementProps } from "@/shared/applyElementProps.js"
 
 import {
   filterOptions,

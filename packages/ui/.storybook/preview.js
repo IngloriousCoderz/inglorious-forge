@@ -78,6 +78,23 @@ export const decorators = [
     const modeClass = mode === "light" ? "iw-theme-light" : "iw-theme-dark"
 
     document.body.className = `${themeClass} ${modeClass}`.trim()
+    const background =
+      getComputedStyle(document.body)
+        .getPropertyValue("--iw-color-bg")
+        .trim() || (mode === "dark" ? "#111827" : "#ffffff")
+    const foreground =
+      getComputedStyle(document.body)
+        .getPropertyValue("--iw-color-text")
+        .trim() || (mode === "dark" ? "#f9fafb" : "#111827")
+
+    document.body.style.backgroundColor = background
+    document.body.style.color = foreground
+
+    const root = document.getElementById("storybook-root")
+    if (root) {
+      root.style.backgroundColor = background
+      root.style.color = foreground
+    }
 
     return story()
   },

@@ -4,9 +4,9 @@
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
-import { classMap, html, ref } from "@inglorious/web"
+import { html } from "@inglorious/web"
 
-import { applyElementProps } from "../../shared/applyElementProps.js"
+import { buttonPrimitive as button } from "../button/index.js"
 
 /**
  * Floating action button for primary contextual actions.
@@ -16,34 +16,18 @@ import { applyElementProps } from "../../shared/applyElementProps.js"
  * @returns {TemplateResult}
  */
 export function render(entity, api) {
-  const {
-    children,
-    color = "primary",
-    size = "md",
-    disabled = false,
-    type = "button",
-    extended = false,
-    ariaLabel,
-    ...rest
-  } = entity
+  const { children, extended = false, className = "", ...rest } = entity
 
-  const classes = {
-    "iw-fab": true,
-    [`iw-fab-${color}`]: color !== "primary",
-    [`iw-fab-${size}`]: size !== "md",
-    "iw-fab-extended": extended,
-  }
-
-  return html`
-    <button
-      type=${type}
-      aria-label=${ariaLabel}
-      class=${classMap(classes)}
-      ?disabled=${disabled}
-      @click=${() => api.notify(`#${entity.id}:click`)}
-      ${ref((element) => applyElementProps(element, rest))}
-    >
-      ${children}
-    </button>
-  `
+  return button.render(
+    {
+      ...rest,
+      shape: extended ? "pill" : "round",
+      className:
+        `iw-fab ${extended ? "iw-fab-extended" : ""} ${className}`.trim(),
+      children: extended
+        ? children
+        : html`<span class="iw-fab-content">${children}</span>`,
+    },
+    api,
+  )
 }

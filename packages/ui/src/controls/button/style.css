@@ -116,4 +116,33 @@
   &.iw-button-full-width {
     width: 100%;
   }
+
+  &.iw-button-shape-pill {
+    border-radius: 999px;
+  }
+
+  &.iw-button-shape-round,
+  &.iw-button-shape-square {
+    width: 2.5rem;
+    aspect-ratio: 1 / 1;
+    padding: 0;
+  }
+
+  &.iw-button-shape-round {
+    border-radius: 999px;
+  }
+
+  &.iw-button-shape-square {
+    border-radius: var(--iw-radius-sm);
+  }
+
+  &.iw-button-sm.iw-button-shape-round,
+  &.iw-button-sm.iw-button-shape-square {
+    width: 2rem;
+  }
+
+  &.iw-button-lg.iw-button-shape-round,
+  &.iw-button-lg.iw-button-shape-square {
+    width: 3rem;
+  }
 }

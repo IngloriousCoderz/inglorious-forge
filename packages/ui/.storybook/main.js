@@ -2,6 +2,7 @@ import { dirname } from "node:path"
 import { fileURLToPath } from "node:url"
 
 import { defineMain } from "@storybook/web-components-vite/node"
+import { mergeConfig } from "vite"
 
 export default defineMain({
   stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
@@ -11,6 +12,15 @@ export default defineMain({
     options: {
       // ...
     },
+  },
+  async viteFinal(config) {
+    return mergeConfig(config, {
+      resolve: {
+        alias: {
+          "@": fileURLToPath(new URL("../src", import.meta.url)),
+        },
+      },
+    })
   },
 })
 

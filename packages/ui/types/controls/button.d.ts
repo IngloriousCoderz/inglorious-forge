@@ -6,6 +6,7 @@ export interface ButtonEntity {
   variant?: "default" | "outline" | "ghost"
   color?: "primary" | "secondary" | "success" | "warning" | "error" | "info"
   size?: "sm" | "md" | "lg"
+  shape?: "rectangle" | "pill" | "round" | "square"
   disabled?: boolean
   fullWidth?: boolean
   type?: "button" | "submit" | "reset" | "menu"

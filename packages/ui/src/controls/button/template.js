@@ -6,7 +6,7 @@
 
 import { classMap, html, ref } from "@inglorious/web"
 
-import { applyElementProps } from "../../shared/applyElementProps.js"
+import { applyElementProps } from "@/shared/applyElementProps.js"
 
 /**
  * Button type for Inglorious Web.
@@ -30,6 +30,7 @@ export function render(entity, api) {
     variant = "default",
     color = "primary",
     size = "md",
+    shape = "rectangle",
     disabled = false,
     fullWidth = false,
     type = "button",
@@ -51,6 +52,7 @@ export function render(entity, api) {
     [`iw-button-${variant}`]: variant !== "default",
     [`iw-button-${color}`]: color !== "primary",
     [`iw-button-${size}`]: size !== "md",
+    [`iw-button-shape-${shape}`]: shape !== "rectangle",
     "iw-button-full-width": fullWidth,
     "iw-button-disabled": disabled,
     ...extraClasses,

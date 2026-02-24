@@ -53,6 +53,19 @@ describe("button", () => {
       expect(buttonElement.classList.contains("iw-button-lg")).toBe(true)
     })
 
+    it("applies shape class for round", () => {
+      const entity = { id: "btn", children: "+", shape: "round" }
+      const api = createMockApi({ [entity.id]: entity })
+      const container = document.createElement("div")
+
+      render(type.render(entity, api), container)
+
+      const buttonElement = container.querySelector("button")
+      expect(buttonElement.classList.contains("iw-button-shape-round")).toBe(
+        true,
+      )
+    })
+
     it("applies variant class for outline", () => {
       const entity = { id: "btn", children: "Outline", variant: "outline" }
       const api = createMockApi({ [entity.id]: entity })

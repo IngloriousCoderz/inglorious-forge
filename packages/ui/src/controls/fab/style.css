@@ -1,64 +1,76 @@
-.iw-fab {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 3.5rem;
-  height: 3.5rem;
-  border: 0;
-  border-radius: 999px;
-  background: var(--iw-color-primary);
-  color: var(--iw-color-white);
+.iw-button.iw-fab {
   box-shadow: var(--iw-shadow-lg);
-  cursor: pointer;
-  transition:
-    transform var(--iw-transition-fast),
-    box-shadow var(--iw-transition-fast);
+  border: 0;
+  width: 3.5rem;
 
   &:hover:not(:disabled) {
     transform: translateY(-1px);
     box-shadow: var(--iw-shadow-xl);
   }
 
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+  .iw-fab-content {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.65em;
+    line-height: 1;
+    font-weight: var(--iw-font-weight-normal);
+    transform: translateY(-0.04em);
   }
 
-  &.iw-fab-sm {
+  &.iw-button-sm {
     width: 2.75rem;
-    height: 2.75rem;
+
+    .iw-fab-content {
+      font-size: 1.55em;
+    }
   }
 
-  &.iw-fab-lg {
+  &.iw-button-lg {
     width: 4.25rem;
-    height: 4.25rem;
+
+    .iw-fab-content {
+      font-size: 1.75em;
+    }
   }
 
   &.iw-fab-extended {
     width: auto;
-    padding: 0 var(--iw-space-4);
-    border-radius: 999px;
+    min-height: 2.5rem;
+    padding: var(--iw-space-2) var(--iw-space-4);
     gap: var(--iw-space-2);
+
+    .iw-fab-content {
+      font-size: inherit;
+      transform: none;
+    }
   }
 
-  &.iw-fab-secondary {
-    background: var(--iw-color-gray-600);
+  &.iw-fab-extended.iw-button-sm {
+    min-height: 2rem;
+    padding: var(--iw-space-1) var(--iw-space-3);
   }
 
-  &.iw-fab-success {
-    background: var(--iw-color-success);
+  &.iw-fab-extended.iw-button-lg {
+    min-height: 3rem;
+    padding: var(--iw-space-3) var(--iw-space-5);
   }
 
-  &.iw-fab-warning {
-    background: var(--iw-color-warning);
-    color: var(--iw-color-black);
+  &.iw-fab-extended .iw-fab-content {
+    transform: none;
   }
 
-  &.iw-fab-error {
-    background: var(--iw-color-error);
+  &.iw-fab-extended .iw-button-icon {
+    width: 1.1em;
+    height: 1.1em;
+    transform: translateY(-0.02em);
   }
 
-  &.iw-fab-info {
-    background: var(--iw-color-info);
+  &.iw-fab-extended.iw-button-sm .iw-button-icon {
+    transform: none;
+  }
+
+  &.iw-fab-extended.iw-button-lg .iw-button-icon {
+    transform: translateY(-0.03em);
   }
 }

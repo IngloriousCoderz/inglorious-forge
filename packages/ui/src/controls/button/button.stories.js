@@ -31,6 +31,11 @@ export default {
       options: ["sm", "md", "lg"],
       description: "Size scale for paddings and font-size.",
     },
+    shape: {
+      control: "select",
+      options: ["rectangle", "pill", "round", "square"],
+      description: "Button shape profile.",
+    },
     disabled: {
       control: "boolean",
       description: "Disables interaction and click notifications.",
@@ -63,6 +68,7 @@ Default.args = {
   variant: "default",
   color: "primary",
   size: "md",
+  shape: "rectangle",
   disabled: false,
   fullWidth: false,
   type: "button",
@@ -115,6 +121,13 @@ FullWidth.args = {
   ...Default.args,
   children: "Full Width Button",
   fullWidth: true,
+}
+
+export const Round = {}
+Round.args = {
+  ...Default.args,
+  shape: "round",
+  children: "＋",
 }
 
 export const CustomContent = {}
