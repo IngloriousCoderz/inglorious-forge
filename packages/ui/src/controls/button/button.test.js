@@ -1,4 +1,5 @@
 import { augmentType } from "@inglorious/store/types"
+import { html } from "@inglorious/web"
 import { createMockApi, render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
@@ -8,8 +9,8 @@ describe("button", () => {
   const type = augmentType(button)
 
   describe("render", () => {
-    it("renders a button with label", () => {
-      const entity = { id: "btn", label: "Click me" }
+    it("renders a button with children", () => {
+      const entity = { id: "btn", children: "Click me" }
       const api = createMockApi({ [entity.id]: entity })
       const container = document.createElement("div")
 
@@ -20,7 +21,7 @@ describe("button", () => {
     })
 
     it("renders with default classes", () => {
-      const entity = { id: "btn", label: "Test" }
+      const entity = { id: "btn", children: "Test" }
       const api = createMockApi({ [entity.id]: entity })
       const container = document.createElement("div")
 
@@ -31,7 +32,7 @@ describe("button", () => {
     })
 
     it("applies size class for sm", () => {
-      const entity = { id: "btn", label: "Small", size: "sm" }
+      const entity = { id: "btn", children: "Small", size: "sm" }
       const api = createMockApi({ [entity.id]: entity })
       const container = document.createElement("div")
 
@@ -42,7 +43,7 @@ describe("button", () => {
     })
 
     it("applies size class for lg", () => {
-      const entity = { id: "btn", label: "Large", size: "lg" }
+      const entity = { id: "btn", children: "Large", size: "lg" }
       const api = createMockApi({ [entity.id]: entity })
       const container = document.createElement("div")
 
@@ -53,7 +54,7 @@ describe("button", () => {
     })
 
     it("applies variant class for outline", () => {
-      const entity = { id: "btn", label: "Outline", variant: "outline" }
+      const entity = { id: "btn", children: "Outline", variant: "outline" }
       const api = createMockApi({ [entity.id]: entity })
       const container = document.createElement("div")
 
@@ -64,7 +65,7 @@ describe("button", () => {
     })
 
     it("applies variant class for ghost", () => {
-      const entity = { id: "btn", label: "Ghost", variant: "ghost" }
+      const entity = { id: "btn", children: "Ghost", variant: "ghost" }
       const api = createMockApi({ [entity.id]: entity })
       const container = document.createElement("div")
 
@@ -75,7 +76,7 @@ describe("button", () => {
     })
 
     it("applies color class for secondary", () => {
-      const entity = { id: "btn", label: "Secondary", color: "secondary" }
+      const entity = { id: "btn", children: "Secondary", color: "secondary" }
       const api = createMockApi({ [entity.id]: entity })
       const container = document.createElement("div")
 
@@ -86,7 +87,7 @@ describe("button", () => {
     })
 
     it("applies color class for success", () => {
-      const entity = { id: "btn", label: "Success", color: "success" }
+      const entity = { id: "btn", children: "Success", color: "success" }
       const api = createMockApi({ [entity.id]: entity })
       const container = document.createElement("div")
 
@@ -97,7 +98,7 @@ describe("button", () => {
     })
 
     it("applies disabled attribute", () => {
-      const entity = { id: "btn", label: "Disabled", disabled: true }
+      const entity = { id: "btn", children: "Disabled", disabled: true }
       const api = createMockApi({ [entity.id]: entity })
       const container = document.createElement("div")
 
@@ -108,7 +109,7 @@ describe("button", () => {
     })
 
     it("applies full width class", () => {
-      const entity = { id: "btn", label: "Full Width", fullWidth: true }
+      const entity = { id: "btn", children: "Full Width", fullWidth: true }
       const api = createMockApi({ [entity.id]: entity })
       const container = document.createElement("div")
 
@@ -121,7 +122,7 @@ describe("button", () => {
     })
 
     it("sets button type attribute", () => {
-      const entity = { id: "btn", label: "Submit", type: "submit" }
+      const entity = { id: "btn", children: "Submit", type: "submit" }
       const api = createMockApi({ [entity.id]: entity })
       const container = document.createElement("div")
 
@@ -131,32 +132,25 @@ describe("button", () => {
       expect(buttonElement.type).toBe("submit")
     })
 
-    it("renders with icon", () => {
-      const entity = { id: "btn", label: "With Icon", icon: "★" }
+    it("renders with custom template children", () => {
+      const entity = {
+        id: "btn",
+        children: html`<span class="content">Custom</span>`,
+      }
       const api = createMockApi({ [entity.id]: entity })
       const container = document.createElement("div")
 
       render(type.render(entity, api), container)
 
-      const icon = container.querySelector(".iw-button-icon")
-      expect(icon.textContent).toBe("★")
-    })
-
-    it("renders with iconAfter", () => {
-      const entity = { id: "btn", label: "With Icon After", iconAfter: "→" }
-      const api = createMockApi({ [entity.id]: entity })
-      const container = document.createElement("div")
-
-      render(type.render(entity, api), container)
-
-      const icon = container.querySelector(".iw-button-icon")
-      expect(icon.textContent).toBe("→")
+      const buttonElement = container.querySelector("button")
+      expect(buttonElement.textContent.trim()).toBe("Custom")
+      expect(buttonElement.querySelector(".content")).not.toBeNull()
     })
   })
 
   describe("click handler", () => {
     it("dispatches click event on button click", () => {
-      const entity = { id: "btn", label: "Click me" }
+      const entity = { id: "btn", children: "Click me" }
       const api = createMockApi({ [entity.id]: entity })
       const container = document.createElement("div")
 

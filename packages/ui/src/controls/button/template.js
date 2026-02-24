@@ -11,11 +11,11 @@ import { classMap, html } from "@inglorious/web"
  *
  * @example
  * // Stateless usage
- * button.render({ label: 'Click me', variant: 'primary' }, api)
+ * button.render({ children: 'Click me', variant: 'primary' }, api)
  *
  * @example
  * // Stateful usage with event handling
- * // Entity: { type: 'button', id: 'submitBtn', label: 'Submit' }
+ * // Entity: { type: 'button', id: 'submitBtn', children: 'Submit' }
  * // In store: api.render('submitBtn')
  *
  * @param {ButtonEntity} entity
@@ -24,16 +24,24 @@ import { classMap, html } from "@inglorious/web"
  */
 export function render(entity, api) {
   const {
-    label,
+    children,
     variant = "default",
     color = "primary",
     size = "md",
     disabled = false,
     fullWidth = false,
     type = "button",
-    icon,
-    iconAfter,
+    ariaLabel = "",
+    ariaPressed = false,
+    className = "",
   } = entity
+
+  const extraClasses = Object.fromEntries(
+    className
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((name) => [name, true]),
+  )
 
   const classes = {
     "iw-button": true,
@@ -42,20 +50,19 @@ export function render(entity, api) {
     [`iw-button-${size}`]: size !== "md",
     "iw-button-full-width": fullWidth,
     "iw-button-disabled": disabled,
+    ...extraClasses,
   }
 
   return html`
     <button
       type=${type}
+      aria-label=${ariaLabel}
+      aria-pressed=${ariaPressed}
       class=${classMap(classes)}
       ?disabled=${disabled}
       @click=${() => api.notify(`#${entity.id}:click`)}
     >
-      ${icon ? html`<span class="iw-button-icon">${icon}</span>` : null}
-      ${label}
-      ${iconAfter
-        ? html`<span class="iw-button-icon">${iconAfter}</span>`
-        : null}
+      ${children}
     </button>
   `
 }

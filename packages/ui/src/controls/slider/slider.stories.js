@@ -1,0 +1,43 @@
+import {
+  makeStoryRender,
+  notifyActionArgType,
+} from "../../stories/notifyStory.js"
+import { slider } from "."
+
+export default {
+  title: "Controls/Slider",
+  tags: ["autodocs"],
+  render: makeStoryRender(slider, "story-slider"),
+  argTypes: {
+    ...notifyActionArgType,
+    label: { control: "text", description: "Field label." },
+    name: { control: "text", description: "Native input name." },
+    value: { control: "number", description: "Current slider value." },
+    min: { control: "number", description: "Minimum value." },
+    max: { control: "number", description: "Maximum value." },
+    step: { control: "number", description: "Step value." },
+    disabled: { control: "boolean", description: "Disables interaction." },
+    showValue: { control: "boolean", description: "Shows current value." },
+    fullWidth: { control: "boolean", description: "Expands width to 100%." },
+  },
+  parameters: {
+    docs: {
+      description: {
+        component: "Range input control with optional value indicator.",
+      },
+    },
+  },
+}
+
+export const Default = {}
+Default.args = {
+  label: "Volume",
+  name: "volume",
+  value: 30,
+  min: 0,
+  max: 100,
+  step: 1,
+  disabled: false,
+  showValue: true,
+  fullWidth: false,
+}

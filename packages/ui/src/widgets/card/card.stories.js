@@ -12,13 +12,34 @@ export default {
   render: makeStoryRender(card, "story-card"),
   argTypes: {
     ...notifyActionArgType,
-    title: { control: "text" },
-    subtitle: { control: "text" },
-    hoverable: { control: "boolean" },
-    clickable: { control: "boolean" },
-    fullWidth: { control: "boolean" },
+    title: {
+      control: "text",
+      description: "Primary header text.",
+    },
+    subtitle: {
+      control: "text",
+      description: "Secondary header text.",
+    },
+    hoverable: {
+      control: "boolean",
+      description: "Enables hover visual feedback.",
+    },
+    clickable: {
+      control: "boolean",
+      description: "Marks the card as interactive and emits click events.",
+    },
+    fullWidth: {
+      control: "boolean",
+      description: "Expands card width to 100% of its container.",
+    },
   },
   parameters: {
+    docs: {
+      description: {
+        component:
+          "Container widget with overridable header/body/footer sub-renderers.",
+      },
+    },
     actions: {
       handles: ["click"],
     },

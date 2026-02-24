@@ -12,22 +12,45 @@ export default {
   render: makeStoryRender(grid, "story-grid"),
   argTypes: {
     ...notifyActionArgType,
-    columns: { control: "number" },
-    minColumnWidth: { control: "text" },
+    columns: {
+      control: "number",
+      description: "Fixed number of columns when auto-fit is not used.",
+    },
+    minColumnWidth: {
+      control: "text",
+      description: "Enables auto-fit columns with minmax(minColumnWidth, 1fr).",
+    },
     gap: {
       control: "select",
       options: ["none", "sm", "md", "lg", "xl"],
+      description: "Spacing between grid cells.",
     },
     align: {
       control: "select",
       options: ["stretch", "start", "center", "end"],
+      description: "Cross-axis alignment for cell content.",
     },
     justify: {
       control: "select",
       options: ["stretch", "start", "center", "end"],
+      description: "Inline-axis alignment for cell content.",
     },
-    fullWidth: { control: "boolean" },
-    children: { control: "object" },
+    fullWidth: {
+      control: "boolean",
+      description: "Expands container width to 100%.",
+    },
+    children: {
+      control: "object",
+      description: "Array of templates/content rendered as-is.",
+    },
+  },
+  parameters: {
+    docs: {
+      description: {
+        component:
+          "Layout primitive for two-dimensional arrangement of template children.",
+      },
+    },
   },
 }
 

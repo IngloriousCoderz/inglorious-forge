@@ -1,0 +1,41 @@
+.iw-radio-group {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  font-family: var(--iw-font-family-sans);
+
+  .iw-radio-group-label {
+    margin-bottom: var(--iw-space-2);
+    font-size: var(--iw-font-size-sm);
+    color: var(--iw-color-text-secondary);
+  }
+
+  .iw-radio-option {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--iw-space-2);
+    color: var(--iw-color-text);
+    cursor: pointer;
+  }
+
+  .iw-radio {
+    margin: 0;
+    accent-color: var(--iw-color-primary);
+  }
+
+  &.iw-radio-group-column {
+    display: flex;
+    flex-direction: column;
+    gap: var(--iw-space-2);
+  }
+
+  &.iw-radio-group-row {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--iw-space-4);
+  }
+
+  &.iw-radio-group-disabled {
+    opacity: 0.6;
+  }
+}

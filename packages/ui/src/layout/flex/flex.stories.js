@@ -15,26 +15,48 @@ export default {
     direction: {
       control: "select",
       options: ["row", "column", "row-reverse", "column-reverse"],
+      description: "Flex main-axis direction.",
     },
     wrap: {
       control: "select",
       options: ["nowrap", "wrap", "wrap-reverse"],
+      description: "Controls wrapping behavior of children.",
     },
     justify: {
       control: "select",
       options: ["start", "center", "end", "between", "around", "evenly"],
+      description: "Main-axis distribution of children.",
     },
     align: {
       control: "select",
       options: ["stretch", "start", "center", "end", "baseline"],
+      description: "Cross-axis alignment of children.",
     },
     gap: {
       control: "select",
       options: ["none", "sm", "md", "lg", "xl"],
+      description: "Spacing between children.",
     },
-    inline: { control: "boolean" },
-    fullWidth: { control: "boolean" },
-    children: { control: "object" },
+    inline: {
+      control: "boolean",
+      description: "Uses inline-flex instead of flex.",
+    },
+    fullWidth: {
+      control: "boolean",
+      description: "Expands container width to 100%.",
+    },
+    children: {
+      control: "object",
+      description: "Array of templates/content rendered as-is.",
+    },
+  },
+  parameters: {
+    docs: {
+      description: {
+        component:
+          "Layout primitive for one-dimensional arrangement of template children.",
+      },
+    },
   },
 }
 

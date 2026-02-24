@@ -35,11 +35,56 @@
       "import": "./src/controls/button/index.js"
     },
     "./button.css": "./src/controls/button/style.css",
+    "./button-group": {
+      "types": "./types/controls/button-group.d.ts",
+      "import": "./src/controls/button-group/index.js"
+    },
+    "./button-group.css": "./src/controls/button-group/style.css",
+    "./checkbox": {
+      "types": "./types/controls/checkbox.d.ts",
+      "import": "./src/controls/checkbox/index.js"
+    },
+    "./checkbox.css": "./src/controls/checkbox/style.css",
+    "./fab": {
+      "types": "./types/controls/fab.d.ts",
+      "import": "./src/controls/fab/index.js"
+    },
+    "./fab.css": "./src/controls/fab/style.css",
+    "./icon-button": {
+      "types": "./types/controls/icon-button.d.ts",
+      "import": "./src/controls/icon-button/index.js"
+    },
+    "./icon-button.css": "./src/controls/icon-button/style.css",
     "./input": {
       "types": "./types/controls/input.d.ts",
       "import": "./src/controls/input/index.js"
     },
     "./input.css": "./src/controls/input/style.css",
+    "./radio-group": {
+      "types": "./types/controls/radio-group.d.ts",
+      "import": "./src/controls/radio-group/index.js"
+    },
+    "./radio-group.css": "./src/controls/radio-group/style.css",
+    "./rating": {
+      "types": "./types/controls/rating.d.ts",
+      "import": "./src/controls/rating/index.js"
+    },
+    "./rating.css": "./src/controls/rating/style.css",
+    "./select": {
+      "types": "./types/controls/select.d.ts",
+      "import": "./src/controls/select/index.js"
+    },
+    "./select.css": "./src/controls/select/style.css",
+    "./slider": {
+      "types": "./types/controls/slider.d.ts",
+      "import": "./src/controls/slider/index.js"
+    },
+    "./slider.css": "./src/controls/slider/style.css",
+    "./switch": {
+      "types": "./types/controls/switch.d.ts",
+      "import": "./src/controls/switch/index.js"
+    },
+    "./switch.css": "./src/controls/switch/style.css",
     "./card": {
       "types": "./types/widgets/card.d.ts",
       "import": "./src/widgets/card/index.js"

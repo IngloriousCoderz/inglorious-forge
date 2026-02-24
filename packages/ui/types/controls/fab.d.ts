@@ -1,21 +1,18 @@
 import type { TemplateResult, Api } from "@inglorious/web"
 
-export interface ButtonEntity {
+export interface FabEntity {
   id?: string
   children?: TemplateResult | string | number
-  variant?: "default" | "outline" | "ghost"
   color?: "primary" | "secondary" | "success" | "warning" | "error" | "info"
   size?: "sm" | "md" | "lg"
   disabled?: boolean
-  fullWidth?: boolean
   type?: "button" | "submit" | "reset" | "menu"
+  extended?: boolean
   ariaLabel?: string
-  ariaPressed?: boolean
-  className?: string
 }
 
-export interface ButtonType {
-  render(entity: ButtonEntity, api: Api): TemplateResult
+export interface FabType {
+  render(entity: FabEntity, api: Api): TemplateResult
 }
 
-export declare const button: ButtonType
+export declare const fab: FabType

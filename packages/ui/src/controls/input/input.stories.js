@@ -10,24 +10,64 @@ export default {
   render: makeStoryRender(input, "story-input"),
   argTypes: {
     ...notifyActionArgType,
-    label: { control: "text" },
-    placeholder: { control: "text" },
-    name: { control: "text" },
+    label: {
+      control: "text",
+      description: "Field label rendered above the input.",
+    },
+    placeholder: {
+      control: "text",
+      description: "Placeholder text shown when value is empty.",
+    },
+    name: {
+      control: "text",
+      description: "Native HTML input name attribute.",
+    },
     type: {
       control: "select",
       options: ["text", "email", "password", "number", "tel", "url", "search"],
+      description: "Native HTML input type.",
     },
-    value: { control: "text" },
-    hint: { control: "text" },
-    error: { control: "text" },
+    value: {
+      control: "text",
+      description: "Current input value.",
+    },
+    hint: {
+      control: "text",
+      description: "Helper text shown below the field when there is no error.",
+    },
+    error: {
+      control: "text",
+      description: "Validation message shown below the field.",
+    },
     size: {
       control: "select",
       options: ["sm", "md", "lg"],
+      description: "Size scale for paddings and font-size.",
     },
-    disabled: { control: "boolean" },
-    readonly: { control: "boolean" },
-    required: { control: "boolean" },
-    fullWidth: { control: "boolean" },
+    disabled: {
+      control: "boolean",
+      description: "Disables user input and interaction.",
+    },
+    readonly: {
+      control: "boolean",
+      description: "Prevents editing while keeping the field focusable.",
+    },
+    required: {
+      control: "boolean",
+      description: "Marks the field as required.",
+    },
+    fullWidth: {
+      control: "boolean",
+      description: "Expands input width to 100% of its container.",
+    },
+  },
+  parameters: {
+    docs: {
+      description: {
+        component:
+          "Text field control with labels, hints, errors, and semantic states.",
+      },
+    },
   },
 }
 export const Default = {}

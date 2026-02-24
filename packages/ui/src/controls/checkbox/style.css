@@ -1,0 +1,33 @@
+.iw-checkbox-field {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--iw-space-2);
+  font-family: var(--iw-font-family-sans);
+  color: var(--iw-color-text);
+  cursor: pointer;
+
+  .iw-checkbox {
+    width: 1rem;
+    height: 1rem;
+    margin: 0;
+    accent-color: var(--iw-color-primary);
+  }
+
+  .iw-checkbox-label {
+    font-size: var(--iw-font-size-base);
+    line-height: var(--iw-line-height-normal);
+  }
+
+  &.iw-checkbox-sm .iw-checkbox-label {
+    font-size: var(--iw-font-size-sm);
+  }
+
+  &.iw-checkbox-lg .iw-checkbox-label {
+    font-size: var(--iw-font-size-lg);
+  }
+
+  &.iw-checkbox-disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}

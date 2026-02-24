@@ -1,0 +1,28 @@
+.iw-slider-field {
+  display: inline-flex;
+  flex-direction: column;
+  gap: var(--iw-space-2);
+  font-family: var(--iw-font-family-sans);
+  color: var(--iw-color-text);
+
+  .iw-slider-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--iw-space-4);
+    font-size: var(--iw-font-size-sm);
+  }
+
+  .iw-slider-value {
+    color: var(--iw-color-text-secondary);
+  }
+
+  .iw-slider {
+    width: 100%;
+    accent-color: var(--iw-color-primary);
+  }
+
+  &.iw-slider-full-width {
+    width: 100%;
+  }
+}

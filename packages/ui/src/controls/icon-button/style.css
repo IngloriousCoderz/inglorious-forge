@@ -1,0 +1,14 @@
+.iw-icon-button-content {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--iw-space-2);
+
+  &.iw-icon-button-content-column {
+    flex-direction: column;
+  }
+
+  &.iw-icon-button-content-row {
+    flex-direction: row;
+  }
+}
