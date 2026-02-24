@@ -1,5 +1,7 @@
 import "@inglorious/ui/tokens"
 import "@inglorious/ui/themes/inglorious"
+import "@inglorious/ui/themes/material"
+import "@inglorious/ui/themes/bootstrap"
 import "@inglorious/ui/button.css"
 import "@inglorious/ui/input.css"
 import "@inglorious/ui/card.css"
@@ -56,7 +58,7 @@ export const decorators = [
     const theme = context.globals.theme
     const mode = context.globals.mode
     const themeClass = themeClasses[theme] || themeClasses.inglorious
-    const modeClass = mode === "light" ? "iw-theme-light" : ""
+    const modeClass = mode === "light" ? "iw-theme-light" : "iw-theme-dark"
 
     document.body.className = `${themeClass} ${modeClass}`.trim()
 

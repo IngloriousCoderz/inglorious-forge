@@ -3,7 +3,7 @@ import { createMockApi, render } from "@inglorious/web/test"
 import { button } from "."
 
 export default {
-  title: "Components/Button",
+  title: "Controls/Button",
   tags: ["autodocs"],
   argTypes: {
     label: { control: "text" },
@@ -64,36 +64,28 @@ Ghost.args = {
   variant: "ghost",
 }
 
-export const Sizes = () => {
-  const container = document.createElement("div")
-  container.style.display = "flex"
-  container.style.gap = "1rem"
-  container.style.alignItems = "center"
-
-  const sizes = ["sm", "md", "lg"]
-  sizes.forEach((size) => {
-    const entity = { id: `btn-${size}`, label: size.toUpperCase(), size }
-    const api = createMockApi(entity)
-    render(button.render(entity, api), container)
-  })
-
-  return container
+export const Small = Template.bind({})
+Small.args = {
+  ...Default.args,
+  size: "sm",
 }
 
-export const Colors = () => {
-  const container = document.createElement("div")
-  container.style.display = "flex"
-  container.style.gap = "1rem"
-  container.style.flexWrap = "wrap"
+export const Large = Template.bind({})
+Large.args = {
+  ...Default.args,
+  size: "lg",
+}
 
-  const colors = ["primary", "secondary", "success", "warning", "error", "info"]
-  colors.forEach((color) => {
-    const entity = { id: `btn-${color}`, label: color, color }
-    const api = createMockApi(entity)
-    render(button.render(entity, api), container)
-  })
+export const Secondary = Template.bind({})
+Secondary.args = {
+  ...Default.args,
+  color: "secondary",
+}
 
-  return container
+export const Success = Template.bind({})
+Success.args = {
+  ...Default.args,
+  color: "success",
 }
 
 export const Disabled = Template.bind({})

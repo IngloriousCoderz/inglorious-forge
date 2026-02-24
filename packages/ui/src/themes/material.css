@@ -1,4 +1,4 @@
-:root {
+.iw-theme-material {
   /* ========================================
      MATERIAL THEME - Material Design Inspired
      ======================================== */
@@ -82,9 +82,6 @@
   /* Alert */
   --iw-alert-radius: var(--iw-radius-md);
   --iw-alert-shadow: none;
-}
-
-.iw-theme-material {
   color-scheme: light;
 }
 

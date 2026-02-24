@@ -34,17 +34,17 @@
       "types": "./types/button.d.ts",
       "import": "./src/components/button/index.js"
     },
-    "./button.css": "./src/components/button/style.css",
+    "./button.css": "./src/controls/button/style.css",
     "./input": {
       "types": "./types/input.d.ts",
       "import": "./src/components/input/index.js"
     },
-    "./input.css": "./src/components/input/style.css",
+    "./input.css": "./src/controls/input/style.css",
     "./card": {
       "types": "./types/card.d.ts",
       "import": "./src/components/card/index.js"
     },
-    "./card.css": "./src/components/card/style.css"
+    "./card.css": "./src/widgets/card/style.css"
   },
   "files": [
     "src",
@@ -61,6 +61,7 @@
     "format": "prettier --write .",
     "lint": "eslint .",
     "test:watch": "vitest",
+    "test": "vitest run",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
@@ -73,6 +74,8 @@
     "@storybook/addon-docs": "^10.2.10",
     "@storybook/addon-essentials": "^8.6.14",
     "@storybook/web-components-vite": "^10.2.10",
+    "happy-dom": "^15.11.0",
+    "jsdom": "^25.0.0",
     "prettier": "^3.6.2",
     "storybook": "^10.2.10",
     "vitest": "^4.0.15"

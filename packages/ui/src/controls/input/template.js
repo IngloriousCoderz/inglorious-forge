@@ -41,36 +41,35 @@ export function render(entity, api) {
   const inputId = entity.id || name
 
   const wrapperClasses = {
-    "iw-input-wrapper": true,
-    [`iw-input-wrapper--${size}`]: size !== "md",
-    "iw-input-wrapper--full-width": fullWidth,
-    "iw-input-wrapper--disabled": disabled,
-    "iw-input-wrapper--error": !!error,
-    "iw-input-wrapper--has-icon": !!icon,
-    "iw-input-wrapper--has-icon-after": !!iconAfter,
+    "iw-input-field": true,
+    "iw-input-full-width": fullWidth,
+    "iw-input-disabled": disabled,
+    "iw-input-has-error": !!error,
+    "iw-input-has-icon": !!icon,
+    "iw-input-has-icon-after": !!iconAfter,
   }
 
   const inputClasses = {
     "iw-input": true,
-    [`iw-input--${size}`]: size !== "md",
-    "iw-input--error": !!error,
+    [`iw-input-${size}`]: size !== "md",
+    "iw-input-error": !!error,
   }
 
   return html`
     <div class=${classMap(wrapperClasses)}>
       ${label
         ? html`
-            <label for=${inputId} class="iw-input__label">
+            <label for=${inputId} class="iw-input-label">
               ${label}
               ${required
-                ? html`<span class="iw-input__required">*</span>`
+                ? html`<span class="iw-input-required">*</span>`
                 : null}
             </label>
           `
         : null}
 
-      <div class="iw-input-container">
-        ${icon ? html`<span class="iw-input__icon">${icon}</span>` : null}
+      <div class="iw-input-frame">
+        ${icon ? html`<span class="iw-input-icon">${icon}</span>` : null}
 
         <input
           id=${inputId}
@@ -89,16 +88,16 @@ export function render(entity, api) {
         />
 
         ${iconAfter
-          ? html`<span class="iw-input__icon iw-input__icon--after"
+          ? html`<span class="iw-input-icon iw-input-icon-after"
               >${iconAfter}</span
             >`
           : null}
       </div>
 
       ${error
-        ? html`<span class="iw-input__error">${error}</span>`
+        ? html`<span class="iw-input-error-message">${error}</span>`
         : hint
-          ? html`<span class="iw-input__hint">${hint}</span>`
+          ? html`<span class="iw-input-hint">${hint}</span>`
           : null}
     </div>
   `

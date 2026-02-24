@@ -1,4 +1,4 @@
-:root {
+.iw-theme-inglorious {
   /* ========================================
      INGLORIOUS THEME - Neon Videogame Aesthetic
      ======================================== */
@@ -80,10 +80,6 @@
   /* Alert */
   --iw-alert-radius: var(--iw-radius-none);
   --iw-alert-shadow: 0 0 10px currentColor;
-}
-
-/* Dark mode is default for Inglorious theme */
-.iw-theme-inglorious {
   color-scheme: dark;
 }
 

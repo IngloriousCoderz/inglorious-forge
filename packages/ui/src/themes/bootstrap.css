@@ -1,4 +1,4 @@
-:root {
+.iw-theme-bootstrap {
   /* ========================================
      BOOTSTRAP THEME - Bootstrap Inspired
      ======================================== */
@@ -78,9 +78,6 @@
   /* Alert */
   --iw-alert-radius: var(--iw-radius-md);
   --iw-alert-shadow: none;
-}
-
-.iw-theme-bootstrap {
   color-scheme: light;
 }
 

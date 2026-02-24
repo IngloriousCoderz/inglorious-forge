@@ -33,9 +33,9 @@ export function render(entity, api) {
 
   const classes = {
     "iw-card": true,
-    "iw-card--hoverable": hoverable || clickable,
-    "iw-card--clickable": clickable,
-    "iw-card--full-width": fullWidth,
+    "iw-card-hoverable": hoverable || clickable,
+    "iw-card-clickable": clickable,
+    "iw-card-full-width": fullWidth,
   }
 
   const hasHeader = title || subtitle || header
@@ -47,26 +47,26 @@ export function render(entity, api) {
     >
       ${hasHeader
         ? html`
-            <div class="iw-card__header">
+            <div class="iw-card-header">
               ${header
                 ? header
                 : html`
                     ${title
-                      ? html`<h3 class="iw-card__title">${title}</h3>`
+                      ? html`<h3 class="iw-card-title">${title}</h3>`
                       : null}
                     ${subtitle
-                      ? html`<p class="iw-card__subtitle">${subtitle}</p>`
+                      ? html`<p class="iw-card-subtitle">${subtitle}</p>`
                       : null}
                   `}
             </div>
           `
         : null}
 
-      <div class="iw-card__body">
+      <div class="iw-card-body">
         <slot></slot>
       </div>
 
-      ${footer ? html`<div class="iw-card__footer">${footer}</div>` : null}
+      ${footer ? html`<div class="iw-card-footer">${footer}</div>` : null}
     </div>
   `
 }

@@ -4,7 +4,7 @@ import { createMockApi, render } from "@inglorious/web/test"
 import { card } from "."
 
 export default {
-  title: "Components/Card",
+  title: "Widgets/Card",
   tags: ["autodocs"],
   argTypes: {
     title: { control: "text" },
@@ -57,8 +57,8 @@ export const WithFooter = () => {
     title: "Card with Footer",
     subtitle: "This card has a footer section",
     footer: html`<div style="display: flex; gap: 0.5rem;">
-      <button class="iw-button iw-button--sm iw-button--ghost">Cancel</button>
-      <button class="iw-button iw-button--sm">Save</button>
+      <button class="iw-button iw-button-sm iw-button-ghost">Cancel</button>
+      <button class="iw-button iw-button-sm">Save</button>
     </div>`,
   }
   const api = createMockApi(entity)

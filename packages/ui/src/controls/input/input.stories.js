@@ -3,7 +3,7 @@ import { createMockApi, render } from "@inglorious/web/test"
 import { input } from "."
 
 export default {
-  title: "Components/Input",
+  title: "Controls/Input",
   tags: ["autodocs"],
   argTypes: {
     label: { control: "text" },
@@ -94,26 +94,18 @@ Readonly.args = {
   value: "Read-only value",
 }
 
-export const Sizes = () => {
-  const container = document.createElement("div")
-  container.style.display = "flex"
-  container.style.flexDirection = "column"
-  container.style.gap = "1rem"
+export const Small = Template.bind({})
+Small.args = {
+  ...Default.args,
+  label: "Small Input",
+  size: "sm",
+}
 
-  const sizes = ["sm", "md", "lg"]
-  sizes.forEach((size) => {
-    const entity = {
-      id: `input-${size}`,
-      label: `Size: ${size}`,
-      name: `input-${size}`,
-      placeholder: `${size} input`,
-      size,
-    }
-    const api = createMockApi(entity)
-    render(input.render(entity, api), container)
-  })
-
-  return container
+export const Large = Template.bind({})
+Large.args = {
+  ...Default.args,
+  label: "Large Input",
+  size: "lg",
 }
 
 export const FullWidth = Template.bind({})
