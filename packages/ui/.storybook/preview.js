@@ -5,6 +5,8 @@ import "@inglorious/ui/themes/bootstrap"
 import "@inglorious/ui/button.css"
 import "@inglorious/ui/input.css"
 import "@inglorious/ui/card.css"
+import "@inglorious/ui/flex.css"
+import "@inglorious/ui/grid.css"
 
 export default {
   tags: ["autodocs"],

@@ -31,20 +31,30 @@
     "./themes/material": "./src/themes/material.css",
     "./themes/bootstrap": "./src/themes/bootstrap.css",
     "./button": {
-      "types": "./types/button.d.ts",
-      "import": "./src/components/button/index.js"
+      "types": "./types/controls/button.d.ts",
+      "import": "./src/controls/button/index.js"
     },
     "./button.css": "./src/controls/button/style.css",
     "./input": {
-      "types": "./types/input.d.ts",
-      "import": "./src/components/input/index.js"
+      "types": "./types/controls/input.d.ts",
+      "import": "./src/controls/input/index.js"
     },
     "./input.css": "./src/controls/input/style.css",
     "./card": {
-      "types": "./types/card.d.ts",
-      "import": "./src/components/card/index.js"
+      "types": "./types/widgets/card.d.ts",
+      "import": "./src/widgets/card/index.js"
     },
-    "./card.css": "./src/widgets/card/style.css"
+    "./card.css": "./src/widgets/card/style.css",
+    "./flex": {
+      "types": "./types/layout/flex.d.ts",
+      "import": "./src/layout/flex/index.js"
+    },
+    "./flex.css": "./src/layout/flex/style.css",
+    "./grid": {
+      "types": "./types/layout/grid.d.ts",
+      "import": "./src/layout/grid/index.js"
+    },
+    "./grid.css": "./src/layout/grid/style.css"
   },
   "files": [
     "src",

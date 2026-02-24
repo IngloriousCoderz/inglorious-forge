@@ -1,6 +1,8 @@
-/** @typedef {import('../../../types/card').CardEntity} CardEntity */
-/** @typedef {import('@inglorious/web').Api} Api */
-/** @typedef {import('@inglorious/web').TemplateResult} TemplateResult */
+/**
+ * @typedef {import('../../../types/widgets/card').CardEntity} CardEntity
+ * @typedef {import('@inglorious/web').Api} Api
+ * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
+ */
 
 import { classMap, html } from "@inglorious/web"
 

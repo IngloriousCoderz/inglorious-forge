@@ -1,6 +1,8 @@
-/** @typedef {import('../../../types/input').InputEntity} InputEntity */
-/** @typedef {import('@inglorious/web').Api} Api */
-/** @typedef {import('@inglorious/web').TemplateResult} TemplateResult */
+/**
+ * @typedef {import('../../../types/controls/input').InputEntity} InputEntity
+ * @typedef {import('@inglorious/web').Api} Api
+ * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
+ */
 
 import { classMap, html } from "@inglorious/web"
 
