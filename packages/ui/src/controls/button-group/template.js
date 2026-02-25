@@ -5,8 +5,8 @@
  */
 
 import { classMap, html, ref } from "@inglorious/web"
-import { applyElementProps } from "@/shared/applyElementProps.js"
 
+import { applyElementProps } from "../../shared/applyElementProps.js"
 import { buttonPrimitive as button } from "../button/index.js"
 
 /**

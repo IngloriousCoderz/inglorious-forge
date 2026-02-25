@@ -14,6 +14,7 @@ export interface RadioGroupEntity {
   value?: string
   options?: RadioOption[]
   direction?: "column" | "row"
+  color?: "primary" | "secondary" | "success" | "warning" | "error" | "info"
   disabled?: boolean
   [key: string]: unknown
 }

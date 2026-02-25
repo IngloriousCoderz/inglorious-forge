@@ -6,6 +6,7 @@ export interface SwitchEntity {
   label?: string
   checked?: boolean
   disabled?: boolean
+  color?: "primary" | "secondary" | "success" | "warning" | "error" | "info"
   size?: "sm" | "md" | "lg"
   [key: string]: unknown
 }

@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 /**
  * @typedef {import('../../../types/controls/select').SelectEntity} SelectEntity
  * @typedef {import('../../../types/controls/select').SelectOption} SelectOption

@@ -1,6 +1,6 @@
+import { augmentType } from "@inglorious/store/types"
 import { html } from "@inglorious/web"
 import { createMockApi, render } from "@inglorious/web/test"
-import { augmentType } from "../../../../store/src/types.js"
 import { describe, expect, it } from "vitest"
 
 import { flex } from "."

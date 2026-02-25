@@ -1,4 +1,5 @@
 .iw-radio-group {
+  --iw-radio-accent: var(--iw-color-primary);
   border: 0;
   margin: 0;
   padding: 0;
@@ -20,7 +21,7 @@
 
   .iw-radio {
     margin: 0;
-    accent-color: var(--iw-color-primary);
+    accent-color: var(--iw-radio-accent);
   }
 
   &.iw-radio-group-column {
@@ -37,5 +38,25 @@
 
   &.iw-radio-group-disabled {
     opacity: 0.6;
+  }
+
+  &.iw-radio-group-secondary {
+    --iw-radio-accent: var(--iw-color-gray-600);
+  }
+
+  &.iw-radio-group-success {
+    --iw-radio-accent: var(--iw-color-success);
+  }
+
+  &.iw-radio-group-warning {
+    --iw-radio-accent: var(--iw-color-warning);
+  }
+
+  &.iw-radio-group-error {
+    --iw-radio-accent: var(--iw-color-error);
+  }
+
+  &.iw-radio-group-info {
+    --iw-radio-accent: var(--iw-color-info);
   }
 }

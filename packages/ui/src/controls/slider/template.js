@@ -6,7 +6,12 @@
 
 import { classMap, html, ref } from "@inglorious/web"
 
-import { applyElementProps } from "@/shared/applyElementProps.js"
+import { applyElementProps } from "../../shared/applyElementProps.js"
+
+const DEFAULT_VALUE = 0
+const DEFAULT_MIN = 0
+const DEFAULT_MAX = 100
+const DEFAULT_STEP = 1
 
 /**
  * Slider control based on native range input.
@@ -19,11 +24,12 @@ export function render(entity, api) {
   const {
     name = "",
     label,
-    value = 0,
-    min = 0,
-    max = 100,
-    step = 1,
+    value = DEFAULT_VALUE,
+    min = DEFAULT_MIN,
+    max = DEFAULT_MAX,
+    step = DEFAULT_STEP,
     disabled = false,
+    color = "primary",
     showValue = true,
     fullWidth = false,
     ...rest
@@ -33,6 +39,7 @@ export function render(entity, api) {
 
   const classes = {
     "iw-slider-field": true,
+    [`iw-slider-${color}`]: color !== "primary",
     "iw-slider-full-width": fullWidth,
   }
 

@@ -1,3 +1,5 @@
+import "@fontsource/material-symbols-outlined"
+import "@fortawesome/fontawesome-free/css/all.min.css"
 import "@inglorious/ui/tokens"
 import "@inglorious/ui/themes/inglorious"
 import "@inglorious/ui/themes/material"
@@ -16,6 +18,18 @@ import "@inglorious/ui/switch.css"
 import "@inglorious/ui/card.css"
 import "@inglorious/ui/flex.css"
 import "@inglorious/ui/grid.css"
+import "@inglorious/ui/avatar.css"
+import "@inglorious/ui/badge.css"
+import "@inglorious/ui/chip.css"
+import "@inglorious/ui/divider.css"
+import "@inglorious/ui/icon.css"
+import "@inglorious/ui/list.css"
+import "@inglorious/ui/material-icon.css"
+import "@inglorious/ui/table.css"
+import "@inglorious/ui/tooltip.css"
+import "@inglorious/ui/typography.css"
+
+import { createIcons, Heart, Settings, User } from "lucide"
 
 export default {
   tags: ["autodocs"],
@@ -70,6 +84,38 @@ const themeClasses = {
   bootstrap: "iw-theme-bootstrap",
 }
 
+createIcons({
+  icons: {
+    User,
+    Settings,
+    Heart,
+  },
+  attrs: {
+    "stroke-width": 1.75,
+  },
+})
+
+function hydrateLucide() {
+  const run = () => {
+    createIcons({
+      icons: {
+        User,
+        Settings,
+        Heart,
+      },
+      attrs: {
+        "stroke-width": 1.75,
+      },
+    })
+  }
+
+  // MDX docs can mount content after the initial story return.
+  queueMicrotask(run)
+  requestAnimationFrame(run)
+  setTimeout(run, 0)
+  setTimeout(run, 80)
+}
+
 export const decorators = [
   (story, context) => {
     const theme = context.globals.theme
@@ -96,6 +142,9 @@ export const decorators = [
       root.style.color = foreground
     }
 
-    return story()
+    const result = story()
+    hydrateLucide()
+
+    return result
   },
 ]

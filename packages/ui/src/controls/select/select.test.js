@@ -46,6 +46,36 @@ describe("select", () => {
     expect(
       container.querySelectorAll(".iw-select-multi-value-tag").length,
     ).toBe(2)
+    expect(container.querySelectorAll(".iw-chip").length).toBe(2)
+    expect(
+      container
+        .querySelector(".iw-chip")
+        .classList.contains("iw-chip-shape-rounded"),
+    ).toBe(true)
+  })
+
+  it("removes a multi tag through chip remove action", () => {
+    const entity = {
+      id: "sel",
+      type: "select",
+      isMulti: true,
+      selectedValue: ["a"],
+      options: [{ label: "A", value: "a" }],
+    }
+    const api = createMockApi({ [entity.id]: entity })
+    const container = document.createElement("div")
+
+    api.getType = () => type
+    render(type.render(entity, api), container)
+
+    container.querySelector(".iw-chip-remove").click()
+
+    expect(api.getEvents()).toEqual([
+      {
+        type: "#sel:optionSelect",
+        payload: { label: "A", value: "a", disabled: false },
+      },
+    ])
   })
 
   it("dispatches toggle event from control click", () => {

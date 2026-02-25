@@ -6,7 +6,7 @@
 
 import { classMap, html, ref } from "@inglorious/web"
 
-import { applyElementProps } from "@/shared/applyElementProps.js"
+import { applyElementProps } from "../../shared/applyElementProps.js"
 
 /**
  * Radio group control for selecting one option.
@@ -22,6 +22,7 @@ export function render(entity, api) {
     value,
     options = [],
     direction = "column",
+    color = "primary",
     disabled = false,
     ...rest
   } = entity
@@ -29,6 +30,7 @@ export function render(entity, api) {
   const rootClasses = {
     "iw-radio-group": true,
     [`iw-radio-group-${direction}`]: true,
+    [`iw-radio-group-${color}`]: color !== "primary",
     "iw-radio-group-disabled": disabled,
   }
 

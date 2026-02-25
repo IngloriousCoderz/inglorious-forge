@@ -1,4 +1,5 @@
 .iw-switch-field {
+  --iw-switch-active-bg: var(--iw-color-primary);
   display: inline-flex;
   align-items: center;
   gap: var(--iw-space-2);
@@ -35,7 +36,7 @@
   }
 
   .iw-switch-input:checked + .iw-switch-track {
-    background: var(--iw-color-primary);
+    background: var(--iw-switch-active-bg);
   }
 
   .iw-switch-input:checked + .iw-switch-track .iw-switch-thumb {
@@ -78,5 +79,25 @@
   &.iw-switch-disabled {
     opacity: 0.6;
     cursor: not-allowed;
+  }
+
+  &.iw-switch-secondary {
+    --iw-switch-active-bg: var(--iw-color-gray-600);
+  }
+
+  &.iw-switch-success {
+    --iw-switch-active-bg: var(--iw-color-success);
+  }
+
+  &.iw-switch-warning {
+    --iw-switch-active-bg: var(--iw-color-warning);
+  }
+
+  &.iw-switch-error {
+    --iw-switch-active-bg: var(--iw-color-error);
+  }
+
+  &.iw-switch-info {
+    --iw-switch-active-bg: var(--iw-color-info);
   }
 }

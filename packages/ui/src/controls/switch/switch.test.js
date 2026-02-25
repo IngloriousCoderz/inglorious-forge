@@ -8,7 +8,12 @@ describe("switchControl", () => {
   const type = augmentType(switchControl)
 
   it("renders checked state", () => {
-    const entity = { id: "sw", checked: true, label: "Enabled" }
+    const entity = {
+      id: "sw",
+      checked: true,
+      label: "Enabled",
+      color: "success",
+    }
     const api = createMockApi({ [entity.id]: entity })
     const container = document.createElement("div")
 
@@ -18,6 +23,11 @@ describe("switchControl", () => {
     expect(container.querySelector(".iw-switch-label").textContent).toBe(
       "Enabled",
     )
+    expect(
+      container
+        .querySelector(".iw-switch-field")
+        .classList.contains("iw-switch-success"),
+    ).toBe(true)
   })
 
   it("dispatches change event", () => {

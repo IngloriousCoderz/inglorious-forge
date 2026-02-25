@@ -6,6 +6,10 @@
 
 import { classMap, html } from "@inglorious/web"
 
+const DEFAULT_VALUE = 0
+const DEFAULT_MAX = 5
+const INDEX_TO_RATING = 1
+
 /**
  * Rating control rendered as clickable symbols.
  *
@@ -15,8 +19,8 @@ import { classMap, html } from "@inglorious/web"
  */
 export function render(entity, api) {
   const {
-    value = 0,
-    max = 5,
+    value = DEFAULT_VALUE,
+    max = DEFAULT_MAX,
     disabled = false,
     readonly = false,
     symbol = "★",
@@ -34,7 +38,7 @@ export function render(entity, api) {
   return html`
     <div class=${classMap(classes)} role="radiogroup" aria-label="rating">
       ${Array.from({ length: max }, (_, index) => {
-        const ratingValue = index + 1
+        const ratingValue = index + INDEX_TO_RATING
         const active = ratingValue <= value
         return html`
           <button

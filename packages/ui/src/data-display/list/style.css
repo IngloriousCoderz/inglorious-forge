@@ -1,0 +1,23 @@
+.iw-list {
+  margin: 0;
+  padding-inline-start: var(--iw-space-6);
+  color: var(--iw-color-text);
+
+  &.iw-list-dense {
+    padding-inline-start: var(--iw-space-5);
+
+    .iw-list-item {
+      padding-block: var(--iw-space-1);
+    }
+  }
+
+  &.iw-list-divided {
+    .iw-list-item + .iw-list-item {
+      border-top: 1px solid var(--iw-color-border);
+    }
+  }
+}
+
+.iw-list-item {
+  padding-block: var(--iw-space-2);
+}

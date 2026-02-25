@@ -1,4 +1,5 @@
 .iw-slider-field {
+  --iw-slider-accent: var(--iw-color-primary);
   display: inline-flex;
   flex-direction: column;
   gap: var(--iw-space-2);
@@ -19,10 +20,30 @@
 
   .iw-slider {
     width: 100%;
-    accent-color: var(--iw-color-primary);
+    accent-color: var(--iw-slider-accent);
   }
 
   &.iw-slider-full-width {
     width: 100%;
+  }
+
+  &.iw-slider-secondary {
+    --iw-slider-accent: var(--iw-color-gray-600);
+  }
+
+  &.iw-slider-success {
+    --iw-slider-accent: var(--iw-color-success);
+  }
+
+  &.iw-slider-warning {
+    --iw-slider-accent: var(--iw-color-warning);
+  }
+
+  &.iw-slider-error {
+    --iw-slider-accent: var(--iw-color-error);
+  }
+
+  &.iw-slider-info {
+    --iw-slider-accent: var(--iw-color-info);
   }
 }

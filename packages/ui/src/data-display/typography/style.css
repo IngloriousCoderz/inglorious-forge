@@ -1,0 +1,49 @@
+.iw-typography {
+  margin: 0;
+  color: var(--iw-color-text);
+  line-height: 1.45;
+
+  &.iw-typography-h1 {
+    font-size: var(--iw-font-size-4xl);
+    line-height: 1.1;
+  }
+
+  &.iw-typography-h2 {
+    font-size: var(--iw-font-size-3xl);
+    line-height: 1.15;
+  }
+
+  &.iw-typography-h3 {
+    font-size: var(--iw-font-size-2xl);
+    line-height: 1.2;
+  }
+
+  &.iw-typography-caption {
+    font-size: var(--iw-font-size-sm);
+    opacity: 0.85;
+  }
+
+  &.iw-typography-overline {
+    font-size: var(--iw-font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  &.iw-typography-align-center {
+    text-align: center;
+  }
+
+  &.iw-typography-align-right {
+    text-align: right;
+  }
+
+  &.iw-typography-nowrap {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &.iw-typography-gutter-bottom {
+    margin-bottom: var(--iw-space-3);
+  }
+}

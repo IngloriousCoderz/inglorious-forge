@@ -11,6 +11,7 @@ describe("radioGroup", () => {
     const entity = {
       id: "rg",
       value: "b",
+      color: "error",
       options: [
         { label: "A", value: "a" },
         { label: "B", value: "b" },
@@ -24,6 +25,11 @@ describe("radioGroup", () => {
     const radios = container.querySelectorAll('input[type="radio"]')
     expect(radios.length).toBe(2)
     expect(radios[1].checked).toBe(true)
+    expect(
+      container
+        .querySelector(".iw-radio-group")
+        .classList.contains("iw-radio-group-error"),
+    ).toBe(true)
   })
 
   it("dispatches change event", () => {

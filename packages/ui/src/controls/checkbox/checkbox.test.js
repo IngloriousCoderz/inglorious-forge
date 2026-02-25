@@ -8,7 +8,12 @@ describe("checkbox", () => {
   const type = augmentType(checkbox)
 
   it("renders label and checkbox", () => {
-    const entity = { id: "cb", label: "Accept", checked: true }
+    const entity = {
+      id: "cb",
+      label: "Accept",
+      checked: true,
+      color: "warning",
+    }
     const api = createMockApi({ [entity.id]: entity })
     const container = document.createElement("div")
 
@@ -18,6 +23,11 @@ describe("checkbox", () => {
       "Accept",
     )
     expect(container.querySelector("input").checked).toBe(true)
+    expect(
+      container
+        .querySelector(".iw-checkbox-field")
+        .classList.contains("iw-checkbox-warning"),
+    ).toBe(true)
   })
 
   it("dispatches change event", () => {

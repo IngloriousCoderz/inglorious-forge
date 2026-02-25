@@ -1,4 +1,5 @@
 .iw-checkbox-field {
+  --iw-checkbox-accent: var(--iw-color-primary);
   display: inline-flex;
   align-items: center;
   gap: var(--iw-space-2);
@@ -10,7 +11,7 @@
     width: 1rem;
     height: 1rem;
     margin: 0;
-    accent-color: var(--iw-color-primary);
+    accent-color: var(--iw-checkbox-accent);
   }
 
   .iw-checkbox-label {
@@ -29,5 +30,25 @@
   &.iw-checkbox-disabled {
     opacity: 0.6;
     cursor: not-allowed;
+  }
+
+  &.iw-checkbox-secondary {
+    --iw-checkbox-accent: var(--iw-color-gray-600);
+  }
+
+  &.iw-checkbox-success {
+    --iw-checkbox-accent: var(--iw-color-success);
+  }
+
+  &.iw-checkbox-warning {
+    --iw-checkbox-accent: var(--iw-color-warning);
+  }
+
+  &.iw-checkbox-error {
+    --iw-checkbox-accent: var(--iw-color-error);
+  }
+
+  &.iw-checkbox-info {
+    --iw-checkbox-accent: var(--iw-color-info);
   }
 }

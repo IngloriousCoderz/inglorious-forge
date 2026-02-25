@@ -1,0 +1,33 @@
+.iw-avatar {
+  display: inline-grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  background: var(--iw-color-bg-secondary);
+  color: var(--iw-color-text);
+  font-size: var(--iw-font-size-sm);
+  font-weight: var(--iw-font-weight-medium);
+  line-height: 1;
+  overflow: hidden;
+
+  .iw-avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &.iw-avatar-sm {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  &.iw-avatar-lg {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  &.iw-avatar-square {
+    border-radius: var(--iw-radius-sm);
+  }
+}

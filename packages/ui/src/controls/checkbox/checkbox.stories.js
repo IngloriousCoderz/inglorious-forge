@@ -15,6 +15,11 @@ export default {
     checked: { control: "boolean", description: "Current checked state." },
     disabled: { control: "boolean", description: "Disables interaction." },
     required: { control: "boolean", description: "Marks input as required." },
+    color: {
+      control: "select",
+      options: ["primary", "secondary", "success", "warning", "error", "info"],
+      description: "Semantic accent color.",
+    },
     size: {
       control: "select",
       options: ["sm", "md", "lg"],
@@ -37,6 +42,7 @@ Default.args = {
   checked: false,
   disabled: false,
   required: false,
+  color: "primary",
   size: "md",
 }
 

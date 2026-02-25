@@ -1,0 +1,43 @@
+import {
+  makeStoryRender,
+  notifyActionArgType,
+} from "../../stories/notifyStory.js"
+import { table } from "."
+
+export default {
+  title: "Data Display/Table",
+  tags: ["autodocs"],
+  render: makeStoryRender(table, "story-table"),
+  argTypes: {
+    ...notifyActionArgType,
+    columns: { control: "object", description: "Column definitions." },
+    rows: { control: "object", description: "Row records." },
+    fullWidth: { control: "boolean", description: "Stretch table width." },
+    striped: { control: "boolean", description: "Enable zebra rows." },
+  },
+  parameters: {
+    docs: {
+      description: {
+        component:
+          "Base table primitive with overridable `renderHeaderCell`, `renderRow`, and `renderCell` sub-renders.",
+      },
+    },
+  },
+}
+
+export const Default = {
+  args: {
+    columns: [
+      { id: "name", label: "Name" },
+      { id: "role", label: "Role" },
+      { id: "score", label: "Score", align: "right" },
+    ],
+    rows: [
+      { id: "u1", name: "Ada", role: "Maintainer", score: 98 },
+      { id: "u2", name: "Max", role: "Contributor", score: 87 },
+      { id: "u3", name: "Lin", role: "Designer", score: 91 },
+    ],
+    fullWidth: true,
+    striped: true,
+  },
+}

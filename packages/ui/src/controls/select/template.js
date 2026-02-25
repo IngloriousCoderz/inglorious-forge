@@ -6,8 +6,9 @@
  */
 
 import { classMap, html, ref, repeat, when } from "@inglorious/web"
-import { applyElementProps } from "@/shared/applyElementProps.js"
 
+import { chipPrimitive } from "../../data-display/chip/index.js"
+import { applyElementProps } from "../../shared/applyElementProps.js"
 import {
   filterOptions,
   formatOption,
@@ -155,19 +156,26 @@ export function renderMultiValue(entity, api) {
  */
 export function renderMultiValueTag(entity, value, api) {
   const option = entity.options.find((opt) => getOptionValue(opt) === value)
+  const tagId = `${entity.id}-tag-${String(value)}`
+  const normalizedOption = option ?? { value }
+  const chipSize = entity.size === "lg" ? "md" : "sm"
+  const chipApi = createMultiValueChipApi(api, entity, tagId, normalizedOption)
 
-  return html`<div
+  return html`<span
     class="iw-select-multi-value-tag"
-    @click=${(event) => {
-      event.stopPropagation()
-      api.notify(`#${entity.id}:optionSelect`, option || { value })
-    }}
+    @click=${(event) => event.stopPropagation()}
   >
-    <span class="iw-select-multi-value-tag-label"
-      >${option ? getOptionLabel(option) : String(value)}</span
-    >
-    <span class="iw-select-multi-value-remove">×</span>
-  </div>`
+    ${chipPrimitive.render(
+      {
+        id: tagId,
+        children: option ? getOptionLabel(option) : String(value),
+        removable: true,
+        size: chipSize,
+        shape: "rounded",
+      },
+      chipApi,
+    )}
+  </span>`
 }
 
 /**
@@ -421,3 +429,17 @@ const KNOWN_SELECT_KEYS = new Set([
   "size",
   "controlProps",
 ])
+
+function createMultiValueChipApi(api, entity, tagId, option) {
+  return {
+    ...api,
+
+    notify(type, payload) {
+      if (type === `#${tagId}:remove`) {
+        return api.notify(`#${entity.id}:optionSelect`, option)
+      }
+
+      return api.notify(type, payload)
+    },
+  }
+}

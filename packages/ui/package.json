@@ -99,7 +99,57 @@
       "types": "./types/layout/grid.d.ts",
       "import": "./src/layout/grid/index.js"
     },
-    "./grid.css": "./src/layout/grid/style.css"
+    "./grid.css": "./src/layout/grid/style.css",
+    "./avatar": {
+      "types": "./types/data-display/avatar.d.ts",
+      "import": "./src/data-display/avatar/index.js"
+    },
+    "./avatar.css": "./src/data-display/avatar/style.css",
+    "./badge": {
+      "types": "./types/data-display/badge.d.ts",
+      "import": "./src/data-display/badge/index.js"
+    },
+    "./badge.css": "./src/data-display/badge/style.css",
+    "./chip": {
+      "types": "./types/data-display/chip.d.ts",
+      "import": "./src/data-display/chip/index.js"
+    },
+    "./chip.css": "./src/data-display/chip/style.css",
+    "./divider": {
+      "types": "./types/data-display/divider.d.ts",
+      "import": "./src/data-display/divider/index.js"
+    },
+    "./divider.css": "./src/data-display/divider/style.css",
+    "./icon": {
+      "types": "./types/data-display/icon.d.ts",
+      "import": "./src/data-display/icon/index.js"
+    },
+    "./icon.css": "./src/data-display/icon/style.css",
+    "./list": {
+      "types": "./types/data-display/list.d.ts",
+      "import": "./src/data-display/list/index.js"
+    },
+    "./list.css": "./src/data-display/list/style.css",
+    "./material-icon": {
+      "types": "./types/data-display/material-icon.d.ts",
+      "import": "./src/data-display/material-icon/index.js"
+    },
+    "./material-icon.css": "./src/data-display/material-icon/style.css",
+    "./table": {
+      "types": "./types/data-display/table.d.ts",
+      "import": "./src/data-display/table/index.js"
+    },
+    "./table.css": "./src/data-display/table/style.css",
+    "./tooltip": {
+      "types": "./types/data-display/tooltip.d.ts",
+      "import": "./src/data-display/tooltip/index.js"
+    },
+    "./tooltip.css": "./src/data-display/tooltip/style.css",
+    "./typography": {
+      "types": "./types/data-display/typography.d.ts",
+      "import": "./src/data-display/typography/index.js"
+    },
+    "./typography.css": "./src/data-display/typography/style.css"
   },
   "files": [
     "src",
@@ -124,6 +174,8 @@
     "@inglorious/web": "workspace:*"
   },
   "devDependencies": {
+    "@fontsource/material-symbols-outlined": "^5.2.36",
+    "@fortawesome/fontawesome-free": "^7.2.0",
     "@inglorious/eslint-config": "workspace:*",
     "@inglorious/store": "workspace:*",
     "@inglorious/web": "workspace:*",
@@ -131,6 +183,7 @@
     "@storybook/web-components-vite": "^10.2.10",
     "happy-dom": "^15.11.0",
     "jsdom": "^25.0.0",
+    "lucide": "^0.575.0",
     "prettier": "^3.6.2",
     "storybook": "^10.2.10",
     "vite": "^7.3.1",

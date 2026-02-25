@@ -7,6 +7,7 @@ export interface CheckboxEntity {
   checked?: boolean
   disabled?: boolean
   required?: boolean
+  color?: "primary" | "secondary" | "success" | "warning" | "error" | "info"
   size?: "sm" | "md" | "lg"
   [key: string]: unknown
 }

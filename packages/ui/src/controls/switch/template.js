@@ -6,7 +6,7 @@
 
 import { classMap, html, ref } from "@inglorious/web"
 
-import { applyElementProps } from "@/shared/applyElementProps.js"
+import { applyElementProps } from "../../shared/applyElementProps.js"
 
 /**
  * Switch control implemented with a checkbox input.
@@ -21,6 +21,7 @@ export function render(entity, api) {
     label = "",
     checked = false,
     disabled = false,
+    color = "primary",
     size = "md",
     ...rest
   } = entity
@@ -29,6 +30,7 @@ export function render(entity, api) {
 
   const classes = {
     "iw-switch-field": true,
+    [`iw-switch-${color}`]: color !== "primary",
     [`iw-switch-${size}`]: size !== "md",
     "iw-switch-disabled": disabled,
   }

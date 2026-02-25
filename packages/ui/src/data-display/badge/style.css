@@ -1,0 +1,56 @@
+.iw-badge {
+  --iw-badge-accent: var(--iw-color-primary);
+  --iw-badge-on-accent: var(--iw-color-primary-text);
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--iw-space-2);
+  min-height: 1.25rem;
+  border-radius: var(--iw-badge-radius, var(--iw-radius-sm));
+  background: var(--iw-badge-accent);
+  color: var(--iw-badge-on-accent);
+  font-size: var(--iw-font-size-xs, 0.75rem);
+  line-height: 1;
+
+  &.iw-badge-sm {
+    min-height: 1rem;
+    padding-inline: var(--iw-space-1);
+    font-size: var(--iw-font-size-xs);
+  }
+
+  &.iw-badge-lg {
+    min-height: 1.5rem;
+    padding-inline: var(--iw-space-3);
+    font-size: var(--iw-font-size-sm);
+  }
+
+  &.iw-badge-secondary {
+    --iw-badge-accent: var(--iw-color-gray-600);
+    --iw-badge-on-accent: var(--iw-color-white);
+  }
+
+  &.iw-badge-success {
+    --iw-badge-accent: var(--iw-color-success);
+    --iw-badge-on-accent: var(--iw-color-white);
+  }
+
+  &.iw-badge-warning {
+    --iw-badge-accent: var(--iw-color-warning);
+    --iw-badge-on-accent: var(--iw-color-black);
+  }
+
+  &.iw-badge-error {
+    --iw-badge-accent: var(--iw-color-error);
+    --iw-badge-on-accent: var(--iw-color-white);
+  }
+
+  &.iw-badge-info {
+    --iw-badge-accent: var(--iw-color-info);
+    --iw-badge-on-accent: var(--iw-color-white);
+  }
+
+  &.iw-badge-outline {
+    background: transparent;
+    border: 1px solid var(--iw-badge-accent);
+    color: var(--iw-badge-accent);
+  }
+}

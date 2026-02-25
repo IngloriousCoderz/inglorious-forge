@@ -18,6 +18,11 @@ export default {
       options: ["column", "row"],
       description: "Layout direction for options.",
     },
+    color: {
+      control: "select",
+      options: ["primary", "secondary", "success", "warning", "error", "info"],
+      description: "Semantic accent color.",
+    },
     disabled: { control: "boolean", description: "Disables all options." },
     options: { control: "object", description: "List of radio options." },
   },
@@ -36,6 +41,7 @@ Default.args = {
   name: "priority",
   value: "medium",
   direction: "column",
+  color: "primary",
   disabled: false,
   options: [
     { label: "Low", value: "low" },

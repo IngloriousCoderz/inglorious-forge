@@ -8,6 +8,7 @@ export interface SliderEntity {
   min?: number
   max?: number
   step?: number
+  color?: "primary" | "secondary" | "success" | "warning" | "error" | "info"
   disabled?: boolean
   showValue?: boolean
   fullWidth?: boolean

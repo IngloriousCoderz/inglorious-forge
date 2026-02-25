@@ -1,0 +1,18 @@
+.iw-divider {
+  border: 0;
+  border-top: 1px solid var(--iw-color-border);
+  margin: var(--iw-space-2) 0;
+
+  &.iw-divider-inset {
+    margin-left: var(--iw-space-4);
+    margin-right: var(--iw-space-4);
+  }
+
+  &.iw-divider-vertical {
+    border-top: 0;
+    border-left: 1px solid var(--iw-color-border);
+    width: 0;
+    height: 100%;
+    margin: 0 var(--iw-space-2);
+  }
+}

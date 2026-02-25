@@ -4,7 +4,7 @@
   gap: var(--iw-space-1);
   font-family: var(--iw-font-family-sans);
 
-  &.iw-input-full-width {
+  &.iw-input-full-width .iw-input {
     width: 100%;
   }
 
@@ -26,11 +26,11 @@
   }
 
   .iw-input {
-    width: 100%;
-    padding: var(--iw-space-2) var(--iw-space-3);
+    height: 2.25rem;
+    padding: 0 var(--iw-space-3);
     font-family: inherit;
     font-size: var(--iw-font-size-base);
-    line-height: var(--iw-line-height-normal);
+    line-height: 1.2;
     color: var(--iw-input-text);
     background-color: var(--iw-input-bg);
     border: 1px solid var(--iw-input-border);
@@ -72,12 +72,14 @@
     }
 
     &.iw-input-sm {
-      padding: var(--iw-space-1) var(--iw-space-2);
+      height: 2rem;
+      padding: 0 var(--iw-space-2);
       font-size: var(--iw-font-size-sm);
     }
 
     &.iw-input-lg {
-      padding: var(--iw-space-3) var(--iw-space-4);
+      height: 2.75rem;
+      padding: 0 var(--iw-space-4);
       font-size: var(--iw-font-size-lg);
     }
   }
