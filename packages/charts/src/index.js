@@ -4,9 +4,8 @@ import * as handlers from "./handlers.js"
 import { render } from "./template.js"
 import { extractDataKeysFromChildren } from "./utils/extract-data-keys.js"
 export { STREAM_DEFAULTS } from "./realtime/defaults.js"
-export { lineChart, realtimeStream } from "./realtime/stream-types.js"
+export { lineChart } from "./realtime/stream-types.js"
 export { withRealtime } from "./realtime/with-realtime.js"
-export { createRealtimeStreamSystem } from "./systems/realtime-stream.js"
 export { streamSlide } from "./utils/stream-slide.js"
 
 // Export chart types for config style
