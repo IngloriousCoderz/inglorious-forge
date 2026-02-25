@@ -11,8 +11,8 @@ const baseLineChart = {
   ...lineRenderer,
 }
 
-// Headline: realtime-enabled chart type
-export const lineChart = withRealtime(baseLineChart)
+// Headline: realtime-enabled chart type (array composition)
+export const lineChart = [baseLineChart, withRealtime]
 
 /**
  * Legacy controller-based type. Prefer per-chart `entity.realtime`.
