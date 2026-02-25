@@ -12,34 +12,42 @@ body {
 
 .app {
   margin: 0 auto;
-  max-width: 1280px;
-  padding: 24px;
+  max-width: 1700px;
+  padding: 0 12px 20px;
 }
 
 .app-header {
   align-items: center;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
+  background: #f2f2f2;
+  border: 1px solid #d8d8d8;
+  border-radius: 0;
   display: flex;
   justify-content: space-between;
-  margin-bottom: 24px;
-  padding: 16px 20px;
+  margin-bottom: 10px;
+  padding: 10px 14px;
 }
 
 .app-header h1 {
-  font-size: 1.25rem;
+  color: #2e77b8;
+  font-size: 1.1rem;
+  letter-spacing: 0.02em;
 }
 
 .app-header nav {
   display: flex;
-  gap: 16px;
+  gap: 14px;
 }
 
 .app-header a {
-  color: #1d4ed8;
+  color: #5d6c7b;
+  font-size: 0.86rem;
   font-weight: 600;
+  padding: 2px 8px;
   text-decoration: none;
+}
+
+.app-header a:hover {
+  background: #e8eef6;
 }
 
 .page-grid {
@@ -58,6 +66,179 @@ body {
 .card h2 {
   font-size: 1rem;
   margin-bottom: 12px;
+}
+
+.mini-grid {
+  max-height: 340px;
+  overflow: auto;
+}
+
+.mini-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.mini-table th,
+.mini-table td {
+  border-bottom: 1px solid #dde4eb;
+  font-size: 0.76rem;
+  padding: 6px 8px;
+  text-align: left;
+}
+
+.mini-table thead th {
+  background: #f0f5fb;
+  color: #314a63;
+  font-weight: 700;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.iw-board {
+  border: 1px solid #d9dfe6;
+  background: #f7f9fc;
+  display: grid;
+  gap: 10px;
+  overflow: hidden;
+  padding: 10px;
+}
+
+.iw-status {
+  background: #eef4fb;
+  border: 1px solid #d5dfeb;
+  color: #3b4b5d;
+  display: flex;
+  font-size: 0.78rem;
+  gap: 18px;
+  padding: 6px 10px;
+}
+
+.iw-top-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.iw-mid-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 1.45fr 1fr;
+}
+
+.iw-bottom-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 1.2fr 1fr;
+}
+
+.iw-panel {
+  background: #fff;
+  border: 1px solid #d9dfe6;
+  min-width: 0;
+}
+
+.iw-panel > header {
+  background: #f0f5fb;
+  border-bottom: 1px solid #d9dfe6;
+  color: #314a63;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 6px 8px;
+}
+
+.iw-panel-body {
+  min-width: 0;
+  overflow: hidden;
+  padding: 8px;
+}
+
+.iw-panel .iw-table {
+  border: 1px solid #e2e8ef;
+  border-radius: 0;
+  box-shadow: none;
+  font-size: 0.75rem;
+  min-width: 0;
+}
+
+.iw-table-panel .iw-panel-body {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.iw-table-panel .iw-table-header-title,
+.iw-table-panel .iw-table-cell {
+  white-space: nowrap;
+}
+
+.iw-panel .iw-table-header {
+  border-bottom: 1px solid #e2e8ef;
+}
+
+.iw-panel .iw-table-header-column {
+  min-height: 26px;
+  padding: 4px 6px;
+}
+
+.iw-panel .iw-table-header-title {
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.iw-panel .iw-table-row {
+  min-height: 24px;
+}
+
+.iw-panel .iw-table-cell {
+  padding: 4px 6px;
+}
+
+.iw-panel .iw-chart {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.iw-panel .iw-chart svg {
+  height: auto !important;
+  max-width: 100%;
+  width: 100% !important;
+}
+
+/* Force solid grid lines (no dashed guides) to match board style */
+.iw-board .iw-chart-cartesian-grid line {
+  stroke-dasharray: none !important;
+}
+
+.iw-board .iw-chart-cartesian-grid-vertical line {
+  display: none;
+}
+
+.instrument-panel {
+  background: #fff;
+  border: 1px solid #c7d9db;
+}
+
+.instrument-panel > header {
+  background: #d5edef;
+  color: #2a7277;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  padding: 7px 10px;
+}
+
+.instrument-grid {
+  display: grid;
+  gap: 8px 20px;
+  grid-template-columns: 1fr 1fr;
+  padding: 10px;
+}
+
+.instrument-grid p {
+  background: #f8fafb;
+  border: 1px solid #e1e8eb;
+  font-size: 0.82rem;
+  padding: 8px 10px;
 }
 
 .kpi-grid {
@@ -89,16 +270,43 @@ body {
   grid-column: span 6;
 }
 
+.span-4 {
+  grid-column: span 4;
+}
+
+.span-5 {
+  grid-column: span 5;
+}
+
+.span-7 {
+  grid-column: span 7;
+}
+
 .span-12 {
   grid-column: span 12;
 }
 
 @media (max-width: 960px) {
+  .iw-status {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .iw-top-grid,
+  .iw-mid-grid,
+  .iw-bottom-grid,
+  .instrument-grid {
+    grid-template-columns: 1fr;
+  }
+
   .kpi-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 
   .span-6,
+  .span-7,
+  .span-5,
+  .span-4,
   .span-12 {
     grid-column: 1 / -1;
   }
