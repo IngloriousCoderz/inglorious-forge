@@ -132,13 +132,24 @@
 export function handleAsync(type, handlers, options = {}) {
   const { scope = "entity" } = options
 
-  function notify(api, entity, event, payload) {
+  /**
+   * Captures entity identity to avoid proxy revocation issues after await.
+   */
+  function getIdentity(entity) {
+    return {
+      id: entity?.id,
+      type: entity?.type,
+    }
+  }
+  function notify(api, identity, event, payload) {
     switch (scope) {
       case "entity":
-        api.notify(`#${entity.id}:${event}`, payload)
+        if (!identity?.id) return
+        api.notify(`#${identity.id}:${event}`, payload)
         break
       case "type":
-        api.notify(`${entity.type}:${event}`, payload)
+        if (!identity?.type) return
+        api.notify(`${identity.type}:${event}`, payload)
         break
       case "global":
         api.notify(event, payload)
@@ -148,11 +159,12 @@ export function handleAsync(type, handlers, options = {}) {
 
   return {
     [type](entity, payload, api) {
+      const identity = getIdentity(entity)
       if (handlers.start) {
-        notify(api, entity, `${type}Start`, payload)
+        notify(api, identity, `${type}Start`, payload)
       }
 
-      notify(api, entity, `${type}Run`, payload)
+      notify(api, identity, `${type}Run`, payload)
     },
 
     ...(handlers.start && {
@@ -162,13 +174,14 @@ export function handleAsync(type, handlers, options = {}) {
     }),
 
     async [`${type}Run`](entity, payload, api) {
+      const identity = getIdentity(entity)
       try {
         const result = await handlers.run(payload, api)
-        notify(api, entity, `${type}Success`, result)
+        notify(api, identity, `${type}Success`, result)
       } catch (error) {
-        notify(api, entity, `${type}Error`, error)
+        notify(api, identity, `${type}Error`, error)
       } finally {
-        notify(api, entity, `${type}Finally`)
+        notify(api, identity, `${type}Finally`)
       }
     },
 
