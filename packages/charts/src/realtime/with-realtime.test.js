@@ -103,4 +103,51 @@ describe("withRealtime", () => {
     expect(entity.brush.startIndex).toBeGreaterThanOrEqual(0)
     expect(entity.brush.endIndex).toBeGreaterThanOrEqual(0)
   })
+
+  it("should schedule periodic streamTick via internal runtime", () => {
+    const api = { notify: vi.fn() }
+    const type = withRealtime({
+      create(entity) {
+        entity.data ??= []
+      },
+    })
+    const entity = {
+      id: "chartA",
+      type: "line",
+      realtime: { enabled: true, visibleWindow: 3 },
+      data: [],
+    }
+
+    type.create(entity, null, api)
+    vi.advanceTimersByTime(250)
+
+    expect(api.notify).toHaveBeenCalledWith("line:streamTick")
+    expect(api.notify).toHaveBeenCalledTimes(2)
+
+    type.destroy(entity, null, api)
+  })
+
+  it("should stop internal runtime when the last realtime entity is destroyed", () => {
+    const api = { notify: vi.fn() }
+    const type = withRealtime({
+      create(entity) {
+        entity.data ??= []
+      },
+    })
+    const entity = {
+      id: "chartB",
+      type: "line",
+      realtime: { enabled: true, visibleWindow: 3 },
+      data: [],
+    }
+
+    type.create(entity, null, api)
+    vi.advanceTimersByTime(100)
+    expect(api.notify).toHaveBeenCalledTimes(1)
+
+    type.destroy(entity, null, api)
+    vi.advanceTimersByTime(300)
+
+    expect(api.notify).toHaveBeenCalledTimes(1)
+  })
 })
