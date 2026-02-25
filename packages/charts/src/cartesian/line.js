@@ -279,18 +279,87 @@ export const line = {
     const axisFn = (ctx) => {
       const { xScale, yScale, dimensions, entity: currentEntity } = ctx
       const [viewStart, viewEnd] = xScale.domain()
+      const dataForLabels =
+        ctx.fullEntity === ctx.entity ? ctx.entity.data : currentEntity.data
+      const isTimeAxis =
+        (config.xAxisType || currentEntity.xAxisType) === "time"
 
-      const scaleTicks = []
-      for (let i = Math.ceil(viewStart); i <= Math.floor(viewEnd); i++) {
-        scaleTicks.push(i)
+      const start = Math.ceil(viewStart)
+      const end = Math.floor(viewEnd)
+      const visibleCount = Math.max(1, end - start + 1)
+      const availableWidth =
+        (dimensions.width || 800) -
+        (dimensions.padding?.left || 0) -
+        (dimensions.padding?.right || 0)
+      const maxTicks = Math.max(2, Math.floor(availableWidth / 110))
+      const roughStep = Math.max(1, visibleCount / maxTicks)
+      const step = getNiceStep(roughStep)
+
+      let scaleTicks = []
+      let labels = []
+      if (isTimeAxis) {
+        const timeTicks = buildTimeAxisTicks(
+          dataForLabels,
+          start,
+          end,
+          maxTicks,
+          config.dataKey,
+        )
+        scaleTicks = timeTicks.ticks
+        labels = timeTicks.labels
+      } else {
+        const rawTicks = []
+        const anchoredStart = Math.ceil(start / step) * step
+        for (let i = anchoredStart; i <= end; i += step) {
+          rawTicks.push(i)
+        }
+        if (!rawTicks.length) {
+          rawTicks.push(start)
+        }
+        if (
+          rawTicks[rawTicks.length - 1] !== end &&
+          end > rawTicks[rawTicks.length - 1]
+        ) {
+          rawTicks.push(end)
+        }
+
+        const rawLabels = rawTicks.map((tick) => {
+          const item = dataForLabels[tick]
+          return item?.[config.dataKey] || item?.name || item?.x || String(tick)
+        })
+
+        const compact = rawTicks.reduce(
+          (acc, tick, index) => {
+            const label = rawLabels[index]
+            if (
+              label === undefined ||
+              label === null ||
+              label === "" ||
+              label === "\u00A0"
+            ) {
+              return acc
+            }
+
+            acc.ticks.push(tick)
+            acc.labels.push(label)
+            return acc
+          },
+          { ticks: [], labels: [] },
+        )
+
+        scaleTicks = compact.ticks.length ? compact.ticks : rawTicks
+        labels = compact.labels.length ? compact.labels : rawLabels
       }
 
-      const labels = scaleTicks.map((tick) => {
-        const dataForLabels =
-          ctx.fullEntity === ctx.entity ? ctx.entity.data : currentEntity.data
-        const item = dataForLabels[tick]
-        return item?.[config.dataKey] || item?.name || item?.x || String(tick)
-      })
+      if (!scaleTicks.length) {
+        scaleTicks = [start, end].filter(
+          (tick, idx, arr) => arr.indexOf(tick) === idx,
+        )
+        labels = scaleTicks.map((tick) => {
+          const item = dataForLabels[tick]
+          return item?.[config.dataKey] || item?.name || item?.x || String(tick)
+        })
+      }
 
       const customXScaleForAxis = Object.assign(xScale.copy(), {
         ticks: () => scaleTicks,
@@ -449,6 +518,143 @@ export const line = {
    * @type {(entity: import('../types/charts').ChartEntity, params: { config?: Record<string, any> }, api: import('@inglorious/web').Api) => (ctx: Record<string, any>) => import('lit-html').TemplateResult}
    */
   renderBrush: createBrushComponent(),
+}
+
+/**
+ * Computes a stable, human-friendly tick step (1, 2, 5, 10, 20, 50, ...)
+ * so ticks add/remove progressively while zooming.
+ * @param {number} roughStep
+ * @returns {number}
+ */
+function getNiceStep(roughStep) {
+  if (!Number.isFinite(roughStep) || roughStep <= 1) return 1
+
+  const exponent = Math.floor(Math.log10(roughStep))
+  const base = 10 ** exponent
+  const fraction = roughStep / base
+
+  if (fraction <= 1) return base
+  if (fraction <= 2) return 2 * base
+  if (fraction <= 5) return 5 * base
+  return 10 * base
+}
+
+function buildTimeAxisTicks(data, start, end, maxTicks, dataKey) {
+  const getDate = (index) => {
+    const item = data[index]
+    const raw = item?.[dataKey] ?? item?.date ?? item?.name ?? item?.x
+    const parsed = parseDateSafe(raw)
+    return parsed
+  }
+
+  const firstDate = getDate(start)
+  const lastDate = getDate(end)
+  if (!firstDate || !lastDate) return { ticks: [], labels: [] }
+
+  const rangeMs = lastDate.getTime() - firstDate.getTime()
+  const granularity =
+    rangeMs > 365 * 24 * 60 * 60 * 1000
+      ? "month"
+      : rangeMs > 90 * 24 * 60 * 60 * 1000
+        ? "week"
+        : "day"
+
+  const ticks = []
+  const labels = []
+  let prevDate = null
+
+  for (let i = start; i <= end; i += 1) {
+    const currentDate = getDate(i)
+    if (!currentDate) continue
+
+    if (!prevDate || hasBoundaryChanged(prevDate, currentDate, granularity)) {
+      ticks.push(i)
+      labels.push(formatTimeLabel(currentDate, granularity))
+      prevDate = currentDate
+    }
+  }
+
+  if (!ticks.length || ticks[0] !== start) {
+    const startDate = getDate(start)
+    if (startDate) {
+      ticks.unshift(start)
+      labels.unshift(formatTimeLabel(startDate, granularity))
+    }
+  }
+
+  if (ticks[ticks.length - 1] !== end) {
+    const endDate = getDate(end)
+    if (endDate) {
+      ticks.push(end)
+      labels.push(formatTimeLabel(endDate, granularity))
+    }
+  }
+
+  if (ticks.length <= maxTicks) return { ticks, labels }
+
+  const thinStep = Math.max(1, Math.ceil(ticks.length / maxTicks))
+  const thinTicks = []
+  const thinLabels = []
+
+  for (let i = 0; i < ticks.length; i += thinStep) {
+    thinTicks.push(ticks[i])
+    thinLabels.push(labels[i])
+  }
+
+  if (thinTicks[thinTicks.length - 1] !== ticks[ticks.length - 1]) {
+    thinTicks.push(ticks[ticks.length - 1])
+    thinLabels.push(labels[labels.length - 1])
+  }
+
+  return { ticks: thinTicks, labels: thinLabels }
+}
+
+function parseDateSafe(value) {
+  if (!value) return null
+  const date = new Date(value)
+  return Number.isNaN(date.getTime()) ? null : date
+}
+
+function hasBoundaryChanged(prevDate, currentDate, granularity) {
+  if (granularity === "month") {
+    return (
+      prevDate.getUTCFullYear() !== currentDate.getUTCFullYear() ||
+      prevDate.getUTCMonth() !== currentDate.getUTCMonth()
+    )
+  }
+
+  if (granularity === "week") {
+    return getUtcWeekKey(prevDate) !== getUtcWeekKey(currentDate)
+  }
+
+  return (
+    prevDate.getUTCFullYear() !== currentDate.getUTCFullYear() ||
+    prevDate.getUTCMonth() !== currentDate.getUTCMonth() ||
+    prevDate.getUTCDate() !== currentDate.getUTCDate()
+  )
+}
+
+function getUtcWeekKey(date) {
+  const utc = new Date(
+    Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()),
+  )
+  const day = utc.getUTCDay() || 7
+  utc.setUTCDate(utc.getUTCDate() + 4 - day)
+  const yearStart = new Date(Date.UTC(utc.getUTCFullYear(), 0, 1))
+  const weekNo = Math.ceil(((utc - yearStart) / 86400000 + 1) / 7)
+  return `${utc.getUTCFullYear()}-${weekNo}`
+}
+
+function formatTimeLabel(date, granularity) {
+  const month = String(date.getUTCMonth() + 1)
+  const day = String(date.getUTCDate())
+  const year = String(date.getUTCFullYear())
+
+  if (granularity === "month") {
+    return `${month}/1/${year}`
+  }
+
+  return `${month}/${day}/${year}`
 }
 
 /**
