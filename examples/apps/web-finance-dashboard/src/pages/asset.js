@@ -1,4 +1,5 @@
 import { html } from "@inglorious/web"
+import { handleAsync } from "../../../../../packages/store/src/async.js"
 import { chart } from "@inglorious/charts"
 
 import { renderKpiCard } from "../components/kpi-card.js"
@@ -8,7 +9,6 @@ import {
   formatMoney,
   hasFmpConfig,
   normalizeHistory,
-  normalizeIncomeRows,
   normalizeQuote,
   toNumber,
 } from "../services/fmp.js"
@@ -16,49 +16,86 @@ import {
 const DEFAULT_SYMBOL = "AAPL"
 
 export const assetPage = {
+  // Headline: route lifecycle
   routeChange(entity, payload, api) {
     if (payload.route !== entity.type) return
+    if (entity.loading) return
 
     const symbol = payload.params?.symbol || DEFAULT_SYMBOL
     const entityId = entity.id
 
-    api.notify(`#${entityId}:assetLoadStart`, symbol)
-
     if (!hasFmpConfig()) {
       api.notify(
-        `#${entityId}:assetLoadFailure`,
+        `#${entityId}:assetFetchError`,
         "Missing VITE_FMP_API_KEY in .env.local",
       )
       return
     }
 
-    loadAssetData(entityId, symbol, api)
+    if (entity.loaded && entity.symbol === symbol) return
+
+    api.notify(`#${entityId}:assetFetch`, { symbol })
   },
 
-  assetLoadStart(entity, symbol) {
-    entity.symbol = symbol
-    entity.loading = true
-    entity.error = null
-  },
+  // Headline: async lifecycle
+  ...handleAsync("assetFetch", {
+    start(entity, payload) {
+      entity.symbol = payload?.symbol || DEFAULT_SYMBOL
+      entity.loading = true
+      entity.error = null
+    },
 
-  assetLoadSuccess(entity, payload) {
-    entity.quote = payload.quote
-    entity.profile = payload.profile
-    entity.fundamentals = payload.fundamentals
-    entity.priceSeries = payload.priceSeries
-    entity.loading = false
-    entity.error = null
-  },
+    async run(payload) {
+      const symbol = payload?.symbol || DEFAULT_SYMBOL
+      const [quotePayload, historyPayload] = await Promise.all([
+        fmpGet("/quote", { symbol }),
+        fmpGet("/historical-price-eod/full", { symbol }),
+      ])
 
-  assetLoadFailure(entity, message) {
-    entity.error = message
-    entity.quote = null
-    entity.profile = null
-    entity.fundamentals = null
-    entity.priceSeries = []
-    entity.loading = false
-  },
+      const quote = normalizeQuote(quotePayload)
+      const priceSeries = normalizeHistory(historyPayload, 40)
 
+      return {
+        quote,
+        profile: {
+          companyName: quote?.name ?? "N/A",
+          exchangeShortName: quote?.exchange ?? "N/A",
+        },
+        fundamentals: {
+          pe: quote?.pe,
+          eps: quote?.eps,
+          marketCap: quote?.marketCap,
+          revenue: null,
+          netIncome: null,
+        },
+        priceSeries,
+      }
+    },
+
+    success(entity, payload) {
+      entity.quote = payload.quote
+      entity.profile = payload.profile
+      entity.fundamentals = payload.fundamentals
+      entity.priceSeries = payload.priceSeries
+      entity.loaded = true
+      entity.error = null
+    },
+
+    error(entity, error) {
+      entity.error = error instanceof Error ? error.message : String(error)
+      entity.quote = null
+      entity.profile = null
+      entity.fundamentals = null
+      entity.priceSeries = []
+      entity.loaded = false
+    },
+
+    finally(entity) {
+      entity.loading = false
+    },
+  }),
+
+  // Body: render
   render(entity, api) {
     const symbol = entity.symbol || DEFAULT_SYMBOL
     const quote = entity.quote || {}
@@ -126,54 +163,30 @@ export const assetPage = {
           `,
           "span-12",
         )}
-        ${entity.loading
-          ? html`<section class="card span-12">
-              <p>Loading ${symbol}...</p>
-            </section>`
-          : null}
-        ${entity.error
-          ? html`<section class="card span-12">
-              <p>FMP error: ${entity.error}</p>
-            </section>`
-          : null}
+        ${renderLoadingState(entity.loading, symbol)}
+        ${renderErrorState(entity.error)}
       </div>
     `
   },
 }
 
-async function loadAssetData(entityId, symbol, api) {
-  try {
-    const [quotePayload, profilePayload, incomePayload, historyPayload] =
-      await Promise.all([
-        fmpGet("/quote", { symbol }),
-        fmpGet("/profile", { symbol }),
-        fmpGet("/income-statement", { symbol, limit: 1 }),
-        fmpGet("/historical-price-eod/full", { symbol }),
-      ])
+// Footer: view helpers
+function renderLoadingState(isLoading, symbol) {
+  if (!isLoading) return null
 
-    const quote = normalizeQuote(quotePayload)
-    const profile = Array.isArray(profilePayload)
-      ? profilePayload[0] || null
-      : profilePayload || null
-    const incomeRows = normalizeIncomeRows(incomePayload, 1)
-    const lastIncome = incomeRows[0] || null
-    const historySeries = normalizeHistory(historyPayload, 40)
+  return html`
+    <section class="card span-12">
+      <p>Loading ${symbol}...</p>
+    </section>
+  `
+}
 
-    api.notify(`#${entityId}:assetLoadSuccess`, {
-      quote,
-      profile,
-      fundamentals: {
-        pe: quote?.pe ?? profile?.pe,
-        eps: quote?.eps ?? profile?.eps,
-        marketCap: quote?.marketCap,
-        revenue: lastIncome?.revenue,
-        netIncome: lastIncome?.netIncome,
-      },
-      priceSeries: historySeries,
-    })
-  } catch (error) {
-    const message =
-      error instanceof Error ? error.message : "Failed to load asset"
-    api.notify(`#${entityId}:assetLoadFailure`, message)
-  }
+function renderErrorState(errorMessage) {
+  if (!errorMessage) return null
+
+  return html`
+    <section class="card span-12">
+      <p>FMP error: ${errorMessage}</p>
+    </section>
+  `
 }
