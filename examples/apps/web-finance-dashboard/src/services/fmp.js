@@ -5,21 +5,18 @@ const env = import.meta.env || {}
 const baseUrl = env.VITE_FMP_BASE_URL || DEFAULT_BASE_URL
 const apiKey = env.VITE_FMP_API_KEY
 
+// Headline: public config guards
 export function hasFmpConfig() {
   return Boolean(apiKey)
 }
 
+// Headline: transport
 export async function fmpGet(path, params = {}) {
   if (!apiKey) {
     throw new Error("Missing VITE_FMP_API_KEY in .env.local")
   }
 
-  const url = new URL(`${baseUrl}${path}`)
-  Object.entries(params).forEach(([key, value]) => {
-    if (value == null || value === "") return
-    url.searchParams.set(key, String(value))
-  })
-  url.searchParams.set("apikey", apiKey)
+  const url = buildFmpUrl(path, params)
 
   const controller = new AbortController()
   const timeoutId = setTimeout(() => controller.abort(), DEFAULT_TIMEOUT_MS)
@@ -45,6 +42,7 @@ export async function fmpGet(path, params = {}) {
   return response.json()
 }
 
+// Body: formatters and normalizers
 export function formatMoney(value) {
   if (!Number.isFinite(value)) return "N/A"
 
@@ -101,4 +99,15 @@ export function toNumber(value) {
     return Number.isFinite(parsed) ? parsed : NaN
   }
   return NaN
+}
+
+// Footer: internal helpers
+function buildFmpUrl(path, params) {
+  const url = new URL(`${baseUrl}${path}`)
+  Object.entries(params).forEach(([key, value]) => {
+    if (value == null || value === "") return
+    url.searchParams.set(key, String(value))
+  })
+  url.searchParams.set("apikey", apiKey)
+  return url
 }
