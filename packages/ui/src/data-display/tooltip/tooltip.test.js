@@ -1,12 +1,9 @@
-import { augmentType } from "@inglorious/store/types"
 import { createMockApi, render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
 import { tooltip } from "."
 
 describe("tooltip", () => {
-  const type = augmentType(tooltip)
-
   it("renders tooltip bubble", () => {
     const entity = {
       id: "tip",
@@ -17,7 +14,7 @@ describe("tooltip", () => {
     const api = createMockApi({ [entity.id]: entity })
     const container = document.createElement("div")
 
-    render(type.render(entity, api), container)
+    render(tooltip.render(entity, api), container)
 
     expect(
       container.querySelector(".iw-tooltip-bubble").textContent.trim(),

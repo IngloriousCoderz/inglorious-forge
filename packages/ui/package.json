@@ -45,6 +45,11 @@
       "import": "./src/controls/checkbox/index.js"
     },
     "./checkbox.css": "./src/controls/checkbox/style.css",
+    "./data-grid": {
+      "types": "./types/data-display/data-grid.d.ts",
+      "import": "./src/data-display/data-grid/index.js"
+    },
+    "./data-grid.css": "./src/data-display/data-grid/style.css",
     "./fab": {
       "types": "./types/controls/fab.d.ts",
       "import": "./src/controls/fab/index.js"

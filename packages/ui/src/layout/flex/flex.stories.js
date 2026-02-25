@@ -9,7 +9,7 @@ import { flex } from "."
 export default {
   title: "Layout/Flex",
   tags: ["autodocs"],
-  render: makeStoryRender(flex, "story-flex"),
+  render: makeStoryRender({ flex }),
   argTypes: {
     ...notifyActionArgType,
     direction: {
@@ -62,6 +62,8 @@ export default {
 
 export const Default = {}
 Default.args = {
+  id: "flex",
+  type: "flex",
   direction: "row",
   wrap: "nowrap",
   justify: "start",

@@ -7,7 +7,7 @@ import { buttonGroup } from "."
 export default {
   title: "Controls/ButtonGroup",
   tags: ["autodocs"],
-  render: makeStoryRender(buttonGroup, "story-button-group"),
+  render: makeStoryRender({ buttonGroup }),
   argTypes: {
     ...notifyActionArgType,
     value: {
@@ -63,6 +63,8 @@ export default {
 
 export const Default = {}
 Default.args = {
+  id: "buttonGroup",
+  type: "buttonGroup",
   value: "",
   multiple: false,
   direction: "row",

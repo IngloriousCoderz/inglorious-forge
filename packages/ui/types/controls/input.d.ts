@@ -3,7 +3,14 @@ import type { TemplateResult, Api } from "@inglorious/web"
 export interface InputEntity {
   id?: string
   name?: string
-  type?: "text" | "password" | "email" | "number" | "tel" | "url" | "search"
+  inputType?:
+    | "text"
+    | "password"
+    | "email"
+    | "number"
+    | "tel"
+    | "url"
+    | "search"
   value?: string
   placeholder?: string
   label?: string

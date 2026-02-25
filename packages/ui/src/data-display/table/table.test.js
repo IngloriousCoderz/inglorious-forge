@@ -1,12 +1,9 @@
-import { augmentType } from "@inglorious/store/types"
 import { createMockApi, render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
 import { table } from "."
 
 describe("table", () => {
-  const type = augmentType(table)
-
   it("renders rows and headers", () => {
     const entity = {
       id: "table",
@@ -22,7 +19,7 @@ describe("table", () => {
     const api = createMockApi({ [entity.id]: entity })
     const container = document.createElement("div")
 
-    render(type.render(entity, api), container)
+    render(table.render(entity, api), container)
 
     expect(container.querySelectorAll("tbody tr")).toHaveLength(2)
     expect(container.querySelectorAll("thead th")).toHaveLength(2)

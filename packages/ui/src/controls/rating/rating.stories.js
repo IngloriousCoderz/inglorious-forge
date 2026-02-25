@@ -7,7 +7,7 @@ import { rating } from "."
 export default {
   title: "Controls/Rating",
   tags: ["autodocs"],
-  render: makeStoryRender(rating, "story-rating"),
+  render: makeStoryRender({ rating }),
   argTypes: {
     ...notifyActionArgType,
     value: { control: "number", description: "Current rating value." },
@@ -37,6 +37,8 @@ export default {
 
 export const Default = {}
 Default.args = {
+  id: "rating",
+  type: "rating",
   value: 3,
   max: 5,
   disabled: false,

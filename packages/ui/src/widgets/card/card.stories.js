@@ -9,7 +9,7 @@ import { card } from "."
 export default {
   title: "Widgets/Card",
   tags: ["autodocs"],
-  render: makeStoryRender(card, "story-card"),
+  render: makeStoryRender({ card }),
   argTypes: {
     ...notifyActionArgType,
     title: {
@@ -47,6 +47,8 @@ export default {
 }
 export const Default = {}
 Default.args = {
+  id: "card",
+  type: "card",
   title: "Card Title",
   subtitle: "This is a card subtitle",
   hoverable: false,
@@ -67,35 +69,29 @@ Clickable.args = {
   clickable: true,
 }
 
-const cardWithFooter = [
+const cardWithFooter = {
   ...card,
-  {
-    renderFooter(entity, api) {
-      return html`<div
-        class="iw-card-footer"
-        style="display: flex; gap: 0.5rem;"
-      >
-        ${entity.footerActions?.map(
-          (action) =>
-            html`<button
-              class="iw-button iw-button-sm ${action.variant === "ghost"
-                ? "iw-button-ghost"
-                : ""}"
-              @click=${() => api.notify(`#${entity.id}:${action.event}`)}
-            >
-              ${action.label}
-            </button>`,
-        )}
-      </div>`
-    },
+  renderFooter(entity, api) {
+    return html`<div class="iw-card-footer" style="display: flex; gap: 0.5rem;">
+      ${entity.footerActions?.map(
+        (action) =>
+          html`<button
+            class="iw-button iw-button-sm ${action.variant === "ghost"
+              ? "iw-button-ghost"
+              : ""}"
+            @click=${() => api.notify(`#${entity.id}:${action.event}`)}
+          >
+            ${action.label}
+          </button>`,
+      )}
+    </div>`
   },
-]
+}
 
 export const WithFooter = {}
-WithFooter.render = makeStoryRender(cardWithFooter, "card-footer", {
-  resolveByEntityType: true,
-})
+WithFooter.render = makeStoryRender({ cardWithFooter })
 WithFooter.args = {
+  id: "cardWithFooter",
   type: "cardWithFooter",
   title: "Card with Footer",
   subtitle: "This card has a footer section",
@@ -107,6 +103,8 @@ WithFooter.args = {
 
 export const NoHeader = {}
 NoHeader.args = {
+  id: "card",
+  type: "card",
   title: null,
   subtitle: null,
 }
@@ -118,10 +116,9 @@ FullWidth.args = {
 }
 
 export const Interactive = {}
-Interactive.render = makeStoryRender(cardWithFooter, "card-interactive", {
-  resolveByEntityType: true,
-})
+Interactive.render = makeStoryRender({ cardWithFooter })
 Interactive.args = {
+  id: "cardWithFooter",
   type: "cardWithFooter",
   title: "Interactive Card",
   subtitle: "Hover, click, and trigger footer actions",

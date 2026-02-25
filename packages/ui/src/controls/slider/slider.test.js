@@ -1,12 +1,9 @@
-import { augmentType } from "@inglorious/store/types"
 import { createMockApi, render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
 import { slider } from "."
 
 describe("slider", () => {
-  const type = augmentType(slider)
-
   it("renders range input with value", () => {
     const entity = {
       id: "sl",
@@ -18,7 +15,7 @@ describe("slider", () => {
     const api = createMockApi({ [entity.id]: entity })
     const container = document.createElement("div")
 
-    render(type.render(entity, api), container)
+    render(slider.render(entity, api), container)
 
     const input = container.querySelector('input[type="range"]')
     expect(input.value).toBe("42")
@@ -36,7 +33,7 @@ describe("slider", () => {
     const api = createMockApi({ [entity.id]: entity })
     const container = document.createElement("div")
 
-    render(type.render(entity, api), container)
+    render(slider.render(entity, api), container)
 
     const input = container.querySelector('input[type="range"]')
     input.value = "64"

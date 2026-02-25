@@ -4,7 +4,7 @@ import { list } from "."
 export default {
   title: "Data Display/List",
   tags: ["autodocs"],
-  render: makeStoryRender(list, "story-list"),
+  render: makeStoryRender({ list }),
   argTypes: {
     items: {
       control: "object",
@@ -29,6 +29,8 @@ export default {
 
 export const Default = {
   args: {
+    id: "list",
+    type: "list",
     items: [
       { id: "a", label: "First item" },
       { id: "b", label: "Second item" },

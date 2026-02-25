@@ -1,4 +1,3 @@
-import { augmentType } from "@inglorious/store/types"
 import { createMockApi, render } from "@inglorious/web/test"
 
 export const notifyActionArgType = {
@@ -9,29 +8,24 @@ export const notifyActionArgType = {
   },
 }
 
-export function makeStoryRender(typeDefinition, id, options = {}) {
-  const { resolveByEntityType = false } = options
-  const type = augmentType(typeDefinition)
-
+export function makeStoryRender(types) {
   return (args) => {
     const container = document.createElement("div")
-    const { onNotify, ...entityArgs } = args
-    const entity = { id, ...entityArgs }
-    const api = createInstrumentedApi(entity, onNotify)
+    const { onNotify, ...entity } = args
 
-    if (resolveByEntityType && entity.type) {
-      const getType = api.getType?.bind(api)
-      api.getType = (typeName) =>
-        typeName === entity.type ? type : getType?.(typeName)
-    }
+    const api = createInstrumentedApi({ [entity.id]: entity }, onNotify)
+    api.getType = (typeName) => types[typeName]
 
+    const type = api.getType(entity.type)
+    type.create?.(entity)
     render(type.render(entity, api), container)
+    type.mount?.(entity, container)
     return container
   }
 }
 
-function createInstrumentedApi(entityOrState, onNotify) {
-  const api = createMockApi(entityOrState)
+function createInstrumentedApi(entities, onNotify) {
+  const api = createMockApi(entities)
   const originalNotify = api.notify.bind(api)
 
   api.notify = (type, payload) => {

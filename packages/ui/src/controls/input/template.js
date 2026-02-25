@@ -27,7 +27,7 @@ import { applyElementProps } from "../../shared/applyElementProps.js"
 export function render(entity, api) {
   const {
     name = "",
-    type = "text",
+    inputType = "text",
     value = "",
     placeholder = "",
     label,
@@ -58,7 +58,7 @@ export function render(entity, api) {
     "iw-input": true,
     [`iw-input-${size}`]: size !== "md",
     "iw-input-error": !!error,
-    "iw-input-number": type === "number",
+    "iw-input-number": inputType === "number",
   }
 
   return html`
@@ -80,7 +80,7 @@ export function render(entity, api) {
         <input
           id=${inputId}
           name=${name}
-          type=${type}
+          type=${inputType}
           .value=${value}
           placeholder=${placeholder}
           ?disabled=${disabled}

@@ -1,4 +1,6 @@
+import { augmentType } from "@inglorious/store/types"
+
 import { withRenderValidation } from "../../shared/withRenderValidation.js"
 import * as renderers from "./template.js"
 
-export const input = [{ ...renderers }, withRenderValidation]
+export const input = augmentType([{ ...renderers }, withRenderValidation])

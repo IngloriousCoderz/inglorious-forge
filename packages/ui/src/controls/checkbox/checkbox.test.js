@@ -1,12 +1,9 @@
-import { augmentType } from "@inglorious/store/types"
 import { createMockApi, render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
 import { checkbox } from "."
 
 describe("checkbox", () => {
-  const type = augmentType(checkbox)
-
   it("renders label and checkbox", () => {
     const entity = {
       id: "cb",
@@ -17,7 +14,7 @@ describe("checkbox", () => {
     const api = createMockApi({ [entity.id]: entity })
     const container = document.createElement("div")
 
-    render(type.render(entity, api), container)
+    render(checkbox.render(entity, api), container)
 
     expect(container.querySelector(".iw-checkbox-label").textContent).toBe(
       "Accept",
@@ -35,7 +32,7 @@ describe("checkbox", () => {
     const api = createMockApi({ [entity.id]: entity })
     const container = document.createElement("div")
 
-    render(type.render(entity, api), container)
+    render(checkbox.render(entity, api), container)
 
     const input = container.querySelector("input")
     input.checked = true

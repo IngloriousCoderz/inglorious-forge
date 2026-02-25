@@ -9,7 +9,7 @@ import { grid } from "."
 export default {
   title: "Layout/Grid",
   tags: ["autodocs"],
-  render: makeStoryRender(grid, "story-grid"),
+  render: makeStoryRender({ grid }),
   argTypes: {
     ...notifyActionArgType,
     columns: {
@@ -56,6 +56,8 @@ export default {
 
 export const Default = {}
 Default.args = {
+  id: "grid",
+  type: "grid",
   columns: 3,
   gap: "md",
   align: "stretch",

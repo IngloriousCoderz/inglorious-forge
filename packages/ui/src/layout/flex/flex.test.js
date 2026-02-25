@@ -1,4 +1,3 @@
-import { augmentType } from "@inglorious/store/types"
 import { html } from "@inglorious/web"
 import { createMockApi, render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
@@ -6,8 +5,6 @@ import { describe, expect, it } from "vitest"
 import { flex } from "."
 
 describe("flex", () => {
-  const type = augmentType(flex)
-
   it("renders children", () => {
     const entity = {
       id: "fx",
@@ -16,7 +13,7 @@ describe("flex", () => {
     const api = createMockApi({ [entity.id]: entity })
     const container = document.createElement("div")
 
-    render(type.render(entity, api), container)
+    render(flex.render(entity, api), container)
 
     expect(
       container.querySelector(".iw-flex").textContent.replace(/\s+/g, ""),
@@ -36,7 +33,7 @@ describe("flex", () => {
     const api = createMockApi({ [entity.id]: entity })
     const container = document.createElement("div")
 
-    render(type.render(entity, api), container)
+    render(flex.render(entity, api), container)
 
     const root = container.querySelector(".iw-flex")
     expect(root.classList.contains("iw-flex-direction-column")).toBe(true)
@@ -55,7 +52,7 @@ describe("flex", () => {
     const api = createMockApi({ [entity.id]: entity })
     const container = document.createElement("div")
 
-    render(type.render(entity, api), container)
+    render(flex.render(entity, api), container)
 
     expect(container.textContent).toContain("Configured Child + Text Child")
   })

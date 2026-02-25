@@ -1,0 +1,30 @@
+.iw-data-grid {
+  user-select: none;
+
+  .iw-data-grid-header {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .iw-data-grid-header-row {
+    display: flex;
+  }
+
+  .iw-data-grid-header-column {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .iw-data-grid-filter-input,
+  .iw-data-grid-filter-select {
+    width: 100%;
+  }
+
+  .iw-data-grid-row {
+    display: flex;
+  }
+
+  .iw-data-grid-footer-row {
+    display: flex;
+  }
+}

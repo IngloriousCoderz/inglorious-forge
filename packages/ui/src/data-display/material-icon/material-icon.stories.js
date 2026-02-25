@@ -4,7 +4,7 @@ import { materialIcon } from "."
 export default {
   title: "Data Display/MaterialIcon",
   tags: ["autodocs"],
-  render: makeStoryRender(materialIcon, "story-material-icon"),
+  render: makeStoryRender({ materialIcon }),
   argTypes: {
     name: {
       control: "text",
@@ -31,5 +31,11 @@ export default {
 }
 
 export const Default = {
-  args: { name: "home", size: "md", filled: true },
+  args: {
+    id: "materialIcon",
+    type: "materialIcon",
+    name: "home",
+    size: "md",
+    filled: true,
+  },
 }

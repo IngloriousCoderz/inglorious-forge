@@ -9,7 +9,7 @@ import { button } from "."
 export default {
   title: "Controls/Button",
   tags: ["autodocs"],
-  render: makeStoryRender(button, "story-button"),
+  render: makeStoryRender({ button }),
   argTypes: {
     ...notifyActionArgType,
     children: {
@@ -64,6 +64,8 @@ export default {
 }
 export const Default = {}
 Default.args = {
+  id: "button",
+  type: "button",
   children: "Button",
   variant: "default",
   color: "primary",
@@ -71,7 +73,6 @@ Default.args = {
   shape: "rectangle",
   disabled: false,
   fullWidth: false,
-  type: "button",
 }
 
 export const Outline = {}

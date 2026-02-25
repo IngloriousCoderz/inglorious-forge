@@ -9,7 +9,7 @@ import { fab } from "."
 export default {
   title: "Controls/Fab",
   tags: ["autodocs"],
-  render: makeStoryRender(fab, "story-fab"),
+  render: makeStoryRender({ fab }),
   argTypes: {
     ...notifyActionArgType,
     children: { control: "text", description: "Content of the FAB." },
@@ -37,6 +37,8 @@ export default {
 
 export const Default = {}
 Default.args = {
+  id: "fab",
+  type: "fab",
   children: "+",
   color: "primary",
   size: "md",

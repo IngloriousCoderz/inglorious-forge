@@ -1,12 +1,9 @@
-import { augmentType } from "@inglorious/store/types"
 import { createMockApi, render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
 import { radioGroup } from "."
 
 describe("radioGroup", () => {
-  const type = augmentType(radioGroup)
-
   it("renders options and selected state", () => {
     const entity = {
       id: "rg",
@@ -20,7 +17,7 @@ describe("radioGroup", () => {
     const api = createMockApi({ [entity.id]: entity })
     const container = document.createElement("div")
 
-    render(type.render(entity, api), container)
+    render(radioGroup.render(entity, api), container)
 
     const radios = container.querySelectorAll('input[type="radio"]')
     expect(radios.length).toBe(2)
@@ -43,7 +40,7 @@ describe("radioGroup", () => {
     const api = createMockApi({ [entity.id]: entity })
     const container = document.createElement("div")
 
-    render(type.render(entity, api), container)
+    render(radioGroup.render(entity, api), container)
 
     const radio = container.querySelector('input[value="b"]')
     radio.checked = true

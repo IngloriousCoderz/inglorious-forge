@@ -4,7 +4,7 @@ import { avatar } from "."
 export default {
   title: "Data Display/Avatar",
   tags: ["autodocs"],
-  render: makeStoryRender(avatar, "story-avatar"),
+  render: makeStoryRender({ avatar }),
   argTypes: {
     src: {
       control: "text",
@@ -39,6 +39,8 @@ export default {
 
 export const Default = {
   args: {
+    id: "avatar",
+    type: "avatar",
     initials: "AM",
     src: "",
     size: "md",
@@ -48,10 +50,8 @@ export const Default = {
 
 export const WithImage = {
   args: {
+    ...Default.args,
     src: "/transparent.png",
     alt: "Transparent avatar sample",
-    initials: "AM",
-    size: "md",
-    shape: "circle",
   },
 }

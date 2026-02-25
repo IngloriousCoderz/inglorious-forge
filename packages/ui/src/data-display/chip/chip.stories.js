@@ -7,7 +7,7 @@ import { chip } from "."
 export default {
   title: "Data Display/Chip",
   tags: ["autodocs"],
-  render: makeStoryRender(chip, "story-chip"),
+  render: makeStoryRender({ chip }),
   argTypes: {
     ...notifyActionArgType,
     children: { control: "text", description: "Chip label content." },
@@ -51,6 +51,8 @@ export default {
 
 export const Default = {
   args: {
+    id: "chip",
+    type: "chip",
     children: "Tag",
     removable: true,
     color: "default",

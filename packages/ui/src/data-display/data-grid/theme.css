@@ -1,0 +1,98 @@
+.iw-data-grid {
+  border: 1px solid var(--iw-color-border);
+  background: var(--iw-color-surface);
+  color: var(--iw-color-text);
+
+  .iw-data-grid-header {
+    border-bottom: 1px solid var(--iw-color-border);
+    padding: var(--iw-space-4) var(--iw-space-0);
+    row-gap: var(--iw-space-4);
+  }
+
+  .iw-data-grid-header-row {
+    align-items: flex-start;
+    column-gap: var(--iw-space-4);
+  }
+
+  .iw-data-grid-header-column {
+    padding: 0 var(--iw-space-4);
+    row-gap: var(--iw-space-2);
+  }
+
+  .iw-data-grid-header-title {
+    font-weight: var(--iw-font-weight-bold);
+    white-space: nowrap;
+  }
+
+  .iw-data-grid-searchbar {
+    padding: 0 var(--iw-space-4);
+  }
+
+  .iw-data-grid-body {
+    max-height: 35em;
+    overflow: auto;
+    border-bottom: 1px solid var(--iw-color-border);
+  }
+
+  .iw-data-grid-row {
+    align-items: center;
+    column-gap: var(--iw-space-4);
+  }
+
+  &.iw-data-grid-striped {
+    .iw-data-grid-row-even {
+      background: color-mix(
+        in srgb,
+        var(--iw-color-surface) 88%,
+        var(--iw-color-bg)
+      );
+    }
+  }
+
+  .iw-data-grid-row-selected {
+    border-left: 1px solid var(--iw-color-primary);
+    border-right: 1px solid var(--iw-color-primary);
+  }
+
+  :not(.iw-data-grid-row-selected) + .iw-data-grid-row-selected {
+    border-top: 1px solid var(--iw-color-primary);
+    margin-top: -1px;
+  }
+
+  .iw-data-grid-row-selected + :not(.iw-data-grid-row-selected) {
+    border-top: 1px solid var(--iw-color-primary);
+    margin-top: -1px;
+  }
+
+  .iw-data-grid-cell {
+    padding: var(--iw-space-4);
+  }
+
+  .iw-data-grid-cell-number,
+  .iw-data-grid-cell-date {
+    text-align: right;
+  }
+
+  .iw-data-grid-cell-boolean {
+    text-align: center;
+  }
+
+  .iw-data-grid-footer {
+    padding: var(--iw-space-4);
+  }
+
+  .iw-data-grid-footer-row {
+    justify-content: space-between;
+    align-items: center;
+    column-gap: var(--iw-space-4);
+  }
+
+  .iw-data-grid-page-input {
+    min-width: var(--iw-space-16);
+    text-align: right;
+  }
+
+  .iw-data-grid-pagination-button {
+    white-space: nowrap;
+  }
+}

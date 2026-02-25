@@ -7,7 +7,7 @@ import { iconButton } from "."
 export default {
   title: "Controls/IconButton",
   tags: ["autodocs"],
-  render: makeStoryRender(iconButton, "story-icon-button"),
+  render: makeStoryRender({ iconButton }),
   argTypes: {
     ...notifyActionArgType,
     icon: { control: "text", description: "Leading icon content." },
@@ -49,6 +49,8 @@ export default {
 
 export const Default = {}
 Default.args = {
+  id: "iconButton",
+  type: "iconButton",
   icon: "★",
   label: "Favorite",
   iconAfter: "",

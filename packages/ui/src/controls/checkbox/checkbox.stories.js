@@ -7,7 +7,7 @@ import { checkbox } from "."
 export default {
   title: "Controls/Checkbox",
   tags: ["autodocs"],
-  render: makeStoryRender(checkbox, "story-checkbox"),
+  render: makeStoryRender({ checkbox }),
   argTypes: {
     ...notifyActionArgType,
     label: { control: "text", description: "Label text." },
@@ -37,6 +37,8 @@ export default {
 
 export const Default = {}
 Default.args = {
+  id: "checkbox",
+  type: "checkbox",
   label: "Accept terms",
   name: "terms",
   checked: false,

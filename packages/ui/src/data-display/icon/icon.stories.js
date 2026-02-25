@@ -4,7 +4,7 @@ import { icon } from "."
 export default {
   title: "Data Display/Icon",
   tags: ["autodocs"],
-  render: makeStoryRender(icon, "story-icon"),
+  render: makeStoryRender({ icon }),
   argTypes: {
     children: { control: "text", description: "Icon glyph or inline content." },
     size: {
@@ -29,5 +29,11 @@ export default {
 }
 
 export const Default = {
-  args: { children: "★", size: "md", color: "current" },
+  args: {
+    id: "icon",
+    type: "icon",
+    children: "★",
+    size: "md",
+    color: "current",
+  },
 }

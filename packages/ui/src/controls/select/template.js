@@ -26,7 +26,7 @@ const NO_FOCUSED_INDEX = -1
  * @returns {TemplateResult}
  */
 export function render(entity, api) {
-  const type = api.getType?.(entity.type)
+  const type = api.getType(entity.type)
   const normalized = ensureDefaults(entity)
 
   return html`<div
@@ -39,13 +39,8 @@ export function render(entity, api) {
     ${normalized.label
       ? html`<label class="iw-select-label">${normalized.label}</label>`
       : null}
-    ${type?.renderControl?.(normalized, api) ?? renderControl(normalized, api)}
-    ${when(
-      normalized.isOpen,
-      () =>
-        type?.renderDropdown?.(normalized, api) ??
-        renderDropdown(normalized, api),
-    )}
+    ${type.renderControl?.(normalized, api)}
+    ${when(normalized.isOpen, () => type.renderDropdown?.(normalized, api))}
   </div>`
 }
 
@@ -56,7 +51,7 @@ export function render(entity, api) {
  * @returns {TemplateResult}
  */
 export function renderControl(entity, api) {
-  const type = api.getType?.(entity.type)
+  const type = api.getType(entity.type)
 
   return html`<div
     class="iw-select-control ${classMap({
@@ -72,9 +67,8 @@ export function renderControl(entity, api) {
   >
     ${when(
       entity.isMulti,
-      () =>
-        type?.renderMultiValue?.(entity, api) ?? renderMultiValue(entity, api),
-      () => type?.renderSingleValue?.(entity) ?? renderSingleValue(entity),
+      () => type.renderMultiValue?.(entity, api),
+      () => type.renderSingleValue?.(entity),
     )}
     ${when(
       entity.isClearable &&
@@ -129,7 +123,7 @@ export function renderSingleValue(entity) {
  * @returns {TemplateResult}
  */
 export function renderMultiValue(entity, api) {
-  const type = api.getType?.(entity.type)
+  const type = api.getType(entity.type)
   if (!Array.isArray(entity.selectedValue) || !entity.selectedValue.length) {
     return html`<span class="iw-select-placeholder"
       >${entity.placeholder}</span
@@ -140,9 +134,7 @@ export function renderMultiValue(entity, api) {
     ${repeat(
       entity.selectedValue,
       (value) => value,
-      (value) =>
-        type?.renderMultiValueTag?.(entity, value, api) ??
-        renderMultiValueTag(entity, value, api),
+      (value) => type.renderMultiValueTag?.(entity, value, api),
     )}
   </div>`
 }
@@ -185,7 +177,7 @@ export function renderMultiValueTag(entity, value, api) {
  * @returns {TemplateResult}
  */
 export function renderDropdown(entity, api) {
-  const type = api.getType?.(entity.type)
+  const type = api.getType(entity.type)
   const filteredOptions = filterOptions(entity.options, entity.searchTerm)
 
   return html`<div
@@ -206,23 +198,13 @@ export function renderDropdown(entity, api) {
       }
     })}
   >
-    ${when(
-      entity.isSearchable,
-      () =>
-        type?.renderSearchInput?.(entity, api) ??
-        renderSearchInput(entity, api),
+    ${when(entity.isSearchable, () => type.renderSearchInput?.(entity, api))}
+    ${when(entity.isLoading, () => type.renderLoading?.(entity))}
+    ${when(!entity.isLoading && !filteredOptions.length, () =>
+      type.renderNoOptions?.(entity),
     )}
-    ${when(
-      entity.isLoading,
-      () => type?.renderLoading?.(entity) ?? renderLoading(entity),
-    )}
-    ${when(
-      !entity.isLoading && !filteredOptions.length,
-      () => type?.renderNoOptions?.(entity) ?? renderNoOptions(entity),
-    )}
-    ${when(
-      !entity.isLoading && filteredOptions.length,
-      () => type?.renderOptions?.(entity, api) ?? renderOptions(entity, api),
+    ${when(!entity.isLoading && filteredOptions.length, () =>
+      type.renderOptions?.(entity, api),
     )}
   </div>`
 }
@@ -262,9 +244,7 @@ export function renderOptions(entity, api) {
     ${repeat(
       filteredOptions,
       (option) => getOptionValue(option),
-      (option, index) =>
-        type?.renderOption?.(entity, { option, index }, api) ??
-        renderOption(entity, { option, index }, api),
+      (option, index) => type.renderOption?.(entity, { option, index }, api),
     )}
   </div>`
 }
@@ -396,8 +376,8 @@ function ensureDefaults(entity) {
     selectedValue: entity.selectedValue ?? (isMulti ? [] : null),
     isLoading: entity.isLoading ?? false,
     isDisabled: entity.isDisabled ?? false,
-    isSearchable: entity.isSearchable ?? true,
-    isClearable: entity.isClearable ?? true,
+    isSearchable: entity.isSearchable ?? false,
+    isClearable: entity.isClearable ?? false,
     placeholder: entity.placeholder ?? "Select...",
     noOptionsMessage: entity.noOptionsMessage ?? "No options",
     loadingMessage: entity.loadingMessage ?? "Loading...",

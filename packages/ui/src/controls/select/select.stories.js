@@ -14,7 +14,7 @@ const options = [
 export default {
   title: "Controls/Select",
   tags: ["autodocs"],
-  render: makeStoryRender(select, "story-select"),
+  render: makeStoryRender({ select }),
   argTypes: {
     ...notifyActionArgType,
     label: { control: "text", description: "Field label." },
@@ -58,6 +58,8 @@ export default {
 
 export const SingleClosed = {}
 SingleClosed.args = {
+  id: "select",
+  type: "select",
   label: "Country",
   selectedValue: "it",
   isMulti: false,

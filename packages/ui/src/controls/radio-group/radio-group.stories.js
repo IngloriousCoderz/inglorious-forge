@@ -7,7 +7,7 @@ import { radioGroup } from "."
 export default {
   title: "Controls/RadioGroup",
   tags: ["autodocs"],
-  render: makeStoryRender(radioGroup, "story-radio-group"),
+  render: makeStoryRender({ radioGroup }),
   argTypes: {
     ...notifyActionArgType,
     label: { control: "text", description: "Fieldset label." },
@@ -37,6 +37,8 @@ export default {
 
 export const Default = {}
 Default.args = {
+  id: "radioGroup",
+  type: "radioGroup",
   label: "Priority",
   name: "priority",
   value: "medium",

@@ -7,7 +7,7 @@ import { switchControl } from "."
 export default {
   title: "Controls/Switch",
   tags: ["autodocs"],
-  render: makeStoryRender(switchControl, "story-switch"),
+  render: makeStoryRender({ switchControl }),
   argTypes: {
     ...notifyActionArgType,
     label: { control: "text", description: "Label text." },
@@ -36,6 +36,8 @@ export default {
 
 export const Default = {}
 Default.args = {
+  id: "switchControl",
+  type: "switchControl",
   label: "Enable notifications",
   name: "notifications",
   checked: false,

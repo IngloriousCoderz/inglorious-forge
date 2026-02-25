@@ -1,4 +1,3 @@
-import { augmentType } from "@inglorious/store/types"
 import { html } from "@inglorious/web"
 import { createMockApi, render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
@@ -6,8 +5,6 @@ import { describe, expect, it } from "vitest"
 import { grid } from "."
 
 describe("grid", () => {
-  const type = augmentType(grid)
-
   it("renders children", () => {
     const entity = {
       id: "gd",
@@ -16,7 +13,7 @@ describe("grid", () => {
     const api = createMockApi({ [entity.id]: entity })
     const container = document.createElement("div")
 
-    render(type.render(entity, api), container)
+    render(grid.render(entity, api), container)
 
     expect(
       container.querySelector(".iw-grid").textContent.replace(/\s+/g, ""),
@@ -35,7 +32,7 @@ describe("grid", () => {
     const api = createMockApi({ [entity.id]: entity })
     const container = document.createElement("div")
 
-    render(type.render(entity, api), container)
+    render(grid.render(entity, api), container)
 
     const root = container.querySelector(".iw-grid")
     expect(root.style.gridTemplateColumns).toContain("repeat(4")
@@ -50,7 +47,7 @@ describe("grid", () => {
     const api = createMockApi({ [entity.id]: entity })
     const container = document.createElement("div")
 
-    render(type.render(entity, api), container)
+    render(grid.render(entity, api), container)
 
     expect(
       container.querySelector(".iw-grid").style.gridTemplateColumns,

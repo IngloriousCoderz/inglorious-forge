@@ -4,7 +4,7 @@ import { typography } from "."
 export default {
   title: "Data Display/Typography",
   tags: ["autodocs"],
-  render: makeStoryRender(typography, "story-typography"),
+  render: makeStoryRender({ typography }),
   argTypes: {
     children: { control: "text", description: "Text content." },
     variant: {
@@ -36,6 +36,8 @@ export default {
 
 export const Default = {
   args: {
+    id: "typography",
+    type: "typography",
     children: "The quick brown fox jumps over the lazy dog.",
     variant: "body",
     align: "left",

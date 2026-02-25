@@ -1,12 +1,9 @@
-import { augmentType } from "@inglorious/store/types"
 import { createMockApi, render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
 import { buttonGroup } from "."
 
 describe("buttonGroup", () => {
-  const type = augmentType(buttonGroup)
-
   it("renders grouped buttons", () => {
     const entity = {
       id: "bg",
@@ -18,7 +15,7 @@ describe("buttonGroup", () => {
     const api = createMockApi({ [entity.id]: entity })
     const container = document.createElement("div")
 
-    render(type.render(entity, api), container)
+    render(buttonGroup.render(entity, api), container)
 
     expect(container.querySelectorAll("button").length).toBe(2)
     expect(container.querySelector(".iw-button-group")).not.toBeNull()
@@ -32,7 +29,7 @@ describe("buttonGroup", () => {
     const api = createMockApi({ [entity.id]: entity })
     const container = document.createElement("div")
 
-    render(type.render(entity, api), container)
+    render(buttonGroup.render(entity, api), container)
 
     container.querySelector("button").click()
 
@@ -51,7 +48,7 @@ describe("buttonGroup", () => {
     const api = createMockApi({ [entity.id]: entity })
     const container = document.createElement("div")
 
-    render(type.render(entity, api), container)
+    render(buttonGroup.render(entity, api), container)
 
     container.querySelectorAll("button")[1].click()
 
@@ -74,7 +71,7 @@ describe("buttonGroup", () => {
     const api = createMockApi({ [entity.id]: entity })
     const container = document.createElement("div")
 
-    render(type.render(entity, api), container)
+    render(buttonGroup.render(entity, api), container)
 
     container.querySelectorAll("button")[1].click()
 

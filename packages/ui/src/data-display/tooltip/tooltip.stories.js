@@ -6,7 +6,7 @@ import { tooltip } from "."
 export default {
   title: "Data Display/Tooltip",
   tags: ["autodocs"],
-  render: makeStoryRender(tooltip, "story-tooltip"),
+  render: makeStoryRender({ tooltip }),
   argTypes: {
     content: { control: "text", description: "Tooltip text." },
     position: {
@@ -33,6 +33,8 @@ export default {
 
 export const Default = {
   args: {
+    id: "tooltip",
+    type: "tooltip",
     children: html`<button type="button">Hover me</button>`,
     content: "Tooltip content",
     position: "bottom",

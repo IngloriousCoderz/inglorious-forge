@@ -4,7 +4,7 @@ import { badge } from "."
 export default {
   title: "Data Display/Badge",
   tags: ["autodocs"],
-  render: makeStoryRender(badge, "story-badge"),
+  render: makeStoryRender({ badge }),
   argTypes: {
     children: { control: "text", description: "Badge content." },
     color: {
@@ -34,5 +34,10 @@ export default {
 }
 
 export const Default = {
-  args: { children: "New", size: "md" },
+  args: {
+    id: "badge",
+    type: "badge",
+    children: "New",
+    size: "md",
+  },
 }

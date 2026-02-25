@@ -7,7 +7,7 @@ import { slider } from "."
 export default {
   title: "Controls/Slider",
   tags: ["autodocs"],
-  render: makeStoryRender(slider, "story-slider"),
+  render: makeStoryRender({ slider }),
   argTypes: {
     ...notifyActionArgType,
     label: { control: "text", description: "Field label." },
@@ -36,6 +36,8 @@ export default {
 
 export const Default = {}
 Default.args = {
+  id: "slider",
+  type: "slider",
   label: "Volume",
   name: "volume",
   value: 30,

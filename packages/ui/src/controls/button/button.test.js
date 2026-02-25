@@ -1,4 +1,3 @@
-import { augmentType } from "@inglorious/store/types"
 import { html } from "@inglorious/web"
 import { createMockApi, render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
@@ -6,15 +5,13 @@ import { describe, expect, it } from "vitest"
 import { button } from "."
 
 describe("button", () => {
-  const type = augmentType(button)
-
   describe("render", () => {
     it("renders a button with children", () => {
       const entity = { id: "btn", children: "Click me" }
       const api = createMockApi({ [entity.id]: entity })
       const container = document.createElement("div")
 
-      render(type.render(entity, api), container)
+      render(button.render(entity, api), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.textContent.trim()).toBe("Click me")
@@ -25,7 +22,7 @@ describe("button", () => {
       const api = createMockApi({ [entity.id]: entity })
       const container = document.createElement("div")
 
-      render(type.render(entity, api), container)
+      render(button.render(entity, api), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.classList.contains("iw-button")).toBe(true)
@@ -36,7 +33,7 @@ describe("button", () => {
       const api = createMockApi({ [entity.id]: entity })
       const container = document.createElement("div")
 
-      render(type.render(entity, api), container)
+      render(button.render(entity, api), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.classList.contains("iw-button-sm")).toBe(true)
@@ -47,7 +44,7 @@ describe("button", () => {
       const api = createMockApi({ [entity.id]: entity })
       const container = document.createElement("div")
 
-      render(type.render(entity, api), container)
+      render(button.render(entity, api), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.classList.contains("iw-button-lg")).toBe(true)
@@ -58,7 +55,7 @@ describe("button", () => {
       const api = createMockApi({ [entity.id]: entity })
       const container = document.createElement("div")
 
-      render(type.render(entity, api), container)
+      render(button.render(entity, api), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.classList.contains("iw-button-shape-round")).toBe(
@@ -71,7 +68,7 @@ describe("button", () => {
       const api = createMockApi({ [entity.id]: entity })
       const container = document.createElement("div")
 
-      render(type.render(entity, api), container)
+      render(button.render(entity, api), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.classList.contains("iw-button-outline")).toBe(true)
@@ -82,7 +79,7 @@ describe("button", () => {
       const api = createMockApi({ [entity.id]: entity })
       const container = document.createElement("div")
 
-      render(type.render(entity, api), container)
+      render(button.render(entity, api), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.classList.contains("iw-button-ghost")).toBe(true)
@@ -93,7 +90,7 @@ describe("button", () => {
       const api = createMockApi({ [entity.id]: entity })
       const container = document.createElement("div")
 
-      render(type.render(entity, api), container)
+      render(button.render(entity, api), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.classList.contains("iw-button-secondary")).toBe(true)
@@ -104,7 +101,7 @@ describe("button", () => {
       const api = createMockApi({ [entity.id]: entity })
       const container = document.createElement("div")
 
-      render(type.render(entity, api), container)
+      render(button.render(entity, api), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.classList.contains("iw-button-success")).toBe(true)
@@ -115,7 +112,7 @@ describe("button", () => {
       const api = createMockApi({ [entity.id]: entity })
       const container = document.createElement("div")
 
-      render(type.render(entity, api), container)
+      render(button.render(entity, api), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.hasAttribute("disabled")).toBe(true)
@@ -126,7 +123,7 @@ describe("button", () => {
       const api = createMockApi({ [entity.id]: entity })
       const container = document.createElement("div")
 
-      render(type.render(entity, api), container)
+      render(button.render(entity, api), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.classList.contains("iw-button-full-width")).toBe(
@@ -139,7 +136,7 @@ describe("button", () => {
       const api = createMockApi({ [entity.id]: entity })
       const container = document.createElement("div")
 
-      render(type.render(entity, api), container)
+      render(button.render(entity, api), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.type).toBe("submit")
@@ -153,7 +150,7 @@ describe("button", () => {
       const api = createMockApi({ [entity.id]: entity })
       const container = document.createElement("div")
 
-      render(type.render(entity, api), container)
+      render(button.render(entity, api), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.textContent.trim()).toBe("Custom")
@@ -170,7 +167,7 @@ describe("button", () => {
       const api = createMockApi({ [entity.id]: entity })
       const container = document.createElement("div")
 
-      render(type.render(entity, api), container)
+      render(button.render(entity, api), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.getAttribute("data-testid")).toBe("primary-cta")
@@ -184,7 +181,7 @@ describe("button", () => {
       const api = createMockApi({ [entity.id]: entity })
       const container = document.createElement("div")
 
-      render(type.render(entity, api), container)
+      render(button.render(entity, api), container)
 
       const buttonElement = container.querySelector("button")
       buttonElement.click()

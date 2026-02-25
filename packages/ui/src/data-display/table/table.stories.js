@@ -7,7 +7,7 @@ import { table } from "."
 export default {
   title: "Data Display/Table",
   tags: ["autodocs"],
-  render: makeStoryRender(table, "story-table"),
+  render: makeStoryRender({ table }),
   argTypes: {
     ...notifyActionArgType,
     columns: { control: "object", description: "Column definitions." },
@@ -27,6 +27,8 @@ export default {
 
 export const Default = {
   args: {
+    id: "table",
+    type: "table",
     columns: [
       { id: "name", label: "Name" },
       { id: "role", label: "Role" },

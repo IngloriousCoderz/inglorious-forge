@@ -1,12 +1,9 @@
-import { augmentType } from "@inglorious/store/types"
 import { createMockApi, render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
 import { select } from "."
 
 describe("select", () => {
-  const type = augmentType(select)
-
   it("renders control with selected value", () => {
     const entity = {
       id: "sel",
@@ -18,10 +15,10 @@ describe("select", () => {
       selectedValue: "b",
     }
     const api = createMockApi({ [entity.id]: entity })
+    api.getType = () => select
     const container = document.createElement("div")
 
-    api.getType = () => type
-    render(type.render(entity, api), container)
+    render(select.render(entity, api), container)
 
     expect(container.querySelector(".iw-select-value").textContent).toBe("B")
   })
@@ -38,10 +35,10 @@ describe("select", () => {
       ],
     }
     const api = createMockApi({ [entity.id]: entity })
+    api.getType = () => select
     const container = document.createElement("div")
 
-    api.getType = () => type
-    render(type.render(entity, api), container)
+    render(select.render(entity, api), container)
 
     expect(
       container.querySelectorAll(".iw-select-multi-value-tag").length,
@@ -63,10 +60,10 @@ describe("select", () => {
       options: [{ label: "A", value: "a" }],
     }
     const api = createMockApi({ [entity.id]: entity })
+    api.getType = () => select
     const container = document.createElement("div")
 
-    api.getType = () => type
-    render(type.render(entity, api), container)
+    render(select.render(entity, api), container)
 
     container.querySelector(".iw-chip-remove").click()
 
@@ -81,10 +78,10 @@ describe("select", () => {
   it("dispatches toggle event from control click", () => {
     const entity = { id: "sel", type: "select", options: [] }
     const api = createMockApi({ [entity.id]: entity })
+    api.getType = () => select
     const container = document.createElement("div")
 
-    api.getType = () => type
-    render(type.render(entity, api), container)
+    render(select.render(entity, api), container)
 
     container.querySelector(".iw-select-control").click()
 
@@ -101,13 +98,13 @@ describe("select", () => {
       isMulti: true,
     }
 
-    type.create(entity)
-    type.optionSelect(entity, { label: "A", value: "a" })
-    type.optionSelect(entity, { label: "B", value: "b" })
+    select.create(entity)
+    select.optionSelect(entity, { label: "A", value: "a" })
+    select.optionSelect(entity, { label: "B", value: "b" })
 
     expect(entity.selectedValue).toEqual(["a", "b"])
 
-    type.optionSelect(entity, { label: "A", value: "a" })
+    select.optionSelect(entity, { label: "A", value: "a" })
     expect(entity.selectedValue).toEqual(["b"])
   })
 })

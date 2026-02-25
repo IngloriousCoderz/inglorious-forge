@@ -1,4 +1,3 @@
-import { augmentType } from "@inglorious/store/types"
 import { html } from "@inglorious/web"
 import { createMockApi, render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
@@ -6,15 +5,13 @@ import { describe, expect, it } from "vitest"
 import { card } from "."
 
 describe("card", () => {
-  const type = augmentType(card)
-
   describe("render", () => {
     it("renders title and subtitle", () => {
       const entity = { id: "card", title: "Title", subtitle: "Subtitle" }
       const api = createMockApi({ [entity.id]: entity })
       const container = document.createElement("div")
 
-      render(type.render(entity, api), container)
+      render(card.render(entity, api), container)
 
       expect(container.querySelector(".iw-card-title").textContent).toBe(
         "Title",
@@ -34,7 +31,7 @@ describe("card", () => {
       const api = createMockApi({ [entity.id]: entity })
       const container = document.createElement("div")
 
-      render(type.render(entity, api), container)
+      render(card.render(entity, api), container)
 
       const cardElement = container.querySelector(".iw-card")
       expect(cardElement.classList.contains("iw-card-hoverable")).toBe(true)
@@ -43,19 +40,16 @@ describe("card", () => {
     })
 
     it("renders footer when type overrides renderFooter", () => {
-      const customCard = [
+      const customCard = {
         ...card,
-        { renderFooter: () => html`<div class="iw-card-footer">Footer</div>` },
-      ]
-      const customType = augmentType(customCard)
+        renderFooter: () => html`<div class="iw-card-footer">Footer</div>`,
+      }
       const entity = { id: "card", type: "customCard", footerText: "Footer" }
       const api = createMockApi({ [entity.id]: entity })
+      api.getType = () => customCard
       const container = document.createElement("div")
-      const getType = api.getType?.bind(api)
-      api.getType = (typeName) =>
-        typeName === entity.type ? customType : getType?.(typeName)
 
-      render(customType.render(entity, api), container)
+      render(customCard.render(entity, api), container)
 
       expect(
         container.querySelector(".iw-card-footer").textContent.trim(),
@@ -67,7 +61,7 @@ describe("card", () => {
       const api = createMockApi({ [entity.id]: entity })
       const container = document.createElement("div")
 
-      render(type.render(entity, api), container)
+      render(card.render(entity, api), container)
 
       expect(container.querySelector(".iw-card-header")).toBe(null)
     })
@@ -79,7 +73,7 @@ describe("card", () => {
       const api = createMockApi({ [entity.id]: entity })
       const container = document.createElement("div")
 
-      render(type.render(entity, api), container)
+      render(card.render(entity, api), container)
 
       container.querySelector(".iw-card").click()
 

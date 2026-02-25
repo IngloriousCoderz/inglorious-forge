@@ -4,7 +4,7 @@ import { divider } from "."
 export default {
   title: "Data Display/Divider",
   tags: ["autodocs"],
-  render: makeStoryRender(divider, "story-divider"),
+  render: makeStoryRender({ divider }),
   argTypes: {
     orientation: {
       control: "select",
@@ -25,4 +25,9 @@ export default {
   },
 }
 
-export const Default = { args: {} }
+export const Default = {
+  args: {
+    id: "divider",
+    type: "divider",
+  },
+}

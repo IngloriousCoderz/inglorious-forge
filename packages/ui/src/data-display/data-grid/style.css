@@ -1,0 +1,9 @@
+@import "./base";
+@import "./theme";
+
+.iw-datagrid {
+  color: var(--iw-color-text);
+  background: var(--iw-color-surface);
+  padding: var(--iw-space-3);
+  border-radius: var(--iw-radius-md);
+}

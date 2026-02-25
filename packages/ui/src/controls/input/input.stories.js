@@ -7,7 +7,7 @@ import { input } from "."
 export default {
   title: "Controls/Input",
   tags: ["autodocs"],
-  render: makeStoryRender(input, "story-input"),
+  render: makeStoryRender({ input }),
   argTypes: {
     ...notifyActionArgType,
     label: {
@@ -86,10 +86,12 @@ export default {
 }
 export const Default = {}
 Default.args = {
+  id: "input",
+  type: "input",
   label: "Username",
   placeholder: "Enter your username",
   name: "username",
-  type: "text",
+  inputType: "text",
   value: "",
   hint: "",
   error: "",
@@ -104,7 +106,7 @@ export const WithHint = {}
 WithHint.args = {
   ...Default.args,
   label: "Email",
-  type: "email",
+  inputType: "email",
   placeholder: "you@example.com",
   hint: "We'll never share your email",
 }
@@ -113,7 +115,7 @@ export const WithError = {}
 WithError.args = {
   ...Default.args,
   label: "Email",
-  type: "email",
+  inputType: "email",
   value: "invalid-email",
   error: "Please enter a valid email address",
 }
@@ -122,7 +124,7 @@ export const Required = {}
 Required.args = {
   ...Default.args,
   label: "Password",
-  type: "password",
+  inputType: "password",
   placeholder: "Enter your password",
   required: true,
 }
@@ -169,7 +171,7 @@ export const Number = {}
 Number.args = {
   ...Default.args,
   label: "Amount",
-  type: "number",
+  inputType: "number",
   value: "1234.56",
   placeholder: "0.00",
   min: "0",
