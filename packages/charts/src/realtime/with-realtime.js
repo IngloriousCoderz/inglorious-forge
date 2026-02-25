@@ -2,6 +2,12 @@
 import { streamSlide } from "../utils/stream-slide.js"
 import { STREAM_DEFAULTS } from "./defaults.js"
 
+const INTERNAL_PULSE_MS = 100
+const runtimeTargetTypes = new Set()
+const runtimeEntityTypes = new Map()
+let runtimeApi = null
+let runtimePulseId = null
+
 export function streamModeChange(entity, payload) {
   entity.brush ??= { enabled: true, height: 30 }
   entity.brush.enabled = true
@@ -28,11 +34,17 @@ export function streamModeChange(entity, payload) {
 export function withRealtime(chartType) {
   return {
     ...chartType,
-    create(entity) {
-      chartType.create?.(entity)
+    create(entity, payload, api) {
+      chartType.create?.(entity, payload, api)
 
       if (!entity?.realtime?.enabled) return
+      runtimeRegister(entity, api)
       realtimeEnsureInitialized(entity)
+    },
+
+    destroy(entity, payload, api) {
+      chartType.destroy?.(entity, payload, api)
+      runtimeUnregister(entity)
     },
 
     streamSlide,
@@ -136,4 +148,49 @@ function realtimeEnsureInitialized(entity) {
   }
 
   return realtime
+}
+
+function runtimeRegister(entity, api) {
+  const entityId = entity?.id
+  const entityType = entity?.type
+  if (!entityId || !entityType) return
+
+  if (runtimeEntityTypes.get(entityId) === entityType) return
+
+  runtimeEntityTypes.set(entityId, entityType)
+  runtimeTargetTypes.add(entityType)
+  runtimeStart(api)
+}
+
+function runtimeStart(api) {
+  if (!api) return
+  runtimeApi = api
+  if (runtimePulseId) return
+
+  runtimePulseId = setInterval(() => {
+    runtimeTick()
+  }, INTERNAL_PULSE_MS)
+}
+
+function runtimeUnregister(entity) {
+  const entityId = entity?.id
+  if (!entityId) return
+
+  const entityType = runtimeEntityTypes.get(entityId)
+  if (!entityType) return
+
+  runtimeEntityTypes.delete(entityId)
+  const hasType = Array.from(runtimeEntityTypes.values()).includes(entityType)
+  if (!hasType) runtimeTargetTypes.delete(entityType)
+
+  if (runtimeTargetTypes.size > 0) return
+  clearInterval(runtimePulseId)
+  runtimePulseId = null
+}
+
+function runtimeTick() {
+  if (!runtimeApi || runtimeTargetTypes.size === 0) return
+  runtimeTargetTypes.forEach((type) => {
+    runtimeApi.notify(`${type}:streamTick`)
+  })
 }

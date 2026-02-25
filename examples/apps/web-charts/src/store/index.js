@@ -3,22 +3,12 @@ import {
   areaChart,
   barChart,
   chart,
-  createRealtimeStreamSystem,
   donutChart,
   lineChart,
   pieChart,
 } from "@inglorious/charts"
 import { entities } from "./entities.js"
 import { middlewares } from "./middlewares.js"
-
-const realtimeStreamRuntime = createRealtimeStreamSystem({
-  targetType: "line",
-  tickEvent: "streamTick",
-  minIntervalMs: 100,
-  intervalMs: 100,
-})
-
-export const stopRealtimeStreamSystem = realtimeStreamRuntime.stop
 
 export const store = createStore({
   types: {
@@ -32,5 +22,4 @@ export const store = createStore({
   },
   entities,
   middlewares,
-  systems: [realtimeStreamRuntime.system],
 })
