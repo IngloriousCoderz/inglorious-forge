@@ -321,6 +321,13 @@ export const pie = {
       // Otherwise, return the result directly (already SVG or TemplateResult)
       return result
     })
+    const centerText = renderCompositionCenterText({
+      config,
+      entity: entityWithData,
+      children: childrenArray,
+      cx,
+      cy,
+    })
 
     return html`
       <div
@@ -334,7 +341,7 @@ export const pie = {
           class="iw-chart-svg"
           style="width: ${width}px; height: ${height}px;"
         >
-          ${processedChildren}
+          ${processedChildren} ${centerText}
         </svg>
         ${renderTooltip(entityWithData, {}, api)}
       </div>
@@ -747,6 +754,58 @@ function renderInsideLabel({ slice, outerRadius, percentage, nameKey, color }) {
       </text>
     </g>
   `
+}
+
+function renderCompositionCenterText({ config, entity, children, cx, cy }) {
+  const label = config.centerText ?? entity.centerText
+  if (!label) return svg``
+
+  const data = Array.isArray(entity.data) ? entity.data : []
+  if (!data.length) return svg``
+
+  const valueAccessor = resolveCompositionValueAccessor(children, entity)
+  const total = data.reduce(
+    (sum, item) => sum + Number(valueAccessor(item) ?? 0),
+    0,
+  )
+
+  return svg`
+    <g class="iw-chart-center-text">
+      <text
+        x=${cx}
+        y=${cy - 5}
+        text-anchor="middle"
+        font-size="1.125em"
+        font-weight="bold"
+        fill="#333"
+      >
+        ${label}
+      </text>
+      <text
+        x=${cx}
+        y=${cy + 15}
+        text-anchor="middle"
+        font-size="0.75em"
+        fill="#777"
+      >
+        ${formatNumber(total)}
+      </text>
+    </g>
+  `
+}
+
+function resolveCompositionValueAccessor(children, entity) {
+  const pieChild = Array.isArray(children)
+    ? children.find((child) => child?.type === "Pie")
+    : null
+  const configuredDataKey = pieChild?.config?.dataKey ?? entity.dataKey
+
+  if (typeof configuredDataKey === "function") return configuredDataKey
+  if (typeof configuredDataKey === "string") {
+    return (item) => item?.[configuredDataKey]
+  }
+
+  return (item) => item?.value
 }
 
 function isDarkColor(hexColor) {
