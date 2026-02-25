@@ -1,219 +1,413 @@
 import { html } from "@inglorious/web"
+import { handleAsync } from "../../../../../packages/store/src/async.js"
 import { chart } from "@inglorious/charts"
 
-import { renderKpiCard } from "../components/kpi-card.js"
-import { renderSectionCard } from "../components/section-card.js"
 import {
-  fmpGet,
-  formatMoney,
-  hasFmpConfig,
-  normalizeHistory,
-  normalizeIncomeRows,
-  normalizeQuote,
-} from "../services/fmp.js"
+  getCurrenciesForMarket,
+  getInstrumentData,
+  getIsinsForSelection,
+  getMarkets,
+} from "../mocks/cascade.js"
+import { fmpGet, hasFmpConfig } from "../services/fmp.js"
 
-const DEFAULT_SYMBOL = "AAPL"
-const DEFAULT_PRICE_SERIES = [
-  { name: "Mon", value: 183.4 },
-  { name: "Tue", value: 184.8 },
-  { name: "Wed", value: 186.1 },
-  { name: "Thu", value: 185.7 },
-  { name: "Fri", value: 187.2 },
-]
-const DEFAULT_REVENUE_SERIES = [
-  { label: "Q1", value: 91.6 },
-  { label: "Q2", value: 94.2 },
-  { label: "Q3", value: 89.4 },
-  { label: "Q4", value: 99.8 },
-]
-const DEFAULT_SEGMENT_SERIES = [
-  { label: "iPhone", value: 52 },
-  { label: "Services", value: 24 },
-  { label: "Mac", value: 12 },
-  { label: "Wearables", value: 12 },
-]
-const HISTORY_RANGE_DAYS = 60
+const EMPTY_INSTRUMENT = {
+  isin: "-",
+  code: "-",
+  currency: "-",
+  priority: "-",
+}
+
+const EMPTY_QUOTE = { ask: 0, bid: 0, mid: 0 }
 
 export const dashboardPage = {
+  // Headline: page lifecycle
   routeChange(entity, payload, api) {
     if (payload.route !== entity.type) return
-    if (entity.loading) return
+    if (entity.initialized) return
 
-    const entityId = entity.id
-    api.notify(`#${entityId}:dashboardLoadStart`)
-
-    if (!hasFmpConfig()) {
-      api.notify(`#${entityId}:dashboardLoadFallback`)
-      return
-    }
-
-    loadDashboardData(entityId, entity.symbol || DEFAULT_SYMBOL, api)
+    api.notify(`#${entity.id}:dashboardInit`)
+    dashboardBootstrap(entity.id, api)
   },
 
-  dashboardLoadStart(entity) {
-    entity.loading = true
-    entity.error = null
+  dashboardInit(entity) {
+    entity.initialized = true
   },
 
-  dashboardLoadFallback(entity) {
-    entity.dataSource = "mock"
-    entity.symbol = DEFAULT_SYMBOL
-    entity.quote = null
-    entity.priceSeries = DEFAULT_PRICE_SERIES
-    entity.revenueSeries = DEFAULT_REVENUE_SERIES
-    entity.segmentSeries = DEFAULT_SEGMENT_SERIES
-    entity.loading = false
-    entity.error = null
+  // Headline: top cascade interactions
+  marketSelect(entity, payload, api) {
+    dashboardMarketApply(entity, payload?.rowId, api)
   },
 
-  dashboardLoadSuccess(entity, payload) {
-    entity.dataSource = "fmp"
-    entity.symbol = payload.symbol
-    entity.quote = payload.quote
-    entity.priceSeries = payload.priceSeries
-    entity.revenueSeries = payload.revenueSeries
-    entity.segmentSeries = DEFAULT_SEGMENT_SERIES
-    entity.loading = false
+  currencySelect(entity, payload, api) {
+    dashboardCurrencyApply(entity, payload?.rowId, api)
   },
 
-  dashboardLoadFailure(entity, message) {
-    entity.error = message
-    entity.dataSource = "mock"
-    entity.quote = null
-    entity.priceSeries = DEFAULT_PRICE_SERIES
-    entity.revenueSeries = DEFAULT_REVENUE_SERIES
-    entity.segmentSeries = DEFAULT_SEGMENT_SERIES
-    entity.loading = false
+  isinSelect(entity, payload, api) {
+    dashboardIsinApply(entity, payload?.rowId, api)
   },
 
+  // Headline: async lifecycle (dashboard-first, low quota)
+  ...handleAsync("dashboardFetchInstrument", {
+    start(entity) {
+      entity.loading = true
+      entity.error = null
+    },
+
+    async run(payload) {
+      const isin = payload?.isin
+      const mockData = getInstrumentData(isin)
+      const mockInstrument = mockData.instrument || EMPTY_INSTRUMENT
+      const mockHistory = Array.isArray(mockData.history)
+        ? mockData.history
+        : []
+      const mockQuote = mockData.quote || EMPTY_QUOTE
+
+      if (!isin || mockInstrument === EMPTY_INSTRUMENT) {
+        return {
+          isin,
+          instrument: EMPTY_INSTRUMENT,
+          history: [],
+          quote: EMPTY_QUOTE,
+          source: "mock",
+        }
+      }
+
+      if (!hasFmpConfig() || !mockInstrument.symbol) {
+        return {
+          isin,
+          instrument: mockInstrument,
+          history: mockHistory,
+          quote: mockQuote,
+          source: "mock",
+        }
+      }
+
+      try {
+        const historyPayload = await fmpGet("/historical-price-eod/full", {
+          symbol: mockInstrument.symbol,
+        })
+        const apiHistory = normalizeDashboardHistory(historyPayload, 500)
+        const apiQuote = quoteFromHistory(apiHistory)
+
+        return {
+          isin,
+          instrument: mockInstrument,
+          history: apiHistory,
+          quote: apiQuote,
+          source: "api",
+        }
+      } catch {
+        return {
+          isin,
+          instrument: mockInstrument,
+          history: mockHistory,
+          quote: mockQuote,
+          source: "mock",
+        }
+      }
+    },
+
+    success(entity, payload, api) {
+      entity.instrument = payload.instrument
+      entity.bookRows = [
+        {
+          isin: payload.isin,
+          ask: payload.quote.ask,
+          bid: payload.quote.bid,
+          mid: payload.quote.mid,
+        },
+      ]
+      entity.dataSource = payload.source
+
+      api.notify(
+        "#financeQuotationChart:chartDataSet",
+        buildBrushSeries(payload.history),
+      )
+      api.notify(
+        "#isinHistoryTable:tableDataSet",
+        buildHistoryTableRows(payload.isin, payload.history),
+      )
+    },
+
+    error(entity, error) {
+      entity.error = error instanceof Error ? error.message : String(error)
+      entity.instrument = EMPTY_INSTRUMENT
+      entity.bookRows = []
+      entity.dataSource = "mock"
+    },
+
+    finally(entity) {
+      entity.loading = false
+    },
+  }),
+
+  // Body: render
   render(entity, api) {
-    const quote = entity.quote || {}
-    const symbol = entity.symbol || DEFAULT_SYMBOL
-    const priceSeries = entity.priceSeries || DEFAULT_PRICE_SERIES
-    const revenueSeries = entity.revenueSeries || DEFAULT_REVENUE_SERIES
-    const segmentSeries = entity.segmentSeries || DEFAULT_SEGMENT_SERIES
+    const instrument = entity.instrument || EMPTY_INSTRUMENT
+    const bookRows = entity.bookRows || []
+    const latest = bookRows[0] || EMPTY_QUOTE
+    const quotationChart = api.getEntity("financeQuotationChart")
 
     return html`
-      <div class="page-grid">
-        <div class="kpi-grid">
-          ${renderKpiCard("Symbol", symbol)}
-          ${renderKpiCard("Price", formatMoney(Number(quote.price)))}
-          ${renderKpiCard("Market Cap", formatMoney(Number(quote.marketCap)))}
-          ${renderKpiCard(
-            "P/E",
-            Number.isFinite(Number(quote.pe))
-              ? Number(quote.pe).toFixed(2)
-              : "N/A",
+      <div class="iw-board">
+        <div class="iw-status">
+          <span>Market: ${entity.selectedMarket || "-"}</span>
+          <span>Currency: ${entity.selectedCurrency || "-"}</span>
+          <span>ISIN: ${entity.selectedIsin || "-"}</span>
+          <span
+            >DS1_Mid_t1:
+            ${Number.isFinite(latest.mid) ? latest.mid.toFixed(2) : "-"}</span
+          >
+          <span>Source: ${entity.dataSource || "mock"}</span>
+          ${entity.loading ? html`<span>Loading...</span>` : null}
+          ${entity.error ? html`<span>Error: ${entity.error}</span>` : null}
+        </div>
+
+        <div class="iw-top-grid">
+          ${renderPanel(
+            "Market",
+            api.render("marketsTable"),
+            "iw-panel iw-table-panel",
+          )}
+          ${renderPanel(
+            "Currency",
+            api.render("currenciesTable"),
+            "iw-panel iw-table-panel",
+          )}
+          ${renderPanel(
+            "ISIN",
+            api.render("isinsTable"),
+            "iw-panel iw-table-panel",
           )}
         </div>
 
-        ${renderSectionCard(
-          "Price Trend",
-          chart.renderLineChart(
-            { data: priceSeries },
-            {
-              width: 760,
-              height: 360,
-              dataKeys: ["value"],
-              children: [
-                chart.CartesianGrid({ stroke: "#eee", strokeDasharray: "5 5" }),
-                chart.XAxis({ dataKey: "name" }),
-                chart.YAxis({ width: "auto" }),
-                chart.Line({ dataKey: "value", stroke: "#2563eb" }),
-                chart.Dots({ dataKey: "value", fill: "#2563eb" }),
-                chart.Tooltip({}),
-              ],
-            },
-            api,
-          ),
-          "span-6",
-        )}
-        ${renderSectionCard(
-          "Quarterly Revenue",
-          chart.renderBarChart(
-            { data: revenueSeries },
-            {
-              width: 760,
-              height: 360,
-              children: [
-                chart.CartesianGrid({ stroke: "#eee", strokeDasharray: "3 3" }),
-                chart.XAxis({ dataKey: "label" }),
-                chart.YAxis({ width: "auto" }),
-                chart.Bar({ dataKey: "value" }),
-                chart.Tooltip({}),
-              ],
-            },
-            api,
-          ),
-          "span-6",
-        )}
-        ${renderSectionCard(
-          "Revenue Mix (sample)",
-          chart.renderPieChart(
-            { data: segmentSeries },
-            {
-              width: 420,
-              height: 320,
-              children: [
-                chart.Pie({
-                  dataKey: "value",
-                  nameKey: "label",
-                  cx: "50%",
-                  cy: "50%",
-                  outerRadius: 100,
-                  label: true,
-                }),
-              ],
-            },
-            api,
-          ),
-          "span-12",
-        )}
-        <section class="card span-12">
-          <p>Data source: ${entity.dataSource || "mock"}</p>
-          <p>FMP configured: ${hasFmpConfig() ? "yes" : "no"}</p>
-          ${entity.loading ? html`<p>Loading market data...</p>` : null}
-          ${entity.error ? html`<p>FMP error: ${entity.error}</p>` : null}
+        <div class="iw-mid-grid">
+          ${renderPanel(
+            "Quotations",
+            chart.renderLineChart(
+              quotationChart,
+              {
+                width: 860,
+                height: 340,
+                dataKeys: ["value"],
+                children: [
+                  chart.CartesianGrid({ stroke: "#d6d6d6" }),
+                  chart.XAxis({ dataKey: "t" }),
+                  chart.YAxis({ width: "auto" }),
+                  chart.Line({ dataKey: "value", stroke: "#d23f3f" }),
+                  chart.Tooltip({}),
+                  chart.Brush({ dataKey: "t", height: 28 }),
+                ],
+              },
+              api,
+            ),
+            "iw-panel iw-chart-panel",
+          )}
+          ${renderPanel(
+            "ISIN / T / Mid",
+            api.render("isinHistoryTable"),
+            "iw-panel iw-side-table iw-table-panel",
+          )}
+        </div>
+
+        <div class="iw-bottom-grid">
+          ${renderPanel(
+            "ISIN / DS1_Ask_t1 / DS1_Bid_t1 / DS1_Mid_t1",
+            html`
+              <table class="mini-table">
+                <thead>
+                  <tr>
+                    <th>ISIN</th>
+                    <th>DS1_Ask_t1</th>
+                    <th>DS1_Bid_t1</th>
+                    <th>DS1_Mid_t1</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>${instrument.isin}</td>
+                    <td>${Number(latest.ask).toFixed(2)}</td>
+                    <td>${Number(latest.bid).toFixed(2)}</td>
+                    <td>${Number(latest.mid).toFixed(2)}</td>
+                  </tr>
+                </tbody>
+              </table>
+            `,
+            "iw-panel",
+          )}
+          ${renderPanel(
+            "Price Comparison",
+            chart.renderBarChart(
+              {
+                data: [
+                  { label: "Ask Price", value: latest.ask },
+                  { label: "Bid Price", value: latest.bid },
+                  { label: "Mid Price", value: latest.mid },
+                ],
+              },
+              {
+                width: 640,
+                height: 270,
+                children: [
+                  chart.CartesianGrid({ stroke: "#d6d6d6" }),
+                  chart.XAxis({ dataKey: "label" }),
+                  chart.YAxis({ width: "auto" }),
+                  chart.Bar({ dataKey: "value" }),
+                  chart.Tooltip({}),
+                ],
+              },
+              api,
+            ),
+            "iw-panel",
+          )}
+        </div>
+
+        <section class="instrument-panel">
+          <header>INSTRUMENT</header>
+          <div class="instrument-grid">
+            <p><strong>ISIN:</strong> ${instrument.isin}</p>
+            <p><strong>CURRENCY:</strong> ${instrument.currency}</p>
+            <p><strong>CODE:</strong> ${instrument.code}</p>
+            <p><strong>PRIORITY:</strong> ${instrument.priority}</p>
+          </div>
         </section>
       </div>
     `
   },
 }
 
-async function loadDashboardData(entityId, symbol, api) {
-  try {
-    const toDate = new Date()
-    const fromDate = new Date(toDate)
-    fromDate.setDate(toDate.getDate() - HISTORY_RANGE_DAYS)
-    const from = fromDate.toISOString().slice(0, 10)
-    const to = toDate.toISOString().slice(0, 10)
+// --- Orchestration (state transitions) --------------------------------------
 
-    const [quotePayload, historyPayload, incomePayload] = await Promise.all([
-      fmpGet("/quote", { symbol }),
-      fmpGet("/historical-price-eod/full", { symbol, from, to }),
-      fmpGet("/income-statement", { symbol, limit: 4 }),
-    ])
+function dashboardBootstrap(entityId, api) {
+  const markets = getMarkets()
+  api.notify("#marketsTable:tableDataSet", markets)
 
-    const quote = normalizeQuote(quotePayload)
-    const historyRows = normalizeHistory(historyPayload, 30)
-    const incomeRows = normalizeIncomeRows(incomePayload, 4)
+  if (!markets.length) return
 
-    const revenueSeries = incomeRows.length
-      ? incomeRows.map((row, index) => ({
-          label: row.calendarYear || row.date || `Q${index + 1}`,
-          value: Number(row.revenue ?? 0) / 1_000_000_000,
-        }))
-      : DEFAULT_REVENUE_SERIES
+  const firstMarket = markets[0].market
+  api.notify("#marketsTable:tableSelect", firstMarket)
+  api.notify(`#${entityId}:marketSelect`, { rowId: firstMarket })
+}
 
-    api.notify(`#${entityId}:dashboardLoadSuccess`, {
-      symbol,
-      quote,
-      priceSeries: historyRows.length ? historyRows : DEFAULT_PRICE_SERIES,
-      revenueSeries,
-    })
-  } catch (error) {
-    const message =
-      error instanceof Error ? error.message : "Failed to load FMP data"
-    api.notify(`#${entityId}:dashboardLoadFailure`, message)
+function dashboardMarketApply(entity, market, api) {
+  entity.selectedMarket = market
+  entity.selectedCurrency = null
+  entity.selectedIsin = null
+
+  const currencies = getCurrenciesForMarket(market)
+  api.notify("#currenciesTable:tableDataSet", currencies)
+  api.notify("#isinsTable:tableDataSet", [])
+  api.notify("#currenciesTable:tableSelect", null)
+  api.notify("#isinsTable:tableSelect", null)
+
+  dashboardInstrumentClear(entity, api)
+
+  if (!currencies.length) return
+
+  const firstCurrency = currencies[0].currency
+  api.notify("#currenciesTable:tableSelect", firstCurrency)
+  api.notify(`#${entity.id}:currencySelect`, { rowId: firstCurrency })
+}
+
+function dashboardCurrencyApply(entity, currency, api) {
+  entity.selectedCurrency = currency
+  entity.selectedIsin = null
+
+  const isins = getIsinsForSelection(entity.selectedMarket, currency)
+  api.notify("#isinsTable:tableDataSet", isins)
+  api.notify("#isinsTable:tableSelect", null)
+
+  dashboardInstrumentClear(entity, api)
+
+  if (!isins.length) return
+
+  const firstIsin = isins[0].isin
+  api.notify("#isinsTable:tableSelect", firstIsin)
+  api.notify(`#${entity.id}:isinSelect`, { rowId: firstIsin })
+}
+
+function dashboardIsinApply(entity, isin, api) {
+  entity.selectedIsin = isin
+  api.notify(`#${entity.id}:dashboardFetchInstrument`, { isin })
+}
+
+function dashboardInstrumentClear(entity, api) {
+  entity.instrument = null
+  entity.bookRows = []
+  entity.error = null
+  entity.loading = false
+  entity.dataSource = "mock"
+  api.notify("#financeQuotationChart:chartDataSet", [])
+  api.notify("#isinHistoryTable:tableDataSet", [])
+}
+
+// --- Formatting helpers -----------------------------------------------------
+
+function formatDateLabel(value) {
+  if (typeof value !== "string" || !value.includes("-")) return String(value)
+  const [year, month, day] = value.split("-")
+  return `${Number(month)}/${Number(day)}/${year}`
+}
+
+function buildBrushSeries(history) {
+  const rows = Array.isArray(history) ? history : []
+  if (!rows.length) return []
+
+  return rows.map((row) => ({
+    // Keep labels for every point; X-axis renderer decides adaptive tick density.
+    t: row.t || row.date,
+    value: Number(row.mid ?? row.close ?? 0),
+  }))
+}
+
+function buildHistoryTableRows(isin, history) {
+  return history
+    .slice()
+    .reverse()
+    .map((row, index) => ({
+      rowId: `${isin}-${index}`,
+      isin,
+      t: formatDateLabel(row.t || row.date),
+      mid: Number(row.mid ?? row.close ?? 0),
+    }))
+}
+
+function normalizeDashboardHistory(payload, limit = 500) {
+  const rows = Array.isArray(payload)
+    ? payload
+    : Array.isArray(payload?.historical)
+      ? payload.historical
+      : []
+
+  return rows
+    .slice(0, limit)
+    .reverse()
+    .map((row) => ({
+      t: row.date,
+      mid: Number(row.close ?? row.price ?? 0),
+    }))
+    .filter((row) => row.t && Number.isFinite(row.mid))
+}
+
+function quoteFromHistory(history) {
+  const latest = history[history.length - 1]
+  const mid = Number(latest?.mid ?? 0)
+  if (!Number.isFinite(mid)) return EMPTY_QUOTE
+
+  return {
+    ask: Number((mid + 0.35).toFixed(2)),
+    bid: Number((mid - 0.28).toFixed(2)),
+    mid: Number(mid.toFixed(2)),
   }
+}
+
+// --- View helper ------------------------------------------------------------
+
+function renderPanel(title, content, className = "iw-panel") {
+  return html`
+    <section class=${className}>
+      <header>${title}</header>
+      <div class="iw-panel-body">${content}</div>
+    </section>
+  `
 }
