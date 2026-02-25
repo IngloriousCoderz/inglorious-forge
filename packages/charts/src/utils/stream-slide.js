@@ -1,17 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { ensureFiniteNumber } from "./data-utils.js"
 
-function buildPoint(entity, nextIndex, nextValue) {
-  const xKey = entity.streamXKey ?? "name"
-  const yKey = entity.streamYKey ?? "value"
-  const indexValue = entity.streamIndexAsNumber ? nextIndex : `${nextIndex}`
-
-  return {
-    [xKey]: indexValue,
-    [yKey]: nextValue,
-  }
-}
-
 export function streamSlide(entity, payload) {
   if (!Array.isArray(entity.data) || !entity.data.length) return
 
@@ -41,4 +30,15 @@ export function streamSlide(entity, payload) {
   }
 
   entity.data = nextData
+}
+
+function buildPoint(entity, nextIndex, nextValue) {
+  const xKey = entity.streamXKey ?? "name"
+  const yKey = entity.streamYKey ?? "value"
+  const indexValue = entity.streamIndexAsNumber ? nextIndex : `${nextIndex}`
+
+  return {
+    [xKey]: indexValue,
+    [yKey]: nextValue,
+  }
 }

@@ -11,19 +11,8 @@ const baseLineChart = {
   ...lineRenderer,
 }
 
+// Headline: realtime-enabled chart type
 export const lineChart = withRealtime(baseLineChart)
-
-function targetsResolve(entity, payload) {
-  const targetId = payload?.targetId
-  if (targetId) return [targetId]
-  return Array.isArray(entity.targets) ? entity.targets : []
-}
-
-function targetsNotify(entity, payload, api, eventName) {
-  targetsResolve(entity, payload).forEach((id) =>
-    api.notify(`#${id}:${eventName}`),
-  )
-}
 
 /**
  * Legacy controller-based type. Prefer per-chart `entity.realtime`.
@@ -67,4 +56,16 @@ export const realtimeStream = {
   streamPlay(entity, payload, api) {
     targetsNotify(entity, payload, api, "streamPlay")
   },
+}
+
+function targetsResolve(entity, payload) {
+  const targetId = payload?.targetId
+  if (targetId) return [targetId]
+  return Array.isArray(entity.targets) ? entity.targets : []
+}
+
+function targetsNotify(entity, payload, api, eventName) {
+  targetsResolve(entity, payload).forEach((id) =>
+    api.notify(`#${id}:${eventName}`),
+  )
 }
