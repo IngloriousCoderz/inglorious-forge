@@ -16,6 +16,7 @@ export function renderDonutSection(api) {
           {
             width: 500,
             height: 400,
+            centerText: "Total",
             children: [
               chart.Pie({
                 dataKey: "value",
