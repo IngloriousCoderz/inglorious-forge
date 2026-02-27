@@ -18,6 +18,8 @@ import { buttonPrimitive as button } from "../button/index.js"
  */
 export function render(entity, api) {
   const {
+    id,
+    type, // eslint-disable-line no-unused-vars
     buttons = [],
     value,
     multiple = false,
@@ -62,7 +64,7 @@ export function render(entity, api) {
           ...itemRest
         } = item
 
-        const childId = `${entity.id}-btn-${itemId ?? index}`
+        const childId = `${id}-btn-${itemId ?? index}`
         const itemValue = explicitValue ?? itemId
         const pressed = multiple
           ? selectedValues.has(itemValue)
@@ -74,15 +76,15 @@ export function render(entity, api) {
           ...api,
           notify(type, payload) {
             if (type === `#${childId}:click`) {
-              api.notify(`#${entity.id}:click`, itemValue)
+              api.notify(`#${id}:click`, itemValue)
               if (value != null || multiple) {
                 if (multiple) {
                   const next = new Set(selectedValues)
                   if (next.has(itemValue)) next.delete(itemValue)
                   else next.add(itemValue)
-                  return api.notify(`#${entity.id}:change`, [...next])
+                  return api.notify(`#${id}:change`, [...next])
                 }
-                return api.notify(`#${entity.id}:change`, itemValue)
+                return api.notify(`#${id}:change`, itemValue)
               }
               return
             }

@@ -70,7 +70,7 @@ describe("select", () => {
     expect(api.getEvents()).toEqual([
       {
         type: "#sel:optionSelect",
-        payload: { label: "A", value: "a", disabled: false },
+        payload: { label: "A", value: "a" },
       },
     ])
   })

@@ -1,6 +1,8 @@
-import { createMockApi, render } from "@inglorious/web/test"
-import { beforeEach, describe, expect, it, vi } from "vitest"
+import { createStore } from "@inglorious/store"
+import { mount } from "@inglorious/web"
+import { afterEach, beforeEach, describe, expect, it } from "vitest"
 
+import { select } from "../../controls/select"
 import {
   dataGrid,
   getPaginationInfo,
@@ -10,6 +12,10 @@ import {
   isAllSelected,
   isSomeSelected,
 } from "."
+
+// ---------------------------------------------------------------------------
+// Fixtures
+// ---------------------------------------------------------------------------
 
 const sampleData = [
   { id: 1, name: "Charlie", age: 35, active: true, role: "Admin" },
@@ -27,12 +33,7 @@ const sampleColumns = [
     isSortable: true,
     isFilterable: true,
   },
-  {
-    id: "active",
-    title: "Active",
-    type: "boolean",
-    isFilterable: true,
-  },
+  { id: "active", title: "Active", type: "boolean", isFilterable: true },
   {
     id: "role",
     title: "Role",
@@ -41,389 +42,487 @@ const sampleColumns = [
   },
 ]
 
-describe("dataGrid", () => {
-  let entity
-  let api
+const GRID_ID = "test-dataGrid"
+
+// ---------------------------------------------------------------------------
+// Test helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * Creates a store, mounts it to a detached DOM element, and waits for the
+ * first render. Returns the store, the container, and convenience accessors.
+ *
+ * mount() calls store.notify("init") internally, which triggers the dataGrid's
+ * init handler (registers child types) and then create (spawns sub-entities),
+ * so by the time the returned promise resolves everything is ready.
+ */
+async function setup(entityOverrides = {}) {
+  const store = createStore({
+    types: { dataGrid, select },
+    entities: {
+      [GRID_ID]: {
+        type: "dataGrid",
+        rows: JSON.parse(JSON.stringify(sampleData)),
+        columns: JSON.parse(JSON.stringify(sampleColumns)),
+        pagination: { page: 0, pageSize: 2 },
+        search: { value: "" },
+        ...entityOverrides,
+      },
+    },
+  })
+
+  const container = document.createElement("div")
+  document.body.appendChild(container)
+
+  const { getEntity } = store._api
+
+  const unsubscribe = await mount(
+    store,
+    (api) => {
+      const e = getEntity(GRID_ID)
+      return e ? dataGrid.render(e, api) : null
+    },
+    container,
+  )
+
+  return {
+    store,
+    container,
+    unsubscribe,
+    getGrid: () => getEntity(GRID_ID),
+    getPageSizeSelect: () => getEntity(`${GRID_ID}-pageSizeSelect`),
+    getSearchbar: () => getEntity(`${GRID_ID}-searchbarInput`),
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Handler tests — isolated, no store or DOM needed
+// ---------------------------------------------------------------------------
+
+describe("dataGrid / handlers", () => {
+  let entity, api
 
   beforeEach(() => {
+    const store = createStore({ types: { dataGrid, select } })
+    store.notify("init")
+    api = store._api
+
     entity = {
-      id: "test-dataGrid",
+      id: GRID_ID,
       type: "dataGrid",
       rows: JSON.parse(JSON.stringify(sampleData)),
       columns: JSON.parse(JSON.stringify(sampleColumns)),
       pagination: { page: 0, pageSize: 2 },
       search: { value: "" },
     }
-    api = createMockApi({ [entity.id]: entity })
-    api.getType = () => dataGrid
-    dataGrid.create(entity)
+    dataGrid.create(entity, undefined, api)
   })
 
-  describe("handlers", () => {
-    describe("create()", () => {
-      it("should initialize with default state", () => {
-        const newEntity = { rows: [{ id: 1, name: "Test" }] }
-        dataGrid.create(newEntity)
-        expect(newEntity.sorts).toEqual([])
-        expect(newEntity.filters).toEqual({})
-        expect(newEntity.selection).toEqual([])
-        expect(newEntity.columns).toBeDefined()
-        expect(newEntity.columns[0].id).toBe("id")
-        expect(newEntity.columns[0].title).toBe("Id")
-      })
+  describe("create()", () => {
+    it("initialises default state", () => {
+      const e = { rows: [{ id: 1, name: "Test" }], search: { value: "" } }
+      dataGrid.create(e, undefined, api)
+      expect(e.sorts).toEqual([])
+      expect(e.filters).toEqual({})
+      expect(e.selection).toEqual([])
+      expect(e.columns[0].id).toBe("id")
+      expect(e.columns[0].title).toBe("Id")
+    })
 
-      it("should throw when rows do not have a valid default id key", () => {
-        const newEntity = {
-          rows: [{ name: "No id" }],
-        }
-        expect(() => dataGrid.create(newEntity)).toThrow(
-          'for field "id". Keys must be string or number',
-        )
-      })
+    it("throws when rows do not have a valid default id key", () => {
+      expect(() => dataGrid.create({ rows: [{ name: "No id" }] })).toThrow(
+        'for field "id". Keys must be string or number',
+      )
+    })
 
-      it("should support custom rowId", () => {
-        const newEntity = {
-          rowId: "uuid",
-          rows: [
-            { uuid: "a1", name: "A" },
-            { uuid: "b1", name: "B" },
-          ],
-        }
-        expect(() => dataGrid.create(newEntity)).not.toThrow()
-      })
+    it("supports a custom rowId", () => {
+      expect(() =>
+        dataGrid.create(
+          {
+            rowId: "uuid",
+            rows: [
+              { uuid: "a1", name: "A" },
+              { uuid: "b1", name: "B" },
+            ],
+            search: { value: "" },
+          },
+          undefined,
+          api,
+        ),
+      ).not.toThrow()
+    })
 
-      it("should throw when row keys are duplicated", () => {
-        const newEntity = {
+    it("throws on duplicate row keys", () => {
+      expect(() =>
+        dataGrid.create({
           rowId: "uuid",
           rows: [
             { uuid: "same", name: "A" },
             { uuid: "same", name: "B" },
           ],
-        }
-        expect(() => dataGrid.create(newEntity)).toThrow(
-          'Duplicate row key "same" for field "uuid"',
-        )
-      })
-    })
-
-    describe("sortChange()", () => {
-      it("should add a new sort", () => {
-        dataGrid.sortChange(entity, "name")
-        expect(entity.sorts).toEqual([{ column: "name", direction: "asc" }])
-      })
-
-      it("should toggle sort direction from asc to desc", () => {
-        dataGrid.sortChange(entity, "name") // asc
-        dataGrid.sortChange(entity, "name") // desc
-        expect(entity.sorts).toEqual([{ column: "name", direction: "desc" }])
-      })
-
-      it("should remove sort when toggling from desc", () => {
-        dataGrid.sortChange(entity, "name") // asc
-        dataGrid.sortChange(entity, "name") // desc
-        dataGrid.sortChange(entity, "name") // remove
-        expect(entity.sorts).toEqual([])
-      })
-
-      it("should reset to page 0 on sort change", () => {
-        entity.pagination.page = 1
-        dataGrid.sortChange(entity, "name")
-        expect(entity.pagination.page).toBe(0)
-      })
-    })
-
-    describe("filterChange()", () => {
-      it("should add a filter", () => {
-        dataGrid.filterChange(entity, { columnId: "name", value: "Alice" })
-        expect(entity.filters.name).toBe("Alice")
-      })
-
-      it("should remove a filter when value is empty", () => {
-        dataGrid.filterChange(entity, { columnId: "name", value: "Alice" })
-        dataGrid.filterChange(entity, { columnId: "name", value: "" })
-        expect(entity.filters.name).toBeUndefined()
-      })
-
-      it("should reset to page 0 on filter change", () => {
-        entity.pagination.page = 1
-        dataGrid.filterChange(entity, { columnId: "name", value: "Alice" })
-        expect(entity.pagination.page).toBe(0)
-      })
-    })
-
-    describe("pagination", () => {
-      it("pageNext: should go to the next page", () => {
-        dataGrid.pageNext(entity)
-        expect(entity.pagination.page).toBe(1)
-      })
-
-      it("pageNext: should not go past the last page", () => {
-        dataGrid.pageNext(entity) // page 1
-        dataGrid.pageNext(entity) // still page 1 (total 4 items, size 2 -> 2 pages)
-        expect(entity.pagination.page).toBe(1)
-      })
-
-      it("pagePrev: should go to the previous page", () => {
-        entity.pagination.page = 1
-        dataGrid.pagePrev(entity)
-        expect(entity.pagination.page).toBe(0)
-      })
-
-      it("pagePrev: should not go before the first page", () => {
-        dataGrid.pagePrev(entity)
-        expect(entity.pagination.page).toBe(0)
-      })
-
-      it("pageSizeChange: should change page size and reset to page 0", () => {
-        entity.pagination.page = 1
-        dataGrid.pageSizeChange(entity, 4)
-        expect(entity.pagination.pageSize).toBe(4)
-        expect(entity.pagination.page).toBe(0)
-      })
-    })
-
-    describe("selection", () => {
-      it("rowToggle: should select an unselected row", () => {
-        dataGrid.rowToggle(entity, 1)
-        expect(entity.selection).toContain(1)
-      })
-
-      it("rowToggle: should deselect a selected row", () => {
-        entity.selection = [1]
-        dataGrid.rowToggle(entity, 1)
-        expect(entity.selection).not.toContain(1)
-      })
-
-      it("rowToggle: should replace selection in single-select mode", () => {
-        entity.isMultiSelect = false
-        entity.selection = [1]
-        dataGrid.rowToggle(entity, 2)
-        expect(entity.selection).toEqual([2])
-      })
-
-      it("rowsToggleAll: should select all visible rows if not all are selected", () => {
-        entity.selection = [1] // Bob (id 3) is on page 2, so not visible
-        dataGrid.rowsToggleAll(entity) // Selects visible rows: Charlie (1), Alice (2)
-        expect(isAllSelected(entity)).toBe(true)
-        expect(entity.selection).toContain(1)
-        expect(entity.selection).toContain(2)
-      })
-
-      it("rowsToggleAll: should deselect all visible rows if all are selected", () => {
-        entity.selection = [1, 2] // All visible rows on page 0 are selected
-        dataGrid.rowsToggleAll(entity)
-        expect(entity.selection).toEqual([])
-      })
-
-      it("rowsToggleAll: should use custom rowId keys", () => {
-        const customEntity = {
-          id: "custom-table",
-          type: "table",
-          rowId: "uuid",
-          rows: [
-            { uuid: "u1", name: "Alice" },
-            { uuid: "u2", name: "Bob" },
-          ],
-          columns: [{ id: "name", title: "Name", isFilterable: false }],
-          pagination: { page: 0, pageSize: 10 },
-        }
-        dataGrid.create(customEntity)
-        dataGrid.rowsToggleAll(customEntity)
-        expect(customEntity.selection).toEqual(["u1", "u2"])
-      })
-    })
-
-    describe("getters and selectors", () => {
-      it("getRows: should return sorted, filtered, and paginated rows", () => {
-        // Sort by age descending
-        dataGrid.sortChange(entity, "age")
-        dataGrid.sortChange(entity, "age")
-        // Filter for active users
-        dataGrid.filterChange(entity, { columnId: "active", value: true })
-
-        // Expected after filter: Charlie (35), Alice (30), David (40)
-        // Expected after sort: David (40), Charlie (35), Alice (30)
-        // Expected after pagination (size 2): David (40), Charlie (35)
-        const rows = getRows(entity)
-        expect(rows.map((r) => r.name)).toEqual(["David", "Charlie"])
-      })
-
-      it("getTotalRows: should return total count after filtering", () => {
-        dataGrid.filterChange(entity, { columnId: "role", value: "Admin" })
-        expect(getTotalRows(entity)).toBe(2) // Charlie, David
-      })
-
-      it("getPaginationInfo: should return correct pagination details", () => {
-        const info = getPaginationInfo(entity)
-        expect(info).toEqual({
-          page: 0,
-          pageSize: 2,
-          totalPages: 2,
-          totalRows: 4,
-          start: 0,
-          end: 2,
-          hasNextPage: true,
-          hasPrevPage: false,
-        })
-      })
-
-      it("getSortDirection: should return the sort direction of a column", () => {
-        dataGrid.sortChange(entity, "name")
-        expect(getSortDirection(entity, "name")).toBe("asc")
-        expect(getSortDirection(entity, "age")).toBeNull()
-      })
-
-      it("isAllSelected: should return true if all visible rows are selected", () => {
-        entity.selection = [1, 2]
-        expect(isAllSelected(entity)).toBe(true)
-      })
-
-      it("isSomeSelected: should return true if some (but not all) visible rows are selected", () => {
-        entity.selection = [1]
-        expect(isSomeSelected(entity)).toBe(true)
-        entity.selection = [1, 2]
-        expect(isSomeSelected(entity)).toBe(false) // All are selected
-      })
-
-      it("isAllSelected/isSomeSelected: should use custom rowId keys", () => {
-        const customEntity = {
-          id: "custom-table",
-          type: "table",
-          rowId: "uuid",
-          rows: [
-            { uuid: "u1", name: "Alice" },
-            { uuid: "u2", name: "Bob" },
-          ],
-          columns: [{ id: "name", title: "Name", isFilterable: false }],
-          pagination: { page: 0, pageSize: 10 },
-          selection: ["u1"],
-        }
-        dataGrid.create(customEntity)
-        expect(isSomeSelected(customEntity)).toBe(true)
-
-        customEntity.selection = ["u1", "u2"]
-        expect(isAllSelected(customEntity)).toBe(true)
-      })
+        }),
+      ).toThrow('Duplicate row key "same" for field "uuid"')
     })
   })
 
-  describe("template", () => {
-    it("render: should call sub-renderers", () => {
-      const container = document.createElement("div")
-      render(dataGrid.render(entity, api), container)
+  describe("sortChange()", () => {
+    it("adds a new sort", () => {
+      dataGrid.sortChange(entity, "name")
+      expect(entity.sorts).toEqual([{ column: "name", direction: "asc" }])
+    })
 
+    it("toggles asc to desc", () => {
+      dataGrid.sortChange(entity, "name")
+      dataGrid.sortChange(entity, "name")
+      expect(entity.sorts).toEqual([{ column: "name", direction: "desc" }])
+    })
+
+    it("removes the sort when toggling past desc", () => {
+      dataGrid.sortChange(entity, "name")
+      dataGrid.sortChange(entity, "name")
+      dataGrid.sortChange(entity, "name")
+      expect(entity.sorts).toEqual([])
+    })
+
+    it("resets to page 0", () => {
+      entity.pagination.page = 1
+      dataGrid.sortChange(entity, "name")
+      expect(entity.pagination.page).toBe(0)
+    })
+  })
+
+  describe("filterChange()", () => {
+    it("adds a filter", () => {
+      dataGrid.filterChange(entity, { columnId: "name", value: "Alice" })
+      expect(entity.filters.name).toBe("Alice")
+    })
+
+    it("removes a filter when value is empty", () => {
+      dataGrid.filterChange(entity, { columnId: "name", value: "Alice" })
+      dataGrid.filterChange(entity, { columnId: "name", value: "" })
+      expect(entity.filters.name).toBeUndefined()
+    })
+
+    it("resets to page 0", () => {
+      entity.pagination.page = 1
+      dataGrid.filterChange(entity, { columnId: "name", value: "Alice" })
+      expect(entity.pagination.page).toBe(0)
+    })
+  })
+
+  describe("searchChange()", () => {
+    it("updates the search value", () => {
+      dataGrid.searchChange(entity, "Ali")
+      expect(entity.search.value).toBe("Ali")
+    })
+
+    it("resets to page 0", () => {
+      entity.pagination.page = 1
+      dataGrid.searchChange(entity, "Ali")
+      expect(entity.pagination.page).toBe(0)
+    })
+  })
+
+  describe("pagination", () => {
+    it("pageNext: advances page", () => {
+      dataGrid.pageNext(entity)
+      expect(entity.pagination.page).toBe(1)
+    })
+
+    it("pageNext: does not go past the last page", () => {
+      dataGrid.pageNext(entity)
+      dataGrid.pageNext(entity)
+      expect(entity.pagination.page).toBe(1)
+    })
+
+    it("pagePrev: goes back one page", () => {
+      entity.pagination.page = 1
+      dataGrid.pagePrev(entity)
+      expect(entity.pagination.page).toBe(0)
+    })
+
+    it("pagePrev: does not go before page 0", () => {
+      dataGrid.pagePrev(entity)
+      expect(entity.pagination.page).toBe(0)
+    })
+
+    it("pageSizeChange: updates size and resets to page 0", () => {
+      entity.pagination.page = 1
+      dataGrid.pageSizeChange(entity, 4)
+      expect(entity.pagination.pageSize).toBe(4)
+      expect(entity.pagination.page).toBe(0)
+    })
+  })
+
+  describe("selection", () => {
+    it("rowToggle: selects an unselected row", () => {
+      dataGrid.rowToggle(entity, 1)
+      expect(entity.selection).toContain(1)
+    })
+
+    it("rowToggle: deselects a selected row", () => {
+      entity.selection = [1]
+      dataGrid.rowToggle(entity, 1)
+      expect(entity.selection).not.toContain(1)
+    })
+
+    it("rowToggle: replaces selection in single-select mode", () => {
+      entity.isMultiSelect = false
+      entity.selection = [1]
+      dataGrid.rowToggle(entity, 2)
+      expect(entity.selection).toEqual([2])
+    })
+
+    it("rowsToggleAll: selects all visible rows when not all selected", () => {
+      entity.selection = [1]
+      dataGrid.rowsToggleAll(entity)
+      expect(isAllSelected(entity)).toBe(true)
+      expect(entity.selection).toContain(1)
+      expect(entity.selection).toContain(2)
+    })
+
+    it("rowsToggleAll: deselects all visible rows when all selected", () => {
+      entity.selection = [1, 2]
+      dataGrid.rowsToggleAll(entity)
+      expect(entity.selection).toEqual([])
+    })
+
+    it("rowsToggleAll: respects custom rowId", () => {
+      const e = {
+        rowId: "uuid",
+        rows: [
+          { uuid: "u1", name: "Alice" },
+          { uuid: "u2", name: "Bob" },
+        ],
+        columns: [{ id: "name", title: "Name", isFilterable: false }],
+        pagination: { page: 0, pageSize: 10 },
+      }
+      dataGrid.create(e, undefined, api)
+      dataGrid.rowsToggleAll(e)
+      expect(e.selection).toEqual(["u1", "u2"])
+    })
+  })
+
+  describe("selectors", () => {
+    it("getRows: applies sort, filter and pagination in order", () => {
+      dataGrid.sortChange(entity, "age")
+      dataGrid.sortChange(entity, "age") // desc
+      dataGrid.filterChange(entity, { columnId: "active", value: true })
+      // active: Charlie(35), Alice(30), David(40) -> desc: David, Charlie, Alice -> page 0 size 2
+      expect(getRows(entity).map((r) => r.name)).toEqual(["David", "Charlie"])
+    })
+
+    it("getTotalRows: counts rows after filtering", () => {
+      dataGrid.filterChange(entity, { columnId: "role", value: "Admin" })
+      expect(getTotalRows(entity)).toBe(2)
+    })
+
+    it("getPaginationInfo: returns correct details", () => {
+      expect(getPaginationInfo(entity)).toEqual({
+        page: 0,
+        pageSize: 2,
+        totalPages: 2,
+        totalRows: 4,
+        start: 0,
+        end: 2,
+        hasNextPage: true,
+        hasPrevPage: false,
+      })
+    })
+
+    it("getSortDirection: returns the direction for a sorted column", () => {
+      dataGrid.sortChange(entity, "name")
+      expect(getSortDirection(entity, "name")).toBe("asc")
+      expect(getSortDirection(entity, "age")).toBeNull()
+    })
+
+    it("isAllSelected: true when all visible rows are selected", () => {
+      entity.selection = [1, 2]
+      expect(isAllSelected(entity)).toBe(true)
+    })
+
+    it("isSomeSelected: true when some but not all visible rows are selected", () => {
+      entity.selection = [1]
+      expect(isSomeSelected(entity)).toBe(true)
+      entity.selection = [1, 2]
+      expect(isSomeSelected(entity)).toBe(false)
+    })
+
+    it("isAllSelected/isSomeSelected: respect custom rowId", () => {
+      const e = {
+        rowId: "uuid",
+        rows: [
+          { uuid: "u1", name: "Alice" },
+          { uuid: "u2", name: "Bob" },
+        ],
+        columns: [{ id: "name", title: "Name", isFilterable: false }],
+        pagination: { page: 0, pageSize: 10 },
+        selection: ["u1"],
+      }
+      dataGrid.create(e, undefined, api)
+      expect(isSomeSelected(e)).toBe(true)
+      e.selection = ["u1", "u2"]
+      expect(isAllSelected(e)).toBe(true)
+    })
+  })
+})
+
+// ---------------------------------------------------------------------------
+// Template + integration tests — full end-to-end via mount()
+// ---------------------------------------------------------------------------
+
+describe("dataGrid / template", () => {
+  let store, container, unsubscribe, getGrid, getPageSizeSelect, getSearchbar
+
+  beforeEach(async () => {
+    ;({
+      store,
+      container,
+      unsubscribe,
+      getGrid,
+      getPageSizeSelect,
+      getSearchbar,
+    } = await setup())
+  })
+
+  afterEach(() => {
+    unsubscribe()
+    container.remove()
+  })
+
+  describe("structure", () => {
+    it("renders header, body and footer", () => {
       expect(container.querySelector(".iw-data-grid-header")).not.toBeNull()
       expect(container.querySelector(".iw-data-grid-body")).not.toBeNull()
       expect(container.querySelector(".iw-data-grid-footer")).not.toBeNull()
     })
 
-    it("renderHeader: should render a header row with columns", () => {
-      // Use the real renderHeader
-      const result = dataGrid.renderHeader(entity, api)
-      const container = document.createElement("div")
-      render(result, container)
-      const renderedItems = container.querySelectorAll(
-        ".iw-data-grid-header-column",
-      )
-      expect(renderedItems).toHaveLength(entity.columns.length)
+    it("renders one header column per column definition", () => {
+      expect(
+        container.querySelectorAll(".iw-data-grid-header-column"),
+      ).toHaveLength(getGrid().columns.length)
     })
 
-    it("renderHeaderColumn: should render a title and sort icon", () => {
-      dataGrid.sortChange(entity, "name") // sort asc
-      const column = entity.columns[0] // name column
-      const result = dataGrid.renderHeaderColumn(entity, { column }, api)
-      const renderedText = result.strings.join("")
-      const title = result.values[2]
-      const icon = result.values[3]
-      expect(renderedText).toContain("iw-data-grid-header-title")
-      expect(`${title} ${icon}`).toBe("Name ▲")
+    it("renders one body row per visible (paginated) item", () => {
+      expect(
+        container.querySelectorAll(".iw-data-grid-body .iw-data-grid-row"),
+      ).toHaveLength(getRows(getGrid()).length)
+    })
+  })
+
+  describe("sorting", () => {
+    it("shows the asc sort icon after clicking a sortable column header", () => {
+      container.querySelector(".iw-data-grid-header-title").click()
+      expect(
+        container.querySelector(".iw-data-grid-header-title").textContent,
+      ).toContain("▲")
     })
 
-    it("renderBody: should render a row for each visible item", () => {
-      const result = dataGrid.renderBody(entity, api)
-      const container = document.createElement("div")
+    it("shows the desc sort icon after clicking the same column twice", () => {
+      const title = container.querySelector(".iw-data-grid-header-title")
+      title.click()
+      title.click()
+      expect(title.textContent).toContain("▼")
+    })
+  })
 
-      render(result, container)
-
-      const renderedRows = container.querySelectorAll(".iw-data-grid-row")
-      const visibleRows = getRows(entity)
-      expect(renderedRows).toHaveLength(visibleRows.length)
+  describe("pagination controls", () => {
+    it("renders the page number input", () => {
+      expect(
+        container.querySelector('.iw-data-grid-footer input[name="page"]'),
+      ).not.toBeNull()
     })
 
-    it("renderRow: should render a row with correct classes", () => {
-      entity.selection = [1] // Select the first row
-      const rowData = entity.rows[0] // Charlie
-
-      // The classMap directive is inside a string, making it hard to inspect.
-      // Instead, we can verify the logic that would be passed to it.
-      const isSelected = entity.selection?.includes(rowData.id)
-      const isEven = 0 % 2 !== 0 // The test passes index 0
-
-      // Assert that our logic correctly determines the class states.
-      expect(isEven).toBe(false)
-      expect(isSelected).toBe(true)
+    it("disables prev buttons on the first page", () => {
+      const [first, prev] = container.querySelectorAll("button")
+      expect(first.disabled).toBe(true)
+      expect(prev.disabled).toBe(true)
     })
 
-    it("renderCell: should render a cell with correct style", () => {
-      const cellData = "Test"
-      const column = entity.columns[0] // name column
-      column.width = 150
-      const result = dataGrid.renderCell(
-        entity,
-        { cell: cellData, index: 0 },
-        api,
-      )
-      const styleString = result.values[1]
-      expect(styleString).toContain("width: 150px")
+    it("clicking next page shows the next set of rows", () => {
+      const buttons = [...container.querySelectorAll("button")]
+      const nextBtn = buttons.find((b) => b.textContent.includes("\u276F"))
+      nextBtn.click()
+      expect(getGrid().pagination.page).toBe(1)
+      expect(
+        container.querySelectorAll(".iw-data-grid-body .iw-data-grid-row"),
+      ).toHaveLength(2)
     })
 
-    it("renderFooter: should render pagination info", () => {
-      // Ensure pagination is present for this test
-      entity.pagination = { page: 0, pageSize: 2 }
-      const result = dataGrid.renderFooter(entity, api)
-      // Reconstruct a simplified string from the template parts to check content
-      const renderedText = result.strings.reduce(
-        (acc, str, i) => acc + str + (result.values[i] ?? ""),
-        "",
-      )
-      // The reconstructed text might have extra whitespace, so we check for parts.
-      expect(renderedText).toContain("1 to 2 of 4")
-      expect(renderedText).toContain("entries")
+    it("disables next buttons on the last page", () => {
+      store.notify(`#${GRID_ID}:pageChange`, 1)
+      const buttons = [...container.querySelectorAll("button")]
+      const [next, last] = buttons.slice(-2)
+      expect(next.disabled).toBe(true)
+      expect(last.disabled).toBe(true)
+    })
+  })
+
+  describe("search", () => {
+    it("typing in the searchbar filters visible rows", () => {
+      const input = container.querySelector(".iw-data-grid-searchbar input")
+      input.value = "Alice"
+      input.dispatchEvent(new Event("input"))
+      expect(
+        container.querySelectorAll(".iw-data-grid-body .iw-data-grid-row"),
+      ).toHaveLength(1)
     })
 
-    it("renderPagination: should render page controls", () => {
-      entity.pagination = { page: 0, pageSize: 2 }
-      const paginationInfo = getPaginationInfo(entity)
-      const result = dataGrid.renderPagination(entity, paginationInfo, api)
+    it("clearing the search restores all rows on the current page", () => {
+      const input = container.querySelector(".iw-data-grid-searchbar input")
+      input.value = "Alice"
+      input.dispatchEvent(new Event("input"))
+      input.value = ""
+      input.dispatchEvent(new Event("input"))
+      expect(
+        container.querySelectorAll(".iw-data-grid-body .iw-data-grid-row"),
+      ).toHaveLength(2)
+    })
+  })
 
-      // Reconstruct a simplified string from the template parts to check content
-      // This is more robust than inspecting the internal structure of lit-html's TemplateResult
-      const renderedText = result.strings.reduce(
-        (acc, str, i) => acc + str + (result.values[i] ?? ""),
-        "",
-      )
-      expect(renderedText).toContain('class="iw-data-grid-page-input"')
-      expect(result.values).toContain(1) // Check that the dynamic value is correct
+  describe("page size select (sub-entity integration)", () => {
+    it("is created alongside the dataGrid", () => {
+      expect(getPageSizeSelect()).toBeDefined()
     })
 
-    it("mount: should measure and set column widths", () => {
-      const mockColumn1 = document.createElement("div")
-      vi.spyOn(mockColumn1, "offsetWidth", "get").mockReturnValue(150)
-      const mockColumn2 = document.createElement("div")
-      vi.spyOn(mockColumn2, "offsetWidth", "get").mockReturnValue(200)
+    it("selecting a page size updates the dataGrid pagination", () => {
+      store.notify(`#${GRID_ID}-pageSizeSelect:optionSelect`, {
+        value: 20,
+        label: "20",
+      })
+      expect(getGrid().pagination.pageSize).toBe(20)
+      expect(getGrid().pagination.page).toBe(0)
+    })
 
-      const containerEl = document.createElement("div")
-      containerEl.appendChild(mockColumn1)
-      containerEl.appendChild(mockColumn2)
+    it("reflects the current pageSize as its selectedValue", () => {
+      expect(getPageSizeSelect().selectedValue).toBe(2)
+      store.notify(`#${GRID_ID}-pageSizeSelect:optionSelect`, {
+        value: 30,
+        label: "30",
+      })
+      expect(getPageSizeSelect().selectedValue).toBe(30)
+    })
 
-      // Only set width if it's a string (e.g., "auto")
-      entity.columns[0].width = "auto"
-      entity.columns[1].width = "auto"
+    it("renders the page size select in the footer", () => {
+      expect(
+        container.querySelector(".iw-data-grid-footer .iw-select"),
+      ).not.toBeNull()
+    })
 
-      dataGrid.mount(entity, containerEl)
+    it("is removed from the store when the dataGrid is destroyed", () => {
+      store.notify("remove", GRID_ID)
+      expect(getPageSizeSelect()).toBeUndefined()
+    })
+  })
 
-      expect(entity.columns[0].width).toBe(150)
-      expect(entity.columns[1].width).toBe(200)
+  describe("searchbar (sub-entity integration)", () => {
+    it("is created alongside the dataGrid", () => {
+      expect(getSearchbar()).toBeDefined()
+    })
+
+    it("is removed from the store when the dataGrid is destroyed", () => {
+      store.notify("remove", GRID_ID)
+      expect(getSearchbar()).toBeUndefined()
     })
   })
 })

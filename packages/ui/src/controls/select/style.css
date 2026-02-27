@@ -2,7 +2,6 @@
   position: relative;
   display: inline-flex;
   flex-direction: column;
-  width: 20rem;
   gap: var(--iw-space-1);
   font-family: var(--iw-font-family-sans);
 

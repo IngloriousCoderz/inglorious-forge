@@ -22,6 +22,8 @@ const DEFAULT_STEP = 1
  */
 export function render(entity, api) {
   const {
+    id,
+    type, // eslint-disable-line no-unused-vars
     name = "",
     label,
     value = DEFAULT_VALUE,
@@ -35,7 +37,7 @@ export function render(entity, api) {
     ...rest
   } = entity
 
-  const inputId = entity.id || name
+  const inputId = id || name
 
   const classes = {
     "iw-slider-field": true,
@@ -65,7 +67,7 @@ export function render(entity, api) {
         .value=${String(value)}
         ?disabled=${disabled}
         @input=${(event) =>
-          api.notify(`#${entity.id}:change`, Number(event.target.value))}
+          api.notify(`#${id}:change`, Number(event.target.value))}
         ${ref((element) => applyElementProps(element, rest))}
       />
     </div>

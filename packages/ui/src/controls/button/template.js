@@ -26,6 +26,8 @@ import { applyElementProps } from "../../shared/applyElementProps.js"
  */
 export function render(entity, api) {
   const {
+    id,
+    type, // eslint-disable-line no-unused-vars
     children,
     variant = "default",
     color = "primary",
@@ -33,7 +35,7 @@ export function render(entity, api) {
     shape = "rectangle",
     disabled = false,
     fullWidth = false,
-    type = "button",
+    buttonType = "button",
     ariaLabel = "",
     ariaPressed = false,
     className = "",
@@ -60,12 +62,12 @@ export function render(entity, api) {
 
   return html`
     <button
-      type=${type}
+      type=${buttonType}
       aria-label=${ariaLabel}
       aria-pressed=${ariaPressed}
       class=${classMap(classes)}
       ?disabled=${disabled}
-      @click=${() => api.notify(`#${entity.id}:click`)}
+      @click=${() => api.notify(`#${id}:click`)}
       ${ref((element) => applyElementProps(element, rest))}
     >
       ${children}

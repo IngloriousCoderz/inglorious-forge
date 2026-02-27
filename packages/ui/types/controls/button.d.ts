@@ -2,6 +2,7 @@ import type { TemplateResult, Api } from "@inglorious/web"
 
 export interface ButtonEntity {
   id?: string
+  type: "button"
   children?: TemplateResult | string | number
   variant?: "default" | "outline" | "ghost"
   color?: "primary" | "secondary" | "success" | "warning" | "error" | "info"
@@ -9,7 +10,7 @@ export interface ButtonEntity {
   shape?: "rectangle" | "pill" | "round" | "square"
   disabled?: boolean
   fullWidth?: boolean
-  type?: "button" | "submit" | "reset" | "menu"
+  buttonType?: "button" | "submit" | "reset" | "menu"
   ariaLabel?: string
   ariaPressed?: boolean
   className?: string

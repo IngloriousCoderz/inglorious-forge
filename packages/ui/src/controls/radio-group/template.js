@@ -17,7 +17,9 @@ import { applyElementProps } from "../../shared/applyElementProps.js"
  */
 export function render(entity, api) {
   const {
-    name = entity.id || "radio",
+    id,
+    type, // eslint-disable-line no-unused-vars
+    name = "",
     label,
     value,
     options = [],
@@ -26,6 +28,8 @@ export function render(entity, api) {
     disabled = false,
     ...rest
   } = entity
+
+  const inputId = id || name
 
   const rootClasses = {
     "iw-radio-group": true,
@@ -54,6 +58,7 @@ export function render(entity, api) {
         return html`
           <label class="iw-radio-option">
             <input
+              id=${inputId}
               class="iw-radio"
               type="radio"
               name=${name}
@@ -61,7 +66,7 @@ export function render(entity, api) {
               .checked=${value === optionValue}
               ?disabled=${disabled || optionDisabled}
               @change=${(event) =>
-                api.notify(`#${entity.id}:change`, event.target.value)}
+                api.notify(`#${id}:change`, event.target.value)}
               ${ref((element) => applyElementProps(element, optionRest))}
             />
             <span>${optionLabel}</span>

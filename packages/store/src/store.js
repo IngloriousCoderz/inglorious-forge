@@ -118,8 +118,19 @@ export function createStore({
           const type = types[entity.type]
           const handle = type[handlerName]
 
-          if (handle) {
-            handle(entity, event.payload, api)
+          handle?.(entity, event.payload, api)
+        }
+
+        if (event.type.endsWith(":destroy")) {
+          const [target] = event.type.split(":")
+          const [, id] = target.split("#")
+          const entity = draft[id]
+          if (entity) {
+            const type = types[entity.type]
+            const typeName = entity.type
+            delete draft[id]
+
+            eventMap.removeEntity(id, type, typeName)
           }
         }
 
@@ -277,12 +288,7 @@ export function createStore({
 
   function removeEntity(draft, payload) {
     const id = payload
-    const entity = draft[id]
-    const type = types[entity.type]
-    const typeName = entity.type
-    delete draft[id]
 
-    eventMap.removeEntity(id, type, typeName)
     incomingEvents.unshift({ type: `#${id}:destroy` })
   }
 }

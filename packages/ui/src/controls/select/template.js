@@ -8,7 +8,6 @@
 import { classMap, html, ref, repeat, when } from "@inglorious/web"
 
 import { chipPrimitive } from "../../data-display/chip/index.js"
-import { applyElementProps } from "../../shared/applyElementProps.js"
 import {
   filterOptions,
   formatOption,
@@ -27,20 +26,19 @@ const NO_FOCUSED_INDEX = -1
  */
 export function render(entity, api) {
   const type = api.getType(entity.type)
-  const normalized = ensureDefaults(entity)
 
   return html`<div
     class=${classMap({
       "iw-select": true,
-      "iw-select-full-width": !!normalized.fullWidth,
-      [`iw-select-${normalized.size}`]: normalized.size !== "md",
+      "iw-select-full-width": !!entity.fullWidth,
+      [`iw-select-${entity.size}`]: entity.size !== "md",
     })}
   >
-    ${normalized.label
-      ? html`<label class="iw-select-label">${normalized.label}</label>`
+    ${entity.label
+      ? html`<label class="iw-select-label">${entity.label}</label>`
       : null}
-    ${type.renderControl?.(normalized, api)}
-    ${when(normalized.isOpen, () => type.renderDropdown?.(normalized, api))}
+    ${type.renderControl?.(entity, api)}
+    ${when(entity.isOpen, () => type.renderDropdown?.(entity, api))}
   </div>`
 }
 
@@ -63,7 +61,6 @@ export function renderControl(entity, api) {
         entity.selectedValue.length,
     })}"
     @click=${() => !entity.isDisabled && api.notify(`#${entity.id}:toggle`)}
-    ${ref((element) => applyElementProps(element, entity.controlProps ?? {}))}
   >
     ${when(
       entity.isMulti,
@@ -271,9 +268,10 @@ export function renderOption(entity, { option, index }, api) {
       "iw-select-dropdown-options-option-focused": isFocused,
       "iw-select-dropdown-options-option-disabled": !!normalized.disabled,
     })}"
-    @click=${() =>
-      !normalized.disabled &&
-      api.notify(`#${entity.id}:optionSelect`, normalized)}
+    @click=${() => {
+      if (normalized.disabled) return
+      api.notify(`#${entity.id}:optionSelect`, normalized)
+    }}
     @mouseenter=${() => api.notify(`#${entity.id}:focusSet`, index)}
   >
     ${when(
@@ -356,70 +354,16 @@ function handleKeyDown(entity, event, api) {
   }
 }
 
-/**
- * @param {SelectEntity} entity
- * @returns {SelectEntity}
- */
-function ensureDefaults(entity) {
-  const isMulti = entity.isMulti ?? false
-  const controlProps = Object.fromEntries(
-    Object.entries(entity).filter(([key]) => !KNOWN_SELECT_KEYS.has(key)),
-  )
-
-  return {
-    ...entity,
-    options: (entity.options ?? []).map(formatOption),
-    isOpen: entity.isOpen ?? false,
-    searchTerm: entity.searchTerm ?? "",
-    focusedIndex: entity.focusedIndex ?? NO_FOCUSED_INDEX,
-    isMulti,
-    selectedValue: entity.selectedValue ?? (isMulti ? [] : null),
-    isLoading: entity.isLoading ?? false,
-    isDisabled: entity.isDisabled ?? false,
-    isSearchable: entity.isSearchable ?? false,
-    isClearable: entity.isClearable ?? false,
-    placeholder: entity.placeholder ?? "Select...",
-    noOptionsMessage: entity.noOptionsMessage ?? "No options",
-    loadingMessage: entity.loadingMessage ?? "Loading...",
-    size: entity.size ?? "md",
-    fullWidth: entity.fullWidth ?? false,
-    label: entity.label ?? "",
-    controlProps,
-  }
-}
-
-const KNOWN_SELECT_KEYS = new Set([
-  "id",
-  "type",
-  "label",
-  "options",
-  "isOpen",
-  "searchTerm",
-  "focusedIndex",
-  "isMulti",
-  "selectedValue",
-  "isLoading",
-  "isDisabled",
-  "isSearchable",
-  "isClearable",
-  "placeholder",
-  "noOptionsMessage",
-  "loadingMessage",
-  "fullWidth",
-  "size",
-  "controlProps",
-])
-
 function createMultiValueChipApi(api, entity, tagId, option) {
   return {
     ...api,
 
-    notify(type, payload) {
-      if (type === `#${tagId}:remove`) {
+    notify(event, payload) {
+      if (event === `#${tagId}:remove`) {
         return api.notify(`#${entity.id}:optionSelect`, option)
       }
 
-      return api.notify(type, payload)
+      return api.notify(event, payload)
     },
   }
 }

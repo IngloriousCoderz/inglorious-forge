@@ -3,14 +3,58 @@
  * @typedef {import('../../../types/data-display/data-grid').Column} Column
  */
 
-import { getRowKeyValue, getRows, getTotalRows } from "./helpers.js"
+import { html } from "@inglorious/web"
+
+import { filterInput } from "./components/filters/input.js"
+import { filterRange } from "./components/filters/range.js"
+import { filterSelect } from "./components/filters/select.js"
+import { currentPageInput } from "./components/pagination/current-page-input.js"
+import { firstPageButton } from "./components/pagination/first-page-button.js"
+import { lastPageButton } from "./components/pagination/last-page-button.js"
+import { nextPageButton } from "./components/pagination/next-page-button.js"
+import { pageSizeSelect } from "./components/pagination/page-size-select.js"
+import { prevPageButton } from "./components/pagination/prev-page-button.js"
+import { searchbarInput } from "./components/searchbar-input.js"
+import {
+  getPaginationInfo,
+  getRowKeyValue,
+  getRows,
+  getTotalRows,
+} from "./helpers.js"
+
+const RANGE_TYPE = {
+  range: "number",
+  date: "date",
+  time: "time",
+  datetime: "datetime-local",
+}
+
+export function init(entity, payload, api) {
+  api.setType("dataGridFilterInput", filterInput)
+  api.setType("dataGridFilterRange", filterRange)
+  api.setType("dataGridFilterSelect", filterSelect)
+  api.setType("dataGridSearchbarInput", searchbarInput)
+
+  api.setType("dataGridFirstPageButton", firstPageButton)
+  api.setType("dataGridPrevPageButton", prevPageButton)
+  api.setType("dataGridCurrentPageInput", currentPageInput)
+  api.setType("dataGridNextPageButton", nextPageButton)
+  api.setType("dataGridLastPageButton", lastPageButton)
+
+  api.setType("dataGridPageSizeSelect", pageSizeSelect)
+}
 
 /**
  * Resets the table entity with default state.
  * @param {DataGridEntity} entity
  */
-export function create(entity) {
+export function create(entity, _, api) {
   initTable(entity)
+  addComponents(entity, api)
+}
+
+export function destroy(entity, _, api) {
+  removeComponents(entity, api)
 }
 
 /**
@@ -63,7 +107,6 @@ export function filterChange(entity, { columnId, value }) {
     entity.filters[columnId] = value
   }
 
-  // Reset to first page when filtering
   if (entity.pagination) {
     entity.pagination.page = 0
   }
@@ -75,6 +118,7 @@ export function filterChange(entity, { columnId, value }) {
  */
 export function filtersClear(entity) {
   entity.filters = {}
+
   if (entity.pagination) {
     entity.pagination.page = 0
   }
@@ -87,6 +131,10 @@ export function filtersClear(entity) {
  */
 export function searchChange(entity, search) {
   entity.search.value = search
+
+  if (entity.pagination) {
+    entity.pagination.page = 0
+  }
 }
 
 /**
@@ -284,6 +332,169 @@ function initTable(entity) {
   }
 
   assertRowKeys(entity)
+}
+
+function addComponents(entity, api) {
+  entity.columns.forEach((column) => {
+    if (!column.isFilterable) {
+      return
+    }
+
+    if (column.filter.type === "select") {
+      api.notify("add", {
+        id: `${entity.id}-filter-${column.id}`,
+        type: "dataGridFilterSelect",
+        name: column.id,
+        multiple: column.filter.isMultiple,
+        autocomplete: "off",
+        selectedValue: entity.filters[column.id] ?? "",
+        options: column.filter.options,
+        size: "sm",
+        fullWidth: true,
+        _owner: entity.id,
+      })
+    } else if (column.filter.type === "number") {
+      api.notify("add", {
+        id: `${entity.id}-filter-${column.id}`,
+        type: "dataGridFilterInput",
+        name: column.id,
+        inputType: "number",
+        placeholder: column.filter.placeholder ?? "=",
+        size: "sm",
+        fullWidth: true,
+        _owner: entity.id,
+      })
+    } else if (
+      ["range", "date", "time", "datetime"].includes(column.filter.type)
+    ) {
+      api.notify("add", {
+        id: `${entity.id}-filter-${column.id}Min`,
+        type: "dataGridFilterRange",
+        name: `${column.id}Min`,
+        inputType: RANGE_TYPE[column.filter.type],
+        placeholder: column.filter.placeholder ?? "≥",
+        size: "sm",
+        fullWidth: true,
+        _owner: entity.id,
+        _column: column.id,
+        _key: "min",
+      })
+      api.notify("add", {
+        id: `${entity.id}-filter-${column.id}Max`,
+        type: "dataGridFilterRange",
+        name: `${column.id}Max`,
+        inputType: RANGE_TYPE[column.filter.type],
+        placeholder: column.filter.placeholder ?? "≤",
+        size: "sm",
+        fullWidth: true,
+        _owner: entity.id,
+        _column: column.id,
+        _key: "max",
+      })
+    } else {
+      api.notify("add", {
+        id: `${entity.id}-filter-${column.id}`,
+        type: "dataGridFilterInput",
+        name: column.id,
+        inputType: "text",
+        placeholder: column.filter.placeholder ?? "Contains...",
+        size: "sm",
+        fullWidth: true,
+        _owner: entity.id,
+      })
+    }
+  })
+
+  if (entity.search) {
+    api.notify("add", {
+      id: `${entity.id}-searchbarInput`,
+      type: "dataGridSearchbarInput",
+      size: "sm",
+      fullWidth: true,
+      name: "search",
+      inputType: "text",
+      placeholder: entity.search.placeholder ?? "Fuzzy search...",
+      value: entity.search.value,
+      _owner: entity.id,
+    })
+  }
+
+  api.notify("add", {
+    id: `${entity.id}-firstPageButton`,
+    type: "dataGridFirstPageButton",
+    color: "secondary",
+    size: "sm",
+    children: html`|&#10094;`,
+    _owner: entity.id,
+  })
+
+  api.notify("add", {
+    id: `${entity.id}-prevPageButton`,
+    type: "dataGridPrevPageButton",
+    color: "secondary",
+    size: "sm",
+    children: html`&#10094;`,
+    _owner: entity.id,
+  })
+
+  if (entity.pagination) {
+    const pagination = getPaginationInfo(entity)
+
+    api.notify("add", {
+      id: `${entity.id}-currentPageInput`,
+      type: "dataGridCurrentPageInput",
+      name: "page",
+      size: "sm",
+      inputType: "number",
+      min: 1,
+      max: pagination.totalPages,
+      _owner: entity.id,
+    })
+
+    api.notify("add", {
+      id: `${entity.id}-nextPageButton`,
+      type: "dataGridNextPageButton",
+      color: "secondary",
+      size: "sm",
+      children: html`&#10095;`,
+      _owner: entity.id,
+    })
+
+    api.notify("add", {
+      id: `${entity.id}-lastPageButton`,
+      type: "dataGridLastPageButton",
+      color: "secondary",
+      size: "sm",
+      children: html`&#10095;|`,
+      _owner: entity.id,
+    })
+
+    api.notify("add", {
+      id: `${entity.id}-pageSizeSelect`,
+      type: "dataGridPageSizeSelect",
+      size: "sm",
+      selectedValue: pagination.pageSize,
+      options: [10, 20, 30],
+      _owner: entity.id,
+    })
+  }
+}
+
+function removeComponents(entity, api) {
+  entity.columns.forEach((column) => {
+    api.notify("remove", `${entity.id}-filter-${column.id}`)
+    api.notify("remove", `${entity.id}-filter-${column.id}Min`)
+    api.notify("remove", `${entity.id}-filter-${column.id}Max`)
+  })
+
+  api.notify("remove", `${entity.id}-searchbarInput`)
+
+  api.notify("remove", `${entity.id}-firstPageButton`)
+  api.notify("remove", `${entity.id}-prevPageButton`)
+  api.notify("remove", `${entity.id}-currentPageInput`)
+  api.notify("remove", `${entity.id}-nextPageButton`)
+  api.notify("remove", `${entity.id}-lastPageButton`)
+  api.notify("remove", `${entity.id}-pageSizeSelect`)
 }
 
 /**

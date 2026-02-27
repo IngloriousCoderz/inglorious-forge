@@ -26,6 +26,8 @@ import { applyElementProps } from "../../shared/applyElementProps.js"
  */
 export function render(entity, api) {
   const {
+    id,
+    type, // eslint-disable-line no-unused-vars
     name = "",
     inputType = "text",
     value = "",
@@ -43,7 +45,7 @@ export function render(entity, api) {
     ...rest
   } = entity
 
-  const inputId = entity.id || name
+  const inputId = id || name
 
   const wrapperClasses = {
     "iw-input-field": true,
@@ -87,10 +89,9 @@ export function render(entity, api) {
           ?readonly=${readonly}
           ?required=${required}
           class=${classMap(inputClasses)}
-          @input=${(event) =>
-            api.notify(`#${entity.id}:change`, event.target.value)}
-          @blur=${() => api.notify(`#${entity.id}:blur`)}
-          @focus=${() => api.notify(`#${entity.id}:focus`)}
+          @input=${(event) => api.notify(`#${id}:change`, event.target.value)}
+          @blur=${() => api.notify(`#${id}:blur`)}
+          @focus=${() => api.notify(`#${id}:focus`)}
           ${ref((element) => applyElementProps(element, rest))}
         />
 

@@ -17,6 +17,8 @@ import { applyElementProps } from "../../shared/applyElementProps.js"
  */
 export function render(entity, api) {
   const {
+    id,
+    type, // eslint-disable-line no-unused-vars
     name = "",
     label = "",
     checked = false,
@@ -27,7 +29,7 @@ export function render(entity, api) {
     ...rest
   } = entity
 
-  const inputId = entity.id || name
+  const inputId = id || name
 
   const classes = {
     "iw-checkbox-field": true,
@@ -46,8 +48,7 @@ export function render(entity, api) {
         .checked=${checked}
         ?disabled=${disabled}
         ?required=${required}
-        @change=${(event) =>
-          api.notify(`#${entity.id}:change`, event.target.checked)}
+        @change=${(event) => api.notify(`#${id}:change`, event.target.checked)}
         ${ref((element) => applyElementProps(element, rest))}
       />
       <span class="iw-checkbox-label">${label}</span>

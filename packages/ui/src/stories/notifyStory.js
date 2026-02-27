@@ -1,4 +1,4 @@
-import { createMockApi, render } from "@inglorious/web/test"
+import { createStore, mount } from "@inglorious/web"
 
 export const notifyActionArgType = {
   onNotify: {
@@ -13,25 +13,14 @@ export function makeStoryRender(types) {
     const container = document.createElement("div")
     const { onNotify, ...entity } = args
 
-    const api = createInstrumentedApi({ [entity.id]: entity }, onNotify)
-    api.getType = (typeName) => types[typeName]
+    const store = createStore({ types, entities: { [entity.id]: entity } })
+    const originalNotify = store._api.notify
+    store._api.notify = (type, payload) => {
+      onNotify?.({ type, payload })
+      return originalNotify(type, payload)
+    }
 
-    const type = api.getType(entity.type)
-    type.create?.(entity)
-    render(type.render(entity, api), container)
-    type.mount?.(entity, container)
+    mount(store, (api) => api.render(entity.id), container)
     return container
   }
-}
-
-function createInstrumentedApi(entities, onNotify) {
-  const api = createMockApi(entities)
-  const originalNotify = api.notify.bind(api)
-
-  api.notify = (type, payload) => {
-    onNotify?.({ type, payload })
-    return originalNotify(type, payload)
-  }
-
-  return api
 }

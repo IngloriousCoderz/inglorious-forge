@@ -1,0 +1,7 @@
+import { html } from "@inglorious/web"
+
+export const app = {
+  render(api) {
+    return html`${api.render("dataGrid")}`
+  },
+}

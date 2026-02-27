@@ -132,7 +132,7 @@ describe("button", () => {
     })
 
     it("sets button type attribute", () => {
-      const entity = { id: "btn", children: "Submit", type: "submit" }
+      const entity = { id: "btn", children: "Submit", buttonType: "submit" }
       const api = createMockApi({ [entity.id]: entity })
       const container = document.createElement("div")
 

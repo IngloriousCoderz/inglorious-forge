@@ -8,7 +8,6 @@
 
 import { classMap, html, ref, repeat } from "@inglorious/web"
 
-import { input } from "../../controls/input"
 import { filters } from "./filters"
 import {
   getPaginationInfo,
@@ -18,8 +17,6 @@ import {
 } from "./helpers.js"
 
 const DIVISOR = 2
-const FIRST_PAGE = 0
-const LAST_PAGE = 1
 const PRETTY_PAGE = 1
 const PERCENTAGE_TO_FLEX = 0.01
 
@@ -125,30 +122,8 @@ export function renderHeaderColumn(entity, { column }, api) {
  * @returns {TemplateResult} The rendered search bar.
  */
 export function renderSearchbar(entity, api) {
-  const wrappedApi = {
-    ...api,
-    notify(event, payload) {
-      if (event === `#${entity.id}-searchbar:change`) {
-        api.notify(`#${entity.id}:searchChange`, payload)
-        return
-      }
-
-      api.notify(event, payload)
-    },
-  }
   return html`<div class="iw-data-grid-searchbar">
-    ${input.render(
-      {
-        id: `${entity.id}-searchbar`,
-        name: "search",
-        type: "text",
-        placeholder: entity.search.placeholder ?? "Fuzzy search...",
-        value: entity.search.value,
-        fullWidth: true,
-        size: "sm",
-      },
-      wrappedApi,
-    )}
+    ${api.render(`${entity.id}-searchbarInput`)}
   </div>`
 }
 
@@ -254,21 +229,7 @@ export function renderFooter(entity, api) {
 
           ${type.renderPagination(entity, pagination, api)}
 
-          <div class="iw-data-grid-footer-row">
-            <div>Page size:</div>
-            <select
-              name="pageSize"
-              @change=${(event) =>
-                api.notify(
-                  `#${entity.id}:pageSizeChange`,
-                  Number(event.target.value),
-                )}
-            >
-              <option>10</option>
-              <option>20</option>
-              <option>30</option>
-            </select>
-          </div>
+          ${type.renderPageSize(entity, pagination, api)}
         </div>
       </div>
     </div>`
@@ -283,53 +244,19 @@ export function renderFooter(entity, api) {
  */
 export function renderPagination(entity, pagination, api) {
   return html`<div class="iw-data-grid-row">
-    <button
-      ?disabled=${!pagination.hasPrevPage}
-      @click=${() => api.notify(`#${entity.id}:pageChange`, FIRST_PAGE)}
-      class="iw-data-grid-pagination-button"
-    >
-      |&#10094;
-    </button>
-    <button
-      ?disabled=${!pagination.hasPrevPage}
-      @click=${() => api.notify(`#${entity.id}:pagePrev`)}
-      class="iw-data-grid-pagination-button"
-    >
-      &#10094;
-    </button>
-    <input
-      name="page"
-      type="number"
-      min="1"
-      max=${pagination.totalPages}
-      value=${pagination.page + PRETTY_PAGE}
-      class="iw-data-grid-page-input"
-      @input=${(event) =>
-        api.notify(
-          `#${entity.id}:pageChange`,
-          Number(event.target.value) - PRETTY_PAGE,
-        )}
-    />
-    /
+    ${api.render(`${entity.id}-firstPageButton`)}
+    ${api.render(`${entity.id}-prevPageButton`)}
+    ${api.render(`${entity.id}-currentPageInput`)} /
     <span>${pagination.totalPages}</span>
-    <button
-      ?disabled="${!pagination.hasNextPage}"
-      @click=${() => api.notify(`#${entity.id}:pageNext`)}
-      class="iw-data-grid-pagination-button"
-    >
-      &#10095;
-    </button>
-    <button
-      ?disabled=${!pagination.hasNextPage}
-      @click=${() =>
-        api.notify(
-          `#${entity.id}:pageChange`,
-          pagination.totalPages - LAST_PAGE,
-        )}
-      class="iw-data-grid-pagination-button"
-    >
-      &#10095;|
-    </button>
+    ${api.render(`${entity.id}-nextPageButton`)}
+    ${api.render(`${entity.id}-lastPageButton`)}
+  </div>`
+}
+
+export function renderPageSize(entity, pagination, api) {
+  return html`<div class="iw-data-grid-footer-row">
+    <div>Page size:</div>
+    ${api.render(`${entity.id}-pageSizeSelect`)}
   </div>`
 }
 

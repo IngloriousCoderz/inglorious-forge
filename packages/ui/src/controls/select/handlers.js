@@ -10,6 +10,10 @@ import { filterOptions, formatOption, getOptionValue } from "./helpers.js"
  * @param {SelectEntity} entity
  */
 export function create(entity) {
+  entity.size ??= "md"
+  entity.fullWidth ??= false
+  entity.label ??= ""
+
   entity.isOpen ??= false
   entity.searchTerm ??= ""
   entity.focusedIndex ??= -1
@@ -22,8 +26,8 @@ export function create(entity) {
 
   entity.isLoading ??= false
   entity.isDisabled ??= false
-  entity.isSearchable ??= true
-  entity.isClearable ??= true
+  entity.isSearchable ??= false
+  entity.isClearable ??= false
 
   entity.placeholder ??= "Select..."
   entity.noOptionsMessage ??= "No options"
