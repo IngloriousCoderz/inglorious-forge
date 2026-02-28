@@ -45,6 +45,11 @@
       "import": "./src/controls/checkbox/index.js"
     },
     "./checkbox.css": "./src/controls/checkbox/style.css",
+    "./combobox": {
+      "types": "./types/controls/combobox.d.ts",
+      "import": "./src/controls/combobox/index.js"
+    },
+    "./combobox.css": "./src/controls/combobox/style.css",
     "./data-grid": {
       "types": "./types/data-display/data-grid.d.ts",
       "import": "./src/data-display/data-grid/index.js"
@@ -185,13 +190,13 @@
     "@inglorious/eslint-config": "workspace:*",
     "@inglorious/store": "workspace:*",
     "@inglorious/web": "workspace:*",
-    "@storybook/addon-docs": "^10.2.10",
-    "@storybook/web-components-vite": "^10.2.10",
+    "@storybook/addon-docs": "^10.2.13",
+    "@storybook/web-components-vite": "^10.2.13",
     "happy-dom": "^15.11.0",
     "jsdom": "^25.0.0",
     "lucide": "^0.575.0",
     "prettier": "^3.6.2",
-    "storybook": "^10.2.10",
+    "storybook": "^10.2.13",
     "vite": "^7.3.1",
     "vitest": "^4.0.15"
   },

@@ -1,6 +1,6 @@
 /**
- * @typedef {import('../../../types/controls/select.js').SelectEntity} SelectEntity
- * @typedef {import('../../../types/controls/select.js').SelectOption} SelectOption
+ * @typedef {import('../../../types/controls/combobox.js').ComboboxEntity} ComboboxEntity
+ * @typedef {import('../../../types/controls/combobox.js').ComboboxOption} ComboboxOption
  * @typedef {import('@inglorious/web').Api} Api
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
@@ -20,7 +20,7 @@ const NO_FOCUSED_INDEX = -1
 
 /**
  * Select control render function.
- * @param {SelectEntity} entity
+ * @param {ComboboxEntity} entity
  * @param {Api} api
  * @returns {TemplateResult}
  */
@@ -29,13 +29,13 @@ export function render(entity, api) {
 
   return html`<div
     class=${classMap({
-      "iw-select": true,
-      "iw-select-full-width": !!entity.fullWidth,
-      [`iw-select-${entity.size}`]: entity.size !== "md",
+      "iw-combobox": true,
+      "iw-combobox-full-width": !!entity.fullWidth,
+      [`iw-combobox-${entity.size}`]: entity.size !== "md",
     })}
   >
     ${entity.label
-      ? html`<label class="iw-select-label">${entity.label}</label>`
+      ? html`<label class="iw-combobox-label">${entity.label}</label>`
       : null}
     ${type.renderControl?.(entity, api)}
     ${when(entity.isOpen, () => type.renderDropdown?.(entity, api))}
@@ -44,7 +44,7 @@ export function render(entity, api) {
 
 /**
  * Render trigger control.
- * @param {SelectEntity} entity
+ * @param {ComboboxEntity} entity
  * @param {Api} api
  * @returns {TemplateResult}
  */
@@ -52,10 +52,10 @@ export function renderControl(entity, api) {
   const type = api.getType(entity.type)
 
   return html`<div
-    class="iw-select-control ${classMap({
-      "iw-select-control-open": entity.isOpen,
-      "iw-select-control-disabled": entity.isDisabled,
-      "iw-select-control-selection":
+    class="iw-combobox-control ${classMap({
+      "iw-combobox-control-open": entity.isOpen,
+      "iw-combobox-control-disabled": entity.isDisabled,
+      "iw-combobox-control-selection":
         entity.isMulti &&
         Array.isArray(entity.selectedValue) &&
         entity.selectedValue.length,
@@ -75,7 +75,7 @@ export function renderControl(entity, api) {
           (!entity.isMulti && entity.selectedValue !== null)),
       () =>
         html`<button
-          class="iw-select-clear"
+          class="iw-combobox-clear"
           type="button"
           @click=${(event) => {
             event.stopPropagation()
@@ -86,18 +86,18 @@ export function renderControl(entity, api) {
         </button>`,
     )}
 
-    <div class="iw-select-arrow"><span>▼</span></div>
+    <div class="iw-combobox-arrow"><span>▼</span></div>
   </div>`
 }
 
 /**
  * Render single selected value.
- * @param {SelectEntity} entity
+ * @param {ComboboxEntity} entity
  * @returns {TemplateResult}
  */
 export function renderSingleValue(entity) {
   if (entity.selectedValue === null) {
-    return html`<span class="iw-select-placeholder"
+    return html`<span class="iw-combobox-placeholder"
       >${entity.placeholder}</span
     >`
   }
@@ -106,7 +106,7 @@ export function renderSingleValue(entity) {
     (option) => getOptionValue(option) === entity.selectedValue,
   )
 
-  return html`<span class="iw-select-value"
+  return html`<span class="iw-combobox-value"
     >${selectedOption
       ? getOptionLabel(selectedOption)
       : String(entity.selectedValue)}</span
@@ -115,19 +115,19 @@ export function renderSingleValue(entity) {
 
 /**
  * Render multi selected value tags.
- * @param {SelectEntity} entity
+ * @param {ComboboxEntity} entity
  * @param {Api} api
  * @returns {TemplateResult}
  */
 export function renderMultiValue(entity, api) {
   const type = api.getType(entity.type)
   if (!Array.isArray(entity.selectedValue) || !entity.selectedValue.length) {
-    return html`<span class="iw-select-placeholder"
+    return html`<span class="iw-combobox-placeholder"
       >${entity.placeholder}</span
     >`
   }
 
-  return html`<div class="iw-select-multi-value">
+  return html`<div class="iw-combobox-multi-value">
     ${repeat(
       entity.selectedValue,
       (value) => value,
@@ -138,7 +138,7 @@ export function renderMultiValue(entity, api) {
 
 /**
  * Render a selected multi-value tag.
- * @param {SelectEntity} entity
+ * @param {ComboboxEntity} entity
  * @param {string|number} value
  * @param {Api} api
  * @returns {TemplateResult}
@@ -151,7 +151,7 @@ export function renderMultiValueTag(entity, value, api) {
   const chipApi = createMultiValueChipApi(api, entity, tagId, normalizedOption)
 
   return html`<span
-    class="iw-select-multi-value-tag"
+    class="iw-combobox-multi-value-tag"
     @click=${(event) => event.stopPropagation()}
   >
     ${chipPrimitive.render(
@@ -169,7 +169,7 @@ export function renderMultiValueTag(entity, value, api) {
 
 /**
  * Render dropdown.
- * @param {SelectEntity} entity
+ * @param {ComboboxEntity} entity
  * @param {Api} api
  * @returns {TemplateResult}
  */
@@ -178,7 +178,7 @@ export function renderDropdown(entity, api) {
   const filteredOptions = filterOptions(entity.options, entity.searchTerm)
 
   return html`<div
-    class="iw-select-dropdown"
+    class="iw-combobox-dropdown"
     ${ref((el) => {
       if (el) {
         setTimeout(() => {
@@ -208,13 +208,13 @@ export function renderDropdown(entity, api) {
 
 /**
  * Render search input.
- * @param {SelectEntity} entity
+ * @param {ComboboxEntity} entity
  * @param {Api} api
  * @returns {TemplateResult}
  */
 export function renderSearchInput(entity, api) {
   return html`<input
-    class="iw-select-dropdown-search"
+    class="iw-combobox-dropdown-search"
     type="text"
     placeholder="Search..."
     .value=${entity.searchTerm ?? ""}
@@ -229,7 +229,7 @@ export function renderSearchInput(entity, api) {
 
 /**
  * Render options list.
- * @param {SelectEntity} entity
+ * @param {ComboboxEntity} entity
  * @param {Api} api
  * @returns {TemplateResult}
  */
@@ -237,7 +237,7 @@ export function renderOptions(entity, api) {
   const filteredOptions = filterOptions(entity.options, entity.searchTerm)
   const type = api.getType?.(entity.type)
 
-  return html`<div class="iw-select-dropdown-options">
+  return html`<div class="iw-combobox-dropdown-options">
     ${repeat(
       filteredOptions,
       (option) => getOptionValue(option),
@@ -248,8 +248,8 @@ export function renderOptions(entity, api) {
 
 /**
  * Render an option row.
- * @param {SelectEntity} entity
- * @param {{ option: SelectOption, index: number }} payload
+ * @param {ComboboxEntity} entity
+ * @param {{ option: ComboboxOption, index: number }} payload
  * @param {Api} api
  * @returns {TemplateResult}
  */
@@ -263,10 +263,10 @@ export function renderOption(entity, { option, index }, api) {
   const isFocused = index === entity.focusedIndex
 
   return html`<div
-    class="iw-select-dropdown-options-option ${classMap({
-      "iw-select-dropdown-options-option-selected": isSelected,
-      "iw-select-dropdown-options-option-focused": isFocused,
-      "iw-select-dropdown-options-option-disabled": !!normalized.disabled,
+    class="iw-combobox-dropdown-options-option ${classMap({
+      "iw-combobox-dropdown-options-option-selected": isSelected,
+      "iw-combobox-dropdown-options-option-focused": isFocused,
+      "iw-combobox-dropdown-options-option-disabled": !!normalized.disabled,
     })}"
     @click=${() => {
       if (normalized.disabled) return
@@ -289,27 +289,27 @@ export function renderOption(entity, { option, index }, api) {
 
 /**
  * Render loading state.
- * @param {SelectEntity} entity
+ * @param {ComboboxEntity} entity
  * @returns {TemplateResult}
  */
 export function renderLoading(entity) {
-  return html`<div class="iw-select-loading">${entity.loadingMessage}</div>`
+  return html`<div class="iw-combobox-loading">${entity.loadingMessage}</div>`
 }
 
 /**
  * Render no options state.
- * @param {SelectEntity} entity
+ * @param {ComboboxEntity} entity
  * @returns {TemplateResult}
  */
 export function renderNoOptions(entity) {
-  return html`<div class="iw-select-no-options">
+  return html`<div class="iw-combobox-no-options">
     ${entity.noOptionsMessage}
   </div>`
 }
 
 /**
  * Handle key navigation.
- * @param {SelectEntity} entity
+ * @param {ComboboxEntity} entity
  * @param {KeyboardEvent} event
  * @param {Api} api
  */

@@ -1,21 +1,21 @@
-.iw-select {
+.iw-combobox {
   position: relative;
   display: inline-flex;
   flex-direction: column;
   gap: var(--iw-space-1);
   font-family: var(--iw-font-family-sans);
 
-  &.iw-select-full-width {
+  &.iw-combobox-full-width {
     width: 100%;
   }
 
-  .iw-select-label {
+  .iw-combobox-label {
     font-size: var(--iw-font-size-sm);
     color: var(--iw-color-text);
     line-height: var(--iw-line-height-normal);
   }
 
-  .iw-select-control {
+  .iw-combobox-control {
     height: 2.25rem;
     display: flex;
     align-items: center;
@@ -37,7 +37,7 @@
       background: var(--iw-input-bg-hover);
     }
 
-    &.iw-select-control-open {
+    &.iw-combobox-control-open {
       border-color: var(--iw-input-border-focus);
       box-shadow: var(--iw-input-shadow-focus);
       background: var(--iw-input-bg-focus);
@@ -45,24 +45,24 @@
       border-bottom-right-radius: 0;
     }
 
-    &.iw-select-control-disabled {
+    &.iw-combobox-control-disabled {
       opacity: 0.6;
       cursor: not-allowed;
     }
 
-    .iw-select-value,
-    .iw-select-placeholder,
-    .iw-select-multi-value {
+    .iw-combobox-value,
+    .iw-combobox-placeholder,
+    .iw-combobox-multi-value {
       flex: 1;
       min-width: 0;
       padding-right: var(--iw-space-1);
     }
 
-    .iw-select-placeholder {
+    .iw-combobox-placeholder {
       color: var(--iw-color-text-muted);
     }
 
-    .iw-select-multi-value {
+    .iw-combobox-multi-value {
       display: flex;
       flex-wrap: nowrap;
       align-items: center;
@@ -76,13 +76,13 @@
         display: none;
       }
 
-      .iw-select-multi-value-tag {
+      .iw-combobox-multi-value-tag {
         display: inline-flex;
         flex: 0 0 auto;
       }
     }
 
-    .iw-select-clear {
+    .iw-combobox-clear {
       border: 0;
       background: transparent;
       color: var(--iw-color-text-muted);
@@ -101,7 +101,7 @@
       }
     }
 
-    .iw-select-arrow {
+    .iw-combobox-arrow {
       width: 1.25rem;
       height: 1.25rem;
       display: inline-flex;
@@ -119,12 +119,12 @@
       }
     }
 
-    &.iw-select-control-open .iw-select-arrow {
+    &.iw-combobox-control-open .iw-combobox-arrow {
       transform: rotate(180deg);
     }
   }
 
-  .iw-select-dropdown {
+  .iw-combobox-dropdown {
     position: absolute;
     top: 100%;
     left: 0;
@@ -142,7 +142,7 @@
     box-shadow: var(--iw-shadow-lg);
     margin-top: -1px;
 
-    .iw-select-dropdown-search {
+    .iw-combobox-dropdown-search {
       width: 100%;
       border: 0;
       border-bottom: 1px solid var(--iw-color-border);
@@ -152,11 +152,11 @@
       outline: none;
     }
 
-    .iw-select-dropdown-options {
+    .iw-combobox-dropdown-options {
       max-height: 15rem;
       overflow-y: auto;
 
-      .iw-select-dropdown-options-option {
+      .iw-combobox-dropdown-options-option {
         display: flex;
         align-items: center;
         gap: var(--iw-space-2);
@@ -164,16 +164,16 @@
         user-select: none;
         padding: var(--iw-space-2) var(--iw-space-3);
 
-        &.iw-select-dropdown-options-option-disabled {
+        &.iw-combobox-dropdown-options-option-disabled {
           opacity: 0.5;
           cursor: not-allowed;
         }
 
-        &.iw-select-dropdown-options-option-focused {
+        &.iw-combobox-dropdown-options-option-focused {
           background: var(--iw-color-bg-secondary);
         }
 
-        &.iw-select-dropdown-options-option-selected {
+        &.iw-combobox-dropdown-options-option-selected {
           background: color-mix(
             in srgb,
             var(--iw-color-primary) 16%,
@@ -183,20 +183,20 @@
       }
     }
 
-    .iw-select-loading,
-    .iw-select-no-options {
+    .iw-combobox-loading,
+    .iw-combobox-no-options {
       padding: var(--iw-space-3);
       text-align: center;
       color: var(--iw-color-text-muted);
     }
   }
 
-  &.iw-select-sm .iw-select-control {
+  &.iw-combobox-sm .iw-combobox-control {
     height: 2rem;
     padding: 0 var(--iw-space-8) 0 var(--iw-space-2);
   }
 
-  &.iw-select-lg .iw-select-control {
+  &.iw-combobox-lg .iw-combobox-control {
     height: 2.75rem;
     padding: 0 var(--iw-space-12) 0 var(--iw-space-4);
   }

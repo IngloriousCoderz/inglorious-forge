@@ -20,7 +20,7 @@ describe("combobox", () => {
 
     render(combobox.render(entity, api), container)
 
-    expect(container.querySelector(".iw-select-value").textContent).toBe("B")
+    expect(container.querySelector(".iw-combobox-value").textContent).toBe("B")
   })
 
   it("renders multi tags", () => {
@@ -41,7 +41,7 @@ describe("combobox", () => {
     render(combobox.render(entity, api), container)
 
     expect(
-      container.querySelectorAll(".iw-select-multi-value-tag").length,
+      container.querySelectorAll(".iw-combobox-multi-value-tag").length,
     ).toBe(2)
     expect(container.querySelectorAll(".iw-chip").length).toBe(2)
     expect(
@@ -83,7 +83,7 @@ describe("combobox", () => {
 
     render(combobox.render(entity, api), container)
 
-    container.querySelector(".iw-select-control").click()
+    container.querySelector(".iw-combobox-control").click()
 
     expect(api.getEvents()).toEqual([{ type: "#sel:toggle" }])
   })
