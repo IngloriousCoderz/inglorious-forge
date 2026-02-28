@@ -1,6 +1,6 @@
 import type { TemplateResult, Api } from "@inglorious/web"
 
-export interface FabEntity {
+export interface FabProps {
   id?: string
   children?: TemplateResult | string | number
   color?: "primary" | "secondary" | "success" | "warning" | "error" | "info"
@@ -9,11 +9,12 @@ export interface FabEntity {
   type?: "button" | "submit" | "reset" | "menu"
   extended?: boolean
   ariaLabel?: string
+  onClick?: () => void
   [key: string]: unknown
 }
 
 export interface FabType {
-  render(entity: FabEntity, api: Api): TemplateResult
+  render(entity: FabProps, api: Api): TemplateResult
 }
 
 export declare const fab: FabType

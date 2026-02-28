@@ -14,7 +14,7 @@ export interface ButtonGroupItem {
   [key: string]: unknown
 }
 
-export interface ButtonGroupEntity {
+export interface ButtonGroupProps {
   id?: string
   buttons?: ButtonGroupItem[]
   value?: string | string[]
@@ -29,7 +29,7 @@ export interface ButtonGroupEntity {
 }
 
 export interface ButtonGroupType {
-  render(entity: ButtonGroupEntity, api: Api): TemplateResult
+  render(entity: ButtonGroupProps, api: Api): TemplateResult
 }
 
 export declare const buttonGroup: ButtonGroupType

@@ -8,6 +8,9 @@
 
 import { classMap, html, ref, repeat } from "@inglorious/web"
 
+import { button } from "../../controls/button/index.js"
+import { input } from "../../controls/input/index.js"
+import { select } from "../../controls/select/index.js"
 import { filters } from "./filters"
 import {
   getPaginationInfo,
@@ -17,8 +20,11 @@ import {
 } from "./helpers.js"
 
 const DIVISOR = 2
-const PRETTY_PAGE = 1
 const PERCENTAGE_TO_FLEX = 0.01
+
+const PRETTY_PAGE = 1
+const FIRST_PAGE = 0
+const LAST_PAGE = 1
 
 /**
  * Measures and sets initial column widths.
@@ -123,7 +129,15 @@ export function renderHeaderColumn(entity, { column }, api) {
  */
 export function renderSearchbar(entity, api) {
   return html`<div class="iw-data-grid-searchbar">
-    ${api.render(`${entity.id}-searchbarInput`)}
+    ${input.render({
+      size: "sm",
+      fullWidth: true,
+      name: "search",
+      inputType: "text",
+      placeholder: entity.search.placeholder ?? "Fuzzy search...",
+      value: entity.search.value,
+      onChange: (value) => api.notify(`#${entity.id}:searchChange`, value),
+    })}
   </div>`
 }
 
@@ -244,19 +258,63 @@ export function renderFooter(entity, api) {
  */
 export function renderPagination(entity, pagination, api) {
   return html`<div class="iw-data-grid-row">
-    ${api.render(`${entity.id}-firstPageButton`)}
-    ${api.render(`${entity.id}-prevPageButton`)}
-    ${api.render(`${entity.id}-currentPageInput`)} /
+    ${button.render({
+      color: "secondary",
+      size: "sm",
+      children: html`|&#10094;`,
+      disabled: !pagination.hasPrevPage,
+      onClick: () => api.notify(`#${entity.id}:pageChange`, FIRST_PAGE),
+    })}
+    ${button.render({
+      color: "secondary",
+      size: "sm",
+      children: html`&#10094;`,
+      disabled: !pagination.hasPrevPage,
+      onClick: () => api.notify(`#${entity.id}:pagePrev`),
+    })}
+    ${input.render({
+      name: "page",
+      size: "sm",
+      inputType: "number",
+      min: 1,
+      max: pagination.totalPages,
+      value: pagination.page + PRETTY_PAGE,
+      onChange: (value) =>
+        api.notify(`#${entity.id}:pageChange`, Number(value) - PRETTY_PAGE),
+    })}
+    /
     <span>${pagination.totalPages}</span>
-    ${api.render(`${entity.id}-nextPageButton`)}
-    ${api.render(`${entity.id}-lastPageButton`)}
+    ${button.render({
+      color: "secondary",
+      size: "sm",
+      children: html`&#10095;`,
+      disabled: !pagination.hasNextPage,
+      onClick: () => api.notify(`#${entity.id}:pageNext`),
+    })}
+    ${button.render({
+      color: "secondary",
+      size: "sm",
+      children: html`&#10095;|`,
+      disabled: !pagination.hasNextPage,
+      onClick: () =>
+        api.notify(
+          `#${entity.id}:pageChange`,
+          pagination.totalPages - LAST_PAGE,
+        ),
+    })}
   </div>`
 }
 
 export function renderPageSize(entity, pagination, api) {
   return html`<div class="iw-data-grid-footer-row">
     <div>Page size:</div>
-    ${api.render(`${entity.id}-pageSizeSelect`)}
+    ${select.render({
+      size: "sm",
+      value: pagination.pageSize,
+      options: [10, 20, 30],
+      onChange: (value) =>
+        api.notify(`#${entity.id}:pageSizeChange`, Number(value)),
+    })}
   </div>`
 }
 

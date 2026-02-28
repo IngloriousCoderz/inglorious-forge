@@ -1,17 +1,13 @@
 import { html } from "@inglorious/web"
 
-import {
-  makeStoryRender,
-  notifyActionArgType,
-} from "../../stories/notifyStory.js"
+import { makeStoryRender } from "../../stories/notifyStory.js"
 import { button } from "."
 
 export default {
   title: "Controls/Button",
   tags: ["autodocs"],
-  render: makeStoryRender({ button }),
+  render: makeStoryRender(button.render),
   argTypes: {
-    ...notifyActionArgType,
     children: {
       control: "text",
       description: "Content displayed inside the button.",
@@ -49,6 +45,7 @@ export default {
       options: ["button", "submit", "reset", "menu"],
       description: "Native HTML button type attribute.",
     },
+    onClick: { action: "onClick" },
   },
   parameters: {
     docs: {
@@ -62,6 +59,7 @@ export default {
     },
   },
 }
+
 export const Default = {}
 Default.args = {
   id: "button",

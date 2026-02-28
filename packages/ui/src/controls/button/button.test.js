@@ -1,5 +1,5 @@
 import { html } from "@inglorious/web"
-import { createMockApi, render } from "@inglorious/web/test"
+import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
 import { button } from "."
@@ -7,55 +7,50 @@ import { button } from "."
 describe("button", () => {
   describe("render", () => {
     it("renders a button with children", () => {
-      const entity = { id: "btn", children: "Click me" }
-      const api = createMockApi({ [entity.id]: entity })
+      const props = { children: "Click me" }
       const container = document.createElement("div")
 
-      render(button.render(entity, api), container)
+      render(button.render(props), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.textContent.trim()).toBe("Click me")
     })
 
     it("renders with default classes", () => {
-      const entity = { id: "btn", children: "Test" }
-      const api = createMockApi({ [entity.id]: entity })
+      const props = { children: "Test" }
       const container = document.createElement("div")
 
-      render(button.render(entity, api), container)
+      render(button.render(props), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.classList.contains("iw-button")).toBe(true)
     })
 
     it("applies size class for sm", () => {
-      const entity = { id: "btn", children: "Small", size: "sm" }
-      const api = createMockApi({ [entity.id]: entity })
+      const props = { children: "Small", size: "sm" }
       const container = document.createElement("div")
 
-      render(button.render(entity, api), container)
+      render(button.render(props), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.classList.contains("iw-button-sm")).toBe(true)
     })
 
     it("applies size class for lg", () => {
-      const entity = { id: "btn", children: "Large", size: "lg" }
-      const api = createMockApi({ [entity.id]: entity })
+      const props = { children: "Large", size: "lg" }
       const container = document.createElement("div")
 
-      render(button.render(entity, api), container)
+      render(button.render(props), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.classList.contains("iw-button-lg")).toBe(true)
     })
 
     it("applies shape class for round", () => {
-      const entity = { id: "btn", children: "+", shape: "round" }
-      const api = createMockApi({ [entity.id]: entity })
+      const props = { children: "+", shape: "round" }
       const container = document.createElement("div")
 
-      render(button.render(entity, api), container)
+      render(button.render(props), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.classList.contains("iw-button-shape-round")).toBe(
@@ -64,66 +59,60 @@ describe("button", () => {
     })
 
     it("applies variant class for outline", () => {
-      const entity = { id: "btn", children: "Outline", variant: "outline" }
-      const api = createMockApi({ [entity.id]: entity })
+      const props = { children: "Outline", variant: "outline" }
       const container = document.createElement("div")
 
-      render(button.render(entity, api), container)
+      render(button.render(props), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.classList.contains("iw-button-outline")).toBe(true)
     })
 
     it("applies variant class for ghost", () => {
-      const entity = { id: "btn", children: "Ghost", variant: "ghost" }
-      const api = createMockApi({ [entity.id]: entity })
+      const props = { children: "Ghost", variant: "ghost" }
       const container = document.createElement("div")
 
-      render(button.render(entity, api), container)
+      render(button.render(props), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.classList.contains("iw-button-ghost")).toBe(true)
     })
 
     it("applies color class for secondary", () => {
-      const entity = { id: "btn", children: "Secondary", color: "secondary" }
-      const api = createMockApi({ [entity.id]: entity })
+      const props = { children: "Secondary", color: "secondary" }
       const container = document.createElement("div")
 
-      render(button.render(entity, api), container)
+      render(button.render(props), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.classList.contains("iw-button-secondary")).toBe(true)
     })
 
     it("applies color class for success", () => {
-      const entity = { id: "btn", children: "Success", color: "success" }
-      const api = createMockApi({ [entity.id]: entity })
+      const props = { children: "Success", color: "success" }
       const container = document.createElement("div")
 
-      render(button.render(entity, api), container)
+      render(button.render(props), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.classList.contains("iw-button-success")).toBe(true)
     })
 
     it("applies disabled attribute", () => {
-      const entity = { id: "btn", children: "Disabled", disabled: true }
-      const api = createMockApi({ [entity.id]: entity })
+      const props = { children: "Disabled", disabled: true }
       const container = document.createElement("div")
 
-      render(button.render(entity, api), container)
+      render(button.render(props), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.hasAttribute("disabled")).toBe(true)
     })
 
     it("applies full width class", () => {
-      const entity = { id: "btn", children: "Full Width", fullWidth: true }
-      const api = createMockApi({ [entity.id]: entity })
+      const props = { children: "Full Width", fullWidth: true }
       const container = document.createElement("div")
 
-      render(button.render(entity, api), container)
+      render(button.render(props), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.classList.contains("iw-button-full-width")).toBe(
@@ -132,25 +121,22 @@ describe("button", () => {
     })
 
     it("sets button type attribute", () => {
-      const entity = { id: "btn", children: "Submit", buttonType: "submit" }
-      const api = createMockApi({ [entity.id]: entity })
+      const props = { children: "Submit", buttonType: "submit" }
       const container = document.createElement("div")
 
-      render(button.render(entity, api), container)
+      render(button.render(props), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.type).toBe("submit")
     })
 
     it("renders with custom template children", () => {
-      const entity = {
-        id: "btn",
+      const props = {
         children: html`<span class="content">Custom</span>`,
       }
-      const api = createMockApi({ [entity.id]: entity })
       const container = document.createElement("div")
 
-      render(button.render(entity, api), container)
+      render(button.render(props), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.textContent.trim()).toBe("Custom")
@@ -158,16 +144,14 @@ describe("button", () => {
     })
 
     it("passes arbitrary attributes to native button", () => {
-      const entity = {
-        id: "btn",
+      const props = {
         children: "Custom attrs",
         "data-testid": "primary-cta",
         title: "Primary action",
       }
-      const api = createMockApi({ [entity.id]: entity })
       const container = document.createElement("div")
 
-      render(button.render(entity, api), container)
+      render(button.render(props), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.getAttribute("data-testid")).toBe("primary-cta")
@@ -177,16 +161,16 @@ describe("button", () => {
 
   describe("click handler", () => {
     it("dispatches click event on button click", () => {
-      const entity = { id: "btn", children: "Click me" }
-      const api = createMockApi({ [entity.id]: entity })
+      let isClicked = false
+      const props = { children: "Click me", onClick: () => (isClicked = true) }
       const container = document.createElement("div")
 
-      render(button.render(entity, api), container)
+      render(button.render(props), container)
 
       const buttonElement = container.querySelector("button")
       buttonElement.click()
 
-      expect(api.getEvents()).toEqual([{ type: "#btn:click" }])
+      expect(isClicked).toBe(true)
     })
   })
 })

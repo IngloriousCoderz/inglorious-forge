@@ -1,24 +1,21 @@
 /**
- * @typedef {import('../../../types/controls/button-group').ButtonGroupEntity} ButtonGroupEntity
- * @typedef {import('@inglorious/web').Api} Api
+ * @typedef {import('../../../types/controls/button-group').ButtonGroupProps} ButtonGroupProps
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
 import { classMap, html, ref } from "@inglorious/web"
 
 import { applyElementProps } from "../../shared/applyElementProps.js"
-import { buttonPrimitive as button } from "../button/index.js"
+import { button } from "../button/index.js"
 
 /**
  * Button group control for grouped actions.
  *
- * @param {ButtonGroupEntity} entity
- * @param {Api} api
+ * @param {ButtonGroupProps} props
  * @returns {TemplateResult}
  */
-export function render(entity, api) {
+export function render(props) {
   const {
-    id,
     type, // eslint-disable-line no-unused-vars
     buttons = [],
     value,
@@ -29,8 +26,9 @@ export function render(entity, api) {
     variant = "default",
     color = "primary",
     disabled = false,
+    onChange,
     ...rest
-  } = entity
+  } = props
 
   const groupClasses = {
     "iw-button-group": true,
@@ -49,7 +47,7 @@ export function render(entity, api) {
       role="group"
       ${ref((element) => applyElementProps(element, rest))}
     >
-      ${buttons.map((item, index) => {
+      ${buttons.map((item) => {
         const {
           id: itemId,
           value: explicitValue,
@@ -64,55 +62,43 @@ export function render(entity, api) {
           ...itemRest
         } = item
 
-        const childId = `${id}-btn-${itemId ?? index}`
         const itemValue = explicitValue ?? itemId
-        const pressed = multiple
+        const isPressed = multiple
           ? selectedValues.has(itemValue)
           : value != null
             ? value === itemValue
             : false
 
-        const childApi = {
-          ...api,
-          notify(type, payload) {
-            if (type === `#${childId}:click`) {
-              api.notify(`#${id}:click`, itemValue)
-              if (value != null || multiple) {
-                if (multiple) {
-                  const next = new Set(selectedValues)
-                  if (next.has(itemValue)) next.delete(itemValue)
-                  else next.add(itemValue)
-                  return api.notify(`#${id}:change`, [...next])
-                }
-                return api.notify(`#${id}:change`, itemValue)
+        return button.render({
+          children: html`
+            ${icon ? html`<span class="iw-button-icon">${icon}</span>` : null}
+            ${children ?? label}
+            ${iconAfter
+              ? html`<span class="iw-button-icon">${iconAfter}</span>`
+              : null}
+          `,
+          variant: itemVariant ?? variant,
+          color: itemColor ?? color,
+          size: itemSize ?? size,
+          disabled: disabled || !!itemDisabled,
+          ariaPressed: isPressed ? true : undefined,
+          className: isPressed ? "iw-button-pressed" : "",
+          onClick: () => {
+            if (multiple) {
+              const next = new Set(selectedValues)
+              if (next.has(itemValue)) {
+                next.delete(itemValue)
+              } else {
+                next.add(itemValue)
               }
-              return
-            }
-            return api.notify(type, payload)
-          },
-        }
 
-        return button.render(
-          {
-            id: childId,
-            children: html`
-              ${icon ? html`<span class="iw-button-icon">${icon}</span>` : null}
-              ${children ?? label}
-              ${iconAfter
-                ? html`<span class="iw-button-icon">${iconAfter}</span>`
-                : null}
-            `,
-            variant: itemVariant ?? variant,
-            color: itemColor ?? color,
-            size: itemSize ?? size,
-            disabled: disabled || !!itemDisabled,
-            ariaPressed: pressed ? true : undefined,
-            className: pressed ? "iw-button-pressed" : "",
-            type: "button",
-            ...itemRest,
+              return onChange([...next])
+            }
+
+            return onChange(itemValue)
           },
-          childApi,
-        )
+          ...itemRest,
+        })
       })}
     </div>
   `

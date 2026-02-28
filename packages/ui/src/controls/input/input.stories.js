@@ -1,15 +1,12 @@
-import {
-  makeStoryRender,
-  notifyActionArgType,
-} from "../../stories/notifyStory.js"
+import { makeStoryRender } from "../../stories/notifyStory.js"
 import { input } from "."
 
 export default {
   title: "Controls/Input",
   tags: ["autodocs"],
-  render: makeStoryRender({ input }),
+  render: makeStoryRender(input.render),
   argTypes: {
-    ...notifyActionArgType,
+    // ...notifyActionArgType,
     label: {
       control: "text",
       description: "Field label rendered above the input.",
@@ -74,6 +71,9 @@ export default {
       control: "boolean",
       description: "Expands input width to 100% of its container.",
     },
+    onChange: { action: "onChange" },
+    onBlur: { action: "onBlur" },
+    onFocus: { action: "onFocus" },
   },
   parameters: {
     docs: {
@@ -84,6 +84,7 @@ export default {
     },
   },
 }
+
 export const Default = {}
 Default.args = {
   id: "input",

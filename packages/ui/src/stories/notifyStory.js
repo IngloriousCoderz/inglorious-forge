@@ -1,4 +1,6 @@
-import { createStore, mount } from "@inglorious/web"
+import { createStore } from "@inglorious/store"
+import { mount } from "@inglorious/web"
+import { render } from "@inglorious/web/test"
 
 export const notifyActionArgType = {
   onNotify: {
@@ -8,9 +10,17 @@ export const notifyActionArgType = {
   },
 }
 
-export function makeStoryRender(types) {
+export function makeStoryRender(config) {
   return (args) => {
     const container = document.createElement("div")
+
+    if (typeof config === "function") {
+      const renderFn = config
+      render(renderFn(args), container)
+      return container
+    }
+
+    const types = config
     const { onNotify, ...entity } = args
 
     const store = createStore({ types, entities: { [entity.id]: entity } })

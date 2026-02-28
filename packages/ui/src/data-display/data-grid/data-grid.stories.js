@@ -1,4 +1,3 @@
-import { select } from "../../controls/select/index.js"
 import {
   makeStoryRender,
   notifyActionArgType,
@@ -8,7 +7,7 @@ import { dataGrid } from "."
 export default {
   title: "Data Display/DataGrid",
   tags: ["autodocs"],
-  render: makeStoryRender({ dataGrid, select }),
+  render: makeStoryRender({ dataGrid }),
   argTypes: {
     ...notifyActionArgType,
     id: { control: "text", description: "Optional grid id" },
@@ -34,6 +33,14 @@ export const Default = {
       { id: 4, name: "David", age: 40, active: true, role: "Admin" },
     ],
     columns: [
+      {
+        id: "id",
+        title: "Id",
+        type: "number",
+        isSortable: true,
+        isFilterable: true,
+        filter: { type: "number" },
+      },
       { id: "name", title: "Name", isSortable: true, isFilterable: true },
       {
         id: "age",

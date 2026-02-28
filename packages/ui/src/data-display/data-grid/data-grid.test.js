@@ -90,8 +90,6 @@ async function setup(entityOverrides = {}) {
     container,
     unsubscribe,
     getGrid: () => getEntity(GRID_ID),
-    getPageSizeSelect: () => getEntity(`${GRID_ID}-pageSizeSelect`),
-    getSearchbar: () => getEntity(`${GRID_ID}-searchbarInput`),
   }
 }
 
@@ -372,17 +370,10 @@ describe("dataGrid / handlers", () => {
 // ---------------------------------------------------------------------------
 
 describe("dataGrid / template", () => {
-  let store, container, unsubscribe, getGrid, getPageSizeSelect, getSearchbar
+  let store, container, unsubscribe, getGrid
 
   beforeEach(async () => {
-    ;({
-      store,
-      container,
-      unsubscribe,
-      getGrid,
-      getPageSizeSelect,
-      getSearchbar,
-    } = await setup())
+    ;({ store, container, unsubscribe, getGrid } = await setup())
   })
 
   afterEach(() => {
@@ -477,52 +468,6 @@ describe("dataGrid / template", () => {
       expect(
         container.querySelectorAll(".iw-data-grid-body .iw-data-grid-row"),
       ).toHaveLength(2)
-    })
-  })
-
-  describe("page size select (sub-entity integration)", () => {
-    it("is created alongside the dataGrid", () => {
-      expect(getPageSizeSelect()).toBeDefined()
-    })
-
-    it("selecting a page size updates the dataGrid pagination", () => {
-      store.notify(`#${GRID_ID}-pageSizeSelect:optionSelect`, {
-        value: 20,
-        label: "20",
-      })
-      expect(getGrid().pagination.pageSize).toBe(20)
-      expect(getGrid().pagination.page).toBe(0)
-    })
-
-    it("reflects the current pageSize as its selectedValue", () => {
-      expect(getPageSizeSelect().selectedValue).toBe(2)
-      store.notify(`#${GRID_ID}-pageSizeSelect:optionSelect`, {
-        value: 30,
-        label: "30",
-      })
-      expect(getPageSizeSelect().selectedValue).toBe(30)
-    })
-
-    it("renders the page size select in the footer", () => {
-      expect(
-        container.querySelector(".iw-data-grid-footer .iw-select"),
-      ).not.toBeNull()
-    })
-
-    it("is removed from the store when the dataGrid is destroyed", () => {
-      store.notify("remove", GRID_ID)
-      expect(getPageSizeSelect()).toBeUndefined()
-    })
-  })
-
-  describe("searchbar (sub-entity integration)", () => {
-    it("is created alongside the dataGrid", () => {
-      expect(getSearchbar()).toBeDefined()
-    })
-
-    it("is removed from the store when the dataGrid is destroyed", () => {
-      store.notify("remove", GRID_ID)
-      expect(getSearchbar()).toBeUndefined()
     })
   })
 })

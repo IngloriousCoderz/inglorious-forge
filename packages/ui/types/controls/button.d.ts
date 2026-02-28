@@ -1,6 +1,6 @@
 import type { TemplateResult, Api } from "@inglorious/web"
 
-export interface ButtonEntity {
+export interface ButtonProps {
   id?: string
   type: "button"
   children?: TemplateResult | string | number
@@ -14,11 +14,12 @@ export interface ButtonEntity {
   ariaLabel?: string
   ariaPressed?: boolean
   className?: string
+  onClick?: () => void
   [key: string]: unknown
 }
 
 export interface ButtonType {
-  render(entity: ButtonEntity, api: Api): TemplateResult
+  render(entity: ButtonProps, api: Api): TemplateResult
 }
 
 export declare const button: ButtonType

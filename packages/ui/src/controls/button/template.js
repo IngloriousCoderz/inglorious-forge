@@ -1,6 +1,5 @@
 /**
- * @typedef {import('../../../types/controls/button').ButtonEntity} ButtonEntity
- * @typedef {import('@inglorious/web').Api} Api
+ * @typedef {import('../../../types/controls/button').ButtonProps} ButtonProps
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
@@ -20,13 +19,11 @@ import { applyElementProps } from "../../shared/applyElementProps.js"
  * // Entity: { type: 'button', id: 'submitBtn', children: 'Submit' }
  * // In store: api.render('submitBtn')
  *
- * @param {ButtonEntity} entity
- * @param {Api} api
+ * @param {ButtonProps} props
  * @returns {TemplateResult}
  */
-export function render(entity, api) {
+export function render(props) {
   const {
-    id,
     type, // eslint-disable-line no-unused-vars
     children,
     variant = "default",
@@ -39,8 +36,9 @@ export function render(entity, api) {
     ariaLabel = "",
     ariaPressed = false,
     className = "",
+    onClick,
     ...rest
-  } = entity
+  } = props
 
   const extraClasses = Object.fromEntries(
     className
@@ -67,7 +65,7 @@ export function render(entity, api) {
       aria-pressed=${ariaPressed}
       class=${classMap(classes)}
       ?disabled=${disabled}
-      @click=${() => api.notify(`#${id}:click`)}
+      @click=${() => onClick?.()}
       ${ref((element) => applyElementProps(element, rest))}
     >
       ${children}

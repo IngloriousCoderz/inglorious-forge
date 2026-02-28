@@ -1,15 +1,11 @@
-import {
-  makeStoryRender,
-  notifyActionArgType,
-} from "../../stories/notifyStory.js"
+import { makeStoryRender } from "../../stories/notifyStory.js"
 import { buttonGroup } from "."
 
 export default {
   title: "Controls/ButtonGroup",
   tags: ["autodocs"],
-  render: makeStoryRender({ buttonGroup }),
+  render: makeStoryRender(buttonGroup.render),
   argTypes: {
-    ...notifyActionArgType,
     value: {
       control: "object",
       description:
@@ -51,6 +47,7 @@ export default {
       control: "object",
       description: "Items rendered as grouped buttons.",
     },
+    onChange: { action: "onChange" },
   },
   parameters: {
     docs: {

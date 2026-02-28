@@ -1,6 +1,5 @@
 /**
- * @typedef {import('../../../types/controls/input').InputEntity} InputEntity
- * @typedef {import('@inglorious/web').Api} Api
+ * @typedef {import('../../../types/controls/input').InputProps} InputProps
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
@@ -20,11 +19,10 @@ import { applyElementProps } from "../../shared/applyElementProps.js"
  * // Entity: { type: 'input', id: 'emailInput', label: 'Email' }
  * // In store: api.render('emailInput')
  *
- * @param {InputEntity} entity
- * @param {Api} api
+ * @param {InputProps} props
  * @returns {TemplateResult}
  */
-export function render(entity, api) {
+export function render(props) {
   const {
     id,
     type, // eslint-disable-line no-unused-vars
@@ -42,8 +40,11 @@ export function render(entity, api) {
     fullWidth = false,
     icon,
     iconAfter,
+    onChange,
+    onBlur,
+    onFocus,
     ...rest
-  } = entity
+  } = props
 
   const inputId = id || name
 
@@ -89,9 +90,9 @@ export function render(entity, api) {
           ?readonly=${readonly}
           ?required=${required}
           class=${classMap(inputClasses)}
-          @input=${(event) => api.notify(`#${id}:change`, event.target.value)}
-          @blur=${() => api.notify(`#${id}:blur`)}
-          @focus=${() => api.notify(`#${id}:focus`)}
+          @input=${(event) => onChange?.(event.target.value)}
+          @blur=${() => onBlur?.()}
+          @focus=${() => onFocus?.()}
           ${ref((element) => applyElementProps(element, rest))}
         />
 

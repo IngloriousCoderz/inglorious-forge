@@ -33,6 +33,25 @@ export function getOptionLabel(option) {
 }
 
 /**
+ * Filter options based on search term.
+ * @param {SelectOption[]} options
+ * @param {string} searchTerm
+ * @returns {SelectOption[]}
+ */
+export function filterOptions(options, searchTerm) {
+  if (!searchTerm || searchTerm.trim() === "") {
+    return options
+  }
+
+  const searchLower = String(searchTerm).toLowerCase().trim()
+
+  return options.filter((option) => {
+    const label = getOptionLabel(option)
+    return label.toLowerCase().includes(searchLower)
+  })
+}
+
+/**
  * Check whether an option is selected.
  * @param {SelectOption} option
  * @param {string|number|(string|number)[]|null} selectedValue

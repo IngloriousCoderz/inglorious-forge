@@ -1,6 +1,6 @@
 import type { TemplateResult, Api } from "@inglorious/web"
 
-export interface InputEntity {
+export interface InputProps {
   id?: string
   name?: string
   inputType?:
@@ -23,14 +23,17 @@ export interface InputEntity {
   fullWidth?: boolean
   icon?: string
   iconAfter?: string
+  onChange?: (value: string) => void
+  onBlur?: () => void
+  onFocus?: () => void
   [key: string]: unknown
 }
 
 export interface InputType {
-  render(entity: InputEntity, api: Api): TemplateResult
-  change(entity: InputEntity, payload: string, api: Api): void
-  blur(entity: InputEntity, payload: unknown, api: Api): void
-  focus(entity: InputEntity, payload: unknown, api: Api): void
+  render(entity: InputProps, api: Api): TemplateResult
+  change(entity: InputProps, payload: string, api: Api): void
+  blur(entity: InputProps, payload: unknown, api: Api): void
+  focus(entity: InputProps, payload: unknown, api: Api): void
 }
 
 export declare const input: InputType

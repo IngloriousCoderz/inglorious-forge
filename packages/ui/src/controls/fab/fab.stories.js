@@ -1,17 +1,13 @@
 import { html } from "@inglorious/web"
 
-import {
-  makeStoryRender,
-  notifyActionArgType,
-} from "../../stories/notifyStory.js"
+import { makeStoryRender } from "../../stories/notifyStory.js"
 import { fab } from "."
 
 export default {
   title: "Controls/Fab",
   tags: ["autodocs"],
-  render: makeStoryRender({ fab }),
+  render: makeStoryRender(fab.render),
   argTypes: {
-    ...notifyActionArgType,
     children: { control: "text", description: "Content of the FAB." },
     color: {
       control: "select",
@@ -25,6 +21,7 @@ export default {
     },
     extended: { control: "boolean", description: "Use extended pill shape." },
     disabled: { control: "boolean", description: "Disables interaction." },
+    onClick: { action: "onClick" },
   },
   parameters: {
     docs: {

@@ -1,6 +1,6 @@
 /**
- * @typedef {import('../../../types/controls/select').SelectEntity} SelectEntity
- * @typedef {import('../../../types/controls/select').SelectOption} SelectOption
+ * @typedef {import('../../../types/controls/select.js').SelectEntity} SelectEntity
+ * @typedef {import('../../../types/controls/select.js').SelectOption} SelectOption
  */
 
 import { filterOptions, formatOption, getOptionValue } from "./helpers.js"
