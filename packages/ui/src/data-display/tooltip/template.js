@@ -1,5 +1,5 @@
 /**
- * @typedef {import('../../../types/data-display/tooltip').TooltipEntity} TooltipEntity
+ * @typedef {import('../../../types/data-display/tooltip').TooltipProps} TooltipProps
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
@@ -8,10 +8,10 @@ import { classMap, html, ref } from "@inglorious/web"
 import { applyElementProps } from "../../shared/applyElementProps.js"
 
 /**
- * @param {TooltipEntity} entity
+ * @param {TooltipProps} props
  * @returns {TemplateResult}
  */
-export function render(entity) {
+export function render(props) {
   const {
     children,
     content,
@@ -20,8 +20,9 @@ export function render(entity) {
     open = false,
     maxWidth = "20rem",
     className = "",
+    onClick,
     ...rest
-  } = entity
+  } = props
 
   const extraClasses = Object.fromEntries(
     className
@@ -42,6 +43,7 @@ export function render(entity) {
     <span
       class=${classMap(classes)}
       ${ref((el) => applyElementProps(el, rest))}
+      @click=${onClick}
     >
       <span class="iw-tooltip-trigger">${children ?? "?"}</span>
       <span

@@ -1,11 +1,17 @@
 /**
- * @typedef {import('../../../types/data-display/badge').BadgeEntity} BadgeEntity
+ * @typedef {import('../../../types/data-display/badge').BadgeProps} BadgeProps
  */
 
 import { classMap, html } from "@inglorious/web"
 
-export function render(entity) {
-  const { children, color = "primary", variant = "solid", size = "md" } = entity
+export function render(props) {
+  const {
+    children,
+    color = "primary",
+    variant = "solid",
+    size = "md",
+    onClick,
+  } = props
 
   const classes = {
     "iw-badge": true,
@@ -14,5 +20,7 @@ export function render(entity) {
     [`iw-badge-${size}`]: size !== "md",
   }
 
-  return html`<span class=${classMap(classes)}>${children}</span>`
+  return html`<span class=${classMap(classes)} @click=${onClick}
+    >${children}</span
+  >`
 }

@@ -1,6 +1,6 @@
 import type { TemplateResult, Api } from "@inglorious/web"
 
-export interface DividerEntity {
+export interface DividerProps {
   id?: string
   orientation?: "horizontal" | "vertical"
   inset?: boolean
@@ -8,7 +8,7 @@ export interface DividerEntity {
 }
 
 export interface DividerType {
-  render(entity: DividerEntity, api: Api): TemplateResult
+  render(entity: DividerProps, api: Api): TemplateResult
 }
 
 export declare const divider: DividerType

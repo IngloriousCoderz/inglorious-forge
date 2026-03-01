@@ -1,6 +1,5 @@
 /**
- * @typedef {import('../../../types/data-display/avatar').AvatarEntity} AvatarEntity
- * @typedef {import('@inglorious/web').Api} Api
+ * @typedef {import('../../../types/data-display/avatar').AvatarProps} AvatarProps
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
@@ -8,11 +7,10 @@ import { classMap, html } from "@inglorious/web"
 
 /**
  * Avatar component.
- * @param {AvatarEntity} entity
- * @param {Api} _api
+ * @param {AvatarProps} props
  * @returns {TemplateResult}
  */
-export function render(entity) {
+export function render(props) {
   const {
     src,
     alt = "avatar",
@@ -20,7 +18,8 @@ export function render(entity) {
     size = "md",
     shape = "circle",
     children,
-  } = entity
+    onClick,
+  } = props
 
   const classes = {
     "iw-avatar": true,
@@ -28,7 +27,7 @@ export function render(entity) {
     [`iw-avatar-${shape}`]: shape !== "circle",
   }
 
-  return html`<span class=${classMap(classes)}>
+  return html`<span class=${classMap(classes)} @click=${onClick}>
     ${src
       ? html`<img class="iw-avatar-img" src=${src} alt=${alt} />`
       : (children ?? initials ?? "?")}

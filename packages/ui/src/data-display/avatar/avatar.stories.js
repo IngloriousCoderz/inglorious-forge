@@ -1,10 +1,10 @@
-import { makeStoryRender } from "../../stories/notifyStory.js"
+import { createRender } from "../../stories/notifyStory.js"
 import { avatar } from "."
 
 export default {
   title: "Data Display/Avatar",
   tags: ["autodocs"],
-  render: makeStoryRender({ avatar }),
+  render: createRender(avatar),
   argTypes: {
     src: {
       control: "text",
@@ -26,6 +26,7 @@ export default {
       options: ["circle", "square"],
       description: "Avatar shape variant.",
     },
+    onClick: { action: "onClick" },
   },
   parameters: {
     docs: {
@@ -39,8 +40,6 @@ export default {
 
 export const Default = {
   args: {
-    id: "avatar",
-    type: "avatar",
     initials: "AM",
     src: "",
     size: "md",

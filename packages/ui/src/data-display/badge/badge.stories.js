@@ -1,10 +1,10 @@
-import { makeStoryRender } from "../../stories/notifyStory.js"
+import { createRender } from "../../stories/notifyStory.js"
 import { badge } from "."
 
 export default {
   title: "Data Display/Badge",
   tags: ["autodocs"],
-  render: makeStoryRender({ badge }),
+  render: createRender(badge),
   argTypes: {
     children: { control: "text", description: "Badge content." },
     color: {
@@ -22,6 +22,7 @@ export default {
       options: ["sm", "md", "lg"],
       description: "Badge size scale.",
     },
+    onClick: { action: "onClick" },
   },
   parameters: {
     docs: {
@@ -35,8 +36,6 @@ export default {
 
 export const Default = {
   args: {
-    id: "badge",
-    type: "badge",
     children: "New",
     size: "md",
   },

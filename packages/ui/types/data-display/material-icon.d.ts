@@ -1,6 +1,6 @@
 import type { TemplateResult, Api } from "@inglorious/web"
 
-export interface MaterialIconEntity {
+export interface MaterialIconProps {
   id?: string
   name?: string
   size?: "sm" | "md" | "lg"
@@ -9,7 +9,7 @@ export interface MaterialIconEntity {
 }
 
 export interface MaterialIconType {
-  render(entity: MaterialIconEntity, api: Api): TemplateResult
+  render(entity: MaterialIconProps, api: Api): TemplateResult
 }
 
 export declare const materialIcon: MaterialIconType

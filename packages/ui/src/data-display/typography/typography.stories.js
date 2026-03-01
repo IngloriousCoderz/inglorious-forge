@@ -1,10 +1,10 @@
-import { makeStoryRender } from "../../stories/notifyStory.js"
+import { createRender } from "../../stories/notifyStory.js"
 import { typography } from "."
 
 export default {
   title: "Data Display/Typography",
   tags: ["autodocs"],
-  render: makeStoryRender({ typography }),
+  render: createRender(typography),
   argTypes: {
     children: { control: "text", description: "Text content." },
     variant: {
@@ -36,8 +36,6 @@ export default {
 
 export const Default = {
   args: {
-    id: "typography",
-    type: "typography",
     children: "The quick brown fox jumps over the lazy dog.",
     variant: "body",
     align: "left",

@@ -1,9 +1,9 @@
 import type { TemplateResult, Api } from "@inglorious/web"
 
-export interface ChipEntity {
+export interface ChipProps {
   id?: string
   children?: TemplateResult | string | number
-  removable?: boolean
+  isRemovable?: boolean
   color?:
     | "default"
     | "primary"
@@ -14,11 +14,12 @@ export interface ChipEntity {
     | "info"
   size?: "sm" | "md" | "lg"
   shape?: "pill" | "rounded" | "square"
+  onClick?: () => void
   [key: string]: unknown
 }
 
 export interface ChipType {
-  render(entity: ChipEntity, api: Api): TemplateResult
+  render(entity: ChipProps, api: Api): TemplateResult
 }
 
 export declare const chip: ChipType

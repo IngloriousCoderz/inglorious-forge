@@ -1,11 +1,11 @@
 /**
- * @typedef {import('../../../types/data-display/divider').DividerEntity} DividerEntity
+ * @typedef {import('../../../types/data-display/divider').DividerProps} DividerProps
  */
 
 import { classMap, html } from "@inglorious/web"
 
-export function render(entity) {
-  const { orientation = "horizontal", inset = false } = entity
+export function render(props) {
+  const { orientation = "horizontal", inset = false } = props
 
   return html`<hr
     class=${classMap({

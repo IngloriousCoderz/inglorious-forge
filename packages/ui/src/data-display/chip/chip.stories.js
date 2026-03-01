@@ -1,17 +1,13 @@
-import {
-  makeStoryRender,
-  notifyActionArgType,
-} from "../../stories/notifyStory.js"
+import { createRender } from "../../stories/notifyStory.js"
 import { chip } from "."
 
 export default {
   title: "Data Display/Chip",
   tags: ["autodocs"],
-  render: makeStoryRender({ chip }),
+  render: createRender(chip),
   argTypes: {
-    ...notifyActionArgType,
     children: { control: "text", description: "Chip label content." },
-    removable: {
+    isRemovable: {
       control: "boolean",
       description: "Shows a remove affordance and emits `#id:remove`.",
     },
@@ -38,6 +34,7 @@ export default {
       options: ["pill", "rounded", "square"],
       description: "Chip corner style.",
     },
+    onClick: { action: "onClick" },
   },
   parameters: {
     docs: {
@@ -51,10 +48,8 @@ export default {
 
 export const Default = {
   args: {
-    id: "chip",
-    type: "chip",
     children: "Tag",
-    removable: true,
+    isRemovable: true,
     color: "default",
     size: "md",
     shape: "pill",

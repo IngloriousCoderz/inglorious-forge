@@ -1,6 +1,6 @@
 import type { TemplateResult, Api } from "@inglorious/web"
 
-export interface TooltipEntity {
+export interface TooltipProps {
   id?: string
   children?: TemplateResult | string | number
   content?: TemplateResult | string | number
@@ -9,11 +9,12 @@ export interface TooltipEntity {
   open?: boolean
   maxWidth?: string
   className?: string
+  onClick: () => void
   [key: string]: unknown
 }
 
 export interface TooltipType {
-  render(entity: TooltipEntity, api: Api): TemplateResult
+  render(entity: TooltipProps, api: Api): TemplateResult
 }
 
 export declare const tooltip: TooltipType

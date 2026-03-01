@@ -1,22 +1,23 @@
-import { createMockApi, render } from "@inglorious/web/test"
+import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
 import { chip } from "."
 
 describe("chip", () => {
   it("renders and emits remove", () => {
-    const entity = {
+    let isClicked = null
+    const props = {
       id: "chip",
       children: "Tag",
-      removable: true,
+      isRemovable: true,
       color: "warning",
       size: "lg",
       shape: "square",
+      onClick: () => (isClicked = true),
     }
-    const api = createMockApi({ [entity.id]: entity })
     const container = document.createElement("div")
 
-    render(chip.render(entity, api), container)
+    render(chip.render(props), container)
 
     container.querySelector(".iw-chip-remove").click()
 
@@ -24,6 +25,6 @@ describe("chip", () => {
     expect(element.classList.contains("iw-chip-lg")).toBe(true)
     expect(element.classList.contains("iw-chip-warning")).toBe(true)
     expect(element.classList.contains("iw-chip-shape-square")).toBe(true)
-    expect(api.getEvents()).toEqual([{ type: "#chip:remove" }])
+    expect(isClicked).toBe(true)
   })
 })

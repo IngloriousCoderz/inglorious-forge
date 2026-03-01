@@ -7,7 +7,7 @@
 
 import { classMap, html, ref, repeat, when } from "@inglorious/web"
 
-import { chipPrimitive } from "../../data-display/chip/index.js"
+import { chip } from "../../data-display/chip/index.js"
 import {
   filterOptions,
   formatOption,
@@ -146,24 +146,20 @@ export function renderMultiValue(entity, api) {
 export function renderMultiValueTag(entity, value, api) {
   const option = entity.options.find((opt) => getOptionValue(opt) === value)
   const tagId = `${entity.id}-tag-${String(value)}`
-  const normalizedOption = option ?? { value }
   const chipSize = entity.size === "lg" ? "md" : "sm"
-  const chipApi = createMultiValueChipApi(api, entity, tagId, normalizedOption)
 
   return html`<span
     class="iw-combobox-multi-value-tag"
     @click=${(event) => event.stopPropagation()}
   >
-    ${chipPrimitive.render(
-      {
-        id: tagId,
-        children: option ? getOptionLabel(option) : String(value),
-        removable: true,
-        size: chipSize,
-        shape: "rounded",
-      },
-      chipApi,
-    )}
+    ${chip.render({
+      id: tagId,
+      children: option ? getOptionLabel(option) : String(value),
+      isRemovable: true,
+      size: chipSize,
+      shape: "rounded",
+      onClick: () => api.notify(`#${entity.id}:optionSelect`, option),
+    })}
   </span>`
 }
 
@@ -351,19 +347,5 @@ function handleKeyDown(entity, event, api) {
       break
     default:
       break
-  }
-}
-
-function createMultiValueChipApi(api, entity, tagId, option) {
-  return {
-    ...api,
-
-    notify(event, payload) {
-      if (event === `#${tagId}:remove`) {
-        return api.notify(`#${entity.id}:optionSelect`, option)
-      }
-
-      return api.notify(event, payload)
-    },
   }
 }

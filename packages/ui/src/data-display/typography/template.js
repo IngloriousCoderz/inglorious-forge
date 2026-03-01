@@ -1,5 +1,5 @@
 /**
- * @typedef {import('../../../types/data-display/typography').TypographyEntity} TypographyEntity
+ * @typedef {import('../../../types/data-display/typography').TypographyProps} TypographyProps
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
@@ -8,10 +8,10 @@ import { classMap, html, ref } from "@inglorious/web"
 import { applyElementProps } from "../../shared/applyElementProps.js"
 
 /**
- * @param {TypographyEntity} entity
+ * @param {TypographyProps} props
  * @returns {TemplateResult}
  */
-export function render(entity) {
+export function render(props) {
   const {
     children,
     variant = "body",
@@ -22,7 +22,7 @@ export function render(entity) {
     gutterBottom = false,
     className = "",
     ...rest
-  } = entity
+  } = props
 
   const extraClasses = Object.fromEntries(
     className

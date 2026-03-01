@@ -5,6 +5,7 @@
   width: 1em;
   height: 1em;
   line-height: 1;
+  cursor: pointer;
 
   &.iw-icon-sm {
     font-size: 0.875rem;

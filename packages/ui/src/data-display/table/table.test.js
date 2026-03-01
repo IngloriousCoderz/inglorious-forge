@@ -1,11 +1,11 @@
-import { createMockApi, render } from "@inglorious/web/test"
+import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
 import { table } from "."
 
 describe("table", () => {
   it("renders rows and headers", () => {
-    const entity = {
+    const props = {
       id: "table",
       columns: [
         { id: "name", label: "Name" },
@@ -16,10 +16,9 @@ describe("table", () => {
         { id: "b", name: "Lin", score: 20 },
       ],
     }
-    const api = createMockApi({ [entity.id]: entity })
     const container = document.createElement("div")
 
-    render(table.render(entity, api), container)
+    render(table.render(props), container)
 
     expect(container.querySelectorAll("tbody tr")).toHaveLength(2)
     expect(container.querySelectorAll("thead th")).toHaveLength(2)

@@ -8,7 +8,7 @@ export type TypographyVariant =
   | "caption"
   | "overline"
 
-export interface TypographyEntity {
+export interface TypographyProps {
   id?: string
   children?: TemplateResult | string | number
   variant?: TypographyVariant
@@ -22,7 +22,7 @@ export interface TypographyEntity {
 }
 
 export interface TypographyType {
-  render(entity: TypographyEntity, api: Api): TemplateResult
+  render(entity: TypographyProps, api: Api): TemplateResult
 }
 
 export declare const typography: TypographyType

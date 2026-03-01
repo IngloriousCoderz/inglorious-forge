@@ -1,17 +1,18 @@
 /**
- * @typedef {import('../../../types/data-display/chip').ChipEntity} ChipEntity
+ * @typedef {import('../../../types/data-display/chip').ChipProps} ChipProps
  */
 
 import { classMap, html } from "@inglorious/web"
 
-export function render(entity, api) {
+export function render(props) {
   const {
     children,
-    removable = false,
+    isRemovable = false,
     color = "default",
     size = "md",
     shape = "pill",
-  } = entity
+    onClick,
+  } = props
 
   const classes = {
     "iw-chip": true,
@@ -22,15 +23,8 @@ export function render(entity, api) {
 
   return html`<span class=${classMap(classes)}>
     <span class="iw-chip-label">${children}</span>
-    ${removable
-      ? html`<button
-          type="button"
-          class="iw-chip-remove"
-          @click=${(event) => {
-            event.stopPropagation()
-            api.notify(`#${entity.id}:remove`)
-          }}
-        >
+    ${isRemovable
+      ? html`<button type="button" class="iw-chip-remove" @click=${onClick}>
           ×
         </button>`
       : null}

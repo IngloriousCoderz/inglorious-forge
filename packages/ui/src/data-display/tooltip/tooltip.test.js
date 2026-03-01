@@ -1,20 +1,19 @@
-import { createMockApi, render } from "@inglorious/web/test"
+import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
 import { tooltip } from "."
 
 describe("tooltip", () => {
   it("renders tooltip bubble", () => {
-    const entity = {
+    const props = {
       id: "tip",
       children: "Hover",
       content: "Details",
       size: "lg",
     }
-    const api = createMockApi({ [entity.id]: entity })
     const container = document.createElement("div")
 
-    render(tooltip.render(entity, api), container)
+    render(tooltip.render(props), container)
 
     expect(
       container.querySelector(".iw-tooltip-bubble").textContent.trim(),

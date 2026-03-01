@@ -1,10 +1,10 @@
-import { makeStoryRender } from "../../stories/notifyStory.js"
+import { createRender } from "../../stories/notifyStory.js"
 import { materialIcon } from "."
 
 export default {
   title: "Data Display/MaterialIcon",
   tags: ["autodocs"],
-  render: makeStoryRender({ materialIcon }),
+  render: createRender(materialIcon),
   argTypes: {
     name: {
       control: "text",
@@ -19,6 +19,7 @@ export default {
       control: "boolean",
       description: "Toggles filled font variation.",
     },
+    onClick: { action: "onClick" },
   },
   parameters: {
     docs: {
@@ -32,8 +33,6 @@ export default {
 
 export const Default = {
   args: {
-    id: "materialIcon",
-    type: "materialIcon",
     name: "home",
     size: "md",
     filled: true,

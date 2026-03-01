@@ -1,11 +1,11 @@
 /**
- * @typedef {import('../../../types/data-display/material-icon').MaterialIconEntity} MaterialIconEntity
+ * @typedef {import('../../../types/data-display/material-icon').MaterialIconProps} MaterialIconProps
  */
 
 import { classMap, html } from "@inglorious/web"
 
-export function render(entity) {
-  const { name = "help", size = "md", filled = true } = entity
+export function render(props) {
+  const { name = "help", size = "md", filled = true, onClick } = props
 
   return html`<span
     class=${classMap({
@@ -15,6 +15,7 @@ export function render(entity) {
       [`iw-material-icon-${size}`]: size !== "md",
     })}
     aria-hidden="true"
+    @click=${onClick}
     >${name}</span
   >`
 }

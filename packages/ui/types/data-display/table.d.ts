@@ -8,30 +8,33 @@ export interface TableColumn {
   [key: string]: unknown
 }
 
-export interface TableEntity {
+export type TableRow = Record<string, unknown>
+
+export interface TableProps {
   id?: string
   type?: string
   columns?: TableColumn[]
-  rows?: Record<string, unknown>[]
+  rows?: TableRow[]
   fullWidth?: boolean
   striped?: boolean
+  onRowClick?: (row: TableRow) => void
   [key: string]: unknown
 }
 
 export interface TableType {
-  render(entity: TableEntity, api: Api): TemplateResult
+  render(entity: TableProps, api: Api): TemplateResult
   renderHeaderCell(
-    entity: TableEntity,
+    entity: TableProps,
     payload: { column: TableColumn; index: number },
     api: Api,
   ): TemplateResult
   renderRow(
-    entity: TableEntity,
+    entity: TableProps,
     payload: { row: Record<string, unknown>; index: number },
     api: Api,
   ): TemplateResult
   renderCell(
-    entity: TableEntity,
+    entity: TableProps,
     payload: {
       column: TableColumn
       row: Record<string, unknown>

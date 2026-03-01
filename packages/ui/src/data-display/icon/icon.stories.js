@@ -1,10 +1,10 @@
-import { makeStoryRender } from "../../stories/notifyStory.js"
+import { createRender } from "../../stories/notifyStory.js"
 import { icon } from "."
 
 export default {
   title: "Data Display/Icon",
   tags: ["autodocs"],
-  render: makeStoryRender({ icon }),
+  render: createRender(icon),
   argTypes: {
     children: { control: "text", description: "Icon glyph or inline content." },
     size: {
@@ -17,6 +17,7 @@ export default {
       description:
         "Any valid CSS color value (`current` keeps inherited color).",
     },
+    onClick: { action: "onClick" },
   },
   parameters: {
     docs: {
@@ -30,8 +31,6 @@ export default {
 
 export const Default = {
   args: {
-    id: "icon",
-    type: "icon",
     children: "★",
     size: "md",
     color: "current",

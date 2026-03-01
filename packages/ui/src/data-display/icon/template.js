@@ -1,11 +1,11 @@
 /**
- * @typedef {import('../../../types/data-display/icon').IconEntity} IconEntity
+ * @typedef {import('../../../types/data-display/icon').IconProps} IconProps
  */
 
 import { classMap, html } from "@inglorious/web"
 
-export function render(entity) {
-  const { children, size = "md", color = "current" } = entity
+export function render(props) {
+  const { children, size = "md", color = "current", onClick } = props
 
   return html`<span
     class=${classMap({
@@ -15,6 +15,7 @@ export function render(entity) {
     })}
     style=${color !== "current" ? `color: ${color};` : ""}
     aria-hidden="true"
+    @click=${onClick}
     >${children}</span
   >`
 }

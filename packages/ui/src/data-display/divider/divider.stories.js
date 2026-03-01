@@ -1,10 +1,12 @@
-import { makeStoryRender } from "../../stories/notifyStory.js"
+import { render } from "@inglorious/web/test"
+
+import { createRender } from "../../stories/notifyStory.js"
 import { divider } from "."
 
 export default {
   title: "Data Display/Divider",
   tags: ["autodocs"],
-  render: makeStoryRender({ divider }),
+  render: createRender(divider),
   argTypes: {
     orientation: {
       control: "select",
@@ -26,8 +28,21 @@ export default {
 }
 
 export const Default = {
+  args: {},
+}
+
+export const Vertical = {
   args: {
-    id: "divider",
-    type: "divider",
+    ...Default.args,
+    orientation: "vertical",
   },
+  decorators: [
+    (story) => {
+      const container = document.createElement("div")
+      container.style.height = "100px"
+      container.style.display = "flex"
+      render(story(), container)
+      return container
+    },
+  ],
 }

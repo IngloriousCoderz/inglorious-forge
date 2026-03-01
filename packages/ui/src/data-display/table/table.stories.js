@@ -1,19 +1,16 @@
-import {
-  makeStoryRender,
-  notifyActionArgType,
-} from "../../stories/notifyStory.js"
+import { createRender } from "../../stories/notifyStory.js"
 import { table } from "."
 
 export default {
   title: "Data Display/Table",
   tags: ["autodocs"],
-  render: makeStoryRender({ table }),
+  render: createRender(table),
   argTypes: {
-    ...notifyActionArgType,
     columns: { control: "object", description: "Column definitions." },
     rows: { control: "object", description: "Row records." },
     fullWidth: { control: "boolean", description: "Stretch table width." },
     striped: { control: "boolean", description: "Enable zebra rows." },
+    onRowClick: { action: "onRowClick" },
   },
   parameters: {
     docs: {
@@ -27,8 +24,6 @@ export default {
 
 export const Default = {
   args: {
-    id: "table",
-    type: "table",
     columns: [
       { id: "name", label: "Name" },
       { id: "role", label: "Role" },
