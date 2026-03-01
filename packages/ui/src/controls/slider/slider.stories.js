@@ -1,10 +1,10 @@
-import { makeStoryRender } from "../../stories/notifyStory.js"
+import { createRender } from "../../stories/notifyStory.js"
 import { slider } from "."
 
 export default {
   title: "Controls/Slider",
   tags: ["autodocs"],
-  render: makeStoryRender(slider.render),
+  render: createRender(slider),
   argTypes: {
     label: { control: "text", description: "Field label." },
     name: { control: "text", description: "Native input name." },

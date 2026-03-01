@@ -1,10 +1,10 @@
-import { makeStoryRender } from "../../stories/notifyStory.js"
+import { createRender } from "../../stories/notifyStory.js"
 import { switchControl } from "."
 
 export default {
   title: "Controls/Switch",
   tags: ["autodocs"],
-  render: makeStoryRender(switchControl.render),
+  render: createRender(switchControl),
   argTypes: {
     label: { control: "text", description: "Label text." },
     name: { control: "text", description: "Native input name." },

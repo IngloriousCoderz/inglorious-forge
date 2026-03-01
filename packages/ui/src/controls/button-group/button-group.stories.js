@@ -1,10 +1,10 @@
-import { makeStoryRender } from "../../stories/notifyStory.js"
+import { createRender } from "../../stories/notifyStory.js"
 import { buttonGroup } from "."
 
 export default {
   title: "Controls/ButtonGroup",
   tags: ["autodocs"],
-  render: makeStoryRender(buttonGroup.render),
+  render: createRender(buttonGroup),
   argTypes: {
     value: {
       control: "object",

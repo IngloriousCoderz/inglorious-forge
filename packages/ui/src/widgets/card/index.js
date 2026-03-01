@@ -1,3 +1,1 @@
-import * as renderers from "./template.js"
-
-export const card = { ...renderers }
+export { card } from "./template.js"

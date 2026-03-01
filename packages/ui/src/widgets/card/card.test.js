@@ -1,5 +1,5 @@
 import { html } from "@inglorious/web"
-import { createMockApi, render } from "@inglorious/web/test"
+import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
 import { card } from "."
@@ -7,11 +7,10 @@ import { card } from "."
 describe("card", () => {
   describe("render", () => {
     it("renders title and subtitle", () => {
-      const entity = { id: "card", title: "Title", subtitle: "Subtitle" }
-      const api = createMockApi({ [entity.id]: entity })
+      const props = { id: "card", title: "Title", subtitle: "Subtitle" }
       const container = document.createElement("div")
 
-      render(card.render(entity, api), container)
+      render(card.render(props), container)
 
       expect(container.querySelector(".iw-card-title").textContent).toBe(
         "Title",
@@ -22,16 +21,15 @@ describe("card", () => {
     })
 
     it("applies modifier classes", () => {
-      const entity = {
+      const props = {
         id: "card",
         hoverable: true,
         clickable: true,
         fullWidth: true,
       }
-      const api = createMockApi({ [entity.id]: entity })
       const container = document.createElement("div")
 
-      render(card.render(entity, api), container)
+      render(card.render(props), container)
 
       const cardElement = container.querySelector(".iw-card")
       expect(cardElement.classList.contains("iw-card-hoverable")).toBe(true)
@@ -44,12 +42,10 @@ describe("card", () => {
         ...card,
         renderFooter: () => html`<div class="iw-card-footer">Footer</div>`,
       }
-      const entity = { id: "card", type: "customCard", footerText: "Footer" }
-      const api = createMockApi({ [entity.id]: entity })
-      api.getType = () => customCard
+      const props = { id: "card", type: "customCard", footerText: "Footer" }
       const container = document.createElement("div")
 
-      render(customCard.render(entity, api), container)
+      render(customCard.render(props), container)
 
       expect(
         container.querySelector(".iw-card-footer").textContent.trim(),
@@ -57,11 +53,10 @@ describe("card", () => {
     })
 
     it("omits header when no header content is provided", () => {
-      const entity = { id: "card" }
-      const api = createMockApi({ [entity.id]: entity })
+      const props = { id: "card" }
       const container = document.createElement("div")
 
-      render(card.render(entity, api), container)
+      render(card.render(props), container)
 
       expect(container.querySelector(".iw-card-header")).toBe(null)
     })
@@ -69,15 +64,19 @@ describe("card", () => {
 
   describe("click event", () => {
     it("dispatches click event", () => {
-      const entity = { id: "card", title: "Click me" }
-      const api = createMockApi({ [entity.id]: entity })
+      let isClicked = null
+      const props = {
+        id: "card",
+        title: "Click me",
+        onClick: () => (isClicked = true),
+      }
       const container = document.createElement("div")
 
-      render(card.render(entity, api), container)
+      render(card.render(props), container)
 
       container.querySelector(".iw-card").click()
 
-      expect(api.getEvents()).toEqual([{ type: "#card:click" }])
+      expect(isClicked).toBe(true)
     })
   })
 })

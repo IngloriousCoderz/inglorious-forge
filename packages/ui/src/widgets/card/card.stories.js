@@ -1,17 +1,13 @@
 import { html } from "@inglorious/web"
 
-import {
-  makeStoryRender,
-  notifyActionArgType,
-} from "../../stories/notifyStory.js"
+import { createRender } from "../../stories/notifyStory.js"
 import { card } from "."
 
 export default {
   title: "Widgets/Card",
   tags: ["autodocs"],
-  render: makeStoryRender({ card }),
+  render: createRender(card),
   argTypes: {
-    ...notifyActionArgType,
     title: {
       control: "text",
       description: "Primary header text.",
@@ -47,8 +43,6 @@ export default {
 }
 export const Default = {}
 Default.args = {
-  id: "card",
-  type: "card",
   title: "Card Title",
   subtitle: "This is a card subtitle",
   hoverable: false,
@@ -89,10 +83,8 @@ const cardWithFooter = {
 }
 
 export const WithFooter = {}
-WithFooter.render = makeStoryRender({ cardWithFooter })
+WithFooter.render = createRender(cardWithFooter)
 WithFooter.args = {
-  id: "cardWithFooter",
-  type: "cardWithFooter",
   title: "Card with Footer",
   subtitle: "This card has a footer section",
   footerActions: [
@@ -103,8 +95,6 @@ WithFooter.args = {
 
 export const NoHeader = {}
 NoHeader.args = {
-  id: "card",
-  type: "card",
   title: null,
   subtitle: null,
 }
@@ -116,10 +106,8 @@ FullWidth.args = {
 }
 
 export const Interactive = {}
-Interactive.render = makeStoryRender({ cardWithFooter })
+Interactive.render = createRender(cardWithFooter)
 Interactive.args = {
-  id: "cardWithFooter",
-  type: "cardWithFooter",
   title: "Interactive Card",
   subtitle: "Hover, click, and trigger footer actions",
   hoverable: true,

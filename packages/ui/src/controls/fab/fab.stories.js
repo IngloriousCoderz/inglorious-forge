@@ -1,12 +1,12 @@
 import { html } from "@inglorious/web"
 
-import { makeStoryRender } from "../../stories/notifyStory.js"
+import { createRender } from "../../stories/notifyStory.js"
 import { fab } from "."
 
 export default {
   title: "Controls/Fab",
   tags: ["autodocs"],
-  render: makeStoryRender(fab.render),
+  render: createRender(fab),
   argTypes: {
     children: { control: "text", description: "Content of the FAB." },
     color: {

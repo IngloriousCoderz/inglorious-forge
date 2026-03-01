@@ -1,12 +1,12 @@
 import { html } from "@inglorious/web"
 
-import { makeStoryRender } from "../../stories/notifyStory.js"
+import { createRender } from "../../stories/notifyStory.js"
 import { flex } from "."
 
 export default {
   title: "Layout/Flex",
   tags: ["autodocs"],
-  render: makeStoryRender(flex.render),
+  render: createRender(flex),
   argTypes: {
     direction: {
       control: "select",

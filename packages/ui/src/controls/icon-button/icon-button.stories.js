@@ -1,10 +1,10 @@
-import { makeStoryRender } from "../../stories/notifyStory.js"
+import { createRender } from "../../stories/notifyStory.js"
 import { iconButton } from "."
 
 export default {
   title: "Controls/IconButton",
   tags: ["autodocs"],
-  render: makeStoryRender(iconButton.render),
+  render: createRender(iconButton),
   argTypes: {
     icon: { control: "text", description: "Leading icon content." },
     label: { control: "text", description: "Optional button label." },

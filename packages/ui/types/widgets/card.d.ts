@@ -1,6 +1,6 @@
 import type { TemplateResult, Api } from "@inglorious/web"
 
-export interface CardEntity {
+export interface CardProps {
   id?: string
   type?: string
   title?: string
@@ -8,14 +8,14 @@ export interface CardEntity {
   hoverable?: boolean
   clickable?: boolean
   fullWidth?: boolean
+  onClick?: () => void
 }
 
 export interface CardType {
-  render(entity: CardEntity, api: Api): TemplateResult
-  renderHeader(entity: CardEntity, api: Api): TemplateResult | null
-  renderBody(entity: CardEntity, api: Api): TemplateResult
-  renderFooter(entity: CardEntity, api: Api): TemplateResult | null
-  click(entity: CardEntity, payload: unknown, api: Api): void
+  render(entity: CardProps, api: Api): TemplateResult
+  renderHeader(entity: CardProps, api: Api): TemplateResult | null
+  renderBody(entity: CardProps, api: Api): TemplateResult
+  renderFooter(entity: CardProps, api: Api): TemplateResult | null
 }
 
 export declare const card: CardType

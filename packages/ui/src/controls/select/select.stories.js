@@ -1,10 +1,10 @@
-import { makeStoryRender } from "../../stories/notifyStory.js"
+import { createRender } from "../../stories/notifyStory.js"
 import { select } from "./index.js"
 
 export default {
   title: "Controls/Select",
   tags: ["autodocs"],
-  render: makeStoryRender(select.render),
+  render: createRender(select),
   argTypes: {
     name: {
       control: "text",

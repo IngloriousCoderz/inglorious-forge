@@ -10,17 +10,16 @@ export const notifyActionArgType = {
   },
 }
 
-export function makeStoryRender(config) {
+export function createRender(type) {
   return (args) => {
     const container = document.createElement("div")
+    render(type.render(args), container)
+    return container
+  }
+}
 
-    if (typeof config === "function") {
-      const renderFn = config
-      render(renderFn(args), container)
-      return container
-    }
-
-    const types = config
+export function makeStoryRender(types) {
+  return (args) => {
     const { onNotify, ...entity } = args
 
     const store = createStore({ types, entities: { [entity.id]: entity } })
@@ -30,6 +29,7 @@ export function makeStoryRender(config) {
       return originalNotify(type, payload)
     }
 
+    const container = document.createElement("div")
     mount(store, (api) => api.render(entity.id), container)
     return container
   }

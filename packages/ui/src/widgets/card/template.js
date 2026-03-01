@@ -1,5 +1,5 @@
 /**
- * @typedef {import('../../../types/widgets/card').CardEntity} CardEntity
+ * @typedef {import('../../../types/widgets/card').CardProps} CardProps
  * @typedef {import('@inglorious/web').Api} Api
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
@@ -18,80 +18,68 @@ import { classMap, html } from "@inglorious/web"
  * // Entity: { type: 'card', id: 'myCard', title: 'Click me' }
  * // In store: api.render('myCard')
  *
- * @param {CardEntity} entity
+ * @param {CardProps} props
  * @param {Api} api
  * @returns {TemplateResult}
  */
-export function render(entity, api) {
-  const { hoverable = false, clickable = false, fullWidth = false } = entity
-  const type = getCardType(entity, api)
+export const card = {
+  render(props, api) {
+    const {
+      hoverable = false,
+      clickable = false,
+      fullWidth = false,
+      onClick,
+    } = props
 
-  const classes = {
-    "iw-card": true,
-    "iw-card-hoverable": hoverable || clickable,
-    "iw-card-clickable": clickable,
-    "iw-card-full-width": fullWidth,
-  }
+    const classes = {
+      "iw-card": true,
+      "iw-card-hoverable": hoverable || clickable,
+      "iw-card-clickable": clickable,
+      "iw-card-full-width": fullWidth,
+    }
 
-  return html`
-    <div
-      class=${classMap(classes)}
-      @click=${() => api.notify(`#${entity.id}:click`)}
-    >
-      ${type.renderHeader(entity, api)} ${type.renderBody(entity, api)}
-      ${type.renderFooter(entity, api)}
-    </div>
-  `
-}
+    return html`
+      <div class=${classMap(classes)} @click=${onClick}>
+        ${this.renderHeader(props, api)} ${this.renderBody(props, api)}
+        ${this.renderFooter(props, api)}
+      </div>
+    `
+  },
 
-/**
- * Default header renderer.
- * Override in composed types for custom header rendering.
- * @param {CardEntity} entity
- * @returns {TemplateResult | null}
- */
-export function renderHeader(entity) {
-  const { title, subtitle } = entity
-  const hasHeader = title || subtitle
-  if (!hasHeader) return null
+  /**
+   * Default header renderer.
+   * Override in composed types for custom header rendering.
+   * @param {CardProps} props
+   * @returns {TemplateResult | null}
+   */
+  renderHeader(props) {
+    const { title, subtitle } = props
+    const hasHeader = title || subtitle
+    if (!hasHeader) return null
 
-  return html`<div class="iw-card-header">
-    ${title ? html`<h3 class="iw-card-title">${title}</h3>` : null}
-    ${subtitle ? html`<p class="iw-card-subtitle">${subtitle}</p>` : null}
-  </div>`
-}
+    return html`<div class="iw-card-header">
+      ${title ? html`<h3 class="iw-card-title">${title}</h3>` : null}
+      ${subtitle ? html`<p class="iw-card-subtitle">${subtitle}</p>` : null}
+    </div>`
+  },
 
-/**
- * Default body renderer.
- * Override in composed types for custom body rendering.
- * @returns {TemplateResult}
- */
-export function renderBody() {
-  return html`<div class="iw-card-body">
-    <slot></slot>
-  </div>`
-}
+  /**
+   * Default body renderer.
+   * Override in composed types for custom body rendering.
+   * @returns {TemplateResult}
+   */
+  renderBody() {
+    return html`<div class="iw-card-body">
+      <slot></slot>
+    </div>`
+  },
 
-/**
- * Default footer renderer.
- * Override in composed types for custom footer rendering.
- * @returns {TemplateResult | null}
- */
-export function renderFooter() {
-  return null
-}
-
-function getCardType(entity, api) {
-  const resolved = api?.getType?.(entity?.type)
-  return hasCardRenderers(resolved)
-    ? resolved
-    : { renderHeader, renderBody, renderFooter }
-}
-
-function hasCardRenderers(type) {
-  return (
-    typeof type?.renderHeader === "function" &&
-    typeof type?.renderBody === "function" &&
-    typeof type?.renderFooter === "function"
-  )
+  /**
+   * Default footer renderer.
+   * Override in composed types for custom footer rendering.
+   * @returns {TemplateResult | null}
+   */
+  renderFooter() {
+    return null
+  },
 }
