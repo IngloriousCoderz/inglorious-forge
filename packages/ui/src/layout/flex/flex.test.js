@@ -1,5 +1,5 @@
 import { html } from "@inglorious/web"
-import { createMockApi, render } from "@inglorious/web/test"
+import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
 import { flex } from "."
@@ -10,10 +10,9 @@ describe("flex", () => {
       id: "fx",
       children: [html`<div>A</div>`, html`<div>B</div>`],
     }
-    const api = createMockApi({ [entity.id]: entity })
     const container = document.createElement("div")
 
-    render(flex.render(entity, api), container)
+    render(flex.render(entity), container)
 
     expect(
       container.querySelector(".iw-flex").textContent.replace(/\s+/g, ""),
@@ -30,10 +29,9 @@ describe("flex", () => {
       gap: "lg",
       fullWidth: true,
     }
-    const api = createMockApi({ [entity.id]: entity })
     const container = document.createElement("div")
 
-    render(flex.render(entity, api), container)
+    render(flex.render(entity), container)
 
     const root = container.querySelector(".iw-flex")
     expect(root.classList.contains("iw-flex-direction-column")).toBe(true)
@@ -49,10 +47,9 @@ describe("flex", () => {
       id: "fx",
       children: [html`<span>Configured Child</span>`, " + Text Child"],
     }
-    const api = createMockApi({ [entity.id]: entity })
     const container = document.createElement("div")
 
-    render(flex.render(entity, api), container)
+    render(flex.render(entity), container)
 
     expect(container.textContent).toContain("Configured Child + Text Child")
   })

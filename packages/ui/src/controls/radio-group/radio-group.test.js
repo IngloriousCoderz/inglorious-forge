@@ -1,11 +1,11 @@
-import { createMockApi, render } from "@inglorious/web/test"
+import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
 import { radioGroup } from "."
 
 describe("radioGroup", () => {
   it("renders options and selected state", () => {
-    const entity = {
+    const props = {
       id: "rg",
       value: "b",
       color: "error",
@@ -14,10 +14,9 @@ describe("radioGroup", () => {
         { label: "B", value: "b" },
       ],
     }
-    const api = createMockApi({ [entity.id]: entity })
     const container = document.createElement("div")
 
-    render(radioGroup.render(entity, api), container)
+    render(radioGroup.render(props), container)
 
     const radios = container.querySelectorAll('input[type="radio"]')
     expect(radios.length).toBe(2)
@@ -30,22 +29,23 @@ describe("radioGroup", () => {
   })
 
   it("dispatches change event", () => {
-    const entity = {
+    let newValue = null
+    const props = {
       id: "rg",
       options: [
         { label: "A", value: "a" },
         { label: "B", value: "b" },
       ],
+      onChange: (value) => (newValue = value),
     }
-    const api = createMockApi({ [entity.id]: entity })
     const container = document.createElement("div")
 
-    render(radioGroup.render(entity, api), container)
+    render(radioGroup.render(props), container)
 
     const radio = container.querySelector('input[value="b"]')
     radio.checked = true
     radio.dispatchEvent(new Event("change"))
 
-    expect(api.getEvents()).toEqual([{ type: "#rg:change", payload: "b" }])
+    expect(newValue).toBe("b")
   })
 })

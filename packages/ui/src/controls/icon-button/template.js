@@ -1,47 +1,41 @@
 /**
- * @typedef {import('../../../types/controls/icon-button').IconButtonEntity} IconButtonEntity
- * @typedef {import('@inglorious/web').Api} Api
+ * @typedef {import('../../../types/controls/icon-button').IconButtonProps} IconButtonProps
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
 import { html } from "@inglorious/web"
 
-import { render as renderButton } from "../button/template.js"
+import { button } from "../button/index.js"
 
 /**
  * Icon button wrapper built on top of the base button renderer.
  *
- * @param {IconButtonEntity} entity
- * @param {Api} api
+ * @param {IconButtonProps} props
  * @returns {TemplateResult}
  */
-export function render(entity, api) {
+export function render(props) {
   const {
+    type, // eslint-disable-line no-unused-vars
     icon,
     label,
     iconAfter,
     direction = "row",
-    iconOnly = false,
-    ariaLabel,
-  } = entity
+    onClick,
+  } = props
 
   const children = html`
     <span class="iw-icon-button-content iw-icon-button-content-${direction}">
       ${icon ? html`<span class="iw-button-icon">${icon}</span>` : null}
-      ${iconOnly ? null : label}
+      ${label}
       ${iconAfter
         ? html`<span class="iw-button-icon">${iconAfter}</span>`
         : null}
     </span>
   `
 
-  return renderButton(
-    {
-      ...entity,
-      label: iconOnly ? "" : label,
-      children,
-      ariaLabel,
-    },
-    api,
-  )
+  return button.render({
+    ...props,
+    children,
+    onClick,
+  })
 }

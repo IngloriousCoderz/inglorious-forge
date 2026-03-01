@@ -60,8 +60,6 @@ export default {
 
 export const Default = {}
 Default.args = {
-  id: "buttonGroup",
-  type: "buttonGroup",
   value: "",
   multiple: false,
   direction: "row",

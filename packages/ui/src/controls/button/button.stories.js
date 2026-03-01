@@ -62,8 +62,6 @@ export default {
 
 export const Default = {}
 Default.args = {
-  id: "button",
-  type: "button",
   children: "Button",
   variant: "default",
   color: "primary",

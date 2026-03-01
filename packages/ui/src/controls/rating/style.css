@@ -22,8 +22,7 @@
     font-size: 1.5rem;
   }
 
-  &.iw-rating-disabled,
-  &.iw-rating-readonly {
+  &.iw-rating-disabled {
     opacity: 0.6;
   }
 }

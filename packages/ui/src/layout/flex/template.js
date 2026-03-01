@@ -1,6 +1,5 @@
 /**
- * @typedef {import('../../../types/layout/flex').FlexEntity} FlexEntity
- * @typedef {import('@inglorious/web').Api} Api
+ * @typedef {import('../../../types/layout/flex').FlexProps} FlexProps
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
@@ -10,11 +9,10 @@ import { classMap, html } from "@inglorious/web"
  * Flex layout component for Inglorious Web.
  * Children are rendered as-is (templates/content composition).
  *
- * @param {FlexEntity} entity
- * @param {Api} api
+ * @param {FlexProps} props
  * @returns {TemplateResult}
  */
-export function render(entity) {
+export function render(props) {
   const {
     direction = "row",
     wrap = "nowrap",
@@ -24,7 +22,8 @@ export function render(entity) {
     inline = false,
     fullWidth = false,
     children = [],
-  } = entity
+    onClick,
+  } = props
 
   const classes = {
     "iw-flex": true,
@@ -37,5 +36,7 @@ export function render(entity) {
     [`iw-flex-gap-${gap}`]: true,
   }
 
-  return html`<div class=${classMap(classes)}>${children}</div>`
+  return html`<div class=${classMap(classes)} @click=${onClick}>
+    ${children}
+  </div>`
 }

@@ -1,6 +1,5 @@
 /**
- * @typedef {import('../../../types/controls/rating').RatingEntity} RatingEntity
- * @typedef {import('@inglorious/web').Api} Api
+ * @typedef {import('../../../types/controls/rating').RatingProps} RatingProps
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
@@ -13,11 +12,10 @@ const INDEX_TO_RATING = 1
 /**
  * Rating control rendered as clickable symbols.
  *
- * @param {RatingEntity} entity
- * @param {Api} api
+ * @param {RatingProps} props
  * @returns {TemplateResult}
  */
-export function render(entity, api) {
+export function render(props) {
   const {
     value = DEFAULT_VALUE,
     max = DEFAULT_MAX,
@@ -26,7 +24,8 @@ export function render(entity, api) {
     symbol = "★",
     emptySymbol = "☆",
     size = "md",
-  } = entity
+    onChange,
+  } = props
 
   const classes = {
     "iw-rating": true,
@@ -39,16 +38,16 @@ export function render(entity, api) {
     <div class=${classMap(classes)} role="radiogroup" aria-label="rating">
       ${Array.from({ length: max }, (_, index) => {
         const ratingValue = index + INDEX_TO_RATING
-        const active = ratingValue <= value
+        const isActive = ratingValue <= value
         return html`
           <button
             type="button"
             class="iw-rating-item"
             aria-label=${`rate-${ratingValue}`}
             ?disabled=${disabled || readonly}
-            @click=${() => api.notify(`#${entity.id}:change`, ratingValue)}
+            @click=${() => onChange?.(ratingValue)}
           >
-            ${active ? symbol : emptySymbol}
+            ${isActive ? symbol : emptySymbol}
           </button>
         `
       })}

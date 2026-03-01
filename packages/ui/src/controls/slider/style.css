@@ -1,4 +1,4 @@
-.iw-slider-field {
+.iw-slider {
   --iw-slider-accent: var(--iw-color-primary);
   display: inline-flex;
   flex-direction: column;
@@ -18,7 +18,7 @@
     color: var(--iw-color-text-secondary);
   }
 
-  .iw-slider {
+  .iw-slider-input {
     width: 100%;
     accent-color: var(--iw-slider-accent);
   }

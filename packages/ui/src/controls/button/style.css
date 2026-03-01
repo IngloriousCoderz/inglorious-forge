@@ -43,31 +43,40 @@
   }
 
   &.iw-button-outline {
-    background-color: var(--iw-button-outline-bg);
-    color: var(--iw-button-outline-text);
-    border-color: var(--iw-button-outline-border);
+    background-color: transparent;
+    color: var(--iw-button-color, var(--iw-color-primary));
+    border-color: var(--iw-button-color, var(--iw-color-primary));
     box-shadow: none;
 
     &:hover:not(:disabled) {
-      background-color: var(--iw-button-outline-bg-hover);
-      color: var(--iw-button-outline-text-hover);
+      background-color: color-mix(
+        in srgb,
+        var(--iw-button-color, var(--iw-color-primary)) 10%,
+        transparent
+      );
+      color: var(--iw-button-color, var(--iw-color-primary));
       box-shadow: none;
     }
   }
 
   &.iw-button-ghost {
-    background-color: var(--iw-button-ghost-bg);
-    color: var(--iw-button-ghost-text);
-    border-color: var(--iw-button-ghost-border);
+    background-color: transparent;
+    color: var(--iw-button-color, var(--iw-color-primary));
+    border-color: transparent;
     box-shadow: none;
 
     &:hover:not(:disabled) {
-      background-color: var(--iw-button-ghost-bg-hover);
+      background-color: color-mix(
+        in srgb,
+        var(--iw-button-color, var(--iw-color-primary)) 10%,
+        transparent
+      );
       box-shadow: none;
     }
   }
 
   &.iw-button-secondary {
+    --iw-button-color: var(--iw-color-gray-600);
     --iw-button-bg: var(--iw-color-gray-600);
     --iw-button-bg-hover: var(--iw-color-gray-700);
     --iw-button-bg-active: var(--iw-color-gray-800);
@@ -75,6 +84,7 @@
   }
 
   &.iw-button-success {
+    --iw-button-color: var(--iw-color-success);
     --iw-button-bg: var(--iw-color-success);
     --iw-button-bg-hover: var(--iw-color-success-dark);
     --iw-button-bg-active: #064e3b;
@@ -82,6 +92,7 @@
   }
 
   &.iw-button-warning {
+    --iw-button-color: var(--iw-color-warning);
     --iw-button-bg: var(--iw-color-warning);
     --iw-button-bg-hover: var(--iw-color-warning-dark);
     --iw-button-bg-active: #78350f;
@@ -90,6 +101,7 @@
   }
 
   &.iw-button-error {
+    --iw-button-color: var(--iw-color-error);
     --iw-button-bg: var(--iw-color-error);
     --iw-button-bg-hover: var(--iw-color-error-dark);
     --iw-button-bg-active: #7f1d1d;
@@ -97,6 +109,7 @@
   }
 
   &.iw-button-info {
+    --iw-button-color: var(--iw-color-info);
     --iw-button-bg: var(--iw-color-info);
     --iw-button-bg-hover: var(--iw-color-info-dark);
     --iw-button-bg-active: #1e3a8a;

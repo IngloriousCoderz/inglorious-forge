@@ -1,6 +1,6 @@
 import type { TemplateResult, Api } from "@inglorious/web"
 
-export interface CheckboxEntity {
+export interface CheckboxProps {
   id?: string
   name?: string
   label?: string
@@ -9,11 +9,12 @@ export interface CheckboxEntity {
   required?: boolean
   color?: "primary" | "secondary" | "success" | "warning" | "error" | "info"
   size?: "sm" | "md" | "lg"
+  onChange?: (isChecked: boolean) => void
   [key: string]: unknown
 }
 
 export interface CheckboxType {
-  render(entity: CheckboxEntity, api: Api): TemplateResult
+  render(entity: CheckboxProps, api: Api): TemplateResult
 }
 
 export declare const checkbox: CheckboxType

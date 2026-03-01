@@ -91,8 +91,8 @@ export function render(props) {
           ?required=${required}
           class=${classMap(inputClasses)}
           @input=${(event) => onChange?.(event.target.value)}
-          @blur=${() => onBlur?.()}
-          @focus=${() => onFocus?.()}
+          @blur=${onBlur}
+          @focus=${onFocus}
           ${ref((element) => applyElementProps(element, rest))}
         />
 

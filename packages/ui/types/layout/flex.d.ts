@@ -1,6 +1,6 @@
 import type { TemplateResult, Api } from "@inglorious/web"
 
-export interface FlexEntity {
+export interface FlexProps {
   id?: string
   type?: string
   direction?: "row" | "column" | "row-reverse" | "column-reverse"
@@ -11,10 +11,11 @@ export interface FlexEntity {
   inline?: boolean
   fullWidth?: boolean
   children?: Array<TemplateResult | string | number>
+  onClick?: () => void
 }
 
 export interface FlexType {
-  render(entity: FlexEntity, api: Api): TemplateResult
+  render(entity: FlexProps, api: Api): TemplateResult
 }
 
 export declare const flex: FlexType

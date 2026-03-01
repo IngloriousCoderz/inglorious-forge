@@ -1,6 +1,5 @@
 /**
- * @typedef {import('../../../types/controls/slider').SliderEntity} SliderEntity
- * @typedef {import('@inglorious/web').Api} Api
+ * @typedef {import('../../../types/controls/slider').SliderProps} SliderProps
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
@@ -16,11 +15,10 @@ const DEFAULT_STEP = 1
 /**
  * Slider control based on native range input.
  *
- * @param {SliderEntity} entity
- * @param {Api} api
+ * @param {SliderProps} props
  * @returns {TemplateResult}
  */
-export function render(entity, api) {
+export function render(props) {
   const {
     id,
     type, // eslint-disable-line no-unused-vars
@@ -34,13 +32,14 @@ export function render(entity, api) {
     color = "primary",
     showValue = true,
     fullWidth = false,
+    onChange,
     ...rest
-  } = entity
+  } = props
 
   const inputId = id || name
 
   const classes = {
-    "iw-slider-field": true,
+    "iw-slider": true,
     [`iw-slider-${color}`]: color !== "primary",
     "iw-slider-full-width": fullWidth,
   }
@@ -58,7 +57,7 @@ export function render(entity, api) {
       </div>`}
       <input
         id=${inputId}
-        class="iw-slider"
+        class="iw-slider-input"
         type="range"
         name=${name}
         min=${min}
@@ -66,8 +65,7 @@ export function render(entity, api) {
         step=${step}
         .value=${String(value)}
         ?disabled=${disabled}
-        @input=${(event) =>
-          api.notify(`#${id}:change`, Number(event.target.value))}
+        @input=${(event) => onChange?.(Number(event.target.value))}
         ${ref((element) => applyElementProps(element, rest))}
       />
     </div>

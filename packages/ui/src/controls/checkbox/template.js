@@ -1,6 +1,5 @@
 /**
- * @typedef {import('../../../types/controls/checkbox').CheckboxEntity} CheckboxEntity
- * @typedef {import('@inglorious/web').Api} Api
+ * @typedef {import('../../../types/controls/checkbox').CheckboxProps} CheckboxProps
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
@@ -11,11 +10,10 @@ import { applyElementProps } from "../../shared/applyElementProps.js"
 /**
  * Checkbox control for boolean values.
  *
- * @param {CheckboxEntity} entity
- * @param {Api} api
+ * @param {CheckboxProps} props
  * @returns {TemplateResult}
  */
-export function render(entity, api) {
+export function render(props) {
   const {
     id,
     type, // eslint-disable-line no-unused-vars
@@ -26,13 +24,14 @@ export function render(entity, api) {
     required = false,
     color = "primary",
     size = "md",
+    onChange,
     ...rest
-  } = entity
+  } = props
 
   const inputId = id || name
 
   const classes = {
-    "iw-checkbox-field": true,
+    "iw-checkbox": true,
     "iw-checkbox-disabled": disabled,
     [`iw-checkbox-${color}`]: color !== "primary",
     [`iw-checkbox-${size}`]: size !== "md",
@@ -48,7 +47,7 @@ export function render(entity, api) {
         .checked=${checked}
         ?disabled=${disabled}
         ?required=${required}
-        @change=${(event) => api.notify(`#${id}:change`, event.target.checked)}
+        @change=${(event) => onChange?.(event.target.checked)}
         ${ref((element) => applyElementProps(element, rest))}
       />
       <span class="iw-checkbox-label">${label}</span>

@@ -34,8 +34,6 @@ export default {
 
 export const Default = {}
 Default.args = {
-  id: "fab",
-  type: "fab",
   children: "+",
   color: "primary",
   size: "md",

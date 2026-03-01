@@ -1,6 +1,6 @@
 import type { TemplateResult, Api } from "@inglorious/web"
 
-export interface GridEntity {
+export interface GridProps {
   id?: string
   type?: string
   columns?: number
@@ -13,7 +13,7 @@ export interface GridEntity {
 }
 
 export interface GridType {
-  render(entity: GridEntity, api: Api): TemplateResult
+  render(entity: GridProps, api: Api): TemplateResult
 }
 
 export declare const grid: GridType

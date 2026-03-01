@@ -60,8 +60,8 @@ export function render(props) {
       ?disabled=${disabled}
       class=${classMap(selectClasses)}
       @change=${(event) => onChange?.(event.target.value)}
-      @blur=${() => onBlur?.()}
-      @focus=${() => onFocus?.()}
+      @blur=${onBlur}
+      @focus=${onFocus}
       ${ref((element) => applyElementProps(element, rest))}
     >
       ${repeat(

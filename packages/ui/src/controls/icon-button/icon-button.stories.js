@@ -1,15 +1,11 @@
-import {
-  makeStoryRender,
-  notifyActionArgType,
-} from "../../stories/notifyStory.js"
+import { makeStoryRender } from "../../stories/notifyStory.js"
 import { iconButton } from "."
 
 export default {
   title: "Controls/IconButton",
   tags: ["autodocs"],
-  render: makeStoryRender({ iconButton }),
+  render: makeStoryRender(iconButton.render),
   argTypes: {
-    ...notifyActionArgType,
     icon: { control: "text", description: "Leading icon content." },
     label: { control: "text", description: "Optional button label." },
     iconAfter: { control: "text", description: "Trailing icon content." },
@@ -17,10 +13,6 @@ export default {
       control: "select",
       options: ["row", "column"],
       description: "Layout direction for icon and label.",
-    },
-    iconOnly: {
-      control: "boolean",
-      description: "Renders icon-only content.",
     },
     ariaLabel: {
       control: "text",
@@ -36,6 +28,12 @@ export default {
       options: ["primary", "secondary", "success", "warning", "error", "info"],
       description: "Semantic color inherited from button.",
     },
+    size: {
+      control: "select",
+      options: ["sm", "md", "lg"],
+      description: "Size scale for paddings and font-size.",
+    },
+    onClick: { action: "onClick" },
   },
   parameters: {
     docs: {
@@ -49,8 +47,6 @@ export default {
 
 export const Default = {}
 Default.args = {
-  id: "iconButton",
-  type: "iconButton",
   icon: "★",
   label: "Favorite",
   iconAfter: "",

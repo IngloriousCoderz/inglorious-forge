@@ -11,7 +11,7 @@ export type SelectOption =
       [key: string]: unknown
     }
 
-export interface SelectEntity {
+export interface SelectProps {
   id?: string
   type?: string
   name?: string
@@ -28,9 +28,7 @@ export interface SelectEntity {
 }
 
 export interface SelectType {
-  create(entity: SelectEntity): void
-  change(entity: SelectEntity): void
-  render(entity: SelectEntity, api: Api): TemplateResult
+  render(entity: SelectProps, api: Api): TemplateResult
 }
 
 export declare const select: SelectType

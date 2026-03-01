@@ -1,5 +1,5 @@
 /**
- * @typedef {import('../../../types/controls/select.js').SelectEntity} SelectEntity
+ * @typedef {import('../../../types/controls/select.js').SelectProps} SelectEntity
  * @typedef {import('../../../types/controls/select.js').SelectOption} SelectOption
  */
 

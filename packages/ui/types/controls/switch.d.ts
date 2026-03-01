@@ -1,6 +1,6 @@
 import type { TemplateResult, Api } from "@inglorious/web"
 
-export interface SwitchEntity {
+export interface SwitchProps {
   id?: string
   name?: string
   label?: string
@@ -8,11 +8,12 @@ export interface SwitchEntity {
   disabled?: boolean
   color?: "primary" | "secondary" | "success" | "warning" | "error" | "info"
   size?: "sm" | "md" | "lg"
+  onChange?: (value: boolean) => void
   [key: string]: unknown
 }
 
 export interface SwitchType {
-  render(entity: SwitchEntity, api: Api): TemplateResult
+  render(entity: SwitchProps, api: Api): TemplateResult
 }
 
 export declare const switchControl: SwitchType

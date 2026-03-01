@@ -87,8 +87,6 @@ export default {
 
 export const Default = {}
 Default.args = {
-  id: "input",
-  type: "input",
   label: "Username",
   placeholder: "Enter your username",
   name: "username",

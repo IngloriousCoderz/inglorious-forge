@@ -1,15 +1,11 @@
-import {
-  makeStoryRender,
-  notifyActionArgType,
-} from "../../stories/notifyStory.js"
+import { makeStoryRender } from "../../stories/notifyStory.js"
 import { rating } from "."
 
 export default {
   title: "Controls/Rating",
   tags: ["autodocs"],
-  render: makeStoryRender({ rating }),
+  render: makeStoryRender(rating.render),
   argTypes: {
-    ...notifyActionArgType,
     value: { control: "number", description: "Current rating value." },
     max: { control: "number", description: "Maximum rating value." },
     disabled: { control: "boolean", description: "Disables interaction." },
@@ -24,6 +20,7 @@ export default {
       options: ["sm", "md", "lg"],
       description: "Symbol size.",
     },
+    onChange: { action: "onChange" },
   },
   parameters: {
     docs: {
@@ -37,8 +34,6 @@ export default {
 
 export const Default = {}
 Default.args = {
-  id: "rating",
-  type: "rating",
   value: 3,
   max: 5,
   disabled: false,

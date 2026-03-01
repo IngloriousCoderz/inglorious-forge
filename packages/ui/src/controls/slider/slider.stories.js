@@ -1,15 +1,11 @@
-import {
-  makeStoryRender,
-  notifyActionArgType,
-} from "../../stories/notifyStory.js"
+import { makeStoryRender } from "../../stories/notifyStory.js"
 import { slider } from "."
 
 export default {
   title: "Controls/Slider",
   tags: ["autodocs"],
-  render: makeStoryRender({ slider }),
+  render: makeStoryRender(slider.render),
   argTypes: {
-    ...notifyActionArgType,
     label: { control: "text", description: "Field label." },
     name: { control: "text", description: "Native input name." },
     value: { control: "number", description: "Current slider value." },
@@ -24,6 +20,7 @@ export default {
     disabled: { control: "boolean", description: "Disables interaction." },
     showValue: { control: "boolean", description: "Shows current value." },
     fullWidth: { control: "boolean", description: "Expands width to 100%." },
+    onChange: { action: "onChange" },
   },
   parameters: {
     docs: {
@@ -36,8 +33,6 @@ export default {
 
 export const Default = {}
 Default.args = {
-  id: "slider",
-  type: "slider",
   label: "Volume",
   name: "volume",
   value: 30,

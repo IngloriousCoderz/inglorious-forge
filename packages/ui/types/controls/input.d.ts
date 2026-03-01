@@ -31,9 +31,6 @@ export interface InputProps {
 
 export interface InputType {
   render(entity: InputProps, api: Api): TemplateResult
-  change(entity: InputProps, payload: string, api: Api): void
-  blur(entity: InputProps, payload: unknown, api: Api): void
-  focus(entity: InputProps, payload: unknown, api: Api): void
 }
 
 export declare const input: InputType

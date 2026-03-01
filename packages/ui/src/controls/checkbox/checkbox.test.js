@@ -1,20 +1,19 @@
-import { createMockApi, render } from "@inglorious/web/test"
+import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
 import { checkbox } from "."
 
 describe("checkbox", () => {
   it("renders label and checkbox", () => {
-    const entity = {
+    const props = {
       id: "cb",
       label: "Accept",
       checked: true,
       color: "warning",
     }
-    const api = createMockApi({ [entity.id]: entity })
     const container = document.createElement("div")
 
-    render(checkbox.render(entity, api), container)
+    render(checkbox.render(props), container)
 
     expect(container.querySelector(".iw-checkbox-label").textContent).toBe(
       "Accept",
@@ -22,22 +21,26 @@ describe("checkbox", () => {
     expect(container.querySelector("input").checked).toBe(true)
     expect(
       container
-        .querySelector(".iw-checkbox-field")
+        .querySelector(".iw-checkbox")
         .classList.contains("iw-checkbox-warning"),
     ).toBe(true)
   })
 
   it("dispatches change event", () => {
-    const entity = { id: "cb", checked: false }
-    const api = createMockApi({ [entity.id]: entity })
+    let isChecked = false
+    const props = {
+      id: "cb",
+      checked: false,
+      onChange: (value) => (isChecked = value),
+    }
     const container = document.createElement("div")
 
-    render(checkbox.render(entity, api), container)
+    render(checkbox.render(props), container)
 
     const input = container.querySelector("input")
     input.checked = true
     input.dispatchEvent(new Event("change"))
 
-    expect(api.getEvents()).toEqual([{ type: "#cb:change", payload: true }])
+    expect(isChecked).toBe(true)
   })
 })

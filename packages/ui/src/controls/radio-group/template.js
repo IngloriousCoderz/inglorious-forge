@@ -1,6 +1,5 @@
 /**
- * @typedef {import('../../../types/controls/radio-group').RadioGroupEntity} RadioGroupEntity
- * @typedef {import('@inglorious/web').Api} Api
+ * @typedef {import('../../../types/controls/radio-group').RadioGroupProps} RadioGroupProps
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
@@ -11,11 +10,10 @@ import { applyElementProps } from "../../shared/applyElementProps.js"
 /**
  * Radio group control for selecting one option.
  *
- * @param {RadioGroupEntity} entity
- * @param {Api} api
+ * @param {RadioGroupProps} props
  * @returns {TemplateResult}
  */
-export function render(entity, api) {
+export function render(props) {
   const {
     id,
     type, // eslint-disable-line no-unused-vars
@@ -26,8 +24,9 @@ export function render(entity, api) {
     direction = "column",
     color = "primary",
     disabled = false,
+    onChange,
     ...rest
-  } = entity
+  } = props
 
   const inputId = id || name
 
@@ -65,8 +64,7 @@ export function render(entity, api) {
               value=${optionValue}
               .checked=${value === optionValue}
               ?disabled=${disabled || optionDisabled}
-              @change=${(event) =>
-                api.notify(`#${id}:change`, event.target.value)}
+              @change=${(event) => onChange?.(event.target.value)}
               ${ref((element) => applyElementProps(element, optionRest))}
             />
             <span>${optionLabel}</span>

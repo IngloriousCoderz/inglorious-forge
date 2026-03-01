@@ -65,7 +65,7 @@ export function render(props) {
       aria-pressed=${ariaPressed}
       class=${classMap(classes)}
       ?disabled=${disabled}
-      @click=${() => onClick?.()}
+      @click=${onClick}
       ${ref((element) => applyElementProps(element, rest))}
     >
       ${children}

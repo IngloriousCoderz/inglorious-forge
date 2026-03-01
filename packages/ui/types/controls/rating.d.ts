@@ -1,6 +1,6 @@
 import type { TemplateResult, Api } from "@inglorious/web"
 
-export interface RatingEntity {
+export interface RatingProps {
   id?: string
   value?: number
   max?: number
@@ -8,11 +8,12 @@ export interface RatingEntity {
   readonly?: boolean
   symbol?: string
   emptySymbol?: string
+  onChange?: (value: number) => void
   size?: "sm" | "md" | "lg"
 }
 
 export interface RatingType {
-  render(entity: RatingEntity, api: Api): TemplateResult
+  render(entity: RatingProps, api: Api): TemplateResult
 }
 
 export declare const rating: RatingType

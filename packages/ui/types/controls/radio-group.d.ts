@@ -7,7 +7,7 @@ export interface RadioOption {
   [key: string]: unknown
 }
 
-export interface RadioGroupEntity {
+export interface RadioGroupProps {
   id?: string
   name?: string
   label?: string
@@ -16,11 +16,12 @@ export interface RadioGroupEntity {
   direction?: "column" | "row"
   color?: "primary" | "secondary" | "success" | "warning" | "error" | "info"
   disabled?: boolean
+  onChange?: (value: string) => void
   [key: string]: unknown
 }
 
 export interface RadioGroupType {
-  render(entity: RadioGroupEntity, api: Api): TemplateResult
+  render(entity: RadioGroupProps, api: Api): TemplateResult
 }
 
 export declare const radioGroup: RadioGroupType

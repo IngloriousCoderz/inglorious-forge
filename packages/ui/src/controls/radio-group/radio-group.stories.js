@@ -1,15 +1,11 @@
-import {
-  makeStoryRender,
-  notifyActionArgType,
-} from "../../stories/notifyStory.js"
+import { makeStoryRender } from "../../stories/notifyStory.js"
 import { radioGroup } from "."
 
 export default {
   title: "Controls/RadioGroup",
   tags: ["autodocs"],
-  render: makeStoryRender({ radioGroup }),
+  render: makeStoryRender(radioGroup.render),
   argTypes: {
-    ...notifyActionArgType,
     label: { control: "text", description: "Fieldset label." },
     name: { control: "text", description: "Native radio input name." },
     value: { control: "text", description: "Selected option value." },
@@ -25,6 +21,7 @@ export default {
     },
     disabled: { control: "boolean", description: "Disables all options." },
     options: { control: "object", description: "List of radio options." },
+    onChange: { action: "onChange" },
   },
   parameters: {
     docs: {
@@ -37,8 +34,6 @@ export default {
 
 export const Default = {}
 Default.args = {
-  id: "radioGroup",
-  type: "radioGroup",
   label: "Priority",
   name: "priority",
   value: "medium",

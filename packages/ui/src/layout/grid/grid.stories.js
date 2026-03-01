@@ -1,17 +1,13 @@
 import { html } from "@inglorious/web"
 
-import {
-  makeStoryRender,
-  notifyActionArgType,
-} from "../../stories/notifyStory.js"
+import { makeStoryRender } from "../../stories/notifyStory.js"
 import { grid } from "."
 
 export default {
   title: "Layout/Grid",
   tags: ["autodocs"],
-  render: makeStoryRender({ grid }),
+  render: makeStoryRender(grid.render),
   argTypes: {
-    ...notifyActionArgType,
     columns: {
       control: "number",
       description: "Fixed number of columns when auto-fit is not used.",
@@ -43,6 +39,7 @@ export default {
       control: "object",
       description: "Array of templates/content rendered as-is.",
     },
+    onClick: { action: "onClick" },
   },
   parameters: {
     docs: {
@@ -56,8 +53,6 @@ export default {
 
 export const Default = {}
 Default.args = {
-  id: "grid",
-  type: "grid",
   columns: 3,
   gap: "md",
   align: "stretch",

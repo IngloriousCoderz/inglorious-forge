@@ -1,15 +1,11 @@
-import {
-  makeStoryRender,
-  notifyActionArgType,
-} from "../../stories/notifyStory.js"
+import { makeStoryRender } from "../../stories/notifyStory.js"
 import { switchControl } from "."
 
 export default {
   title: "Controls/Switch",
   tags: ["autodocs"],
-  render: makeStoryRender({ switchControl }),
+  render: makeStoryRender(switchControl.render),
   argTypes: {
-    ...notifyActionArgType,
     label: { control: "text", description: "Label text." },
     name: { control: "text", description: "Native input name." },
     checked: { control: "boolean", description: "Current checked state." },
@@ -24,6 +20,7 @@ export default {
       options: ["sm", "md", "lg"],
       description: "Switch size.",
     },
+    onChange: { action: "onChange" },
   },
   parameters: {
     docs: {
@@ -36,8 +33,6 @@ export default {
 
 export const Default = {}
 Default.args = {
-  id: "switchControl",
-  type: "switchControl",
   label: "Enable notifications",
   name: "notifications",
   checked: false,

@@ -84,6 +84,8 @@ export function render(props) {
           ariaPressed: isPressed ? true : undefined,
           className: isPressed ? "iw-button-pressed" : "",
           onClick: () => {
+            if (!onChange) return
+
             if (multiple) {
               const next = new Set(selectedValues)
               if (next.has(itemValue)) {

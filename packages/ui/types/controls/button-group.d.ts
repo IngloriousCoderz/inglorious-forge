@@ -25,6 +25,7 @@ export interface ButtonGroupProps {
   variant?: "default" | "outline" | "ghost"
   color?: "primary" | "secondary" | "success" | "warning" | "error" | "info"
   disabled?: boolean
+  onChange?: (value?: string | string[]) => void
   [key: string]: unknown
 }
 

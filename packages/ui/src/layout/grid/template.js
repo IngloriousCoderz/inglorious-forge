@@ -1,6 +1,5 @@
 /**
- * @typedef {import('../../../types/layout/grid').GridEntity} GridEntity
- * @typedef {import('@inglorious/web').Api} Api
+ * @typedef {import('../../../types/layout/grid').GridProps} GridProps
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
@@ -12,11 +11,10 @@ const DEFAULT_COLUMNS = 2
  * Grid layout component for Inglorious Web.
  * Children are rendered as-is (templates/content composition).
  *
- * @param {GridEntity} entity
- * @param {Api} _api
+ * @param {GridProps} props
  * @returns {TemplateResult}
  */
-export function render(entity) {
+export function render(props) {
   const {
     columns = DEFAULT_COLUMNS,
     minColumnWidth,
@@ -25,7 +23,8 @@ export function render(entity) {
     justify = "stretch",
     fullWidth = false,
     children = [],
-  } = entity
+    onClick,
+  } = props
 
   const classes = {
     "iw-grid": true,
@@ -41,7 +40,11 @@ export function render(entity) {
       }
     : { gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }
 
-  return html`<div class=${classMap(classes)} style=${styleMap(styles)}>
+  return html`<div
+    class=${classMap(classes)}
+    style=${styleMap(styles)}
+    @click=${onClick}
+  >
     ${children}
   </div>`
 }

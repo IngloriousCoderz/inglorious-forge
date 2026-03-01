@@ -1,15 +1,11 @@
-import {
-  makeStoryRender,
-  notifyActionArgType,
-} from "../../stories/notifyStory.js"
+import { makeStoryRender } from "../../stories/notifyStory.js"
 import { checkbox } from "."
 
 export default {
   title: "Controls/Checkbox",
   tags: ["autodocs"],
-  render: makeStoryRender({ checkbox }),
+  render: makeStoryRender(checkbox.render),
   argTypes: {
-    ...notifyActionArgType,
     label: { control: "text", description: "Label text." },
     name: { control: "text", description: "Native HTML name attribute." },
     checked: { control: "boolean", description: "Current checked state." },
@@ -25,6 +21,7 @@ export default {
       options: ["sm", "md", "lg"],
       description: "Label size scale.",
     },
+    onChange: { action: "onChange" },
   },
   parameters: {
     docs: {
@@ -37,8 +34,6 @@ export default {
 
 export const Default = {}
 Default.args = {
-  id: "checkbox",
-  type: "checkbox",
   label: "Accept terms",
   name: "terms",
   checked: false,

@@ -1,6 +1,5 @@
 /**
- * @typedef {import('../../../types/controls/switch').SwitchEntity} SwitchEntity
- * @typedef {import('@inglorious/web').Api} Api
+ * @typedef {import('../../../types/controls/switch').SwitchProps} SwitchProps
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
@@ -11,11 +10,10 @@ import { applyElementProps } from "../../shared/applyElementProps.js"
 /**
  * Switch control implemented with a checkbox input.
  *
- * @param {SwitchEntity} entity
- * @param {Api} api
+ * @param {SwitchProps} props
  * @returns {TemplateResult}
  */
-export function render(entity, api) {
+export function render(props) {
   const {
     id,
     type, // eslint-disable-line no-unused-vars
@@ -25,13 +23,14 @@ export function render(entity, api) {
     disabled = false,
     color = "primary",
     size = "md",
+    onChange,
     ...rest
-  } = entity
+  } = props
 
   const inputId = id || name
 
   const classes = {
-    "iw-switch-field": true,
+    "iw-switch": true,
     [`iw-switch-${color}`]: color !== "primary",
     [`iw-switch-${size}`]: size !== "md",
     "iw-switch-disabled": disabled,
@@ -46,7 +45,7 @@ export function render(entity, api) {
         name=${name}
         .checked=${checked}
         ?disabled=${disabled}
-        @change=${(event) => api.notify(`#${id}:change`, event.target.checked)}
+        @change=${(event) => onChange?.(event.target.checked)}
         ${ref((element) => applyElementProps(element, rest))}
       />
       <span class="iw-switch-track" aria-hidden="true">

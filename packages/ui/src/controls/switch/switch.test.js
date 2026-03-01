@@ -1,20 +1,19 @@
-import { createMockApi, render } from "@inglorious/web/test"
+import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
 import { switchControl } from "."
 
 describe("switchControl", () => {
   it("renders checked state", () => {
-    const entity = {
+    const props = {
       id: "sw",
       checked: true,
       label: "Enabled",
       color: "success",
     }
-    const api = createMockApi({ [entity.id]: entity })
     const container = document.createElement("div")
 
-    render(switchControl.render(entity, api), container)
+    render(switchControl.render(props), container)
 
     expect(container.querySelector(".iw-switch-input").checked).toBe(true)
     expect(container.querySelector(".iw-switch-label").textContent).toBe(
@@ -22,22 +21,26 @@ describe("switchControl", () => {
     )
     expect(
       container
-        .querySelector(".iw-switch-field")
+        .querySelector(".iw-switch")
         .classList.contains("iw-switch-success"),
     ).toBe(true)
   })
 
   it("dispatches change event", () => {
-    const entity = { id: "sw", checked: false }
-    const api = createMockApi({ [entity.id]: entity })
+    let newValue = null
+    const props = {
+      id: "sw",
+      checked: false,
+      onChange: (value) => (newValue = value),
+    }
     const container = document.createElement("div")
 
-    render(switchControl.render(entity, api), container)
+    render(switchControl.render(props), container)
 
     const input = container.querySelector(".iw-switch-input")
     input.checked = true
     input.dispatchEvent(new Event("change"))
 
-    expect(api.getEvents()).toEqual([{ type: "#sw:change", payload: true }])
+    expect(newValue).toBe(true)
   })
 })

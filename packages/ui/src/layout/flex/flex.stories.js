@@ -1,17 +1,13 @@
 import { html } from "@inglorious/web"
 
-import {
-  makeStoryRender,
-  notifyActionArgType,
-} from "../../stories/notifyStory.js"
+import { makeStoryRender } from "../../stories/notifyStory.js"
 import { flex } from "."
 
 export default {
   title: "Layout/Flex",
   tags: ["autodocs"],
-  render: makeStoryRender({ flex }),
+  render: makeStoryRender(flex.render),
   argTypes: {
-    ...notifyActionArgType,
     direction: {
       control: "select",
       options: ["row", "column", "row-reverse", "column-reverse"],
@@ -49,6 +45,7 @@ export default {
       control: "object",
       description: "Array of templates/content rendered as-is.",
     },
+    onClick: { action: "onClick" },
   },
   parameters: {
     docs: {
@@ -62,8 +59,6 @@ export default {
 
 export const Default = {}
 Default.args = {
-  id: "flex",
-  type: "flex",
   direction: "row",
   wrap: "nowrap",
   justify: "start",

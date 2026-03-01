@@ -1,19 +1,18 @@
 import { html } from "@inglorious/web"
-import { createMockApi, render } from "@inglorious/web/test"
+import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
 import { grid } from "."
 
 describe("grid", () => {
   it("renders children", () => {
-    const entity = {
+    const props = {
       id: "gd",
       children: [html`<div>A</div>`, html`<div>B</div>`, html`<div>C</div>`],
     }
-    const api = createMockApi({ [entity.id]: entity })
     const container = document.createElement("div")
 
-    render(grid.render(entity, api), container)
+    render(grid.render(props), container)
 
     expect(
       container.querySelector(".iw-grid").textContent.replace(/\s+/g, ""),
@@ -21,7 +20,7 @@ describe("grid", () => {
   })
 
   it("applies grid styles and classes", () => {
-    const entity = {
+    const props = {
       id: "gd",
       columns: 4,
       gap: "lg",
@@ -29,10 +28,9 @@ describe("grid", () => {
       justify: "center",
       fullWidth: true,
     }
-    const api = createMockApi({ [entity.id]: entity })
     const container = document.createElement("div")
 
-    render(grid.render(entity, api), container)
+    render(grid.render(props), container)
 
     const root = container.querySelector(".iw-grid")
     expect(root.style.gridTemplateColumns).toContain("repeat(4")
@@ -43,11 +41,10 @@ describe("grid", () => {
   })
 
   it("uses minColumnWidth for auto-fit layouts", () => {
-    const entity = { id: "gd", minColumnWidth: "12rem" }
-    const api = createMockApi({ [entity.id]: entity })
+    const props = { id: "gd", minColumnWidth: "12rem" }
     const container = document.createElement("div")
 
-    render(grid.render(entity, api), container)
+    render(grid.render(props), container)
 
     expect(
       container.querySelector(".iw-grid").style.gridTemplateColumns,
