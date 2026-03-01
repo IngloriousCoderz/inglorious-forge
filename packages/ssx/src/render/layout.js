@@ -34,7 +34,8 @@ export function layout(body, options) {
         <link rel="icon" type="image/x-icon" href="${favicon}">
         ${Object.entries(meta)
           .map(
-            ([name, content]) => `<meta name="${name}" content="${content}">`,
+            ([key, content]) =>
+              `<meta ${key.includes(":") ? "property" : "name"}="${key}" content="${content}">`,
           )
           .join("\n")}
         ${styles

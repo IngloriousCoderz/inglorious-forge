@@ -51,7 +51,8 @@ export default {
           <title>${title}</title>
           ${Object.entries(meta)
             .map(
-              ([name, content]) => `<meta name="${name}" content="${content}">`,
+              ([key, content]) =>
+                `<meta ${key.includes(":") ? "property" : "name"}="${key}" content="${content}">`,
             )
             .join("\n")}
           ${styles

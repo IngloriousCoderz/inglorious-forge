@@ -1,5 +1,11 @@
 # @inglorious/ssx
 
+## 1.10.1
+
+### Patch Changes
+
+- Fix OpenGraph metatag generation in SSX
+
 ## 1.10.0
 
 ### Minor Changes
