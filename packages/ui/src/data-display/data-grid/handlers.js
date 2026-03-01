@@ -1,5 +1,5 @@
 /**
- * @typedef {import('../../../types/data-display/data-grid').DataGridEntity} DataGridEntity
+ * @typedef {import('../../../types/data-display/data-grid').DataGridProps} DataGridEntity
  * @typedef {import('../../../types/data-display/data-grid').Column} Column
  */
 

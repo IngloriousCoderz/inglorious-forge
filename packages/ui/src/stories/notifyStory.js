@@ -18,7 +18,7 @@ export function createRender(type) {
   }
 }
 
-export function makeStoryRender(types) {
+export function createEntityRender(types) {
   return (args) => {
     const { onNotify, ...entity } = args
 

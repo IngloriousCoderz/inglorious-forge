@@ -55,7 +55,6 @@
     .iw-combobox-multi-value {
       flex: 1;
       min-width: 0;
-      padding-right: var(--iw-space-1);
     }
 
     .iw-combobox-placeholder {
@@ -93,7 +92,6 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      position: absolute;
       right: var(--iw-space-7);
 
       &:hover {

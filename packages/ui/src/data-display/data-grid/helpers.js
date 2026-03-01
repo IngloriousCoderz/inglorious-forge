@@ -44,7 +44,7 @@ export function getPaginationInfo(entity) {
   if (!entity.pagination) return null
 
   const totalRows = getTotalRows(entity)
-  const { page, pageSize } = entity.pagination
+  const { page, pageSize, pageSizes } = entity.pagination
   const totalPages = Math.ceil(totalRows / pageSize)
   const start = page * pageSize
   const end = Math.min((page + 1) * pageSize, totalRows)
@@ -52,6 +52,7 @@ export function getPaginationInfo(entity) {
   return {
     page,
     pageSize,
+    pageSizes,
     totalPages,
     totalRows,
     start,

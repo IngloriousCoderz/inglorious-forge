@@ -22,7 +22,7 @@ export interface Column {
   [key: string]: any
 }
 
-export interface DataGridEntity<T extends Row = Row> {
+export interface DataGridProps<T extends Row = Row> {
   id: string | number
   type: string
   data: T[]
@@ -31,47 +31,47 @@ export interface DataGridEntity<T extends Row = Row> {
   filters: Record<string, any>
   search: { value: string; placeholder?: string } | null
   selection: (string | number)[]
-  pagination: { page: number; pageSize: number } | null
+  pagination?: { page: number; pageSize: number; pageSizes: number[] } | null
   rowId?: string
   isMultiSelect: boolean
   [key: string]: any
 }
 
 export interface DataGridType {
-  create(entity: DataGridEntity): void
-  sortChange(entity: DataGridEntity, columnId: string): void
-  sortsClear(entity: DataGridEntity): void
+  create(entity: DataGridProps): void
+  sortChange(entity: DataGridProps, columnId: string): void
+  sortsClear(entity: DataGridProps): void
   filterChange(
-    entity: DataGridEntity,
+    entity: DataGridProps,
     payload: { columnId: string; value: any },
   ): void
-  filtersClear(entity: DataGridEntity): void
-  searchChange(entity: DataGridEntity, search: string): void
-  pageChange(entity: DataGridEntity, page: number): void
-  pageNext(entity: DataGridEntity): void
-  pagePrev(entity: DataGridEntity): void
-  pageSizeChange(entity: DataGridEntity, pageSize: number): void
-  rowSelect(entity: DataGridEntity, rowId: string | number): void
-  rowDeselect(entity: DataGridEntity, rowId: string | number): void
-  rowToggle(entity: DataGridEntity, rowId: string | number): void
-  rowsToggleAll(entity: DataGridEntity): void
-  rowsSelectAll(entity: DataGridEntity): void
-  selectionClear(entity: DataGridEntity): void
-  render(entity: DataGridEntity, api: Api): TemplateResult
-  renderHeader(entity: DataGridEntity, api: Api): TemplateResult
-  renderBody(entity: DataGridEntity, api: Api): TemplateResult
+  filtersClear(entity: DataGridProps): void
+  searchChange(entity: DataGridProps, search: string): void
+  pageChange(entity: DataGridProps, page: number): void
+  pageNext(entity: DataGridProps): void
+  pagePrev(entity: DataGridProps): void
+  pageSizeChange(entity: DataGridProps, pageSize: number): void
+  rowSelect(entity: DataGridProps, rowId: string | number): void
+  rowDeselect(entity: DataGridProps, rowId: string | number): void
+  rowToggle(entity: DataGridProps, rowId: string | number): void
+  rowsToggleAll(entity: DataGridProps): void
+  rowsSelectAll(entity: DataGridProps): void
+  selectionClear(entity: DataGridProps): void
+  render(entity: DataGridProps, api: Api): TemplateResult
+  renderHeader(entity: DataGridProps, api: Api): TemplateResult
+  renderBody(entity: DataGridProps, api: Api): TemplateResult
   renderRow(
-    entity: DataGridEntity,
+    entity: DataGridProps,
     payload: { row: Row; index: number },
     api: Api,
   ): TemplateResult
   renderCell(
-    entity: DataGridEntity,
+    entity: DataGridProps,
     payload: { cell: any; index: number },
     api: Api,
   ): TemplateResult
   renderValue(
-    entity: DataGridEntity,
+    entity: DataGridProps,
     payload: { value: any; column: Column; index: number },
     api: Api,
   ): any

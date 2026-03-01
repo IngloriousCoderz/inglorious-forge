@@ -11,7 +11,7 @@ export type ComboboxOption =
       [key: string]: unknown
     }
 
-export interface ComboboxEntity {
+export interface ComboboxProps {
   id?: string
   type?: string
   label?: string
@@ -39,18 +39,18 @@ export interface ComboboxEntity {
 }
 
 export interface ComboboxType {
-  create(entity: ComboboxEntity): void
-  render(entity: ComboboxEntity, api: Api): TemplateResult
-  open(entity: ComboboxEntity): void
-  close(entity: ComboboxEntity): void
-  toggle(entity: ComboboxEntity): void
-  optionSelect(entity: ComboboxEntity, option: ComboboxOption): void
-  clear(entity: ComboboxEntity): void
-  searchChange(entity: ComboboxEntity, searchTerm: string): void
-  focusNext(entity: ComboboxEntity): void
-  focusPrev(entity: ComboboxEntity): void
-  focusFirst(entity: ComboboxEntity): void
-  focusLast(entity: ComboboxEntity): void
+  create(entity: ComboboxProps): void
+  render(entity: ComboboxProps, api: Api): TemplateResult
+  open(entity: ComboboxProps): void
+  close(entity: ComboboxProps): void
+  toggle(entity: ComboboxProps): void
+  optionSelect(entity: ComboboxProps, option: ComboboxOption): void
+  clear(entity: ComboboxProps): void
+  searchChange(entity: ComboboxProps, searchTerm: string): void
+  focusNext(entity: ComboboxProps): void
+  focusPrev(entity: ComboboxProps): void
+  focusFirst(entity: ComboboxProps): void
+  focusLast(entity: ComboboxProps): void
 }
 
 export declare const select: ComboboxType

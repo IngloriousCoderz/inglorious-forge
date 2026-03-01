@@ -64,7 +64,7 @@ async function setup(entityOverrides = {}) {
         type: "dataGrid",
         rows: JSON.parse(JSON.stringify(sampleData)),
         columns: JSON.parse(JSON.stringify(sampleColumns)),
-        pagination: { page: 0, pageSize: 2 },
+        pagination: { page: 0, pageSize: 2, pageSizes: [10, 20, 30] },
         search: { value: "" },
         ...entityOverrides,
       },

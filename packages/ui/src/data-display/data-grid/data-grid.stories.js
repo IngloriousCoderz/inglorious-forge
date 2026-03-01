@@ -1,5 +1,5 @@
 import {
-  makeStoryRender,
+  createEntityRender,
   notifyActionArgType,
 } from "../../stories/notifyStory.js"
 import { dataGrid } from "."
@@ -7,7 +7,7 @@ import { dataGrid } from "."
 export default {
   title: "Data Display/DataGrid",
   tags: ["autodocs"],
-  render: makeStoryRender({ dataGrid }),
+  render: createEntityRender({ dataGrid }),
   argTypes: {
     ...notifyActionArgType,
     id: { control: "text", description: "Optional grid id" },
@@ -69,6 +69,7 @@ export const Default = {
     pagination: {
       page: 0,
       pageSize: 10,
+      pageSizes: [10, 20, 30],
     },
     // fullWidth: true,
     striped: true,

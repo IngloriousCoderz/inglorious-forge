@@ -1,21 +1,28 @@
-import { makeStoryRender } from "../../stories/notifyStory.js"
+import { createRender } from "../../stories/notifyStory.js"
 import { list } from "."
 
 export default {
   title: "Data Display/List",
   tags: ["autodocs"],
-  render: makeStoryRender({ list }),
+  render: createRender(list),
   argTypes: {
     items: {
       control: "object",
       description: "Items rendered by default renderer.",
     },
-    ordered: { control: "boolean", description: "Use ordered list semantics." },
-    dense: { control: "boolean", description: "Reduce item vertical spacing." },
-    divided: {
+    isOrdered: {
+      control: "boolean",
+      description: "Use ordered list semantics.",
+    },
+    isDense: {
+      control: "boolean",
+      description: "Reduce item vertical spacing.",
+    },
+    isDivided: {
       control: "boolean",
       description: "Add separators between items.",
     },
+    onItemClick: { action: "onItemClick" },
   },
   parameters: {
     docs: {
@@ -29,15 +36,34 @@ export default {
 
 export const Default = {
   args: {
-    id: "list",
-    type: "list",
     items: [
       { id: "a", label: "First item" },
       { id: "b", label: "Second item" },
       { id: "c", label: "Third item" },
     ],
-    ordered: false,
-    dense: false,
-    divided: false,
+    isOrdered: false,
+    isDense: false,
+    isDivided: false,
+  },
+}
+
+export const Ordered = {
+  args: {
+    ...Default.args,
+    isOrdered: true,
+  },
+}
+
+export const Dense = {
+  args: {
+    ...Default.args,
+    isDense: true,
+  },
+}
+
+export const Divided = {
+  args: {
+    ...Default.args,
+    isDivided: true,
   },
 }

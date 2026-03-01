@@ -1,6 +1,8 @@
 import type { TemplateResult, Api } from "@inglorious/web"
 
-export interface ListEntity {
+export type ListItem = unknown
+
+export interface ListProps {
   id?: string
   type?: string
   items?: unknown[]
@@ -9,14 +11,19 @@ export interface ListEntity {
   dense?: boolean
   divided?: boolean
   className?: string
+  onItemClick?: (item: ListItem, index: number) => void
   [key: string]: unknown
 }
 
 export interface ListType {
-  render(entity: ListEntity, api: Api): TemplateResult
+  render(entity: ListProps, api: Api): TemplateResult
   renderItem(
-    entity: ListEntity,
-    payload: { item: unknown; index: number },
+    entity: ListProps,
+    payload: {
+      item: ListItem
+      index: number
+      onItemClick?: (item: ListItem, index: number) => void
+    },
     api: Api,
   ): TemplateResult
 }

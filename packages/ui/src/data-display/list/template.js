@@ -1,6 +1,5 @@
 /**
- * @typedef {import('../../../types/data-display/list').ListEntity} ListEntity
- * @typedef {import('@inglorious/web').Api} Api
+ * @typedef {import('../../../types/data-display/list').ListProps} ListProps
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
@@ -10,83 +9,81 @@ import { applyElementProps } from "../../shared/applyElementProps.js"
 
 const PRETTY_INDEX = 1
 
-/**
- * @param {ListEntity} entity
- * @param {Api} api
- * @returns {TemplateResult}
- */
-export function render(entity, api) {
-  const {
-    type,
-    items = [],
-    children,
-    ordered = false,
-    dense = false,
-    divided = false,
-    className = "",
-    ...rest
-  } = entity
+export const list = {
+  /**
+   * @param {ListProps} props
+   * @returns {TemplateResult}
+   */
+  render(props) {
+    const {
+      type, // eslint-disable-line no-unused-vars
+      items = [],
+      children,
+      isOrdered = false,
+      isDense = false,
+      isDivided = false,
+      className = "",
+      onItemClick,
+      ...rest
+    } = props
 
-  const extraClasses = Object.fromEntries(
-    className
-      .split(/\s+/)
-      .filter(Boolean)
-      .map((name) => [name, true]),
-  )
-
-  const classes = {
-    "iw-list": true,
-    "iw-list-ordered": ordered,
-    "iw-list-dense": dense,
-    "iw-list-divided": divided,
-    ...extraClasses,
-  }
-
-  const typeWithRenderers = getListType(type, api)
-  const content =
-    children ??
-    repeat(
-      items,
-      (item, index) => item?.id ?? `${index}`,
-      (item, index) =>
-        typeWithRenderers.renderItem(entity, { item, index }, api),
+    const extraClasses = Object.fromEntries(
+      className
+        .split(/\s+/)
+        .filter(Boolean)
+        .map((name) => [name, true]),
     )
 
-  if (ordered) {
+    const classes = {
+      "iw-list": true,
+      "iw-list-ordered": isOrdered,
+      "iw-list-dense": isDense,
+      "iw-list-divided": isDivided,
+      ...extraClasses,
+    }
+
+    const content =
+      children ??
+      repeat(
+        items,
+        (item, index) => item?.id ?? `${index}`,
+        (item, index) => this.renderItem(props, { item, index, onItemClick }),
+      )
+
+    if (isOrdered) {
+      return html`
+        <ol
+          class=${classMap(classes)}
+          ${ref((el) => applyElementProps(el, rest))}
+        >
+          ${content}
+        </ol>
+      `
+    }
+
     return html`
-      <ol
+      <ul
         class=${classMap(classes)}
         ${ref((el) => applyElementProps(el, rest))}
       >
         ${content}
-      </ol>
+      </ul>
     `
-  }
+  },
 
-  return html`
-    <ul class=${classMap(classes)} ${ref((el) => applyElementProps(el, rest))}>
-      ${content}
-    </ul>
-  `
-}
-
-/**
- * @param {ListEntity} _entity
- * @param {{item: unknown, index: number}} payload
- * @returns {TemplateResult}
- */
-export function renderItem(_entity, { item, index }) {
-  const text =
-    item?.label ?? item?.children ?? item ?? `${index + PRETTY_INDEX}`
-  return html`<li class="iw-list-item">${text}</li>`
-}
-
-function getListType(type, api) {
-  const resolved = api?.getType?.(type)
-
-  if (typeof resolved?.renderItem === "function") {
-    return resolved
-  }
-
-  return { renderItem }
+  /**
+   * @param {ListProps} props
+   * @param {{item: unknown, index: number}} payload
+   * @returns {TemplateResult}
+   */
+  renderItem(props, { item, index, onItemClick }) {
+    const text =
+      item?.label ?? item?.children ?? item ?? `${index + PRETTY_INDEX}`
+    return html`<li
+      class="iw-list-item"
+      @click=${() => onItemClick(item, index)}
+    >
+      ${text}
+    </li>`
+  },
 }

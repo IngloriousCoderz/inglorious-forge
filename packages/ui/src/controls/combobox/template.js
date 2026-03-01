@@ -1,5 +1,5 @@
 /**
- * @typedef {import('../../../types/controls/combobox.js').ComboboxEntity} ComboboxEntity
+ * @typedef {import('../../../types/controls/combobox.js').ComboboxProps} ComboboxProps
  * @typedef {import('../../../types/controls/combobox.js').ComboboxOption} ComboboxOption
  * @typedef {import('@inglorious/web').Api} Api
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
@@ -18,332 +18,333 @@ import {
 
 const NO_FOCUSED_INDEX = -1
 
-/**
- * Select control render function.
- * @param {ComboboxEntity} entity
- * @param {Api} api
- * @returns {TemplateResult}
- */
-export function render(entity, api) {
-  const type = api.getType(entity.type)
+export const combobox = {
+  /**
+   * Select control render function.
+   * @param {ComboboxProps} props
+   * @param {Api} api
+   * @returns {TemplateResult}
+   */
+  render(props, api) {
+    return html`<div
+      class=${classMap({
+        "iw-combobox": true,
+        "iw-combobox-full-width": !!props.fullWidth,
+        [`iw-combobox-${props.size}`]: props.size !== "md",
+      })}
+    >
+      ${props.label
+        ? html`<label class="iw-combobox-label">${props.label}</label>`
+        : null}
+      ${this.renderControl?.(props, api)}
+      ${when(props.isOpen, () => this.renderDropdown?.(props, api))}
+    </div>`
+  },
 
-  return html`<div
-    class=${classMap({
-      "iw-combobox": true,
-      "iw-combobox-full-width": !!entity.fullWidth,
-      [`iw-combobox-${entity.size}`]: entity.size !== "md",
-    })}
-  >
-    ${entity.label
-      ? html`<label class="iw-combobox-label">${entity.label}</label>`
-      : null}
-    ${type.renderControl?.(entity, api)}
-    ${when(entity.isOpen, () => type.renderDropdown?.(entity, api))}
-  </div>`
-}
+  /**
+   * Render trigger control.
+   * @param {ComboboxProps} props
+   * @param {Api} api
+   * @returns {TemplateResult}
+   */
+  renderControl(props, api) {
+    return html`<div
+      class="iw-combobox-control ${classMap({
+        "iw-combobox-control-open": props.isOpen,
+        "iw-combobox-control-disabled": props.isDisabled,
+        "iw-combobox-control-selection":
+          props.isMulti &&
+          Array.isArray(props.selectedValue) &&
+          props.selectedValue.length,
+      })}"
+      @click=${() => !props.isDisabled && api.notify(`#${props.id}:toggle`)}
+    >
+      ${when(
+        props.isMulti,
+        () => this.renderMultiValue?.(props, api),
+        () => this.renderSingleValue?.(props),
+      )}
+      ${when(
+        props.isClearable &&
+          ((props.isMulti &&
+            Array.isArray(props.selectedValue) &&
+            props.selectedValue.length) ||
+            (!props.isMulti && props.selectedValue !== null)),
+        () =>
+          html`<button
+            class="iw-combobox-clear"
+            type="button"
+            @click=${(event) => {
+              event.stopPropagation()
+              api.notify(`#${props.id}:clear`)
+              props.onClear?.()
+            }}
+          >
+            ×
+          </button>`,
+      )}
 
-/**
- * Render trigger control.
- * @param {ComboboxEntity} entity
- * @param {Api} api
- * @returns {TemplateResult}
- */
-export function renderControl(entity, api) {
-  const type = api.getType(entity.type)
+      <div class="iw-combobox-arrow"><span>▼</span></div>
+    </div>`
+  },
 
-  return html`<div
-    class="iw-combobox-control ${classMap({
-      "iw-combobox-control-open": entity.isOpen,
-      "iw-combobox-control-disabled": entity.isDisabled,
-      "iw-combobox-control-selection":
-        entity.isMulti &&
-        Array.isArray(entity.selectedValue) &&
-        entity.selectedValue.length,
-    })}"
-    @click=${() => !entity.isDisabled && api.notify(`#${entity.id}:toggle`)}
-  >
-    ${when(
-      entity.isMulti,
-      () => type.renderMultiValue?.(entity, api),
-      () => type.renderSingleValue?.(entity),
-    )}
-    ${when(
-      entity.isClearable &&
-        ((entity.isMulti &&
-          Array.isArray(entity.selectedValue) &&
-          entity.selectedValue.length) ||
-          (!entity.isMulti && entity.selectedValue !== null)),
-      () =>
-        html`<button
-          class="iw-combobox-clear"
-          type="button"
-          @click=${(event) => {
-            event.stopPropagation()
-            api.notify(`#${entity.id}:clear`)
-          }}
-        >
-          ×
-        </button>`,
-    )}
+  /**
+   * Render single selected value.
+   * @param {ComboboxProps} props
+   * @returns {TemplateResult}
+   */
+  renderSingleValue(props) {
+    if (props.selectedValue === null) {
+      return html`<span class="iw-combobox-placeholder"
+        >${props.placeholder}</span
+      >`
+    }
 
-    <div class="iw-combobox-arrow"><span>▼</span></div>
-  </div>`
-}
+    const selectedOption = props.options.find(
+      (option) => getOptionValue(option) === props.selectedValue,
+    )
 
-/**
- * Render single selected value.
- * @param {ComboboxEntity} entity
- * @returns {TemplateResult}
- */
-export function renderSingleValue(entity) {
-  if (entity.selectedValue === null) {
-    return html`<span class="iw-combobox-placeholder"
-      >${entity.placeholder}</span
+    return html`<span class="iw-combobox-value"
+      >${selectedOption
+        ? getOptionLabel(selectedOption)
+        : String(props.selectedValue)}</span
     >`
-  }
+  },
 
-  const selectedOption = entity.options.find(
-    (option) => getOptionValue(option) === entity.selectedValue,
-  )
+  /**
+   * Render multi selected value tags.
+   * @param {ComboboxProps} props
+   * @param {Api} api
+   * @returns {TemplateResult}
+   */
+  renderMultiValue(props, api) {
+    if (!Array.isArray(props.selectedValue) || !props.selectedValue.length) {
+      return html`<span class="iw-combobox-placeholder"
+        >${props.placeholder}</span
+      >`
+    }
 
-  return html`<span class="iw-combobox-value"
-    >${selectedOption
-      ? getOptionLabel(selectedOption)
-      : String(entity.selectedValue)}</span
-  >`
-}
+    return html`<div class="iw-combobox-multi-value">
+      ${repeat(
+        props.selectedValue,
+        (value) => value,
+        (value) => this.renderMultiValueTag?.(props, value, api),
+      )}
+    </div>`
+  },
 
-/**
- * Render multi selected value tags.
- * @param {ComboboxEntity} entity
- * @param {Api} api
- * @returns {TemplateResult}
- */
-export function renderMultiValue(entity, api) {
-  const type = api.getType(entity.type)
-  if (!Array.isArray(entity.selectedValue) || !entity.selectedValue.length) {
-    return html`<span class="iw-combobox-placeholder"
-      >${entity.placeholder}</span
-    >`
-  }
+  /**
+   * Render a selected multi-value tag.
+   * @param {ComboboxProps} props
+   * @param {string|number} value
+   * @param {Api} api
+   * @returns {TemplateResult}
+   */
+  renderMultiValueTag(props, value, api) {
+    const option = props.options.find((opt) => getOptionValue(opt) === value)
+    const tagId = `${props.id}-tag-${String(value)}`
+    const chipSize = props.size === "lg" ? "md" : "sm"
 
-  return html`<div class="iw-combobox-multi-value">
-    ${repeat(
-      entity.selectedValue,
-      (value) => value,
-      (value) => type.renderMultiValueTag?.(entity, value, api),
-    )}
-  </div>`
-}
+    return html`<span
+      class="iw-combobox-multi-value-tag"
+      @click=${(event) => event.stopPropagation()}
+    >
+      ${chip.render({
+        id: tagId,
+        children: option ? getOptionLabel(option) : String(value),
+        isRemovable: true,
+        size: chipSize,
+        shape: "rounded",
+        onClick: () => {
+          api.notify(`#${props.id}:optionSelect`, option)
+          props.onChange?.(option)
+        },
+      })}
+    </span>`
+  },
 
-/**
- * Render a selected multi-value tag.
- * @param {ComboboxEntity} entity
- * @param {string|number} value
- * @param {Api} api
- * @returns {TemplateResult}
- */
-export function renderMultiValueTag(entity, value, api) {
-  const option = entity.options.find((opt) => getOptionValue(opt) === value)
-  const tagId = `${entity.id}-tag-${String(value)}`
-  const chipSize = entity.size === "lg" ? "md" : "sm"
+  /**
+   * Render dropdown.
+   * @param {ComboboxProps} props
+   * @param {Api} api
+   * @returns {TemplateResult}
+   */
+  renderDropdown(props, api) {
+    const filteredOptions = filterOptions(props.options, props.searchTerm)
 
-  return html`<span
-    class="iw-combobox-multi-value-tag"
-    @click=${(event) => event.stopPropagation()}
-  >
-    ${chip.render({
-      id: tagId,
-      children: option ? getOptionLabel(option) : String(value),
-      isRemovable: true,
-      size: chipSize,
-      shape: "rounded",
-      onClick: () => api.notify(`#${entity.id}:optionSelect`, option),
-    })}
-  </span>`
-}
+    return html`<div
+      class="iw-combobox-dropdown"
+      ${ref((el) => {
+        if (el) {
+          setTimeout(() => {
+            document.addEventListener(
+              "click",
+              (event) => {
+                if (!el.contains(event.target)) {
+                  api.notify(`#${props.id}:close`)
+                }
+              },
+              { once: true },
+            )
+          })
+        }
+      })}
+    >
+      ${when(props.isSearchable, () => this.renderSearchInput?.(props, api))}
+      ${when(props.isLoading, () => this.renderLoading?.(props))}
+      ${when(!props.isLoading && !filteredOptions.length, () =>
+        this.renderNoOptions?.(props),
+      )}
+      ${when(!props.isLoading && filteredOptions.length, () =>
+        this.renderOptions?.(props, api),
+      )}
+    </div>`
+  },
 
-/**
- * Render dropdown.
- * @param {ComboboxEntity} entity
- * @param {Api} api
- * @returns {TemplateResult}
- */
-export function renderDropdown(entity, api) {
-  const type = api.getType(entity.type)
-  const filteredOptions = filterOptions(entity.options, entity.searchTerm)
+  /**
+   * Render search input.
+   * @param {ComboboxProps} props
+   * @param {Api} api
+   * @returns {TemplateResult}
+   */
+  renderSearchInput(props, api) {
+    return html`<input
+      class="iw-combobox-dropdown-search"
+      type="text"
+      placeholder="Search..."
+      .value=${props.searchTerm ?? ""}
+      @input=${(event) =>
+        api.notify(`#${props.id}:searchChange`, event.target.value)}
+      @keydown=${(event) => handleKeyDown(props, event, api)}
+      ${ref((el) => {
+        if (el && props.isOpen) queueMicrotask(() => el.focus())
+      })}
+    />`
+  },
 
-  return html`<div
-    class="iw-combobox-dropdown"
-    ${ref((el) => {
-      if (el) {
-        setTimeout(() => {
-          document.addEventListener(
-            "click",
-            (event) => {
-              if (!el.contains(event.target)) {
-                api.notify(`#${entity.id}:close`)
-              }
-            },
-            { once: true },
-          )
-        })
-      }
-    })}
-  >
-    ${when(entity.isSearchable, () => type.renderSearchInput?.(entity, api))}
-    ${when(entity.isLoading, () => type.renderLoading?.(entity))}
-    ${when(!entity.isLoading && !filteredOptions.length, () =>
-      type.renderNoOptions?.(entity),
-    )}
-    ${when(!entity.isLoading && filteredOptions.length, () =>
-      type.renderOptions?.(entity, api),
-    )}
-  </div>`
-}
+  /**
+   * Render options list.
+   * @param {ComboboxProps} props
+   * @param {Api} api
+   * @returns {TemplateResult}
+   */
+  renderOptions(props, api) {
+    const filteredOptions = filterOptions(props.options, props.searchTerm)
 
-/**
- * Render search input.
- * @param {ComboboxEntity} entity
- * @param {Api} api
- * @returns {TemplateResult}
- */
-export function renderSearchInput(entity, api) {
-  return html`<input
-    class="iw-combobox-dropdown-search"
-    type="text"
-    placeholder="Search..."
-    .value=${entity.searchTerm ?? ""}
-    @input=${(event) =>
-      api.notify(`#${entity.id}:searchChange`, event.target.value)}
-    @keydown=${(event) => handleKeyDown(entity, event, api)}
-    ${ref((el) => {
-      if (el && entity.isOpen) queueMicrotask(() => el.focus())
-    })}
-  />`
-}
+    return html`<div class="iw-combobox-dropdown-options">
+      ${repeat(
+        filteredOptions,
+        (option) => getOptionValue(option),
+        (option, index) => this.renderOption?.(props, { option, index }, api),
+      )}
+    </div>`
+  },
 
-/**
- * Render options list.
- * @param {ComboboxEntity} entity
- * @param {Api} api
- * @returns {TemplateResult}
- */
-export function renderOptions(entity, api) {
-  const filteredOptions = filterOptions(entity.options, entity.searchTerm)
-  const type = api.getType?.(entity.type)
+  /**
+   * Render an option row.
+   * @param {ComboboxProps} props
+   * @param {{ option: ComboboxOption, index: number }} payload
+   * @param {Api} api
+   * @returns {TemplateResult}
+   */
+  renderOption(props, { option, index }, api) {
+    const normalized = formatOption(option)
+    const isSelected = isOptionSelected(
+      option,
+      props.selectedValue,
+      props.isMulti,
+    )
+    const isFocused = index === props.focusedIndex
 
-  return html`<div class="iw-combobox-dropdown-options">
-    ${repeat(
-      filteredOptions,
-      (option) => getOptionValue(option),
-      (option, index) => type.renderOption?.(entity, { option, index }, api),
-    )}
-  </div>`
-}
+    return html`<div
+      class="iw-combobox-dropdown-options-option ${classMap({
+        "iw-combobox-dropdown-options-option-selected": isSelected,
+        "iw-combobox-dropdown-options-option-focused": isFocused,
+        "iw-combobox-dropdown-options-option-disabled": !!normalized.disabled,
+      })}"
+      @click=${() => {
+        if (normalized.disabled) return
+        api.notify(`#${props.id}:optionSelect`, normalized)
+        props.onChange?.(normalized)
+      }}
+      @mouseenter=${() => api.notify(`#${props.id}:focusSet`, index)}
+    >
+      ${when(
+        props.isMulti,
+        () =>
+          html`<input
+            type="checkbox"
+            .checked=${isSelected}
+            ?disabled=${!!normalized.disabled}
+          />`,
+      )}
+      <span>${getOptionLabel(normalized)}</span>
+    </div>`
+  },
 
-/**
- * Render an option row.
- * @param {ComboboxEntity} entity
- * @param {{ option: ComboboxOption, index: number }} payload
- * @param {Api} api
- * @returns {TemplateResult}
- */
-export function renderOption(entity, { option, index }, api) {
-  const normalized = formatOption(option)
-  const isSelected = isOptionSelected(
-    option,
-    entity.selectedValue,
-    entity.isMulti,
-  )
-  const isFocused = index === entity.focusedIndex
+  /**
+   * Render loading state.
+   * @param {ComboboxProps} props
+   * @returns {TemplateResult}
+   */
+  renderLoading(props) {
+    return html`<div class="iw-combobox-loading">${props.loadingMessage}</div>`
+  },
 
-  return html`<div
-    class="iw-combobox-dropdown-options-option ${classMap({
-      "iw-combobox-dropdown-options-option-selected": isSelected,
-      "iw-combobox-dropdown-options-option-focused": isFocused,
-      "iw-combobox-dropdown-options-option-disabled": !!normalized.disabled,
-    })}"
-    @click=${() => {
-      if (normalized.disabled) return
-      api.notify(`#${entity.id}:optionSelect`, normalized)
-    }}
-    @mouseenter=${() => api.notify(`#${entity.id}:focusSet`, index)}
-  >
-    ${when(
-      entity.isMulti,
-      () =>
-        html`<input
-          type="checkbox"
-          .checked=${isSelected}
-          ?disabled=${!!normalized.disabled}
-        />`,
-    )}
-    <span>${getOptionLabel(normalized)}</span>
-  </div>`
-}
-
-/**
- * Render loading state.
- * @param {ComboboxEntity} entity
- * @returns {TemplateResult}
- */
-export function renderLoading(entity) {
-  return html`<div class="iw-combobox-loading">${entity.loadingMessage}</div>`
-}
-
-/**
- * Render no options state.
- * @param {ComboboxEntity} entity
- * @returns {TemplateResult}
- */
-export function renderNoOptions(entity) {
-  return html`<div class="iw-combobox-no-options">
-    ${entity.noOptionsMessage}
-  </div>`
+  /**
+   * Render no options state.
+   * @param {ComboboxProps} props
+   * @returns {TemplateResult}
+   */
+  renderNoOptions(props) {
+    return html`<div class="iw-combobox-no-options">
+      ${props.noOptionsMessage}
+    </div>`
+  },
 }
 
 /**
  * Handle key navigation.
- * @param {ComboboxEntity} entity
+ * @param {ComboboxProps} props
  * @param {KeyboardEvent} event
  * @param {Api} api
  */
-function handleKeyDown(entity, event, api) {
-  const filteredOptions = filterOptions(entity.options, entity.searchTerm)
+function handleKeyDown(props, event, api) {
+  const filteredOptions = filterOptions(props.options, props.searchTerm)
 
   switch (event.key) {
     case "ArrowDown":
       event.preventDefault()
-      api.notify(`#${entity.id}:focusNext`)
+      api.notify(`#${props.id}:focusNext`)
       break
     case "ArrowUp":
       event.preventDefault()
-      api.notify(`#${entity.id}:focusPrev`)
+      api.notify(`#${props.id}:focusPrev`)
       break
     case "Enter":
       event.preventDefault()
       if (
-        entity.focusedIndex > NO_FOCUSED_INDEX &&
-        filteredOptions[entity.focusedIndex]
+        props.focusedIndex > NO_FOCUSED_INDEX &&
+        filteredOptions[props.focusedIndex]
       ) {
-        const option = formatOption(filteredOptions[entity.focusedIndex])
+        const option = formatOption(filteredOptions[props.focusedIndex])
         if (!option.disabled) {
-          api.notify(`#${entity.id}:optionSelect`, option)
+          api.notify(`#${props.id}:optionSelect`, option)
+          props.onChange?.(option)
         }
       }
       break
     case "Escape":
       event.preventDefault()
-      api.notify(`#${entity.id}:close`)
+      api.notify(`#${props.id}:close`)
       break
     case "Home":
       event.preventDefault()
-      api.notify(`#${entity.id}:focusFirst`)
+      api.notify(`#${props.id}:focusFirst`)
       break
     case "End":
       event.preventDefault()
-      api.notify(`#${entity.id}:focusLast`)
+      api.notify(`#${props.id}:focusLast`)
       break
     default:
       break

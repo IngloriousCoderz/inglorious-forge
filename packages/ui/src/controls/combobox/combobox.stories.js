@@ -1,5 +1,5 @@
 import {
-  makeStoryRender,
+  createEntityRender,
   notifyActionArgType,
 } from "../../stories/notifyStory.js"
 import { combobox } from "./index.js"
@@ -14,7 +14,7 @@ const options = [
 export default {
   title: "Controls/Combobox",
   tags: ["autodocs"],
-  render: makeStoryRender({ combobox }),
+  render: createEntityRender({ combobox }),
   argTypes: {
     ...notifyActionArgType,
     label: { control: "text", description: "Field label." },

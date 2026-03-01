@@ -1,12 +1,12 @@
 /**
  * @typedef {import('../../../types/data-display/data-grid').Column} Column
- * @typedef {import('../../../types/data-display/data-grid').DataGridEntity} DataGridEntity
+ * @typedef {import('../../../types/data-display/data-grid').DataGridProps} DataGridProps
  * @typedef {import('../../../types/data-display/data-grid').Row} Row
  * @typedef {import('@inglorious/web').Api} Api
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
-import { classMap, html, ref, repeat } from "@inglorious/web"
+import { classMap, html, ref, repeat, when } from "@inglorious/web"
 
 import { button } from "../../controls/button/index.js"
 import { input } from "../../controls/input/index.js"
@@ -26,296 +26,289 @@ const PRETTY_PAGE = 1
 const FIRST_PAGE = 0
 const LAST_PAGE = 1
 
-/**
- * Measures and sets initial column widths.
- * This is called after the initial render to capture the "auto" widths of columns.
- * @param {DataGridEntity} entity The table entity.
- * @param {HTMLElement} containerEl The header row element containing the columns.
- */
-export function mount(entity, containerEl) {
-  const columns = containerEl.querySelectorAll(":scope > *")
-  ;[...columns].forEach((column, index) => {
-    entity.columns[index].width = column.offsetWidth
-  })
-}
+export const dataGrid = {
+  /**
+   * Measures and sets initial column widths.
+   * This is called after the initial render to capture the "auto" widths of columns.
+   * @param {DataGridProps} props The table props.
+   * @param {HTMLElement} containerEl The header row element containing the columns.
+   */
+  mount(props, containerEl) {
+    const columns = containerEl.querySelectorAll(":scope > *")
+    ;[...columns].forEach((column, index) => {
+      props.columns[index].width = column.offsetWidth
+    })
+  },
 
-/**
- * Renders the main table component.
- * @param {DataGridEntity} entity The table entity.
- * @param {Api} api The API object.
- * @returns {TemplateResult} The rendered table.
- */
-export function render(entity, api) {
-  const { striped = false } = entity
+  /**
+   * Renders the main table component.
+   * @param {DataGridProps} props The table props.
+   * @param {Api} api The API object.
+   * @returns {TemplateResult} The rendered table.
+   */
+  render(props, api) {
+    const { striped = false } = props
 
-  const type = api.getType(entity.type)
+    const classes = {
+      "iw-data-grid": true,
+      "iw-data-grid-striped": striped,
+    }
 
-  const classes = {
-    "iw-data-grid": true,
-    "iw-data-grid-striped": striped,
-  }
+    return html`<div class=${classMap(classes)}>
+      ${this.renderHeader?.(props, api)} ${this.renderBody?.(props, api)}
+      ${this.renderFooter?.(props, api)}
+    </div> `
+  },
 
-  return html`<div class=${classMap(classes)}>
-    ${type.renderHeader(entity, api)} ${type.renderBody(entity, api)}
-    ${type.renderFooter(entity, api)}
-  </div> `
-}
+  /**
+   * Renders the table header.
+   * @param {DataGridProps} props The table props.
+   * @param {Api} api The API object.
+   * @returns {TemplateResult} The rendered header.
+   */
+  renderHeader(props, api) {
+    return html`<div class="iw-data-grid-header">
+      <div
+        class="iw-data-grid-header-row"
+        ${ref((el) => {
+          if (
+            el &&
+            props.columns.some(({ width }) => typeof width === "string")
+          ) {
+            queueMicrotask(() => {
+              api.notify(`#${props.id}:mount`, el)
+            })
+          }
+        })}
+      >
+        ${repeat(
+          props.columns,
+          (column) => column.id,
+          (column, index) =>
+            this.renderHeaderColumn?.(props, { column, index }, api),
+        )}
+      </div>
 
-/**
- * Renders the table header.
- * @param {DataGridEntity} entity The table entity.
- * @param {Api} api The API object.
- * @returns {TemplateResult} The rendered header.
- */
-export function renderHeader(entity, api) {
-  const type = api.getType(entity.type)
+      ${props.search && this.renderSearchbar?.(props, api)}
+    </div>`
+  },
 
-  return html`<div class="iw-data-grid-header">
-    <div
-      class="iw-data-grid-header-row"
-      ${ref((el) => {
-        if (
-          el &&
-          entity.columns.some(({ width }) => typeof width === "string")
-        ) {
-          queueMicrotask(() => {
-            api.notify(`#${entity.id}:mount`, el)
-          })
-        }
+  /**
+   * Renders a single column in the header.
+   * @param {DataGridProps} props The table props.
+   * @param {object} payload The payload.
+   * @param {Column} payload.column The column definition.
+   * @param {Api} api The API object.
+   * @returns {TemplateResult} The rendered header column.
+   */
+  renderHeaderColumn(props, { column }, api) {
+    return html`<div
+      class="iw-data-grid-header-column"
+      style=${getColumnStyle(column)}
+    >
+      <div
+        @click=${() =>
+          column.isSortable && api.notify(`#${props.id}:sortChange`, column.id)}
+        class="iw-data-grid-header-title"
+      >
+        ${column.title} ${getSortIcon(getSortDirection(props, column.id))}
+      </div>
+
+      ${column.isFilterable && filters.render(props, column, api)}
+    </div>`
+  },
+
+  /**
+   * Renders the search bar.
+   * @param {DataGridProps} props The table props.
+   * @param {Api} api The API object.
+   * @returns {TemplateResult} The rendered search bar.
+   */
+  renderSearchbar(props, api) {
+    return html`<div class="iw-data-grid-searchbar">
+      ${input.render({
+        size: "sm",
+        fullWidth: true,
+        name: "search",
+        inputType: "text",
+        placeholder: props.search.placeholder ?? "Fuzzy search...",
+        value: props.search.value,
+        onChange: (value) => api.notify(`#${props.id}:searchChange`, value),
       })}
+    </div>`
+  },
+
+  /**
+   * Renders the table body with rows.
+   * @param {DataGridProps} props The table props.
+   * @param {Api} api The API object.
+   * @returns {TemplateResult} The rendered table body.
+   */
+  renderBody(props, api) {
+    return html`<div class="iw-data-grid-body">
+      ${repeat(
+        getRows(props),
+        (row) => getRowKeyValue(props, row),
+        (row, index) => this.renderRow?.(props, { row, index }, api),
+      )}
+    </div>`
+  },
+
+  /**
+   * Renders a single row in the table body.
+   * @param {DataGridProps} props The table props.
+   * @param {object} payload The payload.
+   * @param {Row} payload.row The row data.
+   * @param {number} payload.index The row index.
+   * @param {Api} api The API object.
+   * @returns {TemplateResult} The rendered row.
+   */
+  renderRow(props, { row, index }, api) {
+    const rowId = getRowKeyValue(props, row)
+
+    return html`<div
+      @click=${() => api.notify(`#${props.id}:rowToggle`, rowId)}
+      class="iw-data-grid-row ${classMap({
+        "iw-data-grid-row-even": index % DIVISOR,
+        "iw-data-grid-row-selected": props.selection?.includes(rowId),
+      })}"
     >
       ${repeat(
-        entity.columns,
+        props.columns,
         (column) => column.id,
         (column, index) =>
-          type.renderHeaderColumn(entity, { column, index }, api),
+          this.renderCell?.(props, { cell: row[column.id], index }, api),
       )}
-    </div>
+    </div>`
+  },
 
-    ${entity.search && type.renderSearchbar(entity, api)}
-  </div>`
-}
+  /**
+   * Renders a single cell within a row.
+   * @param {DataGridProps} props The table props.
+   * @param {object} payload The payload.
+   * @param {any} payload.cell The cell data.
+   * @param {number} payload.index The column index.
+   * @param {Api} api The API object.
+   * @returns {TemplateResult} The rendered cell.
+   */
+  renderCell(props, { cell, index }, api) {
+    const column = props.columns[index]
 
-/**
- * Renders a single column in the header.
- * @param {DataGridEntity} entity The table entity.
- * @param {object} payload The payload.
- * @param {Column} payload.column The column definition.
- * @param {Api} api The API object.
- * @returns {TemplateResult} The rendered header column.
- */
-export function renderHeaderColumn(entity, { column }, api) {
-  return html`<div
-    class="iw-data-grid-header-column"
-    style=${getColumnStyle(column)}
-  >
-    <div
-      @click=${() =>
-        column.isSortable && api.notify(`#${entity.id}:sortChange`, column.id)}
-      class="iw-data-grid-header-title"
+    return html`<div
+      class="iw-data-grid-cell ${classMap({
+        "iw-data-grid-cell-number": column.type === "number",
+        "iw-data-grid-cell-date": column.type === "date",
+        "iw-data-grid-cell-boolean": column.type === "boolean",
+      })}"
+      style=${getColumnStyle(column)}
     >
-      ${column.title} ${getSortIcon(getSortDirection(entity, column.id))}
-    </div>
+      ${this.renderValue?.(props, { value: cell, column, index }, api)}
+    </div>`
+  },
 
-    ${column.isFilterable && filters.render(entity, column, api)}
-  </div>`
-}
+  /**
+   * Renders the value within a cell. This can be overridden for custom formatting.
+   * @param {DataGridProps} _props The table props (ignored).
+   * @param {object} payload The payload.
+   * @param {any} payload.value The value to render.
+   * @returns {any} The value to be rendered.
+   */
+  renderValue(_props, { value }) {
+    return value
+  },
 
-/**
- * Renders the search bar.
- * @param {DataGridEntity} entity The table entity.
- * @param {Api} api The API object.
- * @returns {TemplateResult} The rendered search bar.
- */
-export function renderSearchbar(entity, api) {
-  return html`<div class="iw-data-grid-searchbar">
-    ${input.render({
-      size: "sm",
-      fullWidth: true,
-      name: "search",
-      inputType: "text",
-      placeholder: entity.search.placeholder ?? "Fuzzy search...",
-      value: entity.search.value,
-      onChange: (value) => api.notify(`#${entity.id}:searchChange`, value),
-    })}
-  </div>`
-}
+  /**
+   * Renders the table footer.
+   * @param {DataGridProps} props The table props.
+   * @param {Api} api The API object.
+   * @returns {TemplateResult} The rendered footer.
+   */
+  renderFooter(props, api) {
+    const pagination = getPaginationInfo(props)
 
-/**
- * Renders the table body with rows.
- * @param {DataGridEntity} entity The table entity.
- * @param {Api} api The API object.
- * @returns {TemplateResult} The rendered table body.
- */
-export function renderBody(entity, api) {
-  const type = api.getType(entity.type)
-
-  return html`<div class="iw-data-grid-body">
-    ${repeat(
-      getRows(entity),
-      (row) => getRowKeyValue(entity, row),
-      (row, index) => type.renderRow(entity, { row, index }, api),
-    )}
-  </div>`
-}
-
-/**
- * Renders a single row in the table body.
- * @param {DataGridEntity} entity The table entity.
- * @param {object} payload The payload.
- * @param {Row} payload.row The row data.
- * @param {number} payload.index The row index.
- * @param {Api} api The API object.
- * @returns {TemplateResult} The rendered row.
- */
-export function renderRow(entity, { row, index }, api) {
-  const type = api.getType(entity.type)
-  const rowId = getRowKeyValue(entity, row)
-
-  return html`<div
-    @click=${() => api.notify(`#${entity.id}:rowToggle`, rowId)}
-    class="iw-data-grid-row ${classMap({
-      "iw-data-grid-row-even": index % DIVISOR,
-      "iw-data-grid-row-selected": entity.selection?.includes(rowId),
-    })}"
-  >
-    ${repeat(
-      entity.columns,
-      (column) => column.id,
-      (column, index) =>
-        type.renderCell(entity, { cell: row[column.id], index }, api),
-    )}
-  </div>`
-}
-
-/**
- * Renders a single cell within a row.
- * @param {DataGridEntity} entity The table entity.
- * @param {object} payload The payload.
- * @param {any} payload.cell The cell data.
- * @param {number} payload.index The column index.
- * @param {Api} api The API object.
- * @returns {TemplateResult} The rendered cell.
- */
-export function renderCell(entity, { cell, index }, api) {
-  const type = api.getType(entity.type)
-  const column = entity.columns[index]
-
-  return html`<div
-    class="iw-data-grid-cell ${classMap({
-      "iw-data-grid-cell-number": column.type === "number",
-      "iw-data-grid-cell-date": column.type === "date",
-      "iw-data-grid-cell-boolean": column.type === "boolean",
-    })}"
-    style=${getColumnStyle(column)}
-  >
-    ${type.renderValue(entity, { value: cell, column, index }, api)}
-  </div>`
-}
-
-/**
- * Renders the value within a cell. This can be overridden for custom formatting.
- * @param {DataGridEntity} _entity The table entity (ignored).
- * @param {object} payload The payload.
- * @param {any} payload.value The value to render.
- * @returns {any} The value to be rendered.
- */
-export function renderValue(_entity, { value }) {
-  return value
-}
-
-/**
- * Renders the table footer.
- * @param {DataGridEntity} entity The table entity.
- * @param {Api} api The API object.
- * @returns {TemplateResult} The rendered footer.
- */
-export function renderFooter(entity, api) {
-  const type = api.getType(entity.type)
-  const pagination = getPaginationInfo(entity)
-
-  return html`<div class="iw-data-grid-footer">
+    return html`<div class="iw-data-grid-footer">
         <div class="iw-data-grid-footer-row">
           <div>
             ${pagination.start + PRETTY_PAGE} to ${pagination.end} of ${pagination.totalRows}
             entries
           </div>
 
-          ${type.renderPagination(entity, pagination, api)}
+          ${this.renderPagination?.(props, pagination, api)}
 
-          ${type.renderPageSize(entity, pagination, api)}
+          ${when(pagination.pageSizes, () => this.renderPageSize?.(props, pagination, api))}
         </div>
       </div>
     </div>`
-}
+  },
 
-/**
- * Renders the pagination controls.
- * @param {DataGridEntity} entity The table entity.
- * @param {object} pagination The pagination info object from `getPaginationInfo`.
- * @param {Api} api The API object.
- * @returns {TemplateResult} The rendered pagination controls.
- */
-export function renderPagination(entity, pagination, api) {
-  return html`<div class="iw-data-grid-row">
-    ${button.render({
-      color: "secondary",
-      size: "sm",
-      children: html`|&#10094;`,
-      disabled: !pagination.hasPrevPage,
-      onClick: () => api.notify(`#${entity.id}:pageChange`, FIRST_PAGE),
-    })}
-    ${button.render({
-      color: "secondary",
-      size: "sm",
-      children: html`&#10094;`,
-      disabled: !pagination.hasPrevPage,
-      onClick: () => api.notify(`#${entity.id}:pagePrev`),
-    })}
-    ${input.render({
-      name: "page",
-      size: "sm",
-      inputType: "number",
-      min: 1,
-      max: pagination.totalPages,
-      value: pagination.page + PRETTY_PAGE,
-      onChange: (value) =>
-        api.notify(`#${entity.id}:pageChange`, Number(value) - PRETTY_PAGE),
-    })}
-    /
-    <span>${pagination.totalPages}</span>
-    ${button.render({
-      color: "secondary",
-      size: "sm",
-      children: html`&#10095;`,
-      disabled: !pagination.hasNextPage,
-      onClick: () => api.notify(`#${entity.id}:pageNext`),
-    })}
-    ${button.render({
-      color: "secondary",
-      size: "sm",
-      children: html`&#10095;|`,
-      disabled: !pagination.hasNextPage,
-      onClick: () =>
-        api.notify(
-          `#${entity.id}:pageChange`,
-          pagination.totalPages - LAST_PAGE,
-        ),
-    })}
-  </div>`
-}
+  /**
+   * Renders the pagination controls.
+   * @param {DataGridProps} props The table props.
+   * @param {object} pagination The pagination info object from `getPaginationInfo`.
+   * @param {Api} api The API object.
+   * @returns {TemplateResult} The rendered pagination controls.
+   */
+  renderPagination(props, pagination, api) {
+    return html`<div class="iw-data-grid-row">
+      ${button.render({
+        color: "secondary",
+        size: "sm",
+        children: html`|&#10094;`,
+        disabled: !pagination.hasPrevPage,
+        onClick: () => api.notify(`#${props.id}:pageChange`, FIRST_PAGE),
+      })}
+      ${button.render({
+        color: "secondary",
+        size: "sm",
+        children: html`&#10094;`,
+        disabled: !pagination.hasPrevPage,
+        onClick: () => api.notify(`#${props.id}:pagePrev`),
+      })}
+      ${input.render({
+        name: "page",
+        size: "sm",
+        inputType: "number",
+        min: 1,
+        max: pagination.totalPages,
+        value: pagination.page + PRETTY_PAGE,
+        onChange: (value) =>
+          api.notify(`#${props.id}:pageChange`, Number(value) - PRETTY_PAGE),
+      })}
+      /
+      <span>${pagination.totalPages}</span>
+      ${button.render({
+        color: "secondary",
+        size: "sm",
+        children: html`&#10095;`,
+        disabled: !pagination.hasNextPage,
+        onClick: () => api.notify(`#${props.id}:pageNext`),
+      })}
+      ${button.render({
+        color: "secondary",
+        size: "sm",
+        children: html`&#10095;|`,
+        disabled: !pagination.hasNextPage,
+        onClick: () =>
+          api.notify(
+            `#${props.id}:pageChange`,
+            pagination.totalPages - LAST_PAGE,
+          ),
+      })}
+    </div>`
+  },
 
-export function renderPageSize(entity, pagination, api) {
-  return html`<div class="iw-data-grid-footer-row">
-    <div>Page size:</div>
-    ${select.render({
-      size: "sm",
-      value: pagination.pageSize,
-      options: [10, 20, 30],
-      onChange: (value) =>
-        api.notify(`#${entity.id}:pageSizeChange`, Number(value)),
-    })}
-  </div>`
+  renderPageSize(props, pagination, api) {
+    return html`<div class="iw-data-grid-footer-row">
+      <div>Page size:</div>
+      ${select.render({
+        size: "sm",
+        value: pagination.pageSize,
+        options: pagination.pageSizes,
+        onChange: (value) =>
+          api.notify(`#${props.id}:pageSizeChange`, Number(value)),
+      })}
+    </div>`
+  },
 }
 
 /**
