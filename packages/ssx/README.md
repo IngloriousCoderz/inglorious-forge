@@ -721,6 +721,7 @@ export default {
   },
 
   // Global assets
+  prescripts: ["./gdpr.js"], // loaded first in <head>, before any other script (e.g. cookie consent)
   styles: ["./styles/reset.css", "./styles/theme.css"],
   scripts: ["./scripts/analytics.js"],
 

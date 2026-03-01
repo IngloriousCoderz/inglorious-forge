@@ -29,6 +29,7 @@ exports[`renderPage > should render a page with metadata 1`] = `
 "<!DOCTYPE html>
     <html lang="en">
       <head>
+      
         <meta charset="UTF-8" />
         <title>About</title>
         <link rel="icon" type="image/x-icon" href="">

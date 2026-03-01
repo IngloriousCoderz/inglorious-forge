@@ -1,5 +1,11 @@
 # @inglorious/ssx
 
+## 1.11.0
+
+### Minor Changes
+
+- Allow pre-scripts in SSX
+
 ## 1.10.1
 
 ### Patch Changes

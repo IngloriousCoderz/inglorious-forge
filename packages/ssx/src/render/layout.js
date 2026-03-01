@@ -16,6 +16,7 @@
 export function layout(body, options) {
   const {
     lang = "en",
+    prescripts = [],
     charset = "UTF-8",
     title = "",
     favicon = "",
@@ -29,6 +30,9 @@ export function layout(body, options) {
   return `<!DOCTYPE html>
     <html lang="${lang}">
       <head>
+      ${prescripts
+        .map((src) => `<script type="text/javascript" src="${src}"></script>`)
+        .join("\n")}
         <meta charset="${charset}" />
         <title>${title}</title>
         <link rel="icon" type="image/x-icon" href="${favicon}">
