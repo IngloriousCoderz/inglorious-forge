@@ -184,24 +184,38 @@ export const dashboardPage = {
         <div class="iw-mid-grid">
           ${renderPanel(
             "Quotations",
-            chart.renderLineChart(
-              quotationChart,
-              {
-                width: 860,
-                height: 340,
-                dataKeys: ["value"],
-                children: [
-                  chart.CartesianGrid({ stroke: "#d6d6d6" }),
-                  chart.XAxis({ dataKey: "t" }),
-                  chart.YAxis({ width: "auto" }),
-                  chart.Line({ dataKey: "value", stroke: "#d23f3f" }),
-                  chart.Tooltip({}),
-                  chart.Brush({ dataKey: "t", height: 28 }),
-                ],
-              },
-              api,
-            ),
-            "iw-panel iw-chart-panel",
+            html`
+              <div class="chart-wrap">
+                ${entity.loading
+                  ? renderInlineLoader("Loading instrument...")
+                  : null}
+                ${chart.renderLineChart(
+                  quotationChart,
+                  {
+                    width: 860,
+                    height: 340,
+                    dataKeys: ["value"],
+                    children: [
+                      chart.CartesianGrid({ stroke: "#334155" }),
+                      chart.XAxis({ dataKey: "t" }),
+                      chart.YAxis({ width: "auto" }),
+                      chart.Area({
+                        dataKey: "value",
+                        fill: "#3b82f6",
+                        fillOpacity: "0.1",
+                        stroke: "none",
+                      }),
+                      chart.Line({ dataKey: "value", stroke: "#2563eb" }),
+                      chart.Tooltip({}),
+                      chart.Brush({ dataKey: "t", height: 28 }),
+                    ],
+                  },
+                  api,
+                )}
+              </div>
+            `,
+            "iw-panel iw-chart-panel iw-chart-focus",
+            renderSourceBadge(entity.dataSource),
           )}
           ${renderPanel(
             "ISIN / T / Mid",
@@ -237,28 +251,36 @@ export const dashboardPage = {
           )}
           ${renderPanel(
             "Price Comparison",
-            chart.renderBarChart(
-              {
-                data: [
-                  { label: "Ask Price", value: latest.ask },
-                  { label: "Bid Price", value: latest.bid },
-                  { label: "Mid Price", value: latest.mid },
-                ],
-              },
-              {
-                width: 640,
-                height: 270,
-                children: [
-                  chart.CartesianGrid({ stroke: "#d6d6d6" }),
-                  chart.XAxis({ dataKey: "label" }),
-                  chart.YAxis({ width: "auto" }),
-                  chart.Bar({ dataKey: "value" }),
-                  chart.Tooltip({}),
-                ],
-              },
-              api,
-            ),
+            html`
+              <div class="chart-wrap">
+                ${entity.loading
+                  ? renderInlineLoader("Refreshing bars...")
+                  : null}
+                ${chart.renderBarChart(
+                  {
+                    data: [
+                      { label: "Ask Price", value: latest.ask },
+                      { label: "Bid Price", value: latest.bid },
+                      { label: "Mid Price", value: latest.mid },
+                    ],
+                  },
+                  {
+                    width: 640,
+                    height: 270,
+                    children: [
+                      chart.CartesianGrid({ stroke: "#334155" }),
+                      chart.XAxis({ dataKey: "label" }),
+                      chart.YAxis({ width: "auto" }),
+                      chart.Bar({ dataKey: "value" }),
+                      chart.Tooltip({}),
+                    ],
+                  },
+                  api,
+                )}
+              </div>
+            `,
             "iw-panel",
+            renderSourceBadge(entity.dataSource),
           )}
         </div>
 
@@ -354,7 +376,6 @@ function buildBrushSeries(history) {
   if (!rows.length) return []
 
   return rows.map((row) => ({
-    // Keep labels for every point; X-axis renderer decides adaptive tick density.
     t: row.t || row.date,
     value: Number(row.mid ?? row.close ?? 0),
   }))
@@ -401,12 +422,36 @@ function quoteFromHistory(history) {
   }
 }
 
+function renderSourceBadge(source) {
+  const live = source === "api"
+  const label = live ? "Live" : "Historical"
+  const className = live ? "source-badge source-badge-live" : "source-badge"
+  return html`<span class="${className}">${label}</span>`
+}
+
+function renderInlineLoader(label) {
+  return html`
+    <div class="inline-loader">
+      <span class="spinner" aria-hidden="true"></span>
+      <span>${label}</span>
+    </div>
+  `
+}
+
 // --- View helper ------------------------------------------------------------
 
-function renderPanel(title, content, className = "iw-panel") {
+function renderPanel(
+  title,
+  content,
+  className = "iw-panel",
+  headerExtra = null,
+) {
   return html`
     <section class=${className}>
-      <header>${title}</header>
+      <header>
+        <span>${title}</span>
+        ${headerExtra}
+      </header>
       <div class="iw-panel-body">${content}</div>
     </section>
   `
