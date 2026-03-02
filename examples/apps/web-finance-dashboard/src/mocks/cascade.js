@@ -81,6 +81,8 @@ const instruments = [
   },
 ]
 
+const DEFAULT_MOCK_SYMBOLS = ["AAPL", "MSFT", "NVDA", "GOOGL", "TSLA"]
+
 function seededValue(seed, min, max) {
   const x = Math.sin(seed) * 10000
   const ratio = x - Math.floor(x)
@@ -153,4 +155,36 @@ export function getInstrumentData(isin) {
       quote: null,
     }
   )
+}
+
+export function getInstrumentDataBySymbol(symbol) {
+  const instrument = instruments.find((item) => item.symbol === symbol)
+  if (!instrument) {
+    return {
+      instrument: null,
+      history: [],
+      quote: null,
+    }
+  }
+
+  return getInstrumentData(instrument.isin)
+}
+
+export function getMockAssetUniverse(limit = 5) {
+  const normalizedLimit = Math.max(1, Number(limit) || 5)
+  const preferred = DEFAULT_MOCK_SYMBOLS.map((symbol) =>
+    instruments.find((item) => item.symbol === symbol),
+  ).filter(Boolean)
+
+  const selected = preferred.slice(0, normalizedLimit)
+  return selected.map((instrument) => {
+    const data = getInstrumentData(instrument.isin)
+    return {
+      symbol: instrument.symbol,
+      isin: instrument.isin,
+      instrument,
+      history: Array.isArray(data.history) ? data.history : [],
+      quote: data.quote || null,
+    }
+  })
 }

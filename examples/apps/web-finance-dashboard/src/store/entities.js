@@ -26,6 +26,11 @@ export const entities = {
     type: "assetPage",
     symbol: "AAPL",
     loaded: false,
+    loading: false,
+    error: null,
+    dataSource: "mock",
+    fallbackSymbols: [],
+    warning: null,
   },
 
   notFoundPage: {
