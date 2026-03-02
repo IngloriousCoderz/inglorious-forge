@@ -1,7 +1,9 @@
 import { svg } from "@inglorious/web"
 
 import * as handlers from "./handlers.js"
+export { withRealtime } from "./realtime/with-realtime.js"
 import { render } from "./template.js"
+export { streamSlide } from "./utils/stream-slide.js"
 import { extractDataKeysFromChildren } from "./utils/extract-data-keys.js"
 
 // Export chart types for config style
@@ -9,6 +11,7 @@ export {
   areaChart,
   barChart,
   donutChart,
+  lineBaseChart,
   lineChart,
   pieChart,
 } from "./utils/chart-utils.js"
