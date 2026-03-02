@@ -127,3 +127,25 @@ Available scopes:
 - `"global"`
 
 > **Key rule:** Async code must not access entities after `await`. All updates happen in event handlers.
+
+### Concurrency strategy
+
+By default, `handleAsync` uses parallel resolution:
+
+```typescript
+handleAsync("fetchData", handlers, { strategy: "parallel" }) // default
+```
+
+If your UI can trigger rapid consecutive requests (search, route params, symbol switchers), use:
+
+```typescript
+handleAsync("fetchData", handlers, { strategy: "latest" })
+```
+
+With `strategy: "latest"`, only the most recently triggered run emits:
+
+- `fetchDataSuccess`
+- `fetchDataError`
+- `fetchDataFinally`
+
+Older runs are ignored when they complete, preventing stale data from overwriting newer results.
