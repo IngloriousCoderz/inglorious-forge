@@ -78,7 +78,8 @@ export const assetPage = {
           warning: null,
         }
       } catch (error) {
-        const reason = error instanceof Error ? error.message : "API unavailable"
+        const reason =
+          error instanceof Error ? error.message : "API unavailable"
         return buildMockAssetPayload(symbol, fallbackSymbols, reason)
       }
     },
@@ -143,7 +144,9 @@ export const assetPage = {
           "Price History",
           html`
             <div class="chart-wrap">
-              ${entity.loading ? renderInlineLoader("Switching asset...") : null}
+              ${entity.loading
+                ? renderInlineLoader("Switching asset...")
+                : null}
               ${chart.renderLineChart(
                 { data: priceSeries },
                 {
@@ -225,7 +228,9 @@ function renderErrorState(errorMessage) {
 
 function buildMockAssetPayload(symbol, fallbackSymbols, reason) {
   const requested = getInstrumentDataBySymbol(symbol)
-  const selectedSymbol = requested?.instrument ? symbol : fallbackSymbols[0] || DEFAULT_SYMBOL
+  const selectedSymbol = requested?.instrument
+    ? symbol
+    : fallbackSymbols[0] || DEFAULT_SYMBOL
   const mockData = getInstrumentDataBySymbol(selectedSymbol)
 
   const history = Array.isArray(mockData.history) ? mockData.history : []
