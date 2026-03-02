@@ -27,10 +27,13 @@ export const dashboardPage = {
       dashboardInstrumentClear(entity, api)
       return
     }
-    if (entity.initialized) return
+    if (!entity.initialized) {
+      api.notify(`#${entity.id}:dashboardInit`)
+      dashboardBootstrap(entity.id, api)
+      return
+    }
 
-    api.notify(`#${entity.id}:dashboardInit`)
-    dashboardBootstrap(entity.id, api)
+    dashboardResume(entity, api)
   },
 
   dashboardInit(entity) {
@@ -308,6 +311,13 @@ function dashboardBootstrap(entityId, api) {
   const firstMarket = markets[0].market
   api.notify("#marketsTable:tableSelect", firstMarket)
   api.notify(`#${entityId}:marketSelect`, { rowId: firstMarket })
+}
+
+function dashboardResume(entity, api) {
+  if (!entity.selectedIsin) return
+  api.notify(`#${entity.id}:dashboardFetchInstrument`, {
+    isin: entity.selectedIsin,
+  })
 }
 
 function dashboardMarketApply(entity, market, api) {
