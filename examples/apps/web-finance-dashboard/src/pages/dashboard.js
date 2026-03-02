@@ -2,6 +2,7 @@ import { html } from "@inglorious/web"
 import { handleAsync } from "../../../../../packages/store/src/async.js"
 import { chart } from "@inglorious/charts"
 
+import { renderInlineLoader } from "../components/loading.js"
 import {
   getCurrenciesForMarket,
   getInstrumentData,
@@ -22,7 +23,10 @@ const EMPTY_QUOTE = { ask: 0, bid: 0, mid: 0 }
 export const dashboardPage = {
   // Headline: page lifecycle
   routeChange(entity, payload, api) {
-    if (payload.route !== entity.type) return
+    if (payload.route !== entity.type) {
+      dashboardInstrumentClear(entity, api)
+      return
+    }
     if (entity.initialized) return
 
     api.notify(`#${entity.id}:dashboardInit`)
@@ -47,105 +51,102 @@ export const dashboardPage = {
   },
 
   // Headline: async lifecycle (dashboard-first, low quota)
-  ...handleAsync("dashboardFetchInstrument", {
-    start(entity) {
-      entity.loading = true
-      entity.error = null
-    },
+  ...handleAsync(
+    "dashboardFetchInstrument",
+    {
+      start(entity) {
+        entity.loading = true
+        entity.error = null
+      },
 
-    async run(payload) {
-      const isin = payload?.isin
-      const mockData = getInstrumentData(isin)
-      const mockInstrument = mockData.instrument || EMPTY_INSTRUMENT
-      const mockHistory = Array.isArray(mockData.history)
-        ? mockData.history
-        : []
-      const mockQuote = mockData.quote || EMPTY_QUOTE
+      async run(payload) {
+        const isin = payload?.isin
+        const mockData = getInstrumentData(isin)
+        const mockInstrument = mockData.instrument || EMPTY_INSTRUMENT
+        const mockHistory = Array.isArray(mockData.history)
+          ? mockData.history
+          : []
+        const mockQuote = mockData.quote || EMPTY_QUOTE
 
-      if (!isin || mockInstrument === EMPTY_INSTRUMENT) {
-        return {
-          isin,
-          instrument: EMPTY_INSTRUMENT,
-          history: [],
-          quote: EMPTY_QUOTE,
-          source: "mock",
+        if (!isin || mockInstrument === EMPTY_INSTRUMENT) {
+          return createInstrumentPayload({
+            isin,
+            instrument: EMPTY_INSTRUMENT,
+            history: [],
+            quote: EMPTY_QUOTE,
+            source: "mock",
+          })
         }
-      }
 
-      if (!hasFmpConfig() || !mockInstrument.symbol) {
-        return {
-          isin,
-          instrument: mockInstrument,
-          history: mockHistory,
-          quote: mockQuote,
-          source: "mock",
+        if (!hasFmpConfig() || !mockInstrument.symbol) {
+          return createInstrumentPayload({
+            isin,
+            instrument: mockInstrument,
+            history: mockHistory,
+            quote: mockQuote,
+            source: "mock",
+          })
         }
-      }
 
-      try {
-        const historyPayload = await fmpGet("/historical-price-eod/full", {
-          symbol: mockInstrument.symbol,
-        })
-        const apiHistory = normalizeDashboardHistory(historyPayload, 500)
-        const apiQuote = quoteFromHistory(apiHistory)
+        try {
+          const historyPayload = await fmpGet("/historical-price-eod/full", {
+            symbol: mockInstrument.symbol,
+          })
+          if (!isValidDashboardHistoryPayload(historyPayload)) {
+            throw new Error("Invalid API response structure")
+          }
+          const apiHistory = normalizeDashboardHistory(historyPayload, 500)
+          const apiQuote = quoteFromHistory(apiHistory)
 
-        return {
-          isin,
-          instrument: mockInstrument,
-          history: apiHistory,
-          quote: apiQuote,
-          source: "api",
+          return createInstrumentPayload({
+            isin,
+            instrument: mockInstrument,
+            history: apiHistory,
+            quote: apiQuote,
+            source: "api",
+          })
+        } catch {
+          return createInstrumentPayload({
+            isin,
+            instrument: mockInstrument,
+            history: mockHistory,
+            quote: mockQuote,
+            source: "mock",
+          })
         }
-      } catch {
-        return {
-          isin,
-          instrument: mockInstrument,
-          history: mockHistory,
-          quote: mockQuote,
-          source: "mock",
-        }
-      }
-    },
+      },
 
-    success(entity, payload, api) {
-      entity.instrument = payload.instrument
-      entity.bookRows = [
-        {
-          isin: payload.isin,
-          ask: payload.quote.ask,
-          bid: payload.quote.bid,
-          mid: payload.quote.mid,
-        },
-      ]
-      entity.dataSource = payload.source
+      success(entity, payload, api) {
+        entity.instrument = payload.instrument
+        entity.quote = payload.quote
+        entity.dataSource = payload.source
 
-      api.notify(
-        "#financeQuotationChart:chartDataSet",
-        buildBrushSeries(payload.history),
-      )
-      api.notify(
-        "#isinHistoryTable:tableDataSet",
-        buildHistoryTableRows(payload.isin, payload.history),
-      )
-    },
+        api.notify(
+          "#financeQuotationChart:chartDataSet",
+          buildBrushSeries(payload.history),
+        )
+        api.notify(
+          "#isinHistoryTable:tableDataSet",
+          buildHistoryTableRows(payload.isin, payload.history),
+        )
+        entity.loading = false
+      },
 
-    error(entity, error) {
-      entity.error = error instanceof Error ? error.message : String(error)
-      entity.instrument = EMPTY_INSTRUMENT
-      entity.bookRows = []
-      entity.dataSource = "mock"
+      error(entity, error) {
+        entity.error = error instanceof Error ? error.message : String(error)
+        entity.instrument = EMPTY_INSTRUMENT
+        entity.quote = EMPTY_QUOTE
+        entity.dataSource = "mock"
+        entity.loading = false
+      },
     },
-
-    finally(entity) {
-      entity.loading = false
-    },
-  }),
+    { strategy: "latest" },
+  ),
 
   // Body: render
   render(entity, api) {
     const instrument = entity.instrument || EMPTY_INSTRUMENT
-    const bookRows = entity.bookRows || []
-    const latest = bookRows[0] || EMPTY_QUOTE
+    const latest = entity.quote || EMPTY_QUOTE
     const quotationChart = api.getEntity("financeQuotationChart")
 
     return html`
@@ -197,7 +198,7 @@ export const dashboardPage = {
                     dataKeys: ["value"],
                     children: [
                       chart.CartesianGrid({ stroke: "#334155" }),
-                      chart.XAxis({ dataKey: "t" }),
+                      chart.XAxis({ dataKey: "name" }),
                       chart.YAxis({ width: "auto" }),
                       chart.Area({
                         dataKey: "value",
@@ -207,7 +208,7 @@ export const dashboardPage = {
                       }),
                       chart.Line({ dataKey: "value", stroke: "#2563eb" }),
                       chart.Tooltip({}),
-                      chart.Brush({ dataKey: "t", height: 28 }),
+                      chart.Brush({ dataKey: "name", height: 28 }),
                     ],
                   },
                   api,
@@ -215,7 +216,6 @@ export const dashboardPage = {
               </div>
             `,
             "iw-panel iw-chart-panel iw-chart-focus",
-            renderSourceBadge(entity.dataSource),
           )}
           ${renderPanel(
             "ISIN / T / Mid",
@@ -280,7 +280,6 @@ export const dashboardPage = {
               </div>
             `,
             "iw-panel",
-            renderSourceBadge(entity.dataSource),
           )}
         </div>
 
@@ -355,7 +354,7 @@ function dashboardIsinApply(entity, isin, api) {
 
 function dashboardInstrumentClear(entity, api) {
   entity.instrument = null
-  entity.bookRows = []
+  entity.quote = EMPTY_QUOTE
   entity.error = null
   entity.loading = false
   entity.dataSource = "mock"
@@ -364,6 +363,16 @@ function dashboardInstrumentClear(entity, api) {
 }
 
 // --- Formatting helpers -----------------------------------------------------
+
+function createInstrumentPayload(payload) {
+  return {
+    isin: payload.isin,
+    instrument: payload.instrument,
+    history: payload.history,
+    quote: payload.quote,
+    source: payload.source,
+  }
+}
 
 function formatDateLabel(value) {
   if (typeof value !== "string" || !value.includes("-")) return String(value)
@@ -376,7 +385,7 @@ function buildBrushSeries(history) {
   if (!rows.length) return []
 
   return rows.map((row) => ({
-    t: row.t || row.date,
+    name: row.name || row.t || row.date,
     value: Number(row.mid ?? row.close ?? 0),
   }))
 }
@@ -388,7 +397,7 @@ function buildHistoryTableRows(isin, history) {
     .map((row, index) => ({
       rowId: `${isin}-${index}`,
       isin,
-      t: formatDateLabel(row.t || row.date),
+      t: formatDateLabel(row.name || row.t || row.date),
       mid: Number(row.mid ?? row.close ?? 0),
     }))
 }
@@ -404,10 +413,10 @@ function normalizeDashboardHistory(payload, limit = 500) {
     .slice(0, limit)
     .reverse()
     .map((row) => ({
-      t: row.date,
+      name: row.date,
       mid: Number(row.close ?? row.price ?? 0),
     }))
-    .filter((row) => row.t && Number.isFinite(row.mid))
+    .filter((row) => row.name && Number.isFinite(row.mid))
 }
 
 function quoteFromHistory(history) {
@@ -422,20 +431,9 @@ function quoteFromHistory(history) {
   }
 }
 
-function renderSourceBadge(source) {
-  const live = source === "api"
-  const label = live ? "Live" : "Historical"
-  const className = live ? "source-badge source-badge-live" : "source-badge"
-  return html`<span class="${className}">${label}</span>`
-}
-
-function renderInlineLoader(label) {
-  return html`
-    <div class="inline-loader">
-      <span class="spinner" aria-hidden="true"></span>
-      <span>${label}</span>
-    </div>
-  `
+function isValidDashboardHistoryPayload(payload) {
+  if (Array.isArray(payload)) return payload.length > 0
+  return Array.isArray(payload?.historical) && payload.historical.length > 0
 }
 
 // --- View helper ------------------------------------------------------------

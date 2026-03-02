@@ -11,7 +11,7 @@ export const entities = {
     selectedCurrency: null,
     selectedIsin: null,
     instrument: null,
-    bookRows: [],
+    quote: { ask: 0, bid: 0, mid: 0 },
     initialized: false,
     loading: false,
     error: null,
@@ -39,15 +39,7 @@ export const entities = {
 
   financeQuotationChart: {
     type: "line",
-    xAxisType: "time",
-    dataKey: "t",
     data: [],
-    width: 860,
-    height: 340,
-    colors: ["#d23f3f"],
-    showPoints: false,
-    showGrid: true,
-    showTooltip: true,
     brush: {
       enabled: true,
       height: 28,
