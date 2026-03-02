@@ -1,9 +1,17 @@
 import { html } from "@inglorious/web"
 
-export function renderSectionCard(title, content, className = "span-12") {
+export function renderSectionCard(
+  title,
+  content,
+  className = "span-12",
+  headerExtra = null,
+) {
   return html`
     <section class="card ${className}">
-      <h2>${title}</h2>
+      <header class="card-header">
+        <h2>${title}</h2>
+        ${headerExtra}
+      </header>
       ${content}
     </section>
   `
