@@ -3,6 +3,16 @@ import { describe, expect, it, vi } from "vitest"
 import { handleAsync } from "./async"
 import { createMockApi, trigger } from "./test"
 
+function deferred() {
+  let resolve
+  let reject
+  const promise = new Promise((res, rej) => {
+    resolve = res
+    reject = rej
+  })
+  return { promise, resolve, reject }
+}
+
 describe("handleAsync", () => {
   describe("basic async lifecycle", () => {
     it("should execute run, success, and finally handlers on success", async () => {
@@ -256,6 +266,96 @@ describe("handleAsync", () => {
         type: "fetchDataRun",
         payload: {},
       })
+    })
+  })
+
+  describe("concurrency strategy", () => {
+    it("should keep default parallel behavior", async () => {
+      const d1 = deferred()
+      const d2 = deferred()
+      const handlers = {
+        run: vi.fn((payload) => (payload.id === 1 ? d1.promise : d2.promise)),
+      }
+      const asyncHandlers = handleAsync("fetchData", handlers)
+      const entity = { type: "dataFetcher", id: "fetcher1" }
+      const api = createMockApi({ fetcher1: entity })
+
+      trigger(entity, asyncHandlers.fetchData, { id: 1 }, api)
+      trigger(entity, asyncHandlers.fetchData, { id: 2 }, api)
+
+      const runEvents = api
+        .getEvents()
+        .filter((event) => event.type === "#fetcher1:fetchDataRun")
+      const run1 = asyncHandlers.fetchDataRun(entity, runEvents[0].payload, api)
+      const run2 = asyncHandlers.fetchDataRun(entity, runEvents[1].payload, api)
+
+      d1.resolve({ id: 1 })
+      d2.resolve({ id: 2 })
+      await Promise.all([run1, run2])
+
+      const successEvents = api
+        .getEvents()
+        .filter((event) => event.type === "#fetcher1:fetchDataSuccess")
+      expect(successEvents).toHaveLength(2)
+      expect(successEvents).toContainEqual({
+        type: "#fetcher1:fetchDataSuccess",
+        payload: { id: 1 },
+      })
+      expect(successEvents).toContainEqual({
+        type: "#fetcher1:fetchDataSuccess",
+        payload: { id: 2 },
+      })
+    })
+
+    it("should emit only latest lifecycle events with latest strategy", async () => {
+      const d1 = deferred()
+      const d2 = deferred()
+      const handlers = {
+        run: vi.fn((payload) => (payload.id === 1 ? d1.promise : d2.promise)),
+      }
+      const asyncHandlers = handleAsync("fetchData", handlers, {
+        strategy: "latest",
+      })
+      const entity = { type: "dataFetcher", id: "fetcher1" }
+      const api = createMockApi({ fetcher1: entity })
+
+      trigger(entity, asyncHandlers.fetchData, { id: 1 }, api)
+      trigger(entity, asyncHandlers.fetchData, { id: 2 }, api)
+
+      const runEvents = api
+        .getEvents()
+        .filter((event) => event.type === "#fetcher1:fetchDataRun")
+      const run1 = asyncHandlers.fetchDataRun(entity, runEvents[0].payload, api)
+      const run2 = asyncHandlers.fetchDataRun(entity, runEvents[1].payload, api)
+
+      d1.resolve({ id: 1 })
+      await run1
+
+      // Stale run should not emit lifecycle events
+      let successEvents = api
+        .getEvents()
+        .filter((event) => event.type === "#fetcher1:fetchDataSuccess")
+      let finallyEvents = api
+        .getEvents()
+        .filter((event) => event.type === "#fetcher1:fetchDataFinally")
+      expect(successEvents).toHaveLength(0)
+      expect(finallyEvents).toHaveLength(0)
+
+      d2.resolve({ id: 2 })
+      await run2
+
+      successEvents = api
+        .getEvents()
+        .filter((event) => event.type === "#fetcher1:fetchDataSuccess")
+      finallyEvents = api
+        .getEvents()
+        .filter((event) => event.type === "#fetcher1:fetchDataFinally")
+      expect(successEvents).toEqual([
+        { type: "#fetcher1:fetchDataSuccess", payload: { id: 2 } },
+      ])
+      expect(finallyEvents).toEqual([
+        { type: "#fetcher1:fetchDataFinally", payload: undefined },
+      ])
     })
   })
 
