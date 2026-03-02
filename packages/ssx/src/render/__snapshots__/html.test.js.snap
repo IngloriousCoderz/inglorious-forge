@@ -7,6 +7,7 @@ exports[`await toHTML > HTML wrapping > should default to empty title when not p
     <html lang="en">
       <head>
       
+        
         <meta charset="UTF-8" />
         <title></title>
         <link rel="icon" type="image/x-icon" href="">
@@ -28,6 +29,7 @@ exports[`await toHTML > HTML wrapping > should handle empty arrays for meta, sty
     <html lang="en">
       <head>
       
+        
         <meta charset="UTF-8" />
         <title></title>
         <link rel="icon" type="image/x-icon" href="">
@@ -49,6 +51,7 @@ exports[`await toHTML > HTML wrapping > should include all options in wrapped HT
     <html lang="en">
       <head>
       
+        
         <meta charset="UTF-8" />
         <title>Complete Page</title>
         <link rel="icon" type="image/x-icon" href="">
@@ -70,6 +73,7 @@ exports[`await toHTML > HTML wrapping > should include meta tags in wrapped HTML
     <html lang="en">
       <head>
       
+        
         <meta charset="UTF-8" />
         <title>Test Page</title>
         <link rel="icon" type="image/x-icon" href="">
@@ -92,6 +96,7 @@ exports[`await toHTML > HTML wrapping > should include scripts in wrapped HTML 1
     <html lang="en">
       <head>
       
+        
         <meta charset="UTF-8" />
         <title></title>
         <link rel="icon" type="image/x-icon" href="">
@@ -114,6 +119,7 @@ exports[`await toHTML > HTML wrapping > should include stylesheets in wrapped HT
     <html lang="en">
       <head>
       
+        
         <meta charset="UTF-8" />
         <title></title>
         <link rel="icon" type="image/x-icon" href="">
@@ -136,6 +142,7 @@ exports[`await toHTML > HTML wrapping > should wrap HTML with basic DOCTYPE and 
     <html lang="en">
       <head>
       
+        
         <meta charset="UTF-8" />
         <title>My Page</title>
         <link rel="icon" type="image/x-icon" href="">
@@ -178,6 +185,7 @@ exports[`await toHTML > complex scenarios > should render wrapped complex page w
     <html lang="en">
       <head>
       
+        
         <meta charset="UTF-8" />
         <title>My Website</title>
         <link rel="icon" type="image/x-icon" href="">

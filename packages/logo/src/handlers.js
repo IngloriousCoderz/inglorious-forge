@@ -45,9 +45,7 @@ export const logo = {
    * @param {LogoEntity} entity
    * @param {string} id
    */
-  destroy(entity, id) {
-    if (id !== entity.id) return
-
+  destroy() {
     stopInteraction()
   },
 }

@@ -30,11 +30,12 @@ export default {
   layout: (body, options) => {
     const {
       lang = "en",
+      head = "",
+      prescripts = [],
       charset = "UTF-8",
       title = "",
       meta = {},
       styles = [],
-      head = "",
       scripts = [],
       isDev,
     } = options
@@ -43,6 +44,10 @@ export default {
       <!DOCTYPE html>
       <html lang=${lang}>
         <head>
+        ${prescripts
+          .map((src) => `<script type="text/javascript" src="${src}"></script>`)
+          .join("\n")}
+          ${head}
           <meta charset=${charset} />
           <meta
             name="viewport"

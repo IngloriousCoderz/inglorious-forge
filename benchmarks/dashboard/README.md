@@ -91,8 +91,8 @@ pnpm -C benchmarks/dashboard/inglorious-memo dev
 | Svelte                            | 112            | 119             | 16.02            |
 | Svelte + Store                    | 110            | 119             | 16.04            |
 | Svelte + Runes                    | 102            | 118             | 14.13            |
-| Inglorious                        | 105            | 120             | 16.29            |
-| Inglorious Memoized               | 110            | 120             | 16.35            |
+| Inglorious                        | 118            | 120             | 16.29            |
+| Inglorious Memoized               | 115            | 120             | 16.35            |
 
 ### Considerations
 
