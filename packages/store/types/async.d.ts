@@ -10,6 +10,13 @@ import { BaseEntity } from "./store"
 export type AsyncScope = "entity" | "type" | "global"
 
 /**
+ * Concurrency strategy for overlapping async runs
+ * - "parallel": all runs can complete and emit lifecycle events
+ * - "latest": only the latest run can emit success/error/finally
+ */
+export type AsyncStrategy = "parallel" | "latest"
+
+/**
  * Configuration options for async handlers
  */
 export interface AsyncOptions {
@@ -18,6 +25,11 @@ export interface AsyncOptions {
    * @default "entity"
    */
   scope?: AsyncScope
+  /**
+   * Controls how overlapping runs are resolved
+   * @default "parallel"
+   */
+  strategy?: AsyncStrategy
 }
 
 /**

@@ -35,6 +35,10 @@
  *   - "entity": notify `#entityId:event` (default, safest - events only affect the triggering entity)
  *   - "type": notify `typeName:event` (broadcasts to all entities of this type)
  *   - "global": notify `event` (global broadcast to any listener)
+ * @param {"parallel" | "latest"} [options.strategy="parallel"]
+ *   Controls concurrency behavior for overlapping runs:
+ *   - "parallel": all runs can resolve and emit lifecycle events (default)
+ *   - "latest": only the most recently triggered run can emit success/error/finally
  *
  * @returns {Object} An object containing the generated event handlers that can be spread into a type:
  *   - `[type]`: Main trigger - dispatches Start (if defined) and Run events
@@ -130,7 +134,53 @@
  * }
  */
 export function handleAsync(type, handlers, options = {}) {
-  const { scope = "entity" } = options
+  const { scope = "entity", strategy = "parallel" } = options
+  const latest = strategy === "latest"
+  const TOKEN_BASE = 0
+  const TOKEN_INCREMENT = 1
+  const runMetaSymbol = Symbol(`inglorious.async.runMeta.${type}`)
+  const keyTokens = new Map()
+
+  function getKey(identity) {
+    switch (scope) {
+      case "entity":
+        return identity?.id ? `entity:${identity.id}` : null
+      case "type":
+        return identity?.type ? `type:${identity.type}` : null
+      case "global":
+        return "global"
+      default:
+        return null
+    }
+  }
+  function nextToken(key) {
+    const token = (keyTokens.get(key) || TOKEN_BASE) + TOKEN_INCREMENT
+    keyTokens.set(key, token)
+    return token
+  }
+  function getCurrentToken(key) {
+    return keyTokens.get(key)
+  }
+  function clearTokenIfCurrent(key, token) {
+    if (keyTokens.get(key) !== token) return
+    keyTokens.delete(key)
+  }
+  function wrapRunPayload(payload, token) {
+    return {
+      [runMetaSymbol]: true,
+      payload,
+      token,
+    }
+  }
+  function unwrapRunPayload(payload) {
+    if (payload?.[runMetaSymbol]) {
+      return {
+        payload: payload.payload,
+        token: payload.token,
+      }
+    }
+    return { payload, token: null }
+  }
 
   /**
    * Captures entity identity to avoid proxy revocation issues after await.
@@ -160,11 +210,18 @@ export function handleAsync(type, handlers, options = {}) {
   return {
     [type](entity, payload, api) {
       const identity = getIdentity(entity)
+      const key = latest ? getKey(identity) : null
+      const token = key ? nextToken(key) : null
       if (handlers.start) {
         notify(api, identity, `${type}Start`, payload)
       }
 
-      notify(api, identity, `${type}Run`, payload)
+      notify(
+        api,
+        identity,
+        `${type}Run`,
+        latest && token != null ? wrapRunPayload(payload, token) : payload,
+      )
     },
 
     ...(handlers.start && {
@@ -175,13 +232,25 @@ export function handleAsync(type, handlers, options = {}) {
 
     async [`${type}Run`](entity, payload, api) {
       const identity = getIdentity(entity)
+      const key = latest ? getKey(identity) : null
+      const { payload: runPayload, token: runToken } = unwrapRunPayload(payload)
+      const isStale = () =>
+        latest && key && runToken != null && getCurrentToken(key) !== runToken
+
       try {
-        const result = await handlers.run(payload, api)
+        const result = await handlers.run(runPayload, api)
+        if (isStale()) return
         notify(api, identity, `${type}Success`, result)
       } catch (error) {
+        if (isStale()) return
         notify(api, identity, `${type}Error`, error)
       } finally {
-        notify(api, identity, `${type}Finally`)
+        if (!isStale()) {
+          notify(api, identity, `${type}Finally`)
+          if (latest && key && runToken != null) {
+            clearTokenIfCurrent(key, runToken)
+          }
+        }
       }
     },
 
