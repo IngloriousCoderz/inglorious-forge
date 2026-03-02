@@ -3,7 +3,7 @@ import "./routes.js"
 import { createStore } from "@inglorious/web"
 import { router } from "@inglorious/web/router"
 import { table } from "@inglorious/web/table"
-import { barChart, lineChart, pieChart } from "@inglorious/charts"
+import { barChart, lineBaseChart, pieChart } from "@inglorious/charts"
 
 import { assetPage } from "../pages/asset.js"
 import { dashboardPage } from "../pages/dashboard.js"
@@ -12,8 +12,7 @@ import { screenerPage } from "../pages/screener.js"
 import { entities } from "./entities.js"
 import { middlewares } from "./middlewares.js"
 
-const financeLine = {
-  ...lineChart,
+const financeLineBehavior = {
   chartDataSet(entity, rows) {
     entity.data = rows
     entity.brush ??= { enabled: true, height: 28 }
@@ -34,8 +33,7 @@ const financeLine = {
   },
 }
 
-const financeTable = {
-  ...table,
+const financeTableBehavior = {
   tableDataSet(entity, rows) {
     entity.data = rows
     entity.selection = []
@@ -63,8 +61,8 @@ const financeTable = {
 export const store = createStore({
   types: {
     router,
-    financeTable,
-    line: financeLine,
+    financeTable: [table, financeTableBehavior],
+    line: [lineBaseChart, financeLineBehavior],
     bar: barChart,
     pie: pieChart,
     dashboardPage,
