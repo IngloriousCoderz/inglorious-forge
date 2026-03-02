@@ -1,12 +1,12 @@
 import { svg } from "@inglorious/web"
 
 import * as handlers from "./handlers.js"
+export { withRealtime } from "./realtime/with-realtime.js"
 import { render } from "./template.js"
+export { streamSlide } from "./utils/stream-slide.js"
 import { extractDataKeysFromChildren } from "./utils/extract-data-keys.js"
 export { STREAM_DEFAULTS } from "./realtime/defaults.js"
 export { lineChart } from "./realtime/stream-types.js"
-export { withRealtime } from "./realtime/with-realtime.js"
-export { streamSlide } from "./utils/stream-slide.js"
 
 // Export chart types for config style
 export {

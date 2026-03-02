@@ -9,11 +9,13 @@ import { line } from "../cartesian/line.js"
 import * as handlers from "../handlers.js"
 import { donut } from "../polar/donut.js"
 import { pie } from "../polar/pie.js"
+import { withRealtime } from "../realtime/with-realtime.js"
 import { render } from "../template.js"
 
 export const areaChart = combineRenderer(area)
 export const barChart = combineRenderer(bar)
-export const lineChart = combineRenderer(line)
+export const lineBaseChart = combineRenderer(line)
+export const lineChart = [lineBaseChart, withRealtime]
 export const pieChart = combineRenderer(pie)
 export const donutChart = combineRenderer(donut)
 

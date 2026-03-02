@@ -338,10 +338,20 @@ describe("chart", () => {
     })
 
     describe("lineChart", () => {
+      const resolvedLineChart = Array.isArray(lineChart)
+        ? lineChart.reduce(
+            (type, behavior) => ({
+              ...type,
+              ...(typeof behavior === "function" ? behavior(type) : behavior),
+            }),
+            {},
+          )
+        : lineChart
+
       it("should have create, render, and render methods", () => {
-        expect(lineChart.create).toBeDefined()
-        expect(lineChart.render).toBeDefined()
-        expect(lineChart.render).toBeDefined()
+        expect(resolvedLineChart.create).toBeDefined()
+        expect(resolvedLineChart.render).toBeDefined()
+        expect(resolvedLineChart.render).toBeDefined()
       })
 
       it("should render chart with data", () => {
@@ -353,15 +363,15 @@ describe("chart", () => {
           height: 400,
         }
 
-        lineChart.create(entity)
+        resolvedLineChart.create(entity)
         const mockApi = {
           getType: vi.fn((type) => {
-            if (type === "line") return lineChart
+            if (type === "line") return resolvedLineChart
             return null
           }),
           notify: vi.fn(),
         }
-        const result = lineChart.render(entity, mockApi)
+        const result = resolvedLineChart.render(entity, mockApi)
 
         expect(result).toBeDefined()
       })
