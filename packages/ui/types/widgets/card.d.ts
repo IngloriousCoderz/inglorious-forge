@@ -1,4 +1,4 @@
-import type { TemplateResult, Api } from "@inglorious/web"
+import type { TemplateResult } from "@inglorious/web"
 
 export interface CardProps {
   id?: string
@@ -12,10 +12,10 @@ export interface CardProps {
 }
 
 export interface CardType {
-  render(entity: CardProps, api: Api): TemplateResult
-  renderHeader(entity: CardProps, api: Api): TemplateResult | null
-  renderBody(entity: CardProps, api: Api): TemplateResult
-  renderFooter(entity: CardProps, api: Api): TemplateResult | null
+  render(props: CardProps): TemplateResult
+  renderHeader(props: CardProps): TemplateResult | null
+  renderBody(props: CardProps): TemplateResult
+  renderFooter(props: CardProps): TemplateResult | null
 }
 
 export declare const card: CardType

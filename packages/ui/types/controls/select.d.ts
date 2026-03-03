@@ -1,4 +1,4 @@
-import type { TemplateResult, Api } from "@inglorious/web"
+import type { TemplateResult } from "@inglorious/web"
 
 export type SelectOption =
   | string
@@ -28,7 +28,7 @@ export interface SelectProps {
 }
 
 export interface SelectType {
-  render(entity: SelectProps, api: Api): TemplateResult
+  render(props: SelectProps): TemplateResult
 }
 
 export declare const select: SelectType

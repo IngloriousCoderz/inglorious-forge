@@ -48,4 +48,26 @@ describe("radioGroup", () => {
 
     expect(newValue).toBe("b")
   })
+
+  it("renders group label and disables options", () => {
+    const props = {
+      id: "rg",
+      label: "Status",
+      disabled: true,
+      options: [
+        { label: "A", value: "a" },
+        { label: "B", value: "b", disabled: true },
+      ],
+    }
+    const container = document.createElement("div")
+
+    render(radioGroup.render(props), container)
+
+    expect(container.querySelector(".iw-radio-group-label").textContent).toBe(
+      "Status",
+    )
+    const radios = container.querySelectorAll('input[type="radio"]')
+    expect(radios[0].disabled).toBe(true)
+    expect(radios[1].disabled).toBe(true)
+  })
 })

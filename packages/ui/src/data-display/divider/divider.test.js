@@ -12,4 +12,15 @@ describe("divider", () => {
 
     expect(container.querySelector(".iw-divider")).not.toBeNull()
   })
+
+  it("renders vertical inset divider", () => {
+    const props = { id: "dv", orientation: "vertical", inset: true }
+    const container = document.createElement("div")
+
+    render(divider.render(props), container)
+
+    const root = container.querySelector(".iw-divider")
+    expect(root.classList.contains("iw-divider-vertical")).toBe(true)
+    expect(root.classList.contains("iw-divider-inset")).toBe(true)
+  })
 })

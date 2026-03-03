@@ -1,4 +1,4 @@
-import type { TemplateResult, Api } from "@inglorious/web"
+import type { TemplateResult } from "@inglorious/web"
 
 export interface RatingProps {
   id?: string
@@ -13,7 +13,7 @@ export interface RatingProps {
 }
 
 export interface RatingType {
-  render(entity: RatingProps, api: Api): TemplateResult
+  render(props: RatingProps): TemplateResult
 }
 
 export declare const rating: RatingType

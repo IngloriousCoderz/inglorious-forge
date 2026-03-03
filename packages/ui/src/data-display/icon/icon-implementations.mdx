@@ -83,7 +83,7 @@ Use this page as a quick reference for supported icon strategies in `@inglorious
   <div className="iw-icon-tab-panels">
     <section className="iw-icon-tab-panel iw-icon-tab-panel-generic">
       <p>Use <code>@inglorious/ui/icon</code> for glyphs, emoji, and simple symbols.</p>
-      <pre><code>{`icon.render({ children: "★", size: "md", color: "current" }, api)`}</code></pre>
+      <pre><code>{`icon.render({ children: "★", size: "md", color: "current" })`}</code></pre>
       <div className="iw-icon-example">★ ⚑ ♫</div>
     </section>
 
@@ -93,7 +93,7 @@ Use this page as a quick reference for supported icon strategies in `@inglorious
 
 children: html\`<svg viewBox="0 0 24 24" ...>...</svg>\`,
 size: "md",
-}, api)`}</code></pre>
+})`}</code></pre>
 
 <div className="iw-icon-example">
 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -110,7 +110,7 @@ size: "md",
 
     <section className="iw-icon-tab-panel iw-icon-tab-panel-material">
       <p>Use <code>@inglorious/ui/material-icon</code> when Material Symbols fonts are loaded.</p>
-      <pre><code>{`materialIcon.render({ name: "home", filled: true, size: "md" }, api)`}</code></pre>
+      <pre><code>{`materialIcon.render({ name: "home", filled: true, size: "md" })`}</code></pre>
       <div className="iw-icon-example">
         <span className="iw-material-symbol" aria-hidden="true">home</span>
         <span className="iw-material-symbol" aria-hidden="true">settings</span>
@@ -123,7 +123,7 @@ size: "md",
       <pre><code>{`icon.render({
 
 children: html\`<i class="fa-solid fa-user" aria-hidden="true"></i>\`,
-}, api)`}</code></pre>
+})`}</code></pre>
 
 <div className="iw-icon-example">
 <i className="fa-solid fa-user" aria-hidden="true"></i>

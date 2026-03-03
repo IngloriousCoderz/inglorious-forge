@@ -157,6 +157,23 @@ describe("button", () => {
       expect(buttonElement.getAttribute("data-testid")).toBe("primary-cta")
       expect(buttonElement.getAttribute("title")).toBe("Primary action")
     })
+
+    it("applies aria attributes and custom className", () => {
+      const props = {
+        children: "Aria",
+        ariaLabel: "Primary action",
+        ariaPressed: true,
+        className: "extra-class",
+      }
+      const container = document.createElement("div")
+
+      render(button.render(props), container)
+
+      const buttonElement = container.querySelector("button")
+      expect(buttonElement.getAttribute("aria-label")).toBe("Primary action")
+      expect(buttonElement.getAttribute("aria-pressed")).toBe("true")
+      expect(buttonElement.classList.contains("extra-class")).toBe(true)
+    })
   })
 
   describe("click handler", () => {

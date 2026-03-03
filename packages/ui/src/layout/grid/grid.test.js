@@ -50,4 +50,15 @@ describe("grid", () => {
       container.querySelector(".iw-grid").style.gridTemplateColumns,
     ).toContain("auto-fit")
   })
+
+  it("dispatches click handler", () => {
+    let isClicked = false
+    const props = { id: "gd", onClick: () => (isClicked = true) }
+    const container = document.createElement("div")
+
+    render(grid.render(props), container)
+
+    container.querySelector(".iw-grid").click()
+    expect(isClicked).toBe(true)
+  })
 })

@@ -24,4 +24,16 @@ describe("fab", () => {
 
     expect(isClicked).toBe(true)
   })
+
+  it("renders extended variant and merges className", () => {
+    const props = { children: "Create", extended: true, className: "extra" }
+    const container = document.createElement("div")
+
+    render(fab.render(props), container)
+
+    const buttonElement = container.querySelector(".iw-fab")
+    expect(buttonElement.classList.contains("iw-fab-extended")).toBe(true)
+    expect(buttonElement.classList.contains("extra")).toBe(true)
+    expect(container.querySelector(".iw-fab-content")).toBeNull()
+  })
 })

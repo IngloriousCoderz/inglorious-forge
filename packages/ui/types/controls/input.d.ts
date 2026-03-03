@@ -1,4 +1,4 @@
-import type { TemplateResult, Api } from "@inglorious/web"
+import type { TemplateResult } from "@inglorious/web"
 
 export interface InputProps {
   id?: string
@@ -30,7 +30,7 @@ export interface InputProps {
 }
 
 export interface InputType {
-  render(entity: InputProps, api: Api): TemplateResult
+  render(props: InputProps): TemplateResult
 }
 
 export declare const input: InputType

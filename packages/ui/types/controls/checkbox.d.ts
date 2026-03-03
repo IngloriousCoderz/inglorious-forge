@@ -1,4 +1,4 @@
-import type { TemplateResult, Api } from "@inglorious/web"
+import type { TemplateResult } from "@inglorious/web"
 
 export interface CheckboxProps {
   id?: string
@@ -14,7 +14,7 @@ export interface CheckboxProps {
 }
 
 export interface CheckboxType {
-  render(entity: CheckboxProps, api: Api): TemplateResult
+  render(props: CheckboxProps): TemplateResult
 }
 
 export declare const checkbox: CheckboxType

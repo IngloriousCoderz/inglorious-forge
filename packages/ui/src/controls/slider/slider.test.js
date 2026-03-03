@@ -44,4 +44,49 @@ describe("slider", () => {
 
     expect(newValue).toBe(64)
   })
+
+  it("renders label and hides value when showValue is false", () => {
+    const props = {
+      id: "sl",
+      label: "Volume",
+      showValue: false,
+    }
+    const container = document.createElement("div")
+
+    render(slider.render(props), container)
+
+    expect(container.querySelector(".iw-slider-header label").textContent).toBe(
+      "Volume",
+    )
+    expect(container.querySelector(".iw-slider-value")).toBeNull()
+  })
+
+  it("applies full width and disabled attributes", () => {
+    const props = {
+      id: "sl",
+      fullWidth: true,
+      disabled: true,
+      step: 5,
+    }
+    const container = document.createElement("div")
+
+    render(slider.render(props), container)
+
+    const root = container.querySelector(".iw-slider")
+    const input = container.querySelector('input[type="range"]')
+    expect(root.classList.contains("iw-slider-full-width")).toBe(true)
+    expect(input.disabled).toBe(true)
+    expect(input.step).toBe("5")
+  })
+
+  it("sets name and id on range input", () => {
+    const props = { id: "slider", name: "volume" }
+    const container = document.createElement("div")
+
+    render(slider.render(props), container)
+
+    const input = container.querySelector('input[type="range"]')
+    expect(input.id).toBe("slider")
+    expect(input.name).toBe("volume")
+  })
 })

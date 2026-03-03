@@ -1,4 +1,4 @@
-import type { TemplateResult, Api } from "@inglorious/web"
+import type { TemplateResult } from "@inglorious/web"
 
 export type ListItem = unknown
 
@@ -7,24 +7,23 @@ export interface ListProps {
   type?: string
   items?: unknown[]
   children?: TemplateResult | string | number
-  ordered?: boolean
-  dense?: boolean
-  divided?: boolean
+  isOrdered?: boolean
+  isDense?: boolean
+  isDivided?: boolean
   className?: string
   onItemClick?: (item: ListItem, index: number) => void
   [key: string]: unknown
 }
 
 export interface ListType {
-  render(entity: ListProps, api: Api): TemplateResult
+  render(props: ListProps): TemplateResult
   renderItem(
-    entity: ListProps,
+    props: ListProps,
     payload: {
       item: ListItem
       index: number
       onItemClick?: (item: ListItem, index: number) => void
     },
-    api: Api,
   ): TemplateResult
 }
 

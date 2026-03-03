@@ -39,6 +39,26 @@ describe("input", () => {
       expect(errorElement.textContent).toBe("Required")
     })
 
+    it("renders hint when no error is provided", () => {
+      const props = { hint: "Helpful text" }
+      const container = document.createElement("div")
+
+      render(input.render(props), container)
+
+      const hintElement = container.querySelector(".iw-input-hint")
+      expect(hintElement.textContent).toBe("Helpful text")
+    })
+
+    it("prioritizes error over hint", () => {
+      const props = { error: "Required", hint: "Helpful text" }
+      const container = document.createElement("div")
+
+      render(input.render(props), container)
+
+      expect(container.querySelector(".iw-input-error-message")).not.toBeNull()
+      expect(container.querySelector(".iw-input-hint")).toBeNull()
+    })
+
     it("renders icons", () => {
       const props = { icon: "@", iconAfter: "✓" }
       const container = document.createElement("div")
@@ -58,6 +78,33 @@ describe("input", () => {
 
       const inputElement = container.querySelector("input")
       expect(inputElement.classList.contains("iw-input-number")).toBe(true)
+    })
+
+    it("renders required indicator and attributes", () => {
+      const props = { id: "email", label: "Email", required: true }
+      const container = document.createElement("div")
+
+      render(input.render(props), container)
+
+      const inputElement = container.querySelector("input")
+      expect(inputElement.hasAttribute("required")).toBe(true)
+      expect(container.querySelector(".iw-input-required")).not.toBeNull()
+    })
+
+    it("applies disabled, readonly, and fullWidth state", () => {
+      const props = { disabled: true, readonly: true, fullWidth: true }
+      const container = document.createElement("div")
+
+      render(input.render(props), container)
+
+      const inputElement = container.querySelector("input")
+      expect(inputElement.hasAttribute("disabled")).toBe(true)
+      expect(inputElement.hasAttribute("readonly")).toBe(true)
+      expect(
+        container
+          .querySelector(".iw-input-field")
+          .classList.contains("iw-input-full-width"),
+      ).toBe(true)
     })
 
     it("passes arbitrary attributes to native input", () => {
@@ -98,6 +145,25 @@ describe("input", () => {
       inputElement.dispatchEvent(new Event("input"))
 
       expect(newValue).toBe("abc")
+    })
+
+    it("dispatches blur and focus events", () => {
+      let blurCount = 0
+      let focusCount = 0
+      const props = {
+        onBlur: () => (blurCount += 1),
+        onFocus: () => (focusCount += 1),
+      }
+      const container = document.createElement("div")
+
+      render(input.render(props), container)
+
+      const inputElement = container.querySelector("input")
+      inputElement.dispatchEvent(new Event("focus"))
+      inputElement.dispatchEvent(new Event("blur"))
+
+      expect(focusCount).toBe(1)
+      expect(blurCount).toBe(1)
     })
   })
 })

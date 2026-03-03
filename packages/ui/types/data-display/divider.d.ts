@@ -1,4 +1,4 @@
-import type { TemplateResult, Api } from "@inglorious/web"
+import type { TemplateResult } from "@inglorious/web"
 
 export interface DividerProps {
   id?: string
@@ -8,7 +8,7 @@ export interface DividerProps {
 }
 
 export interface DividerType {
-  render(entity: DividerProps, api: Api): TemplateResult
+  render(props: DividerProps): TemplateResult
 }
 
 export declare const divider: DividerType

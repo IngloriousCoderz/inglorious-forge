@@ -1,7 +1,6 @@
 /**
  * @typedef {import('../../../types/data-display/table').TableProps} TableProps
  * @typedef {import('../../../types/data-display/table').TableColumn} TableColumn
- * @typedef {import('@inglorious/web').Api} Api
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
@@ -15,10 +14,9 @@ const STRIPED_OFFSET = 1
 export const table = {
   /**
    * @param {TableProps} props
-   * @param {Api} api
    * @returns {TemplateResult}
    */
-  render(props, api) {
+  render(props) {
     const {
       columns = [],
       rows = [],
@@ -46,7 +44,7 @@ export const table = {
                 columns,
                 (column, index) => column.id ?? `${index}`,
                 (column, index) =>
-                  this.renderHeaderCell(props, { column, index }, api),
+                  this.renderHeaderCell(props, { column, index }),
               )}
             </tr>
           </thead>
@@ -54,8 +52,7 @@ export const table = {
             ${repeat(
               rows,
               (row, index) => row?.id ?? `${index}`,
-              (row, index) =>
-                this.renderRow(props, { row, index, onRowClick }, api),
+              (row, index) => this.renderRow(props, { row, index, onRowClick }),
             )}
           </tbody>
         </table>
@@ -64,23 +61,22 @@ export const table = {
   },
 
   /**
-   * @param {TableProps} _entity
+   * @param {TableProps} _props
    * @param {{column: TableColumn, index: number}} payload
    * @returns {TemplateResult}
    */
-  renderHeaderCell(_entity, { column }) {
+  renderHeaderCell(_props, { column }) {
     const title = column.label ?? column.title ?? column.id
     return html`<th class="iw-table-header-cell">${title}</th>`
   },
 
   /**
-   * @param {TableProps} entity
+   * @param {TableProps} props
    * @param {{row: Record<string, unknown>, index: number}} payload
-   * @param {Api} api
    * @returns {TemplateResult}
    */
-  renderRow(entity, { row, index, onRowClick }, api) {
-    const columns = entity.columns ?? []
+  renderRow(props, { row, index, onRowClick }) {
+    const columns = props.columns ?? []
 
     return html`<tr
       class=${classMap({
@@ -93,17 +89,17 @@ export const table = {
         columns,
         (column, columnIndex) => column.id ?? `${columnIndex}`,
         (column, columnIndex) =>
-          this.renderCell(entity, { column, row, index, columnIndex }, api),
+          this.renderCell(props, { column, row, index, columnIndex }),
       )}
     </tr>`
   },
 
   /**
-   * @param {TableProps} _entity
+   * @param {TableProps} _props
    * @param {{column: TableColumn, row: Record<string, unknown>}} payload
    * @returns {TemplateResult}
    */
-  renderCell(_entity, { column, row }) {
+  renderCell(_props, { column, row }) {
     const value = row?.[column.id]
 
     return html`<td

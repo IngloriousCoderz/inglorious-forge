@@ -1,4 +1,4 @@
-import type { TemplateResult, Api } from "@inglorious/web"
+import type { TemplateResult } from "@inglorious/web"
 
 export interface AvatarProps {
   id?: string
@@ -13,7 +13,7 @@ export interface AvatarProps {
 }
 
 export interface AvatarType {
-  render(entity: AvatarProps, api: Api): TemplateResult
+  render(props: AvatarProps): TemplateResult
 }
 
 export declare const avatar: AvatarType

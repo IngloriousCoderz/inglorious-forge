@@ -1,4 +1,4 @@
-import type { TemplateResult, Api } from "@inglorious/web"
+import type { TemplateResult } from "@inglorious/web"
 
 export interface ButtonGroupItem {
   id?: string
@@ -30,7 +30,7 @@ export interface ButtonGroupProps {
 }
 
 export interface ButtonGroupType {
-  render(entity: ButtonGroupProps, api: Api): TemplateResult
+  render(props: ButtonGroupProps): TemplateResult
 }
 
 export declare const buttonGroup: ButtonGroupType

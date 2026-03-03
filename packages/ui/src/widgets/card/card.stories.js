@@ -28,6 +28,7 @@ export default {
       control: "boolean",
       description: "Expands card width to 100% of its container.",
     },
+    onFooterAction: { action: "onFooterAction" },
   },
   parameters: {
     docs: {
@@ -65,15 +66,15 @@ Clickable.args = {
 
 const cardWithFooter = {
   ...card,
-  renderFooter(entity, api) {
+  renderFooter(props) {
     return html`<div class="iw-card-footer" style="display: flex; gap: 0.5rem;">
-      ${entity.footerActions?.map(
+      ${props.footerActions?.map(
         (action) =>
           html`<button
             class="iw-button iw-button-sm ${action.variant === "ghost"
               ? "iw-button-ghost"
               : ""}"
-            @click=${() => api.notify(`#${entity.id}:${action.event}`)}
+            @click=${() => props.onFooterAction?.(action)}
           >
             ${action.label}
           </button>`,

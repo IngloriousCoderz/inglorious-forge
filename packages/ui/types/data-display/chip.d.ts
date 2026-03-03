@@ -1,4 +1,4 @@
-import type { TemplateResult, Api } from "@inglorious/web"
+import type { TemplateResult } from "@inglorious/web"
 
 export interface ChipProps {
   id?: string
@@ -19,7 +19,7 @@ export interface ChipProps {
 }
 
 export interface ChipType {
-  render(entity: ChipProps, api: Api): TemplateResult
+  render(props: ChipProps): TemplateResult
 }
 
 export declare const chip: ChipType

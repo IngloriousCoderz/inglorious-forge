@@ -1,4 +1,4 @@
-import type { TemplateResult, Api } from "@inglorious/web"
+import type { TemplateResult } from "@inglorious/web"
 
 export interface MaterialIconProps {
   id?: string
@@ -9,7 +9,7 @@ export interface MaterialIconProps {
 }
 
 export interface MaterialIconType {
-  render(entity: MaterialIconProps, api: Api): TemplateResult
+  render(props: MaterialIconProps): TemplateResult
 }
 
 export declare const materialIcon: MaterialIconType

@@ -1,6 +1,5 @@
 /**
  * @typedef {import('../../../types/widgets/card').CardProps} CardProps
- * @typedef {import('@inglorious/web').Api} Api
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
@@ -11,19 +10,13 @@ import { classMap, html } from "@inglorious/web"
  *
  * @example
  * // Stateless usage
- * card.render({ title: 'Card Title', subtitle: 'Description' }, api)
- *
- * @example
- * // Stateful usage with event handling
- * // Entity: { type: 'card', id: 'myCard', title: 'Click me' }
- * // In store: api.render('myCard')
+ * card.render({ title: 'Card Title', subtitle: 'Description' })
  *
  * @param {CardProps} props
- * @param {Api} api
  * @returns {TemplateResult}
  */
 export const card = {
-  render(props, api) {
+  render(props) {
     const {
       hoverable = false,
       clickable = false,
@@ -40,8 +33,8 @@ export const card = {
 
     return html`
       <div class=${classMap(classes)} @click=${onClick}>
-        ${this.renderHeader(props, api)} ${this.renderBody(props, api)}
-        ${this.renderFooter(props, api)}
+        ${this.renderHeader?.(props)} ${this.renderBody?.(props)}
+        ${this.renderFooter?.(props)}
       </div>
     `
   },
@@ -66,9 +59,11 @@ export const card = {
   /**
    * Default body renderer.
    * Override in composed types for custom body rendering.
+   * @param {CardProps} _props
    * @returns {TemplateResult}
    */
-  renderBody() {
+  renderBody(_props) {
+    void _props
     return html`<div class="iw-card-body">
       <slot></slot>
     </div>`
@@ -77,9 +72,11 @@ export const card = {
   /**
    * Default footer renderer.
    * Override in composed types for custom footer rendering.
+   * @param {CardProps} _props
    * @returns {TemplateResult | null}
    */
-  renderFooter() {
+  renderFooter(_props) {
+    void _props
     return null
   },
 }

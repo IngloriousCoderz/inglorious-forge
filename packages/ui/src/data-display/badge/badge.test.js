@@ -14,4 +14,24 @@ describe("badge", () => {
     expect(element.textContent.trim()).toBe("New")
     expect(element.classList.contains("iw-badge-lg")).toBe(true)
   })
+
+  it("applies color/variant classes and click handler", () => {
+    let isClicked = false
+    const props = {
+      id: "bg",
+      children: "Alert",
+      color: "warning",
+      variant: "outline",
+      onClick: () => (isClicked = true),
+    }
+    const container = document.createElement("div")
+
+    render(badge.render(props), container)
+
+    const element = container.querySelector(".iw-badge")
+    expect(element.classList.contains("iw-badge-warning")).toBe(true)
+    expect(element.classList.contains("iw-badge-outline")).toBe(true)
+    element.click()
+    expect(isClicked).toBe(true)
+  })
 })

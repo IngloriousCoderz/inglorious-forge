@@ -12,12 +12,7 @@ import { applyElementProps } from "../../shared/applyElementProps.js"
  *
  * @example
  * // Stateless usage
- * input.render({ label: 'Email', type: 'email', placeholder: 'you@example.com' }, api)
- *
- * @example
- * // Stateful usage with event handling
- * // Entity: { type: 'input', id: 'emailInput', label: 'Email' }
- * // In store: api.render('emailInput')
+ * input.render({ label: 'Email', type: 'email', placeholder: 'you@example.com' })
  *
  * @param {InputProps} props
  * @returns {TemplateResult}

@@ -12,12 +12,7 @@ import { applyElementProps } from "../../shared/applyElementProps.js"
  *
  * @example
  * // Stateless usage
- * button.render({ children: 'Click me', variant: 'primary' }, api)
- *
- * @example
- * // Stateful usage with event handling
- * // Entity: { type: 'button', id: 'submitBtn', children: 'Submit' }
- * // In store: api.render('submitBtn')
+ * button.render({ children: 'Click me', variant: 'primary' })
  *
  * @param {ButtonProps} props
  * @returns {TemplateResult}

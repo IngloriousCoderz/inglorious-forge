@@ -28,7 +28,7 @@ export default {
     docs: {
       description: {
         component:
-          "List primitive with optional ordered mode and overridable `renderItem(entity, payload, api)` sub-render.",
+          "List primitive with optional ordered mode and overridable `renderItem(props, payload)` sub-render.",
       },
     },
   },

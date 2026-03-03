@@ -1,4 +1,4 @@
-import type { TemplateResult, Api } from "@inglorious/web"
+import type { TemplateResult } from "@inglorious/web"
 
 export interface GridProps {
   id?: string
@@ -10,10 +10,11 @@ export interface GridProps {
   justify?: "stretch" | "start" | "center" | "end"
   fullWidth?: boolean
   children?: Array<TemplateResult | string | number>
+  onClick?: () => void
 }
 
 export interface GridType {
-  render(entity: GridProps, api: Api): TemplateResult
+  render(props: GridProps): TemplateResult
 }
 
 export declare const grid: GridType

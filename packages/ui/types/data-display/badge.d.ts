@@ -1,4 +1,4 @@
-import type { TemplateResult, Api } from "@inglorious/web"
+import type { TemplateResult } from "@inglorious/web"
 
 export interface BadgeProps {
   id?: string
@@ -11,7 +11,7 @@ export interface BadgeProps {
 }
 
 export interface BadgeType {
-  render(entity: BadgeProps, api: Api): TemplateResult
+  render(props: BadgeProps): TemplateResult
 }
 
 export declare const badge: BadgeType

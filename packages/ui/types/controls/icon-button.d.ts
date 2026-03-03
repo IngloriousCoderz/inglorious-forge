@@ -1,4 +1,4 @@
-import type { TemplateResult, Api } from "@inglorious/web"
+import type { TemplateResult } from "@inglorious/web"
 
 export interface IconButtonProps {
   id?: string
@@ -18,7 +18,7 @@ export interface IconButtonProps {
 }
 
 export interface IconButtonType {
-  render(entity: IconButtonProps, api: Api): TemplateResult
+  render(props: IconButtonProps): TemplateResult
 }
 
 export declare const iconButton: IconButtonType

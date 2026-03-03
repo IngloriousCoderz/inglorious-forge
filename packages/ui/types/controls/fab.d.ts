@@ -1,4 +1,4 @@
-import type { TemplateResult, Api } from "@inglorious/web"
+import type { TemplateResult } from "@inglorious/web"
 
 export interface FabProps {
   id?: string
@@ -14,7 +14,7 @@ export interface FabProps {
 }
 
 export interface FabType {
-  render(entity: FabProps, api: Api): TemplateResult
+  render(props: FabProps): TemplateResult
 }
 
 export declare const fab: FabType

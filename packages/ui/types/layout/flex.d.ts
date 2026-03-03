@@ -1,4 +1,4 @@
-import type { TemplateResult, Api } from "@inglorious/web"
+import type { TemplateResult } from "@inglorious/web"
 
 export interface FlexProps {
   id?: string
@@ -15,7 +15,7 @@ export interface FlexProps {
 }
 
 export interface FlexType {
-  render(entity: FlexProps, api: Api): TemplateResult
+  render(props: FlexProps): TemplateResult
 }
 
 export declare const flex: FlexType

@@ -32,6 +32,48 @@ describe("iconButton", () => {
     expect(container.querySelector("button").textContent.trim()).toBe("⚙")
   })
 
+  it("renders iconAfter and direction class", () => {
+    const props = {
+      id: "ib",
+      icon: "★",
+      label: "Star",
+      iconAfter: "→",
+      direction: "column",
+    }
+    const container = document.createElement("div")
+
+    render(iconButton.render(props), container)
+
+    const content = container.querySelector(".iw-icon-button-content")
+    expect(content.classList.contains("iw-icon-button-content-column")).toBe(
+      true,
+    )
+    expect(content.textContent.replace(/\s+/g, "")).toBe("★Star→")
+  })
+
+  it("passes button props through", () => {
+    const props = {
+      id: "ib",
+      icon: "★",
+      label: "Star",
+      variant: "outline",
+      color: "secondary",
+      size: "lg",
+      disabled: true,
+      ariaLabel: "Star button",
+    }
+    const container = document.createElement("div")
+
+    render(iconButton.render(props), container)
+
+    const buttonElement = container.querySelector("button")
+    expect(buttonElement.classList.contains("iw-button-outline")).toBe(true)
+    expect(buttonElement.classList.contains("iw-button-secondary")).toBe(true)
+    expect(buttonElement.classList.contains("iw-button-lg")).toBe(true)
+    expect(buttonElement.disabled).toBe(true)
+    expect(buttonElement.getAttribute("aria-label")).toBe("Star button")
+  })
+
   describe("click handler", () => {
     it("dispatches click event on button click", () => {
       let isClicked = false

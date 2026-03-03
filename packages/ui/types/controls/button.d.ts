@@ -1,4 +1,4 @@
-import type { TemplateResult, Api } from "@inglorious/web"
+import type { TemplateResult } from "@inglorious/web"
 
 export interface ButtonProps {
   id?: string
@@ -19,7 +19,7 @@ export interface ButtonProps {
 }
 
 export interface ButtonType {
-  render(entity: ButtonProps, api: Api): TemplateResult
+  render(props: ButtonProps): TemplateResult
 }
 
 export declare const button: ButtonType

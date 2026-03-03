@@ -53,4 +53,21 @@ describe("flex", () => {
 
     expect(container.textContent).toContain("Configured Child + Text Child")
   })
+
+  it("applies inline modifier and dispatches click", () => {
+    let isClicked = false
+    const entity = {
+      id: "fx",
+      inline: true,
+      onClick: () => (isClicked = true),
+    }
+    const container = document.createElement("div")
+
+    render(flex.render(entity), container)
+
+    const root = container.querySelector(".iw-flex")
+    expect(root.classList.contains("iw-flex-inline")).toBe(true)
+    root.click()
+    expect(isClicked).toBe(true)
+  })
 })

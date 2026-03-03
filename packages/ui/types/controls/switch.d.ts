@@ -1,4 +1,4 @@
-import type { TemplateResult, Api } from "@inglorious/web"
+import type { TemplateResult } from "@inglorious/web"
 
 export interface SwitchProps {
   id?: string
@@ -13,7 +13,7 @@ export interface SwitchProps {
 }
 
 export interface SwitchType {
-  render(entity: SwitchProps, api: Api): TemplateResult
+  render(props: SwitchProps): TemplateResult
 }
 
 export declare const switchControl: SwitchType

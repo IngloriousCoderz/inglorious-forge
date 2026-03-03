@@ -19,6 +19,47 @@ describe("select", () => {
     expect(container.querySelector(".iw-select").value).toBe("b")
   })
 
+  it("supports multiple selection and disabled state", () => {
+    const props = {
+      isMulti: true,
+      disabled: true,
+      options: ["a", "b"],
+    }
+    const container = document.createElement("div")
+
+    render(select.render(props), container)
+
+    const selectElement = container.querySelector("select")
+    expect(selectElement.multiple).toBe(true)
+    expect(selectElement.disabled).toBe(true)
+  })
+
+  it("applies size and fullWidth classes", () => {
+    const props = { size: "lg", fullWidth: true, options: ["a", "b"] }
+    const container = document.createElement("div")
+
+    render(select.render(props), container)
+
+    const selectElement = container.querySelector(".iw-select")
+    expect(selectElement.classList.contains("iw-select-lg")).toBe(true)
+    expect(selectElement.classList.contains("iw-select-full-width")).toBe(true)
+  })
+
+  it("respects disabled options", () => {
+    const props = {
+      options: [
+        { label: "A", value: "a", disabled: true },
+        { label: "B", value: "b" },
+      ],
+    }
+    const container = document.createElement("div")
+
+    render(select.render(props), container)
+
+    const option = container.querySelector('option[value="a"]')
+    expect(option.disabled).toBe(true)
+  })
+
   describe("events", () => {
     it("dispatches change event", () => {
       let newValue = null
@@ -39,6 +80,26 @@ describe("select", () => {
       selectElement.dispatchEvent(new Event("change"))
 
       expect(newValue).toBe("a")
+    })
+
+    it("dispatches blur and focus events", () => {
+      let blurCount = 0
+      let focusCount = 0
+      const props = {
+        options: ["a", "b"],
+        onBlur: () => (blurCount += 1),
+        onFocus: () => (focusCount += 1),
+      }
+      const container = document.createElement("div")
+
+      render(select.render(props), container)
+
+      const selectElement = container.querySelector("select")
+      selectElement.dispatchEvent(new Event("focus"))
+      selectElement.dispatchEvent(new Event("blur"))
+
+      expect(focusCount).toBe(1)
+      expect(blurCount).toBe(1)
     })
   })
 })

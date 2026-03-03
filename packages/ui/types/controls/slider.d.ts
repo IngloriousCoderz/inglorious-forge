@@ -1,4 +1,4 @@
-import type { TemplateResult, Api } from "@inglorious/web"
+import type { TemplateResult } from "@inglorious/web"
 
 export interface SliderProps {
   id?: string
@@ -17,7 +17,7 @@ export interface SliderProps {
 }
 
 export interface SliderType {
-  render(entity: SliderProps, api: Api): TemplateResult
+  render(props: SliderProps): TemplateResult
 }
 
 export declare const slider: SliderType

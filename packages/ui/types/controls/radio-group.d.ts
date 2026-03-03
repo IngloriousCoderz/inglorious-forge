@@ -1,4 +1,4 @@
-import type { TemplateResult, Api } from "@inglorious/web"
+import type { TemplateResult } from "@inglorious/web"
 
 export interface RadioOption {
   label: string
@@ -21,7 +21,7 @@ export interface RadioGroupProps {
 }
 
 export interface RadioGroupType {
-  render(entity: RadioGroupProps, api: Api): TemplateResult
+  render(props: RadioGroupProps): TemplateResult
 }
 
 export declare const radioGroup: RadioGroupType

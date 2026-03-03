@@ -1,4 +1,4 @@
-import type { TemplateResult, Api } from "@inglorious/web"
+import type { TemplateResult } from "@inglorious/web"
 
 export interface TooltipProps {
   id?: string
@@ -14,7 +14,7 @@ export interface TooltipProps {
 }
 
 export interface TooltipType {
-  render(entity: TooltipProps, api: Api): TemplateResult
+  render(props: TooltipProps): TemplateResult
 }
 
 export declare const tooltip: TooltipType

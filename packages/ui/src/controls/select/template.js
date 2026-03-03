@@ -13,12 +13,7 @@ import { formatOption, getOptionValue, isOptionSelected } from "./helpers.js"
  *
  * @example
  * // Stateless usage
- * select.render({ options: ['true', 'false'], value: 'true' }, api)
- *
- * @example
- * // Stateful usage with event handling
- * // Entity: { type: 'select', id: 'select', options: ['true', 'false'], value: 'true' }
- * // In store: api.render('select')
+ * select.render({ options: ['true', 'false'], value: 'true' })
  *
  * @param {SelectProps} props
  * @returns {TemplateResult}

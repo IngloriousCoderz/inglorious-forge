@@ -1,4 +1,4 @@
-import type { TemplateResult, Api } from "@inglorious/web"
+import type { TemplateResult } from "@inglorious/web"
 
 export interface TableColumn {
   id: string
@@ -22,26 +22,23 @@ export interface TableProps {
 }
 
 export interface TableType {
-  render(entity: TableProps, api: Api): TemplateResult
+  render(props: TableProps): TemplateResult
   renderHeaderCell(
-    entity: TableProps,
+    props: TableProps,
     payload: { column: TableColumn; index: number },
-    api: Api,
   ): TemplateResult
   renderRow(
-    entity: TableProps,
+    props: TableProps,
     payload: { row: Record<string, unknown>; index: number },
-    api: Api,
   ): TemplateResult
   renderCell(
-    entity: TableProps,
+    props: TableProps,
     payload: {
       column: TableColumn
       row: Record<string, unknown>
       index: number
       columnIndex: number
     },
-    api: Api,
   ): TemplateResult
 }
 

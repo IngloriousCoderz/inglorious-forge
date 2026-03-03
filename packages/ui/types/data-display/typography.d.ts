@@ -1,4 +1,4 @@
-import type { TemplateResult, Api } from "@inglorious/web"
+import type { TemplateResult } from "@inglorious/web"
 
 export type TypographyVariant =
   | "body"
@@ -22,7 +22,7 @@ export interface TypographyProps {
 }
 
 export interface TypographyType {
-  render(entity: TypographyProps, api: Api): TemplateResult
+  render(props: TypographyProps): TemplateResult
 }
 
 export declare const typography: TypographyType

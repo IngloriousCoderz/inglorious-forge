@@ -43,4 +43,26 @@ describe("switchControl", () => {
 
     expect(newValue).toBe(true)
   })
+
+  it("applies size, disabled state, and optional label", () => {
+    const props = {
+      id: "sw",
+      name: "toggle",
+      size: "lg",
+      disabled: true,
+      label: "",
+    }
+    const container = document.createElement("div")
+
+    render(switchControl.render(props), container)
+
+    const root = container.querySelector(".iw-switch")
+    const input = container.querySelector(".iw-switch-input")
+    expect(root.classList.contains("iw-switch-lg")).toBe(true)
+    expect(root.classList.contains("iw-switch-disabled")).toBe(true)
+    expect(input.disabled).toBe(true)
+    expect(input.name).toBe("toggle")
+    expect(input.id).toBe("sw")
+    expect(container.querySelector(".iw-switch-label")).toBeNull()
+  })
 })
