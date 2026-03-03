@@ -35,6 +35,17 @@ export interface ComboboxProps {
 
   fullWidth?: boolean
   size?: "sm" | "md" | "lg"
+  onToggle?: () => void
+  onClear?: () => void
+  onClose?: () => void
+  onSearchChange?: (value: string) => void
+  onFocusSet?: (index: number) => void
+  onFocusNext?: () => void
+  onFocusPrev?: () => void
+  onFocusFirst?: () => void
+  onFocusLast?: () => void
+  onOptionSelect?: (option: ComboboxOption) => void
+  onChange?: (option: ComboboxOption) => void
   [key: string]: unknown
 }
 

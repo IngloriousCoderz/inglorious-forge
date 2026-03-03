@@ -2,7 +2,6 @@
  * @typedef {import('../../../types/data-display/data-grid').Column} Column
  * @typedef {import('../../../types/data-display/data-grid').DataGridProps} DataGridProps
  * @typedef {import('../../../types/data-display/data-grid').Row} Row
- * @typedef {import('@inglorious/web').Api} Api
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
@@ -43,10 +42,9 @@ export const dataGrid = {
   /**
    * Renders the main table component.
    * @param {DataGridProps} props The table props.
-   * @param {Api} api The API object.
    * @returns {TemplateResult} The rendered table.
    */
-  render(props, api) {
+  render(props) {
     const { striped = false } = props
 
     const classes = {
@@ -55,18 +53,17 @@ export const dataGrid = {
     }
 
     return html`<div class=${classMap(classes)}>
-      ${this.renderHeader?.(props, api)} ${this.renderBody?.(props, api)}
-      ${this.renderFooter?.(props, api)}
+      ${this.renderHeader?.(props)} ${this.renderBody?.(props)}
+      ${this.renderFooter?.(props)}
     </div> `
   },
 
   /**
    * Renders the table header.
    * @param {DataGridProps} props The table props.
-   * @param {Api} api The API object.
    * @returns {TemplateResult} The rendered header.
    */
-  renderHeader(props, api) {
+  renderHeader(props) {
     return html`<div class="iw-data-grid-header">
       <div
         class="iw-data-grid-header-row"
@@ -76,7 +73,7 @@ export const dataGrid = {
             props.columns.some(({ width }) => typeof width === "string")
           ) {
             queueMicrotask(() => {
-              api.notify(`#${props.id}:mount`, el)
+              props.onMount?.(el)
             })
           }
         })}
@@ -85,11 +82,11 @@ export const dataGrid = {
           props.columns,
           (column) => column.id,
           (column, index) =>
-            this.renderHeaderColumn?.(props, { column, index }, api),
+            this.renderHeaderColumn?.(props, { column, index }),
         )}
       </div>
 
-      ${props.search && this.renderSearchbar?.(props, api)}
+      ${props.search && this.renderSearchbar?.(props)}
     </div>`
   },
 
@@ -98,33 +95,30 @@ export const dataGrid = {
    * @param {DataGridProps} props The table props.
    * @param {object} payload The payload.
    * @param {Column} payload.column The column definition.
-   * @param {Api} api The API object.
    * @returns {TemplateResult} The rendered header column.
    */
-  renderHeaderColumn(props, { column }, api) {
+  renderHeaderColumn(props, { column }) {
     return html`<div
       class="iw-data-grid-header-column"
       style=${getColumnStyle(column)}
     >
       <div
-        @click=${() =>
-          column.isSortable && api.notify(`#${props.id}:sortChange`, column.id)}
+        @click=${() => column.isSortable && props.onSortChange?.(column.id)}
         class="iw-data-grid-header-title"
       >
         ${column.title} ${getSortIcon(getSortDirection(props, column.id))}
       </div>
 
-      ${column.isFilterable && filters.render(props, column, api)}
+      ${column.isFilterable && filters.render(props, column)}
     </div>`
   },
 
   /**
    * Renders the search bar.
    * @param {DataGridProps} props The table props.
-   * @param {Api} api The API object.
    * @returns {TemplateResult} The rendered search bar.
    */
-  renderSearchbar(props, api) {
+  renderSearchbar(props) {
     return html`<div class="iw-data-grid-searchbar">
       ${input.render({
         size: "sm",
@@ -133,7 +127,7 @@ export const dataGrid = {
         inputType: "text",
         placeholder: props.search.placeholder ?? "Fuzzy search...",
         value: props.search.value,
-        onChange: (value) => api.notify(`#${props.id}:searchChange`, value),
+        onChange: (value) => props.onSearchChange?.(value),
       })}
     </div>`
   },
@@ -141,15 +135,14 @@ export const dataGrid = {
   /**
    * Renders the table body with rows.
    * @param {DataGridProps} props The table props.
-   * @param {Api} api The API object.
    * @returns {TemplateResult} The rendered table body.
    */
-  renderBody(props, api) {
+  renderBody(props) {
     return html`<div class="iw-data-grid-body">
       ${repeat(
         getRows(props),
         (row) => getRowKeyValue(props, row),
-        (row, index) => this.renderRow?.(props, { row, index }, api),
+        (row, index) => this.renderRow?.(props, { row, index }),
       )}
     </div>`
   },
@@ -160,14 +153,13 @@ export const dataGrid = {
    * @param {object} payload The payload.
    * @param {Row} payload.row The row data.
    * @param {number} payload.index The row index.
-   * @param {Api} api The API object.
    * @returns {TemplateResult} The rendered row.
    */
-  renderRow(props, { row, index }, api) {
+  renderRow(props, { row, index }) {
     const rowId = getRowKeyValue(props, row)
 
     return html`<div
-      @click=${() => api.notify(`#${props.id}:rowToggle`, rowId)}
+      @click=${() => props.onRowToggle?.(rowId)}
       class="iw-data-grid-row ${classMap({
         "iw-data-grid-row-even": index % DIVISOR,
         "iw-data-grid-row-selected": props.selection?.includes(rowId),
@@ -177,7 +169,7 @@ export const dataGrid = {
         props.columns,
         (column) => column.id,
         (column, index) =>
-          this.renderCell?.(props, { cell: row[column.id], index }, api),
+          this.renderCell?.(props, { cell: row[column.id], index }),
       )}
     </div>`
   },
@@ -188,10 +180,9 @@ export const dataGrid = {
    * @param {object} payload The payload.
    * @param {any} payload.cell The cell data.
    * @param {number} payload.index The column index.
-   * @param {Api} api The API object.
    * @returns {TemplateResult} The rendered cell.
    */
-  renderCell(props, { cell, index }, api) {
+  renderCell(props, { cell, index }) {
     const column = props.columns[index]
 
     return html`<div
@@ -202,7 +193,7 @@ export const dataGrid = {
       })}"
       style=${getColumnStyle(column)}
     >
-      ${this.renderValue?.(props, { value: cell, column, index }, api)}
+      ${this.renderValue?.(props, { value: cell, column, index })}
     </div>`
   },
 
@@ -220,10 +211,9 @@ export const dataGrid = {
   /**
    * Renders the table footer.
    * @param {DataGridProps} props The table props.
-   * @param {Api} api The API object.
    * @returns {TemplateResult} The rendered footer.
    */
-  renderFooter(props, api) {
+  renderFooter(props) {
     const pagination = getPaginationInfo(props)
 
     return html`<div class="iw-data-grid-footer">
@@ -233,9 +223,9 @@ export const dataGrid = {
             entries
           </div>
 
-          ${this.renderPagination?.(props, pagination, api)}
+          ${this.renderPagination?.(props, pagination)}
 
-          ${when(pagination.pageSizes, () => this.renderPageSize?.(props, pagination, api))}
+          ${when(pagination.pageSizes, () => this.renderPageSize?.(props, pagination))}
         </div>
       </div>
     </div>`
@@ -245,24 +235,23 @@ export const dataGrid = {
    * Renders the pagination controls.
    * @param {DataGridProps} props The table props.
    * @param {object} pagination The pagination info object from `getPaginationInfo`.
-   * @param {Api} api The API object.
    * @returns {TemplateResult} The rendered pagination controls.
    */
-  renderPagination(props, pagination, api) {
+  renderPagination(props, pagination) {
     return html`<div class="iw-data-grid-row">
       ${button.render({
         color: "secondary",
         size: "sm",
         children: html`|&#10094;`,
         disabled: !pagination.hasPrevPage,
-        onClick: () => api.notify(`#${props.id}:pageChange`, FIRST_PAGE),
+        onClick: () => props.onPageChange?.(FIRST_PAGE),
       })}
       ${button.render({
         color: "secondary",
         size: "sm",
         children: html`&#10094;`,
         disabled: !pagination.hasPrevPage,
-        onClick: () => api.notify(`#${props.id}:pagePrev`),
+        onClick: () => props.onPagePrev?.(),
       })}
       ${input.render({
         name: "page",
@@ -271,8 +260,7 @@ export const dataGrid = {
         min: 1,
         max: pagination.totalPages,
         value: pagination.page + PRETTY_PAGE,
-        onChange: (value) =>
-          api.notify(`#${props.id}:pageChange`, Number(value) - PRETTY_PAGE),
+        onChange: (value) => props.onPageChange?.(Number(value) - PRETTY_PAGE),
       })}
       /
       <span>${pagination.totalPages}</span>
@@ -281,31 +269,26 @@ export const dataGrid = {
         size: "sm",
         children: html`&#10095;`,
         disabled: !pagination.hasNextPage,
-        onClick: () => api.notify(`#${props.id}:pageNext`),
+        onClick: () => props.onPageNext?.(),
       })}
       ${button.render({
         color: "secondary",
         size: "sm",
         children: html`&#10095;|`,
         disabled: !pagination.hasNextPage,
-        onClick: () =>
-          api.notify(
-            `#${props.id}:pageChange`,
-            pagination.totalPages - LAST_PAGE,
-          ),
+        onClick: () => props.onPageChange?.(pagination.totalPages - LAST_PAGE),
       })}
     </div>`
   },
 
-  renderPageSize(props, pagination, api) {
+  renderPageSize(props, pagination) {
     return html`<div class="iw-data-grid-footer-row">
       <div>Page size:</div>
       ${select.render({
         size: "sm",
         value: pagination.pageSize,
         options: pagination.pageSizes,
-        onChange: (value) =>
-          api.notify(`#${props.id}:pageSizeChange`, Number(value)),
+        onChange: (value) => props.onPageSizeChange?.(Number(value)),
       })}
     </div>`
   },

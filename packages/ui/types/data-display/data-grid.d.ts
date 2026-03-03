@@ -34,6 +34,15 @@ export interface DataGridProps<T extends Row = Row> {
   pagination?: { page: number; pageSize: number; pageSizes: number[] } | null
   rowId?: string
   isMultiSelect: boolean
+  onMount?: (element: HTMLElement) => void
+  onSortChange?: (columnId: string) => void
+  onFilterChange?: (payload: { columnId: string; value: any }) => void
+  onSearchChange?: (value: string) => void
+  onRowToggle?: (rowId: string | number) => void
+  onPageChange?: (page: number) => void
+  onPageNext?: () => void
+  onPagePrev?: () => void
+  onPageSizeChange?: (pageSize: number) => void
   [key: string]: any
 }
 

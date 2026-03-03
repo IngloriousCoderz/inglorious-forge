@@ -11,7 +11,7 @@ const RANGE_TYPE = {
 }
 
 export const rangeFilter = {
-  render(entity, column, api) {
+  render(entity, column) {
     return html` ${input.render({
       name: `${column.id}Min`,
       inputType: RANGE_TYPE[column.filter.type],
@@ -20,7 +20,7 @@ export const rangeFilter = {
       fullWidth: true,
       onChange: (value) => {
         const formattedValue = value ? format(value, column.type) : null
-        api.notify(`#${entity.id}:filterChange`, {
+        entity.onFilterChange?.({
           columnId: column.id,
           value: { ...entity.filters[column.id], min: formattedValue },
         })
@@ -34,7 +34,7 @@ export const rangeFilter = {
       fullWidth: true,
       onChange: (value) => {
         const formattedValue = value ? format(value, column.type) : null
-        api.notify(`#${entity.id}:filterChange`, {
+        entity.onFilterChange?.({
           columnId: column.id,
           value: { ...entity.filters[column.id], max: formattedValue },
         })

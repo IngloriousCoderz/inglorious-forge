@@ -1,7 +1,6 @@
 /**
  * @typedef {import('../../../types/controls/combobox.js').ComboboxProps} ComboboxProps
  * @typedef {import('../../../types/controls/combobox.js').ComboboxOption} ComboboxOption
- * @typedef {import('@inglorious/web').Api} Api
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
@@ -22,10 +21,9 @@ export const combobox = {
   /**
    * Select control render function.
    * @param {ComboboxProps} props
-   * @param {Api} api
    * @returns {TemplateResult}
    */
-  render(props, api) {
+  render(props) {
     return html`<div
       class=${classMap({
         "iw-combobox": true,
@@ -36,18 +34,17 @@ export const combobox = {
       ${props.label
         ? html`<label class="iw-combobox-label">${props.label}</label>`
         : null}
-      ${this.renderControl?.(props, api)}
-      ${when(props.isOpen, () => this.renderDropdown?.(props, api))}
+      ${this.renderControl?.(props)}
+      ${when(props.isOpen, () => this.renderDropdown?.(props))}
     </div>`
   },
 
   /**
    * Render trigger control.
    * @param {ComboboxProps} props
-   * @param {Api} api
    * @returns {TemplateResult}
    */
-  renderControl(props, api) {
+  renderControl(props) {
     return html`<div
       class="iw-combobox-control ${classMap({
         "iw-combobox-control-open": props.isOpen,
@@ -57,11 +54,11 @@ export const combobox = {
           Array.isArray(props.selectedValue) &&
           props.selectedValue.length,
       })}"
-      @click=${() => !props.isDisabled && api.notify(`#${props.id}:toggle`)}
+      @click=${() => !props.isDisabled && props.onToggle?.()}
     >
       ${when(
         props.isMulti,
-        () => this.renderMultiValue?.(props, api),
+        () => this.renderMultiValue?.(props),
         () => this.renderSingleValue?.(props),
       )}
       ${when(
@@ -76,7 +73,6 @@ export const combobox = {
             type="button"
             @click=${(event) => {
               event.stopPropagation()
-              api.notify(`#${props.id}:clear`)
               props.onClear?.()
             }}
           >
@@ -114,10 +110,9 @@ export const combobox = {
   /**
    * Render multi selected value tags.
    * @param {ComboboxProps} props
-   * @param {Api} api
    * @returns {TemplateResult}
    */
-  renderMultiValue(props, api) {
+  renderMultiValue(props) {
     if (!Array.isArray(props.selectedValue) || !props.selectedValue.length) {
       return html`<span class="iw-combobox-placeholder"
         >${props.placeholder}</span
@@ -128,7 +123,7 @@ export const combobox = {
       ${repeat(
         props.selectedValue,
         (value) => value,
-        (value) => this.renderMultiValueTag?.(props, value, api),
+        (value) => this.renderMultiValueTag?.(props, value),
       )}
     </div>`
   },
@@ -137,10 +132,9 @@ export const combobox = {
    * Render a selected multi-value tag.
    * @param {ComboboxProps} props
    * @param {string|number} value
-   * @param {Api} api
    * @returns {TemplateResult}
    */
-  renderMultiValueTag(props, value, api) {
+  renderMultiValueTag(props, value) {
     const option = props.options.find((opt) => getOptionValue(opt) === value)
     const tagId = `${props.id}-tag-${String(value)}`
     const chipSize = props.size === "lg" ? "md" : "sm"
@@ -156,7 +150,7 @@ export const combobox = {
         size: chipSize,
         shape: "rounded",
         onClick: () => {
-          api.notify(`#${props.id}:optionSelect`, option)
+          props.onOptionSelect?.(option)
           props.onChange?.(option)
         },
       })}
@@ -166,10 +160,9 @@ export const combobox = {
   /**
    * Render dropdown.
    * @param {ComboboxProps} props
-   * @param {Api} api
    * @returns {TemplateResult}
    */
-  renderDropdown(props, api) {
+  renderDropdown(props) {
     const filteredOptions = filterOptions(props.options, props.searchTerm)
 
     return html`<div
@@ -181,7 +174,7 @@ export const combobox = {
               "click",
               (event) => {
                 if (!el.contains(event.target)) {
-                  api.notify(`#${props.id}:close`)
+                  props.onClose?.()
                 }
               },
               { once: true },
@@ -190,13 +183,13 @@ export const combobox = {
         }
       })}
     >
-      ${when(props.isSearchable, () => this.renderSearchInput?.(props, api))}
+      ${when(props.isSearchable, () => this.renderSearchInput?.(props))}
       ${when(props.isLoading, () => this.renderLoading?.(props))}
       ${when(!props.isLoading && !filteredOptions.length, () =>
         this.renderNoOptions?.(props),
       )}
       ${when(!props.isLoading && filteredOptions.length, () =>
-        this.renderOptions?.(props, api),
+        this.renderOptions?.(props),
       )}
     </div>`
   },
@@ -204,18 +197,16 @@ export const combobox = {
   /**
    * Render search input.
    * @param {ComboboxProps} props
-   * @param {Api} api
    * @returns {TemplateResult}
    */
-  renderSearchInput(props, api) {
+  renderSearchInput(props) {
     return html`<input
       class="iw-combobox-dropdown-search"
       type="text"
       placeholder="Search..."
       .value=${props.searchTerm ?? ""}
-      @input=${(event) =>
-        api.notify(`#${props.id}:searchChange`, event.target.value)}
-      @keydown=${(event) => handleKeyDown(props, event, api)}
+      @input=${(event) => props.onSearchChange?.(event.target.value)}
+      @keydown=${(event) => handleKeyDown(props, event)}
       ${ref((el) => {
         if (el && props.isOpen) queueMicrotask(() => el.focus())
       })}
@@ -225,17 +216,16 @@ export const combobox = {
   /**
    * Render options list.
    * @param {ComboboxProps} props
-   * @param {Api} api
    * @returns {TemplateResult}
    */
-  renderOptions(props, api) {
+  renderOptions(props) {
     const filteredOptions = filterOptions(props.options, props.searchTerm)
 
     return html`<div class="iw-combobox-dropdown-options">
       ${repeat(
         filteredOptions,
         (option) => getOptionValue(option),
-        (option, index) => this.renderOption?.(props, { option, index }, api),
+        (option, index) => this.renderOption?.(props, { option, index }),
       )}
     </div>`
   },
@@ -244,10 +234,9 @@ export const combobox = {
    * Render an option row.
    * @param {ComboboxProps} props
    * @param {{ option: ComboboxOption, index: number }} payload
-   * @param {Api} api
    * @returns {TemplateResult}
    */
-  renderOption(props, { option, index }, api) {
+  renderOption(props, { option, index }) {
     const normalized = formatOption(option)
     const isSelected = isOptionSelected(
       option,
@@ -264,10 +253,10 @@ export const combobox = {
       })}"
       @click=${() => {
         if (normalized.disabled) return
-        api.notify(`#${props.id}:optionSelect`, normalized)
+        props.onOptionSelect?.(normalized)
         props.onChange?.(normalized)
       }}
-      @mouseenter=${() => api.notify(`#${props.id}:focusSet`, index)}
+      @mouseenter=${() => props.onFocusSet?.(index)}
     >
       ${when(
         props.isMulti,
@@ -307,19 +296,18 @@ export const combobox = {
  * Handle key navigation.
  * @param {ComboboxProps} props
  * @param {KeyboardEvent} event
- * @param {Api} api
  */
-function handleKeyDown(props, event, api) {
+function handleKeyDown(props, event) {
   const filteredOptions = filterOptions(props.options, props.searchTerm)
 
   switch (event.key) {
     case "ArrowDown":
       event.preventDefault()
-      api.notify(`#${props.id}:focusNext`)
+      props.onFocusNext?.()
       break
     case "ArrowUp":
       event.preventDefault()
-      api.notify(`#${props.id}:focusPrev`)
+      props.onFocusPrev?.()
       break
     case "Enter":
       event.preventDefault()
@@ -329,22 +317,22 @@ function handleKeyDown(props, event, api) {
       ) {
         const option = formatOption(filteredOptions[props.focusedIndex])
         if (!option.disabled) {
-          api.notify(`#${props.id}:optionSelect`, option)
+          props.onOptionSelect?.(option)
           props.onChange?.(option)
         }
       }
       break
     case "Escape":
       event.preventDefault()
-      api.notify(`#${props.id}:close`)
+      props.onClose?.()
       break
     case "Home":
       event.preventDefault()
-      api.notify(`#${props.id}:focusFirst`)
+      props.onFocusFirst?.()
       break
     case "End":
       event.preventDefault()
-      api.notify(`#${props.id}:focusLast`)
+      props.onFocusLast?.()
       break
     default:
       break

@@ -7,7 +7,7 @@ const DEFAULT_PLACEHOLDER = {
 }
 
 export const inputFilter = {
-  render(entity, column, api) {
+  render(entity, column) {
     return input.render({
       name: column.id,
       inputType: column.filter.type,
@@ -17,10 +17,7 @@ export const inputFilter = {
       fullWidth: true,
       onChange: (value) => {
         const formattedValue = value ? format(value, column.type) : null
-        api.notify(`#${entity.id}:filterChange`, {
-          columnId: column.id,
-          value: formattedValue,
-        })
+        entity.onFilterChange?.({ columnId: column.id, value: formattedValue })
       },
     })
   },
