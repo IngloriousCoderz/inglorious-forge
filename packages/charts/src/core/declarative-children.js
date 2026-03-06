@@ -1,17 +1,21 @@
+export const DECLARATIVE_CHILD_NAMES = [
+  "XAxis",
+  "YAxis",
+  "Line",
+  "Area",
+  "Bar",
+  "Pie",
+  "CartesianGrid",
+  "Tooltip",
+  "Brush",
+  "Dots",
+  "Legend",
+]
+
 export function createDeclarativeChildren() {
-  return {
-    XAxis: (config = {}) => ({ type: "XAxis", config }),
-    YAxis: (config = {}) => ({ type: "YAxis", config }),
-    Line: (config = {}) => ({ type: "Line", config }),
-    Area: (config = {}) => ({ type: "Area", config }),
-    Bar: (config = {}) => ({ type: "Bar", config }),
-    Pie: (config = {}) => ({ type: "Pie", config }),
-    CartesianGrid: (config = {}) => ({ type: "CartesianGrid", config }),
-    Tooltip: (config = {}) => ({ type: "Tooltip", config }),
-    Brush: (config = {}) => ({ type: "Brush", config }),
-    Dots: (config = {}) => ({ type: "Dots", config }),
-    Legend: (config = {}) => ({ type: "Legend", config }),
-  }
+  return Object.fromEntries(
+    DECLARATIVE_CHILD_NAMES.map((name) => [name, buildDeclarativeChild(name)]),
+  )
 }
 
 export function createInstanceRenderAliases(declarativeChildren) {
@@ -34,4 +38,8 @@ export function attachInstancePascalAliases(instance) {
   instance.Dots = instance.renderDots
   instance.Legend = instance.renderLegend
   return instance
+}
+
+function buildDeclarativeChild(typeName) {
+  return (config = {}) => ({ type: typeName, config })
 }

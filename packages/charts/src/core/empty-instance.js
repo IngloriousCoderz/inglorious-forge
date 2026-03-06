@@ -1,36 +1,50 @@
+import { CHART_TYPE_METHODS } from "./chart-type-methods.js"
+import {
+  DECLARATIVE_CHILD_NAMES,
+} from "./declarative-children.js"
 import { renderEmptyTemplate } from "./render-dispatch.js"
 
 export function getEmptyChartInstance() {
+  const chartMethods = buildNoopChartMethods()
+  const declarativeMethods = buildNoopDeclarativeMethods()
+  const compatibilityMethods = buildNoopCompatibilityMethods()
+
   return {
-    renderLineChart: renderEmptyTemplate,
-    renderAreaChart: renderEmptyTemplate,
-    renderBarChart: renderEmptyTemplate,
-    renderPieChart: renderEmptyTemplate,
+    Dots: renderEmptyTemplate,
+    Legend: renderEmptyTemplate,
+    ...chartMethods,
+    ...compatibilityMethods,
+    ...declarativeMethods,
+  }
+}
+
+function buildNoopChartMethods() {
+  return Object.fromEntries(
+    CHART_TYPE_METHODS.flatMap(({ suffix }) => [
+      [`${suffix}Chart`, renderEmptyTemplate],
+      [`render${suffix}Chart`, renderEmptyTemplate],
+    ]),
+  )
+}
+
+function buildNoopDeclarativeMethods() {
+  return Object.fromEntries(
+    DECLARATIVE_CHILD_NAMES.map((methodName) => [methodName, renderEmptyTemplate]),
+  )
+}
+
+function buildNoopCompatibilityMethods() {
+  return {
     renderCartesianGrid: renderEmptyTemplate,
     renderXAxis: renderEmptyTemplate,
     renderYAxis: renderEmptyTemplate,
-    renderLegend: renderEmptyTemplate,
     renderLine: renderEmptyTemplate,
     renderArea: renderEmptyTemplate,
     renderBar: renderEmptyTemplate,
     renderPie: renderEmptyTemplate,
-    renderDots: renderEmptyTemplate,
     renderTooltip: renderEmptyTemplate,
     renderBrush: renderEmptyTemplate,
-    LineChart: renderEmptyTemplate,
-    AreaChart: renderEmptyTemplate,
-    BarChart: renderEmptyTemplate,
-    PieChart: renderEmptyTemplate,
-    CartesianGrid: renderEmptyTemplate,
-    XAxis: renderEmptyTemplate,
-    YAxis: renderEmptyTemplate,
-    Line: renderEmptyTemplate,
-    Area: renderEmptyTemplate,
-    Bar: renderEmptyTemplate,
-    Pie: renderEmptyTemplate,
-    Dots: renderEmptyTemplate,
-    Tooltip: renderEmptyTemplate,
-    Brush: renderEmptyTemplate,
-    Legend: renderEmptyTemplate,
+    renderDots: renderEmptyTemplate,
+    renderLegend: renderEmptyTemplate,
   }
 }
