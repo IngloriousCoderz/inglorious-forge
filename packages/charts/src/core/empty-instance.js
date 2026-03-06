@@ -1,7 +1,5 @@
 import { CHART_TYPE_METHODS } from "./chart-type-methods.js"
-import {
-  DECLARATIVE_CHILD_NAMES,
-} from "./declarative-children.js"
+import { DECLARATIVE_CHILD_NAMES } from "./declarative-children.js"
 import { renderEmptyTemplate } from "./render-dispatch.js"
 
 export function getEmptyChartInstance() {
@@ -29,7 +27,10 @@ function buildNoopChartMethods() {
 
 function buildNoopDeclarativeMethods() {
   return Object.fromEntries(
-    DECLARATIVE_CHILD_NAMES.map((methodName) => [methodName, renderEmptyTemplate]),
+    DECLARATIVE_CHILD_NAMES.map((methodName) => [
+      methodName,
+      renderEmptyTemplate,
+    ]),
   )
 }
 
