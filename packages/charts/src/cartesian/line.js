@@ -10,8 +10,11 @@ import { renderXAxis } from "../component/x-axis.js"
 import { renderYAxis } from "../component/y-axis.js"
 import { chart } from "../index.js"
 import { renderDot } from "../shape/dot.js"
-import { resolveChartDimensions } from "../utils/chart-dimensions.js"
-import { getTransformedData, isMultiSeries } from "../utils/data-utils.js"
+import {
+  createCartesianRenderer,
+  sortChildrenByLayer,
+} from "../utils/cartesian-renderer.js"
+import { getTransformedData, parseDimension } from "../utils/data-utils.js"
 import { extractDataKeysFromChildren } from "../utils/extract-data-keys.js"
 import { generateLinePath } from "../utils/paths.js"
 import { processDeclarativeChild } from "../utils/process-declarative-child.js"
@@ -23,79 +26,25 @@ import {
 } from "../utils/tooltip-handlers.js"
 
 export const line = {
-  /**
-   * Config-based rendering entry point.
-   * Builds default composition children from entity options and delegates to
-   * `renderLineChart`.
-   * @param {import('../types/charts').ChartEntity} entity
-   * @param {import('@inglorious/web').Api} api
-   * @returns {import('lit-html').TemplateResult}
-   */
-  render(entity, api) {
-    const type = api.getType(entity.type)
-
-    // Transform multi-series data to wide format if needed
-    let transformedData = entity.data
-    let dataKeys = []
-
-    if (isMultiSeries(entity.data)) {
-      // Extract dataKeys before transformation
-      dataKeys = entity.data.map(
-        (series, idx) =>
-          series.dataKey || series.name || series.label || `series${idx}`,
-      )
-      // Transform to wide format for rendering
-      transformedData = transformMultiSeriesToWide(entity.data)
-    }
-
-    // Apply data filtering if brush is enabled
-    const entityData = entity.brush?.enabled
-      ? getFilteredData({ ...entity, data: transformedData })
-      : transformedData
-
-    // Create entity with transformed and filtered data
-    const entityWithData = {
-      ...entity,
-      data: entityData,
-      dataKey:
-        entity.dataKey || (transformedData[0]?.x !== undefined ? "x" : "name"),
-    }
-
-    // Convert entity config to declarative children
-    const children = buildChildrenFromConfig(entityWithData, dataKeys)
-
-    // Extract dataKeys for config if not already extracted
-    if (dataKeys.length === 0) {
-      if (entityWithData.data && entityWithData.data.length > 0) {
-        const first = entityWithData.data[0]
-        dataKeys = Object.keys(first).filter(
-          (key) =>
-            !["name", "x", "date"].includes(key) &&
-            typeof first[key] === "number",
-        )
-        if (dataKeys.length === 0) {
-          dataKeys = ["y", "value"].filter((k) => first[k] !== undefined)
-        }
-        if (dataKeys.length === 0) {
-          dataKeys = ["value"]
-        }
-      }
-    }
-
-    // Use the unified motor (renderLineChart)
-    // Pass original entity in config so brush can access unfiltered data
-    return type.renderLineChart(
+  render: createCartesianRenderer({
+    seriesType: "line",
+    chartApi: () => chart,
+    toDisplayData: ({ entity, transformedData }) =>
+      entity.brush?.enabled
+        ? getFilteredData({ ...entity, data: transformedData })
+        : transformedData,
+    buildRenderConfig: ({
+      entity,
       entityWithData,
-      {
-        width: entityWithData.width,
-        height: entityWithData.height,
-        dataKeys,
-        originalEntity: { ...entity, data: transformedData },
-        children,
-      },
-      api,
-    )
-  },
+      transformedData,
+      dataKeys,
+    }) => ({
+      width: entityWithData.width,
+      height: entityWithData.height,
+      dataKeys,
+      originalEntity: { ...entity, data: transformedData },
+    }),
+  }),
 
   /**
    * Composition rendering entry point for line charts.
@@ -169,39 +118,17 @@ export const line = {
       })
       .filter(Boolean)
 
-    const cat = {
-      grid: [],
-      axes: [],
-      lines: [],
-      dots: [],
-      tooltip: [],
-      legend: [],
-      brush: [],
-      others: [],
-    }
-    for (const child of processedChildrenArray) {
-      if (typeof child === "function") {
-        if (child.isGrid) cat.grid.push(child)
-        else if (child.isAxis) cat.axes.push(child)
-        else if (child.isLine) cat.lines.push(child)
-        else if (child.isDots) cat.dots.push(child)
-        else if (child.isTooltip) cat.tooltip.push(child)
-        else if (child.isLegend) cat.legend.push(child)
-        else if (child.isBrush) cat.brush.push(child)
-        else cat.others.push(child)
-      } else cat.others.push(child)
-    }
+    const { orderedChildren, buckets } = sortChildrenByLayer(
+      processedChildrenArray,
+      {
+        seriesFlag: "isLine",
+        includeBrush: true,
+      },
+    )
 
-    const processedChildren = [
-      ...cat.grid,
-      ...cat.lines,
-      ...cat.axes,
-      ...cat.dots,
-      ...cat.tooltip,
-      ...cat.legend,
-      ...cat.brush,
-      ...cat.others,
-    ].map((child) => (typeof child === "function" ? child(context) : child))
+    const processedChildren = orderedChildren.map((child) =>
+      typeof child === "function" ? child(context) : child,
+    )
 
     return html`
       <div
@@ -210,8 +137,8 @@ export const line = {
       >
         <svg
           width=${width}
-          height=${height + (cat.brush.length ? 60 : 0)}
-          viewBox="0 0 ${width} ${height + (cat.brush.length ? 60 : 0)}"
+          height=${height + (buckets.brush.length ? 60 : 0)}
+          viewBox="0 0 ${width} ${height + (buckets.brush.length ? 60 : 0)}"
           @mousemove=${createTooltipMoveHandler({
             entity: entityWithData,
             api,
@@ -450,136 +377,4 @@ export const line = {
    * @type {(entity: import('../types/charts').ChartEntity, params: { config?: Record<string, any> }, api: import('@inglorious/web').Api) => (ctx: Record<string, any>) => import('lit-html').TemplateResult}
    */
   renderBrush: createBrushComponent(),
-}
-
-/**
- * Builds declarative children from entity config for renderChart (config style)
- * Converts entity configuration into children objects that renderLineChart can process
- * @param {import('../types/charts').ChartEntity} entity
- * @param {string[]} [providedDataKeys] - Optional dataKeys if already extracted (e.g., from multi-series before transformation)
- */
-function buildChildrenFromConfig(entity, providedDataKeys = null) {
-  const children = []
-
-  // Grid
-  if (entity.showGrid !== false) {
-    children.push(
-      chart.CartesianGrid({ stroke: "#eee", strokeDasharray: "5 5" }),
-    )
-  }
-
-  // XAxis - determine dataKey from entity or data structure
-  let xAxisDataKey = entity.dataKey
-  if (!xAxisDataKey && entity.data && entity.data.length > 0) {
-    const firstItem = entity.data[0]
-    xAxisDataKey = firstItem.name || firstItem.x || firstItem.date || "name"
-  }
-  if (!xAxisDataKey) {
-    xAxisDataKey = "name"
-  }
-  children.push(chart.XAxis({ dataKey: xAxisDataKey }))
-
-  // YAxis
-  children.push(chart.YAxis({ width: "auto" }))
-
-  // Extract dataKeys from entity data or use provided ones
-  let dataKeys = providedDataKeys
-  if (!dataKeys || dataKeys.length === 0) {
-    if (isMultiSeries(entity.data)) {
-      // Multi-series: use series names as dataKeys
-      dataKeys = entity.data.map((series, idx) => {
-        return series.dataKey || series.name || series.label || `series${idx}`
-      })
-    } else if (entity.data && entity.data.length > 0) {
-      // Wide format: extract numeric keys
-      const first = entity.data[0]
-      dataKeys = Object.keys(first).filter(
-        (key) =>
-          !["name", "x", "date"].includes(key) &&
-          typeof first[key] === "number",
-      )
-      if (dataKeys.length === 0) {
-        dataKeys = ["y", "value"].filter((k) => first[k] !== undefined)
-      }
-      if (dataKeys.length === 0) {
-        dataKeys = ["value"] // Default fallback
-      }
-    } else {
-      dataKeys = ["value"] // Default fallback
-    }
-  }
-
-  // Lines (one per dataKey)
-  const colors = entity.colors || ["#8884d8", "#82ca9d", "#ffc658", "#ff8042"]
-  dataKeys.forEach((dataKey, index) => {
-    children.push(
-      chart.Line({
-        dataKey,
-        stroke: colors[index % colors.length],
-        showDots: entity.showPoints !== false,
-      }),
-    )
-  })
-
-  // Dots (if showPoints is true)
-  if (entity.showPoints !== false && dataKeys.length > 0) {
-    dataKeys.forEach((dataKey, index) => {
-      children.push(
-        chart.Dots({
-          dataKey,
-          fill: colors[index % colors.length],
-        }),
-      )
-    })
-  }
-
-  // Tooltip
-  if (entity.showTooltip !== false) {
-    children.push(chart.Tooltip({}))
-  }
-
-  // Legend
-  if (entity.showLegend && isMultiSeries(entity.data)) {
-    children.push(
-      chart.Legend({
-        dataKeys,
-        labels: entity.labels || dataKeys,
-        colors: entity.colors,
-      }),
-    )
-  }
-
-  // Brush
-  if (entity.brush?.enabled && entity.brush?.visible !== false) {
-    children.push(
-      chart.Brush({
-        dataKey: xAxisDataKey,
-        height: entity.brush.height || 30,
-      }),
-    )
-  }
-
-  return children
-}
-
-function transformMultiSeriesToWide(multiSeriesData) {
-  if (!isMultiSeries(multiSeriesData)) return null
-  const dataMap = new Map()
-  const seriesKeys = multiSeriesData.map((s) => s.dataKey || s.name || "series")
-
-  multiSeriesData.forEach((series, seriesIdx) => {
-    const key = seriesKeys[seriesIdx]
-    const values = Array.isArray(series.values) ? series.values : [series]
-    values.forEach((point, index) => {
-      const xVal = point?.x ?? index
-      if (!dataMap.has(xVal)) dataMap.set(xVal, { x: xVal, name: String(xVal) })
-      dataMap.get(xVal)[key] = point?.y ?? point?.value ?? 0
-    })
-  })
-
-  return Array.from(dataMap.values()).sort((a, b) => {
-    return typeof a.x === "number"
-      ? a.x - b.x
-      : String(a.x).localeCompare(String(b.x))
-  })
 }
