@@ -1,11 +1,10 @@
 import { svg } from "@inglorious/web"
 
+const FIRST_CHAR_INDEX = 0
+const REST_START_INDEX = 1
+
 export function renderByChartType(typeKey) {
-  const firstCharIndex = 0
-  const restStartIndex = 1
-  const firstChar = typeKey.charAt(firstCharIndex)
-  const rest = typeKey.slice(restStartIndex)
-  const methodName = `render${firstChar.toUpperCase() + rest}Chart`
+  const methodName = `render${capitalize(typeKey)}Chart`
 
   return function renderUsingType(entity, params, api) {
     if (!entity) return renderEmptyTemplate()
@@ -42,4 +41,10 @@ export function renderWithEntityTypeMethod(entity, methodName, params, api) {
 
 export function renderEmptyTemplate() {
   return svg``
+}
+
+function capitalize(value) {
+  return value
+    ? value[FIRST_CHAR_INDEX].toUpperCase() + value.slice(REST_START_INDEX)
+    : ""
 }
