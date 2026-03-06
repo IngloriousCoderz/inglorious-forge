@@ -17,10 +17,10 @@ export function createChartInstance(entity, api, isInline = false) {
 
   const buildChartRenderMethod = isInline
     ? createInlineMethodBuilder({
-      readCurrentEntity,
-      writeCurrentEntity,
-      api,
-    })
+        readCurrentEntity,
+        writeCurrentEntity,
+        api,
+      })
     : createEntityMethodBuilder({ readCurrentEntity, api })
 
   const declarativeChildren = createDeclarativeChildren()
@@ -67,7 +67,10 @@ function buildChartMethodMap(buildChartRenderFactory, useStandardSignature) {
     CHART_TYPE_METHODS.map(({ type, suffix }) => {
       const methodName = `render${suffix}Chart`
       const exposedName = useStandardSignature ? `${suffix}Chart` : methodName
-      return [exposedName, buildChartRenderFactory(type, methodName, useStandardSignature)]
+      return [
+        exposedName,
+        buildChartRenderFactory(type, methodName, useStandardSignature),
+      ]
     }),
   )
 }
@@ -102,7 +105,11 @@ function createEntityMethodBuilder({ readCurrentEntity, api }) {
     }
 }
 
-function createInlineMethodBuilder({ readCurrentEntity, writeCurrentEntity, api }) {
+function createInlineMethodBuilder({
+  readCurrentEntity,
+  writeCurrentEntity,
+  api,
+}) {
   return (chartType, renderMethod, useStandardSignature = false) =>
     (firstArg = {}, secondArg = []) => {
       const { config, children } = resolveRenderArgs(
@@ -163,7 +170,8 @@ function buildFinalConfig({
 }) {
   return {
     ...config,
-    data: config.data || (shouldFallbackToEntityData ? dataFromEntity : undefined),
+    data:
+      config.data || (shouldFallbackToEntityData ? dataFromEntity : undefined),
     dataKeys:
       chartType !== "pie"
         ? config.dataKeys || extractDataKeysFromChildren(children)
