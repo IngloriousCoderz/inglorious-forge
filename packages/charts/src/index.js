@@ -37,31 +37,14 @@ export const chart = {
   renderYAxis: createComponentRenderer("renderYAxis"),
   renderTooltip: createComponentRenderer("renderTooltip"),
 
-  // Deferred Renderers (resolved once, then executed by chart runtime)
-  renderCartesianGrid: (entity, props = {}, api) =>
-    createDeferredRenderer(
-      entity,
-      api,
-      "renderCartesianGrid",
-      props.config,
-      props.chartType,
-    ),
-  renderXAxis: (entity, props = {}, api) =>
-    createDeferredRenderer(
-      entity,
-      api,
-      "renderXAxis",
-      props.config,
-      props.chartType,
-    ),
-  renderBrush: (entity, props = {}, api) =>
-    createDeferredRenderer(
-      entity,
-      api,
-      "renderBrush",
-      props.config,
-      props.chartType,
-    ),
+  // Component Renderers with optional chartType override from props
+  renderCartesianGrid: createComponentRenderer(
+    "renderCartesianGrid",
+    null,
+    true,
+  ),
+  renderXAxis: createComponentRenderer("renderXAxis", null, true),
+  renderBrush: createComponentRenderer("renderBrush", null, true),
 
   // Declarative Helpers for Composition Style (return intention objects)
   // The parent (renderLineChart, etc) processes these objects and "stamps" them with entity and api
@@ -215,25 +198,17 @@ function renderByChartType(typeKey) {
   }
 }
 
-function createDeferredRenderer(
-  entity,
-  api,
+function createComponentRenderer(
   methodName,
-  config = {},
-  chartTypeName = null,
+  typeOverride = null,
+  preferChartTypeProp = false,
 ) {
-  if (!entity) return renderEmptyTemplate()
-  const resolvedTypeName = chartTypeName || entity.type
-  const chartType = api.getType(resolvedTypeName)
-  return chartType?.[methodName]
-    ? chartType[methodName](entity, { config }, api)
-    : renderEmptyTemplate()
-}
-
-function createComponentRenderer(methodName, typeOverride = null) {
-  return function renderComponent(entity, { config = {} }, api) {
+  return function renderComponent(entity, props = {}, api) {
     if (!entity) return renderEmptyTemplate()
-    const type = api.getType(typeOverride || entity.type)
+    const { config = {}, chartType = null } = props
+    const resolvedTypeName =
+      typeOverride || (preferChartTypeProp ? chartType : null) || entity.type
+    const type = api.getType(resolvedTypeName)
     return type?.[methodName]
       ? type[methodName](entity, { config }, api)
       : renderEmptyTemplate()
@@ -251,42 +226,38 @@ function renderEmptyTemplate() {
   return svg``
 }
 
-function renderEmptyLazyTemplate() {
-  return renderEmptyTemplate
-}
-
 function getEmptyInstance() {
   return {
     renderLineChart: renderEmptyTemplate,
     renderAreaChart: renderEmptyTemplate,
     renderBarChart: renderEmptyTemplate,
     renderPieChart: renderEmptyTemplate,
-    renderCartesianGrid: renderEmptyLazyTemplate,
-    renderXAxis: renderEmptyLazyTemplate,
+    renderCartesianGrid: renderEmptyTemplate,
+    renderXAxis: renderEmptyTemplate,
     renderYAxis: renderEmptyTemplate,
-    renderLegend: renderEmptyLazyTemplate,
+    renderLegend: renderEmptyTemplate,
     renderLine: renderEmptyTemplate,
     renderArea: renderEmptyTemplate,
     renderBar: renderEmptyTemplate,
     renderPie: renderEmptyTemplate,
-    renderDots: renderEmptyLazyTemplate,
+    renderDots: renderEmptyTemplate,
     renderTooltip: renderEmptyTemplate,
-    renderBrush: renderEmptyLazyTemplate,
+    renderBrush: renderEmptyTemplate,
     // Composition Style
     LineChart: renderEmptyTemplate,
     AreaChart: renderEmptyTemplate,
     BarChart: renderEmptyTemplate,
     PieChart: renderEmptyTemplate,
-    CartesianGrid: renderEmptyLazyTemplate,
-    XAxis: renderEmptyLazyTemplate,
+    CartesianGrid: renderEmptyTemplate,
+    XAxis: renderEmptyTemplate,
     YAxis: renderEmptyTemplate,
     Line: renderEmptyTemplate,
     Area: renderEmptyTemplate,
     Bar: renderEmptyTemplate,
     Pie: renderEmptyTemplate,
-    Dots: renderEmptyLazyTemplate,
+    Dots: renderEmptyTemplate,
     Tooltip: renderEmptyTemplate,
-    Brush: renderEmptyLazyTemplate,
-    Legend: renderEmptyLazyTemplate,
+    Brush: renderEmptyTemplate,
+    Legend: renderEmptyTemplate,
   }
 }
