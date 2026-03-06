@@ -1,0 +1,36 @@
+import { renderEmptyTemplate } from "./render-dispatch.js"
+
+export function getEmptyChartInstance() {
+  return {
+    renderLineChart: renderEmptyTemplate,
+    renderAreaChart: renderEmptyTemplate,
+    renderBarChart: renderEmptyTemplate,
+    renderPieChart: renderEmptyTemplate,
+    renderCartesianGrid: renderEmptyTemplate,
+    renderXAxis: renderEmptyTemplate,
+    renderYAxis: renderEmptyTemplate,
+    renderLegend: renderEmptyTemplate,
+    renderLine: renderEmptyTemplate,
+    renderArea: renderEmptyTemplate,
+    renderBar: renderEmptyTemplate,
+    renderPie: renderEmptyTemplate,
+    renderDots: renderEmptyTemplate,
+    renderTooltip: renderEmptyTemplate,
+    renderBrush: renderEmptyTemplate,
+    LineChart: renderEmptyTemplate,
+    AreaChart: renderEmptyTemplate,
+    BarChart: renderEmptyTemplate,
+    PieChart: renderEmptyTemplate,
+    CartesianGrid: renderEmptyTemplate,
+    XAxis: renderEmptyTemplate,
+    YAxis: renderEmptyTemplate,
+    Line: renderEmptyTemplate,
+    Area: renderEmptyTemplate,
+    Bar: renderEmptyTemplate,
+    Pie: renderEmptyTemplate,
+    Dots: renderEmptyTemplate,
+    Tooltip: renderEmptyTemplate,
+    Brush: renderEmptyTemplate,
+    Legend: renderEmptyTemplate,
+  }
+}

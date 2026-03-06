@@ -1,9 +1,9 @@
-import { area } from "./cartesian/area.js"
-import { bar } from "./cartesian/bar.js"
-import { line } from "./cartesian/line.js"
-import * as handlers from "./handlers.js"
-import { donut } from "./polar/donut.js"
-import { pie } from "./polar/pie.js"
+import { area } from "../cartesian/area.js"
+import { bar } from "../cartesian/bar.js"
+import { line } from "../cartesian/line.js"
+import * as handlers from "../handlers.js"
+import { donut } from "../polar/donut.js"
+import { pie } from "../polar/pie.js"
 
 const NOOP = () => {}
 
