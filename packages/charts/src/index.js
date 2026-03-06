@@ -1,5 +1,6 @@
 import { svg } from "@inglorious/web"
 
+import { coreCharts } from "./chart-core.js"
 import * as handlers from "./handlers.js"
 import { render } from "./template.js"
 import { extractDataKeysFromChildren } from "./utils/extract-data-keys.js"
@@ -9,6 +10,7 @@ export { withRealtime } from "./realtime/with-realtime.js"
 export { streamSlide } from "./utils/stream-slide.js"
 
 // Export chart types for config style
+export { coreCharts } from "./chart-core.js"
 export {
   areaChart,
   barChart,
@@ -19,12 +21,13 @@ export {
 export const chart = {
   ...handlers,
   render,
+  core: coreCharts,
 
   // Chart Delegators
-  renderLineChart: createDelegator("line"),
-  renderAreaChart: createDelegator("area"),
-  renderBarChart: createDelegator("bar"),
-  renderPieChart: createDelegator("pie"),
+  renderLineChart: renderByChartType("line"),
+  renderAreaChart: renderByChartType("area"),
+  renderBarChart: renderByChartType("bar"),
+  renderPieChart: renderByChartType("pie"),
 
   // Component Renderers (Abstracted)
   renderLine: createComponentRenderer("renderLine", "line"),
@@ -34,13 +37,31 @@ export const chart = {
   renderYAxis: createComponentRenderer("renderYAxis"),
   renderTooltip: createComponentRenderer("renderTooltip"),
 
-  // Lazy Renderers
-  renderCartesianGrid: (entity, props, api) =>
-    createLazyRenderer(entity, api, "renderCartesianGrid"),
-  renderXAxis: (entity, props, api) =>
-    createLazyRenderer(entity, api, "renderXAxis"),
-  renderBrush: (entity, props, api) =>
-    createLazyRenderer(entity, api, "renderBrush"),
+  // Deferred Renderers (resolved once, then executed by chart runtime)
+  renderCartesianGrid: (entity, props = {}, api) =>
+    createDeferredRenderer(
+      entity,
+      api,
+      "renderCartesianGrid",
+      props.config,
+      props.chartType,
+    ),
+  renderXAxis: (entity, props = {}, api) =>
+    createDeferredRenderer(
+      entity,
+      api,
+      "renderXAxis",
+      props.config,
+      props.chartType,
+    ),
+  renderBrush: (entity, props = {}, api) =>
+    createDeferredRenderer(
+      entity,
+      api,
+      "renderBrush",
+      props.config,
+      props.chartType,
+    ),
 
   // Declarative Helpers for Composition Style (return intention objects)
   // The parent (renderLineChart, etc) processes these objects and "stamps" them with entity and api
@@ -178,7 +199,7 @@ function createInstance(entity, api, isInline = false) {
   return instance
 }
 
-function createDelegator(typeKey) {
+function renderByChartType(typeKey) {
   const firstCharIndex = 0
   const restStartIndex = 1
   const firstChar = typeKey.charAt(firstCharIndex)
@@ -194,15 +215,19 @@ function createDelegator(typeKey) {
   }
 }
 
-function createLazyRenderer(entity, api, methodName) {
-  return function renderLazy(ctx) {
-    if (!entity) return renderEmptyTemplate()
-    const chartTypeName = ctx?.chartType || entity.type
-    const chartType = api.getType(chartTypeName)
-    return chartType?.[methodName]
-      ? chartType[methodName](entity, { config: ctx?.config || {} }, api)
-      : renderEmptyTemplate()
-  }
+function createDeferredRenderer(
+  entity,
+  api,
+  methodName,
+  config = {},
+  chartTypeName = null,
+) {
+  if (!entity) return renderEmptyTemplate()
+  const resolvedTypeName = chartTypeName || entity.type
+  const chartType = api.getType(resolvedTypeName)
+  return chartType?.[methodName]
+    ? chartType[methodName](entity, { config }, api)
+    : renderEmptyTemplate()
 }
 
 function createComponentRenderer(methodName, typeOverride = null) {
