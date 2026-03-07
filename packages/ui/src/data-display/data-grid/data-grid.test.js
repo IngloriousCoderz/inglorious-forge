@@ -51,10 +51,6 @@ const GRID_ID = "test-dataGrid"
 /**
  * Creates a store, mounts it to a detached DOM element, and waits for the
  * first render. Returns the store, the container, and convenience accessors.
- *
- * mount() calls store.notify("init") internally, which triggers the dataGrid's
- * init handler (registers child types) and then create (spawns sub-entities),
- * so by the time the returned promise resolves everything is ready.
  */
 async function setup(entityOverrides = {}) {
   const store = createStore({
@@ -250,6 +246,18 @@ describe("dataGrid / handlers", () => {
       expect(entity.pagination.pageSize).toBe(4)
       expect(entity.pagination.page).toBe(0)
     })
+
+    it("columnResize: updates size and enforces a minimum width", () => {
+      dataGrid.columnResize(entity, { columnId: "name", width: 180 })
+      expect(entity.columns.find((column) => column.id === "name").width).toBe(
+        180,
+      )
+
+      dataGrid.columnResize(entity, { columnId: "name", width: 10 })
+      expect(entity.columns.find((column) => column.id === "name").width).toBe(
+        72,
+      )
+    })
   })
 
   describe("selection", () => {
@@ -269,6 +277,29 @@ describe("dataGrid / handlers", () => {
       entity.selection = [1]
       dataGrid.rowToggle(entity, 2)
       expect(entity.selection).toEqual([2])
+    })
+
+    it("rowClick: plain click replaces selection and sets the anchor", () => {
+      entity.selection = [1, 2]
+      dataGrid.rowClick(entity, { rowId: 3 })
+      expect(entity.selection).toEqual([3])
+      expect(entity.selectionAnchor).toBe(3)
+    })
+
+    it("rowClick: ctrl/meta click toggles selection", () => {
+      entity.selection = [1]
+      dataGrid.rowClick(entity, { rowId: 2, ctrlKey: true })
+      expect(entity.selection).toEqual([1, 2])
+      dataGrid.rowClick(entity, { rowId: 1, metaKey: true })
+      expect(entity.selection).toEqual([2])
+    })
+
+    it("rowClick: shift click selects the visible row range from the anchor", () => {
+      entity.pagination.pageSize = 10
+      entity.selection = [1]
+      entity.selectionAnchor = 1
+      dataGrid.rowClick(entity, { rowId: 3, shiftKey: true })
+      expect(entity.selection).toEqual([1, 2, 3])
     })
 
     it("rowsToggleAll: selects all visible rows when not all selected", () => {
@@ -388,9 +419,22 @@ describe("dataGrid / template", () => {
       expect(container.querySelector(".iw-data-grid-footer")).not.toBeNull()
     })
 
+    it("renders the toolbar above the header row", () => {
+      const header = container.querySelector(".iw-data-grid-header")
+      expect(
+        header.firstElementChild.classList.contains("iw-data-grid-toolbar"),
+      ).toBe(true)
+    })
+
     it("renders one header column per column definition", () => {
       expect(
         container.querySelectorAll(".iw-data-grid-header-column"),
+      ).toHaveLength(getGrid().columns.length)
+    })
+
+    it("renders one resize handle per header column", () => {
+      expect(
+        container.querySelectorAll(".iw-data-grid-column-resizer"),
       ).toHaveLength(getGrid().columns.length)
     })
 
@@ -398,6 +442,30 @@ describe("dataGrid / template", () => {
       expect(
         container.querySelectorAll(".iw-data-grid-body .iw-data-grid-row"),
       ).toHaveLength(getRows(getGrid()).length)
+    })
+
+    it("applies explicit semantics for auto, fractional, and percentage widths", async () => {
+      unsubscribe()
+      container.remove()
+      ;({ store, container, unsubscribe, getGrid } = await setup({
+        columns: [
+          { id: "id", title: "Id", type: "number", width: "auto" },
+          { id: "name", title: "Name", width: "2fr" },
+          { id: "role", title: "Role", width: "40%" },
+        ],
+        rows: [
+          { id: 1, name: "Alice", role: "Admin" },
+          { id: 2, name: "Bob", role: "User" },
+        ],
+      }))
+
+      const [autoColumn, fractionalColumn, percentColumn] =
+        container.querySelectorAll(".iw-data-grid-header-column")
+
+      expect(autoColumn.getAttribute("style")).toContain("flex: 1 1 0")
+      expect(fractionalColumn.getAttribute("style")).toContain("flex: 2 1 0")
+      expect(percentColumn.getAttribute("style")).toContain("width: 40%")
+      expect(percentColumn.getAttribute("style")).toContain("flex: 0 0 40%")
     })
   })
 
@@ -414,6 +482,30 @@ describe("dataGrid / template", () => {
       title.click()
       title.click()
       expect(title.textContent).toContain("▼")
+    })
+  })
+
+  describe("row click modifiers", () => {
+    it("ctrl click adds a row to the current selection", () => {
+      const rows = container.querySelectorAll(
+        ".iw-data-grid-body .iw-data-grid-row",
+      )
+      rows[0].dispatchEvent(new MouseEvent("click", { bubbles: true }))
+      rows[1].dispatchEvent(
+        new MouseEvent("click", { bubbles: true, ctrlKey: true }),
+      )
+      expect(getGrid().selection).toEqual([1, 2])
+    })
+
+    it("shift click selects a contiguous row range", () => {
+      const rows = container.querySelectorAll(
+        ".iw-data-grid-body .iw-data-grid-row",
+      )
+      rows[0].dispatchEvent(new MouseEvent("click", { bubbles: true }))
+      rows[1].dispatchEvent(
+        new MouseEvent("click", { bubbles: true, shiftKey: true }),
+      )
+      expect(getGrid().selection).toEqual([1, 2])
     })
   })
 

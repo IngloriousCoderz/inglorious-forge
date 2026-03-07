@@ -12,33 +12,37 @@ const RANGE_TYPE = {
 
 export const rangeFilter = {
   render(entity, column) {
-    return html` ${input.render({
-      name: `${column.id}Min`,
-      inputType: RANGE_TYPE[column.filter.type],
-      placeholder: column.filter.placeholder ?? "≥",
-      size: "sm",
-      fullWidth: true,
-      onChange: (value) => {
-        const formattedValue = value ? format(value, column.type) : null
-        entity.onFilterChange?.({
-          columnId: column.id,
-          value: { ...entity.filters[column.id], min: formattedValue },
-        })
-      },
-    })}
-    ${input.render({
-      name: `${column.id}Max`,
-      inputType: RANGE_TYPE[column.filter.type],
-      placeholder: column.filter.placeholder ?? "≤",
-      size: "sm",
-      fullWidth: true,
-      onChange: (value) => {
-        const formattedValue = value ? format(value, column.type) : null
-        entity.onFilterChange?.({
-          columnId: column.id,
-          value: { ...entity.filters[column.id], max: formattedValue },
-        })
-      },
-    })}`
+    return html`<div class="iw-data-grid-filter-range">
+      ${input.render({
+        name: `${column.id}Min`,
+        inputType: RANGE_TYPE[column.filter.type],
+        placeholder: column.filter.placeholder ?? "≥",
+        size: "sm",
+        fullWidth: true,
+        className: "iw-data-grid-filter-range-input",
+        onChange: (value) => {
+          const formattedValue = value ? format(value, column.type) : null
+          entity.onFilterChange?.({
+            columnId: column.id,
+            value: { ...entity.filters[column.id], min: formattedValue },
+          })
+        },
+      })}
+      ${input.render({
+        name: `${column.id}Max`,
+        inputType: RANGE_TYPE[column.filter.type],
+        placeholder: column.filter.placeholder ?? "≤",
+        size: "sm",
+        fullWidth: true,
+        className: "iw-data-grid-filter-range-input",
+        onChange: (value) => {
+          const formattedValue = value ? format(value, column.type) : null
+          entity.onFilterChange?.({
+            columnId: column.id,
+            value: { ...entity.filters[column.id], max: formattedValue },
+          })
+        },
+      })}
+    </div>`
   },
 }

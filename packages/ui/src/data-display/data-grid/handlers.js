@@ -5,6 +5,8 @@
 
 import { getRowKeyValue, getRows, getTotalRows } from "./helpers.js"
 
+const MIN_COLUMN_WIDTH = 72
+
 /**
  * Resets the table entity with default state.
  * @param {DataGridEntity} entity
@@ -141,6 +143,18 @@ export function pageSizeChange(entity, pageSize) {
 }
 
 /**
+ * Changes the width of a column.
+ * @param {DataGridEntity} entity
+ * @param {{ columnId: string, width: number }} payload
+ */
+export function columnResize(entity, { columnId, width }) {
+  const column = entity.columns.find((item) => item.id === columnId)
+  if (!column || Number.isNaN(width)) return
+
+  column.width = Math.max(MIN_COLUMN_WIDTH, Math.round(width))
+}
+
+/**
  * Selects a row.
  * @param {DataGridEntity} entity
  * @param {string|number} rowId
@@ -184,6 +198,36 @@ export function rowToggle(entity, rowId) {
   } else {
     entity.selection.splice(index, 1)
   }
+}
+
+/**
+ * Handles row selection from click interactions, including modifier keys.
+ * @param {DataGridEntity} entity
+ * @param {{ rowId: string|number, shiftKey?: boolean, metaKey?: boolean, ctrlKey?: boolean }} payload
+ */
+export function rowClick(
+  entity,
+  { rowId, shiftKey = false, metaKey = false, ctrlKey = false },
+) {
+  if (!entity.isMultiSelect) {
+    entity.selection = [rowId]
+    entity.selectionAnchor = rowId
+    return
+  }
+
+  if (shiftKey && entity.selectionAnchor != null) {
+    selectRowRange(entity, entity.selectionAnchor, rowId)
+    return
+  }
+
+  if (metaKey || ctrlKey) {
+    rowToggle(entity, rowId)
+    entity.selectionAnchor = rowId
+    return
+  }
+
+  entity.selection = [rowId]
+  entity.selectionAnchor = rowId
 }
 
 /**
@@ -281,6 +325,8 @@ function initTable(entity) {
     entity.search.value ??= ""
   }
   entity.selection ??= []
+  entity.selectionAnchor ??= null
+  entity.isMultiSelect ??= true
 
   entity.pagination ??= null
   if (entity.pagination) {
@@ -321,7 +367,7 @@ function getDefaultColumnFilter(type) {
  */
 function getDefaultColumnWidth(filterType) {
   if (filterType === "number") return 70
-  if (filterType === "range") return 100
+  if (filterType === "range") return 120
   if (filterType === "select") return 70
   if (filterType === "date") return 120
   if (filterType === "time") return 120
@@ -337,6 +383,28 @@ function getDefaultColumnWidth(filterType) {
 function capitalize(str) {
   const [firstChar, ...rest] = str
   return [firstChar.toUpperCase(), ...rest].join("")
+}
+
+/**
+ * Selects a contiguous range of visible rows.
+ * @param {DataGridEntity} entity
+ * @param {string|number} fromRowId
+ * @param {string|number} toRowId
+ */
+function selectRowRange(entity, fromRowId, toRowId) {
+  const visibleRows = getRows(entity)
+  const visibleRowIds = visibleRows.map((row) => getRowKeyValue(entity, row))
+  const start = visibleRowIds.indexOf(fromRowId)
+  const end = visibleRowIds.indexOf(toRowId)
+
+  if (start === -1 || end === -1) {
+    entity.selection = [toRowId]
+    entity.selectionAnchor = toRowId
+    return
+  }
+
+  const [rangeStart, rangeEnd] = start < end ? [start, end] : [end, start]
+  entity.selection = visibleRowIds.slice(rangeStart, rangeEnd + 1)
 }
 
 /**

@@ -6,7 +6,12 @@
   .iw-data-grid-header {
     border-bottom: 1px solid var(--iw-color-border);
     padding: var(--iw-space-4) var(--iw-space-0);
-    row-gap: var(--iw-space-4);
+    row-gap: var(--iw-space-3);
+  }
+
+  .iw-data-grid-toolbar {
+    padding: 0 var(--iw-space-4);
+    padding-bottom: var(--iw-space-3);
   }
 
   .iw-data-grid-header-row {
@@ -15,7 +20,7 @@
   }
 
   .iw-data-grid-header-column {
-    padding: 0 var(--iw-space-4);
+    padding: 0 var(--iw-space-5) 0 var(--iw-space-4);
     row-gap: var(--iw-space-2);
   }
 
@@ -24,8 +29,21 @@
     white-space: nowrap;
   }
 
-  .iw-data-grid-searchbar {
-    padding: 0 var(--iw-space-4);
+  .iw-data-grid-column-resizer {
+    &::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: calc(50% - 0.5px);
+      border-right: 1px solid transparent;
+    }
+
+    &:hover {
+      &::after {
+        border-right-color: var(--iw-color-border-focus);
+      }
+    }
   }
 
   .iw-data-grid-body {
@@ -50,18 +68,37 @@
   }
 
   .iw-data-grid-row-selected {
-    border-left: 1px solid var(--iw-color-primary);
-    border-right: 1px solid var(--iw-color-primary);
-  }
+    box-shadow:
+      inset 1px 0 0 var(--iw-color-primary),
+      inset -1px 0 0 var(--iw-color-primary);
 
-  :not(.iw-data-grid-row-selected) + .iw-data-grid-row-selected {
-    border-top: 1px solid var(--iw-color-primary);
-    margin-top: -1px;
-  }
+    &:first-child,
+    .iw-data-grid-row:not(.iw-data-grid-row-selected) + & {
+      box-shadow:
+        inset 1px 0 0 var(--iw-color-primary),
+        inset -1px 0 0 var(--iw-color-primary),
+        inset 0 1px 0 var(--iw-color-primary);
+    }
 
-  .iw-data-grid-row-selected + :not(.iw-data-grid-row-selected) {
-    border-top: 1px solid var(--iw-color-primary);
-    margin-top: -1px;
+    &:last-child,
+    &:not(:has(+ .iw-data-grid-row-selected)) {
+      box-shadow:
+        inset 1px 0 0 var(--iw-color-primary),
+        inset -1px 0 0 var(--iw-color-primary),
+        inset 0 -1px 0 var(--iw-color-primary);
+    }
+
+    &:first-child:last-child,
+    &:first-child:not(:has(+ .iw-data-grid-row-selected)),
+    .iw-data-grid-row:not(.iw-data-grid-row-selected) + &:last-child,
+    .iw-data-grid-row:not(.iw-data-grid-row-selected)
+      + &:not(:has(+ .iw-data-grid-row-selected)) {
+      box-shadow:
+        inset 1px 0 0 var(--iw-color-primary),
+        inset -1px 0 0 var(--iw-color-primary),
+        inset 0 1px 0 var(--iw-color-primary),
+        inset 0 -1px 0 var(--iw-color-primary);
+    }
   }
 
   .iw-data-grid-cell {

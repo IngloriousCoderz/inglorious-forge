@@ -13,11 +13,31 @@
   .iw-data-grid-header-column {
     display: flex;
     flex-direction: column;
+    position: relative;
+  }
+
+  .iw-data-grid-toolbar {
+    display: flex;
+  }
+
+  .iw-data-grid-searchbar {
+    flex: 1 1 auto;
   }
 
   .iw-data-grid-filter-input,
   .iw-data-grid-filter-select {
     width: 100%;
+  }
+
+  .iw-data-grid-filter-range {
+    display: flex;
+    align-items: center;
+    gap: var(--iw-space-2);
+  }
+
+  .iw-data-grid-filter-range-input {
+    min-width: 0;
+    flex: 1 1 0;
   }
 
   .iw-data-grid-row {
@@ -26,5 +46,13 @@
 
   .iw-data-grid-footer-row {
     display: flex;
+  }
+
+  .iw-data-grid-column-resizer {
+    position: absolute;
+    inset: 0 0 0 auto;
+    width: 1rem;
+    cursor: col-resize;
+    touch-action: none;
   }
 }

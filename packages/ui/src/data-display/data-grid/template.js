@@ -5,7 +5,7 @@
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
-import { classMap, html, ref, repeat, when } from "@inglorious/web"
+import { classMap, html, repeat, when } from "@inglorious/web"
 
 import { input } from "../../controls/input/index.js"
 import { select } from "../../controls/select/index.js"
@@ -19,26 +19,12 @@ import {
 } from "./helpers.js"
 
 const DIVISOR = 2
-const PERCENTAGE_TO_FLEX = 0.01
 
 const PRETTY_PAGE = 1
 const FIRST_PAGE = 0
 const LAST_PAGE = 1
 
 export const dataGrid = {
-  /**
-   * Measures and sets initial column widths.
-   * This is called after the initial render to capture the "auto" widths of columns.
-   * @param {DataGridProps} props The table props.
-   * @param {HTMLElement} containerEl The header row element containing the columns.
-   */
-  mount(props, containerEl) {
-    const columns = containerEl.querySelectorAll(":scope > *")
-    ;[...columns].forEach((column, index) => {
-      props.columns[index].width = column.offsetWidth
-    })
-  },
-
   /**
    * Renders the main table component.
    * @param {DataGridProps} props The table props.
@@ -65,19 +51,8 @@ export const dataGrid = {
    */
   renderHeader(props) {
     return html`<div class="iw-data-grid-header">
-      <div
-        class="iw-data-grid-header-row"
-        ${ref((el) => {
-          if (
-            el &&
-            props.columns.some(({ width }) => typeof width === "string")
-          ) {
-            queueMicrotask(() => {
-              props.onMount?.(el)
-            })
-          }
-        })}
-      >
+      ${props.search && this.renderToolbar?.(props)}
+      <div class="iw-data-grid-header-row">
         ${repeat(
           props.columns,
           (column) => column.id,
@@ -85,8 +60,17 @@ export const dataGrid = {
             this.renderHeaderColumn?.(props, { column, index }),
         )}
       </div>
+    </div>`
+  },
 
-      ${props.search && this.renderSearchbar?.(props)}
+  /**
+   * Renders the toolbar above the header row.
+   * @param {DataGridProps} props The table props.
+   * @returns {TemplateResult}
+   */
+  renderToolbar(props) {
+    return html`<div class="iw-data-grid-toolbar">
+      ${this.renderSearchbar?.(props)}
     </div>`
   },
 
@@ -110,6 +94,16 @@ export const dataGrid = {
       </div>
 
       ${column.isFilterable && filters.render(props, column)}
+
+      <div
+        class="iw-data-grid-column-resizer"
+        @pointerdown=${(event) =>
+          props.onColumnResizeStart?.({
+            columnId: column.id,
+            event,
+            width: getRenderedColumnWidth(column, event),
+          })}
+      ></div>
     </div>`
   },
 
@@ -159,7 +153,13 @@ export const dataGrid = {
     const rowId = getRowKeyValue(props, row)
 
     return html`<div
-      @click=${() => props.onRowToggle?.(rowId)}
+      @click=${(event) =>
+        props.onRowClick?.({
+          rowId,
+          shiftKey: event.shiftKey,
+          metaKey: event.metaKey,
+          ctrlKey: event.ctrlKey,
+        })}
       class="iw-data-grid-row ${classMap({
         "iw-data-grid-row-even": index % DIVISOR,
         "iw-data-grid-row-selected": props.selection?.includes(rowId),
@@ -325,16 +325,41 @@ export const dataGrid = {
  * @returns {string} The style string.
  */
 function getColumnStyle(column) {
-  if (typeof column.width === "string") {
-    if (column.width?.endsWith("%")) {
-      const percentage = Number(column.width.slice(0, -1))
-      return `flex: ${percentage * PERCENTAGE_TO_FLEX}`
-    }
-
-    return `width: ${column.width}`
+  if (column.width == null || column.width === "auto") {
+    return "flex: 1 1 0; min-width: 0"
   }
 
-  return `width: ${column.width}px`
+  if (typeof column.width === "string") {
+    if (column.width.endsWith("fr")) {
+      const fraction = Number(column.width.slice(0, -2))
+      const normalizedFraction =
+        Number.isFinite(fraction) && fraction > 0 ? fraction : 1
+
+      return `flex: ${normalizedFraction} 1 0; min-width: 0`
+    }
+
+    if (column.width.endsWith("%")) {
+      return `flex: 0 0 ${column.width}; width: ${column.width}`
+    }
+
+    return `flex: 0 0 ${column.width}; width: ${column.width}`
+  }
+
+  return `flex: 0 0 ${column.width}px; width: ${column.width}px`
+}
+
+/**
+ * Gets the current rendered width of a header column.
+ * @param {Column} column
+ * @param {PointerEvent} event
+ * @returns {number}
+ */
+function getRenderedColumnWidth(column, event) {
+  if (typeof column.width === "number") {
+    return column.width
+  }
+
+  return event.currentTarget?.parentElement?.offsetWidth ?? 0
 }
 
 /**

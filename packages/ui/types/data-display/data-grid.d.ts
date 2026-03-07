@@ -14,6 +14,13 @@ export interface Column {
     options?: SelectOption[]
     [key: string]: any
   }
+  /**
+   * Column width semantics:
+   * - `auto` or `undefined`: flexible column (`1fr`)
+   * - `<n>fr`: proportional flex width
+   * - `<n>%`: literal percentage width
+   * - number / CSS length string: fixed width
+   */
   width?: number | string
   formatter?: string | ((value: any) => any)
   sortFn?: (a: Row, b: Row) => number
@@ -31,13 +38,24 @@ export interface DataGridProps<T extends Row = Row> {
   filters: Record<string, any>
   search: { value: string; placeholder?: string } | null
   selection: (string | number)[]
+  selectionAnchor?: string | number | null
   pagination?: { page: number; pageSize: number; pageSizes: number[] } | null
   rowId?: string
   isMultiSelect: boolean
-  onMount?: (element: HTMLElement) => void
   onSortChange?: (columnId: string) => void
   onFilterChange?: (payload: { columnId: string; value: any }) => void
   onSearchChange?: (value: string) => void
+  onColumnResizeStart?: (payload: {
+    columnId: string
+    event: PointerEvent
+    width: number
+  }) => void
+  onRowClick?: (payload: {
+    rowId: string | number
+    shiftKey?: boolean
+    metaKey?: boolean
+    ctrlKey?: boolean
+  }) => void
   onRowToggle?: (rowId: string | number) => void
   onPageChange?: (page: number) => void
   onPageNext?: () => void
@@ -56,10 +74,23 @@ export interface DataGridType {
   ): void
   filtersClear(entity: DataGridProps): void
   searchChange(entity: DataGridProps, search: string): void
+  columnResize(
+    entity: DataGridProps,
+    payload: { columnId: string; width: number },
+  ): void
   pageChange(entity: DataGridProps, page: number): void
   pageNext(entity: DataGridProps): void
   pagePrev(entity: DataGridProps): void
   pageSizeChange(entity: DataGridProps, pageSize: number): void
+  rowClick(
+    entity: DataGridProps,
+    payload: {
+      rowId: string | number
+      shiftKey?: boolean
+      metaKey?: boolean
+      ctrlKey?: boolean
+    },
+  ): void
   rowSelect(entity: DataGridProps, rowId: string | number): void
   rowDeselect(entity: DataGridProps, rowId: string | number): void
   rowToggle(entity: DataGridProps, rowId: string | number): void
@@ -68,6 +99,12 @@ export interface DataGridType {
   selectionClear(entity: DataGridProps): void
   render(entity: DataGridProps, api: Api): TemplateResult
   renderHeader(entity: DataGridProps, api: Api): TemplateResult
+  renderToolbar(entity: DataGridProps, api: Api): TemplateResult
+  renderHeaderColumn(
+    entity: DataGridProps,
+    payload: { column: Column; index: number },
+    api: Api,
+  ): TemplateResult
   renderBody(entity: DataGridProps, api: Api): TemplateResult
   renderRow(
     entity: DataGridProps,
