@@ -22,8 +22,9 @@ export const list = {
       isOrdered = false,
       isDense = false,
       isDivided = false,
+      inset = false,
+      path = [],
       className = "",
-      onItemClick,
       ...rest
     } = props
 
@@ -39,6 +40,7 @@ export const list = {
       "iw-list-ordered": isOrdered,
       "iw-list-dense": isDense,
       "iw-list-divided": isDivided,
+      "iw-list-inset": inset,
       ...extraClasses,
     }
 
@@ -47,7 +49,20 @@ export const list = {
       repeat(
         items,
         (item, index) => item?.id ?? `${index}`,
-        (item, index) => this.renderItem(props, { item, index, onItemClick }),
+        (item, index) => {
+          const meta = getItemMeta(item, index)
+          const shouldDivide =
+            (isDivided || meta.divider) && index < items.length - 1
+
+          return html`${this.renderItem(props, {
+            item,
+            meta,
+            index,
+            path: [...path, index],
+          })}${shouldDivide
+            ? html`<li class="iw-list-divider" role="separator"></li>`
+            : null}`
+        },
       )
 
     if (isOrdered) {
@@ -73,17 +88,137 @@ export const list = {
 
   /**
    * @param {ListProps} props
-   * @param {{item: unknown, index: number}} payload
+   * @param {{item: unknown, meta: object, index: number, path: number[]}} payload
    * @returns {TemplateResult}
    */
-  renderItem(props, { item, index, onItemClick }) {
-    const text =
-      item?.label ?? item?.children ?? item ?? `${index + PRETTY_INDEX}`
+  renderItem(props, { item, meta, path }) {
+    const {
+      primary,
+      secondary,
+      icon,
+      disabled,
+      selected,
+      onClick,
+      raw,
+      children,
+      action,
+      expanded,
+      onToggle,
+    } = meta
+    const isClickable = !!props.onItemClick || !!onClick
+    const hasChildren = Array.isArray(children) && children.length > 0
+    const isExpanded = !!expanded
+
     return html`<li
-      class="iw-list-item"
-      @click=${() => onItemClick(item, index)}
+      class=${classMap({
+        "iw-list-item": true,
+        "iw-list-item-clickable": isClickable,
+        "iw-list-item-disabled": disabled,
+        "iw-list-item-selected": selected,
+        "iw-list-item-inset": props.inset && !icon,
+      })}
+      @click=${(event) => {
+        event.stopPropagation()
+        if (disabled) return
+        onClick?.(raw ?? item, path)
+        props.onItemClick?.(raw ?? item, path)
+      }}
     >
-      ${text}
+      <div class="iw-list-item-inner">
+        ${icon ? html`<span class="iw-list-item-icon">${icon}</span>` : null}
+        <div class="iw-list-item-content">
+          <div class="iw-list-item-primary">${primary}</div>
+          ${secondary
+            ? html`<div class="iw-list-item-secondary">${secondary}</div>`
+            : null}
+        </div>
+        ${hasChildren
+          ? html`<button
+              class="iw-list-item-toggle"
+              type="button"
+              aria-expanded=${isExpanded}
+              @click=${(event) => {
+                event.stopPropagation()
+                if (disabled) return
+                onToggle?.(raw ?? item, path)
+                props.onItemToggle?.(raw ?? item, path)
+              }}
+            >
+              <span class="iw-list-item-caret">▸</span>
+            </button>`
+          : null}
+        ${action
+          ? html`<span
+              class="iw-list-item-action"
+              @click=${(event) => event.stopPropagation()}
+            >
+              ${action}
+            </span>`
+          : null}
+      </div>
+      ${hasChildren
+        ? isExpanded
+          ? this.render({
+              ...props,
+              items: children,
+              children: null,
+              className: `${props.className ?? ""} iw-list-nested`.trim(),
+              path,
+            })
+          : null
+        : children}
     </li>`
   },
+}
+
+function getItemMeta(item, index) {
+  if (!item || typeof item !== "object") {
+    return {
+      id: `${index}`,
+      primary: item ?? `${index + PRETTY_INDEX}`,
+    }
+  }
+
+  const {
+    id,
+    label,
+    primary,
+    secondary,
+    icon,
+    disabled = false,
+    selected = false,
+    divider = false,
+    onClick,
+    children,
+    action,
+    expanded = false,
+    onToggle,
+  } = item
+
+  const hasNestedChildren = Array.isArray(children)
+  const normalizedChildren = hasNestedChildren
+    ? children
+    : typeof children === "string" || typeof children === "number"
+      ? children
+      : null
+
+  return {
+    id: id ?? `${index}`,
+    primary:
+      primary ??
+      label ??
+      (hasNestedChildren ? "" : normalizedChildren) ??
+      `${index + PRETTY_INDEX}`,
+    secondary,
+    icon,
+    disabled,
+    selected,
+    divider,
+    onClick,
+    children: hasNestedChildren ? children : normalizedChildren,
+    action,
+    expanded,
+    onToggle,
+    raw: item,
+  }
 }

@@ -23,7 +23,7 @@
     "eslint": "^9.39.2",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-simple-import-sort": "^12.1.1",
-    "eslint-plugin-storybook": "^10.2.13",
+    "eslint-plugin-storybook": "^10.2.16",
     "globals": "^16.5.0",
     "husky": "^9.1.7",
     "prettier": "^3.8.1",

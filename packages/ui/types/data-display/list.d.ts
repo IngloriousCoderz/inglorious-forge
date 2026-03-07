@@ -1,17 +1,38 @@
 import type { TemplateResult } from "@inglorious/web"
 
-export type ListItem = unknown
+export type ListItem =
+  | string
+  | number
+  | {
+      id?: string | number
+      label?: TemplateResult | string | number
+      primary?: TemplateResult | string | number
+      secondary?: TemplateResult | string | number
+      icon?: TemplateResult | string | number
+      action?: TemplateResult | string | number
+      expanded?: boolean
+      onToggle?: (item: ListItem, path: number[]) => void
+      disabled?: boolean
+      selected?: boolean
+      divider?: boolean
+      onClick?: (item: ListItem, path: number[]) => void
+      children?: TemplateResult | string | number
+      [key: string]: unknown
+    }
 
 export interface ListProps {
   id?: string
   type?: string
-  items?: unknown[]
+  items?: ListItem[]
   children?: TemplateResult | string | number
   isOrdered?: boolean
   isDense?: boolean
   isDivided?: boolean
+  inset?: boolean
+  path?: number[]
   className?: string
-  onItemClick?: (item: ListItem, index: number) => void
+  onItemClick?: (item: ListItem, path: number[]) => void
+  onItemToggle?: (item: ListItem, path: number[]) => void
   [key: string]: unknown
 }
 
