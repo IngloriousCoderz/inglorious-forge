@@ -1,0 +1,27 @@
+.iw-breadcrumbs-list {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--iw-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.iw-breadcrumbs-link {
+  color: var(--iw-color-primary);
+  text-decoration: none;
+}
+
+.iw-breadcrumbs-link:hover {
+  text-decoration: underline;
+}
+
+.iw-breadcrumbs-separator {
+  color: var(--iw-color-text-muted, var(--iw-color-text));
+}
+
+.iw-breadcrumbs-current {
+  color: var(--iw-color-text-secondary, var(--iw-color-text));
+  font-weight: var(--iw-font-weight-medium);
+}

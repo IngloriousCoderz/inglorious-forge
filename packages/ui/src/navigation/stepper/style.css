@@ -1,0 +1,49 @@
+.iw-stepper {
+  display: flex;
+  gap: var(--iw-space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.iw-stepper-vertical {
+  flex-direction: column;
+}
+
+.iw-stepper-step {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--iw-space-2);
+  color: var(--iw-color-text-muted, var(--iw-color-text));
+}
+
+.iw-stepper-indicator {
+  width: 2rem;
+  height: 2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid var(--iw-color-border);
+}
+
+.iw-stepper-step-active,
+.iw-stepper-step-completed {
+  color: var(--iw-color-text);
+}
+
+.iw-stepper-step-active .iw-stepper-indicator,
+.iw-stepper-step-completed .iw-stepper-indicator {
+  background: var(--iw-color-primary);
+  border-color: var(--iw-color-primary);
+  color: var(--iw-color-primary-text, var(--iw-color-white));
+}
+
+.iw-stepper-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.iw-stepper-optional {
+  font-size: var(--iw-font-size-sm);
+}

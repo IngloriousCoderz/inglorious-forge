@@ -1,0 +1,40 @@
+.iw-link {
+  color: var(--iw-color-primary);
+  text-decoration: none;
+  text-underline-offset: 0.15em;
+  transition:
+    color var(--iw-transition-fast),
+    text-decoration-color var(--iw-transition-fast);
+}
+
+.iw-link:hover {
+  color: var(--iw-color-primary-hover, var(--iw-color-primary));
+}
+
+.iw-link-underline-always {
+  text-decoration: underline;
+}
+
+.iw-link-underline-hover:hover {
+  text-decoration: underline;
+}
+
+.iw-link-underline-none {
+  text-decoration: none;
+}
+
+.iw-link-color-primary {
+  color: var(--iw-color-primary);
+}
+
+.iw-link-color-secondary {
+  color: var(--iw-color-text-secondary, var(--iw-color-text));
+}
+
+.iw-link-color-inherit {
+  color: inherit;
+}
+
+.iw-link-muted {
+  color: var(--iw-color-text-muted, var(--iw-color-text));
+}

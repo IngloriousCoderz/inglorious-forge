@@ -1,0 +1,95 @@
+.iw-drawer-shell {
+  position: fixed;
+  inset: 0;
+  z-index: var(--iw-z-modal, 1050);
+}
+
+.iw-drawer-backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0 none;
+  background: color-mix(in srgb, var(--iw-color-black) 55%, transparent);
+  cursor: pointer;
+}
+
+.iw-drawer {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  min-width: 18rem;
+  max-width: min(24rem, 85vw);
+  height: 100%;
+  background: var(--iw-color-surface);
+  color: var(--iw-color-text);
+  border-color: var(--iw-color-border);
+  box-shadow: var(--iw-shadow-lg);
+}
+
+.iw-drawer-left {
+  left: 0;
+  top: 0;
+  border-right: 1px solid var(--iw-color-border);
+}
+
+.iw-drawer-right {
+  right: 0;
+  top: 0;
+  border-left: 1px solid var(--iw-color-border);
+}
+
+.iw-drawer-top {
+  top: 0;
+  left: 0;
+  right: 0;
+  max-width: none;
+  min-width: 0;
+  height: auto;
+  max-height: 60vh;
+  border-bottom: 1px solid var(--iw-color-border);
+}
+
+.iw-drawer-bottom {
+  bottom: 0;
+  left: 0;
+  right: 0;
+  max-width: none;
+  min-width: 0;
+  height: auto;
+  max-height: 60vh;
+  border-top: 1px solid var(--iw-color-border);
+}
+
+.iw-drawer-persistent,
+.iw-drawer-permanent {
+  position: relative;
+  box-shadow: none;
+}
+
+.iw-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--iw-space-2);
+  padding: var(--iw-space-4);
+  border-bottom: 1px solid var(--iw-color-border);
+}
+
+.iw-drawer-title {
+  font-weight: var(--iw-font-weight-semibold);
+}
+
+.iw-drawer-close {
+  border: 0 none;
+  background: transparent;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: var(--iw-radius-sm);
+  color: inherit;
+  cursor: pointer;
+}
+
+.iw-drawer-body {
+  padding: var(--iw-space-4);
+  overflow: auto;
+  flex: 1 1 auto;
+}

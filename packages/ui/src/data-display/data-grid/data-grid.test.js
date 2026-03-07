@@ -431,8 +431,9 @@ describe("dataGrid / template", () => {
     })
 
     it("clicking next page shows the next set of rows", () => {
-      const buttons = [...container.querySelectorAll("button")]
-      const nextBtn = buttons.find((b) => b.textContent.includes("\u276F"))
+      const nextBtn = container.querySelector(
+        'button[aria-label="Go to page 2"]',
+      )
       nextBtn.click()
       expect(getGrid().pagination.page).toBe(1)
       expect(

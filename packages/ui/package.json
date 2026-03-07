@@ -209,7 +209,52 @@
       "types": "./types/layout/container.d.ts",
       "import": "./src/layout/container/index.js"
     },
-    "./container.css": "./src/layout/container/style.css"
+    "./container.css": "./src/layout/container/style.css",
+    "./bottom-navigation": {
+      "types": "./types/navigation/bottom-navigation.d.ts",
+      "import": "./src/navigation/bottom-navigation/index.js"
+    },
+    "./bottom-navigation.css": "./src/navigation/bottom-navigation/style.css",
+    "./breadcrumbs": {
+      "types": "./types/navigation/breadcrumbs.d.ts",
+      "import": "./src/navigation/breadcrumbs/index.js"
+    },
+    "./breadcrumbs.css": "./src/navigation/breadcrumbs/style.css",
+    "./drawer": {
+      "types": "./types/navigation/drawer.d.ts",
+      "import": "./src/navigation/drawer/index.js"
+    },
+    "./drawer.css": "./src/navigation/drawer/style.css",
+    "./link": {
+      "types": "./types/navigation/link.d.ts",
+      "import": "./src/navigation/link/index.js"
+    },
+    "./link.css": "./src/navigation/link/style.css",
+    "./menu": {
+      "types": "./types/navigation/menu.d.ts",
+      "import": "./src/navigation/menu/index.js"
+    },
+    "./menu.css": "./src/navigation/menu/style.css",
+    "./pagination": {
+      "types": "./types/navigation/pagination.d.ts",
+      "import": "./src/navigation/pagination/index.js"
+    },
+    "./pagination.css": "./src/navigation/pagination/style.css",
+    "./speed-dial": {
+      "types": "./types/navigation/speed-dial.d.ts",
+      "import": "./src/navigation/speed-dial/index.js"
+    },
+    "./speed-dial.css": "./src/navigation/speed-dial/style.css",
+    "./stepper": {
+      "types": "./types/navigation/stepper.d.ts",
+      "import": "./src/navigation/stepper/index.js"
+    },
+    "./stepper.css": "./src/navigation/stepper/style.css",
+    "./tabs": {
+      "types": "./types/navigation/tabs.d.ts",
+      "import": "./src/navigation/tabs/index.js"
+    },
+    "./tabs.css": "./src/navigation/tabs/style.css"
   },
   "files": [
     "src",

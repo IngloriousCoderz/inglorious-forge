@@ -7,9 +7,9 @@
 
 import { classMap, html, ref, repeat, when } from "@inglorious/web"
 
-import { button } from "../../controls/button/index.js"
 import { input } from "../../controls/input/index.js"
 import { select } from "../../controls/select/index.js"
+import { pagination } from "../../navigation/pagination/index.js"
 import { filters } from "./filters"
 import {
   getPaginationInfo,
@@ -237,47 +237,72 @@ export const dataGrid = {
    * @param {object} pagination The pagination info object from `getPaginationInfo`.
    * @returns {TemplateResult} The rendered pagination controls.
    */
-  renderPagination(props, pagination) {
+  renderPagination(props, paginationInfo) {
     return html`<div class="iw-data-grid-row">
-      ${button.render({
-        color: "secondary",
-        size: "sm",
-        children: html`|&#10094;`,
-        disabled: !pagination.hasPrevPage,
-        onClick: () => props.onPageChange?.(FIRST_PAGE),
-      })}
-      ${button.render({
-        color: "secondary",
-        size: "sm",
-        children: html`&#10094;`,
-        disabled: !pagination.hasPrevPage,
-        onClick: () => props.onPagePrev?.(),
-      })}
+      ${pagination.renderControl(
+        {
+          buttonSize: "sm",
+          buttonVariant: "outline",
+          itemClassName: "iw-data-grid-pagination-button",
+        },
+        {
+          label: "«",
+          target: FIRST_PAGE + PRETTY_PAGE,
+          disabled: !paginationInfo.hasPrevPage,
+          onChange: () => props.onPageChange?.(FIRST_PAGE),
+        },
+      )}
+      ${pagination.renderControl(
+        {
+          buttonSize: "sm",
+          buttonVariant: "outline",
+          itemClassName: "iw-data-grid-pagination-button",
+        },
+        {
+          label: "‹",
+          target: Math.max(PRETTY_PAGE, paginationInfo.page),
+          disabled: !paginationInfo.hasPrevPage,
+          onChange: () => props.onPagePrev?.(),
+        },
+      )}
       ${input.render({
         name: "page",
         size: "sm",
         inputType: "number",
         min: 1,
-        max: pagination.totalPages,
-        value: pagination.page + PRETTY_PAGE,
+        max: paginationInfo.totalPages,
+        value: paginationInfo.page + PRETTY_PAGE,
         onChange: (value) => props.onPageChange?.(Number(value) - PRETTY_PAGE),
       })}
       /
-      <span>${pagination.totalPages}</span>
-      ${button.render({
-        color: "secondary",
-        size: "sm",
-        children: html`&#10095;`,
-        disabled: !pagination.hasNextPage,
-        onClick: () => props.onPageNext?.(),
-      })}
-      ${button.render({
-        color: "secondary",
-        size: "sm",
-        children: html`&#10095;|`,
-        disabled: !pagination.hasNextPage,
-        onClick: () => props.onPageChange?.(pagination.totalPages - LAST_PAGE),
-      })}
+      <span>${paginationInfo.totalPages}</span>
+      ${pagination.renderControl(
+        {
+          buttonSize: "sm",
+          buttonVariant: "outline",
+          itemClassName: "iw-data-grid-pagination-button",
+        },
+        {
+          label: "›",
+          target: Math.min(paginationInfo.totalPages, paginationInfo.page + 2),
+          disabled: !paginationInfo.hasNextPage,
+          onChange: () => props.onPageNext?.(),
+        },
+      )}
+      ${pagination.renderControl(
+        {
+          buttonSize: "sm",
+          buttonVariant: "outline",
+          itemClassName: "iw-data-grid-pagination-button",
+        },
+        {
+          label: "»",
+          target: paginationInfo.totalPages,
+          disabled: !paginationInfo.hasNextPage,
+          onChange: () =>
+            props.onPageChange?.(paginationInfo.totalPages - LAST_PAGE),
+        },
+      )}
     </div>`
   },
 

@@ -1,0 +1,32 @@
+.iw-bottom-navigation {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-around;
+  gap: var(--iw-space-2);
+  padding: var(--iw-space-2);
+  background: var(--iw-color-surface);
+  border-top: 1px solid var(--iw-color-border);
+}
+
+.iw-bottom-navigation-action {
+  flex: 1 1 0;
+  min-width: 0;
+  border: 0 none;
+  background: transparent;
+  color: var(--iw-color-text-muted, var(--iw-color-text));
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--iw-space-1);
+  padding: var(--iw-space-2);
+  cursor: pointer;
+}
+
+.iw-bottom-navigation-action-selected {
+  color: var(--iw-color-primary);
+}
+
+.iw-bottom-navigation-label {
+  font-size: var(--iw-font-size-sm);
+}

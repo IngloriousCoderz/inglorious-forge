@@ -92,7 +92,20 @@
     text-align: right;
   }
 
-  .iw-data-grid-pagination-button {
+  .iw-button.iw-button-outline.iw-data-grid-pagination-button {
     white-space: nowrap;
+    --iw-button-color: var(--iw-color-text);
+    border-color: var(--iw-color-border);
+    color: var(--iw-color-text);
+
+    &:hover:not(:disabled) {
+      border-color: var(--iw-color-border);
+      color: var(--iw-color-text);
+      background: color-mix(
+        in srgb,
+        var(--iw-color-surface-hover) 80%,
+        transparent
+      );
+    }
   }
 }

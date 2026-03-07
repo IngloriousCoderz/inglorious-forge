@@ -1,0 +1,38 @@
+.iw-speed-dial {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--iw-space-2);
+}
+
+.iw-speed-dial-actions {
+  display: inline-flex;
+  flex-direction: column;
+  gap: var(--iw-space-2);
+}
+
+.iw-speed-dial-down .iw-speed-dial-actions {
+  order: 1;
+}
+
+.iw-speed-dial-left .iw-speed-dial-actions,
+.iw-speed-dial-right .iw-speed-dial-actions {
+  flex-direction: row;
+}
+
+.iw-speed-dial-trigger,
+.iw-speed-dial-action {
+  border: 0 none;
+  border-radius: 999px;
+  background: var(--iw-color-primary);
+  color: var(--iw-color-primary-text, var(--iw-color-white));
+  width: 3rem;
+  height: 3rem;
+  box-shadow: var(--iw-shadow-md);
+  cursor: pointer;
+}
+
+.iw-speed-dial-action {
+  width: 2.5rem;
+  height: 2.5rem;
+}

@@ -1,0 +1,29 @@
+.iw-pagination {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--iw-space-2);
+  flex-wrap: wrap;
+}
+
+.iw-pagination-item,
+.iw-pagination-ellipsis {
+  min-width: 2rem;
+  height: 2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--iw-radius-sm);
+}
+
+.iw-pagination-item {
+  border: 1px solid var(--iw-color-border);
+  background: var(--iw-color-surface);
+  color: var(--iw-color-text);
+  cursor: pointer;
+}
+
+.iw-pagination-item-current {
+  background: var(--iw-color-primary);
+  color: var(--iw-color-primary-text, var(--iw-color-white));
+  border-color: var(--iw-color-primary);
+}
