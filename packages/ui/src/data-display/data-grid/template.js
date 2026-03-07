@@ -217,16 +217,16 @@ export const dataGrid = {
     const pagination = getPaginationInfo(props)
 
     return html`<div class="iw-data-grid-footer">
-        <div class="iw-data-grid-footer-row">
-          <div>
-            ${pagination.start + PRETTY_PAGE} to ${pagination.end} of ${pagination.totalRows}
-            entries
-          </div>
-
-          ${this.renderPagination?.(props, pagination)}
-
-          ${when(pagination.pageSizes, () => this.renderPageSize?.(props, pagination))}
+      <div class="iw-data-grid-footer-row">
+        <div>
+          ${pagination.start + PRETTY_PAGE} to ${pagination.end} of
+          ${pagination.totalRows} entries
         </div>
+
+        ${this.renderPagination?.(props, pagination)}
+        ${when(pagination.pageSizes, () =>
+          this.renderPageSize?.(props, pagination),
+        )}
       </div>
     </div>`
   },
