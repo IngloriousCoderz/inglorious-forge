@@ -64,6 +64,15 @@
   --iw-space-24: 6rem;
 
   /* ========================================
+     BREAKPOINTS
+     ======================================== */
+  --iw-breakpoint-xs: 20rem;
+  --iw-breakpoint-sm: 40rem;
+  --iw-breakpoint-md: 48rem;
+  --iw-breakpoint-lg: 64rem;
+  --iw-breakpoint-xl: 80rem;
+
+  /* ========================================
      BORDER RADIUS
      ======================================== */
   --iw-radius-none: 0;

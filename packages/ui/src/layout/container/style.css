@@ -1,0 +1,30 @@
+.iw-container {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 68rem;
+  padding-inline: var(--iw-space-4);
+}
+
+.iw-container-centered {
+  margin-inline: auto;
+}
+
+.iw-container-no-gutters {
+  padding-inline: 0;
+}
+
+.iw-container-fixed {
+  width: 100%;
+}
+
+@media (min-width: 40rem) {
+  .iw-container {
+    padding-inline: var(--iw-space-5);
+  }
+}
+
+@media (min-width: 64rem) {
+  .iw-container {
+    padding-inline: var(--iw-space-6);
+  }
+}

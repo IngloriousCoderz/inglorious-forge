@@ -39,6 +39,7 @@ import "@inglorious/ui/dialog.css"
 import "@inglorious/ui/progress.css"
 import "@inglorious/ui/skeleton.css"
 import "@inglorious/ui/snackbar.css"
+import "@inglorious/ui/container.css"
 
 import { createIcons, Heart, Settings, User } from "lucide"
 
