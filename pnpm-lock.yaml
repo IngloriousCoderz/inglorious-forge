@@ -38,8 +38,8 @@ importers:
         specifier: ^3.8.1
         version: 3.8.1
       turbo:
-        specifier: ^2.8.12
-        version: 2.8.12
+        specifier: ^2.8.14
+        version: 2.8.14
 
   benchmarks/charts:
     dependencies:
@@ -1533,7 +1533,7 @@ importers:
         version: 4.0.0-beta.0(tailwindcss@4.1.13)
       eslint-plugin-turbo:
         specifier: ^2.5.0
-        version: 2.5.8(eslint@9.39.2(jiti@2.5.1))(turbo@2.8.12)
+        version: 2.5.8(eslint@9.39.2(jiti@2.5.1))(turbo@2.8.14)
       globals:
         specifier: ^16.3.0
         version: 16.5.0
@@ -11035,58 +11035,58 @@ packages:
         integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==,
       }
 
-  turbo-darwin-64@2.8.12:
+  turbo-darwin-64@2.8.14:
     resolution:
       {
-        integrity: sha512-EiHJmW2MeQQx+21x8hjMHw/uPhXt9PIxvDrxzOtyVwrXzL0tQmsxtO4qHf2l7uA+K6PUJ4+TjY1MHZDuCvWXrw==,
+        integrity: sha512-9sFi7n2lLfEsGWi5OEoA/eTtQU2BPKtzSYKqufMtDeRmqMT9vKjbv9gJCRkllSVE9BOXA0qXC3diyX8V8rKIKw==,
       }
     cpu: [x64]
     os: [darwin]
 
-  turbo-darwin-arm64@2.8.12:
+  turbo-darwin-arm64@2.8.14:
     resolution:
       {
-        integrity: sha512-cbqqGN0vd7ly2TeuaM8k9AK9u1CABO4kBA5KPSqovTiLL3sORccn/mZzJSbvQf0EsYRfU34MgW5FotfwW3kx8Q==,
+        integrity: sha512-aS4yJuy6A1PCLws+PJpZP0qCURG8Y5iVx13z/WAbKyeDTY6W6PiGgcEllSaeLGxyn++382ztN/EZH85n2zZ6VQ==,
       }
     cpu: [arm64]
     os: [darwin]
 
-  turbo-linux-64@2.8.12:
+  turbo-linux-64@2.8.14:
     resolution:
       {
-        integrity: sha512-jXKw9j4r4q6s0goSXuKI3aKbQK2qiNeP25lGGEnq018TM6SWRW1CCpPMxyG91aCKrub7wDm/K45sGNT4ZFBcFQ==,
+        integrity: sha512-XC6wPUDJkakjhNLaS0NrHDMiujRVjH+naEAwvKLArgqRaFkNxjmyNDRM4eu3soMMFmjym6NTxYaF74rvET+Orw==,
       }
     cpu: [x64]
     os: [linux]
 
-  turbo-linux-arm64@2.8.12:
+  turbo-linux-arm64@2.8.14:
     resolution:
       {
-        integrity: sha512-BRJCMdyXjyBoL0GYpvj9d2WNfMHwc3tKmJG5ATn2Efvil9LsiOsd/93/NxDqW0jACtHFNVOPnd/CBwXRPiRbwA==,
+        integrity: sha512-ChfE7isyVNjZrVSPDwcfqcHLG/FuIBbOFxnt1FM8vSuBGzHAs8AlTdwFNIxlEMJfZ8Ad9mdMxdmsCUPIWiQ6cg==,
       }
     cpu: [arm64]
     os: [linux]
 
-  turbo-windows-64@2.8.12:
+  turbo-windows-64@2.8.14:
     resolution:
       {
-        integrity: sha512-vyFOlpFFzQFkikvSVhVkESEfzIopgs2J7J1rYvtSwSHQ4zmHxkC95Q8Kjkus8gg+8X2mZyP1GS5jirmaypGiPw==,
+        integrity: sha512-FTbIeQL1ycLFW2t9uQNMy+bRSzi3Xhwun/e7ZhFBdM+U0VZxxrtfYEBM9CHOejlfqomk6Jh7aRz0sJoqYn39Hg==,
       }
     cpu: [x64]
     os: [win32]
 
-  turbo-windows-arm64@2.8.12:
+  turbo-windows-arm64@2.8.14:
     resolution:
       {
-        integrity: sha512-9nRnlw5DF0LkJClkIws1evaIF36dmmMEO84J5Uj4oQ8C0QTHwlH7DNe5Kq2Jdmu8GXESCNDNuUYG8Cx6W/vm3g==,
+        integrity: sha512-KgZX12cTyhY030qS7ieT8zRkhZZE2VWJasDFVUSVVn17nR7IShpv68/7j5UqJNeRLIGF1XPK0phsP5V5yw3how==,
       }
     cpu: [arm64]
     os: [win32]
 
-  turbo@2.8.12:
+  turbo@2.8.14:
     resolution:
       {
-        integrity: sha512-auUAMLmi0eJhxDhQrxzvuhfEbICnVt0CTiYQYY8WyRJ5nwCDZxD0JG8bCSxT4nusI2CwJzmZAay5BfF6LmK7Hw==,
+        integrity: sha512-UCTxeMNYT1cKaHiIFdLCQ7ulI+jw5i5uOnJOrRXsgUD7G3+OjlUjwVd7JfeVt2McWSVGjYA3EVW/v1FSsJ5DtA==,
       }
     hasBin: true
 
@@ -15442,11 +15442,11 @@ snapshots:
       tailwind-api-utils: 1.0.3(tailwindcss@4.1.13)
       tailwindcss: 4.1.13
 
-  eslint-plugin-turbo@2.5.8(eslint@9.39.2(jiti@2.5.1))(turbo@2.8.12):
+  eslint-plugin-turbo@2.5.8(eslint@9.39.2(jiti@2.5.1))(turbo@2.8.14):
     dependencies:
       dotenv: 16.0.3
       eslint: 9.39.2(jiti@2.5.1)
-      turbo: 2.8.12
+      turbo: 2.8.14
 
   eslint-scope@8.4.0:
     dependencies:
@@ -17578,32 +17578,32 @@ snapshots:
 
   tslib@2.8.1: {}
 
-  turbo-darwin-64@2.8.12:
+  turbo-darwin-64@2.8.14:
     optional: true
 
-  turbo-darwin-arm64@2.8.12:
+  turbo-darwin-arm64@2.8.14:
     optional: true
 
-  turbo-linux-64@2.8.12:
+  turbo-linux-64@2.8.14:
     optional: true
 
-  turbo-linux-arm64@2.8.12:
+  turbo-linux-arm64@2.8.14:
     optional: true
 
-  turbo-windows-64@2.8.12:
+  turbo-windows-64@2.8.14:
     optional: true
 
-  turbo-windows-arm64@2.8.12:
+  turbo-windows-arm64@2.8.14:
     optional: true
 
-  turbo@2.8.12:
+  turbo@2.8.14:
     optionalDependencies:
-      turbo-darwin-64: 2.8.12
-      turbo-darwin-arm64: 2.8.12
-      turbo-linux-64: 2.8.12
-      turbo-linux-arm64: 2.8.12
-      turbo-windows-64: 2.8.12
-      turbo-windows-arm64: 2.8.12
+      turbo-darwin-64: 2.8.14
+      turbo-darwin-arm64: 2.8.14
+      turbo-linux-64: 2.8.14
+      turbo-linux-arm64: 2.8.14
+      turbo-windows-64: 2.8.14
+      turbo-windows-arm64: 2.8.14
 
   type-check@0.4.0:
     dependencies:
