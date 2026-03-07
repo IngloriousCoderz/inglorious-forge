@@ -190,7 +190,7 @@ describe("list", () => {
     let toggled = null
     const props = {
       id: "list",
-      onItemToggle: (item) => (toggled = item),
+      onItemToggle: (item, path) => (toggled = { item, path }),
       items: [
         {
           id: "a",
@@ -208,7 +208,11 @@ describe("list", () => {
     expect(
       container.querySelector(".iw-list-item-action").textContent.trim(),
     ).toBe("On")
+    expect(container.querySelector(".iw-list-item-trailing")).not.toBeNull()
     container.querySelector(".iw-list-item-toggle").click()
-    expect(toggled.id).toBe("a")
+    expect(toggled).toEqual({
+      item: props.items[0],
+      path: [0],
+    })
   })
 })

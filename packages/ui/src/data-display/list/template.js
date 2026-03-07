@@ -1,6 +1,22 @@
 /**
  * @typedef {import('../../../types/data-display/list').ListProps} ListProps
+ * @typedef {import('../../../types/data-display/list').ListItem} ListItem
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
+ * @typedef {{
+ *   id: string | number,
+ *   primary: TemplateResult | string | number,
+ *   secondary?: TemplateResult | string | number,
+ *   icon?: TemplateResult | string | number,
+ *   action?: TemplateResult | string | number,
+ *   expanded?: boolean,
+ *   onToggle?: (item: ListItem, path: number[]) => void,
+ *   disabled?: boolean,
+ *   selected?: boolean,
+ *   divider?: boolean,
+ *   onClick?: (item: ListItem, path: number[]) => void,
+ *   children?: ListItem[] | TemplateResult | string | number | null,
+ *   raw?: ListItem,
+ * }} ListItemMeta
  */
 
 import { classMap, html, ref, repeat } from "@inglorious/web"
@@ -88,7 +104,12 @@ export const list = {
 
   /**
    * @param {ListProps} props
-   * @param {{item: unknown, meta: object, index: number, path: number[]}} payload
+   * @param {{
+   *   item: ListItem,
+   *   meta: ListItemMeta,
+   *   index: number,
+   *   path: number[]
+   * }} payload
    * @returns {TemplateResult}
    */
   renderItem(props, { item, meta, path }) {
@@ -108,6 +129,7 @@ export const list = {
     const isClickable = !!props.onItemClick || !!onClick
     const hasChildren = Array.isArray(children) && children.length > 0
     const isExpanded = !!expanded
+    const hasAction = !!action
 
     return html`<li
       class=${classMap({
@@ -132,27 +154,31 @@ export const list = {
             ? html`<div class="iw-list-item-secondary">${secondary}</div>`
             : null}
         </div>
-        ${hasChildren
-          ? html`<button
-              class="iw-list-item-toggle"
-              type="button"
-              aria-expanded=${isExpanded}
-              @click=${(event) => {
-                event.stopPropagation()
-                if (disabled) return
-                onToggle?.(raw ?? item, path)
-                props.onItemToggle?.(raw ?? item, path)
-              }}
-            >
-              <span class="iw-list-item-caret">▸</span>
-            </button>`
-          : null}
-        ${action
-          ? html`<span
-              class="iw-list-item-action"
-              @click=${(event) => event.stopPropagation()}
-            >
-              ${action}
+        ${hasChildren || hasAction
+          ? html`<span class="iw-list-item-trailing">
+              ${hasChildren
+                ? html`<button
+                    class="iw-list-item-toggle"
+                    type="button"
+                    aria-expanded=${isExpanded}
+                    @click=${(event) => {
+                      event.stopPropagation()
+                      if (disabled) return
+                      onToggle?.(raw ?? item, path)
+                      props.onItemToggle?.(raw ?? item, path)
+                    }}
+                  >
+                    <span class="iw-list-item-caret">▸</span>
+                  </button>`
+                : null}
+              ${action
+                ? html`<span
+                    class="iw-list-item-action"
+                    @click=${(event) => event.stopPropagation()}
+                  >
+                    ${action}
+                  </span>`
+                : null}
             </span>`
           : null}
       </div>

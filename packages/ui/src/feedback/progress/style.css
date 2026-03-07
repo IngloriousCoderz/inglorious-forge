@@ -1,0 +1,73 @@
+.iw-progress {
+  color: var(--iw-color-primary, #2f7ef7);
+}
+
+.iw-progress-linear {
+  width: 100%;
+}
+
+.iw-progress-linear-track {
+  width: 100%;
+  height: 8px;
+  background: color-mix(in srgb, currentColor 24%, transparent);
+  border-radius: var(--iw-radius-sm);
+  overflow: hidden;
+}
+
+.iw-progress-linear-bar {
+  display: block;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, currentColor 84%, white),
+    currentColor
+  );
+  transition: width 0.2s ease;
+  min-width: 8px;
+}
+
+.iw-progress-linear.iw-progress-indeterminate .iw-progress-linear-bar {
+  width: 30%;
+  animation: iw-progress-linear 1.4s ease-in-out infinite;
+}
+
+@keyframes iw-progress-linear {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(350%);
+  }
+}
+
+.iw-progress-circular svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+  display: block;
+}
+
+.iw-progress-circular .iw-progress-track {
+  fill: none;
+  stroke: color-mix(in srgb, currentColor 20%, transparent);
+}
+
+.iw-progress-circular .iw-progress-value {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.2s ease;
+}
+
+.iw-progress-circular.iw-progress-indeterminate {
+  animation: iw-progress-rotate 1.2s linear infinite;
+}
+
+@keyframes iw-progress-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

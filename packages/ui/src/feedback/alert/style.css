@@ -1,0 +1,98 @@
+.iw-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--iw-space-3);
+  padding: var(--iw-space-3);
+  border-radius: var(--iw-alert-radius, var(--iw-radius-md));
+  background: var(--iw-color-surface);
+  color: var(--iw-color-text);
+  border: 1px solid color-mix(in srgb, currentColor 20%, transparent);
+  box-shadow: var(--iw-alert-shadow, none);
+}
+
+.iw-alert-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.1em;
+  color: var(--iw-alert-color, currentColor);
+}
+
+.iw-alert-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--iw-space-1);
+  flex: 1 1 auto;
+}
+
+.iw-alert-title {
+  font-weight: var(--iw-font-weight-semibold);
+}
+
+.iw-alert-description {
+  color: color-mix(in srgb, currentColor 88%, transparent);
+}
+
+.iw-alert-trailing {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--iw-space-2);
+}
+
+.iw-alert-action {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--iw-space-2);
+}
+
+.iw-alert-close {
+  border: 0 none;
+  background: transparent;
+  cursor: pointer;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: var(--iw-radius-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  color: inherit;
+  font-size: 1rem;
+}
+
+.iw-alert-close:hover {
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+
+.iw-alert-info {
+  --iw-alert-color: var(--iw-color-info, #2f7ef7);
+}
+
+.iw-alert-success {
+  --iw-alert-color: var(--iw-color-success, #2e8b57);
+}
+
+.iw-alert-warning {
+  --iw-alert-color: var(--iw-color-warning, #c79500);
+}
+
+.iw-alert-error {
+  --iw-alert-color: var(--iw-color-error, #d14343);
+}
+
+.iw-alert-outlined {
+  background: transparent;
+  border-color: color-mix(in srgb, var(--iw-alert-color) 55%, transparent);
+  color: var(--iw-alert-color);
+}
+
+.iw-alert-filled {
+  background: color-mix(
+    in srgb,
+    var(--iw-alert-color) 18%,
+    var(--iw-color-surface)
+  );
+  border-color: color-mix(in srgb, var(--iw-alert-color) 45%, transparent);
+  color: color-mix(in srgb, var(--iw-alert-color) 72%, var(--iw-color-text));
+}

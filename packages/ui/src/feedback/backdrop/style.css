@@ -1,0 +1,25 @@
+.iw-backdrop {
+  position: fixed;
+  inset: 0;
+  background: color-mix(in srgb, var(--iw-color-black) 65%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--iw-z-modal-backdrop, 1040);
+  color: var(--iw-color-white);
+  backdrop-filter: blur(3px);
+  padding: var(--iw-space-4);
+}
+
+.iw-backdrop-content {
+  max-width: min(28rem, 90vw);
+  padding: var(--iw-space-4) var(--iw-space-5);
+  border-radius: var(--iw-radius-md);
+  background: color-mix(
+    in srgb,
+    var(--iw-color-surface, #111) 88%,
+    transparent
+  );
+  border: 1px solid color-mix(in srgb, var(--iw-color-white) 14%, transparent);
+  box-shadow: var(--iw-shadow-lg, 0 12px 40px rgba(0, 0, 0, 0.35));
+}

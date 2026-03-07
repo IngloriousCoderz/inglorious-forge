@@ -30,6 +30,12 @@ import "@inglorious/ui/material-icon.css"
 import "@inglorious/ui/table.css"
 import "@inglorious/ui/tooltip.css"
 import "@inglorious/ui/typography.css"
+import "@inglorious/ui/alert.css"
+import "@inglorious/ui/backdrop.css"
+import "@inglorious/ui/dialog.css"
+import "@inglorious/ui/progress.css"
+import "@inglorious/ui/skeleton.css"
+import "@inglorious/ui/snackbar.css"
 
 import { createIcons, Heart, Settings, User } from "lucide"
 

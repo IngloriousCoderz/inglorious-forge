@@ -27,6 +27,12 @@
   --iw-color-accent-hover: #ff33ff;
   --iw-color-accent-active: #ff66ff;
 
+  /* Geometry: keep Inglorious mostly squared */
+  --iw-radius-sm: 0;
+  --iw-radius-md: 0;
+  --iw-radius-lg: 0;
+  --iw-radius-xl: 0;
+
   /* ========================================
      COMPONENT TOKENS
      ======================================== */
@@ -79,7 +85,7 @@
 
   /* Alert */
   --iw-alert-radius: var(--iw-radius-none);
-  --iw-alert-shadow: 0 0 10px currentColor;
+  --iw-alert-shadow: none;
   color-scheme: dark;
 }
 

@@ -49,3 +49,9 @@ export type {
   TypographyType,
   TypographyVariant,
 } from "./data-display/typography"
+export type { AlertProps, AlertType } from "./feedback/alert"
+export type { BackdropProps, BackdropType } from "./feedback/backdrop"
+export type { DialogProps, DialogType } from "./feedback/dialog"
+export type { ProgressProps, ProgressType } from "./feedback/progress"
+export type { SkeletonProps, SkeletonType } from "./feedback/skeleton"
+export type { SnackbarProps, SnackbarType } from "./feedback/snackbar"

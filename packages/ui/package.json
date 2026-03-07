@@ -159,7 +159,37 @@
       "types": "./types/data-display/typography.d.ts",
       "import": "./src/data-display/typography/index.js"
     },
-    "./typography.css": "./src/data-display/typography/style.css"
+    "./typography.css": "./src/data-display/typography/style.css",
+    "./alert": {
+      "types": "./types/feedback/alert.d.ts",
+      "import": "./src/feedback/alert/index.js"
+    },
+    "./alert.css": "./src/feedback/alert/style.css",
+    "./backdrop": {
+      "types": "./types/feedback/backdrop.d.ts",
+      "import": "./src/feedback/backdrop/index.js"
+    },
+    "./backdrop.css": "./src/feedback/backdrop/style.css",
+    "./dialog": {
+      "types": "./types/feedback/dialog.d.ts",
+      "import": "./src/feedback/dialog/index.js"
+    },
+    "./dialog.css": "./src/feedback/dialog/style.css",
+    "./progress": {
+      "types": "./types/feedback/progress.d.ts",
+      "import": "./src/feedback/progress/index.js"
+    },
+    "./progress.css": "./src/feedback/progress/style.css",
+    "./skeleton": {
+      "types": "./types/feedback/skeleton.d.ts",
+      "import": "./src/feedback/skeleton/index.js"
+    },
+    "./skeleton.css": "./src/feedback/skeleton/style.css",
+    "./snackbar": {
+      "types": "./types/feedback/snackbar.d.ts",
+      "import": "./src/feedback/snackbar/index.js"
+    },
+    "./snackbar.css": "./src/feedback/snackbar/style.css"
   },
   "files": [
     "src",

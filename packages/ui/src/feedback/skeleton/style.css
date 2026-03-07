@@ -1,0 +1,41 @@
+.iw-skeleton {
+  background: color-mix(in srgb, var(--iw-color-text) 14%, transparent);
+  border-radius: var(--iw-radius-sm);
+  position: relative;
+  overflow: hidden;
+  height: 1em;
+}
+
+.iw-skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.35),
+    transparent
+  );
+  animation: iw-skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes iw-skeleton-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.iw-skeleton-rect {
+  border-radius: var(--iw-radius-sm);
+}
+
+.iw-skeleton-circle {
+  border-radius: 999px;
+}
+
+.iw-skeleton-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--iw-space-2);
+}

@@ -1,0 +1,68 @@
+.iw-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background: color-mix(in srgb, var(--iw-color-black) 55%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--iw-z-modal, 1050);
+  padding: var(--iw-space-4);
+  backdrop-filter: blur(2px);
+}
+
+.iw-dialog {
+  background: var(--iw-color-surface);
+  color: var(--iw-color-text);
+  border-radius: var(--iw-radius-md);
+  border: 1px solid color-mix(in srgb, var(--iw-color-border) 70%, transparent);
+  min-width: min(32rem, 90vw);
+  max-width: min(48rem, 90vw);
+  box-shadow: var(--iw-shadow-lg, 0 12px 40px rgba(0, 0, 0, 0.3));
+  padding: var(--iw-space-4);
+}
+
+.iw-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--iw-space-2);
+}
+
+.iw-dialog-title {
+  font-weight: var(--iw-font-weight-semibold);
+  font-size: 1.1rem;
+}
+
+.iw-dialog-close {
+  border: 0 none;
+  background: transparent;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: var(--iw-radius-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: inherit;
+}
+
+.iw-dialog-close:hover {
+  background-color: color-mix(in srgb, currentColor 12%, transparent);
+}
+
+.iw-dialog-description {
+  margin-top: var(--iw-space-2);
+  color: var(--iw-color-text-muted, var(--iw-color-text));
+}
+
+.iw-dialog-body {
+  margin-top: var(--iw-space-3);
+}
+
+.iw-dialog-actions {
+  margin-top: var(--iw-space-4);
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--iw-space-2);
+}

@@ -16,7 +16,7 @@ export type ListItem =
       selected?: boolean
       divider?: boolean
       onClick?: (item: ListItem, path: number[]) => void
-      children?: TemplateResult | string | number
+      children?: ListItem[] | TemplateResult | string | number
       [key: string]: unknown
     }
 
@@ -42,8 +42,22 @@ export interface ListType {
     props: ListProps,
     payload: {
       item: ListItem
+      meta: {
+        id: string | number
+        primary: TemplateResult | string | number
+        secondary?: TemplateResult | string | number
+        icon?: TemplateResult | string | number
+        action?: TemplateResult | string | number
+        expanded?: boolean
+        onToggle?: (item: ListItem, path: number[]) => void
+        disabled?: boolean
+        selected?: boolean
+        divider?: boolean
+        onClick?: (item: ListItem, path: number[]) => void
+        children?: ListItem[] | TemplateResult | string | number | null
+      }
       index: number
-      onItemClick?: (item: ListItem, index: number) => void
+      path: number[]
     },
   ): TemplateResult
 }

@@ -27,12 +27,13 @@ export default {
       description: "Align items without icons to those with icons.",
     },
     onItemClick: { action: "onItemClick" },
+    onItemToggle: { action: "onItemToggle" },
   },
   parameters: {
     docs: {
       description: {
         component:
-          "List primitive with optional ordered mode and overridable `renderItem(props, payload)` sub-render.",
+          "List primitive with optional ordered mode and overridable `renderItem(props, payload)` sub-render. Click events use `onItemClick(item, path)` and toggle events use `onItemToggle(item, path)`.",
       },
     },
   },
