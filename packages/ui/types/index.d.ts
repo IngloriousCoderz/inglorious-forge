@@ -18,9 +18,16 @@ export type { RatingProps, RatingType } from "./controls/rating"
 export type { SelectProps, SelectType, SelectOption } from "./controls/select"
 export type { SliderProps, SliderType } from "./controls/slider"
 export type { SwitchProps, SwitchType } from "./controls/switch"
-export type { CardProps, CardType } from "./widgets/card"
 export type { FlexProps, FlexType } from "./layout/flex"
 export type { GridProps, GridType } from "./layout/grid"
+export type {
+  AccordionProps,
+  AccordionType,
+  AccordionItem,
+} from "./surfaces/accordion"
+export type { AppBarProps, AppBarType } from "./surfaces/app-bar"
+export type { CardProps, CardType } from "./surfaces/card"
+export type { PaperProps, PaperType } from "./surfaces/paper"
 export type { AvatarProps, AvatarType } from "./data-display/avatar"
 export type { BadgeProps, BadgeType } from "./data-display/badge"
 export type { ChipProps, ChipType } from "./data-display/chip"

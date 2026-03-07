@@ -1,0 +1,126 @@
+.iw-app-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--iw-space-3);
+  min-height: 3.5rem;
+  padding: var(--iw-space-2) var(--iw-space-4);
+  background: var(--iw-color-surface);
+  color: var(--iw-color-text);
+  border-bottom: 1px solid var(--iw-color-border);
+}
+
+.iw-app-bar-elevated {
+  box-shadow: var(--iw-shadow-md);
+}
+
+.iw-app-bar-regular {
+  min-height: 3.5rem;
+  padding-block: var(--iw-space-2);
+}
+
+.iw-app-bar-dense {
+  min-height: 3rem;
+  padding-block: var(--iw-space-1);
+}
+
+.iw-app-bar-prominent {
+  min-height: 4.5rem;
+  align-items: flex-start;
+  padding-top: var(--iw-space-3);
+  padding-bottom: var(--iw-space-3);
+}
+
+.iw-app-bar-fixed {
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: var(--iw-z-fixed, 1030);
+}
+
+.iw-app-bar-sticky {
+  position: sticky;
+  z-index: var(--iw-z-sticky, 1020);
+}
+
+.iw-app-bar-absolute {
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+
+.iw-app-bar-relative {
+  position: relative;
+}
+
+.iw-app-bar-placement-top {
+  top: 0;
+}
+
+.iw-app-bar-placement-bottom {
+  bottom: 0;
+  border-bottom: 0 none;
+  border-top: 1px solid var(--iw-color-border);
+}
+
+.iw-app-bar-color-default {
+  background: var(--iw-color-surface);
+  color: var(--iw-color-text);
+}
+
+.iw-app-bar-color-primary {
+  background: var(--iw-color-primary);
+  color: var(--iw-color-primary-text, var(--iw-color-white));
+  border-color: color-mix(in srgb, currentColor 18%, transparent);
+}
+
+.iw-app-bar-color-secondary {
+  background: var(--iw-color-accent, var(--iw-color-gray-700));
+  color: var(--iw-color-white);
+  border-color: color-mix(in srgb, currentColor 18%, transparent);
+}
+
+.iw-app-bar-color-transparent {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.iw-app-bar-color-inherit {
+  background: inherit;
+  color: inherit;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.iw-app-bar-leading,
+.iw-app-bar-trailing {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--iw-space-2);
+}
+
+.iw-app-bar-meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.iw-app-bar-title {
+  font-weight: var(--iw-font-weight-semibold);
+  line-height: var(--iw-line-height-tight);
+}
+
+.iw-app-bar-subtitle {
+  font-size: var(--iw-font-size-sm);
+  color: color-mix(in srgb, currentColor 72%, transparent);
+  line-height: var(--iw-line-height-tight);
+}
+
+.iw-app-bar-content {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.iw-app-bar-trailing {
+  margin-left: auto;
+}

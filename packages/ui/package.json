@@ -96,10 +96,10 @@
     },
     "./switch.css": "./src/controls/switch/style.css",
     "./card": {
-      "types": "./types/widgets/card.d.ts",
-      "import": "./src/widgets/card/index.js"
+      "types": "./types/surfaces/card.d.ts",
+      "import": "./src/surfaces/card/index.js"
     },
-    "./card.css": "./src/widgets/card/style.css",
+    "./card.css": "./src/surfaces/card/style.css",
     "./flex": {
       "types": "./types/layout/flex.d.ts",
       "import": "./src/layout/flex/index.js"
@@ -189,7 +189,22 @@
       "types": "./types/feedback/snackbar.d.ts",
       "import": "./src/feedback/snackbar/index.js"
     },
-    "./snackbar.css": "./src/feedback/snackbar/style.css"
+    "./snackbar.css": "./src/feedback/snackbar/style.css",
+    "./accordion": {
+      "types": "./types/surfaces/accordion.d.ts",
+      "import": "./src/surfaces/accordion/index.js"
+    },
+    "./accordion.css": "./src/surfaces/accordion/style.css",
+    "./app-bar": {
+      "types": "./types/surfaces/app-bar.d.ts",
+      "import": "./src/surfaces/app-bar/index.js"
+    },
+    "./app-bar.css": "./src/surfaces/app-bar/style.css",
+    "./paper": {
+      "types": "./types/surfaces/paper.d.ts",
+      "import": "./src/surfaces/paper/index.js"
+    },
+    "./paper.css": "./src/surfaces/paper/style.css"
   },
   "files": [
     "src",
