@@ -4,6 +4,10 @@
   z-index: var(--iw-z-modal, 1050);
 }
 
+.iw-drawer-shell-responsive {
+  pointer-events: none;
+}
+
 .iw-drawer-backdrop {
   position: absolute;
   inset: 0;
@@ -23,6 +27,13 @@
   color: var(--iw-color-text);
   border-color: var(--iw-color-border);
   box-shadow: var(--iw-shadow-lg);
+  pointer-events: auto;
+  transition:
+    transform var(--iw-transition-fast),
+    width var(--iw-transition-fast),
+    min-width var(--iw-transition-fast),
+    max-width var(--iw-transition-fast),
+    opacity var(--iw-transition-fast);
 }
 
 .iw-drawer-left {
@@ -65,6 +76,26 @@
   box-shadow: none;
 }
 
+.iw-drawer-responsive.iw-drawer-left {
+  transform: translateX(-100%);
+}
+
+.iw-drawer-responsive.iw-drawer-right {
+  transform: translateX(100%);
+}
+
+.iw-drawer-responsive.iw-drawer-top {
+  transform: translateY(-100%);
+}
+
+.iw-drawer-responsive.iw-drawer-bottom {
+  transform: translateY(100%);
+}
+
+.iw-drawer-responsive.iw-drawer-open {
+  transform: translate(0, 0);
+}
+
 .iw-drawer-header {
   display: flex;
   align-items: center;
@@ -92,4 +123,160 @@
   padding: var(--iw-space-4);
   overflow: auto;
   flex: 1 1 auto;
+}
+
+@media (min-width: 40rem) {
+  .iw-drawer-shell-responsive {
+    position: relative;
+    inset: auto;
+    z-index: auto;
+    pointer-events: auto;
+  }
+
+  .iw-drawer-shell-responsive
+    .iw-drawer-responsive.iw-drawer-breakpoint-sm.iw-drawer-left,
+  .iw-drawer-shell-responsive
+    .iw-drawer-responsive.iw-drawer-breakpoint-sm.iw-drawer-right {
+    position: relative;
+    transform: none;
+    min-width: 18rem;
+    max-width: 18rem;
+    box-shadow: none;
+  }
+
+  .iw-drawer-shell-responsive
+    .iw-drawer-responsive.iw-drawer-breakpoint-sm:not(.iw-drawer-open):not(
+      .iw-drawer-collapsed
+    ) {
+    display: none;
+  }
+
+  .iw-drawer-shell-responsive
+    .iw-drawer-responsive.iw-drawer-breakpoint-sm.iw-drawer-collapsed {
+    min-width: 4.5rem;
+    max-width: 4.5rem;
+    width: 4.5rem;
+  }
+
+  .iw-drawer-shell-responsive .iw-drawer-breakpoint-sm ~ .iw-drawer-backdrop,
+  .iw-drawer-shell-responsive .iw-drawer-backdrop {
+    display: none;
+  }
+}
+
+@media (min-width: 48rem) {
+  .iw-drawer-shell-responsive {
+    position: relative;
+    inset: auto;
+    z-index: auto;
+    pointer-events: auto;
+  }
+
+  .iw-drawer-shell-responsive
+    .iw-drawer-responsive.iw-drawer-breakpoint-md.iw-drawer-left,
+  .iw-drawer-shell-responsive
+    .iw-drawer-responsive.iw-drawer-breakpoint-md.iw-drawer-right {
+    position: relative;
+    transform: none;
+    min-width: 18rem;
+    max-width: 18rem;
+    box-shadow: none;
+  }
+
+  .iw-drawer-shell-responsive
+    .iw-drawer-responsive.iw-drawer-breakpoint-md:not(.iw-drawer-open):not(
+      .iw-drawer-collapsed
+    ) {
+    display: none;
+  }
+
+  .iw-drawer-shell-responsive
+    .iw-drawer-responsive.iw-drawer-breakpoint-md.iw-drawer-collapsed {
+    min-width: 4.5rem;
+    max-width: 4.5rem;
+    width: 4.5rem;
+  }
+
+  .iw-drawer-shell-responsive .iw-drawer-breakpoint-md ~ .iw-drawer-backdrop,
+  .iw-drawer-shell-responsive .iw-drawer-backdrop {
+    display: none;
+  }
+}
+
+@media (min-width: 64rem) {
+  .iw-drawer-shell-responsive {
+    position: relative;
+    inset: auto;
+    z-index: auto;
+    pointer-events: auto;
+  }
+
+  .iw-drawer-shell-responsive
+    .iw-drawer-responsive.iw-drawer-breakpoint-lg.iw-drawer-left,
+  .iw-drawer-shell-responsive
+    .iw-drawer-responsive.iw-drawer-breakpoint-lg.iw-drawer-right {
+    position: relative;
+    transform: none;
+    min-width: 18rem;
+    max-width: 18rem;
+    box-shadow: none;
+  }
+
+  .iw-drawer-shell-responsive
+    .iw-drawer-responsive.iw-drawer-breakpoint-lg:not(.iw-drawer-open):not(
+      .iw-drawer-collapsed
+    ) {
+    display: none;
+  }
+
+  .iw-drawer-shell-responsive
+    .iw-drawer-responsive.iw-drawer-breakpoint-lg.iw-drawer-collapsed {
+    min-width: 4.5rem;
+    max-width: 4.5rem;
+    width: 4.5rem;
+  }
+
+  .iw-drawer-shell-responsive .iw-drawer-breakpoint-lg ~ .iw-drawer-backdrop,
+  .iw-drawer-shell-responsive .iw-drawer-backdrop {
+    display: none;
+  }
+}
+
+@media (min-width: 80rem) {
+  .iw-drawer-shell-responsive {
+    position: relative;
+    inset: auto;
+    z-index: auto;
+    pointer-events: auto;
+  }
+
+  .iw-drawer-shell-responsive
+    .iw-drawer-responsive.iw-drawer-breakpoint-xl.iw-drawer-left,
+  .iw-drawer-shell-responsive
+    .iw-drawer-responsive.iw-drawer-breakpoint-xl.iw-drawer-right {
+    position: relative;
+    transform: none;
+    min-width: 18rem;
+    max-width: 18rem;
+    box-shadow: none;
+  }
+
+  .iw-drawer-shell-responsive
+    .iw-drawer-responsive.iw-drawer-breakpoint-xl:not(.iw-drawer-open):not(
+      .iw-drawer-collapsed
+    ) {
+    display: none;
+  }
+
+  .iw-drawer-shell-responsive
+    .iw-drawer-responsive.iw-drawer-breakpoint-xl.iw-drawer-collapsed {
+    min-width: 4.5rem;
+    max-width: 4.5rem;
+    width: 4.5rem;
+  }
+
+  .iw-drawer-shell-responsive .iw-drawer-breakpoint-xl ~ .iw-drawer-backdrop,
+  .iw-drawer-shell-responsive .iw-drawer-backdrop {
+    display: none;
+  }
 }

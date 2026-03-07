@@ -3,9 +3,11 @@ import type { TemplateResult } from "@inglorious/web"
 export interface DrawerProps {
   id?: string
   type?: string
-  open?: boolean
+  isOpen?: boolean
   anchor?: "left" | "right" | "top" | "bottom"
-  variant?: "temporary" | "persistent" | "permanent"
+  variant?: "temporary" | "persistent" | "permanent" | "responsive"
+  breakpoint?: "sm" | "md" | "lg" | "xl"
+  isCollapsed?: boolean
   title?: TemplateResult | string | number
   children?: TemplateResult | string | number
   backdrop?: boolean

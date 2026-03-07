@@ -1,0 +1,40 @@
+import "./style.css"
+
+import { areaChart, barChart, lineChart } from "@inglorious/charts"
+
+import {
+  createEntityRender,
+  notifyActionArgType,
+} from "../../stories/notifyStory.js"
+import { dashboard } from "./dashboard.js"
+
+export default {
+  title: "Examples/AdminDashboard",
+  tags: ["autodocs"],
+  render: createEntityRender({
+    dashboard,
+    area: areaChart,
+    bar: barChart,
+    line: lineChart,
+  }),
+  argTypes: {
+    ...notifyActionArgType,
+  },
+  parameters: {
+    layout: "fullscreen",
+    docs: {
+      description: {
+        component:
+          "A composed admin dashboard example built from existing navigation, surface, data-display, feedback, and chart primitives.",
+      },
+    },
+  },
+}
+
+export const Default = {
+  args: {
+    id: "dashboard",
+    type: "dashboard",
+    isDrawerOpen: true,
+  },
+}

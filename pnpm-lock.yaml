@@ -1779,6 +1779,9 @@ importers:
 
   packages/ui:
     dependencies:
+      "@inglorious/charts":
+        specifier: workspace:*
+        version: link:../charts
       "@inglorious/utils":
         specifier: workspace:*
         version: link:../utils

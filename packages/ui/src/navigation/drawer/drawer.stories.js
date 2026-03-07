@@ -8,7 +8,10 @@ export default {
   tags: ["autodocs"],
   render: createRender(drawer),
   argTypes: {
-    open: { control: "boolean", description: "Whether the drawer is visible." },
+    isOpen: {
+      control: "boolean",
+      description: "Whether the drawer is visible.",
+    },
     anchor: {
       control: "select",
       options: ["left", "right", "top", "bottom"],
@@ -16,8 +19,17 @@ export default {
     },
     variant: {
       control: "select",
-      options: ["temporary", "persistent", "permanent"],
+      options: ["temporary", "persistent", "permanent", "responsive"],
       description: "Drawer behavior model.",
+    },
+    breakpoint: {
+      control: "select",
+      options: ["sm", "md", "lg", "xl"],
+      description: "Desktop breakpoint for responsive drawers.",
+    },
+    isCollapsed: {
+      control: "boolean",
+      description: "Whether a responsive drawer is collapsed on desktop.",
     },
     title: { control: "text", description: "Optional drawer header title." },
     onClose: { action: "onClose" },
@@ -34,7 +46,7 @@ export default {
 
 export const Temporary = {
   args: {
-    open: true,
+    isOpen: true,
     anchor: "left",
     variant: "temporary",
     title: "Workspace",
@@ -44,10 +56,22 @@ export const Temporary = {
 
 export const Persistent = {
   args: {
-    open: true,
+    isOpen: true,
     anchor: "right",
     variant: "persistent",
     title: "Inspector",
     children: html`<div>Panel content</div>`,
+  },
+}
+
+export const Responsive = {
+  args: {
+    isOpen: true,
+    anchor: "left",
+    variant: "responsive",
+    breakpoint: "lg",
+    isCollapsed: false,
+    title: "Workspace",
+    children: html`<div>Responsive app-shell navigation</div>`,
   },
 }

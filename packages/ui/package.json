@@ -276,6 +276,7 @@
     "build-storybook": "storybook build"
   },
   "peerDependencies": {
+    "@inglorious/charts": "workspace:*",
     "@inglorious/utils": "workspace:*",
     "@inglorious/web": "workspace:*"
   },
