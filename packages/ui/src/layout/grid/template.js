@@ -5,8 +5,6 @@
 
 import { classMap, html, styleMap } from "@inglorious/web"
 
-const DEFAULT_COLUMNS = 2
-
 /**
  * Grid layout component for Inglorious Web.
  * Children are rendered as-is (templates/content composition).
@@ -16,8 +14,8 @@ const DEFAULT_COLUMNS = 2
  */
 export function render(props) {
   const {
-    columns = DEFAULT_COLUMNS,
-    minColumnWidth,
+    columns = 0,
+    minColumnWidth = 0,
     gap = "md",
     align = "stretch",
     justify = "stretch",
@@ -34,11 +32,9 @@ export function render(props) {
     [`iw-grid-justify-${justify}`]: justify !== "stretch",
   }
 
-  const styles = minColumnWidth
-    ? {
-        gridTemplateColumns: `repeat(auto-fit, minmax(${minColumnWidth}, 1fr))`,
-      }
-    : { gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }
+  const styles = {
+    gridTemplateColumns: `repeat(${columns || "auto-fit"}, minmax(${minColumnWidth}, 1fr))`,
+  }
 
   return html`<div
     class=${classMap(classes)}

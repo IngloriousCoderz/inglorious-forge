@@ -10,6 +10,7 @@ import { materialIcon } from "../../data-display/material-icon/index.js"
 import { table } from "../../data-display/table/index.js"
 import { typography } from "../../data-display/typography/index.js"
 import { progress } from "../../feedback/progress/index.js"
+import { flex } from "../../layout/flex/index.js"
 import { grid } from "../../layout/grid/index.js"
 import { breadcrumbs } from "../../navigation/breadcrumbs/template.js"
 import { drawer } from "../../navigation/drawer/index.js"
@@ -62,21 +63,24 @@ export const dashboard = {
               items: [
                 {
                   primary: "Dashboard",
-                  icon: materialIcon.render({ name: "speed" }),
+                  icon: materialIcon.render({ name: "speed", size: "lg" }),
                   selected: true,
                   action: badge.render({ color: "info", children: "NEW" }),
                 },
                 {
                   primary: "Colors",
-                  icon: materialIcon.render({ name: "palette" }),
+                  icon: materialIcon.render({ name: "palette", size: "lg" }),
                 },
                 {
                   primary: "Typography",
-                  icon: materialIcon.render({ name: "text_fields" }),
+                  icon: materialIcon.render({
+                    name: "text_fields",
+                    size: "lg",
+                  }),
                 },
                 {
                   primary: "Base",
-                  icon: materialIcon.render({ name: "extension" }),
+                  icon: materialIcon.render({ name: "extension", size: "lg" }),
                   expanded: true,
                   children: [
                     { primary: "Accordion" },
@@ -87,7 +91,7 @@ export const dashboard = {
                 },
                 {
                   primary: "Buttons",
-                  icon: materialIcon.render({ name: "ads_click" }),
+                  icon: materialIcon.render({ name: "ads_click", size: "lg" }),
                   children: [
                     { primary: "Buttons" },
                     { primary: "Button Group" },
@@ -95,11 +99,11 @@ export const dashboard = {
                 },
                 {
                   primary: "Charts",
-                  icon: materialIcon.render({ name: "pie_chart" }),
+                  icon: materialIcon.render({ name: "pie_chart", size: "lg" }),
                 },
                 {
                   primary: "Forms",
-                  icon: materialIcon.render({ name: "fact_check" }),
+                  icon: materialIcon.render({ name: "fact_check", size: "lg" }),
                   children: [
                     { primary: "Checks and radios" },
                     { primary: "Select" },
@@ -112,30 +116,29 @@ export const dashboard = {
 
         <div class="iw-dashboard-main">
           ${this.renderHeader(entity, api)}
-          <div class="iw-dashboard-content">
-            ${grid.render({
-              minColumnWidth: "15rem",
-              gap: "md",
-              children: statCards.map((card) =>
-                this.renderStatCard(entity, card, api),
-              ),
-            })}
-
-            <div style="height: var(--iw-space-4)"></div>
-            ${this.renderTrafficCard(entity, api)}
-
-            <div style="height: var(--iw-space-4)"></div>
-            ${grid.render({
-              columns: 3,
-              gap: "md",
-              children: socialCards.map((card) =>
-                this.renderSocialCard(entity, card, api),
-              ),
-            })}
-
-            <div style="height: var(--iw-space-4)"></div>
-            ${this.renderTrafficSalesCard()}
-          </div>
+          ${flex.render({
+            direction: "column",
+            gap: "md",
+            className: "iw-dashboard-content",
+            children: [
+              grid.render({
+                minColumnWidth: "20rem",
+                gap: "md",
+                children: statCards.map((card) =>
+                  this.renderStatCard(entity, card, api),
+                ),
+              }),
+              this.renderTrafficCard(entity, api),
+              grid.render({
+                columns: 3,
+                gap: "md",
+                children: socialCards.map((card) =>
+                  this.renderSocialCard(entity, card, api),
+                ),
+              }),
+              this.renderTrafficSalesCard(),
+            ],
+          })}
 
           <footer class="iw-dashboard-footer">
             <div>Admin dashboard example © 2026</div>
@@ -154,13 +157,14 @@ export const dashboard = {
           elevated: false,
           children: html`
             <div class="iw-dashboard-header-row">
+              ${button.render({
+                variant: "ghost",
+                color: "secondary",
+                shape: "square",
+                children: materialIcon.render({ name: "menu", size: "lg" }),
+                onClick: () => api.notify(`#${entity.id}:drawerToggle`),
+              })}
               <div class="iw-dashboard-header-nav">
-                ${button.render({
-                  variant: "ghost",
-                  color: "secondary",
-                  children: materialIcon.render({ name: "menu" }),
-                  onClick: () => api.notify(`#${entity.id}:drawerToggle`),
-                })}
                 ${button.render({
                   variant: "ghost",
                   color: "secondary",
@@ -181,7 +185,10 @@ export const dashboard = {
                 ${button.render({
                   variant: "ghost",
                   color: "secondary",
-                  children: materialIcon.render({ name: "notifications" }),
+                  children: materialIcon.render({
+                    name: "notifications",
+                    size: "lg",
+                  }),
                 })}
                 ${button.render({
                   variant: "ghost",
@@ -193,12 +200,15 @@ export const dashboard = {
                 ${button.render({
                   variant: "ghost",
                   color: "secondary",
-                  children: materialIcon.render({ name: "mail" }),
+                  children: materialIcon.render({ name: "mail", size: "lg" }),
                 })}
                 ${button.render({
                   variant: "ghost",
                   color: "secondary",
-                  children: materialIcon.render({ name: "contrast" }),
+                  children: materialIcon.render({
+                    name: "contrast",
+                    size: "lg",
+                  }),
                 })}
                 ${avatar.render({ initials: "AR" })}
               </div>
@@ -233,7 +243,8 @@ export const dashboard = {
           ${button.render({
             variant: "ghost",
             color: "secondary",
-            children: materialIcon.render({ name: "more_vert" }),
+            shape: "square",
+            children: materialIcon.render({ name: "more_vert", size: "lg" }),
           })}
         </div>
         <div class="iw-dashboard-stat-chart">

@@ -21,10 +21,17 @@ export function render(props) {
     gap = "md",
     inline = false,
     fullWidth = false,
-    classes: extraClasses = {},
+    className = "",
     children = [],
     onClick,
   } = props
+
+  const extraClasses = Object.fromEntries(
+    className
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((name) => [name, true]),
+  )
 
   const classes = {
     "iw-flex": true,

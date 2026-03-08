@@ -51,29 +51,27 @@ export default {
   },
 }
 
-export const Default = {}
-Default.args = {
-  columns: 3,
-  gap: "md",
-  align: "stretch",
-  justify: "stretch",
-  fullWidth: false,
-  children: [
-    html`<div>Cell A</div>`,
-    html`<div>Cell B</div>`,
-    html`<div>Cell C</div>`,
-  ],
+export const Default = {
+  args: {
+    align: "stretch",
+    justify: "stretch",
+    fullWidth: false,
+    gap: "md",
+    children: [
+      html`<div>Product</div>`,
+      html`<div>Price</div>`,
+      html`<div>Status</div>`,
+      html`<div>Actions</div>`,
+      html`<div>Notes</div>`,
+    ],
+    columns: 3,
+  },
 }
 
-export const AutoFit = {}
-AutoFit.args = {
-  ...Default.args,
-  minColumnWidth: "180px",
-  children: [
-    html`<div>Product</div>`,
-    html`<div>Price</div>`,
-    html`<div>Status</div>`,
-    html`<div>Actions</div>`,
-    html`<div>Notes</div>`,
-  ],
+export const AutoFit = {
+  args: {
+    ...Default.args,
+    columns: 0,
+    minColumnWidth: "180px",
+  },
 }
