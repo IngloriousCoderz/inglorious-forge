@@ -1,4 +1,11 @@
 .iw-button {
+  --iw-button-color: var(--iw-color-text);
+  --iw-button-bg: var(--iw-color-surface);
+  --iw-button-bg-hover: var(--iw-color-surface-hover);
+  --iw-button-bg-active: var(--iw-color-surface-active);
+  --iw-button-border: var(--iw-color-border);
+  --iw-button-text: var(--iw-color-text);
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -75,12 +82,22 @@
     }
   }
 
+  &.iw-button-primary {
+    --iw-button-color: var(--iw-color-primary-text);
+    --iw-button-bg: var(--iw-color-primary);
+    --iw-button-bg-hover: var(--iw-color-primary-hover);
+    --iw-button-bg-active: var(--iw-color-primary-active);
+    --iw-button-border: var(--iw-color-primary);
+    --iw-button-text: var(--iw-color-primary-text);
+  }
+
   &.iw-button-secondary {
     --iw-button-color: var(--iw-color-gray-600);
     --iw-button-bg: var(--iw-color-gray-600);
     --iw-button-bg-hover: var(--iw-color-gray-700);
     --iw-button-bg-active: var(--iw-color-gray-800);
     --iw-button-border: var(--iw-color-gray-600);
+    --iw-button-text: var(--iw-color-primary-text);
   }
 
   &.iw-button-success {
@@ -89,6 +106,7 @@
     --iw-button-bg-hover: var(--iw-color-success-dark);
     --iw-button-bg-active: #064e3b;
     --iw-button-border: var(--iw-color-success);
+    --iw-button-text: var(--iw-color-primary-text);
   }
 
   &.iw-button-warning {
@@ -97,7 +115,7 @@
     --iw-button-bg-hover: var(--iw-color-warning-dark);
     --iw-button-bg-active: #78350f;
     --iw-button-border: var(--iw-color-warning);
-    --iw-button-text: var(--iw-color-black);
+    --iw-button-text: var(--iw-color-primary-text);
   }
 
   &.iw-button-error {
@@ -106,6 +124,7 @@
     --iw-button-bg-hover: var(--iw-color-error-dark);
     --iw-button-bg-active: #7f1d1d;
     --iw-button-border: var(--iw-color-error);
+    --iw-button-text: var(--iw-color-primary-text);
   }
 
   &.iw-button-info {
@@ -114,6 +133,7 @@
     --iw-button-bg-hover: var(--iw-color-info-dark);
     --iw-button-bg-active: #1e3a8a;
     --iw-button-border: var(--iw-color-info);
+    --iw-button-text: var(--iw-color-primary-text);
   }
 
   &.iw-button-sm {

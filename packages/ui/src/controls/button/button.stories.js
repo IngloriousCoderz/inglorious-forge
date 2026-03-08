@@ -19,7 +19,15 @@ export default {
     },
     color: {
       control: "select",
-      options: ["primary", "secondary", "success", "warning", "error", "info"],
+      options: [
+        "",
+        "primary",
+        "secondary",
+        "success",
+        "warning",
+        "error",
+        "info",
+      ],
       description: "Semantic color intent.",
     },
     size: {
@@ -64,7 +72,6 @@ export const Default = {}
 Default.args = {
   children: "Button",
   variant: "default",
-  color: "primary",
   size: "md",
   shape: "rectangle",
   disabled: false,
@@ -93,6 +100,12 @@ export const Large = {}
 Large.args = {
   ...Default.args,
   size: "lg",
+}
+
+export const Primary = {}
+Primary.args = {
+  ...Default.args,
+  color: "primary",
 }
 
 export const Secondary = {}

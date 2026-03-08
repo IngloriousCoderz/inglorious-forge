@@ -54,8 +54,8 @@ export const dashboard = {
           onCollapseToggle: () =>
             api.notify(`#${entity.id}:drawerCollapseToggle`),
           title: html`<div class="iw-dashboard-brand">
-            <span class="iw-dashboard-brand-mark">D</span>
-            <span class="iw-dashboard-brand-title">Dashboard</span>
+            ${avatar.render({ src: "/transparent.png", shape: "square" })}
+            <span class="iw-dashboard-brand-title">Inglorious UI</span>
           </div>`,
           children: html`
             ${list.render({
@@ -159,7 +159,6 @@ export const dashboard = {
             <div class="iw-dashboard-header-row">
               ${button.render({
                 variant: "ghost",
-                color: "secondary",
                 shape: "square",
                 children: materialIcon.render({ name: "menu", size: "lg" }),
                 onClick: () => api.notify(`#${entity.id}:drawerToggle`),
@@ -167,24 +166,20 @@ export const dashboard = {
               <div class="iw-dashboard-header-nav">
                 ${button.render({
                   variant: "ghost",
-                  color: "secondary",
                   children: "Dashboard",
                 })}
                 ${button.render({
                   variant: "ghost",
-                  color: "secondary",
                   children: "Users",
                 })}
                 ${button.render({
                   variant: "ghost",
-                  color: "secondary",
                   children: "Settings",
                 })}
               </div>
               <div class="iw-dashboard-header-actions">
                 ${button.render({
                   variant: "ghost",
-                  color: "secondary",
                   children: materialIcon.render({
                     name: "notifications",
                     size: "lg",
@@ -192,25 +187,22 @@ export const dashboard = {
                 })}
                 ${button.render({
                   variant: "ghost",
-                  color: "secondary",
                   children: materialIcon.render({
                     name: "format_list_bulleted",
                   }),
                 })}
                 ${button.render({
                   variant: "ghost",
-                  color: "secondary",
                   children: materialIcon.render({ name: "mail", size: "lg" }),
                 })}
                 ${button.render({
                   variant: "ghost",
-                  color: "secondary",
                   children: materialIcon.render({
                     name: "contrast",
                     size: "lg",
                   }),
                 })}
-                ${avatar.render({ initials: "AR" })}
+                ${avatar.render({ src: "/antony.jpeg" })}
               </div>
             </div>
           `,
