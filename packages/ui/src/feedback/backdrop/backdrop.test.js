@@ -5,7 +5,7 @@ import { backdrop } from "."
 
 describe("backdrop", () => {
   it("renders when open", () => {
-    const props = { open: true, children: "Hello" }
+    const props = { isOpen: true, children: "Hello" }
     const container = document.createElement("div")
 
     render(backdrop.render(props), container)
@@ -17,7 +17,7 @@ describe("backdrop", () => {
   })
 
   it("does not render when closed", () => {
-    const props = { open: false }
+    const props = { isOpen: false }
     const container = document.createElement("div")
 
     render(backdrop.render(props), container)

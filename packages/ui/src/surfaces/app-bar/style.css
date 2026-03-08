@@ -1,9 +1,8 @@
 .iw-app-bar {
   display: flex;
   align-items: center;
-  gap: var(--iw-space-3);
-  min-height: 3.5rem;
-  padding: var(--iw-space-2) var(--iw-space-4);
+  min-height: var(--iw-space-16);
+  /* gap: var(--iw-space-3); */
   background: var(--iw-color-surface);
   color: var(--iw-color-text);
   border-bottom: 1px solid var(--iw-color-border);
@@ -13,18 +12,7 @@
   box-shadow: var(--iw-shadow-md);
 }
 
-.iw-app-bar-regular {
-  min-height: 3.5rem;
-  padding-block: var(--iw-space-2);
-}
-
-.iw-app-bar-dense {
-  min-height: 3rem;
-  padding-block: var(--iw-space-1);
-}
-
 .iw-app-bar-prominent {
-  min-height: 4.5rem;
   align-items: flex-start;
   padding-top: var(--iw-space-3);
   padding-bottom: var(--iw-space-3);
@@ -114,11 +102,6 @@
   font-size: var(--iw-font-size-sm);
   color: color-mix(in srgb, currentColor 72%, transparent);
   line-height: var(--iw-line-height-tight);
-}
-
-.iw-app-bar-content {
-  flex: 1 1 auto;
-  min-width: 0;
 }
 
 .iw-app-bar-trailing {

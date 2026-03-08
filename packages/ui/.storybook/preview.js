@@ -140,11 +140,17 @@ function hydrateLucide() {
 export const decorators = [
   (story, context) => {
     const theme = context.globals.theme
-    const mode = context.globals.mode
     const themeClass = themeClasses[theme] || themeClasses.inglorious
+
+    const mode = context.globals.mode
     const modeClass = mode === "light" ? "iw-theme-light" : "iw-theme-dark"
 
-    document.body.className = `${themeClass} ${modeClass}`.trim()
+    document.body.className = document.body.className.replace(
+      /iw-theme-(\w+)/g,
+      "",
+    )
+    document.body.className += ` ${themeClass} ${modeClass}`
+
     const background =
       getComputedStyle(document.body)
         .getPropertyValue("--iw-color-bg")

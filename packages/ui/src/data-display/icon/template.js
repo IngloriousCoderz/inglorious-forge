@@ -4,9 +4,7 @@
 
 import { classMap, html } from "@inglorious/web"
 
-export function render(props) {
-  const { children, size = "md", color = "current", onClick } = props
-
+export function render({ children, size = "md", color = "current", onClick }) {
   return html`<span
     class=${classMap({
       "iw-icon": true,

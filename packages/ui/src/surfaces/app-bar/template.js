@@ -3,7 +3,7 @@
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
-import { classMap, html, ref } from "@inglorious/web"
+import { classMap, html, ref, when } from "@inglorious/web"
 
 import { applyElementProps } from "../../shared/applyElementProps.js"
 
@@ -51,18 +51,28 @@ export function render(props) {
     })}
     ${ref((el) => applyElementProps(el, rest))}
   >
-    ${leading ? html`<div class="iw-app-bar-leading">${leading}</div>` : null}
-    ${hasMeta
-      ? html`<div class="iw-app-bar-meta">
-          ${title ? html`<div class="iw-app-bar-title">${title}</div>` : null}
-          ${subtitle
-            ? html`<div class="iw-app-bar-subtitle">${subtitle}</div>`
-            : null}
-        </div>`
-      : null}
-    ${children ? html`<div class="iw-app-bar-content">${children}</div>` : null}
-    ${trailing
-      ? html`<div class="iw-app-bar-trailing">${trailing}</div>`
-      : null}
+    ${when(
+      leading,
+      () => html`<div class="iw-app-bar-leading">${leading}</div>`,
+    )}
+    ${when(
+      hasMeta,
+      () =>
+        html`<div class="iw-app-bar-meta">
+          ${when(
+            title,
+            () => html`<div class="iw-app-bar-title">${title}</div>`,
+          )}
+          ${when(
+            subtitle,
+            () => html`<div class="iw-app-bar-subtitle">${subtitle}</div>`,
+          )}
+        </div>`,
+    )}
+    ${children}
+    ${when(
+      trailing,
+      () => html`<div class="iw-app-bar-trailing">${trailing}</div>`,
+    )}
   </header>`
 }

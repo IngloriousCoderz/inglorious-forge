@@ -35,6 +35,5 @@ export const Default = {
   args: {
     id: "dashboard",
     type: "dashboard",
-    isDrawerOpen: true,
   },
 }

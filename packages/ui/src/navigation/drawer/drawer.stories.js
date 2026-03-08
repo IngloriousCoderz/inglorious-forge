@@ -44,34 +44,17 @@ export default {
   },
 }
 
-export const Temporary = {
+export const Default = {
   args: {
     isOpen: true,
-    anchor: "left",
-    variant: "temporary",
     title: "Workspace",
     children: html`<div>Navigation items</div>`,
   },
 }
 
-export const Persistent = {
+export const Right = {
   args: {
-    isOpen: true,
+    ...Default.args,
     anchor: "right",
-    variant: "persistent",
-    title: "Inspector",
-    children: html`<div>Panel content</div>`,
-  },
-}
-
-export const Responsive = {
-  args: {
-    isOpen: true,
-    anchor: "left",
-    variant: "responsive",
-    breakpoint: "lg",
-    isCollapsed: false,
-    title: "Workspace",
-    children: html`<div>Responsive app-shell navigation</div>`,
   },
 }

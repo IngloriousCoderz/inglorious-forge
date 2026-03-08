@@ -8,14 +8,14 @@ export default {
   tags: ["autodocs"],
   render: createRender(backdrop),
   argTypes: {
-    open: { control: "boolean" },
+    isOpen: { control: "boolean" },
     onClick: { action: "onClick" },
   },
 }
 
 export const Open = {
   args: {
-    open: true,
+    isOpen: true,
     children: html`<div>Loading content…</div>`,
   },
 }

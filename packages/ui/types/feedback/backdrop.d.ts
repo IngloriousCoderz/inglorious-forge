@@ -3,10 +3,10 @@ import type { TemplateResult } from "@inglorious/web"
 export interface BackdropProps {
   id?: string
   type?: string
-  open?: boolean
+  isOpen?: boolean
   className?: string
-  onClick?: () => void
   children?: TemplateResult | string | number
+  onClick?: () => void
   [key: string]: unknown
 }
 

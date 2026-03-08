@@ -1,3 +1,3 @@
-import { render } from "./template.js"
+import * as renderers from "./template.js"
 
-export const container = { render }
+export const container = { ...renderers }

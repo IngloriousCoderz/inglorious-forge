@@ -21,6 +21,7 @@ export function render(props) {
     gap = "md",
     inline = false,
     fullWidth = false,
+    classes: extraClasses = {},
     children = [],
     onClick,
   } = props
@@ -34,6 +35,7 @@ export function render(props) {
     [`iw-flex-justify-${justify}`]: true,
     [`iw-flex-align-${align}`]: true,
     [`iw-flex-gap-${gap}`]: true,
+    ...extraClasses,
   }
 
   return html`<div class=${classMap(classes)} @click=${onClick}>

@@ -3,16 +3,14 @@
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
-import { classMap, html } from "@inglorious/web"
+import { classMap, html, when } from "@inglorious/web"
 
 /**
  * @param {BackdropProps} props
  * @returns {TemplateResult | null}
  */
-export function render(props) {
-  const { open = false, className = "", onClick, children } = props
-
-  if (!open) return null
+export function render({ isOpen = false, className = "", onClick, children }) {
+  if (!isOpen) return null
 
   const extraClasses = Object.fromEntries(
     className
@@ -25,6 +23,9 @@ export function render(props) {
     class=${classMap({ "iw-backdrop": true, ...extraClasses })}
     @click=${onClick}
   >
-    <div class="iw-backdrop-content">${children}</div>
+    ${when(
+      children,
+      () => html`<div class="iw-backdrop-content">${children}</div>`,
+    )}
   </div>`
 }
