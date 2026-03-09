@@ -69,7 +69,7 @@ describe("area", () => {
 
       const result = area.renderAreaChart(
         entity,
-        { children, config: { width: 800, height: 400 } },
+        { children, width: 800, height: 400 },
         api,
       )
       const container = document.createElement("div")
@@ -143,7 +143,7 @@ describe("area", () => {
 
       const result = area.renderAreaChart(
         entity,
-        { children, config: { width: "100%", height: "100%" } },
+        { children, width: "100%", height: "100%" },
         api,
       )
       const container = document.createElement("div")
@@ -168,11 +168,9 @@ describe("area", () => {
         entity,
         {
           children,
-          config: {
-            width: 800,
-            height: 400,
-            padding: { top: 0, right: 0, bottom: 0, left: 0 },
-          },
+          width: 800,
+          height: 400,
+          padding: { top: 0, right: 0, bottom: 0, left: 0 },
         },
         api,
       )

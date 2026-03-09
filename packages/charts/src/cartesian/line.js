@@ -86,13 +86,11 @@ export const line = {
     return type.renderLineChart(
       entityWithData,
       {
+        width: entityWithData.width,
+        height: entityWithData.height,
+        dataKeys,
+        originalEntity: { ...entity, data: transformedData },
         children,
-        config: {
-          width: entityWithData.width,
-          height: entityWithData.height,
-          dataKeys,
-          originalEntity: { ...entity, data: transformedData },
-        },
       },
       api,
     )
@@ -105,8 +103,9 @@ export const line = {
    * @param {import('@inglorious/web').Api} api
    * @returns {import('lit-html').TemplateResult}
    */
-  renderLineChart(entity, { children, config = {} }, api) {
+  renderLineChart(entity, params = {}, api) {
     if (!entity) return svg`<text>Entity not found</text>`
+    const { children, ...config } = params
 
     const entityForBrush = config.originalEntity || entity
     const entityWithData = { ...entity }

@@ -89,7 +89,7 @@ describe("bar", () => {
 
       const result = bar.renderBarChart(
         entity,
-        { children, config: { width: 800, height: 400 } },
+        { children, width: 800, height: 400 },
         api,
       )
       const container = document.createElement("div")
@@ -132,11 +132,9 @@ describe("bar", () => {
         entity,
         {
           children,
-          config: {
-            width: 800,
-            height: 400,
-            padding: { top: 0, right: 0, bottom: 0, left: 0 },
-          },
+          width: 800,
+          height: 400,
+          padding: { top: 0, right: 0, bottom: 0, left: 0 },
         },
         api,
       )
