@@ -6,7 +6,7 @@
   padding: var(--iw-space-2) var(--iw-space-4);
   font-family: var(--iw-font-family-sans);
   font-size: var(--iw-font-size-base);
-  font-weight: var(--iw-font-weight-medium);
+  font-weight: var(--iw-font-weight-normal);
   line-height: var(--iw-line-height-normal);
   text-decoration: none;
   white-space: nowrap;

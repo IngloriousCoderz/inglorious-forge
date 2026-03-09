@@ -23,5 +23,5 @@
 
 .iw-breadcrumbs-current {
   color: var(--iw-color-text-secondary, var(--iw-color-text));
-  font-weight: var(--iw-font-weight-medium);
+  font-weight: var(--iw-font-weight-normal);
 }

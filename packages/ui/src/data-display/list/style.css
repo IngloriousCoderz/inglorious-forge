@@ -6,7 +6,7 @@
 
   &.iw-list-dense {
     .iw-list-item {
-      padding-block: var(--iw-space-1);
+      padding-block: var(--iw-space-2);
     }
   }
 
@@ -18,7 +18,7 @@
 }
 
 .iw-list-item {
-  padding: var(--iw-space-2) var(--iw-space-3);
+  padding: var(--iw-space-3) var(--iw-space-4);
   border-radius: var(--iw-radius-sm);
   transition:
     background-color 0.15s ease,
@@ -42,6 +42,14 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  color: var(--iw-color-text-muted, var(--iw-color-text));
+}
+
+.iw-list-title {
+  padding: var(--iw-space-3) var(--iw-space-4);
+  font-size: var(--iw-font-size-xs);
+  font-weight: var(--iw-font-weight-semibold);
+  text-transform: uppercase;
   color: var(--iw-color-text-muted, var(--iw-color-text));
 }
 
@@ -110,7 +118,11 @@
 }
 
 .iw-list-item-selected {
-  background-color: var(--iw-color-surface, rgba(0, 0, 0, 0.08));
+  background-color: var(--iw-color-surface-active, rgba(0, 0, 0, 0.08));
+
+  .iw-list-item-icon {
+    color: var(--iw-color-text);
+  }
 }
 
 .iw-list-item-disabled {

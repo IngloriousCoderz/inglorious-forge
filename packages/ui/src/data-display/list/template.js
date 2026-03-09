@@ -126,6 +126,11 @@ export const list = {
       expanded,
       onToggle,
     } = meta
+
+    if (meta.title) {
+      return html`<li class="iw-list-title">${meta.title}</li>`
+    }
+
     const isClickable = !!props.onItemClick || !!onClick
     const hasChildren = Array.isArray(children) && children.length > 0
     const isExpanded = !!expanded
@@ -211,6 +216,7 @@ function getItemMeta(item, index) {
     primary,
     secondary,
     icon,
+    title,
     disabled = false,
     selected = false,
     divider = false,
@@ -237,6 +243,7 @@ function getItemMeta(item, index) {
       `${index + PRETTY_INDEX}`,
     secondary,
     icon,
+    title,
     disabled,
     selected,
     divider,

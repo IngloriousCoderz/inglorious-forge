@@ -1,7 +1,7 @@
 .iw-drawer {
   display: flex;
   flex-direction: column;
-  width: 18rem;
+  width: 16rem;
   background: var(--iw-color-surface);
   color: var(--iw-color-text);
   transition:
@@ -26,7 +26,7 @@
 
     .iw-drawer-title {
       font-weight: var(--iw-font-weight-semibold);
-      flex: 1 1 auto;
+      white-space: nowrap;
     }
   }
 
@@ -47,6 +47,17 @@
     transition: transform var(--iw-transition-fast);
   }
 
+  .iw-list-item-inset,
+  .iw-list-item-content,
+  .iw-list-item-trailing,
+  .iw-list-nested,
+  .iw-list-title {
+    transition:
+      height var(--iw-transition-fast),
+      padding var(--iw-transition-fast),
+      opacity var(--iw-transition-fast);
+  }
+
   &.iw-drawer-collapsed {
     width: 4rem;
     min-width: 4rem;
@@ -55,8 +66,11 @@
     .iw-list-item-inset,
     .iw-list-item-content,
     .iw-list-item-trailing,
-    .iw-list-nested {
-      display: none;
+    .iw-list-nested,
+    .iw-list-title {
+      height: 0;
+      padding: 0;
+      opacity: 0;
     }
 
     .iw-drawer-toggler > span {

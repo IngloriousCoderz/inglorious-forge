@@ -41,7 +41,7 @@
 
 .iw-accordion-title {
   flex: 1 1 auto;
-  font-weight: var(--iw-font-weight-medium);
+  font-weight: var(--iw-font-weight-normal);
 }
 
 .iw-accordion-caret {

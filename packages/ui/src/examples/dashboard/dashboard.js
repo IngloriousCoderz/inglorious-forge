@@ -66,8 +66,13 @@ export const dashboard = {
                   primary: "Dashboard",
                   icon: materialIcon.render({ name: "speed", size: "lg" }),
                   selected: true,
-                  action: badge.render({ color: "info", children: "NEW" }),
+                  action: badge.render({
+                    color: "info",
+                    children: "NEW",
+                    size: "sm",
+                  }),
                 },
+                { title: "Theme" },
                 {
                   primary: "Colors",
                   icon: materialIcon.render({ name: "palette", size: "lg" }),
@@ -79,6 +84,7 @@ export const dashboard = {
                     size: "lg",
                   }),
                 },
+                { title: "Components" },
                 {
                   primary: "Base",
                   icon: materialIcon.render({ name: "extension", size: "lg" }),
