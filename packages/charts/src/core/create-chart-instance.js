@@ -7,6 +7,14 @@ import {
 } from "./declarative-children.js"
 import { renderWithEntityTypeMethod } from "./render-dispatch.js"
 
+const INLINE_PROTECTED_PROPS = [
+  "showTooltip",
+  "width",
+  "height",
+  "type",
+  "data",
+]
+
 export function createChartInstance(entity, api, isInline = false) {
   let currentEntity = entity
 
@@ -15,27 +23,25 @@ export function createChartInstance(entity, api, isInline = false) {
     currentEntity = nextEntity
   }
 
-  const buildChartRenderMethod = isInline
-    ? createInlineMethodBuilder({
+  const buildRenderer = isInline
+    ? createSelfManagedRenderer({
         readCurrentEntity,
         writeCurrentEntity,
         api,
       })
-    : createEntityMethodBuilder({ readCurrentEntity, api })
+    : createStoreManagedRenderer({ readCurrentEntity, api })
+  const legacyAdapter = wrapAsLegacyAdapter(buildRenderer)
 
   const declarativeChildren = createDeclarativeChildren()
-  const standardChartMethods = buildChartMethodMap(buildChartRenderMethod, true)
-  const compatibilityChartMethods = buildChartMethodMap(
-    buildChartRenderMethod,
-    false,
-  )
+  const standardMethods = mapCatalogToMethods(buildRenderer, "standard")
+  const legacyMethods = mapCatalogToMethods(legacyAdapter, "legacy")
 
   const instance = {
-    ...standardChartMethods,
+    ...standardMethods,
 
     ...declarativeChildren,
 
-    ...compatibilityChartMethods,
+    ...legacyMethods,
 
     ...createInstanceRenderAliases(declarativeChildren),
   }
@@ -50,11 +56,7 @@ export function createInlineChartInstance(api, tempEntity, initializeEntity) {
     data: [],
   }
 
-  const protectedProps = ["showTooltip", "width", "height", "type", "data"]
-  const preserved = protectedProps.reduce((acc, prop) => {
-    if (entity[prop] !== undefined) acc[prop] = entity[prop]
-    return acc
-  }, {})
+  const preserved = pickDefinedProps(entity, INLINE_PROTECTED_PROPS)
 
   initializeEntity(entity)
   Object.assign(entity, preserved)
@@ -62,28 +64,19 @@ export function createInlineChartInstance(api, tempEntity, initializeEntity) {
   return createChartInstance(entity, api, true)
 }
 
-function buildChartMethodMap(buildChartRenderFactory, useStandardSignature) {
+function mapCatalogToMethods(buildRenderMethod, mode) {
   return Object.fromEntries(
     CHART_TYPE_METHODS.map(({ type, suffix }) => {
       const methodName = `render${suffix}Chart`
-      const exposedName = useStandardSignature ? `${suffix}Chart` : methodName
-      return [
-        exposedName,
-        buildChartRenderFactory(type, methodName, useStandardSignature),
-      ]
+      const exposedName = mode === "standard" ? `${suffix}Chart` : methodName
+      return [exposedName, buildRenderMethod(type, methodName)]
     }),
   )
 }
 
-function createEntityMethodBuilder({ readCurrentEntity, api }) {
-  return (chartType, renderMethod, useStandardSignature = false) =>
-    (firstArg = {}, secondArg = []) => {
-      const { config, children } = resolveRenderArgs(
-        firstArg,
-        secondArg,
-        useStandardSignature,
-      )
-
+function createStoreManagedRenderer({ readCurrentEntity, api }) {
+  return (chartType, renderMethod) =>
+    (config = {}, children = []) => {
       const currentEntity = readCurrentEntity()
       const finalConfig = buildFinalConfig({
         chartType,
@@ -93,31 +86,23 @@ function createEntityMethodBuilder({ readCurrentEntity, api }) {
         shouldFallbackToEntityData: true,
       })
 
-      return renderWithEntityTypeMethod(
-        currentEntity,
+      return dispatchRender({
+        entity: currentEntity,
         renderMethod,
-        {
-          children: Array.isArray(children) ? children : [children],
-          config: finalConfig,
-        },
+        children,
+        finalConfig,
         api,
-      )
+      })
     }
 }
 
-function createInlineMethodBuilder({
+function createSelfManagedRenderer({
   readCurrentEntity,
   writeCurrentEntity,
   api,
 }) {
-  return (chartType, renderMethod, useStandardSignature = false) =>
-    (firstArg = {}, secondArg = []) => {
-      const { config, children } = resolveRenderArgs(
-        firstArg,
-        secondArg,
-        useStandardSignature,
-      )
-
+  return (chartType, renderMethod) =>
+    (config = {}, children = []) => {
       const currentEntity = readCurrentEntity()
       const nextEntity = buildInlineEntity(currentEntity, chartType, config)
       writeCurrentEntity(nextEntity)
@@ -130,24 +115,20 @@ function createInlineMethodBuilder({
         shouldFallbackToEntityData: false,
       })
 
-      return renderWithEntityTypeMethod(
-        nextEntity,
+      return dispatchRender({
+        entity: nextEntity,
         renderMethod,
-        {
-          children: Array.isArray(children) ? children : [children],
-          config: finalConfig,
-        },
+        children,
+        finalConfig,
         api,
-      )
+      })
     }
 }
 
-function resolveRenderArgs(firstArg, secondArg, useStandardSignature) {
-  const isLegacySignature = !useStandardSignature && Array.isArray(firstArg)
-  return {
-    config: isLegacySignature ? secondArg || {} : firstArg,
-    children: isLegacySignature ? firstArg : secondArg,
-  }
+function wrapAsLegacyAdapter(buildStandardMethod) {
+  return (chartType, renderMethod) =>
+    (children = [], config = {}) =>
+      buildStandardMethod(chartType, renderMethod)(config, children)
 }
 
 function buildInlineEntity(currentEntity, chartType, config) {
@@ -177,4 +158,23 @@ function buildFinalConfig({
         ? config.dataKeys || extractDataKeysFromChildren(children)
         : undefined,
   }
+}
+
+function dispatchRender({ entity, renderMethod, children, finalConfig, api }) {
+  return renderWithEntityTypeMethod(
+    entity,
+    renderMethod,
+    {
+      children: Array.isArray(children) ? children : [children],
+      config: finalConfig,
+    },
+    api,
+  )
+}
+
+function pickDefinedProps(source, props) {
+  return props.reduce((acc, prop) => {
+    if (source[prop] !== undefined) acc[prop] = source[prop]
+    return acc
+  }, {})
 }
