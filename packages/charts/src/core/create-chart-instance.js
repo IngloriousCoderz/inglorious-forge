@@ -5,7 +5,7 @@ import {
   createDeclarativeChildren,
   createInstanceRenderAliases,
 } from "./declarative-children.js"
-import { renderWithEntityTypeMethod } from "./render-dispatch.js"
+import { createTypeDispatcher } from "./render-dispatch.js"
 
 const INLINE_PROTECTED_PROPS = [
   "showTooltip",
@@ -18,6 +18,7 @@ const warnedLegacyMethods = new Set()
 
 export function createChartInstance(entity, api, isInline = false) {
   let currentEntity = entity
+  const dispatchByEntityType = createTypeDispatcher(api)
 
   const readCurrentEntity = () => currentEntity
   const writeCurrentEntity = (nextEntity) => {
@@ -28,9 +29,9 @@ export function createChartInstance(entity, api, isInline = false) {
     ? createSelfManagedRenderer({
         readCurrentEntity,
         writeCurrentEntity,
-        api,
+        dispatchByEntityType,
       })
-    : createStoreManagedRenderer({ readCurrentEntity, api })
+    : createStoreManagedRenderer({ readCurrentEntity, dispatchByEntityType })
   const legacyAdapter = wrapAsLegacyAdapter(buildRenderer)
 
   const declarativeChildren = createDeclarativeChildren()
@@ -75,7 +76,10 @@ function mapCatalogToMethods(buildRenderMethod, mode) {
   )
 }
 
-function createStoreManagedRenderer({ readCurrentEntity, api }) {
+function createStoreManagedRenderer({
+  readCurrentEntity,
+  dispatchByEntityType,
+}) {
   return (chartType, renderMethod) =>
     (config = {}, children = []) => {
       const normalizedArgs = normalizeRenderInputs({
@@ -97,7 +101,7 @@ function createStoreManagedRenderer({ readCurrentEntity, api }) {
         renderMethod,
         children: normalizedArgs.children,
         finalConfig,
-        api,
+        dispatchByEntityType,
       })
     }
 }
@@ -105,7 +109,7 @@ function createStoreManagedRenderer({ readCurrentEntity, api }) {
 function createSelfManagedRenderer({
   readCurrentEntity,
   writeCurrentEntity,
-  api,
+  dispatchByEntityType,
 }) {
   return (chartType, renderMethod) =>
     (config = {}, children = []) => {
@@ -135,7 +139,7 @@ function createSelfManagedRenderer({
         renderMethod,
         children: normalizedArgs.children,
         finalConfig,
-        api,
+        dispatchByEntityType,
       })
     }
 }
@@ -185,16 +189,17 @@ function buildFinalConfig({
   }
 }
 
-function dispatchRender({ entity, renderMethod, children, finalConfig, api }) {
-  return renderWithEntityTypeMethod(
-    entity,
-    renderMethod,
-    {
-      children: Array.isArray(children) ? children : [children],
-      config: finalConfig,
-    },
-    api,
-  )
+function dispatchRender({
+  entity,
+  renderMethod,
+  children,
+  finalConfig,
+  dispatchByEntityType,
+}) {
+  return dispatchByEntityType(entity, renderMethod, {
+    children: Array.isArray(children) ? children : [children],
+    config: finalConfig,
+  })
 }
 
 function pickDefinedProps(source, props) {
