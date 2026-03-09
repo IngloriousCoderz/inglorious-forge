@@ -78,11 +78,16 @@ function mapCatalogToMethods(buildRenderMethod, mode) {
 function createStoreManagedRenderer({ readCurrentEntity, api }) {
   return (chartType, renderMethod) =>
     (config = {}, children = []) => {
-      const currentEntity = readCurrentEntity()
-      const finalConfig = buildFinalConfig({
+      const normalizedArgs = normalizeRenderInputs({
         chartType,
         config,
         children,
+      })
+      const currentEntity = readCurrentEntity()
+      const finalConfig = buildFinalConfig({
+        chartType,
+        config: normalizedArgs.config,
+        children: normalizedArgs.children,
         dataFromEntity: currentEntity.data,
         shouldFallbackToEntityData: true,
       })
@@ -90,7 +95,7 @@ function createStoreManagedRenderer({ readCurrentEntity, api }) {
       return dispatchRender({
         entity: currentEntity,
         renderMethod,
-        children,
+        children: normalizedArgs.children,
         finalConfig,
         api,
       })
@@ -104,14 +109,23 @@ function createSelfManagedRenderer({
 }) {
   return (chartType, renderMethod) =>
     (config = {}, children = []) => {
+      const normalizedArgs = normalizeRenderInputs({
+        chartType,
+        config,
+        children,
+      })
       const currentEntity = readCurrentEntity()
-      const nextEntity = buildInlineEntity(currentEntity, chartType, config)
+      const nextEntity = buildInlineEntity(
+        currentEntity,
+        chartType,
+        normalizedArgs.config,
+      )
       writeCurrentEntity(nextEntity)
 
       const finalConfig = buildFinalConfig({
         chartType,
-        config,
-        children,
+        config: normalizedArgs.config,
+        children: normalizedArgs.children,
         dataFromEntity: nextEntity.data,
         shouldFallbackToEntityData: false,
       })
@@ -119,7 +133,7 @@ function createSelfManagedRenderer({
       return dispatchRender({
         entity: nextEntity,
         renderMethod,
-        children,
+        children: normalizedArgs.children,
         finalConfig,
         api,
       })
@@ -219,4 +233,30 @@ function isLegacyRenderArgs(firstArg, secondArg) {
 
 function isPlainObject(value) {
   return value !== null && typeof value === "object" && !Array.isArray(value)
+}
+
+function normalizeRenderInputs({ chartType, config, children }) {
+  const safeConfig = isPlainObject(config) ? { ...config } : {}
+  const safeChildren = normalizeChildren(children)
+
+  if (safeConfig.data !== undefined && !Array.isArray(safeConfig.data)) {
+    delete safeConfig.data
+  }
+
+  if (
+    chartType !== "pie" &&
+    safeConfig.dataKeys !== undefined &&
+    !Array.isArray(safeConfig.dataKeys)
+  ) {
+    delete safeConfig.dataKeys
+  }
+
+  return { config: safeConfig, children: safeChildren }
+}
+
+function normalizeChildren(children) {
+  if (children === undefined || children === null) return []
+  if (Array.isArray(children)) return children
+
+  return [children]
 }
