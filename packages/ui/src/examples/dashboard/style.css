@@ -140,8 +140,18 @@
   gap: var(--iw-space-2);
 }
 
+.iw-dashboard-stat-container {
+  position: relative;
+}
+
 .iw-dashboard-stat-chart {
   height: 5rem;
+}
+
+.iw-dashboard-stat-more {
+  position: absolute;
+  top: var(--iw-space-2);
+  right: var(--iw-space-2);
 }
 
 .iw-dashboard-stat-chart .iw-chart,

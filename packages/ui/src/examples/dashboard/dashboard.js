@@ -227,26 +227,29 @@ export const dashboard = {
     return card.render({
       className: `iw-dashboard-stat ${item.className}`,
       body: html`
-        <div class="iw-dashboard-stat-top">
-          <div>
-            <div class="iw-dashboard-stat-value">
-              ${typography.render({ variant: "h2", children: item.value })}
-              ${typography.render({
-                variant: "caption",
-                children: html`${item.change}
-                ${materialIcon.render({ name: item.direction, size: "sm" })}`,
-              })}
+        <div class="iw-dashboard-stat-container">
+          <div class="iw-dashboard-stat-top">
+            <div>
+              <div class="iw-dashboard-stat-value">
+                ${typography.render({ variant: "h2", children: item.value })}
+                ${typography.render({
+                  variant: "caption",
+                  children: html`${item.change}
+                  ${materialIcon.render({ name: item.direction, size: "sm" })}`,
+                })}
+              </div>
+              ${typography.render({ children: item.label })}
             </div>
-            ${typography.render({ children: item.label })}
+          </div>
+          <div class="iw-dashboard-stat-chart">
+            ${this.renderStatChart(entity, item, api)}
           </div>
           ${button.render({
             variant: "ghost",
             shape: "square",
+            className: "iw-dashboard-stat-more",
             children: materialIcon.render({ name: "more_vert", size: "lg" }),
           })}
-        </div>
-        <div class="iw-dashboard-stat-chart">
-          ${this.renderStatChart(entity, item, api)}
         </div>
       `,
     })
@@ -268,7 +271,9 @@ export const dashboard = {
 
     const children = []
     if (item.hasDots) {
-      children.push(chart.Dots({ dataKey: "value", fill: "white" }))
+      children.push(
+        chart.Dots({ dataKey: "value", stroke: "white", fill: "#39a2f1" }),
+      )
     }
 
     if (item.chartType === "area") {
