@@ -5,6 +5,7 @@ export const statCards = [
     change: "-12.4%",
     direction: "arrow_downward",
     className: "iw-dashboard-stat-primary",
+    chartType: "line",
     data: [42, 38, 44, 39, 36, 34, 31],
   },
   {
@@ -13,6 +14,8 @@ export const statCards = [
     change: "40.9%",
     direction: "arrow_upward",
     className: "iw-dashboard-stat-info",
+    chartType: "line",
+    hasDots: true,
     data: [18, 24, 19, 30, 32, 37, 41],
   },
   {
@@ -21,6 +24,7 @@ export const statCards = [
     change: "84.7%",
     direction: "arrow_upward",
     className: "iw-dashboard-stat-warning",
+    chartType: "area",
     data: [8, 11, 12, 16, 17, 15, 19],
   },
   {
@@ -29,6 +33,7 @@ export const statCards = [
     change: "-23.6%",
     direction: "arrow_downward",
     className: "iw-dashboard-stat-danger",
+    chartType: "bar",
     data: [60, 58, 54, 51, 46, 42, 39],
   },
 ]

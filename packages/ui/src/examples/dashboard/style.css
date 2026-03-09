@@ -94,6 +94,10 @@
   display: flex;
   align-items: center;
   gap: var(--iw-space-2);
+
+  .iw-divider-vertical {
+    height: var(--iw-space-8);
+  }
 }
 
 .iw-dashboard-content {
@@ -106,7 +110,7 @@
 }
 
 .iw-dashboard-stat .iw-card-body {
-  padding-bottom: 0;
+  padding: 0;
 }
 
 .iw-dashboard-stat-primary {
@@ -127,6 +131,7 @@
   justify-content: space-between;
   align-items: flex-start;
   gap: var(--iw-space-3);
+  padding: var(--iw-space-4);
 }
 
 .iw-dashboard-stat-value {
@@ -136,7 +141,6 @@
 }
 
 .iw-dashboard-stat-chart {
-  margin-top: var(--iw-space-4);
   height: 5rem;
 }
 

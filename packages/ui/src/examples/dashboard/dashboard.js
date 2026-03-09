@@ -5,6 +5,7 @@ import { button } from "../../controls/button/index.js"
 import { buttonGroup } from "../../controls/button-group/index.js"
 import { avatar } from "../../data-display/avatar/index.js"
 import { badge } from "../../data-display/badge/index.js"
+import { divider } from "../../data-display/divider/index.js"
 import { list } from "../../data-display/list/index.js"
 import { materialIcon } from "../../data-display/material-icon/index.js"
 import { table } from "../../data-display/table/index.js"
@@ -180,6 +181,7 @@ export const dashboard = {
               <div class="iw-dashboard-header-actions">
                 ${button.render({
                   variant: "ghost",
+                  shape: "square",
                   children: materialIcon.render({
                     name: "notifications",
                     size: "lg",
@@ -187,21 +189,26 @@ export const dashboard = {
                 })}
                 ${button.render({
                   variant: "ghost",
+                  shape: "square",
                   children: materialIcon.render({
                     name: "format_list_bulleted",
                   }),
                 })}
                 ${button.render({
                   variant: "ghost",
+                  shape: "square",
                   children: materialIcon.render({ name: "mail", size: "lg" }),
                 })}
+                ${divider.render({ orientation: "vertical" })}
                 ${button.render({
                   variant: "ghost",
+                  shape: "square",
                   children: materialIcon.render({
                     name: "contrast",
                     size: "lg",
                   }),
                 })}
+                ${divider.render({ orientation: "vertical" })}
                 ${avatar.render({ src: "/antony.jpeg" })}
               </div>
             </div>
@@ -234,20 +241,62 @@ export const dashboard = {
           </div>
           ${button.render({
             variant: "ghost",
-            color: "secondary",
             shape: "square",
             children: materialIcon.render({ name: "more_vert", size: "lg" }),
           })}
         </div>
         <div class="iw-dashboard-stat-chart">
-          ${this.renderMiniLineChart(
-            entity,
-            { values: item.data, stroke: "rgba(255,255,255,0.92)" },
-            api,
-          )}
+          ${this.renderStatChart(entity, item, api)}
         </div>
       `,
     })
+  },
+
+  renderStatChart(_, item, api) {
+    const data = item.data.map((value, index) => ({
+      name: `${index}`,
+      value,
+    }))
+
+    const chartConfig = {
+      type: item.chartType,
+      data,
+      width: 400,
+      height: 80,
+      padding: { top: 0, right: 0, bottom: 0, left: 0 },
+    }
+
+    const children = []
+    if (item.hasDots) {
+      children.push(chart.Dots({ dataKey: "value", fill: "white" }))
+    }
+
+    if (item.chartType === "area") {
+      children.push(
+        chart.Area({ dataKey: "value", fill: "rgba(255,255,255,0.3)" }),
+      )
+      return chart.renderAreaChart(
+        chartConfig,
+        { children, config: { dataKeys: ["value"] } },
+        api,
+      )
+    } else if (item.chartType === "bar") {
+      children.push(
+        chart.Bar({ dataKey: "value", fill: "rgba(255,255,255,0.5)" }),
+      )
+      return chart.renderBarChart(
+        chartConfig,
+        { children, config: { dataKeys: ["value"] } },
+        api,
+      )
+    } else {
+      children.push(chart.Line({ dataKey: "value", stroke: "white" }))
+      return chart.renderLineChart(
+        chartConfig,
+        { children, config: { dataKeys: ["value"] } },
+        api,
+      )
+    }
   },
 
   renderTrafficCard(entity, api) {
