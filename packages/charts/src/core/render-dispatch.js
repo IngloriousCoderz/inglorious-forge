@@ -39,6 +39,12 @@ export function renderWithEntityTypeMethod(entity, methodName, params, api) {
     : renderEmptyTemplate()
 }
 
+export function createTypeDispatcher(api) {
+  return function dispatchByEntityType(entity, methodName, params) {
+    return renderWithEntityTypeMethod(entity, methodName, params, api)
+  }
+}
+
 export function renderEmptyTemplate() {
   return svg``
 }
