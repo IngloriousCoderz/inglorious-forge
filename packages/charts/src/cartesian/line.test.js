@@ -58,7 +58,7 @@ describe("line", () => {
     it("should render line chart with children", () => {
       const children = [() => null, () => null, () => null, () => null]
 
-      const result = line.renderLineChart(entity, { children, config: {} }, api)
+      const result = line.renderLineChart(entity, { children }, api)
       const container = document.createElement("div")
       render(result, container)
 
@@ -75,7 +75,7 @@ describe("line", () => {
       const children = []
       const result = line.renderLineChart(
         entity,
-        { children, config: { data: configData } },
+        { children, data: configData },
         api,
       )
 
@@ -89,10 +89,8 @@ describe("line", () => {
         entity,
         {
           children,
-          config: {
-            width: 1000,
-            height: 500,
-          },
+          width: 1000,
+          height: 500,
         },
         api,
       )
@@ -113,11 +111,9 @@ describe("line", () => {
         entity,
         {
           children,
-          config: {
-            width: 800,
-            height: 400,
-            padding: { top: 0, right: 0, bottom: 0, left: 0 },
-          },
+          width: 800,
+          height: 400,
+          padding: { top: 0, right: 0, bottom: 0, left: 0 },
         },
         api,
       )

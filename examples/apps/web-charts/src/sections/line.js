@@ -38,6 +38,33 @@ export function renderLineSections(api, status) {
 
     <div class="charts-comparison">
       <section class="chart-section">
+        <h2>Line Chart - Composition (Padding 0)</h2>
+        ${chart.renderLineChart(
+          api.getEntity("salesLineChartCompositionPadding"),
+          {
+            width: 800,
+            height: 400,
+            padding: { top: 10, right: -10, bottom: 10, left: 0 },
+            dataKeys: ["value"],
+            children: [
+              chart.CartesianGrid({
+                stroke: "#eee",
+                strokeDasharray: "5 5",
+              }),
+              chart.XAxis({ dataKey: "name" }),
+              chart.YAxis({ width: "auto" }),
+              chart.Line({ dataKey: "value", stroke: "#8884d8" }),
+              chart.Dots({ dataKey: "value", fill: "#8884d8" }),
+              chart.Tooltip({}),
+            ],
+          },
+          api,
+        )}
+      </section>
+    </div>
+
+    <div class="charts-comparison">
+      <section class="chart-section">
         <h2>Line Chart with Brush - Config Style</h2>
         ${api.render("lineChartWithBrushConfig")}
       </section>

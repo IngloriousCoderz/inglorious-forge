@@ -122,7 +122,7 @@ function createInstance(entity, api, isInline = false) {
         renderMethod,
         {
           children: Array.isArray(children) ? children : [children],
-          config: finalConfig,
+          ...finalConfig,
         },
         api,
       )

@@ -70,7 +70,7 @@ describe("pie", () => {
 
       const result = pie.renderPieChart(
         entity,
-        { children, config: { width: 500, height: 400 } },
+        { children, width: 500, height: 400 },
         api,
       )
       const container = document.createElement("div")
@@ -105,7 +105,10 @@ describe("pie", () => {
         entity,
         {
           children,
-          config: { width: 500, height: 400, cx: "35%", cy: "35%" },
+          width: 500,
+          height: 400,
+          cx: "35%",
+          cy: "35%",
         },
         api,
       )

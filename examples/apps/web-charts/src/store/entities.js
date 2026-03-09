@@ -36,6 +36,20 @@ export const entities = {
     ],
   },
 
+  // Line Chart - Padding - Composition Style
+  salesLineChartCompositionPadding: {
+    type: "line",
+    data: [
+      { name: "0", value: 50 },
+      { name: "1", value: 150 },
+      { name: "2", value: 120 },
+      { name: "3", value: 180 },
+      { name: "4", value: 25 },
+      { name: "5", value: 160 },
+      { name: "6", value: 190 },
+    ],
+  },
+
   // Line Chart with Brush - Config Style
   lineChartWithBrushConfig: {
     type: "line",
@@ -182,6 +196,20 @@ export const entities = {
     ],
   },
 
+  // Area Chart - Padding - Composition Style
+  salesAreaChartCompositionPadding: {
+    type: "area",
+    data: [
+      { name: "0", value: 50 },
+      { name: "1", value: 150 },
+      { name: "2", value: 120 },
+      { name: "3", value: 180 },
+      { name: "4", value: 25 },
+      { name: "5", value: 160 },
+      { name: "6", value: 190 },
+    ],
+  },
+
   // Area Chart with multiple series - Config Style
   multiSeriesAreaChart: {
     type: "area",
@@ -314,6 +342,19 @@ export const entities = {
 
   // Bar Chart - Composition Style
   salesBarChartComposition: {
+    type: "bar",
+    data: [
+      { label: "Jan", value: 100 },
+      { label: "Feb", value: 150 },
+      { label: "Mar", value: 120 },
+      { label: "Apr", value: 180 },
+      { label: "May", value: 200 },
+      { label: "Jun", value: 160 },
+    ],
+  },
+
+  // Bar Chart - Padding - Composition Style
+  salesBarChartCompositionPadding: {
     type: "bar",
     data: [
       { label: "Jan", value: 100 },

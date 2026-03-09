@@ -79,13 +79,11 @@ export const area = {
     return type.renderAreaChart(
       entityWithData,
       {
+        width: entityWithData.width,
+        height: entityWithData.height,
+        stacked: entity.stacked === true,
+        dataKeys: dataKeys.length > 0 ? dataKeys : undefined,
         children,
-        config: {
-          width: entityWithData.width,
-          height: entityWithData.height,
-          stacked: entity.stacked === true,
-          dataKeys: dataKeys.length > 0 ? dataKeys : undefined,
-        },
       },
       api,
     )
@@ -98,8 +96,9 @@ export const area = {
    * @param {import('@inglorious/web').Api} api
    * @returns {import('lit-html').TemplateResult}
    */
-  renderAreaChart(entity, { children, config = {} }, api) {
+  renderAreaChart(entity, params = {}, api) {
     if (!entity) return svg`<text>Entity not found</text>`
+    const { children, ...config } = params
 
     const entityWithData = config.data
       ? { ...entity, data: config.data }

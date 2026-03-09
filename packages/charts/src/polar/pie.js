@@ -160,37 +160,25 @@ export const pie = {
    * Composition rendering entry point for pie charts.
    * Acts as a context provider for nested `renderPie` components.
    * @param {import('../types/charts').ChartEntity} entity
-   * @param {{ children?: any[]|any, config?: Record<string, any> }|any[]} params
+   * @param {{ children?: any[]|any, [key: string]: any }|any[]} params
    * @param {import('@inglorious/web').Api} api
    * @returns {import('lit-html').TemplateResult}
    */
   renderPieChart(entity, params, api) {
     if (!entity) return html`<div>Entity not found</div>`
 
-    // Handle both { children, config } and { children, ...config } formats
-    let children, config
-    if (params && Array.isArray(params.children)) {
-      // Format: { children: [...], config: {...} } or { children: [...], ...config }
-      children = params.children
-      const existingConfig = params.config || {}
-      // If params has other properties (like width, height), merge them into config
-      const restParams = { ...params }
-      delete restParams.children
-      delete restParams.config
-      config = { ...restParams, ...existingConfig }
-    } else if (Array.isArray(params)) {
+    let children
+    let config
+    if (Array.isArray(params)) {
       // Format: [children] (legacy)
       children = params
       config = {}
     } else {
-      // Format: { children, config } or just config properties
+      // Format: { children, ...config }
       children = params?.children || []
-      const existingConfig = params?.config || {}
-      // If params has other properties, merge them into config
       const restParams = params ? { ...params } : {}
       delete restParams.children
-      delete restParams.config
-      config = { ...restParams, ...existingConfig }
+      config = restParams
     }
 
     const entityWithData = config.data

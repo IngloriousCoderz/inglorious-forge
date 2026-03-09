@@ -41,6 +41,38 @@ export function renderAreaSections(api) {
 
     <div class="charts-comparison">
       <section class="chart-section">
+        <h2>Area Chart - Composition (Padding 0)</h2>
+        ${chart.renderAreaChart(
+          api.getEntity("salesAreaChartCompositionPadding"),
+          {
+            width: 800,
+            height: 400,
+            padding: { top: 0, right: 0, bottom: 0, left: 0 },
+            dataKeys: ["value"],
+            children: [
+              chart.CartesianGrid({
+                stroke: "#eee",
+                strokeDasharray: "5 5",
+              }),
+              chart.XAxis({ dataKey: "name" }),
+              chart.YAxis({ width: "auto" }),
+              chart.Area({
+                dataKey: "value",
+                fill: "#8884d8",
+                fillOpacity: "0.6",
+                stroke: "#8884d8",
+              }),
+              chart.Dots({ dataKey: "value", fill: "#8884d8" }),
+              chart.Tooltip({}),
+            ],
+          },
+          api,
+        )}
+      </section>
+    </div>
+
+    <div class="charts-comparison">
+      <section class="chart-section">
         <h2>Area Chart Multi Series - Config Style</h2>
         ${api.render("multiSeriesAreaChart")}
       </section>

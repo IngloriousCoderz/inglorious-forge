@@ -42,12 +42,10 @@ export const bar = {
     const chartContent = type.renderBarChart(
       entity,
       {
+        width: entity.width,
+        height: entity.height,
+        isRawSVG: true,
         children,
-        config: {
-          width: entity.width,
-          height: entity.height,
-          isRawSVG: true,
-        },
       },
       api,
     )
@@ -70,8 +68,9 @@ export const bar = {
    * @param {import('@inglorious/web').Api} api
    * @returns {import('lit-html').TemplateResult}
    */
-  renderBarChart(entity, { children, config = {} }, api) {
+  renderBarChart(entity, params = {}, api) {
     if (!entity) return html`<div>Entity not found</div>`
+    const { children, ...config } = params
     if (!entity.data || !Array.isArray(entity.data)) {
       return html`<div>Entity data is missing or invalid</div>`
     }
