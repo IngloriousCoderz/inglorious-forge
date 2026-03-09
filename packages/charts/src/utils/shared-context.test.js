@@ -63,6 +63,27 @@ describe("createSharedContext", () => {
       expect(context.dimensions.height).toBe(600)
     })
 
+    it("should respect zero padding object from props", () => {
+      const entity = {
+        id: "test",
+        type: "line",
+        data: [{ value: 100 }],
+      }
+
+      const context = createSharedContext(
+        entity,
+        { padding: { top: 0, right: 0, bottom: 0, left: 0 } },
+        mockApi,
+      )
+
+      expect(context.dimensions.padding).toEqual({
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0,
+      })
+    })
+
     it("should throw error if entity is missing", () => {
       expect(() => {
         createSharedContext(null, {}, mockApi)

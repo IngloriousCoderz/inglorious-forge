@@ -10,7 +10,7 @@ import { renderXAxis } from "../component/x-axis.js"
 import { renderYAxis } from "../component/y-axis.js"
 import { renderRectangle } from "../shape/rectangle.js"
 import { renderCartesianLayout } from "../utils/cartesian-layout.js"
-import { calculatePadding } from "../utils/padding.js"
+import { resolveChartDimensions } from "../utils/chart-dimensions.js"
 import { processDeclarativeChild } from "../utils/process-declarative-child.js"
 import { createCartesianContext } from "../utils/scales.js"
 import { createTooltipHandlers } from "../utils/tooltip-handlers.js"
@@ -76,9 +76,14 @@ export const bar = {
       return html`<div>Entity data is missing or invalid</div>`
     }
 
-    const width = config.width || entity.width || 800
-    const height = config.height || entity.height || 400
-    const padding = calculatePadding(width, height)
+    const { width, height, padding } = resolveChartDimensions({
+      configWidth: config.width,
+      configHeight: config.height,
+      configPadding: config.padding,
+      entityWidth: entity.width,
+      entityHeight: entity.height,
+      entityPadding: entity.padding,
+    })
 
     const childrenArray = (
       Array.isArray(children) ? children : [children]

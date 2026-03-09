@@ -118,6 +118,31 @@ describe("bar", () => {
 
       expect(container.textContent).toContain("Entity data is missing")
     })
+
+    it("should respect custom zero padding in composition config", () => {
+      let capturedPadding = null
+      const children = [
+        (ctx) => {
+          capturedPadding = ctx.dimensions.padding
+          return null
+        },
+      ]
+
+      bar.renderBarChart(
+        entity,
+        {
+          children,
+          config: {
+            width: 800,
+            height: 400,
+            padding: { top: 0, right: 0, bottom: 0, left: 0 },
+          },
+        },
+        api,
+      )
+
+      expect(capturedPadding).toEqual({ top: 0, right: 0, bottom: 0, left: 0 })
+    })
   })
 
   describe("renderBar()", () => {

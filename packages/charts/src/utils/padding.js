@@ -14,3 +14,36 @@ export function calculatePadding(width = 800, height = 400) {
     left: Math.max(50, width * 0.1),
   }
 }
+
+/**
+ * Resolve effective padding for a chart.
+ * Accepts:
+ * - number: applies to all sides
+ * - partial object: merges with defaults
+ * - full object
+ * @param {number|{top?:number,right?:number,bottom?:number,left?:number}|undefined|null} padding
+ * @param {number} width
+ * @param {number} height
+ * @returns {{top:number,right:number,bottom:number,left:number}}
+ */
+export function resolvePadding(padding, width = 800, height = 400) {
+  const base = calculatePadding(width, height)
+
+  if (padding == null) return base
+
+  if (typeof padding === "number") {
+    return {
+      top: padding,
+      right: padding,
+      bottom: padding,
+      left: padding,
+    }
+  }
+
+  return {
+    top: padding.top ?? base.top,
+    right: padding.right ?? base.right,
+    bottom: padding.bottom ?? base.bottom,
+    left: padding.left ?? base.left,
+  }
+}

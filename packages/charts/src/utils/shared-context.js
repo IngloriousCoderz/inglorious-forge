@@ -1,6 +1,4 @@
-/* eslint-disable no-magic-numbers */
-import { parseDimension } from "./data-utils.js"
-import { calculatePadding } from "./padding.js"
+import { resolveChartDimensions } from "./chart-dimensions.js"
 import { createScales } from "./scales.js"
 
 /**
@@ -34,11 +32,14 @@ export function createSharedContext(entity, props = {}, api) {
     filteredEntity = null,
   } = props
 
-  const width =
-    parseDimension(configWidth) || parseDimension(entity.width) || 800
-  const height =
-    parseDimension(configHeight) || parseDimension(entity.height) || 400
-  const padding = configPadding || calculatePadding(width, height)
+  const { width, height, padding } = resolveChartDimensions({
+    configWidth,
+    configHeight,
+    configPadding,
+    entityWidth: entity.width,
+    entityHeight: entity.height,
+    entityPadding: entity.padding,
+  })
 
   const entityForX = {
     ...entity,

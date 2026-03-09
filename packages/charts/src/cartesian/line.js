@@ -9,13 +9,9 @@ import { renderXAxis } from "../component/x-axis.js"
 import { renderYAxis } from "../component/y-axis.js"
 import { chart } from "../index.js"
 import { renderDot } from "../shape/dot.js"
-import {
-  getTransformedData,
-  isMultiSeries,
-  parseDimension,
-} from "../utils/data-utils.js"
+import { resolveChartDimensions } from "../utils/chart-dimensions.js"
+import { getTransformedData, isMultiSeries } from "../utils/data-utils.js"
 import { extractDataKeysFromChildren } from "../utils/extract-data-keys.js"
-import { calculatePadding } from "../utils/padding.js"
 import { generateLinePath } from "../utils/paths.js"
 import { processDeclarativeChild } from "../utils/process-declarative-child.js"
 import { getFilteredData } from "../utils/scales.js"
@@ -124,9 +120,14 @@ export const line = {
       autoDataKeys.forEach((key) => dataKeysSet.add(key))
     }
 
-    const width = parseDimension(config.width || entity.width) || 800
-    const height = parseDimension(config.height || entity.height) || 400
-    const padding = calculatePadding(width, height)
+    const { width, height, padding } = resolveChartDimensions({
+      configWidth: config.width,
+      configHeight: config.height,
+      configPadding: config.padding,
+      entityWidth: entity.width,
+      entityHeight: entity.height,
+      entityPadding: entity.padding,
+    })
 
     const context = createSharedContext(
       entityForBrush,
