@@ -14,6 +14,7 @@ const INLINE_PROTECTED_PROPS = [
   "type",
   "data",
 ]
+const warnedLegacyMethods = new Set()
 
 export function createChartInstance(entity, api, isInline = false) {
   let currentEntity = entity
@@ -127,8 +128,18 @@ function createSelfManagedRenderer({
 
 function wrapAsLegacyAdapter(buildStandardMethod) {
   return (chartType, renderMethod) =>
-    (children = [], config = {}) =>
-      buildStandardMethod(chartType, renderMethod)(config, children)
+    (firstArg = {}, secondArg) => {
+      if (isLegacyRenderArgs(firstArg, secondArg)) {
+        warnLegacySignature(renderMethod)
+        return buildStandardMethod(chartType, renderMethod)(secondArg, firstArg)
+      }
+
+      if (Array.isArray(firstArg) && secondArg === undefined) {
+        return buildStandardMethod(chartType, renderMethod)({}, firstArg)
+      }
+
+      return buildStandardMethod(chartType, renderMethod)(firstArg, secondArg)
+    }
 }
 
 function buildInlineEntity(currentEntity, chartType, config) {
@@ -177,4 +188,35 @@ function pickDefinedProps(source, props) {
     if (source[prop] !== undefined) acc[prop] = source[prop]
     return acc
   }, {})
+}
+
+function warnLegacySignature(renderMethod) {
+  if (!isDevelopmentEnvironment()) return
+  if (warnedLegacyMethods.has(renderMethod)) return
+
+  warnedLegacyMethods.add(renderMethod)
+  globalThis.console?.warn?.(
+    `[charts] ${renderMethod}(children, config) is deprecated. ` +
+      `Use ${toStandardMethodName(renderMethod)}(config, children).`,
+  )
+}
+
+function toStandardMethodName(renderMethod) {
+  return renderMethod.replace(/^render/, "")
+}
+
+function isDevelopmentEnvironment() {
+  const nodeEnv = globalThis?.process?.env?.NODE_ENV
+  if (typeof nodeEnv === "string") {
+    return nodeEnv !== "production"
+  }
+  return true
+}
+
+function isLegacyRenderArgs(firstArg, secondArg) {
+  return Array.isArray(firstArg) && isPlainObject(secondArg)
+}
+
+function isPlainObject(value) {
+  return value !== null && typeof value === "object" && !Array.isArray(value)
 }
