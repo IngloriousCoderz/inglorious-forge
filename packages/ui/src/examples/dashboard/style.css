@@ -167,12 +167,6 @@
   gap: var(--iw-space-4);
 }
 
-.iw-dashboard-traffic-toolbar {
-  display: flex;
-  align-items: center;
-  gap: var(--iw-space-3);
-}
-
 .iw-dashboard-traffic-chart {
   margin-top: var(--iw-space-5);
   height: 19rem;

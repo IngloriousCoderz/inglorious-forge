@@ -22,10 +22,11 @@ export function render(props) {
     type, // eslint-disable-line no-unused-vars
     children,
     variant = "default",
-    color = "",
+    color = "default",
     size = "md",
     shape = "rectangle",
     disabled = false,
+    pressed = false,
     fullWidth = false,
     buttonType = "button",
     ariaLabel = "",
@@ -45,8 +46,9 @@ export function render(props) {
   const classes = {
     "iw-button": true,
     [`iw-button-${variant}`]: variant !== "default",
-    [`iw-button-${color}`]: color !== "",
+    [`iw-button-${color}`]: true,
     [`iw-button-${size}`]: size !== "md",
+    [`iw-button-pressed`]: pressed,
     [`iw-button-shape-${shape}`]: shape !== "rectangle",
     "iw-button-full-width": fullWidth,
     "iw-button-disabled": disabled,

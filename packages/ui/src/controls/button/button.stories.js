@@ -20,7 +20,7 @@ export default {
     color: {
       control: "select",
       options: [
-        "",
+        "default",
         "primary",
         "secondary",
         "success",
@@ -43,6 +43,10 @@ export default {
     disabled: {
       control: "boolean",
       description: "Disables interaction and click notifications.",
+    },
+    pressed: {
+      control: "boolean",
+      description: "Keeps the button in an active state.",
     },
     fullWidth: {
       control: "boolean",
@@ -124,6 +128,12 @@ export const Disabled = {}
 Disabled.args = {
   ...Default.args,
   disabled: true,
+}
+
+export const Pressed = {}
+Pressed.args = {
+  ...Default.args,
+  pressed: true,
 }
 
 export const FullWidth = {}

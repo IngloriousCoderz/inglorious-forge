@@ -159,6 +159,7 @@ export const dashboard = {
           children: html`
             <div class="iw-dashboard-header-row">
               ${button.render({
+                color: "secondary",
                 variant: "ghost",
                 shape: "square",
                 children: materialIcon.render({ name: "menu", size: "lg" }),
@@ -166,20 +167,24 @@ export const dashboard = {
               })}
               <div class="iw-dashboard-header-nav">
                 ${button.render({
+                  color: "secondary",
                   variant: "ghost",
                   children: "Dashboard",
                 })}
                 ${button.render({
+                  color: "secondary",
                   variant: "ghost",
                   children: "Users",
                 })}
                 ${button.render({
+                  color: "secondary",
                   variant: "ghost",
                   children: "Settings",
                 })}
               </div>
               <div class="iw-dashboard-header-actions">
                 ${button.render({
+                  color: "secondary",
                   variant: "ghost",
                   shape: "square",
                   children: materialIcon.render({
@@ -188,6 +193,7 @@ export const dashboard = {
                   }),
                 })}
                 ${button.render({
+                  color: "secondary",
                   variant: "ghost",
                   shape: "square",
                   children: materialIcon.render({
@@ -195,12 +201,14 @@ export const dashboard = {
                   }),
                 })}
                 ${button.render({
+                  color: "secondary",
                   variant: "ghost",
                   shape: "square",
                   children: materialIcon.render({ name: "mail", size: "lg" }),
                 })}
                 ${divider.render({ orientation: "vertical" })}
                 ${button.render({
+                  color: "secondary",
                   variant: "ghost",
                   shape: "square",
                   children: materialIcon.render({
@@ -266,7 +274,7 @@ export const dashboard = {
       data,
       width: 400,
       height: 80,
-      padding: { top: 0, right: 0, bottom: 0, left: 0 },
+      padding: { top: 0, right: 16, bottom: 0, left: 16 },
     }
 
     const children = []
@@ -287,7 +295,7 @@ export const dashboard = {
       )
     } else if (item.chartType === "bar") {
       children.push(
-        chart.Bar({ dataKey: "value", fill: "rgba(255,255,255,0.5)" }),
+        chart.Bar({ dataKey: "value", fill: "rgba(255,255,255,0.3)" }),
       )
       return chart.renderBarChart(
         chartConfig,
@@ -316,23 +324,27 @@ export const dashboard = {
               color: "var(--iw-color-text-secondary)",
             })}
           </div>
-          <div class="iw-dashboard-traffic-toolbar">
-            ${buttonGroup.render({
-              value: "month",
-              variant: "outline",
-              color: "secondary",
-              size: "sm",
-              buttons: [
-                { id: "day", label: "Day" },
-                { id: "month", label: "Month" },
-                { id: "year", label: "Year" },
-              ],
-            })}
-            ${button.render({
-              size: "sm",
-              children: materialIcon.render({ name: "download" }),
-            })}
-          </div>
+          ${flex.render({
+            gap: "md",
+            children: [
+              buttonGroup.render({
+                value: "month",
+                variant: "outline",
+                color: "secondary",
+                size: "md",
+                buttons: [
+                  { id: "day", label: "Day" },
+                  { id: "month", label: "Month" },
+                  { id: "year", label: "Year" },
+                ],
+              }),
+              button.render({
+                size: "md",
+                color: "primary",
+                children: materialIcon.render({ name: "download" }),
+              }),
+            ],
+          })}
         </div>
       `,
       body: html`
@@ -557,22 +569,6 @@ export const dashboard = {
         ${typography.render({ variant: "h3", children: value })}
       </div>
     `
-  },
-
-  renderMiniLineChart(_, { values, stroke }, api) {
-    return chart.renderLineChart(
-      {
-        type: "line",
-        data: values.map((value, index) => ({ name: `${index}`, value })),
-      },
-      {
-        width: 240,
-        height: 80,
-        dataKeys: ["value"],
-        children: [chart.Line({ dataKey: "value", stroke, strokeWidth: 2 })],
-      },
-      api,
-    )
   },
 
   renderAreaSpark(_, values, api) {

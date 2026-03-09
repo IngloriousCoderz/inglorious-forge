@@ -48,11 +48,4 @@
   &:not(.iw-button-group-attached) {
     gap: var(--iw-space-2);
   }
-
-  &.iw-button-group-selection .iw-button.iw-button-pressed {
-    background-color: var(--iw-button-bg-active);
-    border-color: var(--iw-button-bg-active);
-    color: var(--iw-button-text);
-    box-shadow: var(--iw-button-shadow-active);
-  }
 }

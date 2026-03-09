@@ -24,7 +24,7 @@ export function render(props) {
     attached = true,
     size = "md",
     variant = "default",
-    color = "primary",
+    color = "default",
     disabled = false,
     onChange,
     ...rest
@@ -81,8 +81,8 @@ export function render(props) {
           color: itemColor ?? color,
           size: itemSize ?? size,
           disabled: disabled || !!itemDisabled,
+          pressed: isPressed,
           ariaPressed: isPressed ? true : undefined,
-          className: isPressed ? "iw-button-pressed" : "",
           onClick: () => {
             if (!onChange) return
 

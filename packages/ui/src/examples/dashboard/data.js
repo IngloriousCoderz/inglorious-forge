@@ -6,7 +6,7 @@ export const statCards = [
     direction: "arrow_downward",
     className: "iw-dashboard-stat-primary",
     chartType: "line",
-    data: [42, 38, 44, 39, 36, 34, 31],
+    data: [65, 59, 84, 84, 51, 55, 40],
   },
   {
     label: "Income",
@@ -16,7 +16,7 @@ export const statCards = [
     className: "iw-dashboard-stat-info",
     chartType: "line",
     hasDots: true,
-    data: [18, 24, 19, 30, 32, 37, 41],
+    data: [1, 18, 9, 17, 34, 22, 11],
   },
   {
     label: "Conversion Rate",
@@ -25,7 +25,7 @@ export const statCards = [
     direction: "arrow_upward",
     className: "iw-dashboard-stat-warning",
     chartType: "area",
-    data: [8, 11, 12, 16, 17, 15, 19],
+    data: [78, 81, 80, 45, 34, 12, 40],
   },
   {
     label: "Sessions",
@@ -34,7 +34,7 @@ export const statCards = [
     direction: "arrow_downward",
     className: "iw-dashboard-stat-danger",
     chartType: "bar",
-    data: [60, 58, 54, 51, 46, 42, 39],
+    data: [78, 81, 80, 45, 34, 12, 40, 85, 65, 23, 12, 98, 34, 84, 67, 82],
   },
 ]
 
@@ -68,7 +68,7 @@ export const trafficSummary = [
     progress: 80,
     tone: "error",
   },
-  { label: "Bounce Rate", value: "40.15%", progress: 40, tone: "primary" },
+  // { label: "Bounce Rate", value: "40.15%", progress: 40, tone: "primary" },
 ]
 
 export const socialCards = [

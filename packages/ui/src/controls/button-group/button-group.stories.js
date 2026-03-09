@@ -36,7 +36,15 @@ export default {
     },
     color: {
       control: "select",
-      options: ["primary", "secondary", "success", "warning", "error", "info"],
+      options: [
+        "default",
+        "primary",
+        "secondary",
+        "success",
+        "warning",
+        "error",
+        "info",
+      ],
       description: "Default color intent for items.",
     },
     disabled: {
@@ -66,7 +74,6 @@ Default.args = {
   attached: true,
   size: "md",
   variant: "outline",
-  color: "primary",
   disabled: false,
   buttons: [
     { id: "left", value: "left", label: "Left" },
