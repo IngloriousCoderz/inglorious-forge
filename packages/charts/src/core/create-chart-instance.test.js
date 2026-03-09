@@ -98,7 +98,9 @@ describe("createChartInstance legacy adapter", () => {
     }
 
     const instance = createChartInstance(entity, api)
-    const children = [{ type: "Line", config: { dataKey: "value" } }]
+    const lineChild = () => null
+    lineChild.dataKey = "value"
+    const children = [lineChild]
     instance.renderLineChart(children)
 
     const chartsWarnings = warnSpy.mock.calls
@@ -115,9 +117,57 @@ describe("createChartInstance legacy adapter", () => {
     expect(renderLineChart.mock.calls[0][1].children).toEqual(children)
     expect(renderLineChart.mock.calls[0][1].config).toMatchObject({
       data: entity.data,
-      dataKeys: [],
+      dataKeys: ["value"],
     })
 
     warnSpy.mockRestore()
+  })
+
+  it("normalizes invalid config fields in dev mode", async () => {
+    const { createChartInstance } = await import("./create-chart-instance.js")
+
+    const renderLineChart = vi.fn(() => "ok")
+    const api = {
+      getType: () => ({ renderLineChart }),
+    }
+    const entity = {
+      id: "line-4",
+      type: "line",
+      data: [{ name: "A", value: 10 }],
+    }
+
+    const instance = createChartInstance(entity, api)
+    const lineChild = () => null
+    lineChild.dataKey = "value"
+    const children = [lineChild]
+
+    instance.LineChart({ data: "invalid", dataKeys: "invalid" }, children)
+
+    expect(renderLineChart).toHaveBeenCalledTimes(1)
+    expect(renderLineChart.mock.calls[0][1].config.data).toEqual(entity.data)
+    expect(renderLineChart.mock.calls[0][1].config.dataKeys).toEqual(["value"])
+  })
+
+  it("accepts non-object config and null children with safe fallback", async () => {
+    const { createChartInstance } = await import("./create-chart-instance.js")
+
+    const renderLineChart = vi.fn(() => "ok")
+    const api = {
+      getType: () => ({ renderLineChart }),
+    }
+    const entity = {
+      id: "line-5",
+      type: "line",
+      data: [{ name: "A", value: 10 }],
+    }
+
+    const instance = createChartInstance(entity, api)
+    instance.LineChart("invalid", null)
+
+    expect(renderLineChart).toHaveBeenCalledTimes(1)
+    expect(renderLineChart.mock.calls[0][1]).toMatchObject({
+      children: [],
+      config: { data: entity.data, dataKeys: [] },
+    })
   })
 })
