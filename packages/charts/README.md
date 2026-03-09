@@ -409,7 +409,12 @@ import { chart } from "@inglorious/charts"
 
 // In your component
 ${chart(api, "multiSeriesChart", (c) =>
-  c.renderLineChart([
+  c.renderLineChart({
+    width: 800,
+    height: 400,
+    dataKeys: ["productA", "productB"], // Required to sync Y-axis scale across multiple series
+    stacked: false,                     // Set to true to automatically sum values (Area/Bar)
+  }, [
     c.renderLegend({
       dataKeys: ["productA", "productB"],
       labels: ["Product A", "Product B"],
@@ -418,12 +423,7 @@ ${chart(api, "multiSeriesChart", (c) =>
     c.renderLine({ dataKey: "productA", stroke: "#8884d8", showDots: true }),
     c.renderLine({ dataKey: "productB", stroke: "#82ca9d", showDots: true }),
     c.renderTooltip({}),
-  ], {
-    width: 800,
-    height: 400,
-    dataKeys: ["productA", "productB"], // Required to sync Y-axis scale across multiple series
-    stacked: false,                     // Set to true to automatically sum values (Area/Bar)
-  })
+  ])
 )}
 ```
 
