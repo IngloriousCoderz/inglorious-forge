@@ -154,6 +154,31 @@ describe("area", () => {
       expect(svgEl.getAttribute("width")).toBe(String(entity.width))
       expect(svgEl.getAttribute("height")).toBe(String(entity.height))
     })
+
+    it("should respect custom zero padding in composition config", () => {
+      let capturedPadding = null
+      const children = [
+        (ctx) => {
+          capturedPadding = ctx.dimensions.padding
+          return null
+        },
+      ]
+
+      area.renderAreaChart(
+        entity,
+        {
+          children,
+          config: {
+            width: 800,
+            height: 400,
+            padding: { top: 0, right: 0, bottom: 0, left: 0 },
+          },
+        },
+        api,
+      )
+
+      expect(capturedPadding).toEqual({ top: 0, right: 0, bottom: 0, left: 0 })
+    })
   })
 
   describe("renderArea()", () => {
