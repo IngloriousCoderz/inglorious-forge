@@ -2,7 +2,7 @@
   "version": 1,
   "skills": {
     "forge-skills": {
-      "source": "IngloriousCoderz/forge-skills",
+      "source": "ingloriouscoderz/forge-skills",
       "sourceType": "github",
       "computedHash": "ad360bc28aa322c5a6ba9f02e1ad2812ee8365e37ed94360f5867f270a2c0060"
     }
