@@ -17,6 +17,7 @@ import { getTransformedData, parseDimension } from "../utils/data-utils.js"
 import { extractDataKeysFromChildren } from "../utils/extract-data-keys.js"
 import { generateLinePath } from "../utils/paths.js"
 import { processDeclarativeChild } from "../utils/process-declarative-child.js"
+import { ensureChartRuntimeId } from "../utils/runtime-id.js"
 import { getFilteredData } from "../utils/scales.js"
 import { createSharedContext } from "../utils/shared-context.js"
 import {
@@ -58,6 +59,7 @@ export const line = {
 
     const entityForBrush = config.originalEntity || entity
     const entityWithData = { ...entity }
+    const clipPathId = ensureClipPathId(entityForBrush)
 
     // Collect data keys (used for scales and legends)
     const dataKeysSet = new Set()
@@ -104,6 +106,7 @@ export const line = {
     context.entity = entityWithData
     context.fullEntity = entityForBrush
     context.api = api
+    context.clipPathId = clipPathId
 
     // Process children (Grid, Line, XAxis, etc)
     const processedChildrenArray = (
@@ -144,7 +147,7 @@ export const line = {
           })}
         >
           <defs>
-            <clipPath id="chart-clip-${entity.id}">
+            <clipPath id=${clipPathId}>
               <rect
                 x=${padding.left}
                 y=${padding.top}
@@ -287,7 +290,7 @@ export const line = {
       const path = generateLinePath(chartData, xScale, yScale, type)
       if (!path || path.includes("NaN")) return svg``
       return svg`
-        <g class="iw-chart-line-group" clip-path="url(#chart-clip-${e.id})">
+        <g class="iw-chart-line-group" clip-path="url(#${resolveClipPathId(ctx, e)})">
           <path d="${path}" stroke="${stroke}" fill="none" stroke-width="2" />
           ${showDots ? line.renderDots(e, { config: { ...config, fill: stroke } }, api)(ctx) : ""}
         </g>`
@@ -311,7 +314,7 @@ export const line = {
 
       if (!data || data.length === 0) return svg``
       return svg`
-        <g class="iw-chart-dots" clip-path="url(#chart-clip-${e.id})">
+        <g class="iw-chart-dots" clip-path="url(#${resolveClipPathId(ctx, e)})">
           ${repeat(
             data,
             (d, i) => `${dataKey}-${i}`,
@@ -376,4 +379,15 @@ export const line = {
    * @type {(entity: import('../types/charts').ChartEntity, params: { config?: Record<string, any> }, api: import('@inglorious/web').Api) => (ctx: Record<string, any>) => import('lit-html').TemplateResult}
    */
   renderBrush: createBrushComponent(),
+}
+
+function ensureClipPathId(entity) {
+  return `chart-clip-${ensureChartRuntimeId(entity)}`
+}
+
+function resolveClipPathId(ctx, entity) {
+  if (ctx.clipPathId) return ctx.clipPathId
+  const clipPathId = ensureClipPathId(ctx.fullEntity || entity)
+  ctx.clipPathId = clipPathId
+  return clipPathId
 }
