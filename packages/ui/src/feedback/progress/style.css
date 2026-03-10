@@ -1,5 +1,27 @@
 .iw-progress {
-  color: var(--iw-color-primary, #2f7ef7);
+  &.iw-progress-primary {
+    color: var(--iw-color-primary);
+  }
+
+  &.iw-progress-secondary {
+    color: var(--iw-color-secondary);
+  }
+
+  &.iw-progress-success {
+    color: var(--iw-color-success);
+  }
+
+  &.iw-progress-error {
+    color: var(--iw-color-error);
+  }
+
+  &.iw-progress-warning {
+    color: var(--iw-color-warning);
+  }
+
+  &.iw-progress-info {
+    color: var(--iw-color-info);
+  }
 }
 
 .iw-progress-linear {

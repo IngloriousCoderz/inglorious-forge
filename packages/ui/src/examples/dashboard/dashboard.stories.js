@@ -6,6 +6,7 @@ import {
   createEntityRender,
   notifyActionArgType,
 } from "../../stories/notifyStory.js"
+import { appDrawer } from "./app-drawer.js"
 import { dashboard } from "./dashboard.js"
 
 export default {
@@ -13,6 +14,7 @@ export default {
   tags: ["autodocs"],
   render: createEntityRender({
     dashboard,
+    appDrawer,
     area: areaChart,
     bar: barChart,
     line: lineChart,

@@ -22,7 +22,10 @@ export function createEntityRender(types) {
   return (args) => {
     const { onNotify, ...entity } = args
 
-    const store = createStore({ types, entities: { [entity.id]: entity } })
+    const store = createStore({
+      types,
+      autoCreateEntities: true,
+    })
     const originalNotify = store._api.notify
     store._api.notify = (type, payload) => {
       onNotify?.({ type, payload })

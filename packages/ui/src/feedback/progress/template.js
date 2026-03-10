@@ -19,6 +19,7 @@ export function render(props) {
     value,
     size = 40,
     thickness = 4,
+    color = "default",
     className = "",
   } = props
 
@@ -40,6 +41,7 @@ export function render(props) {
       class=${classMap({
         "iw-progress": true,
         "iw-progress-circular": true,
+        "iw-progress-${color}": true,
         "iw-progress-indeterminate": progress == null,
         ...extraClasses,
       })}

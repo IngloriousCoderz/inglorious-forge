@@ -20,9 +20,17 @@ export function render(props) {
     align = "stretch",
     justify = "stretch",
     fullWidth = false,
+    className = "",
     children = [],
     onClick,
   } = props
+
+  const extraClasses = Object.fromEntries(
+    className
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((name) => [name, true]),
+  )
 
   const classes = {
     "iw-grid": true,
@@ -30,10 +38,14 @@ export function render(props) {
     [`iw-grid-gap-${gap}`]: true,
     [`iw-grid-align-${align}`]: align !== "stretch",
     [`iw-grid-justify-${justify}`]: justify !== "stretch",
+    ...extraClasses,
   }
 
-  const styles = {
-    gridTemplateColumns: `repeat(${columns || "auto-fit"}, minmax(${minColumnWidth}, 1fr))`,
+  const styles = {}
+  if (typeof columns !== "number") {
+    styles.gridTemplateColumns = columns
+  } else {
+    styles.gridTemplateColumns = `repeat(${columns || "auto-fit"}, minmax(${minColumnWidth}, 1fr))`
   }
 
   return html`<div

@@ -10,6 +10,17 @@ export default {
     value: { control: "number" },
     size: { control: "number" },
     thickness: { control: "number" },
+    color: {
+      control: "select",
+      options: [
+        "default",
+        "primary",
+        "secondary",
+        "success",
+        "warning",
+        "info",
+      ],
+    },
   },
 }
 

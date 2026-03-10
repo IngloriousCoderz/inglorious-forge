@@ -1,5 +1,6 @@
 export const statCards = [
   {
+    id: "users",
     label: "Users",
     value: "26K",
     change: "-12.4%",
@@ -9,6 +10,7 @@ export const statCards = [
     data: [65, 59, 84, 84, 51, 55, 40],
   },
   {
+    id: "income",
     label: "Income",
     value: "$6.2K",
     change: "40.9%",
@@ -19,6 +21,7 @@ export const statCards = [
     data: [1, 18, 9, 17, 34, 22, 11],
   },
   {
+    id: "conversionRate",
     label: "Conversion Rate",
     value: "2.49%",
     change: "84.7%",
@@ -28,6 +31,7 @@ export const statCards = [
     data: [78, 81, 80, 45, 34, 12, 40],
   },
   {
+    id: "sessions",
     label: "Sessions",
     value: "44K",
     change: "-23.6%",
@@ -39,13 +43,13 @@ export const statCards = [
 ]
 
 export const trafficSeries = [
-  { name: "Jan", visits: 120, unique: 80, pageviews: 110 },
-  { name: "Feb", visits: 138, unique: 94, pageviews: 135 },
-  { name: "Mar", visits: 156, unique: 112, pageviews: 148 },
-  { name: "Apr", visits: 144, unique: 101, pageviews: 139 },
-  { name: "May", visits: 190, unique: 131, pageviews: 182 },
-  { name: "Jun", visits: 208, unique: 149, pageviews: 203 },
-  { name: "Jul", visits: 228, unique: 160, pageviews: 216 },
+  { month: "Jan", visits: 132, unique: 62 },
+  { month: "Feb", visits: 96, unique: 101 },
+  { month: "Mar", visits: 147, unique: 110 },
+  { month: "Apr", visits: 131, unique: 112 },
+  { month: "May", visits: 170, unique: 133 },
+  { month: "Jun", visits: 51, unique: 88 },
+  { month: "Jul", visits: 142, unique: 145 },
 ]
 
 export const trafficSummary = [
@@ -53,22 +57,27 @@ export const trafficSummary = [
     label: "Visits",
     value: "29.703 Users (40%)",
     progress: 40,
-    tone: "success",
+    color: "success",
   },
-  { label: "Unique", value: "24.093 Users (20%)", progress: 20, tone: "info" },
+  {
+    label: "Unique",
+    value: "24.093 Users (20%)",
+    progress: 20,
+    color: "info",
+  },
   {
     label: "Pageviews",
     value: "78.706 Views (60%)",
     progress: 60,
-    tone: "warning",
+    color: "warning",
   },
   {
     label: "New Users",
     value: "22.123 Users (80%)",
     progress: 80,
-    tone: "error",
+    color: "error",
   },
-  // { label: "Bounce Rate", value: "40.15%", progress: 40, tone: "primary" },
+  // { label: "Bounce Rate", value: "40.15%", progress: 40, color: "primary" },
 ]
 
 export const socialCards = [
