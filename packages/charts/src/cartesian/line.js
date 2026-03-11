@@ -58,7 +58,14 @@ export const line = {
     const { children, ...config } = params
 
     const entityForBrush = config.originalEntity || entity
-    const entityWithData = { ...entity }
+    const isInlineEntity = entity?.__inline === true
+    const entityWithData = config.data
+      ? isInlineEntity
+        ? Object.assign(entity, { data: config.data })
+        : { ...entity, data: config.data }
+      : isInlineEntity
+        ? entity
+        : { ...entity }
     const clipPathId = ensureClipPathId(entityForBrush)
 
     // Collect data keys (used for scales and legends)
