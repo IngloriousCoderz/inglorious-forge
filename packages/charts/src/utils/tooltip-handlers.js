@@ -3,6 +3,8 @@
  * Creates reusable onMouseEnter, onMouseLeave, and onMouseMove handlers for chart elements
  */
 
+import * as handlers from "../handlers.js"
+
 // Tooltip offset from cursor position
 const TOOLTIP_OFFSET = 15
 // Estimated tooltip width (can be adjusted based on actual tooltip size)
@@ -40,6 +42,18 @@ export function createTooltipHandlers({ entity, api, tooltipData }) {
       containerRect,
     )
 
+    if (entity.__inline || typeof api?.notify !== "function") {
+      handlers.tooltipShow(entity, {
+        label: tooltipData.label,
+        value: tooltipData.value,
+        color: tooltipData.color,
+        x,
+        y,
+      })
+      api?.notify?.("charts:inlineTooltip")
+      return
+    }
+
     api.notify(`#${entity.id}:tooltipShow`, {
       label: tooltipData.label,
       value: tooltipData.value,
@@ -51,6 +65,12 @@ export function createTooltipHandlers({ entity, api, tooltipData }) {
 
   const onMouseLeave = () => {
     if (!entity.showTooltip) return
+    if (entity.__inline || typeof api?.notify !== "function") {
+      handlers.tooltipHide(entity)
+      api?.notify?.("charts:inlineTooltip")
+      return
+    }
+
     api.notify(`#${entity.id}:tooltipHide`)
   }
 
@@ -82,6 +102,12 @@ export function createTooltipMoveHandler({ entity, api }) {
       svgRect,
       containerRect,
     )
+
+    if (entity.__inline || typeof api?.notify !== "function") {
+      handlers.tooltipMove(entity, { x, y })
+      api?.notify?.("charts:inlineTooltip")
+      return
+    }
 
     api.notify(`#${entity.id}:tooltipMove`, {
       x,
