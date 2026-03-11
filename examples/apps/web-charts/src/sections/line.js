@@ -1,6 +1,13 @@
 import { html } from "@inglorious/web"
 import { chart } from "@inglorious/charts"
 
+const inlineLineData = [
+  { name: "0", value: 40 },
+  { name: "1", value: 120 },
+  { name: "2", value: 90 },
+  { name: "3", value: 160 },
+]
+
 export function renderLineSections(api, status) {
   const { isRealtimeConfigPaused, isRealtimeCompositionPaused } = status
 
@@ -38,13 +45,12 @@ export function renderLineSections(api, status) {
 
     <div class="charts-comparison">
       <section class="chart-section">
-        <h2>Line Chart - Composition (Padding 0)</h2>
+        <h2>Line Chart - Composition (No entity)</h2>
         ${chart.renderLineChart(
-          api.getEntity("salesLineChartCompositionPadding"),
           {
-            width: 800,
-            height: 400,
-            padding: { top: 10, right: -10, bottom: 10, left: 0 },
+            data: inlineLineData,
+            width: 600,
+            height: 240,
             dataKeys: ["value"],
             children: [
               chart.CartesianGrid({
@@ -53,8 +59,8 @@ export function renderLineSections(api, status) {
               }),
               chart.XAxis({ dataKey: "name" }),
               chart.YAxis({ width: "auto" }),
-              chart.Line({ dataKey: "value", stroke: "#8884d8" }),
-              chart.Dots({ dataKey: "value", fill: "#8884d8" }),
+              chart.Line({ dataKey: "value", stroke: "#2563eb" }),
+              chart.Dots({ dataKey: "value", fill: "#2563eb" }),
               chart.Tooltip({}),
             ],
           },
