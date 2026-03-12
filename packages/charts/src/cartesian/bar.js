@@ -260,10 +260,18 @@ export const bar = {
    */
   renderBar(entity, { config = {} }, api) {
     // Preserve config values in closure
-    const { dataKey = "value", fill, multiColor = false } = config
+    const { dataKey, fill, multiColor = false } = config
+    const resolvedDataKey =
+      dataKey ??
+      (Array.isArray(config.data)
+        ? inferSeriesDataKey(config.data, "bar")
+        : "value")
     const drawFn = (ctx, barIndex, totalBars) => {
       const entityFromContext = ctx.entity || entity
       if (!entityFromContext) return svg``
+      const dataSource = Array.isArray(config.data)
+        ? config.data
+        : entityFromContext.data
       const entityColors = entityFromContext.colors || [
         "#8884d8",
         "#82ca9d",
@@ -290,9 +298,9 @@ export const bar = {
       }
 
       return svg`
-        ${entityFromContext.data.map((d, i) => {
+        ${dataSource.map((d, i) => {
           const category = d.label || d.name || d.category || String(i)
-          const value = d[dataKey] ?? 0
+          const value = d[resolvedDataKey] ?? 0
           const bandStart = xScale(category)
 
           // Skip if bandStart is undefined or NaN (invalid category)
@@ -320,6 +328,11 @@ export const bar = {
             entity: entityFromContext,
             api,
             tooltipData: { label: category, value, color },
+            enabled:
+              config.showTooltip ??
+              (ctx.tooltipMode
+                ? ctx.tooltipMode === "all"
+                : ctx.tooltipEnabled),
           })
           return renderRectangle({
             x,
@@ -335,7 +348,7 @@ export const bar = {
     }
 
     drawFn.isBar = true
-    drawFn.dataKey = config.dataKey || "value"
+    drawFn.dataKey = resolvedDataKey || "value"
     return drawFn
   },
 
@@ -446,4 +459,24 @@ export const bar = {
    * @type {(entity: import('../types/charts').ChartEntity, params: { config?: Record<string, any> }, api: import('@inglorious/web').Api) => (ctx: Record<string, any>) => import('lit-html').TemplateResult}
    */
   renderBrush: createBrushComponent(),
+}
+
+function inferSeriesDataKey(data, preferredKey) {
+  if (!Array.isArray(data) || data.length === 0) return undefined
+  const sample = data[0]
+  if (!sample || typeof sample !== "object") return undefined
+
+  if (preferredKey && typeof sample[preferredKey] === "number") {
+    return preferredKey
+  }
+
+  if (typeof sample.value === "number") return "value"
+  if (typeof sample.y === "number") return "y"
+
+  const numericKeys = Object.keys(sample).filter(
+    (key) =>
+      !["name", "label", "x", "date"].includes(key) &&
+      typeof sample[key] === "number",
+  )
+  return numericKeys[0]
 }
