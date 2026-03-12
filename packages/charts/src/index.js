@@ -8,22 +8,21 @@ import { getEmptyChartInstance } from "./core/empty-instance.js"
 import {
   buildComponentRenderer,
   renderByChartType,
+  renderChart,
 } from "./core/render-dispatch.js"
 import * as handlers from "./handlers.js"
+import { render } from "./template.js"
+
 export { STREAM_DEFAULTS } from "./realtime/defaults.js"
 export { lineChart } from "./realtime/stream-types.js"
 export { withRealtime } from "./realtime/with-realtime.js"
-import { render } from "./template.js"
-export { streamSlide } from "./utils/stream-slide.js"
-
-// Export chart types for config style
-export { coreCharts } from "./core/chart-core.js"
 export {
   areaChart,
   barChart,
   donutChart,
   pieChart,
 } from "./utils/chart-utils.js"
+export { streamSlide } from "./utils/stream-slide.js"
 
 const declarativeChildren = createDeclarativeChildren()
 
@@ -33,6 +32,7 @@ export const chart = {
   core: coreCharts,
 
   // Chart Delegators
+  renderChart: renderChart(),
   renderLineChart: renderByChartType("line"),
   renderAreaChart: renderByChartType("area"),
   renderBarChart: renderByChartType("bar"),

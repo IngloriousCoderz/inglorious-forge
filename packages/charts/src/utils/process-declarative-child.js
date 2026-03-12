@@ -15,7 +15,9 @@ export function processDeclarativeChild(child, entity, chartTypeName, api) {
     child.type &&
     child.config !== undefined
   ) {
-    const chartType = api.getType(chartTypeName)
+    const resolvedChartTypeName =
+      getRendererChartType(child.type) || chartTypeName
+    const chartType = api.getType(resolvedChartTypeName)
     const methodName = `render${child.type}`
 
     if (chartType?.[methodName]) {
@@ -43,4 +45,12 @@ export function processDeclarativeChild(child, entity, chartTypeName, api) {
     }
   }
   return child
+}
+
+function getRendererChartType(childType) {
+  if (childType === "Line") return "line"
+  if (childType === "Area") return "area"
+  if (childType === "Bar") return "bar"
+  if (childType === "Pie") return "pie"
+  return null
 }
