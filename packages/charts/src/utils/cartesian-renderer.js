@@ -166,6 +166,7 @@ export function sortChildrenByLayer(
   processedChildren,
   { seriesFlag, reverseSeries = false, includeBrush = false },
 ) {
+  const seriesFlags = Array.isArray(seriesFlag) ? seriesFlag : [seriesFlag]
   const buckets = {
     grid: [],
     axes: [],
@@ -184,7 +185,7 @@ export function sortChildrenByLayer(
     }
     if (child.isGrid) buckets.grid.push(child)
     else if (child.isAxis) buckets.axes.push(child)
-    else if (child[seriesFlag]) buckets.series.push(child)
+    else if (seriesFlags.some((flag) => child[flag])) buckets.series.push(child)
     else if (child.isDots) buckets.dots.push(child)
     else if (child.isTooltip) buckets.tooltip.push(child)
     else if (child.isLegend) buckets.legend.push(child)
