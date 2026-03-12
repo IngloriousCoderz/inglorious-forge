@@ -3,6 +3,15 @@ import type { TemplateResult } from "@inglorious/web"
 export interface ContainerProps {
   id?: string
   type?: string
+  element?:
+    | "div"
+    | "section"
+    | "main"
+    | "header"
+    | "footer"
+    | "nav"
+    | "aside"
+    | "article"
   children?: TemplateResult | string | number
   maxWidth?: "xs" | "sm" | "md" | "lg" | "xl" | "none" | false | number | string
   isFixed?: boolean

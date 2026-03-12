@@ -3,6 +3,15 @@ import type { TemplateResult } from "@inglorious/web"
 export interface FlexProps {
   id?: string
   type?: string
+  element?:
+    | "div"
+    | "section"
+    | "main"
+    | "header"
+    | "footer"
+    | "nav"
+    | "aside"
+    | "article"
   direction?: "row" | "column" | "row-reverse" | "column-reverse"
   wrap?: "nowrap" | "wrap" | "wrap-reverse"
   justify?: "start" | "center" | "end" | "between" | "around" | "evenly"

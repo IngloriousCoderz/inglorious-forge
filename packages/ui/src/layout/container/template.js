@@ -22,6 +22,7 @@ const SIZE_TO_MAX_WIDTH = {
 export function render(props) {
   const {
     type, // eslint-disable-line no-unused-vars
+    element = "div",
     children,
     maxWidth = "lg",
     isFixed = false,
@@ -48,13 +49,48 @@ export function render(props) {
 
   const styles = getContainerStyle(maxWidth, isFixed)
 
-  return html`<div
-    class=${classMap(classes)}
-    style=${styleMap(styles)}
-    ${ref((el) => applyElementProps(el, rest))}
-  >
-    ${children}
-  </div>`
+  return renderElement(element, classes, styles, rest, children)
+}
+
+function renderElement(element, classes, styles, rest, children) {
+  const classValue = classMap(classes)
+  const styleValue = styleMap(styles)
+  const refValue = ref((el) => applyElementProps(el, rest))
+
+  switch (element) {
+    case "section":
+      return html`<section class=${classValue} style=${styleValue} ${refValue}>
+        ${children}
+      </section>`
+    case "main":
+      return html`<main class=${classValue} style=${styleValue} ${refValue}>
+        ${children}
+      </main>`
+    case "header":
+      return html`<header class=${classValue} style=${styleValue} ${refValue}>
+        ${children}
+      </header>`
+    case "footer":
+      return html`<footer class=${classValue} style=${styleValue} ${refValue}>
+        ${children}
+      </footer>`
+    case "nav":
+      return html`<nav class=${classValue} style=${styleValue} ${refValue}>
+        ${children}
+      </nav>`
+    case "aside":
+      return html`<aside class=${classValue} style=${styleValue} ${refValue}>
+        ${children}
+      </aside>`
+    case "article":
+      return html`<article class=${classValue} style=${styleValue} ${refValue}>
+        ${children}
+      </article>`
+    default:
+      return html`<div class=${classValue} style=${styleValue} ${refValue}>
+        ${children}
+      </div>`
+  }
 }
 
 function getContainerStyle(maxWidth, fixed) {

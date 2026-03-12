@@ -26,6 +26,20 @@ export default {
       options: ["none", "sm", "md", "lg", "xl"],
       description: "Inner padding for the grid container.",
     },
+    element: {
+      control: "select",
+      options: [
+        "div",
+        "section",
+        "main",
+        "header",
+        "footer",
+        "nav",
+        "aside",
+        "article",
+      ],
+      description: "Semantic element for the container.",
+    },
     align: {
       control: "select",
       options: ["stretch", "start", "center", "end"],
@@ -63,6 +77,7 @@ export const Default = {
     isFullWidth: false,
     gap: "md",
     padding: "none",
+    element: "div",
     children: [
       html`<div>Product</div>`,
       html`<div>Price</div>`,

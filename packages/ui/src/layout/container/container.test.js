@@ -7,9 +7,11 @@ describe("container", () => {
   it("renders children", () => {
     const host = document.createElement("div")
 
-    render(container.render({ children: "Hello" }), host)
+    render(container.render({ element: "section", children: "Hello" }), host)
 
-    expect(host.querySelector(".iw-container").textContent).toContain("Hello")
+    const root = host.querySelector(".iw-container")
+    expect(root.textContent).toContain("Hello")
+    expect(root.tagName).toBe("SECTION")
   })
 
   it("applies fixed and gutter classes", () => {

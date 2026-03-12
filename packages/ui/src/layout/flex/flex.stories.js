@@ -38,6 +38,20 @@ export default {
       options: ["none", "sm", "md", "lg", "xl"],
       description: "Inner padding for the flex container.",
     },
+    element: {
+      control: "select",
+      options: [
+        "div",
+        "section",
+        "main",
+        "header",
+        "footer",
+        "nav",
+        "aside",
+        "article",
+      ],
+      description: "Semantic element for the container.",
+    },
     isInline: {
       control: "boolean",
       description: "Uses inline-flex instead of flex.",
@@ -70,6 +84,7 @@ Default.args = {
   align: "stretch",
   gap: "md",
   padding: "none",
+  element: "div",
   isInline: false,
   isFullWidth: false,
   children: [

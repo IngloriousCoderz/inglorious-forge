@@ -22,6 +22,7 @@ describe("grid", () => {
   it("applies grid styles and classes", () => {
     const props = {
       id: "gd",
+      element: "section",
       columns: 4,
       gap: "lg",
       padding: "md",
@@ -34,6 +35,7 @@ describe("grid", () => {
     render(grid.render(props), container)
 
     const root = container.querySelector(".iw-grid")
+    expect(root.tagName).toBe("SECTION")
     expect(root.style.gridTemplateColumns).toContain("repeat(4")
     expect(root.classList.contains("iw-grid-gap-lg")).toBe(true)
     expect(root.classList.contains("iw-grid-padding-md")).toBe(true)

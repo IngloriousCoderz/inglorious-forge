@@ -27,6 +27,20 @@ export default {
       options: ["none", "sm", "md", "lg", "xl", "2xl", "full"],
       description: "Corner roundness preset for the surface.",
     },
+    element: {
+      control: "select",
+      options: [
+        "div",
+        "section",
+        "main",
+        "header",
+        "footer",
+        "nav",
+        "aside",
+        "article",
+      ],
+      description: "Semantic element for the surface.",
+    },
     children: {
       control: "text",
       description: "Paper body content.",
@@ -48,6 +62,7 @@ export const Elevated = {
     elevation: 2,
     padding: "md",
     radius: "md",
+    element: "div",
     children: "Surface content",
   },
 }
@@ -57,6 +72,7 @@ export const Outlined = {
     variant: "outlined",
     padding: "md",
     radius: "md",
+    element: "div",
     children: "Outlined surface",
   },
 }

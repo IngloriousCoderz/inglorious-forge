@@ -14,6 +14,7 @@ import { classMap, html, styleMap } from "@inglorious/web"
  */
 export function render(props) {
   const {
+    element = "div",
     columns = 0,
     minColumnWidth = 0,
     gap = "md",
@@ -50,11 +51,77 @@ export function render(props) {
     styles.gridTemplateColumns = `repeat(${columns || "auto-fit"}, minmax(${minColumnWidth}, 1fr))`
   }
 
-  return html`<div
-    class=${classMap(classes)}
-    style=${styleMap(styles)}
-    @click=${onClick}
-  >
-    ${children}
-  </div>`
+  return renderElement(element, classes, styles, onClick, children)
+}
+
+function renderElement(element, classes, styles, onClick, children) {
+  const classValue = classMap(classes)
+  const styleValue = styleMap(styles)
+
+  switch (element) {
+    case "section":
+      return html`<section
+        class=${classValue}
+        style=${styleValue}
+        @click=${onClick}
+      >
+        ${children}
+      </section>`
+    case "main":
+      return html`<main
+        class=${classValue}
+        style=${styleValue}
+        @click=${onClick}
+      >
+        ${children}
+      </main>`
+    case "header":
+      return html`<header
+        class=${classValue}
+        style=${styleValue}
+        @click=${onClick}
+      >
+        ${children}
+      </header>`
+    case "footer":
+      return html`<footer
+        class=${classValue}
+        style=${styleValue}
+        @click=${onClick}
+      >
+        ${children}
+      </footer>`
+    case "nav":
+      return html`<nav
+        class=${classValue}
+        style=${styleValue}
+        @click=${onClick}
+      >
+        ${children}
+      </nav>`
+    case "aside":
+      return html`<aside
+        class=${classValue}
+        style=${styleValue}
+        @click=${onClick}
+      >
+        ${children}
+      </aside>`
+    case "article":
+      return html`<article
+        class=${classValue}
+        style=${styleValue}
+        @click=${onClick}
+      >
+        ${children}
+      </article>`
+    default:
+      return html`<div
+        class=${classValue}
+        style=${styleValue}
+        @click=${onClick}
+      >
+        ${children}
+      </div>`
+  }
 }

@@ -3,6 +3,15 @@ import type { TemplateResult } from "@inglorious/web"
 export interface PaperProps {
   id?: string
   type?: string
+  element?:
+    | "div"
+    | "section"
+    | "main"
+    | "header"
+    | "footer"
+    | "nav"
+    | "aside"
+    | "article"
   children?: TemplateResult | string | number
   variant?: "elevated" | "outlined"
   elevation?: number

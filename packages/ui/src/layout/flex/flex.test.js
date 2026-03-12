@@ -22,6 +22,7 @@ describe("flex", () => {
   it("applies layout modifier classes", () => {
     const entity = {
       id: "fx",
+      element: "section",
       direction: "column",
       wrap: "wrap",
       justify: "center",
@@ -35,6 +36,7 @@ describe("flex", () => {
     render(flex.render(entity), container)
 
     const root = container.querySelector(".iw-flex")
+    expect(root.tagName).toBe("SECTION")
     expect(root.classList.contains("iw-flex-direction-column")).toBe(true)
     expect(root.classList.contains("iw-flex-wrap-wrap")).toBe(true)
     expect(root.classList.contains("iw-flex-justify-center")).toBe(true)

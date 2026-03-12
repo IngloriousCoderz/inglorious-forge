@@ -25,6 +25,20 @@ export default {
       control: "boolean",
       description: "Centers container with auto horizontal margins.",
     },
+    element: {
+      control: "select",
+      options: [
+        "div",
+        "section",
+        "main",
+        "header",
+        "footer",
+        "nav",
+        "aside",
+        "article",
+      ],
+      description: "Semantic element for the container.",
+    },
     children: {
       control: "text",
       description: "Container content.",
@@ -46,6 +60,7 @@ export const Default = {
     isFixed: false,
     isGutterless: false,
     isCentered: true,
+    element: "div",
     children: html`<div style="padding: 1rem; border: 1px dashed currentColor;">
       Content inside container
     </div>`,

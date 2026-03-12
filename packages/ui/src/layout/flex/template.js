@@ -14,6 +14,7 @@ import { classMap, html } from "@inglorious/web"
  */
 export function render(props) {
   const {
+    element = "div",
     direction = "row",
     wrap = "nowrap",
     justify = "start",
@@ -47,7 +48,40 @@ export function render(props) {
     ...extraClasses,
   }
 
-  return html`<div class=${classMap(classes)} @click=${onClick}>
-    ${children}
-  </div>`
+  return renderElement(element, classes, onClick, children)
+}
+
+function renderElement(element, classes, onClick, children) {
+  const classValue = classMap(classes)
+
+  switch (element) {
+    case "section":
+      return html`<section class=${classValue} @click=${onClick}>
+        ${children}
+      </section>`
+    case "main":
+      return html`<main class=${classValue} @click=${onClick}>
+        ${children}
+      </main>`
+    case "header":
+      return html`<header class=${classValue} @click=${onClick}>
+        ${children}
+      </header>`
+    case "footer":
+      return html`<footer class=${classValue} @click=${onClick}>
+        ${children}
+      </footer>`
+    case "nav":
+      return html`<nav class=${classValue} @click=${onClick}>${children}</nav>`
+    case "aside":
+      return html`<aside class=${classValue} @click=${onClick}>
+        ${children}
+      </aside>`
+    case "article":
+      return html`<article class=${classValue} @click=${onClick}>
+        ${children}
+      </article>`
+    default:
+      return html`<div class=${classValue} @click=${onClick}>${children}</div>`
+  }
 }

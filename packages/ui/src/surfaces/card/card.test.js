@@ -8,12 +8,16 @@ describe("card", () => {
   it("renders title and subtitle", () => {
     const container = document.createElement("div")
 
-    render(card.render({ title: "Title", subtitle: "Subtitle" }), container)
+    render(
+      card.render({ title: "Title", subtitle: "Subtitle", element: "section" }),
+      container,
+    )
 
     expect(container.querySelector(".iw-card-title").textContent).toBe("Title")
     expect(container.querySelector(".iw-card-subtitle").textContent).toBe(
       "Subtitle",
     )
+    expect(container.querySelector(".iw-card").tagName).toBe("SECTION")
   })
 
   it("renders body and footer", () => {

@@ -7,11 +7,12 @@ describe("paper", () => {
   it("renders children", () => {
     const container = document.createElement("div")
 
-    render(paper.render({ children: "Hello" }), container)
+    render(paper.render({ element: "section", children: "Hello" }), container)
 
     expect(container.querySelector(".iw-paper").textContent.trim()).toBe(
       "Hello",
     )
+    expect(container.querySelector(".iw-paper").tagName).toBe("SECTION")
   })
 
   it("applies outlined variant", () => {

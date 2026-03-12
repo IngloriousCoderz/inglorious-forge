@@ -24,6 +24,20 @@ export default {
       control: "text",
       description: "Footer region content.",
     },
+    element: {
+      control: "select",
+      options: [
+        "article",
+        "section",
+        "div",
+        "main",
+        "header",
+        "footer",
+        "nav",
+        "aside",
+      ],
+      description: "Semantic element for the card root.",
+    },
     headerPadding: {
       control: "select",
       options: ["none", "sm", "md", "lg", "xl"],
@@ -68,6 +82,7 @@ export const Default = {
     title: "Card Title",
     subtitle: "This is a card subtitle",
     children: "Body content",
+    element: "article",
     headerPadding: "md",
     bodyPadding: "md",
     footerPadding: "md",

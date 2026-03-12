@@ -14,6 +14,7 @@ import { applyElementProps } from "../../shared/applyElementProps.js"
 export function render(props) {
   const {
     type, // eslint-disable-line no-unused-vars
+    element = "div",
     children,
     variant = "elevated",
     elevation = 1,
@@ -30,8 +31,9 @@ export function render(props) {
       .map((name) => [name, true]),
   )
 
-  return html`<div
-    class=${classMap({
+  return renderElement(
+    element,
+    {
       "iw-paper": true,
       [`iw-paper-${variant}`]: true,
       [`iw-paper-elevation-${Math.max(0, Math.min(4, elevation))}`]:
@@ -39,9 +41,36 @@ export function render(props) {
       [`iw-paper-padding-${padding}`]: true,
       [`iw-paper-radius-${radius}`]: radius !== "md",
       ...extraClasses,
-    })}
-    ${ref((el) => applyElementProps(el, rest))}
-  >
-    ${children}
-  </div>`
+    },
+    rest,
+    children,
+  )
+}
+
+function renderElement(element, classes, rest, children) {
+  const classValue = classMap(classes)
+  const refValue = ref((el) => applyElementProps(el, rest))
+
+  switch (element) {
+    case "section":
+      return html`<section class=${classValue} ${refValue}>
+        ${children}
+      </section>`
+    case "main":
+      return html`<main class=${classValue} ${refValue}>${children}</main>`
+    case "header":
+      return html`<header class=${classValue} ${refValue}>${children}</header>`
+    case "footer":
+      return html`<footer class=${classValue} ${refValue}>${children}</footer>`
+    case "nav":
+      return html`<nav class=${classValue} ${refValue}>${children}</nav>`
+    case "aside":
+      return html`<aside class=${classValue} ${refValue}>${children}</aside>`
+    case "article":
+      return html`<article class=${classValue} ${refValue}>
+        ${children}
+      </article>`
+    default:
+      return html`<div class=${classValue} ${refValue}>${children}</div>`
+  }
 }

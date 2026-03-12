@@ -3,6 +3,15 @@ import type { TemplateResult } from "@inglorious/web"
 export interface GridProps {
   id?: string
   type?: string
+  element?:
+    | "div"
+    | "section"
+    | "main"
+    | "header"
+    | "footer"
+    | "nav"
+    | "aside"
+    | "article"
   columns?: number
   minColumnWidth?: string
   gap?: "none" | "sm" | "md" | "lg" | "xl"

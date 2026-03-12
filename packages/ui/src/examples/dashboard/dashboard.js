@@ -50,11 +50,17 @@ export const dashboard = {
               ],
             }),
           })}
-
-          <footer class="iw-dashboard-footer">
-            <div>Admin dashboard example © 2026</div>
-            <div>Built with Inglorious UI primitives and charts</div>
-          </footer>
+          ${flex.render({
+            element: "footer",
+            justify: "between",
+            gap: "md",
+            padding: "md",
+            className: "iw-dashboard-footer",
+            children: [
+              html`<div>Admin dashboard example © 2026</div>`,
+              html`<div>Built with Inglorious UI primitives and charts</div>`,
+            ],
+          })}
         </div>
       </div>
     `

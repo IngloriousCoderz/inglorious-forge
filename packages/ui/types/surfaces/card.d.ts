@@ -3,6 +3,15 @@ import type { TemplateResult } from "@inglorious/web"
 export interface CardProps {
   id?: string
   type?: string
+  element?:
+    | "article"
+    | "section"
+    | "div"
+    | "main"
+    | "header"
+    | "footer"
+    | "nav"
+    | "aside"
   title?: TemplateResult | string | number
   subtitle?: TemplateResult | string | number
   header?: TemplateResult | string | number

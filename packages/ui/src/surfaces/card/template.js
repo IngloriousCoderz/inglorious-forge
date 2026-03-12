@@ -15,6 +15,7 @@ export const card = {
   render(props) {
     const {
       type, // eslint-disable-line no-unused-vars
+      element = "article",
       isHoverable = false,
       isClickable = false,
       isFullWidth = false,
@@ -38,14 +39,16 @@ export const card = {
       ...extraClasses,
     }
 
-    return html`<article
-      class=${classMap(classes)}
-      @click=${onClick}
-      ${ref((el) => applyElementProps(el, rest))}
-    >
-      ${this.renderHeader(props)} ${this.renderBody(props)}
-      ${this.renderFooter(props)}
-    </article>`
+    return renderElement(
+      element,
+      classes,
+      onClick,
+      rest,
+      () => html`
+        ${this.renderHeader(props)} ${this.renderBody(props)}
+        ${this.renderFooter(props)}
+      `,
+    )
   },
 
   /**
@@ -117,4 +120,44 @@ export const card = {
       ${footer}
     </div>`
   },
+}
+
+function renderElement(element, classes, onClick, rest, renderContent) {
+  const classValue = classMap(classes)
+  const refValue = ref((el) => applyElementProps(el, rest))
+
+  switch (element) {
+    case "section":
+      return html`<section class=${classValue} @click=${onClick} ${refValue}>
+        ${renderContent()}
+      </section>`
+    case "div":
+      return html`<div class=${classValue} @click=${onClick} ${refValue}>
+        ${renderContent()}
+      </div>`
+    case "main":
+      return html`<main class=${classValue} @click=${onClick} ${refValue}>
+        ${renderContent()}
+      </main>`
+    case "header":
+      return html`<header class=${classValue} @click=${onClick} ${refValue}>
+        ${renderContent()}
+      </header>`
+    case "footer":
+      return html`<footer class=${classValue} @click=${onClick} ${refValue}>
+        ${renderContent()}
+      </footer>`
+    case "nav":
+      return html`<nav class=${classValue} @click=${onClick} ${refValue}>
+        ${renderContent()}
+      </nav>`
+    case "aside":
+      return html`<aside class=${classValue} @click=${onClick} ${refValue}>
+        ${renderContent()}
+      </aside>`
+    default:
+      return html`<article class=${classValue} @click=${onClick} ${refValue}>
+        ${renderContent()}
+      </article>`
+  }
 }

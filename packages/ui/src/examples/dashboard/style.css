@@ -36,7 +36,7 @@
   }
 
   .iw-dashboard .iw-dashboard-header-nav {
-    display: initial;
+    display: flex;
   }
 }
 
@@ -46,16 +46,6 @@
   gap: var(--iw-space-3);
   padding: var(--iw-space-4);
   font-weight: var(--iw-font-weight-semibold);
-
-  .iw-dashboard-brand-mark {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 2rem;
-    aspect-ratio: 1;
-    background: var(--iw-color-primary);
-    color: var(--iw-color-primary-text);
-  }
 }
 
 .iw-dashboard-header {
@@ -68,9 +58,6 @@
 
   .iw-dashboard-header-row {
     width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     padding-inline: var(--iw-space-4);
   }
 
@@ -79,17 +66,8 @@
   }
 }
 
-.iw-dashboard-header-nav {
-  display: flex;
-  align-items: center;
-  gap: var(--iw-space-2);
-}
-
 .iw-dashboard-header-actions {
   margin-inline-start: auto;
-  display: flex;
-  align-items: center;
-  gap: var(--iw-space-2);
 
   .iw-divider-vertical {
     height: var(--iw-space-8);
@@ -197,18 +175,6 @@
   text-align: center;
 }
 
-.iw-dashboard-sales-layout {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--iw-space-6);
-}
-
-.iw-dashboard-kpi-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--iw-space-4);
-}
-
 .iw-dashboard-kpi {
   border-left: 4px solid currentColor;
   padding-left: var(--iw-space-3);
@@ -220,50 +186,12 @@
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.iw-dashboard-progress-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--iw-space-4);
-}
-
-.iw-dashboard-progress-row {
-  display: grid;
-  grid-template-columns: 6rem 1fr;
-  gap: var(--iw-space-3);
-  align-items: center;
-}
-
-.iw-dashboard-progress-row-dual .iw-dashboard-progress-row-bars {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.iw-dashboard-progress-header {
-  display: flex;
-  align-items: center;
-  gap: var(--iw-space-2);
-}
-
-.iw-dashboard-progress-header-spread {
-  justify-content: space-between;
-}
-
 .iw-dashboard-progress-meta {
-  display: flex;
-  align-items: center;
-  gap: var(--iw-space-2);
   color: var(--iw-color-text-secondary);
 }
 
 .iw-dashboard-progress-list .iw-progress-linear-track {
   height: 0.25rem;
-}
-
-.iw-dashboard-user {
-  display: flex;
-  align-items: center;
-  gap: var(--iw-space-3);
 }
 
 .iw-dashboard-user-subtitle {
@@ -273,12 +201,6 @@
 
 .iw-dashboard-country {
   text-align: center;
-}
-
-.iw-dashboard-usage {
-  display: flex;
-  flex-direction: column;
-  gap: var(--iw-space-2);
 }
 
 .iw-dashboard-payment {
@@ -291,20 +213,13 @@
 }
 
 .iw-dashboard-footer {
-  display: flex;
-  justify-content: space-between;
-  gap: var(--iw-space-4);
-  padding: var(--iw-space-4);
   color: var(--iw-color-text-secondary);
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 @media (max-width: 80rem) {
-  .iw-dashboard-traffic-summary {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
   .iw-dashboard-sales-layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
   }
 }
 
@@ -319,12 +234,11 @@
 }
 
 @media (max-width: 40rem) {
-  .iw-dashboard-kpi-grid,
-  .iw-dashboard-traffic-summary {
-    grid-template-columns: 1fr;
+  .iw-dashboard-kpi-grid {
+    grid-template-columns: 1fr !important;
   }
   .iw-dashboard-progress-row {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
   }
   .iw-dashboard-footer {
     flex-direction: column;
