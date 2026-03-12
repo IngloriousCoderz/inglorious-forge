@@ -26,8 +26,8 @@ export function render(props) {
     value = "",
     options = [],
     size = "md",
-    disabled = false,
-    fullWidth = false,
+    isDisabled = false,
+    isFullWidth = false,
     isMulti = false,
     onChange,
     onBlur,
@@ -39,7 +39,7 @@ export function render(props) {
 
   const selectClasses = {
     "iw-select": true,
-    "iw-select-full-width": !!fullWidth,
+    "iw-select-full-width": !!isFullWidth,
     [`iw-select-${size}`]: size !== "md",
   }
 
@@ -52,7 +52,7 @@ export function render(props) {
       id=${inputId}
       name=${name}
       ?multiple=${isMulti}
-      ?disabled=${disabled}
+      ?disabled=${isDisabled}
       class=${classMap(selectClasses)}
       @change=${(event) => onChange?.(event.target.value)}
       @blur=${onBlur}
@@ -63,7 +63,11 @@ export function render(props) {
         options,
         (option) => getOptionValue(option),
         (option) => {
-          const { value, label, disabled } = formatOption(option)
+          const {
+            value,
+            label,
+            isDisabled: isOptionDisabled,
+          } = formatOption(option)
           const isSelected = isOptionSelected(
             option,
             selectedOption?.value,
@@ -78,7 +82,7 @@ export function render(props) {
           return html`<option
             value=${value}
             .selected=${value === selectedOption?.value}
-            ?disabled=${disabled}
+            ?disabled=${isOptionDisabled}
             class=${classMap(optionClasses)}
           >
             ${label}

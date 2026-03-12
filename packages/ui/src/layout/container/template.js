@@ -24,9 +24,9 @@ export function render(props) {
     type, // eslint-disable-line no-unused-vars
     children,
     maxWidth = "lg",
-    fixed = false,
-    disableGutters = false,
-    center = true,
+    isFixed = false,
+    isGutterless = false,
+    isCentered = true,
     className = "",
     ...rest
   } = props
@@ -40,13 +40,13 @@ export function render(props) {
 
   const classes = {
     "iw-container": true,
-    "iw-container-fixed": fixed,
-    "iw-container-no-gutters": disableGutters,
-    "iw-container-centered": center,
+    "iw-container-fixed": isFixed,
+    "iw-container-no-gutters": isGutterless,
+    "iw-container-centered": isCentered,
     ...extraClasses,
   }
 
-  const styles = getContainerStyle(maxWidth, fixed)
+  const styles = getContainerStyle(maxWidth, isFixed)
 
   return html`<div
     class=${classMap(classes)}

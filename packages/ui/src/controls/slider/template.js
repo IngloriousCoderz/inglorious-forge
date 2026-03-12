@@ -28,10 +28,10 @@ export function render(props) {
     min = DEFAULT_MIN,
     max = DEFAULT_MAX,
     step = DEFAULT_STEP,
-    disabled = false,
+    isDisabled = false,
     color = "primary",
-    showValue = true,
-    fullWidth = false,
+    isValueVisible = true,
+    isFullWidth = false,
     onChange,
     ...rest
   } = props
@@ -41,17 +41,17 @@ export function render(props) {
   const classes = {
     "iw-slider": true,
     [`iw-slider-${color}`]: color !== "primary",
-    "iw-slider-full-width": fullWidth,
+    "iw-slider-full-width": isFullWidth,
   }
 
   return html`
     <div class=${classMap(classes)}>
-      ${(label || showValue) &&
+      ${(label || isValueVisible) &&
       html`<div class="iw-slider-header">
         ${label
           ? html`<label for=${inputId}>${label}</label>`
           : html`<span></span>`}
-        ${showValue
+        ${isValueVisible
           ? html`<output class="iw-slider-value">${value}</output>`
           : null}
       </div>`}
@@ -64,7 +64,7 @@ export function render(props) {
         max=${max}
         step=${step}
         .value=${String(value)}
-        ?disabled=${disabled}
+        ?disabled=${isDisabled}
         @input=${(event) => onChange?.(Number(event.target.value))}
         ${ref((element) => applyElementProps(element, rest))}
       />

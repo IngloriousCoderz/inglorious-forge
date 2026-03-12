@@ -20,7 +20,7 @@ describe("appBar", () => {
   it("applies position and dense classes", () => {
     const container = document.createElement("div")
 
-    render(appBar.render({ position: "sticky", dense: true }), container)
+    render(appBar.render({ position: "sticky", isDense: true }), container)
 
     const root = container.querySelector(".iw-app-bar")
     expect(root.classList.contains("iw-app-bar-sticky")).toBe(true)

@@ -8,8 +8,8 @@ export interface LinkProps {
   children?: TemplateResult | string | number
   underline?: "always" | "hover" | "none"
   color?: "primary" | "secondary" | "inherit"
-  muted?: boolean
-  external?: boolean
+  isMuted?: boolean
+  isExternal?: boolean
   className?: string
   onClick?: () => void
   [key: string]: unknown

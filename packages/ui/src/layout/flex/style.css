@@ -100,4 +100,24 @@
   &.iw-flex-gap-xl {
     gap: var(--iw-space-8);
   }
+
+  &.iw-flex-padding-none {
+    padding: 0;
+  }
+
+  &.iw-flex-padding-sm {
+    padding: var(--iw-space-2);
+  }
+
+  &.iw-flex-padding-md {
+    padding: var(--iw-space-4);
+  }
+
+  &.iw-flex-padding-lg {
+    padding: var(--iw-space-6);
+  }
+
+  &.iw-flex-padding-xl {
+    padding: var(--iw-space-8);
+  }
 }

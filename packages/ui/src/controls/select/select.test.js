@@ -22,7 +22,7 @@ describe("select", () => {
   it("supports multiple selection and disabled state", () => {
     const props = {
       isMulti: true,
-      disabled: true,
+      isDisabled: true,
       options: ["a", "b"],
     }
     const container = document.createElement("div")
@@ -35,7 +35,7 @@ describe("select", () => {
   })
 
   it("applies size and fullWidth classes", () => {
-    const props = { size: "lg", fullWidth: true, options: ["a", "b"] }
+    const props = { size: "lg", isFullWidth: true, options: ["a", "b"] }
     const container = document.createElement("div")
 
     render(select.render(props), container)
@@ -48,7 +48,7 @@ describe("select", () => {
   it("respects disabled options", () => {
     const props = {
       options: [
-        { label: "A", value: "a", disabled: true },
+        { label: "A", value: "a", isDisabled: true },
         { label: "B", value: "b" },
       ],
     }

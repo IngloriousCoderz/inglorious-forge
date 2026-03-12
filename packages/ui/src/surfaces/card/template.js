@@ -15,9 +15,9 @@ export const card = {
   render(props) {
     const {
       type, // eslint-disable-line no-unused-vars
-      hoverable = false,
-      clickable = false,
-      fullWidth = false,
+      isHoverable = false,
+      isClickable = false,
+      isFullWidth = false,
       className = "",
       onClick,
       ...rest
@@ -32,9 +32,9 @@ export const card = {
 
     const classes = {
       "iw-card": true,
-      "iw-card-hoverable": hoverable || clickable,
-      "iw-card-clickable": clickable,
-      "iw-card-full-width": fullWidth,
+      "iw-card-hoverable": isHoverable || isClickable,
+      "iw-card-clickable": isClickable,
+      "iw-card-full-width": isFullWidth,
       ...extraClasses,
     }
 
@@ -53,15 +53,27 @@ export const card = {
    * @returns {TemplateResult | null}
    */
   renderHeader(props) {
-    const { title, subtitle, header } = props
+    const { title, subtitle, header, headerPadding = "md" } = props
 
     if (header) {
-      return html`<div class="iw-card-header">${header}</div>`
+      return html`<div
+        class=${classMap({
+          "iw-card-header": true,
+          [`iw-card-header-padding-${headerPadding}`]: headerPadding !== "md",
+        })}
+      >
+        ${header}
+      </div>`
     }
 
     if (!title && !subtitle) return null
 
-    return html`<div class="iw-card-header">
+    return html`<div
+      class=${classMap({
+        "iw-card-header": true,
+        [`iw-card-header-padding-${headerPadding}`]: headerPadding !== "md",
+      })}
+    >
       ${title ? html`<h3 class="iw-card-title">${title}</h3>` : null}
       ${subtitle ? html`<p class="iw-card-subtitle">${subtitle}</p>` : null}
     </div>`
@@ -72,12 +84,19 @@ export const card = {
    * @returns {TemplateResult | null}
    */
   renderBody(props) {
-    const { children, body } = props
+    const { children, body, bodyPadding = "md" } = props
     const content = body ?? children
 
     if (content == null) return null
 
-    return html`<div class="iw-card-body">${content}</div>`
+    return html`<div
+      class=${classMap({
+        "iw-card-body": true,
+        [`iw-card-body-padding-${bodyPadding}`]: bodyPadding !== "md",
+      })}
+    >
+      ${content}
+    </div>`
   },
 
   /**
@@ -85,10 +104,17 @@ export const card = {
    * @returns {TemplateResult | null}
    */
   renderFooter(props) {
-    const { footer } = props
+    const { footer, footerPadding = "md" } = props
 
     if (footer == null) return null
 
-    return html`<div class="iw-card-footer">${footer}</div>`
+    return html`<div
+      class=${classMap({
+        "iw-card-footer": true,
+        [`iw-card-footer-padding-${footerPadding}`]: footerPadding !== "md",
+      })}
+    >
+      ${footer}
+    </div>`
   },
 }

@@ -7,7 +7,7 @@ describe("switchControl", () => {
   it("renders checked state", () => {
     const props = {
       id: "sw",
-      checked: true,
+      isChecked: true,
       label: "Enabled",
       color: "success",
     }
@@ -30,7 +30,7 @@ describe("switchControl", () => {
     let newValue = null
     const props = {
       id: "sw",
-      checked: false,
+      isChecked: false,
       onChange: (value) => (newValue = value),
     }
     const container = document.createElement("div")
@@ -49,7 +49,7 @@ describe("switchControl", () => {
       id: "sw",
       name: "toggle",
       size: "lg",
-      disabled: true,
+      isDisabled: true,
       label: "",
     }
     const container = document.createElement("div")

@@ -18,8 +18,8 @@ export default {
       options: ["primary", "secondary", "inherit"],
       description: "Color intent.",
     },
-    muted: { control: "boolean", description: "Use muted text color." },
-    external: {
+    isMuted: { control: "boolean", description: "Use muted text color." },
+    isExternal: {
       control: "boolean",
       description: "Opens in a new tab and adds safe rel attributes.",
     },
@@ -47,7 +47,7 @@ export const External = {
   args: {
     href: "https://example.com",
     label: "External link",
-    external: true,
+    isExternal: true,
     underline: "always",
   },
 }

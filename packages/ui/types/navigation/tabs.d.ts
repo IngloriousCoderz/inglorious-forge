@@ -6,7 +6,7 @@ export interface TabItem {
   label: TemplateResult | string | number
   icon?: TemplateResult | string | number
   panel?: TemplateResult | string | number
-  disabled?: boolean
+  isDisabled?: boolean
   onClick?: (value: string | number) => void
   [key: string]: unknown
 }
@@ -16,8 +16,8 @@ export interface TabsProps {
   type?: string
   items?: TabItem[]
   value?: string | number
-  centered?: boolean
-  fullWidth?: boolean
+  isCentered?: boolean
+  isFullWidth?: boolean
   onChange?: (value: string | number) => void
   [key: string]: unknown
 }

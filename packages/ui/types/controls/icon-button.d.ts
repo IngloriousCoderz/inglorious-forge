@@ -11,8 +11,8 @@ export interface IconButtonProps {
   variant?: "default" | "outline" | "ghost"
   color?: "primary" | "secondary" | "success" | "warning" | "error" | "info"
   size?: "sm" | "md" | "lg"
-  disabled?: boolean
-  fullWidth?: boolean
+  isDisabled?: boolean
+  isFullWidth?: boolean
   buttonType?: "button" | "submit" | "reset" | "menu"
   onClick?: () => void
 }

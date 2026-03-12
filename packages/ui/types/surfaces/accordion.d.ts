@@ -5,8 +5,8 @@ export interface AccordionItem {
   title: TemplateResult | string | number
   content?: TemplateResult | string | number
   icon?: TemplateResult | string | number
-  expanded?: boolean
-  disabled?: boolean
+  isExpanded?: boolean
+  isDisabled?: boolean
   onToggle?: (item: AccordionItem, index: number, expanded: boolean) => void
   [key: string]: unknown
 }

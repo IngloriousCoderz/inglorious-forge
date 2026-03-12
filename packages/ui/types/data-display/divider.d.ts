@@ -3,7 +3,7 @@ import type { TemplateResult } from "@inglorious/web"
 export interface DividerProps {
   id?: string
   orientation?: "horizontal" | "vertical"
-  inset?: boolean
+  isInset?: boolean
   [key: string]: unknown
 }
 

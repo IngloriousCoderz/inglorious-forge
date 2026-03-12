@@ -12,15 +12,15 @@ export default {
       control: "number",
       description: "Pages shown beside the current page.",
     },
-    showFirstButton: {
+    isFirstButtonVisible: {
       control: "boolean",
       description: "Show first page control.",
     },
-    showLastButton: {
+    isLastButtonVisible: {
       control: "boolean",
       description: "Show last page control.",
     },
-    disabled: { control: "boolean", description: "Disable all controls." },
+    isDisabled: { control: "boolean", description: "Disable all controls." },
     buttonVariant: {
       control: "select",
       options: ["default", "outline", "ghost"],
@@ -52,8 +52,8 @@ export const Default = {
     page: 4,
     count: 10,
     siblingCount: 1,
-    showFirstButton: true,
-    showLastButton: true,
+    isFirstButtonVisible: true,
+    isLastButtonVisible: true,
     buttonVariant: "ghost",
     buttonColor: "secondary",
     buttonSize: "sm",

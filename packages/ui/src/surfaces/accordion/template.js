@@ -49,8 +49,8 @@ export const accordion = {
     const {
       title,
       content,
-      disabled = false,
-      expanded = false,
+      isDisabled = false,
+      isExpanded = false,
       onToggle,
       icon,
     } = item
@@ -58,26 +58,26 @@ export const accordion = {
     return html`<section
       class=${classMap({
         "iw-accordion-item": true,
-        "iw-accordion-item-expanded": expanded,
-        "iw-accordion-item-disabled": disabled,
+        "iw-accordion-item-expanded": isExpanded,
+        "iw-accordion-item-disabled": isDisabled,
       })}
     >
       <button
         class="iw-accordion-trigger"
         type="button"
-        aria-expanded=${expanded}
-        ?disabled=${disabled}
+        aria-expanded=${isExpanded}
+        ?disabled=${isDisabled}
         @click=${() => {
-          if (disabled) return
-          onToggle?.(item, index, !expanded)
-          props.onItemToggle?.(item, index, !expanded)
+          if (isDisabled) return
+          onToggle?.(item, index, !isExpanded)
+          props.onItemToggle?.(item, index, !isExpanded)
         }}
       >
         ${icon ? html`<span class="iw-accordion-icon">${icon}</span>` : null}
         <span class="iw-accordion-title">${title}</span>
         <span class="iw-accordion-caret">▾</span>
       </button>
-      ${expanded
+      ${isExpanded
         ? html`<div class="iw-accordion-panel">${content}</div>`
         : null}
     </section>`

@@ -13,7 +13,7 @@ export const speedDial = {
    */
   render(props) {
     const {
-      open = false,
+      isOpen = false,
       direction = "up",
       icon = "+",
       ariaLabel = "Speed dial",
@@ -24,10 +24,10 @@ export const speedDial = {
       class=${classMap({
         "iw-speed-dial": true,
         [`iw-speed-dial-${direction}`]: true,
-        "iw-speed-dial-open": open,
+        "iw-speed-dial-open": isOpen,
       })}
     >
-      ${open
+      ${isOpen
         ? html`<div class="iw-speed-dial-actions">
             ${actions.map((action, index) =>
               this.renderAction(action, index, props),
@@ -38,7 +38,7 @@ export const speedDial = {
         type="button"
         class="iw-speed-dial-trigger"
         aria-label=${ariaLabel}
-        @click=${() => props.onToggle?.(!open)}
+        @click=${() => props.onToggle?.(!isOpen)}
       >
         ${icon}
       </button>
@@ -56,7 +56,7 @@ export const speedDial = {
       type="button"
       class="iw-speed-dial-action"
       aria-label=${action.label ?? `Speed dial action ${index + 1}`}
-      ?disabled=${action.disabled}
+      ?disabled=${action.isDisabled}
       @click=${() => {
         action.onClick?.(action.value ?? index)
         props.onAction?.(action.value ?? index, action)

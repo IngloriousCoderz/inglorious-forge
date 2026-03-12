@@ -32,7 +32,7 @@ describe("tooltip", () => {
       children: "Hover",
       content: "Details",
       position: "bottom",
-      open: true,
+      isOpen: true,
       maxWidth: "10rem",
       className: "extra-class",
       onClick: () => (isClicked = true),

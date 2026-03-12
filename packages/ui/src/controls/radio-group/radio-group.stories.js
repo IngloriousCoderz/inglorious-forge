@@ -19,7 +19,7 @@ export default {
       options: ["primary", "secondary", "success", "warning", "error", "info"],
       description: "Semantic accent color.",
     },
-    disabled: { control: "boolean", description: "Disables all options." },
+    isDisabled: { control: "boolean", description: "Disables all options." },
     options: { control: "object", description: "List of radio options." },
     onChange: { action: "onChange" },
   },
@@ -39,7 +39,7 @@ Default.args = {
   value: "medium",
   direction: "column",
   color: "primary",
-  disabled: false,
+  isDisabled: false,
   options: [
     { label: "Low", value: "low" },
     { label: "Medium", value: "medium" },

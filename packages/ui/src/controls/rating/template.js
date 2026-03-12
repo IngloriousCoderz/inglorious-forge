@@ -19,8 +19,8 @@ export function render(props) {
   const {
     value = DEFAULT_VALUE,
     max = DEFAULT_MAX,
-    disabled = false,
-    readonly = false,
+    isDisabled = false,
+    isReadOnly = false,
     symbol = "★",
     emptySymbol = "☆",
     size = "md",
@@ -30,8 +30,8 @@ export function render(props) {
   const classes = {
     "iw-rating": true,
     [`iw-rating-${size}`]: size !== "md",
-    "iw-rating-disabled": disabled,
-    "iw-rating-readonly": readonly,
+    "iw-rating-disabled": isDisabled,
+    "iw-rating-readonly": isReadOnly,
   }
 
   return html`
@@ -44,7 +44,7 @@ export function render(props) {
             type="button"
             class="iw-rating-item"
             aria-label=${`rate-${ratingValue}`}
-            ?disabled=${disabled || readonly}
+            ?disabled=${isDisabled || isReadOnly}
             @click=${() => onChange?.(ratingValue)}
           >
             ${isActive ? symbol : emptySymbol}

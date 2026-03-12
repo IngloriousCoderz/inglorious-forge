@@ -19,7 +19,7 @@ export default {
       options: ["sm", "md", "lg"],
       description: "Tooltip size scale.",
     },
-    open: { control: "boolean", description: "Force tooltip visible." },
+    isOpen: { control: "boolean", description: "Force tooltip visible." },
     maxWidth: { control: "text", description: "Max width CSS value." },
     onClick: { action: "onClick" },
   },
@@ -38,7 +38,7 @@ export const Default = {
     content: "Tooltip content",
     position: "bottom",
     size: "md",
-    open: false,
+    isOpen: false,
     maxWidth: "20rem",
   },
 }

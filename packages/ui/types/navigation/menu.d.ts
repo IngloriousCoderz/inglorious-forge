@@ -6,9 +6,9 @@ export interface MenuItem {
   label?: TemplateResult | string | number
   icon?: TemplateResult | string | number
   trailing?: TemplateResult | string | number
-  divider?: boolean
-  disabled?: boolean
-  selected?: boolean
+  hasDivider?: boolean
+  isDisabled?: boolean
+  isSelected?: boolean
   onClick?: (value: string | number) => void
   [key: string]: unknown
 }
@@ -16,9 +16,9 @@ export interface MenuItem {
 export interface MenuProps {
   id?: string
   type?: string
-  open?: boolean
+  isOpen?: boolean
   items?: MenuItem[]
-  dense?: boolean
+  isDense?: boolean
   className?: string
   onItemClick?: (value: string | number, item: MenuItem) => void
   [key: string]: unknown

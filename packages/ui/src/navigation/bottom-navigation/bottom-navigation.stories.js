@@ -8,7 +8,7 @@ export default {
   argTypes: {
     actions: { control: "object", description: "Bottom navigation actions." },
     value: { control: "text", description: "Currently selected action value." },
-    showLabels: { control: "boolean", description: "Show labels below icons." },
+    hasLabels: { control: "boolean", description: "Show labels below icons." },
     onChange: { action: "onChange" },
   },
   parameters: {

@@ -18,10 +18,6 @@
   &.iw-dashboard-drawer-hidden .iw-dashboard-main {
     padding-left: 0;
   }
-
-  .iw-list {
-    padding: var(--iw-space-2);
-  }
 }
 
 @media (min-width: 0rem) {
@@ -109,10 +105,6 @@
   color: white;
 }
 
-.iw-dashboard-stat .iw-card-body {
-  padding: 0;
-}
-
 .iw-dashboard-stat-primary {
   background: #5856d6;
 }
@@ -167,10 +159,6 @@
 }
 
 .iw-dashboard-social-card {
-  .iw-card-header {
-    padding: 0;
-  }
-
   .iw-dashboard-social-cap {
     position: relative;
     display: flex;

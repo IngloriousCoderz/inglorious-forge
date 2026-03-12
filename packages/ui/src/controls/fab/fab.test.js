@@ -26,7 +26,7 @@ describe("fab", () => {
   })
 
   it("renders extended variant and merges className", () => {
-    const props = { children: "Create", extended: true, className: "extra" }
+    const props = { children: "Create", isExtended: true, className: "extra" }
     const container = document.createElement("div")
 
     render(fab.render(props), container)

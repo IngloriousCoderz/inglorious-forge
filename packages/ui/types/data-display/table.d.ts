@@ -15,8 +15,8 @@ export interface TableProps {
   type?: string
   columns?: TableColumn[]
   rows?: TableRow[]
-  fullWidth?: boolean
-  striped?: boolean
+  isFullWidth?: boolean
+  isStriped?: boolean
   onRowClick?: (row: TableRow) => void
   [key: string]: unknown
 }

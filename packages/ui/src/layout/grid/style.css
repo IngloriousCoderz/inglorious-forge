@@ -26,6 +26,26 @@
   gap: var(--iw-space-8);
 }
 
+.iw-grid.iw-grid-padding-none {
+  padding: 0;
+}
+
+.iw-grid.iw-grid-padding-sm {
+  padding: var(--iw-space-2);
+}
+
+.iw-grid.iw-grid-padding-md {
+  padding: var(--iw-space-4);
+}
+
+.iw-grid.iw-grid-padding-lg {
+  padding: var(--iw-space-6);
+}
+
+.iw-grid.iw-grid-padding-xl {
+  padding: var(--iw-space-8);
+}
+
 .iw-grid.iw-grid-align-start {
   align-items: start;
 }

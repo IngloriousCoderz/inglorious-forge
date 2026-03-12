@@ -6,7 +6,7 @@ export default {
   tags: ["autodocs"],
   render: createRender(snackbar),
   argTypes: {
-    open: { control: "boolean" },
+    isOpen: { control: "boolean" },
     message: { control: "text" },
     position: {
       control: "select",
@@ -18,7 +18,7 @@ export default {
 
 export const Default = {
   args: {
-    open: true,
+    isOpen: true,
     message: "Saved successfully",
     position: "bottom-left",
   },

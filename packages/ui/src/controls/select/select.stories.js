@@ -19,11 +19,11 @@ export default {
       options: ["sm", "md", "lg"],
       description: "Size scale for paddings and font-size.",
     },
-    disabled: {
+    isDisabled: {
       control: "boolean",
       description: "Disables user input and interaction.",
     },
-    fullWidth: {
+    isFullWidth: {
       control: "boolean",
       description: "Expands input width to 100% of its container.",
     },
@@ -46,8 +46,8 @@ Default.args = {
   options: ["Cat", "Dog", "Seal"],
   value: "",
   size: "md",
-  disabled: false,
-  fullWidth: false,
+  isDisabled: false,
+  isFullWidth: false,
 }
 
 export const ComplexOptions = {}
@@ -64,14 +64,14 @@ export const Disabled = {}
 Disabled.args = {
   ...Default.args,
   value: "Cat",
-  disabled: true,
+  isDisabled: true,
 }
 
 export const DisabledOption = {}
 DisabledOption.args = {
   ...ComplexOptions.args,
   options: ComplexOptions.args.options.map((option, index) =>
-    index % 2 ? { ...option, disabled: true } : option,
+    index % 2 ? { ...option, isDisabled: true } : option,
   ),
 }
 
@@ -90,5 +90,5 @@ Large.args = {
 export const FullWidth = {}
 FullWidth.args = {
   ...Default.args,
-  fullWidth: true,
+  isFullWidth: true,
 }

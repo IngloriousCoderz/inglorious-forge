@@ -7,7 +7,7 @@ describe("menu", () => {
   it("does not render when closed", () => {
     const container = document.createElement("div")
 
-    render(menu.render({ open: false }), container)
+    render(menu.render({ isOpen: false }), container)
 
     expect(container.querySelector(".iw-menu")).toBeNull()
   })
@@ -16,7 +16,10 @@ describe("menu", () => {
     const container = document.createElement("div")
 
     render(
-      menu.render({ open: true, items: [{ label: "A" }, { divider: true }] }),
+      menu.render({
+        isOpen: true,
+        items: [{ label: "A" }, { hasDivider: true }],
+      }),
       container,
     )
 
@@ -30,7 +33,7 @@ describe("menu", () => {
 
     render(
       menu.render({
-        open: true,
+        isOpen: true,
         items: [{ label: "A", value: "a" }],
         onItemClick: (next) => (value = next),
       }),

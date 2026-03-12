@@ -8,9 +8,9 @@ export default {
   argTypes: {
     label: { control: "text", description: "Label text." },
     name: { control: "text", description: "Native HTML name attribute." },
-    checked: { control: "boolean", description: "Current checked state." },
-    disabled: { control: "boolean", description: "Disables interaction." },
-    required: { control: "boolean", description: "Marks input as required." },
+    isChecked: { control: "boolean", description: "Current checked state." },
+    isDisabled: { control: "boolean", description: "Disables interaction." },
+    isRequired: { control: "boolean", description: "Marks input as required." },
     color: {
       control: "select",
       options: ["primary", "secondary", "success", "warning", "error", "info"],
@@ -36,9 +36,9 @@ export const Default = {}
 Default.args = {
   label: "Accept terms",
   name: "terms",
-  checked: false,
-  disabled: false,
-  required: false,
+  isChecked: false,
+  isDisabled: false,
+  isRequired: false,
   color: "primary",
   size: "md",
 }
@@ -46,5 +46,5 @@ Default.args = {
 export const Checked = {}
 Checked.args = {
   ...Default.args,
-  checked: true,
+  isChecked: true,
 }

@@ -25,12 +25,12 @@ export function render(props) {
     color = "default",
     size = "md",
     shape = "rectangle",
-    disabled = false,
-    pressed = false,
-    fullWidth = false,
+    isDisabled = false,
+    isPressed = false,
+    isFullWidth = false,
     buttonType = "button",
     ariaLabel = "",
-    ariaPressed = false,
+    isAriaPressed = false,
     className = "",
     onClick,
     ...rest
@@ -48,10 +48,10 @@ export function render(props) {
     [`iw-button-${variant}`]: variant !== "default",
     [`iw-button-${color}`]: true,
     [`iw-button-${size}`]: size !== "md",
-    [`iw-button-pressed`]: pressed,
+    [`iw-button-pressed`]: isPressed,
     [`iw-button-shape-${shape}`]: shape !== "rectangle",
-    "iw-button-full-width": fullWidth,
-    "iw-button-disabled": disabled,
+    "iw-button-full-width": isFullWidth,
+    "iw-button-disabled": isDisabled,
     ...extraClasses,
   }
 
@@ -59,9 +59,9 @@ export function render(props) {
     <button
       type=${buttonType}
       aria-label=${ariaLabel}
-      aria-pressed=${ariaPressed}
+      aria-pressed=${isAriaPressed}
       class=${classMap(classes)}
-      ?disabled=${disabled}
+      ?disabled=${isDisabled}
       @click=${onClick}
       ${ref((element) => applyElementProps(element, rest))}
     >

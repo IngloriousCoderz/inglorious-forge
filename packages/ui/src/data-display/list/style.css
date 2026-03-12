@@ -4,6 +4,26 @@
   color: var(--iw-color-text);
   list-style: none;
 
+  &.iw-list-padding-none {
+    padding: 0;
+  }
+
+  &.iw-list-padding-sm {
+    padding: var(--iw-space-2);
+  }
+
+  &.iw-list-padding-md {
+    padding: var(--iw-space-4);
+  }
+
+  &.iw-list-padding-lg {
+    padding: var(--iw-space-6);
+  }
+
+  &.iw-list-padding-xl {
+    padding: var(--iw-space-8);
+  }
+
   &.iw-list-dense {
     .iw-list-item {
       padding-block: var(--iw-space-2);

@@ -35,7 +35,7 @@ export default {
     placeholder: { control: "text", description: "Placeholder text." },
     noOptionsMessage: { control: "text", description: "No results message." },
     loadingMessage: { control: "text", description: "Loading message." },
-    fullWidth: {
+    isFullWidth: {
       control: "boolean",
       description: "Expand to container width.",
     },
@@ -72,7 +72,7 @@ SingleClosed.args = {
   placeholder: "Select...",
   noOptionsMessage: "No options",
   loadingMessage: "Loading...",
-  fullWidth: false,
+  isFullWidth: false,
   size: "md",
   options,
 }

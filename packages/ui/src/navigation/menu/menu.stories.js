@@ -6,9 +6,12 @@ export default {
   tags: ["autodocs"],
   render: createRender(menu),
   argTypes: {
-    open: { control: "boolean", description: "Whether the menu is visible." },
+    isOpen: {
+      control: "boolean",
+      description: "Whether the menu is visible.",
+    },
     items: { control: "object", description: "Menu items and separators." },
-    dense: { control: "boolean", description: "Compact item spacing." },
+    isDense: { control: "boolean", description: "Compact item spacing." },
     onItemClick: { action: "onItemClick" },
   },
   parameters: {
@@ -22,11 +25,11 @@ export default {
 
 export const Default = {
   args: {
-    open: true,
+    isOpen: true,
     items: [
       { label: "Profile", icon: "👤" },
       { label: "Settings", icon: "⚙" },
-      { divider: true },
+      { hasDivider: true },
       { label: "Logout", trailing: "⌘Q" },
     ],
   },

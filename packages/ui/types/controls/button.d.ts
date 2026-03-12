@@ -8,11 +8,12 @@ export interface ButtonProps {
   color?: "primary" | "secondary" | "success" | "warning" | "error" | "info"
   size?: "sm" | "md" | "lg"
   shape?: "rectangle" | "pill" | "round" | "square"
-  disabled?: boolean
-  fullWidth?: boolean
+  isDisabled?: boolean
+  isPressed?: boolean
+  isFullWidth?: boolean
   buttonType?: "button" | "submit" | "reset" | "menu"
   ariaLabel?: string
-  ariaPressed?: boolean
+  isAriaPressed?: boolean
   className?: string
   onClick?: () => void
   [key: string]: unknown

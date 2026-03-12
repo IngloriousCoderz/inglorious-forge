@@ -23,7 +23,7 @@ export function render(props) {
     options = [],
     direction = "column",
     color = "primary",
-    disabled = false,
+    isDisabled = false,
     onChange,
     ...rest
   } = props
@@ -34,13 +34,13 @@ export function render(props) {
     "iw-radio-group": true,
     [`iw-radio-group-${direction}`]: true,
     [`iw-radio-group-${color}`]: color !== "primary",
-    "iw-radio-group-disabled": disabled,
+    "iw-radio-group-disabled": isDisabled,
   }
 
   return html`
     <fieldset
       class=${classMap(rootClasses)}
-      ?disabled=${disabled}
+      ?disabled=${isDisabled}
       ${ref((element) => applyElementProps(element, rest))}
     >
       ${label
@@ -50,7 +50,7 @@ export function render(props) {
         const {
           label: optionLabel,
           value: optionValue,
-          disabled: optionDisabled = false,
+          isDisabled: optionDisabled = false,
           ...optionRest
         } = option
 
@@ -63,7 +63,7 @@ export function render(props) {
               name=${name}
               value=${optionValue}
               .checked=${value === optionValue}
-              ?disabled=${disabled || optionDisabled}
+              ?disabled=${isDisabled || optionDisabled}
               @change=${(event) => onChange?.(event.target.value)}
               ${ref((element) => applyElementProps(element, optionRest))}
             />

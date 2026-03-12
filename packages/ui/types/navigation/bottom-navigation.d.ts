@@ -5,7 +5,7 @@ export interface BottomNavigationAction {
   value?: string | number
   label: TemplateResult | string | number
   icon?: TemplateResult | string | number
-  disabled?: boolean
+  isDisabled?: boolean
   onClick?: (value: string | number) => void
   [key: string]: unknown
 }
@@ -15,7 +15,7 @@ export interface BottomNavigationProps {
   type?: string
   actions?: BottomNavigationAction[]
   value?: string | number
-  showLabels?: boolean
+  hasLabels?: boolean
   className?: string
   onChange?: (value: string | number) => void
   [key: string]: unknown

@@ -5,7 +5,7 @@ export interface ButtonGroupItem {
   value?: string
   label: string
   children?: TemplateResult | string | number
-  disabled?: boolean
+  isDisabled?: boolean
   variant?: "default" | "outline" | "ghost"
   color?: "primary" | "secondary" | "success" | "warning" | "error" | "info"
   size?: "sm" | "md" | "lg"
@@ -18,13 +18,13 @@ export interface ButtonGroupProps {
   id?: string
   buttons?: ButtonGroupItem[]
   value?: string | string[]
-  multiple?: boolean
+  isMultiple?: boolean
   direction?: "row" | "column"
-  attached?: boolean
+  isAttached?: boolean
   size?: "sm" | "md" | "lg"
   variant?: "default" | "outline" | "ghost"
   color?: "primary" | "secondary" | "success" | "warning" | "error" | "info"
-  disabled?: boolean
+  isDisabled?: boolean
   onChange?: (value?: string | string[]) => void
   [key: string]: unknown
 }

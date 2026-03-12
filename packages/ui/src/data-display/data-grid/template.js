@@ -31,11 +31,11 @@ export const dataGrid = {
    * @returns {TemplateResult} The rendered table.
    */
   render(props) {
-    const { striped = false } = props
+    const { isStriped = false } = props
 
     const classes = {
       "iw-data-grid": true,
-      "iw-data-grid-striped": striped,
+      "iw-data-grid-striped": isStriped,
     }
 
     return html`<div class=${classMap(classes)}>
@@ -116,7 +116,7 @@ export const dataGrid = {
     return html`<div class="iw-data-grid-searchbar">
       ${input.render({
         size: "sm",
-        fullWidth: true,
+        isFullWidth: true,
         name: "search",
         inputType: "text",
         placeholder: props.search.placeholder ?? "Fuzzy search...",
@@ -248,7 +248,7 @@ export const dataGrid = {
         {
           label: "«",
           target: FIRST_PAGE + PRETTY_PAGE,
-          disabled: !paginationInfo.hasPrevPage,
+          isDisabled: !paginationInfo.hasPrevPage,
           onChange: () => props.onPageChange?.(FIRST_PAGE),
         },
       )}
@@ -261,7 +261,7 @@ export const dataGrid = {
         {
           label: "‹",
           target: Math.max(PRETTY_PAGE, paginationInfo.page),
-          disabled: !paginationInfo.hasPrevPage,
+          isDisabled: !paginationInfo.hasPrevPage,
           onChange: () => props.onPagePrev?.(),
         },
       )}
@@ -285,7 +285,7 @@ export const dataGrid = {
         {
           label: "›",
           target: Math.min(paginationInfo.totalPages, paginationInfo.page + 2),
-          disabled: !paginationInfo.hasNextPage,
+          isDisabled: !paginationInfo.hasNextPage,
           onChange: () => props.onPageNext?.(),
         },
       )}
@@ -298,7 +298,7 @@ export const dataGrid = {
         {
           label: "»",
           target: paginationInfo.totalPages,
-          disabled: !paginationInfo.hasNextPage,
+          isDisabled: !paginationInfo.hasNextPage,
           onChange: () =>
             props.onPageChange?.(paginationInfo.totalPages - LAST_PAGE),
         },

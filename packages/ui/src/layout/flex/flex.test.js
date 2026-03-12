@@ -27,7 +27,8 @@ describe("flex", () => {
       justify: "center",
       align: "center",
       gap: "lg",
-      fullWidth: true,
+      padding: "md",
+      isFullWidth: true,
     }
     const container = document.createElement("div")
 
@@ -39,6 +40,7 @@ describe("flex", () => {
     expect(root.classList.contains("iw-flex-justify-center")).toBe(true)
     expect(root.classList.contains("iw-flex-align-center")).toBe(true)
     expect(root.classList.contains("iw-flex-gap-lg")).toBe(true)
+    expect(root.classList.contains("iw-flex-padding-md")).toBe(true)
     expect(root.classList.contains("iw-flex-full-width")).toBe(true)
   })
 
@@ -58,7 +60,7 @@ describe("flex", () => {
     let isClicked = false
     const entity = {
       id: "fx",
-      inline: true,
+      isInline: true,
       onClick: () => (isClicked = true),
     }
     const container = document.createElement("div")

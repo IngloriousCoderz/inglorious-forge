@@ -4,8 +4,8 @@ export interface SwitchProps {
   id?: string
   name?: string
   label?: string
-  checked?: boolean
-  disabled?: boolean
+  isChecked?: boolean
+  isDisabled?: boolean
   color?: "primary" | "secondary" | "success" | "warning" | "error" | "info"
   size?: "sm" | "md" | "lg"
   onChange?: (value: boolean) => void

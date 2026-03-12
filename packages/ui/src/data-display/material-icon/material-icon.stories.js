@@ -15,7 +15,7 @@ export default {
       options: ["sm", "md", "lg"],
       description: "Icon size scale.",
     },
-    filled: {
+    isFilled: {
       control: "boolean",
       description: "Toggles filled font variation.",
     },
@@ -35,6 +35,6 @@ export const Default = {
   args: {
     name: "home",
     size: "md",
-    filled: true,
+    isFilled: true,
   },
 }

@@ -4,7 +4,7 @@ export interface MaterialIconProps {
   id?: string
   name?: string
   size?: "sm" | "md" | "lg"
-  filled?: boolean
+  isFilled?: boolean
   [key: string]: unknown
 }
 

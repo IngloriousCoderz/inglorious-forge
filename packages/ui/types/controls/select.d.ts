@@ -6,7 +6,6 @@ export type SelectOption =
   | {
       value: string | number
       label?: string
-      disabled?: boolean
       isDisabled?: boolean
       [key: string]: unknown
     }
@@ -18,8 +17,8 @@ export interface SelectProps {
   value?: unknown
   options?: SelectOption[]
   size?: "sm" | "md" | "lg"
-  disabled?: boolean
-  fullWidth?: boolean
+  isDisabled?: boolean
+  isFullWidth?: boolean
   isMulti?: boolean
   onChange?: (value: string) => void
   onBlur?: () => void

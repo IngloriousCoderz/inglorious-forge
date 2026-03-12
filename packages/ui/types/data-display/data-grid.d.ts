@@ -37,6 +37,7 @@ export interface DataGridProps<T extends Row = Row> {
   sorts: { column: string; direction: "asc" | "desc" }[]
   filters: Record<string, any>
   search: { value: string; placeholder?: string } | null
+  isStriped?: boolean
   selection: (string | number)[]
   selectionAnchor?: string | number | null
   pagination?: { page: number; pageSize: number; pageSizes: number[] } | null

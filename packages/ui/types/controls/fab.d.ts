@@ -5,9 +5,9 @@ export interface FabProps {
   children?: TemplateResult | string | number
   color?: "primary" | "secondary" | "success" | "warning" | "error" | "info"
   size?: "sm" | "md" | "lg"
-  disabled?: boolean
+  isDisabled?: boolean
   type?: "button" | "submit" | "reset" | "menu"
-  extended?: boolean
+  isExtended?: boolean
   ariaLabel?: string
   onClick?: () => void
   [key: string]: unknown

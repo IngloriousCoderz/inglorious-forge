@@ -81,7 +81,7 @@ describe("input", () => {
     })
 
     it("renders required indicator and attributes", () => {
-      const props = { id: "email", label: "Email", required: true }
+      const props = { id: "email", label: "Email", isRequired: true }
       const container = document.createElement("div")
 
       render(input.render(props), container)
@@ -92,7 +92,11 @@ describe("input", () => {
     })
 
     it("applies disabled, readonly, and fullWidth state", () => {
-      const props = { disabled: true, readonly: true, fullWidth: true }
+      const props = {
+        isDisabled: true,
+        isReadOnly: true,
+        isFullWidth: true,
+      }
       const container = document.createElement("div")
 
       render(input.render(props), container)

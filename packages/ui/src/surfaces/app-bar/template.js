@@ -19,10 +19,10 @@ export function render(props) {
     leading,
     trailing,
     children,
-    dense = false,
+    isDense = false,
     variant = "regular",
     color = "default",
-    elevated = true,
+    isElevated = true,
     position = "static",
     placement = "top",
     className = "",
@@ -37,12 +37,12 @@ export function render(props) {
   )
 
   const hasMeta = title || subtitle
-  const effectiveVariant = dense ? "dense" : variant
+  const effectiveVariant = isDense ? "dense" : variant
 
   return html`<header
     class=${classMap({
       "iw-app-bar": true,
-      "iw-app-bar-elevated": elevated,
+      "iw-app-bar-elevated": isElevated,
       [`iw-app-bar-${effectiveVariant}`]: true,
       [`iw-app-bar-color-${color}`]: true,
       [`iw-app-bar-${position}`]: true,

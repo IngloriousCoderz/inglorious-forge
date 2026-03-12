@@ -26,13 +26,13 @@ describe("paper", () => {
     ).toBe(true)
   })
 
-  it("applies square and padding modifiers", () => {
+  it("applies radius and padding modifiers", () => {
     const container = document.createElement("div")
 
-    render(paper.render({ square: true, padding: "lg" }), container)
+    render(paper.render({ radius: "none", padding: "lg" }), container)
 
     const root = container.querySelector(".iw-paper")
-    expect(root.classList.contains("iw-paper-square")).toBe(true)
+    expect(root.classList.contains("iw-paper-radius-none")).toBe(true)
     expect(root.classList.contains("iw-paper-padding-lg")).toBe(true)
   })
 })

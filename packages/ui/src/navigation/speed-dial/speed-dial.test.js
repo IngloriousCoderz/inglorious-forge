@@ -16,7 +16,7 @@ describe("speedDial", () => {
     const container = document.createElement("div")
 
     render(
-      speedDial.render({ open: true, actions: [{ label: "A" }] }),
+      speedDial.render({ isOpen: true, actions: [{ label: "A" }] }),
       container,
     )
 

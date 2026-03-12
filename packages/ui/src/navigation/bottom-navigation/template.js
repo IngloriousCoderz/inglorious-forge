@@ -18,7 +18,7 @@ export const bottomNavigation = {
       type, // eslint-disable-line no-unused-vars
       actions = [],
       value,
-      showLabels = true,
+      hasLabels = true,
       className = "",
       ...rest
     } = props
@@ -35,7 +35,7 @@ export const bottomNavigation = {
       ${ref((el) => applyElementProps(el, rest))}
     >
       ${actions.map((action, index) =>
-        this.renderAction(action, index, { ...props, showLabels, value }),
+        this.renderAction(action, index, { ...props, hasLabels, value }),
       )}
     </nav>`
   },
@@ -57,7 +57,7 @@ export const bottomNavigation = {
         "iw-bottom-navigation-action-selected": selected,
       })}
       aria-current=${selected ? "page" : null}
-      ?disabled=${action.disabled}
+      ?disabled=${action.isDisabled}
       @click=${() => {
         action.onClick?.(currentValue)
         props.onChange?.(currentValue)
@@ -66,7 +66,7 @@ export const bottomNavigation = {
       ${action.icon
         ? html`<span class="iw-bottom-navigation-icon">${action.icon}</span>`
         : null}
-      ${props.showLabels
+      ${props.hasLabels
         ? html`<span class="iw-bottom-navigation-label">${action.label}</span>`
         : null}
     </button>`

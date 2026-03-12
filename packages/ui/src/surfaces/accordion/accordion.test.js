@@ -25,7 +25,7 @@ describe("accordion", () => {
 
     render(
       accordion.render({
-        items: [{ title: "A", content: "A content", expanded: true }],
+        items: [{ title: "A", content: "A content", isExpanded: true }],
       }),
       container,
     )
@@ -37,7 +37,7 @@ describe("accordion", () => {
 
   it("dispatches onItemToggle", () => {
     let payload = null
-    const items = [{ title: "A", content: "A content", expanded: false }]
+    const items = [{ title: "A", content: "A content", isExpanded: false }]
     const container = document.createElement("div")
 
     render(

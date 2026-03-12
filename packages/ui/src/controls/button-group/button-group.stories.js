@@ -11,7 +11,7 @@ export default {
       description:
         "Selected value(s). String for single mode, array for multiple mode.",
     },
-    multiple: {
+    isMultiple: {
       control: "boolean",
       description: "Enable multi-selection mode.",
     },
@@ -20,7 +20,7 @@ export default {
       options: ["row", "column"],
       description: "Group direction.",
     },
-    attached: {
+    isAttached: {
       control: "boolean",
       description: "Visually attach adjacent buttons.",
     },
@@ -47,7 +47,7 @@ export default {
       ],
       description: "Default color intent for items.",
     },
-    disabled: {
+    isDisabled: {
       control: "boolean",
       description: "Disables all buttons.",
     },
@@ -69,12 +69,12 @@ export default {
 export const Default = {}
 Default.args = {
   value: "",
-  multiple: false,
+  isMultiple: false,
   direction: "row",
-  attached: true,
+  isAttached: true,
   size: "md",
   variant: "outline",
-  disabled: false,
+  isDisabled: false,
   buttons: [
     { id: "left", value: "left", label: "Left" },
     { id: "center", value: "center", label: "Center" },
@@ -102,7 +102,7 @@ SingleSelection.args = {
 export const MultiSelection = {}
 MultiSelection.args = {
   ...Default.args,
-  multiple: true,
+  isMultiple: true,
   value: ["left", "right"],
   buttons: [
     { id: "left", value: "left", label: "Left" },

@@ -19,8 +19,8 @@ export function render(props) {
     type, // eslint-disable-line no-unused-vars
     name = "",
     label = "",
-    checked = false,
-    disabled = false,
+    isChecked = false,
+    isDisabled = false,
     color = "primary",
     size = "md",
     onChange,
@@ -33,7 +33,7 @@ export function render(props) {
     "iw-switch": true,
     [`iw-switch-${color}`]: color !== "primary",
     [`iw-switch-${size}`]: size !== "md",
-    "iw-switch-disabled": disabled,
+    "iw-switch-disabled": isDisabled,
   }
 
   return html`
@@ -43,8 +43,8 @@ export function render(props) {
         class="iw-switch-input"
         type="checkbox"
         name=${name}
-        .checked=${checked}
-        ?disabled=${disabled}
+        .checked=${isChecked}
+        ?disabled=${isDisabled}
         @change=${(event) => onChange?.(event.target.checked)}
         ${ref((element) => applyElementProps(element, rest))}
       />

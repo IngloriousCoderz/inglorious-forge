@@ -19,8 +19,8 @@ export function render(props) {
     label,
     underline = "hover",
     color = "primary",
-    muted = false,
-    external = false,
+    isMuted = false,
+    isExternal = false,
     className = "",
     onClick,
     ...rest
@@ -38,13 +38,13 @@ export function render(props) {
     class=${classMap({
       "iw-link": true,
       [`iw-link-underline-${underline}`]: true,
-      [`iw-link-color-${color}`]: !muted,
-      "iw-link-muted": muted,
-      "iw-link-external": external,
+      [`iw-link-color-${color}`]: !isMuted,
+      "iw-link-muted": isMuted,
+      "iw-link-external": isExternal,
       ...extraClasses,
     })}
-    target=${external ? "_blank" : null}
-    rel=${external ? "noreferrer noopener" : null}
+    target=${isExternal ? "_blank" : null}
+    rel=${isExternal ? "noreferrer noopener" : null}
     @click=${onClick}
     ${ref((el) => applyElementProps(el, rest))}
   >

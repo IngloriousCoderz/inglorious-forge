@@ -8,7 +8,7 @@ export default {
   tags: ["autodocs"],
   render: createRender(dialog),
   argTypes: {
-    open: { control: "boolean" },
+    isOpen: { control: "boolean" },
     title: { control: "text" },
     description: { control: "text" },
     onClose: { action: "onClose" },
@@ -17,7 +17,7 @@ export default {
 
 export const Open = {
   args: {
-    open: true,
+    isOpen: true,
     title: "Delete item",
     description: "This action cannot be undone.",
     children: html`<p>Are you sure you want to continue?</p>`,

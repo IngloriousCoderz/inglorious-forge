@@ -5,7 +5,7 @@ import { dialog } from "."
 
 describe("dialog", () => {
   it("renders when open", () => {
-    const props = { open: true, title: "Hello", description: "Details" }
+    const props = { isOpen: true, title: "Hello", description: "Details" }
     const container = document.createElement("div")
 
     render(dialog.render(props), container)
@@ -17,7 +17,7 @@ describe("dialog", () => {
   })
 
   it("does not render when closed", () => {
-    const props = { open: false }
+    const props = { isOpen: false }
     const container = document.createElement("div")
 
     render(dialog.render(props), container)
@@ -27,7 +27,7 @@ describe("dialog", () => {
 
   it("dispatches close on backdrop click", () => {
     let closed = false
-    const props = { open: true, onClose: () => (closed = true) }
+    const props = { isOpen: true, onClose: () => (closed = true) }
     const container = document.createElement("div")
 
     render(dialog.render(props), container)
@@ -40,7 +40,7 @@ describe("dialog", () => {
     let closeCount = 0
     let backdropCount = 0
     const props = {
-      open: true,
+      isOpen: true,
       onClose: () => closeCount++,
       onBackdropClick: () => backdropCount++,
     }

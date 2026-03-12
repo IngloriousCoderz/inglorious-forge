@@ -17,7 +17,7 @@ export function render(props) {
     content,
     position = "top",
     size = "md",
-    open = false,
+    isOpen = false,
     maxWidth = "20rem",
     className = "",
     onClick,
@@ -33,7 +33,7 @@ export function render(props) {
 
   const classes = {
     "iw-tooltip": true,
-    "iw-tooltip-open": open,
+    "iw-tooltip-open": isOpen,
     [`iw-tooltip-${position}`]: position !== "top",
     [`iw-tooltip-size-${size}`]: size !== "md",
     ...extraClasses,

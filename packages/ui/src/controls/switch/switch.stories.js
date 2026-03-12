@@ -8,8 +8,8 @@ export default {
   argTypes: {
     label: { control: "text", description: "Label text." },
     name: { control: "text", description: "Native input name." },
-    checked: { control: "boolean", description: "Current checked state." },
-    disabled: { control: "boolean", description: "Disables interaction." },
+    isChecked: { control: "boolean", description: "Current checked state." },
+    isDisabled: { control: "boolean", description: "Disables interaction." },
     color: {
       control: "select",
       options: ["primary", "secondary", "success", "warning", "error", "info"],
@@ -35,8 +35,8 @@ export const Default = {}
 Default.args = {
   label: "Enable notifications",
   name: "notifications",
-  checked: false,
-  disabled: false,
+  isChecked: false,
+  isDisabled: false,
   color: "primary",
   size: "md",
 }
@@ -44,5 +44,5 @@ Default.args = {
 export const On = {}
 On.args = {
   ...Default.args,
-  checked: true,
+  isChecked: true,
 }

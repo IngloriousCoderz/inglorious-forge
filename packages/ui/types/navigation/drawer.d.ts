@@ -10,7 +10,7 @@ export interface DrawerProps {
   isCollapsed?: boolean
   title?: TemplateResult | string | number
   children?: TemplateResult | string | number
-  backdrop?: boolean
+  hasBackdrop?: boolean
   className?: string
   onClose?: () => void
   [key: string]: unknown

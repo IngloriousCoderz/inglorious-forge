@@ -14,7 +14,7 @@ describe("divider", () => {
   })
 
   it("renders vertical inset divider", () => {
-    const props = { id: "dv", orientation: "vertical", inset: true }
+    const props = { id: "dv", orientation: "vertical", isInset: true }
     const container = document.createElement("div")
 
     render(divider.render(props), container)

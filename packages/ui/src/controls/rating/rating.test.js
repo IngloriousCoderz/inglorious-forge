@@ -36,8 +36,8 @@ describe("rating", () => {
       id: "rt",
       value: 2,
       max: 5,
-      disabled: true,
-      readonly: true,
+      isDisabled: true,
+      isReadOnly: true,
       onChange: (value) => (newValue = value),
     }
     const container = document.createElement("div")

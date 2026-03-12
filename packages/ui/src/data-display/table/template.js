@@ -20,16 +20,16 @@ export const table = {
     const {
       columns = [],
       rows = [],
-      fullWidth = false,
-      striped = false,
+      isFullWidth = false,
+      isStriped = false,
       onRowClick,
       ...rest
     } = props
 
     const classes = {
       "iw-table": true,
-      "iw-table-full-width": fullWidth,
-      "iw-table-striped": striped,
+      "iw-table-full-width": isFullWidth,
+      "iw-table-striped": isStriped,
     }
 
     return html`

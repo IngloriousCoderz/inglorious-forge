@@ -28,8 +28,8 @@ describe("table", () => {
     const props = {
       columns: [{ id: "name" }],
       rows: [{ id: "a", name: "Ada" }],
-      fullWidth: true,
-      striped: true,
+      isFullWidth: true,
+      isStriped: true,
     }
     const container = document.createElement("div")
 

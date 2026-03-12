@@ -19,9 +19,9 @@ export function render(props) {
     type, // eslint-disable-line no-unused-vars
     name = "",
     label = "",
-    checked = false,
-    disabled = false,
-    required = false,
+    isChecked = false,
+    isDisabled = false,
+    isRequired = false,
     color = "primary",
     size = "md",
     onChange,
@@ -32,7 +32,7 @@ export function render(props) {
 
   const classes = {
     "iw-checkbox": true,
-    "iw-checkbox-disabled": disabled,
+    "iw-checkbox-disabled": isDisabled,
     [`iw-checkbox-${color}`]: color !== "primary",
     [`iw-checkbox-${size}`]: size !== "md",
   }
@@ -44,9 +44,9 @@ export function render(props) {
         class="iw-checkbox"
         type="checkbox"
         name=${name}
-        .checked=${checked}
-        ?disabled=${disabled}
-        ?required=${required}
+        .checked=${isChecked}
+        ?disabled=${isDisabled}
+        ?required=${isRequired}
         @change=${(event) => onChange?.(event.target.checked)}
         ${ref((element) => applyElementProps(element, rest))}
       />

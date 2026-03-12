@@ -17,10 +17,10 @@ export interface InputProps {
   hint?: string
   error?: string
   size?: "sm" | "md" | "lg"
-  disabled?: boolean
-  readonly?: boolean
-  required?: boolean
-  fullWidth?: boolean
+  isDisabled?: boolean
+  isReadOnly?: boolean
+  isRequired?: boolean
+  isFullWidth?: boolean
   icon?: string
   iconAfter?: string
   onChange?: (value: string) => void

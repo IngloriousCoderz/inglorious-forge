@@ -21,6 +21,11 @@ export default {
       options: ["none", "sm", "md", "lg", "xl"],
       description: "Spacing between grid cells.",
     },
+    padding: {
+      control: "select",
+      options: ["none", "sm", "md", "lg", "xl"],
+      description: "Inner padding for the grid container.",
+    },
     align: {
       control: "select",
       options: ["stretch", "start", "center", "end"],
@@ -31,7 +36,7 @@ export default {
       options: ["stretch", "start", "center", "end"],
       description: "Inline-axis alignment for cell content.",
     },
-    fullWidth: {
+    isFullWidth: {
       control: "boolean",
       description: "Expands container width to 100%.",
     },
@@ -55,8 +60,9 @@ export const Default = {
   args: {
     align: "stretch",
     justify: "stretch",
-    fullWidth: false,
+    isFullWidth: false,
     gap: "md",
+    padding: "none",
     children: [
       html`<div>Product</div>`,
       html`<div>Price</div>`,

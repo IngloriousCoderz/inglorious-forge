@@ -6,7 +6,6 @@ export type ComboboxOption =
   | {
       value: string | number
       label?: string
-      disabled?: boolean
       isDisabled?: boolean
       [key: string]: unknown
     }
@@ -33,7 +32,7 @@ export interface ComboboxProps {
   noOptionsMessage?: string
   loadingMessage?: string
 
-  fullWidth?: boolean
+  isFullWidth?: boolean
   size?: "sm" | "md" | "lg"
   onToggle?: () => void
   onClear?: () => void

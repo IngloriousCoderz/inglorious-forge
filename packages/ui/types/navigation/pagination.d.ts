@@ -6,9 +6,9 @@ export interface PaginationProps {
   page?: number
   count?: number
   siblingCount?: number
-  showFirstButton?: boolean
-  showLastButton?: boolean
-  disabled?: boolean
+  isFirstButtonVisible?: boolean
+  isLastButtonVisible?: boolean
+  isDisabled?: boolean
   buttonVariant?: "default" | "outline" | "ghost"
   buttonColor?:
     | "primary"
@@ -31,7 +31,7 @@ export interface PaginationItemRenderProps {
 export interface PaginationControlRenderProps {
   label: string
   target: number
-  disabled?: boolean
+  isDisabled?: boolean
   onChange?: (page: number) => void
 }
 

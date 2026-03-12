@@ -27,7 +27,7 @@ export const combobox = {
     return html`<div
       class=${classMap({
         "iw-combobox": true,
-        "iw-combobox-full-width": !!props.fullWidth,
+        "iw-combobox-full-width": !!props.isFullWidth,
         [`iw-combobox-${props.size}`]: props.size !== "md",
       })}
     >
@@ -249,10 +249,10 @@ export const combobox = {
       class="iw-combobox-dropdown-options-option ${classMap({
         "iw-combobox-dropdown-options-option-selected": isSelected,
         "iw-combobox-dropdown-options-option-focused": isFocused,
-        "iw-combobox-dropdown-options-option-disabled": !!normalized.disabled,
+        "iw-combobox-dropdown-options-option-disabled": !!normalized.isDisabled,
       })}"
       @click=${() => {
-        if (normalized.disabled) return
+        if (normalized.isDisabled) return
         props.onOptionSelect?.(normalized)
         props.onChange?.(normalized)
       }}
@@ -264,7 +264,7 @@ export const combobox = {
           html`<input
             type="checkbox"
             .checked=${isSelected}
-            ?disabled=${!!normalized.disabled}
+            ?disabled=${!!normalized.isDisabled}
           />`,
       )}
       <span>${getOptionLabel(normalized)}</span>
@@ -316,7 +316,7 @@ function handleKeyDown(props, event) {
         filteredOptions[props.focusedIndex]
       ) {
         const option = formatOption(filteredOptions[props.focusedIndex])
-        if (!option.disabled) {
+        if (!option.isDisabled) {
           props.onOptionSelect?.(option)
           props.onChange?.(option)
         }

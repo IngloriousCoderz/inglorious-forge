@@ -24,15 +24,30 @@ export default {
       control: "text",
       description: "Footer region content.",
     },
-    hoverable: {
+    headerPadding: {
+      control: "select",
+      options: ["none", "sm", "md", "lg", "xl"],
+      description: "Header padding preset.",
+    },
+    bodyPadding: {
+      control: "select",
+      options: ["none", "sm", "md", "lg", "xl"],
+      description: "Body padding preset.",
+    },
+    footerPadding: {
+      control: "select",
+      options: ["none", "sm", "md", "lg", "xl"],
+      description: "Footer padding preset.",
+    },
+    isHoverable: {
       control: "boolean",
       description: "Enable hover visual feedback.",
     },
-    clickable: {
+    isClickable: {
       control: "boolean",
       description: "Marks the card as interactive and clickable.",
     },
-    fullWidth: {
+    isFullWidth: {
       control: "boolean",
       description: "Expand to fill parent width.",
     },
@@ -53,6 +68,9 @@ export const Default = {
     title: "Card Title",
     subtitle: "This is a card subtitle",
     children: "Body content",
+    headerPadding: "md",
+    bodyPadding: "md",
+    footerPadding: "md",
   },
 }
 
@@ -69,7 +87,7 @@ export const Interactive = {
     title: "Interactive Card",
     subtitle: "Hover and click enabled",
     children: "Clickable body",
-    hoverable: true,
-    clickable: true,
+    isHoverable: true,
+    isClickable: true,
   },
 }

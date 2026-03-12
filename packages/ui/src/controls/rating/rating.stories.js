@@ -8,8 +8,8 @@ export default {
   argTypes: {
     value: { control: "number", description: "Current rating value." },
     max: { control: "number", description: "Maximum rating value." },
-    disabled: { control: "boolean", description: "Disables interaction." },
-    readonly: {
+    isDisabled: { control: "boolean", description: "Disables interaction." },
+    isReadOnly: {
       control: "boolean",
       description: "Shows value without interaction.",
     },
@@ -36,8 +36,8 @@ export const Default = {}
 Default.args = {
   value: 3,
   max: 5,
-  disabled: false,
-  readonly: false,
+  isDisabled: false,
+  isReadOnly: false,
   symbol: "★",
   emptySymbol: "☆",
   size: "md",

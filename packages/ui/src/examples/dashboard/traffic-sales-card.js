@@ -100,7 +100,7 @@ export const trafficSalesCard = {
         <div style="height: var(--iw-space-5)"></div>
 
         ${table.render({
-          fullWidth: true,
+          isFullWidth: true,
           columns: [
             { id: "user", title: "User" },
             { id: "country", title: "Country" },

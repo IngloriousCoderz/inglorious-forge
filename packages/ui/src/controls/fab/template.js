@@ -14,14 +14,20 @@ import { button } from "../button/index.js"
  * @returns {TemplateResult}
  */
 export function render(props) {
-  const { children, extended = false, className = "", onClick, ...rest } = props
+  const {
+    children,
+    isExtended = false,
+    className = "",
+    onClick,
+    ...rest
+  } = props
 
   return button.render({
     ...rest,
-    shape: extended ? "pill" : "round",
+    shape: isExtended ? "pill" : "round",
     className:
-      `iw-fab ${extended ? "iw-fab-extended" : ""} ${className}`.trim(),
-    children: extended
+      `iw-fab ${isExtended ? "iw-fab-extended" : ""} ${className}`.trim(),
+    children: isExtended
       ? children
       : html`<span class="iw-fab-content">${children}</span>`,
     onClick,

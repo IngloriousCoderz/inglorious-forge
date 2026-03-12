@@ -17,9 +17,10 @@ export function render(props) {
     columns = 0,
     minColumnWidth = 0,
     gap = "md",
+    padding = "none",
     align = "stretch",
     justify = "stretch",
-    fullWidth = false,
+    isFullWidth = false,
     className = "",
     children = [],
     onClick,
@@ -34,8 +35,9 @@ export function render(props) {
 
   const classes = {
     "iw-grid": true,
-    "iw-grid-full-width": fullWidth,
+    "iw-grid-full-width": isFullWidth,
     [`iw-grid-gap-${gap}`]: true,
+    [`iw-grid-padding-${padding}`]: true,
     [`iw-grid-align-${align}`]: align !== "stretch",
     [`iw-grid-justify-${justify}`]: justify !== "stretch",
     ...extraClasses,

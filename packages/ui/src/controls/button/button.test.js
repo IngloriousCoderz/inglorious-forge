@@ -99,7 +99,7 @@ describe("button", () => {
     })
 
     it("applies disabled attribute", () => {
-      const props = { children: "Disabled", disabled: true }
+      const props = { children: "Disabled", isDisabled: true }
       const container = document.createElement("div")
 
       render(button.render(props), container)
@@ -109,7 +109,7 @@ describe("button", () => {
     })
 
     it("applies full width class", () => {
-      const props = { children: "Full Width", fullWidth: true }
+      const props = { children: "Full Width", isFullWidth: true }
       const container = document.createElement("div")
 
       render(button.render(props), container)
@@ -162,7 +162,7 @@ describe("button", () => {
       const props = {
         children: "Aria",
         ariaLabel: "Primary action",
-        ariaPressed: true,
+        isAriaPressed: true,
         className: "extra-class",
       }
       const container = document.createElement("div")

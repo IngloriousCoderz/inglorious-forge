@@ -7,6 +7,7 @@ describe("list", () => {
   it("renders list items", () => {
     const props = {
       id: "list",
+      padding: "sm",
       items: [
         { id: "a", label: "A" },
         { id: "b", label: "B" },
@@ -17,6 +18,11 @@ describe("list", () => {
     render(list.render(props), container)
 
     expect(container.querySelectorAll(".iw-list-item")).toHaveLength(2)
+    expect(
+      container
+        .querySelector(".iw-list")
+        .classList.contains("iw-list-padding-sm"),
+    ).toBe(true)
   })
 
   it("renders ordered list when isOrdered is true", () => {
@@ -91,7 +97,7 @@ describe("list", () => {
   it("applies inset alignment for items without icons", () => {
     const props = {
       id: "list",
-      inset: true,
+      isInset: true,
       items: [
         { id: "a", icon: "★", primary: "With icon" },
         { id: "b", primary: "Without icon" },
@@ -110,8 +116,8 @@ describe("list", () => {
     const props = {
       id: "list",
       items: [
-        { id: "a", primary: "Selected", selected: true },
-        { id: "b", primary: "Disabled", disabled: true },
+        { id: "a", primary: "Selected", isSelected: true },
+        { id: "b", primary: "Disabled", isDisabled: true },
       ],
     }
     const container = document.createElement("div")
@@ -130,7 +136,7 @@ describe("list", () => {
         {
           id: "a",
           primary: "Parent",
-          expanded: true,
+          isExpanded: true,
           children: [{ id: "a-1", primary: "Child" }],
         },
       ],
@@ -151,7 +157,7 @@ describe("list", () => {
         {
           id: "a",
           primary: "Parent",
-          expanded: true,
+          isExpanded: true,
           children: [{ id: "a-1", primary: "Child" }],
         },
       ],
@@ -174,7 +180,7 @@ describe("list", () => {
         {
           id: "a",
           primary: "Parent",
-          expanded: false,
+          isExpanded: false,
           children: [{ id: "a-1", primary: "Child" }],
         },
       ],
@@ -196,7 +202,7 @@ describe("list", () => {
           id: "a",
           primary: "Parent",
           action: "On",
-          expanded: true,
+          isExpanded: true,
           children: [{ id: "a-1", primary: "Child" }],
         },
       ],

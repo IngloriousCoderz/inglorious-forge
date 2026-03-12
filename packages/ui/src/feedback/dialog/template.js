@@ -11,7 +11,7 @@ import { classMap, html } from "@inglorious/web"
  */
 export function render(props) {
   const {
-    open = false,
+    isOpen = false,
     title,
     description,
     children,
@@ -21,7 +21,7 @@ export function render(props) {
     onBackdropClick,
   } = props
 
-  if (!open) return null
+  if (!isOpen) return null
 
   const extraClasses = Object.fromEntries(
     className

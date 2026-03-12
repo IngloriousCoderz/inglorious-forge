@@ -29,10 +29,10 @@ export function render(props) {
     hint,
     error,
     size = "md",
-    disabled = false,
-    readonly = false,
-    required = false,
-    fullWidth = false,
+    isDisabled = false,
+    isReadOnly = false,
+    isRequired = false,
+    isFullWidth = false,
     icon,
     iconAfter,
     onChange,
@@ -45,8 +45,8 @@ export function render(props) {
 
   const wrapperClasses = {
     "iw-input-field": true,
-    "iw-input-full-width": fullWidth,
-    "iw-input-disabled": disabled,
+    "iw-input-full-width": isFullWidth,
+    "iw-input-disabled": isDisabled,
     "iw-input-has-error": !!error,
     "iw-input-has-icon": !!icon,
     "iw-input-has-icon-after": !!iconAfter,
@@ -65,7 +65,7 @@ export function render(props) {
         ? html`
             <label for=${inputId} class="iw-input-label">
               ${label}
-              ${required
+              ${isRequired
                 ? html`<span class="iw-input-required">*</span>`
                 : null}
             </label>
@@ -81,9 +81,9 @@ export function render(props) {
           type=${inputType}
           .value=${value}
           placeholder=${placeholder}
-          ?disabled=${disabled}
-          ?readonly=${readonly}
-          ?required=${required}
+          ?disabled=${isDisabled}
+          ?readonly=${isReadOnly}
+          ?required=${isRequired}
           class=${classMap(inputClasses)}
           @input=${(event) => onChange?.(event.target.value)}
           @blur=${onBlur}

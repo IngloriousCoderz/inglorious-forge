@@ -8,8 +8,9 @@ export interface FlexProps {
   justify?: "start" | "center" | "end" | "between" | "around" | "evenly"
   align?: "stretch" | "start" | "center" | "end" | "baseline"
   gap?: "none" | "sm" | "md" | "lg" | "xl"
-  inline?: boolean
-  fullWidth?: boolean
+  padding?: "none" | "sm" | "md" | "lg" | "xl"
+  isInline?: boolean
+  isFullWidth?: boolean
   children?: Array<TemplateResult | string | number>
   onClick?: () => void
 }

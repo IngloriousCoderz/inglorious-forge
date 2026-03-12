@@ -18,7 +18,11 @@ describe("link", () => {
     const container = document.createElement("div")
 
     render(
-      link.render({ href: "https://example.com", label: "X", external: true }),
+      link.render({
+        href: "https://example.com",
+        label: "X",
+        isExternal: true,
+      }),
       container,
     )
 

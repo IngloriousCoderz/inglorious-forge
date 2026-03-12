@@ -8,11 +8,11 @@
  *   secondary?: TemplateResult | string | number,
  *   icon?: TemplateResult | string | number,
  *   action?: TemplateResult | string | number,
- *   expanded?: boolean,
+ *   isExpanded?: boolean,
  *   onToggle?: (item: ListItem, path: number[]) => void,
- *   disabled?: boolean,
- *   selected?: boolean,
- *   divider?: boolean,
+ *   isDisabled?: boolean,
+ *   isSelected?: boolean,
+ *   hasDivider?: boolean,
  *   onClick?: (item: ListItem, path: number[]) => void,
  *   children?: ListItem[] | TemplateResult | string | number | null,
  *   raw?: ListItem,
@@ -38,7 +38,8 @@ export const list = {
       isOrdered = false,
       isDense = false,
       isDivided = false,
-      inset = false,
+      isInset = false,
+      padding = "none",
       path = [],
       className = "",
       ...rest
@@ -56,7 +57,8 @@ export const list = {
       "iw-list-ordered": isOrdered,
       "iw-list-dense": isDense,
       "iw-list-divided": isDivided,
-      "iw-list-inset": inset,
+      "iw-list-inset": isInset,
+      [`iw-list-padding-${padding}`]: true,
       ...extraClasses,
     }
 
@@ -68,7 +70,7 @@ export const list = {
         (item, index) => {
           const meta = getItemMeta(item, index)
           const shouldDivide =
-            (isDivided || meta.divider) && index < items.length - 1
+            (isDivided || meta.hasDivider) && index < items.length - 1
 
           return html`${this.renderItem(props, {
             item,
@@ -117,13 +119,13 @@ export const list = {
       primary,
       secondary,
       icon,
-      disabled,
-      selected,
+      isDisabled,
+      isSelected,
       onClick,
       raw,
       children,
       action,
-      expanded,
+      isExpanded,
       onToggle,
     } = meta
 
@@ -133,20 +135,20 @@ export const list = {
 
     const isClickable = !!props.onItemClick || !!onClick
     const hasChildren = Array.isArray(children) && children.length > 0
-    const isExpanded = !!expanded
+    const isExpandedValue = !!isExpanded
     const hasAction = !!action
 
     return html`<li
       class=${classMap({
         "iw-list-item": true,
         "iw-list-item-clickable": isClickable,
-        "iw-list-item-disabled": disabled,
-        "iw-list-item-selected": selected,
-        "iw-list-item-inset": props.inset && !icon,
+        "iw-list-item-disabled": isDisabled,
+        "iw-list-item-selected": isSelected,
+        "iw-list-item-inset": props.isInset && !icon,
       })}
       @click=${(event) => {
         event.stopPropagation()
-        if (disabled) return
+        if (isDisabled) return
         onClick?.(raw ?? item, path)
         props.onItemClick?.(raw ?? item, path)
       }}
@@ -165,10 +167,10 @@ export const list = {
                 ? html`<button
                     class="iw-list-item-toggle"
                     type="button"
-                    aria-expanded=${isExpanded}
+                    aria-expanded=${isExpandedValue}
                     @click=${(event) => {
                       event.stopPropagation()
-                      if (disabled) return
+                      if (isDisabled) return
                       onToggle?.(raw ?? item, path)
                       props.onItemToggle?.(raw ?? item, path)
                     }}
@@ -188,7 +190,7 @@ export const list = {
           : null}
       </div>
       ${hasChildren
-        ? isExpanded
+        ? isExpandedValue
           ? this.render({
               ...props,
               items: children,
@@ -217,13 +219,13 @@ function getItemMeta(item, index) {
     secondary,
     icon,
     title,
-    disabled = false,
-    selected = false,
-    divider = false,
+    isDisabled = false,
+    isSelected = false,
+    hasDivider = false,
     onClick,
     children,
     action,
-    expanded = false,
+    isExpanded = false,
     onToggle,
   } = item
 
@@ -244,13 +246,13 @@ function getItemMeta(item, index) {
     secondary,
     icon,
     title,
-    disabled,
-    selected,
-    divider,
+    isDisabled,
+    isSelected,
+    hasDivider,
     onClick,
     children: hasNestedChildren ? children : normalizedChildren,
     action,
-    expanded,
+    isExpanded,
     onToggle,
     raw: item,
   }

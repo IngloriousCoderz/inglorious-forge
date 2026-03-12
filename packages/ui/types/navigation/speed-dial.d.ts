@@ -5,7 +5,7 @@ export interface SpeedDialAction {
   value?: string | number
   label?: TemplateResult | string | number
   icon?: TemplateResult | string | number
-  disabled?: boolean
+  isDisabled?: boolean
   onClick?: (value: string | number) => void
   [key: string]: unknown
 }
@@ -13,12 +13,12 @@ export interface SpeedDialAction {
 export interface SpeedDialProps {
   id?: string
   type?: string
-  open?: boolean
+  isOpen?: boolean
   icon?: TemplateResult | string | number
   ariaLabel?: string
   direction?: "up" | "down" | "left" | "right"
   actions?: SpeedDialAction[]
-  onToggle?: (open: boolean) => void
+  onToggle?: (isOpen: boolean) => void
   onAction?: (value: string | number, action: SpeedDialAction) => void
   [key: string]: unknown
 }

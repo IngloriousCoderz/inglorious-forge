@@ -49,7 +49,7 @@ describe("slider", () => {
     const props = {
       id: "sl",
       label: "Volume",
-      showValue: false,
+      isValueVisible: false,
     }
     const container = document.createElement("div")
 
@@ -64,8 +64,8 @@ describe("slider", () => {
   it("applies full width and disabled attributes", () => {
     const props = {
       id: "sl",
-      fullWidth: true,
-      disabled: true,
+      isFullWidth: true,
+      isDisabled: true,
       step: 5,
     }
     const container = document.createElement("div")

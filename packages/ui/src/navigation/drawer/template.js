@@ -21,6 +21,7 @@ export function render(props) {
     isHidden = false,
     anchor = "left",
     isCollapsed = false,
+    hasBackdrop = true,
     title,
     children,
     className = "",
@@ -92,7 +93,7 @@ export function render(props) {
       )}
     </aside>
 
-    ${when(isOpen, () =>
+    ${when(isOpen && hasBackdrop, () =>
       backdrop.render({
         isOpen: true,
         className: "iw-drawer-backdrop",

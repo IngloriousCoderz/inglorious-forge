@@ -15,16 +15,16 @@ export const tabs = {
     const {
       items = [],
       value = items[0]?.value ?? 0,
-      centered = false,
-      fullWidth = false,
+      isCentered = false,
+      isFullWidth = false,
     } = props
 
     return html`<div class="iw-tabs">
       <div
         class=${classMap({
           "iw-tabs-list": true,
-          "iw-tabs-centered": centered,
-          "iw-tabs-full-width": fullWidth,
+          "iw-tabs-centered": isCentered,
+          "iw-tabs-full-width": isFullWidth,
         })}
         role="tablist"
       >
@@ -57,7 +57,7 @@ export const tabs = {
         "iw-tab-selected": selected,
       })}
       aria-selected=${selected ? "true" : "false"}
-      ?disabled=${item.disabled}
+      ?disabled=${item.isDisabled}
       @click=${() => {
         item.onClick?.(tabValue)
         props.onChange?.(tabValue)

@@ -19,8 +19,9 @@ export function render(props) {
     justify = "start",
     align = "stretch",
     gap = "md",
-    inline = false,
-    fullWidth = false,
+    padding = "none",
+    isInline = false,
+    isFullWidth = false,
     className = "",
     children = [],
     onClick,
@@ -35,13 +36,14 @@ export function render(props) {
 
   const classes = {
     "iw-flex": true,
-    "iw-flex-inline": inline,
-    "iw-flex-full-width": fullWidth,
+    "iw-flex-inline": isInline,
+    "iw-flex-full-width": isFullWidth,
     [`iw-flex-direction-${direction}`]: true,
     [`iw-flex-wrap-${wrap}`]: true,
     [`iw-flex-justify-${justify}`]: true,
     [`iw-flex-align-${align}`]: true,
     [`iw-flex-gap-${gap}`]: true,
+    [`iw-flex-padding-${padding}`]: true,
     ...extraClasses,
   }
 

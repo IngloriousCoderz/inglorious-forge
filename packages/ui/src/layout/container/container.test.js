@@ -15,7 +15,7 @@ describe("container", () => {
   it("applies fixed and gutter classes", () => {
     const host = document.createElement("div")
 
-    render(container.render({ fixed: true, disableGutters: true }), host)
+    render(container.render({ isFixed: true, isGutterless: true }), host)
 
     const root = host.querySelector(".iw-container")
     expect(root.classList.contains("iw-container-fixed")).toBe(true)

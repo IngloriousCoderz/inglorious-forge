@@ -5,9 +5,9 @@ export interface ContainerProps {
   type?: string
   children?: TemplateResult | string | number
   maxWidth?: "xs" | "sm" | "md" | "lg" | "xl" | "none" | false | number | string
-  fixed?: boolean
-  disableGutters?: boolean
-  center?: boolean
+  isFixed?: boolean
+  isGutterless?: boolean
+  isCentered?: boolean
   className?: string
   [key: string]: unknown
 }

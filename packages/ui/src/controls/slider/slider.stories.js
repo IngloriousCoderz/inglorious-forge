@@ -17,9 +17,9 @@ export default {
       options: ["primary", "secondary", "success", "warning", "error", "info"],
       description: "Semantic accent color.",
     },
-    disabled: { control: "boolean", description: "Disables interaction." },
-    showValue: { control: "boolean", description: "Shows current value." },
-    fullWidth: { control: "boolean", description: "Expands width to 100%." },
+    isDisabled: { control: "boolean", description: "Disables interaction." },
+    isValueVisible: { control: "boolean", description: "Shows current value." },
+    isFullWidth: { control: "boolean", description: "Expands width to 100%." },
     onChange: { action: "onChange" },
   },
   parameters: {
@@ -40,7 +40,7 @@ Default.args = {
   max: 100,
   step: 1,
   color: "primary",
-  disabled: false,
-  showValue: true,
-  fullWidth: false,
+  isDisabled: false,
+  isValueVisible: true,
+  isFullWidth: false,
 }

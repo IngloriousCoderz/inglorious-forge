@@ -16,14 +16,14 @@ export const menu = {
   render(props) {
     const {
       type, // eslint-disable-line no-unused-vars
-      open = false,
+      isOpen = false,
       items = [],
-      dense = false,
+      isDense = false,
       className = "",
       ...rest
     } = props
 
-    if (!open) return null
+    if (!isOpen) return null
 
     const extraClasses = Object.fromEntries(
       className
@@ -35,7 +35,7 @@ export const menu = {
     return html`<div
       class=${classMap({
         "iw-menu": true,
-        "iw-menu-dense": dense,
+        "iw-menu-dense": isDense,
         ...extraClasses,
       })}
       role="menu"
@@ -52,7 +52,7 @@ export const menu = {
    * @returns {TemplateResult}
    */
   renderItem(item, index, props) {
-    if (item.divider) {
+    if (item.hasDivider) {
       return html`<div class="iw-menu-divider" role="separator"></div>`
     }
 
@@ -60,10 +60,10 @@ export const menu = {
       type="button"
       class=${classMap({
         "iw-menu-item": true,
-        "iw-menu-item-selected": item.selected,
+        "iw-menu-item-selected": item.isSelected,
       })}
       role="menuitem"
-      ?disabled=${item.disabled}
+      ?disabled=${item.isDisabled}
       @click=${() => {
         item.onClick?.(item.value ?? index)
         props.onItemClick?.(item.value ?? index, item)

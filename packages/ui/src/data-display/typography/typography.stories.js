@@ -19,11 +19,14 @@ export default {
     },
     weight: { control: "text", description: "Optional CSS font-weight value." },
     color: { control: "text", description: "Optional CSS color value." },
-    noWrap: {
+    isNoWrap: {
       control: "boolean",
       description: "Single-line ellipsis behavior.",
     },
-    gutterBottom: { control: "boolean", description: "Add bottom spacing." },
+    hasGutterBottom: {
+      control: "boolean",
+      description: "Add bottom spacing.",
+    },
   },
   parameters: {
     docs: {
@@ -39,7 +42,7 @@ export const Default = {
     children: "The quick brown fox jumps over the lazy dog.",
     variant: "body",
     align: "left",
-    noWrap: false,
-    gutterBottom: false,
+    isNoWrap: false,
+    hasGutterBottom: false,
   },
 }

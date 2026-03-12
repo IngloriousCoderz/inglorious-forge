@@ -6,7 +6,7 @@ export const selectFilter = {
     return select.render({
       name: column.id,
       size: "sm",
-      fullWidth: true,
+      isFullWidth: true,
       options: column.filter.options,
       onChange: (value) => {
         const formattedValue = value ? format(value, column.type) : null

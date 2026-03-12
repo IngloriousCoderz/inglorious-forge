@@ -59,7 +59,7 @@ describe("iconButton", () => {
       variant: "outline",
       color: "secondary",
       size: "lg",
-      disabled: true,
+      isDisabled: true,
       ariaLabel: "Star button",
     }
     const container = document.createElement("div")

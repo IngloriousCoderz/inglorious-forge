@@ -7,7 +7,7 @@ export interface PaperProps {
   variant?: "elevated" | "outlined"
   elevation?: number
   padding?: "none" | "sm" | "md" | "lg"
-  square?: boolean
+  radius?: "none" | "sm" | "md" | "lg" | "xl" | "2xl" | "full"
   className?: string
   [key: string]: unknown
 }

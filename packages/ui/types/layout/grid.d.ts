@@ -6,9 +6,10 @@ export interface GridProps {
   columns?: number
   minColumnWidth?: string
   gap?: "none" | "sm" | "md" | "lg" | "xl"
+  padding?: "none" | "sm" | "md" | "lg" | "xl"
   align?: "stretch" | "start" | "center" | "end"
   justify?: "stretch" | "start" | "center" | "end"
-  fullWidth?: boolean
+  isFullWidth?: boolean
   children?: Array<TemplateResult | string | number>
   onClick?: () => void
 }

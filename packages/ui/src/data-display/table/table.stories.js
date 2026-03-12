@@ -8,8 +8,8 @@ export default {
   argTypes: {
     columns: { control: "object", description: "Column definitions." },
     rows: { control: "object", description: "Row records." },
-    fullWidth: { control: "boolean", description: "Stretch table width." },
-    striped: { control: "boolean", description: "Enable zebra rows." },
+    isFullWidth: { control: "boolean", description: "Stretch table width." },
+    isStriped: { control: "boolean", description: "Enable zebra rows." },
     onRowClick: { action: "onRowClick" },
   },
   parameters: {
@@ -34,7 +34,7 @@ export const Default = {
       { id: "u2", name: "Max", role: "Contributor", score: 87 },
       { id: "u3", name: "Lin", role: "Designer", score: 91 },
     ],
-    fullWidth: true,
-    striped: true,
+    isFullWidth: true,
+    isStriped: true,
   },
 }

@@ -11,6 +11,7 @@ export const socialCard = {
   render(entity, api) {
     return card.render({
       className: "iw-dashboard-social-card",
+      headerPadding: "none",
       header: html`
         <div class="iw-dashboard-social-cap ${entity.capClass}">
           ${materialIcon.render({ name: entity.icon, size: "lg" })}

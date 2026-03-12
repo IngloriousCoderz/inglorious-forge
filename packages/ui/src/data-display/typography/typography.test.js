@@ -20,8 +20,8 @@ describe("typography", () => {
       id: "typo",
       variant: "body",
       align: "center",
-      noWrap: true,
-      gutterBottom: true,
+      isNoWrap: true,
+      hasGutterBottom: true,
       children: "Body",
     }
     const container = document.createElement("div")

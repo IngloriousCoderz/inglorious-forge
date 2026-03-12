@@ -53,10 +53,10 @@ describe("radioGroup", () => {
     const props = {
       id: "rg",
       label: "Status",
-      disabled: true,
+      isDisabled: true,
       options: [
         { label: "A", value: "a" },
-        { label: "B", value: "b", disabled: true },
+        { label: "B", value: "b", isDisabled: true },
       ],
     }
     const container = document.createElement("div")

@@ -56,7 +56,7 @@ describe("buttonGroup", () => {
   it("dispatches change payload array in multiple selection mode", () => {
     let selectedValues = null
     const props = {
-      multiple: true,
+      isMultiple: true,
       value: ["a"],
       buttons: [
         { label: "A", value: "a" },
@@ -76,7 +76,7 @@ describe("buttonGroup", () => {
   it("applies layout classes and attached toggle", () => {
     const props = {
       direction: "column",
-      attached: false,
+      isAttached: false,
       buttons: [{ label: "A", value: "a" }],
     }
     const container = document.createElement("div")
@@ -90,7 +90,7 @@ describe("buttonGroup", () => {
 
   it("disables all buttons when disabled", () => {
     const props = {
-      disabled: true,
+      isDisabled: true,
       buttons: [
         { label: "A", value: "a" },
         { label: "B", value: "b" },

@@ -19,25 +19,25 @@ export function render(props) {
     type, // eslint-disable-line no-unused-vars
     buttons = [],
     value,
-    multiple = false,
+    isMultiple = false,
     direction = "row",
-    attached = true,
+    isAttached = true,
     size = "md",
     variant = "default",
     color = "default",
-    disabled = false,
+    isDisabled = false,
     onChange,
     ...rest
   } = props
 
   const groupClasses = {
     "iw-button-group": true,
-    "iw-button-group-selection": value != null || multiple,
+    "iw-button-group-selection": value != null || isMultiple,
     [`iw-button-group-${direction}`]: true,
-    "iw-button-group-attached": attached,
+    "iw-button-group-attached": isAttached,
   }
 
-  const selectedValues = multiple
+  const selectedValues = isMultiple
     ? new Set(Array.isArray(value) ? value : [])
     : null
 
@@ -53,7 +53,7 @@ export function render(props) {
           value: explicitValue,
           label,
           children,
-          disabled: itemDisabled,
+          isDisabled: itemDisabled,
           variant: itemVariant,
           color: itemColor,
           size: itemSize,
@@ -63,7 +63,7 @@ export function render(props) {
         } = item
 
         const itemValue = explicitValue ?? itemId
-        const isPressed = multiple
+        const isPressed = isMultiple
           ? selectedValues.has(itemValue)
           : value != null
             ? value === itemValue
@@ -80,13 +80,13 @@ export function render(props) {
           variant: itemVariant ?? variant,
           color: itemColor ?? color,
           size: itemSize ?? size,
-          disabled: disabled || !!itemDisabled,
-          pressed: isPressed,
-          ariaPressed: isPressed ? true : undefined,
+          isDisabled: isDisabled || !!itemDisabled,
+          isPressed,
+          isAriaPressed: isPressed ? true : undefined,
           onClick: () => {
             if (!onChange) return
 
-            if (multiple) {
+            if (isMultiple) {
               const next = new Set(selectedValues)
               if (next.has(itemValue)) {
                 next.delete(itemValue)

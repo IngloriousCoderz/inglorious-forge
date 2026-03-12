@@ -11,7 +11,7 @@ import { classMap, html } from "@inglorious/web"
  */
 export function render(props) {
   const {
-    open = false,
+    isOpen = false,
     message,
     action,
     className = "",
@@ -19,7 +19,7 @@ export function render(props) {
     onClose,
   } = props
 
-  if (!open) return null
+  if (!isOpen) return null
 
   const extraClasses = Object.fromEntries(
     className

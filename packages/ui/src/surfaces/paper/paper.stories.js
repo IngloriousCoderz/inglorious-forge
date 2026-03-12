@@ -22,9 +22,10 @@ export default {
       options: ["none", "sm", "md", "lg"],
       description: "Internal spacing preset for content.",
     },
-    square: {
-      control: "boolean",
-      description: "Force squared corners instead of theme radius.",
+    radius: {
+      control: "select",
+      options: ["none", "sm", "md", "lg", "xl", "2xl", "full"],
+      description: "Corner roundness preset for the surface.",
     },
     children: {
       control: "text",
@@ -46,6 +47,7 @@ export const Elevated = {
     variant: "elevated",
     elevation: 2,
     padding: "md",
+    radius: "md",
     children: "Surface content",
   },
 }
@@ -54,6 +56,7 @@ export const Outlined = {
   args: {
     variant: "outlined",
     padding: "md",
+    radius: "md",
     children: "Outlined surface",
   },
 }

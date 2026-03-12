@@ -3,7 +3,7 @@ import type { TemplateResult } from "@inglorious/web"
 export interface RadioOption {
   label: string
   value: string
-  disabled?: boolean
+  isDisabled?: boolean
   [key: string]: unknown
 }
 
@@ -15,7 +15,7 @@ export interface RadioGroupProps {
   options?: RadioOption[]
   direction?: "column" | "row"
   color?: "primary" | "secondary" | "success" | "warning" | "error" | "info"
-  disabled?: boolean
+  isDisabled?: boolean
   onChange?: (value: string) => void
   [key: string]: unknown
 }

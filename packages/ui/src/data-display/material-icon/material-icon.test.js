@@ -21,7 +21,7 @@ describe("materialIcon", () => {
       id: "mi",
       name: "settings",
       size: "lg",
-      filled: false,
+      isFilled: false,
       onClick: () => (isClicked = true),
     }
     const container = document.createElement("div")

@@ -4,8 +4,8 @@ export interface RatingProps {
   id?: string
   value?: number
   max?: number
-  disabled?: boolean
-  readonly?: boolean
+  isDisabled?: boolean
+  isReadOnly?: boolean
   symbol?: string
   emptySymbol?: string
   onChange?: (value: number) => void

@@ -8,7 +8,7 @@ describe("checkbox", () => {
     const props = {
       id: "cb",
       label: "Accept",
-      checked: true,
+      isChecked: true,
       color: "warning",
     }
     const container = document.createElement("div")
@@ -30,7 +30,7 @@ describe("checkbox", () => {
     let isChecked = false
     const props = {
       id: "cb",
-      checked: false,
+      isChecked: false,
       onChange: (value) => (isChecked = value),
     }
     const container = document.createElement("div")
@@ -49,8 +49,8 @@ describe("checkbox", () => {
       id: "cb",
       name: "terms",
       size: "lg",
-      disabled: true,
-      required: true,
+      isDisabled: true,
+      isRequired: true,
     }
     const container = document.createElement("div")
 

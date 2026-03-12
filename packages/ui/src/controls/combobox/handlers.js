@@ -11,7 +11,7 @@ import { filterOptions, formatOption, getOptionValue } from "./helpers.js"
  */
 export function create(entity) {
   entity.size ??= "md"
-  entity.fullWidth ??= false
+  entity.isFullWidth ??= false
   entity.label ??= ""
 
   entity.isOpen ??= false

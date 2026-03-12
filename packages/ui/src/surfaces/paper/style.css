@@ -4,8 +4,28 @@
   border-radius: var(--iw-radius-md);
 }
 
-.iw-paper-square {
+.iw-paper-radius-none {
   border-radius: var(--iw-radius-none);
+}
+
+.iw-paper-radius-sm {
+  border-radius: var(--iw-radius-sm);
+}
+
+.iw-paper-radius-lg {
+  border-radius: var(--iw-radius-lg);
+}
+
+.iw-paper-radius-xl {
+  border-radius: var(--iw-radius-xl);
+}
+
+.iw-paper-radius-2xl {
+  border-radius: var(--iw-radius-2xl);
+}
+
+.iw-paper-radius-full {
+  border-radius: var(--iw-radius-full);
 }
 
 .iw-paper-outlined {

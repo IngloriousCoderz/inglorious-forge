@@ -10,11 +10,11 @@ export type ListItem =
       secondary?: TemplateResult | string | number
       icon?: TemplateResult | string | number
       action?: TemplateResult | string | number
-      expanded?: boolean
+      isExpanded?: boolean
       onToggle?: (item: ListItem, path: number[]) => void
-      disabled?: boolean
-      selected?: boolean
-      divider?: boolean
+      isDisabled?: boolean
+      isSelected?: boolean
+      hasDivider?: boolean
       onClick?: (item: ListItem, path: number[]) => void
       children?: ListItem[] | TemplateResult | string | number
       [key: string]: unknown
@@ -28,7 +28,8 @@ export interface ListProps {
   isOrdered?: boolean
   isDense?: boolean
   isDivided?: boolean
-  inset?: boolean
+  isInset?: boolean
+  padding?: "none" | "sm" | "md" | "lg" | "xl"
   path?: number[]
   className?: string
   onItemClick?: (item: ListItem, path: number[]) => void
@@ -48,11 +49,11 @@ export interface ListType {
         secondary?: TemplateResult | string | number
         icon?: TemplateResult | string | number
         action?: TemplateResult | string | number
-        expanded?: boolean
+        isExpanded?: boolean
         onToggle?: (item: ListItem, path: number[]) => void
-        disabled?: boolean
-        selected?: boolean
-        divider?: boolean
+        isDisabled?: boolean
+        isSelected?: boolean
+        hasDivider?: boolean
         onClick?: (item: ListItem, path: number[]) => void
         children?: ListItem[] | TemplateResult | string | number | null
       }

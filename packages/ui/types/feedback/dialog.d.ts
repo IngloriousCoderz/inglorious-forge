@@ -3,7 +3,7 @@ import type { TemplateResult } from "@inglorious/web"
 export interface DialogProps {
   id?: string
   type?: string
-  open?: boolean
+  isOpen?: boolean
   title?: TemplateResult | string | number
   description?: TemplateResult | string | number
   children?: TemplateResult | string | number

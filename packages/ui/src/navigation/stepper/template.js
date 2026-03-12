@@ -16,14 +16,14 @@ export const stepper = {
       steps = [],
       activeStep = 0,
       orientation = "horizontal",
-      alternativeLabel = false,
+      isAlternativeLabel = false,
     } = props
 
     return html`<ol
       class=${classMap({
         "iw-stepper": true,
         [`iw-stepper-${orientation}`]: true,
-        "iw-stepper-alternative-label": alternativeLabel,
+        "iw-stepper-alternative-label": isAlternativeLabel,
       })}
     >
       ${steps.map((step, index) =>
@@ -39,7 +39,7 @@ export const stepper = {
    * @returns {TemplateResult}
    */
   renderStep(step, index, props) {
-    const completed = step.completed ?? index < props.activeStep
+    const completed = step.isCompleted ?? index < props.activeStep
     const active = index === props.activeStep
 
     return html`<li

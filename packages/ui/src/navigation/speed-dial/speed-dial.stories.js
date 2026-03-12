@@ -6,7 +6,10 @@ export default {
   tags: ["autodocs"],
   render: createRender(speedDial),
   argTypes: {
-    open: { control: "boolean", description: "Whether actions are expanded." },
+    isOpen: {
+      control: "boolean",
+      description: "Whether actions are expanded.",
+    },
     direction: {
       control: "select",
       options: ["up", "down", "left", "right"],
@@ -27,7 +30,7 @@ export default {
 
 export const Default = {
   args: {
-    open: true,
+    isOpen: true,
     actions: [
       { value: "edit", icon: "✎", label: "Edit" },
       { value: "share", icon: "↗", label: "Share" },

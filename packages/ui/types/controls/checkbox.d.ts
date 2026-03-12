@@ -4,9 +4,9 @@ export interface CheckboxProps {
   id?: string
   name?: string
   label?: string
-  checked?: boolean
-  disabled?: boolean
-  required?: boolean
+  isChecked?: boolean
+  isDisabled?: boolean
+  isRequired?: boolean
   color?: "primary" | "secondary" | "success" | "warning" | "error" | "info"
   size?: "sm" | "md" | "lg"
   onChange?: (isChecked: boolean) => void

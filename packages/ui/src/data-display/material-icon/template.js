@@ -5,13 +5,13 @@
 import { classMap, html } from "@inglorious/web"
 
 export function render(props) {
-  const { name = "help", size = "md", filled = true, onClick } = props
+  const { name = "help", size = "md", isFilled = true, onClick } = props
 
   return html`<span
     class=${classMap({
       "iw-material-icon": true,
       "material-symbols-outlined": true,
-      "iw-material-icon-filled": filled,
+      "iw-material-icon-filled": isFilled,
       [`iw-material-icon-${size}`]: size !== "md",
     })}
     aria-hidden="true"

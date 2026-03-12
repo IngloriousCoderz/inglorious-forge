@@ -17,7 +17,7 @@ export function render(props) {
     children,
     variant = "elevated",
     elevation = 1,
-    square = false,
+    radius = "md",
     padding = "md",
     className = "",
     ...rest
@@ -37,7 +37,7 @@ export function render(props) {
       [`iw-paper-elevation-${Math.max(0, Math.min(4, elevation))}`]:
         variant === "elevated",
       [`iw-paper-padding-${padding}`]: true,
-      "iw-paper-square": square,
+      [`iw-paper-radius-${radius}`]: radius !== "md",
       ...extraClasses,
     })}
     ${ref((el) => applyElementProps(el, rest))}

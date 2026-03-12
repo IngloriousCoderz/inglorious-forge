@@ -30,7 +30,7 @@ export const Default = {
       {
         title: "Account",
         content: "Manage your account settings.",
-        expanded: true,
+        isExpanded: true,
       },
       {
         title: "Security",
@@ -51,7 +51,7 @@ export const WithIcons = {
         icon: "👤",
         title: "Profile",
         content: "Public profile details",
-        expanded: true,
+        isExpanded: true,
       },
       { icon: "🔒", title: "Privacy", content: "Visibility and permissions" },
       { icon: "💳", title: "Payments", content: "Payment methods" },

@@ -11,8 +11,8 @@ export default {
       description: "Tab labels, values, and optional panels.",
     },
     value: { control: "text", description: "Currently selected tab value." },
-    centered: { control: "boolean", description: "Center the tab list." },
-    fullWidth: {
+    isCentered: { control: "boolean", description: "Center the tab list." },
+    isFullWidth: {
       control: "boolean",
       description: "Stretch tabs to fill available width.",
     },

@@ -52,7 +52,7 @@ export function isOptionSelected(option, selectedValue, isMulti) {
 /**
  * Normalize option to object shape used in rendering/handlers.
  * @param {SelectOption} option
- * @returns {{ value: string|number, label: string, disabled?: boolean }}
+ * @returns {{ value: string|number, label: string, isDisabled?: boolean }}
  */
 export function formatOption(option) {
   if (typeof option === "string" || typeof option === "number") {
@@ -63,7 +63,7 @@ export function formatOption(option) {
     return {
       value: option.value ?? option,
       label: option.label ?? String(option.value ?? option),
-      disabled: option.disabled ?? option.isDisabled ?? false,
+      isDisabled: option.isDisabled ?? option.disabled ?? false,
       ...option,
     }
   }

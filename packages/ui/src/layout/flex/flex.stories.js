@@ -33,11 +33,16 @@ export default {
       options: ["none", "sm", "md", "lg", "xl"],
       description: "Spacing between children.",
     },
-    inline: {
+    padding: {
+      control: "select",
+      options: ["none", "sm", "md", "lg", "xl"],
+      description: "Inner padding for the flex container.",
+    },
+    isInline: {
       control: "boolean",
       description: "Uses inline-flex instead of flex.",
     },
-    fullWidth: {
+    isFullWidth: {
       control: "boolean",
       description: "Expands container width to 100%.",
     },
@@ -64,8 +69,9 @@ Default.args = {
   justify: "start",
   align: "stretch",
   gap: "md",
-  inline: false,
-  fullWidth: false,
+  padding: "none",
+  isInline: false,
+  isFullWidth: false,
   children: [
     html`<div>First</div>`,
     html`<div>Second</div>`,

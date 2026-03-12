@@ -5,13 +5,13 @@
 import { classMap, html } from "@inglorious/web"
 
 export function render(props) {
-  const { orientation = "horizontal", inset = false } = props
+  const { orientation = "horizontal", isInset = false } = props
 
   return html`<hr
     class=${classMap({
       "iw-divider": true,
       "iw-divider-vertical": orientation === "vertical",
-      "iw-divider-inset": inset,
+      "iw-divider-inset": isInset,
     })}
   />`
 }

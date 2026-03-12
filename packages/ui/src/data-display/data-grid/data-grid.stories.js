@@ -85,8 +85,8 @@ export const Default = {
       pageSize: 10,
       pageSizes: [10, 20, 30],
     },
-    // fullWidth: true,
-    striped: true,
+    // isFullWidth: true,
+    isStriped: true,
   },
 }
 

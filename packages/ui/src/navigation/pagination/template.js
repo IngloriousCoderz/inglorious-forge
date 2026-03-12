@@ -21,9 +21,9 @@ export const pagination = {
       page = 1,
       count = 1,
       siblingCount = 1,
-      showFirstButton = false,
-      showLastButton = false,
-      disabled = false,
+      isFirstButtonVisible = false,
+      isLastButtonVisible = false,
+      isDisabled = false,
       className = "",
     } = props
 
@@ -39,29 +39,29 @@ export const pagination = {
       class=${classMap({ "iw-pagination": true, ...extraClasses })}
       aria-label="Pagination"
     >
-      ${showFirstButton
+      ${isFirstButtonVisible
         ? this.renderControl(props, {
             label: "«",
             target: 1,
-            disabled: page <= PRETTY_PAGE || disabled,
+            isDisabled: page <= PRETTY_PAGE || isDisabled,
           })
         : null}
       ${this.renderControl(props, {
         label: "‹",
         target: Math.max(PRETTY_PAGE, page - PRETTY_PAGE),
-        disabled: page <= PRETTY_PAGE || disabled,
+        isDisabled: page <= PRETTY_PAGE || isDisabled,
       })}
       ${items.map((item) => this.renderItem(props, { item }))}
       ${this.renderControl(props, {
         label: "›",
         target: Math.min(count, page + PRETTY_PAGE),
-        disabled: page >= count || disabled,
+        isDisabled: page >= count || isDisabled,
       })}
-      ${showLastButton
+      ${isLastButtonVisible
         ? this.renderControl(props, {
             label: "»",
             target: count,
-            disabled: page >= count || disabled,
+            isDisabled: page >= count || isDisabled,
           })
         : null}
     </nav>`
@@ -90,7 +90,7 @@ export const pagination = {
         .filter(Boolean)
         .join(" "),
       "aria-current": isCurrent ? "page" : null,
-      disabled: props.disabled,
+      isDisabled: props.isDisabled,
       onClick: () => props.onChange?.(item),
       children: item,
     })
@@ -103,7 +103,7 @@ export const pagination = {
    */
   renderControl(
     props,
-    { label, target, disabled = false, onChange = props.onChange },
+    { label, target, isDisabled = false, onChange = props.onChange },
   ) {
     return button.render({
       variant: props.buttonVariant,
@@ -113,7 +113,7 @@ export const pagination = {
         .filter(Boolean)
         .join(" "),
       ariaLabel: `Go to page ${target}`,
-      disabled,
+      isDisabled,
       onClick: () => onChange?.(target),
       children: label,
     })

@@ -5,7 +5,7 @@ import { snackbar } from "."
 
 describe("snackbar", () => {
   it("renders when open", () => {
-    const props = { open: true, message: "Saved" }
+    const props = { isOpen: true, message: "Saved" }
     const container = document.createElement("div")
 
     render(snackbar.render(props), container)
@@ -16,7 +16,7 @@ describe("snackbar", () => {
   })
 
   it("does not render when closed", () => {
-    const props = { open: false, message: "Saved" }
+    const props = { isOpen: false, message: "Saved" }
     const container = document.createElement("div")
 
     render(snackbar.render(props), container)
@@ -27,7 +27,7 @@ describe("snackbar", () => {
   it("dispatches close handler", () => {
     let closed = false
     const props = {
-      open: true,
+      isOpen: true,
       message: "Saved",
       onClose: () => (closed = true),
     }

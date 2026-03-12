@@ -22,9 +22,14 @@ export default {
       control: "boolean",
       description: "Add separators between items.",
     },
-    inset: {
+    isInset: {
       control: "boolean",
       description: "Align items without icons to those with icons.",
+    },
+    padding: {
+      control: "select",
+      options: ["none", "sm", "md", "lg", "xl"],
+      description: "Outer padding for the list.",
     },
     onItemClick: { action: "onItemClick" },
     onItemToggle: { action: "onItemToggle" },
@@ -49,6 +54,7 @@ export const Default = {
     isOrdered: false,
     isDense: false,
     isDivided: false,
+    padding: "none",
   },
 }
 
@@ -83,14 +89,14 @@ export const WithIcons = {
     isOrdered: false,
     isDense: false,
     isDivided: true,
-    inset: true,
+    isInset: true,
   },
 }
 
 export const Selected = {
   args: {
     items: [
-      { id: "a", primary: "Inbox", selected: true },
+      { id: "a", primary: "Inbox", isSelected: true },
       { id: "b", primary: "Drafts" },
       { id: "c", primary: "Archive" },
     ],
@@ -101,7 +107,7 @@ export const Disabled = {
   args: {
     items: [
       { id: "a", primary: "Active item" },
-      { id: "b", primary: "Disabled item", disabled: true },
+      { id: "b", primary: "Disabled item", isDisabled: true },
     ],
   },
 }
@@ -112,10 +118,10 @@ export const Nested = {
       {
         id: "a",
         primary: "Parent item",
-        expanded: true,
+        isExpanded: true,
         children: [
           { id: "a-1", primary: "Child item 1" },
-          { id: "a-2", primary: "Child item 2", selected: true },
+          { id: "a-2", primary: "Child item 2", isSelected: true },
         ],
       },
       { id: "b", primary: "Sibling item" },
@@ -131,16 +137,16 @@ export const NestedWithIcons = {
         id: "a",
         icon: "📁",
         primary: "Projects",
-        expanded: true,
+        isExpanded: true,
         children: [
           { id: "a-1", icon: "📄", primary: "Spec.md" },
-          { id: "a-2", primary: "Notes", selected: true },
+          { id: "a-2", primary: "Notes", isSelected: true },
         ],
       },
       { id: "b", icon: "🗂️", primary: "Archive" },
     ],
     isDivided: true,
-    inset: true,
+    isInset: true,
   },
 }
 
@@ -169,7 +175,7 @@ export const Expandable = {
       {
         id: "a",
         primary: "Inbox",
-        expanded: false,
+        isExpanded: false,
         children: [
           { id: "a-1", primary: "Starred" },
           { id: "a-2", primary: "Drafts" },

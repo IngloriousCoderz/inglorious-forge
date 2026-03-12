@@ -40,15 +40,15 @@ export default {
       options: ["rectangle", "pill", "round", "square"],
       description: "Button shape profile.",
     },
-    disabled: {
+    isDisabled: {
       control: "boolean",
       description: "Disables interaction and click notifications.",
     },
-    pressed: {
+    isPressed: {
       control: "boolean",
       description: "Keeps the button in an active state.",
     },
-    fullWidth: {
+    isFullWidth: {
       control: "boolean",
       description: "Expands button width to 100% of its container.",
     },
@@ -78,8 +78,8 @@ Default.args = {
   variant: "default",
   size: "md",
   shape: "rectangle",
-  disabled: false,
-  fullWidth: false,
+  isDisabled: false,
+  isFullWidth: false,
 }
 
 export const Outline = {}
@@ -127,20 +127,20 @@ Success.args = {
 export const Disabled = {}
 Disabled.args = {
   ...Default.args,
-  disabled: true,
+  isDisabled: true,
 }
 
 export const Pressed = {}
 Pressed.args = {
   ...Default.args,
-  pressed: true,
+  isPressed: true,
 }
 
 export const FullWidth = {}
 FullWidth.args = {
   ...Default.args,
   children: "Full Width Button",
-  fullWidth: true,
+  isFullWidth: true,
 }
 
 export const Round = {}

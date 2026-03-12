@@ -10,6 +10,7 @@ export const statCard = {
   render(entity, api) {
     return card.render({
       className: `iw-dashboard-stat ${entity.className}`,
+      bodyPadding: "none",
       body: html`
         <div class="iw-dashboard-stat-container">
           <div class="iw-dashboard-stat-top">

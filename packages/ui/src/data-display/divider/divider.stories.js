@@ -13,7 +13,7 @@ export default {
       options: ["horizontal", "vertical"],
       description: "Divider direction.",
     },
-    inset: {
+    isInset: {
       control: "boolean",
       description: "Applies start inset for sectional separators.",
     },

@@ -3,7 +3,7 @@ import type { TemplateResult } from "@inglorious/web"
 export interface SnackbarProps {
   id?: string
   type?: string
-  open?: boolean
+  isOpen?: boolean
   message?: TemplateResult | string | number
   action?: TemplateResult | string | number
   position?: "bottom-left" | "bottom-right" | "top-left" | "top-right"

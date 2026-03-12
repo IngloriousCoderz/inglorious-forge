@@ -4,7 +4,7 @@ export interface Step {
   id?: string | number
   label: TemplateResult | string | number
   optional?: TemplateResult | string | number
-  completed?: boolean
+  isCompleted?: boolean
   [key: string]: unknown
 }
 
@@ -14,7 +14,7 @@ export interface StepperProps {
   steps?: Step[]
   activeStep?: number
   orientation?: "horizontal" | "vertical"
-  alternativeLabel?: boolean
+  isAlternativeLabel?: boolean
   [key: string]: unknown
 }
 

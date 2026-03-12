@@ -18,8 +18,8 @@ export function render(props) {
     align = "left",
     weight,
     color,
-    noWrap = false,
-    gutterBottom = false,
+    isNoWrap = false,
+    hasGutterBottom = false,
     className = "",
     ...rest
   } = props
@@ -35,8 +35,8 @@ export function render(props) {
     "iw-typography": true,
     [`iw-typography-${variant}`]: variant !== "body",
     [`iw-typography-align-${align}`]: align !== "left",
-    "iw-typography-nowrap": noWrap,
-    "iw-typography-gutter-bottom": gutterBottom,
+    "iw-typography-nowrap": isNoWrap,
+    "iw-typography-gutter-bottom": hasGutterBottom,
     ...extraClasses,
   }
 

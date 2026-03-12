@@ -44,11 +44,11 @@ export default {
       options: ["default", "primary", "secondary", "transparent", "inherit"],
       description: "Color scheme for the app bar.",
     },
-    dense: {
+    isDense: {
       control: "boolean",
       description: 'Legacy compact mode alias (forces `variant="dense"`).',
     },
-    elevated: {
+    isElevated: {
       control: "boolean",
       description: "Enable drop shadow separation from content.",
     },

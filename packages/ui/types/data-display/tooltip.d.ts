@@ -6,7 +6,7 @@ export interface TooltipProps {
   content?: TemplateResult | string | number
   position?: "top" | "right" | "bottom" | "left"
   size?: "sm" | "md" | "lg"
-  open?: boolean
+  isOpen?: boolean
   maxWidth?: string
   className?: string
   onClick: () => void

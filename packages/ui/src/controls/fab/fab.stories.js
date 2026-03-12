@@ -19,8 +19,11 @@ export default {
       options: ["sm", "md", "lg"],
       description: "Button size.",
     },
-    extended: { control: "boolean", description: "Use extended pill shape." },
-    disabled: { control: "boolean", description: "Disables interaction." },
+    isExtended: {
+      control: "boolean",
+      description: "Use extended pill shape.",
+    },
+    isDisabled: { control: "boolean", description: "Disables interaction." },
     onClick: { action: "onClick" },
   },
   parameters: {
@@ -37,13 +40,13 @@ Default.args = {
   children: "+",
   color: "primary",
   size: "md",
-  extended: false,
-  disabled: false,
+  isExtended: false,
+  isDisabled: false,
 }
 
 export const Extended = {}
 Extended.args = {
   ...Default.args,
-  extended: true,
+  isExtended: true,
   children: html`<span>＋</span><span>Create</span>`,
 }

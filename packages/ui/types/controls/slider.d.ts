@@ -9,9 +9,9 @@ export interface SliderProps {
   max?: number
   step?: number
   color?: "primary" | "secondary" | "success" | "warning" | "error" | "info"
-  disabled?: boolean
-  showValue?: boolean
-  fullWidth?: boolean
+  isDisabled?: boolean
+  isValueVisible?: boolean
+  isFullWidth?: boolean
   onChange?: (value: number) => void
   [key: string]: unknown
 }

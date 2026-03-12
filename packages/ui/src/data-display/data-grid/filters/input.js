@@ -14,7 +14,7 @@ export const inputFilter = {
       placeholder:
         column.filter.placeholder ?? DEFAULT_PLACEHOLDER[column.filter.type],
       size: "sm",
-      fullWidth: true,
+      isFullWidth: true,
       onChange: (value) => {
         const formattedValue = value ? format(value, column.type) : null
         entity.onFilterChange?.({ columnId: column.id, value: formattedValue })

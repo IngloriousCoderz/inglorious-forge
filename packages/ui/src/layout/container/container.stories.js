@@ -13,15 +13,15 @@ export default {
       description:
         "Maximum width. Presets: xs/sm/md/lg/xl, CSS length, number (px), or false/none.",
     },
-    fixed: {
+    isFixed: {
       control: "boolean",
       description: "Keeps container width fixed at the selected max width.",
     },
-    disableGutters: {
+    isGutterless: {
       control: "boolean",
       description: "Removes horizontal padding.",
     },
-    center: {
+    isCentered: {
       control: "boolean",
       description: "Centers container with auto horizontal margins.",
     },
@@ -43,9 +43,9 @@ export default {
 export const Default = {
   args: {
     maxWidth: "lg",
-    fixed: false,
-    disableGutters: false,
-    center: true,
+    isFixed: false,
+    isGutterless: false,
+    isCentered: true,
     children: html`<div style="padding: 1rem; border: 1px dashed currentColor;">
       Content inside container
     </div>`,
@@ -79,7 +79,7 @@ export const WidthPresets = {
 export const WithoutGutters = {
   args: {
     ...Default.args,
-    disableGutters: true,
+    isGutterless: true,
     children: html`<div
       style="padding: 1rem; background: color-mix(in srgb, var(--iw-color-primary) 14%, transparent);"
     >

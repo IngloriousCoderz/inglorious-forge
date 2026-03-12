@@ -8,10 +8,10 @@ export interface AppBarProps {
   leading?: TemplateResult | string | number
   trailing?: TemplateResult | string | number
   children?: TemplateResult | string | number
-  dense?: boolean
+  isDense?: boolean
   variant?: "regular" | "dense" | "prominent"
   color?: "default" | "primary" | "secondary" | "transparent" | "inherit"
-  elevated?: boolean
+  isElevated?: boolean
   position?: "static" | "sticky" | "fixed" | "absolute" | "relative"
   placement?: "top" | "bottom"
   className?: string

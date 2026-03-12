@@ -28,12 +28,13 @@ export const appDrawer = {
       </div>`,
       children: html`
         ${list.render({
-          inset: true,
+          isInset: true,
+          padding: "sm",
           items: [
             {
               primary: "Dashboard",
               icon: materialIcon.render({ name: "speed", size: "lg" }),
-              selected: true,
+              isSelected: true,
               action: badge.render({
                 color: "info",
                 children: "NEW",
@@ -56,7 +57,7 @@ export const appDrawer = {
             {
               primary: "Base",
               icon: materialIcon.render({ name: "extension", size: "lg" }),
-              expanded: true,
+              isExpanded: true,
               children: [
                 { primary: "Accordion" },
                 { primary: "Cards" },

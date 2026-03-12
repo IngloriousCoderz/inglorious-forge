@@ -9,9 +9,12 @@ export interface CardProps {
   body?: TemplateResult | string | number
   children?: TemplateResult | string | number
   footer?: TemplateResult | string | number
-  hoverable?: boolean
-  clickable?: boolean
-  fullWidth?: boolean
+  headerPadding?: "none" | "sm" | "md" | "lg" | "xl"
+  bodyPadding?: "none" | "sm" | "md" | "lg" | "xl"
+  footerPadding?: "none" | "sm" | "md" | "lg" | "xl"
+  isHoverable?: boolean
+  isClickable?: boolean
+  isFullWidth?: boolean
   className?: string
   onClick?: () => void
   [key: string]: unknown

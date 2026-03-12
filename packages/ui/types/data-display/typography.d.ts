@@ -15,8 +15,8 @@ export interface TypographyProps {
   align?: "left" | "center" | "right"
   weight?: string | number
   color?: string
-  noWrap?: boolean
-  gutterBottom?: boolean
+  isNoWrap?: boolean
+  hasGutterBottom?: boolean
   className?: string
   [key: string]: unknown
 }

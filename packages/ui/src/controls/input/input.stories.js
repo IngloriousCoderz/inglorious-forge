@@ -55,19 +55,19 @@ export default {
       options: ["sm", "md", "lg"],
       description: "Size scale for paddings and font-size.",
     },
-    disabled: {
+    isDisabled: {
       control: "boolean",
       description: "Disables user input and interaction.",
     },
-    readonly: {
+    isReadOnly: {
       control: "boolean",
       description: "Prevents editing while keeping the field focusable.",
     },
-    required: {
+    isRequired: {
       control: "boolean",
       description: "Marks the field as required.",
     },
-    fullWidth: {
+    isFullWidth: {
       control: "boolean",
       description: "Expands input width to 100% of its container.",
     },
@@ -95,10 +95,10 @@ Default.args = {
   hint: "",
   error: "",
   size: "md",
-  disabled: false,
-  readonly: false,
-  required: false,
-  fullWidth: false,
+  isDisabled: false,
+  isReadOnly: false,
+  isRequired: false,
+  isFullWidth: false,
 }
 
 export const WithHint = {}
@@ -125,14 +125,14 @@ Required.args = {
   label: "Password",
   inputType: "password",
   placeholder: "Enter your password",
-  required: true,
+  isRequired: true,
 }
 
 export const Disabled = {}
 Disabled.args = {
   ...Default.args,
   label: "Disabled Input",
-  disabled: true,
+  isDisabled: true,
   value: "Cannot edit",
 }
 
@@ -140,7 +140,7 @@ export const Readonly = {}
 Readonly.args = {
   ...Default.args,
   label: "Readonly Input",
-  readonly: true,
+  isReadOnly: true,
   value: "Read-only value",
 }
 
@@ -163,7 +163,7 @@ FullWidth.args = {
   ...Default.args,
   label: "Full Width Input",
   placeholder: "This input takes full width",
-  fullWidth: true,
+  isFullWidth: true,
 }
 
 export const Number = {}
