@@ -109,14 +109,10 @@ describe("bar", () => {
       expect(container.textContent).toContain("Entity not found")
     })
 
-    it("should return error message if entity.data is invalid", () => {
+    it("should throw if entity.data is invalid", () => {
       entity.data = null
 
-      const result = bar.renderBarChart(entity, { children: [] }, api)
-      const container = document.createElement("div")
-      render(result, container)
-
-      expect(container.textContent).toContain("Entity data is missing")
+      expect(() => bar.renderBarChart(entity, { children: [] }, api)).toThrow()
     })
 
     it("should respect custom zero padding in composition config", () => {

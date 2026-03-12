@@ -30,14 +30,25 @@ export function renderComposedChart(entity, { children, config = {} }, api) {
 
   const seriesTypes = new Set(
     childrenArray
-      .filter((child) => child && CARTESIAN_SERIES.has(child.type))
-      .map((child) => child.type),
+      .map((child) => {
+        if (!child) return null
+        if (child.type && CARTESIAN_SERIES.has(child.type)) return child.type
+        if (typeof child === "function") {
+          if (child.isBar) return "Bar"
+          if (child.isArea) return "Area"
+          if (child.isLine) return "Line"
+        }
+        return null
+      })
+      .filter(Boolean),
   )
 
   const hasBarSeries = seriesTypes.has("Bar")
   const hasAreaSeries = seriesTypes.has("Area")
   const hasLineSeries = seriesTypes.has("Line")
-  const hasBrush = childrenArray.some((child) => child?.type === "Brush")
+  const hasBrush = childrenArray.some(
+    (child) => child?.type === "Brush" || child?.isBrush,
+  )
 
   const inferredChartType = hasBarSeries
     ? "bar"
