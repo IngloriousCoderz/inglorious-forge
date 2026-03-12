@@ -1,5 +1,6 @@
 import { svg } from "@inglorious/web"
 
+import { renderComposedChart } from "../cartesian/composed.js"
 import * as handlers from "../handlers.js"
 import { ensureChartRuntimeIdWithKey } from "../utils/runtime-id.js"
 
@@ -24,6 +25,33 @@ export function renderByChartType(typeKey) {
     return chartType?.[methodName]
       ? chartType[methodName](entity, params, api)
       : renderEmptyTemplate()
+  }
+}
+
+export function renderChart() {
+  return function renderGeneric(firstArg, secondArg, thirdArg) {
+    const { entity, params, api } = normalizeRenderChartArgs(
+      firstArg,
+      secondArg,
+      thirdArg,
+    )
+
+    if (!api) return renderEmptyTemplate()
+
+    const inferredType = inferChartType(entity, params)
+    if (!inferredType) return renderEmptyTemplate()
+
+    if (isCartesianType(inferredType)) {
+      const normalized = normalizeRenderByTypeArgs(
+        inferredType,
+        firstArg,
+        secondArg,
+        thirdArg,
+      )
+      return renderComposedChart(normalized.entity, normalized.params, api)
+    }
+
+    return renderByChartType(inferredType)(firstArg, secondArg, thirdArg)
   }
 }
 
@@ -103,6 +131,56 @@ function normalizeRenderByTypeArgs(typeKey, firstArg, secondArg, thirdArg) {
   }
 
   return { entity, params, api }
+}
+
+function normalizeRenderChartArgs(firstArg, secondArg, thirdArg) {
+  let entity = null
+  let params = {}
+  let api = null
+
+  if (isApiLike(secondArg) && thirdArg === undefined) {
+    api = secondArg
+    params = normalizeChartParams(firstArg)
+  } else {
+    entity = firstArg
+    params = normalizeChartParams(secondArg)
+    api = thirdArg
+  }
+
+  return { entity, params, api }
+}
+
+function inferChartType(entity, params) {
+  const configType = normalizeChartType(params?.config?.type)
+  if (configType) return configType
+
+  const entityType = normalizeChartType(entity?.type)
+  if (entityType) return entityType
+
+  const children = params?.children
+  if (Array.isArray(children)) {
+    if (children.some((child) => child?.type === "Bar")) return "bar"
+    if (children.some((child) => child?.type === "Area")) return "area"
+    if (children.some((child) => child?.type === "Line")) return "line"
+    if (children.some((child) => child?.type === "Pie")) return "pie"
+  }
+
+  return null
+}
+
+function normalizeChartType(type) {
+  if (!type || typeof type !== "string") return null
+  const lowered = type.toLowerCase()
+  if (lowered === "donut") return "pie"
+  if (lowered === "line") return "line"
+  if (lowered === "area") return "area"
+  if (lowered === "bar") return "bar"
+  if (lowered === "pie") return "pie"
+  return null
+}
+
+function isCartesianType(type) {
+  return type === "line" || type === "area" || type === "bar"
 }
 
 function isApiLike(value) {

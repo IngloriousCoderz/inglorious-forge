@@ -10,6 +10,7 @@ export function getEmptyChartInstance() {
   return {
     Dots: renderEmptyTemplate,
     Legend: renderEmptyTemplate,
+    renderChart: renderEmptyTemplate,
     ...chartMethods,
     ...compatibilityMethods,
     ...declarativeMethods,
