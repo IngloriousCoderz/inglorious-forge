@@ -130,7 +130,7 @@ export const line = {
     const { orderedChildren, buckets } = sortChildrenByLayer(
       processedChildrenArray,
       {
-        seriesFlag: "isLine",
+        seriesFlag: ["isLine", "isArea"],
         includeBrush: true,
       },
     )
@@ -291,10 +291,24 @@ export const line = {
         type = "linear",
         showDots = false,
       } = config
-      const data = getTransformedData(e, dataKey)
-      const chartData = data.map((d, i) => ({ ...d, x: i }))
+      const resolvedDataKey =
+        dataKey ??
+        (Array.isArray(config.data)
+          ? inferSeriesDataKey(config.data, "line")
+          : undefined)
+      const dataEntity = Array.isArray(config.data)
+        ? { ...e, data: config.data }
+        : e
+      const data = getTransformedData(dataEntity, resolvedDataKey)
+      const scaleForSeries = xScale.bandwidth
+        ? createBandCenterScale(xScale)
+        : xScale
+      const chartData = data.map((d, i) => ({
+        ...d,
+        x: xScale.bandwidth ? resolveCategoryLabel(dataEntity, i) : i,
+      }))
 
-      const path = generateLinePath(chartData, xScale, yScale, type)
+      const path = generateLinePath(chartData, scaleForSeries, yScale, type)
       if (!path || path.includes("NaN")) return svg``
       return svg`
         <g class="iw-chart-line-group" clip-path="url(#${resolveClipPathId(ctx, e)})">
@@ -317,16 +331,27 @@ export const line = {
     const dotsFn = (ctx) => {
       const { xScale, yScale, entity: e } = ctx
       const { dataKey, fill = "#8884d8", r = "0.25em" } = config
-      const data = getTransformedData(e, dataKey)
+      const resolvedDataKey =
+        dataKey ??
+        (Array.isArray(config.data)
+          ? inferSeriesDataKey(config.data, "line")
+          : undefined)
+      const dataEntity = Array.isArray(config.data)
+        ? { ...e, data: config.data }
+        : e
+      const data = getTransformedData(dataEntity, resolvedDataKey)
+      const scaleForSeries = xScale.bandwidth
+        ? createBandCenterScale(xScale)
+        : xScale
 
       if (!data || data.length === 0) return svg``
       return svg`
         <g class="iw-chart-dots" clip-path="url(#${resolveClipPathId(ctx, e)})">
           ${repeat(
             data,
-            (d, i) => `${dataKey}-${i}`,
+            (d, i) => `${resolvedDataKey || "value"}-${i}`,
             (d, i) => {
-              const originalDataPoint = e.data?.[i]
+              const originalDataPoint = dataEntity.data?.[i]
               const label =
                 originalDataPoint?.name ??
                 originalDataPoint?.label ??
@@ -338,9 +363,16 @@ export const line = {
                 entity: e,
                 api: ctx.api || api,
                 tooltipData: { label: String(label), value: d.y, color: fill },
+                enabled:
+                  config.showTooltip ??
+                  (ctx.tooltipMode
+                    ? ctx.tooltipMode === "all"
+                    : ctx.tooltipEnabled),
               })
               return renderDot({
-                cx: xScale(i),
+                cx: scaleForSeries(
+                  xScale.bandwidth ? resolveCategoryLabel(dataEntity, i) : i,
+                ),
                 cy: yScale(d.y),
                 r,
                 fill,
@@ -397,4 +429,47 @@ function resolveClipPathId(ctx, entity) {
   const clipPathId = ensureClipPathId(ctx.fullEntity || entity)
   ctx.clipPathId = clipPathId
   return clipPathId
+}
+
+function inferSeriesDataKey(data, preferredKey) {
+  if (!Array.isArray(data) || data.length === 0) return undefined
+  const sample = data[0]
+  if (!sample || typeof sample !== "object") return undefined
+
+  if (preferredKey && typeof sample[preferredKey] === "number") {
+    return preferredKey
+  }
+
+  if (typeof sample.value === "number") return "value"
+  if (typeof sample.y === "number") return "y"
+
+  const numericKeys = Object.keys(sample).filter(
+    (key) =>
+      !["name", "label", "x", "date"].includes(key) &&
+      typeof sample[key] === "number",
+  )
+  return numericKeys[0]
+}
+
+function resolveCategoryLabel(entity, index) {
+  const item = entity?.data?.[index]
+  return (
+    item?.label ??
+    item?.name ??
+    item?.category ??
+    item?.x ??
+    item?.date ??
+    String(index)
+  )
+}
+
+function createBandCenterScale(bandScale) {
+  const scale = (value) => {
+    const base = bandScale(value)
+    if (base == null || Number.isNaN(base)) return base
+    return base + bandScale.bandwidth() / 2
+  }
+  scale.domain = () => bandScale.domain()
+  scale.range = () => bandScale.range()
+  return scale
 }
