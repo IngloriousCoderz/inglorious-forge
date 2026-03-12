@@ -1,15 +1,21 @@
+/* eslint-disable no-magic-numbers */
 import { html, svg } from "@inglorious/web"
 
 import { renderTooltip } from "../component/tooltip.js"
+import {
+  DEFAULT_SERIES_INDEX,
+  inferSeriesDataKey,
+} from "../utils/cartesian-helpers.js"
 import { sortChildrenByLayer } from "../utils/cartesian-renderer.js"
 import { extractDataKeysFromChildren } from "../utils/extract-data-keys.js"
 import { processDeclarativeChild } from "../utils/process-declarative-child.js"
 import { ensureChartRuntimeId } from "../utils/runtime-id.js"
+import { getFilteredData } from "../utils/scales.js"
 import { createSharedContext } from "../utils/shared-context.js"
+import { createTooltipMoveHandler } from "../utils/tooltip-handlers.js"
 
 const CARTESIAN_SERIES = new Set(["Line", "Area", "Bar"])
-const DEFAULT_SERIES_INDEX = 0
-const DEFAULT_SERIES_VALUE = 0
+const DEFAULT_SERIES_VALUE = DEFAULT_SERIES_INDEX
 const DEFAULT_INDEX_STEP = 1
 
 export function renderComposedChart(entity, { children, config = {} }, api) {
@@ -62,21 +68,33 @@ export function renderComposedChart(entity, { children, config = {} }, api) {
     autoDataKeys.forEach((key) => dataKeysSet.add(key))
   }
 
-  const composedData = mergeComposedData(
-    entityWithData.data,
-    childrenArray.filter(
-      (child) =>
-        child &&
-        CARTESIAN_SERIES.has(child.type) &&
-        Array.isArray(child.config?.data),
-    ),
+  const baseEntity = entityWithData
+  const seriesChildrenWithData = childrenArray.filter(
+    (child) =>
+      child &&
+      CARTESIAN_SERIES.has(child.type) &&
+      Array.isArray(child.config?.data),
   )
+  const composedData =
+    seriesChildrenWithData.length > DEFAULT_SERIES_VALUE
+      ? mergeComposedData(entityWithData.data, seriesChildrenWithData)
+      : entityWithData.data
   const contextEntity =
     composedData.length > DEFAULT_SERIES_VALUE
       ? entityWithData.__inline
         ? Object.assign(entityWithData, { data: composedData })
         : { ...entityWithData, data: composedData }
       : entityWithData
+
+  const brushSource = config.originalEntity || baseEntity
+  const brush = brushSource?.brush
+  const shouldFilter =
+    (inferredChartType === "line" || inferredChartType === "area") &&
+    brush?.enabled &&
+    !config.originalEntity
+  const filteredEntity = shouldFilter
+    ? { ...contextEntity, data: getFilteredData({ ...contextEntity, brush }) }
+    : contextEntity
 
   const hasTooltip = childrenArray.some(
     (child) => child?.type === "Tooltip" || child?.type === "renderTooltip",
@@ -105,13 +123,37 @@ export function renderComposedChart(entity, { children, config = {} }, api) {
       chartType: inferredChartType,
       stacked: isStacked,
       usedDataKeys: dataKeysSet,
-      filteredEntity: contextEntity,
+      filteredEntity,
     },
     api,
   )
   context.api = api
   context.tooltipEnabled = tooltipEnabled
   context.tooltipMode = tooltipMode
+  context.fullEntity = brushSource
+  context.indexOffset =
+    shouldFilter && brush?.startIndex !== undefined
+      ? brush.startIndex
+      : DEFAULT_SERIES_INDEX
+  context.indexEnd =
+    shouldFilter && brush?.endIndex !== undefined ? brush.endIndex : undefined
+  if (
+    (inferredChartType === "line" || inferredChartType === "area") &&
+    brush?.enabled &&
+    brush.startIndex !== undefined
+  ) {
+    const endIndex =
+      brush.endIndex ??
+      Math.max(DEFAULT_SERIES_INDEX, brushSource.data.length - 1)
+    if (config.originalEntity) {
+      context.xScale.domain([
+        DEFAULT_SERIES_INDEX,
+        Math.max(DEFAULT_SERIES_INDEX, contextEntity.data.length - 1),
+      ])
+    } else {
+      context.xScale.domain([brush.startIndex, endIndex])
+    }
+  }
 
   if (isStacked) {
     context.stack = {
@@ -126,9 +168,16 @@ export function renderComposedChart(entity, { children, config = {} }, api) {
   if (clipPathId) context.clipPathId = clipPathId
 
   const processedChildrenArray = childrenArray
-    .map((child) =>
-      processDeclarativeChild(child, contextEntity, inferredChartType, api),
-    )
+    .map((child) => {
+      const targetEntity =
+        child && child.type === "Brush" ? context.fullEntity : contextEntity
+      return processDeclarativeChild(
+        child,
+        targetEntity,
+        inferredChartType,
+        api,
+      )
+    })
     .filter(Boolean)
 
   const { orderedChildren } = sortChildrenByLayer(processedChildrenArray, {
@@ -160,6 +209,9 @@ export function renderComposedChart(entity, { children, config = {} }, api) {
         width=${context.dimensions.width}
         height=${context.dimensions.height}
         viewBox="0 0 ${context.dimensions.width} ${context.dimensions.height}"
+        @mousemove=${tooltipEnabled
+          ? createTooltipMoveHandler({ entity: contextEntity, api })
+          : null}
       >
         ${clipPathId
           ? html`
@@ -235,25 +287,4 @@ function mergeComposedData(baseData, seriesChildren) {
   }
 
   return merged
-}
-
-function inferSeriesDataKey(data, preferredKey) {
-  if (!Array.isArray(data) || data.length === DEFAULT_SERIES_VALUE)
-    return undefined
-  const sample = data[DEFAULT_SERIES_INDEX]
-  if (!sample || typeof sample !== "object") return undefined
-
-  if (preferredKey && typeof sample[preferredKey] === "number") {
-    return preferredKey
-  }
-
-  if (typeof sample.value === "number") return "value"
-  if (typeof sample.y === "number") return "y"
-
-  const numericKeys = Object.keys(sample).filter(
-    (key) =>
-      !["name", "label", "x", "date"].includes(key) &&
-      typeof sample[key] === "number",
-  )
-  return numericKeys[DEFAULT_SERIES_INDEX]
 }

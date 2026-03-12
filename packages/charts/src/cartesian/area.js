@@ -1,30 +1,29 @@
 /* eslint-disable no-magic-numbers */
-import { html, repeat, svg } from "@inglorious/web"
+import { repeat, svg } from "@inglorious/web"
 
 import { createBrushComponent } from "../component/brush.js"
 import { renderGrid } from "../component/grid.js"
 import { renderLegend } from "../component/legend.js"
-import { createTooltipComponent, renderTooltip } from "../component/tooltip.js"
+import { createTooltipComponent } from "../component/tooltip.js"
 import { renderXAxis } from "../component/x-axis.js"
 import { renderYAxis } from "../component/y-axis.js"
 import { chart } from "../index.js"
 import { renderCurve } from "../shape/curve.js"
 import { renderDot } from "../shape/dot.js"
 import {
-  createCartesianRenderer,
-  sortChildrenByLayer,
-} from "../utils/cartesian-renderer.js"
+  createBandCenterScale,
+  inferSeriesDataKey,
+  resolveCategoryLabel,
+} from "../utils/cartesian-helpers.js"
+import { createCartesianRenderer } from "../utils/cartesian-renderer.js"
 import { getTransformedData } from "../utils/data-utils.js"
-import { extractDataKeysFromChildren } from "../utils/extract-data-keys.js"
 import {
   generateAreaPath,
   generateLinePath,
   generateStackedAreaPath,
 } from "../utils/paths.js"
-import { processDeclarativeChild } from "../utils/process-declarative-child.js"
-import { ensureChartRuntimeId } from "../utils/runtime-id.js"
-import { createSharedContext } from "../utils/shared-context.js"
 import { createTooltipHandlers } from "../utils/tooltip-handlers.js"
+import { renderComposedChart } from "./composed.js"
 
 export const area = {
   render: createCartesianRenderer({
@@ -46,126 +45,8 @@ export const area = {
    * @param {import('@inglorious/web').Api} api
    * @returns {import('lit-html').TemplateResult}
    */
-  renderAreaChart(entity, params = {}, api) {
-    if (!entity) return svg`<text>Entity not found</text>`
-    const { children, ...config } = params
-
-    const entityWithData = config.data
-      ? { ...entity, data: config.data }
-      : entity
-
-    // Auto-detect stacked mode: if config.stacked is not explicitly set,
-    // check if any Area component has a stackId
-    let isStacked = config.stacked === true
-    if (config.stacked === undefined) {
-      const childrenArray = Array.isArray(children) ? children : [children]
-      const hasStackId = childrenArray.some(
-        (child) =>
-          child &&
-          typeof child === "object" &&
-          child.type === "Area" &&
-          child.config &&
-          child.config.stackId !== undefined,
-      )
-      if (hasStackId) {
-        isStacked = true
-        config.stacked = true
-      }
-    }
-
-    // Collect data keys (used for scales and legends)
-    const dataKeysSet = new Set()
-    if (config.dataKeys && Array.isArray(config.dataKeys)) {
-      config.dataKeys.forEach((key) => dataKeysSet.add(key))
-    } else if (children) {
-      const autoDataKeys = extractDataKeysFromChildren(children)
-      autoDataKeys.forEach((key) => dataKeysSet.add(key))
-    }
-
-    const context = createSharedContext(
-      entityWithData,
-      {
-        width: config.width,
-        height: config.height,
-        padding: config.padding,
-        chartType: "area",
-        stacked: isStacked,
-        usedDataKeys: dataKeysSet,
-        filteredEntity: entityWithData,
-      },
-      api,
-    )
-    context.api = api
-
-    if (isStacked) {
-      context.stack = {
-        sumsByStackId: new Map(),
-        computedByKey: new Map(),
-      }
-    }
-
-    const childrenArray = Array.isArray(children) ? children : [children]
-    const hasLineChildren = childrenArray.some(
-      (child) => child && child.type === "Line",
-    )
-    const clipPathId = hasLineChildren
-      ? `chart-clip-${ensureChartRuntimeId(entityWithData)}`
-      : null
-    if (clipPathId) context.clipPathId = clipPathId
-
-    const processedChildrenArray = childrenArray
-      .map((child) =>
-        processDeclarativeChild(child, entityWithData, "area", api),
-      )
-      .filter(Boolean)
-
-    const { orderedChildren: sortedChildren } = sortChildrenByLayer(
-      processedChildrenArray,
-      {
-        seriesFlag: ["isArea", "isLine"],
-        reverseSeries: !isStacked,
-      },
-    )
-
-    const finalRendered = sortedChildren.map((child) => {
-      if (typeof child !== "function") return child
-      const result = child(context)
-      return typeof result === "function" ? result(context) : result
-    })
-
-    return html`
-      <div
-        class="iw-chart"
-        style="display: block; position: relative; width: 100%;"
-      >
-        <svg
-          width=${context.dimensions.width}
-          height=${context.dimensions.height}
-          viewBox="0 0 ${context.dimensions.width} ${context.dimensions.height}"
-        >
-          ${clipPathId
-            ? html`
-                <defs>
-                  <clipPath id=${clipPathId}>
-                    <rect
-                      x=${context.dimensions.padding.left}
-                      y=${context.dimensions.padding.top}
-                      width=${context.dimensions.width -
-                      context.dimensions.padding.left -
-                      context.dimensions.padding.right}
-                      height=${context.dimensions.height -
-                      context.dimensions.padding.top -
-                      context.dimensions.padding.bottom}
-                    />
-                  </clipPath>
-                </defs>
-              `
-            : ""}
-          ${finalRendered}
-        </svg>
-        ${renderTooltip(entityWithData, {}, api)}
-      </div>
-    `
+  renderAreaChart(entity, { children, config = {} }, api) {
+    return renderComposedChart(entity, { children, config }, api)
   },
 
   /**
@@ -264,6 +145,9 @@ export const area = {
           ? inferSeriesDataKey(config.data, "area")
           : undefined)
       const baseEntity = ctx.entity || entity
+      const plotEntity = ctx.fullEntity || baseEntity
+      const indexOffset = ctx.indexOffset ?? 0
+      const indexEnd = ctx.indexEnd
       const dataEntity = Array.isArray(config.data)
         ? { ...baseEntity, data: config.data }
         : baseEntity
@@ -278,8 +162,15 @@ export const area = {
         : xScale
       const chartData = data.map((d, i) => ({
         ...d,
-        x: xScale.bandwidth ? resolveCategoryLabel(dataEntity, i) : i,
+        x: xScale.bandwidth
+          ? resolveCategoryLabel(plotEntity, i + indexOffset)
+          : i + indexOffset,
       }))
+
+      const clippedChartData =
+        typeof indexEnd === "number"
+          ? chartData.filter((point) => point.x <= indexEnd)
+          : chartData
 
       if (isStacked) {
         const stackKey = String(stackId)
@@ -292,19 +183,19 @@ export const area = {
         )
         ctx.stack.computedByKey.set(`${stackKey}:${dataKey}`, seriesStack)
         areaPath = generateStackedAreaPath(
-          chartData,
+          clippedChartData,
           scaleForSeries,
           yScale,
           seriesStack,
         )
         linePath = generateLinePath(
-          chartData.map((d, i) => ({ ...d, y: seriesStack[i][1] })),
+          clippedChartData.map((d, i) => ({ ...d, y: seriesStack[i][1] })),
           scaleForSeries,
           yScale,
         )
       } else {
-        areaPath = generateAreaPath(chartData, scaleForSeries, yScale, 0)
-        linePath = generateLinePath(chartData, scaleForSeries, yScale)
+        areaPath = generateAreaPath(clippedChartData, scaleForSeries, yScale, 0)
+        linePath = generateLinePath(clippedChartData, scaleForSeries, yScale)
       }
 
       return svg`
@@ -352,6 +243,9 @@ export const area = {
       const dataEntity = Array.isArray(config.data)
         ? { ...entityFromContext, data: config.data }
         : entityFromContext
+      const plotEntity = ctx.fullEntity || dataEntity
+      const indexOffset = ctx.indexOffset ?? 0
+      const indexEnd = ctx.indexEnd
       const data = getTransformedData(dataEntity, resolvedDataKey)
       const scaleForSeries = xScale.bandwidth
         ? createBandCenterScale(xScale)
@@ -368,12 +262,18 @@ export const area = {
             data,
             (d, i) => `${resolvedDataKey || "value"}-${i}`,
             (d, i) => {
+              const resolvedIndex = i + indexOffset
+              if (typeof indexEnd === "number" && resolvedIndex > indexEnd) {
+                return svg``
+              }
               const x = scaleForSeries(
-                xScale.bandwidth ? resolveCategoryLabel(dataEntity, i) : d.x,
+                xScale.bandwidth
+                  ? resolveCategoryLabel(plotEntity, resolvedIndex)
+                  : resolvedIndex,
               )
               const y = yScale(seriesStack ? seriesStack[i]?.[1] : d.y)
               // Get label from original data point (like line chart does)
-              const originalDataPoint = dataEntity.data[i]
+              const originalDataPoint = plotEntity.data[resolvedIndex]
               const label =
                 originalDataPoint?.name ||
                 originalDataPoint?.label ||
@@ -446,47 +346,4 @@ export const area = {
    * @type {(entity: import('../types/charts').ChartEntity, params: { config?: Record<string, any> }, api: import('@inglorious/web').Api) => (ctx: Record<string, any>) => import('lit-html').TemplateResult}
    */
   renderBrush: createBrushComponent(),
-}
-
-function inferSeriesDataKey(data, preferredKey) {
-  if (!Array.isArray(data) || data.length === 0) return undefined
-  const sample = data[0]
-  if (!sample || typeof sample !== "object") return undefined
-
-  if (preferredKey && typeof sample[preferredKey] === "number") {
-    return preferredKey
-  }
-
-  if (typeof sample.value === "number") return "value"
-  if (typeof sample.y === "number") return "y"
-
-  const numericKeys = Object.keys(sample).filter(
-    (key) =>
-      !["name", "label", "x", "date"].includes(key) &&
-      typeof sample[key] === "number",
-  )
-  return numericKeys[0]
-}
-
-function resolveCategoryLabel(entity, index) {
-  const item = entity?.data?.[index]
-  return (
-    item?.label ??
-    item?.name ??
-    item?.category ??
-    item?.x ??
-    item?.date ??
-    String(index)
-  )
-}
-
-function createBandCenterScale(bandScale) {
-  const scale = (value) => {
-    const base = bandScale(value)
-    if (base == null || Number.isNaN(base)) return base
-    return base + bandScale.bandwidth() / 2
-  }
-  scale.domain = () => bandScale.domain()
-  scale.range = () => bandScale.range()
-  return scale
 }
