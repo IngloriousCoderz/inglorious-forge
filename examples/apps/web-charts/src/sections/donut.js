@@ -22,7 +22,7 @@ export function renderDonutSection(api) {
 
       <section class="chart-section">
         <h2>Donut Chart - Recharts Style (Composition with api.getEntity)</h2>
-        ${chart.renderPieChart(
+        ${chart.renderChart(
           api.getEntity("categoryDonutChartComposition"),
           {
             width: 500,
@@ -48,7 +48,7 @@ export function renderDonutSection(api) {
     <div class="charts-comparison">
       <section class="chart-section">
         <h2>Donut Chart - Composition (No id #1)</h2>
-        ${chart.renderPieChart(
+        ${chart.renderChart(
           {
             type: "donut",
             data: inlineDonutDataA,
@@ -78,7 +78,7 @@ export function renderDonutSection(api) {
 
       <section class="chart-section">
         <h2>Donut Chart - Composition (No id #2)</h2>
-        ${chart.renderPieChart(
+        ${chart.renderChart(
           {
             type: "donut",
             data: inlineDonutDataB,
