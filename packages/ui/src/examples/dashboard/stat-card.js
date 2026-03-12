@@ -17,11 +17,18 @@ export const statCard = {
             <div>
               <div class="iw-dashboard-stat-value">
                 ${typography.render({ variant: "h2", children: entity.value })}
-                ${typography.render({
-                  variant: "caption",
-                  children: html`${entity.change}
-                  ${materialIcon.render({ name: entity.direction, size: "sm" })}`,
-                })}
+                <span
+                  >(${typography.render({
+                    variant: "caption",
+                    children: html`<span class="iw-dashboard-stat-change">
+                      ${entity.change}
+                      ${materialIcon.render({
+                        name: entity.direction,
+                        size: "sm",
+                      })}
+                    </span>`,
+                  })})</span
+                >
               </div>
               ${typography.render({ children: entity.label })}
             </div>

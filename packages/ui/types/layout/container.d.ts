@@ -15,7 +15,7 @@ export interface ContainerProps {
   children?: TemplateResult | string | number
   maxWidth?: "xs" | "sm" | "md" | "lg" | "xl" | "none" | false | number | string
   isFixed?: boolean
-  isGutterless?: boolean
+  padding?: "none" | "sm" | "md" | "lg" | "xl"
   isCentered?: boolean
   className?: string
   [key: string]: unknown

@@ -22,6 +22,19 @@ export default {
       options: ["sm", "md", "lg"],
       description: "Badge size scale.",
     },
+    shape: {
+      control: "select",
+      options: ["rectangle", "pill", "circle", "square"],
+      description: "Badge shape variant.",
+    },
+    ringWidth: {
+      control: "text",
+      description: "Ring width for shaped badges (e.g. 2px).",
+    },
+    className: {
+      control: "text",
+      description: "Additional CSS classes.",
+    },
     onClick: { action: "onClick" },
   },
   parameters: {
@@ -38,5 +51,14 @@ export const Default = {
   args: {
     children: "New",
     size: "md",
+  },
+}
+
+export const Dot = {
+  args: {
+    children: "",
+    color: "success",
+    shape: "circle",
+    ringWidth: "2px",
   },
 }

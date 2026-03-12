@@ -16,6 +16,7 @@ export const trafficCard = {
     return card.render({
       header: flex.render({
         justify: "between",
+        align: "start",
         gap: "md",
         children: [
           html`<div>

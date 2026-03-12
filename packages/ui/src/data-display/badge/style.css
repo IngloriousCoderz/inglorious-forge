@@ -1,6 +1,9 @@
 .iw-badge {
   --iw-badge-accent: var(--iw-color-primary);
   --iw-badge-on-accent: var(--iw-color-primary-text);
+  --iw-badge-shape-size: 0.65rem;
+  --iw-badge-ring-color: var(--iw-color-text);
+  --iw-badge-ring-width: 0;
   display: inline-flex;
   align-items: center;
   padding: 0 var(--iw-space-2);
@@ -12,15 +15,40 @@
   line-height: 1;
 
   &.iw-badge-sm {
+    --iw-badge-shape-size: 0.5rem;
     min-height: 1rem;
     padding-inline: var(--iw-space-1);
     font-size: var(--iw-font-size-xs);
   }
 
   &.iw-badge-lg {
+    --iw-badge-shape-size: 0.8rem;
     min-height: 1.5rem;
     padding-inline: var(--iw-space-3);
     font-size: var(--iw-font-size-sm);
+  }
+
+  &.iw-badge-shape-circle,
+  &.iw-badge-shape-square {
+    width: var(--iw-badge-shape-size);
+    height: var(--iw-badge-shape-size);
+    min-width: var(--iw-badge-shape-size);
+    min-height: var(--iw-badge-shape-size);
+    padding: 0;
+    line-height: 0;
+    border: var(--iw-badge-ring-width) solid var(--iw-badge-ring-color);
+  }
+
+  &.iw-badge-shape-circle {
+    border-radius: 50%;
+  }
+
+  &.iw-badge-shape-square {
+    border-radius: var(--iw-radius-sm);
+  }
+
+  &.iw-badge-shape-pill {
+    border-radius: var(--iw-radius-full);
   }
 
   &.iw-badge-secondary {

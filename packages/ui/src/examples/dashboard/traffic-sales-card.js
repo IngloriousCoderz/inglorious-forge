@@ -2,6 +2,8 @@ import { html } from "@inglorious/web"
 
 import { button } from "../../controls/button"
 import { avatar } from "../../data-display/avatar"
+import { badge } from "../../data-display/badge"
+import { icon } from "../../data-display/icon"
 import { materialIcon } from "../../data-display/material-icon"
 import { table } from "../../data-display/table"
 import { typography } from "../../data-display/typography"
@@ -25,7 +27,7 @@ export const trafficSalesCard = {
               <div>
                 ${grid.render({
                   columns: 2,
-                  gap: "md",
+                  gap: "lg",
                   className: "iw-dashboard-kpi-grid",
                   children: [
                     this.renderKpi(
@@ -51,12 +53,12 @@ export const trafficSalesCard = {
                 <hr class="iw-dashboard-divider" />
                 ${flex.render({
                   direction: "column",
-                  gap: "md",
+                  gap: "lg",
                   className: "iw-dashboard-progress-list",
                   children: clientBars.map(([day, first, second]) =>
                     grid.render({
                       columns: "6rem 1fr",
-                      gap: "md",
+                      gap: "lg",
                       align: "center",
                       className: "iw-dashboard-progress-row",
                       children: [
@@ -85,7 +87,7 @@ export const trafficSalesCard = {
               <div>
                 ${grid.render({
                   columns: 2,
-                  gap: "md",
+                  gap: "lg",
                   className: "iw-dashboard-kpi-grid",
                   children: [
                     this.renderKpi(
@@ -107,7 +109,7 @@ export const trafficSalesCard = {
                 <hr class="iw-dashboard-divider" />
                 ${flex.render({
                   direction: "column",
-                  gap: "md",
+                  gap: "lg",
                   className: "iw-dashboard-progress-list",
                   children: sourceBars.map(
                     ([label, value, iconName, tone, metric, suffix]) => html`
@@ -115,7 +117,7 @@ export const trafficSalesCard = {
                         ${flex.render({
                           align: "center",
                           justify: "between",
-                          gap: "md",
+                          gap: "lg",
                           children: [
                             flex.render({
                               align: "center",
@@ -123,7 +125,7 @@ export const trafficSalesCard = {
                               children: [
                                 materialIcon.render({
                                   name: iconName,
-                                  size: "sm",
+                                  size: "lg",
                                 }),
                                 html`<span>${label}</span>`,
                               ],
@@ -157,7 +159,7 @@ export const trafficSalesCard = {
         <div style="height: var(--iw-space-5)"></div>
 
         ${table.render({
-          isFullWidth: true,
+          style: { minWidth: "max-content" },
           columns: [
             { id: "user", title: "User" },
             { id: "country", title: "Country" },
@@ -170,9 +172,22 @@ export const trafficSalesCard = {
             user: html`
               ${flex.render({
                 align: "center",
-                gap: "md",
+                gap: "lg",
                 children: [
-                  avatar.render({ initials: row.initials }),
+                  html`<span class="iw-dashboard-avatar">
+                    ${avatar.render({
+                      size: "lg",
+                      color: "auto",
+                      initials: row.initials,
+                    })}
+                    ${badge.render({
+                      shape: "circle",
+                      ringWidth: "1px",
+                      color: row.status,
+                      className: "iw-dashboard-avatar-badge",
+                      children: "",
+                    })}
+                  </span>`,
                   html`<div>
                     <div>${row.name}</div>
                     <div class="iw-dashboard-user-subtitle">
@@ -208,7 +223,13 @@ export const trafficSalesCard = {
               })}
             `,
             payment: html`<div class="iw-dashboard-payment">
-              ${row.payment}
+              ${icon.render({
+                size: "lg",
+                children: html`<i
+                  class="fa-brands fa-${row.payment}"
+                  aria-hidden="true"
+                ></i>`,
+              })}
             </div>`,
             activity: html`
               <div>

@@ -6,6 +6,9 @@ export interface BadgeProps {
   color?: "primary" | "secondary" | "success" | "warning" | "error" | "info"
   variant?: "solid" | "outline"
   size?: "sm" | "md" | "lg"
+  shape?: "rectangle" | "pill" | "circle" | "square"
+  ringWidth?: string
+  className?: string
   onClick?: () => void
   [key: string]: unknown
 }

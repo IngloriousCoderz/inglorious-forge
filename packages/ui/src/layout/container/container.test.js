@@ -14,14 +14,14 @@ describe("container", () => {
     expect(root.tagName).toBe("SECTION")
   })
 
-  it("applies fixed and gutter classes", () => {
+  it("applies fixed and padding classes", () => {
     const host = document.createElement("div")
 
-    render(container.render({ isFixed: true, isGutterless: true }), host)
+    render(container.render({ isFixed: true, padding: "none" }), host)
 
     const root = host.querySelector(".iw-container")
     expect(root.classList.contains("iw-container-fixed")).toBe(true)
-    expect(root.classList.contains("iw-container-no-gutters")).toBe(true)
+    expect(root.classList.contains("iw-container-padding-none")).toBe(true)
   })
 
   it("maps numeric maxWidth to px style", () => {

@@ -3,6 +3,7 @@
   place-items: center;
   width: 2rem;
   height: 2rem;
+  flex: 0 0 auto;
   border-radius: 999px;
   background: var(--iw-color-bg-secondary);
   color: var(--iw-color-text);
@@ -29,5 +30,35 @@
 
   &.iw-avatar-square {
     border-radius: var(--iw-radius-sm);
+  }
+
+  &.iw-avatar-color-primary {
+    background: var(--iw-color-primary);
+    color: var(--iw-color-primary-text, var(--iw-color-white));
+  }
+
+  &.iw-avatar-color-secondary {
+    background: var(--iw-color-gray-400);
+    color: var(--iw-color-text);
+  }
+
+  &.iw-avatar-color-success {
+    background: var(--iw-color-success);
+    color: var(--iw-color-white);
+  }
+
+  &.iw-avatar-color-warning {
+    background: var(--iw-color-warning);
+    color: var(--iw-color-white);
+  }
+
+  &.iw-avatar-color-error {
+    background: var(--iw-color-error);
+    color: var(--iw-color-white);
+  }
+
+  &.iw-avatar-color-info {
+    background: var(--iw-color-info);
+    color: var(--iw-color-white);
   }
 }

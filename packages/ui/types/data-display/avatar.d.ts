@@ -7,6 +7,17 @@ export interface AvatarProps {
   initials?: string
   size?: "sm" | "md" | "lg"
   shape?: "circle" | "square"
+  color?:
+    | "default"
+    | "auto"
+    | "primary"
+    | "secondary"
+    | "success"
+    | "warning"
+    | "error"
+    | "info"
+  backgroundColor?: string
+  textColor?: string
   children?: TemplateResult | string | number
   onClick?: () => void
   [key: string]: unknown

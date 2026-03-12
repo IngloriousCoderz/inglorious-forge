@@ -17,9 +17,10 @@ export default {
       control: "boolean",
       description: "Keeps container width fixed at the selected max width.",
     },
-    isGutterless: {
-      control: "boolean",
-      description: "Removes horizontal padding.",
+    padding: {
+      control: "select",
+      options: ["none", "sm", "md", "lg", "xl"],
+      description: "Horizontal padding preset.",
     },
     isCentered: {
       control: "boolean",
@@ -58,7 +59,7 @@ export const Default = {
   args: {
     maxWidth: "lg",
     isFixed: false,
-    isGutterless: false,
+    padding: undefined,
     isCentered: true,
     element: "div",
     children: html`<div style="padding: 1rem; border: 1px dashed currentColor;">
@@ -91,10 +92,10 @@ export const WidthPresets = {
     </div>`,
 }
 
-export const WithoutGutters = {
+export const WithoutPadding = {
   args: {
     ...Default.args,
-    isGutterless: true,
+    padding: "none",
     children: html`<div
       style="padding: 1rem; background: color-mix(in srgb, var(--iw-color-primary) 14%, transparent);"
     >

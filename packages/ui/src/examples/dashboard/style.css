@@ -74,10 +74,6 @@
   }
 }
 
-.iw-dashboard-content {
-  padding: var(--iw-space-4);
-}
-
 .iw-dashboard-stat {
   overflow: hidden;
   color: white;
@@ -108,6 +104,13 @@
   display: flex;
   align-items: baseline;
   gap: var(--iw-space-2);
+}
+
+.iw-dashboard-stat-change {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--iw-space-1);
+  line-height: 1;
 }
 
 .iw-dashboard-stat-container {
@@ -197,6 +200,17 @@
 .iw-dashboard-user-subtitle {
   color: var(--iw-color-text-secondary);
   font-size: var(--iw-font-size-sm);
+}
+
+.iw-dashboard-avatar {
+  position: relative;
+  display: inline-flex;
+}
+
+.iw-dashboard-avatar-badge {
+  position: absolute;
+  right: -0.15rem;
+  bottom: -0.15rem;
 }
 
 .iw-dashboard-country {

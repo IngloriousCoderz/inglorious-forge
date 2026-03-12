@@ -9,22 +9,26 @@
   margin-inline: auto;
 }
 
-.iw-container-no-gutters {
-  padding-inline: 0;
-}
-
 .iw-container-fixed {
   width: 100%;
 }
 
-@media (min-width: 40rem) {
-  .iw-container {
-    padding-inline: var(--iw-space-5);
-  }
+.iw-container-padding-none {
+  padding: 0;
 }
 
-@media (min-width: 64rem) {
-  .iw-container {
-    padding-inline: var(--iw-space-6);
-  }
+.iw-container-padding-sm {
+  padding-left: var(--iw-space-2);
+}
+
+.iw-container-padding-md {
+  padding: var(--iw-space-4);
+}
+
+.iw-container-padding-lg {
+  padding: var(--iw-space-6);
+}
+
+.iw-container-padding-xl {
+  padding: var(--iw-space-8);
 }

@@ -28,7 +28,7 @@ export const dashboard = {
           ${appHeader.render(entity, api)}
           ${container.render({
             maxWidth: "xl",
-            className: "iw-dashboard-content",
+            padding: "lg",
             children: flex.render({
               direction: "column",
               gap: "lg",

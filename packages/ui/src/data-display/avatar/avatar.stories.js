@@ -26,6 +26,28 @@ export default {
       options: ["circle", "square"],
       description: "Avatar shape variant.",
     },
+    color: {
+      control: "select",
+      options: [
+        "default",
+        "auto",
+        "primary",
+        "secondary",
+        "success",
+        "warning",
+        "error",
+        "info",
+      ],
+      description: "Preset color for initials or fallback content.",
+    },
+    backgroundColor: {
+      control: "text",
+      description: "Custom background color override (CSS color string).",
+    },
+    textColor: {
+      control: "text",
+      description: "Custom text color override (CSS color string).",
+    },
     onClick: { action: "onClick" },
   },
   parameters: {
@@ -44,6 +66,9 @@ export const Default = {
     src: "",
     size: "md",
     shape: "circle",
+    color: "default",
+    backgroundColor: "",
+    textColor: "",
   },
 }
 
@@ -52,5 +77,30 @@ export const WithImage = {
     ...Default.args,
     src: "/transparent.png",
     alt: "Transparent avatar sample",
+  },
+}
+
+export const ColoredInitials = {
+  args: {
+    ...Default.args,
+    initials: "UI",
+    color: "primary",
+  },
+}
+
+export const AutoColor = {
+  args: {
+    ...Default.args,
+    initials: "AD",
+    color: "auto",
+  },
+}
+
+export const CustomColor = {
+  args: {
+    ...Default.args,
+    initials: "IC",
+    backgroundColor: "#1d4ed8",
+    textColor: "#ffffff",
   },
 }

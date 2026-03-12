@@ -22,6 +22,7 @@ describe("badge", () => {
       children: "Alert",
       color: "warning",
       variant: "outline",
+      className: "test-class",
       onClick: () => (isClicked = true),
     }
     const container = document.createElement("div")
@@ -31,7 +32,26 @@ describe("badge", () => {
     const element = container.querySelector(".iw-badge")
     expect(element.classList.contains("iw-badge-warning")).toBe(true)
     expect(element.classList.contains("iw-badge-outline")).toBe(true)
+    expect(element.classList.contains("test-class")).toBe(true)
     element.click()
     expect(isClicked).toBe(true)
+  })
+
+  it("renders a dot badge with ring", () => {
+    const props = {
+      id: "bg",
+      children: "",
+      shape: "circle",
+      ringWidth: "2px",
+    }
+    const container = document.createElement("div")
+
+    render(badge.render(props), container)
+
+    const element = container.querySelector(".iw-badge")
+    expect(element.classList.contains("iw-badge-shape-circle")).toBe(true)
+    expect(element.getAttribute("style")).toContain(
+      "--iw-badge-ring-width:2px;",
+    )
   })
 })

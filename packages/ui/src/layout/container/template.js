@@ -26,7 +26,7 @@ export function render(props) {
     children,
     maxWidth = "lg",
     isFixed = false,
-    isGutterless = false,
+    padding = "md",
     isCentered = true,
     className = "",
     ...rest
@@ -42,8 +42,8 @@ export function render(props) {
   const classes = {
     "iw-container": true,
     "iw-container-fixed": isFixed,
-    "iw-container-no-gutters": isGutterless,
     "iw-container-centered": isCentered,
+    [`iw-container-padding-${padding}`]: true,
     ...extraClasses,
   }
 
