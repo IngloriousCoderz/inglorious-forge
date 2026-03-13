@@ -1,5 +1,6 @@
 import { area } from "../cartesian/area.js"
 import { bar } from "../cartesian/bar.js"
+import { composed } from "../cartesian/composed.js"
 import { line } from "../cartesian/line.js"
 import * as handlers from "../handlers.js"
 import { donut } from "../polar/donut.js"
@@ -16,6 +17,7 @@ export const coreCharts = {
   line: buildPureChart("line", line),
   area: buildPureChart("area", area),
   bar: buildPureChart("bar", bar),
+  composed: buildPureChart("composed", composed),
   pie: buildPureChart("pie", pie),
   donut: buildPureChart("donut", donut),
 }

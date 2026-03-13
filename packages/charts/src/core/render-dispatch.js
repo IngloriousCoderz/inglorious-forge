@@ -1,6 +1,9 @@
 import { svg } from "@inglorious/web"
 
-import { renderComposedChart } from "../cartesian/composed.js"
+import {
+  buildComposedChildren,
+  renderComposedChart,
+} from "../cartesian/composed.js"
 import * as handlers from "../handlers.js"
 import { ensureChartRuntimeIdWithKey } from "../utils/runtime-id.js"
 
@@ -40,6 +43,27 @@ export function renderChart() {
 
     const inferredType = inferChartType(entity, params)
     if (!inferredType) return renderEmptyTemplate()
+
+    if (inferredType === "composed") {
+      const normalized = normalizeRenderByTypeArgs(
+        inferredType,
+        firstArg,
+        secondArg,
+        thirdArg,
+      )
+      const composedEntity = {
+        ...normalized.entity,
+        ...normalized.params.config,
+      }
+      return renderComposedChart(
+        composedEntity,
+        {
+          children: buildComposedChildren(composedEntity),
+          config: normalized.params.config,
+        },
+        api,
+      )
+    }
 
     if (isCartesianType(inferredType)) {
       const normalized = normalizeRenderByTypeArgs(
@@ -176,6 +200,7 @@ function normalizeChartType(type) {
   if (lowered === "area") return "area"
   if (lowered === "bar") return "bar"
   if (lowered === "pie") return "pie"
+  if (lowered === "composed") return "composed"
   return null
 }
 
