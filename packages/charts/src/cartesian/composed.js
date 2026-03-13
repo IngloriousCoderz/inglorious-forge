@@ -3,6 +3,10 @@ import { html, svg } from "@inglorious/web"
 
 import { renderTooltip } from "../component/tooltip.js"
 import {
+  buildCartesianBaseChildren,
+  resolveXAxisDataKey,
+} from "../utils/cartesian-children.js"
+import {
   DEFAULT_SERIES_INDEX,
   inferSeriesDataKey,
 } from "../utils/cartesian-helpers.js"
@@ -259,21 +263,10 @@ export function renderComposedChart(entity, { children, config = {} }, api) {
 }
 
 export function buildComposedChildren(entity) {
-  const children = []
-  if (!entity) return children
-
-  if (entity.showGrid !== false) {
-    children.push({
-      type: "CartesianGrid",
-      config: { stroke: "#eee", strokeDasharray: "5 5" },
-    })
-  }
-
-  children.push({
-    type: "XAxis",
-    config: { dataKey: resolveXAxisDataKey(entity) },
+  const children = buildCartesianBaseChildren(entity, {
+    includeTooltip: false,
+    includeBrush: false,
   })
-  children.push({ type: "YAxis", config: { width: "auto" } })
 
   const series = Array.isArray(entity.series) ? entity.series : []
   series.forEach((item) => {
@@ -369,13 +362,4 @@ function mergeComposedData(baseData, seriesChildren) {
   }
 
   return merged
-}
-
-function resolveXAxisDataKey(entity) {
-  let dataKey = entity?.dataKey
-  if (!dataKey && Array.isArray(entity?.data) && entity.data.length > 0) {
-    const firstItem = entity.data[0]
-    dataKey = firstItem?.name || firstItem?.x || firstItem?.date || "name"
-  }
-  return dataKey || "name"
 }
