@@ -5,6 +5,7 @@
 
 import { area } from "../cartesian/area.js"
 import { bar } from "../cartesian/bar.js"
+import { composed } from "../cartesian/composed.js"
 import { line } from "../cartesian/line.js"
 import * as handlers from "../handlers.js"
 import { donut } from "../polar/donut.js"
@@ -13,6 +14,7 @@ import { render } from "../template.js"
 
 export const areaChart = combineRenderer(area)
 export const barChart = combineRenderer(bar)
+export const composedChart = combineRenderer(composed)
 export const lineChart = combineRenderer(line)
 export const pieChart = combineRenderer(pie)
 export const donutChart = combineRenderer(donut)

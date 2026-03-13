@@ -15,8 +15,17 @@ import { createSharedContext } from "../utils/shared-context.js"
 import { createTooltipMoveHandler } from "../utils/tooltip-handlers.js"
 
 const CARTESIAN_SERIES = new Set(["Line", "Area", "Bar"])
+const KIND_TO_TYPE = {
+  area: "Area",
+  bar: "Bar",
+  line: "Line",
+}
 const DEFAULT_SERIES_VALUE = DEFAULT_SERIES_INDEX
 const DEFAULT_INDEX_STEP = 1
+
+export const composed = {
+  render: renderComposedConfig,
+}
 
 export function renderComposedChart(entity, { children, config = {} }, api) {
   if (!entity) return svg`<text>Entity not found</text>`
@@ -249,6 +258,68 @@ export function renderComposedChart(entity, { children, config = {} }, api) {
   `
 }
 
+export function buildComposedChildren(entity) {
+  const children = []
+  if (!entity) return children
+
+  if (entity.showGrid !== false) {
+    children.push({
+      type: "CartesianGrid",
+      config: { stroke: "#eee", strokeDasharray: "5 5" },
+    })
+  }
+
+  children.push({
+    type: "XAxis",
+    config: { dataKey: resolveXAxisDataKey(entity) },
+  })
+  children.push({ type: "YAxis", config: { width: "auto" } })
+
+  const series = Array.isArray(entity.series) ? entity.series : []
+  series.forEach((item) => {
+    if (!item || typeof item !== "object") return
+    const kind = (item.kind || item.type || "").toLowerCase()
+    const type = KIND_TO_TYPE[kind]
+    if (!type) return
+    /* eslint-disable no-unused-vars */
+    const { kind: _kind, type: _type, ...config } = item
+    children.push({ type, config })
+  })
+
+  if (entity.showTooltip !== false) {
+    children.push({ type: "Tooltip", config: {} })
+  }
+
+  if (entity.brush?.enabled && entity.brush?.visible !== false) {
+    children.push({
+      type: "Brush",
+      config: {
+        dataKey: resolveXAxisDataKey(entity),
+        height: entity.brush.height || 30,
+      },
+    })
+  }
+
+  return children
+}
+
+function renderComposedConfig(entity, api) {
+  if (!entity) return svg`<text>Entity not found</text>`
+  const children = buildComposedChildren(entity)
+  return renderComposedChart(
+    entity,
+    {
+      children,
+      config: {
+        width: entity.width,
+        height: entity.height,
+        padding: entity.padding,
+      },
+    },
+    api,
+  )
+}
+
 function mergeComposedData(baseData, seriesChildren) {
   const merged = Array.isArray(baseData)
     ? baseData.map((item) => ({ ...item }))
@@ -298,4 +369,13 @@ function mergeComposedData(baseData, seriesChildren) {
   }
 
   return merged
+}
+
+function resolveXAxisDataKey(entity) {
+  let dataKey = entity?.dataKey
+  if (!dataKey && Array.isArray(entity?.data) && entity.data.length > 0) {
+    const firstItem = entity.data[0]
+    dataKey = firstItem?.name || firstItem?.x || firstItem?.date || "name"
+  }
+  return dataKey || "name"
 }

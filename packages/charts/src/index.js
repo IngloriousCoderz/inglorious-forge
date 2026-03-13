@@ -19,6 +19,7 @@ export { withRealtime } from "./realtime/with-realtime.js"
 export {
   areaChart,
   barChart,
+  composedChart,
   donutChart,
   pieChart,
 } from "./utils/chart-utils.js"

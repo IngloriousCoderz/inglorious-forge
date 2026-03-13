@@ -3,6 +3,7 @@ import {
   areaChart,
   barChart,
   chart,
+  composedChart,
   donutChart,
   lineChart,
   pieChart,
@@ -15,6 +16,7 @@ export const store = createStore({
     area: areaChart,
     line: lineChart,
     bar: barChart,
+    composed: composedChart,
     pie: pieChart,
     donut: donutChart,
     // Add chart object for composition methods
