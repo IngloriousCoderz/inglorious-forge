@@ -9,6 +9,7 @@ import { renderXAxis } from "../component/x-axis.js"
 import { renderYAxis } from "../component/y-axis.js"
 import { chart } from "../index.js"
 import { renderRectangle } from "../shape/rectangle.js"
+import { buildCartesianBaseChildren } from "../utils/cartesian-children.js"
 import { inferSeriesDataKey } from "../utils/cartesian-helpers.js"
 import { createTooltipHandlers } from "../utils/tooltip-handlers.js"
 import { renderComposedChart } from "./composed.js"
@@ -24,15 +25,10 @@ export const bar = {
    */
   render(entity, api) {
     const type = api.getType(entity.type)
-    const children = [
-      entity.showGrid !== false
-        ? chart.CartesianGrid({ stroke: "#eee", strokeDasharray: "5 5" })
-        : null,
-      chart.XAxis({}),
-      chart.YAxis({ width: "auto" }),
-      chart.Bar({ dataKey: "value", multiColor: false }),
-      entity.showTooltip !== false ? chart.Tooltip({}) : null,
-    ].filter(Boolean)
+    const children = buildCartesianBaseChildren(entity, {
+      makeChild: (typeKey, config) => chart[typeKey](config),
+    })
+    children.push(chart.Bar({ dataKey: "value", multiColor: false }))
 
     return type.renderBarChart(
       entity,

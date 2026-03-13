@@ -1,4 +1,8 @@
 /* eslint-disable no-magic-numbers */
+import {
+  buildCartesianBaseChildren,
+  resolveXAxisDataKey,
+} from "./cartesian-children.js"
 import { isMultiSeries } from "./data-utils.js"
 
 const DEFAULT_COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#ff8042"]
@@ -54,17 +58,11 @@ export function buildCartesianChildrenFromConfig(
   entity,
   { chartApi, seriesType, providedDataKeys = null },
 ) {
-  const children = []
-
-  if (entity.showGrid !== false) {
-    children.push(
-      chartApi.CartesianGrid({ stroke: "#eee", strokeDasharray: "5 5" }),
-    )
-  }
-
-  const xAxisDataKey = resolveXAxisDataKey(entity)
-  children.push(chartApi.XAxis({ dataKey: xAxisDataKey }))
-  children.push(chartApi.YAxis({ width: "auto" }))
+  const children = buildCartesianBaseChildren(entity, {
+    makeChild: (type, config) => chartApi[type](config),
+    includeTooltip: false,
+    includeBrush: false,
+  })
 
   const dataKeys = providedDataKeys?.length
     ? providedDataKeys
@@ -142,7 +140,7 @@ export function buildCartesianChildrenFromConfig(
   if (entity.brush?.enabled && entity.brush?.visible !== false) {
     children.push(
       chartApi.Brush({
-        dataKey: xAxisDataKey,
+        dataKey: resolveXAxisDataKey(entity),
         height: entity.brush.height || 30,
       }),
     )
@@ -277,15 +275,6 @@ export function createCartesianRenderer({
       api,
     )
   }
-}
-
-function resolveXAxisDataKey(entity) {
-  let dataKey = entity.dataKey
-  if (!dataKey && Array.isArray(entity.data) && entity.data.length > 0) {
-    const firstItem = entity.data[0]
-    dataKey = firstItem.name || firstItem.x || firstItem.date || "name"
-  }
-  return dataKey || "name"
 }
 
 function resolveDataKeys(data) {
