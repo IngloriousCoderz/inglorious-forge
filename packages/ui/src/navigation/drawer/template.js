@@ -17,6 +17,7 @@ import { applyElementProps } from "../../shared/applyElementProps.js"
 export function render(props) {
   const {
     type, // eslint-disable-line no-unused-vars
+    items, // eslint-disable-line no-unused-vars
     isOpen = false,
     isHidden = false,
     anchor = "left",

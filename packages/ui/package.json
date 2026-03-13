@@ -268,6 +268,9 @@
     "**/*.css"
   ],
   "scripts": {
+    "dev": "vite --config app/vite.config.js",
+    "build": "vite build --config app/vite.config.js",
+    "preview": "vite preview --config app/vite.config.js",
     "format": "prettier --write .",
     "lint": "eslint .",
     "test:watch": "vitest",
