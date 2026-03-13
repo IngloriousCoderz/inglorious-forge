@@ -1,5 +1,5 @@
-import "@inglorious/ui/tokens"
-import "@inglorious/ui/themes/inglorious"
+import "@inglorious/ui/tokens.css"
+import "@inglorious/ui/themes/inglorious.css"
 import "@inglorious/ui/data-grid.css"
 
 import { dataGrid } from "@inglorious/ui/data-grid"

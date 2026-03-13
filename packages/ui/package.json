@@ -26,10 +26,17 @@
       "types": "./types/index.d.ts",
       "import": "./src/index.js"
     },
-    "./tokens": "./src/tokens/index.css",
-    "./themes/inglorious": "./src/themes/inglorious.css",
-    "./themes/material": "./src/themes/material.css",
-    "./themes/bootstrap": "./src/themes/bootstrap.css",
+    "./all.css": "./src/all.css",
+    "./controls.css": "./src/controls/controls.css",
+    "./data-display.css": "./src/data-display/data-display.css",
+    "./feedback.css": "./src/feedback/feedback.css",
+    "./layout.css": "./src/layout/layout.css",
+    "./navigation.css": "./src/navigation/navigation.css",
+    "./surfaces.css": "./src/surfaces/surfaces.css",
+    "./tokens.css": "./src/tokens/index.css",
+    "./themes/inglorious.css": "./src/themes/inglorious.css",
+    "./themes/material.css": "./src/themes/material.css",
+    "./themes/bootstrap.css": "./src/themes/bootstrap.css",
     "./button": {
       "types": "./types/controls/button.d.ts",
       "import": "./src/controls/button/index.js"
