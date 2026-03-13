@@ -159,7 +159,6 @@ export const trafficSalesCard = {
         <div style="height: var(--iw-space-5)"></div>
 
         ${table.render({
-          style: { minWidth: "max-content" },
           columns: [
             { id: "user", title: "User" },
             { id: "country", title: "Country" },

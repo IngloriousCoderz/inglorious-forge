@@ -4,7 +4,8 @@
 }
 
 .iw-table {
-  width: auto;
+  width: 100%;
+  min-width: max-content;
   border-collapse: collapse;
   border: 1px solid var(--iw-color-border);
   background: var(--iw-color-surface);
