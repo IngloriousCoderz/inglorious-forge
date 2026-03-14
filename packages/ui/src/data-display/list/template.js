@@ -21,6 +21,7 @@
 
 import { classMap, html, ref, repeat } from "@inglorious/web"
 
+import { iconButton } from "../../controls/icon-button"
 import { applyElementProps } from "../../shared/applyElementProps.js"
 
 const PRETTY_INDEX = 1
@@ -135,7 +136,6 @@ export const list = {
 
     const isClickable = !!props.onItemClick || !!onClick
     const hasChildren = Array.isArray(children) && children.length > 0
-    const isExpandedValue = !!isExpanded
     const hasAction = !!action
 
     return html`<li
@@ -164,19 +164,28 @@ export const list = {
         ${hasChildren || hasAction
           ? html`<span class="iw-list-item-trailing">
               ${hasChildren
-                ? html`<button
-                    class="iw-list-item-toggle"
-                    type="button"
-                    aria-expanded=${isExpandedValue}
-                    @click=${(event) => {
+                ? iconButton.render({
+                    variant: "ghost",
+                    color: "default",
+                    size: "sm",
+                    shape: "square",
+                    className: "iw-list-item-toggle",
+                    isDisabled,
+                    ariaLabel: "Toggle section",
+                    "aria-expanded": isExpanded,
+                    onClick: (event) => {
                       event.stopPropagation()
                       if (isDisabled) return
                       onToggle?.(raw ?? item, path)
                       props.onItemToggle?.(raw ?? item, path)
-                    }}
-                  >
-                    <span class="iw-list-item-caret">▸</span>
-                  </button>`
+                    },
+                    icon: html`<span
+                      class="iw-list-item-caret"
+                      aria-hidden="true"
+                      >〱</span
+                    >`,
+                    label: "",
+                  })
                 : null}
               ${action
                 ? html`<span
@@ -190,7 +199,7 @@ export const list = {
           : null}
       </div>
       ${hasChildren
-        ? isExpandedValue
+        ? isExpanded
           ? this.render({
               ...props,
               items: children,

@@ -21,7 +21,7 @@ export function render(props) {
     wrap = "nowrap",
     justify = "start",
     align = "stretch",
-    gap = "md",
+    gap = "none",
     padding = "none",
     isInline = false,
     isFullWidth = false,

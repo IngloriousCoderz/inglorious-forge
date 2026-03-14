@@ -93,31 +93,14 @@
 }
 
 .iw-list-item-toggle {
-  border: 0;
-  background: transparent;
-  padding: 0;
-  margin: 0;
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: var(--iw-radius-sm);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--iw-color-text-muted, var(--iw-color-text));
-  cursor: pointer;
-}
+  .iw-list-item-caret {
+    transform: rotate(180deg);
+    transition: transform 0.15s ease;
+  }
 
-.iw-list-item-toggle:hover {
-  background-color: color-mix(in srgb, currentColor 12%, transparent);
-}
-
-.iw-list-item-caret {
-  display: inline-flex;
-  transition: transform 0.15s ease;
-}
-
-.iw-list-item-toggle[aria-expanded="true"] .iw-list-item-caret {
-  transform: rotate(90deg);
+  &[aria-expanded] .iw-list-item-caret {
+    transform: rotate(270deg);
+  }
 }
 
 .iw-list-item-primary {
