@@ -3,6 +3,7 @@ import { html } from "@inglorious/web"
 import { button } from "../../controls/button"
 import { avatar } from "../../data-display/avatar"
 import { divider } from "../../data-display/divider"
+import { icon } from "../../data-display/icon"
 import { materialIcon } from "../../data-display/material-icon"
 import { flex } from "../../layout/flex"
 import { breadcrumbs } from "../../navigation/breadcrumbs"
@@ -10,6 +11,23 @@ import { appBar } from "../../surfaces/app-bar"
 
 export const appHeader = {
   render(entity, api) {
+    const themeEntity = api.getEntity("theme")
+    const modeEntity = api.getEntity("mode")
+    const themeMode = modeEntity?.mode ?? "auto"
+    const themeName = themeEntity?.theme ?? "inglorious"
+    const themeIcon =
+      themeName === "bootstrap"
+        ? "fa-brands fa-bootstrap"
+        : themeName === "material"
+          ? "fa-brands fa-android"
+          : "fa-solid fa-gamepad"
+    const modeIcon =
+      themeMode === "light"
+        ? "light_mode"
+        : themeMode === "dark"
+          ? "dark_mode"
+          : "contrast"
+
     return html`
       <div class="iw-dashboard-header">
         ${appBar.render({
@@ -83,15 +101,28 @@ export const appHeader = {
                       }),
                     }),
                     divider.render({ orientation: "vertical" }),
+
+                    button.render({
+                      color: "secondary",
+                      variant: "ghost",
+                      shape: "square",
+                      children: icon.render({
+                        children: html`<i class=${themeIcon}></i>`,
+                        size: "lg",
+                      }),
+                      "aria-label": `Theme: ${themeName}`,
+                      onClick: () => api.notify("#theme:toggle"),
+                    }),
                     button.render({
                       color: "secondary",
                       variant: "ghost",
                       shape: "square",
                       children: materialIcon.render({
-                        name: "contrast",
+                        name: modeIcon,
                         size: "lg",
                       }),
-                      onClick: () => api.notify("#theme:toggle"),
+                      "aria-label": `Mode: ${themeMode}`,
+                      onClick: () => api.notify("#mode:toggle"),
                     }),
                     divider.render({ orientation: "vertical" }),
                     avatar.render({ src: "/antony.jpeg" }),

@@ -13,12 +13,14 @@ import { createDevtools, mount } from "@inglorious/web"
 
 import { appDrawer } from "../src/examples/dashboard/app-drawer.js"
 import { dashboard } from "../src/examples/dashboard/dashboard.js"
+import { mode } from "../src/examples/dashboard/mode.js"
 import { theme } from "../src/examples/dashboard/theme.js"
 
 const store = createStore({
   types: {
     dashboard,
     appDrawer,
+    mode,
     theme,
     area: areaChart,
     bar: barChart,
