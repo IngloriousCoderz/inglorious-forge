@@ -56,8 +56,7 @@ export function render(props) {
 
 function renderElement(element, classes, onClick, children, rest) {
   const classValue = classMap(classes)
-  const tag = allowedElements.has(element) ? element : "div"
-  const staticTag = unsafeStatic(tag)
+  const staticTag = unsafeStatic(element)
 
   return staticHtml`<${staticTag}
     class=${classValue}
@@ -67,14 +66,3 @@ function renderElement(element, classes, onClick, children, rest) {
     ${children}
   </${staticTag}>`
 }
-
-const allowedElements = new Set([
-  "div",
-  "section",
-  "main",
-  "header",
-  "footer",
-  "nav",
-  "aside",
-  "article",
-])

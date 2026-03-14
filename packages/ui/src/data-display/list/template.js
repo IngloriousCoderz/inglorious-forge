@@ -22,6 +22,7 @@
 import { classMap, html, ref, repeat, when } from "@inglorious/web"
 
 import { iconButton } from "../../controls/icon-button"
+import { flex } from "../../layout/flex"
 import { applyElementProps } from "../../shared/applyElementProps.js"
 
 const PRETTY_INDEX = 1
@@ -59,7 +60,7 @@ export const list = {
       "iw-list-dense": isDense,
       "iw-list-divided": isDivided,
       "iw-list-inset": isInset,
-      [`iw-list-padding-${padding}`]: true,
+      [`iw-list-padding-${padding}`]: padding !== "none",
       ...extraClasses,
     }
 
@@ -138,80 +139,109 @@ export const list = {
     const hasChildren = Array.isArray(children) && children.length > 0
     const hasAction = !!action
 
-    return html`<li
-      class=${classMap({
-        "iw-list-item": true,
-        "iw-list-item-clickable": isClickable,
-        "iw-list-item-disabled": isDisabled,
-        "iw-list-item-selected": isSelected,
-        "iw-list-item-inset": props.isInset && !icon,
-      })}
-      @click=${(event) => {
+    const listItemClassName = [
+      "iw-list-item",
+      isClickable && "iw-list-item-clickable",
+      isDisabled && "iw-list-item-disabled",
+      isSelected && "iw-list-item-selected",
+      props.isInset && !icon && "iw-list-item-inset",
+    ]
+      .filter(Boolean)
+      .join(" ")
+
+    return flex.render({
+      element: "li",
+      padding: "sm",
+      direction: "column",
+      className: listItemClassName,
+      onClick: (event) => {
         event.stopPropagation()
         if (isDisabled) return
         onClick?.(raw ?? item, path)
         props.onItemClick?.(raw ?? item, path)
-      }}
-    >
-      <div class="iw-list-item-inner">
-        ${icon}
-        <div class="iw-list-item-content">
-          <div class="iw-list-item-primary">${primary}</div>
-          ${when(
-            secondary,
-            () => html`<div class="iw-list-item-secondary">${secondary}</div>`,
-          )}
-        </div>
-        ${when(
-          hasChildren || hasAction,
-          () =>
-            html`<span class="iw-list-item-trailing">
-              ${when(hasChildren, () =>
-                iconButton.render({
-                  variant: "ghost",
-                  color: "default",
-                  size: "sm",
-                  shape: "square",
-                  className: "iw-list-item-toggle",
-                  isDisabled,
-                  ariaLabel: "Toggle section",
-                  "aria-expanded": isExpanded,
-                  onClick: (event) => {
-                    event.stopPropagation()
-                    if (isDisabled) return
-                    onToggle?.(raw ?? item, path)
-                    props.onItemToggle?.(raw ?? item, path)
-                  },
-                  icon: html`<span class="iw-list-item-caret" aria-hidden="true"
-                    >〱</span
-                  >`,
-                  label: "",
-                }),
-              )}
-              ${when(
-                action,
-                () =>
-                  html`<span
-                    class="iw-list-item-action"
-                    @click=${(event) => event.stopPropagation()}
-                  >
-                    ${action}
-                  </span>`,
-              )}
-            </span>`,
-        )}
-      </div>
-      ${when(hasChildren, () =>
-        when(isExpanded, () =>
-          this.render({
-            ...props,
-            items: children,
-            className: `${props.className ?? ""} iw-list-nested`.trim(),
-            path,
-          }),
+      },
+      children: [
+        flex.render({
+          align: "center",
+          gap: "sm",
+          children: [
+            iconButton.render({
+              icon,
+              size: "sm",
+              color: "secondary",
+              variant: "ghost",
+              shape: "square",
+              className: "iw-list-item-icon",
+            }),
+            flex.render({
+              direcion: "column",
+              gap: "sm",
+              className: "iw-list-item-content",
+              children: [
+                html`<div class="iw-list-item-primary">${primary}</div>`,
+                when(
+                  secondary,
+                  () =>
+                    html`<div class="iw-list-item-secondary">
+                      ${secondary}
+                    </div>`,
+                ),
+              ],
+            }),
+            when(
+              hasChildren || hasAction,
+              () =>
+                html`<span class="iw-list-item-trailing">
+                  ${when(hasChildren, () =>
+                    iconButton.render({
+                      variant: "ghost",
+                      color: "default",
+                      size: "sm",
+                      shape: "square",
+                      className: "iw-list-item-toggle",
+                      isDisabled,
+                      ariaLabel: "Toggle section",
+                      "aria-expanded": isExpanded,
+                      onClick: (event) => {
+                        event.stopPropagation()
+                        if (isDisabled) return
+                        onToggle?.(raw ?? item, path)
+                        props.onItemToggle?.(raw ?? item, path)
+                      },
+                      icon: html`<span
+                        class="iw-list-item-caret"
+                        aria-hidden="true"
+                        >〱</span
+                      >`,
+                      label: "",
+                    }),
+                  )}
+                  ${when(
+                    action,
+                    () =>
+                      html`<span
+                        class="iw-list-item-action"
+                        @click=${(event) => event.stopPropagation()}
+                      >
+                        ${action}
+                      </span>`,
+                  )}
+                </span>`,
+            ),
+          ],
+        }),
+        when(hasChildren, () =>
+          when(isExpanded, () =>
+            this.render({
+              ...props,
+              items: children,
+              className: `${props.className ?? ""} iw-list-nested`.trim(),
+              path,
+            }),
+          ),
         ),
-      )}
-    </li>`
+      ],
+    })
   },
 }
 

@@ -163,13 +163,6 @@
     border-radius: 999px;
   }
 
-  &.iw-button-shape-round,
-  &.iw-button-shape-square {
-    width: 2.5rem;
-    aspect-ratio: 1 / 1;
-    padding: 0;
-  }
-
   &.iw-button-shape-round {
     border-radius: 999px;
   }
@@ -181,10 +174,18 @@
   &.iw-button-sm.iw-button-shape-round,
   &.iw-button-sm.iw-button-shape-square {
     width: 2rem;
+    height: 2rem;
+  }
+
+  &.iw-button-md.iw-button-shape-round,
+  &.iw-button-md.iw-button-shape-square {
+    width: 2.5rem;
+    height: 2.5rem;
   }
 
   &.iw-button-lg.iw-button-shape-round,
   &.iw-button-lg.iw-button-shape-square {
     width: 3rem;
+    height: 3rem;
   }
 }

@@ -47,7 +47,7 @@ export function render(props) {
     "iw-button": true,
     [`iw-button-${variant}`]: variant !== "default",
     [`iw-button-${color}`]: true,
-    [`iw-button-${size}`]: size !== "md",
+    [`iw-button-${size}`]: true,
     [`iw-button-pressed`]: isPressed,
     [`iw-button-shape-${shape}`]: shape !== "rectangle",
     "iw-button-full-width": isFullWidth,

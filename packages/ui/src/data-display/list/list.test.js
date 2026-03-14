@@ -88,10 +88,10 @@ describe("list", () => {
 
     render(list.render(props), container)
 
-    expect(container.querySelector(".iw-list-item-icon").textContent).toBe("★")
-    expect(container.querySelector(".iw-list-item-secondary").textContent).toBe(
-      "Pinned",
-    )
+    expect(container.querySelector(".iw-button-icon").textContent).toBe("★")
+    expect(
+      container.querySelector(".iw-list-item-secondary").textContent.trim(),
+    ).toBe("Pinned")
   })
 
   it("applies inset alignment for items without icons", () => {

@@ -4,10 +4,6 @@
   color: var(--iw-color-text);
   list-style: none;
 
-  &.iw-list-padding-none {
-    padding: 0;
-  }
-
   &.iw-list-padding-sm {
     padding: var(--iw-space-2);
   }
@@ -45,12 +41,6 @@
     color 0.15s ease;
 }
 
-.iw-list-item-inner {
-  display: flex;
-  align-items: center;
-  gap: var(--iw-space-3);
-}
-
 .iw-list-item-inset .iw-list-item-content {
   margin-left: calc(var(--iw-space-3) + var(--iw-list-icon-size, 1.25rem));
 }
@@ -61,12 +51,6 @@
   font-weight: var(--iw-font-weight-semibold);
   text-transform: uppercase;
   color: var(--iw-color-text-muted, var(--iw-color-text));
-}
-
-.iw-list-item-content {
-  display: flex;
-  flex-direction: column;
-  gap: var(--iw-space-1);
 }
 
 .iw-list-item-action {
