@@ -1,10 +1,12 @@
 :root {
-  color-scheme: dark;
+  color-scheme: light dark;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
+  transition: background-color var(--iw-transition-slow),
+    color var(--iw-transition-slow);
 }
 
 #app {

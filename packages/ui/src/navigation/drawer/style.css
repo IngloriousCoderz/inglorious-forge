@@ -1,6 +1,4 @@
 .iw-drawer {
-  display: flex;
-  flex-direction: column;
   width: 16rem;
   background: var(--iw-color-surface);
   color: var(--iw-color-text);
@@ -17,10 +15,6 @@
   z-index: var(--iw-z-modal, 1050);
 
   .iw-drawer-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--iw-space-2);
     border-bottom: 1px solid var(--iw-color-border);
     flex-shrink: 0;
 
@@ -37,9 +31,6 @@
   }
 
   .iw-drawer-footer {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
     border-top: 1px solid var(--iw-color-border);
     flex-shrink: 0;
   }
@@ -100,7 +91,7 @@
       transform: translateX(0);
     }
 
-    .iw-drawer-toggler {
+    .iw-drawer-footer {
       display: none;
     }
   }
@@ -127,8 +118,8 @@
       display: none;
     }
 
-    .iw-drawer-toggler {
-      display: inline-flex;
+    .iw-drawer-footer {
+      display: flex;
     }
   }
 }

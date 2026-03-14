@@ -1,4 +1,4 @@
-import { classMap, html } from "@inglorious/web"
+import { html } from "@inglorious/web"
 
 import { container } from "../../layout/container/index.js"
 import { flex } from "../../layout/flex/index.js"
@@ -14,21 +14,25 @@ export const dashboard = {
   render(entity, api) {
     const appDrawer = api.getEntity("appDrawer")
 
-    return html`
-      <div
-        class=${classMap({
-          "iw-dashboard": true,
-          "iw-dashboard-drawer-hidden": appDrawer.isHidden,
-          "iw-dashboard-drawer-collapsed": appDrawer.isCollapsed,
-        })}
-      >
-        ${api.render("appDrawer")}
+    const dashboardClassName = [
+      "iw-dashboard",
+      appDrawer.isHidden && "iw-dashboard-drawer-hidden",
+      appDrawer.isCollapsed && "iw-dashboard-drawer-collapsed",
+    ]
+      .filter(Boolean)
+      .join(" ")
 
-        <div class="iw-dashboard-main">
+    return flex.render({
+      direction: "column",
+      className: dashboardClassName,
+      children: [
+        api.render("appDrawer"),
+        html`<div class="iw-dashboard-main">
           ${appHeader.render(entity, api)}
           ${container.render({
             maxWidth: "xl",
             padding: "lg",
+            className: "iw-dashboard-container",
             children: flex.render({
               direction: "column",
               gap: "lg",
@@ -61,8 +65,8 @@ export const dashboard = {
               html`<div>Built with Inglorious UI primitives and charts</div>`,
             ],
           })}
-        </div>
-      </div>
-    `
+        </div>`,
+      ],
+    })
   },
 }

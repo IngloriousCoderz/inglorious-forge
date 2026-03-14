@@ -91,6 +91,7 @@ export const appHeader = {
                         name: "contrast",
                         size: "lg",
                       }),
+                      onClick: () => api.notify("#theme:toggle"),
                     }),
                     divider.render({ orientation: "vertical" }),
                     avatar.render({ src: "/antony.jpeg" }),

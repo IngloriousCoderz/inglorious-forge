@@ -4,6 +4,7 @@ import { avatar } from "../../data-display/avatar"
 import { badge } from "../../data-display/badge"
 import { list } from "../../data-display/list"
 import { materialIcon } from "../../data-display/material-icon"
+import { flex } from "../../layout/flex"
 import { drawer } from "../../navigation/drawer"
 
 export const appDrawer = {
@@ -34,10 +35,16 @@ export const appDrawer = {
       anchor: "left",
       onClose: () => api.notify(`#${entity.id}:toggle`),
       onCollapseToggle: () => api.notify(`#${entity.id}:collapseToggle`),
-      title: html`<div class="iw-dashboard-brand">
-        ${avatar.render({ src: "/transparent.png", shape: "square" })}
-        <span class="iw-dashboard-brand-title">Inglorious UI</span>
-      </div>`,
+      title: flex.render({
+        align: "center",
+        gap: "sm",
+        padding: "md",
+        className: "iw-dashboard-brand",
+        children: [
+          avatar.render({ src: "/transparent.png", shape: "square" }),
+          html`<span class="iw-dashboard-brand-title">Inglorious UI</span>`,
+        ],
+      }),
       children: html`
         ${list.render({
           isInset: true,
@@ -73,10 +80,7 @@ function getDefaultItems() {
     {
       id: "typography",
       primary: "Typography",
-      icon: materialIcon.render({
-        name: "text_fields",
-        size: "lg",
-      }),
+      icon: materialIcon.render({ name: "text_fields", size: "lg" }),
     },
     { id: "components-title", title: "Components" },
     {

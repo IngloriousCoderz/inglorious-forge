@@ -1,7 +1,5 @@
 .iw-dashboard {
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
 
   .iw-dashboard-main {
     transition: padding-left var(--iw-transition-fast);
@@ -41,10 +39,6 @@
 }
 
 .iw-dashboard-brand {
-  display: flex;
-  align-items: center;
-  gap: var(--iw-space-3);
-  padding: var(--iw-space-4);
   font-weight: var(--iw-font-weight-semibold);
 }
 
@@ -55,6 +49,9 @@
   background: var(--iw-color-surface);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(10px);
+  transition:
+    background-color var(--iw-transition-slow),
+    border-color var(--iw-transition-slow);
 
   .iw-dashboard-header-row {
     width: 100%;
@@ -74,9 +71,21 @@
   }
 }
 
+.iw-dashboard-container {
+  background: var(--iw-color-bg);
+  transition: background-color var(--iw-transition-slow);
+}
+
 .iw-dashboard-stat {
   overflow: hidden;
   color: white;
+
+  .iw-typography,
+  .iw-material-icon,
+  .iw-button,
+  .iw-button .iw-material-icon {
+    color: white;
+  }
 }
 
 .iw-dashboard-stat-primary {
@@ -209,8 +218,8 @@
 
 .iw-dashboard-avatar-badge {
   position: absolute;
-  right: -0.15rem;
-  bottom: -0.15rem;
+  right: 0;
+  bottom: 0;
 }
 
 .iw-dashboard-country {

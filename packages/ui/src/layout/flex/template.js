@@ -3,7 +3,9 @@
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
-import { classMap, html } from "@inglorious/web"
+import { classMap, ref, staticHtml, unsafeStatic } from "@inglorious/web"
+
+import { applyElementProps } from "../../shared/applyElementProps.js"
 
 /**
  * Flex layout component for Inglorious Web.
@@ -26,6 +28,7 @@ export function render(props) {
     className = "",
     children = [],
     onClick,
+    ...rest
   } = props
 
   const extraClasses = Object.fromEntries(
@@ -48,40 +51,30 @@ export function render(props) {
     ...extraClasses,
   }
 
-  return renderElement(element, classes, onClick, children)
+  return renderElement(element, classes, onClick, children, rest)
 }
 
-function renderElement(element, classes, onClick, children) {
+function renderElement(element, classes, onClick, children, rest) {
   const classValue = classMap(classes)
+  const tag = allowedElements.has(element) ? element : "div"
+  const staticTag = unsafeStatic(tag)
 
-  switch (element) {
-    case "section":
-      return html`<section class=${classValue} @click=${onClick}>
-        ${children}
-      </section>`
-    case "main":
-      return html`<main class=${classValue} @click=${onClick}>
-        ${children}
-      </main>`
-    case "header":
-      return html`<header class=${classValue} @click=${onClick}>
-        ${children}
-      </header>`
-    case "footer":
-      return html`<footer class=${classValue} @click=${onClick}>
-        ${children}
-      </footer>`
-    case "nav":
-      return html`<nav class=${classValue} @click=${onClick}>${children}</nav>`
-    case "aside":
-      return html`<aside class=${classValue} @click=${onClick}>
-        ${children}
-      </aside>`
-    case "article":
-      return html`<article class=${classValue} @click=${onClick}>
-        ${children}
-      </article>`
-    default:
-      return html`<div class=${classValue} @click=${onClick}>${children}</div>`
-  }
+  return staticHtml`<${staticTag}
+    class=${classValue}
+    @click=${onClick}
+    ${ref((node) => applyElementProps(node, rest))}
+  >
+    ${children}
+  </${staticTag}>`
 }
+
+const allowedElements = new Set([
+  "div",
+  "section",
+  "main",
+  "header",
+  "footer",
+  "nav",
+  "aside",
+  "article",
+])

@@ -8,6 +8,7 @@ import {
 } from "../../stories/notifyStory.js"
 import { appDrawer } from "./app-drawer.js"
 import { dashboard } from "./dashboard.js"
+import { theme } from "./theme.js"
 
 export default {
   title: "Examples/AdminDashboard",
@@ -15,6 +16,7 @@ export default {
   render: createEntityRender({
     dashboard,
     appDrawer,
+    theme,
     area: areaChart,
     bar: barChart,
     line: lineChart,
