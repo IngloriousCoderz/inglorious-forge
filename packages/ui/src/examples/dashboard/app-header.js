@@ -45,6 +45,7 @@ export const appHeader = {
                   variant: "ghost",
                   shape: "square",
                   children: materialIcon.render({ name: "menu", size: "lg" }),
+                  "aria-label": "Toggle navigation",
                   onClick: () => api.notify(`#appDrawer:toggle`),
                 }),
                 flex.render({
@@ -82,6 +83,7 @@ export const appHeader = {
                         name: "notifications",
                         size: "lg",
                       }),
+                      "aria-label": "Notifications",
                     }),
                     button.render({
                       color: "secondary",
@@ -90,6 +92,7 @@ export const appHeader = {
                       children: materialIcon.render({
                         name: "format_list_bulleted",
                       }),
+                      "aria-label": "Tasks",
                     }),
                     button.render({
                       color: "secondary",
@@ -99,6 +102,7 @@ export const appHeader = {
                         name: "mail",
                         size: "lg",
                       }),
+                      "aria-label": "Messages",
                     }),
                     divider.render({ orientation: "vertical" }),
 

@@ -27,45 +27,52 @@ export const dashboard = {
       className: dashboardClassName,
       children: [
         api.render("appDrawer"),
-        html`<div class="iw-dashboard-main">
-          ${appHeader.render(entity, api)}
-          ${container.render({
-            maxWidth: "xl",
-            padding: "lg",
-            className: "iw-dashboard-container",
-            children: flex.render({
-              direction: "column",
-              gap: "lg",
+        flex.render({
+          element: "main",
+          direction: "column",
+          className: "iw-dashboard-main",
+          children: [
+            appHeader.render(entity, api),
+            container.render({
+              maxWidth: "xl",
+              padding: "lg",
+              className: "iw-dashboard-container",
+              children: flex.render({
+                direction: "column",
+                gap: "lg",
+                children: [
+                  grid.render({
+                    minColumnWidth: "18rem",
+                    gap: "lg",
+                    children: statCards.map((card) =>
+                      statCard.render(card, api),
+                    ),
+                  }),
+                  trafficCard.render(entity, api),
+                  grid.render({
+                    columns: 3,
+                    gap: "lg",
+                    children: socialCards.map((card) =>
+                      socialCard.render(card, api),
+                    ),
+                  }),
+                  trafficSalesCard.render(entity, api),
+                ],
+              }),
+            }),
+            flex.render({
+              element: "footer",
+              justify: "between",
+              gap: "md",
+              padding: "md",
+              className: "iw-dashboard-footer",
               children: [
-                grid.render({
-                  minColumnWidth: "18rem",
-                  gap: "lg",
-                  children: statCards.map((card) => statCard.render(card, api)),
-                }),
-                trafficCard.render(entity, api),
-                grid.render({
-                  columns: 3,
-                  gap: "lg",
-                  children: socialCards.map((card) =>
-                    socialCard.render(card, api),
-                  ),
-                }),
-                trafficSalesCard.render(entity, api),
+                html`<div>Admin dashboard example © 2026</div>`,
+                html`<div>Built with Inglorious UI primitives and charts</div>`,
               ],
             }),
-          })}
-          ${flex.render({
-            element: "footer",
-            justify: "between",
-            gap: "md",
-            padding: "md",
-            className: "iw-dashboard-footer",
-            children: [
-              html`<div>Admin dashboard example © 2026</div>`,
-              html`<div>Built with Inglorious UI primitives and charts</div>`,
-            ],
-          })}
-        </div>`,
+          ],
+        }),
       ],
     })
   },

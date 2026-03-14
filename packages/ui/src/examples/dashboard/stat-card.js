@@ -41,6 +41,7 @@ export const statCard = {
             shape: "square",
             className: "iw-dashboard-stat-more",
             children: materialIcon.render({ name: "more_vert", size: "lg" }),
+            "aria-label": "More options",
           })}
         </div>
       `,

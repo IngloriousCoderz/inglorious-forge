@@ -45,6 +45,7 @@ export const trafficCard = {
                 size: "md",
                 color: "primary",
                 children: materialIcon.render({ name: "download" }),
+                "aria-label": "Download report",
               }),
             ],
           }),

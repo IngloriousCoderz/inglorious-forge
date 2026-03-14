@@ -242,6 +242,7 @@ export const trafficSalesCard = {
                   variant: "ghost",
                   color: "secondary",
                   children: materialIcon.render({ name: "more_vert" }),
+                  "aria-label": "Row actions",
                 })}
               </div>
             `,
