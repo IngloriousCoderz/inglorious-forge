@@ -38,7 +38,7 @@
 }
 
 .iw-list-item {
-  padding: var(--iw-space-3) var(--iw-space-4);
+  padding: var(--iw-space-3);
   border-radius: var(--iw-radius-sm);
   transition:
     background-color 0.15s ease,
@@ -55,18 +55,8 @@
   margin-left: calc(var(--iw-space-3) + var(--iw-list-icon-size, 1.25rem));
 }
 
-.iw-list-item-icon {
-  width: var(--iw-list-icon-size, 1.25rem);
-  height: var(--iw-list-icon-size, 1.25rem);
-  flex: 0 0 var(--iw-list-icon-size, 1.25rem);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--iw-color-text-muted, var(--iw-color-text));
-}
-
 .iw-list-title {
-  padding: var(--iw-space-3) var(--iw-space-4);
+  padding: var(--iw-space-3);
   font-size: var(--iw-font-size-xs);
   font-weight: var(--iw-font-weight-semibold);
   text-transform: uppercase;

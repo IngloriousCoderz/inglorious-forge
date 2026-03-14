@@ -19,7 +19,7 @@
  * }} ListItemMeta
  */
 
-import { classMap, html, ref, repeat } from "@inglorious/web"
+import { classMap, html, ref, repeat, when } from "@inglorious/web"
 
 import { iconButton } from "../../controls/icon-button"
 import { applyElementProps } from "../../shared/applyElementProps.js"
@@ -154,61 +154,63 @@ export const list = {
       }}
     >
       <div class="iw-list-item-inner">
-        ${icon ? html`<span class="iw-list-item-icon">${icon}</span>` : null}
+        ${icon}
         <div class="iw-list-item-content">
           <div class="iw-list-item-primary">${primary}</div>
-          ${secondary
-            ? html`<div class="iw-list-item-secondary">${secondary}</div>`
-            : null}
+          ${when(
+            secondary,
+            () => html`<div class="iw-list-item-secondary">${secondary}</div>`,
+          )}
         </div>
-        ${hasChildren || hasAction
-          ? html`<span class="iw-list-item-trailing">
-              ${hasChildren
-                ? iconButton.render({
-                    variant: "ghost",
-                    color: "default",
-                    size: "sm",
-                    shape: "square",
-                    className: "iw-list-item-toggle",
-                    isDisabled,
-                    ariaLabel: "Toggle section",
-                    "aria-expanded": isExpanded,
-                    onClick: (event) => {
-                      event.stopPropagation()
-                      if (isDisabled) return
-                      onToggle?.(raw ?? item, path)
-                      props.onItemToggle?.(raw ?? item, path)
-                    },
-                    icon: html`<span
-                      class="iw-list-item-caret"
-                      aria-hidden="true"
-                      >〱</span
-                    >`,
-                    label: "",
-                  })
-                : null}
-              ${action
-                ? html`<span
+        ${when(
+          hasChildren || hasAction,
+          () =>
+            html`<span class="iw-list-item-trailing">
+              ${when(hasChildren, () =>
+                iconButton.render({
+                  variant: "ghost",
+                  color: "default",
+                  size: "sm",
+                  shape: "square",
+                  className: "iw-list-item-toggle",
+                  isDisabled,
+                  ariaLabel: "Toggle section",
+                  "aria-expanded": isExpanded,
+                  onClick: (event) => {
+                    event.stopPropagation()
+                    if (isDisabled) return
+                    onToggle?.(raw ?? item, path)
+                    props.onItemToggle?.(raw ?? item, path)
+                  },
+                  icon: html`<span class="iw-list-item-caret" aria-hidden="true"
+                    >〱</span
+                  >`,
+                  label: "",
+                }),
+              )}
+              ${when(
+                action,
+                () =>
+                  html`<span
                     class="iw-list-item-action"
                     @click=${(event) => event.stopPropagation()}
                   >
                     ${action}
-                  </span>`
-                : null}
-            </span>`
-          : null}
+                  </span>`,
+              )}
+            </span>`,
+        )}
       </div>
-      ${hasChildren
-        ? isExpanded
-          ? this.render({
-              ...props,
-              items: children,
-              children: null,
-              className: `${props.className ?? ""} iw-list-nested`.trim(),
-              path,
-            })
-          : null
-        : children}
+      ${when(hasChildren, () =>
+        when(isExpanded, () =>
+          this.render({
+            ...props,
+            items: children,
+            className: `${props.className ?? ""} iw-list-nested`.trim(),
+            path,
+          }),
+        ),
+      )}
     </li>`
   },
 }
