@@ -195,7 +195,7 @@ export const list = {
                   ${when(hasChildren, () =>
                     iconButton.render({
                       variant: "ghost",
-                      color: "default",
+                      color: "secondary",
                       size: "sm",
                       shape: "square",
                       className: "iw-list-item-toggle",
@@ -211,7 +211,7 @@ export const list = {
                       icon: html`<span
                         class="iw-list-item-caret"
                         aria-hidden="true"
-                        >〱</span
+                        >❯</span
                       >`,
                       label: "",
                     }),

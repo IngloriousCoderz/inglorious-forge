@@ -24,6 +24,7 @@ export function createEntityRender(types) {
 
     const store = createStore({
       types,
+      entities: { [entity.id]: entity },
       autoCreateEntities: true,
     })
     const originalNotify = store._api.notify

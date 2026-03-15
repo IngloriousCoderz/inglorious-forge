@@ -43,12 +43,12 @@ Use this page as a quick reference for supported icon strategies in `@inglorious
     border-color: var(--iw-color-primary);
     box-shadow: inset 0 0 0 1px var(--iw-color-primary);
   }
-  .iw-icon-example { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 1.1rem; margin-top: 0.35rem; }
+  .iw-icon-example { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 1.5rem; margin-top: 0.35rem; }
   .iw-material-symbol {
     font-family: "Material Symbols Outlined";
     font-weight: 400;
     font-style: normal;
-    font-size: 24px;
+    font-size: 1.5rem;
     line-height: 1;
     letter-spacing: normal;
     text-transform: none;
@@ -71,28 +71,27 @@ Use this page as a quick reference for supported icon strategies in `@inglorious
   <input id="iw-icon-tab-lucide" type="radio" name="iw-icon-tab" />
   <input id="iw-icon-tab-a11y" type="radio" name="iw-icon-tab" />
 
-<div className="iw-icon-tab-labels">
-  <label htmlFor="iw-icon-tab-generic">Generic</label>
-  <label htmlFor="iw-icon-tab-svg">Inline SVG</label>
-  <label htmlFor="iw-icon-tab-material">Material</label>
-  <label htmlFor="iw-icon-tab-fa">Font Awesome</label>
-  <label htmlFor="iw-icon-tab-lucide">Lucide</label>
-  <label htmlFor="iw-icon-tab-a11y">Accessibility</label>
-</div>
+  <div className="iw-icon-tab-labels">
+    <label htmlFor="iw-icon-tab-generic">Generic</label>
+    <label htmlFor="iw-icon-tab-svg">Inline SVG</label>
+    <label htmlFor="iw-icon-tab-material">Material</label>
+    <label htmlFor="iw-icon-tab-fa">Font Awesome</label>
+    <label htmlFor="iw-icon-tab-lucide">Lucide</label>
+    <label htmlFor="iw-icon-tab-a11y">Accessibility</label>
+  </div>
 
   <div className="iw-icon-tab-panels">
     <section className="iw-icon-tab-panel iw-icon-tab-panel-generic">
-      <p>Use <code>@inglorious/ui/icon</code> for glyphs, emoji, and simple symbols.</p>
-      <pre><code>{`icon.render({ children: "★", size: "md", color: "current" })`}</code></pre>
+      <p>Use <code>@inglorious/ui/icon</code> for glyphs, emoji, and simple symbols. Reference: <a href="/?path=/story/data-display-icon--unicode">UTF-8 Icons</a></p>
+      <pre><code>{`icon.render({ children: "★", size: "md", color: "primary" })`}</code></pre>
       <div className="iw-icon-example">★ ⚑ ♫</div>
     </section>
 
     <section className="iw-icon-tab-panel iw-icon-tab-panel-svg">
       <p>Use inline SVG when you want a custom icon pack without font dependencies.</p>
       <pre><code>{`icon.render({
-
-children: html\`<svg viewBox="0 0 24 24" ...>...</svg>\`,
-size: "md",
+    children: html\`<svg viewBox="0 0 24 24" ...>...</svg>\`,
+    size: "md",
 })`}</code></pre>
 
 <div className="iw-icon-example">
@@ -109,7 +108,7 @@ size: "md",
 </section>
 
     <section className="iw-icon-tab-panel iw-icon-tab-panel-material">
-      <p>Use <code>@inglorious/ui/material-icon</code> when Material Symbols fonts are loaded.</p>
+      <p>Use <code>@inglorious/ui/material-icon</code> when Material Symbols fonts are loaded. Reference: <a href="https://fonts.google.com/icons?icon.set=Material+Icons" target="_blank">Material Icons</a></p>
       <pre><code>{`materialIcon.render({ name: "home", filled: true, size: "md" })`}</code></pre>
       <div className="iw-icon-example">
         <span className="iw-material-symbol" aria-hidden="true">home</span>
@@ -119,9 +118,9 @@ size: "md",
     </section>
 
     <section className="iw-icon-tab-panel iw-icon-tab-panel-fa">
-      <p>Load Font Awesome CSS globally, then pass an icon element as <code>children</code>.</p>
+      <p>Load Font Awesome CSS globally, then pass an icon element as <code>children</code>. Reference: <a href="https://fontawesome.com/search" target="_blank">Font Awesome Icons</a></p>
       <pre><code>{`icon.render({
-children: html\`<i class="fa-solid fa-user" aria-hidden="true"></i>\`,
+    children: html\`<i class="fa-solid fa-user" aria-hidden="true"></i>\`,
 })`}</code></pre>
 
 <div className="iw-icon-example">
@@ -132,12 +131,11 @@ children: html\`<i class="fa-solid fa-user" aria-hidden="true"></i>\`,
 </section>
 
     <section className="iw-icon-tab-panel iw-icon-tab-panel-lucide">
-      <p>Lucide requires runtime bootstrapping before icons render.</p>
+      <p>Lucide requires runtime bootstrapping before icons render. Reference: <a href="https://lucide.dev/icons/?focus" target="_blank">Lucide Icons</a></p>
       <pre><code>{`import { createIcons, icons } from "lucide"
-
 createIcons({
-icons,
-attrs: { "stroke-width": 1.75 },
+    icons,
+    attrs: { "stroke-width": 1.75 },
 })`}</code></pre>
       <p>Then render nodes such as <code>{`<i data-lucide="user"></i>`}</code>.</p>
 
@@ -154,6 +152,7 @@ attrs: { "stroke-width": 1.75 },
         <li>Meaningful icons: include an <code>aria-label</code> or visible text.</li>
         <li>Do not rely on icon shape alone for state; pair with text/color contrast.</li>
       </ul>
+      <p>Unicode glyph explorer lives in the <strong>Data Display/Icon/Unicode</strong> story.</p>
     </section>
 
 </div>

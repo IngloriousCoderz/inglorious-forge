@@ -1,40 +1,99 @@
-import { createRender } from "../../stories/notifyStory.js"
+import { html, repeat } from "@inglorious/web"
+
 import { materialIcon } from "."
 
+const materialIcons = [
+  "search",
+  "home",
+  "menu",
+  "settings",
+  "favorite",
+  "visibility",
+  "notifications",
+  "shopping_cart",
+  "person",
+  "calendar_today",
+  "mail",
+  "chat",
+  "help",
+  "info",
+  "warning",
+  "check_circle",
+  "cancel",
+  "delete",
+  "download",
+  "upload",
+  "lock",
+  "star",
+  "play_arrow",
+  "pause",
+  "stop",
+  "cloud",
+  "camera_alt",
+  "bolt",
+  "palette",
+  "code",
+  "analytics",
+  "schedule",
+]
+
 export default {
-  title: "Data Display/MaterialIcon",
+  title: "Data Display/Material Icon",
   tags: ["autodocs"],
-  render: createRender(materialIcon),
   argTypes: {
-    name: {
-      control: "text",
-      description: "Material Symbol name (for example `home`, `settings`).",
-    },
     size: {
       control: "select",
       options: ["sm", "md", "lg"],
-      description: "Icon size scale.",
     },
     isFilled: {
       control: "boolean",
-      description: "Toggles filled font variation.",
     },
-    onClick: { action: "onClick" },
+    columns: {
+      control: "number",
+    },
   },
   parameters: {
     docs: {
       description: {
         component:
-          "Material Symbols wrapper that renders icons by name using text ligatures.",
+          "Material Symbols icon set (requires Material Symbols font to be loaded).",
       },
     },
   },
 }
 
-export const Default = {
+export const Gallery = {
   args: {
-    name: "home",
-    size: "md",
-    isFilled: true,
+    size: "lg",
+    isFilled: false,
+    columns: 6,
+  },
+  render: (args) => {
+    const columns = Math.max(4, Number(args.columns ?? 6))
+    const size = args.size ?? "lg"
+    const isFilled = Boolean(args.isFilled)
+
+    return html`
+      <div
+        style=${[
+          "display: grid",
+          `grid-template-columns: repeat(${columns}, minmax(0, 1fr))`,
+          "gap: 1rem",
+          "align-items: center",
+          "justify-items: center",
+        ].join("; ")}
+      >
+        ${repeat(
+          materialIcons,
+          (name) => name,
+          (name) =>
+            materialIcon.render({
+              name,
+              size,
+              isFilled,
+            }),
+        )}
+      </div>
+    `
   },
 }

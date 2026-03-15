@@ -68,12 +68,11 @@
 
 .iw-list-item-toggle {
   .iw-list-item-caret {
-    transform: rotate(180deg);
     transition: transform 0.15s ease;
   }
 
   &[aria-expanded] .iw-list-item-caret {
-    transform: rotate(270deg);
+    transform: rotate(90deg);
   }
 }
 
