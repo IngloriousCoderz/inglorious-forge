@@ -30,6 +30,8 @@ export const appDrawer = {
   },
 
   render(entity, api) {
+    const items = mapItemsForRender(entity.items ?? [])
+
     return drawer.render({
       ...entity,
       anchor: "left",
@@ -49,7 +51,7 @@ export const appDrawer = {
         ${list.render({
           isInset: true,
           padding: "sm",
-          items: entity.items,
+          items,
           onItemToggle: (_, path) =>
             api.notify(`#${entity.id}:itemToggle`, { path }),
         })}
@@ -58,64 +60,124 @@ export const appDrawer = {
   },
 }
 
+function mapItemsForRender(items) {
+  return items.map((item) => {
+    const mappedItem = { ...item }
+
+    if (item.icon) {
+      mappedItem.icon = materialIcon.render({ name: item.icon, size: "lg" })
+    }
+
+    if (item.badge) {
+      mappedItem.action = badge.render(item.badge)
+    }
+
+    if (Array.isArray(item.children)) {
+      mappedItem.children = mapItemsForRender(item.children)
+    }
+
+    return mappedItem
+  })
+}
+
 function getDefaultItems() {
   return [
     {
       id: "dashboard",
       primary: "Dashboard",
-      icon: materialIcon.render({ name: "speed", size: "lg" }),
+      icon: "speed",
       isSelected: true,
-      action: badge.render({
+      badge: {
         color: "info",
         children: "NEW",
         size: "sm",
-      }),
+      },
     },
-    { id: "theme-title", title: "Theme" },
+    { id: "primitives-title", title: "Primitives" },
     {
-      id: "colors",
-      primary: "Colors",
-      icon: materialIcon.render({ name: "palette", size: "lg" }),
+      id: "layout",
+      primary: "Layout",
+      icon: "grid_view",
+      children: [
+        { id: "container", primary: "Container" },
+        { id: "flex", primary: "Flex" },
+        { id: "grid", primary: "Grid" },
+      ],
     },
     {
-      id: "typography",
-      primary: "Typography",
-      icon: materialIcon.render({ name: "text_fields", size: "lg" }),
+      id: "controls",
+      primary: "Controls",
+      icon: "buttons_alt",
+      children: [
+        { id: "button", primary: "Button" },
+        { id: "button-group", primary: "Button Group" },
+        { id: "checkbox", primary: "Checkbox" },
+        { id: "fab", primary: "Fab" },
+        { id: "icon-button", primary: "Icon Button" },
+        { id: "input", primary: "Input" },
+        { id: "radio-group", primary: "Radio Group" },
+        { id: "rating", primary: "Rating" },
+        { id: "select", primary: "Select" },
+        { id: "slider", primary: "Slider" },
+        { id: "switch", primary: "Switch" },
+      ],
     },
-    { id: "components-title", title: "Components" },
     {
-      id: "base",
-      primary: "Base",
-      icon: materialIcon.render({ name: "extension", size: "lg" }),
-      isExpanded: false,
+      id: "data-display",
+      primary: "Data Display",
+      icon: "database",
+      children: [
+        { id: "avatar", primary: "Avatar" },
+        { id: "badge", primary: "Badge" },
+        { id: "chip", primary: "Chip" },
+        { id: "data-grid", primary: "Data Grid" },
+        { id: "divider", primary: "Divider" },
+        { id: "icon", primary: "Icon" },
+        { id: "list", primary: "List" },
+        { id: "material-icon", primary: "Material Icon" },
+        { id: "table", primary: "Table" },
+        { id: "tooltip", primary: "Tooltip" },
+        { id: "typography", primary: "Typography" },
+      ],
+    },
+    {
+      id: "feedback",
+      primary: "Feedback",
+      icon: "notifications",
+      children: [
+        { id: "alert", primary: "Alert" },
+        { id: "backdrop", primary: "Backdrop" },
+        { id: "dialog", primary: "Dialog" },
+        { id: "progress", primary: "Progress" },
+        { id: "skeleton", primary: "Skeleton" },
+        { id: "snackbar", primary: "Snackbar" },
+      ],
+    },
+    {
+      id: "navigation",
+      primary: "Navigation",
+      icon: "explore",
+      children: [
+        { id: "bottom-navigation", primary: "Bottom Navigation" },
+        { id: "breadcrumbs", primary: "Breadcrumbs" },
+        { id: "drawer", primary: "Drawer" },
+        { id: "link", primary: "Link" },
+        { id: "menu", primary: "Menu" },
+        { id: "pagination", primary: "Pagination" },
+        { id: "speed-dial", primary: "Speed Dial" },
+        { id: "stepper", primary: "Stepper" },
+        { id: "tabs", primary: "Tabs" },
+      ],
+    },
+    {
+      id: "surfaces",
+      primary: "Surfaces",
+      icon: "layers",
       children: [
         { id: "accordion", primary: "Accordion" },
-        { id: "cards", primary: "Cards" },
-        { id: "pagination", primary: "Pagination" },
-        { id: "tables", primary: "Tables" },
-      ],
-    },
-    {
-      id: "buttons",
-      primary: "Buttons",
-      icon: materialIcon.render({ name: "ads_click", size: "lg" }),
-      children: [
-        { id: "buttons-main", primary: "Buttons" },
-        { id: "button-group", primary: "Button Group" },
-      ],
-    },
-    {
-      id: "charts",
-      primary: "Charts",
-      icon: materialIcon.render({ name: "pie_chart", size: "lg" }),
-    },
-    {
-      id: "forms",
-      primary: "Forms",
-      icon: materialIcon.render({ name: "fact_check", size: "lg" }),
-      children: [
-        { id: "checks", primary: "Checks and radios" },
-        { id: "select", primary: "Select" },
+        { id: "app-bar", primary: "App Bar" },
+        { id: "card", primary: "Card" },
+        { id: "paper", primary: "Paper" },
       ],
     },
   ]
