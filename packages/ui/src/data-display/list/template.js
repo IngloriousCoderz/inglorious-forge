@@ -165,14 +165,16 @@ export const list = {
           align: "center",
           gap: "sm",
           children: [
-            iconButton.render({
-              icon,
-              size: "sm",
-              color: "secondary",
-              variant: "ghost",
-              shape: "square",
-              className: "iw-list-item-icon",
-            }),
+            when(icon, () =>
+              iconButton.render({
+                icon,
+                size: "sm",
+                color: "secondary",
+                variant: "ghost",
+                shape: "square",
+                className: "iw-list-item-icon",
+              }),
+            ),
             flex.render({
               direcion: "column",
               gap: "sm",
