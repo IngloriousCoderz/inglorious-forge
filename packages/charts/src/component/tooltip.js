@@ -1,5 +1,6 @@
 import { html } from "@inglorious/web"
 
+import { getResolvedEntity } from "../utils/cartesian-helpers.js"
 import { formatNumber } from "../utils/data-utils.js"
 
 /**
@@ -55,7 +56,7 @@ export function renderTooltip(entity, props, api) {
 export function createTooltipComponent() {
   return (entity, props, api) => {
     const tooltipFn = (ctx) => {
-      const entityFromContext = ctx.entity || entity
+      const entityFromContext = getResolvedEntity(ctx, entity)
       return renderTooltip(entityFromContext, {}, api)
     }
     // Mark as tooltip component for stable identification during processing

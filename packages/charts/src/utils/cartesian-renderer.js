@@ -4,8 +4,7 @@ import {
   resolveXAxisDataKey,
 } from "./cartesian-children.js"
 import { PALETTE_DEFAULT } from "./constants.js"
-import { isMultiSeries } from "./data-utils.js"
-const EXCLUDED_AXIS_KEYS = new Set(["name", "x", "date"])
+import { isMultiSeries, resolveDataKeys } from "./data-utils.js"
 
 /**
  * Converts long multi-series input into wide rows, reusing the x value as row key.
@@ -274,25 +273,6 @@ export function createCartesianRenderer({
       api,
     )
   }
-}
-
-function resolveDataKeys(data) {
-  if (!Array.isArray(data) || data.length === 0) return ["value"]
-
-  if (isMultiSeries(data)) {
-    return data.map((series, index) => {
-      return series.dataKey || series.name || series.label || `series${index}`
-    })
-  }
-
-  const first = data[0]
-  const keys = Object.keys(first).filter((key) => {
-    return !EXCLUDED_AXIS_KEYS.has(key) && typeof first[key] === "number"
-  })
-  if (keys.length > 0) return keys
-
-  const fallback = ["y", "value"].filter((key) => first[key] !== undefined)
-  return fallback.length > 0 ? fallback : ["value"]
 }
 
 function getRenderMethod(seriesType) {

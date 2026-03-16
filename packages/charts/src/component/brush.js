@@ -1,6 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { svg } from "@inglorious/web"
 
+import { getResolvedEntity } from "../utils/cartesian-helpers.js"
 import { isValidNumber } from "../utils/data-utils.js"
 import { createXScale } from "../utils/scales.js"
 
@@ -237,7 +238,7 @@ export function renderBrush(entity, props, api) {
 export function createBrushComponent(defaultConfig = {}) {
   return (entity, props, api) => {
     const brushFn = (ctx) => {
-      const entityFromContext = ctx.fullEntity || ctx.entity || entity
+      const entityFromContext = ctx.fullEntity || getResolvedEntity(ctx, entity)
       const config = { ...defaultConfig, ...(props.config || {}) }
 
       const result = renderBrush(
