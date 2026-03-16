@@ -28,12 +28,9 @@ export function renderAreaSections(api) {
             height: 400,
             dataKeys: ["value"],
             children: [
-              chart.CartesianGrid({
-                stroke: "#eee",
-                strokeDasharray: "5 5",
-              }),
+              chart.CartesianGrid(),
               chart.XAxis({ dataKey: "name" }),
-              chart.YAxis({ width: "auto" }),
+              chart.YAxis(),
               chart.Area({
                 dataKey: "value",
                 fill: "#8884d8",
@@ -60,7 +57,7 @@ export function renderAreaSections(api) {
             children: [
               chart.CartesianGrid(),
               chart.XAxis({ dataKey: "name" }),
-              chart.YAxis({ width: "auto" }),
+              chart.YAxis(),
               chart.Area({
                 dataKey: "revenue",
                 fill: "#8884d8",
@@ -104,12 +101,9 @@ export function renderAreaSections(api) {
             height: 400,
             dataKeys: ["Revenue", "Expenses", "Profit"],
             children: [
-              chart.CartesianGrid({
-                stroke: "#eee",
-                strokeDasharray: "5 5",
-              }),
+              chart.CartesianGrid(),
               chart.XAxis({ dataKey: "name" }),
-              chart.YAxis({ width: "auto" }),
+              chart.YAxis(),
               chart.Area({
                 dataKey: "Revenue",
                 fill: "#8884d8",
@@ -169,12 +163,9 @@ export function renderAreaSections(api) {
             height: 400,
             dataKeys: ["Revenue", "Expenses", "Profit"],
             children: [
-              chart.CartesianGrid({
-                stroke: "#eee",
-                strokeDasharray: "5 5",
-              }),
+              chart.CartesianGrid(),
               chart.XAxis({ dataKey: "name" }),
-              chart.YAxis({ width: "auto" }),
+              chart.YAxis(),
               chart.Area({
                 dataKey: "Revenue",
                 fill: "#8884d8",
