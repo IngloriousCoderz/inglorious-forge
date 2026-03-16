@@ -1,6 +1,5 @@
 /* eslint-disable no-magic-numbers */
-const DEFAULT_GRID_CONFIG = { stroke: "#eee", strokeDasharray: "5 5" }
-const DEFAULT_Y_AXIS_CONFIG = { width: "auto" }
+import { DEFAULT_GRID_CONFIG, DEFAULT_Y_AXIS_CONFIG } from "./constants.js"
 
 export function resolveXAxisDataKey(entity) {
   let dataKey = entity?.dataKey
