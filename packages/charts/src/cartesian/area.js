@@ -12,10 +12,12 @@ import { renderCurve } from "../shape/curve.js"
 import { renderDot } from "../shape/dot.js"
 import {
   createBandCenterScale,
+  getResolvedEntity,
   inferSeriesDataKey,
   resolveCategoryLabel,
 } from "../utils/cartesian-helpers.js"
 import { createCartesianRenderer } from "../utils/cartesian-renderer.js"
+import { PALETTE_DEFAULT } from "../utils/constants.js"
 import { getTransformedData } from "../utils/data-utils.js"
 import {
   generateAreaPath,
@@ -60,7 +62,7 @@ export const area = {
     const gridFn = (ctx) => {
       const { xScale, yScale, dimensions } = ctx
       return renderGrid(
-        ctx.entity || entity,
+        getResolvedEntity(ctx, entity),
         { xScale, yScale, ...dimensions, ...config },
         api,
       )
@@ -79,7 +81,7 @@ export const area = {
   renderXAxis(entity, { config = {} }, api) {
     const axisFn = (ctx) => {
       const { xScale, yScale, dimensions } = ctx
-      const ent = ctx.entity || entity
+      const ent = getResolvedEntity(ctx, entity)
       const labels = ent.data.map(
         (d, i) => d[config.dataKey] || d.name || String(i),
       )
@@ -107,11 +109,11 @@ export const area = {
    * @param {import('@inglorious/web').Api} api
    * @returns {(ctx: Record<string, any>) => import('lit-html').TemplateResult}
    */
-  renderYAxis(entity, { config = {} } = {}, api) {
+  renderYAxis(entity, { config = {} }, api) {
     const axisFn = (ctx) => {
       const { yScale, dimensions } = ctx
       return renderYAxis(
-        ctx.entity || entity,
+        getResolvedEntity(ctx, entity),
         { yScale, ...dimensions, ...config },
         api,
       )
@@ -132,7 +134,7 @@ export const area = {
       const { xScale, yScale } = ctx
       const {
         dataKey,
-        fill = "#8884d8",
+        fill = PALETTE_DEFAULT[0],
         fillOpacity = "0.6",
         stroke,
         stackId,
@@ -144,7 +146,7 @@ export const area = {
         (Array.isArray(config.data)
           ? inferSeriesDataKey(config.data, "area")
           : undefined)
-      const baseEntity = ctx.entity || entity
+      const baseEntity = getResolvedEntity(ctx, entity)
       const plotEntity = ctx.fullEntity || baseEntity
       const indexOffset = ctx.indexOffset ?? 0
       const indexEnd = ctx.indexEnd
@@ -233,8 +235,8 @@ export const area = {
   renderDots(entity, { config = {} }, api) {
     const dotsFn = (ctx) => {
       const { xScale, yScale } = ctx
-      const entityFromContext = ctx.entity || entity
-      const { dataKey, fill = "#8884d8" } = config
+      const entityFromContext = getResolvedEntity(ctx, entity)
+      const { dataKey, fill = PALETTE_DEFAULT[0] } = config
       const resolvedDataKey =
         dataKey ??
         (Array.isArray(config.data)
