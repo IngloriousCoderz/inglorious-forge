@@ -5,6 +5,7 @@ import { repeat } from "@inglorious/web/directives/repeat"
 
 import { createTooltipComponent, renderTooltip } from "../component/tooltip.js"
 import { renderSector } from "../shape/sector.js"
+import { getResolvedEntity } from "../utils/cartesian-helpers.js"
 import { formatNumber } from "../utils/data-utils.js"
 import { calculatePieData } from "../utils/paths.js"
 import { processDeclarativeChild } from "../utils/process-declarative-child.js"
@@ -347,7 +348,7 @@ export const pie = {
   // eslint-disable-next-line no-unused-vars
   renderPie(entity, { config = {} }, api) {
     const pieFn = (ctx) => {
-      const entityFromContext = ctx.entity || entity
+      const entityFromContext = getResolvedEntity(ctx, entity)
       if (!entityFromContext.data || entityFromContext.data.length === 0) {
         return svg``
       }

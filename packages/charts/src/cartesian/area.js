@@ -329,7 +329,7 @@ export const area = {
       }))
 
       return renderLegend(
-        ctx.entity || entity,
+        getResolvedEntity(ctx, entity),
         {
           series,
           colors: colors || [],

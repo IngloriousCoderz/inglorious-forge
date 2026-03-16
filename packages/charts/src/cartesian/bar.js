@@ -205,7 +205,7 @@ export const bar = {
    */
   renderYAxis(entity, props, api) {
     const axisFn = (ctx) => {
-      const entityFromContext = ctx.entity || entity
+      const entityFromContext = getResolvedEntity(ctx, entity)
       return renderYAxis(
         entityFromContext,
         {
