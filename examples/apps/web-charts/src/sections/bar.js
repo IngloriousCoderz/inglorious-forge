@@ -11,7 +11,7 @@ export function renderBarSection(api) {
 
       <section class="chart-section">
         <h2>Bar Chart - Recharts Style (Composition with api.getEntity)</h2>
-        ${chart.renderChart(
+        ${chart.render(
           api.getEntity("salesBarChartComposition"),
           {
             width: 800,

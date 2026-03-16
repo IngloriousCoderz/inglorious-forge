@@ -20,7 +20,7 @@ export function renderLineSections(api, status) {
 
       <section class="chart-section">
         <h2>Line Chart - Recharts Style (Composition with api.getEntity)</h2>
-        ${chart.renderChart(
+        ${chart.render(
           api.getEntity("salesLineChartComposition"),
           {
             width: 800,
@@ -43,7 +43,7 @@ export function renderLineSections(api, status) {
     <div class="charts-comparison">
       <section class="chart-section">
         <h2>Line Chart - Composition (No entity)</h2>
-        ${chart.renderChart(
+        ${chart.render(
           {
             data: inlineLineData,
             width: 600,
@@ -74,7 +74,7 @@ export function renderLineSections(api, status) {
           Line Chart with Brush - Recharts Style (Composition with
           api.getEntity)
         </h2>
-        ${chart.renderChart(
+        ${chart.render(
           api.getEntity("lineChartWithBrush"),
           {
             width: 800,
@@ -106,7 +106,7 @@ export function renderLineSections(api, status) {
           Line Chart Multi Series - Recharts Style (Composition with
           api.getEntity)
         </h2>
-        ${chart.renderChart(
+        ${chart.render(
           api.getEntity("multiSeriesLineChartComposition"),
           {
             width: 800,
@@ -210,7 +210,7 @@ export function renderLineSections(api, status) {
             Pause
           </button>
         </div>
-        ${chart.renderChart(
+        ${chart.render(
           api.getEntity("realtimeLineChart"),
           {
             width: 800,
