@@ -18,13 +18,12 @@ export function renderBarSection(api) {
             height: 400,
             children: [
               chart.CartesianGrid({
-                stroke: "#eee",
                 strokeDasharray: "3 3",
               }),
               chart.XAxis({ dataKey: "label" }),
-              chart.YAxis({ width: "auto" }),
+              chart.YAxis(),
               chart.Bar({ dataKey: "value" }),
-              chart.Tooltip({}),
+              chart.Tooltip(),
             ],
           },
           api,
