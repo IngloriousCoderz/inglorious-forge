@@ -9,16 +9,18 @@ import {
 import { appDrawer } from "./app-drawer.js"
 import { dashboard } from "./dashboard.js"
 import { mode } from "./mode.js"
+import { primitiveSection } from "./primitive-section.js"
 import { theme } from "./theme.js"
 
 export default {
   title: "Examples/AdminDashboard",
   tags: ["autodocs"],
   render: createEntityRender({
-    dashboard,
-    appDrawer,
-    mode,
     theme,
+    mode,
+    appDrawer,
+    dashboard,
+    primitiveSection,
     area: areaChart,
     bar: barChart,
     line: lineChart,

@@ -74,6 +74,10 @@ export function createHandlers(routeConfig) {
       })
     },
 
+    create(entity) {
+      entity.path ??= "/"
+    },
+
     /**
      * Handles browser `popstate` events.
      * Attempts to match the current location to a route and updates the router

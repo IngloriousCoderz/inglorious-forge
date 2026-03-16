@@ -13,6 +13,7 @@ import { trafficSalesCard } from "./traffic-sales-card.js"
 export const dashboard = {
   render(entity, api) {
     const appDrawer = api.getEntity("appDrawer")
+    const router = api.getEntity("router")
 
     const dashboardClassName = [
       "iw-dashboard",
@@ -21,6 +22,35 @@ export const dashboard = {
     ]
       .filter(Boolean)
       .join(" ")
+
+    const isDashboardRoot = !router || router.path === "/"
+
+    let mainContent
+    if (isDashboardRoot) {
+      mainContent = flex.render({
+        direction: "column",
+        gap: "lg",
+        children: [
+          grid.render({
+            minColumnWidth: "18rem",
+            gap: "lg",
+            children: statCards.map((card) => statCard.render(card, api)),
+          }),
+          trafficCard.render(entity, api),
+          grid.render({
+            columns: 3,
+            gap: "lg",
+            children: socialCards.map((card) => socialCard.render(card, api)),
+          }),
+          trafficSalesCard.render(entity, api),
+        ],
+      })
+    } else {
+      mainContent = api.render("primitiveSection", {
+        name: router.params.name,
+        category: router.path.split("/")[1],
+      })
+    }
 
     return flex.render({
       direction: "column",
@@ -37,28 +67,7 @@ export const dashboard = {
               maxWidth: "xl",
               padding: "lg",
               className: "iw-dashboard-container",
-              children: flex.render({
-                direction: "column",
-                gap: "lg",
-                children: [
-                  grid.render({
-                    minColumnWidth: "18rem",
-                    gap: "lg",
-                    children: statCards.map((card) =>
-                      statCard.render(card, api),
-                    ),
-                  }),
-                  trafficCard.render(entity, api),
-                  grid.render({
-                    columns: 3,
-                    gap: "lg",
-                    children: socialCards.map((card) =>
-                      socialCard.render(card, api),
-                    ),
-                  }),
-                  trafficSalesCard.render(entity, api),
-                ],
-              }),
+              children: mainContent,
             }),
             flex.render({
               element: "footer",

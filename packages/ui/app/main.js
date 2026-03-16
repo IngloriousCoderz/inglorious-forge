@@ -14,14 +14,18 @@ import { createDevtools, mount } from "@inglorious/web"
 import { appDrawer } from "../src/examples/dashboard/app-drawer.js"
 import { dashboard } from "../src/examples/dashboard/dashboard.js"
 import { mode } from "../src/examples/dashboard/mode.js"
+import { primitiveSection } from "../src/examples/dashboard/primitive-section.js"
+import { router } from "../src/examples/dashboard/router.js"
 import { theme } from "../src/examples/dashboard/theme.js"
 
 const store = createStore({
   types: {
-    dashboard,
-    appDrawer,
-    mode,
+    router,
     theme,
+    mode,
+    appDrawer,
+    dashboard,
+    primitiveSection,
     area: areaChart,
     bar: barChart,
     line: lineChart,
