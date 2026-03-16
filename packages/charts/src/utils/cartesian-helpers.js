@@ -45,3 +45,19 @@ export function createBandCenterScale(bandScale) {
   scale.range = () => bandScale.range()
   return scale
 }
+
+/**
+ * Resolves the most appropriate entity from render context.
+ * Prefers context-specific entity, then fullEntity (for brush / overlays),
+ * and finally falls back to the original entity argument.
+ *
+ * @param {Record<string, any>} ctx
+ * @param {import("../types/charts").ChartEntity} entity
+ * @returns {import("../types/charts").ChartEntity | undefined}
+ */
+export function getResolvedEntity(ctx, entity) {
+  if (!ctx) return entity
+  if (ctx.entity) return ctx.entity
+  if (ctx.fullEntity) return ctx.fullEntity
+  return entity
+}

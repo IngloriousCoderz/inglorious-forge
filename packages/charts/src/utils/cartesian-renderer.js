@@ -3,9 +3,8 @@ import {
   buildCartesianBaseChildren,
   resolveXAxisDataKey,
 } from "./cartesian-children.js"
+import { PALETTE_DEFAULT } from "./constants.js"
 import { isMultiSeries } from "./data-utils.js"
-
-const DEFAULT_COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#ff8042"]
 const EXCLUDED_AXIS_KEYS = new Set(["name", "x", "date"])
 
 /**
@@ -68,7 +67,7 @@ export function buildCartesianChildrenFromConfig(
     ? providedDataKeys
     : resolveDataKeys(entity.data)
 
-  const colors = entity.colors || DEFAULT_COLORS
+  const colors = entity.colors || PALETTE_DEFAULT
   const isStackedArea = seriesType === "area" && entity.stacked === true
 
   dataKeys.forEach((dataKey, index) => {
