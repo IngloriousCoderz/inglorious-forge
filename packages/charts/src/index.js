@@ -5,13 +5,8 @@ import {
 } from "./core/create-chart-instance.js"
 import { createDeclarativeChildren } from "./core/declarative-children.js"
 import { getEmptyChartInstance } from "./core/empty-instance.js"
-import {
-  buildComponentRenderer,
-  renderByChartType,
-  renderChart,
-} from "./core/render-dispatch.js"
+import { buildComponentRenderer, renderChart } from "./core/render-dispatch.js"
 import * as handlers from "./handlers.js"
-import { render } from "./template.js"
 
 export { STREAM_DEFAULTS } from "./realtime/defaults.js"
 export { lineChart } from "./realtime/stream-types.js"
@@ -29,15 +24,11 @@ const declarativeChildren = createDeclarativeChildren()
 
 export const chart = {
   ...handlers,
-  render,
   core: coreCharts,
 
   // Chart Delegators
-  renderChart: renderChart(),
-  renderLineChart: renderByChartType("line"),
-  renderAreaChart: renderByChartType("area"),
-  renderBarChart: renderByChartType("bar"),
-  renderPieChart: renderByChartType("pie"),
+  // Unified Composition-mode renderer
+  render: renderChart(),
 
   // Component Renderers (Abstracted)
   renderLine: buildComponentRenderer("renderLine", "line"),
