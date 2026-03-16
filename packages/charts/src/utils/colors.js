@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 
-const DEFAULT_COLORS = ["#3b82f6", "#ef4444", "#10b981", "#f59e0b", "#8b5cf6"]
+import { PALETTE_DEFAULT } from "./constants"
 
 const EXTENDED_COLORS = [
   "#3b82f6",
@@ -73,5 +73,5 @@ export function generateColors(count, customColors = null) {
  * @returns {string[]}
  */
 export function getDefaultColors() {
-  return [...DEFAULT_COLORS]
+  return [...PALETTE_DEFAULT]
 }
