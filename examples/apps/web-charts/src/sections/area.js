@@ -21,7 +21,7 @@ export function renderAreaSections(api) {
 
       <section class="chart-section">
         <h2>Area Chart - Recharts Style (Composition with api.getEntity)</h2>
-        ${chart.renderChart(
+        ${chart.render(
           api.getEntity("salesAreaChartComposition"),
           {
             width: 800,
@@ -49,7 +49,7 @@ export function renderAreaSections(api) {
     <div class="charts-comparison">
       <section class="chart-section">
         <h2>Composed Area + Line + Bar (Composition)</h2>
-        ${chart.renderChart(
+        ${chart.render(
           {
             width: 800,
             height: 400,
@@ -94,7 +94,7 @@ export function renderAreaSections(api) {
           Area Chart Multi Series - Recharts Style (Composition with
           api.getEntity)
         </h2>
-        ${chart.renderChart(
+        ${chart.render(
           api.getEntity("multiSeriesAreaChartComposition"),
           {
             width: 800,
@@ -156,7 +156,7 @@ export function renderAreaSections(api) {
         <h2>
           Area Chart Stacked - Recharts Style (Composition with api.getEntity)
         </h2>
-        ${chart.renderChart(
+        ${chart.render(
           api.getEntity("multiSeriesAreaChartStackedComposition"),
           {
             width: 800,

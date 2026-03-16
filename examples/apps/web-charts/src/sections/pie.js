@@ -22,7 +22,7 @@ export function renderPieSection(api) {
 
       <section class="chart-section">
         <h2>Pie Chart - Recharts Style (Composition with api.getEntity)</h2>
-        ${chart.renderChart(
+        ${chart.render(
           api.getEntity("categoryPieChartComposition"),
           {
             width: 500,
@@ -46,7 +46,7 @@ export function renderPieSection(api) {
     <div class="charts-comparison">
       <section class="chart-section">
         <h2>Pie Chart - Composition (No id #1)</h2>
-        ${chart.renderChart(
+        ${chart.render(
           {
             type: "pie",
             data: inlinePieDataA,
@@ -74,7 +74,7 @@ export function renderPieSection(api) {
 
       <section class="chart-section">
         <h2>Pie Chart - Composition (No id #2)</h2>
-        ${chart.renderChart(
+        ${chart.render(
           {
             type: "pie",
             data: inlinePieDataB,
