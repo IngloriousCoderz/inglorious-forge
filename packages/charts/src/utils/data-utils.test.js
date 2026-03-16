@@ -15,6 +15,7 @@ import {
   isMultiSeries,
   isValidNumber,
   parseDimension,
+  resolveDataKeys,
 } from "./data-utils.js"
 
 describe("data-utils", () => {
@@ -205,6 +206,48 @@ describe("data-utils", () => {
 
     it("should return null if entity.data is missing", () => {
       expect(getTransformedData({ id: "test" }, "value")).toBeNull()
+    })
+  })
+
+  describe("resolveDataKeys", () => {
+    it("should infer keys from wide numeric data excluding axis keys", () => {
+      const data = [
+        { name: "Jan", value: 100, other: 50, label: "A" },
+        { name: "Feb", value: 200, other: 75, label: "B" },
+      ]
+
+      const keys = resolveDataKeys(data)
+
+      // Should ignore name/label and pick numeric keys
+      expect(keys).toContain("value")
+      expect(keys).toContain("other")
+      expect(keys).not.toContain("name")
+      expect(keys).not.toContain("label")
+    })
+
+    it("should infer series keys for multi-series data", () => {
+      const data = [
+        { name: "Series A", values: [{ x: 0, y: 10 }] },
+        { label: "Series B", values: [{ x: 0, y: 20 }] },
+        { values: [{ x: 0, y: 30 }] },
+      ]
+
+      const keys = resolveDataKeys(data)
+
+      expect(keys).toEqual(["Series A", "Series B", "series2"])
+    })
+
+    it("should fallback to y or value when no numeric keys found", () => {
+      const dataWithY = [{ name: "Jan", y: 100 }]
+      const dataWithValue = [{ name: "Jan", value: 200 }]
+
+      expect(resolveDataKeys(dataWithY)).toEqual(["y"])
+      expect(resolveDataKeys(dataWithValue)).toEqual(["value"])
+    })
+
+    it("should return default key for empty or invalid data", () => {
+      expect(resolveDataKeys([])).toEqual(["value"])
+      expect(resolveDataKeys(null)).toEqual(["value"])
     })
   })
 })
