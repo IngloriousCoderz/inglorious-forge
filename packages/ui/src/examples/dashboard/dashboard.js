@@ -46,10 +46,7 @@ export const dashboard = {
         ],
       })
     } else {
-      mainContent = api.render("primitiveSection", {
-        name: router.params.name,
-        category: router.path.split("/")[1],
-      })
+      mainContent = api.render("primitiveSection")
     }
 
     return flex.render({

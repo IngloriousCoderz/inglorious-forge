@@ -176,7 +176,7 @@ export const list = {
               }),
             ),
             flex.render({
-              direcion: "column",
+              direction: "column",
               gap: "sm",
               className: "iw-list-item-content",
               children: [

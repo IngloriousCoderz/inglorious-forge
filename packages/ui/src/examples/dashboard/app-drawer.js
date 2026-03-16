@@ -61,6 +61,8 @@ export const appDrawer = {
 }
 
 function mapItemsForRender(items, api) {
+  const router = api.getEntity("router")
+
   return items.map((item) => {
     const mappedItem = { ...item }
 
@@ -74,6 +76,10 @@ function mapItemsForRender(items, api) {
 
     if (item.href) {
       mappedItem.onClick = () => api.notify("#router:navigate", item.href)
+    }
+
+    if (router.path === item.href) {
+      mappedItem.isSelected = true
     }
 
     if (Array.isArray(item.children)) {
@@ -90,7 +96,6 @@ function getDefaultItems() {
       id: "dashboard",
       primary: "Dashboard",
       icon: "speed",
-      isSelected: true,
       href: "/",
       badge: {
         color: "info",
@@ -121,6 +126,7 @@ function getDefaultItems() {
           href: "/controls/button-group",
         },
         { id: "checkbox", primary: "Checkbox", href: "/controls/checkbox" },
+        { id: "combobox", primary: "Combobox", href: "/controls/combobox" },
         { id: "fab", primary: "Fab", href: "/controls/fab" },
         {
           id: "icon-button",
