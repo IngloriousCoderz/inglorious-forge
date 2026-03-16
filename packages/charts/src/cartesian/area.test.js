@@ -168,9 +168,11 @@ describe("area", () => {
         entity,
         {
           children,
-          width: 800,
-          height: 400,
-          padding: { top: 0, right: 0, bottom: 0, left: 0 },
+          config: {
+            width: 800,
+            height: 400,
+            padding: { top: 0, right: 0, bottom: 0, left: 0 },
+          },
         },
         api,
       )
