@@ -196,17 +196,43 @@ export const entities = {
     ],
   },
 
-  // Area Chart - Padding - Composition Style
-  salesAreaChartCompositionPadding: {
-    type: "area",
+  // Composed Area + Line + Bar - Config Style (same data as Composition below)
+  composedSalesChart: {
+    type: "composed",
     data: [
-      { name: "0", value: 50 },
-      { name: "1", value: 150 },
-      { name: "2", value: 120 },
-      { name: "3", value: 180 },
-      { name: "4", value: 25 },
-      { name: "5", value: 160 },
-      { name: "6", value: 190 },
+      { name: "Jan", revenue: 120, target: 80, forecast: 110 },
+      { name: "Feb", revenue: 180, target: 130, forecast: 150 },
+      { name: "Mar", revenue: 90, target: 140, forecast: 120 },
+      { name: "Apr", revenue: 210, target: 170, forecast: 190 },
+      { name: "May", revenue: 160, target: 220, forecast: 175 },
+      { name: "Jun", revenue: 200, target: 180, forecast: 195 },
+      { name: "Jul", revenue: 130, target: 190, forecast: 150 },
+    ],
+    width: 800,
+    height: 400,
+    showTooltip: true,
+    series: [
+      {
+        kind: "area",
+        dataKey: "revenue",
+        fill: "#8884d8",
+        fillOpacity: "0.3",
+        stroke: "#8884d8",
+        showDots: true,
+        showTooltip: true,
+      },
+      {
+        kind: "bar",
+        dataKey: "target",
+        fill: "#82ca9d",
+        showTooltip: true,
+      },
+      {
+        kind: "line",
+        dataKey: "forecast",
+        stroke: "#ff7300",
+        showDots: true,
+      },
     ],
   },
 

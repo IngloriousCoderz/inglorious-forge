@@ -48,7 +48,12 @@ export function renderAreaSections(api) {
 
     <div class="charts-comparison">
       <section class="chart-section">
-        <h2>Composed Area + Line + Bar (Composition)</h2>
+        <h2>Composed Area + Line + Bar - Config Style</h2>
+        ${api.render("composedSalesChart")}
+      </section>
+
+      <section class="chart-section">
+        <h2>Composed Area + Line + Bar - Recharts Style (Composition)</h2>
         ${chart.render(
           {
             width: 800,
