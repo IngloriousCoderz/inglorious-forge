@@ -274,8 +274,8 @@ export function buildComposedChildren(entity) {
     const kind = (item.kind || item.type || "").toLowerCase()
     const type = KIND_TO_TYPE[kind]
     if (!type) return
-    /* eslint-disable no-unused-vars */
-    const { kind: _kind, type: _type, ...config } = item
+    // eslint-disable-next-line no-unused-vars
+    const { kind: kindValue, type: typeValue, ...config } = item
     children.push({ type, config })
   })
 
