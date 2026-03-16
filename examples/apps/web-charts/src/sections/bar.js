@@ -34,7 +34,7 @@ export function renderBarSection(api) {
     <div class="charts-comparison">
       <section class="chart-section">
         <h2>Bar Chart - Composition (Padding 0)</h2>
-        ${chart.renderBarChart(
+        ${chart.render(
           api.getEntity("salesBarChartCompositionPadding"),
           {
             width: 800,
@@ -42,13 +42,12 @@ export function renderBarSection(api) {
             padding: { top: 0, right: 0, bottom: 0, left: 0 },
             children: [
               chart.CartesianGrid({
-                stroke: "#eee",
                 strokeDasharray: "3 3",
               }),
               chart.XAxis({ dataKey: "label" }),
-              chart.YAxis({ width: "auto" }),
+              chart.YAxis(),
               chart.Bar({ dataKey: "value" }),
-              chart.Tooltip({}),
+              chart.Tooltip(),
             ],
           },
           api,
