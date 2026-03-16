@@ -206,7 +206,8 @@ export function renderComposedChart(entity, { children, config = {} }, api) {
 
   const { orderedChildren } = sortChildrenByLayer(processedChildrenArray, {
     seriesFlag: ["isArea", "isBar", "isLine"],
-    reverseSeries: false,
+    // For area charts, render higher-value series first so lower ones stay visible on top
+    reverseSeries: inferredChartType === "area",
     includeBrush: hasBrush,
   })
 
