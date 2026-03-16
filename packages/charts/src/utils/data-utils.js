@@ -8,6 +8,8 @@
 import { format } from "d3-format"
 import { timeFormat } from "d3-time-format"
 
+const EXCLUDED_AXIS_KEYS = new Set(["name", "label", "x", "date"])
+
 /**
  * Format a number with the specified format
  * @param {number} value - Number to format
@@ -113,6 +115,32 @@ export function ensureValidNumber(value, fallback = 0) {
 export function ensureFiniteNumber(value, fallback = 0) {
   const parsed = Number(value)
   return Number.isFinite(parsed) ? parsed : fallback
+}
+
+/**
+ * Infers numeric data keys from chart data to build series.
+ * Supports both multi-series and flat wide data.
+ *
+ * @param {any[]} data
+ * @returns {string[]}
+ */
+export function resolveDataKeys(data) {
+  if (!Array.isArray(data) || data.length === 0) return ["value"]
+
+  if (isMultiSeries(data)) {
+    return data.map((series, index) => {
+      return series.dataKey || series.name || series.label || `series${index}`
+    })
+  }
+
+  const first = data[0]
+  const keys = Object.keys(first).filter((key) => {
+    return !EXCLUDED_AXIS_KEYS.has(key) && typeof first[key] === "number"
+  })
+  if (keys.length > 0) return keys
+
+  const fallback = ["y", "value"].filter((key) => first[key] !== undefined)
+  return fallback.length > 0 ? fallback : ["value"]
 }
 
 /**
