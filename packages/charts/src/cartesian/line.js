@@ -11,10 +11,12 @@ import { chart } from "../index.js"
 import { renderDot } from "../shape/dot.js"
 import {
   createBandCenterScale,
+  getResolvedEntity,
   inferSeriesDataKey,
   resolveCategoryLabel,
 } from "../utils/cartesian-helpers.js"
 import { createCartesianRenderer } from "../utils/cartesian-renderer.js"
+import { PALETTE_DEFAULT } from "../utils/constants.js"
 import { getTransformedData } from "../utils/data-utils.js"
 import { generateLinePath } from "../utils/paths.js"
 import { ensureChartRuntimeId } from "../utils/runtime-id.js"
@@ -168,10 +170,11 @@ export const line = {
    */
   renderLine(entity, { config = {} }, api) {
     const lineFn = (ctx) => {
-      const { xScale, yScale, entity: e } = ctx
+      const { xScale, yScale } = ctx
+      const e = getResolvedEntity(ctx, entity)
       const {
         dataKey,
-        stroke = "#8884d8",
+        stroke = PALETTE_DEFAULT[0],
         type = "linear",
         showDots = false,
       } = config
@@ -183,7 +186,7 @@ export const line = {
       const dataEntity = Array.isArray(config.data)
         ? { ...e, data: config.data }
         : e
-      const plotEntity = e?.fullEntity || dataEntity
+      const plotEntity = ctx.fullEntity || dataEntity
       const indexOffset = ctx.indexOffset ?? 0
       const indexEnd = ctx.indexEnd
       const data = getTransformedData(dataEntity, resolvedDataKey)
@@ -228,8 +231,9 @@ export const line = {
    */
   renderDots(entity, { config = {} }, api) {
     const dotsFn = (ctx) => {
-      const { xScale, yScale, entity: e } = ctx
-      const { dataKey, fill = "#8884d8", r = "0.25em" } = config
+      const { xScale, yScale } = ctx
+      const e = getResolvedEntity(ctx, entity)
+      const { dataKey, fill = PALETTE_DEFAULT[0], r = "0.25em" } = config
       const resolvedDataKey =
         dataKey ??
         (Array.isArray(config.data)
@@ -238,7 +242,7 @@ export const line = {
       const dataEntity = Array.isArray(config.data)
         ? { ...e, data: config.data }
         : e
-      const plotEntity = e?.fullEntity || dataEntity
+      const plotEntity = ctx.fullEntity || dataEntity
       const indexOffset = ctx.indexOffset ?? 0
       const indexEnd = ctx.indexEnd
       const data = getTransformedData(dataEntity, resolvedDataKey)
@@ -308,7 +312,7 @@ export const line = {
       const { dataKeys = [], labels = [], colors = [] } = config
       const series = dataKeys.map((key, i) => ({
         name: labels[i] || key,
-        color: colors[i % colors.length] || "#8884d8",
+        color: colors[i % colors.length] || PALETTE_DEFAULT[0],
       }))
       return renderLegend(entity, { series, ...ctx.dimensions }, api)
     }

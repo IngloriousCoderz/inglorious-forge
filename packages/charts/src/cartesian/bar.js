@@ -10,7 +10,11 @@ import { renderYAxis } from "../component/y-axis.js"
 import { chart } from "../index.js"
 import { renderRectangle } from "../shape/rectangle.js"
 import { buildCartesianBaseChildren } from "../utils/cartesian-children.js"
-import { inferSeriesDataKey } from "../utils/cartesian-helpers.js"
+import {
+  getResolvedEntity,
+  inferSeriesDataKey,
+} from "../utils/cartesian-helpers.js"
+import { DEFAULT_GRID_CONFIG, PALETTE_DEFAULT } from "../utils/constants.js"
 import { createTooltipHandlers } from "../utils/tooltip-handlers.js"
 import { renderComposedChart } from "./composed.js"
 
@@ -70,17 +74,12 @@ export const bar = {
         ? inferSeriesDataKey(config.data, "bar")
         : "value")
     const drawFn = (ctx, barIndex, totalBars) => {
-      const entityFromContext = ctx.entity || entity
+      const entityFromContext = getResolvedEntity(ctx, entity)
       if (!entityFromContext) return svg``
       const dataSource = Array.isArray(config.data)
         ? config.data
         : entityFromContext.data
-      const entityColors = entityFromContext.colors || [
-        "#8884d8",
-        "#82ca9d",
-        "#ffc658",
-        "#ff7300",
-      ]
+      const entityColors = entityFromContext.colors || PALETTE_DEFAULT
       const { xScale, yScale, dimensions } = ctx
 
       // When there's only one bar, center it in the band without using subScale
@@ -167,7 +166,7 @@ export const bar = {
     // Return a function that preserves the original object
     // This prevents lit-html from evaluating the function before passing it
     const renderFn = (ctx) => {
-      const entityFromContext = ctx.entity || entity
+      const entityFromContext = getResolvedEntity(ctx, entity)
       if (!entityFromContext) return svg``
       return renderXAxis(
         entityFromContext,
@@ -233,7 +232,7 @@ export const bar = {
    */
   renderCartesianGrid(entity, { config = {} }, api) {
     const gridFn = (ctx) => {
-      const entityFromContext = ctx.entity || entity
+      const entityFromContext = getResolvedEntity(ctx, entity)
       if (!entityFromContext) return svg``
       return renderGrid(
         entityFromContext,
@@ -241,8 +240,9 @@ export const bar = {
           ...ctx.dimensions,
           xScale: ctx.xScale,
           yScale: ctx.yScale,
-          stroke: config.stroke || "#eee",
-          strokeDasharray: config.strokeDasharray || "5 5",
+          stroke: config.stroke || DEFAULT_GRID_CONFIG.stroke,
+          strokeDasharray:
+            config.strokeDasharray || DEFAULT_GRID_CONFIG.strokeDasharray,
         },
         api,
       )
