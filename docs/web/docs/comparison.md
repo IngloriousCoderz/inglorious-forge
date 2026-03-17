@@ -414,6 +414,6 @@ All frameworks side-by-side:
 
 - **[Getting Started](./guide/getting-started.md)** — Try Inglorious Web
 - **[Why Not Signals?](./guide/what-is.md)** — Learn about design philosophy
-- **[Examples](https://github.com/ingloriouscode/inglorious-web/tree/main/examples)** — See real apps
+- **[Examples](https://github.com/ingloriousCoderz/inglorious-forge/tree/main/examples)** — See real apps
 
 Still deciding? Try all of them in a simple project and see which feels best to you! 🚀

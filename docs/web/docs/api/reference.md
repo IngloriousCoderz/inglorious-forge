@@ -422,7 +422,7 @@ type UpdateFn<T extends Entity = Entity> = (draft: Draft<T>) => void
 
 ## Changelog
 
-See [CHANGELOG.md](https://github.com/ingloriouscode/inglorious-web/blob/main/CHANGELOG.md) for version history and breaking changes.
+See [CHANGELOG.md](https://github.com/IngloriousCoderz/inglorious-forge/blob/main/packages/web/CHANGELOG.md) for version history and breaking changes.
 
 ## Migration Guides
 
@@ -434,4 +434,4 @@ See [CHANGELOG.md](https://github.com/ingloriouscode/inglorious-web/blob/main/CH
 - **[Featured Types](../featured/overview.md)** — Built-in types documentation
 - **[Advanced](../advanced/type-composition.md)** — Advanced patterns
 
-Need help? [Report an issue](https://github.com/ingloriouscode/inglorious-web/issues) or [ask on discussions](https://github.com/ingloriouscode/inglorious-web/discussions).
+Need help? [Report an issue](https://github.com/IngloriousCoderz/inglorious-forge/issues) or [ask on discussions](https://github.com/IngloriousCoderz/inglorious-forge/discussions).
