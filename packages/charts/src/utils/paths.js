@@ -1,12 +1,4 @@
-import {
-  arc,
-  area,
-  curveLinear,
-  curveMonotoneX,
-  line,
-  pie,
-  stack,
-} from "d3-shape"
+import { arc, area, curveLinear, curveMonotoneX, line, pie } from "d3-shape"
 
 import { getDataPointX, getDataPointY } from "./data-utils.js"
 
@@ -120,47 +112,6 @@ export function generateStackedAreaPath(
  * @param {Function} valueAccessor - Function to extract value from data point
  * @returns {Array<Array<[number, number]>>} Stacked data for each series
  */
-export function calculateStackedData(
-  seriesData,
-  valueAccessor = (d) => getDataPointY(d),
-) {
-  if (!seriesData || seriesData.length === 0) {
-    return []
-  }
-
-  // Get all series values
-  const allSeriesValues = seriesData.map((series) =>
-    Array.isArray(series.values) ? series.values : [series],
-  )
-
-  // Find maximum length to handle different series lengths
-  const maxLength = Math.max(...allSeriesValues.map((s) => s.length))
-
-  // Create data structure for d3-shape stack
-  // Each entry represents one x position with values from all series
-  const data = []
-  for (let i = 0; i < maxLength; i++) {
-    const entry = {}
-    allSeriesValues.forEach((values, seriesIndex) => {
-      const point = values[i]
-      entry[seriesIndex] = point ? valueAccessor(point) : 0
-    })
-    data.push(entry)
-  }
-
-  // Create stack generator
-  const keys = seriesData.map((_, i) => i)
-  const stackGenerator = stack()
-    .keys(keys)
-    .value((d, key) => d[key] ?? 0)
-
-  // Generate stacked data
-  const stacked = stackGenerator(data)
-
-  // Transform to array of [y0, y1] tuples for each series
-  return stacked.map((series) => series.map((point) => [point[0], point[1]]))
-}
-
 /**
  * Calculates pie data with support for startAngle, endAngle, paddingAngle, and minAngle
  * @param {any[]} data - The data array

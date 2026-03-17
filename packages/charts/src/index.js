@@ -1,10 +1,5 @@
 import { coreCharts } from "./core/chart-core.js"
-import {
-  createChartInstance,
-  createInlineChartInstance,
-} from "./core/create-chart-instance.js"
 import { createDeclarativeChildren } from "./core/declarative-children.js"
-import { getEmptyChartInstance } from "./core/empty-instance.js"
 import { buildComponentRenderer, renderChart } from "./core/render-dispatch.js"
 import * as handlers from "./handlers.js"
 
@@ -50,16 +45,5 @@ export const chart = {
   // Declarative Helpers for Composition Style (return intention objects)
   ...declarativeChildren,
 
-  // Helper to create bound methods (reduces repetition)
-  forEntity(entityId, api) {
-    const entity = api.getEntity(entityId)
-    return entity ? createChartInstance(entity, api) : getEmptyChartInstance()
-  },
-
-  // Create instance for inline charts (no entityId needed)
-  forEntityInline(api, tempEntity = null) {
-    return createInlineChartInstance(api, tempEntity, handlers.create)
-  },
-
-  createInstance: createChartInstance,
+  // Deprecated instance helpers removed: use chart.render or api.render
 }

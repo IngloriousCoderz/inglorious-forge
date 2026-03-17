@@ -8,7 +8,7 @@ const runtimeEntityTypes = new Map()
 let runtimeApi = null
 let runtimePulseId = null
 
-export function streamModeChange(entity, payload) {
+function streamModeChange(entity, payload) {
   entity.brush ??= { enabled: true, height: 30 }
   entity.brush.enabled = true
 
