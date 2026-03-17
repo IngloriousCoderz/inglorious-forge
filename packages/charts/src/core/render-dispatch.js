@@ -12,7 +12,7 @@ const REST_START_INDEX = 1
 const inlineEntityCache = new WeakMap()
 const inlineEntityKeyCache = new Map()
 
-export function renderByChartType(typeKey) {
+function renderByChartType(typeKey) {
   const methodName = `render${capitalize(typeKey)}Chart`
 
   return function renderUsingType(firstArg, secondArg, thirdArg) {
@@ -96,20 +96,7 @@ export function buildComponentRenderer(
   }
 }
 
-export function renderWithEntityTypeMethod(entity, methodName, params, api) {
-  const type = api.getType(entity.type)
-  return type?.[methodName]
-    ? type[methodName](entity, params, api)
-    : renderEmptyTemplate()
-}
-
-export function createTypeDispatcher(api) {
-  return function dispatchByEntityType(entity, methodName, params) {
-    return renderWithEntityTypeMethod(entity, methodName, params, api)
-  }
-}
-
-export function renderEmptyTemplate() {
+function renderEmptyTemplate() {
   return svg``
 }
 
