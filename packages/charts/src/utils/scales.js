@@ -5,7 +5,7 @@ import { scaleBand, scaleLinear, scaleTime } from "d3-scale"
 
 import { getDataPointX, getDataPointY, isMultiSeries } from "./data-utils.js"
 
-export function createYScale(
+function createYScale(
   data,
   height,
   padding,
@@ -149,7 +149,7 @@ export function createXScale(data, width, padding) {
     .range([padding.left, width - padding.right])
 }
 
-export function createTimeScale(data, width, padding) {
+function createTimeScale(data, width, padding) {
   const dates = data.map((d) => new Date(d.date ?? d.x))
   const [minDate, maxDate] = extent(dates)
   return scaleTime()
@@ -157,7 +157,7 @@ export function createTimeScale(data, width, padding) {
     .range([padding.left, width - padding.right])
 }
 
-export function createOrdinalScale(categories, width, padding) {
+function createOrdinalScale(categories, width, padding) {
   return scaleBand()
     .domain(categories)
     .range([padding.left, width - padding.right])
@@ -232,21 +232,6 @@ export function createScales(entity, chartType) {
  * @param {string} chartType
  * @returns {CartesianContext}
  */
-export function createCartesianContext(entity, chartType) {
-  const { xScale, yScale } = createScales(entity, chartType)
-
-  return {
-    xScale,
-    yScale,
-    dimensions: {
-      width: entity.width,
-      height: entity.height,
-      padding: entity.padding,
-    },
-    entity,
-  }
-}
-
 /**
  * Calculate X-axis ticks based on data
  * For few data points (≤15), shows all actual x values

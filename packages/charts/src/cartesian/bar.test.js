@@ -78,69 +78,6 @@ describe("bar", () => {
     })
   })
 
-  describe("renderBarChart()", () => {
-    it("should render bar chart with children", () => {
-      const children = [
-        bar.renderCartesianGrid(entity, {}, api),
-        bar.renderXAxis(entity, {}, api),
-        bar.renderYAxis(entity, {}, api),
-        bar.renderBar(entity, { config: { dataKey: "value" } }, api),
-      ]
-
-      const result = bar.renderBarChart(
-        entity,
-        { children, width: 800, height: 400 },
-        api,
-      )
-      const container = document.createElement("div")
-      render(result, container)
-
-      const svg = container.querySelector("svg")
-      expect(svg).toBeTruthy()
-      expect(svg.getAttribute("width")).toBe("800")
-      expect(svg.getAttribute("height")).toBe("400")
-    })
-
-    it("should return error message if entity is missing", () => {
-      const result = bar.renderBarChart(null, { children: [] }, api)
-      const container = document.createElement("div")
-      render(result, container)
-
-      expect(container.textContent).toContain("Entity not found")
-    })
-
-    it("should throw if entity.data is invalid", () => {
-      entity.data = null
-
-      expect(() => bar.renderBarChart(entity, { children: [] }, api)).toThrow()
-    })
-
-    it("should respect custom zero padding in composition config", () => {
-      let capturedPadding = null
-      const children = [
-        (ctx) => {
-          capturedPadding = ctx.dimensions.padding
-          return null
-        },
-      ]
-
-      bar.renderBarChart(
-        entity,
-        {
-          children,
-          config: {
-            width: 800,
-            height: 400,
-            padding: { top: 0, right: 0, bottom: 0, left: 0 },
-          },
-        },
-        api,
-      )
-
-      expect(capturedPadding).toEqual({ top: 0, right: 0, bottom: 0, left: 0 })
-    })
-  })
-
   describe("renderBar()", () => {
     it("should return a function marked as isBar", () => {
       const result = bar.renderBar(

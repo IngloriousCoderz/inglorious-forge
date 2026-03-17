@@ -13,7 +13,7 @@ import { isMultiSeries, resolveDataKeys } from "./data-utils.js"
  * @param {any[]} multiSeriesData
  * @returns {any[] | null}
  */
-export function transformSeriesToWide(multiSeriesData) {
+function transformSeriesToWide(multiSeriesData) {
   if (!isMultiSeries(multiSeriesData)) return null
 
   const dataMap = new Map()
@@ -52,7 +52,7 @@ export function transformSeriesToWide(multiSeriesData) {
  * @param {string[] | null} [options.providedDataKeys]
  * @returns {any[]}
  */
-export function buildCartesianChildrenFromConfig(
+function buildCartesianChildrenFromConfig(
   entity,
   { chartApi, seriesType, providedDataKeys = null },
 ) {
