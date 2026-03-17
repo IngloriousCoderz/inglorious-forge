@@ -2,8 +2,6 @@
  * Recharts-style palette used for cartesian series (Line/Area/Bar)
  * when no explicit `entity.colors` are provided.
  */
-export const PALETTE_ACCENT = ["#8884d8", "#82ca9d", "#ffc658", "#ff8042"]
-
 export const PALETTE_DEFAULT = [
   "#3b82f6",
   "#ef4444",

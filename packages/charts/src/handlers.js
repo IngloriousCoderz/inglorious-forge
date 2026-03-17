@@ -131,20 +131,3 @@ export function tooltipMove(entity, position) {
  * @param {ChartEntity} entity
  * @param {{ startIndex: number; endIndex: number }} payload
  */
-export function brushChange(entity, payload) {
-  if (!entity.brush) entity.brush = { enabled: true }
-
-  const { startIndex, endIndex } = payload
-  const dataLength = entity.data?.length || 0
-
-  entity.brush.startIndex = Math.max(0, Math.min(startIndex, dataLength - 1))
-  entity.brush.endIndex = Math.max(
-    entity.brush.startIndex,
-    Math.min(endIndex, dataLength - 1),
-  )
-
-  if (entity.brush.startIndex === entity.brush.endIndex && dataLength > 1) {
-    if (entity.brush.endIndex < dataLength - 1) entity.brush.endIndex++
-    else if (entity.brush.startIndex > 0) entity.brush.startIndex--
-  }
-}
