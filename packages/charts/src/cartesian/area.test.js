@@ -240,29 +240,4 @@ describe("area", () => {
       expect(api.notify).toHaveBeenCalledWith(`#${entity.id}:tooltipHide`)
     })
   })
-
-  describe("renderXAxis()", () => {
-    it("should return a function", () => {
-      const result = area.renderXAxis(entity, {}, api)
-
-      expect(typeof result).toBe("function")
-    })
-  })
-
-  describe("renderYAxis()", () => {
-    it("should return a function", () => {
-      const result = area.renderYAxis(entity, {}, api)
-
-      expect(typeof result).toBe("function")
-    })
-  })
-
-  describe("renderCartesianGrid()", () => {
-    it("should return a function marked as isGrid", () => {
-      const result = area.renderCartesianGrid(entity, {}, api)
-
-      expect(typeof result).toBe("function")
-      expect(result.isGrid).toBe(true)
-    })
-  })
 })

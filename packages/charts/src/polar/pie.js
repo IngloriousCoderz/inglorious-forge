@@ -5,7 +5,7 @@ import { repeat } from "@inglorious/web/directives/repeat"
 
 import { createTooltipComponent, renderTooltip } from "../component/tooltip.js"
 import { renderSector } from "../shape/sector.js"
-import { getResolvedEntity } from "../utils/cartesian-helpers.js"
+import { getResolvedEntity } from "../utils/cartesian-utils.js"
 import { formatNumber } from "../utils/data-utils.js"
 import { calculatePieData } from "../utils/paths.js"
 import { processDeclarativeChild } from "../utils/process-declarative-child.js"
@@ -169,19 +169,10 @@ export const pie = {
   renderPieChart(entity, params, api) {
     if (!entity) return html`<div>Entity not found</div>`
 
-    let children
-    let config
-    if (Array.isArray(params)) {
-      // Format: [children] (legacy)
-      children = params
-      config = {}
-    } else {
-      // Format: { children, ...config }
-      children = params?.children || []
-      const restParams = params ? { ...params } : {}
-      delete restParams.children
-      config = restParams
-    }
+    const children = params?.children || []
+    const restParams = params ? { ...params } : {}
+    delete restParams.children
+    const config = restParams
 
     const entityWithData = config.data
       ? { ...entity, data: config.data }

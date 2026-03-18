@@ -16,7 +16,7 @@ function renderByChartType(typeKey) {
   const methodName = `render${capitalize(typeKey)}Chart`
 
   return function renderUsingType(firstArg, secondArg, thirdArg) {
-    const { entity, params, api } = normalizeRenderByTypeArgs(
+    const { entity, params, api } = normalizeRenderArgs(
       typeKey,
       firstArg,
       secondArg,
@@ -33,7 +33,8 @@ function renderByChartType(typeKey) {
 
 export function renderChart() {
   return function renderGeneric(firstArg, secondArg, thirdArg) {
-    const { entity, params, api } = normalizeRenderChartArgs(
+    const { entity, params, api } = normalizeRenderArgs(
+      null,
       firstArg,
       secondArg,
       thirdArg,
@@ -45,7 +46,7 @@ export function renderChart() {
     if (!inferredType) return renderEmptyTemplate()
 
     if (inferredType === "composed") {
-      const normalized = normalizeRenderByTypeArgs(
+      const normalized = normalizeRenderArgs(
         inferredType,
         firstArg,
         secondArg,
@@ -66,7 +67,7 @@ export function renderChart() {
     }
 
     if (isCartesianType(inferredType)) {
-      const normalized = normalizeRenderByTypeArgs(
+      const normalized = normalizeRenderArgs(
         inferredType,
         firstArg,
         secondArg,
@@ -90,9 +91,18 @@ export function buildComponentRenderer(
     const resolvedTypeName =
       typeOverride || (preferChartTypeProp ? chartType : null) || entity.type
     const type = api.getType(resolvedTypeName)
-    return type?.[methodName]
-      ? type[methodName](entity, { config }, api)
-      : renderEmptyTemplate()
+    if (type?.[methodName]) {
+      return type[methodName](entity, { config }, api)
+    }
+
+    if (isCartesianType(entity.type)) {
+      const composedType = api.getType("composed")
+      if (composedType?.[methodName]) {
+        return composedType[methodName](entity, { config }, api)
+      }
+    }
+
+    return renderEmptyTemplate()
   }
 }
 
@@ -106,59 +116,91 @@ function capitalize(value) {
     : ""
 }
 
-function normalizeRenderByTypeArgs(typeKey, firstArg, secondArg, thirdArg) {
-  let entity = null
-  let params = {}
-  let api = null
-
-  if (isApiLike(secondArg) && thirdArg === undefined) {
-    api = secondArg
-    params = normalizeChartParams(firstArg)
-  } else {
-    entity = firstArg
-    params = normalizeChartParams(secondArg)
-    api = thirdArg
-  }
+function normalizeRenderArgs(typeKey, firstArg, secondArg, thirdArg) {
+  const { entity, api, params } = parseRenderArgs(firstArg, secondArg, thirdArg)
 
   if (!api) {
     return { entity: null, params, api: null }
   }
 
-  if (!entity) {
-    entity = getInlineEntity(typeKey, params.config)
+  if (!typeKey) {
+    return { entity, params, api }
   }
 
-  hydrateEntityFromConfig(typeKey, entity, params.config)
-
-  if (api.getEntity) {
-    const existingEntity = entity?.id ? api.getEntity(entity.id) : undefined
-    if (existingEntity) {
-      if (params.config?.data !== undefined) {
-        entity = { ...existingEntity, data: params.config.data }
-      } else {
-        entity = existingEntity
-      }
-    }
-  }
-
-  return { entity, params, api }
+  return normalizeInlineEntity(typeKey, entity, params, api)
 }
 
-function normalizeRenderChartArgs(firstArg, secondArg, thirdArg) {
+function parseRenderArgs(firstArg, secondArg, thirdArg) {
   let entity = null
-  let params = {}
   let api = null
+  let paramsSource = null
 
   if (isApiLike(secondArg) && thirdArg === undefined) {
     api = secondArg
-    params = normalizeChartParams(firstArg)
+    paramsSource = firstArg
   } else {
     entity = firstArg
-    params = normalizeChartParams(secondArg)
+    paramsSource = secondArg
     api = thirdArg
   }
 
-  return { entity, params, api }
+  return { entity, api, params: parseRenderParams(paramsSource) }
+}
+
+function parseRenderParams(paramsSource) {
+  if (Array.isArray(paramsSource)) {
+    return { children: paramsSource, config: {} }
+  }
+
+  if (!paramsSource || typeof paramsSource !== "object") {
+    return { children: [], config: {} }
+  }
+
+  const { children, config, ...rest } = paramsSource
+
+  if (config && typeof config === "object") {
+    return {
+      children: Array.isArray(children)
+        ? children
+        : children == null
+          ? []
+          : [children],
+      config: { ...config },
+    }
+  }
+
+  return {
+    children: Array.isArray(children)
+      ? children
+      : children == null
+        ? []
+        : [children],
+    config: rest,
+  }
+}
+
+function normalizeInlineEntity(typeKey, entity, params, api) {
+  let resolvedEntity = entity
+
+  if (!resolvedEntity) {
+    resolvedEntity = getInlineEntity(typeKey, params.config)
+  }
+
+  hydrateEntityFromConfig(typeKey, resolvedEntity, params.config)
+
+  if (api.getEntity) {
+    const existingEntity = resolvedEntity?.id
+      ? api.getEntity(resolvedEntity.id)
+      : undefined
+    if (existingEntity) {
+      resolvedEntity =
+        params.config?.data !== undefined
+          ? { ...existingEntity, data: params.config.data }
+          : existingEntity
+    }
+  }
+
+  return { entity: resolvedEntity, params, api }
 }
 
 function inferChartType(entity, params) {
@@ -199,35 +241,8 @@ function isApiLike(value) {
   return value && typeof value.getType === "function"
 }
 
-function normalizeChartParams(params) {
-  if (Array.isArray(params)) {
-    return { children: params, config: {} }
-  }
-
-  if (!params || typeof params !== "object") {
-    return { children: [], config: {} }
-  }
-
-  const { children, config, ...rest } = params
-
-  if (config && typeof config === "object") {
-    return {
-      children: normalizeChildren(children),
-      config: { ...config },
-    }
-  }
-
-  return {
-    children: normalizeChildren(children),
-    config: rest,
-  }
-}
-
-function normalizeChildren(children) {
-  if (children === undefined || children === null) return []
-  if (Array.isArray(children)) return children
-  return [children]
-}
+// normalizeRenderArgs replaces normalizeRenderByTypeArgs,
+// normalizeRenderChartArgs and normalizeChartParams.
 
 function buildInlineEntity(typeKey, config = {}) {
   const entity = {

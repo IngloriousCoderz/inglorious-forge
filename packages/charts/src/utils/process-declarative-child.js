@@ -52,5 +52,11 @@ function getRendererChartType(childType) {
   if (childType === "Area") return "area"
   if (childType === "Bar") return "bar"
   if (childType === "Pie") return "pie"
+  if (childType === "XAxis") return "composed"
+  if (childType === "YAxis") return "composed"
+  if (childType === "CartesianGrid") return "composed"
+  if (childType === "Brush") return "composed"
+  if (childType === "Legend") return "composed"
+  if (childType === "Tooltip") return "composed"
   return null
 }
