@@ -107,24 +107,4 @@ describe("line", () => {
       expect(dots.length).toBeGreaterThan(0)
     })
   })
-
-  describe("renderXAxis", () => {
-    it("should return template result", () => {
-      const result = line.renderXAxis(
-        entity,
-        { config: { dataKey: "value" } },
-        api,
-      )
-      expect(result).toBeDefined()
-      // renderXAxis returns svg template, which may be empty if context is missing
-    })
-  })
-
-  describe("renderYAxis", () => {
-    it("should return template result", () => {
-      const result = line.renderYAxis(entity, { config: {} }, api)
-      expect(result).toBeDefined()
-      // renderYAxis returns svg template, which may be empty if context is missing
-    })
-  })
 })

@@ -1,16 +1,21 @@
 /* eslint-disable no-magic-numbers */
 import { html, svg } from "@inglorious/web"
 
-import { renderTooltip } from "../component/tooltip.js"
+import { createBrushComponent } from "../component/brush.js"
+import { renderGrid } from "../component/grid.js"
+import { renderLegend } from "../component/legend.js"
+import { createTooltipComponent, renderTooltip } from "../component/tooltip.js"
+import { renderXAxis } from "../component/x-axis.js"
+import { renderYAxis } from "../component/y-axis.js"
 import {
   buildCartesianBaseChildren,
-  resolveXAxisDataKey,
-} from "../utils/cartesian-children.js"
-import {
   DEFAULT_SERIES_INDEX,
+  getResolvedEntity,
   inferSeriesDataKey,
-} from "../utils/cartesian-helpers.js"
-import { sortChildrenByLayer } from "../utils/cartesian-renderer.js"
+  resolveXAxisDataKey,
+  sortChildrenByLayer,
+} from "../utils/cartesian-utils.js"
+import { DEFAULT_GRID_CONFIG, PALETTE_DEFAULT } from "../utils/constants.js"
 import { extractDataKeysFromChildren } from "../utils/extract-data-keys.js"
 import { processDeclarativeChild } from "../utils/process-declarative-child.js"
 import { ensureChartRuntimeId } from "../utils/runtime-id.js"
@@ -29,6 +34,72 @@ const DEFAULT_INDEX_STEP = 1
 
 export const composed = {
   render: renderComposedConfig,
+
+  /**
+   * Composition sub-render for cartesian grid (shared for line/area/bar).
+   */
+  renderCartesianGrid(entity, { config = {} }, api) {
+    const gridFn = (ctx) => {
+      return renderCartesianGrid(ctx, entity, config, api)
+    }
+    gridFn.isGrid = true
+    return gridFn
+  },
+
+  /**
+   * Composition sub-render for X axis (shared for line/area/bar).
+   */
+  renderXAxis(entity, { config = {} }, api) {
+    const axisFn = (ctx) => {
+      return renderCartesianXAxis(ctx, entity, config, api)
+    }
+    axisFn.isAxis = true
+    return axisFn
+  },
+
+  /**
+   * Composition sub-render for Y axis (shared for line/area/bar).
+   */
+  renderYAxis(entity, { config = {} }, api) {
+    const axisFn = (ctx) => {
+      return renderCartesianYAxis(ctx, entity, config, api)
+    }
+    axisFn.isAxis = true
+    return axisFn
+  },
+
+  /**
+   * Composition sub-render for tooltip overlay.
+   */
+  renderTooltip: createTooltipComponent(),
+
+  /**
+   * Composition sub-render for brush control.
+   */
+  renderBrush: createBrushComponent(),
+
+  /**
+   * Composition sub-render for legend.
+   */
+  renderLegend(entity, { config = {} }, api) {
+    const legendFn = (ctx) => {
+      const { dataKeys = [], labels = [], colors = [] } = config
+      if (!dataKeys.length) return svg``
+
+      const series = dataKeys.map((key, i) => ({
+        name: labels[i] || key,
+        color: colors[i % colors.length] || PALETTE_DEFAULT[0],
+      }))
+
+      return renderLegend(
+        getResolvedEntity(ctx, entity),
+        { series, ...ctx.dimensions },
+        api,
+      )
+    }
+    legendFn.isLegend = true
+    return legendFn
+  },
 }
 
 export function renderComposedChart(entity, { children, config = {} }, api) {
@@ -261,6 +332,116 @@ export function renderComposedChart(entity, { children, config = {} }, api) {
       ${renderTooltip(contextEntity, {}, api)}
     </div>
   `
+}
+
+function renderCartesianGrid(ctx, entity, config, api) {
+  const { xScale, yScale, dimensions } = ctx
+  const resolvedEntity = getResolvedEntity(ctx, entity)
+  const mergedConfig = { ...DEFAULT_GRID_CONFIG, ...config }
+
+  if (!xScale?.bandwidth && ctx.chartType === "line") {
+    const [start, end] = xScale.domain()
+    const ticks = []
+    for (let i = Math.ceil(start); i <= Math.floor(end); i++) {
+      ticks.push(i)
+    }
+
+    const customXScale = Object.assign(xScale.copy(), {
+      ticks: () => ticks,
+    })
+
+    return renderGrid(
+      resolvedEntity,
+      {
+        ...dimensions,
+        ...mergedConfig,
+        yScale,
+        xScale: customXScale,
+        ticks,
+        customXTicks: ticks,
+      },
+      api,
+    )
+  }
+
+  return renderGrid(
+    resolvedEntity,
+    { xScale, yScale, ...dimensions, ...mergedConfig },
+    api,
+  )
+}
+
+function renderCartesianXAxis(ctx, entity, config, api) {
+  const { xScale, yScale, dimensions } = ctx
+  const resolvedEntity = getResolvedEntity(ctx, entity)
+
+  if (!xScale?.bandwidth && ctx.chartType === "line") {
+    const [viewStart, viewEnd] = xScale.domain()
+    const scaleTicks = []
+    for (let i = Math.ceil(viewStart); i <= Math.floor(viewEnd); i++) {
+      scaleTicks.push(i)
+    }
+
+    const labels = scaleTicks.map((tick) => {
+      const dataForLabels =
+        ctx.fullEntity === ctx.entity ? ctx.entity.data : resolvedEntity.data
+      const item = dataForLabels[tick]
+      return item?.[config.dataKey] || item?.name || item?.x || String(tick)
+    })
+
+    const customXScaleForAxis = Object.assign(xScale.copy(), {
+      ticks: () => scaleTicks,
+    })
+
+    return renderXAxis(
+      { ...resolvedEntity, xLabels: labels },
+      {
+        ...dimensions,
+        yScale,
+        xScale: customXScaleForAxis,
+        customTicks: scaleTicks,
+        tickValues: scaleTicks,
+        tickFormat: (d) => {
+          const idx = Math.round(d)
+          const labelIdx = scaleTicks.indexOf(idx)
+          return labelIdx !== -1 ? labels[labelIdx] : ""
+        },
+      },
+      api,
+    )
+  }
+
+  if (ctx.chartType === "area" && config.dataKey) {
+    const labels = resolvedEntity.data.map(
+      (d, i) => d[config.dataKey] || d.name || String(i),
+    )
+    return renderXAxis(
+      { ...resolvedEntity, xLabels: labels },
+      { xScale, yScale, ...dimensions },
+      api,
+    )
+  }
+
+  return renderXAxis(resolvedEntity, { xScale, yScale, ...dimensions }, api)
+}
+
+function renderCartesianYAxis(ctx, entity, config, api) {
+  const resolvedEntity = getResolvedEntity(ctx, entity)
+  const ticks = ctx.yScale.ticks ? ctx.yScale.ticks(5) : ctx.yScale.domain()
+
+  if (ctx.chartType === "area") {
+    return renderYAxis(
+      resolvedEntity,
+      { yScale: ctx.yScale, ...ctx.dimensions, ...config },
+      api,
+    )
+  }
+
+  return renderYAxis(
+    resolvedEntity,
+    { yScale: ctx.yScale, customTicks: ticks, ...ctx.dimensions },
+    api,
+  )
 }
 
 export function buildComposedChildren(entity) {

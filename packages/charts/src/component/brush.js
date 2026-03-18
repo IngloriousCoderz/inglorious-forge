@@ -1,7 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { svg } from "@inglorious/web"
 
-import { getResolvedEntity } from "../utils/cartesian-helpers.js"
+import { getResolvedEntity } from "../utils/cartesian-utils.js"
 import { isValidNumber } from "../utils/data-utils.js"
 import { createXScale } from "../utils/scales.js"
 
