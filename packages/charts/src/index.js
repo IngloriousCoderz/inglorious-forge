@@ -1,49 +1,136 @@
-import { coreCharts } from "./core/chart-core.js"
-import { createDeclarativeChildren } from "./core/declarative-children.js"
-import { buildComponentRenderer, renderChart } from "./core/render-dispatch.js"
-import * as handlers from "./handlers.js"
+import {
+  Area,
+  Bar,
+  Brush,
+  CartesianGrid,
+  Dots,
+  Legend,
+  Line,
+  Pie,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "./components/factories.js"
+import { renderFrame } from "./core/engine.js"
+import {
+  standardizeRenderInput,
+  standardizeStoreEntity,
+} from "./core/standardizer.js"
+import {
+  brushChange,
+  create,
+  dataUpdate,
+  sizeUpdate,
+} from "./handlers/chart-handlers.js"
+import { STREAM_DEFAULTS } from "./realtime/defaults.js"
+import { streamSlide } from "./realtime/stream-slide.js"
+import { withRealtime } from "./realtime/with-realtime.js"
 
-export { STREAM_DEFAULTS } from "./realtime/defaults.js"
-export { lineChart } from "./realtime/stream-types.js"
-export { withRealtime } from "./realtime/with-realtime.js"
-export {
-  areaChart,
-  barChart,
-  composedChart,
-  donutChart,
-  pieChart,
-} from "./utils/chart-utils.js"
-export { streamSlide } from "./utils/stream-slide.js"
+function renderStoreChart(entity, api) {
+  return renderFrame(standardizeStoreEntity(entity, api))
+}
 
-const declarativeChildren = createDeclarativeChildren()
+function renderCompositionChart(source, configOrApi, maybeApi) {
+  const { sourceValue, configValue } = normalizeRenderArgs(
+    source,
+    configOrApi,
+    maybeApi,
+  )
+  return renderFrame(standardizeRenderInput(sourceValue, configValue))
+}
+
+function normalizeRenderArgs(source, configOrApi, maybeApi) {
+  if (isApiLike(configOrApi) && maybeApi === undefined) {
+    return {
+      sourceValue: source,
+      configValue: {},
+    }
+  }
+
+  return {
+    sourceValue: source,
+    configValue: configOrApi || {},
+  }
+}
+
+function isApiLike(value) {
+  return (
+    value != null &&
+    typeof value.getEntity === "function" &&
+    typeof value.getType === "function"
+  )
+}
+
+const baseChartType = {
+  create,
+  dataUpdate,
+  sizeUpdate,
+  brushChange,
+}
+
+const baseLineChartType = {
+  ...baseChartType,
+  render(entity, api) {
+    return renderStoreChart(entity, api)
+  },
+}
+
+export const lineChart = withRealtime(baseLineChartType)
+
+export const areaChart = {
+  ...baseChartType,
+  render(entity, api) {
+    return renderStoreChart(entity, api)
+  },
+}
+
+export const barChart = {
+  ...baseChartType,
+  render(entity, api) {
+    return renderStoreChart(entity, api)
+  },
+}
+
+export const composedChart = {
+  ...baseChartType,
+  render(entity, api) {
+    return renderStoreChart(entity, api)
+  },
+}
+
+export const pieChart = {
+  ...baseChartType,
+  render(entity, api) {
+    return renderStoreChart(entity, api)
+  },
+}
+
+export const donutChart = {
+  ...baseChartType,
+  render(entity, api) {
+    return renderStoreChart(entity, api)
+  },
+}
 
 export const chart = {
-  ...handlers,
-  core: coreCharts,
-
-  // Chart Delegators
-  // Unified Composition-mode renderer
-  render: renderChart(),
-
-  // Component Renderers (Abstracted)
-  renderLine: buildComponentRenderer("renderLine", "line"),
-  renderArea: buildComponentRenderer("renderArea", "area"),
-  renderBar: buildComponentRenderer("renderBar", "bar"),
-  renderPie: buildComponentRenderer("renderPie", "pie"),
-  renderYAxis: buildComponentRenderer("renderYAxis"),
-  renderTooltip: buildComponentRenderer("renderTooltip"),
-
-  // Component Renderers with optional chartType override from props
-  renderCartesianGrid: buildComponentRenderer(
-    "renderCartesianGrid",
-    null,
-    true,
-  ),
-  renderXAxis: buildComponentRenderer("renderXAxis", null, true),
-  renderBrush: buildComponentRenderer("renderBrush", null, true),
-
-  // Declarative Helpers for Composition Style (return intention objects)
-  ...declarativeChildren,
-
-  // Deprecated instance helpers removed: use chart.render or api.render
+  create,
+  dataUpdate,
+  sizeUpdate,
+  brushChange,
+  render(source, configOrApi, maybeApi) {
+    return renderCompositionChart(source, configOrApi, maybeApi)
+  },
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Line,
+  Area,
+  Bar,
+  Pie,
+  Dots,
+  Tooltip,
+  Legend,
+  Brush,
 }
+
+export { STREAM_DEFAULTS, streamSlide, withRealtime }
