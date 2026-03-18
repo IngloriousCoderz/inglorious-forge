@@ -3,9 +3,9 @@
  */
 import { describe, expect, it } from "vitest"
 
-import { getResolvedEntity } from "./cartesian-helpers.js"
+import { getResolvedEntity } from "./cartesian-utils.js"
 
-describe("cartesian-helpers", () => {
+describe("cartesian-utils", () => {
   describe("getResolvedEntity", () => {
     const baseEntity = { id: "base" }
 

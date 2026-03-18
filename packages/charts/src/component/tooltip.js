@@ -1,6 +1,6 @@
 import { html } from "@inglorious/web"
 
-import { getResolvedEntity } from "../utils/cartesian-helpers.js"
+import { getResolvedEntity } from "../utils/cartesian-utils.js"
 import { formatNumber } from "../utils/data-utils.js"
 
 /**
