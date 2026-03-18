@@ -11,11 +11,11 @@ import {
   XAxis,
   YAxis,
 } from "./components/factories.js"
-import { renderFrame } from "./core/engine.js"
+import { renderFrame } from "./core/engine/index.js"
 import {
-  standardizeRenderInput,
-  standardizeStoreEntity,
-} from "./core/standardizer.js"
+  createFrameFromEntity,
+  createFrameFromRender,
+} from "./core/standardizer/index.js"
 import {
   brushChange,
   create,
@@ -27,16 +27,12 @@ import { streamSlide } from "./realtime/stream-slide.js"
 import { withRealtime } from "./realtime/with-realtime.js"
 
 function renderStoreChart(entity, api) {
-  return renderFrame(standardizeStoreEntity(entity, api))
+  return renderFrame(createFrameFromEntity(entity, api))
 }
 
-function renderCompositionChart(source, configOrApi, maybeApi) {
-  const { sourceValue, configValue } = normalizeRenderArgs(
-    source,
-    configOrApi,
-    maybeApi,
-  )
-  return renderFrame(standardizeRenderInput(sourceValue, configValue))
+function renderCompositionChart(source, options, api) {
+  const { sourceValue, configValue } = normalizeRenderArgs(source, options, api)
+  return renderFrame(createFrameFromRender(sourceValue, configValue))
 }
 
 function normalizeRenderArgs(source, configOrApi, maybeApi) {
@@ -117,8 +113,8 @@ export const chart = {
   dataUpdate,
   sizeUpdate,
   brushChange,
-  render(source, configOrApi, maybeApi) {
-    return renderCompositionChart(source, configOrApi, maybeApi)
+  render(source, options, api) {
+    return renderCompositionChart(source, options, api)
   },
   CartesianGrid,
   XAxis,
