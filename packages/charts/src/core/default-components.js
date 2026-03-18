@@ -45,7 +45,7 @@ function addSharedCartesianOverlays(components, entity) {
     components.push(Tooltip({}))
   }
 
-  if (entity.brush?.enabled) {
+  if (shouldShowBrush(entity)) {
     components.push(
       Brush({ height: entity.brush.height || DEFAULT_BRUSH_HEIGHT }),
     )
@@ -68,6 +68,10 @@ function buildDefaultLineComponents(entity) {
   })
 
   return addSharedCartesianOverlays(components, entity)
+}
+
+function shouldShowBrush(entity) {
+  return entity.brush?.enabled && entity.brush?.visible !== false
 }
 
 function buildDefaultAreaComponents(entity) {

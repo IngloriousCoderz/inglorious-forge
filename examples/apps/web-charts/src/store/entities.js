@@ -121,6 +121,7 @@ export const entities = {
     height: 400,
     showGrid: true,
     showTooltip: true,
+    showLegend: true,
   },
 
   // Line Chart with multiple series - Composition Style
@@ -275,6 +276,7 @@ export const entities = {
     height: 400,
     showGrid: true,
     showTooltip: true,
+    showLegend: true,
   },
 
   // Area Chart with multiple series - Composition Style
@@ -329,6 +331,7 @@ export const entities = {
     showGrid: true,
     showTooltip: true,
     stacked: true,
+    showLegend: true,
   },
 
   // Area Chart with multiple series stacked - Composition Style
