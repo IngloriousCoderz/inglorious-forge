@@ -1,196 +1,173 @@
 /* eslint-disable no-magic-numbers */
-import { streamSlide } from "../utils/stream-slide.js"
+
+import { brushChange } from "../handlers/chart-handlers.js"
 import { STREAM_DEFAULTS } from "./defaults.js"
+import { streamSlide } from "./stream-slide.js"
 
 const INTERNAL_PULSE_MS = 100
-const runtimeTargetTypes = new Set()
+const runtimeTypeTargets = new Set()
 const runtimeEntityTypes = new Map()
 let runtimeApi = null
 let runtimePulseId = null
 
-function streamModeChange(entity, payload) {
-  entity.brush ??= { enabled: true, height: 30 }
+export function withRealtime(chartType) {
+  return {
+    ...chartType,
+
+    create(entity, payload, api) {
+      chartType.create?.(entity, payload, api)
+
+      if (!entity?.realtime?.enabled) return
+
+      ensureRealtimeSeed(entity)
+      registerRuntime(entity, api)
+      syncRealtimeWindow(entity, entity.realtime?.paused ? "paused" : "live")
+    },
+
+    destroy(entity, payload, api) {
+      chartType.destroy?.(entity, payload, api)
+      unregisterRuntime(entity)
+    },
+
+    streamTick(entity) {
+      if (!entity?.realtime?.enabled) return
+
+      ensureRealtimeSeed(entity)
+      const realtime = getRealtimeConfig(entity)
+      const now = Date.now()
+      const lastTickAt = entity.realtime.lastTickAt
+
+      if (
+        Number.isFinite(lastTickAt) &&
+        now - lastTickAt < realtime.intervalMs
+      ) {
+        return
+      }
+
+      entity.realtime.lastTickAt = now
+
+      if (entity.realtime.paused) {
+        syncRealtimeWindow(entity, "paused")
+        return
+      }
+
+      const delta = Math.round((Math.random() - 0.5) * realtime.variation * 2)
+      const currentValue = Number.isFinite(entity.realtime.currentValue)
+        ? entity.realtime.currentValue
+        : realtime.currentValue
+      const nextValue = Math.max(
+        realtime.min,
+        Math.min(realtime.max, currentValue + delta),
+      )
+
+      entity.realtime.currentValue = nextValue
+      streamSlide(entity, { value: nextValue, maxHistory: realtime.maxHistory })
+      syncRealtimeWindow(entity, "live")
+    },
+
+    streamPause(entity) {
+      if (!entity?.realtime?.enabled) return
+      entity.realtime.paused = true
+      syncRealtimeWindow(entity, "paused")
+    },
+
+    streamPlay(entity) {
+      if (!entity?.realtime?.enabled) return
+      entity.realtime.paused = false
+      syncRealtimeWindow(entity, "live")
+    },
+  }
+}
+
+function getRealtimeConfig(entity) {
+  return {
+    ...STREAM_DEFAULTS,
+    ...(entity.realtime || {}),
+  }
+}
+
+function ensureRealtimeSeed(entity) {
+  const realtime = getRealtimeConfig(entity)
+
+  entity.streamXKey ??= "name"
+  entity.streamYKey ??= "value"
+  entity.maxHistory ??= realtime.maxHistory
+
+  if (Array.isArray(entity.data) && entity.data.length > 0) {
+    entity.streamIndex ??= entity.data.length - 1
+    entity.realtime.currentValue ??= realtime.currentValue
+    return
+  }
+
+  const visibleWindow = Math.max(1, realtime.visibleWindow)
+  entity.data = Array.from({ length: visibleWindow }, (_, index) => ({
+    [entity.streamXKey]: `${index}`,
+    [entity.streamYKey]: realtime.currentValue,
+  }))
+  entity.streamIndex = visibleWindow - 1
+  entity.realtime.currentValue = realtime.currentValue
+}
+
+function syncRealtimeWindow(entity, mode) {
+  const realtime = getRealtimeConfig(entity)
+  entity.brush ??= {
+    enabled: true,
+    height: 30,
+  }
   entity.brush.enabled = true
 
-  const mode = payload?.mode === "paused" ? "paused" : "live"
   if (mode === "paused") {
     entity.brush.visible = true
     return
   }
 
   entity.brush.visible = false
-  if (!Array.isArray(entity.data) || entity.data.length === 0) return
 
-  const visibleWindow = Number.isFinite(payload?.visibleWindow)
-    ? payload.visibleWindow
-    : STREAM_DEFAULTS.visibleWindow
   const endIndex = Math.max(0, entity.data.length - 1)
-  const startIndex = Math.max(0, endIndex - (Math.max(1, visibleWindow) - 1))
+  const startIndex = Math.max(
+    0,
+    endIndex - (Math.max(1, realtime.visibleWindow) - 1),
+  )
 
-  entity.brush.startIndex = startIndex
-  entity.brush.endIndex = endIndex
+  brushChange(entity, {
+    startIndex,
+    endIndex,
+  })
 }
 
-export function withRealtime(chartType) {
-  return {
-    ...chartType,
-    create(entity, payload, api) {
-      chartType.create?.(entity, payload, api)
+function registerRuntime(entity, api) {
+  if (!entity?.id || !entity?.type || !api) return
 
-      if (!entity?.realtime?.enabled) return
-      runtimeRegister(entity, api)
-      realtimeEnsureInitialized(entity)
-    },
-
-    destroy(entity, payload, api) {
-      chartType.destroy?.(entity, payload, api)
-      runtimeUnregister(entity)
-    },
-
-    streamSlide,
-    streamModeChange,
-
-    streamTick(entity) {
-      const realtimeState = entity?.realtime
-      const realtime = realtimeEnsureInitialized(entity)
-      if (!realtime || !realtimeState) return
-
-      const now = Date.now()
-      if (
-        Number.isFinite(realtimeState.lastTickAt) &&
-        now - realtimeState.lastTickAt < realtime.intervalMs
-      ) {
-        return
-      }
-      realtimeState.lastTickAt = now
-
-      if (realtimeState.paused) {
-        streamModeChange(entity, { mode: "paused" })
-        return
-      }
-
-      const nextValue = streamValueNext(realtime)
-      realtimeState.currentValue = nextValue
-
-      streamSlide(entity, {
-        value: nextValue,
-        maxHistory: realtime.maxHistory,
-      })
-      streamModeChange(entity, {
-        mode: "live",
-        visibleWindow: realtime.visibleWindow,
-      })
-    },
-
-    streamPause(entity) {
-      const realtime = entity?.realtime
-      if (!realtime?.enabled) return
-      realtime.paused = true
-      streamModeChange(entity, { mode: "paused" })
-    },
-
-    streamPlay(entity) {
-      const realtime = realtimeConfigGet(entity)
-      if (!realtime || !entity?.realtime) return
-      entity.realtime.paused = false
-      streamModeChange(entity, {
-        mode: "live",
-        visibleWindow: realtime.visibleWindow,
-      })
-    },
-  }
-}
-
-function streamValueNext(realtime) {
-  const min = realtime.min
-  const max = realtime.max
-  const variation = realtime.variation
-  const currentValue = realtime.currentValue
-
-  const delta = Math.round((Math.random() - 0.5) * variation * 2)
-  return Math.max(min, Math.min(max, currentValue + delta))
-}
-
-function realtimeConfigGet(entity) {
-  if (!entity?.realtime?.enabled) return null
-  return {
-    ...STREAM_DEFAULTS,
-    ...entity.realtime,
-  }
-}
-
-function streamSeedBuild(entity, realtime) {
-  const windowSize = Number.isFinite(realtime.visibleWindow)
-    ? Math.max(1, realtime.visibleWindow)
-    : STREAM_DEFAULTS.visibleWindow
-  const xKey = entity.streamXKey ?? "name"
-  const yKey = entity.streamYKey ?? "value"
-  const baseValue =
-    realtime.currentValue ??
-    entity.realtime?.currentValue ??
-    STREAM_DEFAULTS.currentValue
-
-  entity.data = Array.from({ length: windowSize }, (_, i) => ({
-    [xKey]: `${i}`,
-    [yKey]: baseValue,
-  }))
-  entity.streamIndex = windowSize - 1
-}
-
-function realtimeEnsureInitialized(entity) {
-  const realtime = realtimeConfigGet(entity)
-  if (!realtime) return null
-
-  if (!Array.isArray(entity.data) || entity.data.length === 0) {
-    streamSeedBuild(entity, realtime)
-  } else if (!Number.isFinite(entity.streamIndex)) {
-    entity.streamIndex = entity.data.length - 1
-  }
-
-  return realtime
-}
-
-function runtimeRegister(entity, api) {
-  const entityId = entity?.id
-  const entityType = entity?.type
-  if (!entityId || !entityType) return
-
-  if (runtimeEntityTypes.get(entityId) === entityType) return
-
-  runtimeEntityTypes.set(entityId, entityType)
-  runtimeTargetTypes.add(entityType)
-  runtimeStart(api)
-}
-
-function runtimeStart(api) {
-  if (!api) return
+  runtimeEntityTypes.set(entity.id, entity.type)
+  runtimeTypeTargets.add(entity.type)
   runtimeApi = api
+
   if (runtimePulseId) return
 
   runtimePulseId = setInterval(() => {
-    runtimeTick()
+    runtimeTypeTargets.forEach((type) => {
+      runtimeApi?.notify?.(`${type}:streamTick`)
+    })
   }, INTERNAL_PULSE_MS)
 }
 
-function runtimeUnregister(entity) {
-  const entityId = entity?.id
-  if (!entityId) return
+function unregisterRuntime(entity) {
+  if (!entity?.id) return
 
-  const entityType = runtimeEntityTypes.get(entityId)
+  const entityType = runtimeEntityTypes.get(entity.id)
   if (!entityType) return
 
-  runtimeEntityTypes.delete(entityId)
-  const hasType = Array.from(runtimeEntityTypes.values()).includes(entityType)
-  if (!hasType) runtimeTargetTypes.delete(entityType)
+  runtimeEntityTypes.delete(entity.id)
 
-  if (runtimeTargetTypes.size > 0) return
+  const hasRemainingType = Array.from(runtimeEntityTypes.values()).includes(
+    entityType,
+  )
+  if (!hasRemainingType) {
+    runtimeTypeTargets.delete(entityType)
+  }
+
+  if (runtimeTypeTargets.size > 0) return
+
   clearInterval(runtimePulseId)
   runtimePulseId = null
-}
-
-function runtimeTick() {
-  if (!runtimeApi || runtimeTargetTypes.size === 0) return
-  runtimeTargetTypes.forEach((type) => {
-    runtimeApi.notify(`${type}:streamTick`)
-  })
 }
