@@ -2,22 +2,16 @@
 import { svg } from "@inglorious/web"
 import { repeat } from "@inglorious/web/directives/repeat"
 
-import { createBrushComponent } from "../component/brush.js"
-import { renderGrid } from "../component/grid.js"
-import { renderLegend } from "../component/legend.js"
-import { createTooltipComponent } from "../component/tooltip.js"
-import { renderXAxis } from "../component/x-axis.js"
-import { renderYAxis } from "../component/y-axis.js"
 import { chart } from "../index.js"
 import { renderCurve } from "../shape/curve.js"
 import { renderDot } from "../shape/dot.js"
 import {
   createBandCenterScale,
+  createCartesianRenderer,
   getResolvedEntity,
   inferSeriesDataKey,
   resolveCategoryLabel,
-} from "../utils/cartesian-helpers.js"
-import { createCartesianRenderer } from "../utils/cartesian-renderer.js"
+} from "../utils/cartesian-utils.js"
 import { PALETTE_DEFAULT } from "../utils/constants.js"
 import { getTransformedData } from "../utils/data-utils.js"
 import {
@@ -39,89 +33,8 @@ export const area = {
       stacked: entity.stacked === true,
       dataKeys,
     }),
+    renderChart: renderComposedChart,
   }),
-
-  /**
-   * Composition rendering entry point for area charts.
-   * @param {import('../types/charts').ChartEntity} entity
-   * @param {{ children: any[]|any, config?: Record<string, any> }} params
-   * @param {import('@inglorious/web').Api} api
-   * @returns {import('lit-html').TemplateResult}
-   */
-  renderAreaChart(entity, { children, config = {} }, api) {
-    return renderComposedChart(entity, { children, config }, api)
-  },
-
-  /**
-   * Composition sub-render for cartesian grid.
-   * @param {import('../types/charts').ChartEntity} entity
-   * @param {{ config?: Record<string, any> }} params
-   * @param {import('@inglorious/web').Api} api
-   * @returns {(ctx: Record<string, any>) => import('lit-html').TemplateResult}
-   */
-  renderCartesianGrid(entity, { config = {} }, api) {
-    const gridFn = (ctx) => {
-      const { xScale, yScale, dimensions } = ctx
-      return renderGrid(
-        getResolvedEntity(ctx, entity),
-        { xScale, yScale, ...dimensions, ...config },
-        api,
-      )
-    }
-    gridFn.isGrid = true
-    return gridFn
-  },
-
-  /**
-   * Composition sub-render for X axis.
-   * @param {import('../types/charts').ChartEntity} entity
-   * @param {{ config?: Record<string, any> }} params
-   * @param {import('@inglorious/web').Api} api
-   * @returns {(ctx: Record<string, any>) => import('lit-html').TemplateResult}
-   */
-  renderXAxis(entity, { config = {} }, api) {
-    const axisFn = (ctx) => {
-      const { xScale, yScale, dimensions } = ctx
-      const ent = getResolvedEntity(ctx, entity)
-      const labels = ent.data.map(
-        (d, i) => d[config.dataKey] || d.name || String(i),
-      )
-      return renderXAxis(
-        { ...ent, xLabels: labels },
-        { xScale, yScale, ...dimensions },
-        api,
-      )
-    }
-    axisFn.isAxis = true
-    return axisFn
-  },
-
-  /**
-   * Composition sub-render for Y axis.
-   * @param {import('../types/charts').ChartEntity} entity
-   * @param {{ config?: Record<string, any> }} params
-   * @param {import('@inglorious/web').Api} api
-   * @returns {(ctx: Record<string, any>) => import('lit-html').TemplateResult}
-   */
-  /**
-   * Composition sub-render for Y axis.
-   * @param {import('../types/charts').ChartEntity} entity
-   * @param {{ config?: Record<string, any> }} params
-   * @param {import('@inglorious/web').Api} api
-   * @returns {(ctx: Record<string, any>) => import('lit-html').TemplateResult}
-   */
-  renderYAxis(entity, { config = {} }, api) {
-    const axisFn = (ctx) => {
-      const { yScale, dimensions } = ctx
-      return renderYAxis(
-        getResolvedEntity(ctx, entity),
-        { yScale, ...dimensions, ...config },
-        api,
-      )
-    }
-    axisFn.isAxis = true
-    return axisFn
-  },
 
   /**
    * Composition sub-render for area paths.
@@ -307,46 +220,4 @@ export const area = {
     dotsFn.isDots = true
     return dotsFn
   },
-
-  /**
-   * Composition sub-render for tooltip overlay.
-   * @type {(entity: import('../types/charts').ChartEntity, params: { config?: Record<string, any> }, api: import('@inglorious/web').Api) => (ctx: Record<string, any>) => import('lit-html').TemplateResult}
-   */
-  renderTooltip: createTooltipComponent(),
-
-  renderLegend(entity, { config = {} }, api) {
-    const legendFn = (ctx) => {
-      const { dimensions } = ctx
-      const { dataKeys, colors } = config
-
-      if (!dataKeys || dataKeys.length === 0) {
-        return svg``
-      }
-
-      // Convert dataKeys and colors to series format expected by renderLegend
-      const series = dataKeys.map((dataKey, index) => ({
-        name: dataKey,
-        color: colors && colors[index] ? colors[index] : undefined,
-      }))
-
-      return renderLegend(
-        getResolvedEntity(ctx, entity),
-        {
-          series,
-          colors: colors || [],
-          width: dimensions.width,
-          padding: dimensions.padding,
-        },
-        api,
-      )
-    }
-    legendFn.isLegend = true
-    return legendFn
-  },
-
-  /**
-   * Composition sub-render for brush control.
-   * @type {(entity: import('../types/charts').ChartEntity, params: { config?: Record<string, any> }, api: import('@inglorious/web').Api) => (ctx: Record<string, any>) => import('lit-html').TemplateResult}
-   */
-  renderBrush: createBrushComponent(),
 }

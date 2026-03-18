@@ -1,10 +1,136 @@
 /* eslint-disable no-magic-numbers */
 import {
-  buildCartesianBaseChildren,
-  resolveXAxisDataKey,
-} from "./cartesian-children.js"
-import { PALETTE_DEFAULT } from "./constants.js"
+  DEFAULT_GRID_CONFIG,
+  DEFAULT_Y_AXIS_CONFIG,
+  PALETTE_DEFAULT,
+} from "./constants.js"
 import { isMultiSeries, resolveDataKeys } from "./data-utils.js"
+
+export const DEFAULT_SERIES_INDEX = 0
+
+export function inferSeriesDataKey(data, preferredKey) {
+  if (!Array.isArray(data) || data.length === DEFAULT_SERIES_INDEX) {
+    return undefined
+  }
+  const sample = data[DEFAULT_SERIES_INDEX]
+  if (!sample || typeof sample !== "object") return undefined
+
+  if (preferredKey && typeof sample[preferredKey] === "number") {
+    return preferredKey
+  }
+
+  if (typeof sample.value === "number") return "value"
+  if (typeof sample.y === "number") return "y"
+
+  const numericKeys = Object.keys(sample).filter(
+    (key) =>
+      !["name", "label", "x", "date"].includes(key) &&
+      typeof sample[key] === "number",
+  )
+  return numericKeys[DEFAULT_SERIES_INDEX]
+}
+
+export function resolveCategoryLabel(entity, index) {
+  const item = entity?.data?.[index]
+  return (
+    item?.label ??
+    item?.name ??
+    item?.category ??
+    item?.x ??
+    item?.date ??
+    String(index)
+  )
+}
+
+export function createBandCenterScale(bandScale) {
+  const scale = (value) => {
+    const base = bandScale(value)
+    if (base == null || Number.isNaN(base)) return base
+    return base + bandScale.bandwidth() / 2
+  }
+  scale.domain = () => bandScale.domain()
+  scale.range = () => bandScale.range()
+  return scale
+}
+
+/**
+ * Resolves the most appropriate entity from render context.
+ * Prefers context-specific entity, then fullEntity (for brush / overlays),
+ * and finally falls back to the original entity argument.
+ *
+ * @param {Record<string, any>} ctx
+ * @param {import("../types/charts").ChartEntity} entity
+ * @returns {import("../types/charts").ChartEntity | undefined}
+ */
+export function getResolvedEntity(ctx, entity) {
+  if (!ctx) return entity
+  if (ctx.entity) return ctx.entity
+  if (ctx.fullEntity) return ctx.fullEntity
+  return entity
+}
+
+export function resolveXAxisDataKey(entity) {
+  let dataKey = entity?.dataKey
+  if (!dataKey && Array.isArray(entity?.data) && entity.data.length > 0) {
+    const firstItem = entity.data[0]
+    dataKey = firstItem?.name || firstItem?.x || firstItem?.date || "name"
+  }
+  return dataKey || "name"
+}
+
+export function buildCartesianBaseChildren(
+  entity,
+  {
+    makeChild = (type, config) => ({ type, config }),
+    includeGrid = true,
+    includeXAxis = true,
+    includeYAxis = true,
+    includeTooltip = true,
+    includeBrush = true,
+    gridConfig = DEFAULT_GRID_CONFIG,
+    xAxisConfig = {},
+    yAxisConfig = DEFAULT_Y_AXIS_CONFIG,
+    tooltipConfig = {},
+    brushConfig = {},
+  } = {},
+) {
+  const children = []
+  if (!entity) return children
+
+  const xAxisDataKey = resolveXAxisDataKey(entity)
+
+  if (includeGrid && entity.showGrid !== false) {
+    children.push(makeChild("CartesianGrid", gridConfig))
+  }
+
+  if (includeXAxis) {
+    children.push(makeChild("XAxis", { dataKey: xAxisDataKey, ...xAxisConfig }))
+  }
+
+  if (includeYAxis) {
+    children.push(makeChild("YAxis", { ...yAxisConfig }))
+  }
+
+  if (includeTooltip && entity.showTooltip !== false) {
+    children.push(makeChild("Tooltip", tooltipConfig))
+  }
+
+  if (
+    includeBrush &&
+    entity.brush?.enabled &&
+    entity.brush?.visible !== false
+  ) {
+    children.push(
+      makeChild("Brush", {
+        dataKey: xAxisDataKey,
+        height: entity.brush.height || 30,
+        ...brushConfig,
+      }),
+    )
+  }
+
+  return children
+}
 
 /**
  * Converts long multi-series input into wide rows, reusing the x value as row key.
@@ -216,6 +342,7 @@ export function sortChildrenByLayer(
  * @param {any | (() => any)} options.chartApi
  * @param {(args: { entity: any; transformedData: any[] }) => any[]} [options.toDisplayData]
  * @param {(args: { entity: any; entityWithData: any; transformedData: any[]; dataKeys: string[] }) => Record<string, any>} options.buildRenderConfig
+ * @param {(entity: any, params: any, api: any) => any} options.renderChart
  * @returns {(entity: any, api: any) => any}
  */
 export function createCartesianRenderer({
@@ -223,11 +350,9 @@ export function createCartesianRenderer({
   chartApi,
   toDisplayData = ({ transformedData }) => transformedData,
   buildRenderConfig,
+  renderChart,
 }) {
-  const renderMethod = getRenderMethod(seriesType)
-
   return function render(entity, api) {
-    const type = api.getType(entity.type)
     const resolvedChartApi =
       typeof chartApi === "function" ? chartApi() : chartApi
 
@@ -259,7 +384,7 @@ export function createCartesianRenderer({
     const resolvedDataKeys =
       dataKeys.length > 0 ? dataKeys : resolveDataKeys(entityWithData.data)
 
-    return type[renderMethod](
+    return renderChart(
       entityWithData,
       {
         children,
@@ -273,8 +398,4 @@ export function createCartesianRenderer({
       api,
     )
   }
-}
-
-function getRenderMethod(seriesType) {
-  return seriesType === "area" ? "renderAreaChart" : "renderLineChart"
 }
