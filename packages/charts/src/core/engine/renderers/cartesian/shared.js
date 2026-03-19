@@ -2,7 +2,7 @@
 
 import { svg } from "@inglorious/web"
 
-import { COMPONENT_TYPES } from "../../constants.js"
+import { COMPONENT_TYPES } from "../../../constants.js"
 
 export function bandCenter(start, bandwidth) {
   return (start ?? 0) + bandwidth / 2
