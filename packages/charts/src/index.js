@@ -32,7 +32,7 @@ function renderStoreChart(entity, api) {
 
 function renderCompositionChart(source, options, api) {
   const { sourceValue, configValue } = normalizeRenderArgs(source, options, api)
-  return renderFrame(createFrameFromRender(sourceValue, configValue))
+  return renderFrame(createFrameFromRender(sourceValue, configValue, api))
 }
 
 function normalizeRenderArgs(source, configOrApi, maybeApi) {
