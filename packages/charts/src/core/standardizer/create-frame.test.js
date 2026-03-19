@@ -87,4 +87,29 @@ describe("standardizer", () => {
     expect(frame.dimensions.brushHeight).toBeGreaterThan(0)
     expect(frame.dimensions.brushTop).not.toBe(null)
   })
+
+  it("hydrates the interaction entity brush for composition charts", () => {
+    const source = {
+      type: "line",
+      data: [
+        { name: "Jan", value: 10 },
+        { name: "Feb", value: 20 },
+        { name: "Mar", value: 15 },
+      ],
+    }
+
+    const frame = createFrameFromRender(source, {
+      width: 800,
+      height: 400,
+      children: [{ type: "BRUSH", props: {} }],
+    })
+
+    expect(frame.interactionEntity.brush).toEqual({
+      enabled: true,
+      height: 30,
+      startIndex: 0,
+      endIndex: 2,
+      visible: true,
+    })
+  })
 })
