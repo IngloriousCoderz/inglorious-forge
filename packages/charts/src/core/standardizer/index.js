@@ -14,15 +14,15 @@ import {
 } from "./resolve-input.js"
 import { createScales } from "./resolve-scales.js"
 
-export function createFrameFromEntity(entity) {
-  return createFrame(entity, {})
+export function createFrameFromEntity(entity, api = null) {
+  return createFrame(entity, {}, api)
 }
 
-export function createFrameFromRender(source, config = {}) {
-  return createFrame(source, config)
+export function createFrameFromRender(source, config = {}, api = null) {
+  return createFrame(source, config, api)
 }
 
-function createFrame(source, config) {
+function createFrame(source, config, api) {
   const sourceObject = isObject(source) ? source : {}
   const configObject = isObject(config) ? config : {}
   const explicitComponents = getComponents(
@@ -52,13 +52,27 @@ function createFrame(source, config) {
     components,
     tooltipEnabled,
   )
+  syncInteractionEntity(sourceObject, filteredEntity)
   const dimensions = createDimensions(filteredEntity, components)
   const scales = createScales(filteredEntity, components, dimensions)
 
   return {
+    api,
     entity: filteredEntity,
+    interactionEntity: sourceObject,
     components,
     scales,
     dimensions,
+  }
+}
+
+function syncInteractionEntity(sourceObject, filteredEntity) {
+  if (!isObject(sourceObject)) return
+
+  if (filteredEntity.brush) {
+    sourceObject.brush = {
+      ...filteredEntity.brush,
+      ...sourceObject.brush,
+    }
   }
 }
