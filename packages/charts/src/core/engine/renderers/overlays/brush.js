@@ -4,7 +4,7 @@ import { svg } from "@inglorious/web"
 import { line as createLinePath } from "d3-shape"
 
 import { brushChange } from "../../../../handlers/chart-handlers.js"
-import { maximumValue, minimumValue } from "../shared.js"
+import { maximumValue, minimumValue } from "../cartesian/shared.js"
 
 const DEFAULT_BRUSH_HEIGHT = 30
 const MIN_SELECTION_WIDTH = 12
