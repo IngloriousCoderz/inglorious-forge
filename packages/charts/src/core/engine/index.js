@@ -7,16 +7,16 @@ import {
   renderCartesianGrid,
   renderXAxis,
   renderYAxis,
-} from "./renderers/axes.js"
+} from "./renderers/cartesian/axes.js"
 import {
   renderAreaSeries,
   renderBarSeries,
   renderDots,
   renderLineSeries,
-} from "./renderers/cartesian.js"
+} from "./renderers/cartesian/index.js"
 import { renderBrush } from "./renderers/overlays/brush.js"
 import { renderLegend } from "./renderers/overlays/legend.js"
-import { renderCenterText, renderPieSeries } from "./renderers/polar.js"
+import { renderCenterText, renderPieSeries } from "./renderers/polar/index.js"
 
 export function renderFrame(frame) {
   const { entity, dimensions } = frame

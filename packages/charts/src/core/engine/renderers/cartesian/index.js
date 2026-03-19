@@ -3,7 +3,7 @@
 import { svg } from "@inglorious/web"
 import { area as createAreaPath, line as createLinePath } from "d3-shape"
 
-import { COMPONENT_TYPES, DEFAULT_DOT_RADIUS } from "../../constants.js"
+import { COMPONENT_TYPES, DEFAULT_DOT_RADIUS } from "../../../constants.js"
 import {
   createSeriesPoints,
   getBarGroupWidth,

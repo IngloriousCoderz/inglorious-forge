@@ -2,7 +2,7 @@
 
 import { svg } from "@inglorious/web"
 
-import { resolveLegendItems } from "../shared.js"
+import { resolveLegendItems } from "../cartesian/shared.js"
 
 export function renderLegend(component, frame) {
   const items = resolveLegendItems(component, frame)
