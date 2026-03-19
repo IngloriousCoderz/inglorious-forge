@@ -14,7 +14,8 @@ import {
   renderDots,
   renderLineSeries,
 } from "./renderers/cartesian.js"
-import { renderBrush, renderLegend } from "./renderers/overlays.js"
+import { renderBrush } from "./renderers/overlays/brush.js"
+import { renderLegend } from "./renderers/overlays/legend.js"
 import { renderCenterText, renderPieSeries } from "./renderers/polar.js"
 
 export function renderFrame(frame) {
