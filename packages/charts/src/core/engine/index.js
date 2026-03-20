@@ -16,6 +16,7 @@ import {
 } from "./renderers/cartesian/index.js"
 import { renderBrush } from "./renderers/overlays/brush.js"
 import { renderLegend } from "./renderers/overlays/legend.js"
+import { renderTooltipOverlay } from "./renderers/overlays/tooltip.js"
 import { renderCenterText, renderPieSeries } from "./renderers/polar/index.js"
 
 export function renderFrame(frame) {
@@ -86,7 +87,7 @@ const RENDERERS = {
   [COMPONENT_TYPES.PIE]: renderPieSeries,
   [COMPONENT_TYPES.LEGEND]: renderLegend,
   [COMPONENT_TYPES.BRUSH]: renderBrush,
-  [COMPONENT_TYPES.TOOLTIP]: () => svg``,
+  [COMPONENT_TYPES.TOOLTIP]: renderTooltipOverlay,
 }
 
 function renderComponent(component, frame) {
