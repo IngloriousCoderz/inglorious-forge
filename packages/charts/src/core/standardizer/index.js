@@ -25,9 +25,19 @@ export function createFrameFromRender(source, config = {}, api = null) {
 function createFrame(source, config, api) {
   const sourceObject = isObject(source) ? source : {}
   const configObject = isObject(config) ? config : {}
-  const explicitComponents = getComponents(
-    configObject.children ?? sourceObject.children,
-  )
+  const configHasChildren = Object.hasOwn(configObject, "children")
+  const sourceHasChildren = Object.hasOwn(sourceObject, "children")
+
+  const rawChildren = configHasChildren
+    ? configObject.children
+    : sourceObject.children
+
+  const explicitComponents = getComponents(rawChildren)
+
+  // If the caller explicitly provided `children` (even if it ends up empty),
+  // we must not fall back to DEFAULT_COMPONENTS.
+  const shouldFallbackToDefaults =
+    explicitComponents.length === 0 && !configHasChildren && !sourceHasChildren
   const requestedKeys = getDataKeys(
     explicitComponents,
     configObject.dataKeys ?? sourceObject.dataKeys,
@@ -42,10 +52,9 @@ function createFrame(source, config, api) {
     },
     requestedKeys,
   )
-  const components =
-    explicitComponents.length > 0
-      ? explicitComponents
-      : DEFAULT_COMPONENTS[chartType]?.(chartEntity) || []
+  const components = shouldFallbackToDefaults
+    ? DEFAULT_COMPONENTS[chartType]?.(chartEntity) || []
+    : explicitComponents
   const tooltipEnabled = getTooltipState(chartEntity, components)
   const filteredEntity = applyBrushWindow(
     chartEntity,
