@@ -9,7 +9,7 @@ function resolveChartType(chartTypeDef) {
 
   return chartTypeDef.reduce((acc, behavior) => {
     const applied =
-      typeof behavior === "function" ? behavior(acc) : behavior ?? {}
+      typeof behavior === "function" ? behavior(acc) : (behavior ?? {})
     return { ...acc, ...applied }
   }, {})
 }
