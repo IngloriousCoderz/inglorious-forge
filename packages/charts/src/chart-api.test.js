@@ -2,6 +2,18 @@ import { describe, expect, it } from "vitest"
 
 import { chart, lineChart } from "./index.js"
 
+function resolveChartType(chartTypeDef) {
+  // `lineChart` is exported as an array so store-style composition (mixins) works.
+  // Tests call `.render` directly, so we compose the type here for the assertion.
+  if (!Array.isArray(chartTypeDef)) return chartTypeDef
+
+  return chartTypeDef.reduce((acc, behavior) => {
+    const applied =
+      typeof behavior === "function" ? behavior(acc) : behavior ?? {}
+    return { ...acc, ...applied }
+  }, {})
+}
+
 describe("charts public api", () => {
   it("exposes pure component factories on the chart namespace", () => {
     expect(chart.Line({ dataKey: "value" })).toEqual({
@@ -54,7 +66,8 @@ describe("charts public api", () => {
       showTooltip: true,
     }
 
-    const result = lineChart.render(entity, {})
+    const type = resolveChartType(lineChart)
+    const result = type.render(entity, {})
 
     expect(result.strings.join("")).toContain("<svg")
     expect(result.values[4]).toBe("sales-line")
