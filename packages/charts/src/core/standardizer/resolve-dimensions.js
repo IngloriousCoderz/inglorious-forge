@@ -9,6 +9,18 @@ import {
   DEFAULT_WIDTH,
 } from "../constants.js"
 
+/**
+ * Computes layout dimensions for the engine renderer.
+ *
+ * Returns plot geometry derived from:
+ * - `entity.width` / `entity.height` (or defaults)
+ * - `entity.padding` (top/right/bottom/left)
+ * - presence of `Legend` and `Brush` components
+ *
+ * @param {any} entity - Normalized chart entity (includes width/height/padding and brush state).
+ * @param {any[]} components - Component list to detect legend/brush.
+ * @returns {{width:number,height:number,padding:any,plotTop:number,plotRight:number,plotBottom:number,plotLeft:number,plotWidth:number,plotHeight:number,legendHeight:number,brushHeight:number,brushTop:number|null}}
+ */
 export function createDimensions(entity, components) {
   const width = entity.width || DEFAULT_WIDTH
   const height = entity.height || DEFAULT_HEIGHT
