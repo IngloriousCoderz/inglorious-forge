@@ -14,10 +14,31 @@ import {
 } from "./resolve-input.js"
 import { createScales } from "./resolve-scales.js"
 
+/**
+ * Builds a render frame for config-mode store entities (`api.render("entityId")`).
+ *
+ * Config-mode does not require explicit `children`; it may fall back to
+ * `DEFAULT_COMPONENTS` based on the resolved chart type.
+ *
+ * @param {any} entity - Chart entity-like payload (must include `type`, `data`, etc.).
+ * @param {any} api - Web API instance.
+ * @returns {{api:any, entity:any, interactionEntity:any, components:any[], scales:any, dimensions:any}}
+ */
 export function createFrameFromEntity(entity, api = null) {
   return createFrame(entity, {}, api)
 }
 
+/**
+ * Builds a render frame for composition-mode `chart.render(...)`.
+ *
+ * Composition expects `children` to be provided explicitly (axes/tooltip/series),
+ * so the caller doesn't fall back to implicit `DEFAULT_COMPONENTS`.
+ *
+ * @param {any} source - Chart source/entity-like object (must include `type`, `data`, etc.).
+ * @param {any} config - Composition parameters (must include `children` in composition mode).
+ * @param {any} api - Web API instance (used by engine/renderers for interactions).
+ * @returns {{api:any, entity:any, interactionEntity:any, components:any[], scales:any, dimensions:any}}
+ */
 export function createFrameFromRender(source, config = {}, api = null) {
   const sourceObject = isObject(source) ? source : {}
   const configObject = isObject(config) ? config : {}
@@ -48,6 +69,19 @@ export function createFrameFromRender(source, config = {}, api = null) {
   return createFrame(source, config, api)
 }
 
+/**
+ * Internal standardization pipeline used by both config-mode and composition-mode.
+ * It resolves:
+ * - chart type + chart entity normalization
+ * - explicit vs default components fallback
+ * - brush window + tooltip availability
+ * - dimensions and scales for the engine
+ *
+ * @param {any} source - Entity/source payload
+ * @param {any} config - Config payload
+ * @param {any} api - Web API instance
+ * @returns {{api:any, entity:any, interactionEntity:any, components:any[], scales:any, dimensions:any}}
+ */
 function createFrame(source, config, api) {
   const sourceObject = isObject(source) ? source : {}
   const configObject = isObject(config) ? config : {}
