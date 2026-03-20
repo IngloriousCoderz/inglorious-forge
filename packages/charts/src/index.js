@@ -31,29 +31,30 @@ function renderStoreChart(entity, api) {
 }
 
 function renderCompositionChart(source, options, api) {
-  const { sourceValue, configValue } = normalizeRenderArgs(source, options, api)
-  return renderFrame(createFrameFromRender(sourceValue, configValue, api))
+  const args = normalizeRenderArgs(source, options, api)
+  return renderFrame(createFrameFromRender(args.source, args.config, args.api))
 }
 
-function normalizeRenderArgs(source, configOrApi, maybeApi) {
-  if (isApiLike(configOrApi) && maybeApi === undefined) {
+function normalizeRenderArgs(source, config, api) {
+  if (isApi(config)) {
     return {
-      sourceValue: source,
-      configValue: {},
+      source,
+      config: {},
+      api: config,
     }
   }
 
   return {
-    sourceValue: source,
-    configValue: configOrApi || {},
+    source,
+    config: config || {},
+    api,
   }
 }
 
-function isApiLike(value) {
+function isApi(value) {
+  if (!value || typeof value !== "object") return false
   return (
-    value != null &&
-    typeof value.getEntity === "function" &&
-    typeof value.getType === "function"
+    typeof value.getEntity === "function" && typeof value.getType === "function"
   )
 }
 
@@ -64,49 +65,32 @@ const baseChartType = {
   brushChange,
 }
 
-const baseLineChartType = {
-  ...baseChartType,
-  render(entity, api) {
-    return renderStoreChart(entity, api)
-  },
+function createChartType() {
+  return {
+    ...baseChartType,
+    render(entity, api) {
+      return renderStoreChart(entity, api)
+    },
+  }
 }
 
-export const lineChart = withRealtime(baseLineChartType)
-
-export const areaChart = {
-  ...baseChartType,
-  render(entity, api) {
-    return renderStoreChart(entity, api)
-  },
+const definitions = {
+  lineChart: [createChartType(), withRealtime],
+  areaChart: createChartType(),
+  barChart: createChartType(),
+  composedChart: createChartType(),
+  pieChart: createChartType(),
+  donutChart: createChartType(),
 }
 
-export const barChart = {
-  ...baseChartType,
-  render(entity, api) {
-    return renderStoreChart(entity, api)
-  },
-}
-
-export const composedChart = {
-  ...baseChartType,
-  render(entity, api) {
-    return renderStoreChart(entity, api)
-  },
-}
-
-export const pieChart = {
-  ...baseChartType,
-  render(entity, api) {
-    return renderStoreChart(entity, api)
-  },
-}
-
-export const donutChart = {
-  ...baseChartType,
-  render(entity, api) {
-    return renderStoreChart(entity, api)
-  },
-}
+export const {
+  lineChart,
+  areaChart,
+  barChart,
+  composedChart,
+  pieChart,
+  donutChart,
+} = definitions
 
 export const chart = {
   create,
