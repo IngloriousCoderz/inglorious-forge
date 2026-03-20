@@ -19,6 +19,32 @@ export function createFrameFromEntity(entity, api = null) {
 }
 
 export function createFrameFromRender(source, config = {}, api = null) {
+  const sourceObject = isObject(source) ? source : {}
+  const configObject = isObject(config) ? config : {}
+  const configHasChildren = Object.hasOwn(configObject, "children")
+  const sourceHasChildren = Object.hasOwn(sourceObject, "children")
+
+  const rawChildren = configHasChildren
+    ? configObject.children
+    : sourceObject.children
+
+  const explicitComponents = getComponents(rawChildren)
+
+  // Composition: children are required and must not be empty.
+  if (!configHasChildren && !sourceHasChildren) {
+    throw new Error(
+      "[charts] chart.render (composition) requires `children`. " +
+        "Provide components like chart.Line/Area/Bar/Pie plus axes/tooltip as needed.",
+    )
+  }
+
+  if (explicitComponents.length === 0) {
+    throw new Error(
+      "[charts] chart.render (composition) received `children` but it is empty. " +
+        "Provide at least one chart component.",
+    )
+  }
+
   return createFrame(source, config, api)
 }
 
