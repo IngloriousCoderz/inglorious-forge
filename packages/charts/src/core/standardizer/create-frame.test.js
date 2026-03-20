@@ -3,6 +3,39 @@ import { describe, expect, it } from "vitest"
 import { createFrameFromEntity, createFrameFromRender } from "./index.js"
 
 describe("standardizer", () => {
+  it("throws on composition renders when children are missing", () => {
+    expect(() =>
+      createFrameFromRender({
+        type: "line",
+        width: 800,
+        height: 400,
+        data: [
+          { name: "Jan", value: 10 },
+          { name: "Feb", value: 20 },
+        ],
+      }),
+    ).toThrow(/requires `children`/)
+  })
+
+  it("throws on composition renders when children are empty", () => {
+    expect(() =>
+      createFrameFromRender(
+        {
+          type: "line",
+          width: 800,
+          height: 400,
+          data: [
+            { name: "Jan", value: 10 },
+            { name: "Feb", value: 20 },
+          ],
+        },
+        {
+          children: [],
+        },
+      ),
+    ).toThrow(/received `children` but it is empty/)
+  })
+
   it("creates a point x-scale for pure line charts", () => {
     const frame = createFrameFromRender({
       type: "line",
@@ -13,6 +46,7 @@ describe("standardizer", () => {
         { name: "Feb", value: 30 },
         { name: "Mar", value: 20 },
       ],
+      children: [{ type: "LINE", props: { dataKey: "value" } }],
     })
 
     expect(frame.scales.xScaleMode).toBe("point")
@@ -34,6 +68,11 @@ describe("standardizer", () => {
         { kind: "area", dataKey: "revenue" },
         { kind: "bar", dataKey: "target" },
         { kind: "line", dataKey: "forecast" },
+      ],
+      children: [
+        { type: "AREA", props: { dataKey: "revenue" } },
+        { type: "BAR", props: { dataKey: "target" } },
+        { type: "LINE", props: { dataKey: "forecast" } },
       ],
     })
 
