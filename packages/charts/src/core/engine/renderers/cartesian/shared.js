@@ -87,7 +87,13 @@ export function renderSeriesTitles(component, frame) {
   return svg`
     ${points.map(
       (point) => svg`
-        <circle cx=${point.x} cy=${point.y} r="0" fill="transparent">
+        <circle
+          cx=${point.x}
+          cy=${point.y}
+          r="2"
+          fill="transparent"
+          pointer-events="all"
+        >
           ${resolveTooltipTitle(
             frame.entity,
             component,
