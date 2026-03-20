@@ -52,9 +52,16 @@ function getRenderComponents(frame) {
     return orderedComponents
   }
 
-  const sortedAreas = [...areaComponents].sort(
-    (left, right) => getAreaPeak(frame, right) - getAreaPeak(frame, left),
-  )
+  // Precompute area peaks once to avoid recalculating them inside sort
+  // comparator (which would otherwise call getAreaPeak many times).
+  // Keeps the same ordering logic: larger peaks first.
+  const sortedAreas = areaComponents
+    .map((component) => ({
+      component,
+      peak: getAreaPeak(frame, component),
+    }))
+    .sort((a, b) => b.peak - a.peak)
+    .map(({ component }) => component)
   let areaIndex = 0
 
   return orderedComponents.map((component) => {
