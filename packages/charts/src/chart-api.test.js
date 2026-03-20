@@ -82,6 +82,7 @@ describe("charts public api", () => {
       {
         type: "pie",
         data: [{ label: "A", value: 10 }],
+        children: [chart.Pie({ dataKey: "value", nameKey: "label" })],
       },
       api,
     )
