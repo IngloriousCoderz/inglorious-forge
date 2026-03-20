@@ -68,52 +68,24 @@ function getRenderComponents(frame) {
   })
 }
 
+const RENDERERS = {
+  [COMPONENT_TYPES.CARTESIAN_GRID]: renderCartesianGrid,
+  [COMPONENT_TYPES.X_AXIS]: renderXAxis,
+  [COMPONENT_TYPES.Y_AXIS]: renderYAxis,
+  [COMPONENT_TYPES.LINE]: renderLineSeries,
+  [COMPONENT_TYPES.AREA]: renderAreaSeries,
+  [COMPONENT_TYPES.BAR]: renderBarSeries,
+  [COMPONENT_TYPES.DOTS]: renderDots,
+  [COMPONENT_TYPES.PIE]: renderPieSeries,
+  [COMPONENT_TYPES.LEGEND]: renderLegend,
+  [COMPONENT_TYPES.BRUSH]: renderBrush,
+  [COMPONENT_TYPES.TOOLTIP]: () => svg``,
+}
+
 function renderComponent(component, frame) {
-  if (component.type === COMPONENT_TYPES.CARTESIAN_GRID) {
-    return renderCartesianGrid(component, frame)
-  }
+  const renderer = RENDERERS[component.type]
 
-  if (component.type === COMPONENT_TYPES.X_AXIS) {
-    return renderXAxis(component, frame)
-  }
-
-  if (component.type === COMPONENT_TYPES.Y_AXIS) {
-    return renderYAxis(component, frame)
-  }
-
-  if (component.type === COMPONENT_TYPES.LINE) {
-    return renderLineSeries(component, frame)
-  }
-
-  if (component.type === COMPONENT_TYPES.AREA) {
-    return renderAreaSeries(component, frame)
-  }
-
-  if (component.type === COMPONENT_TYPES.BAR) {
-    return renderBarSeries(component, frame)
-  }
-
-  if (component.type === COMPONENT_TYPES.DOTS) {
-    return renderDots(component, frame)
-  }
-
-  if (component.type === COMPONENT_TYPES.PIE) {
-    return renderPieSeries(component, frame)
-  }
-
-  if (component.type === COMPONENT_TYPES.LEGEND) {
-    return renderLegend(component, frame)
-  }
-
-  if (component.type === COMPONENT_TYPES.BRUSH) {
-    return renderBrush(component, frame)
-  }
-
-  if (component.type === COMPONENT_TYPES.TOOLTIP) {
-    return svg``
-  }
-
-  return svg``
+  return renderer ? renderer(component, frame) : svg``
 }
 
 function isPolarChart(type) {
