@@ -13,6 +13,7 @@ export {
   areaChart,
   barChart,
   donutChart,
+  lineBaseChart,
   pieChart,
 } from "./utils/chart-utils.js"
 
