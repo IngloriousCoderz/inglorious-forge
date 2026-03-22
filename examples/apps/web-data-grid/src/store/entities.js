@@ -39,6 +39,7 @@ export const entities = {
       {
         id: "createdAt",
         type: "date",
+        width: 420,
         isSortable: true,
         isFilterable: true,
         filter: { type: "datetime" },

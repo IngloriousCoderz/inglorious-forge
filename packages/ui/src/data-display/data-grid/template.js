@@ -26,11 +26,20 @@ const LAST_PAGE = 1
 
 export const dataGrid = {
   /**
-   * Renders the main table component.
-   * @param {DataGridProps} props The table props.
-   * @returns {TemplateResult} The rendered table.
+   * Main entrypoint. Allows override to wire to the store.
+   * @param {DataGridProps} props The data grid props.
+   * @returns {TemplateResult} The rendered data grid.
    */
   render(props) {
+    return this.renderDataGrid(props)
+  },
+
+  /**
+   * Renders the data grid component.
+   * @param {DataGridProps} props The data grid props.
+   * @returns {TemplateResult} The rendered data grid.
+   */
+  renderDataGrid(props) {
     const { isStriped = false } = props
 
     const classes = {
@@ -45,8 +54,8 @@ export const dataGrid = {
   },
 
   /**
-   * Renders the table header.
-   * @param {DataGridProps} props The table props.
+   * Renders the data grid header.
+   * @param {DataGridProps} props The data grid props.
    * @returns {TemplateResult} The rendered header.
    */
   renderHeader(props) {
@@ -65,7 +74,7 @@ export const dataGrid = {
 
   /**
    * Renders the toolbar above the header row.
-   * @param {DataGridProps} props The table props.
+   * @param {DataGridProps} props The data grid props.
    * @returns {TemplateResult}
    */
   renderToolbar(props) {
@@ -76,7 +85,7 @@ export const dataGrid = {
 
   /**
    * Renders a single column in the header.
-   * @param {DataGridProps} props The table props.
+   * @param {DataGridProps} props The data grid props.
    * @param {object} payload The payload.
    * @param {Column} payload.column The column definition.
    * @returns {TemplateResult} The rendered header column.
@@ -109,7 +118,7 @@ export const dataGrid = {
 
   /**
    * Renders the search bar.
-   * @param {DataGridProps} props The table props.
+   * @param {DataGridProps} props The data grid props.
    * @returns {TemplateResult} The rendered search bar.
    */
   renderSearchbar(props) {
@@ -127,9 +136,9 @@ export const dataGrid = {
   },
 
   /**
-   * Renders the table body with rows.
-   * @param {DataGridProps} props The table props.
-   * @returns {TemplateResult} The rendered table body.
+   * Renders the data grid body with rows.
+   * @param {DataGridProps} props The data grid props.
+   * @returns {TemplateResult} The rendered data grid body.
    */
   renderBody(props) {
     return html`<div class="iw-data-grid-body">
@@ -142,8 +151,8 @@ export const dataGrid = {
   },
 
   /**
-   * Renders a single row in the table body.
-   * @param {DataGridProps} props The table props.
+   * Renders a single row in the data grid body.
+   * @param {DataGridProps} props The data grid props.
    * @param {object} payload The payload.
    * @param {Row} payload.row The row data.
    * @param {number} payload.index The row index.
@@ -176,7 +185,7 @@ export const dataGrid = {
 
   /**
    * Renders a single cell within a row.
-   * @param {DataGridProps} props The table props.
+   * @param {DataGridProps} props The data grid props.
    * @param {object} payload The payload.
    * @param {any} payload.cell The cell data.
    * @param {number} payload.index The column index.
@@ -199,7 +208,7 @@ export const dataGrid = {
 
   /**
    * Renders the value within a cell. This can be overridden for custom formatting.
-   * @param {DataGridProps} _props The table props (ignored).
+   * @param {DataGridProps} _props The data grid props (ignored).
    * @param {object} payload The payload.
    * @param {any} payload.value The value to render.
    * @returns {any} The value to be rendered.
@@ -209,8 +218,8 @@ export const dataGrid = {
   },
 
   /**
-   * Renders the table footer.
-   * @param {DataGridProps} props The table props.
+   * Renders the data grid footer.
+   * @param {DataGridProps} props The data grid props.
    * @returns {TemplateResult} The rendered footer.
    */
   renderFooter(props) {
@@ -233,7 +242,7 @@ export const dataGrid = {
 
   /**
    * Renders the pagination controls.
-   * @param {DataGridProps} props The table props.
+   * @param {DataGridProps} props The data grid props.
    * @param {object} pagination The pagination info object from `getPaginationInfo`.
    * @returns {TemplateResult} The rendered pagination controls.
    */
@@ -339,6 +348,11 @@ function getColumnStyle(column) {
     }
 
     if (column.width.endsWith("%")) {
+      const percentage = Number(column.width.slice(0, -1))
+      if (Number.isFinite(percentage) && percentage >= 100) {
+        return "flex: 1 1 0; min-width: 0"
+      }
+
       return `flex: 0 0 ${column.width}; width: ${column.width}`
     }
 

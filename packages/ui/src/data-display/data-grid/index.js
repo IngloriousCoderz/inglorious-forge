@@ -21,7 +21,7 @@ export const dataGrid = {
         api.notify(`#${id}:pageSizeChange`, pageSize),
     }
 
-    return renderers.render(props)
+    return this.renderDataGrid(props)
   },
 }
 
