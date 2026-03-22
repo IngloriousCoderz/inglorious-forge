@@ -10,10 +10,22 @@ import { applyElementProps } from "../../shared/applyElementProps.js"
 
 export const accordion = {
   /**
+   * Main entrypoint for the accordion component. Delegates to the base accordion renderer for overrides.
+   * Accordions render a list of collapsible items with optional icons.
    * @param {AccordionProps} props
    * @returns {TemplateResult}
    */
   render(props) {
+    return this.renderAccordion(props)
+  },
+
+  /**
+   * Renders the accordion container and iterates items.
+   * Each item is delegated to `renderItem`.
+   * @param {AccordionProps} props
+   * @returns {TemplateResult}
+   */
+  renderAccordion(props) {
     const {
       type, // eslint-disable-line no-unused-vars
       items = [],
@@ -40,6 +52,8 @@ export const accordion = {
   },
 
   /**
+   * Renders a single accordion item with trigger and panel content.
+   * Handles expand/collapse behavior and item-level callbacks.
    * @param {AccordionItem} item
    * @param {number} index
    * @param {AccordionProps} props

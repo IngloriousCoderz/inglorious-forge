@@ -13,10 +13,22 @@ const STRIPED_OFFSET = 1
 
 export const table = {
   /**
+   * Main entrypoint for the table component. It delegates to the base table renderer so overrides can reuse it.
+   * Tables render columns and rows and can be striped or full width.
    * @param {TableProps} props
    * @returns {TemplateResult}
    */
   render(props) {
+    return this.renderTable(props)
+  },
+
+  /**
+   * Renders the table wrapper, header row, and body rows.
+   * Header and cells are delegated to `renderHeaderCell` and `renderCell`.
+   * @param {TableProps} props
+   * @returns {TemplateResult}
+   */
+  renderTable(props) {
     const {
       columns = [],
       rows = [],
@@ -61,6 +73,8 @@ export const table = {
   },
 
   /**
+   * Renders a single header cell label for a column.
+   * Override to customize header content or add controls.
    * @param {TableProps} _props
    * @param {{column: TableColumn, index: number}} payload
    * @returns {TemplateResult}
@@ -71,6 +85,8 @@ export const table = {
   },
 
   /**
+   * Renders a single table row and wires row click handlers.
+   * Cells are delegated to `renderCell`.
    * @param {TableProps} props
    * @param {{row: Record<string, unknown>, index: number}} payload
    * @returns {TemplateResult}
@@ -95,6 +111,8 @@ export const table = {
   },
 
   /**
+   * Renders a single table cell value for a column.
+   * Override to format values or inject custom content.
    * @param {TableProps} _props
    * @param {{column: TableColumn, row: Record<string, unknown>}} payload
    * @returns {TemplateResult}

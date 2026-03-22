@@ -23,6 +23,7 @@ export interface BottomNavigationProps {
 
 export interface BottomNavigationType {
   render(props: BottomNavigationProps): TemplateResult
+  renderBottomNavigation(props: BottomNavigationProps): TemplateResult
   renderAction(
     action: BottomNavigationAction,
     index: number,

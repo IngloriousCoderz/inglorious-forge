@@ -23,6 +23,7 @@ export interface TableProps {
 
 export interface TableType {
   render(props: TableProps): TemplateResult
+  renderTable(props: TableProps): TemplateResult
   renderHeaderCell(
     props: TableProps,
     payload: { column: TableColumn; index: number },

@@ -8,6 +8,8 @@ import { classMap, html, ref } from "@inglorious/web"
 import { applyElementProps } from "../../shared/applyElementProps.js"
 
 /**
+ * Renders a tooltip trigger and bubble with positional styling.
+ * Use `isOpen` to control visibility and `content` to set the tooltip body.
  * @param {TooltipProps} props
  * @returns {TemplateResult}
  */

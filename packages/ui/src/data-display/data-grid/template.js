@@ -27,7 +27,8 @@ const LAST_PAGE = 1
 
 export const dataGrid = {
   /**
-   * Main entrypoint. Allows override to wire to the store.
+   * Main entrypoint for the data grid template. It delegates to the base grid renderer so overrides can still reuse it.
+   * Data grids support sorting, filtering, selection, pagination, and optional virtualization.
    * @param {DataGridProps} props The data grid props.
    * @returns {TemplateResult} The rendered data grid.
    */
@@ -36,7 +37,8 @@ export const dataGrid = {
   },
 
   /**
-   * Renders the data grid component.
+   * Renders the data grid container and wires the header, body, and footer regions.
+   * This is the canonical renderer that custom `render()` overrides should call.
    * @param {DataGridProps} props The data grid props.
    * @returns {TemplateResult} The rendered data grid.
    */
@@ -55,7 +57,8 @@ export const dataGrid = {
   },
 
   /**
-   * Renders the data grid header.
+   * Renders the grid header region, including optional toolbar and column headers.
+   * Column rendering is delegated to `renderHeaderColumn`.
    * @param {DataGridProps} props The data grid props.
    * @returns {TemplateResult} The rendered header.
    */
@@ -74,7 +77,8 @@ export const dataGrid = {
   },
 
   /**
-   * Renders the toolbar above the header row.
+   * Renders the toolbar row that contains search, bulk actions, and filtering controls.
+   * Override to customize the global header tools.
    * @param {DataGridProps} props The data grid props.
    * @returns {TemplateResult}
    */
@@ -85,7 +89,8 @@ export const dataGrid = {
   },
 
   /**
-   * Renders a single column in the header.
+   * Renders a single column header cell, including sorting and filter affordances.
+   * Override to customize header labels or controls per column.
    * @param {DataGridProps} props The data grid props.
    * @param {object} payload The payload.
    * @param {Column} payload.column The column definition.
@@ -118,7 +123,8 @@ export const dataGrid = {
   },
 
   /**
-   * Renders the search bar.
+   * Renders the global search input shown in the grid toolbar.
+   * Used when `search` is enabled in the grid props.
    * @param {DataGridProps} props The data grid props.
    * @returns {TemplateResult} The rendered search bar.
    */
@@ -137,7 +143,8 @@ export const dataGrid = {
   },
 
   /**
-   * Renders the data grid body with rows.
+   * Renders the grid body, either as a standard list of rows or as a virtualized list.
+   * Row rendering is delegated to `renderRow`.
    * @param {DataGridProps} props The data grid props.
    * @returns {TemplateResult} The rendered data grid body.
    */
@@ -187,7 +194,8 @@ export const dataGrid = {
   },
 
   /**
-   * Renders a single row in the data grid body.
+   * Renders a single data row and wires row click/selection handlers.
+   * Cells are delegated to `renderCell` for customization.
    * @param {DataGridProps} props The data grid props.
    * @param {object} payload The payload.
    * @param {Row} payload.row The row data.
@@ -220,7 +228,8 @@ export const dataGrid = {
   },
 
   /**
-   * Renders a single cell within a row.
+   * Renders a single cell container and delegates the value to `renderValue`.
+   * Override to customize per-column cell structure.
    * @param {DataGridProps} props The data grid props.
    * @param {object} payload The payload.
    * @param {any} payload.cell The cell data.
@@ -243,7 +252,8 @@ export const dataGrid = {
   },
 
   /**
-   * Renders the value within a cell. This can be overridden for custom formatting.
+   * Renders the raw cell value for a column.
+   * Override to format values or inject custom content.
    * @param {DataGridProps} _props The data grid props (ignored).
    * @param {object} payload The payload.
    * @param {any} payload.value The value to render.
@@ -254,7 +264,8 @@ export const dataGrid = {
   },
 
   /**
-   * Renders the data grid footer.
+   * Renders the grid footer, including pagination controls and page size selectors.
+   * Footer elements are delegated to `renderPagination` and `renderPageSize`.
    * @param {DataGridProps} props The data grid props.
    * @returns {TemplateResult} The rendered footer.
    */
@@ -281,7 +292,8 @@ export const dataGrid = {
   },
 
   /**
-   * Renders the pagination controls.
+   * Renders pagination controls for the grid footer.
+   * Override to provide custom paging UI.
    * @param {DataGridProps} props The data grid props.
    * @param {object} pagination The pagination info object from `getPaginationInfo`.
    * @returns {TemplateResult} The rendered pagination controls.

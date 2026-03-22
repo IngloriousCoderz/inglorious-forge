@@ -8,10 +8,22 @@ import { classMap, html } from "@inglorious/web"
 
 export const speedDial = {
   /**
+   * Main entrypoint for the speed dial. Delegates to the base renderer for overrides.
+   * Shows a trigger button and an expandable list of actions.
    * @param {SpeedDialProps} props
    * @returns {TemplateResult}
    */
   render(props) {
+    return this.renderSpeedDial(props)
+  },
+
+  /**
+   * Renders the speed dial container, trigger, and optional actions list.
+   * Actions are delegated to `renderAction`.
+   * @param {SpeedDialProps} props
+   * @returns {TemplateResult}
+   */
+  renderSpeedDial(props) {
     const {
       isOpen = false,
       direction = "up",
@@ -46,6 +58,8 @@ export const speedDial = {
   },
 
   /**
+   * Renders a single speed dial action button.
+   * Handles click callbacks and disabled state.
    * @param {SpeedDialAction} action
    * @param {number} index
    * @param {SpeedDialProps} props

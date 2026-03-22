@@ -10,10 +10,22 @@ import { applyElementProps } from "../../shared/applyElementProps.js"
 
 export const menu = {
   /**
+   * Main entrypoint for a menu list. Delegates to the base renderer for overrides.
+   * Menus render selectable items and optional dividers.
    * @param {MenuProps} props
    * @returns {TemplateResult | null}
    */
   render(props) {
+    return this.renderMenu(props)
+  },
+
+  /**
+   * Renders the menu container and iterates items when open.
+   * Each item is delegated to `renderItem`.
+   * @param {MenuProps} props
+   * @returns {TemplateResult | null}
+   */
+  renderMenu(props) {
     const {
       type, // eslint-disable-line no-unused-vars
       isOpen = false,
@@ -46,6 +58,8 @@ export const menu = {
   },
 
   /**
+   * Renders a single menu item or divider.
+   * Handles selection, disabled state, and click callbacks.
    * @param {MenuItem} item
    * @param {number} index
    * @param {MenuProps} props

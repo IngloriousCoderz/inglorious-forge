@@ -8,8 +8,8 @@ import { classMap, html, ref } from "@inglorious/web"
 import { applyElementProps } from "../../shared/applyElementProps.js"
 
 /**
- * Switch control implemented with a checkbox input.
- *
+ * Renders a toggle switch backed by a checkbox input.
+ * Use it for boolean settings with optional labels and disabled state.
  * @param {SwitchProps} props
  * @returns {TemplateResult}
  */

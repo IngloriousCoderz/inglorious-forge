@@ -8,10 +8,22 @@ import { classMap, html } from "@inglorious/web"
 
 export const stepper = {
   /**
+   * Main entrypoint for the stepper component. Delegates to the base renderer for overrides.
+   * Steppers render a sequence of steps with completion states.
    * @param {StepperProps} props
    * @returns {TemplateResult}
    */
   render(props) {
+    return this.renderStepper(props)
+  },
+
+  /**
+   * Renders the ordered list of steps with orientation styling.
+   * Each step is delegated to `renderStep`.
+   * @param {StepperProps} props
+   * @returns {TemplateResult}
+   */
+  renderStepper(props) {
     const {
       steps = [],
       activeStep = 0,
@@ -33,6 +45,8 @@ export const stepper = {
   },
 
   /**
+   * Renders a single step with label, optional text, and completion state.
+   * Calculates active/completed styling based on the current step.
    * @param {Step} step
    * @param {number} index
    * @param {StepperProps} props

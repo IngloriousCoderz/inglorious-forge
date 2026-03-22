@@ -8,6 +8,8 @@ import { classMap, html, ref, when } from "@inglorious/web"
 import { applyElementProps } from "../../shared/applyElementProps.js"
 
 /**
+ * Renders a top app bar with optional leading/trailing content and title metadata.
+ * Supports variants, density, color, and positioning modes.
  * @param {AppBarProps} props
  * @returns {TemplateResult}
  */

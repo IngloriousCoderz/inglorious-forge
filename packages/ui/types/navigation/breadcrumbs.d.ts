@@ -19,6 +19,7 @@ export interface BreadcrumbsProps {
 
 export interface BreadcrumbsType {
   render(props: BreadcrumbsProps): TemplateResult
+  renderBreadcrumbs(props: BreadcrumbsProps): TemplateResult
   renderItem(
     item: BreadcrumbItem,
     index: number,

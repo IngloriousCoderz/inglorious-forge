@@ -8,8 +8,8 @@ import { classMap, html, ref } from "@inglorious/web"
 import { applyElementProps } from "../../shared/applyElementProps.js"
 
 /**
- * Button type for Inglorious Web.
- *
+ * Renders a themed button for actions and form submission.
+ * Supports variants, sizes, shapes, pressed state, and full-width layout.
  * @example
  * // Stateless usage
  * button.render({ children: 'Click me', variant: 'primary' })

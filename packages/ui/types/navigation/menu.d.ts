@@ -26,6 +26,7 @@ export interface MenuProps {
 
 export interface MenuType {
   render(props: MenuProps): TemplateResult | null
+  renderMenu(props: MenuProps): TemplateResult | null
   renderItem(item: MenuItem, index: number, props: MenuProps): TemplateResult
 }
 

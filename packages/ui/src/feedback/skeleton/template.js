@@ -6,6 +6,8 @@
 import { classMap, html } from "@inglorious/web"
 
 /**
+ * Renders a loading skeleton placeholder for text, blocks, or multiple lines.
+ * Use it to indicate content is loading without layout shifts.
  * @param {SkeletonProps} props
  * @returns {TemplateResult}
  */

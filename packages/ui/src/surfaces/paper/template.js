@@ -8,6 +8,8 @@ import { classMap, html, ref } from "@inglorious/web"
 import { applyElementProps } from "../../shared/applyElementProps.js"
 
 /**
+ * Renders a surface container with elevation, radius, and padding options.
+ * Use it as a generic surface for grouping content.
  * @param {PaperProps} props
  * @returns {TemplateResult}
  */

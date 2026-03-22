@@ -6,6 +6,8 @@
 import { classMap, html } from "@inglorious/web"
 
 /**
+ * Renders a modal dialog with header, body, and actions when open.
+ * Clicking the backdrop can close the dialog when handlers are provided.
  * @param {DialogProps} props
  * @returns {TemplateResult | null}
  */

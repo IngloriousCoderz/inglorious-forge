@@ -6,7 +6,8 @@
 import { classMap, html, styleMap } from "@inglorious/web"
 
 /**
- * Avatar component.
+ * Renders an avatar with image, initials, or fallback content.
+ * Supports size, shape, and automatic background color generation.
  * @param {AvatarProps} props
  * @returns {TemplateResult}
  */

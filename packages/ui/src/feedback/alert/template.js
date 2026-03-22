@@ -8,6 +8,8 @@ import { classMap, html, ref } from "@inglorious/web"
 import { applyElementProps } from "../../shared/applyElementProps.js"
 
 /**
+ * Renders an alert message with optional title, description, icon, and actions.
+ * Supports severity and variant styles for info, success, warning, and error.
  * @param {AlertProps} props
  * @returns {TemplateResult}
  */

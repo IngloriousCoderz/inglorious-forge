@@ -10,8 +10,8 @@ const DEFAULT_MAX = 5
 const INDEX_TO_RATING = 1
 
 /**
- * Rating control rendered as clickable symbols.
- *
+ * Renders a star (or custom symbol) rating control.
+ * Supports max value, read-only/disabled states, and emits selection changes.
  * @param {RatingProps} props
  * @returns {TemplateResult}
  */

@@ -19,11 +19,22 @@ const NO_FOCUSED_INDEX = -1
 
 export const combobox = {
   /**
-   * Select control render function.
+   * Main entrypoint for the combobox control. It renders the wrapper, label, control, and dropdown when open.
+   * Comboboxes support search, single or multi-select values, and clearable selection.
    * @param {ComboboxProps} props
    * @returns {TemplateResult}
    */
   render(props) {
+    return this.renderCombobox(props)
+  },
+
+  /**
+   * Main entrypoint for the combobox control. It renders the wrapper, label, control, and dropdown when open.
+   * Comboboxes support search, single or multi-select values, and clearable selection.
+   * @param {ComboboxProps} props
+   * @returns {TemplateResult}
+   */
+  renderCombobox(props) {
     return html`<div
       class=${classMap({
         "iw-combobox": true,
@@ -40,7 +51,8 @@ export const combobox = {
   },
 
   /**
-   * Render trigger control.
+   * Renders the clickable control element that shows the current selection and toggles the dropdown.
+   * Handles placeholder, clear button, and the open/disabled state.
    * @param {ComboboxProps} props
    * @returns {TemplateResult}
    */
@@ -85,7 +97,8 @@ export const combobox = {
   },
 
   /**
-   * Render single selected value.
+   * Renders the currently selected value in single-select mode.
+   * Falls back to the placeholder when no value is selected.
    * @param {ComboboxProps} props
    * @returns {TemplateResult}
    */
@@ -108,7 +121,8 @@ export const combobox = {
   },
 
   /**
-   * Render multi selected value tags.
+   * Renders the selected values in multi-select mode as a row of tags.
+   * Falls back to the placeholder when the selection is empty.
    * @param {ComboboxProps} props
    * @returns {TemplateResult}
    */
@@ -129,7 +143,8 @@ export const combobox = {
   },
 
   /**
-   * Render a selected multi-value tag.
+   * Renders a single selected tag in multi-select mode.
+   * Used to customize chip styling and remove behavior.
    * @param {ComboboxProps} props
    * @param {string|number} value
    * @returns {TemplateResult}
@@ -158,7 +173,8 @@ export const combobox = {
   },
 
   /**
-   * Render dropdown.
+   * Renders the dropdown panel that contains search input, options, and empty/loading states.
+   * Shown only when the combobox is open.
    * @param {ComboboxProps} props
    * @returns {TemplateResult}
    */
@@ -195,7 +211,8 @@ export const combobox = {
   },
 
   /**
-   * Render search input.
+   * Renders the optional search input used to filter options.
+   * Emits search change events as the user types.
    * @param {ComboboxProps} props
    * @returns {TemplateResult}
    */
@@ -214,7 +231,8 @@ export const combobox = {
   },
 
   /**
-   * Render options list.
+   * Renders the list of available options in the dropdown.
+   * Delegates each option to `renderOption` for customization.
    * @param {ComboboxProps} props
    * @returns {TemplateResult}
    */
@@ -231,7 +249,8 @@ export const combobox = {
   },
 
   /**
-   * Render an option row.
+   * Renders a single option row, including selection and focus styling.
+   * Handles click/selection for the option.
    * @param {ComboboxProps} props
    * @param {{ option: ComboboxOption, index: number }} payload
    * @returns {TemplateResult}
@@ -272,7 +291,8 @@ export const combobox = {
   },
 
   /**
-   * Render loading state.
+   * Renders the loading state shown while options are being fetched or filtered.
+   * Displayed when `isLoading` is true.
    * @param {ComboboxProps} props
    * @returns {TemplateResult}
    */
@@ -281,7 +301,8 @@ export const combobox = {
   },
 
   /**
-   * Render no options state.
+   * Renders the empty state when no options match the search or list is empty.
+   * Uses the `noOptionsMessage` prop when provided.
    * @param {ComboboxProps} props
    * @returns {TemplateResult}
    */

@@ -25,6 +25,7 @@ export interface SpeedDialProps {
 
 export interface SpeedDialType {
   render(props: SpeedDialProps): TemplateResult
+  renderSpeedDial(props: SpeedDialProps): TemplateResult
   renderAction(
     action: SpeedDialAction,
     index: number,

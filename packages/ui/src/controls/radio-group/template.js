@@ -8,8 +8,8 @@ import { classMap, html, ref } from "@inglorious/web"
 import { applyElementProps } from "../../shared/applyElementProps.js"
 
 /**
- * Radio group control for selecting one option.
- *
+ * Renders a group of radio options for single selection.
+ * Supports horizontal/vertical layouts and disabled state.
  * @param {RadioGroupProps} props
  * @returns {TemplateResult}
  */

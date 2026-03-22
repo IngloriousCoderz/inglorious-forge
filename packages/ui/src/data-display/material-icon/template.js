@@ -1,9 +1,16 @@
 /**
  * @typedef {import('../../../types/data-display/material-icon').MaterialIconProps} MaterialIconProps
+ * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
 import { classMap, html } from "@inglorious/web"
 
+/**
+ * Renders a Material Symbols icon by name.
+ * Requires the Material Symbols font and supports filled and size variants.
+ * @param {MaterialIconProps} props
+ * @returns {TemplateResult}
+ */
 export function render(props) {
   const { name = "help", size = "md", isFilled = true, onClick } = props
 

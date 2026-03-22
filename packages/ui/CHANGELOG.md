@@ -1,5 +1,11 @@
 # @inglorious/ui
 
+## 1.0.2
+
+### Patch Changes
+
+- Allow easy override of composite primitives
+
 ## 1.0.1
 
 ### Patch Changes

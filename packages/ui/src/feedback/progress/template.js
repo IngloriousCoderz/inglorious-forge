@@ -10,6 +10,8 @@ function clamp(value) {
 }
 
 /**
+ * Renders a linear or circular progress indicator.
+ * Indeterminate mode is used when no explicit value is provided.
  * @param {ProgressProps} props
  * @returns {TemplateResult}
  */

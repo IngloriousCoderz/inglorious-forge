@@ -8,8 +8,8 @@ import { classMap, html, ref } from "@inglorious/web"
 import { applyElementProps } from "../../shared/applyElementProps.js"
 
 /**
- * Input component for Inglorious Web.
- *
+ * Renders a labeled input field with optional icons, hint text, and error messaging.
+ * Supports disabled/readonly/required states and emits `onChange` on input.
  * @example
  * // Stateless usage
  * input.render({ label: 'Email', type: 'email', placeholder: 'you@example.com' })

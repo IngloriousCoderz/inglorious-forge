@@ -9,7 +9,8 @@ import { html, ref, repeat, styleMap } from "@inglorious/web"
 const PRETTY_INDEX = 1
 
 /**
- * Renders the virtualized list component.
+ * Renders a virtualized list that only mounts visible items for performance.
+ * Uses item height estimates to compute scroll ranges and notifies on mount/scroll.
  * @param {VirtualListEntity} entity The list entity state.
  * @param {Api} api The API object.
  * @returns {TemplateResult} The rendered list.
@@ -85,7 +86,8 @@ export function render(entity, api) {
 }
 
 /**
- * Default item renderer.
+ * Default item renderer for a virtualized list item.
+ * Override to customize how each item is displayed.
  * @param {VirtualListEntity} entity The list entity.
  * @param {object} payload The payload for rendering the item.
  * @param {any} payload.item The item data.

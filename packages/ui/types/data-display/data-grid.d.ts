@@ -122,9 +122,10 @@ export interface DataGridType {
   rowsToggleAll(entity: DataGridProps): void
   rowsSelectAll(entity: DataGridProps): void
   selectionClear(entity: DataGridProps): void
-  virtualScroll(entity: DataGridProps, containerEl: HTMLElement): void
   virtualMount(entity: DataGridProps, containerEl: HTMLElement): void
+  virtualScroll(entity: DataGridProps, containerEl: HTMLElement): void
   render(entity: DataGridProps, api: Api): TemplateResult
+  renderDataGrid(entity: DataGridProps, api: Api): TemplateResult
   renderHeader(entity: DataGridProps, api: Api): TemplateResult
   renderToolbar(entity: DataGridProps, api: Api): TemplateResult
   renderHeaderColumn(

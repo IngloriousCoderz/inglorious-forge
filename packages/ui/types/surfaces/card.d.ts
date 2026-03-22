@@ -31,6 +31,7 @@ export interface CardProps {
 
 export interface CardType {
   render(props: CardProps): TemplateResult
+  renderCard(props: CardProps): TemplateResult
   renderHeader(props: CardProps): TemplateResult | null
   renderBody(props: CardProps): TemplateResult | null
   renderFooter(props: CardProps): TemplateResult | null

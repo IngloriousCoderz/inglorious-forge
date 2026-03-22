@@ -8,9 +8,8 @@ import { classMap, ref, staticHtml, unsafeStatic } from "@inglorious/web"
 import { applyElementProps } from "../../shared/applyElementProps.js"
 
 /**
- * Flex layout component for Inglorious Web.
- * Children are rendered as-is (templates/content composition).
- *
+ * Renders a flexible layout container with direction, alignment, spacing, and wrap control.
+ * Use it to compose layouts without writing custom flexbox CSS.
  * @param {FlexProps} props
  * @returns {TemplateResult}
  */

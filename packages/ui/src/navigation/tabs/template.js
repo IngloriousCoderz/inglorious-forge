@@ -8,10 +8,22 @@ import { classMap, html } from "@inglorious/web"
 
 export const tabs = {
   /**
+   * Main entrypoint for tabbed navigation. Delegates to the base renderer for overrides.
+   * Renders tab labels and the active panel.
    * @param {TabsProps} props
    * @returns {TemplateResult}
    */
   render(props) {
+    return this.renderTabs(props)
+  },
+
+  /**
+   * Renders the tabs list and the active panel container.
+   * Individual tabs are delegated to `renderTab`.
+   * @param {TabsProps} props
+   * @returns {TemplateResult}
+   */
+  renderTabs(props) {
     const {
       items = [],
       value = items[0]?.value ?? 0,
@@ -40,6 +52,8 @@ export const tabs = {
   },
 
   /**
+   * Renders a single tab button with selected/disabled states.
+   * Wires click events to update the active tab.
    * @param {TabItem} item
    * @param {number} index
    * @param {TabsProps} props
@@ -69,6 +83,8 @@ export const tabs = {
   },
 
   /**
+   * Renders the active tab panel content.
+   * Returns `null` when the active item has no panel.
    * @param {TabItem | null} item
    * @returns {TemplateResult | null}
    */

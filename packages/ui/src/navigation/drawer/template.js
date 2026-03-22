@@ -11,6 +11,8 @@ import { backdrop } from "../../feedback/backdrop"
 import { flex } from "../../layout/flex"
 
 /**
+ * Renders a side drawer panel with optional header, body, and collapse controls.
+ * Can show a backdrop when open and supports left/right anchoring.
  * @param {DrawerProps} props
  * @returns {TemplateResult}
  */

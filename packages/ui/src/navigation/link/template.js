@@ -8,6 +8,8 @@ import { classMap, html, ref } from "@inglorious/web"
 import { applyElementProps } from "../../shared/applyElementProps.js"
 
 /**
+ * Renders a styled link element with optional underline and color variants.
+ * Supports external link behavior and click handling.
  * @param {LinkProps} props
  * @returns {TemplateResult}
  */

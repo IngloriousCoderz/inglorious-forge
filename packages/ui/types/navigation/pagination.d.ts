@@ -37,6 +37,7 @@ export interface PaginationControlRenderProps {
 
 export interface PaginationType {
   render(props: PaginationProps): TemplateResult
+  renderPagination(props: PaginationProps): TemplateResult
   renderItem(
     props: PaginationProps,
     payload: PaginationItemRenderProps,

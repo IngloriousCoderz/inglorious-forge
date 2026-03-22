@@ -10,10 +10,22 @@ import { applyElementProps } from "../../shared/applyElementProps.js"
 
 export const bottomNavigation = {
   /**
+   * Main entrypoint for bottom navigation. Delegates to the base renderer for overrides.
+   * Renders a row of actions with optional labels.
    * @param {BottomNavigationProps} props
    * @returns {TemplateResult}
    */
   render(props) {
+    return this.renderBottomNavigation(props)
+  },
+
+  /**
+   * Renders the navigation container and iterates actions.
+   * Each action is delegated to `renderAction`.
+   * @param {BottomNavigationProps} props
+   * @returns {TemplateResult}
+   */
+  renderBottomNavigation(props) {
     const {
       type, // eslint-disable-line no-unused-vars
       actions = [],
@@ -41,6 +53,8 @@ export const bottomNavigation = {
   },
 
   /**
+   * Renders a single bottom navigation action.
+   * Handles selection state and click callbacks.
    * @param {BottomNavigationAction} action
    * @param {number} index
    * @param {BottomNavigationProps} props

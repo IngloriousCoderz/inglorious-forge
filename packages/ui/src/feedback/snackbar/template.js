@@ -6,6 +6,8 @@
 import { classMap, html } from "@inglorious/web"
 
 /**
+ * Renders a transient snackbar message with optional action and dismiss control.
+ * Position is configurable (for example bottom-left or top-right).
  * @param {SnackbarProps} props
  * @returns {TemplateResult | null}
  */

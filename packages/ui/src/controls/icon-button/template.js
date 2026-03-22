@@ -8,8 +8,8 @@ import { html } from "@inglorious/web"
 import { button } from "../button/index.js"
 
 /**
- * Icon button wrapper built on top of the base button renderer.
- *
+ * Renders a button optimized for icons with optional label and icon placement.
+ * Built on top of the base button renderer for consistent theming.
  * @param {IconButtonProps} props
  * @returns {TemplateResult}
  */

@@ -9,8 +9,8 @@ import { applyElementProps } from "../../shared/applyElementProps.js"
 import { formatOption, getOptionValue, isOptionSelected } from "./helpers.js"
 
 /**
- * Select component for Inglorious Web.
- *
+ * Renders a styled native select control with optional single or multi-select modes.
+ * Options can be primitives or objects and are rendered with consistent theming.
  * @example
  * // Stateless usage
  * select.render({ options: ['true', 'false'], value: 'true' })

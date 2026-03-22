@@ -1,9 +1,16 @@
 /**
  * @typedef {import('../../../types/data-display/chip').ChipProps} ChipProps
+ * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
 import { classMap, html } from "@inglorious/web"
 
+/**
+ * Renders a compact chip label with optional remove action.
+ * Use chips for tags, filters, or selected values.
+ * @param {ChipProps} props
+ * @returns {TemplateResult}
+ */
 export function render(props) {
   const {
     children,

@@ -8,6 +8,8 @@ import { classMap, html, ref } from "@inglorious/web"
 import { applyElementProps } from "../../shared/applyElementProps.js"
 
 /**
+ * Renders styled text with semantic variants such as headings, body, and caption.
+ * Supports alignment, weight, color, and gutter spacing.
  * @param {TypographyProps} props
  * @returns {TemplateResult}
  */

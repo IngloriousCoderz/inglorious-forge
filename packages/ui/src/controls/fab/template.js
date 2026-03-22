@@ -8,8 +8,8 @@ import { html } from "@inglorious/web"
 import { button } from "../button/index.js"
 
 /**
- * Floating action button for primary contextual actions.
- *
+ * Renders a floating action button for primary contextual actions.
+ * Supports extended mode to display label text alongside the icon.
  * @param {FabProps} props
  * @returns {TemplateResult}
  */

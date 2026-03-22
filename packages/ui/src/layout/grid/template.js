@@ -6,9 +6,8 @@
 import { classMap, html, styleMap } from "@inglorious/web"
 
 /**
- * Grid layout component for Inglorious Web.
- * Children are rendered as-is (templates/content composition).
- *
+ * Renders a CSS grid container with configurable columns, gaps, and alignment.
+ * Supports fixed column counts or auto-fit with a minimum column width.
  * @param {GridProps} props
  * @returns {TemplateResult}
  */

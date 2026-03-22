@@ -10,10 +10,22 @@ import { applyElementProps } from "../../shared/applyElementProps.js"
 
 export const breadcrumbs = {
   /**
+   * Main entrypoint for breadcrumbs navigation. Delegates to the base renderer for overrides.
+   * Renders a list of path items separated by a configurable separator.
    * @param {BreadcrumbsProps} props
    * @returns {TemplateResult}
    */
   render(props) {
+    return this.renderBreadcrumbs(props)
+  },
+
+  /**
+   * Renders the breadcrumb container and iterates items.
+   * Each item is delegated to `renderItem`.
+   * @param {BreadcrumbsProps} props
+   * @returns {TemplateResult}
+   */
+  renderBreadcrumbs(props) {
     const {
       type, // eslint-disable-line no-unused-vars
       items = [],
@@ -49,6 +61,8 @@ export const breadcrumbs = {
   },
 
   /**
+   * Renders a single breadcrumb item, handling current vs. link states.
+   * Override to customize labels or link behavior.
    * @param {BreadcrumbItem} item
    * @param {number} index
    * @param {BreadcrumbsProps} props

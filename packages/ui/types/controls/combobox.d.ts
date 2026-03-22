@@ -51,6 +51,7 @@ export interface ComboboxProps {
 export interface ComboboxType {
   create(entity: ComboboxProps): void
   render(entity: ComboboxProps, api: Api): TemplateResult
+  renderCombobox(props: ComboboxProps): TemplateResult
   open(entity: ComboboxProps): void
   close(entity: ComboboxProps): void
   toggle(entity: ComboboxProps): void

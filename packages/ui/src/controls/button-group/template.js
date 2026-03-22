@@ -9,8 +9,8 @@ import { applyElementProps } from "../../shared/applyElementProps.js"
 import { button } from "../button/index.js"
 
 /**
- * Button group control for grouped actions.
- *
+ * Renders a grouped set of buttons with optional single or multi selection.
+ * Handles attached layout, selection state, and per-item overrides.
  * @param {ButtonGroupProps} props
  * @returns {TemplateResult}
  */

@@ -29,10 +29,22 @@ const PRETTY_INDEX = 1
 
 export const list = {
   /**
+   * Main entrypoint for the list component. It delegates to the base list renderer so overrides can reuse it.
+   * Lists support ordered/unordered modes, nested items, and optional dividers.
    * @param {ListProps} props
    * @returns {TemplateResult}
    */
   render(props) {
+    return this.renderList(props)
+  },
+
+  /**
+   * Renders the list container (ordered or unordered) and iterates items.
+   * Each item is delegated to `renderItem` for customization.
+   * @param {ListProps} props
+   * @returns {TemplateResult}
+   */
+  renderList(props) {
     const {
       type, // eslint-disable-line no-unused-vars
       items = [],
@@ -107,13 +119,10 @@ export const list = {
   },
 
   /**
+   * Renders a single list item, including icon, primary/secondary text, and actions.
+   * Handles item click/toggle wiring and nested children.
    * @param {ListProps} props
    * @param {{
-   *   item: ListItem,
-   *   meta: ListItemMeta,
-   *   index: number,
-   *   path: number[]
-   * }} payload
    * @returns {TemplateResult}
    */
   renderItem(props, { item, meta, path }) {

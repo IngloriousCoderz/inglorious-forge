@@ -1,9 +1,16 @@
 /**
  * @typedef {import('../../../types/data-display/badge').BadgeProps} BadgeProps
+ * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
 import { classMap, html, styleMap } from "@inglorious/web"
 
+/**
+ * Renders a compact badge for status, labels, or counts.
+ * Supports color, variant, size, shape, and optional ring styling.
+ * @param {BadgeProps} props
+ * @returns {TemplateResult}
+ */
 export function render(props) {
   const {
     children,

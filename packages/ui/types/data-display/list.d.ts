@@ -39,6 +39,7 @@ export interface ListProps {
 
 export interface ListType {
   render(props: ListProps): TemplateResult
+  renderList(props: ListProps): TemplateResult
   renderItem(
     props: ListProps,
     payload: {

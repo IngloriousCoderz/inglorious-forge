@@ -13,8 +13,8 @@ const DEFAULT_MAX = 100
 const DEFAULT_STEP = 1
 
 /**
- * Slider control based on native range input.
- *
+ * Renders a range slider with optional label and current value display.
+ * Supports min/max/step, color, disabled state, and full-width layout.
  * @param {SliderProps} props
  * @returns {TemplateResult}
  */

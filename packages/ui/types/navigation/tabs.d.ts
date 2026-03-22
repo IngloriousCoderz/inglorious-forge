@@ -24,6 +24,7 @@ export interface TabsProps {
 
 export interface TabsType {
   render(props: TabsProps): TemplateResult
+  renderTabs(props: TabsProps): TemplateResult
   renderTab(item: TabItem, index: number, props: TabsProps): TemplateResult
   renderPanel(item: TabItem | null, props: TabsProps): TemplateResult | null
 }

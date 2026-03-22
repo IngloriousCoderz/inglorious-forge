@@ -9,10 +9,22 @@ import { applyElementProps } from "../../shared/applyElementProps.js"
 
 export const card = {
   /**
+   * Main entrypoint for the card component. Delegates to the base card renderer for easy overrides.
+   * Cards support header, body, and footer slots with optional click behavior.
    * @param {CardProps} props
    * @returns {TemplateResult}
    */
   render(props) {
+    return this.renderCard(props)
+  },
+
+  /**
+   * Renders the card container and composes header, body, and footer sub-sections.
+   * Uses `element` to control the semantic tag.
+   * @param {CardProps} props
+   * @returns {TemplateResult}
+   */
+  renderCard(props) {
     const {
       type, // eslint-disable-line no-unused-vars
       element = "article",
@@ -52,6 +64,8 @@ export const card = {
   },
 
   /**
+   * Renders the optional card header area (title, subtitle, or custom header content).
+   * Returns `null` when no header content is provided.
    * @param {CardProps} props
    * @returns {TemplateResult | null}
    */
@@ -83,6 +97,8 @@ export const card = {
   },
 
   /**
+   * Renders the main card content area.
+   * Returns `null` when there is no body or children content.
    * @param {CardProps} props
    * @returns {TemplateResult | null}
    */
@@ -103,6 +119,8 @@ export const card = {
   },
 
   /**
+   * Renders the optional card footer area, typically for actions.
+   * Returns `null` when no footer content is provided.
    * @param {CardProps} props
    * @returns {TemplateResult | null}
    */

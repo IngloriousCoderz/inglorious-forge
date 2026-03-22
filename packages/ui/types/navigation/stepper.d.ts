@@ -20,6 +20,7 @@ export interface StepperProps {
 
 export interface StepperType {
   render(props: StepperProps): TemplateResult
+  renderStepper(props: StepperProps): TemplateResult
   renderStep(step: Step, index: number, props: StepperProps): TemplateResult
 }
 

@@ -16,6 +16,8 @@ const SIZE_TO_MAX_WIDTH = {
 }
 
 /**
+ * Renders a responsive layout container with optional max width and padding.
+ * Use it to constrain page content while keeping semantic HTML tags.
  * @param {ContainerProps} props
  * @returns {TemplateResult}
  */

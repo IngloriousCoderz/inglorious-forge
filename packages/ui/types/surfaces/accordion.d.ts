@@ -22,6 +22,7 @@ export interface AccordionProps {
 
 export interface AccordionType {
   render(props: AccordionProps): TemplateResult
+  renderAccordion(props: AccordionProps): TemplateResult
   renderItem(
     item: AccordionItem,
     index: number,

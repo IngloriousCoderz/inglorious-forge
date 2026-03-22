@@ -6,6 +6,8 @@
 import { classMap, html, when } from "@inglorious/web"
 
 /**
+ * Renders a fullscreen backdrop overlay when open.
+ * Optionally wraps child content in a centered container.
  * @param {BackdropProps} props
  * @returns {TemplateResult | null}
  */

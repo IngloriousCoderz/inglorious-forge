@@ -13,10 +13,22 @@ const PRETTY_PAGE = 1
 
 export const pagination = {
   /**
+   * Main entrypoint for pagination controls. Delegates to the base renderer for overrides.
+   * Supports sibling ranges, first/last buttons, and disabled state.
    * @param {PaginationProps} props
    * @returns {TemplateResult}
    */
   render(props) {
+    return this.renderPagination(props)
+  },
+
+  /**
+   * Renders the pagination container and page/control items.
+   * Items are delegated to `renderItem` and `renderControl`.
+   * @param {PaginationProps} props
+   * @returns {TemplateResult}
+   */
+  renderPagination(props) {
     const {
       page = 1,
       count = 1,
@@ -68,6 +80,8 @@ export const pagination = {
   },
 
   /**
+   * Renders a single page number item or ellipsis.
+   * Uses the button primitive for interactive pages.
    * @param {PaginationProps} props
    * @param {PaginationItemRenderProps} payload
    * @returns {TemplateResult}
@@ -97,6 +111,8 @@ export const pagination = {
   },
 
   /**
+   * Renders a navigation control (first/prev/next/last).
+   * Uses the button primitive and wires change events.
    * @param {PaginationProps} props
    * @param {PaginationControlRenderProps} payload
    * @returns {TemplateResult}
