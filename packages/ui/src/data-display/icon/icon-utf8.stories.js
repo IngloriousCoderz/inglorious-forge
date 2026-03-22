@@ -1,5 +1,5 @@
+import { virtualList } from "@inglorious/ui/virtual-list"
 import { html, repeat } from "@inglorious/web"
-import { list as virtualList } from "@inglorious/web/list"
 
 import { button } from "../../controls/button"
 import {

@@ -172,6 +172,10 @@
       "types": "./types/feedback/alert.d.ts",
       "import": "./src/feedback/alert/index.js"
     },
+    "./virtual-list": {
+      "types": "./types/data-display/virtual-list.d.ts",
+      "import": "./src/data-display/virtual-list/index.js"
+    },
     "./alert.css": "./src/feedback/alert/style.css",
     "./backdrop": {
       "types": "./types/feedback/backdrop.d.ts",

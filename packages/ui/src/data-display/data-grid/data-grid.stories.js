@@ -80,12 +80,6 @@ export const Default = {
     columns: baseColumns,
     search: {},
     selection: [2],
-    pagination: {
-      page: 0,
-      pageSize: 10,
-      pageSizes: [10, 20, 30],
-    },
-    // isFullWidth: true,
     isStriped: true,
   },
 }
@@ -128,6 +122,36 @@ export const FlexibleWidths = {
       description: {
         story:
           "Demonstrates mixed column sizing with `auto`, fractional `fr`, percentage, and fixed widths before any manual resizing.",
+      },
+    },
+  },
+}
+
+export const Virtualized = {
+  args: {
+    id: "virtualizedGrid",
+    type: "dataGrid",
+    rows: createRows(1000),
+    columns: baseColumns,
+    search: null,
+    selection: [],
+    pagination: null,
+    isStriped: true,
+    isVirtualized: true,
+    virtualization: {
+      viewportHeight: 480,
+      estimatedHeight: 44,
+      bufferSize: 6,
+      visibleRange: { start: 0, end: 20 },
+      itemHeight: null,
+      scrollTop: 0,
+    },
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Renders 1000 rows with virtualization enabled and pagination disabled.",
       },
     },
   },

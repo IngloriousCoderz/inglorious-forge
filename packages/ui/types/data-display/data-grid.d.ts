@@ -3,6 +3,26 @@ import type { SelectOption } from "../controls/select"
 
 export type Row = Record<string, any>
 
+export interface DataGridVirtualization {
+  /** The current scroll position from the top in pixels. */
+  scrollTop: number
+
+  /** The start and end indices of the currently visible items (including buffer). */
+  visibleRange: { start: number; end: number }
+
+  /** The height of the visible viewport in pixels. */
+  viewportHeight: number
+
+  /** The number of items to render outside the viewport (above and below). */
+  bufferSize: number
+
+  /** The measured height of a single row in pixels. Null until measured on mount. */
+  itemHeight: number | null
+
+  /** An estimated height for rows used for calculations before they are measured. */
+  estimatedHeight: number
+}
+
 export interface Column {
   id: string
   title: string
@@ -38,6 +58,8 @@ export interface DataGridProps<T extends Row = Row> {
   filters: Record<string, any>
   search: { value: string; placeholder?: string } | null
   isStriped?: boolean
+  isVirtualized?: boolean
+  virtualization?: DataGridVirtualization
   selection: (string | number)[]
   selectionAnchor?: string | number | null
   pagination?: { page: number; pageSize: number; pageSizes: number[] } | null
@@ -57,6 +79,8 @@ export interface DataGridProps<T extends Row = Row> {
     metaKey?: boolean
     ctrlKey?: boolean
   }) => void
+  onVirtualScroll?: (containerEl: HTMLElement) => void
+  onVirtualMount?: (containerEl: HTMLElement) => void
   onRowToggle?: (rowId: string | number) => void
   onPageChange?: (page: number) => void
   onPageNext?: () => void
@@ -98,6 +122,8 @@ export interface DataGridType {
   rowsToggleAll(entity: DataGridProps): void
   rowsSelectAll(entity: DataGridProps): void
   selectionClear(entity: DataGridProps): void
+  virtualScroll(entity: DataGridProps, containerEl: HTMLElement): void
+  virtualMount(entity: DataGridProps, containerEl: HTMLElement): void
   render(entity: DataGridProps, api: Api): TemplateResult
   renderHeader(entity: DataGridProps, api: Api): TemplateResult
   renderToolbar(entity: DataGridProps, api: Api): TemplateResult

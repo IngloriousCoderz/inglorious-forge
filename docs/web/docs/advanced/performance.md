@@ -142,11 +142,11 @@ This helps lit-html track which item is which during reorders.
 ### Virtual Scrolling for Large Lists
 
 ```javascript
-import { list } from "@inglorious/web/list"
+import { virtualList } from "@inglorious/ui/virtual-list"
 
 const types = {
   itemList: {
-    ...list,
+    ...virtualList,
 
     renderItem(item, index) {
       return html`<div>${item.name}</div>`

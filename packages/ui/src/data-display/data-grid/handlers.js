@@ -6,13 +6,18 @@
 import { getRowKeyValue, getRows, getTotalRows } from "./helpers.js"
 
 const MIN_COLUMN_WIDTH = 72
+const VIRTUAL_START = 0
+const VIRTUAL_DEFAULT_END = 20
+const DEFAULT_VIEWPORT_HEIGHT = 600
+const DEFAULT_BUFFER_SIZE = 5
+const DEFAULT_ESTIMATED_HEIGHT = 50
 
 /**
  * Resets the table entity with default state.
  * @param {DataGridEntity} entity
  */
 export function create(entity) {
-  initTable(entity)
+  initDataGrid(entity)
 }
 
 /**
@@ -281,10 +286,73 @@ export function selectionClear(entity) {
 }
 
 /**
+ * Handles the scroll event to update the virtualized visible range.
+ * @param {DataGridEntity} entity
+ * @param {HTMLElement} containerEl
+ */
+export function virtualScroll(entity, containerEl) {
+  if (!entity.isVirtualized) return
+  initVirtualization(entity)
+
+  const rows = getRows(entity)
+  const totalItems = rows.length
+  const scrollTop = containerEl.scrollTop
+  const { bufferSize, itemHeight, estimatedHeight, viewportHeight } =
+    entity.virtualization
+  const height = itemHeight || estimatedHeight
+
+  const start = Math.max(
+    VIRTUAL_START,
+    Math.floor(scrollTop / height) - bufferSize,
+  )
+  const visibleCount = Math.ceil(viewportHeight / height)
+  const end = Math.min(start + visibleCount + bufferSize, totalItems)
+
+  if (
+    entity.virtualization.visibleRange.start === start &&
+    entity.virtualization.visibleRange.end === end
+  ) {
+    return
+  }
+
+  entity.virtualization.scrollTop = scrollTop
+  entity.virtualization.visibleRange = { start, end }
+}
+
+/**
+ * Measures the virtualized rows container to update item and viewport height.
+ * @param {DataGridEntity} entity
+ * @param {HTMLElement} containerEl
+ */
+export function virtualMount(entity, containerEl) {
+  if (!entity.isVirtualized) return
+  initVirtualization(entity)
+
+  const viewportHeight = containerEl.clientHeight || containerEl.offsetHeight
+  if (viewportHeight) {
+    entity.virtualization.viewportHeight = viewportHeight
+  }
+
+  const firstRow = containerEl.querySelector("[data-index]")
+  if (!firstRow) return
+
+  entity.virtualization.itemHeight = firstRow.offsetHeight
+  const height =
+    entity.virtualization.itemHeight || entity.virtualization.estimatedHeight
+  const totalItems = getRows(entity).length
+  const end = Math.min(
+    Math.ceil(entity.virtualization.viewportHeight / height),
+    totalItems,
+  )
+
+  entity.virtualization.visibleRange = { start: 0, end }
+}
+
+/**
  * Initializes the table state.
  * @param {DataGridEntity} entity
  */
-function initTable(entity) {
+function initDataGrid(entity) {
   entity.rows ??= []
   entity.rowId ??= "id"
 
@@ -327,13 +395,35 @@ function initTable(entity) {
   entity.selection ??= []
   entity.selectionAnchor ??= null
   entity.isMultiSelect ??= true
+  entity.isVirtualized ??= false
 
   entity.pagination ??= null
   if (entity.pagination) {
     entity.pagination.page ??= 0
   }
 
+  if (entity.isVirtualized) {
+    initVirtualization(entity)
+  }
+
   assertRowKeys(entity)
+}
+
+/**
+ * Ensures virtualization defaults are set.
+ * @param {DataGridEntity} entity
+ */
+function initVirtualization(entity) {
+  entity.virtualization ??= {}
+  entity.virtualization.scrollTop ??= 0
+  entity.virtualization.visibleRange ??= {
+    start: VIRTUAL_START,
+    end: VIRTUAL_DEFAULT_END,
+  }
+  entity.virtualization.viewportHeight ??= DEFAULT_VIEWPORT_HEIGHT
+  entity.virtualization.bufferSize ??= DEFAULT_BUFFER_SIZE
+  entity.virtualization.itemHeight ??= null
+  entity.virtualization.estimatedHeight ??= DEFAULT_ESTIMATED_HEIGHT
 }
 
 /**

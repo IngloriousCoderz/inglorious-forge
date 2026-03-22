@@ -58,10 +58,16 @@ export type {
   DataGridType,
   Column,
   Row,
+  DataGridVirtualization,
 } from "./data-display/data-grid"
 export type { DividerProps, DividerType } from "./data-display/divider"
 export type { IconProps, IconType } from "./data-display/icon"
 export type { ListProps, ListType, ListItem } from "./data-display/list"
+export type {
+  VirtualListEntity,
+  VirtualListItem,
+  VirtualListType,
+} from "./data-display/virtual-list"
 export type {
   MaterialIconProps,
   MaterialIconType,

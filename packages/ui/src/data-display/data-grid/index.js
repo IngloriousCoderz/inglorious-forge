@@ -19,6 +19,10 @@ export const dataGrid = {
       onPagePrev: () => api.notify(`#${id}:pagePrev`),
       onPageSizeChange: (pageSize) =>
         api.notify(`#${id}:pageSizeChange`, pageSize),
+      onVirtualMount: (containerEl) =>
+        api.notify(`#${id}:virtualMount`, containerEl),
+      onVirtualScroll: (containerEl) =>
+        api.notify(`#${id}:virtualScroll`, containerEl),
     }
 
     return this.renderDataGrid(props)

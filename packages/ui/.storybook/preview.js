@@ -11,21 +11,6 @@ export default {
   tags: ["autodocs"],
 }
 
-export const parameters = {
-  actions: {
-    argTypesRegex: "^on[A-Z].*",
-  },
-  controls: {
-    matchers: {
-      color: /(background|color)$/i,
-      date: /Date$/i,
-    },
-  },
-  backgrounds: {
-    disabled: true,
-  },
-}
-
 export const globalTypes = {
   theme: {
     name: "Theme",
@@ -54,10 +39,43 @@ export const globalTypes = {
   },
 }
 
+export const initialGlobals = {
+  theme: "inglorious",
+  mode: "dark",
+}
+
 const themeClasses = {
   inglorious: "iw-theme-inglorious",
   material: "iw-theme-material",
   bootstrap: "iw-theme-bootstrap",
+}
+
+function applyTheme(theme, mode) {
+  const themeClass = themeClasses[theme] || themeClasses.inglorious
+  const modeClass = mode === "light" ? "iw-theme-light" : "iw-theme-dark"
+
+  document.body.className = document.body.className
+    .replace(/iw-theme-(\\w+)/g, "")
+    .trim()
+  document.body.className =
+    `${document.body.className} ${themeClass} ${modeClass}`.trim()
+
+  const background =
+    getComputedStyle(document.body).getPropertyValue("--iw-color-bg").trim() ||
+    (mode === "dark" ? "#111827" : "#ffffff")
+  const foreground =
+    getComputedStyle(document.body)
+      .getPropertyValue("--iw-color-text")
+      .trim() || (mode === "dark" ? "#f9fafb" : "#111827")
+
+  document.body.style.backgroundColor = background
+  document.body.style.color = foreground
+
+  const root = document.getElementById("storybook-root")
+  if (root) {
+    root.style.backgroundColor = background
+    root.style.color = foreground
+  }
 }
 
 createIcons({
@@ -94,35 +112,7 @@ function hydrateLucide() {
 
 export const decorators = [
   (story, context) => {
-    const theme = context.globals.theme
-    const themeClass = themeClasses[theme] || themeClasses.inglorious
-
-    const mode = context.globals.mode
-    const modeClass = mode === "light" ? "iw-theme-light" : "iw-theme-dark"
-
-    document.body.className = document.body.className.replace(
-      /iw-theme-(\w+)/g,
-      "",
-    )
-    document.body.className += ` ${themeClass} ${modeClass}`
-
-    const background =
-      getComputedStyle(document.body)
-        .getPropertyValue("--iw-color-bg")
-        .trim() || (mode === "dark" ? "#111827" : "#ffffff")
-    const foreground =
-      getComputedStyle(document.body)
-        .getPropertyValue("--iw-color-text")
-        .trim() || (mode === "dark" ? "#f9fafb" : "#111827")
-
-    document.body.style.backgroundColor = background
-    document.body.style.color = foreground
-
-    const root = document.getElementById("storybook-root")
-    if (root) {
-      root.style.backgroundColor = background
-      root.style.color = foreground
-    }
+    applyTheme(context.globals.theme, context.globals.mode)
 
     const result = story()
     hydrateLucide()
@@ -130,3 +120,23 @@ export const decorators = [
     return result
   },
 ]
+
+export const parameters = {
+  options: {
+    storySort: {
+      order: ["Overview"],
+    },
+  },
+  actions: {
+    argTypesRegex: "^on[A-Z].*",
+  },
+  controls: {
+    matchers: {
+      color: /(background|color)$/i,
+      date: /Date$/i,
+    },
+  },
+  backgrounds: {
+    disabled: true,
+  },
+}

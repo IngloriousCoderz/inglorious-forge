@@ -13,12 +13,12 @@ Unlike React components (restricted by props), Inglorious types can be customize
 
 ```javascript
 // React: Limited to exposed props
-<MyTable columns={cols} data={data} onSort={...} />
+<MyDataGrid columns={cols} data={data} onSort={...} />
 // Can't customize rendering beyond what component author exposed
 
 // Inglorious Web: Complete customization
-const myTable = {
-  ...table,
+const myDataGrid = {
+  ...dataGrid,
   render(entity, api) {
     // Override entire rendering
   },
@@ -100,16 +100,16 @@ export const exportable = (type) => ({
 ### 3. Create Preset Combinations
 
 ```javascript
-// @mycompany/design-system/presets/basicTable.js
-import { table } from "@inglorious/web/table"
+// @mycompany/design-system/presets/basicGrid.js
+import { dataGrid } from "../components/data-grid"
 import { sortable, exportable } from "./behaviors"
 
-export const basicTable = table
+export const basicGrid = dataGrid
 
-export const sortableTable = [table, sortable]
+export const sortableGrid = [dataGrid, sortable]
 
-export const advancedTable = [
-  table,
+export const advancedGrid = [
+  dataGrid,
   sortable,
   exportable,
   {
@@ -123,26 +123,26 @@ export const advancedTable = [
 Your library users can customize exactly what they need:
 
 ```javascript
-import { table, sortable, exportable } from "@mycompany/design-system"
+import { dataGrid, sortable, exportable } from "@mycompany/design-system"
 
 // Use as-is
-const simpleTable = { ...table }
+const simpleGrid = { ...dataGrid }
 
 // Override specific method
-const customTable = {
-  ...table,
+const customGrid = {
+  ...dataGrid,
   render(entity, api) {
     return html`
-      <table class="my-custom-style">
+      <div class="my-custom-style">
         <!-- Custom rendering -->
-      </table>
+      </div>
     `
   },
 }
 
 // Compose multiple behaviors
-const advancedTable = [
-  table,
+const advancedGrid = [
+  dataGrid,
   sortable,
   exportable,
   {
@@ -156,7 +156,7 @@ const advancedTable = [
 // Mix and match
 const customAdvanced = [
   {
-    ...table,
+    ...dataGrid,
     render(entity, api) {
       // Custom render
     },
@@ -262,14 +262,14 @@ expect(entity.title).toBe('Test')
 1. **Export both components and behaviors**
 
    ```javascript
-   export { card, button, table }
+   export { card, button, dataGrid }
    export { sortable, draggable, closeable }
    ```
 
 2. **Provide presets for common combinations**
 
    ```javascript
-   export { advancedTable, sortableTable }
+   export { advancedGrid, sortableGrid }
    ```
 
 3. **Document customization patterns**

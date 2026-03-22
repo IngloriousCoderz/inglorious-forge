@@ -365,7 +365,7 @@ const types = {
 - **[Core Concepts](./core-concepts.md)** — Deep dive into entities, types, and events
 - **[Rendering Model](./rendering-model.md)** — Understand the full-tree rendering approach
 - **[Event System](./event-system.md)** — Master event targeting and the event queue
-- **[Featured Types](../featured/overview.md)** — Built-in form, table, router, ...
+- **[Featured Types](../featured/overview.md)** — Built-in form/router and UI primitives
 - **[Type Composition](../advanced/type-composition.md)** — Advanced patterns like guards and middleware
 
 Happy building! 🚀

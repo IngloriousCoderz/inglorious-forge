@@ -1,5 +1,5 @@
 {
-  "name": "web-list",
+  "name": "ui-virtualized-list",
   "private": true,
   "version": "0.1.44",
   "type": "module",
@@ -13,6 +13,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@inglorious/ui": "workspace:*",
     "@inglorious/web": "workspace:*"
   },
   "devDependencies": {

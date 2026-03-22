@@ -71,7 +71,6 @@ Use Inglorious Web components for core patterns, Web Components for specialized 
 
 ```javascript
 import { form } from "@inglorious/web/form"
-import { table } from "@inglorious/web/table"
 import "@shoelace-style/shoelace/dist/components/date-picker/date-picker.js"
 
 const types = {
@@ -97,12 +96,6 @@ const types = {
       `
     },
   },
-
-  // Inglorious table for data display
-  dataTable: {
-    ...table,
-    // Customize as needed
-  },
 }
 ```
 
@@ -117,7 +110,7 @@ Most Web Component libraries (Shoelace, Material Web Components) require JavaScr
 - May cause FOUC (Flash of Unstyled Content)
 - Should be client-only enhancements
 
-**Recommendation:** Use Inglorious Web components for SSX/SSG projects.
+**Recommendation:** Use Inglorious Web and [Inglorious UI](https://inglorious.dev/ui) primitives for SSX/SSG projects.
 
 ## Popular Libraries
 

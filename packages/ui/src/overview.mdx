@@ -1,0 +1,39 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Overview" />
+
+# Inglorious UI
+
+Inglorious UI is a design system built on the same entity/type model as Inglorious Web. It provides ready-made primitives for building complete UIs while keeping rendering and behavior fully overrideable.
+
+## What You Get
+
+- **Controls**: Buttons, inputs, selects, toggles, sliders, and field helpers.
+- **Data Display**: Typography, badges, avatars, icons, tooltips, and data-driven widgets.
+- **Navigation**: Tabs, breadcrumbs, drawers, menus, pagination, and links.
+- **Feedback**: Alerts, dialogs, progress indicators, snackbars, and skeletons.
+- **Layout & Surfaces**: Grid, flex, containers, cards, paper, and app scaffolding.
+
+## Design System Principles
+
+- **Composable**: Most components are built from smaller primitives.
+- **Overridable**: You can replace `render()` and sub-renders to customize structure.
+- **Themeable**: Themes are layered on top of shared tokens and reset styles.
+- **Entity-first**: Every primitive is a type that integrates with the same rendering and store model.
+
+## Using the Library
+
+To get a themed UI, include the base styles plus a theme stylesheet, then add the theme classes at your app root.
+
+```css
+@import "@inglorious/ui/base.css";
+@import "@inglorious/ui/themes/bootstrap.css";
+```
+
+```html
+<div class="iw-theme-bootstrap iw-theme-light">...</div>
+```
+
+Explore the sidebar to see primitives grouped by category, with examples and configuration options for each type.
+
+You can also switch the active **Theme** and **Mode** from the Storybook header toolbar to preview components with different styles.

@@ -1,14 +1,12 @@
 /**
- * @typedef {import('../../types/list').ListEntity} ListEntity
- * @typedef {import('../../types/mount').Api} Api
- * @typedef {import('lit-html').TemplateResult} TemplateResult
+ * @typedef {import('../../../types/data-display/virtual-list').VirtualListEntity} VirtualListEntity
  */
 
 const LIST_START = 0
 
 /**
- * Initializes the list entity with default state.
- * @param {ListEntity} entity
+ * Initializes the virtual list entity with default state.
+ * @param {VirtualListEntity} entity
  */
 export function create(entity) {
   resetList(entity)
@@ -16,7 +14,7 @@ export function create(entity) {
 
 /**
  * Handles the scroll event to update the visible range.
- * @param {ListEntity} entity
+ * @param {VirtualListEntity} entity
  * @param {HTMLElement} containerEl
  */
 export function scroll(entity, containerEl) {
@@ -42,7 +40,7 @@ export function scroll(entity, containerEl) {
 
 /**
  * Mounts the list, measuring the first item to determine item height.
- * @param {ListEntity} entity
+ * @param {VirtualListEntity} entity
  * @param {HTMLElement} containerEl
  */
 export function mount(entity, containerEl) {
@@ -58,7 +56,7 @@ export function mount(entity, containerEl) {
 
 /**
  * Resets the list entity state.
- * @param {ListEntity} entity
+ * @param {VirtualListEntity} entity
  */
 function resetList(entity) {
   entity.scrollTop = 0

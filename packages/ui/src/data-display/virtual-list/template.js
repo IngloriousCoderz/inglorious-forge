@@ -1,29 +1,32 @@
 /**
- * @typedef {import('../../types/mount').Api} Api
- * @typedef {import('../../types/list').ListEntity} ListEntity
- * @typedef {import('lit-html').TemplateResult} TemplateResult
+ * @typedef {import('../../../types/data-display/virtual-list').VirtualListEntity} VirtualListEntity
+ * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
+ * @typedef {import('@inglorious/web').Api} Api
  */
 
-import { html } from "lit-html"
-import { ref } from "lit-html/directives/ref.js"
-import { repeat } from "lit-html/directives/repeat.js"
-import { styleMap } from "lit-html/directives/style-map.js"
+import { html, ref, repeat, styleMap } from "@inglorious/web"
 
 const PRETTY_INDEX = 1
 
 /**
  * Renders the virtualized list component.
- * @param {ListEntity} entity The list entity state.
+ * @param {VirtualListEntity} entity The list entity state.
  * @param {Api} api The API object.
  * @returns {TemplateResult} The rendered list.
  */
 export function render(entity, api) {
-  const { items, visibleRange, viewportHeight, itemHeight, estimatedHeight } =
-    entity
+  const {
+    items,
+    visibleRange,
+    viewportHeight,
+    itemHeight,
+    estimatedHeight,
+    className,
+  } = entity
   const type = api.getType(entity.type)
 
   if (!items) {
-    console.warn(`list entity ${entity.id} needs 'items'`)
+    console.warn(`virtual list entity ${entity.id} needs 'items'`)
     return html``
   }
 
@@ -38,8 +41,9 @@ export function render(entity, api) {
 
   return html`
     <div
+      class=${className ?? ""}
       style=${styleMap({ height: `${viewportHeight}px`, overflow: "auto" })}
-      @scroll=${(e) => api.notify(`#${entity.id}:scroll`, e.target)}
+      @scroll=${(e) => api.notify(`#${entity.id}:scroll`, e.currentTarget)}
       ${ref((el) => {
         if (el && !itemHeight) {
           queueMicrotask(() => {
@@ -82,7 +86,7 @@ export function render(entity, api) {
 
 /**
  * Default item renderer.
- * @param {ListEntity} entity The list entity.
+ * @param {VirtualListEntity} entity The list entity.
  * @param {object} payload The payload for rendering the item.
  * @param {any} payload.item The item data.
  * @param {number} payload.index The item's absolute index in the full list.

@@ -10,6 +10,7 @@ import { classMap, html, repeat, when } from "@inglorious/web"
 import { input } from "../../controls/input/index.js"
 import { select } from "../../controls/select/index.js"
 import { pagination } from "../../navigation/pagination/index.js"
+import { virtualList } from "../virtual-list/index.js"
 import { filters } from "./filters"
 import {
   getPaginationInfo,
@@ -141,13 +142,48 @@ export const dataGrid = {
    * @returns {TemplateResult} The rendered data grid body.
    */
   renderBody(props) {
-    return html`<div class="iw-data-grid-body">
-      ${repeat(
-        getRows(props),
-        (row) => getRowKeyValue(props, row),
-        (row, index) => this.renderRow?.(props, { row, index }),
-      )}
-    </div>`
+    const rows = getRows(props)
+
+    if (!props.isVirtualized) {
+      return html`<div class="iw-data-grid-body">
+        ${repeat(
+          rows,
+          (row) => getRowKeyValue(props, row),
+          (row, index) => this.renderRow?.(props, { row, index }),
+        )}
+      </div>`
+    }
+
+    const virtualState = getVirtualizationState(props, rows.length)
+    const virtualEntity = {
+      id: props.id,
+      type: "dataGridVirtualRows",
+      items: rows,
+      className: "iw-data-grid-body",
+      scrollTop: virtualState.scrollTop,
+      visibleRange: virtualState.visibleRange,
+      viewportHeight: virtualState.viewportHeight,
+      bufferSize: virtualState.bufferSize,
+      itemHeight: virtualState.itemHeight,
+      estimatedHeight: virtualState.estimatedHeight,
+    }
+
+    const virtualApi = {
+      notify: (target, payload) => {
+        if (target === `#${props.id}:scroll`) {
+          props.onVirtualScroll?.(payload)
+        }
+        if (target === `#${props.id}:mount`) {
+          props.onVirtualMount?.(payload)
+        }
+      },
+      getType: () => ({
+        renderItem: (_entity, { item, index }) =>
+          this.renderRow?.(props, { row: item, index }),
+      }),
+    }
+
+    return virtualList.render(virtualEntity, virtualApi)
   },
 
   /**
@@ -224,6 +260,10 @@ export const dataGrid = {
    */
   renderFooter(props) {
     const pagination = getPaginationInfo(props)
+
+    if (!pagination) {
+      return null
+    }
 
     return html`<div class="iw-data-grid-footer">
       <div class="iw-data-grid-footer-row">
@@ -389,5 +429,30 @@ function getSortIcon(direction) {
       return "▼"
     default:
       return "▲▼"
+  }
+}
+
+function getVirtualizationState(props, totalItems) {
+  const fallback = {
+    scrollTop: 0,
+    visibleRange: { start: 0, end: Math.min(20, totalItems) },
+    viewportHeight: 600,
+    bufferSize: 5,
+    itemHeight: null,
+    estimatedHeight: 50,
+  }
+
+  const virtualState = props.virtualization ?? fallback
+  const visibleRange = virtualState.visibleRange ?? fallback.visibleRange
+  const start = Math.max(0, Math.min(visibleRange.start ?? 0, totalItems))
+  const end = Math.max(
+    start,
+    Math.min(visibleRange.end ?? totalItems, totalItems),
+  )
+
+  return {
+    ...fallback,
+    ...virtualState,
+    visibleRange: { start, end },
   }
 }

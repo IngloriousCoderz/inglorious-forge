@@ -307,26 +307,29 @@ test("form resets to initial values", () => {
 ## Component Testing
 
 ```javascript
-import { table } from "@inglorious/web/table"
+test("custom list renders rows", () => {
+  const listType = {
+    render(entity) {
+      return html`
+        <ul>
+          ${entity.items.map((item) => html`<li>${item.name}</li>`)}
+        </ul>
+      `
+    },
+  }
 
-test("table renders rows", () => {
   const entity = {
-    data: [
+    items: [
       { id: 1, name: "Alice" },
       { id: 2, name: "Bob" },
     ],
-    columns: [
-      { id: "id", label: "ID" },
-      { id: "name", label: "Name" },
-    ],
   }
 
-  const mockApi = { notify: jest.fn(), render: jest.fn() }
-  const template = table.render(entity, mockApi)
-  const html = render(template)
+  const template = listType.render(entity, { notify: () => {} })
+  const output = render(template)
 
-  expect(html).toContain("Alice")
-  expect(html).toContain("Bob")
+  expect(output).toContain("Alice")
+  expect(output).toContain("Bob")
 })
 ```
 

@@ -31,10 +31,6 @@
       "import": "./src/form/index.js"
     },
     "./hydrate": "./src/hydrate.js",
-    "./list": {
-      "types": "./types/list.d.ts",
-      "import": "./src/list/index.js"
-    },
     "./router": {
       "types": "./types/router.d.ts",
       "import": "./src/router/index.js"

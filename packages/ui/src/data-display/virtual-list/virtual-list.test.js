@@ -1,12 +1,13 @@
 /**
  * @vitest-environment jsdom
  */
-import { html, render } from "lit-html"
+import { html } from "@inglorious/web"
+import { render } from "@inglorious/web/test"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
-import { list } from "."
+import { virtualList } from "."
 
-describe("list", () => {
+describe("virtualList", () => {
   let entity
   let api
 
@@ -31,7 +32,7 @@ describe("list", () => {
 
   describe("create()", () => {
     it("should set default list properties on init", () => {
-      list.create(entity)
+      virtualList.create(entity)
 
       expect(entity.scrollTop).toBe(0)
       expect(entity.visibleRange).toEqual({ start: 0, end: 20 })
@@ -45,7 +46,7 @@ describe("list", () => {
       entity.viewportHeight = 800
       entity.visibleRange = { start: 10, end: 30 }
 
-      list.create(entity)
+      virtualList.create(entity)
 
       expect(entity.viewportHeight).toBe(800)
       expect(entity.visibleRange).toEqual({ start: 10, end: 30 })
@@ -55,13 +56,13 @@ describe("list", () => {
 
   describe("scroll()", () => {
     beforeEach(() => {
-      list.create(entity)
+      virtualList.create(entity)
     })
 
     it("should calculate visible range using itemHeight", () => {
       entity.itemHeight = 20
 
-      list.scroll(entity, { scrollTop: 200 })
+      virtualList.scroll(entity, { scrollTop: 200 })
 
       expect(entity.visibleRange).toEqual({ start: 5, end: 40 })
       expect(entity.scrollTop).toBe(200)
@@ -70,7 +71,7 @@ describe("list", () => {
     it("should fall back to estimatedHeight if itemHeight is null", () => {
       entity.estimatedHeight = 50
 
-      list.scroll(entity, { scrollTop: 500 })
+      virtualList.scroll(entity, { scrollTop: 500 })
 
       expect(entity.visibleRange).toEqual({ start: 5, end: 22 })
     })
@@ -81,7 +82,7 @@ describe("list", () => {
 
       const snapshot = { ...entity.visibleRange }
 
-      list.scroll(entity, { scrollTop: 201 })
+      virtualList.scroll(entity, { scrollTop: 201 })
 
       expect(entity.visibleRange).toEqual(snapshot)
     })
@@ -90,7 +91,7 @@ describe("list", () => {
       entity.itemHeight = 20
       entity.bufferSize = 10
 
-      list.scroll(entity, { scrollTop: 0 })
+      virtualList.scroll(entity, { scrollTop: 0 })
 
       expect(entity.visibleRange.start).toBe(0)
     })
@@ -98,7 +99,7 @@ describe("list", () => {
     it("should handle scrolling near the bottom", () => {
       entity.itemHeight = 20
 
-      list.scroll(entity, { scrollTop: 1900 })
+      virtualList.scroll(entity, { scrollTop: 1900 })
 
       expect(entity.visibleRange).toEqual({ start: 90, end: 100 })
     })
@@ -106,7 +107,7 @@ describe("list", () => {
 
   describe("mount()", () => {
     it("should measure first item and update itemHeight and visibleRange", () => {
-      list.create(entity)
+      virtualList.create(entity)
 
       const itemEl = document.createElement("div")
       vi.spyOn(itemEl, "offsetHeight", "get").mockReturnValue(40)
@@ -115,26 +116,26 @@ describe("list", () => {
         querySelector: vi.fn().mockReturnValue(itemEl),
       }
 
-      list.mount(entity, containerEl)
+      virtualList.mount(entity, containerEl)
 
       expect(entity.itemHeight).toBe(40)
       expect(entity.visibleRange).toEqual({ start: 0, end: 15 })
     })
 
     it("should do nothing if no item is found", () => {
-      list.create(entity)
+      virtualList.create(entity)
       const snapshot = { ...entity }
 
-      list.mount(entity, { querySelector: () => null })
+      virtualList.mount(entity, { querySelector: () => null })
 
       expect(entity).toEqual(snapshot)
     })
 
     it("should overwrite itemHeight when mounting", () => {
-      list.create(entity)
+      virtualList.create(entity)
       entity.itemHeight = 42
 
-      list.mount(entity, {
+      virtualList.mount(entity, {
         querySelector: () => ({ offsetHeight: 100 }),
       })
 
@@ -147,9 +148,11 @@ describe("list", () => {
       const spy = vi.spyOn(console, "warn").mockImplementation(() => {})
       delete entity.items
 
-      const result = list.render(entity, api)
+      const result = virtualList.render(entity, api)
 
-      expect(spy).toHaveBeenCalledWith(`list entity ${entity.id} needs 'items'`)
+      expect(spy).toHaveBeenCalledWith(
+        `virtual list entity ${entity.id} needs 'items'`,
+      )
       render(result, document.createElement("div"))
 
       spy.mockRestore()
@@ -159,7 +162,7 @@ describe("list", () => {
       const spy = vi.spyOn(console, "warn").mockImplementation(() => {})
       api.getType.mockReturnValue({})
 
-      const result = list.render(entity, api)
+      const result = virtualList.render(entity, api)
 
       expect(spy).toHaveBeenCalledWith(
         `type ${entity.type} needs 'renderItem' method`,
@@ -170,12 +173,12 @@ describe("list", () => {
     })
 
     it("should render only items in the visible range", () => {
-      list.create(entity)
+      virtualList.create(entity)
       entity.itemHeight = 50
       entity.visibleRange = { start: 10, end: 15 }
 
       const container = document.createElement("div")
-      render(list.render(entity, api), container)
+      render(virtualList.render(entity, api), container)
 
       const items = container.querySelectorAll("[data-index]")
       const indices = [...items].map((el) => Number(el.dataset.index))
@@ -184,25 +187,25 @@ describe("list", () => {
     })
 
     it("should set the correct total spacer height", () => {
-      list.create(entity)
+      virtualList.create(entity)
       entity.itemHeight = 40
 
       const container = document.createElement("div")
-      render(list.render(entity, api), container)
+      render(virtualList.render(entity, api), container)
 
       const spacer = container.querySelector("div > div > div")
       expect(spacer.style.height).toBe("4000px")
     })
 
     it("should update rendered items after scrolling (integration test)", () => {
-      list.create(entity)
+      virtualList.create(entity)
       entity.itemHeight = 50
 
       const container = document.createElement("div")
-      render(list.render(entity, api), container)
+      render(virtualList.render(entity, api), container)
 
-      list.scroll(entity, { scrollTop: 500 }) // ~item 10
-      render(list.render(entity, api), container)
+      virtualList.scroll(entity, { scrollTop: 500 }) // ~item 10
+      render(virtualList.render(entity, api), container)
 
       const indices = [...container.querySelectorAll("[data-index]")].map(
         (el) => Number(el.dataset.index),
@@ -217,7 +220,7 @@ describe("list", () => {
       const item = { id: 1, value: "test" }
 
       const container = document.createElement("div")
-      render(list.renderItem(null, { item, index: 5 }), container)
+      render(virtualList.renderItem(null, { item, index: 5 }), container)
 
       const el = container.querySelector(".iw-list-item")
       expect(el).toBeTruthy()

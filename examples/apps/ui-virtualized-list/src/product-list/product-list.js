@@ -1,12 +1,12 @@
+import { virtualList } from "@inglorious/ui/virtual-list"
 import { classMap, html } from "@inglorious/web"
-import { list } from "@inglorious/web/list"
 
 import classes from "./product-list.module.css"
 
 const DIVISOR = 2
 
 export const productList = {
-  ...list,
+  ...virtualList,
 
   renderItem(_, { item, index }) {
     return html`<div

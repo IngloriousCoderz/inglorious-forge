@@ -153,7 +153,7 @@ Still renders in ~15ms, leaving 1ms for the frame budget. Good performance!
 
 ## When Full-Tree Re-render Might Be Slow
 
-1. **Rendering 1000+ DOM nodes** — Use the `list` component (virtual scrolling)
+1. **Rendering 1000+ DOM nodes** — Use the [Inglorious UI](https://inglorious.dev/ui) virtualized list
 2. **Extremely complex templates** — Simplify or break into smaller entities
 3. **Expensive computations in render** — Move to event handlers or use `compute()` memoization
 

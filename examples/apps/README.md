@@ -10,11 +10,12 @@ Available demos:
 - [react-todomvc-rtk](./react-todomvc-rtk/README.md) — React TodoMVC using RTK slices via Inglorious migration adapters
 - [react-todomvc-ts](./react-todomvc-ts/README.md) — React TodoMVC in TypeScript
 - [web-form](./web-form/README.md) — form type demo (validation, arrays, field helpers)
-- [web-list](./web-list/README.md) — virtualized list demo (extends `list` and uses `renderItem`)
+- [ui-virtualized-list](./ui-virtualized-list/README.md) — virtualized list demo (extends `virtualList` and uses `renderItem`)
+- [ui-data-grid](./ui-data-grid/README.md) — data grid demo (sorting, filtering, pagination)
 - [web-logo](./web-logo/README.md) — interactive logo manipulation
 - [web-motion](./web-motion/README.md) — motion lifecycle demo using `@inglorious/motion`
 - [web-router](./web-router/README.md) — router demo (entity based client-side routing)
-- [web-select](./web-select/README.md) — select type demo (single selection, multi, remote options)
+- [ui-combobox](./ui-combobox/README.md) — combobox demo (single selection, multi, remote options)
 - [web-todomvc](./web-todomvc/README.md) — TodoMVC client-only demo with `@inglorious/web` (start here!)
 - [web-todomvc](./web-todomvc-ace/README.md) — TodoMVC client-only demo with the `autoCreateEntities` flag on
 - [web-todomvc-cs](./web-todomvc-cs/README.md) — TodoMVC client-server demo with `@inglorious/web` and json-server

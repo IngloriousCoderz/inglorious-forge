@@ -62,7 +62,7 @@
       background: color-mix(
         in srgb,
         var(--iw-color-surface) 88%,
-        var(--iw-color-bg)
+        var(--iw-color-primary)
       );
     }
   }

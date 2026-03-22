@@ -315,49 +315,9 @@ interface FormEntity {
 }
 ```
 
-### Table
+### UI Primitives
 
-```typescript
-interface TableConfig {
-  data: any[]
-  columns: ColumnDef[]
-  onRowClick?: (row: any) => void
-}
-
-interface ColumnDef {
-  key: string
-  label: string
-  format?: (value: any) => string
-}
-```
-
-### Select
-
-```typescript
-interface SelectConfig {
-  options: SelectOption[]
-  value?: any | any[]
-  multiple?: boolean
-  searchable?: boolean
-}
-
-interface SelectOption {
-  value: any
-  label: string
-  disabled?: boolean
-}
-```
-
-### Virtual List
-
-```typescript
-interface ListConfig {
-  items: any[]
-  renderItem: (item: any) => TemplateResult
-  itemHeight: number
-  bufferSize?: number
-}
-```
+UI primitives live in **[Inglorious UI](https://inglorious.dev/ui)**. See that package’s documentation for their APIs.
 
 ## Environment Variables
 

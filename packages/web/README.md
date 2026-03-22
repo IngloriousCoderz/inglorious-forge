@@ -95,7 +95,7 @@ This framework is ideal for both small apps and large business UIs.
 
 ## When NOT to Use Inglorious Web
 
-- You're frequently mutating thousands of items without virtualization (though our `list` component handles this elegantly)
+- You're frequently mutating thousands of items without virtualization (use [Inglorious UI](https://inglorious.dev/ui))
 - You need framework-agnostic components for users who might not use Inglorious (use Web Components instead)
 - Your team is already deeply invested in React/Vue/Angular and migration costs outweigh benefits
 
@@ -1228,120 +1228,9 @@ The composition pattern keeps your code modular and reusable without introducing
 
 ---
 
-## Table
+## UI Primitives ([Inglorious UI](https://inglorious.dev/ui))
 
-`@inglorious/web` includes a `table` type for displaying data in a tabular format. It's designed to be flexible and customizable.
-
-### 1. Add the `table` type
-
-To use it, import the `table` type and its CSS, then create an entity for your table. You must define the `data` to be displayed and can optionally provide `columns` definitions.
-
-```javascript
-// In your entity definition file
-import { table } from "@inglorious/web/table"
-
-// Import base styles and a theme. You can create your own theme.
-import "@inglorious/web/table/base.css"
-import "@inglorious/web/table/theme.css"
-
-export default {
-  ...table,
-  data: [
-    { id: 1, name: "Product A", price: 100 },
-    { id: 2, name: "Product B", price: 150 },
-  ],
-  columns: [
-    { id: "id", label: "ID" },
-    { id: "name", label: "Product Name" },
-    { id: "price", label: "Price" },
-  ],
-}
-```
-
-### 2. Custom Rendering
-
-You can customize how data is rendered in the table cells by overriding the `renderValue` method. This is useful for formatting values or displaying custom content.
-
-The example below from `examples/apps/web-table/src/product-table/product-table.js` shows how to format values based on a `formatter` property in the column definition.
-
-```javascript
-import { table } from "@inglorious/web/table"
-import { format } from "date-fns"
-
-const formatters = {
-  isAvailable: (val) => (val ? "✔️" : "❌"),
-  createdAt: (val) => format(val, "dd/MM/yyyy HH:mm"),
-}
-
-export const productTable = {
-  ...table,
-
-  renderValue(value, column) {
-    return formatters[column.formatter]?.(value) ?? value
-  },
-}
-```
-
-### 3. Theming
-
-The table comes with a base stylesheet (`@inglorious/web/table/base.css`) and a default theme (`@inglorious/web/table/theme.css`). You can create your own theme by creating a new CSS file and styling the table elements to match your application's design.
-
----
-
-## Select
-
-`@inglorious/web` includes a robust `select` type for handling dropdowns, supporting single/multi-select, filtering, and keyboard navigation.
-
-### 1. Add the `select` type
-
-Import the `select` type and its CSS, then create an entity.
-
-```javascript
-import { createStore } from "@inglorious/web"
-import { select } from "@inglorious/web/select"
-// Import base styles and theme
-import "@inglorious/web/select/base.css"
-import "@inglorious/web/select/theme.css"
-
-const types = { select }
-
-const entities = {
-  countrySelect: {
-    type: "select",
-    options: [
-      { value: "us", label: "United States" },
-      { value: "ca", label: "Canada" },
-      { value: "fr", label: "France" },
-    ],
-    // Configuration
-    isMulti: false,
-    isSearchable: true,
-    placeholder: "Select a country...",
-  },
-}
-
-const store = createStore({ types, entities })
-```
-
-### 2. Render
-
-Render it like any other entity.
-
-```javascript
-const renderApp = (api) => {
-  return html` <div class="my-form">${api.render("countrySelect")}</div> `
-}
-```
-
-### 3. State & Events
-
-The `select` entity maintains its own state:
-
-- `selectedValue`: The current value (single value or array if `isMulti: true`).
-- `isOpen`: Whether the dropdown is open.
-- `searchTerm`: Current search input.
-
-It listens to internal events like `#<id>:toggle`, `#<id>:optionSelect`, etc. You typically don't need to manually dispatch these unless you are building custom controls around it.
+For ready-made UI primitives (controls, data display, navigation, feedback, layout, surfaces), use the **[Inglorious UI](https://inglorious.dev/ui)** design system. It follows the same entity/type pattern, so you can still override `render()` and `renderItem()` when you need custom behavior.
 
 ---
 
@@ -1425,79 +1314,6 @@ For a complete, working demo and helper components look at `examples/apps/web-fo
 
 ---
 
-## Virtualized lists
-
-`@inglorious/web` provides a small virtualized `list` type to efficiently render very long lists by only keeping visible items in the DOM. The `list` type is useful when you need to display large datasets without paying the full cost of mounting every element at once.
-
-Key features:
-
-- Renders only the visible slice of items and positions them absolutely inside a scrolling container.
-- Automatically measures the first visible item height when not provided.
-- Efficient scroll handling with simple buffer controls to avoid visual gaps.
-
-### Typical entity shape
-
-When you add the `list` type to your store the entity can include these properties (the type will provide sensible defaults). Only `items` is required — all other properties are optional:
-
-- `items` (Array) — the dataset to render.
-- `visibleRange` ({ start, end }) — current visible slice indices.
-- `viewportHeight` (number) — height of the scrolling viewport in pixels.
-- `itemHeight` (number | null) — fixed height for each item (when null, the type will measure the first item and use an estimated height).
-- `estimatedHeight` (number) — fallback height used before measurement.
-- `bufferSize` (number) — extra items to render before/after the visible range to reduce flicker during scrolling.
-
-### Events & methods
-
-The `list` type listens for the following events on the target entity:
-
-- `#<id>:scroll` — payload is the scrolling container; updates `visibleRange` based on scroll position.
-- `#<id>:measureHeight` — payload is the container element; used internally to measure the first item and compute `itemHeight`.
-
-It also expects the item type to export `renderItem(item, index, api)` so each visible item can be rendered using the project's entity-based render approach.
-
-### Example
-
-Minimal example showing how to extend the `list` type to create a domain-specific list (e.g. `productList`) and provide a `renderItem(item, index, api)` helper.
-
-```javascript
-import { createStore, html } from "@inglorious/web"
-import { list } from "@inglorious/web/list"
-
-// Extend the built-in list type to render product items
-const productList = {
-  ...list,
-
-  renderItem(item, index) {
-    return html`<div class="product">
-      ${index}: <strong>${item.name}</strong> — ${item.price}
-    </div>`
-  },
-}
-
-const types = { list: productList }
-
-const entities = {
-  products: {
-    type: "list",
-    items: Array.from({ length: 10000 }, (_, i) => ({
-      name: `Product ${i}`,
-      price: `$${i}`,
-    })),
-    viewportHeight: 400,
-    estimatedHeight: 40,
-    bufferSize: 5,
-  },
-}
-
-const store = createStore({ types, entities })
-
-// Render with api.render(entity.id) as usual — the list will call productList.renderItem for each visible item.
-```
-
-See `src/list.js` in the package for the implementation details and the `examples/apps/web-list` demo for a complete working example. In the demo the `productList` type extends the `list` type and provides `renderItem(item, index)` to render each visible item — see `examples/apps/web-list/src/product-list/product-list.js`.
-
----
-
 ## Building Component Libraries with Inglorious Web
 
 **Inglorious types are uniquely suited for component libraries** because they're fully customizable through JavaScript's spread operator.
@@ -1507,22 +1323,20 @@ See `src/list.js` in the package for the implementation details and the `example
 **Library publishes types:**
 
 ```javascript
-// @acme/design-system/table.js
-export const table = {
+// @acme/design-system/data-grid.js
+export const dataGrid = {
   render(entity, api) {
     const type = api.getType(entity.type)
 
     return html`
-      <table>
-        ${entity.data.map((row) => type.renderRow(entity, row, api))}
-      </table>
+      <div class="data-grid">
+        ${entity.rows.map((row) => type.renderRow(entity, row, api))}
+      </div>
     `
   },
 
   renderRow(entity, row, api) {
-    return html`<tr>
-      ${row.name}
-    </tr>`
+    return html`<div class="data-grid-row">${row.name}</div>`
   },
 
   rowClick(entity, row) {
@@ -1534,26 +1348,26 @@ export const table = {
 **Users customize freely:**
 
 ```javascript
-import { table } from "@acme/design-system/table"
+import { dataGrid } from "@acme/design-system/data-grid"
 
 // Use as-is
-const simpleTable = { ...table }
+const simpleGrid = { ...dataGrid }
 
 // Override methods
-const customTable = {
-  ...table,
+const customGrid = {
+  ...dataGrid,
   renderRow(entity, row, api) {
-    return html`<tr class="custom">
+    return html`<div class="data-grid-row custom">
       ${row.name} - ${row.email}
-    </tr>`
+    </div>`
   },
 }
 
 // Compose with behaviors
 import { sortable, exportable } from "@acme/design-system/behaviors"
 
-const advancedTable = [
-  table,
+const advancedGrid = [
+  dataGrid,
   sortable,
   exportable,
   {
@@ -1584,7 +1398,7 @@ Inglorious Web works seamlessly with any Web Component library, such as Shoelace
 
 ### ⚠️ SSG/SSR Considerations
 
-**Inglorious Web's built-in components** (`table`, `list`, `select`, `form`) are fully compatible with [@inglorious/ssx](https://npmjs.com/package/@inglorious/ssx) for static site generation. They render to complete HTML at build time and hydrate seamlessly on the client.
+**Inglorious Web's built-in form type** and **[Inglorious UI](https://inglorious.dev/ui) primitives** are fully compatible with [@inglorious/ssx](https://npmjs.com/package/@inglorious/ssx) for static site generation. They render to complete HTML at build time and hydrate seamlessly on the client.
 
 **Third-party Web Components** currently have limited SSR/SSG support. Most Web Component libraries (including Shoelace and Material Web Components) require client-side JavaScript to initialize and render, which means:
 
@@ -1598,7 +1412,7 @@ Inglorious Web works seamlessly with any Web Component library, such as Shoelace
 - Use Inglorious Web components for content that needs to be pre-rendered (product listings, blog posts, documentation)
 - Use Web Components for interactive, client-only features (color pickers, rich text editors, admin tools)
 
-**Use Inglorious Web's built-in components when:**
+**Use Inglorious Web + [Inglorious UI](https://inglorious.dev/ui) primitives when:**
 
 - ✅ You want full architectural consistency
 - ✅ You need fine-grained control over behavior
@@ -1623,19 +1437,11 @@ Inglorious Web works seamlessly with any Web Component library, such as Shoelace
 ### Example: Hybrid Approach
 
 ```javascript
-import { table } from "@inglorious/web/table"
 import "@shoelace-style/shoelace/dist/components/color-picker/color-picker.js"
 
 const types = {
-  // Inglorious Web component - full store integration
-  productTable: {
-    ...table,
-    data: products,
-    columns: [
-      { id: "name", label: "Product Name" },
-      { id: "price", label: "Price" },
-    ],
-  },
+  // App-specific type - full store integration
+  productTable,
 
   // Web Component - for specialized UI
   themeEditor: {
@@ -1788,11 +1594,8 @@ import {
   getFieldValue,
   isFieldTouched,
 } from "@inglorious/web/form"
-import { list } from "@inglorious/web/list"
 import { router } from "@inglorious/web/router"
-import { select } from "@inglorious/web/select"
 import { render, trigger } from "@inglorious/web/test"
-import { table } from "@inglorious/web/table"
 ```
 
 ---
@@ -1825,7 +1628,7 @@ const myType = {
 2. **Avoid creating new objects in render** - Use entity properties, not inline `{}`
 3. **Use `repeat()` directive for lists** - Helps lit-html track item identity
 4. **Profile with browser DevTools** - Look for slow renders (>16ms)
-5. **Consider virtualization** - Use `list` type for 1000+ items
+5. **Consider virtualization** - Use [Inglorious UI](https://inglorious.dev/ui) for 1000+ items
 
 If renders are slow:
 
@@ -1876,8 +1679,6 @@ Check out these demos to see `@inglorious/web` in action:
 - **[Web TodoMVC](https://github.com/IngloriousCoderz/inglorious-forge/tree/main/examples/apps/web-todomvc)** - A client-only TodoMVC implementation, a good starting point for learning the framework.
 - **[Web TodoMVC-CS](https://github.com/IngloriousCoderz/inglorious-forge/tree/main/examples/apps/web-todomvc-cs)** - A client-server version with JSON server, showing async event handlers and API integration with component organization (render/handlers modules).
 - **[Web Form](https://github.com/IngloriousCoderz/inglorious-forge/tree/main/examples/apps/web-form)** - Form handling with validation, arrays, and field helpers.
-- **[Web List](https://github.com/IngloriousCoderz/inglorious-forge/tree/main/examples/apps/web-list)** - Virtualized list with `renderItem` helper for efficient rendering of large datasets.
-- **[Web Table](https://github.com/IngloriousCoderz/inglorious-forge/tree/main/examples/apps/web-table)** - Table component with complex data display patterns.
 - **[Web Router](https://github.com/IngloriousCoderz/inglorious-forge/tree/main/examples/apps/web-router)** - Entity-based client-side routing with hash navigation.
 
 ---

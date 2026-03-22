@@ -21,17 +21,15 @@ description: Philosophy, design principles, ECS inspiration, and use cases
 - **No signals** — no hidden reactivity graph, no automatic tracking
 - **No subscriptions** — no cleanup needed, no memory leaks
 - **No lifecycle hooks** — no special methods to manage
-- **Built-in features** — router, forms, tables, virtual lists, select dropdowns
+- **Built-in features** — router and forms; UI primitives live in [Inglorious UI](https://inglorious.dev/ui)
 
 ## Built-in Features and Ecosystem
 
 ### Built-in features
 
-- **Table** — [/web/featured/table/](https://inglorious.dev/web/featured/table/)
 - **Form** — [/web/featured/form/](https://inglorious.dev/web/featured/form/)
 - **Router** — [/web/featured/router/](https://inglorious.dev/web/featured/router/)
-- **Select** — [/web/featured/select/](https://inglorious.dev/web/featured/select/)
-- **Virtual List** — [/web/featured/list/](https://inglorious.dev/web/featured/list/)
+- **UI primitives** — ready-made UI components ([Inglorious UI](https://inglorious.dev/ui))
 
 ### Ecosystem packages
 

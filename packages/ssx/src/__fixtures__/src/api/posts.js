@@ -349,7 +349,7 @@ graph TD
     id: "2025-12-20_inglorious_web",
     title: "Inglorious Web",
     date: "2025-12-20",
-    body: `The **Inglorious Web framework** was born. Yes, framework. Not library. The software had to provide default implementations for the most common developer needs, such as a router, a form, a table, a select, a virtualized list. The only two things missing to make it a framework worth using were charts and SSG/SSR.
+    body: `The **Inglorious Web framework** was born. Yes, framework. Not library. The software had to provide default implementations for the most common developer needs, such as a router, a form, and a cohesive UI layer. The only two things missing to make it a framework worth using were charts and SSG/SSR.
 
 Complete framework primitives:
 
@@ -361,11 +361,9 @@ import {
 } from '@inglorious/web';
 import { router } from '@inglorious/web/router';
 import { form } from '@inglorious/web/form';
-import { table } from '@inglorious/web/table';
-import { select } from '@inglorious/web/select';
-import { list } from '@inglorious/web/list';
+import { virtualList } from '@inglorious/ui/virtual-list';
 
-const types = { router, form, table, select, list };
+const types = { router, form, virtualList };
 const store = createStore({ types, entities });
 mount(store, renderApp, root);
 \`\`\`
@@ -376,14 +374,10 @@ Feature completeness: $C = \\frac{n_{\\text{done}}}{n_{\\text{needed}}} = \\frac
 graph TD
     A[Entity Store] --> B[Router]
     A --> C[Form]
-    A --> D[Table]
-    A --> E[Select]
-    A --> F[VirtualList]
+    A --> D[VirtualList]
     B --> G[Framework]
     C --> G
     D --> G
-    E --> G
-    F --> G
     G -.->|TODO| H[Charts]
     G -.->|TODO| I[SSG/SSR]
 \`\`\``,

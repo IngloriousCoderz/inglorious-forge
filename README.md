@@ -43,10 +43,10 @@ A small view layer built around `lit-html` and the entity store. No components, 
 Includes built-in utilities like:
 
 - router
-- virtualized lists
 - forms
-- tables
 - and other small helpers
+
+UI primitives (controls, data display, navigation, feedback, layout, surfaces) live in **[Inglorious UI](https://inglorious.dev/ui)**.
 
 #### `@inglorious/ssx`
 
@@ -127,7 +127,7 @@ The [examples/](examples/) directory contains several example projects:
 
 - TodoMVC implementations
 - Form examples
-- List and table examples
+- UI examples (data grid, virtualized list, combobox)
 - Router examples
 
 **React Examples (using `@inglorious/react-store`):**

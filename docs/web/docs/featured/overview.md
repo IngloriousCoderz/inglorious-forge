@@ -18,10 +18,7 @@ This means:
 - **Composable** — Mix with other types through type composition
 - **Testable** — Test with simple `trigger()` calls, no special setup
 
-#title: Components Overview
-description: Introduction to built-in components and integration options
-
-# Built-in Components
+# Built-in Types
 
 ### Router
 
@@ -45,78 +42,9 @@ Declarative form state management with validation.
 
 **[Learn more →](./form.md)**
 
-### Table
+## UI Primitives
 
-Flexible table component for displaying data.
-
-- Sortable columns
-- Customizable cell rendering
-- Row selection
-- Themeable with CSS
-
-**[Learn more →](./table.md)**
-
-### Select
-
-Dropdown with single/multi-select, search, and keyboard nav.
-
-- Single and multi-select modes
-- Searchable options
-- Keyboard navigation (arrow keys, enter, escape)
-- Custom option rendering
-
-**[Learn more →](./select.md)**
-
-### Virtual List
-
-Efficient rendering of large lists with virtualization.
-
-- Renders only visible items
-- Configurable item height
-- Automatic height measurement
-- Smooth scrolling with buffering
-
-**[Learn more →](./list.md)**
-
-## Using Built-in Components
-
-### Basic Setup
-
-```javascript
-import { createStore, mount, html } from "@inglorious/web"
-import { form } from "@inglorious/web/form"
-import { table } from "@inglorious/web/table"
-
-const types = {
-  form,
-  table,
-  // ... your types
-}
-
-const entities = {
-  form: {
-    type: "form",
-    initialValues: { email: "", password: "" },
-  },
-  table: {
-    type: "table",
-    data: [
-      /* ... */
-    ],
-    columns: [
-      /* ... */
-    ],
-  },
-}
-
-const store = createStore({ types, entities })
-
-mount(
-  store,
-  (api) => html` ${api.render("form")} ${api.render("table")} `,
-  document.getElementById("root"),
-)
-```
+For ready-made UI primitives (controls, data display, navigation, feedback, layout, surfaces), use the **[Inglorious UI](https://inglorious.dev/ui)** design system. It follows the same entity/type pattern, so you can still override `render()` and `renderItem()` when you need custom behavior.
 
 ### Customizing Components
 
@@ -166,7 +94,7 @@ const types = {
 
 ✅ **Use them if:**
 
-- You need that specific functionality (form, table, router, etc.)
+- You need that specific functionality (form, router, etc.)
 - You want store-integrated, predictable behavior
 - You want simple, pure-function testing
 - You want to avoid external dependencies
@@ -251,9 +179,7 @@ Each component has unique features. Dive into the specific docs:
 
 - **[Router](./router.md)** — URL routing with guards
 - **[Form](./form.md)** — Validation, array fields, submission
-- **[Table](./table.md)** — Sorting, custom rendering
-- **[Select](./select.md)** — Multi-select, search, keyboard nav
-- **[List](./list.md)** — Virtual scrolling for large datasets
+- **[UI Primitives](./ui.md)** — Ready-made UI primitives ([Inglorious UI](https://inglorious.dev/ui))
 
 ## Next Steps
 
