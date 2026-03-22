@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/ui",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "A design system for Inglorious Web with render-function components and customizable themes",
   "author": "IceOnFire <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",

@@ -1,5 +1,13 @@
 # charts-benchmark
 
+## 0.1.5
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/web@4.5.0
+  - @inglorious/charts@4.0.0
+
 ## 0.1.4
 
 ### Patch Changes

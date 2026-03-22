@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 4.5.0
+
+### Minor Changes
+
+- Create a design system and make web package leaner
+
 ## 4.4.0
 
 ### Minor Changes

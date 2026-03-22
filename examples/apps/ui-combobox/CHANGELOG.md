@@ -1,5 +1,13 @@
 # ui-combobox
 
+## 0.2.31
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/ui@1.0.0
+  - @inglorious/web@4.5.0
+
 ## 0.2.30
 
 ### Patch Changes
