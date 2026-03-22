@@ -1,4 +1,6 @@
 .iw-theme-material {
+  font-family: var(--iw-font-family-sans);
+
   /* ========================================
      MATERIAL THEME - Material Design Inspired
      ======================================== */

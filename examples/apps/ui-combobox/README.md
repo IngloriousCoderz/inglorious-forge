@@ -1,6 +1,6 @@
-# web-combobox
+# ui-combobox
 
-A demo app showcasing the `combobox` component from `@inglorious/web`.
+A demo app showcasing the `combobox` component from `@inglorious/ui`.
 
 This example demonstrates three common use cases for a combobox/dropdown component:
 
@@ -12,7 +12,7 @@ Quick start:
 
 ```bash
 # from repository root
-cd examples/apps/web-combobox
+cd examples/apps/ui-combobox
 pnpm install
 pnpm dev
 ```

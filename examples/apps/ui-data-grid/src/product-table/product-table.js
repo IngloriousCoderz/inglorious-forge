@@ -1,7 +1,3 @@
-import "@inglorious/ui/tokens.css"
-import "@inglorious/ui/themes/inglorious.css"
-import "@inglorious/ui/data-grid.css"
-
 import { dataGrid } from "@inglorious/ui/data-grid"
 import { format } from "date-fns"
 

@@ -1,4 +1,4 @@
-@import "./tokens/index.css";
+@import "./styles/base.css";
 @import "./controls/controls.css";
 @import "./data-display/data-display.css";
 @import "./feedback/feedback.css";

@@ -1,9 +1,3 @@
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
 :root {
   /* ========================================
      COLOR PALETTE - Primitive Colors
@@ -145,10 +139,4 @@
   --iw-z-modal: 1050;
   --iw-z-popover: 1060;
   --iw-z-tooltip: 1070;
-}
-
-.iw-theme-inglorious,
-.iw-theme-material,
-.iw-theme-bootstrap {
-  font-family: var(--iw-font-family-sans);
 }

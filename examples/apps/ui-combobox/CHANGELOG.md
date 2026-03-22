@@ -1,4 +1,4 @@
-# web-combobox
+# ui-combobox
 
 ## 0.2.30
 

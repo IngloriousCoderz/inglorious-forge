@@ -1,4 +1,6 @@
 .iw-theme-bootstrap {
+  font-family: var(--iw-font-family-sans);
+
   /* ========================================
      BOOTSTRAP THEME - Bootstrap Inspired
      ======================================== */

@@ -1,5 +1,7 @@
 @import "../../controls/input/style.css";
 @import "../../controls/select/style.css";
+@import "../../controls/button/style.css";
+@import "../../navigation/pagination/style.css";
 
 @import "./base";
 @import "./theme";

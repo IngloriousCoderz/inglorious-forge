@@ -1,3 +1,5 @@
+@import "../../data-display/chip/style.css";
+
 .iw-combobox {
   position: relative;
   display: inline-flex;

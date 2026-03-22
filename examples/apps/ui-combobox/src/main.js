@@ -1,5 +1,5 @@
 import "./style.css"
-import "@inglorious/ui/tokens.css"
+import "@inglorious/ui/base.css"
 import "@inglorious/ui/themes/bootstrap.css"
 import "@inglorious/ui/combobox.css"
 
