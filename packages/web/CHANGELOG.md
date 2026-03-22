@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 4.5.1
+
+### Patch Changes
+
+- Cleanup web package
+
 ## 4.5.0
 
 ### Minor Changes
