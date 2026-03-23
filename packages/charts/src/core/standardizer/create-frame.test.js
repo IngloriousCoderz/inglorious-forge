@@ -14,26 +14,22 @@ describe("standardizer", () => {
           { name: "Feb", value: 20 },
         ],
       }),
-    ).toThrow(/requires `children`/)
+    ).toThrow(/requires 'children' with components\./)
   })
 
   it("throws on composition renders when children are empty", () => {
     expect(() =>
-      createFrameFromRender(
-        {
-          type: "line",
-          width: 800,
-          height: 400,
-          data: [
-            { name: "Jan", value: 10 },
-            { name: "Feb", value: 20 },
-          ],
-        },
-        {
-          children: [],
-        },
-      ),
-    ).toThrow(/received `children` but it is empty/)
+      createFrameFromRender({
+        type: "line",
+        width: 800,
+        height: 400,
+        data: [
+          { name: "Jan", value: 10 },
+          { name: "Feb", value: 20 },
+        ],
+        children: [],
+      }),
+    ).toThrow(/requires 'children' with components\./)
   })
 
   it("creates a point x-scale for pure line charts", () => {
@@ -135,13 +131,12 @@ describe("standardizer", () => {
         { name: "Feb", value: 20 },
         { name: "Mar", value: 15 },
       ],
-    }
-
-    const frame = createFrameFromRender(source, {
       width: 800,
       height: 400,
       children: [{ type: "brush", props: {} }],
-    })
+    }
+
+    const frame = createFrameFromRender(source)
 
     expect(frame.interactionEntity.brush).toEqual({
       enabled: true,
