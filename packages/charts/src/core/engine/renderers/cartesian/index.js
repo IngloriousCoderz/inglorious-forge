@@ -12,8 +12,6 @@ import {
   resolveTooltipTitle,
 } from "./shared.js"
 
-const DEFAULT_DOT_RADIUS = 4
-
 export function renderLineSeries(component, frame) {
   const { entity } = frame
   const dataKey = component.props?.dataKey
@@ -127,59 +125,8 @@ export function renderDots(component, frame) {
     component.props?.fill ||
     component.props?.stroke ||
     resolveSeriesColor(frame, component.props?.dataKey)
-  const radius = component.props?.r || DEFAULT_DOT_RADIUS
+  const radius = component.props?.r || 4
   const dataKey = component.props?.dataKey
-
-  const notifyUpdate = () => {
-    const targetId = frame.interactionEntity?.id ?? frame.entity?.id ?? null
-    if (!targetId || !frame.api?.notify) return
-    frame.api.notify(`#${targetId}:update`)
-  }
-
-  const updateTooltip = (event, row) => {
-    if (!frame.entity?.tooltipEnabled || !row) return
-    if (!frame.interactionEntity) return
-
-    const svgEl = event.currentTarget?.closest?.("svg") || event.target
-    const svgRect = svgEl?.getBoundingClientRect?.()
-    if (!svgRect) return
-
-    const relativeX = event.clientX - svgRect.left
-    const relativeY = event.clientY - svgRect.top
-
-    const tooltipWidth = 140
-    const tooltipHeight = 60
-    const offset = 15
-
-    let x = relativeX + offset
-    let y = relativeY - offset
-
-    const maxX = (frame.dimensions?.width ?? 0) - tooltipWidth
-    const maxY = (frame.dimensions?.height ?? 0) - tooltipHeight
-
-    x = Math.max(0, Math.min(maxX, x))
-    y = Math.max(0, Math.min(maxY, y))
-
-    const xKey = frame.entity.xKey
-    const label = row?.[xKey] ?? row?.label ?? row?.name ?? ""
-    const value = dataKey ? row?.[dataKey] : row?.value
-
-    frame.interactionEntity.tooltip = {
-      x,
-      y,
-      label,
-      value,
-      color: fill,
-    }
-    notifyUpdate()
-  }
-
-  const clearTooltip = () => {
-    if (!frame.entity?.tooltipEnabled) return
-    if (!frame.interactionEntity) return
-    frame.interactionEntity.tooltip = null
-    notifyUpdate()
-  }
 
   return svg`
     <g class="iw-chart-dots">
@@ -192,9 +139,11 @@ export function renderDots(component, frame) {
             fill=${fill}
             pointer-events="all"
             style="cursor: pointer;"
-            @mouseenter=${(e) => updateTooltip(e, point.row)}
-            @mousemove=${(e) => updateTooltip(e, point.row)}
-            @mouseleave=${clearTooltip}
+            @mouseenter=${(e) =>
+              updateTooltip(e, point.row, frame, dataKey, fill)}
+            @mousemove=${(e) =>
+              updateTooltip(e, point.row, frame, dataKey, fill)}
+            @mouseleave=${() => clearTooltip(frame)}
           >
             ${resolveTooltipTitle(frame.entity, component, point.row, dataKey)}
           </circle>
@@ -202,4 +151,55 @@ export function renderDots(component, frame) {
       )}
     </g>
   `
+}
+
+function updateTooltip(event, row, frame, dataKey, fill) {
+  if (!frame.entity?.tooltipEnabled || !row) return
+  if (!frame.interactionEntity) return
+
+  const svgEl = event.currentTarget?.closest?.("svg") || event.target
+  const svgRect = svgEl?.getBoundingClientRect?.()
+  if (!svgRect) return
+
+  const relativeX = event.clientX - svgRect.left
+  const relativeY = event.clientY - svgRect.top
+
+  const tooltipWidth = 140
+  const tooltipHeight = 60
+  const offset = 15
+
+  let x = relativeX + offset
+  let y = relativeY - offset
+
+  const maxX = (frame.dimensions?.width ?? 0) - tooltipWidth
+  const maxY = (frame.dimensions?.height ?? 0) - tooltipHeight
+
+  x = Math.max(0, Math.min(maxX, x))
+  y = Math.max(0, Math.min(maxY, y))
+
+  const xKey = frame.entity.xKey
+  const label = row?.[xKey] ?? row?.label ?? row?.name ?? ""
+  const value = dataKey ? row?.[dataKey] : row?.value
+
+  frame.interactionEntity.tooltip = {
+    x,
+    y,
+    label,
+    value,
+    color: fill,
+  }
+  notifyUpdate(frame)
+}
+
+function clearTooltip(frame) {
+  if (!frame.entity?.tooltipEnabled) return
+  if (!frame.interactionEntity) return
+  frame.interactionEntity.tooltip = null
+  notifyUpdate(frame)
+}
+
+function notifyUpdate(frame) {
+  const targetId = frame.interactionEntity?.id ?? frame.entity?.id ?? null
+  if (!targetId || !frame.api?.notify) return
+  frame.api.notify(`#${targetId}:update`)
 }
