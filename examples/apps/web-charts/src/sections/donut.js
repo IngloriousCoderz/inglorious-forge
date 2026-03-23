@@ -23,8 +23,8 @@ export function renderDonutSection(api) {
       <section class="chart-section">
         <h2>Donut Chart - Recharts Style (Composition with api.getEntity)</h2>
         ${chart.render(
-          api.getEntity("categoryDonutChartComposition"),
           {
+            entity: "categoryDonutChartComposition",
             width: 500,
             height: 400,
             centerText: "Total",
@@ -55,10 +55,6 @@ export function renderDonutSection(api) {
             width: 360,
             height: 280,
             showTooltip: true,
-          },
-          {
-            width: 360,
-            height: 280,
             centerText: "Total",
             children: [
               chart.Pie({
@@ -85,10 +81,6 @@ export function renderDonutSection(api) {
             width: 360,
             height: 280,
             showTooltip: true,
-          },
-          {
-            width: 360,
-            height: 280,
             centerText: "Total",
             children: [
               chart.Pie({

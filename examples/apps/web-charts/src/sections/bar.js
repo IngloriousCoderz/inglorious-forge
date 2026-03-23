@@ -12,8 +12,8 @@ export function renderBarSection(api) {
       <section class="chart-section">
         <h2>Bar Chart - Recharts Style (Composition with api.getEntity)</h2>
         ${chart.render(
-          api.getEntity("salesBarChartComposition"),
           {
+            entity: "salesBarChartComposition",
             width: 800,
             height: 400,
             children: [
@@ -35,8 +35,8 @@ export function renderBarSection(api) {
       <section class="chart-section">
         <h2>Bar Chart - Composition (Padding 0)</h2>
         ${chart.render(
-          api.getEntity("salesBarChartCompositionPadding"),
           {
+            entity: "salesBarChartCompositionPadding",
             width: 800,
             height: 400,
             padding: { top: 0, right: 0, bottom: 0, left: 0 },
