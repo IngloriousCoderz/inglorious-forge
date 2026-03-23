@@ -21,8 +21,8 @@ export function renderLineSections(api, status) {
       <section class="chart-section">
         <h2>Line Chart - Recharts Style (Composition with api.getEntity)</h2>
         ${chart.render(
-          api.getEntity("salesLineChartComposition"),
           {
+            entity: "salesLineChartComposition",
             width: 800,
             height: 400,
             dataKeys: ["value"],
@@ -75,8 +75,8 @@ export function renderLineSections(api, status) {
           api.getEntity)
         </h2>
         ${chart.render(
-          api.getEntity("lineChartWithBrush"),
           {
+            entity: "lineChartWithBrush",
             width: 800,
             height: 400,
             dataKeys: ["value"],
@@ -107,8 +107,8 @@ export function renderLineSections(api, status) {
           api.getEntity)
         </h2>
         ${chart.render(
-          api.getEntity("multiSeriesLineChartComposition"),
           {
+            entity: "multiSeriesLineChartComposition",
             width: 800,
             height: 400,
             dataKeys: ["productA", "productB", "productC", "productD"],
@@ -211,8 +211,8 @@ export function renderLineSections(api, status) {
           </button>
         </div>
         ${chart.render(
-          api.getEntity("realtimeLineChart"),
           {
+            entity: "realtimeLineChart",
             width: 800,
             height: 400,
             dataKeys: ["value"],

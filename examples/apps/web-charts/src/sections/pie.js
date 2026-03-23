@@ -23,8 +23,8 @@ export function renderPieSection(api) {
       <section class="chart-section">
         <h2>Pie Chart - Recharts Style (Composition with api.getEntity)</h2>
         ${chart.render(
-          api.getEntity("categoryPieChartComposition"),
           {
+            entity: "categoryPieChartComposition",
             width: 500,
             height: 400,
             children: [
@@ -53,10 +53,6 @@ export function renderPieSection(api) {
             width: 360,
             height: 280,
             showTooltip: true,
-          },
-          {
-            width: 360,
-            height: 280,
             children: [
               chart.Pie({
                 dataKey: "value",
@@ -81,10 +77,6 @@ export function renderPieSection(api) {
             width: 360,
             height: 280,
             showTooltip: true,
-          },
-          {
-            width: 360,
-            height: 280,
             children: [
               chart.Pie({
                 dataKey: "value",
