@@ -3,7 +3,6 @@
 import { svg } from "@inglorious/web"
 import { area as createAreaPath, line as createLinePath } from "d3-shape"
 
-import { COMPONENT_TYPES, DEFAULT_DOT_RADIUS } from "../../../constants.js"
 import {
   createSeriesPoints,
   getBarGroupWidth,
@@ -12,6 +11,8 @@ import {
   resolveSeriesColor,
   resolveTooltipTitle,
 } from "./shared.js"
+
+const DEFAULT_DOT_RADIUS = 4
 
 export function renderLineSeries(component, frame) {
   const { entity } = frame
@@ -78,9 +79,7 @@ export function renderAreaSeries(component, frame) {
 
 export function renderBarSeries(component, frame) {
   const { entity, scales } = frame
-  const barComponents = frame.components.filter(
-    (item) => item.type === COMPONENT_TYPES.BAR,
-  )
+  const barComponents = frame.components.filter((item) => item.type === "bar")
   const barIndex = barComponents.indexOf(component)
   const groupWidth = getBarGroupWidth(frame)
   const barWidth = Math.max(6, groupWidth / Math.max(1, barComponents.length))

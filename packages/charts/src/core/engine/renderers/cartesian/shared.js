@@ -2,8 +2,6 @@
 
 import { svg } from "@inglorious/web"
 
-import { COMPONENT_TYPES } from "../../../constants.js"
-
 export function bandCenter(start, bandwidth) {
   return (start ?? 0) + bandwidth / 2
 }
@@ -48,9 +46,7 @@ export function createSeriesPoints(component, frame) {
   const stackedKeys = stackId
     ? frame.components
         .filter(
-          (item) =>
-            item.type === COMPONENT_TYPES.AREA &&
-            item.props?.stackId === stackId,
+          (item) => item.type === "area" && item.props?.stackId === stackId,
         )
         .map((item) => item.props?.dataKey)
     : []

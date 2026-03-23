@@ -46,12 +46,12 @@ describe("standardizer", () => {
         { name: "Feb", value: 30 },
         { name: "Mar", value: 20 },
       ],
-      children: [{ type: "LINE", props: { dataKey: "value" } }],
+      children: [{ type: "line", props: { dataKey: "value" } }],
     })
 
     expect(frame.scales.xScaleMode).toBe("point")
     expect(frame.components.map((component) => component.type)).toContain(
-      "LINE",
+      "line",
     )
   })
 
@@ -70,9 +70,9 @@ describe("standardizer", () => {
         { kind: "line", dataKey: "forecast" },
       ],
       children: [
-        { type: "AREA", props: { dataKey: "revenue" } },
-        { type: "BAR", props: { dataKey: "target" } },
-        { type: "LINE", props: { dataKey: "forecast" } },
+        { type: "area", props: { dataKey: "revenue" } },
+        { type: "bar", props: { dataKey: "target" } },
+        { type: "line", props: { dataKey: "forecast" } },
       ],
     })
 
@@ -97,7 +97,7 @@ describe("standardizer", () => {
     })
 
     expect(
-      frame.components.some((component) => component.type === "BRUSH"),
+      frame.components.some((component) => component.type === "brush"),
     ).toBe(false)
     expect(frame.dimensions.brushHeight).toBe(0)
     expect(frame.dimensions.brushTop).toBe(null)
@@ -121,7 +121,7 @@ describe("standardizer", () => {
     })
 
     expect(
-      frame.components.some((component) => component.type === "BRUSH"),
+      frame.components.some((component) => component.type === "brush"),
     ).toBe(true)
     expect(frame.dimensions.brushHeight).toBeGreaterThan(0)
     expect(frame.dimensions.brushTop).not.toBe(null)
@@ -140,7 +140,7 @@ describe("standardizer", () => {
     const frame = createFrameFromRender(source, {
       width: 800,
       height: 400,
-      children: [{ type: "BRUSH", props: {} }],
+      children: [{ type: "brush", props: {} }],
     })
 
     expect(frame.interactionEntity.brush).toEqual({

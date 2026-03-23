@@ -12,7 +12,8 @@ import {
   XAxis,
   YAxis,
 } from "../components/factories.js"
-import { CHART_TYPES, DEFAULT_BRUSH_HEIGHT } from "./constants.js"
+
+const DEFAULT_BRUSH_HEIGHT = 30
 
 export const DEFAULT_COMPONENTS = {
   line: buildDefaultLineComponents,
@@ -154,7 +155,7 @@ function buildDefaultComposedComponents(entity) {
   series.forEach((item, index) => {
     if (!item || typeof item !== "object") return
 
-    if (item.kind === CHART_TYPES.AREA) {
+    if (item.kind === "area") {
       components.push(
         Area({
           dataKey: item.dataKey,
@@ -169,7 +170,7 @@ function buildDefaultComposedComponents(entity) {
       return
     }
 
-    if (item.kind === CHART_TYPES.BAR) {
+    if (item.kind === "bar") {
       components.push(
         Bar({
           dataKey: item.dataKey,
@@ -180,7 +181,7 @@ function buildDefaultComposedComponents(entity) {
       return
     }
 
-    if (item.kind === CHART_TYPES.LINE) {
+    if (item.kind === "line") {
       components.push(
         Line({
           dataKey: item.dataKey,
