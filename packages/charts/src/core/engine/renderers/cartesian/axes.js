@@ -5,9 +5,6 @@ import { format } from "d3-format"
 
 import { getCategoryX } from "./shared.js"
 
-const formatTick = format(",")
-const DEFAULT_TICK_COUNT = 5
-
 export function renderCartesianGrid(component, frame) {
   const { scales, dimensions } = frame
   const stroke = component.props?.stroke || "#e5e7eb"
@@ -28,7 +25,7 @@ export function renderCartesianGrid(component, frame) {
           />
         `
       })}
-      ${scales.yScale.ticks(DEFAULT_TICK_COUNT).map((tick) => {
+      ${scales.yScale.ticks(5).map((tick) => {
         const y = scales.yScale(tick)
         return svg`
           <line
@@ -91,7 +88,7 @@ export function renderYAxis(component, frame) {
         y2=${dimensions.plotBottom}
         stroke="#cbd5e1"
       />
-      ${scales.yScale.ticks(DEFAULT_TICK_COUNT).map((tick) => {
+      ${scales.yScale.ticks(5).map((tick) => {
         const y = scales.yScale(tick)
         return svg`
           <text
@@ -108,3 +105,5 @@ export function renderYAxis(component, frame) {
     </g>
   `
 }
+
+const formatTick = format(",")
