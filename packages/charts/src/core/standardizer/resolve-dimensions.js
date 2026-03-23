@@ -1,13 +1,10 @@
 /* eslint-disable no-magic-numbers */
 
-import {
-  COMPONENT_TYPES,
-  DEFAULT_BRUSH_GAP,
-  DEFAULT_BRUSH_HEIGHT,
-  DEFAULT_HEIGHT,
-  DEFAULT_LEGEND_HEIGHT,
-  DEFAULT_WIDTH,
-} from "../constants.js"
+const DEFAULT_BRUSH_GAP = 16
+const DEFAULT_BRUSH_HEIGHT = 30
+const DEFAULT_HEIGHT = 400
+const DEFAULT_LEGEND_HEIGHT = 40
+const DEFAULT_WIDTH = 800
 
 /**
  * Computes layout dimensions for the engine renderer.
@@ -24,11 +21,9 @@ import {
 export function createDimensions(entity, components) {
   const width = entity.width || DEFAULT_WIDTH
   const height = entity.height || DEFAULT_HEIGHT
-  const hasLegend = components.some(
-    (component) => component.type === COMPONENT_TYPES.LEGEND,
-  )
+  const hasLegend = components.some((component) => component.type === "legend")
   const brushComponent = components.find(
-    (component) => component.type === COMPONENT_TYPES.BRUSH,
+    (component) => component.type === "brush",
   )
   const hasVisibleBrush =
     entity.brush?.enabled &&

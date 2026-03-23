@@ -3,10 +3,10 @@
 import { svg } from "@inglorious/web"
 import { format } from "d3-format"
 
-import { DEFAULT_TICK_COUNT } from "../../../constants.js"
 import { getCategoryX } from "./shared.js"
 
 const formatTick = format(",")
+const DEFAULT_TICK_COUNT = 5
 
 export function renderCartesianGrid(component, frame) {
   const { scales, dimensions } = frame

@@ -1,12 +1,8 @@
 /* eslint-disable no-magic-numbers */
 
-import {
-  CHART_TYPES,
-  COMPONENT_TYPES,
-  DEFAULT_BRUSH_HEIGHT,
-  DEFAULT_HEIGHT,
-  DEFAULT_WIDTH,
-} from "../constants.js"
+const DEFAULT_BRUSH_HEIGHT = 30
+const DEFAULT_HEIGHT = 400
+const DEFAULT_WIDTH = 800
 
 const INLINE_PREFIX = "inline-chart"
 
@@ -32,12 +28,12 @@ export function mergeEntityInput(source, config) {
 }
 
 const SUPPORTED_CHART_TYPES = new Set([
-  CHART_TYPES.DONUT,
-  CHART_TYPES.PIE,
-  CHART_TYPES.LINE,
-  CHART_TYPES.AREA,
-  CHART_TYPES.BAR,
-  CHART_TYPES.COMPOSED,
+  "donut",
+  "pie",
+  "line",
+  "area",
+  "bar",
+  "composed",
 ])
 
 export function getChartType(entity, components) {
@@ -45,29 +41,23 @@ export function getChartType(entity, components) {
     return entity.type
   }
 
-  if (components.some((component) => component.type === COMPONENT_TYPES.PIE)) {
-    return entity.centerText ? CHART_TYPES.DONUT : CHART_TYPES.PIE
+  if (components.some((component) => component.type === "pie")) {
+    return entity.centerText ? "donut" : "pie"
   }
 
-  const hasArea = components.some(
-    (component) => component.type === COMPONENT_TYPES.AREA,
-  )
-  const hasBar = components.some(
-    (component) => component.type === COMPONENT_TYPES.BAR,
-  )
-  const hasLine = components.some(
-    (component) => component.type === COMPONENT_TYPES.LINE,
-  )
+  const hasArea = components.some((component) => component.type === "area")
+  const hasBar = components.some((component) => component.type === "bar")
+  const hasLine = components.some((component) => component.type === "line")
 
   if ([hasArea, hasBar, hasLine].filter(Boolean).length > 1) {
-    return CHART_TYPES.COMPOSED
+    return "composed"
   }
 
-  if (hasArea) return CHART_TYPES.AREA
-  if (hasBar) return CHART_TYPES.BAR
-  if (hasLine) return CHART_TYPES.LINE
+  if (hasArea) return "area"
+  if (hasBar) return "bar"
+  if (hasLine) return "line"
 
-  return CHART_TYPES.LINE
+  return "line"
 }
 
 export function getComponents(children) {
@@ -78,14 +68,10 @@ export function getComponents(children) {
 export function getTooltipState(entity, components) {
   if (entity.showTooltip === true) return true
   if (entity.showTooltip === false) {
-    return components.some(
-      (component) => component.type === COMPONENT_TYPES.TOOLTIP,
-    )
+    return components.some((component) => component.type === "tooltip")
   }
 
-  if (
-    components.some((component) => component.type === COMPONENT_TYPES.TOOLTIP)
-  ) {
+  if (components.some((component) => component.type === "tooltip")) {
     return true
   }
 
@@ -94,7 +80,7 @@ export function getTooltipState(entity, components) {
 
 export function applyBrushWindow(entity, components, tooltipEnabled) {
   const hasBrushComponent = components.some(
-    (component) => component.type === COMPONENT_TYPES.BRUSH,
+    (component) => component.type === "brush",
   )
   const brushEnabled = entity.brush?.enabled || hasBrushComponent
   const fullData = Array.isArray(entity.fullData)
