@@ -1,9 +1,17 @@
 /* eslint-disable no-magic-numbers */
 
 import { brushChange } from "../handlers/chart-handlers.js"
-import { STREAM_DEFAULTS } from "./defaults.js"
 import { streamSlide } from "./stream-slide.js"
 
+const STREAM_DEFAULTS = {
+  intervalMs: 1000,
+  visibleWindow: 30,
+  min: -80,
+  max: 220,
+  variation: 25,
+  currentValue: 220,
+  maxHistory: 2000,
+}
 const INTERNAL_PULSE_MS = 100
 const runtimeTypeTargets = new Set()
 const runtimeEntityTypes = new Map()
