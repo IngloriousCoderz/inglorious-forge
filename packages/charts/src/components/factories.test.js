@@ -17,53 +17,53 @@ import {
 describe("component factories", () => {
   it("creates cartesian infrastructure components", () => {
     expect(CartesianGrid({ stroke: "#eee" })).toEqual({
-      type: "CARTESIAN_GRID",
+      type: "cartesian-grid",
       props: { stroke: "#eee" },
     })
     expect(XAxis({ dataKey: "name" })).toEqual({
-      type: "X_AXIS",
+      type: "x-axis",
       props: { dataKey: "name" },
     })
     expect(YAxis({ width: "auto" })).toEqual({
-      type: "Y_AXIS",
+      type: "y-axis",
       props: { width: "auto" },
     })
   })
 
   it("creates series components", () => {
     expect(Line({ dataKey: "value" })).toEqual({
-      type: "LINE",
+      type: "line",
       props: { dataKey: "value" },
     })
     expect(Area({ dataKey: "value" })).toEqual({
-      type: "AREA",
+      type: "area",
       props: { dataKey: "value" },
     })
     expect(Bar({ dataKey: "value" })).toEqual({
-      type: "BAR",
+      type: "bar",
       props: { dataKey: "value" },
     })
     expect(Pie({ dataKey: "value" })).toEqual({
-      type: "PIE",
+      type: "pie",
       props: { dataKey: "value" },
     })
     expect(Dots({ dataKey: "value" })).toEqual({
-      type: "DOTS",
+      type: "dots",
       props: { dataKey: "value" },
     })
   })
 
   it("creates overlay components", () => {
     expect(Tooltip({})).toEqual({
-      type: "TOOLTIP",
+      type: "tooltip",
       props: {},
     })
     expect(Legend({ dataKeys: ["value"] })).toEqual({
-      type: "LEGEND",
+      type: "legend",
       props: { dataKeys: ["value"] },
     })
     expect(Brush({ height: 24 })).toEqual({
-      type: "BRUSH",
+      type: "brush",
       props: { height: 24 },
     })
   })

@@ -2,7 +2,6 @@
 
 import { svg } from "@inglorious/web"
 
-import { CHART_TYPES, COMPONENT_TYPES } from "../constants.js"
 import {
   renderCartesianGrid,
   renderXAxis,
@@ -45,8 +44,7 @@ export function renderFrame(frame) {
 function getRenderComponents(frame) {
   const orderedComponents = [...frame.components]
   const areaComponents = orderedComponents.filter(
-    (component) =>
-      component.type === COMPONENT_TYPES.AREA && !component.props?.stackId,
+    (component) => component.type === "area" && !component.props?.stackId,
   )
 
   if (areaComponents.length <= 1) {
@@ -66,7 +64,7 @@ function getRenderComponents(frame) {
   let areaIndex = 0
 
   return orderedComponents.map((component) => {
-    if (component.type !== COMPONENT_TYPES.AREA || component.props?.stackId) {
+    if (component.type !== "area" || component.props?.stackId) {
       return component
     }
 
@@ -77,17 +75,17 @@ function getRenderComponents(frame) {
 }
 
 const RENDERERS = {
-  [COMPONENT_TYPES.CARTESIAN_GRID]: renderCartesianGrid,
-  [COMPONENT_TYPES.X_AXIS]: renderXAxis,
-  [COMPONENT_TYPES.Y_AXIS]: renderYAxis,
-  [COMPONENT_TYPES.LINE]: renderLineSeries,
-  [COMPONENT_TYPES.AREA]: renderAreaSeries,
-  [COMPONENT_TYPES.BAR]: renderBarSeries,
-  [COMPONENT_TYPES.DOTS]: renderDots,
-  [COMPONENT_TYPES.PIE]: renderPieSeries,
-  [COMPONENT_TYPES.LEGEND]: renderLegend,
-  [COMPONENT_TYPES.BRUSH]: renderBrush,
-  [COMPONENT_TYPES.TOOLTIP]: renderTooltipOverlay,
+  "cartesian-grid": renderCartesianGrid,
+  "x-axis": renderXAxis,
+  "y-axis": renderYAxis,
+  line: renderLineSeries,
+  area: renderAreaSeries,
+  bar: renderBarSeries,
+  dots: renderDots,
+  pie: renderPieSeries,
+  legend: renderLegend,
+  brush: renderBrush,
+  tooltip: renderTooltipOverlay,
 }
 
 function renderComponent(component, frame) {
@@ -97,7 +95,7 @@ function renderComponent(component, frame) {
 }
 
 function isPolarChart(type) {
-  return type === CHART_TYPES.PIE || type === CHART_TYPES.DONUT
+  return type === "pie" || type === "donut"
 }
 
 function getAreaPeak(frame, component) {

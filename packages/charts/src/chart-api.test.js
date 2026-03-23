@@ -17,11 +17,11 @@ function resolveChartType(chartTypeDef) {
 describe("charts public api", () => {
   it("exposes pure component factories on the chart namespace", () => {
     expect(chart.Line({ dataKey: "value" })).toEqual({
-      type: "LINE",
+      type: "line",
       props: { dataKey: "value" },
     })
     expect(chart.XAxis({ dataKey: "name" })).toEqual({
-      type: "X_AXIS",
+      type: "x-axis",
       props: { dataKey: "name" },
     })
   })

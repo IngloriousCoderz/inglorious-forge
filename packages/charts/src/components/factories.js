@@ -1,45 +1,43 @@
-import { COMPONENT_TYPES } from "../core/constants.js"
-
 export function CartesianGrid(props = {}) {
-  return { type: COMPONENT_TYPES.CARTESIAN_GRID, props }
+  return { type: "cartesian-grid", props }
 }
 
 export function XAxis(props = {}) {
-  return { type: COMPONENT_TYPES.X_AXIS, props }
+  return { type: "x-axis", props }
 }
 
 export function YAxis(props = {}) {
-  return { type: COMPONENT_TYPES.Y_AXIS, props }
+  return { type: "y-axis", props }
 }
 
 export function Line(props = {}) {
-  return { type: COMPONENT_TYPES.LINE, props }
+  return { type: "line", props }
 }
 
 export function Area(props = {}) {
-  return { type: COMPONENT_TYPES.AREA, props }
+  return { type: "area", props }
 }
 
 export function Bar(props = {}) {
-  return { type: COMPONENT_TYPES.BAR, props }
+  return { type: "bar", props }
 }
 
 export function Pie(props = {}) {
-  return { type: COMPONENT_TYPES.PIE, props }
+  return { type: "pie", props }
 }
 
 export function Dots(props = {}) {
-  return { type: COMPONENT_TYPES.DOTS, props }
+  return { type: "dots", props }
 }
 
 export function Tooltip(props = {}) {
-  return { type: COMPONENT_TYPES.TOOLTIP, props }
+  return { type: "tooltip", props }
 }
 
 export function Legend(props = {}) {
-  return { type: COMPONENT_TYPES.LEGEND, props }
+  return { type: "legend", props }
 }
 
 export function Brush(props = {}) {
-  return { type: COMPONENT_TYPES.BRUSH, props }
+  return { type: "brush", props }
 }

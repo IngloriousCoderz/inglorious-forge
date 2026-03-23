@@ -15,14 +15,14 @@ describe("default components", () => {
     })
 
     expect(components.map((component) => component.type)).toEqual([
-      "CARTESIAN_GRID",
-      "X_AXIS",
-      "Y_AXIS",
-      "LINE",
-      "LINE",
-      "LEGEND",
-      "TOOLTIP",
-      "BRUSH",
+      "cartesian-grid",
+      "x-axis",
+      "y-axis",
+      "line",
+      "line",
+      "legend",
+      "tooltip",
+      "brush",
     ])
     expect(components[3].props).toMatchObject({
       dataKey: "valueA",
@@ -41,7 +41,7 @@ describe("default components", () => {
     })
 
     const areaComponents = components.filter(
-      (component) => component.type === "AREA",
+      (component) => component.type === "area",
     )
     expect(areaComponents).toHaveLength(2)
     expect(areaComponents[0].props.stackId).toBe("default-stack")
@@ -56,7 +56,7 @@ describe("default components", () => {
       brush: { enabled: true, visible: false },
     })
 
-    expect(components.some((component) => component.type === "BRUSH")).toBe(
+    expect(components.some((component) => component.type === "brush")).toBe(
       false,
     )
   })
@@ -74,15 +74,15 @@ describe("default components", () => {
     })
 
     expect(pieComponents[0]).toMatchObject({
-      type: "PIE",
+      type: "pie",
       props: {
         dataKey: "amount",
         nameKey: "category",
       },
     })
     expect(donutComponents[0].props.innerRadius).toBe("55%")
-    expect(pieComponents.at(-1).type).toBe("TOOLTIP")
-    expect(donutComponents.at(-1).type).toBe("TOOLTIP")
+    expect(pieComponents.at(-1).type).toBe("tooltip")
+    expect(donutComponents.at(-1).type).toBe("tooltip")
   })
 
   it("maps composed series kinds to their matching component types", () => {
@@ -99,14 +99,14 @@ describe("default components", () => {
     })
 
     expect(components.map((component) => component.type)).toEqual([
-      "CARTESIAN_GRID",
-      "X_AXIS",
-      "Y_AXIS",
-      "AREA",
-      "BAR",
-      "LINE",
-      "LEGEND",
-      "TOOLTIP",
+      "cartesian-grid",
+      "x-axis",
+      "y-axis",
+      "area",
+      "bar",
+      "line",
+      "legend",
+      "tooltip",
     ])
   })
 })

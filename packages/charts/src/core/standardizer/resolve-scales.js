@@ -3,15 +3,11 @@
 import { max, min, sum } from "d3-array"
 import { scaleBand, scaleLinear, scalePoint } from "d3-scale"
 
-import {
-  CHART_TYPES,
-  COMPONENT_TYPES,
-  DEFAULT_BAR_PADDING,
-  SERIES_COMPONENTS,
-} from "../constants.js"
+const DEFAULT_BAR_PADDING = 0.18
+const SERIES_COMPONENTS = ["line", "area", "bar"]
 
 export function createScales(entity, components, dimensions) {
-  if (entity.type === CHART_TYPES.PIE || entity.type === CHART_TYPES.DONUT) {
+  if (entity.type === "pie" || entity.type === "donut") {
     return {
       centerX: resolveRadiusValue(entity.cx || "50%", dimensions.width),
       centerY: resolveRadiusValue(entity.cy || "50%", dimensions.height),
@@ -28,9 +24,7 @@ export function createScales(entity, components, dimensions) {
 
   const rows = entity.data
   const xDomain = rows.map((row, index) => `${row?.[entity.xKey] ?? index}`)
-  const hasBars = components.some(
-    (component) => component.type === COMPONENT_TYPES.BAR,
-  )
+  const hasBars = components.some((component) => component.type === "bar")
   const xScale = hasBars
     ? scaleBand()
         .domain(xDomain)
@@ -96,7 +90,7 @@ function collectAreaStackGroups(components) {
   const groups = new Map()
 
   components.forEach((component) => {
-    if (component.type !== COMPONENT_TYPES.AREA) return
+    if (component.type !== "area") return
     const stackId = component.props?.stackId
     const dataKey = component.props?.dataKey
     if (!stackId || !dataKey) return
