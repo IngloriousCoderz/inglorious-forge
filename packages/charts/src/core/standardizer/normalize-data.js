@@ -1,6 +1,25 @@
 /* eslint-disable no-magic-numbers */
 
-import { NON_SERIES_KEYS, PALETTE, X_VALUE_KEYS } from "../constants.js"
+const X_VALUE_KEYS = ["name", "label", "date", "x"]
+const PALETTE = [
+  "#3b82f6",
+  "#8b5cf6",
+  "#10b981",
+  "#f59e0b",
+  "#ef4444",
+  "#06b6d4",
+  "#ec4899",
+  "#64748b",
+]
+const NON_SERIES_KEYS = new Set([
+  "id",
+  "type",
+  "name",
+  "label",
+  "date",
+  "x",
+  "color",
+])
 
 export function createChartEntity(entity, requestedKeys) {
   const colors = resolveColors(entity.colors)

@@ -17,9 +17,9 @@ describe("engine", () => {
         tooltipEnabled: true,
       },
       components: [
-        { type: "AREA", props: { dataKey: "low", fill: "#111111" } },
-        { type: "AREA", props: { dataKey: "high", fill: "#222222" } },
-        { type: "AREA", props: { dataKey: "mid", fill: "#333333" } },
+        { type: "area", props: { dataKey: "low", fill: "#111111" } },
+        { type: "area", props: { dataKey: "high", fill: "#222222" } },
+        { type: "area", props: { dataKey: "mid", fill: "#333333" } },
       ],
       scales: {
         xScaleMode: "point",
@@ -66,7 +66,7 @@ describe("engine", () => {
         },
         seriesKeys: ["value"],
       },
-      components: [{ type: "BRUSH", props: {} }],
+      components: [{ type: "brush", props: {} }],
       scales: {
         plottedKeys: ["value"],
       },

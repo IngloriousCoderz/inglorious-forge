@@ -23,8 +23,8 @@ function createFrame() {
       ],
     },
     components: [
-      { type: "BAR", props: { dataKey: "revenue" } },
-      { type: "BAR", props: { dataKey: "cost" } },
+      { type: "bar", props: { dataKey: "revenue" } },
+      { type: "bar", props: { dataKey: "cost" } },
     ],
     scales: {
       xScale,
@@ -74,7 +74,7 @@ describe("cartesian renderers", () => {
   it("renders bars for each row", () => {
     const result = renderBarSeries(
       {
-        type: "BAR",
+        type: "bar",
         props: {
           dataKey: "revenue",
         },

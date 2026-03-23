@@ -1,11 +1,18 @@
 /* eslint-disable no-magic-numbers */
 
-import {
-  DEFAULT_BRUSH_HEIGHT,
-  DEFAULT_HEIGHT,
-  DEFAULT_WIDTH,
-  PALETTE,
-} from "../core/constants.js"
+const DEFAULT_BRUSH_HEIGHT = 30
+const DEFAULT_HEIGHT = 400
+const DEFAULT_WIDTH = 800
+const PALETTE = [
+  "#3b82f6",
+  "#8b5cf6",
+  "#10b981",
+  "#f59e0b",
+  "#ef4444",
+  "#06b6d4",
+  "#ec4899",
+  "#64748b",
+]
 
 export function create(entity) {
   entity.width ??= DEFAULT_WIDTH

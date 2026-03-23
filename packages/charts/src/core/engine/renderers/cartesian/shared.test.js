@@ -115,12 +115,12 @@ describe("shared render helpers", () => {
   it("creates stacked series points for area stacks", () => {
     const frame = createBaseFrame()
     frame.components = [
-      { type: "AREA", props: { dataKey: "revenue", stackId: "sales" } },
-      { type: "AREA", props: { dataKey: "cost", stackId: "sales" } },
+      { type: "area", props: { dataKey: "revenue", stackId: "sales" } },
+      { type: "area", props: { dataKey: "cost", stackId: "sales" } },
     ]
 
     const points = createSeriesPoints(
-      { type: "AREA", props: { dataKey: "cost", stackId: "sales" } },
+      { type: "area", props: { dataKey: "cost", stackId: "sales" } },
       frame,
     )
 
