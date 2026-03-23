@@ -34,8 +34,6 @@ describe("charts public api", () => {
           { name: "Jan", value: 10 },
           { name: "Feb", value: 20 },
         ],
-      },
-      {
         width: 800,
         height: 400,
         children: [
