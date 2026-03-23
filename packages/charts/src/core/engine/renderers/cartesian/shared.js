@@ -2,41 +2,29 @@
 
 import { svg } from "@inglorious/web"
 
-export function bandCenter(start, bandwidth) {
-  return (start ?? 0) + bandwidth / 2
-}
+export function renderSeriesTitles(component, frame) {
+  const points = createSeriesPoints(component, frame)
 
-export function getCategoryX(scales, label) {
-  return bandCenter(scales.xScale(label), scales.xScale.bandwidth())
-}
-
-export function getBarGroupWidth(frame) {
-  const { scales, dimensions, entity } = frame
-
-  if (scales.xScaleMode === "band") {
-    return scales.xScale.bandwidth()
-  }
-
-  if (typeof scales.xScale.step === "function") {
-    return Math.max(12, scales.xScale.step() * 0.6)
-  }
-
-  return Math.max(12, dimensions.plotWidth / Math.max(1, entity.data.length))
-}
-
-export function resolveSeriesColor(frame, dataKey) {
-  const plottedKeys = frame.scales.plottedKeys || frame.entity.seriesKeys
-  const index = Math.max(0, plottedKeys.indexOf(dataKey))
-  return frame.entity.colors[index % frame.entity.colors.length]
-}
-
-export function resolveTooltipTitle(entity, component, row, dataKey) {
-  const enabled = entity.tooltipEnabled || component.props?.showTooltip
-  if (!enabled) return ""
-
-  const label = row?.[entity.xKey] ?? row?.label ?? row?.name ?? "item"
-  const value = dataKey ? row?.[dataKey] : row?.value
-  return svg`<title>${label}: ${value}</title>`
+  return svg`
+    ${points.map(
+      (point) => svg`
+        <circle
+          cx=${point.x}
+          cy=${point.y}
+          r="2"
+          fill="transparent"
+          pointer-events="all"
+        >
+          ${resolveTooltipTitle(
+            frame.entity,
+            component,
+            point.row,
+            component.props?.dataKey,
+          )}
+        </circle>
+      `,
+    )}
+  `
 }
 
 export function createSeriesPoints(component, frame) {
@@ -77,29 +65,19 @@ export function createSeriesPoints(component, frame) {
   })
 }
 
-export function renderSeriesTitles(component, frame) {
-  const points = createSeriesPoints(component, frame)
+export function resolveSeriesColor(frame, dataKey) {
+  const plottedKeys = frame.scales.plottedKeys || frame.entity.seriesKeys
+  const index = Math.max(0, plottedKeys.indexOf(dataKey))
+  return frame.entity.colors[index % frame.entity.colors.length]
+}
 
-  return svg`
-    ${points.map(
-      (point) => svg`
-        <circle
-          cx=${point.x}
-          cy=${point.y}
-          r="2"
-          fill="transparent"
-          pointer-events="all"
-        >
-          ${resolveTooltipTitle(
-            frame.entity,
-            component,
-            point.row,
-            component.props?.dataKey,
-          )}
-        </circle>
-      `,
-    )}
-  `
+export function resolveTooltipTitle(entity, component, row, dataKey) {
+  const enabled = entity.tooltipEnabled || component.props?.showTooltip
+  if (!enabled) return ""
+
+  const label = row?.[entity.xKey] ?? row?.label ?? row?.name ?? "item"
+  const value = dataKey ? row?.[dataKey] : row?.value
+  return svg`<title>${label}: ${value}</title>`
 }
 
 export function resolveLegendItems(component, frame) {
@@ -117,6 +95,24 @@ export function resolveLegendItems(component, frame) {
   }))
 }
 
+export function getBarGroupWidth(frame) {
+  const { scales, dimensions, entity } = frame
+
+  if (scales.xScaleMode === "band") {
+    return scales.xScale.bandwidth()
+  }
+
+  if (typeof scales.xScale.step === "function") {
+    return Math.max(12, scales.xScale.step() * 0.6)
+  }
+
+  return Math.max(12, dimensions.plotWidth / Math.max(1, entity.data.length))
+}
+
+export function getCategoryX(scales, label) {
+  return bandCenter(scales.xScale(label), scales.xScale.bandwidth())
+}
+
 export function maximumValue(rows, dataKey) {
   return Math.max(
     ...rows.map((row) => (Number.isFinite(row?.[dataKey]) ? row[dataKey] : 0)),
@@ -127,4 +123,8 @@ export function minimumValue(rows, dataKey) {
   return Math.min(
     ...rows.map((row) => (Number.isFinite(row?.[dataKey]) ? row[dataKey] : 0)),
   )
+}
+
+export function bandCenter(start, bandwidth) {
+  return (start ?? 0) + bandwidth / 2
 }
