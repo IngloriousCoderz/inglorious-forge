@@ -1,11 +1,5 @@
 /* eslint-disable no-magic-numbers */
 
-const DEFAULT_BRUSH_GAP = 16
-const DEFAULT_BRUSH_HEIGHT = 30
-const DEFAULT_HEIGHT = 400
-const DEFAULT_LEGEND_HEIGHT = 40
-const DEFAULT_WIDTH = 800
-
 /**
  * Computes layout dimensions for the engine renderer.
  *
@@ -19,8 +13,8 @@ const DEFAULT_WIDTH = 800
  * @returns {{width:number,height:number,padding:any,plotTop:number,plotRight:number,plotBottom:number,plotLeft:number,plotWidth:number,plotHeight:number,legendHeight:number,brushHeight:number,brushTop:number|null}}
  */
 export function createDimensions(entity, components) {
-  const width = entity.width || DEFAULT_WIDTH
-  const height = entity.height || DEFAULT_HEIGHT
+  const width = entity.width || 800
+  const height = entity.height || 400
   const hasLegend = components.some((component) => component.type === "legend")
   const brushComponent = components.find(
     (component) => component.type === "brush",
@@ -30,16 +24,12 @@ export function createDimensions(entity, components) {
     entity.brush?.visible !== false &&
     Boolean(brushComponent)
   const brushHeight = hasVisibleBrush
-    ? brushComponent?.props?.height ||
-      entity.brush?.height ||
-      DEFAULT_BRUSH_HEIGHT
+    ? brushComponent?.props?.height || entity.brush?.height || 30
     : 0
-  const legendHeight = hasLegend ? DEFAULT_LEGEND_HEIGHT : 0
+  const legendHeight = hasLegend ? 40 : 0
   const plotTop = entity.padding.top + legendHeight
   const plotBottom =
-    height -
-    entity.padding.bottom -
-    (brushHeight > 0 ? brushHeight + DEFAULT_BRUSH_GAP : 0)
+    height - entity.padding.bottom - (brushHeight > 0 ? brushHeight + 16 : 0)
   const plotLeft = entity.padding.left
   const plotRight = width - entity.padding.right
 
