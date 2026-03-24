@@ -3,16 +3,6 @@
 const DEFAULT_BRUSH_HEIGHT = 30
 const DEFAULT_HEIGHT = 400
 const DEFAULT_WIDTH = 800
-const PALETTE = [
-  "#3b82f6",
-  "#8b5cf6",
-  "#10b981",
-  "#f59e0b",
-  "#ef4444",
-  "#06b6d4",
-  "#ec4899",
-  "#64748b",
-]
 
 export function create(entity) {
   entity.width ??= DEFAULT_WIDTH
@@ -21,7 +11,16 @@ export function create(entity) {
   entity.showGrid ??= true
   entity.showLegend ??= false
   entity.showTooltip ??= true
-  entity.colors ??= [...PALETTE]
+  entity.colors ??= [
+    "#3b82f6",
+    "#8b5cf6",
+    "#10b981",
+    "#f59e0b",
+    "#ef4444",
+    "#06b6d4",
+    "#ec4899",
+    "#64748b",
+  ]
 
   if (entity.brush?.enabled) {
     entity.brush.height ??= DEFAULT_BRUSH_HEIGHT
@@ -42,10 +41,7 @@ export function sizeUpdate(entity, payload) {
 
 export function brushChange(entity, payload) {
   if (!entity.brush?.enabled) {
-    entity.brush = {
-      enabled: true,
-      height: DEFAULT_BRUSH_HEIGHT,
-    }
+    entity.brush = { enabled: true, height: DEFAULT_BRUSH_HEIGHT }
   }
 
   const maxIndex = Math.max(0, (entity.data?.length || 0) - 1)
