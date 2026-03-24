@@ -7,18 +7,18 @@ import { brushChange } from "../../../../handlers/chart-handlers.js"
 import { maximumValue, minimumValue } from "../cartesian/shared.js"
 
 const DEFAULT_BRUSH_HEIGHT = 30
-const MIN_SELECTION_WIDTH = 12
-const LEFT_ACTION = "resize-left"
-const RIGHT_ACTION = "resize-right"
-const PAN_ACTION = "pan"
 
 export function renderBrush(component, frame) {
   const layout = getBrushLayout(component, frame)
   if (!layout) return svg``
 
-  const onPan = createBrushMouseDownHandler(frame, layout, PAN_ACTION)
-  const onResizeLeft = createBrushMouseDownHandler(frame, layout, LEFT_ACTION)
-  const onResizeRight = createBrushMouseDownHandler(frame, layout, RIGHT_ACTION)
+  const onPan = createBrushMouseDownHandler(frame, layout, "pan")
+  const onResizeLeft = createBrushMouseDownHandler(frame, layout, "resize-left")
+  const onResizeRight = createBrushMouseDownHandler(
+    frame,
+    layout,
+    "resize-right",
+  )
 
   return svg`
     <g class="iw-chart-brush">
@@ -85,7 +85,7 @@ export function getBrushRangeAfterDrag({
       ? Math.round((deltaX / brushAreaWidth) * totalIndices)
       : 0
 
-  if (action === PAN_ACTION) {
+  if (action === "pan") {
     let nextStart = startIndex + indexDelta
     let nextEnd = endIndex + indexDelta
 
@@ -105,7 +105,7 @@ export function getBrushRangeAfterDrag({
     }
   }
 
-  if (action === LEFT_ACTION) {
+  if (action === "resize-left") {
     let nextStart = startIndex + indexDelta
 
     if (nextStart < 0) {
@@ -183,10 +183,7 @@ function getBrushLayout(component, frame) {
       ? entity.brush.endIndex / (entity.fullData.length - 1)
       : 1
   const selectionX = brushAreaX + brushAreaWidth * startRatio
-  const selectionWidth = Math.max(
-    MIN_SELECTION_WIDTH,
-    brushAreaWidth * (endRatio - startRatio),
-  )
+  const selectionWidth = Math.max(12, brushAreaWidth * (endRatio - startRatio))
 
   return {
     brushAreaWidth,
