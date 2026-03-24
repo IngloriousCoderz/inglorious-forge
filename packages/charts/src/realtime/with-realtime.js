@@ -12,7 +12,6 @@ const STREAM_DEFAULTS = {
   currentValue: 220,
   maxHistory: 2000,
 }
-const INTERNAL_PULSE_MS = 100
 const runtimeTypeTargets = new Set()
 const runtimeEntityTypes = new Map()
 let runtimeApi = null
@@ -45,12 +44,8 @@ export function withRealtime(chartType) {
       const now = Date.now()
       const lastTickAt = entity.realtime.lastTickAt
 
-      if (
-        Number.isFinite(lastTickAt) &&
-        now - lastTickAt < realtime.intervalMs
-      ) {
+      if (Number.isFinite(lastTickAt) && now - lastTickAt < realtime.intervalMs)
         return
-      }
 
       entity.realtime.lastTickAt = now
 
@@ -87,13 +82,6 @@ export function withRealtime(chartType) {
   }
 }
 
-function getRealtimeConfig(entity) {
-  return {
-    ...STREAM_DEFAULTS,
-    ...(entity.realtime || {}),
-  }
-}
-
 function ensureRealtimeSeed(entity) {
   const realtime = getRealtimeConfig(entity)
 
@@ -118,10 +106,7 @@ function ensureRealtimeSeed(entity) {
 
 function syncRealtimeWindow(entity, mode) {
   const realtime = getRealtimeConfig(entity)
-  entity.brush ??= {
-    enabled: true,
-    height: 30,
-  }
+  entity.brush ??= { enabled: true, height: 30 }
   entity.brush.enabled = true
 
   if (mode === "paused") {
@@ -137,10 +122,7 @@ function syncRealtimeWindow(entity, mode) {
     endIndex - (Math.max(1, realtime.visibleWindow) - 1),
   )
 
-  brushChange(entity, {
-    startIndex,
-    endIndex,
-  })
+  brushChange(entity, { startIndex, endIndex })
 }
 
 function registerRuntime(entity, api) {
@@ -156,7 +138,7 @@ function registerRuntime(entity, api) {
     runtimeTypeTargets.forEach((type) => {
       runtimeApi?.notify?.(`${type}:streamTick`)
     })
-  }, INTERNAL_PULSE_MS)
+  }, 100)
 }
 
 function unregisterRuntime(entity) {
@@ -178,4 +160,8 @@ function unregisterRuntime(entity) {
 
   clearInterval(runtimePulseId)
   runtimePulseId = null
+}
+
+function getRealtimeConfig(entity) {
+  return { ...STREAM_DEFAULTS, ...(entity.realtime || {}) }
 }
