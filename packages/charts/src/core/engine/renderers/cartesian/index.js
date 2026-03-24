@@ -4,6 +4,10 @@ import { svg } from "@inglorious/web"
 import { area as createAreaPath, line as createLinePath } from "d3-shape"
 
 import {
+  hideFallbackTooltip,
+  showFallbackTooltip,
+} from "../overlays/tooltip-fallback.js"
+import {
   createSeriesPoints,
   getBarGroupWidth,
   getCategoryX,
@@ -106,12 +110,7 @@ export function renderBarSeries(component, frame) {
             height=${height}
             fill=${fill}
           >
-            ${resolveTooltipTitle(
-              frame.entity,
-              component,
-              row,
-              component.props?.dataKey,
-            )}
+            ${resolveTooltipTitle(frame.entity, component, row, component.props?.dataKey)}
           </rect>
         `
       })}
@@ -127,6 +126,7 @@ export function renderDots(component, frame) {
     resolveSeriesColor(frame, component.props?.dataKey)
   const radius = component.props?.r || 4
   const dataKey = component.props?.dataKey
+  const useOverlayTooltip = canUseOverlayTooltip(frame)
 
   return svg`
     <g class="iw-chart-dots">
@@ -139,13 +139,20 @@ export function renderDots(component, frame) {
             fill=${fill}
             pointer-events="all"
             style="cursor: pointer;"
-            @mouseenter=${(e) =>
-              updateTooltip(e, point.row, frame, dataKey, fill)}
-            @mousemove=${(e) =>
-              updateTooltip(e, point.row, frame, dataKey, fill)}
-            @mouseleave=${() => clearTooltip(frame)}
+            @mouseenter=${(e) => updateTooltip(e, point.row, frame, dataKey, fill)}
+            @mousemove=${(e) => updateTooltip(e, point.row, frame, dataKey, fill)}
+            @mouseleave=${(e) => clearTooltip(frame, e)}
           >
-            ${resolveTooltipTitle(frame.entity, component, point.row, dataKey)}
+            ${
+              frame.entity?.tooltipEnabled && useOverlayTooltip
+                ? ""
+                : resolveTooltipTitle(
+                    frame.entity,
+                    component,
+                    point.row,
+                    dataKey,
+                  )
+            }
           </circle>
         `,
       )}
@@ -155,7 +162,6 @@ export function renderDots(component, frame) {
 
 function updateTooltip(event, row, frame, dataKey, fill) {
   if (!frame.entity?.tooltipEnabled || !row) return
-  if (!frame.interactionEntity) return
 
   const svgEl = event.currentTarget?.closest?.("svg") || event.target
   const svgRect = svgEl?.getBoundingClientRect?.()
@@ -163,43 +169,48 @@ function updateTooltip(event, row, frame, dataKey, fill) {
 
   const relativeX = event.clientX - svgRect.left
   const relativeY = event.clientY - svgRect.top
-
-  const tooltipWidth = 140
-  const tooltipHeight = 60
   const offset = 15
+  const x = Math.max(
+    0,
+    Math.min((frame.dimensions?.width ?? 0) - 140, relativeX + offset),
+  )
+  const y = Math.max(
+    0,
+    Math.min((frame.dimensions?.height ?? 0) - 60, relativeY - offset),
+  )
 
-  let x = relativeX + offset
-  let y = relativeY - offset
-
-  const maxX = (frame.dimensions?.width ?? 0) - tooltipWidth
-  const maxY = (frame.dimensions?.height ?? 0) - tooltipHeight
-
-  x = Math.max(0, Math.min(maxX, x))
-  y = Math.max(0, Math.min(maxY, y))
-
-  const xKey = frame.entity.xKey
-  const label = row?.[xKey] ?? row?.label ?? row?.name ?? ""
+  const label = row?.[frame.entity.xKey] ?? row?.label ?? row?.name ?? ""
   const value = dataKey ? row?.[dataKey] : row?.value
 
-  frame.interactionEntity.tooltip = {
-    x,
-    y,
-    label,
-    value,
-    color: fill,
+  if (!canUseOverlayTooltip(frame)) {
+    showFallbackTooltip(svgEl, x, y, label, value, fill)
+    return
   }
+
+  frame.interactionEntity.tooltip = { x, y, label, value, color: fill }
   notifyUpdate(frame)
 }
 
-function clearTooltip(frame) {
-  if (!frame.entity?.tooltipEnabled) return
-  if (!frame.interactionEntity) return
+function clearTooltip(frame, event) {
+  if (!canUseOverlayTooltip(frame)) {
+    hideFallbackTooltip(event?.currentTarget?.closest?.("svg"))
+    return
+  }
+
   frame.interactionEntity.tooltip = null
   notifyUpdate(frame)
 }
 
 function notifyUpdate(frame) {
-  const targetId = frame.interactionEntity?.id ?? frame.entity?.id ?? null
+  const targetId = frame.interactionEntity?.id ?? null
   if (!targetId || !frame.api?.notify) return
   frame.api.notify(`#${targetId}:update`)
+}
+
+function canUseOverlayTooltip(frame) {
+  return Boolean(
+    frame?.storeBackedInteraction &&
+    frame?.api?.notify &&
+    frame?.interactionEntity?.id,
+  )
 }
