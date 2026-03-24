@@ -1,26 +1,5 @@
 /* eslint-disable no-magic-numbers */
 
-const X_VALUE_KEYS = ["name", "label", "date", "x"]
-const PALETTE = [
-  "#3b82f6",
-  "#8b5cf6",
-  "#10b981",
-  "#f59e0b",
-  "#ef4444",
-  "#06b6d4",
-  "#ec4899",
-  "#64748b",
-]
-const NON_SERIES_KEYS = new Set([
-  "id",
-  "type",
-  "name",
-  "label",
-  "date",
-  "x",
-  "color",
-])
-
 export function createChartEntity(entity, requestedKeys) {
   const colors = resolveColors(entity.colors)
 
@@ -78,11 +57,7 @@ function createPieData(rawData) {
 
 function createCartesianData(rawData, requestedKeys) {
   if (!Array.isArray(rawData) || rawData.length === 0) {
-    return {
-      rows: [],
-      xKey: "name",
-      seriesKeys: requestedKeys,
-    }
+    return { rows: [], xKey: "name", seriesKeys: requestedKeys }
   }
 
   if (Array.isArray(rawData[0]?.values)) {
@@ -116,11 +91,7 @@ function normalizeLongSeriesData(seriesList) {
     })
   })
 
-  return {
-    rows: rowsByIndex,
-    xKey: "name",
-    seriesKeys,
-  }
+  return { rows: rowsByIndex, xKey: "name", seriesKeys }
 }
 
 function normalizePointSeriesData(points) {
@@ -130,11 +101,7 @@ function normalizePointSeriesData(points) {
     value: resolveNumericValue(point),
   }))
 
-  return {
-    rows,
-    xKey: "name",
-    seriesKeys: ["value"],
-  }
+  return { rows, xKey: "name", seriesKeys: ["value"] }
 }
 
 function normalizeWideSeriesData(rows, requestedKeys) {
@@ -146,14 +113,11 @@ function normalizeWideSeriesData(rows, requestedKeys) {
     [xKey]: row?.[xKey] ?? row?.name ?? row?.label ?? row?.date ?? `${index}`,
   }))
 
-  return {
-    rows: normalizedRows,
-    xKey,
-    seriesKeys,
-  }
+  return { rows: normalizedRows, xKey, seriesKeys }
 }
 
 function resolveXKey(rows) {
+  const X_VALUE_KEYS = ["name", "label", "date", "x"]
   const firstRow = rows[0] || {}
 
   for (const key of X_VALUE_KEYS) {
@@ -164,6 +128,15 @@ function resolveXKey(rows) {
 }
 
 function inferSeriesKeys(rows, xKey) {
+  const NON_SERIES_KEYS = new Set([
+    "id",
+    "type",
+    "name",
+    "label",
+    "date",
+    "x",
+    "color",
+  ])
   const keys = new Set()
 
   rows.forEach((row) => {
@@ -173,13 +146,21 @@ function inferSeriesKeys(rows, xKey) {
     })
   })
 
-  if (keys.size > 0) return [...keys]
-  return ["value"]
+  return keys.size > 0 ? [...keys] : ["value"]
 }
 
 function resolveColors(colors) {
-  if (Array.isArray(colors) && colors.length > 0) return colors
-  return [...PALETTE]
+  const PALETTE = [
+    "#3b82f6",
+    "#8b5cf6",
+    "#10b981",
+    "#f59e0b",
+    "#ef4444",
+    "#06b6d4",
+    "#ec4899",
+    "#64748b",
+  ]
+  return Array.isArray(colors) && colors.length > 0 ? colors : [...PALETTE]
 }
 
 function createPadding(padding, width, height) {
@@ -193,12 +174,7 @@ function createPadding(padding, width, height) {
   if (padding == null) return base
 
   if (typeof padding === "number") {
-    return {
-      top: padding,
-      right: padding,
-      bottom: padding,
-      left: padding,
-    }
+    return { top: padding, right: padding, bottom: padding, left: padding }
   }
 
   return {
