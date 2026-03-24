@@ -3,9 +3,6 @@
 import { max, min, sum } from "d3-array"
 import { scaleBand, scaleLinear, scalePoint } from "d3-scale"
 
-const DEFAULT_BAR_PADDING = 0.18
-const SERIES_COMPONENTS = ["line", "area", "bar"]
-
 export function createScales(entity, components, dimensions) {
   if (entity.type === "pie" || entity.type === "donut") {
     return {
@@ -29,7 +26,7 @@ export function createScales(entity, components, dimensions) {
     ? scaleBand()
         .domain(xDomain)
         .range([dimensions.plotLeft, dimensions.plotRight])
-        .padding(DEFAULT_BAR_PADDING)
+        .padding(0.18)
     : scalePoint()
         .domain(xDomain)
         .range([dimensions.plotLeft, dimensions.plotRight])
@@ -52,12 +49,11 @@ export function createScales(entity, components, dimensions) {
 
 function getPlottedKeys(entity, components) {
   const plotted = components
-    .filter((component) => SERIES_COMPONENTS.includes(component.type))
+    .filter((component) => ["line", "area", "bar"].includes(component.type))
     .map((component) => component.props?.dataKey)
     .filter(Boolean)
 
-  if (plotted.length > 0) return plotted
-  return entity.seriesKeys
+  return plotted.length > 0 ? plotted : entity.seriesKeys
 }
 
 function getYDomain(rows, plottedKeys, components) {
