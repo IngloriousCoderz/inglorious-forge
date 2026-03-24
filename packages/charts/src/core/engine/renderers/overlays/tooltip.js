@@ -15,7 +15,11 @@ export function renderTooltipOverlay(component, frame) {
   const safeY = Number.isFinite(y) ? y : 0
 
   return svg`
-    <g class="iw-chart-modal" transform="translate(${safeX}, ${safeY})">
+    <g
+      class="iw-chart-modal"
+      transform="translate(${safeX}, ${safeY})"
+      pointer-events="none"
+    >
       <rect
         x="0"
         y="0"
