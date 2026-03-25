@@ -22,33 +22,10 @@ export const DEFAULT_COMPONENTS = {
   composed: buildDefaultComposedComponents,
 }
 
-function buildCartesianScaffold(entity) {
-  const components = []
-
-  if (entity.showGrid !== false) {
-    components.push(CartesianGrid())
-  }
-
-  components.push(XAxis({ dataKey: entity.xKey }))
-  components.push(YAxis())
-
-  return components
-}
-
-function addSharedCartesianOverlays(components, entity) {
-  if (entity.showLegend !== false && entity.seriesKeys.length > 1) {
-    components.push(Legend({}))
-  }
-
-  if (entity.showTooltip === true) {
-    components.push(Tooltip({}))
-  }
-
-  if (shouldShowBrush(entity)) {
-    components.push(Brush({ height: entity.brush.height || 30 }))
-  }
-
-  return components
+const CARTESIAN_COMPONENTS = {
+  area: Area,
+  bar: Bar,
+  line: Line,
 }
 
 function buildDefaultLineComponents(entity) {
@@ -137,46 +114,46 @@ function buildDefaultComposedComponents(entity) {
 
   series.forEach((item, index) => {
     if (!item || typeof item !== "object") return
+    const Component = CARTESIAN_COMPONENTS[item.kind]
+    if (!Component) return
+    const color = entity.colors[index]
 
-    switch (item.kind) {
-      case "area":
-        components.push(
-          Area({
-            dataKey: item.dataKey,
-            stroke: item.stroke || entity.colors[index],
-            fill: item.fill || entity.colors[index],
-            fillOpacity: item.fillOpacity ?? 0.3,
-            showDots: item.showDots,
-            showTooltip: item.showTooltip,
-            stackId: item.stackId,
-          }),
-        )
-        break
-
-      case "bar":
-        components.push(
-          Bar({
-            dataKey: item.dataKey,
-            fill: item.fill || entity.colors[index],
-            showTooltip: item.showTooltip,
-          }),
-        )
-        break
-
-      case "line":
-        components.push(
-          Line({
-            dataKey: item.dataKey,
-            stroke: item.stroke || entity.colors[index],
-            showDots: item.showDots,
-            showTooltip: item.showTooltip,
-          }),
-        )
-        break
-    }
+    components.push(
+      Component({
+        stroke: color,
+        fill: color,
+        fillOpacity: 0.3,
+        ...item,
+      }),
+    )
   })
 
   return addSharedCartesianOverlays(components, entity)
+}
+
+function addSharedCartesianOverlays(components, entity) {
+  const overlays = [
+    entity.showLegend !== false && entity.seriesKeys.length > 1 && Legend({}),
+    entity.showTooltip === true && Tooltip({}),
+    shouldShowBrush(entity) && Brush({ height: entity.brush.height || 30 }),
+  ].filter(Boolean)
+
+  components.push(...overlays)
+
+  return components
+}
+
+function buildCartesianScaffold(entity) {
+  const components = []
+
+  if (entity.showGrid !== false) {
+    components.push(CartesianGrid())
+  }
+
+  components.push(XAxis({ dataKey: entity.xKey }))
+  components.push(YAxis())
+
+  return components
 }
 
 function shouldShowBrush(entity) {
