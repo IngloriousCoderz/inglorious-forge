@@ -43,8 +43,8 @@ export const store = createStore({
       ],
       width: 800,
       height: 400,
-      showGrid: true,
-      showTooltip: true,
+      hasGrid: true,
+      hasTooltip: true,
     },
   },
 })

@@ -8,9 +8,9 @@ describe("default components", () => {
       xKey: "name",
       seriesKeys: ["valueA", "valueB"],
       colors: ["#111111", "#222222"],
-      showGrid: true,
-      showLegend: true,
-      showTooltip: true,
+      hasGrid: true,
+      hasLegend: true,
+      hasTooltip: true,
       brush: { enabled: true, visible: true, height: 24 },
     })
 
@@ -27,7 +27,7 @@ describe("default components", () => {
     expect(components[3].props).toMatchObject({
       dataKey: "valueA",
       stroke: "#111111",
-      showDots: true,
+      hasDots: true,
     })
   })
 
@@ -37,7 +37,7 @@ describe("default components", () => {
       seriesKeys: ["Revenue", "Expenses"],
       colors: ["#111111", "#222222"],
       stacked: true,
-      showTooltip: true,
+      hasTooltip: true,
     })
 
     const areaComponents = components.filter(
@@ -65,12 +65,12 @@ describe("default components", () => {
     const pieComponents = DEFAULT_COMPONENTS.pie({
       dataKey: "amount",
       nameKey: "category",
-      showTooltip: true,
+      hasTooltip: true,
     })
     const donutComponents = DEFAULT_COMPONENTS.donut({
       dataKey: "amount",
       nameKey: "category",
-      showTooltip: true,
+      hasTooltip: true,
     })
 
     expect(pieComponents[0]).toMatchObject({
@@ -95,7 +95,7 @@ describe("default components", () => {
         { kind: "line", dataKey: "forecast" },
       ],
       seriesKeys: ["revenue", "target", "forecast"],
-      showTooltip: true,
+      hasTooltip: true,
     })
 
     expect(components.map((component) => component.type)).toEqual([

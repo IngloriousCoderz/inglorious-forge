@@ -16,9 +16,9 @@ describe("chart handlers", () => {
     expect(entity.width).toBe(800)
     expect(entity.height).toBe(400)
     expect(entity.data).toEqual([])
-    expect(entity.showGrid).toBe(true)
-    expect(entity.showLegend).toBe(false)
-    expect(entity.showTooltip).toBe(false)
+    expect(entity.hasGrid).toBe(true)
+    expect(entity.hasLegend).toBe(false)
+    expect(entity.hasTooltip).toBe(false)
     expect(entity.colors.length).toBeGreaterThan(0)
   })
 
@@ -28,7 +28,7 @@ describe("chart handlers", () => {
       width: 900,
       height: 320,
       data: [{ name: "Jan", value: 10 }],
-      showLegend: true,
+      hasLegend: true,
     }
 
     create(entity)
@@ -36,7 +36,7 @@ describe("chart handlers", () => {
     expect(entity.width).toBe(900)
     expect(entity.height).toBe(320)
     expect(entity.data).toEqual([{ name: "Jan", value: 10 }])
-    expect(entity.showLegend).toBe(true)
+    expect(entity.hasLegend).toBe(true)
   })
 
   it("initializes brush defaults during create", () => {

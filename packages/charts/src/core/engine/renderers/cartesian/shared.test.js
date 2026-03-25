@@ -21,7 +21,7 @@ function createBaseFrame() {
       xKey: "name",
       seriesKeys: ["revenue", "cost"],
       colors: ["#2563eb", "#f97316"],
-      tooltipEnabled: true,
+      isTooltipEnabled: true,
       data: [
         { name: "Jan", revenue: 10, cost: 4 },
         { name: "Feb", revenue: 16, cost: 8 },
@@ -96,13 +96,13 @@ describe("shared render helpers", () => {
 
   it("creates tooltip titles only when enabled", () => {
     const enabled = resolveTooltipTitle(
-      { xKey: "name", tooltipEnabled: true },
+      { xKey: "name", isTooltipEnabled: true },
       { props: {} },
       { name: "Jan", revenue: 10 },
       "revenue",
     )
     const disabled = resolveTooltipTitle(
-      { xKey: "name", tooltipEnabled: false },
+      { xKey: "name", isTooltipEnabled: false },
       { props: {} },
       { name: "Jan", revenue: 10 },
       "revenue",

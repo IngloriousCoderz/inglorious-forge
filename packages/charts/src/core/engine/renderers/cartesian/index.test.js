@@ -16,7 +16,7 @@ function createFrame() {
       xKey: "name",
       seriesKeys: ["revenue", "cost"],
       colors: ["#2563eb", "#f97316"],
-      tooltipEnabled: true,
+      isTooltipEnabled: true,
       data: [
         { name: "Jan", revenue: 10, cost: 4 },
         { name: "Feb", revenue: 16, cost: 8 },
@@ -46,7 +46,7 @@ describe("cartesian renderers", () => {
       {
         props: {
           dataKey: "revenue",
-          showDots: true,
+          hasDots: true,
         },
       },
       createFrame(),
@@ -94,14 +94,14 @@ describe("cartesian renderers", () => {
         type: "bar",
         props: {
           dataKey: "revenue",
-          showTooltip: true,
+          hasTooltip: true,
         },
       },
       {
         ...createFrame(),
         entity: {
           ...createFrame().entity,
-          tooltipEnabled: false,
+          isTooltipEnabled: false,
         },
       },
     )
