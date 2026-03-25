@@ -15,7 +15,6 @@ import {
 } from "./renderers/cartesian/index.js"
 import { renderBrush } from "./renderers/overlays/brush.js"
 import { renderLegend } from "./renderers/overlays/legend.js"
-import { renderTooltipOverlay } from "./renderers/overlays/tooltip.js"
 import { renderCenterText, renderPieSeries } from "./renderers/polar/index.js"
 
 export function renderFrame(frame) {
@@ -85,7 +84,6 @@ const RENDERERS = {
   pie: renderPieSeries,
   legend: renderLegend,
   brush: renderBrush,
-  tooltip: renderTooltipOverlay,
 }
 
 function renderComponent(component, frame) {
