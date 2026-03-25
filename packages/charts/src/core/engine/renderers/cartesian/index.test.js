@@ -88,6 +88,32 @@ describe("cartesian renderers", () => {
     expect(rects).toHaveLength(2)
   })
 
+  it("wires runtime tooltip handlers for bars that opt in", () => {
+    const result = renderBarSeries(
+      {
+        type: "bar",
+        props: {
+          dataKey: "revenue",
+          showTooltip: true,
+        },
+      },
+      {
+        ...createFrame(),
+        entity: {
+          ...createFrame().entity,
+          tooltipEnabled: false,
+        },
+      },
+    )
+
+    const rects = result.values.find(Array.isArray)
+    const rectMarkup = String(rects[0].strings.join(""))
+
+    expect(rectMarkup).toContain("@mouseenter=")
+    expect(rectMarkup).toContain("@mousemove=")
+    expect(rectMarkup).toContain("@mouseleave=")
+  })
+
   it("renders dots for each series point", () => {
     const result = renderDots(
       {
