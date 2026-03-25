@@ -102,14 +102,13 @@ export function applyBrushWindow(entity, components, tooltipEnabled) {
 }
 
 export function getTooltipState(entity, components) {
-  if (entity.showTooltip === true) return true
-  if (entity.showTooltip === false) {
-    return components.some((component) => component.type === "tooltip")
-  }
-
   if (components.some((component) => component.type === "tooltip")) return true
 
-  return components.some((component) => component.props?.showTooltip === true)
+  if (components.some((component) => component.props?.showTooltip === true)) {
+    return true
+  }
+
+  return entity.showTooltip === true
 }
 
 export function getComponents(children) {

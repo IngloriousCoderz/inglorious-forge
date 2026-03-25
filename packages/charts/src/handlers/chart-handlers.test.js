@@ -18,7 +18,7 @@ describe("chart handlers", () => {
     expect(entity.data).toEqual([])
     expect(entity.showGrid).toBe(true)
     expect(entity.showLegend).toBe(false)
-    expect(entity.showTooltip).toBe(true)
+    expect(entity.showTooltip).toBe(false)
     expect(entity.colors.length).toBeGreaterThan(0)
   })
 

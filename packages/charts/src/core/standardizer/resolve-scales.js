@@ -5,15 +5,24 @@ import { scaleBand, scaleLinear, scalePoint } from "d3-scale"
 
 export function createScales(entity, components, dimensions) {
   if (entity.type === "pie" || entity.type === "donut") {
+    const pieComponent = getPolarComponent(components)
+    const polarProps = pieComponent?.props || {}
+
     return {
-      centerX: resolveRadiusValue(entity.cx || "50%", dimensions.width),
-      centerY: resolveRadiusValue(entity.cy || "50%", dimensions.height),
+      centerX: resolveRadiusValue(
+        polarProps.cx ?? entity.cx ?? "50%",
+        dimensions.width,
+      ),
+      centerY: resolveRadiusValue(
+        polarProps.cy ?? entity.cy ?? "50%",
+        dimensions.height,
+      ),
       outerRadius: resolveRadiusValue(
-        entity.outerRadius || "70%",
+        polarProps.outerRadius ?? entity.outerRadius ?? "70%",
         Math.min(dimensions.width, dimensions.height) / 2,
       ),
       innerRadius: resolveRadiusValue(
-        entity.innerRadius || 0,
+        polarProps.innerRadius ?? entity.innerRadius ?? 0,
         Math.min(dimensions.width, dimensions.height) / 2,
       ),
     }
@@ -97,6 +106,10 @@ function collectAreaStackGroups(components) {
   })
 
   return [...groups.values()]
+}
+
+function getPolarComponent(components) {
+  return components.find((component) => component.type === "pie")
 }
 
 function resolveRadiusValue(value, base) {
