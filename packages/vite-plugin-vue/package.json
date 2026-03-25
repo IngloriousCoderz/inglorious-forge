@@ -34,6 +34,7 @@
   },
   "dependencies": {
     "@babel/core": "^7.28.5",
+    "@babel/generator": "^7.29.0",
     "@babel/parser": "^7.29.0",
     "@babel/plugin-syntax-typescript": "^7.28.6",
     "@babel/types": "^7.29.0",
@@ -41,7 +42,6 @@
     "htmlparser2": "^10.1.0"
   },
   "devDependencies": {
-    "@babel/generator": "^7.29.0",
     "@inglorious/eslint-config": "workspace:*",
     "vitest": "^2.0.4"
   },

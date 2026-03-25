@@ -485,10 +485,12 @@ function createImportSpecifier(name) {
  */
 function toCamelCase(input) {
   // Step 1: kebab-case → camelCase
-  const camel = input.replace(/-([a-z0-9])/gi, (_, c) => c.toUpperCase())
+  const [firstChar, ...rest] = input.replace(/-([a-z0-9])/gi, (_, c) =>
+    c.toUpperCase(),
+  )
 
   // Step 2: PascalCase → camelCase
-  return camel.charAt(0).toLowerCase() + camel.slice(1)
+  return [firstChar.toLowerCase(), ...rest].join("")
 }
 
 function isJsx(node) {

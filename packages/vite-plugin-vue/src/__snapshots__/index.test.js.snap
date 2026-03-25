@@ -74,7 +74,7 @@ export const testComponent = {
         \${todo.text}
       </li>\`)}
     </ul>\`, () => html\`<p>No todos</p>\`)}
-    html\`<p>No todos</p>\`
+    
   </div>\`;
   }
 };
@@ -116,18 +116,18 @@ export const testComponent = {
 
   render(entity, api) {
     return html\`<div class="todos">
-    html\`<form @submit="\${() => api.notify(\`#\${entity.id}:addTodo\`)}">
-      html\`<input .value="\${entity.newTodo}" @input="\${() => api.notify(\`#\${entity.id}:updateNewTodo\`)}"></input>\`
-      html\`<button type="submit">Add</button>\`
-    </form>\`
+    <form @submit="\${() => api.notify(\`#\${entity.id}:addTodo\`)}">
+      <input .value="\${entity.newTodo}" @input="\${() => api.notify(\`#\${entity.id}:updateNewTodo\`)}"></input>
+      <button type="submit">Add</button>
+    </form>
     \${when(entity.todos.length > 0, () => html\`<ul>
       \${repeat(entity.todos, todo => todo.id, (todo) => html\`<li>
-        html\`<input type="checkbox" .checked="\${todo.done}" @change="\${() => api.notify(\`#\${entity.id}:toggleTodo\`, todo.id)}"></input>\`
-        html\`<span>\${todo.text}</span>\`
-        html\`<button @click="\${() => api.notify(\`#\${entity.id}:removeTodo\`, todo.id)}">×</button>\`
+        <input type="checkbox" .checked="\${todo.done}" @change="\${() => api.notify(\`#\${entity.id}:toggleTodo\`, todo.id)}"></input>
+        <span>\${todo.text}</span>
+        <button @click="\${() => api.notify(\`#\${entity.id}:removeTodo\`, todo.id)}">×</button>
       </li>\`)}
     </ul>\`, () => html\`<p>No todos yet!</p>\`)}
-    html\`<p>No todos yet!</p>\`
+    
   </div>\`;
   }
 };
@@ -208,7 +208,7 @@ exports[`@inglorious/vite-plugin-vue > conditionals > handles v-if / v-else 1`] 
 export const testComponent = {
   render(entity, api) {
     return html\`\${when(entity.show, () => html\`<div>Yes</div>\`, () => html\`<div>No</div>\`)}
-  html\`<div>No</div>\`\`;
+  \`;
   }
 };
 "
@@ -221,7 +221,7 @@ export const testComponent = {
   render(entity, api) {
     return html\`\${when(entity.status === 'loading', () => html\`<div>Loading</div>\`, () => when(entity.status === 'error', () => html\`<div>Error</div>\`, () => html\`<div>Success</div>\`))}
   html\`<div>Error</div>\`
-  html\`<div>Success</div>\`\`;
+  \`;
   }
 };
 "
@@ -243,30 +243,14 @@ export const testComponent = {
 "
 `;
 
-exports[`@inglorious/vite-plugin-vue > distinguishing between in-scope and out-of-scope primitives > uses primitive.render(props) for in-scope components and api.render(entityId) for out-of-scope 1`] = `
-"import { html } from "@inglorious/web";
-
-import { dataGrid as DataGrid } from "./components";
-
-export const testComponent = {
-  render(entity, api) {
-    return html\`<div>
-    \${DataGrid.render({ prop1: "value" })}
-    \${api.render("dataGrid1")}
-  </div>\`;
-  }
-};
-"
-`;
-
 exports[`@inglorious/vite-plugin-vue > edge cases > handles self-closing tags 1`] = `
 "import { html } from "@inglorious/web";
 
 export const testComponent = {
   render(entity, api) {
     return html\`<div>
-    html\`<input type="text"></input>\`
-    html\`<br></br>\`
+    <input type="text"></input>
+    <br></br>
   </div>\`;
   }
 };

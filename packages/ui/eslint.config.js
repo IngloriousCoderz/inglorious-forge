@@ -1,15 +1,22 @@
-import browserConfig from "@inglorious/eslint-config/browser"
+import reactConfig from "@inglorious/eslint-config/react"
 import storybookConfig from "@inglorious/eslint-config/storybook"
 import { defineConfig } from "eslint/config"
 
 export default defineConfig([
-  ...browserConfig,
+  ...reactConfig,
   ...storybookConfig,
 
   {
     files: ["**/*.js"],
     rules: {
       "no-magic-numbers": "off",
+    },
+  },
+
+  {
+    files: ["**/*.{jsx,tsx}"],
+    rules: {
+      "react/jsx-no-undef": "off",
     },
   },
 ])

@@ -78,7 +78,7 @@ function mapItemsForRender(items, api) {
       mappedItem.onClick = () => api.notify("#router:navigate", item.href)
     }
 
-    if (router.path === item.href) {
+    if (router?.path === item.href) {
       mappedItem.isSelected = true
     }
 

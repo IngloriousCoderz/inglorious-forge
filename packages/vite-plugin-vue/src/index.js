@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { transformAsync } from "@babel/core"
-import generate from "@babel/generator"
+import { generate } from "@babel/generator"
 import * as babelParser from "@babel/parser"
 import syntaxTs from "@babel/plugin-syntax-typescript"
 import * as t from "@babel/types"
@@ -384,7 +384,9 @@ function transformTemplate(nodes, methodNames = [], scriptImports = new Set()) {
   const parts = []
 
   for (const node of nodes) {
-    parts.push(transformNode(node, imports, methodNames, scriptImports))
+    parts.push(
+      transformNode(node, imports, methodNames, scriptImports, {}, false),
+    )
   }
 
   const code = parts.length === 1 ? parts[0] : `html\`${parts.join("")}\``
@@ -408,11 +410,11 @@ function transformNode(
   methodNames,
   scriptImports,
   context = {},
+  isChild = false,
 ) {
   if (node.type === "text") {
     return transformTextNode(node, imports, context)
   }
-
   if (node.type === "tag") {
     return transformElementNode(
       node,
@@ -420,9 +422,9 @@ function transformNode(
       methodNames,
       scriptImports,
       context,
+      isChild,
     )
   }
-
   return ""
 }
 
@@ -479,47 +481,44 @@ function transformElementNode(
   methodNames,
   scriptImports,
   context,
+  isChild = false,
 ) {
   const { attribs = {} } = node
 
-  // Check for v-if, v-else-if, v-else
   if (attribs["v-if"]) {
     imports.add("when")
     imports.add("html")
     const condition = attribs["v-if"]
     delete attribs["v-if"]
 
-    // Build the consequent (this element without v-if)
     const consequent = buildElement(
       node,
       imports,
       methodNames,
       scriptImports,
       context,
+      false, // always false
     )
-
-    // Check for v-else-if or v-else siblings
     const alternate = findAlternate(
       node,
       imports,
       methodNames,
       scriptImports,
       context,
+      isChild,
     )
 
     if (alternate) {
-      return `\${when(${wrapWithEntity(condition, context)}, () => ${consequent}, () => ${alternate})}`
+      return `\${when(${wrapWithEntity(condition, context, scriptImports)}, () => ${consequent}, () => ${alternate})}`
     } else {
-      return `\${when(${wrapWithEntity(condition, context)}, () => ${consequent})}`
+      return `\${when(${wrapWithEntity(condition, context, scriptImports)}, () => ${consequent})}`
     }
   }
 
-  // Skip v-else-if and v-else (they're handled by v-if)
   if (attribs["v-else-if"] || attribs["v-else"] !== undefined) {
     return ""
   }
 
-  // Check for v-for
   if (attribs["v-for"]) {
     imports.add("repeat")
     imports.add("html")
@@ -531,32 +530,27 @@ function transformElementNode(
     delete attribs[":key"]
     delete attribs["v-bind:key"]
 
-    // Parse v-for: "item in items" or "(item, index) in items"
     const forMatch = vFor.match(/^(?:\(([^)]+)\)|(\w+))\s+in\s+(.+)$/)
-    if (!forMatch) {
-      throw new Error(`Invalid v-for syntax: ${vFor}`)
-    }
+    if (!forMatch) throw new Error(`Invalid v-for syntax: ${vFor}`)
 
     const params = forMatch[1] || forMatch[2]
     const items = forMatch[3].trim()
-
-    // Parse parameters: "item, index" or "item"
     const paramList = params.split(",").map((p) => p.trim())
     const itemParam = paramList[0]
     const indexParam = paramList[1] || null
 
-    // Build the template function with the new context
     const newContext = { ...context, loopVar: itemParam, indexVar: indexParam }
+    // Items inside repeat are always children of the repeat call
     const template = buildElement(
       node,
       imports,
       methodNames,
       scriptImports,
       newContext,
+      false,
     )
 
-    // Build repeat() call - items should be wrapped with entity
-    const wrappedItems = wrapWithEntity(items, context)
+    const wrappedItems = wrapWithEntity(items, context, scriptImports)
 
     if (keyAttr) {
       const keyExpr = keyAttr.replace(/^["']|["']$/g, "")
@@ -566,7 +560,14 @@ function transformElementNode(
     }
   }
 
-  return buildElement(node, imports, methodNames, scriptImports, context)
+  return buildElement(
+    node,
+    imports,
+    methodNames,
+    scriptImports,
+    context,
+    isChild,
+  )
 }
 
 /**
@@ -579,30 +580,36 @@ function transformElementNode(
  * @param {Object} context - Contextual information.
  * @returns {string} Generated code.
  */
-function buildElement(node, imports, methodNames, scriptImports, context) {
+function buildElement(
+  node,
+  imports,
+  methodNames,
+  scriptImports,
+  context,
+  isChild = false,
+) {
   const { name, attribs = {}, children = [] } = node
 
-  // Check if this is a custom component (starts with uppercase)
+  // Custom component
   if (/^[A-Z]/.test(name)) {
     const props = {}
     for (const [key, value] of Object.entries(attribs)) {
-      // Skip Vue directives
       if (
-        key === "v-if" ||
-        key === "v-else-if" ||
-        key === "v-else" ||
-        key === "v-for" ||
-        key === ":key" ||
-        key === "v-bind:key"
-      ) {
+        ["v-if", "v-else-if", "v-else", "v-for", ":key", "v-bind:key"].includes(
+          key,
+        )
+      )
         continue
-      }
 
       if (key.startsWith(":") || key.startsWith("v-bind:")) {
         const propName = key.startsWith(":")
           ? key.slice(1)
           : key.replace("v-bind:", "")
-        props[propName] = wrapWithEntity(value, context)
+        props[propName] = wrapWithEntity(
+          normalizeWhitespace(value),
+          context,
+          scriptImports,
+        )
       } else {
         props[key] = `"${value}"`
       }
@@ -613,14 +620,11 @@ function buildElement(node, imports, methodNames, scriptImports, context) {
       .join(", ")
     const propsArg = propsStr ? `{ ${propsStr} }` : ""
 
-    // Check if the component is in scope (imported)
     if (scriptImports.has(name)) {
       return `\${${name}.render(${propsArg})}`
     }
 
-    // Convert component name to camelCase for the entity ID
     const componentId = toCamelCase(name)
-
     return `\${api.render("${componentId}"${propsArg ? `, ${propsArg}` : ""})}`
   }
 
@@ -628,26 +632,14 @@ function buildElement(node, imports, methodNames, scriptImports, context) {
 
   const parts = [`<${name}`]
 
-  // Process attributes
   for (const [key, value] of Object.entries(attribs)) {
-    // Skip Vue directives we've already handled
-    if (
-      key === "v-if" ||
-      key === "v-else-if" ||
-      key === "v-else" ||
-      key === "v-for"
-    ) {
-      continue
-    }
+    if (["v-if", "v-else-if", "v-else", "v-for"].includes(key)) continue
 
-    // Handle :prop or v-bind:prop
     if (key.startsWith(":") || key.startsWith("v-bind:")) {
       const propName = key.startsWith(":")
         ? key.slice(1)
         : key.replace("v-bind:", "")
       const actualName = propName === "class" ? "class" : propName
-
-      // Use . prefix for property binding (unless it's class, id, or kebab-case)
       const prefix =
         actualName.includes("-") ||
         actualName === "class" ||
@@ -655,47 +647,40 @@ function buildElement(node, imports, methodNames, scriptImports, context) {
           ? ""
           : "."
 
-      parts.push(
-        ` ${prefix}${actualName}="\${${wrapWithEntity(value, context)}}"`,
+      const wrapped = wrapWithEntity(
+        normalizeWhitespace(value),
+        context,
+        scriptImports,
       )
+      const needsParens = wrapped.trimStart().startsWith("{")
+      const expr = needsParens ? `(${wrapped})` : wrapped
+      parts.push(` ${prefix}${actualName}="\${${expr}}"`)
       continue
     }
 
-    // Handle @event or v-on:event
     if (key.startsWith("@") || key.startsWith("v-on:")) {
       const eventName = key.startsWith("@")
         ? key.slice(1)
         : key.replace("v-on:", "")
-
       const handlerValue = value.trim()
 
-      // Check if it's a simple method reference: "methodName"
       if (methodNames.includes(handlerValue)) {
         parts.push(
           ` @${eventName}="\${() => api.notify(\`#\${entity.id}:${handlerValue}\`)}"`,
         )
-      }
-      // Check if it's an inline arrow function calling a method: "() => methodName(entity, ...args)"
-      else {
-        // Try to detect method calls like: () => methodName(entity, arg1, arg2)
+      } else {
         const methodCallMatch = handlerValue.match(
           /\(\s*(?:e|\)\s*)?\s*=>\s*(\w+)\s*\(/,
         )
-
         if (methodCallMatch) {
           const calledMethod = methodCallMatch[1]
-
           if (methodNames.includes(calledMethod)) {
-            // Extract the arguments after entity (e.g., "entity, todo.id" -> "todo.id")
             const argsMatch = handlerValue.match(/\(\s*entity\s*,\s*([^)]+)\)/)
-
             if (argsMatch) {
-              const args = argsMatch[1].trim()
               parts.push(
-                ` @${eventName}="\${() => api.notify(\`#\${entity.id}:${calledMethod}\`, ${args})}"`,
+                ` @${eventName}="\${() => api.notify(\`#\${entity.id}:${calledMethod}\`, ${argsMatch[1].trim()})}"`,
               )
             } else {
-              // No args after entity, just call with entity
               parts.push(
                 ` @${eventName}="\${() => api.notify(\`#\${entity.id}:${calledMethod}\`)}"`,
               )
@@ -703,49 +688,57 @@ function buildElement(node, imports, methodNames, scriptImports, context) {
             continue
           }
         }
-
-        // Not a method call, pass through as-is
         parts.push(` @${eventName}="\${${handlerValue}}"`)
       }
       continue
     }
 
-    // Regular attributes
     parts.push(` ${key}="${value}"`)
   }
 
   parts.push(">")
 
-  // Process children
-  if (children.length > 0) {
-    for (const child of children) {
-      parts.push(
-        transformNode(child, imports, methodNames, scriptImports, context),
-      )
-    }
+  for (const child of children) {
+    // All children are rendered as raw content (isChild = true)
+    parts.push(
+      transformNode(child, imports, methodNames, scriptImports, context, true),
+    )
   }
 
   parts.push(`</${name}>`)
 
-  return `html\`${parts.join("")}\``
+  const inner = parts.join("")
+  // Only wrap in html` ` at the outermost level
+  return isChild ? inner : `html\`${inner}\``
 }
 
 /**
  * Wrap an expression with entity. prefix if it's not in a loop context
  */
-function wrapWithEntity(expr, context) {
-  // If we're in a v-for loop and the expression uses the loop variable, don't add entity.
-  if (context.loopVar && expr.includes(context.loopVar)) {
-    return expr
-  }
+function wrapWithEntity(expr, context, scriptImports = new Set()) {
+  const trimmed = expr.trim()
 
-  // If expression already starts with entity., don't double-wrap
-  if (expr.trim().startsWith("entity.")) {
-    return expr
-  }
+  if (context.loopVar && trimmed.includes(context.loopVar)) return trimmed
+  if (trimmed.startsWith("entity.")) return trimmed
+  if (
+    trimmed.startsWith("{") ||
+    trimmed.startsWith("[") ||
+    trimmed.startsWith("`") ||
+    trimmed.startsWith("'") ||
+    trimmed.startsWith('"') ||
+    trimmed === "true" ||
+    trimmed === "false" ||
+    trimmed === "null" ||
+    trimmed === "undefined" ||
+    /^\d/.test(trimmed)
+  )
+    return trimmed
 
-  // Otherwise, add entity. prefix
-  return `entity.${expr}`
+  // Don't wrap if root identifier is an import
+  const rootIdent = trimmed.match(/^([a-zA-Z_$][\w$]*)/)?.[1]
+  if (rootIdent && scriptImports.has(rootIdent)) return trimmed
+
+  return `entity.${trimmed}`
 }
 
 /**
@@ -758,7 +751,14 @@ function wrapWithEntity(expr, context) {
  * @param {Object} context - Contextual information.
  * @returns {string|null} Generated code for the alternate, or null.
  */
-function findAlternate(node, imports, methodNames, scriptImports, context) {
+function findAlternate(
+  node,
+  imports,
+  methodNames,
+  scriptImports,
+  context,
+  isChild = false,
+) {
   const parent = node.parent
   if (!parent || !parent.children) return null
 
@@ -786,6 +786,7 @@ function findAlternate(node, imports, methodNames, scriptImports, context) {
           methodNames,
           scriptImports,
           context,
+          false,
         )
         const alternate = findAlternate(
           sibling,
@@ -793,6 +794,7 @@ function findAlternate(node, imports, methodNames, scriptImports, context) {
           methodNames,
           scriptImports,
           context,
+          isChild,
         )
 
         if (alternate) {
@@ -803,13 +805,13 @@ function findAlternate(node, imports, methodNames, scriptImports, context) {
       }
 
       if (attribs["v-else"] !== undefined) {
-        delete attribs["v-else"]
         return buildElement(
           sibling,
           imports,
           methodNames,
           scriptImports,
           context,
+          false,
         )
       }
     }
@@ -819,4 +821,8 @@ function findAlternate(node, imports, methodNames, scriptImports, context) {
   }
 
   return null
+}
+
+function normalizeWhitespace(str) {
+  return str.replace(/\s+/g, " ").trim()
 }

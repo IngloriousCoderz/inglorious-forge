@@ -43,7 +43,7 @@ export function render(props) {
       class=${classMap({
         "iw-progress": true,
         "iw-progress-circular": true,
-        "iw-progress-${color}": true,
+        [`iw-progress-${color}`]: true,
         "iw-progress-indeterminate": progress == null,
         ...extraClasses,
       })}
