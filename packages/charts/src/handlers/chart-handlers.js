@@ -10,7 +10,7 @@ export function create(entity) {
   entity.data ??= []
   entity.showGrid ??= true
   entity.showLegend ??= false
-  entity.showTooltip ??= true
+  entity.showTooltip ??= false
   entity.colors ??= [
     "#3b82f6",
     "#8b5cf6",
