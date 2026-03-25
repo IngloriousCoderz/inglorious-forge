@@ -300,4 +300,22 @@ describe("vite-plugin-jsx", () => {
     `
     expect(await transform(code)).toMatchSnapshot()
   })
+
+  it("distinguishes between in-scope and out-of-scope primitives", async () => {
+    const code = `
+import { dataGrid as DataGrid } from "./components";
+
+export const app = {
+  render(api) {
+    return (
+      <>
+        <DataGrid prop1="value" />
+        <DataGrid1 />
+      </>
+    );
+  },
+};
+`
+    expect(await transform(code)).toMatchSnapshot()
+  })
 })

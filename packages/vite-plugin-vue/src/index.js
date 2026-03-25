@@ -32,9 +32,14 @@ export function vue() {
         const componentName = toCamelCase(path.basename(id))
 
         // Parse the script to understand what's state vs methods
-        const { stateVars, methods } = script
+        const { stateVars, methods, scriptImports, importDecls } = script
           ? parseScript(script, scriptLang)
-          : { stateVars: [], methods: [] }
+          : {
+              stateVars: [],
+              methods: [],
+              scriptImports: new Set(),
+              importDecls: [],
+            }
 
         // Parse the template into a DOM tree
         const dom = parseTemplate(template)
@@ -43,6 +48,7 @@ export function vue() {
         const { code: templateCode, imports } = transformTemplate(
           dom,
           methods.map((m) => m.name),
+          scriptImports,
         )
 
         // Build the final output
@@ -54,8 +60,52 @@ export function vue() {
         if (imports.has("when")) importLines.push("when")
         if (imports.has("repeat")) importLines.push("repeat")
 
-        if (importLines.length > 0) {
-          output += `import { ${importLines.join(", ")} } from "@inglorious/web";\n\n`
+        const generatedImportLines = []
+        let mergedWebImport = false
+
+        if (importDecls.length > 0) {
+          for (let i = 0; i < importDecls.length; i++) {
+            const decl = importDecls[i]
+            if (decl.source.value === "@inglorious/web") {
+              if (importLines.length > 0) {
+                const cloned = t.cloneNode(decl, true)
+                const existing = new Set()
+                for (const specifier of cloned.specifiers) {
+                  if (t.isImportSpecifier(specifier)) {
+                    existing.add(specifier.imported.name)
+                  }
+                }
+                for (const name of importLines) {
+                  if (!existing.has(name)) {
+                    cloned.specifiers.push(
+                      t.importSpecifier(t.identifier(name), t.identifier(name)),
+                    )
+                  }
+                }
+                generatedImportLines.push(generate(cloned).code)
+              } else {
+                generatedImportLines.push(generate(decl).code)
+              }
+              mergedWebImport = true
+            } else {
+              generatedImportLines.push(generate(decl).code)
+            }
+          }
+        }
+
+        if (!mergedWebImport && importLines.length > 0) {
+          output += `import { ${importLines.join(", ")} } from "@inglorious/web";\n`
+        }
+
+        if (generatedImportLines.length > 0) {
+          if (!mergedWebImport && importLines.length > 0) {
+            output += "\n"
+          }
+          output += `${generatedImportLines.join("\n")}\n`
+        }
+
+        if (output.length > 0) {
+          output += "\n"
         }
 
         // Create the component export
@@ -154,10 +204,25 @@ function parseScript(script, lang) {
 
     const stateVars = []
     const methods = []
+    const scriptImports = new Set()
+    const importDecls = []
 
     for (const node of ast.program.body) {
+      // Handle imports
+      if (t.isImportDeclaration(node)) {
+        importDecls.push(node)
+        for (const specifier of node.specifiers) {
+          if (
+            t.isImportSpecifier(specifier) ||
+            t.isImportDefaultSpecifier(specifier) ||
+            t.isImportNamespaceSpecifier(specifier)
+          ) {
+            scriptImports.add(specifier.local.name)
+          }
+        }
+      }
       // Handle variable declarations (const value = 0)
-      if (t.isVariableDeclaration(node)) {
+      else if (t.isVariableDeclaration(node)) {
         for (const declarator of node.declarations) {
           if (!t.isIdentifier(declarator.id)) continue
 
@@ -199,7 +264,7 @@ function parseScript(script, lang) {
       }
     }
 
-    return { stateVars, methods }
+    return { stateVars, methods, scriptImports, importDecls }
   } catch (error) {
     throw new Error(`Failed to parse script: ${error.message}`)
   }
@@ -311,14 +376,15 @@ function parseTemplate(html) {
  *
  * @param {Array} nodes - Array of DOM nodes.
  * @param {Array<string>} methodNames - List of method names to recognize as event handlers
+ * @param {Set<string>} scriptImports - List of imported names from the script section
  * @returns {{ code: string, imports: Set<string> }} Generated code and required imports.
  */
-function transformTemplate(nodes, methodNames = []) {
+function transformTemplate(nodes, methodNames = [], scriptImports = new Set()) {
   const imports = new Set()
   const parts = []
 
   for (const node of nodes) {
-    parts.push(transformNode(node, imports, methodNames))
+    parts.push(transformNode(node, imports, methodNames, scriptImports))
   }
 
   const code = parts.length === 1 ? parts[0] : `html\`${parts.join("")}\``
@@ -332,16 +398,29 @@ function transformTemplate(nodes, methodNames = []) {
  * @param {Object} node - DOM node.
  * @param {Set<string>} imports - Set to track required imports.
  * @param {Array<string>} methodNames - List of method names
+ * @param {Set<string>} scriptImports - List of imported names
  * @param {Object} [context] - Contextual information (e.g., v-for loop variable).
  * @returns {string} Generated code for this node.
  */
-function transformNode(node, imports, methodNames, context = {}) {
+function transformNode(
+  node,
+  imports,
+  methodNames,
+  scriptImports,
+  context = {},
+) {
   if (node.type === "text") {
     return transformTextNode(node, imports, context)
   }
 
   if (node.type === "tag") {
-    return transformElementNode(node, imports, methodNames, context)
+    return transformElementNode(
+      node,
+      imports,
+      methodNames,
+      scriptImports,
+      context,
+    )
   }
 
   return ""
@@ -390,10 +469,17 @@ function transformTextNode(node, imports, context) {
  * @param {Object} node - Element node.
  * @param {Set<string>} imports - Set to track required imports.
  * @param {Array<string>} methodNames - List of method names
+ * @param {Set<string>} scriptImports - List of imported names
  * @param {Object} context - Contextual information.
  * @returns {string} Generated code.
  */
-function transformElementNode(node, imports, methodNames, context) {
+function transformElementNode(
+  node,
+  imports,
+  methodNames,
+  scriptImports,
+  context,
+) {
   const { attribs = {} } = node
 
   // Check for v-if, v-else-if, v-else
@@ -404,10 +490,22 @@ function transformElementNode(node, imports, methodNames, context) {
     delete attribs["v-if"]
 
     // Build the consequent (this element without v-if)
-    const consequent = buildElement(node, imports, methodNames, context)
+    const consequent = buildElement(
+      node,
+      imports,
+      methodNames,
+      scriptImports,
+      context,
+    )
 
     // Check for v-else-if or v-else siblings
-    const alternate = findAlternate(node, imports, methodNames, context)
+    const alternate = findAlternate(
+      node,
+      imports,
+      methodNames,
+      scriptImports,
+      context,
+    )
 
     if (alternate) {
       return `\${when(${wrapWithEntity(condition, context)}, () => ${consequent}, () => ${alternate})}`
@@ -449,7 +547,13 @@ function transformElementNode(node, imports, methodNames, context) {
 
     // Build the template function with the new context
     const newContext = { ...context, loopVar: itemParam, indexVar: indexParam }
-    const template = buildElement(node, imports, methodNames, newContext)
+    const template = buildElement(
+      node,
+      imports,
+      methodNames,
+      scriptImports,
+      newContext,
+    )
 
     // Build repeat() call - items should be wrapped with entity
     const wrappedItems = wrapWithEntity(items, context)
@@ -462,7 +566,7 @@ function transformElementNode(node, imports, methodNames, context) {
     }
   }
 
-  return buildElement(node, imports, methodNames, context)
+  return buildElement(node, imports, methodNames, scriptImports, context)
 }
 
 /**
@@ -471,18 +575,53 @@ function transformElementNode(node, imports, methodNames, context) {
  * @param {Object} node - Element node.
  * @param {Set<string>} imports - Set to track required imports.
  * @param {Array<string>} methodNames - List of method names
+ * @param {Set<string>} scriptImports - List of imported names
  * @param {Object} context - Contextual information.
  * @returns {string} Generated code.
  */
-function buildElement(node, imports, methodNames, context) {
+function buildElement(node, imports, methodNames, scriptImports, context) {
   const { name, attribs = {}, children = [] } = node
 
   // Check if this is a custom component (starts with uppercase)
   if (/^[A-Z]/.test(name)) {
+    const props = {}
+    for (const [key, value] of Object.entries(attribs)) {
+      // Skip Vue directives
+      if (
+        key === "v-if" ||
+        key === "v-else-if" ||
+        key === "v-else" ||
+        key === "v-for" ||
+        key === ":key" ||
+        key === "v-bind:key"
+      ) {
+        continue
+      }
+
+      if (key.startsWith(":") || key.startsWith("v-bind:")) {
+        const propName = key.startsWith(":")
+          ? key.slice(1)
+          : key.replace("v-bind:", "")
+        props[propName] = wrapWithEntity(value, context)
+      } else {
+        props[key] = `"${value}"`
+      }
+    }
+
+    const propsStr = Object.entries(props)
+      .map(([k, v]) => `${k}: ${v}`)
+      .join(", ")
+    const propsArg = propsStr ? `{ ${propsStr} }` : ""
+
+    // Check if the component is in scope (imported)
+    if (scriptImports.has(name)) {
+      return `\${${name}.render(${propsArg})}`
+    }
+
     // Convert component name to camelCase for the entity ID
     const componentId = toCamelCase(name)
 
-    return `\${api.render("${componentId}")}`
+    return `\${api.render("${componentId}"${propsArg ? `, ${propsArg}` : ""})}`
   }
 
   imports.add("html")
@@ -580,7 +719,9 @@ function buildElement(node, imports, methodNames, context) {
   // Process children
   if (children.length > 0) {
     for (const child of children) {
-      parts.push(transformNode(child, imports, methodNames, context))
+      parts.push(
+        transformNode(child, imports, methodNames, scriptImports, context),
+      )
     }
   }
 
@@ -613,10 +754,11 @@ function wrapWithEntity(expr, context) {
  * @param {Object} node - The v-if element node.
  * @param {Set<string>} imports - Set to track required imports.
  * @param {Array<string>} methodNames - List of method names
+ * @param {Set<string>} scriptImports - List of imported names
  * @param {Object} context - Contextual information.
  * @returns {string|null} Generated code for the alternate, or null.
  */
-function findAlternate(node, imports, methodNames, context) {
+function findAlternate(node, imports, methodNames, scriptImports, context) {
   const parent = node.parent
   if (!parent || !parent.children) return null
 
@@ -638,8 +780,20 @@ function findAlternate(node, imports, methodNames, context) {
         const condition = attribs["v-else-if"]
         delete attribs["v-else-if"]
 
-        const consequent = buildElement(sibling, imports, methodNames, context)
-        const alternate = findAlternate(sibling, imports, methodNames, context)
+        const consequent = buildElement(
+          sibling,
+          imports,
+          methodNames,
+          scriptImports,
+          context,
+        )
+        const alternate = findAlternate(
+          sibling,
+          imports,
+          methodNames,
+          scriptImports,
+          context,
+        )
 
         if (alternate) {
           return `when(${wrapWithEntity(condition, context)}, () => ${consequent}, () => ${alternate})`
@@ -650,7 +804,13 @@ function findAlternate(node, imports, methodNames, context) {
 
       if (attribs["v-else"] !== undefined) {
         delete attribs["v-else"]
-        return buildElement(sibling, imports, methodNames, context)
+        return buildElement(
+          sibling,
+          imports,
+          methodNames,
+          scriptImports,
+          context,
+        )
       }
     }
 

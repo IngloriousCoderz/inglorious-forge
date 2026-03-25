@@ -1,5 +1,11 @@
 # @inglorious/vite-plugin-vue
 
+## 0.3.0
+
+### Minor Changes
+
+- Distinguish between in-scope and out-of-scope primitives in Vite plugins
+
 ## 0.2.1
 
 ### Patch Changes

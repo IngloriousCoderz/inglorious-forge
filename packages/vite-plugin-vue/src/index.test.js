@@ -740,4 +740,21 @@ const count: number = 0
       expect(result).toMatchSnapshot()
     })
   })
+
+  it("distinguishes between in-scope and out-of-scope primitives", async () => {
+    const code = `
+<template>
+  <div>
+    <DataGrid prop1="value" />
+    <DataGrid1 />
+  </div>
+</template>
+
+<script>
+import { dataGrid as DataGrid } from "./components";
+</script>
+`
+    const result = await transform(code)
+    expect(result).toMatchSnapshot()
+  })
 })

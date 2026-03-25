@@ -227,6 +227,38 @@ export const testComponent = {
 "
 `;
 
+exports[`@inglorious/vite-plugin-vue > distinguishes between in-scope and out-of-scope primitives 1`] = `
+"import { html } from "@inglorious/web";
+
+import { dataGrid as DataGrid } from "./components";
+
+export const testComponent = {
+  render(entity, api) {
+    return html\`<div>
+    \${DataGrid.render({ prop1: "value" })}
+    \${api.render("dataGrid1")}
+  </div>\`;
+  }
+};
+"
+`;
+
+exports[`@inglorious/vite-plugin-vue > distinguishing between in-scope and out-of-scope primitives > uses primitive.render(props) for in-scope components and api.render(entityId) for out-of-scope 1`] = `
+"import { html } from "@inglorious/web";
+
+import { dataGrid as DataGrid } from "./components";
+
+export const testComponent = {
+  render(entity, api) {
+    return html\`<div>
+    \${DataGrid.render({ prop1: "value" })}
+    \${api.render("dataGrid1")}
+  </div>\`;
+  }
+};
+"
+`;
+
 exports[`@inglorious/vite-plugin-vue > edge cases > handles self-closing tags 1`] = `
 "import { html } from "@inglorious/web";
 

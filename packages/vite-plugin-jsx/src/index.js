@@ -266,7 +266,6 @@ function buildTemplate(node, path, isSvg = false) {
       }
     }
 
-    const name = tag.toLowerCase()
     const props = []
 
     for (const attr of node.openingElement.attributes) {
@@ -288,6 +287,16 @@ function buildTemplate(node, path, isSvg = false) {
 
       props.push(t.objectProperty(t.identifier(key), value))
     }
+
+    // Check if the tag is in scope (e.g. imported)
+    if (path && path.scope.hasBinding(tag)) {
+      return t.callExpression(
+        t.memberExpression(t.identifier(tag), t.identifier("render")),
+        props.length ? [t.objectExpression(props)] : [],
+      )
+    }
+
+    const name = toCamelCase(tag)
 
     return t.callExpression(
       t.memberExpression(t.identifier("api"), t.identifier("render")),
@@ -466,6 +475,20 @@ function createImportSpecifier(name) {
     imported: { type: "Identifier", name },
     local: { type: "Identifier", name },
   }
+}
+
+/**
+ * Convert PascalCase or kebab-case to camelCase.
+ *
+ * @param {string} input - The string to convert.
+ * @returns {string} The camelCased string.
+ */
+function toCamelCase(input) {
+  // Step 1: kebab-case → camelCase
+  const camel = input.replace(/-([a-z0-9])/gi, (_, c) => c.toUpperCase())
+
+  // Step 2: PascalCase → camelCase
+  return camel.charAt(0).toLowerCase() + camel.slice(1)
 }
 
 function isJsx(node) {

@@ -1,5 +1,29 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`vite-plugin-jsx > distinguishes between in-scope and out-of-scope capitalized tags 1`] = `
+"import { html } from "@inglorious/web";
+import { dataGrid as DataGrid } from "./components";
+export const app = {
+  render(api) {
+    return html\` \${DataGrid.render({
+      prop1: "value"
+    })} \${api.render("dataGrid1")} \`;
+  }
+};"
+`;
+
+exports[`vite-plugin-jsx > distinguishes between in-scope and out-of-scope primitives 1`] = `
+"import { html } from "@inglorious/web";
+import { dataGrid as DataGrid } from "./components";
+export const app = {
+  render(api) {
+    return html\` \${DataGrid.render({
+      prop1: "value"
+    })} \${api.render("dataGrid1")} \`;
+  }
+};"
+`;
+
 exports[`vite-plugin-jsx > distinguishes between properties (.) and attributes 1`] = `
 "import { html } from "@inglorious/web";
 const App = () => html\`<my-element id=\${id} class=\${cls} aria-label=\${label} data-test=\${test} .someProp=\${value} .complexData=\${obj}></my-element>\`;"
