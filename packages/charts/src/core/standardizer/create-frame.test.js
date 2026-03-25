@@ -146,4 +146,30 @@ describe("standardizer", () => {
       visible: true,
     })
   })
+
+  it("uses pie component radii for composition donut charts", () => {
+    const frame = createFrameFromRender({
+      type: "donut",
+      width: 500,
+      height: 400,
+      data: [
+        { name: "A", value: 20 },
+        { name: "B", value: 35 },
+      ],
+      children: [
+        {
+          type: "pie",
+          props: {
+            dataKey: "value",
+            nameKey: "name",
+            outerRadius: 140,
+            innerRadius: 84,
+          },
+        },
+      ],
+    })
+
+    expect(frame.scales.outerRadius).toBe(140)
+    expect(frame.scales.innerRadius).toBe(84)
+  })
 })
