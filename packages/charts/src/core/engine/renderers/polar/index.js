@@ -9,7 +9,7 @@ export function renderPieSeries(component, frame) {
   const { entity, scales } = frame
   const dataKey = component.props?.dataKey || entity.dataKey
   const nameKey = component.props?.nameKey || entity.nameKey
-  const showLabel = component.props?.label
+  const hasLabel = component.props?.label
   const labelPosition = component.props?.labelPosition || "outside"
   const layout = createPieLayout()
     .sort(null)
@@ -52,7 +52,7 @@ export function renderPieSeries(component, frame) {
           <g>
             <path d=${createArc(slice) || ""} fill=${fill}>
               ${
-                !frame.entity.tooltipEnabled && component.props?.showTooltip
+                !frame.entity.isTooltipEnabled && component.props?.hasTooltip
                   ? svg`<title>${label}: ${value}</title>`
                   : ""
               }
@@ -79,7 +79,7 @@ export function renderPieSeries(component, frame) {
               @mouseleave=${(event) => clearPolarTooltip(frame, event)}
             />
             ${
-              showLabel
+              hasLabel
                 ? labelPosition === "inside"
                   ? svg`
                       <text
@@ -91,7 +91,7 @@ export function renderPieSeries(component, frame) {
                         dominant-baseline="middle"
                       >
                         ${
-                          component.props?.showPercentage === false
+                          component.props?.hasPercentage === false
                             ? label
                             : `${label} ${percentage}`
                         }
@@ -115,7 +115,7 @@ export function renderPieSeries(component, frame) {
                         ${label}
                       </text>
                       ${
-                        component.props?.showPercentage === false
+                        component.props?.hasPercentage === false
                           ? ""
                           : svg`
                               <text
@@ -157,7 +157,7 @@ export function renderCenterText(frame) {
 }
 
 function updatePolarTooltip(event, frame, { label, fill, percentage }) {
-  if (!frame.entity?.tooltipEnabled) return
+  if (!frame.entity?.isTooltipEnabled) return
 
   const svgEl = event.currentTarget?.closest?.("svg") || event.target
   const svgRect = svgEl?.getBoundingClientRect?.()

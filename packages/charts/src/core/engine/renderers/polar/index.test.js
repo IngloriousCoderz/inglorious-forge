@@ -31,7 +31,7 @@ function createFrame() {
     entity: {
       dataKey: "value",
       nameKey: "name",
-      tooltipEnabled: true,
+      isTooltipEnabled: true,
       colors: ["#2563eb", "#f97316"],
       centerText: "42%",
       data: [

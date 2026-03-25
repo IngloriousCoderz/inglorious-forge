@@ -52,7 +52,7 @@ export function renderPieSection(api) {
             data: inlinePieDataA,
             width: 360,
             height: 280,
-            showTooltip: true,
+            hasTooltip: true,
             children: [
               chart.Pie({
                 dataKey: "value",
@@ -76,7 +76,7 @@ export function renderPieSection(api) {
             data: inlinePieDataB,
             width: 360,
             height: 280,
-            showTooltip: true,
+            hasTooltip: true,
             children: [
               chart.Pie({
                 dataKey: "value",

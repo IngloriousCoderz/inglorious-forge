@@ -17,9 +17,9 @@ export const entities = {
     ],
     width: 800,
     height: 400,
-    showGrid: true,
-    showLegend: false,
-    showTooltip: true,
+    hasGrid: true,
+    hasLegend: false,
+    hasTooltip: true,
   },
 
   // Line Chart - Composition Style
@@ -59,8 +59,8 @@ export const entities = {
     })),
     width: 800,
     height: 400,
-    showGrid: true,
-    showTooltip: true,
+    hasGrid: true,
+    hasTooltip: true,
     brush: {
       enabled: true,
       height: 30,
@@ -119,9 +119,9 @@ export const entities = {
     ],
     width: 800,
     height: 400,
-    showGrid: true,
-    showTooltip: true,
-    showLegend: true,
+    hasGrid: true,
+    hasTooltip: true,
+    hasLegend: true,
   },
 
   // Line Chart with multiple series - Composition Style
@@ -145,9 +145,9 @@ export const entities = {
     },
     width: 800,
     height: 400,
-    showGrid: true,
-    showLegend: false,
-    showTooltip: true,
+    hasGrid: true,
+    hasLegend: false,
+    hasTooltip: true,
   },
 
   // Realtime Line Chart - Sliding Window (Composition Style)
@@ -178,9 +178,9 @@ export const entities = {
     ],
     width: 800,
     height: 400,
-    showGrid: true,
-    showLegend: false,
-    showTooltip: true,
+    hasGrid: true,
+    hasLegend: false,
+    hasTooltip: true,
   },
 
   // Area Chart - Composition Style
@@ -211,7 +211,7 @@ export const entities = {
     ],
     width: 800,
     height: 400,
-    showTooltip: true,
+    hasTooltip: true,
     series: [
       {
         kind: "area",
@@ -219,20 +219,20 @@ export const entities = {
         fill: "#8884d8",
         fillOpacity: "0.3",
         stroke: "#8884d8",
-        showDots: true,
-        showTooltip: true,
+        hasDots: true,
+        hasTooltip: true,
       },
       {
         kind: "bar",
         dataKey: "target",
         fill: "#82ca9d",
-        showTooltip: true,
+        hasTooltip: true,
       },
       {
         kind: "line",
         dataKey: "forecast",
         stroke: "#ff7300",
-        showDots: true,
+        hasDots: true,
       },
     ],
   },
@@ -274,9 +274,9 @@ export const entities = {
     ],
     width: 800,
     height: 400,
-    showGrid: true,
-    showTooltip: true,
-    showLegend: true,
+    hasGrid: true,
+    hasTooltip: true,
+    hasLegend: true,
   },
 
   // Area Chart with multiple series - Composition Style
@@ -328,10 +328,10 @@ export const entities = {
     ],
     width: 800,
     height: 400,
-    showGrid: true,
-    showTooltip: true,
+    hasGrid: true,
+    hasTooltip: true,
     stacked: true,
-    showLegend: true,
+    hasLegend: true,
   },
 
   // Area Chart with multiple series stacked - Composition Style
@@ -365,8 +365,8 @@ export const entities = {
     ],
     width: 800,
     height: 400,
-    showGrid: true,
-    showTooltip: true,
+    hasGrid: true,
+    hasTooltip: true,
   },
 
   // Bar Chart - Composition Style
@@ -412,7 +412,7 @@ export const entities = {
     ],
     width: 500,
     height: 400,
-    showTooltip: true,
+    hasTooltip: true,
   },
 
   // Pie Chart - Composition Style
@@ -441,7 +441,7 @@ export const entities = {
     height: 400,
     cx: "35%", // Custom X position
     cy: "35%", // Custom Y position
-    showTooltip: true,
+    hasTooltip: true,
   },
 
   // Pie Chart with custom position - Composition Style
@@ -468,7 +468,7 @@ export const entities = {
     height: 400,
     startAngle: 180, // Start at 180° (left)
     endAngle: 0, // End at 0° (right) - creates half circle
-    showTooltip: true,
+    hasTooltip: true,
   },
 
   // Pie Chart with partial angle - Composition Style
@@ -494,7 +494,7 @@ export const entities = {
     width: 500,
     height: 400,
     paddingAngle: 5, // 5 degrees gap between sectors
-    showTooltip: true,
+    hasTooltip: true,
   },
 
   // Pie Chart with padding - Composition Style
@@ -521,7 +521,7 @@ export const entities = {
     width: 500,
     height: 400,
     minAngle: 10, // Each sector has at least 10 degrees
-    showTooltip: true,
+    hasTooltip: true,
   },
 
   // Pie Chart with minimum angle - Composition Style
@@ -548,7 +548,7 @@ export const entities = {
     width: 500,
     height: 400,
     cornerRadius: 10, // Rounded edges
-    showTooltip: true,
+    hasTooltip: true,
   },
 
   // Pie Chart with rounded corners - Composition Style
@@ -575,7 +575,7 @@ export const entities = {
     height: 400,
     dataKey: (d) => d.sales, // Extract value from "sales"
     nameKey: (d) => d.product, // Extract label from "product"
-    showTooltip: true,
+    hasTooltip: true,
   },
 
   // Pie Chart with custom data structure - Composition Style
@@ -603,7 +603,7 @@ export const entities = {
     paddingAngle: 3, // Space between sectors
     cornerRadius: 8, // Rounded edges
     minAngle: 5, // Minimum angle per sector
-    showTooltip: true,
+    hasTooltip: true,
   },
 
   // Pie Chart combining multiple features - Composition Style
@@ -634,7 +634,7 @@ export const entities = {
     height: 400,
     centerText: "Total",
     innerRadiusRatio: 0.6,
-    showTooltip: true,
+    hasTooltip: true,
   },
 
   // Donut Chart - Composition Style

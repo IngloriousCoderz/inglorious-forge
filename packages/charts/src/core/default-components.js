@@ -33,7 +33,7 @@ function buildDefaultLineComponents(entity) {
 
   entity.seriesKeys.forEach((dataKey, index) => {
     components.push(
-      Line({ dataKey, stroke: entity.colors[index], showDots: true }),
+      Line({ dataKey, stroke: entity.colors[index], hasDots: true }),
     )
   })
 
@@ -78,11 +78,11 @@ function buildDefaultPieComponents(entity) {
       cx: entity.cx || "50%",
       cy: entity.cy || "50%",
       outerRadius: entity.outerRadius || "70%",
-      label: entity.showLabel !== false,
+      label: entity.hasLabel !== false,
     }),
   ]
 
-  if (entity.showTooltip === true) {
+  if (entity.hasTooltip === true) {
     components.push(Tooltip({}))
   }
 
@@ -101,7 +101,7 @@ function buildDefaultDonutComponents(entity) {
     }),
   ]
 
-  if (entity.showTooltip === true) {
+  if (entity.hasTooltip === true) {
     components.push(Tooltip({}))
   }
 
@@ -133,8 +133,8 @@ function buildDefaultComposedComponents(entity) {
 
 function addSharedCartesianOverlays(components, entity) {
   const overlays = [
-    entity.showLegend !== false && entity.seriesKeys.length > 1 && Legend({}),
-    entity.showTooltip === true && Tooltip({}),
+    entity.hasLegend !== false && entity.seriesKeys.length > 1 && Legend({}),
+    entity.hasTooltip === true && Tooltip({}),
     shouldShowBrush(entity) && Brush({ height: entity.brush.height || 30 }),
   ].filter(Boolean)
 
@@ -146,7 +146,7 @@ function addSharedCartesianOverlays(components, entity) {
 function buildCartesianScaffold(entity) {
   const components = []
 
-  if (entity.showGrid !== false) {
+  if (entity.hasGrid !== false) {
     components.push(CartesianGrid())
   }
 
