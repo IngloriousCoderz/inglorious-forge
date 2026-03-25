@@ -16,7 +16,7 @@ export function createChartEntity(entity, requestedKeys) {
       seriesKeys: [],
       xKey: null,
       padding: createPadding(entity.padding, entity.width, entity.height),
-      tooltipEnabled: entity.showTooltip === true,
+      isTooltipEnabled: entity.hasTooltip === true,
     }
   }
 
@@ -30,7 +30,7 @@ export function createChartEntity(entity, requestedKeys) {
     seriesKeys: cartesianData.seriesKeys,
     xKey: cartesianData.xKey,
     padding: createPadding(entity.padding, entity.width, entity.height),
-    tooltipEnabled: entity.showTooltip === true,
+    isTooltipEnabled: entity.hasTooltip === true,
   }
 }
 

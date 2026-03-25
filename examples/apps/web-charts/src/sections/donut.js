@@ -54,7 +54,7 @@ export function renderDonutSection(api) {
             data: inlineDonutDataA,
             width: 360,
             height: 280,
-            showTooltip: true,
+            hasTooltip: true,
             centerText: "Total",
             children: [
               chart.Pie({
@@ -80,7 +80,7 @@ export function renderDonutSection(api) {
             data: inlineDonutDataB,
             width: 360,
             height: 280,
-            showTooltip: true,
+            hasTooltip: true,
             centerText: "Total",
             children: [
               chart.Pie({

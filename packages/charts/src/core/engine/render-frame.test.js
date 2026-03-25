@@ -14,7 +14,7 @@ describe("engine", () => {
         ],
         xKey: "name",
         colors: ["#111111", "#222222", "#333333"],
-        tooltipEnabled: true,
+        isTooltipEnabled: true,
       },
       components: [
         { type: "area", props: { dataKey: "low", fill: "#111111" } },
@@ -56,7 +56,7 @@ describe("engine", () => {
         fullData: [{ name: "Jan", value: 10 }],
         xKey: "name",
         colors: ["#2563eb"],
-        tooltipEnabled: true,
+        isTooltipEnabled: true,
         brush: {
           enabled: true,
           visible: false,

@@ -31,9 +31,9 @@ export function renderLineSeries(component, frame) {
         stroke=${stroke}
         stroke-width=${component.props?.strokeWidth || 3}
       />
-      ${component.props?.showDots ? renderDots(component, frame) : ""}
+      ${component.props?.hasDots ? renderDots(component, frame) : ""}
       ${
-        canShowTooltip(component, frame) && !component.props?.showDots
+        canShowTooltip(component, frame) && !component.props?.hasDots
           ? renderSeriesTitles(component, frame)
           : ""
       }
@@ -66,9 +66,9 @@ export function renderAreaSeries(component, frame) {
         stroke=${stroke}
         stroke-width=${component.props?.strokeWidth || 3}
       />
-      ${component.props?.showDots ? renderDots(component, frame) : ""}
+      ${component.props?.hasDots ? renderDots(component, frame) : ""}
       ${
-        canShowTooltip(component, frame) && !component.props?.showDots
+        canShowTooltip(component, frame) && !component.props?.hasDots
           ? renderSeriesTitles(component, frame)
           : ""
       }

@@ -8,8 +8,8 @@ const lineEntity = {
   data: generateChartData(),
   width: 400,
   height: 300,
-  showGrid: true,
-  showTooltip: true,
+  hasGrid: true,
+  hasTooltip: true,
 }
 lineChart.create(lineEntity)
 
@@ -19,8 +19,8 @@ const areaEntity = {
   data: generateChartData(),
   width: 400,
   height: 300,
-  showGrid: true,
-  showTooltip: true,
+  hasGrid: true,
+  hasTooltip: true,
 }
 areaChart.create(areaEntity)
 
@@ -30,8 +30,8 @@ const barEntity = {
   data: generateChartData(),
   width: 400,
   height: 300,
-  showGrid: true,
-  showTooltip: true,
+  hasGrid: true,
+  hasTooltip: true,
 }
 barChart.create(barEntity)
 
@@ -44,7 +44,7 @@ const pieEntity = {
   })),
   width: 400,
   height: 300,
-  showTooltip: true,
+  hasTooltip: true,
 }
 pieChart.create(pieEntity)
 

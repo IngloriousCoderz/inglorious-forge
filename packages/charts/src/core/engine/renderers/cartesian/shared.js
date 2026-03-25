@@ -74,7 +74,8 @@ export function resolveSeriesColor(frame, dataKey) {
 }
 
 export function resolveTooltipTitle(entity, component, row, dataKey) {
-  const enabled = entity.tooltipEnabled || component.props?.showTooltip === true
+  const enabled =
+    entity.isTooltipEnabled || component.props?.hasTooltip === true
   if (!enabled) return ""
 
   const label = row?.[entity.xKey] ?? row?.label ?? row?.name ?? "item"
@@ -83,7 +84,7 @@ export function resolveTooltipTitle(entity, component, row, dataKey) {
 }
 
 export function canShowTooltip(component, frame) {
-  return Boolean(frame.entity?.tooltipEnabled || component.props?.showTooltip)
+  return Boolean(frame.entity?.isTooltipEnabled || component.props?.hasTooltip)
 }
 
 export function resolveLegendItems(component, frame) {
