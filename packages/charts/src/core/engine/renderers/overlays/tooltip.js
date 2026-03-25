@@ -1,46 +1,39 @@
-/* eslint-disable no-magic-numbers */
-import { svg } from "@inglorious/web"
+export function showTooltip(svgEl, x, y, label, value, color) {
+  if (!svgEl) return
 
-const TOOLTIP_WIDTH = 140
-const TOOLTIP_HEIGHT = 60
+  let group = svgEl.querySelector(".iw-chart-modal-fallback")
 
-export function renderTooltipOverlay(component, frame) {
-  if (!frame.entity?.tooltipEnabled) return svg``
+  if (!group) {
+    svgEl.insertAdjacentHTML("beforeend", createFallbackTemplate())
+    group = svgEl.querySelector(".iw-chart-modal-fallback")
+  }
+  if (!group) return
 
-  const tooltip = frame.interactionEntity?.tooltip
-  if (!tooltip) return svg``
+  group.setAttribute("transform", `translate(${x}, ${y})`)
+  group.setAttribute("display", "inline")
 
-  const { x, y, label, value, color } = tooltip
-  const safeX = Number.isFinite(x) ? x : 0
-  const safeY = Number.isFinite(y) ? y : 0
+  group
+    .querySelector('[data-role="dot"]')
+    ?.setAttribute("fill", color || "#3b82f6")
+  const labelNode = group.querySelector('[data-role="label"]')
+  if (labelNode) labelNode.textContent = String(label ?? "")
+  const valueNode = group.querySelector('[data-role="value"]')
+  if (valueNode) valueNode.textContent = String(value ?? "")
+}
 
-  return svg`
-    <g
-      class="iw-chart-modal"
-      transform="translate(${safeX}, ${safeY})"
-      pointer-events="none"
-    >
-      <rect
-        x="0"
-        y="0"
-        width=${TOOLTIP_WIDTH}
-        height=${TOOLTIP_HEIGHT}
-        rx="6"
-        ry="6"
-        fill="rgba(255, 255, 255, 0.95)"
-        stroke="#cbd5e1"
-      />
-      <circle cx="12" cy="18" r="5" fill=${color || "#3b82f6"} />
-      <text x="24" y="19" fill="#475569" font-size="12">${label ?? ""}</text>
-      <text
-        x="24"
-        y="41"
-        fill="#0f172a"
-        font-size="14"
-        font-weight="600"
-      >
-        ${value ?? ""}
-      </text>
+export function hideTooltip(svgEl) {
+  svgEl
+    ?.querySelector?.(".iw-chart-modal-fallback")
+    ?.setAttribute("display", "none")
+}
+
+function createFallbackTemplate() {
+  return `
+    <g class="iw-chart-modal-fallback" pointer-events="none" display="none">
+      <rect x="0" y="0" width="132" height="50" rx="6" ry="6" fill="white" fill-opacity="0.95" stroke="#cbd5e1"></rect>
+      <circle data-role="dot" cx="12" cy="16" r="4" fill="#3b82f6"></circle>
+      <text data-role="label" x="22" y="17" fill="#475569" font-size="12"></text>
+      <text data-role="value" x="22" y="35" fill="#0f172a" font-size="13" font-weight="600"></text>
     </g>
   `
 }
