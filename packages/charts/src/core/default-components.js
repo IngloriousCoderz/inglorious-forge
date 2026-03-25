@@ -40,7 +40,7 @@ function addSharedCartesianOverlays(components, entity) {
     components.push(Legend({}))
   }
 
-  if (entity.showTooltip !== false) {
+  if (entity.showTooltip === true) {
     components.push(Tooltip({}))
   }
 
@@ -105,7 +105,7 @@ function buildDefaultPieComponents(entity) {
     }),
   ]
 
-  if (entity.showTooltip !== false) {
+  if (entity.showTooltip === true) {
     components.push(Tooltip({}))
   }
 
@@ -124,7 +124,7 @@ function buildDefaultDonutComponents(entity) {
     }),
   ]
 
-  if (entity.showTooltip !== false) {
+  if (entity.showTooltip === true) {
     components.push(Tooltip({}))
   }
 
