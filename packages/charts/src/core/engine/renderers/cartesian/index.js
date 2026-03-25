@@ -3,11 +3,9 @@
 import { svg } from "@inglorious/web"
 import { area as createAreaPath, line as createLinePath } from "d3-shape"
 
+import { hideTooltip, showTooltip } from "../overlays/tooltip.js"
 import {
-  hideFallbackTooltip,
-  showFallbackTooltip,
-} from "../overlays/tooltip-fallback.js"
-import {
+  canShowTooltip,
   createSeriesPoints,
   getBarGroupWidth,
   getCategoryX,
@@ -17,7 +15,6 @@ import {
 } from "./shared.js"
 
 export function renderLineSeries(component, frame) {
-  const { entity } = frame
   const dataKey = component.props?.dataKey
   const stroke = component.props?.stroke || resolveSeriesColor(frame, dataKey)
   const series = createSeriesPoints(component, frame)
@@ -36,7 +33,7 @@ export function renderLineSeries(component, frame) {
       />
       ${component.props?.showDots ? renderDots(component, frame) : ""}
       ${
-        entity.tooltipEnabled && !component.props?.showDots
+        canShowTooltip(component, frame) && !component.props?.showDots
           ? renderSeriesTitles(component, frame)
           : ""
       }
@@ -71,7 +68,7 @@ export function renderAreaSeries(component, frame) {
       />
       ${component.props?.showDots ? renderDots(component, frame) : ""}
       ${
-        frame.entity.tooltipEnabled && !component.props?.showDots
+        canShowTooltip(component, frame) && !component.props?.showDots
           ? renderSeriesTitles(component, frame)
           : ""
       }
@@ -109,9 +106,30 @@ export function renderBarSeries(component, frame) {
             width=${barWidth}
             height=${height}
             fill=${fill}
-          >
-            ${resolveTooltipTitle(frame.entity, component, row, component.props?.dataKey)}
-          </rect>
+            pointer-events="all"
+            style=${
+              canShowTooltip(component, frame) ? "cursor: pointer;" : undefined
+            }
+            @mouseenter=${(event) =>
+              updateTooltip(
+                event,
+                row,
+                frame,
+                component.props?.dataKey,
+                fill,
+                component,
+              )}
+            @mousemove=${(event) =>
+              updateTooltip(
+                event,
+                row,
+                frame,
+                component.props?.dataKey,
+                fill,
+                component,
+              )}
+            @mouseleave=${(event) => clearTooltip(event)}
+          />
         `
       })}
     </g>
@@ -126,7 +144,6 @@ export function renderDots(component, frame) {
     resolveSeriesColor(frame, component.props?.dataKey)
   const radius = component.props?.r || 4
   const dataKey = component.props?.dataKey
-  const useOverlayTooltip = canUseOverlayTooltip(frame)
 
   return svg`
     <g class="iw-chart-dots">
@@ -139,19 +156,21 @@ export function renderDots(component, frame) {
             fill=${fill}
             pointer-events="all"
             style="cursor: pointer;"
-            @mouseenter=${(e) => updateTooltip(e, point.row, frame, dataKey, fill)}
-            @mousemove=${(e) => updateTooltip(e, point.row, frame, dataKey, fill)}
-            @mouseleave=${(e) => clearTooltip(frame, e)}
+            @mouseenter=${(event) =>
+              updateTooltip(event, point.row, frame, dataKey, fill, component)}
+            @mousemove=${(event) =>
+              updateTooltip(event, point.row, frame, dataKey, fill, component)}
+            @mouseleave=${(event) => clearTooltip(event)}
           >
             ${
-              frame.entity?.tooltipEnabled && useOverlayTooltip
-                ? ""
-                : resolveTooltipTitle(
+              !canShowTooltip(component, frame)
+                ? resolveTooltipTitle(
                     frame.entity,
                     component,
                     point.row,
                     dataKey,
                   )
+                : ""
             }
           </circle>
         `,
@@ -160,8 +179,8 @@ export function renderDots(component, frame) {
   `
 }
 
-function updateTooltip(event, row, frame, dataKey, fill) {
-  if (!frame.entity?.tooltipEnabled || !row) return
+function updateTooltip(event, row, frame, dataKey, fill, component) {
+  if (!canShowTooltip(component, frame) || !row) return
 
   const svgEl = event.currentTarget?.closest?.("svg") || event.target
   const svgRect = svgEl?.getBoundingClientRect?.()
@@ -182,35 +201,9 @@ function updateTooltip(event, row, frame, dataKey, fill) {
   const label = row?.[frame.entity.xKey] ?? row?.label ?? row?.name ?? ""
   const value = dataKey ? row?.[dataKey] : row?.value
 
-  if (!canUseOverlayTooltip(frame)) {
-    showFallbackTooltip(svgEl, x, y, label, value, fill)
-    return
-  }
-
-  frame.interactionEntity.tooltip = { x, y, label, value, color: fill }
-  notifyUpdate(frame)
+  showTooltip(svgEl, x, y, label, value, fill)
 }
 
-function clearTooltip(frame, event) {
-  if (!canUseOverlayTooltip(frame)) {
-    hideFallbackTooltip(event?.currentTarget?.closest?.("svg"))
-    return
-  }
-
-  frame.interactionEntity.tooltip = null
-  notifyUpdate(frame)
-}
-
-function notifyUpdate(frame) {
-  const targetId = frame.interactionEntity?.id ?? null
-  if (!targetId || !frame.api?.notify) return
-  frame.api.notify(`#${targetId}:update`)
-}
-
-function canUseOverlayTooltip(frame) {
-  return Boolean(
-    frame?.storeBackedInteraction &&
-    frame?.api?.notify &&
-    frame?.interactionEntity?.id,
-  )
+function clearTooltip(event) {
+  hideTooltip(event?.currentTarget?.closest?.("svg"))
 }
