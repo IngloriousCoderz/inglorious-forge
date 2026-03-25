@@ -68,11 +68,11 @@ function createFrame(source, api) {
   const components = shouldFallback
     ? DEFAULT_COMPONENTS[chartType]?.(chartEntity) || []
     : explicitComponents
-  const tooltipEnabled = getTooltipState(chartEntity, components)
+  const isTooltipEnabled = getTooltipState(chartEntity, components)
   const filteredEntity = applyBrushWindow(
     chartEntity,
     components,
-    tooltipEnabled,
+    isTooltipEnabled,
   )
   const dimensions = createDimensions(filteredEntity, components)
 

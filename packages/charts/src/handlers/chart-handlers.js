@@ -8,9 +8,9 @@ export function create(entity) {
   entity.width ??= DEFAULT_WIDTH
   entity.height ??= DEFAULT_HEIGHT
   entity.data ??= []
-  entity.showGrid ??= true
-  entity.showLegend ??= false
-  entity.showTooltip ??= false
+  entity.hasGrid ??= true
+  entity.hasLegend ??= false
+  entity.hasTooltip ??= false
   entity.colors ??= [
     "#3b82f6",
     "#8b5cf6",

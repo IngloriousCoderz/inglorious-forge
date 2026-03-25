@@ -12,9 +12,10 @@ export function mergeEntityInput(source, config) {
     brush: config.brush ?? source.brush,
     width: config.width ?? source.width ?? 800,
     height: config.height ?? source.height ?? 400,
-    showGrid: config.showGrid ?? source.showGrid,
-    showLegend: config.showLegend ?? source.showLegend,
-    showTooltip: config.showTooltip ?? source.showTooltip,
+    hasGrid: config.hasGrid ?? source.hasGrid,
+    hasLegend: config.hasLegend ?? source.hasLegend,
+    hasTooltip: config.hasTooltip ?? source.hasTooltip,
+    hasLabel: config.hasLabel ?? source.hasLabel,
     padding: config.padding ?? source.padding,
     centerText: config.centerText ?? source.centerText,
     stacked: config.stacked ?? source.stacked,
@@ -51,7 +52,7 @@ export function getChartType(entity, components) {
   return "line"
 }
 
-export function applyBrushWindow(entity, components, tooltipEnabled) {
+export function applyBrushWindow(entity, components, isTooltipEnabled) {
   const hasBrushComponent = components.some(
     (component) => component.type === "brush",
   )
@@ -72,7 +73,7 @@ export function applyBrushWindow(entity, components, tooltipEnabled) {
             visible: entity.brush?.visible ?? true,
           }
         : entity.brush,
-      tooltipEnabled,
+      isTooltipEnabled,
       data: fullData,
       fullData,
     }
@@ -95,7 +96,7 @@ export function applyBrushWindow(entity, components, tooltipEnabled) {
       endIndex: boundedEnd,
       visible: entity.brush?.visible ?? true,
     },
-    tooltipEnabled,
+    isTooltipEnabled,
     data: fullData.slice(boundedStart, boundedEnd + 1),
     fullData,
   }
@@ -104,11 +105,15 @@ export function applyBrushWindow(entity, components, tooltipEnabled) {
 export function getTooltipState(entity, components) {
   if (components.some((component) => component.type === "tooltip")) return true
 
+  if (components.some((component) => component.props?.hasTooltip === true)) {
+    return true
+  }
+
   if (components.some((component) => component.props?.showTooltip === true)) {
     return true
   }
 
-  return entity.showTooltip === true
+  return entity.hasTooltip === true
 }
 
 export function getComponents(children) {
