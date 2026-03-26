@@ -5,10 +5,10 @@ import { format } from "d3-format"
 
 import { getCategoryX } from "./shared.js"
 
-export function renderCartesianGrid(component, frame) {
+export function renderCartesianGrid(primitive, frame) {
   const { scales, dimensions } = frame
-  const stroke = component.props?.stroke || "#e5e7eb"
-  const dasharray = component.props?.strokeDasharray || "5 5"
+  const stroke = primitive.props?.stroke || "#e5e7eb"
+  const dasharray = primitive.props?.strokeDasharray || "5 5"
 
   return svg`
     <g class="iw-chart-grid">
@@ -42,9 +42,9 @@ export function renderCartesianGrid(component, frame) {
   `
 }
 
-export function renderXAxis(component, frame) {
+export function renderXAxis(primitive, frame) {
   const { entity, scales, dimensions } = frame
-  const dataKey = component.props?.dataKey || entity.xKey
+  const dataKey = primitive.props?.dataKey || entity.xKey
   const labels = entity.data.map((row, index) => row?.[dataKey] ?? `${index}`)
 
   return svg`
@@ -75,9 +75,9 @@ export function renderXAxis(component, frame) {
   `
 }
 
-export function renderYAxis(component, frame) {
+export function renderYAxis(primitive, frame) {
   const { scales, dimensions } = frame
-  void component
+  void primitive
 
   return svg`
     <g class="iw-chart-axis iw-chart-axis-y">

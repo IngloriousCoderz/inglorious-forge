@@ -8,8 +8,8 @@ import { maximumValue, minimumValue } from "../cartesian/shared.js"
 
 const DEFAULT_BRUSH_HEIGHT = 30
 
-export function renderBrush(component, frame) {
-  const layout = getBrushLayout(component, frame)
+export function renderBrush(primitive, frame) {
+  const layout = getBrushLayout(primitive, frame)
   if (!layout) return svg``
 
   const onPan = createBrushMouseDownHandler(frame, layout, "pan")
@@ -134,7 +134,7 @@ export function getBrushRangeAfterDrag({
   }
 }
 
-function getBrushLayout(component, frame) {
+function getBrushLayout(primitive, frame) {
   const { entity, dimensions } = frame
   if (
     !entity.brush?.enabled ||
@@ -145,7 +145,7 @@ function getBrushLayout(component, frame) {
   }
 
   const dataKey =
-    component.props?.dataKey ||
+    primitive.props?.dataKey ||
     frame.scales.plottedKeys?.[0] ||
     entity.seriesKeys?.[0]
 
@@ -154,7 +154,7 @@ function getBrushLayout(component, frame) {
   const brushAreaWidth = dimensions.plotWidth
   const brushAreaX = dimensions.plotLeft
   const brushHeight =
-    component.props?.height || entity.brush.height || DEFAULT_BRUSH_HEIGHT
+    primitive.props?.height || entity.brush.height || DEFAULT_BRUSH_HEIGHT
   const brushY = dimensions.brushTop
   const xStep =
     entity.fullData.length > 1

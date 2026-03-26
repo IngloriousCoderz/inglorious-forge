@@ -1,3 +1,9 @@
+import { renderFrame } from "./core/engine/index.js"
+import {
+  createFrameFromEntity,
+  createFrameFromRender,
+} from "./core/standardizer/index.js"
+import * as handlers from "./handlers/chart-handlers.js"
 import {
   Area,
   Bar,
@@ -10,13 +16,7 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-} from "./components/factories.js"
-import { renderFrame } from "./core/engine/index.js"
-import {
-  createFrameFromEntity,
-  createFrameFromRender,
-} from "./core/standardizer/index.js"
-import * as handlers from "./handlers/chart-handlers.js"
+} from "./primitives/factories.js"
 import { streamSlide, withRealtime } from "./realtime/index.js"
 
 const storeRender = (entity, api) =>

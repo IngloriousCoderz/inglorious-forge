@@ -16,7 +16,7 @@ describe("engine", () => {
         colors: ["#111111", "#222222", "#333333"],
         isTooltipEnabled: true,
       },
-      components: [
+      primitives: [
         { type: "area", props: { dataKey: "low", fill: "#111111" } },
         { type: "area", props: { dataKey: "high", fill: "#222222" } },
         { type: "area", props: { dataKey: "mid", fill: "#333333" } },
@@ -66,7 +66,7 @@ describe("engine", () => {
         },
         seriesKeys: ["value"],
       },
-      components: [{ type: "brush", props: {} }],
+      primitives: [{ type: "brush", props: {} }],
       scales: {
         plottedKeys: ["value"],
       },
