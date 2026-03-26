@@ -3,10 +3,10 @@
 import { max, min, sum } from "d3-array"
 import { scaleBand, scaleLinear, scalePoint } from "d3-scale"
 
-export function createScales(entity, components, dimensions) {
+export function createScales(entity, primitives, dimensions) {
   if (entity.type === "pie" || entity.type === "donut") {
-    const pieComponent = getPolarComponent(components)
-    const polarProps = pieComponent?.props || {}
+    const piePrimitive = getPolarPrimitive(primitives)
+    const polarProps = piePrimitive?.props || {}
 
     return {
       centerX: resolveRadiusValue(
@@ -30,7 +30,7 @@ export function createScales(entity, components, dimensions) {
 
   const rows = entity.data
   const xDomain = rows.map((row, index) => `${row?.[entity.xKey] ?? index}`)
-  const hasBars = components.some((component) => component.type === "bar")
+  const hasBars = primitives.some((primitive) => primitive.type === "bar")
   const xScale = hasBars
     ? scaleBand()
         .domain(xDomain)
@@ -41,8 +41,8 @@ export function createScales(entity, components, dimensions) {
         .range([dimensions.plotLeft, dimensions.plotRight])
         .padding(0)
 
-  const plottedKeys = getPlottedKeys(entity, components)
-  const domain = getYDomain(entity.fullData, plottedKeys, components)
+  const plottedKeys = getPlottedKeys(entity, primitives)
+  const domain = getYDomain(entity.fullData, plottedKeys, primitives)
   const yScale = scaleLinear()
     .domain(domain)
     .nice()
@@ -56,19 +56,19 @@ export function createScales(entity, components, dimensions) {
   }
 }
 
-function getPlottedKeys(entity, components) {
-  const plotted = components
-    .filter((component) => ["line", "area", "bar"].includes(component.type))
-    .map((component) => component.props?.dataKey)
+function getPlottedKeys(entity, primitives) {
+  const plotted = primitives
+    .filter((primitive) => ["line", "area", "bar"].includes(primitive.type))
+    .map((primitive) => primitive.props?.dataKey)
     .filter(Boolean)
 
   return plotted.length > 0 ? plotted : entity.seriesKeys
 }
 
-function getYDomain(rows, plottedKeys, components) {
+function getYDomain(rows, plottedKeys, primitives) {
   if (!Array.isArray(rows) || rows.length === 0) return [0, 1]
 
-  const stackGroups = collectAreaStackGroups(components)
+  const stackGroups = collectAreaStackGroups(primitives)
   const values = []
 
   rows.forEach((row) => {
@@ -91,13 +91,13 @@ function getYDomain(rows, plottedKeys, components) {
   return [lowerBound, upperBound]
 }
 
-function collectAreaStackGroups(components) {
+function collectAreaStackGroups(primitives) {
   const groups = new Map()
 
-  components.forEach((component) => {
-    if (component.type !== "area") return
-    const stackId = component.props?.stackId
-    const dataKey = component.props?.dataKey
+  primitives.forEach((primitive) => {
+    if (primitive.type !== "area") return
+    const stackId = primitive.props?.stackId
+    const dataKey = primitive.props?.dataKey
     if (!stackId || !dataKey) return
 
     const keys = groups.get(stackId) || []
@@ -108,8 +108,8 @@ function collectAreaStackGroups(components) {
   return [...groups.values()]
 }
 
-function getPolarComponent(components) {
-  return components.find((component) => component.type === "pie")
+function getPolarPrimitive(primitives) {
+  return primitives.find((primitive) => primitive.type === "pie")
 }
 
 function resolveRadiusValue(value, base) {

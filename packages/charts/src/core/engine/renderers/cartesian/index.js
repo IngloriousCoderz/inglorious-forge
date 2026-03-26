@@ -14,10 +14,10 @@ import {
   resolveTooltipTitle,
 } from "./shared.js"
 
-export function renderLineSeries(component, frame) {
-  const dataKey = component.props?.dataKey
-  const stroke = component.props?.stroke || resolveSeriesColor(frame, dataKey)
-  const series = createSeriesPoints(component, frame)
+export function renderLineSeries(primitive, frame) {
+  const dataKey = primitive.props?.dataKey
+  const stroke = primitive.props?.stroke || resolveSeriesColor(frame, dataKey)
+  const series = createSeriesPoints(primitive, frame)
   const linePath = createLinePath()
     .defined((point) => Number.isFinite(point.y))
     .x((point) => point.x)
@@ -29,24 +29,24 @@ export function renderLineSeries(component, frame) {
         d=${linePath(series) || ""}
         fill="none"
         stroke=${stroke}
-        stroke-width=${component.props?.strokeWidth || 3}
+        stroke-width=${primitive.props?.strokeWidth || 3}
       />
-      ${component.props?.hasDots ? renderDots(component, frame) : ""}
+      ${primitive.props?.hasDots ? renderDots(primitive, frame) : ""}
       ${
-        canShowTooltip(component, frame) && !component.props?.hasDots
-          ? renderSeriesTitles(component, frame)
+        canShowTooltip(primitive, frame) && !primitive.props?.hasDots
+          ? renderSeriesTitles(primitive, frame)
           : ""
       }
     </g>
   `
 }
 
-export function renderAreaSeries(component, frame) {
-  const dataKey = component.props?.dataKey
-  const fill = component.props?.fill || resolveSeriesColor(frame, dataKey)
-  const stroke = component.props?.stroke || fill
-  const fillOpacity = component.props?.fillOpacity ?? 0.3
-  const series = createSeriesPoints(component, frame)
+export function renderAreaSeries(primitive, frame) {
+  const dataKey = primitive.props?.dataKey
+  const fill = primitive.props?.fill || resolveSeriesColor(frame, dataKey)
+  const stroke = primitive.props?.stroke || fill
+  const fillOpacity = primitive.props?.fillOpacity ?? 0.3
+  const series = createSeriesPoints(primitive, frame)
   const areaPath = createAreaPath()
     .defined((point) => Number.isFinite(point.y))
     .x((point) => point.x)
@@ -64,40 +64,40 @@ export function renderAreaSeries(component, frame) {
         d=${linePath(series) || ""}
         fill="none"
         stroke=${stroke}
-        stroke-width=${component.props?.strokeWidth || 3}
+        stroke-width=${primitive.props?.strokeWidth || 3}
       />
-      ${component.props?.hasDots ? renderDots(component, frame) : ""}
+      ${primitive.props?.hasDots ? renderDots(primitive, frame) : ""}
       ${
-        canShowTooltip(component, frame) && !component.props?.hasDots
-          ? renderSeriesTitles(component, frame)
+        canShowTooltip(primitive, frame) && !primitive.props?.hasDots
+          ? renderSeriesTitles(primitive, frame)
           : ""
       }
     </g>
   `
 }
 
-export function renderBarSeries(component, frame) {
+export function renderBarSeries(primitive, frame) {
   const { entity, scales } = frame
-  const barComponents = frame.components.filter((item) => item.type === "bar")
-  const barIndex = barComponents.indexOf(component)
+  const barPrimitives = frame.primitives.filter((item) => item.type === "bar")
+  const barIndex = barPrimitives.indexOf(primitive)
   const groupWidth = getBarGroupWidth(frame)
-  const barWidth = Math.max(6, groupWidth / Math.max(1, barComponents.length))
+  const barWidth = Math.max(6, groupWidth / Math.max(1, barPrimitives.length))
   const groupStart = -groupWidth / 2 + barWidth * barIndex
 
   return svg`
     <g class="iw-chart-bar">
       ${entity.data.map((row, index) => {
         const label = `${row?.[entity.xKey] ?? index}`
-        const value = Number.isFinite(row?.[component.props?.dataKey])
-          ? row[component.props.dataKey]
+        const value = Number.isFinite(row?.[primitive.props?.dataKey])
+          ? row[primitive.props.dataKey]
           : 0
         const x = getCategoryX(scales, label) + groupStart
         const y = value >= 0 ? scales.yScale(value) : scales.yScale(0)
         const baseY = value >= 0 ? scales.yScale(0) : scales.yScale(value)
         const height = Math.abs(baseY - y)
         const fill =
-          component.props?.fill ||
-          resolveSeriesColor(frame, component.props?.dataKey)
+          primitive.props?.fill ||
+          resolveSeriesColor(frame, primitive.props?.dataKey)
 
         return svg`
           <rect
@@ -108,25 +108,25 @@ export function renderBarSeries(component, frame) {
             fill=${fill}
             pointer-events="all"
             style=${
-              canShowTooltip(component, frame) ? "cursor: pointer;" : undefined
+              canShowTooltip(primitive, frame) ? "cursor: pointer;" : undefined
             }
             @mouseenter=${(event) =>
               updateTooltip(
                 event,
                 row,
                 frame,
-                component.props?.dataKey,
+                primitive.props?.dataKey,
                 fill,
-                component,
+                primitive,
               )}
             @mousemove=${(event) =>
               updateTooltip(
                 event,
                 row,
                 frame,
-                component.props?.dataKey,
+                primitive.props?.dataKey,
                 fill,
-                component,
+                primitive,
               )}
             @mouseleave=${(event) => clearTooltip(event)}
           />
@@ -136,14 +136,14 @@ export function renderBarSeries(component, frame) {
   `
 }
 
-export function renderDots(component, frame) {
-  const series = createSeriesPoints(component, frame)
+export function renderDots(primitive, frame) {
+  const series = createSeriesPoints(primitive, frame)
   const fill =
-    component.props?.fill ||
-    component.props?.stroke ||
-    resolveSeriesColor(frame, component.props?.dataKey)
-  const radius = component.props?.r || 4
-  const dataKey = component.props?.dataKey
+    primitive.props?.fill ||
+    primitive.props?.stroke ||
+    resolveSeriesColor(frame, primitive.props?.dataKey)
+  const radius = primitive.props?.r || 4
+  const dataKey = primitive.props?.dataKey
 
   return svg`
     <g class="iw-chart-dots">
@@ -157,16 +157,16 @@ export function renderDots(component, frame) {
             pointer-events="all"
             style="cursor: pointer;"
             @mouseenter=${(event) =>
-              updateTooltip(event, point.row, frame, dataKey, fill, component)}
+              updateTooltip(event, point.row, frame, dataKey, fill, primitive)}
             @mousemove=${(event) =>
-              updateTooltip(event, point.row, frame, dataKey, fill, component)}
+              updateTooltip(event, point.row, frame, dataKey, fill, primitive)}
             @mouseleave=${(event) => clearTooltip(event)}
           >
             ${
-              !canShowTooltip(component, frame)
+              !canShowTooltip(primitive, frame)
                 ? resolveTooltipTitle(
                     frame.entity,
-                    component,
+                    primitive,
                     point.row,
                     dataKey,
                   )
@@ -179,8 +179,8 @@ export function renderDots(component, frame) {
   `
 }
 
-function updateTooltip(event, row, frame, dataKey, fill, component) {
-  if (!canShowTooltip(component, frame) || !row) return
+function updateTooltip(event, row, frame, dataKey, fill, primitive) {
+  if (!canShowTooltip(primitive, frame) || !row) return
 
   const svgEl = event.currentTarget?.closest?.("svg") || event.target
   const svgRect = svgEl?.getBoundingClientRect?.()

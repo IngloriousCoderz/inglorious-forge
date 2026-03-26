@@ -6,25 +6,25 @@
  * Returns plot geometry derived from:
  * - `entity.width` / `entity.height` (or defaults)
  * - `entity.padding` (top/right/bottom/left)
- * - presence of `Legend` and `Brush` components
+ * - presence of `Legend` and `Brush` primitives
  *
  * @param {any} entity - Normalized chart entity (includes width/height/padding and brush state).
- * @param {any[]} components - Component list to detect legend/brush.
+ * @param {any[]} primitives - Primitive list to detect legend/brush.
  * @returns {{width:number,height:number,padding:any,plotTop:number,plotRight:number,plotBottom:number,plotLeft:number,plotWidth:number,plotHeight:number,legendHeight:number,brushHeight:number,brushTop:number|null}}
  */
-export function createDimensions(entity, components) {
+export function createDimensions(entity, primitives) {
   const width = entity.width || 800
   const height = entity.height || 400
-  const hasLegend = components.some((component) => component.type === "legend")
-  const brushComponent = components.find(
-    (component) => component.type === "brush",
+  const hasLegend = primitives.some((primitive) => primitive.type === "legend")
+  const brushPrimitive = primitives.find(
+    (primitive) => primitive.type === "brush",
   )
   const hasVisibleBrush =
     entity.brush?.enabled &&
     entity.brush?.visible !== false &&
-    Boolean(brushComponent)
+    Boolean(brushPrimitive)
   const brushHeight = hasVisibleBrush
-    ? brushComponent?.props?.height || entity.brush?.height || 30
+    ? brushPrimitive?.props?.height || entity.brush?.height || 30
     : 0
   const legendHeight = hasLegend ? 40 : 0
   const plotTop = entity.padding.top + legendHeight

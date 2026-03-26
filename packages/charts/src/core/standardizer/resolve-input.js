@@ -24,7 +24,7 @@ export function mergeEntityInput(source, config) {
   }
 }
 
-export function getChartType(entity, components) {
+export function getChartType(entity, primitives) {
   const SUPPORTED_CHART_TYPES = new Set([
     "donut",
     "pie",
@@ -36,13 +36,13 @@ export function getChartType(entity, components) {
 
   if (SUPPORTED_CHART_TYPES.has(entity.type)) return entity.type
 
-  if (components.some((component) => component.type === "pie")) {
+  if (primitives.some((primitive) => primitive.type === "pie")) {
     return entity.centerText ? "donut" : "pie"
   }
 
-  const hasArea = components.some((component) => component.type === "area")
-  const hasBar = components.some((component) => component.type === "bar")
-  const hasLine = components.some((component) => component.type === "line")
+  const hasArea = primitives.some((primitive) => primitive.type === "area")
+  const hasBar = primitives.some((primitive) => primitive.type === "bar")
+  const hasLine = primitives.some((primitive) => primitive.type === "line")
 
   if ([hasArea, hasBar, hasLine].filter(Boolean).length > 1) return "composed"
   if (hasArea) return "area"
@@ -52,11 +52,11 @@ export function getChartType(entity, components) {
   return "line"
 }
 
-export function applyBrushWindow(entity, components, isTooltipEnabled) {
-  const hasBrushComponent = components.some(
-    (component) => component.type === "brush",
+export function applyBrushWindow(entity, primitives, isTooltipEnabled) {
+  const hasBrushPrimitive = primitives.some(
+    (primitive) => primitive.type === "brush",
   )
-  const brushEnabled = entity.brush?.enabled || hasBrushComponent
+  const brushEnabled = entity.brush?.enabled || hasBrushPrimitive
   const fullData = Array.isArray(entity.fullData)
     ? entity.fullData
     : entity.data
@@ -102,21 +102,21 @@ export function applyBrushWindow(entity, components, isTooltipEnabled) {
   }
 }
 
-export function getTooltipState(entity, components) {
-  if (components.some((component) => component.type === "tooltip")) return true
+export function getTooltipState(entity, primitives) {
+  if (primitives.some((primitive) => primitive.type === "tooltip")) return true
 
-  if (components.some((component) => component.props?.hasTooltip === true)) {
+  if (primitives.some((primitive) => primitive.props?.hasTooltip === true)) {
     return true
   }
 
-  if (components.some((component) => component.props?.showTooltip === true)) {
+  if (primitives.some((primitive) => primitive.props?.showTooltip === true)) {
     return true
   }
 
   return entity.hasTooltip === true
 }
 
-export function getComponents(children) {
+export function getPrimitives(children) {
   if (!children) return []
   return Array.isArray(children) ? children.filter(Boolean) : [children]
 }
