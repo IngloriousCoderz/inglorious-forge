@@ -53,7 +53,7 @@ describe("polar renderers", () => {
     const result = renderPieSeries(
       {
         props: {
-          label: true,
+          hasLabel: true,
         },
       },
       createFrame(),

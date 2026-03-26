@@ -27,7 +27,7 @@ function createBaseFrame() {
         { name: "Feb", revenue: 16, cost: 8 },
       ],
     },
-    components: [],
+    primitives: [],
     scales: {
       xScale,
       xScaleMode: "band",
@@ -114,7 +114,7 @@ describe("shared render helpers", () => {
 
   it("creates stacked series points for area stacks", () => {
     const frame = createBaseFrame()
-    frame.components = [
+    frame.primitives = [
       { type: "area", props: { dataKey: "revenue", stackId: "sales" } },
       { type: "area", props: { dataKey: "cost", stackId: "sales" } },
     ]

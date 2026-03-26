@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest"
 
-import { DEFAULT_COMPONENTS } from "./default-components.js"
+import { DEFAULT_PRIMITIVES } from "./default-primitives.js"
 
-describe("default components", () => {
+describe("default primitives", () => {
   it("builds line defaults with grid, axes, series, legend, tooltip and brush", () => {
-    const components = DEFAULT_COMPONENTS.line({
+    const primitives = DEFAULT_PRIMITIVES.line({
       xKey: "name",
       seriesKeys: ["valueA", "valueB"],
       colors: ["#111111", "#222222"],
@@ -14,7 +14,7 @@ describe("default components", () => {
       brush: { enabled: true, visible: true, height: 24 },
     })
 
-    expect(components.map((component) => component.type)).toEqual([
+    expect(primitives.map((primitive) => primitive.type)).toEqual([
       "cartesian-grid",
       "x-axis",
       "y-axis",
@@ -24,7 +24,7 @@ describe("default components", () => {
       "tooltip",
       "brush",
     ])
-    expect(components[3].props).toMatchObject({
+    expect(primitives[3].props).toMatchObject({
       dataKey: "valueA",
       stroke: "#111111",
       hasDots: true,
@@ -32,7 +32,7 @@ describe("default components", () => {
   })
 
   it("builds stacked area defaults with default stack ids", () => {
-    const components = DEFAULT_COMPONENTS.area({
+    const primitives = DEFAULT_PRIMITIVES.area({
       xKey: "name",
       seriesKeys: ["Revenue", "Expenses"],
       colors: ["#111111", "#222222"],
@@ -40,53 +40,53 @@ describe("default components", () => {
       hasTooltip: true,
     })
 
-    const areaComponents = components.filter(
-      (component) => component.type === "area",
+    const areaPrimitives = primitives.filter(
+      (primitive) => primitive.type === "area",
     )
-    expect(areaComponents).toHaveLength(2)
-    expect(areaComponents[0].props.stackId).toBe("default-stack")
-    expect(areaComponents[0].props.fillOpacity).toBe(0.45)
+    expect(areaPrimitives).toHaveLength(2)
+    expect(areaPrimitives[0].props.stackId).toBe("default-stack")
+    expect(areaPrimitives[0].props.fillOpacity).toBe(0.45)
   })
 
   it("does not include a brush when brush visibility is false", () => {
-    const components = DEFAULT_COMPONENTS.bar({
+    const primitives = DEFAULT_PRIMITIVES.bar({
       xKey: "name",
       seriesKeys: ["value"],
       colors: ["#111111"],
       brush: { enabled: true, visible: false },
     })
 
-    expect(components.some((component) => component.type === "brush")).toBe(
+    expect(primitives.some((primitive) => primitive.type === "brush")).toBe(
       false,
     )
   })
 
   it("builds pie and donut defaults with tooltip support", () => {
-    const pieComponents = DEFAULT_COMPONENTS.pie({
+    const piePrimitives = DEFAULT_PRIMITIVES.pie({
       dataKey: "amount",
       nameKey: "category",
       hasTooltip: true,
     })
-    const donutComponents = DEFAULT_COMPONENTS.donut({
+    const donutPrimitives = DEFAULT_PRIMITIVES.donut({
       dataKey: "amount",
       nameKey: "category",
       hasTooltip: true,
     })
 
-    expect(pieComponents[0]).toMatchObject({
+    expect(piePrimitives[0]).toMatchObject({
       type: "pie",
       props: {
         dataKey: "amount",
         nameKey: "category",
       },
     })
-    expect(donutComponents[0].props.innerRadius).toBe("55%")
-    expect(pieComponents.at(-1).type).toBe("tooltip")
-    expect(donutComponents.at(-1).type).toBe("tooltip")
+    expect(donutPrimitives[0].props.innerRadius).toBe("55%")
+    expect(piePrimitives.at(-1).type).toBe("tooltip")
+    expect(donutPrimitives.at(-1).type).toBe("tooltip")
   })
 
-  it("maps composed series kinds to their matching component types", () => {
-    const components = DEFAULT_COMPONENTS.composed({
+  it("maps composed series kinds to their matching primitive types", () => {
+    const primitives = DEFAULT_PRIMITIVES.composed({
       xKey: "name",
       colors: ["#111111", "#222222", "#333333"],
       series: [
@@ -98,7 +98,7 @@ describe("default components", () => {
       hasTooltip: true,
     })
 
-    expect(components.map((component) => component.type)).toEqual([
+    expect(primitives.map((primitive) => primitive.type)).toEqual([
       "cartesian-grid",
       "x-axis",
       "y-axis",

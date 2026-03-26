@@ -19,7 +19,7 @@ import { renderCenterText, renderPieSeries } from "./renderers/polar/index.js"
 
 export function renderFrame(frame) {
   const { entity, dimensions } = frame
-  const orderedComponents = getRenderComponents(frame)
+  const orderedPrimitives = getRenderPrimitives(frame)
 
   return svg`
     <svg
@@ -30,7 +30,7 @@ export function renderFrame(frame) {
       role="img"
       aria-label=${entity.id}
     >
-      ${orderedComponents.map((component) => renderComponent(component, frame))}
+      ${orderedPrimitives.map((primitive) => renderPrimitive(primitive, frame))}
       ${
         entity.centerText && isPolarChart(entity.type)
           ? renderCenterText(frame)
@@ -40,36 +40,36 @@ export function renderFrame(frame) {
   `
 }
 
-function getRenderComponents(frame) {
-  const orderedComponents = [...frame.components]
-  const areaComponents = orderedComponents.filter(
-    (component) => component.type === "area" && !component.props?.stackId,
+function getRenderPrimitives(frame) {
+  const orderedPrimitives = [...frame.primitives]
+  const areaPrimitives = orderedPrimitives.filter(
+    (primitive) => primitive.type === "area" && !primitive.props?.stackId,
   )
 
-  if (areaComponents.length <= 1) {
-    return orderedComponents
+  if (areaPrimitives.length <= 1) {
+    return orderedPrimitives
   }
 
   // Precompute area peaks once to avoid recalculating them inside sort
   // comparator (which would otherwise call getAreaPeak many times).
   // Keeps the same ordering logic: larger peaks first.
-  const sortedAreas = areaComponents
-    .map((component) => ({
-      component,
-      peak: getAreaPeak(frame, component),
+  const sortedAreas = areaPrimitives
+    .map((primitive) => ({
+      primitive,
+      peak: getAreaPeak(frame, primitive),
     }))
     .sort((a, b) => b.peak - a.peak)
-    .map(({ component }) => component)
+    .map(({ primitive }) => primitive)
   let areaIndex = 0
 
-  return orderedComponents.map((component) => {
-    if (component.type !== "area" || component.props?.stackId) {
-      return component
+  return orderedPrimitives.map((primitive) => {
+    if (primitive.type !== "area" || primitive.props?.stackId) {
+      return primitive
     }
 
-    const nextComponent = sortedAreas[areaIndex]
+    const nextPrimitive = sortedAreas[areaIndex]
     areaIndex += 1
-    return nextComponent
+    return nextPrimitive
   })
 }
 
@@ -86,18 +86,18 @@ const RENDERERS = {
   brush: renderBrush,
 }
 
-function renderComponent(component, frame) {
-  const renderer = RENDERERS[component.type]
+function renderPrimitive(primitive, frame) {
+  const renderer = RENDERERS[primitive.type]
 
-  return renderer ? renderer(component, frame) : svg``
+  return renderer ? renderer(primitive, frame) : svg``
 }
 
 function isPolarChart(type) {
   return type === "pie" || type === "donut"
 }
 
-function getAreaPeak(frame, component) {
-  const dataKey = component.props?.dataKey
+function getAreaPeak(frame, primitive) {
+  const dataKey = primitive.props?.dataKey
   if (!dataKey || !Array.isArray(frame.entity.data)) return 0
 
   return Math.max(

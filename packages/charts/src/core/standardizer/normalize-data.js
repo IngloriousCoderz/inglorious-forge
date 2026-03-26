@@ -34,11 +34,11 @@ export function createChartEntity(entity, requestedKeys) {
   }
 }
 
-export function getDataKeys(components, configDataKeys) {
+export function getDataKeys(primitives, configDataKeys) {
   const keys = new Set(Array.isArray(configDataKeys) ? configDataKeys : [])
 
-  components.forEach((component) => {
-    const dataKey = component?.props?.dataKey
+  primitives.forEach((primitive) => {
+    const dataKey = primitive?.props?.dataKey
     if (dataKey) keys.add(dataKey)
   })
 

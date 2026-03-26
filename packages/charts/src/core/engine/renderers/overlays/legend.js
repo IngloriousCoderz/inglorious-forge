@@ -4,8 +4,8 @@ import { svg } from "@inglorious/web"
 
 import { resolveLegendItems } from "../cartesian/shared.js"
 
-export function renderLegend(component, frame) {
-  const items = resolveLegendItems(component, frame)
+export function renderLegend(primitive, frame) {
+  const items = resolveLegendItems(primitive, frame)
   const startX = frame.dimensions.plotLeft
   const y = frame.dimensions.padding.top + 12
 

@@ -11,40 +11,40 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-} from "../components/factories.js"
+} from "../primitives/factories.js"
 
-export const DEFAULT_COMPONENTS = {
-  line: buildDefaultLineComponents,
-  area: buildDefaultAreaComponents,
-  bar: buildDefaultBarComponents,
-  pie: buildDefaultPieComponents,
-  donut: buildDefaultDonutComponents,
-  composed: buildDefaultComposedComponents,
+export const DEFAULT_PRIMITIVES = {
+  line: buildDefaultLinePrimitives,
+  area: buildDefaultAreaPrimitives,
+  bar: buildDefaultBarPrimitives,
+  pie: buildDefaultPiePrimitives,
+  donut: buildDefaultDonutPrimitives,
+  composed: buildDefaultComposedPrimitives,
 }
 
-const CARTESIAN_COMPONENTS = {
+const CARTESIAN_PRIMITIVES = {
   area: Area,
   bar: Bar,
   line: Line,
 }
 
-function buildDefaultLineComponents(entity) {
-  const components = buildCartesianScaffold(entity)
+function buildDefaultLinePrimitives(entity) {
+  const primitives = buildCartesianScaffold(entity)
 
   entity.seriesKeys.forEach((dataKey, index) => {
-    components.push(
+    primitives.push(
       Line({ dataKey, stroke: entity.colors[index], hasDots: true }),
     )
   })
 
-  return addSharedCartesianOverlays(components, entity)
+  return addSharedCartesianOverlays(primitives, entity)
 }
 
-function buildDefaultAreaComponents(entity) {
-  const components = buildCartesianScaffold(entity)
+function buildDefaultAreaPrimitives(entity) {
+  const primitives = buildCartesianScaffold(entity)
 
   entity.seriesKeys.forEach((dataKey, index) => {
-    components.push(
+    primitives.push(
       Area({
         dataKey,
         stroke: entity.colors[index],
@@ -55,71 +55,71 @@ function buildDefaultAreaComponents(entity) {
     )
   })
 
-  return addSharedCartesianOverlays(components, entity)
+  return addSharedCartesianOverlays(primitives, entity)
 }
 
-function buildDefaultBarComponents(entity) {
-  const components = buildCartesianScaffold(entity)
+function buildDefaultBarPrimitives(entity) {
+  const primitives = buildCartesianScaffold(entity)
 
   entity.seriesKeys.forEach((dataKey, index) => {
-    components.push(Bar({ dataKey, fill: entity.colors[index] }))
+    primitives.push(Bar({ dataKey, fill: entity.colors[index] }))
   })
 
-  return addSharedCartesianOverlays(components, entity)
+  return addSharedCartesianOverlays(primitives, entity)
 }
 
-function buildDefaultPieComponents(entity) {
+function buildDefaultPiePrimitives(entity) {
   const nameKey = entity.nameKey || "label"
   const dataKey = entity.dataKey || "value"
-  const components = [
+  const primitives = [
     Pie({
       dataKey,
       nameKey,
       cx: entity.cx || "50%",
       cy: entity.cy || "50%",
       outerRadius: entity.outerRadius || "70%",
-      label: entity.hasLabel !== false,
+      hasLabel: entity.hasLabel !== false,
     }),
   ]
 
   if (entity.hasTooltip === true) {
-    components.push(Tooltip({}))
+    primitives.push(Tooltip({}))
   }
 
-  return components
+  return primitives
 }
 
-function buildDefaultDonutComponents(entity) {
-  const [pieComponent] = buildDefaultPieComponents({
+function buildDefaultDonutPrimitives(entity) {
+  const [piePrimitive] = buildDefaultPiePrimitives({
     ...entity,
     innerRadius: entity.innerRadius || "55%",
   })
-  const components = [
+  const primitives = [
     Pie({
-      ...pieComponent.props,
+      ...piePrimitive.props,
       innerRadius: entity.innerRadius || "55%",
     }),
   ]
 
   if (entity.hasTooltip === true) {
-    components.push(Tooltip({}))
+    primitives.push(Tooltip({}))
   }
 
-  return components
+  return primitives
 }
 
-function buildDefaultComposedComponents(entity) {
-  const components = buildCartesianScaffold(entity)
+function buildDefaultComposedPrimitives(entity) {
+  const primitives = buildCartesianScaffold(entity)
   const series = Array.isArray(entity.series) ? entity.series : []
 
   series.forEach((item, index) => {
     if (!item || typeof item !== "object") return
-    const Component = CARTESIAN_COMPONENTS[item.kind]
-    if (!Component) return
+    const Primitive = CARTESIAN_PRIMITIVES[item.kind]
+    if (!Primitive) return
     const color = entity.colors[index]
 
-    components.push(
-      Component({
+    primitives.push(
+      Primitive({
         stroke: color,
         fill: color,
         fillOpacity: 0.3,
@@ -128,32 +128,32 @@ function buildDefaultComposedComponents(entity) {
     )
   })
 
-  return addSharedCartesianOverlays(components, entity)
+  return addSharedCartesianOverlays(primitives, entity)
 }
 
-function addSharedCartesianOverlays(components, entity) {
+function addSharedCartesianOverlays(primitives, entity) {
   const overlays = [
     entity.hasLegend !== false && entity.seriesKeys.length > 1 && Legend({}),
     entity.hasTooltip === true && Tooltip({}),
     shouldShowBrush(entity) && Brush({ height: entity.brush.height || 30 }),
   ].filter(Boolean)
 
-  components.push(...overlays)
+  primitives.push(...overlays)
 
-  return components
+  return primitives
 }
 
 function buildCartesianScaffold(entity) {
-  const components = []
+  const primitives = []
 
   if (entity.hasGrid !== false) {
-    components.push(CartesianGrid())
+    primitives.push(CartesianGrid())
   }
 
-  components.push(XAxis({ dataKey: entity.xKey }))
-  components.push(YAxis())
+  primitives.push(XAxis({ dataKey: entity.xKey }))
+  primitives.push(YAxis())
 
-  return components
+  return primitives
 }
 
 function shouldShowBrush(entity) {
