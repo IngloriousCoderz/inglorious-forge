@@ -15,7 +15,7 @@ function resolveChartType(chartTypeDef) {
 }
 
 describe("charts public api", () => {
-  it("exposes pure component factories on the chart namespace", () => {
+  it("exposes pure primitive factories on the chart namespace", () => {
     expect(chart.Line({ dataKey: "value" })).toEqual({
       type: "line",
       props: { dataKey: "value" },

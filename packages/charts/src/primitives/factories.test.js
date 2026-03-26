@@ -14,8 +14,8 @@ import {
   YAxis,
 } from "./factories.js"
 
-describe("component factories", () => {
-  it("creates cartesian infrastructure components", () => {
+describe("primitive factories", () => {
+  it("creates cartesian infrastructure primitives", () => {
     expect(CartesianGrid({ stroke: "#eee" })).toEqual({
       type: "cartesian-grid",
       props: { stroke: "#eee" },
@@ -30,7 +30,7 @@ describe("component factories", () => {
     })
   })
 
-  it("creates series components", () => {
+  it("creates series primitives", () => {
     expect(Line({ dataKey: "value" })).toEqual({
       type: "line",
       props: { dataKey: "value" },
@@ -53,7 +53,7 @@ describe("component factories", () => {
     })
   })
 
-  it("creates overlay components", () => {
+  it("creates overlay primitives", () => {
     expect(Tooltip({})).toEqual({
       type: "tooltip",
       props: {},

@@ -22,7 +22,7 @@ function createFrame() {
         { name: "Feb", revenue: 16, cost: 8 },
       ],
     },
-    components: [
+    primitives: [
       { type: "bar", props: { dataKey: "revenue" } },
       { type: "bar", props: { dataKey: "cost" } },
     ],

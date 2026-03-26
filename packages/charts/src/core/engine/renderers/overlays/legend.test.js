@@ -33,7 +33,7 @@ describe("legend renderer", () => {
     expect(items).toHaveLength(2)
   })
 
-  it("uses frame plotted keys when the component does not define them", () => {
+  it("uses frame plotted keys when the primitive does not define them", () => {
     const result = renderLegend(
       { props: {} },
       {

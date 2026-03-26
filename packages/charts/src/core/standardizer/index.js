@@ -1,12 +1,12 @@
 /* eslint-disable no-magic-numbers */
-import { DEFAULT_COMPONENTS } from "../default-components.js"
+import { DEFAULT_PRIMITIVES } from "../default-primitives.js"
 import { createChartEntity, getDataKeys } from "./normalize-data.js"
 import { createDimensions } from "./resolve-dimensions.js"
 import {
   applyBrushWindow,
   createStableId,
   getChartType,
-  getComponents,
+  getPrimitives,
   getTooltipState,
   isObject,
 } from "./resolve-input.js"
@@ -31,10 +31,10 @@ export function createFrameFromRender(props, api = null) {
     }
   }
 
-  const explicitComponents = getComponents(source.children)
-  if (!Object.hasOwn(source, "children") || explicitComponents.length === 0) {
+  const explicitPrimitives = getPrimitives(source.children)
+  if (!Object.hasOwn(source, "children") || explicitPrimitives.length === 0) {
     throw new Error(
-      "[charts] chart.render (composition) requires 'children' with components.",
+      "[charts] chart.render (composition) requires 'children' with primitives.",
     )
   }
 
@@ -50,31 +50,31 @@ export function createFrameFromRender(props, api = null) {
 
 function createFrame(source, api) {
   const input = isObject(source) ? source : {}
-  const explicitComponents = getComponents(input.children)
+  const explicitPrimitives = getPrimitives(input.children)
 
   const isComposition = Object.hasOwn(input, "children")
-  const shouldFallback = !isComposition || explicitComponents.length === 0
+  const shouldFallback = !isComposition || explicitPrimitives.length === 0
 
-  const chartType = getChartType(input, explicitComponents)
+  const chartType = getChartType(input, explicitPrimitives)
   const chartEntity = createChartEntity(
     {
       ...input,
       id: input.id || createStableId(input, chartType),
       type: chartType,
     },
-    getDataKeys(explicitComponents, input.dataKeys),
+    getDataKeys(explicitPrimitives, input.dataKeys),
   )
 
-  const components = shouldFallback
-    ? DEFAULT_COMPONENTS[chartType]?.(chartEntity) || []
-    : explicitComponents
-  const isTooltipEnabled = getTooltipState(chartEntity, components)
+  const primitives = shouldFallback
+    ? DEFAULT_PRIMITIVES[chartType]?.(chartEntity) || []
+    : explicitPrimitives
+  const isTooltipEnabled = getTooltipState(chartEntity, primitives)
   const filteredEntity = applyBrushWindow(
     chartEntity,
-    components,
+    primitives,
     isTooltipEnabled,
   )
-  const dimensions = createDimensions(filteredEntity, components)
+  const dimensions = createDimensions(filteredEntity, primitives)
 
   syncInteractionEntity(input, filteredEntity)
 
@@ -82,9 +82,9 @@ function createFrame(source, api) {
     api,
     entity: filteredEntity,
     interactionEntity: input,
-    components,
+    primitives,
     dimensions,
-    scales: createScales(filteredEntity, components, dimensions),
+    scales: createScales(filteredEntity, primitives, dimensions),
   }
 }
 

@@ -14,7 +14,7 @@ describe("standardizer", () => {
           { name: "Feb", value: 20 },
         ],
       }),
-    ).toThrow(/requires 'children' with components\./)
+    ).toThrow(/requires 'children' with primitives\./)
   })
 
   it("throws on composition renders when children are empty", () => {
@@ -29,7 +29,7 @@ describe("standardizer", () => {
         ],
         children: [],
       }),
-    ).toThrow(/requires 'children' with components\./)
+    ).toThrow(/requires 'children' with primitives\./)
   })
 
   it("creates a point x-scale for pure line charts", () => {
@@ -46,7 +46,7 @@ describe("standardizer", () => {
     })
 
     expect(frame.scales.xScaleMode).toBe("point")
-    expect(frame.components.map((component) => component.type)).toContain(
+    expect(frame.primitives.map((primitive) => primitive.type)).toContain(
       "line",
     )
   })
@@ -93,7 +93,7 @@ describe("standardizer", () => {
     })
 
     expect(
-      frame.components.some((component) => component.type === "brush"),
+      frame.primitives.some((primitive) => primitive.type === "brush"),
     ).toBe(false)
     expect(frame.dimensions.brushHeight).toBe(0)
     expect(frame.dimensions.brushTop).toBe(null)
@@ -117,7 +117,7 @@ describe("standardizer", () => {
     })
 
     expect(
-      frame.components.some((component) => component.type === "brush"),
+      frame.primitives.some((primitive) => primitive.type === "brush"),
     ).toBe(true)
     expect(frame.dimensions.brushHeight).toBeGreaterThan(0)
     expect(frame.dimensions.brushTop).not.toBe(null)
@@ -147,7 +147,7 @@ describe("standardizer", () => {
     })
   })
 
-  it("uses pie component radii for composition donut charts", () => {
+  it("uses pie primitive radii for composition donut charts", () => {
     const frame = createFrameFromRender({
       type: "donut",
       width: 500,

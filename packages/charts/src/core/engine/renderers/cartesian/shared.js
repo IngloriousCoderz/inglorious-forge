@@ -2,10 +2,10 @@
 
 import { svg } from "@inglorious/web"
 
-export function renderSeriesTitles(component, frame) {
-  if (!canShowTooltip(component, frame)) return ""
+export function renderSeriesTitles(primitive, frame) {
+  if (!canShowTooltip(primitive, frame)) return ""
 
-  const points = createSeriesPoints(component, frame)
+  const points = createSeriesPoints(primitive, frame)
 
   return svg`
     ${points.map(
@@ -19,9 +19,9 @@ export function renderSeriesTitles(component, frame) {
         >
           ${resolveTooltipTitle(
             frame.entity,
-            component,
+            primitive,
             point.row,
-            component.props?.dataKey,
+            primitive.props?.dataKey,
           )}
         </circle>
       `,
@@ -29,12 +29,12 @@ export function renderSeriesTitles(component, frame) {
   `
 }
 
-export function createSeriesPoints(component, frame) {
+export function createSeriesPoints(primitive, frame) {
   const { entity, scales } = frame
-  const dataKey = component.props?.dataKey
-  const stackId = component.props?.stackId
+  const dataKey = primitive.props?.dataKey
+  const stackId = primitive.props?.stackId
   const stackedKeys = stackId
-    ? frame.components
+    ? frame.primitives
         .filter(
           (item) => item.type === "area" && item.props?.stackId === stackId,
         )
@@ -73,9 +73,9 @@ export function resolveSeriesColor(frame, dataKey) {
   return frame.entity.colors[index % frame.entity.colors.length]
 }
 
-export function resolveTooltipTitle(entity, component, row, dataKey) {
+export function resolveTooltipTitle(entity, primitive, row, dataKey) {
   const enabled =
-    entity.isTooltipEnabled || component.props?.hasTooltip === true
+    entity.isTooltipEnabled || primitive.props?.hasTooltip === true
   if (!enabled) return ""
 
   const label = row?.[entity.xKey] ?? row?.label ?? row?.name ?? "item"
@@ -83,20 +83,20 @@ export function resolveTooltipTitle(entity, component, row, dataKey) {
   return svg`<title>${label}: ${value}</title>`
 }
 
-export function canShowTooltip(component, frame) {
-  return Boolean(frame.entity?.isTooltipEnabled || component.props?.hasTooltip)
+export function canShowTooltip(primitive, frame) {
+  return Boolean(frame.entity?.isTooltipEnabled || primitive.props?.hasTooltip)
 }
 
-export function resolveLegendItems(component, frame) {
+export function resolveLegendItems(primitive, frame) {
   const dataKeys =
-    component.props?.dataKeys ||
+    primitive.props?.dataKeys ||
     frame.scales.plottedKeys ||
     frame.entity.seriesKeys
 
   return dataKeys.map((dataKey, index) => ({
     label: dataKey,
     color:
-      component.props?.colors?.[index] ||
+      primitive.props?.colors?.[index] ||
       resolveSeriesColor(frame, dataKey) ||
       frame.entity.colors[index % frame.entity.colors.length],
   }))

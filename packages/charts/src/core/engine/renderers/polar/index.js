@@ -5,12 +5,12 @@ import { arc, pie as createPieLayout } from "d3-shape"
 
 import { hideTooltip, showTooltip } from "../overlays/tooltip.js"
 
-export function renderPieSeries(component, frame) {
+export function renderPieSeries(primitive, frame) {
   const { entity, scales } = frame
-  const dataKey = component.props?.dataKey || entity.dataKey
-  const nameKey = component.props?.nameKey || entity.nameKey
-  const hasLabel = component.props?.label
-  const labelPosition = component.props?.labelPosition || "outside"
+  const dataKey = primitive.props?.dataKey || entity.dataKey
+  const nameKey = primitive.props?.nameKey || entity.nameKey
+  const hasLabel = primitive.props?.hasLabel
+  const labelPosition = primitive.props?.labelPosition || "outside"
   const layout = createPieLayout()
     .sort(null)
     .value((row) => row?.[dataKey] ?? 0)(entity.data)
@@ -52,7 +52,7 @@ export function renderPieSeries(component, frame) {
           <g>
             <path d=${createArc(slice) || ""} fill=${fill}>
               ${
-                !frame.entity.isTooltipEnabled && component.props?.hasTooltip
+                !frame.entity.isTooltipEnabled && primitive.props?.hasTooltip
                   ? svg`<title>${label}: ${value}</title>`
                   : ""
               }
@@ -76,7 +76,7 @@ export function renderPieSeries(component, frame) {
                   fill,
                   percentage,
                 })}
-              @mouseleave=${(event) => clearPolarTooltip(frame, event)}
+              @mouseleave=${(event) => clearPolarTooltip(event)}
             />
             ${
               hasLabel
@@ -91,7 +91,7 @@ export function renderPieSeries(component, frame) {
                         dominant-baseline="middle"
                       >
                         ${
-                          component.props?.hasPercentage === false
+                          primitive.props?.hasPercentage === false
                             ? label
                             : `${label} ${percentage}`
                         }
@@ -115,7 +115,7 @@ export function renderPieSeries(component, frame) {
                         ${label}
                       </text>
                       ${
-                        component.props?.hasPercentage === false
+                        primitive.props?.hasPercentage === false
                           ? ""
                           : svg`
                               <text
@@ -178,8 +178,7 @@ function updatePolarTooltip(event, frame, { label, fill, percentage }) {
   showTooltip(svgEl, x, y, label, percentage, fill)
 }
 
-function clearPolarTooltip(frame, event) {
-  void frame
+function clearPolarTooltip(event) {
   hideTooltip(event?.currentTarget?.closest?.("svg"))
 }
 
