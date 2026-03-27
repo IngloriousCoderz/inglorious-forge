@@ -23,6 +23,9 @@
     ".": {
       "import": "./src/index.js"
     },
+    "./realtime": {
+      "import": "./src/decorators/with-realtime.js"
+    },
     "./base.css": "./src/base.css",
     "./theme.css": "./src/theme.css"
   },
