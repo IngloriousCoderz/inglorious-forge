@@ -8,13 +8,17 @@ import {
   lineChart,
   pieChart,
 } from "@inglorious/charts"
+import { withRealtime } from "@inglorious/charts/realtime"
 import { entities } from "./entities.js"
 import { middlewares } from "./middlewares.js"
+
+const lineRealtimeChart = withRealtime(lineChart)
 
 export const store = createStore({
   types: {
     area: areaChart,
     line: lineChart,
+    "line-rt": lineRealtimeChart,
     bar: barChart,
     composed: composedChart,
     pie: pieChart,
