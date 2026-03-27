@@ -17,12 +17,12 @@ import {
   XAxis,
   YAxis,
 } from "./primitives/factories.js"
-import { streamSlide, withRealtime } from "./realtime/index.js"
+import { streamSlide } from "./realtime/index.js"
 
 const storeRender = (entity, api) =>
   renderFrame(createFrameFromEntity(entity, api))
 
-export const lineChart = [{ ...handlers, render: storeRender }, withRealtime]
+export const lineChart = { ...handlers, render: storeRender }
 export const areaChart = { ...handlers, render: storeRender }
 export const barChart = { ...handlers, render: storeRender }
 export const composedChart = { ...handlers, render: storeRender }
@@ -47,4 +47,4 @@ export const chart = {
   Brush,
 }
 
-export { streamSlide, withRealtime }
+export { streamSlide }
