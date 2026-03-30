@@ -138,10 +138,6 @@ export const entities = {
   // Realtime Line Chart - Sliding Window (Config Style)
   realtimeLineChartConfig: {
     type: "line-rt",
-    realtime: {
-      // override example:
-      // intervalMs: 500,
-    },
     width: 800,
     height: 400,
     hasGrid: true,
@@ -152,10 +148,6 @@ export const entities = {
   // Realtime Line Chart - Sliding Window (Composition Style)
   realtimeLineChart: {
     type: "line-rt",
-    realtime: {
-      // override example:
-      // intervalMs: 500,
-    },
   },
 
   // ============================================
