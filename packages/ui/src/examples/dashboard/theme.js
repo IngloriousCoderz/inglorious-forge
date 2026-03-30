@@ -6,7 +6,7 @@ import {
   nextTheme,
 } from "./theme-utils.js"
 
-export const theme = {
+export const Theme = {
   create(entity) {
     entity.theme ??= DEFAULTS.theme
     applyTheme(entity.theme, getMode())

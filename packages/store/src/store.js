@@ -1,3 +1,4 @@
+import { toCamelCase } from "@inglorious/utils/data-structures/string.js"
 import { create } from "mutative"
 
 import { createApi } from "./api.js"
@@ -208,9 +209,10 @@ export function createStore({
       }
     }
 
-    if (autoCreateEntities && !state[typeName]) {
+    const entityId = toCamelCase(typeName)
+    if (autoCreateEntities && !state[entityId]) {
       notify("add", {
-        id: typeName,
+        id: entityId,
         type: typeName,
       })
     }
@@ -259,12 +261,13 @@ export function createStore({
 
     if (autoCreateEntities) {
       for (const typeName of Object.keys(types)) {
+        const entityId = toCamelCase(typeName)
         const hasEntity = Object.values(state).some(
           (entity) => entity.type === typeName,
         )
 
         if (!hasEntity) {
-          addEntity(state, { id: typeName, type: typeName })
+          addEntity(state, { id: entityId, type: typeName })
         }
       }
     }

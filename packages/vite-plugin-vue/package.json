@@ -38,6 +38,7 @@
     "@babel/parser": "^7.29.0",
     "@babel/plugin-syntax-typescript": "^7.28.6",
     "@babel/types": "^7.29.0",
+    "@inglorious/utils": "workspace:*",
     "domhandler": "^5.0.3",
     "htmlparser2": "^10.1.0"
   },

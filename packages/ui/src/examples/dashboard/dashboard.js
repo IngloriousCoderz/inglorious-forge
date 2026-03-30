@@ -3,14 +3,14 @@ import { html } from "@inglorious/web"
 import { container } from "../../layout/container/index.js"
 import { flex } from "../../layout/flex/index.js"
 import { grid } from "../../layout/grid/index.js"
-import { appHeader } from "./app-header.js"
+import { AppHeader } from "./app-header.js"
 import { socialCards, statCards } from "./data.js"
-import { socialCard } from "./social-card.js"
-import { statCard } from "./stat-card.js"
-import { trafficCard } from "./traffic-card.js"
-import { trafficSalesCard } from "./traffic-sales-card.js"
+import { SocialCard } from "./social-card.js"
+import { StatCard } from "./stat-card.js"
+import { TrafficCard } from "./traffic-card.js"
+import { TrafficSalesCard } from "./traffic-sales-card.js"
 
-export const dashboard = {
+export const Dashboard = {
   render(entity, api) {
     const appDrawer = api.getEntity("appDrawer")
     const router = api.getEntity("router")
@@ -34,15 +34,15 @@ export const dashboard = {
           grid.render({
             minColumnWidth: "18rem",
             gap: "lg",
-            children: statCards.map((card) => statCard.render(card, api)),
+            children: statCards.map((card) => StatCard.render(card, api)),
           }),
-          trafficCard.render(entity, api),
+          TrafficCard.render(entity, api),
           grid.render({
             columns: 3,
             gap: "lg",
-            children: socialCards.map((card) => socialCard.render(card, api)),
+            children: socialCards.map((card) => SocialCard.render(card, api)),
           }),
-          trafficSalesCard.render(entity, api),
+          TrafficSalesCard.render(entity, api),
         ],
       })
     } else {
@@ -59,7 +59,7 @@ export const dashboard = {
           direction: "column",
           className: "iw-dashboard-main",
           children: [
-            appHeader.render(entity, api),
+            AppHeader.render(entity, api),
             container.render({
               maxWidth: "xl",
               padding: "lg",

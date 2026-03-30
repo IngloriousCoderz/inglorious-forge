@@ -7,7 +7,7 @@ import { typography } from "../../data-display/typography"
 import { grid } from "../../layout/grid"
 import { card } from "../../surfaces/card"
 
-export const socialCard = {
+export const SocialCard = {
   render(entity, api) {
     return card.render({
       className: "iw-dashboard-social-card",

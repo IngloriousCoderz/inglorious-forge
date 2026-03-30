@@ -6,7 +6,7 @@ import { materialIcon } from "../../data-display/material-icon"
 import { typography } from "../../data-display/typography"
 import { card } from "../../surfaces/card"
 
-export const statCard = {
+export const StatCard = {
   render(entity, api) {
     return card.render({
       className: `iw-dashboard-stat ${entity.className}`,

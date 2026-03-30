@@ -11,7 +11,7 @@ import { grid } from "../../layout/grid"
 import { card } from "../../surfaces/card"
 import { trafficSeries, trafficSummary } from "./data"
 
-export const trafficCard = {
+export const TrafficCard = {
   render(entity, api) {
     return card.render({
       header: flex.render({

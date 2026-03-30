@@ -9,7 +9,7 @@ import { flex } from "../../layout/flex"
 import { breadcrumbs } from "../../navigation/breadcrumbs"
 import { appBar } from "../../surfaces/app-bar"
 
-export const appHeader = {
+export const AppHeader = {
   render(entity, api) {
     const themeEntity = api.getEntity("theme")
     const modeEntity = api.getEntity("mode")

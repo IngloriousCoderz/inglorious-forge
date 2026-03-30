@@ -1,0 +1,18 @@
+import { Meta } from "@storybook/addon-docs/blocks"
+
+<Meta title="Utils/Data Structures/String" />
+
+# String
+
+Functions that deal with a single string.
+
+## `toCamelCase`
+
+Converts `kebab-case` or `PascalCase` identifiers into `camelCase`.
+
+```javascript
+import { toCamelCase } from "@inglorious/utils/data-structures/string.js"
+
+toCamelCase("my-element") // myElement
+toCamelCase("MyElement") // myElement
+```

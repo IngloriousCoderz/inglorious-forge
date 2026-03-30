@@ -1,14 +1,14 @@
 import { container as Container } from "../../layout/container/index.js"
 import { flex as Flex } from "../../layout/flex/index.js"
 import { grid as Grid } from "../../layout/grid/index.js"
-import { appHeader } from "./app-header.js"
+import { AppHeader } from "./app-header.js"
 import { socialCards, statCards } from "./data.js"
-import { socialCard } from "./social-card.js"
-import { statCard } from "./stat-card.js"
-import { trafficCard } from "./traffic-card.js"
-import { trafficSalesCard } from "./traffic-sales-card.js"
+import { SocialCard } from "./social-card.js"
+import { StatCard } from "./stat-card.js"
+import { TrafficCard } from "./traffic-card.js"
+import { TrafficSalesCard } from "./traffic-sales-card.js"
 
-export const dashboardJsx = {
+export const DashboardJsx = {
   render(entity, api) {
     const appDrawer = api.getEntity("appDrawer")
     const router = api.getEntity("router")
@@ -28,13 +28,17 @@ export const dashboardJsx = {
       mainContent = (
         <Flex direction="column" gap="lg">
           <Grid minColumnWidth="18rem" gap="lg">
-            {statCards.map((card) => statCard.render(card, api))}
+            {statCards.map((card) => (
+              <StatCard key={card.id} {...card} />
+            ))}
           </Grid>
-          {trafficCard.render(entity, api)}
+          {TrafficCard.render(entity, api)}
           <Grid columns={3} gap="lg">
-            {socialCards.map((card) => socialCard.render(card, api))}
+            {socialCards.map((card) => (
+              <SocialCard key={card.id} {...card} />
+            ))}
           </Grid>
-          {trafficSalesCard.render(entity, api)}
+          {TrafficSalesCard.render(entity, api)}
         </Flex>
       )
     } else {
@@ -45,7 +49,7 @@ export const dashboardJsx = {
       <Flex direction="column" className={dashboardClassName}>
         <AppDrawer />
         <Flex element="main" direction="column" className="iw-dashboard-main">
-          {appHeader.render(entity, api)}
+          {AppHeader.render(entity, api)}
           <Container
             maxWidth="xl"
             padding="lg"

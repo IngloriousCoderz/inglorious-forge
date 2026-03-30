@@ -65,4 +65,38 @@ describe("babel visitor", () => {
       `),
     ).toMatchSnapshot()
   })
+
+  it("extracts repeat keys while keeping api on component renders inside render methods", async () => {
+    expect(
+      await transform(`
+        import { statCard as StatCard } from "./stat-card.js"
+
+        export const dashboard = {
+          render(entity, api) {
+            return (
+              <div>
+                {entity.statCards.map((card) => (
+                  <StatCard key={card.id} {...card} />
+                ))}
+              </div>
+            )
+          },
+        }
+      `),
+    ).toMatchSnapshot()
+  })
+
+  it("forwards api to spread-only component renders inside render methods", async () => {
+    expect(
+      await transform(`
+        import { statCard as StatCard } from "./stat-card.js"
+
+        export const dashboard = {
+          render(entity, api) {
+            return <StatCard key={entity.id} {...entity} />
+          },
+        }
+      `),
+    ).toMatchSnapshot()
+  })
 })

@@ -4,6 +4,7 @@ import { generate } from "@babel/generator"
 import * as babelParser from "@babel/parser"
 import syntaxTs from "@babel/plugin-syntax-typescript"
 import * as t from "@babel/types"
+import { toCamelCase } from "@inglorious/utils/data-structures/string.js"
 import { DomHandler } from "domhandler"
 import * as htmlparser2 from "htmlparser2"
 import path from "path"
@@ -152,19 +153,6 @@ export function vue() {
       }
     },
   }
-}
-
-/**
- * Convert filename to camelCase for component name
- */
-function toCamelCase(input) {
-  const base = input.replace(/\.[^/.]+$/, "")
-
-  // Step 1: kebab-case → camelCase
-  const camel = base.replace(/-([a-z0-9])/gi, (_, c) => c.toUpperCase())
-
-  // Step 2: PascalCase → camelCase
-  return camel.charAt(0).toLowerCase() + camel.slice(1)
 }
 
 /**

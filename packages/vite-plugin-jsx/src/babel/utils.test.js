@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { createImportSpecifier, isJsx, toCamelCase, tpl } from "./utils.js"
+import { createImportSpecifier, isJsx, tpl } from "./utils.js"
 
 describe("babel utils", () => {
   it("creates template elements", () => {
@@ -17,11 +17,6 @@ describe("babel utils", () => {
       imported: { type: "Identifier", name: "html" },
       local: { type: "Identifier", name: "html" },
     })
-  })
-
-  it("converts kebab-case and PascalCase to camelCase", () => {
-    expect(toCamelCase("my-element")).toBe("myElement")
-    expect(toCamelCase("MyElement")).toBe("myElement")
   })
 
   it("recognizes JSX and transformed html calls", () => {

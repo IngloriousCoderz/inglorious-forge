@@ -13,7 +13,7 @@ import { grid } from "../../layout/grid"
 import { card } from "../../surfaces/card"
 import { clientBars, sourceBars, userRows } from "./data"
 
-export const trafficSalesCard = {
+export const TrafficSalesCard = {
   render(entity, api) {
     return card.render({
       title: "Traffic & Sales",

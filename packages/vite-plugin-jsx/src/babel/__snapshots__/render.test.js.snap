@@ -1,5 +1,14 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`babel render > forwards spreads and ignores key on capitalized components inside render methods 1`] = `
+"import { statCard as StatCard } from "./stat-card.js";
+export const dashboard = {
+  render(entity, api) {
+    return StatCard.render(entity, api);
+  }
+};"
+`;
+
 exports[`babel render > renders SVG self-closing tags correctly 1`] = `"const Icon = () => html\`<svg> <path d="M0 0h10v10H0z" /> <circle cx="5" cy="5" r="5" /> </svg>\`;"`;
 
 exports[`babel render > renders attributes and event listeners 1`] = `"const view = () => html\`<button class="primary" @click=\${handleClick}>Save</button>\`;"`;

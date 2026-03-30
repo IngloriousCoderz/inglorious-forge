@@ -43,6 +43,20 @@ describe("babel render", () => {
     ).toMatchSnapshot()
   })
 
+  it("forwards spreads and ignores key on capitalized components inside render methods", async () => {
+    expect(
+      await transform(`
+        import { statCard as StatCard } from "./stat-card.js"
+
+        export const dashboard = {
+          render(entity, api) {
+            return <StatCard key={entity.id} {...entity} />
+          },
+        }
+      `),
+    ).toMatchSnapshot()
+  })
+
   it("renders fragments and nested expressions", async () => {
     expect(
       await transform(`

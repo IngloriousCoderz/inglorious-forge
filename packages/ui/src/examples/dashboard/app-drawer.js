@@ -7,7 +7,7 @@ import { materialIcon } from "../../data-display/material-icon"
 import { flex } from "../../layout/flex"
 import { drawer } from "../../navigation/drawer"
 
-export const appDrawer = {
+export const AppDrawer = {
   create(entity) {
     entity.items ??= getDefaultItems()
   },

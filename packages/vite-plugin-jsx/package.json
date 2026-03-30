@@ -35,7 +35,8 @@
   "dependencies": {
     "@babel/core": "^7.28.5",
     "@babel/plugin-syntax-jsx": "^7.28.6",
-    "@babel/plugin-syntax-typescript": "^7.28.6"
+    "@babel/plugin-syntax-typescript": "^7.28.6",
+    "@inglorious/utils": "workspace:*"
   },
   "devDependencies": {
     "@inglorious/eslint-config": "workspace:*",

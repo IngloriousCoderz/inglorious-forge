@@ -1,5 +1,25 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`babel visitor > extracts repeat keys while keeping api on component renders inside render methods 1`] = `
+"import { html, repeat } from "@inglorious/web";
+import { statCard as StatCard } from "./stat-card.js";
+export const dashboard = {
+  render(entity, api) {
+    return html\`<div> \${repeat(entity.statCards, card => card.id, card => StatCard.render(card, api))} </div>\`;
+  }
+};"
+`;
+
+exports[`babel visitor > forwards api to spread-only component renders inside render methods 1`] = `
+"import { html } from "@inglorious/web";
+import { statCard as StatCard } from "./stat-card.js";
+export const dashboard = {
+  render(entity, api) {
+    return StatCard.render(entity, api);
+  }
+};"
+`;
+
 exports[`babel visitor > injects api into render methods 1`] = `
 "import { html } from "@inglorious/web";
 export const app = {
@@ -24,7 +44,7 @@ export const app = {
   render(api) {
     return DataGrid.render({
       prop1: "value"
-    });
+    }, api);
   }
 };"
 `;

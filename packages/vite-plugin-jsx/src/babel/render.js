@@ -1,6 +1,7 @@
 import { types as t } from "@babel/core"
+import { toCamelCase } from "@inglorious/utils/data-structures/string.js"
 
-import { toCamelCase, tpl } from "./utils.js"
+import { tpl } from "./utils.js"
 
 const AFTER_ON = 2
 const LAST = 1
@@ -129,6 +130,33 @@ function getChildrenPaths(path) {
 }
 
 /**
+ * Find the surrounding render method or render property function for a JSX path.
+ *
+ * @param {import("@babel/core").NodePath | null | undefined} path - The current JSX path.
+ * @returns {import("@babel/core").NodePath | null} The function path that owns the render method.
+ */
+function findRenderFunction(path) {
+  if (!path) return null
+
+  const objectMethod = path.findParent(
+    (parent) => parent.isObjectMethod() && parent.node.key.name === "render",
+  )
+  if (objectMethod) return objectMethod
+
+  const objectProperty = path.findParent(
+    (parent) => parent.isObjectProperty() && parent.node.key.name === "render",
+  )
+  if (!objectProperty) return null
+
+  const value = objectProperty.get("value")
+  if (value.isFunctionExpression() || value.isArrowFunctionExpression()) {
+    return value
+  }
+
+  return null
+}
+
+/**
  * Convert a JSXElement node into a lit-html template or component call.
  *
  * @param {import("@babel/types").JSXElement} node - The JSX element node.
@@ -138,26 +166,15 @@ function getChildrenPaths(path) {
  */
 export function buildTemplate(node, path, isSvg = false) {
   const tag = node.openingElement.name.name
+  let repeatKeyExpr = null
+  let apiIdentifier = null
 
   if (isCapitalizedComponent(tag)) {
-    if (path) {
-      const fn = path.getFunctionParent()
-      if (fn) {
-        let isRender = false
+    const renderFn = findRenderFunction(path)
 
-        if (fn.isObjectMethod() && fn.node.key.name === "render") {
-          isRender = true
-        } else if (
-          fn.parentPath.isObjectProperty() &&
-          fn.parentPath.node.key.name === "render"
-        ) {
-          isRender = true
-        }
-
-        if (isRender) {
-          ensureRenderApiParameter(fn)
-        }
-      }
+    if (renderFn) {
+      ensureRenderApiParameter(renderFn)
+      apiIdentifier = t.identifier("api")
     }
 
     const props = []
@@ -169,6 +186,13 @@ export function buildTemplate(node, path, isSvg = false) {
       }
 
       const key = attr.name.name
+      if (key === "key") {
+        if (attr.value && t.isJSXExpressionContainer(attr.value)) {
+          repeatKeyExpr = attr.value.expression
+        }
+        continue
+      }
+
       let value
 
       if (!attr.value) {
@@ -212,20 +236,42 @@ export function buildTemplate(node, path, isSvg = false) {
     }
 
     if (path && path.scope.hasBinding(tag)) {
-      return t.callExpression(
+      const renderArgs = []
+      const [onlyProp] = props
+      const singleSpreadArg =
+        props.length === LAST &&
+        t.isSpreadElement(onlyProp) &&
+        !filteredChildren.length
+
+      if (singleSpreadArg) {
+        renderArgs.push(onlyProp.argument)
+      } else {
+        renderArgs.push(
+          props.length ? t.objectExpression(props) : t.objectExpression([]),
+        )
+      }
+
+      if (apiIdentifier) {
+        renderArgs.push(apiIdentifier)
+      }
+
+      const renderCall = t.callExpression(
         t.memberExpression(t.identifier(tag), t.identifier("render")),
-        props.length ? [t.objectExpression(props)] : [],
+        renderArgs,
       )
+      if (repeatKeyExpr) renderCall.__repeatKey = repeatKeyExpr
+      return renderCall
     }
 
     const name = toCamelCase(tag)
-
-    return t.callExpression(
+    const renderCall = t.callExpression(
       t.memberExpression(t.identifier("api"), t.identifier("render")),
       props.length
         ? [t.stringLiteral(name), t.objectExpression(props)]
         : [t.stringLiteral(name)],
     )
+    if (repeatKeyExpr) renderCall.__repeatKey = repeatKeyExpr
+    return renderCall
   }
 
   const isCurrentSvg = isSvg || tag === "svg"

@@ -109,12 +109,18 @@ export function jsxToLit() {
       CallExpression(path) {
         const { callee, arguments: args } = path.node
         const [arrow] = args
+        const body = arrow && arrow.body
+        const isRenderableBody =
+          (body && isJsx(body)) ||
+          (t.isCallExpression(body) &&
+            t.isMemberExpression(body.callee) &&
+            body.callee.property.name === "render")
 
         if (
           t.isMemberExpression(callee) &&
           callee.property.name === "map" &&
           t.isArrowFunctionExpression(arrow) &&
-          isJsx(arrow.body)
+          isRenderableBody
         ) {
           if (
             !path.findParent(
@@ -131,14 +137,16 @@ export function jsxToLit() {
           const repeatArgs = [items]
 
           let keyExpr = null
-          if (t.isJSXElement(arrow.body)) {
-            const keyAttr = arrow.body.openingElement.attributes.find(
+          if (t.isJSXElement(body)) {
+            const keyAttr = body.openingElement.attributes.find(
               (attr) => attr.name && attr.name.name === "key",
             )
 
             if (keyAttr && keyAttr.value.type === "JSXExpressionContainer") {
               keyExpr = keyAttr.value.expression
             }
+          } else if (body && body.__repeatKey) {
+            keyExpr = body.__repeatKey
           }
 
           if (keyExpr) {

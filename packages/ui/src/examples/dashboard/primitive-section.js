@@ -7,7 +7,7 @@ import { grid } from "../../layout/grid/index.js"
 import { card } from "../../surfaces/card/index.js"
 import { getPrimitiveContent } from "./primitive-content.js"
 
-export const primitiveSection = {
+export const PrimitiveSection = {
   render(entity, api) {
     const router = api?.getEntity?.("router")
     const content = getPrimitiveContent(router?.path, entity)

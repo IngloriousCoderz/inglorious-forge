@@ -1,24 +1,9 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`@inglorious/vite-plugin-vue > TypeScript support > handles TypeScript script sections 1`] = `
-"import { html } from "@inglorious/web";
-export const testComponent = {
-  create(entity) {
-    entity.message = "Hello";
-  },
-  greet(entity) {
-    console.log(entity.message);
-  },
-  render(entity, api) {
-    return html\`<div>\${entity.message}</div>\`;
-  }
-};"
-`;
-
 exports[`@inglorious/vite-plugin-vue > basic behavior > converts kebab-case to camelCase 1`] = `
 "import { html } from "@inglorious/web";
 
-export const userProfile = {
+export const userProfile.vue = {
   render(entity, api) {
     return html\`<div>Test</div>\`;
   }
@@ -29,7 +14,7 @@ export const userProfile = {
 exports[`@inglorious/vite-plugin-vue > basic behavior > generates correct component name from filename 1`] = `
 "import { html } from "@inglorious/web";
 
-export const myComponent = {
+export const myComponent.vue = {
   render(entity, api) {
     return html\`<div>Test</div>\`;
   }
@@ -40,7 +25,7 @@ export const myComponent = {
 exports[`@inglorious/vite-plugin-vue > basic behavior > transforms a simple template 1`] = `
 "import { html } from "@inglorious/web";
 
-export const testComponent = {
+export const testComponent.vue = {
   render(entity, api) {
     return html\`<div>Hello World</div>\`;
   }
@@ -51,7 +36,7 @@ export const testComponent = {
 exports[`@inglorious/vite-plugin-vue > bindings > handles property and event bindings 1`] = `
 "import { html } from "@inglorious/web";
 
-export const testComponent = {
+export const testComponent.vue = {
   render(entity, api) {
     return html\`<input type="text" .value="\${entity.text}" .maxLength="\${entity.maxLength}" @input="\${onInput}"></input>\`;
   }
@@ -62,7 +47,7 @@ export const testComponent = {
 exports[`@inglorious/vite-plugin-vue > complex component > handles a realistic component 1`] = `
 "import { html, when, repeat } from "@inglorious/web";
 
-export const testComponent = {
+export const testComponent.vue = {
   create(entity) {
     entity.todos = []
   },
@@ -84,7 +69,7 @@ export const testComponent = {
 exports[`@inglorious/vite-plugin-vue > complex component > handles complete todo app 1`] = `
 "import { html, when, repeat } from "@inglorious/web";
 
-export const testComponent = {
+export const testComponent.vue = {
   create(entity) {
     entity.todos = []
     entity.newTodo = ''
@@ -137,7 +122,7 @@ export const testComponent = {
 exports[`@inglorious/vite-plugin-vue > component references > renders PascalCase component inside conditionals 1`] = `
 "import { html, when } from "@inglorious/web";
 
-export const testComponent = {
+export const testComponent.vue = {
   render(entity, api) {
     return \${when(entity.visible, () => \${api.render("message1")})};
   }
@@ -148,7 +133,7 @@ export const testComponent = {
 exports[`@inglorious/vite-plugin-vue > component references > renders PascalCase component inside loops 1`] = `
 "import { html, repeat } from "@inglorious/web";
 
-export const testComponent = {
+export const testComponent.vue = {
   render(entity, api) {
     return \${repeat(entity.items, (item) => \${api.render("message1")})};
   }
@@ -157,7 +142,7 @@ export const testComponent = {
 `;
 
 exports[`@inglorious/vite-plugin-vue > component references > renders PascalCase component without props 1`] = `
-"export const testComponent = {
+"export const testComponent.vue = {
   render(entity, api) {
     return \${api.render("message1")};
   }
@@ -168,7 +153,7 @@ exports[`@inglorious/vite-plugin-vue > component references > renders PascalCase
 exports[`@inglorious/vite-plugin-vue > component references > renders multiple PascalCase components 1`] = `
 "import { html } from "@inglorious/web";
 
-export const testComponent = {
+export const testComponent.vue = {
   render(entity, api) {
     return html\`<div>
     \${api.render("header")}
@@ -181,7 +166,7 @@ export const testComponent = {
 `;
 
 exports[`@inglorious/vite-plugin-vue > component references > renders nested PascalCase components 1`] = `
-"export const testComponent = {
+"export const testComponent.vue = {
   render(entity, api) {
     return \${api.render("section")};
   }
@@ -192,7 +177,7 @@ exports[`@inglorious/vite-plugin-vue > component references > renders nested Pas
 exports[`@inglorious/vite-plugin-vue > conditionals > handles nested v-if 1`] = `
 "import { html, when } from "@inglorious/web";
 
-export const testComponent = {
+export const testComponent.vue = {
   render(entity, api) {
     return \${when(entity.outer, () => html\`<div>
     \${when(entity.inner, () => html\`<span>Nested</span>\`)}
@@ -205,7 +190,7 @@ export const testComponent = {
 exports[`@inglorious/vite-plugin-vue > conditionals > handles v-if / v-else 1`] = `
 "import { html, when } from "@inglorious/web";
 
-export const testComponent = {
+export const testComponent.vue = {
   render(entity, api) {
     return html\`\${when(entity.show, () => html\`<div>Yes</div>\`, () => html\`<div>No</div>\`)}
   \`;
@@ -217,7 +202,7 @@ export const testComponent = {
 exports[`@inglorious/vite-plugin-vue > conditionals > handles v-if / v-else-if / v-else 1`] = `
 "import { html, when } from "@inglorious/web";
 
-export const testComponent = {
+export const testComponent.vue = {
   render(entity, api) {
     return html\`\${when(entity.status === 'loading', () => html\`<div>Loading</div>\`, () => when(entity.status === 'error', () => html\`<div>Error</div>\`, () => html\`<div>Success</div>\`))}
   html\`<div>Error</div>\`
@@ -232,7 +217,7 @@ exports[`@inglorious/vite-plugin-vue > distinguishes between in-scope and out-of
 
 import { dataGrid as DataGrid } from "./components";
 
-export const testComponent = {
+export const testComponent.vue = {
   render(entity, api) {
     return html\`<div>
     \${DataGrid.render({ prop1: "value" })}
@@ -246,7 +231,7 @@ export const testComponent = {
 exports[`@inglorious/vite-plugin-vue > edge cases > handles self-closing tags 1`] = `
 "import { html } from "@inglorious/web";
 
-export const testComponent = {
+export const testComponent.vue = {
   render(entity, api) {
     return html\`<div>
     <input type="text"></input>
@@ -260,7 +245,7 @@ export const testComponent = {
 exports[`@inglorious/vite-plugin-vue > event handlers > handles multiple event types 1`] = `
 "import { html } from "@inglorious/web";
 
-export const testComponent = {
+export const testComponent.vue = {
   onInput(entity) {
     
   },
@@ -283,7 +268,7 @@ export const testComponent = {
 exports[`@inglorious/vite-plugin-vue > event handlers > transforms method references to api.notify 1`] = `
 "import { html } from "@inglorious/web";
 
-export const testComponent = {
+export const testComponent.vue = {
   increment(entity) {
     entity.count++
   },
@@ -298,7 +283,7 @@ export const testComponent = {
 exports[`@inglorious/vite-plugin-vue > interpolations > handles interpolation 1`] = `
 "import { html } from "@inglorious/web";
 
-export const testComponent = {
+export const testComponent.vue = {
   render(entity, api) {
     return html\`<p>Hello \${entity.name}!</p>\`;
   }
@@ -309,7 +294,7 @@ export const testComponent = {
 exports[`@inglorious/vite-plugin-vue > interpolations > handles multiple interpolations 1`] = `
 "import { html } from "@inglorious/web";
 
-export const testComponent = {
+export const testComponent.vue = {
   render(entity, api) {
     return html\`<p>\${entity.x} + \${entity.y} = \${entity.x + y}</p>\`;
   }
@@ -320,7 +305,7 @@ export const testComponent = {
 exports[`@inglorious/vite-plugin-vue > loops > handles v-for 1`] = `
 "import { html, repeat } from "@inglorious/web";
 
-export const testComponent = {
+export const testComponent.vue = {
   render(entity, api) {
     return \${repeat(entity.items, item => item.id, (item) => html\`<li>
     \${item.name}
@@ -333,7 +318,7 @@ export const testComponent = {
 exports[`@inglorious/vite-plugin-vue > loops > handles v-for with index 1`] = `
 "import { html, repeat } from "@inglorious/web";
 
-export const testComponent = {
+export const testComponent.vue = {
   render(entity, api) {
     return \${repeat(entity.items, item => item.id, (item, index) => html\`<li>
     \${entity.index}: \${item.name}
@@ -346,7 +331,7 @@ export const testComponent = {
 exports[`@inglorious/vite-plugin-vue > loops > handles v-for without :key 1`] = `
 "import { html, repeat } from "@inglorious/web";
 
-export const testComponent = {
+export const testComponent.vue = {
   render(entity, api) {
     return \${repeat(entity.items, (item) => html\`<li>
     \${item.name}
@@ -359,7 +344,7 @@ export const testComponent = {
 exports[`@inglorious/vite-plugin-vue > script section > handles arrow function methods 1`] = `
 "import { html } from "@inglorious/web";
 
-export const testComponent = {
+export const testComponent.vue = {
   create(entity) {
     entity.count = 0
   },
@@ -378,7 +363,7 @@ export const testComponent = {
 exports[`@inglorious/vite-plugin-vue > script section > handles multi-line function bodies 1`] = `
 "import { html } from "@inglorious/web";
 
-export const testComponent = {
+export const testComponent.vue = {
   save(entity) {
     const data = entity.formData
       console.log('Saving', data)
@@ -395,7 +380,7 @@ export const testComponent = {
 exports[`@inglorious/vite-plugin-vue > script section > handles regular function declarations 1`] = `
 "import { html } from "@inglorious/web";
 
-export const testComponent = {
+export const testComponent.vue = {
   create(entity) {
     entity.count = 0
   },
@@ -414,7 +399,7 @@ export const testComponent = {
 exports[`@inglorious/vite-plugin-vue > script section > includes script content verbatim 1`] = `
 "import { html } from "@inglorious/web";
 
-export const testComponent = {
+export const testComponent.vue = {
   create(entity) {
     entity.value = 0
   },
@@ -433,7 +418,7 @@ export const testComponent = {
 exports[`@inglorious/vite-plugin-vue > script section > separates state variables from methods 1`] = `
 "import { html } from "@inglorious/web";
 
-export const testComponent = {
+export const testComponent.vue = {
   create(entity) {
     entity.count = 0
     entity.items = []
@@ -457,7 +442,7 @@ export const testComponent = {
 exports[`@inglorious/vite-plugin-vue > script section > works without script section 1`] = `
 "import { html } from "@inglorious/web";
 
-export const testComponent = {
+export const testComponent.vue = {
   render(entity, api) {
     return html\`<div>Static content</div>\`;
   }

@@ -26,6 +26,10 @@
       "types": "./types/index.d.ts",
       "import": "./src/index.js"
     },
+    "./data-structures/string.js": {
+      "types": "./types/data-structures/string.d.ts",
+      "import": "./src/data-structures/string.js"
+    },
     "./*": {
       "types": "./types/*.d.ts",
       "import": "./src/*"

@@ -6,19 +6,19 @@ import {
   createEntityRender,
   notifyActionArgType,
 } from "../../stories/notifyStory.js"
-import { appDrawer } from "./app-drawer.js"
-import { dashboard } from "./dashboard.js"
-import { dashboardJsx } from "./dashboard-jsx.jsx"
+import { AppDrawer } from "./app-drawer.js"
+import { Dashboard } from "./dashboard.js"
+import { DashboardJsx } from "./dashboard-jsx.jsx"
 // import { dashboardVue } from "./dashboard-vue.vue"
-import { mode } from "./mode.js"
-import { primitiveSection } from "./primitive-section.js"
-import { theme } from "./theme.js"
+import { Mode } from "./mode.js"
+import { PrimitiveSection } from "./primitive-section.js"
+import { Theme } from "./theme.js"
 
 const baseTypes = {
-  theme,
-  mode,
-  appDrawer,
-  primitiveSection,
+  Theme,
+  Mode,
+  AppDrawer,
+  PrimitiveSection,
   area: areaChart,
   bar: barChart,
   line: lineChart,
@@ -44,29 +44,29 @@ export default {
 export const Default = {
   render: createEntityRender({
     ...baseTypes,
-    dashboard,
+    Dashboard,
   }),
   args: {
     id: "dashboard",
-    type: "dashboard",
+    type: "Dashboard",
   },
 }
 
 export const Jsx = {
   render: createEntityRender({
     ...baseTypes,
-    dashboard: dashboardJsx,
+    Dashboard: DashboardJsx,
   }),
   args: {
     id: "dashboard",
-    type: "dashboard",
+    type: "Dashboard",
   },
 }
 
 // export const Vue = {
 //   render: createEntityRender({
 //     ...baseTypes,
-//     dashboard: dashboardVue,
+//     Dashboard: DashboardVue,
 //   }),
 //   args: {
 //     id: "dashboard",
