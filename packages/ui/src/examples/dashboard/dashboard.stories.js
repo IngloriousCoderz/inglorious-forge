@@ -1,6 +1,6 @@
 import "./style.css"
 
-import { areaChart, barChart, lineChart } from "@inglorious/charts"
+import { chart } from "@inglorious/charts"
 
 import {
   createEntityRender,
