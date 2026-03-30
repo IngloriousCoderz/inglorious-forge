@@ -1,6 +1,6 @@
 import "./style.css"
 
-import { areaChart, barChart, lineChart } from "@inglorious/charts"
+import { chart } from "@inglorious/charts"
 
 import {
   createEntityRender,
@@ -21,14 +21,24 @@ const baseTypes = {
   AppDrawer,
   AppHeader,
   PrimitiveSection,
-  area: areaChart,
-  bar: barChart,
-  line: lineChart,
+  area: chart,
+  bar: chart,
+  line: chart,
 }
 
 export default {
   title: "Examples/AdminDashboard",
   tags: ["autodocs"],
+  render: createEntityRender({
+    Theme,
+    Mode,
+    AppDrawer,
+    Dashboard,
+    PrimitiveSection,
+    area: chart,
+    bar: chart,
+    line: chart,
+  }),
   argTypes: {
     ...notifyActionArgType,
   },
