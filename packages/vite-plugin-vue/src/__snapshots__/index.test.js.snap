@@ -183,7 +183,9 @@ export const TestComponent = {
 exports[`@inglorious/vite-plugin-vue > component references > renders nested PascalCase components 1`] = `
 "export const TestComponent = {
   render(entity, api) {
-    return api.render("section");
+    return api.render("section", { children: html\`
+    \${api.render("message1")}
+  \` });
   }
 };
 "
@@ -230,7 +232,7 @@ export const TestComponent = {
 exports[`@inglorious/vite-plugin-vue > distinguishes between in-scope and out-of-scope primitives 1`] = `
 "import { html } from "@inglorious/web";
 
-import { dataGrid as DataGrid } from "./components";
+import { DataGrid } from "./components";
 
 export const TestComponent = {
   render(entity, api) {

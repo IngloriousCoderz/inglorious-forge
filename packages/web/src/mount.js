@@ -44,13 +44,13 @@ export async function mount(store, renderFn, element) {
  */
 function createRender(api) {
   return function (id, typeName, type) {
+    registerTypeIfMissing(api, typeName, type)
+
     const entity = api.getEntity(id)
 
     if (!entity) {
       return ""
     }
-
-    registerTypeIfMissing(api, typeName, type)
 
     const entityType = api.getType(entity.type)
     if (!entityType?.render) {

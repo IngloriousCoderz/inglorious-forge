@@ -46,11 +46,25 @@ describe("babel render", () => {
   it("forwards spreads and ignores key on capitalized components inside render methods", async () => {
     expect(
       await transform(`
-        import { statCard as StatCard } from "./stat-card.js"
+        import { StatCard } from "./stat-card.js"
 
         export const dashboard = {
           render(entity, api) {
             return <StatCard key={entity.id} {...entity} />
+          },
+        }
+      `),
+    ).toMatchSnapshot()
+  })
+
+  it("lazily registers bound capitalized components without props", async () => {
+    expect(
+      await transform(`
+        import { Form } from "./form.js"
+
+        export const dashboard = {
+          render() {
+            return <Form />
           },
         }
       `),

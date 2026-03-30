@@ -177,6 +177,7 @@ export function buildTemplate(node, path, isSvg = false) {
       apiIdentifier = t.identifier("api")
     }
 
+    const componentId = toCamelCase(tag)
     const props = []
 
     for (const attr of node.openingElement.attributes) {
@@ -235,6 +236,18 @@ export function buildTemplate(node, path, isSvg = false) {
       props.push(t.objectProperty(t.identifier("children"), childrenTemplate))
     }
 
+    const shouldLazyRegister =
+      renderFn && !props.length && !filteredChildren.length
+
+    if (shouldLazyRegister) {
+      const renderCall = t.callExpression(
+        t.memberExpression(t.identifier("api"), t.identifier("render")),
+        [t.stringLiteral(componentId), t.stringLiteral(tag), t.identifier(tag)],
+      )
+      if (repeatKeyExpr) renderCall.__repeatKey = repeatKeyExpr
+      return renderCall
+    }
+
     if (path && path.scope.hasBinding(tag)) {
       const renderArgs = []
       const [onlyProp] = props
@@ -263,12 +276,11 @@ export function buildTemplate(node, path, isSvg = false) {
       return renderCall
     }
 
-    const name = toCamelCase(tag)
     const renderCall = t.callExpression(
       t.memberExpression(t.identifier("api"), t.identifier("render")),
       props.length
-        ? [t.stringLiteral(name), t.objectExpression(props)]
-        : [t.stringLiteral(name)],
+        ? [t.stringLiteral(componentId), t.objectExpression(props)]
+        : [t.stringLiteral(componentId)],
     )
     if (repeatKeyExpr) renderCall.__repeatKey = repeatKeyExpr
     return renderCall

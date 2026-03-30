@@ -2,7 +2,7 @@
 
 exports[`babel visitor > extracts repeat keys while keeping api on component renders inside render methods 1`] = `
 "import { html, repeat } from "@inglorious/web";
-import { statCard as StatCard } from "./stat-card.js";
+import { StatCard } from "./stat-card.js";
 export const dashboard = {
   render(entity, api) {
     return html\`<div> \${repeat(entity.statCards, card => card.id, card => StatCard.render(card, api))} </div>\`;
@@ -12,7 +12,7 @@ export const dashboard = {
 
 exports[`babel visitor > forwards api to spread-only component renders inside render methods 1`] = `
 "import { html } from "@inglorious/web";
-import { statCard as StatCard } from "./stat-card.js";
+import { StatCard } from "./stat-card.js";
 export const dashboard = {
   render(entity, api) {
     return StatCard.render(entity, api);
@@ -22,9 +22,10 @@ export const dashboard = {
 
 exports[`babel visitor > injects api into render methods 1`] = `
 "import { html } from "@inglorious/web";
+import { Form } from "./form.js";
 export const app = {
   render(api) {
-    return api.render("form");
+    return api.render("form", "Form", Form);
   }
 };"
 `;
@@ -39,7 +40,7 @@ const view = ({
 
 exports[`babel visitor > keeps in-scope components as direct renders 1`] = `
 "import { html } from "@inglorious/web";
-import { dataGrid as DataGrid } from "./components";
+import { DataGrid } from "./components";
 export const app = {
   render(api) {
     return DataGrid.render({
@@ -53,7 +54,7 @@ exports[`babel visitor > moves api to the end when it is not already last 1`] = 
 "import { html } from "@inglorious/web";
 export const app = {
   render(entity, api) {
-    return api.render("form");
+    return api.render("form", "Form", Form);
   }
 };"
 `;

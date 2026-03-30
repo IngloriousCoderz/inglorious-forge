@@ -1,62 +1,58 @@
 <template>
-  <div :class="rootClass">
+  <Flex direction="column" :class="rootClass">
     <AppDrawer />
 
-    <main
-      class="iw-flex iw-flex-direction-column iw-flex-wrap-nowrap iw-flex-justify-start iw-flex-align-stretch iw-flex-gap-none iw-flex-padding-none iw-dashboard-main"
-    >
+    <Flex element="main" direction="column" className="iw-dashboard-main">
       <AppHeader />
 
-      <div
-        class="iw-container iw-container-centered iw-container-padding-lg iw-dashboard-container"
-        :style="{ maxWidth: '80rem' }"
-      >
-        <div
-          v-if="isDashboardRoot"
-          class="iw-flex iw-flex-direction-column iw-flex-wrap-nowrap iw-flex-justify-start iw-flex-align-stretch iw-flex-gap-lg iw-flex-padding-none"
-        >
-          <div
-            class="iw-grid iw-grid-gap-lg iw-grid-padding-none"
-            :style="{
-              gridTemplateColumns: 'repeat(auto-fit, minmax(18rem, 1fr))',
-            }"
-          >
-            <div v-for="card in statCards" :key="card.id">
-              <StatCard v-bind="card" />
-            </div>
-          </div>
+      <Container maxWidth="xl" padding="lg" className="iw-dashboard-container">
+        <Flex v-if="isDashboardRoot" direction="column" gap="lg">
+          <Grid minColumnWidth="18rem" gap="lg">
+            <StatCard v-for="card in statCards" :key="card.id" v-bind="card" />
+          </Grid>
 
           <TrafficCard />
 
-          <div
-            class="iw-grid iw-grid-gap-lg iw-grid-padding-none"
-            :style="{ gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }"
-          >
-            <div v-for="card in socialCards" :key="card.icon">
-              <SocialCard v-bind="card" />
-            </div>
-          </div>
+          <Grid :columns="3" gap="lg">
+            <SocialCard
+              v-for="card in socialCards"
+              :key="card.icon"
+              v-bind="card"
+            />
+          </Grid>
 
           <TrafficSalesCard />
-        </div>
+        </Flex>
 
         <PrimitiveSection v-else />
-      </div>
+      </Container>
 
-      <footer
-        class="iw-flex iw-flex-direction-row iw-flex-wrap-nowrap iw-flex-justify-between iw-flex-align-stretch iw-flex-gap-md iw-flex-padding-md iw-dashboard-footer"
+      <Flex
+        element="footer"
+        justify="between"
+        gap="md"
+        padding="md"
+        className="iw-dashboard-footer"
       >
         <div>Admin dashboard example © 2026</div>
         <div>Built with Inglorious UI primitives and charts</div>
-      </footer>
-    </main>
-  </div>
+      </Flex>
+    </Flex>
+  </Flex>
 </template>
 
 <script>
+import { container as Container } from "../../layout/container/index.js"
+import { flex as Flex } from "../../layout/flex/index.js"
+import { grid as Grid } from "../../layout/grid/index.js"
 import { socialCards, statCards } from "./data.js"
+import { AppDrawer } from "./app-drawer.js"
+import { AppHeader } from "./app-header.js"
+import { PrimitiveSection } from "./primitive-section.js"
 import { SocialCard } from "./social-card.js"
 import { StatCard } from "./stat-card.js"
+import { TrafficCard } from "./traffic-card.js"
+import { TrafficSalesCard } from "./traffic-sales-card.js"
 
 const rootClass =
   "iw-flex iw-flex-direction-column iw-flex-wrap-nowrap iw-flex-justify-start iw-flex-align-stretch iw-flex-gap-none iw-flex-padding-none iw-dashboard"

@@ -31,6 +31,8 @@ describe("babel visitor", () => {
   it("injects api into render methods", async () => {
     expect(
       await transform(`
+        import { Form } from "./form.js"
+
         export const app = {
           render() {
             return <Form />
@@ -55,7 +57,7 @@ describe("babel visitor", () => {
   it("keeps in-scope components as direct renders", async () => {
     expect(
       await transform(`
-        import { dataGrid as DataGrid } from "./components"
+        import {  DataGrid } from "./components"
 
         export const app = {
           render(api) {
@@ -69,7 +71,7 @@ describe("babel visitor", () => {
   it("extracts repeat keys while keeping api on component renders inside render methods", async () => {
     expect(
       await transform(`
-        import { statCard as StatCard } from "./stat-card.js"
+        import { StatCard } from "./stat-card.js"
 
         export const dashboard = {
           render(entity, api) {
@@ -89,7 +91,7 @@ describe("babel visitor", () => {
   it("forwards api to spread-only component renders inside render methods", async () => {
     expect(
       await transform(`
-        import { statCard as StatCard } from "./stat-card.js"
+        import { StatCard } from "./stat-card.js"
 
         export const dashboard = {
           render(entity, api) {

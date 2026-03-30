@@ -289,12 +289,12 @@ Capitalized tags are treated as **Engine Components** and compiled to `api.rende
 export const app = {
   render() {
     // ☝️ Plugin auto-injects 'api' if you use components!
-    return <Form id="f1" />
+    return <Form />
   },
 }
 ```
 
-→ `api.render("form", { id: "f1" })`
+→ `api.render("form", "Form", Form)`
 
 > 💡 **Smart injection**: The plugin automatically adds the `api` parameter to your render function when you use Engine Components in JSX. You don't need to add it manually!
 
@@ -323,7 +323,7 @@ export const form = {
 // ✅ DO THIS - Compose at the entity level instead
 export const form = {
   render(entity, api) {
-    return html`<form>${api.render("field", { formId: entity.id })}</form>`
+    return html`<form>${api.render("field", "Field", Field)}</form>`
   },
 }
 ```

@@ -1,8 +1,10 @@
 import { container as Container } from "../../layout/container/index.js"
 import { flex as Flex } from "../../layout/flex/index.js"
 import { grid as Grid } from "../../layout/grid/index.js"
+import { AppDrawer } from "./app-drawer.js"
 import { AppHeader } from "./app-header.js"
 import { socialCards, statCards } from "./data.js"
+import { PrimitiveSection } from "./primitive-section.js"
 import { SocialCard } from "./social-card.js"
 import { StatCard } from "./stat-card.js"
 import { TrafficCard } from "./traffic-card.js"
@@ -23,40 +25,41 @@ export const DashboardJsx = {
 
     const isDashboardRoot = !router || router.path === "/"
 
-    let mainContent
-    if (isDashboardRoot) {
-      mainContent = (
-        <Flex direction="column" gap="lg">
-          <Grid minColumnWidth="18rem" gap="lg">
-            {statCards.map((card) => (
-              <StatCard key={card.id} {...card} />
-            ))}
-          </Grid>
-          {TrafficCard.render(entity, api)}
-          <Grid columns={3} gap="lg">
-            {socialCards.map((card) => (
-              <SocialCard key={card.id} {...card} />
-            ))}
-          </Grid>
-          {TrafficSalesCard.render(entity, api)}
-        </Flex>
-      )
-    } else {
-      mainContent = api.render("primitiveSection")
-    }
-
     return (
       <Flex direction="column" className={dashboardClassName}>
         <AppDrawer />
+
         <Flex element="main" direction="column" className="iw-dashboard-main">
-          {AppHeader.render(entity, api)}
+          <AppHeader />
+
           <Container
             maxWidth="xl"
             padding="lg"
             className="iw-dashboard-container"
           >
-            {mainContent}
+            {isDashboardRoot && (
+              <Flex direction="column" gap="lg">
+                <Grid minColumnWidth="18rem" gap="lg">
+                  {statCards.map((card) => (
+                    <StatCard key={card.id} {...card} />
+                  ))}
+                </Grid>
+
+                <TrafficCard />
+
+                <Grid columns={3} gap="lg">
+                  {socialCards.map((card) => (
+                    <SocialCard key={card.id} {...card} />
+                  ))}
+                </Grid>
+
+                <TrafficSalesCard />
+              </Flex>
+            )}
+
+            {!isDashboardRoot && <PrimitiveSection />}
           </Container>
+
           <Flex
             element="footer"
             justify="between"

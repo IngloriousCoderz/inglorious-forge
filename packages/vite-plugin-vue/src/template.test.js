@@ -48,6 +48,24 @@ describe("template helpers", () => {
     expect(result.code).toContain('label: "Total"')
   })
 
+  it("passes inner content as children for PascalCase components", () => {
+    const dom = parseTemplate(`<Flex><span>{{ label }}</span></Flex>`)
+    const result = transformTemplate(dom, [], new Set(["Flex"]))
+
+    expect(result.code).toContain("Flex.render({")
+    expect(result.code).toContain("children:")
+    expect(result.code).toContain("entity.label")
+  })
+
+  it("lazily registers imported PascalCase components without props", () => {
+    const dom = parseTemplate(`<StatCard />`)
+    const result = transformTemplate(dom, [], new Set(["StatCard"]))
+
+    expect(result.code).toContain(
+      'api.render("statCard", "StatCard", StatCard)',
+    )
+  })
+
   it("forwards v-bind objects directly to component renders", () => {
     const dom = parseTemplate(`<StatCard v-bind="card" />`)
     const result = transformTemplate(dom)

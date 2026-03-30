@@ -1,10 +1,19 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`babel render > forwards spreads and ignores key on capitalized components inside render methods 1`] = `
-"import { statCard as StatCard } from "./stat-card.js";
+"import { StatCard } from "./stat-card.js";
 export const dashboard = {
   render(entity, api) {
     return StatCard.render(entity, api);
+  }
+};"
+`;
+
+exports[`babel render > lazily registers bound capitalized components without props 1`] = `
+"import { Form } from "./form.js";
+export const dashboard = {
+  render(api) {
+    return api.render("form", "Form", Form);
   }
 };"
 `;

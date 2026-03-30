@@ -93,6 +93,38 @@ function transformNode(
 }
 
 /**
+ * Render a child node list into a lit-html template expression.
+ *
+ * @param {Array} children - Child DOM nodes.
+ * @param {Set<string>} imports - Required lit-html imports.
+ * @param {Array<string>} methodNames - Recognized method names.
+ * @param {Set<string>} scriptImports - Imported names from the script block.
+ * @param {Object} context - Rendering context.
+ * @returns {string} The rendered child template expression.
+ */
+function renderChildren(
+  children,
+  imports,
+  methodNames,
+  scriptImports,
+  context,
+) {
+  if (!children.length) {
+    return ""
+  }
+
+  const parts = []
+
+  for (const child of children) {
+    parts.push(
+      transformNode(child, imports, methodNames, scriptImports, context, true),
+    )
+  }
+
+  return `html\`${parts.join("")}\``
+}
+
+/**
  * Transform a text node, preserving static text and interpolating `{{ }}` expressions.
  *
  * @param {Object} node - DOM text node.
@@ -251,6 +283,7 @@ export function buildElement(
   const { name, attribs = {}, children = [] } = node
 
   if (/^[A-Z]/.test(name)) {
+    const componentId = toCamelCase(path.basename(name))
     const props = {}
     let spreadValue = null
     for (const [key, value] of Object.entries(attribs)) {
@@ -276,6 +309,18 @@ export function buildElement(
       props[key] = `"${value}"`
     }
 
+    const childrenTemplate = renderChildren(
+      children,
+      imports,
+      methodNames,
+      scriptImports,
+      context,
+    )
+
+    if (childrenTemplate) {
+      props.children = childrenTemplate
+    }
+
     const propsStr = Object.entries(props)
       .map(([key, value]) => `${key}: ${value}`)
       .join(", ")
@@ -291,10 +336,13 @@ export function buildElement(
         : ""
 
     if (scriptImports.has(name)) {
-      return `\${${name}.render(${propsArg}${propsArg ? ", " : ""}api)}`
+      if (!propsArg) {
+        return `\${api.render("${componentId}", "${name}", ${name})}`
+      }
+
+      return `\${${name}.render(${propsArg}, api)}`
     }
 
-    const componentId = toCamelCase(path.basename(name))
     return `\${api.render("${componentId}"${propsArg ? `, ${propsArg}` : ""})}`
   }
 

@@ -7,6 +7,7 @@ import {
   notifyActionArgType,
 } from "../../stories/notifyStory.js"
 import { AppDrawer } from "./app-drawer.js"
+import { AppHeader } from "./app-header.js"
 import { Dashboard } from "./dashboard.js"
 import { DashboardJsx } from "./dashboard-jsx.jsx"
 import { DashboardVue } from "./dashboard-vue.vue"
@@ -18,6 +19,7 @@ const baseTypes = {
   Theme,
   Mode,
   AppDrawer,
+  AppHeader,
   PrimitiveSection,
   area: areaChart,
   bar: barChart,

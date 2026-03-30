@@ -751,7 +751,7 @@ const count: number = 0
 </template>
 
 <script>
-import { dataGrid as DataGrid } from "./components";
+import { DataGrid } from "./components";
 </script>
 `
     const result = await transform(code)

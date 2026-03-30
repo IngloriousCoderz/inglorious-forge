@@ -1,4 +1,4 @@
-import { html } from "@inglorious/web"
+import { html, when } from "@inglorious/web"
 
 import { container } from "../../layout/container/index.js"
 import { flex } from "../../layout/flex/index.js"
@@ -25,30 +25,6 @@ export const Dashboard = {
 
     const isDashboardRoot = !router || router.path === "/"
 
-    let mainContent
-    if (isDashboardRoot) {
-      mainContent = flex.render({
-        direction: "column",
-        gap: "lg",
-        children: [
-          grid.render({
-            minColumnWidth: "18rem",
-            gap: "lg",
-            children: statCards.map((card) => StatCard.render(card, api)),
-          }),
-          TrafficCard.render(entity, api),
-          grid.render({
-            columns: 3,
-            gap: "lg",
-            children: socialCards.map((card) => SocialCard.render(card, api)),
-          }),
-          TrafficSalesCard.render(entity, api),
-        ],
-      })
-    } else {
-      mainContent = api.render("primitiveSection")
-    }
-
     return flex.render({
       direction: "column",
       className: dashboardClassName,
@@ -64,7 +40,33 @@ export const Dashboard = {
               maxWidth: "xl",
               padding: "lg",
               className: "iw-dashboard-container",
-              children: mainContent,
+              children: when(
+                isDashboardRoot,
+                () =>
+                  flex.render({
+                    direction: "column",
+                    gap: "lg",
+                    children: [
+                      grid.render({
+                        minColumnWidth: "18rem",
+                        gap: "lg",
+                        children: statCards.map((card) =>
+                          StatCard.render(card, api),
+                        ),
+                      }),
+                      TrafficCard.render(entity, api),
+                      grid.render({
+                        columns: 3,
+                        gap: "lg",
+                        children: socialCards.map((card) =>
+                          SocialCard.render(card, api),
+                        ),
+                      }),
+                      TrafficSalesCard.render(entity, api),
+                    ],
+                  }),
+                () => api.render("primitiveSection"),
+              ),
             }),
             flex.render({
               element: "footer",
