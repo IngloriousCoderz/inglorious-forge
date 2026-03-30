@@ -415,6 +415,41 @@ const increment = (entity) => entity.value++
       expect(result).toMatchSnapshot()
     })
 
+    it("emits render-scope locals inside render", async () => {
+      const code = `
+<template>
+  <Flex :class="dashboardClassName" v-if="isDashboardRoot">
+    <span>{{ dashboardClassName }}</span>
+  </Flex>
+</template>
+
+<script>
+import { flex as Flex } from "../../layout/flex/index.js"
+
+const appDrawer = api.getEntity("appDrawer")
+const dashboardClassName = [
+  "iw-dashboard",
+  appDrawer.isHidden && "iw-dashboard-drawer-hidden",
+  appDrawer.isCollapsed && "iw-dashboard-drawer-collapsed",
+]
+  .filter(Boolean)
+  .join(" ")
+
+const router = api.getEntity("router")
+const isDashboardRoot = !router || router.path === "/"
+</script>
+`
+      const result = await transform(code, "dashboard-vue.vue")
+      expect(result).toContain("render(entity, api)")
+      expect(result).toContain("const dashboardClassName = [")
+      expect(result).toContain(
+        'const isDashboardRoot = !router || router.path === "/"',
+      )
+      expect(result).toContain("dashboardClassName")
+      expect(result).not.toContain("entity.dashboardClassName")
+      expect(result).toMatchSnapshot()
+    })
+
     it("separates state variables from methods", async () => {
       const code = `
 <template>

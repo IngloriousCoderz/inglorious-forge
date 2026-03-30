@@ -15,6 +15,7 @@ const SOURCE_END_OFFSET = 1
  * @param {string} lang - Script language identifier.
  * @returns {{
  *   stateVars: Array<{name: string, value: string}>,
+ *   renderVars: Array<{name: string, value: string}>,
  *   methods: Array<{name: string, params: string, body: string}>,
  *   scriptImports: Set<string>,
  *   importDecls: Array<import("@babel/types").ImportDeclaration>,
@@ -28,9 +29,11 @@ export function parseScript(script, lang) {
     })
 
     const stateVars = []
+    const renderVars = []
     const methods = []
     const scriptImports = new Set()
     const importDecls = []
+    const renderScopeNames = new Set(["api"])
 
     for (const node of ast.program.body) {
       if (t.isImportDeclaration(node)) {
@@ -66,7 +69,12 @@ export function parseScript(script, lang) {
             methods.push({ name, params, body })
           } else {
             const value = extractValue(init, script)
-            stateVars.push({ name, value })
+            if (referencesRenderScope(init, renderScopeNames)) {
+              renderVars.push({ name, value })
+              renderScopeNames.add(name)
+            } else {
+              stateVars.push({ name, value })
+            }
           }
         }
         continue
@@ -83,10 +91,47 @@ export function parseScript(script, lang) {
       }
     }
 
-    return { stateVars, methods, scriptImports, importDecls }
+    return { stateVars, renderVars, methods, scriptImports, importDecls }
   } catch (error) {
     throw new Error(`Failed to parse script: ${error.message}`)
   }
+}
+
+/**
+ * Determine whether an initializer reads from render-scope bindings.
+ *
+ * @param {import("@babel/types").Node | null | undefined} node - Initializer node.
+ * @param {Set<string>} renderScopeNames - Names available in render scope.
+ * @returns {boolean} Whether the initializer should be emitted inside render().
+ */
+function referencesRenderScope(node, renderScopeNames) {
+  const stack = [node]
+  const visited = new Set()
+
+  while (stack.length) {
+    const current = stack.pop()
+
+    if (!current || typeof current !== "object") continue
+    if (visited.has(current)) continue
+    visited.add(current)
+
+    if (Array.isArray(current)) {
+      stack.push(...current)
+      continue
+    }
+
+    if (t.isIdentifier(current) && renderScopeNames.has(current.name)) {
+      return true
+    }
+
+    for (const value of Object.values(current)) {
+      if (value && typeof value === "object") {
+        stack.push(value)
+      }
+    }
+  }
+
+  return false
 }
 
 /**

@@ -1,5 +1,5 @@
 <template>
-  <Flex direction="column" :class="rootClass">
+  <Flex direction="column" :className="dashboardClassName">
     <AppDrawer />
 
     <Flex element="main" direction="column" className="iw-dashboard-main">
@@ -45,16 +45,24 @@
 import { container as Container } from "../../layout/container/index.js"
 import { flex as Flex } from "../../layout/flex/index.js"
 import { grid as Grid } from "../../layout/grid/index.js"
-import { socialCards, statCards } from "./data.js"
 import { AppDrawer } from "./app-drawer.js"
 import { AppHeader } from "./app-header.js"
+import { socialCards, statCards } from "./data.js"
 import { PrimitiveSection } from "./primitive-section.js"
 import { SocialCard } from "./social-card.js"
 import { StatCard } from "./stat-card.js"
 import { TrafficCard } from "./traffic-card.js"
 import { TrafficSalesCard } from "./traffic-sales-card.js"
 
-const rootClass =
-  "iw-flex iw-flex-direction-column iw-flex-wrap-nowrap iw-flex-justify-start iw-flex-align-stretch iw-flex-gap-none iw-flex-padding-none iw-dashboard"
-const isDashboardRoot = true
+const appDrawer = api.getEntity("appDrawer")
+const dashboardClassName = [
+  "iw-dashboard",
+  appDrawer.isHidden && "iw-dashboard-drawer-hidden",
+  appDrawer.isCollapsed && "iw-dashboard-drawer-collapsed",
+]
+  .filter(Boolean)
+  .join(" ")
+
+const router = api.getEntity("router")
+const isDashboardRoot = !router || router.path === "/"
 </script>

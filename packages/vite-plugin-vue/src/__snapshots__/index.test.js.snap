@@ -358,6 +358,31 @@ export const TestComponent = {
 "
 `;
 
+exports[`@inglorious/vite-plugin-vue > script section > emits render-scope locals inside render 1`] = `
+"import { html, when } from "@inglorious/web";
+
+import { flex as Flex } from "../../layout/flex/index.js";
+
+export const DashboardVue = {
+  render(entity, api) {
+    const appDrawer = api.getEntity("appDrawer")
+    const dashboardClassName = [
+  "iw-dashboard",
+  appDrawer.isHidden && "iw-dashboard-drawer-hidden",
+  appDrawer.isCollapsed && "iw-dashboard-drawer-collapsed",
+]
+  .filter(Boolean)
+  .join(" ")
+    const router = api.getEntity("router")
+    const isDashboardRoot = !router || router.path === "/"
+    return when(isDashboardRoot, () => Flex.render({ class: dashboardClassName, children: html\`
+    <span>\${dashboardClassName}</span>
+  \` }, api));
+  }
+};
+"
+`;
+
 exports[`@inglorious/vite-plugin-vue > script section > handles arrow function methods 1`] = `
 "import { html } from "@inglorious/web";
 

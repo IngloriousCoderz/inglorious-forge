@@ -37,30 +37,40 @@ export function parseTemplate(html) {
  * @param {Array} nodes - DOM nodes to transform.
  * @param {Array<string>} methodNames - Recognized method names.
  * @param {Set<string>} scriptImports - Imported names from the script block.
+ * @param {Set<string>} renderScopeNames - Names declared in the render scope.
  * @returns {{ code: string, imports: Set<string> }} Generated code and required imports.
  */
 export function transformTemplate(
   nodes,
   methodNames = [],
   scriptImports = new Set(),
+  renderScopeNames = new Set(),
 ) {
   const imports = new Set()
   const parts = []
 
   for (const node of nodes) {
     parts.push(
-      transformNode(node, imports, methodNames, scriptImports, {}, false),
+      transformNode(
+        node,
+        imports,
+        methodNames,
+        scriptImports,
+        renderScopeNames,
+        {},
+        false,
+      ),
     )
   }
 
   if (!parts.length) {
-    return { code: "", imports }
+    return { code: "html``", imports }
   }
 
-  const [firstPart, secondPart] = parts
+  const [singlePart, secondPart] = parts
   const code =
     secondPart === undefined
-      ? unwrapTemplateExpression(firstPart)
+      ? unwrapTemplateExpression(singlePart)
       : `html\`${parts.join("")}\``
 
   return { code, imports }
@@ -71,11 +81,12 @@ function transformNode(
   imports,
   methodNames,
   scriptImports,
+  renderScopeNames,
   context = {},
   isChild = false,
 ) {
   if (node.type === "text") {
-    return transformTextNode(node, context)
+    return transformTextNode(node, context, renderScopeNames)
   }
 
   if (node.type === "tag") {
@@ -84,6 +95,7 @@ function transformNode(
       imports,
       methodNames,
       scriptImports,
+      renderScopeNames,
       context,
       isChild,
     )
@@ -99,6 +111,7 @@ function transformNode(
  * @param {Set<string>} imports - Required lit-html imports.
  * @param {Array<string>} methodNames - Recognized method names.
  * @param {Set<string>} scriptImports - Imported names from the script block.
+ * @param {Set<string>} renderScopeNames - Names declared in the render scope.
  * @param {Object} context - Rendering context.
  * @returns {string} The rendered child template expression.
  */
@@ -107,6 +120,7 @@ function renderChildren(
   imports,
   methodNames,
   scriptImports,
+  renderScopeNames,
   context,
 ) {
   if (!children.length) {
@@ -117,7 +131,15 @@ function renderChildren(
 
   for (const child of children) {
     parts.push(
-      transformNode(child, imports, methodNames, scriptImports, context, true),
+      transformNode(
+        child,
+        imports,
+        methodNames,
+        scriptImports,
+        renderScopeNames,
+        context,
+        true,
+      ),
     )
   }
 
@@ -129,9 +151,10 @@ function renderChildren(
  *
  * @param {Object} node - DOM text node.
  * @param {Object} context - Rendering context.
+ * @param {Set<string>} renderScopeNames - Names declared in the render scope.
  * @returns {string} Transformed text.
  */
-export function transformTextNode(node, context) {
+export function transformTextNode(node, context, renderScopeNames = new Set()) {
   const text = node.data
   const parts = []
   let lastIndex = 0
@@ -144,7 +167,9 @@ export function transformTextNode(node, context) {
     }
 
     const [fullMatch, expr] = match
-    parts.push(`\${${wrapWithEntity(expr, context)}}`)
+    parts.push(
+      `\${${wrapWithEntity(expr, context, new Set(), renderScopeNames)}}`,
+    )
     lastIndex = match.index + fullMatch.length
   }
 
@@ -162,6 +187,7 @@ export function transformTextNode(node, context) {
  * @param {Set<string>} imports - Required lit-html imports.
  * @param {Array<string>} methodNames - Recognized method names.
  * @param {Set<string>} scriptImports - Imported names from the script block.
+ * @param {Set<string>} renderScopeNames - Names declared in the render scope.
  * @param {Object} context - Rendering context.
  * @param {boolean} isChild - Whether the node is nested inside another element.
  * @returns {string} Transformed node code.
@@ -171,6 +197,7 @@ export function transformElementNode(
   imports,
   methodNames,
   scriptImports,
+  renderScopeNames,
   context,
   isChild = false,
 ) {
@@ -187,6 +214,7 @@ export function transformElementNode(
       imports,
       methodNames,
       scriptImports,
+      renderScopeNames,
       context,
       false,
     )
@@ -195,15 +223,28 @@ export function transformElementNode(
       imports,
       methodNames,
       scriptImports,
+      renderScopeNames,
       context,
       isChild,
     )
 
     if (alternate) {
-      return `\${when(${wrapWithEntity(condition, context, scriptImports)}, () => ${unwrapTemplateExpression(consequent)}, () => ${unwrapTemplateExpression(alternate)})}`
+      return `\${when(${wrapWithEntity(
+        condition,
+        context,
+        scriptImports,
+        renderScopeNames,
+      )}, () => ${unwrapTemplateExpression(
+        consequent,
+      )}, () => ${unwrapTemplateExpression(alternate)})}`
     }
 
-    return `\${when(${wrapWithEntity(condition, context, scriptImports)}, () => ${unwrapTemplateExpression(consequent)})}`
+    return `\${when(${wrapWithEntity(
+      condition,
+      context,
+      scriptImports,
+      renderScopeNames,
+    )}, () => ${unwrapTemplateExpression(consequent)})}`
   }
 
   if (attribs["v-else-if"] || attribs["v-else"] !== undefined) {
@@ -237,11 +278,17 @@ export function transformElementNode(
       imports,
       methodNames,
       scriptImports,
+      renderScopeNames,
       newContext,
       false,
     )
 
-    const wrappedItems = wrapWithEntity(itemList, context, scriptImports)
+    const wrappedItems = wrapWithEntity(
+      itemList,
+      context,
+      scriptImports,
+      renderScopeNames,
+    )
 
     if (keyAttr) {
       const keyExpr = keyAttr.replace(/^["']|["']$/g, "")
@@ -256,6 +303,7 @@ export function transformElementNode(
     imports,
     methodNames,
     scriptImports,
+    renderScopeNames,
     context,
     isChild,
   )
@@ -268,6 +316,7 @@ export function transformElementNode(
  * @param {Set<string>} imports - Required lit-html imports.
  * @param {Array<string>} methodNames - Recognized method names.
  * @param {Set<string>} scriptImports - Imported names from the script block.
+ * @param {Set<string>} renderScopeNames - Names declared in the render scope.
  * @param {Object} context - Rendering context.
  * @param {boolean} isChild - Whether the node is nested inside another element.
  * @returns {string} Transformed element string.
@@ -277,6 +326,7 @@ export function buildElement(
   imports,
   methodNames,
   scriptImports,
+  renderScopeNames,
   context,
   isChild = false,
 ) {
@@ -302,6 +352,7 @@ export function buildElement(
           normalizeWhitespace(value),
           context,
           scriptImports,
+          renderScopeNames,
         )
         continue
       }
@@ -314,6 +365,7 @@ export function buildElement(
       imports,
       methodNames,
       scriptImports,
+      renderScopeNames,
       context,
     )
 
@@ -325,7 +377,7 @@ export function buildElement(
       .map(([key, value]) => `${key}: ${value}`)
       .join(", ")
     const spreadArg = spreadValue
-      ? wrapWithEntity(spreadValue, context, scriptImports)
+      ? wrapWithEntity(spreadValue, context, scriptImports, renderScopeNames)
       : ""
     const propsArg = spreadArg
       ? propsStr
@@ -369,6 +421,7 @@ export function buildElement(
         normalizeWhitespace(value),
         context,
         scriptImports,
+        renderScopeNames,
       )
       const needsParens = wrapped.trimStart().startsWith("{")
       const expr = needsParens ? `(${wrapped})` : wrapped
@@ -419,7 +472,15 @@ export function buildElement(
 
   for (const child of children) {
     parts.push(
-      transformNode(child, imports, methodNames, scriptImports, context, true),
+      transformNode(
+        child,
+        imports,
+        methodNames,
+        scriptImports,
+        renderScopeNames,
+        context,
+        true,
+      ),
     )
   }
 
@@ -435,13 +496,26 @@ export function buildElement(
  * @param {string} expr - Expression to wrap.
  * @param {Object} context - Rendering context.
  * @param {Set<string>} scriptImports - Imported names from the script block.
+ * @param {Set<string>} renderScopeNames - Names declared in the render scope.
  * @returns {string} Normalized expression.
  */
-export function wrapWithEntity(expr, context, scriptImports = new Set()) {
+export function wrapWithEntity(
+  expr,
+  context,
+  scriptImports = new Set(),
+  renderScopeNames = new Set(),
+) {
   const trimmed = expr.trim()
+  const renderScopeNameSet =
+    renderScopeNames instanceof Set
+      ? renderScopeNames
+      : new Set(renderScopeNames)
 
   if (context.loopVar && trimmed.includes(context.loopVar)) return trimmed
   if (trimmed.startsWith("entity.")) return trimmed
+  if (trimmed.startsWith("api.")) return trimmed
+  if (trimmed.startsWith("!api.")) return trimmed
+
   if (
     trimmed.startsWith("{") ||
     trimmed.startsWith("[") ||
@@ -458,6 +532,7 @@ export function wrapWithEntity(expr, context, scriptImports = new Set()) {
   }
 
   const [rootIdent] = trimmed.match(/^([a-zA-Z_$][\w$]*)/) || []
+  if (rootIdent && renderScopeNameSet.has(rootIdent)) return trimmed
   if (rootIdent && scriptImports.has(rootIdent)) return trimmed
 
   return `entity.${trimmed}`
@@ -470,6 +545,7 @@ export function wrapWithEntity(expr, context, scriptImports = new Set()) {
  * @param {Set<string>} imports - Required lit-html imports.
  * @param {Array<string>} methodNames - Recognized method names.
  * @param {Set<string>} scriptImports - Imported names from the script block.
+ * @param {Set<string>} renderScopeNames - Names declared in the render scope.
  * @param {Object} context - Rendering context.
  * @param {boolean} isChild - Whether the current node is nested.
  * @returns {string | null} Alternate branch code.
@@ -479,6 +555,7 @@ export function findAlternate(
   imports,
   methodNames,
   scriptImports,
+  renderScopeNames,
   context,
   isChild = false,
 ) {
@@ -504,6 +581,7 @@ export function findAlternate(
           imports,
           methodNames,
           scriptImports,
+          renderScopeNames,
           context,
           false,
         )
@@ -512,15 +590,26 @@ export function findAlternate(
           imports,
           methodNames,
           scriptImports,
+          renderScopeNames,
           context,
           isChild,
         )
 
         if (alternate) {
-          return `when(${wrapWithEntity(condition, context)}, () => ${unwrapTemplateExpression(consequent)}, () => ${unwrapTemplateExpression(alternate)})`
+          return `when(${wrapWithEntity(
+            condition,
+            context,
+            scriptImports,
+            renderScopeNames,
+          )}, () => ${unwrapTemplateExpression(consequent)}, () => ${unwrapTemplateExpression(alternate)})`
         }
 
-        return `when(${wrapWithEntity(condition, context)}, () => ${unwrapTemplateExpression(consequent)})`
+        return `when(${wrapWithEntity(
+          condition,
+          context,
+          scriptImports,
+          renderScopeNames,
+        )}, () => ${unwrapTemplateExpression(consequent)})`
       }
 
       if (attribs["v-else"] !== undefined) {
@@ -529,6 +618,7 @@ export function findAlternate(
           imports,
           methodNames,
           scriptImports,
+          renderScopeNames,
           context,
           false,
         )

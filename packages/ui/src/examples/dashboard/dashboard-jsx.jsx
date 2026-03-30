@@ -13,8 +13,6 @@ import { TrafficSalesCard } from "./traffic-sales-card.js"
 export const DashboardJsx = {
   render(entity, api) {
     const appDrawer = api.getEntity("appDrawer")
-    const router = api.getEntity("router")
-
     const dashboardClassName = [
       "iw-dashboard",
       appDrawer.isHidden && "iw-dashboard-drawer-hidden",
@@ -23,6 +21,7 @@ export const DashboardJsx = {
       .filter(Boolean)
       .join(" ")
 
+    const router = api.getEntity("router")
     const isDashboardRoot = !router || router.path === "/"
 
     return (

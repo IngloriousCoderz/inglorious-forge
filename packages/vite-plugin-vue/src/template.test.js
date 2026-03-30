@@ -12,9 +12,28 @@ describe("template helpers", () => {
   it("wraps bare expressions with entity", () => {
     expect(wrapWithEntity("count", {})).toBe("entity.count")
     expect(wrapWithEntity("entity.count", {})).toBe("entity.count")
-    expect(wrapWithEntity("helper(count)", {}, new Set(["helper"]))).toBe(
-      "helper(count)",
+    expect(wrapWithEntity("api.getEntity('router')", {})).toBe(
+      "api.getEntity('router')",
     )
+  })
+
+  it("keeps render-scope locals bare", () => {
+    expect(
+      wrapWithEntity(
+        "dashboardClassName",
+        {},
+        new Set(),
+        new Set(["dashboardClassName"]),
+      ),
+    ).toBe("dashboardClassName")
+    expect(
+      wrapWithEntity(
+        "isDashboardRoot",
+        {},
+        new Set(),
+        new Set(["isDashboardRoot"]),
+      ),
+    ).toBe("isDashboardRoot")
   })
 
   it("renders a simple template", () => {
@@ -71,5 +90,24 @@ describe("template helpers", () => {
     const result = transformTemplate(dom)
 
     expect(result.code).toContain('api.render("statCard", entity.card)')
+  })
+
+  it("preserves render-scope locals in bindings and conditionals", () => {
+    const dom = parseTemplate(`
+<Flex :class="dashboardClassName" v-if="isDashboardRoot">
+  <span>{{ dashboardClassName }}</span>
+</Flex>
+`)
+    const result = transformTemplate(
+      dom,
+      [],
+      new Set(["Flex"]),
+      new Set(["dashboardClassName", "isDashboardRoot"]),
+    )
+
+    expect(result.code).toContain("dashboardClassName")
+    expect(result.code).toContain("isDashboardRoot")
+    expect(result.code).not.toContain("entity.dashboardClassName")
+    expect(result.code).not.toContain("entity.isDashboardRoot")
   })
 })

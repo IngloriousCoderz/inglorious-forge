@@ -31,20 +31,23 @@ export function vue() {
 
         const componentName = toPascalCase(path.basename(id, path.extname(id)))
 
-        const { stateVars, methods, scriptImports, importDecls } = script
-          ? parseScript(script, scriptLang)
-          : {
-              stateVars: [],
-              methods: [],
-              scriptImports: new Set(),
-              importDecls: [],
-            }
+        const { stateVars, renderVars, methods, scriptImports, importDecls } =
+          script
+            ? parseScript(script, scriptLang)
+            : {
+                stateVars: [],
+                renderVars: [],
+                methods: [],
+                scriptImports: new Set(),
+                importDecls: [],
+              }
 
         const dom = parseTemplate(template)
         const { code: templateCode, imports } = transformTemplate(
           dom,
           methods.map((method) => method.name),
           scriptImports,
+          new Set(renderVars.map((stateVar) => stateVar.name)),
         )
 
         let output = ""
@@ -114,7 +117,12 @@ export function vue() {
           output += `  ${method.name}(${method.params}) {\n${method.body}  },\n\n`
         }
 
-        output += `  render(entity, api) {\n    return ${templateCode};\n  }\n`
+        output += `  render(entity, api) {\n`
+        for (const renderVar of renderVars) {
+          output += `    const ${renderVar.name} = ${renderVar.value}\n`
+        }
+        output += `    return ${templateCode || "html``"};\n`
+        output += `  }\n`
         output += `};\n`
 
         if (scriptLang === "ts") {
