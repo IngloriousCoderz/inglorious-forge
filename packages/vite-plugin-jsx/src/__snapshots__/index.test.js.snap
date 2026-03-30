@@ -56,7 +56,7 @@ html\`<div class="empty"></div>\`;"
 
 exports[`vite-plugin-jsx > handles SVG self-closing tags correctly 1`] = `
 "import { html } from "@inglorious/web";
-const Icon = () => html\`<svg> \${html\`<path d="M0 0h10v10H0z" />\`} \${html\`<circle cx="5" cy="5" r="5" />\`} </svg>\`;"
+const Icon = () => html\`<svg> <path d="M0 0h10v10H0z" /> <circle cx="5" cy="5" r="5" /> </svg>\`;"
 `;
 
 exports[`vite-plugin-jsx > handles boolean attributes 1`] = `
@@ -71,7 +71,7 @@ html\`<button @click=\${handleClick} @mouseover=\${() => {}}>Click</button>\`;"
 
 exports[`vite-plugin-jsx > handles fragments 1`] = `
 "import { html } from "@inglorious/web";
-const List = () => html\` \${html\`<li>A</li>\`} \${html\`<li>B</li>\`} \`;"
+const List = () => html\` <li>A</li> <li>B</li> \`;"
 `;
 
 exports[`vite-plugin-jsx > handles nested expressions and elements 1`] = `
@@ -81,7 +81,7 @@ const App = () => html\`<div>\${when(show, () => html\`<span>Visible</span>\`, (
 
 exports[`vite-plugin-jsx > ignores empty expressions and comments 1`] = `
 "import { html } from "@inglorious/web";
-const App = () => html\`<div>   \${html\`<span>Content</span>\`} </div>\`;"
+const App = () => html\`<div>   <span>Content</span> </div>\`;"
 `;
 
 exports[`vite-plugin-jsx > injects api argument into render function if missing when using components 1`] = `
@@ -132,6 +132,19 @@ exports[`vite-plugin-jsx > moves api parameter to the end when it is in the midd
 export const app = {
   render(entity, options, api) {
     return api.render("form");
+  }
+};"
+`;
+
+exports[`vite-plugin-jsx > passes children as a prop to capitalized components 1`] = `
+"import { html } from "@inglorious/web";
+export const app = {
+  render(entity, api) {
+    return api.render("flex", {
+      direction: "column",
+      gap: "lg",
+      children: html\`<div>Child A</div><div>Child B</div>\`
+    });
   }
 };"
 `;

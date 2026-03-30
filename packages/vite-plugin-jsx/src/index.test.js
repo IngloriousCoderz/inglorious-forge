@@ -60,6 +60,22 @@ describe("vite-plugin-jsx", () => {
     expect(await transform(code)).toMatchSnapshot()
   })
 
+  it("passes children as a prop to capitalized components", async () => {
+    const code = `
+    export const app = {
+      render(entity, api) {
+        return (
+          <Flex direction="column" gap="lg">
+            <div>Child A</div>
+            <div>Child B</div>
+          </Flex>
+        )
+      },
+    }
+  `
+    expect(await transform(code)).toMatchSnapshot()
+  })
+
   it("handles fragments", async () => {
     const code = `
       const List = () => (

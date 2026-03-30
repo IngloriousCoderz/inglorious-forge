@@ -187,10 +187,6 @@ function jsxToLit() {
             // If key found, inject key function as 2nd argument: (item) => item.id
             if (keyExpr) {
               repeatArgs.push(t.arrowFunctionExpression(arrow.params, keyExpr))
-            } else {
-              // If no key, repeat acts like map, but we can still use it
-              // Or we could skip repeat and just let map run (lit handles arrays)
-              // But user asked for repeat.
             }
 
             repeatArgs.push(templateFn)
@@ -203,6 +199,36 @@ function jsxToLit() {
       },
     },
   }
+}
+
+/**
+ * Inlines a child TaggedTemplateExpression into the parent's quasis/exprs arrays,
+ * avoiding html`${html`...`}` nesting.
+ *
+ * @param {string} text - Accumulated raw text before this child.
+ * @param {Object} childTemplate - The child's TaggedTemplateExpression AST node.
+ * @param {Array} quasis - Parent's quasis array (mutated).
+ * @param {Array} exprs - Parent's expressions array (mutated).
+ * @returns {string} The new accumulated text (last quasi of the inlined child).
+ */
+function inlineChildTemplate(text, childTemplate, quasis, exprs) {
+  const { quasis: cq, expressions: ce } = childTemplate.quasi
+
+  if (ce.length === 0) {
+    // Pure static content — just concatenate into accumulated text
+    return text + cq[0].value.raw
+  }
+
+  // Has expressions — push the merged first quasi, then all middle pairs
+  quasis.push(tpl(text + cq[0].value.raw))
+  for (let j = 0; j < ce.length - 1; j++) {
+    exprs.push(ce[j])
+    quasis.push(cq[j + 1])
+  }
+  exprs.push(ce[ce.length - 1])
+
+  // Return the last quasi's raw as new accumulated text (not pushed yet)
+  return cq[cq.length - 1].value.raw
 }
 
 /**
@@ -286,6 +312,36 @@ function buildTemplate(node, path, isSvg = false) {
       }
 
       props.push(t.objectProperty(t.identifier(key), value))
+    }
+
+    // Collect children and pass as a `children` prop if present
+    const filteredChildren = node.children.filter(
+      (child) => !(child.type === "JSXText" && child.value.trim() === ""),
+    )
+
+    if (filteredChildren.length > 0) {
+      const allChildPaths = path ? path.get("children") : []
+
+      // Match filtered children back to their original paths by index
+      const filteredWithPaths = node.children
+        .map((child, i) => ({ child, childPath: allChildPaths[i] }))
+        .filter(
+          ({ child }) =>
+            !(child.type === "JSXText" && child.value.trim() === ""),
+        )
+
+      const fragmentNode = { children: filteredWithPaths.map((x) => x.child) }
+      const fragmentPathLike =
+        filteredWithPaths.length > 0
+          ? { get: () => filteredWithPaths.map((x) => x.childPath) }
+          : null
+
+      const childrenTemplate = buildFragment(
+        fragmentNode,
+        fragmentPathLike,
+        isSvg,
+      )
+      props.push(t.objectProperty(t.identifier("children"), childrenTemplate))
     }
 
     // Check if the tag is in scope (e.g. imported)
@@ -393,13 +449,19 @@ function buildTemplate(node, path, isSvg = false) {
       exprs.push(child.expression)
       text = ""
     } else {
-      quasis.push(tpl(text))
-      exprs.push(
+      const childTemplate =
         child.type === "JSXFragment"
           ? buildFragment(child, childPath, nextIsSvg)
-          : buildTemplate(child, childPath, nextIsSvg),
-      )
-      text = ""
+          : buildTemplate(child, childPath, nextIsSvg)
+
+      if (childTemplate.type === "TaggedTemplateExpression") {
+        text = inlineChildTemplate(text, childTemplate, quasis, exprs)
+      } else {
+        // CallExpression (capitalized component) — keep as interpolation
+        quasis.push(tpl(text))
+        exprs.push(childTemplate)
+        text = ""
+      }
     }
   }
 
@@ -439,13 +501,23 @@ function buildFragment(node, path, isSvg = false) {
       exprs.push(child.expression)
       text = ""
     } else {
-      quasis.push(tpl(text))
-      exprs.push(
+      const childIsSvg =
+        isSvg ||
+        (child.type === "JSXElement" &&
+          child.openingElement.name.name === "svg")
+      const childTemplate =
         child.type === "JSXFragment"
-          ? buildFragment(child, childPath, isSvg)
-          : buildTemplate(child, childPath, isSvg),
-      )
-      text = ""
+          ? buildFragment(child, childPath, childIsSvg)
+          : buildTemplate(child, childPath, childIsSvg)
+
+      if (childTemplate.type === "TaggedTemplateExpression") {
+        text = inlineChildTemplate(text, childTemplate, quasis, exprs)
+      } else {
+        // CallExpression (capitalized component) — keep as interpolation
+        quasis.push(tpl(text))
+        exprs.push(childTemplate)
+        text = ""
+      }
     }
   }
 
