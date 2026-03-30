@@ -1,3 +1,7 @@
+const TEMPLATE_CONTENT_GROUP = 1
+const SCRIPT_CONTENT_GROUP = 2
+const SCRIPT_LANG_GROUP = 1
+
 /**
  * Extract the template and script sections from a Vue single-file component.
  *
@@ -11,8 +15,10 @@ export function extractSections(code) {
   )
 
   return {
-    template: templateMatch ? templateMatch[1].trim() || "" : null,
-    script: scriptMatch ? scriptMatch[2].trim() : null,
-    scriptLang: scriptMatch ? scriptMatch[1] || "js" : null,
+    template: templateMatch
+      ? templateMatch[TEMPLATE_CONTENT_GROUP].trim() || ""
+      : null,
+    script: scriptMatch ? scriptMatch[SCRIPT_CONTENT_GROUP].trim() : null,
+    scriptLang: scriptMatch ? scriptMatch[SCRIPT_LANG_GROUP] || "js" : null,
   }
 }

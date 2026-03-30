@@ -53,9 +53,14 @@ export function transformTemplate(
     )
   }
 
+  if (!parts.length) {
+    return { code: "", imports }
+  }
+
+  const [firstPart, secondPart] = parts
   const code =
-    parts.length === 1
-      ? unwrapTemplateExpression(parts[0])
+    secondPart === undefined
+      ? unwrapTemplateExpression(firstPart)
       : `html\`${parts.join("")}\``
 
   return { code, imports }
@@ -106,9 +111,9 @@ export function transformTextNode(node, context) {
       parts.push(text.slice(lastIndex, match.index))
     }
 
-    const expr = match[1].trim()
+    const [fullMatch, expr] = match
     parts.push(`\${${wrapWithEntity(expr, context)}}`)
-    lastIndex = match.index + match[0].length
+    lastIndex = match.index + fullMatch.length
   }
 
   if (lastIndex < text.length) {
@@ -187,11 +192,12 @@ export function transformElementNode(
     const forMatch = vFor.match(/^(?:\(([^)]+)\)|(\w+))\s+in\s+(.+)$/)
     if (!forMatch) throw new Error(`Invalid v-for syntax: ${vFor}`)
 
-    const params = forMatch[1] || forMatch[2]
-    const items = forMatch[3].trim()
-    const paramList = params.split(",").map((param) => param.trim())
-    const itemParam = paramList[0]
-    const indexParam = paramList[1] || null
+    const [, paramsA, paramsB, items] = forMatch
+    const params = paramsA || paramsB
+    const itemList = items.trim()
+    const [itemParam, indexParam = null] = params
+      .split(",")
+      .map((param) => param.trim())
 
     const newContext = { ...context, loopVar: itemParam, indexVar: indexParam }
     const template = buildElement(
@@ -203,7 +209,7 @@ export function transformElementNode(
       false,
     )
 
-    const wrappedItems = wrapWithEntity(items, context, scriptImports)
+    const wrappedItems = wrapWithEntity(itemList, context, scriptImports)
 
     if (keyAttr) {
       const keyExpr = keyAttr.replace(/^["']|["']$/g, "")
@@ -257,7 +263,7 @@ export function buildElement(
 
       if (key.startsWith(":") || key.startsWith("v-bind:")) {
         const propName = key.startsWith(":")
-          ? key.slice(1)
+          ? key.slice(":".length)
           : key.replace("v-bind:", "")
         props[propName] = wrapWithEntity(
           normalizeWhitespace(value),
@@ -301,7 +307,7 @@ export function buildElement(
 
     if (key.startsWith(":") || key.startsWith("v-bind:")) {
       const propName = key.startsWith(":")
-        ? key.slice(1)
+        ? key.slice(":".length)
         : key.replace("v-bind:", "")
       const actualName = propName === "class" ? "class" : propName
       const prefix =
@@ -324,7 +330,7 @@ export function buildElement(
 
     if (key.startsWith("@") || key.startsWith("v-on:")) {
       const eventName = key.startsWith("@")
-        ? key.slice(1)
+        ? key.slice("@".length)
         : key.replace("v-on:", "")
       const handlerValue = value.trim()
 
@@ -337,12 +343,13 @@ export function buildElement(
           /\(\s*(?:e|\)\s*)?\s*=>\s*(\w+)\s*\(/,
         )
         if (methodCallMatch) {
-          const calledMethod = methodCallMatch[1]
+          const [, calledMethod] = methodCallMatch
           if (methodNames.includes(calledMethod)) {
             const argsMatch = handlerValue.match(/\(\s*entity\s*,\s*([^)]+)\)/)
             if (argsMatch) {
+              const [, args] = argsMatch
               parts.push(
-                ` @${eventName}="\${() => api.notify(\`#\${entity.id}:${calledMethod}\`, ${argsMatch[1].trim()})}"`,
+                ` @${eventName}="\${() => api.notify(\`#\${entity.id}:${calledMethod}\`, ${args.trim()})}"`,
               )
             } else {
               parts.push(
@@ -402,7 +409,7 @@ export function wrapWithEntity(expr, context, scriptImports = new Set()) {
     return trimmed
   }
 
-  const rootIdent = trimmed.match(/^([a-zA-Z_$][\w$]*)/)?.[1]
+  const [rootIdent] = trimmed.match(/^([a-zA-Z_$][\w$]*)/) || []
   if (rootIdent && scriptImports.has(rootIdent)) return trimmed
 
   return `entity.${trimmed}`
@@ -433,9 +440,8 @@ export function findAlternate(
   const siblings = parent.children
   const currentIndex = siblings.indexOf(node)
 
-  for (let i = currentIndex + 1; i < siblings.length; i++) {
-    const sibling = siblings[i]
-
+  const [, ...followingSiblings] = siblings.slice(currentIndex)
+  for (const sibling of followingSiblings) {
     if (sibling.type === "text" && sibling.data.trim() === "") continue
 
     if (sibling.type === "tag") {
@@ -495,7 +501,7 @@ export function findAlternate(
  */
 function unwrapTemplateExpression(code) {
   if (code.startsWith("${") && code.endsWith("}")) {
-    return code.slice(2, -1)
+    return code.slice("${".length, code.length - "}".length)
   }
 
   return code

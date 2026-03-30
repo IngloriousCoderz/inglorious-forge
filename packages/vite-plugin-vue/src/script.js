@@ -3,6 +3,10 @@ import * as babelParser from "@babel/parser"
 import * as t from "@babel/types"
 
 const INDENT = "    "
+const OPENING_BRACE_OFFSET = 1
+const CLOSING_BRACE_OFFSET = 1
+const SOURCE_START_OFFSET = 1
+const SOURCE_END_OFFSET = 1
 
 /**
  * Parse the script section of a Vue component.
@@ -92,7 +96,7 @@ export function parseScript(script, lang) {
  * @returns {string} The parameter list string.
  */
 export function extractParams(node) {
-  if (!node.params || node.params.length === 0) {
+  if (!node.params || !node.params.length) {
     return "entity"
   }
 
@@ -123,7 +127,7 @@ export function extractFunctionBodyFromAST(node) {
   if (t.isBlockStatement(body)) {
     const { code } = generate(body, { retainLines: false, concise: false })
     const lines = code
-      .slice(1, -1)
+      .slice(OPENING_BRACE_OFFSET, code.length - CLOSING_BRACE_OFFSET)
       .trim()
       .split("\n")
       .map((line) => `${INDENT}${line}`)
@@ -147,8 +151,8 @@ export function extractFunctionBody(node, source) {
   const body = node.body
 
   if (t.isBlockStatement(body)) {
-    const start = body.start + 1
-    const end = body.end - 1
+    const start = body.start + SOURCE_START_OFFSET
+    const end = body.end - SOURCE_END_OFFSET
     let bodyCode = source.slice(start, end).trim()
 
     bodyCode = bodyCode

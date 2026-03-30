@@ -2,7 +2,7 @@ import { transformAsync } from "@babel/core"
 import syntaxJsx from "@babel/plugin-syntax-jsx"
 import syntaxTs from "@babel/plugin-syntax-typescript"
 
-import { jsxToLit } from "./babel/visitor.js"
+import { jsxToLit } from "./visitor.js"
 
 /**
  * Create the Vite plugin that compiles JSX/TSX into lit-html templates.

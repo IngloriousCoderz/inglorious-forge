@@ -56,11 +56,10 @@ export function vue() {
         const generatedImportLines = []
         let mergedWebImport = false
 
-        if (importDecls.length > 0) {
-          for (let i = 0; i < importDecls.length; i++) {
-            const decl = importDecls[i]
+        if (importDecls.length) {
+          for (const decl of importDecls) {
             if (decl.source.value === "@inglorious/web") {
-              if (importLines.length > 0) {
+              if (importLines.length) {
                 const cloned = t.cloneNode(decl, true)
                 const existing = new Set()
                 for (const specifier of cloned.specifiers) {
@@ -86,24 +85,24 @@ export function vue() {
           }
         }
 
-        if (!mergedWebImport && importLines.length > 0) {
+        if (!mergedWebImport && importLines.length) {
           output += `import { ${importLines.join(", ")} } from "@inglorious/web";\n`
         }
 
-        if (generatedImportLines.length > 0) {
-          if (!mergedWebImport && importLines.length > 0) {
+        if (generatedImportLines.length) {
+          if (!mergedWebImport && importLines.length) {
             output += "\n"
           }
           output += `${generatedImportLines.join("\n")}\n`
         }
 
-        if (output.length > 0) {
+        if (output) {
           output += "\n"
         }
 
         output += `export const ${componentName} = {\n`
 
-        if (stateVars.length > 0) {
+        if (stateVars.length) {
           output += `  create(entity) {\n`
           for (const stateVar of stateVars) {
             output += `    entity.${stateVar.name} = ${stateVar.value}\n`
