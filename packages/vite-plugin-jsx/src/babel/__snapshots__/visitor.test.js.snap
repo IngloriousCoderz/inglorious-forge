@@ -1,0 +1,39 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`babel visitor > injects api into render methods 1`] = `
+"import { html } from "@inglorious/web";
+export const app = {
+  render(api) {
+    return api.render("form");
+  }
+};"
+`;
+
+exports[`babel visitor > injects html, when, and repeat imports 1`] = `
+"import { html, when } from "@inglorious/web";
+const view = ({
+  items,
+  show
+}) => html\`<div> \${when(show, () => html\`<span>\${items.map(item => html\`<b .key=\${item.id}>\${item.name}</b>\`)}</span>\`)} </div>\`;"
+`;
+
+exports[`babel visitor > keeps in-scope components as direct renders 1`] = `
+"import { html } from "@inglorious/web";
+import { dataGrid as DataGrid } from "./components";
+export const app = {
+  render(api) {
+    return DataGrid.render({
+      prop1: "value"
+    });
+  }
+};"
+`;
+
+exports[`babel visitor > moves api to the end when it is not already last 1`] = `
+"import { html } from "@inglorious/web";
+export const app = {
+  render(entity, api) {
+    return api.render("form");
+  }
+};"
+`;
