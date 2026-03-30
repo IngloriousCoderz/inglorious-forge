@@ -2,6 +2,17 @@
 
 const DEFAULT_BRUSH_HEIGHT = 30
 
+const SUPPORTED_CHART_TYPES = new Set([
+  "donut",
+  "pie",
+  "line",
+  "area",
+  "bar",
+  "composed",
+])
+
+const SUPPORTED_CHART_TYPE_TOKENS = [...SUPPORTED_CHART_TYPES]
+
 export function mergeEntityInput(source, config) {
   return {
     ...source,
@@ -25,16 +36,9 @@ export function mergeEntityInput(source, config) {
 }
 
 export function getChartType(entity, primitives) {
-  const SUPPORTED_CHART_TYPES = new Set([
-    "donut",
-    "pie",
-    "line",
-    "area",
-    "bar",
-    "composed",
-  ])
+  const normalizedType = getChartTypeAlias(entity.type)
 
-  if (SUPPORTED_CHART_TYPES.has(entity.type)) return entity.type
+  if (normalizedType) return normalizedType
 
   if (primitives.some((primitive) => primitive.type === "pie")) {
     return entity.centerText ? "donut" : "pie"
@@ -100,6 +104,19 @@ export function applyBrushWindow(entity, primitives, isTooltipEnabled) {
     data: fullData.slice(boundedStart, boundedEnd + 1),
     fullData,
   }
+}
+
+function getChartTypeAlias(type) {
+  if (typeof type !== "string") return null
+
+  if (SUPPORTED_CHART_TYPES.has(type)) return type
+
+  const tokens = type.toLowerCase().split("-")
+  const match = SUPPORTED_CHART_TYPE_TOKENS.find((chartType) =>
+    tokens.includes(chartType),
+  )
+
+  return match || null
 }
 
 export function getTooltipState(entity, primitives) {

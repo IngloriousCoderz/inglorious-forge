@@ -19,20 +19,22 @@ import {
 } from "./primitives/factories.js"
 import { streamSlide } from "./realtime/index.js"
 
-const storeRender = (entity, api) =>
-  renderFrame(createFrameFromEntity(entity, api))
+function renderChart(source, api) {
+  if (
+    source &&
+    typeof source === "object" &&
+    Object.hasOwn(source, "children")
+  ) {
+    return renderFrame(createFrameFromRender(source, api))
+  }
 
-export const lineChart = { ...handlers, render: storeRender }
-export const areaChart = { ...handlers, render: storeRender }
-export const barChart = { ...handlers, render: storeRender }
-export const composedChart = { ...handlers, render: storeRender }
-export const pieChart = { ...handlers, render: storeRender }
-export const donutChart = { ...handlers, render: storeRender }
+  return renderFrame(createFrameFromEntity(source, api))
+}
 
 export const chart = {
   ...handlers,
-  render(props, api) {
-    return renderFrame(createFrameFromRender(props, api))
+  render(source, api) {
+    return renderChart(source, api)
   },
   CartesianGrid,
   XAxis,
