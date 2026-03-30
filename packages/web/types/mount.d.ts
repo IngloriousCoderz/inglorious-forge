@@ -1,13 +1,31 @@
 import type { TemplateResult } from "lit-html"
-import type { BaseEntity, Store, Api as StoreApi } from "@inglorious/store"
+import type {
+  BaseEntity,
+  EntitiesState,
+  EntityType,
+  Store,
+  Api as StoreApi,
+} from "@inglorious/store"
 
-export type Api = StoreApi & {
+export type Api<
+  TEntity extends BaseEntity = BaseEntity,
+  TState extends EntitiesState<TEntity> = EntitiesState<TEntity>,
+> = StoreApi<TEntity, TState> & {
   /**
    * Renders an entity or a type component by its ID.
    * @param id The ID of the entity or type to render.
+   * @param typeName Optional type name to lazy-register.
+   * @param type Optional type definition to register when typeName is provided.
    * @returns The rendered template or an empty string if not found.
    */
-  render: (id: string) => TemplateResult | string
+  render: {
+    (id: string): TemplateResult | string
+    (
+      id: string,
+      typeName: string,
+      type: EntityType<TEntity>,
+    ): TemplateResult | string
+  }
 }
 
 /**
@@ -17,8 +35,11 @@ export type Api = StoreApi & {
  * @param element The DOM element to mount the template to.
  * @returns An unsubscribe function.
  */
-export function mount<Entity = BaseEntity, State = BaseState>(
-  store: Store<Entity, State>,
-  renderFn: (api: Api) => TemplateResult | null,
+export function mount<
+  TEntity extends BaseEntity = BaseEntity,
+  TState extends EntitiesState<TEntity> = EntitiesState<TEntity>,
+>(
+  store: Store<TEntity, TState>,
+  renderFn: (api: Api<TEntity, TState>) => TemplateResult | null,
   element: HTMLElement | DocumentFragment,
 ): () => void

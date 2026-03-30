@@ -1,5 +1,6 @@
 /** @typedef {import('lit-html').TemplateResult} TemplateResult */
 /** @typedef {import('@inglorious/store').Store} Store */
+/** @typedef {import('@inglorious/store').EntityType} EntityType */
 /** @typedef {import('../types/mount').Api} Api */
 
 import { html, render } from "lit-html"
@@ -42,19 +43,33 @@ export async function mount(store, renderFn, element) {
  * @private
  */
 function createRender(api) {
-  return function (id) {
+  return function (id, typeName, type) {
     const entity = api.getEntity(id)
 
     if (!entity) {
       return ""
     }
 
-    const type = api.getType(entity.type)
-    if (!type?.render) {
+    registerTypeIfMissing(api, typeName, type)
+
+    const entityType = api.getType(entity.type)
+    if (!entityType?.render) {
       console.warn(`No render function for type: ${entity.type}`)
       return html`<div>No renderer for ${entity.type}</div>`
     }
 
-    return type.render(entity, api)
+    return entityType.render(entity, api)
+  }
+}
+
+/**
+ * Registers a type definition lazily when the caller provides one to render().
+ * @param {Api} api - The mount API.
+ * @param {string | undefined} typeName - The type name to register.
+ * @param {EntityType | undefined} type - The type definition to register.
+ */
+function registerTypeIfMissing(api, typeName, type) {
+  if (typeName && type && !api.getType(typeName)) {
+    api.setType(typeName, type)
   }
 }

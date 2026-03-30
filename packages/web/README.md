@@ -17,7 +17,7 @@ Unlike modern frameworks that invent their own languages or rely on signals, pro
 
 - **Entity-Based Rendering Model**  
   Each entity type defines its own `render(entity, api)` method.  
-  `api.render(id)` composes the UI by invoking the correct renderer for each entity.
+  `api.render(id, typeName?, Type?)` composes the UI by invoking the correct renderer for each entity and can lazily register a missing type.
 
 - **Type Composition**  
   Types can be composed as arrays of behaviors, enabling reusable patterns like authentication guards, logging, or any cross-cutting concern.
@@ -1556,9 +1556,9 @@ Connects a store to a `lit-html` template and renders it into a DOM element. It 
 
 The `renderFn` receives a powerful `api` object that contains all methods from the store's API (`getEntities`, `getEntity`, `notify`, etc.) plus special methods for the web package.
 
-**`api.render(id, options?)`**
+**`api.render(id, typeName?, Type?)`**
 
-This method is the cornerstone of entity-based rendering. It looks up an entity by its `id`, finds its corresponding type definition, and calls the `render(entity, api)` method on that type. This allows you to define rendering logic alongside an entity's other behaviors.
+This method is the cornerstone of entity-based rendering. It looks up an entity by its `id`, finds its corresponding type definition, and calls the `render(entity, api)` method on that type. When you pass `typeName` and `Type`, it will lazily register the type with `api.setType(typeName, Type)` if the type is not already present.
 
 ### Re-exported `lit-html` Utilities
 
