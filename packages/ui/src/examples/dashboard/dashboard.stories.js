@@ -9,7 +9,7 @@ import {
 import { AppDrawer } from "./app-drawer.js"
 import { Dashboard } from "./dashboard.js"
 import { DashboardJsx } from "./dashboard-jsx.jsx"
-// import { dashboardVue } from "./dashboard-vue.vue"
+import { DashboardVue } from "./dashboard-vue.vue"
 import { Mode } from "./mode.js"
 import { PrimitiveSection } from "./primitive-section.js"
 import { Theme } from "./theme.js"
@@ -63,13 +63,13 @@ export const Jsx = {
   },
 }
 
-// export const Vue = {
-//   render: createEntityRender({
-//     ...baseTypes,
-//     Dashboard: DashboardVue,
-//   }),
-//   args: {
-//     id: "dashboard",
-//     type: "dashboard",
-//   },
-// }
+export const Vue = {
+  render: createEntityRender({
+    ...baseTypes,
+    Dashboard: DashboardVue,
+  }),
+  args: {
+    id: "dashboard",
+    type: "dashboard",
+  },
+}
