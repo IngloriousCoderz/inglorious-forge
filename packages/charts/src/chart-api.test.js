@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { chart, lineChart } from "./index.js"
+import { chart } from "./index.js"
 
 describe("charts public api", () => {
   it("exposes pure primitive factories on the chart namespace", () => {
@@ -52,7 +52,7 @@ describe("charts public api", () => {
       hasTooltip: true,
     }
 
-    const result = lineChart.render(entity, {})
+    const result = chart.render(entity, {})
 
     expect(result.strings.join("")).toContain("<svg")
     expect(result.values[4]).toBe("sales-line")
