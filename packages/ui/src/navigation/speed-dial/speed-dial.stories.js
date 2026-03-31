@@ -1,10 +1,10 @@
 import { createRender } from "../../stories/notifyStory.js"
-import { speedDial } from "."
+import { SpeedDial } from "."
 
 export default {
   title: "Navigation/Speed Dial",
   tags: ["autodocs"],
-  render: createRender(speedDial),
+  render: createRender(SpeedDial),
   argTypes: {
     isOpen: {
       control: "boolean",

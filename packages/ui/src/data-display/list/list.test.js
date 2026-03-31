@@ -1,7 +1,7 @@
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
-import { list } from "."
+import { List } from "."
 
 describe("list", () => {
   it("renders list items", () => {
@@ -15,7 +15,7 @@ describe("list", () => {
     }
     const container = document.createElement("div")
 
-    render(list.render(props), container)
+    render(List.render(props), container)
 
     expect(container.querySelectorAll(".iw-list-item")).toHaveLength(2)
     expect(
@@ -33,7 +33,7 @@ describe("list", () => {
     }
     const container = document.createElement("div")
 
-    render(list.render(props), container)
+    render(List.render(props), container)
 
     expect(container.querySelector("ol")).not.toBeNull()
   })
@@ -47,7 +47,7 @@ describe("list", () => {
     }
     const container = document.createElement("div")
 
-    render(list.render(props), container)
+    render(List.render(props), container)
 
     const root = container.querySelector(".iw-list")
     expect(root.classList.contains("iw-list-dense")).toBe(true)
@@ -63,7 +63,7 @@ describe("list", () => {
     }
     const container = document.createElement("div")
 
-    render(list.render(props), container)
+    render(List.render(props), container)
 
     container.querySelector(".iw-list-item").click()
     expect(clicked).toEqual({
@@ -86,7 +86,7 @@ describe("list", () => {
     }
     const container = document.createElement("div")
 
-    render(list.render(props), container)
+    render(List.render(props), container)
 
     expect(container.querySelector(".iw-button-icon").textContent).toBe("★")
     expect(
@@ -105,7 +105,7 @@ describe("list", () => {
     }
     const container = document.createElement("div")
 
-    render(list.render(props), container)
+    render(List.render(props), container)
 
     const items = container.querySelectorAll(".iw-list-item")
     expect(items[0].classList.contains("iw-list-item-inset")).toBe(false)
@@ -122,7 +122,7 @@ describe("list", () => {
     }
     const container = document.createElement("div")
 
-    render(list.render(props), container)
+    render(List.render(props), container)
 
     const items = container.querySelectorAll(".iw-list-item")
     expect(items[0].classList.contains("iw-list-item-selected")).toBe(true)
@@ -143,7 +143,7 @@ describe("list", () => {
     }
     const container = document.createElement("div")
 
-    render(list.render(props), container)
+    render(List.render(props), container)
 
     expect(container.querySelector(".iw-list-nested")).not.toBeNull()
   })
@@ -164,7 +164,7 @@ describe("list", () => {
     }
     const container = document.createElement("div")
 
-    render(list.render(props), container)
+    render(List.render(props), container)
 
     const nested = container.querySelector(".iw-list-nested .iw-list-item")
     nested.click()
@@ -187,7 +187,7 @@ describe("list", () => {
     }
     const container = document.createElement("div")
 
-    render(list.render(props), container)
+    render(List.render(props), container)
 
     expect(container.querySelector(".iw-list-nested")).toBeNull()
   })
@@ -209,7 +209,7 @@ describe("list", () => {
     }
     const container = document.createElement("div")
 
-    render(list.render(props), container)
+    render(List.render(props), container)
 
     expect(
       container.querySelector(".iw-list-item-action").textContent.trim(),

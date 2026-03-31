@@ -1,5 +1,5 @@
-import { form } from "@inglorious/web/form"
+import { Form } from "@inglorious/web/form"
 
-import { render } from "./render"
+import * as renderers from "./render"
 
-export const logoForm = { ...form, render }
+export const LogoForm = { ...Form, ...renderers }

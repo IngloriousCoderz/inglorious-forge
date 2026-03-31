@@ -11,17 +11,17 @@ export interface Task {
 
 // Define your entity types
 export interface FormEntity extends BaseEntity {
-  type: "form"
+  type: "Form"
   value: string
 }
 
 export interface ListEntity extends BaseEntity {
-  type: "list"
+  type: "List"
   tasks: Task[]
 }
 
 export interface FooterEntity extends BaseEntity {
-  type: "footer"
+  type: "Footer"
   activeFilter: Filter
 }
 
@@ -37,19 +37,19 @@ export interface AppState extends EntitiesState<AppEntity> {
 
 // Types configuration
 export interface AppTypes {
-  form: {
+  Form: {
     inputChange: (entity: FormEntity, value: string) => void
     formSubmit: (entity: FormEntity) => void
   }
 
-  list: {
+  List: {
     formSubmit: (entity: ListEntity, value: string) => void
     toggleClick: (entity: ListEntity, id: number) => void
     deleteClick: (entity: ListEntity, id: number) => void
     clearClick: (entity: ListEntity) => void
   }
 
-  footer: {
+  Footer: {
     filterClick: (entity: FooterEntity, id: Filter) => void
     clearClick: (entity: FooterEntity) => void
   }

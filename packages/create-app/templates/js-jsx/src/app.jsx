@@ -1,8 +1,11 @@
-export const app = {
+import { Message } from "./types/message"
+
+export const App = {
   render() {
     return (
       <h1>
-        <Message1 />, <Message2 />, <Message3 />!
+        <Message id="message1" />, <Message id="message2" />,{" "}
+        <Message id="message3" />!
       </h1>
     )
   },

@@ -23,16 +23,16 @@ const DEFAULT_GAME_CONFIG = {
   systems: [],
 
   types: {
-    game: [game()],
-    audio: [audio()],
-    images: [images()],
+    Game: [game()],
+    Audio: [audio()],
+    Images: [images()],
   },
 
   entities: {
     // eslint-disable-next-line no-magic-numbers
-    game: { type: "game", size: v(800, 600) },
-    audio: { type: "audio", sounds: {} },
-    images: { type: "images", images: {} },
+    game: { type: "Game", size: v(800, 600) },
+    audio: { type: "Audio", sounds: {} },
+    images: { type: "Images", images: {} },
   },
 }
 

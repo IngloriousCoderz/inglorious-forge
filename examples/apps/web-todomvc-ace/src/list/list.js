@@ -7,7 +7,7 @@ const DEFAULT_ID = 1
 const LAST_TASK = 1
 const NEXT_ID = 1
 
-export const list = {
+export const List = {
   create(entity) {
     entity.tasks = []
   },

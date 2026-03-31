@@ -1,12 +1,12 @@
 import { html } from "@inglorious/web"
 
 import { createRender } from "../../stories/notifyStory.js"
-import { appBar } from "."
+import { AppBar } from "."
 
 export default {
   title: "Surfaces/App Bar",
   tags: ["autodocs"],
-  render: createRender(appBar),
+  render: createRender(AppBar),
   argTypes: {
     title: {
       control: "text",

@@ -15,12 +15,12 @@ import { AppDrawer } from "../src/examples/dashboard/app-drawer.js"
 import { Dashboard } from "../src/examples/dashboard/dashboard.js"
 import { Mode } from "../src/examples/dashboard/mode.js"
 import { PrimitiveSection } from "../src/examples/dashboard/primitive-section.js"
-import { router } from "../src/examples/dashboard/router.js"
+import { Router } from "../src/examples/dashboard/router.js"
 import { Theme } from "../src/examples/dashboard/theme.js"
 
 const store = createStore({
   types: {
-    router,
+    Router,
     Theme,
     Mode,
     AppDrawer,

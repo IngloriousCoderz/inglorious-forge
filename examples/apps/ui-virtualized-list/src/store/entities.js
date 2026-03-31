@@ -4,7 +4,7 @@ const PRICE_MULTIPLIER = 10
 
 export const entities = {
   list: {
-    type: "productList",
+    type: "ProductList",
     items: Array(LARGE_NUMBER)
       .fill(null)
       .map((_, index) => ({

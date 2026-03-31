@@ -2,7 +2,7 @@ import { v } from "@inglorious/utils/v.js"
 
 export default {
   types: {
-    character: {
+    Character: {
       render(entity, ctx) {
         const {
           size = 24,
@@ -44,12 +44,12 @@ export default {
 
   entities: {
     game: {
-      type: "game",
+      type: "Game",
       devMode: true,
     },
 
     character: {
-      type: "character",
+      type: "Character",
       position: v(400, 0, 300),
     },
   },

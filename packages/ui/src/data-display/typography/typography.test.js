@@ -1,14 +1,14 @@
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
-import { typography } from "."
+import { Typography } from "."
 
 describe("typography", () => {
   it("renders heading variant", () => {
     const props = { id: "typo", variant: "h2", children: "Heading" }
     const container = document.createElement("div")
 
-    render(typography.render(props), container)
+    render(Typography.render(props), container)
 
     expect(
       container.querySelector(".iw-typography-h2").textContent.trim(),
@@ -26,7 +26,7 @@ describe("typography", () => {
     }
     const container = document.createElement("div")
 
-    render(typography.render(props), container)
+    render(Typography.render(props), container)
 
     const root = container.querySelector(".iw-typography")
     expect(root.classList.contains("iw-typography-align-center")).toBe(true)
@@ -44,7 +44,7 @@ describe("typography", () => {
     }
     const container = document.createElement("div")
 
-    render(typography.render(props), container)
+    render(Typography.render(props), container)
 
     const element = container.querySelector(".iw-typography")
     const style = element.getAttribute("style")

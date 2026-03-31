@@ -26,8 +26,6 @@ export async function generatePages(store, pages, options = {}, loader) {
   } = options
   const load = loader || ((p) => import(pathToFileURL(path.resolve(p))))
 
-  const api = store._api
-
   for (const page of pages) {
     console.log(
       `  Generating ${shouldGenerateHtml ? "HTML" : ""}${shouldGenerateHtml && shouldGenerateMetadata ? " and " : ""}${shouldGenerateMetadata ? "metadata" : ""} for ${page.path}...`,
@@ -36,7 +34,7 @@ export async function generatePages(store, pages, options = {}, loader) {
     const module = await load(page.filePath)
     page.module = module
 
-    const entity = api.getEntity(page.moduleName)
+    const [entity] = store._api.getEntities(page.moduleName)
     if (page.locale) {
       entity.locale = page.locale
     }

@@ -1,6 +1,6 @@
 export const entities = {
   form: {
-    type: "userForm",
+    type: "UserForm",
     initialValues: {
       name: null,
       age: null,

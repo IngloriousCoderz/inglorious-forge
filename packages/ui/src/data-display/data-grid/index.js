@@ -1,8 +1,8 @@
 import * as handlers from "./handlers.js"
 import * as helpers from "./helpers.js"
-import { dataGrid as renderers } from "./template.js"
+import { DataGrid as renderers } from "./template.js"
 
-export const dataGrid = {
+export const DataGrid = {
   ...handlers,
   ...renderers,
   render(entity, api) {

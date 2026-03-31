@@ -28,4 +28,4 @@ export interface FlexType {
   render(props: FlexProps): TemplateResult
 }
 
-export declare const flex: FlexType
+export declare const Flex: FlexType

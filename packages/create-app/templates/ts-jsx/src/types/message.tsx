@@ -1,6 +1,6 @@
 import type { MessageType } from "../../types"
 
-export const message: MessageType = {
+export const Message: MessageType = {
   click(entity) {
     entity.isUpperCase = !entity.isUpperCase
   },

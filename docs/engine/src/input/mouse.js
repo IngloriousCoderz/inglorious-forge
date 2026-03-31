@@ -5,9 +5,9 @@ import { v } from "@inglorious/utils/v.js"
 
 export default {
   types: {
-    mouse: [{ render: renderMouse }, mouse()],
+    Mouse: [{ render: renderMouse }, mouse()],
 
-    character: [
+    Character: [
       { render: renderCharacter },
       {
         update(entity, dt, api) {
@@ -20,14 +20,14 @@ export default {
 
   entities: {
     game: {
-      type: "game",
+      type: "Game",
       devMode: true,
     },
 
     mouse: createMouse({ position: v(400, 0, 300) }),
 
     character: {
-      type: "character",
+      type: "Character",
       velocity: v(0, 0, 0),
       position: v(400, 0, 300),
     },

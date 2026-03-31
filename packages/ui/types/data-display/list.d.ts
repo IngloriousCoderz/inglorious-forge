@@ -64,4 +64,4 @@ export interface ListType {
   ): TemplateResult
 }
 
-export declare const list: ListType
+export declare const List: ListType

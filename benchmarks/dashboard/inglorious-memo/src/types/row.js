@@ -1,6 +1,6 @@
 import { html } from "@inglorious/web"
 
-export const row = {
+export const Row = {
   render(entity, api) {
     const statusClass = `status status-${entity.status.toLowerCase()}`
 

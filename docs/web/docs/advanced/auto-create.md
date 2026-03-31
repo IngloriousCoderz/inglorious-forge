@@ -13,17 +13,17 @@ Normally you define both types and entities:
 
 ```javascript
 const types = {
-  header: {
+  Header: {
     render(entity, api) {
       return html`<header>...</header>`
     },
   },
-  sidebar: {
+  Sidebar: {
     render(entity, api) {
       return html`<aside>...</aside>`
     },
   },
-  content: {
+  Content: {
     render(entity, api) {
       return html`<main>...</main>`
     },
@@ -32,9 +32,9 @@ const types = {
 
 // Must define every entity
 const entities = {
-  header: { type: "header", title: "My App" },
-  sidebar: { type: "sidebar", items: [] },
-  content: { type: "content", text: "" },
+  header: { type: "Header", title: "My App" },
+  sidebar: { type: "Sidebar", items: [] },
+  content: { type: "Content", text: "" },
 }
 ```
 
@@ -44,17 +44,17 @@ Let the store create entities automatically:
 
 ```javascript
 const types = {
-  header: {
+  Header: {
     render(entity, api) {
       return html`<header>...</header>`
     },
   },
-  sidebar: {
+  Sidebar: {
     render(entity, api) {
       return html`<aside>...</aside>`
     },
   },
-  content: {
+  Content: {
     render(entity, api) {
       return html`<main>...</main>`
     },
@@ -79,7 +79,7 @@ const store = createStore({
 Use the `create()` lifecycle event:
 
 ```javascript
-const header = {
+const Header = {
   create(entity) {
     // Runs when entity is first created
     entity.title = "My App"
@@ -93,7 +93,7 @@ const header = {
   },
 }
 
-const sidebar = {
+const Sidebar = {
   create(entity) {
     entity.items = []
     entity.isOpen = false
@@ -112,7 +112,7 @@ const sidebar = {
 
 // Auto create entities with initialized state
 const store = createStore({
-  types: { header, sidebar },
+  types: { Header, Sidebar },
   autoCreateEntities: true,
 })
 ```
@@ -139,11 +139,11 @@ You can mix auto-create with manual entities:
 
 ```javascript
 const store = createStore({
-  types: { header, sidebar, todoItem },
+  types: { Header, Sidebar, TodoItem },
   entities: {
     // Manually created entities (multiple todos)
-    todo1: { type: "todoItem", id: "todo1", title: "Buy milk" },
-    todo2: { type: "todoItem", id: "todo2", title: "Walk dog" },
+    todo1: { type: "TodoItem", title: "Buy milk" },
+    todo2: { type: "TodoItem", title: "Walk dog" },
     // header and sidebar will be auto-created
   },
   autoCreateEntities: true,
@@ -156,7 +156,7 @@ const store = createStore({
 import { createStore, mount, html } from "@inglorious/web"
 
 const types = {
-  app: {
+  App: {
     render(entity, api) {
       return html`
         <div class="app">
@@ -167,7 +167,7 @@ const types = {
     },
   },
 
-  header: {
+  Header: {
     create(entity) {
       entity.title = "My Todos"
     },
@@ -177,7 +177,7 @@ const types = {
     },
   },
 
-  todoForm: {
+  TodoForm: {
     create(entity) {
       entity.inputValue = ""
     },
@@ -212,7 +212,7 @@ const types = {
     },
   },
 
-  todoList: {
+  TodoList: {
     create(entity) {
       entity.todos = {}
     },

@@ -1,5 +1,5 @@
 import { setRoutes } from "@inglorious/web/router"
-export { router } from "@inglorious/web/router"
+export { Router } from "@inglorious/web/router"
 
 setRoutes({
   "/": "dashboard",

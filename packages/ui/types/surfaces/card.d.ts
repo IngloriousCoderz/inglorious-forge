@@ -37,4 +37,4 @@ export interface CardType {
   renderFooter(props: CardProps): TemplateResult | null
 }
 
-export declare const card: CardType
+export declare const Card: CardType

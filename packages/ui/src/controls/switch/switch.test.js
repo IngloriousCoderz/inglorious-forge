@@ -1,9 +1,9 @@
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
-import { switchControl } from "."
+import { Switch } from "."
 
-describe("switchControl", () => {
+describe("switch", () => {
   it("renders checked state", () => {
     const props = {
       id: "sw",
@@ -13,7 +13,7 @@ describe("switchControl", () => {
     }
     const container = document.createElement("div")
 
-    render(switchControl.render(props), container)
+    render(Switch.render(props), container)
 
     expect(container.querySelector(".iw-switch-input").checked).toBe(true)
     expect(container.querySelector(".iw-switch-label").textContent).toBe(
@@ -35,7 +35,7 @@ describe("switchControl", () => {
     }
     const container = document.createElement("div")
 
-    render(switchControl.render(props), container)
+    render(Switch.render(props), container)
 
     const input = container.querySelector(".iw-switch-input")
     input.checked = true
@@ -54,7 +54,7 @@ describe("switchControl", () => {
     }
     const container = document.createElement("div")
 
-    render(switchControl.render(props), container)
+    render(Switch.render(props), container)
 
     const root = container.querySelector(".iw-switch")
     const input = container.querySelector(".iw-switch-input")

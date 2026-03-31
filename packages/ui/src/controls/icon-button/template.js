@@ -5,7 +5,7 @@
 
 import { html } from "@inglorious/web"
 
-import { button } from "../button/index.js"
+import { Button } from "../button/index.js"
 
 /**
  * Renders a button optimized for icons with optional label and icon placement.
@@ -33,7 +33,7 @@ export function render(props) {
     </span>
   `
 
-  return button.render({
+  return Button.render({
     ...props,
     children,
     onClick,

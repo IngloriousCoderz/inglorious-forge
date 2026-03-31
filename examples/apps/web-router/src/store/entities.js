@@ -1,10 +1,10 @@
 export const entities = {
   router: {
-    type: "router",
+    type: "Router",
   },
 
   userList: {
-    type: "userList",
+    type: "UserList",
     users: [
       { id: "1", name: "Alice", email: "alice@example.com" },
       { id: "2", name: "Bob", email: "bob@example.com" },
@@ -12,30 +12,30 @@ export const entities = {
   },
 
   userDetail: {
-    type: "userDetail",
+    type: "UserDetail",
   },
 
   postList: {
-    type: "postList",
+    type: "PostList",
     posts: [],
   },
 
   lazyEntity: {
-    type: "lazyEntity",
+    type: "LazyEntity",
     message: "Hi!",
   },
 
   lazyData: {
-    type: "lazyData",
+    type: "LazyData",
     posts: [],
   },
 
   adminPage: {
-    type: "adminPage",
+    type: "AdminPage",
   },
 
   loginPage: {
-    type: "loginPage",
+    type: "LoginPage",
     username: "",
     password: "",
   },

@@ -51,10 +51,10 @@ For ready-made UI primitives (controls, data display, navigation, feedback, layo
 Override any method:
 
 ```javascript
-import { form } from "@inglorious/web/form"
+import { Form } from "@inglorious/web/form"
 
-const customForm = {
-  ...form,
+const CustomForm = {
+  ...Form,
 
   // Override validation
   validate(entity, schema) {
@@ -86,7 +86,7 @@ const logging = (type) => ({
 })
 
 const types = {
-  form: [form, logging],
+  Form: [Form, logging],
 }
 ```
 
@@ -138,8 +138,8 @@ All built-in components use type composition. This means you can:
 Example: Form with custom validation:
 
 ```javascript
-const customForm = {
-  ...form,
+const CustomForm = {
+  ...Form,
 
   validate(entity, schema) {
     // Custom validation logic
@@ -159,13 +159,13 @@ const customForm = {
 Testing is straightforward with `trigger()`:
 
 ```javascript
-import { form } from "@inglorious/web/form"
+import { Form } from "@inglorious/web/form"
 import { trigger } from "@inglorious/web/test"
 
 test("form sets field value", () => {
   const { entity } = trigger(
-    { type: "form", initialValues: { name: "" }, values: { name: "" } },
-    form.fieldChange,
+    { type: "Form", initialValues: { name: "" }, values: { name: "" } },
+    Form.fieldChange,
     { path: "name", value: "Alice" },
   )
 

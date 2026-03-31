@@ -1,4 +1,4 @@
 import * as handlers from "./handlers.js"
-import { render } from "./template.js"
+import * as renderers from "./template.js"
 
-export const playground = { ...handlers, render }
+export const Playground = { ...handlers, ...renderers }

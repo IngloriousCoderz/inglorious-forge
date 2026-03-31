@@ -118,8 +118,8 @@ const types = {
 
 // Define initial entities
 const entities = {
-  work: { type: "todoList", todos: [] },
-  personal: { type: "todoList", todos: [] },
+  work: { type: "TodoList", todos: [] },
+  personal: { type: "TodoList", todos: [] },
 }
 
 // Create store
@@ -171,9 +171,9 @@ const types = {
 }
 
 const entities = {
-  workTodos: { type: "todoList", todos: [], priority: "high" },
-  personalTodos: { type: "todoList", todos: [], priority: "low" },
-  settings: { type: "settings", theme: "dark", language: "en" },
+  workTodos: { type: "TodoList", todos: [], priority: "high" },
+  personalTodos: { type: "TodoList", todos: [], priority: "low" },
+  settings: { type: "Settings", theme: "dark", language: "en" },
 }
 ```
 
@@ -241,7 +241,7 @@ const types = {
 
 // 2. Define initial entities
 const entities = {
-  counter1: { type: "counter", value: 0 },
+  counter1: { type: "Counter", value: 0 },
 }
 
 // 3. Create the store
@@ -352,12 +352,12 @@ const types = {
 }
 
 const entities = {
-  counter1: { type: "counter", value: 0 },
-  counter2: { type: "counter", value: 0 },
-  counter3: { type: "counter", value: 0 },
+  counter1: { type: "Counter", value: 0 },
+  counter2: { type: "Counter", value: 0 },
+  counter3: { type: "Counter", value: 0 },
 }
 
-store.notify("add", { id: "counter4", type: "counter", value: 0 })
+store.notify("add", { id: "counter4", type: "Counter", value: 0 })
 ```
 
 Inglorious Store has a few built-in events that you can use:
@@ -707,7 +707,7 @@ function increment(entity, payload, api) {
 
 // Test it
 const { entity, events } = trigger(
-  { type: "counter", id: "counter1", value: 99 },
+  { type: "Counter", id: "counter1", value: 99 },
   increment,
   { amount: 5 },
 )
@@ -725,8 +725,8 @@ import { createMockApi, trigger } from "@inglorious/store/test"
 
 // Create a mock API with some initial entities
 const api = createMockApi({
-  counter1: { type: "counter", value: 10 },
-  counter2: { type: "counter", value: 20 },
+  counter1: { type: "Counter", value: 10 },
+  counter2: { type: "Counter", value: 20 },
 })
 
 // A handler that copies a value from another entity
@@ -737,7 +737,7 @@ function copyValue(entity, payload, api) {
 
 // Trigger the handler with the custom mock API
 const { entity } = trigger(
-  { type: "counter", id: "counter2", value: 20 },
+  { type: "Counter", id: "counter2", value: 20 },
   copyValue,
   { sourceId: "counter1" },
   api,
@@ -1042,15 +1042,15 @@ const types = {
 
 // Without autoCreateEntities (default)
 const entities = {
-  settings: { type: "settings", theme: "dark" },
-  analytics: { type: "analytics", events: [] },
+  settings: { type: "Settings", theme: "dark" },
+  analytics: { type: "Analytics", events: [] },
 }
 
 // With autoCreateEntities: true
 const entities = {
   // settings and analytics will be auto-created as:
-  // settings: { type: "settings" }
-  // analytics: { type: "analytics" }
+  // settings: { type: "Settings" }
+  // analytics: { type: "Analytics" }
 }
 
 const store = createStore({

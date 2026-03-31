@@ -1,3 +1,3 @@
 import * as renderers from "./template.js"
 
-export const grid = { ...renderers }
+export const Grid = { ...renderers }

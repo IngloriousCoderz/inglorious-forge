@@ -1,14 +1,14 @@
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
-import { materialIcon } from "."
+import { MaterialIcon } from "."
 
 describe("materialIcon", () => {
   it("renders icon name", () => {
     const props = { id: "mi", name: "home" }
     const container = document.createElement("div")
 
-    render(materialIcon.render(props), container)
+    render(MaterialIcon.render(props), container)
 
     expect(container.querySelector(".iw-material-icon").textContent).toBe(
       "home",
@@ -26,7 +26,7 @@ describe("materialIcon", () => {
     }
     const container = document.createElement("div")
 
-    render(materialIcon.render(props), container)
+    render(MaterialIcon.render(props), container)
 
     const element = container.querySelector(".iw-material-icon")
     expect(element.classList.contains("iw-material-icon-lg")).toBe(true)

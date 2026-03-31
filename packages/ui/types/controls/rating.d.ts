@@ -16,4 +16,4 @@ export interface RatingType {
   render(props: RatingProps): TemplateResult
 }
 
-export declare const rating: RatingType
+export declare const Rating: RatingType

@@ -6,7 +6,7 @@ import classes from "./footer.module.css"
 
 const SINGLE_TASK = 1
 
-export default function render(entity, api) {
+export function render(entity, api) {
   const allTasksCount = api.select(tasksCount())
   const completedTasksCount = api.select(tasksCount("completed"))
   const activeTasksCount = api.select(tasksCount("active"))

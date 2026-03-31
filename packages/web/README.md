@@ -306,8 +306,8 @@ const types = {
 }
 
 const entities = {
-  counter1: { type: "counter", value: 0 },
-  counter2: { type: "counter", value: 10 },
+  counter1: { type: "Counter", value: 0 },
+  counter2: { type: "Counter", value: 10 },
 }
 
 export const store = createStore({ types, entities })
@@ -358,7 +358,7 @@ import { counter } from "./types/counter.js"
 
 test("increment adds to value", () => {
   const { entity, events } = trigger(
-    { type: "counter", id: "counter1", value: 10 },
+    { type: "Counter", id: "counter1", value: 10 },
     counter.increment,
     { amount: 5 },
   )
@@ -369,7 +369,7 @@ test("increment adds to value", () => {
 
 test("increment dispatches overflow event", () => {
   const { entity, events } = trigger(
-    { type: "counter", id: "counter1", value: 99 },
+    { type: "Counter", id: "counter1", value: 99 },
     counter.increment,
     { amount: 5 },
   )
@@ -389,7 +389,7 @@ import { counter } from "./types/counter.js"
 
 test("counter renders correctly", () => {
   const entity = {
-    type: "counter",
+    type: "Counter",
     id: "counter1",
     value: 42,
   }
@@ -406,7 +406,7 @@ test("counter renders correctly", () => {
 })
 
 test("counter button has click handler", () => {
-  const entity = { type: "counter", id: "counter1", value: 10 }
+  const entity = { type: "Counter", id: "counter1", value: 10 }
   const mockApi = { notify: jest.fn() }
 
   const template = counter.render(entity, mockApi)
@@ -445,12 +445,12 @@ That's it. No `@testing-library/react`, no `renderHook`, no `act()` wrappers.
 
 ```javascript
 import { trigger } from "@inglorious/web/test"
-import { todo } from "./types/todo.js"
+import { Todo } from "./types/todo.js"
 
 test("toggle changes completed status", () => {
   const { entity } = trigger(
-    { type: "todo", id: "todo1", text: "Buy milk", completed: false },
-    todo.toggle,
+    { type: "Todo", id: "todo1", text: "Buy milk", completed: false },
+    Todo.toggle,
   )
 
   expect(entity.completed).toBe(true)
@@ -458,8 +458,8 @@ test("toggle changes completed status", () => {
 
 test("delete dispatches remove event", () => {
   const { events } = trigger(
-    { type: "todo", id: "todo1", text: "Buy milk" },
-    todo.delete,
+    { type: "Todo", id: "todo1", text: "Buy milk" },
+    Todo.delete,
   )
 
   expect(events).toEqual([{ type: "#todoList:removeTodo", payload: "todo1" }])
@@ -470,17 +470,17 @@ test("delete dispatches remove event", () => {
 
 ```javascript
 import { render } from "@inglorious/web/test"
-import { todo } from "./types/todo.js"
+import { Todo } from "./types/todo.js"
 
 test("todo renders text and status", () => {
   const entity = {
-    type: "todo",
+    type: "Todo",
     id: "todo1",
     text: "Buy milk",
     completed: false,
   }
 
-  const html = render(todo.render(entity, { notify: jest.fn() }))
+  const html = render(Todo.render(entity, { notify: jest.fn() }))
 
   expect(html).toContain("Buy milk")
   expect(html).not.toContain("completed")
@@ -488,13 +488,13 @@ test("todo renders text and status", () => {
 
 test("completed todo has completed class", () => {
   const entity = {
-    type: "todo",
+    type: "Todo",
     id: "todo1",
     text: "Buy milk",
     completed: true,
   }
 
-  const html = render(todo.render(entity, { notify: jest.fn() }))
+  const html = render(Todo.render(entity, { notify: jest.fn() }))
 
   expect(html).toContain("completed")
 })
@@ -504,13 +504,13 @@ test("completed todo has completed class", () => {
 
 ```javascript
 import { createStore } from "@inglorious/web"
-import { counter } from "./types/counter.js"
+import { Counter } from "./types/counter.js"
 
 test("full user interaction flow", () => {
   const store = createStore({
-    types: { counter },
+    types: { Counter },
     entities: {
-      counter1: { type: "counter", id: "counter1", value: 0 },
+      counter1: { type: "Counter", id: "counter1", value: 0 },
     },
   })
 
@@ -595,11 +595,11 @@ Type composition (like route guards) is also easy to test:
 ```javascript
 import { trigger } from "@inglorious/web/test"
 import { requireAuth } from "./guards/require-auth.js"
-import { adminPage } from "./pages/admin.js"
+import { AdminPage } from "./pages/admin.js"
 
 test("requireAuth blocks unauthenticated access", () => {
   // Compose the guard with the page type
-  const guardedPage = requireAuth(adminPage)
+  const GuardedPage = requireAuth(AdminPage)
 
   // Mock localStorage.getItem to return null (not logged in)
   const mockApi = {
@@ -607,8 +607,8 @@ test("requireAuth blocks unauthenticated access", () => {
   }
 
   const { events } = trigger(
-    { type: "adminPage", id: "admin" },
-    guardedPage.routeChange,
+    { type: "GuardedPage", id: "admin" },
+    GuardedPage.routeChange,
     { route: "adminPage" },
     mockApi,
   )
@@ -626,12 +626,12 @@ test("requireAuth allows authenticated access", () => {
   // Mock localStorage.getItem to return user data
   localStorage.setItem("user", JSON.stringify({ id: 1 }))
 
-  const guardedPage = requireAuth(adminPage)
+  const GuardedPage = requireAuth(AdminPage)
   const mockApi = { notify: jest.fn() }
 
   const { events } = trigger(
-    { type: "adminPage", id: "admin" },
-    guardedPage.routeChange,
+    { type: "GuardedPage", id: "admin" },
+    GuardedPage.routeChange,
     { route: "adminPage" },
     mockApi,
   )
@@ -694,7 +694,7 @@ To use it:
 3. Write your render functions using JSX
 
 ```jsx
-export const counter = {
+export const Counter = {
   render(entity, api) {
     return (
       <div className="counter">
@@ -848,7 +848,7 @@ const title = "Todos"
 **Generated output (simplified):**
 
 ```js
-export const app = {
+export const App = {
   create(entity) {
     entity.title = "Todos"
   },
@@ -963,24 +963,24 @@ To enable the router, add it to your store's types and create a `router` entity.
 ```javascript
 // store.js
 import { createStore, html } from "@inglorious/web"
-import { router, setRoutes } from "@inglorious/web/router"
+import { Router, setRoutes } from "@inglorious/web/router"
 
 const types = {
   // 1. Add the router type to your store's types
-  router,
+  Router,
 
   // 2. Define types for your pages
-  homePage: {
+  HomePage: {
     render: () => html`<h1>Welcome Home!</h1>`,
   },
-  userPage: {
+  UserPage: {
     render: (entity, api) => {
       // Access route params from the router entity
       const { params } = api.getEntity("router")
       return html`<h1>User ${params?.id ?? "Unknown"} - ${entity.username}</h1>`
     },
   },
-  notFoundPage: {
+  NotFoundPage: {
     render: () => html`<h1>404 - Page Not Found</h1>`,
   },
 }
@@ -988,10 +988,10 @@ const types = {
 const entities = {
   // 3. Create the router entity (no `routes` here)
   router: {
-    type: "router",
+    type: "Router",
   },
   userPage: {
-    type: "userPage",
+    type: "UserPage",
     username: "Alice",
   },
 }
@@ -1056,7 +1056,7 @@ You can improve performance by lazy-loading routes. Use a loader function that r
 ```javascript
 // store.js
 const entities = {
-  router: { type: "router" },
+  router: { type: "Router" },
 }
 
 export const store = createStore({ types, entities })
@@ -1073,7 +1073,7 @@ setRoutes({
 import { html } from "@inglorious/web"
 
 // Must be a named export matching the type name you want to use
-export const adminPage = {
+export const AdminPage = {
   render: () => html`<h1>Admin Area</h1>`,
 }
 ```
@@ -1116,25 +1116,25 @@ export const requireAuth = (type) => ({
 ```javascript
 // store.js
 import { createStore } from "@inglorious/web"
-import { router } from "@inglorious/web/router"
+import { Router } from "@inglorious/web/router"
 import { requireAuth } from "./guards/require-auth.js"
-import { adminPage } from "./pages/admin.js"
-import { loginPage } from "./pages/login.js"
+import { AdminPage } from "./pages/admin.js"
+import { LoginPage } from "./pages/login.js"
 
 const types = {
-  router,
+  Router,
 
   // Public page - no guard
-  loginPage,
+  LoginPage,
 
   // Protected page - composed with requireAuth guard
-  adminPage: [adminPage, requireAuth],
+  AdminPage: [AdminPage, requireAuth],
 }
 
 const entities = {
-  router: { type: "router" },
-  adminPage: { type: "adminPage" },
-  loginPage: { type: "loginPage" },
+  router: { type: "Router" },
+  adminPage: { type: "AdminPage" },
+  loginPage: { type: "LoginPage" },
 }
 
 export const store = createStore({ types, entities })
@@ -1173,10 +1173,10 @@ You can compose multiple guards for fine-grained control:
 ```javascript
 const types = {
   // Require authentication AND admin role
-  adminPage: [adminPage, requireAuth, requireAdmin],
+  AdminPage: [AdminPage, requireAuth, requireAdmin],
 
   // Require authentication AND resource ownership
-  userProfile: [userProfile, requireAuth, requireOwnership],
+  UserProfile: [UserProfile, requireAuth, requireOwnership],
 }
 ```
 
@@ -1207,7 +1207,7 @@ const logging = (type) => ({
 
 const types = {
   // Compose the counter type with logging
-  counter: [counterBase, logging],
+  counter: [CounterBase, logging],
 }
 ```
 
@@ -1248,13 +1248,13 @@ Include `form` in your `types` and create an entity for the form (use any id you
 
 ```javascript
 import { createStore } from "@inglorious/web"
-import { form } from "@inglorious/web/form"
+import { Form } from "@inglorious/web/form"
 
-const types = { form }
+const types = { Form }
 
 const entities = {
   form: {
-    type: "form",
+    type: "Form",
     initialValues: {
       name: "",
       email: "",
@@ -1324,7 +1324,7 @@ For a complete, working demo and helper components look at `examples/apps/web-fo
 
 ```javascript
 // @acme/design-system/data-grid.js
-export const dataGrid = {
+export const DataGrid = {
   render(entity, api) {
     const type = api.getType(entity.type)
 
@@ -1348,14 +1348,14 @@ export const dataGrid = {
 **Users customize freely:**
 
 ```javascript
-import { dataGrid } from "@acme/design-system/data-grid"
+import { DataGrid } from "@acme/design-system/data-grid"
 
 // Use as-is
-const simpleGrid = { ...dataGrid }
+const SimpleGrid = { ...DataGrid }
 
 // Override methods
-const customGrid = {
-  ...dataGrid,
+const CustomGrid = {
+  ...DataGrid,
   renderRow(entity, row, api) {
     return html`<div class="data-grid-row custom">
       ${row.name} - ${row.email}
@@ -1366,8 +1366,8 @@ const customGrid = {
 // Compose with behaviors
 import { sortable, exportable } from "@acme/design-system/behaviors"
 
-const advancedGrid = [
-  dataGrid,
+const AdvancedGrid = [
+  DataGrid,
   sortable,
   exportable,
   {
@@ -1441,10 +1441,10 @@ import "@shoelace-style/shoelace/dist/components/color-picker/color-picker.js"
 
 const types = {
   // App-specific type - full store integration
-  productTable,
+  ProductTable,
 
   // Web Component - for specialized UI
-  themeEditor: {
+  ThemeEditor: {
     colorChange(entity, color) {
       entity.primaryColor = color
     },
@@ -1475,7 +1475,7 @@ Let's be real: in a web app you very rarely need to create more than one entity 
 
 ```javascript
 const types = {
-  app: {
+  App: {
     render(entity, api) {
       return html`
         <div class="app">${api.render("header")} ${api.render("content")}</div>
@@ -1483,13 +1483,13 @@ const types = {
     },
   },
 
-  header: {
+  Header: {
     render(entity, api) {
       return html`<header>${entity.title}</header>`
     },
   },
 
-  content: {
+  Content: {
     render(entity, api) {
       return html`<main>${entity.text}</main>`
     },
@@ -1498,9 +1498,9 @@ const types = {
 
 // Without autoCreateEntities - you need to define every entity
 const entities = {
-  app: { type: "app" },
-  header: { type: "header", title: "Welcome" },
-  content: { type: "content", text: "Hello World" },
+  app: { type: "App" },
+  header: { type: "Header", title: "Welcome" },
+  content: { type: "Content", text: "Hello World" },
 }
 
 // With autoCreateEntities - entities are created automatically
@@ -1514,7 +1514,7 @@ const store = createStore({
 If you want to initialize an entity with specific data, you can use the `create()` event handler:
 
 ```javascript
-const header = {
+const Header = {
   create(entity) {
     entity.title = "Welcome"
   },
@@ -1589,12 +1589,19 @@ import {
 
 // Subpath imports for tree-shaking
 import {
-  form,
+  Form,
   getFieldError,
   getFieldValue,
   isFieldTouched,
 } from "@inglorious/web/form"
-import { router } from "@inglorious/web/router"
+import {
+  Router,
+  getRoutes,
+  getRoute,
+  setRoutes,
+  addRoute,
+  removeRoute,
+} from "@inglorious/web/router"
 import { render, trigger } from "@inglorious/web/test"
 ```
 
@@ -1607,7 +1614,7 @@ When an entity's `render()` method throws an error, it can crash your entire app
 **Best practice:** Wrap your render logic in try-catch at the entity level:
 
 ```javascript
-const myType = {
+const MyType = {
   render(entity, api) {
     try {
       // Your render logic

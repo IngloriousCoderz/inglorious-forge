@@ -1,13 +1,13 @@
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
-import { speedDial } from "."
+import { SpeedDial } from "."
 
 describe("speedDial", () => {
   it("renders trigger", () => {
     const container = document.createElement("div")
 
-    render(speedDial.render({}), container)
+    render(SpeedDial.render({}), container)
 
     expect(container.querySelector(".iw-speed-dial-trigger")).not.toBeNull()
   })
@@ -16,7 +16,7 @@ describe("speedDial", () => {
     const container = document.createElement("div")
 
     render(
-      speedDial.render({ isOpen: true, actions: [{ label: "A" }] }),
+      SpeedDial.render({ isOpen: true, actions: [{ label: "A" }] }),
       container,
     )
 

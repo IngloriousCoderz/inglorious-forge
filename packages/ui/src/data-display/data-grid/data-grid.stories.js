@@ -2,7 +2,7 @@ import {
   createEntityRender,
   notifyActionArgType,
 } from "../../stories/notifyStory.js"
-import { dataGrid } from "."
+import { DataGrid } from "."
 
 const baseRows = [
   { id: 1, name: "Charlie", age: 35, active: true, role: "Admin" },
@@ -57,7 +57,7 @@ function createRows(count) {
 export default {
   title: "Data Display/DataGrid",
   tags: ["autodocs"],
-  render: createEntityRender({ dataGrid }),
+  render: createEntityRender({ DataGrid }),
   argTypes: {
     ...notifyActionArgType,
     id: { control: "text", description: "Optional grid id" },
@@ -75,7 +75,7 @@ export default {
 export const Default = {
   args: {
     id: "dataGrid",
-    type: "dataGrid",
+    type: "DataGrid",
     rows: baseRows,
     columns: baseColumns,
     search: {},
@@ -130,7 +130,7 @@ export const FlexibleWidths = {
 export const Virtualized = {
   args: {
     id: "virtualizedGrid",
-    type: "dataGrid",
+    type: "DataGrid",
     rows: createRows(1000),
     columns: baseColumns,
     search: null,

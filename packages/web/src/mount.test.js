@@ -27,7 +27,7 @@ describe("mount", () => {
     element = document.createElement("div")
     entity = {
       id: "dashboard-entity",
-      type: "dashboard",
+      type: "Dashboard",
     }
     componentType = {
       render: vi.fn(() => "dashboard-template"),
@@ -63,12 +63,12 @@ describe("mount", () => {
     await mount(
       store,
       (renderApi) =>
-        renderApi.render("dashboard-entity", "dashboard", componentType),
+        renderApi.render("dashboard-entity", "Dashboard", componentType),
       element,
     )
 
-    expect(api.getType).toHaveBeenCalledWith("dashboard")
-    expect(api.setType).toHaveBeenCalledWith("dashboard", componentType)
+    expect(api.getType).toHaveBeenCalledWith("Dashboard")
+    expect(api.setType).toHaveBeenCalledWith("Dashboard", componentType)
     expect(componentType.render).toHaveBeenCalledWith(
       entity,
       expect.objectContaining({
@@ -82,12 +82,12 @@ describe("mount", () => {
   })
 
   it("does not re-register a type that already exists", async () => {
-    types.dashboard = componentType
+    types.Dashboard = componentType
 
     await mount(
       store,
       (renderApi) =>
-        renderApi.render("dashboard-entity", "dashboard", componentType),
+        renderApi.render("dashboard-entity", "Dashboard", componentType),
       element,
     )
 

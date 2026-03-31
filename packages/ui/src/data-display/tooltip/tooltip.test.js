@@ -1,7 +1,7 @@
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
-import { tooltip } from "."
+import { Tooltip } from "."
 
 describe("tooltip", () => {
   it("renders tooltip bubble", () => {
@@ -13,7 +13,7 @@ describe("tooltip", () => {
     }
     const container = document.createElement("div")
 
-    render(tooltip.render(props), container)
+    render(Tooltip.render(props), container)
 
     expect(
       container.querySelector(".iw-tooltip-bubble").textContent.trim(),
@@ -39,7 +39,7 @@ describe("tooltip", () => {
     }
     const container = document.createElement("div")
 
-    render(tooltip.render(props), container)
+    render(Tooltip.render(props), container)
 
     const root = container.querySelector(".iw-tooltip")
     expect(root.classList.contains("iw-tooltip-bottom")).toBe(true)

@@ -1,14 +1,14 @@
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
-import { snackbar } from "."
+import { Snackbar } from "."
 
 describe("snackbar", () => {
   it("renders when open", () => {
     const props = { isOpen: true, message: "Saved" }
     const container = document.createElement("div")
 
-    render(snackbar.render(props), container)
+    render(Snackbar.render(props), container)
 
     expect(container.querySelector(".iw-snackbar-message").textContent).toBe(
       "Saved",
@@ -19,7 +19,7 @@ describe("snackbar", () => {
     const props = { isOpen: false, message: "Saved" }
     const container = document.createElement("div")
 
-    render(snackbar.render(props), container)
+    render(Snackbar.render(props), container)
 
     expect(container.querySelector(".iw-snackbar")).toBeNull()
   })
@@ -33,7 +33,7 @@ describe("snackbar", () => {
     }
     const container = document.createElement("div")
 
-    render(snackbar.render(props), container)
+    render(Snackbar.render(props), container)
 
     container.querySelector(".iw-snackbar-close").click()
     expect(closed).toBe(true)

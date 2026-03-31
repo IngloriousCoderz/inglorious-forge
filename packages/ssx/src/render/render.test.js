@@ -17,7 +17,7 @@ describe("renderPage", () => {
     const page = { path: "/", moduleName: "index", module }
 
     const store = createStore({
-      types: { index: module.index },
+      types: { Index: module.Index },
       updateMode: "manual",
     })
     store.update()
@@ -30,10 +30,10 @@ describe("renderPage", () => {
   it("should render a page with entity", async () => {
     const module = await import(pathToFileURL(path.join(PAGES_DIR, "about.js")))
     const page = { path: "/about", moduleName: "about", module }
-    const entity = { type: "about", name: "Us" }
+    const entity = { type: "About", name: "Us" }
 
     const store = createStore({
-      types: { about: module.about },
+      types: { About: module.About },
       entities: { about: entity },
       updateMode: "manual",
     })
@@ -46,10 +46,10 @@ describe("renderPage", () => {
   it("should render a page with metadata", async () => {
     const module = await import(pathToFileURL(path.join(PAGES_DIR, "about.js")))
     const page = { path: "/about", moduleName: "about", module }
-    const entity = { type: "about", name: "Us" }
+    const entity = { type: "About", name: "Us" }
 
     const store = createStore({
-      types: { about: module.about },
+      types: { About: module.About },
       entities: { about: entity },
       updateMode: "manual",
     })
@@ -66,7 +66,7 @@ describe("renderPage", () => {
     const module = await import(pathToFileURL(path.join(PAGES_DIR, "blog.js")))
     const page = { path: "/blog", moduleName: "blog", module }
     const entity = {
-      type: "blog",
+      type: "Blog",
       name: "Antony",
       posts: [
         { id: 1, title: "First Post" },
@@ -76,7 +76,7 @@ describe("renderPage", () => {
     }
 
     const store = createStore({
-      types: { blog: module.blog },
+      types: { Blog: module.Blog },
       entities: { blog: entity },
       updateMode: "manual",
     })
@@ -90,9 +90,9 @@ describe("renderPage", () => {
     const module = await import(
       pathToFileURL(path.join(PAGES_DIR, "posts", "_slug.js"))
     )
-    const page = { path: "/posts/1", moduleName: "post", module }
+    const page = { path: "/posts/1", moduleName: "Post", module }
     const entity = {
-      type: "blog",
+      type: "Post",
       name: "Antony",
       post: {
         id: 1,
@@ -103,12 +103,12 @@ describe("renderPage", () => {
     }
 
     const store = createStore({
-      types: { blog: module.post },
+      types: { Post: module.Post },
       entities: { post: entity },
       updateMode: "manual",
     })
 
-    const html = await renderPage(store, page, module, DEFAULT_OPTIONS)
+    const html = await renderPage(store, page, entity, DEFAULT_OPTIONS)
 
     expect(html).toMatchSnapshot()
   })

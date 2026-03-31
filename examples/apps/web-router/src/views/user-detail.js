@@ -2,7 +2,7 @@ import { html } from "@inglorious/web"
 
 const BACK = -1
 
-export const userDetail = {
+export const UserDetail = {
   routeChange(entity, payload, api) {
     if (payload.route !== entity.type) return
 

@@ -1,13 +1,13 @@
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
-import { appBar } from "."
+import { AppBar } from "."
 
 describe("appBar", () => {
   it("renders title and subtitle", () => {
     const container = document.createElement("div")
 
-    render(appBar.render({ title: "Title", subtitle: "Subtitle" }), container)
+    render(AppBar.render({ title: "Title", subtitle: "Subtitle" }), container)
 
     expect(container.querySelector(".iw-app-bar-title").textContent).toBe(
       "Title",
@@ -20,7 +20,7 @@ describe("appBar", () => {
   it("applies position and dense classes", () => {
     const container = document.createElement("div")
 
-    render(appBar.render({ position: "sticky", isDense: true }), container)
+    render(AppBar.render({ position: "sticky", isDense: true }), container)
 
     const root = container.querySelector(".iw-app-bar")
     expect(root.classList.contains("iw-app-bar-sticky")).toBe(true)
@@ -31,7 +31,7 @@ describe("appBar", () => {
     const container = document.createElement("div")
 
     render(
-      appBar.render({
+      AppBar.render({
         color: "primary",
         placement: "bottom",
         position: "fixed",
@@ -48,7 +48,7 @@ describe("appBar", () => {
   it("renders trailing region", () => {
     const container = document.createElement("div")
 
-    render(appBar.render({ trailing: "Action" }), container)
+    render(AppBar.render({ trailing: "Action" }), container)
 
     expect(
       container.querySelector(".iw-app-bar-trailing").textContent.trim(),

@@ -1,12 +1,12 @@
 import { createStore, type TypesConfig } from "@inglorious/web"
 
 import type { AppEntity, AppState } from "../../types"
-import { message } from "../message/message"
+import { Message } from "../types/message"
 import { entities } from "./entities"
 import { middlewares } from "./middlewares"
 
 export const store = createStore<AppEntity, AppState>({
-  types: { message } as unknown as TypesConfig<AppEntity>,
+  types: { Message } as unknown as TypesConfig<AppEntity>,
   entities,
   middlewares,
 })

@@ -71,7 +71,7 @@ import { html } from "@inglorious/web"
 // You can import API for type safety, though it's optional
 // import type { API } from "@inglorious/web"
 
-export const index = {
+export const Index = {
   render(/* entity: any, api: API */) {
     return html`
       <div>
@@ -92,7 +92,7 @@ export const index = {
 // src/pages/index.js
 import { html } from "@inglorious/web"
 
-export const index = {
+export const Index = {
   render() {
     return html`
       <div>
@@ -242,7 +242,7 @@ const messages = {
   pt: "Olá mundo!",
 }
 
-export const hello = {
+export const Hello = {
   render(entity) {
     return html`<h1>${messages[entity.locale] ?? messages.en}</h1>`
   },
@@ -270,7 +270,7 @@ Notes:
 // src/pages/about.js
 import { html } from "@inglorious/web"
 
-export const about = {
+export const About = {
   click(entity) {
     entity.name += "!"
   },
@@ -290,7 +290,7 @@ export const about = {
 // src/store/entities.js
 export const entities = {
   about: {
-    type: "about",
+    type: "About",
     name: "Us",
   },
 }
@@ -304,7 +304,7 @@ Load data at build time with the `load` export:
 // src/pages/blog.js
 import { html } from "@inglorious/web"
 
-export const blog = {
+export const Blog = {
   render(entity) {
     return html`
       <h1>Blog Posts</h1>
@@ -342,7 +342,7 @@ Generate multiple pages from data:
 // src/pages/posts/_slug.js
 import { html } from "@inglorious/web"
 
-export const post = {
+export const Post = {
   render(entity) {
     return html`
       <article>
@@ -385,7 +385,7 @@ export const metadata = (entity) => ({
 Export metadata for HTML `<head>`. The `metadata` export can be a plain object or a function:
 
 ```javascript
-export const index = {
+export const Index = {
   render() {
     return html`<h1>Home</h1>`
   },
@@ -415,7 +415,7 @@ export const metadata = (entity) => ({
 Pages hydrate automatically with lit-html. Interactivity works immediately:
 
 ```javascript
-export const counter = {
+export const Counter = {
   click(entity) {
     entity.count++
   },
@@ -558,7 +558,7 @@ Fetch from your API in `routeChange` for client-side navigation, and use direct 
 // src/pages/posts/_slug.js
 import { html } from "@inglorious/web"
 
-export const post = {
+export const Post = {
   async routeChange(entity, { route, params }, api) {
     if (route !== entity.type) return
 
@@ -778,7 +778,7 @@ Create a fallback route:
 
 ```javascript
 // src/pages/404.js
-export const notFound = {
+export const NotFound = {
   render() {
     return html`
       <div>

@@ -49,9 +49,9 @@ Object containing initial entity instances:
 
 ```javascript
 const entities = {
-  workTodos: { type: "todoList", todos: [] },
-  personalTodos: { type: "todoList", todos: [] },
-  counter: { type: "counter", value: 0 },
+  workTodos: { type: "TodoList", todos: [] },
+  personalTodos: { type: "TodoList", todos: [] },
+  counter: { type: "Counter", value: 0 },
 }
 ```
 
@@ -95,8 +95,8 @@ const store = createStore({
 })
 
 // Automatically creates:
-// settings: { type: "settings" }
-// analytics: { type: "analytics" }
+// settings: { type: "Settings" }
+// analytics: { type: "Analytics" }
 ```
 
 **Use when:**
@@ -381,7 +381,7 @@ const types = {
   },
 }
 
-store.notify("add", { id: "work", type: "todoList", todos: [] })
+store.notify("add", { id: "work", type: "TodoList", todos: [] })
 // create handler fires only for "work" entity
 ```
 
@@ -411,7 +411,7 @@ Built-in event to add a new entity:
 ```javascript
 store.notify("add", {
   id: "newList",
-  type: "todoList",
+  type: "TodoList",
   todos: [],
   priority: "high",
 })
@@ -586,7 +586,7 @@ Define types for your store:
 import type { TypesConfig } from "@inglorious/store"
 
 interface TodoListEntity {
-  type: "todoList"
+  type: "TodoList"
   todos: Array<{ id: number; text: string; done: boolean }>
 }
 

@@ -359,11 +359,11 @@ import {
   html, 
   mount 
 } from '@inglorious/web';
-import { router } from '@inglorious/web/router';
-import { form } from '@inglorious/web/form';
-import { virtualList } from '@inglorious/ui/virtual-list';
+import { Router } from '@inglorious/web/router';
+import { Form } from '@inglorious/web/form';
+import { VirtualList } from '@inglorious/ui/virtual-list';
 
-const types = { router, form, virtualList };
+const types = { Router, Form, VirtualList };
 const store = createStore({ types, entities });
 mount(store, renderApp, root);
 \`\`\`

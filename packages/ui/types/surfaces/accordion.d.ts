@@ -30,4 +30,4 @@ export interface AccordionType {
   ): TemplateResult
 }
 
-export declare const accordion: AccordionType
+export declare const Accordion: AccordionType

@@ -8,7 +8,7 @@ import { v } from "@inglorious/utils/v.js"
 
 export default {
   types: {
-    character: [
+    Character: [
       { render: renderCharacter },
       {
         update(entity, dt, api) {
@@ -29,12 +29,12 @@ export default {
 
   entities: {
     game: {
-      type: "game",
+      type: "Game",
       devMode: true,
     },
 
     left: {
-      type: "character",
+      type: "Character",
       position: v(200, 0, 300),
       orientation: 0,
       maxSpeed: 250,
@@ -44,7 +44,7 @@ export default {
     },
 
     right: {
-      type: "character",
+      type: "Character",
       position: v(600, 0, 300),
       orientation: pi(),
       maxSpeed: 250,

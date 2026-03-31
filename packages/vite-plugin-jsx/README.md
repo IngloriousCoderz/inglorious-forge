@@ -98,7 +98,7 @@ function render(entity, api) {
 ### Handling Events
 
 ```jsx
-export const button = {
+export const Button = {
   render(entity, api) {
     return (
       <button onClick={() => api.notify(`#${entity.id}:click`)}>
@@ -112,7 +112,7 @@ export const button = {
 ### Conditional Rendering
 
 ```jsx
-export const panel = {
+export const Panel = {
   render(entity, api) {
     return (
       <div>
@@ -131,7 +131,7 @@ export const panel = {
 ### Lists with Keys
 
 ```jsx
-export const todoList = {
+export const TodoList = {
   render(entity, api) {
     return (
       <ul>
@@ -166,11 +166,11 @@ For entity types with JSX renders:
 import { html } from "@inglorious/web"
 
 type CounterEntity = {
-  type: "counter"
+  type: "Counter"
   value: number
 }
 
-export const counter = {
+export const Counter = {
   render(entity: CounterEntity, api) {
     return (
       <div className="counter">
@@ -286,7 +286,7 @@ Nested SVG trees are handled correctly, including `foreignObject`.
 Capitalized tags are treated as **Engine Components** and compiled to `api.render()` calls.
 
 ```jsx
-export const app = {
+export const App = {
   render() {
     // ☝️ Plugin auto-injects 'api' if you use components!
     return <Form />
@@ -310,18 +310,18 @@ They are **render boundaries** for your engine.
 
 ```jsx
 // ❌ DON'T DO THIS - Engine components don't support children
-export const form = {
+export const Form = {
   render(entity, api) {
     return (
-      <Form id="f1">
+      <form>
         <Field />
-      </Form>
+      </form>
     )
   },
 }
 
 // ✅ DO THIS - Compose at the entity level instead
-export const form = {
+export const Form = {
   render(entity, api) {
     return html`<form>${api.render("field", "Field", Field)}</form>`
   },

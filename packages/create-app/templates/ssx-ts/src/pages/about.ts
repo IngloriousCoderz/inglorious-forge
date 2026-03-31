@@ -2,7 +2,7 @@ import { Api, html } from "@inglorious/web"
 
 import type { AboutEntity } from "../../types"
 
-export const about = {
+export const About = {
   click(entity: AboutEntity) {
     entity.name += "!"
   },

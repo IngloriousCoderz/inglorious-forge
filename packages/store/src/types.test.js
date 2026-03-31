@@ -68,20 +68,20 @@ test("should handle undefined or null input gracefully", () => {
 
 test("should augment a map of types correctly", () => {
   const types = {
-    player: { onJump: () => "boing" },
-    enemy: [
+    Player: { onJump: () => "boing" },
+    Enemy: [
       { onMove: () => "stomp" },
       (type) => ({ ...type, onAttack: () => "bite" }),
     ],
-    item: [],
+    Item: [],
   }
 
   const result = augmentTypes(types)
 
-  expect(result.player).toStrictEqual({ onJump: expect.any(Function) })
-  expect(result.enemy).toStrictEqual({
+  expect(result.Player).toStrictEqual({ onJump: expect.any(Function) })
+  expect(result.Enemy).toStrictEqual({
     onMove: expect.any(Function),
     onAttack: expect.any(Function),
   })
-  expect(result.item).toStrictEqual({})
+  expect(result.Item).toStrictEqual({})
 })

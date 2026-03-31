@@ -1,12 +1,12 @@
 import { withMotion } from "@inglorious/motion"
 
 import * as handlers from "./handlers.js"
-import { render } from "./template.js"
+import * as renderers from "./template.js"
 
-const layoutCardBase = { ...handlers, render }
+const LayoutCardBase = { ...handlers, ...renderers }
 
-export const layoutCard = [
-  layoutCardBase,
+export const LayoutCard = [
+  LayoutCardBase,
   withMotion({
     classPrefix: "demo-layout-card",
     layout: true,

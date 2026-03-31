@@ -1,1 +1,1 @@
-export { breadcrumbs } from "./template.js"
+export { Breadcrumbs } from "./template.js"

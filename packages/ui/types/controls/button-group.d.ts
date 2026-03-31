@@ -33,4 +33,4 @@ export interface ButtonGroupType {
   render(props: ButtonGroupProps): TemplateResult
 }
 
-export declare const buttonGroup: ButtonGroupType
+export declare const ButtonGroup: ButtonGroupType

@@ -27,4 +27,4 @@ export interface GridType {
   render(props: GridProps): TemplateResult
 }
 
-export declare const grid: GridType
+export declare const Grid: GridType

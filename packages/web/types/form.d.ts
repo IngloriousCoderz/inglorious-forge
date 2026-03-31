@@ -189,7 +189,7 @@ export interface FormValidationErrorPayload {
 /**
  * The form type implementation for the entity-based state manager.
  */
-export declare const form: {
+export interface FormType {
   /**
    * Initializes the form entity with default state.
    * @param entity The form entity.
@@ -309,6 +309,8 @@ export declare const form: {
     payload: FormValidationErrorPayload,
   ): void
 }
+
+export declare const Form: FormType
 
 /**
  * Gets the value of a specific field in the form.

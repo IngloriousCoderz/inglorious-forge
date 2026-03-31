@@ -2,9 +2,9 @@ import { createStore } from "@inglorious/store"
 import { mount } from "@inglorious/web"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
 
-import { select } from "../../controls/select"
+import { Select } from "../../controls/select"
 import {
-  dataGrid,
+  DataGrid,
   getPaginationInfo,
   getRows,
   getSortDirection,
@@ -42,7 +42,7 @@ const sampleColumns = [
   },
 ]
 
-const GRID_ID = "test-dataGrid"
+const GRID_ID = "test-DataGrid"
 
 // ---------------------------------------------------------------------------
 // Test helpers
@@ -54,10 +54,10 @@ const GRID_ID = "test-dataGrid"
  */
 async function setup(entityOverrides = {}) {
   const store = createStore({
-    types: { dataGrid, select },
+    types: { DataGrid, Select },
     entities: {
       [GRID_ID]: {
-        type: "dataGrid",
+        type: "DataGrid",
         rows: JSON.parse(JSON.stringify(sampleData)),
         columns: JSON.parse(JSON.stringify(sampleColumns)),
         pagination: { page: 0, pageSize: 2, pageSizes: [10, 20, 30] },
@@ -76,7 +76,7 @@ async function setup(entityOverrides = {}) {
     store,
     (api) => {
       const e = getEntity(GRID_ID)
-      return e ? dataGrid.render(e, api) : null
+      return e ? DataGrid.render(e, api) : null
     },
     container,
   )
@@ -93,29 +93,29 @@ async function setup(entityOverrides = {}) {
 // Handler tests — isolated, no store or DOM needed
 // ---------------------------------------------------------------------------
 
-describe("dataGrid / handlers", () => {
+describe("DataGrid / handlers", () => {
   let entity, api
 
   beforeEach(() => {
-    const store = createStore({ types: { dataGrid, select } })
+    const store = createStore({ types: { DataGrid, Select } })
     store.notify("init")
     api = store._api
 
     entity = {
       id: GRID_ID,
-      type: "dataGrid",
+      type: "DataGrid",
       rows: JSON.parse(JSON.stringify(sampleData)),
       columns: JSON.parse(JSON.stringify(sampleColumns)),
       pagination: { page: 0, pageSize: 2 },
       search: { value: "" },
     }
-    dataGrid.create(entity, undefined, api)
+    DataGrid.create(entity, undefined, api)
   })
 
   describe("create()", () => {
     it("initialises default state", () => {
       const e = { rows: [{ id: 1, name: "Test" }], search: { value: "" } }
-      dataGrid.create(e, undefined, api)
+      DataGrid.create(e, undefined, api)
       expect(e.sorts).toEqual([])
       expect(e.filters).toEqual({})
       expect(e.selection).toEqual([])
@@ -124,14 +124,14 @@ describe("dataGrid / handlers", () => {
     })
 
     it("throws when rows do not have a valid default id key", () => {
-      expect(() => dataGrid.create({ rows: [{ name: "No id" }] })).toThrow(
+      expect(() => DataGrid.create({ rows: [{ name: "No id" }] })).toThrow(
         'for field "id". Keys must be string or number',
       )
     })
 
     it("supports a custom rowId", () => {
       expect(() =>
-        dataGrid.create(
+        DataGrid.create(
           {
             rowId: "uuid",
             rows: [
@@ -148,7 +148,7 @@ describe("dataGrid / handlers", () => {
 
     it("throws on duplicate row keys", () => {
       expect(() =>
-        dataGrid.create({
+        DataGrid.create({
           rowId: "uuid",
           rows: [
             { uuid: "same", name: "A" },
@@ -161,99 +161,99 @@ describe("dataGrid / handlers", () => {
 
   describe("sortChange()", () => {
     it("adds a new sort", () => {
-      dataGrid.sortChange(entity, "name")
+      DataGrid.sortChange(entity, "name")
       expect(entity.sorts).toEqual([{ column: "name", direction: "asc" }])
     })
 
     it("toggles asc to desc", () => {
-      dataGrid.sortChange(entity, "name")
-      dataGrid.sortChange(entity, "name")
+      DataGrid.sortChange(entity, "name")
+      DataGrid.sortChange(entity, "name")
       expect(entity.sorts).toEqual([{ column: "name", direction: "desc" }])
     })
 
     it("removes the sort when toggling past desc", () => {
-      dataGrid.sortChange(entity, "name")
-      dataGrid.sortChange(entity, "name")
-      dataGrid.sortChange(entity, "name")
+      DataGrid.sortChange(entity, "name")
+      DataGrid.sortChange(entity, "name")
+      DataGrid.sortChange(entity, "name")
       expect(entity.sorts).toEqual([])
     })
 
     it("resets to page 0", () => {
       entity.pagination.page = 1
-      dataGrid.sortChange(entity, "name")
+      DataGrid.sortChange(entity, "name")
       expect(entity.pagination.page).toBe(0)
     })
   })
 
   describe("filterChange()", () => {
     it("adds a filter", () => {
-      dataGrid.filterChange(entity, { columnId: "name", value: "Alice" })
+      DataGrid.filterChange(entity, { columnId: "name", value: "Alice" })
       expect(entity.filters.name).toBe("Alice")
     })
 
     it("removes a filter when value is empty", () => {
-      dataGrid.filterChange(entity, { columnId: "name", value: "Alice" })
-      dataGrid.filterChange(entity, { columnId: "name", value: "" })
+      DataGrid.filterChange(entity, { columnId: "name", value: "Alice" })
+      DataGrid.filterChange(entity, { columnId: "name", value: "" })
       expect(entity.filters.name).toBeUndefined()
     })
 
     it("resets to page 0", () => {
       entity.pagination.page = 1
-      dataGrid.filterChange(entity, { columnId: "name", value: "Alice" })
+      DataGrid.filterChange(entity, { columnId: "name", value: "Alice" })
       expect(entity.pagination.page).toBe(0)
     })
   })
 
   describe("searchChange()", () => {
     it("updates the search value", () => {
-      dataGrid.searchChange(entity, "Ali")
+      DataGrid.searchChange(entity, "Ali")
       expect(entity.search.value).toBe("Ali")
     })
 
     it("resets to page 0", () => {
       entity.pagination.page = 1
-      dataGrid.searchChange(entity, "Ali")
+      DataGrid.searchChange(entity, "Ali")
       expect(entity.pagination.page).toBe(0)
     })
   })
 
   describe("pagination", () => {
     it("pageNext: advances page", () => {
-      dataGrid.pageNext(entity)
+      DataGrid.pageNext(entity)
       expect(entity.pagination.page).toBe(1)
     })
 
     it("pageNext: does not go past the last page", () => {
-      dataGrid.pageNext(entity)
-      dataGrid.pageNext(entity)
+      DataGrid.pageNext(entity)
+      DataGrid.pageNext(entity)
       expect(entity.pagination.page).toBe(1)
     })
 
     it("pagePrev: goes back one page", () => {
       entity.pagination.page = 1
-      dataGrid.pagePrev(entity)
+      DataGrid.pagePrev(entity)
       expect(entity.pagination.page).toBe(0)
     })
 
     it("pagePrev: does not go before page 0", () => {
-      dataGrid.pagePrev(entity)
+      DataGrid.pagePrev(entity)
       expect(entity.pagination.page).toBe(0)
     })
 
     it("pageSizeChange: updates size and resets to page 0", () => {
       entity.pagination.page = 1
-      dataGrid.pageSizeChange(entity, 4)
+      DataGrid.pageSizeChange(entity, 4)
       expect(entity.pagination.pageSize).toBe(4)
       expect(entity.pagination.page).toBe(0)
     })
 
     it("columnResize: updates size and enforces a minimum width", () => {
-      dataGrid.columnResize(entity, { columnId: "name", width: 180 })
+      DataGrid.columnResize(entity, { columnId: "name", width: 180 })
       expect(entity.columns.find((column) => column.id === "name").width).toBe(
         180,
       )
 
-      dataGrid.columnResize(entity, { columnId: "name", width: 10 })
+      DataGrid.columnResize(entity, { columnId: "name", width: 10 })
       expect(entity.columns.find((column) => column.id === "name").width).toBe(
         72,
       )
@@ -262,35 +262,35 @@ describe("dataGrid / handlers", () => {
 
   describe("selection", () => {
     it("rowToggle: selects an unselected row", () => {
-      dataGrid.rowToggle(entity, 1)
+      DataGrid.rowToggle(entity, 1)
       expect(entity.selection).toContain(1)
     })
 
     it("rowToggle: deselects a selected row", () => {
       entity.selection = [1]
-      dataGrid.rowToggle(entity, 1)
+      DataGrid.rowToggle(entity, 1)
       expect(entity.selection).not.toContain(1)
     })
 
     it("rowToggle: replaces selection in single-select mode", () => {
       entity.isMultiSelect = false
       entity.selection = [1]
-      dataGrid.rowToggle(entity, 2)
+      DataGrid.rowToggle(entity, 2)
       expect(entity.selection).toEqual([2])
     })
 
     it("rowClick: plain click replaces selection and sets the anchor", () => {
       entity.selection = [1, 2]
-      dataGrid.rowClick(entity, { rowId: 3 })
+      DataGrid.rowClick(entity, { rowId: 3 })
       expect(entity.selection).toEqual([3])
       expect(entity.selectionAnchor).toBe(3)
     })
 
     it("rowClick: ctrl/meta click toggles selection", () => {
       entity.selection = [1]
-      dataGrid.rowClick(entity, { rowId: 2, ctrlKey: true })
+      DataGrid.rowClick(entity, { rowId: 2, ctrlKey: true })
       expect(entity.selection).toEqual([1, 2])
-      dataGrid.rowClick(entity, { rowId: 1, metaKey: true })
+      DataGrid.rowClick(entity, { rowId: 1, metaKey: true })
       expect(entity.selection).toEqual([2])
     })
 
@@ -298,13 +298,13 @@ describe("dataGrid / handlers", () => {
       entity.pagination.pageSize = 10
       entity.selection = [1]
       entity.selectionAnchor = 1
-      dataGrid.rowClick(entity, { rowId: 3, shiftKey: true })
+      DataGrid.rowClick(entity, { rowId: 3, shiftKey: true })
       expect(entity.selection).toEqual([1, 2, 3])
     })
 
     it("rowsToggleAll: selects all visible rows when not all selected", () => {
       entity.selection = [1]
-      dataGrid.rowsToggleAll(entity)
+      DataGrid.rowsToggleAll(entity)
       expect(isAllSelected(entity)).toBe(true)
       expect(entity.selection).toContain(1)
       expect(entity.selection).toContain(2)
@@ -312,7 +312,7 @@ describe("dataGrid / handlers", () => {
 
     it("rowsToggleAll: deselects all visible rows when all selected", () => {
       entity.selection = [1, 2]
-      dataGrid.rowsToggleAll(entity)
+      DataGrid.rowsToggleAll(entity)
       expect(entity.selection).toEqual([])
     })
 
@@ -326,23 +326,23 @@ describe("dataGrid / handlers", () => {
         columns: [{ id: "name", title: "Name", isFilterable: false }],
         pagination: { page: 0, pageSize: 10 },
       }
-      dataGrid.create(e, undefined, api)
-      dataGrid.rowsToggleAll(e)
+      DataGrid.create(e, undefined, api)
+      DataGrid.rowsToggleAll(e)
       expect(e.selection).toEqual(["u1", "u2"])
     })
   })
 
   describe("selectors", () => {
     it("getRows: applies sort, filter and pagination in order", () => {
-      dataGrid.sortChange(entity, "age")
-      dataGrid.sortChange(entity, "age") // desc
-      dataGrid.filterChange(entity, { columnId: "active", value: true })
+      DataGrid.sortChange(entity, "age")
+      DataGrid.sortChange(entity, "age") // desc
+      DataGrid.filterChange(entity, { columnId: "active", value: true })
       // active: Charlie(35), Alice(30), David(40) -> desc: David, Charlie, Alice -> page 0 size 2
       expect(getRows(entity).map((r) => r.name)).toEqual(["David", "Charlie"])
     })
 
     it("getTotalRows: counts rows after filtering", () => {
-      dataGrid.filterChange(entity, { columnId: "role", value: "Admin" })
+      DataGrid.filterChange(entity, { columnId: "role", value: "Admin" })
       expect(getTotalRows(entity)).toBe(2)
     })
 
@@ -360,7 +360,7 @@ describe("dataGrid / handlers", () => {
     })
 
     it("getSortDirection: returns the direction for a sorted column", () => {
-      dataGrid.sortChange(entity, "name")
+      DataGrid.sortChange(entity, "name")
       expect(getSortDirection(entity, "name")).toBe("asc")
       expect(getSortDirection(entity, "age")).toBeNull()
     })
@@ -388,7 +388,7 @@ describe("dataGrid / handlers", () => {
         pagination: { page: 0, pageSize: 10 },
         selection: ["u1"],
       }
-      dataGrid.create(e, undefined, api)
+      DataGrid.create(e, undefined, api)
       expect(isSomeSelected(e)).toBe(true)
       e.selection = ["u1", "u2"]
       expect(isAllSelected(e)).toBe(true)
@@ -400,7 +400,7 @@ describe("dataGrid / handlers", () => {
 // Template + integration tests — full end-to-end via mount()
 // ---------------------------------------------------------------------------
 
-describe("dataGrid / template", () => {
+describe("DataGrid / template", () => {
   let store, container, unsubscribe, getGrid
 
   beforeEach(async () => {

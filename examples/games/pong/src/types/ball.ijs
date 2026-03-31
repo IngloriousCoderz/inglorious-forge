@@ -9,7 +9,7 @@ const X = 0
 const Z = 2
 const REVERSE = -1
 
-export const ball = {
+export const Ball = {
   render: renderRectangle,
 
   create(entity) {

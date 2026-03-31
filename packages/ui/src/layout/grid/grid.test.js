@@ -2,7 +2,7 @@ import { html } from "@inglorious/web"
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
-import { grid } from "."
+import { Grid } from "."
 
 describe("grid", () => {
   it("renders children", () => {
@@ -12,7 +12,7 @@ describe("grid", () => {
     }
     const container = document.createElement("div")
 
-    render(grid.render(props), container)
+    render(Grid.render(props), container)
 
     expect(
       container.querySelector(".iw-grid").textContent.replace(/\s+/g, ""),
@@ -32,7 +32,7 @@ describe("grid", () => {
     }
     const container = document.createElement("div")
 
-    render(grid.render(props), container)
+    render(Grid.render(props), container)
 
     const root = container.querySelector(".iw-grid")
     expect(root.tagName).toBe("SECTION")
@@ -48,7 +48,7 @@ describe("grid", () => {
     const props = { id: "gd", minColumnWidth: "12rem" }
     const container = document.createElement("div")
 
-    render(grid.render(props), container)
+    render(Grid.render(props), container)
 
     expect(
       container.querySelector(".iw-grid").style.gridTemplateColumns,
@@ -60,7 +60,7 @@ describe("grid", () => {
     const props = { id: "gd", onClick: () => (isClicked = true) }
     const container = document.createElement("div")
 
-    render(grid.render(props), container)
+    render(Grid.render(props), container)
 
     container.querySelector(".iw-grid").click()
     expect(isClicked).toBe(true)

@@ -58,7 +58,7 @@ describe("await toHTML", () => {
           },
         },
         entities: {
-          greeting: { type: "message", text: "Hello from store" },
+          greeting: { type: "Message", text: "Hello from store" },
         },
       })
 
@@ -77,9 +77,9 @@ describe("await toHTML", () => {
           },
         },
         entities: {
-          item1: { type: "item", name: "First" },
-          item2: { type: "item", name: "Second" },
-          item3: { type: "item", name: "Third" },
+          item1: { type: "Item", name: "First" },
+          item2: { type: "Item", name: "Second" },
+          item3: { type: "Item", name: "Third" },
         },
       })
 
@@ -104,7 +104,7 @@ describe("await toHTML", () => {
           },
         },
         entities: {
-          content: { type: "content", isVisible: true },
+          content: { type: "Content", isVisible: true },
         },
       })
 
@@ -227,8 +227,8 @@ describe("await toHTML", () => {
           item: { render: (entity) => html`<span>${entity.label}</span>` },
         },
         entities: {
-          myWrapper: { type: "wrapper" },
-          myItem: { type: "item", label: "Test Item" },
+          myWrapper: { type: "Wrapper" },
+          myItem: { type: "Item", label: "Test Item" },
         },
       })
 
@@ -250,8 +250,8 @@ describe("await toHTML", () => {
           },
         },
         entities: {
-          msg1: { type: "message", text: "First message" },
-          msg2: { type: "message", text: "Second message" },
+          msg1: { type: "Message", text: "First message" },
+          msg2: { type: "Message", text: "Second message" },
         },
       })
 
@@ -272,7 +272,7 @@ describe("await toHTML", () => {
         types: {
           header: { render: () => html`<header><h1>My Website</h1></header>` },
         },
-        entities: { header: { type: "header" } },
+        entities: { header: { type: "Header" } },
       })
 
       const renderFn = (api) =>
@@ -309,7 +309,7 @@ describe("await toHTML", () => {
           },
         },
         entities: {
-          myButton: { type: "button", id: "myButton" },
+          myButton: { type: "Button", id: "myButton" },
         },
       })
 
@@ -337,7 +337,7 @@ describe("await toHTML", () => {
           },
         },
         entities: {
-          counter1: { type: "counter", id: "counter1", count: 5 },
+          counter1: { type: "Counter", id: "counter1", count: 5 },
         },
       })
 

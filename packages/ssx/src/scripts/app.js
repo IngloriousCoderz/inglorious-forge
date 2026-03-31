@@ -49,7 +49,7 @@ export async function generateApp(pages, options = {}, loader) {
 
   return `import "@inglorious/web/hydrate"
 import { createDevtools, createStore, mount } from "@inglorious/web"
-import { getRoute, router, setRoutes } from "@inglorious/web/router"
+import { Router, getRoute, setRoutes } from "@inglorious/web/router"
 import { getLocaleFromPath } from "@inglorious/ssx/i18n"
 
 ${typesImport}
@@ -77,15 +77,20 @@ const pages = ${JSON.stringify(
 const path = normalizeRoutePath(window.location.pathname)
 const page = pages.find((page) => normalizeRoutePath(page.path) === path)
 
-const types = { router }
+const types = { Router }
 ${typesAssignment}
 
 const i18n = ${JSON.stringify(i18n, null, 2)}
 const isDev = ${JSON.stringify(isDev)}
 
+const toCamelCase = (str) => {
+  const [firstChar, ...rest] = str
+  return [firstChar.toLowerCase(), ...rest].join("")
+}
+
 const entities = {
-  router: { type: "router", path, route: page?.moduleName },
-  i18n: { type: "i18n", ...i18n },
+  router: { type: "Router", path, route: toCamelCase(page?.moduleName) },
+  i18n: { type: "I18n", ...i18n },
 }
 ${entitiesAssignment}
 Object.assign(entities, JSON.parse(document.getElementById("__SSX_PAGE__").textContent))

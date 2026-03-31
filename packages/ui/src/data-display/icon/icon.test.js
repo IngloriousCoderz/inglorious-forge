@@ -1,14 +1,14 @@
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
-import { icon } from "."
+import { Icon } from "."
 
 describe("icon", () => {
   it("renders content", () => {
     const props = { id: "ic", children: "★" }
     const container = document.createElement("div")
 
-    render(icon.render(props), container)
+    render(Icon.render(props), container)
 
     expect(container.querySelector(".iw-icon").textContent).toBe("★")
   })
@@ -24,7 +24,7 @@ describe("icon", () => {
     }
     const container = document.createElement("div")
 
-    render(icon.render(props), container)
+    render(Icon.render(props), container)
 
     const element = container.querySelector(".iw-icon")
     expect(element.classList.contains("iw-icon-lg")).toBe(true)

@@ -4,6 +4,8 @@
  * @typedef {import("../../types/router").Api} Api
  */
 
+import { toCamelCase } from "@inglorious/utils/data-structures/string.js"
+
 const SKIP_FULL_MATCH_GROUP = 1 // .match() result at index 0 is the full string
 const REMOVE_COLON_PREFIX = 1
 
@@ -74,10 +76,6 @@ export function createHandlers(routeConfig) {
       })
     },
 
-    create(entity) {
-      entity.path ??= "/"
-    },
-
     /**
      * Handles browser `popstate` events.
      * Attempts to match the current location to a route and updates the router
@@ -93,12 +91,12 @@ export function createHandlers(routeConfig) {
       const entityId = entity.id
 
       if (route) {
-        if (typeof route.entityType === "function") {
+        if (typeof route.route === "function") {
           entity.isLoading = true
           entity.error = null
 
           try {
-            const module = await route.entityType()
+            const module = await route.route()
             api.notify(`#${entityId}:routeLoadSuccess`, { module, route })
             api.notify(`#${entityId}:popstate`, payload)
           } catch (error) {
@@ -166,12 +164,12 @@ export function createHandlers(routeConfig) {
       }
 
       // Asynchronous navigation
-      if (typeof route.entityType === "function") {
+      if (typeof route.route === "function") {
         entity.isLoading = true
         entity.error = null
 
         try {
-          const module = await route.entityType()
+          const module = await route.route()
           api.notify(`#${entityId}:routeLoadSuccess`, { module, route })
           api.notify(`#${entityId}:navigate`, payload)
         } catch (error) {
@@ -204,7 +202,7 @@ export function createHandlers(routeConfig) {
      * Registers the loaded type in the runtime type registry via `api.setType`
      * and updates the `routeConfig` entry for the pattern.
      * @param {RouterEntity} entity
-     * @param {{module: object, route: {pattern: string, entityType: string}}} payload
+     * @param {{module: object, route: {pattern: string, route: string}}} payload
      * @param {Api} api
      */
     routeLoadSuccess(entity, payload, api) {
@@ -215,7 +213,8 @@ export function createHandlers(routeConfig) {
       )
 
       api.setType(typeName, type)
-      routeConfig[route.pattern] = typeName
+      const [routeEntity] = api.getEntities(typeName)
+      routeConfig[route.pattern] = routeEntity?.id ?? toCamelCase(typeName)
 
       entity.isLoading = false
     },
@@ -263,9 +262,9 @@ function findRoute(routeConfig, pathname) {
   const [path, search] = pathname.split("?")
   let fallbackRoute = null
 
-  for (const [pattern, entityType] of Object.entries(routeConfig)) {
+  for (const [pattern, route] of Object.entries(routeConfig)) {
     if (pattern === "*") {
-      fallbackRoute = { pattern, entityType, params: {}, path }
+      fallbackRoute = { pattern, route, params: {}, path }
       continue
     }
 
@@ -274,7 +273,7 @@ function findRoute(routeConfig, pathname) {
       const query = search
         ? Object.fromEntries(new URLSearchParams(search))
         : {}
-      return { pattern, entityType, params, path, query }
+      return { pattern, route, params, path, query }
     }
   }
 
@@ -331,13 +330,13 @@ function patternToRegex(pattern) {
  * Updates the router entity's internal state.
  * @param {RouterEntity} entity - The router entity.
  * @param {object} options - The update options.
- * @param {string} options.entityType - The matched entity type.
+ * @param {string} options.route - The matched entity.
  * @param {string} options.path - The full path (pathname only, no query).
  * @param {object} options.params - The extracted route parameters.
  * @param {object} [options.query] - The parsed query parameters.
  */
-function updateRouter(entity, { entityType, path, params, query }) {
-  entity.route = entityType
+function updateRouter(entity, { route, path, params, query }) {
+  entity.route = route
   entity.path = path
   entity.params = params
   entity.query = query

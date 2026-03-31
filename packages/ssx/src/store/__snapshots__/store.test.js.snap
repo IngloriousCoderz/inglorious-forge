@@ -6,7 +6,7 @@ exports[`generateStore > should generate the proper types and entities from a pa
     "id": "blog",
     "name": "Matteo Antony",
     "posts": [],
-    "type": "blog",
+    "type": "Blog",
   },
 }
 `;
@@ -16,7 +16,7 @@ exports[`generateStore > should generate the proper types and entities from a pa
   "about": {
     "id": "about",
     "name": "Us",
-    "type": "about",
+    "type": "About",
   },
 }
 `;
@@ -25,7 +25,7 @@ exports[`generateStore > should generate the proper types and entities from a st
 {
   "index": {
     "id": "index",
-    "type": "index",
+    "type": "Index",
   },
 }
 `;

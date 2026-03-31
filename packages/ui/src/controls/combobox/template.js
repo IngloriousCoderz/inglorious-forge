@@ -6,7 +6,7 @@
 
 import { classMap, html, ref, repeat, when } from "@inglorious/web"
 
-import { chip } from "../../data-display/chip/index.js"
+import { Chip } from "../../data-display/chip/index.js"
 import {
   filterOptions,
   formatOption,
@@ -17,7 +17,7 @@ import {
 
 const NO_FOCUSED_INDEX = -1
 
-export const combobox = {
+export const Combobox = {
   /**
    * Main entrypoint for the combobox control. It renders the wrapper, label, control, and dropdown when open.
    * Comboboxes support search, single or multi-select values, and clearable selection.
@@ -158,7 +158,7 @@ export const combobox = {
       class="iw-combobox-multi-value-tag"
       @click=${(event) => event.stopPropagation()}
     >
-      ${chip.render({
+      ${Chip.render({
         id: tagId,
         children: option ? getOptionLabel(option) : String(value),
         isRemovable: true,

@@ -5,7 +5,8 @@ const messages = {
   it: "Ciao mondo!",
   pt: "Olá mundo!",
 }
-export const hello = {
+
+export const Hello = {
   render(entity) {
     return html`<h1>${messages[entity.locale] ?? messages.en}</h1>
       <a href="/hello">en</a> | <a href="/it/hello">it</a> |

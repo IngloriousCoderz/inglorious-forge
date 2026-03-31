@@ -1,15 +1,15 @@
 import { html } from "@inglorious/web"
 
-import { nav } from "../components/nav.js"
+import { Nav } from "../components/nav.js"
 
-export const blog = {
+export const Blog = {
   create(entity) {
     entity.name = "Matteo Antony"
     entity.posts ??= []
   },
 
   async routeChange(entity, payload, api) {
-    if (payload.route !== entity.type) return
+    if (payload.route !== entity.id) return
     if (entity.posts && entity.posts.length) return
 
     const entityId = entity.id
@@ -24,7 +24,7 @@ export const blog = {
 
   render(entity) {
     return html`<h1>${entity.name}'s Blog</h1>
-      ${nav.render()}
+      ${Nav.render()}
       <ul>
         ${entity.posts?.map(
           (post) =>

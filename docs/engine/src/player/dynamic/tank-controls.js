@@ -11,12 +11,12 @@ export default {
   types: {
     ...controls("character"),
 
-    character: [{ render: renderCharacter }, tankControls(), clamped()],
+    Character: [{ render: renderCharacter }, tankControls(), clamped()],
   },
 
   entities: {
     game: {
-      type: "game",
+      type: "Game",
       devMode: true,
     },
 
@@ -39,7 +39,7 @@ export default {
     }),
 
     character: {
-      type: "character",
+      type: "Character",
       maxAngularSpeed: 10,
       maxAcceleration: 500,
       maxSpeed: 250,

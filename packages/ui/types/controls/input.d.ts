@@ -33,4 +33,4 @@ export interface InputType {
   render(props: InputProps): TemplateResult
 }
 
-export declare const input: InputType
+export declare const Input: InputType

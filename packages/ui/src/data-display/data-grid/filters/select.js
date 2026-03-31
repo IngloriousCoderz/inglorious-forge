@@ -1,9 +1,9 @@
-import { select } from "../../../controls/select"
+import { Select } from "../../../controls/select"
 import { format } from "./helpers"
 
-export const selectFilter = {
+export const SelectFilter = {
   render(entity, column) {
-    return select.render({
+    return Select.render({
       name: column.id,
       size: "sm",
       isFullWidth: true,

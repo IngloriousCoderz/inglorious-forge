@@ -1,10 +1,10 @@
 import { createRender } from "../../stories/notifyStory.js"
-import { avatar } from "."
+import { Avatar } from "."
 
 export default {
   title: "Data Display/Avatar",
   tags: ["autodocs"],
-  render: createRender(avatar),
+  render: createRender(Avatar),
   argTypes: {
     src: {
       control: "text",

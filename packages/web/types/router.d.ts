@@ -1,3 +1,5 @@
+import type { Api } from "./mount"
+
 /**
  * A map of route patterns to entity types.
  * The order of routes matters: more specific routes (e.g., `/users/new`)
@@ -83,7 +85,7 @@ export interface RouterType {
    * @param payload The initialization payload (currently unused).
    * @param api The store API for interacting with the system.
    */
-  init(entity: RouterEntity, payload: any, api: StoreApi): void
+  init(entity: RouterEntity, payload: any, api: Api): void
 
   /**
    * Navigates to a new route, updating the browser's history and the router entity state.
@@ -99,7 +101,7 @@ export interface RouterType {
   navigate(
     entity: RouterEntity,
     payload: string | number | NavigatePayload,
-    api: StoreApi,
+    api: Api,
   ): void | Promise<void>
 
   /**
@@ -109,31 +111,25 @@ export interface RouterType {
    * @param {RouteSyncPayload} payload - The new route state.
    * @param {StoreApi} api - The store API.
    */
-  routeSync(
-    entity: RouterEntity,
-    payload: RouteSyncPayload,
-    api: StoreApi,
-  ): void
+  routeSync(entity: RouterEntity, payload: RouteSyncPayload, api: Api): void
   /**
    * Handles browser `popstate` events. May perform async loading for lazy routes.
    */
-  popstate(
-    entity: RouterEntity,
-    payload: any,
-    api: StoreApi,
-  ): void | Promise<void>
+  popstate(entity: RouterEntity, payload: any, api: Api): void | Promise<void>
 
   /**
    * Handles successful async route loading for a pattern.
    * Registers the loaded type and updates runtime route config.
    */
-  routeLoadSuccess(entity: RouterEntity, payload: any, api: StoreApi): void
+  routeLoadSuccess(entity: RouterEntity, payload: any, api: Api): void
 
   /**
    * Handles errors that occurred while loading a lazy route.
    */
   routeLoadError(entity: RouterEntity, payload: any): void
 }
+
+export declare const Router: RouterType
 
 /**
  * Returns the current route configuration.

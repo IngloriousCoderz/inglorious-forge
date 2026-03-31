@@ -27,4 +27,4 @@ export interface BreadcrumbsType {
   ): TemplateResult
 }
 
-export declare const breadcrumbs: BreadcrumbsType
+export declare const Breadcrumbs: BreadcrumbsType

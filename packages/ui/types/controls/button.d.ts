@@ -2,7 +2,7 @@ import type { TemplateResult } from "@inglorious/web"
 
 export interface ButtonProps {
   id?: string
-  type: "button"
+  type: "Button"
   children?: TemplateResult | string | number
   variant?: "default" | "outline" | "ghost"
   color?: "primary" | "secondary" | "success" | "warning" | "error" | "info"
@@ -23,4 +23,4 @@ export interface ButtonType {
   render(props: ButtonProps): TemplateResult
 }
 
-export declare const button: ButtonType
+export declare const Button: ButtonType

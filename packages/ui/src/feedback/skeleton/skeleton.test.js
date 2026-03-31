@@ -1,14 +1,14 @@
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
-import { skeleton } from "."
+import { Skeleton } from "."
 
 describe("skeleton", () => {
   it("renders multiline skeleton", () => {
     const props = { lines: 3 }
     const container = document.createElement("div")
 
-    render(skeleton.render(props), container)
+    render(Skeleton.render(props), container)
 
     expect(container.querySelectorAll(".iw-skeleton").length).toBe(3)
   })
@@ -17,7 +17,7 @@ describe("skeleton", () => {
     const props = { variant: "circle", width: 24, height: 24 }
     const container = document.createElement("div")
 
-    render(skeleton.render(props), container)
+    render(Skeleton.render(props), container)
 
     expect(container.querySelector(".iw-skeleton-circle")).not.toBeNull()
   })

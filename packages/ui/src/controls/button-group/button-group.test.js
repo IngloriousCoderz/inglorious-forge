@@ -1,7 +1,7 @@
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
-import { buttonGroup } from "."
+import { ButtonGroup } from "."
 
 describe("buttonGroup", () => {
   it("renders grouped buttons", () => {
@@ -13,7 +13,7 @@ describe("buttonGroup", () => {
     }
     const container = document.createElement("div")
 
-    render(buttonGroup.render(props), container)
+    render(ButtonGroup.render(props), container)
 
     expect(container.querySelectorAll("button").length).toBe(2)
     expect(container.querySelector(".iw-button-group")).not.toBeNull()
@@ -27,7 +27,7 @@ describe("buttonGroup", () => {
     }
     const container = document.createElement("div")
 
-    render(buttonGroup.render(props), container)
+    render(ButtonGroup.render(props), container)
 
     container.querySelector("button").click()
 
@@ -46,7 +46,7 @@ describe("buttonGroup", () => {
     }
     const container = document.createElement("div")
 
-    render(buttonGroup.render(props), container)
+    render(ButtonGroup.render(props), container)
 
     container.querySelectorAll("button")[1].click()
 
@@ -66,7 +66,7 @@ describe("buttonGroup", () => {
     }
     const container = document.createElement("div")
 
-    render(buttonGroup.render(props), container)
+    render(ButtonGroup.render(props), container)
 
     container.querySelectorAll("button")[1].click()
 
@@ -81,7 +81,7 @@ describe("buttonGroup", () => {
     }
     const container = document.createElement("div")
 
-    render(buttonGroup.render(props), container)
+    render(ButtonGroup.render(props), container)
 
     const root = container.querySelector(".iw-button-group")
     expect(root.classList.contains("iw-button-group-column")).toBe(true)
@@ -98,7 +98,7 @@ describe("buttonGroup", () => {
     }
     const container = document.createElement("div")
 
-    render(buttonGroup.render(props), container)
+    render(ButtonGroup.render(props), container)
 
     const buttons = container.querySelectorAll("button")
     expect(buttons[0].disabled).toBe(true)
@@ -115,7 +115,7 @@ describe("buttonGroup", () => {
     }
     const container = document.createElement("div")
 
-    render(buttonGroup.render(props), container)
+    render(ButtonGroup.render(props), container)
 
     const pressed = container.querySelector(".iw-button-pressed")
     expect(pressed).not.toBeNull()

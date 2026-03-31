@@ -58,7 +58,7 @@ describe("RTK Adapter", () => {
       })
 
       const entity = {
-        type: "userProfile",
+        type: "UserProfile",
         id: "profile1",
         loading: false,
         user: null,
@@ -109,7 +109,7 @@ describe("RTK Adapter", () => {
       })
 
       const handlers = convertAsyncThunk("fetchTodos", payloadCreator)
-      const entity = { type: "todos", id: "todos1" }
+      const entity = { type: "Todos", id: "todos1" }
       const api = createMockApi({ todos1: entity })
 
       await handlers.fetchTodosRun(entity, null, api)
@@ -173,7 +173,7 @@ describe("RTK Adapter", () => {
 
       const counterType = convertSlice(counterSlice)
 
-      const entity = { type: "counter", id: "counter1" }
+      const entity = { type: "Counter", id: "counter1" }
       const api = createMockApi({ counter1: entity })
 
       const { entity: initialized } = trigger(
@@ -200,7 +200,7 @@ describe("RTK Adapter", () => {
       const todoType = convertSlice(todosSlice)
       const api = createMockApi({
         todos: {
-          type: "todoList",
+          type: "TodoList",
           id: "todos",
           items: [{ id: 1, text: "Keep me" }],
         },
@@ -208,7 +208,7 @@ describe("RTK Adapter", () => {
 
       const { entity } = trigger(
         {
-          type: "todoList",
+          type: "TodoList",
           id: "todos",
           items: [{ id: 1, text: "Keep me" }],
         },
@@ -237,7 +237,7 @@ describe("RTK Adapter", () => {
 
       const counterType = convertSlice(counterSlice)
 
-      let entity = { type: "counter", id: "counter1", value: 5 }
+      let entity = { type: "Counter", id: "counter1", value: 5 }
       const api = createMockApi({ counter1: entity })
 
       // Increment
@@ -267,11 +267,11 @@ describe("RTK Adapter", () => {
 
       const counterType = convertSlice(counterSlice)
       const api = createMockApi({
-        counter1: { type: "counter", id: "counter1", value: 1 },
+        counter1: { type: "Counter", id: "counter1", value: 1 },
       })
 
       const { entity } = trigger(
-        { type: "counter", id: "counter1", value: 1 },
+        { type: "Counter", id: "counter1", value: 1 },
         counterType["counter/increment"],
         2,
         api,
@@ -302,11 +302,11 @@ describe("RTK Adapter", () => {
         extraActions: [formSubmit, clearClick],
       })
       const api = createMockApi({
-        list1: { type: "list", id: "list1", tasks: [] },
+        list1: { type: "List", id: "list1", tasks: [] },
       })
 
       const { entity: entity1 } = trigger(
-        { type: "list", id: "list1", tasks: [] },
+        { type: "List", id: "list1", tasks: [] },
         listType.formSubmit,
         "Buy milk",
         api,
@@ -315,7 +315,7 @@ describe("RTK Adapter", () => {
 
       const { entity: entity2 } = trigger(
         {
-          type: "list",
+          type: "List",
           id: "list1",
           tasks: [
             { id: 1, text: "Buy milk", completed: true },
@@ -410,9 +410,9 @@ describe("RTK Adapter", () => {
       expect(todoType.fetchTodoFulfilled).toBeDefined()
       expect(todoType.fetchTodoRejected).toBeDefined()
 
-      const api = createMockApi({ todos: { type: "todoList", id: "todos" } })
+      const api = createMockApi({ todos: { type: "TodoList", id: "todos" } })
       const { entity: e1 } = trigger(
-        { type: "todoList", id: "todos", loading: false, todos: [] },
+        { type: "TodoList", id: "todos", loading: false, todos: [] },
         todoType.fetchTodoPending,
         "1",
         api,
@@ -429,7 +429,7 @@ describe("RTK Adapter", () => {
       expect(e2.todos).toEqual([{ id: "1", text: "todo-1" }])
 
       const { entity: e3 } = trigger(
-        { type: "todoList", id: "todos", loading: false, todos: [] },
+        { type: "TodoList", id: "todos", loading: false, todos: [] },
         todoType["todos/fetchTodo/pending"],
         "1",
         api,
@@ -474,10 +474,10 @@ describe("RTK Adapter", () => {
       expect(todoType.fetchTodoRun).toBeDefined()
       expect(todoType.fetchTodoSuccess).toBeDefined()
 
-      const api = createMockApi({ todos: { type: "todoList", id: "todos" } })
+      const api = createMockApi({ todos: { type: "TodoList", id: "todos" } })
 
       const { entity: e1 } = trigger(
-        { type: "todoList", id: "todos", loading: false, todos: [] },
+        { type: "TodoList", id: "todos", loading: false, todos: [] },
         todoType.fetchTodoStart,
         "1",
         api,
@@ -605,7 +605,7 @@ describe("RTK Adapter", () => {
       })
 
       // Initialize entity
-      let entity = { type: "todoList", id: "todos" }
+      let entity = { type: "TodoList", id: "todos" }
       const api = createMockApi({ todos: entity })
 
       // Create

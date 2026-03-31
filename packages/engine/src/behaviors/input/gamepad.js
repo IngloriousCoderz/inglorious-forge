@@ -86,5 +86,5 @@ export function gamepadListener() {
 }
 
 export function createGamepad(targetId, mapping = {}) {
-  return { type: "gamepad_listener", targetId, mapping }
+  return { type: "GamepadListener", targetId, mapping }
 }

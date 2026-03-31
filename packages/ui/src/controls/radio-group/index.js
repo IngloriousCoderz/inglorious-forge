@@ -1,3 +1,3 @@
 import * as renderers from "./template.js"
 
-export const radioGroup = { ...renderers }
+export const RadioGroup = { ...renderers }

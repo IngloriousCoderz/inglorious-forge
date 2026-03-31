@@ -4,7 +4,7 @@ const LAST_TASK = 1
 const NEXT_ID = 1
 
 export const types = {
-  form: {
+  Form: {
     inputChange(entity, value) {
       entity.value = value
     },
@@ -14,7 +14,7 @@ export const types = {
     },
   },
 
-  list: {
+  List: {
     formSubmit(entity, value) {
       entity.tasks.push({ id: nextId(entity.tasks), text: value })
     },
@@ -34,7 +34,7 @@ export const types = {
     },
   },
 
-  footer: {
+  Footer: {
     filterClick(entity, id) {
       entity.activeFilter = id
     },

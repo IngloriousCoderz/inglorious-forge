@@ -8,9 +8,9 @@ import {
   updateData,
 } from "@benchmarks/dashboard-shared"
 import { filteredRows } from "@/store/select"
-import { row } from "./row"
+import { Row } from "./row"
 
-export const table = {
+export const Table = {
   create(entity) {
     entity.data = generateData(ROWS_TO_GENERATE)
   },
@@ -46,7 +46,7 @@ export const table = {
           ${repeat(
             rows,
             (r) => r.id,
-            (r) => html`${row.render(r, api)}`,
+            (r) => html`${Row.render(r, api)}`,
           )}
         </tbody>
       </table>

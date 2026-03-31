@@ -1,7 +1,7 @@
 import { createMockApi, render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
-import { combobox } from "."
+import { Combobox } from "."
 
 describe("combobox", () => {
   it("renders control with selected value", () => {
@@ -15,10 +15,10 @@ describe("combobox", () => {
       selectedValue: "b",
     }
     const api = createMockApi({ [entity.id]: entity })
-    api.getType = () => combobox
+    api.getType = () => Combobox
     const container = document.createElement("div")
 
-    render(combobox.render(entity, api), container)
+    render(Combobox.render(entity, api), container)
 
     expect(container.querySelector(".iw-combobox-value").textContent).toBe("B")
   })
@@ -35,10 +35,10 @@ describe("combobox", () => {
       ],
     }
     const api = createMockApi({ [entity.id]: entity })
-    api.getType = () => combobox
+    api.getType = () => Combobox
     const container = document.createElement("div")
 
-    render(combobox.render(entity, api), container)
+    render(Combobox.render(entity, api), container)
 
     expect(
       container.querySelectorAll(".iw-combobox-multi-value-tag").length,
@@ -60,10 +60,10 @@ describe("combobox", () => {
       options: [{ label: "A", value: "a" }],
     }
     const api = createMockApi({ [entity.id]: entity })
-    api.getType = () => combobox
+    api.getType = () => Combobox
     const container = document.createElement("div")
 
-    render(combobox.render(entity, api), container)
+    render(Combobox.render(entity, api), container)
 
     container.querySelector(".iw-chip-remove").click()
 
@@ -78,10 +78,10 @@ describe("combobox", () => {
   it("dispatches toggle event from control click", () => {
     const entity = { id: "sel", type: "select", options: [] }
     const api = createMockApi({ [entity.id]: entity })
-    api.getType = () => combobox
+    api.getType = () => Combobox
     const container = document.createElement("div")
 
-    render(combobox.render(entity, api), container)
+    render(Combobox.render(entity, api), container)
 
     container.querySelector(".iw-combobox-control").click()
 
@@ -98,13 +98,13 @@ describe("combobox", () => {
       isMulti: true,
     }
 
-    combobox.create(entity)
-    combobox.optionSelect(entity, { label: "A", value: "a" })
-    combobox.optionSelect(entity, { label: "B", value: "b" })
+    Combobox.create(entity)
+    Combobox.optionSelect(entity, { label: "A", value: "a" })
+    Combobox.optionSelect(entity, { label: "B", value: "b" })
 
     expect(entity.selectedValue).toEqual(["a", "b"])
 
-    combobox.optionSelect(entity, { label: "A", value: "a" })
+    Combobox.optionSelect(entity, { label: "A", value: "a" })
     expect(entity.selectedValue).toEqual(["b"])
   })
 })

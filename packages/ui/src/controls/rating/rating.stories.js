@@ -1,10 +1,10 @@
 import { createRender } from "../../stories/notifyStory.js"
-import { rating } from "."
+import { Rating } from "."
 
 export default {
   title: "Controls/Rating",
   tags: ["autodocs"],
-  render: createRender(rating),
+  render: createRender(Rating),
   argTypes: {
     value: { control: "number", description: "Current rating value." },
     max: { control: "number", description: "Maximum rating value." },

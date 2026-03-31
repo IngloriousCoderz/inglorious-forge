@@ -59,13 +59,13 @@ const types = {
 
 // Create multiple instances without code duplication
 const entities = {
-  counter1: { type: "counter", value: 0 },
-  counter2: { type: "counter", value: 0 },
-  counter3: { type: "counter", value: 0 },
+  counter1: { type: "Counter", value: 0 },
+  counter2: { type: "Counter", value: 0 },
+  counter3: { type: "Counter", value: 0 },
 }
 
 // Add new instances at runtime
-store.notify("add", { id: "counter4", type: "counter", value: 0 })
+store.notify("add", { id: "counter4", type: "Counter", value: 0 })
 ```
 
 ### ✅ Event-Driven

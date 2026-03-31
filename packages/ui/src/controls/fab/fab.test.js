@@ -1,14 +1,14 @@
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
-import { fab } from "."
+import { Fab } from "."
 
 describe("fab", () => {
   it("renders content", () => {
     const props = { children: "+" }
     const container = document.createElement("div")
 
-    render(fab.render(props), container)
+    render(Fab.render(props), container)
 
     expect(container.querySelector(".iw-fab").textContent.trim()).toBe("+")
   })
@@ -18,7 +18,7 @@ describe("fab", () => {
     const props = { children: "+", onClick: () => (isClicked = true) }
     const container = document.createElement("div")
 
-    render(fab.render(props), container)
+    render(Fab.render(props), container)
 
     container.querySelector("button").click()
 
@@ -29,7 +29,7 @@ describe("fab", () => {
     const props = { children: "Create", isExtended: true, className: "extra" }
     const container = document.createElement("div")
 
-    render(fab.render(props), container)
+    render(Fab.render(props), container)
 
     const buttonElement = container.querySelector(".iw-fab")
     expect(buttonElement.classList.contains("iw-fab-extended")).toBe(true)

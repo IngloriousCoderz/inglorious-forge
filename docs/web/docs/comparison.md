@@ -42,7 +42,7 @@ function Counter() {
 **Inglorious Web:**
 
 ```javascript
-const counter = {
+const Counter = {
   create(entity) {
     entity.count = 0
   },
@@ -50,6 +50,7 @@ const counter = {
   increment(entity) {
     entity.count++
   },
+
   render(entity, api) {
     return html`
       <div>
@@ -123,7 +124,7 @@ export default {
 **Inglorious Web:**
 
 ```javascript
-const form = {
+const Form = {
   async submit(entity, api) {
     entity.errors = validate(entity.values)
     if (!Object.keys(entity.errors).length) {
@@ -252,7 +253,7 @@ render(entity, api) {
 **Inglorious Web:**
 
 ```javascript
-const toggle = {
+const Toggle = {
   toggle(entity) {
     entity.isOpen = !entity.isOpen
   },

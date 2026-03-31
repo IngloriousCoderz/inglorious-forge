@@ -11,7 +11,7 @@ import { applyElementProps } from "../../shared/applyElementProps.js"
 const EVEN_ROW_DIVISOR = 2
 const STRIPED_OFFSET = 1
 
-export const table = {
+export const Table = {
   /**
    * Main entrypoint for the table component. It delegates to the base table renderer so overrides can reuse it.
    * Tables render columns and rows and can be striped or full width.

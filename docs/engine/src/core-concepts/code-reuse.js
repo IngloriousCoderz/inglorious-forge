@@ -9,7 +9,7 @@ import { v } from "@inglorious/utils/v.js"
 
 export default {
   types: {
-    character: [
+    Character: [
       { render: renderCharacter },
       {
         update(entity, dt, api) {
@@ -19,24 +19,24 @@ export default {
       },
     ],
 
-    fps: [{ render: renderFps }, fps()],
+    Fps: [{ render: renderFps }, fps()],
   },
 
   entities: {
     game: {
-      type: "game",
+      type: "Game",
       devMode: true,
     },
 
     character: {
-      type: "character",
+      type: "Character",
       maxSpeed: 250,
       orientation: pi() / 6,
       position: zero(),
     },
 
     fps: {
-      type: "fps",
+      type: "Fps",
       position: v(0, 0, 600),
     },
   },

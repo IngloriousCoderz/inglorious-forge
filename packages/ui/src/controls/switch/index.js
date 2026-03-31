@@ -1,3 +1,3 @@
 import * as renderers from "./template.js"
 
-export const switchControl = { ...renderers }
+export const Switch = { ...renderers }

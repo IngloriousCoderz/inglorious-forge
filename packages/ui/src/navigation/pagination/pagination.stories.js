@@ -1,10 +1,10 @@
 import { createRender } from "../../stories/notifyStory.js"
-import { pagination } from "."
+import { Pagination } from "."
 
 export default {
   title: "Navigation/Pagination",
   tags: ["autodocs"],
-  render: createRender(pagination),
+  render: createRender(Pagination),
   argTypes: {
     page: { control: "number", description: "Current page (1-based)." },
     count: { control: "number", description: "Total number of pages." },

@@ -33,4 +33,4 @@ export interface SpeedDialType {
   ): TemplateResult
 }
 
-export declare const speedDial: SpeedDialType
+export declare const SpeedDial: SpeedDialType

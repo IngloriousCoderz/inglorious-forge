@@ -1,6 +1,6 @@
 import { html } from "@inglorious/web"
 
-export const form = {
+export const Form = {
   create(entity) {
     entity.value = ""
   },

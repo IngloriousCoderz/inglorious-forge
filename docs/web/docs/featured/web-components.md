@@ -27,7 +27,7 @@ npm install @shoelace-style/shoelace
 ```javascript
 import "@shoelace-style/shoelace/dist/components/color-picker/color-picker.js"
 
-const themeEditor = {
+const ThemeEditor = {
   colorChange(entity, color) {
     entity.primaryColor = color
   },
@@ -70,13 +70,14 @@ render(entity, api) {
 Use Inglorious Web components for core patterns, Web Components for specialized UI:
 
 ```javascript
-import { form } from "@inglorious/web/form"
+import { Form } from "@inglorious/web/form"
 import "@shoelace-style/shoelace/dist/components/date-picker/date-picker.js"
 
 const types = {
   // Inglorious form for business logic
-  form: {
-    ...form,
+  Form: {
+    ...Form,
+
     render(entity, api) {
       return html`
         <form>
@@ -167,7 +168,7 @@ If Web Components aren't updating correctly:
 ```javascript
 import { ref } from "lit-html"
 
-const picker = {
+const ColorPicker = {
   render(entity, api) {
     const colorRef = ref()
 

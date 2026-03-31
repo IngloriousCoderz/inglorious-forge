@@ -19,4 +19,4 @@ export interface LinkType {
   render(props: LinkProps): TemplateResult
 }
 
-export declare const link: LinkType
+export declare const Link: LinkType

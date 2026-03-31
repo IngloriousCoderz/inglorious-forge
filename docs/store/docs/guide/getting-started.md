@@ -45,8 +45,8 @@ const types = {
 
 // Define initial entities
 const entities = {
-  work: { type: "todoList", todos: [] },
-  personal: { type: "todoList", todos: [] },
+  work: { type: "TodoList", todos: [] },
+  personal: { type: "TodoList", todos: [] },
 }
 
 // Create the store

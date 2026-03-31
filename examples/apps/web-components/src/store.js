@@ -63,7 +63,7 @@ function createInstanceRef(key) {
 
 export const store = createStore({
   types: {
-    app: {
+    App: {
       create(entity) {
         entity.renderCount = 0
         entity.mdSwitchChecked = false

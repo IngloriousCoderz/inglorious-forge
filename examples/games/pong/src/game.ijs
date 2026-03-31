@@ -11,26 +11,26 @@ import { renderFps } from "@inglorious/renderer-2d/fps"
 import { renderRectangle } from "@inglorious/renderer-2d/shapes/rectangle"
 import { magnitude } from "@inglorious/utils/math/vector"
 
-import { ball } from "./behaviors/ball"
-import { game } from "./behaviors/game"
-import { paddle } from "./behaviors/paddle"
-import { score } from "./behaviors/score"
-import { text } from "./behaviors/text"
+import { Ball } from "./types/ball"
+import { Game } from "./types/game"
+import { Paddle } from "./types/paddle"
+import { Score } from "./types/score"
+import { Text } from "./types/text"
 
 const WIDTH = 432
 const HEIGHT = 243
 
 export default {
   types: {
-    touch: touch(),
+    Touch: touch(),
 
     ...controls("player1", "player2"),
-    game,
-    text,
-    score,
-    paddle: [{ render: renderRectangle }, paddle, modernControls(), clamped()],
-    ball,
-    fps: [{ render: renderFps }, fps({ accuracy: 0 })],
+    Game,
+    Text,
+    Score,
+    Paddle: [{ render: renderRectangle }, Paddle, modernControls(), clamped()],
+    Ball,
+    Fps: [{ render: renderFps }, fps({ accuracy: 0 })],
   },
 
   entities: {
@@ -47,7 +47,7 @@ export default {
     }),
 
     game: {
-      type: "game",
+      type: "Game",
       devMode: true,
       pixelated: true,
       size: [WIDTH, HEIGHT],
@@ -57,7 +57,7 @@ export default {
     },
 
     message: {
-      type: "text",
+      type: "Text",
       position: v(WIDTH / 2, 0, HEIGHT - 10),
       font: "'Press Start 2P'",
       size: 8,
@@ -68,7 +68,7 @@ export default {
     },
 
     score: {
-      type: "score",
+      type: "Score",
       position: v(WIDTH / 2, 0, HEIGHT / 2 + 28),
       font: "'Press Start 2P'",
       size: 32,
@@ -80,7 +80,7 @@ export default {
     },
 
     player1: {
-      type: "paddle",
+      type: "Paddle",
       size: v(5, 0, 20),
       color: "transparent",
       backgroundColor: "white",
@@ -93,7 +93,7 @@ export default {
     },
 
     player2: {
-      type: "paddle",
+      type: "Paddle",
       size: v(5, 0, 20),
       color: "transparent",
       backgroundColor: "white",
@@ -106,7 +106,7 @@ export default {
     },
 
     ball: {
-      type: "ball",
+      type: "Ball",
       size: v(4, 0, 4),
       color: "transparent",
       backgroundColor: "white",
@@ -120,7 +120,7 @@ export default {
     },
 
     fps: {
-      type: "fps",
+      type: "Fps",
       position: v(10, 0, HEIGHT - 10),
       font: "'Press Start 2P'",
       size: 8,

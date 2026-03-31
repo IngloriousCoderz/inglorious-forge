@@ -1,12 +1,12 @@
 import { html } from "@inglorious/web"
 
 import { createRender } from "../../stories/notifyStory.js"
-import { container } from "."
+import { Container } from "."
 
 export default {
   title: "Layout/Container",
   tags: ["autodocs"],
-  render: createRender(container),
+  render: createRender(Container),
   argTypes: {
     maxWidth: {
       control: "text",
@@ -79,7 +79,7 @@ export const WidthPresets = {
             >
               ${size}
             </div>
-            ${container.render({
+            ${Container.render({
               maxWidth: size,
               children: html`<div
                 style="padding: 0.5rem 0.75rem; border: 1px solid var(--iw-color-border);"

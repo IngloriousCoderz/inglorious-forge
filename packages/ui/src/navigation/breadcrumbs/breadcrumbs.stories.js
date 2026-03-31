@@ -1,10 +1,10 @@
 import { createRender } from "../../stories/notifyStory.js"
-import { breadcrumbs } from "."
+import { Breadcrumbs } from "."
 
 export default {
   title: "Navigation/Breadcrumbs",
   tags: ["autodocs"],
-  render: createRender(breadcrumbs),
+  render: createRender(Breadcrumbs),
   argTypes: {
     items: { control: "object", description: "Ordered breadcrumb path items." },
     separator: {

@@ -1,3 +1,3 @@
 import * as renderers from "./template.js"
 
-export const flex = { ...renderers }
+export const Flex = { ...renderers }

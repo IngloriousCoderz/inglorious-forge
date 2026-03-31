@@ -3,7 +3,7 @@
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
-import { router, setRoutes } from "."
+import { Router, setRoutes } from "."
 
 describe("router", () => {
   let entity
@@ -12,7 +12,7 @@ describe("router", () => {
   beforeEach(() => {
     entity = {
       id: "router",
-      type: "router",
+      type: "Router",
     }
 
     setRoutes({
@@ -24,6 +24,7 @@ describe("router", () => {
     })
 
     api = {
+      getEntities: vi.fn().mockReturnValue([entity]),
       getEntity: vi.fn().mockReturnValue(entity),
       notify: vi.fn(),
       setType: vi.fn(),
@@ -56,7 +57,7 @@ describe("router", () => {
       const windowSpy = vi.spyOn(window, "addEventListener")
       const documentSpy = vi.spyOn(document, "addEventListener")
 
-      router.init(entity, undefined, api)
+      Router.init(entity, undefined, api)
 
       expect(api.notify).toHaveBeenCalledWith("#router:navigate", {
         to: "/users/123?sort=asc",
@@ -70,7 +71,7 @@ describe("router", () => {
 
   describe("navigate()", () => {
     it("should navigate to a new path and update the entity", () => {
-      router.navigate(entity, "/users/456?q=test", api)
+      Router.navigate(entity, "/users/456?q=test", api)
 
       expect(entity.path).toBe("/users/456")
       expect(entity.route).toBe("userPage")
@@ -85,18 +86,18 @@ describe("router", () => {
     })
 
     it("should use replaceState when replace is true", () => {
-      router.navigate(entity, { to: "/users", replace: true }, api)
+      Router.navigate(entity, { to: "/users", replace: true }, api)
       expect(history.replaceState).toHaveBeenCalled()
       expect(history.pushState).not.toHaveBeenCalled()
     })
 
     it("should handle numeric navigation", () => {
-      router.navigate(entity, -1, api)
+      Router.navigate(entity, -1, api)
       expect(history.go).toHaveBeenCalledWith(-1)
     })
 
     it("should build path from params", () => {
-      router.navigate(
+      Router.navigate(
         entity,
         { to: "/users/:id/posts/:postId", params: { id: 1, postId: 2 } },
         api,
@@ -111,7 +112,7 @@ describe("router", () => {
     })
 
     it("should use the fallback route for unknown paths", () => {
-      router.navigate(entity, "/some/unknown/path", api)
+      Router.navigate(entity, "/some/unknown/path", api)
       expect(entity.route).toBe("notFoundPage")
       expect(entity.params).toEqual({})
     })
@@ -124,7 +125,7 @@ describe("router", () => {
         hash: "",
       })
 
-      router.navigate(entity, "/users", api)
+      Router.navigate(entity, "/users", api)
 
       expect(history.pushState).not.toHaveBeenCalled()
       expect(api.notify).not.toHaveBeenCalledWith(
@@ -141,7 +142,7 @@ describe("router", () => {
         hash: "",
       })
 
-      router.navigate(entity, { to: "/users", force: true }, api)
+      Router.navigate(entity, { to: "/users", force: true }, api)
 
       expect(history.pushState).toHaveBeenCalled()
       expect(api.notify).toHaveBeenCalledWith("routeChange", expect.any(Object))
@@ -157,7 +158,7 @@ describe("router", () => {
         origin: "http://localhost:3000",
       })
 
-      await router.popstate(entity, undefined, api)
+      await Router.popstate(entity, undefined, api)
 
       expect(entity.path).toBe("/users/789")
       expect(entity.route).toBe("userPage")
@@ -182,7 +183,7 @@ describe("router", () => {
         "/lazy": lazyRoute,
       })
 
-      await router.navigate(entity, "/lazy", api)
+      await Router.navigate(entity, "/lazy", api)
 
       expect(entity.isLoading).toBe(true)
       expect(api.notify).toHaveBeenCalledWith("#router:routeLoadSuccess", {
@@ -201,7 +202,7 @@ describe("router", () => {
         "/failing": failingRoute,
       })
 
-      await router.navigate(entity, "/failing", api)
+      await Router.navigate(entity, "/failing", api)
 
       expect(api.notify).toHaveBeenCalledWith("#router:routeLoadError", {
         error,
@@ -209,7 +210,7 @@ describe("router", () => {
       })
 
       // Simulate calling the routeLoadError handler
-      router.routeLoadError(entity, { error, path: "/failing" })
+      Router.routeLoadError(entity, { error, path: "/failing" })
 
       expect(entity.isLoading).toBe(false)
       expect(entity.error).toBe(error)
@@ -224,7 +225,7 @@ describe("router", () => {
       const route = { pattern: "/lazy", entityType: () => {} }
       const payload = { module, route }
 
-      router.routeLoadSuccess(entity, payload, api)
+      Router.routeLoadSuccess(entity, payload, api)
 
       expect(api.setType).toHaveBeenCalledWith("myPage", module.myPage)
       expect(entity.isLoading).toBe(false)
@@ -237,7 +238,7 @@ describe("router", () => {
       const payload = { error, path: "/lazy" }
       const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {})
 
-      router.routeLoadError(entity, payload)
+      Router.routeLoadError(entity, payload)
 
       expect(entity.path).toBe("/lazy")
       expect(entity.isLoading).toBe(false)

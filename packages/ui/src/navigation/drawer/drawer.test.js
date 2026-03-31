@@ -1,7 +1,7 @@
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
-import { drawer } from "."
+import { Drawer } from "."
 
 describe("drawer", () => {
   it("fires onClose from the backdrop", () => {
@@ -9,7 +9,7 @@ describe("drawer", () => {
     const container = document.createElement("div")
 
     render(
-      drawer.render({ isOpen, onClose: () => (isOpen = false) }),
+      Drawer.render({ isOpen, onClose: () => (isOpen = false) }),
       container,
     )
 
@@ -22,7 +22,7 @@ describe("drawer", () => {
     const container = document.createElement("div")
 
     render(
-      drawer.render({
+      Drawer.render({
         isOpen: true,
         isCollapsed,
         onCollapseToggle: () => (isCollapsed = true),

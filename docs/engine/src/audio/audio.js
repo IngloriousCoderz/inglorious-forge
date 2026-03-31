@@ -13,7 +13,7 @@ export default {
   types: {
     ...controls("character"),
 
-    game: [
+    Game: [
       (type) => ({
         start(entity, event, api) {
           type.start?.(entity, event, api)
@@ -23,9 +23,9 @@ export default {
       }),
     ],
 
-    platform: [{ render: renderRectangle }],
+    Platform: [{ render: renderRectangle }],
 
-    character: [
+    Character: [
       { render: renderCharacter },
       modernVelocity(),
       clamped({ depthAxis: "z" }),
@@ -44,7 +44,7 @@ export default {
 
   entities: {
     game: {
-      type: "game",
+      type: "Game",
       devMode: true,
     },
 
@@ -61,7 +61,7 @@ export default {
     }),
 
     audio: {
-      type: "audio",
+      type: "Audio",
       sounds: {
         music: { url: "/sounds/music.mp3", loop: true, volume: 0.25 },
         jump: { url: "/sounds/jump.ogg" },
@@ -69,7 +69,7 @@ export default {
     },
 
     ground: {
-      type: "platform",
+      type: "Platform",
       position: v(400, 24, 0),
       size: v(800, 48),
       backgroundColor: "green",
@@ -79,7 +79,7 @@ export default {
     },
 
     character: {
-      type: "character",
+      type: "Character",
       layer: 1,
       position: v(200, 60, 0),
       collisions: {

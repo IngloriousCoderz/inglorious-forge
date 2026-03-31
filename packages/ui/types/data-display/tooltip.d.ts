@@ -17,4 +17,4 @@ export interface TooltipType {
   render(props: TooltipProps): TemplateResult
 }
 
-export declare const tooltip: TooltipType
+export declare const Tooltip: TooltipType

@@ -5,20 +5,20 @@ import { createStore } from "./store.js"
 test("it should process events by mutating state inside handlers", () => {
   const config = {
     types: {
-      kitty: {
+      Kitty: {
         feed(entity) {
           entity.isFed = true
         },
       },
     },
     entities: {
-      kitty1: { type: "kitty" },
+      kitty1: { type: "Kitty" },
     },
   }
   const afterState = {
     kitty1: {
       id: "kitty1",
-      type: "kitty",
+      type: "Kitty",
       isFed: true,
     },
   }
@@ -34,7 +34,7 @@ test("it should process events by mutating state inside handlers", () => {
 test("it should process an event queue in the same update cycle", () => {
   const config = {
     types: {
-      kitty: {
+      Kitty: {
         feed(entity) {
           entity.isFed = true
         },
@@ -45,13 +45,13 @@ test("it should process an event queue in the same update cycle", () => {
     },
 
     entities: {
-      kitty1: { type: "kitty" },
+      kitty1: { type: "Kitty" },
     },
   }
   const afterState = {
     kitty1: {
       id: "kitty1",
-      type: "kitty",
+      type: "Kitty",
       isFed: true,
       isMeowing: true,
     },
@@ -69,12 +69,12 @@ test("it should process an event queue in the same update cycle", () => {
 test("it should send an event from an entity and process it in the same update cycle in batched mode", () => {
   const config = {
     types: {
-      doggo: {
+      Doggo: {
         update(entity, dt, api) {
           api.notify("bark")
         },
       },
-      kitty: {
+      Kitty: {
         bark(entity) {
           entity.position = "far"
         },
@@ -82,15 +82,15 @@ test("it should send an event from an entity and process it in the same update c
     },
 
     entities: {
-      doggo1: { type: "doggo" },
-      kitty1: { type: "kitty", position: "near" },
+      doggo1: { type: "Doggo" },
+      kitty1: { type: "Kitty", position: "near" },
     },
 
     updateMode: "manual",
   }
   const afterState = {
-    doggo1: { id: "doggo1", type: "doggo" },
-    kitty1: { id: "kitty1", type: "kitty", position: "far" },
+    doggo1: { id: "doggo1", type: "Doggo" },
+    kitty1: { id: "kitty1", type: "Kitty", position: "far" },
   }
 
   const store = createStore(config)
@@ -105,13 +105,13 @@ test("it should send an event from an entity and process it in the same update c
 test("it should add an entity via an 'add' event", () => {
   const config = {
     types: {
-      kitty: {},
+      Kitty: {},
     },
     entities: {},
   }
-  const newEntity = { id: "kitty1", type: "kitty" }
+  const newEntity = { id: "kitty1", type: "Kitty" }
   const afterState = {
-    kitty1: { id: "kitty1", type: "kitty" },
+    kitty1: { id: "kitty1", type: "Kitty" },
   }
 
   const store = createStore(config)
@@ -126,7 +126,7 @@ test("it should remove an entity via a 'remove' event", () => {
   const config = {
     types: {},
     entities: {
-      kitty1: { type: "kitty" },
+      kitty1: { type: "Kitty" },
     },
   }
   const store = createStore(config)
@@ -152,11 +152,11 @@ test("it should change an entity's behavior via setType", () => {
 
   const config = {
     types: {
-      bug: Caterpillar,
+      Bug: Caterpillar,
     },
 
     entities: {
-      bug: { type: "bug" },
+      bug: { type: "Bug" },
     },
   }
 
@@ -166,14 +166,14 @@ test("it should change an entity's behavior via setType", () => {
   store.update()
 
   expect(store.getState()).toStrictEqual({
-    bug: { id: "bug", type: "bug", isFull: true },
+    bug: { id: "bug", type: "Bug", isFull: true },
   })
 
-  store.setType("bug", [Caterpillar, Butterfly])
+  store.setType("Bug", [Caterpillar, Butterfly])
   store.notify("fly")
   store.update()
   expect(store.getState()).toStrictEqual({
-    bug: { id: "bug", type: "bug", isFull: true, hasFlown: true },
+    bug: { id: "bug", type: "Bug", isFull: true, hasFlown: true },
   })
 })
 

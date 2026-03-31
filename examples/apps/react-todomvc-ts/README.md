@@ -106,17 +106,17 @@ export interface Task {
 
 // Define your entity types
 export interface FormEntity extends BaseEntity {
-  type: "form"
+  type: "Form"
   value: string
 }
 
 export interface ListEntity extends BaseEntity {
-  type: "list"
+  type: "List"
   tasks: Task[]
 }
 
 export interface FooterEntity extends BaseEntity {
-  type: "footer"
+  type: "Footer"
   activeFilter: Filter
 }
 
@@ -133,19 +133,19 @@ export interface TodoListState {
 
 // Types configuration - defines exact handler signatures
 export interface TodoListTypes {
-  form: {
+  Form: {
     inputChange: (entity: FormEntity, value: string) => void
     formSubmit: (entity: FormEntity) => void
   }
 
-  list: {
+  List: {
     formSubmit: (entity: ListEntity, value: string) => void
     toggleClick: (entity: ListEntity, id: number) => void
     deleteClick: (entity: ListEntity, id: number) => void
     clearClick: (entity: ListEntity, _payload: void) => void
   }
 
-  footer: {
+  Footer: {
     filterClick: (entity: FooterEntity, filter: Filter) => void
   }
 }
@@ -161,15 +161,15 @@ import type { TodoListState } from "../types"
 
 export const entities: TodoListState = {
   form: {
-    type: "form",
+    type: "Form",
     value: "",
   },
   list: {
-    type: "list",
+    type: "List",
     tasks: [],
   },
   footer: {
-    type: "footer",
+    type: "Footer",
     activeFilter: "all",
   },
 }
@@ -184,7 +184,7 @@ Event handlers are fully typed with specific entity types and payloads:
 import type { TodoListTypes } from "../types"
 
 export const types: TodoListTypes = {
-  form: {
+  Form: {
     inputChange(entity, value) {
       entity.value = value
     },
@@ -193,7 +193,7 @@ export const types: TodoListTypes = {
     },
   },
 
-  list: {
+  List: {
     formSubmit(entity, value) {
       entity.tasks.push({
         id: Date.now(),
@@ -216,7 +216,7 @@ export const types: TodoListTypes = {
     },
   },
 
-  footer: {
+  Footer: {
     filterClick(entity, filter) {
       entity.activeFilter = filter
     },
@@ -252,7 +252,7 @@ export const { Provider, useSelector, useNotify } = createReactStore(store)
 
 Using `@inglorious/react-store` hooks with TypeScript:
 
-```typescript
+```tsx
 import { useNotify, useSelector } from "./store"
 import type { TodoListState } from "../types"
 
@@ -342,7 +342,7 @@ entity.tasks.push({ id: 1 }) // Error: missing 'text'
 
 // ❌ TypeScript catches wrong entity types
 const types: TodoListTypes = {
-  form: {
+  Form: {
     inputChange(entity: ListEntity, value: string) {
       // Error: should be FormEntity
       entity.value = value
@@ -358,24 +358,24 @@ Define a types interface for complete type safety:
 ```typescript
 // Define exact handler signatures
 interface TodoListTypes {
-  form: {
+  Form: {
     inputChange: (entity: FormEntity, value: string) => void
     formSubmit: (entity: FormEntity) => void
   }
-  list: {
+  List: {
     formSubmit: (entity: ListEntity, value: string) => void
     toggleClick: (entity: ListEntity, id: number) => void
     deleteClick: (entity: ListEntity, id: number) => void
     clearClick: (entity: ListEntity) => void
   }
-  footer: {
+  Footer: {
     filterClick: (entity: FooterEntity, filter: Filter) => void
   }
 }
 
 // Use it in your types configuration
 const types: TodoListTypes = {
-  form: {
+  Form: {
     inputChange(entity, value) {
       entity.value = value // Fully typed!
     },
@@ -383,7 +383,7 @@ const types: TodoListTypes = {
       entity.value = ""
     },
   },
-  list: {
+  List: {
     formSubmit(entity, value) {
       entity.tasks.push({ id: Date.now(), text: value, completed: false })
     },
@@ -401,7 +401,7 @@ const types: TodoListTypes = {
       entity.tasks = entity.tasks.filter((task) => !task.completed)
     },
   },
-  footer: {
+  Footer: {
     filterClick(entity, filter) {
       entity.activeFilter = filter
     },
@@ -507,13 +507,13 @@ const listSlice = createSlice({
 ```typescript
 // Define types once
 interface FormEntity extends BaseEntity {
-  type: "form"
+  type: "Form"
   value: string
 }
 
 // Event handlers with simple types
 const types = {
-  form: {
+  Form: {
     inputChange(entity, value: string) {
       entity.value = value
     },
@@ -522,7 +522,7 @@ const types = {
     },
   },
 
-  list: {
+  List: {
     formSubmit(entity, value: string) {
       entity.tasks.push({ id: Date.now(), text: value, completed: false })
     },

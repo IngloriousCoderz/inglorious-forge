@@ -1,12 +1,12 @@
 import { html } from "@inglorious/web"
 
 import { createRender } from "../../stories/notifyStory.js"
-import { button } from "."
+import { Button } from "."
 
 export default {
   title: "Controls/Button",
   tags: ["autodocs"],
-  render: createRender(button),
+  render: createRender(Button),
   argTypes: {
     children: {
       control: "text",

@@ -30,9 +30,9 @@ export default {
   types: {
     ...controls("player"),
 
-    tilemap: [{ render: renderTilemap }, debugCollisions],
+    Tilemap: [{ render: renderTilemap }, debugCollisions],
 
-    player: [
+    Player: [
       { render: renderSprite },
       debugCollisions,
       modernVelocity(),
@@ -43,7 +43,7 @@ export default {
 
   entities: {
     game: {
-      type: "game",
+      type: "Game",
       devMode: true,
       pixelated: true,
     },
@@ -58,7 +58,7 @@ export default {
     }),
 
     images: {
-      type: "images",
+      type: "Images",
       images: {
         dungeon: { url: "/tilemaps/dungeon.png" },
         dungeonCharacter: { url: "/sprites/dungeon_character.png" },
@@ -66,7 +66,7 @@ export default {
     },
 
     dungeon: {
-      type: "tilemap",
+      type: "Tilemap",
       position: v(400, 0, 300),
       tilemap: {
         image: {
@@ -168,7 +168,7 @@ export default {
     },
 
     player: {
-      type: "player",
+      type: "Player",
       layer: 1,
       position: v(400 - 48, 0, 300 - 48 / 2),
       maxSpeed: 250,

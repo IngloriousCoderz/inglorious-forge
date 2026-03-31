@@ -15,4 +15,4 @@ export interface ProgressType {
   render(props: ProgressProps): TemplateResult
 }
 
-export declare const progress: ProgressType
+export declare const Progress: ProgressType

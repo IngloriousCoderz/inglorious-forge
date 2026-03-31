@@ -27,7 +27,7 @@ import "@inglorious/logo/style.css"
 
 const entities = {
   logo: {
-    type: "logo",
+    type: "Logo",
     size: 256,
     faces: [
       { image: "I", reverse: false, eye: true },

@@ -3,25 +3,25 @@ import { v } from "@inglorious/utils/v.js"
 
 export default {
   types: {
-    tilemap: [{ render: renderTilemap }],
+    Tilemap: [{ render: renderTilemap }],
   },
 
   entities: {
     game: {
-      type: "game",
+      type: "Game",
       devMode: true,
       pixelated: true,
     },
 
     images: {
-      type: "images",
+      type: "Images",
       images: {
         dungeon: { url: "/tilemaps/dungeon.png" },
       },
     },
 
     dungeon: {
-      type: "tilemap",
+      type: "Tilemap",
       position: v(400, 0, 300),
       tilemap: {
         image: {

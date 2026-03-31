@@ -5,7 +5,7 @@
 
 import { html } from "@inglorious/web"
 
-import { button } from "../button/index.js"
+import { Button } from "../button/index.js"
 
 /**
  * Renders a floating action button for primary contextual actions.
@@ -22,7 +22,7 @@ export function render(props) {
     ...rest
   } = props
 
-  return button.render({
+  return Button.render({
     ...rest,
     shape: isExtended ? "pill" : "round",
     className:

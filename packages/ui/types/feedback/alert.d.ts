@@ -19,4 +19,4 @@ export interface AlertType {
   render(props: AlertProps): TemplateResult
 }
 
-export declare const alert: AlertType
+export declare const Alert: AlertType

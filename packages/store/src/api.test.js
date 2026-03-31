@@ -4,8 +4,8 @@ import { createApi } from "./api.js"
 
 test("api.select runs selectors against current state", () => {
   let state = {
-    alpha: { type: "test", value: 2 },
-    beta: { type: "test", value: 5 },
+    alpha: { type: "Test", value: 2 },
+    beta: { type: "Test", value: 5 },
   }
 
   const store = {
@@ -23,8 +23,8 @@ test("api.select runs selectors against current state", () => {
   expect(api.select(selectTotal)).toBe(7)
 
   state = {
-    alpha: { type: "test", value: 3 },
-    beta: { type: "test", value: 4 },
+    alpha: { type: "Test", value: 3 },
+    beta: { type: "Test", value: 4 },
   }
 
   expect(api.select(selectTotal)).toBe(7)
@@ -32,9 +32,9 @@ test("api.select runs selectors against current state", () => {
 
 test("api.getEntities supports optional type filtering", () => {
   const state = {
-    alpha: { type: "test", value: 2 },
-    beta: { type: "other", value: 5 },
-    gamma: { type: "test", value: 8 },
+    alpha: { type: "Test", value: 2 },
+    beta: { type: "Other", value: 5 },
+    gamma: { type: "Test", value: 8 },
   }
 
   const store = {
@@ -49,6 +49,6 @@ test("api.getEntities supports optional type filtering", () => {
   const api = createApi(store)
 
   expect(api.getEntities()).toBe(state)
-  expect(api.getEntities("test")).toEqual([state.alpha, state.gamma])
-  expect(api.getEntities("missing")).toEqual([])
+  expect(api.getEntities("Test")).toEqual([state.alpha, state.gamma])
+  expect(api.getEntities("Missing")).toEqual([])
 })

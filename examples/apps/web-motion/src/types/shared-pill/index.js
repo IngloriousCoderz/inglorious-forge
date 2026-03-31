@@ -1,12 +1,12 @@
 import { withMotion } from "@inglorious/motion"
 
 import * as handlers from "./handlers.js"
-import { render } from "./template.js"
+import * as renderers from "./template.js"
 
-const sharedPillBase = { ...handlers, render }
+const SharedPillBase = { ...handlers, ...renderers }
 
-export const sharedPill = [
-  sharedPillBase,
+export const SharedPill = [
+  SharedPillBase,
   withMotion({
     classPrefix: "demo-shared",
     layout: true,

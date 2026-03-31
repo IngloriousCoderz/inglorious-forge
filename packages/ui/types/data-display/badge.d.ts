@@ -17,4 +17,4 @@ export interface BadgeType {
   render(props: BadgeProps): TemplateResult
 }
 
-export declare const badge: BadgeType
+export declare const Badge: BadgeType

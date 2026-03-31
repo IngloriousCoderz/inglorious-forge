@@ -43,4 +43,4 @@ export interface TableType {
   ): TemplateResult
 }
 
-export declare const table: TableType
+export declare const Table: TableType

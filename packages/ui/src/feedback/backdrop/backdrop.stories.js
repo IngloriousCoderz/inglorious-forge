@@ -1,12 +1,12 @@
 import { html } from "@inglorious/web"
 
 import { createRender } from "../../stories/notifyStory.js"
-import { backdrop } from "."
+import { Backdrop } from "."
 
 export default {
   title: "Feedback/Backdrop",
   tags: ["autodocs"],
-  render: createRender(backdrop),
+  render: createRender(Backdrop),
   argTypes: {
     isOpen: { control: "boolean" },
     onClick: { action: "onClick" },

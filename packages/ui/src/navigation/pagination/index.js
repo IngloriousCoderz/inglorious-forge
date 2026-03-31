@@ -1,1 +1,1 @@
-export { pagination } from "./template.js"
+export { Pagination } from "./template.js"

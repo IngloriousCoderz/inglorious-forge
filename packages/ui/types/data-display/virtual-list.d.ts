@@ -91,4 +91,4 @@ export interface VirtualListType {
   ): TemplateResult
 }
 
-export declare const virtualList: VirtualListType
+export declare const VirtualList: VirtualListType

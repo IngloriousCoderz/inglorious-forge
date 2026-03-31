@@ -121,15 +121,15 @@ Instead of one monolithic reducer, state is organized into **entities**:
 // src/store/entities.js
 export const entities = {
   form: {
-    type: "form",
+    type: "Form",
     value: "",
   },
   list: {
-    type: "list",
+    type: "List",
     tasks: [],
   },
   footer: {
-    type: "footer",
+    type: "Footer",
     activeFilter: "all",
   },
 }

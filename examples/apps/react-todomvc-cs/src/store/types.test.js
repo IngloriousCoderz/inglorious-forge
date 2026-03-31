@@ -34,9 +34,9 @@ it("should fetch tasks on listMount and update the store on tasksFetched", async
 
   expect(state.list.tasks).toEqual(mockTasks)
   expect(state).toEqual({
-    form: { id: "form", type: "form", value: "" },
-    list: { id: "list", type: "list", tasks: mockTasks },
-    footer: { id: "footer", type: "footer", activeFilter: "all" },
+    form: { id: "form", type: "Form", value: "" },
+    list: { id: "list", type: "List", tasks: mockTasks },
+    footer: { id: "footer", type: "Footer", activeFilter: "all" },
   })
 })
 

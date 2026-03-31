@@ -13,9 +13,9 @@ import { v } from "@inglorious/utils/v.js"
 
 export default {
   types: {
-    mouse: [{ render: renderMouse }, mouse()],
+    Mouse: [{ render: renderMouse }, mouse()],
 
-    character: [
+    Character: [
       { render: renderCharacter },
       fsm({
         meandering: {
@@ -51,14 +51,14 @@ export default {
 
   entities: {
     game: {
-      type: "game",
+      type: "Game",
       devMode: true,
     },
 
     mouse: createMouse(),
 
     character: {
-      type: "character",
+      type: "Character",
       state: "meandering",
       maxSpeed: 250,
       maxAngularSpeed: pi() / 4,

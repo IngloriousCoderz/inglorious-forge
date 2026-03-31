@@ -255,7 +255,7 @@ Everything is explicit JavaScript. No framework magic, no hidden dependencies, n
 
 ```javascript
 // That's it. No special setup, no decorators, no refs.
-const counter = {
+const Counter = {
   create(entity) {
     entity.count = 0
   },
@@ -280,7 +280,7 @@ You can test handlers directly as impure functions:
 
 ```javascript
 const entity = { count: 0 }
-counter.increment(entity)
+Counter.increment(entity)
 expect(entity.count).toBe(1)
 ```
 
@@ -290,7 +290,7 @@ Or use `trigger()` to test them as pure functions (using [Mutative.js](https://m
 import { trigger } from "@inglorious/web/test"
 
 const entityBefore = { count: 0 }
-const { entity } = trigger(entityBefore, counter.increment)
+const { entity } = trigger(entityBefore, Counter.increment)
 expect(entity.count).toBe(1)
 expect(entityBefore.count).toBe(0) // Original entity unchanged
 ```
@@ -300,7 +300,7 @@ expect(entityBefore.count).toBe(0) // Original entity unchanged
 Types as arrays. No wrapper hell, no HOCs.
 
 ```javascript
-const protectedPage = [basePage, requireAuth, requireAdmin]
+const ProtectedPage = [BasePage, requireAuth, requireAdmin]
 ```
 
 ### 5. **Predictability**

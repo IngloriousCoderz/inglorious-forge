@@ -1,6 +1,6 @@
 export const entities = {
   about: {
-    type: "about",
+    type: "About",
     name: "Us",
   },
 }

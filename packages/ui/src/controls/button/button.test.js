@@ -2,7 +2,7 @@ import { html } from "@inglorious/web"
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
-import { button } from "."
+import { Button } from "."
 
 describe("button", () => {
   describe("render", () => {
@@ -10,7 +10,7 @@ describe("button", () => {
       const props = { children: "Click me" }
       const container = document.createElement("div")
 
-      render(button.render(props), container)
+      render(Button.render(props), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.textContent.trim()).toBe("Click me")
@@ -20,7 +20,7 @@ describe("button", () => {
       const props = { children: "Test" }
       const container = document.createElement("div")
 
-      render(button.render(props), container)
+      render(Button.render(props), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.classList.contains("iw-button")).toBe(true)
@@ -30,7 +30,7 @@ describe("button", () => {
       const props = { children: "Small", size: "sm" }
       const container = document.createElement("div")
 
-      render(button.render(props), container)
+      render(Button.render(props), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.classList.contains("iw-button-sm")).toBe(true)
@@ -40,7 +40,7 @@ describe("button", () => {
       const props = { children: "Large", size: "lg" }
       const container = document.createElement("div")
 
-      render(button.render(props), container)
+      render(Button.render(props), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.classList.contains("iw-button-lg")).toBe(true)
@@ -50,7 +50,7 @@ describe("button", () => {
       const props = { children: "+", shape: "round" }
       const container = document.createElement("div")
 
-      render(button.render(props), container)
+      render(Button.render(props), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.classList.contains("iw-button-shape-round")).toBe(
@@ -62,7 +62,7 @@ describe("button", () => {
       const props = { children: "Outline", variant: "outline" }
       const container = document.createElement("div")
 
-      render(button.render(props), container)
+      render(Button.render(props), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.classList.contains("iw-button-outline")).toBe(true)
@@ -72,7 +72,7 @@ describe("button", () => {
       const props = { children: "Ghost", variant: "ghost" }
       const container = document.createElement("div")
 
-      render(button.render(props), container)
+      render(Button.render(props), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.classList.contains("iw-button-ghost")).toBe(true)
@@ -82,7 +82,7 @@ describe("button", () => {
       const props = { children: "Secondary", color: "secondary" }
       const container = document.createElement("div")
 
-      render(button.render(props), container)
+      render(Button.render(props), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.classList.contains("iw-button-secondary")).toBe(true)
@@ -92,7 +92,7 @@ describe("button", () => {
       const props = { children: "Success", color: "success" }
       const container = document.createElement("div")
 
-      render(button.render(props), container)
+      render(Button.render(props), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.classList.contains("iw-button-success")).toBe(true)
@@ -102,7 +102,7 @@ describe("button", () => {
       const props = { children: "Disabled", isDisabled: true }
       const container = document.createElement("div")
 
-      render(button.render(props), container)
+      render(Button.render(props), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.hasAttribute("disabled")).toBe(true)
@@ -112,7 +112,7 @@ describe("button", () => {
       const props = { children: "Full Width", isFullWidth: true }
       const container = document.createElement("div")
 
-      render(button.render(props), container)
+      render(Button.render(props), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.classList.contains("iw-button-full-width")).toBe(
@@ -124,7 +124,7 @@ describe("button", () => {
       const props = { children: "Submit", buttonType: "submit" }
       const container = document.createElement("div")
 
-      render(button.render(props), container)
+      render(Button.render(props), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.type).toBe("submit")
@@ -136,7 +136,7 @@ describe("button", () => {
       }
       const container = document.createElement("div")
 
-      render(button.render(props), container)
+      render(Button.render(props), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.textContent.trim()).toBe("Custom")
@@ -151,7 +151,7 @@ describe("button", () => {
       }
       const container = document.createElement("div")
 
-      render(button.render(props), container)
+      render(Button.render(props), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.getAttribute("data-testid")).toBe("primary-cta")
@@ -167,7 +167,7 @@ describe("button", () => {
       }
       const container = document.createElement("div")
 
-      render(button.render(props), container)
+      render(Button.render(props), container)
 
       const buttonElement = container.querySelector("button")
       expect(buttonElement.getAttribute("aria-label")).toBe("Primary action")
@@ -182,7 +182,7 @@ describe("button", () => {
       const props = { children: "Click me", onClick: () => (isClicked = true) }
       const container = document.createElement("div")
 
-      render(button.render(props), container)
+      render(Button.render(props), container)
 
       const buttonElement = container.querySelector("button")
       buttonElement.click()

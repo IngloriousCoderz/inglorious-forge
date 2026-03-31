@@ -1,12 +1,12 @@
 import { createStore } from "@inglorious/web"
 
-import { liveLogo } from "../components/live-logo"
-import { logoForm } from "../components/logo-form"
+import { LiveLogo } from "../components/live-logo"
+import { LogoForm } from "../components/logo-form"
 import { entities } from "./entities"
 import { middlewares } from "./middlewares"
 
 export const store = createStore({
-  types: { logoForm, liveLogo },
+  types: { LiveLogo, LogoForm },
   entities,
   middlewares,
 })

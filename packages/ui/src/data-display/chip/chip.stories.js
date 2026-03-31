@@ -1,10 +1,10 @@
 import { createRender } from "../../stories/notifyStory.js"
-import { chip } from "."
+import { Chip } from "."
 
 export default {
   title: "Data Display/Chip",
   tags: ["autodocs"],
-  render: createRender(chip),
+  render: createRender(Chip),
   argTypes: {
     children: { control: "text", description: "Chip label content." },
     isRemovable: {

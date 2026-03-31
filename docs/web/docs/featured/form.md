@@ -10,15 +10,15 @@ Declarative form state management with validation, array fields, and submission.
 ## Basic Setup
 
 ```javascript
-import { form } from "@inglorious/web/form"
+import { Form } from "@inglorious/web/form"
 
 const types = {
-  form,
+  Form,
 }
 
 const entities = {
   form: {
-    type: "form",
+    type: "Form",
     initialValues: {
       email: "",
       password: "",
@@ -110,12 +110,15 @@ api.notify("#form:fieldArrayMove", {
 
 ```javascript
 import {
+  Form,
   getFieldValue,
   getFieldError,
   isFieldTouched,
 } from "@inglorious/web/form"
 
-const loginForm = {
+const LoginForm = {
+  ...Form,
+
   render(entity, api) {
     return html`
       <form
@@ -149,7 +152,9 @@ const loginForm = {
 ## Submission
 
 ```javascript
-const form = {
+const AsyncForm = {
+  ...Form,
+
   // Handle submission
   async submit(entity, payload, api) {
     // Set state BEFORE await

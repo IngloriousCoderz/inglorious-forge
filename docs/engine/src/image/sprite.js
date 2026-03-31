@@ -6,7 +6,7 @@ export default {
   systems: [spriteAnimationSystem()],
 
   types: {
-    cat: [
+    Cat: [
       { render: renderSprite },
       {
         create(entity) {
@@ -18,20 +18,20 @@ export default {
 
   entities: {
     game: {
-      type: "game",
+      type: "Game",
       devMode: true,
       pixelated: true,
     },
 
     images: {
-      type: "images",
+      type: "Images",
       images: {
         neko: { url: "/sprites/neko.png" },
       },
     },
 
     neko: {
-      type: "cat",
+      type: "Cat",
       position: v(400, 0, 300),
       sprite: {
         image: {

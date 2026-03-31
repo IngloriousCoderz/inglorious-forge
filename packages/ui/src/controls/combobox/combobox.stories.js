@@ -2,7 +2,7 @@ import {
   createEntityRender,
   notifyActionArgType,
 } from "../../stories/notifyStory.js"
-import { combobox } from "./index.js"
+import { Combobox } from "./index.js"
 
 const options = [
   { label: "Italy", value: "it" },
@@ -14,7 +14,7 @@ const options = [
 export default {
   title: "Controls/Combobox",
   tags: ["autodocs"],
-  render: createEntityRender({ combobox }),
+  render: createEntityRender({ Combobox }),
   argTypes: {
     ...notifyActionArgType,
     label: { control: "text", description: "Field label." },
@@ -59,7 +59,7 @@ export default {
 export const SingleClosed = {}
 SingleClosed.args = {
   id: "combobox",
-  type: "combobox",
+  type: "Combobox",
   label: "Country",
   selectedValue: "it",
   isMulti: false,

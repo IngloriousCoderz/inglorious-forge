@@ -16,4 +16,4 @@ export interface SwitchType {
   render(props: SwitchProps): TemplateResult
 }
 
-export declare const switchControl: SwitchType
+export declare const Switch: SwitchType

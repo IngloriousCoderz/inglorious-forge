@@ -83,13 +83,13 @@ Use this page as a quick reference for supported icon strategies in `@inglorious
   <div className="iw-icon-tab-panels">
     <section className="iw-icon-tab-panel iw-icon-tab-panel-generic">
       <p>Use <code>@inglorious/ui/icon</code> for glyphs, emoji, and simple symbols. Reference: <a href="/?path=/story/data-display-icon--unicode">UTF-8 Icons</a></p>
-      <pre><code>{`icon.render({ children: "★", size: "md", color: "primary" })`}</code></pre>
+      <pre><code>{`Icon.render({ children: "★", size: "md", color: "primary" })`}</code></pre>
       <div className="iw-icon-example">★ ⚑ ♫</div>
     </section>
 
     <section className="iw-icon-tab-panel iw-icon-tab-panel-svg">
       <p>Use inline SVG when you want a custom icon pack without font dependencies.</p>
-      <pre><code>{`icon.render({
+      <pre><code>{`Icon.render({
     children: html\`<svg viewBox="0 0 24 24" ...>...</svg>\`,
     size: "md",
 })`}</code></pre>
@@ -109,7 +109,7 @@ Use this page as a quick reference for supported icon strategies in `@inglorious
 
     <section className="iw-icon-tab-panel iw-icon-tab-panel-material">
       <p>Use <code>@inglorious/ui/material-icon</code> when Material Symbols fonts are loaded. Reference: <a href="https://fonts.google.com/icons?icon.set=Material+Icons" target="_blank">Material Icons</a></p>
-      <pre><code>{`materialIcon.render({ name: "home", filled: true, size: "md" })`}</code></pre>
+      <pre><code>{`MaterialIcon.render({ name: "home", filled: true, size: "md" })`}</code></pre>
       <div className="iw-icon-example">
         <span className="iw-material-symbol" aria-hidden="true">home</span>
         <span className="iw-material-symbol" aria-hidden="true">settings</span>
@@ -119,7 +119,7 @@ Use this page as a quick reference for supported icon strategies in `@inglorious
 
     <section className="iw-icon-tab-panel iw-icon-tab-panel-fa">
       <p>Load Font Awesome CSS globally, then pass an icon element as <code>children</code>. Reference: <a href="https://fontawesome.com/search" target="_blank">Font Awesome Icons</a></p>
-      <pre><code>{`icon.render({
+      <pre><code>{`Icon.render({
     children: html\`<i class="fa-solid fa-user" aria-hidden="true"></i>\`,
 })`}</code></pre>
 

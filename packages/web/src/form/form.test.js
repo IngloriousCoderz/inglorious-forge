@@ -3,7 +3,7 @@
  */
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
-import { form, getFieldError, getFieldValue, isFieldTouched } from "."
+import { Form, getFieldError, getFieldValue, isFieldTouched } from "."
 
 describe("form", () => {
   let entity
@@ -24,7 +24,7 @@ describe("form", () => {
   describe("init()", () => {
     it("should add global event listeners for click and submit", () => {
       const spy = vi.spyOn(document, "addEventListener")
-      form.init(entity)
+      Form.init(entity)
       expect(spy).toHaveBeenCalledWith("click", expect.any(Function))
       expect(spy).toHaveBeenCalledWith("submit", expect.any(Function))
       spy.mockRestore()
@@ -34,7 +34,7 @@ describe("form", () => {
   describe("create()", () => {
     it("should initialize the form", () => {
       entity.values = {}
-      form.create(entity)
+      Form.create(entity)
       expect(entity.values).toEqual(entity.initialValues)
     })
 
@@ -43,7 +43,7 @@ describe("form", () => {
       entity.values = {}
       entity.isPristine = false
 
-      form.create(entity)
+      Form.create(entity)
 
       expect(entity.values).toEqual(entity.initialValues)
       expect(entity.values).not.toBe(entity.initialValues) // should be a clone
@@ -64,11 +64,11 @@ describe("form", () => {
 
   describe("reset()", () => {
     it("should reset the form to its initial state", () => {
-      form.create(entity)
+      Form.create(entity)
       entity.values.name = "Jane Doe"
       entity.isPristine = false
 
-      form.reset(entity)
+      Form.reset(entity)
 
       expect(entity.values).toEqual(entity.initialValues)
       expect(entity.isPristine).toBe(true)
@@ -77,11 +77,11 @@ describe("form", () => {
 
   describe("fieldChange()", () => {
     beforeEach(() => {
-      form.create(entity)
+      Form.create(entity)
     })
 
     it("should update a field's value, mark it as touched, and set form to dirty", () => {
-      form.fieldChange(entity, { path: "name", value: "Jane Doe" })
+      Form.fieldChange(entity, { path: "name", value: "Jane Doe" })
 
       expect(entity.values.name).toBe("Jane Doe")
       expect(entity.touched.name).toBe(true)
@@ -89,7 +89,7 @@ describe("form", () => {
     })
 
     it("should update a nested field's value", () => {
-      form.fieldChange(entity, {
+      Form.fieldChange(entity, {
         path: "contact.email",
         value: "jane.doe@example.com",
       })
@@ -100,7 +100,7 @@ describe("form", () => {
 
     it("should validate the field if a validate function is provided", () => {
       const validate = (value) => (value.length < 10 ? "Too short" : null)
-      form.fieldChange(entity, { path: "name", value: "Jane", validate })
+      Form.fieldChange(entity, { path: "name", value: "Jane", validate })
 
       expect(entity.errors.name).toBe("Too short")
       expect(entity.isValid).toBe(false)
@@ -108,10 +108,10 @@ describe("form", () => {
 
     it("should clear a field's error when it becomes valid", () => {
       const validate = (value) => (value.length < 10 ? "Too short" : null)
-      form.fieldChange(entity, { path: "name", value: "Jane", validate })
+      Form.fieldChange(entity, { path: "name", value: "Jane", validate })
       expect(entity.isValid).toBe(false)
 
-      form.fieldChange(entity, {
+      Form.fieldChange(entity, {
         path: "name",
         value: "Jane Doe The Great",
         validate,
@@ -124,18 +124,18 @@ describe("form", () => {
 
   describe("fieldBlur()", () => {
     beforeEach(() => {
-      form.create(entity)
+      Form.create(entity)
     })
 
     it("should mark a field as touched", () => {
-      form.fieldBlur(entity, { path: "name" })
+      Form.fieldBlur(entity, { path: "name" })
       expect(entity.touched.name).toBe(true)
     })
 
     it("should validate the field if a validate function is provided", () => {
       const validate = (value) =>
         value === "John Doe" ? "Cannot be John" : null
-      form.fieldBlur(entity, { path: "name", validate })
+      Form.fieldBlur(entity, { path: "name", validate })
 
       expect(entity.errors.name).toBe("Cannot be John")
       expect(entity.isValid).toBe(false)
@@ -144,11 +144,11 @@ describe("form", () => {
 
   describe("field array operations", () => {
     beforeEach(() => {
-      form.create(entity)
+      Form.create(entity)
     })
 
     it("fieldArrayAppend: should append a value and metadata", () => {
-      form.fieldArrayAppend(entity, { path: "tags", value: "c" })
+      Form.fieldArrayAppend(entity, { path: "tags", value: "c" })
 
       expect(entity.values.tags).toEqual(["a", "b", "c"])
       expect(entity.errors.tags).toEqual([null, null, null])
@@ -157,7 +157,7 @@ describe("form", () => {
     })
 
     it("fieldArrayRemove: should remove a value and metadata at an index", () => {
-      form.fieldArrayRemove(entity, { path: "tags", index: 0 })
+      Form.fieldArrayRemove(entity, { path: "tags", index: 0 })
 
       expect(entity.values.tags).toEqual(["b"])
       expect(entity.errors.tags).toEqual([null])
@@ -166,7 +166,7 @@ describe("form", () => {
     })
 
     it("fieldArrayInsert: should insert a value and metadata at an index", () => {
-      form.fieldArrayInsert(entity, { path: "tags", index: 1, value: "c" })
+      Form.fieldArrayInsert(entity, { path: "tags", index: 1, value: "c" })
 
       expect(entity.values.tags).toEqual(["a", "c", "b"])
       expect(entity.errors.tags).toEqual([null, null, null])
@@ -178,7 +178,7 @@ describe("form", () => {
       entity.errors.tags[0] = "Error on A"
       entity.touched.tags[0] = true
 
-      form.fieldArrayMove(entity, { path: "tags", fromIndex: 0, toIndex: 1 })
+      Form.fieldArrayMove(entity, { path: "tags", fromIndex: 0, toIndex: 1 })
 
       expect(entity.values.tags).toEqual(["b", "a"])
       expect(entity.errors.tags).toEqual([null, "Error on A"])
@@ -189,7 +189,7 @@ describe("form", () => {
     it("fieldArray operations should warn if path is not an array", () => {
       const spy = vi.spyOn(console, "warn").mockImplementation(() => {})
 
-      form.fieldArrayAppend(entity, { path: "name", value: "c" })
+      Form.fieldArrayAppend(entity, { path: "name", value: "c" })
       expect(spy).toHaveBeenCalledWith("Field at path 'name' is not an array")
 
       spy.mockRestore()
@@ -198,7 +198,7 @@ describe("form", () => {
 
   describe("validate()", () => {
     beforeEach(() => {
-      form.create(entity)
+      Form.create(entity)
     })
 
     it("should set errors and isValid based on the validation function", () => {
@@ -210,7 +210,7 @@ describe("form", () => {
         return errors
       }
 
-      form.validate(entity, { validate })
+      Form.validate(entity, { validate })
 
       expect(entity.errors.name).toBe("Name must be Jane Doe")
       expect(entity.isValid).toBe(false)
@@ -220,7 +220,7 @@ describe("form", () => {
       const validate = () => ({})
 
       entity.isValid = false
-      form.validate(entity, { validate })
+      Form.validate(entity, { validate })
 
       expect(entity.errors).toEqual({})
       expect(entity.isValid).toBe(true)
@@ -231,13 +231,13 @@ describe("form", () => {
     let api
 
     beforeEach(() => {
-      form.create(entity)
+      Form.create(entity)
       api = { notify: vi.fn() }
     })
 
     it("should set isValidating to true and call the validation function", async () => {
       const validate = vi.fn().mockResolvedValue({})
-      await form.validateAsync(entity, { validate }, api)
+      await Form.validateAsync(entity, { validate }, api)
       expect(entity.isValidating).toBe(true)
       expect(validate).toHaveBeenCalledWith(entity.values)
     })
@@ -245,7 +245,7 @@ describe("form", () => {
     it("should notify 'validationComplete' on successful validation", async () => {
       const errors = { name: "Required" }
       const validate = async () => errors
-      await form.validateAsync(entity, { validate }, api)
+      await Form.validateAsync(entity, { validate }, api)
 
       expect(api.notify).toHaveBeenCalledWith(
         `#${entity.id}:validationComplete`,
@@ -261,7 +261,7 @@ describe("form", () => {
       const validate = async () => {
         throw error
       }
-      await form.validateAsync(entity, { validate }, api)
+      await Form.validateAsync(entity, { validate }, api)
 
       expect(api.notify).toHaveBeenCalledWith(`#${entity.id}:validationError`, {
         error: "Validation failed",
@@ -271,11 +271,11 @@ describe("form", () => {
 
   describe("validationComplete()", () => {
     it("should update form state after async validation", () => {
-      form.create(entity)
+      Form.create(entity)
       entity.isValidating = true
       const errors = { name: "Error" }
 
-      form.validationComplete(entity, { errors, isValid: false })
+      Form.validationComplete(entity, { errors, isValid: false })
 
       expect(entity.isValidating).toBe(false)
       expect(entity.errors).toBe(errors)
@@ -285,10 +285,10 @@ describe("form", () => {
 
   describe("validationError()", () => {
     it("should update form state after an async validation error", () => {
-      form.create(entity)
+      Form.create(entity)
       entity.isValidating = true
 
-      form.validationError(entity, { error: "Network Error" })
+      Form.validationError(entity, { error: "Network Error" })
 
       expect(entity.isValidating).toBe(false)
       expect(entity.submitError).toBe("Network Error")

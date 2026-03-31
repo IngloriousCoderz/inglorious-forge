@@ -1,10 +1,10 @@
-import { combobox } from "@inglorious/ui/combobox"
+import { Combobox } from "@inglorious/ui/combobox"
 
-export const remoteCombobox = {
-  ...combobox,
+export const RemoteCombobox = {
+  ...Combobox,
 
   toggle(entity, payload, api) {
-    combobox.toggle(entity, payload, api)
+    Combobox.toggle(entity, payload, api)
 
     if (!entity.isOpen) return
 

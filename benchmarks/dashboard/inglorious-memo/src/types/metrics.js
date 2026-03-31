@@ -7,7 +7,7 @@ import { html } from "@inglorious/web"
 const ERROR_FPS = 30
 const WARN_FPS = 50
 
-export const metrics = {
+export const Metrics = {
   create(entity) {
     entity.fps = 60
     entity.fpsNow = 60

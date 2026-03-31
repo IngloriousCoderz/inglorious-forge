@@ -25,6 +25,6 @@ export const { setFilter } = slice.actions
 
 export default slice.reducer
 
-export const footer = convertSlice(slice, {
+export const Footer = convertSlice(slice, {
   extraActions: [clearClick],
 })

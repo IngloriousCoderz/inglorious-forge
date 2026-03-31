@@ -12,13 +12,13 @@ export default {
   types: {
     ...controls("character"),
 
-    character: [{ render: renderCharacter }, modernControls(), clamped()],
+    Character: [{ render: renderCharacter }, modernControls(), clamped()],
 
-    game: {
+    Game: {
       start(entity, event, api) {
         api.notify("add", {
           id: "player1",
-          type: "character",
+          type: "Character",
           position: [random(0, 800), 0, random(0, 600)],
           orientation: random(-pi(), pi(), 0.1),
           movement: {},
@@ -39,7 +39,7 @@ export default {
     }),
 
     game: {
-      type: "game",
+      type: "Game",
       multiplayer: {
         // serverUrl: "ws://localhost:3000",
         serverUrl: "wss://inglorious-server.onrender.com",

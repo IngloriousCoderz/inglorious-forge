@@ -13,17 +13,17 @@ export interface Task {
 
 // Define your entity types
 export interface FormEntity extends BaseEntity {
-  type: "form"
+  type: "Form"
   value: string
 }
 
 export interface ListEntity extends BaseEntity {
-  type: "list"
+  type: "List"
   tasks: Task[]
 }
 
 export interface FooterEntity extends BaseEntity {
-  type: "footer"
+  type: "Footer"
   activeFilter: Filter
 }
 

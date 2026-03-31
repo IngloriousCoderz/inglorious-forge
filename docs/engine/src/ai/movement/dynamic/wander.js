@@ -11,7 +11,7 @@ import { v } from "@inglorious/utils/v.js"
 
 export default {
   types: {
-    character: [
+    Character: [
       {
         render: renderCharacter,
         update(entity, dt, api) {
@@ -31,7 +31,7 @@ export default {
       },
     ],
 
-    form: {
+    Form: {
       fieldChange(entity, { id, value }) {
         entity.groups.wander.fields[id].value = value
       },
@@ -40,12 +40,12 @@ export default {
 
   entities: {
     game: {
-      type: "game",
+      type: "Game",
       devMode: true,
     },
 
     character: {
-      type: "character",
+      type: "Character",
       maxAcceleration: 1000,
       maxSpeed: 250,
       maxAngularSpeed: pi() / 4,
@@ -56,7 +56,7 @@ export default {
     },
 
     parameters: {
-      type: "form",
+      type: "Form",
       position: v(800 - 352, 0, 600),
       groups: {
         wander: {

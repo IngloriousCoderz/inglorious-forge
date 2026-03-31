@@ -1,1 +1,1 @@
-export { bottomNavigation } from "./template.js"
+export { BottomNavigation } from "./template.js"

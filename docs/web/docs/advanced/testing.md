@@ -17,17 +17,17 @@ Execute a handler as a pure function (with Mutative) and get back the new state 
 
 ```javascript
 import { trigger } from "@inglorious/web/test"
-import { counter } from "./types"
+import { Counter } from "./types"
 
 test("increment adds to count", () => {
   const { entity, events } = trigger(
-    { type: "counter", id: "counter1", count: 10 },
-    counter.increment,
+    { count: 10 }, // base state
+    Counter.increment, // event handler
     5, // payload (optional)
   )
 
-  expect(entity.count).toBe(15)
-  expect(events).toEqual([])
+  expect(entity.count).toBe(15) // new state
+  expect(events).toEqual([]) // queued events
 })
 ```
 
@@ -52,7 +52,7 @@ test("counter renders value", () => {
 
 ```javascript
 test("increment increments count", () => {
-  const { entity } = trigger({ count: 0 }, counter.increment)
+  const { entity } = trigger({ count: 0 }, Counter.increment)
 
   expect(entity.count).toBe(1)
 })
@@ -62,7 +62,7 @@ test("increment increments count", () => {
 
 ```javascript
 test("add adds to count", () => {
-  const { entity } = trigger({ count: 10 }, counter.add, 5)
+  const { entity } = trigger({ count: 10 }, Counter.add, 5)
 
   expect(entity.count).toBe(15)
 })
@@ -74,7 +74,7 @@ test("add adds to count", () => {
 test("fetchData sets loading state", async () => {
   const { entity } = await trigger(
     { isLoading: false, data: null },
-    dataFetcher.fetchData,
+    DataFetcher.fetchData,
   )
 
   // Check loading state, data, etc.
@@ -88,7 +88,7 @@ test("fetchData sets loading state", async () => {
 test("delete dispatches notification", () => {
   const { events } = trigger(
     { id: "todo-1", title: "Buy milk" },
-    todo.delete,
+    Todo.delete,
     null,
     { notify: jest.fn() },
   )
@@ -108,7 +108,7 @@ import { render } from "@inglorious/web/test"
 
 test("greeting displays name", () => {
   const entity = { name: "Alice" }
-  const template = greeting.render(entity, { notify: jest.fn() })
+  const template = Greeting.render(entity, { notify: jest.fn() })
   const html = render(template)
 
   expect(html).toContain("Hello, Alice")
@@ -120,7 +120,7 @@ test("greeting displays name", () => {
 ```javascript
 test("shows login button when not logged in", () => {
   const entity = { isLoggedIn: false }
-  const template = user.render(entity, { notify: jest.fn() })
+  const template = User.render(entity, { notify: jest.fn() })
   const html = render(template)
 
   expect(html).toContain("Login")
@@ -129,7 +129,7 @@ test("shows login button when not logged in", () => {
 
 test("shows logout button when logged in", () => {
   const entity = { isLoggedIn: true, name: "Alice" }
-  const template = user.render(entity, { notify: jest.fn() })
+  const template = User.render(entity, { notify: jest.fn() })
   const html = render(template)
 
   expect(html).toContain("Logout")
@@ -148,7 +148,7 @@ test("todo list renders all items", () => {
     ],
   }
 
-  const template = todoList.render(entity, { notify: jest.fn() })
+  const template = TodoList.render(entity, { notify: jest.fn() })
   const html = render(template)
 
   expect(html).toContain("Buy milk")
@@ -163,8 +163,8 @@ test("todo list renders all items", () => {
 ```javascript
 test("user workflow", () => {
   const store = createStore({
-    types: { counter },
-    entities: { counter: { type: "counter", count: 0 } },
+    types: { Counter },
+    entities: { counter: { type: "Counter", count: 0 } },
   })
 
   // Dispatch event
@@ -183,21 +183,21 @@ test("user workflow", () => {
 test("cart and notification interaction", () => {
   const store = createStore({
     types: {
-      cart: {
+      Cart: {
         addItem(entity, itemId) {
           entity.items.push(itemId)
           entity.api.notify("itemAdded", { itemId })
         },
       },
-      notification: {
+      Notification: {
         itemAdded(entity, { itemId }) {
           entity.message = `Added ${itemId}`
         },
       },
     },
     entities: {
-      cart: { type: "cart", items: [] },
-      notification: { type: "notification", message: "" },
+      cart: { type: "Cart", items: [] },
+      notification: { type: "Notification", message: "" },
     },
   })
 
@@ -214,29 +214,31 @@ test("cart and notification interaction", () => {
 
 ```javascript
 test("logging behavior logs events", () => {
-  const logged = []
+  const loggedEvents = []
 
-  const logging = (type) => ({
+  const withLogging = (type) => ({
     increment(entity, payload, api) {
-      logged.push("increment")
+      loggedEvents.push("increment")
       type.increment(entity, payload, api)
     },
   })
 
-  const testType = [
+  const TestType = [
     {
       increment(e) {
         e.count++
       },
     },
-    logging,
+    withLogging,
   ]
 
-  const baseType = testType[0]
-  const { entity } = trigger({ count: 0 }, baseType.increment)
+  const { entity } = trigger(
+    { count: 0 },
+    TestType.find((t) => t.increment).increment,
+  )
 
   expect(entity.count).toBe(1)
-  expect(logged).toContain("increment")
+  expect(loggedEvents).toContain("increment")
 })
 ```
 
@@ -255,17 +257,21 @@ test("auth guard blocks unauthenticated access", () => {
   })
 
   const mockApi = { notify: jest.fn() }
-  const baseType = {
+  const BaseType = {
     navigate(e, r) {
       e.route = r
     },
   }
-  const guardedType = [baseType, requireAuth]
+  const GuardedType = [BaseType, requireAuth]
 
   localStorage.removeItem("user")
 
-  const handler = guardedType.find((t) => t.navigate).navigate
-  trigger({ route: "" }, handler, "/admin", mockApi)
+  trigger(
+    { route: "" },
+    GuardedType.find((t) => t.navigate).navigate,
+    "/admin",
+    mockApi,
+  )
 
   expect(mockApi.notify).toHaveBeenCalledWith("navigate", "/login")
 })
@@ -274,16 +280,16 @@ test("auth guard blocks unauthenticated access", () => {
 ## Form Testing
 
 ```javascript
-import { form } from "@inglorious/web/form"
+import { Form } from "@inglorious/web/form"
 
 test("form validates email", () => {
   const { entity, events } = trigger(
     {
-      type: "form",
+      type: "Form",
       initialValues: { email: "" },
       values: { email: "" },
     },
-    form.fieldChange,
+    Form.fieldChange,
     { path: "email", value: "invalid" },
   )
 
@@ -293,11 +299,11 @@ test("form validates email", () => {
 test("form resets to initial values", () => {
   const { entity } = trigger(
     {
-      type: "form",
+      type: "Form",
       initialValues: { email: "test@example.com" },
       values: { email: "changed@example.com" },
     },
-    form.reset,
+    Form.reset,
   )
 
   expect(entity.values.email).toBe("test@example.com")
@@ -308,7 +314,7 @@ test("form resets to initial values", () => {
 
 ```javascript
 test("custom list renders rows", () => {
-  const listType = {
+  const List = {
     render(entity) {
       return html`
         <ul>
@@ -325,7 +331,7 @@ test("custom list renders rows", () => {
     ],
   }
 
-  const template = listType.render(entity, { notify: () => {} })
+  const template = List.render(entity)
   const output = render(template)
 
   expect(output).toContain("Alice")
@@ -363,12 +369,12 @@ test("counter increments", () => {
 import { trigger, render } from "@inglorious/web/test"
 
 test("counter increments", () => {
-  const { entity } = trigger({ count: 0 }, counter.increment)
+  const { entity } = trigger({ count: 0 }, Counter.increment)
   expect(entity.count).toBe(1)
 })
 
 test("counter renders", () => {
-  const html = render(counter.render({ count: 1 }, { notify: jest.fn() }))
+  const html = render(Counter.render({ count: 1 }, { notify: jest.fn() }))
   expect(html).toContain("Count: 1")
 })
 ```

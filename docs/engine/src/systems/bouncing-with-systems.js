@@ -8,18 +8,18 @@ export default {
   systems: [delayedJumpSystem()],
 
   types: {
-    ball: [{ render: renderCircle }, jumpable()],
-    platform: [{ render: renderRectangle }],
+    Ball: [{ render: renderCircle }, jumpable()],
+    Platform: [{ render: renderRectangle }],
   },
 
   entities: {
     game: {
-      type: "game",
+      type: "Game",
       devMode: true,
     },
 
     ball1: {
-      type: "ball",
+      type: "Ball",
       position: v(200, 64, 0),
       backgroundColor: "#393664",
       maxJump: 250,
@@ -28,7 +28,7 @@ export default {
     },
 
     ball2: {
-      type: "ball",
+      type: "Ball",
       position: v(400, 64, 0),
       backgroundColor: "#643639",
       maxJump: 250,
@@ -37,7 +37,7 @@ export default {
     },
 
     ball3: {
-      type: "ball",
+      type: "Ball",
       position: v(600, 64, 0),
       backgroundColor: "#366439",
       maxJump: 250,
@@ -46,7 +46,7 @@ export default {
     },
 
     ground: {
-      type: "platform",
+      type: "Platform",
       position: v(400, 24, 0),
       size: v(800, 48, 0),
       backgroundColor: "#654321",

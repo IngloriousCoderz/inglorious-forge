@@ -1,4 +1,4 @@
-export default function render(entity, api) {
+export function render(entity, api) {
   return (
     <form
       onSubmit={(event) => {

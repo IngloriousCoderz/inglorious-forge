@@ -24,4 +24,4 @@ export interface RadioGroupType {
   render(props: RadioGroupProps): TemplateResult
 }
 
-export declare const radioGroup: RadioGroupType
+export declare const RadioGroup: RadioGroupType

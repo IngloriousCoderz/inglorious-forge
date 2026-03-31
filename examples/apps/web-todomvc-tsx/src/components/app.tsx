@@ -1,4 +1,8 @@
-export const app = {
+import { Footer } from "./footer/footer"
+import { Form } from "./form/form"
+import { List } from "./list/list"
+
+export const App = {
   render() {
     return (
       <>

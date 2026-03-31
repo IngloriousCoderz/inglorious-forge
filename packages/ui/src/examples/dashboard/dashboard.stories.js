@@ -72,6 +72,6 @@ export const Vue = {
   }),
   args: {
     id: "dashboard",
-    type: "dashboard",
+    type: "Dashboard",
   },
 }

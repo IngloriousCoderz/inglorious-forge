@@ -30,4 +30,4 @@ export interface MenuType {
   renderItem(item: MenuItem, index: number, props: MenuProps): TemplateResult
 }
 
-export declare const menu: MenuType
+export declare const Menu: MenuType

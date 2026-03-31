@@ -41,7 +41,7 @@ The scaffolding created a simple app that demonstrates Inglorious Web's key stre
 ```javascript
 import { html } from "@inglorious/web"
 
-export const message = {
+export const Message = {
   click(entity) {
     entity.isUpperCase = !entity.isUpperCase
   },
@@ -65,15 +65,15 @@ This defines the **behavior** for all `message` entities:
 ```javascript
 export const entities = {
   message1: {
-    type: "message",
+    type: "Message",
     who: "world",
   },
   message2: {
-    type: "message",
+    type: "Message",
     who: "wide",
   },
   message3: {
-    type: "message",
+    type: "Message",
     who: "web",
   },
 }
@@ -88,7 +88,7 @@ This is where Inglorious Web shines - creating multiple instances is just declar
 ```javascript
 import { html } from "@inglorious/web"
 
-export const app = {
+export const App = {
   render(api) {
     return html`<h1>
       ${api.render("message1")}, ${api.render("message2")},
@@ -128,7 +128,7 @@ Entities are plain JavaScript objects representing UI state:
 ```javascript
 {
   id: "message1",     // From the entities object key
-  type: "message",    // References the type definition
+  type: "Message",    // References the type definition
   who: "world",       // Your custom state
   isUpperCase: true   // Added by the click handler
 }
@@ -139,7 +139,7 @@ Entities are plain JavaScript objects representing UI state:
 Types define **shared behavior** for entities:
 
 ```javascript
-const message = {
+const Message = {
   // Event handler
   click(entity) {
     entity.isUpperCase = !entity.isUpperCase
@@ -173,9 +173,9 @@ Props passed at render time, instances managed by framework.
 ```javascript
 // Declare instances explicitly
 entities: {
-  message1: { type: "message", who: "world" },
-  message2: { type: "message", who: "wide" },
-  message3: { type: "message", who: "web" },
+  message1: { type: "Message", who: "world" },
+  message2: { type: "Message", who: "wide" },
+  message3: { type: "Message", who: "web" },
 }
 
 // Render by ID
@@ -223,7 +223,7 @@ Let's add a "reset all" feature.
 **1. Add a reset handler to the message type** (`src/message/message.js`):
 
 ```javascript
-export const message = {
+export const Message = {
   click(entity) {
     entity.isUpperCase = !entity.isUpperCase
   },
@@ -245,7 +245,7 @@ export const message = {
 **2. Add a button in the app** (`src/app.js`):
 
 ```javascript
-export const app = {
+export const App = {
   render(api) {
     return html`
       <div>
@@ -297,7 +297,7 @@ Want to skip the build step? Create a single HTML file:
       import { createStore, mount, html } from "@inglorious/web"
 
       const types = {
-        message: {
+        Message: {
           click(entity) {
             entity.isUpperCase = !entity.isUpperCase
           },
@@ -314,9 +314,9 @@ Want to skip the build step? Create a single HTML file:
       }
 
       const entities = {
-        message1: { type: "message", who: "world" },
-        message2: { type: "message", who: "wide" },
-        message3: { type: "message", who: "web" },
+        message1: { type: "Message", who: "world" },
+        message2: { type: "Message", who: "wide" },
+        message3: { type: "Message", who: "web" },
       }
 
       const store = createStore({ types, entities })

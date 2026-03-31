@@ -1,7 +1,7 @@
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
-import { checkbox } from "."
+import { Checkbox } from "."
 
 describe("checkbox", () => {
   it("renders label and checkbox", () => {
@@ -13,7 +13,7 @@ describe("checkbox", () => {
     }
     const container = document.createElement("div")
 
-    render(checkbox.render(props), container)
+    render(Checkbox.render(props), container)
 
     expect(container.querySelector(".iw-checkbox-label").textContent).toBe(
       "Accept",
@@ -35,7 +35,7 @@ describe("checkbox", () => {
     }
     const container = document.createElement("div")
 
-    render(checkbox.render(props), container)
+    render(Checkbox.render(props), container)
 
     const input = container.querySelector("input")
     input.checked = true
@@ -54,7 +54,7 @@ describe("checkbox", () => {
     }
     const container = document.createElement("div")
 
-    render(checkbox.render(props), container)
+    render(Checkbox.render(props), container)
 
     const root = container.querySelector(".iw-checkbox")
     const input = container.querySelector("input")

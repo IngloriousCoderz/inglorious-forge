@@ -73,7 +73,7 @@ import { createStore, mount, html } from "@inglorious/web"
 
 // Define entity types
 const types = {
-  todoApp: {
+  TodoApp: {
     addTodo(entity, title) {
       if (title.trim()) {
         const id = Date.now()
@@ -155,7 +155,7 @@ const store = createStore({
   types,
   entities: {
     todoApp: {
-      type: "todoApp",
+      type: "TodoApp",
       input: "",
       todos: {},
     },
@@ -189,7 +189,7 @@ Then visit `http://localhost:8000` and you have a working todo app! 🎉
 
 ```javascript
 const types = {
-  todoApp: {
+  TodoApp: {
     // Event handlers (mutate state)
     addTodo(entity, title) {
       /* ... */
@@ -214,7 +214,7 @@ const store = createStore({
   entities: {
     todoApp: {
       // Entity with initial state
-      type: "todoApp",
+      type: "TodoApp",
       input: "",
       todos: {},
     },
@@ -240,7 +240,7 @@ When state changes:
 
 ```javascript
 const types = {
-  todoApp: {
+  TodoApp: {
     // ... existing methods
 
     setFilter(entity, filter) {
@@ -284,7 +284,7 @@ const types = {
 
 ```javascript
 const types = {
-  todoApp: {
+  TodoApp: {
     create(entity) {
       // Load from localStorage
       const saved = localStorage.getItem("todos")
@@ -338,7 +338,7 @@ For larger apps, break into multiple entities:
 
 ```javascript
 const types = {
-  app: {
+  App: {
     render(entity, api) {
       return html`
         <div>
@@ -348,13 +348,13 @@ const types = {
       `
     },
   },
-  header: {
+  Header: {
     /* ... */
   },
-  todoList: {
+  TodoList: {
     /* ... */
   },
-  footer: {
+  Footer: {
     /* ... */
   },
 }

@@ -1,6 +1,6 @@
 import { html } from "@inglorious/web"
 
-export const app = {
+export const App = {
   render(api) {
     return html`<div class="app">
       <div class="header">

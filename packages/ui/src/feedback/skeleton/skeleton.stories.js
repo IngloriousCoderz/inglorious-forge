@@ -1,10 +1,10 @@
 import { createRender } from "../../stories/notifyStory.js"
-import { skeleton } from "."
+import { Skeleton } from "."
 
 export default {
   title: "Feedback/Skeleton",
   tags: ["autodocs"],
-  render: createRender(skeleton),
+  render: createRender(Skeleton),
   argTypes: {
     variant: { control: "select", options: ["text", "rect", "circle"] },
     width: { control: "text" },

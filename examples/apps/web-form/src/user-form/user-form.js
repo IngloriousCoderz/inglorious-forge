@@ -1,5 +1,5 @@
 import { html } from "@inglorious/web"
-import { form } from "@inglorious/web/form"
+import { Form } from "@inglorious/web/form"
 
 import { input } from "./fields/input"
 import { radio } from "./fields/radio"
@@ -16,8 +16,8 @@ import {
   validateStreet,
 } from "./validation"
 
-export const userForm = {
-  ...form,
+export const UserForm = {
+  ...Form,
 
   submit(entity, _, api) {
     if (!entity.isValid) {

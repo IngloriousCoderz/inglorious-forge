@@ -1,16 +1,7 @@
 import type { AppState } from "../../types"
 
 export const entities: AppState = {
-  form: {
-    type: "form",
-    value: "",
-  },
-  list: {
-    type: "list",
-    tasks: [],
-  },
-  footer: {
-    type: "footer",
-    activeFilter: "all",
-  },
+  form: { type: "Form", value: "" },
+  list: { type: "List", tasks: [] },
+  footer: { type: "Footer", activeFilter: "all" },
 }

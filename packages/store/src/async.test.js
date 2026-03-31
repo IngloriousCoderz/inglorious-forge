@@ -21,7 +21,7 @@ describe("handleAsync", () => {
       const asyncHandlers = handleAsync("fetchData", handlers)
 
       const entity = {
-        type: "dataFetcher",
+        type: "DataFetcher",
         id: "fetcher1",
         result: null,
         completed: false,
@@ -95,7 +95,7 @@ describe("handleAsync", () => {
       const asyncHandlers = handleAsync("fetchData", handlers)
 
       const entity = {
-        type: "dataFetcher",
+        type: "DataFetcher",
         id: "fetcher1",
         error: null,
         completed: false,
@@ -154,7 +154,7 @@ describe("handleAsync", () => {
       const asyncHandlers = handleAsync("fetchData", handlers)
 
       const entity = {
-        type: "dataFetcher",
+        type: "DataFetcher",
         id: "fetcher1",
         loading: false,
         data: null,
@@ -207,7 +207,7 @@ describe("handleAsync", () => {
 
       const asyncHandlers = handleAsync("fetchData", handlers)
 
-      const entity = { type: "dataFetcher", id: "fetcher1" }
+      const entity = { type: "DataFetcher", id: "fetcher1" }
       const api = createMockApi({ fetcher1: entity })
 
       trigger(entity, asyncHandlers.fetchData, {}, api)
@@ -227,13 +227,13 @@ describe("handleAsync", () => {
         scope: "type",
       })
 
-      const entity = { type: "dataFetcher", id: "fetcher1" }
+      const entity = { type: "DataFetcher", id: "fetcher1" }
       const api = createMockApi({ fetcher1: entity })
 
       trigger(entity, asyncHandlers.fetchData, {}, api)
 
       expect(api.getEvents()).toContainEqual({
-        type: "dataFetcher:fetchDataRun",
+        type: "DataFetcher:fetchDataRun",
         payload: {},
       })
     })
@@ -247,7 +247,7 @@ describe("handleAsync", () => {
         scope: "global",
       })
 
-      const entity = { type: "dataFetcher", id: "fetcher1" }
+      const entity = { type: "DataFetcher", id: "fetcher1" }
       const api = createMockApi({ fetcher1: entity })
 
       trigger(entity, asyncHandlers.fetchData, {}, api)
@@ -270,7 +270,7 @@ describe("handleAsync", () => {
 
       const asyncHandlers = handleAsync("fetchData", handlers)
 
-      const entity = { type: "dataFetcher", id: "fetcher1", value: 0 }
+      const entity = { type: "DataFetcher", id: "fetcher1", value: 0 }
       const api = createMockApi({ fetcher1: entity })
 
       await asyncHandlers.fetchDataRun(entity, {}, api)
@@ -289,7 +289,7 @@ describe("handleAsync", () => {
 
       const asyncHandlers = handleAsync("fetchData", handlers)
 
-      const entity = { type: "dataFetcher", id: "fetcher1" }
+      const entity = { type: "DataFetcher", id: "fetcher1" }
       const api = createMockApi({ fetcher1: entity })
 
       await asyncHandlers.fetchDataRun(entity, {}, api)
@@ -310,7 +310,7 @@ describe("handleAsync", () => {
       const asyncHandlers = handleAsync("fetchData", handlers)
 
       const entity = {
-        type: "dataFetcher",
+        type: "DataFetcher",
         id: "fetcher1",
         completed: false,
       }
@@ -367,7 +367,7 @@ describe("handleAsync", () => {
       const asyncHandlers = handleAsync("fetchTodos", handlers)
 
       const entity = {
-        type: "todoList",
+        type: "TodoList",
         id: "todos1",
         status: "idle",
         todos: [],
@@ -460,7 +460,7 @@ describe("handleAsync", () => {
       const asyncHandlers = handleAsync("fetchTodos", handlers)
 
       const entity = {
-        type: "todoList",
+        type: "TodoList",
         id: "todos1",
         status: "idle",
         error: null,
@@ -561,7 +561,7 @@ describe("handleAsync", () => {
 
       const asyncHandlers = handleAsync("process", handlers)
 
-      const entity = { type: "processor", id: "proc1" }
+      const entity = { type: "Processor", id: "proc1" }
       const api = createMockApi({ proc1: entity })
 
       const originalPayload = { value: 10, extra: "data" }
@@ -594,7 +594,7 @@ describe("handleAsync", () => {
 
       const asyncHandlers = handleAsync("fetchData", handlers)
 
-      const entity = { type: "dataFetcher", id: "fetcher1" }
+      const entity = { type: "DataFetcher", id: "fetcher1" }
       const api = createMockApi({ fetcher1: entity })
 
       // Run should complete and dispatch finally despite success handler error
@@ -627,7 +627,7 @@ describe("handleAsync", () => {
       expect(type.operation2).toBeDefined()
       expect(type.operation2Run).toBeDefined()
 
-      const entity = { type: "multi", id: "multi1" }
+      const entity = { type: "Multi", id: "multi1" }
       const api = createMockApi({ multi1: entity })
 
       await type.operation1Run(entity, {}, api)

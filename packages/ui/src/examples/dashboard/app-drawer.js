@@ -1,11 +1,11 @@
 import { html } from "@inglorious/web"
 
-import { avatar } from "../../data-display/avatar"
-import { badge } from "../../data-display/badge"
-import { list } from "../../data-display/list"
-import { materialIcon } from "../../data-display/material-icon"
-import { flex } from "../../layout/flex"
-import { drawer } from "../../navigation/drawer"
+import { Avatar } from "../../data-display/avatar"
+import { Badge } from "../../data-display/badge"
+import { List } from "../../data-display/list"
+import { MaterialIcon } from "../../data-display/material-icon"
+import { Flex } from "../../layout/flex"
+import { Drawer } from "../../navigation/drawer"
 
 export const AppDrawer = {
   create(entity) {
@@ -32,23 +32,23 @@ export const AppDrawer = {
   render(entity, api) {
     const items = mapItemsForRender(entity.items ?? [], api)
 
-    return drawer.render({
+    return Drawer.render({
       ...entity,
       anchor: "left",
       onClose: () => api.notify(`#${entity.id}:toggle`),
       onCollapseToggle: () => api.notify(`#${entity.id}:collapseToggle`),
-      title: flex.render({
+      title: Flex.render({
         align: "center",
         gap: "sm",
         padding: "md",
         className: "iw-dashboard-brand",
         children: [
-          avatar.render({ src: "/transparent.png", shape: "square" }),
+          Avatar.render({ src: "/transparent.png", shape: "square" }),
           html`<span class="iw-dashboard-brand-title">Inglorious UI</span>`,
         ],
       }),
       children: html`
-        ${list.render({
+        ${List.render({
           isInset: true,
           padding: "sm",
           items,
@@ -67,11 +67,11 @@ function mapItemsForRender(items, api) {
     const mappedItem = { ...item }
 
     if (item.icon) {
-      mappedItem.icon = materialIcon.render({ name: item.icon, size: "lg" })
+      mappedItem.icon = MaterialIcon.render({ name: item.icon, size: "lg" })
     }
 
     if (item.badge) {
-      mappedItem.action = badge.render(item.badge)
+      mappedItem.action = Badge.render(item.badge)
     }
 
     if (item.href) {

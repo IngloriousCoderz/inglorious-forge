@@ -1,13 +1,13 @@
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
-import { pagination } from "."
+import { Pagination } from "."
 
 describe("pagination", () => {
   it("renders pages and controls", () => {
     const container = document.createElement("div")
 
-    render(pagination.render({ page: 2, count: 5 }), container)
+    render(Pagination.render({ page: 2, count: 5 }), container)
 
     expect(
       container.querySelectorAll(".iw-pagination-item").length,
@@ -17,7 +17,7 @@ describe("pagination", () => {
   it("marks current page", () => {
     const container = document.createElement("div")
 
-    render(pagination.render({ page: 3, count: 5 }), container)
+    render(Pagination.render({ page: 3, count: 5 }), container)
 
     expect(
       container.querySelector(".iw-pagination-item-current").textContent.trim(),
@@ -29,7 +29,7 @@ describe("pagination", () => {
     const container = document.createElement("div")
 
     render(
-      pagination.render({
+      Pagination.render({
         page: 1,
         count: 5,
         onChange: (value) => (nextPage = value),

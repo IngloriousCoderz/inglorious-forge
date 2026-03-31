@@ -1,12 +1,12 @@
 import { render } from "@inglorious/web/test"
 
 import { createRender } from "../../stories/notifyStory.js"
-import { divider } from "."
+import { Divider } from "."
 
 export default {
   title: "Data Display/Divider",
   tags: ["autodocs"],
-  render: createRender(divider),
+  render: createRender(Divider),
   argTypes: {
     orientation: {
       control: "select",

@@ -15,7 +15,7 @@ export default {
   types: {
     ...controls("character"),
 
-    character: [
+    Character: [
       {
         render: renderCharacter,
 
@@ -76,7 +76,7 @@ export default {
       clamped(),
     ],
 
-    form: {
+    Form: {
       fieldChange(entity, { id, value }) {
         entity.groups.matchVelocity.fields[id].value = value
       },
@@ -85,7 +85,7 @@ export default {
 
   entities: {
     game: {
-      type: "game",
+      type: "Game",
       devMode: true,
     },
 
@@ -97,7 +97,7 @@ export default {
     }),
 
     character: {
-      type: "character",
+      type: "Character",
       maxAcceleration: 1000,
       maxSpeed: 250,
       position: v(400, 0, 300),
@@ -107,7 +107,7 @@ export default {
     },
 
     parameters: {
-      type: "form",
+      type: "Form",
       position: v(800 - 328, 0, 600),
       groups: {
         matchVelocity: {

@@ -70,7 +70,7 @@ export async function dev(options = {}) {
       // Generate store for THIS request (to pick up changes)
       const store = await generateStore(pages, mergedOptions, loader)
 
-      const entity = store._api.getEntity(page.moduleName)
+      const [entity] = store._api.getEntities(page.moduleName)
       if (page.locale) {
         entity.locale = page.locale
       }

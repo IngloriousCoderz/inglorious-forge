@@ -29,7 +29,7 @@ class MyCellComponent {
 
 export const entities = {
   agGrid: {
-    type: "grid",
+    type: "Grid",
     title: "Sales Data",
     tickCount: 0,
     rowIdField: "id",

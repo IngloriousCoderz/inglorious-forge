@@ -1,10 +1,10 @@
 import { createRender } from "../../stories/notifyStory.js"
-import { progress } from "."
+import { Progress } from "."
 
 export default {
   title: "Feedback/Progress",
   tags: ["autodocs"],
-  render: createRender(progress),
+  render: createRender(Progress),
   argTypes: {
     variant: { control: "select", options: ["linear", "circular"] },
     value: { control: "number" },

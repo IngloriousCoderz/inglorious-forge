@@ -30,4 +30,4 @@ export interface SelectType {
   render(props: SelectProps): TemplateResult
 }
 
-export declare const select: SelectType
+export declare const Select: SelectType

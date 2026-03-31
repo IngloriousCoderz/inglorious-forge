@@ -14,7 +14,7 @@ Types can be defined as **arrays of behaviors** that wrap and extend each other:
 ```javascript
 const types = {
   // Simple type
-  counter: {
+  Counter: {
     increment(entity) {
       entity.count++
     },
@@ -24,7 +24,7 @@ const types = {
   },
 
   // Composed type (array of behaviors)
-  loggedCounter: [baseCounter, loggingBehavior, analyticsBehavior],
+  LoggedCounter: [BaseCounter, loggingBehavior, analyticsBehavior],
 }
 ```
 
@@ -39,7 +39,7 @@ Each behavior in the array can:
 
 ```javascript
 // Base type
-const counter = {
+const Counter = {
   increment(entity) {
     entity.count++
   },
@@ -49,7 +49,7 @@ const counter = {
 }
 
 // Logging behavior
-const logging = (type) => ({
+const withLogging = (type) => ({
   increment(entity, payload, api) {
     console.log(`Incrementing counter ${entity.id}`)
     // Call the wrapped type's handler
@@ -60,7 +60,7 @@ const logging = (type) => ({
 
 // Compose
 const types = {
-  counter: [counter, logging],
+  Counter: [Counter, withLogging],
 }
 ```
 
@@ -74,7 +74,7 @@ When you dispatch `#counter:increment`:
 
 ```javascript
 // Base page type
-const adminPage = {
+const AdminPage = {
   navigate(entity, route) {
     entity.currentRoute = route
   },
@@ -118,13 +118,13 @@ const requireAdmin = (type) => ({
 // Compose guards
 const types = {
   // Public page, no guards
-  publicPage: page,
+  PublicPage: Page,
 
   // Authenticated page
-  userProfile: [page, requireAuth],
+  UserProfile: [Page, requireAuth],
 
   // Admin-only page
-  adminPanel: [page, requireAuth, requireAdmin],
+  AdminPanel: [Page, requireAuth, requireAdmin],
 }
 ```
 
@@ -138,9 +138,9 @@ Guards execute in order:
 ## Pattern: Analytics
 
 ```javascript
-const analytics = (type) => ({
-  // Intercept all events
-  "*": function (entity, payload, api) {
+const withAnalytics = (type) => ({
+  // Intercept event
+  increment(entity, payload, api) {
     // Track event
     track({
       entity: entity.type,
@@ -149,19 +149,19 @@ const analytics = (type) => ({
     })
 
     // Call original handler
-    type[arguments.callee.name]?.(entity, payload, api)
+    type.increment?.(entity, payload, api)
   },
 })
 
 const types = {
-  trackedCounter: [counter, analytics],
+  TrackedCounter: [Counter, withAnalytics],
 }
 ```
 
 ## Pattern: Validation
 
 ```javascript
-const validated = (type) => ({
+const withValidation = (type) => ({
   setEmail(entity, email, api) {
     // Validate before calling handler
     if (!email.includes("@")) {
@@ -174,7 +174,7 @@ const validated = (type) => ({
 })
 
 const types = {
-  form: [baseForm, validated],
+  Form: [BaseForm, withValidation],
 }
 ```
 
@@ -201,7 +201,7 @@ const withSnapshots = (type) => ({
 })
 
 const types = {
-  undoableCounter: [counter, withSnapshots],
+  UndoableCounter: [Counter, withSnapshots],
 }
 ```
 
@@ -228,7 +228,7 @@ const debounced = (type) => {
 }
 
 const types = {
-  autosaveForm: [form, debounced],
+  AutosaveForm: [Form, debounced],
 }
 ```
 
@@ -238,28 +238,28 @@ Chain multiple behaviors:
 
 ```javascript
 const types = {
-  advancedForm: [form, logging, validation, analytics, debounced],
+  AdvancedForm: [Form, withLogging, withValidation, withAnalytics, debounced],
 }
 ```
 
 Execution order (for a `fieldChange` event):
 
-1. `logging` logs start
-2. `validation` validates
-3. `analytics` tracks
+1. `withLogging` logs start
+2. `withValidation` validates
+3. `withAnalytics` tracks
 4. `debounced` debounces
-5. `form` (base type) executes
+5. `Form` (base type) executes
 6. `debounced` finishes timeout setup
-7. `analytics` completes tracking
-8. `validation` logs result
-9. `logging` logs end
+7. `withAnalytics` completes tracking
+8. `withValidation` logs result
+9. `withLogging` logs end
 
 ## Partial Behavior
 
 A behavior doesn't need to intercept all events:
 
 ```javascript
-const logging = (type) => ({
+const withLogging = (type) => ({
   // Only intercept increment
   increment(entity, payload, api) {
     console.log("Incrementing")
@@ -325,29 +325,30 @@ Test behaviors independently:
 import { trigger } from "@inglorious/web/test"
 
 test("logging logs events", () => {
-  const logged = []
-  const logging = (type) => ({
+  const loggedEvents = []
+
+  const withLogging = (type) => ({
     increment(entity, payload, api) {
-      logged.push("increment")
+      loggedEvents.push("increment")
       type.increment(entity, payload, api)
     },
   })
 
-  const testType = [
+  const TestType = [
     {
       increment(e) {
         e.count++
       },
     },
-    logging,
+    withLogging,
   ]
 
   const { entity } = trigger(
     { count: 0 },
-    testType.find((t) => t.increment).increment,
+    TestType.find((t) => t.increment).increment,
   )
 
-  expect(logged).toContain("increment")
+  expect(loggedEvents).toContain("increment")
   expect(entity.count).toBe(1)
 })
 ```

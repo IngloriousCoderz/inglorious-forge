@@ -6,7 +6,7 @@ import classes from "./footer.module.css"
 
 const SINGLE_TASK = 1
 
-export const footer: FooterType = {
+export const Footer: FooterType = {
   create(entity) {
     entity.activeFilter = "all"
   },

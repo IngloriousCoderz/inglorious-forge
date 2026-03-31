@@ -1,12 +1,12 @@
 import { withMotion } from "@inglorious/motion"
 
 import * as handlers from "./handlers.js"
-import { render } from "./template.js"
+import * as renderers from "./template.js"
 
-const motionPanelBase = { ...handlers, render }
+const MotionPanelBase = { ...handlers, ...renderers }
 
-export const motionPanel = [
-  motionPanelBase,
+export const MotionPanel = [
+  MotionPanelBase,
   withMotion({
     classPrefix: "demo-motion",
     initial: "visible",

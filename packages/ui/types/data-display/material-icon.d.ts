@@ -12,4 +12,4 @@ export interface MaterialIconType {
   render(props: MaterialIconProps): TemplateResult
 }
 
-export declare const materialIcon: MaterialIconType
+export declare const MaterialIcon: MaterialIconType

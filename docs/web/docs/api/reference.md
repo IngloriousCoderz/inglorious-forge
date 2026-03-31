@@ -42,7 +42,7 @@ interface Store {
 ```javascript
 const store = createStore({
   types: {
-    counter: {
+    Counter: {
       increment: (entity) => {
         entity.count++
       },
@@ -50,7 +50,7 @@ const store = createStore({
     },
   },
   entities: {
-    counter: { type: "counter", count: 0 },
+    counter: { type: "Counter", count: 0 },
   },
 })
 ```

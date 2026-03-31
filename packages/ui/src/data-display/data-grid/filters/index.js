@@ -1,21 +1,21 @@
 import { choose, html } from "@inglorious/web"
 
-import { inputFilter } from "./input.js"
-import { rangeFilter } from "./range.js"
-import { selectFilter } from "./select.js"
+import { InputFilter } from "./input.js"
+import { RangeFilter } from "./range.js"
+import { SelectFilter } from "./select.js"
 
-export const filters = {
+export const Filters = {
   render(entity, column) {
     return html`${choose(
       column.filter.type,
       [
-        ["range", () => rangeFilter.render(entity, column)],
-        ["date", () => rangeFilter.render(entity, column)],
-        ["time", () => rangeFilter.render(entity, column)],
-        ["datetime", () => rangeFilter.render(entity, column)],
-        ["select", () => selectFilter.render(entity, column)],
+        ["range", () => RangeFilter.render(entity, column)],
+        ["date", () => RangeFilter.render(entity, column)],
+        ["time", () => RangeFilter.render(entity, column)],
+        ["datetime", () => RangeFilter.render(entity, column)],
+        ["select", () => SelectFilter.render(entity, column)],
       ],
-      () => inputFilter.render(entity, column),
+      () => InputFilter.render(entity, column),
     )}`
   },
 }

@@ -1,6 +1,6 @@
 import { html } from "@inglorious/web"
 
-export const message = {
+export const Message = {
   click(entity) {
     entity.isUpperCase = !entity.isUpperCase
   },

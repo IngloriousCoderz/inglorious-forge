@@ -1,10 +1,10 @@
 import { createRender } from "../../stories/notifyStory.js"
-import { stepper } from "."
+import { Stepper } from "."
 
 export default {
   title: "Navigation/Stepper",
   tags: ["autodocs"],
-  render: createRender(stepper),
+  render: createRender(Stepper),
   argTypes: {
     steps: { control: "object", description: "Ordered step definitions." },
     activeStep: {

@@ -16,20 +16,20 @@ Both use the same **@inglorious/store** with entities, types, and events:
 const store = createStore({
   types: {
     // Game entities
-    player: {
+    Player: {
       /* game logic */
     },
-    enemy: {
+    Enemy: {
       /* game logic */
     },
 
     // UI entities
-    hud: {
+    Hud: {
       render(entity, api) {
         /* ... */
       },
     },
-    inventory: {
+    Inventory: {
       render(entity, api) {
         /* ... */
       },
@@ -51,15 +51,15 @@ import { createEngine } from "@inglorious/engine"
 const store = createStore({
   types: {
     // Game world
-    player: {
+    Player: {
       /* physics, movement */
     },
-    camera: {
+    Camera: {
       /* camera logic */
     },
 
     // UI overlays
-    hud: {
+    Hud: {
       render(entity, api) {
         const player = api.getEntity("player")
         return html`
@@ -89,15 +89,15 @@ Combine 3D visualization with Inglorious Web UI:
 const store = createStore({
   types: {
     // Data visualization entities
-    scene: {
+    Scene: {
       /* Three.js scene management */
     },
-    camera: {
+    Camera: {
       /* camera control */
     },
 
     // UI controls
-    controlPanel: {
+    ControlPanel: {
       render(entity, api) {
         return html`
           <div class="controls">
@@ -118,15 +118,15 @@ const store = createStore({
 
 ```javascript
 // Game updates entity state
-const player = {
-  takeDamage(entity, amount) {
+const Player = {
+  damageTaken(entity, amount) {
     entity.health -= amount
     // Health is reactive - UI updates automatically
   },
 }
 
 // UI reads game state
-const hud = {
+const Hud = {
   render(entity, api) {
     const player = api.getEntity("player")
     return html`<h1>HP: ${player.health}</h1>`
@@ -138,7 +138,7 @@ const hud = {
 
 ```javascript
 // UI triggers game events
-const menu = {
+const Menu = {
   render(entity, api) {
     return html`
       <button @click=${() => api.notify("#game:start")}>Start Game</button>
@@ -147,7 +147,7 @@ const menu = {
 }
 
 // Game responds
-const game = {
+const Game = {
   start(entity, api) {
     entity.isRunning = true
     api.notify("gameStarted")
@@ -160,18 +160,18 @@ const game = {
 ```javascript
 // Single input system for game and UI
 document.addEventListener("keydown", (e) => {
-  store.notify("keyPressed", { key: e.key })
+  store.notify("keyPress", { key: e.key })
 })
 
 // Both game and UI handle it
-const player = {
-  keyPressed(entity, { key }) {
+const Player = {
+  keyPress(entity, { key }) {
     if (key === "w") entity.y -= 5
   },
 }
 
-const menuPage = {
-  keyPressed(entity, { key }) {
+const MenuPage = {
+  keyPress(entity, { key }) {
     if (key === "Escape") entity.visible = false
   },
 }
@@ -217,7 +217,7 @@ import { createEngine } from "@inglorious/engine"
 
 const store = createStore({
   types: {
-    player: {
+    Player: {
       update(entity) {
         // Move player
         entity.x += entity.vx
@@ -233,7 +233,7 @@ const store = createStore({
       },
     },
 
-    input: {
+    Input: {
       keydown(entity, { key }) {
         if (key === "ArrowUp") entity.keys.up = true
         if (key === "ArrowLeft") entity.keys.left = true
@@ -254,7 +254,7 @@ const store = createStore({
       },
     },
 
-    hud: {
+    Hud: {
       render(entity, api) {
         const player = api.getEntity("player")
         return html`
@@ -268,18 +268,18 @@ const store = createStore({
 
   entities: {
     player: {
-      type: "player",
+      type: "Player",
       x: 200,
       y: 200,
       vx: 0,
       vy: 0,
     },
     input: {
-      type: "input",
+      type: "Input",
       keys: { up: false, left: false },
     },
     hud: {
-      type: "hud",
+      type: "Hud",
     },
   },
 })
@@ -311,7 +311,7 @@ mount(store, (api) => api.render("hud"), document.getElementById("ui"))
 Redux DevTools shows both game and UI events:
 
 ```
-← gameStarted
+← gameStart
 ← player:update
 ← hud:render (implicit)
 ← player:takeDamage

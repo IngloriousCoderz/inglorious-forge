@@ -1,10 +1,10 @@
 import { createRender } from "../../stories/notifyStory.js"
-import { checkbox } from "."
+import { Checkbox } from "."
 
 export default {
   title: "Controls/Checkbox",
   tags: ["autodocs"],
-  render: createRender(checkbox),
+  render: createRender(Checkbox),
   argTypes: {
     label: { control: "text", description: "Label text." },
     name: { control: "text", description: "Native HTML name attribute." },

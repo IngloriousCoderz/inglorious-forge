@@ -1,6 +1,6 @@
 import { html, repeat } from "@inglorious/web"
 
-import { materialIcon } from "."
+import { MaterialIcon } from "."
 
 const materialIcons = [
   "search",
@@ -87,7 +87,7 @@ export const Gallery = {
           materialIcons,
           (name) => name,
           (name) =>
-            materialIcon.render({
+            MaterialIcon.render({
               name,
               size,
               isFilled,

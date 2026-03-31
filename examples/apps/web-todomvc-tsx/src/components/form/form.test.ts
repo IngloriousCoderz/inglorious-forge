@@ -1,25 +1,25 @@
 import { type Event, trigger } from "@inglorious/web"
 import { expect, it } from "vitest"
 
-import type { FormEntity, FormType } from "../../types"
-import { form } from "./form"
+import type { FormEntity, FormType } from "../../../types"
+import { Form } from "./form"
 
 it("should update the form value on inputChange", () => {
   const entityBefore: FormEntity = {
     id: "form",
-    type: "form",
+    type: "Form",
     value: "",
   }
   const event: Event = { type: "inputChange", payload: "Hello world!" }
   const entityAfter: FormEntity = {
     id: "form",
-    type: "form",
+    type: "Form",
     value: "Hello world!",
   }
 
   const { entity } = trigger(
     entityBefore,
-    form[event.type as keyof typeof form] as FormType["inputChange"],
+    Form[event.type as keyof typeof Form] as FormType["inputChange"],
     event.payload,
   ) as unknown as { entity: FormEntity }
 
@@ -29,19 +29,19 @@ it("should update the form value on inputChange", () => {
 it("should clear the form value on formSubmit", () => {
   const entityBefore: FormEntity = {
     id: "form",
-    type: "form",
+    type: "Form",
     value: "Hello world!",
   }
   const event: Event = { type: "formSubmit", payload: "Hello world!" }
   const entityAfter: FormEntity = {
     id: "form",
-    type: "form",
+    type: "Form",
     value: "",
   }
 
   const { entity } = trigger(
     entityBefore,
-    form[event.type as keyof typeof form] as FormType["formSubmit"],
+    Form[event.type as keyof typeof Form] as FormType["formSubmit"],
     event.payload,
   ) as unknown as { entity: FormEntity }
 

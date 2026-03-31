@@ -1,6 +1,6 @@
 import { html } from "@inglorious/web"
 
-import { input } from "../../../controls/input"
+import { Input } from "../../../controls/input"
 import { format } from "./helpers"
 
 const RANGE_TYPE = {
@@ -10,10 +10,10 @@ const RANGE_TYPE = {
   datetime: "datetime-local",
 }
 
-export const rangeFilter = {
+export const RangeFilter = {
   render(entity, column) {
     return html`<div class="iw-data-grid-filter-range">
-      ${input.render({
+      ${Input.render({
         name: `${column.id}Min`,
         inputType: RANGE_TYPE[column.filter.type],
         placeholder: column.filter.placeholder ?? "≥",
@@ -28,7 +28,7 @@ export const rangeFilter = {
           })
         },
       })}
-      ${input.render({
+      ${Input.render({
         name: `${column.id}Max`,
         inputType: RANGE_TYPE[column.filter.type],
         placeholder: column.filter.placeholder ?? "≤",

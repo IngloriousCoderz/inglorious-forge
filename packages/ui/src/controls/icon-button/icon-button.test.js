@@ -1,14 +1,14 @@
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
-import { iconButton } from "."
+import { IconButton } from "."
 
 describe("iconButton", () => {
   it("renders icon and label", () => {
     const props = { id: "ib", icon: "★", label: "Star" }
     const container = document.createElement("div")
 
-    render(iconButton.render(props), container)
+    render(IconButton.render(props), container)
 
     expect(container.querySelector("button")).not.toBeNull()
     expect(
@@ -27,7 +27,7 @@ describe("iconButton", () => {
     }
     const container = document.createElement("div")
 
-    render(iconButton.render(props), container)
+    render(IconButton.render(props), container)
 
     expect(container.querySelector("button").textContent.trim()).toBe("⚙")
   })
@@ -42,7 +42,7 @@ describe("iconButton", () => {
     }
     const container = document.createElement("div")
 
-    render(iconButton.render(props), container)
+    render(IconButton.render(props), container)
 
     const content = container.querySelector(".iw-icon-button-content")
     expect(content.classList.contains("iw-icon-button-content-column")).toBe(
@@ -64,7 +64,7 @@ describe("iconButton", () => {
     }
     const container = document.createElement("div")
 
-    render(iconButton.render(props), container)
+    render(IconButton.render(props), container)
 
     const buttonElement = container.querySelector("button")
     expect(buttonElement.classList.contains("iw-button-outline")).toBe(true)
@@ -80,7 +80,7 @@ describe("iconButton", () => {
       const props = { icon: "★", onClick: () => (isClicked = true) }
       const container = document.createElement("div")
 
-      render(iconButton.render(props), container)
+      render(IconButton.render(props), container)
 
       const buttonElement = container.querySelector("button")
       buttonElement.click()

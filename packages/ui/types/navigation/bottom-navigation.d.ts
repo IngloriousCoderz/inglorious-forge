@@ -31,4 +31,4 @@ export interface BottomNavigationType {
   ): TemplateResult
 }
 
-export declare const bottomNavigation: BottomNavigationType
+export declare const BottomNavigation: BottomNavigationType

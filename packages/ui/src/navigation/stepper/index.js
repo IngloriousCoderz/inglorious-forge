@@ -1,1 +1,1 @@
-export { stepper } from "./template.js"
+export { Stepper } from "./template.js"

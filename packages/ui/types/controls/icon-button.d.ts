@@ -21,4 +21,4 @@ export interface IconButtonType {
   render(props: IconButtonProps): TemplateResult
 }
 
-export declare const iconButton: IconButtonType
+export declare const IconButton: IconButtonType

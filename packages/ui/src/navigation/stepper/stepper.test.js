@@ -1,14 +1,14 @@
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
-import { stepper } from "."
+import { Stepper } from "."
 
 describe("stepper", () => {
   it("renders all steps", () => {
     const container = document.createElement("div")
 
     render(
-      stepper.render({ steps: [{ label: "A" }, { label: "B" }] }),
+      Stepper.render({ steps: [{ label: "A" }, { label: "B" }] }),
       container,
     )
 
@@ -19,7 +19,7 @@ describe("stepper", () => {
     const container = document.createElement("div")
 
     render(
-      stepper.render({
+      Stepper.render({
         activeStep: 1,
         steps: [{ label: "A" }, { label: "B" }],
       }),

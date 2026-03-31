@@ -1,14 +1,14 @@
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
-import { bottomNavigation } from "."
+import { BottomNavigation } from "."
 
 describe("bottomNavigation", () => {
   it("renders actions", () => {
     const container = document.createElement("div")
 
     render(
-      bottomNavigation.render({ actions: [{ label: "A" }, { label: "B" }] }),
+      BottomNavigation.render({ actions: [{ label: "A" }, { label: "B" }] }),
       container,
     )
 
@@ -21,7 +21,7 @@ describe("bottomNavigation", () => {
     const container = document.createElement("div")
 
     render(
-      bottomNavigation.render({
+      BottomNavigation.render({
         value: "a",
         actions: [{ value: "a", label: "A" }],
       }),

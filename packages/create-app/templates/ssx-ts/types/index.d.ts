@@ -2,7 +2,7 @@ import { BaseEntity, EntitiesState } from "@inglorious/store"
 
 // Define your entity types
 export interface AboutEntity extends BaseEntity {
-  type: "about"
+  type: "About"
   id?: string
   name: string
 }
@@ -17,7 +17,7 @@ export interface AppState extends EntitiesState<AppEntity> {
 
 // Types configuration
 export interface AppTypes {
-  about: {
+  About: {
     click: (entity: AboutEntity) => void
   }
 }

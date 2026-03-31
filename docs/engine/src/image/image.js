@@ -3,24 +3,24 @@ import { v } from "@inglorious/utils/v.js"
 
 export default {
   types: {
-    image: [{ render: renderImage }],
+    Image: [{ render: renderImage }],
   },
 
   entities: {
     game: {
-      type: "game",
+      type: "Game",
       devMode: true,
     },
 
     images: {
-      type: "images",
+      type: "Images",
       images: {
         logo: { url: "/logo.png" },
       },
     },
 
     logo: {
-      type: "image",
+      type: "Image",
       position: v(400 - 128 / 2, 0, 300 + 128 / 2),
       image: {
         id: "logo",

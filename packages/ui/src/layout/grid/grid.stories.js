@@ -1,12 +1,12 @@
 import { html } from "@inglorious/web"
 
 import { createRender } from "../../stories/notifyStory.js"
-import { grid } from "."
+import { Grid } from "."
 
 export default {
   title: "Layout/Grid",
   tags: ["autodocs"],
-  render: createRender(grid),
+  render: createRender(Grid),
   argTypes: {
     columns: {
       control: "number",

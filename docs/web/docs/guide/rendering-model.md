@@ -36,7 +36,7 @@ Let's walk through an example:
 <button @click=${() => api.notify("#counter:increment")}>+</button>
 
 // 2. Handler executes
-counter.increment(entity) {
+Counter.increment(entity) {
   entity.value++ // State mutates
 }
 
@@ -301,7 +301,7 @@ render(entity, api) {
 ```javascript
 // ✅ Good: Multiple entities
 const types = {
-  app: {
+  App: {
     render(entity, api) {
       return html`
         <div>
@@ -311,20 +311,20 @@ const types = {
       `
     },
   },
-  header: {
+  Header: {
     /* ... */
   },
-  content: {
+  Content: {
     /* ... */
   },
-  footer: {
+  Footer: {
     /* ... */
   },
 }
 
 // ❌ Avoid: Massive single entity
 const types = {
-  app: {
+  App: {
     render(entity, api) {
       return html`
         <header><!-- 100 lines --></header>

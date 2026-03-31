@@ -3,7 +3,7 @@ import * as client from "../services/client"
 const TASKS_TO_REMOVE = 1
 
 export const types = {
-  form: {
+  Form: {
     inputChange(entity, value) {
       entity.value = value
     },
@@ -13,7 +13,7 @@ export const types = {
     },
   },
 
-  list: {
+  List: {
     async listMount(entity, _, api) {
       const tasks = await client.fetchTasks()
       api.notify("tasksFetched", tasks)
@@ -65,7 +65,7 @@ export const types = {
     },
   },
 
-  footer: {
+  Footer: {
     filterClick(entity, id) {
       entity.activeFilter = id
     },

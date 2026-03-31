@@ -22,4 +22,4 @@ export interface AppBarType {
   render(props: AppBarProps): TemplateResult
 }
 
-export declare const appBar: AppBarType
+export declare const AppBar: AppBarType

@@ -1,14 +1,14 @@
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
-import { alert } from "."
+import { Alert } from "."
 
 describe("alert", () => {
   it("renders title and description", () => {
     const props = { title: "Hello", description: "Details" }
     const container = document.createElement("div")
 
-    render(alert.render(props), container)
+    render(Alert.render(props), container)
 
     expect(container.querySelector(".iw-alert-title").textContent).toBe("Hello")
     expect(container.querySelector(".iw-alert-description").textContent).toBe(
@@ -20,7 +20,7 @@ describe("alert", () => {
     const props = { severity: "warning", variant: "outlined" }
     const container = document.createElement("div")
 
-    render(alert.render(props), container)
+    render(Alert.render(props), container)
 
     const root = container.querySelector(".iw-alert")
     expect(root.classList.contains("iw-alert-warning")).toBe(true)
@@ -30,7 +30,7 @@ describe("alert", () => {
   it("uses the filled class by default", () => {
     const container = document.createElement("div")
 
-    render(alert.render({}), container)
+    render(Alert.render({}), container)
 
     const root = container.querySelector(".iw-alert")
     expect(root.classList.contains("iw-alert-filled")).toBe(true)
@@ -41,7 +41,7 @@ describe("alert", () => {
     const props = { onClose: () => (closed = true) }
     const container = document.createElement("div")
 
-    render(alert.render(props), container)
+    render(Alert.render(props), container)
 
     container.querySelector(".iw-alert-close").click()
     expect(closed).toBe(true)
@@ -50,7 +50,7 @@ describe("alert", () => {
   it("renders action and close inside trailing slot", () => {
     const container = document.createElement("div")
 
-    render(alert.render({ action: "Undo", onClose: () => {} }), container)
+    render(Alert.render({ action: "Undo", onClose: () => {} }), container)
 
     const trailing = container.querySelector(".iw-alert-trailing")
     expect(trailing).not.toBeNull()

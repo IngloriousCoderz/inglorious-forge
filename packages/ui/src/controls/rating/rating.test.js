@@ -1,14 +1,14 @@
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
-import { rating } from "."
+import { Rating } from "."
 
 describe("rating", () => {
   it("renders max items", () => {
     const props = { id: "rt", value: 2, max: 5 }
     const container = document.createElement("div")
 
-    render(rating.render(props), container)
+    render(Rating.render(props), container)
 
     expect(container.querySelectorAll(".iw-rating-item").length).toBe(5)
   })
@@ -23,7 +23,7 @@ describe("rating", () => {
     }
     const container = document.createElement("div")
 
-    render(rating.render(props), container)
+    render(Rating.render(props), container)
 
     container.querySelectorAll(".iw-rating-item")[3].click()
 
@@ -42,7 +42,7 @@ describe("rating", () => {
     }
     const container = document.createElement("div")
 
-    render(rating.render(props), container)
+    render(Rating.render(props), container)
 
     container.querySelectorAll(".iw-rating-item")[0].click()
     expect(newValue).toBeNull()
@@ -61,7 +61,7 @@ describe("rating", () => {
     }
     const container = document.createElement("div")
 
-    render(rating.render(props), container)
+    render(Rating.render(props), container)
 
     const items = container.querySelectorAll(".iw-rating-item")
     expect(items[0].textContent.trim()).toBe("+")

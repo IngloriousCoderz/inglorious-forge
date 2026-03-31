@@ -1,7 +1,7 @@
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
-import { chip } from "."
+import { Chip } from "."
 
 describe("chip", () => {
   it("renders and emits remove", () => {
@@ -17,7 +17,7 @@ describe("chip", () => {
     }
     const container = document.createElement("div")
 
-    render(chip.render(props), container)
+    render(Chip.render(props), container)
 
     container.querySelector(".iw-chip-remove").click()
 

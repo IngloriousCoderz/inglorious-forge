@@ -48,7 +48,7 @@ describe("babel render", () => {
       await transform(`
         import { StatCard } from "./stat-card.js"
 
-        export const dashboard = {
+        export const Dashboard = {
           render(entity, api) {
             return <StatCard key={entity.id} {...entity} />
           },
@@ -62,7 +62,7 @@ describe("babel render", () => {
       await transform(`
         import { Form } from "./form.js"
 
-        export const dashboard = {
+        export const Dashboard = {
           render() {
             return <Form />
           },

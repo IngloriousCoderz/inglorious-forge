@@ -1,1 +1,1 @@
-export { speedDial } from "./template.js"
+export { SpeedDial } from "./template.js"

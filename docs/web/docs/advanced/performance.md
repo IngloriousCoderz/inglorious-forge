@@ -45,7 +45,7 @@ Instead of one massive entity:
 
 ```javascript
 // ❌ Bad: Monolithic
-const app = {
+const App = {
   render(entity, api) {
     return html`
       <header><!-- 100 lines --></header>
@@ -56,7 +56,7 @@ const app = {
 }
 
 // ✅ Good: Composed
-const app = {
+const App = {
   render(entity, api) {
     return html`
       <div>
@@ -142,11 +142,11 @@ This helps lit-html track which item is which during reorders.
 ### Virtual Scrolling for Large Lists
 
 ```javascript
-import { virtualList } from "@inglorious/ui/virtual-list"
+import { VirtualList } from "@inglorious/ui/virtual-list"
 
 const types = {
-  itemList: {
-    ...virtualList,
+  ItemList: {
+    ...VirtualList,
 
     renderItem(item, index) {
       return html`<div>${item.name}</div>`
@@ -156,7 +156,7 @@ const types = {
 
 const entities = {
   items: {
-    type: "itemList",
+    type: "ItemList",
     items: hugeArray,
     viewportHeight: 600,
     itemHeight: 50, // Fixed height for efficiency
@@ -323,11 +323,11 @@ To reduce bundle size further:
 
 ```javascript
 // Good: Only import what you use
-import { form } from "@inglorious/web/form"
-import { router } from "@inglorious/web/router"
+import { Form } from "@inglorious/web/form"
+import { Router } from "@inglorious/web/router"
 
 // Lazy load
-const admin = () => import("./pages/admin")
+const Admin = () => import("./pages/admin")
 ```
 
 ## When Performance Matters Most
@@ -378,7 +378,7 @@ const benchmark = async (name, fn, iterations = 1000) => {
 }
 
 benchmark("Full render", () => renderApp(api))
-benchmark("Handler call", () => counter.increment(entity))
+benchmark("Handler call", () => Counter.increment(entity))
 ```
 
 ## Best Practices

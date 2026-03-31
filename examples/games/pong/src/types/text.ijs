@@ -5,7 +5,7 @@ const PlayerName = {
   player2: "Player 2",
 }
 
-export const text = {
+export const Text = {
   render: renderText,
 
   start(entity, _, api) {

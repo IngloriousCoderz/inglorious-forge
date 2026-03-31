@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`await toHTML > API rendering within components > should support api.render() method in component render function 1`] = `"<!--lit-part AEmR7W+R0Ak=--><div><!--lit-part AEmR7W+R0Ak=--><div><!--lit-part 94tjhjhkEYE=--><span><!--lit-part-->Test Item<!--/lit-part--></span><!--/lit-part--></div><!--/lit-part--></div><!--/lit-part-->"`;
+exports[`await toHTML > API rendering within components > should support api.render() method in component render function 1`] = `"<!--lit-part AEmR7W+R0Ak=--><div><!--lit-part /IhwyZRcrv0=--><div>No renderer for <!--lit-part-->Wrapper<!--/lit-part--></div><!--/lit-part--></div><!--/lit-part-->"`;
 
 exports[`await toHTML > HTML wrapping > should default to empty title when not provided 1`] = `
 "<!DOCTYPE html>
@@ -175,7 +175,7 @@ exports[`await toHTML > basic rendering > should render with inline styles 1`] =
 exports[`await toHTML > complex scenarios > should render a complete page structure with message list 1`] = `
 "<!--lit-part +cA78tGC3gg=--><div class="app">
           <header><h1>Messages</h1></header>
-          <main><!--lit-part BBm+nXwMlvM=--><div class="message"><p><!--lit-part-->First message<!--/lit-part--></p></div><!--/lit-part--> <!--lit-part BBm+nXwMlvM=--><div class="message"><p><!--lit-part-->Second message<!--/lit-part--></p></div><!--/lit-part--></main>
+          <main><!--lit-part /IhwyZRcrv0=--><div>No renderer for <!--lit-part-->Message<!--/lit-part--></div><!--/lit-part--> <!--lit-part /IhwyZRcrv0=--><div>No renderer for <!--lit-part-->Message<!--/lit-part--></div><!--/lit-part--></main>
           <footer>© 2024</footer>
         </div><!--/lit-part-->"
 `;
@@ -196,7 +196,7 @@ exports[`await toHTML > complex scenarios > should render wrapped complex page w
       </head>
       <body>
         <div id="root"><!--lit-part +13IoGopdS0=--><div>
-          <!--lit-part 3pdihBEs5o4=--><header><h1>My Website</h1></header><!--/lit-part-->
+          <!--lit-part /IhwyZRcrv0=--><div>No renderer for <!--lit-part-->Header<!--/lit-part--></div><!--/lit-part-->
           <p>Welcome!</p>
         </div><!--/lit-part--></div>
         
@@ -212,30 +212,16 @@ exports[`await toHTML > edge cases > should not include wrap by default 1`] = `"
 
 exports[`await toHTML > edge cases > should return only inner HTML when wrap is false 1`] = `"<!--lit-part gGEl6BGI3HM=--><p>Inner</p><!--/lit-part-->"`;
 
-exports[`await toHTML > event handling > should render event handlers in templates 1`] = `
-"<!--lit-part AEmR7W+R0Ak=--><div><!--lit-part 0Z7ukmv6ipw=--><!--lit-node 0--><div >
-                Click me
-              </div><!--/lit-part--></div><!--/lit-part-->"
-`;
+exports[`await toHTML > event handling > should render event handlers in templates 1`] = `"<!--lit-part AEmR7W+R0Ak=--><div><!--lit-part /IhwyZRcrv0=--><div>No renderer for <!--lit-part-->Button<!--/lit-part--></div><!--/lit-part--></div><!--/lit-part-->"`;
 
-exports[`await toHTML > event handling > should render multiple event handlers 1`] = `
-"<!--lit-part AEmR7W+R0Ak=--><div><!--lit-part FAFSiVKpr7w=--><div>
-                <!--lit-node 1--><button >
-                  +
-                </button>
-                <span><!--lit-part-->5<!--/lit-part--></span>
-                <!--lit-node 4--><button >
-                  -
-                </button>
-              </div><!--/lit-part--></div><!--/lit-part-->"
-`;
+exports[`await toHTML > event handling > should render multiple event handlers 1`] = `"<!--lit-part AEmR7W+R0Ak=--><div><!--lit-part /IhwyZRcrv0=--><div>No renderer for <!--lit-part-->Counter<!--/lit-part--></div><!--/lit-part--></div><!--/lit-part-->"`;
 
-exports[`await toHTML > rendering with state > should evaluate conditional rendering based on state 1`] = `"<!--lit-part AEmR7W+R0Ak=--><div><!--lit-part chlxvVpvWi4=--><p>Visible content</p><!--/lit-part--></div><!--/lit-part-->"`;
+exports[`await toHTML > rendering with state > should evaluate conditional rendering based on state 1`] = `"<!--lit-part AEmR7W+R0Ak=--><div><!--lit-part /IhwyZRcrv0=--><div>No renderer for <!--lit-part-->Content<!--/lit-part--></div><!--/lit-part--></div><!--/lit-part-->"`;
 
-exports[`await toHTML > rendering with state > should render entities from store 1`] = `"<!--lit-part AEmR7W+R0Ak=--><div><!--lit-part 94tjhjhkEYE=--><span><!--lit-part-->Hello from store<!--/lit-part--></span><!--/lit-part--></div><!--/lit-part-->"`;
+exports[`await toHTML > rendering with state > should render entities from store 1`] = `"<!--lit-part AEmR7W+R0Ak=--><div><!--lit-part /IhwyZRcrv0=--><div>No renderer for <!--lit-part-->Message<!--/lit-part--></div><!--/lit-part--></div><!--/lit-part-->"`;
 
 exports[`await toHTML > rendering with state > should render multiple entities 1`] = `
 "<!--lit-part djPks5nEU7c=--><ul>
-          <!--lit-part PuAyB/F8cHw=--><li><!--lit-part-->First<!--/lit-part--></li><!--/lit-part--> <!--lit-part PuAyB/F8cHw=--><li><!--lit-part-->Second<!--/lit-part--></li><!--/lit-part--> <!--lit-part PuAyB/F8cHw=--><li><!--lit-part-->Third<!--/lit-part--></li><!--/lit-part-->
+          <!--lit-part /IhwyZRcrv0=--><div>No renderer for <!--lit-part-->Item<!--/lit-part--></div><!--/lit-part--> <!--lit-part /IhwyZRcrv0=--><div>No renderer for <!--lit-part-->Item<!--/lit-part--></div><!--/lit-part--> <!--lit-part /IhwyZRcrv0=--><div>No renderer for <!--lit-part-->Item<!--/lit-part--></div><!--/lit-part-->
         </ul><!--/lit-part-->"
 `;

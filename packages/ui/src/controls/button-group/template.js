@@ -6,7 +6,7 @@
 import { classMap, html, ref } from "@inglorious/web"
 
 import { applyElementProps } from "../../shared/applyElementProps.js"
-import { button } from "../button/index.js"
+import { Button } from "../button/index.js"
 
 /**
  * Renders a grouped set of buttons with optional single or multi selection.
@@ -69,7 +69,7 @@ export function render(props) {
             ? value === itemValue
             : false
 
-        return button.render({
+        return Button.render({
           children: html`
             ${icon ? html`<span class="iw-button-icon">${icon}</span>` : null}
             ${children ?? label}

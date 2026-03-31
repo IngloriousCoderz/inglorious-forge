@@ -32,7 +32,7 @@ Instead of template literals:
 
 ```javascript
 // Without JSX (lit-html)
-const counter = {
+const Counter = {
   render(entity, api) {
     return html`
       <div class="counter">
@@ -44,7 +44,7 @@ const counter = {
 }
 
 // With JSX
-const counter = {
+const Counter = {
   render(entity, api) {
     return (
       <div className="counter">

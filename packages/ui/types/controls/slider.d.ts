@@ -20,4 +20,4 @@ export interface SliderType {
   render(props: SliderProps): TemplateResult
 }
 
-export declare const slider: SliderType
+export declare const Slider: SliderType

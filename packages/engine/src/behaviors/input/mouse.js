@@ -48,7 +48,7 @@ export function trackMouse(parent, api, toGamePosition) {
 
 export function createMouse(overrides = {}) {
   return {
-    type: "mouse",
+    type: "Mouse",
     layer: 999, // A high layer value to ensure it's always rendered on top
     position: zero(),
     ...overrides,

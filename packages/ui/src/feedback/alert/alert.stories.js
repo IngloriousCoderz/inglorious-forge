@@ -1,10 +1,10 @@
 import { createRender } from "../../stories/notifyStory.js"
-import { alert } from "."
+import { Alert } from "."
 
 export default {
   title: "Feedback/Alert",
   tags: ["autodocs"],
-  render: createRender(alert),
+  render: createRender(Alert),
   argTypes: {
     title: { control: "text" },
     description: { control: "text" },

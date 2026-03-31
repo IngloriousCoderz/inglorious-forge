@@ -18,7 +18,7 @@ describe("generateStore", () => {
 
     const store = await generateStore([page], { rootDir: ROOT_DIR })
 
-    expect(store.getType("index").render).toBeDefined()
+    expect(store.getType("Index").render).toBeDefined()
     expect(store.getState()).toMatchSnapshot()
   })
 
@@ -29,7 +29,7 @@ describe("generateStore", () => {
 
     const store = await generateStore([page], { rootDir: ROOT_DIR })
 
-    expect(store.getType("about").render).toBeDefined()
+    expect(store.getType("About").render).toBeDefined()
     expect(store.getState()).toMatchSnapshot()
   })
 
@@ -40,7 +40,7 @@ describe("generateStore", () => {
 
     const store = await generateStore([page], { rootDir: ROOT_DIR })
 
-    expect(store.getType("blog").render).toBeDefined()
+    expect(store.getType("Blog").render).toBeDefined()
     expect(store.getState()).toMatchSnapshot()
   })
 

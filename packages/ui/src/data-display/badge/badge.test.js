@@ -1,14 +1,14 @@
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
-import { badge } from "."
+import { Badge } from "."
 
 describe("badge", () => {
   it("renders content", () => {
     const props = { id: "bg", children: "New", size: "lg" }
     const container = document.createElement("div")
 
-    render(badge.render(props), container)
+    render(Badge.render(props), container)
 
     const element = container.querySelector(".iw-badge")
     expect(element.textContent.trim()).toBe("New")
@@ -27,7 +27,7 @@ describe("badge", () => {
     }
     const container = document.createElement("div")
 
-    render(badge.render(props), container)
+    render(Badge.render(props), container)
 
     const element = container.querySelector(".iw-badge")
     expect(element.classList.contains("iw-badge-warning")).toBe(true)
@@ -46,7 +46,7 @@ describe("badge", () => {
     }
     const container = document.createElement("div")
 
-    render(badge.render(props), container)
+    render(Badge.render(props), container)
 
     const element = container.querySelector(".iw-badge")
     expect(element.classList.contains("iw-badge-shape-circle")).toBe(true)

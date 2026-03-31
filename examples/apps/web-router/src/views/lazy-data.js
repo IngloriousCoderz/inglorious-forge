@@ -1,8 +1,8 @@
 import { html } from "@inglorious/web"
 
-export const lazyData = {
+export const LazyData = {
   async routeChange(entity, payload, api) {
-    if (payload.route !== entity.type) return
+    if (payload.route !== entity.id) return
     if (entity.posts.length) return
 
     const entityId = entity.id
@@ -16,6 +16,7 @@ export const lazyData = {
 
   render(entity) {
     return html`<div class="post-list">
+      <h1>Lazy Loaded Type And Data</h1>
       <ul>
         ${entity.posts.map((post) => html` <li>${post.text}</li> `)}
       </ul>

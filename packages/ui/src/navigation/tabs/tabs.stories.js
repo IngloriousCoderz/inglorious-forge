@@ -1,10 +1,10 @@
 import { createRender } from "../../stories/notifyStory.js"
-import { tabs } from "."
+import { Tabs } from "."
 
 export default {
   title: "Navigation/Tabs",
   tags: ["autodocs"],
-  render: createRender(tabs),
+  render: createRender(Tabs),
   argTypes: {
     items: {
       control: "object",

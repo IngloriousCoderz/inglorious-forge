@@ -1,13 +1,13 @@
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
-import { tabs } from "."
+import { Tabs } from "."
 
 describe("tabs", () => {
   it("renders tabs", () => {
     const container = document.createElement("div")
 
-    render(tabs.render({ items: [{ label: "A" }, { label: "B" }] }), container)
+    render(Tabs.render({ items: [{ label: "A" }, { label: "B" }] }), container)
 
     expect(container.querySelectorAll(".iw-tab")).toHaveLength(2)
   })
@@ -16,7 +16,7 @@ describe("tabs", () => {
     const container = document.createElement("div")
 
     render(
-      tabs.render({
+      Tabs.render({
         value: "b",
         items: [
           { value: "a", label: "A", panel: "Panel A" },

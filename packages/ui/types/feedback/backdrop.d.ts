@@ -14,4 +14,4 @@ export interface BackdropType {
   render(props: BackdropProps): TemplateResult | null
 }
 
-export declare const backdrop: BackdropType
+export declare const Backdrop: BackdropType

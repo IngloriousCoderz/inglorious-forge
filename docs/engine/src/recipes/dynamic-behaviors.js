@@ -52,24 +52,24 @@ export default {
   types: {
     ...controls("dario"),
 
-    dario: DARIO,
+    Dario: DARIO,
 
-    platform: [{ render: renderRectangle }],
+    Platform: [{ render: renderRectangle }],
 
-    mushroom: [{ render: renderRectangle }],
+    Mushroom: [{ render: renderRectangle }],
 
-    fireFlower: [{ render: renderRectangle }],
+    FireFlower: [{ render: renderRectangle }],
 
-    feather: [{ render: renderRectangle }],
+    Feather: [{ render: renderRectangle }],
 
-    diamond: [{ render: renderRectangle }],
+    Diamond: [{ render: renderRectangle }],
 
-    goomba: [{ render: renderRectangle }],
+    Goomba: [{ render: renderRectangle }],
   },
 
   entities: {
     game: {
-      type: "game",
+      type: "Game",
       devMode: true,
     },
 
@@ -90,7 +90,7 @@ export default {
     }),
 
     dario: {
-      type: "dario",
+      type: "Dario",
       layer: 1,
       position: v(116, 48, 0),
       size: v(32, 32, 0),
@@ -106,7 +106,7 @@ export default {
     },
 
     ground: {
-      type: "platform",
+      type: "Platform",
       position: v(400, 16, 0),
       size: v(800, 32, 0),
       backgroundColor: "#654321",
@@ -116,7 +116,7 @@ export default {
     },
 
     platform1: {
-      type: "platform",
+      type: "Platform",
       position: v(275, 100, 0),
       size: v(150, 32, 0),
       backgroundColor: "#654321",
@@ -126,7 +126,7 @@ export default {
     },
 
     powerUp1: {
-      type: "mushroom",
+      type: "Mushroom",
       layer: 1,
       position: v(266, 132, 0),
       size: v(32, 32, 0),
@@ -137,7 +137,7 @@ export default {
     },
 
     platform2: {
-      type: "platform",
+      type: "Platform",
       position: v(525, 180, 0),
       size: v(150, 32, 0),
       backgroundColor: "#654321",
@@ -147,7 +147,7 @@ export default {
     },
 
     powerUp2: {
-      type: "fireFlower",
+      type: "FireFlower",
       layer: 1,
       position: v(516, 212, 0),
       size: v(32, 32, 0),
@@ -158,7 +158,7 @@ export default {
     },
 
     platform3: {
-      type: "platform",
+      type: "Platform",
       position: v(725, 240, 0),
       size: v(150, 32, 0),
       backgroundColor: "#654321",
@@ -168,7 +168,7 @@ export default {
     },
 
     powerUp3: {
-      type: "feather",
+      type: "Feather",
       layer: 1,
       position: v(716, 272, 0),
       size: v(32, 32, 0),
@@ -179,7 +179,7 @@ export default {
     },
 
     platform4: {
-      type: "platform",
+      type: "Platform",
       position: v(475, 320, 0),
       size: v(150, 32, 0),
       backgroundColor: "#654321",
@@ -189,7 +189,7 @@ export default {
     },
 
     powerUp4: {
-      type: "diamond",
+      type: "Diamond",
       layer: 1,
       position: v(466, 352, 0),
       size: v(32, 32, 0),
@@ -200,7 +200,7 @@ export default {
     },
 
     enemy1: {
-      type: "goomba",
+      type: "Goomba",
       position: v(48, 48, 0),
       size: v(32, 32, 0),
       backgroundColor: "#800000",
@@ -210,7 +210,7 @@ export default {
     },
 
     enemy2: {
-      type: "goomba",
+      type: "Goomba",
       position: v(416, 48, 0),
       size: v(32, 32, 0),
       backgroundColor: "#800000",
@@ -220,7 +220,7 @@ export default {
     },
 
     enemy3: {
-      type: "goomba",
+      type: "Goomba",
       position: v(656, 48, 0),
       size: v(32, 32, 0),
       backgroundColor: "#800000",

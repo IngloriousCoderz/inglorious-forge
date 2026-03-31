@@ -6,7 +6,7 @@ import {
   updateData,
 } from "@benchmarks/dashboard-shared"
 
-export const table = {
+export const Table = {
   create(entity) {
     entity.data = generateData(ROWS_TO_GENERATE)
   },

@@ -24,4 +24,4 @@ export interface StepperType {
   renderStep(step: Step, index: number, props: StepperProps): TemplateResult
 }
 
-export declare const stepper: StepperType
+export declare const Stepper: StepperType

@@ -1,13 +1,13 @@
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
-import { link } from "."
+import { Link } from "."
 
 describe("link", () => {
   it("renders label and href", () => {
     const container = document.createElement("div")
 
-    render(link.render({ href: "/docs", label: "Docs" }), container)
+    render(Link.render({ href: "/docs", label: "Docs" }), container)
 
     const anchor = container.querySelector(".iw-link")
     expect(anchor.getAttribute("href")).toBe("/docs")
@@ -18,7 +18,7 @@ describe("link", () => {
     const container = document.createElement("div")
 
     render(
-      link.render({
+      Link.render({
         href: "https://example.com",
         label: "X",
         isExternal: true,

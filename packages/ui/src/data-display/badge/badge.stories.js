@@ -1,10 +1,10 @@
 import { createRender } from "../../stories/notifyStory.js"
-import { badge } from "."
+import { Badge } from "."
 
 export default {
   title: "Data Display/Badge",
   tags: ["autodocs"],
-  render: createRender(badge),
+  render: createRender(Badge),
   argTypes: {
     children: { control: "text", description: "Badge content." },
     color: {

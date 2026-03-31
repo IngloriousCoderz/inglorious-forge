@@ -7,7 +7,7 @@ const VALUE_TO_HSL = 120
 
 const chartData = {}
 
-export const chart = {
+export const Chart = {
   destroy(entity) {
     delete chartData[entity.id]
   },

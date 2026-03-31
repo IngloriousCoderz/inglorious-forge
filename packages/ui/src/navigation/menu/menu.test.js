@@ -1,13 +1,13 @@
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
-import { menu } from "."
+import { Menu } from "."
 
 describe("menu", () => {
   it("does not render when closed", () => {
     const container = document.createElement("div")
 
-    render(menu.render({ isOpen: false }), container)
+    render(Menu.render({ isOpen: false }), container)
 
     expect(container.querySelector(".iw-menu")).toBeNull()
   })
@@ -16,7 +16,7 @@ describe("menu", () => {
     const container = document.createElement("div")
 
     render(
-      menu.render({
+      Menu.render({
         isOpen: true,
         items: [{ label: "A" }, { hasDivider: true }],
       }),
@@ -32,7 +32,7 @@ describe("menu", () => {
     const container = document.createElement("div")
 
     render(
-      menu.render({
+      Menu.render({
         isOpen: true,
         items: [{ label: "A", value: "a" }],
         onItemClick: (next) => (value = next),

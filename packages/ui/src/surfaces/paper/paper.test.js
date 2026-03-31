@@ -1,13 +1,13 @@
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
-import { paper } from "."
+import { Paper } from "."
 
 describe("paper", () => {
   it("renders children", () => {
     const container = document.createElement("div")
 
-    render(paper.render({ element: "section", children: "Hello" }), container)
+    render(Paper.render({ element: "section", children: "Hello" }), container)
 
     expect(container.querySelector(".iw-paper").textContent.trim()).toBe(
       "Hello",
@@ -18,7 +18,7 @@ describe("paper", () => {
   it("applies outlined variant", () => {
     const container = document.createElement("div")
 
-    render(paper.render({ variant: "outlined" }), container)
+    render(Paper.render({ variant: "outlined" }), container)
 
     expect(
       container
@@ -30,7 +30,7 @@ describe("paper", () => {
   it("applies radius and padding modifiers", () => {
     const container = document.createElement("div")
 
-    render(paper.render({ radius: "none", padding: "lg" }), container)
+    render(Paper.render({ radius: "none", padding: "lg" }), container)
 
     const root = container.querySelector(".iw-paper")
     expect(root.classList.contains("iw-paper-radius-none")).toBe(true)

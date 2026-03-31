@@ -10,12 +10,12 @@ export default {
   types: {
     ...controls("character"),
 
-    character: [{ render: renderCharacter }, modernControls()],
+    Character: [{ render: renderCharacter }, modernControls()],
   },
 
   entities: {
     game: {
-      type: "game",
+      type: "Game",
       devMode: true,
     },
 
@@ -37,7 +37,7 @@ export default {
     }),
 
     character: {
-      type: "character",
+      type: "Character",
       maxSpeed: 250,
       position: v(400, 0, 300),
     },

@@ -1,8 +1,8 @@
 import * as handlers from "./handlers.js"
 import * as helpers from "./helpers.js"
-import { combobox as renderers } from "./template.js"
+import { Combobox as renderers } from "./template.js"
 
-export const combobox = {
+export const Combobox = {
   ...handlers,
   ...renderers,
   render(entity, api) {

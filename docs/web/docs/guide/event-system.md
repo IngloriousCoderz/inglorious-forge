@@ -51,7 +51,7 @@ All entities can listen:
 api.notify("appInitialized")
 
 // Any type can handle it
-const myType = {
+const MyType = {
   appInitialized(entity) {
     console.log("App is ready!")
   },
@@ -64,10 +64,10 @@ Target all entities of a specific type:
 
 ```javascript
 // Dispatch
-api.notify("todo:toggle")
+api.notify("Todo:toggle")
 
 // All todo entities listen
-const todo = {
+const Todo = {
   toggle(entity) {
     entity.completed = !entity.completed
   },
@@ -83,7 +83,7 @@ Target a specific entity:
 api.notify("#counter:increment")
 
 // Only the counter entity with that ID listens
-const counter = {
+const Counter = {
   increment(entity) {
     entity.value++
   },
@@ -96,10 +96,10 @@ Most specific targeting:
 
 ```javascript
 // Dispatch
-api.notify("listItem#item1:itemSelected", { highlighted: true })
+api.notify("ListItem#item1:itemSelected", { highlighted: true })
 
 // Only that entity with that handler listens
-const listItem = {
+const ListItem = {
   itemSelected(entity, payload) {
     entity.highlighted = payload.highlighted
   },
@@ -111,7 +111,7 @@ const listItem = {
 ### Handler Signature
 
 ```javascript
-const myType = {
+const MyType = {
   someEvent(entity, payload, api) {
     // entity: The entity being updated
     // payload: Data passed with the event
@@ -125,7 +125,7 @@ const myType = {
 You can omit unused parameters:
 
 ```javascript
-const myType = {
+const MyType = {
   // Just entity
   doSomething(entity) {
     entity.count++
@@ -149,7 +149,7 @@ const myType = {
 ### Pattern 1: Toggle State
 
 ```javascript
-const toggle = {
+const Toggle = {
   toggle(entity) {
     entity.isOpen = !entity.isOpen
   },
@@ -168,7 +168,7 @@ const toggle = {
 ### Pattern 2: Form Input
 
 ```javascript
-const form = {
+const Form = {
   setField(entity, { field, value }) {
     entity[field] = value
   },
@@ -192,7 +192,7 @@ const form = {
 ### Pattern 3: Async Operations
 
 ```javascript
-const dataLoader = {
+const DataLoader = {
   async load(entity, api) {
     // Set loading BEFORE await
     entity.isLoading = true
@@ -235,24 +235,24 @@ const dataLoader = {
 Entities communicate through events:
 
 ```javascript
-const cart = {
-  addItem(entity, itemId, api) {
+const Cart = {
+  addClick(entity, itemId, api) {
     entity.items.push(itemId)
     // Tell the store something happened
-    api.notify("itemAdded", { itemId })
+    api.notify("itemAdd", { itemId })
   },
 
   render(entity, api) {
     return html`
-      <button @click=${() => api.notify("#cart:addItem", "item-123")}>
+      <button @click=${() => api.notify("#cart:addClick", "item-123")}>
         Add to Cart
       </button>
     `
   },
 }
 
-const notification = {
-  itemAdded(entity, payload) {
+const Notification = {
+  itemAdd(entity, payload) {
     entity.message = `Added ${payload.itemId} to cart`
   },
 
@@ -269,7 +269,7 @@ const notification = {
 Runs when an entity is first created:
 
 ```javascript
-const user = {
+const User = {
   create(entity) {
     entity.createdAt = new Date()
     console.log(`User ${entity.id} created`)
@@ -286,7 +286,7 @@ const user = {
 Runs when an entity is removed:
 
 ```javascript
-const modal = {
+const Modal = {
   destroy(entity) {
     console.log(`Modal ${entity.id} destroyed`)
     // Cleanup if needed
@@ -352,7 +352,7 @@ gameLoop()
 ### With Full Event Object
 
 ```javascript
-const myType = {
+const MyType = {
   someEvent(entity, payload, api, meta) {
     // meta contains: { type, timestamp, source, ... }
     console.log(`Event at ${meta.timestamp}`)
@@ -363,7 +363,7 @@ const myType = {
 ### Conditional Handling
 
 ```javascript
-const form = {
+const Form = {
   fieldChange(entity, { field, value }) {
     // Only update if valid
     if (value.length > 0) {
@@ -376,7 +376,7 @@ const form = {
 ### Event Delegation
 
 ```javascript
-const list = {
+const List = {
   itemEvent(entity, { itemId, action }, api) {
     // Handle different actions for list items
     switch (action) {
@@ -397,7 +397,7 @@ Type composition allows you to intercept and modify events:
 
 ```javascript
 // Base type
-const page = {
+const Page = {
   navigate(entity, route) {
     entity.currentRoute = route
   },
@@ -416,7 +416,7 @@ const requireAuth = (type) => ({
 
 // Compose
 const types = {
-  protectedPage: [page, requireAuth],
+  ProtectedPage: [Page, requireAuth],
 }
 ```
 

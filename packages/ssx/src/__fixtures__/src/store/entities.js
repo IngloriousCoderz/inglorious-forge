@@ -1,6 +1,6 @@
 export const entities = {
   logo: {
-    type: "logo",
+    type: "Logo",
     size: 256,
     isInteractive: true,
     faces: [

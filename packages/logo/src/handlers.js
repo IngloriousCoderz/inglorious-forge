@@ -15,7 +15,7 @@ const FIRST_ITEM = 0
 const eventType = isTouchDevice() ? "touchmove" : "mousemove"
 let moveListener = null
 
-export const logo = {
+export const Logo = {
   /**
    * Initialize interactivity for the given entity.
    * @param {LogoEntity} entity

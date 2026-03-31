@@ -1,3 +1,3 @@
-import { logo } from "@inglorious/logo"
+import { Logo } from "@inglorious/logo"
 
-export const types = { logo }
+export const types = { Logo }

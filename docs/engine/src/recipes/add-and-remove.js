@@ -8,7 +8,7 @@ import { v } from "@inglorious/utils/v.js"
 
 export default {
   types: {
-    mouse: [
+    Mouse: [
       { render: renderMouse },
       mouse(),
       {
@@ -27,7 +27,7 @@ export default {
 
           api.notify("add", {
             id: `character${maxId + 1}`,
-            type: "character",
+            type: "Character",
             position,
             orientation: random(0, 2 * pi(), 0.01),
             collisions: {
@@ -42,12 +42,12 @@ export default {
       },
     ],
 
-    character: [{ render: renderCharacter }],
+    Character: [{ render: renderCharacter }],
   },
 
   entities: {
     game: {
-      type: "game",
+      type: "Game",
       devMode: true,
     },
 

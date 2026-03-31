@@ -17,8 +17,9 @@ Unlike React components (restricted by props), Inglorious types can be customize
 // Can't customize rendering beyond what component author exposed
 
 // Inglorious Web: Complete customization
-const myDataGrid = {
-  ...dataGrid,
+const MyDataGrid = {
+  ...DataGrid,
+
   render(entity, api) {
     // Override entire rendering
   },
@@ -34,7 +35,7 @@ const myDataGrid = {
 
 ```javascript
 // @mycompany/design-system/components/card.js
-export const card = {
+export const Card = {
   render(entity, api) {
     return html`
       <div class="card">
@@ -46,7 +47,7 @@ export const card = {
 }
 
 // @mycompany/design-system/components/button.js
-export const button = {
+export const Button = {
   onClick(entity, handler) {
     handler()
   },
@@ -101,15 +102,15 @@ export const exportable = (type) => ({
 
 ```javascript
 // @mycompany/design-system/presets/basicGrid.js
-import { dataGrid } from "../components/data-grid"
+import { DataGrid } from "../components/data-grid"
 import { sortable, exportable } from "./behaviors"
 
-export const basicGrid = dataGrid
+export const BasicGrid = DataGrid
 
-export const sortableGrid = [dataGrid, sortable]
+export const SortableGrid = [DataGrid, sortable]
 
-export const advancedGrid = [
-  dataGrid,
+export const AdvancedGrid = [
+  DataGrid,
   sortable,
   exportable,
   {
@@ -123,14 +124,14 @@ export const advancedGrid = [
 Your library users can customize exactly what they need:
 
 ```javascript
-import { dataGrid, sortable, exportable } from "@mycompany/design-system"
+import { DataGrid, sortable, exportable } from "@mycompany/design-system"
 
 // Use as-is
-const simpleGrid = { ...dataGrid }
+const SimpleGrid = { ...DataGrid }
 
 // Override specific method
-const customGrid = {
-  ...dataGrid,
+const CustomGrid = {
+  ...DataGrid,
   render(entity, api) {
     return html`
       <div class="my-custom-style">
@@ -141,8 +142,8 @@ const customGrid = {
 }
 
 // Compose multiple behaviors
-const advancedGrid = [
-  dataGrid,
+const AdvancedGrid = [
+  DataGrid,
   sortable,
   exportable,
   {
@@ -154,9 +155,9 @@ const advancedGrid = [
 ]
 
 // Mix and match
-const customAdvanced = [
+const CustomAdvanced = [
   {
-    ...dataGrid,
+    ...DataGrid,
     render(entity, api) {
       // Custom render
     },
@@ -181,15 +182,15 @@ A flexible card component for displaying grouped content.
 ## Basic Usage
 
 \`\`\`javascript
-import { card } from '@mycompany/design-system'
+import { Card } from '@mycompany/design-system'
 
 const types = {
-card,
+Card,
 }
 
 const entities = {
 myCard: {
-type: 'card',
+type: 'Card',
 title: 'Hello',
 content: 'World',
 },
@@ -201,8 +202,8 @@ content: 'World',
 Override the render method:
 
 \`\`\`javascript
-const customCard = {
-...card,
+const CustomCard = {
+...Card,
 render(entity, api) {
 return html\`
 
@@ -222,11 +223,11 @@ ${entity.title}
 Compose with behaviors:
 
 \`\`\`javascript
-import { card } from '@mycompany/design-system'
+import { Card } from '@mycompany/design-system'
 import { draggable, closeable } from '@mycompany/design-system/behaviors'
 
 const types = {
-modalCard: [card, draggable, closeable],
+ModalCard: [Card, draggable, closeable],
 }
 \`\`\`
 
@@ -235,14 +236,14 @@ modalCard: [card, draggable, closeable],
 Test with \`trigger()\`:
 
 \`\`\`javascript
-import { card } from '@mycompany/design-system'
+import { Card } from '@mycompany/design-system'
 import { trigger } from '@inglorious/web/test'
 
 test('card renders title', () => {
 const { entity } = trigger(
 { type: 'card', title: 'Test', content: 'Content' },
 () => {},
-card.render
+Card.render
 )
 expect(entity.title).toBe('Test')
 })
@@ -262,14 +263,14 @@ expect(entity.title).toBe('Test')
 1. **Export both components and behaviors**
 
    ```javascript
-   export { card, button, dataGrid }
+   export { Card, Button, DataGrid }
    export { sortable, draggable, closeable }
    ```
 
 2. **Provide presets for common combinations**
 
    ```javascript
-   export { advancedGrid, sortableGrid }
+   export { AdvancedGrid, SortableGrid }
    ```
 
 3. **Document customization patterns**

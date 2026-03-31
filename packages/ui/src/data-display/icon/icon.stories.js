@@ -1,10 +1,10 @@
 import { createRender } from "../../stories/notifyStory.js"
-import { icon } from "."
+import { Icon } from "."
 
 export default {
   title: "Data Display/Icon",
   tags: ["autodocs"],
-  render: createRender(icon),
+  render: createRender(Icon),
   argTypes: {
     children: { control: "text", description: "Icon glyph or inline content." },
     size: {

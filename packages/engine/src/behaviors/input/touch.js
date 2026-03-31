@@ -88,7 +88,7 @@ export function trackTouch(parent, api, toGamePosition) {
 
 export function createTouch() {
   return {
-    type: "touch",
+    type: "Touch",
     layer: 999, // A high layer value to ensure it's always rendered on top
     positions: [],
     collisions: {

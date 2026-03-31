@@ -7,11 +7,11 @@
 
 import { classMap, html } from "@inglorious/web"
 
-import { button } from "../../controls/button/index.js"
+import { Button } from "../../controls/button/index.js"
 
 const PRETTY_PAGE = 1
 
-export const pagination = {
+export const Pagination = {
   /**
    * Main entrypoint for pagination controls. Delegates to the base renderer for overrides.
    * Supports sibling ranges, first/last buttons, and disabled state.
@@ -92,7 +92,7 @@ export const pagination = {
     }
 
     const isCurrent = item === props.page
-    return button.render({
+    return Button.render({
       variant: isCurrent ? "default" : props.buttonVariant,
       color: isCurrent ? "primary" : props.buttonColor,
       size: props.buttonSize,
@@ -121,7 +121,7 @@ export const pagination = {
     props,
     { label, target, isDisabled = false, onChange = props.onChange },
   ) {
-    return button.render({
+    return Button.render({
       variant: props.buttonVariant,
       color: props.buttonColor,
       size: props.buttonSize,

@@ -1,1 +1,1 @@
-export { menu } from "./template.js"
+export { Menu } from "./template.js"

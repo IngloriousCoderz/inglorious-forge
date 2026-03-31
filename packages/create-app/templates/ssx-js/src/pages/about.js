@@ -1,6 +1,6 @@
 import { html } from "@inglorious/web"
 
-export const about = {
+export const About = {
   click(entity) {
     entity.name += "!"
   },

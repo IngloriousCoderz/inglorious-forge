@@ -1,3 +1,3 @@
 import * as renderers from "./template.js"
 
-export const input = { ...renderers }
+export const Input = { ...renderers }

@@ -1,10 +1,10 @@
 import { createRender } from "../../stories/notifyStory.js"
-import { table } from "."
+import { Table } from "."
 
 export default {
   title: "Data Display/Table",
   tags: ["autodocs"],
-  render: createRender(table),
+  render: createRender(Table),
   argTypes: {
     columns: { control: "object", description: "Column definitions." },
     rows: { control: "object", description: "Row records." },

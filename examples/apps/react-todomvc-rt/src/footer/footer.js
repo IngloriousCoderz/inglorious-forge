@@ -1,4 +1,4 @@
-export const footer = {
+export const Footer = {
   filterClick(entity, id) {
     entity.activeFilter = id
   },

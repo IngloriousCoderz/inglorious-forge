@@ -1,12 +1,12 @@
 import { withMotion } from "@inglorious/motion"
 
 import * as handlers from "./handlers.js"
-import { render } from "./template.js"
+import * as renderers from "./template.js"
 
-const toastBase = { ...handlers, render }
+const ToastBase = { ...handlers, ...renderers }
 
-export const toast = [
-  toastBase,
+export const Toast = [
+  ToastBase,
   withMotion({
     classPrefix: "demo-toast",
     initial: "visible",

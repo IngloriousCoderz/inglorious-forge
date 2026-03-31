@@ -24,7 +24,7 @@ function increment(entity, payload, api) {
 
 // Test it
 const { entity, events } = trigger(
-  { type: "counter", id: "counter1", value: 99 },
+  { type: "Counter", id: "counter1", value: 99 },
   increment,
   { amount: 5 },
 )
@@ -42,8 +42,8 @@ import { createMockApi, trigger } from "@inglorious/store/test"
 
 // Create a mock API with some initial entities
 const api = createMockApi({
-  counter1: { type: "counter", value: 10 },
-  counter2: { type: "counter", value: 20 },
+  counter1: { type: "Counter", value: 10 },
+  counter2: { type: "Counter", value: 20 },
 })
 
 // A handler that copies a value from another entity
@@ -54,7 +54,7 @@ function copyValue(entity, payload, api) {
 
 // Trigger the handler with the custom mock API
 const { entity } = trigger(
-  { type: "counter", id: "counter2", value: 20 },
+  { id: "counter2", type: "Counter", value: 20 },
   copyValue,
   { sourceId: "counter1" },
   api,

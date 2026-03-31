@@ -1,10 +1,10 @@
 import { createRender } from "../../stories/notifyStory.js"
-import { list } from "."
+import { List } from "."
 
 export default {
   title: "Data Display/List",
   tags: ["autodocs"],
-  render: createRender(list),
+  render: createRender(List),
   argTypes: {
     items: {
       control: "object",

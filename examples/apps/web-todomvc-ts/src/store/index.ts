@@ -1,12 +1,12 @@
 import { createStore, type TypesConfig } from "@inglorious/web"
 
-import { footer } from "../components/footer/footer"
-import { form } from "../components/form/form"
-import { list } from "../components/list/list"
+import { Footer } from "../components/footer/footer"
+import { Form } from "../components/form/form"
+import { List } from "../components/list/list"
 import { middlewares } from "./middlewares"
 
 export const store = createStore({
-  types: { form, list, footer } as unknown as TypesConfig,
+  types: { Form, List, Footer } as unknown as TypesConfig,
   middlewares,
   autoCreateEntities: true,
 })

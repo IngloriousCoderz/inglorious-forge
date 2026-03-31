@@ -1,3 +1,3 @@
 import * as renderers from "./template.js"
 
-export const badge = { ...renderers }
+export const Badge = { ...renderers }

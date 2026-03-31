@@ -6,7 +6,7 @@
 
 import { classMap, html } from "@inglorious/web"
 
-export const stepper = {
+export const Stepper = {
   /**
    * Main entrypoint for the stepper component. Delegates to the base renderer for overrides.
    * Steppers render a sequence of steps with completion states.

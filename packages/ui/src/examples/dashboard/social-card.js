@@ -1,42 +1,42 @@
 import { chart } from "@inglorious/charts"
 import { html } from "@inglorious/web"
 
-import { divider } from "../../data-display/divider"
-import { materialIcon } from "../../data-display/material-icon"
-import { typography } from "../../data-display/typography"
-import { grid } from "../../layout/grid"
-import { card } from "../../surfaces/card"
+import { Divider } from "../../data-display/divider"
+import { MaterialIcon } from "../../data-display/material-icon"
+import { Typography } from "../../data-display/typography"
+import { Grid } from "../../layout/grid"
+import { Card } from "../../surfaces/card"
 
 export const SocialCard = {
   render(entity, api) {
-    return card.render({
+    return Card.render({
       className: "iw-dashboard-social-card",
       headerPadding: "none",
       header: html`
         <div class="iw-dashboard-social-cap ${entity.capClass}">
-          ${materialIcon.render({ name: entity.icon, size: "lg" })}
+          ${MaterialIcon.render({ name: entity.icon, size: "lg" })}
           <div class="iw-dashboard-social-chart">
             ${this.renderAreaSpark(entity, api)}
           </div>
         </div>
       `,
-      body: grid.render({
+      body: Grid.render({
         columns: "1fr auto 1fr",
         gap: "md",
         className: "iw-dashboard-social-stats",
         children: [
           html`<div>
-            ${typography.render({ variant: "h3", children: entity.top })}
-            ${typography.render({
+            ${Typography.render({ variant: "h3", children: entity.top })}
+            ${Typography.render({
               variant: "caption",
               children: entity.topLabel,
               color: "var(--iw-color-text-secondary)",
             })}
           </div>`,
-          divider.render({ orientation: "vertical" }),
+          Divider.render({ orientation: "vertical" }),
           html`<div>
-            ${typography.render({ variant: "h3", children: entity.bottom })}
-            ${typography.render({
+            ${Typography.render({ variant: "h3", children: entity.bottom })}
+            ${Typography.render({
               variant: "caption",
               children: entity.bottomLabel,
               color: "var(--iw-color-text-secondary)",

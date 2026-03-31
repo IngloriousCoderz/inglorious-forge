@@ -6,21 +6,21 @@ import { EventMap } from "./event-map.js"
 
 test("constructor should initialize the event map from types and entities", () => {
   const types = {
-    player: {
+    Player: {
       update: () => {},
       fire: () => {},
     },
-    enemy: {
+    Enemy: {
       update: () => {},
     },
-    item: {}, // Type with no events
+    Item: {}, // Type with no events
   }
   const entities = {
-    player1: { type: "player" },
-    player2: { type: "player" },
-    enemy1: { type: "enemy" },
-    item1: { type: "item" },
-    ghost1: { type: "ghost" }, // Type that doesn't exist
+    player1: { type: "Player" },
+    player2: { type: "Player" },
+    enemy1: { type: "Enemy" },
+    item1: { type: "Item" },
+    ghost1: { type: "Ghost" }, // Type that doesn't exist
   }
 
   const eventMap = new EventMap(types, entities)
@@ -43,20 +43,20 @@ test("constructor should initialize the event map from types and entities", () =
 
 test("addEntity should add an entity to the correct event sets", () => {
   const types = {
-    player: {
+    Player: {
       update: () => {},
       jump: () => {},
     },
   }
   const eventMap = new EventMap(types, {})
 
-  eventMap.addEntity("player1", types.player, "player")
+  eventMap.addEntity("player1", types.Player, "Player")
 
   expect(eventMap.getEntitiesForEvent("update")).toStrictEqual(["player1"])
   expect(eventMap.getEntitiesForEvent("jump")).toStrictEqual(["player1"])
 
   // Add another entity of the same type
-  eventMap.addEntity("player2", types.player, "player")
+  eventMap.addEntity("player2", types.Player, "Player")
   expect(eventMap.getEntitiesForEvent("update")).toStrictEqual([
     "player1",
     "player2",
@@ -69,36 +69,36 @@ test("addEntity should add an entity to the correct event sets", () => {
 
 test("removeEntity should remove an entity from its event sets", () => {
   const types = {
-    player: {
+    Player: {
       update: () => {},
       fire: () => {},
     },
   }
   const entities = {
-    player1: { type: "player" },
-    player2: { type: "player" },
+    player1: { type: "Player" },
+    player2: { type: "Player" },
   }
   const eventMap = new EventMap(types, entities)
 
-  eventMap.removeEntity("player1", types.player, "player")
+  eventMap.removeEntity("player1", types.Player, "Player")
 
   expect(eventMap.getEntitiesForEvent("update")).toStrictEqual(["player2"])
   expect(eventMap.getEntitiesForEvent("fire")).toStrictEqual(["player2"])
 
   // Removing a non-existent entity should not throw an error
   expect(() =>
-    eventMap.removeEntity("player3", types.player, "player"),
+    eventMap.removeEntity("player3", types.Player, "Player"),
   ).not.toThrow()
 })
 
 test("getEntitiesForEvent should return the correct set of entities for an event", () => {
   const types = {
-    player: { update: () => {} },
-    enemy: { update: () => {} },
+    Player: { update: () => {} },
+    Enemy: { update: () => {} },
   }
   const entities = {
-    player1: { type: "player" },
-    enemy1: { type: "enemy" },
+    player1: { type: "Player" },
+    enemy1: { type: "Enemy" },
   }
   const eventMap = new EventMap(types, entities)
 
@@ -111,18 +111,18 @@ test("getEntitiesForEvent should return the correct set of entities for an event
 
 test("getEntitiesForEvent should handle scoped events correctly", () => {
   const types = {
-    form: { submit: () => {} },
-    button: { submit: () => {} },
+    Form: { submit: () => {} },
+    Button: { submit: () => {} },
   }
   const entities = {
-    loginForm: { type: "form" },
-    signupForm: { type: "form" },
-    submitButton: { type: "button" },
+    loginForm: { type: "Form" },
+    signupForm: { type: "Form" },
+    submitButton: { type: "Button" },
   }
   const eventMap = new EventMap(types, entities)
 
-  // Scoped to a type: 'form:submit' should only return form entities
-  expect(eventMap.getEntitiesForEvent("form:submit")).toStrictEqual([
+  // Scoped to a type: 'Form:submit' should only return form entities
+  expect(eventMap.getEntitiesForEvent("Form:submit")).toStrictEqual([
     "loginForm",
     "signupForm",
   ])
@@ -132,8 +132,8 @@ test("getEntitiesForEvent should handle scoped events correctly", () => {
     "loginForm",
   ])
 
-  // Scoped to a specific entity by type and ID: 'form#loginForm:submit'
-  expect(eventMap.getEntitiesForEvent("form#loginForm:submit")).toStrictEqual([
+  // Scoped to a specific entity by type and ID: 'Form#loginForm:submit'
+  expect(eventMap.getEntitiesForEvent("Form#loginForm:submit")).toStrictEqual([
     "loginForm",
   ])
 
@@ -144,7 +144,7 @@ test("getEntitiesForEvent should handle scoped events correctly", () => {
   expect(eventMap.getEntitiesForEvent("#loginForm:click")).toStrictEqual([])
 
   // Scoped to an entity ID, but with the wrong type specified
-  expect(eventMap.getEntitiesForEvent("button#loginForm:submit")).toStrictEqual(
+  expect(eventMap.getEntitiesForEvent("Button#loginForm:submit")).toStrictEqual(
     [],
   )
 
@@ -163,7 +163,7 @@ test("EventMap provides a significant performance benefit for event handling", a
 
   // We'll use a mock function to ensure the "work" is consistent
   const updateHandler = vi.fn()
-  types.updater.update = updateHandler
+  types.Updater.update = updateHandler
 
   // --- Simulation A: The Old Way (iterating all entities) ---
   const oldWayStartTime = performance.now()
@@ -204,11 +204,11 @@ function createTestEntities(count) {
 
   for (let i = 0; i < count; i++) {
     const isUpdater = Math.random() < 0.1
-    const typeId = isUpdater ? "updater" : "static"
+    const typeId = isUpdater ? "Updater" : "Static"
     entities[`entity-${i}`] = { id: `entity-${i}`, type: typeId }
   }
-  types["updater"] = updaterType
-  types["static"] = staticType
+  types.Updater = updaterType
+  types.Static = staticType
 
   return { entities, types }
 }

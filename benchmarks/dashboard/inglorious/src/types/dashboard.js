@@ -1,7 +1,7 @@
 import { CHARTS } from "@benchmarks/dashboard-shared"
 import { html } from "@inglorious/web"
 
-export const app = {
+export const Dashboard = {
   render(api) {
     const { filter, sortBy } = api.getEntity("metrics")
 

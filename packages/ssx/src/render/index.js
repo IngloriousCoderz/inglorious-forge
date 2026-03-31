@@ -1,3 +1,5 @@
+import { toCamelCase } from "@inglorious/utils/data-structures/string.js"
+
 import { createGetPageOption } from "../utils/page-options.js"
 import { toHTML } from "./html.js"
 
@@ -24,6 +26,7 @@ const DEFAULT_OPTIONS = {
  */
 export async function renderPage(store, page, entity, options = {}) {
   const { moduleName, module } = page
+  const entityId = entity?.id ?? toCamelCase(moduleName)
 
   const getPageOption = createGetPageOption(store, module, entity)
 
@@ -42,7 +45,7 @@ export async function renderPage(store, page, entity, options = {}) {
     ...getPageOption("scripts", DEFAULT_OPTIONS),
   ]
 
-  return toHTML(store, (api) => api.render(moduleName), {
+  return toHTML(store, (api) => api.render(entityId), {
     ...options,
     lang,
     charset,
@@ -52,6 +55,6 @@ export async function renderPage(store, page, entity, options = {}) {
     styles,
     head,
     scripts,
-    ssxPage: { [moduleName]: entity },
+    ssxPage: { [entityId]: entity },
   })
 }

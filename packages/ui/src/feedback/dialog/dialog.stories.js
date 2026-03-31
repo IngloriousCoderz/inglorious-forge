@@ -1,12 +1,12 @@
 import { html } from "@inglorious/web"
 
 import { createRender } from "../../stories/notifyStory.js"
-import { dialog } from "."
+import { Dialog } from "."
 
 export default {
   title: "Feedback/Dialog",
   tags: ["autodocs"],
-  render: createRender(dialog),
+  render: createRender(Dialog),
   argTypes: {
     isOpen: { control: "boolean" },
     title: { control: "text" },

@@ -1,4 +1,4 @@
-export const form = {
+export const Form = {
   inputChange(entity, value) {
     entity.value = value
   },

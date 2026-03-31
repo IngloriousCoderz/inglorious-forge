@@ -15,4 +15,4 @@ export interface SkeletonType {
   render(props: SkeletonProps): TemplateResult
 }
 
-export declare const skeleton: SkeletonType
+export declare const Skeleton: SkeletonType

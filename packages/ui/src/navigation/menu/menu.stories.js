@@ -1,10 +1,10 @@
 import { createRender } from "../../stories/notifyStory.js"
-import { menu } from "."
+import { Menu } from "."
 
 export default {
   title: "Navigation/Menu",
   tags: ["autodocs"],
-  render: createRender(menu),
+  render: createRender(Menu),
   argTypes: {
     isOpen: {
       control: "boolean",

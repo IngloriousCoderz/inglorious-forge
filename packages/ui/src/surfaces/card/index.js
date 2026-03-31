@@ -1,1 +1,1 @@
-export { card } from "./template.js"
+export { Card } from "./template.js"

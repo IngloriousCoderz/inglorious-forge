@@ -1,6 +1,6 @@
 const Z = 2
 
-export const paddle = {
+export const Paddle = {
   create(entity) {
     entity.initialPosition = entity.position
   },

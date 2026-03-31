@@ -2,14 +2,14 @@ import { html } from "@inglorious/web"
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
-import { card } from "."
+import { Card } from "."
 
 describe("card", () => {
   it("renders title and subtitle", () => {
     const container = document.createElement("div")
 
     render(
-      card.render({ title: "Title", subtitle: "Subtitle", element: "section" }),
+      Card.render({ title: "Title", subtitle: "Subtitle", element: "section" }),
       container,
     )
 
@@ -24,7 +24,7 @@ describe("card", () => {
     const container = document.createElement("div")
 
     render(
-      card.render({
+      Card.render({
         title: "Title",
         children: "Body",
         headerPadding: "none",
@@ -63,7 +63,7 @@ describe("card", () => {
     const container = document.createElement("div")
 
     render(
-      card.render({
+      Card.render({
         isHoverable: true,
         isClickable: true,
         isFullWidth: true,

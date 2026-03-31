@@ -1,7 +1,7 @@
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
-import { radioGroup } from "."
+import { RadioGroup } from "."
 
 describe("radioGroup", () => {
   it("renders options and selected state", () => {
@@ -16,7 +16,7 @@ describe("radioGroup", () => {
     }
     const container = document.createElement("div")
 
-    render(radioGroup.render(props), container)
+    render(RadioGroup.render(props), container)
 
     const radios = container.querySelectorAll('input[type="radio"]')
     expect(radios.length).toBe(2)
@@ -40,7 +40,7 @@ describe("radioGroup", () => {
     }
     const container = document.createElement("div")
 
-    render(radioGroup.render(props), container)
+    render(RadioGroup.render(props), container)
 
     const radio = container.querySelector('input[value="b"]')
     radio.checked = true
@@ -61,7 +61,7 @@ describe("radioGroup", () => {
     }
     const container = document.createElement("div")
 
-    render(radioGroup.render(props), container)
+    render(RadioGroup.render(props), container)
 
     expect(container.querySelector(".iw-radio-group-label").textContent).toBe(
       "Status",

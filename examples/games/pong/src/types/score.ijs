@@ -1,6 +1,6 @@
 import { renderText } from "@inglorious/renderer-2d/text"
 
-export const score = {
+export const Score = {
   render: renderText,
 
   playerScore(entity, scoringPlayer, api) {

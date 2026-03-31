@@ -20,7 +20,7 @@ export default {
   types: {
     ...controls("character"),
 
-    mouse: [
+    Mouse: [
       { render: renderMouse },
       mouse(),
       {
@@ -54,7 +54,7 @@ export default {
       },
     ],
 
-    character: [
+    Character: [
       {
         render: renderCharacter,
         update(entity, dt, api) {
@@ -74,7 +74,7 @@ export default {
       clamped(),
     ],
 
-    form: {
+    Form: {
       fieldChange(entity, { id, value }) {
         entity.groups.align.fields[id].value = value
       },
@@ -83,12 +83,12 @@ export default {
 
   entities: {
     game: {
-      type: "game",
+      type: "Game",
       devMode: true,
     },
 
     mouse: {
-      type: "mouse",
+      type: "Mouse",
       position: v(400, 0, 300),
       orientation: 0,
     },
@@ -101,7 +101,7 @@ export default {
     }),
 
     character: {
-      type: "character",
+      type: "Character",
       maxAngularSpeed: pi() / 4,
       position: v(400, 0, 300),
       collisions: {
@@ -110,7 +110,7 @@ export default {
     },
 
     parameters: {
-      type: "form",
+      type: "Form",
       position: v(800 - 328, 0, 600),
       groups: {
         align: {

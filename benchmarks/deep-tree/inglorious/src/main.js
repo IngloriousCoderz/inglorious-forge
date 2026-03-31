@@ -3,6 +3,6 @@ import "@benchmarks/deep-tree-shared/style.css"
 import { mount } from "@inglorious/web"
 
 import { store } from "./store/index"
-import { app } from "./types/app"
+import { App } from "./types/app"
 
-mount(store, app.render, document.getElementById("root"))
+mount(store, App.render, document.getElementById("root"))

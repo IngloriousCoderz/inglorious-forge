@@ -1,7 +1,7 @@
 import { html, repeat } from "@inglorious/web"
 
 export function render(entity, api) {
-  const toasts = api.getEntities("toast")
+  const toasts = api.getEntities("Toast")
 
   return html`
     <section class="stack">

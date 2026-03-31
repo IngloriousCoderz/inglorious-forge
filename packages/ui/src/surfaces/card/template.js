@@ -7,7 +7,7 @@ import { classMap, html, ref } from "@inglorious/web"
 
 import { applyElementProps } from "../../shared/applyElementProps.js"
 
-export const card = {
+export const Card = {
   /**
    * Main entrypoint for the card component. Delegates to the base card renderer for easy overrides.
    * Cards support header, body, and footer slots with optional click behavior.

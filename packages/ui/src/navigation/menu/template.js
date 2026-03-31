@@ -8,7 +8,7 @@ import { classMap, html, ref } from "@inglorious/web"
 
 import { applyElementProps } from "../../shared/applyElementProps.js"
 
-export const menu = {
+export const Menu = {
   /**
    * Main entrypoint for a menu list. Delegates to the base renderer for overrides.
    * Menus render selectable items and optional dividers.

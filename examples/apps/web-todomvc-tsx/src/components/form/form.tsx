@@ -1,6 +1,6 @@
 import type { FormType } from "../../../types"
 
-export const form: FormType = {
+export const Form: FormType = {
   create(entity) {
     entity.value = ""
   },

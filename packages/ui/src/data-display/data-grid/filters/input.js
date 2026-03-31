@@ -1,4 +1,4 @@
-import { input } from "../../../controls/input"
+import { Input } from "../../../controls/input"
 import { format } from "./helpers"
 
 const DEFAULT_PLACEHOLDER = {
@@ -6,9 +6,9 @@ const DEFAULT_PLACEHOLDER = {
   text: "Contains...",
 }
 
-export const inputFilter = {
+export const InputFilter = {
   render(entity, column) {
-    return input.render({
+    return Input.render({
       name: column.id,
       inputType: column.filter.type,
       placeholder:

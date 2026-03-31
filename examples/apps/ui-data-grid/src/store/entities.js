@@ -6,7 +6,7 @@ const TIME_MULTIPLIER = 3600_000
 
 export const entities = {
   dataGrid: {
-    type: "productTable",
+    type: "ProductTable",
     columns: [
       {
         id: "id",

@@ -27,7 +27,7 @@ ModuleRegistry.registerModules([AllCommunityModule])
 
 const gridInstances = new Map()
 
-export const gridType = {
+export const GridType = {
   create(entity) {
     entity.themeClass ??= "ag-theme-quartz"
     entity.height ??= 520

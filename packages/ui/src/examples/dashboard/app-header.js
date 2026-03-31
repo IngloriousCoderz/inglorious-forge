@@ -1,13 +1,13 @@
 import { html } from "@inglorious/web"
 
-import { button } from "../../controls/button"
-import { avatar } from "../../data-display/avatar"
-import { divider } from "../../data-display/divider"
-import { icon } from "../../data-display/icon"
-import { materialIcon } from "../../data-display/material-icon"
-import { flex } from "../../layout/flex"
-import { breadcrumbs } from "../../navigation/breadcrumbs"
-import { appBar } from "../../surfaces/app-bar"
+import { Button } from "../../controls/button"
+import { Avatar } from "../../data-display/avatar"
+import { Divider } from "../../data-display/divider"
+import { Icon } from "../../data-display/icon"
+import { MaterialIcon } from "../../data-display/material-icon"
+import { Flex } from "../../layout/flex"
+import { Breadcrumbs } from "../../navigation/breadcrumbs"
+import { AppBar } from "../../surfaces/app-bar"
 
 export const AppHeader = {
   render(entity, api) {
@@ -30,116 +30,116 @@ export const AppHeader = {
 
     return html`
       <div class="iw-dashboard-header">
-        ${appBar.render({
+        ${AppBar.render({
           position: "static",
           elevated: false,
           children: html`
-            ${flex.render({
+            ${Flex.render({
               justify: "between",
               align: "center",
               gap: "md",
               className: "iw-dashboard-header-row",
               children: [
-                button.render({
+                Button.render({
                   color: "secondary",
                   variant: "ghost",
                   shape: "square",
-                  children: materialIcon.render({ name: "menu", size: "lg" }),
+                  children: MaterialIcon.render({ name: "menu", size: "lg" }),
                   "aria-label": "Toggle navigation",
                   onClick: () => api.notify(`#appDrawer:toggle`),
                 }),
-                flex.render({
+                Flex.render({
                   align: "center",
                   gap: "sm",
                   className: "iw-dashboard-header-nav",
                   children: [
-                    button.render({
+                    Button.render({
                       color: "secondary",
                       variant: "ghost",
                       children: "Dashboard",
                     }),
-                    button.render({
+                    Button.render({
                       color: "secondary",
                       variant: "ghost",
                       children: "Users",
                     }),
-                    button.render({
+                    Button.render({
                       color: "secondary",
                       variant: "ghost",
                       children: "Settings",
                     }),
                   ],
                 }),
-                flex.render({
+                Flex.render({
                   align: "center",
                   gap: "sm",
                   className: "iw-dashboard-header-actions",
                   children: [
-                    button.render({
+                    Button.render({
                       color: "secondary",
                       variant: "ghost",
                       shape: "square",
-                      children: materialIcon.render({
+                      children: MaterialIcon.render({
                         name: "notifications",
                         size: "lg",
                       }),
                       "aria-label": "Notifications",
                     }),
-                    button.render({
+                    Button.render({
                       color: "secondary",
                       variant: "ghost",
                       shape: "square",
-                      children: materialIcon.render({
+                      children: MaterialIcon.render({
                         name: "format_list_bulleted",
                       }),
                       "aria-label": "Tasks",
                     }),
-                    button.render({
+                    Button.render({
                       color: "secondary",
                       variant: "ghost",
                       shape: "square",
-                      children: materialIcon.render({
+                      children: MaterialIcon.render({
                         name: "mail",
                         size: "lg",
                       }),
                       "aria-label": "Messages",
                     }),
-                    divider.render({ orientation: "vertical" }),
+                    Divider.render({ orientation: "vertical" }),
 
-                    button.render({
+                    Button.render({
                       color: "secondary",
                       variant: "ghost",
                       shape: "square",
-                      children: icon.render({
+                      children: Icon.render({
                         children: html`<i class=${themeIcon}></i>`,
                         size: "lg",
                       }),
                       "aria-label": `Theme: ${themeName}`,
                       onClick: () => api.notify("#theme:toggle"),
                     }),
-                    button.render({
+                    Button.render({
                       color: "secondary",
                       variant: "ghost",
                       shape: "square",
-                      children: materialIcon.render({
+                      children: MaterialIcon.render({
                         name: modeIcon,
                         size: "lg",
                       }),
                       "aria-label": `Mode: ${themeMode}`,
                       onClick: () => api.notify("#mode:toggle"),
                     }),
-                    divider.render({ orientation: "vertical" }),
-                    avatar.render({ src: "/antony.jpeg" }),
+                    Divider.render({ orientation: "vertical" }),
+                    Avatar.render({ src: "/antony.jpeg" }),
                   ],
                 }),
               ],
             })}
           `,
         })}
-        ${flex.render({
+        ${Flex.render({
           align: "center",
           className: "iw-dashboard-header-row iw-dashboard-breadcrumbs",
-          children: breadcrumbs.render({
+          children: Breadcrumbs.render({
             items: [{ label: "Home", href: "#" }, { label: "Dashboard" }],
           }),
         })}

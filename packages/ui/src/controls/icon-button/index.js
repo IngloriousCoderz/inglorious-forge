@@ -1,3 +1,3 @@
 import * as renderers from "./template.js"
 
-export const iconButton = { ...renderers }
+export const IconButton = { ...renderers }

@@ -51,7 +51,7 @@ This compiles to a standard @inglorious/web component:
 ```javascript
 import { html } from "@inglorious/web"
 
-export const counter = {
+export const Counter = {
   create(entity) {
     entity.count = 0
   },
@@ -215,7 +215,7 @@ const addItem = (entity, item) => entity.items.push(item)
 Compiles to:
 
 ```javascript
-export const component = {
+export const Component = {
   // State initialization
   create(entity) {
     entity.count = 0

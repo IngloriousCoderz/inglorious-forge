@@ -1,6 +1,6 @@
 import { html } from "@inglorious/web"
 
-export const index = {
+export const Index = {
   render() {
     return html`
       <div>

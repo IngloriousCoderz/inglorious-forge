@@ -4,7 +4,7 @@ import { tasksCount } from "../store/select"
 
 const SINGLE_TASK = 1
 
-export const footer = {
+export const Footer = {
   create(entity) {
     entity.activeFilter = "all"
   },

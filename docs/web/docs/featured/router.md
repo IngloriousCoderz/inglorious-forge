@@ -11,20 +11,20 @@ Client-side routing integrated directly into your store. Routes are entities wit
 
 ```javascript
 import { createStore } from "@inglorious/web"
-import { router, setRoutes } from "@inglorious/web/router"
+import { Router, setRoutes } from "@inglorious/web/router"
 
 const types = {
-  router,
-  homePage: { render: () => html`<h1>Home</h1>` },
-  aboutPage: { render: () => html`<h1>About</h1>` },
-  notFoundPage: { render: () => html`<h1>404</h1>` },
+  Router,
+  HomePage: { render: () => html`<h1>Home</h1>` },
+  AboutPage: { render: () => html`<h1>About</h1>` },
+  NotFoundPage: { render: () => html`<h1>404</h1>` },
 }
 
 const entities = {
-  router: { type: "router" },
-  homePage: { type: "homePage" },
-  aboutPage: { type: "aboutPage" },
-  notFoundPage: { type: "notFoundPage" },
+  router: { type: "Router" },
+  homePage: { type: "HomePage" },
+  aboutPage: { type: "AboutPage" },
+  notFoundPage: { type: "NotFoundPage" },
 }
 
 const store = createStore({ types, entities })
@@ -63,7 +63,7 @@ setRoutes({
 })
 
 // Access route params
-const userPage = {
+const UserPage = {
   render(entity, api) {
     const { params } = api.getEntity("router")
     return html`<h1>User ${params.id}</h1>`
@@ -121,8 +121,8 @@ const requireAdmin = (type) => ({
 
 // Protect routes
 const types = {
-  adminPage: [adminPageBase, requireAuth, requireAdmin],
-  profilePage: [profilePageBase, requireAuth],
+  AdminPage: [AdminPageBase, requireAuth, requireAdmin],
+  ProfilePage: [ProfilePageBase, requireAuth],
 }
 ```
 

@@ -1,7 +1,7 @@
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
-import { table } from "."
+import { Table } from "."
 
 describe("table", () => {
   it("renders rows and headers", () => {
@@ -18,7 +18,7 @@ describe("table", () => {
     }
     const container = document.createElement("div")
 
-    render(table.render(props), container)
+    render(Table.render(props), container)
 
     expect(container.querySelectorAll("tbody tr")).toHaveLength(2)
     expect(container.querySelectorAll("thead th")).toHaveLength(2)
@@ -33,7 +33,7 @@ describe("table", () => {
     }
     const container = document.createElement("div")
 
-    render(table.render(props), container)
+    render(Table.render(props), container)
 
     const tableElement = container.querySelector(".iw-table")
     expect(tableElement.classList.contains("iw-table-full-width")).toBe(true)
@@ -50,7 +50,7 @@ describe("table", () => {
     }
     const container = document.createElement("div")
 
-    render(table.render(props), container)
+    render(Table.render(props), container)
 
     container.querySelector("tbody tr").click()
     expect(clicked).toBe(row)
@@ -63,7 +63,7 @@ describe("table", () => {
     }
     const container = document.createElement("div")
 
-    render(table.render(props), container)
+    render(Table.render(props), container)
 
     expect(container.querySelector("thead th").textContent).toBe("Full Name")
   })

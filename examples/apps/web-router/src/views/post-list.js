@@ -2,7 +2,7 @@ import { html } from "@inglorious/web"
 
 const BACK = -1
 
-export const postList = {
+export const PostList = {
   async routeChange(entity, payload, api) {
     if (payload.route !== entity.type) return
     if (entity.posts.length) return

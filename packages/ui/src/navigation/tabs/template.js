@@ -6,7 +6,7 @@
 
 import { classMap, html } from "@inglorious/web"
 
-export const tabs = {
+export const Tabs = {
   /**
    * Main entrypoint for tabbed navigation. Delegates to the base renderer for overrides.
    * Renders tab labels and the active panel.

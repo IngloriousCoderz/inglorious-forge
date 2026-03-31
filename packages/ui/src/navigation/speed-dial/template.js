@@ -6,7 +6,7 @@
 
 import { classMap, html } from "@inglorious/web"
 
-export const speedDial = {
+export const SpeedDial = {
   /**
    * Main entrypoint for the speed dial. Delegates to the base renderer for overrides.
    * Shows a trigger button and an expandable list of actions.

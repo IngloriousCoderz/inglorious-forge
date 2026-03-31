@@ -29,4 +29,4 @@ export interface TabsType {
   renderPanel(item: TabItem | null, props: TabsProps): TemplateResult | null
 }
 
-export declare const tabs: TabsType
+export declare const Tabs: TabsType

@@ -1,11 +1,11 @@
 import { createStore } from "@inglorious/web"
 
-import { message } from "../message/message"
+import { Message } from "../types/message"
 import { entities } from "./entities"
 import { middlewares } from "./middlewares"
 
 export const store = createStore({
-  types: { message },
+  types: { Message },
   entities,
   middlewares,
 })

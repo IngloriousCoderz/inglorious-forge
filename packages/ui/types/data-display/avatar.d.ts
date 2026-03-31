@@ -27,4 +27,4 @@ export interface AvatarType {
   render(props: AvatarProps): TemplateResult
 }
 
-export declare const avatar: AvatarType
+export declare const Avatar: AvatarType

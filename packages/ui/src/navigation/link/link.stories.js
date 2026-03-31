@@ -1,10 +1,10 @@
 import { createRender } from "../../stories/notifyStory.js"
-import { link } from "."
+import { Link } from "."
 
 export default {
   title: "Navigation/Link",
   tags: ["autodocs"],
-  render: createRender(link),
+  render: createRender(Link),
   argTypes: {
     href: { control: "text", description: "Destination URL." },
     label: { control: "text", description: "Fallback text content." },

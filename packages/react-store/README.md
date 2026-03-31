@@ -47,7 +47,7 @@ const types = {
 }
 
 const entities = {
-  myCounter: { type: "counter", value: 0 },
+  myCounter: { type: "Counter", value: 0 },
 }
 
 export const store = createStore({ types, entities })
@@ -247,8 +247,8 @@ const types = {
 }
 
 const entities = {
-  form: { type: "form", value: "" },
-  list: { type: "list", tasks: [] },
+  form: { type: "Form", value: "" },
+  list: { type: "List", tasks: [] },
 }
 
 export const store = createStore({ types, entities })
@@ -338,7 +338,7 @@ Full TypeScript support is available! The library includes complete type definit
 import { BaseEntity } from "@inglorious/store"
 
 interface CounterEntity extends BaseEntity {
-  type: "counter"
+  type: "Counter"
   value: number
 }
 

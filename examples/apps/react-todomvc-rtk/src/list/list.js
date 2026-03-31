@@ -42,7 +42,7 @@ export const { toggleClick, deleteClick } = slice.actions
 
 export default slice.reducer
 
-export const list = convertSlice(slice, {
+export const List = convertSlice(slice, {
   extraActions: [formSubmit, clearClick],
 })
 

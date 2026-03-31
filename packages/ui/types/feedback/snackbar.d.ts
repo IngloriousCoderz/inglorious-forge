@@ -16,4 +16,4 @@ export interface SnackbarType {
   render(props: SnackbarProps): TemplateResult | null
 }
 
-export declare const snackbar: SnackbarType
+export declare const Snackbar: SnackbarType

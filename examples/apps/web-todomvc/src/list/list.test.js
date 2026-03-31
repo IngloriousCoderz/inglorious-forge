@@ -1,7 +1,7 @@
 import { trigger } from "@inglorious/web"
 import { expect, it } from "vitest"
 
-import { list } from "./list"
+import { List } from "./list"
 
 it("should add a new task on formSubmit", () => {
   const entityBefore = { id: "list", type: "list", tasks: [] }
@@ -12,7 +12,7 @@ it("should add a new task on formSubmit", () => {
     tasks: [{ id: 1, text: "Hello world!" }],
   }
 
-  const { entity } = trigger(entityBefore, list[event.type], event.payload)
+  const { entity } = trigger(entityBefore, List[event.type], event.payload)
 
   expect(entity).toEqual(entityAfter)
 })
@@ -30,7 +30,7 @@ it("should toggle a task as completed on toggleClick", () => {
     tasks: [{ id: 1, text: "Hello world!", completed: true }],
   }
 
-  const { entity } = trigger(entityBefore, list[event.type], event.payload)
+  const { entity } = trigger(entityBefore, List[event.type], event.payload)
 
   expect(entity).toEqual(entityAfter)
 })
@@ -44,7 +44,7 @@ it("should delete a task on deleteClick", () => {
   const event = { type: "deleteClick", payload: 1 }
   const entityAfter = { id: "list", type: "list", tasks: [] }
 
-  const { entity } = trigger(entityBefore, list[event.type], event.payload)
+  const { entity } = trigger(entityBefore, List[event.type], event.payload)
 
   expect(entity).toEqual(entityAfter)
 })
@@ -62,7 +62,7 @@ it("should clear all completed tasks on clearClick", () => {
     tasks: [],
   }
 
-  const { entity } = trigger(entityBefore, list[event.type], event.payload)
+  const { entity } = trigger(entityBefore, List[event.type], event.payload)
 
   expect(entity).toEqual(entityAfter)
 })

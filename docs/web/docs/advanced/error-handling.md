@@ -14,7 +14,7 @@ Since the full template tree re-renders on state change, an error in any entity'
 **Best practice:** Wrap render in try-catch:
 
 ```javascript
-const myType = {
+const MyType = {
   render(entity, api) {
     try {
       // Your render logic
@@ -37,8 +37,8 @@ const myType = {
 Event handlers can fail. Handle them gracefully:
 
 ```javascript
-const myType = {
-  saveData(entity, data) {
+const MyType = {
+  dataSave(entity, data) {
     try {
       // Validate data
       if (!data || !data.id) {
@@ -69,8 +69,8 @@ const myType = {
 Async handlers need error handling:
 
 ```javascript
-const dataLoader = {
-  async fetchData(entity, api) {
+const DataLoader = {
+  async dataFetch(entity, api) {
     entity.isLoading = true
     entity.error = null
 
@@ -83,20 +83,20 @@ const dataLoader = {
 
       const data = await response.json()
       // After await, notify success event
-      api.notify("#dataLoader:fetchSuccess", data)
+      api.notify("#dataLoader:dataFetchSuccess", data)
     } catch (error) {
       // After await, notify error event
-      api.notify("#dataLoader:fetchError", error.message)
+      api.notify("#dataLoader:dataFetchError", error.message)
     }
   },
 
-  fetchSuccess(entity, data) {
+  dataFetchSuccess(entity, data) {
     entity.isLoading = false
     entity.data = data
     entity.error = null
   },
 
-  fetchError(entity, error) {
+  dataFetchError(entity, error) {
     entity.isLoading = false
     entity.error = error
     entity.data = null
@@ -111,7 +111,7 @@ const dataLoader = {
       return html`
         <div class="error">
           <p>${entity.error}</p>
-          <button @click=${() => api.notify("#dataLoader:fetchData")}>
+          <button @click=${() => api.notify("#dataLoader:dataFetch")}>
             Retry
           </button>
         </div>
@@ -128,8 +128,8 @@ const dataLoader = {
 Prevent invalid state with validation:
 
 ```javascript
-const user = {
-  setEmail(entity, email) {
+const User = {
+  emailChange(entity, email) {
     if (!email || !email.includes("@")) {
       entity.emailError = "Invalid email format"
       return
@@ -145,7 +145,7 @@ const user = {
         <input
           type="email"
           value="${entity.email}"
-          @input=${(e) => api.notify("#user:setEmail", e.target.value)}
+          @input=${(e) => api.notify("#user:emailChange", e.target.value)}
         />
         ${entity.emailError
           ? html`<p class="error">${entity.emailError}</p>`
@@ -173,7 +173,7 @@ const validatePassword = (value) => {
   return null
 }
 
-const form = {
+const Form = {
   fieldChange(entity, { field, value }) {
     entity.values[field] = value
 
@@ -237,7 +237,7 @@ Better approach: wrap in handlers:
 
 ```javascript
 const types = {
-  protectedPage: {
+  ProtectedPage: {
     navigate(entity, route) {
       try {
         // Navigation logic
@@ -255,7 +255,7 @@ const types = {
 Add a global error entity:
 
 ```javascript
-const errorNotification = {
+const ErrorNotification = {
   handleError(entity, error) {
     entity.message = error.message
     entity.type = error.type || "error"
@@ -279,7 +279,7 @@ const errorNotification = {
 }
 
 // In your handlers, notify the error entity
-const myType = {
+const MyType = {
   async riskyOperation(entity, api) {
     try {
       // Do something risky

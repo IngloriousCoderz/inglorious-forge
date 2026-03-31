@@ -1,4 +1,4 @@
-export const game = {
+export const Game = {
   action(entity, _, api) {
     // NOTE: we could use the fsm behavior here, but let's keep it for some more complex game.
     switch (entity.state) {

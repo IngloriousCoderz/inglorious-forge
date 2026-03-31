@@ -1,7 +1,7 @@
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
-import { select } from "."
+import { Select } from "."
 
 describe("select", () => {
   it("renders with selected value", () => {
@@ -14,7 +14,7 @@ describe("select", () => {
     }
     const container = document.createElement("div")
 
-    render(select.render(props), container)
+    render(Select.render(props), container)
 
     expect(container.querySelector(".iw-select").value).toBe("b")
   })
@@ -27,7 +27,7 @@ describe("select", () => {
     }
     const container = document.createElement("div")
 
-    render(select.render(props), container)
+    render(Select.render(props), container)
 
     const selectElement = container.querySelector("select")
     expect(selectElement.multiple).toBe(true)
@@ -38,7 +38,7 @@ describe("select", () => {
     const props = { size: "lg", isFullWidth: true, options: ["a", "b"] }
     const container = document.createElement("div")
 
-    render(select.render(props), container)
+    render(Select.render(props), container)
 
     const selectElement = container.querySelector(".iw-select")
     expect(selectElement.classList.contains("iw-select-lg")).toBe(true)
@@ -54,7 +54,7 @@ describe("select", () => {
     }
     const container = document.createElement("div")
 
-    render(select.render(props), container)
+    render(Select.render(props), container)
 
     const option = container.querySelector('option[value="a"]')
     expect(option.disabled).toBe(true)
@@ -73,7 +73,7 @@ describe("select", () => {
       }
       const container = document.createElement("div")
 
-      render(select.render(props), container)
+      render(Select.render(props), container)
 
       const selectElement = container.querySelector("select")
       selectElement.value = "a"
@@ -92,7 +92,7 @@ describe("select", () => {
       }
       const container = document.createElement("div")
 
-      render(select.render(props), container)
+      render(Select.render(props), container)
 
       const selectElement = container.querySelector("select")
       selectElement.dispatchEvent(new Event("focus"))

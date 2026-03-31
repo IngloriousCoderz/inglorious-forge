@@ -25,4 +25,4 @@ export interface ContainerType {
   render(props: ContainerProps): TemplateResult
 }
 
-export declare const container: ContainerType
+export declare const Container: ContainerType

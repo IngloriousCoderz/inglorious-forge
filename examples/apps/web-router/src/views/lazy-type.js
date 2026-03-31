@@ -1,8 +1,11 @@
 import { html } from "@inglorious/web"
 
-export const lazyType = {
+export const LazyType = {
   render() {
-    return html`<h1>Lazy Loaded Route</h1>
-      <p>Check your network panel: this route was loaded on demand!</p>`
+    return html`<h1>Lazy Loaded Type</h1>
+      <p>
+        This route was loaded lazily, and it creates an entity on the fly. Check
+        your Network panel!
+      </p>`
   },
 }

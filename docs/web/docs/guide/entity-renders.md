@@ -23,7 +23,7 @@ render(entity: Entity, api: API): TemplateResult
 ## Basic Render
 
 ```javascript
-const greeting = {
+const Greeting = {
   render(entity, api) {
     return html`<h1>Hello, ${entity.name}!</h1>`
   },
@@ -53,7 +53,7 @@ render(entity, api) {
 ### Render Other Entities
 
 ```javascript
-const page = {
+const Page = {
   render(entity, api) {
     return html`
       <div class="page">
@@ -69,7 +69,7 @@ const page = {
 ### Dispatch Events
 
 ```javascript
-const button = {
+const Button = {
   render(entity, api) {
     return html`
       <button @click=${() => api.notify("#button:clicked", { x: 100 })}>
@@ -85,7 +85,7 @@ const button = {
 ### If/Else
 
 ```javascript
-const user = {
+const User = {
   render(entity, api) {
     if (entity.isLoggedIn) {
       return html`<p>Welcome, ${entity.name}!</p>`
@@ -101,7 +101,7 @@ const user = {
 ```javascript
 import { when } from "@inglorious/web"
 
-const user = {
+const User = {
   render(entity, api) {
     return html`
       ${when(
@@ -119,7 +119,7 @@ const user = {
 ### Simple Map
 
 ```javascript
-const todoList = {
+const TodoList = {
   render(entity, api) {
     return html`
       <ul>
@@ -137,7 +137,7 @@ The `repeat()` directive helps lit-html track which item is which:
 ```javascript
 import { repeat } from "@inglorious/web"
 
-const todoList = {
+const TodoList = {
   render(entity, api) {
     return html`
       <ul>
@@ -277,7 +277,7 @@ Note the `.` prefix — it sets a property instead of an attribute.
 ### Parent-Child Pattern
 
 ```javascript
-const parent = {
+const Parent = {
   render(entity, api) {
     return html`
       <div class="parent">
@@ -288,7 +288,7 @@ const parent = {
   },
 }
 
-const child = {
+const Child = {
   render(entity, api) {
     return html`
       <div class="child">
@@ -304,13 +304,13 @@ const child = {
 Since `api` is passed through the entire render tree, entities can access other entity state and trigger events:
 
 ```javascript
-const parent = {
+const Parent = {
   render(entity, api) {
     return html`<div class="parent">${api.render("child")}</div>`
   },
 }
 
-const child = {
+const Child = {
   render(entity, api) {
     const parent = api.getEntity("parent")
 
@@ -363,7 +363,7 @@ The `handleAsync` helper makes async operations safe and easy:
 ```javascript
 import { handleAsync } from "@inglorious/web"
 
-const myType = {
+const MyType = {
   ...handleAsync("fetch", {
     // All lifecycle hooks are optional except 'run'
 
@@ -433,8 +433,8 @@ This pattern ensures you never touch the entity after an `await`.
 If you prefer not to use `handleAsync`, follow this pattern:
 
 ```javascript
-const dataFetcher = {
-  async fetchData(entity, payload, api) {
+const DataFetcher = {
+  async dataFetch(entity, payload, api) {
     // Synchronous state updates BEFORE await
     entity.isLoading = true
     entity.error = null
@@ -443,25 +443,25 @@ const dataFetcher = {
       const response = await fetch("/api/data")
       const data = await response.json()
       // AFTER await: use events, not entity
-      api.notify("#dataFetcher:loadSuccess", data)
+      api.notify("#dataFetcher:dataFetchSuccess", data)
     } catch (err) {
-      api.notify("#dataFetcher:loadError", err.message)
+      api.notify("#dataFetcher:dataFetchError", err.message)
     } finally {
-      api.notify("#dataFetcher:loadFinally")
+      api.notify("#dataFetcher:dataFetchFinally")
     }
   },
 
-  loadSuccess(entity, data) {
+  dataFetchSuccess(entity, data) {
     entity.data = data
     entity.error = null
   },
 
-  loadError(entity, error) {
+  dataFetchError(entity, error) {
     entity.error = error
     entity.data = null
   },
 
-  loadFinally(entity) {
+  dataFetchFinally(entity) {
     entity.isLoading = false
   },
 
@@ -488,7 +488,7 @@ For expensive computations that should only run when dependencies change, use `c
 ```javascript
 import { compute } from "@inglorious/web"
 
-const dashboard = {
+const Dashboard = {
   render(entity, api) {
     // This computation only runs when entities.list.items changes
     const totalValue = compute(
@@ -545,7 +545,7 @@ Use refs when you need direct DOM access (use sparingly):
 ```javascript
 import { ref, createRef } from "@inglorious/web"
 
-const canvas = {
+const Canvas = {
   create(entity) {
     entity.canvasRef = createRef()
   },
@@ -572,7 +572,7 @@ For complex UIs, compose multiple entity renders:
 
 ```javascript
 const types = {
-  app: {
+  App: {
     render(entity, api) {
       return html`
         <div class="app">
@@ -584,19 +584,19 @@ const types = {
     },
   },
 
-  navigation: {
+  Navigation: {
     render(entity, api) {
       return html`<nav><!-- navigation content --></nav>`
     },
   },
 
-  sidebar: {
+  Sidebar: {
     render(entity, api) {
       return html`<aside><!-- sidebar content --></aside>`
     },
   },
 
-  content: {
+  Content: {
     render(entity, api) {
       return html`<main><!-- main content --></main>`
     },

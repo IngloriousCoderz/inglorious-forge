@@ -15,7 +15,7 @@ if (!import.meta.env.SSR) {
   import("@shoelace-style/shoelace/dist/components/switch/switch.js")
 }
 
-export const index = {
+export const Index = {
   create(entity) {
     entity.count = 0
     entity.mdSwitch = false

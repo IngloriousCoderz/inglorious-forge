@@ -17,4 +17,4 @@ export interface CheckboxType {
   render(props: CheckboxProps): TemplateResult
 }
 
-export declare const checkbox: CheckboxType
+export declare const Checkbox: CheckboxType

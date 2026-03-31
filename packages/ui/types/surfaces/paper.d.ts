@@ -25,4 +25,4 @@ export interface PaperType {
   render(props: PaperProps): TemplateResult
 }
 
-export declare const paper: PaperType
+export declare const Paper: PaperType

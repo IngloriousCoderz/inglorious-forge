@@ -2,7 +2,7 @@ import "@benchmarks/dashboard-shared/style.css"
 
 import { mount } from "@inglorious/web"
 
-import { store } from "./store/index"
-import { app } from "./types/dashboard"
+import { store } from "./store"
+import { Dashboard } from "./types/dashboard"
 
-mount(store, app.render, document.getElementById("root"))
+mount(store, Dashboard.render, document.getElementById("root"))

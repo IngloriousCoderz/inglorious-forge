@@ -1,10 +1,10 @@
 import { createRender } from "../../stories/notifyStory.js"
-import { snackbar } from "."
+import { Snackbar } from "."
 
 export default {
   title: "Feedback/Snackbar",
   tags: ["autodocs"],
-  render: createRender(snackbar),
+  render: createRender(Snackbar),
   argTypes: {
     isOpen: { control: "boolean" },
     message: { control: "text" },

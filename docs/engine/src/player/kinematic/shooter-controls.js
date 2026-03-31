@@ -14,19 +14,19 @@ export default {
   types: {
     ...controls("character"),
 
-    mouse: [{ render: renderMouse }, mouse()],
+    Mouse: [{ render: renderMouse }, mouse()],
 
-    character: [{ render: renderCharacter }, shooterControls(), clamped()],
+    Character: [{ render: renderCharacter }, shooterControls(), clamped()],
   },
 
   entities: {
     game: {
-      type: "game",
+      type: "Game",
       devMode: true,
     },
 
     mouse: {
-      type: "mouse",
+      type: "Mouse",
       position: v(400, 0, 300),
     },
 
@@ -49,7 +49,7 @@ export default {
     }),
 
     character: {
-      type: "character",
+      type: "Character",
       maxAngularSpeed: 2 * pi(),
       maxSpeed: 250,
       position: v(400, 0, 300),

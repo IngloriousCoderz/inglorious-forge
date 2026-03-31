@@ -1,19 +1,16 @@
 import { UPDATE_INTERVAL } from "@benchmarks/deep-tree-shared"
 import { createStore } from "@inglorious/web"
 
-import { metrics } from "../types/metrics"
-import { tree } from "../types/tree"
+import { Metrics } from "../types/metrics"
+import { Tree } from "../types/tree"
 
 const ONE_SECOND = 1000
 
 export const store = createStore({
-  types: {
-    metrics,
-    tree,
-  },
+  types: { Metrics, Tree },
   entities: {
-    metrics: { id: "metrics", type: "metrics" },
-    tree: { id: "tree", type: "tree" },
+    metrics: { type: "Metrics" },
+    tree: { type: "Tree" },
   },
 })
 

@@ -2,7 +2,7 @@ import { type Event, trigger } from "@inglorious/web"
 import { expect, it } from "vitest"
 
 import type { ListEntity, ListType } from "../../../types"
-import { list } from "./list"
+import { List } from "./list"
 
 it("should add a new task on formSubmit", () => {
   const entityBefore: ListEntity = { id: "list", type: "list", tasks: [] }
@@ -15,7 +15,7 @@ it("should add a new task on formSubmit", () => {
 
   const { entity } = trigger(
     entityBefore,
-    list[event.type as keyof typeof list] as ListType["formSubmit"],
+    List[event.type as keyof typeof List] as ListType["formSubmit"],
     event.payload,
   ) as unknown as { entity: ListEntity }
 
@@ -37,7 +37,7 @@ it("should toggle a task as completed on toggleClick", () => {
 
   const { entity } = trigger(
     entityBefore,
-    list[event.type as keyof typeof list] as ListType["toggleClick"],
+    List[event.type as keyof typeof List] as ListType["toggleClick"],
     event.payload,
   ) as unknown as { entity: ListEntity }
 
@@ -55,7 +55,7 @@ it("should delete a task on deleteClick", () => {
 
   const { entity } = trigger(
     entityBefore,
-    list[event.type as keyof typeof list] as ListType["deleteClick"],
+    List[event.type as keyof typeof List] as ListType["deleteClick"],
     event.payload,
   ) as unknown as ListEntity
 
@@ -77,7 +77,7 @@ it("should clear all completed tasks on clearClick", () => {
 
   const { entity } = trigger(
     entityBefore,
-    list[event.type as keyof typeof list] as ListType["clearClick"],
+    List[event.type as keyof typeof List] as ListType["clearClick"],
     event.payload,
   ) as unknown as ListEntity
 

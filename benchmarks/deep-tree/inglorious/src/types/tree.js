@@ -7,7 +7,7 @@ import { html } from "@inglorious/web"
 
 const model = createTreeModel()
 
-export const tree = {
+export const Tree = {
   create(entity) {
     entity.root = model.root
     entity.leafIds = model.leafIds

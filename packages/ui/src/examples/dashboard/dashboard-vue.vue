@@ -42,9 +42,9 @@
 </template>
 
 <script>
-import { container as Container } from "../../layout/container/index.js"
-import { flex as Flex } from "../../layout/flex/index.js"
-import { grid as Grid } from "../../layout/grid/index.js"
+import { Container } from "../../layout/container/index.js"
+import { Flex } from "../../layout/flex/index.js"
+import { Grid } from "../../layout/grid/index.js"
 import { AppDrawer } from "./app-drawer.js"
 import { AppHeader } from "./app-header.js"
 import { socialCards, statCards } from "./data.js"

@@ -1,10 +1,10 @@
 import { createRender } from "../../stories/notifyStory.js"
-import { typography } from "."
+import { Typography } from "."
 
 export default {
   title: "Data Display/Typography",
   tags: ["autodocs"],
-  render: createRender(typography),
+  render: createRender(Typography),
   argTypes: {
     children: { control: "text", description: "Text content." },
     variant: {

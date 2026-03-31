@@ -1,14 +1,14 @@
 import { chart } from "@inglorious/charts"
 import { html } from "@inglorious/web"
 
-import { button } from "../../controls/button"
-import { materialIcon } from "../../data-display/material-icon"
-import { typography } from "../../data-display/typography"
-import { card } from "../../surfaces/card"
+import { Button } from "../../controls/button"
+import { MaterialIcon } from "../../data-display/material-icon"
+import { Typography } from "../../data-display/typography"
+import { Card } from "../../surfaces/card"
 
 export const StatCard = {
   render(entity, api) {
-    return card.render({
+    return Card.render({
       className: `iw-dashboard-stat ${entity.className}`,
       bodyPadding: "none",
       body: html`
@@ -16,13 +16,13 @@ export const StatCard = {
           <div class="iw-dashboard-stat-top">
             <div>
               <div class="iw-dashboard-stat-value">
-                ${typography.render({ variant: "h2", children: entity.value })}
+                ${Typography.render({ variant: "h2", children: entity.value })}
                 <span
-                  >(${typography.render({
+                  >(${Typography.render({
                     variant: "caption",
                     children: html`<span class="iw-dashboard-stat-change">
                       ${entity.change}
-                      ${materialIcon.render({
+                      ${MaterialIcon.render({
                         name: entity.direction,
                         size: "sm",
                       })}
@@ -30,17 +30,17 @@ export const StatCard = {
                   })})</span
                 >
               </div>
-              ${typography.render({ children: entity.label })}
+              ${Typography.render({ children: entity.label })}
             </div>
           </div>
           <div class="iw-dashboard-stat-chart">
             ${this.renderStatChart(entity, api)}
           </div>
-          ${button.render({
+          ${Button.render({
             variant: "ghost",
             shape: "square",
             className: "iw-dashboard-stat-more",
-            children: materialIcon.render({ name: "more_vert", size: "lg" }),
+            children: MaterialIcon.render({ name: "more_vert", size: "lg" }),
             "aria-label": "More options",
           })}
         </div>

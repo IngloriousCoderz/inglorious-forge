@@ -21,13 +21,13 @@
 
 import { classMap, html, ref, repeat, when } from "@inglorious/web"
 
-import { iconButton } from "../../controls/icon-button"
-import { flex } from "../../layout/flex"
+import { IconButton } from "../../controls/icon-button"
+import { Flex } from "../../layout/flex"
 import { applyElementProps } from "../../shared/applyElementProps.js"
 
 const PRETTY_INDEX = 1
 
-export const list = {
+export const List = {
   /**
    * Main entrypoint for the list component. It delegates to the base list renderer so overrides can reuse it.
    * Lists support ordered/unordered modes, nested items, and optional dividers.
@@ -158,7 +158,7 @@ export const list = {
       .filter(Boolean)
       .join(" ")
 
-    return flex.render({
+    return Flex.render({
       element: "li",
       padding: "sm",
       direction: "column",
@@ -170,12 +170,12 @@ export const list = {
         props.onItemClick?.(raw ?? item, path)
       },
       children: [
-        flex.render({
+        Flex.render({
           align: "center",
           gap: "sm",
           children: [
             when(icon, () =>
-              iconButton.render({
+              IconButton.render({
                 icon,
                 size: "sm",
                 color: "secondary",
@@ -184,7 +184,7 @@ export const list = {
                 className: "iw-list-item-icon",
               }),
             ),
-            flex.render({
+            Flex.render({
               direction: "column",
               gap: "sm",
               className: "iw-list-item-content",
@@ -204,7 +204,7 @@ export const list = {
               () =>
                 html`<span class="iw-list-item-trailing">
                   ${when(hasChildren, () =>
-                    iconButton.render({
+                    IconButton.render({
                       variant: "ghost",
                       color: "secondary",
                       size: "sm",

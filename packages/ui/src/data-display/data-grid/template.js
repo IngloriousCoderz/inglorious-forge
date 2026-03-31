@@ -7,11 +7,11 @@
 
 import { classMap, html, repeat, when } from "@inglorious/web"
 
-import { input } from "../../controls/input/index.js"
-import { select } from "../../controls/select/index.js"
-import { pagination } from "../../navigation/pagination/index.js"
-import { virtualList } from "../virtual-list/index.js"
-import { filters } from "./filters"
+import { Input } from "../../controls/input/index.js"
+import { Select } from "../../controls/select/index.js"
+import { Pagination } from "../../navigation/pagination/index.js"
+import { VirtualList } from "../virtual-list/index.js"
+import { Filters } from "./filters"
 import {
   getPaginationInfo,
   getRowKeyValue,
@@ -25,7 +25,7 @@ const PRETTY_PAGE = 1
 const FIRST_PAGE = 0
 const LAST_PAGE = 1
 
-export const dataGrid = {
+export const DataGrid = {
   /**
    * Main entrypoint for the data grid template. It delegates to the base grid renderer so overrides can still reuse it.
    * Data grids support sorting, filtering, selection, pagination, and optional virtualization.
@@ -108,7 +108,7 @@ export const dataGrid = {
         ${column.title} ${getSortIcon(getSortDirection(props, column.id))}
       </div>
 
-      ${column.isFilterable && filters.render(props, column)}
+      ${column.isFilterable && Filters.render(props, column)}
 
       <div
         class="iw-data-grid-column-resizer"
@@ -130,7 +130,7 @@ export const dataGrid = {
    */
   renderSearchbar(props) {
     return html`<div class="iw-data-grid-searchbar">
-      ${input.render({
+      ${Input.render({
         size: "sm",
         isFullWidth: true,
         name: "search",
@@ -164,7 +164,7 @@ export const dataGrid = {
     const virtualState = getVirtualizationState(props, rows.length)
     const virtualEntity = {
       id: props.id,
-      type: "dataGridVirtualRows",
+      type: "DataGridVirtualRows",
       items: rows,
       className: "iw-data-grid-body",
       scrollTop: virtualState.scrollTop,
@@ -190,7 +190,7 @@ export const dataGrid = {
       }),
     }
 
-    return virtualList.render(virtualEntity, virtualApi)
+    return VirtualList.render(virtualEntity, virtualApi)
   },
 
   /**
@@ -300,7 +300,7 @@ export const dataGrid = {
    */
   renderPagination(props, paginationInfo) {
     return html`<div class="iw-data-grid-row">
-      ${pagination.renderControl(
+      ${Pagination.renderControl(
         {
           buttonSize: "sm",
           buttonVariant: "outline",
@@ -313,7 +313,7 @@ export const dataGrid = {
           onChange: () => props.onPageChange?.(FIRST_PAGE),
         },
       )}
-      ${pagination.renderControl(
+      ${Pagination.renderControl(
         {
           buttonSize: "sm",
           buttonVariant: "outline",
@@ -326,7 +326,7 @@ export const dataGrid = {
           onChange: () => props.onPagePrev?.(),
         },
       )}
-      ${input.render({
+      ${Input.render({
         name: "page",
         size: "sm",
         inputType: "number",
@@ -337,7 +337,7 @@ export const dataGrid = {
       })}
       /
       <span>${paginationInfo.totalPages}</span>
-      ${pagination.renderControl(
+      ${Pagination.renderControl(
         {
           buttonSize: "sm",
           buttonVariant: "outline",
@@ -350,7 +350,7 @@ export const dataGrid = {
           onChange: () => props.onPageNext?.(),
         },
       )}
-      ${pagination.renderControl(
+      ${Pagination.renderControl(
         {
           buttonSize: "sm",
           buttonVariant: "outline",
@@ -370,7 +370,7 @@ export const dataGrid = {
   renderPageSize(props, pagination) {
     return html`<div class="iw-data-grid-footer-row">
       <div>Page size:</div>
-      ${select.render({
+      ${Select.render({
         size: "sm",
         value: pagination.pageSize,
         options: pagination.pageSizes,

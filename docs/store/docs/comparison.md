@@ -46,12 +46,12 @@ Entities are first-class citizens. Add instances at runtime with no code changes
 
 ```javascript
 const entities = {
-  workTodos: { type: "todoList", todos: [] },
-  personalTodos: { type: "todoList", todos: [] },
+  workTodos: { type: "TodoList", todos: [] },
+  personalTodos: { type: "TodoList", todos: [] },
 }
 
 // Adding new list at runtime
-store.notify("add", { id: "projectTodos", type: "todoList", todos: [] })
+store.notify("add", { id: "projectTodos", type: "TodoList", todos: [] })
 ```
 
 ### 📦 Boilerplate
@@ -102,7 +102,7 @@ const types = {
 }
 
 const entities = {
-  todos: { type: "todoList", todos: [] },
+  todos: { type: "TodoList", todos: [] },
 }
 ```
 
@@ -199,7 +199,7 @@ const types = {
   },
 }
 
-store.notify("add", { id: "entity1", type: "myType" })
+store.notify("add", { id: "entity1", type: "MyType" })
 store.notify("remove", "entity1")
 ```
 
@@ -238,7 +238,7 @@ expect(state[1].text).toBe("New todo")
 import { trigger } from "@inglorious/store/test"
 
 const { entity } = trigger(
-  { type: "todoList", todos: [] },
+  { type: "TodoList", todos: [] },
   todoListType.addTodo,
   "New todo",
 )

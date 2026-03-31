@@ -1,12 +1,12 @@
 import { html } from "@inglorious/web"
 
 import { createRender } from "../../stories/notifyStory.js"
-import { drawer } from "."
+import { Drawer } from "."
 
 export default {
   title: "Navigation/Drawer",
   tags: ["autodocs"],
-  render: createRender(drawer),
+  render: createRender(Drawer),
   argTypes: {
     isOpen: {
       control: "boolean",

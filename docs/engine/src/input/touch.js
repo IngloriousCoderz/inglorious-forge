@@ -4,9 +4,9 @@ import { v } from "@inglorious/utils/v.js"
 
 export default {
   types: {
-    touch: touch(),
+    Touch: touch(),
 
-    character: [
+    Character: [
       { render: renderCharacter },
       {
         entityTouchMove(entity, { targetId, position }) {
@@ -20,14 +20,14 @@ export default {
 
   entities: {
     game: {
-      type: "game",
+      type: "Game",
       devMode: true,
     },
 
     touch: createTouch(),
 
     character: {
-      type: "character",
+      type: "Character",
       velocity: v(0, 0, 0),
       position: v(400, 0, 300),
       collisions: { touch: { shape: "circle", radius: 12 } },

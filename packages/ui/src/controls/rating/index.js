@@ -1,3 +1,3 @@
 import * as renderers from "./template.js"
 
-export const rating = { ...renderers }
+export const Rating = { ...renderers }

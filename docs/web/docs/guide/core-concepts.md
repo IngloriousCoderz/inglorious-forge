@@ -19,7 +19,7 @@ An **entity** is a JavaScript object that represents a piece of your UI state. E
 // Entity example
 const userEntity = {
   id: "user",
-  type: "user",
+  type: "User",
   name: "Alice",
   email: "alice@example.com",
   isLoggedIn: true,
@@ -41,7 +41,7 @@ const userEntity = {
 A **type** defines the behavior and (optionally) rendering for entities of that type. Types are plain JavaScript objects with methods that act as event handlers — they get triggered when an event with the same name is notified:
 
 ```javascript
-const user = {
+const User = {
   // Event handlers
   login(entity, { email, password }) {
     // Mutate entity state
@@ -84,7 +84,7 @@ An event queue ensures that notifying events remains deterministic.
 Event handlers receive up to three parameters:
 
 ```javascript
-myType = {
+const MyType = {
   someEvent(entity, payload, api) {
     // entity: The entity being updated
     // payload: Optional data passed with the event
@@ -96,7 +96,7 @@ myType = {
 For simpler events, you can omit unused parameters:
 
 ```javascript
-const counter = {
+const Counter = {
   increment(entity) {
     // Only need the entity
     entity.count++
@@ -121,7 +121,7 @@ Types are not necessarily components — they're just collections of behavior. A
 ```javascript
 import { html } from "@inglorious/web"
 
-const greeting = {
+const Greeting = {
   render(entity, api) {
     return html`
       <div class="greeting">
@@ -145,10 +145,11 @@ Render methods are just pure functions. You can invoke them directly:
 
 ```javascript
 import { html } from "@inglorious/web"
+import { Header } from "./header"
 
-const app = {
+const App = {
   render(entity, api) {
-    return html`<header>${header.render({ title: "Hello" }, api)}</header>`
+    return html`<header>${Header.render({ title: "Hello" }, api)}</header>`
   },
 }
 ```
@@ -159,11 +160,12 @@ If there's an entity of that type in the store, you can retrieve it with the `ap
 
 ```javascript
 import { html } from "@inglorious/web"
+import { Header } from "./header"
 
-const app = {
+const App = {
   render(entity, api) {
     const headerEntity = api.getEntity("header")
-    return html`<header>${header.render(headerEntity, api)}</header>`
+    return html`<header>${Header.render(headerEntity, api)}</header>`
   },
 }
 ```
@@ -173,7 +175,7 @@ The `api` object provides a convenience method to do this more concisely:
 ```javascript
 import { html } from "@inglorious/web"
 
-const app = {
+const App = {
   render(entity, api) {
     return html`<header>${api.render("header")}</header>`
   },
@@ -187,12 +189,25 @@ This pattern is incredibly clean because:
 - ✅ Entities communicate through events
 - ✅ All state is visible in the store (no hidden state)
 
+This requires that the Header type was already registered as a type in the store. If that's not the case, you can register it lazily:
+
+```javascript
+import { html } from "@inglorious/web"
+import { Header } from "./header"
+
+const App = {
+  render(entity, api) {
+    return html`<header>${api.render("header", "Header", Header)}</header>`
+  },
+}
+```
+
 ### Using the `api` Object
 
 The `api` parameter provides access to store methods in both event handlers and render methods:
 
 ```javascript
-const page = {
+const Page = {
   render(entity, api) {
     // Get another entity
     const user = api.getEntity("user")
@@ -323,7 +338,7 @@ api.notify("todo:toggle") // All entities of type "todo"
 Inglorious Web uses [Mutative.js](https://mutative.js.org/) to handle immutable state safely. You write mutations that **look mutable** but produce **immutable results**:
 
 ```javascript
-const todo = {
+const Todo = {
   toggle(entity) {
     // Looks like mutation
     entity.completed = !entity.completed
@@ -360,7 +375,7 @@ This is incredibly powerful for:
 
 ```javascript
 // Base behavior
-const page = {
+const Page = {
   navigate(entity, route) {
     entity.currentRoute = route
   },
@@ -387,7 +402,7 @@ const requireAuth = (type) => ({
 
 // Compose them as an array
 const types = {
-  protectedPage: [page, requireAuth],
+  ProtectedPage: [Page, requireAuth],
 }
 ```
 

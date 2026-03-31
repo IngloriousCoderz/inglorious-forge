@@ -4,7 +4,7 @@ export function addToast(entity, _payload, api) {
 
   api.notify("add", {
     id: `toast-${next}`,
-    type: "toast",
+    type: "Toast",
     title: `Toast #${next}`,
     message: "Presence mode=wait queues exits in this group.",
     motionVariant: "visible",

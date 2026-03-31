@@ -88,12 +88,12 @@ import { createStore, mount, html } from "@inglorious/web"
 
 const store = createStore({
   types: {
-    app: {
+    App: {
       render: (entity, api) => html`<h1>Hello World</h1>`,
     },
   },
   entities: {
-    app: { type: "app" },
+    app: { type: "App" },
   },
 })
 
@@ -136,11 +136,11 @@ Create `src/types.ts`:
 import { html, type API } from "@inglorious/web"
 
 export interface AppEntity {
-  type: "app"
+  type: "App"
   message: string
 }
 
-export const app = {
+export const App = {
   render(entity: AppEntity, api: API) {
     return html`<h1>${entity.message}</h1>`
   },
@@ -151,12 +151,12 @@ Create `src/main.ts`:
 
 ```typescript
 import { createStore, mount } from "@inglorious/web"
-import { app } from "./types"
+import { App } from "./types"
 
 const store = createStore({
-  types: { app },
+  types: { App },
   entities: {
-    app: { type: "app", message: "Hello, TypeScript!" },
+    app: { type: "App", message: "Hello, TypeScript!" },
   },
 })
 
@@ -177,7 +177,7 @@ import { createStore, mount, html } from "@inglorious/web"
 
 const store = createStore({
   types: {
-    counter: {
+    Counter: {
       increment(entity) {
         entity.count++
       },
@@ -192,7 +192,7 @@ const store = createStore({
     },
   },
   entities: {
-    counter: { type: "counter", count: 0 },
+    counter: { type: "Counter", count: 0 },
   },
 })
 

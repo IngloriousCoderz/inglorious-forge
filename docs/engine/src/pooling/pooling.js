@@ -28,7 +28,7 @@ function spawning() {
 
       for (let i = 0; i < MAX_BUBBLES; i++) {
         api.notify("spawn", {
-          type: "bubble",
+          type: "Bubble",
           position: [random(0, 800), 0, random(0, 600)],
           velocity: [random(-50, 50), 0, random(-50, 50)],
           color: getRandomColor(),
@@ -43,7 +43,7 @@ function spawning() {
 
       if (activeBubbles < MAX_BUBBLES) {
         api.notify("spawn", {
-          type: "bubble",
+          type: "Bubble",
           position: [random(0, 800), 0, random(0, 600)],
           velocity: [random(-50, 50), 0, random(-50, 50)],
           color: getRandomColor(),
@@ -78,13 +78,13 @@ function despawning() {
 
 export default {
   types: {
-    game: [game(), spawning()],
+    Game: [game(), spawning()],
 
-    bubble: [{ render: renderCircle }, velocity(), despawning()],
+    Bubble: [{ render: renderCircle }, velocity(), despawning()],
 
-    fps: [{ render: renderFps }, fps()],
+    Fps: [{ render: renderFps }, fps()],
 
-    activeBubbles: [
+    ActiveBubbles: [
       { render: renderText },
       {
         update(entity, dt, api) {
@@ -94,7 +94,7 @@ export default {
       },
     ],
 
-    inactiveBubbles: [
+    InactiveBubbles: [
       { render: renderText },
       {
         update(entity, dt, api) {
@@ -110,19 +110,19 @@ export default {
     game: { devMode: true },
 
     fps: {
-      type: "fps",
+      type: "Fps",
       position: v(0, 0, 600),
       layer: 1,
     },
 
     activeBubbles: {
-      type: "activeBubbles",
+      type: "ActiveBubbles",
       position: v(0, 0, 580),
       layer: 1,
     },
 
     inactiveBubbles: {
-      type: "inactiveBubbles",
+      type: "InactiveBubbles",
       position: v(0, 0, 560),
       layer: 1,
     },

@@ -1,14 +1,14 @@
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
-import { accordion } from "."
+import { Accordion } from "."
 
 describe("accordion", () => {
   it("renders items", () => {
     const container = document.createElement("div")
 
     render(
-      accordion.render({
+      Accordion.render({
         items: [
           { title: "A", content: "A content" },
           { title: "B", content: "B content" },
@@ -24,7 +24,7 @@ describe("accordion", () => {
     const container = document.createElement("div")
 
     render(
-      accordion.render({
+      Accordion.render({
         items: [{ title: "A", content: "A content", isExpanded: true }],
       }),
       container,
@@ -41,7 +41,7 @@ describe("accordion", () => {
     const container = document.createElement("div")
 
     render(
-      accordion.render({
+      Accordion.render({
         items,
         onItemToggle: (item, index, expanded) => {
           payload = { item, index, expanded }

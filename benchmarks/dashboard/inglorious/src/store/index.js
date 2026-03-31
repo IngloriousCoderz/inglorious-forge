@@ -1,15 +1,15 @@
 import { CHARTS, UPDATE_FREQUENCY } from "@benchmarks/dashboard-shared"
 import { createStore } from "@inglorious/web"
 
-import { chart } from "../types/chart"
-import { metrics } from "../types/metrics"
-import { table } from "../types/table"
+import { Chart } from "../types/chart"
+import { Metrics } from "../types/metrics"
+import { Table } from "../types/table"
 
 const RESET = 0
 const ONE_SECOND = 1000
 
 export const store = createStore({
-  types: { metrics, chart, table },
+  types: { Metrics, Chart, Table },
   entities: CHARTS,
   autoCreateEntities: true,
 })

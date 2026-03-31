@@ -11,4 +11,4 @@ export interface DividerType {
   render(props: DividerProps): TemplateResult
 }
 
-export declare const divider: DividerType
+export declare const Divider: DividerType

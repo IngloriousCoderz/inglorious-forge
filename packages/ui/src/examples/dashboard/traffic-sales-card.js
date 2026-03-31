@@ -1,31 +1,31 @@
 import { html } from "@inglorious/web"
 
-import { button } from "../../controls/button"
-import { avatar } from "../../data-display/avatar"
-import { badge } from "../../data-display/badge"
-import { icon } from "../../data-display/icon"
-import { materialIcon } from "../../data-display/material-icon"
-import { table } from "../../data-display/table"
-import { typography } from "../../data-display/typography"
-import { progress } from "../../feedback/progress"
-import { flex } from "../../layout/flex"
-import { grid } from "../../layout/grid"
-import { card } from "../../surfaces/card"
+import { Button } from "../../controls/button"
+import { Avatar } from "../../data-display/avatar"
+import { Badge } from "../../data-display/badge"
+import { Icon } from "../../data-display/icon"
+import { MaterialIcon } from "../../data-display/material-icon"
+import { Table } from "../../data-display/table"
+import { Typography } from "../../data-display/typography"
+import { Progress } from "../../feedback/progress"
+import { Flex } from "../../layout/flex"
+import { Grid } from "../../layout/grid"
+import { Card } from "../../surfaces/card"
 import { clientBars, sourceBars, userRows } from "./data"
 
 export const TrafficSalesCard = {
   render(entity, api) {
-    return card.render({
+    return Card.render({
       title: "Traffic & Sales",
       body: html`
-        ${grid.render({
+        ${Grid.render({
           columns: 2,
           gap: "lg",
           className: "iw-dashboard-sales-layout",
           children: [
             html`
               <div>
-                ${grid.render({
+                ${Grid.render({
                   columns: 2,
                   gap: "lg",
                   className: "iw-dashboard-kpi-grid",
@@ -51,27 +51,27 @@ export const TrafficSalesCard = {
                   ],
                 })}
                 <hr class="iw-dashboard-divider" />
-                ${flex.render({
+                ${Flex.render({
                   direction: "column",
                   gap: "lg",
                   className: "iw-dashboard-progress-list",
                   children: clientBars.map(([day, first, second]) =>
-                    grid.render({
+                    Grid.render({
                       columns: "6rem 1fr",
                       gap: "lg",
                       align: "center",
                       className: "iw-dashboard-progress-row",
                       children: [
                         html`<span>${day}</span>`,
-                        flex.render({
+                        Flex.render({
                           direction: "column",
                           gap: "sm",
                           children: [
-                            progress.render({
+                            Progress.render({
                               value: first,
                               className: "iw-progress-info",
                             }),
-                            progress.render({
+                            Progress.render({
                               value: second,
                               className: "iw-progress-error",
                             }),
@@ -85,7 +85,7 @@ export const TrafficSalesCard = {
             `,
             html`
               <div>
-                ${grid.render({
+                ${Grid.render({
                   columns: 2,
                   gap: "lg",
                   className: "iw-dashboard-kpi-grid",
@@ -107,30 +107,30 @@ export const TrafficSalesCard = {
                   ],
                 })}
                 <hr class="iw-dashboard-divider" />
-                ${flex.render({
+                ${Flex.render({
                   direction: "column",
                   gap: "lg",
                   className: "iw-dashboard-progress-list",
                   children: sourceBars.map(
                     ([label, value, iconName, tone, metric, suffix]) => html`
                       <div>
-                        ${flex.render({
+                        ${Flex.render({
                           align: "center",
                           justify: "between",
                           gap: "lg",
                           children: [
-                            flex.render({
+                            Flex.render({
                               align: "center",
                               gap: "sm",
                               children: [
-                                materialIcon.render({
+                                MaterialIcon.render({
                                   name: iconName,
                                   size: "lg",
                                 }),
                                 html`<span>${label}</span>`,
                               ],
                             }),
-                            flex.render({
+                            Flex.render({
                               align: "center",
                               gap: "sm",
                               className: "iw-dashboard-progress-meta",
@@ -143,7 +143,7 @@ export const TrafficSalesCard = {
                             }),
                           ],
                         })}
-                        ${progress.render({
+                        ${Progress.render({
                           value,
                           className: `iw-progress-${tone}`,
                         })}
@@ -158,7 +158,7 @@ export const TrafficSalesCard = {
 
         <div style="height: var(--iw-space-5)"></div>
 
-        ${table.render({
+        ${Table.render({
           columns: [
             { id: "user", title: "User" },
             { id: "country", title: "Country" },
@@ -169,17 +169,17 @@ export const TrafficSalesCard = {
           ],
           rows: userRows.map((row) => ({
             user: html`
-              ${flex.render({
+              ${Flex.render({
                 align: "center",
                 gap: "lg",
                 children: [
                   html`<span class="iw-dashboard-avatar">
-                    ${avatar.render({
+                    ${Avatar.render({
                       size: "lg",
                       color: "auto",
                       initials: row.initials,
                     })}
-                    ${badge.render({
+                    ${Badge.render({
                       shape: "circle",
                       ringWidth: "1px",
                       color: row.status,
@@ -200,11 +200,11 @@ export const TrafficSalesCard = {
               ${row.country}
             </div>`,
             usage: html`
-              ${flex.render({
+              ${Flex.render({
                 direction: "column",
                 gap: "sm",
                 children: [
-                  flex.render({
+                  Flex.render({
                     justify: "between",
                     gap: "sm",
                     children: [
@@ -214,7 +214,7 @@ export const TrafficSalesCard = {
                       >`,
                     ],
                   }),
-                  progress.render({
+                  Progress.render({
                     value: row.usage,
                     className: `iw-progress-${row.status}`,
                   }),
@@ -222,7 +222,7 @@ export const TrafficSalesCard = {
               })}
             `,
             payment: html`<div class="iw-dashboard-payment">
-              ${icon.render({
+              ${Icon.render({
                 size: "lg",
                 children: html`<i
                   class="fa-brands fa-${row.payment}"
@@ -238,10 +238,10 @@ export const TrafficSalesCard = {
             `,
             menu: html`
               <div class="iw-dashboard-menu-cell">
-                ${button.render({
+                ${Button.render({
                   variant: "ghost",
                   color: "secondary",
-                  children: materialIcon.render({ name: "more_vert" }),
+                  children: MaterialIcon.render({ name: "more_vert" }),
                   "aria-label": "Row actions",
                 })}
               </div>
@@ -255,12 +255,12 @@ export const TrafficSalesCard = {
   renderKpi(_, { label, value, color }) {
     return html`
       <div class="iw-dashboard-kpi" style=${`color: ${color};`}>
-        ${typography.render({
+        ${Typography.render({
           variant: "caption",
           children: label,
           color: "var(--iw-color-text-secondary)",
         })}
-        ${typography.render({ variant: "h3", children: value })}
+        ${Typography.render({ variant: "h3", children: value })}
       </div>
     `
   },

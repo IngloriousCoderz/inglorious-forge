@@ -1,14 +1,14 @@
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
-import { avatar } from "."
+import { Avatar } from "."
 
 describe("avatar", () => {
   it("renders initials", () => {
     const props = { id: "av", initials: "AB", color: "primary" }
     const container = document.createElement("div")
 
-    render(avatar.render(props), container)
+    render(Avatar.render(props), container)
 
     expect(container.querySelector(".iw-avatar").textContent.trim()).toBe("AB")
     expect(
@@ -30,7 +30,7 @@ describe("avatar", () => {
     }
     const container = document.createElement("div")
 
-    render(avatar.render(props), container)
+    render(Avatar.render(props), container)
 
     const root = container.querySelector(".iw-avatar")
     const img = container.querySelector(".iw-avatar-img")
@@ -50,7 +50,7 @@ describe("avatar", () => {
     }
     const container = document.createElement("div")
 
-    render(avatar.render(props), container)
+    render(Avatar.render(props), container)
 
     const root = container.querySelector(".iw-avatar")
     expect(root.style.background).toBe("rgb(15, 23, 42)")
@@ -61,7 +61,7 @@ describe("avatar", () => {
     const props = { id: "av", initials: "Auto", color: "auto" }
     const container = document.createElement("div")
 
-    render(avatar.render(props), container)
+    render(Avatar.render(props), container)
 
     const root = container.querySelector(".iw-avatar")
     expect(root.getAttribute("style")).toContain("background:hsl(")

@@ -1,6 +1,6 @@
 import { html } from "@inglorious/web"
 
-export const userList = {
+export const UserList = {
   render(entity) {
     return html`
       <div class="user-list">

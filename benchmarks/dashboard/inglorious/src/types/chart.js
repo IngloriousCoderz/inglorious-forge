@@ -5,7 +5,7 @@ import { chartData } from "../store/select"
 const VALUE_TO_PX = 100
 const VALUE_TO_HSL = 120
 
-export const chart = {
+export const Chart = {
   render(entity, api) {
     const { values, max, avg } = api.select(chartData(entity))
 

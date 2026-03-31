@@ -17,4 +17,4 @@ export interface FabType {
   render(props: FabProps): TemplateResult
 }
 
-export declare const fab: FabType
+export declare const Fab: FabType

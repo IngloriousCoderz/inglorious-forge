@@ -13,4 +13,4 @@ export interface IconType {
   render(props: IconProps): TemplateResult
 }
 
-export declare const icon: IconType
+export declare const Icon: IconType

@@ -15,7 +15,7 @@ pnpm add @inglorious/ag-grid @inglorious/web ag-grid-community
 
 ```js
 import { createStore } from "@inglorious/web"
-import { agGrid, configureAgGrid } from "@inglorious/ag-grid"
+import { AgGrid, configureAgGrid } from "@inglorious/ag-grid"
 import {
   AllCommunityModule,
   createGrid,
@@ -31,11 +31,11 @@ configureAgGrid({
 
 const store = createStore({
   types: {
-    grid: agGrid,
+    AgGrid,
   },
   entities: {
     agGrid: {
-      type: "grid",
+      type: "AgGrid",
       columnDefs: [],
       rowData: [],
     },
@@ -52,7 +52,7 @@ Set sizing from entity state:
 
 ```js
 {
-  type: "grid",
+  type: "AgGrid",
   themeClass: "ag-theme-quartz",
   height: 520, // number (px) or CSS string like "70vh"
   gridOptions: {

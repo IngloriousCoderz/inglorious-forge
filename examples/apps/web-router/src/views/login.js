@@ -1,6 +1,6 @@
 import { html } from "@inglorious/web"
 
-export const loginPage = {
+export const LoginPage = {
   navigate(entity, payload) {
     if (payload.to === "/login") {
       entity.redirectTo = payload.redirectTo

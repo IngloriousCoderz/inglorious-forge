@@ -1,8 +1,8 @@
 import { html } from "@inglorious/web"
 
-import { nav } from "../components/nav.js"
+import { Nav } from "../components/nav.js"
 
-export const about = {
+export const About = {
   create(entity) {
     entity.name = "Us"
   },
@@ -18,7 +18,7 @@ export const about = {
           >${entity.name}</span
         >
       </h1>
-      ${nav.render()}`
+      ${Nav.render()}`
   },
 }
 

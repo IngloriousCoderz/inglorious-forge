@@ -13,10 +13,10 @@ import { v } from "@inglorious/utils/v.js"
 
 export default {
   types: {
-    keyboard: [keyboard()],
-    mouse: [{ render: renderMouse }, mouse()],
+    Keyboard: [keyboard()],
+    Mouse: [{ render: renderMouse }, mouse()],
 
-    character: {
+    Character: {
       render: renderCharacter,
       update(entity, dt, api) {
         const mouse = api.getEntity("mouse")
@@ -24,12 +24,12 @@ export default {
       },
     },
 
-    camera: [{ render: renderCamera }, camera()],
+    Camera: [{ render: renderCamera }, camera()],
   },
 
   entities: {
     game: {
-      type: "game",
+      type: "Game",
       devMode: true,
     },
 
@@ -39,14 +39,14 @@ export default {
 
     player: {
       id: "player",
-      type: "character",
+      type: "Character",
       maxSpeed: 250,
       maxAcceleration: 500,
       position: v(0, 0, 0),
     },
 
     camera: {
-      type: "camera",
+      type: "Camera",
       layer: 1,
       isActive: true,
       targetId: "player",

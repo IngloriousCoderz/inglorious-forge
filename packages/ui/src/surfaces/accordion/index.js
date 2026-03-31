@@ -1,1 +1,1 @@
-export { accordion } from "./template.js"
+export { Accordion } from "./template.js"

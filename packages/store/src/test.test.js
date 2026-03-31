@@ -4,7 +4,7 @@ import { createMockApi, trigger } from "./test"
 
 describe("createMockApi", () => {
   it("should create a mock API with all required methods", () => {
-    const entities = { counter1: { type: "counter", value: 0 } }
+    const entities = { counter1: { type: "Counter", value: 0 } }
 
     const api = createMockApi(entities)
 
@@ -18,8 +18,8 @@ describe("createMockApi", () => {
 
   it("should return all entities via getEntities()", () => {
     const entities = {
-      counter1: { type: "counter", value: 5 },
-      counter2: { type: "counter", value: 10 },
+      counter1: { type: "Counter", value: 5 },
+      counter2: { type: "Counter", value: 10 },
     }
 
     const api = createMockApi(entities)
@@ -29,14 +29,14 @@ describe("createMockApi", () => {
 
   it("should filter entities by type via getEntities(typeName)", () => {
     const entities = {
-      counter1: { type: "counter", value: 5 },
-      status1: { type: "status", value: "ok" },
-      counter2: { type: "counter", value: 10 },
+      counter1: { type: "Counter", value: 5 },
+      status1: { type: "Status", value: "ok" },
+      counter2: { type: "Counter", value: 10 },
     }
 
     const api = createMockApi(entities)
 
-    expect(api.getEntities("counter")).toEqual([
+    expect(api.getEntities("Counter")).toEqual([
       entities.counter1,
       entities.counter2,
     ])
@@ -45,19 +45,19 @@ describe("createMockApi", () => {
 
   it("should return a specific entity via getEntity()", () => {
     const entities = {
-      counter1: { type: "counter", value: 5 },
-      counter2: { type: "counter", value: 10 },
+      counter1: { type: "Counter", value: 5 },
+      counter2: { type: "Counter", value: 10 },
     }
 
     const api = createMockApi(entities)
 
-    expect(api.getEntity("counter1")).toEqual({ type: "counter", value: 5 })
-    expect(api.getEntity("counter2")).toEqual({ type: "counter", value: 10 })
+    expect(api.getEntity("counter1")).toEqual({ type: "Counter", value: 5 })
+    expect(api.getEntity("counter2")).toEqual({ type: "Counter", value: 10 })
   })
 
   it("should return undefined for non-existent entity", () => {
     const entities = {
-      counter1: { type: "counter", value: 5 },
+      counter1: { type: "Counter", value: 5 },
     }
 
     const api = createMockApi(entities)
@@ -67,7 +67,7 @@ describe("createMockApi", () => {
 
   it("should track dispatched events", () => {
     const entities = {
-      counter1: { type: "counter", value: 0 },
+      counter1: { type: "Counter", value: 0 },
     }
 
     const api = createMockApi(entities)
@@ -83,7 +83,7 @@ describe("createMockApi", () => {
 
   it("should track events dispatched via notify()", () => {
     const entities = {
-      counter1: { type: "counter", value: 0 },
+      counter1: { type: "Counter", value: 0 },
     }
 
     const api = createMockApi(entities)
@@ -99,20 +99,20 @@ describe("createMockApi", () => {
 
   it("should freeze entities to prevent mutations", () => {
     const entities = {
-      counter1: { type: "counter", value: 0 },
+      counter1: { type: "Counter", value: 0 },
     }
 
     const api = createMockApi(entities)
     const allEntities = api.getEntities()
 
     expect(() => {
-      allEntities.counter1 = { type: "counter", value: 999 }
+      allEntities.counter1 = { type: "Counter", value: 999 }
     }).toThrow()
   })
 
   it("should start with empty events array", () => {
     const entities = {
-      counter1: { type: "counter", value: 0 },
+      counter1: { type: "Counter", value: 0 },
     }
 
     const api = createMockApi(entities)
@@ -123,8 +123,8 @@ describe("createMockApi", () => {
 
 describe("trigger", () => {
   it("should execute handler and return new entity", () => {
-    const entityBefore = { type: "counter", value: 0 }
-    const entityAfter = { type: "counter", value: 5 }
+    const entityBefore = { type: "Counter", value: 0 }
+    const entityAfter = { type: "Counter", value: 5 }
 
     function increment(entity, amount) {
       entity.value += amount
@@ -136,7 +136,7 @@ describe("trigger", () => {
   })
 
   it("should not mutate original entity", () => {
-    const entityBefore = { type: "counter", value: 0 }
+    const entityBefore = { type: "Counter", value: 0 }
 
     function increment(entity, amount) {
       entity.value += amount
@@ -148,8 +148,8 @@ describe("trigger", () => {
   })
 
   it("should capture events dispatched during handler execution", () => {
-    const entityBefore = { type: "counter", value: 99 }
-    const entityAfter = { type: "counter", value: 104 }
+    const entityBefore = { type: "Counter", value: 99 }
+    const entityAfter = { type: "Counter", value: 104 }
     const eventsAfter = [{ type: "overflow", payload: 104 }]
 
     function increment(entity, amount, api) {
@@ -167,8 +167,8 @@ describe("trigger", () => {
   })
 
   it("should work with handlers that do not dispatch events", () => {
-    const entityBefore = { type: "todo", text: "Buy milk", completed: false }
-    const entityAfter = { type: "todo", text: "Buy milk", completed: true }
+    const entityBefore = { type: "Todo", text: "Buy milk", completed: false }
+    const entityAfter = { type: "Todo", text: "Buy milk", completed: true }
     const eventsAfter = []
 
     function toggle(entity) {
@@ -182,12 +182,12 @@ describe("trigger", () => {
   })
 
   it("should allow handler to read other entities via API", () => {
-    const entityBefore = { id: "counter2", type: "counter", value: 20 }
-    const entityAfter = { id: "counter2", type: "counter", value: 30 }
+    const entityBefore = { id: "counter2", type: "Counter", value: 20 }
+    const entityAfter = { id: "counter2", type: "Counter", value: 30 }
 
     const mockApi = createMockApi({
-      counter1: { id: "counter1", type: "counter", value: 10 },
-      counter2: { id: "counter2", type: "counter", value: 20 },
+      counter1: { id: "counter1", type: "Counter", value: 10 },
+      counter2: { id: "counter2", type: "Counter", value: 20 },
     })
 
     function addFromSource(entity, sourceId, api) {
@@ -203,8 +203,8 @@ describe("trigger", () => {
   })
 
   it("should accept custom mock API", () => {
-    const entityBefore = { type: "counter", value: 0 }
-    const entityAfter = { type: "counter", value: 5 }
+    const entityBefore = { type: "Counter", value: 0 }
+    const entityAfter = { type: "Counter", value: 5 }
     const eventsAfter = [{ type: "incremented", payload: undefined }]
 
     const customApi = createMockApi(entityBefore)
@@ -221,8 +221,8 @@ describe("trigger", () => {
   })
 
   it("should handle multiple dispatched events", () => {
-    const entityBefore = { type: "counter", value: 50 }
-    const entityAfter = { type: "counter", value: 110 }
+    const entityBefore = { type: "Counter", value: 50 }
+    const entityAfter = { type: "Counter", value: 110 }
     const eventsAfter = [
       { type: "increment:start", payload: undefined },
       { type: "milestone:hundred", payload: undefined },
@@ -248,8 +248,8 @@ describe("trigger", () => {
   })
 
   it("should work without payload", () => {
-    const entityBefore = { type: "counter", value: 5 }
-    const entityAfter = { type: "counter", value: 0 }
+    const entityBefore = { type: "Counter", value: 5 }
+    const entityAfter = { type: "Counter", value: 0 }
 
     function reset(entity) {
       entity.value = 0
@@ -262,13 +262,13 @@ describe("trigger", () => {
 
   it("should work with complex entity mutations", () => {
     const entityBefore = {
-      type: "player",
+      type: "Player",
       name: "Alice",
       inventory: ["sword", "shield"],
       stats: { health: 100, mana: 50 },
     }
     const entityAfter = {
-      type: "player",
+      type: "Player",
       name: "Alice",
       inventory: ["sword", "shield", "potion"],
       stats: { health: 100, mana: 50 },

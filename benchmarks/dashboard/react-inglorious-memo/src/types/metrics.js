@@ -3,7 +3,7 @@ import {
   createFpsBenchmark,
 } from "@benchmarks/dashboard-shared"
 
-export const metrics = {
+export const Metrics = {
   create(entity) {
     entity.fps = 60
     entity.fpsNow = 60

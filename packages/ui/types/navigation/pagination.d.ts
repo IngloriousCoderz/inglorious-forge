@@ -48,4 +48,4 @@ export interface PaginationType {
   ): TemplateResult
 }
 
-export declare const pagination: PaginationType
+export declare const Pagination: PaginationType

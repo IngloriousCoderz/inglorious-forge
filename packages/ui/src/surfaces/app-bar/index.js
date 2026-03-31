@@ -1,3 +1,3 @@
 import * as renderers from "./template.js"
 
-export const appBar = { ...renderers }
+export const AppBar = { ...renderers }

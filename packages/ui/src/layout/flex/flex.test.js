@@ -2,7 +2,7 @@ import { html } from "@inglorious/web"
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
-import { flex } from "."
+import { Flex } from "."
 
 describe("flex", () => {
   it("renders children", () => {
@@ -12,7 +12,7 @@ describe("flex", () => {
     }
     const container = document.createElement("div")
 
-    render(flex.render(entity), container)
+    render(Flex.render(entity), container)
 
     expect(
       container.querySelector(".iw-flex").textContent.replace(/\s+/g, ""),
@@ -33,7 +33,7 @@ describe("flex", () => {
     }
     const container = document.createElement("div")
 
-    render(flex.render(entity), container)
+    render(Flex.render(entity), container)
 
     const root = container.querySelector(".iw-flex")
     expect(root.tagName).toBe("SECTION")
@@ -53,7 +53,7 @@ describe("flex", () => {
     }
     const container = document.createElement("div")
 
-    render(flex.render(entity), container)
+    render(Flex.render(entity), container)
 
     expect(container.textContent).toContain("Configured Child + Text Child")
   })
@@ -67,7 +67,7 @@ describe("flex", () => {
     }
     const container = document.createElement("div")
 
-    render(flex.render(entity), container)
+    render(Flex.render(entity), container)
 
     const root = container.querySelector(".iw-flex")
     expect(root.classList.contains("iw-flex-inline")).toBe(true)

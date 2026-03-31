@@ -1,14 +1,14 @@
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
-import { dialog } from "."
+import { Dialog } from "."
 
 describe("dialog", () => {
   it("renders when open", () => {
     const props = { isOpen: true, title: "Hello", description: "Details" }
     const container = document.createElement("div")
 
-    render(dialog.render(props), container)
+    render(Dialog.render(props), container)
 
     expect(container.querySelector(".iw-dialog")).not.toBeNull()
     expect(container.querySelector(".iw-dialog-title").textContent).toBe(
@@ -20,7 +20,7 @@ describe("dialog", () => {
     const props = { isOpen: false }
     const container = document.createElement("div")
 
-    render(dialog.render(props), container)
+    render(Dialog.render(props), container)
 
     expect(container.querySelector(".iw-dialog")).toBeNull()
   })
@@ -30,7 +30,7 @@ describe("dialog", () => {
     const props = { isOpen: true, onClose: () => (closed = true) }
     const container = document.createElement("div")
 
-    render(dialog.render(props), container)
+    render(Dialog.render(props), container)
 
     container.querySelector(".iw-dialog-backdrop").click()
     expect(closed).toBe(true)
@@ -46,7 +46,7 @@ describe("dialog", () => {
     }
     const container = document.createElement("div")
 
-    render(dialog.render(props), container)
+    render(Dialog.render(props), container)
 
     container.querySelector(".iw-dialog-backdrop").click()
 

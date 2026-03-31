@@ -1,7 +1,7 @@
 import { trigger } from "@inglorious/web"
 import { expect, it } from "vitest"
 
-import { form } from "."
+import { Form } from "."
 
 it("should update the form value on inputChange", () => {
   const entityBefore = {
@@ -16,7 +16,7 @@ it("should update the form value on inputChange", () => {
     value: "Hello world!",
   }
 
-  const { entity } = trigger(entityBefore, form[event.type], event.payload)
+  const { entity } = trigger(entityBefore, Form[event.type], event.payload)
 
   expect(entity).toEqual(entityAfter)
 })
@@ -34,7 +34,7 @@ it("should clear the form value on formSubmit", () => {
     value: "",
   }
 
-  const { entity } = trigger(entityBefore, form[event.type], event.payload)
+  const { entity } = trigger(entityBefore, Form[event.type], event.payload)
 
   expect(entity).toEqual(entityAfter)
 })

@@ -1,7 +1,7 @@
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
-import { slider } from "."
+import { Slider } from "."
 
 describe("slider", () => {
   it("renders range input with value", () => {
@@ -14,7 +14,7 @@ describe("slider", () => {
     }
     const container = document.createElement("div")
 
-    render(slider.render(props), container)
+    render(Slider.render(props), container)
 
     const input = container.querySelector('input[type="range"]')
     expect(input.value).toBe("42")
@@ -36,7 +36,7 @@ describe("slider", () => {
     }
     const container = document.createElement("div")
 
-    render(slider.render(props), container)
+    render(Slider.render(props), container)
 
     const input = container.querySelector('input[type="range"]')
     input.value = "64"
@@ -53,7 +53,7 @@ describe("slider", () => {
     }
     const container = document.createElement("div")
 
-    render(slider.render(props), container)
+    render(Slider.render(props), container)
 
     expect(container.querySelector(".iw-slider-header label").textContent).toBe(
       "Volume",
@@ -70,7 +70,7 @@ describe("slider", () => {
     }
     const container = document.createElement("div")
 
-    render(slider.render(props), container)
+    render(Slider.render(props), container)
 
     const root = container.querySelector(".iw-slider")
     const input = container.querySelector('input[type="range"]')
@@ -83,7 +83,7 @@ describe("slider", () => {
     const props = { id: "slider", name: "volume" }
     const container = document.createElement("div")
 
-    render(slider.render(props), container)
+    render(Slider.render(props), container)
 
     const input = container.querySelector('input[type="range"]')
     expect(input.id).toBe("slider")

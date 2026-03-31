@@ -1,10 +1,10 @@
 import { createRender } from "../../stories/notifyStory.js"
-import { bottomNavigation } from "."
+import { BottomNavigation } from "."
 
 export default {
   title: "Navigation/Bottom Navigation",
   tags: ["autodocs"],
-  render: createRender(bottomNavigation),
+  render: createRender(BottomNavigation),
   argTypes: {
     actions: { control: "object", description: "Bottom navigation actions." },
     value: { control: "text", description: "Currently selected action value." },

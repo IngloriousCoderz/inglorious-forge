@@ -4,12 +4,12 @@ import { pi } from "@inglorious/utils/math/trigonometry.js"
 
 export default {
   types: {
-    character: [{ render: renderCharacter }],
+    Character: [{ render: renderCharacter }],
   },
 
   entities: {
     game: {
-      type: "game",
+      type: "Game",
       devMode: true,
     },
 
@@ -20,7 +20,7 @@ export default {
           `character${index + 1}`,
           {
             id: `character${index + 1}`,
-            type: "character",
+            type: "Character",
             position: [random(0, 800), 0, random(0, 600)],
             orientation: random(0, 2 * pi(), 0.01),
           },

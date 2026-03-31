@@ -1,14 +1,14 @@
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
-import { breadcrumbs } from "."
+import { Breadcrumbs } from "."
 
 describe("breadcrumbs", () => {
   it("renders all items", () => {
     const container = document.createElement("div")
 
     render(
-      breadcrumbs.render({
+      Breadcrumbs.render({
         items: [{ label: "A", href: "#" }, { label: "B" }],
       }),
       container,
@@ -21,7 +21,7 @@ describe("breadcrumbs", () => {
     const container = document.createElement("div")
 
     render(
-      breadcrumbs.render({ items: [{ label: "A" }, { label: "B" }] }),
+      Breadcrumbs.render({ items: [{ label: "A" }, { label: "B" }] }),
       container,
     )
 

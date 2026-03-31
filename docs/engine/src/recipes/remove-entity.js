@@ -7,7 +7,7 @@ import { v } from "@inglorious/utils/v.js"
 
 export default {
   types: {
-    mouse: [
+    Mouse: [
       { render: renderMouse },
       mouse(),
       {
@@ -17,12 +17,12 @@ export default {
       },
     ],
 
-    character: [{ render: renderCharacter }],
+    Character: [{ render: renderCharacter }],
   },
 
   entities: {
     game: {
-      type: "game",
+      type: "Game",
       devMode: true,
     },
 
@@ -39,7 +39,7 @@ export default {
         .map((_, index) => [
           `character${index + 1}`,
           {
-            type: "character",
+            type: "Character",
             position: [random(0, 800), 0, random(0, 600)],
             orientation: random(0, 2 * pi(), 0.01),
             collisions: {

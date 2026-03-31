@@ -5,11 +5,11 @@ import { renderMarkdown } from "@inglorious/ssx/markdown"
 import { html, unsafeHTML } from "@inglorious/web"
 import mermaid from "mermaid"
 
-import { nav } from "../../components/nav.js"
+import { Nav } from "../../components/nav.js"
 
-export const post = {
+export const Post = {
   async routeChange(entity, { route, params }, api) {
-    if (route !== entity.type) return
+    if (route !== entity.id) return
 
     const entityId = entity.id
     const response = await fetch(`/api/posts/${params.slug}`)
@@ -33,7 +33,7 @@ export const post = {
     }
 
     return html`<h1>${entity.post.title}</h1>
-      ${nav.render()}
+      ${Nav.render()}
       <div>${entity.post.date}</div>
       <div class="markdown-body">${unsafeHTML(entity.post.body)}</div>`
   },

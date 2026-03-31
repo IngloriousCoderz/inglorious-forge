@@ -1,8 +1,8 @@
 import { html } from "@inglorious/web"
 
-export const adminPage = {
+export const AdminPage = {
   routeChange(entity, payload) {
-    if (payload.route !== entity.type) return
+    if (payload.route !== entity.id) return
     entity.username = JSON.parse(localStorage.getItem("user")).username
   },
 

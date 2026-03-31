@@ -1,12 +1,12 @@
 import { html } from "@inglorious/web"
 
 import { createRender } from "../../stories/notifyStory.js"
-import { accordion } from "."
+import { Accordion } from "."
 
 export default {
   title: "Surfaces/Accordion",
   tags: ["autodocs"],
-  render: createRender(accordion),
+  render: createRender(Accordion),
   argTypes: {
     items: {
       control: "object",

@@ -1,6 +1,6 @@
 export const entities = {
   logoForm: {
-    type: "logoForm",
+    type: "LogoForm",
     initialValues: {
       size: 256,
       isInteractive: false,
@@ -11,7 +11,7 @@ export const entities = {
     },
   },
   liveLogo: {
-    type: "liveLogo",
+    type: "LiveLogo",
     size: 256,
     faces: [
       { image: "I", reverse: false, eye: true },

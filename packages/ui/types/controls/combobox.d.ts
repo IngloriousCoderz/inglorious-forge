@@ -64,4 +64,4 @@ export interface ComboboxType {
   focusLast(entity: ComboboxProps): void
 }
 
-export declare const combobox: ComboboxType
+export declare const Combobox: ComboboxType

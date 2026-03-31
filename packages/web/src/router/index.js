@@ -9,7 +9,7 @@ import { createHelpers } from "./helpers.js"
  */
 const routeConfig = {}
 
-export const router = { ...createHandlers(routeConfig) }
+export const Router = { ...createHandlers(routeConfig) }
 
 export const { getRoutes, getRoute, setRoutes, addRoute, removeRoute } =
   createHelpers(routeConfig)

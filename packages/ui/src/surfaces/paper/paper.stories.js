@@ -1,12 +1,12 @@
 import { html } from "@inglorious/web"
 
 import { createRender } from "../../stories/notifyStory.js"
-import { paper } from "."
+import { Paper } from "."
 
 export default {
   title: "Surfaces/Paper",
   tags: ["autodocs"],
-  render: createRender(paper),
+  render: createRender(Paper),
   argTypes: {
     variant: {
       control: "select",
@@ -85,7 +85,7 @@ export const AllElevations = {
       ${[0, 1, 2, 3, 4].map(
         (level) =>
           html`<div>
-            ${paper.render({
+            ${Paper.render({
               variant: "elevated",
               elevation: level,
               padding: "md",

@@ -8,7 +8,7 @@ import { classMap, html, ref } from "@inglorious/web"
 
 import { applyElementProps } from "../../shared/applyElementProps.js"
 
-export const accordion = {
+export const Accordion = {
   /**
    * Main entrypoint for the accordion component. Delegates to the base accordion renderer for overrides.
    * Accordions render a list of collapsible items with optional icons.

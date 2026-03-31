@@ -1,10 +1,10 @@
 import { createRender } from "../../stories/notifyStory.js"
-import { radioGroup } from "."
+import { RadioGroup } from "."
 
 export default {
   title: "Controls/RadioGroup",
   tags: ["autodocs"],
-  render: createRender(radioGroup),
+  render: createRender(RadioGroup),
   argTypes: {
     label: { control: "text", description: "Fieldset label." },
     name: { control: "text", description: "Native radio input name." },

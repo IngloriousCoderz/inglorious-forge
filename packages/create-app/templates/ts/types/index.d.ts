@@ -4,7 +4,7 @@ import { BaseEntity, EntitiesState } from "@inglorious/web"
 
 // Define your entity types
 export interface MessageEntity extends BaseEntity {
-  type: "message"
+  type: "Message"
   id?: string
   who: string
   isUpperCase?: boolean

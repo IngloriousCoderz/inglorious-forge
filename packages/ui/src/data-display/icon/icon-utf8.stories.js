@@ -1,18 +1,18 @@
-import { virtualList } from "@inglorious/ui/virtual-list"
+import { VirtualList } from "@inglorious/ui/virtual-list"
 import { html, repeat } from "@inglorious/web"
 
-import { button } from "../../controls/button"
+import { Button } from "../../controls/button"
 import {
   createEntityRender,
   notifyActionArgType,
 } from "../../stories/notifyStory.js"
-import { icon } from "."
+import { Icon } from "."
 
 const unicodeList = {
-  ...virtualList,
+  ...VirtualList,
 
   create(entity) {
-    virtualList.create(entity)
+    VirtualList.create(entity)
 
     const items = []
     let rowIndex = 0
@@ -35,7 +35,7 @@ const unicodeList = {
   },
 
   render(entity, api) {
-    return virtualList.render(entity, {
+    return VirtualList.render(entity, {
       ...api,
       getType: () => unicodeList,
     })
@@ -64,7 +64,7 @@ const unicodeList = {
               .toUpperCase()
               .padStart(4, "0")}`
 
-            return button.render({
+            return Button.render({
               id: code,
               variant: "ghost",
               color: "default",
@@ -72,7 +72,7 @@ const unicodeList = {
               shape: "square",
               ariaLabel: label,
               onClick: () => copyGlyph(glyph),
-              children: icon.render({
+              children: Icon.render({
                 children: glyph,
                 size,
                 color: "current",
@@ -128,7 +128,7 @@ export default {
 export const Unicode = {
   args: {
     id: "unicodeList",
-    type: "unicodeList",
+    type: "UnicodeList",
     start: 0,
     end: 129799,
     columns: 20,

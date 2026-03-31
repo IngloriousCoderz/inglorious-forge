@@ -12,12 +12,12 @@ export const Default = {
   args: {
     config: {
       types: {
-        form: {},
+        Form: {},
       },
 
       entities: {
         login: {
-          type: "form",
+          type: "Form",
           position: v(150, 0, 600 - 160),
           fields: {
             username: {

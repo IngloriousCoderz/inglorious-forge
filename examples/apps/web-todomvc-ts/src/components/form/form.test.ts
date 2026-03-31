@@ -2,7 +2,7 @@ import { type Event, trigger } from "@inglorious/web"
 import { expect, it } from "vitest"
 
 import type { FormEntity, FormType } from "../../../types"
-import { form } from "./form"
+import { Form } from "./form"
 
 it("should update the form value on inputChange", () => {
   const entityBefore: FormEntity = {
@@ -19,7 +19,7 @@ it("should update the form value on inputChange", () => {
 
   const { entity } = trigger(
     entityBefore,
-    form[event.type as keyof typeof form] as FormType["inputChange"],
+    Form[event.type as keyof typeof Form] as FormType["inputChange"],
     event.payload,
   ) as unknown as { entity: FormEntity }
 
@@ -41,7 +41,7 @@ it("should clear the form value on formSubmit", () => {
 
   const { entity } = trigger(
     entityBefore,
-    form[event.type as keyof typeof form] as FormType["formSubmit"],
+    Form[event.type as keyof typeof Form] as FormType["formSubmit"],
     event.payload,
   ) as unknown as { entity: FormEntity }
 

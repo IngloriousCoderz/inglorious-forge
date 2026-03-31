@@ -8,7 +8,7 @@ import { classMap, html, ref } from "@inglorious/web"
 
 import { applyElementProps } from "../../shared/applyElementProps.js"
 
-export const bottomNavigation = {
+export const BottomNavigation = {
   /**
    * Main entrypoint for bottom navigation. Delegates to the base renderer for overrides.
    * Renders a row of actions with optional labels.
@@ -70,7 +70,7 @@ export const bottomNavigation = {
         "iw-bottom-navigation-action": true,
         "iw-bottom-navigation-action-selected": selected,
       })}
-      aria-current=${selected ? "page" : null}
+      aria-current=${selected ? "page" : "false"}
       ?disabled=${action.isDisabled}
       @click=${() => {
         action.onClick?.(currentValue)

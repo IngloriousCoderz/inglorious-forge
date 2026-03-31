@@ -8,7 +8,7 @@ import { classMap, html, ref } from "@inglorious/web"
 
 import { applyElementProps } from "../../shared/applyElementProps.js"
 
-export const breadcrumbs = {
+export const Breadcrumbs = {
   /**
    * Main entrypoint for breadcrumbs navigation. Delegates to the base renderer for overrides.
    * Renders a list of path items separated by a configurable separator.
@@ -84,7 +84,7 @@ export const breadcrumbs = {
             class=${classMap({
               "iw-breadcrumbs-current": isLast,
             })}
-            aria-current=${isLast ? "page" : null}
+            aria-current=${isLast ? "page" : "false"}
           >
             ${item.label}
           </span>`}

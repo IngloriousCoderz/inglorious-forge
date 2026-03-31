@@ -1,6 +1,6 @@
 import { html } from "@inglorious/web"
 
-export const nav = {
+export const Nav = {
   render() {
     return html`<nav>
       <a href="/">Home</a> | <a href="/about">About</a> |

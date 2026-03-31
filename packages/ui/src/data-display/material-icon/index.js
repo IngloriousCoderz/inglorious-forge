@@ -1,3 +1,3 @@
 import * as renderers from "./template.js"
 
-export const materialIcon = { ...renderers }
+export const MaterialIcon = { ...renderers }

@@ -5,7 +5,7 @@ const X = 0
 
 export default {
   types: {
-    character: {
+    Character: {
       render(entity, ctx) {
         const {
           size = 24,
@@ -62,12 +62,12 @@ export default {
 
   entities: {
     game: {
-      type: "game",
+      type: "Game",
       devMode: true,
     },
 
     character: {
-      type: "character",
+      type: "Character",
       maxSpeed: 250,
       position: v(400, 0, 300),
       velocity: v(250, 0, 0),

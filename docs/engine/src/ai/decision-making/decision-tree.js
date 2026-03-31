@@ -77,9 +77,9 @@ export default {
   systems: [spriteAnimationSystem()],
 
   types: {
-    mouse: [{ render: renderMouse }, mouse()],
+    Mouse: [{ render: renderMouse }, mouse()],
 
-    cat: [
+    Cat: [
       { render: renderSprite },
       fsm({
         idle: {
@@ -150,7 +150,7 @@ export default {
 
   entities: {
     game: {
-      type: "game",
+      type: "Game",
       devMode: true,
       pixelated: true,
     },
@@ -158,14 +158,14 @@ export default {
     mouse: createMouse(),
 
     images: {
-      type: "images",
+      type: "Images",
       images: {
         neko: { url: "/sprites/neko.png" },
       },
     },
 
     neko: {
-      type: "cat",
+      type: "Cat",
       state: "idle",
       maxSpeed: 250,
       position: v(400, 0, 300),

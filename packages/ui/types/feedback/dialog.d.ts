@@ -18,4 +18,4 @@ export interface DialogType {
   render(props: DialogProps): TemplateResult | null
 }
 
-export declare const dialog: DialogType
+export declare const Dialog: DialogType

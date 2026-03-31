@@ -1,13 +1,13 @@
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
-import { container } from "."
+import { Container } from "."
 
 describe("container", () => {
   it("renders children", () => {
     const host = document.createElement("div")
 
-    render(container.render({ element: "section", children: "Hello" }), host)
+    render(Container.render({ element: "section", children: "Hello" }), host)
 
     const root = host.querySelector(".iw-container")
     expect(root.textContent).toContain("Hello")
@@ -17,7 +17,7 @@ describe("container", () => {
   it("applies fixed and padding classes", () => {
     const host = document.createElement("div")
 
-    render(container.render({ isFixed: true, padding: "none" }), host)
+    render(Container.render({ isFixed: true, padding: "none" }), host)
 
     const root = host.querySelector(".iw-container")
     expect(root.classList.contains("iw-container-fixed")).toBe(true)
@@ -27,7 +27,7 @@ describe("container", () => {
   it("maps numeric maxWidth to px style", () => {
     const host = document.createElement("div")
 
-    render(container.render({ maxWidth: 960 }), host)
+    render(Container.render({ maxWidth: 960 }), host)
 
     expect(host.querySelector(".iw-container").style.maxWidth).toBe("960px")
   })
@@ -35,7 +35,7 @@ describe("container", () => {
   it("allows full-width mode with maxWidth false", () => {
     const host = document.createElement("div")
 
-    render(container.render({ maxWidth: false }), host)
+    render(Container.render({ maxWidth: false }), host)
 
     expect(host.querySelector(".iw-container").style.maxWidth).toBe("none")
   })

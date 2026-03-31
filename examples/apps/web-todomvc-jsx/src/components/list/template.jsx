@@ -4,7 +4,7 @@ import { filteredTasks } from "@/store/select"
 
 import classes from "./list.module.css"
 
-export default function render(entity, api) {
+export function render(entity, api) {
   const tasks = api.select(filteredTasks)
 
   return (

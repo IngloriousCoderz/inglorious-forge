@@ -1,5 +1,5 @@
 export const entities = {
-  form: { type: "form", value: "" },
-  list: { type: "list", tasks: [] },
-  footer: { type: "footer", activeFilter: "all" },
+  form: { type: "Form", value: "" },
+  list: { type: "List", tasks: [] },
+  footer: { type: "Footer", activeFilter: "all" },
 }

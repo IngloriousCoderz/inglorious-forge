@@ -33,7 +33,7 @@ describe("babel visitor", () => {
       await transform(`
         import { Form } from "./form.js"
 
-        export const app = {
+        export const App = {
           render() {
             return <Form />
           },
@@ -45,7 +45,7 @@ describe("babel visitor", () => {
   it("moves api to the end when it is not already last", async () => {
     expect(
       await transform(`
-        export const app = {
+        export const App = {
           render(api, entity) {
             return <Form />
           },
@@ -59,7 +59,7 @@ describe("babel visitor", () => {
       await transform(`
         import {  DataGrid } from "./components"
 
-        export const app = {
+        export const App = {
           render(api) {
             return <DataGrid prop1="value" />
           },
@@ -73,7 +73,7 @@ describe("babel visitor", () => {
       await transform(`
         import { StatCard } from "./stat-card.js"
 
-        export const dashboard = {
+        export const Dashboard = {
           render(entity, api) {
             return (
               <div>
@@ -93,7 +93,7 @@ describe("babel visitor", () => {
       await transform(`
         import { StatCard } from "./stat-card.js"
 
-        export const dashboard = {
+        export const Dashboard = {
           render(entity, api) {
             return <StatCard key={entity.id} {...entity} />
           },

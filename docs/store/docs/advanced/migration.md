@@ -61,7 +61,7 @@ const types = {
 }
 
 const entities = {
-  todos: { type: "todoList", todos: [] },
+  todos: { type: "TodoList", todos: [] },
 }
 
 export const store = createStore({ types, entities })
@@ -224,14 +224,14 @@ const store = configureStore({
 
 ```javascript
 const entities = {
-  workTodos: { type: "todoList", todos: [] },
-  personalTodos: { type: "todoList", todos: [] },
+  workTodos: { type: "TodoList", todos: [] },
+  personalTodos: { type: "TodoList", todos: [] },
 }
 
 // To add a new list at runtime:
 store.notify("add", {
   id: "projectTodos",
-  type: "todoList",
+  type: "TodoList",
   todos: [],
 })
 ```
@@ -268,7 +268,7 @@ const types = {
 }
 
 // These handlers fire automatically
-store.notify("add", { id: "myList", type: "todoList", todos: [] })
+store.notify("add", { id: "myList", type: "TodoList", todos: [] })
 store.notify("remove", { id: "myList" }) // destroy handler fires
 ```
 

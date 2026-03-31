@@ -1,7 +1,7 @@
 import { trigger } from "@inglorious/web"
 import { expect, it } from "vitest"
 
-import { footer } from "."
+import { Footer } from "."
 
 it("should update the filter on filterClick", () => {
   const entityBefore = {
@@ -16,7 +16,7 @@ it("should update the filter on filterClick", () => {
     activeFilter: "completed",
   }
 
-  const { entity } = trigger(entityBefore, footer[event.type], event.payload)
+  const { entity } = trigger(entityBefore, Footer[event.type], event.payload)
 
   expect(entity).toEqual(entityAfter)
 })

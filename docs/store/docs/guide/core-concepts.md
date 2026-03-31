@@ -23,8 +23,8 @@ const types = {
 }
 
 const entities = {
-  workTodos: { type: "todoList", todos: [] },
-  personalTodos: { type: "todoList", todos: [] },
+  workTodos: { type: "TodoList", todos: [] },
+  personalTodos: { type: "TodoList", todos: [] },
 }
 ```
 
@@ -51,12 +51,12 @@ const initialState = {
 ```javascript
 // Inglorious approach
 const entities = {
-  work: { type: "todoList", todos: [] },
-  personal: { type: "todoList", todos: [] },
+  work: { type: "TodoList", todos: [] },
+  personal: { type: "TodoList", todos: [] },
 }
 
 // Add a new list at runtime
-store.notify("add", { id: "project", type: "todoList", todos: [] })
+store.notify("add", { id: "project", type: "TodoList", todos: [] })
 // It's already part of the state with its own behavior!
 ```
 
@@ -304,7 +304,7 @@ const types = {
 
 store.notify("add", {
   id: "work",
-  type: "todoList",
+  type: "TodoList",
   todos: [],
 })
 // create handler fires for entity 'work'
@@ -409,9 +409,9 @@ const types = {
 }
 
 const entities = {
-  work: { type: "todoList", todos: [] },
-  personal: { type: "todoList", todos: [] },
-  stats: { type: "stats", totalAdded: 0, totalToggled: 0 },
+  work: { type: "TodoList", todos: [] },
+  personal: { type: "TodoList", todos: [] },
+  stats: { type: "Stats", totalAdded: 0, totalToggled: 0 },
 }
 
 const store = createStore({ types, entities })

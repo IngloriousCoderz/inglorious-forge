@@ -1,7 +1,7 @@
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
-import { input } from "."
+import { Input } from "."
 
 describe("input", () => {
   describe("render", () => {
@@ -9,7 +9,7 @@ describe("input", () => {
       const props = { name: "email", label: "Email" }
       const container = document.createElement("div")
 
-      render(input.render(props), container)
+      render(Input.render(props), container)
 
       const labelElement = container.querySelector("label")
       const inputElement = container.querySelector("input")
@@ -21,7 +21,7 @@ describe("input", () => {
       const props = { size: "sm" }
       const container = document.createElement("div")
 
-      render(input.render(props), container)
+      render(Input.render(props), container)
 
       const inputElement = container.querySelector("input")
       expect(inputElement.classList.contains("iw-input-sm")).toBe(true)
@@ -31,7 +31,7 @@ describe("input", () => {
       const props = { error: "Required" }
       const container = document.createElement("div")
 
-      render(input.render(props), container)
+      render(Input.render(props), container)
 
       const inputElement = container.querySelector("input")
       const errorElement = container.querySelector(".iw-input-error-message")
@@ -43,7 +43,7 @@ describe("input", () => {
       const props = { hint: "Helpful text" }
       const container = document.createElement("div")
 
-      render(input.render(props), container)
+      render(Input.render(props), container)
 
       const hintElement = container.querySelector(".iw-input-hint")
       expect(hintElement.textContent).toBe("Helpful text")
@@ -53,7 +53,7 @@ describe("input", () => {
       const props = { error: "Required", hint: "Helpful text" }
       const container = document.createElement("div")
 
-      render(input.render(props), container)
+      render(Input.render(props), container)
 
       expect(container.querySelector(".iw-input-error-message")).not.toBeNull()
       expect(container.querySelector(".iw-input-hint")).toBeNull()
@@ -63,7 +63,7 @@ describe("input", () => {
       const props = { icon: "@", iconAfter: "✓" }
       const container = document.createElement("div")
 
-      render(input.render(props), container)
+      render(Input.render(props), container)
 
       const icons = container.querySelectorAll(".iw-input-icon")
       expect(icons.length).toBe(2)
@@ -74,7 +74,7 @@ describe("input", () => {
       const props = { inputType: "number", value: "42" }
       const container = document.createElement("div")
 
-      render(input.render(props), container)
+      render(Input.render(props), container)
 
       const inputElement = container.querySelector("input")
       expect(inputElement.classList.contains("iw-input-number")).toBe(true)
@@ -84,7 +84,7 @@ describe("input", () => {
       const props = { id: "email", label: "Email", isRequired: true }
       const container = document.createElement("div")
 
-      render(input.render(props), container)
+      render(Input.render(props), container)
 
       const inputElement = container.querySelector("input")
       expect(inputElement.hasAttribute("required")).toBe(true)
@@ -99,7 +99,7 @@ describe("input", () => {
       }
       const container = document.createElement("div")
 
-      render(input.render(props), container)
+      render(Input.render(props), container)
 
       const inputElement = container.querySelector("input")
       expect(inputElement.hasAttribute("disabled")).toBe(true)
@@ -122,7 +122,7 @@ describe("input", () => {
       }
       const container = document.createElement("div")
 
-      render(input.render(props), container)
+      render(Input.render(props), container)
 
       const inputElement = container.querySelector("input")
       expect(inputElement.getAttribute("min")).toBe("0")
@@ -142,7 +142,7 @@ describe("input", () => {
       }
       const container = document.createElement("div")
 
-      render(input.render(props), container)
+      render(Input.render(props), container)
 
       const inputElement = container.querySelector("input")
       inputElement.value = "abc"
@@ -160,7 +160,7 @@ describe("input", () => {
       }
       const container = document.createElement("div")
 
-      render(input.render(props), container)
+      render(Input.render(props), container)
 
       const inputElement = container.querySelector("input")
       inputElement.dispatchEvent(new Event("focus"))

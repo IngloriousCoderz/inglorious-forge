@@ -10,7 +10,7 @@ export type AgGridEntity = Record<string, any> & {
   gridOptions?: Record<string, any>
 }
 
-export const agGrid: {
+export const AgGrid: {
   create(entity: AgGridEntity): void
   render(entity: AgGridEntity): any
   mounted(entity: AgGridEntity, payload?: any): void

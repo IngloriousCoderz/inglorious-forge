@@ -13,9 +13,9 @@ export default {
   types: {
     ...controls("character"),
 
-    platform: [{ render: renderRectangle }],
+    Platform: [{ render: renderRectangle }],
 
-    character: [
+    Character: [
       { render: renderCharacter },
       modernVelocity(),
       clamped({ depthAxis: "z" }),
@@ -25,7 +25,7 @@ export default {
 
   entities: {
     game: {
-      type: "game",
+      type: "Game",
       devMode: true,
     },
 
@@ -42,7 +42,7 @@ export default {
     }),
 
     ground: {
-      type: "platform",
+      type: "Platform",
       position: v(400, 24, 0),
       size: v(800, 48),
       backgroundColor: "green",
@@ -52,7 +52,7 @@ export default {
     },
 
     platform: {
-      type: "platform",
+      type: "Platform",
       position: v(600, 120, 0),
       size: v(80, 24, 0),
       backgroundColor: "grey",
@@ -62,7 +62,7 @@ export default {
     },
 
     character: {
-      type: "character",
+      type: "Character",
       layer: 1,
       position: v(200, 60, 0),
       collisions: {

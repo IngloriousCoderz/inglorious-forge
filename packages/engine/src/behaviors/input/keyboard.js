@@ -41,7 +41,7 @@ export function keyboard() {
 }
 
 export function createKeyboard(targetId, mapping = {}) {
-  return { type: "keyboard", targetId, mapping }
+  return { type: "Keyboard", targetId, mapping }
 }
 
 function createKeyboardHandler(id, api) {

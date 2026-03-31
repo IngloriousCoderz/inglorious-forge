@@ -1,1 +1,1 @@
-export { tabs } from "./template.js"
+export { Tabs } from "./template.js"

@@ -101,7 +101,7 @@ HTML is interactive after JavaScript loads:
 import { html } from "@inglorious/web"
 import { getPost, getAllPosts } from "../api/posts"
 
-export const page = {
+export const Page = {
   async create(entity, api) {
     const { id } = entity.params
     // In create(), it's safe to await and update since create() runs
@@ -129,16 +129,6 @@ export const page = {
     `
   },
 }
-
-// Generate static pages for all posts
-export async function* generate() {
-  const posts = await getAllPosts()
-  for (const post of posts) {
-    yield {
-      id: post.id,
-    }
-  }
-}
 ```
 
 ### Build Output
@@ -163,40 +153,6 @@ dist/blog/
 | JavaScript           | Optional       | Required | Optional   | No     |
 
 ## Advanced SSX Features
-
-### Incremental Static Generation
-
-Regenerate only changed pages:
-
-```javascript
-export async function* generate() {
-  // Only regenerate this page every hour
-  yield {
-    id: "homepage",
-    revalidate: 3600,
-  }
-}
-```
-
-### Dynamic Routes
-
-Generate pages for dynamic data:
-
-```javascript
-export async function* generate() {
-  const posts = await fetchPosts()
-  for (const post of posts) {
-    yield {
-      id: post.slug,
-      // Generate nested routes
-      nested: [
-        { route: "edit", id: `${post.slug}-edit` },
-        { route: "preview", id: `${post.slug}-preview` },
-      ],
-    }
-  }
-}
-```
 
 ### Custom Metadata
 

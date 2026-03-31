@@ -22,4 +22,4 @@ export interface ChipType {
   render(props: ChipProps): TemplateResult
 }
 
-export declare const chip: ChipType
+export declare const Chip: ChipType

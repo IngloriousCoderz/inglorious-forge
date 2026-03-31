@@ -20,4 +20,4 @@ export interface DrawerType {
   render(props: DrawerProps): TemplateResult | null
 }
 
-export declare const drawer: DrawerType
+export declare const Drawer: DrawerType

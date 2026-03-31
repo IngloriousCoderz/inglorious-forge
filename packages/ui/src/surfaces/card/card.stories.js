@@ -1,12 +1,12 @@
 import { html } from "@inglorious/web"
 
 import { createRender } from "../../stories/notifyStory.js"
-import { card } from "."
+import { Card } from "."
 
 export default {
   title: "Surfaces/Card",
   tags: ["autodocs"],
-  render: createRender(card),
+  render: createRender(Card),
   argTypes: {
     title: {
       control: "text",

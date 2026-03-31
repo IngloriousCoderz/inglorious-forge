@@ -2,11 +2,11 @@ import { createStore } from "@inglorious/store"
 
 import { CHARTS } from "@benchmarks/dashboard-shared"
 
-import { metrics } from "../types/metrics"
-import { table } from "../types/table"
+import { Metrics } from "../types/metrics"
+import { Table } from "../types/table"
 
 export const store = createStore({
-  types: { metrics, table },
+  types: { Metrics, Table },
   entities: CHARTS,
   autoCreateEntities: true,
 })

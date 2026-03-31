@@ -1,12 +1,12 @@
 import { html } from "@inglorious/web"
 
 import { createRender } from "../../stories/notifyStory.js"
-import { tooltip } from "."
+import { Tooltip } from "."
 
 export default {
   title: "Data Display/Tooltip",
   tags: ["autodocs"],
-  render: createRender(tooltip),
+  render: createRender(Tooltip),
   argTypes: {
     content: { control: "text", description: "Tooltip text." },
     position: {

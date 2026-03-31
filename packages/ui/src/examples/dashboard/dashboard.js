@@ -1,8 +1,8 @@
 import { html, when } from "@inglorious/web"
 
-import { container } from "../../layout/container/index.js"
-import { flex } from "../../layout/flex/index.js"
-import { grid } from "../../layout/grid/index.js"
+import { Container } from "../../layout/container/index.js"
+import { Flex } from "../../layout/flex/index.js"
+import { Grid } from "../../layout/grid/index.js"
 import { AppHeader } from "./app-header.js"
 import { socialCards, statCards } from "./data.js"
 import { SocialCard } from "./social-card.js"
@@ -24,29 +24,29 @@ export const Dashboard = {
     const router = api.getEntity("router")
     const isDashboardRoot = !router || router.path === "/"
 
-    return flex.render({
+    return Flex.render({
       direction: "column",
       className: dashboardClassName,
       children: [
         api.render("appDrawer"),
-        flex.render({
+        Flex.render({
           element: "main",
           direction: "column",
           className: "iw-dashboard-main",
           children: [
             AppHeader.render(entity, api),
-            container.render({
+            Container.render({
               maxWidth: "xl",
               padding: "lg",
               className: "iw-dashboard-container",
               children: when(
                 isDashboardRoot,
                 () =>
-                  flex.render({
+                  Flex.render({
                     direction: "column",
                     gap: "lg",
                     children: [
-                      grid.render({
+                      Grid.render({
                         minColumnWidth: "18rem",
                         gap: "lg",
                         children: statCards.map((card) =>
@@ -54,7 +54,7 @@ export const Dashboard = {
                         ),
                       }),
                       TrafficCard.render(entity, api),
-                      grid.render({
+                      Grid.render({
                         columns: 3,
                         gap: "lg",
                         children: socialCards.map((card) =>
@@ -67,7 +67,7 @@ export const Dashboard = {
                 () => api.render("primitiveSection"),
               ),
             }),
-            flex.render({
+            Flex.render({
               element: "footer",
               justify: "between",
               gap: "md",

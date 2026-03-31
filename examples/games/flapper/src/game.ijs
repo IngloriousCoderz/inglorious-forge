@@ -6,27 +6,27 @@ import { renderFps } from "@inglorious/renderer-2d/fps"
 import { renderImage } from "@inglorious/renderer-2d/image/image"
 import { zero } from "@inglorious/utils/math/vector"
 
-import { game } from "./behaviors/game"
+import { Game } from "./types/game"
 
 const WIDTH = 512
 const HEIGHT = 288
 
 export default {
   types: {
-    touch: touch(),
+    Touch: touch(),
 
-    game,
-    fps: [{ render: renderFps }, fps({ accuracy: 0 })],
+    Game,
+    Fps: [{ render: renderFps }, fps({ accuracy: 0 })],
 
-    background: [{ render: renderImage }, infiniteScroll()],
-    ground: [{ render: renderImage }, infiniteScroll()],
+    Background: [{ render: renderImage }, infiniteScroll()],
+    Ground: [{ render: renderImage }, infiniteScroll()],
   },
 
   entities: {
     touch: createTouch(),
 
     game: {
-      type: "game",
+      type: "Game",
       devMode: true,
       pixelated: true,
       size: [WIDTH, HEIGHT],
@@ -35,7 +35,7 @@ export default {
     },
 
     fps: {
-      type: "fps",
+      type: "Fps",
       position: v(10, 0, HEIGHT - 10),
       font: "'Press Start 2P'",
       size: 8,
@@ -60,7 +60,7 @@ export default {
     },
 
     background: {
-      type: "background",
+      type: "Background",
       position: zero(),
       velocity: v(-30, 0, 0),
       image: {
@@ -72,7 +72,7 @@ export default {
     },
 
     ground: {
-      type: "ground",
+      type: "Ground",
       position: zero(),
       velocity: v(-60, 0, 0),
       image: {

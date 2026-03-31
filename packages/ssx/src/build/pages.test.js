@@ -37,7 +37,9 @@ describe("generatePages", () => {
   })
 
   it("should generate HTML and metadata by default", async () => {
-    const store = { _api: { getEntity: vi.fn(() => ({})) } }
+    const store = {
+      _api: { getEntities: vi.fn(() => []), getEntity: vi.fn(() => ({})) },
+    }
     const pages = [{ path: "/p1", filePath: pageFile, moduleName: "p1" }]
 
     renderPage.mockResolvedValue("<html></html>")
@@ -53,7 +55,9 @@ describe("generatePages", () => {
   })
 
   it("should skip HTML generation when disabled", async () => {
-    const store = { _api: { getEntity: vi.fn(() => ({})) } }
+    const store = {
+      _api: { getEntities: vi.fn(() => []), getEntity: vi.fn(() => ({})) },
+    }
     const pages = [{ path: "/p2", filePath: pageFile, moduleName: "p2" }]
 
     vi.clearAllMocks()
@@ -67,7 +71,9 @@ describe("generatePages", () => {
   })
 
   it("should skip metadata generation when disabled", async () => {
-    const store = { _api: { getEntity: vi.fn(() => ({})) } }
+    const store = {
+      _api: { getEntities: vi.fn(() => []), getEntity: vi.fn(() => ({})) },
+    }
     const pages = [{ path: "/p3", filePath: pageFile, moduleName: "p3" }]
 
     vi.clearAllMocks()
@@ -83,7 +89,12 @@ describe("generatePages", () => {
 
   it("should set entity.locale from page.locale even without load()", async () => {
     const entity = {}
-    const store = { _api: { getEntity: vi.fn(() => entity) } }
+    const store = {
+      _api: {
+        getEntities: vi.fn(() => [entity]),
+        getEntity: vi.fn(() => entity),
+      },
+    }
     const pages = [
       {
         path: "/it/p4",
@@ -105,7 +116,12 @@ describe("generatePages", () => {
 
   it("should overwrite entity.locale for each localized page render", async () => {
     const entity = { locale: "en" }
-    const store = { _api: { getEntity: vi.fn(() => entity) } }
+    const store = {
+      _api: {
+        getEntities: vi.fn(() => [entity]),
+        getEntity: vi.fn(() => entity),
+      },
+    }
     const pages = [
       {
         path: "/it/p5",

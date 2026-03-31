@@ -1,4 +1,4 @@
-import { dataGrid } from "@inglorious/ui/data-grid"
+import { DataGrid } from "@inglorious/ui/data-grid"
 import { format } from "date-fns"
 
 const formatters = {
@@ -6,8 +6,8 @@ const formatters = {
   createdAt: (value) => format(value, "dd/MM/yyyy HH:mm"),
 }
 
-export const productTable = {
-  ...dataGrid,
+export const ProductTable = {
+  ...DataGrid,
 
   renderValue(_, { value, column }) {
     return formatters[column.formatter]?.(value) ?? value

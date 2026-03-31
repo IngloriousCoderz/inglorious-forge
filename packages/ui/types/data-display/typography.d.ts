@@ -25,4 +25,4 @@ export interface TypographyType {
   render(props: TypographyProps): TemplateResult
 }
 
-export declare const typography: TypographyType
+export declare const Typography: TypographyType

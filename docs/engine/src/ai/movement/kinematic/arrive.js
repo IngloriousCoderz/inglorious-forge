@@ -12,9 +12,9 @@ import { v } from "@inglorious/utils/v.js"
 
 export default {
   types: {
-    mouse: [{ render: renderMouse }, mouse()],
+    Mouse: [{ render: renderMouse }, mouse()],
 
-    character: [
+    Character: [
       {
         render: renderCharacter,
         update(entity, dt, api) {
@@ -34,7 +34,7 @@ export default {
       clamped(),
     ],
 
-    form: {
+    Form: {
       fieldChange(entity, { id, value }) {
         entity.groups.arrive.fields[id].value = value
       },
@@ -43,17 +43,17 @@ export default {
 
   entities: {
     game: {
-      type: "game",
+      type: "Game",
       devMode: true,
     },
 
     mouse: {
-      type: "mouse",
+      type: "Mouse",
       position: v(400, 0, 300),
     },
 
     character: {
-      type: "character",
+      type: "Character",
       maxSpeed: 250,
       position: v(400, 0, 300),
       collisions: {
@@ -62,7 +62,7 @@ export default {
     },
 
     parameters: {
-      type: "form",
+      type: "Form",
       position: v(800 - 328, 0, 600),
       groups: {
         arrive: {

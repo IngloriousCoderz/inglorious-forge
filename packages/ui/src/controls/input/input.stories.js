@@ -1,10 +1,10 @@
 import { createRender } from "../../stories/notifyStory.js"
-import { input } from "."
+import { Input } from "."
 
 export default {
   title: "Controls/Input",
   tags: ["autodocs"],
-  render: createRender(input),
+  render: createRender(Input),
   argTypes: {
     // ...notifyActionArgType,
     label: {

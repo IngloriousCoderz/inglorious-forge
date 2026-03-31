@@ -15,9 +15,9 @@ export default {
   types: {
     ...controls("character"),
 
-    stats: {},
+    Stats: {},
 
-    character: [
+    Character: [
       { render: renderCharacter },
       modernControls(),
       clamped(),
@@ -40,7 +40,7 @@ export default {
 
   entities: {
     game: {
-      type: "game",
+      type: "Game",
       devMode: true,
     },
 
@@ -64,13 +64,13 @@ export default {
     }),
 
     stats: {
-      type: "stats",
+      type: "Stats",
       position: v(600, 0, 600),
       target: "character",
     },
 
     character: {
-      type: "character",
+      type: "Character",
       maxSpeed: 250,
       position: v(400, 0, 300),
       maxJump: 100,

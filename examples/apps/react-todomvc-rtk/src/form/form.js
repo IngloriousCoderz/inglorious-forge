@@ -25,6 +25,6 @@ export const { inputChange } = slice.actions
 
 export default slice.reducer
 
-export const form = convertSlice(slice, {
+export const Form = convertSlice(slice, {
   extraActions: [formSubmit],
 })

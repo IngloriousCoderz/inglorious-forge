@@ -1,6 +1,6 @@
 export const entities = {
   countrySelect: {
-    type: "combobox",
+    type: "Combobox",
     placeholder: "Select a country...",
     options: [
       { value: "br", label: "Brazil" },
@@ -15,7 +15,7 @@ export const entities = {
   },
 
   multiSelect: {
-    type: "combobox",
+    type: "Combobox",
     placeholder: "Select languages...",
     options: [
       { value: "js", label: "JavaScript" },
@@ -32,7 +32,7 @@ export const entities = {
   },
 
   remoteSelect: {
-    type: "remoteCombobox",
+    type: "RemoteCombobox",
     placeholder: "Select your favorite animal...",
   },
 }

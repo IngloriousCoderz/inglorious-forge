@@ -1,3 +1,5 @@
+import type { Api, TemplateResult } from "@inglorious/web"
+
 export interface Face {
   /** name of the svg */
   image:
@@ -43,3 +45,12 @@ export interface LogoEntity {
   isInteractive?: boolean
   isScrollPrevented?: boolean
 }
+
+export interface LogoType {
+  render(entity: LogoEntity, api: Api): TemplateResult
+  create(entity: LogoEntity, payload: unknown, api: Api): void
+  coordsChange(entity: LogoEntity, payload: { x: number; y: number }): void
+  destroy(entity: LogoEntity, payload: unknown, api: Api): void
+}
+
+export declare const Logo: LogoType

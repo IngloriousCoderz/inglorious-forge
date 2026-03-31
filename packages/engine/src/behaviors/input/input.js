@@ -27,5 +27,5 @@ export function input() {
 }
 
 export function createInput(targetId, mapping = {}) {
-  return { type: "input", targetId, mapping }
+  return { type: "Input", targetId, mapping }
 }

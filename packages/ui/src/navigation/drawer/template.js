@@ -5,10 +5,10 @@
 
 import { html, when } from "@inglorious/web"
 
-import { button } from "../../controls/button"
-import { materialIcon } from "../../data-display/material-icon"
-import { backdrop } from "../../feedback/backdrop"
-import { flex } from "../../layout/flex"
+import { Button } from "../../controls/button"
+import { MaterialIcon } from "../../data-display/material-icon"
+import { Backdrop } from "../../feedback/backdrop"
+import { Flex } from "../../layout/flex"
 
 /**
  * Renders a side drawer panel with optional header, body, and collapse controls.
@@ -52,7 +52,7 @@ export function render(props) {
     .join(" ")
 
   return html`
-    ${flex.render({
+    ${Flex.render({
       element: "aside",
       direction: "column",
       className: drawerClassName,
@@ -60,7 +60,7 @@ export function render(props) {
         when(
           title || onClose,
           () => html`
-            ${flex.render({
+            ${Flex.render({
               align: "center",
               justify: "between",
               gap: "sm",
@@ -71,14 +71,14 @@ export function render(props) {
                   () => html`<div class="iw-drawer-title">${title}</div>`,
                 ),
                 when(onClose, () =>
-                  button.render({
+                  Button.render({
                     color: "secondary",
                     variant: "ghost",
                     shape: "square",
                     className: "iw-drawer-close",
                     "aria-label": "Close",
                     onClick: onClose,
-                    children: materialIcon.render({
+                    children: MaterialIcon.render({
                       name: "close",
                       size: "lg",
                     }),
@@ -89,7 +89,7 @@ export function render(props) {
           `,
         ),
 
-        flex.render({
+        Flex.render({
           direction: "column",
           className: "iw-drawer-body",
           children,
@@ -98,11 +98,11 @@ export function render(props) {
         when(
           onCollapseToggle,
           () => html`
-            ${flex.render({
+            ${Flex.render({
               justify: "end",
               padding: "sm",
               className: "iw-drawer-footer",
-              children: button.render({
+              children: Button.render({
                 color: "secondary",
                 variant: "ghost",
                 shape: "square",
@@ -111,7 +111,7 @@ export function render(props) {
                   ? "Expand sidebar"
                   : "Collapse sidebar",
                 onClick: onCollapseToggle,
-                children: materialIcon.render({
+                children: MaterialIcon.render({
                   name: "left_panel_close",
                   size: "lg",
                 }),
@@ -123,7 +123,7 @@ export function render(props) {
       ...rest,
     })}
     ${when(isOpen && hasBackdrop, () =>
-      backdrop.render({
+      Backdrop.render({
         isOpen: true,
         className: "iw-drawer-backdrop",
         onClick: onClose,
