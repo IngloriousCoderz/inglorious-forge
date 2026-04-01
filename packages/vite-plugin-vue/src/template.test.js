@@ -102,9 +102,7 @@ describe("template helpers", () => {
       new Set(["Message"]),
     )
 
-    expect(result.code).toContain(
-      'api.render("message1", "Message", Message)',
-    )
+    expect(result.code).toContain('api.render("message1", "Message", Message)')
   })
 
   it("preserves render-scope locals in bindings and conditionals", () => {

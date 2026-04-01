@@ -38,17 +38,16 @@ export function vue() {
           scriptImports,
           vueImports,
           importDecls,
-        } =
-          script
-            ? parseScript(script, scriptLang)
-            : {
-                stateVars: [],
-                renderVars: [],
-                methods: [],
-                scriptImports: new Set(),
-                vueImports: new Set(),
-                importDecls: [],
-              }
+        } = script
+          ? parseScript(script, scriptLang)
+          : {
+              stateVars: [],
+              renderVars: [],
+              methods: [],
+              scriptImports: new Set(),
+              vueImports: new Set(),
+              importDecls: [],
+            }
 
         const dom = parseTemplate(template)
         const { code: templateCode, imports } = transformTemplate(

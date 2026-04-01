@@ -486,15 +486,9 @@ import { Message } from "./types/message.vue"
 </template>
 `
       const result = await transform(code, "app.vue")
-      expect(result).toContain(
-        'api.render("message1", "Message", Message)',
-      )
-      expect(result).toContain(
-        'api.render("message2", "Message", Message)',
-      )
-      expect(result).toContain(
-        'api.render("message3", "Message", Message)',
-      )
+      expect(result).toContain('api.render("message1", "Message", Message)')
+      expect(result).toContain('api.render("message2", "Message", Message)')
+      expect(result).toContain('api.render("message3", "Message", Message)')
       expect(result).toMatchSnapshot()
     })
 
