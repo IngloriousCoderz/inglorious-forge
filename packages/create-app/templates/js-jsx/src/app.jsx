@@ -4,8 +4,8 @@ export const App = {
   render() {
     return (
       <h1>
-        <Message id="message1" />, <Message id="message2" />,{" "}
-        <Message id="message3" />!
+        <Message entityId="message1" />, <Message entityId="message2" />,{" "}
+        <Message entityId="message3" />!
       </h1>
     )
   },

@@ -296,30 +296,30 @@ export const App = {
 
 → `api.render("form", "Form", Form)`
 
-> 💡 **Smart injection**: The plugin automatically adds the `api` parameter to your render function when you use Engine Components in JSX. You don't need to add it manually!
+If you want to render a specific entity instead of the default id derived from the component name, pass `entityId` explicitly:
+
+```jsx
+<Message entityId="message1" />
+```
+
+→ `api.render("message1", "Message", Message)`
+
+That still triggers `props, api` injection in the surrounding `render()` method, so multiple explicit entity renders in one component keep working.
+
+> 💡 **Smart injection**: The plugin automatically adds `props` and `api` parameters to your render function when you use Engine Components in JSX. You don't need to add them manually!
 
 #### ⚠️ Important Constraint
 
 These engine components must:
 
-- **not** contain children
 - **not** represent DOM
 - **not** try to be React
 
 They are **render boundaries** for your engine.
 
-```jsx
-// ❌ DON'T DO THIS - Engine components don't support children
-export const Form = {
-  render(entity, api) {
-    return (
-      <form>
-        <Field />
-      </form>
-    )
-  },
-}
+Children are supported and become `props.children` in the generated component render call.
 
+```jsx
 // ✅ DO THIS - Compose at the entity level instead
 export const Form = {
   render(entity, api) {

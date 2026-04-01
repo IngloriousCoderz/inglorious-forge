@@ -41,7 +41,7 @@ function createTemplateExpression(quasis, expressions) {
 }
 
 /**
- * Ensure a render method has an `api` parameter in the right position.
+ * Ensure a render method has `props` and `api` parameters in the right position.
  *
  * @param {import("@babel/core").NodePath} fn - The render function path.
  */
@@ -50,6 +50,7 @@ function ensureRenderApiParameter(fn) {
   const apiIndex = params.findIndex(
     (param) => t.isIdentifier(param) && param.name === "api",
   )
+  const propsParam = t.identifier("props")
 
   if (apiIndex !== NOT_FOUND) {
     if (apiIndex !== params.length - LAST) {
@@ -66,6 +67,10 @@ function ensureRenderApiParameter(fn) {
       fn.pushContainer("params", apiNode)
     }
     return
+  }
+
+  if (!params.length) {
+    fn.pushContainer("params", propsParam)
   }
 
   const lastParam = params[params.length - LAST]
@@ -167,10 +172,12 @@ function findRenderFunction(path) {
 export function buildTemplate(node, path, isSvg = false) {
   const tag = node.openingElement.name.name
   let repeatKeyExpr = null
+  let entityIdExpr = null
   let apiIdentifier = null
 
   if (isCapitalizedComponent(tag)) {
     const renderFn = findRenderFunction(path)
+    const hasBinding = path && path.scope.hasBinding(tag)
 
     if (renderFn) {
       ensureRenderApiParameter(renderFn)
@@ -187,6 +194,25 @@ export function buildTemplate(node, path, isSvg = false) {
       }
 
       const key = attr.name.name
+      if (key === "entityId") {
+        if (!attr.value) {
+          if (path) {
+            throw path.buildCodeFrameError(
+              "entityId must have a value on capitalized components.",
+            )
+          }
+
+          throw new Error(
+            "entityId must have a value on capitalized components.",
+          )
+        }
+
+        entityIdExpr = t.isJSXExpressionContainer(attr.value)
+          ? attr.value.expression
+          : attr.value
+        continue
+      }
+
       if (key === "key") {
         if (attr.value && t.isJSXExpressionContainer(attr.value)) {
           repeatKeyExpr = attr.value.expression
@@ -210,6 +236,18 @@ export function buildTemplate(node, path, isSvg = false) {
     const filteredChildren = node.children.filter(
       (child) => !(child.type === "JSXText" && child.value.trim() === ""),
     )
+
+    if (entityIdExpr && (props.length || filteredChildren.length)) {
+      if (path) {
+        throw path.buildCodeFrameError(
+          "entityId cannot be combined with additional props or children.",
+        )
+      }
+
+      throw new Error(
+        "entityId cannot be combined with additional props or children.",
+      )
+    }
 
     if (filteredChildren.length) {
       const allChildPaths = getChildrenPaths(path)
@@ -237,18 +275,37 @@ export function buildTemplate(node, path, isSvg = false) {
     }
 
     const shouldLazyRegister =
-      renderFn && !props.length && !filteredChildren.length
+      renderFn && hasBinding && !props.length && !filteredChildren.length
+    const renderEntityId = entityIdExpr ?? t.stringLiteral(componentId)
 
     if (shouldLazyRegister) {
       const renderCall = t.callExpression(
         t.memberExpression(t.identifier("api"), t.identifier("render")),
-        [t.stringLiteral(componentId), t.stringLiteral(tag), t.identifier(tag)],
+        [renderEntityId, t.stringLiteral(tag), t.identifier(tag)],
       )
       if (repeatKeyExpr) renderCall.__repeatKey = repeatKeyExpr
       return renderCall
     }
 
-    if (path && path.scope.hasBinding(tag)) {
+    if (entityIdExpr && hasBinding) {
+      const renderCall = t.callExpression(
+        t.memberExpression(t.identifier("api"), t.identifier("render")),
+        [renderEntityId, t.stringLiteral(tag), t.identifier(tag)],
+      )
+      if (repeatKeyExpr) renderCall.__repeatKey = repeatKeyExpr
+      return renderCall
+    }
+
+    if (entityIdExpr) {
+      const renderCall = t.callExpression(
+        t.memberExpression(t.identifier("api"), t.identifier("render")),
+        [renderEntityId],
+      )
+      if (repeatKeyExpr) renderCall.__repeatKey = repeatKeyExpr
+      return renderCall
+    }
+
+    if (hasBinding) {
       const renderArgs = []
       const [onlyProp] = props
       const singleSpreadArg =

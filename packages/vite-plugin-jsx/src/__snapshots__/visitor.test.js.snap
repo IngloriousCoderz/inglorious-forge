@@ -24,7 +24,7 @@ exports[`babel visitor > injects api into render methods 1`] = `
 "import { html } from "@inglorious/web";
 import { Form } from "./form.js";
 export const App = {
-  render(api) {
+  render(props, api) {
     return api.render("form", "Form", Form);
   }
 };"
@@ -54,7 +54,7 @@ exports[`babel visitor > moves api to the end when it is not already last 1`] = 
 "import { html } from "@inglorious/web";
 export const App = {
   render(entity, api) {
-    return api.render("form", "Form", Form);
+    return api.render("form");
   }
 };"
 `;

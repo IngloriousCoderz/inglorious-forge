@@ -8,9 +8,9 @@ export const App = {
     return (
       <h1>
         {/* @ts-expect-error - JSX components are entity type names, not imports */}
-        <Message id="message1" />, <Message id="message2" />,{" "}
+        <Message entityId="message1" />, <Message entityId="message2" />,{" "}
         {/* @ts-expect-error - JSX components are entity type names, not imports */}
-        <Message id="message3" />!
+        <Message entityId="message3" />!
       </h1>
     )
   },

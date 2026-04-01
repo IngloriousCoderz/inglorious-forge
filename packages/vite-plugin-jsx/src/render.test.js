@@ -71,6 +71,40 @@ describe("babel render", () => {
     ).toMatchSnapshot()
   })
 
+  it("renders bound capitalized components with an explicit entity id", async () => {
+    expect(
+      await transform(`
+        import { Message } from "./message.js"
+
+        export const Dashboard = {
+          render() {
+            return <Message entityId="message1" />
+          },
+        }
+      `),
+    ).toMatchSnapshot()
+  })
+
+  it("injects api when multiple explicit entity ids are rendered in the same method", async () => {
+    expect(
+      await transform(`
+        import { Message } from "./types/message"
+
+        export const App = {
+          render() {
+            return (
+              <h1>
+                <Message entityId="message1" />, <Message entityId="message2" />
+                ,{" "}
+                <Message entityId="message3" />!
+              </h1>
+            )
+          },
+        }
+      `),
+    ).toMatchSnapshot()
+  })
+
   it("renders fragments and nested expressions", async () => {
     expect(
       await transform(`

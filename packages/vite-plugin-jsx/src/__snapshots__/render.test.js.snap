@@ -9,10 +9,19 @@ export const Dashboard = {
 };"
 `;
 
+exports[`babel render > injects api when multiple explicit entity ids are rendered in the same method 1`] = `
+"import { Message } from "./types/message";
+export const App = {
+  render(props, api) {
+    return html\`<h1> \${api.render("message1", "Message", Message)}, \${api.render("message2", "Message", Message)} ,\${" "} \${api.render("message3", "Message", Message)}! </h1>\`;
+  }
+};"
+`;
+
 exports[`babel render > lazily registers bound capitalized components without props 1`] = `
 "import { Form } from "./form.js";
 export const Dashboard = {
-  render(api) {
+  render(props, api) {
     return api.render("form", "Form", Form);
   }
 };"
@@ -23,5 +32,14 @@ exports[`babel render > renders SVG self-closing tags correctly 1`] = `"const Ic
 exports[`babel render > renders attributes and event listeners 1`] = `"const view = () => html\`<button class="primary" @click=\${handleClick}>Save</button>\`;"`;
 
 exports[`babel render > renders basic JSX elements as lit-html templates 1`] = `"export const App = () => html\`<div>Hello World</div>\`;"`;
+
+exports[`babel render > renders bound capitalized components with an explicit entity id 1`] = `
+"import { Message } from "./message.js";
+export const Dashboard = {
+  render(props, api) {
+    return api.render("message1", "Message", Message);
+  }
+};"
+`;
 
 exports[`babel render > renders fragments and nested expressions 1`] = `"const view = () => html\` <div>\${show ? "yes" : "no"}</div> <img src="image.png" /> \`;"`;

@@ -32,7 +32,7 @@ Instead of template literals:
 
 ```vue
 <!-- Without Vue template syntax (lit-html) -->
-<!-- const counter = {
+<!-- const Counter = {
   render(entity, api) {
     return html`...`
   }
