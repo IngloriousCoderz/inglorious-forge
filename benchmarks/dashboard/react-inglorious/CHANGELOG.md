@@ -1,5 +1,12 @@
 # @benchmarks/dashboard-react-inglorious
 
+## 0.1.2
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/store@10.0.0
+
 ## 0.1.1
 
 ### Patch Changes

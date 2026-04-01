@@ -1,5 +1,16 @@
 # @inglorious/logo
 
+## 3.0.0
+
+### Major Changes
+
+- Use PascalCase for type names
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/web@5.0.0
+
 ## 2.1.2
 
 ### Patch Changes

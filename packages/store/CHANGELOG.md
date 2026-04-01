@@ -1,5 +1,16 @@
 # @inglorious/store
 
+## 10.0.0
+
+### Major Changes
+
+- Use PascalCase for type names
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/utils@3.8.0
+
 ## 9.6.0
 
 ### Minor Changes

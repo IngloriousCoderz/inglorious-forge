@@ -1,5 +1,16 @@
 # @inglorious/vite-plugin-jsx
 
+## 2.0.0
+
+### Major Changes
+
+- Use PascalCase for type names
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/utils@3.8.0
+
 ## 1.2.0
 
 ### Minor Changes

@@ -1,5 +1,17 @@
 # @inglorious/ssx
 
+## 2.0.0
+
+### Major Changes
+
+- Use PascalCase for type names
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/web@5.0.0
+  - @inglorious/utils@3.8.0
+
 ## 1.11.2
 
 ### Patch Changes

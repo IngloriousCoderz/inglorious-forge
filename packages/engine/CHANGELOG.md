@@ -1,5 +1,17 @@
 # @inglorious/engine
 
+## 22.0.0
+
+### Minor Changes
+
+- Use PascalCase for type names
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/store@10.0.0
+  - @inglorious/utils@3.8.0
+
 ## 21.0.0
 
 ### Patch Changes

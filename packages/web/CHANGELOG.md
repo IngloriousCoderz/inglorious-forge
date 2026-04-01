@@ -1,5 +1,17 @@
 # @inglorious/react-store
 
+## 5.0.0
+
+### Major Changes
+
+- Use PascalCase for type names
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/store@10.0.0
+  - @inglorious/utils@3.8.0
+
 ## 4.5.1
 
 ### Patch Changes

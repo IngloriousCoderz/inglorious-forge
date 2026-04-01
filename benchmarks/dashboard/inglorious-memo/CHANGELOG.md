@@ -1,5 +1,13 @@
 # @benchmarks/dashboard-inglorious-memo
 
+## 0.1.6
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/store@10.0.0
+  - @inglorious/web@5.0.0
+
 ## 0.1.5
 
 ### Patch Changes

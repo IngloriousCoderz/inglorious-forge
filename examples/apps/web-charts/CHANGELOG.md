@@ -1,5 +1,13 @@
 # web-charts
 
+## 0.1.7
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/web@5.0.0
+  - @inglorious/charts@5.0.0
+
 ## 0.1.6
 
 ### Patch Changes

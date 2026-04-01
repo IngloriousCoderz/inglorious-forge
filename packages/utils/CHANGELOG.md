@@ -1,5 +1,11 @@
 # @inglorious/utils
 
+## 3.8.0
+
+### Minor Changes
+
+- Use PascalCase for type names
+
 ## 3.7.3
 
 ### Patch Changes

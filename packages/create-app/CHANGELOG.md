@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.0.0
+
+### Major Changes
+
+- Use PascalCase for type names
+
 ## 0.5.1
 
 ### Patch Changes

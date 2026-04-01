@@ -1,5 +1,18 @@
 # @inglorious/ui
 
+## 2.0.0
+
+### Major Changes
+
+- Use PascalCase for type names
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/web@5.0.0
+  - @inglorious/utils@3.8.0
+  - @inglorious/charts@5.0.0
+
 ## 1.0.2
 
 ### Patch Changes
