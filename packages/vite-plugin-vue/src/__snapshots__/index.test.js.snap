@@ -457,6 +457,22 @@ export const TestComponent = {
 "
 `;
 
+exports[`@inglorious/vite-plugin-vue > script section > lazily renders imported Vue components with bare v-bind ids 1`] = `
+"import { html } from "@inglorious/web";
+
+import { Message } from "./types/message.vue";
+
+export const App = {
+  render(entity, api) {
+    return html\`<h1>
+    \${api.render("message1", "Message", Message)}, \${api.render("message2", "Message", Message)},
+    \${api.render("message3", "Message", Message)}!
+  </h1>\`;
+  }
+};
+"
+`;
+
 exports[`@inglorious/vite-plugin-vue > script section > separates state variables from methods 1`] = `
 "import { html } from "@inglorious/web";
 

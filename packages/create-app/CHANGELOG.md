@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.0.1
+
+### Patch Changes
+
+- Fix entity binding in Vue plugin
+
 ## 1.0.0
 
 ### Major Changes

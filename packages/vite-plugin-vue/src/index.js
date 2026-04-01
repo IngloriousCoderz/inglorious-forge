@@ -31,7 +31,14 @@ export function vue() {
 
         const componentName = toPascalCase(path.basename(id, path.extname(id)))
 
-        const { stateVars, renderVars, methods, scriptImports, importDecls } =
+        const {
+          stateVars,
+          renderVars,
+          methods,
+          scriptImports,
+          vueImports,
+          importDecls,
+        } =
           script
             ? parseScript(script, scriptLang)
             : {
@@ -39,6 +46,7 @@ export function vue() {
                 renderVars: [],
                 methods: [],
                 scriptImports: new Set(),
+                vueImports: new Set(),
                 importDecls: [],
               }
 
@@ -48,6 +56,7 @@ export function vue() {
           methods.map((method) => method.name),
           scriptImports,
           new Set(renderVars.map((stateVar) => stateVar.name)),
+          vueImports,
         )
 
         let output = ""

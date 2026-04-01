@@ -18,6 +18,7 @@ const SOURCE_END_OFFSET = 1
  *   renderVars: Array<{name: string, value: string}>,
  *   methods: Array<{name: string, params: string, body: string}>,
  *   scriptImports: Set<string>,
+ *   vueImports: Set<string>,
  *   importDecls: Array<import("@babel/types").ImportDeclaration>,
  * }} Parsed script metadata.
  */
@@ -32,12 +33,14 @@ export function parseScript(script, lang) {
     const renderVars = []
     const methods = []
     const scriptImports = new Set()
+    const vueImports = new Set()
     const importDecls = []
     const renderScopeNames = new Set(["api"])
 
     for (const node of ast.program.body) {
       if (t.isImportDeclaration(node)) {
         importDecls.push(node)
+        const isVueImport = node.source.value.endsWith(".vue")
         for (const specifier of node.specifiers) {
           if (
             t.isImportSpecifier(specifier) ||
@@ -45,6 +48,9 @@ export function parseScript(script, lang) {
             t.isImportNamespaceSpecifier(specifier)
           ) {
             scriptImports.add(specifier.local.name)
+            if (isVueImport) {
+              vueImports.add(specifier.local.name)
+            }
           }
         }
         continue
@@ -91,7 +97,14 @@ export function parseScript(script, lang) {
       }
     }
 
-    return { stateVars, renderVars, methods, scriptImports, importDecls }
+    return {
+      stateVars,
+      renderVars,
+      methods,
+      scriptImports,
+      vueImports,
+      importDecls,
+    }
   } catch (error) {
     throw new Error(`Failed to parse script: ${error.message}`)
   }

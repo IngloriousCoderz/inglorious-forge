@@ -92,6 +92,21 @@ describe("template helpers", () => {
     expect(result.code).toContain('api.render("statCard", entity.card)')
   })
 
+  it("renders imported Vue components from bare v-bind entity ids", () => {
+    const dom = parseTemplate(`<Message v-bind="message1" />`)
+    const result = transformTemplate(
+      dom,
+      [],
+      new Set(["Message"]),
+      new Set(),
+      new Set(["Message"]),
+    )
+
+    expect(result.code).toContain(
+      'api.render("message1", "Message", Message)',
+    )
+  })
+
   it("preserves render-scope locals in bindings and conditionals", () => {
     const dom = parseTemplate(`
 <Flex :class="dashboardClassName" v-if="isDashboardRoot">

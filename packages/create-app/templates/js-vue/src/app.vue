@@ -1,4 +1,4 @@
-<script setup>
+<script>
 import { Message } from "./types/message.vue"
 </script>
 

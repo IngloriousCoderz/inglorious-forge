@@ -45,6 +45,7 @@ export function transformTemplate(
   methodNames = [],
   scriptImports = new Set(),
   renderScopeNames = new Set(),
+  vueImports = new Set(),
 ) {
   const imports = new Set()
   const parts = []
@@ -57,6 +58,7 @@ export function transformTemplate(
         methodNames,
         scriptImports,
         renderScopeNames,
+        vueImports,
         {},
         false,
       ),
@@ -82,6 +84,7 @@ function transformNode(
   methodNames,
   scriptImports,
   renderScopeNames,
+  vueImports,
   context = {},
   isChild = false,
 ) {
@@ -96,6 +99,7 @@ function transformNode(
       methodNames,
       scriptImports,
       renderScopeNames,
+      vueImports,
       context,
       isChild,
     )
@@ -121,6 +125,7 @@ function renderChildren(
   methodNames,
   scriptImports,
   renderScopeNames,
+  vueImports,
   context,
 ) {
   if (!children.length) {
@@ -137,6 +142,7 @@ function renderChildren(
         methodNames,
         scriptImports,
         renderScopeNames,
+        vueImports,
         context,
         true,
       ),
@@ -198,6 +204,7 @@ export function transformElementNode(
   methodNames,
   scriptImports,
   renderScopeNames,
+  vueImports,
   context,
   isChild = false,
 ) {
@@ -215,6 +222,7 @@ export function transformElementNode(
       methodNames,
       scriptImports,
       renderScopeNames,
+      vueImports,
       context,
       false,
     )
@@ -224,6 +232,7 @@ export function transformElementNode(
       methodNames,
       scriptImports,
       renderScopeNames,
+      vueImports,
       context,
       isChild,
     )
@@ -279,6 +288,7 @@ export function transformElementNode(
       methodNames,
       scriptImports,
       renderScopeNames,
+      vueImports,
       newContext,
       false,
     )
@@ -304,6 +314,7 @@ export function transformElementNode(
     methodNames,
     scriptImports,
     renderScopeNames,
+    vueImports,
     context,
     isChild,
   )
@@ -327,6 +338,7 @@ export function buildElement(
   methodNames,
   scriptImports,
   renderScopeNames,
+  vueImports,
   context,
   isChild = false,
 ) {
@@ -366,6 +378,7 @@ export function buildElement(
       methodNames,
       scriptImports,
       renderScopeNames,
+      vueImports,
       context,
     )
 
@@ -390,6 +403,16 @@ export function buildElement(
     if (scriptImports.has(name)) {
       if (!propsArg) {
         return `\${api.render("${componentId}", "${name}", ${name})}`
+      }
+
+      if (
+        vueImports.has(name) &&
+        spreadValue &&
+        !propsStr &&
+        !childrenTemplate &&
+        /^[A-Za-z_$][\w$]*$/.test(spreadValue)
+      ) {
+        return `\${api.render("${spreadValue}", "${name}", ${name})}`
       }
 
       return `\${${name}.render(${propsArg}, api)}`
@@ -478,6 +501,7 @@ export function buildElement(
         methodNames,
         scriptImports,
         renderScopeNames,
+        vueImports,
         context,
         true,
       ),
@@ -556,6 +580,7 @@ export function findAlternate(
   methodNames,
   scriptImports,
   renderScopeNames,
+  vueImports,
   context,
   isChild = false,
 ) {
@@ -582,6 +607,7 @@ export function findAlternate(
           methodNames,
           scriptImports,
           renderScopeNames,
+          vueImports,
           context,
           false,
         )
@@ -591,6 +617,7 @@ export function findAlternate(
           methodNames,
           scriptImports,
           renderScopeNames,
+          vueImports,
           context,
           isChild,
         )
@@ -619,6 +646,7 @@ export function findAlternate(
           methodNames,
           scriptImports,
           renderScopeNames,
+          vueImports,
           context,
           false,
         )

@@ -472,6 +472,32 @@ const addItem = (entity, item) => entity.items.push(item)
       expect(result).toMatchSnapshot()
     })
 
+    it("lazily renders imported Vue components with bare v-bind ids", async () => {
+      const code = `
+<script>
+import { Message } from "./types/message.vue"
+</script>
+
+<template>
+  <h1>
+    <Message v-bind="message1" />, <Message v-bind="message2" />,
+    <Message v-bind="message3" />!
+  </h1>
+</template>
+`
+      const result = await transform(code, "app.vue")
+      expect(result).toContain(
+        'api.render("message1", "Message", Message)',
+      )
+      expect(result).toContain(
+        'api.render("message2", "Message", Message)',
+      )
+      expect(result).toContain(
+        'api.render("message3", "Message", Message)',
+      )
+      expect(result).toMatchSnapshot()
+    })
+
     it("handles arrow function methods", async () => {
       const code = `
 <template>
