@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { Api } from "@inglorious/web"
 
 import { Message } from "./types/message"

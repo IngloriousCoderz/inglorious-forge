@@ -2,7 +2,7 @@ import { createStore, type TypesConfig } from "@inglorious/web"
 
 import type { AppEntity, AppState } from "../../types"
 // @ts-expect-error - Handled by @inglorious/vite-plugin-vue
-import { Message } from "../message/message.vue"
+import { Message } from "../types/message.vue"
 import { entities } from "./entities"
 import { middlewares } from "./middlewares"
 

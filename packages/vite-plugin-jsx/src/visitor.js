@@ -26,10 +26,15 @@ function ensureWebImports(path) {
       nodePath.isImportDeclaration() &&
       nodePath.node.source.value === IMPORT_SOURCE
     ) {
-      importDecl = nodePath
+      if (nodePath.node.importKind !== "type") {
+        importDecl = nodePath
+      }
 
       for (const specifier of nodePath.get("specifiers")) {
-        if (specifier.isImportSpecifier()) {
+        if (
+          specifier.isImportSpecifier() &&
+          nodePath.node.importKind !== "type"
+        ) {
           needed.delete(specifier.node.imported.name)
         }
       }

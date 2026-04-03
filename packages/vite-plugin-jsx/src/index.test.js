@@ -26,5 +26,25 @@ describe("index", () => {
     )
 
     expect(result.code).toContain("html`<div>Hello</div>`")
+    expect(result.code).toContain('import { html } from "@inglorious/web"')
+  })
+
+  it("keeps type-only web imports separate from html imports", async () => {
+    const plugin = jsx()
+    const result = await plugin.transform(
+      `
+        import type { Api } from "@inglorious/web"
+
+        export const App = {
+          render(props: Record<string, unknown> | null, api: Api) {
+            return <div>Hello</div>
+          },
+        }
+      `,
+      "app.tsx",
+    )
+
+    expect(result.code).toContain('import { html } from "@inglorious/web"')
+    expect(result.code).toContain('import type { Api } from "@inglorious/web"')
   })
 })
