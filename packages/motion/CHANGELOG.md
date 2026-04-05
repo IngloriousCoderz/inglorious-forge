@@ -1,5 +1,12 @@
 # @inglorious/motion
 
+## 4.0.2
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/web@5.0.2
+
 ## 4.0.1
 
 ### Patch Changes

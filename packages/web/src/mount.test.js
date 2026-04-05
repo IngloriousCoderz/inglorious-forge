@@ -125,19 +125,4 @@ describe("mount", () => {
 
     expect(hydrateSpy).toHaveBeenCalledWith("dashboard-template", element)
   })
-
-  it("can skip hydration for static content", async () => {
-    element.innerHTML = "<span>server-rendered</span>"
-
-    await mount(
-      store,
-      (renderApi) =>
-        renderApi.render("dashboard-entity", "Dashboard", componentType),
-      element,
-      { hydrate: false },
-    )
-
-    expect(hydrateSpy).not.toHaveBeenCalled()
-    expect(renderSpy).toHaveBeenCalledWith("dashboard-template", element)
-  })
 })

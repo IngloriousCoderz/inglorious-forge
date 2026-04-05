@@ -1,3 +1,6 @@
+import path from "node:path"
+
+import { toCamelCase } from "@inglorious/utils/data-structures/string.js"
 import hljs from "highlight.js"
 import katex from "katex"
 import MarkdownIt from "markdown-it"
@@ -24,6 +27,7 @@ export function markdownPlugin(options = {}) {
       const matter = (await import("gray-matter")).default
       const { content, data } = matter(code)
       const htmlContent = md.render(content)
+      const moduleName = getMarkdownModuleName(id)
       const hasMermaid =
         content.includes('class="mermaid"') || content.includes("```mermaid")
 
@@ -40,9 +44,7 @@ export function markdownPlugin(options = {}) {
         ${mermaidCode}
 
         export const metadata = ${JSON.stringify(data)}
-        export const hydrate = false
-        
-        export default {
+        export const ${moduleName} = {
           render() {
             if (typeof window !== "undefined" && ${hasMermaid}) {
               setTimeout(() => {
@@ -100,4 +102,15 @@ function createMarkdownRenderer() {
   }
 
   return md
+}
+
+function getMarkdownModuleName(id) {
+  const baseName = path.basename(id, path.extname(id))
+  const pascalCase = toPascalCase(baseName)
+  return /^[A-Za-z_$]/.test(pascalCase) ? pascalCase : `_${pascalCase}`
+}
+
+function toPascalCase(input) {
+  const camelCase = toCamelCase(input.replace(/[^a-zA-Z0-9_$-]/g, "_"))
+  return camelCase.replace(/^[a-z]/, (char) => char.toUpperCase())
 }

@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 5.0.2
+
+### Patch Changes
+
+- Fix Markdown pages being exported as default
+
 ## 5.0.1
 
 ### Patch Changes
