@@ -1,6 +1,4 @@
-import { setRoutes } from "@inglorious/web/router"
-
-setRoutes({
+export const routes = {
   "/": "home",
   "/users": "userList",
   "/users/:userId": "userDetail",
@@ -12,4 +10,4 @@ setRoutes({
   "/admin": "adminPage",
   "/login": "loginPage",
   "*": "notFound",
-})
+}

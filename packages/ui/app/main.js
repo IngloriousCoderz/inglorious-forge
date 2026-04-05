@@ -10,13 +10,16 @@ import "./main.css"
 import { areaChart, barChart, lineChart } from "@inglorious/charts"
 import { createStore } from "@inglorious/store"
 import { createDevtools, mount } from "@inglorious/web"
+import { Router, setRoutes } from "@inglorious/web/router"
 
 import { AppDrawer } from "../src/examples/dashboard/app-drawer.js"
 import { Dashboard } from "../src/examples/dashboard/dashboard.js"
 import { Mode } from "../src/examples/dashboard/mode.js"
 import { PrimitiveSection } from "../src/examples/dashboard/primitive-section.js"
-import { Router } from "../src/examples/dashboard/router.js"
 import { Theme } from "../src/examples/dashboard/theme.js"
+import { routes } from "./routes.js"
+
+setRoutes(routes)
 
 const store = createStore({
   types: {

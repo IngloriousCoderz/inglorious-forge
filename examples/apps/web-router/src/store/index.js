@@ -1,7 +1,5 @@
-import "./routes"
-
 import { createStore } from "@inglorious/web"
-import { Router } from "@inglorious/web/router"
+import { Router, setRoutes } from "@inglorious/web/router"
 
 import { AdminPage } from "../views/admin"
 import { Home } from "../views/home"
@@ -13,6 +11,9 @@ import { UserDetail } from "../views/user-detail"
 import { UserList } from "../views/user-list"
 import { entities } from "./entities"
 import { middlewares } from "./middlewares"
+import { routes } from "./routes"
+
+setRoutes(routes)
 
 export const store = createStore({
   types: {

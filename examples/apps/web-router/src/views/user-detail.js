@@ -4,7 +4,7 @@ const BACK = -1
 
 export const UserDetail = {
   routeChange(entity, payload, api) {
-    if (payload.route !== entity.type) return
+    if (payload.route !== entity.id) return
 
     const { users } = api.getEntity("userList")
     entity.user = users.find((user) => user.id === payload.params.userId)

@@ -4,7 +4,7 @@ const BACK = -1
 
 export const PostList = {
   async routeChange(entity, payload, api) {
-    if (payload.route !== entity.type) return
+    if (payload.route !== entity.id) return
     if (entity.posts.length) return
 
     const entityId = entity.id
