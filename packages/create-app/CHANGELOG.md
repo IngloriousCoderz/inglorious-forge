@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.0.2
+
+### Patch Changes
+
+- Fix Markdown hydration in SSX apps
+
 ## 1.0.1
 
 ### Patch Changes

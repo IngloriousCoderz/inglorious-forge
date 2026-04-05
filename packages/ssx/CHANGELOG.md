@@ -1,5 +1,13 @@
 # @inglorious/ssx
 
+## 2.0.1
+
+### Patch Changes
+
+- Fix Markdown hydration in SSX apps
+- Updated dependencies
+  - @inglorious/web@5.0.1
+
 ## 2.0.0
 
 ### Major Changes

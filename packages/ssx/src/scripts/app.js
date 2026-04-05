@@ -123,6 +123,7 @@ ${routes.join(",\n")}
 const module = await getRoute(page.pattern)()
 const type = module[page.moduleName]
 types[page.moduleName] = type
+const shouldHydrate = module.hydrate !== false
 
 const store = createStore({ types, entities, middlewares, systems, autoCreateEntities: true })
 
@@ -131,7 +132,7 @@ const root = document.getElementById("root")
 mount(store, (api) => {
   const { route } = api.getEntity("router")
   return api.render(route)
-}, root)
+}, root, { hydrate: shouldHydrate })
 `
 }
 

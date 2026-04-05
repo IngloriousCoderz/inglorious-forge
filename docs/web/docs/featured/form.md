@@ -123,7 +123,6 @@ const LoginForm = {
     return html`
       <form
         @submit=${(e) => {
-          e.preventDefault()
           api.notify("#form:validate", { validate: validateForm })
           api.notify("#form:submit")
         }}

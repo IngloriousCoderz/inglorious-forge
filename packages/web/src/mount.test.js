@@ -7,9 +7,17 @@ const { renderSpy } = vi.hoisted(() => ({
   renderSpy: vi.fn(),
 }))
 
+const { hydrateSpy } = vi.hoisted(() => ({
+  hydrateSpy: vi.fn(),
+}))
+
 vi.mock("lit-html", () => ({
   html: (strings, ...values) => ({ strings, values }),
   render: renderSpy,
+}))
+
+vi.mock("@lit-labs/ssr-client", () => ({
+  hydrate: hydrateSpy,
 }))
 
 import { mount } from "./mount.js"
@@ -57,6 +65,7 @@ describe("mount", () => {
     }
 
     renderSpy.mockReset()
+    hydrateSpy.mockReset()
   })
 
   it("lazily registers a missing type passed to api.render", async () => {
@@ -101,6 +110,34 @@ describe("mount", () => {
         render: expect.any(Function),
       }),
     )
+    expect(renderSpy).toHaveBeenCalledWith("dashboard-template", element)
+  })
+
+  it("hydrates existing markup by default", async () => {
+    element.innerHTML = "<span>server-rendered</span>"
+
+    await mount(
+      store,
+      (renderApi) =>
+        renderApi.render("dashboard-entity", "Dashboard", componentType),
+      element,
+    )
+
+    expect(hydrateSpy).toHaveBeenCalledWith("dashboard-template", element)
+  })
+
+  it("can skip hydration for static content", async () => {
+    element.innerHTML = "<span>server-rendered</span>"
+
+    await mount(
+      store,
+      (renderApi) =>
+        renderApi.render("dashboard-entity", "Dashboard", componentType),
+      element,
+      { hydrate: false },
+    )
+
+    expect(hydrateSpy).not.toHaveBeenCalled()
     expect(renderSpy).toHaveBeenCalledWith("dashboard-template", element)
   })
 })

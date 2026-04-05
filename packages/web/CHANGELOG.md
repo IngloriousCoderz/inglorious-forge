@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 5.0.1
+
+### Patch Changes
+
+- Fix Markdown hydration in SSX apps
+
 ## 5.0.0
 
 ### Major Changes

@@ -40,6 +40,7 @@ export function markdownPlugin(options = {}) {
         ${mermaidCode}
 
         export const metadata = ${JSON.stringify(data)}
+        export const hydrate = false
         
         export default {
           render() {

@@ -66,9 +66,7 @@ export default defineConfig({
             { text: "Overview", link: "/featured/overview" },
             { text: "Router", link: "/featured/router" },
             { text: "Form", link: "/featured/form" },
-            { text: "Table", link: "/featured/table" },
-            { text: "Select", link: "/featured/select" },
-            { text: "Virtual List", link: "/featured/list" },
+            { text: "UI Primitives", link: "/featured/ui" },
           ],
         },
         {

@@ -1,5 +1,13 @@
 # @inglorious/ui
 
+## 2.0.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/web@5.0.1
+  - @inglorious/charts@5.0.1
+
 ## 2.0.0
 
 ### Major Changes

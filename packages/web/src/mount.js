@@ -10,20 +10,21 @@ import { html, render } from "lit-html"
  * @param {Store} store - The application state store.
  * @param {(api: Api) => TemplateResult | null} renderFn - The root render function.
  * @param {HTMLElement | DocumentFragment} element - The DOM element to mount the template to.
+ * @param {Object} [options] - Mount options.
+ * @param {boolean} [options.hydrate=true] - Whether to hydrate the existing DOM.
  * @returns {() => void} An unsubscribe function
  */
-export async function mount(store, renderFn, element) {
+export async function mount(store, renderFn, element, options = {}) {
   const api = { ...store._api }
   api.render = createRender(api)
 
-  let shouldHydrate = element.hasChildNodes()
+  const shouldHydrate = options.hydrate !== false && element.hasChildNodes()
 
   // If we need to hydrate, load the heavy lifting only now
   if (shouldHydrate) {
     const { hydrate } = await import("@lit-labs/ssr-client")
     const template = renderFn(api)
     hydrate(template, element)
-    shouldHydrate = false
   }
 
   const unsubscribe = store.subscribe(() => {

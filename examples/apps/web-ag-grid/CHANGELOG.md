@@ -1,5 +1,13 @@
 # web-ag-grid
 
+## 0.1.7
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/web@5.0.1
+  - @inglorious/ag-grid@4.0.1
+
 ## 0.1.6
 
 ### Patch Changes
