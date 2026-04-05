@@ -188,6 +188,7 @@ export const List = {
               Icon.render({
                 size: "lg",
                 color: "var(--iw-color-text-muted)",
+                className: "iw-list-item-icon",
                 children: icon,
               }),
             ),

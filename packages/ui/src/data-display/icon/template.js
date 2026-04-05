@@ -11,12 +11,26 @@ import { classMap, html } from "@inglorious/web"
  * @param {IconProps} props
  * @returns {TemplateResult}
  */
-export function render({ children, size = "md", color = "current", onClick }) {
+export function render({
+  children,
+  size = "md",
+  color = "current",
+  className = "",
+  onClick,
+}) {
+  const extraClasses = Object.fromEntries(
+    className
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((name) => [name, true]),
+  )
+
   return html`<span
     class=${classMap({
       "iw-icon": true,
       [`iw-icon-${size}`]: size !== "md",
       "iw-icon-current": color === "current",
+      ...extraClasses,
     })}
     style=${color !== "current" ? `color: ${color};` : ""}
     aria-hidden="true"

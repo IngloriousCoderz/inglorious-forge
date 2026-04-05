@@ -42,6 +42,10 @@
     color 0.15s ease;
 }
 
+.iw-list-item-icon {
+  padding: var(--iw-space-4);
+}
+
 .iw-list-item-inset .iw-list-item-content {
   margin-left: calc(var(--iw-space-3) + var(--iw-list-icon-size, 1.25rem));
 }

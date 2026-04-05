@@ -5,6 +5,7 @@ export interface IconProps {
   children?: TemplateResult | string | number
   size?: "sm" | "md" | "lg"
   color?: string
+  className?: string
   onClick?: () => void
   [key: string]: unknown
 }

@@ -30,7 +30,7 @@ export const AppDrawer = {
   },
 
   render(entity, api) {
-    const items = mapItemsForRender(entity.items ?? [], api)
+    const items = mapItemsForRender(entity, entity.items ?? [], api)
 
     return Drawer.render({
       ...entity,
@@ -52,15 +52,19 @@ export const AppDrawer = {
           isInset: true,
           padding: "sm",
           items,
-          onItemToggle: (_, path) =>
-            api.notify(`#${entity.id}:itemToggle`, { path }),
+          onItemToggle: (_, path) => {
+            api.notify(`#${entity.id}:itemToggle`, { path })
+            if (entity.isCollapsed) {
+              api.notify(`#${entity.id}:collapseToggle`)
+            }
+          },
         })}
       `,
     })
   },
 }
 
-function mapItemsForRender(items, api) {
+function mapItemsForRender(entity, items, api) {
   const router = api.getEntity("router")
 
   return items.map((item) => {
@@ -75,7 +79,14 @@ function mapItemsForRender(items, api) {
     }
 
     if (item.href) {
-      mappedItem.onClick = () => api.notify("#router:navigate", item.href)
+      mappedItem.onClick = () => {
+        api.notify("#router:navigate", item.href)
+
+        const isMobile = document.body.clientWidth < 64 * 16
+        if (isMobile) {
+          api.notify(`#${entity.id}:toggle`)
+        }
+      }
     }
 
     if (router?.path === item.href) {
@@ -83,7 +94,7 @@ function mapItemsForRender(items, api) {
     }
 
     if (Array.isArray(item.children)) {
-      mappedItem.children = mapItemsForRender(item.children, api)
+      mappedItem.children = mapItemsForRender(entity, item.children, api)
     }
 
     return mappedItem
