@@ -22,6 +22,7 @@
 import { classMap, html, ref, repeat, when } from "@inglorious/web"
 
 import { IconButton } from "../../controls/icon-button"
+import { Icon } from "../../data-display/icon"
 import { Flex } from "../../layout/flex"
 import { applyElementProps } from "../../shared/applyElementProps.js"
 
@@ -145,12 +146,14 @@ export const List = {
     }
 
     const isClickable = !!props.onItemClick || !!onClick
-    const hasChildren = Array.isArray(children) && children.length > 0
+    const hasChildren = Array.isArray(children) && children.length
+    const isExpandable = !!hasChildren
     const hasAction = !!action
 
     const listItemClassName = [
       "iw-list-item",
       isClickable && "iw-list-item-clickable",
+      isExpandable && "iw-list-item-expandable",
       isDisabled && "iw-list-item-disabled",
       isSelected && "iw-list-item-selected",
       props.isInset && !icon && "iw-list-item-inset",
@@ -166,6 +169,13 @@ export const List = {
       onClick: (event) => {
         event.stopPropagation()
         if (isDisabled) return
+
+        if (isExpandable) {
+          onToggle?.(raw ?? item, path)
+          props.onItemToggle?.(raw ?? item, path)
+          return
+        }
+
         onClick?.(raw ?? item, path)
         props.onItemClick?.(raw ?? item, path)
       },
@@ -175,13 +185,10 @@ export const List = {
           gap: "sm",
           children: [
             when(icon, () =>
-              IconButton.render({
-                icon,
-                size: "sm",
-                color: "secondary",
-                variant: "ghost",
-                shape: "square",
-                className: "iw-list-item-icon",
+              Icon.render({
+                size: "lg",
+                color: "var(--iw-color-text-muted)",
+                children: icon,
               }),
             ),
             Flex.render({
@@ -200,10 +207,10 @@ export const List = {
               ],
             }),
             when(
-              hasChildren || hasAction,
+              isExpandable || hasAction,
               () =>
                 html`<span class="iw-list-item-trailing">
-                  ${when(hasChildren, () =>
+                  ${when(isExpandable, () =>
                     IconButton.render({
                       variant: "ghost",
                       color: "secondary",

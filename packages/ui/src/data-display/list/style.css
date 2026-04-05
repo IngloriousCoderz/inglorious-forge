@@ -36,6 +36,7 @@
 .iw-list-item {
   padding: var(--iw-space-3);
   border-radius: var(--iw-radius-sm);
+  background-color: var(--iw-list-item);
   transition:
     background-color 0.15s ease,
     color 0.15s ease;
@@ -85,20 +86,18 @@
   color: var(--iw-color-text-muted, var(--iw-color-text));
 }
 
-.iw-list-item-clickable {
+.iw-list-item-clickable,
+.iw-list-item-expandable {
   cursor: pointer;
 }
 
-.iw-list-item-clickable:hover {
-  background-color: var(--iw-color-surface, rgba(0, 0, 0, 0.05));
+.iw-list-item-clickable:hover,
+.iw-list-item-expandable:hover {
+  filter: brightness(120%);
 }
 
 .iw-list-item-selected {
-  background-color: var(--iw-color-surface-active, rgba(0, 0, 0, 0.08));
-
-  .iw-list-item-icon {
-    color: var(--iw-color-text);
-  }
+  background-color: var(--iw-list-item-selected);
 }
 
 .iw-list-item-disabled {
@@ -116,4 +115,11 @@
 .iw-list-nested {
   margin-top: var(--iw-space-1);
   padding-left: var(--iw-space-4);
+}
+
+.iw-theme-light {
+  .iw-list-item-clickable:hover,
+  .iw-list-item-expandable:hover {
+    filter: brightness(96%);
+  }
 }

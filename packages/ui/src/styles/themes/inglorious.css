@@ -85,6 +85,14 @@
   /* Badge */
   --iw-badge-radius: var(--iw-radius-none);
 
+  /* List */
+  --iw-list-item: var(--iw-color-gray-800);
+  --iw-list-item-selected: color-mix(
+    in srgb,
+    var(--iw-color-primary) 8%,
+    var(--iw-color-gray-800)
+  );
+
   /* Alert */
   --iw-alert-radius: var(--iw-radius-none);
   --iw-alert-shadow: none;
@@ -111,4 +119,12 @@
 
   --iw-button-shadow-hover: 0 0 10px var(--iw-color-primary);
   --iw-card-shadow-hover: var(--iw-shadow-xl), 0 0 15px rgba(0, 255, 136, 0.2);
+
+  --iw-list-item: var(--iw-color-white);
+  --iw-list-item-active: var(--iw-color-gray-100);
+  --iw-list-item-selected: color-mix(
+    in srgb,
+    var(--iw-color-primary) 8%,
+    var(--iw-color-white)
+  );
 }

@@ -88,7 +88,7 @@ describe("list", () => {
 
     render(List.render(props), container)
 
-    expect(container.querySelector(".iw-button-icon").textContent).toBe("★")
+    expect(container.querySelector(".iw-icon").textContent).toBe("★")
     expect(
       container.querySelector(".iw-list-item-secondary").textContent.trim(),
     ).toBe("Pinned")
@@ -171,6 +171,32 @@ describe("list", () => {
 
     expect(clicked).toHaveLength(1)
     expect(clicked[0].path).toEqual([0, 0])
+  })
+
+  it("toggles expandable items when the row is clicked", () => {
+    let toggled = null
+    const props = {
+      id: "list",
+      onItemToggle: (item, path) => (toggled = { item, path }),
+      items: [
+        {
+          id: "a",
+          primary: "Parent",
+          isExpanded: false,
+          children: [{ id: "a-1", primary: "Child" }],
+        },
+      ],
+    }
+    const container = document.createElement("div")
+
+    render(List.render(props), container)
+
+    container.querySelector(".iw-list-item").click()
+
+    expect(toggled).toEqual({
+      item: props.items[0],
+      path: [0],
+    })
   })
 
   it("does not render nested list when collapsed", () => {

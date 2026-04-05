@@ -77,6 +77,14 @@
   /* Badge */
   --iw-badge-radius: var(--iw-radius-md);
 
+  /* List */
+  --iw-list-item: var(--iw-color-white);
+  --iw-list-item-selected: color-mix(
+    in srgb,
+    var(--iw-color-primary) 8%,
+    var(--iw-color-white)
+  );
+
   /* Alert */
   --iw-alert-radius: var(--iw-radius-md);
   --iw-alert-shadow: none;
@@ -117,4 +125,12 @@
   --iw-button-outline-border: var(--iw-color-primary);
   --iw-button-ghost-bg-hover: #343a40;
   --iw-button-ghost-text: var(--iw-color-text);
+
+  --iw-list-item: #2c3036;
+  --iw-list-item-active: #343a40;
+  --iw-list-item-selected: color-mix(
+    in srgb,
+    var(--iw-color-primary) 12%,
+    #2c3036
+  );
 }
