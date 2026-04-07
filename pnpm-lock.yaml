@@ -983,6 +983,9 @@ importers:
 
   examples/apps/web-form:
     dependencies:
+      "@inglorious/ui":
+        specifier: workspace:*
+        version: link:../../../packages/ui
       "@inglorious/web":
         specifier: workspace:*
         version: link:../../../packages/web

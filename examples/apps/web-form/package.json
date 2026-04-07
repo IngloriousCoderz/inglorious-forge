@@ -13,6 +13,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@inglorious/ui": "workspace:*",
     "@inglorious/web": "workspace:*"
   },
   "devDependencies": {

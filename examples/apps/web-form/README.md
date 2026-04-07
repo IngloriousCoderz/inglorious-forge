@@ -1,6 +1,6 @@
 # web-form
 
-Small demo showing the `form` type and helper components (inputs/selects/radios) built on top of `@inglorious/web`.
+Invoice-style form performance demo built on `@inglorious/web` and `@inglorious/ui`.
 
 Quick start:
 
@@ -13,5 +13,6 @@ pnpm dev
 
 Files of interest:
 
-- `src/user-form/user-form.js` — shows how the `userForm` type is extended and handles submit/validation
-- `src/user-form/fields/*` — field helper components (input, select, radio)
+- `src/invoice-form/index.js` — the invoice form, row rendering, and live totals
+- `src/main.js` — UI theme and component style imports
+- `src/store/entities.js` — seeds the form with 100 line items
