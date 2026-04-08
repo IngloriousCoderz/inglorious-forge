@@ -3,6 +3,8 @@
  * Creates reusable onMouseEnter, onMouseLeave, and onMouseMove handlers for chart elements
  */
 
+import * as handlers from "../handlers.js"
+
 // Tooltip offset from cursor position
 const TOOLTIP_OFFSET = 15
 // Estimated tooltip width (can be adjusted based on actual tooltip size)
@@ -21,9 +23,15 @@ const TOOLTIP_ESTIMATED_HEIGHT = 60
  * @param {string} params.tooltipData.color - Tooltip color
  * @returns {{ onMouseEnter: Function, onMouseLeave: Function }}
  */
-export function createTooltipHandlers({ entity, api, tooltipData }) {
+export function createTooltipHandlers({
+  entity,
+  api,
+  tooltipData,
+  enabled = undefined,
+}) {
+  const isEnabled = enabled ?? entity.showTooltip
   const onMouseEnter = (e) => {
-    if (!entity.showTooltip) return
+    if (!isEnabled) return
     const svgElement = e.currentTarget.closest("svg")
     const svgRect = svgElement.getBoundingClientRect()
     const containerElement =
@@ -40,6 +48,18 @@ export function createTooltipHandlers({ entity, api, tooltipData }) {
       containerRect,
     )
 
+    if (entity.__inline || typeof api?.notify !== "function") {
+      handlers.tooltipShow(entity, {
+        label: tooltipData.label,
+        value: tooltipData.value,
+        color: tooltipData.color,
+        x,
+        y,
+      })
+      api?.notify?.("charts:inlineTooltip")
+      return
+    }
+
     api.notify(`#${entity.id}:tooltipShow`, {
       label: tooltipData.label,
       value: tooltipData.value,
@@ -50,7 +70,13 @@ export function createTooltipHandlers({ entity, api, tooltipData }) {
   }
 
   const onMouseLeave = () => {
-    if (!entity.showTooltip) return
+    if (!isEnabled) return
+    if (entity.__inline || typeof api?.notify !== "function") {
+      handlers.tooltipHide(entity)
+      api?.notify?.("charts:inlineTooltip")
+      return
+    }
+
     api.notify(`#${entity.id}:tooltipHide`)
   }
 
@@ -82,6 +108,12 @@ export function createTooltipMoveHandler({ entity, api }) {
       svgRect,
       containerRect,
     )
+
+    if (entity.__inline || typeof api?.notify !== "function") {
+      handlers.tooltipMove(entity, { x, y })
+      api?.notify?.("charts:inlineTooltip")
+      return
+    }
 
     api.notify(`#${entity.id}:tooltipMove`, {
       x,

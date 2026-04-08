@@ -22,7 +22,23 @@ import { calculateXTicks } from "../utils/scales.js"
  */
 // eslint-disable-next-line no-unused-vars
 export function renderGrid(entity, props, api) {
-  const { xScale, yScale, width, height, padding, customYTicks } = props
+  const {
+    xScale,
+    yScale,
+    width,
+    height,
+    padding,
+    customYTicks,
+    stroke = "#eee",
+    strokeDasharray = "5 5",
+    strokeWidth = 1,
+  } = props
+
+  // If grid is visually disabled, bail early.
+  if (strokeWidth <= 0 || stroke === "none" || stroke === "transparent") {
+    return svg``
+  }
+
   // Use entity.data if available, otherwise fallback to scale ticks
   const data = entity?.data
 
@@ -56,6 +72,7 @@ export function renderGrid(entity, props, api) {
   const yTicks =
     customYTicks && Array.isArray(customYTicks) ? customYTicks : yScale.ticks(5)
 
+  // Render main grid groups.
   return svg`
     <g class="iw-chart-cartesian-grid">
       <g class="iw-chart-cartesian-grid-horizontal">
@@ -66,8 +83,9 @@ export function renderGrid(entity, props, api) {
             const y = yScale(t)
             return svg`
               <line
-                stroke-dasharray="3 3"
-                stroke="#ccc"
+                stroke-dasharray=${strokeDasharray}
+                stroke=${stroke}
+                stroke-width=${strokeWidth}
                 fill="none"
                 x=${padding.left}
                 y=${padding.top}
@@ -102,8 +120,9 @@ export function renderGrid(entity, props, api) {
             }
             return svg`
               <line
-                stroke-dasharray="3 3"
-                stroke="#ccc"
+                stroke-dasharray=${strokeDasharray}
+                stroke=${stroke}
+                stroke-width=${strokeWidth}
                 fill="none"
                 x=${padding.left}
                 y=${padding.top}

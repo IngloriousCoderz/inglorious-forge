@@ -1,100 +1,49 @@
 /* eslint-disable no-magic-numbers */
-import { html, repeat, svg } from "@inglorious/web"
+import { repeat, svg } from "@inglorious/web"
 
 import { createBrushComponent } from "../component/brush.js"
 import { renderGrid } from "../component/grid.js"
 import { renderLegend } from "../component/legend.js"
-import { createTooltipComponent, renderTooltip } from "../component/tooltip.js"
+import { createTooltipComponent } from "../component/tooltip.js"
 import { renderXAxis } from "../component/x-axis.js"
 import { renderYAxis } from "../component/y-axis.js"
 import { chart } from "../index.js"
 import { renderDot } from "../shape/dot.js"
-import { resolveChartDimensions } from "../utils/chart-dimensions.js"
-import { getTransformedData, isMultiSeries } from "../utils/data-utils.js"
-import { extractDataKeysFromChildren } from "../utils/extract-data-keys.js"
-import { generateLinePath } from "../utils/paths.js"
-import { processDeclarativeChild } from "../utils/process-declarative-child.js"
-import { getFilteredData } from "../utils/scales.js"
-import { createSharedContext } from "../utils/shared-context.js"
 import {
-  createTooltipHandlers,
-  createTooltipMoveHandler,
-} from "../utils/tooltip-handlers.js"
+  createBandCenterScale,
+  getResolvedEntity,
+  inferSeriesDataKey,
+  resolveCategoryLabel,
+} from "../utils/cartesian-helpers.js"
+import { createCartesianRenderer } from "../utils/cartesian-renderer.js"
+import { PALETTE_DEFAULT } from "../utils/constants.js"
+import { getTransformedData } from "../utils/data-utils.js"
+import { generateLinePath } from "../utils/paths.js"
+import { ensureChartRuntimeId } from "../utils/runtime-id.js"
+import { getFilteredData } from "../utils/scales.js"
+import { createTooltipHandlers } from "../utils/tooltip-handlers.js"
+import { renderComposedChart } from "./composed.js"
 
 export const line = {
-  /**
-   * Config-based rendering entry point.
-   * Builds default composition children from entity options and delegates to
-   * `renderLineChart`.
-   * @param {import('../types/charts').ChartEntity} entity
-   * @param {import('@inglorious/web').Api} api
-   * @returns {import('lit-html').TemplateResult}
-   */
-  render(entity, api) {
-    const type = api.getType(entity.type)
-
-    // Transform multi-series data to wide format if needed
-    let transformedData = entity.data
-    let dataKeys = []
-
-    if (isMultiSeries(entity.data)) {
-      // Extract dataKeys before transformation
-      dataKeys = entity.data.map(
-        (series, idx) =>
-          series.dataKey || series.name || series.label || `series${idx}`,
-      )
-      // Transform to wide format for rendering
-      transformedData = transformMultiSeriesToWide(entity.data)
-    }
-
-    // Apply data filtering if brush is enabled
-    const entityData = entity.brush?.enabled
-      ? getFilteredData({ ...entity, data: transformedData })
-      : transformedData
-
-    // Create entity with transformed and filtered data
-    const entityWithData = {
-      ...entity,
-      data: entityData,
-      dataKey:
-        entity.dataKey || (transformedData[0]?.x !== undefined ? "x" : "name"),
-    }
-
-    // Convert entity config to declarative children
-    const children = buildChildrenFromConfig(entityWithData, dataKeys)
-
-    // Extract dataKeys for config if not already extracted
-    if (dataKeys.length === 0) {
-      if (entityWithData.data && entityWithData.data.length > 0) {
-        const first = entityWithData.data[0]
-        dataKeys = Object.keys(first).filter(
-          (key) =>
-            !["name", "x", "date"].includes(key) &&
-            typeof first[key] === "number",
-        )
-        if (dataKeys.length === 0) {
-          dataKeys = ["y", "value"].filter((k) => first[k] !== undefined)
-        }
-        if (dataKeys.length === 0) {
-          dataKeys = ["value"]
-        }
-      }
-    }
-
-    // Use the unified motor (renderLineChart)
-    // Pass original entity in config so brush can access unfiltered data
-    return type.renderLineChart(
+  render: createCartesianRenderer({
+    seriesType: "line",
+    chartApi: () => chart,
+    toDisplayData: ({ entity, transformedData }) =>
+      entity.brush?.enabled
+        ? getFilteredData({ ...entity, data: transformedData })
+        : transformedData,
+    buildRenderConfig: ({
+      entity,
       entityWithData,
-      {
-        width: entityWithData.width,
-        height: entityWithData.height,
-        dataKeys,
-        originalEntity: { ...entity, data: transformedData },
-        children,
-      },
-      api,
-    )
-  },
+      transformedData,
+      dataKeys,
+    }) => ({
+      width: entityWithData.width,
+      height: entityWithData.height,
+      dataKeys,
+      originalEntity: { ...entity, data: transformedData },
+    }),
+  }),
 
   /**
    * Composition rendering entry point for line charts.
@@ -103,134 +52,8 @@ export const line = {
    * @param {import('@inglorious/web').Api} api
    * @returns {import('lit-html').TemplateResult}
    */
-  renderLineChart(entity, params = {}, api) {
-    if (!entity) return svg`<text>Entity not found</text>`
-    const { children, ...config } = params
-
-    const entityForBrush = config.originalEntity || entity
-    const entityWithData = { ...entity }
-
-    // Collect data keys (used for scales and legends)
-    const dataKeysSet = new Set()
-    if (config.dataKeys && Array.isArray(config.dataKeys)) {
-      config.dataKeys.forEach((key) => dataKeysSet.add(key))
-    } else if (children) {
-      const autoDataKeys = extractDataKeysFromChildren(children)
-      autoDataKeys.forEach((key) => dataKeysSet.add(key))
-    }
-
-    const { width, height, padding } = resolveChartDimensions({
-      configWidth: config.width,
-      configHeight: config.height,
-      configPadding: config.padding,
-      entityWidth: entity.width,
-      entityHeight: entity.height,
-      entityPadding: entity.padding,
-    })
-
-    const context = createSharedContext(
-      entityForBrush,
-      {
-        width,
-        height,
-        padding,
-        usedDataKeys: dataKeysSet,
-        chartType: "line",
-        filteredEntity: entityWithData,
-      },
-      api,
-    )
-
-    // Adjust domain for Brush
-    const brush = entityForBrush.brush
-    if (brush?.enabled && brush.startIndex !== undefined) {
-      if (config.originalEntity) {
-        context.xScale.domain([0, entity.data.length - 1])
-      } else {
-        context.xScale.domain([brush.startIndex, brush.endIndex])
-      }
-    }
-
-    context.dimensions = { width, height, padding }
-    context.entity = entityWithData
-    context.fullEntity = entityForBrush
-    context.api = api
-
-    // Process children (Grid, Line, XAxis, etc)
-    const processedChildrenArray = (
-      Array.isArray(children) ? children : [children]
-    )
-      .filter(Boolean)
-      .map((child) => {
-        const targetEntity =
-          child && child.type === "Brush" ? entityForBrush : entityWithData
-        return processDeclarativeChild(child, targetEntity, "line", api)
-      })
-      .filter(Boolean)
-
-    const cat = {
-      grid: [],
-      axes: [],
-      lines: [],
-      dots: [],
-      tooltip: [],
-      legend: [],
-      brush: [],
-      others: [],
-    }
-    for (const child of processedChildrenArray) {
-      if (typeof child === "function") {
-        if (child.isGrid) cat.grid.push(child)
-        else if (child.isAxis) cat.axes.push(child)
-        else if (child.isLine) cat.lines.push(child)
-        else if (child.isDots) cat.dots.push(child)
-        else if (child.isTooltip) cat.tooltip.push(child)
-        else if (child.isLegend) cat.legend.push(child)
-        else if (child.isBrush) cat.brush.push(child)
-        else cat.others.push(child)
-      } else cat.others.push(child)
-    }
-
-    const processedChildren = [
-      ...cat.grid,
-      ...cat.lines,
-      ...cat.axes,
-      ...cat.dots,
-      ...cat.tooltip,
-      ...cat.legend,
-      ...cat.brush,
-      ...cat.others,
-    ].map((child) => (typeof child === "function" ? child(context) : child))
-
-    return html`
-      <div
-        class="iw-chart"
-        style="display: block; position: relative; width: 100%; box-sizing: border-box;"
-      >
-        <svg
-          width=${width}
-          height=${height + (cat.brush.length ? 60 : 0)}
-          viewBox="0 0 ${width} ${height + (cat.brush.length ? 60 : 0)}"
-          @mousemove=${createTooltipMoveHandler({
-            entity: entityWithData,
-            api,
-          })}
-        >
-          <defs>
-            <clipPath id="chart-clip-${entity.id}">
-              <rect
-                x=${padding.left}
-                y=${padding.top}
-                width=${width - padding.left - padding.right}
-                height=${height - padding.top - padding.bottom}
-              />
-            </clipPath>
-          </defs>
-          ${processedChildren}
-        </svg>
-        ${renderTooltip(entityWithData, {}, api)}
-      </div>
-    `
+  renderLineChart(entity, { children, config = {} }, api) {
+    return renderComposedChart(entity, { children, config }, api)
   },
 
   /**
@@ -347,20 +170,50 @@ export const line = {
    */
   renderLine(entity, { config = {} }, api) {
     const lineFn = (ctx) => {
-      const { xScale, yScale, entity: e } = ctx
+      const { xScale, yScale } = ctx
+      const e = getResolvedEntity(ctx, entity)
       const {
         dataKey,
-        stroke = "#8884d8",
+        stroke = PALETTE_DEFAULT[0],
         type = "linear",
         showDots = false,
       } = config
-      const data = getTransformedData(e, dataKey)
-      const chartData = data.map((d, i) => ({ ...d, x: i }))
+      const resolvedDataKey =
+        dataKey ??
+        (Array.isArray(config.data)
+          ? inferSeriesDataKey(config.data, "line")
+          : undefined)
+      const dataEntity = Array.isArray(config.data)
+        ? { ...e, data: config.data }
+        : e
+      const plotEntity = ctx.fullEntity || dataEntity
+      const indexOffset = ctx.indexOffset ?? 0
+      const indexEnd = ctx.indexEnd
+      const data = getTransformedData(dataEntity, resolvedDataKey)
+      const scaleForSeries = xScale.bandwidth
+        ? createBandCenterScale(xScale)
+        : xScale
+      const chartData = data.map((d, i) => ({
+        ...d,
+        x: xScale.bandwidth
+          ? resolveCategoryLabel(plotEntity, i + indexOffset)
+          : i + indexOffset,
+      }))
 
-      const path = generateLinePath(chartData, xScale, yScale, type)
+      const clippedChartData =
+        typeof indexEnd === "number"
+          ? chartData.filter((point) => point.x <= indexEnd)
+          : chartData
+
+      const path = generateLinePath(
+        clippedChartData,
+        scaleForSeries,
+        yScale,
+        type,
+      )
       if (!path || path.includes("NaN")) return svg``
       return svg`
-        <g class="iw-chart-line-group" clip-path="url(#chart-clip-${e.id})">
+        <g class="iw-chart-line-group" clip-path="url(#${resolveClipPathId(ctx, e)})">
           <path d="${path}" stroke="${stroke}" fill="none" stroke-width="2" />
           ${showDots ? line.renderDots(e, { config: { ...config, fill: stroke } }, api)(ctx) : ""}
         </g>`
@@ -378,18 +231,34 @@ export const line = {
    */
   renderDots(entity, { config = {} }, api) {
     const dotsFn = (ctx) => {
-      const { xScale, yScale, entity: e } = ctx
-      const { dataKey, fill = "#8884d8", r = "0.25em" } = config
-      const data = getTransformedData(e, dataKey)
+      const { xScale, yScale } = ctx
+      const e = getResolvedEntity(ctx, entity)
+      const { dataKey, fill = PALETTE_DEFAULT[0], r = "0.25em" } = config
+      const resolvedDataKey =
+        dataKey ??
+        (Array.isArray(config.data)
+          ? inferSeriesDataKey(config.data, "line")
+          : undefined)
+      const dataEntity = Array.isArray(config.data)
+        ? { ...e, data: config.data }
+        : e
+      const plotEntity = ctx.fullEntity || dataEntity
+      const indexOffset = ctx.indexOffset ?? 0
+      const indexEnd = ctx.indexEnd
+      const data = getTransformedData(dataEntity, resolvedDataKey)
+      const scaleForSeries = xScale.bandwidth
+        ? createBandCenterScale(xScale)
+        : xScale
 
       if (!data || data.length === 0) return svg``
       return svg`
-        <g class="iw-chart-dots" clip-path="url(#chart-clip-${e.id})">
+        <g class="iw-chart-dots" clip-path="url(#${resolveClipPathId(ctx, e)})">
           ${repeat(
             data,
-            (d, i) => `${dataKey}-${i}`,
+            (d, i) => `${resolvedDataKey || "value"}-${i}`,
             (d, i) => {
-              const originalDataPoint = e.data?.[i]
+              const resolvedIndex = i + indexOffset
+              const originalDataPoint = plotEntity.data?.[resolvedIndex]
               const label =
                 originalDataPoint?.name ??
                 originalDataPoint?.label ??
@@ -401,9 +270,22 @@ export const line = {
                 entity: e,
                 api: ctx.api || api,
                 tooltipData: { label: String(label), value: d.y, color: fill },
+                enabled:
+                  config.showTooltip ??
+                  (ctx.tooltipMode
+                    ? ctx.tooltipMode === "all"
+                    : ctx.tooltipEnabled),
               })
+              if (typeof indexEnd === "number" && resolvedIndex > indexEnd) {
+                return svg``
+              }
+
               return renderDot({
-                cx: xScale(i),
+                cx: scaleForSeries(
+                  xScale.bandwidth
+                    ? resolveCategoryLabel(plotEntity, resolvedIndex)
+                    : resolvedIndex,
+                ),
                 cy: yScale(d.y),
                 r,
                 fill,
@@ -430,7 +312,7 @@ export const line = {
       const { dataKeys = [], labels = [], colors = [] } = config
       const series = dataKeys.map((key, i) => ({
         name: labels[i] || key,
-        color: colors[i % colors.length] || "#8884d8",
+        color: colors[i % colors.length] || PALETTE_DEFAULT[0],
       }))
       return renderLegend(entity, { series, ...ctx.dimensions }, api)
     }
@@ -451,134 +333,13 @@ export const line = {
   renderBrush: createBrushComponent(),
 }
 
-/**
- * Builds declarative children from entity config for renderChart (config style)
- * Converts entity configuration into children objects that renderLineChart can process
- * @param {import('../types/charts').ChartEntity} entity
- * @param {string[]} [providedDataKeys] - Optional dataKeys if already extracted (e.g., from multi-series before transformation)
- */
-function buildChildrenFromConfig(entity, providedDataKeys = null) {
-  const children = []
-
-  // Grid
-  if (entity.showGrid !== false) {
-    children.push(
-      chart.CartesianGrid({ stroke: "#eee", strokeDasharray: "5 5" }),
-    )
-  }
-
-  // XAxis - determine dataKey from entity or data structure
-  let xAxisDataKey = entity.dataKey
-  if (!xAxisDataKey && entity.data && entity.data.length > 0) {
-    const firstItem = entity.data[0]
-    xAxisDataKey = firstItem.name || firstItem.x || firstItem.date || "name"
-  }
-  if (!xAxisDataKey) {
-    xAxisDataKey = "name"
-  }
-  children.push(chart.XAxis({ dataKey: xAxisDataKey }))
-
-  // YAxis
-  children.push(chart.YAxis({ width: "auto" }))
-
-  // Extract dataKeys from entity data or use provided ones
-  let dataKeys = providedDataKeys
-  if (!dataKeys || dataKeys.length === 0) {
-    if (isMultiSeries(entity.data)) {
-      // Multi-series: use series names as dataKeys
-      dataKeys = entity.data.map((series, idx) => {
-        return series.dataKey || series.name || series.label || `series${idx}`
-      })
-    } else if (entity.data && entity.data.length > 0) {
-      // Wide format: extract numeric keys
-      const first = entity.data[0]
-      dataKeys = Object.keys(first).filter(
-        (key) =>
-          !["name", "x", "date"].includes(key) &&
-          typeof first[key] === "number",
-      )
-      if (dataKeys.length === 0) {
-        dataKeys = ["y", "value"].filter((k) => first[k] !== undefined)
-      }
-      if (dataKeys.length === 0) {
-        dataKeys = ["value"] // Default fallback
-      }
-    } else {
-      dataKeys = ["value"] // Default fallback
-    }
-  }
-
-  // Lines (one per dataKey)
-  const colors = entity.colors || ["#8884d8", "#82ca9d", "#ffc658", "#ff8042"]
-  dataKeys.forEach((dataKey, index) => {
-    children.push(
-      chart.Line({
-        dataKey,
-        stroke: colors[index % colors.length],
-        showDots: entity.showPoints !== false,
-      }),
-    )
-  })
-
-  // Dots (if showPoints is true)
-  if (entity.showPoints !== false && dataKeys.length > 0) {
-    dataKeys.forEach((dataKey, index) => {
-      children.push(
-        chart.Dots({
-          dataKey,
-          fill: colors[index % colors.length],
-        }),
-      )
-    })
-  }
-
-  // Tooltip
-  if (entity.showTooltip !== false) {
-    children.push(chart.Tooltip({}))
-  }
-
-  // Legend
-  if (entity.showLegend && isMultiSeries(entity.data)) {
-    children.push(
-      chart.Legend({
-        dataKeys,
-        labels: entity.labels || dataKeys,
-        colors: entity.colors,
-      }),
-    )
-  }
-
-  // Brush
-  if (entity.brush?.enabled && entity.brush?.visible !== false) {
-    children.push(
-      chart.Brush({
-        dataKey: xAxisDataKey,
-        height: entity.brush.height || 30,
-      }),
-    )
-  }
-
-  return children
+function ensureClipPathId(entity) {
+  return `chart-clip-${ensureChartRuntimeId(entity)}`
 }
 
-function transformMultiSeriesToWide(multiSeriesData) {
-  if (!isMultiSeries(multiSeriesData)) return null
-  const dataMap = new Map()
-  const seriesKeys = multiSeriesData.map((s) => s.dataKey || s.name || "series")
-
-  multiSeriesData.forEach((series, seriesIdx) => {
-    const key = seriesKeys[seriesIdx]
-    const values = Array.isArray(series.values) ? series.values : [series]
-    values.forEach((point, index) => {
-      const xVal = point?.x ?? index
-      if (!dataMap.has(xVal)) dataMap.set(xVal, { x: xVal, name: String(xVal) })
-      dataMap.get(xVal)[key] = point?.y ?? point?.value ?? 0
-    })
-  })
-
-  return Array.from(dataMap.values()).sort((a, b) => {
-    return typeof a.x === "number"
-      ? a.x - b.x
-      : String(a.x).localeCompare(String(b.x))
-  })
+function resolveClipPathId(ctx, entity) {
+  if (ctx.clipPathId) return ctx.clipPathId
+  const clipPathId = ensureClipPathId(ctx.fullEntity || entity)
+  ctx.clipPathId = clipPathId
+  return clipPathId
 }

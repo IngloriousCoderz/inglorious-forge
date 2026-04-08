@@ -1,93 +1,44 @@
 /* eslint-disable no-magic-numbers */
-import { html, repeat, svg } from "@inglorious/web"
+import { repeat, svg } from "@inglorious/web"
 
 import { createBrushComponent } from "../component/brush.js"
 import { renderGrid } from "../component/grid.js"
 import { renderLegend } from "../component/legend.js"
-import { createTooltipComponent, renderTooltip } from "../component/tooltip.js"
+import { createTooltipComponent } from "../component/tooltip.js"
 import { renderXAxis } from "../component/x-axis.js"
 import { renderYAxis } from "../component/y-axis.js"
 import { chart } from "../index.js"
 import { renderCurve } from "../shape/curve.js"
 import { renderDot } from "../shape/dot.js"
-import { getTransformedData, isMultiSeries } from "../utils/data-utils.js"
-import { extractDataKeysFromChildren } from "../utils/extract-data-keys.js"
+import {
+  createBandCenterScale,
+  getResolvedEntity,
+  inferSeriesDataKey,
+  resolveCategoryLabel,
+} from "../utils/cartesian-helpers.js"
+import { createCartesianRenderer } from "../utils/cartesian-renderer.js"
+import { PALETTE_DEFAULT } from "../utils/constants.js"
+import { getTransformedData } from "../utils/data-utils.js"
 import {
   generateAreaPath,
   generateLinePath,
   generateStackedAreaPath,
 } from "../utils/paths.js"
-import { processDeclarativeChild } from "../utils/process-declarative-child.js"
-import { createSharedContext } from "../utils/shared-context.js"
 import { createTooltipHandlers } from "../utils/tooltip-handlers.js"
+import { renderComposedChart } from "./composed.js"
 
 export const area = {
-  /**
-   * Config-based rendering entry point.
-   * Builds default composition children from entity options and delegates to
-   * `renderAreaChart`.
-   * @param {import('../types/charts').ChartEntity} entity
-   * @param {import('@inglorious/web').Api} api
-   * @returns {import('lit-html').TemplateResult}
-   */
-  render(entity, api) {
-    const type = api.getType(entity.type)
-
-    // Transform multi-series data to wide format if needed
-    let transformedData = entity.data
-    let dataKeys = []
-
-    if (isMultiSeries(entity.data)) {
-      // Extract dataKeys before transformation
-      dataKeys = entity.data.map(
-        (series, idx) =>
-          series.dataKey || series.name || series.label || `series${idx}`,
-      )
-      // Transform to wide format for rendering
-      transformedData = transformMultiSeriesToWide(entity.data)
-    }
-
-    // Create entity with transformed data
-    const entityWithData = {
-      ...entity,
-      data: transformedData,
-      dataKey:
-        entity.dataKey || (transformedData[0]?.x !== undefined ? "x" : "name"),
-    }
-
-    // Convert entity config to declarative children
-    const children = buildChildrenFromConfig(entityWithData, dataKeys)
-
-    // Extract dataKeys for config if not already extracted
-    if (dataKeys.length === 0) {
-      if (entityWithData.data && entityWithData.data.length > 0) {
-        const first = entityWithData.data[0]
-        dataKeys = Object.keys(first).filter(
-          (key) =>
-            !["name", "x", "date"].includes(key) &&
-            typeof first[key] === "number",
-        )
-        if (dataKeys.length === 0) {
-          dataKeys = ["y", "value"].filter((k) => first[k] !== undefined)
-        }
-        if (dataKeys.length === 0) {
-          dataKeys = ["value"]
-        }
-      }
-    }
-
-    return type.renderAreaChart(
-      entityWithData,
-      {
-        width: entityWithData.width,
-        height: entityWithData.height,
-        stacked: entity.stacked === true,
-        dataKeys: dataKeys.length > 0 ? dataKeys : undefined,
-        children,
-      },
-      api,
-    )
-  },
+  render: createCartesianRenderer({
+    seriesType: "area",
+    chartApi: () => chart,
+    toDisplayData: ({ transformedData }) => transformedData,
+    buildRenderConfig: ({ entity, entityWithData, dataKeys }) => ({
+      width: entityWithData.width,
+      height: entityWithData.height,
+      stacked: entity.stacked === true,
+      dataKeys,
+    }),
+  }),
 
   /**
    * Composition rendering entry point for area charts.
@@ -96,125 +47,8 @@ export const area = {
    * @param {import('@inglorious/web').Api} api
    * @returns {import('lit-html').TemplateResult}
    */
-  renderAreaChart(entity, params = {}, api) {
-    if (!entity) return svg`<text>Entity not found</text>`
-    const { children, ...config } = params
-
-    const entityWithData = config.data
-      ? { ...entity, data: config.data }
-      : entity
-
-    // Auto-detect stacked mode: if config.stacked is not explicitly set,
-    // check if any Area component has a stackId
-    let isStacked = config.stacked === true
-    if (config.stacked === undefined) {
-      const childrenArray = Array.isArray(children) ? children : [children]
-      const hasStackId = childrenArray.some(
-        (child) =>
-          child &&
-          typeof child === "object" &&
-          child.type === "Area" &&
-          child.config &&
-          child.config.stackId !== undefined,
-      )
-      if (hasStackId) {
-        isStacked = true
-        config.stacked = true
-      }
-    }
-
-    // Collect data keys (used for scales and legends)
-    const dataKeysSet = new Set()
-    if (config.dataKeys && Array.isArray(config.dataKeys)) {
-      config.dataKeys.forEach((key) => dataKeysSet.add(key))
-    } else if (children) {
-      const autoDataKeys = extractDataKeysFromChildren(children)
-      autoDataKeys.forEach((key) => dataKeysSet.add(key))
-    }
-
-    const context = createSharedContext(
-      entityWithData,
-      {
-        width: config.width,
-        height: config.height,
-        padding: config.padding,
-        chartType: "area",
-        stacked: isStacked,
-        usedDataKeys: dataKeysSet,
-        filteredEntity: entityWithData,
-      },
-      api,
-    )
-    context.api = api
-
-    if (isStacked) {
-      context.stack = {
-        sumsByStackId: new Map(),
-        computedByKey: new Map(),
-      }
-    }
-
-    const childrenArray = Array.isArray(children) ? children : [children]
-
-    const processedChildrenArray = childrenArray
-      .map((child) =>
-        processDeclarativeChild(child, entityWithData, "area", api),
-      )
-      .filter(Boolean)
-
-    const grid = [],
-      axes = [],
-      areas = [],
-      dots = [],
-      tooltip = [],
-      legend = [],
-      others = []
-
-    for (const child of processedChildrenArray) {
-      if (typeof child === "function") {
-        if (child.isGrid) grid.push(child)
-        else if (child.isAxis) axes.push(child)
-        else if (child.isArea) areas.push(child)
-        else if (child.isDots) dots.push(child)
-        else if (child.isTooltip) tooltip.push(child)
-        else if (child.isLegend) legend.push(child)
-        else others.push(child)
-      } else {
-        others.push(child)
-      }
-    }
-
-    const sortedChildren = [
-      ...grid,
-      ...(isStacked ? areas : [...areas].reverse()),
-      ...axes,
-      ...dots,
-      ...tooltip,
-      ...legend,
-      ...others,
-    ]
-
-    const finalRendered = sortedChildren.map((child) => {
-      if (typeof child !== "function") return child
-      const result = child(context)
-      return typeof result === "function" ? result(context) : result
-    })
-
-    return html`
-      <div
-        class="iw-chart"
-        style="display: block; position: relative; width: 100%;"
-      >
-        <svg
-          width=${context.dimensions.width}
-          height=${context.dimensions.height}
-          viewBox="0 0 ${context.dimensions.width} ${context.dimensions.height}"
-        >
-          ${finalRendered}
-        </svg>
-        ${renderTooltip(entityWithData, {}, api)}
-      </div>
-    `
+  renderAreaChart(entity, { children, config = {} }, api) {
+    return renderComposedChart(entity, { children, config }, api)
   },
 
   /**
@@ -228,7 +62,7 @@ export const area = {
     const gridFn = (ctx) => {
       const { xScale, yScale, dimensions } = ctx
       return renderGrid(
-        ctx.entity || entity,
+        getResolvedEntity(ctx, entity),
         { xScale, yScale, ...dimensions, ...config },
         api,
       )
@@ -247,7 +81,7 @@ export const area = {
   renderXAxis(entity, { config = {} }, api) {
     const axisFn = (ctx) => {
       const { xScale, yScale, dimensions } = ctx
-      const ent = ctx.entity || entity
+      const ent = getResolvedEntity(ctx, entity)
       const labels = ent.data.map(
         (d, i) => d[config.dataKey] || d.name || String(i),
       )
@@ -275,11 +109,14 @@ export const area = {
    * @param {import('@inglorious/web').Api} api
    * @returns {(ctx: Record<string, any>) => import('lit-html').TemplateResult}
    */
-  // eslint-disable-next-line no-unused-vars
   renderYAxis(entity, { config = {} }, api) {
     const axisFn = (ctx) => {
       const { yScale, dimensions } = ctx
-      return renderYAxis(ctx.entity || entity, { yScale, ...dimensions }, api)
+      return renderYAxis(
+        getResolvedEntity(ctx, entity),
+        { yScale, ...dimensions, ...config },
+        api,
+      )
     }
     axisFn.isAxis = true
     return axisFn
@@ -292,22 +129,50 @@ export const area = {
    * @param {import('@inglorious/web').Api} api
    * @returns {(ctx: Record<string, any>) => import('lit-html').TemplateResult}
    */
-  // eslint-disable-next-line no-unused-vars
   renderArea(entity, { config = {} }, api) {
     const areaFn = (ctx) => {
       const { xScale, yScale } = ctx
       const {
         dataKey,
-        fill = "#8884d8",
+        fill = PALETTE_DEFAULT[0],
         fillOpacity = "0.6",
         stroke,
         stackId,
+        showDots = false,
+        showTooltip = undefined,
       } = config
-      const data = getTransformedData(ctx.entity || entity, dataKey)
+      const resolvedDataKey =
+        dataKey ??
+        (Array.isArray(config.data)
+          ? inferSeriesDataKey(config.data, "area")
+          : undefined)
+      const baseEntity = getResolvedEntity(ctx, entity)
+      const plotEntity = ctx.fullEntity || baseEntity
+      const indexOffset = ctx.indexOffset ?? 0
+      const indexEnd = ctx.indexEnd
+      const dataEntity = Array.isArray(config.data)
+        ? { ...baseEntity, data: config.data }
+        : baseEntity
+      const data = getTransformedData(dataEntity, resolvedDataKey)
       if (!data) return svg``
 
       const isStacked = Boolean(stackId) && Boolean(ctx.stack)
       let areaPath, linePath
+
+      const scaleForSeries = xScale.bandwidth
+        ? createBandCenterScale(xScale)
+        : xScale
+      const chartData = data.map((d, i) => ({
+        ...d,
+        x: xScale.bandwidth
+          ? resolveCategoryLabel(plotEntity, i + indexOffset)
+          : i + indexOffset,
+      }))
+
+      const clippedChartData =
+        typeof indexEnd === "number"
+          ? chartData.filter((point) => point.x <= indexEnd)
+          : chartData
 
       if (isStacked) {
         const stackKey = String(stackId)
@@ -319,21 +184,41 @@ export const area = {
           seriesStack.map((p) => p[1]),
         )
         ctx.stack.computedByKey.set(`${stackKey}:${dataKey}`, seriesStack)
-        areaPath = generateStackedAreaPath(data, xScale, yScale, seriesStack)
+        areaPath = generateStackedAreaPath(
+          clippedChartData,
+          scaleForSeries,
+          yScale,
+          seriesStack,
+        )
         linePath = generateLinePath(
-          data.map((d, i) => ({ ...d, y: seriesStack[i][1] })),
-          xScale,
+          clippedChartData.map((d, i) => ({ ...d, y: seriesStack[i][1] })),
+          scaleForSeries,
           yScale,
         )
       } else {
-        areaPath = generateAreaPath(data, xScale, yScale, 0)
-        linePath = generateLinePath(data, xScale, yScale)
+        areaPath = generateAreaPath(clippedChartData, scaleForSeries, yScale, 0)
+        linePath = generateLinePath(clippedChartData, scaleForSeries, yScale)
       }
 
       return svg`
         <g class="iw-chart-area">
           ${renderCurve({ d: areaPath, fill, fillOpacity })}
           ${linePath ? renderCurve({ d: linePath, stroke: stroke || fill }) : ""}
+          ${
+            showDots || showTooltip
+              ? area.renderDots(
+                  dataEntity,
+                  {
+                    config: {
+                      ...config,
+                      fill: stroke || fill,
+                      showTooltip,
+                    },
+                  },
+                  api,
+                )(ctx)
+              : ""
+          }
         </g>`
     }
     areaFn.isArea = true
@@ -350,9 +235,23 @@ export const area = {
   renderDots(entity, { config = {} }, api) {
     const dotsFn = (ctx) => {
       const { xScale, yScale } = ctx
-      const entityFromContext = ctx.entity || entity
-      const { dataKey, fill = "#8884d8" } = config
-      const data = getTransformedData(entityFromContext, dataKey)
+      const entityFromContext = getResolvedEntity(ctx, entity)
+      const { dataKey, fill = PALETTE_DEFAULT[0] } = config
+      const resolvedDataKey =
+        dataKey ??
+        (Array.isArray(config.data)
+          ? inferSeriesDataKey(config.data, "area")
+          : undefined)
+      const dataEntity = Array.isArray(config.data)
+        ? { ...entityFromContext, data: config.data }
+        : entityFromContext
+      const plotEntity = ctx.fullEntity || dataEntity
+      const indexOffset = ctx.indexOffset ?? 0
+      const indexEnd = ctx.indexEnd
+      const data = getTransformedData(dataEntity, resolvedDataKey)
+      const scaleForSeries = xScale.bandwidth
+        ? createBandCenterScale(xScale)
+        : xScale
       if (!data || data.length === 0) return svg``
 
       const seriesStack = ctx.stack?.computedByKey.get(
@@ -363,12 +262,20 @@ export const area = {
         <g class="iw-chart-dots">
           ${repeat(
             data,
-            (d, i) => `${dataKey}-${i}`,
+            (d, i) => `${resolvedDataKey || "value"}-${i}`,
             (d, i) => {
-              const x = xScale(d.x)
+              const resolvedIndex = i + indexOffset
+              if (typeof indexEnd === "number" && resolvedIndex > indexEnd) {
+                return svg``
+              }
+              const x = scaleForSeries(
+                xScale.bandwidth
+                  ? resolveCategoryLabel(plotEntity, resolvedIndex)
+                  : resolvedIndex,
+              )
               const y = yScale(seriesStack ? seriesStack[i]?.[1] : d.y)
               // Get label from original data point (like line chart does)
-              const originalDataPoint = entityFromContext.data[i]
+              const originalDataPoint = plotEntity.data[resolvedIndex]
               const label =
                 originalDataPoint?.name ||
                 originalDataPoint?.label ||
@@ -379,6 +286,11 @@ export const area = {
                 entity: entityFromContext,
                 api: ctx.api || api,
                 tooltipData: { label, value, color: fill },
+                enabled:
+                  config.showTooltip ??
+                  (ctx.tooltipMode
+                    ? ctx.tooltipMode === "all"
+                    : ctx.tooltipEnabled),
               })
               return renderDot({
                 cx: x,
@@ -417,7 +329,7 @@ export const area = {
       }))
 
       return renderLegend(
-        ctx.entity || entity,
+        getResolvedEntity(ctx, entity),
         {
           series,
           colors: colors || [],
@@ -436,121 +348,4 @@ export const area = {
    * @type {(entity: import('../types/charts').ChartEntity, params: { config?: Record<string, any> }, api: import('@inglorious/web').Api) => (ctx: Record<string, any>) => import('lit-html').TemplateResult}
    */
   renderBrush: createBrushComponent(),
-}
-
-/**
- * Builds declarative children from entity config for render (config style)
- * Converts entity configuration into children objects that renderAreaChart can process
- * @param {import('../types/charts').ChartEntity} entity
- * @param {string[]} [providedDataKeys] - Optional dataKeys if already extracted (e.g., from multi-series before transformation)
- */
-function buildChildrenFromConfig(entity, providedDataKeys = null) {
-  const children = []
-
-  if (entity.showGrid !== false) {
-    children.push(
-      chart.CartesianGrid({ stroke: "#eee", strokeDasharray: "5 5" }),
-    )
-  }
-
-  // XAxis - determine dataKey from entity or data structure
-  let xAxisDataKey = entity.dataKey
-  if (!xAxisDataKey && entity.data?.length > 0) {
-    const first = entity.data[0]
-    xAxisDataKey = first.name || first.x || first.date || "name"
-  }
-  if (!xAxisDataKey) {
-    xAxisDataKey = "name"
-  }
-  children.push(chart.XAxis({ dataKey: xAxisDataKey }))
-  children.push(chart.YAxis({ width: "auto" }))
-
-  // Extract dataKeys from entity data or use provided ones
-  let dataKeys = providedDataKeys
-  if (!dataKeys || dataKeys.length === 0) {
-    if (isMultiSeries(entity.data)) {
-      // Multi-series: use series names as dataKeys
-      dataKeys = entity.data.map((s, i) => s.dataKey || s.name || `series${i}`)
-    } else if (entity.data?.length > 0) {
-      // Wide format: extract numeric keys
-      const first = entity.data[0]
-      dataKeys = Object.keys(first).filter(
-        (key) =>
-          !["name", "x", "date"].includes(key) &&
-          typeof first[key] === "number",
-      )
-      if (dataKeys.length === 0) {
-        dataKeys = ["y", "value"].filter((k) => first[k] !== undefined)
-      }
-      if (dataKeys.length === 0) {
-        dataKeys = ["value"]
-      }
-    } else {
-      dataKeys = ["value"]
-    }
-  }
-
-  const colors = entity.colors || ["#8884d8", "#82ca9d", "#ffc658", "#ff8042"]
-  const isStacked = entity.stacked === true
-
-  dataKeys.forEach((key, i) => {
-    children.push(
-      chart.Area({
-        dataKey: key,
-        fill: colors[i % colors.length],
-        fillOpacity: "0.6",
-        stroke: colors[i % colors.length],
-        stackId: isStacked ? "1" : undefined,
-      }),
-    )
-  })
-
-  if (entity.showPoints !== false) {
-    dataKeys.forEach((key, i) => {
-      children.push(
-        chart.Dots({
-          dataKey: key,
-          fill: colors[i % colors.length],
-          stackId: isStacked ? "1" : undefined,
-        }),
-      )
-    })
-  }
-
-  if (entity.showTooltip !== false) children.push(chart.Tooltip({}))
-
-  // Legend
-  if (entity.showLegend === true && dataKeys.length > 1) {
-    children.push(
-      chart.Legend({ dataKeys, colors: colors.slice(0, dataKeys.length) }),
-    )
-  }
-
-  if (entity.brush?.enabled) {
-    children.push(chart.Brush({ dataKey: xAxisDataKey || "name" }))
-  }
-
-  return children
-}
-
-function transformMultiSeriesToWide(multiSeriesData) {
-  if (!isMultiSeries(multiSeriesData)) return null
-  const dataMap = new Map()
-  const seriesKeys = multiSeriesData.map((s) => s.dataKey || s.name || "series")
-
-  multiSeriesData.forEach((series, seriesIdx) => {
-    const key = seriesKeys[seriesIdx]
-    const values = Array.isArray(series.values) ? series.values : [series]
-    values.forEach((point, index) => {
-      const xVal = point?.x ?? index
-      if (!dataMap.has(xVal)) dataMap.set(xVal, { x: xVal, name: String(xVal) })
-      dataMap.get(xVal)[key] = point?.y ?? point?.value ?? 0
-    })
-  })
-
-  return Array.from(dataMap.values()).sort((a, b) => {
-    return typeof a.x === "number"
-      ? a.x - b.x
-      : String(a.x).localeCompare(String(b.x))
-  })
 }

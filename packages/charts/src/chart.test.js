@@ -4,6 +4,7 @@
 import { describe, expect, it, vi } from "vitest"
 
 import { chart } from "./index.js"
+import { render as renderTemplate } from "./template.js"
 import {
   areaChart,
   barChart,
@@ -258,7 +259,7 @@ describe("chart", () => {
           getType: vi.fn(() => barChart),
         }
 
-        const result = chart.render(entity, mockApi)
+        const result = renderTemplate(entity, mockApi)
 
         expect(mockApi.getType).toHaveBeenCalledWith("bar")
         expect(result).toBeDefined()
@@ -276,7 +277,7 @@ describe("chart", () => {
           getType: vi.fn(() => null),
         }
 
-        const result = chart.render(entity, mockApi)
+        const result = renderTemplate(entity, mockApi)
 
         expect(mockApi.getType).toHaveBeenCalledWith("unknown")
         expect(result).toBeDefined()
