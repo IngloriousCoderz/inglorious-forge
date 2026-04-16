@@ -1,4 +1,4 @@
-import { createStore } from "@inglorious/web"
+import { createStore } from "@inglorious/store"
 
 import { CHARTS } from "@benchmarks/dashboard-shared"
 

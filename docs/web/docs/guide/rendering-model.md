@@ -381,7 +381,7 @@ render(entity, api) {
 For expensive derived state, use `compute()`:
 
 ```javascript
-import { compute } from "@inglorious/store"
+import { compute } from "@inglorious/store/select"
 
 // Memoize: Only recalculate if dependencies change
 const getExpensiveValue = compute(

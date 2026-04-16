@@ -13,6 +13,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@inglorious/store": "workspace:*",
     "@inglorious/ui": "workspace:*",
     "@inglorious/web": "workspace:*",
     "date-fns": "^4.1.0"

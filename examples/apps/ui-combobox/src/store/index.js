@@ -1,5 +1,5 @@
+import { createStore } from "@inglorious/store"
 import { Combobox } from "@inglorious/ui/combobox"
-import { createStore } from "@inglorious/web"
 
 import { RemoteCombobox } from "../remote-combobox.js"
 import { entities } from "./entities.js"

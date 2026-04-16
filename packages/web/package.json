@@ -26,6 +26,10 @@
       "types": "./types/index.d.ts",
       "import": "./src/index.js"
     },
+    "./directives/*": {
+      "types": "./types/directives/*.d.ts",
+      "import": "./src/directives/*.js"
+    },
     "./form": {
       "types": "./types/form.d.ts",
       "import": "./src/form/index.js"
@@ -34,6 +38,10 @@
     "./router": {
       "types": "./types/router.d.ts",
       "import": "./src/router/index.js"
+    },
+    "./static": {
+      "types": "./types/static.d.ts",
+      "import": "./src/static.js"
     },
     "./test": {
       "import": "./src/test.js"
@@ -55,10 +63,12 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@inglorious/store": "workspace:*",
     "@inglorious/utils": "workspace:*",
     "@lit-labs/ssr-client": "^1.1.8",
     "lit-html": "^3.3.1"
+  },
+  "peerDependencies": {
+    "@inglorious/store": "workspace:*"
   },
   "devDependencies": {
     "@inglorious/eslint-config": "workspace:*",

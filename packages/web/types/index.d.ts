@@ -1,5 +1,2 @@
-export * from "./form"
 export * from "./lit-html"
 export * from "./mount"
-export * from "./router"
-export * from "./store"

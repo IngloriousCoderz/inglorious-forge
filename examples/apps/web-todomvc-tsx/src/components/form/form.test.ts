@@ -1,4 +1,5 @@
-import { type Event, trigger } from "@inglorious/web"
+import type { Event } from "@inglorious/store"
+import { trigger } from "@inglorious/web/test"
 import { expect, it } from "vitest"
 
 import type { FormEntity, FormType } from "../../../types"

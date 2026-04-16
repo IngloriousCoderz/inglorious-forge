@@ -1,4 +1,5 @@
-import { classMap, html } from "@inglorious/web"
+import { html } from "@inglorious/web"
+import { classMap } from "@inglorious/web/directives/class-map"
 
 import type { ListType, Task } from "../../../types"
 import { filteredTasks } from "../../store/select"

@@ -9,7 +9,8 @@ import "./main.css"
 
 import { areaChart, barChart, lineChart } from "@inglorious/charts"
 import { createStore } from "@inglorious/store"
-import { createDevtools, mount } from "@inglorious/web"
+import { createDevtools } from "@inglorious/store/client/devtools"
+import { mount } from "@inglorious/web"
 import { Router, setRoutes } from "@inglorious/web/router"
 
 import { AppDrawer } from "../src/examples/dashboard/app-drawer.js"

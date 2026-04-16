@@ -12,11 +12,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@inglorious/web": "workspace:*",
     "@inglorious/charts": "workspace:*",
-    "recharts": "^2.15.0",
+    "@inglorious/web": "workspace:*",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react-dom": "^19.2.0",
+    "recharts": "^2.15.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",

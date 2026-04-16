@@ -20,7 +20,7 @@ Browser extensions:
 ### 2. Create Middleware
 
 ```javascript
-import { createDevtools } from "@inglorious/web"
+import { createDevtools } from "@inglorious/store/client/devtools"
 
 export const devtools = createDevtools()
 ```
@@ -28,7 +28,7 @@ export const devtools = createDevtools()
 ### 3. Pass to Store
 
 ```javascript
-import { createStore } from "@inglorious/web"
+import { createStore } from "@inglorious/store"
 import { devtools } from "./devtools"
 
 const store = createStore({
@@ -227,7 +227,7 @@ const devtools = createDevtools({
 For production builds, disable DevTools:
 
 ```javascript
-import { createDevtools } from "@inglorious/web"
+import { createDevtools } from "@inglorious/store/client/devtools"
 
 const middlewares = []
 

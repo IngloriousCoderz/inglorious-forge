@@ -1,6 +1,7 @@
 /* eslint-disable no-magic-numbers */
 
-import { repeat, svg } from "@inglorious/web"
+import { svg } from "@inglorious/web"
+import { repeat } from "@inglorious/web/directives/repeat"
 
 import { formatNumber, isValidNumber } from "../utils/data-utils.js"
 

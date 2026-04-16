@@ -145,7 +145,7 @@ html`
 **lit-html:**
 
 ```javascript
-import { when } from "@inglorious/web"
+import { when } from "@inglorious/web/directives/when"
 
 html`
   ${when(
@@ -174,7 +174,7 @@ html`
 **lit-html:**
 
 ```javascript
-import { repeat } from "@inglorious/web"
+import { repeat } from "@inglorious/web/directives/repeat"
 
 html`
   <ul>

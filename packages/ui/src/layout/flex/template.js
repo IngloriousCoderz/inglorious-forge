@@ -3,7 +3,9 @@
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
-import { classMap, ref, staticHtml, unsafeStatic } from "@inglorious/web"
+import { classMap } from "@inglorious/web/directives/class-map"
+import { ref } from "@inglorious/web/directives/ref"
+import { staticHtml, unsafeStatic } from "@inglorious/web/static"
 
 import { applyElementProps } from "../../shared/applyElementProps.js"
 

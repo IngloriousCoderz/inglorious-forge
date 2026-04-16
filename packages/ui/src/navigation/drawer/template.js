@@ -3,7 +3,8 @@
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
-import { html, when } from "@inglorious/web"
+import { html } from "@inglorious/web"
+import { when } from "@inglorious/web/directives/when"
 
 import { Button } from "../../controls/button"
 import { MaterialIcon } from "../../data-display/material-icon"

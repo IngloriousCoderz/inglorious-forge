@@ -45,8 +45,9 @@ const store = createStore({
 A canvas-based game with HTML5 UI for menus, HUD, inventory:
 
 ```javascript
-import { createStore, mount, html } from "@inglorious/web"
+import { createStore } from "@inglorious/store"
 import { createEngine } from "@inglorious/engine"
+import { mount, html } from "@inglorious/web"
 
 const store = createStore({
   types: {
@@ -56,9 +57,7 @@ const store = createStore({
     },
     Camera: {
       /* camera logic */
-    },
-
-    // UI overlays
+    }, // UI overlays
     Hud: {
       render(entity, api) {
         const player = api.getEntity("player")
@@ -94,9 +93,7 @@ const store = createStore({
     },
     Camera: {
       /* camera control */
-    },
-
-    // UI controls
+    }, // UI controls
     ControlPanel: {
       render(entity, api) {
         return html`
@@ -212,8 +209,9 @@ camera.update() // Updates state
 ## Example: Simple Game with HUD
 
 ```javascript
-import { createStore, mount, html } from "@inglorious/web"
+import { createStore } from "@inglorious/store"
 import { createEngine } from "@inglorious/engine"
+import { mount, html } from "@inglorious/web"
 
 const store = createStore({
   types: {

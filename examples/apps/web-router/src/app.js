@@ -1,4 +1,5 @@
-import { html, when } from "@inglorious/web"
+import { html } from "@inglorious/web"
+import { when } from "@inglorious/web/directives/when"
 
 export const app = {
   render(api) {

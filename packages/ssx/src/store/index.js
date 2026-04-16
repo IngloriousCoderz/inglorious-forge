@@ -1,6 +1,6 @@
 import { pathToFileURL } from "node:url"
 
-import { createStore } from "@inglorious/web"
+import { createStore } from "@inglorious/store"
 
 import { getModuleName } from "../utils/module.js"
 import { getStoreStuff } from "./stuff.js"

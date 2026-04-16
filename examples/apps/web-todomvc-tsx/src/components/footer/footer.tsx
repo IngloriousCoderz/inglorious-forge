@@ -1,4 +1,4 @@
-import { classMap } from "@inglorious/web"
+import { classMap } from "@inglorious/web/directives/class-map"
 
 import type { FooterType } from "../../../types"
 import { tasksCount } from "../../store/select"

@@ -98,6 +98,9 @@ importers:
       "@benchmarks/dashboard-shared":
         specifier: workspace:*
         version: link:../shared
+      "@inglorious/store":
+        specifier: workspace:*
+        version: link:../../../packages/store
       "@inglorious/web":
         specifier: workspace:*
         version: link:../../../packages/web
@@ -409,6 +412,9 @@ importers:
       "@benchmarks/deep-tree-shared":
         specifier: workspace:*
         version: link:../shared
+      "@inglorious/store":
+        specifier: workspace:*
+        version: link:../../../packages/store
       "@inglorious/web":
         specifier: workspace:*
         version: link:../../../packages/web
@@ -826,6 +832,9 @@ importers:
 
   examples/apps/ui-combobox:
     dependencies:
+      "@inglorious/store":
+        specifier: workspace:*
+        version: link:../../../packages/store
       "@inglorious/ui":
         specifier: workspace:*
         version: link:../../../packages/ui
@@ -851,6 +860,9 @@ importers:
 
   examples/apps/ui-data-grid:
     dependencies:
+      "@inglorious/store":
+        specifier: workspace:*
+        version: link:../../../packages/store
       "@inglorious/ui":
         specifier: workspace:*
         version: link:../../../packages/ui
@@ -879,6 +891,9 @@ importers:
 
   examples/apps/ui-virtualized-list:
     dependencies:
+      "@inglorious/store":
+        specifier: workspace:*
+        version: link:../../../packages/store
       "@inglorious/ui":
         specifier: workspace:*
         version: link:../../../packages/ui
@@ -907,6 +922,9 @@ importers:
       "@inglorious/ag-grid":
         specifier: workspace:*
         version: link:../../../packages/ag-grid
+      "@inglorious/store":
+        specifier: workspace:*
+        version: link:../../../packages/store
       "@inglorious/web":
         specifier: workspace:*
         version: link:../../../packages/web
@@ -935,6 +953,9 @@ importers:
       "@inglorious/charts":
         specifier: workspace:*
         version: link:../../../packages/charts
+      "@inglorious/store":
+        specifier: workspace:*
+        version: link:../../../packages/store
       "@inglorious/web":
         specifier: workspace:*
         version: link:../../../packages/web
@@ -948,6 +969,9 @@ importers:
 
   examples/apps/web-components:
     dependencies:
+      "@inglorious/store":
+        specifier: workspace:*
+        version: link:../../../packages/store
       "@inglorious/web":
         specifier: workspace:*
         version: link:../../../packages/web
@@ -967,6 +991,9 @@ importers:
       "@inglorious/ssx":
         specifier: workspace:*
         version: link:../../../packages/ssx
+      "@inglorious/store":
+        specifier: workspace:*
+        version: link:../../../packages/store
       "@inglorious/web":
         specifier: workspace:*
         version: link:../../../packages/web
@@ -983,6 +1010,9 @@ importers:
 
   examples/apps/web-form:
     dependencies:
+      "@inglorious/store":
+        specifier: workspace:*
+        version: link:../../../packages/store
       "@inglorious/ui":
         specifier: workspace:*
         version: link:../../../packages/ui
@@ -1011,6 +1041,9 @@ importers:
       "@inglorious/logo":
         specifier: workspace:*
         version: link:../../../packages/logo
+      "@inglorious/store":
+        specifier: workspace:*
+        version: link:../../../packages/store
       "@inglorious/utils":
         specifier: workspace:*
         version: link:../../../packages/utils
@@ -1039,6 +1072,9 @@ importers:
       "@inglorious/motion":
         specifier: workspace:*
         version: link:../../../packages/motion
+      "@inglorious/store":
+        specifier: workspace:*
+        version: link:../../../packages/store
       "@inglorious/web":
         specifier: workspace:*
         version: link:../../../packages/web
@@ -1064,6 +1100,9 @@ importers:
 
   examples/apps/web-router:
     dependencies:
+      "@inglorious/store":
+        specifier: workspace:*
+        version: link:../../../packages/store
       "@inglorious/web":
         specifier: workspace:*
         version: link:../../../packages/web
@@ -1086,6 +1125,9 @@ importers:
 
   examples/apps/web-todomvc:
     dependencies:
+      "@inglorious/store":
+        specifier: workspace:*
+        version: link:../../../packages/store
       "@inglorious/web":
         specifier: workspace:*
         version: link:../../../packages/web
@@ -1111,6 +1153,9 @@ importers:
 
   examples/apps/web-todomvc-ace:
     dependencies:
+      "@inglorious/store":
+        specifier: workspace:*
+        version: link:../../../packages/store
       "@inglorious/web":
         specifier: workspace:*
         version: link:../../../packages/web
@@ -1136,6 +1181,9 @@ importers:
 
   examples/apps/web-todomvc-cs:
     dependencies:
+      "@inglorious/store":
+        specifier: workspace:*
+        version: link:../../../packages/store
       "@inglorious/web":
         specifier: workspace:*
         version: link:../../../packages/web
@@ -1161,6 +1209,9 @@ importers:
 
   examples/apps/web-todomvc-jsx:
     dependencies:
+      "@inglorious/store":
+        specifier: workspace:*
+        version: link:../../../packages/store
       "@inglorious/web":
         specifier: workspace:*
         version: link:../../../packages/web
@@ -1189,6 +1240,9 @@ importers:
 
   examples/apps/web-todomvc-ts:
     dependencies:
+      "@inglorious/store":
+        specifier: workspace:*
+        version: link:../../../packages/store
       "@inglorious/web":
         specifier: workspace:*
         version: link:../../../packages/web
@@ -1229,6 +1283,9 @@ importers:
 
   examples/apps/web-todomvc-tsx:
     dependencies:
+      "@inglorious/store":
+        specifier: workspace:*
+        version: link:../../../packages/store
       "@inglorious/web":
         specifier: workspace:*
         version: link:../../../packages/web
@@ -1671,6 +1728,9 @@ importers:
 
   packages/ssx:
     dependencies:
+      "@inglorious/store":
+        specifier: workspace:*
+        version: link:../store
       "@inglorious/utils":
         specifier: workspace:*
         version: link:../utils

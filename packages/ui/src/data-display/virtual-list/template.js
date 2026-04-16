@@ -4,7 +4,10 @@
  * @typedef {import('@inglorious/web').Api} Api
  */
 
-import { html, ref, repeat, styleMap } from "@inglorious/web"
+import { html } from "@inglorious/web"
+import { ref } from "@inglorious/web/directives/ref"
+import { repeat } from "@inglorious/web/directives/repeat"
+import { styleMap } from "@inglorious/web/directives/style-map"
 
 const PRETTY_INDEX = 1
 

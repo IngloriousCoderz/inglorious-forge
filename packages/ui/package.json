@@ -292,6 +292,7 @@
   },
   "peerDependencies": {
     "@inglorious/charts": "workspace:*",
+    "@inglorious/store": "workspace:*",
     "@inglorious/utils": "workspace:*",
     "@inglorious/web": "workspace:*"
   },

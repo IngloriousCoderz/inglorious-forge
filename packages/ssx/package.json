@@ -57,6 +57,7 @@
     "preview": "node ./bin/ssx.js serve -r ./src/__fixtures__"
   },
   "dependencies": {
+    "@inglorious/store": "workspace:*",
     "@inglorious/utils": "workspace:*",
     "@inglorious/web": "workspace:*",
     "@lit-labs/ssr": "^4.0.0",

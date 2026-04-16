@@ -1,4 +1,4 @@
-import { createStore } from "@inglorious/web"
+import { createStore } from "@inglorious/store"
 
 import { Message } from "../types/message"
 import { entities } from "./entities"

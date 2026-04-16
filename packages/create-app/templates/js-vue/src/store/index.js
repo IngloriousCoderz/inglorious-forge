@@ -1,4 +1,4 @@
-import { createStore } from "@inglorious/web"
+import { createStore } from "@inglorious/store"
 
 import { Message } from "../types/message.vue"
 import { entities } from "./entities"

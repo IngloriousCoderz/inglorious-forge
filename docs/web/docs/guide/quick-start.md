@@ -69,7 +69,8 @@ Create `index.html`:
 Create `main.js` with your entity types:
 
 ```javascript
-import { createStore, mount, html } from "@inglorious/web"
+import { createStore } from "@inglorious/store"
+import { mount, html } from "@inglorious/web"
 
 // Define entity types
 const types = {

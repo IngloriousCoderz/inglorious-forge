@@ -3,7 +3,10 @@
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
-import { classMap, html, ref, when } from "@inglorious/web"
+import { html } from "@inglorious/web"
+import { classMap } from "@inglorious/web/directives/class-map"
+import { ref } from "@inglorious/web/directives/ref"
+import { when } from "@inglorious/web/directives/when"
 
 import { applyElementProps } from "../../shared/applyElementProps.js"
 

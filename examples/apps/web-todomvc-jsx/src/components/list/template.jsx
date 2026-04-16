@@ -1,4 +1,4 @@
-import { classMap } from "@inglorious/web"
+import { classMap } from "@inglorious/web/directives/class-map"
 
 import { filteredTasks } from "@/store/select"
 

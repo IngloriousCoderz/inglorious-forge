@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@inglorious/ssx": "workspace:*",
+    "@inglorious/store": "workspace:*",
     "@inglorious/web": "workspace:*",
     "@material/web": "^2.3.0",
     "@shoelace-style/shoelace": "^2.20.1"

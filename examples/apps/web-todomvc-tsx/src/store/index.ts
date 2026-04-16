@@ -1,4 +1,4 @@
-import { createStore, type TypesConfig } from "@inglorious/web"
+import { createStore, type TypesConfig } from "@inglorious/store"
 
 import { Footer } from "../components/footer/footer"
 import { Form } from "../components/form/form"

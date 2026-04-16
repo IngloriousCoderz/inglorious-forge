@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@benchmarks/dashboard-shared": "workspace:*",
+    "@inglorious/store": "workspace:*",
     "@inglorious/web": "workspace:*"
   },
   "devDependencies": {

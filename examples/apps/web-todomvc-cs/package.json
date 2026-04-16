@@ -16,6 +16,7 @@
     "api": "pnpm dlx json-server server/db.json"
   },
   "dependencies": {
+    "@inglorious/store": "workspace:*",
     "@inglorious/web": "workspace:*"
   },
   "devDependencies": {

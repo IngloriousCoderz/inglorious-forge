@@ -3,7 +3,9 @@
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
-import { classMap, html, styleMap } from "@inglorious/web"
+import { html } from "@inglorious/web"
+import { classMap } from "@inglorious/web/directives/class-map"
+import { styleMap } from "@inglorious/web/directives/style-map"
 
 /**
  * Renders an avatar with image, initials, or fallback content.

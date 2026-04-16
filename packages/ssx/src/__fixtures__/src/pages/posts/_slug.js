@@ -2,7 +2,8 @@ import "katex/dist/katex.min.css"
 import "highlight.js/styles/github-dark.css"
 
 import { renderMarkdown } from "@inglorious/ssx/markdown"
-import { html, unsafeHTML } from "@inglorious/web"
+import { html } from "@inglorious/web"
+import { unsafeHTML } from "@inglorious/web/directives/unsafe-html"
 import mermaid from "mermaid"
 
 import { Nav } from "../../components/nav.js"

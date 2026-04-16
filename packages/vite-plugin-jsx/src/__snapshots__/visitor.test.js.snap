@@ -1,7 +1,8 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`babel visitor > extracts repeat keys while keeping api on component renders inside render methods 1`] = `
-"import { html, repeat } from "@inglorious/web";
+"import { repeat } from "@inglorious/web/directives/repeat";
+import { html } from "@inglorious/web";
 import { StatCard } from "./stat-card.js";
 export const Dashboard = {
   render(entity, api) {
@@ -20,6 +21,32 @@ export const Dashboard = {
 };"
 `;
 
+exports[`babel visitor > imports html only once with multiple jsx elements 1`] = `
+"import { html } from "@inglorious/web";
+const a = html\`<div></div>\`;
+const b = html\`<span></span>\`;
+const c = html\`<p></p>\`;"
+`;
+
+exports[`babel visitor > imports repeat only once with multiple map calls 1`] = `
+"import { repeat } from "@inglorious/web/directives/repeat";
+import { html } from "@inglorious/web";
+const view = ({
+  xs,
+  ys
+}) => {
+  return html\`<div> \${repeat(xs, x => x.id, x => html\`<span .key=\${x.id}>\${x.name}</span>\`)} \${repeat(ys, y => y.id, y => html\`<span .key=\${y.id}>\${y.name}</span>\`)} </div>\`;
+};"
+`;
+
+exports[`babel visitor > imports when only once with multiple conditional expressions 1`] = `
+"import { when } from "@inglorious/web/directives/when";
+import { html } from "@inglorious/web";
+const a = when(show, () => html\`<div></div>\`);
+const b = when(show, () => html\`<span></span>\`);
+const c = when(flag, () => html\`<p></p>\`, () => html\`<em></em>\`);"
+`;
+
 exports[`babel visitor > injects api into render methods 1`] = `
 "import { html } from "@inglorious/web";
 import { Form } from "./form.js";
@@ -31,7 +58,8 @@ export const App = {
 `;
 
 exports[`babel visitor > injects html, when, and repeat imports 1`] = `
-"import { html, when } from "@inglorious/web";
+"import { when } from "@inglorious/web/directives/when";
+import { html } from "@inglorious/web";
 const view = ({
   items,
   show

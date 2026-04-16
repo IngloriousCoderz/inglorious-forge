@@ -282,7 +282,9 @@ const deleteItem = (entity, id) => {
       expect(result).toContain(":deleteItem")
       expect(result).toContain("item.id")
       // Should transform to: api.notify(`#${entity.id}:deleteItem`, item.id)
-      expect(result).toMatch(/api\.notify\([^,]+:deleteItem[^,]+,\s*item\.id\)/)
+      expect(result).toMatch(
+        /api\.notify\([^, ]+:deleteItem[^, ]+, \s*item\.id\)/,
+      )
     })
   })
 
@@ -428,10 +430,7 @@ import { flex as Flex } from "../../layout/flex/index.js"
 
 const appDrawer = api.getEntity("appDrawer")
 const dashboardClassName = [
-  "iw-dashboard",
-  appDrawer.isHidden && "iw-dashboard-drawer-hidden",
-  appDrawer.isCollapsed && "iw-dashboard-drawer-collapsed",
-]
+  "iw-dashboard", appDrawer.isHidden && "iw-dashboard-drawer-hidden", appDrawer.isCollapsed && "iw-dashboard-drawer-collapsed", ]
   .filter(Boolean)
   .join(" ")
 
@@ -480,8 +479,7 @@ import { Message } from "./types/message.vue"
 
 <template>
   <h1>
-    <Message v-bind="message1" />, <Message v-bind="message2" />,
-    <Message v-bind="message3" />!
+    <Message v-bind="message1" />, <Message v-bind="message2" />, <Message v-bind="message3" />!
   </h1>
 </template>
 `

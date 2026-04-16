@@ -48,7 +48,9 @@ export async function generateApp(pages, options = {}, loader) {
     : ""
 
   return `import "@inglorious/web/hydrate"
-import { createDevtools, createStore, mount } from "@inglorious/web"
+import { createStore } from "@inglorious/store"
+import { createDevtools } from "@inglorious/store/client/devtools"
+import { mount } from "@inglorious/web"
 import { Router, getRoute, setRoutes } from "@inglorious/web/router"
 import { getLocaleFromPath } from "@inglorious/ssx/i18n"
 

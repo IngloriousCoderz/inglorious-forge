@@ -10,7 +10,7 @@ Client-side routing integrated directly into your store. Routes are entities wit
 ## Setup
 
 ```javascript
-import { createStore } from "@inglorious/web"
+import { createStore } from "@inglorious/store"
 import { Router, setRoutes } from "@inglorious/web/router"
 
 const types = {

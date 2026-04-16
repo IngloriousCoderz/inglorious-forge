@@ -1,7 +1,7 @@
 import path from "node:path"
 import { pathToFileURL } from "node:url"
 
-import { createStore } from "@inglorious/web"
+import { createStore } from "@inglorious/store"
 import { describe, expect, it } from "vitest"
 
 import { renderPage } from "."

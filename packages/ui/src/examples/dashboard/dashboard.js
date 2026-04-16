@@ -1,4 +1,5 @@
-import { html, when } from "@inglorious/web"
+import { html } from "@inglorious/web"
+import { when } from "@inglorious/web/directives/when"
 
 import { Container } from "../../layout/container/index.js"
 import { Flex } from "../../layout/flex/index.js"

@@ -84,7 +84,8 @@ Create `index.html`:
 Create `main.js`:
 
 ```javascript
-import { createStore, mount, html } from "@inglorious/web"
+import { createStore } from "@inglorious/store"
+import { mount, html } from "@inglorious/web"
 
 const store = createStore({
   types: {
@@ -150,7 +151,8 @@ export const App = {
 Create `src/main.ts`:
 
 ```typescript
-import { createStore, mount } from "@inglorious/web"
+import { createStore } from "@inglorious/store"
+import { mount } from "@inglorious/web"
 import { App } from "./types"
 
 const store = createStore({
@@ -173,7 +175,8 @@ mount(store, (api) => api.render("app"), document.getElementById("root")!)
 Create a simple test app:
 
 ```javascript
-import { createStore, mount, html } from "@inglorious/web"
+import { createStore } from "@inglorious/store"
+import { mount, html } from "@inglorious/web"
 
 const store = createStore({
   types: {

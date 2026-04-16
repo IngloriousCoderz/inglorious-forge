@@ -153,7 +153,8 @@ const store = createStore({
 ## Example: TODO App
 
 ```javascript
-import { createStore, mount, html } from "@inglorious/web"
+import { createStore } from "@inglorious/store"
+import { mount, html } from "@inglorious/web"
 
 const types = {
   App: {

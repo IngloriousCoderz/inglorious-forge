@@ -1,6 +1,6 @@
 import "./vite-end"
 
-import { BaseEntity, EntitiesState } from "@inglorious/web"
+import { BaseEntity, EntitiesState } from "@inglorious/store"
 
 // Define your entity types
 export interface MessageEntity extends BaseEntity {

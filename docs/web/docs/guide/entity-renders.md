@@ -99,7 +99,7 @@ const User = {
 ### Using lit-html's when() Directive
 
 ```javascript
-import { when } from "@inglorious/web"
+import { when } from "@inglorious/web/directives/when"
 
 const User = {
   render(entity, api) {
@@ -135,7 +135,7 @@ const TodoList = {
 The `repeat()` directive helps lit-html track which item is which:
 
 ```javascript
-import { repeat } from "@inglorious/web"
+import { repeat } from "@inglorious/web/directives/repeat"
 
 const TodoList = {
   render(entity, api) {
@@ -223,7 +223,7 @@ render(entity, api) {
 ### Class Binding
 
 ```javascript
-import { classMap } from "@inglorious/web"
+import { classMap } from "@inglorious/web/directives/class-map"
 
 render(entity, api) {
   return html`
@@ -241,7 +241,7 @@ render(entity, api) {
 ### Style Binding
 
 ```javascript
-import { styleMap } from "@inglorious/web"
+import { styleMap } from "@inglorious/web/directives/style-map"
 
 render(entity, api) {
   return html`
@@ -361,7 +361,7 @@ async fetchData(entity, api) {
 The `handleAsync` helper makes async operations safe and easy:
 
 ```javascript
-import { handleAsync } from "@inglorious/web"
+import { handleAsync } from "@inglorious/store/async"
 
 const MyType = {
   ...handleAsync("fetch", {
@@ -486,7 +486,7 @@ const DataFetcher = {
 For expensive computations that should only run when dependencies change, use `compute()`:
 
 ```javascript
-import { compute } from "@inglorious/web"
+import { compute } from "@inglorious/store/select"
 
 const Dashboard = {
   render(entity, api) {
@@ -517,7 +517,7 @@ const Dashboard = {
 
 ```javascript
 // In your selectors file
-import { compute } from "@inglorious/web"
+import { compute } from "@inglorious/store/select"
 
 export const totalValue = compute(
   (items) => {
@@ -543,7 +543,7 @@ This pattern keeps your expensive computations from running on every render.
 Use refs when you need direct DOM access (use sparingly):
 
 ```javascript
-import { ref, createRef } from "@inglorious/web"
+import { ref, createRef } from "@inglorious/web/directives/ref"
 
 const Canvas = {
   create(entity) {

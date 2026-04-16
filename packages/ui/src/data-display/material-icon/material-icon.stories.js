@@ -1,4 +1,5 @@
-import { html, repeat } from "@inglorious/web"
+import { html } from "@inglorious/web"
+import { repeat } from "@inglorious/web/directives/repeat"
 
 import { MaterialIcon } from "."
 

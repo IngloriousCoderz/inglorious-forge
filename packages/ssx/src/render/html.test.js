@@ -1,4 +1,5 @@
-import { createStore, html } from "@inglorious/web"
+import { createStore } from "@inglorious/store"
+import { html } from "@inglorious/web"
 import { describe, expect, it } from "vitest"
 
 import { toHTML } from "./html.js"

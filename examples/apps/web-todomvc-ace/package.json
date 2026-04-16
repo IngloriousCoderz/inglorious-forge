@@ -15,6 +15,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@inglorious/store": "workspace:*",
     "@inglorious/web": "workspace:*"
   },
   "devDependencies": {

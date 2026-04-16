@@ -3,7 +3,8 @@
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
-import { classMap, html } from "@inglorious/web"
+import { html } from "@inglorious/web"
+import { classMap } from "@inglorious/web/directives/class-map"
 
 /**
  * Renders an inline icon element with size and color control.

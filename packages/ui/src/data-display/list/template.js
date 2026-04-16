@@ -19,7 +19,11 @@
  * }} ListItemMeta
  */
 
-import { classMap, html, ref, repeat, when } from "@inglorious/web"
+import { html } from "@inglorious/web"
+import { classMap } from "@inglorious/web/directives/class-map"
+import { ref } from "@inglorious/web/directives/ref"
+import { repeat } from "@inglorious/web/directives/repeat"
+import { when } from "@inglorious/web/directives/when"
 
 import { IconButton } from "../../controls/icon-button"
 import { Icon } from "../../data-display/icon"

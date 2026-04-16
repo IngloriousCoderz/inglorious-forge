@@ -14,7 +14,7 @@ pnpm add @inglorious/ag-grid @inglorious/web ag-grid-community
 ## Usage
 
 ```js
-import { createStore } from "@inglorious/web"
+import { createStore } from "@inglorious/store"
 import { AgGrid, configureAgGrid } from "@inglorious/ag-grid"
 import {
   AllCommunityModule,

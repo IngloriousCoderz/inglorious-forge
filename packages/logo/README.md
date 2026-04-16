@@ -21,7 +21,7 @@ Import the package and its stylesheet, and (optionally) the types for TypeScript
 Then, register the `logo` type in your store, create an entity of that type, and use `api.render(entityId)` inside your templates (see the [`web-logo`](https://github.com/IngloriousCoderz/inglorious-forge/tree/main/examples/apps/web-logo) demo app).
 
 ```js
-import { createStore } from "@inglorious/web"
+import { createStore } from "@inglorious/store"
 import { logo } from "@inglorious/logo"
 import "@inglorious/logo/style.css"
 

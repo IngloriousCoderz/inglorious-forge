@@ -154,7 +154,7 @@ The plugin works with `.tsx` files out of the box. For proper type checking:
 // tsconfig.json
 {
   "compilerOptions": {
-    "jsx": "preserve",           // Let Vite handle JSX transformation
+    "jsx": "preserve", // Let Vite handle JSX transformation
     "jsxImportSource": undefined // Prevent automatic React imports
   }
 }

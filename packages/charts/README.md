@@ -31,7 +31,7 @@ The simplest way to create charts is using the config-first approach. First, reg
 
 ```javascript
 // In your store/index.js
-import { createStore } from "@inglorious/web"
+import { createStore } from "@inglorious/store"
 import {
   lineChart,
   areaChart,
@@ -172,13 +172,8 @@ Displays data as a connected line, ideal for showing trends over time.
 
 ```javascript
 {
-  type: "line",
-  data: [
-    { name: "Jan", value: 100 },
-    { name: "Feb", value: 200 },
-    { name: "Mar", value: 150 },
-  ],
-  showPoints: true, // Show dots on data points
+  type: "line", data: [
+    { name: "Jan", value: 100 }, { name: "Feb", value: 200 }, { name: "Mar", value: 150 }, ], showPoints: true, // Show dots on data points
 }
 ```
 
@@ -186,8 +181,7 @@ Displays data as a connected line, ideal for showing trends over time.
 
 ```javascript
 c.renderLineChart([
-  c.renderLine({ dataKey: "value", stroke: "#8884d8", showDots: true }),
-  // ... other components
+  c.renderLine({ dataKey: "value", stroke: "#8884d8", showDots: true }), // ... other components
 ])
 ```
 
@@ -199,13 +193,8 @@ Similar to line charts but with filled areas under the line.
 
 ```javascript
 {
-  type: "area",
-  data: [
-    { name: "Jan", value: 100 },
-    { name: "Feb", value: 200 },
-    { name: "Mar", value: 150 },
-  ],
-  stacked: false, // Set to true for stacked areas
+  type: "area", data: [
+    { name: "Jan", value: 100 }, { name: "Feb", value: 200 }, { name: "Mar", value: 150 }, ], stacked: false, // Set to true for stacked areas
 }
 ```
 
@@ -219,8 +208,7 @@ c.renderAreaChart([
     fillOpacity: "0.6",
     stroke: "#8884d8",
   }),
-  c.renderDots({ dataKey: "value", fill: "#8884d8" }),
-  // ... other components
+  c.renderDots({ dataKey: "value", fill: "#8884d8" }), // ... other components
 ])
 ```
 
@@ -232,21 +220,15 @@ Displays data as rectangular bars, perfect for comparing categories.
 
 ```javascript
 {
-  type: "bar",
-  data: [
-    { name: "A", value: 100 },
-    { name: "B", value: 200 },
-    { name: "C", value: 150 },
-  ],
-}
+  type: "bar", data: [
+    { name: "A", value: 100 }, { name: "B", value: 200 }, { name: "C", value: 150 }, ], }
 ```
 
 **Composition Mode:**
 
 ```javascript
 c.renderBarChart([
-  c.renderBar({ dataKey: "value", fill: "#8884d8" }),
-  // ... other components
+  c.renderBar({ dataKey: "value", fill: "#8884d8" }), // ... other components
 ])
 ```
 
@@ -258,16 +240,10 @@ Circular chart showing proportions of a whole.
 
 ```javascript
 {
-  type: "pie",
-  data: [
-    { label: "A", value: 30 },
-    { label: "B", value: 40 },
-    { label: "C", value: 30 },
-  ],
-  cx: "50%", // Center X
+  type: "pie", data: [
+    { label: "A", value: 30 }, { label: "B", value: 40 }, { label: "C", value: 30 }, ], cx: "50%", // Center X
   cy: "50%", // Center Y
-  showTooltip: true,
-}
+  showTooltip: true, }
 ```
 
 ### Donut Chart
@@ -278,13 +254,8 @@ Similar to pie chart but with a hollow center.
 
 ```javascript
 {
-  type: "donut",
-  data: [
-    { label: "A", value: 30 },
-    { label: "B", value: 40 },
-    { label: "C", value: 30 },
-  ],
-  innerRadius: "60%", // Controls the hole size
+  type: "donut", data: [
+    { label: "A", value: 30 }, { label: "B", value: 40 }, { label: "C", value: 30 }, ], innerRadius: "60%", // Controls the hole size
 }
 ```
 
@@ -401,23 +372,15 @@ Inglorious Charts supports two data formats:
 
 ```javascript
 {
-  name: "Jan",
-  productA: 100,
-  productB: 200,
-  productC: 150,
-}
+  name: "Jan", productA: 100, productB: 200, productC: 150, }
 ```
 
 **Long Format (Config Style)**: Ideal for dynamic APIs. Separate series with their own arrays.
 
 ```javascript
 {
-  name: "Product A",
-  values: [
-    { x: 0, y: 100 },
-    { x: 1, y: 200 },
-  ],
-}
+  name: "Product A", values: [
+    { x: 0, y: 100 }, { x: 1, y: 200 }, ], }
 ```
 
 ## Multiple Series
@@ -428,25 +391,12 @@ For multiple series, use nested data structure:
 
 ```javascript
 {
-  type: "line",
-  data: [
+  type: "line", data: [
     {
-      name: "Product A",
-      values: [
-        { x: 0, y: 10 },
-        { x: 1, y: 250 },
-      ],
-    },
-    {
-      name: "Product B",
-      values: [
-        { x: 0, y: 280 },
-        { x: 1, y: 120 },
-      ],
-    },
-  ],
-  showLegend: true,
-}
+      name: "Product A", values: [
+        { x: 0, y: 10 }, { x: 1, y: 250 }, ], }, {
+      name: "Product B", values: [
+        { x: 0, y: 280 }, { x: 1, y: 120 }, ], }, ], showLegend: true, }
 ```
 
 ### Composition Mode

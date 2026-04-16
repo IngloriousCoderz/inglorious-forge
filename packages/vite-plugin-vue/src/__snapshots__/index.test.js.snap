@@ -367,10 +367,7 @@ export const DashboardVue = {
   render(entity, api) {
     const appDrawer = api.getEntity("appDrawer")
     const dashboardClassName = [
-  "iw-dashboard",
-  appDrawer.isHidden && "iw-dashboard-drawer-hidden",
-  appDrawer.isCollapsed && "iw-dashboard-drawer-collapsed",
-]
+  "iw-dashboard", appDrawer.isHidden && "iw-dashboard-drawer-hidden", appDrawer.isCollapsed && "iw-dashboard-drawer-collapsed", ]
   .filter(Boolean)
   .join(" ")
     const router = api.getEntity("router")
@@ -465,8 +462,7 @@ import { Message } from "./types/message.vue";
 export const App = {
   render(entity, api) {
     return html\`<h1>
-    \${api.render("message1", "Message", Message)}, \${api.render("message2", "Message", Message)},
-    \${api.render("message3", "Message", Message)}!
+    \${api.render("message1", "Message", Message)}, \${api.render("message2", "Message", Message)}, \${api.render("message3", "Message", Message)}!
   </h1>\`;
   }
 };

@@ -1,5 +1,6 @@
 import { VirtualList } from "@inglorious/ui/virtual-list"
-import { html, repeat } from "@inglorious/web"
+import { html } from "@inglorious/web"
+import { repeat } from "@inglorious/web/directives/repeat"
 
 import { Button } from "../../controls/button"
 import {

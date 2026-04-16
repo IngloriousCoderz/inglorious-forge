@@ -1,4 +1,4 @@
-import { compute } from "@inglorious/web"
+import { compute } from "@inglorious/store/select"
 
 export const value = (entities) => entities.form.value
 export const tasks = (entities) => entities.list.tasks

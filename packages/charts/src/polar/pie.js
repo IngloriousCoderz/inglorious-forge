@@ -1,6 +1,7 @@
 /* eslint-disable no-magic-numbers */
 
-import { html, repeat, svg } from "@inglorious/web"
+import { html, svg } from "@inglorious/web"
+import { repeat } from "@inglorious/web/directives/repeat"
 
 import { createTooltipComponent, renderTooltip } from "../component/tooltip.js"
 import { renderSector } from "../shape/sector.js"

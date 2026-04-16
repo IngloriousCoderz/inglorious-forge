@@ -1,4 +1,6 @@
-import { createStore, html, ref } from "@inglorious/web"
+import { html } from "@inglorious/web"
+import { ref } from "@inglorious/web/directives/ref"
+import { createStore } from "@inglorious/store"
 
 const componentInstances = {
   mdButton: null,

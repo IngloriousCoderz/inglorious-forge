@@ -3,7 +3,8 @@
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
-import { classMap, html } from "@inglorious/web"
+import { html } from "@inglorious/web"
+import { classMap } from "@inglorious/web/directives/class-map"
 
 function clamp(value) {
   return Math.max(0, Math.min(100, value))

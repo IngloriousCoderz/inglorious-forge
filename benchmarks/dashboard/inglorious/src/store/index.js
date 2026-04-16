@@ -1,5 +1,5 @@
+import { createStore } from "@inglorious/store"
 import { CHARTS, UPDATE_FREQUENCY } from "@benchmarks/dashboard-shared"
-import { createStore } from "@inglorious/web"
 
 import { Chart } from "../types/chart"
 import { Metrics } from "../types/metrics"

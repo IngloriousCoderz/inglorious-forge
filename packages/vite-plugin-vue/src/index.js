@@ -18,7 +18,6 @@ export function vue() {
   return {
     name: "@inglorious/vite-plugin-vue",
     enforce: "pre",
-
     async transform(code, id) {
       if (!/\.vue$/.test(id)) return null
 

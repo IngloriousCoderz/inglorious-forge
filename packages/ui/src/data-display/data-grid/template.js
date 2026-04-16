@@ -5,7 +5,10 @@
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
-import { classMap, html, repeat, when } from "@inglorious/web"
+import { html } from "@inglorious/web"
+import { classMap } from "@inglorious/web/directives/class-map"
+import { repeat } from "@inglorious/web/directives/repeat"
+import { when } from "@inglorious/web/directives/when"
 
 import { Input } from "../../controls/input/index.js"
 import { Select } from "../../controls/select/index.js"

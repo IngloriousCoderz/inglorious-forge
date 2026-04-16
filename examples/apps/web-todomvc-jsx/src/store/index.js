@@ -1,4 +1,4 @@
-import { createStore } from "@inglorious/web"
+import { createStore } from "@inglorious/store"
 
 import { Footer } from "@/components/footer"
 import { Form } from "@/components/form"

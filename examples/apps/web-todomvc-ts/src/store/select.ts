@@ -1,4 +1,4 @@
-import { compute } from "@inglorious/web"
+import { compute } from "@inglorious/store/select"
 
 import type { AppState, Filter, Task } from "../../types"
 

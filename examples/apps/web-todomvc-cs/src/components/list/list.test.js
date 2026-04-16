@@ -1,4 +1,4 @@
-import { createStore } from "@inglorious/web"
+import { createStore } from "@inglorious/store"
 import { beforeEach, expect, it, vi } from "vitest"
 
 import * as list from "@/components/list/handlers"

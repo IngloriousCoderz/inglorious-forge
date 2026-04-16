@@ -1,4 +1,4 @@
-import { createStore } from "@inglorious/web"
+import { createStore } from "@inglorious/store"
 
 import { LiveLogo } from "../components/live-logo"
 import { LogoForm } from "../components/logo-form"

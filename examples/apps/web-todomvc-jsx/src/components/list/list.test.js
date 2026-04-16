@@ -1,4 +1,4 @@
-import { trigger } from "@inglorious/web"
+import { trigger } from "@inglorious/web/test"
 import { expect, it } from "vitest"
 
 import { List } from "."

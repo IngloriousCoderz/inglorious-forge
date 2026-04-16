@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@benchmarks/deep-tree-shared": "workspace:*",
+    "@inglorious/store": "workspace:*",
     "@inglorious/web": "workspace:*"
   },
   "devDependencies": {

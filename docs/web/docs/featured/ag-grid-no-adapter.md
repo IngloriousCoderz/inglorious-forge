@@ -16,7 +16,8 @@ If your team prefers zero abstraction, you can mount AG Grid directly from an In
 ## Minimal direct integration
 
 ```js
-import { html, ref } from "@inglorious/web"
+import { html } from "@inglorious/web"
+import { ref } from "@inglorious/web/directives/ref"
 import {
   AllCommunityModule,
   createGrid,

@@ -283,7 +283,8 @@ First, set up your store with entity types. For each type you want to render, ad
 
 ```javascript
 // store.js
-import { createStore, html } from "@inglorious/web"
+import { createStore } from "@inglorious/store"
+import { html } from "@inglorious/web"
 
 const types = {
   counter: {
@@ -503,7 +504,7 @@ test("completed todo has completed class", () => {
 #### Integration Test: Full Store
 
 ```javascript
-import { createStore } from "@inglorious/web"
+import { createStore } from "@inglorious/store"
 import { Counter } from "./types/counter.js"
 
 test("full user interaction flow", () => {
@@ -527,7 +528,7 @@ test("full user interaction flow", () => {
 #### Testing Computed State
 
 ```javascript
-import { compute } from "@inglorious/store"
+import { compute } from "@inglorious/store/select"
 
 test("filtered todos excludes completed", () => {
   const todos = [
@@ -852,7 +853,6 @@ export const App = {
   create(entity) {
     entity.title = "Todos"
   },
-
   render(entity, api) {
     return html`
       <div>
@@ -916,7 +916,7 @@ To enable DevTools, add the middleware provided by `createDevtools()`.
 
 ```javascript
 // middlewares.js
-import { createDevtools } from "@inglorious/web"
+import { createDevtools } from "@inglorious/store/client/devtools"
 
 export const middlewares = []
 
@@ -930,7 +930,7 @@ if (import.meta.env.DEV) {
 
 ```javascript
 // store.js
-import { createStore } from "@inglorious/web"
+import { createStore } from "@inglorious/store"
 import { middlewares } from "./middlewares.js"
 
 export const store = createStore({
@@ -962,14 +962,13 @@ To enable the router, add it to your store's types and create a `router` entity.
 
 ```javascript
 // store.js
-import { createStore, html } from "@inglorious/web"
+import { createStore } from "@inglorious/store"
+import { html } from "@inglorious/web"
 import { Router, setRoutes } from "@inglorious/web/router"
 
 const types = {
   // 1. Add the router type to your store's types
-  Router,
-
-  // 2. Define types for your pages
+  Router, // 2. Define types for your pages
   HomePage: {
     render: () => html`<h1>Welcome Home!</h1>`,
   },
@@ -1062,8 +1061,7 @@ const entities = {
 export const store = createStore({ types, entities })
 
 setRoutes({
-  "/": "homePage",
-  // Lazy load: returns a Promise resolving to a module
+  "/": "homePage", // Lazy load: returns a Promise resolving to a module
   "/admin": () => import("./pages/admin.js"),
 })
 ```
@@ -1115,19 +1113,15 @@ export const requireAuth = (type) => ({
 
 ```javascript
 // store.js
-import { createStore } from "@inglorious/web"
+import { createStore } from "@inglorious/store"
 import { Router } from "@inglorious/web/router"
 import { requireAuth } from "./guards/require-auth.js"
 import { AdminPage } from "./pages/admin.js"
 import { LoginPage } from "./pages/login.js"
 
 const types = {
-  Router,
-
-  // Public page - no guard
-  LoginPage,
-
-  // Protected page - composed with requireAuth guard
+  Router, // Public page - no guard
+  LoginPage, // Protected page - composed with requireAuth guard
   AdminPage: [AdminPage, requireAuth],
 }
 
@@ -1173,9 +1167,7 @@ You can compose multiple guards for fine-grained control:
 ```javascript
 const types = {
   // Require authentication AND admin role
-  AdminPage: [AdminPage, requireAuth, requireAdmin],
-
-  // Require authentication AND resource ownership
+  AdminPage: [AdminPage, requireAuth, requireAdmin], // Require authentication AND resource ownership
   UserProfile: [UserProfile, requireAuth, requireOwnership],
 }
 ```
@@ -1196,9 +1188,7 @@ const logging = (type) => ({
   render(entity, api) {
     console.log(`Rendering ${entity.id}`)
     return type.render(entity, api)
-  },
-
-  // Intercept any event
+  }, // Intercept any event
   someEvent(entity, payload, api) {
     console.log(`Event triggered on ${entity.id}`)
     type.someEvent?.(entity, payload, api)
@@ -1247,7 +1237,7 @@ For ready-made UI primitives (controls, data display, navigation, feedback, layo
 Include `form` in your `types` and create an entity for the form (use any id you like — `form` is used below for clarity):
 
 ```javascript
-import { createStore } from "@inglorious/web"
+import { createStore } from "@inglorious/store"
 import { Form } from "@inglorious/web/form"
 
 const types = { Form }
@@ -1334,11 +1324,9 @@ export const DataGrid = {
       </div>
     `
   },
-
   renderRow(entity, row, api) {
     return html`<div class="data-grid-row">${row.name}</div>`
   },
-
   rowClick(entity, row) {
     entity.selectedRow = row
   },
@@ -1441,14 +1429,11 @@ import "@shoelace-style/shoelace/dist/components/color-picker/color-picker.js"
 
 const types = {
   // App-specific type - full store integration
-  ProductTable,
-
-  // Web Component - for specialized UI
+  ProductTable, // Web Component - for specialized UI
   ThemeEditor: {
     colorChange(entity, color) {
       entity.primaryColor = color
     },
-
     render(entity, api) {
       return html`
         <div>
@@ -1482,13 +1467,11 @@ const types = {
       `
     },
   },
-
   Header: {
     render(entity, api) {
       return html`<header>${entity.title}</header>`
     },
   },
-
   Content: {
     render(entity, api) {
       return html`<main>${entity.text}</main>`
@@ -1518,7 +1501,6 @@ const Header = {
   create(entity) {
     entity.title = "Welcome"
   },
-
   render(entity, api) {
     return html`<header>${entity.title}</header>`
   },
@@ -1560,50 +1542,37 @@ The `renderFn` receives a powerful `api` object that contains all methods from t
 
 This method is the cornerstone of entity-based rendering. It looks up an entity by its `id`, finds its corresponding type definition, and calls the `render(entity, api)` method on that type. When you pass `typeName` and `Type`, it will lazily register the type with `api.setType(typeName, Type)` if the type is not already present.
 
-### Re-exported `lit-html` Utilities
+### Package Entry Points
 
-For convenience, `@inglorious/web` re-exports the most common utilities from `@inglorious/store` and `lit-html`, so you only need one import.
+`@inglorious/web` keeps its root entry point intentionally small:
 
 ```javascript
-import {
-  // from @inglorious/store
-  createStore,
-  createDevtools,
-  compute,
-  createSelector, // for Redux compatibility
-  // from @inglorious/store/test
-  trigger,
-  // from lit-html
-  mount,
-  html,
-  svg,
-  // lit-html directives
-  choose,
-  classMap,
-  ref,
-  repeat,
-  styleMap,
-  unsafeHTML,
-  when,
-} from "@inglorious/web"
-
-// Subpath imports for tree-shaking
-import {
-  Form,
-  getFieldError,
-  getFieldValue,
-  isFieldTouched,
-} from "@inglorious/web/form"
-import {
-  Router,
-  getRoutes,
-  getRoute,
-  setRoutes,
-  addRoute,
-  removeRoute,
-} from "@inglorious/web/router"
-import { render, trigger } from "@inglorious/web/test"
+import { mount, html, svg } from "@inglorious/web"
 ```
+
+Import everything else from the package that owns it, or from an explicit `@inglorious/web` subpath:
+
+```javascript
+import { createStore } from "@inglorious/store"
+import { handleAsync } from "@inglorious/store/async"
+import { withOptimistic } from "@inglorious/store/optimistic"
+import { compute, createSelector } from "@inglorious/store/select"
+import { createDevtools } from "@inglorious/store/client/devtools"
+
+import { classMap } from "@inglorious/web/directives/class-map"
+import { ref, createRef } from "@inglorious/web/directives/ref"
+import { repeat } from "@inglorious/web/directives/repeat"
+import { styleMap } from "@inglorious/web/directives/style-map"
+import { unsafeHTML } from "@inglorious/web/directives/unsafe-html"
+import { when } from "@inglorious/web/directives/when"
+import { staticHtml, unsafeStatic } from "@inglorious/web/static"
+import { render, trigger } from "@inglorious/web/test"
+
+import { Form } from "@inglorious/web/form"
+import { Router, setRoutes } from "@inglorious/web/router"
+```
+
+This keeps `lit-html` as an internal implementation detail while still giving applications stable, tree-shakeable import paths.
 
 ---
 

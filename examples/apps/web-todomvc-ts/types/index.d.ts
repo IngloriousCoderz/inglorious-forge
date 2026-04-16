@@ -1,6 +1,7 @@
 import "./vite-end"
 
-import { Api, BaseEntity, EntitiesState, TemplateResult } from "@inglorious/web"
+import { BaseEntity, EntitiesState } from "@inglorious/store"
+import { Api, TemplateResult } from "@inglorious/web"
 
 export type Filter = "all" | "active" | "completed"
 

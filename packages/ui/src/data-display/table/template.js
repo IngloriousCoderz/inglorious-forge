@@ -4,7 +4,10 @@
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
-import { classMap, html, ref, repeat } from "@inglorious/web"
+import { html } from "@inglorious/web"
+import { classMap } from "@inglorious/web/directives/class-map"
+import { ref } from "@inglorious/web/directives/ref"
+import { repeat } from "@inglorious/web/directives/repeat"
 
 import { applyElementProps } from "../../shared/applyElementProps.js"
 

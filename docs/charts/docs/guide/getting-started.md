@@ -8,13 +8,13 @@ description: Install and render your first chart.
 ## Install
 
 ```bash
-pnpm add @inglorious/charts @inglorious/web
+pnpm add @inglorious/store @inglorious/charts @inglorious/web
 ```
 
 ## Register chart types
 
 ```js
-import { createStore } from "@inglorious/web"
+import { createStore } from "@inglorious/store"
 import {
   lineChart,
   areaChart,

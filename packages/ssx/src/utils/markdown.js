@@ -40,7 +40,8 @@ export function markdownPlugin(options = {}) {
         import "katex/dist/katex.min.css"
         import "highlight.js/styles/${theme}.css"
 
-        import { html, unsafeHTML } from "@inglorious/web"
+        import { html } from "@inglorious/web"
+import { unsafeHTML } from "@inglorious/web/directives/unsafe-html"
         ${mermaidCode}
 
         export const metadata = ${JSON.stringify(data)}

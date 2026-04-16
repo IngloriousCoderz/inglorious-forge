@@ -3,7 +3,11 @@ import { types as t } from "@babel/core"
 import { buildFragment, buildTemplate } from "./render.js"
 import { createImportSpecifier, isJsx } from "./utils.js"
 
-const IMPORT_SOURCE = "@inglorious/web"
+const IMPORT_SOURCES = {
+  html: "@inglorious/web",
+  when: "@inglorious/web/directives/when",
+  repeat: "@inglorious/web/directives/repeat",
+}
 
 /**
  * Add the `@inglorious/web` imports required by a transformed file.
@@ -11,49 +15,48 @@ const IMPORT_SOURCE = "@inglorious/web"
  * @param {import("@babel/core").NodePath} path - The Program path being finalized.
  */
 function ensureWebImports(path) {
-  const needed = new Set()
+  const needed = {
+    html: path.__needsHtml,
+    when: path.__needsWhen,
+    repeat: path.__needsRepeat,
+  }
 
-  if (path.__needsHtml) needed.add("html")
-  if (path.__needsWhen) needed.add("when")
-  if (path.__needsRepeat) needed.add("repeat")
-
-  if (!needed.size) return
-
-  let importDecl = null
+  const importDecls = { html: null, when: null, repeat: null }
 
   path.get("body").forEach((nodePath) => {
-    if (
-      nodePath.isImportDeclaration() &&
-      nodePath.node.source.value === IMPORT_SOURCE
-    ) {
-      if (nodePath.node.importKind !== "type") {
-        importDecl = nodePath
-      }
+    if (!nodePath.isImportDeclaration() || nodePath.node.importKind === "type")
+      return
 
-      for (const specifier of nodePath.get("specifiers")) {
+    const name = Object.keys(IMPORT_SOURCES).find(
+      (key) => IMPORT_SOURCES[key] === nodePath.node.source.value,
+    )
+
+    if (name) {
+      importDecls[name] = nodePath
+      nodePath.get("specifiers").forEach((specifier) => {
         if (
           specifier.isImportSpecifier() &&
-          nodePath.node.importKind !== "type"
+          specifier.node.imported.name === name
         ) {
-          needed.delete(specifier.node.imported.name)
+          needed[name] = false
         }
-      }
+      })
     }
   })
 
-  const specifiersToAdd = [...needed].map(createImportSpecifier)
+  Object.keys(IMPORT_SOURCES).forEach((name) => {
+    if (!needed[name]) return
 
-  if (!specifiersToAdd.length) return
-
-  if (importDecl) {
-    importDecl.pushContainer("specifiers", specifiersToAdd)
-    return
-  }
-
-  path.unshiftContainer(
-    "body",
-    t.importDeclaration(specifiersToAdd, t.stringLiteral(IMPORT_SOURCE)),
-  )
+    const specifier = createImportSpecifier(name)
+    if (importDecls[name]) {
+      importDecls[name].pushContainer("specifiers", [specifier])
+    } else {
+      path.unshiftContainer(
+        "body",
+        t.importDeclaration([specifier], t.stringLiteral(IMPORT_SOURCES[name])),
+      )
+    }
+  })
 }
 
 /**

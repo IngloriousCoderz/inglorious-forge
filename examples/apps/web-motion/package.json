@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@inglorious/motion": "workspace:*",
+    "@inglorious/store": "workspace:*",
     "@inglorious/web": "workspace:*"
   },
   "devDependencies": {

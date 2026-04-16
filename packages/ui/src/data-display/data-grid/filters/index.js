@@ -1,4 +1,5 @@
-import { choose, html } from "@inglorious/web"
+import { html } from "@inglorious/web"
+import { choose } from "@inglorious/web/directives/choose"
 
 import { InputFilter } from "./input.js"
 import { RangeFilter } from "./range.js"

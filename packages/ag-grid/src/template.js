@@ -1,4 +1,5 @@
-import { html, ref } from "@inglorious/web"
+import { html } from "@inglorious/web"
+import { ref } from "@inglorious/web/directives/ref"
 
 import { DEFAULT_THEME_CLASS } from "./defaults.js"
 import { mountOrUpdateGrid } from "./runtime.js"

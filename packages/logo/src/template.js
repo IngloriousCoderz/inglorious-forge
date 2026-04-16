@@ -14,7 +14,9 @@
  * @property {boolean} [isScrollPrevented]
  */
 
-import { html, styleMap, when } from "@inglorious/web"
+import { html } from "@inglorious/web"
+import { styleMap } from "@inglorious/web/directives/style-map"
+import { when } from "@inglorious/web/directives/when"
 
 import eye from "./assets/eye.svg"
 import * as faces from "./assets/faces/index.js"

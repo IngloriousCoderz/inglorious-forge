@@ -1,4 +1,4 @@
-import { compute } from "@inglorious/web"
+import { compute } from "@inglorious/store/select"
 
 const SAME = 0
 const DEFAULT_AVG = 0

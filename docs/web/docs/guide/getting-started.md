@@ -294,7 +294,8 @@ Want to skip the build step? Create a single HTML file:
   <body>
     <div id="root"></div>
     <script type="module">
-      import { createStore, mount, html } from "@inglorious/web"
+      import { createStore } from "@inglorious/store"
+      import { mount, html } from "@inglorious/web"
 
       const types = {
         Message: {

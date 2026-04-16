@@ -1,5 +1,5 @@
+import { createStore } from "@inglorious/store"
 import { UPDATE_INTERVAL } from "@benchmarks/deep-tree-shared"
-import { createStore } from "@inglorious/web"
 
 import { Metrics } from "../types/metrics"
 import { Tree } from "../types/tree"
