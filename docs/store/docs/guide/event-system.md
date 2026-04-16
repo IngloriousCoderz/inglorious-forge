@@ -328,7 +328,7 @@ store.notify("fetchTodos", userId)
 The `handleAsync` helper generates multiple events with different scopes:
 
 ```javascript
-import { handleAsync } from "@inglorious/store"
+import { handleAsync } from "@inglorious/store/async"
 
 const types = {
   todoList: {
@@ -349,6 +349,14 @@ const types = {
   },
 }
 ```
+
+Think of the flow like a newspaper article:
+
+- `start` writes the headline and sets the scene
+- `run` gathers the reporting
+- `success` publishes the story
+- `error` prints the correction
+- `finally` archives the notes
 
 Generated events by scope:
 

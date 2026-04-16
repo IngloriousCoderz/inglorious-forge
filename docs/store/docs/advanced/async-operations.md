@@ -55,27 +55,39 @@ The `handleAsync` helper generates a set of event handlers representing the life
 handleAsync(type, handlers, options?)
 ```
 
+Think of the flow like a newspaper article:
+
+- `start` writes the headline and sets the scene
+- `run` gathers the reporting
+- `success` publishes the story
+- `error` prints the correction
+- `finally` archives the notes
+
 **Example:**
 
 ```typescript
-handleAsync("fetchTodos", {
-  async run(payload) {
-    const res = await fetch("/api/todos")
-    return res.json()
-  },
+import { handleAsync } from "@inglorious/store/async"
 
-  success(entity, todos) {
-    entity.todos = todos
-  },
+const todoList = {
+  ...handleAsync("fetchTodos", {
+    async run(payload) {
+      const res = await fetch("/api/todos")
+      return res.json()
+    },
 
-  error(entity, error) {
-    entity.error = error.message
-  },
+    success(entity, todos) {
+      entity.todos = todos
+    },
 
-  finally(entity) {
-    entity.loading = false
-  },
-})
+    error(entity, error) {
+      entity.error = error.message
+    },
+
+    finally(entity) {
+      entity.loading = false
+    },
+  }),
+}
 ```
 
 Triggering `fetchTodos` emits the following events:
@@ -105,6 +117,60 @@ handleAsync("save", {
 ```
 
 If omitted, no `Start` event is generated.
+
+### Optimistic Updates
+
+If you want optimistic UI state, wrap the async behavior with `optimistic`.
+This helper lives at `@inglorious/store/optimistic`, so only users who need it import it:
+
+```typescript
+import { handleAsync } from "@inglorious/store/async"
+import { optimistic } from "@inglorious/store/optimistic"
+
+const saveTodo = optimistic(
+  handleAsync("saveTodo", {
+    async run(payload) {
+      const res = await fetch("/api/todos", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      })
+      if (!res.ok) throw new Error("Failed")
+      return res.json()
+    },
+    success(entity, todo) {
+      entity.todos = entity.todos.map((item) =>
+        item.id === todo.tempId ? todo : item,
+      )
+    },
+  }),
+  (entity, payload) => ({
+    todos: [
+      ...entity.todos,
+      {
+        id: payload.tempId,
+        title: payload.title,
+        completed: payload.completed,
+        pending: true,
+      },
+    ],
+  }),
+)
+```
+
+If the optimistic state does not depend on the payload, use a static patch instead:
+
+```typescript
+const saveSettings = optimistic(
+  handleAsync("saveSettings", {
+    async run(payload) {
+      return api.save(payload)
+    },
+  }),
+  { status: "saving" },
+)
+```
+
+The wrapper stores a shallow snapshot of the patched keys, applies the optimistic patch during `Start`, and restores the previous values if the request fails.
 
 ### Event scoping
 

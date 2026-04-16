@@ -436,7 +436,7 @@ store.notify("remove", { id: "workTodos" })
 Helper to generate lifecycle events for async operations:
 
 ```typescript
-import { handleAsync } from "@inglorious/store"
+import { handleAsync } from "@inglorious/store/async"
 
 const types = {
   todoList: {
@@ -465,6 +465,14 @@ const types = {
 store.notify("fetchTodos", userId)
 ```
 
+Think of the flow like a newspaper article:
+
+- `start` writes the headline and sets the scene
+- `run` gathers the reporting
+- `success` publishes the story
+- `error` prints the correction
+- `finally` archives the notes
+
 Generated events:
 
 - `fetchTodos` - Trigger the async operation
@@ -472,6 +480,47 @@ Generated events:
 - `fetchTodosSuccess` - Success handler fires
 - `fetchTodosError` - Error handler fires
 - `fetchTodosFinally` - Always fires (optional)
+
+### Optimistic Updates
+
+For optimistic UI state, wrap the generated behavior with `optimistic`.
+This helper lives at `@inglorious/store/optimistic`, so only users who need it import it:
+
+```typescript
+import { handleAsync } from "@inglorious/store/async"
+import { optimistic } from "@inglorious/store/optimistic"
+
+const todoList = {
+  ...optimistic(
+    handleAsync("saveTodo", {
+      async run(payload) {
+        const res = await fetch("/api/todos", {
+          method: "POST",
+          body: JSON.stringify(payload),
+        })
+        if (!res.ok) throw new Error("Failed")
+        return res.json()
+      },
+      success(entity, todo) {
+        entity.todos = entity.todos.map((item) =>
+          item.id === todo.tempId ? todo : item,
+        )
+      },
+    }),
+    (entity, payload) => ({
+      todos: [
+        ...entity.todos,
+        {
+          id: payload.tempId,
+          title: payload.title,
+          completed: payload.completed,
+          pending: true,
+        },
+      ],
+    }),
+  ),
+}
+```
 
 ### Options
 

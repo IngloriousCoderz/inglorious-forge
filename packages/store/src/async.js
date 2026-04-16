@@ -146,7 +146,7 @@ export function handleAsync(type, handlers, options = {}) {
     }
   }
 
-  return {
+  const asyncHandlers = {
     [type](entity, payload, api) {
       if (handlers.start) {
         notify(api, entity, `${type}Start`, payload)
@@ -184,4 +184,13 @@ export function handleAsync(type, handlers, options = {}) {
       handlers.finally?.(entity, api)
     },
   }
+
+  Object.defineProperty(asyncHandlers, ASYNC_META, {
+    value: { type, scope },
+    enumerable: false,
+  })
+
+  return asyncHandlers
 }
+
+export const ASYNC_META = Symbol.for("@inglorious/store/asyncMeta")
