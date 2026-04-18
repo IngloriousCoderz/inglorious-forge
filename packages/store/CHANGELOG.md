@@ -1,5 +1,11 @@
 # @inglorious/store
 
+## 11.0.0
+
+### Major Changes
+
+- Separate exports
+
 ## 10.0.0
 
 ### Major Changes

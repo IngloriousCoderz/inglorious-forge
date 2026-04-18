@@ -1,5 +1,12 @@
 # @benchmarks/dashboard-react-rtk-inglorious
 
+## 0.1.3
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/store@11.0.0
+
 ## 0.1.2
 
 ### Patch Changes
