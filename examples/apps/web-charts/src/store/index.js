@@ -1,19 +1,19 @@
 import { createStore } from "@inglorious/web"
-import { chart } from "@inglorious/charts"
+import { Chart } from "@inglorious/charts"
 import { withRealtime } from "@inglorious/charts/realtime"
 import { entities } from "./entities.js"
 
 export const store = createStore({
   types: {
-    area: chart,
-    bar: chart,
-    line: chart,
-    "area-rt": [chart, withRealtime],
-    "bar-rt": [chart, withRealtime],
-    "line-rt": [chart, withRealtime],
-    composed: chart,
-    pie: chart,
-    donut: chart,
+    area: Chart,
+    bar: Chart,
+    line: Chart,
+    "area-rt": [Chart, withRealtime],
+    "bar-rt": [Chart, withRealtime],
+    "line-rt": [Chart, withRealtime],
+    composed: Chart,
+    pie: Chart,
+    donut: Chart,
   },
   entities,
 })

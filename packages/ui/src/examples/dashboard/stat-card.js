@@ -1,4 +1,4 @@
-import { chart } from "@inglorious/charts"
+import { Chart } from "@inglorious/charts"
 import { html } from "@inglorious/web"
 
 import { Button } from "../../controls/button"
@@ -54,7 +54,7 @@ export const StatCard = {
       value,
     }))
 
-    const chartConfig = {
+    const base = {
       id: entity.id,
       type: entity.chartType,
       data,
@@ -66,19 +66,19 @@ export const StatCard = {
     const children = []
     if (entity.hasDots) {
       children.push(
-        chart.Dots({ dataKey: "value", stroke: "white", fill: "#39a2f1" }),
+        Chart.Dots({ dataKey: "value", stroke: "white", fill: "#39a2f1" }),
       )
     }
 
     if (entity.chartType === "area") {
-      children.push(chart.Area({ fill: "rgba(255,255,255,0.3)" }))
-      return chart.renderAreaChart(chartConfig, { children }, api)
-    } else if (entity.chartType === "bar") {
-      children.push(chart.Bar({ fill: "rgba(255,255,255,0.3)" }))
-      return chart.renderBarChart(chartConfig, { children }, api)
-    } else {
-      children.push(chart.Line({ stroke: "white" }))
-      return chart.renderLineChart(chartConfig, { children }, api)
+      children.push(Chart.Area({ fill: "rgba(255,255,255,0.3)" }))
+      return Chart.render({ ...base, children }, api)
     }
+    if (entity.chartType === "bar") {
+      children.push(Chart.Bar({ fill: "rgba(255,255,255,0.3)" }))
+      return Chart.render({ ...base, children }, api)
+    }
+    children.push(Chart.Line({ stroke: "white" }))
+    return Chart.render({ ...base, children }, api)
   },
 }

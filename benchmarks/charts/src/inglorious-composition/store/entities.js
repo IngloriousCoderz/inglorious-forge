@@ -1,4 +1,4 @@
-import { areaChart, barChart, lineChart, pieChart } from "@inglorious/charts"
+import { Chart } from "@inglorious/charts"
 import { generateChartData } from "../../utils.js"
 
 // Create entities and initialize them
@@ -7,21 +7,21 @@ const lineEntity = {
   type: "line",
   data: generateChartData(),
 }
-lineChart.create(lineEntity)
+Chart.create(lineEntity)
 
 const areaEntity = {
   id: "areaChart1",
   type: "area",
   data: generateChartData(),
 }
-areaChart.create(areaEntity)
+Chart.create(areaEntity)
 
 const barEntity = {
   id: "barChart1",
   type: "bar",
   data: generateChartData(),
 }
-barChart.create(barEntity)
+Chart.create(barEntity)
 
 const pieEntity = {
   id: "pieChart1",
@@ -31,7 +31,7 @@ const pieEntity = {
     value: d.value,
   })),
 }
-pieChart.create(pieEntity)
+Chart.create(pieEntity)
 
 export const entities = {
   lineChart1: lineEntity,

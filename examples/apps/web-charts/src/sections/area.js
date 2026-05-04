@@ -1,5 +1,5 @@
 import { html } from "@inglorious/web"
-import { chart } from "@inglorious/charts"
+import { Chart } from "@inglorious/charts"
 
 const composedData = [
   { name: "Jan", revenue: 120, target: 80, forecast: 110 },
@@ -21,24 +21,24 @@ export function renderAreaSections(api) {
 
       <section class="chart-section">
         <h2>Area Chart - Recharts Style (Composition with api.getEntity)</h2>
-        ${chart.render(
+        ${Chart.render(
           {
             entity: "salesAreaChartComposition",
             width: 800,
             height: 400,
             dataKeys: ["value"],
             children: [
-              chart.CartesianGrid(),
-              chart.XAxis({ dataKey: "name" }),
-              chart.YAxis(),
-              chart.Area({
+              Chart.CartesianGrid(),
+              Chart.XAxis({ dataKey: "name" }),
+              Chart.YAxis(),
+              Chart.Area({
                 dataKey: "value",
                 fill: "#8884d8",
                 fillOpacity: "0.6",
                 stroke: "#8884d8",
               }),
-              chart.Dots({ dataKey: "value", fill: "#8884d8" }),
-              chart.Tooltip({}),
+              Chart.Dots({ dataKey: "value", fill: "#8884d8" }),
+              Chart.Tooltip({}),
             ],
           },
           api,
@@ -54,16 +54,16 @@ export function renderAreaSections(api) {
 
       <section class="chart-section">
         <h2>Composed Area + Line + Bar - Recharts Style (Composition)</h2>
-        ${chart.render(
+        ${Chart.render(
           {
             width: 800,
             height: 400,
             data: composedData,
             children: [
-              chart.CartesianGrid(),
-              chart.XAxis({ dataKey: "name" }),
-              chart.YAxis(),
-              chart.Area({
+              Chart.CartesianGrid(),
+              Chart.XAxis({ dataKey: "name" }),
+              Chart.YAxis(),
+              Chart.Area({
                 dataKey: "revenue",
                 fill: "#8884d8",
                 fillOpacity: "0.3",
@@ -71,12 +71,12 @@ export function renderAreaSections(api) {
                 hasDots: true,
                 hasTooltip: true,
               }),
-              chart.Bar({
+              Chart.Bar({
                 dataKey: "target",
                 fill: "#82ca9d",
                 hasTooltip: true,
               }),
-              chart.Line({
+              Chart.Line({
                 dataKey: "forecast",
                 stroke: "#ff7300",
                 hasDots: true,
@@ -99,51 +99,51 @@ export function renderAreaSections(api) {
           Area Chart Multi Series - Recharts Style (Composition with
           api.getEntity)
         </h2>
-        ${chart.render(
+        ${Chart.render(
           {
             entity: "multiSeriesAreaChartComposition",
             width: 800,
             height: 400,
             dataKeys: ["Revenue", "Expenses", "Profit"],
             children: [
-              chart.CartesianGrid(),
-              chart.XAxis({ dataKey: "name" }),
-              chart.YAxis(),
-              chart.Area({
+              Chart.CartesianGrid(),
+              Chart.XAxis({ dataKey: "name" }),
+              Chart.YAxis(),
+              Chart.Area({
                 dataKey: "Revenue",
                 fill: "#8884d8",
                 fillOpacity: "0.6",
                 stroke: "#8884d8",
               }),
-              chart.Area({
+              Chart.Area({
                 dataKey: "Expenses",
                 fill: "#82ca9d",
                 fillOpacity: "0.6",
                 stroke: "#82ca9d",
               }),
-              chart.Area({
+              Chart.Area({
                 dataKey: "Profit",
                 fill: "#ffc658",
                 fillOpacity: "0.6",
                 stroke: "#ffc658",
               }),
-              chart.Dots({
+              Chart.Dots({
                 dataKey: "Revenue",
                 fill: "#8884d8",
               }),
-              chart.Dots({
+              Chart.Dots({
                 dataKey: "Expenses",
                 fill: "#82ca9d",
               }),
-              chart.Dots({
+              Chart.Dots({
                 dataKey: "Profit",
                 fill: "#ffc658",
               }),
-              chart.Legend({
+              Chart.Legend({
                 dataKeys: ["Revenue", "Expenses", "Profit"],
                 colors: ["#8884d8", "#82ca9d", "#ffc658"],
               }),
-              chart.Tooltip({}),
+              Chart.Tooltip({}),
             ],
           },
           api,
@@ -161,57 +161,57 @@ export function renderAreaSections(api) {
         <h2>
           Area Chart Stacked - Recharts Style (Composition with api.getEntity)
         </h2>
-        ${chart.render(
+        ${Chart.render(
           {
             entity: "multiSeriesAreaChartStackedComposition",
             width: 800,
             height: 400,
             dataKeys: ["Revenue", "Expenses", "Profit"],
             children: [
-              chart.CartesianGrid(),
-              chart.XAxis({ dataKey: "name" }),
-              chart.YAxis(),
-              chart.Area({
+              Chart.CartesianGrid(),
+              Chart.XAxis({ dataKey: "name" }),
+              Chart.YAxis(),
+              Chart.Area({
                 dataKey: "Revenue",
                 fill: "#8884d8",
                 fillOpacity: "0.6",
                 stroke: "#8884d8",
                 stackId: "1",
               }),
-              chart.Area({
+              Chart.Area({
                 dataKey: "Expenses",
                 fill: "#82ca9d",
                 fillOpacity: "0.6",
                 stroke: "#82ca9d",
                 stackId: "1",
               }),
-              chart.Area({
+              Chart.Area({
                 dataKey: "Profit",
                 fill: "#ffc658",
                 fillOpacity: "0.6",
                 stroke: "#ffc658",
                 stackId: "1",
               }),
-              chart.Dots({
+              Chart.Dots({
                 dataKey: "Revenue",
                 fill: "#8884d8",
                 stackId: "1",
               }),
-              chart.Dots({
+              Chart.Dots({
                 dataKey: "Expenses",
                 fill: "#82ca9d",
                 stackId: "1",
               }),
-              chart.Dots({
+              Chart.Dots({
                 dataKey: "Profit",
                 fill: "#ffc658",
                 stackId: "1",
               }),
-              chart.Legend({
+              Chart.Legend({
                 dataKeys: ["Revenue", "Expenses", "Profit"],
                 colors: ["#8884d8", "#82ca9d", "#ffc658"],
               }),
-              chart.Tooltip({}),
+              Chart.Tooltip({}),
             ],
           },
           api,
