@@ -1,6 +1,6 @@
 import "./style.css"
 
-import { chart } from "@inglorious/charts"
+import { Chart } from "@inglorious/charts"
 
 import {
   createEntityRender,
@@ -21,9 +21,9 @@ const baseTypes = {
   AppDrawer,
   AppHeader,
   PrimitiveSection,
-  area: areaChart,
-  bar: barChart,
-  line: lineChart,
+  area: Chart,
+  bar: Chart,
+  line: Chart,
 }
 
 export default {

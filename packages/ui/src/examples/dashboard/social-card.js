@@ -1,4 +1,4 @@
-import { chart } from "@inglorious/charts"
+import { Chart } from "@inglorious/charts"
 import { html } from "@inglorious/web"
 
 import { Divider } from "../../data-display/divider"
@@ -48,18 +48,16 @@ export const SocialCard = {
   },
 
   renderAreaSpark(entity, api) {
-    return chart.renderAreaChart(
+    return Chart.render(
       {
         type: "area",
         data: entity.data.map((value, index) => ({ name: `${index}`, value })),
-      },
-      {
         width: 640,
         height: 200,
         padding: 0,
         dataKeys: ["value"],
         children: [
-          chart.Area({
+          Chart.Area({
             dataKey: "value",
             stroke: "rgba(255,255,255,0.9)",
             fill: "rgba(255,255,255,0.35)",

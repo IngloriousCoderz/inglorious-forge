@@ -31,7 +31,7 @@ function renderChart(source, api) {
   return renderFrame(createFrameFromEntity(source, api))
 }
 
-export const chart = {
+export const Chart = {
   ...handlers,
   render(source, api) {
     return renderChart(source, api)

@@ -1,5 +1,5 @@
 import { html } from "@inglorious/web"
-import { chart } from "@inglorious/charts"
+import { Chart } from "@inglorious/charts"
 
 export function renderPieSection(api) {
   const inlinePieDataA = [
@@ -22,13 +22,13 @@ export function renderPieSection(api) {
 
       <section class="chart-section">
         <h2>Pie Chart - Recharts Style (Composition with api.getEntity)</h2>
-        ${chart.render(
+        ${Chart.render(
           {
             entity: "categoryPieChartComposition",
             width: 500,
             height: 400,
             children: [
-              chart.Pie({
+              Chart.Pie({
                 dataKey: "value",
                 nameKey: "name",
                 cx: "50%",
@@ -46,7 +46,7 @@ export function renderPieSection(api) {
     <div class="charts-comparison">
       <section class="chart-section">
         <h2>Pie Chart - Composition (No id #1)</h2>
-        ${chart.render(
+        ${Chart.render(
           {
             type: "pie",
             data: inlinePieDataA,
@@ -54,7 +54,7 @@ export function renderPieSection(api) {
             height: 280,
             hasTooltip: true,
             children: [
-              chart.Pie({
+              Chart.Pie({
                 dataKey: "value",
                 nameKey: "name",
                 cx: "50%",
@@ -70,7 +70,7 @@ export function renderPieSection(api) {
 
       <section class="chart-section">
         <h2>Pie Chart - Composition (No id #2)</h2>
-        ${chart.render(
+        ${Chart.render(
           {
             type: "pie",
             data: inlinePieDataB,
@@ -78,7 +78,7 @@ export function renderPieSection(api) {
             height: 280,
             hasTooltip: true,
             children: [
-              chart.Pie({
+              Chart.Pie({
                 dataKey: "value",
                 nameKey: "name",
                 cx: "50%",

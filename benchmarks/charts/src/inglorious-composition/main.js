@@ -1,4 +1,5 @@
 import { mount, html } from "@inglorious/web"
+import { Chart } from "@inglorious/charts"
 import "@inglorious/charts/base.css"
 import "@inglorious/charts/theme.css"
 
@@ -33,6 +34,10 @@ const countFPS = () => {
 
 requestAnimationFrame(countFPS)
 
+function renderComposition(entityId, api, props) {
+  return Chart.render({ entity: entityId, ...props }, api)
+}
+
 // App render function
 const app = {
   render(api) {
@@ -55,169 +60,82 @@ const app = {
         <div class="charts-grid">
           <div class="chart-container">
             <div class="chart-title">Line Chart</div>
-            ${renderEntityChart("lineChart1", api, ({ entity, type }) =>
-              type.renderLineChart(
-                entity,
-                {
-                  children: [
-                    type.renderCartesianGrid(
-                      entity,
-                      {
-                        config: {
-                          stroke: "#eee",
-                          strokeDasharray: "5 5",
-                        },
-                      },
-                      api,
-                    ),
-                    type.renderXAxis(
-                      entity,
-                      { config: { dataKey: "name" } },
-                      api,
-                    ),
-                    type.renderYAxis(
-                      entity,
-                      { config: { width: "auto" } },
-                      api,
-                    ),
-                    type.renderLine(
-                      entity,
-                      {
-                        config: {
-                          dataKey: "value",
-                          stroke: "#8884d8",
-                          showDots: true,
-                        },
-                      },
-                      api,
-                    ),
-                    type.renderTooltip(entity, { config: {} }, api),
-                  ],
-                  config: { width: 400, height: 300, dataKeys: ["value"] },
-                },
-                api,
-              ),
-            )}
+            ${renderComposition("lineChart1", api, {
+              width: 400,
+              height: 300,
+              dataKeys: ["value"],
+              children: [
+                Chart.CartesianGrid({
+                  stroke: "#eee",
+                  strokeDasharray: "5 5",
+                }),
+                Chart.XAxis({ dataKey: "name" }),
+                Chart.YAxis({ width: "auto" }),
+                Chart.Line({ dataKey: "value", stroke: "#8884d8" }),
+                Chart.Dots({ dataKey: "value", fill: "#8884d8" }),
+                Chart.Tooltip({}),
+              ],
+            })}
           </div>
           <div class="chart-container">
             <div class="chart-title">Area Chart</div>
-            ${renderEntityChart("areaChart1", api, ({ entity, type }) =>
-              type.renderAreaChart(
-                entity,
-                {
-                  children: [
-                    type.renderCartesianGrid(
-                      entity,
-                      {
-                        config: {
-                          stroke: "#eee",
-                          strokeDasharray: "5 5",
-                        },
-                      },
-                      api,
-                    ),
-                    type.renderXAxis(
-                      entity,
-                      { config: { dataKey: "name" } },
-                      api,
-                    ),
-                    type.renderYAxis(
-                      entity,
-                      { config: { width: "auto" } },
-                      api,
-                    ),
-                    type.renderArea(
-                      entity,
-                      {
-                        config: {
-                          dataKey: "value",
-                          fill: "#8884d8",
-                          fillOpacity: "0.6",
-                          stroke: "#8884d8",
-                        },
-                      },
-                      api,
-                    ),
-                    type.renderDots(
-                      entity,
-                      { config: { dataKey: "value", fill: "#8884d8" } },
-                      api,
-                    ),
-                    type.renderTooltip(entity, { config: {} }, api),
-                  ],
-                  config: { width: 400, height: 300, dataKeys: ["value"] },
-                },
-                api,
-              ),
-            )}
+            ${renderComposition("areaChart1", api, {
+              width: 400,
+              height: 300,
+              dataKeys: ["value"],
+              children: [
+                Chart.CartesianGrid({
+                  stroke: "#eee",
+                  strokeDasharray: "5 5",
+                }),
+                Chart.XAxis({ dataKey: "name" }),
+                Chart.YAxis({ width: "auto" }),
+                Chart.Area({
+                  dataKey: "value",
+                  fill: "#8884d8",
+                  fillOpacity: "0.6",
+                  stroke: "#8884d8",
+                }),
+                Chart.Dots({ dataKey: "value", fill: "#8884d8" }),
+                Chart.Tooltip({}),
+              ],
+            })}
           </div>
           <div class="chart-container">
             <div class="chart-title">Bar Chart</div>
-            ${renderEntityChart("barChart1", api, ({ entity, type }) =>
-              type.renderBarChart(
-                entity,
-                {
-                  children: [
-                    type.renderCartesianGrid(
-                      entity,
-                      {
-                        config: {
-                          stroke: "#eee",
-                          strokeDasharray: "5 5",
-                        },
-                      },
-                      api,
-                    ),
-                    type.renderXAxis(
-                      entity,
-                      { config: { dataKey: "name" } },
-                      api,
-                    ),
-                    type.renderYAxis(
-                      entity,
-                      { config: { width: "auto" } },
-                      api,
-                    ),
-                    type.renderBar(
-                      entity,
-                      { config: { dataKey: "value", fill: "#8884d8" } },
-                      api,
-                    ),
-                    type.renderTooltip(entity, { config: {} }, api),
-                  ],
-                  config: { width: 400, height: 300, dataKeys: ["value"] },
-                },
-                api,
-              ),
-            )}
+            ${renderComposition("barChart1", api, {
+              width: 400,
+              height: 300,
+              dataKeys: ["value"],
+              children: [
+                Chart.CartesianGrid({
+                  stroke: "#eee",
+                  strokeDasharray: "5 5",
+                }),
+                Chart.XAxis({ dataKey: "name" }),
+                Chart.YAxis({ width: "auto" }),
+                Chart.Bar({ dataKey: "value", fill: "#8884d8" }),
+                Chart.Tooltip({}),
+              ],
+            })}
           </div>
           <div class="chart-container">
             <div class="chart-title">Pie Chart</div>
-            ${renderEntityChart("pieChart1", api, ({ entity, type }) =>
-              type.renderPieChart(
-                entity,
-                {
-                  children: [
-                    type.renderPie(
-                      entity,
-                      {
-                        config: {
-                          dataKey: "value",
-                          nameKey: "label",
-                          cx: "50%",
-                          cy: "50%",
-                          outerRadius: 80,
-                        },
-                      },
-                      api,
-                    ),
-                    type.renderTooltip(entity, { config: {} }, api),
-                  ],
-                  config: { width: 400, height: 300 },
-                },
-                api,
-              ),
-            )}
+            ${renderComposition("pieChart1", api, {
+              width: 400,
+              height: 300,
+              dataKeys: ["value"],
+              children: [
+                Chart.Pie({
+                  dataKey: "value",
+                  nameKey: "label",
+                  cx: "50%",
+                  cy: "50%",
+                  outerRadius: 80,
+                }),
+                Chart.Tooltip({}),
+              ],
+            })}
           </div>
         </div>
       </div>
@@ -262,10 +180,3 @@ setInterval(() => {
     store.notify(`#pieChart1:update`)
   }
 }, 100)
-
-function renderEntityChart(entityId, api, renderFn) {
-  const entity = api.getEntity(entityId)
-  const type = api.getType(entity.type)
-
-  return renderFn({ entity, type })
-}

@@ -34,7 +34,7 @@ export function createFrameFromRender(props, api = null) {
   const explicitPrimitives = getPrimitives(source.children)
   if (!Object.hasOwn(source, "children") || explicitPrimitives.length === 0) {
     throw new Error(
-      "[charts] chart.render (composition) requires 'children' with primitives.",
+      "[charts] Chart.render (composition) requires 'children' with primitives.",
     )
   }
 
