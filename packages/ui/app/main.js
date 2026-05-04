@@ -7,7 +7,7 @@ import "@inglorious/ui/all.css"
 import "../src/examples/dashboard/style.css"
 import "./main.css"
 
-import { chart } from "@inglorious/charts"
+import { Chart } from "@inglorious/charts"
 import { createStore } from "@inglorious/store"
 import { createDevtools } from "@inglorious/store/client/devtools"
 import { mount } from "@inglorious/web"
@@ -30,9 +30,9 @@ const store = createStore({
     AppDrawer,
     Dashboard,
     PrimitiveSection,
-    area: chart,
-    bar: chart,
-    line: chart,
+    area: Chart,
+    bar: Chart,
+    line: Chart,
   },
   autoCreateEntities: true,
   middlewares: [createDevtools().middleware],

@@ -15,23 +15,15 @@ pnpm add @inglorious/store @inglorious/charts @inglorious/web
 
 ```js
 import { createStore } from "@inglorious/store"
-import {
-  lineChart,
-  areaChart,
-  barChart,
-  pieChart,
-  donutChart,
-  chart,
-} from "@inglorious/charts"
+import { Chart } from "@inglorious/charts"
 
 export const store = createStore({
   types: {
-    line: lineChart,
-    area: areaChart,
-    bar: barChart,
-    pie: pieChart,
-    donut: donutChart,
-    chart,
+    line: Chart,
+    area: Chart,
+    bar: Chart,
+    pie: Chart,
+    donut: Chart,
   },
   entities: {
     sales: {

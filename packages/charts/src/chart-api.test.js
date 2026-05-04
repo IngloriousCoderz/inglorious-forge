@@ -1,21 +1,21 @@
 import { describe, expect, it } from "vitest"
 
-import { chart } from "./index.js"
+import { Chart } from "./index.js"
 
 describe("charts public api", () => {
-  it("exposes pure primitive factories on the chart namespace", () => {
-    expect(chart.Line({ dataKey: "value" })).toEqual({
+  it("exposes pure primitive factories on the Chart namespace", () => {
+    expect(Chart.Line({ dataKey: "value" })).toEqual({
       type: "line",
       props: { dataKey: "value" },
     })
-    expect(chart.XAxis({ dataKey: "name" })).toEqual({
+    expect(Chart.XAxis({ dataKey: "name" })).toEqual({
       type: "x-axis",
       props: { dataKey: "name" },
     })
   })
 
   it("renders composition charts as svg templates", () => {
-    const result = chart.render(
+    const result = Chart.render(
       {
         type: "line",
         data: [
@@ -25,10 +25,10 @@ describe("charts public api", () => {
         width: 800,
         height: 400,
         children: [
-          chart.CartesianGrid(),
-          chart.XAxis({ dataKey: "name" }),
-          chart.YAxis(),
-          chart.Line({ dataKey: "value" }),
+          Chart.CartesianGrid(),
+          Chart.XAxis({ dataKey: "name" }),
+          Chart.YAxis(),
+          Chart.Line({ dataKey: "value" }),
         ],
       },
       {},
@@ -52,7 +52,7 @@ describe("charts public api", () => {
       hasTooltip: true,
     }
 
-    const result = chart.render(entity, {})
+    const result = Chart.render(entity, {})
 
     expect(result.strings.join("")).toContain("<svg")
     expect(result.values[4]).toBe("sales-line")
@@ -63,16 +63,21 @@ describe("charts public api", () => {
       getEntity() {},
       getType() {},
     }
-    const result = chart.render(
+    const result = Chart.render(
       {
         type: "pie",
         data: [{ label: "A", value: 10 }],
-        children: [chart.Pie({ dataKey: "value", nameKey: "label" })],
+        children: [Chart.Pie({ dataKey: "value", nameKey: "label" })],
       },
       api,
     )
 
     expect(result.strings.join("")).toContain("<svg")
     expect(result.values[4]).toBe("inline-chart-pie-anonymous")
+  })
+
+  it("exposes create/render on Chart for createStore (config mode)", () => {
+    expect(typeof Chart.render).toBe("function")
+    expect(typeof Chart.create).toBe("function")
   })
 })

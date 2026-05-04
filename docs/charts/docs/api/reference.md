@@ -8,65 +8,55 @@ description: Public API of @inglorious/charts.
 ## Exports
 
 ```js
-import {
-  areaChart,
-  barChart,
-  chart,
-  donutChart,
-  lineChart,
-  pieChart,
-} from "@inglorious/charts"
+import { Chart, streamSlide } from "@inglorious/charts"
 ```
 
-## Config-first chart types
+## `Chart`
 
-- `lineChart`
-- `areaChart`
-- `barChart`
-- `pieChart`
-- `donutChart`
+Um único objeto para **modo config** (`api.render(entityId)`) e **composição** (`Chart.render` com `children`).
 
-Use these as entity types in `createStore({ types })`.
+- Registre o mesmo objeto para cada tipo de entidade no store (`line: Chart`, `area: Chart`, …). O campo `type` da entidade (`"line"`, `"area"`, …) orienta defaults e primitivas.
+- **`Chart.render(props, api)`**: com `props.children`, roda composição (`createFrameFromRender`); sem `children`, trata `props` como snapshot de entidade (`createFrameFromEntity`).
 
-## `chart` helper (composition mode)
+### Factories (composição)
 
-### Main methods
+- `Chart.CartesianGrid(config)`
+- `Chart.XAxis(config)`
+- `Chart.YAxis(config)`
+- `Chart.Line(config)`
+- `Chart.Area(config)`
+- `Chart.Bar(config)`
+- `Chart.Pie(config)`
+- `Chart.Dots(config)`
+- `Chart.Tooltip(config)`
+- `Chart.Legend(config)`
+- `Chart.Brush(config)`
 
-- `chart.renderLineChart(entity, params, api)`
-- `chart.renderAreaChart(entity, params, api)`
-- `chart.renderBarChart(entity, params, api)`
-- `chart.renderPieChart(entity, params, api)`
+### Exemplo (composição)
 
-### Child factories
+```js
+Chart.render(
+  {
+    entity: "salesLine",
+    width: 800,
+    height: 400,
+    dataKeys: ["value"],
+    children: [
+      Chart.CartesianGrid(),
+      Chart.XAxis({ dataKey: "name" }),
+      Chart.YAxis(),
+      Chart.Line({ dataKey: "value" }),
+      Chart.Tooltip({}),
+    ],
+  },
+  api,
+)
+```
 
-- `chart.CartesianGrid(config)`
-- `chart.XAxis(config)`
-- `chart.YAxis(config)`
-- `chart.Line(config)`
-- `chart.Area(config)`
-- `chart.Bar(config)`
-- `chart.Pie(config)`
-- `chart.Dots(config)`
-- `chart.Tooltip(config)`
-- `chart.Legend(config)`
-- `chart.Brush(config)`
+## `streamSlide`
 
-### Entity-scoped helper
+Utilitário para janela deslizante em dados realtime (veja o entry `realtime` do pacote se usar `withRealtime`).
 
-- `chart.forEntity(entityId, api)`
-- `chart.forEntityInline(api, tempEntity?)`
+## Eventos
 
-These return a bound instance with the same rendering methods for concise local composition.
-
-## Events handled by chart types
-
-Core handlers include:
-
-- `dataUpdate`
-- `sizeUpdate`
-- `tooltipShow`
-- `tooltipMove`
-- `tooltipHide`
-- `brushChange`
-
-All handlers are event-driven through `api.notify(...)`.
+Handlers principais: `dataUpdate`, `sizeUpdate`, `tooltipShow`, `tooltipMove`, `tooltipHide`, `brushChange` — via `api.notify(...)`.

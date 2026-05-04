@@ -1,5 +1,5 @@
 import { html } from "@inglorious/web"
-import { chart } from "@inglorious/charts"
+import { Chart } from "@inglorious/charts"
 
 const inlineLineData = [
   { name: "0", value: 40 },
@@ -20,19 +20,19 @@ export function renderLineSections(api, status) {
 
       <section class="chart-section">
         <h2>Line Chart - Recharts Style (Composition with api.getEntity)</h2>
-        ${chart.render(
+        ${Chart.render(
           {
             entity: "salesLineChartComposition",
             width: 800,
             height: 400,
             dataKeys: ["value"],
             children: [
-              chart.CartesianGrid(),
-              chart.XAxis({ dataKey: "name" }),
-              chart.YAxis(),
-              chart.Line({ dataKey: "value", stroke: "#8884d8" }),
-              chart.Dots({ dataKey: "value", fill: "#8884d8" }),
-              chart.Tooltip(),
+              Chart.CartesianGrid(),
+              Chart.XAxis({ dataKey: "name" }),
+              Chart.YAxis(),
+              Chart.Line({ dataKey: "value", stroke: "#8884d8" }),
+              Chart.Dots({ dataKey: "value", fill: "#8884d8" }),
+              Chart.Tooltip(),
             ],
           },
           api,
@@ -43,19 +43,19 @@ export function renderLineSections(api, status) {
     <div class="charts-comparison">
       <section class="chart-section">
         <h2>Line Chart - Composition (No entity)</h2>
-        ${chart.render(
+        ${Chart.render(
           {
             data: inlineLineData,
             width: 600,
             height: 240,
             dataKeys: ["value"],
             children: [
-              chart.CartesianGrid(),
-              chart.XAxis({ dataKey: "name" }),
-              chart.YAxis(),
-              chart.Line({ dataKey: "value", stroke: "#2563eb" }),
-              chart.Dots({ dataKey: "value", fill: "#2563eb" }),
-              chart.Tooltip(),
+              Chart.CartesianGrid(),
+              Chart.XAxis({ dataKey: "name" }),
+              Chart.YAxis(),
+              Chart.Line({ dataKey: "value", stroke: "#2563eb" }),
+              Chart.Dots({ dataKey: "value", fill: "#2563eb" }),
+              Chart.Tooltip(),
             ],
           },
           api,
@@ -74,20 +74,20 @@ export function renderLineSections(api, status) {
           Line Chart with Brush - Recharts Style (Composition with
           api.getEntity)
         </h2>
-        ${chart.render(
+        ${Chart.render(
           {
             entity: "lineChartWithBrush",
             width: 800,
             height: 400,
             dataKeys: ["value"],
             children: [
-              chart.CartesianGrid(),
-              chart.XAxis({ dataKey: "name" }),
-              chart.YAxis(),
-              chart.Line({ dataKey: "value", stroke: "#8884d8" }),
-              chart.Dots({ dataKey: "value", fill: "#8884d8" }),
-              chart.Tooltip(),
-              chart.Brush(),
+              Chart.CartesianGrid(),
+              Chart.XAxis({ dataKey: "name" }),
+              Chart.YAxis(),
+              Chart.Line({ dataKey: "value", stroke: "#8884d8" }),
+              Chart.Dots({ dataKey: "value", fill: "#8884d8" }),
+              Chart.Tooltip(),
+              Chart.Brush(),
             ],
           },
           api,
@@ -106,53 +106,53 @@ export function renderLineSections(api, status) {
           Line Chart Multi Series - Recharts Style (Composition with
           api.getEntity)
         </h2>
-        ${chart.render(
+        ${Chart.render(
           {
             entity: "multiSeriesLineChartComposition",
             width: 800,
             height: 400,
             dataKeys: ["productA", "productB", "productC", "productD"],
             children: [
-              chart.CartesianGrid(),
-              chart.XAxis({ dataKey: "name" }),
-              chart.YAxis(),
-              chart.Line({
+              Chart.CartesianGrid(),
+              Chart.XAxis({ dataKey: "name" }),
+              Chart.YAxis(),
+              Chart.Line({
                 dataKey: "productA",
                 stroke: "#8884d8",
               }),
-              chart.Line({
+              Chart.Line({
                 dataKey: "productB",
                 stroke: "#82ca9d",
               }),
-              chart.Line({
+              Chart.Line({
                 dataKey: "productC",
                 stroke: "#ffc658",
               }),
-              chart.Line({
+              Chart.Line({
                 dataKey: "productD",
                 stroke: "#ff8042",
               }),
-              chart.Dots({
+              Chart.Dots({
                 dataKey: "productA",
                 fill: "#8884d8",
               }),
-              chart.Dots({
+              Chart.Dots({
                 dataKey: "productB",
                 fill: "#82ca9d",
               }),
-              chart.Dots({
+              Chart.Dots({
                 dataKey: "productC",
                 fill: "#ffc658",
               }),
-              chart.Dots({
+              Chart.Dots({
                 dataKey: "productD",
                 fill: "#ff8042",
               }),
-              chart.Legend({
+              Chart.Legend({
                 dataKeys: ["productA", "productB", "productC", "productD"],
                 colors: ["#8884d8", "#82ca9d", "#ffc658", "#ff8042"],
               }),
-              chart.Tooltip(),
+              Chart.Tooltip(),
             ],
           },
           api,
@@ -210,20 +210,20 @@ export function renderLineSections(api, status) {
             Pause
           </button>
         </div>
-        ${chart.render(
+        ${Chart.render(
           {
             entity: "realtimeLineChart",
             width: 800,
             height: 400,
             dataKeys: ["value"],
             children: [
-              chart.CartesianGrid(),
-              chart.XAxis({ dataKey: "name" }),
-              chart.YAxis(),
-              chart.Line({ dataKey: "value", stroke: "#2563eb" }),
-              chart.Dots({ dataKey: "value", fill: "#2563eb" }),
-              chart.Tooltip(),
-              ...(isRealtimeCompositionPaused ? [chart.Brush()] : []),
+              Chart.CartesianGrid(),
+              Chart.XAxis({ dataKey: "name" }),
+              Chart.YAxis(),
+              Chart.Line({ dataKey: "value", stroke: "#2563eb" }),
+              Chart.Dots({ dataKey: "value", fill: "#2563eb" }),
+              Chart.Tooltip(),
+              ...(isRealtimeCompositionPaused ? [Chart.Brush()] : []),
             ],
           },
           api,
