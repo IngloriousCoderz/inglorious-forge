@@ -35,6 +35,8 @@ const LEFT = 0
 const RIGHT = 1
 
 export function render(entity, api) {
+  const [xRotation, yRotation] = entity.values.rotation
+
   return html`<div class=${classes.logoForm}>
     <label for="size">Size</label>
     <input
@@ -46,6 +48,48 @@ export function render(entity, api) {
       @input=${(event) =>
         api.notify("fieldChange", {
           path: "size",
+          value: Number(event.target.value),
+        })}
+    />
+
+    <label for="xRotation">X Rotation</label>
+    <input
+      id="xRotation"
+      type="number"
+      min="-180"
+      max="180"
+      .value=${xRotation}
+      @input=${(event) =>
+        api.notify("fieldChange", {
+          path: "rotation.0",
+          value: Number(event.target.value),
+        })}
+    />
+
+    <label for="yRotation">Y Rotation</label>
+    <input
+      id="yRotation"
+      type="number"
+      min="-180"
+      max="180"
+      .value=${yRotation}
+      @input=${(event) =>
+        api.notify("fieldChange", {
+          path: "rotation.1",
+          value: Number(event.target.value),
+        })}
+    />
+
+    <label for="skew">Skew</label>
+    <input
+      id="skew"
+      type="number"
+      min="0"
+      max="90"
+      .value=${entity.values.skew}
+      @input=${(event) =>
+        api.notify("fieldChange", {
+          path: "skew",
           value: Number(event.target.value),
         })}
     />
