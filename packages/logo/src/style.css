@@ -21,7 +21,8 @@
       }
 
       &.left {
-        transform: rotateY(0deg) translateZ(var(--z-translation)) skew(12deg);
+        transform: rotateY(0deg) translateZ(var(--z-translation))
+          skew(calc(1 * var(--skew)));
 
         > img {
           transform: var(--left-face-flip);
@@ -29,7 +30,8 @@
       }
 
       &.right {
-        transform: rotateY(90deg) translateZ(var(--z-translation)) skew(-12deg);
+        transform: rotateY(90deg) translateZ(var(--z-translation))
+          skew(calc(-1 * var(--skew)));
 
         > img {
           transform: var(--right-face-flip);

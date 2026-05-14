@@ -21,10 +21,10 @@ import { when } from "@inglorious/web/directives/when"
 import eye from "./assets/eye.svg"
 import * as faces from "./assets/faces/index.js"
 
-const MINUS_FORTY_DEGREES = -0.6981
-const MINUS_FORTY_FIVE_DEGREES = -0.7854
+const DEFAULT_POSITION = [0, 0] // eslint-disable-line no-magic-numbers
+const DEFAULT_ROTATION = [-45, -40] // eslint-disable-line no-magic-numbers
 const DEFAULT_SIZE = 256
-const DEFAULT_COORDS = 0
+const DEFAULT_SKEW = 12
 const STEP = 0.001
 const HALF = 0.5
 
@@ -36,7 +36,14 @@ const HALF = 0.5
  * @returns {import('lit-html').TemplateResult}
  */
 export function render(entity) {
-  const { size = DEFAULT_SIZE, x = DEFAULT_COORDS, y = DEFAULT_COORDS } = entity
+  const {
+    size = DEFAULT_SIZE,
+    position = DEFAULT_POSITION,
+    rotation = DEFAULT_ROTATION,
+    skew = DEFAULT_SKEW,
+  } = entity
+  const [x, y] = position
+  const [hRotation, vRotation] = rotation
   const [left, right] = entity.faces
 
   return html`<div
@@ -44,12 +51,13 @@ export function render(entity) {
     style=${styleMap({
       "--size": `${size}px`,
       "--transform": `scaleY(1.2) translateZ(-${size}px) rotateX(${
-        MINUS_FORTY_DEGREES - STEP * y
-      }rad)
-          rotateY(${MINUS_FORTY_FIVE_DEGREES + STEP * x}rad)`,
+        vRotation - STEP * y
+      }deg)
+          rotateY(${hRotation + STEP * x}deg)`,
       "--z-translation": `${size * HALF}px`,
       "--left-face-flip": left.reverse ? "rotateY(180deg)" : "none",
       "--right-face-flip": right.reverse ? "rotateY(180deg)" : "none",
+      "--skew": `${skew}deg`,
     })}
   >
     <div class="iw-logo-cube">
