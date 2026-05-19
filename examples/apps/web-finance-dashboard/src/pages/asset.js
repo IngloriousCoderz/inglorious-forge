@@ -27,53 +27,50 @@ export const assetPage = {
   },
 
   // Headline: async lifecycle
-  ...handleAsync(
-    "assetFetch",
-    {
-      start(entity, payload) {
-        entity.symbol = payload?.symbol || DEFAULT_ASSET_SYMBOL
-        entity.loading = true
-        entity.error = null
-      },
-
-      async run(payload) {
-        return fetchAssetData(payload)
-      },
-
-      success(entity, payload) {
-        entity.symbol = payload.quote?.symbol || entity.symbol
-        entity.quote = payload.quote || {}
-        entity.profile = payload.profile || {}
-        entity.fundamentals = payload.fundamentals || {}
-        entity.priceSeries = Array.isArray(payload.priceSeries)
-          ? payload.priceSeries
-          : []
-        entity.dataSource = payload.source
-        entity.fallbackSymbols = payload.fallbackSymbols
-        entity.warning = payload.warning
-        entity.loaded = true
-        entity.error = null
-        entity.loading = false
-      },
-
-      error(entity, error) {
-        entity.error = error instanceof Error ? error.message : String(error)
-        entity.quote = null
-        entity.profile = null
-        entity.fundamentals = null
-        entity.priceSeries = []
-        entity.dataSource = "mock"
-        entity.fallbackSymbols = getFallbackSymbols()
-        entity.warning = "Falling back to mock data"
-        entity.loaded = false
-        entity.loading = false
-      },
-
-      finally(entity) {
-        entity.loading = false
-      },
+  ...handleAsync("assetFetch", {
+    start(entity, payload) {
+      entity.symbol = payload?.symbol || DEFAULT_ASSET_SYMBOL
+      entity.loading = true
+      entity.error = null
     },
-  ),
+
+    async run(payload) {
+      return fetchAssetData(payload)
+    },
+
+    success(entity, payload) {
+      entity.symbol = payload.quote?.symbol || entity.symbol
+      entity.quote = payload.quote || {}
+      entity.profile = payload.profile || {}
+      entity.fundamentals = payload.fundamentals || {}
+      entity.priceSeries = Array.isArray(payload.priceSeries)
+        ? payload.priceSeries
+        : []
+      entity.dataSource = payload.source
+      entity.fallbackSymbols = payload.fallbackSymbols
+      entity.warning = payload.warning
+      entity.loaded = true
+      entity.error = null
+      entity.loading = false
+    },
+
+    error(entity, error) {
+      entity.error = error instanceof Error ? error.message : String(error)
+      entity.quote = null
+      entity.profile = null
+      entity.fundamentals = null
+      entity.priceSeries = []
+      entity.dataSource = "mock"
+      entity.fallbackSymbols = getFallbackSymbols()
+      entity.warning = "Falling back to mock data"
+      entity.loaded = false
+      entity.loading = false
+    },
+
+    finally(entity) {
+      entity.loading = false
+    },
+  }),
 
   // Body: render
   render(entity, api) {
