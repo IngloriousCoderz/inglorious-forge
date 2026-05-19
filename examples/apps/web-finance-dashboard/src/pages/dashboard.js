@@ -54,100 +54,97 @@ export const dashboardPage = {
   },
 
   // Headline: async lifecycle (dashboard-first, low quota)
-  ...handleAsync(
-    "dashboardFetchInstrument",
-    {
-      start(entity) {
-        entity.loading = true
-        entity.error = null
-      },
-
-      async run(payload) {
-        const isin = payload?.isin
-        const mockData = getInstrumentData(isin)
-        const mockInstrument = mockData.instrument || EMPTY_INSTRUMENT
-        const mockHistory = Array.isArray(mockData.history)
-          ? mockData.history
-          : []
-        const mockQuote = mockData.quote || EMPTY_QUOTE
-
-        if (!isin || mockInstrument === EMPTY_INSTRUMENT) {
-          return createInstrumentPayload({
-            isin,
-            instrument: EMPTY_INSTRUMENT,
-            history: [],
-            quote: EMPTY_QUOTE,
-            source: "mock",
-          })
-        }
-
-        if (!hasFmpConfig() || !mockInstrument.symbol) {
-          return createInstrumentPayload({
-            isin,
-            instrument: mockInstrument,
-            history: mockHistory,
-            quote: mockQuote,
-            source: "mock",
-          })
-        }
-
-        try {
-          const historyPayload = await fmpGet("/historical-price-eod/full", {
-            symbol: mockInstrument.symbol,
-          })
-          if (!isValidDashboardHistoryPayload(historyPayload)) {
-            throw new Error("Invalid API response structure")
-          }
-          const apiHistory = normalizeDashboardHistory(historyPayload, 500)
-          const apiQuote = quoteFromHistory(apiHistory)
-
-          return createInstrumentPayload({
-            isin,
-            instrument: mockInstrument,
-            history: apiHistory,
-            quote: apiQuote,
-            source: "api",
-          })
-        } catch {
-          return createInstrumentPayload({
-            isin,
-            instrument: mockInstrument,
-            history: mockHistory,
-            quote: mockQuote,
-            source: "mock",
-          })
-        }
-      },
-
-      success(entity, payload, api) {
-        entity.instrument = payload.instrument
-        entity.quote = payload.quote
-        entity.dataSource = payload.source
-
-        api.notify(
-          "#financeQuotationChart:dataUpdate",
-          buildBrushSeries(payload.history),
-        )
-        api.notify(
-          "#isinHistoryTable:tableDataSet",
-          buildHistoryTableRows(payload.isin, payload.history),
-        )
-        entity.loading = false
-      },
-
-      error(entity, error) {
-        entity.error = error instanceof Error ? error.message : String(error)
-        entity.instrument = EMPTY_INSTRUMENT
-        entity.quote = EMPTY_QUOTE
-        entity.dataSource = "mock"
-        entity.loading = false
-      },
-
-      finally(entity) {
-        entity.loading = false
-      },
+  ...handleAsync("dashboardFetchInstrument", {
+    start(entity) {
+      entity.loading = true
+      entity.error = null
     },
-  ),
+
+    async run(payload) {
+      const isin = payload?.isin
+      const mockData = getInstrumentData(isin)
+      const mockInstrument = mockData.instrument || EMPTY_INSTRUMENT
+      const mockHistory = Array.isArray(mockData.history)
+        ? mockData.history
+        : []
+      const mockQuote = mockData.quote || EMPTY_QUOTE
+
+      if (!isin || mockInstrument === EMPTY_INSTRUMENT) {
+        return createInstrumentPayload({
+          isin,
+          instrument: EMPTY_INSTRUMENT,
+          history: [],
+          quote: EMPTY_QUOTE,
+          source: "mock",
+        })
+      }
+
+      if (!hasFmpConfig() || !mockInstrument.symbol) {
+        return createInstrumentPayload({
+          isin,
+          instrument: mockInstrument,
+          history: mockHistory,
+          quote: mockQuote,
+          source: "mock",
+        })
+      }
+
+      try {
+        const historyPayload = await fmpGet("/historical-price-eod/full", {
+          symbol: mockInstrument.symbol,
+        })
+        if (!isValidDashboardHistoryPayload(historyPayload)) {
+          throw new Error("Invalid API response structure")
+        }
+        const apiHistory = normalizeDashboardHistory(historyPayload, 500)
+        const apiQuote = quoteFromHistory(apiHistory)
+
+        return createInstrumentPayload({
+          isin,
+          instrument: mockInstrument,
+          history: apiHistory,
+          quote: apiQuote,
+          source: "api",
+        })
+      } catch {
+        return createInstrumentPayload({
+          isin,
+          instrument: mockInstrument,
+          history: mockHistory,
+          quote: mockQuote,
+          source: "mock",
+        })
+      }
+    },
+
+    success(entity, payload, api) {
+      entity.instrument = payload.instrument
+      entity.quote = payload.quote
+      entity.dataSource = payload.source
+
+      api.notify(
+        "#financeQuotationChart:dataUpdate",
+        buildBrushSeries(payload.history),
+      )
+      api.notify(
+        "#isinHistoryTable:tableDataSet",
+        buildHistoryTableRows(payload.isin, payload.history),
+      )
+      entity.loading = false
+    },
+
+    error(entity, error) {
+      entity.error = error instanceof Error ? error.message : String(error)
+      entity.instrument = EMPTY_INSTRUMENT
+      entity.quote = EMPTY_QUOTE
+      entity.dataSource = "mock"
+      entity.loading = false
+    },
+
+    finally(entity) {
+      entity.loading = false
+    },
+  }),
 
   // Body: render
   render(entity, api) {
