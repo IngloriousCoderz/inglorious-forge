@@ -1,6 +1,6 @@
+import { Chart } from "@inglorious/charts"
+import { handleAsync } from "@inglorious/store/async"
 import { html } from "@inglorious/web"
-import { handleAsync } from "../../../../../packages/store/src/async.js"
-import { chart } from "@inglorious/charts"
 
 import { renderInlineLoader } from "../components/loading.js"
 import { renderKpiCard } from "../components/kpi-card.js"
@@ -15,7 +15,7 @@ import { formatMoney, toNumber } from "../services/fmp.js"
 export const assetPage = {
   // Headline: route lifecycle
   routeChange(entity, payload, api) {
-    if (payload.route !== entity.type) {
+    if (payload.route !== entity.id) {
       assetTransientClear(entity)
       return
     }
@@ -68,8 +68,11 @@ export const assetPage = {
         entity.loaded = false
         entity.loading = false
       },
+
+      finally(entity) {
+        entity.loading = false
+      },
     },
-    { strategy: "latest" },
   ),
 
   // Body: render
@@ -102,19 +105,19 @@ export const assetPage = {
               ${entity.loading
                 ? renderInlineLoader("Switching asset...")
                 : null}
-              ${chart.renderLineChart(
-                { data: priceSeries },
+              ${Chart.render(
                 {
+                  data: priceSeries,
                   width: 1000,
                   height: 360,
                   dataKeys: ["value"],
                   children: [
-                    chart.CartesianGrid({ stroke: "#334155" }),
-                    chart.XAxis({ dataKey: "name" }),
-                    chart.YAxis({ width: "auto" }),
-                    chart.Line({ dataKey: "value", stroke: trendColor }),
-                    chart.Dots({ dataKey: "value", fill: trendColor }),
-                    chart.Tooltip({}),
+                    Chart.CartesianGrid({ stroke: "#334155" }),
+                    Chart.XAxis({ dataKey: "name" }),
+                    Chart.YAxis(),
+                    Chart.Line({ dataKey: "value", stroke: trendColor }),
+                    Chart.Dots({ dataKey: "value", fill: trendColor }),
+                    Chart.Tooltip(),
                   ],
                 },
                 api,

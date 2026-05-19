@@ -5,7 +5,7 @@ import { renderSectionCard } from "../components/section-card.js"
 export const screenerPage = {
   // Headline: route lifecycle
   routeChange(entity, payload) {
-    if (payload.route !== entity.type) return
+    if (payload.route !== entity.id) return
     if (entity.initialized) return
     entity.initialized = true
   },

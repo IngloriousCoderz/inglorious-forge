@@ -162,13 +162,16 @@ export function handleAsync(type, handlers, options = {}) {
     }),
 
     async [`${type}Run`](entity, payload, api) {
+      // Snapshot routing keys before await — mutative revokes draft proxies after the patch.
+      const scopedEntity = { id: entity.id, type: entity.type }
+
       try {
         const result = await handlers.run(payload, api)
-        notify(api, entity, `${type}Success`, result)
+        notify(api, scopedEntity, `${type}Success`, result)
       } catch (error) {
-        notify(api, entity, `${type}Error`, error)
+        notify(api, scopedEntity, `${type}Error`, error)
       } finally {
-        notify(api, entity, `${type}Finally`)
+        notify(api, scopedEntity, `${type}Finally`)
       }
     },
 

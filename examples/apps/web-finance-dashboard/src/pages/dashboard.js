@@ -1,6 +1,6 @@
+import { Chart } from "@inglorious/charts"
+import { handleAsync } from "@inglorious/store/async"
 import { html } from "@inglorious/web"
-import { handleAsync } from "../../../../../packages/store/src/async.js"
-import { chart } from "@inglorious/charts"
 
 import { renderInlineLoader } from "../components/loading.js"
 import {
@@ -23,7 +23,7 @@ const EMPTY_QUOTE = { ask: 0, bid: 0, mid: 0 }
 export const dashboardPage = {
   // Headline: page lifecycle
   routeChange(entity, payload, api) {
-    if (payload.route !== entity.type) {
+    if (payload.route !== entity.id) {
       dashboardInstrumentClear(entity, api)
       return
     }
@@ -125,7 +125,7 @@ export const dashboardPage = {
         entity.dataSource = payload.source
 
         api.notify(
-          "#financeQuotationChart:chartDataSet",
+          "#financeQuotationChart:dataUpdate",
           buildBrushSeries(payload.history),
         )
         api.notify(
@@ -142,15 +142,17 @@ export const dashboardPage = {
         entity.dataSource = "mock"
         entity.loading = false
       },
+
+      finally(entity) {
+        entity.loading = false
+      },
     },
-    { strategy: "latest" },
   ),
 
   // Body: render
   render(entity, api) {
     const instrument = entity.instrument || EMPTY_INSTRUMENT
     const latest = entity.quote || EMPTY_QUOTE
-    const quotationChart = api.getEntity("financeQuotationChart")
 
     return html`
       <div class="iw-board">
@@ -193,25 +195,25 @@ export const dashboardPage = {
                 ${entity.loading
                   ? renderInlineLoader("Loading instrument...")
                   : null}
-                ${chart.renderLineChart(
-                  quotationChart,
+                ${Chart.render(
                   {
+                    entity: "financeQuotationChart",
                     width: 860,
                     height: 340,
                     dataKeys: ["value"],
                     children: [
-                      chart.CartesianGrid({ stroke: "#334155" }),
-                      chart.XAxis({ dataKey: "name" }),
-                      chart.YAxis({ width: "auto" }),
-                      chart.Area({
+                      Chart.CartesianGrid({ stroke: "#334155" }),
+                      Chart.XAxis({ dataKey: "name" }),
+                      Chart.YAxis(),
+                      Chart.Area({
                         dataKey: "value",
                         fill: "#3b82f6",
                         fillOpacity: "0.1",
                         stroke: "none",
                       }),
-                      chart.Line({ dataKey: "value", stroke: "#2563eb" }),
-                      chart.Tooltip({}),
-                      chart.Brush({ dataKey: "name", height: 28 }),
+                      Chart.Line({ dataKey: "value", stroke: "#2563eb" }),
+                      Chart.Tooltip(),
+                      Chart.Brush({ dataKey: "name", height: 28 }),
                     ],
                   },
                   api,
@@ -259,23 +261,21 @@ export const dashboardPage = {
                 ${entity.loading
                   ? renderInlineLoader("Refreshing bars...")
                   : null}
-                ${chart.renderBarChart(
+                ${Chart.render(
                   {
                     data: [
                       { label: "Ask Price", value: latest.ask },
                       { label: "Bid Price", value: latest.bid },
                       { label: "Mid Price", value: latest.mid },
                     ],
-                  },
-                  {
                     width: 640,
                     height: 270,
                     children: [
-                      chart.CartesianGrid({ stroke: "#334155" }),
-                      chart.XAxis({ dataKey: "label" }),
-                      chart.YAxis({ width: "auto" }),
-                      chart.Bar({ dataKey: "value" }),
-                      chart.Tooltip({}),
+                      Chart.CartesianGrid({ stroke: "#334155" }),
+                      Chart.XAxis({ dataKey: "label" }),
+                      Chart.YAxis(),
+                      Chart.Bar({ dataKey: "value" }),
+                      Chart.Tooltip(),
                     ],
                   },
                   api,
@@ -368,7 +368,7 @@ function dashboardInstrumentClear(entity, api) {
   entity.error = null
   entity.loading = false
   entity.dataSource = "mock"
-  api.notify("#financeQuotationChart:chartDataSet", [])
+  api.notify("#financeQuotationChart:dataUpdate", [])
   api.notify("#isinHistoryTable:tableDataSet", [])
 }
 

@@ -2,7 +2,7 @@ import { screenerRows } from "../mocks/screener.js"
 
 export const entities = {
   router: {
-    type: "router",
+    type: "Router",
   },
 
   dashboardPage: {
@@ -40,6 +40,10 @@ export const entities = {
   financeQuotationChart: {
     type: "line",
     data: [],
+    width: 860,
+    height: 340,
+    hasGrid: true,
+    hasTooltip: true,
     brush: {
       enabled: true,
       height: 28,
@@ -62,7 +66,12 @@ export const entities = {
         isFilterable: false,
       },
     ],
-    data: [],
+    rows: [],
+    sorts: [],
+    filters: {},
+    search: null,
+    selection: [],
+    isMultiSelect: false,
     pagination: { pageSize: 10 },
   },
 
@@ -81,7 +90,12 @@ export const entities = {
       },
       { id: "market", title: "Market", isSortable: false, isFilterable: false },
     ],
-    data: [],
+    rows: [],
+    sorts: [],
+    filters: {},
+    search: null,
+    selection: [],
+    isMultiSelect: false,
     pagination: { pageSize: 10 },
   },
 
@@ -121,7 +135,12 @@ export const entities = {
         isFilterable: false,
       },
     ],
-    data: [],
+    rows: [],
+    sorts: [],
+    filters: {},
+    search: null,
+    selection: [],
+    isMultiSelect: false,
     pagination: { pageSize: 10 },
   },
 
@@ -140,7 +159,12 @@ export const entities = {
         isFilterable: false,
       },
     ],
-    data: [],
+    rows: [],
+    sorts: [],
+    filters: {},
+    search: null,
+    selection: [],
+    isMultiSelect: false,
     pagination: { pageSize: 25 },
   },
 
@@ -185,8 +209,12 @@ export const entities = {
       },
     ],
     rowId: "symbol",
-    data: screenerRows,
-    search: {},
+    rows: screenerRows,
+    sorts: [],
+    filters: {},
+    search: { value: "" },
+    selection: [],
+    isMultiSelect: true,
     pagination: { pageSize: 10 },
   },
 }
