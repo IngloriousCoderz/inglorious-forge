@@ -1,4 +1,4 @@
-import { chart } from "@inglorious/charts"
+import { Chart } from "@inglorious/charts"
 import { html } from "@inglorious/web"
 
 import { Button } from "../../controls/button"
@@ -84,22 +84,24 @@ export const TrafficCard = {
   },
 
   renderTrafficChart(_, api) {
-    return chart.renderAreaChart(
-      { id: "traffic", type: "area", data: trafficSeries },
+    return Chart.render(
       {
+        id: "traffic",
+        type: "area",
+        data: trafficSeries,
         width: 1400,
         height: 320,
         dataKeys: ["visits", "unique"],
         children: [
-          chart.CartesianGrid({
+          Chart.CartesianGrid({
             stroke: "rgba(255,255,255,0.08)",
             strokeDasharray: "4 4",
           }),
-          chart.XAxis({ dataKey: "month" }),
-          chart.YAxis({ width: "auto" }),
-          chart.Area({ dataKey: "visits", stroke: "#39a2f1", strokeWidth: 3 }),
-          chart.Area({ dataKey: "unique", stroke: "#2eb85c", strokeWidth: 3 }),
-          chart.Tooltip({}),
+          Chart.XAxis({ dataKey: "month" }),
+          Chart.YAxis({ width: "auto" }),
+          Chart.Area({ dataKey: "visits", stroke: "#39a2f1", strokeWidth: 3 }),
+          Chart.Area({ dataKey: "unique", stroke: "#2eb85c", strokeWidth: 3 }),
+          Chart.Tooltip({}),
         ],
       },
       api,

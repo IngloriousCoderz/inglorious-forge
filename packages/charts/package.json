@@ -14,23 +14,23 @@
   },
   "keywords": [
     "charts",
-    "visualization",
     "svg",
-    "recharts",
+    "d3",
     "inglorious"
   ],
   "type": "module",
   "exports": {
     ".": {
-      "types": "./types/index.d.ts",
       "import": "./src/index.js"
+    },
+    "./realtime": {
+      "import": "./src/decorators/with-realtime.js"
     },
     "./base.css": "./src/base.css",
     "./theme.css": "./src/theme.css"
   },
   "files": [
-    "src",
-    "types"
+    "src"
   ],
   "publishConfig": {
     "access": "public"

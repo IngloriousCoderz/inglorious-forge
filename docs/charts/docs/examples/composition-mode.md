@@ -8,21 +8,21 @@ description: Build charts with reusable chart helper primitives.
 Composition mode gives control over chart internals.
 
 ```js
-import { chart } from "@inglorious/charts"
+import { Chart } from "@inglorious/charts"
 
-chart.renderLineChart(
-  api.getEntity("salesLineChartComposition"),
+Chart.render(
   {
+    entity: "salesLineChartComposition",
     width: 800,
     height: 400,
     dataKeys: ["value"],
     children: [
-      chart.CartesianGrid({ stroke: "#eee", strokeDasharray: "5 5" }),
-      chart.XAxis({ dataKey: "name" }),
-      chart.YAxis({ width: "auto" }),
-      chart.Line({ dataKey: "value", stroke: "#8884d8" }),
-      chart.Dots({ dataKey: "value", fill: "#8884d8" }),
-      chart.Tooltip({}),
+      Chart.CartesianGrid({ stroke: "#eee", strokeDasharray: "5 5" }),
+      Chart.XAxis({ dataKey: "name" }),
+      Chart.YAxis({ width: "auto" }),
+      Chart.Line({ dataKey: "value", stroke: "#8884d8" }),
+      Chart.Dots({ dataKey: "value", fill: "#8884d8" }),
+      Chart.Tooltip({}),
     ],
   },
   api,

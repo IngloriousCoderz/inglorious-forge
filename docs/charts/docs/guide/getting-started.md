@@ -15,23 +15,15 @@ pnpm add @inglorious/store @inglorious/charts @inglorious/web
 
 ```js
 import { createStore } from "@inglorious/store"
-import {
-  lineChart,
-  areaChart,
-  barChart,
-  pieChart,
-  donutChart,
-  chart,
-} from "@inglorious/charts"
+import { Chart } from "@inglorious/charts"
 
 export const store = createStore({
   types: {
-    line: lineChart,
-    area: areaChart,
-    bar: barChart,
-    pie: pieChart,
-    donut: donutChart,
-    chart,
+    line: Chart,
+    area: Chart,
+    bar: Chart,
+    pie: Chart,
+    donut: Chart,
   },
   entities: {
     sales: {
@@ -43,8 +35,8 @@ export const store = createStore({
       ],
       width: 800,
       height: 400,
-      showGrid: true,
-      showTooltip: true,
+      hasGrid: true,
+      hasTooltip: true,
     },
   },
 })
