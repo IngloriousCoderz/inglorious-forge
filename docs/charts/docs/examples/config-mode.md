@@ -19,9 +19,9 @@ Config-first is the fastest way to ship charts.
   ],
   width: 800,
   height: 400,
-  showGrid: true,
-  showTooltip: true,
-  showLegend: false,
+  hasGrid: true,
+  hasTooltip: true,
+  hasLegend: false,
 }
 ```
 

@@ -1,25 +1,19 @@
 import { createStore } from "@inglorious/store"
-import {
-  areaChart,
-  barChart,
-  chart,
-  donutChart,
-  lineChart,
-  pieChart,
-} from "@inglorious/charts"
+import { Chart } from "@inglorious/charts"
+import { withRealtime } from "@inglorious/charts/realtime"
 import { entities } from "./entities.js"
-import { middlewares } from "./middlewares.js"
 
 export const store = createStore({
   types: {
-    area: areaChart,
-    line: lineChart,
-    bar: barChart,
-    pie: pieChart,
-    donut: donutChart,
-    // Add chart object for composition methods
-    chart: chart,
+    area: Chart,
+    bar: Chart,
+    line: Chart,
+    "area-rt": [Chart, withRealtime],
+    "bar-rt": [Chart, withRealtime],
+    "line-rt": [Chart, withRealtime],
+    composed: Chart,
+    pie: Chart,
+    donut: Chart,
   },
   entities,
-  middlewares,
 })

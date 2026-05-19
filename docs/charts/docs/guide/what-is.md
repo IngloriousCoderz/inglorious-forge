@@ -18,10 +18,10 @@ It focuses on:
 
 ### Config-first
 
-Register chart types (`lineChart`, `areaChart`, etc.) and render entities directly with `api.render(id)`.
+Register `Chart` for each entity kind in the store (e.g. `line: Chart`, `area: Chart`) and render entities with `api.render(id)`.
 
 ### Composition
 
-Use the exported `chart` helper (`chart.renderLineChart`, `chart.XAxis`, `chart.Tooltip`, etc.) for finer control.
+Use the exported `Chart` helper (`Chart.render`, `Chart.XAxis`, `Chart.Tooltip`, etc.) for finer control.
 
 Both styles can coexist in the same app.
