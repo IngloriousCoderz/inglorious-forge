@@ -60,7 +60,9 @@ export const TestComponent = {
 `;
 
 exports[`@inglorious/vite-plugin-vue > complex component > handles a realistic component 1`] = `
-"import { html, when, repeat } from "@inglorious/web";
+"import { html } from "@inglorious/web";
+import { when } from "@inglorious/web/directives/when";
+import { repeat } from "@inglorious/web/directives/repeat";
 
 export const TestComponent = {
   create(entity) {
@@ -82,7 +84,9 @@ export const TestComponent = {
 `;
 
 exports[`@inglorious/vite-plugin-vue > complex component > handles complete todo app 1`] = `
-"import { html, when, repeat } from "@inglorious/web";
+"import { html } from "@inglorious/web";
+import { when } from "@inglorious/web/directives/when";
+import { repeat } from "@inglorious/web/directives/repeat";
 
 export const TestComponent = {
   create(entity) {
@@ -135,7 +139,8 @@ export const TestComponent = {
 `;
 
 exports[`@inglorious/vite-plugin-vue > component references > renders PascalCase component inside conditionals 1`] = `
-"import { html, when } from "@inglorious/web";
+"import { html } from "@inglorious/web";
+import { when } from "@inglorious/web/directives/when";
 
 export const TestComponent = {
   render(entity, api) {
@@ -146,7 +151,8 @@ export const TestComponent = {
 `;
 
 exports[`@inglorious/vite-plugin-vue > component references > renders PascalCase component inside loops 1`] = `
-"import { html, repeat } from "@inglorious/web";
+"import { html } from "@inglorious/web";
+import { repeat } from "@inglorious/web/directives/repeat";
 
 export const TestComponent = {
   render(entity, api) {
@@ -192,7 +198,8 @@ exports[`@inglorious/vite-plugin-vue > component references > renders nested Pas
 `;
 
 exports[`@inglorious/vite-plugin-vue > conditionals > handles nested v-if 1`] = `
-"import { html, when } from "@inglorious/web";
+"import { html } from "@inglorious/web";
+import { when } from "@inglorious/web/directives/when";
 
 export const TestComponent = {
   render(entity, api) {
@@ -205,7 +212,8 @@ export const TestComponent = {
 `;
 
 exports[`@inglorious/vite-plugin-vue > conditionals > handles v-if / v-else 1`] = `
-"import { html, when } from "@inglorious/web";
+"import { html } from "@inglorious/web";
+import { when } from "@inglorious/web/directives/when";
 
 export const TestComponent = {
   render(entity, api) {
@@ -217,7 +225,8 @@ export const TestComponent = {
 `;
 
 exports[`@inglorious/vite-plugin-vue > conditionals > handles v-if / v-else-if / v-else 1`] = `
-"import { html, when } from "@inglorious/web";
+"import { html } from "@inglorious/web";
+import { when } from "@inglorious/web/directives/when";
 
 export const TestComponent = {
   render(entity, api) {
@@ -320,7 +329,8 @@ export const TestComponent = {
 `;
 
 exports[`@inglorious/vite-plugin-vue > loops > handles v-for 1`] = `
-"import { html, repeat } from "@inglorious/web";
+"import { html } from "@inglorious/web";
+import { repeat } from "@inglorious/web/directives/repeat";
 
 export const TestComponent = {
   render(entity, api) {
@@ -333,7 +343,8 @@ export const TestComponent = {
 `;
 
 exports[`@inglorious/vite-plugin-vue > loops > handles v-for with index 1`] = `
-"import { html, repeat } from "@inglorious/web";
+"import { html } from "@inglorious/web";
+import { repeat } from "@inglorious/web/directives/repeat";
 
 export const TestComponent = {
   render(entity, api) {
@@ -346,7 +357,8 @@ export const TestComponent = {
 `;
 
 exports[`@inglorious/vite-plugin-vue > loops > handles v-for without :key 1`] = `
-"import { html, repeat } from "@inglorious/web";
+"import { html } from "@inglorious/web";
+import { repeat } from "@inglorious/web/directives/repeat";
 
 export const TestComponent = {
   render(entity, api) {
@@ -359,7 +371,8 @@ export const TestComponent = {
 `;
 
 exports[`@inglorious/vite-plugin-vue > script section > emits render-scope locals inside render 1`] = `
-"import { html, when } from "@inglorious/web";
+"import { html } from "@inglorious/web";
+import { when } from "@inglorious/web/directives/when";
 
 import { flex as Flex } from "../../layout/flex/index.js";
 

@@ -58,18 +58,34 @@ export function vue() {
         )
 
         let output = ""
-        const importLines = []
-        if (imports.has("html")) importLines.push("html")
-        if (imports.has("when")) importLines.push("when")
-        if (imports.has("repeat")) importLines.push("repeat")
+        const runtimeImportsBySource = {
+          "@inglorious/web": new Set(),
+          "@inglorious/web/directives/when": new Set(),
+          "@inglorious/web/directives/repeat": new Set(),
+        }
+
+        if (imports.has("html")) {
+          runtimeImportsBySource["@inglorious/web"].add("html")
+        }
+        if (imports.has("when")) {
+          runtimeImportsBySource["@inglorious/web/directives/when"].add("when")
+        }
+        if (imports.has("repeat")) {
+          runtimeImportsBySource["@inglorious/web/directives/repeat"].add(
+            "repeat",
+          )
+        }
 
         const generatedImportLines = []
-        let mergedWebImport = false
 
         if (importDecls.length) {
           for (const decl of importDecls) {
-            if (decl.source.value === "@inglorious/web") {
-              if (importLines.length) {
+            const source = decl.source.value
+
+            if (runtimeImportsBySource[source]) {
+              const runtimeImports = runtimeImportsBySource[source]
+
+              if (runtimeImports.size) {
                 const cloned = t.cloneNode(decl, true)
                 const existing = new Set()
                 for (const specifier of cloned.specifiers) {
@@ -77,7 +93,8 @@ export function vue() {
                     existing.add(specifier.imported.name)
                   }
                 }
-                for (const name of importLines) {
+
+                for (const name of runtimeImports) {
                   if (!existing.has(name)) {
                     cloned.specifiers.push(
                       t.importSpecifier(t.identifier(name), t.identifier(name)),
@@ -88,19 +105,26 @@ export function vue() {
               } else {
                 generatedImportLines.push(generate(decl).code)
               }
-              mergedWebImport = true
+              runtimeImportsBySource[source].clear()
             } else {
               generatedImportLines.push(generate(decl).code)
             }
           }
         }
 
-        if (!mergedWebImport && importLines.length) {
-          output += `import { ${importLines.join(", ")} } from "@inglorious/web";\n`
+        const remainingRuntimeImports = Object.entries(runtimeImportsBySource)
+          .filter(([, names]) => names.size)
+          .map(
+            ([source, names]) =>
+              `import { ${[...names].join(", ")} } from "${source}";`,
+          )
+
+        if (remainingRuntimeImports.length) {
+          output += `${remainingRuntimeImports.join("\n")}\n`
         }
 
         if (generatedImportLines.length) {
-          if (!mergedWebImport && importLines.length) {
+          if (remainingRuntimeImports.length) {
             output += "\n"
           }
           output += `${generatedImportLines.join("\n")}\n`

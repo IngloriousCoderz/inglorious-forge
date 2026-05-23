@@ -577,7 +577,10 @@ const save = (entity) => {
 </template>
 `
       const result = await transform(code)
-      expect(result).toContain("html, when")
+      expect(result).toContain('import { html } from "@inglorious/web"')
+      expect(result).toContain(
+        'import { when } from "@inglorious/web/directives/when"',
+      )
     })
 
     it("imports repeat for v-for", async () => {
@@ -587,7 +590,10 @@ const save = (entity) => {
 </template>
 `
       const result = await transform(code)
-      expect(result).toContain("html, repeat")
+      expect(result).toContain('import { html } from "@inglorious/web"')
+      expect(result).toContain(
+        'import { repeat } from "@inglorious/web/directives/repeat"',
+      )
     })
 
     it("imports all needed directives", async () => {
