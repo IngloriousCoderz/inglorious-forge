@@ -7,6 +7,8 @@ A lightweight, reactive-enough web framework built on **pure JavaScript**, the e
 
 Unlike modern frameworks that invent their own languages or rely on signals, proxies, or compilers, **@inglorious/web embraces plain JavaScript** and a transparent architecture.
 
+It's a **complete framework**: it ships with a client-side router, declarative forms, async helpers (via `@inglorious/store/async`), and a dedicated testing utilities entry point (`@inglorious/web/test`) that re-exports `trigger` from `@inglorious/store` and `render` from `lit-html`. UI primitives (controls, data display, navigation, feedback, layout, surfaces) live in the companion package **[Inglorious UI](https://inglorious.dev/ui)**.
+
 ---
 
 ## Features
@@ -26,8 +28,8 @@ Unlike modern frameworks that invent their own languages or rely on signals, pro
   Zero magic, zero reactivity graphs, zero compiler.  
   Just JavaScript functions and store events.
 
-- **Router, Forms, Tables, Virtual Lists**  
-  High-level primitives built on the same predictable model.
+- **Router, Forms, Async, Testing utilities**  
+  High-level primitives built on the same predictable model. UI primitives (tables, virtual lists, comboboxes, and more) live in **[Inglorious UI](https://inglorious.dev/ui)**.
 
 - **Zero Component State**  
   All state lives in the store — never inside components.
@@ -347,7 +349,12 @@ One of Inglorious Web's greatest strengths is **testability**. Entity handlers a
 
 ### Testing Utilities
 
-Inglorious Web provides two simple utilities for testing via `@inglorious/web/test`:
+The `@inglorious/web/test` entry point re-exports two helpers so you can test handlers and templates without any extra setup:
+
+- **`trigger`** — comes from `@inglorious/store` (`@inglorious/store/test`). It executes an entity handler and returns the new state plus any dispatched events.
+- **`render`** — comes from `lit-html`. It renders a template to a DOM node so you can assert on its output.
+
+Both are re-exported from `@inglorious/web/test` purely as a convenience, so a web app only needs to depend on `@inglorious/web` to test its handlers and templates.
 
 #### `trigger(entity, handler, payload?, api?)`
 

@@ -826,7 +826,8 @@ Incremental builds respect your page dependencies and invalidate the cache when 
 
 ### Fully Supported
 
-- All Inglorious Web components (`table`, `list`, `select`, `form`)
+- All Inglorious Web built-in types (`form`, `router`)
+- All [Inglorious UI](https://inglorious.dev/ui) primitives (controls, data display, navigation, feedback, layout, surfaces)
 - Custom components using lit-html templates
 - Plain HTML and CSS
 

@@ -38,15 +38,20 @@ Official React bindings for `@inglorious/store`. Provides hooks and a Provider c
 
 #### `@inglorious/web`
 
-A small view layer built around `lit-html` and the entity store. No components, no lifecycles — just functions that return templates.
+A small but **complete** web framework built around `lit-html` and the entity store. No components, no lifecycles — just functions that return templates.
 
-Includes built-in utilities like:
+It ships with:
 
-- router
-- forms
-- and other small helpers
+- a client-side **router** with lazy routes and type-composition guards
+- declarative **forms** with sync/async validation and array fields
+- **async helpers** (via `@inglorious/store/async`) for thunks, requests, and optimistic updates
+- a **testing utilities** entry point (`@inglorious/web/test`) that re-exports `trigger` from `@inglorious/store` and `render` from `lit-html`, so you can unit-test handlers and templates with zero setup
 
-UI primitives (controls, data display, navigation, feedback, layout, surfaces) live in **[Inglorious UI](https://inglorious.dev/ui)**.
+UI primitives (controls, data display such as tables and virtual lists, navigation, feedback, layout, surfaces) live in **[Inglorious UI](https://inglorious.dev/ui)**.
+
+#### `@inglorious/ui`
+
+A design system for Inglorious Web with render-function components and customizable themes. Includes tables, virtualized lists, comboboxes, and the rest of the data-display, controls, navigation, feedback, layout, and surfaces families.
 
 #### `@inglorious/ssx`
 
@@ -55,6 +60,26 @@ UI primitives (controls, data display, navigation, feedback, layout, surfaces) l
 #### `@inglorious/vite-plugin-jsx`
 
 A Vite plugin that compiles standard JSX / TSX into highly-optimized `lit-html` templates for `@inglorious/web`.
+
+#### `@inglorious/vite-plugin-vue`
+
+A Vite plugin that compiles a subset of Vue Single-File Component templates into `lit-html` render functions for `@inglorious/web`. Template-only — no Vue runtime, no reactivity.
+
+#### `@inglorious/jsx`
+
+JSX runtime helpers used by `@inglorious/vite-plugin-jsx`.
+
+#### `@inglorious/charts`
+
+A declarative SVG charting library for `@inglorious/web`, inspired by Recharts. Composable chart primitives built with the same entity/type model.
+
+#### `@inglorious/motion`
+
+CSS-first motion primitives for `@inglorious/web`, implemented via type composition. Animate entities without leaving the store-driven model.
+
+#### `@inglorious/ag-grid`
+
+Direct AG Grid integration for `@inglorious/web` — no adapter required.
 
 ### Game Engine
 
@@ -111,13 +136,17 @@ The official graphical user interface for the Inglorious Engine. Still experimen
 
 ### Documentation
 
-Interactive Storybook documentation is available in the [docs/](docs/) directory, covering:
+Documentation lives in the [docs/](docs/) directory and is split per package:
 
-- **Inglorious Engine** - guides on cameras, collision detection, pooling, entity systems, player management, AI, audio, input, and multiplayer
-- **Utilities** - helper functions and utilities for common tasks
-- Recipes and patterns for common game development scenarios
+- **`docs/engine`** — interactive **Storybook** for the game engine: cameras, collision detection, pooling, entity systems, players, AI, audio, input, multiplayer, and recipes
+- **`docs/web`**, **`docs/store`**, **`docs/charts`**, **`docs/motion`** — **VitePress** sites with guides, API reference, and recipes
+- **`docs/forge`** — landing page for the whole monorepo
 
-The documentation features live, interactive examples built with Storybook.
+The Storybook docs feature live, interactive examples; the VitePress sites focus on conceptual guides and API reference.
+
+### Benchmarks
+
+The [benchmarks/](benchmarks/) directory contains apples-to-apples benchmarks comparing Inglorious Web with React, Vue, and Svelte across three workloads (live dashboard, deep tree sparse-update, charts). For context and a full breakdown of the results, see the article **[You probably don't need to think about UI optimization](https://dev.to/iceonfire/you-probably-dont-need-to-think-about-ui-optimization-honest-benchmarks-2m5g)** and the broader series on [dev.to/iceonfire](https://dev.to/iceonfire).
 
 ### Examples
 
@@ -125,10 +154,17 @@ The [examples/](examples/) directory contains several example projects:
 
 **Web Applications (using `@inglorious/web`):**
 
-- TodoMVC implementations
-- Form examples
-- UI examples (data grid, virtualized list, combobox)
-- Router examples
+- TodoMVC implementations (plain JS, TS, JSX, TSX, client-server)
+- Form example with validation, arrays, and field helpers
+- Router example with entity-based client-side routing
+- Web Components interop (Material Web, Shoelace) — including an SSX variant
+- Logo and motion playgrounds
+
+**UI Examples (using `@inglorious/ui`):**
+
+- Data grid (sorting, filtering, pagination)
+- Virtualized list
+- Combobox (single selection, multi, remote options)
 
 **React Examples (using `@inglorious/react-store`):**
 
