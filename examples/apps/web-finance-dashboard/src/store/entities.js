@@ -6,7 +6,7 @@ export const entities = {
   },
 
   dashboardPage: {
-    type: "dashboardPage",
+    type: "DashboardPage",
     selectedMarket: null,
     selectedCurrency: null,
     selectedIsin: null,
@@ -19,11 +19,11 @@ export const entities = {
   },
 
   screenerPage: {
-    type: "screenerPage",
+    type: "ScreenerPage",
   },
 
   assetPage: {
-    type: "assetPage",
+    type: "AssetPage",
     symbol: "AAPL",
     loaded: false,
     loading: false,
@@ -34,11 +34,11 @@ export const entities = {
   },
 
   notFoundPage: {
-    type: "notFoundPage",
+    type: "NotFoundPage",
   },
 
   financeQuotationChart: {
-    type: "line",
+    type: "Line",
     data: [],
     width: 860,
     height: 340,
@@ -51,7 +51,7 @@ export const entities = {
   },
 
   marketsTable: {
-    type: "financeTable",
+    type: "FinanceTable",
     ownerId: "dashboardPage",
     selectEvent: "marketSelect",
     rowId: "market",
@@ -76,7 +76,7 @@ export const entities = {
   },
 
   currenciesTable: {
-    type: "financeTable",
+    type: "FinanceTable",
     ownerId: "dashboardPage",
     selectEvent: "currencySelect",
     rowId: "currency",
@@ -100,7 +100,7 @@ export const entities = {
   },
 
   isinsTable: {
-    type: "financeTable",
+    type: "FinanceTable",
     ownerId: "dashboardPage",
     selectEvent: "isinSelect",
     rowId: "isin",
@@ -145,7 +145,7 @@ export const entities = {
   },
 
   isinHistoryTable: {
-    type: "financeTable",
+    type: "FinanceTable",
     rowId: "rowId",
     isMultiSelect: false,
     columns: [
@@ -169,7 +169,7 @@ export const entities = {
   },
 
   screenerTable: {
-    type: "financeTable",
+    type: "FinanceTable",
     columns: [
       { id: "symbol", title: "Symbol", isSortable: true, isFilterable: true },
       {
