@@ -4,10 +4,10 @@ import { entities } from "./entities.js"
 
 export const store = createStore({
   types: {
-    line: Chart,
-    area: Chart,
-    bar: Chart,
-    pie: Chart,
+    Line: Chart,
+    Area: Chart,
+    Bar: Chart,
+    Pie: Chart,
   },
   entities,
   middlewares: [],

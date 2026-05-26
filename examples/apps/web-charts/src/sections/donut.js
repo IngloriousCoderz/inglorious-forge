@@ -50,7 +50,7 @@ export function renderDonutSection(api) {
         <h2>Donut Chart - Composition (No id #1)</h2>
         ${Chart.render(
           {
-            type: "donut",
+            type: "Donut",
             data: inlineDonutDataA,
             width: 360,
             height: 280,
@@ -76,7 +76,7 @@ export function renderDonutSection(api) {
         <h2>Donut Chart - Composition (No id #2)</h2>
         ${Chart.render(
           {
-            type: "donut",
+            type: "Donut",
             data: inlineDonutDataB,
             width: 360,
             height: 280,

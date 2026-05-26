@@ -4,7 +4,7 @@ import { generateChartData } from "../../utils.js"
 // Create entities and initialize them
 const lineEntity = {
   id: "lineChart1",
-  type: "line",
+  type: "Line",
   data: generateChartData(),
   width: 400,
   height: 300,
@@ -15,7 +15,7 @@ Chart.create(lineEntity)
 
 const areaEntity = {
   id: "areaChart1",
-  type: "area",
+  type: "Area",
   data: generateChartData(),
   width: 400,
   height: 300,
@@ -26,7 +26,7 @@ Chart.create(areaEntity)
 
 const barEntity = {
   id: "barChart1",
-  type: "bar",
+  type: "Bar",
   data: generateChartData(),
   width: 400,
   height: 300,
@@ -37,7 +37,7 @@ Chart.create(barEntity)
 
 const pieEntity = {
   id: "pieChart1",
-  type: "pie",
+  type: "Pie",
   data: generateChartData(10).map((d) => ({
     label: d.name,
     value: d.value,

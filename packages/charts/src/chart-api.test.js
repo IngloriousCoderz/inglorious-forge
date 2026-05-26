@@ -41,7 +41,7 @@ describe("charts public api", () => {
   it("renders store-style chart types through the same core engine", () => {
     const entity = {
       id: "sales-line",
-      type: "line",
+      type: "Line",
       data: [
         { name: "Jan", value: 10 },
         { name: "Feb", value: 20 },

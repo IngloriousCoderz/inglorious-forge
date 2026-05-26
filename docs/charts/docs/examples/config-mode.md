@@ -11,7 +11,7 @@ Config-first is the fastest way to ship charts.
 
 ```js
 {
-  type: "bar",
+  type: "Bar",
   data: [
     { label: "Jan", value: 100 },
     { label: "Feb", value: 150 },

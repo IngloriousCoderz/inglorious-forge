@@ -13,12 +13,12 @@ import { Chart, streamSlide } from "@inglorious/charts"
 
 ## `Chart`
 
-Um único objeto para **modo config** (`api.render(entityId)`) e **composição** (`Chart.render` com `children`).
+A single object for **config mode** (`api.render(entityId)`) and **composition** (`Chart.render` with `children`).
 
-- Registre o mesmo objeto para cada tipo de entidade no store (`line: Chart`, `area: Chart`, …). O campo `type` da entidade (`"line"`, `"area"`, …) orienta defaults e primitivas.
-- **`Chart.render(props, api)`**: com `props.children`, roda composição (`createFrameFromRender`); sem `children`, trata `props` como snapshot de entidade (`createFrameFromEntity`).
+- Register the same handler for each chart entity kind in the store (`Line: Chart`, `Area: Chart`, …). The entity `type` field (`"Line"`, `"Area"`, …) drives defaults and primitives.
+- **`Chart.render(props, api)`**: when `props.children` is set, runs composition (`createFrameFromRender`); without `children`, treats `props` as an entity snapshot (`createFrameFromEntity`).
 
-### Factories (composição)
+### Factories (composition)
 
 - `Chart.CartesianGrid(config)`
 - `Chart.XAxis(config)`
@@ -32,7 +32,7 @@ Um único objeto para **modo config** (`api.render(entityId)`) e **composição*
 - `Chart.Legend(config)`
 - `Chart.Brush(config)`
 
-### Exemplo (composição)
+### Example (composition)
 
 ```js
 Chart.render(
@@ -55,8 +55,8 @@ Chart.render(
 
 ## `streamSlide`
 
-Utilitário para janela deslizante em dados realtime (veja o entry `realtime` do pacote se usar `withRealtime`).
+Utility for a sliding window over realtime data (see the package `realtime` entry when using `withRealtime`).
 
-## Eventos
+## Events
 
-Handlers principais: `dataUpdate`, `sizeUpdate`, `tooltipShow`, `tooltipMove`, `tooltipHide`, `brushChange` — via `api.notify(...)`.
+Main handlers: `dataUpdate`, `sizeUpdate`, `tooltipShow`, `tooltipMove`, `tooltipHide`, `brushChange` — dispatched via `api.notify(...)`.
