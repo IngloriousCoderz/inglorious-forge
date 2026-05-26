@@ -2,7 +2,7 @@ import { html } from "@inglorious/web"
 
 import { renderSectionCard } from "../components/section-card.js"
 
-export const screenerPage = {
+export const ScreenerPage = {
   // Headline: route lifecycle
   routeChange(entity, payload) {
     if (payload.route !== entity.id) return

@@ -20,7 +20,7 @@ const EMPTY_INSTRUMENT = {
 
 const EMPTY_QUOTE = { ask: 0, bid: 0, mid: 0 }
 
-export const dashboardPage = {
+export const DashboardPage = {
   // Headline: page lifecycle
   routeChange(entity, payload, api) {
     if (payload.route !== entity.id) {

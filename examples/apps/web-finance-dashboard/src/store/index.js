@@ -5,14 +5,14 @@ import { createStore } from "@inglorious/store"
 import { Router } from "@inglorious/web/router"
 import { DataGrid } from "@inglorious/ui/data-grid"
 
-import { assetPage } from "../pages/asset.js"
-import { dashboardPage } from "../pages/dashboard.js"
-import { notFoundPage } from "../pages/not-found.js"
-import { screenerPage } from "../pages/screener.js"
+import { AssetPage } from "../pages/asset.js"
+import { DashboardPage } from "../pages/dashboard.js"
+import { NotFoundPage } from "../pages/not-found.js"
+import { ScreenerPage } from "../pages/screener.js"
 import { entities } from "./entities.js"
 import { middlewares } from "./middlewares.js"
 
-const financeLineType = {
+export const Line = {
   create: Chart.create,
   dataUpdate(entity, rows) {
     Chart.dataUpdate(entity, rows)
@@ -36,7 +36,7 @@ const financeLineType = {
   brushChange: Chart.brushChange,
 }
 
-export const financeTable = {
+export const FinanceTable = {
   ...DataGrid,
   tableDataSet(entity, rows) {
     entity.rows = Array.isArray(rows) ? rows : []
@@ -65,12 +65,12 @@ export const financeTable = {
 export const store = createStore({
   types: {
     Router,
-    financeTable,
-    line: financeLineType,
-    dashboardPage,
-    screenerPage,
-    assetPage,
-    notFoundPage,
+    FinanceTable,
+    Line,
+    DashboardPage,
+    ScreenerPage,
+    AssetPage,
+    NotFoundPage,
   },
   entities,
   middlewares,

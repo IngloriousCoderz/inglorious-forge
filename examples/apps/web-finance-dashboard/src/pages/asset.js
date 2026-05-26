@@ -12,7 +12,7 @@ import {
 } from "../services/asset-service.js"
 import { formatMoney, toNumber } from "../services/fmp.js"
 
-export const assetPage = {
+export const AssetPage = {
   // Headline: route lifecycle
   routeChange(entity, payload, api) {
     if (payload.route !== entity.id) {
