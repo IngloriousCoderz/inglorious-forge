@@ -5,7 +5,7 @@ export const entities = {
 
   // Line Chart - Config Style
   salesLineChart: {
-    type: "line",
+    type: "Line",
     data: [
       { x: 0, y: 50 },
       { x: 1, y: 150 },
@@ -24,7 +24,7 @@ export const entities = {
 
   // Line Chart - Composition Style
   salesLineChartComposition: {
-    type: "line",
+    type: "Line",
     data: [
       { name: "0", value: 50 },
       { name: "1", value: 150 },
@@ -38,7 +38,7 @@ export const entities = {
 
   // Line Chart - Padding - Composition Style
   salesLineChartCompositionPadding: {
-    type: "line",
+    type: "Line",
     data: [
       { name: "0", value: 50 },
       { name: "1", value: 150 },
@@ -52,7 +52,7 @@ export const entities = {
 
   // Line Chart with Brush - Config Style
   lineChartWithBrushConfig: {
-    type: "line",
+    type: "Line",
     data: Array.from({ length: 30 }, (_, i) => ({
       name: `${i}`,
       value: Math.floor(Math.random() * 1000) + 100,
@@ -69,7 +69,7 @@ export const entities = {
 
   // Line Chart with Brush - Composition Style
   lineChartWithBrush: {
-    type: "line",
+    type: "Line",
     data: Array.from({ length: 30 }, (_, i) => ({
       name: `${i}`,
       value: Math.floor(Math.random() * 1000) + 100,
@@ -78,7 +78,7 @@ export const entities = {
 
   // Line Chart with multiple series - Config Style
   multiSeriesLineChart: {
-    type: "line",
+    type: "Line",
     data: [
       {
         name: "Product A",
@@ -126,7 +126,7 @@ export const entities = {
 
   // Line Chart with multiple series - Composition Style
   multiSeriesLineChartComposition: {
-    type: "line",
+    type: "Line",
     data: [
       { name: "0", productA: 10, productB: 280, productC: 160, productD: 230 },
       { name: "1", productA: 250, productB: 120, productC: 90, productD: 145 },
@@ -137,7 +137,7 @@ export const entities = {
 
   // Realtime Line Chart - Sliding Window (Config Style)
   realtimeLineChartConfig: {
-    type: "line-rt",
+    type: "Line-rt",
     width: 800,
     height: 400,
     hasGrid: true,
@@ -147,7 +147,7 @@ export const entities = {
 
   // Realtime Line Chart - Sliding Window (Composition Style)
   realtimeLineChart: {
-    type: "line-rt",
+    type: "Line-rt",
   },
 
   // ============================================
@@ -156,7 +156,7 @@ export const entities = {
 
   // Area Chart - Config Style
   salesAreaChart: {
-    type: "area",
+    type: "Area",
     data: [
       { x: 0, y: 50 },
       { x: 1, y: 150 },
@@ -175,7 +175,7 @@ export const entities = {
 
   // Area Chart - Composition Style
   salesAreaChartComposition: {
-    type: "area",
+    type: "Area",
     data: [
       { name: "0", value: 50 },
       { name: "1", value: 150 },
@@ -189,7 +189,7 @@ export const entities = {
 
   // Composed Area + Line + Bar - Config Style (same data as Composition below)
   composedSalesChart: {
-    type: "composed",
+    type: "Composed",
     data: [
       { name: "Jan", revenue: 120, target: 80, forecast: 110 },
       { name: "Feb", revenue: 180, target: 130, forecast: 150 },
@@ -229,7 +229,7 @@ export const entities = {
 
   // Area Chart with multiple series - Config Style
   multiSeriesAreaChart: {
-    type: "area",
+    type: "Area",
     data: [
       {
         name: "Revenue",
@@ -271,7 +271,7 @@ export const entities = {
 
   // Area Chart with multiple series - Composition Style
   multiSeriesAreaChartComposition: {
-    type: "area",
+    type: "Area",
     data: [
       { name: "0", Revenue: 20, Expenses: 80, Profit: 100 },
       { name: "1", Revenue: 30, Expenses: 120, Profit: 150 },
@@ -283,7 +283,7 @@ export const entities = {
 
   // Area Chart with multiple series stacked - Config Style
   multiSeriesAreaChartStacked: {
-    type: "area",
+    type: "Area",
     data: [
       {
         name: "Revenue",
@@ -328,7 +328,7 @@ export const entities = {
   // Note: Order matters for stacked! Revenue (base), Expenses (middle), Profit (top)
   // Using same x values as Config to match X-axis labels
   multiSeriesAreaChartStackedComposition: {
-    type: "area",
+    type: "Area",
     data: [
       { name: "0", x: 0, Revenue: 100, Expenses: 80, Profit: 20 },
       { name: "1", x: 1, Revenue: 150, Expenses: 120, Profit: 30 },
@@ -344,7 +344,7 @@ export const entities = {
 
   // Bar Chart - Config Style
   salesBarChart: {
-    type: "bar",
+    type: "Bar",
     data: [
       { label: "Jan", value: 100 },
       { label: "Feb", value: 150 },
@@ -361,7 +361,7 @@ export const entities = {
 
   // Bar Chart - Composition Style
   salesBarChartComposition: {
-    type: "bar",
+    type: "Bar",
     data: [
       { label: "Jan", value: 100 },
       { label: "Feb", value: 150 },
@@ -374,7 +374,7 @@ export const entities = {
 
   // Bar Chart - Padding - Composition Style
   salesBarChartCompositionPadding: {
-    type: "bar",
+    type: "Bar",
     data: [
       { label: "Jan", value: 100 },
       { label: "Feb", value: 150 },
@@ -391,7 +391,7 @@ export const entities = {
 
   // Pie Chart - Config Style
   categoryPieChart: {
-    type: "pie",
+    type: "Pie",
     data: [
       { label: "Category A", value: 20 },
       { label: "Category B", value: 35 },
@@ -407,7 +407,7 @@ export const entities = {
 
   // Pie Chart - Composition Style
   categoryPieChartComposition: {
-    type: "pie",
+    type: "Pie",
     data: [
       { name: "Category A", value: 20 },
       { name: "Category B", value: 35 },
@@ -420,7 +420,7 @@ export const entities = {
 
   // Pie Chart with custom position - Config Style
   pieCustomPosition: {
-    type: "pie",
+    type: "Pie",
     data: [
       { label: "North", value: 30 },
       { label: "South", value: 25 },
@@ -436,7 +436,7 @@ export const entities = {
 
   // Pie Chart with custom position - Composition Style
   pieCustomPositionComposition: {
-    type: "pie",
+    type: "Pie",
     data: [
       { name: "North", value: 30 },
       { name: "South", value: 25 },
@@ -447,7 +447,7 @@ export const entities = {
 
   // Pie Chart with partial angle - Config Style
   piePartial: {
-    type: "pie",
+    type: "Pie",
     data: [
       { label: "Q1", value: 25 },
       { label: "Q2", value: 30 },
@@ -463,7 +463,7 @@ export const entities = {
 
   // Pie Chart with partial angle - Composition Style
   piePartialComposition: {
-    type: "pie",
+    type: "Pie",
     data: [
       { name: "Q1", value: 25 },
       { name: "Q2", value: 30 },
@@ -474,7 +474,7 @@ export const entities = {
 
   // Pie Chart with padding - Config Style
   pieWithPadding: {
-    type: "pie",
+    type: "Pie",
     data: [
       { label: "Red", value: 30 },
       { label: "Blue", value: 25 },
@@ -489,7 +489,7 @@ export const entities = {
 
   // Pie Chart with padding - Composition Style
   pieWithPaddingComposition: {
-    type: "pie",
+    type: "Pie",
     data: [
       { name: "Red", value: 30 },
       { name: "Blue", value: 25 },
@@ -500,7 +500,7 @@ export const entities = {
 
   // Pie Chart with minimum angle - Config Style
   pieMinAngle: {
-    type: "pie",
+    type: "Pie",
     data: [
       { label: "Large", value: 50 },
       { label: "Medium", value: 30 },
@@ -516,7 +516,7 @@ export const entities = {
 
   // Pie Chart with minimum angle - Composition Style
   pieMinAngleComposition: {
-    type: "pie",
+    type: "Pie",
     data: [
       { name: "Large", value: 50 },
       { name: "Medium", value: 30 },
@@ -528,7 +528,7 @@ export const entities = {
 
   // Pie Chart with rounded corners - Config Style
   pieRounded: {
-    type: "pie",
+    type: "Pie",
     data: [
       { label: "Option A", value: 30 },
       { label: "Option B", value: 25 },
@@ -543,7 +543,7 @@ export const entities = {
 
   // Pie Chart with rounded corners - Composition Style
   pieRoundedComposition: {
-    type: "pie",
+    type: "Pie",
     data: [
       { name: "Option A", value: 30 },
       { name: "Option B", value: 25 },
@@ -554,7 +554,7 @@ export const entities = {
 
   // Pie Chart with custom data structure - Config Style
   pieCustomData: {
-    type: "pie",
+    type: "Pie",
     data: [
       { product: "Laptop", sales: 150 },
       { product: "Phone", sales: 200 },
@@ -570,7 +570,7 @@ export const entities = {
 
   // Pie Chart with custom data structure - Composition Style
   pieCustomDataComposition: {
-    type: "pie",
+    type: "Pie",
     data: [
       { product: "Laptop", sales: 150 },
       { product: "Phone", sales: 200 },
@@ -581,7 +581,7 @@ export const entities = {
 
   // Pie Chart combining multiple features - Config Style
   pieAdvanced: {
-    type: "pie",
+    type: "Pie",
     data: [
       { label: "Team A", value: 40 },
       { label: "Team B", value: 30 },
@@ -598,7 +598,7 @@ export const entities = {
 
   // Pie Chart combining multiple features - Composition Style
   pieAdvancedComposition: {
-    type: "pie",
+    type: "Pie",
     data: [
       { name: "Team A", value: 40 },
       { name: "Team B", value: 30 },
@@ -613,7 +613,7 @@ export const entities = {
 
   // Donut Chart - Config Style
   categoryDonutChart: {
-    type: "donut",
+    type: "Donut",
     data: [
       { label: "Desktop", value: 45 },
       { label: "Mobile", value: 30 },
@@ -629,7 +629,7 @@ export const entities = {
 
   // Donut Chart - Composition Style
   categoryDonutChartComposition: {
-    type: "pie",
+    type: "Pie",
     data: [
       { name: "Desktop", value: 45 },
       { name: "Mobile", value: 30 },
@@ -644,7 +644,7 @@ export const entities = {
 
   // Product Chart - for Line Chart Recharts-style composition
   productLineChart: {
-    type: "line",
+    type: "Line",
     data: [
       { name: "0", uv: 50 },
       { name: "1", uv: 150 },
@@ -658,7 +658,7 @@ export const entities = {
 
   // Product Chart - for Area Chart Recharts-style composition
   productAreaChart: {
-    type: "area",
+    type: "Area",
     data: [
       { name: "0", uv: 50 },
       { name: "1", uv: 150 },
@@ -672,7 +672,7 @@ export const entities = {
 
   // Product Chart - for Bar Chart Recharts-style composition
   productBarChart: {
-    type: "bar",
+    type: "Bar",
     data: [
       { name: "A", uv: 400, pv: 240 },
       { name: "B", uv: 300, pv: 456 },

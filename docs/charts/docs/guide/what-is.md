@@ -18,7 +18,7 @@ It focuses on:
 
 ### Config-first
 
-Register `Chart` for each entity kind in the store (e.g. `line: Chart`, `area: Chart`) and render entities with `api.render(id)`.
+Register `Chart` for each entity kind in the store (e.g. `Line: Chart`, `Area: Chart`) and render entities with `api.render(id)`.
 
 ### Composition
 

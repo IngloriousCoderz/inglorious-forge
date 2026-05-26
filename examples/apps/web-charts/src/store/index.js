@@ -5,15 +5,15 @@ import { entities } from "./entities.js"
 
 export const store = createStore({
   types: {
-    area: Chart,
-    bar: Chart,
-    line: Chart,
-    "area-rt": [Chart, withRealtime],
-    "bar-rt": [Chart, withRealtime],
-    "line-rt": [Chart, withRealtime],
-    composed: Chart,
-    pie: Chart,
-    donut: Chart,
+    Area: Chart,
+    Bar: Chart,
+    Line: Chart,
+    "Area-rt": [Chart, withRealtime],
+    "Bar-rt": [Chart, withRealtime],
+    "Line-rt": [Chart, withRealtime],
+    Composed: Chart,
+    Pie: Chart,
+    Donut: Chart,
   },
   entities,
 })

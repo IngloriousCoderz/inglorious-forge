@@ -48,7 +48,7 @@ export function renderPieSection(api) {
         <h2>Pie Chart - Composition (No id #1)</h2>
         ${Chart.render(
           {
-            type: "pie",
+            type: "Pie",
             data: inlinePieDataA,
             width: 360,
             height: 280,
@@ -72,7 +72,7 @@ export function renderPieSection(api) {
         <h2>Pie Chart - Composition (No id #2)</h2>
         ${Chart.render(
           {
-            type: "pie",
+            type: "Pie",
             data: inlinePieDataB,
             width: 360,
             height: 280,

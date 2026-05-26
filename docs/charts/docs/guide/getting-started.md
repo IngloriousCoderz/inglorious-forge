@@ -19,15 +19,15 @@ import { Chart } from "@inglorious/charts"
 
 export const store = createStore({
   types: {
-    line: Chart,
-    area: Chart,
-    bar: Chart,
-    pie: Chart,
-    donut: Chart,
+    Line: Chart,
+    Area: Chart,
+    Bar: Chart,
+    Pie: Chart,
+    Donut: Chart,
   },
   entities: {
     sales: {
-      type: "line",
+      type: "Line",
       data: [
         { name: "Jan", value: 100 },
         { name: "Feb", value: 160 },
