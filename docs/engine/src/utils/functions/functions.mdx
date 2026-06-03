@@ -1,6 +1,6 @@
 import { Meta } from '@storybook/addon-docs/blocks'
 
-import { compose, pipe } from '@inglorious/utils/functions/functions'
+import { compose, debounce, pipe, throttle } from '@inglorious/utils/functions/functions'
 import { toString } from '@inglorious/utils/data-structures/object'
 
 <Meta title="Utils/Functions/Functions" />
@@ -21,6 +21,14 @@ Implements function composition, which expects functions to wrap each other.
 
 <code>compose(html('p'), punctuate('!'), shout)("Hello world") == {toString(compose((x) => `<${"p"}>${x}</${"p"}>`, (x) => `${x}${"!"}`, (x) => x.toUpperCase())("Hello world"))}</code>&nbsp;
 
+## Debounce
+
+Delays a function until calls stop for a given amount of time.
+
+<code>const save = debounce(() => "saved", 300)</code>&nbsp;
+
+<code>save.pending() == {toString((() => { const save = debounce(() => "saved", 300); save(); return save.pending() })())}</code>&nbsp;
+
 ## Pipe
 
 Implements function piping, which functions to be processed one after the other in order.
@@ -32,3 +40,11 @@ Implements function piping, which functions to be processed one after the other 
 <code>const html = (tag) => (x) => \`\<$\{tag\}>$\{x\}\</$\{tag\}>\`</code>&nbsp;
 
 <code>pipe(shout, punctuate('!'), html('p'))("Hello world") == {toString(pipe((x) => x.toUpperCase(), ((mark) => (x) => `${x}${mark}`)("!"), ((tag) => (x) => `<${tag}>${x}</${tag}>`)("p"))("Hello world"))}</code>&nbsp;
+
+## Throttle
+
+Invokes a function immediately, then ignores calls until the wait time has elapsed.
+
+<code>const save = throttle(() => "saved", 300)</code>&nbsp;
+
+<code>save() == {toString(throttle(() => "saved", 300)())}</code>&nbsp;
