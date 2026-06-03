@@ -315,6 +315,38 @@ interface FormEntity {
 }
 ```
 
+### Geolocation
+
+```typescript
+interface GeolocationEntity {
+  isSupported: boolean
+  isLoading: boolean
+  isWatching: boolean
+  position: {
+    coords: {
+      accuracy: number
+      altitude: number | null
+      altitudeAccuracy: number | null
+      heading: number | null
+      latitude: number
+      longitude: number
+      speed: number | null
+    }
+    timestamp: number
+  } | null
+  error: { code: number; message: string } | null
+  watchId: number | null
+}
+
+// Usage
+import { Geolocation } from "@inglorious/web/geolocation"
+
+const store = createStore({
+  types: { Geolocation },
+  autoCreateEntities: true,
+})
+```
+
 ### UI Primitives
 
 UI primitives live in **[Inglorious UI](https://inglorious.dev/ui)**. See that package’s documentation for their APIs.

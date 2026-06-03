@@ -7,7 +7,7 @@ A lightweight, reactive-enough web framework built on **pure JavaScript**, the e
 
 Unlike modern frameworks that invent their own languages or rely on signals, proxies, or compilers, **@inglorious/web embraces plain JavaScript** and a transparent architecture.
 
-It's a **complete framework**: it ships with a client-side router, declarative forms, async helpers (via `@inglorious/store/async`), and a dedicated testing utilities entry point (`@inglorious/web/test`) that re-exports `trigger` from `@inglorious/store` and `render` from `lit-html`. UI primitives (controls, data display, navigation, feedback, layout, surfaces) live in the companion package **[Inglorious UI](https://inglorious.dev/ui)**.
+It's a **complete framework**: it ships with a client-side router, declarative forms, geolocation state, async helpers (via `@inglorious/store/async`), and a dedicated testing utilities entry point (`@inglorious/web/test`) that re-exports `trigger` from `@inglorious/store` and `render` from `lit-html`. UI primitives (controls, data display, navigation, feedback, layout, surfaces) live in the companion package **[Inglorious UI](https://inglorious.dev/ui)**.
 
 ---
 
@@ -28,7 +28,7 @@ It's a **complete framework**: it ships with a client-side router, declarative f
   Zero magic, zero reactivity graphs, zero compiler.  
   Just JavaScript functions and store events.
 
-- **Router, Forms, Async, Testing utilities**  
+- **Router, Forms, Geolocation, Async, Testing utilities**  
   High-level primitives built on the same predictable model. UI primitives (tables, virtual lists, comboboxes, and more) live in **[Inglorious UI](https://inglorious.dev/ui)**.
 
 - **Zero Component State**  
@@ -1228,6 +1228,50 @@ The composition pattern keeps your code modular and reusable without introducing
 ## UI Primitives ([Inglorious UI](https://inglorious.dev/ui))
 
 For ready-made UI primitives (controls, data display, navigation, feedback, layout, surfaces), use the **[Inglorious UI](https://inglorious.dev/ui)** design system. It follows the same entity/type pattern, so you can still override `render()` and `renderItem()` when you need custom behavior.
+
+---
+
+## Geolocation
+
+`@inglorious/web` includes a `Geolocation` type for keeping browser geolocation state inside the store.
+
+```javascript
+import { createStore } from "@inglorious/store"
+import { Geolocation } from "@inglorious/web/geolocation"
+
+const store = createStore({
+  types: { Geolocation },
+  autoCreateEntities: true,
+})
+
+// The store now contains a `geolocation` entity.
+store.getState().geolocation
+```
+
+The entity state contains:
+
+- `isSupported` — whether `navigator.geolocation` is available
+- `isLoading` — whether a current-position request or first watch result is pending
+- `isWatching` — whether a geolocation watch is active
+- `position` — the latest normalized `{ coords, timestamp }` value
+- `error` — the latest normalized `{ code, message }` error
+- `watchId` — the active browser watch id, or `null`
+
+Events:
+
+- `#geolocation:getCurrentPosition` — request the current position
+- `#geolocation:watch` — start watching position changes
+- `#geolocation:clearWatch` — stop the active watch
+
+```javascript
+api.notify("#geolocation:getCurrentPosition", {
+  enableHighAccuracy: true,
+  timeout: 5000,
+})
+
+api.notify("#geolocation:watch")
+api.notify("#geolocation:clearWatch")
+```
 
 ---
 

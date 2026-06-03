@@ -42,6 +42,15 @@ Declarative form state management with validation.
 
 **[Learn more →](./form.md)**
 
+### Geolocation
+
+Browser geolocation state kept in an entity.
+
+- Auto-created `geolocation` entity with `autoCreateEntities`
+- Current-position requests
+- Position watching and cleanup
+- Normalized position and error state
+
 ## UI Primitives
 
 For ready-made UI primitives (controls, data display, navigation, feedback, layout, surfaces), use the **[Inglorious UI](https://inglorious.dev/ui)** design system. It follows the same entity/type pattern, so you can still override `render()` and `renderItem()` when you need custom behavior.

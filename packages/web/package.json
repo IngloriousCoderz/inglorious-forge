@@ -34,6 +34,10 @@
       "types": "./types/form.d.ts",
       "import": "./src/form/index.js"
     },
+    "./geolocation": {
+      "types": "./types/geolocation.d.ts",
+      "import": "./src/geolocation/index.js"
+    },
     "./hydrate": "./src/hydrate.js",
     "./router": {
       "types": "./types/router.d.ts",
