@@ -1,5 +1,12 @@
 # @inglorious/motion
 
+## 6.0.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/web@6.1.1
+
 ## 6.0.0
 
 ### Patch Changes

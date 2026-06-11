@@ -20,16 +20,16 @@ This means:
 
 # Built-in Types
 
-### Router
+### Compass
 
-Client-side routing that integrates directly with your store.
+Device orientation and heading state kept in an entity.
 
-- Hash-based or path-based routing
-- URL sync with entity state
-- Lazy-loadable routes
-- Type composition for route guards (auth, permissions)
+- Permission request flow
+- Device orientation event handling
+- Heading normalization and manual offset
+- Active/inactive tracking
 
-**[Learn more →](./router.md)**
+**[Learn more →](./compass.md)**
 
 ### Form
 
@@ -53,16 +53,16 @@ Browser geolocation state kept in an entity.
 
 **[Learn more →](./geolocation.md)**
 
-### Compass
+### Router
 
-Device orientation and heading state kept in an entity.
+Client-side routing that integrates directly with your store.
 
-- Permission request flow
-- Device orientation event handling
-- Heading normalization and manual offset
-- Active/inactive tracking
+- Hash-based or path-based routing
+- URL sync with entity state
+- Lazy-loadable routes
+- Type composition for route guards (auth, permissions)
 
-**[Learn more →](./compass.md)**
+**[Learn more →](./router.md)**
 
 ## UI Primitives
 

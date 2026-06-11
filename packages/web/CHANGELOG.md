@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 6.1.1
+
+### Patch Changes
+
+- Simplify compass property naming
+
 ## 6.1.0
 
 ### Minor Changes

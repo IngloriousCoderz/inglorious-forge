@@ -13,8 +13,8 @@ const DEFAULT_ERROR_CODE = 0
 export function create(entity) {
   entity.error ??= null
   entity.heading ??= null
-  entity.isCompassActive ??= false
-  entity.isCompassPermissionGranted ??= false
+  entity.isActive ??= false
+  entity.isPermissionGranted ??= false
   entity.isLoading ??= false
   entity.isSupported = isCompassSupported()
   entity.manualOffset ??= 0
@@ -49,7 +49,7 @@ export function compassUnwatch(entity) {
   }
 
   entity.isLoading = false
-  entity.isCompassActive = false
+  entity.isActive = false
   entity.compassTimeout = NO_TIMEOUT
   entity._orientationListener = null
   entity._absoluteListener = null
@@ -59,7 +59,7 @@ export function compassUnwatch(entity) {
 export function compassError(entity, error) {
   entity.error = normalizeError(error)
   entity.isLoading = false
-  entity.isCompassPermissionGranted = false
+  entity.isPermissionGranted = false
 }
 
 export async function compassPermissionsRequest(entity, _, api) {
@@ -97,7 +97,7 @@ export async function compassPermissionsRequest(entity, _, api) {
 
 export function compassPermissionsGrant(entity) {
   entity.isLoading = false
-  entity.isCompassPermissionGranted = true
+  entity.isPermissionGranted = true
 }
 
 export function compassWatch(entity, _, api) {
@@ -135,7 +135,7 @@ function checkTimeout(entity, api) {
 }
 
 export function compassActiveChange(entity, value) {
-  entity.isCompassActive = value
+  entity.isActive = value
 }
 
 export function compassHeadingChange(entity, value) {

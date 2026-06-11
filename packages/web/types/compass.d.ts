@@ -5,8 +5,8 @@ export interface CompassEntity {
   type?: "Compass"
   error: CompassError | null
   heading: number | null
-  isCompassActive: boolean
-  isCompassPermissionGranted: boolean
+  isActive: boolean
+  isPermissionGranted: boolean
   isLoading: boolean
   isSupported: boolean
   manualOffset: number | null

@@ -45,8 +45,8 @@ describe("compass", () => {
         type: "Compass",
         error: null,
         heading: null,
-        isCompassActive: false,
-        isCompassPermissionGranted: false,
+        isActive: false,
+        isPermissionGranted: false,
         isLoading: false,
         isSupported: true,
         manualOffset: 0,
@@ -147,12 +147,12 @@ describe("compass", () => {
   describe("compassPermissionsGrant", () => {
     beforeEach(() => Compass.create(entity))
 
-    it("should set isCompassPermissionGranted and clear isLoading", () => {
+    it("should set isPermissionGranted and clear isLoading", () => {
       entity.isLoading = true
 
       Compass.compassPermissionsGrant(entity)
 
-      expect(entity.isCompassPermissionGranted).toBe(true)
+      expect(entity.isPermissionGranted).toBe(true)
       expect(entity.isLoading).toBe(false)
     })
 
@@ -327,7 +327,7 @@ describe("compass", () => {
       Compass.compassUnwatch(entity)
 
       expect(entity.isLoading).toBe(false)
-      expect(entity.isCompassActive).toBe(false)
+      expect(entity.isActive).toBe(false)
       expect(entity.compassTimeout).toBeNull()
       expect(entity._orientationListener).toBeNull()
       expect(entity._absoluteListener).toBeNull()
@@ -359,11 +359,11 @@ describe("compass", () => {
     })
 
     it("should revoke permission on error", () => {
-      entity.isCompassPermissionGranted = true
+      entity.isPermissionGranted = true
 
       Compass.compassError(entity, { code: 1, message: "Denied" })
 
-      expect(entity.isCompassPermissionGranted).toBe(false)
+      expect(entity.isPermissionGranted).toBe(false)
     })
   })
 
@@ -372,12 +372,12 @@ describe("compass", () => {
   // ---------------------------------------------------------------------------
 
   describe("compassActiveChange", () => {
-    it("should set isCompassActive", () => {
+    it("should set isActive", () => {
       Compass.compassActiveChange(entity, true)
-      expect(entity.isCompassActive).toBe(true)
+      expect(entity.isActive).toBe(true)
 
       Compass.compassActiveChange(entity, false)
-      expect(entity.isCompassActive).toBe(false)
+      expect(entity.isActive).toBe(false)
     })
   })
 

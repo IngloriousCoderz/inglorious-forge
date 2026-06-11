@@ -62,11 +62,8 @@ const renderApp = (api) => {
     <section>
       <h2>Compass</h2>
       <p>Supported: ${compass.isSupported ? "yes" : "no"}</p>
-      <p>
-        Permission:
-        ${compass.isCompassPermissionGranted ? "granted" : "unknown"}
-      </p>
-      <p>Active: ${compass.isCompassActive ? "yes" : "no"}</p>
+      <p>Permission: ${compass.isPermissionGranted ? "granted" : "unknown"}</p>
+      <p>Active: ${compass.isActive ? "yes" : "no"}</p>
       <p>
         Heading:
         ${compass.heading !== null
