@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 6.1.0
+
+### Minor Changes
+
+- Add compass type to web
+
 ## 6.0.0
 
 ### Major Changes

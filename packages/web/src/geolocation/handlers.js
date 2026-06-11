@@ -7,22 +7,6 @@
 const NO_WATCH_ID = null
 
 /**
- * Stops an active geolocation watch.
- * @param {GeolocationEntity} entity - The geolocation entity.
- */
-export function unwatch(entity) {
-  const geolocation = getGeolocation()
-
-  if (entity.watchId !== NO_WATCH_ID && geolocation) {
-    geolocation.clearWatch(entity.watchId)
-  }
-
-  entity.isLoading = false
-  entity.isWatching = false
-  entity.watchId = NO_WATCH_ID
-}
-
-/**
  * Initializes the geolocation entity with default state.
  * @param {GeolocationEntity} entity - The geolocation entity.
  */
@@ -40,7 +24,7 @@ export function create(entity) {
  * @param {GeolocationEntity} entity - The geolocation entity.
  */
 export function destroy(entity) {
-  unwatch(entity)
+  geolocationUnwatch(entity)
 }
 
 /**
@@ -48,7 +32,7 @@ export function destroy(entity) {
  * @param {GeolocationEntity} entity - The geolocation entity.
  * @param {GeolocationPositionError} error - The geolocation error.
  */
-export function error(entity, error) {
+export function geolocationError(entity, error) {
   entity.error = normalizeError(error)
   entity.isLoading = false
 }
@@ -59,7 +43,7 @@ export function error(entity, error) {
  * @param {GeolocationOptions} options - Position options.
  * @param {{ notify: Function }} api - The store API.
  */
-export function request(entity, options = {}, api) {
+export function geolocationRequest(entity, options = {}, api) {
   const geolocation = getGeolocation()
 
   entity.isSupported = Boolean(geolocation)
@@ -67,7 +51,7 @@ export function request(entity, options = {}, api) {
 
   if (!geolocation) {
     entity.isLoading = false
-    api.notify(`#${entity.id}:error`, createUnsupportedError())
+    api.notify("geolocationError", createUnsupportedError())
     return
   }
 
@@ -75,10 +59,10 @@ export function request(entity, options = {}, api) {
 
   geolocation.getCurrentPosition(
     (position) => {
-      api.notify(`#${entity.id}:success`, normalizePosition(position))
+      api.notify("geolocationSuccess", normalizePosition(position))
     },
     (error) => {
-      api.notify(`#${entity.id}:error`, error)
+      api.notify("geolocationError", error)
     },
     options,
   )
@@ -89,10 +73,26 @@ export function request(entity, options = {}, api) {
  * @param {GeolocationEntity} entity - The geolocation entity.
  * @param {GeolocationPosition} position - The geolocation position.
  */
-export function success(entity, position) {
+export function geolocationSuccess(entity, position) {
   entity.error = null
   entity.isLoading = false
   entity.position = position
+}
+
+/**
+ * Stops an active geolocation watch.
+ * @param {GeolocationEntity} entity - The geolocation entity.
+ */
+export function geolocationUnwatch(entity) {
+  const geolocation = getGeolocation()
+
+  if (entity.watchId !== NO_WATCH_ID && geolocation) {
+    geolocation.clearWatch(entity.watchId)
+  }
+
+  entity.isLoading = false
+  entity.isWatching = false
+  entity.watchId = NO_WATCH_ID
 }
 
 /**
@@ -101,7 +101,7 @@ export function success(entity, position) {
  * @param {GeolocationOptions} options - Watch options.
  * @param {{ notify: Function }} api - The store API.
  */
-export function watch(entity, options = {}, api) {
+export function geolocationWatch(entity, options = {}, api) {
   const geolocation = getGeolocation()
 
   entity.isSupported = Boolean(geolocation)
@@ -109,7 +109,7 @@ export function watch(entity, options = {}, api) {
 
   if (!geolocation) {
     entity.isLoading = false
-    api.notify(`#${entity.id}:error`, createUnsupportedError())
+    api.notify("geolocationError", createUnsupportedError())
     return
   }
 
@@ -121,10 +121,10 @@ export function watch(entity, options = {}, api) {
   entity.isWatching = true
   entity.watchId = geolocation.watchPosition(
     (position) => {
-      api.notify(`#${entity.id}:success`, normalizePosition(position))
+      api.notify("geolocationSuccess", normalizePosition(position))
     },
     (error) => {
-      api.notify(`#${entity.id}:error`, error)
+      api.notify("geolocationError", error)
     },
     options,
   )

@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/web",
-  "version": "6.0.0",
+  "version": "6.1.0",
   "description": "A new web framework that leverages the power of the Inglorious Store combined with the performance and simplicity of lit-html.",
   "author": "IceOnFire <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -25,6 +25,10 @@
     ".": {
       "types": "./types/index.d.ts",
       "import": "./src/index.js"
+    },
+    "./compass": {
+      "types": "./types/compass.d.ts",
+      "import": "./src/compass/index.js"
     },
     "./directives/*": {
       "types": "./types/directives/*.d.ts",

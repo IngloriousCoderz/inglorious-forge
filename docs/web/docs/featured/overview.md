@@ -51,6 +51,19 @@ Browser geolocation state kept in an entity.
 - Position watching and cleanup
 - Normalized position and error state
 
+**[Learn more →](./geolocation.md)**
+
+### Compass
+
+Device orientation and heading state kept in an entity.
+
+- Permission request flow
+- Device orientation event handling
+- Heading normalization and manual offset
+- Active/inactive tracking
+
+**[Learn more →](./compass.md)**
+
 ## UI Primitives
 
 For ready-made UI primitives (controls, data display, navigation, feedback, layout, surfaces), use the **[Inglorious UI](https://inglorious.dev/ui)** design system. It follows the same entity/type pattern, so you can still override `render()` and `renderItem()` when you need custom behavior.

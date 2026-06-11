@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vitepress dev docs",
-    "build": "vitepress build docs && mkdir -p docs/.vitepress/dist-temp/motion && mv docs/.vitepress/dist/* docs/.vitepress/dist-temp/motion/ && rm -rf docs/.vitepress/dist && mv docs/.vitepress/dist-temp docs/.vitepress/dist",
+    "build": "vitepress build docs && shx mkdir -p docs/.vitepress/dist-temp/motion && shx mv docs/.vitepress/dist/* docs/.vitepress/dist-temp/motion/ && shx rm -rf docs/.vitepress/dist && shx mv docs/.vitepress/dist-temp docs/.vitepress/dist",
     "serve": "vitepress serve docs"
   },
   "devDependencies": {

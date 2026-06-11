@@ -67,7 +67,7 @@ describe("geolocation", () => {
   describe("request()", () => {
     it("should request the current position", () => {
       Geolocation.create(entity)
-      Geolocation.request(entity, { enableHighAccuracy: true }, api)
+      Geolocation.geolocationRequest(entity, { enableHighAccuracy: true }, api)
 
       expect(entity.isLoading).toBe(true)
       expect(geolocation.getCurrentPosition).toHaveBeenCalledWith(
@@ -79,12 +79,12 @@ describe("geolocation", () => {
 
     it("should notify success with a normalized position", () => {
       Geolocation.create(entity)
-      Geolocation.request(entity, {}, api)
+      Geolocation.geolocationRequest(entity, {}, api)
 
       const [onSuccess] = geolocation.getCurrentPosition.mock.calls[0]
       onSuccess(position)
 
-      expect(api.notify).toHaveBeenCalledWith("#geolocation:success", position)
+      expect(api.notify).toHaveBeenCalledWith("geolocationSuccess", position)
     })
   })
 
@@ -93,7 +93,7 @@ describe("geolocation", () => {
       entity.isLoading = true
       entity.error = { code: 1, message: "Denied" }
 
-      Geolocation.success(entity, position)
+      Geolocation.geolocationSuccess(entity, position)
 
       expect(entity.error).toBe(null)
       expect(entity.isLoading).toBe(false)
@@ -105,7 +105,7 @@ describe("geolocation", () => {
     it("should store a normalized error", () => {
       entity.isLoading = true
 
-      Geolocation.error(entity, { code: 1, message: "Denied" })
+      Geolocation.geolocationError(entity, { code: 1, message: "Denied" })
 
       expect(entity.error).toEqual({ code: 1, message: "Denied" })
       expect(entity.isLoading).toBe(false)
@@ -115,7 +115,7 @@ describe("geolocation", () => {
   describe("watch()", () => {
     it("should start watching positions", () => {
       Geolocation.create(entity)
-      Geolocation.watch(entity, { timeout: 1000 }, api)
+      Geolocation.geolocationWatch(entity, { timeout: 1000 }, api)
 
       expect(entity.isLoading).toBe(true)
       expect(entity.isWatching).toBe(true)
@@ -130,7 +130,7 @@ describe("geolocation", () => {
     it("should not start a second watch while already watching", () => {
       entity.watchId = 7
 
-      Geolocation.watch(entity, {}, api)
+      Geolocation.geolocationWatch(entity, {}, api)
 
       expect(geolocation.watchPosition).not.toHaveBeenCalled()
     })
@@ -142,7 +142,7 @@ describe("geolocation", () => {
       entity.isWatching = true
       entity.watchId = 7
 
-      Geolocation.unwatch(entity)
+      Geolocation.geolocationUnwatch(entity)
 
       expect(geolocation.clearWatch).toHaveBeenCalledWith(7)
       expect(entity.isLoading).toBe(false)
@@ -159,10 +159,10 @@ describe("geolocation", () => {
       })
 
       Geolocation.create(entity)
-      Geolocation.request(entity, {}, api)
+      Geolocation.geolocationRequest(entity, {}, api)
 
       expect(entity.isSupported).toBe(false)
-      expect(api.notify).toHaveBeenCalledWith("#geolocation:error", {
+      expect(api.notify).toHaveBeenCalledWith("geolocationError", {
         code: 0,
         message: "Geolocation is not supported by this environment.",
       })

@@ -7,7 +7,7 @@ A lightweight, reactive-enough web framework built on **pure JavaScript**, the e
 
 Unlike modern frameworks that invent their own languages or rely on signals, proxies, or compilers, **@inglorious/web embraces plain JavaScript** and a transparent architecture.
 
-It's a **complete framework**: it ships with a client-side router, declarative forms, geolocation state, async helpers (via `@inglorious/store/async`), and a dedicated testing utilities entry point (`@inglorious/web/test`) that re-exports `trigger` from `@inglorious/store` and `render` from `lit-html`. UI primitives (controls, data display, navigation, feedback, layout, surfaces) live in the companion package **[Inglorious UI](https://inglorious.dev/ui)**.
+It's a **complete framework**: it ships with a client-side router, declarative forms, geolocation and compass state, async helpers (via `@inglorious/store/async`), and a dedicated testing utilities entry point (`@inglorious/web/test`) that re-exports `trigger` from `@inglorious/store` and `render` from `lit-html`. UI primitives (controls, data display, navigation, feedback, layout, surfaces) live in the companion package **[Inglorious UI](https://inglorious.dev/ui)**.
 
 ---
 
@@ -28,10 +28,10 @@ It's a **complete framework**: it ships with a client-side router, declarative f
   Zero magic, zero reactivity graphs, zero compiler.  
   Just JavaScript functions and store events.
 
-- **Router, Forms, Geolocation, Async, Testing utilities**  
+- **Router, Forms, Geolocation, Compass, Async, Testing utilities**
   High-level primitives built on the same predictable model. UI primitives (tables, virtual lists, comboboxes, and more) live in **[Inglorious UI](https://inglorious.dev/ui)**.
 
-- **Zero Component State**  
+- **Zero Component State**
   All state lives in the store — never inside components.
 
 - **No Signals, No Subscriptions, No Framework-Level Memory Leaks**  
@@ -1259,18 +1259,145 @@ The entity state contains:
 
 Events:
 
-- `#geolocation:getCurrentPosition` — request the current position
-- `#geolocation:watch` — start watching position changes
-- `#geolocation:clearWatch` — stop the active watch
+- `geolocationRequest` — request the current position
+- `geolocationWatch` — start watching position changes
+- `geolocationUnwatch` — stop the active watch
 
 ```javascript
-api.notify("#geolocation:getCurrentPosition", {
+api.notify("geolocationRequest", {
   enableHighAccuracy: true,
   timeout: 5000,
 })
 
-api.notify("#geolocation:watch")
-api.notify("#geolocation:clearWatch")
+api.notify("geolocationWatch")
+api.notify("geolocationUnwatch")
+```
+
+### Example: Show current location
+
+```javascript
+import { mount, html } from "@inglorious/web"
+import { store } from "./store.js"
+
+const renderApp = (api) => {
+  const geolocation = api.getEntity("geolocation")
+  const position = geolocation.position
+
+  return html`
+    <section>
+      <h2>Geolocation</h2>
+      <p>Supported: ${geolocation.isSupported ? "yes" : "no"}</p>
+      <p>Loading: ${geolocation.isLoading ? "yes" : "no"}</p>
+      <p>
+        Position:
+        ${position
+          ? html`${position.coords.latitude.toFixed(4)},
+            ${position.coords.longitude.toFixed(4)}`
+          : "unknown"}
+      </p>
+      <p>Error: ${geolocation.error ? geolocation.error.message : "none"}</p>
+      <button
+        @click=${() =>
+          api.notify("geolocationRequest", {
+            enableHighAccuracy: true,
+            timeout: 5000,
+          })}
+      >
+        Request Current Position
+      </button>
+      <button @click=${() => api.notify("geolocationWatch")}>
+        Start Watch
+      </button>
+      <button @click=${() => api.notify("geolocationUnwatch")}>
+        Stop Watch
+      </button>
+    </section>
+  `
+}
+
+mount(store, renderApp, document.getElementById("root"))
+```
+
+---
+
+## Compass
+
+`@inglorious/web` also includes a `Compass` type for managing device orientation and heading state inside the store.
+
+```javascript
+import { createStore } from "@inglorious/store"
+import { Compass } from "@inglorious/web/compass"
+
+const store = createStore({
+  types: { Compass },
+  autoCreateEntities: true,
+})
+
+// The store now contains a `compass` entity.
+store.getState().compass
+```
+
+The entity state contains:
+
+- `isSupported` — whether device orientation sensors are available
+- `isLoading` — whether permissions or heading data are pending
+- `isCompassPermissionGranted` — whether compass permission has been granted
+- `isCompassActive` — whether a valid heading is currently active
+- `heading` — the latest heading in degrees, or `null`
+- `error` — the latest normalized `{ code, message }` error
+- `manualOffset` — a heading offset in degrees to apply to raw sensor values
+
+Events:
+
+- `compassPermissionsRequest` — request compass permission when needed
+- `compassWatch` — start listening for device orientation events
+- `compassUnwatch` — stop listening for device orientation events
+- `compassPermissionsGrant` — set permission granted
+- `compassActiveChange` — update active/inactive state
+- `compassHeadingChange` — update the latest heading
+- `compassError` — store a normalized compass error
+
+```javascript
+api.notify("compassPermissionsRequest")
+api.notify("compassWatch")
+api.notify("compassUnwatch")
+```
+
+### Example: Show heading and request permission
+
+```javascript
+import { mount, html } from "@inglorious/web"
+import { store } from "./store.js"
+
+const renderApp = (api) => {
+  const compass = api.getEntity("compass")
+
+  return html`
+    <section>
+      <h2>Compass</h2>
+      <p>Supported: ${compass.isSupported ? "yes" : "no"}</p>
+      <p>
+        Permission:
+        ${compass.isCompassPermissionGranted ? "granted" : "unknown"}
+      </p>
+      <p>Active: ${compass.isCompassActive ? "yes" : "no"}</p>
+      <p>
+        Heading:
+        ${compass.heading !== null
+          ? `${compass.heading.toFixed(1)}°`
+          : "unknown"}
+      </p>
+      <p>Error: ${compass.error ? compass.error.message : "none"}</p>
+      <button @click=${() => api.notify("compassPermissionsRequest")}>
+        Request Permission
+      </button>
+      <button @click=${() => api.notify("compassWatch")}>Start Compass</button>
+      <button @click=${() => api.notify("compassUnwatch")}>Stop Compass</button>
+    </section>
+  `
+}
+
+mount(store, renderApp, document.getElementById("root"))
 ```
 
 ---
@@ -1621,6 +1748,8 @@ import { render, trigger } from "@inglorious/web/test"
 
 import { Form } from "@inglorious/web/form"
 import { Router, setRoutes } from "@inglorious/web/router"
+import { Geolocation } from "@inglorious/web/geolocation"
+import { Compass } from "@inglorious/web/compass"
 ```
 
 This keeps `lit-html` as an internal implementation detail while still giving applications stable, tree-shakeable import paths.

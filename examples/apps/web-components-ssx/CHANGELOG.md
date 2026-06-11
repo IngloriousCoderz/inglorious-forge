@@ -1,5 +1,13 @@
 # web-components-ssx
 
+## 0.1.11
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/web@6.1.0
+  - @inglorious/ssx@2.0.4
+
 ## 0.1.10
 
 ### Patch Changes

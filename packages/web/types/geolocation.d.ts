@@ -1,3 +1,5 @@
+import { Api } from "./mount"
+
 export interface GeolocationCoordinates {
   accuracy: number
   altitude: number | null
@@ -43,13 +45,13 @@ export interface GeolocationType {
   request(
     entity: GeolocationEntity,
     options: GeolocationOptions | undefined,
-    api: { notify: (event: string, payload?: unknown) => void },
+    api: Api,
   ): void
   success(entity: GeolocationEntity, position: GeolocationPosition): void
   watch(
     entity: GeolocationEntity,
     options: GeolocationOptions | undefined,
-    api: { notify: (event: string, payload?: unknown) => void },
+    api: Api,
   ): void
 }
 
