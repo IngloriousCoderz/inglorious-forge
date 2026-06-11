@@ -51,9 +51,8 @@ describe("compass", () => {
         isSupported: true,
         manualOffset: 0,
         _absoluteListener: null,
+        _cancelTimeout: null,
         _orientationListener: null,
-        _isUsingAbsolute: false,
-        compassTimeout: null,
       })
     })
 
@@ -183,14 +182,15 @@ describe("compass", () => {
       )
     })
 
-    it("should store listeners on the entity", () => {
+    it("should store listeners and a cancel function on the entity", () => {
       Compass.compassWatch(entity, undefined, api)
 
       expect(entity._orientationListener).toBeTypeOf("function")
       expect(entity._absoluteListener).toBeTypeOf("function")
+      expect(entity._cancelTimeout).toBeTypeOf("function")
     })
 
-    it("should notify compassActiveChange false after timeout when no heading arrived", () => {
+    it("should notify compassActiveChange false after timeout", () => {
       Compass.compassWatch(entity, undefined, api)
 
       vi.runAllTimers()
@@ -198,10 +198,17 @@ describe("compass", () => {
       expect(api.notify).toHaveBeenCalledWith("compassActiveChange", false)
     })
 
-    it("should not notify compassActiveChange false after timeout when heading already arrived", () => {
+    it("should not notify compassActiveChange false when timeout was cancelled by a heading", () => {
       Compass.compassWatch(entity, undefined, api)
-      entity.heading = 45
 
+      // Simulate a heading arriving before the timeout fires
+      const [[, orientationListener]] =
+        windowMock.addEventListener.mock.calls.filter(
+          ([name]) => name === "deviceorientation",
+        )
+      orientationListener({ alpha: 45 })
+
+      api.notify.mockClear()
       vi.runAllTimers()
 
       expect(api.notify).not.toHaveBeenCalledWith("compassActiveChange", false)
@@ -213,86 +220,106 @@ describe("compass", () => {
   // ---------------------------------------------------------------------------
 
   describe("orientation listener", () => {
+    let orientationListener
+    let absoluteListener
+
     beforeEach(() => {
       Compass.create(entity)
       Compass.compassWatch(entity, undefined, api)
+
+      orientationListener = windowMock.addEventListener.mock.calls.find(
+        ([name]) => name === "deviceorientation",
+      )[1]
+
+      absoluteListener = windowMock.addEventListener.mock.calls.find(
+        ([name]) => name === "deviceorientationabsolute",
+      )[1]
     })
 
     it("should notify compassHeadingChange with the adjusted heading", () => {
-      const [[, listener]] = windowMock.addEventListener.mock.calls.filter(
-        ([name]) => name === "deviceorientation",
-      )
-
-      listener({ alpha: 90 })
+      orientationListener({ alpha: 90 })
 
       expect(api.notify).toHaveBeenCalledWith("compassHeadingChange", 90)
     })
 
     it("should notify compassActiveChange true when a valid heading arrives", () => {
-      const [[, listener]] = windowMock.addEventListener.mock.calls.filter(
-        ([name]) => name === "deviceorientation",
-      )
-
-      listener({ alpha: 45 })
+      orientationListener({ alpha: 45 })
 
       expect(api.notify).toHaveBeenCalledWith("compassActiveChange", true)
     })
 
     it("should ignore events where alpha is not a number", () => {
-      const [[, listener]] = windowMock.addEventListener.mock.calls.filter(
-        ([name]) => name === "deviceorientation",
-      )
-
-      listener({ alpha: null })
+      orientationListener({ alpha: null })
 
       expect(api.notify).not.toHaveBeenCalled()
     })
 
-    it("should apply manualOffset to the heading", () => {
+    it("should snapshot manualOffset at watch time", () => {
+      // manualOffset is snapshotted when compassWatch is called, so changes
+      // after the fact must have no effect
       entity.manualOffset = 10
 
-      const [[, listener]] = windowMock.addEventListener.mock.calls.filter(
-        ([name]) => name === "deviceorientation",
-      )
+      orientationListener({ alpha: 80 })
 
-      listener({ alpha: 80 })
+      // manualOffset was 0 at watch time, so heading should be 80, not 90
+      expect(api.notify).toHaveBeenCalledWith("compassHeadingChange", 80)
+    })
+
+    it("should use manualOffset when set before compassWatch", () => {
+      entity.manualOffset = 10
+      Compass.compassWatch(entity, undefined, api)
+
+      const [, listenerWithOffset] =
+        windowMock.addEventListener.mock.calls.findLast(
+          ([name]) => name === "deviceorientation",
+        )
+
+      listenerWithOffset({ alpha: 80 })
 
       expect(api.notify).toHaveBeenCalledWith("compassHeadingChange", 90)
     })
 
-    it("should clear the timeout when a heading arrives", () => {
-      const [[, listener]] = windowMock.addEventListener.mock.calls.filter(
-        ([name]) => name === "deviceorientation",
-      )
+    it("should cancel the timeout when a heading arrives", () => {
+      const clearTimeoutSpy = vi.spyOn(globalThis, "clearTimeout")
 
-      listener({ alpha: 30 })
+      orientationListener({ alpha: 30 })
 
-      expect(entity.compassTimeout).toBeNull()
+      expect(clearTimeoutSpy).toHaveBeenCalled()
+    })
+
+    it("should not fire compassActiveChange false after timeout once a heading arrived", () => {
+      orientationListener({ alpha: 30 })
+
+      api.notify.mockClear()
+      vi.runAllTimers()
+
+      expect(api.notify).not.toHaveBeenCalledWith("compassActiveChange", false)
     })
 
     it("should upgrade to absolute listener and drop orientation listener", () => {
-      const [[, absoluteListener]] =
-        windowMock.addEventListener.mock.calls.filter(
-          ([name]) => name === "deviceorientationabsolute",
-        )
-
       absoluteListener({ alpha: 120 })
 
-      expect(entity._isUsingAbsolute).toBe(true)
       expect(windowMock.removeEventListener).toHaveBeenCalledWith(
         "deviceorientation",
-        entity._orientationListener,
+        orientationListener,
       )
+    })
+
+    it("should not remove orientation listener more than once on repeated absolute events", () => {
+      absoluteListener({ alpha: 120 })
+      absoluteListener({ alpha: 130 })
+
+      const removeCalls = windowMock.removeEventListener.mock.calls.filter(
+        ([name]) => name === "deviceorientation",
+      )
+
+      expect(removeCalls).toHaveLength(1)
     })
 
     it("should wrap heading correctly past 360 degrees", () => {
       windowMock.screen.orientation.angle = 90
 
-      const [[, listener]] = windowMock.addEventListener.mock.calls.filter(
-        ([name]) => name === "deviceorientation",
-      )
-
-      listener({ alpha: 30 }) // 30 - 90 = -60 → wraps to 300
+      orientationListener({ alpha: 30 }) // 30 - 90 = -60 → wraps to 300
 
       expect(api.notify).toHaveBeenCalledWith("compassHeadingChange", 300)
     })
@@ -328,19 +355,24 @@ describe("compass", () => {
 
       expect(entity.isLoading).toBe(false)
       expect(entity.isActive).toBe(false)
-      expect(entity.compassTimeout).toBeNull()
       expect(entity._orientationListener).toBeNull()
       expect(entity._absoluteListener).toBeNull()
-      expect(entity._isUsingAbsolute).toBe(false)
+      expect(entity._cancelTimeout).toBeNull()
     })
 
     it("should cancel a pending timeout", () => {
       const clearTimeoutSpy = vi.spyOn(globalThis, "clearTimeout")
 
-      const timeoutId = entity.compassTimeout
       Compass.compassUnwatch(entity)
 
-      expect(clearTimeoutSpy).toHaveBeenCalledWith(timeoutId)
+      expect(clearTimeoutSpy).toHaveBeenCalled()
+    })
+
+    it("should not throw when called without a prior compassWatch", () => {
+      const freshEntity = { id: "compass", type: "Compass" }
+      Compass.create(freshEntity)
+
+      expect(() => Compass.compassUnwatch(freshEntity)).not.toThrow()
     })
   })
 
@@ -405,6 +437,7 @@ describe("compass", () => {
 
       expect(entity._orientationListener).toBeNull()
       expect(entity._absoluteListener).toBeNull()
+      expect(entity._cancelTimeout).toBeNull()
     })
   })
 })

@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 6.1.2
+
+### Patch Changes
+
+- Fix accessing compass props asynchronously
+
 ## 6.1.1
 
 ### Patch Changes

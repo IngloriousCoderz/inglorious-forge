@@ -19,11 +19,8 @@ export function create(entity) {
   entity.isSupported = isCompassSupported()
   entity.manualOffset ??= 0
   entity._absoluteListener ??= null
+  entity._cancelTimeout ??= null
   entity._orientationListener ??= null
-  // True once a deviceorientationabsolute event fires; used to drop the
-  // fallback deviceorientation listener so only one path updates heading.
-  entity._isUsingAbsolute ??= false
-  entity.compassTimeout ??= NO_TIMEOUT
 }
 
 export function destroy(entity) {
@@ -44,16 +41,15 @@ export function compassUnwatch(entity) {
     )
   }
 
-  if (entity.compassTimeout !== NO_TIMEOUT) {
-    clearTimeout(entity.compassTimeout)
+  if (entity._cancelTimeout) {
+    entity._cancelTimeout()
   }
 
   entity.isLoading = false
   entity.isActive = false
-  entity.compassTimeout = NO_TIMEOUT
   entity._orientationListener = null
   entity._absoluteListener = null
-  entity._isUsingAbsolute = false
+  entity._cancelTimeout = null
 }
 
 export function compassError(entity, error) {
@@ -101,12 +97,30 @@ export function compassPermissionsGrant(entity) {
 }
 
 export function compassWatch(entity, _, api) {
-  entity._isUsingAbsolute = false
+  // Snapshot values from the entity while the proxy is still live.
+  // Closures must not access `entity` after this handler returns, as
+  // Mutative revokes the draft proxy at that point.
+  const manualOffset = entity.manualOffset
 
-  const orientationListener = createOrientationChangeListener(entity, api)
+  let isUsingAbsolute = false
+  let timeoutId = NO_TIMEOUT
+
+  const cancelTimeout = () => {
+    if (timeoutId !== NO_TIMEOUT) {
+      clearTimeout(timeoutId)
+      timeoutId = NO_TIMEOUT
+    }
+  }
+
+  const orientationListener = createOrientationChangeListener(
+    cancelTimeout,
+    manualOffset,
+    api,
+  )
+
   const absoluteListener = (event) => {
-    if (!entity._isUsingAbsolute) {
-      entity._isUsingAbsolute = true
+    if (!isUsingAbsolute) {
+      isUsingAbsolute = true
       getWindow()?.removeEventListener("deviceorientation", orientationListener)
     }
 
@@ -115,23 +129,16 @@ export function compassWatch(entity, _, api) {
 
   entity._orientationListener = orientationListener
   entity._absoluteListener = absoluteListener
+  entity._cancelTimeout = cancelTimeout
 
   const win = getWindow()
   win?.addEventListener("deviceorientationabsolute", absoluteListener)
   win?.addEventListener("deviceorientation", orientationListener)
 
-  entity.compassTimeout = globalThis.setTimeout(
-    () => checkTimeout(entity, api),
-    COMPASS_TIMEOUT,
-  )
-}
-
-function checkTimeout(entity, api) {
-  entity.compassTimeout = NO_TIMEOUT
-
-  if (!entity.heading) {
+  timeoutId = globalThis.setTimeout(() => {
+    timeoutId = NO_TIMEOUT
     api.notify("compassActiveChange", false)
-  }
+  }, COMPASS_TIMEOUT)
 }
 
 export function compassActiveChange(entity, value) {
@@ -143,22 +150,18 @@ export function compassHeadingChange(entity, value) {
   entity.heading = value
 }
 
-function createOrientationChangeListener(entity, api) {
+function createOrientationChangeListener(cancelTimeout, manualOffset, api) {
   return (event) => {
     const heading = event?.alpha
     if (typeof heading !== "number") {
       return
     }
 
-    if (entity.compassTimeout !== NO_TIMEOUT) {
-      clearTimeout(entity.compassTimeout)
-      entity.compassTimeout = NO_TIMEOUT
-    }
+    cancelTimeout()
 
     const screenAngle = getScreenAngle()
     const adjustedHeading =
-      (((heading - screenAngle + entity.manualOffset) % FULL_CIRCLE) +
-        FULL_CIRCLE) %
+      (((heading - screenAngle + manualOffset) % FULL_CIRCLE) + FULL_CIRCLE) %
       FULL_CIRCLE
 
     api.notify("compassActiveChange", true)
