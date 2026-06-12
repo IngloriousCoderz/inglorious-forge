@@ -272,29 +272,28 @@ const store = createStore({
 
 ## Built-in Components
 
-### Router
+### Compass
 
 ```typescript
-interface RouterConfig {
-  routes: {
-    [path: string]: ComponentDef
-  }
-  notFound?: ComponentDef
-}
-
-interface RouterEntity {
-  currentPath: string
-  params: Record<string, string>
+interface CompassEntity {
+  id: string | number
+  type?: "Compass"
+  error: { code: number; message: string } | null
+  heading: number | null
+  isActive: boolean
+  isPermissionGranted: boolean
+  isLoading: boolean
+  isSupported: boolean
+  manualOffset: number | null
 }
 
 // Usage
-const router = {
-  routes: {
-    "/": Home,
-    "/about": About,
-    "/:id": Detail,
-  },
-}
+import { Compass } from "@inglorious/web/compass"
+
+const store = createStore({
+  types: { Compass },
+  autoCreateEntities: true,
+})
 ```
 
 ### Form
@@ -319,6 +318,8 @@ interface FormEntity {
 
 ```typescript
 interface GeolocationEntity {
+  id: string | number
+  type?: "Geolocation"
   isSupported: boolean
   isLoading: boolean
   isWatching: boolean
@@ -345,6 +346,31 @@ const store = createStore({
   types: { Geolocation },
   autoCreateEntities: true,
 })
+```
+
+### Router
+
+```typescript
+interface RouterConfig {
+  routes: {
+    [path: string]: ComponentDef
+  }
+  notFound?: ComponentDef
+}
+
+interface RouterEntity {
+  currentPath: string
+  params: Record<string, string>
+}
+
+// Usage
+const router = {
+  routes: {
+    "/": Home,
+    "/about": About,
+    "/:id": Detail,
+  },
+}
 ```
 
 ### UI Primitives
