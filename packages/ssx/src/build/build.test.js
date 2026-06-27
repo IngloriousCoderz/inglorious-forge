@@ -117,7 +117,7 @@ describe("build", () => {
       expect.any(String),
       expect.any(String),
     )
-    expect(result).toEqual({ changed: 1, skipped: 1 })
+    expect(result).toEqual({ changed: 1, skipped: 0 })
   })
 
   it("should generate sitemap and rss if configured", async () => {

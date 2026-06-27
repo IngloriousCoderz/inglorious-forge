@@ -3,9 +3,9 @@
 [![NPM version](https://img.shields.io/npm/v/@inglorious/ssx.svg)](https://www.npmjs.com/package/@inglorious/ssx)  
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Static Site Xecution** - Build blazing-fast static sites with [@inglorious/web](https://www.npmjs.com/package/@inglorious/web), complete with server-side rendering, client-side hydration, and zero-config routing.
+**Static Site Xecution** - Build blazing-fast static sites with [@inglorious/web](https://www.npmjs.com/package/@inglorious/web), complete with static-site generation, optional server-side rendering, client-side hydration, and zero-config routing.
 
-SSX takes your entity-based web apps and generates optimized static HTML with full hydration support. Think Next.js SSG or Astro, but with the simplicity and predictability of Inglorious Web's entity architecture.
+SSX takes your entity-based web apps and generates optimized static HTML with full hydration support. By default, pages are generated during the build and written to `dist/`, but you can opt specific pages into request-time rendering when you need fresh data or per-request behavior. Think Next.js SSG or Astro, but with the simplicity and predictability of Inglorious Web's entity architecture.
 
 ---
 
@@ -153,6 +153,32 @@ Deploy `dist/` to:
 ---
 
 ## Features
+
+### ⚙️ Rendering Modes: SSG by Default, SSR by Opt-In
+
+SSX is primarily a static-site generator. During `ssx build`, most pages are rendered once and emitted as static HTML files in `dist/`.
+
+If a page needs request-time rendering, export `ssr` from the page module:
+
+```javascript
+// src/pages/checkout.js
+import { html } from "@inglorious/web"
+
+export const ssr = true
+
+export async function load(entity) {
+  entity.checkout = await fetchCheckoutDetails()
+}
+
+export const Checkout = {
+  render(entity) {
+    return html`<h1>Checkout</h1>
+      <p>${entity.checkout?.status}</p>`
+  },
+}
+```
+
+SSR pages are skipped during the static build, then rendered on demand by the dev server or by a dedicated runtime server started with `ssx ssr`. That keeps the build output focused on pages that should be statically generated.
 
 ### 🗺️ Sitemap & RSS Generation
 
@@ -653,6 +679,19 @@ Options:
   -c, --config <file>  Config file (default: "site.config.js")
   -r, --root <dir>     Source root directory (default: ".")
   -o, --out <dir>      Output directory (default: "dist")
+  -p, --port <port>    Server port (default: 3000)
+```
+
+### `ssx ssr`
+
+Starts a runtime server that renders SSR-marked pages on demand:
+
+```bash
+pnpm ssx ssr [options]
+
+Options:
+  -c, --config <file>  Config file (default: "site.config.js")
+  -r, --root <dir>     Root directory (default: ".")
   -p, --port <port>    Server port (default: 3000)
 ```
 

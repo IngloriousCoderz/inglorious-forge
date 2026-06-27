@@ -123,15 +123,20 @@ export async function build(options = {}) {
     loader,
   )
 
-  // Combine rendered and skipped pages for sitemap/RSS
-  const allGeneratedPages = [...changedPages, ...skippedPages]
+  const staticChangedPages = changedPages.filter((page) => page.html)
+  const staticSkippedPages = skippedPages.filter(
+    (page) => page.html || page.metadata,
+  )
 
-  if (changedPages.length) {
+  // Combine rendered and skipped pages for sitemap/RSS
+  const allGeneratedPages = [...staticChangedPages, ...staticSkippedPages]
+
+  if (staticChangedPages.length) {
     // 6. Generate client-side JavaScript
     console.log("\n💾 Writing files...\n")
 
     // 7. Write HTML pages
-    for (const page of changedPages) {
+    for (const page of staticChangedPages) {
       const filePath = await writePageToDisk(page.path, page.html, outDir)
       console.log(`  ✓ ${filePath}`)
     }
@@ -185,8 +190,8 @@ export async function build(options = {}) {
   console.log("\n✨ Build complete!\n")
 
   const result = {
-    changed: changedPages.length,
-    skipped: skippedPages.length,
+    changed: staticChangedPages.length,
+    skipped: staticSkippedPages.length,
   }
 
   if (previousNodeEnv == null) {

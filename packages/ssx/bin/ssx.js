@@ -9,6 +9,7 @@ import { Command } from "commander"
 import { build } from "../src/build/index.js"
 import { dev } from "../src/dev/index.js"
 import { serve } from "../src/serve/index.js"
+import { ssr } from "../src/ssr/index.js"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -115,6 +116,33 @@ program
       })
     } catch (error) {
       console.error("Server failed:", error)
+      process.exit(1)
+    }
+  })
+
+program
+  .command("ssr")
+  .description("Start an SSR runtime server that renders pages on demand")
+  .option("-c, --config <file>", "config file name", "site.config.js")
+  .option("-r, --root <dir>", "root directory", ".")
+  .option("-p, --port <port>", "server port", 3000)
+  .action(async (options) => {
+    const cwd = process.cwd()
+    const rootDir = path.resolve(cwd, options.root)
+    const configPath = resolveConfigFile(rootDir, options.config)
+    const port = Number(options.port)
+
+    try {
+      await ssr({
+        ...options,
+        config: undefined,
+        root: undefined,
+        configPath,
+        rootDir,
+        port,
+      })
+    } catch (error) {
+      console.error("SSR server failed:", error)
       process.exit(1)
     }
   })

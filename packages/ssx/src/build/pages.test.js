@@ -4,10 +4,14 @@ import path from "node:path"
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest"
 
 import { renderPage } from "../render/index.js"
+import { generateStore } from "../store/index.js"
 import { extractPageMetadata } from "./metadata.js"
 import { generatePages } from "./pages"
 
 vi.mock("../render/index.js")
+vi.mock("../store/index.js", () => ({
+  generateStore: vi.fn(),
+}))
 vi.mock("./metadata.js")
 
 describe("generatePages", () => {
@@ -145,5 +149,26 @@ describe("generatePages", () => {
     await generatePages(store, pages, {}, loader)
 
     expect(entity.locale).toBe("pt")
+  })
+
+  it("should skip pages marked as ssr during static build generation", async () => {
+    const sharedStore = {
+      _api: {
+        getEntities: vi.fn(() => [{}]),
+        getEntity: vi.fn(() => ({})),
+      },
+    }
+    const pages = [{ path: "/ssr", filePath: pageFile, moduleName: "ssr" }]
+    const loader = vi.fn(async () => ({ ssr: true, render: () => {} }))
+
+    vi.clearAllMocks()
+    renderPage.mockResolvedValue("<html></html>")
+    extractPageMetadata.mockReturnValue({})
+
+    await generatePages(sharedStore, pages, {}, loader)
+
+    expect(generateStore).not.toHaveBeenCalled()
+    expect(renderPage).not.toHaveBeenCalled()
+    expect(extractPageMetadata).not.toHaveBeenCalled()
   })
 })

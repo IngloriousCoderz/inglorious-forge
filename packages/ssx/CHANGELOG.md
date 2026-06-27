@@ -1,5 +1,11 @@
 # @inglorious/ssx
 
+## 2.1.0
+
+### Minor Changes
+
+- d38c82e: Add SSR support to Inglorious SSX
+
 ## 2.0.6
 
 ### Patch Changes

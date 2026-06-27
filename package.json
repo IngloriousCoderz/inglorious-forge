@@ -34,7 +34,7 @@
     "*.{js,jsx,ts,tsx,mjs,cjs,json,md,css,scss,html,yml,yaml}": "prettier --write",
     "*.{js,jsx,ts,tsx,mjs,cjs}": "eslint --fix"
   },
-  "packageManager": "pnpm@10.33.0",
+  "packageManager": "pnpm@11.9.0",
   "engines": {
     "node": ">= 22"
   }

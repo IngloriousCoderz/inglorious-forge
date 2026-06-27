@@ -1,11 +1,101 @@
 {
   "version": 1,
   "skills": {
+    "charts": {
+      "source": "IngloriousCoderz/forge-skills",
+      "sourceType": "github",
+      "skillPath": "skills/charts/SKILL.md",
+      "computedHash": "0bbb92b6301fede6954d5b470b962dd1a515e49e85b0ad43c13355249aa4f5ef"
+    },
+    "create-app": {
+      "source": "IngloriousCoderz/forge-skills",
+      "sourceType": "github",
+      "skillPath": "skills/create-app/SKILL.md",
+      "computedHash": "ab71aee5391a29e514b9363e0cb36714a4dfc033d48b017e50f170ad21fce853"
+    },
+    "create-game": {
+      "source": "IngloriousCoderz/forge-skills",
+      "sourceType": "github",
+      "skillPath": "skills/create-game/SKILL.md",
+      "computedHash": "b1f7b4091dd4d61eeee449a55c6e7f9d7d82b23c3d9a5bf527a0205e9458fdba"
+    },
+    "engine": {
+      "source": "IngloriousCoderz/forge-skills",
+      "sourceType": "github",
+      "skillPath": "skills/engine/SKILL.md",
+      "computedHash": "23b6649defb900f4b2b19cf3e4c241385455d77096bf77f69e898c497e0fb4fd"
+    },
     "forge-skills": {
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
-      "skillPath": "SKILL.md",
-      "computedHash": "7ee242be4ef14c86a1f82bae2f02eb3ed90d8c50efd24b5b6a72b2527651576c"
+      "skillPath": "skills/forge/SKILL.md",
+      "computedHash": "dea89ffee91e89811c5a44ad76c9237b1463de7890942944eae49ef987fd51fb"
+    },
+    "react-store": {
+      "source": "IngloriousCoderz/forge-skills",
+      "sourceType": "github",
+      "skillPath": "skills/react-store/SKILL.md",
+      "computedHash": "67d750115accf7049e94e70a8b4fa54b82ac296a271b658a7a17787c987bbedd"
+    },
+    "server": {
+      "source": "IngloriousCoderz/forge-skills",
+      "sourceType": "github",
+      "skillPath": "skills/server/SKILL.md",
+      "computedHash": "25cef29fcf88cec6c38a164f19cb8f630c4836e743afc63b7374fe218f4c78c2"
+    },
+    "ssx": {
+      "source": "IngloriousCoderz/forge-skills",
+      "sourceType": "github",
+      "skillPath": "skills/ssx/SKILL.md",
+      "computedHash": "75b6433b7fa3190c188a5e4031886f9c85ef6b53a663ff22ab2056986a21c19f"
+    },
+    "store": {
+      "source": "IngloriousCoderz/forge-skills",
+      "sourceType": "github",
+      "skillPath": "skills/store/SKILL.md",
+      "computedHash": "af550dc905d2db0bb3c754aab33c104794ad1024175c35b4d25ffe67b2ad0bb5"
+    },
+    "ui": {
+      "source": "IngloriousCoderz/forge-skills",
+      "sourceType": "github",
+      "skillPath": "skills/ui/SKILL.md",
+      "computedHash": "8a848c8fa0d804b87a2469a41ebdfbe2ee80b67faa10a0213e6300e418f59ff5"
+    },
+    "ui-best-practices": {
+      "source": "IngloriousCoderz/forge-skills",
+      "sourceType": "github",
+      "skillPath": "skills/ui-best-practices/SKILL.md",
+      "computedHash": "73bbf6f1a223ea5212416002abd25fa942882ffa1e9a22508a406ae128bc5c18"
+    },
+    "utils": {
+      "source": "IngloriousCoderz/forge-skills",
+      "sourceType": "github",
+      "skillPath": "skills/utils/SKILL.md",
+      "computedHash": "a7b2253dfc5bd3d698ea0dc2019877b5c0a7dcd2dc371ec206a501cfa06e3488"
+    },
+    "vite-plugin-jsx": {
+      "source": "IngloriousCoderz/forge-skills",
+      "sourceType": "github",
+      "skillPath": "skills/vite-plugin-jsx/SKILL.md",
+      "computedHash": "f72e17c6539cc2e3dc71b47129d0e1c6ef78ee7b964c57df26fdc427455bb85f"
+    },
+    "vite-plugin-vue": {
+      "source": "IngloriousCoderz/forge-skills",
+      "sourceType": "github",
+      "skillPath": "skills/vite-plugin-vue/SKILL.md",
+      "computedHash": "82b2424746f0b4a3d78ddf2e38f00bb53a80a584fa765640b61a7492d1359d46"
+    },
+    "web": {
+      "source": "IngloriousCoderz/forge-skills",
+      "sourceType": "github",
+      "skillPath": "skills/web/SKILL.md",
+      "computedHash": "49b425d04dbeabe9f7f7f7ac9808da173296a584827241c864fd885773426fee"
+    },
+    "web-best-practices": {
+      "source": "IngloriousCoderz/forge-skills",
+      "sourceType": "github",
+      "skillPath": "skills/web-best-practices/SKILL.md",
+      "computedHash": "7bc7c2e2e0536595cfd1173920f5b820f035e1a29e75ff4eea2e0dcc3cb4c74e"
     }
   }
 }

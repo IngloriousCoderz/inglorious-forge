@@ -7,6 +7,8 @@ description: Static site generation with pre-rendering and client-side hydration
 
 For building static HTML sites with pre-rendering and client-side hydration, use **[@inglorious/ssx](https://npmjs.com/@inglorious/ssx)**.
 
+SSX is primarily an SSG framework: the default build renders pages to static HTML files. When a page needs fresh, request-specific data, you can opt it into SSR with `export const ssr = true` so it is rendered on demand instead of being emitted as a static file.
+
 ## What is SSX?
 
 **Static Site Xecution (SSX)** is a static site generator built on Inglorious Web. It combines:
@@ -60,7 +62,7 @@ pages/
 
 ### Pre-Rendered HTML
 
-Every page is generated as static HTML at build time:
+Every regular page is generated as static HTML at build time:
 
 ```bash
 npm run build
@@ -71,6 +73,8 @@ npm run build
 # dist/blog/post-1/index.html
 # ...
 ```
+
+If you need request-time rendering for a specific page, mark it with `export const ssr = true`. Those pages are skipped during the static build and are instead rendered on demand by the dev server or by `ssx ssr`.
 
 ### Client Hydration
 
@@ -153,6 +157,33 @@ dist/blog/
 | JavaScript           | Optional       | Required | Optional   | No     |
 
 ## Advanced SSX Features
+
+### Per-Page SSR
+
+SSG is the default behavior. Use SSR when a page depends on request-specific data such as cookies, headers, authentication, or other runtime-only context:
+
+```javascript
+// pages/profile.js
+import { html } from "@inglorious/web"
+
+export const ssr = true
+
+export async function load(entity, page) {
+  entity.user = await getCurrentUser(page.request)
+}
+
+export const Profile = {
+  render(entity) {
+    return html`<h1>${entity.user?.name}</h1>`
+  },
+}
+```
+
+Start the dedicated runtime server with:
+
+```bash
+npx ssx ssr
+```
 
 ### Custom Metadata
 

@@ -34,6 +34,10 @@ export async function generatePages(store, pages, options = {}, loader) {
     const module = await load(page.filePath)
     page.module = module
 
+    if (module?.ssr) {
+      continue
+    }
+
     const [entity] = store._api.getEntities(page.moduleName)
     if (page.locale) {
       entity.locale = page.locale

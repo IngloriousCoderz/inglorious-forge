@@ -7,6 +7,13 @@ packages:
   - examples/games/*
   - packages/*
 
+allowBuilds:
+  "@parcel/watcher": true
+  "@tailwindcss/oxide": true
+  esbuild: true
+  sharp: true
+  vue-demi: true
+
 onlyBuiltDependencies:
   - "@parcel/watcher"
   - "@tailwindcss/oxide"
