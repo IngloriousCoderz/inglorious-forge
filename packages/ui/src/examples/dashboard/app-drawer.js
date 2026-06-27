@@ -44,7 +44,9 @@ export const AppDrawer = {
         className: "iw-dashboard-brand",
         children: [
           Avatar.render({ src: "/transparent.png", shape: "square" }),
-          html`<span class="iw-dashboard-brand-title">Inglorious UI</span>`,
+          html`<span class="iw-dashboard-brand-title iw-typography"
+            >Inglorious UI</span
+          >`,
         ],
       }),
       children: html`

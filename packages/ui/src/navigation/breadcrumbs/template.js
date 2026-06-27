@@ -73,7 +73,7 @@ export const Breadcrumbs = {
   renderItem(item, index, props) {
     const isLast = index === props.items.length - 1
 
-    return html`<li class="iw-breadcrumbs-item">
+    return html`<li class="iw-breadcrumbs-item iw-typography">
       ${item.href && !isLast
         ? html`<a
             href=${item.href}

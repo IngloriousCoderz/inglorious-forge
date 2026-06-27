@@ -146,7 +146,7 @@ export const List = {
     } = meta
 
     if (meta.title) {
-      return html`<li class="iw-list-title">${meta.title}</li>`
+      return html`<li class="iw-list-title iw-typography">${meta.title}</li>`
     }
 
     const isClickable = !!props.onItemClick || !!onClick
@@ -156,6 +156,7 @@ export const List = {
 
     const listItemClassName = [
       "iw-list-item",
+      "iw-typography",
       isClickable && "iw-list-item-clickable",
       isExpandable && "iw-list-item-expandable",
       isDisabled && "iw-list-item-disabled",
