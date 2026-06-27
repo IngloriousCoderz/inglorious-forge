@@ -30,6 +30,10 @@ export async function ssr(options = {}) {
   )
   connectServer.use(apiMiddleware)
 
+  const pagesDir = path.join(rootDir, "src", "pages")
+  const pages = await getPages(pagesDir, mergedOptions, loader)
+  await registerApp(pages, mergedOptions, loader, viteServer)
+
   connectServer.use(async (req, res, next) => {
     const [url] = req.url.split("?")
 
@@ -48,6 +52,7 @@ export async function ssr(options = {}) {
         options: { ...mergedOptions, isDev: false },
         loader,
         viteServer,
+        pages,
       })
 
       if (!result) {
@@ -78,7 +83,7 @@ export async function ssr(options = {}) {
 
 export async function renderRequest(
   url,
-  { rootDir = ".", options = {}, loader, viteServer } = {},
+  { rootDir = ".", options = {}, loader, viteServer, pages } = {},
 ) {
   const [pathname] = String(url || "").split("?")
 
@@ -91,18 +96,25 @@ export async function renderRequest(
     return null
   }
 
-  const pagesDir = path.join(rootDir, "src", "pages")
-  const pages = await getPages(pagesDir, options, loader)
+  let resolvedPages = pages
+  if (resolvedPages == null) {
+    const pagesDir = path.join(rootDir, "src", "pages")
+    resolvedPages = await getPages(pagesDir, options, loader)
+    await registerApp(resolvedPages, options, loader, viteServer)
+  }
 
-  const page = pages.find((candidate) => matchRoute(candidate.path, pathname))
-  if (!page) {
+  const origPage = resolvedPages.find((candidate) =>
+    matchRoute(candidate.path, pathname),
+  )
+  if (!origPage) {
     return null
   }
 
-  const module = await loader(page.filePath)
+  const module = await loader(origPage.filePath)
+  const page = { ...origPage }
   page.module = module
 
-  const store = await generateStore(pages, options, loader)
+  const store = await generateStore(resolvedPages, options, loader)
   const [entity] = store._api.getEntities(page.moduleName)
   if (page.locale) {
     entity.locale = page.locale
@@ -112,6 +124,16 @@ export async function renderRequest(
     await module.load(entity, page)
   }
 
+  const html = await renderPage(store, page, entity, {
+    ...options,
+    wrap: true,
+    isDev: Boolean(options.isDev),
+  })
+
+  return { html, page, entity, store }
+}
+
+async function registerApp(pages, options, loader, viteServer) {
   const app = await generateApp(
     pages,
     { ...options, isDev: Boolean(options.isDev) },
@@ -125,12 +147,4 @@ export async function renderRequest(
       viteServer.moduleGraph.invalidateModule(virtualModule)
     }
   }
-
-  const html = await renderPage(store, page, entity, {
-    ...options,
-    wrap: true,
-    isDev: Boolean(options.isDev),
-  })
-
-  return { html, page, entity, store }
 }
