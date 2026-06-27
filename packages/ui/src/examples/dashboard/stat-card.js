@@ -55,30 +55,33 @@ export const StatCard = {
     }))
 
     const base = {
-      id: entity.id,
-      type: entity.chartType,
       data,
       width: 400,
       height: 80,
-      padding: { top: 0, right: 16, bottom: -16, left: 16 },
+      padding: { top: 0, right: 16, bottom: -8, left: 16 },
+      dataKeys: ["value"],
     }
 
     const children = []
+
+    if (entity.chartType === "area") {
+      children.push(
+        Chart.Area({ dataKey: "value", fill: "rgba(255,255,255,0.3)" }),
+      )
+    } else if (entity.chartType === "bar") {
+      children.push(
+        Chart.Bar({ dataKey: "value", fill: "rgba(255,255,255,0.3)" }),
+      )
+    } else if (entity.chartType === "line") {
+      children.push(Chart.Line({ dataKey: "value", stroke: "white" }))
+    }
+
     if (entity.hasDots) {
       children.push(
         Chart.Dots({ dataKey: "value", stroke: "white", fill: "#39a2f1" }),
       )
     }
 
-    if (entity.chartType === "area") {
-      children.push(Chart.Area({ fill: "rgba(255,255,255,0.3)" }))
-      return Chart.render({ ...base, children }, api)
-    }
-    if (entity.chartType === "bar") {
-      children.push(Chart.Bar({ fill: "rgba(255,255,255,0.3)" }))
-      return Chart.render({ ...base, children }, api)
-    }
-    children.push(Chart.Line({ stroke: "white" }))
     return Chart.render({ ...base, children }, api)
   },
 }

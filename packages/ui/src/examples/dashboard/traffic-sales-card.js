@@ -62,7 +62,7 @@ export const TrafficSalesCard = {
                       align: "center",
                       className: "iw-dashboard-progress-row",
                       children: [
-                        html`<span>${day}</span>`,
+                        html`<span class="iw-typography">${day}</span>`,
                         Flex.render({
                           direction: "column",
                           gap: "sm",
@@ -127,7 +127,9 @@ export const TrafficSalesCard = {
                                   name: iconName,
                                   size: "lg",
                                 }),
-                                html`<span>${label}</span>`,
+                                html`<span class="iw-typography"
+                                  >${label}</span
+                                >`,
                               ],
                             }),
                             Flex.render({
@@ -136,10 +138,18 @@ export const TrafficSalesCard = {
                               className: "iw-dashboard-progress-meta",
                               children: metric
                                 ? [
-                                    html`<span>${metric}</span>`,
-                                    html`<span>${suffix}</span>`,
+                                    html`<span class="iw-typography"
+                                      >${metric}</span
+                                    >`,
+                                    html`<span class="iw-typography"
+                                      >${suffix}</span
+                                    >`,
                                   ]
-                                : [html`<span>${value}%</span>`],
+                                : [
+                                    html`<span class="iw-typography"
+                                      >${value}%</span
+                                    >`,
+                                  ],
                             }),
                           ],
                         })}
@@ -187,7 +197,7 @@ export const TrafficSalesCard = {
                       children: "",
                     })}
                   </span>`,
-                  html`<div>
+                  html`<div class="iw-typography">
                     <div>${row.name}</div>
                     <div class="iw-dashboard-user-subtitle">
                       ${row.subtitle}
@@ -208,8 +218,9 @@ export const TrafficSalesCard = {
                     justify: "between",
                     gap: "sm",
                     children: [
-                      html`<span>${row.usage}%</span>`,
-                      html`<span class="iw-dashboard-user-subtitle"
+                      html`<span class="iw-typography">${row.usage}%</span>`,
+                      html`<span
+                        class="iw-typography iw-dashboard-user-subtitle"
                         >${row.range}</span
                       >`,
                     ],
@@ -232,8 +243,10 @@ export const TrafficSalesCard = {
             </div>`,
             activity: html`
               <div>
-                <div class="iw-dashboard-user-subtitle">Last login</div>
-                <div>${row.activity}</div>
+                <div class="iw-typography iw-dashboard-user-subtitle">
+                  Last login
+                </div>
+                <div class="iw-typography">${row.activity}</div>
               </div>
             `,
             menu: html`

@@ -1,5 +1,13 @@
 # web-finance-dashboard
 
+## 0.1.4
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/charts@7.0.3
+  - @inglorious/ui@4.0.3
+
 ## 0.1.3
 
 ### Patch Changes

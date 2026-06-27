@@ -139,9 +139,12 @@ export function renderBarSeries(primitive, frame) {
 export function renderDots(primitive, frame) {
   const series = createSeriesPoints(primitive, frame)
   const fill =
-    primitive.props?.fill ||
+    primitive.props?.fill || resolveSeriesColor(frame, primitive.props?.dataKey)
+  const stroke =
     primitive.props?.stroke ||
     resolveSeriesColor(frame, primitive.props?.dataKey)
+  const strokeWidth = primitive.props?.strokeWidth ?? 2
+
   const radius = primitive.props?.r || 4
   const dataKey = primitive.props?.dataKey
 
@@ -154,6 +157,8 @@ export function renderDots(primitive, frame) {
             cy=${point.y}
             r=${radius}
             fill=${fill}
+            stroke=${stroke}
+            stroke-width=${strokeWidth}
             pointer-events="all"
             style="cursor: pointer;"
             @mouseenter=${(event) =>

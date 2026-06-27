@@ -78,7 +78,6 @@
 
 .iw-dashboard-stat {
   overflow: hidden;
-  color: white;
 
   .iw-typography,
   .iw-material-icon,
@@ -88,16 +87,16 @@
   }
 }
 
-.iw-dashboard-stat-primary {
+.iw-card.iw-dashboard-stat-primary > .iw-card-body {
   background: #5856d6;
 }
-.iw-dashboard-stat-info {
+.iw-card.iw-dashboard-stat-info > .iw-card-body {
   background: #39a2f1;
 }
-.iw-dashboard-stat-warning {
+.iw-card.iw-dashboard-stat-warning > .iw-card-body {
   background: #f5a524;
 }
-.iw-dashboard-stat-danger {
+.iw-card.iw-dashboard-stat-danger > .iw-card-body {
   background: #e55353;
 }
 
@@ -149,6 +148,8 @@
 }
 
 .iw-dashboard-social-card {
+  background-color: var(--iw-card-border);
+
   .iw-dashboard-social-cap {
     position: relative;
     display: flex;
@@ -180,6 +181,10 @@
       width: 100%;
       height: 100%;
     }
+  }
+
+  .iw-card-body {
+    background-color: var(--iw-card-bg);
   }
 }
 

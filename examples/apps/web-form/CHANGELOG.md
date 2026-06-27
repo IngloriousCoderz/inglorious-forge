@@ -1,5 +1,12 @@
 # lit-todomvc
 
+## 0.1.55
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/ui@4.0.3
+
 ## 0.1.54
 
 ### Patch Changes

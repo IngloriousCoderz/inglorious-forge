@@ -1,5 +1,11 @@
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&family=Oxanium:wght@200..800&display=swap");
+
+:root {
+  --iw-font-family: "Oxanium", var(--iw-font-family-sans);
+}
+
 .iw-theme-inglorious {
-  font-family: var(--iw-font-family-sans);
+  --iw-font-family-sans: var(--iw-font-family);
 
   /* ========================================
      INGLORIOUS THEME - Neon Videogame Aesthetic
@@ -127,4 +133,52 @@
     var(--iw-color-primary) 8%,
     var(--iw-color-white)
   );
+}
+
+.iw-theme-inglorious {
+  .iw-typography {
+    font-family: var(--iw-font-family-sans);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  th {
+    font-family: "Orbitron", sans-serif;
+  }
+
+  .iw-card {
+    --cut: 20px;
+
+    clip-path: polygon(
+      0 0,
+      100% 0,
+      100% calc(100% - var(--cut)),
+      calc(100% - var(--cut)) 100%,
+      0 100%
+    );
+
+    background-color: var(--iw-card-border);
+
+    .iw-card-header,
+    .iw-card-body,
+    .iw-card-footer {
+      background-color: var(--iw-card-bg);
+    }
+
+    > :last-child {
+      --cut: 20px;
+
+      clip-path: polygon(
+        0 0,
+        100% 0,
+        100% calc(100% - var(--cut)),
+        calc(100% - var(--cut)) 100%,
+        0 100%
+      );
+    }
+  }
 }

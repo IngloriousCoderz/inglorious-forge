@@ -50,12 +50,10 @@ export const SocialCard = {
   renderAreaSpark(entity, api) {
     return Chart.render(
       {
-        type: "area",
         data: entity.data.map((value, index) => ({ name: `${index}`, value })),
         width: 640,
         height: 200,
         padding: 0,
-        dataKeys: ["value"],
         children: [
           Chart.Area({
             dataKey: "value",

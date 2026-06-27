@@ -75,8 +75,12 @@ export const Dashboard = {
               padding: "md",
               className: "iw-dashboard-footer",
               children: [
-                html`<div>Admin dashboard example © 2026</div>`,
-                html`<div>Built with Inglorious UI primitives and charts</div>`,
+                html`<div class="iw-typography">
+                  Admin dashboard example © 2026
+                </div>`,
+                html`<div class="iw-typography">
+                  Built with Inglorious UI primitives and charts
+                </div>`,
               ],
             }),
           ],

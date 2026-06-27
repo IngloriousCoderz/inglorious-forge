@@ -1,5 +1,13 @@
 # @inglorious/ui
 
+## 4.0.3
+
+### Patch Changes
+
+- Fix chart dots not showing correctly
+- Updated dependencies
+  - @inglorious/charts@7.0.3
+
 ## 4.0.2
 
 ### Patch Changes
