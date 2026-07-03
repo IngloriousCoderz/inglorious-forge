@@ -2,7 +2,7 @@
 
 This suite now includes both:
 
-- cross-framework baselines (React/Vue/Svelte/Inglorious)
+- cross-framework baselines (React/Vue/Solid/Svelte/Inglorious)
 - React state-strategy variants (memoized, RTK, RTK + adapters, Inglorious Store)
 
 ## Scope
@@ -16,23 +16,27 @@ This suite now includes both:
 - **React + Inglorious Store**: `benchmarks/dashboard/react-inglorious`
 - **React + Inglorious Store memoized**: `benchmarks/dashboard/react-inglorious-memo`
 - **Vue baseline**: `benchmarks/dashboard/vue`
-- **Vue + Pinia baseline**: `benchmarks/dashboard/vue-pinia`
+- **Vue + Pinia**: `benchmarks/dashboard/vue-pinia`
+- **Solid baseline**: `benchmarks/dashboard/solid`
+- **Solid memoized**: `benchmarks/dashboard/solid-memo`
+- **Solid + store baseline**: `benchmarks/dashboard/solid-store`
+- **Solid + store memoized**: `benchmarks/dashboard/solid-store-memo`
 - **Svelte baseline**: `benchmarks/dashboard/svelte`
-- **Svelte + store baseline**: `benchmarks/dashboard/svelte-store`
-- **Svelte + runes baseline**: `benchmarks/dashboard/svelte-runes`
+- **Svelte + store**: `benchmarks/dashboard/svelte-store`
+- **Svelte + runes**: `benchmarks/dashboard/svelte-runes`
 - **Inglorious baseline**: `benchmarks/dashboard/inglorious`
 - **Inglorious memoized**: `benchmarks/dashboard/inglorious-memo`
 - **Shared model/data/CSS**: `benchmarks/dashboard/shared`
 
 ## Fairness Rules
 
-| Rule                              | Status | Notes                                                                          |
-| --------------------------------- | ------ | ------------------------------------------------------------------------------ |
-| Same dataset and update frequency | ✅     | All apps use `@benchmarks/dashboard-shared`.                                   |
-| Same chart model and slicing      | ✅     | Shared `CHARTS` and shared chart derivation helper.                            |
-| Same business-logic shape         | ✅     | Event-driven handlers: metrics/table react to the same event names.            |
-| Same top-level component shape    | ✅     | React/Vue/Svelte/Inglorious all use dashboard + metrics + chart + table + row. |
-| Same styling                      | ✅     | All apps import `@benchmarks/dashboard-shared/style.css`.                      |
+| Rule                              | Status | Notes                                                                                |
+| --------------------------------- | ------ | ------------------------------------------------------------------------------------ |
+| Same dataset and update frequency | ✅     | All apps use `@benchmarks/dashboard-shared`.                                         |
+| Same chart model and slicing      | ✅     | Shared `CHARTS` and shared chart derivation helper.                                  |
+| Same business-logic shape         | ✅     | Event-driven handlers: metrics/table react to the same event names.                  |
+| Same top-level component shape    | ✅     | React/Vue/Solid/Svelte/Inglorious all use dashboard + metrics + chart + table + row. |
+| Same styling                      | ✅     | All apps import `@benchmarks/dashboard-shared/style.css`.                            |
 
 ## Business Logic Model
 
@@ -44,7 +48,7 @@ Baseline cross-framework variants use the same event-driven logic contract from 
 - `metrics.setSort`
 - `table.click`
 
-React/Vue/Svelte baseline apps apply these events through a shared pure reducer (`applyEvent`) and derive rows via shared selectors.
+React/Vue/Solid/Svelte baseline apps apply these events through a shared pure reducer (`applyEvent`) and derive rows via shared selectors.
 Inglorious applies equivalent events through type handlers and selectors.
 
 React state-strategy variants are intentionally separate implementations to compare architecture cost:
@@ -67,6 +71,10 @@ pnpm -C benchmarks/dashboard/react-inglorious dev
 pnpm -C benchmarks/dashboard/react-inglorious-memo dev
 pnpm -C benchmarks/dashboard/vue dev
 pnpm -C benchmarks/dashboard/vue-pinia dev
+pnpm -C benchmarks/dashboard/solid dev
+pnpm -C benchmarks/dashboard/solid-memo dev
+pnpm -C benchmarks/dashboard/solid-store dev
+pnpm -C benchmarks/dashboard/solid-store-memo dev
 pnpm -C benchmarks/dashboard/svelte dev
 pnpm -C benchmarks/dashboard/svelte-store dev
 pnpm -C benchmarks/dashboard/svelte-runes dev
@@ -88,6 +96,10 @@ pnpm -C benchmarks/dashboard/inglorious-memo dev
 | React + Inglorious Store Memoized | 87             | 120             | 72.05            |
 | Vue                               | 116            | 117             | 26.80            |
 | Vue + Pinia                       | 117            | 117             | 28.56            |
+| Solid                             | TBD            | TBD             | TBD              |
+| Solid memoized                    | TBD            | TBD             | TBD              |
+| Solid + store                     | TBD            | TBD             | TBD              |
+| Solid + store memoized            | TBD            | TBD             | TBD              |
 | Svelte                            | 112            | 119             | 16.02            |
 | Svelte + Store                    | 110            | 119             | 16.04            |
 | Svelte + Runes                    | 102            | 118             | 14.13            |
