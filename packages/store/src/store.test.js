@@ -1,6 +1,10 @@
-import { expect, test } from "vitest"
+import { afterEach, expect, test, vi } from "vitest"
 
 import { createStore } from "./store.js"
+
+afterEach(() => {
+  vi.useRealTimers()
+})
 
 test("it should process events by mutating state inside handlers", () => {
   const config = {
@@ -202,4 +206,91 @@ test("it should auto-create entities when autoCreateEntities is enabled", () => 
     id: "player1",
     type: "Player",
   })
+})
+
+test("it should collapse rapid debounced notifications into a single handler run", () => {
+  vi.useFakeTimers()
+
+  const config = {
+    types: {
+      Kitty: {
+        feed(entity) {
+          entity.mealCount = (entity.mealCount ?? 0) + 1
+        },
+      },
+    },
+    entities: {
+      kitty1: { type: "Kitty" },
+    },
+  }
+
+  const store = createStore(config)
+
+  store.notifyDebounced("feed", undefined, 100)
+  store.notifyDebounced("feed", undefined, 100)
+  store.notifyDebounced("feed", undefined, 100)
+
+  // nothing fires until the wait elapses
+  expect(store.getState().kitty1.mealCount).toBeUndefined()
+
+  vi.advanceTimersByTime(100)
+
+  // three rapid calls resulted in exactly one handler run
+  expect(store.getState().kitty1.mealCount).toBe(1)
+})
+
+test("it should notify with the most recent payload when debounced", () => {
+  vi.useFakeTimers()
+
+  const config = {
+    types: {
+      Kitty: {
+        setName(entity, name) {
+          entity.name = name
+        },
+      },
+    },
+    entities: {
+      kitty1: { type: "Kitty" },
+    },
+  }
+
+  const store = createStore(config)
+
+  store.notifyDebounced("setName", "Whiskers", 100)
+  store.notifyDebounced("setName", "Mittens", 100)
+
+  vi.advanceTimersByTime(100)
+
+  expect(store.getState().kitty1.name).toBe("Mittens")
+})
+
+test("it should debounce each event type independently", () => {
+  vi.useFakeTimers()
+
+  const config = {
+    types: {
+      Kitty: {
+        feed(entity) {
+          entity.isFed = true
+        },
+        pet(entity) {
+          entity.isHappy = true
+        },
+      },
+    },
+    entities: {
+      kitty1: { type: "Kitty" },
+    },
+  }
+
+  const store = createStore(config)
+
+  store.notifyDebounced("feed", undefined, 100)
+  store.notifyDebounced("pet", undefined, 100)
+
+  vi.advanceTimersByTime(100)
+
+  expect(store.getState().kitty1.isFed).toBe(true)
+  expect(store.getState().kitty1.isHappy).toBe(true)
 })

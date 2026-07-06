@@ -62,6 +62,16 @@ export function createApi(store, extras) {
      * @returns {void}
      */
     notify: store.notify,
+    /**
+     * Notifies the store, but debounced: rapid calls sharing the same `type`
+     * collapse into a single notification fired `wait` ms after the last call.
+     * Use this to debounce a follow-up event from inside a handler.
+     * @param {string} type
+     * @param {any} [payload]
+     * @param {number} [wait]
+     * @returns {void}
+     */
+    notifyDebounced: store.notifyDebounced,
     ...extras,
   }
 }

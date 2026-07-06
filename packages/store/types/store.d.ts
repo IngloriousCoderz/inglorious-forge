@@ -79,6 +79,7 @@ export interface Store<
   subscribe: (listener: Listener) => Unsubscribe
   update: () => Event[]
   notify: (type: string, payload?: any) => void
+  notifyDebounced: (type: string, payload?: any, wait?: number) => void
   dispatch: (event: Event) => void
   getTypes: () => TypesConfig<TEntity>
   getType: (typeName: string) => EntityType<TEntity>
