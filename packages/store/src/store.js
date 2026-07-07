@@ -1,4 +1,5 @@
 import { toCamelCase } from "@inglorious/utils/data-structures/string.js"
+import { debounce as createDebounce } from "@inglorious/utils/functions/functions.js"
 import { create } from "mutative"
 
 import { createApi } from "./api.js"
@@ -27,6 +28,7 @@ export function createStore({
   updateMode = "auto",
 } = {}) {
   const listeners = new Set()
+  const debouncers = new Map()
 
   const types = augmentTypes(originalTypes)
 
@@ -37,6 +39,7 @@ export function createStore({
     subscribe,
     update,
     notify,
+    notifyDebounced,
     dispatch, // needed for compatibility with Redux
     getTypes,
     getType,
@@ -157,6 +160,38 @@ export function createStore({
   function notify(type, payload) {
     // NOTE: it's important to invoke store.dispatch instead of dispatch, otherwise we cannot override it
     store.dispatch({ type, payload })
+  }
+
+  /**
+   * Notifies the store, but debounced: rapid calls sharing the same `type`
+   * collapse into a single notification, fired `wait` ms after the last call.
+   *
+   * This is the store-friendly way to use debouncing. Handlers receive a
+   * `mutative` draft that is revoked once the event tick ends, so you cannot
+   * debounce a handler's body directly (it would mutate a dead draft) — instead
+   * you debounce the *emission* of a follow-up event, which is always safe.
+   * The `type` and `payload` are snapshotted up front, so no draft is retained.
+   *
+   * The internal timer is keyed by `type` and removed as soon as it fires, so
+   * no per-event state lingers between bursts.
+   *
+   * @param {string} type - The event type to notify (e.g. `#combobox:optionsLoad`).
+   * @param {any} [payload] - The event payload; the most recent one wins.
+   * @param {number} [wait] - Milliseconds to wait after the last call (defaults to 0).
+   */
+  function notifyDebounced(type, payload, wait) {
+    let debounced = debouncers.get(type)
+
+    if (!debounced) {
+      debounced = createDebounce((latestPayload) => {
+        // NOTE: self-cleanup keeps the map bounded to events currently in flight
+        debouncers.delete(type)
+        store.notify(type, latestPayload)
+      }, wait)
+      debouncers.set(type, debounced)
+    }
+
+    debounced(payload)
   }
 
   /**
