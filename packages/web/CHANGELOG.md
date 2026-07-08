@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 6.2.0
+
+### Minor Changes
+
+- Add withDebounce decorator to web
+
 ## 6.1.2
 
 ### Patch Changes

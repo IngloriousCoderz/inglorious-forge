@@ -16,7 +16,7 @@ export const app = {
       </div>
 
       <div>
-        <h2>Remote Select</h2>
+        <h2>Remote Select (debounced)</h2>
         ${api.render("remoteSelect")}
       </div>
     </main>`

@@ -1,3 +1,5 @@
+import { Api } from "./mount"
+
 /**
  * Represents the structure of form values, which can be a nested object.
  */
@@ -286,7 +288,7 @@ export interface FormType {
   validateAsync<T extends FormValues>(
     entity: FormEntity<T>,
     payload: FormValidateAsyncPayload<T>,
-    api: any,
+    api: Api,
   ): Promise<void>
 
   /**

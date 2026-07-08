@@ -34,5 +34,6 @@ export const entities = {
   remoteSelect: {
     type: "RemoteCombobox",
     placeholder: "Select your favorite animal...",
+    isSearchable: true,
   },
 }
