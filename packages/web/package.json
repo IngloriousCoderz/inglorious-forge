@@ -57,6 +57,10 @@
     },
     "./test": {
       "import": "./src/test.js"
+    },
+    "./viewport": {
+      "types": "./types/viewport.d.ts",
+      "import": "./src/viewport/index.js"
     }
   },
   "files": [
