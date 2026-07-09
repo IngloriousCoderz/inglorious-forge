@@ -38,6 +38,10 @@
       "types": "./types/directives/*.d.ts",
       "import": "./src/directives/*.js"
     },
+    "./element-size": {
+      "types": "./types/element-size.d.ts",
+      "import": "./src/element-size/index.js"
+    },
     "./form": {
       "types": "./types/form.d.ts",
       "import": "./src/form/index.js"
@@ -57,10 +61,6 @@
     },
     "./test": {
       "import": "./src/test.js"
-    },
-    "./viewport": {
-      "types": "./types/viewport.d.ts",
-      "import": "./src/viewport/index.js"
     }
   },
   "files": [
