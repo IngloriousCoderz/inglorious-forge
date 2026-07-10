@@ -1,5 +1,12 @@
 # @benchmarks/deep-tree-inglorious
 
+## 0.1.14
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/web@6.3.0
+
 ## 0.1.13
 
 ### Patch Changes

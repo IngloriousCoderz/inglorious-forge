@@ -2,7 +2,7 @@
   "name": "@inglorious/babel-preset-inglorious-script",
   "version": "1.0.6",
   "description": "Babel preset for the IngloriousScript language.",
-  "author": "IceOnFire <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
+  "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
   "main": "src/index.js",
   "homepage": "https://github.com/IngloriousCoderz/inglorious-forge/tree/main/packages/babel-preset-inglorious-script#readme",

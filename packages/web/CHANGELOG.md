@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 6.3.0
+
+### Minor Changes
+
+- Add ElementSize type
+
 ## 6.2.0
 
 ### Minor Changes

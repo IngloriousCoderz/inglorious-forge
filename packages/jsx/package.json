@@ -2,7 +2,7 @@
   "name": "@inglorious/jsx",
   "version": "0.1.2",
   "description": "A shim for JSX syntax, to please the TypeScript gods.",
-  "author": "IceOnFire <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
+  "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
   "type": "module",
   "homepage": "https://github.com/IngloriousCoderz/inglorious-forge/tree/main/packages/jsx#readme",

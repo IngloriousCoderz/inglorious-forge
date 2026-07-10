@@ -1,8 +1,8 @@
 {
   "name": "@inglorious/ssx",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "description": "Server-Side-X. Xecution? Xperience? Who knows.",
-  "author": "IceOnFire <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
+  "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
   "repository": {
     "type": "git",

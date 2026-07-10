@@ -1,8 +1,15 @@
 {
   "name": "@inglorious/web",
-  "version": "6.2.0",
+  "version": "6.3.0",
   "description": "A new web framework that leverages the power of the Inglorious Store combined with the performance and simplicity of lit-html.",
-  "author": "IceOnFire <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
+  "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
+  "contributors": [
+    {
+      "name": "Luis Cruz",
+      "email": "stackbuilder1228@gmail.com",
+      "url": "https://topstar-ai.github.io/"
+    }
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",

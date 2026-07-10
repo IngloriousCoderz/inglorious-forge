@@ -36,7 +36,9 @@ export const app = {
         <div class="readout">
           <h2>Board size</h2>
           <p class="size">${format(width)} × ${format(height)}</p>
-          <p class="hint">Drag the board's corner, or add and remove elements.</p>
+          <p class="hint">
+            Drag the board's corner, or add and remove elements.
+          </p>
         </div>
       </div>
     </main>`

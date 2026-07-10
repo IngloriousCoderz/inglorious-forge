@@ -1,5 +1,13 @@
 # web-motion
 
+## 0.2.13
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/web@6.3.0
+  - @inglorious/motion@8.0.0
+
 ## 0.2.12
 
 ### Patch Changes
