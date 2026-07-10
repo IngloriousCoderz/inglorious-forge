@@ -14,8 +14,6 @@ const observers = new Map()
 export function create(entity, _, api) {
   entity.width ??= null
   entity.height ??= null
-  entity.selector ??= null
-  entity.isSupported = isSupported()
   entity.isWatching ??= false
 
   elementSizeWatch(entity, _, api)
