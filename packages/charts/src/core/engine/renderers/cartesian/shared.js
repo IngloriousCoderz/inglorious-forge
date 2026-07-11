@@ -1,6 +1,15 @@
 /* eslint-disable no-magic-numbers */
 
 import { svg } from "@inglorious/web"
+import { unsafeSVG } from "@inglorious/web/directives/unsafe-svg"
+
+// Escapes text for safe inclusion in raw SVG markup.
+function escapeXml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+}
 
 export function renderSeriesTitles(primitive, frame) {
   if (!canShowTooltip(primitive, frame)) return ""
@@ -80,7 +89,8 @@ export function resolveTooltipTitle(entity, primitive, row, dataKey) {
 
   const label = row?.[entity.xKey] ?? row?.label ?? row?.name ?? "item"
   const value = dataKey ? row?.[dataKey] : row?.value
-  return svg`<title>${label}: ${value}</title>`
+  // @lit-labs/ssr can't render a binding inside a raw-text <title>, so emit it as raw SVG.
+  return svg`${unsafeSVG(`<title>${escapeXml(`${label}: ${value}`)}</title>`)}`
 }
 
 export function canShowTooltip(primitive, frame) {

@@ -108,7 +108,10 @@ describe("shared render helpers", () => {
       "revenue",
     )
 
-    expect(String(enabled.strings.join(""))).toContain("<title>")
+    // The <title> markup lives in the unsafeSVG directive's values, not the template strings.
+    const titleMarkup = enabled.values[0].values[0]
+    expect(titleMarkup).toContain("<title>")
+    expect(titleMarkup).toContain("Jan: 10")
     expect(disabled).toBe("")
   })
 

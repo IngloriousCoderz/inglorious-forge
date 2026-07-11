@@ -1,0 +1,26 @@
+{
+  "name": "web-charts-ssx",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "author": "IceOnFire <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
+  "license": "MIT",
+  "scripts": {
+    "dev": "ssx dev",
+    "build": "ssx build",
+    "preview": "ssx serve"
+  },
+  "dependencies": {
+    "@inglorious/charts": "workspace:*",
+    "@inglorious/ssx": "workspace:*",
+    "@inglorious/store": "workspace:*",
+    "@inglorious/web": "workspace:*"
+  },
+  "devDependencies": {
+    "vite": "^7.1.6"
+  },
+  "packageManager": "pnpm@10.15.0",
+  "engines": {
+    "node": ">= 22"
+  }
+}
