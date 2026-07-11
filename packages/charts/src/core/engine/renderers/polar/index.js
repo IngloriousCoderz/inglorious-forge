@@ -1,9 +1,18 @@
 /* eslint-disable no-magic-numbers */
 
 import { svg } from "@inglorious/web"
+import { unsafeSVG } from "@inglorious/web/directives/unsafe-svg"
 import { arc, pie as createPieLayout } from "d3-shape"
 
 import { hideTooltip, showTooltip } from "../overlays/tooltip.js"
+
+// Escapes text for safe inclusion in raw SVG markup.
+function escapeXml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+}
 
 export function renderPieSeries(primitive, frame) {
   const { entity, scales } = frame
@@ -53,7 +62,7 @@ export function renderPieSeries(primitive, frame) {
             <path d=${createArc(slice) || ""} fill=${fill}>
               ${
                 !frame.entity.isTooltipEnabled && primitive.props?.hasTooltip
-                  ? svg`<title>${label}: ${value}</title>`
+                  ? svg`${unsafeSVG(`<title>${escapeXml(`${label}: ${value}`)}</title>`)}`
                   : ""
               }
             </path>
