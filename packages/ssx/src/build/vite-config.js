@@ -1,12 +1,9 @@
 import path from "node:path"
 
-import { minifyTemplateLiterals } from "rollup-plugin-minify-template-literals"
 import { mergeConfig } from "vite"
 import { ViteImageOptimizer } from "vite-plugin-image-optimizer"
 
 import { markdownPlugin } from "../utils/markdown.js"
-
-// import { minifyTemplateLiterals } from "rollup-plugin-minify-template-literals"
 
 /**
  * Generate Vite config for building the client bundle
@@ -22,7 +19,13 @@ export function createViteConfig(options = {}) {
       root: process.cwd(),
       publicDir: publicDir,
       plugins: [
-        minifyTemplateLiterals(),
+        // NOTE: do not add minifyTemplateLiterals() here. It minifies lit
+        // templates as HTML, where `<circle/>` is an unknown non-void element,
+        // so it strips the XML self-closing slash. In an svg`` template that
+        // silently reparents every following sibling as a child of the shape
+        // (`<circle/><text/>` becomes `<circle><text/></circle>`), and SVG
+        // shapes don't render children — charts vanish. html-minifier-terser's
+        // keepClosingSlash only covers void HTML elements, so it can't fix it.
         ViteImageOptimizer({
           // Options can be overridden by the user in site.config.js via the `vite` property
         }),
