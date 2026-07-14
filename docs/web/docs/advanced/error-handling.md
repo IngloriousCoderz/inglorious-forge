@@ -11,7 +11,23 @@ Inglorious Web provides several patterns for handling errors gracefully.
 
 Since the full template tree re-renders on state change, an error in any entity's `render` method could crash the entire app.
 
-**Best practice:** Wrap render in try-catch:
+**Best practice:** isolate the render with the [`withErrorBoundary`](./decorators.md#witherrorboundary) decorator, which catches the throw and shows a fallback while the rest of the app keeps rendering:
+
+```javascript
+import { html } from "@inglorious/web"
+import { withErrorBoundary } from "@inglorious/web/decorators/with-error-boundary"
+
+const types = {
+  Chart: [
+    ChartBase,
+    withErrorBoundary(
+      (err) => html`<div class="error">Chart failed: ${err.message}</div>`,
+    ),
+  ],
+}
+```
+
+For a one-off you can also wrap the render body in try-catch directly:
 
 ```javascript
 const MyType = {
@@ -31,6 +47,8 @@ const MyType = {
   },
 }
 ```
+
+The decorator is preferred: it keeps the concern out of your render logic and composes onto any type. See [Error Boundaries](#error-boundaries) below for the full picture.
 
 ## Event Handler Errors
 
@@ -211,44 +229,58 @@ const Form = {
 }
 ```
 
-## Error Boundaries with Composition
+## Error Boundaries
 
-Create an error boundary behavior:
+Inglorious Web ships two complementary error boundaries. Together they mean a single throwing render can never white-screen the whole app.
 
-```javascript
-const errorBoundary = (type) => ({
-  // Wrap all handlers with try-catch
-  [Symbol.hasInstance](entity, payload, api) {
-    // This doesn't work exactly as-is, but here's the concept
-    try {
-      const handler = type[this.name]
-      if (handler) {
-        return handler(entity, payload, api)
-      }
-    } catch (error) {
-      entity.error = error.message
-      console.error(error)
-    }
-  },
-})
-```
+### Entity-level: `withErrorBoundary`
 
-Better approach: wrap in handlers:
+Compose the [`withErrorBoundary`](./decorators.md#witherrorboundary) decorator onto any type to isolate its render. A failing entity shows its fallback while its siblings keep rendering:
 
 ```javascript
+import { html } from "@inglorious/web"
+import { withErrorBoundary } from "@inglorious/web/decorators/with-error-boundary"
+
 const types = {
-  ProtectedPage: {
-    navigate(entity, route) {
-      try {
-        // Navigation logic
-        entity.route = route
-      } catch (error) {
-        entity.error = `Navigation failed: ${error.message}`
-      }
-    },
-  },
+  Widget: [
+    WidgetBase,
+    withErrorBoundary(
+      (error, entity) =>
+        html`<div class="error">${entity.title} failed: ${error.message}</div>`,
+    ),
+  ],
 }
 ```
+
+Because it wraps `render` deterministically, it produces the same fallback on the server and the client, so it is safe under SSR/[SSX](./ssx.md) with no hydration mismatch.
+
+### Root-level: the `mount` guard
+
+The root render function itself can also throw — before any entity is reached (for example, a missing router entity). `mount` accepts a fourth options argument with `onError` and `fallback` to catch that case, keeping the store subscription alive so one bad update can't freeze the UI:
+
+```javascript
+import { html, mount } from "@inglorious/web"
+
+mount(
+  store,
+  (api) => api.render(api.getEntity("router").route),
+  document.getElementById("root"),
+  {
+    onError: (error, api) => reportToService(error),
+    fallback: (error) => html`
+      <main class="app-error">
+        <h1>Something went wrong</h1>
+        <button @click=${() => location.reload()}>Reload</button>
+      </main>
+    `,
+  },
+)
+```
+
+- `onError(error, api)` — called when the root render throws. Defaults to `console.error`.
+- `fallback(error, api)` — optional template rendered in place of the failed root render. If omitted, the error is logged and the last good DOM is left in place.
+
+Use the entity-level decorator for per-widget isolation, and the root guard as a final safety net around the whole app.
 
 ## Global Error Handling
 

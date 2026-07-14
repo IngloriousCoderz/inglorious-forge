@@ -71,6 +71,63 @@ Use `withThrottle` for handlers such as:
 
 Use `hasTrailing: true` when you need to ensure the final state of a burst is never dropped (e.g., ending a resize or scroll and needing to capture the final position).
 
+## withErrorBoundary
+
+The built-in `withErrorBoundary` decorator wraps a type's `render` in an error boundary. If the wrapped render throws, the caught error is handed to a `fallback` function and its template is rendered instead — so a single failing entity degrades to a fallback UI rather than taking down the whole app.
+
+Because every entity is rendered through the same `render`, composing a boundary onto a type is the idiomatic way to isolate that subtree.
+
+```javascript
+import { html } from "@inglorious/web"
+import { withErrorBoundary } from "@inglorious/web/decorators/with-error-boundary"
+
+const types = {
+  Chart: [
+    ChartBase,
+    withErrorBoundary((err) => html`<p>Chart failed: ${err.message}</p>`),
+  ],
+}
+```
+
+The `fallback` receives the caught `error`, the `entity`, and the render `api`, so it can render anything a normal template can — including a retry action:
+
+```javascript
+withErrorBoundary(
+  (error, entity, api) => html`
+    <div class="chart-error">
+      <p>${entity.title ?? "This widget"} could not be displayed.</p>
+      <button @click=${() => api.notify(`#${entity.id}:reload`)}>Retry</button>
+    </div>
+  `,
+)
+```
+
+If you omit the fallback, the decorator logs the error and renders nothing, which is still enough to keep the rest of the app alive.
+
+### How it works
+
+- Composes **after** the base type so it wraps the base `render`; every other handler on the type is left untouched.
+- Catches errors thrown **synchronously during render** and returns the fallback instead of letting them propagate.
+- The wrap is deterministic, so the same error produces the same fallback during SSR and client hydration — it never introduces a hydration mismatch, and works out of the box with [SSX](./ssx.md).
+
+### When to use it
+
+Use `withErrorBoundary` for any type whose render depends on data that might be malformed or incomplete:
+
+- charts and data-visualization widgets
+- third-party or user-provided content
+- dashboard tiles where one broken widget shouldn't blank the page
+
+### Limitations
+
+Like React and Svelte error boundaries, this only catches errors thrown **during render**. It does **not** catch:
+
+- errors thrown in **event handlers** (they fire outside render)
+- errors from **async work / thunks** (they run in the store phase, before render)
+- errors thrown by **lit-html directives** committed after `render` returns
+
+Those belong to the store phase — handle them as `entity.error` state inside your handlers (see [Error Handling](./error-handling.md)). For a last-resort net around the _root_ render, see the [root-level guard](./error-handling.md#error-boundaries).
+
 ## Adding more decorators
 
 As the collection grows, additional decorators can be added in the same style. Keep each decorator focused on a single concern, return a behavior object that mirrors the wrapped type's handlers, and let the composed type decide how to use it.
