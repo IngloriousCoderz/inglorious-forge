@@ -125,4 +125,61 @@ describe("mount", () => {
 
     expect(hydrateSpy).toHaveBeenCalledWith("dashboard-template", element)
   })
+
+  it("catches a throwing root render instead of crashing the subscription", async () => {
+    const error = new Error("root boom")
+    const onError = vi.fn()
+
+    // subscribe fires the listener on notify("init"); the throwing renderFn
+    // must not propagate out of it.
+    await expect(
+      mount(
+        store,
+        () => {
+          throw error
+        },
+        element,
+        { onError },
+      ),
+    ).resolves.toBeInstanceOf(Function)
+
+    expect(onError).toHaveBeenCalledWith(error, expect.any(Object))
+    // No fallback provided → nothing is committed, but no throw either.
+    expect(renderSpy).not.toHaveBeenCalled()
+  })
+
+  it("renders the provided fallback when the root render throws", async () => {
+    const error = new Error("root boom")
+    const fallback = vi.fn(() => "root-fallback")
+
+    await mount(
+      store,
+      () => {
+        throw error
+      },
+      element,
+      { onError: vi.fn(), fallback },
+    )
+
+    expect(fallback).toHaveBeenCalledWith(error, expect.any(Object))
+    expect(renderSpy).toHaveBeenCalledWith("root-fallback", element)
+  })
+
+  it("falls back to a client render instead of hydrating when hydrate-path render throws", async () => {
+    element.innerHTML = "<span>server-rendered</span>"
+    const error = new Error("hydrate boom")
+    const fallback = vi.fn(() => "root-fallback")
+
+    await mount(
+      store,
+      () => {
+        throw error
+      },
+      element,
+      { onError: vi.fn(), fallback },
+    )
+
+    expect(hydrateSpy).not.toHaveBeenCalled()
+    expect(renderSpy).toHaveBeenCalledWith("root-fallback", element)
+  })
 })

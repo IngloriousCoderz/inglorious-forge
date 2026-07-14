@@ -29,10 +29,31 @@ export type Api<
 }
 
 /**
+ * Root error-boundary options for `mount`.
+ */
+export interface MountOptions<
+  TEntity extends BaseEntity = BaseEntity,
+  TState extends EntitiesState<TEntity> = EntitiesState<TEntity>,
+> {
+  /**
+   * Called when the root render function throws. Defaults to `console.error`.
+   */
+  onError?: (error: unknown, api: Api<TEntity, TState>) => void
+  /**
+   * Optional fallback template rendered in place of the failed root render.
+   */
+  fallback?: (
+    error: unknown,
+    api: Api<TEntity, TState>,
+  ) => TemplateResult | null
+}
+
+/**
  * Mounts a lit-html template to the DOM and subscribes to a store for re-rendering.
  * @param store The application state store.
  * @param renderFn The root render function that receives the API and returns a template.
  * @param element The DOM element to mount the template to.
+ * @param options Root error-boundary options (`onError`, `fallback`).
  * @returns An unsubscribe function.
  */
 export function mount<
@@ -42,4 +63,5 @@ export function mount<
   store: Store<TEntity, TState>,
   renderFn: (api: Api<TEntity, TState>) => TemplateResult | null,
   element: HTMLElement | DocumentFragment,
+  options?: MountOptions<TEntity, TState>,
 ): () => void

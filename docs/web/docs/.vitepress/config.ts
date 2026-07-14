@@ -97,6 +97,7 @@ export default defineConfig({
           text: "Development",
           items: [
             { text: "Testing", link: "/advanced/testing" },
+            { text: "Decorators", link: "/advanced/decorators" },
             { text: "Error Handling", link: "/advanced/error-handling" },
             { text: "Performance", link: "/advanced/performance" },
             { text: "Redux DevTools", link: "/advanced/devtools" },
