@@ -8,6 +8,11 @@ export interface DebounceBehavior {
 }
 
 export declare function withDebounce(
-  config: number | Record<string, number>,
-  handlerNames?: string[],
+  config: number,
+  handlerNames: string[],
+): <T extends Record<string, any>>(type: T) => DebounceBehavior
+
+export declare function withDebounce(
+  config: Record<string, number>,
+  handlerNames?: undefined,
 ): <T extends Record<string, any>>(type: T) => DebounceBehavior

@@ -41,6 +41,10 @@
       "types": "./types/decorators/with-debounce.d.ts",
       "import": "./src/decorators/with-debounce/index.js"
     },
+    "./decorators/with-throttle": {
+      "types": "./types/decorators/with-throttle.d.ts",
+      "import": "./src/decorators/with-throttle/index.js"
+    },
     "./directives/*": {
       "types": "./types/directives/*.d.ts",
       "import": "./src/directives/*.js"

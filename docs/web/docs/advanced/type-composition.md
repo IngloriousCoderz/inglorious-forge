@@ -234,7 +234,7 @@ const types = {
 
 ## Decorators
 
-For common concerns such as debouncing, Inglorious Web also provides ready-made decorator helpers that plug directly into the same array-based composition model. The first built-in decorator is `withDebounce`, which wraps one or more handlers with per-entity debouncing and cancellation support.
+For common concerns such as debouncing and throttling, Inglorious Web also provides ready-made decorator helpers that plug directly into the same array-based composition model. Built-in decorators include `withDebounce` (for deferred, deduplicated calls) and `withThrottle` (for rate-limited calls with optional trailing), both with per-entity scoping and automatic cancellation support.
 
 For a dedicated overview and usage examples, see [Decorators](./decorators.md).
 
