@@ -38,6 +38,11 @@
     "./themes/inglorious.css": "./src/styles/themes/inglorious.css",
     "./themes/material.css": "./src/styles/themes/material.css",
     "./themes/bootstrap.css": "./src/styles/themes/bootstrap.css",
+    "./before-after": {
+      "types": "./types/controls/before-after.d.ts",
+      "import": "./src/controls/before-after/index.js"
+    },
+    "./before-after.css": "./src/controls/before-after/style.css",
     "./button": {
       "types": "./types/controls/button.d.ts",
       "import": "./src/controls/button/index.js"

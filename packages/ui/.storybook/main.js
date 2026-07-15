@@ -19,6 +19,15 @@ export default defineMain({
     return mergeConfig(config, {
       plugins: [jsx(), vue()],
 
+      // Skip esbuild's automatic dependency pre-scan of story entries. The
+      // scanner does not apply Vite plugins, so it reads `.vue` SFCs before
+      // `@inglorious/vite-plugin-vue` compiles them and fails with
+      // "No matching export ... for import DashboardVue". Deps are still
+      // discovered lazily through the normal (plugin-aware) transform pipeline.
+      optimizeDeps: {
+        entries: [],
+      },
+
       resolve: {
         alias: {
           "@": fileURLToPath(new URL("../src", import.meta.url)),

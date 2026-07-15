@@ -13,7 +13,9 @@ import { createDevtools } from "@inglorious/store/client/devtools"
 import { mount } from "@inglorious/web"
 import { Router, setRoutes } from "@inglorious/web/router"
 
+import { BeforeAfter } from "../src/controls/before-after/index.js"
 import { AppDrawer } from "../src/examples/dashboard/app-drawer.js"
+import { beforeAfterImages } from "../src/examples/dashboard/before-after-data.js"
 import { Dashboard } from "../src/examples/dashboard/dashboard.js"
 import { Mode } from "../src/examples/dashboard/mode.js"
 import { PrimitiveSection } from "../src/examples/dashboard/primitive-section.js"
@@ -30,9 +32,19 @@ const store = createStore({
     AppDrawer,
     Dashboard,
     PrimitiveSection,
+    BeforeAfter,
     area: Chart,
     bar: Chart,
     line: Chart,
+  },
+  entities: {
+    beforeAfter: {
+      id: "beforeAfter",
+      type: "BeforeAfter",
+      before: beforeAfterImages.before,
+      after: beforeAfterImages.after,
+      position: 50,
+    },
   },
   autoCreateEntities: true,
   middlewares: [createDevtools().middleware],

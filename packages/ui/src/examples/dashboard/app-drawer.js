@@ -132,6 +132,11 @@ function getDefaultItems() {
       primary: "Controls",
       icon: "buttons_alt",
       children: [
+        {
+          id: "before-after",
+          primary: "Before / After",
+          href: "/controls/before-after",
+        },
         { id: "button", primary: "Button", href: "/controls/button" },
         {
           id: "button-group",
