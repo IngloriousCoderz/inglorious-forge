@@ -1,3 +1,4 @@
+export { BeforeAfter } from "./controls/before-after/index.js"
 export { Button } from "./controls/button/index.js"
 export { ButtonGroup } from "./controls/button-group/index.js"
 export { Checkbox } from "./controls/checkbox/index.js"

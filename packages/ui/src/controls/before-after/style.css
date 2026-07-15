@@ -1,0 +1,118 @@
+.iw-before-after {
+  --iw-before-after-position: 50%;
+
+  /* Themed by default: the accent follows the active theme + color mode
+     (inglorious / material / bootstrap, light / dark). Fallbacks keep the
+     control usable when no theme stylesheet is loaded. */
+  --iw-before-after-accent: var(--iw-color-primary, #3b82f6);
+  --iw-before-after-divider-width: 3px;
+  --iw-before-after-divider-color: var(--iw-before-after-accent);
+  --iw-before-after-handle-size: 44px;
+  --iw-before-after-handle-bg: var(--iw-before-after-accent);
+  --iw-before-after-handle-color: var(--iw-color-primary-text, #fff);
+  --iw-before-after-handle-arrow: 6px;
+
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  cursor: ew-resize;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  outline: none;
+
+  &:focus-visible {
+    outline: 2px solid var(--iw-color-primary);
+    outline-offset: 2px;
+  }
+
+  &.iw-before-after-full-width {
+    display: block;
+    width: 100%;
+  }
+
+  &.iw-before-after-disabled {
+    cursor: default;
+  }
+
+  .iw-before-after-before {
+    display: block;
+  }
+
+  .iw-before-after-before .iw-before-after-image {
+    width: 100%;
+    height: auto;
+  }
+
+  .iw-before-after-after {
+    position: absolute;
+    inset: 0;
+    clip-path: inset(0 0 0 var(--iw-before-after-position));
+  }
+
+  .iw-before-after-after .iw-before-after-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .iw-before-after-image {
+    display: block;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  .iw-before-after-divider {
+    position: absolute;
+    inset-block: 0;
+    left: var(--iw-before-after-position);
+    width: var(--iw-before-after-divider-width);
+    transform: translateX(-50%);
+    background: var(--iw-before-after-divider-color);
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 12%);
+    pointer-events: none;
+  }
+
+  .iw-before-after-handle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: var(--iw-before-after-handle-size);
+    height: var(--iw-before-after-handle-size);
+    border: var(--iw-before-after-divider-width) solid
+      var(--iw-before-after-handle-color);
+    border-radius: var(--iw-radius-full);
+    background: var(--iw-before-after-handle-bg);
+    transform: translate(-50%, -50%);
+    box-shadow: var(--iw-shadow-md);
+  }
+
+  /* Two chevron arrows drawn with borders, no icon font needed. */
+  .iw-before-after-handle::before,
+  .iw-before-after-handle::after {
+    content: "";
+    width: 0;
+    height: 0;
+    border-top: var(--iw-before-after-handle-arrow) solid transparent;
+    border-bottom: var(--iw-before-after-handle-arrow) solid transparent;
+  }
+
+  .iw-before-after-handle::before {
+    margin-right: var(--iw-before-after-handle-arrow);
+    border-right: var(--iw-before-after-handle-arrow) solid
+      var(--iw-before-after-handle-color);
+  }
+
+  .iw-before-after-handle::after {
+    margin-left: var(--iw-before-after-handle-arrow);
+    border-left: var(--iw-before-after-handle-arrow) solid
+      var(--iw-before-after-handle-color);
+  }
+}

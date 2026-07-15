@@ -1,5 +1,7 @@
-import { html } from "@inglorious/web"
+import { createStore } from "@inglorious/store"
+import { html, mount } from "@inglorious/web"
 
+import { BeforeAfter } from "../../controls/before-after/index.js"
 import { Button } from "../../controls/button/index.js"
 import { ButtonGroup } from "../../controls/button-group/index.js"
 import { Checkbox } from "../../controls/checkbox/index.js"
@@ -45,6 +47,7 @@ import { Accordion } from "../../surfaces/accordion/index.js"
 import { AppBar } from "../../surfaces/app-bar/index.js"
 import { Card } from "../../surfaces/card/index.js"
 import { Paper } from "../../surfaces/paper/index.js"
+import { beforeAfterImages } from "./before-after-data.js"
 
 const categoryMeta = {
   layout: {
@@ -101,6 +104,34 @@ const previewRow = (children) =>
 
 const previewColumn = (children) =>
   html`<div class="iw-primitive-preview-column">${children}</div>`
+
+// The Before/After control is entity-driven, so a live preview needs its own
+// store. It is created once and memoized: the same mounted node is returned on
+// every re-render, keeping the divider interactive (and its position stable)
+// without leaking stores.
+let beforeAfterPreviewNode
+function beforeAfterPreview() {
+  if (!beforeAfterPreviewNode) {
+    const container = document.createElement("div")
+    const store = createStore({
+      types: { BeforeAfter },
+      entities: {
+        beforeAfterPreview: {
+          id: "beforeAfterPreview",
+          type: "BeforeAfter",
+          before: beforeAfterImages.before,
+          after: beforeAfterImages.after,
+          position: 50,
+          isFullWidth: true,
+        },
+      },
+      autoCreateEntities: true,
+    })
+    mount(store, (api) => api.render("beforeAfterPreview"), container)
+    beforeAfterPreviewNode = container
+  }
+  return beforeAfterPreviewNode
+}
 
 const primitiveDetailsByPath = {
   "/layout/container": {
@@ -278,6 +309,25 @@ Checkbox.render({
             isChecked: false,
           }),
         ]),
+    },
+  },
+  "/controls/before-after": {
+    name: "Before / After",
+    summary: "Drag-to-compare slider for two overlaid images.",
+    description:
+      "Before/After overlays two images and reveals the top one with a draggable divider. The reveal is pure CSS (clip-path) and the divider position is the only piece of entity state; the divider and handle follow the active theme and color mode.",
+    useCases: ["Image comparisons", "Before/after edits", "Visual diffs"],
+    example: {
+      code: `import { BeforeAfter } from "@inglorious/ui/before-after"
+
+BeforeAfter.render({
+  id: "demo",
+  before: { src: "before.jpg", alt: "Before" },
+  after: { src: "after.jpg", alt: "After" },
+  position: 50,
+  isFullWidth: true
+})`,
+      preview: () => beforeAfterPreview(),
     },
   },
   "/controls/combobox": {
