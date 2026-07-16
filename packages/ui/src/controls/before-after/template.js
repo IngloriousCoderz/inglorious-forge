@@ -3,11 +3,11 @@
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
+import { clamp } from "@inglorious/utils/math/numbers.js"
 import { html } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
 
 import {
-  clamp,
   DEFAULT_POSITION,
   DEFAULT_STEP,
   MAX_POSITION,
@@ -193,7 +193,7 @@ function handleKeyDown(props) {
     }
 
     event.preventDefault()
-    props.onPositionChange?.(clamp(next))
+    props.onPositionChange?.(clamp(next, MIN_POSITION, MAX_POSITION))
   }
 }
 
@@ -217,5 +217,9 @@ function positionFromEvent(event) {
   const rect = event.currentTarget.getBoundingClientRect()
   if (!rect.width) return null
 
-  return clamp(((event.clientX - rect.left) / rect.width) * 100)
+  return clamp(
+    ((event.clientX - rect.left) / rect.width) * 100,
+    MIN_POSITION,
+    MAX_POSITION,
+  )
 }
