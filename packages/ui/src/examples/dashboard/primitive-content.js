@@ -1,5 +1,4 @@
-import { createStore } from "@inglorious/store"
-import { html, mount } from "@inglorious/web"
+import { html } from "@inglorious/web"
 
 import { BeforeAfter } from "../../controls/before-after/index.js"
 import { Button } from "../../controls/button/index.js"
@@ -104,34 +103,6 @@ const previewRow = (children) =>
 
 const previewColumn = (children) =>
   html`<div class="iw-primitive-preview-column">${children}</div>`
-
-// The Before/After control is entity-driven, so a live preview needs its own
-// store. It is created once and memoized: the same mounted node is returned on
-// every re-render, keeping the divider interactive (and its position stable)
-// without leaking stores.
-let beforeAfterPreviewNode
-function beforeAfterPreview() {
-  if (!beforeAfterPreviewNode) {
-    const container = document.createElement("div")
-    const store = createStore({
-      types: { BeforeAfter },
-      entities: {
-        beforeAfterPreview: {
-          id: "beforeAfterPreview",
-          type: "BeforeAfter",
-          before: beforeAfterImages.before,
-          after: beforeAfterImages.after,
-          position: 50,
-          isFullWidth: true,
-        },
-      },
-      autoCreateEntities: true,
-    })
-    mount(store, (api) => api.render("beforeAfterPreview"), container)
-    beforeAfterPreviewNode = container
-  }
-  return beforeAfterPreviewNode
-}
 
 const primitiveDetailsByPath = {
   "/layout/container": {
@@ -327,7 +298,14 @@ BeforeAfter.render({
   position: 50,
   isFullWidth: true
 })`,
-      preview: () => beforeAfterPreview(),
+      preview: () =>
+        BeforeAfter.render({
+          id: "before-after",
+          before: beforeAfterImages.before,
+          after: beforeAfterImages.after,
+          position: 50,
+          isFullWidth: true,
+        }),
     },
   },
   "/controls/combobox": {

@@ -4,9 +4,9 @@ import { describe, expect, it } from "vitest"
 
 import { BeforeAfter } from "."
 
-// Exercises the real entity/event loop the dashboard relies on: a scoped
-// `#<id>:setPosition` event runs the handler, mutates the single piece of
-// state (`position`), and the mounted view re-renders from it.
+// Exercises the real entity/event loop: a scoped `#<id>:positionChange` event
+// runs the handler, mutates the single piece of state (`position`), and the
+// mounted view re-renders from it.
 describe("before-after (store integration)", () => {
   function mountBeforeAfter(overrides = {}) {
     const store = createStore({
@@ -21,7 +21,6 @@ describe("before-after (store integration)", () => {
           ...overrides,
         },
       },
-      autoCreateEntities: true,
     })
 
     const container = document.createElement("div")
@@ -35,14 +34,16 @@ describe("before-after (store integration)", () => {
 
     const root = container.querySelector(".iw-before-after")
     expect(root).not.toBeNull()
-    expect(root.style.getPropertyValue("--iw-before-after-position")).toBe("50%")
+    expect(root.style.getPropertyValue("--iw-before-after-position")).toBe(
+      "50%",
+    )
     expect(container.querySelectorAll(".iw-before-after img").length).toBe(2)
   })
 
-  it("updates position through a scoped setPosition event", () => {
+  it("updates position through a scoped positionChange event", () => {
     const { store, container } = mountBeforeAfter()
 
-    store._api.notify("#beforeAfter:setPosition", 30)
+    store._api.notify("#beforeAfter:positionChange", 30)
 
     expect(store._api.getEntity("beforeAfter").position).toBe(30)
     expect(
@@ -55,10 +56,10 @@ describe("before-after (store integration)", () => {
   it("clamps out-of-range positions coming through the event loop", () => {
     const { store } = mountBeforeAfter()
 
-    store._api.notify("#beforeAfter:setPosition", 999)
+    store._api.notify("#beforeAfter:positionChange", 999)
     expect(store._api.getEntity("beforeAfter").position).toBe(100)
 
-    store._api.notify("#beforeAfter:setPosition", -50)
+    store._api.notify("#beforeAfter:positionChange", -50)
     expect(store._api.getEntity("beforeAfter").position).toBe(0)
   })
 })

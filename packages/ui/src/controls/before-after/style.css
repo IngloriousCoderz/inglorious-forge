@@ -1,16 +1,14 @@
 .iw-before-after {
   --iw-before-after-position: 50%;
 
-  /* Themed by default: the accent follows the active theme + color mode
-     (inglorious / material / bootstrap, light / dark). Fallbacks keep the
-     control usable when no theme stylesheet is loaded. */
-  --iw-before-after-accent: var(--iw-color-primary, #3b82f6);
-  --iw-before-after-divider-width: 3px;
-  --iw-before-after-divider-color: var(--iw-before-after-accent);
-  --iw-before-after-handle-size: 44px;
-  --iw-before-after-handle-bg: var(--iw-before-after-accent);
-  --iw-before-after-handle-color: var(--iw-color-primary-text, #fff);
-  --iw-before-after-handle-arrow: 6px;
+  /* Neutral in every theme on purpose: the divider should separate the two
+     pictures without competing with them for attention. */
+  --iw-before-after-divider-width: 2px;
+  --iw-before-after-divider-color: rgb(255 255 255 / 90%);
+  --iw-before-after-handle-size: 40px;
+  --iw-before-after-handle-bg: rgb(255 255 255 / 90%);
+  --iw-before-after-handle-color: rgb(17 24 39 / 65%);
+  --iw-before-after-handle-arrow: 5px;
 
   position: relative;
   display: inline-block;
@@ -33,8 +31,22 @@
     width: 100%;
   }
 
+  /* Greyed out and dimmed, so it reads as "you cannot move this". */
   &.iw-before-after-disabled {
+    --iw-before-after-divider-color: rgb(156 163 175 / 60%);
+    --iw-before-after-handle-bg: rgb(156 163 175 / 60%);
+    --iw-before-after-handle-color: rgb(255 255 255 / 60%);
+
     cursor: default;
+
+    .iw-before-after-image {
+      filter: grayscale(70%);
+      opacity: 0.75;
+    }
+
+    .iw-before-after-handle {
+      box-shadow: none;
+    }
   }
 
   .iw-before-after-before {
@@ -86,8 +98,6 @@
     box-sizing: border-box;
     width: var(--iw-before-after-handle-size);
     height: var(--iw-before-after-handle-size);
-    border: var(--iw-before-after-divider-width) solid
-      var(--iw-before-after-handle-color);
     border-radius: var(--iw-radius-full);
     background: var(--iw-before-after-handle-bg);
     transform: translate(-50%, -50%);

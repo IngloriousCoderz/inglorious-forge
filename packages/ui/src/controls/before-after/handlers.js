@@ -2,10 +2,7 @@
  * @typedef {import('../../../types/controls/before-after.js').BeforeAfterProps} BeforeAfterEntity
  */
 
-const DEFAULT_POSITION = 50
-const DEFAULT_STEP = 1
-const MIN_POSITION = 0
-const MAX_POSITION = 100
+import { clamp, DEFAULT_POSITION, DEFAULT_STEP } from "./helpers.js"
 
 /**
  * Initialize missing before/after state defaults.
@@ -30,11 +27,11 @@ export function create(entity) {
  * @param {BeforeAfterEntity} entity
  * @param {number} position
  */
-export function setPosition(entity, position) {
+export function positionChange(entity, position) {
   if (entity.isDisabled) return
 
   const value = Number(position)
   if (Number.isNaN(value)) return
 
-  entity.position = Math.max(MIN_POSITION, Math.min(MAX_POSITION, value))
+  entity.position = clamp(value)
 }

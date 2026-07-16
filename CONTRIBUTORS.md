@@ -6,7 +6,7 @@ This repository appreciates the following contributors for their work on Inglori
 
 - Luis Cruz (topstar-ai)
   - Email: stackbuilder1228@gmail.com
-  - Website: https://topstar-ai.github.io/
+  - Website: https://topstar-ai-github-io.vercel.app
 
 ## Inglorious Charts
 

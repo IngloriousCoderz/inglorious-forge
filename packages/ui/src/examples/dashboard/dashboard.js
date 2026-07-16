@@ -1,11 +1,9 @@
 import { html } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 
-import { Typography } from "../../data-display/typography/index.js"
 import { Container } from "../../layout/container/index.js"
 import { Flex } from "../../layout/flex/index.js"
 import { Grid } from "../../layout/grid/index.js"
-import { Card } from "../../surfaces/card/index.js"
 import { AppHeader } from "./app-header.js"
 import { socialCards, statCards } from "./data.js"
 import { SocialCard } from "./social-card.js"
@@ -57,27 +55,6 @@ export const Dashboard = {
                         ),
                       }),
                       TrafficCard.render(entity, api),
-                      when(api.getEntity?.("beforeAfter"), () =>
-                        Card.render({
-                          children: Flex.render({
-                            direction: "column",
-                            gap: "md",
-                            children: [
-                              Typography.render({
-                                variant: "h6",
-                                children: "Before / After",
-                              }),
-                              Typography.render({
-                                variant: "body2",
-                                color: "secondary",
-                                children:
-                                  "Drag the divider (or focus it and use the arrow keys) to compare. The divider and handle follow the active theme and mode — cycle them from the header to see the variation.",
-                              }),
-                              api.render("beforeAfter"),
-                            ],
-                          }),
-                        }),
-                      ),
                       Grid.render({
                         columns: 3,
                         gap: "lg",
