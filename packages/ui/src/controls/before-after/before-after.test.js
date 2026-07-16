@@ -1,3 +1,4 @@
+import { html } from "@inglorious/web"
 import { createMockApi, render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
@@ -52,7 +53,9 @@ describe("before-after", () => {
     const root = container.querySelector(".iw-before-after")
     root.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight" }))
 
-    expect(api.getEvents()).toEqual([{ type: "#ba:setPosition", payload: 55 }])
+    expect(api.getEvents()).toEqual([
+      { type: "#ba:positionChange", payload: 55 },
+    ])
   })
 
   it("jumps to the edges with Home and End", () => {
@@ -63,8 +66,8 @@ describe("before-after", () => {
     root.dispatchEvent(new KeyboardEvent("keydown", { key: "Home" }))
 
     expect(api.getEvents()).toEqual([
-      { type: "#ba:setPosition", payload: 100 },
-      { type: "#ba:setPosition", payload: 0 },
+      { type: "#ba:positionChange", payload: 100 },
+      { type: "#ba:positionChange", payload: 0 },
     ])
   })
 
@@ -88,23 +91,51 @@ describe("before-after", () => {
     expect(entity.isDisabled).toBe(false)
   })
 
-  it("setPosition clamps to the 0-100 range", () => {
+  it("positionChange clamps to the 0-100 range", () => {
     const entity = { id: "ba", position: 50 }
 
-    BeforeAfter.setPosition(entity, 120)
+    BeforeAfter.positionChange(entity, 120)
     expect(entity.position).toBe(100)
 
-    BeforeAfter.setPosition(entity, -20)
+    BeforeAfter.positionChange(entity, -20)
     expect(entity.position).toBe(0)
 
-    BeforeAfter.setPosition(entity, 42)
+    BeforeAfter.positionChange(entity, 42)
     expect(entity.position).toBe(42)
   })
 
-  it("setPosition ignores updates while disabled", () => {
+  it("lets consumers override the divider and handle sub-renders", () => {
+    const entity = { id: "ba", type: "BeforeAfter", position: 50 }
+    const api = createMockApi({ [entity.id]: entity })
+    const CustomBeforeAfter = {
+      ...BeforeAfter,
+      renderHandle: () => html`<span class="my-handle">drag</span>`,
+    }
+    const container = document.createElement("div")
+
+    render(CustomBeforeAfter.render(entity, api), container)
+
+    expect(container.querySelector(".my-handle").textContent).toBe("drag")
+    expect(container.querySelector(".iw-before-after-handle")).toBeNull()
+    // the divider still wraps whatever the handle renderer returns
+    expect(
+      container.querySelector(".iw-before-after-divider .my-handle"),
+    ).not.toBeNull()
+  })
+
+  it("marks the control as disabled for styling and assistive tech", () => {
+    const { container } = setup({ isDisabled: true })
+
+    const root = container.querySelector(".iw-before-after")
+    expect(root.classList.contains("iw-before-after-disabled")).toBe(true)
+    expect(root.getAttribute("aria-disabled")).toBe("true")
+    expect(root.getAttribute("tabindex")).toBe("-1")
+  })
+
+  it("positionChange ignores updates while disabled", () => {
     const entity = { id: "ba", position: 50, isDisabled: true }
 
-    BeforeAfter.setPosition(entity, 10)
+    BeforeAfter.positionChange(entity, 10)
 
     expect(entity.position).toBe(50)
   })

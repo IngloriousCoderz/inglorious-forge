@@ -21,15 +21,19 @@ export interface BeforeAfterProps {
   isDisabled?: boolean
   isFullWidth?: boolean
 
-  onSlide?: (position: number) => void
-  onChange?: (position: number) => void
+  onPositionChange?: (position: number) => void
   [key: string]: unknown
 }
 
 export interface BeforeAfterType {
   create(entity: BeforeAfterProps): void
-  setPosition(entity: BeforeAfterProps, position: number): void
+  positionChange(entity: BeforeAfterProps, position: number): void
   render(entity: BeforeAfterProps, api: Api): TemplateResult
+  renderBeforeAfter(props: BeforeAfterProps): TemplateResult
+  renderBefore(props: BeforeAfterProps): TemplateResult
+  renderAfter(props: BeforeAfterProps): TemplateResult
+  renderDivider(props: BeforeAfterProps): TemplateResult
+  renderHandle(props: BeforeAfterProps): TemplateResult
 }
 
 export declare const BeforeAfter: BeforeAfterType
