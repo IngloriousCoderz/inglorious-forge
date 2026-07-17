@@ -1,6 +1,6 @@
-import { html } from "@inglorious/web"
+import { createStore } from "@inglorious/store"
+import { html, mount } from "@inglorious/web"
 
-import { BeforeAfter } from "../../controls/before-after/index.js"
 import { Button } from "../../controls/button/index.js"
 import { ButtonGroup } from "../../controls/button-group/index.js"
 import { Checkbox } from "../../controls/checkbox/index.js"
@@ -15,6 +15,8 @@ import { Slider } from "../../controls/slider/index.js"
 import { Switch } from "../../controls/switch/index.js"
 import { Avatar } from "../../data-display/avatar/index.js"
 import { Badge } from "../../data-display/badge/index.js"
+import { BeforeAfter } from "../../data-display/before-after/index.js"
+import { Carousel } from "../../data-display/carousel/index.js"
 import { Chip } from "../../data-display/chip/index.js"
 import { DataGrid } from "../../data-display/data-grid/index.js"
 import { Divider } from "../../data-display/divider/index.js"
@@ -103,6 +105,48 @@ const previewRow = (children) =>
 
 const previewColumn = (children) =>
   html`<div class="iw-primitive-preview-column">${children}</div>`
+
+const livePreviews = new Map()
+
+/**
+ * Entity-driven primitives render their controls from state, so a preview
+ * without a store freezes: a carousel arrow would recompute from the same page
+ * forever, and a dragged divider would never move. Give each one its own store,
+ * created once and reused on every re-render so the preview keeps its state.
+ * @param {Object.<string, any>} types
+ * @param {Object.<string, any>} entity
+ * @returns {HTMLElement}
+ */
+function livePreview(types, entity) {
+  if (!livePreviews.has(entity.id)) {
+    const container = document.createElement("div")
+    // The mount needs an element, but it must not become a box of its own:
+    // as a flex item it would shrink and take the primitive down with it.
+    container.style.display = "contents"
+
+    const store = createStore({ types, entities: { [entity.id]: entity } })
+    mount(store, (api) => api.render(entity.id), container)
+    livePreviews.set(entity.id, container)
+  }
+
+  return livePreviews.get(entity.id)
+}
+
+const carouselSlides = [
+  "#22d3ee",
+  "#4f46e5",
+  "#f59e0b",
+  "#10b981",
+  "#ef4444",
+].map(
+  (color, index) =>
+    html`<div
+      style="display:grid;place-items:center;height:14rem;border-radius:0.5rem;
+             background:${color};color:#fff;font:700 2rem sans-serif;"
+    >
+      ${index + 1}
+    </div>`,
+)
 
 const primitiveDetailsByPath = {
   "/layout/container": {
@@ -197,6 +241,38 @@ Grid.render({
         }),
     },
   },
+  "/data-display/carousel": {
+    summary: "Scroll-snapping carousel with arrows and pagination dots.",
+    description:
+      "Carousel lays items out in a scroll-snapping viewport: swiping, momentum and snapping come from the browser, while the current page is the only piece of entity state. Arrows and indicators are overridable sub-renders.",
+    useCases: ["Image galleries", "Feature tours", "Onboarding slides"],
+    example: {
+      code: `import { Carousel } from "@inglorious/ui/carousel"
+
+Carousel.render({
+  id: "demo",
+  label: "Example carousel",
+  items: [slideOne, slideTwo, slideThree],
+  page: 0,
+  gap: "md",
+  isFullWidth: true
+})`,
+      preview: () =>
+        livePreview(
+          { Carousel },
+          {
+            id: "carousel",
+            type: "Carousel",
+            label: "Example carousel",
+            items: carouselSlides,
+            page: 0,
+            gap: "md",
+            isInfinite: true,
+            isFullWidth: true,
+          },
+        ),
+    },
+  },
   "/controls/button": {
     summary: "Action trigger with variants, colors, and shapes.",
     description:
@@ -282,7 +358,7 @@ Checkbox.render({
         ]),
     },
   },
-  "/controls/before-after": {
+  "/data-display/before-after": {
     name: "Before / After",
     summary: "Drag-to-compare slider for two overlaid images.",
     description:
@@ -299,13 +375,17 @@ BeforeAfter.render({
   isFullWidth: true
 })`,
       preview: () =>
-        BeforeAfter.render({
-          id: "before-after",
-          before: beforeAfterImages.before,
-          after: beforeAfterImages.after,
-          position: 50,
-          isFullWidth: true,
-        }),
+        livePreview(
+          { BeforeAfter },
+          {
+            id: "beforeAfter",
+            type: "BeforeAfter",
+            before: beforeAfterImages.before,
+            after: beforeAfterImages.after,
+            position: 50,
+            isFullWidth: true,
+          },
+        ),
     },
   },
   "/controls/combobox": {
@@ -332,21 +412,26 @@ Combobox.render({
   selectedValue: ["inglorious"]
 })`,
       preview: () =>
-        Combobox.render({
-          label: "Frameworks",
-          placeholder: "Select frameworks...",
-          isMulti: true,
-          isSearchable: true,
-          isClearable: true,
-          options: [
-            { label: "React", value: "react" },
-            { label: "Angular", value: "angular" },
-            { label: "Vue", value: "vue" },
-            { label: "Svelte", value: "svelte" },
-            { label: "Inglorious", value: "inglorious" },
-          ],
-          selectedValue: ["inglorious"],
-        }),
+        livePreview(
+          { Combobox },
+          {
+            id: "combobox",
+            type: "Combobox",
+            label: "Frameworks",
+            placeholder: "Select frameworks...",
+            isMulti: true,
+            isSearchable: true,
+            isClearable: true,
+            options: [
+              { label: "React", value: "react" },
+              { label: "Angular", value: "angular" },
+              { label: "Vue", value: "vue" },
+              { label: "Svelte", value: "svelte" },
+              { label: "Inglorious", value: "inglorious" },
+            ],
+            selectedValue: ["inglorious"],
+          },
+        ),
     },
   },
   "/controls/fab": {
@@ -618,23 +703,28 @@ DataGrid.render({
   pagination: { page: 0, pageSize: 3, pageSizes: [3, 6] }
 })`,
       preview: () =>
-        DataGrid.render({
-          rowId: "id",
-          columns: [
-            { id: "id", title: "ID", type: "number", isSortable: true },
-            { id: "name", title: "Name" },
-            { id: "status", title: "Status" },
-          ],
-          rows: [
-            { id: 1, name: "Alpha", status: "Active" },
-            { id: 2, name: "Beta", status: "Paused" },
-            { id: 3, name: "Gamma", status: "Active" },
-          ],
-          filters: {},
-          sorts: [],
-          selection: [],
-          pagination: { page: 0, pageSize: 3, pageSizes: [3, 6] },
-        }),
+        livePreview(
+          { DataGrid },
+          {
+            id: "dataGrid",
+            type: "DataGrid",
+            rowId: "id",
+            columns: [
+              { id: "id", title: "ID", type: "number", isSortable: true },
+              { id: "name", title: "Name" },
+              { id: "status", title: "Status" },
+            ],
+            rows: [
+              { id: 1, name: "Alpha", status: "Active" },
+              { id: 2, name: "Beta", status: "Paused" },
+              { id: 3, name: "Gamma", status: "Active" },
+            ],
+            filters: {},
+            sorts: [],
+            selection: [],
+            pagination: { page: 0, pageSize: 3, pageSizes: [3, 6] },
+          },
+        ),
     },
   },
   "/data-display/divider": {

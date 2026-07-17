@@ -1,0 +1,300 @@
+import { html } from "@inglorious/web"
+import { createMockApi, render } from "@inglorious/web/test"
+import { describe, expect, it, vi } from "vitest"
+
+import { Carousel } from "."
+
+const items = ["one", "two", "three"]
+
+/** jsdom has no layout, so hand the viewport fake offsets and a scrollTo spy. */
+function fakeLayout(viewport) {
+  viewport.querySelectorAll(".iw-carousel-item").forEach((item, index) => {
+    Object.defineProperty(item, "offsetLeft", { value: index * 100 })
+    Object.defineProperty(item, "offsetTop", { value: index * 100 })
+  })
+  viewport.scrollTo = vi.fn()
+  return viewport
+}
+
+function setup(overrides = {}) {
+  const entity = {
+    id: "c",
+    type: "Carousel",
+    items,
+    page: 0,
+    ...overrides,
+  }
+  const api = createMockApi({ [entity.id]: entity })
+  api.getType = () => Carousel
+  const container = document.createElement("div")
+
+  render(Carousel.render(entity, api), container)
+
+  return { entity, api, container }
+}
+
+describe("carousel", () => {
+  it("renders one item per entry", () => {
+    const { container } = setup()
+
+    const rendered = container.querySelectorAll(".iw-carousel-item")
+    expect(rendered.length).toBe(3)
+    expect(rendered[0].textContent.trim()).toBe("one")
+    expect(rendered[0].getAttribute("aria-label")).toBe("1 of 3")
+  })
+
+  it("labels the viewport as a carousel", () => {
+    const { container } = setup({ label: "Photos" })
+
+    const viewport = container.querySelector(".iw-carousel-viewport")
+    expect(viewport.getAttribute("aria-roledescription")).toBe("carousel")
+    expect(viewport.getAttribute("aria-label")).toBe("Photos")
+    expect(viewport.getAttribute("tabindex")).toBe("0")
+  })
+
+  it("marks the current indicator", () => {
+    const { container } = setup({ page: 1 })
+
+    const dots = container.querySelectorAll(".iw-carousel-indicator")
+    expect(dots.length).toBe(3)
+    expect(dots[1].classList.contains("iw-carousel-indicator-current")).toBe(
+      true,
+    )
+    expect(dots[1].getAttribute("aria-current")).toBe("page")
+  })
+
+  it("disables the arrows at either end", () => {
+    const arrow = (c, dir) =>
+      c.querySelector(`.iw-carousel-arrow-${dir} button`)
+
+    const first = setup({ page: 0 })
+    expect(arrow(first.container, "previous").disabled).toBe(true)
+    expect(arrow(first.container, "next").disabled).toBe(false)
+
+    const last = setup({ page: 2 })
+    expect(arrow(last.container, "previous").disabled).toBe(false)
+    expect(arrow(last.container, "next").disabled).toBe(true)
+  })
+
+  it("renders the arrows as Button components", () => {
+    const { container } = setup()
+
+    const button = container.querySelector(".iw-carousel-arrow-next button")
+    expect(button.classList.contains("iw-button")).toBe(true)
+    expect(button.classList.contains("iw-button-shape-round")).toBe(true)
+    expect(button.getAttribute("aria-label")).toBe("Next slide")
+  })
+
+  it("hides arrows and indicators when asked", () => {
+    const { container } = setup({ hasArrows: false, hasIndicators: false })
+
+    expect(container.querySelector(".iw-carousel-arrow")).toBeNull()
+    expect(container.querySelector(".iw-carousel-indicators")).toBeNull()
+  })
+
+  it("goes vertical on the y axis", () => {
+    const { container } = setup({ axis: "y" })
+
+    expect(
+      container
+        .querySelector(".iw-carousel")
+        .classList.contains("iw-carousel-vertical"),
+    ).toBe(true)
+  })
+
+  it("applies gap and alignment classes", () => {
+    const { container } = setup({ gap: "lg", align: "center" })
+
+    const root = container.querySelector(".iw-carousel")
+    expect(root.classList.contains("iw-carousel-gap-lg")).toBe(true)
+    expect(root.classList.contains("iw-carousel-align-center")).toBe(true)
+  })
+
+  it("reports the settled page from a scroll", () => {
+    const { container, api } = setup()
+
+    const viewport = fakeLayout(
+      container.querySelector(".iw-carousel-viewport"),
+    )
+    viewport.scrollLeft = 200
+    viewport.dispatchEvent(new Event("scroll"))
+
+    expect(api.getEvents()).toEqual([{ type: "#c:pageChange", payload: 2 }])
+  })
+
+  it("scrolls to the next page on an arrow click", () => {
+    const { container } = setup({ page: 0 })
+
+    const viewport = fakeLayout(
+      container.querySelector(".iw-carousel-viewport"),
+    )
+    container.querySelector(".iw-carousel-arrow-next").click()
+
+    expect(viewport.scrollTo).toHaveBeenCalledWith({
+      left: 100,
+      behavior: "auto",
+    })
+  })
+
+  it("scrolls with the arrow keys", () => {
+    const { container } = setup({ page: 1 })
+
+    const viewport = fakeLayout(
+      container.querySelector(".iw-carousel-viewport"),
+    )
+    viewport.scrollLeft = 100
+    viewport.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight" }))
+
+    expect(viewport.scrollTo).toHaveBeenCalledWith({
+      left: 200,
+      behavior: "auto",
+    })
+  })
+
+  it("jumps straight to a page on an indicator click", () => {
+    const { container } = setup({ page: 0 })
+
+    const viewport = fakeLayout(
+      container.querySelector(".iw-carousel-viewport"),
+    )
+    container.querySelectorAll(".iw-carousel-indicator")[2].click()
+
+    expect(viewport.scrollTo).toHaveBeenCalledWith({
+      left: 200,
+      behavior: "auto",
+    })
+  })
+
+  it("can page back from the end when items are narrower than the viewport", () => {
+    // Matteo's "Many per view" bug: at max scroll the reported page is the last
+    // one, but its neighbours sit past the scroll range, so page arithmetic got
+    // stuck. Paging is relative to the scroll position instead.
+    const { container } = setup({ page: 2 })
+
+    const viewport = fakeLayout(
+      container.querySelector(".iw-carousel-viewport"),
+    )
+    viewport.scrollLeft = 150 // parked at the end, between items 1 and 2
+    container.querySelector(".iw-carousel-arrow-previous").click()
+
+    expect(viewport.scrollTo).toHaveBeenCalledWith({
+      left: 100,
+      behavior: "auto",
+    })
+  })
+
+  it("applies the initial page without a layout engine (jsdom-safe)", async () => {
+    const { container } = setup({ page: 2 })
+
+    // settleOnInitialPage schedules a scroll on the next frame; without the
+    // scrollTo guard this frame throws in jsdom.
+    await new Promise((resolve) => requestAnimationFrame(() => resolve()))
+    await new Promise((resolve) => setTimeout(resolve, 0))
+
+    expect(container.querySelector(".iw-carousel")).not.toBeNull()
+  })
+
+  it("lets consumers override the arrow and indicator sub-renders", () => {
+    const entity = { id: "c", type: "Carousel", items, page: 0 }
+    const api = createMockApi({ [entity.id]: entity })
+    const CustomCarousel = {
+      ...Carousel,
+      renderArrow: (props, direction) =>
+        html`<button class="my-arrow">${direction}</button>`,
+    }
+    const container = document.createElement("div")
+
+    render(CustomCarousel.render(entity, api), container)
+
+    expect(container.querySelectorAll(".my-arrow").length).toBe(2)
+    expect(container.querySelector(".iw-carousel-arrow")).toBeNull()
+  })
+
+  it("create initializes page and defaults", () => {
+    const entity = { id: "c" }
+
+    Carousel.create(entity)
+
+    expect(entity.page).toBe(0)
+    expect(entity.axis).toBe("x")
+    expect(entity.items).toEqual([])
+    expect(entity.hasArrows).toBe(true)
+    expect(entity.hasIndicators).toBe(true)
+  })
+
+  it("pageChange clamps to the available items", () => {
+    const entity = { id: "c", items, page: 0 }
+
+    Carousel.pageChange(entity, 99)
+    expect(entity.page).toBe(2)
+
+    Carousel.pageChange(entity, -5)
+    expect(entity.page).toBe(0)
+
+    Carousel.pageChange(entity, 1)
+    expect(entity.page).toBe(1)
+  })
+
+  it("pageChange ignores values that are not numbers", () => {
+    const entity = { id: "c", items, page: 1 }
+
+    Carousel.pageChange(entity, "nope")
+
+    expect(entity.page).toBe(1)
+  })
+
+  it("rotate wraps the rotation within the item count", () => {
+    const entity = { id: "c", items, rotation: 0 }
+
+    Carousel.rotate(entity, 1)
+    expect(entity.rotation).toBe(1)
+
+    // stepping back past zero wraps to the last item
+    Carousel.rotate(entity, -2)
+    expect(entity.rotation).toBe(2)
+
+    // stepping forward past the end wraps to the front
+    Carousel.rotate(entity, 5)
+    expect(entity.rotation).toBe(1)
+  })
+
+  it("create defaults an infinite carousel to off with no rotation", () => {
+    const entity = { id: "c" }
+
+    Carousel.create(entity)
+
+    expect(entity.isInfinite).toBe(false)
+    expect(entity.rotation).toBe(0)
+  })
+
+  it("renders items rotated when infinite", () => {
+    const { container } = setup({ isInfinite: true, rotation: 1 })
+
+    const shown = [...container.querySelectorAll(".iw-carousel-item")].map(
+      (n) => n.textContent.trim(),
+    )
+    // [one, two, three] rotated by 1 -> [two, three, one]
+    expect(shown).toEqual(["two", "three", "one"])
+  })
+
+  it("never disables the arrows when infinite", () => {
+    const { container } = setup({ isInfinite: true, page: 2 })
+
+    expect(
+      container.querySelector(".iw-carousel-arrow-next button").disabled,
+    ).toBe(false)
+    expect(
+      container.querySelector(".iw-carousel-arrow-previous button").disabled,
+    ).toBe(false)
+  })
+
+  it("tracks the current dot by logical item when infinite", () => {
+    const { container } = setup({ isInfinite: true, rotation: 1, page: 0 })
+
+    // page 0 of a carousel rotated by 1 shows the original item at index 1
+    const dots = container.querySelectorAll(".iw-carousel-indicator")
+    expect(dots[1].classList.contains("iw-carousel-indicator-current")).toBe(
+      true,
+    )
+  })
+})

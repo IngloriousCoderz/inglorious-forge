@@ -1,0 +1,225 @@
+.iw-carousel {
+  --iw-carousel-arrow-size: 2.25rem;
+  --iw-carousel-arrow-bg: var(--iw-color-surface);
+  --iw-carousel-arrow-color: var(--iw-color-text);
+  --iw-carousel-arrow-inset: var(--iw-space-2);
+  --iw-carousel-arrow-chevron: 5px;
+  --iw-carousel-indicator-size: 0.5rem;
+  --iw-carousel-indicator-color: var(--iw-color-border);
+  --iw-carousel-indicator-color-current: var(--iw-color-primary);
+
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+
+  &.iw-carousel-full-width {
+    display: block;
+    width: 100%;
+  }
+
+  /* Snapping, swiping, momentum and RTL all come from the browser. */
+  .iw-carousel-viewport {
+    position: relative;
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    outline: none;
+  }
+
+  .iw-carousel-viewport::-webkit-scrollbar {
+    display: none;
+  }
+
+  .iw-carousel-viewport:focus-visible {
+    outline: 2px solid var(--iw-color-primary);
+    outline-offset: 2px;
+  }
+
+  /* One item per view by default, so every item can reach the start of the
+     viewport and each one is exactly one page. Override
+     --iw-carousel-item-size to show several at once. */
+  .iw-carousel-item {
+    flex: 0 0 var(--iw-carousel-item-size, 100%);
+    scroll-snap-align: start;
+  }
+
+  /* Smooth scrolling would animate every drag step, so it is turned off while
+     dragging. Snapping stays on: the browser then lands on the nearest slide by
+     itself, and re-enabling it instead would snap back to the item it
+     remembered. Doubled up on the class so this outranks the reduced-motion
+     rule at the end of the file. */
+  .iw-carousel-viewport.iw-carousel-viewport-dragging {
+    scroll-behavior: auto;
+    scroll-snap-type: none;
+    cursor: grabbing;
+    user-select: none;
+  }
+
+  /* A vertical carousel has to be given a height, otherwise the viewport just
+     grows to fit every item and there is nothing left to scroll. Override
+     --iw-carousel-viewport-size to change it. */
+  &.iw-carousel-vertical .iw-carousel-viewport {
+    flex-direction: column;
+    height: var(--iw-carousel-viewport-size, 20rem);
+    overflow-x: hidden;
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+    overscroll-behavior-y: contain;
+  }
+
+  /* Gap tokens mirror Flex. */
+  &.iw-carousel-gap-sm .iw-carousel-viewport {
+    gap: var(--iw-space-2);
+  }
+
+  &.iw-carousel-gap-md .iw-carousel-viewport {
+    gap: var(--iw-space-4);
+  }
+
+  &.iw-carousel-gap-lg .iw-carousel-viewport {
+    gap: var(--iw-space-6);
+  }
+
+  &.iw-carousel-gap-xl .iw-carousel-viewport {
+    gap: var(--iw-space-8);
+  }
+
+  /* Off-axis alignment. */
+  &.iw-carousel-align-start .iw-carousel-viewport {
+    align-items: flex-start;
+  }
+
+  &.iw-carousel-align-center .iw-carousel-viewport {
+    align-items: center;
+  }
+
+  &.iw-carousel-align-end .iw-carousel-viewport {
+    align-items: flex-end;
+  }
+
+  /* The stage holds the viewport and its arrows, so centring ignores the dots. */
+  .iw-carousel-stage {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--iw-space-2);
+  }
+
+  &.iw-carousel-vertical .iw-carousel-stage {
+    flex-direction: column;
+  }
+
+  .iw-carousel-stage .iw-carousel-viewport {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  /* Inside: float the arrows over the slides. */
+  &.iw-carousel-arrows-inside .iw-carousel-stage {
+    gap: 0;
+  }
+
+  &.iw-carousel-arrows-inside .iw-carousel-arrow {
+    position: absolute;
+    top: 50%;
+    z-index: 1;
+    transform: translateY(-50%);
+  }
+
+  &.iw-carousel-arrows-inside .iw-carousel-arrow-previous {
+    left: var(--iw-carousel-arrow-inset);
+  }
+
+  &.iw-carousel-arrows-inside .iw-carousel-arrow-next {
+    right: var(--iw-carousel-arrow-inset);
+  }
+
+  &.iw-carousel-vertical.iw-carousel-arrows-inside .iw-carousel-arrow {
+    top: auto;
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  &.iw-carousel-vertical.iw-carousel-arrows-inside .iw-carousel-arrow-previous {
+    top: var(--iw-carousel-arrow-inset);
+  }
+
+  &.iw-carousel-vertical.iw-carousel-arrows-inside .iw-carousel-arrow-next {
+    bottom: var(--iw-carousel-arrow-inset);
+  }
+
+  /* Outside: the arrows sit beside the scrolling area, flex handles centring. */
+  &.iw-carousel-arrows-outside .iw-carousel-arrow {
+    position: static;
+    flex: 0 0 auto;
+  }
+
+  /* Chevrons drawn with borders, no icon font needed. */
+  .iw-carousel-chevron {
+    display: block;
+    width: 0;
+    height: 0;
+    border-top: var(--iw-carousel-arrow-chevron) solid transparent;
+    border-bottom: var(--iw-carousel-arrow-chevron) solid transparent;
+  }
+
+  .iw-carousel-arrow-previous .iw-carousel-chevron {
+    margin-right: 2px;
+    border-right: 7px solid currentcolor;
+  }
+
+  .iw-carousel-arrow-next .iw-carousel-chevron {
+    margin-left: 2px;
+    border-left: 7px solid currentcolor;
+  }
+
+  &.iw-carousel-vertical .iw-carousel-chevron {
+    border-right: none;
+    border-left: none;
+    border-inline: var(--iw-carousel-arrow-chevron) solid transparent;
+  }
+
+  &.iw-carousel-vertical .iw-carousel-arrow-previous .iw-carousel-chevron {
+    margin: 0 0 2px;
+    border-top: none;
+    border-bottom: 7px solid currentcolor;
+  }
+
+  &.iw-carousel-vertical .iw-carousel-arrow-next .iw-carousel-chevron {
+    margin: 2px 0 0;
+    border-top: 7px solid currentcolor;
+    border-bottom: none;
+  }
+
+  .iw-carousel-indicators {
+    display: flex;
+    justify-content: center;
+    gap: var(--iw-space-2);
+    padding: var(--iw-space-2);
+  }
+
+  .iw-carousel-indicator {
+    width: var(--iw-carousel-indicator-size);
+    height: var(--iw-carousel-indicator-size);
+    padding: 0;
+    border: none;
+    border-radius: var(--iw-radius-full);
+    background: var(--iw-carousel-indicator-color);
+    cursor: pointer;
+  }
+
+  .iw-carousel-indicator-current {
+    background: var(--iw-carousel-indicator-color-current);
+  }
+}
+
+/* Respect reduced motion: only animate paging when the user allows it. */
+@media (prefers-reduced-motion: no-preference) {
+  .iw-carousel .iw-carousel-viewport {
+    scroll-behavior: smooth;
+  }
+}

@@ -39,10 +39,10 @@
     "./themes/material.css": "./src/styles/themes/material.css",
     "./themes/bootstrap.css": "./src/styles/themes/bootstrap.css",
     "./before-after": {
-      "types": "./types/controls/before-after.d.ts",
-      "import": "./src/controls/before-after/index.js"
+      "types": "./types/data-display/before-after.d.ts",
+      "import": "./src/data-display/before-after/index.js"
     },
-    "./before-after.css": "./src/controls/before-after/style.css",
+    "./before-after.css": "./src/data-display/before-after/style.css",
     "./button": {
       "types": "./types/controls/button.d.ts",
       "import": "./src/controls/button/index.js"
@@ -53,6 +53,11 @@
       "import": "./src/controls/button-group/index.js"
     },
     "./button-group.css": "./src/controls/button-group/style.css",
+    "./carousel": {
+      "types": "./types/data-display/carousel.d.ts",
+      "import": "./src/data-display/carousel/index.js"
+    },
+    "./carousel.css": "./src/data-display/carousel/style.css",
     "./checkbox": {
       "types": "./types/controls/checkbox.d.ts",
       "import": "./src/controls/checkbox/index.js"
