@@ -46,6 +46,18 @@
     scroll-snap-align: start;
   }
 
+  /* Smooth scrolling would animate every drag step, so it is turned off while
+     dragging. Snapping stays on: the browser then lands on the nearest slide by
+     itself, and re-enabling it instead would snap back to the item it
+     remembered. Doubled up on the class so this outranks the reduced-motion
+     rule at the end of the file. */
+  .iw-carousel-viewport.iw-carousel-viewport-dragging {
+    scroll-behavior: auto;
+    scroll-snap-type: none;
+    cursor: grabbing;
+    user-select: none;
+  }
+
   /* A vertical carousel has to be given a height, otherwise the viewport just
      grows to fit every item and there is nothing left to scroll. Override
      --iw-carousel-viewport-size to change it. */
@@ -88,85 +100,96 @@
     align-items: flex-end;
   }
 
-  .iw-carousel-arrow {
-    position: absolute;
-    top: 50%;
+  /* The stage holds the viewport and its arrows, so centring ignores the dots. */
+  .iw-carousel-stage {
+    position: relative;
     display: flex;
     align-items: center;
-    justify-content: center;
-    box-sizing: border-box;
-    width: var(--iw-carousel-arrow-size);
-    height: var(--iw-carousel-arrow-size);
-    padding: 0;
-    border: 1px solid var(--iw-color-border);
-    border-radius: var(--iw-radius-full);
-    background: var(--iw-carousel-arrow-bg);
-    color: var(--iw-carousel-arrow-color);
+    gap: var(--iw-space-2);
+  }
+
+  &.iw-carousel-vertical .iw-carousel-stage {
+    flex-direction: column;
+  }
+
+  .iw-carousel-stage .iw-carousel-viewport {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  /* Inside: float the arrows over the slides. */
+  &.iw-carousel-arrows-inside .iw-carousel-stage {
+    gap: 0;
+  }
+
+  &.iw-carousel-arrows-inside .iw-carousel-arrow {
+    position: absolute;
+    top: 50%;
+    z-index: 1;
     transform: translateY(-50%);
-    box-shadow: var(--iw-shadow-sm);
-    cursor: pointer;
   }
 
-  .iw-carousel-arrow:disabled {
-    opacity: 0.4;
-    cursor: default;
-  }
-
-  .iw-carousel-arrow-previous {
+  &.iw-carousel-arrows-inside .iw-carousel-arrow-previous {
     left: var(--iw-carousel-arrow-inset);
   }
 
-  .iw-carousel-arrow-next {
+  &.iw-carousel-arrows-inside .iw-carousel-arrow-next {
     right: var(--iw-carousel-arrow-inset);
   }
 
-  /* Chevrons drawn with borders, no icon font needed. */
-  .iw-carousel-arrow::before {
-    content: "";
-    width: 0;
-    height: 0;
-    border-top: var(--iw-carousel-arrow-chevron) solid transparent;
-    border-bottom: var(--iw-carousel-arrow-chevron) solid transparent;
-  }
-
-  .iw-carousel-arrow-previous::before {
-    margin-right: 2px;
-    border-right: 7px solid currentcolor;
-  }
-
-  .iw-carousel-arrow-next::before {
-    margin-left: 2px;
-    border-left: 7px solid currentcolor;
-  }
-
-  &.iw-carousel-vertical .iw-carousel-arrow {
+  &.iw-carousel-vertical.iw-carousel-arrows-inside .iw-carousel-arrow {
     top: auto;
     right: auto;
     left: 50%;
     transform: translateX(-50%);
   }
 
-  &.iw-carousel-vertical .iw-carousel-arrow-previous {
+  &.iw-carousel-vertical.iw-carousel-arrows-inside .iw-carousel-arrow-previous {
     top: var(--iw-carousel-arrow-inset);
   }
 
-  &.iw-carousel-vertical .iw-carousel-arrow-next {
+  &.iw-carousel-vertical.iw-carousel-arrows-inside .iw-carousel-arrow-next {
     bottom: var(--iw-carousel-arrow-inset);
   }
 
-  &.iw-carousel-vertical .iw-carousel-arrow::before {
+  /* Outside: the arrows sit beside the scrolling area, flex handles centring. */
+  &.iw-carousel-arrows-outside .iw-carousel-arrow {
+    position: static;
+    flex: 0 0 auto;
+  }
+
+  /* Chevrons drawn with borders, no icon font needed. */
+  .iw-carousel-chevron {
+    display: block;
+    width: 0;
+    height: 0;
+    border-top: var(--iw-carousel-arrow-chevron) solid transparent;
+    border-bottom: var(--iw-carousel-arrow-chevron) solid transparent;
+  }
+
+  .iw-carousel-arrow-previous .iw-carousel-chevron {
+    margin-right: 2px;
+    border-right: 7px solid currentcolor;
+  }
+
+  .iw-carousel-arrow-next .iw-carousel-chevron {
+    margin-left: 2px;
+    border-left: 7px solid currentcolor;
+  }
+
+  &.iw-carousel-vertical .iw-carousel-chevron {
     border-right: none;
     border-left: none;
     border-inline: var(--iw-carousel-arrow-chevron) solid transparent;
   }
 
-  &.iw-carousel-vertical .iw-carousel-arrow-previous::before {
+  &.iw-carousel-vertical .iw-carousel-arrow-previous .iw-carousel-chevron {
     margin: 0 0 2px;
     border-top: none;
     border-bottom: 7px solid currentcolor;
   }
 
-  &.iw-carousel-vertical .iw-carousel-arrow-next::before {
+  &.iw-carousel-vertical .iw-carousel-arrow-next .iw-carousel-chevron {
     margin: 2px 0 0;
     border-top: 7px solid currentcolor;
     border-bottom: none;

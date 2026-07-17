@@ -19,7 +19,7 @@ const slide = (index) =>
 const items = COLORS.map((color, index) => slide(index))
 
 export default {
-  title: "Controls/Carousel",
+  title: "Data Display/Carousel",
   tags: ["autodocs"],
   render: createEntityRender({ Carousel }),
   argTypes: {
@@ -43,6 +43,25 @@ export default {
       control: "select",
       options: ["stretch", "start", "center", "end"],
       description: "Off-axis alignment of items.",
+    },
+    arrowPlacement: {
+      control: "inline-radio",
+      options: ["inside", "outside"],
+      description: "Float the arrows over the slides, or sit them beside.",
+    },
+    arrowVariant: {
+      control: "select",
+      options: ["default", "outline", "ghost"],
+      description: "Button variant used for the arrows.",
+    },
+    arrowColor: {
+      control: "select",
+      options: ["primary", "secondary", "success", "warning", "error", "info"],
+      description: "Button color used for the arrows.",
+    },
+    isInfinite: {
+      control: "boolean",
+      description: "Wrap past the ends by rotating the items.",
     },
     hasArrows: {
       control: "boolean",
@@ -74,9 +93,29 @@ Default.args = {
   axis: "x",
   gap: "md",
   align: "stretch",
+  arrowPlacement: "inside",
+  arrowVariant: "default",
+  isInfinite: true,
   hasArrows: true,
   hasIndicators: true,
   isFullWidth: true,
+}
+
+/** Arrows beside the scrolling area, as most carousels show them. */
+export const ArrowsOutside = {}
+ArrowsOutside.args = {
+  ...Default.args,
+  id: "carousel-arrows-outside",
+  arrowPlacement: "outside",
+  arrowVariant: "ghost",
+}
+
+/** Wraps past the ends: after 5 it continues to 1, rather than rewinding. */
+export const Infinite = {}
+Infinite.args = {
+  ...Default.args,
+  id: "carousel-infinite",
+  isInfinite: true,
 }
 
 export const StartOnThirdSlide = {}

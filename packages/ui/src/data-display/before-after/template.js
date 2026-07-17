@@ -1,5 +1,5 @@
 /**
- * @typedef {import('../../../types/controls/before-after.js').BeforeAfterProps} BeforeAfterProps
+ * @typedef {import('../../../types/data-display/before-after.js').BeforeAfterProps} BeforeAfterProps
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 

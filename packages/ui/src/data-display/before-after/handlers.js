@@ -1,5 +1,5 @@
 /**
- * @typedef {import('../../../types/controls/before-after.js').BeforeAfterProps} BeforeAfterEntity
+ * @typedef {import('../../../types/data-display/before-after.js').BeforeAfterProps} BeforeAfterEntity
  */
 
 import { clamp } from "@inglorious/utils/math/numbers.js"

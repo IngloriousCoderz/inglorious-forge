@@ -132,18 +132,12 @@ function getDefaultItems() {
       primary: "Controls",
       icon: "buttons_alt",
       children: [
-        {
-          id: "before-after",
-          primary: "Before / After",
-          href: "/controls/before-after",
-        },
         { id: "button", primary: "Button", href: "/controls/button" },
         {
           id: "button-group",
           primary: "Button Group",
           href: "/controls/button-group",
         },
-        { id: "carousel", primary: "Carousel", href: "/controls/carousel" },
         { id: "checkbox", primary: "Checkbox", href: "/controls/checkbox" },
         { id: "combobox", primary: "Combobox", href: "/controls/combobox" },
         { id: "fab", primary: "Fab", href: "/controls/fab" },
@@ -171,6 +165,12 @@ function getDefaultItems() {
       children: [
         { id: "avatar", primary: "Avatar", href: "/data-display/avatar" },
         { id: "badge", primary: "Badge", href: "/data-display/badge" },
+        {
+          id: "before-after",
+          primary: "Before / After",
+          href: "/data-display/before-after",
+        },
+        { id: "carousel", primary: "Carousel", href: "/data-display/carousel" },
         { id: "chip", primary: "Chip", href: "/data-display/chip" },
         {
           id: "data-grid",
