@@ -9,6 +9,7 @@ export const Carousel = {
     const props = {
       ...entity,
       onPageChange: (page) => api.notify(`#${id}:pageChange`, page),
+      onRotate: (step) => api.notify(`#${id}:rotate`, step),
     }
 
     return this.renderCarousel(props)

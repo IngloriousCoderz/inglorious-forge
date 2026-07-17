@@ -1,10 +1,8 @@
 import { createStore } from "@inglorious/store"
 import { html, mount } from "@inglorious/web"
 
-import { BeforeAfter } from "../../controls/before-after/index.js"
 import { Button } from "../../controls/button/index.js"
 import { ButtonGroup } from "../../controls/button-group/index.js"
-import { Carousel } from "../../controls/carousel/index.js"
 import { Checkbox } from "../../controls/checkbox/index.js"
 import { Combobox } from "../../controls/combobox/index.js"
 import { Fab } from "../../controls/fab/index.js"
@@ -17,6 +15,8 @@ import { Slider } from "../../controls/slider/index.js"
 import { Switch } from "../../controls/switch/index.js"
 import { Avatar } from "../../data-display/avatar/index.js"
 import { Badge } from "../../data-display/badge/index.js"
+import { BeforeAfter } from "../../data-display/before-after/index.js"
+import { Carousel } from "../../data-display/carousel/index.js"
 import { Chip } from "../../data-display/chip/index.js"
 import { DataGrid } from "../../data-display/data-grid/index.js"
 import { Divider } from "../../data-display/divider/index.js"
@@ -132,11 +132,17 @@ function livePreview(types, entity) {
   return livePreviews.get(entity.id)
 }
 
-const carouselSlides = ["#22d3ee", "#4f46e5", "#f59e0b"].map(
+const carouselSlides = [
+  "#22d3ee",
+  "#4f46e5",
+  "#f59e0b",
+  "#10b981",
+  "#ef4444",
+].map(
   (color, index) =>
     html`<div
-      style="display:grid;place-items:center;height:10rem;border-radius:0.5rem;
-             background:${color};color:#fff;font:700 1.5rem sans-serif;"
+      style="display:grid;place-items:center;height:14rem;border-radius:0.5rem;
+             background:${color};color:#fff;font:700 2rem sans-serif;"
     >
       ${index + 1}
     </div>`,
@@ -235,7 +241,7 @@ Grid.render({
         }),
     },
   },
-  "/controls/carousel": {
+  "/data-display/carousel": {
     summary: "Scroll-snapping carousel with arrows and pagination dots.",
     description:
       "Carousel lays items out in a scroll-snapping viewport: swiping, momentum and snapping come from the browser, while the current page is the only piece of entity state. Arrows and indicators are overridable sub-renders.",
@@ -261,6 +267,7 @@ Carousel.render({
             items: carouselSlides,
             page: 0,
             gap: "md",
+            isInfinite: true,
             isFullWidth: true,
           },
         ),
@@ -351,7 +358,7 @@ Checkbox.render({
         ]),
     },
   },
-  "/controls/before-after": {
+  "/data-display/before-after": {
     name: "Before / After",
     summary: "Drag-to-compare slider for two overlaid images.",
     description:

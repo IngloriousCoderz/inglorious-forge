@@ -64,21 +64,25 @@ describe("carousel", () => {
   })
 
   it("disables the arrows at either end", () => {
+    const arrow = (c, dir) =>
+      c.querySelector(`.iw-carousel-arrow-${dir} button`)
+
     const first = setup({ page: 0 })
-    expect(
-      first.container.querySelector(".iw-carousel-arrow-previous").disabled,
-    ).toBe(true)
-    expect(
-      first.container.querySelector(".iw-carousel-arrow-next").disabled,
-    ).toBe(false)
+    expect(arrow(first.container, "previous").disabled).toBe(true)
+    expect(arrow(first.container, "next").disabled).toBe(false)
 
     const last = setup({ page: 2 })
-    expect(
-      last.container.querySelector(".iw-carousel-arrow-previous").disabled,
-    ).toBe(false)
-    expect(
-      last.container.querySelector(".iw-carousel-arrow-next").disabled,
-    ).toBe(true)
+    expect(arrow(last.container, "previous").disabled).toBe(false)
+    expect(arrow(last.container, "next").disabled).toBe(true)
+  })
+
+  it("renders the arrows as Button components", () => {
+    const { container } = setup()
+
+    const button = container.querySelector(".iw-carousel-arrow-next button")
+    expect(button.classList.contains("iw-button")).toBe(true)
+    expect(button.classList.contains("iw-button-shape-round")).toBe(true)
+    expect(button.getAttribute("aria-label")).toBe("Next slide")
   })
 
   it("hides arrows and indicators when asked", () => {
@@ -138,6 +142,7 @@ describe("carousel", () => {
     const viewport = fakeLayout(
       container.querySelector(".iw-carousel-viewport"),
     )
+    viewport.scrollLeft = 100
     viewport.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight" }))
 
     expect(viewport.scrollTo).toHaveBeenCalledWith({
@@ -156,6 +161,24 @@ describe("carousel", () => {
 
     expect(viewport.scrollTo).toHaveBeenCalledWith({
       left: 200,
+      behavior: "auto",
+    })
+  })
+
+  it("can page back from the end when items are narrower than the viewport", () => {
+    // Matteo's "Many per view" bug: at max scroll the reported page is the last
+    // one, but its neighbours sit past the scroll range, so page arithmetic got
+    // stuck. Paging is relative to the scroll position instead.
+    const { container } = setup({ page: 2 })
+
+    const viewport = fakeLayout(
+      container.querySelector(".iw-carousel-viewport"),
+    )
+    viewport.scrollLeft = 150 // parked at the end, between items 1 and 2
+    container.querySelector(".iw-carousel-arrow-previous").click()
+
+    expect(viewport.scrollTo).toHaveBeenCalledWith({
+      left: 100,
       behavior: "auto",
     })
   })
@@ -218,5 +241,60 @@ describe("carousel", () => {
     Carousel.pageChange(entity, "nope")
 
     expect(entity.page).toBe(1)
+  })
+
+  it("rotate wraps the rotation within the item count", () => {
+    const entity = { id: "c", items, rotation: 0 }
+
+    Carousel.rotate(entity, 1)
+    expect(entity.rotation).toBe(1)
+
+    // stepping back past zero wraps to the last item
+    Carousel.rotate(entity, -2)
+    expect(entity.rotation).toBe(2)
+
+    // stepping forward past the end wraps to the front
+    Carousel.rotate(entity, 5)
+    expect(entity.rotation).toBe(1)
+  })
+
+  it("create defaults an infinite carousel to off with no rotation", () => {
+    const entity = { id: "c" }
+
+    Carousel.create(entity)
+
+    expect(entity.isInfinite).toBe(false)
+    expect(entity.rotation).toBe(0)
+  })
+
+  it("renders items rotated when infinite", () => {
+    const { container } = setup({ isInfinite: true, rotation: 1 })
+
+    const shown = [...container.querySelectorAll(".iw-carousel-item")].map(
+      (n) => n.textContent.trim(),
+    )
+    // [one, two, three] rotated by 1 -> [two, three, one]
+    expect(shown).toEqual(["two", "three", "one"])
+  })
+
+  it("never disables the arrows when infinite", () => {
+    const { container } = setup({ isInfinite: true, page: 2 })
+
+    expect(
+      container.querySelector(".iw-carousel-arrow-next button").disabled,
+    ).toBe(false)
+    expect(
+      container.querySelector(".iw-carousel-arrow-previous button").disabled,
+    ).toBe(false)
+  })
+
+  it("tracks the current dot by logical item when infinite", () => {
+    const { container } = setup({ isInfinite: true, rotation: 1, page: 0 })
+
+    // page 0 of a carousel rotated by 1 shows the original item at index 1
+    const dots = container.querySelectorAll(".iw-carousel-indicator")
+    expect(dots[1].classList.contains("iw-carousel-indicator-current")).toBe(
+      true,
+    )
   })
 })

@@ -14,7 +14,7 @@ const after = {
 }
 
 export default {
-  title: "Controls/BeforeAfter",
+  title: "Data Display/BeforeAfter",
   tags: ["autodocs"],
   render: createEntityRender({ BeforeAfter }),
   argTypes: {

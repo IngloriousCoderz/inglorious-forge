@@ -1,5 +1,7 @@
 @import "./avatar/style.css";
 @import "./badge/style.css";
+@import "./before-after/style.css";
+@import "./carousel/style.css";
 @import "./chip/style.css";
 @import "./data-grid/style.css";
 @import "./divider/style.css";
