@@ -289,7 +289,9 @@ function goToPage(viewport, page, props, behavior = "auto") {
   const item = viewport.children[clampPage(page, props.items)]
   if (!item) return
 
-  viewport.scrollTo(
+  // Guarded like setPointerCapture: real browsers always have scrollTo, but
+  // non-layout environments such as jsdom do not.
+  viewport.scrollTo?.(
     (props.axis ?? DEFAULT_AXIS) === VERTICAL_AXIS
       ? { top: item.offsetTop, behavior }
       : { left: item.offsetLeft, behavior },

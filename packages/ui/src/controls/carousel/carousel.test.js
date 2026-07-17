@@ -1,10 +1,20 @@
 import { html } from "@inglorious/web"
 import { createMockApi, render } from "@inglorious/web/test"
-import { describe, expect, it } from "vitest"
+import { describe, expect, it, vi } from "vitest"
 
 import { Carousel } from "."
 
 const items = ["one", "two", "three"]
+
+/** jsdom has no layout, so hand the viewport fake offsets and a scrollTo spy. */
+function fakeLayout(viewport) {
+  viewport.querySelectorAll(".iw-carousel-item").forEach((item, index) => {
+    Object.defineProperty(item, "offsetLeft", { value: index * 100 })
+    Object.defineProperty(item, "offsetTop", { value: index * 100 })
+  })
+  viewport.scrollTo = vi.fn()
+  return viewport
+}
 
 function setup(overrides = {}) {
   const entity = {
@@ -99,15 +109,66 @@ describe("carousel", () => {
   it("reports the settled page from a scroll", () => {
     const { container, api } = setup()
 
-    const viewport = container.querySelector(".iw-carousel-viewport")
-    // jsdom has no layout, so fake the offsets the listener reads.
-    viewport.querySelectorAll(".iw-carousel-item").forEach((item, index) => {
-      Object.defineProperty(item, "offsetLeft", { value: index * 100 })
-    })
+    const viewport = fakeLayout(
+      container.querySelector(".iw-carousel-viewport"),
+    )
     viewport.scrollLeft = 200
     viewport.dispatchEvent(new Event("scroll"))
 
     expect(api.getEvents()).toEqual([{ type: "#c:pageChange", payload: 2 }])
+  })
+
+  it("scrolls to the next page on an arrow click", () => {
+    const { container } = setup({ page: 0 })
+
+    const viewport = fakeLayout(
+      container.querySelector(".iw-carousel-viewport"),
+    )
+    container.querySelector(".iw-carousel-arrow-next").click()
+
+    expect(viewport.scrollTo).toHaveBeenCalledWith({
+      left: 100,
+      behavior: "auto",
+    })
+  })
+
+  it("scrolls with the arrow keys", () => {
+    const { container } = setup({ page: 1 })
+
+    const viewport = fakeLayout(
+      container.querySelector(".iw-carousel-viewport"),
+    )
+    viewport.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight" }))
+
+    expect(viewport.scrollTo).toHaveBeenCalledWith({
+      left: 200,
+      behavior: "auto",
+    })
+  })
+
+  it("jumps straight to a page on an indicator click", () => {
+    const { container } = setup({ page: 0 })
+
+    const viewport = fakeLayout(
+      container.querySelector(".iw-carousel-viewport"),
+    )
+    container.querySelectorAll(".iw-carousel-indicator")[2].click()
+
+    expect(viewport.scrollTo).toHaveBeenCalledWith({
+      left: 200,
+      behavior: "auto",
+    })
+  })
+
+  it("applies the initial page without a layout engine (jsdom-safe)", async () => {
+    const { container } = setup({ page: 2 })
+
+    // settleOnInitialPage schedules a scroll on the next frame; without the
+    // scrollTo guard this frame throws in jsdom.
+    await new Promise((resolve) => requestAnimationFrame(() => resolve()))
+    await new Promise((resolve) => setTimeout(resolve, 0))
+
+    expect(container.querySelector(".iw-carousel")).not.toBeNull()
   })
 
   it("lets consumers override the arrow and indicator sub-renders", () => {
