@@ -53,6 +53,11 @@
       "import": "./src/controls/button-group/index.js"
     },
     "./button-group.css": "./src/controls/button-group/style.css",
+    "./carousel": {
+      "types": "./types/controls/carousel.d.ts",
+      "import": "./src/controls/carousel/index.js"
+    },
+    "./carousel.css": "./src/controls/carousel/style.css",
     "./checkbox": {
       "types": "./types/controls/checkbox.d.ts",
       "import": "./src/controls/checkbox/index.js"
