@@ -1,6 +1,7 @@
 export { BeforeAfter } from "./controls/before-after/index.js"
 export { Button } from "./controls/button/index.js"
 export { ButtonGroup } from "./controls/button-group/index.js"
+export { Carousel } from "./controls/carousel/index.js"
 export { Checkbox } from "./controls/checkbox/index.js"
 export { Fab } from "./controls/fab/index.js"
 export { IconButton } from "./controls/icon-button/index.js"

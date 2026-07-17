@@ -143,6 +143,7 @@ function getDefaultItems() {
           primary: "Button Group",
           href: "/controls/button-group",
         },
+        { id: "carousel", primary: "Carousel", href: "/controls/carousel" },
         { id: "checkbox", primary: "Checkbox", href: "/controls/checkbox" },
         { id: "combobox", primary: "Combobox", href: "/controls/combobox" },
         { id: "fab", primary: "Fab", href: "/controls/fab" },
