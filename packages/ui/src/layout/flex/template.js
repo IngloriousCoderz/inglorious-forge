@@ -24,6 +24,7 @@ export function render(props) {
     align = "stretch",
     gap = "none",
     padding = "none",
+    overflow = "visible",
     isInline = false,
     isFullWidth = false,
     className = "",
@@ -49,6 +50,7 @@ export function render(props) {
     [`iw-flex-align-${align}`]: true,
     [`iw-flex-gap-${gap}`]: true,
     [`iw-flex-padding-${padding}`]: true,
+    [`iw-flex-overflow-${overflow}`]: true,
     ...extraClasses,
   }
 

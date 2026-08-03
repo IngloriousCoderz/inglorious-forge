@@ -29,6 +29,7 @@ describe("flex", () => {
       align: "center",
       gap: "lg",
       padding: "md",
+      overflow: "auto",
       isFullWidth: true,
     }
     const container = document.createElement("div")
@@ -43,7 +44,20 @@ describe("flex", () => {
     expect(root.classList.contains("iw-flex-align-center")).toBe(true)
     expect(root.classList.contains("iw-flex-gap-lg")).toBe(true)
     expect(root.classList.contains("iw-flex-padding-md")).toBe(true)
+    expect(root.classList.contains("iw-flex-overflow-auto")).toBe(true)
     expect(root.classList.contains("iw-flex-full-width")).toBe(true)
+  })
+
+  it("defaults to visible overflow", () => {
+    const container = document.createElement("div")
+
+    render(Flex.render({ id: "fx" }), container)
+
+    expect(
+      container
+        .querySelector(".iw-flex")
+        .classList.contains("iw-flex-overflow-visible"),
+    ).toBe(true)
   })
 
   it("renders mixed child content", () => {

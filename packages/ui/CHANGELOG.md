@@ -1,5 +1,11 @@
 # @inglorious/ui
 
+## 6.1.0
+
+### Minor Changes
+
+- Add carousel and scollable flex
+
 ## 6.0.0
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @inglorious/docs
 
+## 1.10.24
+
+### Patch Changes
+
+- Add carousel and scollable flex
+
 ## 1.10.23
 
 ### Patch Changes

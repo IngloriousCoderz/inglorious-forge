@@ -38,6 +38,12 @@ export default {
       options: ["none", "sm", "md", "lg", "xl"],
       description: "Inner padding for the flex container.",
     },
+    overflow: {
+      control: "select",
+      options: ["visible", "hidden", "clip", "scroll", "auto"],
+      description:
+        "Overflow behavior. Scrollable values also release flex minimum dimensions.",
+    },
     element: {
       control: "select",
       options: [
@@ -84,6 +90,7 @@ Default.args = {
   align: "stretch",
   gap: "md",
   padding: "none",
+  overflow: "visible",
   element: "div",
   isInline: false,
   isFullWidth: false,
@@ -117,5 +124,47 @@ Wrapped.args = {
     html`<div>Four</div>`,
     html`<div>Five</div>`,
     html`<div>Six</div>`,
+  ],
+}
+
+export const ScrollableContent = {}
+ScrollableContent.args = {
+  direction: "column",
+  element: "section",
+  overflow: "hidden",
+  className: "iw-flex-scrollable-story",
+  style: { height: "24rem", border: "1px solid var(--iw-color-border)" },
+  children: [
+    Flex.render({
+      element: "header",
+      padding: "md",
+      style: {
+        flex: "0 0 3.5rem",
+        background: "var(--iw-color-surface)",
+      },
+      children: ["Fixed header"],
+    }),
+    Flex.render({
+      element: "main",
+      direction: "column",
+      overflow: "auto",
+      padding: "md",
+      style: { flex: "1 1 0" },
+      children: [
+        html`<div style="min-height: 48rem">
+          This content is intentionally taller than the available space. The
+          header and footer stay visible while this main area scrolls.
+        </div>`,
+      ],
+    }),
+    Flex.render({
+      element: "footer",
+      padding: "md",
+      style: {
+        flex: "0 0 3.5rem",
+        background: "var(--iw-color-surface)",
+      },
+      children: ["Fixed footer"],
+    }),
   ],
 }

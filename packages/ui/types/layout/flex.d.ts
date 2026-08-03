@@ -18,6 +18,7 @@ export interface FlexProps {
   align?: "stretch" | "start" | "center" | "end" | "baseline"
   gap?: "none" | "sm" | "md" | "lg" | "xl"
   padding?: "none" | "sm" | "md" | "lg" | "xl"
+  overflow?: "visible" | "hidden" | "clip" | "scroll" | "auto"
   isInline?: boolean
   isFullWidth?: boolean
   children?: Array<TemplateResult | string | number>
