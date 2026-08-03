@@ -11,7 +11,6 @@ import { when } from "@inglorious/web/directives/when"
 
 import { Button } from "../../controls/button/index.js"
 import {
-  carouselHome,
   clampPage,
   DEFAULT_ALIGN,
   DEFAULT_ARROW_PLACEMENT,
@@ -21,7 +20,6 @@ import {
   FIRST_PAGE,
   getLastPage,
   normalizeRotation,
-  rotateItems,
   VERTICAL_AXIS,
 } from "./helpers.js"
 
@@ -111,7 +109,8 @@ export const Carousel = {
       ${repeat(
         items,
         (item, index) => index,
-        (item, index) => this.renderItem?.(props, item, index),
+        (item, index) =>
+          this.renderItem?.(props, item, logicalIndex(props, index)),
       )}
     </div>`
   },
@@ -248,11 +247,9 @@ function handleScroll(props) {
 }
 
 /**
- * Runs the treadmill: once the scroll settles, rotate the strip so the slide in
- * view moves to the home slot, then snap the scroll back to home. Both happen
- * before the next paint, so the slide never appears to jump, which is what lets
- * an infinite carousel wrap by dragging, not just with the arrows. Also restores
- * snapping after a mouse drag.
+ * Updates the logical position after an infinite scroll. Infinite carousels
+ * render a repeated strip, so returning from one copy to the middle copy keeps
+ * exactly the same slides in view while leaving scroll room on both sides.
  * @param {CarouselProps} props
  * @returns {(event: Event) => void}
  */
@@ -268,12 +265,21 @@ function handleScrollEnd(props) {
     if (!props.isInfinite) return
 
     const isVertical = (props.axis ?? DEFAULT_AXIS) === VERTICAL_AXIS
-    const home = carouselHome(props.items?.length ?? 0)
-    const delta = pageFromScroll(viewport, props.axis) - home
+    const length = props.items?.length ?? 0
+    if (!length) return
+
+    const page = pageFromScroll(viewport, props.axis)
+    const logical = normalizeRotation(page, length)
+    const home = length + currentLogical(props)
+    const delta = page - home
     if (!delta) return
 
     props.onRotate?.(delta)
-    setScroll(viewport, offsetOf(viewport, home, isVertical), isVertical)
+    setScroll(
+      viewport,
+      offsetOf(viewport, length + logical, isVertical),
+      isVertical,
+    )
   }
 }
 
@@ -289,7 +295,7 @@ function handleKeyDown(props) {
     switch (event.key) {
       case "ArrowLeft":
         if (isVertical) return
-        pageBy(props, -ONE_PAGE)
+        pageBy(props, -ONE_PAGE, event.currentTarget)
         break
       case "ArrowUp":
         if (!isVertical) return
@@ -396,8 +402,9 @@ function pageBy(props, step, from) {
   const offsets = itemOffsets(viewport, isVertical)
   const here = pageFromScroll(viewport, props.axis)
 
-  // Infinite: there is always a slide to move into, and the treadmill
-  // re-centres afterwards, so simply page one step from where it sits.
+  // Infinite carousels use a three-copy strip, so a normal one-step scroll is
+  // always available. Their settle handler silently returns to the middle copy
+  // after wrapping, where the visible sequence is identical.
   if (props.isInfinite) {
     goToPage(
       viewport,
@@ -405,6 +412,14 @@ function pageBy(props, step, from) {
       props,
       "smooth",
     )
+    return
+  }
+
+  // Several items can be visible at once, so their later offsets may extend
+  // past the physical scroll range. At the end, choosing the first such offset
+  // would make a right arrow jump backwards after the browser clamps it.
+  const limit = maxScroll(viewport, isVertical)
+  if (step > 0 && limit > SCROLL_EPSILON && scroll >= limit - SCROLL_EPSILON) {
     return
   }
 
@@ -427,10 +442,15 @@ function goToLogical(props, viewport, logical) {
   if (!viewport) return
 
   if (props.isInfinite) {
-    const isVertical = (props.axis ?? DEFAULT_AXIS) === VERTICAL_AXIS
-    const home = carouselHome(props.items?.length ?? 0)
-    props.onRotate?.(logical - home - (props.rotation ?? 0))
-    setScroll(viewport, offsetOf(viewport, home, isVertical), isVertical)
+    const length = props.items?.length ?? 0
+    const page = pageFromScroll(viewport, props.axis)
+    const candidates = [logical, length + logical, length * 2 + logical]
+    const target = candidates.reduce((nearest, candidate) =>
+      Math.abs(candidate - page) < Math.abs(nearest - page)
+        ? candidate
+        : nearest,
+    )
+    goToPage(viewport, target, props)
     return
   }
 
@@ -477,7 +497,10 @@ function offsetOf(viewport, index, isVertical) {
 function goToPage(viewport, page, props, behavior = "auto") {
   if (!viewport) return
 
-  const item = viewport.children[clampPage(page, props.items)]
+  const index = props.isInfinite
+    ? Math.max(FIRST_PAGE, Math.min(page, viewport.children.length - 1))
+    : clampPage(page, props.items)
+  const item = viewport.children[index]
   if (!item) return
 
   // Guarded like setPointerCapture: real browsers always have scrollTo, but
@@ -502,7 +525,7 @@ function settleOnInitialPage(props) {
 
     viewport.dataset.iwCarouselReady = "true"
     requestAnimationFrame(() =>
-      goToPage(viewport, props.page ?? FIRST_PAGE, props, "instant"),
+      goToPage(viewport, initialPage(props), props, "instant"),
     )
   }
 }
@@ -518,10 +541,16 @@ function pageFromScroll(viewport, axis = DEFAULT_AXIS) {
   const scroll = isVertical ? viewport.scrollTop : viewport.scrollLeft
   const offsets = itemOffsets(viewport, isVertical)
 
-  // Items past the last full viewport can never reach the start, so once we
-  // run out of scroll the last one is as far as we got.
-  if (scroll >= maxScroll(viewport, isVertical) - SCROLL_EPSILON) {
-    return getLastPage(offsets)
+  // Several items may be visible at once. At the physical end of the strip,
+  // use the next item's offset rather than the final item: an infinite
+  // carousel re-centres from this page, and treating the end as the last item
+  // would rotate past slides that were never scrolled through.
+  const limit = maxScroll(viewport, isVertical)
+  if (limit > SCROLL_EPSILON && scroll >= limit - SCROLL_EPSILON) {
+    const next = offsets.findIndex(
+      (offset) => offset >= scroll - SCROLL_EPSILON,
+    )
+    return next >= FIRST_PAGE ? next : getLastPage(offsets)
   }
 
   let page = FIRST_PAGE
@@ -564,13 +593,37 @@ function maxScroll(viewport, isVertical) {
 }
 
 /**
- * The items in the order they are shown: rotated when infinite, as-is otherwise.
+ * Infinite carousels use three copies of the items. This gives the viewport a
+ * real buffer at each end, so scrolling never has to animate into a reordered
+ * strip. The middle copy is used as the resting position after every wrap.
  * @param {CarouselProps} props
  * @returns {unknown[]}
  */
 function displayedItems(props) {
   const items = props.items ?? []
-  return props.isInfinite ? rotateItems(items, props.rotation) : items
+  return props.isInfinite ? [...items, ...items, ...items] : items
+}
+
+/**
+ * Translate a physical repeated-strip index to the original item index.
+ * @param {CarouselProps} props
+ * @param {number} index
+ * @returns {number}
+ */
+function logicalIndex(props, index) {
+  return props.isInfinite
+    ? normalizeRotation(index, props.items?.length ?? 0)
+    : index
+}
+
+/**
+ * The physical page to use when the viewport first mounts.
+ * @param {CarouselProps} props
+ * @returns {number}
+ */
+function initialPage(props) {
+  if (!props.isInfinite) return props.page ?? FIRST_PAGE
+  return (props.items?.length ?? 0) + currentLogical(props)
 }
 
 /**
