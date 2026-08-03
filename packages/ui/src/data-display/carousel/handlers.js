@@ -3,7 +3,6 @@
  */
 
 import {
-  carouselHome,
   clampPage,
   DEFAULT_ALIGN,
   DEFAULT_ARROW_PLACEMENT,
@@ -44,7 +43,7 @@ export function create(entity) {
   // An infinite carousel keeps the current item in the middle slot, so the
   // starting item is placed there by rotating the strip up front.
   if (entity.isInfinite && entity.items.length > ENOUGH_TO_WRAP) {
-    const home = carouselHome(entity.items.length)
+    const home = Math.floor(entity.items.length / 2)
     entity.rotation = normalizeRotation(entity.page - home, entity.items.length)
     entity.page = home
   }

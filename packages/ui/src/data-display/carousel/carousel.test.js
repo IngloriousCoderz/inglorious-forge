@@ -183,6 +183,37 @@ describe("carousel", () => {
     })
   })
 
+  it("does not page backwards when going right at the end with many items visible", () => {
+    const { container } = setup({ page: 2 })
+
+    const viewport = fakeLayout(
+      container.querySelector(".iw-carousel-viewport"),
+    )
+    Object.defineProperties(viewport, {
+      clientWidth: { value: 150 },
+      scrollWidth: { value: 300 },
+    })
+    viewport.scrollLeft = 150
+    container.querySelector(".iw-carousel-arrow-next").click()
+
+    expect(viewport.scrollTo).not.toHaveBeenCalled()
+  })
+
+  it("keeps an infinite many-per-view carousel in the middle copy after moving right", () => {
+    const { container, api } = setup({ isInfinite: true, page: 1, rotation: 0 })
+    const viewport = fakeLayout(
+      container.querySelector(".iw-carousel-viewport"),
+    )
+    viewport.scrollLeft = 500
+    viewport.dispatchEvent(new Event("scrollend"))
+
+    expect(api.getEvents()).toEqual([{ type: "#c:rotate", payload: 1 }])
+    expect(viewport.scrollTo).toHaveBeenCalledWith({
+      left: 500,
+      behavior: "instant",
+    })
+  })
+
   it("applies the initial page without a layout engine (jsdom-safe)", async () => {
     const { container } = setup({ page: 2 })
 
@@ -267,14 +298,23 @@ describe("carousel", () => {
     expect(entity.rotation).toBe(0)
   })
 
-  it("renders items rotated when infinite", () => {
+  it("renders a repeated strip when infinite", () => {
     const { container } = setup({ isInfinite: true, rotation: 1 })
 
     const shown = [...container.querySelectorAll(".iw-carousel-item")].map(
       (n) => n.textContent.trim(),
     )
-    // [one, two, three] rotated by 1 -> [two, three, one]
-    expect(shown).toEqual(["two", "three", "one"])
+    expect(shown).toEqual([
+      "one",
+      "two",
+      "three",
+      "one",
+      "two",
+      "three",
+      "one",
+      "two",
+      "three",
+    ])
   })
 
   it("never disables the arrows when infinite", () => {

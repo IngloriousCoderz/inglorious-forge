@@ -154,7 +154,13 @@ Bare.args = {
  * together — one item per view is the exact case.
  */
 export const ManyPerView = {}
-ManyPerView.args = { ...Default.args, id: "carousel-many" }
+ManyPerView.args = {
+  ...Default.args,
+  id: "carousel-many",
+  // The infinite treadmill keeps one slide at its centre, so it is not a good
+  // fit when several slides are intentionally visible at once.
+  isInfinite: false,
+}
 ManyPerView.decorators = [
   (story) => html`<div style="--iw-carousel-item-size: 14rem">${story()}</div>`,
 ]

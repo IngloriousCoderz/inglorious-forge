@@ -49,8 +49,14 @@ export interface CarouselProps {
 
 export interface CarouselType {
   create(entity: CarouselProps): void
+  indicatorSelect(
+    props: CarouselProps,
+    index: number,
+    viewport: HTMLElement | null | undefined,
+  ): void
   pageChange(entity: CarouselProps, page: number): void
   rotate(entity: CarouselProps, step: number): void
+
   render(entity: CarouselProps, api: Api): TemplateResult
   renderCarousel(props: CarouselProps): TemplateResult
   renderViewport(props: CarouselProps): TemplateResult
@@ -61,11 +67,6 @@ export interface CarouselType {
   ): TemplateResult
   renderIndicators(props: CarouselProps): TemplateResult
   renderIndicator(props: CarouselProps, index: number): TemplateResult
-  indicatorSelect(
-    props: CarouselProps,
-    index: number,
-    viewport: HTMLElement | null | undefined,
-  ): void
 }
 
 export declare const Carousel: CarouselType

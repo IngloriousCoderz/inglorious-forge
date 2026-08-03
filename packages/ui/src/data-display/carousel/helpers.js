@@ -44,16 +44,6 @@ export function getLastPage(items = []) {
 }
 
 /**
- * The slot an infinite carousel keeps the current item in: the middle, so there
- * is always a buffer of items to scroll or drag into on either side.
- * @param {number} length
- * @returns {number}
- */
-export function carouselHome(length) {
-  return Math.floor((length ?? 0) / 2)
-}
-
-/**
  * Keep a page index within the available pages.
  * @param {number} page
  * @param {unknown[]} [items]
