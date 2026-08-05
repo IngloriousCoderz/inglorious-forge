@@ -20,17 +20,6 @@ This means:
 
 # Built-in Types
 
-### Compass
-
-Device orientation and heading state kept in an entity.
-
-- Permission request flow
-- Device orientation event handling
-- Heading normalization and manual offset
-- Active/inactive tracking
-
-**[Learn more →](./compass.md)**
-
 ### Form
 
 Declarative form state management with validation.
@@ -42,17 +31,6 @@ Declarative form state management with validation.
 
 **[Learn more →](./form.md)**
 
-### Geolocation
-
-Browser geolocation state kept in an entity.
-
-- Auto-created `geolocation` entity with `autoCreateEntities`
-- Current-position requests
-- Position watching and cleanup
-- Normalized position and error state
-
-**[Learn more →](./geolocation.md)**
-
 ### Router
 
 Client-side routing that integrates directly with your store.
@@ -63,6 +41,17 @@ Client-side routing that integrates directly with your store.
 - Type composition for route guards (auth, permissions)
 
 **[Learn more →](./router.md)**
+
+### Sensors
+
+Browser sensors are exposed as entity types so state stays inside your store and sensor behavior remains testable.
+
+- Serializable state with runtime listeners kept outside entities
+- Sensor lifecycle and normalization live in one place
+- Standard store bindings can drive UI updates
+- Includes Compass, Geolocation, ElementSize, MediaQuery, NetworkStatus, and PageVisibility
+
+**[Learn more →](./sensors.md)**
 
 ## UI Primitives
 

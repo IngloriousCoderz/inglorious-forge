@@ -33,10 +33,6 @@
       "types": "./types/index.d.ts",
       "import": "./src/index.js"
     },
-    "./compass": {
-      "types": "./types/compass.d.ts",
-      "import": "./src/compass/index.js"
-    },
     "./decorators/with-debounce": {
       "types": "./types/decorators/with-debounce.d.ts",
       "import": "./src/decorators/with-debounce/index.js"
@@ -53,22 +49,38 @@
       "types": "./types/directives/*.d.ts",
       "import": "./src/directives/*.js"
     },
-    "./element-size": {
-      "types": "./types/element-size.d.ts",
-      "import": "./src/element-size/index.js"
-    },
     "./form": {
       "types": "./types/form.d.ts",
       "import": "./src/form/index.js"
-    },
-    "./geolocation": {
-      "types": "./types/geolocation.d.ts",
-      "import": "./src/geolocation/index.js"
     },
     "./hydrate": "./src/hydrate.js",
     "./router": {
       "types": "./types/router.d.ts",
       "import": "./src/router/index.js"
+    },
+    "./sensors/compass": {
+      "types": "./types/sensors/compass.d.ts",
+      "import": "./src/sensors/compass/index.js"
+    },
+    "./sensors/element-size": {
+      "types": "./types/sensors/element-size.d.ts",
+      "import": "./src/sensors/element-size/index.js"
+    },
+    "./sensors/geolocation": {
+      "types": "./types/sensors/geolocation.d.ts",
+      "import": "./src/sensors/geolocation/index.js"
+    },
+    "./sensors/media-query": {
+      "types": "./types/sensors/media-query.d.ts",
+      "import": "./src/sensors/media-query/index.js"
+    },
+    "./sensors/network-status": {
+      "types": "./types/sensors/network-status.d.ts",
+      "import": "./src/sensors/network-status/index.js"
+    },
+    "./sensors/page-visibility": {
+      "types": "./types/sensors/page-visibility.d.ts",
+      "import": "./src/sensors/page-visibility/index.js"
     },
     "./static": {
       "types": "./types/static.d.ts",

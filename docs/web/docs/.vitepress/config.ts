@@ -64,10 +64,9 @@ export default defineConfig({
           text: "Featured Types",
           items: [
             { text: "Overview", link: "/featured/overview" },
-            { text: "Compass", link: "/featured/compass" },
             { text: "Form", link: "/featured/form" },
-            { text: "Geolocation", link: "/featured/geolocation" },
             { text: "Router", link: "/featured/router" },
+            { text: "Sensors", link: "/featured/sensors" },
             { text: "UI Primitives", link: "/featured/ui" },
           ],
         },

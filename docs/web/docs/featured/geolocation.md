@@ -1,13 +1,13 @@
 ---
-title: Geolocation Component
+title: Geolocation
 description: Browser geolocation support with current position and watch state in the store
 ---
 
-# Geolocation Component
+# Geolocation
 
 Keep browser geolocation state inside your store with the `Geolocation` type.
 
-## Setup
+## Usage
 
 ```javascript
 import { createStore } from "@inglorious/store"
@@ -17,6 +17,8 @@ const store = createStore({
   types: { Geolocation },
   autoCreateEntities: true,
 })
+
+const geolocation = store.getEntity("geolocation")
 ```
 
 With `autoCreateEntities`, the store automatically creates a `geolocation` entity.

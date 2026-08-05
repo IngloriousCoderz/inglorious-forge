@@ -1,7 +1,7 @@
 /**
- * @typedef {import("../../types/geolocation.js").GeolocationEntity} GeolocationEntity
- * @typedef {import("../../types/geolocation.js").GeolocationOptions} GeolocationOptions
- * @typedef {import("../../types/geolocation.js").GeolocationPosition} GeolocationPosition
+ * @typedef {import("../../../types/sensors/geolocation.js").GeolocationEntity} GeolocationEntity
+ * @typedef {import("../../../types/sensors/geolocation.js").GeolocationOptions} GeolocationOptions
+ * @typedef {import("../../../types/sensors/geolocation.js").GeolocationPosition} GeolocationPosition
  */
 
 const NO_WATCH_ID = null

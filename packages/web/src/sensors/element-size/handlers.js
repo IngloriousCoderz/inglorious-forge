@@ -1,10 +1,10 @@
 /**
- * @typedef {import("../../types/element-size.js").ElementSizeEntity} ElementSizeEntity
- * @typedef {import("../../types/element-size.js").ElementSizeSize} ElementSizeSize
+ * @typedef {import("../../../types/sensors/element-size.js").ElementSizeEntity} ElementSizeEntity
+ * @typedef {import("../../../types/sensors/element-size.js").ElementSizeSize} ElementSizeSize
  */
 
-// Observers aren't serializable, so they're kept here by id, not on the entity.
-const observers = new Map()
+// Listeners aren't serializable, so they're kept here by id, not on the entity.
+const listeners = new Map()
 
 /**
  * Initializes the entity state and starts observing the target element's size.
@@ -35,7 +35,7 @@ export function destroy(entity) {
 export function elementSizeWatch(entity, _, api) {
   entity.isSupported = isSupported()
 
-  if (!entity.isSupported || observers.has(entity.id)) {
+  if (!entity.isSupported || listeners.has(entity.id)) {
     return
   }
 
@@ -54,7 +54,7 @@ export function elementSizeWatch(entity, _, api) {
   })
   observer.observe(element)
 
-  observers.set(id, observer)
+  listeners.set(id, observer)
   entity.isWatching = true
 }
 
@@ -73,11 +73,11 @@ export function elementSizeChange(entity, size) {
  * @param {ElementSizeEntity} entity - The element size entity.
  */
 export function elementSizeUnwatch(entity) {
-  const observer = observers.get(entity.id)
+  const observer = listeners.get(entity.id)
 
   if (observer) {
     observer.disconnect()
-    observers.delete(entity.id)
+    listeners.delete(entity.id)
   }
 
   entity.isWatching = false

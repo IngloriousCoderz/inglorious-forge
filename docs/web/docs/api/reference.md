@@ -1,41 +1,24 @@
 ---
 title: API Reference
-description: Complete API documentation for Inglorious Web
+description: Runtime API documentation for Inglorious Web
 ---
 
 # API Reference
 
-Complete reference for Inglorious Web's public API.
+This page documents the runtime API for Inglorious Web and the underlying Inglorious Store.
 
-## createStore(config)
+## `createStore(config)`
 
-Creates a new store instance.
+Creates a store instance to manage entities, event dispatch, and reactive rendering.
 
 ### Parameters
 
-```typescript
-interface StoreConfig {
-  types: Record<string, TypeDefinition>
-  entities?: Record<string, Entity>
-  middlewares?: Middleware[]
-  autoCreateEntities?: boolean
-}
-```
-
-### Returns
-
-```typescript
-interface Store {
-  entities: Record<string, Entity>
-  getEntity(id: string): Entity | undefined
-  getEntities(): Record<string, Entity>
-  getEntities(type: string): Entity[]
-  render(entity: string | Entity): TemplateResult
-  notify(event: string, payload?: any): void
-  update(entity: Entity, fn: UpdateFn): void
-  subscribe(callback: (store: Store) => void): () => void
-}
-```
+- `types?: Record<string, object>` — type definitions for entities.
+- `entities?: Record<string, object>` — initial entity state.
+- `systems?: object[]` — systems that handle events outside entity-specific handlers.
+- `middlewares?: Function[]` — middleware functions to intercept or transform events.
+- `autoCreateEntities?: boolean` — automatically create a default entity for each registered type.
+- `updateMode?: "auto" | "manual"` — whether events are processed immediately or manually.
 
 ### Example
 
@@ -43,220 +26,112 @@ interface Store {
 const store = createStore({
   types: {
     Counter: {
-      increment: (entity) => {
-        entity.count++
+      create(entity) {
+        entity.count = 0
       },
-      render: (entity, api) => html`...`,
+      increment(entity) {
+        entity.count += 1
+      },
+      render(entity) {
+        return html`<span>${entity.count}</span>`
+      },
     },
   },
   entities: {
-    counter: { type: "Counter", count: 0 },
+    counter: { type: "Counter" },
   },
 })
 ```
 
-## Type Definition
+## Store methods
 
-```typescript
-interface TypeDefinition {
-  create?(entity: Entity, payload?: any, api?: API): void | Promise<void>
-  render?(entity: Entity, api?: API): TemplateResult | null
-  destroy?(entity: Entity, api?: API): void
-  [eventName: string]: EventHandler | undefined
-}
+The object returned by `createStore()` exposes the core store API.
 
-type EventHandler = (
-  entity: Entity,
-  payload?: any,
-  api?: API,
-) => void | Promise<void>
-```
+### `store.subscribe(listener)`
 
-### Event Naming
+Subscribe to state updates.
 
 ```javascript
-// Broadcast event (all types)
-api.notify("eventName")
-
-// Targeted to type
-api.notify("#typeName:eventName")
-
-// Targeted to specific entity
-api.notify("#typeName#entityId:eventName")
-
-// Legacy: type#id
-api.notify("typeName#entityId:eventName")
+const unsubscribe = store.subscribe(() => {
+  console.log("store updated")
+})
 ```
 
-## API Object
+## Related
 
-Passed as second argument to handlers and render methods.
-
-### Methods
-
-#### `render(entity)`
-
-Render an entity to HTML. It is just a convenience method that allows to avoid invoking the render method of a type directly:
+### Example
 
 ```javascript
-// Rendering the header entity...
-api.render("header")
+import { mount } from "@inglorious/web"
 
-// is the same as:
-header.render(api.getEntity("header"), api)
+mount(store, (api) => api.render("app"), document.getElementById("root"), {
+  onError(error) {
+    console.error("render failed", error)
+  },
+})
 ```
 
-#### `getEntity(id)`
+### What mount does
 
-Get entity by ID.
+- Creates an `api` object from the store
+- Adds `api.render()` for entity rendering
+- Hydrates existing markup if the container already has child nodes
+- Subscribes to store updates and re-renders automatically
+- Emits the `init` event once mounted
 
-```javascript
-const user = api.getEntity("user")
-```
+## Rendering helpers
 
-#### `getEntities(type?)`
+The docs use `lit-html` helpers like `html`, `when`, `repeat`, and `unsafeHTML`.
 
-Get entities from state.
+### `when(condition, content)`
 
-```javascript
-// Full entities map
-const allEntities = api.getEntities()
-
-// Filter by type
-const todos = api.getEntities("todo")
-```
-
-#### `select(selector)`
-
-Run a selector against the current state.
+Render content conditionally.
 
 ```javascript
-const activeFilter = (state) => state.toolbar.activeFilter
-const filter = api.select(activeFilter)
-```
-
-#### `notify(event, payload)`
-
-Dispatch an event.
-
-```javascript
-api.notify("#counter:increment", 5)
-api.notify("#form:submit", { email: "user@example.com" })
-```
-
-#### `dispatch(action)`
-
-Dispatch an event, Redux-style.
-
-```javascript
-api.dispatch({ type: "#counter:increment", payload: 5 })
-api.dispatch({ type: "#form:submit", payload: { email: "user@example.com" } })
-```
-
-## Directives
-
-Template literals for special handling, borrowed from lit-html.
-
-### `when(condition)`
-
-Conditional rendering.
-
-```javascript
-html`
-  ${when(entity.isOpen, () => html`<div>Open</div>`)}
-  ${when(!entity.isOpen, () => html`<div>Closed</div>`)}
-`
+html` ${when(entity.isOpen, () => html`<div>Open</div>`)} `
 ```
 
 ### `repeat(items, fn)`
 
-List rendering with key-based diffing.
+Render a list with keyed diffing.
 
 ```javascript
 html`
   <ul>
     ${repeat(
-      entity.todos,
+      items,
       (item) => item.id,
-      (item) => html` <li>${item.title}</li> `,
+      (item) => html`<li>${item.label}</li>`,
     )}
   </ul>
 `
 ```
 
-### `unsafeHTML(html)`
+### `unsafeHTML(htmlString)`
 
-Raw HTML (use with caution).
-
-```javascript
-html`<div>${unsafeHTML(entity.richText)}</div>`
-```
-
-## mount(store, renderFn, container)
-
-Mount the app to the DOM.
-
-### Parameters
-
-- `store` — Store instance
-- `renderFn` — Function returning TemplateResult
-- `container` — DOM element
-
-### Example
+Render raw HTML.
 
 ```javascript
-mount(store, (api) => api.render("app"), document.getElementById("root"))
-```
-
-## Utilities
-
-### `trigger(store, entity, event, payload)`
-
-Dispatch event and wait for completion (testing).
-
-```javascript
-await trigger(store, todo, "toggle")
-assert.equal(todo.completed, true)
-```
-
-### `render(store, entity)`
-
-Render entity to string (testing).
-
-```javascript
-const html = await render(store, todoItem)
-assert.include(html, "Buy milk")
-```
-
-### `compute(fn, inputs)`
-
-Memoize expensive computation.
-
-```javascript
-const total = compute(
-  () => items.reduce((sum, item) => sum + item.price, 0),
-  [items],
-)
+html`<div>${unsafeHTML(entity.content)}</div>`
 ```
 
 ## Middleware
 
-Intercept and modify events.
+Middleware can intercept and modify events before they reach handlers.
 
-```typescript
-interface Middleware {
-  (store: Store, event: Event): Event | null
-}
-
-interface Event {
-  type: string
-  targetType?: string
-  targetId?: string
-  payload?: any
+```javascript
+function logger(store, event) {
+  console.log("event", event)
+  return event
 }
 ```
 
-### Example
+Middleware receives:
+
+- `store` — the store object
+- `event` — the event object with `type` and optional `payload`
+
+If a middleware returns `null`, the event is dropped.
 
 ```javascript
 const loggingMiddleware = (store, event) => {
@@ -269,113 +144,6 @@ const store = createStore({
   middlewares: [loggingMiddleware],
 })
 ```
-
-## Built-in Components
-
-### Compass
-
-```typescript
-interface CompassEntity {
-  id: string | number
-  type?: "Compass"
-  error: { code: number; message: string } | null
-  heading: number | null
-  isActive: boolean
-  isPermissionGranted: boolean
-  isLoading: boolean
-  isSupported: boolean
-  manualOffset: number | null
-}
-
-// Usage
-import { Compass } from "@inglorious/web/compass"
-
-const store = createStore({
-  types: { Compass },
-  autoCreateEntities: true,
-})
-```
-
-### Form
-
-```typescript
-interface FormConfig {
-  initialValues: Record<string, any>
-  onSubmit: (values) => void | Promise<void>
-  validate?: (values) => Record<string, string>
-}
-
-interface FormEntity {
-  values: Record<string, any>
-  errors: Record<string, string>
-  touched: Record<string, boolean>
-  isSubmitting: boolean
-  isDirty: boolean
-}
-```
-
-### Geolocation
-
-```typescript
-interface GeolocationEntity {
-  id: string | number
-  type?: "Geolocation"
-  isSupported: boolean
-  isLoading: boolean
-  isWatching: boolean
-  position: {
-    coords: {
-      accuracy: number
-      altitude: number | null
-      altitudeAccuracy: number | null
-      heading: number | null
-      latitude: number
-      longitude: number
-      speed: number | null
-    }
-    timestamp: number
-  } | null
-  error: { code: number; message: string } | null
-  watchId: number | null
-}
-
-// Usage
-import { Geolocation } from "@inglorious/web/geolocation"
-
-const store = createStore({
-  types: { Geolocation },
-  autoCreateEntities: true,
-})
-```
-
-### Router
-
-```typescript
-interface RouterConfig {
-  routes: {
-    [path: string]: ComponentDef
-  }
-  notFound?: ComponentDef
-}
-
-interface RouterEntity {
-  currentPath: string
-  params: Record<string, string>
-}
-
-// Usage
-const router = {
-  routes: {
-    "/": Home,
-    "/about": About,
-    "/:id": Detail,
-  },
-}
-```
-
-### UI Primitives
-
-UI primitives live in **[Inglorious UI](https://inglorious.dev/ui)**. See that package’s documentation for their APIs.
 
 ## Environment Variables
 
@@ -421,30 +189,6 @@ type TemplateResult = import("lit-html").TemplateResult
 ```typescript
 type UpdateFn<T extends Entity = Entity> = (draft: Draft<T>) => void
 ```
-
-## Packages
-
-### Core Packages
-
-- **@inglorious/web** — Main package (Web + Store)
-- **@inglorious/store** — State management only
-- **@inglorious/jsx** — JSX support
-- **@inglorious/vite-plugin-jsx** — Vite JSX plugin
-
-### Related Packages
-
-- **@inglorious/engine** — Game framework
-- **@inglorious/ssx** — Static site generation
-- **@inglorious/vite-plugin-vue** — Vue template support
-- **@inglorious/create-app** — Scaffolding tool
-
-## Changelog
-
-See [CHANGELOG.md](https://github.com/IngloriousCoderz/inglorious-forge/blob/main/packages/web/CHANGELOG.md) for version history and breaking changes.
-
-## Migration Guides
-
-- **React → Inglorious Web** — [View comparison](../comparison.md)
 
 ## Related
 

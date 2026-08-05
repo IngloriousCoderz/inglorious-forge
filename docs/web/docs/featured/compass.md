@@ -1,13 +1,13 @@
 ---
-title: Compass Component
+title: Compass
 description: Device orientation and heading support with the Compass type
 ---
 
-# Compass Component
+# Compass
 
 The `Compass` type keeps device orientation and heading state in the store.
 
-## Setup
+## Usage
 
 ```javascript
 import { createStore } from "@inglorious/store"
@@ -17,6 +17,8 @@ const store = createStore({
   types: { Compass },
   autoCreateEntities: true,
 })
+
+const compass = store.getEntity("compass")
 ```
 
 This creates a `compass` entity automatically when `autoCreateEntities` is enabled.
@@ -27,8 +29,8 @@ The `compass` entity tracks:
 
 - `isSupported` — whether device orientation sensors are available
 - `isLoading` — whether permission or heading data is pending
-- `isCompassPermissionGranted` — whether compass permission was granted
-- `isCompassActive` — whether a valid heading is currently active
+- `isPermissionGranted` — whether compass permission was granted
+- `isActive` — whether a valid heading is currently active
 - `heading` — the latest heading in degrees, or `null`
 - `error` — the latest normalized `{ code, message }` error
 - `manualOffset` — an optional heading offset in degrees

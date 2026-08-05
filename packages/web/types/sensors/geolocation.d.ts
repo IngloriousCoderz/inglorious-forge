@@ -1,4 +1,4 @@
-import { Api } from "./mount"
+import { Api } from "../mount"
 
 export interface GeolocationCoordinates {
   accuracy: number

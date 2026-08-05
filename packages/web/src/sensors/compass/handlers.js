@@ -1,6 +1,6 @@
 /**
- * @typedef {import("../../types/compass.js").CompassEntity} CompassEntity
- * @typedef {import("../../types/compass.js").CompassError} CompassError
+ * @typedef {import("../../../types/sensors/compass.js").CompassEntity} CompassEntity
+ * @typedef {import("../../../types/sensors/compass.js").CompassError} CompassError
  */
 
 const COMPASS_TIMEOUT = 3000
