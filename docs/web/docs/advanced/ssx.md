@@ -7,13 +7,14 @@ description: Static site generation with pre-rendering and client-side hydration
 
 For building static HTML sites with pre-rendering and client-side hydration, use **[@inglorious/ssx](https://npmjs.com/@inglorious/ssx)**.
 
-SSX is primarily an SSG framework: the default build renders pages to static HTML files. When a page needs fresh, request-specific data, you can opt it into SSR with `export const ssr = true` so it is rendered on demand instead of being emitted as a static file.
+SSX supports both **SSG and SSR**: it generates static HTML by default for fast, SEO-friendly pages, and it can also render individual pages on demand with `export const ssr = true` when they depend on request-specific data such as cookies, headers, or authentication.
 
 ## What is SSX?
 
 **Static Site Xecution (SSX)** is a static site generator built on Inglorious Web. It combines:
 
-- **Pre-rendered HTML** for SEO and fast initial loads
+- **SSG by default** for fast pre-rendered HTML and zero-server deployment
+- **SSR on demand** for request-specific pages and runtime data
 - **Client-side hydration** for interactivity
 - **File-based routing** for simplicity
 - **Entity-based patterns** for consistency

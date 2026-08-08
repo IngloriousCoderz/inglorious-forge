@@ -221,7 +221,7 @@ store.subscribe(() => {
 
 ### 6. Content-Heavy Sites with SEO Requirements
 
-- Use [@inglorious/ssx](../advanced/ssx.md) for static site generation
+- Use [@inglorious/ssx](../advanced/ssx.md) for SSG or SSR-powered content sites
 - Super lean hydration thanks to lit-labs/ssr
 - Full SEO support with pre-rendered HTML
 - Perfect for marketing sites, blogs, documentation

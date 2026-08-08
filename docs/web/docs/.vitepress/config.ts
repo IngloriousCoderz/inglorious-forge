@@ -17,6 +17,7 @@ export default defineConfig({
     nav: [
       { text: "What is it?", link: "/guide/what-is" },
       { text: "Guide", link: "/guide/getting-started" },
+      { text: "Featured Types", link: "/featured/overview" },
       {
         text: "Learn More",
         items: [
@@ -24,14 +25,7 @@ export default defineConfig({
           { text: "Type Composition", link: "/advanced/type-composition" },
           { text: "Testing", link: "/advanced/testing" },
           { text: "Performance", link: "/advanced/performance" },
-        ],
-      },
-      { text: "Featured Types", link: "/featured/overview" },
-      {
-        text: "Ecosystem",
-        items: [
-          { text: "Inglorious Motion", link: "https://inglorious.dev/motion/" },
-          { text: "Inglorious Charts", link: "https://inglorious.dev/charts/" },
+          { text: "SSX & Static Sites", link: "/advanced/ssx" },
         ],
       },
       { text: "API Reference", link: "/api/reference" },
@@ -66,7 +60,18 @@ export default defineConfig({
             { text: "Overview", link: "/featured/overview" },
             { text: "Form", link: "/featured/form" },
             { text: "Router", link: "/featured/router" },
-            { text: "Sensors", link: "/featured/sensors" },
+            {
+              text: "Sensors",
+              items: [
+                { text: "Overview", link: "/featured/sensors" },
+                { text: "Compass", link: "/featured/compass" },
+                { text: "Geolocation", link: "/featured/geolocation" },
+                { text: "ElementSize", link: "/featured/element-size" },
+                { text: "MediaQuery", link: "/featured/media-query" },
+                { text: "NetworkStatus", link: "/featured/network-status" },
+                { text: "PageVisibility", link: "/featured/page-visibility" },
+              ],
+            },
             { text: "UI Primitives", link: "/featured/ui" },
           ],
         },
