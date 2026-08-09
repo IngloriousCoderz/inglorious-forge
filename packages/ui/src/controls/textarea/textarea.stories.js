@@ -1,14 +1,14 @@
 import { createRender } from "../../stories/notifyStory.js"
-import { Input } from "."
+import { Textarea } from "."
 
 export default {
-  title: "Controls/Input",
+  title: "Controls/Textarea",
   tags: ["autodocs"],
-  render: createRender(Input),
+  render: createRender(Textarea),
   argTypes: {
     label: {
       control: "text",
-      description: "Field label rendered above the input.",
+      description: "Field label rendered above the textarea.",
     },
     placeholder: {
       control: "text",
@@ -16,30 +16,11 @@ export default {
     },
     name: {
       control: "text",
-      description: "Native HTML input name attribute.",
-    },
-    type: {
-      control: "select",
-      options: ["text", "email", "password", "number", "tel", "url", "search"],
-      description: "Native HTML input type.",
-    },
-    inputmode: {
-      control: "select",
-      options: [
-        "none",
-        "text",
-        "decimal",
-        "numeric",
-        "tel",
-        "search",
-        "email",
-        "url",
-      ],
-      description: "Native inputmode hint for virtual keyboards.",
+      description: "Native HTML textarea name attribute.",
     },
     value: {
       control: "text",
-      description: "Current input value.",
+      description: "Current textarea value.",
     },
     hint: {
       control: "text",
@@ -52,7 +33,11 @@ export default {
     size: {
       control: "select",
       options: ["sm", "md", "lg"],
-      description: "Size scale for paddings and font-size.",
+      description: "Size scale for internal spacing and typography.",
+    },
+    rows: {
+      control: "number",
+      description: "Initial number of visible text rows.",
     },
     isDisabled: {
       control: "boolean",
@@ -60,7 +45,7 @@ export default {
     },
     isReadOnly: {
       control: "boolean",
-      description: "Prevents editing while keeping the field focusable.",
+      description: "Prevents editing while keeping the control focusable.",
     },
     isRequired: {
       control: "boolean",
@@ -68,7 +53,16 @@ export default {
     },
     isFullWidth: {
       control: "boolean",
-      description: "Expands input width to 100% of its container.",
+      description: "Expands the textarea width to 100% of its container.",
+    },
+    isAutoSize: {
+      control: "boolean",
+      description:
+        "Applies field-sizing: content so the textarea grows with its content.",
+    },
+    isResizable: {
+      control: "boolean",
+      description: "Enables the browser resize handle for vertical resizing.",
     },
     onChange: { action: "onChange" },
     onBlur: { action: "onBlur" },
@@ -78,7 +72,7 @@ export default {
     docs: {
       description: {
         component:
-          "Text field control with labels, hints, errors, and semantic states.",
+          "Multi-line text input with labels, hints, errors, and automatic content sizing support.",
       },
     },
   },
@@ -86,95 +80,79 @@ export default {
 
 export const Default = {}
 Default.args = {
-  label: "Username",
-  placeholder: "Enter your username",
-  name: "username",
-  inputType: "text",
+  label: "Bio",
+  placeholder: "Tell us a little about yourself",
+  name: "bio",
   value: "",
   hint: "",
   error: "",
   size: "md",
+  rows: 4,
   isDisabled: false,
   isReadOnly: false,
   isRequired: false,
   isFullWidth: false,
+  isAutoSize: false,
+  isResizable: false,
 }
 
 export const WithHint = {}
 WithHint.args = {
   ...Default.args,
-  label: "Email",
-  inputType: "email",
-  placeholder: "you@example.com",
-  hint: "We'll never share your email",
+  label: "Project notes",
+  hint: "Include any implementation details or blockers.",
 }
 
 export const WithError = {}
 WithError.args = {
   ...Default.args,
-  label: "Email",
-  inputType: "email",
-  value: "invalid-email",
-  error: "Please enter a valid email address",
+  label: "Description",
+  value: "This is too long",
+  error: "Please keep the description under 280 characters.",
 }
 
 export const Required = {}
 Required.args = {
   ...Default.args,
-  label: "Password",
-  inputType: "password",
-  placeholder: "Enter your password",
+  label: "Message",
+  placeholder: "Write a quick message",
   isRequired: true,
 }
 
 export const Disabled = {}
 Disabled.args = {
   ...Default.args,
-  label: "Disabled Input",
+  label: "Disabled textarea",
   isDisabled: true,
-  value: "Cannot edit",
+  value: "Cannot edit this value",
 }
 
 export const Readonly = {}
 Readonly.args = {
   ...Default.args,
-  label: "Readonly Input",
+  label: "Read-only textarea",
   isReadOnly: true,
-  value: "Read-only value",
+  value: "This field is read-only and not editable.",
 }
 
 export const Small = {}
 Small.args = {
   ...Default.args,
-  label: "Small Input",
+  label: "Small textarea",
   size: "sm",
 }
 
 export const Large = {}
 Large.args = {
   ...Default.args,
-  label: "Large Input",
+  label: "Large textarea",
   size: "lg",
 }
 
 export const FullWidth = {}
 FullWidth.args = {
   ...Default.args,
-  label: "Full Width Input",
-  placeholder: "This input takes full width",
+  label: "Full width textarea",
+  placeholder: "This textarea takes the full width of its container",
   isFullWidth: true,
-}
-
-export const Number = {}
-Number.args = {
-  ...Default.args,
-  label: "Amount",
-  inputType: "number",
-  value: "1234.56",
-  placeholder: "0.00",
-  min: "0",
-  max: "10000",
-  step: "0.01",
-  inputmode: "decimal",
-  "data-testid": "amount-input",
 }

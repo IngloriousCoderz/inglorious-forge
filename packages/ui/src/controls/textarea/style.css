@@ -1,0 +1,98 @@
+.iw-textarea-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--iw-space-1);
+  font-family: var(--iw-font-family-sans);
+
+  &.iw-textarea-full-width .iw-textarea {
+    width: 100%;
+  }
+
+  .iw-textarea-label {
+    font-size: var(--iw-font-size-sm);
+    font-weight: var(--iw-font-weight-normal);
+    color: var(--iw-color-text);
+  }
+
+  .iw-textarea-required {
+    color: var(--iw-color-error);
+    margin-left: var(--iw-space-1);
+  }
+
+  .iw-textarea {
+    min-height: 3rem;
+    width: min(100%, 100%);
+    resize: none;
+    padding: var(--iw-space-2) var(--iw-space-3);
+    font-family: inherit;
+    font-size: var(--iw-font-size-base);
+    line-height: 1.5;
+    color: var(--iw-input-text);
+    background-color: var(--iw-input-bg);
+    border: 1px solid var(--iw-input-border);
+    border-radius: var(--iw-input-radius);
+    outline: none;
+    transition: all var(--iw-transition-fast);
+
+    &::placeholder {
+      color: var(--iw-input-text-placeholder);
+    }
+
+    &:hover:not(:disabled) {
+      background-color: var(--iw-input-bg-hover);
+      border-color: var(--iw-input-border-hover);
+    }
+
+    &:focus:not(:disabled) {
+      background-color: var(--iw-input-bg-focus);
+      border-color: var(--iw-input-border-focus);
+      box-shadow: var(--iw-input-shadow-focus);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    &.iw-textarea-auto-size {
+      field-sizing: content;
+    }
+
+    &.iw-textarea-resizable {
+      resize: vertical;
+    }
+
+    &.iw-textarea-error {
+      border-color: var(--iw-color-error);
+
+      &:focus {
+        border-color: var(--iw-color-error);
+        box-shadow: 0 0 0 1px var(--iw-color-error);
+      }
+    }
+
+    &.iw-textarea-sm {
+      padding: var(--iw-space-1) var(--iw-space-2);
+      font-size: var(--iw-font-size-sm);
+    }
+
+    &.iw-textarea-lg {
+      padding: var(--iw-space-3) var(--iw-space-4);
+      font-size: var(--iw-font-size-lg);
+    }
+  }
+
+  .iw-textarea-hint,
+  .iw-textarea-error-message {
+    font-size: var(--iw-font-size-sm);
+    line-height: var(--iw-line-height-normal);
+  }
+
+  .iw-textarea-hint {
+    color: var(--iw-color-text-muted);
+  }
+
+  .iw-textarea-error-message {
+    color: var(--iw-color-error);
+  }
+}

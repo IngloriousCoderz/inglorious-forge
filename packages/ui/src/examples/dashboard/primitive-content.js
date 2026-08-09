@@ -13,6 +13,7 @@ import { Rating } from "../../controls/rating/index.js"
 import { Select } from "../../controls/select/index.js"
 import { Slider } from "../../controls/slider/index.js"
 import { Switch } from "../../controls/switch/index.js"
+import { Textarea } from "../../controls/textarea/index.js"
 import { Avatar } from "../../data-display/avatar/index.js"
 import { Badge } from "../../data-display/badge/index.js"
 import { BeforeAfter } from "../../data-display/before-after/index.js"
@@ -510,6 +511,42 @@ Input.render({
             inputType: "password",
             placeholder: "••••••••",
             value: "",
+          }),
+        ]),
+    },
+  },
+  "/controls/textarea": {
+    summary: "Multi-line text entry with validation and auto-sizing support.",
+    description:
+      "Textarea is built for longer responses and keeps its height aligned with the content while supporting helper text and validation states.",
+    useCases: [
+      "Message bodies",
+      "Long-form notes",
+      "Descriptions and feedback",
+    ],
+    example: {
+      code: `import { Textarea } from "@inglorious/ui/textarea"
+
+Textarea.render({
+  label: "Project details",
+  placeholder: "Describe the scope and constraints",
+  rows: 4,
+  hint: "A few sentences are enough"
+})`,
+      preview: () =>
+        previewColumn([
+          Textarea.render({
+            label: "Project details",
+            placeholder: "Describe the scope and constraints",
+            rows: 4,
+            hint: "A few sentences are enough",
+            value: "",
+          }),
+          Textarea.render({
+            label: "Notes",
+            value:
+              "The migration is nearly complete and we're validating the edge cases.",
+            error: "Please keep it under 280 characters.",
           }),
         ]),
     },

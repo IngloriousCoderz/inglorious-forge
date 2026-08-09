@@ -113,6 +113,11 @@
       "import": "./src/controls/switch/index.js"
     },
     "./switch.css": "./src/controls/switch/style.css",
+    "./textarea": {
+      "types": "./types/controls/textarea.d.ts",
+      "import": "./src/controls/textarea/index.js"
+    },
+    "./textarea.css": "./src/controls/textarea/style.css",
     "./card": {
       "types": "./types/surfaces/card.d.ts",
       "import": "./src/surfaces/card/index.js"
