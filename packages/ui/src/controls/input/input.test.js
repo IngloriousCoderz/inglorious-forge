@@ -80,6 +80,28 @@ describe("input", () => {
       expect(inputElement.classList.contains("iw-input-number")).toBe(true)
     })
 
+    it("supports native date and color input types", () => {
+      const dateContainer = document.createElement("div")
+      const colorContainer = document.createElement("div")
+
+      render(
+        Input.render({ inputType: "date", value: "2026-08-10" }),
+        dateContainer,
+      )
+      render(
+        Input.render({ inputType: "color", value: "#7c3aed" }),
+        colorContainer,
+      )
+
+      const dateElement = dateContainer.querySelector("input")
+      const colorElement = colorContainer.querySelector("input")
+
+      expect(dateElement.type).toBe("date")
+      expect(dateElement.value).toBe("2026-08-10")
+      expect(colorElement.type).toBe("color")
+      expect(colorElement.value).toBe("#7c3aed")
+    })
+
     it("renders required indicator and attributes", () => {
       const props = { id: "email", label: "Email", isRequired: true }
       const container = document.createElement("div")

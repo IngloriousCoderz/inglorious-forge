@@ -11,6 +11,12 @@ export interface InputProps {
     | "tel"
     | "url"
     | "search"
+    | "date"
+    | "time"
+    | "datetime-local"
+    | "month"
+    | "week"
+    | "color"
   value?: string
   placeholder?: string
   label?: string
