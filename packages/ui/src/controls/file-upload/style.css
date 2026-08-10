@@ -1,0 +1,99 @@
+.iw-upload {
+  display: flex;
+  flex-direction: column;
+  gap: var(--iw-space-1);
+  font-family: var(--iw-font-family-sans);
+
+  &.iw-upload-full-width .iw-upload-field-box {
+    width: 100%;
+  }
+
+  .iw-upload-label {
+    font-size: var(--iw-font-size-sm);
+    font-weight: var(--iw-font-weight-normal);
+    color: var(--iw-color-text);
+  }
+
+  .iw-upload-required {
+    color: var(--iw-color-error);
+    margin-left: var(--iw-space-1);
+  }
+
+  .iw-upload-field-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 7rem;
+    padding: var(--iw-space-4);
+    border: 1px dashed var(--iw-input-border);
+    border-radius: var(--iw-input-radius);
+    background: var(--iw-input-bg);
+    color: var(--iw-color-text);
+    transition: all var(--iw-transition-fast);
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+      background: var(--iw-input-bg-hover);
+      border-color: var(--iw-input-border-hover);
+    }
+
+    &:focus-within {
+      border-color: var(--iw-input-border-focus);
+      box-shadow: var(--iw-input-shadow-focus);
+    }
+
+    &.iw-upload-field-error {
+      border-color: var(--iw-color-error);
+
+      &:focus-within {
+        border-color: var(--iw-color-error);
+        box-shadow: 0 0 0 1px var(--iw-color-error);
+      }
+    }
+  }
+
+  .iw-upload-input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .iw-upload-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--iw-space-1);
+    pointer-events: none;
+    text-align: center;
+  }
+
+  .iw-upload-title {
+    font-weight: var(--iw-font-weight-medium);
+  }
+
+  .iw-upload-description {
+    color: var(--iw-color-text-muted);
+    font-size: var(--iw-font-size-sm);
+  }
+
+  .iw-upload-field-summary {
+    font-size: var(--iw-font-size-sm);
+    color: var(--iw-color-text-muted);
+  }
+
+  .iw-upload-hint,
+  .iw-upload-error-message {
+    font-size: var(--iw-font-size-sm);
+    line-height: var(--iw-line-height-normal);
+  }
+
+  .iw-upload-hint {
+    color: var(--iw-color-text-muted);
+  }
+
+  .iw-upload-error-message {
+    color: var(--iw-color-error);
+  }
+}

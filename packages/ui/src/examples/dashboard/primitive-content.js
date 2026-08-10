@@ -6,6 +6,7 @@ import { ButtonGroup } from "../../controls/button-group/index.js"
 import { Checkbox } from "../../controls/checkbox/index.js"
 import { Combobox } from "../../controls/combobox/index.js"
 import { Fab } from "../../controls/fab/index.js"
+import { FileUpload } from "../../controls/file-upload/index.js"
 import { IconButton } from "../../controls/icon-button/index.js"
 import { Input } from "../../controls/input/index.js"
 import { RadioGroup } from "../../controls/radio-group/index.js"
@@ -511,6 +512,37 @@ Input.render({
             inputType: "password",
             placeholder: "••••••••",
             value: "",
+          }),
+        ]),
+    },
+  },
+  "/controls/file-upload": {
+    summary:
+      "File selection area for uploads, attachments, and drag-and-drop flows.",
+    description:
+      "FileUpload wraps the native file input in a clearer interaction area while preserving validation, hints, and selected file summaries.",
+    useCases: ["Attachments", "Bulk upload", "Resume and invoice submissions"],
+    example: {
+      code: `import { FileUpload } from "@inglorious/ui/file-upload"
+
+FileUpload.render({
+  label: "Resume",
+  accept: ".pdf,.doc,.docx",
+  selectedFiles: ["resume.pdf"],
+  hint: "PDF or DOCX up to 5MB"
+})`,
+      preview: () =>
+        previewColumn([
+          FileUpload.render({
+            label: "Resume",
+            accept: ".pdf,.doc,.docx",
+            selectedFiles: ["resume.pdf"],
+            hint: "PDF or DOCX up to 5MB",
+          }),
+          FileUpload.render({
+            label: "Attachments",
+            isMultiple: true,
+            selectedFiles: ["brief.pdf", "notes.md"],
           }),
         ]),
     },

@@ -147,6 +147,11 @@ function getDefaultItems() {
           href: "/controls/icon-button",
         },
         { id: "input", primary: "Input", href: "/controls/input" },
+        {
+          id: "file-upload",
+          primary: "File Upload",
+          href: "/controls/file-upload",
+        },
         { id: "textarea", primary: "Textarea", href: "/controls/textarea" },
         {
           id: "radio-group",

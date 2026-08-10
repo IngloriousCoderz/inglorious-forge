@@ -118,6 +118,11 @@
       "import": "./src/controls/textarea/index.js"
     },
     "./textarea.css": "./src/controls/textarea/style.css",
+    "./file-upload": {
+      "types": "./types/controls/file-upload.d.ts",
+      "import": "./src/controls/file-upload/index.js"
+    },
+    "./file-upload.css": "./src/controls/file-upload/style.css",
     "./card": {
       "types": "./types/surfaces/card.d.ts",
       "import": "./src/surfaces/card/index.js"
