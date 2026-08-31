@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.1.1
+
+### Patch Changes
+
+- Improve hybrid mobile app creation
+
 ## 1.1.0
 
 ### Minor Changes

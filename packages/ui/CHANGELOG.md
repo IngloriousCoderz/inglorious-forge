@@ -1,5 +1,11 @@
 # @inglorious/ui
 
+## 7.1.0
+
+### Minor Changes
+
+- Improve hybrid mobile app creation
+
 ## 7.0.0
 
 ### Patch Changes

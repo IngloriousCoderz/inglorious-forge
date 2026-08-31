@@ -43,3 +43,35 @@ The public CSS exports are:
 - `@inglorious/ui/themes/material.css`
 - `@inglorious/ui/themes/bootstrap.css`
 - `@inglorious/ui/all.css`
+
+## Safe-area utilities
+
+The base styles also expose CSS variables and utility classes for iPhone notch and home-indicator safe areas.
+
+```css
+:root {
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+}
+```
+
+The following utility classes are available:
+
+```css
+.pt-safe {
+  padding-top: var(--safe-area-top);
+}
+.pb-safe {
+  padding-bottom: var(--safe-area-bottom);
+}
+.pl-safe {
+  padding-left: var(--safe-area-left);
+}
+.pr-safe {
+  padding-right: var(--safe-area-right);
+}
+```
+
+These are useful for mobile layouts that need to respect notches, rounded corners, and the home indicator. They are intentionally generic utilities so apps can opt into them without having to define custom safe-area values repeatedly.
