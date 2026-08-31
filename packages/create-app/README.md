@@ -23,6 +23,17 @@ pnpm create @inglorious/app
 
 The CLI will guide you through the setup process, asking for a project name and which template you'd like to use.
 
+For JavaScript and TypeScript Vite app templates, the CLI can also add optional app targets:
+
+```bash
+npm create @inglorious/app@latest -- --pwa
+npm create @inglorious/app@latest -- --mobile
+npm create @inglorious/app@latest -- --pwa --mobile
+```
+
+- `--pwa` adds a web app manifest, service worker, and browser-only service worker registration.
+- `--mobile` adds Capacitor dependencies, config, and mobile scripts for iOS and Android.
+
 ## Templates
 
 The following templates are available to get you started:
@@ -48,6 +59,12 @@ pnpm install
 
 # 3. Start the development server
 pnpm dev
+```
+
+When mobile support is enabled, build and sync native projects with:
+
+```bash
+pnpm mobile:sync
 ```
 
 ## License

@@ -4,7 +4,7 @@ import { Checkbox } from "@inglorious/ui/checkbox"
 import { Input } from "@inglorious/ui/input"
 import { Slider } from "@inglorious/ui/slider"
 import { Switch } from "@inglorious/ui/switch"
-import { ElementSize } from "@inglorious/web/element-size"
+import { ElementSize } from "@inglorious/web/sensors/element-size"
 
 import { Board } from "./board.js"
 import { entities } from "./entities.js"

@@ -1,5 +1,12 @@
 # web-components
 
+## 0.0.14
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/web@6.4.0
+
 ## 0.0.13
 
 ### Patch Changes

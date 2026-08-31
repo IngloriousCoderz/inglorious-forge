@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 6.4.0
+
+### Minor Changes
+
+- Add PWA and hybrid mobile support
+
 ## 6.3.0
 
 ### Minor Changes

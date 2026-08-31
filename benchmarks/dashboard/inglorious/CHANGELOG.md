@@ -1,5 +1,12 @@
 # @benchmarks/dashboard-inglorious
 
+## 0.1.15
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/web@6.4.0
+
 ## 0.1.14
 
 ### Patch Changes

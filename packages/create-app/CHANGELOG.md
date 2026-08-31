@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.1.0
+
+### Minor Changes
+
+- Add PWA and hybrid mobile support
+
 ## 1.0.2
 
 ### Patch Changes
