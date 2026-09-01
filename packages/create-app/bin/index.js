@@ -8,8 +8,12 @@ import path from "path"
 import prompts from "prompts"
 import { fileURLToPath } from "url"
 
-const INDENTATION = 2
 const CAPACITOR_VERSION = "^8.5.0"
+const VITE_PLUGIN_PWA_VERSION = "^1.3.0"
+const VITE_PWA_ASSETS_GENERATOR_VERSION = "^1.0.0"
+const WORKBOX_WINDOW_VERSION = "^7.4.1"
+
+const INDENTATION = 2
 const AFTER_FIRST_CHARACTER_INDEX = 1
 const EMPTY_LENGTH = 0
 const FIRST_CHARACTER_INDEX = 0
@@ -198,12 +202,12 @@ async function main() {
 
       if (pwa) {
         spinner.text = "Adding PWA support..."
-        addPwaSupport(targetDir, projectName)
+        addPwaSupport(targetDir, pkg, projectName)
       }
 
       if (mobile) {
         spinner.text = "Adding Capacitor support..."
-        addMobileSupport(targetDir, pkg, projectName, templateName)
+        addMobileSupport(targetDir, pkg, projectName)
       }
 
       for (const depType of ["dependencies", "devDependencies"]) {
@@ -286,20 +290,22 @@ function readBooleanFlag(args, name) {
   return null
 }
 
-function addPwaSupport(targetDir, projectName) {
+function addPwaSupport(targetDir, pkg, projectName) {
+  pkg.devDependencies ??= {}
+  pkg.devDependencies["vite-plugin-pwa"] = VITE_PLUGIN_PWA_VERSION
+  pkg.devDependencies["@vite-pwa/assets-generator"] =
+    VITE_PWA_ASSETS_GENERATOR_VERSION
+  pkg.devDependencies["workbox-window"] = WORKBOX_WINDOW_VERSION
+
   const publicDir = path.join(targetDir, "public")
   fs.mkdirSync(publicDir, { recursive: true })
-  fs.writeFileSync(path.join(publicDir, "sw.js"), createServiceWorkerSource())
-  fs.writeFileSync(
-    path.join(publicDir, "manifest.webmanifest"),
-    JSON.stringify(createWebManifest(projectName), null, INDENTATION) + EOL,
-  )
 
-  injectPwaHeadTags(path.join(targetDir, "index.html"))
+  injectPwaPluginConfig(targetDir, projectName)
+  writePwaRegistration(targetDir)
   injectServiceWorkerRegistration(targetDir)
 }
 
-function addMobileSupport(targetDir, pkg, projectName, templateName) {
+function addMobileSupport(targetDir, pkg, projectName) {
   pkg.dependencies ??= {}
   pkg.devDependencies ??= {}
   pkg.scripts ??= {}
@@ -314,10 +320,9 @@ function addMobileSupport(targetDir, pkg, projectName, templateName) {
   pkg.scripts["mobile:ios"] = "pnpm build && cap run ios"
   pkg.scripts["mobile:android"] = "pnpm build && cap run android"
 
-  const extension = templateName.startsWith("ts") ? "ts" : "js"
   fs.writeFileSync(
-    path.join(targetDir, `capacitor.config.ts`), // HACK: apparently only ts config works!
-    createCapacitorConfigSource(projectName, extension),
+    path.join(targetDir, "capacitor.config.ts"),
+    createCapacitorConfigSource(projectName),
   )
 
   appendMobileSetupToReadme(targetDir)
@@ -398,96 +403,6 @@ pnpm mobile:ios
   )
 }
 
-function createServiceWorkerSource() {
-  return `const CACHE_NAME = "inglorious-app-v1"
-const APP_SHELL = ["/", "/index.html", "/logo.png", "/style.css"]
-
-self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)),
-  )
-  self.skipWaiting()
-})
-
-self.addEventListener("activate", (event) => {
-  event.waitUntil(
-    caches
-      .keys()
-      .then((keys) =>
-        Promise.all(keys.map((key) => key === CACHE_NAME ? null : caches.delete(key))),
-      ),
-  )
-  self.clients.claim()
-})
-
-self.addEventListener("fetch", (event) => {
-  if (event.request.method !== "GET") {
-    return
-  }
-
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse
-      }
-
-      return fetch(event.request).catch(() => {
-        if (event.request.mode === "navigate") {
-          return caches.match("/index.html")
-        }
-
-        throw new Error("Network request failed")
-      })
-    }),
-  )
-})
-`
-}
-
-function createWebManifest(projectName) {
-  return {
-    name: projectName,
-    short_name: projectName,
-    description: "An Inglorious Web app.",
-    start_url: "/",
-    display: "standalone",
-    background_color: "#ffffff",
-    theme_color: "#111827",
-    icons: [
-      {
-        src: "/logo.png",
-        sizes: "192x192",
-        type: "image/png",
-      },
-      {
-        src: "/logo.png",
-        sizes: "512x512",
-        type: "image/png",
-      },
-    ],
-  }
-}
-
-function injectPwaHeadTags(indexPath) {
-  let index = fs.readFileSync(indexPath, "utf-8")
-
-  if (!index.includes('rel="manifest"')) {
-    index = index.replace(
-      /^([ \t]*<link rel="icon"[^>]*>\r?\n)/m,
-      `$1    <link rel="manifest" href="/manifest.webmanifest" />${EOL}`,
-    )
-  }
-
-  if (!index.includes('name="theme-color"')) {
-    index = index.replace(
-      /^([ \t]*<meta name="viewport"[^>]*>\r?\n)/m,
-      `$1    <meta name="theme-color" content="#111827" />${EOL}`,
-    )
-  }
-
-  fs.writeFileSync(indexPath, index)
-}
-
 function injectServiceWorkerRegistration(targetDir) {
   const mainPath = findMainPath(targetDir)
 
@@ -497,21 +412,92 @@ function injectServiceWorkerRegistration(targetDir) {
 
   let main = fs.readFileSync(mainPath, "utf-8")
 
-  if (!main.includes("@inglorious/web/mobile")) {
-    main = main.replace(
-      /^([ \t]*import \{ mount \} from "@inglorious\/web"\r?\n)/m,
-      (match) =>
-        `${match}import { isNative } from "@inglorious/web/mobile"${EOL}`,
-    )
-  }
-
-  if (!main.includes('navigator.serviceWorker.register("/sw.js")')) {
-    main = `${main.trimEnd()}${EOL}${EOL}if (!isNative() && "serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/sw.js")
-}${EOL}`
+  if (!main.includes("./pwa")) {
+    main = injectAfterImport(main, "@inglorious/web", `import "./pwa"`)
   }
 
   fs.writeFileSync(mainPath, main)
+}
+
+function injectPwaPluginConfig(targetDir, projectName) {
+  const viteConfigPath = findViteConfigPath(targetDir)
+
+  if (!viteConfigPath) {
+    return
+  }
+
+  let viteConfig = fs.readFileSync(viteConfigPath, "utf-8")
+
+  if (!viteConfig.includes("vite-plugin-pwa")) {
+    viteConfig = injectAfterImport(
+      viteConfig,
+      "vite",
+      `import { VitePWA } from "vite-plugin-pwa"`,
+    )
+  }
+
+  if (!viteConfig.includes("VitePWA(")) {
+    viteConfig = viteConfig.replace(
+      /plugins: \[/,
+      `plugins: [${EOL}    ${createVitePwaConfig(projectName)},`,
+    )
+  }
+
+  fs.writeFileSync(viteConfigPath, viteConfig)
+}
+
+function writePwaRegistration(targetDir) {
+  const mainPath = findMainPath(targetDir)
+
+  if (!mainPath) {
+    return
+  }
+
+  const extension = path.extname(mainPath)
+  const pwaPath = path.join(targetDir, `src/pwa${extension}`)
+
+  fs.writeFileSync(pwaPath, createPwaRegistrationSource(extension))
+}
+
+function createPwaRegistrationSource(extension) {
+  if (extension === ".ts") {
+    return `/// <reference types="vite-plugin-pwa/client" />
+import { isNative } from "@inglorious/web/mobile"
+import { registerSW } from "virtual:pwa-register"
+
+if (!isNative()) {
+  registerSW()
+}
+`
+  }
+
+  return `import { isNative } from "@inglorious/web/mobile"
+import { registerSW } from "virtual:pwa-register"
+
+if (!isNative()) {
+  registerSW()
+}
+`
+}
+
+function createVitePwaConfig(projectName) {
+  return `VitePWA({
+      injectRegister: false,
+      registerType: "autoUpdate",
+      pwaAssets: {
+        image: "public/logo.png",
+        preset: "minimal-2023",
+      },
+      manifest: {
+        name: "${projectName}",
+        short_name: "${projectName}",
+        description: "An Inglorious Web app.",
+        theme_color: "#ffffff",
+        background_color: "#ffffff",
+        display: "standalone",
+        start_url: "/",
+      },
+    })`
 }
 
 function findMainPath(targetDir) {
@@ -523,10 +509,38 @@ function findMainPath(targetDir) {
   return candidates.find((candidate) => fs.existsSync(candidate)) ?? null
 }
 
-function createCapacitorConfigSource(projectName /* , extension */) {
+function findViteConfigPath(targetDir) {
+  const candidates = [
+    path.join(targetDir, "vite.config.ts"),
+    path.join(targetDir, "vite.config.js"),
+  ]
+
+  return candidates.find((candidate) => fs.existsSync(candidate)) ?? null
+}
+
+function injectAfterImport(source, importSource, newImport) {
+  const importLinePattern = new RegExp(
+    `^([ \\t]*import .+ from "${escapeRegExp(importSource)}"\\r?\\n)`,
+    "m",
+  )
+
+  if (!importLinePattern.test(source)) {
+    return `${newImport}${EOL}${source}`
+  }
+
+  return source.replace(
+    importLinePattern,
+    (match) => `${match}${newImport}${EOL}`,
+  )
+}
+
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+}
+
+function createCapacitorConfigSource(projectName) {
   const appId = `com.inglorious.${toJavaIdentifier(projectName)}`
 
-  //if (extension === "ts") { // HACK: apparently only ts config files work!
   return `import type { CapacitorConfig } from "@capacitor/cli"
 
 const config: CapacitorConfig = {

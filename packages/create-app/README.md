@@ -31,7 +31,7 @@ npm create @inglorious/app@latest -- --mobile
 npm create @inglorious/app@latest -- --pwa --mobile
 ```
 
-- `--pwa` adds a web app manifest, service worker, and browser-only service worker registration.
+- `--pwa` adds `vite-plugin-pwa`, a basic web app manifest configuration, PWA icons, and browser-only service worker registration.
 - `--mobile` adds Capacitor dependencies, config, and mobile scripts for iOS and Android.
 
 ## Templates
