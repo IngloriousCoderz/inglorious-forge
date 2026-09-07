@@ -58,6 +58,11 @@ export const store = createStore({ entities })
 If the seed file cannot be resolved statically, the plugin falls back to the
 store module. Inline seed objects are therefore treated as part of that module.
 
+When iterating on an entity's `create()` function, HMR does not recreate
+existing entities automatically. Use the **Reset** button in the Redux DevTools
+extension instead; it already calls `store.reset()` and gives the updated
+`create()` logic a fresh set of entities.
+
 ## Requirements and limitations
 
 - The plugin recognizes a named `mount` import from `@inglorious/web`.

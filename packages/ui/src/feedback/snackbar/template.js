@@ -43,16 +43,18 @@ export function render(props) {
     <div class="iw-snackbar-content">
       <span class="iw-snackbar-message">${message}</span>
       ${action ? html`<span class="iw-snackbar-action">${action}</span>` : null}
-      ${onClose
-        ? html`<button
-            type="button"
-            class="iw-snackbar-close"
-            aria-label="Dismiss"
-            @click=${onClose}
-          >
-            ×
-          </button>`
-        : null}
+      ${
+        onClose
+          ? html`<button
+              type="button"
+              class="iw-snackbar-close"
+              aria-label="Dismiss"
+              @click=${onClose}
+            >
+              ×
+            </button>`
+          : null
+      }
     </div>
   </div>`
 }

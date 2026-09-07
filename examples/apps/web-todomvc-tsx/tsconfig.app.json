@@ -1,9 +1,11 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "module": "ESNext",
     "moduleResolution": "bundler",
     "target": "ES2020",
+    "noEmit": true,
     "verbatimModuleSyntax": true,
     "jsx": "preserve"
   },

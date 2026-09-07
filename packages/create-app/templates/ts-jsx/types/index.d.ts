@@ -21,8 +21,10 @@ export interface AppState extends EntitiesState<AppEntity> {
   message3: MessageEntity
 }
 
+export type AppApi = Api<AppEntity, AppState>
+
 // Types configuration
 export interface MessageType {
   click: (entity: MessageEntity) => void
-  render: (entity: MessageEntity, api: Api) => TemplateResult | null
+  render: (entity: MessageEntity, api: AppApi) => TemplateResult | null
 }

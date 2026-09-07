@@ -1,5 +1,4 @@
-import { mount } from "@inglorious/web"
-import { html } from "@inglorious/web"
+import { mount, html } from "@inglorious/web"
 import "@inglorious/charts/base.css"
 import "@inglorious/charts/theme.css"
 
@@ -43,11 +42,9 @@ const app = {
           <h1 class="title">Inglorious Charts - Config Mode</h1>
           <div class="metrics">
             <div
-              class="metric fps ${fps < 30
-                ? "error"
-                : fps < 60
-                  ? "warning"
-                  : ""}"
+              class="metric fps ${
+                fps < 30 ? "error" : fps < 60 ? "warning" : ""
+              }"
             >
               FPS: ${fps}
             </div>

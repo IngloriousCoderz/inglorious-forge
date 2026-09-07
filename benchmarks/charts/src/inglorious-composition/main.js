@@ -47,11 +47,9 @@ const app = {
           <h1 class="title">Inglorious Charts - Composition Mode</h1>
           <div class="metrics">
             <div
-              class="metric fps ${fps < 30
-                ? "error"
-                : fps < 60
-                  ? "warning"
-                  : ""}"
+              class="metric fps ${
+                fps < 30 ? "error" : fps < 60 ? "warning" : ""
+              }"
             >
               FPS: ${fps}
             </div>

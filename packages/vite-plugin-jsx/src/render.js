@@ -47,8 +47,13 @@ function createTemplateExpression(quasis, expressions) {
  */
 function ensureRenderApiParameter(fn) {
   const params = fn.node.params
+  const hadNoParams = params.length === 0
   const apiIndex = params.findIndex(
-    (param) => t.isIdentifier(param) && param.name === "api",
+    (param) =>
+      (t.isIdentifier(param) && param.name === "api") ||
+      (t.isAssignmentPattern(param) &&
+        t.isIdentifier(param.left) &&
+        param.left.name === "api"),
   )
   const propsParam = t.identifier("props")
 
@@ -80,7 +85,12 @@ function ensureRenderApiParameter(fn) {
     )
   }
 
-  fn.pushContainer("params", t.identifier("api"))
+  fn.pushContainer(
+    "params",
+    hadNoParams
+      ? t.assignmentPattern(t.identifier("api"), t.identifier("props"))
+      : t.identifier("api"),
+  )
 }
 
 /**

@@ -22,7 +22,25 @@ import { generateRSS } from "./rss.js"
 import { generateSitemap } from "./sitemap.js"
 import { createViteConfig } from "./vite-config.js"
 
-vi.mock("node:fs/promises")
+const mockRm = vi.hoisted(() => vi.fn())
+const mockMkdir = vi.hoisted(() => vi.fn())
+const mockWriteFile = vi.hoisted(() => vi.fn())
+
+vi.mock("node:fs/promises", async (importOriginal) => {
+  const actual = await importOriginal()
+  return {
+    ...actual,
+    rm: mockRm,
+    mkdir: mockMkdir,
+    writeFile: mockWriteFile,
+    default: {
+      ...actual.default,
+      rm: mockRm,
+      mkdir: mockMkdir,
+      writeFile: mockWriteFile,
+    },
+  }
+})
 vi.mock("vite")
 vi.mock("../router/index.js")
 vi.mock("../scripts/app.js")

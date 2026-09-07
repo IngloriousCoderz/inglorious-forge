@@ -311,15 +311,9 @@ const types = {
       `
     },
   },
-  Header: {
-    /* ... */
-  },
-  Content: {
-    /* ... */
-  },
-  Footer: {
-    /* ... */
-  },
+  Header: {/* ... */},
+  Content: {/* ... */},
+  Footer: {/* ... */},
 }
 
 // ❌ Avoid: Massive single entity

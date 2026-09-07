@@ -189,9 +189,11 @@ export const DashboardPage = {
             "Quotations",
             html`
               <div class="chart-wrap">
-                ${entity.loading
-                  ? renderInlineLoader("Loading instrument...")
-                  : null}
+                ${
+                  entity.loading
+                    ? renderInlineLoader("Loading instrument...")
+                    : null
+                }
                 ${Chart.render(
                   {
                     entity: "financeQuotationChart",
@@ -255,9 +257,11 @@ export const DashboardPage = {
             "Price Comparison",
             html`
               <div class="chart-wrap">
-                ${entity.loading
-                  ? renderInlineLoader("Refreshing bars...")
-                  : null}
+                ${
+                  entity.loading
+                    ? renderInlineLoader("Refreshing bars...")
+                    : null
+                }
                 ${Chart.render(
                   {
                     data: [

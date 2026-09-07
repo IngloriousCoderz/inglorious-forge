@@ -1,4 +1,4 @@
-import { createStore } from "@inglorious/web"
+import { createStore } from "@inglorious/store"
 import { Chart } from "@inglorious/charts"
 import { entities } from "./entities.js"
 

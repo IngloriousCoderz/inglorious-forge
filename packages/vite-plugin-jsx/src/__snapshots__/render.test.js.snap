@@ -9,10 +9,20 @@ export const Dashboard = {
 };"
 `;
 
+exports[`babel render > injects api only once for multiple bound components 1`] = `
+"import { Form } from "./form.js";
+import { List } from "./list.js";
+export const App = {
+  render(props, api = props) {
+    return html\`\${api.render("form", "Form", Form)}\${api.render("list", "List", List)}\`;
+  }
+};"
+`;
+
 exports[`babel render > injects api when multiple explicit entity ids are rendered in the same method 1`] = `
 "import { Message } from "./types/message";
 export const App = {
-  render(props, api) {
+  render(props, api = props) {
     return html\`<h1> \${api.render("message1", "Message", Message)}, \${api.render("message2", "Message", Message)} ,\${" "} \${api.render("message3", "Message", Message)}! </h1>\`;
   }
 };"
@@ -21,7 +31,16 @@ export const App = {
 exports[`babel render > lazily registers bound capitalized components without props 1`] = `
 "import { Form } from "./form.js";
 export const Dashboard = {
-  render(props, api) {
+  render(props, api = props) {
+    return api.render("form", "Form", Form);
+  }
+};"
+`;
+
+exports[`babel render > lets a root render receive api as its first argument 1`] = `
+"import { Form } from "./form.js";
+export const App = {
+  render(props, api = props) {
     return api.render("form", "Form", Form);
   }
 };"
@@ -36,7 +55,7 @@ exports[`babel render > renders basic JSX elements as lit-html templates 1`] = `
 exports[`babel render > renders bound capitalized components with an explicit entity id 1`] = `
 "import { Message } from "./message.js";
 export const Dashboard = {
-  render(props, api) {
+  render(props, api = props) {
     return api.render("message1", "Message", Message);
   }
 };"

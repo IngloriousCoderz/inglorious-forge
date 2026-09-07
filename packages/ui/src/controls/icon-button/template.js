@@ -27,9 +27,11 @@ export function render(props) {
     <span class="iw-icon-button-content iw-icon-button-content-${direction}">
       ${icon ? html`<span class="iw-button-icon">${icon}</span>` : null}
       ${label}
-      ${iconAfter
-        ? html`<span class="iw-button-icon">${iconAfter}</span>`
-        : null}
+      ${
+        iconAfter
+          ? html`<span class="iw-button-icon">${iconAfter}</span>`
+          : null
+      }
     </span>
   `
 

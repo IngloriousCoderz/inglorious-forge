@@ -7,8 +7,7 @@ export interface ThrottleOptions {
 export interface ThrottleBehavior {
   destroy?: (entity: any, payload?: any, api?: Api) => void
   [handlerName: string]:
-    | ((entity: any, payload?: any, api?: Api) => void)
-    | undefined
+    ((entity: any, payload?: any, api?: Api) => void) | undefined
 }
 
 export declare function withThrottle(

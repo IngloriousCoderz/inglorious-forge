@@ -349,15 +349,9 @@ const types = {
       `
     },
   },
-  Header: {
-    /* ... */
-  },
-  TodoList: {
-    /* ... */
-  },
-  Footer: {
-    /* ... */
-  },
+  Header: {/* ... */},
+  TodoList: {/* ... */},
+  Footer: {/* ... */},
 }
 ```
 

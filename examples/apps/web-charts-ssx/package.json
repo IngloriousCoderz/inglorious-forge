@@ -17,7 +17,7 @@
     "@inglorious/web": "workspace:*"
   },
   "devDependencies": {
-    "vite": "^7.1.6"
+    "vite": "^8.2.2"
   },
   "packageManager": "pnpm@10.15.0",
   "engines": {

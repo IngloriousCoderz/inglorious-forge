@@ -23,13 +23,13 @@
     "@inglorious/jsx": "workspace:*",
     "@inglorious/vite-plugin-hmr": "workspace:*",
     "@inglorious/vite-plugin-jsx": "workspace:*",
-    "@types/node": "^24.8.0",
-    "eslint": "^9.39.1",
-    "prettier": "^3.6.2",
-    "rollup-plugin-minify-template-literals": "^1.1.7",
-    "typescript": "~5.9.3",
-    "vite": "^7.1.6",
-    "vitest": "^4.0.16",
-    "vite-plugin-image-optimizer": "^2.0.3"
+    "@types/node": "^26.4.1",
+    "eslint": "^10.10.0",
+    "prettier": "^3.9.6",
+    "rollup-plugin-minify-template-literals": "^2.2.0",
+    "typescript": "~7.0.2",
+    "vite": "^8.2.2",
+    "vite-plugin-image-optimizer": "^2.0.3",
+    "vitest": "^5.0.0"
   }
 }

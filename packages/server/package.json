@@ -47,8 +47,8 @@
   "dependencies": {
     "@inglorious/store": "workspace:*",
     "@inglorious/utils": "workspace:*",
-    "pino": "^9.9.4",
-    "ws": "^8.18.3"
+    "pino": "^10.3.1",
+    "ws": "^8.21.3"
   },
   "peerDependencies": {
     "@inglorious/store": "workspace:*",
@@ -56,8 +56,8 @@
   },
   "devDependencies": {
     "@inglorious/eslint-config": "workspace:*",
-    "nodemon": "^3.1.10",
-    "prettier": "^3.6.2"
+    "nodemon": "^3.1.14",
+    "prettier": "^3.9.6"
   },
   "packageManager": "pnpm@10.15.0",
   "engines": {

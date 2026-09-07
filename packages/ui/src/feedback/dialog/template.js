@@ -43,23 +43,29 @@ export function render(props) {
       aria-modal="true"
       @click=${(event) => event.stopPropagation()}
     >
-      ${(title || onClose) &&
-      html`<div class="iw-dialog-header">
-        ${title ? html`<div class="iw-dialog-title">${title}</div>` : null}
-        ${onClose
-          ? html`<button
-              type="button"
-              class="iw-dialog-close"
-              aria-label="Close"
-              @click=${onClose}
-            >
-              ×
-            </button>`
-          : null}
-      </div>`}
-      ${description
-        ? html`<div class="iw-dialog-description">${description}</div>`
-        : null}
+      ${
+        (title || onClose) &&
+        html`<div class="iw-dialog-header">
+          ${title ? html`<div class="iw-dialog-title">${title}</div>` : null}
+          ${
+            onClose
+              ? html`<button
+                  type="button"
+                  class="iw-dialog-close"
+                  aria-label="Close"
+                  @click=${onClose}
+                >
+                  ×
+                </button>`
+              : null
+          }
+        </div>`
+      }
+      ${
+        description
+          ? html`<div class="iw-dialog-description">${description}</div>`
+          : null
+      }
       ${children ? html`<div class="iw-dialog-body">${children}</div>` : null}
       ${actions ? html`<div class="iw-dialog-actions">${actions}</div>` : null}
     </div>

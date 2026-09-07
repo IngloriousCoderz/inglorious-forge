@@ -10,17 +10,21 @@ export function render(entity, api) {
       </button>
 
       <div class="shared-scene">
-        ${entity.expanded
-          ? html`
-              <div class="shared-large">
-                ${api.render("sharedHeroExpanded")}
-              </div>
-              <div class="shared-small shared-placeholder"></div>
-            `
-          : html`
-              <div class="shared-small">${api.render("sharedHeroCompact")}</div>
-              <div class="shared-large shared-placeholder"></div>
-            `}
+        ${
+          entity.expanded
+            ? html`
+                <div class="shared-large">
+                  ${api.render("sharedHeroExpanded")}
+                </div>
+                <div class="shared-small shared-placeholder"></div>
+              `
+            : html`
+                <div class="shared-small">
+                  ${api.render("sharedHeroCompact")}
+                </div>
+                <div class="shared-large shared-placeholder"></div>
+              `
+        }
       </div>
     </section>
   `

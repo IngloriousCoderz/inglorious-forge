@@ -5,6 +5,7 @@ packages:
   - docs/*
   - examples/apps/*
   - examples/games/*
+  - examples/its
   - packages/*
 
 allowBuilds:

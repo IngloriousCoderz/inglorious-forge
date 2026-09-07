@@ -118,6 +118,31 @@ describe("@inglorious/vite-plugin-hmr", () => {
     expect(result.code).toContain("import.meta.hot.accept()")
   })
 
+  it("parses TypeScript-only import syntax", async () => {
+    const plugin = hmr()
+    plugin.configResolved({ command: "serve" })
+
+    readFileSync.mockImplementation(() => {
+      throw new Error("ENOENT")
+    })
+
+    const context = createContext(
+      resolveMap({ "./store": "/project/src/store.ts" }),
+    )
+    const code = `
+      import { mount } from "@inglorious/web"
+      import { store, type Store } from "./store"
+
+      const render = (api: Store) => null
+      mount(store, render, document.getElementById("root")!)
+    `
+
+    const result = await plugin.transform.call(context, code, "main.ts")
+
+    expect(result.code).toContain("const __hmrStore = store")
+    expect(result.code).toContain('"inglorious:seed-changed"')
+  })
+
   it("resolves the dedicated entities file when createStore imports it", async () => {
     const plugin = hmr()
     plugin.configResolved({ command: "serve" })

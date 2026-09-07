@@ -55,24 +55,30 @@ export function render(props) {
     ${icon ? html`<div class="iw-alert-icon">${icon}</div>` : null}
     <div class="iw-alert-content">
       ${title ? html`<div class="iw-alert-title">${title}</div>` : null}
-      ${content
-        ? html`<div class="iw-alert-description">${content}</div>`
-        : null}
+      ${
+        content
+          ? html`<div class="iw-alert-description">${content}</div>`
+          : null
+      }
     </div>
-    ${hasTrailing
-      ? html`<div class="iw-alert-trailing">
-          ${action ? html`<div class="iw-alert-action">${action}</div>` : null}
-          ${onClose
-            ? html`<button
-                type="button"
-                class="iw-alert-close"
-                aria-label="Dismiss"
-                @click=${onClose}
-              >
-                ×
-              </button>`
-            : null}
-        </div>`
-      : null}
+    ${
+      hasTrailing
+        ? html`<div class="iw-alert-trailing">
+            ${action ? html`<div class="iw-alert-action">${action}</div>` : null}
+            ${
+              onClose
+                ? html`<button
+                    type="button"
+                    class="iw-alert-close"
+                    aria-label="Dismiss"
+                    @click=${onClose}
+                  >
+                    ×
+                  </button>`
+                : null
+            }
+          </div>`
+        : null
+    }
   </div>`
 }

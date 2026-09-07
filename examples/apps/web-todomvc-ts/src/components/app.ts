@@ -1,7 +1,9 @@
-import { type Api, html } from "@inglorious/web"
+import { html } from "@inglorious/web"
+
+import type { AppApi } from "../../types"
 
 export const app = {
-  render(api: Api) {
+  render(api: AppApi) {
     return html`${api.render("form")}${api.render("list")}${api.render(
       "footer",
     )}`

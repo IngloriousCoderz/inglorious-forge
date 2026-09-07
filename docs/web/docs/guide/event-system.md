@@ -317,12 +317,8 @@ For advanced use cases (like game loops or animations), you can control when upd
 import { createStore } from "@inglorious/store"
 
 const store = createStore({
-  types: {
-    /* ... */
-  },
-  entities: {
-    /* ... */
-  },
+  types: {/* ... */},
+  entities: {/* ... */},
   updateMode: "manual", // Don't update automatically
 })
 

@@ -63,16 +63,20 @@ export function render(props) {
 
   return html`
     <div class=${classMap(wrapperClasses)}>
-      ${label
-        ? html`
-            <label for=${inputId} class="iw-input-label">
-              ${label}
-              ${isRequired
-                ? html`<span class="iw-input-required">*</span>`
-                : null}
-            </label>
-          `
-        : null}
+      ${
+        label
+          ? html`
+              <label for=${inputId} class="iw-input-label">
+                ${label}
+                ${
+                  isRequired
+                    ? html`<span class="iw-input-required">*</span>`
+                    : null
+                }
+              </label>
+            `
+          : null
+      }
 
       <div class="iw-input-frame">
         ${icon ? html`<span class="iw-input-icon">${icon}</span>` : null}
@@ -93,18 +97,22 @@ export function render(props) {
           ${ref((element) => applyElementProps(element, rest))}
         />
 
-        ${iconAfter
-          ? html`<span class="iw-input-icon iw-input-icon-after"
-              >${iconAfter}</span
-            >`
-          : null}
+        ${
+          iconAfter
+            ? html`<span class="iw-input-icon iw-input-icon-after"
+                >${iconAfter}</span
+              >`
+            : null
+        }
       </div>
 
-      ${error
-        ? html`<span class="iw-input-error-message">${error}</span>`
-        : hint
-          ? html`<span class="iw-input-hint">${hint}</span>`
-          : null}
+      ${
+        error
+          ? html`<span class="iw-input-error-message">${error}</span>`
+          : hint
+            ? html`<span class="iw-input-hint">${hint}</span>`
+            : null
+      }
     </div>
   `
 }

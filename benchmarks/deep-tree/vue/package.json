@@ -10,10 +10,10 @@
   },
   "dependencies": {
     "@benchmarks/deep-tree-shared": "workspace:*",
-    "vue": "^3.5.0"
+    "vue": "^3.5.42"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^6.0.4",
-    "vite": "^7.1.7"
+    "@vitejs/plugin-vue": "^6.0.8",
+    "vite": "^8.2.2"
   }
 }

@@ -43,7 +43,7 @@ export default {
     },
 
     images: {
-      type: "images",
+      type: "Images",
       images: {
         background: { url: "/images/background.png" },
         ground: { url: "/images/ground.png" },
@@ -51,7 +51,7 @@ export default {
     },
 
     audio: {
-      type: "audio",
+      type: "Audio",
       sounds: {
         // paddleHit: { url: "/sounds/paddle_hit.ogg" },
         // score: { url: "/sounds/score.ogg" },

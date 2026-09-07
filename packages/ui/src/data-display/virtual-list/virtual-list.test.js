@@ -193,7 +193,7 @@ describe("virtualList", () => {
       const container = document.createElement("div")
       render(VirtualList.render(entity, api), container)
 
-      const spacer = container.querySelector("div > div > div")
+      const [, spacer] = container.querySelectorAll("div > div")
       expect(spacer.style.height).toBe("4000px")
     })
 

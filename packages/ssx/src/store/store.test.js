@@ -1,16 +1,32 @@
 import { existsSync } from "node:fs"
 import path from "node:path"
 
-import { describe, expect, it, vi } from "vitest"
+import { beforeEach, describe, expect, it, vi } from "vitest"
 
 import { generateStore } from "."
+
+const mockExistsSync = vi.hoisted(() => vi.fn(() => false))
+
+vi.mock("node:fs", async (importOriginal) => {
+  const actual = await importOriginal()
+  return {
+    ...actual,
+    existsSync: mockExistsSync,
+    default: {
+      ...actual.default,
+      existsSync: mockExistsSync,
+    },
+  }
+})
 
 const ROOT_DIR = path.join(import.meta.dirname, "..", "__fixtures__")
 const PAGES_DIR = path.join(ROOT_DIR, "src", "pages")
 
-vi.mock("node:fs")
-
 describe("generateStore", () => {
+  beforeEach(() => {
+    mockExistsSync.mockReturnValue(false)
+  })
+
   it("should generate the proper types and entities from a static page", async () => {
     const page = {
       filePath: path.join(PAGES_DIR, "index.js"),

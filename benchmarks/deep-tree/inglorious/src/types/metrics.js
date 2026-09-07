@@ -36,9 +36,9 @@ export const Metrics = {
       <div class="metric">FPS(now): ${entity.fpsNow}</div>
       <div class="metric">
         30s:
-        ${entity.benchmark.done
-          ? "DONE"
-          : `${entity.benchmark.remaining}s left`}
+        ${
+          entity.benchmark.done ? "DONE" : `${entity.benchmark.remaining}s left`
+        }
       </div>
       <div class="metric">
         Mean/Min/Max:

@@ -409,9 +409,11 @@ const MyType = {
         <button @click=${() => api.notify("#myEntity:fetch", { id: 123 })}>
           Load Data
         </button>
-        ${entity.data
-          ? html`<pre>${JSON.stringify(entity.data, null, 2)}</pre>`
-          : null}
+        ${
+          entity.data
+            ? html`<pre>${JSON.stringify(entity.data, null, 2)}</pre>`
+            : null
+        }
       </div>
     `
   },

@@ -38,8 +38,8 @@
   },
   "devDependencies": {
     "@inglorious/eslint-config": "workspace:*",
-    "eslint": "^9.34.0",
-    "prettier": "^3.6.2",
-    "vitest": "^1.6.0"
+    "eslint": "^10.10.0",
+    "prettier": "^3.9.6",
+    "vitest": "^5.0.0"
   }
 }

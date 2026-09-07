@@ -79,12 +79,18 @@ export const BottomNavigation = {
         props.onChange?.(currentValue)
       }}
     >
-      ${action.icon
-        ? html`<span class="iw-bottom-navigation-icon">${action.icon}</span>`
-        : null}
-      ${props.hasLabels
-        ? html`<span class="iw-bottom-navigation-label">${action.label}</span>`
-        : null}
+      ${
+        action.icon
+          ? html`<span class="iw-bottom-navigation-icon">${action.icon}</span>`
+          : null
+      }
+      ${
+        props.hasLabels
+          ? html`<span class="iw-bottom-navigation-label"
+              >${action.label}</span
+            >`
+          : null
+      }
     </button>`
   },
 }

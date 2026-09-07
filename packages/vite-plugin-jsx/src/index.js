@@ -14,6 +14,23 @@ export function jsx() {
     name: "@inglorious/vite-plugin-jsx",
     enforce: "pre",
 
+    configResolved(config) {
+      if ("oxc" in config) {
+        config.oxc.jsx = "preserve"
+      } else {
+        config.esbuild.jsx = "preserve"
+      }
+
+      const optimizeDeps = config.optimizeDeps
+      if ("rolldownOptions" in optimizeDeps) {
+        optimizeDeps.rolldownOptions.transform ??= {}
+        optimizeDeps.rolldownOptions.transform.jsx = "preserve"
+      } else {
+        optimizeDeps.esbuildOptions ??= {}
+        optimizeDeps.esbuildOptions.jsx = "preserve"
+      }
+    },
+
     async transform(code, id) {
       if (!/\.[jt]sx$/.test(id)) return null
 

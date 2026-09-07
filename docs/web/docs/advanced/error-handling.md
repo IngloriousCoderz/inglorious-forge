@@ -165,9 +165,11 @@ const User = {
           value="${entity.email}"
           @input=${(e) => api.notify("#user:emailChange", e.target.value)}
         />
-        ${entity.emailError
-          ? html`<p class="error">${entity.emailError}</p>`
-          : ""}
+        ${
+          entity.emailError
+            ? html`<p class="error">${entity.emailError}</p>`
+            : ""
+        }
       </div>
     `
   },
@@ -220,9 +222,11 @@ const Form = {
               value: e.target.value,
             })}
         />
-        ${entity.errors.email
-          ? html` <p class="error">${entity.errors.email}</p> `
-          : ""}
+        ${
+          entity.errors.email
+            ? html` <p class="error">${entity.errors.email}</p> `
+            : ""
+        }
       </form>
     `
   },

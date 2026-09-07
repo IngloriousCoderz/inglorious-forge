@@ -57,16 +57,20 @@ export function render(props) {
 
   return html`
     <div class=${classMap(wrapperClasses)}>
-      ${label
-        ? html`
-            <label for=${textareaId} class="iw-textarea-label">
-              ${label}
-              ${isRequired
-                ? html`<span class="iw-textarea-required">*</span>`
-                : null}
-            </label>
-          `
-        : null}
+      ${
+        label
+          ? html`
+              <label for=${textareaId} class="iw-textarea-label">
+                ${label}
+                ${
+                  isRequired
+                    ? html`<span class="iw-textarea-required">*</span>`
+                    : null
+                }
+              </label>
+            `
+          : null
+      }
 
       <textarea
         id=${textareaId}
@@ -84,11 +88,13 @@ export function render(props) {
         ${ref((element) => applyElementProps(element, rest))}
       ></textarea>
 
-      ${error
-        ? html`<span class="iw-textarea-error-message">${error}</span>`
-        : hint
-          ? html`<span class="iw-textarea-hint">${hint}</span>`
-          : null}
+      ${
+        error
+          ? html`<span class="iw-textarea-error-message">${error}</span>`
+          : hint
+            ? html`<span class="iw-textarea-hint">${hint}</span>`
+            : null
+      }
     </div>
   `
 }

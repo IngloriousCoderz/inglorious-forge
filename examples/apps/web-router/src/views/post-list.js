@@ -27,10 +27,12 @@ export const PostList = {
       : entity.posts
 
     return html`<div class="post-list">
-      ${user &&
-      html`<button @click=${() => api.notify("navigate", BACK)}>
-        ← Back
-      </button>`}
+      ${
+        user &&
+        html`<button @click=${() => api.notify("navigate", BACK)}>
+          ← Back
+        </button>`
+      }
 
       <h1>${user ? `${user.name}'s` : ""} Posts</h1>
 

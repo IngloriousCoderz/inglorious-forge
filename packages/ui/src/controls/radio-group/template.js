@@ -45,9 +45,11 @@ export function render(props) {
       ?disabled=${isDisabled}
       ${ref((element) => applyElementProps(element, rest))}
     >
-      ${label
-        ? html`<legend class="iw-radio-group-label">${label}</legend>`
-        : null}
+      ${
+        label
+          ? html`<legend class="iw-radio-group-label">${label}</legend>`
+          : null
+      }
       ${options.map((option) => {
         const {
           label: optionLabel,

@@ -51,7 +51,7 @@ exports[`babel visitor > injects api into render methods 1`] = `
 "import { html } from "@inglorious/web";
 import { Form } from "./form.js";
 export const App = {
-  render(props, api) {
+  render(props, api = props) {
     return api.render("form", "Form", Form);
   }
 };"

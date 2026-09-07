@@ -55,20 +55,20 @@ function connectDevTools(store, config = {}) {
       // Hot-swap store without resetting DevTools history
       existing.restoreSetState?.()
       const baseSetState = store.setState
-      let restoreSetState = null
+      const restoreSetState =
+        updateMode === "auto"
+          ? () => {
+              if (store.setState !== baseSetState) {
+                store.setState = baseSetState
+              }
+            }
+          : () => {
+              // no-op when not wrapping setState
+            }
       if (updateMode === "auto") {
-        restoreSetState = () => {
-          if (store.setState !== baseSetState) {
-            store.setState = baseSetState
-          }
-        }
         store.setState = (newState) => {
           baseSetState(newState)
           sendAction({ type: "stateInit", payload: newState }, store.getState())
-        }
-      } else {
-        restoreSetState = () => {
-          // no-op when not wrapping setState
         }
       }
       existing.store = store
@@ -90,21 +90,21 @@ function connectDevTools(store, config = {}) {
 
   const name = config.name ?? document.title
   const baseSetState = store.setState
-  let restoreSetState = null
+  const restoreSetState =
+    updateMode === "auto"
+      ? () => {
+          if (store.setState !== baseSetState) {
+            store.setState = baseSetState
+          }
+        }
+      : () => {
+          // noop; we didn't wrap setState
+        }
   // Only add setState side-effects in auto update mode; manual update mode logs explicitly from engine.
   if (updateMode === "auto") {
-    restoreSetState = () => {
-      if (store.setState !== baseSetState) {
-        store.setState = baseSetState
-      }
-    }
     store.setState = (newState) => {
       baseSetState(newState)
       sendAction({ type: "stateInit", payload: newState }, store.getState())
-    }
-  } else {
-    restoreSetState = () => {
-      // noop; we didn't wrap setState
     }
   }
 

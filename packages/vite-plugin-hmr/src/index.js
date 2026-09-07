@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs"
 
+import { parse as parseTypeScript } from "@babel/parser"
 import MagicString from "magic-string"
 
 /**
@@ -33,7 +34,7 @@ export function hmr() {
       if (!/\.[jt]sx?$/.test(id)) return null
       if (!code.includes("@inglorious/web")) return null // cheap bail before parsing
 
-      const ast = this.parse(code)
+      const ast = parseModule(this, code, id)
 
       const mountLocalName = findImportName(ast, "@inglorious/web", "mount")
       if (!mountLocalName) return null
@@ -144,7 +145,7 @@ async function resolveEntitiesFile(pluginContext, storeFileId) {
     return null
   }
 
-  const storeAst = pluginContext.parse(storeCode)
+  const storeAst = parseModule(pluginContext, storeCode, storeFileId)
 
   const createStoreLocalName = findImportName(
     storeAst,
@@ -167,6 +168,15 @@ async function resolveEntitiesFile(pluginContext, storeFileId) {
     storeFileId,
   )
   return resolvedEntities?.id ?? null
+}
+
+function parseModule(pluginContext, code, id) {
+  if (!/\.tsx?$/.test(id)) return pluginContext.parse(code)
+
+  return parseTypeScript(code, {
+    sourceType: "module",
+    plugins: ["typescript", "jsx"],
+  }).program
 }
 
 /**

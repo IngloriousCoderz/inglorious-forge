@@ -7,12 +7,7 @@ export type CarouselDirection = "previous" | "next"
 export type CarouselArrowPlacement = "inside" | "outside"
 export type CarouselArrowVariant = "default" | "outline" | "ghost"
 export type CarouselArrowColor =
-  | "primary"
-  | "secondary"
-  | "success"
-  | "warning"
-  | "error"
-  | "info"
+  "primary" | "secondary" | "success" | "warning" | "error" | "info"
 
 export interface CarouselProps {
   id?: string

@@ -57,10 +57,18 @@ We use `vite-plugin-babel` to transform IngloriousScript syntax. The `.its` exte
 export default defineConfig({
   plugins: [
     babel({
-      include: "src/**",
-      filter: /\.(js|ijs|ts|its)$/,
+      include: /[\\/]src[\\/].*\.(js|ijs|ts|its)$/,
       babelConfig: {
-        presets: ["@inglorious/inglorious-script"],
+        presets: [
+          "@inglorious/inglorious-script",
+          [
+            "@babel/preset-typescript",
+            {
+              ignoreExtensions: true,
+              onlyRemoveTypeImports: true,
+            },
+          ],
+        ],
       },
     }),
   ],

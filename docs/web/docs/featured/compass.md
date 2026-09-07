@@ -68,9 +68,11 @@ const renderApp = (api) => {
       <p>Active: ${compass.isActive ? "yes" : "no"}</p>
       <p>
         Heading:
-        ${compass.heading !== null
-          ? `${compass.heading.toFixed(1)}°`
-          : "unknown"}
+        ${
+          compass.heading !== null
+            ? `${compass.heading.toFixed(1)}°`
+            : "unknown"
+        }
       </p>
       <p>Error: ${compass.error ? compass.error.message : "none"}</p>
       <button @click=${() => api.notify("compassPermissionsRequest")}>

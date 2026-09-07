@@ -29,7 +29,7 @@ export function renderImage(entity, ctx, api) {
 
   ctx.translate(-tileWidth * anchorX, -tileHeight * anchorY)
 
-  const images = api.getType("images")
+  const images = api.getType("Images")
   const img = images.get(id) || document.getElementById(id)
   if (img) {
     ctx.drawImage(img, ...imgParams)

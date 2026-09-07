@@ -21,12 +21,12 @@ describe("page visibility", () => {
       removeEventListener: vi.fn(),
     }
 
-    globalThis.document = doc
+    vi.stubGlobal("document", doc)
   })
 
   afterEach(() => {
+    vi.unstubAllGlobals()
     vi.restoreAllMocks()
-    delete globalThis.document
   })
 
   it("should initialize entity state and start watching", () => {

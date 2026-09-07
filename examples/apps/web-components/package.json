@@ -13,13 +13,13 @@
   "dependencies": {
     "@inglorious/store": "workspace:*",
     "@inglorious/web": "workspace:*",
-    "@material/web": "^2.3.0",
+    "@material/web": "^2.5.0",
     "@shoelace-style/shoelace": "^2.20.1"
   },
   "devDependencies": {
     "@inglorious/eslint-config": "workspace:*",
     "@inglorious/vite-plugin-hmr": "workspace:*",
-    "vite": "^7.1.6"
+    "vite": "^8.2.2"
   },
   "packageManager": "pnpm@10.15.0",
   "engines": {

@@ -20,13 +20,12 @@ describe("network status", () => {
       navigator: { onLine: true },
     }
 
-    globalThis.window = windowMock
-    globalThis.navigator = windowMock.navigator
+    vi.stubGlobal("window", windowMock)
+    vi.stubGlobal("navigator", windowMock.navigator)
   })
 
   afterEach(() => {
-    delete globalThis.window
-    delete globalThis.navigator
+    vi.unstubAllGlobals()
   })
 
   it("should initialize entity state and start watching", () => {

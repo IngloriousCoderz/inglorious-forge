@@ -99,9 +99,9 @@ export const AssetPage = {
           "Price History",
           html`
             <div class="chart-wrap">
-              ${entity.loading
-                ? renderInlineLoader("Switching asset...")
-                : null}
+              ${
+                entity.loading ? renderInlineLoader("Switching asset...") : null
+              }
               ${Chart.render(
                 {
                   data: priceSeries,
@@ -127,9 +127,11 @@ export const AssetPage = {
           "Fundamentals",
           html`
             ${renderMockSelector(entity.fallbackSymbols || [])}
-            ${entity.warning
-              ? html`<p class="info-note">${entity.warning}</p>`
-              : null}
+            ${
+              entity.warning
+                ? html`<p class="info-note">${entity.warning}</p>`
+                : null
+            }
             <p>Name: ${profile.companyName ?? "N/A"}</p>
             <p>
               Exchange:
@@ -137,15 +139,19 @@ export const AssetPage = {
             </p>
             <p>
               P/E:
-              ${Number.isFinite(Number(fundamentals.pe))
-                ? Number(fundamentals.pe).toFixed(2)
-                : "N/A"}
+              ${
+                Number.isFinite(Number(fundamentals.pe))
+                  ? Number(fundamentals.pe).toFixed(2)
+                  : "N/A"
+              }
             </p>
             <p>
               EPS:
-              ${Number.isFinite(Number(fundamentals.eps))
-                ? Number(fundamentals.eps).toFixed(2)
-                : "N/A"}
+              ${
+                Number.isFinite(Number(fundamentals.eps))
+                  ? Number(fundamentals.eps).toFixed(2)
+                  : "N/A"
+              }
             </p>
             <p>Revenue: ${formatMoney(Number(fundamentals.revenue))}</p>
             <p>Net Income: ${formatMoney(Number(fundamentals.netIncome))}</p>

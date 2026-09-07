@@ -52,13 +52,15 @@ export const Pagination = {
       class=${classMap({ "iw-pagination": true, ...extraClasses })}
       aria-label="Pagination"
     >
-      ${isFirstButtonVisible
-        ? this.renderControl(props, {
-            label: "«",
-            target: 1,
-            isDisabled: page <= PRETTY_PAGE || isDisabled,
-          })
-        : null}
+      ${
+        isFirstButtonVisible
+          ? this.renderControl(props, {
+              label: "«",
+              target: 1,
+              isDisabled: page <= PRETTY_PAGE || isDisabled,
+            })
+          : null
+      }
       ${this.renderControl(props, {
         label: "‹",
         target: Math.max(PRETTY_PAGE, page - PRETTY_PAGE),
@@ -70,13 +72,15 @@ export const Pagination = {
         target: Math.min(count, page + PRETTY_PAGE),
         isDisabled: page >= count || isDisabled,
       })}
-      ${isLastButtonVisible
-        ? this.renderControl(props, {
-            label: "»",
-            target: count,
-            isDisabled: page >= count || isDisabled,
-          })
-        : null}
+      ${
+        isLastButtonVisible
+          ? this.renderControl(props, {
+              label: "»",
+              target: count,
+              isDisabled: page >= count || isDisabled,
+            })
+          : null
+      }
     </nav>`
   },
 

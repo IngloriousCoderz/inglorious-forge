@@ -527,9 +527,7 @@ const todoList = {
 ```typescript
 handleAsync(
   "fetchTodos",
-  {
-    /* handlers */
-  },
+  {/* handlers */},
   {
     scope: "entity", // "entity" | "type" | "global"
     // "entity": #entityId:fetchTodosSuccess

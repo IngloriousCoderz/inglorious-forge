@@ -29,8 +29,9 @@ export const Chart = {
                 class="bar"
                 style="
                 height: ${(value / max) * VALUE_TO_PX}px;
-                background-color: hsl(${(value / max) *
-                VALUE_TO_HSL}, 70%, 50%);
+                background-color: hsl(${
+                  (value / max) * VALUE_TO_HSL
+                }, 70%, 50%);
               "
               ></div>
             `,

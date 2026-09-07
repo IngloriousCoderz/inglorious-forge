@@ -40,13 +40,15 @@ export const SpeedDial = {
         "iw-speed-dial-open": isOpen,
       })}
     >
-      ${isOpen
-        ? html`<div class="iw-speed-dial-actions">
-            ${actions.map((action, index) =>
-              this.renderAction(action, index, props),
-            )}
-          </div>`
-        : null}
+      ${
+        isOpen
+          ? html`<div class="iw-speed-dial-actions">
+              ${actions.map((action, index) =>
+                this.renderAction(action, index, props),
+              )}
+            </div>`
+          : null
+      }
       <button
         type="button"
         class="iw-speed-dial-trigger"

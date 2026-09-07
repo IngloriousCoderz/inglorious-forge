@@ -46,9 +46,11 @@ export const Combobox = {
         [`iw-combobox-${props.size}`]: props.size !== "md",
       })}
     >
-      ${props.label
-        ? html`<label class="iw-combobox-label">${props.label}</label>`
-        : null}
+      ${
+        props.label
+          ? html`<label class="iw-combobox-label">${props.label}</label>`
+          : null
+      }
       ${this.renderControl?.(props)}
       ${when(props.isOpen, () => this.renderDropdown?.(props))}
     </div>`
@@ -118,9 +120,11 @@ export const Combobox = {
     )
 
     return html`<span class="iw-combobox-value"
-      >${selectedOption
-        ? getOptionLabel(selectedOption)
-        : String(props.selectedValue)}</span
+      >${
+        selectedOption
+          ? getOptionLabel(selectedOption)
+          : String(props.selectedValue)
+      }</span
     >`
   },
 

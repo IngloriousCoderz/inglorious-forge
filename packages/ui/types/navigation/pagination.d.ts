@@ -11,12 +11,7 @@ export interface PaginationProps {
   isDisabled?: boolean
   buttonVariant?: "default" | "outline" | "ghost"
   buttonColor?:
-    | "primary"
-    | "secondary"
-    | "success"
-    | "warning"
-    | "error"
-    | "info"
+    "primary" | "secondary" | "success" | "warning" | "error" | "info"
   buttonSize?: "sm" | "md" | "lg"
   itemClassName?: string
   className?: string

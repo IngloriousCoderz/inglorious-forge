@@ -4,7 +4,19 @@ import { afterEach, describe, expect, it, vi } from "vitest"
 
 import { generateRSS } from "./rss"
 
-vi.mock("node:fs/promises")
+const mockWriteFile = vi.hoisted(() => vi.fn())
+
+vi.mock("node:fs/promises", async (importOriginal) => {
+  const actual = await importOriginal()
+  return {
+    ...actual,
+    writeFile: mockWriteFile,
+    default: {
+      ...actual.default,
+      writeFile: mockWriteFile,
+    },
+  }
+})
 
 describe("generateRSS", () => {
   const consoleSpy = vi.spyOn(console, "warn").mockImplementation(() => {})

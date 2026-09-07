@@ -172,7 +172,9 @@ export function vue() {
         if (this.error) {
           this.error(`Error transforming Vue template: ${error.message}`)
         } else {
-          throw new Error(`Error transforming Vue template: ${error.message}`)
+          throw new Error(`Error transforming Vue template: ${error.message}`, {
+            cause: error,
+          })
         }
       }
     },

@@ -48,15 +48,21 @@ export function render(props) {
 
   return html`
     <div class=${classMap(classes)}>
-      ${(label || isValueVisible) &&
-      html`<div class="iw-slider-header">
-        ${label
-          ? html`<label for=${inputId}>${label}</label>`
-          : html`<span></span>`}
-        ${isValueVisible
-          ? html`<output class="iw-slider-value">${value}</output>`
-          : null}
-      </div>`}
+      ${
+        (label || isValueVisible) &&
+        html`<div class="iw-slider-header">
+          ${
+            label
+              ? html`<label for=${inputId}>${label}</label>`
+              : html`<span></span>`
+          }
+          ${
+            isValueVisible
+              ? html`<output class="iw-slider-value">${value}</output>`
+              : null
+          }
+        </div>`
+      }
       <input
         id=${inputId}
         class="iw-slider-input"

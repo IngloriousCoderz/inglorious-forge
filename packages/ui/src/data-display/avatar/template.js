@@ -57,9 +57,11 @@ export function render(props) {
     style=${styleMap(styles)}
     @click=${onClick}
   >
-    ${src
-      ? html`<img class="iw-avatar-img" src=${src} alt=${alt} />`
-      : (children ?? initials ?? "?")}
+    ${
+      src
+        ? html`<img class="iw-avatar-img" src=${src} alt=${alt} />`
+        : (children ?? initials ?? "?")
+    }
   </span>`
 }
 

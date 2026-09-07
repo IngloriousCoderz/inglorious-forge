@@ -38,12 +38,14 @@ export interface AppState extends EntitiesState<AppEntity> {
   footer: FooterEntity
 }
 
+export type AppApi = Api<AppEntity, AppState>
+
 // Types configuration
 export interface FormType {
   create: (entity: FormEntity) => void
   inputChange: (entity: FormEntity, value: string) => void
   formSubmit: (entity: FormEntity) => void
-  render: (entity: FormEntity, api: Api) => TemplateResult | null
+  render: (entity: FormEntity, api: AppApi) => TemplateResult | null
 }
 
 export interface ListType {
@@ -52,12 +54,12 @@ export interface ListType {
   toggleClick: (entity: ListEntity, id: number) => void
   deleteClick: (entity: ListEntity, id: number) => void
   clearClick: (entity: ListEntity) => void
-  render: (entity: ListEntity, api: Api) => TemplateResult | null
+  render: (entity: ListEntity, api: AppApi) => TemplateResult | null
 }
 
 export interface FooterType {
   create: (entity: FooterEntity) => void
   filterClick: (entity: FooterEntity, id: Filter) => void
   clearClick: (entity: FooterEntity) => void
-  render: (entity: FooterEntity, api: Api) => TemplateResult | null
+  render: (entity: FooterEntity, api: AppApi) => TemplateResult | null
 }

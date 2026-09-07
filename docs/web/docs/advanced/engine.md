@@ -16,12 +16,8 @@ Both use the same **@inglorious/store** with entities, types, and events:
 const store = createStore({
   types: {
     // Game entities
-    Player: {
-      /* game logic */
-    },
-    Enemy: {
-      /* game logic */
-    },
+    Player: {/* game logic */},
+    Enemy: {/* game logic */},
 
     // UI entities
     Hud: {
@@ -52,12 +48,8 @@ import { mount, html } from "@inglorious/web"
 const store = createStore({
   types: {
     // Game world
-    Player: {
-      /* physics, movement */
-    },
-    Camera: {
-      /* camera logic */
-    }, // UI overlays
+    Player: {/* physics, movement */},
+    Camera: {/* camera logic */}, // UI overlays
     Hud: {
       render(entity, api) {
         const player = api.getEntity("player")
@@ -88,12 +80,8 @@ Combine 3D visualization with Inglorious Web UI:
 const store = createStore({
   types: {
     // Data visualization entities
-    Scene: {
-      /* Three.js scene management */
-    },
-    Camera: {
-      /* camera control */
-    }, // UI controls
+    Scene: {/* Three.js scene management */},
+    Camera: {/* camera control */}, // UI controls
     ControlPanel: {
       render(entity, api) {
         return html`

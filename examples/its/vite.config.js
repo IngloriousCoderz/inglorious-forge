@@ -7,8 +7,7 @@ export default defineConfig({
 
   plugins: [
     babel({
-      include: "src/**",
-      filter: /\.(js|ijs|ts|its)$/,
+      include: /[\\/]src[\\/].*\.(js|ijs|ts|its)$/,
 
       babelConfig: {
         presets: [
@@ -16,8 +15,7 @@ export default defineConfig({
           [
             "@babel/preset-typescript",
             {
-              isTSX: false,
-              allExtensions: true,
+              ignoreExtensions: true,
               onlyRemoveTypeImports: true,
             },
           ],

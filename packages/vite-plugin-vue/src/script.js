@@ -106,7 +106,9 @@ export function parseScript(script, lang) {
       importDecls,
     }
   } catch (error) {
-    throw new Error(`Failed to parse script: ${error.message}`)
+    throw new Error(`Failed to parse script: ${error.message}`, {
+      cause: error,
+    })
   }
 }
 

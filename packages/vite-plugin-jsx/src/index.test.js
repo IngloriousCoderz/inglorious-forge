@@ -8,6 +8,19 @@ describe("@inglorious/vite-plugin-jsx", () => {
 
     expect(plugin.name).toBe("@inglorious/vite-plugin-jsx")
     expect(plugin.enforce).toBe("pre")
+    const config = {
+      esbuild: {},
+      oxc: {},
+      optimizeDeps: { rolldownOptions: { transform: {} } },
+    }
+    plugin.configResolved(config)
+    expect(config.oxc.jsx).toBe("preserve")
+    expect(config.optimizeDeps.rolldownOptions.transform.jsx).toBe("preserve")
+
+    const legacyConfig = { esbuild: {}, optimizeDeps: {} }
+    plugin.configResolved(legacyConfig)
+    expect(legacyConfig.esbuild.jsx).toBe("preserve")
+    expect(legacyConfig.optimizeDeps.esbuildOptions.jsx).toBe("preserve")
   })
 
   it("skips non-JSX files", async () => {

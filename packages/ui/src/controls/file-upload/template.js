@@ -55,16 +55,20 @@ export function render(props) {
 
   return html`
     <div class=${classMap(wrapperClasses)}>
-      ${label
-        ? html`
-            <label for=${uploadId} class="iw-upload-label">
-              ${label}
-              ${isRequired
-                ? html`<span class="iw-upload-required">*</span>`
-                : null}
-            </label>
-          `
-        : null}
+      ${
+        label
+          ? html`
+              <label for=${uploadId} class="iw-upload-label">
+                ${label}
+                ${
+                  isRequired
+                    ? html`<span class="iw-upload-required">*</span>`
+                    : null
+                }
+              </label>
+            `
+          : null
+      }
 
       <div class=${classMap(fieldClasses)}>
         <input
@@ -90,11 +94,13 @@ export function render(props) {
 
       <div class="iw-upload-field-summary">${summaryText}</div>
 
-      ${error
-        ? html`<span class="iw-upload-error-message">${error}</span>`
-        : hint
-          ? html`<span class="iw-upload-hint">${hint}</span>`
-          : null}
+      ${
+        error
+          ? html`<span class="iw-upload-error-message">${error}</span>`
+          : hint
+            ? html`<span class="iw-upload-hint">${hint}</span>`
+            : null
+      }
     </div>
   `
 }

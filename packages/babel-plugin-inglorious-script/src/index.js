@@ -212,7 +212,7 @@ export default function (babel) {
         path.replaceWith(
           t.callExpression(t.identifier(config.helperName), [
             argument,
-            t.numericLiteral(UNARY_MINUS),
+            t.valueToNode(UNARY_MINUS),
           ]),
         )
       },

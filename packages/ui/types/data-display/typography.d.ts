@@ -1,12 +1,7 @@
 import type { TemplateResult } from "@inglorious/web"
 
 export type TypographyVariant =
-  | "body"
-  | "h1"
-  | "h2"
-  | "h3"
-  | "caption"
-  | "overline"
+  "body" | "h1" | "h2" | "h3" | "caption" | "overline"
 
 export interface TypographyProps {
   id?: string

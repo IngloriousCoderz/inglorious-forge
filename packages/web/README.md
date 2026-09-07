@@ -1290,10 +1290,12 @@ const renderApp = (api) => {
       <p>Loading: ${geolocation.isLoading ? "yes" : "no"}</p>
       <p>
         Position:
-        ${position
-          ? html`${position.coords.latitude.toFixed(4)},
-            ${position.coords.longitude.toFixed(4)}`
-          : "unknown"}
+        ${
+          position
+            ? html`${position.coords.latitude.toFixed(4)},
+              ${position.coords.longitude.toFixed(4)}`
+            : "unknown"
+        }
       </p>
       <p>Error: ${geolocation.error ? geolocation.error.message : "none"}</p>
       <button
@@ -1383,9 +1385,11 @@ const renderApp = (api) => {
       <p>Active: ${compass.isCompassActive ? "yes" : "no"}</p>
       <p>
         Heading:
-        ${compass.heading !== null
-          ? `${compass.heading.toFixed(1)}°`
-          : "unknown"}
+        ${
+          compass.heading !== null
+            ? `${compass.heading.toFixed(1)}°`
+            : "unknown"
+        }
       </p>
       <p>Error: ${compass.error ? compass.error.message : "none"}</p>
       <button @click=${() => api.notify("compassPermissionsRequest")}>

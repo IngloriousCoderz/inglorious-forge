@@ -22,6 +22,7 @@ coverage
 # Build Outputs
 .next/
 out/
+cache/
 dist
 dist-ssr
 storybook-static

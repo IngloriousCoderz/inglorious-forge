@@ -51,12 +51,13 @@ export const Breadcrumbs = {
       <ol class="iw-breadcrumbs-list">
         ${items.map(
           (item, index) =>
-            html`${this.renderItem(item, index, props)}${index <
-            items.length - 1
-              ? html`<li class="iw-breadcrumbs-separator" aria-hidden="true">
-                  ${separator}
-                </li>`
-              : null}`,
+            html`${this.renderItem(item, index, props)}${
+              index < items.length - 1
+                ? html`<li class="iw-breadcrumbs-separator" aria-hidden="true">
+                    ${separator}
+                  </li>`
+                : null
+            }`,
         )}
       </ol>
     </nav>`
@@ -74,22 +75,24 @@ export const Breadcrumbs = {
     const isLast = index === props.items.length - 1
 
     return html`<li class="iw-breadcrumbs-item iw-typography">
-      ${item.href && !isLast
-        ? html`<a
-            href=${item.href}
-            class="iw-breadcrumbs-link"
-            @click=${item.onClick ?? null}
-          >
-            ${item.label}
-          </a>`
-        : html`<span
-            class=${classMap({
-              "iw-breadcrumbs-current": isLast,
-            })}
-            aria-current=${isLast ? "page" : "false"}
-          >
-            ${item.label}
-          </span>`}
+      ${
+        item.href && !isLast
+          ? html`<a
+              href=${item.href}
+              class="iw-breadcrumbs-link"
+              @click=${item.onClick ?? null}
+            >
+              ${item.label}
+            </a>`
+          : html`<span
+              class=${classMap({
+                "iw-breadcrumbs-current": isLast,
+              })}
+              aria-current=${isLast ? "page" : "false"}
+            >
+              ${item.label}
+            </span>`
+      }
     </li>`
   },
 }

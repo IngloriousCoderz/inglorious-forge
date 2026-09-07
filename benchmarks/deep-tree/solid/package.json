@@ -10,10 +10,10 @@
   },
   "dependencies": {
     "@benchmarks/deep-tree-shared": "workspace:*",
-    "solid-js": "^1.9.14"
+    "solid-js": "^1.9.15"
   },
   "devDependencies": {
-    "vite": "^7.1.7",
-    "vite-plugin-solid": "^2.11.12"
+    "vite": "^8.2.2",
+    "vite-plugin-solid": "^2.11.14"
   }
 }

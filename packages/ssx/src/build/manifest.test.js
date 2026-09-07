@@ -12,7 +12,22 @@ import {
   saveManifest,
 } from "./manifest"
 
-vi.mock("node:fs/promises")
+const mockReadFile = vi.hoisted(() => vi.fn())
+const mockWriteFile = vi.hoisted(() => vi.fn())
+
+vi.mock("node:fs/promises", async (importOriginal) => {
+  const actual = await importOriginal()
+  return {
+    ...actual,
+    readFile: mockReadFile,
+    writeFile: mockWriteFile,
+    default: {
+      ...actual.default,
+      readFile: mockReadFile,
+      writeFile: mockWriteFile,
+    },
+  }
+})
 
 describe("manifest", () => {
   const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {})

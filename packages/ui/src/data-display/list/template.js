@@ -96,9 +96,11 @@ export const List = {
             meta,
             index,
             path: [...path, index],
-          })}${shouldDivide
-            ? html`<li class="iw-list-divider" role="separator"></li>`
-            : null}`
+          })}${
+            shouldDivide
+              ? html`<li class="iw-list-divider" role="separator"></li>`
+              : null
+          }`
         },
       )
 

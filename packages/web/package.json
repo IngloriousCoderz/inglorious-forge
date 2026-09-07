@@ -112,15 +112,15 @@
   "dependencies": {
     "@inglorious/utils": "workspace:*",
     "@lit-labs/ssr-client": "^1.1.8",
-    "lit-html": "^3.3.1"
+    "lit-html": "^3.3.3"
   },
   "peerDependencies": {
     "@inglorious/store": "workspace:*"
   },
   "devDependencies": {
     "@inglorious/eslint-config": "workspace:*",
-    "prettier": "^3.6.2",
-    "vitest": "^4.0.15"
+    "prettier": "^3.9.6",
+    "vitest": "^5.0.0"
   },
   "packageManager": "pnpm@10.15.0",
   "engines": {

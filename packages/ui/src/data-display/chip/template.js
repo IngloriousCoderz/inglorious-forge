@@ -31,10 +31,12 @@ export function render(props) {
 
   return html`<span class=${classMap(classes)}>
     <span class="iw-chip-label">${children}</span>
-    ${isRemovable
-      ? html`<button type="button" class="iw-chip-remove" @click=${onClick}>
-          ×
-        </button>`
-      : null}
+    ${
+      isRemovable
+        ? html`<button type="button" class="iw-chip-remove" @click=${onClick}>
+            ×
+          </button>`
+        : null
+    }
   </span>`
 }

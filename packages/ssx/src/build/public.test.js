@@ -5,7 +5,28 @@ import { afterEach, describe, expect, it, vi } from "vitest"
 
 import { copyPublicDir } from "./public"
 
-vi.mock("node:fs/promises")
+const mockAccess = vi.hoisted(() => vi.fn())
+const mockReaddir = vi.hoisted(() => vi.fn())
+const mockMkdir = vi.hoisted(() => vi.fn())
+const mockCopyFile = vi.hoisted(() => vi.fn())
+
+vi.mock("node:fs/promises", async (importOriginal) => {
+  const actual = await importOriginal()
+  return {
+    ...actual,
+    access: mockAccess,
+    readdir: mockReaddir,
+    mkdir: mockMkdir,
+    copyFile: mockCopyFile,
+    default: {
+      ...actual.default,
+      access: mockAccess,
+      readdir: mockReaddir,
+      mkdir: mockMkdir,
+      copyFile: mockCopyFile,
+    },
+  }
+})
 
 describe("copyPublicDir", () => {
   const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {})

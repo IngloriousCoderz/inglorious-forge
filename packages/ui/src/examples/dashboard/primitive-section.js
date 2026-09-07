@@ -77,22 +77,24 @@ export const PrimitiveSection = {
                       description ??
                       "This section is wired for per-primitive docs and examples.",
                   })}
-                  ${useCases.length
-                    ? html`
-                        <div style="margin-top: 16px; text-align: left;">
-                          ${Typography.render({
-                            variant: "body2",
-                            color: "secondary",
-                            children: "Common use cases",
-                          })}
-                          <ul style="margin: 8px 0 0; padding-left: 20px;">
-                            ${useCases.map(
-                              (useCase) => html`<li>${useCase}</li>`,
-                            )}
-                          </ul>
-                        </div>
-                      `
-                    : ""}
+                  ${
+                    useCases.length
+                      ? html`
+                          <div style="margin-top: 16px; text-align: left;">
+                            ${Typography.render({
+                              variant: "body2",
+                              color: "secondary",
+                              children: "Common use cases",
+                            })}
+                            <ul style="margin: 8px 0 0; padding-left: 20px;">
+                              ${useCases.map(
+                                (useCase) => html`<li>${useCase}</li>`,
+                              )}
+                            </ul>
+                          </div>
+                        `
+                      : ""
+                  }
                 </div>
               `,
             }),
@@ -123,10 +125,9 @@ export const PrimitiveSection = {
                               color: "secondary",
                               children: "Code",
                             }),
-                            html`<pre
-                              class="iw-primitive-code"
-                            ><code>${exampleCode ??
-                            "// Example coming soon."}</code></pre>`,
+                            html`<pre class="iw-primitive-code"><code>${
+                              exampleCode ?? "// Example coming soon."
+                            }</code></pre>`,
                           ],
                         }),
                         Flex.render({
@@ -139,10 +140,12 @@ export const PrimitiveSection = {
                               children: "Result",
                             }),
                             html`<div class="iw-primitive-preview">
-                              ${examplePreview ??
-                              html`<div class="iw-primitive-preview-empty">
-                                Preview coming soon.
-                              </div>`}
+                              ${
+                                examplePreview ??
+                                html`<div class="iw-primitive-preview-empty">
+                                  Preview coming soon.
+                                </div>`
+                              }
                             </div>`,
                           ],
                         }),

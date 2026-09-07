@@ -5,32 +5,41 @@
   "files": [
     "base.js",
     "browser.js",
+    "browser.d.ts",
     "node.js",
     "react.js",
     "storybook.js",
-    "tailwind.js"
+    "tailwind.js",
+    "typescript.js",
+    "typescript.d.ts"
   ],
   "exports": {
+    "./browser": {
+      "types": "./browser.d.ts",
+      "default": "./browser.js"
+    },
     "./base": "./base.js",
-    "./browser": "./browser.js",
     "./node": "./node.js",
     "./react": "./react.js",
     "./storybook": "./storybook.js",
     "./tailwind": "./tailwind.js",
-    "./typescript": "./typescript.js"
+    "./typescript": {
+      "types": "./typescript.d.ts",
+      "default": "./typescript.js"
+    }
   },
   "publishConfig": {
     "access": "public"
   },
   "sideEffects": false,
   "dependencies": {
-    "eslint-config-prettier": "^10.1.1",
-    "eslint-plugin-only-warn": "^1.1.0",
-    "globals": "^16.3.0"
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-only-warn": "^1.2.1",
+    "globals": "^17.12.0"
   },
   "peerDependencies": {
     "@eslint/js": "^9.34.0",
-    "eslint": "^9.34.0",
+    "eslint": "^9.34.0 || ^10.0.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-simple-import-sort": "^12.1.1",
@@ -38,9 +47,9 @@
     "eslint-plugin-turbo": "^2.5.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.34.0",
-    "@typescript-eslint/eslint-plugin": "^8.48.1",
-    "@typescript-eslint/parser": "^8.48.1",
-    "eslint": "^9.34.0"
+    "@eslint/js": "^10.0.1",
+    "@typescript-eslint/eslint-plugin": "^8.69.0",
+    "@typescript-eslint/parser": "^8.69.0",
+    "eslint": "^10.10.0"
   }
 }

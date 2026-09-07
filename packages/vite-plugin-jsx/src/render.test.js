@@ -71,6 +71,35 @@ describe("babel render", () => {
     ).toMatchSnapshot()
   })
 
+  it("lets a root render receive api as its first argument", async () => {
+    expect(
+      await transform(`
+        import { Form } from "./form.js"
+
+        export const App = {
+          render() {
+            return <Form />
+          },
+        }
+      `),
+    ).toMatchSnapshot()
+  })
+
+  it("injects api only once for multiple bound components", async () => {
+    expect(
+      await transform(`
+        import { Form } from "./form.js"
+        import { List } from "./list.js"
+
+        export const App = {
+          render() {
+            return <><Form /><List /></>
+          },
+        }
+      `),
+    ).toMatchSnapshot()
+  })
+
   it("renders bound capitalized components with an explicit entity id", async () => {
     expect(
       await transform(`

@@ -137,9 +137,11 @@ const LoginForm = {
               value: e.target.value,
             })}
         />
-        ${getFieldError(entity, "email")
-          ? html` <p class="error">${getFieldError(entity, "email")}</p> `
-          : ""}
+        ${
+          getFieldError(entity, "email")
+            ? html` <p class="error">${getFieldError(entity, "email")}</p> `
+            : ""
+        }
 
         <button type="submit">Login</button>
       </form>
@@ -187,9 +189,11 @@ const AsyncForm = {
     return html`
       <form @submit=${() => api.notify("#form:submit")}>
         <!-- fields -->
-        ${entity.submitError
-          ? html`<p class="error">${entity.submitError}</p>`
-          : ""}
+        ${
+          entity.submitError
+            ? html`<p class="error">${entity.submitError}</p>`
+            : ""
+        }
         <button ?disabled=${entity.isSubmitting}>
           ${entity.isSubmitting ? "Loading..." : "Submit"}
         </button>

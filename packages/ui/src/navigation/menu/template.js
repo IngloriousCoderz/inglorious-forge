@@ -85,13 +85,17 @@ export const Menu = {
         props.onItemClick?.(item.value ?? index, item)
       }}
     >
-      ${item.icon
-        ? html`<span class="iw-menu-item-icon">${item.icon}</span>`
-        : null}
+      ${
+        item.icon
+          ? html`<span class="iw-menu-item-icon">${item.icon}</span>`
+          : null
+      }
       <span class="iw-menu-item-label">${item.label}</span>
-      ${item.trailing
-        ? html`<span class="iw-menu-item-trailing">${item.trailing}</span>`
-        : null}
+      ${
+        item.trailing
+          ? html`<span class="iw-menu-item-trailing">${item.trailing}</span>`
+          : null
+      }
     </button>`
   },
 }

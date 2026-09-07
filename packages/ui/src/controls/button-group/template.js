@@ -75,9 +75,11 @@ export function render(props) {
           children: html`
             ${icon ? html`<span class="iw-button-icon">${icon}</span>` : null}
             ${children ?? label}
-            ${iconAfter
-              ? html`<span class="iw-button-icon">${iconAfter}</span>`
-              : null}
+            ${
+              iconAfter
+                ? html`<span class="iw-button-icon">${iconAfter}</span>`
+                : null
+            }
           `,
           variant: itemVariant ?? variant,
           color: itemColor ?? color,

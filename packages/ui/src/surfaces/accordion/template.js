@@ -93,9 +93,11 @@ export const Accordion = {
         <span class="iw-accordion-title">${title}</span>
         <span class="iw-accordion-caret">▾</span>
       </button>
-      ${isExpanded
-        ? html`<div class="iw-accordion-panel">${content}</div>`
-        : null}
+      ${
+        isExpanded
+          ? html`<div class="iw-accordion-panel">${content}</div>`
+          : null
+      }
     </section>`
   },
 }
