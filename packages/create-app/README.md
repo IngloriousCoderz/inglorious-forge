@@ -61,10 +61,19 @@ pnpm install
 pnpm dev
 ```
 
-When mobile support is enabled, build and sync native projects with:
+When mobile support is enabled, initialize the native platforms once, then build and sync them with:
 
 ```bash
+# Run one or both commands once, depending on the platforms you need
+pnpm mobile:init:android
+pnpm mobile:init:ios
+
 pnpm mobile:sync
+
+# Build and open the native app
+pnpm mobile:android
+# or
+pnpm mobile:ios
 ```
 
 For Android and iOS builds, install Android Studio with the Android SDK and a Java runtime compatible with Capacitor. Capacitor currently works reliably with JDK 21, so prefer JDK 21 over newer Java versions if you hit Java compatibility issues. Set `JAVA_HOME` to your JDK 21 install and `ANDROID_HOME` to your Android SDK path before running the native app. See the official Capacitor setup guides for platform-specific instructions:

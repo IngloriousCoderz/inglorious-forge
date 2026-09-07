@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.1.2
+
+### Patch Changes
+
+- Add HMR Vite plugin
+
 ## 1.1.1
 
 ### Patch Changes

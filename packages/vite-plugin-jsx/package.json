@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/vite-plugin-jsx",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "A Vite plugin that transforms JSX into lit-html syntax.",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -41,6 +41,9 @@
   "devDependencies": {
     "@inglorious/eslint-config": "workspace:*",
     "vitest": "^2.0.4"
+  },
+  "peerDependencies": {
+    "vite": "^7.1.3"
   },
   "engines": {
     "node": ">= 22"

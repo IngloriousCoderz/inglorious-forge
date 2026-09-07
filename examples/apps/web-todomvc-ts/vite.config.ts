@@ -1,6 +1,7 @@
 import path from "node:path"
 import { fileURLToPath } from "node:url"
 
+import { hmr } from "@inglorious/vite-plugin-hmr"
 import { minifyTemplateLiterals } from "rollup-plugin-minify-template-literals"
 import { defineConfig } from "vite"
 import { ViteImageOptimizer } from "vite-plugin-image-optimizer"
@@ -13,7 +14,7 @@ export default defineConfig({
   // @see https://github.com/vitejs/vite/issues/1973
   define: { "process.env": {} },
 
-  plugins: [ViteImageOptimizer()],
+  plugins: [ViteImageOptimizer(), hmr()],
 
   build: {
     rollupOptions: {

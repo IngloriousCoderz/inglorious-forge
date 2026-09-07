@@ -1,7 +1,7 @@
 {
   "name": "web-charts",
   "private": true,
-  "version": "0.1.17",
+  "version": "0.1.18",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -14,7 +14,11 @@
     "@inglorious/web": "workspace:*"
   },
   "devDependencies": {
+    "@inglorious/eslint-config": "workspace:*",
+    "@inglorious/vite-plugin-hmr": "workspace:*",
     "eslint": "^9.36.0",
+    "prettier": "^3.6.2",
+    "rollup-plugin-minify-template-literals": "^1.1.7",
     "vite": "^7.2.2"
   }
 }

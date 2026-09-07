@@ -1,7 +1,7 @@
 {
   "name": "web-components",
   "private": true,
-  "version": "0.0.14",
+  "version": "0.0.15",
   "type": "module",
   "author": "IceOnFire <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -17,6 +17,8 @@
     "@shoelace-style/shoelace": "^2.20.1"
   },
   "devDependencies": {
+    "@inglorious/eslint-config": "workspace:*",
+    "@inglorious/vite-plugin-hmr": "workspace:*",
     "vite": "^7.1.6"
   },
   "packageManager": "pnpm@10.15.0",

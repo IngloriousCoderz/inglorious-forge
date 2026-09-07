@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest"
 
 import { jsx } from "."
 
-describe("index", () => {
+describe("@inglorious/vite-plugin-jsx", () => {
   it("creates the Vite plugin entry point", () => {
     const plugin = jsx()
 

@@ -1,6 +1,7 @@
-export const CAPACITOR_VERSION = "^8.5.0"
+export const CAPACITOR_VERSION = "^8.5.1"
 export const VITE_PLUGIN_PWA_VERSION = "^1.3.0"
-export const VITE_PWA_ASSETS_GENERATOR_VERSION = "^1.0.0"
+export const VITE_PWA_ASSETS_GENERATOR_VERSION = "^1.0.2"
+export const TYPESCRIPT_VERSION = "^7.0.2"
 export const WORKBOX_WINDOW_VERSION = "^7.4.1"
 
 export const INDENTATION = 2

@@ -1,5 +1,15 @@
 # web-components-ssx
 
+## 0.1.19
+
+### Patch Changes
+
+- Add HMR Vite plugin
+- Updated dependencies
+  - @inglorious/store@11.0.1
+  - @inglorious/web@6.4.1
+  - @inglorious/ssx@2.1.5
+
 ## 0.1.18
 
 ### Patch Changes

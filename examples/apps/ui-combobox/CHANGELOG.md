@@ -1,5 +1,15 @@
 # ui-combobox
 
+## 0.2.47
+
+### Patch Changes
+
+- Add HMR Vite plugin
+- Updated dependencies
+  - @inglorious/store@11.0.1
+  - @inglorious/web@6.4.1
+  - @inglorious/ui@7.1.1
+
 ## 0.2.46
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @inglorious/vite-plugin-jsx
 
+## 2.0.1
+
+### Patch Changes
+
+- Add HMR Vite plugin
+
 ## 2.0.0
 
 ### Major Changes

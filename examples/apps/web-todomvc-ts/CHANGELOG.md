@@ -1,5 +1,14 @@
 # web-todomvc-ts
 
+## 0.2.36
+
+### Patch Changes
+
+- Add HMR Vite plugin
+- Updated dependencies
+  - @inglorious/store@11.0.1
+  - @inglorious/web@6.4.1
+
 ## 0.2.35
 
 ### Patch Changes

@@ -1,5 +1,15 @@
 # web-ag-grid
 
+## 0.1.16
+
+### Patch Changes
+
+- Add HMR Vite plugin
+- Updated dependencies
+  - @inglorious/store@11.0.1
+  - @inglorious/web@6.4.1
+  - @inglorious/ag-grid@9.0.1
+
 ## 0.1.15
 
 ### Patch Changes

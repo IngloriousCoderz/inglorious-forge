@@ -1,5 +1,15 @@
 # lit-todomvc
 
+## 0.1.52
+
+### Patch Changes
+
+- Add HMR Vite plugin
+- Updated dependencies
+  - @inglorious/store@11.0.1
+  - @inglorious/web@6.4.1
+  - @inglorious/logo@3.0.10
+
 ## 0.1.51
 
 ### Patch Changes

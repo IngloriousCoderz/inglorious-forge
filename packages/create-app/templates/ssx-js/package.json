@@ -25,8 +25,8 @@
   },
   "devDependencies": {
     "@inglorious/eslint-config": "workspace:*",
-    "eslint": "^9.39.1",
-    "prettier": "^3.6.2",
+    "eslint": "^10.9.1",
+    "prettier": "^3.9.6",
     "serve": "^14.2.1"
   },
   "packageManager": "pnpm@10.15.0",

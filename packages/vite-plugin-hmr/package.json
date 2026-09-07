@@ -1,0 +1,50 @@
+{
+  "name": "@inglorious/vite-plugin-hmr",
+  "version": "1.0.0",
+  "description": "Preserve Inglorious Web store state across Vite hot updates.",
+  "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
+  "license": "MIT",
+  "type": "module",
+  "main": "./src/index.js",
+  "homepage": "https://github.com/IngloriousCoderz/inglorious-forge/tree/main/packages/vite-plugin-hmr#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/IngloriousCoderz/inglorious-forge.git",
+    "directory": "packages/vite-plugin-hmr"
+  },
+  "bugs": {
+    "url": "https://github.com/IngloriousCoderz/inglorious-forge/issues"
+  },
+  "keywords": [
+    "vite",
+    "vite-plugin",
+    "inglorious",
+    "hmr",
+    "state-preservation",
+    "inglorious-web"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "format": "prettier --write .",
+    "lint": "eslint .",
+    "test:watch": "vitest",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "magic-string": "^1.2.3"
+  },
+  "devDependencies": {
+    "@inglorious/eslint-config": "workspace:*",
+    "rollup": "^4.63.1",
+    "vitest": "^2.0.4"
+  },
+  "peerDependencies": {
+    "vite": "^7.1.3"
+  },
+  "engines": {
+    "node": ">= 22"
+  }
+}

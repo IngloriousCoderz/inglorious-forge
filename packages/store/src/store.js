@@ -244,6 +244,9 @@ export function createStore({
     const entitiesToDestroy = [...oldEntityIds].filter(
       (id) => !newEntityIds.has(id),
     )
+    const entitiesToUpdate = [...newEntityIds].filter((id) =>
+      oldEntityIds.has(id),
+    )
 
     state = oldEntities
     eventMap = new EventMap(types, oldEntities)
@@ -257,6 +260,17 @@ export function createStore({
     entitiesToCreate.forEach((id) => {
       const entity = newEntities[id]
       addEntity(state, { id, ...entity })
+    })
+
+    entitiesToUpdate.forEach((id) => {
+      const oldType = oldEntities[id].type
+      const newEntity = newEntities[id]
+      state[id] = newEntity
+
+      if (newEntity.type !== oldType) {
+        eventMap.removeEntity(id, types[oldType], oldType)
+        eventMap.addEntity(id, types[newEntity.type], newEntity.type)
+      }
     })
 
     if (autoCreateEntities) {

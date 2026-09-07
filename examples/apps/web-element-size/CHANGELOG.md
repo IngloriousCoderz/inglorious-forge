@@ -1,5 +1,15 @@
 # web-element-size
 
+## 0.0.5
+
+### Patch Changes
+
+- Add HMR Vite plugin
+- Updated dependencies
+  - @inglorious/store@11.0.1
+  - @inglorious/web@6.4.1
+  - @inglorious/ui@7.1.1
+
 ## 0.0.4
 
 ### Patch Changes

@@ -1,7 +1,7 @@
 {
   "name": "web-todomvc-ts",
   "private": true,
-  "version": "0.2.35",
+  "version": "0.2.36",
   "type": "module",
   "author": "IceOnFire <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -20,6 +20,7 @@
   },
   "devDependencies": {
     "@inglorious/eslint-config": "workspace:*",
+    "@inglorious/vite-plugin-hmr": "workspace:*",
     "@types/node": "^24.8.0",
     "eslint": "^9.39.1",
     "prettier": "^3.6.2",

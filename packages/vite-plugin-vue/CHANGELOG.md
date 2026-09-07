@@ -1,5 +1,11 @@
 # @inglorious/vite-plugin-vue
 
+## 1.0.2
+
+### Patch Changes
+
+- Add HMR Vite plugin
+
 ## 1.0.1
 
 ### Patch Changes

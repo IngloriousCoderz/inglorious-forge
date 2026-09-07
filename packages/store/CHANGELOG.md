@@ -1,5 +1,11 @@
 # @inglorious/store
 
+## 11.0.1
+
+### Patch Changes
+
+- Add HMR Vite plugin
+
 ## 11.0.0
 
 ### Major Changes

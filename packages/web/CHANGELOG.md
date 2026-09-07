@@ -1,5 +1,13 @@
 # @inglorious/react-store
 
+## 6.4.1
+
+### Patch Changes
+
+- Add HMR Vite plugin
+- Updated dependencies
+  - @inglorious/store@11.0.1
+
 ## 6.4.0
 
 ### Minor Changes

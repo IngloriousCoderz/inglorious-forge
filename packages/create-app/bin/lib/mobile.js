@@ -2,7 +2,7 @@ import fs from "fs"
 import { EOL } from "os"
 import path from "path"
 
-import { CAPACITOR_VERSION } from "./constants.js"
+import { CAPACITOR_VERSION, TYPESCRIPT_VERSION } from "./constants.js"
 import { toJavaIdentifier } from "./file.js"
 
 export function addMobileSupport(targetDir, pkg, projectName) {
@@ -14,8 +14,11 @@ export function addMobileSupport(targetDir, pkg, projectName) {
   pkg.devDependencies["@capacitor/android"] = CAPACITOR_VERSION
   pkg.devDependencies["@capacitor/cli"] = CAPACITOR_VERSION
   pkg.devDependencies["@capacitor/ios"] = CAPACITOR_VERSION
+  pkg.devDependencies["typescript"] = TYPESCRIPT_VERSION
 
   pkg.scripts.cap = "cap"
+  pkg.scripts["mobile:init:ios"] = "cap add ios"
+  pkg.scripts["mobile:init:android"] = "cap add android"
   pkg.scripts["mobile:sync"] = "pnpm build && cap sync"
   pkg.scripts["mobile:ios"] = "pnpm build && cap run ios"
   pkg.scripts["mobile:android"] = "pnpm build && cap run android"

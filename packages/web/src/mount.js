@@ -6,32 +6,6 @@
 import { html, render } from "lit-html"
 
 /**
- * Root-level error boundary. Unlike the per-entity `withErrorBoundary`
- * decorator (which isolates a single failing type's render), this catches
- * errors thrown by the *root* render function itself — before any entity is
- * reached (e.g. a missing router entity), or by an unguarded child.
- *
- * Without it, a throwing root render takes down the whole app: on the initial
- * pass it aborts the mount, and inside the store subscription it throws out of
- * the notify loop on every subsequent update, freezing the UI. Catching it
- * keeps the subscription alive so one bad tick can't kill the app.
- *
- * @param {(api: Api) => TemplateResult | null} renderFn
- * @param {Api} api
- * @param {(error: unknown, api: Api) => void} onError
- * @param {((error: unknown, api: Api) => TemplateResult | null) | undefined} fallback
- * @returns {{ ok: true, template: TemplateResult | null } | { ok: false, fallback: TemplateResult | null }}
- */
-function renderRoot(renderFn, api, onError, fallback) {
-  try {
-    return { ok: true, template: renderFn(api) }
-  } catch (error) {
-    onError(error, api)
-    return { ok: false, fallback: fallback ? fallback(error, api) : null }
-  }
-}
-
-/**
  * Mounts a lit-html template to the DOM and subscribes to a store for re-rendering.
  * @param {Store} store - The application state store.
  * @param {(api: Api) => TemplateResult | null} renderFn - The root render function.
@@ -44,12 +18,16 @@ function renderRoot(renderFn, api, onError, fallback) {
  * @returns {() => void} An unsubscribe function
  */
 export async function mount(store, renderFn, element, options = {}) {
-  const { onError = defaultOnError, fallback } = options
+  const {
+    onError = defaultOnError,
+    fallback,
+    hydrate: allowHydrate = true,
+  } = options
 
   const api = { ...store._api }
   api.render = createRender(api)
 
-  const shouldHydrate = element.hasChildNodes()
+  const shouldHydrate = allowHydrate && element.hasChildNodes()
 
   // If we need to hydrate, load the heavy lifting only now
   if (shouldHydrate) {
@@ -76,6 +54,32 @@ export async function mount(store, renderFn, element, options = {}) {
 
   store.notify("init")
   return unsubscribe
+}
+
+/**
+ * Root-level error boundary. Unlike the per-entity `withErrorBoundary`
+ * decorator (which isolates a single failing type's render), this catches
+ * errors thrown by the *root* render function itself — before any entity is
+ * reached (e.g. a missing router entity), or by an unguarded child.
+ *
+ * Without it, a throwing root render takes down the whole app: on the initial
+ * pass it aborts the mount, and inside the store subscription it throws out of
+ * the notify loop on every subsequent update, freezing the UI. Catching it
+ * keeps the subscription alive so one bad tick can't kill the app.
+ *
+ * @param {(api: Api) => TemplateResult | null} renderFn
+ * @param {Api} api
+ * @param {(error: unknown, api: Api) => void} onError
+ * @param {((error: unknown, api: Api) => TemplateResult | null) | undefined} fallback
+ * @returns {{ ok: true, template: TemplateResult | null } | { ok: false, fallback: TemplateResult | null }}
+ */
+function renderRoot(renderFn, api, onError, fallback) {
+  try {
+    return { ok: true, template: renderFn(api) }
+  } catch (error) {
+    onError(error, api)
+    return { ok: false, fallback: fallback ? fallback(error, api) : null }
+  }
 }
 
 /**
