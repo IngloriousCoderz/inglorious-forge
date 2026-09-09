@@ -1,4 +1,3 @@
-// @inglorious/vite-plugin-hmr/index.js
 import { readFileSync } from "node:fs"
 
 import { parse as parseBabel } from "@babel/parser"
@@ -8,32 +7,27 @@ import MagicString from "magic-string"
  * Creates the Vite plugin that adds Hot Module Reloading support for
  * apps built with @inglorious/web.
  *
- * Two independent HMR boundaries are set up:
+ * Individual type files (e.g. Footer.js) get their own self-accept that
+ * patches the running store in place via `store.setType()` — no store
+ * recreation, no state loss, because nothing was ever torn down. The
+ * running store instance is looked up through a global registry
+ * (`globalThis.__INGLORIOUS_HMR_STORE__`) rather than imported —
+ * importing store.js from a type file would create a circular import,
+ * and Vite forces a full page reload for any HMR update touching a
+ * circular import, silently defeating this boundary.
  *
- * 1. Individual type files (e.g. Footer.js) get their own self-accept
- *    that patches the running store in place via `store.setType()`.
- *    The running store instance is looked up through a global registry
- *    (`globalThis.__INGLORIOUS_HMR_STORE__`) rather than imported —
- *    importing store.js from a type file would create a circular import
- *    (store.js -> types -> this file -> store.js), and Vite forces a
- *    full page reload for any HMR update touching a circular import, which
- *    would silently defeat this entire boundary.
- * 2. The app's `mount(store, render, element)` call is the fallback
- *    boundary for everything else (entities seed data, store config) —
- *    recreate the store, restore its state, except when the change comes
- *    from the seed itself.
- *
- * Both are best-effort: anything that can't be resolved statically
- * (dynamic type registries, computed properties, non-literal configs)
- * simply doesn't get the optimization — it falls through to the next
- * boundary up, down to a plain full reload in the worst case. Never a
- * hard failure.
+ * Anything that isn't a resolved type file (entities.js, store.js
+ * itself, the types index, or anything unresolvable statically) has no
+ * dedicated boundary and simply falls through to Vite's own default: a
+ * full page reload. That's the correct outcome for those files anyway —
+ * they define what a fresh session should look like, so a fresh session
+ * (a reload) is exactly right, and it comes for free without any restore
+ * machinery to get wrong.
  *
  * @returns {import("vite").Plugin}
  */
 export function hmr() {
   let isServe = false
-  let seedFilePath = null
   /** @type {Map<string, { typeName: string, exportName: string }>} */
   let typeFileMap = new Map()
 
@@ -68,24 +62,13 @@ export function hmr() {
           ? await resolveStoreFilePath(this, ast, storeArg.name, id)
           : null
 
-      seedFilePath = storeFilePath
-        ? await resolveSeedFile(this, storeFilePath)
-        : null
-
       typeFileMap = storeFilePath
         ? await resolveTypeFiles(this, storeFilePath)
         : new Map()
 
-      return rewrite(code, mountCall, Boolean(seedFilePath))
-    },
+      if (storeArg?.type !== "Identifier") return null
 
-    // Runs server-side, once per changed file, with the actual file path
-    // Vite detected on disk — used only for the mount()-level boundary;
-    // type files handle their own updates via self-accept.
-    handleHotUpdate(ctx) {
-      if (seedFilePath && ctx.file === seedFilePath) {
-        ctx.server.ws.send({ type: "custom", event: "inglorious:seed-changed" })
-      }
+      return registerStoreGlobally(code, mountCall)
     },
   }
 }
@@ -99,7 +82,7 @@ function findImportName(ast, source, importedName) {
         specifier.type === "ImportSpecifier" &&
         specifier.imported.name === importedName
       ) {
-        return specifier.local.name // handles `import { mount as m }` too
+        return specifier.local.name
       }
     }
   }
@@ -120,12 +103,6 @@ function findTopLevelMountCall(ast, mountLocalName) {
   return null
 }
 
-/**
- * Like a plain "find the import source for this local name" lookup, but
- * also returns the *exported* name from the source module — needed
- * because the local binding name and the actual export name can differ
- * (aliased imports, default imports).
- */
 function findImportInfoForLocal(ast, localName) {
   for (const node of ast.body) {
     if (node.type !== "ImportDeclaration") continue
@@ -183,18 +160,6 @@ async function resolveStoreFilePath(
   return resolved?.id ?? null
 }
 
-/**
- * Finds `createStore({ ..., [propName]: identifier, ... })` in a top-level
- * variable declaration and returns the identifier's local name — only if
- * the value is a plain identifier. Returns null for object literals,
- * spreads, computed keys, or anything else that can't be traced to an
- * import statically.
- */
-function findConfigPropertyIdentifier(ast, createStoreLocalName, propName) {
-  const value = findConfigPropertyValue(ast, createStoreLocalName, propName)
-  return value?.type === "Identifier" ? value.name : null
-}
-
 function findConfigPropertyValue(ast, createStoreLocalName, propName) {
   for (const node of ast.body) {
     const decl =
@@ -225,46 +190,10 @@ function findConfigPropertyValue(ast, createStoreLocalName, propName) {
 }
 
 /**
- * Resolves which file's changes should skip the HMR state restore for the
- * mount()-level boundary. Tries the dedicated entities file first, falls
- * back to the whole store module if entities is inline or unresolvable.
- */
-async function resolveSeedFile(pluginContext, storeFileId) {
-  const entitiesFile = await resolveEntitiesFile(pluginContext, storeFileId)
-  return entitiesFile ?? storeFileId
-}
-
-async function resolveEntitiesFile(pluginContext, storeFileId) {
-  const storeAst = parseFile(pluginContext, storeFileId)
-  if (!storeAst) return null
-
-  const createStoreLocalName = findImportName(
-    storeAst,
-    "@inglorious/store",
-    "createStore",
-  )
-  if (!createStoreLocalName) return null
-
-  const entitiesLocalName = findConfigPropertyIdentifier(
-    storeAst,
-    createStoreLocalName,
-    "entities",
-  )
-  if (!entitiesLocalName) return null
-
-  const importInfo = findImportInfoForLocal(storeAst, entitiesLocalName)
-  if (!importInfo) return null
-
-  const resolved = await pluginContext.resolve(importInfo.source, storeFileId)
-  return resolved?.id ?? null
-}
-
-/**
  * Resolves the individual type files behind createStore({ types }), so
  * each one can become its own HMR boundary.
  *
  * @returns {Promise<Map<string, { typeName: string, exportName: string }>>}
- *   Keyed by each type file's resolved absolute path.
  */
 async function resolveTypeFiles(pluginContext, storeFileId) {
   const map = new Map()
@@ -331,11 +260,6 @@ async function resolveTypeFiles(pluginContext, storeFileId) {
   return map
 }
 
-/**
- * Finds `export const <exportName> = { key: value, ... }` (or the default
- * export equivalent) and returns [key, localValueName] pairs for
- * properties whose value is a plain identifier.
- */
 function findExportedObjectEntries(ast, exportName) {
   for (const node of ast.body) {
     let objectExpr = null
@@ -373,12 +297,6 @@ function findObjectEntries(objectExpr) {
     .map((prop) => [prop.key.name ?? prop.key.value, prop.value.name])
 }
 
-/**
- * Injects a self-accept boundary into a type file. Deliberately does NOT
- * import the store module — see the module-level doc comment for why.
- * Looks up the running store through a global registry instead, which the
- * mount()-level rewrite populates.
- */
 function rewriteTypeModule(code, typeInfo) {
   const { typeName, exportName } = typeInfo
   const s = new MagicString(code)
@@ -397,62 +315,24 @@ if (import.meta.hot) {
   return { code: s.toString(), map: s.generateMap({ hires: true }) }
 }
 
-function rewrite(code, mountCall, hasSeedFile) {
-  const s = new MagicString(code)
-  const [storeArg, renderArg, elementArg, optionsArg] = mountCall.arguments
-
+/**
+ * Registers the running store instance globally, so type files can find
+ * it without importing store.js (which would create a circular import).
+ * Deliberately does NOT touch the mount() call itself — no self-accept,
+ * no options injected, no rewritten arguments. main.js is not an HMR
+ * boundary anymore; anything that reaches it falls through to a plain
+ * full reload, which is the correct outcome for structural changes.
+ */
+function registerStoreGlobally(code, mountCall) {
+  const [storeArg] = mountCall.arguments
   const storeSrc = code.slice(storeArg.start, storeArg.end)
-  const renderSrc = code.slice(renderArg.start, renderArg.end)
-  const elementSrc = code.slice(elementArg.start, elementArg.end)
-  const optionsSrc = optionsArg
-    ? code.slice(optionsArg.start, optionsArg.end)
-    : "{}"
 
-  const seedTracking = hasSeedFile
-    ? `
-let __hmrPendingSkipRestore = false
-if (import.meta.hot) {
-  import.meta.hot.on("inglorious:seed-changed", () => {
-    __hmrPendingSkipRestore = true
-  })
-}
-`
-    : ""
-
+  const s = new MagicString(code)
   s.appendLeft(
     mountCall.start,
-    `const __hmrStore = ${storeSrc}
-const __hmrRender = ${renderSrc}
-const __hmrElement = ${elementSrc}
-${seedTracking}
-const __hmrAlreadyMounted = Boolean(import.meta.hot?.data?.mounted)
-const __hmrRestoredState = import.meta.hot?.data?.state
-const __hmrSkipRestore = Boolean(import.meta.hot?.data?.skipRestore)
-if (__hmrRestoredState && !__hmrSkipRestore) __hmrStore.setState(__hmrRestoredState)
+    `if (import.meta.hot) globalThis.__INGLORIOUS_HMR_STORE__ = ${storeSrc}
 
 `,
-  )
-
-  s.overwrite(
-    mountCall.start,
-    mountCall.end,
-    `mount(__hmrStore, __hmrRender, __hmrElement, { ...(${optionsSrc}), hydrate: !__hmrAlreadyMounted })`,
-  )
-
-  s.appendRight(
-    mountCall.end,
-    `
-
-if (import.meta.hot) {
-  globalThis.__INGLORIOUS_HMR_STORE__ = __hmrStore
-  import.meta.hot.data.mounted = true
-  import.meta.hot.dispose((data) => {
-    data.mounted = true
-    data.state = __hmrStore.getState()
-    data.skipRestore = ${hasSeedFile ? "__hmrPendingSkipRestore" : "false"}
-  })
-  import.meta.hot.accept()
-}`,
   )
 
   return { code: s.toString(), map: s.generateMap({ hires: true }) }

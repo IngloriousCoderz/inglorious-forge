@@ -62,7 +62,7 @@ describe("@inglorious/vite-plugin-hmr", () => {
 
     expect(plugin.name).toBe("@inglorious/vite-plugin-hmr")
     expect(typeof plugin.transform).toBe("function")
-    expect(typeof plugin.handleHotUpdate).toBe("function")
+    expect(plugin.handleHotUpdate).toBeUndefined()
   })
 
   it("skips transformation outside of dev/serve mode", async () => {
@@ -117,12 +117,12 @@ describe("@inglorious/vite-plugin-hmr", () => {
     ).resolves.toBe(null)
   })
 
-  it("injects HMR bootstrap around a top-level mount() call", async () => {
+  it("registers the running store globally before mount()", async () => {
     const plugin = hmr()
     plugin.configResolved({ command: "serve" })
 
     readFileSync.mockImplementation(() => {
-      throw new Error("ENOENT") // store.js not reachable in this test
+      throw new Error("ENOENT")
     })
 
     const context = createContext(
@@ -131,20 +131,34 @@ describe("@inglorious/vite-plugin-hmr", () => {
 
     const result = await plugin.transform.call(context, MAIN_CODE, "main.js")
 
-    expect(result.code).toContain("const __hmrStore = store")
-    expect(result.code).toContain("const __hmrRender = render")
-    expect(result.code).toContain("const __hmrElement = element")
+    expect(result).not.toBeNull()
     expect(result.code).toContain(
-      "mount(__hmrStore, __hmrRender, __hmrElement,",
+      "if (import.meta.hot) globalThis.__INGLORIOUS_HMR_STORE__ = store",
     )
-    expect(result.code).toContain(
-      "globalThis.__INGLORIOUS_HMR_STORE__ = __hmrStore",
-    )
-    expect(result.code).toContain("import.meta.hot.dispose")
-    expect(result.code).toContain("import.meta.hot.accept()")
+    expect(result.code).toContain("mount(store, render, element)")
+    expect(result.code).not.toContain("inglorious:seed-changed")
   })
 
-  it("parses TypeScript-only import syntax", async () => {
+  it("does not register or evaluate the store twice for a non-identifier mount() argument", async () => {
+    const plugin = hmr()
+    plugin.configResolved({ command: "serve" })
+
+    const context = createContext()
+    const code = `
+    import { createStore } from "@inglorious/store"
+    import { mount } from "@inglorious/web"
+    import { render } from "./app"
+
+    const element = document.getElementById("root")
+    mount(createStore({ types: {}, entities: {} }), render, element)
+  `
+
+    await expect(plugin.transform.call(context, code, "main.js")).resolves.toBe(
+      null,
+    )
+  })
+
+  it("parses TypeScript-only import syntax without changing the mount call", async () => {
     const plugin = hmr()
     plugin.configResolved({ command: "serve" })
 
@@ -165,108 +179,13 @@ describe("@inglorious/vite-plugin-hmr", () => {
 
     const result = await plugin.transform.call(context, code, "main.ts")
 
-    expect(result.code).toContain("const __hmrStore = store")
-    expect(result.code).toContain('"inglorious:seed-changed"')
-  })
-
-  it("resolves the dedicated entities file when createStore imports it", async () => {
-    const plugin = hmr()
-    plugin.configResolved({ command: "serve" })
-
-    readFileSync.mockImplementation((filePath) =>
-      filePath === "/project/src/store.js"
-        ? STORE_CODE
-        : (() => {
-            throw new Error("ENOENT")
-          })(),
+    expect(result).not.toBeNull()
+    expect(result.code).toContain(
+      "if (import.meta.hot) globalThis.__INGLORIOUS_HMR_STORE__ = store",
     )
-
-    const context = createContext(resolveMap(RESOLVE_MAP))
-
-    await plugin.transform.call(context, MAIN_CODE, "main.js")
-
-    const send = vi.fn()
-    plugin.handleHotUpdate({
-      file: "/project/src/entities.js",
-      server: { ws: { send } },
-    })
-
-    expect(send).toHaveBeenCalledWith({
-      type: "custom",
-      event: "inglorious:seed-changed",
-    })
-  })
-
-  it("falls back to watching the whole store module when entities is inline", async () => {
-    const plugin = hmr()
-    plugin.configResolved({ command: "serve" })
-
-    readFileSync.mockReturnValue(`
-      import { createStore } from "@inglorious/store"
-
-      export const store = createStore({ entities: { tasks: [] } })
-    `)
-
-    const context = createContext(
-      resolveMap({ "./store": "/project/src/store.js" }),
+    expect(result.code).toContain(
+      'mount(store, render, document.getElementById("root")!)',
     )
-
-    await plugin.transform.call(context, MAIN_CODE, "main.js")
-
-    const send = vi.fn()
-    plugin.handleHotUpdate({
-      file: "/project/src/store.js",
-      server: { ws: { send } },
-    })
-
-    expect(send).toHaveBeenCalledWith({
-      type: "custom",
-      event: "inglorious:seed-changed",
-    })
-  })
-
-  it("does not notify for files unrelated to the resolved seed", async () => {
-    const plugin = hmr()
-    plugin.configResolved({ command: "serve" })
-
-    readFileSync.mockImplementation(() => {
-      throw new Error("ENOENT")
-    })
-
-    const context = createContext(
-      resolveMap({ "./store": "/project/src/store.js" }),
-    )
-
-    await plugin.transform.call(context, MAIN_CODE, "main.js")
-
-    const send = vi.fn()
-    plugin.handleHotUpdate({
-      file: "/project/src/some-unrelated-component.js",
-      server: { ws: { send } },
-    })
-
-    expect(send).not.toHaveBeenCalled()
-  })
-
-  it("skips seed tracking when mount()'s store argument isn't a plain identifier", async () => {
-    const plugin = hmr()
-    plugin.configResolved({ command: "serve" })
-
-    const context = createContext()
-
-    const code = `
-      import { createStore } from "@inglorious/store"
-      import { mount } from "@inglorious/web"
-      import { render } from "./app"
-
-      const element = document.getElementById("root")
-      mount(createStore({ types: {}, entities: {} }), render, element)
-    `
-
-    const result = await plugin.transform.call(context, code, "main.js")
-
-    expect(result.code).not.toContain("inglorious:seed-changed")
-    expect(result.code).toContain("data.skipRestore = false")
   })
 
   describe("per-type HMR boundary", () => {
@@ -306,7 +225,7 @@ describe("@inglorious/vite-plugin-hmr", () => {
       expect(result.code).toContain("globalThis.__INGLORIOUS_HMR_STORE__")
     })
 
-    it("does not introduce an import of the store module (would create a cycle)", async () => {
+    it("does not import the store module in the type boundary", async () => {
       const { plugin, context } = await setupWithTypes()
 
       const footerCode = `
@@ -323,8 +242,18 @@ describe("@inglorious/vite-plugin-hmr", () => {
       expect(result.code).not.toMatch(/from\s+["']\.\.?\/.*store/)
     })
 
-    it("leaves files not resolved as type files untouched by the per-type path", async () => {
-      const { plugin, context } = await setupWithTypes()
+    it("leaves files not resolved as type files untouched", async () => {
+      const plugin = hmr()
+      plugin.configResolved({ command: "serve" })
+
+      readFileSync.mockImplementation((filePath) => {
+        if (filePath === "/project/src/store.js") return STORE_CODE
+        if (filePath === "/project/src/types/index.js") return TYPES_CODE
+        throw new Error("ENOENT")
+      })
+
+      const context = createContext(resolveMap(RESOLVE_MAP))
+      await plugin.transform.call(context, MAIN_CODE, "main.js")
 
       const code = `console.log("just a helper, not a type")`
 
@@ -364,10 +293,11 @@ describe("@inglorious/vite-plugin-hmr", () => {
         "/project/src/footer/footer.js",
       )
 
+      expect(result).not.toBeNull()
       expect(result.code).toContain('store.setType("Footer", nextType)')
     })
 
-    it("falls back to the mount() boundary when types can't be resolved statically", async () => {
+    it("falls back to the root mount registration when types can't be resolved statically", async () => {
       const plugin = hmr()
       plugin.configResolved({ command: "serve" })
 
@@ -383,10 +313,11 @@ describe("@inglorious/vite-plugin-hmr", () => {
 
       const result = await plugin.transform.call(context, MAIN_CODE, "main.js")
 
-      // No crash, mount() boundary still gets its usual treatment
+      expect(result).not.toBeNull()
       expect(result.code).toContain(
-        "mount(__hmrStore, __hmrRender, __hmrElement,",
+        "if (import.meta.hot) globalThis.__INGLORIOUS_HMR_STORE__ = store",
       )
+      expect(result.code).toContain("mount(store, render, element)")
     })
   })
 })
