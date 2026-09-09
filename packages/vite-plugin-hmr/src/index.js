@@ -1,26 +1,41 @@
+// @inglorious/vite-plugin-hmr/index.js
 import { readFileSync } from "node:fs"
 
-import { parse as parseTypeScript } from "@babel/parser"
+import { parse as parseBabel } from "@babel/parser"
 import MagicString from "magic-string"
 
 /**
  * Creates the Vite plugin that adds Hot Module Reloading support for
  * apps built with @inglorious/web.
  *
- * It finds the app's `mount(store, render, element)` call and rewrites it
- * to preserve store state across hot updates, except when the change comes
- * from whatever seeds the store's initial entities — in that case, a fresh
- * start is the correct behavior, so the previous state is not restored.
+ * Two independent HMR boundaries are set up:
+ *
+ * 1. Individual type files (e.g. Footer.js) get their own self-accept
+ *    that patches the running store in place via `store.setType()`.
+ *    The running store instance is looked up through a global registry
+ *    (`globalThis.__INGLORIOUS_HMR_STORE__`) rather than imported —
+ *    importing store.js from a type file would create a circular import
+ *    (store.js -> types -> this file -> store.js), and Vite forces a
+ *    full page reload for any HMR update touching a circular import, which
+ *    would silently defeat this entire boundary.
+ * 2. The app's `mount(store, render, element)` call is the fallback
+ *    boundary for everything else (entities seed data, store config) —
+ *    recreate the store, restore its state, except when the change comes
+ *    from the seed itself.
+ *
+ * Both are best-effort: anything that can't be resolved statically
+ * (dynamic type registries, computed properties, non-literal configs)
+ * simply doesn't get the optimization — it falls through to the next
+ * boundary up, down to a plain full reload in the worst case. Never a
+ * hard failure.
  *
  * @returns {import("vite").Plugin}
  */
 export function hmr() {
   let isServe = false
-  /** Absolute path of the file whose changes should NOT trigger a state
-   *  restore (the store's seed data). Resolved once, during transform of
-   *  the entry file. Null if it couldn't be determined statically — in
-   *  that case the plugin always restores state, which is the safe default. */
   let seedFilePath = null
+  /** @type {Map<string, { typeName: string, exportName: string }>} */
+  let typeFileMap = new Map()
 
   return {
     name: "@inglorious/vite-plugin-hmr",
@@ -32,9 +47,14 @@ export function hmr() {
     async transform(code, id) {
       if (!isServe) return null
       if (!/\.[jt]sx?$/.test(id)) return null
-      if (!code.includes("@inglorious/web")) return null // cheap bail before parsing
 
-      const ast = parseModule(this, code, id)
+      if (typeFileMap.has(id)) {
+        return rewriteTypeModule(code, typeFileMap.get(id))
+      }
+
+      if (!code.includes("@inglorious/web")) return null
+
+      const ast = parseCode(this, code)
 
       const mountLocalName = findImportName(ast, "@inglorious/web", "mount")
       if (!mountLocalName) return null
@@ -42,20 +62,30 @@ export function hmr() {
       const mountCall = findTopLevelMountCall(ast, mountLocalName)
       if (!mountCall) return null
 
-      seedFilePath = await resolveSeedFile(this, ast, mountCall, id)
+      const [storeArg] = mountCall.arguments
+      const storeFilePath =
+        storeArg?.type === "Identifier"
+          ? await resolveStoreFilePath(this, ast, storeArg.name, id)
+          : null
+
+      seedFilePath = storeFilePath
+        ? await resolveSeedFile(this, storeFilePath)
+        : null
+
+      typeFileMap = storeFilePath
+        ? await resolveTypeFiles(this, storeFilePath)
+        : new Map()
 
       return rewrite(code, mountCall, Boolean(seedFilePath))
     },
 
     // Runs server-side, once per changed file, with the actual file path
-    // Vite detected on disk — no ambiguity about which file this is,
-    // unlike the client-side HMR payload (see note below).
+    // Vite detected on disk — used only for the mount()-level boundary;
+    // type files handle their own updates via self-accept.
     handleHotUpdate(ctx) {
       if (seedFilePath && ctx.file === seedFilePath) {
         ctx.server.ws.send({ type: "custom", event: "inglorious:seed-changed" })
       }
-      // Returning nothing lets Vite's normal HMR propagation continue
-      // unchanged; this hook only adds a side-channel notification.
     },
   }
 }
@@ -90,105 +120,82 @@ function findTopLevelMountCall(ast, mountLocalName) {
   return null
 }
 
-function findImportSourceForLocal(ast, localName) {
+/**
+ * Like a plain "find the import source for this local name" lookup, but
+ * also returns the *exported* name from the source module — needed
+ * because the local binding name and the actual export name can differ
+ * (aliased imports, default imports).
+ */
+function findImportInfoForLocal(ast, localName) {
   for (const node of ast.body) {
     if (node.type !== "ImportDeclaration") continue
     for (const specifier of node.specifiers) {
-      if (specifier.local.name === localName) return node.source.value
+      if (specifier.local.name !== localName) continue
+      if (specifier.type === "ImportDefaultSpecifier") {
+        return { source: node.source.value, exportName: "default" }
+      }
+      if (specifier.type === "ImportSpecifier") {
+        return {
+          source: node.source.value,
+          exportName: specifier.imported.name,
+        }
+      }
     }
   }
   return null
 }
 
-/**
- * Resolves which file's changes should skip the HMR state restore.
- *
- * Tries, in order:
- *  1. The specific file `entities` is imported from, if `store.js` calls
- *     createStore({ ..., entities, ... }) with `entities` as an imported
- *     identifier (the common case — a dedicated entities.js file).
- *  2. The store module itself (`store.js`), if `entities` can't be traced
- *     to an external import — covers inline seed data, e.g.
- *     createStore({ entities: { ... } }).
- *  3. null, if even the store module can't be resolved — disables this
- *     feature entirely rather than guessing wrong.
- */
-async function resolveSeedFile(pluginContext, mainAst, mountCall, mainId) {
-  const [storeArg] = mountCall.arguments
-  if (storeArg?.type !== "Identifier") return null
-
-  const storeImportSource = findImportSourceForLocal(mainAst, storeArg.name)
-  if (!storeImportSource) return null
-
-  const resolvedStore = await pluginContext.resolve(storeImportSource, mainId)
-  if (!resolvedStore) return null
-
-  const entitiesFile = await resolveEntitiesFile(
-    pluginContext,
-    resolvedStore.id,
-  )
-
-  return entitiesFile ?? resolvedStore.id
-}
-
-/**
- * Attempts step 1 above: find createStore({ entities }) inside the store
- * module and resolve the file `entities` comes from. Returns null if the
- * call, the property, or the import can't be found statically — the
- * caller falls back to watching the store module as a whole.
- */
-async function resolveEntitiesFile(pluginContext, storeFileId) {
-  let storeCode
+function parseFile(pluginContext, fileId) {
+  let code
   try {
-    storeCode = readFileSync(storeFileId, "utf-8")
+    code = readFileSync(fileId, "utf-8")
   } catch {
     return null
   }
-
-  const storeAst = parseModule(pluginContext, storeCode, storeFileId)
-
-  const createStoreLocalName = findImportName(
-    storeAst,
-    "@inglorious/store",
-    "createStore",
-  )
-  if (!createStoreLocalName) return null
-
-  const entitiesLocalName = findEntitiesArgName(storeAst, createStoreLocalName)
-  if (!entitiesLocalName) return null
-
-  const entitiesImportSource = findImportSourceForLocal(
-    storeAst,
-    entitiesLocalName,
-  )
-  if (!entitiesImportSource) return null
-
-  const resolvedEntities = await pluginContext.resolve(
-    entitiesImportSource,
-    storeFileId,
-  )
-  return resolvedEntities?.id ?? null
+  try {
+    return parseCode(pluginContext, code)
+  } catch {
+    return null
+  }
 }
 
-function parseModule(pluginContext, code, id) {
-  if (!/\.tsx?$/.test(id)) return pluginContext.parse(code)
+function parseCode(pluginContext, code) {
+  try {
+    return pluginContext.parse(code)
+  } catch {
+    return parseBabel(code, {
+      sourceType: "module",
+      plugins: ["typescript", "jsx", "estree"],
+    }).program
+  }
+}
 
-  return parseTypeScript(code, {
-    sourceType: "module",
-    plugins: ["typescript", "jsx"],
-  }).program
+async function resolveStoreFilePath(
+  pluginContext,
+  mainAst,
+  storeLocalName,
+  mainId,
+) {
+  const importInfo = findImportInfoForLocal(mainAst, storeLocalName)
+  if (!importInfo) return null
+
+  const resolved = await pluginContext.resolve(importInfo.source, mainId)
+  return resolved?.id ?? null
 }
 
 /**
- * Finds `createStore({ ..., entities, ... })` in a top-level variable
- * declaration (including `export const store = createStore(...)`) and
- * returns the local name bound to its `entities` property — only if that
- * value is an identifier (imported or locally defined). Returns null for
- * anything else (inline object literal, spread, computed key, etc.),
- * which is exactly the signal the caller uses to fall back to watching
- * the whole store module instead.
+ * Finds `createStore({ ..., [propName]: identifier, ... })` in a top-level
+ * variable declaration and returns the identifier's local name — only if
+ * the value is a plain identifier. Returns null for object literals,
+ * spreads, computed keys, or anything else that can't be traced to an
+ * import statically.
  */
-function findEntitiesArgName(ast, createStoreLocalName) {
+function findConfigPropertyIdentifier(ast, createStoreLocalName, propName) {
+  const value = findConfigPropertyValue(ast, createStoreLocalName, propName)
+  return value?.type === "Identifier" ? value.name : null
+}
+
+function findConfigPropertyValue(ast, createStoreLocalName, propName) {
   for (const node of ast.body) {
     const decl =
       node.type === "ExportNamedDeclaration" ? node.declaration : node
@@ -210,13 +217,184 @@ function findEntitiesArgName(ast, createStoreLocalName) {
       for (const prop of configArg.properties) {
         if (prop.type !== "Property") continue
         const keyName = prop.key.name ?? prop.key.value
-        if (keyName === "entities" && prop.value.type === "Identifier") {
-          return prop.value.name
-        }
+        if (keyName === propName) return prop.value
       }
     }
   }
   return null
+}
+
+/**
+ * Resolves which file's changes should skip the HMR state restore for the
+ * mount()-level boundary. Tries the dedicated entities file first, falls
+ * back to the whole store module if entities is inline or unresolvable.
+ */
+async function resolveSeedFile(pluginContext, storeFileId) {
+  const entitiesFile = await resolveEntitiesFile(pluginContext, storeFileId)
+  return entitiesFile ?? storeFileId
+}
+
+async function resolveEntitiesFile(pluginContext, storeFileId) {
+  const storeAst = parseFile(pluginContext, storeFileId)
+  if (!storeAst) return null
+
+  const createStoreLocalName = findImportName(
+    storeAst,
+    "@inglorious/store",
+    "createStore",
+  )
+  if (!createStoreLocalName) return null
+
+  const entitiesLocalName = findConfigPropertyIdentifier(
+    storeAst,
+    createStoreLocalName,
+    "entities",
+  )
+  if (!entitiesLocalName) return null
+
+  const importInfo = findImportInfoForLocal(storeAst, entitiesLocalName)
+  if (!importInfo) return null
+
+  const resolved = await pluginContext.resolve(importInfo.source, storeFileId)
+  return resolved?.id ?? null
+}
+
+/**
+ * Resolves the individual type files behind createStore({ types }), so
+ * each one can become its own HMR boundary.
+ *
+ * @returns {Promise<Map<string, { typeName: string, exportName: string }>>}
+ *   Keyed by each type file's resolved absolute path.
+ */
+async function resolveTypeFiles(pluginContext, storeFileId) {
+  const map = new Map()
+
+  const storeAst = parseFile(pluginContext, storeFileId)
+  if (!storeAst) return map
+
+  const createStoreLocalName = findImportName(
+    storeAst,
+    "@inglorious/store",
+    "createStore",
+  )
+  if (!createStoreLocalName) return map
+
+  const typesValue = findConfigPropertyValue(
+    storeAst,
+    createStoreLocalName,
+    "types",
+  )
+  if (!typesValue) return map
+
+  let typesAst
+  let typesFileId
+  let entries
+
+  if (typesValue.type === "Identifier") {
+    const typesImportInfo = findImportInfoForLocal(storeAst, typesValue.name)
+    if (!typesImportInfo) return map
+
+    const resolvedTypesFile = await pluginContext.resolve(
+      typesImportInfo.source,
+      storeFileId,
+    )
+    if (!resolvedTypesFile) return map
+
+    typesFileId = resolvedTypesFile.id
+    typesAst = parseFile(pluginContext, typesFileId)
+    if (!typesAst) return map
+    entries = findExportedObjectEntries(typesAst, typesImportInfo.exportName)
+  } else if (typesValue.type === "ObjectExpression") {
+    typesAst = storeAst
+    typesFileId = storeFileId
+    entries = findObjectEntries(typesValue)
+  } else {
+    return map
+  }
+
+  for (const [typeName, localName] of entries) {
+    const importInfo = findImportInfoForLocal(typesAst, localName)
+    if (!importInfo) continue
+
+    const resolvedTypeFile = await pluginContext.resolve(
+      importInfo.source,
+      typesFileId,
+    )
+    if (!resolvedTypeFile) continue
+
+    map.set(resolvedTypeFile.id, {
+      typeName,
+      exportName: importInfo.exportName,
+    })
+  }
+
+  return map
+}
+
+/**
+ * Finds `export const <exportName> = { key: value, ... }` (or the default
+ * export equivalent) and returns [key, localValueName] pairs for
+ * properties whose value is a plain identifier.
+ */
+function findExportedObjectEntries(ast, exportName) {
+  for (const node of ast.body) {
+    let objectExpr = null
+
+    if (exportName === "default" && node.type === "ExportDefaultDeclaration") {
+      objectExpr = node.declaration
+    }
+
+    if (
+      node.type === "ExportNamedDeclaration" &&
+      node.declaration?.type === "VariableDeclaration"
+    ) {
+      for (const declarator of node.declaration.declarations) {
+        if (
+          declarator.id.type === "Identifier" &&
+          declarator.id.name === exportName
+        ) {
+          objectExpr = declarator.init
+        }
+      }
+    }
+
+    if (objectExpr?.type === "ObjectExpression") {
+      return findObjectEntries(objectExpr)
+    }
+  }
+  return []
+}
+
+function findObjectEntries(objectExpr) {
+  return objectExpr.properties
+    .filter(
+      (prop) => prop.type === "Property" && prop.value.type === "Identifier",
+    )
+    .map((prop) => [prop.key.name ?? prop.key.value, prop.value.name])
+}
+
+/**
+ * Injects a self-accept boundary into a type file. Deliberately does NOT
+ * import the store module — see the module-level doc comment for why.
+ * Looks up the running store through a global registry instead, which the
+ * mount()-level rewrite populates.
+ */
+function rewriteTypeModule(code, typeInfo) {
+  const { typeName, exportName } = typeInfo
+  const s = new MagicString(code)
+
+  s.append(`
+
+if (import.meta.hot) {
+  import.meta.hot.accept((mod) => {
+    const nextType = mod?.[${JSON.stringify(exportName)}]
+    const store = globalThis.__INGLORIOUS_HMR_STORE__
+    if (nextType && store) store.setType(${JSON.stringify(typeName)}, nextType)
+  })
+}
+`)
+
+  return { code: s.toString(), map: s.generateMap({ hires: true }) }
 }
 
 function rewrite(code, mountCall, hasSeedFile) {
@@ -266,6 +444,7 @@ if (__hmrRestoredState && !__hmrSkipRestore) __hmrStore.setState(__hmrRestoredSt
     `
 
 if (import.meta.hot) {
+  globalThis.__INGLORIOUS_HMR_STORE__ = __hmrStore
   import.meta.hot.data.mounted = true
   import.meta.hot.dispose((data) => {
     data.mounted = true
