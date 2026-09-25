@@ -1,7 +1,7 @@
 /**
- * @typedef {import("../../types/math").Vector} Vector
- * @typedef {import("../../types/math").Vector2} Vector2
- * @typedef {import("../../types/math").Vector3} Vector3
+ * @typedef {import("../../types/math/vector").Vector} Vector
+ * @typedef {import("../../types/math/vector").Vector2} Vector2
+ * @typedef {import("../../types/math/vector").Vector3} Vector3
  */
 
 import { v } from "../v.js"

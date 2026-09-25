@@ -1,5 +1,5 @@
 /**
- * @typedef {import("../../types/math").Vector3} Vector3
+ * @typedef {import("../../types/math/vector").Vector3} Vector3
  */
 
 import { magnitude, setMagnitude, zero } from "../math/vector.js"

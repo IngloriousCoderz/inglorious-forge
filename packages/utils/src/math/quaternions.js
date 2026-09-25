@@ -1,5 +1,5 @@
 /**
- * @typedef {import("../../types/math").Quaternion} Quaternion
+ * @typedef {import("../../types/math/quaternion").Quaternion} Quaternion
  */
 
 import { v } from "../v.js"

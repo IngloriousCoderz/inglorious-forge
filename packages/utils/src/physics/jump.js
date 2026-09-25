@@ -1,7 +1,3 @@
-/**
- * @typedef {import("../../types/math").Vector3} Vector3
- */
-
 /* eslint-disable no-magic-numbers */
 
 const DEFAULT_MAX_JUMP = 0 // Default maximum jump height.

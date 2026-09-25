@@ -1,5 +1,0 @@
-export * as acceleration from "./physics/acceleration"
-export * as friction from "./physics/friction"
-export * as gravity from "./physics/gravity"
-export * as jump from "./physics/jump"
-export * as velocity from "./physics/velocity"

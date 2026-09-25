@@ -7,6 +7,7 @@ import {
   downLeft,
   downRight,
   left,
+  neighbors,
   right,
   toString,
   up,
@@ -132,6 +133,43 @@ test("it should not return coordinates to the left if cell is leftmost", () => {
   const coordinates = [3, 0]
 
   expect(() => left(coordinates, size)).toThrow()
+})
+
+test("it should return the coordinates neighboring an interior cell", () => {
+  const size = [4, 5]
+  const coordinates = [2, 3]
+  const expectedResult = [
+    [1, 2],
+    [1, 3],
+    [1, 4],
+    [2, 2],
+    [2, 4],
+    [3, 2],
+    [3, 3],
+    [3, 4],
+  ]
+
+  expect(neighbors(coordinates, size)).toStrictEqual(expectedResult)
+})
+
+test("it should return only existing coordinates neighboring a corner cell", () => {
+  const size = [4, 5]
+  const coordinates = [0, 4]
+  const expectedResult = [
+    [0, 3],
+    [1, 3],
+    [1, 4],
+  ]
+
+  expect(neighbors(coordinates, size)).toStrictEqual(expectedResult)
+})
+
+test("it should return no neighbors for a board with one cell", () => {
+  const size = [1, 1]
+  const coordinates = [0, 0]
+  const expectedResult = []
+
+  expect(neighbors(coordinates, size)).toStrictEqual(expectedResult)
 })
 
 test("it should return the coordinates of the cell to the right", () => {

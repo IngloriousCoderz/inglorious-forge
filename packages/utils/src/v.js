@@ -1,5 +1,5 @@
 /**
- * @typedef {import("../types/math").Vector} Vector
+ * @typedef {import("../types/math/vector").Vector} Vector
  */
 
 import { isArray } from "./data-structures/array.js"

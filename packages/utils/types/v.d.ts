@@ -1,4 +1,4 @@
-import { Vector } from "./math"
+import type { Vector } from "./math/vector"
 
 /**
  * Ensures that a given value is a vector.
@@ -12,7 +12,9 @@ import { Vector } from "./math"
  * @param {T} value The value to check and potentially convert.
  * @returns {T extends number[] ? Vector : T} The value as a vector, or the original value if no conversion was needed.
  */
-export function ensureV<T>(value: T): T extends number[] ? Vector : T
+export function ensureV<T>(
+  value: T,
+): T extends readonly number[] ? Vector<T> : T
 
 /**
  * A utility function to create a vector from a list of coordinates.
@@ -22,4 +24,6 @@ export function ensureV<T>(value: T): T extends number[] ? Vector : T
  * @param {...number} coords - The coordinates of the vector.
  * @returns {Vector} The created vector.
  */
-export function v(...coords: number[]): Vector
+export function v<Coordinates extends number[]>(
+  ...coords: Coordinates
+): Vector<Coordinates>

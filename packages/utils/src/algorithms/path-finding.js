@@ -1,6 +1,7 @@
 /**
- * @typedef {import("../../types/data-structures").Node} Node
- * @typedef {import("../../types/data-structures").Graph} Graph
+ * @typedef {import("../../types/algorithms/path-finding").Node} Node
+ * @typedef {import("../../types/algorithms/path-finding").Graph} Graph
+ * @typedef {import("../../types/math/vector").Vector2} Vector2
  */
 
 import { contains, push, remove, root } from "../data-structures/heap.js"
@@ -32,7 +33,7 @@ export const eucledianDistance = (a, b) =>
  *
  * @param {Node} a - The first node.
  * @param {Node} b - The second node.
- * @returns {number} - The Manhattan distance between the two nodes.
+ * @returns {Vector2} The component-wise Manhattan distance between the two nodes.
  */
 export const manhattanDistance = (a, b) => abs(subtract(a.position, b.position))
 
@@ -61,7 +62,7 @@ const compareTotalCost = (a, b) => b.totalCost - a.totalCost
  * @param {string} start - The ID of the start node.
  * @param {string} end - The ID of the end node.
  * @param {(a: Node, b: Node) => number} [heuristic=eucledianDistance] - The heuristic function to estimate the cost.
- * @returns {string[]} - An array of node IDs representing the shortest path.
+ * @returns {string[]|undefined} - The node IDs representing the shortest path, or `undefined` if no path exists.
  */
 export function findPath(graph, start, end, heuristic = eucledianDistance) {
   const { nodes, arcs } = adaptGraph(graph)

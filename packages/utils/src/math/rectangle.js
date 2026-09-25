@@ -1,7 +1,7 @@
 /**
- * @typedef {import("../../types/math").Circle} Circle
- * @typedef {import("../../types/math").Rectangle} Rectangle
- * @typedef {import("../../types/math").Platform} Platform
+ * @typedef {import("../../types/math/circle").Circle} Circle
+ * @typedef {import("../../types/math/point").PointInput} PointInput
+ * @typedef {import("../../types/math/rectangle").Rectangle} Rectangle
  */
 
 import { intersectsRectangle as circleIntersectsRectangle } from "./circle.js"
@@ -12,7 +12,7 @@ const HALF = 2
 /**
  * Checks if a rectangle intersects with a point.
  * @param {Rectangle} rectangle - The rectangle to check.
- * @param {Point} point - The point to check.
+ * @param {PointInput} point - The point to check.
  * @returns {boolean} True if the point intersects the circle, false otherwise.
  */
 export function intersectsPoint(rectangle, point) {

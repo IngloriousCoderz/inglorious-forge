@@ -1,5 +1,5 @@
 /**
- * @typedef {import("../../types/math").Vector3} Vector3
+ * @typedef {import("../../types/math/vector").Vector3} Vector3
  */
 
 /* eslint-disable no-magic-numbers */

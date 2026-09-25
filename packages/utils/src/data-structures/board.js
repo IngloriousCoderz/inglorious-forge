@@ -19,6 +19,18 @@ const MOVE_DOWN = 1
 const MOVE_LEFT = -1
 const MOVE_RIGHT = 1
 const MOVE_UP = -1
+const NO_STEP = 0
+
+const NEIGHBOR_OFFSETS = [
+  [MOVE_UP, MOVE_LEFT],
+  [MOVE_UP, NO_STEP],
+  [MOVE_UP, MOVE_RIGHT],
+  [NO_STEP, MOVE_LEFT],
+  [NO_STEP, MOVE_RIGHT],
+  [MOVE_DOWN, MOVE_LEFT],
+  [MOVE_DOWN, NO_STEP],
+  [MOVE_DOWN, MOVE_RIGHT],
+]
 
 /**
  * Calculates the index in a one-dimensional array for given row and column.
@@ -90,6 +102,25 @@ export function left([i, j]) {
     throw new Error()
   }
   return [i, j + MOVE_LEFT]
+}
+
+/**
+ * Returns the coordinates neighboring the given coordinates that fall within the board.
+ * @param {[number, number]} coords - The coordinates [row, column].
+ * @param {[number, number]} size - Array containing the number of rows and columns.
+ * @returns {[number, number][]} The neighboring coordinates within the board.
+ */
+export function neighbors([i, j], [rows, columns]) {
+  return NEIGHBOR_OFFSETS.map(([rowOffset, columnOffset]) => [
+    i + rowOffset,
+    j + columnOffset,
+  ]).filter(
+    ([row, column]) =>
+      row >= FIRST_ROW &&
+      row < rows &&
+      column >= FIRST_COLUMN &&
+      column < columns,
+  )
 }
 
 /**

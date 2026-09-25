@@ -26,9 +26,69 @@
       "types": "./types/index.d.ts",
       "import": "./src/index.js"
     },
-    "./data-structures/string.js": {
-      "types": "./types/data-structures/string.d.ts",
-      "import": "./src/data-structures/string.js"
+    "./algorithms": {
+      "types": "./types/algorithms/index.d.ts",
+      "import": "./src/algorithms/index.js"
+    },
+    "./algorithms/*.js": {
+      "types": "./types/algorithms/*.d.ts",
+      "import": "./src/algorithms/*.js"
+    },
+    "./algorithms/*": {
+      "types": "./types/algorithms/*.d.ts",
+      "import": "./src/algorithms/*.js"
+    },
+    "./data-structures": {
+      "types": "./types/data-structures/index.d.ts",
+      "import": "./src/data-structures/index.js"
+    },
+    "./data-structures/*.js": {
+      "types": "./types/data-structures/*.d.ts",
+      "import": "./src/data-structures/*.js"
+    },
+    "./data-structures/*": {
+      "types": "./types/data-structures/*.d.ts",
+      "import": "./src/data-structures/*.js"
+    },
+    "./functions": {
+      "types": "./types/functions/index.d.ts",
+      "import": "./src/functions/index.js"
+    },
+    "./functions/*.js": {
+      "types": "./types/functions/*.d.ts",
+      "import": "./src/functions/*.js"
+    },
+    "./functions/*": {
+      "types": "./types/functions/*.d.ts",
+      "import": "./src/functions/*.js"
+    },
+    "./math": {
+      "types": "./types/math/index.d.ts",
+      "import": "./src/math/index.js"
+    },
+    "./math/*.js": {
+      "types": "./types/math/*.d.ts",
+      "import": "./src/math/*.js"
+    },
+    "./math/*": {
+      "types": "./types/math/*.d.ts",
+      "import": "./src/math/*.js"
+    },
+    "./physics": {
+      "types": "./types/physics/index.d.ts",
+      "import": "./src/physics/index.js"
+    },
+    "./physics/*.js": {
+      "types": "./types/physics/*.d.ts",
+      "import": "./src/physics/*.js"
+    },
+    "./physics/*": {
+      "types": "./types/physics/*.d.ts",
+      "import": "./src/physics/*.js"
+    },
+    "./*.js": {
+      "types": "./types/*.d.ts",
+      "import": "./src/*"
     },
     "./*": {
       "types": "./types/*.d.ts",

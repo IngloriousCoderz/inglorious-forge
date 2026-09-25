@@ -1,7 +1,7 @@
 /**
- * @typedef {import("../../types/math").Segment} Segment
- * @typedef {import("../../types/math").Point} Point
- * @typedef {import("../../types/math").Circle} Circle
+ * @typedef {import("../../types/math/segment").Segment} Segment
+ * @typedef {import("../../types/math/point").Point} Point
+ * @typedef {import("../../types/math/circle").Circle} Circle
  */
 
 import { magnitude, setMagnitude } from "./vector.js"

@@ -1,8 +1,9 @@
 /**
- * @typedef {import("../../types/math").Point} Point
- * @typedef {import("../../types/math").Line} Line
- * @typedef {import("../../types/math").Circle} Circle
- * @typedef {import("../../types/math").Rectangle} Rectangle
+ * @typedef {import("../../types/math/point").Point} Point
+ * @typedef {import("../../types/math/point").PointInput} PointInput
+ * @typedef {import("../../types/math/line").Line} Line
+ * @typedef {import("../../types/math/circle").Circle} Circle
+ * @typedef {import("../../types/math/rectangle").Rectangle} Rectangle
  */
 
 const SQUARED = 2
@@ -24,8 +25,8 @@ export function getDistanceFromLine(point, line) {
 
 /**
  * Checks if two points intersect.
- * @param {Point} point1 - The first point as a 3D coordinate [x, y, z].
- * @param {Point} point2 - The second point as a 3D coordinate [x, y, z].
+ * @param {PointInput} point1 - The first point as a 3D coordinate [x, y, z].
+ * @param {PointInput} point2 - The second point as a 3D coordinate [x, y, z].
  * @returns {boolean} True if the points intersect, false otherwise.
  */
 export function intersectsPoint(point1, point2) {
@@ -36,7 +37,7 @@ export function intersectsPoint(point1, point2) {
 
 /**
  * Checks if a point intersects with a circle.
- * @param {Point} point - The point as a 3D coordinate [x, y, z].
+ * @param {PointInput} point - The point as a 3D coordinate [x, y, z].
  * @param {Circle} circle - The circle with a position and radius.
  * @returns {boolean} True if the point intersects the circle, false otherwise.
  */
@@ -53,7 +54,7 @@ export function intersectsCircle(point, circle) {
 
 /**
  * Checks if a point intersects with a rectangle.
- * @param {Point} point - The point as a 3D coordinate [x, y, z].
+ * @param {PointInput} point - The point as a 3D coordinate [x, y, z].
  * @param {Rectangle} rectangle - The rectangle with a position and size.
  * @returns {boolean} True if the point intersects the rectangle, false otherwise.
  */
