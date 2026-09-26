@@ -157,7 +157,7 @@ test("getEntitiesForEvent should handle scoped events correctly", () => {
 })
 
 test("EventMap provides a significant performance benefit for event handling", async () => {
-  const ENTITY_COUNT = 10000
+  const ENTITY_COUNT = 100000
   const { entities, types } = createTestEntities(ENTITY_COUNT)
   const eventMap = new EventMap(types, entities)
 

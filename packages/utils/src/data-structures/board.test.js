@@ -2,10 +2,12 @@ import { expect, test } from "vitest"
 
 import { mod } from "../math/numbers.js"
 import {
+  countNeighbors,
   createBoard,
   down,
   downLeft,
   downRight,
+  getIndex,
   left,
   neighbors,
   right,
@@ -45,6 +47,32 @@ test("it should create a checkerboard", () => {
   const expectedResult = [1, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1]
 
   expect(createBoard(size, filler)).toStrictEqual(expectedResult)
+})
+
+test("it should return the flat index for a cell", () => {
+  expect(getIndex(2, 3, 5)).toBe(13)
+})
+
+test("it should count all neighbors of an interior cell", () => {
+  const size = [4, 5]
+  const cells = createBoard(size, (row, column) => row + column)
+
+  expect(countNeighbors(cells, [2, 3], size)).toBe(8)
+})
+
+test("it should count only neighbors matching a predicate", () => {
+  const size = [4, 5]
+  const cells = createBoard(size, (row, column) => {
+    if (row === 1 && column === 3) return "rabbit"
+    if (row === 1 && column === 4) return "fox"
+    return null
+  })
+
+  expect(
+    countNeighbors(cells, [1, 2], size, {
+      predicate: (cell) => cell === "rabbit",
+    }),
+  ).toBe(1)
 })
 
 test("it should return the coordinates of the cell downward", () => {
@@ -170,6 +198,96 @@ test("it should return no neighbors for a board with one cell", () => {
   const expectedResult = []
 
   expect(neighbors(coordinates, size)).toStrictEqual(expectedResult)
+})
+
+test("it should wrap neighbors around board edges when requested", () => {
+  const size = [3, 3]
+  const coordinates = [0, 0]
+  const expectedResult = [
+    [2, 2],
+    [2, 0],
+    [2, 1],
+    [0, 2],
+    [0, 1],
+    [1, 2],
+    [1, 0],
+    [1, 1],
+  ]
+
+  expect(neighbors(coordinates, size, { wrap: "both" })).toStrictEqual(
+    expectedResult,
+  )
+})
+
+test("it should wrap only the column axis when wrapping horizontally", () => {
+  const size = [3, 3]
+  const coordinates = [0, 0]
+  const expectedResult = [
+    [0, 2],
+    [0, 1],
+    [1, 2],
+    [1, 0],
+    [1, 1],
+  ]
+
+  expect(neighbors(coordinates, size, { wrap: "horizontal" })).toStrictEqual(
+    expectedResult,
+  )
+})
+
+test("it should wrap only the row axis when wrapping vertically", () => {
+  const size = [3, 3]
+  const coordinates = [0, 0]
+  const expectedResult = [
+    [2, 0],
+    [2, 1],
+    [0, 1],
+    [1, 0],
+    [1, 1],
+  ]
+
+  expect(neighbors(coordinates, size, { wrap: "vertical" })).toStrictEqual(
+    expectedResult,
+  )
+})
+
+test("it should wrap each axis independently around opposite edges", () => {
+  const size = [3, 4]
+  const coordinates = [2, 3]
+  const expectedResult = [
+    [1, 2],
+    [1, 3],
+    [1, 0],
+    [2, 2],
+    [2, 0],
+    [0, 2],
+    [0, 3],
+    [0, 0],
+  ]
+
+  expect(neighbors(coordinates, size, { wrap: "both" })).toStrictEqual(
+    expectedResult,
+  )
+})
+
+test("it should wrap each axis independently on a non-square board", () => {
+  const size = [3, 4]
+  const coordinates = [2, 3]
+
+  expect(neighbors(coordinates, size).length).toBe(3)
+  expect(neighbors(coordinates, size, { wrap: "horizontal" }).length).toBe(5)
+  expect(neighbors(coordinates, size, { wrap: "vertical" }).length).toBe(5)
+  expect(neighbors(coordinates, size, { wrap: "both" }).length).toBe(8)
+})
+
+test("it should count wrapped neighbors around board edges", () => {
+  const size = [3, 3]
+  const cells = createBoard(size, () => "filled")
+
+  expect(countNeighbors(cells, [0, 0], size)).toBe(3)
+  expect(countNeighbors(cells, [0, 0], size, { wrap: "both" })).toBe(8)
+  expect(countNeighbors(cells, [0, 0], size, { wrap: "horizontal" })).toBe(5)
+  expect(countNeighbors(cells, [0, 0], size, { wrap: "vertical" })).toBe(5)
 })
 
 test("it should return the coordinates of the cell to the right", () => {

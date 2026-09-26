@@ -19,6 +19,11 @@ Creates a store instance to manage entities, event dispatch, and reactive render
 - `middlewares?: Function[]` — middleware functions to intercept or transform events.
 - `autoCreateEntities?: boolean` — automatically create a default entity for each registered type.
 - `updateMode?: "auto" | "manual"` — whether events are processed immediately or manually.
+- `updateStrategy?: "structural-sharing" | "full-clone"` — how the state is copied before queued
+  events are applied. The default, `"structural-sharing"`, copies only the entities that change.
+  Use `"full-clone"` for simulations where thousands of entities change every frame; it requires every
+  state value to be structured-cloneable (no functions or DOM nodes in the state). Under both
+  strategies the current state is swapped only after every queued event has been processed.
 
 ### Example
 

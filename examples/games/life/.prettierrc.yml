@@ -1,0 +1,6 @@
+semi: false
+
+overrides:
+  - files: "*.ijs"
+    options:
+      parser: babel

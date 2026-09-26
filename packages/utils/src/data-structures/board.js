@@ -11,36 +11,55 @@ const DEFAULT_FILLER = () => null
  */
 const DEFAULT_CELL_TO_STRING = (cell) => `${cell}`
 
+/**
+ * Default predicate that matches every neighboring cell.
+ * @returns {boolean} Always true.
+ */
+const DEFAULT_NEIGHBOR_PREDICATE = () => true
+
 const FIRST_ROW = 0
 const FIRST_COLUMN = 0
 const LAST_ROW_OFFSET = 1
 const LAST_COLUMN_OFFSET = 1
-const MOVE_DOWN = 1
-const MOVE_LEFT = -1
-const MOVE_RIGHT = 1
-const MOVE_UP = -1
-const NO_STEP = 0
+const DOWN = 1
+const LEFT = -1
+const RIGHT = 1
+const UP = -1
+const CENTER = 0
+
+const BOTH = "both"
+const HORIZONTAL = "horizontal"
+const NO_WRAP = undefined
+const VERTICAL = "vertical"
 
 const NEIGHBOR_OFFSETS = [
-  [MOVE_UP, MOVE_LEFT],
-  [MOVE_UP, NO_STEP],
-  [MOVE_UP, MOVE_RIGHT],
-  [NO_STEP, MOVE_LEFT],
-  [NO_STEP, MOVE_RIGHT],
-  [MOVE_DOWN, MOVE_LEFT],
-  [MOVE_DOWN, NO_STEP],
-  [MOVE_DOWN, MOVE_RIGHT],
+  [UP, LEFT],
+  [UP, CENTER],
+  [UP, RIGHT],
+  [CENTER, LEFT],
+  [CENTER, RIGHT],
+  [DOWN, LEFT],
+  [DOWN, CENTER],
+  [DOWN, RIGHT],
 ]
 
 /**
- * Calculates the index in a one-dimensional array for given row and column.
- * @param {number} row - The row index.
- * @param {number} column - The column index.
- * @param {number} columns - The total number of columns.
- * @returns {number} The calculated index.
+ * Counts the neighboring cells that satisfy a predicate.
+ * @param {Array} cells - The board cells.
+ * @param {[number, number]} coords - The coordinates [row, column].
+ * @param {[number, number]} size - Array containing the number of rows and columns.
+ * @param {Object} [options] - Neighbor options.
+ * @param {Function} [options.predicate=DEFAULT_NEIGHBOR_PREDICATE] - The predicate applied to each neighboring cell.
+ * @param {"horizontal" | "vertical" | "both"} [options.wrap=undefined] - The axes that wrap around board edges.
+ * @returns {number} The number of matching neighboring cells.
  */
-function getIndex(row, column, columns) {
-  return row * columns + column
+export function countNeighbors(cells, coords, size, options = {}) {
+  const { predicate = DEFAULT_NEIGHBOR_PREDICATE, wrap = NO_WRAP } = options
+  const [, columns] = size
+
+  return neighbors(coords, size, { wrap }).filter(([row, column]) =>
+    predicate(cells[getIndex(row, column, columns)]),
+  ).length
 }
 
 /**
@@ -68,7 +87,7 @@ export function down([i, j], [rows]) {
   if (i === rows - LAST_ROW_OFFSET) {
     throw new Error()
   }
-  return [i + MOVE_DOWN, j]
+  return [i + DOWN, j]
 }
 
 /**
@@ -92,6 +111,17 @@ export function downRight(coords, size) {
 }
 
 /**
+ * Calculates the index in a one-dimensional array for given row and column.
+ * @param {number} row - The row index.
+ * @param {number} column - The column index.
+ * @param {number} columns - The total number of columns.
+ * @returns {number} The calculated index.
+ */
+export function getIndex(row, column, columns) {
+  return row * columns + column
+}
+
+/**
  * Moves the given coordinates one step left.
  * @param {[number, number]} coords - The current coordinates [row, column].
  * @returns {[number, number]} The new coordinates after moving left.
@@ -101,20 +131,30 @@ export function left([i, j]) {
   if (j === FIRST_COLUMN) {
     throw new Error()
   }
-  return [i, j + MOVE_LEFT]
+  return [i, j + LEFT]
 }
 
 /**
  * Returns the coordinates neighboring the given coordinates that fall within the board.
  * @param {[number, number]} coords - The coordinates [row, column].
  * @param {[number, number]} size - Array containing the number of rows and columns.
+ * @param {Object} [options] - Neighbor options.
+ * @param {"horizontal" | "vertical" | "both"} [options.wrap=undefined] - The axes that wrap around board edges. "horizontal" wraps the column axis, "vertical" wraps the row axis, and "both" wraps each axis independently.
  * @returns {[number, number][]} The neighboring coordinates within the board.
  */
-export function neighbors([i, j], [rows, columns]) {
-  return NEIGHBOR_OFFSETS.map(([rowOffset, columnOffset]) => [
-    i + rowOffset,
-    j + columnOffset,
-  ]).filter(
+export function neighbors([i, j], [rows, columns], options = {}) {
+  const { wrap = NO_WRAP } = options
+  const shouldWrapRows = wrap === BOTH || wrap === VERTICAL
+  const shouldWrapColumns = wrap === BOTH || wrap === HORIZONTAL
+
+  return NEIGHBOR_OFFSETS.map(([rowOffset, columnOffset]) => {
+    const row = shouldWrapRows ? wrapIndex(i + rowOffset, rows) : i + rowOffset
+    const column = shouldWrapColumns
+      ? wrapIndex(j + columnOffset, columns)
+      : j + columnOffset
+
+    return [row, column]
+  }).filter(
     ([row, column]) =>
       row >= FIRST_ROW &&
       row < rows &&
@@ -134,7 +174,7 @@ export function right([i, j], [, columns]) {
   if (j === columns - LAST_COLUMN_OFFSET) {
     throw new Error()
   }
-  return [i, j + MOVE_RIGHT]
+  return [i, j + RIGHT]
 }
 
 /**
@@ -166,7 +206,7 @@ export function up([i, j]) {
   if (i === FIRST_ROW) {
     throw new Error()
   }
-  return [i + MOVE_UP, j]
+  return [i + UP, j]
 }
 
 /**
@@ -187,4 +227,15 @@ export function upLeft(coords, size) {
  */
 export function upRight(coords, size) {
   return up(right(coords, size), size)
+}
+
+/**
+ * Normalizes an index into a wrapping range.
+ * @param {number} index - The index to normalize.
+ * @param {number} length - The range length.
+ * @returns {number} The normalized index.
+ */
+function wrapIndex(index, length) {
+  const remainder = index % length
+  return remainder < FIRST_ROW ? remainder + length : remainder
 }

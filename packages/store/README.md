@@ -1072,6 +1072,7 @@ const store = createStore({
   systems, // Array (optional): global state handlers
   autoCreateEntities, // Boolean (optional): false (default) or true
   updateMode, // String (optional): 'auto' (default) or 'manual'
+  updateStrategy, // String (optional): 'structural-sharing' (default) or 'full-clone'
 })
 ```
 
@@ -1088,6 +1089,79 @@ const store = createStore({
 - **`updateMode`** (optional) - Controls when React components re-render:
   - `'auto'` (default) - Automatic updates after each event
   - `'manual'` - Manual control via `api.update()`
+- **`updateStrategy`** (optional) - Controls how the state is copied before queued events are applied:
+  - `'structural-sharing'` (default) - Only the entities that actually changed are copied
+  - `'full-clone'` - The whole state is deep-cloned and updated without a proxy
+
+#### Update Strategy
+
+`updateStrategy` decides how much copying work each update does. It exists because the right
+answer depends on how many entities change per update.
+
+**`'structural-sharing'`** (default) applies events to a draft proxy (via
+[Mutative](https://github.com/pmndrs/mutative)), so only the entities that actually changed
+get copied. Untouched entities keep their previous object reference, which makes
+reference-equality change detection nearly free. This is what you want for UI stores, where a
+handful of entities change per interaction.
+
+**`'full-clone'`** deep-clones the entire state with `structuredClone` and applies events directly to
+the copy, with no proxy involved. Every update costs time proportional to the total state size,
+but there's no per-entity proxy overhead, so it scales much better when thousands of entities
+change every frame — the typical case for a game simulation.
+
+```javascript
+// A UI store: few entities change, reference equality matters
+const store = createStore({
+  types,
+  entities,
+  updateStrategy: "structural-sharing",
+})
+
+// A game simulation: thousands of entities change every frame
+const store = createStore({ types, entities, updateStrategy: "full-clone" })
+```
+
+#### State swapping
+
+Both strategies keep the current state intact while the queued events are applied to a separate
+draft, and swap the two only once every event has been processed. Handlers and systems always
+receive that draft as their first argument and mutate it directly, and subscribers are notified
+only after the swap.
+
+A consequence worth knowing: during an update, `api.getEntity()` and `api.getEntities()` read the
+**previous** state, not the in-flight changes. This holds under both strategies, so code that
+needs to read another entity's up-to-date value must go through the event payload, or read it in
+a system that runs after the entity handlers.
+
+```javascript
+const types = {
+  Counter: {
+    // Reads the previous value of `other`, not the value set earlier in this same update.
+    increment(entity, payload, api) {
+      entity.previous = api.getEntity("other").count
+    },
+  },
+}
+```
+
+**Caveats for `'full-clone'`:**
+
+- Every value in the state must be [structured-cloneable](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm).
+  Functions, DOM nodes, and class instances with non-cloneable internals throw a
+  `DataCloneError`. Keep such values in module scope or in a closure inside a behavior factory
+  (as the `images()` and `audio()` engine behaviors do) rather than in the state.
+- The state is not frozen, even in `devMode`.
+- Writing to an entity obtained from `api.getEntity()` during an update mutates the _previous_
+  state and is discarded, because the draft is a deep copy. Under `'structural-sharing'` the
+  draft may still share that reference, so the write happens to survive. Always mutate the
+  entity passed to your handler rather than one fetched through the api.
+
+An unsupported strategy throws a `TypeError` at store creation:
+
+```javascript
+createStore({ types, entities, updateStrategy: "immutable" })
+// TypeError: Unsupported update strategy: immutable. Expected one of: structural-sharing, full-clone.
+```
 
 #### Auto-Create Entities
 

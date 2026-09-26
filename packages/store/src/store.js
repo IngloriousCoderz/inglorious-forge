@@ -7,16 +7,46 @@ import { EventMap, parseEvent } from "./event-map.js"
 import { applyMiddlewares } from "./middlewares.js"
 import { augmentType, augmentTypes } from "./types.js"
 
+/** Copies only the entities that change, using a draft proxy. */
+const STRUCTURAL_SHARING = "structural-sharing"
+
+/** Deep-clones the whole state and applies events to the copy, without a proxy. */
+const FULL_CLONE = "full-clone"
+
+const UPDATE_STRATEGIES = [STRUCTURAL_SHARING, FULL_CLONE]
+
 /**
  * Creates a store to manage state and events.
- * @param {Object} config - Configuration options for the store.
- * @param {Object} [config.types] - The initial types configuration.
- * @param {Object} [config.entities] - The initial entities configuration.
- * @param {Array} [config.systems] - The initial systems configuration.
- * @param {Array} [config.middlewares] - The initial middlewares configuration.
- * @param {boolean} [config.autoCreateEntities] - Creates entities if not defined in `config.entities`.
- * @param {"auto" | "manual"} [config.updateMode] - The update mode (defaults to "auto").
- * @returns {Object} The store with methods to interact with state and events.
+ *
+ * Events are queued and drained by {@link createStore|update}. The `updateStrategy` option
+ * controls how the state is copied before the queued events are applied:
+ *
+ * - `"structural-sharing"` (default) - Applies events to a draft proxy, so only the entities
+ *   that actually changed are copied. Unchanged entities keep their previous reference, which
+ *   makes change detection cheap for consumers that rely on reference equality. This is the
+ *   right choice for UI stores, where a small number of entities change at a time.
+ * - `"full-clone"` - Deep-clones the whole state with `structuredClone` and applies events directly
+ *   to the copy, without a proxy. The cost is proportional to the total state size on every
+ *   update, but there is no per-entity proxy overhead, so it scales better when thousands of
+ *   entities change every frame, as in a game simulation.
+ *
+ * Under both strategies the current state is kept intact while the queued events are applied to a
+ * separate draft, and the two are swapped only once every event has been processed. Handlers and
+ * systems therefore always receive the draft as their first argument and mutate it directly, and
+ * subscribers are notified only after the swap. This also means that, during an update,
+ * `api.getEntity()` and `api.getEntities()` read the *previous* state rather than the in-flight
+ * changes, under either strategy.
+ *
+ * @param {StoreConfig} config - Configuration options for the store.
+ * @param {Types} [config.types] - The initial types configuration.
+ * @param {Entities} [config.entities] - The initial entities configuration.
+ * @param {Object[]} [config.systems] - The initial systems configuration.
+ * @param {Function[]} [config.middlewares] - The initial middlewares configuration.
+ * @param {boolean} [config.autoCreateEntities=false] - Creates entities if not defined in `config.entities`.
+ * @param {"auto" | "manual"} [config.updateMode="auto"] - Whether each event triggers an update, or updates are batched until `update()` is called.
+ * @param {UpdateStrategy} [config.updateStrategy="structural-sharing"] - How the state is copied before events are applied.
+ * @returns {Store} The store with methods to interact with state and events.
+ * @throws {TypeError} If `updateStrategy` is not a supported strategy.
  */
 export function createStore({
   types: originalTypes = {},
@@ -25,7 +55,10 @@ export function createStore({
   middlewares = [],
   autoCreateEntities = false,
   updateMode = "auto",
+  updateStrategy = STRUCTURAL_SHARING,
 } = {}) {
+  assertUpdateStrategy(updateStrategy)
+
   const listeners = new Set()
 
   const types = augmentTypes(originalTypes)
@@ -73,6 +106,12 @@ export function createStore({
 
   /**
    * Updates the state based on elapsed time and processes events.
+   *
+   * The current state is left untouched while the queued events are applied to a separate
+   * draft, according to the configured `updateStrategy`. The draft only replaces the current
+   * state once every queued event has been processed, and subscribers are notified afterwards.
+   *
+   * @returns {Event[]} The events processed during this update.
    */
   function update() {
     if (isProcessing) {
@@ -81,18 +120,37 @@ export function createStore({
 
     isProcessing = true
     const processedEvents = []
+    let nextState
 
-    state = create(state, patcher, {
-      enableAutoFreeze: state.game?.devMode,
-    })
+    if (updateStrategy === STRUCTURAL_SHARING) {
+      nextState = create(state, patch, {
+        enableAutoFreeze: state.game?.devMode,
+      })
+    } else {
+      const draft = structuredClone(state)
 
+      patch(draft)
+      nextState = draft
+    }
+
+    state = nextState
     isProcessing = false
 
     listeners.forEach((onUpdate) => onUpdate())
 
     return processedEvents
 
-    function patcher(draft) {
+    /**
+     * Applies every queued event to the given draft.
+     *
+     * The draft is either the proxy returned by `create` (structural sharing) or the
+     * deep copy produced by `structuredClone` (full clone). The current state is not
+     * modified, and only becomes the new state once this function returns.
+     *
+     * @param {Entities} draft - The draft to apply the queued events to.
+     * @returns {void}
+     */
+    function patch(draft) {
       while (incomingEvents.length) {
         const event = incomingEvents.shift()
         processedEvents.push(event)
@@ -193,7 +251,8 @@ export function createStore({
   /**
    * Sets an augmented type configuration given its name.
    * @param {string} typeName - The name of the type to set.
-   * @param {Object} type - The type configuration.
+   * @param {Type} type - The type configuration.
+   * @returns {void}
    */
   function setType(typeName, type) {
     const oldType = types[typeName]
@@ -229,7 +288,8 @@ export function createStore({
   /**
    * Sets the entire state of the store.
    * This is useful for importing state or setting initial state from a server.
-   * @param {Object} nextState - The new state to set.
+   * @param {Entities} nextState - The new state to set.
+   * @returns {void}
    */
   function setState(nextState) {
     const oldEntities = state ?? {}
@@ -289,11 +349,18 @@ export function createStore({
 
   /**
    * Resets the store to its initial state.
+   * @returns {void}
    */
   function reset() {
     setState(originalEntities)
   }
 
+  /**
+   * Adds an entity to the state and registers its event handlers.
+   * @param {Entities} draft - The draft (structural sharing) or the copy (full clone) to mutate.
+   * @param {Entity} payload - The entity to add, including its id.
+   * @returns {void}
+   */
   function addEntity(draft, payload) {
     const { id, ...entity } = payload
     draft[id] = augmentEntity(id, entity)
@@ -303,9 +370,40 @@ export function createStore({
     incomingEvents.unshift({ type: `#${id}:create` })
   }
 
-  function removeEntity(draft, payload) {
-    const id = payload
-
+  /**
+   * Queues the destruction of an entity. The entity is removed by the `#id:destroy` event.
+   * @param {Entities} draft - The draft (structural sharing) or the copy (full clone) to mutate.
+   * @param {string} id - The id of the entity to remove.
+   * @returns {void}
+   */
+  function removeEntity(draft, id) {
     incomingEvents.unshift({ type: `#${id}:destroy` })
   }
 }
+
+/**
+ * Validates the given update strategy.
+ * @param {UpdateStrategy} updateStrategy - The update strategy to validate.
+ * @returns {void}
+ * @throws {TypeError} If the update strategy is not supported.
+ */
+function assertUpdateStrategy(updateStrategy) {
+  if (UPDATE_STRATEGIES.includes(updateStrategy)) {
+    return
+  }
+
+  throw new TypeError(
+    `Unsupported update strategy: ${updateStrategy}. Expected one of: ${UPDATE_STRATEGIES.join(", ")}.`,
+  )
+}
+
+/**
+ * @typedef {"structural-sharing" | "full-clone"} UpdateStrategy - How the state is copied before events are applied.
+ * @typedef {Object} StoreConfig - Configuration options accepted by {@link createStore}.
+ * @typedef {Object.<string, any>} Type - An augmented entity type.
+ * @typedef {Object.<string, Type>} Types - A collection of augmented types.
+ * @typedef {Object.<string, any>} Entity - An object representing an entity.
+ * @typedef {Object.<string, Entity>} Entities - A collection of entities indexed by id.
+ * @typedef {(listener: () => void) => () => void} Listener - Subscribes to state updates and returns an unsubscribe function.
+ * @typedef {Object} Store - The store returned by {@link createStore}.
+ */
