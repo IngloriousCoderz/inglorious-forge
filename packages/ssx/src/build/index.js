@@ -9,9 +9,10 @@ import { generateStore } from "../store/index.js"
 import { loadConfig } from "../utils/config.js"
 import {
   createManifest,
+  createPageHasher,
   determineRebuildPages,
-  hashEntities,
   hashRuntime,
+  hashSharedSources,
   loadManifest,
   saveManifest,
 } from "./manifest.js"
@@ -83,8 +84,9 @@ export async function build(options = {}) {
   await copyPublicDir(mergedOptions)
 
   // Determine which pages need rebuilding
-  const entitiesHash = await hashEntities(rootDir)
+  const sharedHash = await hashSharedSources(rootDir)
   const runtimeHash = await hashRuntime()
+  const getPageHash = createPageHasher(vite)
   let pagesToChange = allPages
   let pagesToSkip = []
 
@@ -92,8 +94,9 @@ export async function build(options = {}) {
     const result = await determineRebuildPages(
       allPages,
       manifest,
-      entitiesHash,
+      sharedHash,
       runtimeHash,
+      getPageHash,
     )
     pagesToChange = result.pagesToBuild
     pagesToSkip = result.pagesToSkip
@@ -181,8 +184,9 @@ export async function build(options = {}) {
   if (incremental) {
     const newManifest = await createManifest(
       allGeneratedPages,
-      entitiesHash,
+      sharedHash,
       runtimeHash,
+      getPageHash,
     )
     await saveManifest(outDir, newManifest)
   }

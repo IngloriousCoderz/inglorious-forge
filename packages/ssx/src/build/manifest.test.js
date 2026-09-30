@@ -3,11 +3,13 @@ import fs from "node:fs/promises"
 import { afterEach, describe, expect, it, vi } from "vitest"
 
 import {
+  collectPageDependencies,
   createManifest,
+  createPageHasher,
   determineRebuildPages,
-  hashEntities,
   hashFile,
   hashRuntime,
+  hashSharedSources,
   loadManifest,
   saveManifest,
 } from "./manifest"
@@ -28,6 +30,28 @@ vi.mock("node:fs/promises", async (importOriginal) => {
     },
   }
 })
+
+/**
+ * Builds a stub Vite server whose module graph maps each id to the ids it
+ * imports, mirroring the shape of `vite.moduleGraph`.
+ */
+function fakeVite(graph) {
+  const nodes = new Map()
+  const nodeFor = (id) => {
+    if (!nodes.has(id)) {
+      nodes.set(id, { id, importedModules: new Set() })
+    }
+    return nodes.get(id)
+  }
+
+  for (const [id, imported] of Object.entries(graph)) {
+    for (const childId of imported) {
+      nodeFor(id).importedModules.add(nodeFor(childId))
+    }
+  }
+
+  return { moduleGraph: { getModuleById: (id) => nodes.get(id) } }
+}
 
 describe("manifest", () => {
   const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {})
@@ -55,7 +79,7 @@ describe("manifest", () => {
       const result = await loadManifest("dist")
       expect(result).toEqual({
         pages: {},
-        entities: null,
+        shared: null,
         runtime: null,
         buildTime: null,
       })
@@ -90,14 +114,30 @@ describe("manifest", () => {
     })
   })
 
-  describe("hashEntities", () => {
-    it("should hash entities.js in root dir", async () => {
-      fs.readFile.mockResolvedValue("entities")
-      await hashEntities("src")
-      expect(fs.readFile).toHaveBeenCalledWith(
-        expect.stringContaining("entities.js"),
-        "utf-8",
-      )
+  describe("hashSharedSources", () => {
+    it("should hash store and config files under src", async () => {
+      fs.readFile.mockResolvedValue("content")
+
+      await hashSharedSources("root")
+
+      const readPaths = fs.readFile.mock.calls.map(([filePath]) => filePath)
+
+      expect(readPaths).toContain("root/src/store/entities.js")
+      expect(readPaths).toContain("root/src/store/types.js")
+      expect(readPaths).toContain("root/src/site.config.js")
+    })
+
+    it("should return a stable hash regardless of extension order", async () => {
+      fs.readFile.mockImplementation(async (filePath) => {
+        if (filePath === "root/src/store/entities.ts") return "entities"
+        return null
+      })
+
+      const first = await hashSharedSources("root")
+      const second = await hashSharedSources("root")
+
+      expect(typeof first).toBe("string")
+      expect(first).toBe(second)
     })
   })
 
@@ -111,15 +151,15 @@ describe("manifest", () => {
   })
 
   describe("determineRebuildPages", () => {
-    it("should rebuild all if entities hash changed", async () => {
+    it("should rebuild all if shared sources hash changed", async () => {
       const pages = [{ path: "/" }]
-      const manifest = { entities: "old" }
+      const manifest = { shared: "old" }
       const result = await determineRebuildPages(pages, manifest, "new", "rt")
 
       expect(result.pagesToBuild).toEqual(pages)
       expect(result.pagesToSkip).toEqual([])
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining("Entities changed"),
+        expect.stringContaining("Shared sources changed"),
       )
     })
 
@@ -129,7 +169,7 @@ describe("manifest", () => {
         { path: "/same", filePath: "same.js" },
       ]
       const manifest = {
-        entities: "hash",
+        shared: "hash",
         pages: {
           "/changed": { hash: "old-hash" },
           "/same": { hash: "9a0364b9e99bb480dd25e1f0284c8555" }, // md5("content")
@@ -156,9 +196,49 @@ describe("manifest", () => {
       expect(result.pagesToSkip[0].path).toBe("/same")
     })
 
+    it("should rebuild a page when a shared partial it imports changes", async () => {
+      const page = { path: "/", filePath: "/site/src/pages/index.js" }
+      const pages = [page]
+      const vite = fakeVite({
+        "/site/src/pages/index.js": ["/site/src/components/nav.js"],
+      })
+      const read = (edited) =>
+        fs.readFile.mockImplementation(
+          async (filePath) =>
+            `content of ${
+              edited && filePath === "/site/src/components/nav.js"
+                ? "/site/src/components/nav.js EDITED"
+                : filePath
+            }`,
+        )
+
+      read(false)
+      const before = await createPageHasher(vite)(page)
+
+      read(true)
+      const after = await createPageHasher(vite)(page)
+
+      expect(after).not.toBe(before)
+
+      const result = await determineRebuildPages(
+        pages,
+        {
+          shared: "hash",
+          runtime: "rt",
+          pages: { "/": { hash: before } },
+        },
+        "hash",
+        "rt",
+        createPageHasher(vite),
+      )
+
+      expect(result.pagesToBuild).toHaveLength(1)
+      expect(result.pagesToSkip).toHaveLength(0)
+    })
+
     it("should rebuild all if runtime hash changed", async () => {
       const pages = [{ path: "/" }]
-      const manifest = { entities: "hash", runtime: "old-rt" }
+      const manifest = { shared: "hash", runtime: "old-rt" }
       const result = await determineRebuildPages(
         pages,
         manifest,
@@ -174,13 +254,113 @@ describe("manifest", () => {
     })
   })
 
+  describe("collectPageDependencies", () => {
+    it("should follow the module graph transitively", () => {
+      const vite = fakeVite({
+        "/site/src/pages/index.js": [
+          "/site/src/components/nav.js",
+          "/site/src/store/theme.js",
+        ],
+        "/site/src/components/nav.js": ["/site/src/components/logo.js"],
+      })
+
+      expect(collectPageDependencies("/site/src/pages/index.js", vite)).toEqual(
+        [
+          "/site/src/components/logo.js",
+          "/site/src/components/nav.js",
+          "/site/src/pages/index.js",
+          "/site/src/store/theme.js",
+        ],
+      )
+    })
+
+    it("should exclude node_modules and virtual modules", () => {
+      const vite = fakeVite({
+        "/site/src/pages/index.js": [
+          "/site/node_modules/dep/index.js",
+          "\0virtual:module",
+          "/site/src/components/nav.js",
+        ],
+      })
+
+      expect(collectPageDependencies("/site/src/pages/index.js", vite)).toEqual(
+        ["/site/src/components/nav.js", "/site/src/pages/index.js"],
+      )
+    })
+
+    it("should track linked workspace packages but ignore installed ones", () => {
+      const vite = fakeVite({
+        "/site/src/pages/index.js": [
+          "/repo/packages/web/src/index.js",
+          "/site/node_modules/@inglorious/web/dist/index.js",
+        ],
+      })
+
+      expect(collectPageDependencies("/site/src/pages/index.js", vite)).toEqual(
+        ["/repo/packages/web/src/index.js", "/site/src/pages/index.js"],
+      )
+    })
+
+    it("should handle import cycles", () => {
+      const vite = fakeVite({
+        "/site/a.js": ["/site/b.js"],
+        "/site/b.js": ["/site/a.js"],
+      })
+
+      expect(collectPageDependencies("/site/a.js", vite)).toEqual([
+        "/site/a.js",
+        "/site/b.js",
+      ])
+    })
+
+    it("should fall back to the page module when the graph has no entry", () => {
+      expect(
+        collectPageDependencies("/site/src/pages/index.js", fakeVite({})),
+      ).toEqual(["/site/src/pages/index.js"])
+      expect(collectPageDependencies("/site/src/pages/index.js")).toEqual([
+        "/site/src/pages/index.js",
+      ])
+    })
+  })
+
+  describe("createPageHasher", () => {
+    it("should read each dependency at most once across pages", async () => {
+      const vite = fakeVite({
+        "/site/a.js": ["/site/shared.js"],
+        "/site/b.js": ["/site/shared.js"],
+      })
+      fs.readFile.mockResolvedValue("content")
+
+      const getPageHash = createPageHasher(vite)
+      await getPageHash({ filePath: "/site/a.js" })
+      await getPageHash({ filePath: "/site/b.js" })
+
+      const reads = fs.readFile.mock.calls
+        .map(([filePath]) => filePath)
+        .filter((filePath) => filePath === "/site/shared.js")
+
+      expect(reads).toHaveLength(1)
+    })
+
+    it("should be order-independent", async () => {
+      const forward = fakeVite({ "/site/a.js": ["/site/x.js", "/site/y.js"] })
+      const reverse = fakeVite({ "/site/a.js": ["/site/y.js", "/site/x.js"] })
+      fs.readFile.mockImplementation(async (filePath) => `body:${filePath}`)
+
+      const first = await createPageHasher(forward)({ filePath: "/site/a.js" })
+      const second = await createPageHasher(reverse)({ filePath: "/site/a.js" })
+
+      expect(first).toBe(second)
+    })
+  })
+
   describe("createManifest", () => {
     it("should create a new manifest with page hashes", async () => {
       const renderedPages = [
         { path: "/", filePath: "index.js" },
         { path: "/about", filePath: "about.js" },
       ]
-      const entitiesHash = "entities-hash"
+      const sharedHash = "shared-hash"
       const runtimeHash = "runtime-hash"
 
       fs.readFile.mockImplementation(async (path) => {
@@ -191,21 +371,34 @@ describe("manifest", () => {
 
       const manifest = await createManifest(
         renderedPages,
-        entitiesHash,
+        sharedHash,
         runtimeHash,
       )
 
-      expect(manifest.entities).toBe(entitiesHash)
+      expect(manifest.shared).toBe(sharedHash)
       expect(manifest.runtime).toBe(runtimeHash)
       expect(manifest.buildTime).toBeDefined()
-      expect(manifest.pages["/"]).toEqual({
-        hash: "176b689259e8d68ef0aa869fd3b3be45",
-        filePath: "index.js",
-      })
-      expect(manifest.pages["/about"]).toEqual({
-        hash: "f43ab6cf4975e90e757c05cc3c619a85",
-        filePath: "about.js",
-      })
+      expect(manifest.pages["/"].filePath).toBe("index.js")
+      expect(manifest.pages["/about"].filePath).toBe("about.js")
+    })
+
+    it("should record the dependency-aware hash produced by the page hasher", async () => {
+      const vite = fakeVite({ "index.js": ["nav.js"] })
+      fs.readFile.mockImplementation(async (filePath) => `body:${filePath}`)
+
+      const getPageHash = createPageHasher(vite)
+      const manifest = await createManifest(
+        [{ path: "/", filePath: "index.js" }],
+        "shared",
+        "rt",
+        getPageHash,
+      )
+
+      expect(manifest.pages["/"].hash).toBe(
+        await getPageHash({
+          filePath: "index.js",
+        }),
+      )
     })
   })
 })

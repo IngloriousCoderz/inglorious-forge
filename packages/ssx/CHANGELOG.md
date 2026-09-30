@@ -1,5 +1,11 @@
 # @inglorious/ssx
 
+## 2.1.6
+
+### Patch Changes
+
+- Implement true incremental SSX builds
+
 ## 2.1.5
 
 ### Patch Changes

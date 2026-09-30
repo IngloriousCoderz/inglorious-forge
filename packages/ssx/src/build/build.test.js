@@ -11,8 +11,9 @@ import { loadConfig } from "../utils/config.js"
 import { build } from "."
 import {
   createManifest,
+  createPageHasher,
   determineRebuildPages,
-  hashEntities,
+  hashSharedSources,
   loadManifest,
   saveManifest,
 } from "./manifest.js"
@@ -62,6 +63,7 @@ describe("build", () => {
       ssrLoadModule: vi.fn(),
       close: vi.fn(),
     })
+    createPageHasher.mockReturnValue(vi.fn().mockResolvedValue("page-hash"))
   })
 
   afterEach(() => {
@@ -73,7 +75,7 @@ describe("build", () => {
     loadConfig.mockResolvedValue({})
     loadManifest.mockResolvedValue(null) // First build
     getPages.mockResolvedValue([{ path: "/" }])
-    hashEntities.mockResolvedValue("hash")
+    hashSharedSources.mockResolvedValue("hash")
     generateStore.mockResolvedValue({
       store: {},
       entities: {},
@@ -109,9 +111,9 @@ describe("build", () => {
   })
 
   it("should handle incremental builds", async () => {
-    const manifest = { entities: "hash" }
+    const manifest = { shared: "hash" }
     loadManifest.mockResolvedValue(manifest)
-    hashEntities.mockResolvedValue("hash")
+    hashSharedSources.mockResolvedValue("hash")
 
     const allPages = [{ path: "/changed" }, { path: "/skipped" }]
     getPages.mockResolvedValue(allPages)
