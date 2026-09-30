@@ -1,5 +1,11 @@
 # @inglorious/ssx
 
+## 2.1.7
+
+### Patch Changes
+
+- Fix duplicate <head> on SSX default layout
+
 ## 2.1.6
 
 ### Patch Changes

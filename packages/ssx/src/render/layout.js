@@ -33,7 +33,6 @@ export function layout(body, options) {
       ${prescripts
         .map((src) => `<script type="text/javascript" src="${src}"></script>`)
         .join("\n")}
-        ${head}
         <meta charset="${charset}" />
         <title>${title}</title>
         <link rel="icon" type="image/x-icon" href="${favicon}">

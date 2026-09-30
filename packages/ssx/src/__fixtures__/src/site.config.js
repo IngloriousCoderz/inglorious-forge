@@ -44,10 +44,11 @@ export default {
       <!DOCTYPE html>
       <html lang=${lang}>
         <head>
-        ${prescripts
-          .map((src) => `<script type="text/javascript" src="${src}"></script>`)
-          .join("\n")}
-          ${head}
+          ${prescripts
+            .map(
+              (src) => `<script type="text/javascript" src="${src}"></script>`,
+            )
+            .join("\n")}
           <meta charset=${charset} />
           <meta
             name="viewport"

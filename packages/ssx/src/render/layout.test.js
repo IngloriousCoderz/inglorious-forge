@@ -44,6 +44,30 @@ describe("layout", () => {
     expect(html).toContain('<link rel="icon" href="/favicon.ico">')
   })
 
+  it("should emit head content exactly once", () => {
+    const html = layout("", {
+      head: '<link rel="alternate" hreflang="it" href="https://x.test/it">',
+    })
+
+    expect(
+      html.match(/hreflang="it"/g),
+      "head content must not be duplicated",
+    ).toHaveLength(1)
+  })
+
+  it("should keep meta charset ahead of head content", () => {
+    const head = `<link rel="preload" href="/${"a".repeat(1200)}.woff2" as="font">`
+    const html = layout("", { head })
+
+    const charset = html.indexOf("<meta charset")
+    const headStart = html.indexOf(head)
+
+    expect(charset).toBeGreaterThan(-1)
+    expect(headStart).toBeGreaterThan(charset)
+    // Browsers only prescan the first 1024 bytes to detect the encoding.
+    expect(charset).toBeLessThan(1024)
+  })
+
   it("should include vite client in dev mode", () => {
     const html = layout("", { isDev: true })
     expect(html).toContain(
