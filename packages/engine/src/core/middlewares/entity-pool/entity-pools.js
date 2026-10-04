@@ -8,6 +8,10 @@ export class EntityPools {
     return this._activeEntitiesById
   }
 
+  getAllActiveEntitiesById() {
+    return Object.fromEntries(this._activeEntitiesById)
+  }
+
   acquire(props) {
     this.lazyInit(props)
     const entity = this._pools.get(props.type).acquire(props)

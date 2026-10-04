@@ -30,10 +30,6 @@
       "types": "./types/algorithms/index.d.ts",
       "import": "./src/algorithms/index.js"
     },
-    "./data-structures": {
-      "types": "./types/data-structures/index.d.ts",
-      "import": "./src/data-structures/index.js"
-    },
     "./algorithms/*.js": {
       "types": "./types/algorithms/*.d.ts",
       "import": "./src/algorithms/*.js"
@@ -41,6 +37,10 @@
     "./algorithms/*": {
       "types": "./types/algorithms/*.d.ts",
       "import": "./src/algorithms/*.js"
+    },
+    "./data-structures": {
+      "types": "./types/data-structures/index.d.ts",
+      "import": "./src/data-structures/index.js"
     },
     "./data-structures/*.js": {
       "types": "./types/data-structures/*.d.ts",

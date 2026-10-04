@@ -1,9 +1,21 @@
+@font-face {
+  font-family: "Flappy";
+  src: url("/fonts/flappy.ttf") format("truetype");
+  font-display: block;
+}
+
+@font-face {
+  font-family: "Fifty Bird";
+  src: url("/fonts/font.ttf") format("truetype");
+  font-display: block;
+}
+
 * {
   box-sizing: border-box;
 }
 
 body {
-  font-family: "Press Start 2P", system-ui;
+  font-family: "Fifty Bird", system-ui;
   width: 100vw;
   height: 100vh;
   margin: 0;
@@ -17,6 +29,7 @@ body {
 
 #fullscreen-prompt {
   position: absolute;
+  font-family: "Flappy", system-ui;
   font-size: 1.5rem;
   text-align: center;
   animation: blink 1.5s step-start 0s infinite;
@@ -42,8 +55,4 @@ canvas {
     width: auto;
     height: 100vh;
   }
-}
-
-img {
-  display: none;
 }

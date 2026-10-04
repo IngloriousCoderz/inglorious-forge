@@ -1,3 +1,4 @@
+import { findCollision } from "@inglorious/engine/collision/detection.js"
 import { createApi } from "@inglorious/store/api.js"
 import { EventMap } from "@inglorious/store/event-map.js"
 
@@ -10,6 +11,19 @@ export function entityPoolMiddleware() {
 
     store.extras ??= {}
     store.extras.getAllActivePoolEntities = () => pools.getAllActiveEntities()
+
+    // Pooled entities live outside of the store, so they are merged into the
+    // given entities to take part in collision detection just like the others.
+    store.extras.findCollision = (
+      entity,
+      entities = store.getState(),
+      collisionGroup,
+    ) =>
+      findCollision(
+        entity,
+        { ...entities, ...pools.getAllActiveEntitiesById() },
+        collisionGroup,
+      )
 
     const game = store.getState().game
     if (game.devMode) {

@@ -6,7 +6,20 @@ export function audio() {
   const audioBufferCache = new Map()
   const activeSources = new Map()
 
+  function resume() {
+    window.removeEventListener("pointerdown", resume)
+    window.removeEventListener("keydown", resume)
+    audioContext.resume()
+  }
+
   return {
+    create() {
+      // Browsers keep an AudioContext suspended until the user interacts with
+      // the page, so playback would be silently dropped until then.
+      window.addEventListener("pointerdown", resume)
+      window.addEventListener("keydown", resume)
+    },
+
     async init(entity) {
       const sounds = entity.sounds || {}
 
@@ -21,8 +34,14 @@ export function audio() {
     },
 
     soundPlay(entity, name) {
-      const { volume = DEFAULT_VOLUME, loop } = entity.sounds[name]
+      const { volume = DEFAULT_VOLUME, loop } = entity.sounds[name] || {}
       const audioBuffer = audioBufferCache.get(name)
+
+      if (!audioBuffer) return
+
+      // Only one source per sound can be tracked, so playing a sound again
+      // replaces the previous one instead of stacking a new copy on top of it.
+      activeSources.get(name)?.stop()
 
       const source = audioContext.createBufferSource()
       const gainNode = audioContext.createGain()
@@ -46,6 +65,9 @@ export function audio() {
     },
 
     stop() {
+      window.removeEventListener("pointerdown", resume)
+      window.removeEventListener("keydown", resume)
+
       for (const source of activeSources.values()) {
         source.stop()
       }

@@ -3,7 +3,7 @@ import { defineConfig } from "vite"
 export default defineConfig({
   resolve: {
     alias: {
-      "@inglorious/engine/": "/src/engine/",
+      "@inglorious/engine/": "/src/",
     },
   },
 })

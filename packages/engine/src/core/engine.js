@@ -6,8 +6,12 @@ import { createDevtools } from "@inglorious/store/client/devtools.js"
 import { multiplayerMiddleware } from "@inglorious/store/client/multiplayer-middleware.js"
 import { createStore } from "@inglorious/store/store.js"
 import { augmentType } from "@inglorious/store/types.js"
-import { isArray } from "@inglorious/utils/data-structures/array.js"
-import { extendWith } from "@inglorious/utils/objects"
+import {
+  ensureArray,
+  isArray,
+} from "@inglorious/utils/data-structures/array.js"
+import { isFunction } from "@inglorious/utils/functions"
+import { extendWith, isObject } from "@inglorious/utils/objects"
 import { v } from "@inglorious/utils/v.js"
 import { isVector } from "@inglorious/utils/vectors"
 
@@ -110,6 +114,14 @@ export class Engine {
   }
 
   /**
+   * Returns the current game state.
+   * @returns {Entities} The entities of the current state.
+   */
+  getState() {
+    return this._store.getState()
+  }
+
+  /**
    * Updates the game state.
    * @param {number} dt - Delta time since the last update in milliseconds.
    */
@@ -144,12 +156,19 @@ export class Engine {
 }
 
 function merger(targetValue, sourceValue) {
+  // The default types and systems are lists of behaviors, so a game composing
+  // or extending one of them keeps the built-in ones instead of replacing them.
   if (
     isArray(targetValue) &&
     !isVector(targetValue) &&
-    isArray(sourceValue) &&
-    !isVector(sourceValue)
+    isBehavior(sourceValue)
   ) {
-    return [...targetValue, ...sourceValue]
+    return [...targetValue, ...ensureArray(sourceValue)]
   }
+}
+
+function isBehavior(value) {
+  if (isArray(value)) return !isVector(value)
+
+  return isObject(value) || isFunction(value)
 }

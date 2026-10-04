@@ -26,7 +26,9 @@
   },
   "scripts": {
     "format": "prettier --write .",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test:watch": "vitest",
+    "test": "vitest run"
   },
   "dependencies": {
     "@inglorious/engine": "workspace:*",
