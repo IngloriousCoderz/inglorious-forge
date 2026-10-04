@@ -1,8 +1,16 @@
+import { ZERO_VECTOR } from "@inglorious/utils/math/vectors"
 import { v } from "@inglorious/utils/v.js"
 
 const HALF = 2
 const SIDES = 2
-const NO_DEPTH = 0
+
+/**
+ * The game is played on a single plane: sprites have no depth, and only the
+ * background, ground and pipes move sideways. Taken from `ZERO_VECTOR` so these
+ * cannot drift away from it.
+ */
+const [NO_OFFSET, NO_RISE, NO_DEPTH] = ZERO_VECTOR
+export { NO_DEPTH, NO_OFFSET, NO_RISE }
 
 export const WIDTH = 512
 export const HEIGHT = 288
@@ -91,6 +99,7 @@ const COUNTDOWN_TEXT_MARGIN = 120
 const GAME_OVER_PROMPT_TEXT_MARGIN = 160
 const FPS_TEXT_MARGIN = 10
 
+export const SCORE_TEXT_X = NO_TEXT_MARGIN
 export const SCORE_TEXT_ALTITUDE = HEIGHT - NO_TEXT_MARGIN
 export const TITLE_TEXT_ALTITUDE = HEIGHT - TITLE_TEXT_MARGIN
 export const PROMPT_TEXT_ALTITUDE = HEIGHT - PROMPT_TEXT_MARGIN
@@ -101,9 +110,6 @@ export const GAME_OVER_PROMPT_TEXT_ALTITUDE =
   HEIGHT - GAME_OVER_PROMPT_TEXT_MARGIN
 export const FPS_TEXT_X = WIDTH - FPS_TEXT_MARGIN
 export const FPS_TEXT_ALTITUDE = HEIGHT - FPS_TEXT_MARGIN
-
-/** The game is played on a single plane, so nothing here has any depth. */
-export const FLAT = v(NO_DEPTH, NO_DEPTH, NO_DEPTH)
 
 export const LAYER_BACKGROUND = -3
 export const LAYER_PIPES = -2

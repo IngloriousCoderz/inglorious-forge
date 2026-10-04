@@ -18,6 +18,12 @@ export type Vector7 = Vector<
   readonly [number, number, number, number, number, number, number]
 >
 
+/** The vector with every component at zero. */
+export const ZERO_VECTOR: Vector3
+
+/** The vector one unit long along the x axis. */
+export const UNIT_VECTOR: Vector3
+
 /** Returns the absolute value of each vector component. */
 export function abs<T extends Vector>(vector: T): T
 

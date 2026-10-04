@@ -1,5 +1,3 @@
-/* eslint-disable no-magic-numbers */
-
 import { collisionGizmos } from "@inglorious/engine/behaviors/debug/collision.js"
 import { fps } from "@inglorious/engine/behaviors/fps"
 import { infiniteScroll } from "@inglorious/engine/behaviors/infinite-scroll"
@@ -22,12 +20,18 @@ import {
   BIRD_WIDTH,
   COLOR_TEXT,
   COUNTDOWN_START,
+  COUNTDOWN_TEXT_ALTITUDE,
   FONT_FAMILY,
   FONT_SIZE_HUGE,
   FONT_SIZE_LARGE,
   FONT_SIZE_MEDIUM,
   FONT_SIZE_SMALL,
   FONT_SMALL_FAMILY,
+  FPS_TEXT_ALTITUDE,
+  FPS_TEXT_X,
+  GAME_OVER_PROMPT_TEXT_ALTITUDE,
+  GAME_OVER_SCORE_TEXT_ALTITUDE,
+  GAME_OVER_TEXT_ALTITUDE,
   GAME_STATE,
   GROUND_HEIGHT,
   GROUND_LOOP,
@@ -39,7 +43,14 @@ import {
   LAYER_GROUND,
   LAYER_OVERLAY,
   LAYER_TEXT,
+  NO_DEPTH,
+  NO_OFFSET,
+  NO_RISE,
   PRESS,
+  PROMPT_TEXT_ALTITUDE,
+  SCORE_TEXT_ALTITUDE,
+  SCORE_TEXT_X,
+  TITLE_TEXT_ALTITUDE,
   WIDTH,
 } from "./constants.js"
 import { Bird } from "./types/bird.ijs"
@@ -55,9 +66,13 @@ import {
   TitlePrompt,
 } from "./types/text.ijs"
 
-const CENTER_X = WIDTH / 2
-const BOTTOM_LEFT = [0, 1]
-const CENTER = [0.5, 0.5]
+const HALF = 2
+const CENTERED = 0.5
+const BOTTOM_EDGE = 0
+
+const CENTER_X = WIDTH / HALF
+const BOTTOM_LEFT = [CENTERED, BOTTOM_EDGE]
+const CENTER = [CENTERED, CENTERED]
 
 const gizmos = collisionGizmos({ shapes: { rectangle: renderRectangle } })
 
@@ -125,26 +140,26 @@ export default {
     background: {
       type: "Background",
       layer: LAYER_BACKGROUND,
-      position: v(0, 0, 0),
-      velocity: v(-BACKGROUND_SPEED, 0, 0),
+      position: v(NO_OFFSET, NO_RISE, NO_DEPTH),
+      velocity: v(-BACKGROUND_SPEED, NO_RISE, NO_DEPTH),
       image: {
         id: "background",
         imageSize: [WIDTH, HEIGHT],
         anchor: BOTTOM_LEFT,
-        loop: v(BACKGROUND_LOOP, 0, 0),
+        loop: v(BACKGROUND_LOOP, NO_RISE, NO_DEPTH),
       },
     },
 
     ground: {
       type: "Ground",
       layer: LAYER_GROUND,
-      position: v(0, 0, 0),
-      velocity: v(-GROUND_SPEED, 0, 0),
+      position: v(NO_OFFSET, NO_RISE, NO_DEPTH),
+      velocity: v(-GROUND_SPEED, NO_RISE, NO_DEPTH),
       image: {
         id: "ground",
         imageSize: [WIDTH, GROUND_HEIGHT],
         anchor: BOTTOM_LEFT,
-        loop: v(GROUND_LOOP, 0, 0),
+        loop: v(GROUND_LOOP, NO_RISE, NO_DEPTH),
       },
     },
 
@@ -152,7 +167,7 @@ export default {
       type: "Bird",
       layer: LAYER_BIRD,
       position: BIRD_INITIAL_POSITION,
-      velocity: v(0, 0, 0),
+      velocity: v(NO_OFFSET, NO_RISE, NO_DEPTH),
       size: BIRD_SIZE,
       collisions: {
         hitbox: { shape: "rectangle", size: BIRD_HITBOX_SIZE },
@@ -167,7 +182,7 @@ export default {
     score: {
       type: "Score",
       layer: LAYER_TEXT,
-      position: v(8, HEIGHT - 8, 0),
+      position: v(SCORE_TEXT_X, SCORE_TEXT_ALTITUDE, NO_DEPTH),
       font: FONT_FAMILY,
       size: FONT_SIZE_LARGE,
       textAlign: "left",
@@ -177,7 +192,7 @@ export default {
     title: {
       type: "Title",
       layer: LAYER_TEXT,
-      position: v(CENTER_X, HEIGHT - 64, 0),
+      position: v(CENTER_X, TITLE_TEXT_ALTITUDE, NO_DEPTH),
       font: FONT_FAMILY,
       size: FONT_SIZE_LARGE,
       textAlign: "center",
@@ -187,7 +202,7 @@ export default {
     titlePrompt: {
       type: "TitlePrompt",
       layer: LAYER_TEXT,
-      position: v(CENTER_X, HEIGHT - 100, 0),
+      position: v(CENTER_X, PROMPT_TEXT_ALTITUDE, NO_DEPTH),
       font: FONT_FAMILY,
       size: FONT_SIZE_MEDIUM,
       textAlign: "center",
@@ -197,7 +212,7 @@ export default {
     countdown: {
       type: "Countdown",
       layer: LAYER_TEXT,
-      position: v(CENTER_X, HEIGHT - 120, 0),
+      position: v(CENTER_X, COUNTDOWN_TEXT_ALTITUDE, NO_DEPTH),
       font: FONT_FAMILY,
       size: FONT_SIZE_HUGE,
       textAlign: "center",
@@ -207,7 +222,7 @@ export default {
     gameOver: {
       type: "GameOver",
       layer: LAYER_TEXT,
-      position: v(CENTER_X, HEIGHT - 64, 0),
+      position: v(CENTER_X, GAME_OVER_TEXT_ALTITUDE, NO_DEPTH),
       font: FONT_FAMILY,
       size: FONT_SIZE_LARGE,
       textAlign: "center",
@@ -217,7 +232,7 @@ export default {
     gameOverScore: {
       type: "GameOverScore",
       layer: LAYER_TEXT,
-      position: v(CENTER_X, HEIGHT - 100, 0),
+      position: v(CENTER_X, GAME_OVER_SCORE_TEXT_ALTITUDE, NO_DEPTH),
       font: FONT_FAMILY,
       size: FONT_SIZE_MEDIUM,
       textAlign: "center",
@@ -227,7 +242,7 @@ export default {
     gameOverPrompt: {
       type: "GameOverPrompt",
       layer: LAYER_TEXT,
-      position: v(CENTER_X, HEIGHT - 160, 0),
+      position: v(CENTER_X, GAME_OVER_PROMPT_TEXT_ALTITUDE, NO_DEPTH),
       font: FONT_FAMILY,
       size: FONT_SIZE_MEDIUM,
       textAlign: "center",
@@ -237,7 +252,7 @@ export default {
     fps: {
       type: "Fps",
       layer: LAYER_OVERLAY,
-      position: v(WIDTH - 10, HEIGHT - 10, 0),
+      position: v(FPS_TEXT_X, FPS_TEXT_ALTITUDE, NO_DEPTH),
       font: FONT_SMALL_FAMILY,
       size: FONT_SIZE_SMALL,
       textAlign: "right",

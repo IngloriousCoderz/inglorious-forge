@@ -1,5 +1,3 @@
-/* eslint-disable no-magic-numbers */
-
 import { fsm } from "@inglorious/engine/behaviors/fsm"
 import { clamp } from "@inglorious/utils/math/numbers.js"
 import { random } from "@inglorious/utils/math/rng.js"
@@ -18,8 +16,13 @@ import {
 } from "../constants.js"
 import { clearPipes, spawnPipePair } from "./pipe.ijs"
 
+// The gap is lowered by a random amount, so the first pipe of a round sits
+// somewhere between the highest and the lowest gap of the ones after it.
+const NO_LOWERING = 0
+const NO_COUNT = 0
+
 function randomGapY() {
-  return INITIAL_GAP_Y - random(0, INITIAL_GAP_Y_SPREAD)
+  return INITIAL_GAP_Y - random(NO_LOWERING, INITIAL_GAP_Y_SPREAD)
 }
 
 // The stage belongs to a round, so it is cleared as soon as a round is over
@@ -61,7 +64,7 @@ export const Game = fsm({
       entity.timer %= COUNTDOWN_TIME
       entity.count--
 
-      if (entity.count === 0) {
+      if (entity.count === NO_COUNT) {
         startPlay(entity, api)
       }
     },

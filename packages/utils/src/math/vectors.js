@@ -16,8 +16,15 @@ import { quaternion } from "./quaternions.js"
 import { hypothenuse } from "./triangle.js"
 import { atan2, cos, sin } from "./trigonometry.js"
 
-const ZERO_VECTOR = v(0, 0, 0) // eslint-disable-line no-magic-numbers
-const UNIT_VECTOR = v(1, 0, 0) // eslint-disable-line no-magic-numbers
+/**
+ * The vector with every component at zero, handy as the starting point for a
+ * vector you are about to build up component by component. Vectors are mutable,
+ * so copy it rather than handing it to anything that writes to a vector.
+ */
+export const ZERO_VECTOR = v(0, 0, 0) // eslint-disable-line no-magic-numbers
+
+/** The vector one unit long along the x axis. */
+export const UNIT_VECTOR = v(1, 0, 0) // eslint-disable-line no-magic-numbers
 
 const X = 0
 const Y = 1
