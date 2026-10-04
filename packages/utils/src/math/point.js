@@ -1,4 +1,25 @@
 /**
+ * A point in the Inglorious coordinate system: `[x, y, z]`.
+ *
+ * The world is y-up: the origin sits on the floor, and a bigger `y` is always a
+ * higher place in the world. Gravity subtracts from it, a jump adds to it, and an
+ * object resting on the ground has `y = 0`.
+ *
+ * `z` is the depth axis, and it is y-up as well — it is not screen-down, so both
+ * vertical axes grow upwards. Renderers turn them into screen coordinates:
+ * `@inglorious/renderer-2d` projects a point to `canvasY = height - y - z`,
+ * which puts `(0, 0, 0)` at the bottom-left of the canvas and turns both axes
+ * upside down.
+ *
+ * @example Reading a position in a 2D game
+ * ```js
+ * v(0, 0, 0) // the floor
+ * v(0, 100, 0) // a hundred pixels up
+ *
+ * entity.velocity[1] -= GRAVITY * dt // falling loses height
+ * entity.position[1] = 0 // keeping a body on the ground
+ * ```
+ *
  * @typedef {import("../../types/math/point").Point} Point
  * @typedef {import("../../types/math/point").PointInput} PointInput
  * @typedef {import("../../types/math/line").Line} Line

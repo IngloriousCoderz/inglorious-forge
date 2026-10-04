@@ -8,7 +8,6 @@ import {
   GAME_STATE,
   GAP_HEIGHT,
   LAYER_PIPES,
-  PIPE_HEIGHT,
   PIPE_SIZE,
   PIPE_SPAWN_X,
   PIPE_SPEED,
@@ -19,9 +18,9 @@ const X = 0
 const Y = 1
 const HALF = 2
 
-// Centred horizontally, so that the tile lines up with the hitbox, which the
-// engine resolves around the entity position. Vertically the tile is anchored on
-// the gap, because that is where its cap belongs.
+// The sprite and its hitbox share this anchor, so they line up by construction.
+// Vertically the pipe is pinned to the gap, which is where its cap belongs, and
+// the hitbox then reaches from there to the opposite edge of the screen.
 const TOP_ANCHOR = [0.5, 0]
 const BOTTOM_ANCHOR = [0.5, 1]
 
@@ -61,15 +60,9 @@ export function spawnPipePair(api, gapY) {
       // stands on its upper edge, so both grow away from the opening.
       position: v(PIPE_SPAWN_X, isUpper ? gapY : gapY - GAP_HEIGHT, 0),
       velocity: v(-PIPE_SPEED, 0, 0),
+      anchor: isUpper ? BOTTOM_ANCHOR : TOP_ANCHOR,
       size: PIPE_SIZE,
-      collisions: {
-        // The tile is anchored on the gap, while the solid column it stands for
-        // reaches all the way to the opposite edge of the screen.
-        hitbox: {
-          shape: "rectangle",
-          offset: v(0, isUpper ? PIPE_HEIGHT / HALF : -PIPE_HEIGHT / HALF, 0),
-        },
-      },
+      collisions: { hitbox: { shape: "rectangle" } },
       // The texture carries its cap on top, so only the pipe hanging from the
       // ceiling has to be mirrored to keep both caps next to the gap.
       flipY: isUpper,

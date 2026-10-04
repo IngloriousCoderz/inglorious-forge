@@ -1,4 +1,11 @@
 /**
+ * `height` and `depth` are independent axes, not halves of one screen
+ * dimension, so a body on the `xy` plane is sized `v(w, h, 0)` and one on the
+ * `xz` plane `v(w, 0, h)`. `@inglorious/renderer-2d` flattens both onto the
+ * screen and draws a rectangle `height + depth` tall, while
+ * {@link intersectsRectangle} tests the two axes separately.
+ *
+ * @typedef {import("../../types/math/rectangle").Size} Size
  * @typedef {import("../../types/math/circle").Circle} Circle
  * @typedef {import("../../types/math/point").PointInput} PointInput
  * @typedef {import("../../types/math/rectangle").Rectangle} Rectangle
@@ -11,6 +18,11 @@ const HALF = 2
 
 /**
  * Checks if a rectangle intersects with a point.
+ *
+ * The rectangle's `position` is its center, and `size` extends around it. A
+ * sprite is the exception: an `image.anchor` picks which corner of the tile sits
+ * on the position, so the two only line up when the anchor matches, such as
+ * `[0.5, 0.5]` for a centred one.
  * @param {Rectangle} rectangle - The rectangle to check.
  * @param {PointInput} point - The point to check.
  * @returns {boolean} True if the point intersects the circle, false otherwise.

@@ -1,5 +1,12 @@
-const HALF = 2
+import { anchorMargins, shapeAnchor } from "./anchor.js"
 
+const Y = 1
+
+/**
+ * Where an entity's position has to be for it to come to rest on top of a
+ * target, given that both are positioned by their anchor rather than their
+ * centre.
+ */
 export function calculateLandingPosition(
   entity,
   target,
@@ -14,26 +21,37 @@ export function calculateLandingPosition(
   return calculatePYForPoint(entity, target, collisionGroup)
 }
 
+/**
+ * How far the top edge of a shape sits above the point it is anchored to.
+ */
+function topOf(target, collisionGroup) {
+  const collision = target.collisions[collisionGroup]
+  const { after } = anchorMargins(
+    shapeAnchor(target, collision),
+    collision.size ?? target.size,
+  )
+
+  return target.position[Y] + after[Y]
+}
+
 function calculatePYForPoint(entity, target, collisionGroup) {
-  const [, targetY] = target.position
-  const [, targetHeight] = target.collisions[collisionGroup].size ?? target.size
-  return targetY + targetHeight / HALF
+  return topOf(target, collisionGroup)
 }
 
 function calculatePYForCircle(entity, target, collisionGroup) {
   const entityRadius = entity.collisions[collisionGroup].radius ?? entity.radius
 
-  const [, targetY] = target.position
-  const [, targetHeight] = target.collisions[collisionGroup].size ?? target.size
-  return targetY + targetHeight / HALF + entityRadius
+  return topOf(target, collisionGroup) + entityRadius
 }
 
 function calculatePYForRectangle(entity, target, collisionGroup) {
-  const [, entityHeight] = entity.collisions[collisionGroup].size ?? entity.size
+  const collision = entity.collisions[collisionGroup]
+  const { before } = anchorMargins(
+    shapeAnchor(entity, collision),
+    collision.size ?? entity.size,
+  )
 
-  const [, targetY] = target.position
-  const [, targetHeight] = target.collisions[collisionGroup].size ?? target.size
-  return targetY + targetHeight / HALF + entityHeight / HALF
+  return topOf(target, collisionGroup) + before[Y]
 }
 
 const CalculatePY = {

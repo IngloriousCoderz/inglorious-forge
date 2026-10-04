@@ -1,4 +1,10 @@
+import {
+  anchorMargins,
+  entityAnchor,
+  shapeAnchor,
+} from "@inglorious/engine/physics/anchor.js"
 import { abs } from "@inglorious/utils/math/numbers.js"
+import { v } from "@inglorious/utils/v.js"
 import {
   angle,
   clamp,
@@ -11,8 +17,8 @@ import {
 
 const ORIGIN = 0
 const DOUBLE = 2
-const HALF = 2
 const X = 0
+const Y = 1
 const Z = 2
 
 export function bounce(entity, dt, [maxX, maxZ]) {
@@ -35,17 +41,20 @@ export function bounce(entity, dt, [maxX, maxZ]) {
 
 const ClampToBoundsByShape = {
   rectangle(entity, [maxX, maxZ], collisionGroup) {
-    const [width, height, depth] =
-      entity.collisions[collisionGroup].size ?? entity.size
+    const collision = entity.collisions[collisionGroup]
+    const size = collision.size ?? entity.size
 
-    const halfWidth = width / HALF
-    const halfHeight = height / HALF
-    const halfDepth = depth / HALF
+    // An anchored box leaves uneven room on either side of its position, so the
+    // anchor itself decides how close to the bounds it may get.
+    const { before: low, after: high } = anchorMargins(
+      shapeAnchor(entity, collision),
+      size,
+    )
 
     return clamp(
       entity.position,
-      [halfWidth, halfHeight, halfDepth],
-      [maxX - halfWidth, maxZ - halfHeight, maxZ - halfDepth],
+      [low[ORIGIN], low[Y], low[Z]],
+      [maxX - high[ORIGIN], maxZ - high[Y], maxZ - high[Z]],
     )
   },
 
@@ -84,30 +93,28 @@ export function clampToBounds(
 }
 
 export function flip(entity, [maxX, maxZ]) {
-  const [x, , z] = entity.position
+  const { x, z } = entity.position
 
   entity.collisions ??= {}
   entity.collisions.bounds ??= {}
   entity.collisions.bounds.shape ??= "rectangle"
 
-  let width, height, depth
+  let size
   if (entity.collisions.bounds.shape === "circle") {
-    width = entity.collisions.bounds.radius * DOUBLE
-    height = entity.collisions.bounds.radius * DOUBLE
-    depth = entity.collisions.bounds.radius * DOUBLE
+    const radius = entity.collisions.bounds.radius ?? entity.radius
+    size = v(radius * DOUBLE, radius * DOUBLE, radius * DOUBLE)
   } else {
-    ;[width, height, depth] = entity.collisions.bounds.size ?? entity.size
+    size = entity.collisions.bounds.size ?? entity.size
   }
-  const halfWidth = width / HALF
-  const halfHeight = height / HALF
-  const halfDepth = depth / HALF
 
-  const left = x - halfWidth
-  const right = x + halfWidth
-  const bottom = z - halfHeight
-  const top = z + halfHeight
-  const back = z - halfDepth
-  const front = z + halfDepth
+  const { before: low, after: high } = anchorMargins(entityAnchor(entity), size)
+
+  const left = x - low[X]
+  const right = x + high[X]
+  const bottom = z - low[Y]
+  const top = z + high[Y]
+  const back = z - low[Z]
+  const front = z + high[Z]
 
   const direction = fromAngle(entity.orientation)
 

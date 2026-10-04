@@ -1,3 +1,4 @@
+import { anchorOffset, shapeAnchor } from "@inglorious/engine/physics/anchor.js"
 import * as circle from "@inglorious/utils/math/circle.js"
 import * as hitmask from "@inglorious/utils/math/hitmask.js"
 import * as line from "@inglorious/utils/math/line.js"
@@ -86,7 +87,11 @@ export function findCollisions(entity, target, collisionGroup = "hitbox") {
 
 /**
  * Correctly calculates the absolute position and size of an entity's
- * collision shape, including any offsets.
+ * collision shape, including any offsets and the anchor the shape hangs from.
+ *
+ * The shape is reported by its centre, which is where the collision maths wants
+ * it, so an anchored shape is shifted off its position by half the room it does
+ * not take up on that side.
  */
 function getCollisionShape(entity, collisionGroup = "hitbox") {
   const collision = entity.collisions[collisionGroup]
@@ -94,8 +99,11 @@ function getCollisionShape(entity, collisionGroup = "hitbox") {
     return null
   }
 
+  const size = collision.size ?? entity.size
+
   const position = add(
     entity.position,
+    anchorOffset(shapeAnchor(entity, collision), size),
     collision.offset ?? zero(),
     entity.offset ?? zero(),
   )
@@ -103,7 +111,7 @@ function getCollisionShape(entity, collisionGroup = "hitbox") {
   return {
     ...collision,
     position,
-    size: collision.size ?? entity.size,
+    size,
     radius: collision.radius ?? entity.radius,
   }
 }

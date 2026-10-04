@@ -1,8 +1,8 @@
-/* eslint-disable no-magic-numbers */
-
 import { v } from "@inglorious/utils/v.js"
 
 const HALF = 2
+const SIDES = 2
+const NO_DEPTH = 0
 
 export const WIDTH = 512
 export const HEIGHT = 288
@@ -22,16 +22,16 @@ const BIRD_CRASH_OVERLAP = 1
 
 export const BIRD_WIDTH = 38
 export const BIRD_HEIGHT = 24
-export const BIRD_SIZE = v(BIRD_WIDTH, BIRD_HEIGHT, 0)
+export const BIRD_SIZE = v(BIRD_WIDTH, BIRD_HEIGHT, NO_DEPTH)
 export const BIRD_INITIAL_POSITION = v(
   WIDTH / HALF - BIRD_INSET + BIRD_WIDTH / HALF,
   HEIGHT / HALF + BIRD_INSET - BIRD_HEIGHT / HALF,
-  0,
+  NO_DEPTH,
 )
 export const BIRD_HITBOX_SIZE = v(
-  BIRD_WIDTH - BIRD_HITBOX_INSET * 2,
-  BIRD_HEIGHT - BIRD_HITBOX_INSET * 2,
-  0,
+  BIRD_WIDTH - BIRD_HITBOX_INSET * SIDES,
+  BIRD_HEIGHT - BIRD_HITBOX_INSET * SIDES,
+  NO_DEPTH,
 )
 export const BIRD_GRAVITY = 980
 export const BIRD_FLAP_SPEED = 300
@@ -42,9 +42,11 @@ export const BIRD_CRASH_Y =
 
 export const PIPE_WIDTH = 70
 export const PIPE_HEIGHT = HEIGHT
-export const PIPE_SIZE = v(PIPE_WIDTH, PIPE_HEIGHT, 0)
+export const PIPE_SIZE = v(PIPE_WIDTH, PIPE_HEIGHT, NO_DEPTH)
 export const PIPE_SPEED = 60
-export const PIPE_SPAWN_X = WIDTH + 32
+// Pipes enter from just beyond the right edge of the screen.
+const PIPE_SPAWN_MARGIN = 32
+export const PIPE_SPAWN_X = WIDTH + PIPE_SPAWN_MARGIN
 export const GAP_HEIGHT = 90
 // `GAP_Y` is the altitude of the lower edge of the gap, i.e. where the pipe
 // hanging from the ceiling ends.
@@ -52,7 +54,7 @@ export const MIN_GAP_Y = GAP_HEIGHT
 export const MAX_GAP_Y = HEIGHT - CEILING_MARGIN
 export const PIPE_SPAWN_INTERVAL = 2
 export const GAP_Y_SPREAD = 20
-export const INITIAL_GAP_Y = HEIGHT - CEILING_MARGIN * 2
+export const INITIAL_GAP_Y = HEIGHT - CEILING_MARGIN * SIDES
 export const INITIAL_GAP_Y_SPREAD = 80
 
 export const COUNTDOWN_TIME = 0.75
@@ -79,6 +81,29 @@ export const FONT_SIZE_LARGE = 28
 export const FONT_SIZE_HUGE = 56
 
 export const COLOR_TEXT = "white"
+
+// Text sits a margin down from the top of the screen, so the margins are measured
+// as altitudes instead.
+const NO_TEXT_MARGIN = 8
+const TITLE_TEXT_MARGIN = 64
+const PROMPT_TEXT_MARGIN = 100
+const COUNTDOWN_TEXT_MARGIN = 120
+const GAME_OVER_PROMPT_TEXT_MARGIN = 160
+const FPS_TEXT_MARGIN = 10
+
+export const SCORE_TEXT_ALTITUDE = HEIGHT - NO_TEXT_MARGIN
+export const TITLE_TEXT_ALTITUDE = HEIGHT - TITLE_TEXT_MARGIN
+export const PROMPT_TEXT_ALTITUDE = HEIGHT - PROMPT_TEXT_MARGIN
+export const COUNTDOWN_TEXT_ALTITUDE = HEIGHT - COUNTDOWN_TEXT_MARGIN
+export const GAME_OVER_TEXT_ALTITUDE = HEIGHT - TITLE_TEXT_MARGIN
+export const GAME_OVER_SCORE_TEXT_ALTITUDE = HEIGHT - PROMPT_TEXT_MARGIN
+export const GAME_OVER_PROMPT_TEXT_ALTITUDE =
+  HEIGHT - GAME_OVER_PROMPT_TEXT_MARGIN
+export const FPS_TEXT_X = WIDTH - FPS_TEXT_MARGIN
+export const FPS_TEXT_ALTITUDE = HEIGHT - FPS_TEXT_MARGIN
+
+/** The game is played on a single plane, so nothing here has any depth. */
+export const FLAT = v(NO_DEPTH, NO_DEPTH, NO_DEPTH)
 
 export const LAYER_BACKGROUND = -3
 export const LAYER_PIPES = -2

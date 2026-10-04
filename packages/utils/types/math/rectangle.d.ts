@@ -1,10 +1,31 @@
 import type { Circle } from "./circle"
 import type { Point, PointInput } from "./point"
 
-/** Represents the dimensions of a 3D object. */
+/**
+ * The dimensions of a 3D object, as `[width, height, depth]`.
+ *
+ * `width` is the extent along `x`, `height` the extent along `y` and `depth` the
+ * extent along `z`. `height` and `depth` are **independent axes**, not halves of
+ * one screen dimension, so in a 2D game that plays on the `xy` plane a size reads
+ * as `v(w, h, 0)` — and an entity whose body is placed on the `xz` plane instead
+ * reads as `v(w, 0, h)`.
+ *
+ * When a renderer has to flatten both vertical axes onto the screen, it adds
+ * them: `@inglorious/renderer-2d` draws a rectangle `height + depth` tall. A
+ * collision shape never does — `intersectsRectangle` tests the two axes
+ * separately, which is why a body cannot collide with something that is merely
+ * "near it" on the other axis.
+ */
 export type Size = readonly [width: number, height: number, depth: number]
 
-/** Represents an axis-aligned rectangle. */
+/**
+ * Represents an axis-aligned rectangle.
+ *
+ * `position` is the point the box hangs off and `size` is its extent, so with
+ * the default centred anchor the position is the middle of the box. Set an
+ * `anchor` to describe the box by a different point, such as `[0, 1]` for its
+ * bottom-left corner.
+ */
 export interface Rectangle {
   /** The center of the rectangle. */
   position: Point
