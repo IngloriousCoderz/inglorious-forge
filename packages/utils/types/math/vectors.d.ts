@@ -123,6 +123,11 @@ export function multiply<T extends Vector2 | Vector3>(
 ): T
 
 /** Normalizes a vector to unit magnitude. */
+/**
+ * Flips the direction of every component.
+ */
+export function negate<T extends Vector>(vector: T): T
+
 export function normalize<T extends Vector>(vector: T): T
 
 /** Alias for `power`. */
@@ -139,6 +144,14 @@ export function power<T extends Vector2 | Vector3>(
 
 /** Raises a scalar to each vector component. */
 export function powerOf<T extends Vector>(scalar: number, vector: T): T
+
+/**
+ * Draws a random vector, taking each component from its own range.
+ */
+export function randomVector(
+  low?: readonly number[],
+  high?: readonly number[],
+): Vector3
 
 /** Alias for `mod`. */
 export const remainder: typeof mod

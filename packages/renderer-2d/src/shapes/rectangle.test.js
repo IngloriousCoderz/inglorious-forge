@@ -159,3 +159,19 @@ test("a sprite should keep a box on it even without an entity anchor", () => {
 
   expect(boxOf(entity)).toStrictEqual(spriteOf(entity))
 })
+
+test("it should draw at full opacity by default", () => {
+  const { ctx } = createContext()
+
+  renderRectangle({ size: [10, 10, 0] }, ctx)
+
+  expect(ctx.globalAlpha).toBe(1)
+})
+
+test("it should draw at the given opacity", () => {
+  const { ctx } = createContext()
+
+  renderRectangle({ size: [10, 10, 0], opacity: 0.5 }, ctx)
+
+  expect(ctx.globalAlpha).toBe(0.5)
+})

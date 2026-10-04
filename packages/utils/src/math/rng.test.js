@@ -53,3 +53,22 @@ test("it should create a random number in the range (-1, 1)", () => {
   expect(randomNumber).toBeGreaterThan(-1)
   expect(randomNumber).toBeLessThan(1)
 })
+
+test("it should create a random float when only one bound is a float", () => {
+  // The upper bound is a whole number, which used to send this down the integer
+  // path and answer only 0 or 1.
+  for (let attempt = 0; attempt < 100; attempt++) {
+    const randomNumber = random(0.5, 1)
+
+    expect(randomNumber).toBeGreaterThanOrEqual(0.5)
+    expect(randomNumber).toBeLessThan(1)
+  }
+})
+
+test("it should keep integer ranges whole", () => {
+  for (let attempt = 0; attempt < 100; attempt++) {
+    const randomNumber = random(1, 6)
+
+    expect(Number.isInteger(randomNumber)).toBe(true)
+  }
+})

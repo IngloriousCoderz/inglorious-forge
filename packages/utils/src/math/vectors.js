@@ -13,6 +13,7 @@ import {
   snap as nSnap,
 } from "./numbers.js"
 import { quaternion } from "./quaternions.js"
+import { random } from "./rng.js"
 import { hypothenuse } from "./triangle.js"
 import { atan2, cos, sin } from "./trigonometry.js"
 
@@ -43,6 +44,7 @@ const Z = 2
 const LAST_COORDINATE = 1
 const TWO_COORDINATES = 2
 const NO_Y = 0
+const NO_COMPONENT = 0
 const DEFAULT_PRECISION = 1
 const DEFAULT_DECIMALS = 0
 
@@ -247,6 +249,16 @@ export function multiply(...operands) {
 }
 
 /**
+ * Flips the direction of every component, so that adding the result to a vector
+ * gives back the point mirrored through it.
+ * @param {Vector} vector - The input vector.
+ * @returns {Vector} The negated vector.
+ */
+export function negate(vector) {
+  return v(...vector.map((coordinate) => -coordinate))
+}
+
+/**
  * Normalizes the vector to have a magnitude of 1.
  * @param {Vector} vector - The input vector.
  * @returns {Vector} The normalized vector.
@@ -280,6 +292,35 @@ export function power(...operands) {
  */
 export function powerOf(scalar, vector) {
   return v(...vector.map((coordinate) => scalar ** coordinate))
+}
+
+/**
+ * Draws a random vector, taking each component from its own range: the low end is
+ * where that axis starts, the high end where it can reach. This is `random`
+ * applied per axis, so it suits ranges that differ by axis, where a single pair of
+ * bounds would have to be square.
+ *
+ * A component whose bounds are the same always comes out equal to them, and either
+ * bound may be left out to fall back to zero on that axis.
+ *
+ * @param {Vector} [low] - Where each axis starts.
+ * @param {Vector} [high] - Where each axis can reach.
+ * @returns {Vector} The random vector.
+ * @example
+ * ```js
+ * // Debris thrown to the left or right, never up or down.
+ * randomVector(v(-15, 0, 0), v(15, 0, 0))
+ * ```
+ */
+export function randomVector(low, high) {
+  const [lowX, lowY, lowZ] = low ?? []
+  const [highX, highY, highZ] = high ?? []
+
+  return v(
+    random(lowX ?? NO_COMPONENT, highX ?? NO_COMPONENT),
+    random(lowY ?? NO_COMPONENT, highY ?? NO_COMPONENT),
+    random(lowZ ?? NO_COMPONENT, highZ ?? NO_COMPONENT),
+  )
 }
 
 /**

@@ -2,6 +2,7 @@ import { entityAnchor } from "@inglorious/engine/physics/anchor.js"
 
 const DEFAULT_POSITION = 0
 const WHOLE = 1
+const OPAQUE = 1
 
 const NO_FLIP = 1
 const FLIP = -1
@@ -13,6 +14,7 @@ export function renderImage(entity, ctx, api) {
     sy = DEFAULT_POSITION,
     flipX = false,
     flipY = false,
+    opacity = OPAQUE,
   } = entity
   const { id, src, imageSize, tileSize = imageSize } = image
 
@@ -39,6 +41,8 @@ export function renderImage(entity, ctx, api) {
   ]
 
   ctx.save()
+
+  ctx.globalAlpha = opacity
 
   // The anchor counts from the bottom of the tile while the canvas counts down
   // from the top, so the vertical share is what is left over.

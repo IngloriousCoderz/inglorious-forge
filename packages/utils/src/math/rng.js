@@ -31,10 +31,13 @@ export function random(...args) {
     return Math.random()
   }
 
+  // A range with a fractional bound cannot be stepped through as integers, so it
+  // is read as a continuous range. Requiring both bounds to be floats used to
+  // send `random(0.5, 1)` down the integer path, where it could only ever answer
+  // 0 or 1.
   if (
     args.length > 1 &&
-    !Number.isInteger(args[0]) &&
-    !Number.isInteger(args[1])
+    (!Number.isInteger(args[0]) || !Number.isInteger(args[1]))
   ) {
     const [from, to] = args
     return Math.random() * (to - from) + from

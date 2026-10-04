@@ -164,6 +164,22 @@ test("it should mirror the image on a single axis", () => {
   expect(calls.box).toMatchObject({ left: 0, right: 70, top: -288, bottom: 0 })
 })
 
+test("it should draw at full opacity by default", () => {
+  const { ctx } = createContext()
+
+  renderImage({ image }, ctx, api)
+
+  expect(ctx.globalAlpha).toBe(1)
+})
+
+test("it should draw at the given opacity", () => {
+  const { ctx } = createContext()
+
+  renderImage({ image, opacity: 0.25 }, ctx, api)
+
+  expect(ctx.globalAlpha).toBe(0.25)
+})
+
 test("it should not mirror the image by default", () => {
   const { calls, ctx } = createContext()
 

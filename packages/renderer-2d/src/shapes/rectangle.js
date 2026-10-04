@@ -9,6 +9,7 @@ const X = 0
 const Y = 1
 const Z = 2
 const DEFAULT_THICKNESS = 1
+const OPAQUE = 1
 const DEFAULT_WIDTH = 100
 const DEFAULT_HEIGHT = 50
 const NO_DEPTH = 0
@@ -29,6 +30,7 @@ export function renderRectangle(entity, ctx) {
     color = "black",
     backgroundColor = "transparent",
     thickness = DEFAULT_THICKNESS,
+    opacity = OPAQUE,
   } = entity
 
   const [width = DEFAULT_WIDTH, height = DEFAULT_HEIGHT, depth = NO_DEPTH] =
@@ -50,6 +52,7 @@ export function renderRectangle(entity, ctx) {
 
   ctx.save()
 
+  ctx.globalAlpha = opacity
   ctx.lineWidth = thickness
   ctx.strokeStyle = color
   ctx.fillStyle = backgroundColor

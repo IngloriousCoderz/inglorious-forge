@@ -1,8 +1,12 @@
-import { expect, test } from "vitest"
+import { describe, expect, test } from "vitest"
 
 import { v } from "../v.js"
 import { sqrt } from "./numbers.js"
 import { cos, pi, sin } from "./trigonometry.js"
+
+const X = 0
+const Y = 1
+const Z = 2
 import {
   abs,
   angle,
@@ -21,9 +25,11 @@ import {
   mod,
   modOf,
   multiply,
+  negate,
   normalize,
   power,
   powerOf,
+  randomVector,
   rotate,
   setAngle,
   setMagnitude,
@@ -418,4 +424,93 @@ test("it should broadcast a scalar operand to every component when combining wit
   expect(mod(v(17, 25, 31), v(6, 7, 8), 4)).toStrictEqual(v(1, 0, 3))
   expect(multiply(v(1, 2, 3), v(4, 5, 6), 2)).toStrictEqual(v(8, 20, 36))
   expect(power(v(2, 3, 4), v(4, 3, 2), 2)).toStrictEqual(v(256, 729, 256))
+})
+
+describe("negate", () => {
+  test("it should flip the direction of every component", () => {
+    expect(negate([1, -2, 3])).toStrictEqual([-1, 2, -3])
+  })
+
+  test("it should answer negative zero for zero", () => {
+    // Negating zero gives negative zero: equal to zero in any calculation, but not
+    // strictly equal, so it will not match a `toStrictEqual` on `[0, 0, 0]`.
+    const negated = negate([0, 0, 0])
+
+    expect(Object.is(negated[X], -0)).toBe(true)
+    expect(negated[X] === 0).toBe(true)
+  })
+
+  test("it should be its own inverse", () => {
+    expect(negate(negate([4, -5, 6]))).toStrictEqual([4, -5, 6])
+  })
+
+  test("it should add back up to nothing", () => {
+    expect(sum([10, 20, 30], negate([10, 20, 30]))).toStrictEqual([0, 0, 0])
+  })
+
+  test("it should return a vector", () => {
+    expect(isVector(negate([1, 2, 3]))).toBe(true)
+  })
+
+  test("it should not modify the vector it is given", () => {
+    const vector = [1, 2, 3]
+
+    negate(vector)
+
+    expect(vector).toStrictEqual([1, 2, 3])
+  })
+})
+
+describe("randomVector", () => {
+  const sample = (low, high, attempts = 200) =>
+    Array.from({ length: attempts }, () => randomVector(low, high))
+
+  test("it should keep every component within its own range", () => {
+    sample([-15, 0, 0], [15, 80, 0]).forEach((vector) => {
+      expect(vector[X]).toBeGreaterThanOrEqual(-15)
+      expect(vector[X]).toBeLessThanOrEqual(15)
+      expect(vector[Y]).toBeGreaterThanOrEqual(0)
+      expect(vector[Y]).toBeLessThanOrEqual(80)
+      expect(vector[Z]).toBe(0)
+    })
+  })
+
+  test("it should reach both ends of the range", () => {
+    const xs = sample([-10, 0, 0], [10, 0, 0]).map((vector) => vector[X])
+
+    expect(Math.min(...xs)).toBeLessThan(-9)
+    expect(Math.max(...xs)).toBeGreaterThan(9)
+  })
+
+  test("it should give a fixed axis exactly that value", () => {
+    // A range that starts and ends on the same number can only answer it, which is
+    // how an axis is held still.
+    sample([0, 7, 0], [0, 7, 0]).forEach((vector) => {
+      expect(vector[Y]).toBe(7)
+    })
+  })
+
+  test("it should default a missing bound to zero", () => {
+    sample(undefined, [5, 0, 0]).forEach((vector) => {
+      expect(vector[X]).toBeGreaterThanOrEqual(0)
+      expect(vector[X]).toBeLessThanOrEqual(5)
+      expect(vector[Y]).toBe(0)
+      expect(vector[Z]).toBe(0)
+    })
+  })
+
+  test("it should answer zeroes when given nothing", () => {
+    expect(randomVector()).toStrictEqual([0, 0, 0])
+    expect(randomVector(undefined, undefined)).toStrictEqual([0, 0, 0])
+  })
+
+  test("it should not return the same value twice in a row", () => {
+    const values = new Set(sample([0, 0, 0], [100, 0, 0]).map((v) => v[X]))
+
+    expect(values.size).toBeGreaterThan(1)
+  })
+
+  test("it should return a vector", () => {
+    expect(isVector(randomVector([0, 0, 0], [1, 1, 1]))).toBe(true)
+  })
 })
