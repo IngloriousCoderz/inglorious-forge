@@ -19,9 +19,9 @@ const HALF = 2
 /**
  * Checks if a rectangle intersects with a point.
  *
- * The rectangle's `position` is its center, and `size` extends around it. A
- * sprite is the exception: an `image.anchor` picks which corner of the tile sits
- * on the position, so the two only line up when the anchor matches, such as
+ * The rectangle's `position` is its center, and `size` extends around it. An
+ * anchored shape is the exception: its `anchor` picks which point sits on the
+ * position, so the two only line up when the anchor matches, such as
  * `[0.5, 0.5]` for a centred one.
  * @param {Rectangle} rectangle - The rectangle to check.
  * @param {PointInput} point - The point to check.

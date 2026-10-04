@@ -1,12 +1,12 @@
 import { v } from "@inglorious/utils/v.js"
 import { expect, test, vi } from "vitest"
 
-import { createPointer, pointer } from "./pointer.js"
+import { createPointerEntity, pointer } from "./pointer.js"
 
 const createApi = () => ({ notify: vi.fn() })
 
 test("it should bind the target and its actions", () => {
-  expect(createPointer("game", ["press"])).toStrictEqual({
+  expect(createPointerEntity("game", ["press"])).toStrictEqual({
     type: "Pointer",
     targetId: "game",
     actions: ["press"],
@@ -14,7 +14,7 @@ test("it should bind the target and its actions", () => {
 })
 
 test("it should bind no action by default", () => {
-  expect(createPointer("game").actions).toStrictEqual([])
+  expect(createPointerEntity("game").actions).toStrictEqual([])
 })
 
 test("it should press and release every action on a click", () => {

@@ -91,7 +91,7 @@ function tileBox(entity, position = [0, 0]) {
   return calls.box
 }
 
-test("it should draw the whole image from its top-left corner", () => {
+test("it should draw the whole image centred by default", () => {
   const { calls, ctx } = createContext()
 
   renderImage({ image }, ctx, api)
@@ -102,7 +102,7 @@ test("it should draw the whole image from its top-left corner", () => {
     "drawImage",
     "restore",
   ])
-  expect(calls[1]).toStrictEqual(["translate", -0, -0])
+  expect(calls[1]).toStrictEqual(["translate", -35, -144])
   expect(drawArgs(calls)).toStrictEqual([0, 0, 70, 288, 0, 0, 70, 288])
 })
 
@@ -114,11 +114,13 @@ test("it should crop the image to a tile", () => {
   expect(drawArgs(calls)).toStrictEqual([0, 128, 70, 32, 0, 0, 70, 32])
 })
 
+// Anchors count from the bottom of the tile, so a bottom-anchored tile is drawn
+// above the position, which is the negative half of the canvas.
 const ANCHORS = [
-  ["top-left", [0, 0], 0, 70, 0, 288],
-  ["top-right", [1, 0], -70, 0, 0, 288],
-  ["bottom-left", [0, 1], 0, 70, -288, 0],
-  ["bottom-right", [1, 1], -70, 0, -288, 0],
+  ["bottom-left", [0, 0], 0, 70, -288, 0],
+  ["bottom-right", [1, 0], -70, 0, -288, 0],
+  ["top-left", [0, 1], 0, 70, 0, 288],
+  ["top-right", [1, 1], -70, 0, 0, 288],
   ["centred", [0.5, 0.5], -35, 35, -144, 144],
 ]
 
@@ -154,7 +156,7 @@ test.each(ANCHORS)(
 test("it should mirror the image on a single axis", () => {
   const { calls, ctx } = createContext()
 
-  renderImage({ flipX: true, image: { ...image, anchor: [0, 1] } }, ctx, api)
+  renderImage({ flipX: true, image: { ...image, anchor: [0, 0] } }, ctx, api)
 
   expect(calls.filter(([name]) => name === "scale")).toStrictEqual([
     ["scale", -1, 1],
@@ -168,4 +170,32 @@ test("it should not mirror the image by default", () => {
   renderImage({ image }, ctx, api)
 
   expect(calls.filter(([name]) => name === "scale")).toStrictEqual([])
+})
+
+test("an entity anchor should place the sprite", () => {
+  expect(tileBox({ anchor: [0, 0], image })).toStrictEqual({
+    left: 0,
+    right: 70,
+    top: -288,
+    bottom: 0,
+  })
+})
+
+test("an entity anchor and an image anchor should agree", () => {
+  const entity = { anchor: [0, 0], image: { ...image, anchor: [0, 0] } }
+
+  expect(tileBox(entity)).toStrictEqual(
+    tileBox({ ...entity, anchor: undefined }),
+  )
+})
+
+test("an entity anchor should win over an image anchor", () => {
+  const entity = { anchor: [0, 1], image: { ...image, anchor: [0, 0] } }
+
+  expect(tileBox(entity)).toStrictEqual({
+    left: 0,
+    right: 70,
+    top: 0,
+    bottom: 288,
+  })
 })

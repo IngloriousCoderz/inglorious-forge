@@ -26,6 +26,6 @@ export function input() {
   }
 }
 
-export function createInput(targetId, mapping = {}) {
+export function createInputEntity(targetId, mapping = {}) {
   return { type: "Input", targetId, mapping }
 }

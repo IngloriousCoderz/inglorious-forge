@@ -85,7 +85,7 @@ export function trackTouch(parent, api, toGamePosition) {
   }
 }
 
-export function createTouch() {
+export function createTouchEntity() {
   return {
     type: "Touch",
     layer: 999, // A high layer value to ensure it's always rendered on top

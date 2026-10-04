@@ -46,7 +46,7 @@ export function trackMouse(parent, api, toGamePosition) {
   }
 }
 
-export function createMouse(overrides = {}) {
+export function createMouseEntity(overrides = {}) {
   return {
     type: "Mouse",
     layer: 999, // A high layer value to ensure it's always rendered on top

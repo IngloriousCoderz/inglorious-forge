@@ -2,10 +2,13 @@
 import { modernControls } from "@inglorious/engine/behaviors/controls/kinematic/modern"
 import { fps } from "@inglorious/engine/behaviors/fps"
 import {
-  controls,
-  createControls,
+  controlTypes,
+  createControlEntities,
 } from "@inglorious/engine/behaviors/input/controls"
-import { createTouch, touch } from "@inglorious/engine/behaviors/input/touch"
+import {
+  createTouchEntity,
+  touch,
+} from "@inglorious/engine/behaviors/input/touch"
 import { clamped } from "@inglorious/engine/behaviors/physics/clamped"
 import { renderFps } from "@inglorious/renderer-2d/fps"
 import { renderRectangle } from "@inglorious/renderer-2d/shapes/rectangle"
@@ -24,7 +27,7 @@ export default {
   types: {
     Touch: touch(),
 
-    ...controls("player1", "player2"),
+    ...controlTypes("player1", "player2"),
     Game,
     Text,
     Score,
@@ -34,14 +37,14 @@ export default {
   },
 
   entities: {
-    touch: createTouch(),
+    touch: createTouchEntity(),
 
-    ...createControls("player1", {
+    ...createControlEntities("player1", {
       KeyW: "moveUp",
       KeyS: "moveDown",
       Space: "action",
     }),
-    ...createControls("player2", {
+    ...createControlEntities("player2", {
       ArrowUp: "moveUp",
       ArrowDown: "moveDown",
     }),

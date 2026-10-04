@@ -38,7 +38,7 @@ test("a bottom-anchored hitbox stands on its position", () => {
   const platform = {
     position: v(100, 0, 0),
     size: v(64, 16, 0),
-    anchor: [0, 1],
+    anchor: [0, 0],
     collisions: { hitbox: { shape: "rectangle" } },
   }
 
@@ -51,7 +51,7 @@ test("a bottom-anchored hitbox stands on its position", () => {
 test("a hitbox should follow the anchor of the sprite it belongs to", () => {
   const tile = {
     position: v(100, 0, 0),
-    image: { id: "tile", imageSize: [64, 16], anchor: [0, 1] },
+    image: { id: "tile", imageSize: [64, 16], anchor: [0, 0] },
     size: v(64, 16, 0),
     collisions: { hitbox: { shape: "rectangle" } },
   }
@@ -65,7 +65,7 @@ test("a hitbox should follow the anchor of the sprite it belongs to", () => {
 test("a hitbox may pin itself differently from its sprite", () => {
   const tile = {
     position: v(100, 8, 0),
-    anchor: [0, 1],
+    anchor: [0, 0],
     size: v(64, 16, 0),
     collisions: { hitbox: { shape: "rectangle", anchor: [0.5, 0.5] } },
   }
@@ -83,7 +83,7 @@ test("an anchored platform should only be stood on from above", () => {
     type: "Platform",
     position: v(100, 0, 0),
     size: v(64, 16, 0),
-    anchor: [0, 1],
+    anchor: [0, 0],
     collisions: { hitbox: { shape: "rectangle" } },
   }
   const jumper = {

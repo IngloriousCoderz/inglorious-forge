@@ -2,8 +2,8 @@ import { collisionGizmos } from "@inglorious/engine/behaviors/debug/collision.js
 import { fps } from "@inglorious/engine/behaviors/fps"
 import { infiniteScroll } from "@inglorious/engine/behaviors/infinite-scroll"
 import {
-  controls,
-  createControls,
+  controlTypes,
+  createControlEntities,
 } from "@inglorious/engine/behaviors/input/controls.js"
 import { renderFps } from "@inglorious/renderer-2d/fps.js"
 import { renderImage } from "@inglorious/renderer-2d/image/image.js"
@@ -68,17 +68,18 @@ import {
 
 const HALF = 2
 const CENTERED = 0.5
+const LEFT_EDGE = 0
 const BOTTOM_EDGE = 0
 
 const CENTER_X = WIDTH / HALF
-const BOTTOM_LEFT = [CENTERED, BOTTOM_EDGE]
+const BOTTOM_LEFT = [LEFT_EDGE, BOTTOM_EDGE]
 const CENTER = [CENTERED, CENTERED]
 
 const gizmos = collisionGizmos({ shapes: { rectangle: renderRectangle } })
 
 export default {
   types: {
-    ...controls("game"),
+    ...controlTypes("game"),
 
     Game,
     Bird: [Bird, gizmos],
@@ -97,7 +98,7 @@ export default {
   },
 
   entities: {
-    ...createControls(
+    ...createControlEntities(
       "game",
       { Space: PRESS, Enter: PRESS, NumpadEnter: PRESS },
       [PRESS],

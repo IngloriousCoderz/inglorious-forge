@@ -48,9 +48,8 @@ export function shapeAnchor(entity, collision) {
 /**
  * How far the centre of a box sits from the point it is anchored to, per axis.
  *
- * `x` runs left to right on screen while `y` and `z` run bottom to top in the
- * world but top to bottom on screen, which is why the vertical axes are offset
- * the other way round.
+ * Every axis works the same way, because the anchor counts from the same end the
+ * coordinate does.
  */
 export function anchorOffset(anchor, size) {
   const [anchorX = CENTER, anchorY = CENTER, anchorZ = CENTER] = anchor ?? []
@@ -58,17 +57,18 @@ export function anchorOffset(anchor, size) {
 
   return v(
     (CENTER - anchorX) * width,
-    (anchorY - CENTER) * height,
-    (anchorZ - CENTER) * depth,
+    (CENTER - anchorY) * height,
+    (CENTER - anchorZ) * depth,
   )
 }
 
 /**
  * How much room a box takes on either side of the point it is anchored to, as
- * `before` and `after` vectors. Together the two are always the full extent,
+ * `before` and `after` vectors: what lies below and behind the point, and what
+ * lies above and in front of it. Together the two are always the full extent,
  * whatever the anchor is.
  *
- * A shape anchored at `[0, 1]` therefore leaves nothing below it and its whole
+ * A shape anchored at `[0, 0]` therefore leaves nothing below it and its whole
  * height above it, which is what lets it rest on a floor.
  */
 export function anchorMargins(anchor, size) {

@@ -5,37 +5,37 @@ export function gamepadsPoller(targetIds = []) {
     },
 
     update(entity, dt, api) {
-      navigator.getGamepads().forEach((gamepad) => {
-        if (gamepad == null) return
+      navigator.getGamepads().forEach((pad) => {
+        if (pad == null) return
 
-        const cache = (entity.gamepadStateCache[gamepad.index] ??= {
+        const cache = (entity.gamepadStateCache[pad.index] ??= {
           axes: [],
           buttons: [],
         })
 
-        gamepad.axes.forEach((axis, index) => {
+        pad.axes.forEach((axis, index) => {
           if (axis === cache.axes[index]) return
 
           api.notify("gamepadAxis", {
-            targetId: targetIds[gamepad.index],
+            targetId: targetIds[pad.index],
             axis: `Axis${index}`,
             value: axis,
           })
           cache.axes[index] = axis
         })
 
-        gamepad.buttons.forEach((button, index) => {
+        pad.buttons.forEach((button, index) => {
           const wasPressed = cache.buttons[index]
           const isPressed = button.pressed
 
           if (isPressed && !wasPressed) {
             api.notify("gamepadPress", {
-              targetId: targetIds[gamepad.index],
+              targetId: targetIds[pad.index],
               button: `Btn${index}`,
             })
           } else if (!isPressed && wasPressed) {
             api.notify("gamepadRelease", {
-              targetId: targetIds[gamepad.index],
+              targetId: targetIds[pad.index],
               button: `Btn${index}`,
             })
           }
@@ -47,7 +47,7 @@ export function gamepadsPoller(targetIds = []) {
   }
 }
 
-export function gamepadListener() {
+export function gamepad() {
   return {
     gamepadAxis(entity, { targetId, axis, value }, api) {
       if (targetId !== entity.targetId) return
@@ -85,6 +85,6 @@ export function gamepadListener() {
   }
 }
 
-export function createGamepad(targetId, mapping = {}) {
-  return { type: "GamepadListener", targetId, mapping }
+export function createGamepadEntity(targetId, mapping = {}) {
+  return { type: "Gamepad", targetId, mapping }
 }

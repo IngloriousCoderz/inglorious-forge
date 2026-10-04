@@ -1,9 +1,12 @@
-import { anchorOffset } from "@inglorious/engine/physics/anchor.js"
+import { anchorMargins } from "@inglorious/engine/physics/anchor.js"
 import { renderImage } from "@inglorious/renderer-2d/image/image.js"
 import { expect, test } from "vitest"
 
 import { renderRectangle } from "./rectangle.js"
 
+const X = 0
+const Y = 1
+const ORIGIN = 0
 const api = { getType: () => ({ get: () => ({ id: "tile" }), load() {} }) }
 
 function createContext() {
@@ -91,9 +94,9 @@ const spriteOf = (entity) => draw(renderImage, entity, entity.position)
 
 const ANCHORS = [
   ["centred", [0.5, 0.5]],
-  ["top-left", [0, 0]],
-  ["bottom-left", [0, 1]],
-  ["top-right", [1, 0]],
+  ["bottom-left", [0, 0]],
+  ["top-left", [0, 1]],
+  ["bottom-right", [1, 0]],
 ]
 
 test("it should straddle its position by default", () => {
@@ -115,14 +118,14 @@ test("it should still fall back to sensible defaults", () => {
 })
 
 test.each(ANCHORS)("a %s anchored box hangs off its position", (_, anchor) => {
-  const [offsetX, offsetY] = anchorOffset(anchor, [64, 16, 0])
+  const { before, after } = anchorMargins(anchor, [64, 16, 0])
   const box = boxOf({ size: [64, 16, 0], anchor })
 
   expect(box).toMatchObject({
-    left: offsetX - 32,
-    right: offsetX + 32,
-    top: -offsetY - 8,
-    bottom: -offsetY + 8,
+    left: ORIGIN - before[X],
+    right: ORIGIN + after[X],
+    top: ORIGIN - after[Y],
+    bottom: ORIGIN + before[Y],
   })
 })
 

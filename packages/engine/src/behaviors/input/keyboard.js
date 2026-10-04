@@ -40,7 +40,7 @@ export function keyboard() {
   }
 }
 
-export function createKeyboard(targetId, mapping = {}) {
+export function createKeyboardEntity(targetId, mapping = {}) {
   return { type: "Keyboard", targetId, mapping }
 }
 

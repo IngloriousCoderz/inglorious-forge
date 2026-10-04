@@ -89,7 +89,7 @@ test("it should land a body on top of an anchored platform", () => {
     // A platform described by its bottom-left corner, sitting on the floor.
     position: v(0, 0, 0),
     size: v(20, 10, 0),
-    anchor: [0, 1],
+    anchor: [0, 0],
     collisions: { platform: { shape: "rectangle" } },
   }
 
@@ -101,7 +101,7 @@ test("it should land an anchored body on top of a platform", () => {
   const entity = {
     position: v(0, 0, 0),
     size: v(10, 10, 0),
-    anchor: [0, 1],
+    anchor: [0, 0],
     collisions: { platform: { shape: "rectangle" } },
   }
   const target = {

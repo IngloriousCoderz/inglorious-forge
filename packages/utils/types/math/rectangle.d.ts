@@ -23,8 +23,8 @@ export type Size = readonly [width: number, height: number, depth: number]
  *
  * `position` is the point the box hangs off and `size` is its extent, so with
  * the default centred anchor the position is the middle of the box. Set an
- * `anchor` to describe the box by a different point, such as `[0, 1]` for its
- * bottom-left corner.
+ * `anchor` to describe the box by a different point, such as `[0, 0]` for its
+ * bottom-left corner, so that the box stands on its position.
  */
 export interface Rectangle {
   /** The center of the rectangle. */

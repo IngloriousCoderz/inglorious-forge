@@ -18,15 +18,15 @@ const X = 0
 const Y = 1
 const HALF = 2
 const CENTERED = 0.5
-const CEILING_EDGE = 0
-const FLOOR_EDGE = 1
+const BOTTOM_EDGE = 0
+const TOP_EDGE = 1
 const LEFT_EDGE = 0
 
-// The sprite and its hitbox share this anchor, so they line up by construction.
-// Vertically the pipe is pinned to the gap, which is where its cap belongs, and
-// the hitbox then reaches from there to the opposite edge of the screen.
-const TOP_ANCHOR = [CENTERED, CEILING_EDGE]
-const BOTTOM_ANCHOR = [CENTERED, FLOOR_EDGE]
+// Vertically the pipe is pinned to the gap, which is where its cap belongs, so
+// each pipe grows away from the opening: the ceiling one upwards from the gap,
+// the floor one downwards from it.
+const TOP_ANCHOR = [CENTERED, TOP_EDGE]
+const BOTTOM_ANCHOR = [CENTERED, BOTTOM_EDGE]
 
 export const Pipe = {
   render: renderImage,
@@ -50,8 +50,8 @@ export const Pipe = {
 }
 
 /**
- * Spawns a pair of pipes leaving a `gapY` wide opening, where `gapY` is the
- * altitude of the lower edge of the gap.
+ * Spawns a pair of pipes leaving a `GAP_HEIGHT` tall opening whose top sits at
+ * the altitude `gapY`.
  */
 export function spawnPipePair(api, gapY) {
   ;[true, false].forEach((isUpper) => {
@@ -60,10 +60,11 @@ export function spawnPipePair(api, gapY) {
       isUpper,
       scored: false,
       layer: LAYER_PIPES,
-      // The ceiling pipe hangs from the lower edge of the gap, the floor one
-      // stands on its upper edge, so both grow away from the opening.
+      // `gapY` is the altitude of the top of the gap, so the ceiling pipe stands
+      // on it and the floor one hangs from the gap's lower edge.
       position: v(PIPE_SPAWN_X, isUpper ? gapY : gapY - GAP_HEIGHT, NO_DEPTH),
       velocity: v(-PIPE_SPEED, NO_RISE, NO_DEPTH),
+      // One anchor places the sprite, its hitbox and its gizmo together.
       anchor: isUpper ? BOTTOM_ANCHOR : TOP_ANCHOR,
       size: PIPE_SIZE,
       collisions: { hitbox: { shape: "rectangle" } },
@@ -73,7 +74,6 @@ export function spawnPipePair(api, gapY) {
       image: {
         id: "pipe",
         imageSize: [PIPE_SIZE[X], PIPE_SIZE[Y]],
-        anchor: isUpper ? BOTTOM_ANCHOR : TOP_ANCHOR,
       },
     })
   })

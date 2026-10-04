@@ -22,7 +22,7 @@ export function pointer() {
   }
 }
 
-export function createPointer(targetId, actions = DEFAULT_ACTIONS) {
+export function createPointerEntity(targetId, actions = DEFAULT_ACTIONS) {
   return { type: "Pointer", targetId, actions }
 }
 

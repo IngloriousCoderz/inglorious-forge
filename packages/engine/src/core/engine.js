@@ -156,8 +156,10 @@ export class Engine {
 }
 
 function merger(targetValue, sourceValue) {
-  // The default types and systems are lists of behaviors, so a game composing
-  // or extending one of them keeps the built-in ones instead of replacing them.
+  // The default types and systems are lists of behaviors. A game that declares one
+  // of them as a plain object is deep-merged anyway, but a decorator is a function
+  // and would replace the list outright, so this is what keeps the built-in
+  // behaviors underneath it.
   if (
     isArray(targetValue) &&
     !isVector(targetValue) &&
