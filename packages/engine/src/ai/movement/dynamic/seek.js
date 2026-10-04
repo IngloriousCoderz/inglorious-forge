@@ -4,9 +4,10 @@ import {
   magnitude,
   multiply,
   setMagnitude,
+  subtract,
+  sum,
   zero,
-} from "@inglorious/utils/math/vector.js"
-import { subtract, sum } from "@inglorious/utils/math/vectors.js"
+} from "@inglorious/utils/vectors"
 
 const DEFAULT_MAX_ACCELERATION = 0
 const DEFAULT_MAX_SPEED = 0

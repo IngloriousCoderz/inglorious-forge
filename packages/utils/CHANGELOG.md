@@ -1,5 +1,11 @@
 # @inglorious/utils
 
+## 4.0.0
+
+### Major Changes
+
+- Provide shortcut paths to common utils functions
+
 ## 3.8.0
 
 ### Minor Changes

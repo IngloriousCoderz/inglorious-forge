@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 
-import { zero } from "@inglorious/utils/math/vector.js"
+import { zero } from "@inglorious/utils/vectors"
 
 export function renderRectangle(entity, ctx) {
   const {

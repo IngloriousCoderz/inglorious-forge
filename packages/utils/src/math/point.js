@@ -11,7 +11,7 @@ const HALF = 2
 
 import { distanceFromPoint } from "./line.js"
 import { isBetween } from "./numbers.js"
-import { isVector } from "./vector.js"
+import { isVector } from "./vectors.js"
 
 /**
  * Calculates the distance from a point to a line.

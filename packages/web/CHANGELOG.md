@@ -1,5 +1,14 @@
 # @inglorious/react-store
 
+## 6.4.2
+
+### Patch Changes
+
+- Provide shortcut paths to common utils functions
+- Updated dependencies
+  - @inglorious/utils@4.0.0
+  - @inglorious/store@11.0.2
+
 ## 6.4.1
 
 ### Patch Changes

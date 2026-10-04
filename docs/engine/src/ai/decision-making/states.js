@@ -5,11 +5,10 @@ import { createMouse, mouse } from "@inglorious/engine/behaviors/input/mouse.js"
 import { clampToBounds, flip } from "@inglorious/engine/physics/bounds.js"
 import { renderCharacter } from "@inglorious/renderer-2d/character.js"
 import { renderMouse } from "@inglorious/renderer-2d/mouse.js"
-import { merge } from "@inglorious/utils/data-structures/objects.js"
 import { pi } from "@inglorious/utils/math/trigonometry.js"
-import { length } from "@inglorious/utils/math/vector.js"
-import { subtract } from "@inglorious/utils/math/vectors.js"
+import { merge } from "@inglorious/utils/objects"
 import { v } from "@inglorious/utils/v.js"
+import { length, subtract } from "@inglorious/utils/vectors"
 
 export default {
   types: {

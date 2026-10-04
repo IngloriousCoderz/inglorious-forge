@@ -1,6 +1,5 @@
 import { randomBinomial } from "@inglorious/utils/math/rng.js"
-import { angle, createVector, multiply } from "@inglorious/utils/math/vector.js"
-import { sum } from "@inglorious/utils/math/vectors.js"
+import { angle, createVector, multiply, sum } from "@inglorious/utils/vectors"
 
 const DEFAULT_MAX_SPEED = 0
 const DEFAULT_MAX_ANGULAR_SPEED = 0

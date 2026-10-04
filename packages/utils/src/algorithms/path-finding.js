@@ -1,12 +1,11 @@
 /**
  * @typedef {import("../../types/algorithms/path-finding").Node} Node
  * @typedef {import("../../types/algorithms/path-finding").Graph} Graph
- * @typedef {import("../../types/math/vector").Vector2} Vector2
+ * @typedef {import("../../types/math/vectors").Vector2} Vector2
  */
 
 import { contains, push, remove, root } from "../data-structures/heap.js"
-import { abs, magnitude } from "../math/vector.js"
-import { subtract } from "../math/vectors.js"
+import { abs, magnitude, subtract } from "../math/vectors.js"
 
 const NO_COST = 0
 

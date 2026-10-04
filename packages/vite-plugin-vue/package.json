@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/vite-plugin-vue",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A Vite plugin that transforms Vue-like template syntax into lit-html templates.",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",

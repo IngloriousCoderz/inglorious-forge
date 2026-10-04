@@ -1,4 +1,4 @@
-import { serialize } from "@inglorious/utils/data-structures/object.js"
+import { serialize } from "@inglorious/utils/objects"
 import { WebSocketServer } from "ws"
 
 /**

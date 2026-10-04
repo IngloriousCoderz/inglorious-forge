@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/babel-plugin-inglorious-script",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "A Babel plugin for the IngloriousScript language.",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",

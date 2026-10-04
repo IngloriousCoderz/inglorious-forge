@@ -1,4 +1,4 @@
-import { get } from "@inglorious/utils/data-structures/object.js"
+import { get } from "@inglorious/utils/objects"
 
 /**
  * Retrieves the validation error for a specific form field.

@@ -3,7 +3,7 @@ import { findCollision } from "@inglorious/engine/collision/detection"
 import { renderRectangle } from "@inglorious/renderer-2d/shapes/rectangle"
 import { choose, random } from "@inglorious/utils/math/rng"
 import { pi } from "@inglorious/utils/math/trigonometry"
-import { fromAngle } from "@inglorious/utils/math/vector"
+import { fromAngle } from "@inglorious/utils/vectors"
 
 const X = 0
 const Z = 2

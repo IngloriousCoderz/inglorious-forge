@@ -4,7 +4,7 @@ import { infiniteScroll } from "@inglorious/engine/behaviors/infinite-scroll"
 import { createTouch, touch } from "@inglorious/engine/behaviors/input/touch"
 import { renderFps } from "@inglorious/renderer-2d/fps"
 import { renderImage } from "@inglorious/renderer-2d/image/image"
-import { zero } from "@inglorious/utils/math/vector"
+import { zero } from "@inglorious/utils/vectors"
 
 import { Game } from "./types/game"
 

@@ -1,7 +1,6 @@
 import { expect, test } from "vitest"
 
-import { length } from "../math/vector.js"
-import { subtract } from "../math/vectors.js"
+import { length, subtract } from "../math/vectors.js"
 import { v } from "../v.js"
 import { decide } from "./decision-tree.js"
 

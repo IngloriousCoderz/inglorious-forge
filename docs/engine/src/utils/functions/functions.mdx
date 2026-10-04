@@ -1,13 +1,20 @@
 import { Meta } from '@storybook/addon-docs/blocks'
 
-import { compose, debounce, pipe, throttle } from '@inglorious/utils/functions/functions'
-import { toString } from '@inglorious/utils/data-structures/object'
+import { toString as bToString } from '@inglorious/utils/data-structures/boolean'
+import {
+  compose,
+  debounce,
+  isFunction,
+  pipe,
+  throttle,
+} from '@inglorious/utils/functions'
+import { toString } from '@inglorious/utils/objects'
 
 <Meta title="Utils/Functions/Functions" />
 
 # Functions
 
-Basic functions that deal with ...functions.
+Functions that deal with a single function or with multiple functions.
 
 ## Compose
 
@@ -28,6 +35,14 @@ Delays a function until calls stop for a given amount of time.
 <code>const save = debounce(() => "saved", 300)</code>&nbsp;
 
 <code>save.pending() == {toString((() => { const save = debounce(() => "saved", 300); save(); return save.pending() })())}</code>&nbsp;
+
+## Is Function
+
+Checks if a value is a function.
+
+<code>isFunction(() => null) == {bToString(isFunction(() => null))}</code>&nbsp;
+
+<code>isFunction(null) == {bToString(isFunction(null))}</code>&nbsp;
 
 ## Pipe
 

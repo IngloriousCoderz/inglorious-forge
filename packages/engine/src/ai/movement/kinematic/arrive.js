@@ -4,8 +4,9 @@ import {
   divide,
   magnitude,
   multiply,
-} from "@inglorious/utils/math/vector.js"
-import { subtract, sum } from "@inglorious/utils/math/vectors.js"
+  subtract,
+  sum,
+} from "@inglorious/utils/vectors"
 
 export const DEFAULT_TARGET_RADIUS = 1
 export const DEFAULT_TIME_TO_TARGET = 0.1

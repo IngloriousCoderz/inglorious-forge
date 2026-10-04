@@ -12,7 +12,7 @@ Working with vectors in game development often involves verbose and repetitive f
 
 ```javascript
 // Before: Standard JavaScript
-import { add, scale, mod } from "@inglorious/utils/math/vectors.js"
+import { add, scale, mod } from "@inglorious/utils/vectors"
 
 const newPosition = mod(add(position, scale(velocity, dt)), worldSize)
 ```

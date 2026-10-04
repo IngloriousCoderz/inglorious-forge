@@ -11,8 +11,8 @@ import { renderHitmask } from "@inglorious/renderer-2d/image/hitmask.js"
 import { renderSprite } from "@inglorious/renderer-2d/image/sprite.js"
 import { renderTilemap } from "@inglorious/renderer-2d/image/tilemap.js"
 import { renderRectangle } from "@inglorious/renderer-2d/shapes/rectangle.js"
-import { angle, magnitude } from "@inglorious/utils/math/vector.js"
 import { v } from "@inglorious/utils/v.js"
+import { angle, magnitude } from "@inglorious/utils/vectors"
 
 const X = 0
 const Z = 2

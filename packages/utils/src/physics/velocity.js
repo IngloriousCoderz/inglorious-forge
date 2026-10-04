@@ -1,9 +1,8 @@
 /**
- * @typedef {import("../../types/math/vector").Vector3} Vector3
+ * @typedef {import("../../types/math/vectors").Vector3} Vector3
  */
 
-import { clamp, multiply, zero } from "../math/vector.js"
-import { sum } from "../math/vectors.js"
+import { clamp, multiply, sum, zero } from "../math/vectors.js"
 
 const DEFAULT_DT = 1 // Default time delta for the applyVelocity function.
 const DEFAULT_MAX_SPEED = 0 // Default maximum speed for velocity clamping.

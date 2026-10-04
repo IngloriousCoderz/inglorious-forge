@@ -1,4 +1,4 @@
-import type { Vector } from "./math/vector"
+import type { Vector } from "./math/vectors"
 
 /**
  * Ensures that a given value is a vector.

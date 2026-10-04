@@ -1,5 +1,16 @@
 # @inglorious/ui
 
+## 7.1.2
+
+### Patch Changes
+
+- Provide shortcut paths to common utils functions
+- Updated dependencies
+  - @inglorious/utils@4.0.0
+  - @inglorious/store@11.0.2
+  - @inglorious/web@6.4.2
+  - @inglorious/charts@10.0.2
+
 ## 7.1.1
 
 ### Patch Changes

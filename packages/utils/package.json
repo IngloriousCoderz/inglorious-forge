@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/utils",
-  "version": "3.8.0",
+  "version": "4.0.0",
   "description": "A set of general-purpose utility functions designed with functional programming principles in mind.",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -30,6 +30,10 @@
       "types": "./types/algorithms/index.d.ts",
       "import": "./src/algorithms/index.js"
     },
+    "./data-structures": {
+      "types": "./types/data-structures/index.d.ts",
+      "import": "./src/data-structures/index.js"
+    },
     "./algorithms/*.js": {
       "types": "./types/algorithms/*.d.ts",
       "import": "./src/algorithms/*.js"
@@ -37,10 +41,6 @@
     "./algorithms/*": {
       "types": "./types/algorithms/*.d.ts",
       "import": "./src/algorithms/*.js"
-    },
-    "./data-structures": {
-      "types": "./types/data-structures/index.d.ts",
-      "import": "./src/data-structures/index.js"
     },
     "./data-structures/*.js": {
       "types": "./types/data-structures/*.d.ts",
@@ -53,14 +53,6 @@
     "./functions": {
       "types": "./types/functions/index.d.ts",
       "import": "./src/functions/index.js"
-    },
-    "./functions/*.js": {
-      "types": "./types/functions/*.d.ts",
-      "import": "./src/functions/*.js"
-    },
-    "./functions/*": {
-      "types": "./types/functions/*.d.ts",
-      "import": "./src/functions/*.js"
     },
     "./math": {
       "types": "./types/math/index.d.ts",
@@ -86,13 +78,37 @@
       "types": "./types/physics/*.d.ts",
       "import": "./src/physics/*.js"
     },
-    "./*.js": {
-      "types": "./types/*.d.ts",
-      "import": "./src/*"
+    "./objects.js": {
+      "types": "./types/data-structures/objects.d.ts",
+      "import": "./src/data-structures/objects.js"
     },
-    "./*": {
-      "types": "./types/*.d.ts",
-      "import": "./src/*"
+    "./objects": {
+      "types": "./types/data-structures/objects.d.ts",
+      "import": "./src/data-structures/objects.js"
+    },
+    "./quaternions.js": {
+      "types": "./types/math/quaternions.d.ts",
+      "import": "./src/math/quaternions.js"
+    },
+    "./quaternions": {
+      "types": "./types/math/quaternions.d.ts",
+      "import": "./src/math/quaternions.js"
+    },
+    "./vectors.js": {
+      "types": "./types/math/vectors.d.ts",
+      "import": "./src/math/vectors.js"
+    },
+    "./vectors": {
+      "types": "./types/math/vectors.d.ts",
+      "import": "./src/math/vectors.js"
+    },
+    "./v.js": {
+      "types": "./types/v.d.ts",
+      "import": "./src/v.js"
+    },
+    "./v": {
+      "types": "./types/v.d.ts",
+      "import": "./src/v.js"
     }
   },
   "files": [

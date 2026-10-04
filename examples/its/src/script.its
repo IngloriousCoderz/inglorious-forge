@@ -1,6 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import type { Vector } from "@inglorious/utils/math/vector"
-import { toString } from "@inglorious/utils/math/vector"
+import type { Vector, toString } from "@inglorious/utils/vectors"
 
 {
   const position: Vector = v(10, 20, 30)

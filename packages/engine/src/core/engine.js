@@ -7,9 +7,9 @@ import { multiplayerMiddleware } from "@inglorious/store/client/multiplayer-midd
 import { createStore } from "@inglorious/store/store.js"
 import { augmentType } from "@inglorious/store/types.js"
 import { isArray } from "@inglorious/utils/data-structures/array.js"
-import { extendWith } from "@inglorious/utils/data-structures/objects.js"
-import { isVector } from "@inglorious/utils/math/vector.js"
+import { extendWith } from "@inglorious/utils/objects"
 import { v } from "@inglorious/utils/v.js"
+import { isVector } from "@inglorious/utils/vectors"
 
 import { coreEvents } from "./core-events.js"
 import { Loop } from "./loops/index.js"

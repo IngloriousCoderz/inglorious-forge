@@ -4,8 +4,14 @@
  * @typedef {import("../../types/math/circle").Circle} Circle
  */
 
-import { magnitude, setMagnitude } from "./vector.js"
-import { distance, dot, subtract, sum } from "./vectors.js"
+import {
+  distance,
+  dot,
+  magnitude,
+  setMagnitude,
+  subtract,
+  sum,
+} from "./vectors.js"
 
 const BEFORE_SEGMENT = 0
 

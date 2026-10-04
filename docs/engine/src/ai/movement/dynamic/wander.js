@@ -5,8 +5,8 @@ import {
 } from "@inglorious/engine/ai/movement/dynamic/wander.js"
 import { flip } from "@inglorious/engine/physics/bounds.js"
 import { renderCharacter } from "@inglorious/renderer-2d/character.js"
-import { merge } from "@inglorious/utils/data-structures/objects.js"
 import { pi } from "@inglorious/utils/math/trigonometry.js"
+import { merge } from "@inglorious/utils/objects"
 import { v } from "@inglorious/utils/v.js"
 
 export default {

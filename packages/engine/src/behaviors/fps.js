@@ -1,5 +1,5 @@
 import { Ticker } from "@inglorious/engine/animation/ticker.js"
-import { extend } from "@inglorious/utils/data-structures/objects.js"
+import { extend } from "@inglorious/utils/objects"
 
 const DEFAULT_PARAMS = {
   accuracy: 1,

@@ -1,9 +1,9 @@
 import { createMouse, mouse } from "@inglorious/engine/behaviors/input/mouse.js"
 import { renderCharacter } from "@inglorious/renderer-2d/character.js"
 import { renderMouse } from "@inglorious/renderer-2d/mouse.js"
-import { filter } from "@inglorious/utils/data-structures/object.js"
 import { random } from "@inglorious/utils/math/rng.js"
 import { pi } from "@inglorious/utils/math/trigonometry.js"
+import { filter } from "@inglorious/utils/objects"
 import { v } from "@inglorious/utils/v.js"
 
 export default {

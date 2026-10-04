@@ -5,9 +5,9 @@ import {
   createVector,
   fromAngle,
   multiply,
+  sum,
   zero,
-} from "@inglorious/utils/math/vector.js"
-import { sum } from "@inglorious/utils/math/vectors.js"
+} from "@inglorious/utils/vectors"
 
 const ORIGIN = 0
 const DOUBLE = 2

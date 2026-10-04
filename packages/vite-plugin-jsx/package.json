@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/vite-plugin-jsx",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "A Vite plugin that transforms JSX into lit-html syntax.",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",

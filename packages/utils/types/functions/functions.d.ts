@@ -34,6 +34,11 @@ export function debounce<T extends AnyFunction>(
 ): DebouncedFunction<T>
 
 /**
+ * Checks whether a value is a function.
+ */
+export function isFunction(func: unknown): func is Function
+
+/**
  * Pipes multiple functions from left to right.
  */
 export function pipe<TArgs extends any[], TResult>(

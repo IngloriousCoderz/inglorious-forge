@@ -1,7 +1,6 @@
 import { seek } from "@inglorious/engine/ai/movement/kinematic/seek.js"
 import { randomBinomial } from "@inglorious/utils/math/rng.js"
-import { fromAngle, multiply } from "@inglorious/utils/math/vector.js"
-import { sum } from "@inglorious/utils/math/vectors.js"
+import { fromAngle, multiply, sum } from "@inglorious/utils/vectors"
 
 export const DEFAULT_WANDER_RADIUS = 10
 

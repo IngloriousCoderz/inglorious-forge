@@ -1,4 +1,4 @@
-import { clone, get, set } from "@inglorious/utils/data-structures/object.js"
+import { clone, get, set } from "@inglorious/utils/objects"
 
 /**
  * @typedef {import('../../types/form.js').FormEntity} FormEntity

@@ -1,6 +1,11 @@
 import { seek } from "@inglorious/engine/ai/movement/dynamic/seek.js"
-import { magnitude, multiply, zero } from "@inglorious/utils/math/vector.js"
-import { subtract, sum } from "@inglorious/utils/math/vectors.js"
+import {
+  magnitude,
+  multiply,
+  subtract,
+  sum,
+  zero,
+} from "@inglorious/utils/vectors"
 
 export const DEFAULT_MAX_PREDICTION = 10
 

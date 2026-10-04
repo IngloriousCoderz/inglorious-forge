@@ -1,12 +1,11 @@
-import { filter } from "@inglorious/utils/data-structures/object.js"
 import * as circle from "@inglorious/utils/math/circle.js"
 import * as hitmask from "@inglorious/utils/math/hitmask.js"
 import * as line from "@inglorious/utils/math/line.js"
 import * as point from "@inglorious/utils/math/point.js"
 import * as rectangle from "@inglorious/utils/math/rectangle.js"
 import * as segment from "@inglorious/utils/math/segment.js"
-import { zero } from "@inglorious/utils/math/vector.js"
-import { add } from "@inglorious/utils/math/vectors.js"
+import { filter } from "@inglorious/utils/objects"
+import { add, zero } from "@inglorious/utils/vectors"
 
 const Z = 2 // Z-axis index.
 

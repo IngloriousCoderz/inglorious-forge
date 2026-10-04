@@ -1,5 +1,14 @@
 # @inglorious/renderer-react-dom
 
+## 22.0.2
+
+### Patch Changes
+
+- Provide shortcut paths to common utils functions
+- Updated dependencies
+  - @inglorious/utils@4.0.0
+  - @inglorious/engine@23.0.2
+
 ## 22.0.1
 
 ### Patch Changes

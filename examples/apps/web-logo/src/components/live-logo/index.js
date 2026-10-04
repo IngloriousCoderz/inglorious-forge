@@ -1,5 +1,5 @@
 import { Logo, startInteraction, stopInteraction } from "@inglorious/logo"
-import { set } from "@inglorious/utils/data-structures/object"
+import { set } from "@inglorious/utils/objects"
 
 export const LiveLogo = {
   ...Logo,

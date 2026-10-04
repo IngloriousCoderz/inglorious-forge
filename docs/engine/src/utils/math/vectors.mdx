@@ -1,32 +1,89 @@
 import { Meta } from '@storybook/addon-docs/blocks'
 
-import {
-cross,
-  add,
-  divide,
-  distance,
-dot,
-  mod,
-  multiply,
-  hadamard,
-  power,
-scalarProduct,
-subtract,
-sum,
-vectorProduct,
-} from '@inglorious/utils/math/vectors'
-import { toString } from '@inglorious/utils/math/vector'
 import { pi, cos, sin } from '@inglorious/utils/math/trigonometry'
+import {
+  abs,
+  add,
+  angle,
+  clamp,
+  conjugate,
+  cross,
+  distance,
+  divide,
+  divideBy,
+  dot,
+  from2D,
+  fromAngle,
+  hadamard,
+  isVector,
+  length,
+  magnitude,
+  mod,
+  modOf,
+  multiply,
+  normalize,
+  power,
+  powerOf,
+  remainder,
+  rotate,
+  scalarProduct,
+  setAngle,
+  setMagnitude,
+  shift,
+  subtract,
+  sum,
+  to2D,
+  toCartesian,
+  toCylindrical,
+  toPolar,
+  toSpherical,
+  toString,
+  unit,
+  vectorProduct,
+  zero,
+} from '@inglorious/utils/vectors'
 
 <Meta title="Utils/Math/Vectors" />
 
 # Vectors
 
-Functions that deal with multiple vectors.
+Functions that deal with a single vector or with multiple vectors.
+
+## Abs
+
+Returns the absolute value of each component in the vector.
+
+<code>abs([-2, 0, 3]) == {toString(abs([-2, 0, 3]))}</code>&nbsp;
 
 ## Add
 
 Alias of `sum`.
+
+## Angle
+
+Returns the angle of a vector, calculated as the `atan2` between the last and first coordinate.
+
+<code>angle([1, 1]) == {angle([1, 1]).toFixed(3)}</code> (&asymp;&pi;/4)
+
+<code>angle([1, 0, 1]) == {angle([1, 0, 1]).toFixed(3)}</code> (&asymp;&pi;/4)
+
+## Clamp
+
+Limits the magnitude of a vector to a lower and upper bound.
+
+<code>clamp([6, 8], 0, 5) == {toString(clamp([6, 8], 0, 5))}</code>&nbsp;
+
+<code>clamp([3, 4], 0, 5) == {toString(clamp([3, 4], 0, 5))}</code>&nbsp;
+
+Bounds can be specified as other vectors too.
+
+<code>clamp([6, 8], [0, 0], [3, 4]) == {toString(clamp([6, 8], [0, 0], [3, 4]))}</code>&nbsp;
+
+## Conjugate
+
+Flips the sign of all coordinates except the first one.
+
+<code>conjugate([1, 2, 3]) == {toString(conjugate([1, 2, 3]))}</code>&nbsp;
 
 ## Cross
 
@@ -44,9 +101,17 @@ Computes the distance between multiple vectors.
 
 ## Divide
 
-Computes the component-wise division of multiple vectors.
+Divides any vector by a scalar, or multiple vectors component-wise. A scalar operand is applied to every component.
+
+<code>divide([4, 8, 12], 4) == {toString(divide([4, 8, 12], 4))}</code>&nbsp;
 
 <code>divide([80, 40, 20], [2, 4, 5], [2, 2, 2]) == {toString(divide([80, 40, 20], [2, 4, 5], [2, 2, 2]))}</code>&nbsp;
+
+## Divide By
+
+Divides a scalar by a vector.
+
+<code>divideBy(12, [4, 8, 12]) == {toString(divideBy(12, [4, 8, 12]))}</code>&nbsp;
 
 ## Dot
 
@@ -56,31 +121,129 @@ Performs the dot product between multiple vectors (alias `scalarProduct`).
 
 <code>dot([1, 2, 3], [4, 5, 6], [7, 8, 9]) == {dot([1, 2, 3], [4, 5, 6], [7, 8, 9])}</code>&nbsp;
 
-## Mod
+## From 2D
 
-Computes the component-wise modulus of multiple vectors.
+Builds a 3D vector from a 2D one.
 
-<code>mod([15, 25], [10, 10]) == {toString(mod([15, 25], [10, 10]))}</code>&nbsp;
+<code>from2D([3, 4]) == {toString(from2D([3, 4]))}</code>&nbsp;
+
+## From Angle
+
+Creates a 3D unit vector from a given angle.
+
+<code>fromAngle(pi() / 4) == {toString(fromAngle(pi() / 4))}</code>&nbsp;
 
 ## Hadamard
 
 Alias of `multiply`.
 
+## Is Vector
+
+Checks if a value is a vector (an array of numbers). For performance, vectors created with `v()` are tagged and can be identified more quickly.
+
+<code>isVector([1, 2, 3]) == {isVector([1, 2, 3]).toString()}</code>&nbsp;
+
+<code>isVector([1, 'a', 3]) == {isVector([1, 'a', 3]).toString()}</code>&nbsp;
+
+## Length
+
+Alias of `magnitude`.
+
+## Magnitude
+
+Computes the magnitude of any vector (alias `length`).
+
+<code>magnitude([3, 4]) == {magnitude([3, 4])}</code>&nbsp;
+
+## Mod
+
+Applies the `mod` operator on any vector, or component-wise on multiple vectors (alias `remainder`).
+
+<code>mod([10, 12, -18], 12) == {toString(mod([10, 12, -18], 12))}</code>&nbsp;
+
+<code>mod([15, 25], [10, 10]) == {toString(mod([15, 25], [10, 10]))}</code>&nbsp;
+
+## Mod Of
+
+Applies the `mod` operator of a scalar with a vector.
+
+<code>modOf(18, [10, 12, -18]) == {toString(modOf(18, [10, 12, -18]))}</code>&nbsp;
+
 ## Multiply
 
-Computes the component-wise multiplication of multiple vectors (Hadamard product).
+Multiplies a vector with a scalar, or multiple vectors component-wise (aliases `scale`, `times`, `hadamard`).
+
+<code>multiply([1, 2, 3], 4) == {toString(multiply([1, 2, 3], 4))}</code>&nbsp;
 
 <code>multiply([1, 2, 3], [4, 5, 6], [2, 2, 2]) == {toString(multiply([1, 2, 3], [4, 5, 6], [2, 2, 2]))}</code>&nbsp;
 
+## Normalize
+
+Gives the vector unit length while maintaining its angle.
+
+<code>normalize([3, 4]) == {toString(normalize([3, 4]), 1)}</code>&nbsp;
+
+<code>normalize([-3, -4]) == {toString(normalize([-3, -4]), 1)}</code>&nbsp;
+
 ## Power
 
-Computes the component-wise power of multiple vectors.
+Raises each component of the vector to the given exponent, or multiple vectors component-wise (alias `pow`).
+
+<code>power([1, 2, 3], 2) == {toString(power([1, 2, 3], 2), 0)}</code>&nbsp;
 
 <code>power([2, 3, 4], [4, 3, 2]) == {toString(power([2, 3, 4], [4, 3, 2]))}</code>&nbsp;
+
+## Power Of
+
+Raises a scalar to the power of each component of a vector.
+
+<code>powerOf(2, [1, 2, 3]) == {toString(powerOf(2, [1, 2, 3]))}</code>&nbsp;
+
+## Remainder
+
+Alias of `mod`.
+
+## Rotate
+
+Adds the given angle to a 2D or 3D vector using quaternions.
+
+<code>rotate([1, 0], 0) == {toString(rotate([1, 0], 0))}</code>&nbsp;
+
+<code>rotate([1, 0], pi() / 4) == {toString(rotate([1, 0], pi() / 4), 3)}</code> (&asymp;[cos(&pi;/4), sin(&pi;/4)])
+
+<code>rotate([1, 0, 0], 0) == {toString(rotate([1, 0, 0], 0))}</code>&nbsp;
+
+<code>rotate([1, 0, 0], pi() / 4) == {toString(rotate([1, 0, 0], pi() / 4), 3)}</code> (&asymp;[cos(&pi;/4), 0, sin(&pi;/4)])
+
+<code>rotate([-1, 0, 0], pi() / 4) == {toString(rotate([-1, 0, 0], pi() / 4), 3)}</code> (&asymp;[cos(-3/4*&pi;), 0, sin(-3/4*&pi;)])
 
 ## Scalar Product
 
 Alias of `dot`.
+
+## Scale
+
+Alias of `multiply`.
+
+## Set Angle
+
+Changes the angle of a vector.
+
+<code>setAngle([cos(pi() / 4), 0, sin(pi() / 4)], pi() / 2) == {toString(setAngle([cos(pi() / 4), 0, sin(pi() / 4)], pi() / 2))}</code>&nbsp;
+
+## Set Magnitude
+
+Changes the magnitude of any vector, keeping its angle (alias `setLength`).
+
+<code>setMagnitude([3, 4], 10) == {toString(setMagnitude([3, 4], 10))}</code>&nbsp;
+
+<code>setMagnitude([-3, -4], 10) == {toString(setMagnitude([-3, -4], 10))}</code>&nbsp;
+
+## Shift
+
+Moves coordinates around by a certain index.
+
+<code>shift([1, 2, 3, 4, 5], 2) == {toString(shift([1, 2, 3, 4, 5], 2))}</code>&nbsp;
 
 ## Subtract
 
@@ -98,6 +261,62 @@ Sums all vectors together, component-wise (alias `add`).
 
 <code>sum([1, 2, 3], [4, 5, 6], [7, 8, 9]) == {toString(sum([1, 2, 3], [4, 5, 6], [7, 8, 9]))}</code>&nbsp;
 
+## Times
+
+Alias of `multiply`.
+
+## To 2D
+
+Builds a 2D vector from a 3D one.
+
+<code>to2D([3, 0, 4]) == {toString(to2D([3, 0, 4]))}</code>&nbsp;
+
+## To Cartesian
+
+Converts a 2D polar vector into cartesian coordinates.
+
+<code>toCartesian([2 ** 0.5, pi() / 4]) == {toString(toCartesian([2 ** 0.5, pi() / 4]))}</code>&nbsp;
+
+## To Cylindrical
+
+Converts a 3D cartesian vector to cylindrical coordinates.
+
+<code>toCylindrical([1, 1, 1]) == {toString(toCylindrical([1, 1, 1]), 3)}</code>&nbsp;
+
+## To Polar
+
+Converts a 2D cartesian vector to polar coordinates.
+
+<code>toPolar([1, 1]) == {toString(toPolar([1, 1]), 3)}</code>&nbsp; (&asymp;[&#8730;2, &pi;/4])
+
+## To Spherical
+
+Converts a 3D cartesian vector to spherical coordinates.
+
+<code>toSpherical([1, 1, 1]) == {toString(toSpherical([1, 1, 1]), 3)}</code>&nbsp; (&asymp;[&#8730;3, arccos(1/&#8730;3), &pi;/4])
+
+## To String
+
+Returns a string representation of any vector, up to optional decimal points.
+
+<code>toString([1, 0]) == "{toString([1, 0])}"</code>&nbsp;
+
+<code>toString([cos(pi() / 4), 0], 3) == "{toString([cos(pi() / 4), 0], 3)}"</code>&nbsp;
+
+## Unit
+
+Returns a unit 3D vector at a given optional angle.
+
+<code>unit() == {toString(unit())}</code>&nbsp;
+
+<code>unit(pi() / 2) == {toString(unit(pi() / 2))}</code>&nbsp;
+
 ## Vector Product
 
 Alias of `cross`.
+
+## Zero
+
+Creates a zero vector of 3 dimensions.
+
+<code>zero() == {toString(zero())}</code>&nbsp;

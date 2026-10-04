@@ -1,4 +1,4 @@
-import type { Vector3 } from "../math/vector"
+import type { Vector3 } from "../math/vectors"
 
 export interface AccelerationParams {
   acceleration?: Vector3

@@ -8,7 +8,7 @@ import { createMouse, mouse } from "@inglorious/engine/behaviors/input/mouse.js"
 import { clamped } from "@inglorious/engine/behaviors/physics/clamped.js"
 import { renderCharacter } from "@inglorious/renderer-2d/character.js"
 import { renderMouse } from "@inglorious/renderer-2d/mouse.js"
-import { merge } from "@inglorious/utils/data-structures/objects.js"
+import { merge } from "@inglorious/utils/objects"
 import { v } from "@inglorious/utils/v.js"
 
 export default {

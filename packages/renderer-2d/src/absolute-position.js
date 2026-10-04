@@ -1,4 +1,4 @@
-import { snap, zero } from "@inglorious/utils/math/vector.js"
+import { snap, zero } from "@inglorious/utils/vectors"
 
 export function absolutePosition(render) {
   return (entity, ctx, api) => {

@@ -1,4 +1,4 @@
-import { compose } from "@inglorious/utils/functions/functions.js"
+import { compose } from "@inglorious/utils/functions"
 
 /**
  * Applies a list of middleware functions to a store's dispatch method.

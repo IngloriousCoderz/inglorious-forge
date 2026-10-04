@@ -30,7 +30,7 @@ Here are a few examples of how you can use the utilities in this package.
 Compose functions together from right to left.
 
 ```javascript
-import { compose } from "@inglorious/utils/functions/functions"
+import { compose } from "@inglorious/utils/functions"
 
 const add = (a) => (b) => a + b
 const multiply = (a) => (b) => a * b
@@ -49,7 +49,7 @@ const result = calculate(10) // 40
 Delay a function until calls stop for a given amount of time.
 
 ```javascript
-import { debounce } from "@inglorious/utils/functions/functions"
+import { debounce } from "@inglorious/utils/functions"
 
 const debouncedSave = debounce(() => {
   save()
@@ -61,7 +61,7 @@ const debouncedSave = debounce(() => {
 Compose functions together in a readable, left-to-right sequence.
 
 ```javascript
-import { pipe } from "@inglorious/utils/functions/functions"
+import { pipe } from "@inglorious/utils/functions"
 
 const add = (a) => (b) => a + b
 const multiply = (a) => (b) => a * b
@@ -80,7 +80,7 @@ const result = calculate(10) // 40
 Run a function immediately, then suppress repeated calls until the wait time has elapsed.
 
 ```javascript
-import { throttle } from "@inglorious/utils/functions/functions"
+import { throttle } from "@inglorious/utils/functions"
 
 const throttledSave = throttle(() => {
   save()
@@ -92,7 +92,7 @@ const throttledSave = throttle(() => {
 Perform vector operations on plain objects.
 
 ```javascript
-import { add } from "@inglorious/utils/math/vector.js"
+import { add } from "@inglorious/utils/vectors"
 
 const position = [10, 20]
 const velocity = [2, -1]
@@ -107,10 +107,31 @@ const newPosition = add(position, velocity)
 
 This package is designed to be used with subpath imports, which helps with tree-shaking.
 
+Most modules are grouped by category:
+
 - **`@inglorious/utils/algorithms`**: Utilities for AI algorithms, like decision trees and A\*.
+- **`@inglorious/utils/data-structures`**: Utilities for arrays, boards, heaps, objects, sets, strings, and trees.
 - **`@inglorious/utils/functions`**: Utilities for function composition and timing.
 - **`@inglorious/utils/math`**: Utilities for math operations.
 - **`@inglorious/utils/physics`**: Utilities for calculations on friction, acceleration, and gravity.
+
+The four largest modules are also available as top-level subpaths, so you don't need to
+know whether a helper lives under `data-structures` or `math`:
+
+- **`@inglorious/utils/functions`**: `compose`, `debounce`, `isFunction`, `pipe`, `throttle`.
+- **`@inglorious/utils/objects`**: Single-object helpers (`clone`, `get`, `set`, `produce`, ...) alongside multi-object helpers (`merge`, `extend`, `defaults`, ...).
+- **`@inglorious/utils/quaternions`**: `quaternion` and `combine`.
+- **`@inglorious/utils/vectors`**: Single-vector helpers (`magnitude`, `normalize`, `rotate`, ...) alongside multi-vector helpers (`cross`, `dot`, `sum`, ...).
+
+`divide`, `mod`, `multiply` and `power` accept either a scalar or one or more vectors:
+a scalar is applied to every component, while vectors are combined component-wise.
+
+```javascript
+import { multiply } from "@inglorious/utils/vectors"
+
+multiply([1, 2, 3], 2) // => [2, 4, 6]
+multiply([1, 2, 3], [4, 5, 6]) // => [4, 10, 18]
+```
 
 ---
 

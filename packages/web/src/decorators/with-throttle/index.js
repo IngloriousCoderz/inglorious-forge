@@ -1,4 +1,4 @@
-import { throttle } from "@inglorious/utils/functions/functions.js"
+import { throttle } from "@inglorious/utils/functions"
 
 /**
  * Wraps selected event handlers of a type with throttling, scoped per-entity.

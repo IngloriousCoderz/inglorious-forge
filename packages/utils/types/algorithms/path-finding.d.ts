@@ -1,4 +1,4 @@
-import type { Vector2 } from "../math/vector"
+import type { Vector2 } from "../math/vectors"
 
 /**
  * A map where keys are node identifiers and values are their [x, y] coordinates.

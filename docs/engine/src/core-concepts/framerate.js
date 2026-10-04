@@ -2,10 +2,10 @@ import { fps } from "@inglorious/engine/behaviors/fps.js"
 import { bounce } from "@inglorious/engine/physics/bounds.js"
 import { renderCharacter } from "@inglorious/renderer-2d/character.js"
 import { renderFps } from "@inglorious/renderer-2d/fps.js"
-import { merge } from "@inglorious/utils/data-structures/objects.js"
 import { pi } from "@inglorious/utils/math/trigonometry.js"
-import { zero } from "@inglorious/utils/math/vector.js"
+import { merge } from "@inglorious/utils/objects"
 import { v } from "@inglorious/utils/v.js"
+import { zero } from "@inglorious/utils/vectors"
 
 export default {
   loop: { type: "Fixed", fps: 10 },

@@ -6,10 +6,9 @@ import { spriteAnimationSystem } from "@inglorious/engine/systems/sprite-animati
 import { renderSprite } from "@inglorious/renderer-2d/image/sprite.js"
 import { renderMouse } from "@inglorious/renderer-2d/mouse.js"
 import { decide } from "@inglorious/utils/algorithms/decision-tree.js"
-import { merge } from "@inglorious/utils/data-structures/objects.js"
-import { length } from "@inglorious/utils/math/vector.js"
-import { subtract } from "@inglorious/utils/math/vectors.js"
+import { merge } from "@inglorious/utils/objects"
 import { v } from "@inglorious/utils/v.js"
+import { length, subtract } from "@inglorious/utils/vectors"
 
 // A reusable decision tree node
 const wakeUp = () => ({

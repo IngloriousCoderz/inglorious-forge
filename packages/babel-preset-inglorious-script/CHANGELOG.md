@@ -1,5 +1,12 @@
 # @inglorious/babel-preset-inglorious-script
 
+## 1.0.7
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/babel-plugin-inglorious-script@1.4.2
+
 ## 1.0.6
 
 ### Patch Changes

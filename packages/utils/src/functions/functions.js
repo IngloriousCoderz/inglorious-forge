@@ -85,6 +85,16 @@ export function debounce(fn, delay = DEFAULT_DELAY) {
 }
 
 /**
+ * Checks if a value is a function.
+ *
+ * @param {*} func - The value to check.
+ * @returns {boolean} True if the value is a function, false otherwise.
+ */
+export function isFunction(func) {
+  return typeof func === "function"
+}
+
+/**
  * Pipes multiple functions from left to right, as if the functions are applied one by one.
  * The first function (leftmost) can take multiple arguments; the remaining functions must be unary.
  *

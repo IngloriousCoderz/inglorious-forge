@@ -1,6 +1,6 @@
 import { addNamed } from "@babel/helper-module-imports"
 
-const VECTOR_MODULE = "@inglorious/utils/math/vector.js"
+const VECTORS_MODULE = "@inglorious/utils/vectors"
 const V_MODULE = "@inglorious/utils/v.js"
 
 import { Config } from "./config.js"
@@ -38,7 +38,7 @@ export function injectHelpers(t, programPath, operators) {
 
   let isVectorId = null
   if (operators.size) {
-    isVectorId = addNamed(programPath, "isVector", VECTOR_MODULE)
+    isVectorId = addNamed(programPath, "isVector", VECTORS_MODULE)
   }
 
   const helper = createHelper(t, isVectorId)
@@ -51,16 +51,12 @@ export function injectHelpers(t, programPath, operators) {
         config.originalFunctionVec,
         config.moduleVec,
       )
-      const vecOpScalarId = addNamed(
-        programPath,
-        config.originalFunctionScalar,
-        config.moduleScalar,
-      )
+      const vecOpScalarId = vecOpVecId
       const vecOpScalarReverseId = config.originalFunctionScalarReverse
         ? addNamed(
             programPath,
             config.originalFunctionScalarReverse,
-            config.moduleScalar,
+            config.moduleScalarReverse,
           )
         : null
       return helper(operator, config, {

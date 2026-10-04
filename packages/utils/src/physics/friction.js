@@ -1,8 +1,8 @@
 /**
- * @typedef {import("../../types/math/vector").Vector3} Vector3
+ * @typedef {import("../../types/math/vectors").Vector3} Vector3
  */
 
-import { magnitude, setMagnitude, zero } from "../math/vector.js"
+import { magnitude, setMagnitude, zero } from "../math/vectors.js"
 
 const DEFAULT_DT = 1 // Default time delta for the applyFriction function.
 const NO_FRICTION = 0 // No friction constant.

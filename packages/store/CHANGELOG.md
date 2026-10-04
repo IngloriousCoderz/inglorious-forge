@@ -1,5 +1,13 @@
 # @inglorious/store
 
+## 11.0.2
+
+### Patch Changes
+
+- Provide shortcut paths to common utils functions
+- Updated dependencies
+  - @inglorious/utils@4.0.0
+
 ## 11.0.1
 
 ### Patch Changes

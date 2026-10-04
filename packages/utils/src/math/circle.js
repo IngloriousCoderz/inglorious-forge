@@ -6,8 +6,7 @@
 
 import { intersectsCircle as pointIntersectsCircle } from "./point.js"
 import { hypothenuse } from "./triangle.js"
-import { clamp } from "./vector.js"
-import { subtract } from "./vectors.js"
+import { clamp, subtract } from "./vectors.js"
 
 const HALF = 2
 const SQUARED = 2

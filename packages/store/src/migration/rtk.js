@@ -5,7 +5,7 @@
  * Inglorious types, enabling gradual migration from RTK to Inglorious Store.
  */
 
-import { extend } from "@inglorious/utils/data-structures/objects.js"
+import { extend } from "@inglorious/utils/objects"
 
 import { handleAsync } from "../async"
 

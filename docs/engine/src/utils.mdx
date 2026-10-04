@@ -1,6 +1,6 @@
 import { Meta } from '@storybook/addon-docs/blocks'
 
-import { toString } from '@inglorious/utils/math/vector.js'
+import { toString } from '@inglorious/utils/vectors'
 import { v, ensureV } from '@inglorious/utils/v.js'
 
 <Meta title="Utils/Docs" />
@@ -38,7 +38,7 @@ const sum = math.vectors.sum([1, 2], [3, 4]);
 Alternatively, you can import individual functions directly. This can be useful for tree-shaking and is often handled automatically by modern IDEs:
 
 ```javascript
-import { sum } from '@inglorious/utils/math/vectors';
+import { sum } from '@inglorious/utils/vectors';
 
 const result = sum([1, 2], [3, 4]);
 ```
@@ -47,7 +47,7 @@ const result = sum([1, 2], [3, 4]);
 
 The following namespaces are available. Explore them to see what you can use in your own game logic.
 
-- **[Data Structures](/docs/utils-data-structures-object--docs)**: For specialized data structures like graphs or trees.
+- **[Data Structures](/docs/utils-data-structures-objects--docs)**: For specialized data structures like graphs or trees.
 - **[Functions](/docs/utils-functions-functions--docs)**: General-purpose functional programming helpers.
 - **[Math](/docs/utils-math-numbers--docs)**: For vector math, random number generation, and other calculations.
 - **[Physics](/docs/utils-physics-friction--docs)**: For simple physics calculations like collisions.

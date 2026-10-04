@@ -4,7 +4,6 @@ import * as line from "./line.js"
 import * as linearInterpolation from "./linear-interpolation.js"
 import * as numbers from "./numbers.js"
 import * as point from "./point.js"
-import * as quaternion from "./quaternion.js"
 import * as quaternions from "./quaternions.js"
 import * as rectangle from "./rectangle.js"
 import * as rng from "./rng.js"
@@ -12,7 +11,6 @@ import * as segment from "./segment.js"
 import * as statistics from "./statistics.js"
 import * as triangle from "./triangle.js"
 import * as trigonometry from "./trigonometry.js"
-import * as vector from "./vector.js"
 import * as vectors from "./vectors.js"
 
 export {
@@ -22,7 +20,6 @@ export {
   linearInterpolation,
   numbers,
   point,
-  quaternion,
   quaternions,
   rectangle,
   rng,
@@ -30,6 +27,5 @@ export {
   statistics,
   triangle,
   trigonometry,
-  vector,
   vectors,
 }

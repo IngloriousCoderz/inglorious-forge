@@ -1,7 +1,6 @@
 import { ensureArray } from "@inglorious/utils/data-structures/array.js"
-import { map } from "@inglorious/utils/data-structures/object.js"
-import { extend } from "@inglorious/utils/data-structures/objects.js"
-import { pipe } from "@inglorious/utils/functions/functions.js"
+import { pipe } from "@inglorious/utils/functions"
+import { extend, map } from "@inglorious/utils/objects"
 
 /**
  * Augments a single type by composing its behaviors and mixins.
