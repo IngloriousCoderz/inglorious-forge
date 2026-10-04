@@ -101,6 +101,23 @@ const newPosition = add(position, velocity)
 // => [12, 19]
 ```
 
+Two vectors are worth knowing by name: `ZERO_VECTOR`, with every component at zero, and
+`UNIT_VECTOR`, one unit long along the x axis. The zero one is handy for naming the components
+you care about, or for building a vector up from scratch:
+
+```javascript
+import { ZERO_VECTOR } from "@inglorious/utils/math/vectors.js"
+import { v } from "@inglorious/utils/v.js"
+
+const [, NO_RISE, NO_DEPTH] = ZERO_VECTOR
+
+const position = v(10, 20, NO_DEPTH)
+```
+
+Vectors are mutable arrays, so copy a shared vector rather than storing it where something writes
+to one, such as an entity position. Copy it with `v(...ZERO_VECTOR)`: a plain spread
+(`[...ZERO_VECTOR]`) gives you a new array but drops the tag that `isVector` looks for.
+
 ---
 
 ## API

@@ -18,10 +18,20 @@ export type Vector7 = Vector<
   readonly [number, number, number, number, number, number, number]
 >
 
-/** The vector with every component at zero. */
+/**
+ * The vector with every component at zero.
+ *
+ * Vectors are mutable, so copy it with `v(...ZERO_VECTOR)` before storing it
+ * where something writes to one.
+ */
 export const ZERO_VECTOR: Vector3
 
-/** The vector one unit long along the x axis. */
+/**
+ * The vector one unit long along the x axis.
+ *
+ * Vectors are mutable, so copy it with `v(...UNIT_VECTOR)` before storing it
+ * where something writes to one.
+ */
 export const UNIT_VECTOR: Vector3
 
 /** Returns the absolute value of each vector component. */

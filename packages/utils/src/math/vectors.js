@@ -17,13 +17,24 @@ import { hypothenuse } from "./triangle.js"
 import { atan2, cos, sin } from "./trigonometry.js"
 
 /**
- * The vector with every component at zero, handy as the starting point for a
- * vector you are about to build up component by component. Vectors are mutable,
- * so copy it rather than handing it to anything that writes to a vector.
+ * The vector with every component at zero. Useful for naming the components you
+ * care about, and for building a vector up from scratch:
+ *
+ *     const [, NO_RISE, NO_DEPTH] = ZERO_VECTOR
+ *     const position = v(10, 20, NO_DEPTH)
+ *
+ * Vectors are mutable arrays, so copy it rather than storing it where something
+ * writes to one, such as an entity position. Copy it with `v(...ZERO_VECTOR)`,
+ * since a plain spread drops the tag `isVector` looks for.
  */
 export const ZERO_VECTOR = v(0, 0, 0) // eslint-disable-line no-magic-numbers
 
-/** The vector one unit long along the x axis. */
+/**
+ * The vector one unit long along the x axis. Useful for facing a direction, as
+ * in `rotate(UNIT_VECTOR, angle)`.
+ *
+ * As with `ZERO_VECTOR`, copy it with `v(...UNIT_VECTOR)` before storing it.
+ */
 export const UNIT_VECTOR = v(1, 0, 0) // eslint-disable-line no-magic-numbers
 
 const X = 0
