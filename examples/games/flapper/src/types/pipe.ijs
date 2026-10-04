@@ -28,6 +28,18 @@ const LEFT_EDGE = 0
 const TOP_ANCHOR = [CENTERED, TOP_EDGE]
 const BOTTOM_ANCHOR = [CENTERED, BOTTOM_EDGE]
 
+const CEILING = "ceiling"
+const FLOOR = "floor"
+
+// The side a pipe sits against decides both how it is anchored and which way it
+// faces, because the texture carries its cap on top and only the pipe hanging
+// from the ceiling is mirrored. Keeping the two together in one lookup is what
+// stops the cap and the hitbox from drifting apart.
+const SIDES = {
+  [CEILING]: { anchor: BOTTOM_ANCHOR, flipY: true },
+  [FLOOR]: { anchor: TOP_ANCHOR, flipY: false },
+}
+
 export const Pipe = {
   render: renderImage,
 
@@ -37,7 +49,11 @@ export const Pipe = {
 
     entity.position[X] += entity.velocity[X] * dt
 
-    if (entity.isUpper && !entity.scored && hasPassedBird(entity, api)) {
+    if (
+      entity.side === CEILING &&
+      !entity.scored &&
+      hasPassedBird(entity, api)
+    ) {
       entity.scored = true
       api.notify("pipeScored")
     }
@@ -51,31 +67,33 @@ export const Pipe = {
 
 /**
  * Spawns a pair of pipes leaving a `GAP_HEIGHT` tall opening whose top sits at
- * the altitude `gapY`.
+ * the altitude `gapY`: the ceiling pipe stands on that top edge, and the floor
+ * one hangs from the bottom of the gap.
  */
 export function spawnPipePair(api, gapY) {
-  ;[true, false].forEach((isUpper) => {
-    api.notify("spawn", {
-      type: "Pipe",
-      isUpper,
-      scored: false,
-      layer: LAYER_PIPES,
-      // `gapY` is the altitude of the top of the gap, so the ceiling pipe stands
-      // on it and the floor one hangs from the gap's lower edge.
-      position: v(PIPE_SPAWN_X, isUpper ? gapY : gapY - GAP_HEIGHT, NO_DEPTH),
-      velocity: v(-PIPE_SPEED, NO_RISE, NO_DEPTH),
-      // One anchor places the sprite, its hitbox and its gizmo together.
-      anchor: isUpper ? BOTTOM_ANCHOR : TOP_ANCHOR,
-      size: PIPE_SIZE,
-      collisions: { hitbox: { shape: "rectangle" } },
-      // The texture carries its cap on top, so only the pipe hanging from the
-      // ceiling has to be mirrored to keep both caps next to the gap.
-      flipY: isUpper,
-      image: {
-        id: "pipe",
-        imageSize: [PIPE_SIZE[X], PIPE_SIZE[Y]],
-      },
-    })
+  spawnPipe(api, CEILING, gapY)
+  spawnPipe(api, FLOOR, gapY - GAP_HEIGHT)
+}
+
+function spawnPipe(api, side, altitude) {
+  const { anchor, flipY } = SIDES[side]
+
+  api.notify("spawn", {
+    type: "Pipe",
+    side,
+    scored: false,
+    layer: LAYER_PIPES,
+    position: v(PIPE_SPAWN_X, altitude, NO_DEPTH),
+    velocity: v(-PIPE_SPEED, NO_RISE, NO_DEPTH),
+    // One anchor places the sprite, its hitbox and its gizmo together.
+    anchor,
+    size: PIPE_SIZE,
+    collisions: { hitbox: { shape: "rectangle" } },
+    flipY,
+    image: {
+      id: "pipe",
+      imageSize: [PIPE_SIZE[X], PIPE_SIZE[Y]],
+    },
   })
 }
 
