@@ -68,6 +68,32 @@ For a sheet that is cut on a uniform grid with no sub-cell cropping, `renderSpri
 the `Sprite` behaviour address tiles by index instead and also handle animation. Reach
 for `crop` when a frame is bigger than a cell, or sits inside one.
 
+### `flipped(frame)`
+
+A frame can be mirrored, and a mirrored frame is written as the frame's own number with a
+flag set in the top bit. `flipped` is that, written down:
+
+```js
+import { flipped } from "@inglorious/renderer-2d/image/flags.js"
+
+const entities = {
+  cat: {
+    type: "Cat",
+    sprite: {
+      image: { id: "neko", imageSize: [192, 192], tileSize: [32, 32] },
+      frames: {
+        right: [16, 17, 18],
+        left: [flipped(16), flipped(17), flipped(18)],
+      },
+    },
+  },
+}
+```
+
+Both `renderSprite` and `renderTilemap` read the flag back out, so a frame list can mix
+mirrored and plain frames freely. The two flags they read are exported from the same
+place, should you need to take a frame apart yourself.
+
 ## Shapes
 
 `renderRectangle`, `renderCircle`, `renderLine`, `renderText` and friends. Each takes its

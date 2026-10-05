@@ -6,6 +6,7 @@ import {
   mouse,
 } from "@inglorious/engine/behaviors/input/mouse.js"
 import { spriteAnimationSystem } from "@inglorious/engine/systems/sprite-animation.js"
+import { flipped } from "@inglorious/renderer-2d/image/flags.js"
 import { renderSprite } from "@inglorious/renderer-2d/image/sprite.js"
 import { renderMouse } from "@inglorious/renderer-2d/mouse.js"
 import { decide } from "@inglorious/utils/algorithms/decision-tree.js"
@@ -182,14 +183,14 @@ export default {
         frames: {
           idle: [4],
           aware: v(0, 4),
-          leftUp: [0x80000000 + 23, 0x80000000 + 29],
+          leftUp: [flipped(23), flipped(29)],
           up: [28, 30, 28, 31],
           rightUp: v(23, 29),
           right: v(16, 22),
           rightDown: v(13, 14),
           down: [1, 2, 1, 7],
-          leftDown: [0x80000000 + 13, 0x80000000 + 14],
-          left: [0x80000000 + 16, 0x80000000 + 22],
+          leftDown: [flipped(13), flipped(14)],
+          left: [flipped(16), flipped(22)],
           sleepy: [4, 10, 10, 3, 9, 15, 9, 15, 15],
           sleeping: [26, 26, 27, 27],
         },

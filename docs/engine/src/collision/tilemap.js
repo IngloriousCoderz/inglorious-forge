@@ -7,6 +7,7 @@ import {
 } from "@inglorious/engine/behaviors/input/controls.js"
 import { findCollisions } from "@inglorious/engine/collision/detection.js"
 import { spriteAnimationSystem } from "@inglorious/engine/systems/sprite-animation.js"
+import { flipped } from "@inglorious/renderer-2d/image/flags.js"
 import { renderHitmask } from "@inglorious/renderer-2d/image/hitmask.js"
 import { renderSprite } from "@inglorious/renderer-2d/image/sprite.js"
 import { renderTilemap } from "@inglorious/renderer-2d/image/tilemap.js"
@@ -119,7 +120,7 @@ export default {
               91,
               -1,
               -1,
-              0x80000000 + 91,
+              flipped(91),
               -1,
               // third row
               -1,
@@ -133,9 +134,9 @@ export default {
               91,
               -1,
               -1,
-              0x80000000 + 91,
+              flipped(91),
               -1,
-              // fifht row
+              // fifth row
               -1,
               -1,
               -1,
@@ -182,7 +183,7 @@ export default {
         speed: 0.2,
         frames: {
           right: [17],
-          left: [0x80000000 + 17],
+          left: [flipped(17)],
         },
       },
       collisions: {

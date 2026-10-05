@@ -1,3 +1,4 @@
+import { flipped } from "@inglorious/renderer-2d/image/flags.js"
 import { renderTilemap } from "@inglorious/renderer-2d/image/tilemap.js"
 import { v } from "@inglorious/utils/v.js"
 
@@ -74,7 +75,7 @@ export default {
               91,
               -1,
               -1,
-              0x80000000 + 91,
+              flipped(91),
               -1,
               // third row
               -1,
@@ -88,9 +89,9 @@ export default {
               91,
               -1,
               -1,
-              0x80000000 + 91,
+              flipped(91),
               -1,
-              // fifht row
+              // fifth row
               -1,
               -1,
               -1,

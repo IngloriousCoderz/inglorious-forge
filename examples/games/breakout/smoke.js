@@ -116,7 +116,10 @@ check(state().highScores === undefined, "and HIGH SCORES")
 // The serve is the wait between two games. It stands on the same field the play does,
 // with the ball on the paddle and everything the play would show already showing.
 check(state().ball !== undefined, "a ball is served")
-check(state().servePrompt.value === "Press Enter to serve!", "the serve says so")
+check(
+  state().servePrompt.value === "Press Enter to serve!",
+  "the serve says so",
+)
 check(state().servePrompt.size === 16, "in the medium font")
 check(state().score !== undefined, "the score stands on the serve")
 check(state().scoreLabel.value === "Score:", "labelled Score")
@@ -139,8 +142,7 @@ check(
   "the ball rides the paddle while serving",
 )
 check(
-  state().ball.position[0] ===
-    state().paddle.position[0] + 32 - 4,
+  state().ball.position[0] === state().paddle.position[0] + 32 - 4,
   "sitting on the middle of it, a ball's width clear",
 )
 check(state().ball.position[1] === 40, "and resting on top of it")
@@ -212,7 +214,6 @@ check(state().paused.value === "", "and PAUSED goes away")
 // The original plays its pause sound both pausing and resuming.
 check(played.at(-1) === "pause", "resuming sounds the pause again")
 
-
 // The interface along the top of the field: the hearts, the score, and the counter.
 // These are all placed by hand and all sit in the same corner, so they are checked
 // against each other rather than against nothing.
@@ -229,10 +230,14 @@ check(
 )
 // The label and the number are one line of interface, so they hang from one height.
 check(
-  hud.score.value === "0" && hud.scoreLabel.position[1] === hud.score.position[1],
+  hud.score.value === "0" &&
+    hud.scoreLabel.position[1] === hud.score.position[1],
   `the label and the number share a height (${hud.scoreLabel.position[1]})`,
 )
-check(hud.scoreLabel.textAlign === "left", "the label runs left from its own edge")
+check(
+  hud.scoreLabel.textAlign === "left",
+  "the label runs left from its own edge",
+)
 check(hud.score.textAlign === "right", "the number runs back from the far one")
 // The counter is ours rather than the original's, so it goes where the play never draws:
 // the bottom left, well below the paddle and clear of the score in the top right.
@@ -247,7 +252,8 @@ check(hud.fps.textAlign === "left", "reading inwards from the corner")
 // screen is checked for being wholly inside it.
 const linesFit = (screen, where) => {
   for (const [id, line] of Object.entries(screen)) {
-    if (typeof line.value !== "string" || typeof line.size !== "number") continue
+    if (typeof line.value !== "string" || typeof line.size !== "number")
+      continue
 
     check(
       line.position[1] - line.size >= 0 && line.position[1] <= 243,
@@ -293,7 +299,9 @@ lifeStep(4)
 lifePress("Enter")
 lifePress("Enter")
 check(lifeState().game.state === "play", "a game of its own reaches the play")
-const lifeBricks = Object.keys(lifeState()).filter((id) => id.startsWith("brick"))
+const lifeBricks = Object.keys(lifeState()).filter((id) =>
+  id.startsWith("brick"),
+)
 check(lifeBricks.length > 0, "with a level standing above it")
 
 // A brick knocked out is worth ten points, and the score is the game's own.
@@ -303,12 +311,17 @@ const knockedOut = lifeBricks[0]
 const [ballX, ballY] = lifeState().ball.position
 lifeState()[knockedOut].position = [ballX, ballY, 0]
 lifeStep(2)
-check(lifeState().score.value === "10", `a brick is worth ten (${lifeState().score.value})`)
+check(
+  lifeState().score.value === "10",
+  `a brick is worth ten (${lifeState().score.value})`,
+)
 check(lifeState()[knockedOut] === undefined, "and the brick is gone")
 
 // The level is one level across the whole game, so losing a life does not roll a new one
 // and quietly put back every brick knocked out so far.
-const remaining = Object.keys(lifeState()).filter((id) => id.startsWith("brick"))
+const remaining = Object.keys(lifeState()).filter((id) =>
+  id.startsWith("brick"),
+)
 check(
   remaining.length === lifeBricks.length - 1,
   `losing a life keeps the level as it stood (${remaining.length} of ${lifeBricks.length})`,
@@ -316,12 +329,12 @@ check(
 
 const hurtBefore = lifeSounds.length
 dropTheBall()
-check(lifeState().game.state === "serve", "a ball past the floor means another serve")
-check(lifeState().game.health === 2, "and costs a life")
 check(
-  lifeSounds.slice(hurtBefore).includes("hurt"),
-  "having sounded the hurt",
+  lifeState().game.state === "serve",
+  "a ball past the floor means another serve",
 )
+check(lifeState().game.health === 2, "and costs a life")
+check(lifeSounds.slice(hurtBefore).includes("hurt"), "having sounded the hurt")
 // The hearts fill from the left, so only the last one empties. They are asked on the
 // frame after the loss, because whichever entity asks first in a frame sees the life
 // count as it was when the frame began.
@@ -350,7 +363,10 @@ check(
 // has said anything.
 lifeStep(1)
 linesFit(lifeState(), "on the game over screen")
-check(lifeState().gameOverTitle.value === "GAME OVER", "the title says GAME OVER")
+check(
+  lifeState().gameOverTitle.value === "GAME OVER",
+  "the title says GAME OVER",
+)
 check(
   lifeState().gameOverScore.value === "Final Score: 10",
   `and the score it came to (${lifeState().gameOverScore.value})`,
@@ -361,7 +377,8 @@ check(
   "the title sits above the score",
 )
 check(
-  lifeState().gameOverScore.position[1] > lifeState().gameOverPrompt.position[1],
+  lifeState().gameOverScore.position[1] >
+    lifeState().gameOverPrompt.position[1],
   "and the prompt below it",
 )
 // Nothing of the game in progress is left standing behind the game over screen.
@@ -374,7 +391,10 @@ check(
 
 lifePress("Enter")
 check(lifeState().game.state === "start", "Enter goes back to the start screen")
-check(lifeState().gameOverTitle === undefined, "the game over screen goes with it")
+check(
+  lifeState().gameOverTitle === undefined,
+  "the game over screen goes with it",
+)
 
 // A new game begins again from the beginning.
 lifePress("Enter")
@@ -436,8 +456,10 @@ const from = `${96 + skinColumn * 8},${48 + skinRow * 8}`
 
 // The ball is cropped from the sheet at the pixel the original's quad table puts it,
 // which is not the same as the skin's number: that table starts at one.
-check(from === `${96 + skinColumn * 8},${48 + skinRow * 8}`,
-  `the ball is cropped from where its skin sits (${from})`)
+check(
+  from === `${96 + skinColumn * 8},${48 + skinRow * 8}`,
+  `the ball is cropped from where its skin sits (${from})`,
+)
 check(
   servedBall.image.frameSize.join() === "8,8",
   `and is 8x8 (${servedBall.image.frameSize.join("x")})`,
