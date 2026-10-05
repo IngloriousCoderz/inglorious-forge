@@ -203,3 +203,90 @@ test("it should auto-create entities when autoCreateEntities is enabled", () => 
     type: "Player",
   })
 })
+
+const HALTED = {
+  types: {
+    Game: [
+      {
+        update(entity) {
+          entity.frames = (entity.frames ?? 0) + 1
+        },
+      },
+    ],
+    Overlay: [
+      {
+        update(entity) {
+          entity.frames++
+        },
+      },
+    ],
+  },
+  entities: {
+    game: { type: "Game", frames: 0 },
+    overlay: { type: "Overlay", frames: 0, updatesWhilePaused: true },
+  },
+}
+
+test("it should halt updates for every type", () => {
+  const store = createStore(HALTED)
+
+  store.notify("update")
+  store.notify("pause")
+  store.update()
+  store.notify("update")
+  store.update()
+
+  expect(store.getState().game.frames).toBe(1)
+})
+
+test("it should keep updating an entity that says it updates while paused", () => {
+  const store = createStore(HALTED)
+
+  store.notify("pause")
+  store.update()
+  store.notify("update")
+  store.update()
+
+  expect(store.getState().game.frames).toBe(0)
+  expect(store.getState().overlay.frames).toBe(1)
+})
+
+test("it should resume updates", () => {
+  const store = createStore(HALTED)
+
+  store.notify("pause")
+  store.notify("resume")
+  store.update()
+  store.notify("update")
+  store.update()
+
+  expect(store.getState().game.frames).toBe(1)
+  expect(store.getState().overlay.frames).toBe(1)
+})
+
+test("it should keep handling other events while halted", () => {
+  const config = {
+    types: {
+      Game: [
+        { update() {} },
+        {
+          press(entity) {
+            entity.presses = (entity.presses ?? 0) + 1
+          },
+        },
+      ],
+    },
+    entities: { game: { type: "Game" } },
+  }
+  const store = createStore(config)
+
+  store.notify("pause")
+  store.update()
+
+  // This is the whole point of halting the update rather than every event: whatever
+  // takes the pause back off has to keep receiving its events.
+  store.notify("press")
+  store.update()
+
+  expect(store.getState().game.presses).toBe(1)
+})

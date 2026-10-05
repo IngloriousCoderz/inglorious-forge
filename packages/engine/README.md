@@ -26,6 +26,43 @@ This will set up a complete project with a development server ready to go.
 - **Composable by Design**: Build complex behaviors by composing pure functions and decorators, offering a powerful alternative to inheritance.
 - **Renderer Agnostic**: The engine is headless. You can use any rendering technology you like, from Canvas2D and HTML to React components.
 - **Zero Build Step Option**: Write plain JavaScript and run it directly in the browser. No complex build configurations required.
+- **Pausing without permission checks**: `notify("pause")` halts the world, so nothing that moves has to ask whether it is allowed to.
+
+### Pausing
+
+`api.notify("pause")` stops the store handing out `update` events, and `notify("resume")` starts it again:
+
+```javascript
+fsm({
+  play: {
+    togglePause(entity, _, api) {
+      api.notify("soundPlay", "pause")
+      api.notify(entity.paused ? "resume" : "pause")
+    },
+  },
+})
+```
+
+The game entity already keeps a readable `paused` flag, which is what that handler reads. Because `update` is never called while halted, a moving entity needs no pause check of its own:
+
+```javascript
+update(entity, dt) {
+  // Never runs while paused, so nothing here has to know about pausing.
+  entity.position[0] += entity.velocity[0] * dt
+}
+```
+
+Everything else keeps flowing, so the thing that takes the pause back off still receives its events. A type that must keep updating declares it, which is for overlays and pause menus rather than gameplay:
+
+```javascript
+const Paused = [
+  { updatesWhilePaused: true },
+  { render: renderText },
+  { update },
+]
+```
+
+The default is to **stop**. Anything that keeps going has to say so, so forgetting a flag pauses the thing you meant to pause rather than freezing the menu. See the [store's built-in events](https://github.com/iceonfire/inglorious-forge/tree/main/packages/store#built-in-events) for the full behaviour.
 
 ## Documentation
 

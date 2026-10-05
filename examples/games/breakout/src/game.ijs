@@ -8,31 +8,21 @@ import { renderImage } from "@inglorious/renderer-2d/image/image.js"
 import { v } from "@inglorious/utils/v.js"
 
 import {
-  BACKGROUND_SCALE,
-  BACKGROUND_SIZE,
-  BOTTOM_EDGE,
-  FONT_SIZE_SMALL,
   GAME_STATE,
   HEIGHT,
   LAYER_BACKGROUND,
   LAYER_OVERLAY,
-  LEFT_EDGE,
   MENU_START,
-  NO_DEPTH,
-  NO_OFFSET,
-  PAUSE,
   PRESS,
   PRESS_MENU_DOWN,
   PRESS_MENU_UP,
+  TOGGLE_PAUSE,
   WIDTH,
 } from "./constants.js"
 import { Game } from "./types/game.ijs"
 import { Paddle } from "./types/paddle.ijs"
 import { HighScores, Paused, Start, Title } from "./types/text.ijs"
 
-const BOTTOM_LEFT = [LEFT_EDGE, BOTTOM_EDGE]
-const FPS_MARGIN = 10
-const FPS_SIZE = FONT_SIZE_SMALL
 const FPS_COLOR = "rgb(0, 255, 0)"
 
 export default {
@@ -53,8 +43,10 @@ export default {
         create(entity) {
           entity.image = {
             id: "background",
-            imageSize: BACKGROUND_SIZE,
-            scale: BACKGROUND_SCALE,
+            imageSize: [302, 129],
+            // The original scales the backdrop by one pixel less than its own size, so
+            // it overshoots the screen slightly on each axis. Taken as written.
+            scale: [WIDTH / 301, HEIGHT / 128],
           }
         },
       },
@@ -70,7 +62,7 @@ export default {
       "game",
       {
         Enter: PRESS,
-        Space: PAUSE,
+        Space: TOGGLE_PAUSE,
         ArrowUp: PRESS_MENU_UP,
         ArrowDown: PRESS_MENU_DOWN,
       },
@@ -115,15 +107,18 @@ export default {
     background: {
       type: "Background",
       layer: LAYER_BACKGROUND,
-      position: v(NO_OFFSET, NO_OFFSET, NO_DEPTH),
-      anchor: BOTTOM_LEFT,
+      position: v(0, 0, 0),
+      anchor: [0, 0],
     },
 
     fps: {
       type: "Fps",
+      // An overlay keeps updating while the world is halted, or it would freeze on
+      // whatever it last drew.
+      updatesWhilePaused: true,
       layer: LAYER_OVERLAY,
-      position: v(WIDTH - FPS_MARGIN, HEIGHT - FPS_MARGIN, NO_DEPTH),
-      size: FPS_SIZE,
+      position: v(WIDTH - 10, HEIGHT - 10, 0),
+      size: 8,
       color: FPS_COLOR,
       textAlign: "right",
     },

@@ -5,8 +5,8 @@ import {
 } from "@inglorious/engine/ai/movement/dynamic/align.js"
 import { lookWhereYoureGoing } from "@inglorious/engine/ai/movement/dynamic/look-where-youre-going.js"
 import {
-  controls,
-  createControls,
+  controlTypes,
+  createControlEntities,
 } from "@inglorious/engine/behaviors/input/controls.js"
 import { clamped } from "@inglorious/engine/behaviors/physics/clamped.js"
 import { renderCharacter } from "@inglorious/renderer-2d/character.js"
@@ -17,7 +17,7 @@ import { sum } from "@inglorious/utils/vectors"
 
 export default {
   types: {
-    ...controls("character"),
+    ...controlTypes("character"),
 
     Character: [
       {
@@ -102,7 +102,7 @@ export default {
       devMode: true,
     },
 
-    ...createControls("character", {
+    ...createControlEntities("character", {
       ArrowLeft: "moveLeft",
       ArrowRight: "moveRight",
       ArrowDown: "moveDown",

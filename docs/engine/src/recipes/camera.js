@@ -1,10 +1,13 @@
 import { arrive } from "@inglorious/engine/ai/movement/dynamic/arrive.js"
 import { camera } from "@inglorious/engine/behaviors/camera.js"
 import {
-  createKeyboard,
+  createKeyboardEntity,
   keyboard,
 } from "@inglorious/engine/behaviors/input/keyboard.js"
-import { createMouse, mouse } from "@inglorious/engine/behaviors/input/mouse.js"
+import {
+  createMouseEntity,
+  mouse,
+} from "@inglorious/engine/behaviors/input/mouse.js"
 import { renderCamera } from "@inglorious/renderer-2d/camera.js"
 import { renderCharacter } from "@inglorious/renderer-2d/character.js"
 import { renderMouse } from "@inglorious/renderer-2d/mouse.js"
@@ -33,9 +36,9 @@ export default {
       devMode: true,
     },
 
-    keyboard: createKeyboard(),
+    keyboard: createKeyboardEntity(),
 
-    mouse: createMouse(),
+    mouse: createMouseEntity(),
 
     player: {
       id: "player",

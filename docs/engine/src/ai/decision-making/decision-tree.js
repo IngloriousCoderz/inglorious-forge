@@ -1,7 +1,10 @@
 import { arrive } from "@inglorious/engine/ai/movement/kinematic/arrive.js"
 import { Sprite } from "@inglorious/engine/animation/sprite.js"
 import { fsm } from "@inglorious/engine/behaviors/fsm.js"
-import { createMouse, mouse } from "@inglorious/engine/behaviors/input/mouse.js"
+import {
+  createMouseEntity,
+  mouse,
+} from "@inglorious/engine/behaviors/input/mouse.js"
 import { spriteAnimationSystem } from "@inglorious/engine/systems/sprite-animation.js"
 import { renderSprite } from "@inglorious/renderer-2d/image/sprite.js"
 import { renderMouse } from "@inglorious/renderer-2d/mouse.js"
@@ -154,7 +157,7 @@ export default {
       pixelated: true,
     },
 
-    mouse: createMouse(),
+    mouse: createMouseEntity(),
 
     images: {
       type: "Images",

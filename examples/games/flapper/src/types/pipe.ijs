@@ -16,7 +16,6 @@ import {
 
 const X = 0
 const Y = 1
-const HALF = 2
 const CENTERED = 0.5
 const BOTTOM_EDGE = 0
 const TOP_EDGE = 1
@@ -59,7 +58,7 @@ export const Pipe = {
     }
 
     // Recycled once the whole pipe has left the screen on the left.
-    if (entity.position[X] + PIPE_WIDTH / HALF <= LEFT_EDGE) {
+    if (entity.position[X] + PIPE_WIDTH / 2 <= LEFT_EDGE) {
       api.notify("despawn", entity)
     }
   },
@@ -109,7 +108,6 @@ function hasPassedBird(entity, api) {
   const bird = api.getEntity("bird")
 
   return (
-    entity.position[X] + PIPE_SIZE[X] / HALF <
-    bird.position[X] - BIRD_WIDTH / HALF
+    entity.position[X] + PIPE_SIZE[X] / 2 < bird.position[X] - BIRD_WIDTH / 2
   )
 }

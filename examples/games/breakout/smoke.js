@@ -151,13 +151,13 @@ press("Space")
 engine._store.notify("keyboardKeyUp", "ArrowRight")
 const pausedAt = state().paddle.position[0]
 step(30)
-check(state().game.state === "paused", "space pauses")
+check(state().game.paused === true, "space pauses")
 check(state().paddle.position[0] === pausedAt, "a paused paddle does not move")
 check(state().paused.value === "PAUSED", "PAUSED is shown while paused")
 
 press("Space")
 check(state().game.state === "play", "space resumes")
-check(state().paused === undefined, "and PAUSED goes away with the pause")
+check(state().paused.value === "", "and PAUSED goes away")
 // The original plays its pause sound both pausing and resuming.
 check(played.at(-1) === "pause", "resuming sounds the pause again")
 

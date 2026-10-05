@@ -17,7 +17,12 @@ export interface Event<T = any> {
 }
 
 /**
- * Entity type definition with event handlers
+ * Entity type definition with event handlers.
+ *
+ * `updatesWhilePaused` opts the type out of a pause: the store stops handing out
+ * `update` events while the world is halted, and a type that says this keeps
+ * receiving them. It is for overlays and menus; anything that moves should leave it
+ * off so that it stops.
  */
 export type EntityType<TEntity extends BaseEntity = BaseEntity> = {
   [K: string]: (entity: TEntity, payload: any, api: Api) => void

@@ -1,8 +1,8 @@
 import { modernControls } from "@inglorious/engine/behaviors/controls/dynamic/modern.js"
 import { fsm } from "@inglorious/engine/behaviors/fsm.js"
 import {
-  controls,
-  createControls,
+  controlTypes,
+  createControlEntities,
 } from "@inglorious/engine/behaviors/input/controls.js"
 import { clamped } from "@inglorious/engine/behaviors/physics/clamped.js"
 import { jumpable } from "@inglorious/engine/behaviors/physics/jumpable.js"
@@ -13,7 +13,7 @@ const Y = 1
 
 export default {
   types: {
-    ...controls("character"),
+    ...controlTypes("character"),
 
     Stats: {},
 
@@ -44,7 +44,7 @@ export default {
       devMode: true,
     },
 
-    ...createControls("character", {
+    ...createControlEntities("character", {
       ArrowUp: "moveUp",
       ArrowDown: "moveDown",
       ArrowLeft: "moveLeft",

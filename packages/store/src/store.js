@@ -63,7 +63,7 @@ export function createStore({
 
   const types = augmentTypes(originalTypes)
 
-  let state, eventMap, incomingEvents, isProcessing
+  let state, eventMap, incomingEvents, isProcessing, isHalted
   reset()
 
   const baseStore = {
@@ -155,6 +155,17 @@ export function createStore({
         const event = incomingEvents.shift()
         processedEvents.push(event)
 
+        // Pausing and resuming are the store's own, and they keep dispatching like any
+        // other event, so the game behaviour still sees them and anything else that
+        // wants to react gets the same notification.
+        if (event.type === "pause") {
+          isHalted = true
+        }
+
+        if (event.type === "resume") {
+          isHalted = false
+        }
+
         // Handle special system events
         if (event.type === "add") {
           addEntity(draft, event.payload)
@@ -172,9 +183,21 @@ export function createStore({
         // Get entities that should handle this event (filtered by EventMap)
         const entityIds = eventMap.getEntitiesForEvent(event.type)
 
+        // A halted world stops handing out updates, because anything that moves by
+        // integrating a delta time would otherwise carry on regardless. An entity that
+        // sets `updatesWhilePaused` is exempt, which is how an overlay, a button or the
+        // thing that takes the pause back off keeps working while the rest stands still.
+        //
+        // It is read off the entity rather than the type so that the type stays an index
+        // signature of handlers, which is what lets it be called and indexed freely.
+        const halted = isHalted && handlerName === "update"
+
         for (const id of entityIds) {
           const entity = draft[id]
           const type = types[entity.type]
+
+          if (halted && !entity.updatesWhilePaused) continue
+
           const handle = type[handlerName]
 
           handle?.(entity, event.payload, api)
@@ -208,6 +231,12 @@ export function createStore({
    * - 'submit' - broadcast to all entities with submit handler
    * - 'form:submit' - only form entities
    * - 'form[loginForm]:submit' - only loginForm entity
+   *
+   * Two of these are the store's own. 'pause' stops the store handing out 'update'
+   * events, and 'resume' starts it again, which is how anything that moves by
+   * integrating a delta time stops without being told about it. A type declares
+   * `updatesWhilePaused` to keep updating regardless. Both keep dispatching to types
+   * that handle them, unlike 'add' and 'remove'.
    *
    * @param {string} type - The event type to notify.
    * @param {any} payload - The event payload.
@@ -352,6 +381,7 @@ export function createStore({
    * @returns {void}
    */
   function reset() {
+    isHalted = false
     setState(originalEntities)
   }
 

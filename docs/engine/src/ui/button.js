@@ -1,4 +1,7 @@
-import { createMouse, mouse } from "@inglorious/engine/behaviors/input/mouse.js"
+import {
+  createMouseEntity,
+  mouse,
+} from "@inglorious/engine/behaviors/input/mouse.js"
 import { button } from "@inglorious/engine/behaviors/ui/button.js"
 import { renderMouse } from "@inglorious/renderer-2d/mouse.js"
 import { v } from "@inglorious/utils/v.js"
@@ -23,7 +26,7 @@ export default {
       devMode: true,
     },
 
-    mouse: createMouse(),
+    mouse: createMouseEntity(),
 
     rect1: {
       type: "Button",

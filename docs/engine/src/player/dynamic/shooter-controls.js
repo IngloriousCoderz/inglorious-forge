@@ -1,9 +1,12 @@
 import { shooterControls } from "@inglorious/engine/behaviors/controls/dynamic/shooter.js"
 import {
-  controls,
-  createControls,
+  controlTypes,
+  createControlEntities,
 } from "@inglorious/engine/behaviors/input/controls.js"
-import { createMouse, mouse } from "@inglorious/engine/behaviors/input/mouse.js"
+import {
+  createMouseEntity,
+  mouse,
+} from "@inglorious/engine/behaviors/input/mouse.js"
 import { clamped } from "@inglorious/engine/behaviors/physics/clamped.js"
 import { renderCharacter } from "@inglorious/renderer-2d/character.js"
 import { renderMouse } from "@inglorious/renderer-2d/mouse.js"
@@ -12,7 +15,7 @@ import { v } from "@inglorious/utils/v.js"
 
 export default {
   types: {
-    ...controls("character"),
+    ...controlTypes("character"),
 
     Mouse: [{ render: renderMouse }, mouse()],
 
@@ -25,9 +28,9 @@ export default {
       devMode: true,
     },
 
-    mouse: createMouse({ position: v(400, 0, 300) }),
+    mouse: createMouseEntity({ position: v(400, 0, 300) }),
 
-    ...createControls("character", {
+    ...createControlEntities("character", {
       ArrowUp: "moveUp",
       ArrowDown: "moveDown",
       ArrowLeft: "moveLeft",

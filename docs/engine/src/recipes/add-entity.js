@@ -1,4 +1,7 @@
-import { createMouse, mouse } from "@inglorious/engine/behaviors/input/mouse.js"
+import {
+  createMouseEntity,
+  mouse,
+} from "@inglorious/engine/behaviors/input/mouse.js"
 import { renderCharacter } from "@inglorious/renderer-2d/character.js"
 import { renderMouse } from "@inglorious/renderer-2d/mouse.js"
 import { random } from "@inglorious/utils/math/rng.js"
@@ -39,6 +42,6 @@ export default {
       devMode: true,
     },
 
-    mouse: createMouse({ position: v(400, 0, 300) }),
+    mouse: createMouseEntity({ position: v(400, 0, 300) }),
   },
 }

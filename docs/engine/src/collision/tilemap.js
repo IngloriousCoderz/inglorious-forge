@@ -2,8 +2,8 @@ import { Sprite } from "@inglorious/engine/animation/sprite.js"
 import { modernVelocity } from "@inglorious/engine/behaviors/controls/kinematic/modern.js"
 import { collisionGizmos } from "@inglorious/engine/behaviors/debug/collision.js"
 import {
-  controls,
-  createControls,
+  controlTypes,
+  createControlEntities,
 } from "@inglorious/engine/behaviors/input/controls.js"
 import { findCollisions } from "@inglorious/engine/collision/detection.js"
 import { spriteAnimationSystem } from "@inglorious/engine/systems/sprite-animation.js"
@@ -28,7 +28,7 @@ export default {
   systems: [spriteAnimationSystem()],
 
   types: {
-    ...controls("player"),
+    ...controlTypes("player"),
 
     Tilemap: [{ render: renderTilemap }, debugCollisions],
 
@@ -48,7 +48,7 @@ export default {
       pixelated: true,
     },
 
-    ...createControls("player", {
+    ...createControlEntities("player", {
       ArrowLeft: "moveLeft",
       ArrowRight: "moveRight",
       ArrowDown: "moveDown",

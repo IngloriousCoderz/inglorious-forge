@@ -4,7 +4,10 @@ import {
   DEFAULT_TARGET_RADIUS,
   DEFAULT_TIME_TO_TARGET,
 } from "@inglorious/engine/ai/movement/dynamic/arrive.js"
-import { createMouse, mouse } from "@inglorious/engine/behaviors/input/mouse.js"
+import {
+  createMouseEntity,
+  mouse,
+} from "@inglorious/engine/behaviors/input/mouse.js"
 import { clamped } from "@inglorious/engine/behaviors/physics/clamped.js"
 import { renderCharacter } from "@inglorious/renderer-2d/character.js"
 import { renderMouse } from "@inglorious/renderer-2d/mouse.js"
@@ -49,7 +52,7 @@ export default {
       devMode: true,
     },
 
-    mouse: createMouse({ position: v(400, 0, 300) }),
+    mouse: createMouseEntity({ position: v(400, 0, 300) }),
 
     character: {
       type: "Character",

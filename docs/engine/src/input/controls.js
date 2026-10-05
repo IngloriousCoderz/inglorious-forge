@@ -1,14 +1,14 @@
 import { modernControls } from "@inglorious/engine/behaviors/controls/kinematic/modern.js"
 import {
-  controls,
-  createControls,
+  controlTypes,
+  createControlEntities,
 } from "@inglorious/engine/behaviors/input/controls.js"
 import { renderCharacter } from "@inglorious/renderer-2d/character.js"
 import { v } from "@inglorious/utils/v.js"
 
 export default {
   types: {
-    ...controls("character"),
+    ...controlTypes("character"),
 
     Character: [{ render: renderCharacter }, modernControls()],
   },
@@ -19,7 +19,7 @@ export default {
       devMode: true,
     },
 
-    ...createControls("character", {
+    ...createControlEntities("character", {
       ArrowUp: "moveUp",
       ArrowDown: "moveDown",
       ArrowLeft: "moveLeft",

@@ -1256,6 +1256,50 @@ Each handler receives three arguments:
 
 - **`create(entity)`** - triggered when entity added via `add` event, visible only to that entity
 - **`destroy(entity)`** - triggered when entity removed via `remove` event, visible only to that entity
+- **`pause`** - halts the world, see below
+- **`resume`** - unhalts it
+
+#### Pausing the world
+
+`notify("pause")` stops the store handing out `update` events, and `notify("resume")` starts it again:
+
+```javascript
+store.notify("pause")
+store.notify("update")
+store.update() // nothing updated
+
+store.notify("resume")
+store.notify("update")
+store.update() // updated as normal
+```
+
+This is for anything that moves by integrating a delta time. Those entities do not need to know about pausing at all: their `update` is simply never called, so they cannot drift.
+
+Everything else keeps flowing. Input handlers, custom events and rendering are untouched, which is what lets a pause screen take itself back off:
+
+```javascript
+// Still works while the world is halted
+pauseMenu.pause(entity, _, api) {
+  api.notify("resume")
+}
+```
+
+An entity opts out by setting `updatesWhilePaused`, which is for overlays and menus rather than for gameplay:
+
+```javascript
+const Overlay = [{ update(entity, dt) { entity.ticks++ } }]
+
+// in entities
+overlay: { type: "Overlay", updatesWhilePaused: true }
+```
+
+It is a property of the entity rather than of the type so that a type stays a plain index signature of handlers, which is what keeps it freely callable and indexable from TypeScript.
+
+The default is to **stop**. Anything that keeps updating has to say so, so forgetting a flag pauses the thing you meant to pause rather than freezing the menu.
+
+`reset()` clears the halt, so replacing the entities does not leave the world frozen.
+
+Note that `pause` and `resume` keep dispatching like any other event, unlike `add` and `remove`. The store acts on them _and_ every type that handles them still gets called, so one notification can both halt the world and let the game record why.
 
 ### Notify vs Dispatch
 

@@ -66,12 +66,11 @@ import {
   TitlePrompt,
 } from "./types/text.ijs"
 
-const HALF = 2
 const CENTERED = 0.5
 const LEFT_EDGE = 0
 const BOTTOM_EDGE = 0
 
-const CENTER_X = WIDTH / HALF
+const CENTER_X = WIDTH / 2
 const BOTTOM_LEFT = [LEFT_EDGE, BOTTOM_EDGE]
 const CENTER = [CENTERED, CENTERED]
 

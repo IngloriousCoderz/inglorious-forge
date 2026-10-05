@@ -5,8 +5,8 @@ import {
   DEFAULT_TIME_TO_TARGET,
 } from "@inglorious/engine/ai/movement/dynamic/align.js"
 import {
-  controls,
-  createControls,
+  controlTypes,
+  createControlEntities,
 } from "@inglorious/engine/behaviors/input/controls.js"
 import { mouse } from "@inglorious/engine/behaviors/input/mouse.js"
 import { clamped } from "@inglorious/engine/behaviors/physics/clamped.js"
@@ -19,7 +19,7 @@ import { v } from "@inglorious/utils/v.js"
 
 export default {
   types: {
-    ...controls("mouse"),
+    ...controlTypes("mouse"),
 
     Mouse: [
       { render: renderMouse },
@@ -99,7 +99,7 @@ export default {
       orientation: 0,
     },
 
-    ...createControls("mouse", {
+    ...createControlEntities("mouse", {
       ArrowLeft: "turnLeft",
       ArrowRight: "turnRight",
       ArrowDown: "turnRight",

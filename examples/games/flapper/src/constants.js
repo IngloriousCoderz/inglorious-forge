@@ -1,14 +1,8 @@
 import { ZERO_VECTOR } from "@inglorious/utils/math/vectors"
 import { v } from "@inglorious/utils/v.js"
 
-const HALF = 2
-const SIDES = 2
-
-/**
- * The game is played on a single plane: sprites have no depth, and only the
- * background, ground and pipes move sideways. Taken from `ZERO_VECTOR` so these
- * cannot drift away from it.
- */
+// The game is played on a single plane: sprites have no depth, and only the
+// background, ground and pipes move sideways.
 const [NO_OFFSET, NO_RISE, NO_DEPTH] = ZERO_VECTOR
 export { NO_DEPTH, NO_OFFSET, NO_RISE }
 
@@ -24,37 +18,36 @@ export const GROUND_LOOP = WIDTH
 
 export const CEILING_MARGIN = 10
 
+// The bird is inset from where its hitbox sits, so that it overlaps a pipe by a
+// little before it is called a collision.
 const BIRD_INSET = 8
 const BIRD_HITBOX_INSET = 2
-const BIRD_CRASH_OVERLAP = 1
 
 export const BIRD_WIDTH = 38
 export const BIRD_HEIGHT = 24
 export const BIRD_SIZE = v(BIRD_WIDTH, BIRD_HEIGHT, NO_DEPTH)
 export const BIRD_INITIAL_POSITION = v(
-  WIDTH / HALF - BIRD_INSET + BIRD_WIDTH / HALF,
-  HEIGHT / HALF + BIRD_INSET - BIRD_HEIGHT / HALF,
+  WIDTH / 2 - BIRD_INSET + BIRD_WIDTH / 2,
+  HEIGHT / 2 + BIRD_INSET - BIRD_HEIGHT / 2,
   NO_DEPTH,
 )
 export const BIRD_HITBOX_SIZE = v(
-  BIRD_WIDTH - BIRD_HITBOX_INSET * SIDES,
-  BIRD_HEIGHT - BIRD_HITBOX_INSET * SIDES,
+  BIRD_WIDTH - BIRD_HITBOX_INSET * 2,
+  BIRD_HEIGHT - BIRD_HITBOX_INSET * 2,
   NO_DEPTH,
 )
 export const BIRD_GRAVITY = 980
 export const BIRD_FLAP_SPEED = 300
 // The bird is done for once its head sinks past the ground, which the original
 // allows by a single pixel.
-export const BIRD_CRASH_Y =
-  GROUND_HEIGHT - BIRD_CRASH_OVERLAP + BIRD_HEIGHT / HALF
+export const BIRD_CRASH_Y = GROUND_HEIGHT - 1 + BIRD_HEIGHT / 2
 
 export const PIPE_WIDTH = 70
 export const PIPE_HEIGHT = HEIGHT
 export const PIPE_SIZE = v(PIPE_WIDTH, PIPE_HEIGHT, NO_DEPTH)
 export const PIPE_SPEED = 60
 // Pipes enter from just beyond the right edge of the screen.
-const PIPE_SPAWN_MARGIN = 32
-export const PIPE_SPAWN_X = WIDTH + PIPE_SPAWN_MARGIN
+export const PIPE_SPAWN_X = WIDTH + 32
 export const GAP_HEIGHT = 90
 // `GAP_Y` is the altitude of the lower edge of the gap, i.e. where the pipe
 // hanging from the ceiling ends.
@@ -62,7 +55,7 @@ export const MIN_GAP_Y = GAP_HEIGHT
 export const MAX_GAP_Y = HEIGHT - CEILING_MARGIN
 export const PIPE_SPAWN_INTERVAL = 2
 export const GAP_Y_SPREAD = 20
-export const INITIAL_GAP_Y = HEIGHT - CEILING_MARGIN * SIDES
+export const INITIAL_GAP_Y = HEIGHT - CEILING_MARGIN * 2
 export const INITIAL_GAP_Y_SPREAD = 80
 
 export const COUNTDOWN_TIME = 0.75
@@ -90,26 +83,18 @@ export const FONT_SIZE_HUGE = 56
 
 export const COLOR_TEXT = "white"
 
-// Text sits a margin down from the top of the screen, so the margins are measured
-// as altitudes instead.
-const NO_TEXT_MARGIN = 8
-const TITLE_TEXT_MARGIN = 64
-const PROMPT_TEXT_MARGIN = 100
-const COUNTDOWN_TEXT_MARGIN = 120
-const GAME_OVER_PROMPT_TEXT_MARGIN = 160
-const FPS_TEXT_MARGIN = 10
-
-export const SCORE_TEXT_X = NO_TEXT_MARGIN
-export const SCORE_TEXT_ALTITUDE = HEIGHT - NO_TEXT_MARGIN
-export const TITLE_TEXT_ALTITUDE = HEIGHT - TITLE_TEXT_MARGIN
-export const PROMPT_TEXT_ALTITUDE = HEIGHT - PROMPT_TEXT_MARGIN
-export const COUNTDOWN_TEXT_ALTITUDE = HEIGHT - COUNTDOWN_TEXT_MARGIN
-export const GAME_OVER_TEXT_ALTITUDE = HEIGHT - TITLE_TEXT_MARGIN
-export const GAME_OVER_SCORE_TEXT_ALTITUDE = HEIGHT - PROMPT_TEXT_MARGIN
-export const GAME_OVER_PROMPT_TEXT_ALTITUDE =
-  HEIGHT - GAME_OVER_PROMPT_TEXT_MARGIN
-export const FPS_TEXT_X = WIDTH - FPS_TEXT_MARGIN
-export const FPS_TEXT_ALTITUDE = HEIGHT - FPS_TEXT_MARGIN
+// Text sits a margin down from the top of the screen, so the margins are written as
+// they are in the original and turned into altitudes here.
+export const SCORE_TEXT_X = 8
+export const SCORE_TEXT_ALTITUDE = HEIGHT - 8
+export const TITLE_TEXT_ALTITUDE = HEIGHT - 64
+export const PROMPT_TEXT_ALTITUDE = HEIGHT - 100
+export const COUNTDOWN_TEXT_ALTITUDE = HEIGHT - 120
+export const GAME_OVER_TEXT_ALTITUDE = HEIGHT - 64
+export const GAME_OVER_SCORE_TEXT_ALTITUDE = HEIGHT - 100
+export const GAME_OVER_PROMPT_TEXT_ALTITUDE = HEIGHT - 160
+export const FPS_TEXT_X = WIDTH - 10
+export const FPS_TEXT_ALTITUDE = HEIGHT - 10
 
 export const LAYER_BACKGROUND = -3
 export const LAYER_PIPES = -2

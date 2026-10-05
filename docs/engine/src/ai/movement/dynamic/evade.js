@@ -2,7 +2,10 @@ import {
   DEFAULT_MAX_PREDICTION,
   evade,
 } from "@inglorious/engine/ai/movement/dynamic/evade.js"
-import { createMouse, mouse } from "@inglorious/engine/behaviors/input/mouse.js"
+import {
+  createMouseEntity,
+  mouse,
+} from "@inglorious/engine/behaviors/input/mouse.js"
 import { clamped } from "@inglorious/engine/behaviors/physics/clamped.js"
 import { renderCharacter } from "@inglorious/renderer-2d/character.js"
 import { renderMouse } from "@inglorious/renderer-2d/mouse.js"
@@ -45,7 +48,7 @@ export default {
       devMode: true,
     },
 
-    mouse: createMouse({
+    mouse: createMouseEntity({
       position: v(400, 0, 300),
       velocity: v(0, 0, 0),
     }),

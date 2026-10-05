@@ -3,8 +3,8 @@ import {
   matchVelocity,
 } from "@inglorious/engine/ai/movement/dynamic/match-velocity.js"
 import {
-  controls,
-  createControls,
+  controlTypes,
+  createControlEntities,
 } from "@inglorious/engine/behaviors/input/controls.js"
 import { clamped } from "@inglorious/engine/behaviors/physics/clamped.js"
 import { renderCharacter } from "@inglorious/renderer-2d/character.js"
@@ -13,7 +13,7 @@ import { v } from "@inglorious/utils/v.js"
 
 export default {
   types: {
-    ...controls("character"),
+    ...controlTypes("character"),
 
     Character: [
       {
@@ -89,7 +89,7 @@ export default {
       devMode: true,
     },
 
-    ...createControls("character", {
+    ...createControlEntities("character", {
       ArrowLeft: "moveLeft",
       ArrowRight: "moveRight",
       ArrowDown: "moveDown",

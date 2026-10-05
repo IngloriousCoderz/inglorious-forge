@@ -1,4 +1,7 @@
-import { createTouch, touch } from "@inglorious/engine/behaviors/input/touch.js"
+import {
+  createTouchEntity,
+  touch,
+} from "@inglorious/engine/behaviors/input/touch.js"
 import { renderCharacter } from "@inglorious/renderer-2d/character.js"
 import { v } from "@inglorious/utils/v.js"
 
@@ -24,7 +27,7 @@ export default {
       devMode: true,
     },
 
-    touch: createTouch(),
+    touch: createTouchEntity(),
 
     character: {
       type: "Character",

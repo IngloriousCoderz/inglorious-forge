@@ -1,7 +1,7 @@
 import { modernControls } from "@inglorious/engine/behaviors/controls/kinematic/modern.js"
 import {
-  controls,
-  createControls,
+  controlTypes,
+  createControlEntities,
 } from "@inglorious/engine/behaviors/input/controls.js"
 import { clamped } from "@inglorious/engine/behaviors/physics/clamped.js"
 import { renderCharacter } from "@inglorious/renderer-2d/character.js"
@@ -10,7 +10,7 @@ import { pi } from "@inglorious/utils/math/trigonometry.js"
 
 export default {
   types: {
-    ...controls("character"),
+    ...controlTypes("character"),
 
     Character: [{ render: renderCharacter }, modernControls(), clamped()],
 
@@ -31,7 +31,7 @@ export default {
   },
 
   entities: {
-    ...createControls("player1", {
+    ...createControlEntities("player1", {
       KeyW: "moveUp",
       KeyS: "moveDown",
       KeyA: "moveLeft",

@@ -1,7 +1,7 @@
 import { modernVelocity } from "@inglorious/engine/behaviors/controls/kinematic/modern.js"
 import {
-  controls,
-  createControls,
+  controlTypes,
+  createControlEntities,
 } from "@inglorious/engine/behaviors/input/controls.js"
 import { clamped } from "@inglorious/engine/behaviors/physics/clamped.js"
 import { jumpable } from "@inglorious/engine/behaviors/physics/jumpable.js"
@@ -11,7 +11,7 @@ import { v } from "@inglorious/utils/v.js"
 
 export default {
   types: {
-    ...controls("character"),
+    ...controlTypes("character"),
 
     Game: [
       (type) => ({
@@ -48,7 +48,7 @@ export default {
       devMode: true,
     },
 
-    ...createControls("character", {
+    ...createControlEntities("character", {
       ArrowLeft: "moveLeft",
       ArrowRight: "moveRight",
       Space: "jump",
