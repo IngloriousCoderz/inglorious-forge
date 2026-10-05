@@ -85,10 +85,6 @@ check(
 check(state().title.textAlign === "center", "text is centred horizontally")
 check(state().title.font === "'Breakout'", "text uses the loaded font")
 check(state().title.position[0] === 216, "text is centred on the screen")
-console.log(
-  `\n${failures === 0 ? "all checks passed" : `${failures} check(s) failed`}`,
-)
-if (failures) process.exitCode = 1
 
 // The ball plays sounds as it goes, so this asks whether the confirm happened rather
 // than whether it was the last thing to happen.
@@ -270,6 +266,11 @@ check(
   `and upwards between 50 and 60 (${served.velocity[1]})`,
 )
 
+// The walls are tested with the ball clear of the level, because a brick now bounces it
+// on the way up and this is about the wall rather than about the bricks.
+ballState().ball.position[0] = 431
+ballState().ball.velocity = [0, 50, 0]
+
 // It climbs until it meets the ceiling, which is the one wall that is not at an
 // altitude of zero in this world.
 let climbed = 0
@@ -336,43 +337,78 @@ check(
   "having sounded the paddle hit",
 )
 
-console.log(
-  `\n${failures === 0 ? "all checks passed" : `${failures} check(s) failed`}`,
-)
-if (failures) process.exitCode = 1
+// The paddle bounce lifts the ball clear of it, so that a ball sitting inside the paddle
+// is only hit once rather than being bounced out of it over and over.
+const paddleTop = ballState().paddle.position[1]
+ballState().paddle.position[0] = 200
+const toPaddle = ballState().ball
+toPaddle.position[0] = 200
+toPaddle.position[1] = paddleTop - 1
+toPaddle.velocity[1] = -50
 
-// Driving the ball into a brick knocks it out without bouncing, which is what the
-// original does at this stage: the brick goes and the ball carries on.
-const target = Object.entries(ballState()).find(
-  ([, { type }]) => type === "Brick",
-)
-const [targetId] = target
-const beforeBricks = Object.values(ballState()).filter(
-  ({ type }) => type === "Brick",
-).length
-
-ballState().ball.position = [...target[1].position]
-ballState().ball.velocity = [0, -40, 0]
-
-const beforeBrickHit = ballSounds.length
-ballStep(2)
+const afterPaddle = ballSounds.length
+ballStep(1)
 
 check(
-  ballState()[targetId] === undefined,
-  "the ball knocks the brick out of the level",
+  ballState().ball.position[1] === paddleTop + 8,
+  `and lifted clear of it (${ballState().ball.position[1]})`,
 )
 check(
-  Object.values(ballState()).filter(({ type }) => type === "Brick").length ===
-    beforeBricks - 1,
-  "and the level is one brick shorter",
+  ballState().ball.velocity[1] === 50,
+  `going back up (${ballState().ball.velocity[1]})`,
 )
 check(
-  ballSounds.slice(beforeBrickHit).includes("brickHit"),
-  "having sounded the brick hit",
+  ballSounds.slice(afterPaddle).filter((s) => s === "paddleHit").length === 1,
+  "having sounded the paddle hit exactly once",
+)
+ballStep(3)
+check(
+  ballSounds.slice(afterPaddle).filter((s) => s === "paddleHit").length === 1,
+  "and not again on the frames after",
+)
+
+// A brick is bounced off along whichever side the ball went in by, and pushed back out
+// so that it is not still overlapping the brick it just left.
+/** Drops the ball onto one face of a brick, moving towards it, and steps a frame. */
+const strike = (fromAbove) => {
+  // A fresh brick each time, because striking one knocks it out of the level.
+  const [, brick] = Object.entries(ballState()).find(
+    ([, { type }]) => type === "Brick",
+  )
+
+  const brickTop = brick.position[1]
+
+  const ball = ballState().ball
+  const altitude = fromAbove ? brickTop + 4 : brickTop - 12
+
+  ball.position[0] = brick.position[0] + 12
+  ball.position[1] = altitude
+  ball.velocity[0] = 0
+  ball.velocity[1] = fromAbove ? -50 : 50
+
+  ballStep(1)
+
+  return { altitude, after: ballState().ball }
+}
+
+const above = strike(true)
+check(
+  above.after.velocity[1] > 0,
+  `a ball from above bounces up (${above.after.velocity[1]})`,
 )
 check(
-  ballState().ball.velocity[1] < 0,
-  `and carried straight on (${ballState().ball.velocity[1]})`,
+  above.after.position[1] > above.altitude,
+  `and is pushed away from the brick (${above.altitude} to ${above.after.position[1].toFixed(1)})`,
+)
+
+const below = strike(false)
+check(
+  below.after.velocity[1] < 0,
+  `a ball from below bounces down (${below.after.velocity[1]})`,
+)
+check(
+  below.after.position[1] < below.altitude,
+  `and is pushed away from the brick (${below.altitude} to ${below.after.position[1].toFixed(1)})`,
 )
 
 console.log(

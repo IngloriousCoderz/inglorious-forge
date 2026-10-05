@@ -13,10 +13,42 @@ import { BALL_SIZE, SOUND_PADDLE_HIT, SOUND_WALL_HIT } from "../constants.js"
 
 const X = 0
 const Y = 1
+const HALF = 2
 const NO_DEPTH = 0
 const FLIP = -1
 const HIT_PADDLE = "Paddle"
 const HIT_BRICK = "Brick"
+
+// The original measures the ball from its centre when it works out which way to bounce
+// it, so it is given a radius as well as a size.
+const BALL_RADIUS = BALL_SIZE / HALF
+
+// A hit near the edge of a moving paddle throws the ball off at an angle. These are the
+// sideways speed it starts from and how much each pixel past the centre adds to it.
+const BOUNCE_DX = 50
+const BOUNCE_PER_PIXEL = 8
+
+// Each brick hit quickens the game very slightly.
+const BRICK_BOUNCE_Y = 1.02
+
+/**
+ * Where the middle of a box is.
+ *
+ * These sprites are anchored by their top left corner, because that is where the
+ * original draws them from, so on a world counting up from the floor the centre sits
+ * half a box *below* the position on the vertical axis and half a box to the right of
+ * it on the horizontal one.
+ */
+function centreOf(entity) {
+  const [width, height] = entity.size
+
+  return [entity.position[X] + width / HALF, entity.position[Y] - height / HALF]
+}
+
+/** Which way to push a ball out of something: away from it. */
+function awayFrom(delta) {
+  return delta >= 0 ? 1 : -1
+}
 
 // The serve. The original picks both axes at random, so the ball never starts on the
 // same line twice: sideways anywhere between -200 and 200, and upwards between 50 and
@@ -99,36 +131,89 @@ function bounceOffWalls(entity, api) {
 }
 
 /**
- * Hitting the paddle flips the vertical velocity and nothing else, which is the whole
- * of the original's bounce at this stage.
+ * Hitting the paddle lifts the ball clear of it and reverses it.
  *
- * The collision is found rather than asked for, so that when the bricks arrive they can
- * be found the same way and told apart by what was hit.
+ * The lift is what stops the ball being hit again on the very next frame: without it the
+ * ball would still be inside the paddle it just bounced off.
+ *
+ * A hit near the edge of a paddle that is moving the same way as the ball throws the ball
+ * off at an angle, which is the whole of the original's feel at this stage.
  */
 function bounceOffPaddle(entity, api) {
-  const colliding = findCollision(entity, api.getEntities())
+  const paddle = findCollision(entity, api.getEntities())
 
-  if (colliding?.type !== HIT_PADDLE) return
+  if (paddle?.type !== HIT_PADDLE) return
 
+  entity.position[Y] = paddle.position[Y] + BALL_SIZE
   entity.velocity[Y] *= FLIP
 
   api.notify("soundPlay", SOUND_PADDLE_HIT)
+
+  const isPaddleMovingLeft = paddle.velocity[X] < 0
+  const isPaddleMovingRight = paddle.velocity[X] > 0
+  const [paddleCentre] = centreOf(paddle)
+
+  if (entity.position[X] < paddleCentre && isPaddleMovingLeft) {
+    const past = paddleCentre - entity.position[X]
+
+    entity.velocity[X] = -BOUNCE_DX - BOUNCE_PER_PIXEL * past
+  } else if (entity.position[X] > paddleCentre && isPaddleMovingRight) {
+    const past = entity.position[X] - paddleCentre
+
+    entity.velocity[X] = BOUNCE_DX + BOUNCE_PER_PIXEL * past
+  }
 }
 
 /**
- * Every brick the ball is touching is knocked out, not just the first, because the
- * original walks its whole table of bricks each frame without stopping at a hit.
+ * Every brick the ball is touching is knocked out, and the ball bounces off the first
+ * one it meets.
  *
- * The ball does not bounce off a brick yet. That is not an omission: at this stage the
- * original destroys the brick and carries straight on, and the angled bounce its own
- * comments describe only arrives later.
+ * The bounce is worked out from how deep the ball has sunk into the brick on each axis.
+ * The shallower of the two is the side it went in by, so that is the axis it comes back
+ * out on; the other would have it leaving through a face it did not pass through.
+ *
+ * The ball is pushed clear as well as reflected, otherwise it would stay overlapping the
+ * brick it just hit and be told to bounce off it again next frame.
  */
 function knockOutBricks(entity, api) {
   const bricks = filter(api.getEntities(), (_, { type }) => type === HIT_BRICK)
 
-  Object.entries(bricks).forEach(([id, brick]) => {
-    if (!collidesWith(entity, brick)) return
+  for (const [id, brick] of Object.entries(bricks)) {
+    if (!collidesWith(entity, brick)) continue
 
     api.notify("brickHit", id)
-  })
+
+    resolveBrickBounce(entity, brick)
+
+    // Only one brick is answered per frame, so that a ball in the corner of two of them
+    // picks one side rather than being bounced out of both.
+    break
+  }
+}
+
+function resolveBrickBounce(entity, brick) {
+  const [brickWidth, brickHeight] = brick.size
+  const [brickCentreX, brickCentreY] = centreOf(brick)
+  const [ballCentreX, ballCentreY] = centreOf(entity)
+
+  const [deltaX, deltaY] = [
+    ballCentreX - brickCentreX,
+    ballCentreY - brickCentreY,
+  ]
+
+  const [overlapX, overlapY] = [
+    brickWidth / HALF + BALL_RADIUS - Math.abs(deltaX),
+    brickHeight / HALF + BALL_RADIUS - Math.abs(deltaY),
+  ]
+
+  if (overlapX < overlapY) {
+    entity.velocity[X] *= FLIP
+    entity.position[X] += awayFrom(deltaX) * overlapX
+  } else {
+    entity.velocity[Y] *= FLIP
+    entity.position[Y] += awayFrom(deltaY) * overlapY
+  }
+
+  // Applied whichever way it left, so every brick hit quickens the game a little.
+  entity.velocity[Y] *= BRICK_BOUNCE_Y
 }
