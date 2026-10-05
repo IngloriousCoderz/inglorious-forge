@@ -1,3 +1,4 @@
+import { collisionGizmos } from "@inglorious/engine/behaviors/debug/collision"
 import { fps } from "@inglorious/engine/behaviors/fps"
 import {
   controlTypes,
@@ -5,6 +6,7 @@ import {
 } from "@inglorious/engine/behaviors/input/controls.js"
 import { renderFps } from "@inglorious/renderer-2d/fps.js"
 import { renderImage } from "@inglorious/renderer-2d/image/image.js"
+import { renderRectangle } from "@inglorious/renderer-2d/shapes/rectangle.js"
 import { v } from "@inglorious/utils/v.js"
 
 import {
@@ -28,14 +30,19 @@ import { HighScores, Paused, Start, Title } from "./types/text.ijs"
 
 const FPS_COLOR = "rgb(0, 255, 0)"
 
+// The hitboxes the ball actually collides with, drawn over the sprites in debug mode.
+// The shapes are resolved the same way the detection resolves them, so an entity that is
+// merely `solid` shows the box it is really using.
+const gizmos = collisionGizmos({ shapes: { rectangle: renderRectangle } })
+
 export default {
   types: {
     ...controlTypes("game"),
 
     Game: [scenes(), Game],
-    Ball,
-    Brick,
-    Paddle,
+    Ball: [...Ball, gizmos],
+    Brick: [Brick, gizmos],
+    Paddle: [...Paddle, gizmos],
     Title,
     Start,
     HighScores,

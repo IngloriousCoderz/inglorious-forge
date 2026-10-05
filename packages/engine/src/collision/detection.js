@@ -97,6 +97,9 @@ export function findCollisions(entity, target, collisionGroup = "hitbox") {
 /**
  * The collision an entity has in a group, if it has one.
  *
+ * Exported so that anything drawing a collision draws the one that actually happens,
+ * rather than a second guess at it.
+ *
  * A `solid` entity has one without being told what shape it is: the shape is its size.
  * That is the shape almost everything solid wants, and naming it every time is three
  * lines of configuration saying nothing.
@@ -105,7 +108,7 @@ export function findCollisions(entity, target, collisionGroup = "hitbox") {
  * things have a size and are not in the way: a line of text, a frame counter, anything
  * measured in pixels rather than in space.
  */
-function collisionGroupOf(entity, collisionGroup) {
+export function collisionGroupOf(entity, collisionGroup) {
   const collision = entity.collisions?.[collisionGroup]
 
   if (collision) return collision
