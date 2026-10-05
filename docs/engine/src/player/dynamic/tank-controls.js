@@ -9,7 +9,7 @@ import { v } from "@inglorious/utils/v.js"
 
 export default {
   types: {
-    ...controlTypes("character"),
+    ...controlTypes(),
 
     Character: [{ render: renderCharacter }, tankControls(), clamped()],
   },
@@ -20,7 +20,7 @@ export default {
       devMode: true,
     },
 
-    ...createControlEntities("character", {
+    ...createControlEntities({
       ArrowUp: "moveForward",
       ArrowDown: "moveBackward",
       ArrowLeft: "turnLeft",

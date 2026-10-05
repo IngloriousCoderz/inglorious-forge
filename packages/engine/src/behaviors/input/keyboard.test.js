@@ -21,7 +21,7 @@ beforeEach(() => {
 function press(properties) {
   const api = { notify: vi.fn() }
   const type = keyboard()
-  const entity = createKeyboardEntity("game", { KeyW: "moveUp" })
+  const entity = createKeyboardEntity({ KeyW: "moveUp" })
 
   type.create(entity, null, api)
   listeners.keydown({ stopPropagation: () => {}, ...properties })
@@ -32,7 +32,7 @@ function press(properties) {
 function release(properties) {
   const api = { notify: vi.fn() }
   const type = keyboard()
-  const entity = createKeyboardEntity("game", { KeyW: "moveUp" })
+  const entity = createKeyboardEntity({ KeyW: "moveUp" })
 
   type.create(entity, null, api)
   listeners.keyup({ stopPropagation: () => {}, ...properties })
@@ -50,7 +50,6 @@ test("it should report the character a key produced", () => {
   const { api } = press({ code: "KeyW", key: "w" })
 
   expect(api.notify).toHaveBeenCalledWith("keyboardChar", {
-    targetId: "game",
     character: "w",
   })
 })
@@ -59,7 +58,6 @@ test("it should report the shifted character, while the code stays put", () => {
   const { api } = press({ code: "KeyW", key: "W" })
 
   expect(api.notify).toHaveBeenCalledWith("keyboardChar", {
-    targetId: "game",
     character: "W",
   })
   expect(api.notify).toHaveBeenCalledWith("keyboardKeyDown", "KeyW")
@@ -70,7 +68,6 @@ test("it should report the character the layout produces", () => {
   const { api } = press({ code: "KeyQ", key: "q" })
 
   expect(api.notify).toHaveBeenCalledWith("keyboardChar", {
-    targetId: "game",
     character: "q",
   })
   expect(api.notify).toHaveBeenCalledWith("keyboardKeyDown", "KeyQ")
@@ -98,7 +95,6 @@ test.each([
   const { api } = press({ code, key: character })
 
   expect(api.notify).toHaveBeenCalledWith("keyboardChar", {
-    targetId: "game",
     character,
   })
 })
@@ -113,14 +109,13 @@ test("it should not report a character on key up", () => {
 test("it should still map actions by code and hold them until key up", () => {
   const api = { notify: vi.fn() }
   const type = keyboard()
-  const entity = createKeyboardEntity("game", { KeyW: "moveUp" })
+  const entity = createKeyboardEntity({ KeyW: "moveUp" })
 
   type.create(entity, null, api)
   type.keyboardKeyDown(entity, "KeyW", api)
 
   expect(entity.moveUp).toBe(true)
   expect(api.notify).toHaveBeenCalledWith("inputPress", {
-    targetId: "game",
     action: "moveUp",
   })
 
@@ -128,7 +123,6 @@ test("it should still map actions by code and hold them until key up", () => {
 
   expect(entity.moveUp).toBe(false)
   expect(api.notify).toHaveBeenCalledWith("inputRelease", {
-    targetId: "game",
     action: "moveUp",
   })
 })

@@ -32,10 +32,12 @@ export function jumpable(params) {
       entity.vy ??= 0
     },
 
-    jump(entity, entityId, api) {
-      type.jump?.(entity, entityId, api)
+    jump(entity, payload, api) {
+      type.jump?.(entity, payload, api)
 
-      if (entityId === entity.id && entity.jumpsLeft) {
+      // An action's name is its address, so a jump is for whichever entity handles
+      // it. There is no id to compare against: the notification carries none.
+      if (entity.jumpsLeft) {
         entity.vy = jump(entity)
         entity.groundObject = undefined
         entity.jumpsLeft--

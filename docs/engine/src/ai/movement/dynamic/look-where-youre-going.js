@@ -17,7 +17,7 @@ import { sum } from "@inglorious/utils/vectors"
 
 export default {
   types: {
-    ...controlTypes("character"),
+    ...controlTypes(),
 
     Character: [
       {
@@ -27,29 +27,29 @@ export default {
           entity.movement ??= {}
         },
 
-        moveLeft(entity, entityId) {
-          if (entityId === entity.id) entity.movement.left = true
+        moveLeft(entity) {
+          entity.movement.left = true
         },
-        moveLeftEnd(entity, entityId) {
-          if (entityId === entity.id) entity.movement.left = false
+        moveLeftEnd(entity) {
+          entity.movement.left = false
         },
-        moveRight(entity, entityId) {
-          if (entityId === entity.id) entity.movement.right = true
+        moveRight(entity) {
+          entity.movement.right = true
         },
-        moveRightEnd(entity, entityId) {
-          if (entityId === entity.id) entity.movement.right = false
+        moveRightEnd(entity) {
+          entity.movement.right = false
         },
-        moveUp(entity, entityId) {
-          if (entityId === entity.id) entity.movement.up = true
+        moveUp(entity) {
+          entity.movement.up = true
         },
-        moveUpEnd(entity, entityId) {
-          if (entityId === entity.id) entity.movement.up = false
+        moveUpEnd(entity) {
+          entity.movement.up = false
         },
-        moveDown(entity, entityId) {
-          if (entityId === entity.id) entity.movement.down = true
+        moveDown(entity) {
+          entity.movement.down = true
         },
-        moveDownEnd(entity, entityId) {
-          if (entityId === entity.id) entity.movement.down = false
+        moveDownEnd(entity) {
+          entity.movement.down = false
         },
 
         update(entity, dt, api) {
@@ -102,7 +102,7 @@ export default {
       devMode: true,
     },
 
-    ...createControlEntities("character", {
+    ...createControlEntities({
       ArrowLeft: "moveLeft",
       ArrowRight: "moveRight",
       ArrowDown: "moveDown",

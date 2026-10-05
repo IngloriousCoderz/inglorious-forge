@@ -18,7 +18,7 @@ import { v } from "@inglorious/utils/v.js"
 
 export default {
   types: {
-    ...controlTypes("character"),
+    ...controlTypes(),
 
     Mouse: [
       { render: renderMouse },
@@ -30,17 +30,17 @@ export default {
           }
         },
 
-        turnLeft(entity, entityId) {
-          if (entityId === entity.id) entity.turningLeft = true
+        turnLeft(entity) {
+          entity.turningLeft = true
         },
-        turnLeftEnd(entity, entityId) {
-          if (entityId === entity.id) entity.turningLeft = false
+        turnLeftEnd(entity) {
+          entity.turningLeft = false
         },
-        turnRight(entity, entityId) {
-          if (entityId === entity.id) entity.turningRight = true
+        turnRight(entity) {
+          entity.turningRight = true
         },
-        turnRightEnd(entity, entityId) {
-          if (entityId === entity.id) entity.turningRight = false
+        turnRightEnd(entity) {
+          entity.turningRight = false
         },
 
         update(entity, dt) {
@@ -93,7 +93,7 @@ export default {
       orientation: 0,
     },
 
-    ...createControlEntities("mouse", {
+    ...createControlEntities({
       ArrowLeft: "turnLeft",
       ArrowRight: "turnRight",
       ArrowDown: "turnRight",

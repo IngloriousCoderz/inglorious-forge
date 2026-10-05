@@ -37,7 +37,7 @@ const gizmos = collisionGizmos({ shapes: { rectangle: renderRectangle } })
 
 export default {
   types: {
-    ...controlTypes("game"),
+    ...controlTypes(),
 
     Game: [scenes(), Game],
     Ball: [...Ball, gizmos],
@@ -70,25 +70,16 @@ export default {
   entities: {
     // Two targets, because a movement event is matched on the entity's own id:
     // the game reads the menu and state keys, the paddle reads the arrows.
-    ...createControlEntities(
-      "game",
-      {
-        Enter: PRESS,
-        Space: TOGGLE_PAUSE,
-        ArrowUp: PRESS_MENU_UP,
-        ArrowDown: PRESS_MENU_DOWN,
-      },
-      [],
-    ),
-
-    ...createControlEntities(
-      "paddle",
-      {
-        ArrowLeft: "moveLeft",
-        ArrowRight: "moveRight",
-      },
-      [],
-    ),
+    // One mapping for the whole game. An action's name is what addresses it, so the
+    // paddle's movement and the game's menu keys can share one keyboard.
+    ...createControlEntities({
+      Enter: PRESS,
+      Space: TOGGLE_PAUSE,
+      ArrowUp: PRESS_MENU_UP,
+      ArrowDown: PRESS_MENU_DOWN,
+      ArrowLeft: "moveLeft",
+      ArrowRight: "moveRight",
+    }),
 
     game: {
       type: "Game",

@@ -22,18 +22,18 @@ export function pointer() {
   }
 }
 
-export function createPointerEntity(targetId, actions = DEFAULT_ACTIONS) {
-  return { type: "Pointer", targetId, actions }
+export function createPointerEntity(actions = DEFAULT_ACTIONS) {
+  return { type: "Pointer", actions }
 }
 
 function press(entity, api) {
   entity.actions.forEach((action) => {
-    api.notify("inputPress", { targetId: entity.targetId, action })
+    api.notify("inputPress", { action })
   })
 }
 
 function release(entity, api) {
   entity.actions.forEach((action) => {
-    api.notify("inputRelease", { targetId: entity.targetId, action })
+    api.notify("inputRelease", { action })
   })
 }

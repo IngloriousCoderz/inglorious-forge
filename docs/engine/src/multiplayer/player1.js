@@ -10,7 +10,7 @@ import { pi } from "@inglorious/utils/math/trigonometry.js"
 
 export default {
   types: {
-    ...controlTypes("character"),
+    ...controlTypes(),
 
     Character: [{ render: renderCharacter }, modernControls(), clamped()],
 
@@ -31,7 +31,7 @@ export default {
   },
 
   entities: {
-    ...createControlEntities("player1", {
+    ...createControlEntities({
       KeyW: "moveUp",
       KeyS: "moveDown",
       KeyA: "moveLeft",

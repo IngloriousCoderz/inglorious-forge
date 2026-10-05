@@ -11,44 +11,44 @@ import { createPointerEntity, pointer } from "./pointer.js"
  * that is already a list, which is how a game keeps the built-in ones. To add to
  * a control type, list the behaviors instead, as in `Keyboard: [keyboard(), …]`.
  *
+ * There is one of each per game. A game has one keyboard, one pointer and one
+ * gamepad mapping, and an action's name is what addresses it: a type that handles
+ * `moveLeft` is the type that answers to it.
+ *
  * @example
  * ```js
- * types: { ...controlTypes("game"), Game, Bird }
+ * types: { ...controlTypes(), Game, Bird }
  * ```
  */
-export function controlTypes(...targetIds) {
+export function controlTypes() {
   return {
     Keyboard: keyboard(),
     Pointer: pointer(),
-    GamepadsPoller: gamepadsPoller(targetIds),
+    GamepadsPoller: gamepadsPoller(),
     Gamepad: gamepad(),
     Input: input(),
   }
 }
 
 /**
- * The entities that listen for input on behalf of `targetId`, spread under
- * `entities`. The mapping turns a key or button into an action the rest of the
- * game listens for by name.
+ * The entities that listen for input on the game's behalf, spread under `entities`.
+ * The mapping turns a key, axis or button into an action the rest of the game
+ * listens for by name.
  *
  * @example
  * ```js
  * entities: {
- *   ...createControlEntities("game", { Space: "press" }, ["press"]),
+ *   ...createControlEntities({ Space: "press" }, ["sceneClick"]),
  *   game: { type: "Game" },
  * }
  * ```
  */
-export function createControlEntities(
-  targetId,
-  mapping = {},
-  pointerActions = [],
-) {
+export function createControlEntities(mapping = {}, pointerActions = []) {
   return {
     gamepads: { type: "GamepadsPoller" },
-    [`keyboard_${targetId}`]: createKeyboardEntity(targetId, mapping),
-    [`gamepad_${targetId}`]: createGamepadEntity(targetId, mapping),
-    [`input_${targetId}`]: createInputEntity(targetId, mapping),
-    [`pointer_${targetId}`]: createPointerEntity(targetId, pointerActions),
+    keyboard: createKeyboardEntity(mapping),
+    gamepad: createGamepadEntity(mapping),
+    input: createInputEntity(mapping),
+    pointer: createPointerEntity(pointerActions),
   }
 }

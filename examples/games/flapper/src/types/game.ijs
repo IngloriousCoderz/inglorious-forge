@@ -35,23 +35,22 @@ function startCountdown(entity, api) {
 
   clearPipes(api)
   api.notify("reset")
+
+  // The world was held still for the game over screen. It has to start moving again
+  // here rather than when play starts, because the countdown is what leads there and
+  // the countdown needs to be updated in order to finish.
+  api.notify("resume")
 }
 
-function startPlay(entity, api) {
+function startPlay(entity) {
   entity.state = GAME_STATE.play
   entity.pipeTimer = 0
   entity.lastGapY = randomGapY()
-
-  // The world was held still for the game over screen, and only wakes up once
-  // the round is actually under way.
-  api.notify("resume")
 }
 
 export const Game = fsm({
   [GAME_STATE.title]: {
-    press(entity, targetId, api) {
-      if (targetId !== entity.id) return
-
+    press(entity, _, api) {
       startCountdown(entity, api)
     },
   },
@@ -71,9 +70,7 @@ export const Game = fsm({
   },
 
   [GAME_STATE.play]: {
-    press(entity, targetId, api) {
-      if (targetId !== entity.id) return
-
+    press(entity, _, api) {
       api.notify("birdFlap")
     },
 
@@ -112,8 +109,7 @@ export const Game = fsm({
       entity.timer += dt
     },
 
-    press(entity, targetId, api) {
-      if (targetId !== entity.id) return
+    press(entity, _, api) {
       if (entity.timer < SCORE_GRACE_TIME) return
 
       startCountdown(entity, api)

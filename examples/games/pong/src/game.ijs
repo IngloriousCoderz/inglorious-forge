@@ -16,7 +16,7 @@ import { magnitude } from "@inglorious/utils/vectors"
 
 import { Ball } from "./types/ball"
 import { Game } from "./types/game"
-import { Paddle } from "./types/paddle"
+import { paddle } from "./types/paddle"
 import { Score } from "./types/score"
 import { Text } from "./types/text"
 
@@ -27,11 +27,22 @@ export default {
   types: {
     Touch: touch(),
 
-    ...controlTypes("player1", "player2"),
+    ...controlTypes(),
     Game,
     Text,
     Score,
-    Paddle: [{ render: renderRectangle }, Paddle, modernControls(), clamped()],
+    Paddle1: [
+      { render: renderRectangle },
+      ...paddle("player1"),
+      modernControls(),
+      clamped(),
+    ],
+    Paddle2: [
+      { render: renderRectangle },
+      ...paddle("player2"),
+      modernControls(),
+      clamped(),
+    ],
     Ball,
     Fps: [{ render: renderFps }, fps({ accuracy: 0 })],
   },
@@ -39,14 +50,15 @@ export default {
   entities: {
     touch: createTouchEntity(),
 
-    ...createControlEntities("player1", {
-      KeyW: "moveUp",
-      KeyS: "moveDown",
+    ...createControlEntities({
+      KeyW: "player1Up",
+      KeyS: "player1Down",
       Space: "action",
-    }),
-    ...createControlEntities("player2", {
-      ArrowUp: "moveUp",
-      ArrowDown: "moveDown",
+      ArrowUp: "player2Up",
+      ArrowDown: "player2Down",
+      // A gamepad's left stick drives both paddles, which is why the shared action
+      // names are still what the movement behaviours read.
+      Axis1: "moveUpDown",
     }),
 
     game: {
@@ -83,7 +95,7 @@ export default {
     },
 
     player1: {
-      type: "Paddle",
+      type: "Paddle1",
       size: v(5, 0, 20),
       color: "transparent",
       backgroundColor: "white",
@@ -96,7 +108,7 @@ export default {
     },
 
     player2: {
-      type: "Paddle",
+      type: "Paddle2",
       size: v(5, 0, 20),
       color: "transparent",
       backgroundColor: "white",
@@ -131,7 +143,7 @@ export default {
     },
 
     audio: {
-      type: "audio",
+      type: "Audio",
       sounds: {
         paddleHit: { url: "/sounds/paddle_hit.ogg" },
         score: { url: "/sounds/score.ogg" },

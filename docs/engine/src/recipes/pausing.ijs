@@ -16,7 +16,7 @@ const speed = 60
  */
 export default {
   types: {
-    ...controlTypes("menu"),
+    ...controlTypes(),
 
     Dot: [
       { render: renderRectangle },
@@ -51,7 +51,7 @@ export default {
   },
 
   entities: {
-    ...createControlEntities("menu", { Space: "press" }, []),
+    ...createControlEntities({ Space: "press" }, []),
 
     game: {
       devMode: true,

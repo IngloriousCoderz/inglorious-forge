@@ -28,7 +28,7 @@ export default {
   systems: [spriteAnimationSystem()],
 
   types: {
-    ...controlTypes("player"),
+    ...controlTypes(),
 
     Tilemap: [{ render: renderTilemap }, debugCollisions],
 
@@ -48,7 +48,7 @@ export default {
       pixelated: true,
     },
 
-    ...createControlEntities("player", {
+    ...createControlEntities({
       ArrowLeft: "moveLeft",
       ArrowRight: "moveRight",
       ArrowDown: "moveDown",

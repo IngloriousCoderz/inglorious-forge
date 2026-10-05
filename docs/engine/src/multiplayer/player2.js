@@ -10,7 +10,7 @@ import { v } from "@inglorious/utils/v.js"
 
 export default {
   types: {
-    ...controlTypes("character"),
+    ...controlTypes(),
 
     Character: [{ render: renderCharacter }, modernControls(), clamped()],
 
@@ -31,7 +31,7 @@ export default {
   },
 
   entities: {
-    ...createControlEntities("player2", {
+    ...createControlEntities({
       KeyI: "moveUp",
       KeyK: "moveDown",
       KeyJ: "moveLeft",

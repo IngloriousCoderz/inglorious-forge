@@ -50,7 +50,7 @@ const ULTRA_DARIO = [
 
 export default {
   types: {
-    ...controlTypes("dario"),
+    ...controlTypes(),
 
     Dario: DARIO,
 
@@ -73,7 +73,7 @@ export default {
       devMode: true,
     },
 
-    ...createControlEntities("dario", {
+    ...createControlEntities({
       ArrowLeft: "moveLeft",
       ArrowRight: "moveRight",
       Space: "jump",
@@ -233,30 +233,24 @@ export default {
 
 function canBreakBricks() {
   return {
-    break(entity, entityId) {
-      if (entityId === entity.id) {
-        console.log("Breaking!")
-      }
+    break() {
+      console.log("Breaking!")
     },
   }
 }
 
 function canShoot() {
   return {
-    shoot(entity, entityId) {
-      if (entityId === entity.id) {
-        console.log("Shooting!")
-      }
+    shoot() {
+      console.log("Shooting!")
     },
   }
 }
 
 function canGlide() {
   return {
-    glide(entity, entityId) {
-      if (entityId === entity.id) {
-        console.log("Gliding!")
-      }
+    glide() {
+      console.log("Gliding!")
     },
   }
 }
@@ -274,7 +268,7 @@ function canCollideWithPowerups(type) {
       const oldheight = entity.size[1]
 
       switch (powerup.type) {
-        case "mushroom":
+        case "Mushroom":
           entity.size = v(64, 64, 0)
           entity.maxSpeed = 300
           entity.position[1] += (entity.size[1] - oldheight) / 2
@@ -283,7 +277,7 @@ function canCollideWithPowerups(type) {
           api.setType(entity.type, SUPER_DARIO)
           break
 
-        case "fireFlower":
+        case "FireFlower":
           entity.size = v(64, 64, 0)
           entity.maxSpeed = 350
           entity.position[1] += (entity.size[1] - oldheight) / 2
@@ -292,7 +286,7 @@ function canCollideWithPowerups(type) {
           api.setType(entity.type, FIRE_DARIO)
           break
 
-        case "feather":
+        case "Feather":
           entity.size = v(64, 64, 0)
           entity.maxSpeed = 350
           entity.position[1] += (entity.size[1] - oldheight) / 2
@@ -301,7 +295,7 @@ function canCollideWithPowerups(type) {
           api.setType(entity.type, CAPE_DARIO)
           break
 
-        case "diamond":
+        case "Diamond":
           entity.size = v(96, 96, 0)
           entity.maxSpeed = 400
           entity.position[1] += (entity.size[1] - oldheight) / 2

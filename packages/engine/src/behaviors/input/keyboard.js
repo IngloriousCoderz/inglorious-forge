@@ -13,8 +13,7 @@
  * const actions = { KeyW: "moveUp", Space: "press" }
  *
  * // Typing, by character.
- * keyboardChar(entity, { targetId, character }) {
- *   if (targetId !== entity.targetId) return
+ * keyboardChar(entity, { character }) {
  *   entity.name += character
  * }
  * ```
@@ -27,7 +26,7 @@ export function keyboard() {
     create(entity, payload, api) {
       currentDocument = document.body.ownerDocument || document
 
-      handleKeyDown = createKeyDownHandler(entity.targetId, api)
+      handleKeyDown = createKeyDownHandler(api)
       handleKeyUp = createKeyUpHandler(api)
 
       currentDocument.addEventListener("keydown", handleKeyDown)
@@ -45,7 +44,7 @@ export function keyboard() {
 
       if (!entity[action]) {
         entity[action] = true
-        api.notify("inputPress", { targetId: entity.targetId, action })
+        api.notify("inputPress", { action })
       }
     },
 
@@ -55,17 +54,17 @@ export function keyboard() {
 
       if (entity[action]) {
         entity[action] = false
-        api.notify("inputRelease", { targetId: entity.targetId, action })
+        api.notify("inputRelease", { action })
       }
     },
   }
 }
 
-export function createKeyboardEntity(targetId, mapping = {}) {
-  return { type: "Keyboard", targetId, mapping }
+export function createKeyboardEntity(mapping = {}) {
+  return { type: "Keyboard", mapping }
 }
 
-function createKeyDownHandler(targetId, api) {
+function createKeyDownHandler(api) {
   return (event) => {
     event.stopPropagation()
     api.notify("keyboardKeyDown", event.code)
@@ -73,7 +72,7 @@ function createKeyDownHandler(targetId, api) {
     // Holding a key down arrives as further keydowns, which is what typing
     // should do.
     if (isCharacter(event.key)) {
-      api.notify("keyboardChar", { targetId, character: event.key })
+      api.notify("keyboardChar", { character: event.key })
     }
   }
 }

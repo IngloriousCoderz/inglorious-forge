@@ -13,7 +13,7 @@ const Y = 1
 
 export default {
   types: {
-    ...controlTypes("character"),
+    ...controlTypes(),
 
     Stats: {},
 
@@ -44,7 +44,7 @@ export default {
       devMode: true,
     },
 
-    ...createControlEntities("character", {
+    ...createControlEntities({
       ArrowUp: "moveUp",
       ArrowDown: "moveDown",
       ArrowLeft: "moveLeft",

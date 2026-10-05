@@ -11,7 +11,7 @@ import { v } from "@inglorious/utils/v.js"
 
 export default {
   types: {
-    ...controlTypes("character"),
+    ...controlTypes(),
 
     Game: [
       (type) => ({
@@ -48,7 +48,7 @@ export default {
       devMode: true,
     },
 
-    ...createControlEntities("character", {
+    ...createControlEntities({
       ArrowLeft: "moveLeft",
       ArrowRight: "moveRight",
       Space: "jump",

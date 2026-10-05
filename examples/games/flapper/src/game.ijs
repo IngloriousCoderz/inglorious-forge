@@ -78,7 +78,7 @@ const gizmos = collisionGizmos({ shapes: { rectangle: renderRectangle } })
 
 export default {
   types: {
-    ...controlTypes("game"),
+    ...controlTypes(),
 
     Game,
     Bird: [Bird, gizmos],
@@ -98,13 +98,16 @@ export default {
 
   entities: {
     ...createControlEntities(
-      "game",
       { Space: PRESS, Enter: PRESS, NumpadEnter: PRESS },
       [PRESS],
     ),
 
     game: {
       type: "Game",
+      // The game keeps counting while the world is held still for the game over
+      // screen: the grace period and the countdown both run on this update, so if it
+      // stopped the game could never be restarted.
+      updatesWhilePaused: true,
       devMode: true,
       pixelated: true,
       size: [WIDTH, HEIGHT],
@@ -181,6 +184,8 @@ export default {
 
     score: {
       type: "Score",
+      // Text is an overlay: it keeps updating while the world is held still.
+      updatesWhilePaused: true,
       layer: LAYER_TEXT,
       position: v(SCORE_TEXT_X, SCORE_TEXT_ALTITUDE, NO_DEPTH),
       font: FONT_FAMILY,
@@ -191,6 +196,8 @@ export default {
 
     title: {
       type: "Title",
+      // Text is an overlay: it keeps updating while the world is held still.
+      updatesWhilePaused: true,
       layer: LAYER_TEXT,
       position: v(CENTER_X, TITLE_TEXT_ALTITUDE, NO_DEPTH),
       font: FONT_FAMILY,
@@ -201,6 +208,8 @@ export default {
 
     titlePrompt: {
       type: "TitlePrompt",
+      // Text is an overlay: it keeps updating while the world is held still.
+      updatesWhilePaused: true,
       layer: LAYER_TEXT,
       position: v(CENTER_X, PROMPT_TEXT_ALTITUDE, NO_DEPTH),
       font: FONT_FAMILY,
@@ -211,6 +220,8 @@ export default {
 
     countdown: {
       type: "Countdown",
+      // Text is an overlay: it keeps updating while the world is held still.
+      updatesWhilePaused: true,
       layer: LAYER_TEXT,
       position: v(CENTER_X, COUNTDOWN_TEXT_ALTITUDE, NO_DEPTH),
       font: FONT_FAMILY,
@@ -221,6 +232,8 @@ export default {
 
     gameOver: {
       type: "GameOver",
+      // Text is an overlay: it keeps updating while the world is held still.
+      updatesWhilePaused: true,
       layer: LAYER_TEXT,
       position: v(CENTER_X, GAME_OVER_TEXT_ALTITUDE, NO_DEPTH),
       font: FONT_FAMILY,
@@ -231,6 +244,8 @@ export default {
 
     gameOverScore: {
       type: "GameOverScore",
+      // Text is an overlay: it keeps updating while the world is held still.
+      updatesWhilePaused: true,
       layer: LAYER_TEXT,
       position: v(CENTER_X, GAME_OVER_SCORE_TEXT_ALTITUDE, NO_DEPTH),
       font: FONT_FAMILY,
@@ -241,6 +256,8 @@ export default {
 
     gameOverPrompt: {
       type: "GameOverPrompt",
+      // Text is an overlay: it keeps updating while the world is held still.
+      updatesWhilePaused: true,
       layer: LAYER_TEXT,
       position: v(CENTER_X, GAME_OVER_PROMPT_TEXT_ALTITUDE, NO_DEPTH),
       font: FONT_FAMILY,

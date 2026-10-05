@@ -15,7 +15,7 @@ import { v } from "@inglorious/utils/v.js"
 
 export default {
   types: {
-    ...controlTypes("character"),
+    ...controlTypes(),
 
     Mouse: [{ render: renderMouse }, mouse()],
 
@@ -30,7 +30,7 @@ export default {
 
     mouse: createMouseEntity({ position: v(400, 0, 300) }),
 
-    ...createControlEntities("character", {
+    ...createControlEntities({
       ArrowUp: "moveUp",
       ArrowDown: "moveDown",
       ArrowLeft: "moveLeft",

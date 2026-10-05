@@ -41,7 +41,7 @@ beforeEach(() => {
 const isList = (value) => Array.isArray(value)
 
 test("it should define each control type as a bare behavior", () => {
-  const types = controlTypes("game")
+  const types = controlTypes()
 
   expect(Object.keys(types)).toStrictEqual([
     "Keyboard",
@@ -60,9 +60,9 @@ test("it should define each control type as a bare behavior", () => {
 
 test("it should wire a game up from the types and entities alone", () => {
   const engine = new Engine({
-    types: { ...controlTypes("game") },
+    types: { ...controlTypes() },
     entities: {
-      ...createControlEntities("game", { Space: "press" }, ["press"]),
+      ...createControlEntities({ Space: "press" }, ["press"]),
       game: { type: "Game", devMode: false, size: v(512, 288, 0) },
     },
   })
@@ -70,19 +70,19 @@ test("it should wire a game up from the types and entities alone", () => {
   expect(Object.keys(engine._store.getType("Keyboard"))).toContain(
     "keyboardKeyDown",
   )
-  expect(engine.getState().keyboard_game.type).toBe("Keyboard")
+  expect(engine.getState().keyboard.type).toBe("Keyboard")
 })
 
 test("a game should still be able to add to a control type", () => {
   const engine = new Engine({
     types: {
-      ...controlTypes("game"),
+      ...controlTypes(),
       // Listing the behaviors is how you compose onto a type the engine does not
       // already own, so the keyboard keeps its own handlers and gains yours.
-      Keyboard: [controlTypes("game").Keyboard, { birdHit: () => {} }],
+      Keyboard: [controlTypes().Keyboard, { birdHit: () => {} }],
     },
     entities: {
-      ...createControlEntities("game"),
+      ...createControlEntities(),
       game: { type: "Game", devMode: false, size: v(512, 288, 0) },
     },
   })
@@ -96,21 +96,21 @@ test("a game should still be able to add to a control type", () => {
   ])
 })
 
-test("it should name the control entities after their target", () => {
-  const entities = createControlEntities("player1", { Space: "press" }, ["go"])
+test("it should name the control entities for what they are", () => {
+  const entities = createControlEntities({ Space: "press" }, ["go"])
 
+  // One of each per game, named for its job rather than for whoever it reports to.
   expect(Object.keys(entities).sort()).toStrictEqual([
-    "gamepad_player1",
+    "gamepad",
     "gamepads",
-    "input_player1",
-    "keyboard_player1",
-    "pointer_player1",
+    "input",
+    "keyboard",
+    "pointer",
   ])
   expect(entities.gamepads).toStrictEqual({ type: "GamepadsPoller" })
-  expect(entities.keyboard_player1).toStrictEqual({
+  expect(entities.keyboard).toStrictEqual({
     type: "Keyboard",
-    targetId: "player1",
     mapping: { Space: "press" },
   })
-  expect(entities.pointer_player1.actions).toStrictEqual(["go"])
+  expect(entities.pointer.actions).toStrictEqual(["go"])
 })
