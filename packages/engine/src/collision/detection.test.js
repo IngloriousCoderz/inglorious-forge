@@ -191,3 +191,37 @@ test("a declared collision still wins over being solid", () => {
 
   expect(collidesWith(ball, thin)).toBe(false)
 })
+
+test("a collision offset moves the shape without moving the sprite", () => {
+  // A square sprite is easier to draw from a corner, while a circle is easier to place
+  // from its middle, so the two are pinned to the same corner and the collision is
+  // pushed to where its own shape wants to be measured from.
+  const half = 8
+  const corner = [0, 0]
+
+  const ball = {
+    position: v(100, 100, 0),
+    size: v(16, 16, 0),
+    anchor: corner,
+  }
+  const fromCentre = {
+    ...ball,
+    collisions: {
+      hitbox: { shape: "circle", radius: half, offset: v(half, half, 0) },
+    },
+  }
+  const withoutOffset = {
+    ...ball,
+    collisions: { hitbox: { shape: "circle", radius: half } },
+  }
+
+  const ballCentre = [100 + half, 100 + half]
+
+  // The offset puts the circle's middle where the sprite's middle is.
+  expect(collidesWith(ball, fromCentre)).toBe(
+    collidesWith(
+      { ...ball, position: v(ballCentre[X], ballCentre[Y], 0) },
+      withoutOffset,
+    ),
+  )
+})

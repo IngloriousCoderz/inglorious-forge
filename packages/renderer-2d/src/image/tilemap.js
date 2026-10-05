@@ -34,8 +34,14 @@ export function renderTilemap(entity, ctx, api) {
 
   layers.forEach(({ tiles }) => {
     tiles.forEach((flaggedTile, index) => {
-      const dx = (index % columns) * tileWidth
-      const dy = Math.floor(index / columns) * tileHeight - tilemapHeight
+      // The middle of this tile's cell, which is where the sprite is drawn around.
+      // Centring the cell rather than its corner is what makes this agree with the
+      // collision shape, which is measured from the same anchor.
+      const dx = (index % columns) * tileWidth + tileWidth / HALF
+      const dy =
+        Math.floor(index / columns) * tileHeight -
+        tilemapHeight +
+        tileHeight / HALF
 
       const isFlippedHorizontally = !!(flaggedTile & FLIPPED_HORIZONTALLY_FLAG)
       const isFlippedVertically = !!(flaggedTile & FLIPPED_VERTICALLY_FLAG)
@@ -51,12 +57,13 @@ export function renderTilemap(entity, ctx, api) {
 
       ctx.translate(dx, dy)
 
-      ctx.translate(tileWidth / HALF, tileHeight / HALF)
+      // Flipping happens about the middle of the tile, which is now the origin, so
+      // there is nothing left to translate back. Centring is left to the image, which
+      // is the one place that does it.
       ctx.scale(
         isFlippedHorizontally ? FLIP : NO_FLIP,
         isFlippedVertically ? FLIP : NO_FLIP,
       )
-      ctx.translate(-tileWidth / HALF, -tileHeight / HALF)
 
       renderImage({ image, sx, sy }, ctx, api)
 

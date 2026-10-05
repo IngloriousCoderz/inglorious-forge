@@ -59,6 +59,26 @@ in space. Making `size` imply solidity would quietly turn all of those into wall
 A declared `collisions` block still wins, so an entity can be solid and still have a hit
 box smaller than itself, or shaped like a point or a circle.
 
+A block may also carry its own `size` and `offset`, so the shape can be measured from a
+different place than the sprite is drawn from:
+
+```javascript
+ball: {
+  type: "Ball",
+  position: v(100, 100, 0),
+  size: v(16, 16, 0),
+  anchor: [0, 0], // the sprite is drawn from its corner
+  collisions: {
+    // ...but the circle is measured from its middle, so it is pushed there
+    hitbox: { shape: "circle", radius: 8, offset: v(8, 8, 0) },
+  },
+}
+```
+
+Useful whenever the two shapes disagree about where they are measured from — a square
+sprite from a corner against a circle collision from its centre. `entity.offset` shifts
+both at once, which is the difference between moving the thing and moving its outline.
+
 ### Pausing
 
 `api.notify("pause")` stops the store handing out `update` events, and `notify("resume")` starts it again:
