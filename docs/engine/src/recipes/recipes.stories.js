@@ -1,8 +1,8 @@
 import RendererChooser from "../renderer-chooser.jsx"
 import addAndRemove from "./add-and-remove.js"
 import addEntity from "./add-entity.js"
-import pausing from "./pausing.ijs"
 import dynamicBehaviors from "./dynamic-behaviors.js"
+import pausing from "./pausing.ijs"
 import randomEntities from "./random-entities.js"
 import removeEntity from "./remove-entity.js"
 

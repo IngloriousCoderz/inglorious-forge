@@ -1,5 +1,7 @@
 import "./smoke-setup.js"
+
 import { Engine } from "@inglorious/engine/core/engine.js"
+
 import gameConfig from "./src/game.ijs"
 
 gameConfig.entities.game.devMode = false
@@ -186,6 +188,11 @@ ballAudio.soundPlay = function sound(entity, name) {
 ballStep(4)
 check(ballState().ball === undefined, "the title screen has no ball either")
 
+const bricksBefore = Object.keys(ballState()).filter((id) =>
+  id.startsWith("brick"),
+)
+check(bricksBefore.length === 0, "and no bricks either")
+
 ballNotify("keyboardKeyDown", "Enter")
 ballNotify("keyboardKeyUp", "Enter")
 // One update is needed to process the key, and the ball is served inside it but not
@@ -202,6 +209,49 @@ check(from === "96,48", `the ball is cropped from (96, 48) (${from})`)
 check(
   servedBall.image.frameSize.join() === "8,8",
   `and is 8x8 (${servedBall.image.frameSize.join("x")})`,
+)
+
+// The level, laid out the way the original lays it out: rows and columns both at random,
+// bricks 32 wide and touching, padded by 8 plus half a brick for each missing column.
+const brickList = Object.values(ballState()).filter(
+  ({ type }) => type === "Brick",
+)
+const columns = new Set(brickList.map(({ position }) => position[0])).size
+const rows = new Set(brickList.map(({ position }) => position[1])).size
+
+check(rows >= 1 && rows <= 5, `the level has between 1 and 5 rows (${rows})`)
+check(
+  columns >= 7 && columns <= 13,
+  `and between 7 and 13 columns (${columns})`,
+)
+check(
+  brickList.length === rows * columns,
+  `holding one brick per cell (${brickList.length})`,
+)
+check(
+  brickList.every(({ size }) => size[0] === 32 && size[1] === 16),
+  "each 32x16",
+)
+// Touching, so the columns are one brick width apart.
+const xs = [...new Set(brickList.map(({ position }) => position[0]))].sort(
+  (a, b) => a - b,
+)
+check(
+  xs.every((x, i) => i === 0 || x - xs[i - 1] === 32),
+  `laid out touching (${xs.join(", ")})`,
+)
+// Padded by 8 plus half a brick for each of the columns it is short of.
+check(
+  xs[0] === 8 + (13 - columns) * 16,
+  `and padded for the missing columns (${xs[0]})`,
+)
+// Hanging from the ceiling, which is where the original starts them.
+const ys = [...new Set(brickList.map(({ position }) => position[1]))].sort(
+  (a, b) => b - a,
+)
+check(
+  ys[0] === 227 && ys[ys.length - 1] === 243 - rows * 16,
+  `from just under the ceiling down (${ys.join(", ")})`,
 )
 
 // The serve, straight from PlayState:init.
@@ -284,6 +334,45 @@ check(
 check(
   ballSounds.slice(beforeHit).includes("paddleHit"),
   "having sounded the paddle hit",
+)
+
+console.log(
+  `\n${failures === 0 ? "all checks passed" : `${failures} check(s) failed`}`,
+)
+if (failures) process.exitCode = 1
+
+// Driving the ball into a brick knocks it out without bouncing, which is what the
+// original does at this stage: the brick goes and the ball carries on.
+const target = Object.entries(ballState()).find(
+  ([, { type }]) => type === "Brick",
+)
+const [targetId] = target
+const beforeBricks = Object.values(ballState()).filter(
+  ({ type }) => type === "Brick",
+).length
+
+ballState().ball.position = [...target[1].position]
+ballState().ball.velocity = [0, -40, 0]
+
+const beforeBrickHit = ballSounds.length
+ballStep(2)
+
+check(
+  ballState()[targetId] === undefined,
+  "the ball knocks the brick out of the level",
+)
+check(
+  Object.values(ballState()).filter(({ type }) => type === "Brick").length ===
+    beforeBricks - 1,
+  "and the level is one brick shorter",
+)
+check(
+  ballSounds.slice(beforeBrickHit).includes("brickHit"),
+  "having sounded the brick hit",
+)
+check(
+  ballState().ball.velocity[1] < 0,
+  `and carried straight on (${ballState().ball.velocity[1]})`,
 )
 
 console.log(

@@ -47,7 +47,7 @@ function createTemplateExpression(quasis, expressions) {
  */
 function ensureRenderApiParameter(fn) {
   const params = fn.node.params
-  const hadNoParams = params.length === 0
+  const hadNoParams = !params.length
   const apiIndex = params.findIndex(
     (param) =>
       (t.isIdentifier(param) && param.name === "api") ||

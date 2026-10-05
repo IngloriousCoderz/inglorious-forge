@@ -9,6 +9,7 @@ import { filter } from "@inglorious/utils/objects"
 import { add, zero } from "@inglorious/utils/vectors"
 
 const Z = 2 // Z-axis index.
+const RECTANGLE = "rectangle"
 
 const Shape = {
   circle,
@@ -29,7 +30,7 @@ const Shape = {
 export function findCollision(entity, entities, collisionGroup = "hitbox") {
   const otherEntities = filter(
     entities,
-    (id, { collisions }) => id !== entity.id && collisions?.[collisionGroup],
+    (id, other) => id !== entity.id && collisionGroupOf(other, collisionGroup),
   )
 
   return Object.values(otherEntities)
@@ -93,8 +94,27 @@ export function findCollisions(entity, target, collisionGroup = "hitbox") {
  * it, so an anchored shape is shifted off its position by half the room it does
  * not take up on that side.
  */
+/**
+ * The collision an entity has in a group, if it has one.
+ *
+ * A `solid` entity has one without being told what shape it is: the shape is its size.
+ * That is the shape almost everything solid wants, and naming it every time is three
+ * lines of configuration saying nothing.
+ *
+ * It is asked for rather than assumed from the presence of a `size`, because plenty of
+ * things have a size and are not in the way: a line of text, a frame counter, anything
+ * measured in pixels rather than in space.
+ */
+function collisionGroupOf(entity, collisionGroup) {
+  const collision = entity.collisions?.[collisionGroup]
+
+  if (collision) return collision
+
+  return entity.solid ? { shape: RECTANGLE } : null
+}
+
 function getCollisionShape(entity, collisionGroup = "hitbox") {
-  const collision = entity.collisions[collisionGroup]
+  const collision = collisionGroupOf(entity, collisionGroup)
   if (!collision) {
     return null
   }

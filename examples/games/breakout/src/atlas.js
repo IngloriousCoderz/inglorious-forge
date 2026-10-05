@@ -1,19 +1,15 @@
-import { BALL_SIZE, PADDLE_HEIGHT, PADDLE_WIDTH } from "./constants.js"
+import {
+  BALL_SIZE,
+  BRICK_HEIGHT,
+  BRICK_WIDTH,
+  PADDLE_HEIGHT,
+  PADDLE_WIDTH,
+} from "./constants.js"
 
-// Every sprite is cut from the same sheet on its own 32x16 grid, and `renderImage`
-// reads `sx`/`sy` as tile indices on it, so a frame is written in the sheet's pixels
-// and divided down here. `frameSize` then says how much of the sheet to actually take,
-// which is what lets a frame cross a cell boundary or sit at a size the grid does not
-// describe — both of which the paddle and the ball need.
+// Every sprite is cut from the same sheet on its own 32x16 grid. A frame says where it
+// is on the sheet and how much of it to take, in pixels, and `crop` divides that down to
+// the grid for the renderer.
 const TILE = [32, 16]
-
-const frame = (x, y, width, height) => ({
-  sx: x / TILE[0],
-  sy: y / TILE[1],
-  tileSize: TILE,
-  frameSize: [width, height],
-  imageSize: [width, height],
-})
 
 /**
  * `breakout.png` is one atlas that every sprite in the game is cropped from.
@@ -23,11 +19,36 @@ const frame = (x, y, width, height) => ({
  * against each other, so the 64 wide paddle starts one whole 32 wide paddle in, at
  * pixel (32, 64).
  */
-export const paddleFrame = () => frame(32, 64, PADDLE_WIDTH, PADDLE_HEIGHT)
+export const paddleFrame = () => ({
+  x: 32,
+  y: 64,
+  width: PADDLE_WIDTH,
+  height: PADDLE_HEIGHT,
+  tileSize: TILE,
+})
 
 /**
  * The balls are 8x8 and sit in rows starting at (96, 48), so they are a third of a cell
- * wide. The original serves the first of them: its quad table starts at one, so the
- * skin it asks for by name is the one at x 96 rather than the one after it.
+ * wide. The original serves the first of them: its quad table starts at one, so the skin
+ * it asks for by name is the one at x 96 rather than the one after it.
  */
-export const ballFrame = () => frame(96, 48, BALL_SIZE, BALL_SIZE)
+export const ballFrame = () => ({
+  x: 96,
+  y: 48,
+  width: BALL_SIZE,
+  height: BALL_SIZE,
+  tileSize: TILE,
+})
+
+/**
+ * The bricks are just the first tiles of the sheet in order, and the original only ever
+ * draws the first one, because the tiers and colours that would pick a later tile arrive
+ * with the levels that use them.
+ */
+export const brickFrame = () => ({
+  x: 0,
+  y: 0,
+  width: BRICK_WIDTH,
+  height: BRICK_HEIGHT,
+  tileSize: TILE,
+})

@@ -1,6 +1,11 @@
-import { findCollision } from "@inglorious/engine/collision/detection"
+import {
+  collidesWith,
+  findCollision,
+} from "@inglorious/engine/collision/detection"
+import { crop } from "@inglorious/renderer-2d/image/crop.js"
 import { renderImage } from "@inglorious/renderer-2d/image/image.js"
 import { random } from "@inglorious/utils/math/rng.js"
+import { filter } from "@inglorious/utils/objects"
 import { v } from "@inglorious/utils/v.js"
 
 import { ballFrame } from "../atlas.js"
@@ -11,6 +16,7 @@ const Y = 1
 const NO_DEPTH = 0
 const FLIP = -1
 const HIT_PADDLE = "Paddle"
+const HIT_BRICK = "Brick"
 
 // The serve. The original picks both axes at random, so the ball never starts on the
 // same line twice: sideways anywhere between -200 and 200, and upwards between 50 and
@@ -40,18 +46,7 @@ export const Ball = [
         NO_DEPTH,
       )
 
-      // The crop is read off the entity and the grid off its image, so the frame is
-      // split between the two.
-      const frame = ballFrame()
-
-      entity.image = {
-        id: "breakout",
-        imageSize: frame.imageSize,
-        tileSize: frame.tileSize,
-        frameSize: frame.frameSize,
-      }
-      entity.sx = frame.sx
-      entity.sy = frame.sy
+      crop(entity, "breakout", ballFrame())
     },
 
     update(entity, dt, api) {
@@ -59,6 +54,7 @@ export const Ball = [
 
       bounceOffWalls(entity, api)
       bounceOffPaddle(entity, api)
+      knockOutBricks(entity, api)
     },
   },
 ]
@@ -117,4 +113,22 @@ function bounceOffPaddle(entity, api) {
   entity.velocity[Y] *= FLIP
 
   api.notify("soundPlay", SOUND_PADDLE_HIT)
+}
+
+/**
+ * Every brick the ball is touching is knocked out, not just the first, because the
+ * original walks its whole table of bricks each frame without stopping at a hit.
+ *
+ * The ball does not bounce off a brick yet. That is not an omission: at this stage the
+ * original destroys the brick and carries straight on, and the angled bounce its own
+ * comments describe only arrives later.
+ */
+function knockOutBricks(entity, api) {
+  const bricks = filter(api.getEntities(), (_, { type }) => type === HIT_BRICK)
+
+  Object.entries(bricks).forEach(([id, brick]) => {
+    if (!collidesWith(entity, brick)) return
+
+    api.notify("brickHit", id)
+  })
 }

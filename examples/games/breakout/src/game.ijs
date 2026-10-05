@@ -20,8 +20,10 @@ import {
   WIDTH,
 } from "./constants.js"
 import { Ball } from "./types/ball.ijs"
-import { Game } from "./types/game.ijs"
+import { Brick } from "./types/brick.ijs"
 import { Paddle } from "./types/paddle.ijs"
+import { scenes } from "./types/scene-listener.ijs"
+import { Game } from "./types/states.ijs"
 import { HighScores, Paused, Start, Title } from "./types/text.ijs"
 
 const FPS_COLOR = "rgb(0, 255, 0)"
@@ -30,8 +32,9 @@ export default {
   types: {
     ...controlTypes("game"),
 
-    Game,
+    Game: [scenes(), Game],
     Ball,
+    Brick,
     Paddle,
     Title,
     Start,
@@ -104,6 +107,7 @@ export default {
         confirm: { url: "/sounds/confirm.wav" },
         pause: { url: "/sounds/pause.wav" },
         wallHit: { url: "/sounds/wall_hit.wav" },
+        brickHit: { url: "/sounds/brick_hit_2.wav" },
       },
     },
 

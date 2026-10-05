@@ -1,4 +1,5 @@
 import { createMovementEventHandlers } from "@inglorious/engine/behaviors/controls/event-handlers.js"
+import { crop } from "@inglorious/renderer-2d/image/crop.js"
 import { renderImage } from "@inglorious/renderer-2d/image/image.js"
 import { clamp } from "@inglorious/utils/math/numbers.js"
 import { v } from "@inglorious/utils/v.js"
@@ -24,18 +25,7 @@ export const Paddle = [
     create(entity) {
       entity.velocity = v(0, 0, 0)
 
-      // `renderImage` reads the crop offsets off the entity, but the grid and the
-      // frame size off the image, so the frame is split between the two.
-      const frame = paddleFrame()
-
-      entity.image = {
-        id: "breakout",
-        imageSize: frame.imageSize,
-        tileSize: frame.tileSize,
-        frameSize: frame.frameSize,
-      }
-      entity.sx = frame.sx
-      entity.sy = frame.sy
+      crop(entity, "breakout", paddleFrame())
     },
 
     update(entity, dt) {

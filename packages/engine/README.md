@@ -27,6 +27,37 @@ This will set up a complete project with a development server ready to go.
 - **Renderer Agnostic**: The engine is headless. You can use any rendering technology you like, from Canvas2D and HTML to React components.
 - **Zero Build Step Option**: Write plain JavaScript and run it directly in the browser. No complex build configurations required.
 - **Pausing without permission checks**: `notify("pause")` halts the world, so nothing that moves has to ask whether it is allowed to.
+- **Sprites in one call**: `crop()` points an entity at a frame of a sheet without you having to remember which half of the crop lives where. See [renderer-2d](https://github.com/iceonfire/inglorious-forge/tree/main/packages/renderer-2d).
+
+### Collision
+
+Give an entity a `collisions` block and it is solid:
+
+```javascript
+entities: {
+  brick: {
+    type: "Brick",
+    size: [32, 16, 0],
+    collisions: { hitbox: { shape: "rectangle" } },
+  },
+}
+```
+
+Or, for the shape almost everything solid wants, say so in one word:
+
+```javascript
+entities: {
+  brick: { type: "Brick", size: [32, 16, 0], solid: true },
+}
+```
+
+`solid: true` means "collide with a rectangle the size of `size`". It is asked for rather
+than assumed from the presence of a `size`, because plenty of things have a size and are
+not in the way: a line of text, a frame counter, anything measured in pixels rather than
+in space. Making `size` imply solidity would quietly turn all of those into walls.
+
+A declared `collisions` block still wins, so an entity can be solid and still have a hit
+box smaller than itself, or shaped like a point or a circle.
 
 ### Pausing
 

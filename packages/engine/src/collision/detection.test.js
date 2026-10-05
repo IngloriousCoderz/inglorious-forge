@@ -141,3 +141,53 @@ test("anchoring should not change what a centred box collides with", () => {
     expect(anchored).toBe(centred)
   })
 })
+
+test("a solid entity collides with its own size", () => {
+  const ball = {
+    position: v(100, 100, 0),
+    size: v(8, 8, 0),
+    solid: true,
+  }
+  const brick = {
+    position: v(104, 100, 0),
+    size: v(32, 16, 0),
+    solid: true,
+  }
+
+  // Overlapping by four pixels on the x axis, which is all it takes.
+  expect(findCollision(ball, { brick })).toStrictEqual(brick)
+  expect(collidesWith(ball, brick)).toBe(true)
+})
+
+test("an entity that only has a size is not in the way", () => {
+  const ball = {
+    position: v(100, 100, 0),
+    size: v(8, 8, 0),
+    solid: true,
+  }
+
+  // Plenty of things have a size and are not solid: a line of text, a frame counter,
+  // anything measured in pixels rather than in space.
+  const label = { position: v(100, 100, 0), size: v(8, 8, 0) }
+
+  expect(findCollision(ball, { label })).toBeUndefined()
+})
+
+test("a declared collision still wins over being solid", () => {
+  const ball = {
+    position: v(100, 100, 0),
+    size: v(8, 8, 0),
+    solid: true,
+  }
+  // Solid, and wide enough that its box does overlap the ball's: it spans 74 to 106
+  // across, and the ball spans 96 to 104. Its hitbox is a point rather than that box
+  // though, and the point sits at 90, clear of the ball, so they do not touch.
+  const thin = {
+    position: v(90, 100, 0),
+    size: v(32, 16, 0),
+    solid: true,
+    collisions: { hitbox: { shape: "point" } },
+  }
+
+  expect(collidesWith(ball, thin)).toBe(false)
+})

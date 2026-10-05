@@ -87,6 +87,8 @@ function createKeyUpHandler(api) {
 
 // Anything that is not a single printable character carries a word instead:
 // modifiers, navigation and function keys among them.
+const SINGLE_CHARACTER = 1
+
 function isCharacter(key) {
-  return typeof key === "string" && key.length === 1
+  return typeof key === "string" && key.length === SINGLE_CHARACTER
 }

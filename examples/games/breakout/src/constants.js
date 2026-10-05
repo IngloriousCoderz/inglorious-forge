@@ -25,6 +25,18 @@ export const BALL_START_X = WIDTH / 2 - 4
 // The original serves it from VIRTUAL_HEIGHT - 42, which is an altitude of 42.
 export const BALL_START_ALTITUDE = 42
 
+// The bricks, which the level makes at random.
+export const BRICK_WIDTH = 32
+export const BRICK_HEIGHT = 16
+export const BRICK_MIN_ROWS = 1
+export const BRICK_MAX_ROWS = 5
+export const BRICK_MIN_COLS = 7
+export const BRICK_MAX_COLS = 13
+// The screen is padded so that the widest level still leaves a brick's half-width on
+// each side, which is what the level's own arithmetic below relies on.
+export const BRICK_PADDING = 8
+export const BRICK_MAX_COLUMN_PADDING = 16
+
 export const GAME_STATE = {
   start: "start",
   play: "play",
@@ -47,6 +59,7 @@ export const SOUND_PADDLE_HIT = "paddleHit"
 export const SOUND_CONFIRM = "confirm"
 export const SOUND_PAUSE = "pause"
 export const SOUND_WALL_HIT = "wallHit"
+export const SOUND_BRICK_HIT = "brickHit"
 
 export const FONT_FAMILY = "'Breakout'"
 
@@ -56,6 +69,7 @@ export const COLOR_HIGHLIGHT = "rgb(103, 255, 255)"
 
 export const LAYER_BACKGROUND = -1
 export const LAYER_PADDLE = 1
+export const LAYER_BRICK = 0
 export const LAYER_BALL = 2
 export const LAYER_TEXT = 3
 export const LAYER_OVERLAY = 4

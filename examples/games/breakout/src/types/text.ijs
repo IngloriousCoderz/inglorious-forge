@@ -1,5 +1,4 @@
 import { renderText } from "@inglorious/renderer-2d/text.js"
-import { v } from "@inglorious/utils/v.js"
 
 import {
   COLOR_HIGHLIGHT,
@@ -8,7 +7,6 @@ import {
   HEIGHT,
   MENU_HIGH_SCORES,
   MENU_START,
-  WIDTH,
 } from "../constants.js"
 
 /**
@@ -86,9 +84,4 @@ export const Paused = {
   update(entity, dt, api) {
     say(entity, api.getEntity("game").paused ? "PAUSED" : "", 32)
   },
-}
-
-/** Where a line of text sits: centred on the screen at the given altitude. */
-export function positionFor(altitude) {
-  return v(WIDTH / 2, altitude, 0)
 }
