@@ -2,16 +2,23 @@ import { fsm } from "@inglorious/engine/behaviors/fsm"
 import { v } from "@inglorious/utils/v.js"
 
 import {
+  BALL_SIZE,
+  BALL_START_ALTITUDE,
+  BALL_START_X,
   GAME_STATE,
+  LAYER_BALL,
   LAYER_PADDLE,
   LAYER_TEXT,
+  LEFT_EDGE,
   MENU_ITEMS,
+  PADDLE_ALTITUDE,
   PADDLE_HEIGHT,
+  PADDLE_START_X,
   PADDLE_WIDTH,
   SOUND_CONFIRM,
   SOUND_PADDLE_HIT,
   SOUND_PAUSE,
-  WIDTH,
+  TOP_EDGE,
 } from "../constants.js"
 import {
   HIGH_SCORES_ALTITUDE,
@@ -26,6 +33,7 @@ const START_ID = "start"
 const HIGH_SCORES_ID = "highScores"
 const PAUSED_ID = "paused"
 const PADDLE_ID = "paddle"
+const BALL_ID = "ball"
 
 /**
  * What exists in each state.
@@ -39,7 +47,7 @@ const PADDLE_ID = "paddle"
  */
 const SCENES = {
   [GAME_STATE.start]: [TITLE_ID, START_ID, HIGH_SCORES_ID],
-  [GAME_STATE.play]: [PADDLE_ID, PAUSED_ID],
+  [GAME_STATE.play]: [PADDLE_ID, BALL_ID, PAUSED_ID],
 }
 
 const BUILDERS = {
@@ -53,6 +61,26 @@ const BUILDERS = {
     updatesWhilePaused: true,
   }),
   [PADDLE_ID]: paddleEntity,
+  [BALL_ID]: ballEntity,
+}
+
+/**
+ * The ball is served from the middle, just clear of the paddle, and carries the skin
+ * the original starts it with.
+ *
+ * Its hitbox is its whole 8x8, because the original collides with bounding boxes. The
+ * two must not overlap at the serve, or the ball would be hit before it has moved.
+ */
+function ballEntity() {
+  return {
+    id: BALL_ID,
+    type: "Ball",
+    layer: LAYER_BALL,
+    position: v(BALL_START_X, BALL_START_ALTITUDE, 0),
+    anchor: [LEFT_EDGE, TOP_EDGE],
+    size: v(BALL_SIZE, BALL_SIZE, 0),
+    collisions: { hitbox: { shape: "rectangle" } },
+  }
 }
 
 /**
@@ -140,8 +168,9 @@ function text(id, type, altitude) {
 }
 
 /**
- * The paddle floats a paddle's own height above the floor, anchored by its
- * bottom-left corner so that corner is what the bounds keep on screen.
+ * The paddle hangs from its own height above the floor, anchored by its top-left corner
+ * because that is where the original draws it from, and it is that corner the bounds
+ * keep on screen.
  *
  * `movement` is declared up front rather than in the type's `create`, because a
  * movement event can be handled before the entity has been created.
@@ -151,9 +180,12 @@ function paddleEntity() {
     id: PADDLE_ID,
     type: "Paddle",
     layer: LAYER_PADDLE,
-    position: v(WIDTH / 2 - 32, 32, 0),
-    anchor: [0, 0],
+    position: v(PADDLE_START_X, PADDLE_ALTITUDE, 0),
+    anchor: [LEFT_EDGE, TOP_EDGE],
     size: v(PADDLE_WIDTH, PADDLE_HEIGHT, 0),
+    // The ball collides with bounding boxes, and the original collides the paddle with
+    // its whole box rather than some smaller shape inside it.
+    collisions: { hitbox: { shape: "rectangle" } },
     movement: {},
   }
 }

@@ -19,6 +19,7 @@ import {
   TOGGLE_PAUSE,
   WIDTH,
 } from "./constants.js"
+import { Ball } from "./types/ball.ijs"
 import { Game } from "./types/game.ijs"
 import { Paddle } from "./types/paddle.ijs"
 import { HighScores, Paused, Start, Title } from "./types/text.ijs"
@@ -30,6 +31,7 @@ export default {
     ...controlTypes("game"),
 
     Game,
+    Ball,
     Paddle,
     Title,
     Start,
@@ -101,6 +103,7 @@ export default {
         paddleHit: { url: "/sounds/paddle_hit.wav" },
         confirm: { url: "/sounds/confirm.wav" },
         pause: { url: "/sounds/pause.wav" },
+        wallHit: { url: "/sounds/wall_hit.wav" },
       },
     },
 
