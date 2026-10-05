@@ -9,7 +9,15 @@ import { filter } from "@inglorious/utils/objects"
 import { v } from "@inglorious/utils/v.js"
 
 import { ballFrame } from "../atlas.js"
-import { BALL_SIZE, SOUND_PADDLE_HIT, SOUND_WALL_HIT } from "../constants.js"
+import {
+  BALL_SIZE,
+  BALL_SKIN_COUNT,
+  FLOOR,
+  GAME_STATE,
+  PADDLE_WIDTH,
+  SOUND_PADDLE_HIT,
+  SOUND_WALL_HIT,
+} from "../constants.js"
 
 const X = 0
 const Y = 1
@@ -56,6 +64,43 @@ function awayFrom(delta) {
 const SERVE_SIDEWAYS = 200
 const SERVE_UPWARD = [50, 60]
 
+// The original numbers its ball skins from one, so the random pick is made over the
+// same range it would make over in Lua.
+const FIRST_SKIN = 1
+
+/**
+ * Puts the ball up ready to be served: a skin of its own, and a heading of its own.
+ *
+ * The original makes a new ball to do this at the start of every serve, so both the skin
+ * and the heading are drawn afresh each time rather than kept from last serve.
+ */
+function serveRandomly(entity) {
+  entity.skin = random(FIRST_SKIN, BALL_SKIN_COUNT)
+
+  entity.velocity = v(
+    random(-SERVE_SIDEWAYS, SERVE_SIDEWAYS),
+    random(...SERVE_UPWARD),
+    NO_DEPTH,
+  )
+
+  crop(entity, "breakout", ballFrame(entity.skin))
+}
+
+/**
+ * While a serve is being waited out the ball sits on the paddle instead of moving.
+ *
+ * The original hangs it off the middle of the paddle, a ball's own height above the
+ * paddle's own top edge, which is what leaves it resting on the paddle rather than
+ * buried in it.
+ */
+function rideThePaddle(entity, api) {
+  const paddle = api.getEntity("paddle")
+
+  entity.position[X] =
+    paddle.position[X] + PADDLE_WIDTH / HALF - BALL_SIZE / HALF
+  entity.position[Y] = paddle.position[Y] + BALL_SIZE
+}
+
 /**
  * The ball, which serves upward out of the middle and then bounces off the walls and
  * the paddle.
@@ -72,21 +117,39 @@ export const Ball = [
     render: renderImage,
 
     create(entity) {
-      entity.velocity = v(
-        random(-SERVE_SIDEWAYS, SERVE_SIDEWAYS),
-        random(...SERVE_UPWARD),
-        NO_DEPTH,
-      )
+      entity.velocity = v(NO_DEPTH, NO_DEPTH, NO_DEPTH)
 
-      crop(entity, "breakout", ballFrame())
+      serveRandomly(entity)
+    },
+
+    // Every serve starts a new ball, which is this type's cue to draw a fresh skin and a
+    // fresh heading. `stateChange` carries the id of whatever moved, so this is one of the
+    // few places where checking who it was about is the right thing to do.
+    stateChange(entity, { entityId, to }) {
+      if (entityId !== entity.id) return
+
+      if (to === GAME_STATE.serve) serveRandomly(entity)
     },
 
     update(entity, dt, api) {
+      const game = api.getEntity("game")
+
+      // Nothing moves under its own power until the serve is answered.
+      if (game.state === GAME_STATE.serve) {
+        rideThePaddle(entity, api)
+
+        return
+      }
+
       move(entity, dt)
 
       bounceOffWalls(entity, api)
       bounceOffPaddle(entity, api)
       knockOutBricks(entity, api)
+
+      // There is no floor to bounce off. Falling past it is how a life is spent, which
+      // is the game's business rather than the ball's: the ball only says that it fell.
+      if (entity.position[Y] <= FLOOR) api.notify("ballLost")
     },
   },
 ]

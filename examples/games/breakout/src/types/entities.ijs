@@ -4,8 +4,14 @@ import {
   BALL_SIZE,
   BALL_START_ALTITUDE,
   BALL_START_X,
+  HEART_ALTITUDE,
+  HEART_HEIGHT,
+  HEART_SPACING,
+  HEART_START_X,
+  HEART_WIDTH,
   HEIGHT,
   LEFT_EDGE,
+  MAX_HEALTH,
   PADDLE_ALTITUDE,
   PADDLE_HEIGHT,
   PADDLE_START_X,
@@ -46,6 +52,8 @@ export function createBallEntity() {
   return {
     id: "ball",
     type: "Ball",
+    // The ball carries its own skin, which the original picks at random on every serve.
+    skin: 1,
     layer: 2,
     position: v(BALL_START_X, BALL_START_ALTITUDE, 0),
     anchor: [LEFT_EDGE, TOP_EDGE],
@@ -55,9 +63,36 @@ export function createBallEntity() {
   }
 }
 
+/**
+ * A heart of the health readout.
+ *
+ * There are always three of them, as many as the player starts with lives: each one
+ * shows itself as full while the life it stands for is still in hand, and empties once
+ * it is not. Which of the two it draws is therefore not a thing this entity decides for
+ * itself when it is built, but a thing it is told every frame.
+ */
+export function createHeartEntity(index) {
+  return {
+    id: `heart${index}`,
+    type: "Heart",
+    layer: 2,
+    position: v(HEART_START_X + index * HEART_SPACING, HEART_ALTITUDE, 0),
+    anchor: [LEFT_EDGE, TOP_EDGE],
+    size: v(HEART_WIDTH, HEART_HEIGHT, 0),
+    heart: index,
+  }
+}
+
 /** The level is made at random, so it is built on entry rather than listed anywhere. */
 export function createPlayScene(bricks) {
-  return [createPaddleEntity(), createBallEntity(), ...bricks]
+  return [
+    createPaddleEntity(),
+    createBallEntity(),
+    ...bricks,
+    ...Array.from({ length: MAX_HEALTH }, (_, index) =>
+      createHeartEntity(index),
+    ),
+  ]
 }
 
 export { HEIGHT }

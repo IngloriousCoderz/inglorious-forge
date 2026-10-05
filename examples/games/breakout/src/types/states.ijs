@@ -1,13 +1,23 @@
 import { fsm } from "@inglorious/engine/behaviors/fsm"
 
-import { GAME_STATE, MENU_ITEMS } from "../constants.js"
+import {
+  GAME_STATE,
+  MAX_HEALTH,
+  MENU_ITEMS,
+  SCORE_PER_BRICK,
+  SOUND_CONFIRM,
+  SOUND_HURT,
+  SOUND_PADDLE_HIT,
+  SOUND_PAUSE,
+} from "../constants.js"
 
 /**
- * Two states: the start screen, and playing. Pausing is a flag on the second rather
- * than a state of its own, which is what the original does.
+ * Four states now: the start screen, the wait before each serve, the play itself, and
+ * the end. Pausing is still a flag on the play state rather than a state of its own,
+ * which is what the original does.
  *
- * This says only when the machine moves. What each state is made of lives in
- * `scenes.ijs`, which is announced to this machine's listener when it lands somewhere.
+ * This says only when the machine moves. What each state is made of lives in `scene.ijs`,
+ * which is announced to this machine's listener when it lands somewhere.
  */
 export const Game = fsm({
   [GAME_STATE.start]: {
@@ -16,18 +26,31 @@ export const Game = fsm({
     pressMenuUp(entity, _, api) {
       chooseMenu(entity, -1)
 
-      api.notify("soundPlay", "paddleHit")
+      api.notify("soundPlay", SOUND_PADDLE_HIT)
     },
 
     pressMenuDown(entity, _, api) {
       chooseMenu(entity, 1)
 
-      api.notify("soundPlay", "paddleHit")
+      api.notify("soundPlay", SOUND_PADDLE_HIT)
     },
 
     press(entity, _, api) {
-      api.notify("soundPlay", "confirm")
+      api.notify("soundPlay", SOUND_CONFIRM)
 
+      // A new game starts with every life and nothing scored. The level itself is made
+      // by the scene, which is told to throw the last one away.
+      entity.health = MAX_HEALTH
+      entity.score = 0
+
+      entity.state = GAME_STATE.serve
+    },
+  },
+
+  // Nothing happens here but wait. The ball rides on the paddle and the level stands
+  // where the last game left it, and pressing says go.
+  [GAME_STATE.serve]: {
+    press(entity) {
       entity.state = GAME_STATE.play
     },
   },
@@ -40,9 +63,32 @@ export const Game = fsm({
     // It is not named `pause`, because that is the built-in event and a state that
     // answers to it would run alongside the built-in rather than instead of it.
     togglePause(entity, _, api) {
-      api.notify("soundPlay", "pause")
+      api.notify("soundPlay", SOUND_PAUSE)
 
       api.notify(entity.paused ? "resume" : "pause")
+    },
+
+    // A brick knocked out is worth points, and the score is the game's own.
+    brickHit(entity) {
+      entity.score += SCORE_PER_BRICK
+    },
+
+    // The ball falling past the floor costs a life. Whether that ends the game or merely
+    // means another serve is the game's decision, not the ball's, which is why the ball
+    // only says what happened.
+    ballLost(entity, _, api) {
+      api.notify("soundPlay", SOUND_HURT)
+
+      entity.health -= 1
+
+      entity.state =
+        entity.health === 0 ? GAME_STATE.gameOver : GAME_STATE.serve
+    },
+  },
+
+  [GAME_STATE.gameOver]: {
+    press(entity) {
+      entity.state = GAME_STATE.start
     },
   },
 })

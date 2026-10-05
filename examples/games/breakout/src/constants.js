@@ -37,11 +37,52 @@ export const BRICK_MAX_COLS = 13
 export const BRICK_PADDING = 8
 export const BRICK_MAX_COLUMN_PADDING = 16
 
+// The original splits the game in four now: a start screen, the wait before each serve,
+// the play itself, and the end. Pausing is still not one of them -- it is a flag on the
+// play state, exactly as before.
 export const GAME_STATE = {
   start: "start",
+  serve: "serve",
   play: "play",
-  paused: "paused",
+  gameOver: "gameOver",
 }
+
+// Lives and scoring, which the serve screen now carries across between serves.
+export const MAX_HEALTH = 3
+export const SCORE_PER_BRICK = 10
+
+// The original picks one of seven ball skins at random on every serve.
+export const BALL_SKIN_FIRST_ROW = 4
+
+// The ball loses a life by falling below the floor, which is an altitude of nothing.
+// Kept as a name so the check reads as what it is.
+export const FLOOR = 0
+export const BALL_SKIN_COUNT = 7
+
+// The three font sizes the original names small, medium and large.
+export const FONT_SMALL = 8
+export const FONT_MEDIUM = 16
+export const FONT_LARGE = 32
+
+// The readout along the top right: a heart for each life in hand, then the label, then
+// the number. The original hangs its hearts a pixel above its text and prints its number
+// half a font above its own label, both of which read as a misalignment rather than a
+// decision, so all three are lined up on the one row here.
+export const SCORE_LABEL_X = WIDTH - 60
+export const SCORE_VALUE_BOX = 40
+export const SCORE_VALUE_X = WIDTH - 50 + SCORE_VALUE_BOX
+export const SCORE_TOP = 5
+// A text entity is anchored by the top edge of its line, so an altitude says where the
+// line begins rather than where it ends.
+export const SCORE_ALTITUDE = HEIGHT - SCORE_TOP
+
+// The health readout, which is three hearts along the top right: a full one for each
+// life still in hand, then an empty one for each life spent.
+export const HEART_WIDTH = 10
+export const HEART_HEIGHT = 9
+export const HEART_START_X = WIDTH - 100
+export const HEART_ALTITUDE = SCORE_ALTITUDE
+export const HEART_SPACING = 11
 
 export const MENU_ITEMS = ["start", "high-scores"]
 export const MENU_START = MENU_ITEMS[0]
@@ -60,8 +101,17 @@ export const SOUND_CONFIRM = "confirm"
 export const SOUND_PAUSE = "pause"
 export const SOUND_WALL_HIT = "wallHit"
 export const SOUND_BRICK_HIT = "brickHit"
+export const SOUND_HURT = "hurt"
 
 export const FONT_FAMILY = "'Breakout'"
+
+// The frame rate has no counterpart in the original, which has no counter at all. It goes
+// in the bottom left, the one corner the play never draws in: the paddle stops an
+// entity's own height above the floor, and the bottom right belongs to the score.
+export const FPS_MARGIN = 4
+export const FPS_SIZE = 8
+// Also anchored by its top edge, so it sits a margin and a line below the ceiling.
+export const FPS_ALTITUDE = HEIGHT - FPS_MARGIN - FPS_SIZE
 
 // The colour the original picks a menu item out with.
 export const COLOR_TEXT = "white"

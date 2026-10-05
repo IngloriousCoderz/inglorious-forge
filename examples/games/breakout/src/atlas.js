@@ -1,7 +1,10 @@
 import {
   BALL_SIZE,
+  BALL_SKIN_FIRST_ROW,
   BRICK_HEIGHT,
   BRICK_WIDTH,
+  HEART_HEIGHT,
+  HEART_WIDTH,
   PADDLE_HEIGHT,
   PADDLE_WIDTH,
 } from "./constants.js"
@@ -32,12 +35,33 @@ export const paddleFrame = () => ({
  * wide. The original serves the first of them: its quad table starts at one, so the skin
  * it asks for by name is the one at x 96 rather than the one after it.
  */
-export const ballFrame = () => ({
-  x: 96,
-  y: 48,
-  width: BALL_SIZE,
-  height: BALL_SIZE,
-  tileSize: TILE,
+export const ballFrame = (skin = 1) => {
+  // Four skins sit along the first row and three along the second, both starting at
+  // x 96, so the row is found by counting how many skins come before this one.
+  const row = skin > BALL_SKIN_FIRST_ROW ? 1 : 0
+  const column = skin - 1 - row * BALL_SKIN_FIRST_ROW
+
+  return {
+    x: 96 + column * BALL_SIZE,
+    y: 48 + row * BALL_SIZE,
+    width: BALL_SIZE,
+    height: BALL_SIZE,
+    tileSize: TILE,
+  }
+}
+
+/**
+ * `hearts.png` is a sheet of its own on a 10x9 grid, holding two hearts: a full one
+ * first, then the empty one that stands in for a life already spent.
+ */
+export const HEART_TILE = [HEART_WIDTH, HEART_HEIGHT]
+
+export const heartFrame = (full) => ({
+  x: full ? 0 : HEART_WIDTH,
+  y: 0,
+  width: HEART_WIDTH,
+  height: HEART_HEIGHT,
+  tileSize: HEART_TILE,
 })
 
 /**

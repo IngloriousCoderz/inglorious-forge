@@ -10,6 +10,9 @@ import { renderRectangle } from "@inglorious/renderer-2d/shapes/rectangle.js"
 import { v } from "@inglorious/utils/v.js"
 
 import {
+  FPS_ALTITUDE,
+  FPS_MARGIN,
+  FPS_SIZE,
   GAME_STATE,
   HEIGHT,
   LAYER_BACKGROUND,
@@ -23,10 +26,22 @@ import {
 } from "./constants.js"
 import { Ball } from "./types/ball.ijs"
 import { Brick } from "./types/brick.ijs"
+import { Heart } from "./types/heart.ijs"
 import { Paddle } from "./types/paddle.ijs"
 import { scenes } from "./types/scene-listener.ijs"
 import { Game } from "./types/states.ijs"
-import { HighScores, Paused, Start, Title } from "./types/text.ijs"
+import {
+  GameOverPrompt,
+  GameOverScore,
+  GameOverTitle,
+  HighScores,
+  Paused,
+  Score,
+  ScoreLabel,
+  ServePrompt,
+  Start,
+  Title,
+} from "./types/text.ijs"
 
 const FPS_COLOR = "rgb(0, 255, 0)"
 
@@ -43,10 +58,17 @@ export default {
     Ball: [...Ball, gizmos],
     Brick: [Brick, gizmos],
     Paddle: [...Paddle, gizmos],
+    Heart,
     Title,
     Start,
     HighScores,
     Paused,
+    ScoreLabel,
+    Score,
+    ServePrompt,
+    GameOverTitle,
+    GameOverScore,
+    GameOverPrompt,
 
     /** The backdrop is drawn once, stretched to fill the screen. */
     Background: [
@@ -95,6 +117,7 @@ export default {
       images: {
         background: { url: "/images/background.png" },
         breakout: { url: "/images/breakout.png" },
+        hearts: { url: "/images/hearts.png" },
       },
     },
 
@@ -106,6 +129,7 @@ export default {
         pause: { url: "/sounds/pause.wav" },
         wallHit: { url: "/sounds/wall_hit.wav" },
         brickHit: { url: "/sounds/brick_hit_2.wav" },
+        hurt: { url: "/sounds/hurt.wav" },
       },
     },
 
@@ -122,10 +146,10 @@ export default {
       // whatever it last drew.
       updatesWhilePaused: true,
       layer: LAYER_OVERLAY,
-      position: v(WIDTH - 10, HEIGHT - 10, 0),
-      size: 8,
+      position: v(FPS_MARGIN, FPS_ALTITUDE, 0),
+      size: FPS_SIZE,
       color: FPS_COLOR,
-      textAlign: "right",
+      textAlign: "left",
     },
   },
 }
