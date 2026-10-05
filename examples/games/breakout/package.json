@@ -1,0 +1,32 @@
+{
+  "name": "@inglorious/breakout",
+  "version": "0.2.33",
+  "type": "module",
+  "private": true,
+  "description": "A Breakout clone, re-implemented with the Inglorious Engine.",
+  "author": "IceOnFire <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
+  "license": "MIT",
+  "scripts": {
+    "format": "prettier --write .",
+    "lint": "node scripts/check-order.mjs src && eslint .",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@inglorious/engine": "workspace:*",
+    "@inglorious/renderer-2d": "workspace:*",
+    "@inglorious/utils": "workspace:*"
+  },
+  "devDependencies": {
+    "@inglorious/babel-preset-inglorious-script": "workspace:*",
+    "@inglorious/eslint-config": "workspace:*",
+    "@inglorious/utils": "workspace:*",
+    "vite": "^8.2.2",
+    "vite-plugin-babel": "^1.7.3"
+  },
+  "packageManager": "pnpm@10.15.0",
+  "engines": {
+    "node": ">= 22"
+  }
+}

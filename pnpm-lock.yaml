@@ -1575,6 +1575,31 @@ importers:
         specifier: ^5.0.0
         version: 5.0.0(@types/node@26.4.1)(happy-dom@20.14.0)(jsdom@30.0.1)(vite@8.2.2(@types/node@26.4.1)(esbuild@0.28.2)(jiti@2.5.1)(sass@1.104.0)(terser@5.51.2)(yaml@2.9.0))
 
+  examples/games/breakout:
+    dependencies:
+      "@inglorious/engine":
+        specifier: workspace:*
+        version: link:../../../packages/engine
+      "@inglorious/renderer-2d":
+        specifier: workspace:*
+        version: link:../../../packages/renderer-2d
+      "@inglorious/utils":
+        specifier: workspace:*
+        version: link:../../../packages/utils
+    devDependencies:
+      "@inglorious/babel-preset-inglorious-script":
+        specifier: workspace:*
+        version: link:../../../packages/babel-preset-inglorious-script
+      "@inglorious/eslint-config":
+        specifier: workspace:*
+        version: link:../../../packages/eslint-config
+      vite:
+        specifier: ^8.2.2
+        version: 8.3.1(@types/node@26.4.1)(esbuild@0.28.2)(jiti@2.5.1)(sass@1.104.0)(terser@5.51.2)(yaml@2.9.0)
+      vite-plugin-babel:
+        specifier: ^1.7.3
+        version: 1.7.3(@babel/core@7.29.7(supports-color@7.2.0))(vite@8.3.1(@types/node@26.4.1)(esbuild@0.28.2)(jiti@2.5.1)(sass@1.104.0)(terser@5.51.2)(yaml@2.9.0))
+
   examples/games/flapper:
     dependencies:
       "@inglorious/engine":
@@ -18153,6 +18178,11 @@ snapshots:
     dependencies:
       "@babel/core": 7.29.7(supports-color@7.2.0)
       vite: 8.2.2(@types/node@26.4.1)(esbuild@0.28.2)(jiti@2.5.1)(sass@1.104.0)(terser@5.51.2)(yaml@2.9.0)
+
+  vite-plugin-babel@1.7.3(@babel/core@7.29.7(supports-color@7.2.0))(vite@8.3.1(@types/node@26.4.1)(esbuild@0.28.2)(jiti@2.5.1)(sass@1.104.0)(terser@5.51.2)(yaml@2.9.0)):
+    dependencies:
+      "@babel/core": 7.29.7(supports-color@7.2.0)
+      vite: 8.3.1(@types/node@26.4.1)(esbuild@0.28.2)(jiti@2.5.1)(sass@1.104.0)(terser@5.51.2)(yaml@2.9.0)
 
   vite-plugin-image-optimizer@2.0.3(sharp@0.35.4(@types/node@24.8.0))(svgo@4.1.0)(vite@8.2.2(@types/node@24.8.0)(esbuild@0.28.2)(jiti@2.5.1)(sass@1.104.0)(terser@5.51.2)(yaml@2.9.0)):
     dependencies:

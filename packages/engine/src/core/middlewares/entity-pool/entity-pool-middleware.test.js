@@ -81,3 +81,34 @@ test("it should also find collisions against the given entities", () => {
 
   expect(collision.id).toBe("pipe")
 })
+
+test("it should stop delivering to a pooled entity once it is recycled", () => {
+  const seen = []
+
+  const store = createStore({
+    types: {
+      Brick: {
+        brickHit(entity) {
+          seen.push(entity.id)
+        },
+      },
+    },
+    entities: { game: { type: "Game", devMode: false } },
+    middlewares: [entityPoolMiddleware()],
+    updateMode: "manual",
+  })
+
+  store.notify("spawn", { type: "Brick", id: "brick", position: v(0, 0, 0) })
+  store.update()
+  store.notify("despawn", {
+    type: "brick-entity",
+    id: "brick",
+    position: v(0, 0, 0),
+  })
+  store.update()
+
+  store.notify("#brick:brickHit")
+  store.update()
+
+  expect(seen).toStrictEqual([])
+})

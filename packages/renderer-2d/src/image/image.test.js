@@ -114,6 +114,59 @@ test("it should crop the image to a tile", () => {
   expect(drawArgs(calls)).toStrictEqual([0, 128, 70, 32, 0, 0, 70, 32])
 })
 
+// Artwork is not always one piece per cell: a sprite can be wider than the grid it
+// is cut from, or sit inside its cell with background around it. `frameSize` is how
+// much of the sheet to read, and `imageSize` is still the size it is drawn at.
+test("it should read only a part of a tile", () => {
+  const { calls, ctx } = createContext()
+
+  renderImage(
+    {
+      image: {
+        ...image,
+        tileSize: [32, 16],
+        frameSize: [64, 10],
+        imageSize: [64, 10],
+      },
+      sx: 1,
+      sy: 4,
+    },
+    ctx,
+    api,
+  )
+
+  expect(drawArgs(calls)).toStrictEqual([32, 64, 64, 10, 0, 0, 64, 10])
+})
+
+test("it should draw a partial frame at its image size, not the tile size", () => {
+  const { calls, ctx } = createContext()
+
+  renderImage(
+    {
+      image: {
+        id: "pipe",
+        tileSize: [32, 16],
+        frameSize: [64, 10],
+        imageSize: [64, 10],
+      },
+      sx: 1,
+      sy: 4,
+      anchor: [0, 0],
+    },
+    ctx,
+    api,
+  )
+
+  // Anchors count from the bottom, so a bottom-anchored box is drawn above the
+  // position, which is negative on the canvas. The offset is the height of the
+  // art rather than the height of the cell it was cut from.
+  expect(calls.find(([name]) => name === "translate")).toStrictEqual([
+    "translate",
+    -0,
+    -10,
+  ])
+})
+
 // Anchors count from the bottom of the tile, so a bottom-anchored tile is drawn
 // above the position, which is the negative half of the canvas.
 const ANCHORS = [
@@ -162,6 +215,25 @@ test("it should mirror the image on a single axis", () => {
     ["scale", -1, 1],
   ])
   expect(calls.box).toMatchObject({ left: 0, right: 70, top: -288, bottom: 0 })
+})
+
+test("it should draw at its native size by default", () => {
+  const { calls, ctx } = createContext()
+
+  renderImage({ image }, ctx, api)
+
+  expect(calls.filter(([name]) => name === "scale")).toStrictEqual([])
+})
+
+test("it should scale the tile about the anchored point", () => {
+  const { calls, ctx } = createContext()
+
+  renderImage({ image: { ...image, scale: 4 } }, ctx, api)
+
+  // Scaling happens after the anchor translate, so the anchored point stays put.
+  expect(calls.filter(([name]) => name === "scale")).toStrictEqual([
+    ["scale", 4, 4],
+  ])
 })
 
 test("it should draw at full opacity by default", () => {
@@ -214,4 +286,30 @@ test("an entity anchor should win over an image anchor", () => {
     top: 0,
     bottom: 288,
   })
+})
+
+test("a scaled tile should keep its anchored point on the position", () => {
+  // Scaling has to come before the anchor translate, or the tile is placed against
+  // its unscaled size and then scaled out from under the anchor.
+  const { calls, ctx } = createContext()
+
+  renderImage({ image: { ...image, scale: [2, 3], anchor: [0, 0] } }, ctx, api)
+
+  const scales = calls.filter(([name]) => name === "scale")
+  const translate = calls.find(([name]) => name === "translate")
+
+  expect(scales).toStrictEqual([["scale", 2, 3]])
+  // Scaled: a 70x288 tile at [0, 0] reaches 140 across and 864 up from the origin.
+  expect(calls.box).toMatchObject({ left: 0, right: 140, top: -864, bottom: 0 })
+  expect(translate).toBeDefined()
+})
+
+test("a scaled tile should scale each axis on its own", () => {
+  const { calls, ctx } = createContext()
+
+  renderImage({ image: { ...image, scale: [2, 3] } }, ctx, api)
+
+  expect(calls.filter(([name]) => name === "scale")).toStrictEqual([
+    ["scale", 2, 3],
+  ])
 })

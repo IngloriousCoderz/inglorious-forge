@@ -1,5 +1,29 @@
 const DEFAULT_VOLUME = 1
 
+/**
+ * Fetches and decodes one sound. A sound that is missing, or that the browser
+ * cannot decode, is reported and skipped: losing one effect is not worth refusing
+ * to start.
+ */
+async function load(context, cache, name, url) {
+  try {
+    const response = await fetch(url)
+
+    if (!response.ok) {
+      console.warn(`Sound '${name}' could not be fetched from ${url}`)
+      return
+    }
+
+    const audioBuffer = await context.decodeAudioData(
+      await response.arrayBuffer(),
+    )
+
+    cache.set(name, audioBuffer)
+  } catch (error) {
+    console.warn(`Sound '${name}' could not be loaded from ${url}`, error)
+  }
+}
+
 export function audio() {
   const audioContext = new (window.AudioContext || window.webkitAudioContext)()
 
@@ -24,12 +48,9 @@ export function audio() {
       const sounds = entity.sounds || {}
 
       await Promise.all(
-        Object.entries(sounds).map(async ([name, { url }]) => {
-          const response = await fetch(url)
-          const arrayBuffer = await response.arrayBuffer()
-          const audioBuffer = await audioContext.decodeAudioData(arrayBuffer)
-          audioBufferCache.set(name, audioBuffer)
-        }),
+        Object.entries(sounds).map(([name, { url }]) =>
+          load(audioContext, audioBufferCache, name, url),
+        ),
       )
     },
 

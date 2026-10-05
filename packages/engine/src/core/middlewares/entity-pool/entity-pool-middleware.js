@@ -37,14 +37,14 @@ export function entityPoolMiddleware() {
         case "spawn": {
           const entity = pools.acquire(event.payload)
           const type = store.getType(entity.type)
-          eventMap.addEntity(entity.id, type)
+          eventMap.addEntity(entity.id, type, entity.type)
           break
         }
 
         case "despawn": {
           const entity = pools.recycle(event.payload)
           const type = store.getType(entity.type)
-          eventMap.removeEntity(entity.id, type)
+          eventMap.removeEntity(entity.id, type, entity.type)
           break
         }
 
@@ -52,6 +52,10 @@ export function entityPoolMiddleware() {
           const entityIds = eventMap.getEntitiesForEvent(event.type)
           for (const id of entityIds) {
             const entity = pools.activeEntitiesById.get(id)
+            // An id can outlive its entity, if it was pooled away between the
+            // lookup and here. There is nothing to hand the event to.
+            if (!entity) continue
+
             const type = store.getType(entity.type)
             const handle = type[event.type]
             handle?.(entity, event.payload, api)
