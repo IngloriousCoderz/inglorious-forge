@@ -41,7 +41,7 @@ function spawning() {
       type.update?.(entity, dt, api)
 
       const activeBubbles = Object.values(api.getEntities()).filter(
-        (entity) => entity.type === "bubble",
+        (entity) => entity.type === "Bubble",
       )
 
       if (activeBubbles.length < MAX_BUBBLES) {
@@ -93,7 +93,7 @@ export default {
       {
         update(entity, dt, api) {
           const entities = api.getEntities()
-          entity.value = `Active bubbles: ${Object.values(entities).filter(({ type }) => type === "bubble").length}`
+          entity.value = `Active bubbles: ${Object.values(entities).filter(({ type }) => type === "Bubble").length}`
         },
       },
     ],

@@ -38,7 +38,7 @@ function spawning() {
     update(entity, dt, api) {
       type.update?.(entity, dt, api)
 
-      const activeBubbles = api.getEntityPoolsStats().bubble?.active || 0
+      const activeBubbles = api.getEntityPoolsStats().Bubble?.active || 0
 
       if (activeBubbles < MAX_BUBBLES) {
         api.notify("spawn", {
@@ -87,7 +87,7 @@ export default {
       { render: renderText },
       {
         update(entity, dt, api) {
-          const activeBubbles = api.getEntityPoolsStats().bubble?.active || 0
+          const activeBubbles = api.getEntityPoolsStats().Bubble?.active || 0
           entity.value = `Active bubbles: ${activeBubbles}`
         },
       },
@@ -98,7 +98,7 @@ export default {
       {
         update(entity, dt, api) {
           const inactiveBubbles =
-            api.getEntityPoolsStats().bubble?.inactive || 0
+            api.getEntityPoolsStats().Bubble?.inactive || 0
           entity.value = `Inactive bubbles: ${inactiveBubbles}`
         },
       },

@@ -28,7 +28,7 @@ export function renderingSystem(canvas) {
 
       // 2. Find active camera
       const camera = Object.values(entities).find(
-        (entity) => entity.type === "camera" && entity.isActive,
+        (entity) => entity.type === "Camera" && entity.isActive,
       )
 
       // 3. Render world entities with camera transform

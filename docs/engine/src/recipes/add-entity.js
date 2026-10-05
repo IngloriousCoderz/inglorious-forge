@@ -19,7 +19,7 @@ export default {
           const entities = api.getEntities()
           const characters = filter(
             entities,
-            (_, { type }) => type === "character",
+            (_, { type }) => type === "Character",
           )
           const ids = Object.keys(characters)
 
