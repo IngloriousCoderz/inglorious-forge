@@ -8,6 +8,17 @@ const state = () => engine.getState()
 const step = (n = 1) => {
   for (let i = 0; i < n; i++) engine.update(1 / 60)
 }
+// Sounds are watched at the point they are handled rather than at the point they are
+// asked for, so this records what the game actually reached for. Recording the
+// request instead would not catch a sound wired to the wrong state.
+const played = []
+const audioType = engine._store.getType("Audio")
+const playSound = audioType.soundPlay
+audioType.soundPlay = function sound(entity, name) {
+  played.push(name)
+  return playSound.call(this, entity, name)
+}
+
 const press = (code) => {
   engine._store.notify("keyboardKeyDown", code)
   engine._store.notify("keyboardKeyUp", code)
@@ -44,22 +55,18 @@ press("ArrowUp")
 check(state().game.menuItem === "high-scores", "the menu wraps upwards")
 press("ArrowDown")
 check(state().game.menuItem === "start", "and downwards")
-// The file is 302x129 but its last row and column are transparent, so the artwork
-// is 301x128 and has to be both sized and scaled as such or the dead edge is
-// stretched across the screen.
 check(
-  state().background.image.imageSize.join() === "301,128",
-  "the backdrop is drawn at its artwork size",
+  state().background.image.imageSize.join() === "302,129",
+  "the backdrop is drawn at its native size",
 )
 check(state().background.anchor.join() === "0,0", "anchored at the bottom left")
 const scale = state().background.image.scale
 check(scale[0] > 1 && scale[1] > 1, "the backdrop is stretched to fill")
-// Stretched from 301x128 onto 432x243, it has to cover the screen exactly or a
-// strip of the clear colour shows along an edge.
+// The original scales by one pixel less than the image on purpose, so this
+// overshoots the screen slightly rather than landing exactly on it.
 check(
-  Math.abs(301 * scale[0] - 432) < 1e-6 &&
-    Math.abs(128 * scale[1] - 243) < 1e-6,
-  "and covers the screen with no gap",
+  scale[0] === 432 / 301 && scale[1] === 243 / 128,
+  "and is scaled by the original's one-pixel-short factor",
 )
 
 // The altitudes are the original's y-down positions turned the right way up.
@@ -83,9 +90,17 @@ if (failures) process.exitCode = 1
 
 press("Enter")
 check(state().game.state === "play", "Enter leaves the start screen")
+check(played.at(-1) === "confirm", "Enter sounds the confirm")
 check(state().paddle !== undefined, "and the paddle arrives with it")
 check(state().paddle.position[0] === 184, "the paddle starts centred")
-check(state().paddle.position[1] === 16, "and floats above the floor")
+// The original puts the paddle's centre at VIRTUAL_HEIGHT - 32, an altitude of 32.
+check(state().paddle.position[1] === 32, "and floats a paddle's height clear")
+// In the original the menu is drawn by the start state, so leaving it takes the menu
+// away. Here the game adds and removes the entities instead, so they are gone from
+// the store rather than sitting in it with nothing to say.
+check(state().title === undefined, "the title leaves with the menu")
+check(state().start === undefined, "and so does START")
+check(state().highScores === undefined, "and HIGH SCORES")
 
 const hold = (code, frames = 30) => {
   engine._store.notify("keyboardKeyDown", code)
@@ -142,7 +157,9 @@ check(state().paused.value === "PAUSED", "PAUSED is shown while paused")
 
 press("Space")
 check(state().game.state === "play", "space resumes")
-check(state().paused.value === "", "and PAUSED goes away")
+check(state().paused === undefined, "and PAUSED goes away with the pause")
+// The original plays its pause sound both pausing and resuming.
+check(played.at(-1) === "pause", "resuming sounds the pause again")
 
 console.log(
   `\n${failures === 0 ? "all checks passed" : `${failures} check(s) failed`}`,

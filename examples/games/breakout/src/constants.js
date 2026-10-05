@@ -44,17 +44,13 @@ const BACKGROUND_Y = 1
 const BACKGROUND_PIXEL_WIDTH = 302
 const BACKGROUND_PIXEL_HEIGHT = 129
 
-// Its last row and last column are fully transparent, so the artwork is one pixel
-// smaller on each axis than the file claims. Both the size and the scale have to
-// account for that, or the transparent edge is stretched across the screen and its
-// floor colour is smeared into the bar that was meant to be drawn underneath it.
-export const BACKGROUND_SIZE = [
-  BACKGROUND_PIXEL_WIDTH - ONE,
-  BACKGROUND_PIXEL_HEIGHT - ONE,
-]
+// The original draws it at native size and scales by one pixel less than that, which
+// overshoots the screen slightly on each axis. Taken as written rather than tidied
+// up, so the backdrop lands where the original's does.
+export const BACKGROUND_SIZE = [BACKGROUND_PIXEL_WIDTH, BACKGROUND_PIXEL_HEIGHT]
 export const BACKGROUND_SCALE = [
-  WIDTH / BACKGROUND_SIZE[BACKGROUND_X],
-  HEIGHT / BACKGROUND_SIZE[BACKGROUND_Y],
+  WIDTH / (BACKGROUND_SIZE[BACKGROUND_X] - ONE),
+  HEIGHT / (BACKGROUND_SIZE[BACKGROUND_Y] - ONE),
 ]
 
 /**
@@ -72,9 +68,13 @@ export const PADDLE_WIDTH = 64
 export const PADDLE_HEIGHT = 16
 export const PADDLE_SPEED = 200
 export const PADDLE_START_X = WIDTH / HALF - PADDLE_WIDTH / HALF
-// The original sits the paddle a paddle's own height above the floor: its top edge
-// is at VIRTUAL_HEIGHT - 32, which is an altitude of 32, leaving 16 below it.
-export const PADDLE_ALTITUDE = PADDLE_HEIGHT
+// The original puts the paddle's centre at VIRTUAL_HEIGHT - 32, which is an altitude
+// of 32, leaving a full paddle height of floor beneath it.
+const PADDLES_HIGH = 2
+
+const FLOOR_CLEARANCE = PADDLES_HIGH * PADDLE_HEIGHT
+
+export const PADDLE_ALTITUDE = FLOOR_CLEARANCE
 export const LEFT_EDGE = 0
 export const BOTTOM_EDGE = 0
 
@@ -113,9 +113,19 @@ export const PADDLE_TILE = [PADDLE_TILE_X, PADDLE_TILE_Y]
 export const PADDLE_FRAME_SIZE = [PADDLE_WIDTH, PADDLE_HEIGHT]
 export const ATLAS_ID = "breakout"
 
+// The sounds the original plays, named as it registers them. Moving between menu
+// items reuses the paddle hit rather than a select sound of its own.
+export const SOUND_PADDLE_HIT = "paddleHit"
+export const SOUND_CONFIRM = "confirm"
+export const SOUND_PAUSE = "pause"
+
 const HALF_HEIGHT = HEIGHT / HALF
 
-export const PAUSED_ALTITUDE = HALF_HEIGHT - FONT_SIZE_MEDIUM
+// The original centres 'PAUSED' on VIRTUAL_HEIGHT / 2 - 16 with printf, which
+// centres a block vertically. Text here hangs off its top edge, so it has to drop by
+// half a font to land where the original's does.
+export const PAUSED_ALTITUDE =
+  HEIGHT - (HALF_HEIGHT - FONT_SIZE_MEDIUM) - FONT_SIZE_LARGE / HALF
 
 export const LAYER_BACKGROUND = -1
 export const LAYER_PADDLE = 1

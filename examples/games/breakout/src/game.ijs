@@ -14,26 +14,21 @@ import {
   FONT_SIZE_SMALL,
   GAME_STATE,
   HEIGHT,
-  HIGH_SCORES_ALTITUDE,
   LAYER_BACKGROUND,
   LAYER_OVERLAY,
-  LAYER_TEXT,
   LEFT_EDGE,
   MENU_START,
   NO_DEPTH,
   NO_OFFSET,
   PAUSE,
-  PAUSED_ALTITUDE,
   PRESS,
   PRESS_MENU_DOWN,
   PRESS_MENU_UP,
-  START_ALTITUDE,
-  TITLE_ALTITUDE,
   WIDTH,
 } from "./constants.js"
 import { Game } from "./types/game.ijs"
 import { Paddle } from "./types/paddle.ijs"
-import { HighScores, Paused, positionFor, Start, Title } from "./types/text.ijs"
+import { HighScores, Paused, Start, Title } from "./types/text.ijs"
 
 const BOTTOM_LEFT = [LEFT_EDGE, BOTTOM_EDGE]
 const FPS_MARGIN = 10
@@ -122,28 +117,6 @@ export default {
       layer: LAYER_BACKGROUND,
       position: v(NO_OFFSET, NO_OFFSET, NO_DEPTH),
       anchor: BOTTOM_LEFT,
-    },
-
-    paused: {
-      type: "Paused",
-      layer: LAYER_TEXT,
-      position: positionFor(PAUSED_ALTITUDE),
-    },
-
-    title: {
-      type: "Title",
-      layer: LAYER_TEXT,
-      position: positionFor(TITLE_ALTITUDE),
-    },
-    start: {
-      type: "Start",
-      layer: LAYER_TEXT,
-      position: positionFor(START_ALTITUDE),
-    },
-    highScores: {
-      type: "HighScores",
-      layer: LAYER_TEXT,
-      position: positionFor(HIGH_SCORES_ALTITUDE),
     },
 
     fps: {

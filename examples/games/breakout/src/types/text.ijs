@@ -7,11 +7,11 @@ import {
   FONT_FAMILY,
   FONT_SIZE_LARGE,
   FONT_SIZE_MEDIUM,
-  GAME_STATE,
   HIGH_SCORES_ALTITUDE,
   MENU_HIGH_SCORES,
   MENU_START,
   NO_DEPTH,
+  PAUSED_ALTITUDE,
   START_ALTITUDE,
   TITLE_ALTITUDE,
   WIDTH,
@@ -24,6 +24,10 @@ const CENTERED = 0.5
 /**
  * A line of text that reads the game entity each frame, so the menu can change what
  * it says and which item is picked out without anything reaching into the entity.
+ *
+ * Nothing here checks whether the game is on the start screen: the lines are added
+ * and removed with the state that says them, so an existing line is always one that
+ * has something to say.
  */
 function line(text, altitude, size = FONT_SIZE_LARGE, selected) {
   return {
@@ -56,21 +60,10 @@ export const HighScores = line(
 )
 
 /**
- * "PAUSED" is only a thing while the game is paused, so it reads as an ordinary
- * line of text that happens to show only in that state.
+ * "PAUSED" only ever exists while the game is paused, because it is added and removed
+ * with that state, so it does not have to check for itself.
  */
-export const Paused = {
-  render: renderText,
-
-  update(entity, dt, api) {
-    const game = api.getEntity("game")
-
-    entity.value = game.state === GAME_STATE.paused ? "PAUSED" : ""
-    entity.size = FONT_SIZE_LARGE
-    entity.font = FONT_FAMILY
-    entity.textAlign = "center"
-  },
-}
+export const Paused = line("PAUSED", PAUSED_ALTITUDE, FONT_SIZE_LARGE)
 
 /** Where a line of text sits: centred on the screen at the given altitude. */
 export function positionFor(altitude) {
