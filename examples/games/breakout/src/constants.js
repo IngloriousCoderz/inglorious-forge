@@ -105,6 +105,10 @@ export const MENU_HIGH_SCORES = MENU_ITEMS[1]
 
 // The keys, as the behaviours name the events they answer to.
 export const PRESS = "press"
+// Escape quits, and it does so from every state rather than from the play alone: the
+// original checks it in all four, so a way out is never behind a particular screen. The
+// engine turns this into the loop stopping, so there is no state that has to handle it.
+export const QUIT = "quit"
 export const PRESS_MENU_UP = "pressMenuUp"
 export const PRESS_MENU_DOWN = "pressMenuDown"
 export const TOGGLE_PAUSE = "togglePause"

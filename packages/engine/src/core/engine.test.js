@@ -51,6 +51,7 @@ test("it should compose a game type with the built-in game behavior", () => {
     "birdHit",
     "keyboardKeyUp",
     "pause",
+    "quit",
     "resume",
   ])
 })
@@ -66,6 +67,7 @@ test("it should compose a game type declared as a decorator", () => {
     "create",
     "keyboardKeyUp",
     "pause",
+    "quit",
     "resume",
   ])
 })
@@ -101,4 +103,47 @@ test("it should read the current state", () => {
   const engine = new Engine(config({ score: 0 }))
 
   expect(engine.getState().game.score).toBe(0)
+})
+
+test("it should stop when a game asks to quit", () => {
+  const engine = new Engine(config())
+
+  engine._store.notify("quit")
+  engine.update(1 / 60)
+
+  expect(engine.getState().game.quit).toBe(true)
+})
+
+test("it should stop the loop on the frame a quit is answered", () => {
+  const engine = new Engine(config())
+  engine.stop = vi.fn()
+
+  engine._store.notify("quit")
+  engine.update(1 / 60)
+
+  expect(engine.stop).toHaveBeenCalled()
+})
+
+test("it should not move the world after a quit has been answered", () => {
+  const update = vi.fn()
+  const engine = new Engine({ ...config(), systems: [{ update }] })
+
+  engine._store.notify("quit")
+  engine.update(1 / 60)
+  update.mockClear()
+
+  engine.update(1 / 60)
+  engine.update(1 / 60)
+
+  expect(update).not.toHaveBeenCalled()
+})
+
+test("it should keep running when nobody has asked to quit", () => {
+  const stop = vi.fn()
+  const engine = new Engine(config())
+
+  engine.stop = stop
+  engine.update(1 / 60)
+
+  expect(stop).not.toHaveBeenCalled()
 })

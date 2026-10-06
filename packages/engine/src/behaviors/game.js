@@ -14,6 +14,14 @@ export function game() {
       entity.paused = false
     },
 
+    // Nothing halts on this one, because the loop is not the store's to halt. The flag
+    // is set here and the engine reads it after the frame, in the same place it reads
+    // `devMode` -- which is what lets any game offer a way out without reaching for the
+    // engine itself, and keeps a behaviour testable against a bare store.
+    quit(entity) {
+      entity.quit = true
+    },
+
     keyboardKeyUp(entity, code) {
       switch (code) {
         case "KeyC":

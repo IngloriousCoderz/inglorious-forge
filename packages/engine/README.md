@@ -27,6 +27,7 @@ This will set up a complete project with a development server ready to go.
 - **Renderer Agnostic**: The engine is headless. You can use any rendering technology you like, from Canvas2D and HTML to React components.
 - **Zero Build Step Option**: Write plain JavaScript and run it directly in the browser. No complex build configurations required.
 - **Pausing without permission checks**: `notify("pause")` halts the world, so nothing that moves has to ask whether it is allowed to.
+- **A way out that works anywhere**: `notify("quit")` ends the game, from any state, without a handler of its own.
 - **Sprites in one call**: `crop()` points an entity at a frame of a sheet without you having to remember which half of the crop lives where. See [renderer-2d](https://github.com/iceonfire/inglorious-forge/tree/main/packages/renderer-2d).
 - **Screens that share a world**: `scenes()` puts a state's entities up and takes the last state's down, leaving whatever the two have in common standing.
 - **A mistyped type is an error**: the engine refuses a configuration whose entity names a type nothing declared, and says which type was nearly meant.

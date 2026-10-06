@@ -297,6 +297,31 @@ const linesFit = (screen, where) => {
 }
 linesFit(hud, "on the serve")
 
+// Escape quits, and it quits from any state rather than from the play alone -- the
+// original checks it in all four of its states, so a way out is never behind a particular
+// screen. Quitting is the engine's own: the game only announces it.
+check(state().game.quit === undefined, "nothing has asked to quit yet")
+
+press("Escape")
+check(state().game.quit === true, "Escape asks the engine to quit")
+
+// And it is the loop that stops rather than the world being halted, so the game is still
+// in the state it was in.
+// The flag is on the game entity; `paused` on its own is the overlay that says PAUSED.
+check(
+  state().game.state === "play" && state().game.paused === false,
+  "leaving the game exactly where it was, and not paused",
+)
+
+// Quitting stops the loop rather than halting the world, so the frame the quit is
+// processed on still runs to its end -- and after it, nothing is asked to move again.
+const frozenAt = state().ball.position.join()
+step(60)
+check(
+  state().ball.position.join() === frozenAt,
+  `and the world is never updated again (${frozenAt})`,
+)
+
 // Lives and scoring get a game of their own, because playing one out to its end means
 // waiting for the ball to fall three times.
 const lifeEngine = new Engine(gameConfig)

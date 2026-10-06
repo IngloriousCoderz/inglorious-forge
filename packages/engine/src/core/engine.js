@@ -112,6 +112,9 @@ export class Engine {
 
   /**
    * Stops the game engine, halting the loop and notifying the store.
+   *
+   * A game does this by notifying `quit`, which the `game` behaviour turns into a flag
+   * the engine reads after the frame.
    */
   stop() {
     this._store.notify("stop")
@@ -132,9 +135,28 @@ export class Engine {
    * @param {number} dt - Delta time since the last update in milliseconds.
    */
   update(dt) {
+    // A game that has asked to quit is not updated again, and the loop that would have
+    // asked is cancelled on the way past. Checking before the world moves is what makes
+    // quitting mean the game is finished, rather than leaving the engine running a frame
+    // behind a loop that has stopped asking.
+    if (this._store.getState().game?.quit) {
+      this.stop()
+
+      return
+    }
+
     this._store.notify("update", dt)
     const processedEvents = this._store.update()
     const entities = this._store.getState()
+
+    // And a quit answered during that update -- which is how a key press reaches one --
+    // ends the loop on the spot rather than a frame later. The frame that answered it
+    // still ran to its end: a quit is given between frames, not in the middle of one.
+    if (entities.game?.quit) {
+      this.stop()
+
+      return
+    }
 
     // Check for devMode changes and connect/disconnect dev tools accordingly.
     const newDevMode = entities.game?.devMode

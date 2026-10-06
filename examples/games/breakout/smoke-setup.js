@@ -22,6 +22,10 @@ globalThis.window = {
   addEventListener: noop,
   removeEventListener: noop,
   devicePixelRatio: 1,
+  // Quitting the game stops the loop, and the loop is the browser's. These are here so a
+  // test can press Escape without the harness standing in for a browser that is not there.
+  cancelAnimationFrame: noop,
+  requestAnimationFrame: noop,
   location: { host: "localhost:3000", hostname: "localhost", port: "3000" },
 }
 globalThis.document = {

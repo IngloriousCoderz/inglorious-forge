@@ -22,6 +22,7 @@ import {
   PRESS,
   PRESS_MENU_DOWN,
   PRESS_MENU_UP,
+  QUIT,
   TOGGLE_PAUSE,
   WIDTH,
 } from "./constants.js"
@@ -97,6 +98,7 @@ export default {
     // paddle's movement and the game's menu keys can share one keyboard.
     ...createControlEntities({
       Enter: PRESS,
+      Escape: QUIT,
       Space: TOGGLE_PAUSE,
       ArrowUp: PRESS_MENU_UP,
       ArrowDown: PRESS_MENU_DOWN,

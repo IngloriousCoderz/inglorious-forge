@@ -82,6 +82,23 @@ export function rendering(canvas) {
       canvas.addEventListener("touchend", _onTouchEnd)
     },
 
+    // A game that has quit is not being shown any more.
+    //
+    // This cannot be a rule in the render: the render draws from the state as it stood
+    // before the frame's events, so a quit given during that frame is answered too late
+    // to keep it out. Answering it here is after the last draw, which is the only moment
+    // from which a clear sticks.
+    //
+    // Without it the canvas keeps the last frame of a finished game, which is what
+    // stopping the loop alone leaves, and is indistinguishable from a pause.
+    quit(entity, event, api) {
+      const game = api.getEntity("game")
+      const [gameWidth, gameHeight] = game.size
+
+      ctx.fillStyle = game.backgroundColor || "lightgrey"
+      ctx.fillRect(ORIGIN, ORIGIN, gameWidth, gameHeight)
+    },
+
     destroy() {
       if (_onMouseMove) {
         canvas.removeEventListener("mousemove", _onMouseMove)
