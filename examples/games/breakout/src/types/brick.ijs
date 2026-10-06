@@ -36,9 +36,9 @@ import {
  * That leaves the hardest brick taking ten hits and the plainest one taking a single hit,
  * which is what makes a level's bricks worth choosing.
  *
- * The hit is announced rather than taken as a message, so that whatever scores the hit
- * does not have to be the thing that found the collision. It carries the hits the brick had
- * left when it was hit, because that is what it was worth at the time.
+ * The hit is announced rather than taken as a message, so that whatever scores the hit does
+ * not have to be the thing that found the collision. It carries the hits the brick had left
+ * when it was hit, because that is what it was worth at the time.
  */
 export const Brick = {
   render: renderImage,

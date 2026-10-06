@@ -2,7 +2,9 @@ import "./smoke-setup.js"
 
 import { Engine } from "@inglorious/engine/core/engine.js"
 
+import { brickColourOf, brickTierOf } from "./src/atlas.js"
 import {
+  BALL_MAX_VERTICAL_SPEED,
   BRICK_COLORS,
   LAYER_BRICK,
   LAYER_PADDLE,
@@ -15,7 +17,6 @@ import {
   PARTICLE_SPREAD,
 } from "./src/constants.js"
 import gameConfig from "./src/game.ijs"
-import { brickColourOf, brickTierOf } from "./src/atlas.js"
 import { createLevel } from "./src/levelmaker.ijs"
 
 gameConfig.entities.game.devMode = false
@@ -310,6 +311,169 @@ const linesFit = (screen, where) => {
   }
 }
 linesFit(hud, "on the serve")
+
+// Clearing a level ends it, and the next one starts afresh.
+const levelEngine = new Engine(gameConfig)
+const levelState = () => levelEngine.getState()
+const levelStep = (n = 1) => {
+  for (let i = 0; i < n; i++) levelEngine.update(1 / 60)
+}
+const levelPress = (code) => {
+  levelEngine._store.notify("keyboardKeyDown", code)
+  levelEngine._store.notify("keyboardKeyUp", code)
+  levelStep(2)
+}
+const levelSounds = []
+const levelAudio = levelEngine._store.getType("Audio")
+const levelPlaySound = levelAudio.soundPlay
+levelAudio.soundPlay = function sound(entity, name) {
+  levelSounds.push(name)
+  return levelPlaySound.call(this, entity, name)
+}
+
+levelStep(4)
+levelPress("Enter")
+
+check(levelState().game.level === 1, "a new game is on the first level")
+check(levelState().level.value === "Level 1", "and the serve says so")
+
+levelPress("Enter")
+check(levelState().game.state === "play", "the serve is answered")
+
+// Every brick but the last is taken away, and the last one is hit for real. A brick that
+// is only knocked back must not finish the level.
+const levelBricks = Object.keys(levelState()).filter((id) =>
+  id.startsWith("brick"),
+)
+const survivor = levelBricks[0]
+
+for (const id of levelBricks.slice(1)) {
+  levelEngine._store.notify("remove", id)
+}
+
+// Those removals announce themselves, so the level counts itself down to the one brick
+// left standing without being told to.
+levelStep(1)
+check(levelState().game.bricksLeft === 1, "and the level counts what is left")
+check(
+  levelState().game.state === "play",
+  "and the level is not finished while a brick is still standing",
+)
+
+// The last one, knocked down with its own hit.
+levelState()[survivor].hp = 1
+const [sx, sy] = levelState()[survivor].position
+levelState().ball.position = [sx + 12, sy - 4, 0]
+levelState().ball.velocity = [0, 0, 0]
+levelStep(2)
+
+check(levelState()[survivor] === undefined, "the last brick is gone")
+check(
+  levelState().game.state === "victory",
+  `and the level is finished (${levelState().game.state})`,
+)
+check(levelSounds.includes("victory"), "having sounded the victory")
+check(
+  levelState().victoryTitle.value === "Level 1 complete!",
+  "the victory says so",
+)
+check(
+  levelState().victoryPrompt.value === "Press Enter to serve!",
+  "and how to carry on",
+)
+check(
+  levelState().score !== undefined && levelState().heart0 !== undefined,
+  "with the score and the lives still standing under it",
+)
+check(
+  levelState().paused === undefined && levelState().servePrompt === undefined,
+  "but none of the serve's own lines",
+)
+
+const firstLevelBricks = levelBricks.length
+levelPress("Enter")
+
+check(levelState().game.state === "serve", "Enter starts the next level")
+check(levelState().game.level === 2, "and it is the second")
+check(levelState().level.value === "Level 2", "which the serve says")
+check(
+  levelState().victoryTitle === undefined,
+  "with the victory screen taken away",
+)
+const secondLevelBricks = Object.keys(levelState()).filter((id) =>
+  id.startsWith("brick"),
+)
+// Every brick of the first level had been knocked out, so standing the same ones back up
+// would mean the second level is the first one again.
+check(
+  secondLevelBricks.length > 0 &&
+    secondLevelBricks.every((id) => !levelBricks.includes(id)),
+  `and a level of its own standing up (${secondLevelBricks.length})`,
+)
+check(
+  secondLevelBricks.every((id) => id.startsWith("brick2-")),
+  "whose bricks are named for the level they belong to",
+)
+
+// A new game rolls a new level rather than beginning again on the one it left behind.
+const beforeNewGame = secondLevelBricks[0]
+levelEngine._store.notify("quit")
+const fresh = new Engine(gameConfig)
+const freshState = () => fresh.getState()
+const freshStep = (n = 1) => {
+  for (let i = 0; i < n; i++) fresh.update(1 / 60)
+}
+freshStep(4)
+fresh._store.notify("keyboardKeyDown", "Enter")
+fresh._store.notify("keyboardKeyUp", "Enter")
+freshStep(2)
+fresh._store.notify("keyboardKeyDown", "Enter")
+fresh._store.notify("keyboardKeyUp", "Enter")
+freshStep(2)
+check(freshState().game.level === 1, "a new game is back on the first level")
+check(
+  Object.keys(freshState()).some((id) => id.startsWith("brick1-")),
+  "with a level rolled for it",
+)
+
+// The ball quickens a little on every brick hit, up to a point.
+const capped = new Engine(gameConfig)
+const cappedState = () => capped.getState()
+const cappedStep = (n = 1) => {
+  for (let i = 0; i < n; i++) capped.update(1 / 60)
+}
+const cappedPress = (code) => {
+  capped._store.notify("keyboardKeyDown", code)
+  capped._store.notify("keyboardKeyUp", code)
+  cappedStep(2)
+}
+cappedStep(4)
+cappedPress("Enter")
+cappedPress("Enter")
+const cappedBricks = Object.keys(cappedState()).filter((id) =>
+  id.startsWith("brick"),
+)
+const cappedBrick = cappedBricks[0]
+const [cx, cy] = cappedState()[cappedBrick].position
+cappedState()[cappedBrick].hp = 10
+
+// Well over the ceiling, so a hit has nothing left to quicken.
+cappedState().ball.position = [cx + 12, cy - 4, 0]
+cappedState().ball.velocity = [0, 400, 0]
+cappedStep(1)
+check(
+  cappedState().ball.velocity[1] <= BALL_MAX_VERTICAL_SPEED,
+  `a ball already at the ceiling does not quicken (${cappedState().ball.velocity[1].toFixed(0)})`,
+)
+
+// Under it, so a hit still does.
+cappedState().ball.position = [cx + 12, cy - 4, 0]
+cappedState().ball.velocity = [0, 100, 0]
+cappedStep(1)
+check(
+  Math.abs(cappedState().ball.velocity[1]) > 100,
+  `and one under it still does (${cappedState().ball.velocity[1].toFixed(1)})`,
+)
 
 // Escape quits, and it quits from any state rather than from the play alone -- the
 // original checks it in all four of its states, so a way out is never behind a particular

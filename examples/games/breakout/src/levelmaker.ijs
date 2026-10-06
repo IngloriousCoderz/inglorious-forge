@@ -133,7 +133,7 @@ export function createLevel(level, layer) {
         // Named for where the brick would stand rather than for how many have been made
         // so far, so that a row which skips leaves a gap in the names instead of
         // colliding with the row above it.
-        id: brickId(row, column, columns),
+        id: brickId(level, row, column, columns),
         type: "Brick",
         layer,
         // A solid row was given a colour and a tier of its own before the alternate pair
@@ -162,8 +162,10 @@ export function createLevel(level, layer) {
  * The name a brick stands under, counting positions across the whole level.
  *
  * Counting positions rather than bricks made is what keeps two bricks in different rows
- * from taking the same name when a row has left some out.
+ * from taking the same name when a row has left some out. The level is in the name as
+ * well, because a brick belongs to the level it was rolled for and two levels of the
+ * same size would otherwise hand out the same names for entirely different bricks.
  */
-function brickId(row, column, columns) {
-  return `${BRICK_ID_PREFIX}${row * columns + column + FIRST_BRICK}`
+function brickId(level, row, column, columns) {
+  return `${BRICK_ID_PREFIX}${level}-${row * columns + column + FIRST_BRICK}`
 }

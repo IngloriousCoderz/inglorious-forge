@@ -5,8 +5,9 @@ import {
   createGameOverScene,
   createPausedEntity,
   createScoreEntities,
-  createServePromptEntity,
+  createServeEntities,
   createStartScene,
+  createVictoryScene,
 } from "./text-entities.ijs"
 
 /**
@@ -25,17 +26,22 @@ import {
  * itself whether it has anything to say.
  */
 export const SCENES = {
-  // A new game, so the level the last one was played on is thrown away and a fresh one
-  // will be made when this state hands over to the serve.
+  // A new game. The level it starts from is put back to the first, and the level the last
+  // game rolled is forgotten rather than kept -- otherwise a game that ended on the first
+  // level would begin again on the level it left behind, bricks and all.
   start: (entity) => {
-    entity.bricks = null
+    entity.level = FIRST_LEVEL
+    entity.bricksLevel = NO_LEVEL
 
     return createStartScene()
   },
 
-  serve: (entity) => [...createGameScene(entity), createServePromptEntity()],
+  serve: (entity) => [...createGameScene(entity), ...createServeEntities()],
 
   play: (entity) => [...createGameScene(entity), createPausedEntity()],
+
+  // The same field as the serve, with the bricks gone and two lines saying so.
+  victory: (entity) => [...createGameScene(entity), ...createVictoryScene()],
 
   gameOver: () => createGameOverScene(),
 }
@@ -52,7 +58,24 @@ export const SCENES = {
  * what decides how far along the colours and the tiers a level may reach.
  */
 function createGameScene(entity) {
-  entity.bricks ??= createLevel(entity.level, LAYER_BRICK)
+  // The level is remade whenever the one it was made for is not the level being played,
+  // which is what finishing a level comes to. Rerolling it on every state instead would
+  // quietly put back every brick knocked out of the level before.
+  if (entity.bricksLevel !== entity.level) {
+    entity.bricks = createLevel(entity.level, LAYER_BRICK)
+    entity.bricksLevel = entity.level
+
+    // How many are standing. Counted here rather than asked for when a brick goes,
+    // because a change made during a pass of events is not visible until that pass has
+    // finished -- so a handler that asked would still see the brick it was just told
+    // about, along with every brick gone before it in the same pass.
+    entity.bricksLeft = entity.bricks.length
+  }
 
   return [...createPlayScene(entity.bricks), ...createScoreEntities()]
 }
+
+const FIRST_LEVEL = 1
+
+// Standing in for a level whose bricks have not been made, or have been forgotten.
+const NO_LEVEL = null

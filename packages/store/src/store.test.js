@@ -290,3 +290,56 @@ test("it should keep handling other events while halted", () => {
 
   expect(store.getState().game.presses).toBe(1)
 })
+
+test("it should tell everything when an entity leaves, not just the thing itself", () => {
+  // create and destroy are a thing's own lifecycle and reach only the thing itself. A
+  // level counting down the bricks it rolled needs to hear about the ones going, and there
+  // is no other way to be told.
+  const heard = []
+  const config = {
+    types: {
+      Game: {
+        remove(entity, id) {
+          heard.push(id)
+        },
+      },
+      Brick: {},
+    },
+    entities: {
+      game: { type: "Game" },
+      brick1: { type: "Brick" },
+      brick2: { type: "Brick" },
+    },
+  }
+  const store = createStore(config)
+
+  store.notify("remove", "brick1")
+  store.update()
+
+  expect(heard).toStrictEqual(["brick1"])
+  expect(store.getState().brick1).toBeUndefined()
+})
+
+test("it should say when an entity joins as well", () => {
+  const heard = []
+  const config = {
+    types: {
+      Game: {
+        add(entity, id) {
+          heard.push(id)
+        },
+      },
+      Brick: {},
+    },
+    entities: { game: { type: "Game" } },
+  }
+  const store = createStore(config)
+
+  store.notify("add", { id: "brick1", type: "Brick" })
+  store.update()
+
+  // A payload carries the least that can be had. A removal needs only the id, because
+  // everything else can still be looked up by it; an addition carries the entity itself,
+  // because there is nothing yet to look it up by.
+  expect(heard).toStrictEqual([{ id: "brick1", type: "Brick" }])
+})

@@ -51,6 +51,10 @@ export const PAUSED_PLACEMENT = printf(HEIGHT / 2 - 16)
 
 // The serve prompt sits across the middle of the field, over the bricks it is waiting on.
 export const SERVE_PLACEMENT = printf(HEIGHT / 2)
+export const LEVEL_PLACEMENT = printf(HEIGHT / 3)
+
+export const VICTORY_TITLE_PLACEMENT = printf(HEIGHT / 4)
+export const VICTORY_PROMPT_PLACEMENT = printf(HEIGHT / 2)
 
 // The game over screen is three lines: a title high up, the score across the middle and
 // a prompt near the bottom, each a third of the way down the screen from the last.
@@ -145,6 +149,27 @@ export const Score = reads(
 export const ServePrompt = line(
   "Press Enter to serve!",
   SERVE_PLACEMENT,
+  FONT_MEDIUM,
+)
+
+// The level being served, which the original puts where the title goes -- there is no
+// title standing while a level is being waited out.
+export const Level = reads(
+  ({ level }) => `Level ${level}`,
+  LEVEL_PLACEMENT,
+  FONT_LARGE,
+)
+
+// And the two lines that say a level is done: the title higher up the screen than anything
+// else on it, and the prompt across the middle.
+export const VictoryTitle = reads(
+  ({ level }) => `Level ${level} complete!`,
+  VICTORY_TITLE_PLACEMENT,
+  FONT_LARGE,
+)
+export const VictoryPrompt = line(
+  "Press Enter to serve!",
+  VICTORY_PROMPT_PLACEMENT,
   FONT_MEDIUM,
 )
 

@@ -11,12 +11,13 @@ import {
   SOUND_HURT,
   SOUND_PADDLE_HIT,
   SOUND_PAUSE,
+  SOUND_VICTORY,
 } from "../constants.js"
 
 /**
- * Four states now: the start screen, the wait before each serve, the play itself, and
- * the end. Pausing is still a flag on the play state rather than a state of its own,
- * which is what the original does.
+ * Five states now: the start screen, the wait before each serve, the play itself, the end
+ * of a level, and the end of the game. Pausing is still a flag on the play state rather
+ * than a state of its own, which is what the original does.
  *
  * This says only when the machine moves. What each state is made of lives in `scene.ijs`,
  * which is announced to this machine's listener when it lands somewhere.
@@ -79,6 +80,25 @@ export const Game = fsm({
         brickColourOf(hp) * BRICK_COLOR_SCORE
     },
 
+    // The last brick to go finishes the level. `remove` is announced to everything, so a
+    // brick that is only knocked back is not counted -- it has not gone anywhere.
+    //
+    // Everything leaving the world is announced, and a good deal leaves it on the way
+    // between two screens, so what went is asked about before it is counted. The entity
+    // still reads as what it was, because the state is only published once the pass is
+    // finished.
+    remove(entity, id, api) {
+      if (api.getEntity(id)?.type !== BRICK) return
+
+      entity.bricksLeft -= ONE_BRICK
+
+      if (entity.bricksLeft > BRICKS_STILL_STANDING) return
+
+      api.notify("soundPlay", SOUND_VICTORY)
+
+      entity.state = GAME_STATE.victory
+    },
+
     // The ball falling past the floor costs a life. Whether that ends the game or merely
     // means another serve is the game's decision, not the ball's, which is why the ball
     // only says what happened.
@@ -92,12 +112,31 @@ export const Game = fsm({
     },
   },
 
+  // The level is finished. It stands on the same field the serve did, with the paddle
+  // where the last life left it, and answers Enter by starting the next level -- which is
+  // a new level of bricks, and the same score and the same lives.
+  [GAME_STATE.victory]: {
+    press(entity) {
+      entity.level += NEXT_LEVEL
+
+      entity.state = GAME_STATE.serve
+    },
+  },
+
   [GAME_STATE.gameOver]: {
     press(entity) {
       entity.state = GAME_STATE.start
     },
   },
 })
+
+// What has to have gone for the level to be over.
+const BRICK = "Brick"
+
+const ONE_BRICK = 1
+const BRICKS_STILL_STANDING = 0
+
+const NEXT_LEVEL = 1
 
 /** The menu wraps, so pressing up from the first item lands on the last. */
 function chooseMenu(entity, step) {

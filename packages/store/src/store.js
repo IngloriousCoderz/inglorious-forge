@@ -147,6 +147,13 @@ export function createStore({
      * deep copy produced by `structuredClone` (full clone). The current state is not
      * modified, and only becomes the new state once this function returns.
      *
+     * A change made by a handler is not visible to the next handler in the same pass:
+     * `getState` still returns the state as it was before the pass began. This is on
+     * purpose -- every event in the pass sees one consistent world, rather than some
+     * changes having landed and others not -- and it means a handler that asks what is
+     * left is asking about the past. Anything reacting to a change should be told the
+     * change rather than go looking for it.
+     *
      * @param {Entities} draft - The draft to apply the queued events to.
      * @returns {void}
      */
@@ -167,14 +174,29 @@ export function createStore({
         }
 
         // Handle special system events
+        // `add` and `remove` change the world and are then dispatched like any
+        // other event, so that whatever is watching can hear about it. They are
+        // broadcast: the entity named by the payload is not the only one that wants
+        // to know, and a level counting down the bricks it rolled needs to hear
+        // about each of them going.
+        //
+        // They are not the counterpart to `create` and `destroy`, which reach only
+        // the entity they are about so that those read as a constructor and a
+        // destructor without every handler beginning by checking whether it is the
+        // one being talked about.
+        //
+        // The two carry different payloads, and that is on purpose: a payload
+        // carries the least that can be had. A removal needs only the id, because
+        // everything else about the entity can still be looked up by it. An
+        // addition carries the entity itself, because there is nothing yet to look
+        // it up by -- the same asymmetry as removing a user by id but updating one
+        // by the patched user.
         if (event.type === "add") {
           addEntity(draft, event.payload)
-          continue
         }
 
         if (event.type === "remove") {
           removeEntity(draft, event.payload)
-          continue
         }
 
         // Parse the event to get handler name
@@ -236,10 +258,10 @@ export function createStore({
    * events, and 'resume' starts it again, which is how anything that moves by
    * integrating a delta time stops without being told about it. A type declares
    * `updatesWhilePaused` to keep updating regardless. Both keep dispatching to types
-   * that handle them, unlike 'add' and 'remove'.
    *
    * @param {string} type - The event type to notify.
-   * @param {any} payload - The event payload.
+   * @param {any} payload - The event payload. Carries the least that can be had
+   *   about what happened.
    */
   function notify(type, payload) {
     // NOTE: it's important to invoke store.dispatch instead of dispatch, otherwise we cannot override it

@@ -10,14 +10,19 @@ import { v } from "@inglorious/utils/v.js"
 
 import { ballFrame } from "../atlas.js"
 import {
+  BALL_MAX_VERTICAL_SPEED,
   BALL_SIZE,
   BALL_SKIN_COUNT,
+  BRICK_BOUNCE_Y,
   FLOOR,
   GAME_STATE,
   PADDLE_WIDTH,
   SOUND_PADDLE_HIT,
   SOUND_WALL_HIT,
 } from "../constants.js"
+
+// The states a ball waits on the paddle in rather than playing on its own.
+const RIDING = [GAME_STATE.serve, GAME_STATE.victory]
 
 const X = 0
 const Y = 1
@@ -35,9 +40,6 @@ const BALL_RADIUS = BALL_SIZE / HALF
 // sideways speed it starts from and how much each pixel past the centre adds to it.
 const BOUNCE_DX = 50
 const BOUNCE_PER_PIXEL = 8
-
-// Each brick hit quickens the game very slightly.
-const BRICK_BOUNCE_Y = 1.02
 
 /**
  * Where the middle of a box is.
@@ -134,8 +136,10 @@ export const Ball = [
     update(entity, dt, api) {
       const game = api.getEntity("game")
 
-      // Nothing moves under its own power until the serve is answered.
-      if (game.state === GAME_STATE.serve) {
+      // Nothing moves under its own power while a serve is being waited out, nor while a
+      // level is being congratulated on -- both of which are the same field with the ball
+      // sitting on the paddle waiting to be let go.
+      if (RIDING.includes(game.state)) {
         rideThePaddle(entity, api)
 
         return
@@ -280,6 +284,9 @@ function resolveBrickBounce(entity, brick) {
     entity.position[Y] += awayFrom(deltaY) * overlapY
   }
 
-  // Applied whichever way it left, so every brick hit quickens the game a little.
-  entity.velocity[Y] *= BRICK_BOUNCE_Y
+  // Applied whichever way it left, so every brick hit quickens the ball a little -- but
+  // only while there is something left to quicken.
+  if (Math.abs(entity.velocity[Y]) < BALL_MAX_VERTICAL_SPEED) {
+    entity.velocity[Y] *= BRICK_BOUNCE_Y
+  }
 }

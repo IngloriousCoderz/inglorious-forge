@@ -11,12 +11,15 @@ import {
   GAME_OVER_SCORE_PLACEMENT,
   GAME_OVER_TITLE_PLACEMENT,
   HIGH_SCORES_PLACEMENT,
+  LEVEL_PLACEMENT,
   PAUSED_PLACEMENT,
   SCORE_LABEL_PLACEMENT,
   SCORE_PLACEMENT,
   SERVE_PLACEMENT,
   START_PLACEMENT,
   TITLE_PLACEMENT,
+  VICTORY_PROMPT_PLACEMENT,
+  VICTORY_TITLE_PLACEMENT,
 } from "./text.ijs"
 
 /**
@@ -48,9 +51,29 @@ export function createPausedEntity() {
   }
 }
 
-/** The line that says the game is waiting to be served. */
-export function createServePromptEntity() {
-  return createTextEntity("servePrompt", "ServePrompt", SERVE_PLACEMENT)
+/** The lines that say the game is waiting to be served, and which level it is. */
+export function createServeEntities() {
+  return [
+    createTextEntity("level", "Level", LEVEL_PLACEMENT),
+    createTextEntity("servePrompt", "ServePrompt", SERVE_PLACEMENT),
+  ]
+}
+
+/**
+ * The two lines that say a level has been finished.
+ *
+ * The paddle, the ball, the score and the lives all stay standing underneath, which is
+ * what this screen shares with the serve: it is the same field with the bricks gone.
+ */
+export function createVictoryScene() {
+  return [
+    createTextEntity("victoryTitle", "VictoryTitle", VICTORY_TITLE_PLACEMENT),
+    createTextEntity(
+      "victoryPrompt",
+      "VictoryPrompt",
+      VICTORY_PROMPT_PLACEMENT,
+    ),
+  ]
 }
 
 /**
@@ -80,6 +103,7 @@ export function createGameOverScene() {
       "gameOverTitle",
       "GameOverTitle",
       GAME_OVER_TITLE_PLACEMENT,
+      LEVEL_PLACEMENT,
     ),
     createTextEntity(
       "gameOverScore",

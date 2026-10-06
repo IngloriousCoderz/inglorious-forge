@@ -25,6 +25,13 @@ export const BALL_START_X = WIDTH / 2 - 4
 // The original serves it from VIRTUAL_HEIGHT - 42, which is an altitude of 42.
 export const BALL_START_ALTITUDE = 42
 
+// Each brick hit quickens the ball very slightly, and this is as quick as it is allowed
+// to get. The ceiling arrived with the levels: a level is meant to be harder than the
+// last because of the bricks in it, and a ball too quick to reach them is harder to play
+// rather than harder to beat.
+export const BRICK_BOUNCE_Y = 1.02
+export const BALL_MAX_VERTICAL_SPEED = 150
+
 // The bricks, which the level makes at random.
 export const BRICK_WIDTH = 32
 export const BRICK_HEIGHT = 16
@@ -65,6 +72,7 @@ export const GAME_STATE = {
   start: "start",
   serve: "serve",
   play: "play",
+  victory: "victory",
   gameOver: "gameOver",
 }
 
@@ -132,6 +140,8 @@ export const SOUND_WALL_HIT = "wallHit"
 export const SOUND_BRICK_HIT = "brickHit"
 // A brick takes several hits now, and this is the sound of the last of them.
 export const SOUND_BRICK_BROKEN = "brickBroken"
+// And this is the sound of a level being finished.
+export const SOUND_VICTORY = "victory"
 export const SOUND_HURT = "hurt"
 
 export const FONT_FAMILY = "'Breakout'"
