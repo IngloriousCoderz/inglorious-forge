@@ -1,8 +1,8 @@
 import {
   BALL_SIZE,
   BALL_SKIN_FIRST_ROW,
+  BRICK_COLORS_PER_TIER,
   BRICK_FIRST_COLOR,
-  BRICK_FIRST_TIER,
   BRICK_TIERS_PER_COLOR,
   HEART_HEIGHT,
   HEART_WIDTH,
@@ -82,18 +82,31 @@ export const heartFrame = (full) => ({
 })
 
 /**
- * The bricks are the first twenty quads of the sheet, and which one a brick is drawn from
- * is its colour and its tier: every four quads is one colour's four tiers, with the tiers
- * in order.
+ * Which tier of the sheet a brick with so many hits left sits in, and which colour of it.
  *
- * A brick with no colour or tier of its own is the first one on the sheet, which is the
- * plain blue brick every level started with before either of them existed.
- *
- * This one is named by its quad rather than in pixels because its colour and its tier are
- * a number of the sheet rather than a place on it, and turning a number that is already a
- * quad into pixels only to divide it back down to a quad would be a round trip. The brick
- * crops from this through `cropQuad`, which is the one place that knows how a quad's own
- * number becomes a place on a sheet.
+ * The bricks run five colours across each of four tiers, in one sequence, so the two fall
+ * out of the hits left rather than being carried alongside them.
  */
-export const brickQuad = (color = BRICK_FIRST_COLOR, tier = BRICK_FIRST_TIER) =>
-  (color - BRICK_FIRST_COLOR) * BRICK_TIERS_PER_COLOR + tier
+export const brickTierOf = (hp) =>
+  Math.floor((hp - BRICK_FIRST_COLOR) / BRICK_COLORS_PER_TIER)
+
+export const brickColourOf = (hp) =>
+  ((hp - BRICK_FIRST_COLOR) % BRICK_COLORS_PER_TIER) + BRICK_FIRST_COLOR
+
+/**
+ * The bricks are the first twenty quads of the sheet, and which one a brick is drawn from
+ * is where its hits left put it: every four quads is one colour's four tiers, with the
+ * tiers in order.
+ *
+ * A brick with nothing left on it is the first one on the sheet, which is the plain blue
+ * brick every level started with before any of this existed.
+ *
+ * This one is named by its quad rather than in pixels because it is a number of the sheet
+ * rather than a place on it, and turning a number that is already a quad into pixels only
+ * to divide it back down to a quad would be a round trip. The brick crops from this
+ * through `cropQuad`, which is the one place that knows how a quad's own number becomes a
+ * place on a sheet.
+ */
+export const brickQuad = (hp = BRICK_FIRST_COLOR) =>
+  (brickColourOf(hp) - BRICK_FIRST_COLOR) * BRICK_TIERS_PER_COLOR +
+  brickTierOf(hp)

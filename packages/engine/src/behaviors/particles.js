@@ -73,7 +73,8 @@ export function particle() {
  *   position: v(100, 100, 0),
  *   size: v(2, 2, 0),
  *   lifetime: [0.5, 1],
- *   acceleration: [v(-15, 0, 0), v(15, 80, 0)],
+ *   tint: "rgb(99, 155, 255)",
+ *   acceleration: [v(-15, -80, 0), v(15, 0, 0)],
  *   spread: v(5, 5, 0),
  *   layer: LAYER_PARTICLES,
  *   image: { id: "particle", imageSize: [2, 2] },
@@ -92,6 +93,7 @@ export function emitBurst(api, params) {
     opacity = OPAQUE,
     layer = NO_LAYER,
     image,
+    tint,
     position = v(NO_SPREAD, NO_SPREAD, NO_DEPTH),
   } = params
 
@@ -103,6 +105,7 @@ export function emitBurst(api, params) {
       layer,
       size,
       image,
+      tint,
       age: NO_TIME,
       life: random(...lifetime),
       startOpacity: opacity,

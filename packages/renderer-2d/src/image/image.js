@@ -8,6 +8,29 @@ const NATIVE_SCALE = 1
 const NO_FLIP = 1
 const FLIP = -1
 
+// A tinted copy of a frame is made once and kept. Tinting means compositing, which means
+// an offscreen canvas and a second draw, so doing it per frame for every particle on
+// screen would cost more than the particle itself.
+//
+// The copies belong to an engine rather than to this module. Two engines on one page
+// cannot get a wrong answer from sharing them -- the key decides the pixels on its own --
+// but a module-level cache outlives every engine that filled it, holds canvases nothing
+// will ever draw again, and hands them to whichever engine starts next. Keying on the api
+// keeps each engine's to itself and lets them go when the engine does.
+//
+// The name is `tint` and not `color` because `color` is a field entities carry for their
+// own reasons -- a brick's colour is a number, and one of those in here would be handed
+// to the canvas as a fill style, which it ignores without complaint, leaving every brick
+// drawn black.
+const tintedFramesPerApi = new WeakMap()
+
+/** The tinted frames belonging to one engine's api, made on first use. */
+function tintedFramesFor(api) {
+  if (!tintedFramesPerApi.has(api)) tintedFramesPerApi.set(api, new Map())
+
+  return tintedFramesPerApi.get(api)
+}
+
 export function renderImage(entity, ctx, api) {
   const {
     image,
@@ -16,6 +39,7 @@ export function renderImage(entity, ctx, api) {
     flipX = false,
     flipY = false,
     opacity = OPAQUE,
+    tint,
   } = entity
   const {
     id,
@@ -87,7 +111,9 @@ export function renderImage(entity, ctx, api) {
   const images = api.getType("Images")
   const img = images.get(id) || document.getElementById(id)
   if (img) {
-    ctx.drawImage(img, ...imgParams)
+    // An image is drawn in its own colours unless it is given one, in which case the
+    // shape it is keeps whatever alpha it came with and only the colour is replaced.
+    ctx.drawImage(tint ? tinted(api, img, imgParams, tint) : img, ...imgParams)
   } else if (src) {
     images.load(id, src)
   } else {
@@ -95,4 +121,35 @@ export function renderImage(entity, ctx, api) {
   }
 
   ctx.restore()
+}
+
+/**
+ * The same frame of the same image, recoloured.
+ *
+ * `source-in` keeps the pixels the source already had and replaces their colour, so a
+ * soft-edged sprite stays soft-edged and an empty corner stays empty -- which a fill or
+ * a multiply would not do.
+ */
+function tinted(api, img, params, tint) {
+  const [sx, sy, width, height] = params
+  const frames = tintedFramesFor(api)
+  const key = `${img.id ?? img.src}|${sx},${sy},${width},${height}|${tint}`
+
+  if (frames.has(key)) return frames.get(key)
+
+  const copy = document.createElement("canvas")
+
+  copy.width = width
+  copy.height = height
+
+  const copyCtx = copy.getContext("2d")
+
+  copyCtx.drawImage(img, sx, sy, width, height, 0, 0, width, height)
+  copyCtx.globalCompositeOperation = "source-in"
+  copyCtx.fillStyle = tint
+  copyCtx.fillRect(0, 0, width, height)
+
+  frames.set(key, copy)
+
+  return copy
 }

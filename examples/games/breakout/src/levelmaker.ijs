@@ -2,6 +2,7 @@ import { random } from "@inglorious/utils/math/rng.js"
 import { v } from "@inglorious/utils/v.js"
 
 import {
+  BRICK_COLORS_PER_TIER,
   BRICK_FIRST_COLOR,
   BRICK_FIRST_TIER,
   BRICK_HEIGHT,
@@ -121,6 +122,13 @@ export function createLevel(level, layer) {
         ? [alternateColor1, alternateTier1]
         : [alternateColor2, alternateTier2]
 
+      // The bricks are rolled as a colour and a tier, which is how the original thinks
+      // about them, and carried as the hits they are worth, which is one number and the
+      // same thing said shorter.
+      const hp =
+        (alternates ? tier : solidTier) * BRICK_COLORS_PER_TIER +
+        (alternates ? color : solidColor)
+
       bricks.push({
         // Named for where the brick would stand rather than for how many have been made
         // so far, so that a row which skips leaves a gap in the names instead of
@@ -130,8 +138,7 @@ export function createLevel(level, layer) {
         layer,
         // A solid row was given a colour and a tier of its own before the alternate pair
         // was looked at, and the alternate pair does not apply to it at all.
-        color: alternates ? color : solidColor,
-        tier: alternates ? tier : solidTier,
+        hp,
         position: v(
           column * BRICK_WIDTH +
             BRICK_PADDING +

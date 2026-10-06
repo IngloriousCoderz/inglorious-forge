@@ -2,7 +2,20 @@ import "./smoke-setup.js"
 
 import { Engine } from "@inglorious/engine/core/engine.js"
 
+import {
+  BRICK_COLORS,
+  LAYER_BRICK,
+  LAYER_PADDLE,
+  LAYER_PARTICLE,
+  PARTICLE_ACCELERATION_FALL,
+  PARTICLE_ACCELERATION_SIDEWAYS,
+  PARTICLE_ALPHA_PER_TIER,
+  PARTICLE_COUNT,
+  PARTICLE_LIFETIME,
+  PARTICLE_SPREAD,
+} from "./src/constants.js"
 import gameConfig from "./src/game.ijs"
+import { brickColourOf, brickTierOf } from "./src/atlas.js"
 import { createLevel } from "./src/levelmaker.ijs"
 
 gameConfig.entities.game.devMode = false
@@ -35,6 +48,7 @@ const hold = (code, frames = 30) => {
 }
 
 const BRICK_WIDTH = 32
+const FIFTEEN = 15
 const BRICK_MAX_COLS = 13
 
 /**
@@ -389,7 +403,7 @@ const hitBrick = (id) => {
   lifeStep(1)
 }
 
-const scoreOf = (brick) => brick.tier * 200 + brick.color * 25
+const scoreOf = (hp) => brickTierOf(hp) * 200 + brickColourOf(hp) * 25
 
 // The brick is given a known place in the order so that what a hit does to it can be
 // said outright rather than read off whatever the level happened to roll.
@@ -403,18 +417,17 @@ const firstOfLowestRow = lifeBricks.find(
 )
 
 const study = firstOfLowestRow
-lifeState()[study].color = 5
-lifeState()[study].tier = 0
+lifeState()[study].hp = 5
 
 lifeState().game.score = 0
 hitBrick(study)
 check(
-  lifeState().score.value === String(scoreOf({ tier: 0, color: 5 })),
-  `a brick scores what its colour was worth (${lifeState().score.value})`,
+  lifeState().score.value === String(scoreOf(5)),
+  `a brick scores what it was worth before the hit (${lifeState().score.value})`,
 )
 check(
-  lifeState()[study] !== undefined && lifeState()[study].color === 4,
-  "and a hit knocks it back a colour rather than taking it",
+  lifeState()[study] !== undefined && lifeState()[study].hp === 4,
+  "and a hit takes one off it rather than taking it away",
 )
 
 // The order runs down the colours of a tier, and at the first colour on to the tier below
@@ -422,13 +435,15 @@ check(
 const walk = lifeBricks.find(
   (id) => id !== study && lifeState()[id]?.position[1] === lowestRow,
 )
-lifeState()[walk].color = 2
-lifeState()[walk].tier = 1
+lifeState()[walk].hp = 7
 const seen = [[1, 2]]
 while (lifeState()[walk] !== undefined && seen.length < 20) {
   hitBrick(walk)
   if (lifeState()[walk] !== undefined) {
-    seen.push([lifeState()[walk].tier, lifeState()[walk].color])
+    seen.push([
+      brickTierOf(lifeState()[walk].hp),
+      brickColourOf(lifeState()[walk].hp),
+    ])
   }
 }
 // Two of one tier's five colours, then the last four of the tier below, and then nothing
@@ -455,12 +470,197 @@ check(
   `every hit sounds, and only the one that breaks a brick sounds the break (${hitCount} hits, ${brokenCount} breaks)`,
 )
 
+// How many hits a brick takes, which is a plain function of where it sits in the palette:
+// down through its colours, then on to the tier below and round to the last colour of
+// that. This is what all the bricks looked alike got in the way of seeing.
+const hitsToBreak = (hp) => {
+  const engine = new Engine(gameConfig)
+  const at = () => engine.getState()
+  const run = (n = 1) => {
+    for (let i = 0; i < n; i++) engine.update(1 / 60)
+  }
+  const key = (code) => {
+    engine._store.notify("keyboardKeyDown", code)
+    engine._store.notify("keyboardKeyUp", code)
+    run(2)
+  }
+
+  run(4)
+  key("Enter")
+  key("Enter")
+
+  const bricks = Object.keys(at()).filter((id) => id.startsWith("brick"))
+  const lowest = Math.min(...bricks.map((id) => at()[id].position[1]))
+  const brick = bricks.find((id) => at()[id].position[1] === lowest)
+
+  at()[brick].hp = hp
+
+  const [x, y] = at()[brick].position
+  let hits = 0
+
+  while (at()[brick] && hits < FIFTEEN) {
+    at().ball.position = [x + 12, y - 4, 0]
+    at().ball.velocity = [0, 0, 0]
+    run(1)
+    hits++
+  }
+
+  return hits
+}
+
+check(hitsToBreak(1) === 1, "the plainest brick takes one hit")
+check(hitsToBreak(5) === 5, "the last colour of a tier takes five")
+check(hitsToBreak(6) === 6, "and the first colour of the tier above takes six")
+check(hitsToBreak(10) === 10, "while the hardest brick on the sheet takes ten")
+
+// The debris a brick throws off when it is hit.
+const debrisOf = (engine) =>
+  engine._store.extras
+    .getAllActivePoolEntities()
+    .filter((p) => p.type === "Particle")
+
+const dustEngine = new Engine(gameConfig)
+const dustState = () => dustEngine.getState()
+const dustStep = (n = 1) => {
+  for (let i = 0; i < n; i++) dustEngine.update(1 / 60)
+}
+const dustPress = (code) => {
+  dustEngine._store.notify("keyboardKeyDown", code)
+  dustEngine._store.notify("keyboardKeyUp", code)
+  dustStep(2)
+}
+
+dustStep(4)
+dustPress("Enter")
+dustPress("Enter")
+
+const dustBricks = Object.keys(dustState()).filter((id) =>
+  id.startsWith("brick"),
+)
+const dustLowest = Math.min(
+  ...dustBricks.map((id) => dustState()[id].position[1]),
+)
+const dustBrick = dustBricks.find(
+  (id) => dustState()[id].position[1] === dustLowest,
+)
+dustState()[dustBrick].hp = 8
+
+check(
+  debrisOf(dustEngine).length === 0,
+  "a level on its own throws off no debris",
+)
+
+const [dustX, dustY] = dustState()[dustBrick].position
+dustState().ball.position = [dustX + 12, dustY - 4, 0]
+dustState().ball.velocity = [0, 0, 0]
+dustStep(1)
+
+const debris = debrisOf(dustEngine)
+check(
+  debris.length === PARTICLE_COUNT,
+  `a brick hit throws off ${PARTICLE_COUNT} pieces (${debris.length})`,
+)
+// The debris is tinted. The brick it came off is *not*: a brick's own `color` is a number
+// saying where it sits in the palette, and a renderer reading that as a colour to draw it
+// in is handed something the canvas ignores without complaint, leaving the brick black.
+check(
+  debris.every((p) => p.tint === BRICK_COLORS[3]),
+  "every piece tinted with the colour of the brick it came off",
+)
+check(
+  debris.every((p) =>
+    p.tint === undefined ? false : typeof p.tint === "string",
+  ),
+  "in a colour the canvas understands rather than a number",
+)
+check(
+  dustState()[dustBrick].tint === undefined,
+  "while the brick itself is left untinted",
+)
+check(
+  debris.every((p) => p.startOpacity === PARTICLE_ALPHA_PER_TIER * 2),
+  "and as opaque as the tier it was hit at says",
+)
+check(
+  debris.every(
+    (p) =>
+      Math.abs(p.position[0] - (dustX + 16)) <= PARTICLE_SPREAD &&
+      Math.abs(p.position[1] - (dustY - 8)) <= PARTICLE_SPREAD,
+  ),
+  "thrown from the middle of it, scattered within a box",
+)
+// Downwards here, where the original counts the other way up the screen.
+check(
+  debris.every(
+    (p) =>
+      p.acceleration[1] <= 0 &&
+      p.acceleration[1] >= -PARTICLE_ACCELERATION_FALL &&
+      Math.abs(p.acceleration[0]) <= PARTICLE_ACCELERATION_SIDEWAYS,
+  ),
+  "every piece falling, and within the sideways spread it is given",
+)
+check(
+  debris.every(
+    (p) => p.life >= PARTICLE_LIFETIME[0] && p.life <= PARTICLE_LIFETIME[1],
+  ),
+  "each lasting its own time, between half a second and a second",
+)
+// Drawn after the bricks and before the paddle, which is where the original draws them.
+check(
+  debris.every((p) => p.layer === LAYER_PARTICLE) &&
+    LAYER_BRICK < LAYER_PARTICLE &&
+    LAYER_PARTICLE < LAYER_PADDLE,
+  "drawn over the bricks and under the paddle",
+)
+
+// The ball is put back on the paddle first. Left sitting in the brick's cell it keeps
+// being hit -- the bounce pushes it only as far as the overlap, which is not far enough to
+// leave -- and a brick that is never done being hit throws off debris for ever.
+dustState().ball.position = [212, 40, 0]
+dustState().ball.velocity = [0, 0, 0]
+
+// Each piece has its own lifetime, so the longest has to be waited out before the burst
+// has all gone.
+const longestLife = Math.max(...debris.map((p) => p.life))
+dustStep(Math.ceil(longestLife * 60) + 2)
+check(
+  debrisOf(dustEngine).length === 0,
+  "and gone again once they have lived their time",
+)
+
+// A higher brick throws brighter debris, which is what a tier is for.
+const brighter = new Engine(gameConfig)
+const brighterState = () => brighter.getState()
+const brighterStep = (n = 1) => {
+  for (let i = 0; i < n; i++) brighter.update(1 / 60)
+}
+const brighterPress = (code) => {
+  brighter._store.notify("keyboardKeyDown", code)
+  brighter._store.notify("keyboardKeyUp", code)
+  brighterStep(2)
+}
+brighterStep(4)
+brighterPress("Enter")
+brighterPress("Enter")
+const brighterBricks = Object.keys(brighterState()).filter((id) =>
+  id.startsWith("brick"),
+)
+const brighterBrick = brighterBricks[0]
+const [bx, by] = brighterState()[brighterBrick].position
+brighterState()[brighterBrick].hp = 1
+brighterState().ball.position = [bx + 12, by - 4, 0]
+brighterState().ball.velocity = [0, 0, 0]
+brighterStep(1)
+const lowTier = debrisOf(brighter).map((p) => p.startOpacity)
+
+check(
+  debris[0].startOpacity > lowTier[0],
+  "a brick higher up the sheet throws brighter debris",
+)
+
 // A higher brick is worth knocking down than a low one, which is the whole reason a level
 // bothers with colour.
-check(
-  scoreOf({ tier: 3, color: 1 }) > scoreOf({ tier: 0, color: 5 }),
-  "a tier is worth more than a colour",
-)
+check(scoreOf(20) > scoreOf(5), "a tier is worth more than a colour")
 
 // The level is one level across the whole game, so losing a life does not roll a new one
 // and quietly put back every brick knocked out so far.
@@ -665,26 +865,20 @@ check(
   `from just under the ceiling down (${ys.join(", ")})`,
 )
 
-// A brick's colour and tier are what say which of the twenty frames it draws from, so
-// each brick's own crop is checked against the pair it was given rather than against a
-// fixed tile. On the first level the tiers never leave zero and the colours stop at four.
-const quadsOf = (color, tier) => {
-  const quad = (color - 1) * 4 + tier
+// How many hits a brick has left is what says which of the twenty frames it draws from, so
+// each brick's own crop is checked against that rather than against a fixed tile. On the
+// first level the tiers never leave zero, so a brick is worth at most four hits.
+const quadsOf = (hp) => {
+  const quad = (brickColourOf(hp) - 1) * 4 + brickTierOf(hp)
   return `${quad % 6},${Math.floor(quad / 6)}`
 }
 check(
-  brickList.every(({ color }) => color >= 1 && color <= 4),
-  `every brick's colour is within the level (${[...new Set(brickList.map((b) => b.color))].sort().join(", ")})`,
+  brickList.every(({ hp }) => hp >= 1 && hp <= 4),
+  `every brick is worth between one and four hits on the first level (${[...new Set(brickList.map((b) => b.hp))].sort().join(", ")})`,
 )
 check(
-  brickList.every(({ tier }) => tier === 0),
-  "and the first level leaves every tier at the bottom",
-)
-check(
-  brickList.every(
-    ({ color, tier, sx, sy }) => `${sx},${sy}` === quadsOf(color, tier),
-  ),
-  "each brick cropped from the frame its colour and tier name",
+  brickList.every(({ sx, sy, hp }) => `${sx},${sy}` === quadsOf(hp)),
+  "each brick cropped from the frame however many hits it has left put it",
 )
 // A row is solid or alternating or skipping, and a row is one of the three all the way
 // along: bricks in a row that share a colour and a tier are all of them or none of them.
@@ -730,7 +924,10 @@ check(
 
     return Array.from({ length: LEVEL_ROLLS }, () => createLevel(level, 0))
       .flat()
-      .every(({ color, tier }) => color <= highestColor && tier <= highestTier)
+      .every(
+        ({ hp }) =>
+          brickColourOf(hp) <= highestColor && brickTierOf(hp) <= highestTier,
+      )
   }),
   "and nothing on it went past the colours and tiers its level allows",
 )
@@ -744,8 +941,8 @@ check(
 // has to turn up -- which a single level cannot promise, since every one of its rows may
 // roll solid on the same colour.
 check(
-  new Set(rolled.flat().map(({ color }) => color)).size > 1,
-  `and the colours are rolled, not fixed (${[...new Set(rolled.flat().map((b) => b.color))].sort().join(", ")})`,
+  new Set(rolled.flat().map(({ hp }) => hp)).size > 1,
+  `and the bricks are rolled, not fixed (${[...new Set(rolled.flat().map((b) => b.hp))].sort().join(", ")})`,
 )
 check(
   Array.from({ length: LEVEL_ROLLS }, () => createLevel(1, 0)).every((bricks) =>

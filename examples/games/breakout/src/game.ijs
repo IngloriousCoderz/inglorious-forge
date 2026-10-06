@@ -4,6 +4,7 @@ import {
   controlTypes,
   createControlEntities,
 } from "@inglorious/engine/behaviors/input/controls.js"
+import { particle } from "@inglorious/engine/behaviors/particles.js"
 import { scenes } from "@inglorious/engine/behaviors/scenes.js"
 import { renderFps } from "@inglorious/renderer-2d/fps.js"
 import { renderImage } from "@inglorious/renderer-2d/image/image.js"
@@ -59,6 +60,10 @@ export default {
     Game: [scenes(SCENES), Game],
     Ball: [...Ball, gizmos],
     Brick: [Brick, gizmos],
+
+    // The debris a brick throws off. One of these is emitted per particle of a burst, so
+    // they are pooled rather than added and taken away by hand.
+    Particle: [{ render: renderImage }, particle()],
     Paddle: [...Paddle, gizmos],
     Heart,
     Title,
@@ -125,6 +130,7 @@ export default {
         background: { url: "/images/background.png" },
         breakout: { url: "/images/breakout.png" },
         hearts: { url: "/images/hearts.png" },
+        particle: { url: "/images/particle.png" },
       },
     },
 

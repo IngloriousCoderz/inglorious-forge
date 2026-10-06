@@ -313,3 +313,142 @@ test("a scaled tile should scale each axis on its own", () => {
     ["scale", 2, 3],
   ])
 })
+
+// A canvas just real enough for tinting: compositing one frame and reading a pixel back
+// out of the result.
+const tintedCanvas = () => {
+  const composited = []
+
+  return {
+    width: 8,
+    height: 8,
+    composited,
+    getContext: () => ({
+      globalCompositeOperation: "source-over",
+      fillStyle: "",
+      drawImage() {},
+      fillRect() {
+        composited.push(this.fillStyle)
+      },
+      getImageData: () => ({ data: [1, 2, 3, 0] }),
+    }),
+  }
+}
+
+const withDocument = (make) => {
+  const previous = globalThis.document
+
+  globalThis.document = { createElement: () => make() }
+
+  return () => {
+    globalThis.document = previous
+  }
+}
+
+test("it should draw an image in the colour it is given", () => {
+  const { calls, ctx } = createContext()
+  const copy = tintedCanvas()
+  const restore = withDocument(() => copy)
+
+  renderImage({ image, tint: "rgb(1, 2, 3)" }, ctx, api)
+
+  expect(calls.find(([name]) => name === "drawImage")[1]).toBe(copy)
+  restore()
+})
+
+test("it should keep the shape of the image it tinted", () => {
+  const { ctx } = createContext()
+  const copy = tintedCanvas()
+  const restore = withDocument(() => copy)
+
+  renderImage({ image, tint: "rgb(1, 2, 3)" }, ctx, api)
+
+  // The corner of a soft-edged sprite must stay empty, which is what `source-in` gives
+  // and what filling the whole frame would take away.
+  expect(copy.getContext().getImageData(0, 0, 1, 1).data[3]).toBe(0)
+  restore()
+})
+
+test("it should draw the same tinted frame once", () => {
+  const { calls, ctx } = createContext()
+  const copy = tintedCanvas()
+  const restore = withDocument(() => copy)
+
+  // Its own colour, because the tinted frames are kept for the life of the module and
+  // the earlier tests have already had this one.
+  renderImage({ image, tint: "rgb(4, 5, 6)" }, ctx, api)
+  renderImage({ image, tint: "rgb(4, 5, 6)" }, ctx, api)
+
+  // Compositing twice per frame for every particle would cost more than the particle.
+  expect(copy.composited).toStrictEqual(["rgb(4, 5, 6)"])
+  expect(calls.filter(([name]) => name === "drawImage")).toHaveLength(2)
+  restore()
+})
+
+test("it should tint each colour it is asked for separately", () => {
+  const made = []
+  const restore = withDocument(() => {
+    const copy = tintedCanvas()
+    made.push(copy)
+    return copy
+  })
+  const { ctx } = createContext()
+
+  renderImage({ image, tint: "red" }, ctx, api)
+  renderImage({ image, tint: "blue" }, ctx, api)
+
+  expect(made).toHaveLength(2)
+  restore()
+})
+
+test("it should not take a number in color for a tint", () => {
+  const { calls, ctx } = createContext()
+  const restore = withDocument(() => tintedCanvas())
+
+  // A brick's `color` is its place in the palette, not a colour to draw it in. The canvas
+  // ignores an invalid fill style without complaint, so claiming the name `color` here
+  // meant every brick in the game drew black and said nothing about it.
+  renderImage({ image, color: 4 }, ctx, api)
+
+  expect(calls.find(([name]) => name === "drawImage")[1]).toStrictEqual({
+    id: "pipe",
+  })
+  restore()
+})
+
+test("it should keep each engine's tinted frames to itself", () => {
+  const made = []
+  const restore = withDocument(() => {
+    const copy = tintedCanvas()
+    made.push(copy)
+    return copy
+  })
+
+  const first = createContext()
+  const second = createContext()
+
+  // An api stands for an engine, so two engines is two of them.
+  const oneEngine = { getType: () => ({ get: () => ({ id: "pipe" }) }) }
+  const anotherEngine = { getType: () => ({ get: () => ({ id: "pipe" }) }) }
+
+  renderImage({ image, tint: "rgb(9, 9, 9)" }, first.ctx, oneEngine)
+  renderImage({ image, tint: "rgb(9, 9, 9)" }, second.ctx, anotherEngine)
+  renderImage({ image, tint: "rgb(9, 9, 9)" }, second.ctx, anotherEngine)
+
+  // Two engines sharing a cache would get one canvas for both, kept for ever by a module
+  // that outlives them. Each makes its own, and the second one reuses its own.
+  expect(made).toHaveLength(2)
+  expect(made[0].composited).toStrictEqual(["rgb(9, 9, 9)"])
+  expect(made[1].composited).toStrictEqual(["rgb(9, 9, 9)"])
+  restore()
+})
+
+test("it should leave an untinted image alone", () => {
+  const { calls, ctx } = createContext()
+
+  renderImage({ image }, ctx, api)
+
+  expect(calls.find(([name]) => name === "drawImage")[1]).toStrictEqual({
+    id: "pipe",
+  })
+})

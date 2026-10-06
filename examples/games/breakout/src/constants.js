@@ -37,13 +37,19 @@ export const BRICK_MAX_COLS = 13
 export const BRICK_PADDING = 8
 export const BRICK_MAX_COLUMN_PADDING = 16
 
-// A brick is a colour and a tier, and the pair says which of the twenty brick frames it
-// is drawn from: five colours, four tiers each.
+// How many hits a brick is worth, and therefore where on the sheet it is drawn: the bricks
+// run five colours across each of four tiers, in one unbroken sequence from the plain blue
+// one at the top of the sheet to the hardest. A brick carries how many hits are left in it
+// rather than a colour and a tier, so that being knocked back is losing one and there is
+// no ordering to get wrong.
+export const BRICK_COLORS_PER_TIER = 5
 export const BRICK_FIRST_COLOR = 1
 export const BRICK_FIRST_TIER = 0
 export const BRICK_MAX_COLOR = 5
 export const BRICK_MAX_TIER = 3
 export const BRICK_TIERS_PER_COLOR = 4
+export const BRICK_MAX_HP =
+  BRICK_MAX_TIER * BRICK_COLORS_PER_TIER + BRICK_MAX_COLOR
 
 // The level says how far along the colours and tiers a level may reach. Every fifth
 // level unlocks the next tier, and the colours climb one per level within each group of
@@ -142,9 +148,38 @@ export const FPS_ALTITUDE = HEIGHT - FPS_MARGIN - FPS_SIZE
 export const COLOR_TEXT = "white"
 export const COLOR_HIGHLIGHT = "rgb(103, 255, 255)"
 
+// The debris a brick throws off is drawn after the bricks and before the paddle, which
+// is where the original puts it. A layer is a number and nothing else, so a brick's and a
+// paddle's can be told apart by sitting between them rather than by one of them moving.
 export const LAYER_BACKGROUND = -1
-export const LAYER_PADDLE = 1
 export const LAYER_BRICK = 0
+export const LAYER_PARTICLE = 0.5
+export const LAYER_PADDLE = 1
 export const LAYER_BALL = 2
 export const LAYER_TEXT = 3
 export const LAYER_OVERLAY = 4
+
+// The colours of the five bricks on the sheet, which the debris of a knocked brick is
+// coloured to match. These are the original's own values rather than anything read off
+// the artwork, which is what a particle needs: it is drawn in the brick's colour, not in
+// the colour of the pixels that happen to be there.
+export const BRICK_COLORS = {
+  1: "rgb(99, 155, 255)",
+  2: "rgb(106, 190, 47)",
+  3: "rgb(217, 87, 99)",
+  4: "rgb(215, 123, 186)",
+  5: "rgb(251, 242, 54)",
+}
+
+// What a knocked brick throws off, and how it falls. The acceleration is given between
+// two corners and each particle's own is drawn from between them, which is what makes
+// the burst look scattered rather than like a grid.
+export const PARTICLE_COUNT = 64
+export const PARTICLE_SIZE = 8
+export const PARTICLE_LIFETIME = [0.5, 1]
+export const PARTICLE_SPREAD = 10
+export const PARTICLE_ACCELERATION_FALL = 80
+export const PARTICLE_ACCELERATION_SIDEWAYS = 15
+// How opaque the debris starts, per tier. The original works in eight-bit alpha and this
+// is that number divided by 255; the debris fades out over its own lifetime either way.
+export const PARTICLE_ALPHA_PER_TIER = 55 / 255
