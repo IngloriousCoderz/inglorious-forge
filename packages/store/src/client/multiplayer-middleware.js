@@ -1,4 +1,4 @@
-import { deserialize, extend, serialize } from "@inglorious/utils/objects"
+import { deserialize, extend, serialize } from "@inglorious/utils/object.js"
 
 // A constant for the server's WebSocket URL.
 const DEFAULT_SERVER_URL = `ws://${window.location.hostname}:3000`

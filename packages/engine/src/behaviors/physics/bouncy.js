@@ -1,4 +1,4 @@
-import { defaults, extend } from "@inglorious/utils/objects"
+import { defaults, extend } from "@inglorious/utils/object.js"
 import { jump } from "@inglorious/utils/physics/jump.js"
 
 const DEFAULT_PARAMS = {

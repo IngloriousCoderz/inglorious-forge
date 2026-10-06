@@ -5,7 +5,7 @@ import {
   subtract,
   sum,
   zero,
-} from "@inglorious/utils/vectors"
+} from "@inglorious/utils/vectors.js"
 
 export const DEFAULT_MAX_PREDICTION = 10
 

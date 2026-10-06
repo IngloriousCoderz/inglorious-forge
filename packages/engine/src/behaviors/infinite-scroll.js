@@ -1,4 +1,4 @@
-import { mod, scale, sum } from "@inglorious/utils/vectors"
+import { mod, scale, sum } from "@inglorious/utils/vectors.js"
 
 export function infiniteScroll() {
   return {

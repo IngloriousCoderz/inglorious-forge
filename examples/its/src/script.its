@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import type { Vector, toString } from "@inglorious/utils/vectors"
+import type { Vector, toString } from "@inglorious/utils/vectors.js"
 
 {
   const position: Vector = v(10, 20, 30)

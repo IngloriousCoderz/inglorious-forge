@@ -28,6 +28,46 @@ This will set up a complete project with a development server ready to go.
 - **Zero Build Step Option**: Write plain JavaScript and run it directly in the browser. No complex build configurations required.
 - **Pausing without permission checks**: `notify("pause")` halts the world, so nothing that moves has to ask whether it is allowed to.
 - **Sprites in one call**: `crop()` points an entity at a frame of a sheet without you having to remember which half of the crop lives where. See [renderer-2d](https://github.com/iceonfire/inglorious-forge/tree/main/packages/renderer-2d).
+- **Screens that share a world**: `scenes()` puts a state's entities up and takes the last state's down, leaving whatever the two have in common standing.
+- **A mistyped type is an error**: the engine refuses a configuration whose entity names a type nothing declared, and says which type was nearly meant.
+
+### Scenes
+
+A state machine says when it moves; `scenes()` says what each state is made of. Pair them
+and each screen is a description of what should be standing there:
+
+```javascript
+import { fsm } from "@inglorious/engine/behaviors/fsm.js"
+import { scenes } from "@inglorious/engine/behaviors/scenes.js"
+
+const SCENES = {
+  title: () => [createTitleEntity(), createMenuEntity()],
+  play: () => [createPaddleEntity(), createBallEntity()],
+}
+
+const types = {
+  Game: [
+    scenes(SCENES),
+    fsm({
+      title: {
+        start(entity) {
+          entity.state = "play"
+        },
+      },
+    }),
+  ],
+}
+
+const entities = { game: { type: "Game", state: "title" } }
+```
+
+Only the difference between two states is touched. Anything they share stays standing as it
+is — which is what carries a paddle, a ball and a level from the serve into the play without
+rebuilding them, and so without losing where the paddle had slid to or what had already been
+knocked out. Without it, every move between two states that share a world rebuilds it.
+
+A state is also handed the entity asking for it, so anything worth making only once — a
+level, say — can be held on the entity and left alone the second time round.
 
 ### Collision
 

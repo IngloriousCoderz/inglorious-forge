@@ -6,13 +6,13 @@ import {
   mouse,
 } from "@inglorious/engine/behaviors/input/mouse.js"
 import { spriteAnimationSystem } from "@inglorious/engine/systems/sprite-animation.js"
-import { flipped } from "@inglorious/renderer-2d/image/flags.js"
+import { flippedHorizontally } from "@inglorious/renderer-2d/image/flags.js"
 import { renderSprite } from "@inglorious/renderer-2d/image/sprite.js"
 import { renderMouse } from "@inglorious/renderer-2d/mouse.js"
 import { decide } from "@inglorious/utils/algorithms/decision-tree.js"
-import { merge } from "@inglorious/utils/objects"
+import { merge } from "@inglorious/utils/object.js"
 import { v } from "@inglorious/utils/v.js"
-import { length, subtract } from "@inglorious/utils/vectors"
+import { length, subtract } from "@inglorious/utils/vectors.js"
 
 // A reusable decision tree node
 const wakeUp = () => ({
@@ -183,14 +183,14 @@ export default {
         frames: {
           idle: [4],
           aware: v(0, 4),
-          leftUp: [flipped(23), flipped(29)],
+          leftUp: [flippedHorizontally(23), flippedHorizontally(29)],
           up: [28, 30, 28, 31],
           rightUp: v(23, 29),
           right: v(16, 22),
           rightDown: v(13, 14),
           down: [1, 2, 1, 7],
-          leftDown: [flipped(13), flipped(14)],
-          left: [flipped(16), flipped(22)],
+          leftDown: [flippedHorizontally(13), flippedHorizontally(14)],
+          left: [flippedHorizontally(16), flippedHorizontally(22)],
           sleepy: [4, 10, 10, 3, 9, 15, 9, 15, 15],
           sleeping: [26, 26, 27, 27],
         },

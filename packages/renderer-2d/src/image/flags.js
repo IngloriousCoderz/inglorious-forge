@@ -18,16 +18,14 @@ export const FLIPPED_VERTICALLY_FLAG = 0x40000000
  *
  * @example
  * ```js
- * const types = {
- *   Cat: [{ render: renderSprite }],
- * }
+ * import { flippedHorizontally } from "@inglorious/renderer-2d/image/flags.js"
  *
  * const entities = {
  *   cat: {
  *     type: "Cat",
  *     sprite: {
  *       image: { id: "neko", imageSize: [192, 192], tileSize: [32, 32] },
- *       frames: { left: [flipped(16), flipped(22)] },
+ *       frames: { left: [flippedHorizontally(16), flippedHorizontally(22)] },
  *     },
  *   },
  * }
@@ -39,9 +37,28 @@ export const FLIPPED_VERTICALLY_FLAG = 0x40000000
 // Coercing to a signed 32 bit integer, which is what the bitwise operators work in.
 const SIGNED_32_BIT = 0
 
-export function flipped(frame) {
+export function flippedHorizontally(frame) {
   // The coercion says what a sum already means: ORing in the flag gives a number too
   // large for 32 bits, and every reader takes these apart with the bitwise operators,
   // which would truncate it to something different on the way past anyway.
   return FLIPPED_HORIZONTALLY_FLAG | frame | SIGNED_32_BIT
+}
+
+/**
+ * The number for a frame drawn mirrored top to bottom.
+ *
+ * @example
+ * ```js
+ * import { flippedVertically } from "@inglorious/renderer-2d/image/flags.js"
+ *
+ * const frames = { ceiling: [flippedVertically(4)] }
+ * ```
+ *
+ * @param {number} frame - The frame's number on the sheet, counted from the top left.
+ * @returns {number} The frame's number with the mirror set in it.
+ */
+export function flippedVertically(frame) {
+  // The coercion says the same thing here as it does above: the flag leaves the frame's
+  // number outside the 32 bits the readers work in.
+  return FLIPPED_VERTICALLY_FLAG | frame | SIGNED_32_BIT
 }

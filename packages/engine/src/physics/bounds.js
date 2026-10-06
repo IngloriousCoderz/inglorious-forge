@@ -13,7 +13,7 @@ import {
   multiply,
   sum,
   zero,
-} from "@inglorious/utils/vectors"
+} from "@inglorious/utils/vectors.js"
 
 const ORIGIN = 0
 const DOUBLE = 2

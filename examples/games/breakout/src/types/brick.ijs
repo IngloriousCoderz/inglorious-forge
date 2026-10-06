@@ -1,7 +1,7 @@
-import { crop } from "@inglorious/renderer-2d/image/crop.js"
+import { cropQuad } from "@inglorious/renderer-2d/image/crop-quad.js"
 import { renderImage } from "@inglorious/renderer-2d/image/image.js"
 
-import { brickFrame } from "../atlas.js"
+import { brickQuad, SHEET_TILE, SHEET_TILES_ACROSS } from "../atlas.js"
 import { SOUND_BRICK_HIT } from "../constants.js"
 
 /**
@@ -19,7 +19,10 @@ export const Brick = {
   render: renderImage,
 
   create(entity) {
-    crop(entity, "breakout", brickFrame(entity.color, entity.tier))
+    cropQuad(entity, "breakout", brickQuad(entity.color, entity.tier), {
+      tileSize: SHEET_TILE,
+      tilesAcross: SHEET_TILES_ACROSS,
+    })
   },
 
   brickHit(entity, id, api) {

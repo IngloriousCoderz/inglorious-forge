@@ -1,5 +1,5 @@
 import { applyVelocity } from "@inglorious/utils/physics/velocity.js"
-import { angle, magnitude } from "@inglorious/utils/vectors"
+import { angle, magnitude } from "@inglorious/utils/vectors.js"
 
 const DEFAULT_ORIENTATION = 0
 

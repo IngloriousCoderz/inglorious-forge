@@ -92,7 +92,7 @@ const throttledSave = throttle(() => {
 Perform vector operations on plain objects.
 
 ```javascript
-import { add } from "@inglorious/utils/vectors"
+import { add } from "@inglorious/utils/vectors.js"
 
 const position = [10, 20]
 const velocity = [2, -1]
@@ -144,7 +144,7 @@ know whether a helper lives under `data-structures` or `math`:
 a scalar is applied to every component, while vectors are combined component-wise.
 
 ```javascript
-import { multiply } from "@inglorious/utils/vectors"
+import { multiply } from "@inglorious/utils/vectors.js"
 
 multiply([1, 2, 3], 2) // => [2, 4, 6]
 multiply([1, 2, 3], [4, 5, 6]) // => [4, 10, 18]

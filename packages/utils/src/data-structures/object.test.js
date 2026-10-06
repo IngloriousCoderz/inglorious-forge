@@ -18,7 +18,7 @@ import {
   serialize,
   set,
   toString,
-} from "./objects.js"
+} from "./object.js"
 
 test("it should deep clone an object", () => {
   const obj = {

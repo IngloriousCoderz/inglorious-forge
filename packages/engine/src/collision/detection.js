@@ -5,8 +5,8 @@ import * as line from "@inglorious/utils/math/line.js"
 import * as point from "@inglorious/utils/math/point.js"
 import * as rectangle from "@inglorious/utils/math/rectangle.js"
 import * as segment from "@inglorious/utils/math/segment.js"
-import { filter } from "@inglorious/utils/objects"
-import { add, zero } from "@inglorious/utils/vectors"
+import { filter } from "@inglorious/utils/object.js"
+import { add, zero } from "@inglorious/utils/vectors.js"
 
 const Z = 2 // Z-axis index.
 const RECTANGLE = "rectangle"

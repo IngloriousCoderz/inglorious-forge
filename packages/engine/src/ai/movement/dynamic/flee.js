@@ -7,7 +7,7 @@ import {
   subtract,
   sum,
   zero,
-} from "@inglorious/utils/vectors"
+} from "@inglorious/utils/vectors.js"
 
 const DEFAULT_MAX_ACCELERATION = 0
 const DEFAULT_MAX_SPEED = 0

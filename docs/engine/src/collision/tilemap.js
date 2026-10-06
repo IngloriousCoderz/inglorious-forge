@@ -7,13 +7,13 @@ import {
 } from "@inglorious/engine/behaviors/input/controls.js"
 import { findCollisions } from "@inglorious/engine/collision/detection.js"
 import { spriteAnimationSystem } from "@inglorious/engine/systems/sprite-animation.js"
-import { flipped } from "@inglorious/renderer-2d/image/flags.js"
+import { flippedHorizontally } from "@inglorious/renderer-2d/image/flags.js"
 import { renderHitmask } from "@inglorious/renderer-2d/image/hitmask.js"
 import { renderSprite } from "@inglorious/renderer-2d/image/sprite.js"
 import { renderTilemap } from "@inglorious/renderer-2d/image/tilemap.js"
 import { renderRectangle } from "@inglorious/renderer-2d/shapes/rectangle.js"
 import { v } from "@inglorious/utils/v.js"
-import { angle, magnitude } from "@inglorious/utils/vectors"
+import { angle, magnitude } from "@inglorious/utils/vectors.js"
 
 const X = 0
 const Z = 2
@@ -120,7 +120,7 @@ export default {
               91,
               -1,
               -1,
-              flipped(91),
+              flippedHorizontally(91),
               -1,
               // third row
               -1,
@@ -134,7 +134,7 @@ export default {
               91,
               -1,
               -1,
-              flipped(91),
+              flippedHorizontally(91),
               -1,
               // fifth row
               -1,
@@ -183,7 +183,7 @@ export default {
         speed: 0.2,
         frames: {
           right: [17],
-          left: [flipped(17)],
+          left: [flippedHorizontally(17)],
         },
       },
       collisions: {

@@ -2,20 +2,21 @@ import { v } from "@inglorious/utils/v.js"
 
 import {
   LAYER_TEXT,
-  SCORE_ALTITUDE,
   SCORE_LABEL_X,
   SCORE_VALUE_X,
   WIDTH,
 } from "../constants.js"
 import {
-  GAME_OVER_PROMPT_ALTITUDE,
-  GAME_OVER_SCORE_ALTITUDE,
-  GAME_OVER_TITLE_ALTITUDE,
-  HIGH_SCORES_ALTITUDE,
-  PAUSED_ALTITUDE,
-  SERVE_ALTITUDE,
-  START_ALTITUDE,
-  TITLE_ALTITUDE,
+  GAME_OVER_PROMPT_PLACEMENT,
+  GAME_OVER_SCORE_PLACEMENT,
+  GAME_OVER_TITLE_PLACEMENT,
+  HIGH_SCORES_PLACEMENT,
+  PAUSED_PLACEMENT,
+  SCORE_LABEL_PLACEMENT,
+  SCORE_PLACEMENT,
+  SERVE_PLACEMENT,
+  START_PLACEMENT,
+  TITLE_PLACEMENT,
 } from "./text.ijs"
 
 /**
@@ -27,9 +28,9 @@ import {
  */
 export function createStartScene() {
   return [
-    createTextEntity("title", "Title", TITLE_ALTITUDE),
-    createTextEntity("start", "Start", START_ALTITUDE),
-    createTextEntity("highScores", "HighScores", HIGH_SCORES_ALTITUDE),
+    createTextEntity("title", "Title", TITLE_PLACEMENT),
+    createTextEntity("start", "Start", START_PLACEMENT),
+    createTextEntity("highScores", "HighScores", HIGH_SCORES_PLACEMENT),
   ]
 }
 
@@ -42,14 +43,14 @@ export function createStartScene() {
  */
 export function createPausedEntity() {
   return {
-    ...createTextEntity("paused", "Paused", PAUSED_ALTITUDE),
+    ...createTextEntity("paused", "Paused", PAUSED_PLACEMENT),
     updatesWhilePaused: true,
   }
 }
 
 /** The line that says the game is waiting to be served. */
 export function createServePromptEntity() {
-  return createTextEntity("servePrompt", "ServePrompt", SERVE_ALTITUDE)
+  return createTextEntity("servePrompt", "ServePrompt", SERVE_PLACEMENT)
 }
 
 /**
@@ -62,12 +63,12 @@ export function createServePromptEntity() {
 export function createScoreEntities() {
   return [
     {
-      ...createTextEntity("scoreLabel", "ScoreLabel", SCORE_ALTITUDE),
-      position: v(SCORE_LABEL_X, SCORE_ALTITUDE, 0),
+      ...createTextEntity("scoreLabel", "ScoreLabel", SCORE_LABEL_PLACEMENT),
+      position: v(SCORE_LABEL_X, SCORE_LABEL_PLACEMENT.altitude, 0),
     },
     {
-      ...createTextEntity("score", "Score", SCORE_ALTITUDE),
-      position: v(SCORE_VALUE_X, SCORE_ALTITUDE, 0),
+      ...createTextEntity("score", "Score", SCORE_PLACEMENT),
+      position: v(SCORE_VALUE_X, SCORE_PLACEMENT.altitude, 0),
     },
   ]
 }
@@ -78,23 +79,28 @@ export function createGameOverScene() {
     createTextEntity(
       "gameOverTitle",
       "GameOverTitle",
-      GAME_OVER_TITLE_ALTITUDE,
+      GAME_OVER_TITLE_PLACEMENT,
     ),
     createTextEntity(
       "gameOverScore",
       "GameOverScore",
-      GAME_OVER_SCORE_ALTITUDE,
+      GAME_OVER_SCORE_PLACEMENT,
     ),
     createTextEntity(
       "gameOverPrompt",
       "GameOverPrompt",
-      GAME_OVER_PROMPT_ALTITUDE,
+      GAME_OVER_PROMPT_PLACEMENT,
     ),
   ]
 }
 
-/** A line of the interface, placed the way the original centres its own text. */
-function createTextEntity(id, type, altitude) {
+/**
+ * A line of the interface, placed where the original puts it.
+ *
+ * The placement is the original's own coordinate turned the right way up, together with
+ * which edge of the line sits on it, so neither half has to be worked out here.
+ */
+function createTextEntity(id, type, { altitude }) {
   return {
     id,
     type,

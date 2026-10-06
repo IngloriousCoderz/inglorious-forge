@@ -1,8 +1,8 @@
 import { findCollision } from "@inglorious/engine/collision/detection.js"
-import { defaults, extend } from "@inglorious/utils/objects"
+import { defaults, extend } from "@inglorious/utils/object.js"
 import { applyGravity } from "@inglorious/utils/physics/gravity.js"
 import { jump } from "@inglorious/utils/physics/jump.js"
-import { angle, magnitude, zero } from "@inglorious/utils/vectors"
+import { angle, magnitude, zero } from "@inglorious/utils/vectors.js"
 
 const DEFAULT_PARAMS = {
   maxSpeed: 250,

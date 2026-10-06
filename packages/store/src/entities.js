@@ -1,4 +1,4 @@
-import { map } from "@inglorious/utils/objects"
+import { map } from "@inglorious/utils/object.js"
 
 /**
  * @typedef {Object.<string, any>} Entity - An object representing an entity.

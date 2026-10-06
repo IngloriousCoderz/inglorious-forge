@@ -14,7 +14,7 @@ import { renderCharacter } from "@inglorious/renderer-2d/character.js"
 import { renderMouse } from "@inglorious/renderer-2d/mouse.js"
 import { clamp } from "@inglorious/utils/math/numbers.js"
 import { pi } from "@inglorious/utils/math/trigonometry.js"
-import { merge } from "@inglorious/utils/objects"
+import { merge } from "@inglorious/utils/object.js"
 import { v } from "@inglorious/utils/v.js"
 
 export default {

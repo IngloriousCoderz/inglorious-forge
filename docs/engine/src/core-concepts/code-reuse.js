@@ -3,9 +3,9 @@ import { bounce } from "@inglorious/engine/physics/bounds.js"
 import { renderCharacter } from "@inglorious/renderer-2d/character.js"
 import { renderFps } from "@inglorious/renderer-2d/fps.js"
 import { pi } from "@inglorious/utils/math/trigonometry.js"
-import { merge } from "@inglorious/utils/objects"
+import { merge } from "@inglorious/utils/object.js"
 import { v } from "@inglorious/utils/v.js"
-import { zero } from "@inglorious/utils/vectors"
+import { zero } from "@inglorious/utils/vectors.js"
 
 export default {
   types: {

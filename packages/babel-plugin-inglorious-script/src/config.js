@@ -1,4 +1,4 @@
-const VECTORS_MODULE = "@inglorious/utils/vectors"
+const VECTORS_MODULE = "@inglorious/utils/vectors.js"
 
 /**
  * @typedef {'vec_op_vec' | 'vec_op_scalar' | 'vec_op_scalar_commutative'} HelperType

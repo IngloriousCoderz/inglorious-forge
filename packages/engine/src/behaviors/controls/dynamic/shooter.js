@@ -1,8 +1,8 @@
 import { face } from "@inglorious/engine/ai/movement/dynamic/face.js"
 import { tankMove } from "@inglorious/engine/movement/dynamic/tank.js"
 import { pi } from "@inglorious/utils/math/trigonometry.js"
-import { extend, merge } from "@inglorious/utils/objects"
-import { zero } from "@inglorious/utils/vectors"
+import { extend, merge } from "@inglorious/utils/object.js"
+import { zero } from "@inglorious/utils/vectors.js"
 
 import { createMovementEventHandlers } from "../event-handlers.js"
 

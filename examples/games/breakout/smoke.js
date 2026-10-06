@@ -252,11 +252,21 @@ check(
   hud.heart2.position[0] + 10 < hud.scoreLabel.position[0],
   "and stand to the left of the score label",
 )
-// The label and the number are one line of interface, so they hang from one height.
+// The label and the number are one line of interface, so they hang from one height --
+// and from one edge of the line, because two entities can share a position and still be
+// drawn half a font apart if one is anchored by its top and the other by its middle.
 check(
   hud.score.value === "0" &&
     hud.scoreLabel.position[1] === hud.score.position[1],
   `the label and the number share a height (${hud.scoreLabel.position[1]})`,
+)
+check(
+  hud.scoreLabel.baseline === hud.score.baseline,
+  "and share a baseline, so they are one line and not two",
+)
+check(
+  hud.scoreLabel.baseline === "top" && hud.paused.baseline === "middle",
+  "with the printed lines anchored by their top and the centred ones by their middle",
 )
 check(
   hud.scoreLabel.textAlign === "left",

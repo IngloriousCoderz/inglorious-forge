@@ -4,6 +4,7 @@ import {
   controlTypes,
   createControlEntities,
 } from "@inglorious/engine/behaviors/input/controls.js"
+import { scenes } from "@inglorious/engine/behaviors/scenes.js"
 import { renderFps } from "@inglorious/renderer-2d/fps.js"
 import { renderImage } from "@inglorious/renderer-2d/image/image.js"
 import { renderRectangle } from "@inglorious/renderer-2d/shapes/rectangle.js"
@@ -28,7 +29,7 @@ import { Ball } from "./types/ball.ijs"
 import { Brick } from "./types/brick.ijs"
 import { Heart } from "./types/heart.ijs"
 import { Paddle } from "./types/paddle.ijs"
-import { scenes } from "./types/scene-listener.ijs"
+import { SCENES } from "./types/scene.ijs"
 import { Game } from "./types/states.ijs"
 import {
   GameOverPrompt,
@@ -54,7 +55,7 @@ export default {
   types: {
     ...controlTypes(),
 
-    Game: [scenes(), Game],
+    Game: [scenes(SCENES), Game],
     Ball: [...Ball, gizmos],
     Brick: [Brick, gizmos],
     Paddle: [...Paddle, gizmos],

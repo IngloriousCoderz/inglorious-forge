@@ -1,4 +1,4 @@
-import { snap } from "@inglorious/utils/vectors"
+import { snap } from "@inglorious/utils/vectors.js"
 
 export function infiniteLoop(render) {
   return (entity, ctx, api) => {

@@ -1,5 +1,5 @@
 import { align } from "@inglorious/engine/ai/movement/dynamic/align.js"
-import { angle, magnitude, subtract } from "@inglorious/utils/vectors"
+import { angle, magnitude, subtract } from "@inglorious/utils/vectors.js"
 
 export function face(entity, target, dt, options) {
   const direction = subtract(target.position, entity.position)

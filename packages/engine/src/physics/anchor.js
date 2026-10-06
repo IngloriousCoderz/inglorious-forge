@@ -4,13 +4,32 @@ const X = 0
 const Y = 1
 const Z = 2
 const HALF = 2
-const CENTER = 0.5
+const HALVED = 0.5
 const NO_EXTENT = 0
+const AT_EDGE = 0
+const AT_FAR_EDGE = 1
 
 /**
  * A shape is centred on its position unless it says otherwise.
  */
-export const DEFAULT_ANCHOR = v(CENTER, CENTER, CENTER)
+export const CENTER = v(HALVED, HALVED, HALVED)
+export const DEFAULT_ANCHOR = CENTER
+
+/**
+ * The nine points a shape can be anchored by, named rather than written out.
+ *
+ * Writing `anchor: [0, 1]` says what it means only to whoever has the anchor module
+ * open, and nothing stops `[0, 1]` from being read as bottom-left when it is top-left.
+ * Naming them costs an import and removes the reading.
+ */
+export const TOP_LEFT = v(AT_EDGE, AT_EDGE, AT_EDGE)
+export const TOP_CENTER = v(HALVED, AT_EDGE, AT_EDGE)
+export const TOP_RIGHT = v(AT_FAR_EDGE, AT_EDGE, AT_EDGE)
+export const LEFT = v(AT_EDGE, HALVED, AT_EDGE)
+export const RIGHT = v(AT_FAR_EDGE, HALVED, AT_EDGE)
+export const BOTTOM_LEFT = v(AT_EDGE, AT_FAR_EDGE, AT_EDGE)
+export const BOTTOM_CENTER = v(HALVED, AT_FAR_EDGE, AT_EDGE)
+export const BOTTOM_RIGHT = v(AT_FAR_EDGE, AT_FAR_EDGE, AT_EDGE)
 
 /**
  * The anchor an entity's shapes are positioned by.
@@ -26,11 +45,13 @@ export const DEFAULT_ANCHOR = v(CENTER, CENTER, CENTER)
  *
  * @example
  * ```js
+ * import { BOTTOM_LEFT, CENTER } from "@inglorious/engine/physics/anchor.js"
+ *
  * // A platform described by its bottom-left corner, which is what you stand on.
- * { type: "Platform", position: v(0, 0, 0), size: v(64, 16, 0), anchor: [0, 1] }
+ * { type: "Platform", position: v(0, 0, 0), size: v(64, 16, 0), anchor: BOTTOM_LEFT }
  *
  * // A body straddling its position, which is the default.
- * { type: "Ball", position: v(10, 10, 0), size: v(4, 4, 0) }
+ * { type: "Ball", position: v(10, 10, 0), size: v(4, 4, 0), anchor: CENTER }
  * ```
  */
 export function entityAnchor(entity) {
@@ -52,13 +73,13 @@ export function shapeAnchor(entity, collision) {
  * coordinate does.
  */
 export function anchorOffset(anchor, size) {
-  const [anchorX = CENTER, anchorY = CENTER, anchorZ = CENTER] = anchor ?? []
+  const [anchorX = HALVED, anchorY = HALVED, anchorZ = HALVED] = anchor ?? []
   const [width, height, depth] = extentsOf(size)
 
   return v(
-    (CENTER - anchorX) * width,
-    (CENTER - anchorY) * height,
-    (CENTER - anchorZ) * depth,
+    (HALVED - anchorX) * width,
+    (HALVED - anchorY) * height,
+    (HALVED - anchorZ) * depth,
   )
 }
 

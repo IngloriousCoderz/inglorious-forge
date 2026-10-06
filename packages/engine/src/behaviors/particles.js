@@ -1,6 +1,11 @@
 import { random } from "@inglorious/utils/math/rng.js"
 import { v } from "@inglorious/utils/v.js"
-import { multiply, negate, randomVector, sum } from "@inglorious/utils/vectors"
+import {
+  multiply,
+  negate,
+  randomVector,
+  sum,
+} from "@inglorious/utils/vectors.js"
 
 const FIRST_INDEX = 0
 const SINGLE = 1

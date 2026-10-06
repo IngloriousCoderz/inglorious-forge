@@ -5,7 +5,7 @@ import {
 import { crop } from "@inglorious/renderer-2d/image/crop.js"
 import { renderImage } from "@inglorious/renderer-2d/image/image.js"
 import { random } from "@inglorious/utils/math/rng.js"
-import { filter } from "@inglorious/utils/objects"
+import { filter } from "@inglorious/utils/object.js"
 import { v } from "@inglorious/utils/v.js"
 
 import { ballFrame } from "../atlas.js"

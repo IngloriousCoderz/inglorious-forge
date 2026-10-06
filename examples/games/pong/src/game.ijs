@@ -12,7 +12,7 @@ import {
 import { clamped } from "@inglorious/engine/behaviors/physics/clamped"
 import { renderFps } from "@inglorious/renderer-2d/fps"
 import { renderRectangle } from "@inglorious/renderer-2d/shapes/rectangle"
-import { magnitude } from "@inglorious/utils/vectors"
+import { magnitude } from "@inglorious/utils/vectors.js"
 
 import { Ball } from "./types/ball"
 import { Game } from "./types/game"

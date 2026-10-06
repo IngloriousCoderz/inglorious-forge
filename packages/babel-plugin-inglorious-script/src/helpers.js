@@ -1,6 +1,6 @@
 import { addNamed } from "@babel/helper-module-imports"
 
-const VECTORS_MODULE = "@inglorious/utils/vectors"
+const VECTORS_MODULE = "@inglorious/utils/vectors.js"
 const V_MODULE = "@inglorious/utils/v.js"
 
 import { Config } from "./config.js"

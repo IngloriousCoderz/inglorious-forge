@@ -5,7 +5,7 @@ import { renderCircle } from "@inglorious/renderer-2d/shapes/circle.js"
 import { renderText } from "@inglorious/renderer-2d/text.js"
 import { random } from "@inglorious/utils/math/rng.js"
 import { v } from "@inglorious/utils/v.js"
-import { add, scale } from "@inglorious/utils/vectors"
+import { add, scale } from "@inglorious/utils/vectors.js"
 
 const ORIGIN = 0
 const MAX_BUBBLES = 1000

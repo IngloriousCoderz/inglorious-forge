@@ -11,13 +11,14 @@ import {
   isArray,
 } from "@inglorious/utils/data-structures/array.js"
 import { isFunction } from "@inglorious/utils/functions"
-import { extendWith, isObject } from "@inglorious/utils/objects"
+import { extendWith, isObject } from "@inglorious/utils/object.js"
 import { v } from "@inglorious/utils/v.js"
-import { isVector } from "@inglorious/utils/vectors"
+import { isVector } from "@inglorious/utils/vectors.js"
 
 import { coreEvents } from "./core-events.js"
 import { Loop } from "./loops/index.js"
 import { entityPoolMiddleware } from "./middlewares/entity-pool/entity-pool-middleware.js"
+import { assertTypesAreDeclared } from "./types.js"
 
 // Default game configuration
 // loop.type specifies the type of loop to use (defaults to "animationFrame").
@@ -51,6 +52,11 @@ export class Engine {
    */
   constructor(...gameConfigs) {
     this._config = extendWith(merger, DEFAULT_GAME_CONFIG, ...gameConfigs)
+
+    // Said before anything is made, because a type that was never declared is not an error
+    // anywhere after this point -- it augments into an empty type, and everything sent to
+    // the entity quietly goes nowhere.
+    assertTypesAreDeclared(this._config)
 
     // Determine devMode from the entities config
     const devMode = this._config.entities.game?.devMode

@@ -6,7 +6,7 @@ import {
   multiply,
   subtract,
   sum,
-} from "@inglorious/utils/vectors"
+} from "@inglorious/utils/vectors.js"
 
 export const DEFAULT_TARGET_RADIUS = 1
 export const DEFAULT_TIME_TO_TARGET = 0.1

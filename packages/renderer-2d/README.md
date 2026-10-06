@@ -94,6 +94,49 @@ Both `renderSprite` and `renderTilemap` read the flag back out, so a frame list 
 mirrored and plain frames freely. The two flags they read are exported from the same
 place, should you need to take a frame apart yourself.
 
+### `baseline`
+
+A line is drawn against the **top** edge of its position by default, which keeps the
+position and `lineHeight` in step with what is drawn whatever the font's own baseline
+turns out to be.
+
+`baseline` says which edge of the line sits on the position instead, and takes the names
+the canvas gives — `top`, `hanging`, `middle`, `alphabetic`, `bottom`:
+
+```js
+import { renderText } from "@inglorious/renderer-2d/text.js"
+
+// The line starts at the position.
+{ render: renderText, value: "Score:", position: v(372, 238, 0), size: 8 }
+
+// The middle of the line is at the position, so no half a line height has to be worked
+// out by hand at every place one is wanted.
+{ render: renderText, value: "GAME OVER", position: v(216, 162, 0), size: 32, baseline: "middle" }
+```
+
+Two entities at the same position are only on the same line if they share a `baseline`
+as well — a top-anchored and a middle-anchored line at the same point sit half a line
+height apart.
+
+## Anchors
+
+Sprites and shapes can be anchored by any of nine points, named in
+`@inglorious/engine/physics/anchor.js` rather than written as pairs of numbers:
+
+```js
+import { BOTTOM_LEFT, TOP_LEFT } from "@inglorious/engine/physics/anchor.js"
+
+// Drawn from its top left corner, which is where a sprite sheet's own coordinates point.
+{ type: "Ball", position: v(212, 40, 0), size: v(8, 8, 0), anchor: TOP_LEFT }
+
+// Sitting on the position, which is what a floor is.
+{ type: "Platform", position: v(0, 0, 0), size: v(64, 16, 0), anchor: BOTTOM_LEFT }
+```
+
+`TOP_LEFT`, `TOP_CENTER`, `TOP_RIGHT`, `LEFT`, `CENTER`, `RIGHT`, `BOTTOM_LEFT`,
+`BOTTOM_CENTER`, `BOTTOM_RIGHT`. Anchors count from the top on both vertical axes, so
+`BOTTOM_LEFT` is on the floor. `CENTER` is the default.
+
 ## Shapes
 
 `renderRectangle`, `renderCircle`, `renderLine`, `renderText` and friends. Each takes its

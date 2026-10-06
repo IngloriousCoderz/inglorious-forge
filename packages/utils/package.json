@@ -78,13 +78,13 @@
       "types": "./types/physics/*.d.ts",
       "import": "./src/physics/*.js"
     },
-    "./objects.js": {
-      "types": "./types/data-structures/objects.d.ts",
-      "import": "./src/data-structures/objects.js"
+    "./object.js": {
+      "types": "./types/data-structures/object.d.ts",
+      "import": "./src/data-structures/object.js"
     },
-    "./objects": {
-      "types": "./types/data-structures/objects.d.ts",
-      "import": "./src/data-structures/objects.js"
+    "./object": {
+      "types": "./types/data-structures/object.d.ts",
+      "import": "./src/data-structures/object.js"
     },
     "./quaternions.js": {
       "types": "./types/math/quaternions.d.ts",

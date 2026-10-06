@@ -45,6 +45,26 @@ test("it should anchor the text to its top edge", () => {
   expect(state.textBaseline).toBe("top")
 })
 
+test("it should anchor the text wherever the entity asks", () => {
+  const { state, ctx } = createContext()
+
+  renderText({ value: "GAME OVER", baseline: "middle" }, ctx)
+
+  expect(state.textBaseline).toBe("middle")
+})
+
+test("it should say the baselines it can take", () => {
+  // These are the names the canvas gives, so passing one through costs nothing and
+  // naming them here is what keeps the default from being the only one that works.
+  const { state, ctx } = createContext()
+
+  for (const baseline of ["top", "hanging", "middle", "alphabetic", "bottom"]) {
+    renderText({ value: "Score", baseline }, ctx)
+
+    expect(state.textBaseline).toBe(baseline)
+  }
+})
+
 test("it should lay out the lines by their line height", () => {
   const { calls, ctx } = createContext()
 

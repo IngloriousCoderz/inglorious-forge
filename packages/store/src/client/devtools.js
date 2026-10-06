@@ -1,4 +1,4 @@
-import { deserialize } from "@inglorious/utils/objects"
+import { deserialize } from "@inglorious/utils/object.js"
 
 const LAST_STATE = 1
 

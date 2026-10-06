@@ -1,5 +1,5 @@
 import { Logo, startInteraction, stopInteraction } from "@inglorious/logo"
-import { set } from "@inglorious/utils/objects"
+import { set } from "@inglorious/utils/object.js"
 
 export const LiveLogo = {
   ...Logo,
