@@ -48,6 +48,8 @@ const hold = (code, frames = 30) => {
   step(2)
 }
 
+const TEN = 10
+
 const BRICK_WIDTH = 32
 const FIFTEEN = 15
 const BRICK_MAX_COLS = 13
@@ -97,6 +99,81 @@ press("ArrowUp")
 check(state().game.menuItem === "high-scores", "the menu wraps upwards")
 press("ArrowDown")
 check(state().game.menuItem === "start", "and downwards")
+
+// The scores kept between games. The second item of the menu reads them rather than
+// starting a game.
+check(
+  state().highScoresTitle === undefined,
+  "the table is not up on the title screen",
+)
+press("ArrowDown")
+press("Enter")
+step(4)
+check(
+  state().game.state === "highScores",
+  "choosing HIGH SCORES reads the table",
+)
+check(state().highScoresTitle.value === "High Scores", "the table is titled")
+check(state().highScoresTitle.size === 32, "in the large font")
+check(
+  state().highScoresPrompt.value === "Press Escape to return to the main menu!",
+  "and says how to leave",
+)
+check(state().highScoresPrompt.size === 8, "in the small font")
+// Ten rows, and each row is three separately aligned pieces, so thirty entities.
+check(
+  Object.keys(state()).filter((id) => /^highScore\d+Position$/.test(id))
+    .length === TEN,
+  "ten rows",
+)
+check(
+  state().highScore0Position.value === "1.",
+  "the first row is numbered from one",
+)
+check(state().highScore9Position.value === "10.", "and the tenth from ten")
+check(state().highScore0Position.textAlign === "left", "the position runs left")
+check(
+  state().highScore0Name.textAlign === "right",
+  "the name runs back from its own box",
+)
+check(
+  state().highScore0Score.textAlign === "right",
+  "and the score runs back from another",
+)
+// The boxes are the original's, so these are where each ends rather than where a line of
+// text is centred: 108, 108 + 50 + 38, and 216 + 100.
+check(
+  state().highScore0Position.position[0] === 108,
+  "the position column sits at a quarter",
+)
+check(
+  state().highScore0Name.position[0] === 196,
+  "the name ends where its box does",
+)
+check(
+  state().highScore0Score.position[0] === 316,
+  "and the score where its own does",
+)
+// Seeded from nothing, the table reads ten thousand down to a thousand, all one name.
+check(state().highScore0Name.value === "CTO", "the seed is one name")
+check(state().highScore0Score.value === "10000", "from ten thousand")
+check(state().highScore9Score.value === "1000", "down to a thousand")
+check(state().game.highScores.length === TEN, "ten entries are kept")
+
+// This is the one screen the original takes the way out for itself: Escape goes back to
+// the menu instead of out of the game.
+press("Escape")
+step(2)
+check(state().game.state === "start", "Escape leaves the table")
+check(state().game.quit !== true, "and does not quit the game with it")
+check(
+  state().highScoresTitle === undefined,
+  "the table is taken off the screen",
+)
+// Left back on START, which is where this section began, so the rest of the title screen
+// is walked from the same place it would otherwise have been.
+press("ArrowDown")
+check(state().game.menuItem === "start", "and the menu is back on START")
 check(
   state().background.image.imageSize.join() === "302,129",
   "the backdrop is drawn at its native size",

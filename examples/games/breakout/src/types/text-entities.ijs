@@ -6,11 +6,15 @@ import {
   SCORE_VALUE_X,
   WIDTH,
 } from "../constants.js"
+import { ENTRIES as HIGH_SCORE_ENTRIES } from "../high-scores.js"
 import {
   GAME_OVER_PROMPT_PLACEMENT,
   GAME_OVER_SCORE_PLACEMENT,
   GAME_OVER_TITLE_PLACEMENT,
-  HIGH_SCORES_PLACEMENT,
+  HIGH_SCORES_ITEM_PLACEMENT,
+  HIGH_SCORES_PROMPT_PLACEMENT,
+  HIGH_SCORES_TITLE_PLACEMENT,
+  highScoreRowAltitude,
   LEVEL_PLACEMENT,
   PAUSED_PLACEMENT,
   SCORE_LABEL_PLACEMENT,
@@ -33,7 +37,7 @@ export function createStartScene() {
   return [
     createTextEntity("title", "Title", TITLE_PLACEMENT),
     createTextEntity("start", "Start", START_PLACEMENT),
-    createTextEntity("highScores", "HighScores", HIGH_SCORES_PLACEMENT),
+    createTextEntity("highScores", "HighScores", HIGH_SCORES_ITEM_PLACEMENT),
   ]
 }
 
@@ -49,6 +53,73 @@ export function createPausedEntity() {
     ...createTextEntity("paused", "Paused", PAUSED_PLACEMENT),
     updatesWhilePaused: true,
   }
+}
+
+// The columns of the high score table. The original gives each piece of a row its own box,
+// so what is wanted is where each box ends rather than where a line of text is centred:
+// the position runs left from the first box, and the name and the score run back from
+// theirs.
+const HIGH_SCORE_NAME_BOX = 50
+const HIGH_SCORE_NAME_OFFSET = 38
+const HIGH_SCORE_SCORE_BOX = 100
+
+const HIGH_SCORE_POSITION_X = WIDTH / 4
+const HIGH_SCORE_NAME_RIGHT =
+  WIDTH / 4 + HIGH_SCORE_NAME_BOX + HIGH_SCORE_NAME_OFFSET
+const HIGH_SCORE_SCORE_RIGHT = WIDTH / 2 + HIGH_SCORE_SCORE_BOX
+
+/**
+ * The ten rows of the high score table.
+ *
+ * The original lays each row out as three separately aligned pieces -- the position
+ * left-aligned in a box of its own, the name right-aligned in another, the score
+ * right-aligned in a third -- so a row is three entities and the table is thirty.
+ */
+export function createHighScoreEntities() {
+  const rows = []
+
+  for (let row = 0; row < HIGH_SCORE_ENTRIES; row++) {
+    const altitude = highScoreRowAltitude(row)
+
+    rows.push(
+      {
+        ...createTextEntity(`highScore${row}Position`, "HighScorePosition", {
+          altitude,
+        }),
+        position: v(HIGH_SCORE_POSITION_X, altitude, 0),
+        row,
+      },
+      {
+        ...createTextEntity(`highScore${row}Name`, "HighScoreName", {
+          altitude,
+        }),
+        position: v(HIGH_SCORE_NAME_RIGHT, altitude, 0),
+        row,
+      },
+      {
+        ...createTextEntity(`highScore${row}Score`, "HighScoreScore", {
+          altitude,
+        }),
+        position: v(HIGH_SCORE_SCORE_RIGHT, altitude, 0),
+        row,
+      },
+    )
+  }
+
+  return [
+    createTextEntity(
+      "highScoresTitle",
+      "HighScoreTitle",
+      HIGH_SCORES_TITLE_PLACEMENT,
+      highScoreRowAltitude,
+    ),
+    ...rows,
+    createTextEntity(
+      "highScoresPrompt",
+      "HighScoresPrompt",
+      HIGH_SCORES_PROMPT_PLACEMENT,
+    ),
+  ]
 }
 
 /** The lines that say the game is waiting to be served, and which level it is. */

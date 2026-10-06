@@ -1,8 +1,10 @@
 import { LAYER_BRICK } from "../constants.js"
+import { loadHighScores } from "../high-scores.js"
 import { createLevel } from "../levelmaker.ijs"
 import { createPlayScene } from "./entities.ijs"
 import {
   createGameOverScene,
+  createHighScoreEntities,
   createPausedEntity,
   createScoreEntities,
   createServeEntities,
@@ -44,6 +46,14 @@ export const SCENES = {
   victory: (entity) => [...createGameScene(entity), ...createVictoryScene()],
 
   gameOver: () => createGameOverScene(),
+
+  // Where the scores kept between games are read off, rather than where they are kept:
+  // the table is loaded once, by whichever screen first needs it.
+  highScores: (entity) => {
+    entity.highScores ??= loadHighScores()
+
+    return createHighScoreEntities()
+  },
 }
 
 /**

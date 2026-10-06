@@ -37,7 +37,12 @@ import {
   GameOverPrompt,
   GameOverScore,
   GameOverTitle,
+  HighScoreName,
+  HighScorePosition,
   HighScores,
+  HighScoreScore,
+  HighScoresPrompt,
+  HighScoreTitle,
   Level,
   Paused,
   Score,
@@ -82,6 +87,14 @@ export default {
     GameOverTitle,
     GameOverScore,
     GameOverPrompt,
+
+    // The table of scores kept between games: a title, and each row of it in three pieces
+    // because the original aligns each of those separately.
+    HighScoreTitle,
+    HighScorePosition,
+    HighScoreName,
+    HighScoreScore,
+    HighScoresPrompt,
 
     /** The backdrop is drawn once, stretched to fill the screen. */
     Background: [

@@ -12,10 +12,13 @@ import {
   MENU_START,
   SCORE_TOP,
 } from "../constants.js"
+import { entryOf } from "../high-scores.js"
 
 // The two baselines the original's two ways of laying a line out come down to.
 const TOP_BASELINE = "top"
 const MIDDLE_BASELINE = "middle"
+
+const ONE = 1
 
 /**
  * Where a line of the original's sits, as this world would place it.
@@ -44,9 +47,16 @@ const printf = (y) => ({ altitude: at(y), baseline: MIDDLE_BASELINE })
  */
 const print = (y) => ({ altitude: at(y), baseline: TOP_BASELINE })
 
+// The high score table: a title high on the screen, ten rows thirteen pixels apart, and a
+// line at the bottom saying how to get back out of it.
+const HIGH_SCORES_TITLE_Y = 20
+const HIGH_SCORES_PROMPT_Y = HEIGHT - 18
+const HIGH_SCORES_FIRST_ROW_Y = 60
+const HIGH_SCORES_ROW_STEP = 13
+
 export const TITLE_PLACEMENT = printf(HEIGHT / 3)
 export const START_PLACEMENT = printf(HEIGHT / 2 + 70)
-export const HIGH_SCORES_PLACEMENT = printf(HEIGHT / 2 + 90)
+export const HIGH_SCORES_ITEM_PLACEMENT = printf(HEIGHT / 2 + 90)
 export const PAUSED_PLACEMENT = printf(HEIGHT / 2 - 16)
 
 // The serve prompt sits across the middle of the field, over the bricks it is waiting on.
@@ -66,6 +76,15 @@ export const GAME_OVER_PROMPT_PLACEMENT = printf(HEIGHT - HEIGHT / 4)
 // centres, so the label hangs from its top edge. It centres its number instead, which
 // leaves the number sitting half a font lower than the label beside it -- so the number
 // is printed too, and the two are one line of interface as they plainly are meant to be.
+export const HIGH_SCORES_TITLE_PLACEMENT = printf(
+  HIGH_SCORES_TITLE_Y,
+  FONT_LARGE,
+)
+export const HIGH_SCORES_PROMPT_PLACEMENT = printf(
+  HIGH_SCORES_PROMPT_Y,
+  FONT_SMALL,
+)
+
 export const SCORE_LABEL_PLACEMENT = print(SCORE_TOP)
 export const SCORE_PLACEMENT = print(SCORE_TOP)
 
@@ -116,7 +135,15 @@ function reads(read, place, size = FONT_MEDIUM, textAlign = "center") {
     render: renderText,
 
     update(entity, dt, api) {
-      say(entity, read(api.getEntity("game")), size, textAlign, place.baseline)
+      // The entity itself is handed to the reader as well as the game, so that one type
+      // can serve a whole row of a table rather than one type per row.
+      say(
+        entity,
+        read(api.getEntity("game"), entity),
+        size,
+        textAlign,
+        place?.baseline,
+      )
 
       entity.color = COLOR_TEXT
     },
@@ -127,7 +154,7 @@ export const Title = line("BREAKOUT", TITLE_PLACEMENT)
 export const Start = line("START", START_PLACEMENT, FONT_MEDIUM, MENU_START)
 export const HighScores = line(
   "HIGH SCORES",
-  HIGH_SCORES_PLACEMENT,
+  HIGH_SCORES_ITEM_PLACEMENT,
   FONT_MEDIUM,
   MENU_HIGH_SCORES,
 )
@@ -144,6 +171,39 @@ export const Score = reads(
   SCORE_PLACEMENT,
   FONT_SMALL,
   "right",
+)
+
+// The high score table. Each row reads one entry of the table, and where the entry is
+// missing both halves say so rather than showing a blank.
+export const HighScoreTitle = line(
+  "High Scores",
+  HIGH_SCORES_TITLE_PLACEMENT,
+  FONT_LARGE,
+)
+
+export const HighScorePosition = reads(
+  (_, { row }) => `${row + ONE}.`,
+  undefined,
+  FONT_MEDIUM,
+  "left",
+)
+export const HighScoreName = reads(
+  ({ highScores }, { row }) => entryOf(highScores[row]).name,
+  undefined,
+  FONT_MEDIUM,
+  "right",
+)
+export const HighScoreScore = reads(
+  ({ highScores }, { row }) => String(entryOf(highScores[row]).score),
+  undefined,
+  FONT_MEDIUM,
+  "right",
+)
+
+export const HighScoresPrompt = line(
+  "Press Escape to return to the main menu!",
+  HIGH_SCORES_PROMPT_PLACEMENT,
+  FONT_SMALL,
 )
 
 export const ServePrompt = line(
@@ -167,6 +227,12 @@ export const VictoryTitle = reads(
   VICTORY_TITLE_PLACEMENT,
   FONT_LARGE,
 )
+
+/** Where the nth row of the high score table sits, as an altitude. */
+export function highScoreRowAltitude(index) {
+  return printf(HIGH_SCORES_FIRST_ROW_Y + index * HIGH_SCORES_ROW_STEP).altitude
+}
+
 export const VictoryPrompt = line(
   "Press Enter to serve!",
   VICTORY_PROMPT_PLACEMENT,

@@ -127,3 +127,51 @@ test("it should stay quiet when a handler does not move the machine", () => {
 
   expect(seen()).toHaveLength(1)
 })
+
+test("it should let a state answer for itself in place of the type", () => {
+  // The type's handler is the default every state would otherwise do; a state that names
+  // the same event takes it over rather than adding to it.
+  const calls = []
+
+  const config = {
+    types: {
+      Kitty: [
+        {
+          leave(entity) {
+            calls.push(`type in ${entity.state}`)
+          },
+        },
+        fsm({
+          default: {},
+          table: {
+            // The screen that keeps the way out for itself.
+            leave(entity) {
+              calls.push("back to the menu")
+
+              entity.state = "default"
+            },
+          },
+          play: {},
+        }),
+      ],
+    },
+    entities: { entity1: { type: "Kitty", state: "default" } },
+  }
+
+  const store = createStore(config)
+
+  store.notify("leave")
+  store.update()
+  expect(calls).toEqual(["type in default"])
+
+  store.getState().entity1.state = "table"
+  store.notify("leave")
+  store.update()
+  expect(calls).toEqual(["type in default", "back to the menu"])
+  expect(store.getState().entity1.state).toBe("default")
+
+  store.getState().entity1.state = "play"
+  store.notify("leave")
+  store.update()
+  expect(calls).toEqual(["type in default", "back to the menu", "type in play"])
+})

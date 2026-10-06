@@ -73,6 +73,7 @@ export const GAME_STATE = {
   serve: "serve",
   play: "play",
   victory: "victory",
+  highScores: "highScores",
   gameOver: "gameOver",
 }
 

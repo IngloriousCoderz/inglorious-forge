@@ -24,10 +24,15 @@ export function fsm(states) {
           [eventName](entity, event, api) {
             const from = entity.state
 
-            type[eventName]?.(entity, event, api)
+            // A state answers for itself, and what it has to say replaces what the type
+            // would have said. The type-level handler is the default -- the thing every
+            // state would otherwise do -- and a state takes it over by naming the same
+            // event, which is how a screen can take the way out for itself: the high
+            // score table is left with Escape rather than quit by, without the built-in
+            // quit having to know that screen exists.
+            const handler = states[entity.state]?.[eventName] ?? type[eventName]
 
-            const state = states[entity.state]
-            state?.[eventName]?.(entity, event, api)
+            handler?.(entity, event, api)
 
             announce(entity, from, api)
           },

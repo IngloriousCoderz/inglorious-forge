@@ -6,12 +6,14 @@ import {
   BRICK_TIER_SCORE,
   GAME_STATE,
   MAX_HEALTH,
+  MENU_HIGH_SCORES,
   MENU_ITEMS,
   SOUND_CONFIRM,
   SOUND_HURT,
   SOUND_PADDLE_HIT,
   SOUND_PAUSE,
   SOUND_VICTORY,
+  SOUND_WALL_HIT,
 } from "../constants.js"
 
 /**
@@ -40,6 +42,14 @@ export const Game = fsm({
 
     press(entity, _, api) {
       api.notify("soundPlay", SOUND_CONFIRM)
+
+      // The second item of the menu reads the scores rather than starting a game. Which
+      // of the two was chosen is the menu's decision, so it is asked about here.
+      if (entity.menuItem === MENU_HIGH_SCORES) {
+        entity.state = GAME_STATE.highScores
+
+        return
+      }
 
       // A new game starts with every life and nothing scored. The level itself is made
       // by the scene, which is told to throw the last one away.
@@ -120,6 +130,17 @@ export const Game = fsm({
       entity.level += NEXT_LEVEL
 
       entity.state = GAME_STATE.serve
+    },
+  },
+
+  // The scores kept between games. Nothing on this screen changes one -- nothing does
+  // yet -- and Escape goes back to the menu rather than out of the game, which is the one
+  // place the original takes the way out for itself.
+  [GAME_STATE.highScores]: {
+    quit(entity, _, api) {
+      api.notify("soundPlay", SOUND_WALL_HIT)
+
+      entity.state = GAME_STATE.start
     },
   },
 
