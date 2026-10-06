@@ -110,6 +110,10 @@ export default {
       size: [WIDTH, HEIGHT],
       state: GAME_STATE.start,
       menuItem: MENU_START,
+      // The level the bricks are rolled for. Nothing moves it on yet -- the original
+      // asks for level one from its start screen for now -- but the levelmaker reads it,
+      // so it is the game's to carry rather than the levelmaker's to guess.
+      level: 1,
     },
 
     images: {

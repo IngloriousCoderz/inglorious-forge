@@ -3,6 +3,7 @@ import "./smoke-setup.js"
 import { Engine } from "@inglorious/engine/core/engine.js"
 
 import gameConfig from "./src/game.ijs"
+import { createLevel } from "./src/levelmaker.ijs"
 
 gameConfig.entities.game.devMode = false
 const engine = new Engine(gameConfig)
@@ -31,6 +32,23 @@ const hold = (code, frames = 30) => {
   step(frames)
   engine._store.notify("keyboardKeyUp", code)
   step(2)
+}
+
+const BRICK_WIDTH = 32
+const BRICK_MAX_COLS = 13
+
+/**
+ * Whether a level's left edge is where an odd number of columns would put it.
+ *
+ * A level is padded by 8 plus sixteen for every column it is short of the widest level
+ * of thirteen. An odd column count is always an even number of columns short, so that
+ * padding always lands 8 above a whole brick's width -- and a row that skips its first
+ * cell moves the leftmost brick along by a whole cell, which keeps it there. That is why
+ * this can say a level was padded for an odd count without being able to say what that
+ * count was.
+ */
+function paddedForOddColumns(leftEdge) {
+  return leftEdge >= 8 && (leftEdge - 8) % BRICK_WIDTH === 0
 }
 
 let failures = 0
@@ -208,11 +226,17 @@ check(state().game.paused === true, "space pauses")
 check(state().paddle.position[0] === pausedAt, "a paused paddle does not move")
 check(state().paused.value === "PAUSED", "PAUSED is shown while paused")
 
+// The original plays its pause sound both pausing and resuming. Which sound came out
+// last is not the question, because the ball is live again by the end of the press and
+// may have reached something: whether the pause was sounded at all is.
+const beforeResume = played.length
 press("Space")
 check(state().game.state === "play", "space resumes")
 check(state().paused.value === "", "and PAUSED goes away")
-// The original plays its pause sound both pausing and resuming.
-check(played.at(-1) === "pause", "resuming sounds the pause again")
+check(
+  played.slice(beforeResume).includes("pause"),
+  "resuming sounds the pause again",
+)
 
 // The interface along the top of the field: the hearts, the score, and the counter.
 // These are all placed by hand and all sit in the same corner, so they are checked
@@ -470,34 +494,44 @@ check(
 const brickList = Object.values(ballState()).filter(
   ({ type }) => type === "Brick",
 )
-const columns = new Set(brickList.map(({ position }) => position[0])).size
 const rows = new Set(brickList.map(({ position }) => position[1])).size
 
 check(rows >= 1 && rows <= 5, `the level has between 1 and 5 rows (${rows})`)
+// How many columns the level rolled cannot be read back off it -- a row that skips its
+// first cell moves the leftmost brick a whole cell right, which is exactly the gap
+// between one possible padding and the next -- so all that can be said is that it is no
+// fuller than the widest level, and not empty.
 check(
-  columns >= 7 && columns <= 13,
-  `and between 7 and 13 columns (${columns})`,
-)
-check(
-  brickList.length === rows * columns,
-  `holding one brick per cell (${brickList.length})`,
+  brickList.length > 0 && brickList.length <= rows * BRICK_MAX_COLS,
+  `with a brick for most cells, and none at all for some (${brickList.length})`,
 )
 check(
   brickList.every(({ size }) => size[0] === 32 && size[1] === 16),
   "each 32x16",
 )
-// Touching, so the columns are one brick width apart.
+// Bricks are laid out in cells one brick wide, and a row that skips leaves a whole cell
+// empty between neighbours -- so a row's bricks are either touching or one cell apart,
+// and never closer than touching.
 const xs = [...new Set(brickList.map(({ position }) => position[0]))].sort(
   (a, b) => a - b,
 )
 check(
-  xs.every((x, i) => i === 0 || x - xs[i - 1] === 32),
-  `laid out touching (${xs.join(", ")})`,
+  xs.every((x, i) => i === 0 || x - xs[i - 1] === 32 || x - xs[i - 1] === 64),
+  `laid out on the grid, touching or one cell apart (${xs.join(", ")})`,
 )
-// Padded by 8 plus half a brick for each of the columns it is short of.
+// And no two bricks share a cell, whichever row they are in.
 check(
-  xs[0] === 8 + (13 - columns) * 16,
-  `and padded for the missing columns (${xs[0]})`,
+  new Set(brickList.map(({ position }) => position.join(","))).size ===
+    brickList.length,
+  "with no cell holding two bricks",
+)
+check(
+  paddedForOddColumns(xs[0]),
+  `and padded for an odd number of columns (${xs[0]})`,
+)
+check(
+  xs.every((x) => x >= xs[0] && (x - xs[0]) % BRICK_WIDTH === 0),
+  "with every brick on the same grid of cells",
 )
 // Hanging from the ceiling, which is where the original starts them.
 const ys = [...new Set(brickList.map(({ position }) => position[1]))].sort(
@@ -506,6 +540,95 @@ const ys = [...new Set(brickList.map(({ position }) => position[1]))].sort(
 check(
   ys[0] === 227 && ys[ys.length - 1] === 243 - rows * 16,
   `from just under the ceiling down (${ys.join(", ")})`,
+)
+
+// A brick's colour and tier are what say which of the twenty frames it draws from, so
+// each brick's own crop is checked against the pair it was given rather than against a
+// fixed tile. On the first level the tiers never leave zero and the colours stop at four.
+const quadsOf = (color, tier) => {
+  const quad = (color - 1) * 4 + tier
+  return `${quad % 6},${Math.floor(quad / 6)}`
+}
+check(
+  brickList.every(({ color }) => color >= 1 && color <= 4),
+  `every brick's colour is within the level (${[...new Set(brickList.map((b) => b.color))].sort().join(", ")})`,
+)
+check(
+  brickList.every(({ tier }) => tier === 0),
+  "and the first level leaves every tier at the bottom",
+)
+check(
+  brickList.every(
+    ({ color, tier, sx, sy }) => `${sx},${sy}` === quadsOf(color, tier),
+  ),
+  "each brick cropped from the frame its colour and tier name",
+)
+// A row is solid or alternating or skipping, and a row is one of the three all the way
+// along: bricks in a row that share a colour and a tier are all of them or none of them.
+const byRow = new Map()
+for (const brick of brickList) {
+  const row = Math.round((243 - brick.position[1]) / 16) - 1
+  byRow.set(row, [...(byRow.get(row) ?? []), brick])
+}
+check(
+  [...byRow.values()].every((bricks) => {
+    const cells = bricks.map(({ position }) => position[0])
+    const skipping = cells.some((x, i) => i > 0 && x - cells[i - 1] === 64)
+    const solid =
+      new Set(bricks.map(({ color, tier }) => `${color},${tier}`)).size === 1
+
+    // A skipping row says nothing about its colours, because it never got to choose.
+    return (
+      skipping ||
+      solid ||
+      new Set(bricks.map((b) => `${b.color},${b.tier}`)).size <= 2
+    )
+  }),
+  "every row is one pattern the whole way along",
+)
+
+// The levelmaker is reached here directly, because a single game only ever plays the
+// first level and so cannot show what a later one asks for. Every level is bounded by its
+// own colour and tier reach, which is what stops a late level asking for a frame that is
+// not on the sheet.
+const LEVEL_ROLLS = 60
+const LEVELS = [1, 4, 5, 9, 20, 24, 100]
+const rolled = LEVELS.flatMap((level) =>
+  Array.from({ length: LEVEL_ROLLS }, () => createLevel(level, 0)),
+)
+check(
+  rolled.every((bricks) => bricks.length > 0),
+  `every level made something (${rolled.length} levels)`,
+)
+check(
+  LEVELS.every((level) => {
+    const highestTier = Math.min(3, Math.floor(level / 5))
+    const highestColor = Math.min(5, (level % 5) + 3)
+
+    return Array.from({ length: LEVEL_ROLLS }, () => createLevel(level, 0))
+      .flat()
+      .every(({ color, tier }) => color <= highestColor && tier <= highestTier)
+  }),
+  "and nothing on it went past the colours and tiers its level allows",
+)
+check(
+  rolled.every(
+    (bricks) => new Set(bricks.map(({ id }) => id)).size === bricks.length,
+  ),
+  "with no two bricks in a level sharing a name",
+)
+// The palette is rolled rather than fixed, so across enough levels more than one colour
+// has to turn up -- which a single level cannot promise, since every one of its rows may
+// roll solid on the same colour.
+check(
+  new Set(rolled.flat().map(({ color }) => color)).size > 1,
+  `and the colours are rolled, not fixed (${[...new Set(rolled.flat().map((b) => b.color))].sort().join(", ")})`,
+)
+check(
+  Array.from({ length: LEVEL_ROLLS }, () => createLevel(1, 0)).every((bricks) =>
+    paddedForOddColumns(Math.min(...bricks.map(({ position }) => position[0]))),
+  ),
+  "every level is padded for an odd number of columns",
 )
 
 // The serve. While the serve is being waited out the ball is parked on the paddle, and

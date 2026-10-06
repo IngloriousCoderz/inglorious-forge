@@ -1,7 +1,10 @@
 import {
   BALL_SIZE,
   BALL_SKIN_FIRST_ROW,
+  BRICK_FIRST_COLOR,
+  BRICK_FIRST_TIER,
   BRICK_HEIGHT,
+  BRICK_TIERS_PER_COLOR,
   BRICK_WIDTH,
   HEART_HEIGHT,
   HEART_WIDTH,
@@ -13,6 +16,24 @@ import {
 // is on the sheet and how much of it to take, in pixels, and `crop` divides that down to
 // the grid for the renderer.
 const TILE = [32, 16]
+
+// The sheet is this many tiles across, which is what a quad's own number has to be
+// divided by to say where it sits. The original numbers its quads in reading order down
+// the sheet, so on a sheet six across, the seventh quad is the first tile of the second
+// row rather than anything further along the first.
+const TILES_ACROSS = 6
+
+/** Where the nth quad of the sheet is, in pixels. */
+function frameAt(quad, size) {
+  const [tileWidth, tileHeight] = TILE
+
+  return {
+    x: (quad % TILES_ACROSS) * tileWidth,
+    y: Math.floor(quad / TILES_ACROSS) * tileHeight,
+    ...size,
+    tileSize: TILE,
+  }
+}
 
 /**
  * `breakout.png` is one atlas that every sprite in the game is cropped from.
@@ -65,14 +86,18 @@ export const heartFrame = (full) => ({
 })
 
 /**
- * The bricks are just the first tiles of the sheet in order, and the original only ever
- * draws the first one, because the tiers and colours that would pick a later tile arrive
- * with the levels that use them.
+ * The bricks are the first twenty quads of the sheet, and which one a brick is drawn
+ * from is its colour and its tier: every four quads is one colour's four tiers, with the
+ * tiers in order.
+ *
+ * A brick with no colour or tier of its own is the first one on the sheet, which is the
+ * plain blue brick every level started with before either of them existed.
  */
-export const brickFrame = () => ({
-  x: 0,
-  y: 0,
-  width: BRICK_WIDTH,
-  height: BRICK_HEIGHT,
-  tileSize: TILE,
-})
+export const brickFrame = (
+  color = BRICK_FIRST_COLOR,
+  tier = BRICK_FIRST_TIER,
+) =>
+  frameAt((color - BRICK_FIRST_COLOR) * BRICK_TIERS_PER_COLOR + tier, {
+    width: BRICK_WIDTH,
+    height: BRICK_HEIGHT,
+  })

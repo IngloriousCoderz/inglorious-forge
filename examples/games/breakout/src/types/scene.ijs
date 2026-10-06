@@ -43,9 +43,12 @@ const SCENES = {
  * The level is made at random and is held on the game entity rather than rolled again
  * each time a state is entered, because it is one level across the whole game. Rerolling
  * it per state would quietly put back every brick knocked out of the level before.
+ *
+ * The level itself is read off the game entity and passed to the levelmaker, which is
+ * what decides how far along the colours and the tiers a level may reach.
  */
 function createGameScene(entity) {
-  entity.bricks ??= createLevel(LAYER_BRICK)
+  entity.bricks ??= createLevel(entity.level, LAYER_BRICK)
 
   return [...createPlayScene(entity.bricks), ...createScoreEntities()]
 }

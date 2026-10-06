@@ -37,6 +37,21 @@ export const BRICK_MAX_COLS = 13
 export const BRICK_PADDING = 8
 export const BRICK_MAX_COLUMN_PADDING = 16
 
+// A brick is a colour and a tier, and the pair says which of the twenty brick frames it
+// is drawn from: five colours, four tiers each.
+export const BRICK_FIRST_COLOR = 1
+export const BRICK_FIRST_TIER = 0
+export const BRICK_MAX_COLOR = 5
+export const BRICK_MAX_TIER = 3
+export const BRICK_TIERS_PER_COLOR = 4
+
+// The level says how far along the colours and tiers a level may reach. Every fifth
+// level unlocks the next tier, and the colours climb one per level within each group of
+// five -- both of which stop, so that a late level cannot ask for a frame that is not on
+// the sheet.
+export const LEVELS_PER_TIER = 5
+export const COLOR_BASE = 3
+
 // The original splits the game in four now: a start screen, the wait before each serve,
 // the play itself, and the end. Pausing is still not one of them -- it is a flag on the
 // play state, exactly as before.
