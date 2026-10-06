@@ -363,27 +363,114 @@ const lifeBricks = Object.keys(lifeState()).filter((id) =>
 )
 check(lifeBricks.length > 0, "with a level standing above it")
 
-// A brick knocked out is worth ten points, and the score is the game's own.
-// Rather than wait for the ball to find a brick, the first one is put where the ball
-// already is, which is the collision the original would have found for it.
-const knockedOut = lifeBricks[0]
-const [ballX, ballY] = lifeState().ball.position
-lifeState()[knockedOut].position = [ballX, ballY, 0]
-lifeStep(2)
-check(
-  lifeState().score.value === "10",
-  `a brick is worth ten (${lifeState().score.value})`,
+// A brick hit is worth the tier and the colour it was hit at. Rather than wait for the
+// ball to find one, a brick is put where the ball already is, which is the collision the
+// original would have found for it.
+// The ball is put inside one brick's cell and stopped there, rather than a brick being
+// put on the ball: a brick's cell holds one brick and nothing else, so exactly one hit
+// is resolved. The bounce then pushes the ball clear, so the next hit needs putting it
+// back.
+const hitBrick = (id) => {
+  // Strictly inside the brick's cell, and clear of all four of its edges. Bricks are
+  // anchored by their top left corner, so a brick at (x, y) covers x to x+32 across and
+  // y-16 to y up, and touching an edge counts as overlapping -- which is right for a game
+  // but means a ball parked on a corner would hit this brick and its neighbour at once.
+  const [brickX, brickY] = lifeState()[id].position
+
+  lifeState().ball.position = [brickX + 12, brickY - 4, 0]
+  lifeState().ball.velocity = [0, 0, 0]
+  lifeStep(1)
+
+  // The bounce pushes the ball clear of the brick it hit, but not always clear of the
+  // one next to it, so it is put back on the paddle before the frame that lets the score
+  // text catch up. Otherwise one hit knocks back two bricks.
+  lifeState().ball.position = [212, 40, 0]
+  lifeState().ball.velocity = [0, 0, 0]
+  lifeStep(1)
+}
+
+const scoreOf = (brick) => brick.tier * 200 + brick.color * 25
+
+// The brick is given a known place in the order so that what a hit does to it can be
+// said outright rather than read off whatever the level happened to roll.
+// The lowest row, so that putting the ball in a brick's cell is not the ball hitting the
+// ceiling on the way.
+const lowestRow = Math.min(
+  ...lifeBricks.map((id) => lifeState()[id].position[1]),
 )
-check(lifeState()[knockedOut] === undefined, "and the brick is gone")
+const firstOfLowestRow = lifeBricks.find(
+  (id) => lifeState()[id].position[1] === lowestRow,
+)
+
+const study = firstOfLowestRow
+lifeState()[study].color = 5
+lifeState()[study].tier = 0
+
+lifeState().game.score = 0
+hitBrick(study)
+check(
+  lifeState().score.value === String(scoreOf({ tier: 0, color: 5 })),
+  `a brick scores what its colour was worth (${lifeState().score.value})`,
+)
+check(
+  lifeState()[study] !== undefined && lifeState()[study].color === 4,
+  "and a hit knocks it back a colour rather than taking it",
+)
+
+// The order runs down the colours of a tier, and at the first colour on to the tier below
+// and round to the last colour of that.
+const walk = lifeBricks.find(
+  (id) => id !== study && lifeState()[id]?.position[1] === lowestRow,
+)
+lifeState()[walk].color = 2
+lifeState()[walk].tier = 1
+const seen = [[1, 2]]
+while (lifeState()[walk] !== undefined && seen.length < 20) {
+  hitBrick(walk)
+  if (lifeState()[walk] !== undefined) {
+    seen.push([lifeState()[walk].tier, lifeState()[walk].color])
+  }
+}
+// Two of one tier's five colours, then the last four of the tier below, and then nothing
+// left to knock off.
+check(
+  seen.map(([, color]) => color).join() === "2,1,5,4,3,2,1",
+  `and the colours run down and round (${seen.map(([, c]) => c).join(",")})`,
+)
+check(
+  seen.every(([tier], i) => tier === (i < 2 ? 1 : 0)),
+  `the tier dropping once the colours are used up (${seen.map(([t]) => t).join(",")})`,
+)
+check(
+  lifeState()[walk] === undefined,
+  "and a brick with nothing left on it leaves",
+)
+
+// Every hit sounds the hit, and only the hit that finally breaks a brick sounds the
+// break as well -- so a brick that took seven hits was heard six times and broken once.
+const hitCount = lifeSounds.filter((name) => name === "brickHit").length
+const brokenCount = lifeSounds.filter((name) => name === "brickBroken").length
+check(
+  hitCount > brokenCount && brokenCount >= 1,
+  `every hit sounds, and only the one that breaks a brick sounds the break (${hitCount} hits, ${brokenCount} breaks)`,
+)
+
+// A higher brick is worth knocking down than a low one, which is the whole reason a level
+// bothers with colour.
+check(
+  scoreOf({ tier: 3, color: 1 }) > scoreOf({ tier: 0, color: 5 }),
+  "a tier is worth more than a colour",
+)
 
 // The level is one level across the whole game, so losing a life does not roll a new one
 // and quietly put back every brick knocked out so far.
 const remaining = Object.keys(lifeState()).filter((id) =>
   id.startsWith("brick"),
 )
+const knockedOut = lifeBricks.length - remaining.length
 check(
-  remaining.length === lifeBricks.length - 1,
-  `losing a life keeps the level as it stood (${remaining.length} of ${lifeBricks.length})`,
+  knockedOut === 1,
+  `and only the broken one is gone (${knockedOut} of ${lifeBricks.length})`,
 )
 
 const hurtBefore = lifeSounds.length
@@ -410,6 +497,7 @@ skins.add(lifeState().ball.skin)
 check(lifeState().game.health === 1, "a second life goes the same way")
 
 // The last life ends the game.
+const finalScore = lifeState().game.score
 const gameOverSounds = lifeSounds.length
 dropTheBall()
 check(lifeState().game.health === 0, "the last life is spent")
@@ -427,7 +515,7 @@ check(
   "the title says GAME OVER",
 )
 check(
-  lifeState().gameOverScore.value === "Final Score: 10",
+  lifeState().gameOverScore.value === `Final Score: ${finalScore}`,
   `and the score it came to (${lifeState().gameOverScore.value})`,
 )
 check(lifeState().gameOverPrompt.value === "Press Enter!", "with a prompt")

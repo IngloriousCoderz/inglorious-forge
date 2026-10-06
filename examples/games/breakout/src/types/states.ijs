@@ -1,10 +1,11 @@
 import { fsm } from "@inglorious/engine/behaviors/fsm"
 
 import {
+  BRICK_COLOR_SCORE,
+  BRICK_TIER_SCORE,
   GAME_STATE,
   MAX_HEALTH,
   MENU_ITEMS,
-  SCORE_PER_BRICK,
   SOUND_CONFIRM,
   SOUND_HURT,
   SOUND_PADDLE_HIT,
@@ -68,9 +69,11 @@ export const Game = fsm({
       api.notify(entity.paused ? "resume" : "pause")
     },
 
-    // A brick knocked out is worth points, and the score is the game's own.
-    brickHit(entity) {
-      entity.score += SCORE_PER_BRICK
+    // A brick hit is worth the tier and the colour it was hit at. The rule is the game's
+    // rather than the brick's: the brick says what it is, and what that is worth is
+    // decided here.
+    brickHit(entity, { color, tier }) {
+      entity.score += tier * BRICK_TIER_SCORE + color * BRICK_COLOR_SCORE
     },
 
     // The ball falling past the floor costs a life. Whether that ends the game or merely

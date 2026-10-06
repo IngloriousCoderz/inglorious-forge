@@ -136,6 +136,7 @@ export default {
         pause: { url: "/sounds/pause.wav" },
         wallHit: { url: "/sounds/wall_hit.wav" },
         brickHit: { url: "/sounds/brick_hit_2.wav" },
+        brickBroken: { url: "/sounds/brick_hit_1.wav" },
         hurt: { url: "/sounds/hurt.wav" },
       },
     },

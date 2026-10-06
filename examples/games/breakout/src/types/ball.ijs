@@ -244,7 +244,15 @@ function knockOutBricks(entity, api) {
   for (const [id, brick] of Object.entries(bricks)) {
     if (!collidesWith(entity, brick)) continue
 
-    api.notify("brickHit", id)
+    // The brick's colour and tier are reported as they are at the moment of the hit,
+    // which is what it was worth: the knock-back a hit causes changes both of them, and
+    // whatever scores this cannot read them off the brick afterwards and get the same
+    // answer.
+    api.notify("brickHit", {
+      id,
+      color: brick.color,
+      tier: brick.tier,
+    })
 
     resolveBrickBounce(entity, brick)
 

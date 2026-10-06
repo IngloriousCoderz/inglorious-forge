@@ -62,9 +62,13 @@ export const GAME_STATE = {
   gameOver: "gameOver",
 }
 
-// Lives and scoring, which the serve screen now carries across between serves.
+// Lives, which the serve screen carries across between serves.
 export const MAX_HEALTH = 3
-export const SCORE_PER_BRICK = 10
+
+// What a brick is worth. A brick scores by the tier and the colour it had when it was
+// hit, so a harder brick is worth knocking down rather than one hit to clear.
+export const BRICK_TIER_SCORE = 200
+export const BRICK_COLOR_SCORE = 25
 
 // The original picks one of seven ball skins at random on every serve.
 export const BALL_SKIN_FIRST_ROW = 4
@@ -120,6 +124,8 @@ export const SOUND_CONFIRM = "confirm"
 export const SOUND_PAUSE = "pause"
 export const SOUND_WALL_HIT = "wallHit"
 export const SOUND_BRICK_HIT = "brickHit"
+// A brick takes several hits now, and this is the sound of the last of them.
+export const SOUND_BRICK_BROKEN = "brickBroken"
 export const SOUND_HURT = "hurt"
 
 export const FONT_FAMILY = "'Breakout'"
