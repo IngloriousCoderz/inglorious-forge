@@ -22,14 +22,15 @@ const FLIP = -1
 // own reasons -- a thing's colour is a number, and one of those in here would be handed
 // to the canvas as a fill style, which it ignores without complaint, leaving every thing
 // drawn black.
-const tintedFramesPerApi = new WeakMap()
-
 /** The tinted frames belonging to one engine's api, made on first use. */
-function tintedFramesFor(api) {
-  if (!tintedFramesPerApi.has(api)) tintedFramesPerApi.set(api, new Map())
-
-  return tintedFramesPerApi.get(api)
-}
+/**
+ * The tinted frames of each image, whoever asked for them.
+ *
+ * Keyed by the image and then by what was cut out of it and the colour it was mixed with,
+ * which is all a tinted frame depends on. Two engines drawing the same frame of the same
+ * picture get one copy between them rather than one each.
+ */
+const tintedFramesPerImage = new WeakMap()
 
 export function renderImage(entity, ctx, api) {
   const { image, flipX = false, flipY = false, opacity = OPAQUE, tint } = entity
@@ -103,8 +104,12 @@ export function renderImage(entity, ctx, api) {
   }
 
   const images = api.getType("Images")
-  const img = images.get(id) || document.getElementById(id)
-  if (img) {
+
+  const img = images.get(id)
+  // Whichever it came from, it has to have finished arriving. Drawing from an image that
+  // has not decoded throws, and a tinted one would copy to a blank canvas and cache that
+  // blank against its id, so the blank would go on being drawn for the rest of the session.
+  if (img && isReady(img)) {
     // An image is drawn in its own colours unless it is given one.
     //
     // The two are not drawn the same way. A tinted frame is a canvas of its own with the
@@ -113,7 +118,7 @@ export function renderImage(entity, ctx, api) {
     // anything past the first cell is off the edge of a canvas one cell wide, and the
     // frame would simply not appear.
     if (tint) {
-      ctx.drawImage(tinted(img, sourceParams, tint, api), ...destParams)
+      ctx.drawImage(tinted(img, sourceParams, tint), ...destParams)
     } else {
       ctx.drawImage(img, ...sourceParams, ...destParams)
     }
@@ -133,9 +138,9 @@ export function renderImage(entity, ctx, api) {
  * soft-edged sprite stays soft-edged and an empty corner stays empty -- which a fill or
  * a multiply would not do.
  */
-function tinted(img, params, tint, api) {
+function tinted(img, params, tint) {
   const [sx, sy, width, height] = params
-  const frames = tintedFramesFor(api)
+  const frames = tintedFramesFor(img)
   const key = `${img.id ?? img.src}|${sx},${sy},${width},${height}|${tint}`
 
   if (frames.has(key)) return frames.get(key)
@@ -167,4 +172,17 @@ function tinted(img, params, tint, api) {
   frames.set(key, copy)
 
   return copy
+}
+
+function tintedFramesFor(img) {
+  if (!tintedFramesPerImage.has(img)) tintedFramesPerImage.set(img, new Map())
+
+  return tintedFramesPerImage.get(img)
+}
+
+/** Whether an image has finished arriving, and so can be drawn from. */
+function isReady(img) {
+  // A canvas-backed or already-resolved image has no `complete` to read, and an image
+  // that has loaded always reports at least one pixel of width.
+  return img.complete === undefined || (img.complete && img.naturalWidth > 0)
 }

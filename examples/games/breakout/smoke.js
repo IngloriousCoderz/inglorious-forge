@@ -50,6 +50,7 @@ const hold = (code, frames = 30) => {
 
 const TEN = 10
 const ARROW_SIZE = 24
+const BRICK_HEIGHT = 16
 const HEART_WIDTH = 10
 const TWENTY_FOUR = 24
 
@@ -661,6 +662,11 @@ const cappedPress = (code) => {
 cappedStep(4)
 cappedPress("Enter")
 cappedPress("Enter")
+// Two Enters reach the serve, not the play: the menu asks which paddle first, so the
+// serve is the second screen and answering it is a third.
+check(cappedState().game.state === "serve", "two Enters reach the serve")
+cappedPress("Enter")
+check(cappedState().game.state === "play", "and a third answers it")
 const cappedBricks = Object.keys(cappedState()).filter((id) =>
   id.startsWith("brick"),
 )
@@ -864,6 +870,13 @@ const hitsToBreak = (hp) => {
   run(4)
   key("Enter")
   key("Enter")
+  // Two Enters reach the serve, because the menu asks which paddle first; this one is
+  // about hits landing, so it wants the play.
+  key("Enter")
+  check(
+    at().game.state === "play",
+    "the brick of a given number of hits is being played at",
+  )
 
   const bricks = Object.keys(at()).filter((id) => id.startsWith("brick"))
   const lowest = Math.min(...bricks.map((id) => at()[id].position[1]))
@@ -1262,8 +1275,12 @@ check(
 )
 
 // A new game begins again from the beginning, from the menu the last score left us at.
+// The first Enter only reaches the choice of paddle: a new game's lives and score are
+// settled when that choice is confirmed, not before, so nothing is back yet.
 lifePress("Enter")
-check(lifeState().game.state === "serve", "and starts again")
+check(lifeState().game.state === "paddleSelect", "and asks which paddle first")
+lifePress("Enter")
+check(lifeState().game.state === "serve", "and then it starts")
 check(lifeState().game.health === 3, "with every life back")
 check(lifeState().score.value === "3000", "and back to the seed score")
 // A new game makes a new level, which is rolled afresh and so need not be the size the
@@ -1297,13 +1314,20 @@ const bricksBefore = Object.keys(ballState()).filter((id) =>
 )
 check(bricksBefore.length === 0, "and no bricks either")
 
-// Two Enters now reach the play: one leaves the start screen, the second answers the
-// serve. The first is given its own update so the field is standing up before the
-// second is pressed.
+// Three Enters reach the play: one leaves the menu, one confirms the paddle, and one
+// answers the serve. Each is given its own update so the field is standing up before the
+// next is pressed.
 ballNotify("keyboardKeyDown", "Enter")
 ballNotify("keyboardKeyUp", "Enter")
 ballStep(2)
-check(ballState().game.state === "serve", "the ball's game reaches the serve")
+check(
+  ballState().game.state === "paddleSelect",
+  "the ball's game reaches the choice of paddle",
+)
+ballNotify("keyboardKeyDown", "Enter")
+ballNotify("keyboardKeyUp", "Enter")
+ballStep(2)
+check(ballState().game.state === "serve", "and then the serve")
 
 ballNotify("keyboardKeyDown", "Enter")
 ballNotify("keyboardKeyUp", "Enter")
@@ -1386,16 +1410,18 @@ check(
 // How many hits a brick has left is what says which of the twenty frames it draws from, so
 // each brick's own crop is checked against that rather than against a fixed tile. On the
 // first level the tiers never leave zero, so a brick is worth at most four hits.
-const quadsOf = (hp) => {
+// Where a brick's frame starts on the sheet, in pixels: its quad's column and row, each
+// turned into a place by the cell it is cut on.
+const frameOf = (hp) => {
   const quad = (brickColourOf(hp) - 1) * 4 + brickTierOf(hp)
-  return `${quad % 6},${Math.floor(quad / 6)}`
+  return `${(quad % 6) * BRICK_WIDTH},${Math.floor(quad / 6) * BRICK_HEIGHT}`
 }
 check(
   brickList.every(({ hp }) => hp >= 1 && hp <= 4),
   `every brick is worth between one and four hits on the first level (${[...new Set(brickList.map((b) => b.hp))].sort().join(", ")})`,
 )
 check(
-  brickList.every(({ sx, sy, hp }) => `${sx},${sy}` === quadsOf(hp)),
+  brickList.every(({ image, hp }) => `${image.x},${image.y}` === frameOf(hp)),
   "each brick cropped from the frame however many hits it has left put it",
 )
 // A row is solid or alternating or skipping, and a row is one of the three all the way

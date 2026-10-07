@@ -4,7 +4,14 @@ import { renderImage } from "./image.js"
 
 const image = { id: "pipe", imageSize: [70, 288] }
 
-const api = { getType: () => ({ get: () => ({ id: "pipe" }) }) }
+// One image, however many times it is asked for, which is what a real source does.
+const loaded = {
+  id: "pipe",
+  complete: true,
+  naturalWidth: 70,
+  naturalHeight: 288,
+}
+const api = { getType: () => ({ get: () => loaded }) }
 
 const drawArgs = (calls) =>
   calls.find(([name]) => name === "drawImage").slice(2)
@@ -443,12 +450,12 @@ test("it should not take a number in color for a tint", () => {
   renderImage({ image, color: 4 }, ctx, api)
 
   expect(calls.find(([name]) => name === "drawImage")[1]).toStrictEqual({
-    id: "pipe",
+    ...loaded,
   })
   restore()
 })
 
-test("it should keep each engine's tinted frames to itself", () => {
+test("it should share a tinted frame between engines", () => {
   const made = []
   const restore = withDocument(() => {
     const copy = tintedCanvas()
@@ -459,19 +466,20 @@ test("it should keep each engine's tinted frames to itself", () => {
   const first = createContext()
   const second = createContext()
 
-  // An api stands for an engine, so two engines is two of them.
-  const oneEngine = { getType: () => ({ get: () => ({ id: "pipe" }) }) }
-  const anotherEngine = { getType: () => ({ get: () => ({ id: "pipe" }) }) }
+  // An api stands for an engine, so two engines is two of them. They are drawing the same
+  // frame of the same picture, so they share one tinted copy rather than making one each.
+  const oneEngine = { getType: () => ({ get: () => loaded }) }
+  const anotherEngine = { getType: () => ({ get: () => loaded }) }
 
   renderImage({ image, tint: "rgb(9, 9, 9)" }, first.ctx, oneEngine)
   renderImage({ image, tint: "rgb(9, 9, 9)" }, second.ctx, anotherEngine)
   renderImage({ image, tint: "rgb(9, 9, 9)" }, second.ctx, anotherEngine)
 
-  // Two engines sharing a cache would get one canvas for both, kept for ever by a module
-  // that outlives them. Each makes its own, and the second one reuses its own.
-  expect(made).toHaveLength(2)
-  expect(made[0].composited).toStrictEqual(["rgb(9, 9, 9)"])
-  expect(made[1].composited).toStrictEqual(["rgb(9, 9, 9)"])
+  expect(made).toHaveLength(1)
+
+  // Sharing does not keep a frame for ever: the cache hangs off the image itself, so once
+  // the image is gone -- the document dropped it, or `Images` cleared on stop -- so is the
+  // tinted copy that was cut from it.
   restore()
 })
 
@@ -481,6 +489,29 @@ test("it should leave an untinted image alone", () => {
   renderImage({ image }, ctx, api)
 
   expect(calls.find(([name]) => name === "drawImage")[1]).toStrictEqual({
-    id: "pipe",
+    ...loaded,
   })
+})
+
+test("it should draw only an image that has finished loading", () => {
+  // An image in the document with the right id is not good enough. An `<img>` that has not
+  // finished decoding throws when it is drawn from, and a tinted one would cache a blank
+  // frame against its id and go on drawing that blank for the rest of the session. So the
+  // document is not consulted at all: `Images` says what is loaded, and nothing else is
+  // drawn until it does.
+  const { calls, ctx } = createContext()
+  const previous = globalThis.document
+
+  globalThis.document = {
+    getElementById: () => ({ id: "cat", complete: false, src: "cat.png" }),
+  }
+
+  // `Images` knows of nothing, so there is nothing loaded to draw from.
+  renderImage({ image: { ...image, id: "cat" } }, ctx, {
+    getType: () => ({ get: () => undefined }),
+  })
+
+  expect(calls.some(([name]) => name === "drawImage")).toBe(false)
+
+  globalThis.document = previous
 })
