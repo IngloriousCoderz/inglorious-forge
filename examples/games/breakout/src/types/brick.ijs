@@ -1,15 +1,8 @@
 import { emitBurst } from "@inglorious/engine/behaviors/particles.js"
-import { cropQuad } from "@inglorious/renderer-2d/image/crop-quad.js"
 import { renderImage } from "@inglorious/renderer-2d/image/image.js"
 import { v } from "@inglorious/utils/v.js"
 
-import {
-  brickColourOf,
-  brickQuad,
-  brickTierOf,
-  SHEET_TILE,
-  SHEET_TILES_ACROSS,
-} from "../atlas.js"
+import { brickColourOf, brickFrame, brickTierOf } from "../atlas.js"
 import {
   BRICK_COLORS,
   LAYER_PARTICLE,
@@ -23,6 +16,12 @@ import {
   SOUND_BRICK_BROKEN,
   SOUND_BRICK_HIT,
 } from "../constants.js"
+
+const X = 0
+const Y = 1
+const HALF = 2
+const NO_DEPTH = 0
+const ONE = 1
 
 /**
  * A brick the ball can knock down a piece at a time.
@@ -44,7 +43,7 @@ export const Brick = {
   render: renderImage,
 
   create(entity) {
-    crop(entity)
+    entity.image = { ...entity.image, id: "breakout", ...brickFrame(entity.hp) }
   },
 
   // The hit is broadcast, so every brick in the game hears it and only the one it names
@@ -67,7 +66,7 @@ export const Brick = {
       return
     }
 
-    crop(entity)
+    entity.image = { ...entity.image, id: "breakout", ...brickFrame(entity.hp) }
   },
 }
 
@@ -110,17 +109,3 @@ function knockOff(entity, api) {
     image: { id: "particle", imageSize: [PARTICLE_SIZE, PARTICLE_SIZE] },
   })
 }
-
-/** Cuts the entity's image to the frame however many hits it has left put it. */
-function crop(entity) {
-  cropQuad(entity, "breakout", brickQuad(entity.hp), {
-    tileSize: SHEET_TILE,
-    tilesAcross: SHEET_TILES_ACROSS,
-  })
-}
-
-const X = 0
-const Y = 1
-const HALF = 2
-const NO_DEPTH = 0
-const ONE = 1

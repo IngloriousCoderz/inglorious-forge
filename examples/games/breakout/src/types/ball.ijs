@@ -2,7 +2,6 @@ import {
   collidesWith,
   findCollision,
 } from "@inglorious/engine/collision/detection"
-import { crop } from "@inglorious/renderer-2d/image/crop.js"
 import { renderImage } from "@inglorious/renderer-2d/image/image.js"
 import { random } from "@inglorious/utils/math/rng.js"
 import { filter } from "@inglorious/utils/object.js"
@@ -85,7 +84,7 @@ function serveRandomly(entity) {
     NO_DEPTH,
   )
 
-  crop(entity, "breakout", ballFrame(entity.skin))
+  entity.image = { ...entity.image, id: "breakout", ...ballFrame(entity.skin) }
 }
 
 /**

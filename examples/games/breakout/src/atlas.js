@@ -3,7 +3,9 @@ import {
   BALL_SKIN_FIRST_ROW,
   BRICK_COLORS_PER_TIER,
   BRICK_FIRST_COLOR,
+  BRICK_HEIGHT,
   BRICK_TIERS_PER_COLOR,
+  BRICK_WIDTH,
   HEART_HEIGHT,
   HEART_WIDTH,
   PADDLE_HEIGHT,
@@ -41,11 +43,12 @@ export const SHEET_TILES_ACROSS = 6
  * against each other, so the 64 wide paddle starts one whole 32 wide paddle in, at
  * pixel (32, 64).
  */
-export const paddleFrame = () => ({
+export const paddleFrame = (skin = 1) => ({
+  // Always the 64 wide paddle: the sheet carries four widths, but the original picks the
+  // second quad of a row, so all four of its choices are the same size in four colours.
   x: 32,
-  y: 64,
-  width: PADDLE_WIDTH,
-  height: PADDLE_HEIGHT,
+  y: 64 + (skin - 1) * 32,
+  frameSize: [PADDLE_WIDTH, PADDLE_HEIGHT],
   tileSize: SHEET_TILE,
 })
 
@@ -63,8 +66,7 @@ export const ballFrame = (skin = 1) => {
   return {
     x: 96 + column * BALL_SIZE,
     y: 48 + row * BALL_SIZE,
-    width: BALL_SIZE,
-    height: BALL_SIZE,
+    frameSize: [BALL_SIZE, BALL_SIZE],
     tileSize: SHEET_TILE,
   }
 }
@@ -76,8 +78,7 @@ export const ballFrame = (skin = 1) => {
 export const heartFrame = (full) => ({
   x: full ? 0 : HEART_WIDTH,
   y: 0,
-  width: HEART_WIDTH,
-  height: HEART_HEIGHT,
+  frameSize: [HEART_WIDTH, HEART_HEIGHT],
   tileSize: [HEART_WIDTH, HEART_HEIGHT],
 })
 
@@ -100,13 +101,21 @@ export const brickColourOf = (hp) =>
  *
  * A brick with nothing left on it is the first one on the sheet, which is the plain blue
  * brick every level started with before any of this existed.
- *
- * This one is named by its quad rather than in pixels because it is a number of the sheet
- * rather than a place on it, and turning a number that is already a quad into pixels only
- * to divide it back down to a quad would be a round trip. The brick crops from this
- * through `cropQuad`, which is the one place that knows how a quad's own number becomes a
- * place on a sheet.
  */
 export const brickQuad = (hp = BRICK_FIRST_COLOR) =>
   (brickColourOf(hp) - BRICK_FIRST_COLOR) * BRICK_TIERS_PER_COLOR +
   brickTierOf(hp)
+
+/**
+ * Where that quad sits on the sheet.
+ *
+ * Six quads fit across, so a quad's own number is the same arithmetic any grid is: the
+ * rest is the column and the rest again is the row. Said once here rather than by a
+ * helper that crops as it goes.
+ */
+export const brickFrame = (hp = BRICK_FIRST_COLOR) => ({
+  x: (brickQuad(hp) % SHEET_TILES_ACROSS) * BRICK_WIDTH,
+  y: Math.floor(brickQuad(hp) / SHEET_TILES_ACROSS) * BRICK_HEIGHT,
+  frameSize: [BRICK_WIDTH, BRICK_HEIGHT],
+  tileSize: SHEET_TILE,
+})

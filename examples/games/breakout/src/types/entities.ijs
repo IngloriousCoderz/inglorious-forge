@@ -4,12 +4,12 @@ import {
   BALL_SIZE,
   BALL_START_ALTITUDE,
   BALL_START_X,
+  FIRST_PADDLE_SKIN,
   HEART_ALTITUDE,
   HEART_HEIGHT,
   HEART_SPACING,
   HEART_START_X,
   HEART_WIDTH,
-  HEIGHT,
   LEFT_EDGE,
   MAX_HEALTH,
   PADDLE_ALTITUDE,
@@ -26,11 +26,12 @@ import {
  * the ball it serves, and the level above them.
  */
 
-export function createPaddleEntity() {
+export function createPaddleEntity(skin = FIRST_PADDLE_SKIN) {
   return {
     id: "paddle",
     type: "Paddle",
     layer: 1,
+    skin,
     position: v(PADDLE_START_X, PADDLE_ALTITUDE, 0),
     anchor: [LEFT_EDGE, TOP_EDGE],
     size: v(PADDLE_WIDTH, PADDLE_HEIGHT, 0),
@@ -84,9 +85,9 @@ export function createHeartEntity(index) {
 }
 
 /** The level is made at random, so it is built on entry rather than listed anywhere. */
-export function createPlayScene(bricks) {
+export function createPlayScene(bricks, paddleSkin = FIRST_PADDLE_SKIN) {
   return [
-    createPaddleEntity(),
+    createPaddleEntity(paddleSkin),
     createBallEntity(),
     ...bricks,
     ...Array.from({ length: MAX_HEALTH }, (_, index) =>
@@ -94,5 +95,3 @@ export function createPlayScene(bricks) {
     ),
   ]
 }
-
-export { HEIGHT }

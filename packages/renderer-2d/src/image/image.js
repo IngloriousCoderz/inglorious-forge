@@ -32,18 +32,16 @@ function tintedFramesFor(api) {
 }
 
 export function renderImage(entity, ctx, api) {
-  const {
-    image,
-    sx = DEFAULT_POSITION,
-    sy = DEFAULT_POSITION,
-    flipX = false,
-    flipY = false,
-    opacity = OPAQUE,
-    tint,
-  } = entity
+  const { image, flipX = false, flipY = false, opacity = OPAQUE, tint } = entity
   const {
     id,
     src,
+    // Where in the sheet this frame starts, in pixels. A frame is a rectangle in the
+    // picture, and saying so in the picture's own units is the whole of it: it used to be
+    // a fraction of the grid, which the renderer multiplied straight back by the grid to
+    // get here again.
+    x = DEFAULT_POSITION,
+    y = DEFAULT_POSITION,
     imageSize,
     tileSize = imageSize,
     scale = NATIVE_SCALE,
@@ -70,16 +68,12 @@ export function renderImage(entity, ctx, api) {
   const dx = flipX ? -drawWidth : DEFAULT_POSITION
   const dy = flipY ? -drawHeight : DEFAULT_POSITION
 
-  const imgParams = [
-    sx * tileWidth,
-    sy * tileHeight,
-    frameWidth,
-    frameHeight,
-    dx,
-    dy,
-    drawWidth,
-    drawHeight,
-  ]
+  // Where in the sheet this frame is read from, and how much of it is read.
+  const sourceParams = [x, y, frameWidth, frameHeight]
+
+  // Where it lands and how big it lands, kept apart from the source because a tinted
+  // frame is a canvas of its own with the frame already cut out of it.
+  const destParams = [dx, dy, drawWidth, drawHeight]
 
   ctx.save()
 
@@ -111,9 +105,18 @@ export function renderImage(entity, ctx, api) {
   const images = api.getType("Images")
   const img = images.get(id) || document.getElementById(id)
   if (img) {
-    // An image is drawn in its own colours unless it is given one, in which case the
-    // shape it is keeps whatever alpha it came with and only the colour is replaced.
-    ctx.drawImage(tint ? tinted(api, img, imgParams, tint) : img, ...imgParams)
+    // An image is drawn in its own colours unless it is given one.
+    //
+    // The two are not drawn the same way. A tinted frame is a canvas of its own with the
+    // frame already cut out of it, so it is drawn whole -- giving it the source
+    // parameters as well would read from wherever the frame sits in the sheet, which for
+    // anything past the first cell is off the edge of a canvas one cell wide, and the
+    // frame would simply not appear.
+    if (tint) {
+      ctx.drawImage(tinted(img, sourceParams, tint, api), ...destParams)
+    } else {
+      ctx.drawImage(img, ...sourceParams, ...destParams)
+    }
   } else if (src) {
     images.load(id, src)
   } else {
@@ -130,7 +133,7 @@ export function renderImage(entity, ctx, api) {
  * soft-edged sprite stays soft-edged and an empty corner stays empty -- which a fill or
  * a multiply would not do.
  */
-function tinted(api, img, params, tint) {
+function tinted(img, params, tint, api) {
   const [sx, sy, width, height] = params
   const frames = tintedFramesFor(api)
   const key = `${img.id ?? img.src}|${sx},${sy},${width},${height}|${tint}`
@@ -145,9 +148,21 @@ function tinted(api, img, params, tint) {
   const copyCtx = copy.getContext("2d")
 
   copyCtx.drawImage(img, sx, sy, width, height, 0, 0, width, height)
-  copyCtx.globalCompositeOperation = "source-in"
+
+  // Mixed, not painted over. Filling the colour in with `source-in` would keep only the
+  // sprite's outline and throw its pixels away, which is a recolour rather than a tint:
+  // the sprite's own shading goes with it, and a white one comes out flat.
+  //
+  // `multiply` is the mixing, so a tint of white leaves the sprite equal to itself and a
+  // tint of anything else darkens or colours it the way laying ink over it would. It also
+  // fills the transparent parts of the cell, which the original never did, so the sprite
+  // is drawn once more over the top to put its own outline back.
+  copyCtx.globalCompositeOperation = "multiply"
   copyCtx.fillStyle = tint
   copyCtx.fillRect(0, 0, width, height)
+
+  copyCtx.globalCompositeOperation = "destination-in"
+  copyCtx.drawImage(img, sx, sy, width, height, 0, 0, width, height)
 
   frames.set(key, copy)
 

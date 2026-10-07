@@ -49,6 +49,8 @@ const hold = (code, frames = 30) => {
 }
 
 const TEN = 10
+const ARROW_SIZE = 24
+const HEART_WIDTH = 10
 const TWENTY_FOUR = 24
 
 const BRICK_WIDTH = 32
@@ -232,7 +234,103 @@ check(state().title.position[0] === 216, "text is centred on the screen")
 // than whether it was the last thing to happen.
 const beforeConfirm = played.length
 press("Enter")
-check(state().game.state === "serve", "Enter leaves the start screen")
+check(
+  state().game.state === "paddleSelect",
+  "Enter leaves the start screen for the choice of paddle",
+)
+
+// The choice of paddle. Four of them, the same width in four colours, so what is being
+// chosen is a look. The arrows either side of it are dimmed when the choice is already as
+// far that way as it goes, and reaching one says so rather than doing nothing.
+check(
+  state().selectPaddlePrompt.value ===
+    "Select your paddle with left and right!",
+  "which says how",
+)
+check(state().selectPaddlePrompt.size === 16, "in the medium font")
+check(
+  state().selectPaddleHint.value === "(Press Enter to continue!)",
+  "and that Enter carries on",
+)
+check(state().selectPaddleHint.size === 8, "in the small font")
+check(state().game.paddleSkin === 1, "the first paddle is chosen to begin with")
+check(
+  state().selectPaddle.position[0] === 184,
+  "the paddle is shown in the middle",
+)
+check(
+  state().selectPaddle.position[1] === 81,
+  "on the row below the two lines of text",
+)
+check(state().selectLeftArrow.position[0] === 84, "with an arrow to the left")
+check(state().selectRightArrow.position[0] === 324, "and one to the right")
+// The arrows sheet holds two of them side by side, so the one on each side is cut from
+// its own half of it.
+check(
+  state().selectLeftArrow.image.id === "arrows",
+  "cut from the arrows sheet",
+)
+check(
+  state().selectLeftArrow.image.frameSize.join() === "24,24",
+  "both a cell wide",
+)
+check(state().selectLeftArrow.image.x === 0, "the left one from the left of it")
+check(
+  state().selectRightArrow.image.x === ARROW_SIZE,
+  "and the right one from the right",
+)
+// Darkened and faded, which is what the original does: a dark grey laid over the arrow at
+// half opacity. A white tint leaves an arrow equal to itself, which is the other half of
+// saying the same thing.
+check(
+  state().selectLeftArrow.tint === "rgb(40, 40, 40)",
+  "the left one darkened, being already as far left as it goes",
+)
+check(state().selectLeftArrow.opacity === 128 / 255, "and faded")
+check(
+  state().selectRightArrow.tint === "white",
+  "and the right one is not darkened",
+)
+check(state().selectRightArrow.opacity === 1, "nor faded")
+check(state().selectRightArrow.opacity === 1, "and is drawn as it comes")
+
+press("ArrowLeft")
+check(state().game.paddleSkin === 1, "left at the first paddle stays there")
+check(played.includes("noSelect"), "and says it cannot go further")
+press("ArrowRight")
+check(state().game.paddleSkin === 2, "right moves along")
+check(played.includes("select"), "with the sound of moving")
+check(
+  state().selectLeftArrow.tint === "white",
+  "so the left arrow is no longer darkened",
+)
+check(
+  state().selectRightArrow.tint === "white",
+  "and neither is darkened while there is room both ways",
+)
+check(state().selectPaddle.skin === 2, "the paddle shown is the one chosen")
+for (let i = 0; i < 2; i++) press("ArrowRight")
+check(state().game.paddleSkin === 4, "to the last")
+check(
+  state().selectRightArrow.tint === "rgb(40, 40, 40)",
+  "where the right arrow is darkened too",
+)
+check(
+  state().selectPaddle.skin === 4,
+  "and the paddle shown has followed the choice",
+)
+press("ArrowRight")
+check(state().game.paddleSkin === 4, "and pressing on stays at the last")
+
+press("Enter")
+check(state().game.state === "serve", "Enter leaves the choice for the serve")
+// The paddle that gets played with is the one that was chosen, not simply the first.
+check(state().paddle.skin === 4, "and it is played with the paddle chosen")
+check(state().paddle.image.y === 160, "cut from its own band of the sheet")
+check(
+  Object.keys(state()).filter((id) => id === "paddle").length === 1,
+  "with one paddle standing, not one chosen and one default",
+)
 check(
   played.slice(beforeConfirm).includes("confirm"),
   "Enter sounds the confirm",
@@ -441,6 +539,11 @@ levelAudio.soundPlay = function sound(entity, name) {
 
 levelStep(4)
 levelPress("Enter")
+check(
+  levelState().game.state === "paddleSelect",
+  "and the choice of paddle comes before the serve",
+)
+levelPress("Enter")
 
 check(levelState().game.level === 1, "a new game is on the first level")
 check(levelState().level.value === "Level 1", "and the serve says so")
@@ -643,6 +746,7 @@ const dropTheBall = () => {
 lifeStep(4)
 lifePress("Enter")
 lifePress("Enter")
+lifePress("Enter")
 check(lifeState().game.state === "play", "a game of its own reaches the play")
 const lifeBricks = Object.keys(lifeState()).filter((id) =>
   id.startsWith("brick"),
@@ -805,6 +909,7 @@ const dustPress = (code) => {
 dustStep(4)
 dustPress("Enter")
 dustPress("Enter")
+dustPress("Enter")
 
 const dustBricks = Object.keys(dustState()).filter((id) =>
   id.startsWith("brick"),
@@ -914,6 +1019,7 @@ const brighterPress = (code) => {
 brighterStep(4)
 brighterPress("Enter")
 brighterPress("Enter")
+brighterPress("Enter")
 const brighterBricks = Object.keys(brighterState()).filter((id) =>
   id.startsWith("brick"),
 )
@@ -957,8 +1063,11 @@ check(lifeSounds.slice(hurtBefore).includes("hurt"), "having sounded the hurt")
 // frame after the loss, because whichever entity asks first in a frame sees the life
 // count as it was when the frame began.
 lifeStep(1)
-check(lifeState().heart0.sx === 0, "the first heart is still full")
-check(lifeState().heart2.sx === 1, "and the last one has emptied")
+check(lifeState().heart0.image.x === 0, "the first heart is still full")
+check(
+  lifeState().heart2.image.x === HEART_WIDTH,
+  "and the last one has emptied",
+)
 
 // Every serve is a new ball with a skin of its own.
 const skins = new Set([lifeState().ball.skin])

@@ -23,8 +23,11 @@ export function renderSprite(entity, ctx, api) {
   tile &= ~FLIPPED_HORIZONTALLY_FLAG
   tile &= ~FLIPPED_VERTICALLY_FLAG
 
-  const sx = tile % cols
-  const sy = Math.floor(tile / cols)
+  // A frame is a place on the sheet, so it is said in the sheet's own units: the column
+  // and the row of tiles, turned back into where that cell starts.
+  const [, tileHeight] = tileSize
+  const x = (tile % cols) * tileWidth
+  const y = Math.floor(tile / cols) * tileHeight
 
   ctx.save()
 
@@ -39,7 +42,7 @@ export function renderSprite(entity, ctx, api) {
     isFlippedVertically ? FLIP : NO_FLIP,
   )
 
-  renderImage({ image, sx, sy }, ctx, api)
+  renderImage({ image: { ...image, x, y } }, ctx, api)
 
   ctx.restore()
 }

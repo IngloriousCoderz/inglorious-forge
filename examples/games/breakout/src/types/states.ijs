@@ -4,13 +4,16 @@ import { brickColourOf, brickTierOf } from "../atlas.js"
 import {
   BRICK_COLOR_SCORE,
   BRICK_TIER_SCORE,
+  FIRST_PADDLE_SKIN,
   GAME_STATE,
+  LAST_PADDLE_SKIN,
   MAX_HEALTH,
   MENU_HIGH_SCORES,
   MENU_ITEMS,
   SOUND_CONFIRM,
   SOUND_HIGH_SCORE,
   SOUND_HURT,
+  SOUND_NO_SELECT,
   SOUND_PADDLE_HIT,
   SOUND_PAUSE,
   SOUND_SELECT,
@@ -65,12 +68,7 @@ export const Game = fsm({
         return
       }
 
-      // A new game starts with every life, and no longer with nothing scored. The level
-      // itself is made by the scene, which is told to throw the last one away.
-      entity.health = MAX_HEALTH
-      entity.score = STARTING_SCORE
-
-      entity.state = GAME_STATE.serve
+      entity.state = GAME_STATE.paddleSelect
     },
   },
 
@@ -142,6 +140,28 @@ export const Game = fsm({
   [GAME_STATE.victory]: {
     press(entity) {
       entity.level += 1
+
+      entity.state = GAME_STATE.serve
+    },
+  },
+
+  // Which paddle to play with. Four of them, the same width in four colours, so what is
+  // being chosen is a look rather than a size. Reaching either end is said rather than
+  // done: the original plays a different sound and leaves the arrow dimmed.
+  [GAME_STATE.paddleSelect]: {
+    moveLeft(entity, _, api) {
+      choosePaddle(entity, -1, api)
+    },
+
+    moveRight(entity, _, api) {
+      choosePaddle(entity, 1, api)
+    },
+
+    press(entity, _, api) {
+      api.notify("soundPlay", SOUND_CONFIRM)
+
+      entity.health = MAX_HEALTH
+      entity.score = STARTING_SCORE
 
       entity.state = GAME_STATE.serve
     },
@@ -235,6 +255,26 @@ function scrollLetter(entity, step) {
   // Which letter is being changed is counted from one, as the original counts it, and a
   // name is counted from zero.
   entity.name = scrollName(entity.name, entity.letter - 1, step)
+}
+
+/**
+ * Moves the choice one along, or says it cannot.
+ *
+ * The paddles do not wrap: the first and the last are ends, and pressing into one plays
+ * the sound that means "no" rather than moving to somewhere else.
+ */
+function choosePaddle(entity, step, api) {
+  const chosen = entity.paddleSkin + step
+
+  if (chosen < FIRST_PADDLE_SKIN || chosen > LAST_PADDLE_SKIN) {
+    api.notify("soundPlay", SOUND_NO_SELECT)
+
+    return
+  }
+
+  api.notify("soundPlay", SOUND_SELECT)
+
+  entity.paddleSkin = chosen
 }
 
 /** The menu wraps, so pressing up from the first item lands on the last. */

@@ -1,4 +1,3 @@
-import { crop } from "@inglorious/renderer-2d/image/crop.js"
 import { renderImage } from "@inglorious/renderer-2d/image/image.js"
 
 import { heartFrame } from "../atlas.js"
@@ -20,6 +19,10 @@ export const Heart = {
   update(entity, dt, api) {
     const { health } = api.getEntity("game")
 
-    crop(entity, "hearts", heartFrame(entity.heart < health))
+    entity.image = {
+      ...entity.image,
+      id: "hearts",
+      ...heartFrame(entity.heart < health),
+    }
   },
 }

@@ -106,10 +106,10 @@ test("it should draw the whole image centred by default", () => {
   expect(drawArgs(calls)).toStrictEqual([0, 0, 70, 288, 0, 0, 70, 288])
 })
 
-test("it should crop the image to a tile", () => {
+test("it should read the image from where the frame says", () => {
   const { calls, ctx } = createContext()
 
-  renderImage({ image: { ...image, tileSize: [70, 32] }, sy: 4 }, ctx, api)
+  renderImage({ image: { ...image, tileSize: [70, 32], y: 128 } }, ctx, api)
 
   expect(drawArgs(calls)).toStrictEqual([0, 128, 70, 32, 0, 0, 70, 32])
 })
@@ -127,9 +127,9 @@ test("it should read only a part of a tile", () => {
         tileSize: [32, 16],
         frameSize: [64, 10],
         imageSize: [64, 10],
+        x: 32,
+        y: 64,
       },
-      sx: 1,
-      sy: 4,
     },
     ctx,
     api,
@@ -353,6 +353,38 @@ test("it should draw an image in the colour it is given", () => {
   renderImage({ image, tint: "rgb(1, 2, 3)" }, ctx, api)
 
   expect(calls.find(([name]) => name === "drawImage")[1]).toBe(copy)
+  restore()
+})
+
+test("it should draw a tinted frame whole rather than cutting it out again", () => {
+  // A tinted frame is a canvas of its own with the frame already cut out of it. Giving it
+  // the source parameters as well makes the renderer read from wherever the frame sits in
+  // the sheet, which for anything past the first cell is off the edge of a canvas one
+  // cell wide -- so the frame silently does not appear at all.
+  const { calls, ctx } = createContext()
+  const restore = withDocument(() => tintedCanvas())
+
+  renderImage(
+    {
+      image: {
+        ...image,
+        imageSize: [192, 256],
+        tileSize: [32, 16],
+        frameSize: [8, 8],
+      },
+      sx: 3,
+      sy: 3,
+      size: [8, 8, 0],
+      anchor: [0, 1],
+      tint: "rgb(1, 2, 3)",
+    },
+    ctx,
+    api,
+  )
+
+  const drawn = calls.filter(([name]) => name === "drawImage").pop()
+
+  expect(drawn.slice(2)).toStrictEqual([0, 0, 8, 8])
   restore()
 })
 

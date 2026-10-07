@@ -1,10 +1,10 @@
 import { arrive } from "@inglorious/engine/ai/movement/kinematic/arrive.js"
 import { Sprite } from "@inglorious/engine/animation/sprite.js"
-import { fsm } from "@inglorious/engine/behaviors/state-machine/fsm.js"
 import {
   createMouseEntity,
   mouse,
 } from "@inglorious/engine/behaviors/input/mouse.js"
+import { fsm } from "@inglorious/engine/behaviors/state-machine/fsm.js"
 import { spriteAnimationSystem } from "@inglorious/engine/systems/sprite-animation.js"
 import { flippedHorizontally } from "@inglorious/renderer-2d/image/flags.js"
 import { renderSprite } from "@inglorious/renderer-2d/image/sprite.js"

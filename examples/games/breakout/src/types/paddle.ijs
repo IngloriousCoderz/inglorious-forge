@@ -1,5 +1,4 @@
 import { createMovementEventHandlers } from "@inglorious/engine/behaviors/controls/event-handlers.js"
-import { crop } from "@inglorious/renderer-2d/image/crop.js"
 import { renderImage } from "@inglorious/renderer-2d/image/image.js"
 import { clamp } from "@inglorious/utils/math/number.js"
 import { v } from "@inglorious/utils/v.js"
@@ -25,7 +24,11 @@ export const Paddle = [
     create(entity) {
       entity.velocity = v(0, 0, 0)
 
-      crop(entity, "breakout", paddleFrame())
+      entity.image = {
+        ...entity.image,
+        id: "breakout",
+        ...paddleFrame(entity.skin),
+      }
     },
 
     update(entity, dt) {
@@ -51,5 +54,3 @@ export const Paddle = [
   // Turns the held arrow keys into the movement flags read above.
   createMovementEventHandlers(["moveLeft", "moveRight"]),
 ]
-
-export { X }

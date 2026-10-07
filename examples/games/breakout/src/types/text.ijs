@@ -1,5 +1,7 @@
+import { renderImage } from "@inglorious/renderer-2d/image/image.js"
 import { renderText } from "@inglorious/renderer-2d/text.js"
 
+import { paddleFrame } from "../atlas.js"
 import {
   COLOR_HIGHLIGHT,
   COLOR_TEXT,
@@ -12,10 +14,23 @@ import {
   MENU_START,
   SCORE_TOP,
 } from "../constants.js"
+import {
+  ARROW_SIZE,
+  ARROWS_IMAGE,
+  ARROWS_SHEET,
+  FIRST_PADDLE_SKIN,
+  LAST_PADDLE_SKIN,
+  LEFT_ARROW,
+  OPAQUE,
+  SELECT_ARROW_OPACITY,
+  SELECT_ARROW_TINT,
+  WHITE,
+} from "../constants.js"
 import { entryOf } from "../high-scores.js"
 
 // The two baselines the original's two ways of laying a line out come down to.
 const TOP_BASELINE = "top"
+
 const MIDDLE_BASELINE = "middle"
 
 /**
@@ -75,6 +90,8 @@ export const GAME_OVER_PROMPT_PLACEMENT = printf(HEIGHT - HEIGHT / 4)
 // leaves the number sitting half a font lower than the label beside it -- so the number
 // is printed too, and the two are one line of interface as they plainly are meant to be.
 export const YOUR_SCORE_PLACEMENT = printf(30)
+export const SELECT_PADDLE_PROMPT_PLACEMENT = printf(HEIGHT / 4)
+export const SELECT_PADDLE_HINT_PLACEMENT = printf(HEIGHT / 3)
 export const ENTERED_LETTER_PLACEMENT = print(HEIGHT / 2)
 export const ENTER_SCORE_PROMPT_PLACEMENT = printf(HEIGHT - 18)
 
@@ -238,6 +255,86 @@ export const EnterScorePrompt = line(
   ENTER_SCORE_PROMPT_PLACEMENT,
   FONT_SMALL,
 )
+
+export const SelectPaddlePrompt = line(
+  "Select your paddle with left and right!",
+  SELECT_PADDLE_PROMPT_PLACEMENT,
+  FONT_MEDIUM,
+)
+
+export const SelectPaddleHint = line(
+  "(Press Enter to continue!)",
+  SELECT_PADDLE_HINT_PLACEMENT,
+  FONT_SMALL,
+)
+
+/**
+ * One of the two arrows, drawn dimmed when the choice is already as far that way as it
+ * goes.
+ *
+ * The arrows sheet holds two of them side by side, and which one is drawn is settled once
+ * from the arrow's own column. What changes per frame is only how faded it looks, and that
+ * is asked of the game: one place decides what "as far as it goes" means.
+ */
+/**
+ * The paddle as it would be played with: the thing being chosen, so it follows the choice
+ * rather than being cut once and left.
+ */
+export const SelectPaddle = {
+  render: renderImage,
+
+  create(entity) {
+    entity.image = {
+      ...entity.image,
+      id: "breakout",
+      ...paddleFrame(entity.skin),
+    }
+  },
+
+  update(entity, dt, api) {
+    const { paddleSkin = FIRST_PADDLE_SKIN } = api.getEntity("game")
+
+    if (paddleSkin === entity.skin) return
+
+    entity.skin = paddleSkin
+
+    entity.image = {
+      ...entity.image,
+      id: "breakout",
+      ...paddleFrame(paddleSkin),
+    }
+  },
+}
+
+export const SelectArrow = {
+  render: renderImage,
+
+  create(entity) {
+    entity.image = {
+      ...entity.image,
+      id: ARROWS_IMAGE,
+      imageSize: ARROWS_SHEET,
+      // The sheet holds two of them side by side, so which one is drawn follows from
+      // which way this one points.
+      x: entity.column * ARROW_SIZE,
+      y: 0,
+      frameSize: [ARROW_SIZE, ARROW_SIZE],
+      tileSize: [ARROW_SIZE, ARROW_SIZE],
+    }
+  },
+
+  update(entity, dt, api) {
+    const { paddleSkin = FIRST_PADDLE_SKIN } = api.getEntity("game")
+
+    const isAtTheEnd =
+      entity.arrow === LEFT_ARROW
+        ? paddleSkin === FIRST_PADDLE_SKIN
+        : paddleSkin === LAST_PADDLE_SKIN
+
+    entity.tint = isAtTheEnd ? SELECT_ARROW_TINT : WHITE
+    entity.opacity = isAtTheEnd ? SELECT_ARROW_OPACITY : OPAQUE
+  },
+}
 
 export const ServePrompt = line(
   "Press Enter to serve!",

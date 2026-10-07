@@ -1,9 +1,21 @@
 import { v } from "@inglorious/utils/v.js"
 
 import {
+  ARROW_SIZE,
+  ARROWS_IMAGE,
+  ARROWS_SHEET,
+  FIRST_PADDLE_SKIN,
+  HEIGHT,
+  LAYER_BRICK,
   LAYER_TEXT,
+  LEFT_ARROW,
+  LEFT_EDGE,
+  PADDLE_HEIGHT,
+  PADDLE_WIDTH,
+  RIGHT_ARROW,
   SCORE_LABEL_X,
   SCORE_VALUE_X,
+  TOP_EDGE,
   WIDTH,
 } from "../constants.js"
 import { ENTRIES as HIGH_SCORE_ENTRIES } from "../high-scores.js"
@@ -21,6 +33,8 @@ import {
   PAUSED_PLACEMENT,
   SCORE_LABEL_PLACEMENT,
   SCORE_PLACEMENT,
+  SELECT_PADDLE_HINT_PLACEMENT,
+  SELECT_PADDLE_PROMPT_PLACEMENT,
   SERVE_PLACEMENT,
   START_PLACEMENT,
   TITLE_PLACEMENT,
@@ -62,6 +76,17 @@ export function createPausedEntity() {
 // so what is wanted is where each box ends rather than where a line of text is centred:
 // the position runs left from the first box, and the name and the score run back from
 // theirs.
+// Which way an arrow points, and so which column of the sheet it is cut from.
+
+// The row the arrows and the paddle stand in, and where each sits along it: an arrow
+// either side and the choice between them, all on one line. The original puts the row a
+// third of the way up from the bottom, which is the same place as a third of the way down
+// from the top once the two are turned over.
+const SELECT_ROW_ALTITUDE = HEIGHT / 3
+const SELECT_LEFT_ARROW_X = WIDTH / 4 - ARROW_SIZE
+const SELECT_RIGHT_ARROW_X = WIDTH - WIDTH / 4
+const SELECT_PADDLE_X = WIDTH / 2 - PADDLE_WIDTH / 2
+
 const HIGH_SCORE_NAME_BOX = 50
 const HIGH_SCORE_NAME_OFFSET = 38
 const HIGH_SCORE_SCORE_BOX = 100
@@ -153,6 +178,66 @@ export function createHighScoreEntities() {
   ]
 }
 
+/**
+ * The screen that asks which paddle to play with.
+ *
+ * An arrow either side of the choice, dimmed when the choice is already as far that way as
+ * it goes, and the chosen paddle itself in the middle. The dimming is worked out from the
+ * game rather than set here, so that one place decides what "as far as it goes" means.
+ */
+export function createPaddleSelectEntities() {
+  return [
+    createTextEntity(
+      "selectPaddlePrompt",
+      "SelectPaddlePrompt",
+      SELECT_PADDLE_PROMPT_PLACEMENT,
+    ),
+    createTextEntity(
+      "selectPaddleHint",
+      "SelectPaddleHint",
+      SELECT_PADDLE_HINT_PLACEMENT,
+    ),
+    createArrowEntity("selectLeftArrow", LEFT_ARROW),
+    createArrowEntity("selectRightArrow", RIGHT_ARROW),
+    createSelectPaddleEntity(),
+  ]
+}
+
+/** One of the two arrows, pointing whichever way it is cut to point. */
+function createArrowEntity(id, arrow) {
+  return {
+    id,
+    type: "SelectArrow",
+    layer: LAYER_BRICK,
+    position: v(
+      arrow === LEFT_ARROW ? SELECT_LEFT_ARROW_X : SELECT_RIGHT_ARROW_X,
+      SELECT_ROW_ALTITUDE,
+      0,
+    ),
+    anchor: [LEFT_EDGE, TOP_EDGE],
+    size: v(ARROW_SIZE, ARROW_SIZE, 0),
+    // The sheet is 48 wide and holds two arrows; `tileSize` is what says which one.
+    image: { id: ARROWS_IMAGE, imageSize: ARROWS_SHEET },
+    // Which way this one points, which is also which way it can be moved.
+    arrow,
+    // Which column of the sheet it is cut from: the arrows sheet holds two of them.
+    column: arrow,
+  }
+}
+
+/** The paddle as it would be played with, which is the thing being chosen. */
+function createSelectPaddleEntity() {
+  return {
+    id: "selectPaddle",
+    type: "SelectPaddle",
+    skin: FIRST_PADDLE_SKIN,
+    layer: LAYER_BRICK,
+    position: v(SELECT_PADDLE_X, SELECT_ROW_ALTITUDE, 0),
+    anchor: [LEFT_EDGE, TOP_EDGE],
+    size: v(PADDLE_WIDTH, PADDLE_HEIGHT, 0),
+  }
+}
+
 /** The lines that say the game is waiting to be served, and which level it is. */
 export function createServeEntities() {
   return [
@@ -206,6 +291,8 @@ export function createGameOverScene() {
       "GameOverTitle",
       GAME_OVER_TITLE_PLACEMENT,
       LEVEL_PLACEMENT,
+      SELECT_PADDLE_HINT_PLACEMENT,
+      SELECT_PADDLE_PROMPT_PLACEMENT,
     ),
     createTextEntity(
       "gameOverScore",

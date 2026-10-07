@@ -14,6 +14,12 @@ export const PADDLE_START_X = WIDTH / 2 - 32
 // hangs down from there and leaves a paddle's own height of floor beneath it.
 export const PADDLE_ALTITUDE = PADDLE_HEIGHT * 2
 
+// The paddles that can be chosen from, and the one the game serves with when nothing was
+// chosen. The original keeps its own choice in the state, not on the paddle.
+export const PADDLE_SKINS = 4
+export const FIRST_PADDLE_SKIN = 1
+export const LAST_PADDLE_SKIN = PADDLE_SKINS
+
 // The original draws every sprite from its top left corner, which in a world counting
 // up from the floor is a top-left anchor.
 export const LEFT_EDGE = 0
@@ -75,6 +81,7 @@ export const GAME_STATE = {
   victory: "victory",
   highScores: "highScores",
   enterHighScore: "enterHighScore",
+  paddleSelect: "paddleSelect",
   gameOver: "gameOver",
 }
 
@@ -147,6 +154,7 @@ export const SOUND_CONFIRM = "confirm"
 export const SOUND_PAUSE = "pause"
 export const SOUND_WALL_HIT = "wallHit"
 export const SOUND_SELECT = "select"
+export const SOUND_NO_SELECT = "noSelect"
 export const SOUND_HIGH_SCORE = "highScore"
 export const SOUND_BRICK_HIT = "brickHit"
 // A brick takes several hits now, and this is the sound of the last of them.
@@ -167,6 +175,23 @@ export const FPS_ALTITUDE = HEIGHT - FPS_MARGIN - FPS_SIZE
 
 // The colour the original picks a menu item out with.
 export const COLOR_TEXT = "white"
+
+// How far along an arrow is drawn when it cannot go any further. The original darkens it
+// and fades it at once: a dark grey laid over it, at half opacity, which is why it is still
+// the same arrow rather than a different picture.
+export const SELECT_ARROW_TINT = "rgb(40, 40, 40)"
+export const SELECT_ARROW_OPACITY = 128 / 255
+export const WHITE = "white"
+export const OPAQUE = 1
+
+// The arrows sheet holds two of them side by side, so which one is drawn follows from
+// which way it points.
+export const ARROWS_IMAGE = "arrows"
+// One row of two, each a cell wide.
+export const ARROWS_SHEET = [48, 24]
+export const LEFT_ARROW = 0
+export const RIGHT_ARROW = 1
+export const ARROW_SIZE = 24
 export const COLOR_HIGHLIGHT = "rgb(103, 255, 255)"
 
 // The debris a brick throws off is drawn after the bricks and before the paddle, which
@@ -243,6 +268,15 @@ export const MAPPINGS_BY_STATE = {
   [GAME_STATE.highScores]: { Escape: QUIT },
   // Which letter is being changed is moved with the same keys the paddle moves with,
   // because there is no paddle on this screen to want them.
+  // Here the arrows move a choice rather than the paddle, which is the whole reason a
+  // state says its own keys: the same four keys mean the opposite of what they mean in
+  // the play, and nothing has to be renamed or worked around to say so.
+  [GAME_STATE.paddleSelect]: {
+    Enter: PRESS,
+    Escape: QUIT,
+    ArrowLeft: MOVE_LEFT,
+    ArrowRight: MOVE_RIGHT,
+  },
   [GAME_STATE.enterHighScore]: {
     Enter: PRESS,
     Escape: QUIT,

@@ -1,4 +1,5 @@
 import { LAYER_BRICK } from "../constants.js"
+import { FIRST_PADDLE_SKIN } from "../constants.js"
 import { initialName, loadHighScores } from "../high-scores.js"
 import { createLevel } from "../levelmaker.ijs"
 import { createPlayScene } from "./entities.ijs"
@@ -6,6 +7,7 @@ import {
   createEnterHighScoreEntities,
   createGameOverScene,
   createHighScoreEntities,
+  createPaddleSelectEntities,
   createPausedEntity,
   createScoreEntities,
   createServeEntities,
@@ -54,8 +56,14 @@ export const SCENES = {
 
   gameOver: () => createGameOverScene(),
 
-  // Where the scores kept between games are read off, rather than where they are kept:
-  // the table is loaded once, by whichever screen first needs it.
+  // Which paddle to play with. Nothing is chosen here: the choice belongs to the game,
+  // which starts on the first paddle and is moved along by the state.
+  paddleSelect: (entity) => {
+    entity.paddleSkin ??= FIRST_PADDLE_SKIN
+
+    return createPaddleSelectEntities()
+  },
+
   // Writing a name in. The letters start on the first letter of the alphabet, all three
   // of them, and the first is the one being changed -- as the original does, rather than
   // as whatever the last game left behind.
@@ -99,7 +107,10 @@ function createGameScene(entity) {
     entity.bricksLeft = entity.bricks.length
   }
 
-  return [...createPlayScene(entity.bricks), ...createScoreEntities()]
+  return [
+    ...createPlayScene(entity.bricks, entity.paddleSkin),
+    ...createScoreEntities(),
+  ]
 }
 
 const FIRST_LEVEL = 1
