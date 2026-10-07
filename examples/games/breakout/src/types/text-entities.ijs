@@ -8,6 +8,8 @@ import {
 } from "../constants.js"
 import { ENTRIES as HIGH_SCORE_ENTRIES } from "../high-scores.js"
 import {
+  ENTER_SCORE_PROMPT_PLACEMENT,
+  ENTERED_LETTER_PLACEMENT,
   GAME_OVER_PROMPT_PLACEMENT,
   GAME_OVER_SCORE_PLACEMENT,
   GAME_OVER_TITLE_PLACEMENT,
@@ -24,6 +26,7 @@ import {
   TITLE_PLACEMENT,
   VICTORY_PROMPT_PLACEMENT,
   VICTORY_TITLE_PLACEMENT,
+  YOUR_SCORE_PLACEMENT,
 } from "./text.ijs"
 
 /**
@@ -67,6 +70,34 @@ const HIGH_SCORE_POSITION_X = WIDTH / 4
 const HIGH_SCORE_NAME_RIGHT =
   WIDTH / 4 + HIGH_SCORE_NAME_BOX + HIGH_SCORE_NAME_OFFSET
 const HIGH_SCORE_SCORE_RIGHT = WIDTH / 2 + HIGH_SCORE_SCORE_BOX
+
+// The three letters of a name, which the original spreads about the middle of the screen
+// with gaps either side of each.
+const ENTERED_LETTER_X = [-28, -6, 20].map((offset) => WIDTH / 2 + offset)
+
+/** The three letters a name is written with. */
+export function createEnterHighScoreEntities() {
+  const letters = ENTERED_LETTER_X.map((x, slot) => ({
+    ...createTextEntity(
+      `enteredLetter${slot}`,
+      "EnteredLetter",
+      ENTERED_LETTER_PLACEMENT,
+    ),
+    position: v(x, ENTERED_LETTER_PLACEMENT.altitude, 0),
+    slot,
+  }))
+
+  return [
+    createTextEntity("yourScore", "YourScore", YOUR_SCORE_PLACEMENT),
+    ...letters,
+    createTextEntity(
+      "enterScorePrompt",
+      "EnterScorePrompt",
+      ENTERED_LETTER_PLACEMENT,
+      ENTER_SCORE_PROMPT_PLACEMENT,
+    ),
+  ]
+}
 
 /**
  * The ten rows of the high score table.

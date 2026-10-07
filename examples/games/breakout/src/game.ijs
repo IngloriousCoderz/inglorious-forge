@@ -34,6 +34,8 @@ import { Paddle } from "./types/paddle.ijs"
 import { SCENES } from "./types/scene.ijs"
 import { Game } from "./types/states.ijs"
 import {
+  EnteredLetter,
+  EnterScorePrompt,
   GameOverPrompt,
   GameOverScore,
   GameOverTitle,
@@ -52,6 +54,7 @@ import {
   Title,
   VictoryPrompt,
   VictoryTitle,
+  YourScore,
 } from "./types/text.ijs"
 
 const FPS_COLOR = "rgb(0, 255, 0)"
@@ -95,6 +98,9 @@ export default {
     HighScoreName,
     HighScoreScore,
     HighScoresPrompt,
+    YourScore,
+    EnteredLetter,
+    EnterScorePrompt,
 
     /** The backdrop is drawn once, stretched to fill the screen. */
     Background: [
@@ -163,6 +169,8 @@ export default {
         brickHit: { url: "/sounds/brick_hit_2.wav" },
         brickBroken: { url: "/sounds/brick_hit_1.wav" },
         victory: { url: "/sounds/victory.wav" },
+        select: { url: "/sounds/select.wav" },
+        highScore: { url: "/sounds/high_score.wav" },
         hurt: { url: "/sounds/hurt.wav" },
       },
     },

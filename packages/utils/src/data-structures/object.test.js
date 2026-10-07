@@ -10,6 +10,7 @@ import {
   filter,
   find,
   get,
+  isDeepEqual,
   isObject,
   map,
   merge,
@@ -587,4 +588,63 @@ test("mergeWith without a merger should behave like merge", () => {
 
   const mergeResult = merge({ a: 1, b: { c: 2 }, d: [3] }, obj2)
   expect(result).toStrictEqual(mergeResult)
+})
+
+test("it should tell two values the same all the way down", () => {
+  expect(
+    isDeepEqual({ a: 1, b: [1, { c: 2 }] }, { a: 1, b: [1, { c: 2 }] }),
+  ).toBe(true)
+  expect(
+    isDeepEqual({ a: 1, b: [1, { c: 2 }] }, { a: 1, b: [1, { c: 3 }] }),
+  ).toBe(false)
+  expect(isDeepEqual([1, 2], [1, 2])).toBe(true)
+  expect(isDeepEqual([1, 2], [2, 1])).toBe(false)
+})
+
+test("it should tell a key left out from a key set to nothing", () => {
+  // The reason this is written rather than with `JSON.stringify`: the two stringify the
+  // same, and they are not the same. Setting a key to nothing is how a mapping is taken
+  // off, so the difference has to be the one it sees.
+  expect(isDeepEqual({}, { ArrowUp: undefined })).toBe(false)
+  expect(isDeepEqual({ ArrowUp: undefined }, {})).toBe(false)
+  expect(isDeepEqual({ ArrowUp: undefined }, { ArrowUp: undefined })).toBe(true)
+})
+
+test("it should tell values of different shapes apart", () => {
+  expect(isDeepEqual({ a: 1 }, { a: "1" })).toBe(false)
+  expect(isDeepEqual({ a: 1 }, { a: 1, b: 2 })).toBe(false)
+  expect(isDeepEqual([1], { 0: 1 })).toBe(false)
+  expect(isDeepEqual(null, {})).toBe(false)
+  expect(isDeepEqual(null, null)).toBe(true)
+  expect(isDeepEqual(NaN, NaN)).toBe(true)
+})
+
+test("it should say the same object is the same without walking it", () => {
+  const object = { a: { b: { c: 1 } } }
+
+  expect(isDeepEqual(object, object)).toBe(true)
+  expect(isDeepEqual(object.a, object.a)).toBe(true)
+})
+
+test("it should compare a thing that contains itself without walking it for ever", () => {
+  // Two loops that are the same all the way round are the same; two that come back to
+  // themselves differently are not. Before this was noticed, the first of those ran the
+  // stack out while the second quietly said no, which is the worst way round to fail.
+  const looping = (name) => {
+    const thing = { name }
+
+    thing.self = thing
+
+    return thing
+  }
+
+  expect(isDeepEqual(looping("a"), looping("a"))).toBe(true)
+  expect(isDeepEqual(looping("a"), looping("b"))).toBe(false)
+
+  const together = { name: "a", back: null }
+  const other = { name: "a", back: null }
+  together.back = together
+  other.back = other
+
+  expect(isDeepEqual(together, other)).toBe(true)
 })

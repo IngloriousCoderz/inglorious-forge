@@ -20,7 +20,15 @@
  */
 export function keyboard() {
   let handleKeyDown, handleKeyUp
+
+  // What each key that is currently down was pressed as.
+  const pressedAs = {}
   let currentDocument = null
+
+  function detach() {
+    currentDocument?.removeEventListener("keydown", handleKeyDown)
+    currentDocument?.removeEventListener("keyup", handleKeyUp)
+  }
 
   return {
     create(entity, payload, api) {
@@ -33,10 +41,13 @@ export function keyboard() {
       currentDocument.addEventListener("keyup", handleKeyUp)
     },
 
-    stop() {
-      currentDocument.removeEventListener("keydown", handleKeyDown)
-      currentDocument.removeEventListener("keyup", handleKeyUp)
-    },
+    stop: detach,
+
+    // Being taken off the world has to let go of the document the same way stopping the
+    // game does. Without this an entity that is created and destroyed -- a screen's own
+    // keyboard, say -- leaves its listeners behind, and the next one added means two
+    // keyboards answering to the same key.
+    destroy: detach,
 
     keyboardKeyDown(entity, keyCode, api) {
       const action = entity.mapping[keyCode]
@@ -46,10 +57,18 @@ export function keyboard() {
         entity[action] = true
         api.notify("inputPress", { action })
       }
+
+      // Remembered, because a key can still be down when the mapping it was pressed under
+      // is changed under it -- and the release then has to go back to the action that was
+      // pressed rather than looking it up in a mapping that no longer names it.
+      pressedAs[keyCode] = action
     },
 
     keyboardKeyUp(entity, keyCode, api) {
-      const action = entity.mapping[keyCode]
+      const action = pressedAs[keyCode] ?? entity.mapping[keyCode]
+
+      delete pressedAs[keyCode]
+
       if (!action) return
 
       if (entity[action]) {

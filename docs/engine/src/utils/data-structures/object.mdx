@@ -10,6 +10,7 @@ import {
   filter,
   find,
   get,
+  isDeepEqual,
   isObject,
   map,
   merge,
@@ -18,10 +19,10 @@ import {
   serialize,
   set,
   toString,
-} from '@inglorious/utils/objects'
+} from '@inglorious/utils/object'
 import { v } from '@inglorious/utils/v'
 
-<Meta title="Utils/Data Structures/Objects" />
+<Meta title="Utils/Data Structures/Object" />
 
 # Objects
 
@@ -132,6 +133,59 @@ const object = { 'a': [{ 'b': { 'c': 3 } }] };
 get(object, 'a.0.b.c'); // => 3
 get(object, 'a.0.d', 'default'); // => 'default'
 ```
+
+## Is Deep Equal
+
+Whether two values are the same, all the way down. Uses `Object.is` first, so the same
+reference is never walked.
+
+### Why not `JSON.stringify`
+
+Because it cannot tell a key that was left out from one that was set to nothing, and those
+are different things:
+
+```javascript
+JSON.stringify({}) === JSON.stringify({ ArrowUp: undefined }); // true — and wrong
+isDeepEqual({}, { ArrowUp: undefined }); // false
+```
+
+Setting a key to `undefined` is how a mapping is taken off, so that difference has to be
+one this function sees.
+
+### Usage
+
+```javascript
+isDeepEqual({ a: 1, b: [1, { c: 2 }] }, { a: 1, b: [1, { c: 2 }] }); // true
+isDeepEqual({ a: 1 }, { a: 2 }); // false
+isDeepEqual([1, 2], [2, 1]); // false
+isDeepEqual(NaN, NaN); // true
+isDeepEqual(null, null); // true
+isDeepEqual([1], { 0: 1 }); // false
+```
+
+### Things worth knowing
+
+**A thing that contains itself is compared, not walked for ever.** Pairs already met are
+remembered, so a self-referencing structure is fine:
+
+```javascript
+const looping = (name) => {
+  const thing = { name };
+
+  thing.self = thing;
+
+  return thing;
+};
+
+isDeepEqual(looping('a'), looping('a')); // true
+isDeepEqual(looping('a'), looping('b')); // false
+```
+
+**It does not settle whether two structures _share_ the same parts.** One value used
+twice against two equal ones written out twice reads as different, because only the pairs
+already met are remembered. That errs towards calling things changed when they are not,
+which is the safe way round for what this is usually asked — a redundant merge rather than
+a missed one.
 
 ## Is Object
 

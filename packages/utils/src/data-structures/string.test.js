@@ -17,7 +17,7 @@ test("it should leave already camelCase strings unchanged", () => {
 test("it should count how far one string is from another", () => {
   expect(editDistance("audio", "audio")).toBe(0)
   expect(editDistance("audio", "audi")).toBe(1)
-  expect(editDistance("kitty", "elephant")).toBeGreaterThan(3)
+  expect(editDistance("cat", "elephant")).toBeGreaterThan(3)
 })
 
 test("it should ignore case when looking for the name that was meant", () => {
@@ -28,10 +28,10 @@ test("it should ignore case when looking for the name that was meant", () => {
 })
 
 test("it should suggest the name that was nearly meant", () => {
-  const declared = ["Game", "Audio", "Paddle", "Ball"]
+  const declared = ["Game", "Audio", "Actor", "Body"]
 
   expect(namesNear("audio", declared)).toStrictEqual(["Audio"])
-  expect(namesNear("Padle", declared)).toStrictEqual(["Paddle"])
+  expect(namesNear("Actar", declared)).toStrictEqual(["Actor"])
 })
 
 test("it should not suggest a name that is nothing like", () => {

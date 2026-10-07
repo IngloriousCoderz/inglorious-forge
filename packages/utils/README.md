@@ -128,7 +128,6 @@ Most modules are grouped by category:
 
 - **`@inglorious/utils/algorithms`**: Utilities for AI algorithms, like decision trees and A\*.
 - **`@inglorious/utils/data-structures`**: Utilities for arrays, boards, heaps, objects, sets, strings, and trees.
-- **`@inglorious/utils/functions`**: Utilities for function composition and timing.
 - **`@inglorious/utils/math`**: Utilities for math operations.
 - **`@inglorious/utils/physics`**: Utilities for calculations on friction, acceleration, and gravity.
 
@@ -136,7 +135,7 @@ The four largest modules are also available as top-level subpaths, so you don't 
 know whether a helper lives under `data-structures` or `math`:
 
 - **`@inglorious/utils/functions`**: `compose`, `debounce`, `isFunction`, `pipe`, `throttle`.
-- **`@inglorious/utils/objects`**: Single-object helpers (`clone`, `get`, `set`, `produce`, ...) alongside multi-object helpers (`merge`, `extend`, `defaults`, ...).
+- **`@inglorious/utils/object`**: Single-object helpers (`clone`, `get`, `set`, `produce`, ...) alongside multi-object helpers (`merge`, `extend`, `defaults`, ...).
 - **`@inglorious/utils/quaternions`**: `quaternion` and `combine`.
 - **`@inglorious/utils/vectors`**: Single-vector helpers (`magnitude`, `normalize`, `rotate`, ...) alongside multi-vector helpers (`cross`, `dot`, `sum`, ...).
 

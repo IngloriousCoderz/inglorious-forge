@@ -36,6 +36,21 @@ export function audio() {
     audioContext.resume()
   }
 
+  // Both stopping the game and being taken off the world have to let go of the window and
+  // of anything still sounding over it. One function, because the two differ only in when
+  // they happen -- and a listener an entity that is no longer in the world forgot to take
+  // off would stay on the page for as long as the page is open.
+  function release() {
+    window.removeEventListener("pointerdown", resume)
+    window.removeEventListener("keydown", resume)
+
+    for (const source of activeSources.values()) {
+      source.stop()
+    }
+
+    activeSources.clear()
+  }
+
   return {
     create() {
       // Browsers keep an AudioContext suspended until the user interacts with
@@ -85,14 +100,10 @@ export function audio() {
       activeSources.delete(name)
     },
 
-    stop() {
-      window.removeEventListener("pointerdown", resume)
-      window.removeEventListener("keydown", resume)
+    stop: release,
 
-      for (const source of activeSources.values()) {
-        source.stop()
-      }
-      activeSources.clear()
-    },
+    // Taken off the world rather than the game stopping: the same letting go, because
+    // there is nothing left for anything still sounding to be sound over.
+    destroy: release,
   }
 }

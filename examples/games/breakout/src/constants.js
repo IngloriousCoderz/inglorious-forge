@@ -74,6 +74,7 @@ export const GAME_STATE = {
   play: "play",
   victory: "victory",
   highScores: "highScores",
+  enterHighScore: "enterHighScore",
   gameOver: "gameOver",
 }
 
@@ -118,6 +119,11 @@ export const HEART_START_X = WIDTH - 100
 export const HEART_ALTITUDE = SCORE_ALTITUDE
 export const HEART_SPACING = 11
 
+// A new game no longer starts at nothing. The original seeds it at three thousand so
+// that a first game is always good enough to be worth entering into the table -- which
+// it would not be against ten thousand down to a thousand.
+export const STARTING_SCORE = 3000
+
 export const MENU_ITEMS = ["start", "high-scores"]
 export const MENU_START = MENU_ITEMS[0]
 export const MENU_HIGH_SCORES = MENU_ITEMS[1]
@@ -138,6 +144,8 @@ export const SOUND_PADDLE_HIT = "paddleHit"
 export const SOUND_CONFIRM = "confirm"
 export const SOUND_PAUSE = "pause"
 export const SOUND_WALL_HIT = "wallHit"
+export const SOUND_SELECT = "select"
+export const SOUND_HIGH_SCORE = "highScore"
 export const SOUND_BRICK_HIT = "brickHit"
 // A brick takes several hits now, and this is the sound of the last of them.
 export const SOUND_BRICK_BROKEN = "brickBroken"

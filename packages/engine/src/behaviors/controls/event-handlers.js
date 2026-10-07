@@ -7,7 +7,7 @@
  *
  * @example
  * ```js
- * const Paddle = [modernControls(), createMovementEventHandlers(["moveLeft"])]
+ * const Actor = [modernControls(), createMovementEventHandlers(["moveLeft"])]
  * ```
  */
 export function createMovementEventHandlers(events) {

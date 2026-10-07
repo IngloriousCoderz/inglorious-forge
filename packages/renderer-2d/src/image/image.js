@@ -19,8 +19,8 @@ const FLIP = -1
 // keeps each engine's to itself and lets them go when the engine does.
 //
 // The name is `tint` and not `color` because `color` is a field entities carry for their
-// own reasons -- a brick's colour is a number, and one of those in here would be handed
-// to the canvas as a fill style, which it ignores without complaint, leaving every brick
+// own reasons -- a thing's colour is a number, and one of those in here would be handed
+// to the canvas as a fill style, which it ignores without complaint, leaving every thing
 // drawn black.
 const tintedFramesPerApi = new WeakMap()
 

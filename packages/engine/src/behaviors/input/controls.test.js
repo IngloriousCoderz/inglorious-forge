@@ -90,6 +90,7 @@ test("a game should still be able to add to a control type", () => {
   expect(Object.keys(engine._store.getType("Keyboard")).sort()).toStrictEqual([
     "birdHit",
     "create",
+    "destroy",
     "keyboardKeyDown",
     "keyboardKeyUp",
     "stop",

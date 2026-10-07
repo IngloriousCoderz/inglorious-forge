@@ -25,11 +25,11 @@ export function fsm(states) {
             const from = entity.state
 
             // A state answers for itself, and what it has to say replaces what the type
-            // would have said. The type-level handler is the default -- the thing every
+            // would have said. The type-stage handler is the default -- the thing every
             // state would otherwise do -- and a state takes it over by naming the same
-            // event, which is how a screen can take the way out for itself: the high
-            // score table is left with Escape rather than quit by, without the built-in
-            // quit having to know that screen exists.
+            // event, which is how a state can take the way out for itself rather than
+            // being quit by, without whatever answers by default having to know that
+            // state exists.
             const handler = states[entity.state]?.[eventName] ?? type[eventName]
 
             handler?.(entity, event, api)

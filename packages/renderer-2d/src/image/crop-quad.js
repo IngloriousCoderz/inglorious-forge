@@ -21,19 +21,19 @@ const ONE_TILE_ACROSS = 1
  * import { cropQuad } from "@inglorious/renderer-2d/image/crop-quad.js"
  *
  * const types = {
- *   Brick: [
+ *   Thing: [
  *     { render: renderImage },
  *     {
  *       create(entity) {
  *         // The twelfth tile of a sheet cut into 32x16 tiles, six across.
- *         cropQuad(entity, "breakout", 11, { tileSize: [32, 16], tilesAcross: 6 })
+ *         cropQuad(entity, "the game", 11, { tileSize: [32, 16], tilesAcross: 6 })
  *       },
  *     },
  *   ],
  * }
  *
  * const entities = {
- *   brick: { type: "Brick", size: v(32, 16, 0) },
+ *   thing: { type: "Thing", size: v(32, 16, 0) },
  * }
  * ```
  *

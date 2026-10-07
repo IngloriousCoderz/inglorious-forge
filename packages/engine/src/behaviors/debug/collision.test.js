@@ -18,11 +18,11 @@ test("it should draw the collision a solid entity really uses", () => {
   const gizmo = collisionGizmos({ shapes: { rectangle: render } })(type)
 
   // An entity with no declared block at all, only `solid`.
-  const ball = { id: "ball", size: [8, 8, 0], solid: true }
+  const body = { id: "body", size: [8, 8, 0], solid: true }
 
-  gizmo.render(ball, ctx, api)
+  gizmo.render(body, ctx, api)
 
-  expect(type.render).toHaveBeenCalledWith(ball, ctx, api)
+  expect(type.render).toHaveBeenCalledWith(body, ctx, api)
   expect(drawn).toHaveLength(1)
   expect(drawn[0]).toMatchObject({ shape: "rectangle", color: GREEN })
   expect(drawn[0]).toMatchObject({ size: [8, 8, 0] })
@@ -57,7 +57,7 @@ test("it should keep drawing the declared collisions", () => {
   })
 
   const entity = {
-    id: "brick",
+    id: "thing",
     size: [32, 16, 0],
     collisions: {
       hitbox: { shape: "rectangle" },

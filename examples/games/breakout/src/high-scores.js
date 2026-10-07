@@ -92,3 +92,75 @@ export function entryOf(entry) {
     score: entry?.score ?? EMPTY_ENTRY,
   }
 }
+
+// The letters a name is made of. The original runs from A to Z and wraps round, and
+// three of them make a name.
+export const FIRST_LETTER = 65
+export const LAST_LETTER = 90
+
+// What all three letters start as.
+const NAME_LETTER = "A"
+
+/**
+ * Where a score would go in the table, or null if it would not go at all.
+ *
+ * The table is walked from the bottom up and the last match kept, which is the best
+ * place the score earns rather than the first one it happens to beat: a score past
+ * everything lands on the first entry, not on the last.
+ */
+export function rankOf(scores, score) {
+  let rank = null
+
+  for (let index = scores.length - 1; index >= 0; index--) {
+    if (score > (scores[index]?.score ?? 0)) rank = index
+  }
+
+  return rank
+}
+
+/**
+ * Puts a name and its score into the table at the place it earned, moving the rest down.
+ *
+ * The original shifts all the way from the tenth entry and so writes an eleventh past
+ * the end on the way, which is harmless there because nothing reads that far. Here the
+ * last entry has nowhere to move to and is dropped, so the table stays the length it is
+ * read back at.
+ */
+export function recordScore(scores, rank, name, score) {
+  // Everything below the place earned moves down one to make room, and the last entry
+  // falls off the end -- which is what keeps the table the length it is read back at.
+  // The original shifts all the way from the tenth entry and so writes an eleventh past
+  // it on the way; nothing ever reads that far there, and nothing should here.
+  scores.splice(rank, 0, { name, score })
+  scores.length = ENTRIES
+
+  return scores
+}
+
+/**
+ * A name is a string of letters rather than a list of codes, because that is what a name
+ * is. A list of numbers on an entity is a vector as far as the engine is concerned, which
+ * makes it a strange way to hold three characters.
+ */
+export function initialName() {
+  return NAME_LETTER.repeat(NAME_LENGTH)
+}
+
+/** One letter of a name moved on by `step`, wrapping round at A and at Z. */
+export function scrollName(name, index, step) {
+  const next = name.charCodeAt(index) + step
+
+  const letter =
+    next > LAST_LETTER ? FIRST_LETTER : next < FIRST_LETTER ? LAST_LETTER : next
+
+  return (
+    name.slice(0, index) + String.fromCharCode(letter) + name.slice(index + ONE)
+  )
+}
+
+/** Writes the table back down, so that the next game to start reads this one. */
+export function saveHighScores(scores, storage = globalThis.localStorage) {
+  storage?.setItem(KEY, JSON.stringify(scores))
+}
+
+const ONE = 1

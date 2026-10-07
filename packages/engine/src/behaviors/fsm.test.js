@@ -6,7 +6,7 @@ import { fsm } from "./fsm.js"
 test("it should add a finite state machine", () => {
   const config = {
     types: {
-      Kitty: [
+      Cat: [
         fsm({
           default: {
             meow(entity) {
@@ -23,7 +23,7 @@ test("it should add a finite state machine", () => {
     },
     entities: {
       entity1: {
-        type: "Kitty",
+        type: "Cat",
         treats: 0,
       },
     },
@@ -31,7 +31,7 @@ test("it should add a finite state machine", () => {
   const afterState = {
     entity1: {
       id: "entity1",
-      type: "Kitty",
+      type: "Cat",
       state: "meowing",
       treats: 1,
     },
@@ -53,7 +53,7 @@ test("it should add a finite state machine", () => {
 const build = () => {
   const config = {
     types: {
-      Kitty: [
+      Cat: [
         fsm({
           default: {
             meow(entity) {
@@ -78,7 +78,7 @@ const build = () => {
       ],
     },
     entities: {
-      entity1: { type: "Kitty" },
+      entity1: { type: "Cat" },
       watcher: { type: "Watcher", seen: [] },
     },
   }
@@ -135,7 +135,7 @@ test("it should let a state answer for itself in place of the type", () => {
 
   const config = {
     types: {
-      Kitty: [
+      Cat: [
         {
           leave(entity) {
             calls.push(`type in ${entity.state}`)
@@ -155,7 +155,7 @@ test("it should let a state answer for itself in place of the type", () => {
         }),
       ],
     },
-    entities: { entity1: { type: "Kitty", state: "default" } },
+    entities: { entity1: { type: "Cat", state: "default" } },
   }
 
   const store = createStore(config)

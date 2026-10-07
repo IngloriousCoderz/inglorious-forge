@@ -1,8 +1,9 @@
 import { LAYER_BRICK } from "../constants.js"
-import { loadHighScores } from "../high-scores.js"
+import { initialName, loadHighScores } from "../high-scores.js"
 import { createLevel } from "../levelmaker.ijs"
 import { createPlayScene } from "./entities.ijs"
 import {
+  createEnterHighScoreEntities,
   createGameOverScene,
   createHighScoreEntities,
   createPausedEntity,
@@ -31,9 +32,15 @@ export const SCENES = {
   // A new game. The level it starts from is put back to the first, and the level the last
   // game rolled is forgotten rather than kept -- otherwise a game that ended on the first
   // level would begin again on the level it left behind, bricks and all.
+  // The table is loaded once, here rather than by the screen that reads it off, because it
+  // is not only read: the end of a game weighs the score against it to decide whether
+  // there is a name to write. Loading it when the menu needs it would mean the first game
+  // had no table to be weighed against -- and the first game is exactly the one the
+  // original seeds a score into the table for.
   start: (entity) => {
     entity.level = FIRST_LEVEL
     entity.bricksLevel = NO_LEVEL
+    entity.highScores ??= loadHighScores()
 
     return createStartScene()
   },
@@ -49,6 +56,16 @@ export const SCENES = {
 
   // Where the scores kept between games are read off, rather than where they are kept:
   // the table is loaded once, by whichever screen first needs it.
+  // Writing a name in. The letters start on the first letter of the alphabet, all three
+  // of them, and the first is the one being changed -- as the original does, rather than
+  // as whatever the last game left behind.
+  enterHighScore: (entity) => {
+    entity.name ??= initialName()
+    entity.letter ??= FIRST_SLOT
+
+    return createEnterHighScoreEntities()
+  },
+
   highScores: (entity) => {
     entity.highScores ??= loadHighScores()
 
@@ -88,4 +105,7 @@ function createGameScene(entity) {
 const FIRST_LEVEL = 1
 
 // Standing in for a level whose bricks have not been made, or have been forgotten.
+// Which of the three letters is being changed to begin with: the first.
+const FIRST_SLOT = 1
+
 const NO_LEVEL = null

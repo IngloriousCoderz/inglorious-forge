@@ -9,12 +9,21 @@ import {
   MENU_HIGH_SCORES,
   MENU_ITEMS,
   SOUND_CONFIRM,
+  SOUND_HIGH_SCORE,
   SOUND_HURT,
   SOUND_PADDLE_HIT,
   SOUND_PAUSE,
+  SOUND_SELECT,
   SOUND_VICTORY,
   SOUND_WALL_HIT,
+  STARTING_SCORE,
 } from "../constants.js"
+import {
+  rankOf,
+  recordScore,
+  saveHighScores,
+  scrollName,
+} from "../high-scores.js"
 
 /**
  * Five states now: the start screen, the wait before each serve, the play itself, the end
@@ -51,10 +60,10 @@ export const Game = fsm({
         return
       }
 
-      // A new game starts with every life and nothing scored. The level itself is made
-      // by the scene, which is told to throw the last one away.
+      // A new game starts with every life, and no longer with nothing scored. The level
+      // itself is made by the scene, which is told to throw the last one away.
       entity.health = MAX_HEALTH
-      entity.score = 0
+      entity.score = STARTING_SCORE
 
       entity.state = GAME_STATE.serve
     },
@@ -144,9 +153,67 @@ export const Game = fsm({
     },
   },
 
+  // The end of a game is where a score is weighed against the table. A score that beats
+  // something in it is worth writing down, and one that beats nothing is not -- so the
+  // table decides, and the game is only told which of the two happened.
   [GAME_STATE.gameOver]: {
+    press(entity, _, api) {
+      const rank = rankOf(entity.highScores, entity.score)
+
+      if (rank === null) {
+        entity.state = GAME_STATE.start
+
+        return
+      }
+
+      api.notify("soundPlay", SOUND_HIGH_SCORE)
+
+      entity.scoreRank = rank
+      entity.state = GAME_STATE.enterHighScore
+    },
+  },
+
+  // Writing a name in, three letters at a time. Left and right choose which letter is
+  // being changed and up and down change it; the original plays a sound for moving
+  // between the letters and not for scrolling them, and that is kept.
+  [GAME_STATE.enterHighScore]: {
+    moveLeft(entity, _, api) {
+      if (entity.letter === FIRST_LETTER_SLOT) return
+
+      entity.letter -= ONE
+
+      api.notify("soundPlay", SOUND_SELECT)
+    },
+
+    moveRight(entity, _, api) {
+      if (entity.letter === LAST_LETTER_SLOT) return
+
+      entity.letter += ONE
+
+      api.notify("soundPlay", SOUND_SELECT)
+    },
+
+    pressMenuUp(entity) {
+      scrollLetter(entity, ONE)
+    },
+
+    pressMenuDown(entity) {
+      scrollLetter(entity, -ONE)
+    },
+
+    // Enter takes the name as it stands, puts it in the table where it earned its place,
+    // moves the rest down, and writes the table back down to be read next time.
     press(entity) {
-      entity.state = GAME_STATE.start
+      recordScore(
+        entity.highScores,
+        entity.scoreRank,
+        entity.name,
+        entity.score,
+      )
+
+      saveHighScores(entity.highScores)
+
+      entity.state = GAME_STATE.highScores
     },
   },
 })
@@ -158,6 +225,19 @@ const ONE_BRICK = 1
 const BRICKS_STILL_STANDING = 0
 
 const NEXT_LEVEL = 1
+const ONE = 1
+
+// The three letters of a name, and which of them is being changed.
+const FIRST_LETTER_SLOT = 1
+const LAST_LETTER_SLOT = 3
+
+// A letter scrolls up and down from A to Z and wraps round at both ends, the way the
+// original's three slots do.
+function scrollLetter(entity, step) {
+  // Which letter is being changed is counted from one, as the original counts it, and a
+  // name is counted from zero.
+  entity.name = scrollName(entity.name, entity.letter - ONE, step)
+}
 
 /** The menu wraps, so pressing up from the first item lands on the last. */
 function chooseMenu(entity, step) {

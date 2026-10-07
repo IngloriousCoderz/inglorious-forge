@@ -87,7 +87,7 @@ test("it should stop delivering to a pooled entity once it is recycled", () => {
 
   const store = createStore({
     types: {
-      Brick: {
+      Thing: {
         brickHit(entity) {
           seen.push(entity.id)
         },
@@ -98,16 +98,16 @@ test("it should stop delivering to a pooled entity once it is recycled", () => {
     updateMode: "manual",
   })
 
-  store.notify("spawn", { type: "Brick", id: "brick", position: v(0, 0, 0) })
+  store.notify("spawn", { type: "Thing", id: "thing", position: v(0, 0, 0) })
   store.update()
   store.notify("despawn", {
-    type: "brick-entity",
-    id: "brick",
+    type: "thing-entity",
+    id: "thing",
     position: v(0, 0, 0),
   })
   store.update()
 
-  store.notify("#brick:brickHit")
+  store.notify("#thing:brickHit")
   store.update()
 
   expect(seen).toStrictEqual([])

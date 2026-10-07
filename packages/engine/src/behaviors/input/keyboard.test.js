@@ -126,3 +126,51 @@ test("it should still map actions by code and hold them until key up", () => {
     action: "moveUp",
   })
 })
+
+test("it should let go of the document when the entity is destroyed", () => {
+  // A keyboard that is created and destroyed -- a screen's own, say -- must not leave its
+  // listeners behind, or the next one added means two keyboards answering to one key.
+  const added = []
+  const removed = []
+
+  vi.stubGlobal("document", {
+    body: {},
+    addEventListener: (name, handler) => added.push([name, handler]),
+    removeEventListener: (name, handler) => removed.push([name, handler]),
+  })
+
+  const type = keyboard()
+  const entity = createKeyboardEntity({ KeyW: "moveUp" })
+
+  type.create(entity, null, { notify: vi.fn() })
+
+  expect(added.map(([name]) => name)).toEqual(["keydown", "keyup"])
+  expect(removed).toHaveLength(0)
+
+  type.destroy(entity, null, { notify: vi.fn() })
+
+  expect(removed.map(([name]) => name)).toEqual(["keydown", "keyup"])
+  expect(removed[0][1]).toBe(added[0][1])
+  expect(removed[1][1]).toBe(added[1][1])
+})
+
+test("it should let a key go even when the mapping changed while it was down", () => {
+  // A key can still be down when the thing it was pressed under is told a different
+  // mapping. Looking the release up in that new mapping would find nothing, and the
+  // action would stay held for ever -- swallowing every press of it from then on, with
+  // nothing to say so.
+  const api = { notify: vi.fn() }
+  const type = keyboard()
+  const entity = createKeyboardEntity({ KeyW: "moveUp" })
+
+  type.create(entity, null, api)
+  type.keyboardKeyDown(entity, "KeyW", api)
+  expect(entity.moveUp).toBe(true)
+
+  // The mapping changes under the key while it is still down.
+  entity.mapping = { KeyW: "fire" }
+  type.keyboardKeyUp(entity, "KeyW", api)
+
+  expect(entity.moveUp).toBe(false)
+  expect(api.notify).toHaveBeenCalledWith("inputRelease", { action: "moveUp" })
+})

@@ -51,7 +51,7 @@ export const BOTTOM_RIGHT = v(AT_FAR_EDGE, AT_FAR_EDGE, AT_EDGE)
  * { type: "Platform", position: v(0, 0, 0), size: v(64, 16, 0), anchor: BOTTOM_LEFT }
  *
  * // A body straddling its position, which is the default.
- * { type: "Ball", position: v(10, 10, 0), size: v(4, 4, 0), anchor: CENTER }
+ * { type: "Sprite", position: v(10, 10, 0), size: v(4, 4, 0), anchor: CENTER }
  * ```
  */
 export function entityAnchor(entity) {

@@ -405,9 +405,9 @@ test("it should not take a number in color for a tint", () => {
   const { calls, ctx } = createContext()
   const restore = withDocument(() => tintedCanvas())
 
-  // A brick's `color` is its place in the palette, not a colour to draw it in. The canvas
+  // A thing's `color` is its place in the palette, not a colour to draw it in. The canvas
   // ignores an invalid fill style without complaint, so claiming the name `color` here
-  // meant every brick in the game drew black and said nothing about it.
+  // meant every thing in the game drew black and said nothing about it.
   renderImage({ image, color: 4 }, ctx, api)
 
   expect(calls.find(([name]) => name === "drawImage")[1]).toStrictEqual({

@@ -1,3 +1,5 @@
+import { isDeepEqual } from "@inglorious/utils/object.js"
+
 import { STATE_CHANGE } from "./fsm.js"
 
 // What a scene is remembered under, so that the next state can be told what it replaced.
@@ -11,13 +13,17 @@ const NOTHING = []
  *
  * A state machine says when it moves; this says what each state is made of, and is
  * usually the pair to `fsm`. Together they cover the ordinary case of a game that is a
- * few screens and a world that survives the move between them -- the title screen has no
- * paddle on it, and the serve and the play share one.
+ * few screens and a world that survives the move between them -- a menu has nothing on it
+ * that the play has, and two states of the same play have all of it in common.
  *
  * Only the difference between two states is touched. Anything they have in common is
- * left standing as it is, which is what carries the paddle, the ball and the level from
- * one state into the next without rebuilding them, and so without losing where the
- * paddle had slid to or what had already been knocked out.
+ * left standing as it is, which is what carries whatever the two share from one into the
+ * next without rebuilding it, and so without losing whatever the world has already done
+ * to it.
+ *
+ * A thing that stands on both sides but is not configured the same way is patched rather
+ * than rebuilt, so one state may take over part of it -- a keyboard whose keys mean
+ * something else there -- without the rest of it being torn up to make room.
  *
  * @example
  * ```js
@@ -55,9 +61,23 @@ export function scenes(scenesByState) {
     }
 
     for (const added of arriving) {
-      if (leavingIds.includes(added.id)) continue
+      if (!leavingIds.includes(added.id)) {
+        api.notify("add", added)
 
-      api.notify("add", added)
+        continue
+      }
+
+      // The same thing stands on both sides of the move, so it is neither added nor
+      // removed -- but it may be wanted to be a different thing now. A screen's own
+      // keyboard carries the keys that screen answers to, so the mapping a state puts up
+      // is part of what that state is made of. Only what has actually changed is merged
+      // over, which is what leaves a shared thing where the world had put it when the
+      // next state says nothing different about it.
+      const previous = leaving.find(({ id }) => id === added.id)
+
+      if (!isDeepEqual(previous, added)) {
+        api.notify("patch", added)
+      }
     }
 
     entity[SCENE] = arriving

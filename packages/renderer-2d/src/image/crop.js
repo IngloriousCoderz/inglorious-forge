@@ -12,18 +12,18 @@
  * @example
  * ```js
  * const types = {
- *   Ball: [
+ *   Sprite: [
  *     { render: renderImage },
  *     {
  *       create(entity) {
- *         crop(entity, "breakout", { x: 96, y: 48, width: 8, height: 8 })
+ *         crop(entity, "sheet", { x: 96, y: 48, width: 8, height: 8 })
  *       },
  *     },
  *   ],
  * }
  *
  * const entities = {
- *   ball: { type: "Ball", image: { id: "breakout" } },
+ *   sprite: { type: "Sprite", image: { id: "sheet" } },
  * }
  * ```
  *

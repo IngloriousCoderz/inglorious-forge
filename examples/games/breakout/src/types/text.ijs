@@ -76,14 +76,12 @@ export const GAME_OVER_PROMPT_PLACEMENT = printf(HEIGHT - HEIGHT / 4)
 // centres, so the label hangs from its top edge. It centres its number instead, which
 // leaves the number sitting half a font lower than the label beside it -- so the number
 // is printed too, and the two are one line of interface as they plainly are meant to be.
-export const HIGH_SCORES_TITLE_PLACEMENT = printf(
-  HIGH_SCORES_TITLE_Y,
-  FONT_LARGE,
-)
-export const HIGH_SCORES_PROMPT_PLACEMENT = printf(
-  HIGH_SCORES_PROMPT_Y,
-  FONT_SMALL,
-)
+export const YOUR_SCORE_PLACEMENT = printf(30)
+export const ENTERED_LETTER_PLACEMENT = print(HEIGHT / 2)
+export const ENTER_SCORE_PROMPT_PLACEMENT = printf(HEIGHT - 18)
+
+export const HIGH_SCORES_TITLE_PLACEMENT = printf(HIGH_SCORES_TITLE_Y)
+export const HIGH_SCORES_PROMPT_PLACEMENT = printf(HIGH_SCORES_PROMPT_Y)
 
 export const SCORE_LABEL_PLACEMENT = print(SCORE_TOP)
 export const SCORE_PLACEMENT = print(SCORE_TOP)
@@ -203,6 +201,43 @@ export const HighScoreScore = reads(
 export const HighScoresPrompt = line(
   "Press Escape to return to the main menu!",
   HIGH_SCORES_PROMPT_PLACEMENT,
+  FONT_SMALL,
+)
+
+// Writing a name in. The score is said across the top, the three letters stand in the
+// middle with the one being changed picked out, and a line at the bottom says how to
+// finish.
+export const YourScore = reads(
+  ({ score }) => `Your score: ${score}`,
+  YOUR_SCORE_PLACEMENT,
+  FONT_MEDIUM,
+)
+
+// The three letters of a name, with the one being changed picked out in the same colour
+// the menu picks its item out in. This is the only line of text whose colour is not
+// fixed, so rather than go through `reads` it says for itself which colour it is today.
+export const EnteredLetter = {
+  render: renderText,
+
+  update(entity, dt, api) {
+    const game = api.getEntity("game")
+
+    say(
+      entity,
+      game.name[entity.slot],
+      FONT_LARGE,
+      "left",
+      ENTERED_LETTER_PLACEMENT.baseline,
+    )
+
+    entity.color =
+      entity.slot === game.letter - ONE ? COLOR_HIGHLIGHT : COLOR_TEXT
+  },
+}
+
+export const EnterScorePrompt = line(
+  "Press Enter to confirm!",
+  ENTER_SCORE_PROMPT_PLACEMENT,
   FONT_SMALL,
 )
 

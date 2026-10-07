@@ -3,9 +3,9 @@ import { expect, test } from "vitest"
 import { crop } from "./crop.js"
 
 test("it should point an entity at a frame of a sheet", () => {
-  const entity = { image: { id: "breakout" } }
+  const entity = { image: { id: "the game" } }
 
-  crop(entity, "breakout", {
+  crop(entity, "the game", {
     x: 96,
     y: 48,
     width: 8,
@@ -14,7 +14,7 @@ test("it should point an entity at a frame of a sheet", () => {
   })
 
   expect(entity.image).toStrictEqual({
-    id: "breakout",
+    id: "the game",
     imageSize: [8, 8],
     tileSize: [32, 16],
     frameSize: [8, 8],
@@ -27,8 +27,8 @@ test("it should point an entity at a frame of a sheet", () => {
 test("it should read a frame wider than one tile", () => {
   const entity = {}
 
-  // This is the paddle: 64 wide on a 32 wide grid, so it covers the cell after it too.
-  crop(entity, "breakout", {
+  // This one is 64 wide on a 32 wide grid, so it covers the cell after it too.
+  crop(entity, "the game", {
     x: 32,
     y: 64,
     width: 64,
@@ -51,11 +51,11 @@ test("it should fall back to the entity's own size", () => {
 })
 
 test("it should keep whatever the image already carried", () => {
-  const entity = { image: { id: "breakout", scale: 2 } }
+  const entity = { image: { id: "the game", scale: 2 } }
 
   crop(entity, undefined, { x: 0, y: 0, width: 8, height: 8 })
 
-  expect(entity.image.id).toBe("breakout")
+  expect(entity.image.id).toBe("the game")
   expect(entity.image.scale).toBe(2)
 })
 
@@ -64,7 +64,7 @@ test("it should read the right pixels off a sheet with no grid given", () => {
 
   // Without a grid the frame is its own tile, so the offsets come out as indices the
   // renderer multiplies back up. What matters is the pixel it lands on, not the index.
-  crop(entity, "breakout", { x: 96, y: 48, width: 8, height: 8 })
+  crop(entity, "the game", { x: 96, y: 48, width: 8, height: 8 })
 
   const [tileWidth, tileHeight] = entity.image.tileSize
 
@@ -76,5 +76,5 @@ test("it should read the right pixels off a sheet with no grid given", () => {
 test("it should return the entity so it can be used inline", () => {
   const entity = {}
 
-  expect(crop(entity, "breakout", { width: 8, height: 8 })).toBe(entity)
+  expect(crop(entity, "the game", { width: 8, height: 8 })).toBe(entity)
 })

@@ -30,7 +30,7 @@ Game engines solved state complexity years ago — Inglorious Store brings those
 - ✅ Entity-based state (manage multiple instances effortlessly)
 - ✅ No action creators, thunks, or slices
 - ✅ Predictable, testable, purely functional code
-- ✅ Built-in lifecycle events (`add`, `remove`)
+- ✅ Built-in lifecycle events (`add`, `remove`, `patch`, `replace`)
 - ✅ 10x faster immutability than Redux Toolkit (Mutative vs Immer)
 
 ---
@@ -364,6 +364,56 @@ Inglorious Store has a few built-in events that you can use:
 
 - `add`: adds a new entity to the state. Triggers a `create` lifecycle event.
 - `remove`: removes an entity from the state. Triggers a `destroy` lifecycle event.
+- `patch`: changes some of a standing entity and leaves the rest alone.
+- `replace`: installs a new configuration on a standing entity, dropping what it does
+  not mention.
+
+`patch` and `replace` cover the case `add` and `remove` do not: changing something that is
+already in the world without taking it out of it. They are the same pair the web settled
+long ago — `POST`, `DELETE`, `PUT`, `PATCH` — for the same reason:
+
+```javascript
+// A patch touches only what it names. Anything else the entity already had survives,
+// which is what makes it safe to nudge part of something mid-flight.
+store.notify("patch", { id: "counter1", value: 10 })
+
+// A replace says the whole of it is different, so anything it does not name is gone.
+store.notify("replace", { id: "counter1", type: "Counter", value: 10 })
+```
+
+A field set to `undefined` is set to _nothing_ in either, rather than being left alone:
+
+```javascript
+// The key stops being mapped. This is not the same as saying nothing about it, which
+// would leave whatever it was mapped to last time standing.
+store.notify("patch", {
+  id: "keyboard",
+  mapping: { Escape: "pause", ArrowUp: undefined },
+})
+```
+
+Neither runs `create` or `destroy`: the entity never stopped standing, and something that
+was never removed cannot have been destroyed. Naming a different `type` in either moves
+the entity onto that type's handlers.
+
+The practical use is a world whose rules change with its state — a keyboard whose keys
+mean one thing on a menu and another in play:
+
+```javascript
+const types = {
+  Keyboard: { keyDown: (entity, key) => report(key) },
+  Game: [
+    scenes({
+      menu: () => [{ id: "keyboard", type: "Keyboard", mapping: MENU_KEYS }],
+      play: () => [{ id: "keyboard", type: "Keyboard", mapping: PLAY_KEYS }],
+    }),
+    fsm({/* … */}),
+  ],
+}
+```
+
+The keyboard is one keyboard, not two: the mapping is patched when the state moves, and
+`isDeepEqual` from `@inglorious/utils` is what tells the two apart.
 
 The lifecycle events can be used to define event handlers similar to constructor and destructor methods in OOP:
 
@@ -1258,6 +1308,10 @@ Each handler receives three arguments:
 - **`destroy(entity)`** - triggered when entity removed via `remove` event, visible only to that entity
 - **`pause`** - halts the world, see below
 - **`resume`** - unhalts it
+- **`add` / `remove`** - put a thing into the world or take it out, triggering `create` / `destroy`
+- **`patch` / `replace`** - change a thing that is already standing, the first touching only
+  what it names and the second installing all of it
+- **`update`** - the frame tick, disabled while the world is paused
 
 #### Pausing the world
 

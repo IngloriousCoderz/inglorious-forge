@@ -9,8 +9,8 @@ const ids = (store) => Object.keys(store.getState())
 const SCENES = {
   title: () => [{ id: "title", type: "Text" }],
   play: () => [
-    { id: "paddle", type: "Paddle" },
-    { id: "ball", type: "Ball" },
+    { id: "actor", type: "Actor" },
+    { id: "body", type: "Body" },
   ],
 }
 
@@ -56,7 +56,7 @@ test("it should take the last state down when the machine moves", () => {
   store.notify("start")
   store.update()
 
-  expect(ids(store)).toStrictEqual(["game", "paddle", "ball"])
+  expect(ids(store)).toStrictEqual(["game", "actor", "body"])
 })
 
 test("it should put the previous state back", () => {
@@ -71,43 +71,139 @@ test("it should put the previous state back", () => {
 })
 
 test("it should leave what two states share standing", () => {
-  // The paddle belongs to both states, and standing through the move is the whole point:
+  // The actor belongs to both states, and standing through the move is the whole point:
   // it keeps its position, and anything it has done to itself.
   const shared = {
-    title: () => [{ id: "paddle", type: "Paddle" }],
+    title: () => [{ id: "actor", type: "Actor" }],
     play: () => [
-      { id: "paddle", type: "Paddle" },
-      { id: "ball", type: "Ball" },
+      { id: "actor", type: "Actor" },
+      { id: "body", type: "Body" },
     ],
   }
   const store = createStore(config(shared))
   store.update()
-  store.getState().paddle.position = [7, 9, 0]
+  store.getState().actor.position = [7, 9, 0]
 
   store.notify("start")
   store.update()
 
-  expect(store.getState().paddle.position).toStrictEqual([7, 9, 0])
-  expect(ids(store)).toStrictEqual(["game", "paddle", "ball"])
+  expect(store.getState().actor.position).toStrictEqual([7, 9, 0])
+  expect(ids(store)).toStrictEqual(["game", "actor", "body"])
 })
 
 test("it should not re-add what is already standing", () => {
+  // Whether the actor standing is the one the title scene put up is a question about the
+  // actor being *made*, not about what its fields read: a thing that stays standing is
+  // not made again, though it may be told a different configuration afterwards.
   let made = 0
-  const counting = {
-    title: () => [{ id: "paddle", type: "Paddle", made: ++made }],
+  const Actor = {
+    create(entity) {
+      made++
+    },
+  }
+  const scenes = {
+    title: () => [{ id: "actor", type: "Actor" }],
     play: () => [
-      { id: "paddle", type: "Paddle", made: ++made },
-      { id: "ball", type: "Ball" },
+      { id: "actor", type: "Actor" },
+      { id: "body", type: "Body" },
     ],
   }
-  const store = createStore(config(counting))
+  const store = createStore({
+    ...config(scenes),
+    types: { ...config(scenes).types, Actor },
+  })
+
   store.update()
   store.notify("start")
   store.update()
 
-  // The paddle standing is the one the title scene put up, numbered one, rather than the
-  // second one the play scene would have added.
-  expect(store.getState().paddle.made).toBe(1)
+  expect(made).toBe(1)
+  expect(ids(store)).toStrictEqual(["game", "actor", "body"])
+})
+
+test("it should patch what is standing when the next state wants it different", () => {
+  // A screen may bring its own keyboard, and the keys it answers to are part of what the
+  // screen is. The keyboard is the same keyboard -- one keyboard answers the key -- so it
+  // is told a different mapping rather than made again beside the old one.
+  let made = 0
+  const Keyboard = {
+    create() {
+      made++
+    },
+  }
+  const scenes = {
+    menu: () => [
+      { id: "keyboard", type: "Keyboard", mapping: { Escape: "quit" } },
+    ],
+    play: () => [
+      { id: "keyboard", type: "Keyboard", mapping: { Escape: "pause" } },
+      { id: "actor", type: "Actor" },
+    ],
+  }
+  const store = createStore({
+    ...config(scenes),
+    types: { ...config(scenes).types, Keyboard },
+  })
+
+  store.update()
+  store.notify("start")
+  store.update()
+
+  expect(made).toBe(1)
+  expect(ids(store)).toStrictEqual(["game", "keyboard", "actor"])
+  expect(store.getState().keyboard.mapping).toStrictEqual({ Escape: "pause" })
+})
+
+test("it should leave standing alone what the next state wants unchanged", () => {
+  // Nothing about the actor differs between these two states, so it is not told
+  // anything -- which is what keeps it where the world left it.
+  const scenes = {
+    title: () => [{ id: "actor", type: "Actor" }],
+    play: () => [
+      { id: "actor", type: "Actor" },
+      { id: "body", type: "Body" },
+    ],
+  }
+  const store = createStore(config(scenes))
+
+  store.update()
+  store.getState().actor.position = [7, 9, 0]
+  store.notify("start")
+  store.update()
+
+  expect(store.getState().actor.position).toStrictEqual([7, 9, 0])
+})
+
+test("it should take a key off a mapping when a state maps it to nothing", () => {
+  // A key the screen does not answer to is a key with nothing mapped to it, which is not
+  // the same as leaving the last screen's answer to it standing.
+  const scenes = {
+    title: () => [
+      {
+        id: "keyboard",
+        type: "Keyboard",
+        mapping: { Escape: "quit", ArrowUp: "up" },
+      },
+    ],
+    play: () => [
+      {
+        id: "keyboard",
+        type: "Keyboard",
+        mapping: { Escape: "pause", ArrowUp: undefined },
+      },
+    ],
+  }
+  const store = createStore(config(scenes))
+
+  store.update()
+  store.notify("start")
+  store.update()
+
+  const mapping = store.getState().keyboard.mapping
+
+  expect(mapping.Escape).toBe("pause")
+  expect(Object.hasOwn(mapping, "ArrowUp")).toBe(true)
+  expect(mapping.ArrowUp).toBeUndefined()
 })
 
 test("it should stand nothing for a state it does not know", () => {
@@ -136,10 +232,10 @@ test("it should ignore another entity's machine moving", () => {
   store.update()
 
   expect(ids(store).sort()).toStrictEqual([
-    "ball",
+    "actor",
+    "body",
     "game",
     "other",
-    "paddle",
     "title",
   ])
 })
@@ -151,9 +247,9 @@ test("it should let a state prepare what the next one stands", () => {
   const lazy = {
     title: () => [{ id: "title", type: "Text" }],
     play: (entity) => {
-      entity.level ??= [{ id: "brick1", type: "Brick", made: ++made }]
+      entity.stage ??= [{ id: "brick1", type: "Thing", made: ++made }]
 
-      return [{ id: "paddle", type: "Paddle" }, ...entity.level]
+      return [{ id: "actor", type: "Actor" }, ...entity.stage]
     },
   }
   const store = createStore(config(lazy))
@@ -161,12 +257,12 @@ test("it should let a state prepare what the next one stands", () => {
   store.notify("start")
   store.update()
 
-  // Losing the level is how a round ends; coming back for it must not make another.
+  // Losing the stage is how a round ends; coming back for it must not make another.
   store.notify("stop")
   store.update()
   store.notify("start")
   store.update()
 
   expect(store.getState().brick1.made).toBe(1)
-  expect(ids(store)).toStrictEqual(["game", "paddle", "brick1"])
+  expect(ids(store)).toStrictEqual(["game", "actor", "brick1"])
 })

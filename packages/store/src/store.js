@@ -177,8 +177,8 @@ export function createStore({
         // `add` and `remove` change the world and are then dispatched like any
         // other event, so that whatever is watching can hear about it. They are
         // broadcast: the entity named by the payload is not the only one that wants
-        // to know, and a level counting down the bricks it rolled needs to hear
-        // about each of them going.
+        // to know, and something counting down what it put up needs to hear about
+        // each of them going.
         //
         // They are not the counterpart to `create` and `destroy`, which reach only
         // the entity they are about so that those read as a constructor and a
@@ -197,6 +197,29 @@ export function createStore({
 
         if (event.type === "remove") {
           removeEntity(draft, event.payload)
+        }
+
+        // A thing that stands through a change of state can still be told a different
+        // configuration, in either of the two ways the world offers.
+        //
+        // `patch` changes some of it and leaves the rest alone, which is how a screen
+        // takes over one field of something it shares with the screen before it. A field
+        // named as `undefined` is set to nothing rather than being left alone, which is
+        // how a key is taken off a mapping.
+        //
+        // `replace` installs what it is given and drops everything it does not mention,
+        // which is how the whole of something is said to be different.
+        //
+        // Neither takes the thing out of the world, so neither runs `create` or `destroy`:
+        // it never stopped standing, and a thing that was never removed cannot have been
+        // destroyed. This is the same pair the world has to hand for anything else --
+        // `add` and `remove` beside them, and post/delete/put/patch before that.
+        if (event.type === "patch") {
+          patchEntity(draft, event.payload)
+        }
+
+        if (event.type === "replace") {
+          replaceEntity(draft, event.payload)
         }
 
         // Parse the event to get handler name
@@ -420,6 +443,75 @@ export function createStore({
 
     eventMap.addEntity(id, type, entity.type)
     incomingEvents.unshift({ type: `#${id}:create` })
+  }
+
+  /**
+   * Moves a standing thing onto the handlers of whatever type it now names.
+   *
+   * A type is the only thing about a thing that cannot be merged: there is no such thing
+   * as being half a sort, so naming a different one means taking the thing out of the old
+   * one's list of entities before putting it in the new one.
+   *
+   * @param {Entities} draft - The draft (structural sharing) or the copy (full clone) to mutate.
+   * @param {string} id - The thing being moved.
+   * @param {string} previousType - The type it was under.
+   * @param {string|undefined} type - The type it is under now, if it has named one.
+   * @returns {void}
+   */
+  function moveToType(draft, id, previousType, type) {
+    if (!type || type === previousType) return
+
+    eventMap.removeEntity(id, types[previousType], previousType)
+    eventMap.addEntity(id, types[type], type)
+  }
+
+  /**
+   * Merges a new configuration into a thing that is already standing.
+   *
+   * Only the fields the configuration names are touched, so anything the world has done
+   * to the thing since it was made survives unless the
+   * new configuration says otherwise. A field named as `undefined` is set to nothing,
+   * which is what taking a key off a mapping means.
+   *
+   * @param {Entities} draft - The draft (structural sharing) or the copy (full clone) to mutate.
+   * @param {Entity} payload - The thing and the fields to merge into it.
+   * @returns {void}
+   */
+  function patchEntity(draft, payload) {
+    const { id, ...config } = payload
+    const existing = draft[id]
+
+    // Configuring something that is not there is not a thing that can be done. The world
+    // is built in one pass, so a scene naming a thing another scene is yet to put up is
+    // ordinary rather than a mistake, and is not worth failing over.
+    if (!existing) return
+
+    draft[id] = augmentEntity(id, { ...existing, ...config })
+
+    moveToType(draft, id, existing.type, config.type)
+  }
+
+  /**
+   * Installs a new configuration on a standing thing, dropping what it does not mention.
+   *
+   * The thing keeps its place in the world and its name; everything else is whatever it
+   * is told, and anything it is not told is gone. A field set to `undefined` is set to
+   * nothing here as much as it is in a patch -- the difference between the two is what
+   * happens to the fields neither mentions.
+   *
+   * @param {Entities} draft - The draft (structural sharing) or the copy (full clone) to mutate.
+   * @param {Entity} payload - The thing and the fields it is to be.
+   * @returns {void}
+   */
+  function replaceEntity(draft, payload) {
+    const { id, ...config } = payload
+    const existing = draft[id]
+
+    if (!existing) return
+
+    draft[id] = augmentEntity(id, config)
+
+    moveToType(draft, id, existing.type, config.type)
   }
 
   /**

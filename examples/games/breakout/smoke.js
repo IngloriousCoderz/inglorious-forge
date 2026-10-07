@@ -49,6 +49,7 @@ const hold = (code, frames = 30) => {
 }
 
 const TEN = 10
+const TWENTY_FOUR = 24
 
 const BRICK_WIDTH = 32
 const FIFTEEN = 15
@@ -159,6 +160,30 @@ check(state().highScore0Name.value === "CTO", "the seed is one name")
 check(state().highScore0Score.value === "10000", "from ten thousand")
 check(state().highScore9Score.value === "1000", "down to a thousand")
 check(state().game.highScores.length === TEN, "ten entries are kept")
+// The title belongs at the top of the screen with the rows below it, and the rows belong
+// in order from the first to the tenth. Asking that the title clears the first row is
+// what catches a title laid out at the height of the middle of the table.
+const titleAltitude = state().highScoresTitle.position[1]
+const firstRowAltitude = state().highScore0Position.position[1]
+const lastRowAltitude = state().highScore9Position.position[1]
+check(
+  titleAltitude > firstRowAltitude,
+  `the title stands above the first row (${titleAltitude} against ${firstRowAltitude})`,
+)
+check(
+  firstRowAltitude > lastRowAltitude,
+  "and the rows run down the screen in order",
+)
+const SCREEN_HEIGHT = 243
+check(
+  titleAltitude + state().highScoresTitle.size / 2 <= SCREEN_HEIGHT &&
+    titleAltitude - state().highScoresTitle.size / 2 > firstRowAltitude,
+  "and the whole of it is on the screen, above the first row",
+)
+check(
+  state().highScoresPrompt.position[1] < lastRowAltitude,
+  "with the prompt at the bottom, below the last row",
+)
 
 // This is the one screen the original takes the way out for itself: Escape goes back to
 // the menu instead of out of the game.
@@ -234,7 +259,13 @@ check(state().servePrompt.size === 16, "in the medium font")
 check(state().score !== undefined, "the score stands on the serve")
 check(state().scoreLabel.value === "Score:", "labelled Score")
 check(state().score.size === 8, "in the small font")
-check(state().score.value === "0", "starting at nothing")
+// A new game no longer starts at nothing. The original seeds it at three thousand so a
+// first game is always worth entering into a table running ten thousand down to a
+// thousand -- against nothing, it would never be.
+check(
+  state().score.value === "3000",
+  "starting at three thousand, not at nothing",
+)
 check(state().game.health === 3, "with three lives in hand")
 check(
   ["heart0", "heart1", "heart2"].every((id) => state()[id] !== undefined),
@@ -348,7 +379,7 @@ check(
 // and from one edge of the line, because two entities can share a position and still be
 // drawn half a font apart if one is anchored by its top and the other by its middle.
 check(
-  hud.score.value === "0" &&
+  hud.score.value === "3000" &&
     hud.scoreLabel.position[1] === hud.score.position[1],
   `the label and the number share a height (${hud.scoreLabel.position[1]})`,
 )
@@ -984,11 +1015,148 @@ check(
   "the game over screen goes with it",
 )
 
-// A new game begins again from the beginning.
+// A score good enough to be worth writing down does not go back to the menu: it goes to
+// the screen where a name is written in. The table it is weighed against is the seeded
+// one, ten thousand down to a thousand, so anything past ten thousand beats all of it.
+lifeState().game.state = "gameOver"
+lifeState().game.score = 10500
+lifeStep(2)
+check(lifeState().game.state === "gameOver", "the game is over")
+lifePress("Enter")
+check(
+  lifeState().game.state === "enterHighScore",
+  "a score past all of them earns a name",
+)
+check(lifeSounds.includes("highScore"), "and says so with the high score sound")
+check(
+  lifeState().yourScore.value === "Your score: 10500",
+  "the score it came to is said across the top",
+)
+check(lifeState().yourScore.size === 16, "in the medium font")
+check(
+  lifeState().enterScorePrompt.value === "Press Enter to confirm!",
+  "and a line at the bottom says how to finish",
+)
+check(lifeState().enterScorePrompt.size === 8, "in the small font")
+
+// Three letters, all on A, with the first picked out as the one being changed.
+check(lifeState().game.name === "AAA", "the name starts as three letters of A")
+check(lifeState().enteredLetter0.value === "A", "the first reads A")
+check(lifeState().enteredLetter1.value === "A", "and so does the second")
+check(lifeState().enteredLetter2.value === "A", "and the third")
+check(
+  lifeState().enteredLetter0.color === "rgb(103, 255, 255)",
+  "the first is picked out",
+)
+check(lifeState().enteredLetter1.color === "white", "and the second is not")
+check(lifeState().enteredLetter2.color === "white", "nor the third")
+// The letters are laid out about the middle of the screen with a gap either side.
+check(
+  lifeState().enteredLetter0.position[0] === 188,
+  "the first letter stands left",
+)
+check(lifeState().enteredLetter1.position[0] === 210, "the second after it")
+check(lifeState().enteredLetter2.position[0] === 236, "and the third last")
+
+// Up and down scroll the letter being changed, wrapping round at A and at Z. No sound:
+// the original plays one only for moving between the letters.
+const soundsBeforeScroll = lifeSounds.length
+lifePress("ArrowUp")
+check(lifeState().game.name === "BAA", "up scrolls the letter on")
+check(
+  lifeSounds.length === soundsBeforeScroll,
+  "and says nothing while doing it",
+)
+for (let i = 0; i < TWENTY_FOUR; i++) lifePress("ArrowUp")
+check(lifeState().game.name === "ZAA", "up to Z")
+lifePress("ArrowUp")
+check(lifeState().game.name === "AAA", "and wraps round to A")
+lifePress("ArrowDown")
+check(lifeState().game.name === "ZAA", "down from A wraps round to Z")
+lifePress("ArrowUp")
+check(lifeState().game.name === "AAA", "and up again comes back to A")
+
+// Left and right choose which letter is being changed, and say so.
+const soundsBeforeMove = lifeSounds.length
+lifePress("ArrowLeft")
+check(
+  lifeState().game.letter === 1,
+  "the first letter is already being changed",
+)
+check(lifeSounds.length === soundsBeforeMove, "and moving onto it says nothing")
+lifePress("ArrowRight")
+check(lifeState().game.letter === 2, "right moves to the second")
+check(lifeSounds.includes("select"), "with the select sound")
+check(
+  lifeState().enteredLetter0.color === "white",
+  "leaving the first unpicked",
+)
+check(
+  lifeState().enteredLetter1.color === "rgb(103, 255, 255)",
+  "and picking out the second",
+)
+lifePress("ArrowRight")
+lifePress("ArrowRight")
+check(lifeState().game.letter === 3, "and on to the third")
+lifePress("ArrowRight")
+check(lifeState().game.letter === 3, "which will not go past the third")
+
+// Scrolling now changes the third letter, not the first.
+lifePress("ArrowDown")
+check(lifeState().game.name === "AAZ", "so it is the third that is changed")
+lifePress("ArrowDown")
+check(lifeState().game.name === "AAY", "and down again")
+
+// Enter writes the name in at the place it earned and shows the table.
+lifePress("Enter")
+check(
+  lifeState().game.state === "highScores",
+  "confirming writes the name in and shows the table",
+)
+check(
+  lifeState().game.highScores.length === TEN,
+  "which is still ten entries long",
+)
+check(
+  lifeState().highScore0Name.value === "AAY",
+  "the new name is at the top, having beaten everything",
+)
+check(
+  lifeState().highScore0Score.value === "10500",
+  "with the score it came to",
+)
+check(lifeState().highScore1Name.value === "CTO", "and the rest moved down")
+check(
+  lifeState().highScore1Score.value === "10000",
+  "carrying their scores with them",
+)
+
+// A score that beats nothing goes back to the menu, and is not written down.
+lifePress("Escape")
+lifeState().game.state = "gameOver"
+lifeState().game.score = 500
+lifeStep(2)
+lifePress("Enter")
+check(
+  lifeState().game.state === "start",
+  "a score beating nothing goes back to the menu",
+)
+// The table's own entities are off the screen at the menu, so this asks the table rather
+// than what is drawn of it.
+check(
+  !lifeState().game.highScores.some((entry) => entry.score === 500),
+  "and is not written into the table",
+)
+check(
+  lifeState().game.highScores[0].name === "AAY",
+  "which still has the score written in earlier at the top of it",
+)
+
+// A new game begins again from the beginning, from the menu the last score left us at.
 lifePress("Enter")
 check(lifeState().game.state === "serve", "and starts again")
 check(lifeState().game.health === 3, "with every life back")
-check(lifeState().score.value === "0", "and nothing scored")
+check(lifeState().score.value === "3000", "and back to the seed score")
 // A new game makes a new level, which is rolled afresh and so need not be the size the
 // last one happened to be.
 check(
