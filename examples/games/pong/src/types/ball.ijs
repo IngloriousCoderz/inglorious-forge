@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { findCollision } from "@inglorious/engine/collision/detection"
 import { renderRectangle } from "@inglorious/renderer-2d/shapes/rectangle"
 import { choose, random } from "@inglorious/utils/math/rng"

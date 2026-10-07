@@ -2,18 +2,6 @@ import { fsm } from "@inglorious/engine/behaviors/state-machine/fsm.js"
 import { clamp } from "@inglorious/utils/math/number.js"
 import { random } from "@inglorious/utils/math/rng.js"
 
-import {
-  COUNTDOWN_START,
-  COUNTDOWN_TIME,
-  GAME_STATE,
-  GAP_Y_SPREAD,
-  INITIAL_GAP_Y,
-  INITIAL_GAP_Y_SPREAD,
-  MAX_GAP_Y,
-  MIN_GAP_Y,
-  PIPE_SPAWN_INTERVAL,
-  SCORE_GRACE_TIME,
-} from "../constants.js"
 import { clearPipes, spawnPipePair } from "./pipe.ijs"
 
 // The gap is lowered by a random amount, so the first pipe of a round sits
@@ -22,14 +10,14 @@ const NO_LOWERING = 0
 const NO_COUNT = 0
 
 function randomGapY() {
-  return INITIAL_GAP_Y - random(NO_LOWERING, INITIAL_GAP_Y_SPREAD)
+  return 288 - 10 * 2 - random(NO_LOWERING, 80)
 }
 
 // The stage belongs to a round, so it is cleared as soon as a round is over
 // rather than when the next one begins.
 function startCountdown(entity, api) {
-  entity.state = GAME_STATE.countdown
-  entity.count = COUNTDOWN_START
+  entity.state = "countdown"
+  entity.count = 3
   entity.timer = 0
   entity.score = 0
 
@@ -43,24 +31,24 @@ function startCountdown(entity, api) {
 }
 
 function startPlay(entity) {
-  entity.state = GAME_STATE.play
+  entity.state = "play"
   entity.pipeTimer = 0
   entity.lastGapY = randomGapY()
 }
 
 export const Game = fsm({
-  [GAME_STATE.title]: {
+  ["title"]: {
     press(entity, _, api) {
       startCountdown(entity, api)
     },
   },
 
-  [GAME_STATE.countdown]: {
+  ["countdown"]: {
     update(entity, dt, api) {
       entity.timer += dt
-      if (entity.timer <= COUNTDOWN_TIME) return
+      if (entity.timer <= 0.75) return
 
-      entity.timer %= COUNTDOWN_TIME
+      entity.timer %= 0.75
       entity.count--
 
       if (entity.count === NO_COUNT) {
@@ -69,7 +57,7 @@ export const Game = fsm({
     },
   },
 
-  [GAME_STATE.play]: {
+  ["play"]: {
     press(entity, _, api) {
       api.notify("birdFlap")
     },
@@ -80,7 +68,7 @@ export const Game = fsm({
     },
 
     birdHit(entity, _, api) {
-      entity.state = GAME_STATE.score
+      entity.state = "score"
       entity.timer = 0
       api.notify("pause")
       api.notify("soundPlay", "explosion")
@@ -89,28 +77,24 @@ export const Game = fsm({
 
     update(entity, dt, api) {
       entity.pipeTimer += dt
-      if (entity.pipeTimer <= PIPE_SPAWN_INTERVAL) return
+      if (entity.pipeTimer <= 2) return
 
       entity.pipeTimer = 0
       // Keep consecutive gaps close to each other, so that they never get too
       // far apart vertically.
-      entity.lastGapY = clamp(
-        entity.lastGapY + random(-GAP_Y_SPREAD, GAP_Y_SPREAD),
-        MIN_GAP_Y,
-        MAX_GAP_Y,
-      )
+      entity.lastGapY = clamp(entity.lastGapY + random(-20, 20), 72, 288 - 10)
 
       spawnPipePair(api, entity.lastGapY)
     },
   },
 
-  [GAME_STATE.score]: {
+  ["score"]: {
     update(entity, dt) {
       entity.timer += dt
     },
 
     press(entity, _, api) {
-      if (entity.timer < SCORE_GRACE_TIME) return
+      if (entity.timer < 0.25) return
 
       startCountdown(entity, api)
     },

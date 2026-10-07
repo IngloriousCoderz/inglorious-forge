@@ -11,47 +11,19 @@ import { renderRectangle } from "@inglorious/renderer-2d/shapes/rectangle.js"
 import { v } from "@inglorious/utils/v.js"
 
 import {
-  BACKGROUND_LOOP,
-  BACKGROUND_SPEED,
-  BIRD_HEIGHT,
-  BIRD_HITBOX_SIZE,
-  BIRD_INITIAL_POSITION,
-  BIRD_SIZE,
   BIRD_WIDTH,
-  COLOR_TEXT,
   COUNTDOWN_START,
-  COUNTDOWN_TEXT_ALTITUDE,
   FONT_FAMILY,
   FONT_SIZE_HUGE,
   FONT_SIZE_LARGE,
   FONT_SIZE_MEDIUM,
   FONT_SIZE_SMALL,
   FONT_SMALL_FAMILY,
-  FPS_TEXT_ALTITUDE,
-  FPS_TEXT_X,
-  GAME_OVER_PROMPT_TEXT_ALTITUDE,
-  GAME_OVER_SCORE_TEXT_ALTITUDE,
-  GAME_OVER_TEXT_ALTITUDE,
   GAME_STATE,
-  GROUND_HEIGHT,
-  GROUND_LOOP,
-  GROUND_SPEED,
-  HEIGHT,
   INITIAL_GAP_Y,
-  LAYER_BACKGROUND,
-  LAYER_BIRD,
-  LAYER_GROUND,
-  LAYER_OVERLAY,
-  LAYER_TEXT,
   NO_DEPTH,
   NO_OFFSET,
   NO_RISE,
-  PRESS,
-  PROMPT_TEXT_ALTITUDE,
-  SCORE_TEXT_ALTITUDE,
-  SCORE_TEXT_X,
-  TITLE_TEXT_ALTITUDE,
-  WIDTH,
 } from "./constants.js"
 import { Bird } from "./types/bird.ijs"
 import { Game } from "./types/game.ijs"
@@ -70,7 +42,7 @@ const CENTERED = 0.5
 const LEFT_EDGE = 0
 const BOTTOM_EDGE = 0
 
-const CENTER_X = WIDTH / 2
+const CENTER_X = 512 / 2
 const BOTTOM_LEFT = [LEFT_EDGE, BOTTOM_EDGE]
 const CENTER = [CENTERED, CENTERED]
 
@@ -98,8 +70,8 @@ export default {
 
   entities: {
     ...createControlEntities(
-      { Space: PRESS, Enter: PRESS, NumpadEnter: PRESS },
-      [PRESS],
+      { Space: "press", Enter: "press", NumpadEnter: "press" },
+      ["press"],
     ),
 
     game: {
@@ -110,7 +82,7 @@ export default {
       updatesWhilePaused: true,
       devMode: true,
       pixelated: true,
-      size: [WIDTH, HEIGHT],
+      size: [512, 288],
       backgroundColor: "rgb(40, 45, 52)",
       state: GAME_STATE.title,
       count: COUNTDOWN_START,
@@ -142,42 +114,45 @@ export default {
 
     background: {
       type: "Background",
-      layer: LAYER_BACKGROUND,
+      layer: -3,
       position: v(NO_OFFSET, NO_RISE, NO_DEPTH),
-      velocity: v(-BACKGROUND_SPEED, NO_RISE, NO_DEPTH),
+      velocity: v(-30, NO_RISE, NO_DEPTH),
       image: {
         id: "background",
-        imageSize: [WIDTH, HEIGHT],
+        imageSize: [512, 288],
         anchor: BOTTOM_LEFT,
-        loop: v(BACKGROUND_LOOP, NO_RISE, NO_DEPTH),
+        loop: v(413, NO_RISE, NO_DEPTH),
       },
     },
 
     ground: {
       type: "Ground",
-      layer: LAYER_GROUND,
+      layer: 0,
       position: v(NO_OFFSET, NO_RISE, NO_DEPTH),
-      velocity: v(-GROUND_SPEED, NO_RISE, NO_DEPTH),
+      velocity: v(-60, NO_RISE, NO_DEPTH),
       image: {
         id: "ground",
-        imageSize: [WIDTH, GROUND_HEIGHT],
+        imageSize: [512, 16],
         anchor: BOTTOM_LEFT,
-        loop: v(GROUND_LOOP, NO_RISE, NO_DEPTH),
+        loop: v(512, NO_RISE, NO_DEPTH),
       },
     },
 
     bird: {
       type: "Bird",
-      layer: LAYER_BIRD,
-      position: BIRD_INITIAL_POSITION,
+      layer: -1,
+      position: v(512 / 2 - 8 + 38 / 2, 288 / 2 + 8 - 24 / 2, NO_DEPTH),
       velocity: v(NO_OFFSET, NO_RISE, NO_DEPTH),
-      size: BIRD_SIZE,
+      size: v(38, 24, NO_DEPTH),
       collisions: {
-        hitbox: { shape: "rectangle", size: BIRD_HITBOX_SIZE },
+        hitbox: {
+          shape: "rectangle",
+          size: v(38 - 2 * 2, 24 - 2 * 2, NO_DEPTH),
+        },
       },
       image: {
         id: "bird",
-        imageSize: [BIRD_WIDTH, BIRD_HEIGHT],
+        imageSize: [BIRD_WIDTH, 24],
         anchor: CENTER,
       },
     },
@@ -186,90 +161,90 @@ export default {
       type: "Score",
       // Text is an overlay: it keeps updating while the world is held still.
       updatesWhilePaused: true,
-      layer: LAYER_TEXT,
-      position: v(SCORE_TEXT_X, SCORE_TEXT_ALTITUDE, NO_DEPTH),
+      layer: 1,
+      position: v(8, 288 - 8, NO_DEPTH),
       font: FONT_FAMILY,
       size: FONT_SIZE_LARGE,
       textAlign: "left",
-      color: COLOR_TEXT,
+      color: "white",
     },
 
     title: {
       type: "Title",
       // Text is an overlay: it keeps updating while the world is held still.
       updatesWhilePaused: true,
-      layer: LAYER_TEXT,
-      position: v(CENTER_X, TITLE_TEXT_ALTITUDE, NO_DEPTH),
+      layer: 1,
+      position: v(CENTER_X, 288 - 64, NO_DEPTH),
       font: FONT_FAMILY,
       size: FONT_SIZE_LARGE,
       textAlign: "center",
-      color: COLOR_TEXT,
+      color: "white",
     },
 
     titlePrompt: {
       type: "TitlePrompt",
       // Text is an overlay: it keeps updating while the world is held still.
       updatesWhilePaused: true,
-      layer: LAYER_TEXT,
-      position: v(CENTER_X, PROMPT_TEXT_ALTITUDE, NO_DEPTH),
+      layer: 1,
+      position: v(CENTER_X, 288 - 100, NO_DEPTH),
       font: FONT_FAMILY,
       size: FONT_SIZE_MEDIUM,
       textAlign: "center",
-      color: COLOR_TEXT,
+      color: "white",
     },
 
     countdown: {
       type: "Countdown",
       // Text is an overlay: it keeps updating while the world is held still.
       updatesWhilePaused: true,
-      layer: LAYER_TEXT,
-      position: v(CENTER_X, COUNTDOWN_TEXT_ALTITUDE, NO_DEPTH),
+      layer: 1,
+      position: v(CENTER_X, 288 - 120, NO_DEPTH),
       font: FONT_FAMILY,
       size: FONT_SIZE_HUGE,
       textAlign: "center",
-      color: COLOR_TEXT,
+      color: "white",
     },
 
     gameOver: {
       type: "GameOver",
       // Text is an overlay: it keeps updating while the world is held still.
       updatesWhilePaused: true,
-      layer: LAYER_TEXT,
-      position: v(CENTER_X, GAME_OVER_TEXT_ALTITUDE, NO_DEPTH),
+      layer: 1,
+      position: v(CENTER_X, 288 - 64, NO_DEPTH),
       font: FONT_FAMILY,
       size: FONT_SIZE_LARGE,
       textAlign: "center",
-      color: COLOR_TEXT,
+      color: "white",
     },
 
     gameOverScore: {
       type: "GameOverScore",
       // Text is an overlay: it keeps updating while the world is held still.
       updatesWhilePaused: true,
-      layer: LAYER_TEXT,
-      position: v(CENTER_X, GAME_OVER_SCORE_TEXT_ALTITUDE, NO_DEPTH),
+      layer: 1,
+      position: v(CENTER_X, 288 - 100, NO_DEPTH),
       font: FONT_FAMILY,
       size: FONT_SIZE_MEDIUM,
       textAlign: "center",
-      color: COLOR_TEXT,
+      color: "white",
     },
 
     gameOverPrompt: {
       type: "GameOverPrompt",
       // Text is an overlay: it keeps updating while the world is held still.
       updatesWhilePaused: true,
-      layer: LAYER_TEXT,
-      position: v(CENTER_X, GAME_OVER_PROMPT_TEXT_ALTITUDE, NO_DEPTH),
+      layer: 1,
+      position: v(CENTER_X, 288 - 160, NO_DEPTH),
       font: FONT_FAMILY,
       size: FONT_SIZE_MEDIUM,
       textAlign: "center",
-      color: COLOR_TEXT,
+      color: "white",
     },
 
     fps: {
       type: "Fps",
-      layer: LAYER_OVERLAY,
-      position: v(FPS_TEXT_X, FPS_TEXT_ALTITUDE, NO_DEPTH),
+      layer: 2,
+      position: v(512 - 10, 288 - 10, NO_DEPTH),
       font: FONT_SMALL_FAMILY,
       size: FONT_SIZE_SMALL,
       textAlign: "right",

@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { modernControls } from "@inglorious/engine/behaviors/controls/kinematic/modern"
 import { fps } from "@inglorious/engine/behaviors/fps"
 import {

@@ -4,61 +4,75 @@ A modern implementation of the classic arcade game, Pong.
 
 ![Gameplay Screenshot](https://raw.githubusercontent.com/IngloriousCoderz/inglorious-forge/main/examples/games/pong/public/screenshot.png)
 
-## About This Project
-
-This project is a port of the Pong game originally created with Lua and the LÖVE 2D framework. The original version was developed as part of the first lecture in Harvard's CS50's Introduction to Game Development.
-
-- **Original Course Lecture:** [CS50's Intro to Game Development - Lecture 1: Pong](https://www.youtube.com/watch?v=jZqYXSmgDuM)
-- **Original Source Code (Lua/LÖVE 2D):** [games50/pong](https://github.com/games50/pong)
-
 While the core gameplay remains faithful to the original, this port serves as a demonstration of the [**Inglorious Engine**](https://www.npmjs.com/package/@inglorious/engine). It was an exercise in applying modern architectural patterns and tooling to a classic game.
 
-## Key Features & Architectural Highlights
+## Running it
 
-This version showcases several modern development practices and design patterns:
+```sh
+pnpm install
+pnpm dev
+```
 
-### 1. Simplified Vector Math with IngloriousScript
+## Checking it
 
-Vector calculations for movement, collision, and physics are greatly simplified through the use of the **IngloriousScript** language. This allows for more readable and maintainable physics code, abstracting away the low-level mathematical operations.
+```sh
+npx vite-node smoke.js
+```
 
-### 2. Modular Configuration
+Sixteen headless checks walk the serve, the play, a wall, a point and the end of the game,
+and report `all checks passed`.
 
-Instead of a single monolithic configuration file, this project subdivides game settings into multiple, organized files. This approach improves maintainability by separating concerns like entity definitions, game states, and asset management.
+## What this port is
 
-### 3. Event-Driven Game Engine (Pub/Sub)
+Pong was written by hand against the engine, and is deliberately the simplest of the
+three games here — one ball, two paddles, four states. It is the reference for how little
+a game has to say.
 
-The **Inglorious Engine** is built on an event-driven, Publish-Subscribe (Pub/Sub) architecture. This design promotes a loosely coupled system where game entities communicate through events, making the codebase more modular and extensible.
+The original:
 
-## Getting Started
+- **Lecture:** [CS50's Intro to Game Development — Lecture 1: Pong](https://www.youtube.com/watch?v=jZqYXSmgDuM)
+- **Source (Lua / LÖVE 2D):** [games50/pong](https://github.com/games50/pong)
 
-1.  Clone the repository:
-    ```bash
-    git clone https://github.com/IngloriousCoderz/inglorious-forge.git
-    ```
-2.  Navigate to the project directory:
-    ```bash
-    cd inglorious-forge/examples/games/pong
-    ```
-3.  Install dependencies:
-    ```bash
-    pnpm install
-    ```
-4.  Run the game:
-    ```bash
-    pnpm dev
-    ```
+|                | Lua original                                                            | This port                                                                             |
+| -------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| Entities       | classes with `Push`                                                     | config objects                                                                        |
+| Paddles        | one `Paddle` class, two instances                                       | one behaviour, parameterised by player                                                |
+| Input          | `love.keyboard` polled per paddle                                       | one mapping table; each paddle says which of its own actions feed the shared movement |
+| Ball direction | a `Ball` class with `dx`/`dy` and a `Paddle:collide` branch per side    | an angle and a speed, `fromAngle(orientation) * maxSpeed`                             |
+| Rendering      | `love.graphics` calls                                                   | declarative rectangles and text                                                       |
+| Touch          | a `Paddle`/`Ball` branch on whether input came from a mouse or a finger | one `entityTouchMove` per paddle, and a touch shape per entity                        |
 
-## How to Play
+### The three that mattered most
 
-- **Player 1 (Left Paddle):** Use `W` (up) and `S` (down).
-- **Player 2 (Right Paddle):** Use `Up Arrow` (up) and `Down Arrow` (down).
-- **Serve Ball:** Press `Spacebar` to start the game.
-- **Objective:** Be the first player to score 10 points!
+**Both paddles are one behaviour.** The keyboard is what keeps the players apart — `W`
+and `S` for one, the arrows for the other — and the shared movement code only ever hears
+`moveUp` and `moveDown`. Each paddle names which of its own actions feed them, so there
+is one paddle and two bindings rather than two paddle classes.
 
-## License
+**Direction is an angle, not two axes.** The original stores `dx` and `dy` and branches
+on which side of the paddle was hit, which is four cases and a normalisation to get right.
+Here it is one angle that the paddle sets, and the velocity is derived from it every
+frame. Choosing the serve angle and choosing the deflection angle are then the same
+operation.
 
-**MIT License - Free and open source**
+**Touch is a shape, not a branch.** Whether input came from a mouse or a finger is
+declared per entity, so the touch handler does not have to ask.
 
-Created by [Matteo Antony Mistretta](https://github.com/IngloriousCoderz)
+## Deliberate departures
 
-You're free to use, modify, and distribute this software. See [LICENSE](./LICENSE) for details.
+- **The ball is not clamped at a wall.** It is reflected while still inside, so putting
+  it back is never needed. The harness asserts the heading reverses rather than the
+  position, which is the mechanism that actually exists.
+- **Numbers stay in place.** `10`, `200`, `HEIGHT - 50` sit where they are used rather
+  than behind a name each; the lint rule against them is off for games, because in a game
+  the surrounding position usually says what the number is.
+
+## Layout
+
+|                        |                                            |
+| ---------------------- | ------------------------------------------ |
+| `src/game.ijs`         | the config: types, entities, input, sounds |
+| `src/types/game.ijs`   | the states: start, serve, play, game over  |
+| `src/types/ball.ijs`   | serving, walls, paddles, scoring           |
+| `src/types/paddle.ijs` | one paddle, bound to a player              |
+| `src/types/score.ijs`  | the score, and the win                     |

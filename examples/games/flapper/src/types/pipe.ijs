@@ -1,18 +1,7 @@
 import { renderImage } from "@inglorious/renderer-2d/image/image.js"
 import { v } from "@inglorious/utils/v.js"
 
-import {
-  BIRD_WIDTH,
-  GAME_STATE,
-  GAP_HEIGHT,
-  LAYER_PIPES,
-  NO_DEPTH,
-  NO_RISE,
-  PIPE_SIZE,
-  PIPE_SPAWN_X,
-  PIPE_SPEED,
-  PIPE_WIDTH,
-} from "../constants.js"
+import { BIRD_WIDTH, HEIGHT } from "../constants"
 
 const X = 0
 const Y = 1
@@ -44,7 +33,7 @@ export const Pipe = {
 
   update(entity, dt, api) {
     const game = api.getEntity("game")
-    if (game.state !== GAME_STATE.play) return
+    if (game.state !== "play") return
 
     entity.position[X] += entity.velocity[X] * dt
 
@@ -58,20 +47,20 @@ export const Pipe = {
     }
 
     // Recycled once the whole pipe has left the screen on the left.
-    if (entity.position[X] + PIPE_WIDTH / 2 <= LEFT_EDGE) {
+    if (entity.position[X] + 70 / 2 <= LEFT_EDGE) {
       api.notify("despawn", entity)
     }
   },
 }
 
 /**
- * Spawns a pair of pipes leaving a `GAP_HEIGHT` tall opening whose top sits at
+ * Spawns a pair of pipes leaving a `90` tall opening whose top sits at
  * the altitude `gapY`: the ceiling pipe stands on that top edge, and the floor
  * one hangs from the bottom of the gap.
  */
 export function spawnPipePair(api, gapY) {
   spawnPipe(api, CEILING, gapY)
-  spawnPipe(api, FLOOR, gapY - GAP_HEIGHT)
+  spawnPipe(api, FLOOR, gapY - 90)
 }
 
 function spawnPipe(api, side, altitude) {
@@ -81,17 +70,17 @@ function spawnPipe(api, side, altitude) {
     type: "Pipe",
     side,
     scored: false,
-    layer: LAYER_PIPES,
-    position: v(PIPE_SPAWN_X, altitude, NO_DEPTH),
-    velocity: v(-PIPE_SPEED, NO_RISE, NO_DEPTH),
+    layer: -2,
+    position: v(512 + 32, altitude, 0),
+    velocity: v(-60, 0, 0),
     // One anchor places the sprite, its hitbox and its gizmo together.
     anchor,
-    size: PIPE_SIZE,
+    size: v(70, HEIGHT, 0),
     collisions: { hitbox: { shape: "rectangle" } },
     flipY,
     image: {
       id: "pipe",
-      imageSize: [PIPE_SIZE[X], PIPE_SIZE[Y]],
+      imageSize: [v(70, HEIGHT, 0)[X], v(70, HEIGHT, 0)[Y]],
     },
   })
 }
@@ -108,6 +97,7 @@ function hasPassedBird(entity, api) {
   const bird = api.getEntity("bird")
 
   return (
-    entity.position[X] + PIPE_SIZE[X] / 2 < bird.position[X] - BIRD_WIDTH / 2
+    entity.position[X] + v(70, HEIGHT, 0)[X] / 2 <
+    bird.position[X] - BIRD_WIDTH / 2
   )
 }
