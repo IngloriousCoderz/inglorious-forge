@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { Ticker } from "@inglorious/engine/animation/ticker.js"
-import { mod } from "@inglorious/utils/math/numbers.js"
+import { mod } from "@inglorious/utils/math/number.js"
 import { pi, toRange } from "@inglorious/utils/math/trigonometry.js"
 
 export const Sprite = {

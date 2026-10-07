@@ -1,6 +1,6 @@
 import { expect, test } from "vitest"
 
-import { zero } from "../math/vectors.js"
+import { zero } from "../math/vector.js"
 import { v } from "../v.js"
 import { applyFriction } from "./friction.js"
 

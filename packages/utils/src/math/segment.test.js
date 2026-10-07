@@ -1,7 +1,7 @@
 import { expect, test } from "vitest"
 
 import { v } from "../v.js"
-import { isClose } from "./numbers.js"
+import { isClose } from "./number.js"
 import {
   closestPoint,
   coefficients,

@@ -1,4 +1,4 @@
-import { zero } from "@inglorious/utils/vectors.js"
+import { zero } from "@inglorious/utils/vector.js"
 
 import classes from "./with-absolute-position.module.scss"
 

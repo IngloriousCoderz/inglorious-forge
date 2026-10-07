@@ -13,7 +13,7 @@ import {
 import { isFunction } from "@inglorious/utils/functions"
 import { extendWith, isObject } from "@inglorious/utils/object.js"
 import { v } from "@inglorious/utils/v.js"
-import { isVector } from "@inglorious/utils/vectors.js"
+import { isVector } from "@inglorious/utils/vector.js"
 
 import { coreEvents } from "./core-events.js"
 import { Loop } from "./loops/index.js"

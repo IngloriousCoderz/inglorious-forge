@@ -1,4 +1,4 @@
-import { abs, clamp } from "@inglorious/utils/math/numbers.js"
+import { abs, clamp } from "@inglorious/utils/math/number.js"
 import { toRange } from "@inglorious/utils/math/trigonometry.js"
 
 export const DEFAULT_TARGET_RADIUS = 0.1

@@ -3,7 +3,7 @@
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
-import { clamp } from "@inglorious/utils/math/numbers.js"
+import { clamp } from "@inglorious/utils/math/number.js"
 import { html } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
 

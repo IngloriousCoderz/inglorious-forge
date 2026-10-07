@@ -1,4 +1,4 @@
-import { clamp } from "@inglorious/utils/math/numbers.js"
+import { clamp } from "@inglorious/utils/math/number.js"
 
 export const DEFAULT_AXIS = "x"
 export const VERTICAL_AXIS = "y"

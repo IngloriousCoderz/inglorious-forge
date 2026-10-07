@@ -11,7 +11,7 @@ import { renderMouse } from "@inglorious/renderer-2d/mouse.js"
 import { pi } from "@inglorious/utils/math/trigonometry.js"
 import { merge } from "@inglorious/utils/object.js"
 import { v } from "@inglorious/utils/v.js"
-import { length, subtract } from "@inglorious/utils/vectors.js"
+import { length, subtract } from "@inglorious/utils/vector.js"
 
 export default {
   types: {

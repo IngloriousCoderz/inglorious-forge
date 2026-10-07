@@ -50,6 +50,14 @@
       "types": "./types/data-structures/*.d.ts",
       "import": "./src/data-structures/*.js"
     },
+    "./function.js": {
+      "types": "./types/functions/function.d.ts",
+      "import": "./src/functions/function.js"
+    },
+    "./function": {
+      "types": "./types/functions/function.d.ts",
+      "import": "./src/functions/function.js"
+    },
     "./functions": {
       "types": "./types/functions/index.d.ts",
       "import": "./src/functions/index.js"
@@ -86,21 +94,21 @@
       "types": "./types/data-structures/object.d.ts",
       "import": "./src/data-structures/object.js"
     },
-    "./quaternions.js": {
-      "types": "./types/math/quaternions.d.ts",
-      "import": "./src/math/quaternions.js"
+    "./quaternion.js": {
+      "types": "./types/math/quaternion.d.ts",
+      "import": "./src/math/quaternion.js"
     },
-    "./quaternions": {
-      "types": "./types/math/quaternions.d.ts",
-      "import": "./src/math/quaternions.js"
+    "./quaternion": {
+      "types": "./types/math/quaternion.d.ts",
+      "import": "./src/math/quaternion.js"
     },
-    "./vectors.js": {
-      "types": "./types/math/vectors.d.ts",
-      "import": "./src/math/vectors.js"
+    "./vector.js": {
+      "types": "./types/math/vector.d.ts",
+      "import": "./src/math/vector.js"
     },
-    "./vectors": {
-      "types": "./types/math/vectors.d.ts",
-      "import": "./src/math/vectors.js"
+    "./vector": {
+      "types": "./types/math/vector.d.ts",
+      "import": "./src/math/vector.js"
     },
     "./v.js": {
       "types": "./types/v.d.ts",

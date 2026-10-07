@@ -1,7 +1,7 @@
 import { findCollision } from "@inglorious/engine/collision/detection.js"
 import { clampToBounds } from "@inglorious/engine/physics/bounds.js"
 import { v } from "@inglorious/utils/v.js"
-import { magnitude, subtract } from "@inglorious/utils/vectors.js"
+import { magnitude, subtract } from "@inglorious/utils/vector.js"
 
 const MOVEMENT_THRESHOLD = 5
 

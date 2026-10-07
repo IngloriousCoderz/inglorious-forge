@@ -1,6 +1,6 @@
 // @see https://jonathanwhiting.com/tutorial/collision/
 
-import { isBetween } from "./numbers.js"
+import { isBetween } from "./number.js"
 import { intersectsRectangle } from "./rectangle.js"
 
 const FIRST = 0

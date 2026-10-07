@@ -5,7 +5,7 @@ import {
   negate,
   randomVector,
   sum,
-} from "@inglorious/utils/vectors.js"
+} from "@inglorious/utils/vector.js"
 
 const FIRST_INDEX = 0
 const SINGLE = 1

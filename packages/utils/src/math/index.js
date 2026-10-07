@@ -2,16 +2,16 @@ import * as circle from "./circle.js"
 import * as hitmask from "./hitmask.js"
 import * as line from "./line.js"
 import * as linearInterpolation from "./linear-interpolation.js"
-import * as numbers from "./numbers.js"
+import * as numbers from "./number.js"
 import * as point from "./point.js"
-import * as quaternions from "./quaternions.js"
+import * as quaternions from "./quaternion.js"
 import * as rectangle from "./rectangle.js"
 import * as rng from "./rng.js"
 import * as segment from "./segment.js"
 import * as statistics from "./statistics.js"
 import * as triangle from "./triangle.js"
 import * as trigonometry from "./trigonometry.js"
-import * as vectors from "./vectors.js"
+import * as vector from "./vector.js"
 
 export {
   circle,
@@ -27,5 +27,5 @@ export {
   statistics,
   triangle,
   trigonometry,
-  vectors,
+  vector,
 }

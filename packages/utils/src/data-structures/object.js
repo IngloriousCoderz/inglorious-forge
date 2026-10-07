@@ -1,4 +1,4 @@
-import { isFunction } from "../functions/functions.js"
+import { isFunction } from "../functions/function.js"
 import { v } from "../v.js"
 import { isArray } from "./array.js"
 

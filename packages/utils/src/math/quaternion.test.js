@@ -1,6 +1,6 @@
 import { expect, test } from "vitest"
 
-import { combine, quaternion } from "./quaternions.js"
+import { combine, quaternion } from "./quaternion.js"
 import { cos, pi, sin } from "./trigonometry.js"
 
 test("it should return the quaternion for no rotation", () => {

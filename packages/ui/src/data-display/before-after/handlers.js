@@ -2,7 +2,7 @@
  * @typedef {import('../../../types/data-display/before-after.js').BeforeAfterProps} BeforeAfterEntity
  */
 
-import { clamp } from "@inglorious/utils/math/numbers.js"
+import { clamp } from "@inglorious/utils/math/number.js"
 
 import {
   DEFAULT_POSITION,

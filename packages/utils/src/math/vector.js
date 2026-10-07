@@ -1,8 +1,8 @@
 /**
- * @typedef {import("../../types/math/vectors").Vector} Vector
- * @typedef {import("../../types/math/vectors").Vector2} Vector2
- * @typedef {import("../../types/math/vectors").Vector3} Vector3
- * @typedef {import("../../types/math/vectors").Vector7} Vector7
+ * @typedef {import("../../types/math/vector").Vector} Vector
+ * @typedef {import("../../types/math/vector").Vector2} Vector2
+ * @typedef {import("../../types/math/vector").Vector3} Vector3
+ * @typedef {import("../../types/math/vector").Vector7} Vector7
  */
 
 import { v } from "../v.js"
@@ -11,8 +11,8 @@ import {
   clamp as nClamp,
   mod as nMod,
   snap as nSnap,
-} from "./numbers.js"
-import { quaternion } from "./quaternions.js"
+} from "./number.js"
+import { quaternion } from "./quaternion.js"
 import { random } from "./rng.js"
 import { hypothenuse } from "./triangle.js"
 import { atan2, cos, sin } from "./trigonometry.js"

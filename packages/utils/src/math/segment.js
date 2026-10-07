@@ -11,7 +11,7 @@ import {
   setMagnitude,
   subtract,
   sum,
-} from "./vectors.js"
+} from "./vector.js"
 
 const BEFORE_SEGMENT = 0
 

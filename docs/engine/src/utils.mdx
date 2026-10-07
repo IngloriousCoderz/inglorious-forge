@@ -1,6 +1,6 @@
 import { Meta } from '@storybook/addon-docs/blocks'
 
-import { toString } from '@inglorious/utils/vectors'
+import { toString } from '@inglorious/utils/vector'
 import { v, ensureV } from '@inglorious/utils/v.js'
 
 <Meta title="Utils/Docs" />
@@ -32,13 +32,13 @@ Then, you can import the namespaces you need in your project:
 ```javascript
 import { math, dataStructures } from '@inglorious/utils';
 
-const sum = math.vectors.sum([1, 2], [3, 4]);
+const sum = math.vector.sum([1, 2], [3, 4]);
 ```
 
 Alternatively, you can import individual functions directly. This can be useful for tree-shaking and is often handled automatically by modern IDEs:
 
 ```javascript
-import { sum } from '@inglorious/utils/vectors';
+import { sum } from '@inglorious/utils/vector';
 
 const result = sum([1, 2], [3, 4]);
 ```

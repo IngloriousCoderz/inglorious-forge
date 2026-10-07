@@ -59,7 +59,7 @@ Recursively converts a JSON string back into a JavaScript object, automatically 
 ### Usage
 
 ```javascript
-import { deserialize } from '@inglorious/utils/objects';
+import { deserialize } from '@inglorious/utils/object';
 
 const packet = '{"position":{"_type":"vector","coords":[10,20,30]},"color":{"_type":"vector","coords":[255,0,0,1]},"inventory":["sword","shield"]}';
 
@@ -126,7 +126,7 @@ Gets the value at a specified path of an object using dot-notation. If the resol
 ### Usage
 
 ```javascript
-import { get } from '@inglorious/utils/objects';
+import { get } from '@inglorious/utils/object';
 
 const object = { 'a': [{ 'b': { 'c': 3 } }] };
 
@@ -255,7 +255,7 @@ The function can be called in two ways:
 #### Standard Call
 
 ```javascript
-import { produce } from '@inglorious/utils/objects';
+import { produce } from '@inglorious/utils/object';
 
 const baseState = {
   user: { name: 'Alice', age: 30 },
@@ -276,7 +276,7 @@ console.log(baseState.user.age); // 30 (original state is untouched)
 You can also create a reusable producer function by passing only the recipe.
 
 ```javascript
-import { produce } from '@inglorious/utils/objects';
+import { produce } from '@inglorious/utils/object';
 
 const incrementAge = produce((draft) => {
   draft.user.age += 1;
@@ -298,7 +298,7 @@ This ensures that the vector's type information is preserved during serializatio
 ### Usage
 
 ```javascript
-import { serialize } from '@inglorious/utils/objects';
+import { serialize } from '@inglorious/utils/object';
 import { v } from '@inglorious/utils/v';
 
 const player = {
@@ -321,7 +321,7 @@ Sets the value at a specified path of an object. If a portion of the path doesn'
 ### Usage
 
 ```javascript
-import { set } from '@inglorious/utils/objects';
+import { set } from '@inglorious/utils/object';
 
 const object = { 'a': [{ 'b': { 'c': 3 } }] };
 

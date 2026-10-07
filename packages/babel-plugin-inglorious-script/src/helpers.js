@@ -1,6 +1,6 @@
 import { addNamed } from "@babel/helper-module-imports"
 
-const VECTORS_MODULE = "@inglorious/utils/vectors.js"
+const VECTOR_MODULE = "@inglorious/utils/vector.js"
 const V_MODULE = "@inglorious/utils/v.js"
 
 import { Config } from "./config.js"
@@ -38,7 +38,7 @@ export function injectHelpers(t, programPath, operators) {
 
   let isVectorId = null
   if (operators.size) {
-    isVectorId = addNamed(programPath, "isVector", VECTORS_MODULE)
+    isVectorId = addNamed(programPath, "isVector", VECTOR_MODULE)
   }
 
   const helper = createHelper(t, isVectorId)

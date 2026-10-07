@@ -1,6 +1,6 @@
 import { expect, test } from "vitest"
 
-import { mod } from "../math/numbers.js"
+import { mod } from "../math/number.js"
 import {
   countNeighbors,
   createBoard,

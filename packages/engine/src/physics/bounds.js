@@ -3,7 +3,7 @@ import {
   entityAnchor,
   shapeAnchor,
 } from "@inglorious/engine/physics/anchor.js"
-import { abs } from "@inglorious/utils/math/numbers.js"
+import { abs } from "@inglorious/utils/math/number.js"
 import { v } from "@inglorious/utils/v.js"
 import {
   angle,
@@ -13,7 +13,7 @@ import {
   multiply,
   sum,
   zero,
-} from "@inglorious/utils/vectors.js"
+} from "@inglorious/utils/vector.js"
 
 const ORIGIN = 0
 const DOUBLE = 2

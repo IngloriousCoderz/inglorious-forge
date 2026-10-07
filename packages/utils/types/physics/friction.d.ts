@@ -1,4 +1,4 @@
-import type { Vector3 } from "../math/vectors"
+import type { Vector3 } from "../math/vector"
 
 export interface FrictionParams {
   friction: number

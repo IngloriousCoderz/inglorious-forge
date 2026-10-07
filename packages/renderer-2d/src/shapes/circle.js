@@ -1,7 +1,7 @@
 /* eslint-disable no-magic-numbers */
 
 import { pi } from "@inglorious/utils/math/trigonometry.js"
-import { zero } from "@inglorious/utils/vectors.js"
+import { zero } from "@inglorious/utils/vector.js"
 
 export function renderCircle(entity, ctx) {
   const {

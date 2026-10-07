@@ -3,7 +3,7 @@ import {
   entityAnchor,
 } from "@inglorious/engine/physics/anchor.js"
 import { v } from "@inglorious/utils/v.js"
-import { zero } from "@inglorious/utils/vectors.js"
+import { zero } from "@inglorious/utils/vector.js"
 
 const X = 0
 const Y = 1

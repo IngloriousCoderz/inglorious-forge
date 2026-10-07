@@ -1,4 +1,4 @@
-const VECTORS_MODULE = "@inglorious/utils/vectors.js"
+const VECTOR_MODULE = "@inglorious/utils/vector.js"
 
 /**
  * @typedef {'vec_op_vec' | 'vec_op_scalar' | 'vec_op_scalar_commutative'} HelperType
@@ -32,48 +32,48 @@ export const Config = {
     helperName: "__vectorSum",
     type: "vec_op_vec",
     originalFunction: "sum",
-    module: VECTORS_MODULE,
+    module: VECTOR_MODULE,
     error_scalar: "Cannot add a vector and a non-vector.",
   },
   "-": {
     helperName: "__vectorSubtract",
     type: "vec_op_vec",
     originalFunction: "subtract",
-    module: VECTORS_MODULE,
+    module: VECTOR_MODULE,
     error_scalar: "Cannot subtract a vector and a non-vector.",
   },
   "*": {
     helperName: "__vectorMultiply",
     type: "vec_op_mixed",
     originalFunctionVec: "multiply",
-    moduleVec: VECTORS_MODULE,
+    moduleVec: VECTOR_MODULE,
     error_scalar: "Cannot multiply a non-vector by a vector.",
   },
   "/": {
     helperName: "__vectorDivide",
     type: "vec_op_mixed",
     originalFunctionVec: "divide",
-    moduleVec: VECTORS_MODULE,
+    moduleVec: VECTOR_MODULE,
     originalFunctionScalarReverse: "divideBy",
-    moduleScalarReverse: VECTORS_MODULE,
+    moduleScalarReverse: VECTOR_MODULE,
     error_scalar: "Cannot divide a non-vector by a vector.",
   },
   "%": {
     helperName: "__vectorMod",
     type: "vec_op_mixed",
     originalFunctionVec: "mod",
-    moduleVec: VECTORS_MODULE,
+    moduleVec: VECTOR_MODULE,
     originalFunctionScalarReverse: "modOf",
-    moduleScalarReverse: VECTORS_MODULE,
+    moduleScalarReverse: VECTOR_MODULE,
     error_scalar: "Cannot compute the modulus of a non-vector by a vector.",
   },
   "**": {
     helperName: "__vectorPower",
     type: "vec_op_mixed",
     originalFunctionVec: "power",
-    moduleVec: VECTORS_MODULE,
+    moduleVec: VECTOR_MODULE,
     originalFunctionScalarReverse: "powerOf",
-    moduleScalarReverse: VECTORS_MODULE,
+    moduleScalarReverse: VECTOR_MODULE,
     error_scalar: "Cannot raise a non-vector to the power of a vector.",
   },
 }

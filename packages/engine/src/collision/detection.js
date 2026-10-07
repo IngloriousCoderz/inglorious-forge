@@ -6,7 +6,7 @@ import * as point from "@inglorious/utils/math/point.js"
 import * as rectangle from "@inglorious/utils/math/rectangle.js"
 import * as segment from "@inglorious/utils/math/segment.js"
 import { filter } from "@inglorious/utils/object.js"
-import { add, zero } from "@inglorious/utils/vectors.js"
+import { add, zero } from "@inglorious/utils/vector.js"
 
 const Z = 2 // Z-axis index.
 const RECTANGLE = "rectangle"

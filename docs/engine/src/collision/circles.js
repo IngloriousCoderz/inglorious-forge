@@ -1,7 +1,7 @@
 import { findCollision } from "@inglorious/engine/collision/detection.js"
 import { bounce } from "@inglorious/engine/physics/bounds.js"
 import { renderCharacter } from "@inglorious/renderer-2d/character.js"
-import { mod } from "@inglorious/utils/math/numbers.js"
+import { mod } from "@inglorious/utils/math/number.js"
 import { pi } from "@inglorious/utils/math/trigonometry.js"
 import { merge } from "@inglorious/utils/object.js"
 import { v } from "@inglorious/utils/v.js"

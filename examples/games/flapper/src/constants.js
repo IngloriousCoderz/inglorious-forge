@@ -1,4 +1,4 @@
-import { ZERO_VECTOR } from "@inglorious/utils/math/vectors"
+import { ZERO_VECTOR } from "@inglorious/utils/math/vector"
 import { v } from "@inglorious/utils/v.js"
 
 // The game is played on a single plane: sprites have no depth, and only the

@@ -1,5 +1,5 @@
 import { matchVelocity } from "@inglorious/engine/ai/movement/dynamic/match-velocity.js"
-import { magnitude, setMagnitude, subtract } from "@inglorious/utils/vectors.js"
+import { magnitude, setMagnitude, subtract } from "@inglorious/utils/vector.js"
 
 export const DEFAULT_TARGET_RADIUS = 1
 export const DEFAULT_SLOW_RADIUS = 100

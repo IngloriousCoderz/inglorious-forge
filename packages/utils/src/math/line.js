@@ -4,7 +4,7 @@
  * @typedef {import("../../types/math/circle").Circle} Circle
  */
 
-import { abs } from "./numbers.js"
+import { abs } from "./number.js"
 import { hypothenuse } from "./triangle.js"
 
 /**

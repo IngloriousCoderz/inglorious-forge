@@ -5,7 +5,7 @@ import {
   setMagnitude,
   subtract,
   sum,
-} from "@inglorious/utils/vectors.js"
+} from "@inglorious/utils/vector.js"
 
 const DEFAULT_MAX_SPEED = 0
 

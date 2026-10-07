@@ -92,7 +92,7 @@ const throttledSave = throttle(() => {
 Perform vector operations on plain objects.
 
 ```javascript
-import { add } from "@inglorious/utils/vectors.js"
+import { add } from "@inglorious/utils/vector.js"
 
 const position = [10, 20]
 const velocity = [2, -1]
@@ -106,7 +106,7 @@ Two vectors are worth knowing by name: `ZERO_VECTOR`, with every component at ze
 you care about, or for building a vector up from scratch:
 
 ```javascript
-import { ZERO_VECTOR } from "@inglorious/utils/math/vectors.js"
+import { ZERO_VECTOR } from "@inglorious/utils/math/vector.js"
 import { v } from "@inglorious/utils/v.js"
 
 const [, NO_RISE, NO_DEPTH] = ZERO_VECTOR
@@ -136,14 +136,14 @@ know whether a helper lives under `data-structures` or `math`:
 
 - **`@inglorious/utils/functions`**: `compose`, `debounce`, `isFunction`, `pipe`, `throttle`.
 - **`@inglorious/utils/object`**: Single-object helpers (`clone`, `get`, `set`, `produce`, ...) alongside multi-object helpers (`merge`, `extend`, `defaults`, ...).
-- **`@inglorious/utils/quaternions`**: `quaternion` and `combine`.
-- **`@inglorious/utils/vectors`**: Single-vector helpers (`magnitude`, `normalize`, `rotate`, ...) alongside multi-vector helpers (`cross`, `dot`, `sum`, ...).
+- **`@inglorious/utils/quaternion`**: `quaternion` and `combine`.
+- **`@inglorious/utils/vector`**: Single-vector helpers (`magnitude`, `normalize`, `rotate`, ...) alongside multi-vector helpers (`cross`, `dot`, `sum`, ...).
 
 `divide`, `mod`, `multiply` and `power` accept either a scalar or one or more vectors:
 a scalar is applied to every component, while vectors are combined component-wise.
 
 ```javascript
-import { multiply } from "@inglorious/utils/vectors.js"
+import { multiply } from "@inglorious/utils/vector.js"
 
 multiply([1, 2, 3], 2) // => [2, 4, 6]
 multiply([1, 2, 3], [4, 5, 6]) // => [4, 10, 18]

@@ -31,8 +31,8 @@ const SQUARED = 2
 const HALF = 2
 
 import { distanceFromPoint } from "./line.js"
-import { isBetween } from "./numbers.js"
-import { isVector } from "./vectors.js"
+import { isBetween } from "./number.js"
+import { isVector } from "./vector.js"
 
 /**
  * Calculates the distance from a point to a line.

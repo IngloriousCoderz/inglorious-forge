@@ -5,7 +5,7 @@ import { renderFps } from "@inglorious/renderer-2d/fps.js"
 import { pi } from "@inglorious/utils/math/trigonometry.js"
 import { merge } from "@inglorious/utils/object.js"
 import { v } from "@inglorious/utils/v.js"
-import { zero } from "@inglorious/utils/vectors.js"
+import { zero } from "@inglorious/utils/vector.js"
 
 export default {
   types: {

@@ -82,7 +82,7 @@ const newPos = pos + vel;`
 })
 
 test("it should handle imported vectors", () => {
-  const code = `import { initialPosition } from './vectors.js';
+  const code = `import { initialPosition } from './vector.js';
 const result = initialPosition + v(1, 2);`
 
   expect(transform(code)).toMatchSnapshot()
@@ -513,7 +513,7 @@ const summed = (v1 + v2).map(x => x / 2);`
 })
 
 test("it should transform methods on imported vectors", () => {
-  const code = `import { initialPosition } from './vectors.js';
+  const code = `import { initialPosition } from './vector.js';
 const scaled = initialPosition.map(x => x * 0.5);`
 
   expect(transform(code)).toMatchSnapshot()

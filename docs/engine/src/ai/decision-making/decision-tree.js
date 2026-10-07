@@ -12,7 +12,7 @@ import { renderMouse } from "@inglorious/renderer-2d/mouse.js"
 import { decide } from "@inglorious/utils/algorithms/decision-tree.js"
 import { merge } from "@inglorious/utils/object.js"
 import { v } from "@inglorious/utils/v.js"
-import { length, subtract } from "@inglorious/utils/vectors.js"
+import { length, subtract } from "@inglorious/utils/vector.js"
 
 // A reusable decision tree node
 const wakeUp = () => ({

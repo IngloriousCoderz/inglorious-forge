@@ -1,5 +1,5 @@
 import { pipe } from "@inglorious/utils/functions"
-import { to2D } from "@inglorious/utils/vectors.js"
+import { to2D } from "@inglorious/utils/vector.js"
 
 import { absolutePosition } from "./absolute-position.js"
 import { infiniteLoop } from "./infinite-loop.js"

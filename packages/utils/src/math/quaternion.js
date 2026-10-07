@@ -1,11 +1,11 @@
 /**
- * @typedef {import("../../types/math/vectors").Vector3} Vector3
- * @typedef {import("../../types/math/quaternions").Quaternion} Quaternion
+ * @typedef {import("../../types/math/vector").Vector3} Vector3
+ * @typedef {import("../../types/math/quaternion").Quaternion} Quaternion
  */
 
 import { v } from "../v.js"
 import { cos, sin } from "./trigonometry.js"
-import { cross, dot, multiply, sum } from "./vectors.js"
+import { cross, dot, multiply, sum } from "./vector.js"
 
 const DEFAULT_ANGLE = 0
 const HALF = 2 // Constant representing the divisor for halving an angle.

@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest"
 
 import { v } from "../v.js"
-import { sqrt } from "./numbers.js"
+import { sqrt } from "./number.js"
 import { cos, pi, sin } from "./trigonometry.js"
 
 const X = 0
@@ -45,7 +45,7 @@ import {
   toString,
   unit,
   zero,
-} from "./vectors.js"
+} from "./vector.js"
 
 test("it should compute the absolute value of a vector's coordinates", () => {
   const vector = v(-2, 0, 3)

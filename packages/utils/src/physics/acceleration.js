@@ -1,8 +1,8 @@
 /**
- * @typedef {import("../../types/math/vectors").Vector3} Vector3
+ * @typedef {import("../../types/math/vector").Vector3} Vector3
  */
 
-import { clamp, multiply, sum, zero } from "../math/vectors.js"
+import { clamp, multiply, sum, zero } from "../math/vector.js"
 import { applyFriction } from "./friction.js"
 
 const DEFAULT_DT = 1 // Default time delta for the applyAcceleration function.

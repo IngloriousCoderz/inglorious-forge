@@ -1,4 +1,4 @@
-import { toString } from "@inglorious/utils/vectors.js"
+import { toString } from "@inglorious/utils/vector.js"
 
 const DECIMALS = 1
 

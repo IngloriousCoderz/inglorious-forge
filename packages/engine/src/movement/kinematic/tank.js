@@ -1,11 +1,5 @@
 import { toRange } from "@inglorious/utils/math/trigonometry.js"
-import {
-  clamp,
-  multiply,
-  rotate,
-  sum,
-  zero,
-} from "@inglorious/utils/vectors.js"
+import { clamp, multiply, rotate, sum, zero } from "@inglorious/utils/vector.js"
 
 const DEFAULT_MAX_SPEED = 0
 

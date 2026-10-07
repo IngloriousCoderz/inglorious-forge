@@ -9,7 +9,7 @@ import {
   sign,
   snap,
   sqrt,
-} from "./numbers.js"
+} from "./number.js"
 
 test("it should return the same number if already positive", () => {
   const num = 42

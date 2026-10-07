@@ -1,4 +1,4 @@
-import type { Vector } from "../math/vectors"
+import type { Vector } from "../math/vector"
 
 export type ObjectValue<T> = T extends object ? T[keyof T] : never
 

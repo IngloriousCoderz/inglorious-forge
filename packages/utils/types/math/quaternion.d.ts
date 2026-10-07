@@ -1,4 +1,4 @@
-import type { Vector, Vector3 } from "./vectors"
+import type { Vector, Vector3 } from "./vector"
 
 /** A quaternion represented as a four-dimensional vector. */
 export type Quaternion = Vector<readonly [number, number, number, number]>

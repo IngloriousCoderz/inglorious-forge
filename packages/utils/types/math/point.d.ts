@@ -1,4 +1,4 @@
-import type { Vector3 } from "./vectors"
+import type { Vector3 } from "./vector"
 import type { Circle } from "./circle"
 import type { Line } from "./line"
 import type { Rectangle } from "./rectangle"

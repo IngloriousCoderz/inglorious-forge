@@ -1,4 +1,4 @@
-import { snap, zero } from "@inglorious/utils/vectors.js"
+import { snap, zero } from "@inglorious/utils/vector.js"
 
 /**
  * Places an entity on the canvas.

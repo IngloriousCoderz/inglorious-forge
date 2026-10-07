@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, test, vi } from "vitest"
 
-import { compose, debounce, isFunction, pipe, throttle } from "./functions.js"
+import { compose, debounce, isFunction, pipe, throttle } from "./function.js"
 
 test("it should correctly identify a function", () => {
   const func = () => {}

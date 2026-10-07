@@ -13,7 +13,7 @@ import { renderCharacter } from "@inglorious/renderer-2d/character.js"
 import { pi } from "@inglorious/utils/math/trigonometry.js"
 import { merge } from "@inglorious/utils/object.js"
 import { v } from "@inglorious/utils/v.js"
-import { sum } from "@inglorious/utils/vectors.js"
+import { sum } from "@inglorious/utils/vector.js"
 
 export default {
   types: {
