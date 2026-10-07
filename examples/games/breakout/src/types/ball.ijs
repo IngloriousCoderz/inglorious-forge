@@ -8,20 +8,10 @@ import { filter } from "@inglorious/utils/object.js"
 import { v } from "@inglorious/utils/v.js"
 
 import { ballFrame } from "../atlas.js"
-import {
-  BALL_MAX_VERTICAL_SPEED,
-  BALL_SIZE,
-  BALL_SKIN_COUNT,
-  BRICK_BOUNCE_Y,
-  FLOOR,
-  GAME_STATE,
-  PADDLE_WIDTH,
-  SOUND_PADDLE_HIT,
-  SOUND_WALL_HIT,
-} from "../constants.js"
+import { BALL_SIZE, PADDLE_WIDTH } from "../constants.js"
 
 // The states a ball waits on the paddle in rather than playing on its own.
-const RIDING = [GAME_STATE.serve, GAME_STATE.victory]
+const RIDING = ["serve", "victory"]
 
 const X = 0
 const Y = 1
@@ -76,7 +66,7 @@ const FIRST_SKIN = 1
  * and the heading are drawn afresh each time rather than kept from last serve.
  */
 function serveRandomly(entity) {
-  entity.skin = random(FIRST_SKIN, BALL_SKIN_COUNT)
+  entity.skin = random(FIRST_SKIN, 7)
 
   entity.velocity = v(
     random(-SERVE_SIDEWAYS, SERVE_SIDEWAYS),
@@ -129,7 +119,7 @@ export const Ball = [
     stateChange(entity, { entityId, to }) {
       if (entityId !== entity.id) return
 
-      if (to === GAME_STATE.serve) serveRandomly(entity)
+      if (to === "serve") serveRandomly(entity)
     },
 
     update(entity, dt, api) {
@@ -152,7 +142,7 @@ export const Ball = [
 
       // There is no floor to bounce off. Falling past it is how a life is spent, which
       // is the game's business rather than the ball's: the ball only says that it fell.
-      if (entity.position[Y] <= FLOOR) api.notify("ballLost")
+      if (entity.position[Y] <= 0) api.notify("ballLost")
     },
   },
 ]
@@ -176,14 +166,14 @@ function bounceOffWalls(entity, api) {
     entity.position[X] = 0
     entity.velocity[X] *= FLIP
 
-    api.notify("soundPlay", SOUND_WALL_HIT)
+    api.notify("soundPlay", "wallHit")
   }
 
   if (entity.position[X] >= width - BALL_SIZE) {
     entity.position[X] = width - BALL_SIZE
     entity.velocity[X] *= FLIP
 
-    api.notify("soundPlay", SOUND_WALL_HIT)
+    api.notify("soundPlay", "wallHit")
   }
 
   // The ceiling is the one wall whose altitude is not zero, since this world counts up
@@ -192,7 +182,7 @@ function bounceOffWalls(entity, api) {
     entity.position[Y] = height
     entity.velocity[Y] *= FLIP
 
-    api.notify("soundPlay", SOUND_WALL_HIT)
+    api.notify("soundPlay", "wallHit")
   }
 }
 
@@ -213,7 +203,7 @@ function bounceOffPaddle(entity, api) {
   entity.position[Y] = paddle.position[Y] + BALL_SIZE
   entity.velocity[Y] *= FLIP
 
-  api.notify("soundPlay", SOUND_PADDLE_HIT)
+  api.notify("soundPlay", "paddleHit")
 
   const isPaddleMovingLeft = paddle.velocity[X] < 0
   const isPaddleMovingRight = paddle.velocity[X] > 0
@@ -285,7 +275,7 @@ function resolveBrickBounce(entity, brick) {
 
   // Applied whichever way it left, so every brick hit quickens the ball a little -- but
   // only while there is something left to quicken.
-  if (Math.abs(entity.velocity[Y]) < BALL_MAX_VERTICAL_SPEED) {
-    entity.velocity[Y] *= BRICK_BOUNCE_Y
+  if (Math.abs(entity.velocity[Y]) < 150) {
+    entity.velocity[Y] *= 1.02
   }
 }

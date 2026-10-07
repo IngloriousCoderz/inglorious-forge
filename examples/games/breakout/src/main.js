@@ -1,10 +1,9 @@
 import { Engine } from "@inglorious/engine/core/engine.js"
 import { createRenderer } from "@inglorious/renderer-2d/index.js"
 
-import { FONT_FAMILY } from "./constants.js"
 import game from "./game.ijs"
 
-const FONTS = [16, 32].map((size) => `${size}px ${FONT_FAMILY}`)
+const FONTS = [16, 32].map((size) => `${size}px 'Breakout'`)
 
 window.addEventListener("load", async () => {
   // The font is drawn onto the canvas, so it has to be ready before the first frame.

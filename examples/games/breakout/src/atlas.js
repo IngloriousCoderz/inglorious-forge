@@ -1,10 +1,8 @@
 import {
   BALL_SIZE,
-  BALL_SKIN_FIRST_ROW,
   BRICK_COLORS_PER_TIER,
   BRICK_FIRST_COLOR,
   BRICK_HEIGHT,
-  BRICK_TIERS_PER_COLOR,
   BRICK_WIDTH,
   HEART_HEIGHT,
   HEART_WIDTH,
@@ -60,8 +58,8 @@ export const paddleFrame = (skin = 1) => ({
 export const ballFrame = (skin = 1) => {
   // Four skins sit along the first row and three along the second, both starting at
   // x 96, so the row is found by counting how many skins come before this one.
-  const row = skin > BALL_SKIN_FIRST_ROW ? 1 : 0
-  const column = skin - 1 - row * BALL_SKIN_FIRST_ROW
+  const row = skin > 4 ? 1 : 0
+  const column = skin - 1 - row * 4
 
   return {
     x: 96 + column * BALL_SIZE,
@@ -103,8 +101,7 @@ export const brickColourOf = (hp) =>
  * brick every level started with before any of this existed.
  */
 export const brickQuad = (hp = BRICK_FIRST_COLOR) =>
-  (brickColourOf(hp) - BRICK_FIRST_COLOR) * BRICK_TIERS_PER_COLOR +
-  brickTierOf(hp)
+  (brickColourOf(hp) - BRICK_FIRST_COLOR) * 4 + brickTierOf(hp)
 
 /**
  * Where that quad sits on the sheet.

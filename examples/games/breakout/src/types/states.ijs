@@ -2,26 +2,9 @@ import { fsm } from "@inglorious/engine/behaviors/state-machine/fsm.js"
 
 import { brickColourOf, brickTierOf } from "../atlas.js"
 import {
-  BRICK_COLOR_SCORE,
-  BRICK_TIER_SCORE,
   FIRST_PADDLE_SKIN,
-  GAME_STATE,
   LAST_PADDLE_SKIN,
   MAX_HEALTH,
-  MAX_RECOVER_POINTS,
-  MENU_HIGH_SCORES,
-  MENU_ITEMS,
-  RECOVER_POINTS,
-  SOUND_CONFIRM,
-  SOUND_HIGH_SCORE,
-  SOUND_HURT,
-  SOUND_NO_SELECT,
-  SOUND_PADDLE_HIT,
-  SOUND_PAUSE,
-  SOUND_RECOVER,
-  SOUND_SELECT,
-  SOUND_VICTORY,
-  SOUND_WALL_HIT,
 } from "../constants.js"
 import {
   rankOf,
@@ -44,45 +27,45 @@ const FIRST_LETTER_SLOT = 1
 const LAST_LETTER_SLOT = 3
 
 export const Game = fsm({
-  [GAME_STATE.start]: {
+  start: {
     // Moving between the menu items plays a sound, once per move rather than once
     // per key, because both arrows share the one handler in the original too.
     pressMenuUp(entity, _, api) {
       chooseMenu(entity, -1)
 
-      api.notify("soundPlay", SOUND_PADDLE_HIT)
+      api.notify("soundPlay", "paddleHit")
     },
 
     pressMenuDown(entity, _, api) {
       chooseMenu(entity, 1)
 
-      api.notify("soundPlay", SOUND_PADDLE_HIT)
+      api.notify("soundPlay", "paddleHit")
     },
 
     press(entity, _, api) {
-      api.notify("soundPlay", SOUND_CONFIRM)
+      api.notify("soundPlay", "confirm")
 
       // The second item of the menu reads the scores rather than starting a game. Which
       // of the two was chosen is the menu's decision, so it is asked about here.
-      if (entity.menuItem === MENU_HIGH_SCORES) {
-        entity.state = GAME_STATE.highScores
+      if (entity.menuItem === "high-scores") {
+        entity.state = "highScores"
 
         return
       }
 
-      entity.state = GAME_STATE.paddleSelect
+      entity.state = "paddleSelect"
     },
   },
 
   // Nothing happens here but wait. The ball rides on the paddle and the level stands
   // where the last game left it, and pressing says go.
-  [GAME_STATE.serve]: {
+  serve: {
     press(entity) {
-      entity.state = GAME_STATE.play
+      entity.state = "play"
     },
   },
 
-  [GAME_STATE.play]: {
+  play: {
     // Pausing is the engine's own: it sets the flag on the game entity and halts the
     // world, so nothing that moves has to check for itself. This only decides which way
     // round to send it, which is what the original's single key does too.
@@ -90,7 +73,7 @@ export const Game = fsm({
     // It is not named `pause`, because that is the built-in event and a state that
     // answers to it would run alongside the built-in rather than instead of it.
     togglePause(entity, _, api) {
-      api.notify("soundPlay", SOUND_PAUSE)
+      api.notify("soundPlay", "pause")
 
       api.notify(entity.paused ? "resume" : "pause")
     },
@@ -99,9 +82,7 @@ export const Game = fsm({
     // rather than the brick's: the brick says what it is, and what that is worth is
     // decided here.
     brickHit(entity, { hp }) {
-      entity.score +=
-        brickTierOf(hp) * BRICK_TIER_SCORE +
-        brickColourOf(hp) * BRICK_COLOR_SCORE
+      entity.score += brickTierOf(hp) * 200 + brickColourOf(hp) * 25
     },
 
     // The last brick to go finishes the level. `remove` is announced to everything, so a
@@ -122,49 +103,45 @@ export const Game = fsm({
       // brick of a level is worth a life as much as any other.
       if (entity.score > entity.recoverPoints) {
         entity.health = Math.min(MAX_HEALTH, entity.health + 1)
-        entity.recoverPoints = Math.min(
-          MAX_RECOVER_POINTS,
-          entity.recoverPoints * 2,
-        )
+        entity.recoverPoints = Math.min(100000, entity.recoverPoints * 2)
 
-        api.notify("soundPlay", SOUND_RECOVER)
+        api.notify("soundPlay", "recover")
       }
 
       if (entity.bricksLeft > BRICKS_STILL_STANDING) return
 
-      api.notify("soundPlay", SOUND_VICTORY)
+      api.notify("soundPlay", "victory")
 
-      entity.state = GAME_STATE.victory
+      entity.state = "victory"
     },
 
     // The ball falling past the floor costs a life. Whether that ends the game or merely
     // means another serve is the game's decision, not the ball's, which is why the ball
     // only says what happened.
     ballLost(entity, _, api) {
-      api.notify("soundPlay", SOUND_HURT)
+      api.notify("soundPlay", "hurt")
 
       entity.health -= 1
 
-      entity.state =
-        entity.health === 0 ? GAME_STATE.gameOver : GAME_STATE.serve
+      entity.state = entity.health === 0 ? "gameOver" : "serve"
     },
   },
 
   // The level is finished. It stands on the same field the serve did, with the paddle
   // where the last life left it, and answers Enter by starting the next level -- which is
   // a new level of bricks, and the same score and the same lives.
-  [GAME_STATE.victory]: {
+  victory: {
     press(entity) {
       entity.level += 1
 
-      entity.state = GAME_STATE.serve
+      entity.state = "serve"
     },
   },
 
   // Which paddle to play with. Four of them, the same width in four colours, so what is
   // being chosen is a look rather than a size. Reaching either end is said rather than
   // done: the original plays a different sound and leaves the arrow dimmed.
-  [GAME_STATE.paddleSelect]: {
+  paddleSelect: {
     moveLeft(entity, _, api) {
       choosePaddle(entity, -1, api)
     },
@@ -174,57 +151,57 @@ export const Game = fsm({
     },
 
     press(entity, _, api) {
-      api.notify("soundPlay", SOUND_CONFIRM)
+      api.notify("soundPlay", "confirm")
 
       entity.health = MAX_HEALTH
       entity.score = 0
-      entity.recoverPoints = RECOVER_POINTS
+      entity.recoverPoints = 3000
 
-      entity.state = GAME_STATE.serve
+      entity.state = "serve"
     },
   },
 
   // The scores kept between games. Nothing on this screen changes one -- nothing does
   // yet -- and Escape goes back to the menu rather than out of the game, which is the one
   // place the original takes the way out for itself.
-  [GAME_STATE.highScores]: {
+  highScores: {
     quit(entity, _, api) {
-      api.notify("soundPlay", SOUND_WALL_HIT)
+      api.notify("soundPlay", "wallHit")
 
-      entity.state = GAME_STATE.start
+      entity.state = "start"
     },
   },
 
   // The end of a game is where a score is weighed against the table. A score that beats
   // something in it is worth writing down, and one that beats nothing is not -- so the
   // table decides, and the game is only told which of the two happened.
-  [GAME_STATE.gameOver]: {
+  gameOver: {
     press(entity, _, api) {
       const rank = rankOf(entity.highScores, entity.score)
 
       if (rank === null) {
-        entity.state = GAME_STATE.start
+        entity.state = "start"
 
         return
       }
 
-      api.notify("soundPlay", SOUND_HIGH_SCORE)
+      api.notify("soundPlay", "highScore")
 
       entity.scoreRank = rank
-      entity.state = GAME_STATE.enterHighScore
+      entity.state = "enterHighScore"
     },
   },
 
   // Writing a name in, three letters at a time. Left and right choose which letter is
   // being changed and up and down change it; the original plays a sound for moving
   // between the letters and not for scrolling them, and that is kept.
-  [GAME_STATE.enterHighScore]: {
+  enterHighScore: {
     moveLeft(entity, _, api) {
       if (entity.letter === FIRST_LETTER_SLOT) return
 
       entity.letter -= 1
 
-      api.notify("soundPlay", SOUND_SELECT)
+      api.notify("soundPlay", "select")
     },
 
     moveRight(entity, _, api) {
@@ -232,7 +209,7 @@ export const Game = fsm({
 
       entity.letter += 1
 
-      api.notify("soundPlay", SOUND_SELECT)
+      api.notify("soundPlay", "select")
     },
 
     pressMenuUp(entity) {
@@ -255,7 +232,7 @@ export const Game = fsm({
 
       saveHighScores(entity.highScores)
 
-      entity.state = GAME_STATE.highScores
+      entity.state = "highScores"
     },
   },
 })
@@ -284,22 +261,24 @@ function choosePaddle(entity, step, api) {
   const chosen = entity.paddleSkin + step
 
   if (chosen < FIRST_PADDLE_SKIN || chosen > LAST_PADDLE_SKIN) {
-    api.notify("soundPlay", SOUND_NO_SELECT)
+    api.notify("soundPlay", "noSelect")
 
     return
   }
 
-  api.notify("soundPlay", SOUND_SELECT)
+  api.notify("soundPlay", "select")
 
   entity.paddleSkin = chosen
 }
 
 /** The menu wraps, so pressing up from the first item lands on the last. */
 function chooseMenu(entity, step) {
-  const current = MENU_ITEMS.indexOf(entity.menuItem)
-  const next = (current + step + MENU_ITEMS.length) % MENU_ITEMS.length
+  const current = ["start", "high-scores"].indexOf(entity.menuItem)
+  const next =
+    (current + step + ["start", "high-scores"].length) %
+    ["start", "high-scores"].length
 
-  entity.menuItem = MENU_ITEMS[next]
+  entity.menuItem = ["start", "high-scores"][next]
 
   return entity.menuItem
 }

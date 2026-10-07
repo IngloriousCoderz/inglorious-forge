@@ -3,19 +3,18 @@ import { renderImage } from "@inglorious/renderer-2d/image/image.js"
 import { v } from "@inglorious/utils/v.js"
 
 import { brickColourOf, brickFrame, brickTierOf } from "../atlas.js"
-import {
-  BRICK_COLORS,
-  LAYER_PARTICLE,
-  PARTICLE_ACCELERATION_FALL,
-  PARTICLE_ACCELERATION_SIDEWAYS,
-  PARTICLE_ALPHA_PER_TIER,
-  PARTICLE_COUNT,
-  PARTICLE_LIFETIME,
-  PARTICLE_SIZE,
-  PARTICLE_SPREAD,
-  SOUND_BRICK_BROKEN,
-  SOUND_BRICK_HIT,
-} from "../constants.js"
+
+// The colours of the five bricks on the sheet, which the debris of a knocked brick is
+// coloured to match. These are the original's own values rather than anything read off
+// the artwork, which is what a particle needs: it is drawn in the brick's colour, not in
+// the colour of the pixels that happen to be there.
+export const BRICK_COLORS = {
+  1: "rgb(99, 155, 255)",
+  2: "rgb(106, 190, 47)",
+  3: "rgb(217, 87, 99)",
+  4: "rgb(215, 123, 186)",
+  5: "rgb(251, 242, 54)",
+}
 
 const X = 0
 const Y = 1
@@ -52,14 +51,14 @@ export const Brick = {
   brickHit(entity, { id }, api) {
     if (id !== entity.id) return
 
-    api.notify("soundPlay", SOUND_BRICK_HIT)
+    api.notify("soundPlay", "brickHit")
 
     knockOff(entity, api)
 
     entity.hp -= ONE
 
     if (entity.hp < ONE) {
-      api.notify("soundPlay", SOUND_BRICK_BROKEN)
+      api.notify("soundPlay", "brickBroken")
 
       api.notify("remove", id)
 
@@ -83,29 +82,26 @@ export const Brick = {
  */
 function knockOff(entity, api) {
   const [width, height] = entity.size
-  const spread = v(PARTICLE_SPREAD, PARTICLE_SPREAD, NO_DEPTH)
-  const fall = -PARTICLE_ACCELERATION_FALL
+  const spread = v(10, 10, NO_DEPTH)
+  const fall = -80
   const tier = brickTierOf(entity.hp)
 
   emitBurst(api, {
-    count: PARTICLE_COUNT,
+    count: 64,
     position: v(
       entity.position[X] + width / HALF,
       entity.position[Y] - height / HALF,
       NO_DEPTH,
     ),
     spread,
-    size: v(PARTICLE_SIZE, PARTICLE_SIZE, NO_DEPTH),
-    lifetime: PARTICLE_LIFETIME,
+    size: v(8, 8, NO_DEPTH),
+    lifetime: [0.5, 1],
     // Downwards in the original, which counts from the top of the screen. This world
     // counts from the floor, so falling is the smaller of the two.
-    acceleration: [
-      v(-PARTICLE_ACCELERATION_SIDEWAYS, fall, NO_DEPTH),
-      v(PARTICLE_ACCELERATION_SIDEWAYS, NO_DEPTH, NO_DEPTH),
-    ],
-    opacity: PARTICLE_ALPHA_PER_TIER * (tier + ONE),
-    layer: LAYER_PARTICLE,
+    acceleration: [v(-15, fall, NO_DEPTH), v(15, NO_DEPTH, NO_DEPTH)],
+    opacity: (55 / 255) * (tier + ONE),
+    layer: 0.5,
     tint: BRICK_COLORS[brickColourOf(entity.hp)],
-    image: { id: "particle", imageSize: [PARTICLE_SIZE, PARTICLE_SIZE] },
+    image: { id: "particle", imageSize: [8, 8] },
   })
 }

@@ -12,19 +12,7 @@ import { renderImage } from "@inglorious/renderer-2d/image/image.js"
 import { renderRectangle } from "@inglorious/renderer-2d/shapes/rectangle.js"
 import { v } from "@inglorious/utils/v.js"
 
-import {
-  FPS_ALTITUDE,
-  FPS_MARGIN,
-  FPS_SIZE,
-  GAME_STATE,
-  HEIGHT,
-  LAYER_BACKGROUND,
-  LAYER_OVERLAY,
-  MAPPINGS_BY_STATE,
-  MENU_START,
-  SOUND_MUSIC,
-  WIDTH,
-} from "./constants.js"
+import { HEIGHT, WIDTH } from "./constants.js"
 import { Ball } from "./types/ball.ijs"
 import { Brick } from "./types/brick.ijs"
 import { Heart } from "./types/heart.ijs"
@@ -59,6 +47,63 @@ import {
   YourScore,
 } from "./types/text.ijs"
 
+// What each state answers to, by key and by button alike -- a gamepad button is mapped the
+// same way a key is, so the name says what is in the table rather than half of it.
+//
+// Every state says its own, and a state that says none is deaf on purpose: the same key
+// answers one thing on the menu and another in play, so carrying the last mapping on into a
+// state nobody thought about would be the mistake.
+const MAPPINGS_BY_STATE = {
+  start: {
+    Enter: "press",
+    Escape: "quit",
+    ArrowUp: "pressMenuUp",
+    ArrowDown: "pressMenuDown",
+  },
+  // The paddle is on the screen for the wait as well as the play, and it is what the wait
+  // is for: the original's own comment says the state is "basically just moving the paddle
+  // left and right with the ball". So the arrows are here too, and not only in the play.
+  serve: {
+    Enter: "press",
+    Escape: "quit",
+    ArrowLeft: "moveLeft",
+    ArrowRight: "moveRight",
+  },
+  play: {
+    Space: "togglePause",
+    Escape: "quit",
+    ArrowLeft: "moveLeft",
+    ArrowRight: "moveRight",
+  },
+  victory: {
+    Enter: "press",
+    Escape: "quit",
+    ArrowLeft: "moveLeft",
+    ArrowRight: "moveRight",
+  },
+  gameOver: { Enter: "press", Escape: "quit" },
+  highScores: { Escape: "quit" },
+  // Which letter is being changed is moved with the same keys the paddle moves with,
+  // because there is no paddle on this screen to want them.
+  // Here the arrows move a choice rather than the paddle, which is the whole reason a
+  // state says its own keys: the same four keys mean the opposite of what they mean in
+  // the play, and nothing has to be renamed or worked around to say so.
+  paddleSelect: {
+    Enter: "press",
+    Escape: "quit",
+    ArrowLeft: "moveLeft",
+    ArrowRight: "moveRight",
+  },
+  enterHighScore: {
+    Enter: "press",
+    Escape: "quit",
+    ArrowLeft: "moveLeft",
+    ArrowRight: "moveRight",
+    ArrowUp: "pressMenuUp",
+    ArrowDown: "pressMenuDown",
+  },
+}
+
 const FPS_COLOR = "rgb(0, 255, 0)"
 
 // The hitboxes the ball actually collides with, drawn over the sprites in debug mode.
@@ -79,7 +124,7 @@ export default {
         start(entity, event, api) {
           type.start?.(entity, event, api)
 
-          api.notify("soundPlay", SOUND_MUSIC)
+          api.notify("soundPlay", "music")
         },
       }),
       Game,
@@ -152,8 +197,8 @@ export default {
       devMode: true,
       pixelated: true,
       size: [WIDTH, HEIGHT],
-      state: GAME_STATE.start,
-      menuItem: MENU_START,
+      state: "start",
+      menuItem: "start",
       // The level the bricks are rolled for. Nothing moves it on yet -- the original
       // asks for level one from its start screen for now -- but the levelmaker reads it,
       // so it is the game's to carry rather than the levelmaker's to guess.
@@ -192,7 +237,7 @@ export default {
 
     background: {
       type: "Background",
-      layer: LAYER_BACKGROUND,
+      layer: -1,
       position: v(0, 0, 0),
       anchor: [0, 0],
     },
@@ -202,9 +247,9 @@ export default {
       // An overlay keeps updating while the world is halted, or it would freeze on
       // whatever it last drew.
       updatesWhilePaused: true,
-      layer: LAYER_OVERLAY,
-      position: v(FPS_MARGIN, FPS_ALTITUDE, 0),
-      size: FPS_SIZE,
+      layer: 4,
+      position: v(4, HEIGHT - 4 - 8, 0),
+      size: 8,
       color: FPS_COLOR,
       textAlign: "left",
     },

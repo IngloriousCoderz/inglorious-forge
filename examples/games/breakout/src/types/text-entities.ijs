@@ -2,19 +2,14 @@ import { v } from "@inglorious/utils/v.js"
 
 import {
   ARROW_SIZE,
-  ARROWS_IMAGE,
   ARROWS_SHEET,
   FIRST_PADDLE_SKIN,
   HEIGHT,
   LAYER_BRICK,
-  LAYER_TEXT,
   LEFT_ARROW,
   LEFT_EDGE,
   PADDLE_HEIGHT,
   PADDLE_WIDTH,
-  RIGHT_ARROW,
-  SCORE_LABEL_X,
-  SCORE_VALUE_X,
   TOP_EDGE,
   WIDTH,
 } from "../constants.js"
@@ -198,7 +193,7 @@ export function createPaddleSelectEntities() {
       SELECT_PADDLE_HINT_PLACEMENT,
     ),
     createArrowEntity("selectLeftArrow", LEFT_ARROW),
-    createArrowEntity("selectRightArrow", RIGHT_ARROW),
+    createArrowEntity("selectRightArrow", 1),
     createSelectPaddleEntity(),
   ]
 }
@@ -217,7 +212,7 @@ function createArrowEntity(id, arrow) {
     anchor: [LEFT_EDGE, TOP_EDGE],
     size: v(ARROW_SIZE, ARROW_SIZE, 0),
     // The sheet is 48 wide and holds two arrows; `tileSize` is what says which one.
-    image: { id: ARROWS_IMAGE, imageSize: ARROWS_SHEET },
+    image: { id: "arrows", imageSize: ARROWS_SHEET },
     // Which way this one points, which is also which way it can be moved.
     arrow,
     // Which column of the sheet it is cut from: the arrows sheet holds two of them.
@@ -274,11 +269,11 @@ export function createScoreEntities() {
   return [
     {
       ...createTextEntity("scoreLabel", "ScoreLabel", SCORE_LABEL_PLACEMENT),
-      position: v(SCORE_LABEL_X, SCORE_LABEL_PLACEMENT.altitude, 0),
+      position: v(432 - 60, SCORE_LABEL_PLACEMENT.altitude, 0),
     },
     {
       ...createTextEntity("score", "Score", SCORE_PLACEMENT),
-      position: v(SCORE_VALUE_X, SCORE_PLACEMENT.altitude, 0),
+      position: v(432 - 50 + 40, SCORE_PLACEMENT.altitude, 0),
     },
   ]
 }
@@ -317,7 +312,7 @@ function createTextEntity(id, type, { altitude }) {
   return {
     id,
     type,
-    layer: LAYER_TEXT,
+    layer: 3,
     position: v(WIDTH / 2, altitude, 0),
   }
 }

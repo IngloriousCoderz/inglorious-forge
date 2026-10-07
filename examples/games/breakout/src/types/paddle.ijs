@@ -4,7 +4,7 @@ import { clamp } from "@inglorious/utils/math/number.js"
 import { v } from "@inglorious/utils/v.js"
 
 import { paddleFrame } from "../atlas.js"
-import { PADDLE_SPEED, PADDLE_WIDTH, WIDTH } from "../constants.js"
+import { PADDLE_WIDTH, WIDTH } from "../constants.js"
 
 const X = 0
 
@@ -35,8 +35,7 @@ export const Paddle = [
       const { movement = {} } = entity
 
       entity.velocity = [
-        (movement.moveRight ? PADDLE_SPEED : 0) -
-          (movement.moveLeft ? PADDLE_SPEED : 0),
+        (movement.moveRight ? 200 : 0) - (movement.moveLeft ? 200 : 0),
         0,
         0,
       ]

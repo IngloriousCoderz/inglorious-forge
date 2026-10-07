@@ -3,21 +3,10 @@ import "./smoke-setup.js"
 import { Engine } from "@inglorious/engine/core/engine.js"
 
 import { brickColourOf, brickTierOf } from "./src/atlas.js"
-import {
-  BALL_MAX_VERTICAL_SPEED,
-  BRICK_COLORS,
-  LAYER_BRICK,
-  LAYER_PADDLE,
-  LAYER_PARTICLE,
-  PARTICLE_ACCELERATION_FALL,
-  PARTICLE_ACCELERATION_SIDEWAYS,
-  PARTICLE_ALPHA_PER_TIER,
-  PARTICLE_COUNT,
-  PARTICLE_LIFETIME,
-  PARTICLE_SPREAD,
-} from "./src/constants.js"
+import { LAYER_BRICK } from "./src/constants.js"
 import gameConfig from "./src/game.ijs"
 import { createLevel } from "./src/levelmaker.ijs"
+import { BRICK_COLORS } from "./src/types/brick.ijs"
 
 gameConfig.entities.game.devMode = false
 const engine = new Engine(gameConfig)
@@ -93,6 +82,13 @@ press("ArrowDown")
 step(4)
 check(state().game.menuItem === "high-scores", "down moves to HIGH SCORES")
 check(state().highScores.color === "rgb(103, 255, 255)", "the pick-out follows")
+// Each menu line is tied to the item it stands for by the string it is given, and that
+// tie is invisible until the pick-out stops following one of them.
+press("ArrowUp")
+step(2)
+check(state().start.color === "rgb(103, 255, 255)", "and comes back to START")
+press("ArrowDown")
+step(2)
 check(state().start.color === "white", "and leaves the other one")
 // The paddle belongs to a game in progress, so the title screen must not show one
 // sitting on the floor behind the menu.
@@ -673,7 +669,7 @@ cappedState().ball.position = [cx + 12, cy - 4, 0]
 cappedState().ball.velocity = [0, 400, 0]
 cappedStep(1)
 check(
-  cappedState().ball.velocity[1] <= BALL_MAX_VERTICAL_SPEED,
+  cappedState().ball.velocity[1] <= 150,
   `a ball already at the ceiling does not quicken (${cappedState().ball.velocity[1].toFixed(0)})`,
 )
 
@@ -941,8 +937,8 @@ dustStep(1)
 
 const debris = debrisOf(dustEngine)
 check(
-  debris.length === PARTICLE_COUNT,
-  `a brick hit throws off ${PARTICLE_COUNT} pieces (${debris.length})`,
+  debris.length === 64,
+  `a brick hit throws off ${64} pieces (${debris.length})`,
 )
 // The debris is tinted. The brick it came off is *not*: a brick's own `color` is a number
 // saying where it sits in the palette, and a renderer reading that as a colour to draw it
@@ -962,14 +958,14 @@ check(
   "while the brick itself is left untinted",
 )
 check(
-  debris.every((p) => p.startOpacity === PARTICLE_ALPHA_PER_TIER * 2),
+  debris.every((p) => p.startOpacity === (55 / 255) * 2),
   "and as opaque as the tier it was hit at says",
 )
 check(
   debris.every(
     (p) =>
-      Math.abs(p.position[0] - (dustX + 16)) <= PARTICLE_SPREAD &&
-      Math.abs(p.position[1] - (dustY - 8)) <= PARTICLE_SPREAD,
+      Math.abs(p.position[0] - (dustX + 16)) <= 10 &&
+      Math.abs(p.position[1] - (dustY - 8)) <= 10,
   ),
   "thrown from the middle of it, scattered within a box",
 )
@@ -978,22 +974,18 @@ check(
   debris.every(
     (p) =>
       p.acceleration[1] <= 0 &&
-      p.acceleration[1] >= -PARTICLE_ACCELERATION_FALL &&
-      Math.abs(p.acceleration[0]) <= PARTICLE_ACCELERATION_SIDEWAYS,
+      p.acceleration[1] >= -80 &&
+      Math.abs(p.acceleration[0]) <= 15,
   ),
   "every piece falling, and within the sideways spread it is given",
 )
 check(
-  debris.every(
-    (p) => p.life >= PARTICLE_LIFETIME[0] && p.life <= PARTICLE_LIFETIME[1],
-  ),
+  debris.every((p) => p.life >= [0.5, 1][0] && p.life <= [0.5, 1][1]),
   "each lasting its own time, between half a second and a second",
 )
 // Drawn after the bricks and before the paddle, which is where the original draws them.
 check(
-  debris.every((p) => p.layer === LAYER_PARTICLE) &&
-    LAYER_BRICK < LAYER_PARTICLE &&
-    LAYER_PARTICLE < LAYER_PADDLE,
+  debris.every((p) => p.layer === 0.5) && LAYER_BRICK < 0.5 && 0.5 < 1,
   "drawn over the bricks and under the paddle",
 )
 

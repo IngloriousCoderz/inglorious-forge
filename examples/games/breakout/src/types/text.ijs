@@ -2,29 +2,13 @@ import { renderImage } from "@inglorious/renderer-2d/image/image.js"
 import { renderText } from "@inglorious/renderer-2d/text.js"
 
 import { paddleFrame } from "../atlas.js"
-import {
-  COLOR_HIGHLIGHT,
-  COLOR_TEXT,
-  FONT_FAMILY,
-  FONT_LARGE,
-  FONT_MEDIUM,
-  FONT_SMALL,
-  HEIGHT,
-  MENU_HIGH_SCORES,
-  MENU_START,
-  SCORE_TOP,
-} from "../constants.js"
+import { FONT_LARGE, FONT_MEDIUM, FONT_SMALL, HEIGHT } from "../constants.js"
 import {
   ARROW_SIZE,
-  ARROWS_IMAGE,
   ARROWS_SHEET,
   FIRST_PADDLE_SKIN,
   LAST_PADDLE_SKIN,
   LEFT_ARROW,
-  OPAQUE,
-  SELECT_ARROW_OPACITY,
-  SELECT_ARROW_TINT,
-  WHITE,
 } from "../constants.js"
 import { entryOf } from "../high-scores.js"
 
@@ -98,14 +82,14 @@ export const ENTER_SCORE_PROMPT_PLACEMENT = printf(HEIGHT - 18)
 export const HIGH_SCORES_TITLE_PLACEMENT = printf(HIGH_SCORES_TITLE_Y)
 export const HIGH_SCORES_PROMPT_PLACEMENT = printf(HIGH_SCORES_PROMPT_Y)
 
-export const SCORE_LABEL_PLACEMENT = print(SCORE_TOP)
-export const SCORE_PLACEMENT = print(SCORE_TOP)
+export const SCORE_LABEL_PLACEMENT = print(5)
+export const SCORE_PLACEMENT = print(5)
 
 /** The parts of a line that do not change from one frame to the next. */
 function say(entity, text, size, textAlign, baseline) {
   entity.value = text
   entity.size = size
-  entity.font = FONT_FAMILY
+  entity.font = "'Breakout'"
   // The original lays out every one of its lines explicitly, and the renderer is
   // left-aligned and top-anchored by default, so both are passed in rather than assumed.
   entity.textAlign = textAlign
@@ -131,7 +115,7 @@ function line(text, place, size = FONT_LARGE, selected, textAlign = "center") {
       // A line that belongs to the menu is picked out while it is the chosen item.
       const isSelected = selected !== undefined && game.menuItem === selected
 
-      entity.color = isSelected ? COLOR_HIGHLIGHT : COLOR_TEXT
+      entity.color = isSelected ? "rgb(103, 255, 255)" : "white"
     },
   }
 }
@@ -158,18 +142,18 @@ function reads(read, place, size = FONT_MEDIUM, textAlign = "center") {
         place?.baseline,
       )
 
-      entity.color = COLOR_TEXT
+      entity.color = "white"
     },
   }
 }
 
 export const Title = line("BREAKOUT", TITLE_PLACEMENT)
-export const Start = line("START", START_PLACEMENT, FONT_MEDIUM, MENU_START)
+export const Start = line("START", START_PLACEMENT, FONT_MEDIUM, "start")
 export const HighScores = line(
   "HIGH SCORES",
   HIGH_SCORES_ITEM_PLACEMENT,
   FONT_MEDIUM,
-  MENU_HIGH_SCORES,
+  "high-scores",
 )
 
 export const ScoreLabel = line(
@@ -246,7 +230,7 @@ export const EnteredLetter = {
     )
 
     entity.color =
-      entity.slot === game.letter - 1 ? COLOR_HIGHLIGHT : COLOR_TEXT
+      entity.slot === game.letter - 1 ? "rgb(103, 255, 255)" : "white"
   },
 }
 
@@ -312,7 +296,7 @@ export const SelectArrow = {
   create(entity) {
     entity.image = {
       ...entity.image,
-      id: ARROWS_IMAGE,
+      id: "arrows",
       imageSize: ARROWS_SHEET,
       // The sheet holds two of them side by side, so which one is drawn follows from
       // which way this one points.
@@ -331,8 +315,8 @@ export const SelectArrow = {
         ? paddleSkin === FIRST_PADDLE_SKIN
         : paddleSkin === LAST_PADDLE_SKIN
 
-    entity.tint = isAtTheEnd ? SELECT_ARROW_TINT : WHITE
-    entity.opacity = isAtTheEnd ? SELECT_ARROW_OPACITY : OPAQUE
+    entity.tint = isAtTheEnd ? "rgb(40, 40, 40)" : "white"
+    entity.opacity = isAtTheEnd ? 128 / 255 : 1
   },
 }
 

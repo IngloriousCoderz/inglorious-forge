@@ -6,32 +6,14 @@ import {
   BRICK_FIRST_COLOR,
   BRICK_FIRST_TIER,
   BRICK_HEIGHT,
-  BRICK_MAX_COLOR,
   BRICK_MAX_COLS,
-  BRICK_MAX_COLUMN_PADDING,
-  BRICK_MAX_ROWS,
-  BRICK_MAX_TIER,
-  BRICK_MIN_COLS,
-  BRICK_MIN_ROWS,
-  BRICK_PADDING,
   BRICK_WIDTH,
-  COLOR_BASE,
   HEIGHT,
   LEFT_EDGE,
-  LEVELS_PER_TIER,
   TOP_EDGE,
 } from "./constants.js"
 
-const FIRST_ROW = 0
-const FIRST_COLUMN = 0
-const FIRST_BRICK = 1
 const BRICK_ID_PREFIX = "brick"
-
-// The two patterns a row can be in, and the fair coin that picks between them.
-const FACES = 2
-const FIRST_FACE = 0
-const EVEN = 2
-const ONE = 1
 
 /**
  * A fair coin, which is what the original's `math.random(2) == 1` is.
@@ -40,7 +22,7 @@ const ONE = 1
  * asks for is zero rather than one.
  */
 function flip() {
-  return random(FACES) === FIRST_FACE
+  return random(2) === 0
 }
 
 /**
@@ -51,7 +33,7 @@ function flip() {
  * one side twice as much as the other, putting the level off to one side.
  */
 function oddColumns(columns) {
-  return columns % EVEN === 0 ? columns + ONE : columns
+  return columns % 2 === 0 ? columns + 1 : columns
 }
 
 /**
@@ -70,23 +52,17 @@ function oddColumns(columns) {
  * counting up from the ceiling, so a row's altitude is the height less the original's y.
  */
 export function createLevel(level, layer) {
-  const rows = random(BRICK_MIN_ROWS, BRICK_MAX_ROWS)
-  const columns = oddColumns(random(BRICK_MIN_COLS, BRICK_MAX_COLS))
+  const rows = random(1, 5)
+  const columns = oddColumns(random(7, BRICK_MAX_COLS))
 
   // How far along the colours and the tiers this level may reach. Both stop short of the
   // top of the sheet, so a late level cannot ask for a frame that is not there.
-  const highestTier = Math.min(
-    BRICK_MAX_TIER,
-    Math.floor(level / LEVELS_PER_TIER),
-  )
-  const highestColor = Math.min(
-    BRICK_MAX_COLOR,
-    (level % LEVELS_PER_TIER) + COLOR_BASE,
-  )
+  const highestTier = Math.min(3, Math.floor(level / 5))
+  const highestColor = Math.min(5, (level % 5) + 3)
 
   const bricks = []
 
-  for (let row = FIRST_ROW; row < rows; row++) {
+  for (let row = 0; row < rows; row++) {
     const skips = flip()
     const alternates = flip()
 
@@ -104,7 +80,7 @@ export function createLevel(level, layer) {
     const solidColor = random(BRICK_FIRST_COLOR, highestColor)
     const solidTier = random(BRICK_FIRST_TIER, highestTier)
 
-    for (let column = FIRST_COLUMN; column < columns; column++) {
+    for (let column = 0; column < columns; column++) {
       // A skipping row leaves out every other brick. The flag turns over on every column
       // whether or not the row skips, which is what spaces the gaps out evenly rather
       // than clumping them at one end.
@@ -140,10 +116,8 @@ export function createLevel(level, layer) {
         // was looked at, and the alternate pair does not apply to it at all.
         hp,
         position: v(
-          column * BRICK_WIDTH +
-            BRICK_PADDING +
-            (BRICK_MAX_COLS - columns) * BRICK_MAX_COLUMN_PADDING,
-          HEIGHT - (row + ONE) * BRICK_HEIGHT,
+          column * BRICK_WIDTH + 8 + (BRICK_MAX_COLS - columns) * 16,
+          HEIGHT - (row + 1) * BRICK_HEIGHT,
           0,
         ),
         anchor: [LEFT_EDGE, TOP_EDGE],
@@ -167,5 +141,5 @@ export function createLevel(level, layer) {
  * same size would otherwise hand out the same names for entirely different bricks.
  */
 function brickId(level, row, column, columns) {
-  return `${BRICK_ID_PREFIX}${level}-${row * columns + column + FIRST_BRICK}`
+  return `${BRICK_ID_PREFIX}${level}-${row * columns + column + 1}`
 }

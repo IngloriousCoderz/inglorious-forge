@@ -2,19 +2,13 @@ import { v } from "@inglorious/utils/v.js"
 
 import {
   BALL_SIZE,
-  BALL_START_ALTITUDE,
-  BALL_START_X,
   FIRST_PADDLE_SKIN,
-  HEART_ALTITUDE,
   HEART_HEIGHT,
-  HEART_SPACING,
-  HEART_START_X,
   HEART_WIDTH,
+  HEIGHT,
   LEFT_EDGE,
   MAX_HEALTH,
-  PADDLE_ALTITUDE,
   PADDLE_HEIGHT,
-  PADDLE_START_X,
   PADDLE_WIDTH,
   TOP_EDGE,
 } from "../constants.js"
@@ -32,7 +26,7 @@ export function createPaddleEntity(skin = FIRST_PADDLE_SKIN) {
     type: "Paddle",
     layer: 1,
     skin,
-    position: v(PADDLE_START_X, PADDLE_ALTITUDE, 0),
+    position: v(432 / 2 - 32, 16 * 2, 0),
     anchor: [LEFT_EDGE, TOP_EDGE],
     size: v(PADDLE_WIDTH, PADDLE_HEIGHT, 0),
     // The original collides the paddle with its whole bounding box rather than some
@@ -56,7 +50,7 @@ export function createBallEntity() {
     // The ball carries its own skin, which the original picks at random on every serve.
     skin: 1,
     layer: 2,
-    position: v(BALL_START_X, BALL_START_ALTITUDE, 0),
+    position: v(432 / 2 - 4, 42, 0),
     anchor: [LEFT_EDGE, TOP_EDGE],
     size: v(BALL_SIZE, BALL_SIZE, 0),
     // The ball collides with bounding boxes, like everything else here.
@@ -77,7 +71,7 @@ export function createHeartEntity(index) {
     id: `heart${index}`,
     type: "Heart",
     layer: 2,
-    position: v(HEART_START_X + index * HEART_SPACING, HEART_ALTITUDE, 0),
+    position: v(432 - 100 + index * 11, HEIGHT - 5, 0),
     anchor: [LEFT_EDGE, TOP_EDGE],
     size: v(HEART_WIDTH, HEART_HEIGHT, 0),
     heart: index,
