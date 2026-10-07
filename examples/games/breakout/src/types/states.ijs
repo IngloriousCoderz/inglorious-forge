@@ -8,18 +8,20 @@ import {
   GAME_STATE,
   LAST_PADDLE_SKIN,
   MAX_HEALTH,
+  MAX_RECOVER_POINTS,
   MENU_HIGH_SCORES,
   MENU_ITEMS,
+  RECOVER_POINTS,
   SOUND_CONFIRM,
   SOUND_HIGH_SCORE,
   SOUND_HURT,
   SOUND_NO_SELECT,
   SOUND_PADDLE_HIT,
   SOUND_PAUSE,
+  SOUND_RECOVER,
   SOUND_SELECT,
   SOUND_VICTORY,
   SOUND_WALL_HIT,
-  STARTING_SCORE,
 } from "../constants.js"
 import {
   rankOf,
@@ -114,6 +116,20 @@ export const Game = fsm({
 
       entity.bricksLeft -= 1
 
+      // A brick is worth points, and enough points is worth a life back. The bar doubles
+      // each time one is recovered, so the gaps between them grow the further on the game
+      // gets, and it is settled before the level is checked for being over -- the last
+      // brick of a level is worth a life as much as any other.
+      if (entity.score > entity.recoverPoints) {
+        entity.health = Math.min(MAX_HEALTH, entity.health + 1)
+        entity.recoverPoints = Math.min(
+          MAX_RECOVER_POINTS,
+          entity.recoverPoints * 2,
+        )
+
+        api.notify("soundPlay", SOUND_RECOVER)
+      }
+
       if (entity.bricksLeft > BRICKS_STILL_STANDING) return
 
       api.notify("soundPlay", SOUND_VICTORY)
@@ -161,7 +177,8 @@ export const Game = fsm({
       api.notify("soundPlay", SOUND_CONFIRM)
 
       entity.health = MAX_HEALTH
-      entity.score = STARTING_SCORE
+      entity.score = 0
+      entity.recoverPoints = RECOVER_POINTS
 
       entity.state = GAME_STATE.serve
     },

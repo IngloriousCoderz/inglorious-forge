@@ -358,13 +358,7 @@ check(state().servePrompt.size === 16, "in the medium font")
 check(state().score !== undefined, "the score stands on the serve")
 check(state().scoreLabel.value === "Score:", "labelled Score")
 check(state().score.size === 8, "in the small font")
-// A new game no longer starts at nothing. The original seeds it at three thousand so a
-// first game is always worth entering into a table running ten thousand down to a
-// thousand -- against nothing, it would never be.
-check(
-  state().score.value === "3000",
-  "starting at three thousand, not at nothing",
-)
+check(state().score.value === "0", "starting at nothing scored")
 check(state().game.health === 3, "with three lives in hand")
 check(
   ["heart0", "heart1", "heart2"].every((id) => state()[id] !== undefined),
@@ -478,7 +472,7 @@ check(
 // and from one edge of the line, because two entities can share a position and still be
 // drawn half a font apart if one is anchored by its top and the other by its middle.
 check(
-  hud.score.value === "3000" &&
+  hud.score.value === "0" &&
     hud.scoreLabel.position[1] === hud.score.position[1],
   `the label and the number share a height (${hud.scoreLabel.position[1]})`,
 )
@@ -1282,7 +1276,7 @@ check(lifeState().game.state === "paddleSelect", "and asks which paddle first")
 lifePress("Enter")
 check(lifeState().game.state === "serve", "and then it starts")
 check(lifeState().game.health === 3, "with every life back")
-check(lifeState().score.value === "3000", "and back to the seed score")
+check(lifeState().score.value === "0", "and back to nothing scored")
 // A new game makes a new level, which is rolled afresh and so need not be the size the
 // last one happened to be.
 check(
@@ -1676,3 +1670,90 @@ console.log(
   `\n${failures === 0 ? "all checks passed" : `${failures} check(s) failed`}`,
 )
 if (failures) process.exitCode = 1
+
+// A life back. A brick is worth points, and enough points is worth a life -- and the bar
+// for it doubles every time one is recovered, so the gaps grow the further on the game
+// gets. This is the one thing a player earns back rather than loses.
+const recovered = new Engine(gameConfig)
+const healState = () => recovered.getState()
+const healStep = (n = 1) => {
+  for (let i = 0; i < n; i++) recovered.update(1 / 60)
+}
+const healSounds = []
+const healAudio = recovered._store.getType("Audio")
+const healPlaySound = healAudio.soundPlay
+healAudio.soundPlay = function sound(entity, name) {
+  healSounds.push(name)
+  return healPlaySound.call(this, entity, name)
+}
+const healPress = (code) => {
+  recovered._store.notify("keyboardKeyDown", code)
+  recovered._store.notify("keyboardKeyUp", code)
+  healStep(2)
+}
+
+// The engine announces `start` and then begins the loop. There is no loop to run here,
+// so the announcement is made on its own -- which is still the whole of what `start` does.
+recovered._store.notify("start")
+healStep(4)
+healPress("Enter")
+healPress("Enter")
+healPress("Enter")
+check(healState().game.state === "play", "a game of its own reaches the play")
+check(
+  healState().game.recoverPoints === 3000,
+  "healing starts at three thousand points",
+)
+check(healState().game.health === 3, "with every life already in hand")
+check(healSounds.includes("music"), "and the music running under it all")
+
+// Under the bar, a life is not earned.
+const healBricks = Object.keys(healState()).filter((id) =>
+  id.startsWith("brick"),
+)
+const healBrick = healBricks[0]
+healState()[healBrick].hp = 1
+healState().ball.position = [
+  healState()[healBrick].position[0] + 12,
+  healState()[healBrick].position[1] - 4,
+  0,
+]
+healState().ball.velocity = [0, 0, 0]
+healStep(1)
+check(
+  healState().game.score < 3000,
+  `a first brick is under the bar (${healState().game.score})`,
+)
+check(healState().game.health === 3, "so no life is recovered")
+
+// Over it, a life is.
+const recoverSoundsBefore = healSounds.length
+healState().game.score = 3001
+const healBricksAfter = Object.keys(healState()).filter((id) =>
+  id.startsWith("brick"),
+)
+const healBrickAfter = healBricksAfter.find((id) => id !== healBrick)
+healState()[healBrickAfter].hp = 1
+healState().ball.position = [
+  healState()[healBrickAfter].position[0] + 12,
+  healState()[healBrickAfter].position[1] - 4,
+  0,
+]
+healState().ball.velocity = [0, 0, 0]
+healStep(1)
+check(
+  healState().game.health === 3,
+  "still no life at three lives already in hand",
+)
+check(
+  healState().game.recoverPoints === 6000,
+  "but the bar has doubled to six thousand",
+)
+check(
+  healSounds.slice(recoverSoundsBefore).includes("recover"),
+  "and the recovering sound",
+)
+check(
+  healSounds.filter((name) => name === "music").length === 1,
+  "the music played once, not per state",
+)

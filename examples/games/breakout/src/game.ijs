@@ -22,6 +22,7 @@ import {
   LAYER_OVERLAY,
   MAPPINGS_BY_STATE,
   MENU_START,
+  SOUND_MUSIC,
   WIDTH,
 } from "./constants.js"
 import { Ball } from "./types/ball.ijs"
@@ -69,7 +70,20 @@ export default {
   types: {
     ...controlTypes(),
 
-    Game: [scenes(SCENES), mappings(MAPPINGS_BY_STATE), Game],
+    Game: [
+      scenes(SCENES),
+      mappings(MAPPINGS_BY_STATE),
+      (type) => ({
+        // The music runs under every screen and is never stopped, so nothing here starts
+        // or ends it: it begins when the game does.
+        start(entity, event, api) {
+          type.start?.(entity, event, api)
+
+          api.notify("soundPlay", SOUND_MUSIC)
+        },
+      }),
+      Game,
+    ],
     Ball: [...Ball, gizmos],
     Brick: [Brick, gizmos],
 
@@ -170,6 +184,8 @@ export default {
         select: { url: "/sounds/select.wav" },
         highScore: { url: "/sounds/high_score.wav" },
         noSelect: { url: "/sounds/no-select.wav" },
+        recover: { url: "/sounds/recover.wav" },
+        music: { url: "/sounds/music.wav", loop: true, volume: 0.25 },
         hurt: { url: "/sounds/hurt.wav" },
       },
     },

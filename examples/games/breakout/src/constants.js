@@ -126,10 +126,15 @@ export const HEART_START_X = WIDTH - 100
 export const HEART_ALTITUDE = SCORE_ALTITUDE
 export const HEART_SPACING = 11
 
-// A new game no longer starts at nothing. The original seeds it at three thousand so
-// that a first game is always good enough to be worth entering into the table -- which
-// it would not be against ten thousand down to a thousand.
-export const STARTING_SCORE = 3000
+// What has to be scored before a brick is worth a life back, and where that bar goes
+// next: it doubles every time a life is recovered, so the further into a game the gaps
+// between them grow.
+export const RECOVER_POINTS = 3000
+export const MAX_RECOVER_POINTS = 100000
+
+// The music runs under everything and is never stopped, so it is played once when the
+// game starts rather than by any state.
+export const SOUND_MUSIC = "music"
 
 export const MENU_ITEMS = ["start", "high-scores"]
 export const MENU_START = MENU_ITEMS[0]
@@ -155,6 +160,7 @@ export const SOUND_PAUSE = "pause"
 export const SOUND_WALL_HIT = "wallHit"
 export const SOUND_SELECT = "select"
 export const SOUND_NO_SELECT = "noSelect"
+export const SOUND_RECOVER = "recover"
 export const SOUND_HIGH_SCORE = "highScore"
 export const SOUND_BRICK_HIT = "brickHit"
 // A brick takes several hits now, and this is the sound of the last of them.
