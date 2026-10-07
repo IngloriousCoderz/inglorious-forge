@@ -21,22 +21,17 @@ const FLIP = -1
 const HIT_PADDLE = "Paddle"
 const HIT_BRICK = "Brick"
 
-// The original measures the ball from its centre when it works out which way to bounce
-// it, so it is given a radius as well as a size.
+// The original measures the ball from its centre when it works out which way to bounce it.
 const BALL_RADIUS = BALL_SIZE / HALF
 
-// A hit near the edge of a moving paddle throws the ball off at an angle. These are the
-// sideways speed it starts from and how much each pixel past the centre adds to it.
+// A hit near the edge of a moving paddle throws the ball off at an angle: this is the
+// sideways speed it starts from, and this what each pixel past the centre adds.
 const BOUNCE_DX = 50
 const BOUNCE_PER_PIXEL = 8
 
 /**
- * Where the middle of a box is.
- *
- * These sprites are anchored by their top left corner, because that is where the
- * original draws them from, so on a world counting up from the floor the centre sits
- * half a box *below* the position on the vertical axis and half a box to the right of
- * it on the horizontal one.
+ * Where the middle of a box is. Sprites are anchored by their top left corner, so on a
+ * world counting up from the floor the centre sits half a box below the position.
  */
 function centreOf(entity) {
   const [width, height] = entity.size
@@ -49,22 +44,15 @@ function awayFrom(delta) {
   return delta >= 0 ? 1 : -1
 }
 
-// The serve. The original picks both axes at random, so the ball never starts on the
-// same line twice: sideways anywhere between -200 and 200, and upwards between 50 and
-// 60, which is downwards in the original's screen.
+// Both axes are picked at random on a serve, so the ball never starts on the same line
+// twice. Upwards here is downwards in the original's screen.
 const SERVE_SIDEWAYS = 200
 const SERVE_UPWARD = [50, 60]
 
-// The original numbers its ball skins from one, so the random pick is made over the
-// same range it would make over in Lua.
+// The original numbers its ball skins from one.
 const FIRST_SKIN = 1
 
-/**
- * Puts the ball up ready to be served: a skin of its own, and a heading of its own.
- *
- * The original makes a new ball to do this at the start of every serve, so both the skin
- * and the heading are drawn afresh each time rather than kept from last serve.
- */
+/** A skin and a heading of its own, drawn afresh for every serve. */
 function serveRandomly(entity) {
   entity.skin = random(FIRST_SKIN, 7)
 
@@ -155,9 +143,6 @@ function move(entity, dt) {
 /**
  * The walls are the sides and the ceiling. There is no floor: the ball is supposed to
  * fall past the paddle, and losing a life for it comes later.
- *
- * Each side is checked against the ball's own size rather than the screen's, so it
- * stops flush with the wall instead of half overhanging it.
  */
 function bounceOffWalls(entity, api) {
   const [width, height] = api.getEntity("game").size
@@ -187,13 +172,11 @@ function bounceOffWalls(entity, api) {
 }
 
 /**
- * Hitting the paddle lifts the ball clear of it and reverses it.
+ * Hitting the paddle lifts the ball clear of it and reverses it. The lift is what stops
+ * the ball being hit again on the very next frame.
  *
- * The lift is what stops the ball being hit again on the very next frame: without it the
- * ball would still be inside the paddle it just bounced off.
- *
- * A hit near the edge of a paddle that is moving the same way as the ball throws the ball
- * off at an angle, which is the whole of the original's feel at this stage.
+ * A hit near the edge of a paddle moving the same way throws the ball off at an angle,
+ * which is the whole of the original's feel at this stage.
  */
 function bounceOffPaddle(entity, api) {
   const paddle = findCollision(entity, api.getEntities())
@@ -221,15 +204,10 @@ function bounceOffPaddle(entity, api) {
 }
 
 /**
- * Every brick the ball is touching is knocked out, and the ball bounces off the first
- * one it meets.
- *
- * The bounce is worked out from how deep the ball has sunk into the brick on each axis.
- * The shallower of the two is the side it went in by, so that is the axis it comes back
- * out on; the other would have it leaving through a face it did not pass through.
- *
- * The ball is pushed clear as well as reflected, otherwise it would stay overlapping the
- * brick it just hit and be told to bounce off it again next frame.
+ * The ball bounces off the first brick it meets and knocks it out. The bounce works out
+ * how deep the ball has sunk in on each axis: the shallower is the side it went in by,
+ * so that is the axis it comes back out on, and the ball is pushed clear as well as
+ * reflected so that it is not told to bounce off the same brick again next frame.
  */
 function knockOutBricks(entity, api) {
   const bricks = filter(api.getEntities(), (_, { type }) => type === HIT_BRICK)
@@ -237,9 +215,8 @@ function knockOutBricks(entity, api) {
   for (const [id, brick] of Object.entries(bricks)) {
     if (!collidesWith(entity, brick)) continue
 
-    // What the brick is worth is reported as it stands at the moment of the hit, because
-    // the hit takes one off it and whatever scores this could not read it off the brick
-    // afterwards and get the same answer.
+    // Reported as it stands at the moment of the hit: the hit takes one off it, and a
+    // reader during this pass would still see the brick as it was.
     api.notify("brickHit", { id, hp: brick.hp })
 
     resolveBrickBounce(entity, brick)
@@ -273,8 +250,7 @@ function resolveBrickBounce(entity, brick) {
     entity.position[Y] += awayFrom(deltaY) * overlapY
   }
 
-  // Applied whichever way it left, so every brick hit quickens the ball a little -- but
-  // only while there is something left to quicken.
+  // Every brick hit quickens the ball, but only while there is something left to quicken.
   if (Math.abs(entity.velocity[Y]) < 150) {
     entity.velocity[Y] *= 1.02
   }

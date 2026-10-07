@@ -2,6 +2,7 @@ import { expect, test } from "vitest"
 
 import {
   contains,
+  cycleIndex,
   ensureArray,
   isArray,
   max,
@@ -203,4 +204,19 @@ test("it should remove an object from an array", () => {
   ]
 
   expect(remove(arr, item)).toStrictEqual(expectedResult)
+})
+
+test("it should cycle an index forwards, wrapping at the end", () => {
+  expect(cycleIndex(0, 3, 1)).toBe(1)
+  expect(cycleIndex(2, 3, 1)).toBe(0)
+})
+
+test("it should cycle an index backwards, wrapping at the start", () => {
+  expect(cycleIndex(1, 3, -1)).toBe(0)
+  expect(cycleIndex(0, 3, -1)).toBe(2)
+})
+
+test("it should cycle an index by more than its length", () => {
+  expect(cycleIndex(0, 3, 5)).toBe(2)
+  expect(cycleIndex(0, 3, -5)).toBe(1)
 })

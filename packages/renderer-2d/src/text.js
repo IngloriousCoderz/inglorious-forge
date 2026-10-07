@@ -13,7 +13,21 @@ const DEFAULT_VALUE = ""
 // working out half a line height by hand.
 const TOP_BASELINE = "top"
 const DEFAULT_POSITION = 0
+const DEFAULT_PARAMS = {
+  baseline: TOP_BASELINE,
+  color: DEFAULT_COLOR,
+  font: DEFAULT_FONT,
+  size: DEFAULT_SIZE,
+  textAlign: DEFAULT_TEXT_ALIGN,
+  value: DEFAULT_VALUE,
+}
 
+/**
+ * Draws `entity.value`, one line per newline, from its position.
+ *
+ * @param {object} entity - The entity being drawn.
+ * @param {CanvasRenderingContext2D} ctx - The context to draw into.
+ */
 export function renderText(entity, ctx) {
   const {
     size = DEFAULT_SIZE,
@@ -40,4 +54,42 @@ export function renderText(entity, ctx) {
   })
 
   ctx.restore()
+}
+
+/**
+ * A line of text that says the same thing every frame.
+ *
+ * Everything is named, because a text line takes five of them and a positional fifth is
+ * one that can be dropped without anything going wrong -- a missing line is an empty
+ * screen, not an error.
+ *
+ * @param {object} [params] - What to draw.
+ * @param {string} [params.value] - What the line says.
+ * @param {number} [params.size] - The font size.
+ * @param {string} [params.color] - The colour to draw it in.
+ * @param {string} [params.font] - The font family.
+ * @param {string} [params.textAlign] - Which edge the line sits on its position.
+ * @param {string} [params.baseline] - Which edge of the line sits on its position.
+ * @returns {object} A behaviour rendering that line.
+ */
+export function text(params = {}) {
+  const { baseline, color, font, size, textAlign, value } = {
+    ...DEFAULT_PARAMS,
+    ...params,
+  }
+
+  return {
+    render: renderText,
+
+    create(entity) {
+      entity.value = value
+      entity.size = size
+      entity.font = font
+      entity.textAlign = textAlign
+      entity.baseline = baseline
+      entity.color = color
+
+      return entity
+    },
+  }
 }

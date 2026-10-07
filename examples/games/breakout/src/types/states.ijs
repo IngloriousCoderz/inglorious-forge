@@ -1,10 +1,12 @@
 import { fsm } from "@inglorious/engine/behaviors/state-machine/fsm.js"
+import { cycleIndex } from "@inglorious/utils/array.js"
 
 import { brickColourOf, brickTierOf } from "../atlas.js"
 import {
   FIRST_PADDLE_SKIN,
   LAST_PADDLE_SKIN,
   MAX_HEALTH,
+  MENU_ITEMS,
 } from "../constants.js"
 import {
   rankOf,
@@ -273,12 +275,11 @@ function choosePaddle(entity, step, api) {
 
 /** The menu wraps, so pressing up from the first item lands on the last. */
 function chooseMenu(entity, step) {
-  const current = ["start", "high-scores"].indexOf(entity.menuItem)
-  const next =
-    (current + step + ["start", "high-scores"].length) %
-    ["start", "high-scores"].length
+  const index = cycleIndex(
+    MENU_ITEMS.indexOf(entity.menuItem),
+    MENU_ITEMS.length,
+    step,
+  )
 
-  entity.menuItem = ["start", "high-scores"][next]
-
-  return entity.menuItem
+  return (entity.menuItem = MENU_ITEMS[index])
 }

@@ -23,6 +23,18 @@ export function contains(arr, item) {
 }
 
 /**
+ * The index `step` places along a list of `length`, wrapping round at either end.
+ *
+ * @param {number} index - Where to start from.
+ * @param {number} length - How long the list is.
+ * @param {number} step - How far to move. Negative steps move backwards.
+ * @returns {number} - The index landed on, always within the list.
+ */
+export function cycleIndex(index, length, step) {
+  return (((index + step) % length) + length) % length
+}
+
+/**
  * Ensures that the given value is an array. If it's not an array, it wraps it in one.
  *
  * @param {*} value - The value to check.

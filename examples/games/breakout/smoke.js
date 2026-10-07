@@ -11,6 +11,7 @@ import { BRICK_COLORS } from "./src/types/brick.ijs"
 gameConfig.entities.game.devMode = false
 const engine = new Engine(gameConfig)
 const state = () => engine.getState()
+const firstState = state
 const step = (n = 1) => {
   for (let i = 0; i < n; i++) engine.update(1 / 60)
 }
@@ -70,6 +71,24 @@ const check = (ok, l) => {
 step(4)
 check(state().game.menuItem === "start", "the menu starts on START")
 check(state().title.value === "BREAKOUT", "the title reads BREAKOUT")
+// Every line says itself in white, or in the colour the menu picks an item out with. The
+// renderer defaults text to black, so a line that leaves its colour out is black rather
+// than white, and a screen of black lines on a dark backdrop looks like nothing at all.
+const PICKED_OUT = "rgb(103, 255, 255)"
+const whiteLines = (state) =>
+  Object.entries(state).filter(
+    ([id, entity]) =>
+      entity?.type !== "game" &&
+      typeof entity?.value === "string" &&
+      entity.value !== "" &&
+      entity.color !== "white" &&
+      entity.color !== PICKED_OUT,
+  )
+
+check(
+  whiteLines(state()).length === 0,
+  "every line on the start screen is white",
+)
 check(state().title.size === 32, "the title is the large font")
 check(state().start.value === "START", "the first item reads START")
 check(state().start.size === 16, "menu items use the medium font")
@@ -596,6 +615,24 @@ const firstLevelBricks = levelBricks.length
 levelPress("Enter")
 
 check(levelState().game.state === "serve", "Enter starts the next level")
+
+// A line placed at the middle of the screen is centred on it. Anything else pushes the
+// whole line to one side of where it was put -- which reads as misplaced rather than as
+// wrong, and is what a left-aligned line at the centre looks like.
+const centredLines = (state) =>
+  Object.entries(state).filter(
+    ([id, entity]) =>
+      typeof entity?.value === "string" &&
+      entity.value !== "" &&
+      entity.position?.[0] === 432 / 2 &&
+      entity.textAlign !== "center",
+  )
+check(
+  centredLines(levelState()).length === 0,
+  `every line at the middle is centred on it (${centredLines(levelState())
+    .map(([id]) => id)
+    .join(", ")})`,
+)
 check(levelState().game.level === 2, "and it is the second")
 check(levelState().level.value === "Level 2", "which the serve says")
 check(
@@ -1692,6 +1729,12 @@ healPress("Enter")
 healPress("Enter")
 healPress("Enter")
 check(healState().game.state === "play", "a game of its own reaches the play")
+check(
+  whiteLines(healState()).length === 0,
+  `and every line in play is white too (${whiteLines(healState())
+    .map(([id]) => id)
+    .join(", ")})`,
+)
 check(
   healState().game.recoverPoints === 3000,
   "healing starts at three thousand points",

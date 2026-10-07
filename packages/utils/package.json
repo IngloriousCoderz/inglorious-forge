@@ -26,6 +26,14 @@
       "types": "./types/index.d.ts",
       "import": "./src/index.js"
     },
+    "./array.js": {
+      "types": "./types/data-structures/array.d.ts",
+      "import": "./src/data-structures/array.js"
+    },
+    "./array": {
+      "types": "./types/data-structures/array.d.ts",
+      "import": "./src/data-structures/array.js"
+    },
     "./algorithms": {
       "types": "./types/algorithms/index.d.ts",
       "import": "./src/algorithms/index.js"

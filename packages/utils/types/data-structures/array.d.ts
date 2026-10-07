@@ -6,6 +6,11 @@ export type Comparator<T> = (left: T, right: T) => number
 export function contains<T>(arr: readonly T[], item: T): boolean
 
 /**
+ * The index `step` places along a list of `length`, wrapping round at either end.
+ */
+export function cycleIndex(index: number, length: number, step: number): number
+
+/**
  * Ensures that a value is an array.
  */
 export function ensureArray<T>(value: T): T extends readonly unknown[] ? T : T[]
