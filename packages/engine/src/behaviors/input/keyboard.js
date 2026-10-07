@@ -41,6 +41,13 @@ export function keyboard() {
       currentDocument.addEventListener("keyup", handleKeyUp)
     },
 
+    // What this device answers to is set on this device. Each one that reads a mapping
+    // takes the change itself rather than being handed it, because the one thing a
+    // handler can be trusted to change is the entity it was given.
+    mappingChange(entity, mapping) {
+      entity.mapping = mapping
+    },
+
     stop: detach,
 
     // Being taken off the world has to let go of the document the same way stopping the

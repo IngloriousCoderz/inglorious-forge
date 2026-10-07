@@ -45,6 +45,10 @@ export function gamepad() {
   const pressedAs = {}
 
   return {
+    mappingChange(entity, mapping) {
+      entity.mapping = mapping
+    },
+
     gamepadAxis(entity, { axis, value }, api) {
       const action = entity.mapping[axis]
       if (!action) return

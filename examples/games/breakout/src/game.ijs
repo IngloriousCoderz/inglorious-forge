@@ -5,7 +5,8 @@ import {
   createControlEntities,
 } from "@inglorious/engine/behaviors/input/controls.js"
 import { particle } from "@inglorious/engine/behaviors/particles.js"
-import { scenes } from "@inglorious/engine/behaviors/scenes.js"
+import { mappings } from "@inglorious/engine/behaviors/state-machine/mappings.js"
+import { scenes } from "@inglorious/engine/behaviors/state-machine/scenes.js"
 import { renderFps } from "@inglorious/renderer-2d/fps.js"
 import { renderImage } from "@inglorious/renderer-2d/image/image.js"
 import { renderRectangle } from "@inglorious/renderer-2d/shapes/rectangle.js"
@@ -19,12 +20,8 @@ import {
   HEIGHT,
   LAYER_BACKGROUND,
   LAYER_OVERLAY,
+  MAPPINGS_BY_STATE,
   MENU_START,
-  PRESS,
-  PRESS_MENU_DOWN,
-  PRESS_MENU_UP,
-  QUIT,
-  TOGGLE_PAUSE,
   WIDTH,
 } from "./constants.js"
 import { Ball } from "./types/ball.ijs"
@@ -68,7 +65,7 @@ export default {
   types: {
     ...controlTypes(),
 
-    Game: [scenes(SCENES), Game],
+    Game: [scenes(SCENES), mappings(MAPPINGS_BY_STATE), Game],
     Ball: [...Ball, gizmos],
     Brick: [Brick, gizmos],
 
@@ -122,19 +119,11 @@ export default {
   },
 
   entities: {
-    // Two targets, because a movement event is matched on the entity's own id:
-    // the game reads the menu and state keys, the paddle reads the arrows.
-    // One mapping for the whole game. An action's name is what addresses it, so the
-    // paddle's movement and the game's menu keys can share one keyboard.
-    ...createControlEntities({
-      Enter: PRESS,
-      Escape: QUIT,
-      Space: TOGGLE_PAUSE,
-      ArrowUp: PRESS_MENU_UP,
-      ArrowDown: PRESS_MENU_DOWN,
-      ArrowLeft: "moveLeft",
-      ArrowRight: "moveRight",
-    }),
+    // One keyboard for the whole game, and no mapping of its own: what each key means is
+    // said by the state that answers to it, and applied when the machine moves. An action's
+    // name is what addresses it, so the paddle's movement and the menu's keys can share one
+    // keyboard without either having to know about the other.
+    ...createControlEntities(),
 
     game: {
       type: "Game",

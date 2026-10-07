@@ -18,8 +18,6 @@ import { entryOf } from "../high-scores.js"
 const TOP_BASELINE = "top"
 const MIDDLE_BASELINE = "middle"
 
-const ONE = 1
-
 /**
  * Where a line of the original's sits, as this world would place it.
  *
@@ -180,7 +178,7 @@ export const HighScoreTitle = line(
 )
 
 export const HighScorePosition = reads(
-  (_, { row }) => `${row + ONE}.`,
+  (_, { row }) => `${row + 1}.`,
   undefined,
   FONT_MEDIUM,
   "left",
@@ -231,7 +229,7 @@ export const EnteredLetter = {
     )
 
     entity.color =
-      entity.slot === game.letter - ONE ? COLOR_HIGHLIGHT : COLOR_TEXT
+      entity.slot === game.letter - 1 ? COLOR_HIGHLIGHT : COLOR_TEXT
   },
 }
 

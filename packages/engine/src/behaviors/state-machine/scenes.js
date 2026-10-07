@@ -1,13 +1,5 @@
 import { isDeepEqual } from "@inglorious/utils/object.js"
 
-import { STATE_CHANGE } from "./fsm.js"
-
-// What a scene is remembered under, so that the next state can be told what it replaced.
-const SCENE = "scene"
-
-// A state with nothing in it is a state the machine is merely passing through.
-const NOTHING = []
-
 /**
  * Puts an entity up, and takes down whatever the state before it had up.
  *
@@ -27,8 +19,8 @@ const NOTHING = []
  *
  * @example
  * ```js
- * import { scenes } from "@inglorious/engine/behaviors/scenes.js"
- * import { fsm } from "@inglorious/engine/behaviors/fsm.js"
+ * import { scenes } from "@inglorious/engine/behaviors/state-machine/scenes.js"
+ * import { fsm } from "@inglorious/engine/behaviors/state-machine/fsm.js"
  *
  * const SCENES = {
  *   title: () => [createTitleEntity(), createMenuEntity()],
@@ -48,8 +40,8 @@ const NOTHING = []
  */
 export function scenes(scenesByState) {
   function build(entity, state, api) {
-    const leaving = entity[SCENE] ?? []
-    const arriving = scenesByState[state]?.(entity) ?? NOTHING
+    const leaving = entity.scene ?? []
+    const arriving = scenesByState[state]?.(entity) ?? []
 
     const leavingIds = leaving.map(({ id }) => id)
     const arrivingIds = arriving.map(({ id }) => id)
@@ -68,11 +60,9 @@ export function scenes(scenesByState) {
       }
 
       // The same thing stands on both sides of the move, so it is neither added nor
-      // removed -- but it may be wanted to be a different thing now. A screen's own
-      // keyboard carries the keys that screen answers to, so the mapping a state puts up
-      // is part of what that state is made of. Only what has actually changed is merged
-      // over, which is what leaves a shared thing where the world had put it when the
-      // next state says nothing different about it.
+      // removed -- but it may be wanted to be a different thing now, and then only what
+      // has actually changed is merged over it. That is what leaves a shared thing where
+      // the world had put it when the next state says nothing different about it.
       const previous = leaving.find(({ id }) => id === added.id)
 
       if (!isDeepEqual(previous, added)) {
@@ -80,7 +70,7 @@ export function scenes(scenesByState) {
       }
     }
 
-    entity[SCENE] = arriving
+    entity.scene = arriving
   }
 
   return {
@@ -90,7 +80,7 @@ export function scenes(scenesByState) {
 
     // The announcement is broadcast and carries the id, so that anything else listening
     // for it can tell which machine moved. This one is only interested in its own.
-    [STATE_CHANGE](entity, { entityId, to }, api) {
+    stateChange(entity, { entityId, to }, api) {
       if (entityId !== entity.id) return
 
       build(entity, to, api)

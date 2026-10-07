@@ -93,6 +93,7 @@ test("a game should still be able to add to a control type", () => {
     "destroy",
     "keyboardKeyDown",
     "keyboardKeyUp",
+    "mappingChange",
     "stop",
   ])
 })

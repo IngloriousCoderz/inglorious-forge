@@ -137,6 +137,8 @@ export const QUIT = "quit"
 export const PRESS_MENU_UP = "pressMenuUp"
 export const PRESS_MENU_DOWN = "pressMenuDown"
 export const TOGGLE_PAUSE = "togglePause"
+export const MOVE_LEFT = "moveLeft"
+export const MOVE_RIGHT = "moveRight"
 
 // The sounds the original plays. Moving between menu items reuses the paddle hit
 // rather than a select sound of its own, which is what the original does.
@@ -202,3 +204,51 @@ export const PARTICLE_ACCELERATION_SIDEWAYS = 15
 // How opaque the debris starts, per tier. The original works in eight-bit alpha and this
 // is that number divided by 255; the debris fades out over its own lifetime either way.
 export const PARTICLE_ALPHA_PER_TIER = 55 / 255
+
+// What each state answers to, by key and by button alike -- a gamepad button is mapped the
+// same way a key is, so the name says what is in the table rather than half of it.
+//
+// Every state says its own, and a state that says none is deaf on purpose: the same key
+// answers one thing on the menu and another in play, so carrying the last mapping on into a
+// state nobody thought about would be the mistake.
+export const MAPPINGS_BY_STATE = {
+  [GAME_STATE.start]: {
+    Enter: PRESS,
+    Escape: QUIT,
+    ArrowUp: PRESS_MENU_UP,
+    ArrowDown: PRESS_MENU_DOWN,
+  },
+  // The paddle is on the screen for the wait as well as the play, and it is what the wait
+  // is for: the original's own comment says the state is "basically just moving the paddle
+  // left and right with the ball". So the arrows are here too, and not only in the play.
+  [GAME_STATE.serve]: {
+    Enter: PRESS,
+    Escape: QUIT,
+    ArrowLeft: MOVE_LEFT,
+    ArrowRight: MOVE_RIGHT,
+  },
+  [GAME_STATE.play]: {
+    Space: TOGGLE_PAUSE,
+    Escape: QUIT,
+    ArrowLeft: MOVE_LEFT,
+    ArrowRight: MOVE_RIGHT,
+  },
+  [GAME_STATE.victory]: {
+    Enter: PRESS,
+    Escape: QUIT,
+    ArrowLeft: MOVE_LEFT,
+    ArrowRight: MOVE_RIGHT,
+  },
+  [GAME_STATE.gameOver]: { Enter: PRESS, Escape: QUIT },
+  [GAME_STATE.highScores]: { Escape: QUIT },
+  // Which letter is being changed is moved with the same keys the paddle moves with,
+  // because there is no paddle on this screen to want them.
+  [GAME_STATE.enterHighScore]: {
+    Enter: PRESS,
+    Escape: QUIT,
+    ArrowLeft: MOVE_LEFT,
+    ArrowRight: MOVE_RIGHT,
+    ArrowUp: PRESS_MENU_UP,
+    ArrowDown: PRESS_MENU_DOWN,
+  },
+}

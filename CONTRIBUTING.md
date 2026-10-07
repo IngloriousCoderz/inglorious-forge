@@ -124,7 +124,20 @@ positionFromEvent(event)
 
 ### Keep lists alphabetical
 
-Aggregate lists, like the `@import`s in `controls.css`, are easier to scan and to extend when they are sorted alphabetically.
+Aggregate lists, like the `@import`s in `controls.css`, are easier to scan and to extend when they are sorted alphabetically. This goes for the declarations in a file too, exported or not: a support function sits where its name sorts, not banished to the bottom, because function declarations hoist and so its position is free.
+
+### Name files and folders in kebab-case
+
+Every file and every folder: `keys-per-state.js`, `infinite-scroll.js`, `state-machine/`. Names are always **kebab-case**, never camelCase and never snake_case.
+
+This is a rule about _paths_, not about the things inside them. A file may export a camelCase name and should, since that is what reads at the import site:
+
+```javascript
+// the file is kebab-case, the thing it exports is not
+import { someModule } from "@inglorious/package/some-folder/some-module.js"
+```
+
+The two are kept apart on purpose. A path is looked up by machine and by tooling -- globs, import maps, bundler resolution -- and one spelling for it keeps all of that agreeing. A name is read by a person, and camelCase reads better at the call site. See also [Keep lists alphabetical](#keep-lists-alphabetical) for what goes _inside_ a file.
 
 ## Component Conventions
 

@@ -1,6 +1,6 @@
 import { arrive } from "@inglorious/engine/ai/movement/kinematic/arrive.js"
 import { wander } from "@inglorious/engine/ai/movement/kinematic/wander.js"
-import { fsm } from "@inglorious/engine/behaviors/fsm.js"
+import { fsm } from "@inglorious/engine/behaviors/state-machine/fsm.js"
 import {
   createMouseEntity,
   mouse,

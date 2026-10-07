@@ -1,9 +1,5 @@
 const DEFAULT_STATE = "default"
 
-// The transition a machine announces when it moves, so that anything which depends on
-// which state a thing is in does not have to be wired to every transition by hand.
-export const STATE_CHANGE = "stateChange"
-
 export function fsm(states) {
   const uniqueEventNames = [
     ...new Set(Object.values(states).flatMap(Object.keys)),
@@ -55,5 +51,5 @@ function announce(entity, from, api) {
 
   if (to === from) return
 
-  api.notify(STATE_CHANGE, { entityId: entity.id, from, to })
+  api.notify("stateChange", { entityId: entity.id, from, to })
 }

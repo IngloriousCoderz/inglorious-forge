@@ -1,5 +1,5 @@
 import { modernControls } from "@inglorious/engine/behaviors/controls/dynamic/modern.js"
-import { fsm } from "@inglorious/engine/behaviors/fsm.js"
+import { fsm } from "@inglorious/engine/behaviors/state-machine/fsm.js"
 import {
   controlTypes,
   createControlEntities,

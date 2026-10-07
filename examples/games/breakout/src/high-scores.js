@@ -98,7 +98,7 @@ export function entryOf(entry) {
 export const FIRST_LETTER = 65
 export const LAST_LETTER = 90
 
-// What all three letters start as.
+// What every letter of a name starts as.
 const NAME_LETTER = "A"
 
 /**
@@ -154,7 +154,7 @@ export function scrollName(name, index, step) {
     next > LAST_LETTER ? FIRST_LETTER : next < FIRST_LETTER ? LAST_LETTER : next
 
   return (
-    name.slice(0, index) + String.fromCharCode(letter) + name.slice(index + ONE)
+    name.slice(0, index) + String.fromCharCode(letter) + name.slice(index + 1)
   )
 }
 
@@ -162,5 +162,3 @@ export function scrollName(name, index, step) {
 export function saveHighScores(scores, storage = globalThis.localStorage) {
   storage?.setItem(KEY, JSON.stringify(scores))
 }
-
-const ONE = 1

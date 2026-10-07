@@ -61,7 +61,7 @@ export const SCENES = {
   // as whatever the last game left behind.
   enterHighScore: (entity) => {
     entity.name ??= initialName()
-    entity.letter ??= FIRST_SLOT
+    entity.letter ??= 1
 
     return createEnterHighScoreEntities()
   },
@@ -105,7 +105,5 @@ function createGameScene(entity) {
 const FIRST_LEVEL = 1
 
 // Standing in for a level whose bricks have not been made, or have been forgotten.
-// Which of the three letters is being changed to begin with: the first.
-const FIRST_SLOT = 1
 
 const NO_LEVEL = null

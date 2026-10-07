@@ -29,6 +29,39 @@ export function clone(obj) {
 }
 
 /**
+ * Recursively merges properties from a source object into a target object.
+ * This is a helper function for `merge` and `extend`.
+ *
+ * @param {Object} target - The target object to merge into.
+ * @param {Object} source - The source object to merge from.
+ * @param {Function} [merger] - An optional function to customize merging behavior for specific keys.
+ * @returns {Object} - The modified target object.
+ */
+function deepMerge(target, source, merger) {
+  for (const [key, value] of Object.entries(source)) {
+    if (isFunction(merger)) {
+      const mergedValue = merger(target[key], value)
+      if (mergedValue !== undefined) {
+        target[key] = mergedValue
+        continue
+      }
+    }
+
+    if (isArray(value)) {
+      target[key] = value
+    } else if (isObject(value)) {
+      if (!isObject(target[key])) {
+        target[key] = {}
+      }
+      target[key] = deepMerge(target[key], value, merger)
+    } else {
+      target[key] = value
+    }
+  }
+  return target
+}
+
+/**
  * Assigns default properties to a target object from a source object.
  * For each key in `defaultProps`, if `target[key]` is `null` or `undefined`,
  * it is set to `defaultProps[key]`.
@@ -186,6 +219,57 @@ export function get(obj, path, defaultValue = undefined) {
  * @param {*} value - The value to check.
  * @returns {boolean} True if the value is a plain object, false otherwise.
  */
+/**
+ * Whether two values are the same, all the way down.
+ *
+ * Written here rather than with `JSON.stringify` because stringify cannot tell a key
+ * that was left out from one that was set to nothing, and those are different: a key
+ * mapped to `undefined` is a key with nothing mapped to it, which is how a mapping is
+ * taken off.
+ *
+ * @param {*} left - The first value.
+ * @param {*} right - The second value.
+ * @param {WeakMap} [seen] - The pairs already compared, so a structure that contains
+ *   itself is not walked for ever. Passed along rather than asked for.
+ *
+ * What it does not settle is whether two structures *share* the same parts. One value
+ * used twice against two equal ones written out twice are reported as different, because
+ * only the pairs already met are remembered. That errs towards calling things changed
+ * when they are not, which is the safe way round for the thing this is asked about.
+ *
+ * @returns {boolean} Whether the two are the same.
+ */
+export function isDeepEqual(left, right, seen = new WeakMap()) {
+  if (Object.is(left, right)) return true
+
+  // `Object.is` has already said no to these two being the same object, and neither can be
+  // walked: a function is equal to itself and nothing else, and a key present in one and
+  // not the other is a difference even when both read as undefined.
+  if (typeof left !== "object" || typeof right !== "object") return false
+  if (left === null || right === null) return false
+
+  if (Array.isArray(left) !== Array.isArray(right)) return false
+
+  // A thing that contains itself would otherwise be walked for ever. Meeting the same
+  // thing twice means it has already been compared, and it was the same then or the walk
+  // would have stopped there -- so the only question left is whether it was matched to
+  // this one. A structure that loops back to itself differently is a difference, which is
+  // what stops this reporting two equal loops that are not.
+  if (seen.has(left)) return seen.get(left) === right
+
+  seen.set(left, right)
+
+  const leftKeys = Object.keys(left)
+  const rightKeys = Object.keys(right)
+
+  if (leftKeys.length !== rightKeys.length) return false
+
+  return leftKeys.every(
+    (key) =>
+      Object.hasOwn(right, key) && isDeepEqual(left[key], right[key], seen),
+  )
+}
+
 export function isObject(value) {
   return value != null && value.constructor === Object
 }
@@ -395,88 +479,4 @@ ${" ".repeat(indentationLevel)}}`
   }
 
   return obj
-}
-
-/**
- * Recursively merges properties from a source object into a target object.
- * This is a helper function for `merge` and `extend`.
- *
- * @param {Object} target - The target object to merge into.
- * @param {Object} source - The source object to merge from.
- * @param {Function} [merger] - An optional function to customize merging behavior for specific keys.
- * @returns {Object} - The modified target object.
- */
-function deepMerge(target, source, merger) {
-  for (const [key, value] of Object.entries(source)) {
-    if (isFunction(merger)) {
-      const mergedValue = merger(target[key], value)
-      if (mergedValue !== undefined) {
-        target[key] = mergedValue
-        continue
-      }
-    }
-
-    if (isArray(value)) {
-      target[key] = value
-    } else if (isObject(value)) {
-      if (!isObject(target[key])) {
-        target[key] = {}
-      }
-      target[key] = deepMerge(target[key], value, merger)
-    } else {
-      target[key] = value
-    }
-  }
-  return target
-}
-
-/**
- * Whether two values are the same, all the way down.
- *
- * Written here rather than with `JSON.stringify` because stringify cannot tell a key
- * that was left out from one that was set to nothing, and those are different: a key
- * mapped to `undefined` is a key with nothing mapped to it, which is how a mapping is
- * taken off.
- *
- * @param {*} left - The first value.
- * @param {*} right - The second value.
- * @param {WeakMap} [seen] - The pairs already compared, so a structure that contains
- *   itself is not walked for ever. Passed along rather than asked for.
- *
- * What it does not settle is whether two structures *share* the same parts. One value
- * used twice against two equal ones written out twice are reported as different, because
- * only the pairs already met are remembered. That errs towards calling things changed
- * when they are not, which is the safe way round for the thing this is asked about.
- *
- * @returns {boolean} Whether the two are the same.
- */
-export function isDeepEqual(left, right, seen = new WeakMap()) {
-  if (Object.is(left, right)) return true
-
-  // `Object.is` has already said no to these two being the same object, and neither can be
-  // walked: a function is equal to itself and nothing else, and a key present in one and
-  // not the other is a difference even when both read as undefined.
-  if (typeof left !== "object" || typeof right !== "object") return false
-  if (left === null || right === null) return false
-
-  if (Array.isArray(left) !== Array.isArray(right)) return false
-
-  // A thing that contains itself would otherwise be walked for ever. Meeting the same
-  // thing twice means it has already been compared, and it was the same then or the walk
-  // would have stopped there -- so the only question left is whether it was matched to
-  // this one. A structure that loops back to itself differently is a difference, which is
-  // what stops this reporting two equal loops that are not.
-  if (seen.has(left)) return seen.get(left) === right
-
-  seen.set(left, right)
-
-  const leftKeys = Object.keys(left)
-  const rightKeys = Object.keys(right)
-
-  if (leftKeys.length !== rightKeys.length) return false
-
-  return leftKeys.every(
-    (key) =>
-      Object.hasOwn(right, key) && isDeepEqual(left[key], right[key], seen),
-  )
 }

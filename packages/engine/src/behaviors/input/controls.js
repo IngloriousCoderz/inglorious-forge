@@ -48,7 +48,7 @@ export function createControlEntities(mapping = {}, pointerActions = []) {
     gamepads: { type: "GamepadsPoller" },
     keyboard: createKeyboardEntity(mapping),
     gamepad: createGamepadEntity(mapping),
-    input: createInputEntity(mapping),
+    input: createInputEntity(),
     pointer: createPointerEntity(pointerActions),
   }
 }

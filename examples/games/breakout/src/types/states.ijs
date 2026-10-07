@@ -1,4 +1,4 @@
-import { fsm } from "@inglorious/engine/behaviors/fsm"
+import { fsm } from "@inglorious/engine/behaviors/state-machine/fsm.js"
 
 import { brickColourOf, brickTierOf } from "../atlas.js"
 import {
@@ -33,6 +33,11 @@ import {
  * This says only when the machine moves. What each state is made of lives in `scene.ijs`,
  * which is announced to this machine's listener when it lands somewhere.
  */
+// Which of the three letters of a name is being changed, counted from one as the original
+// counts it.
+const FIRST_LETTER_SLOT = 1
+const LAST_LETTER_SLOT = 3
+
 export const Game = fsm({
   [GAME_STATE.start]: {
     // Moving between the menu items plays a sound, once per move rather than once
@@ -109,7 +114,7 @@ export const Game = fsm({
     remove(entity, id, api) {
       if (api.getEntity(id)?.type !== BRICK) return
 
-      entity.bricksLeft -= ONE_BRICK
+      entity.bricksLeft -= 1
 
       if (entity.bricksLeft > BRICKS_STILL_STANDING) return
 
@@ -136,7 +141,7 @@ export const Game = fsm({
   // a new level of bricks, and the same score and the same lives.
   [GAME_STATE.victory]: {
     press(entity) {
-      entity.level += NEXT_LEVEL
+      entity.level += 1
 
       entity.state = GAME_STATE.serve
     },
@@ -180,7 +185,7 @@ export const Game = fsm({
     moveLeft(entity, _, api) {
       if (entity.letter === FIRST_LETTER_SLOT) return
 
-      entity.letter -= ONE
+      entity.letter -= 1
 
       api.notify("soundPlay", SOUND_SELECT)
     },
@@ -188,17 +193,17 @@ export const Game = fsm({
     moveRight(entity, _, api) {
       if (entity.letter === LAST_LETTER_SLOT) return
 
-      entity.letter += ONE
+      entity.letter += 1
 
       api.notify("soundPlay", SOUND_SELECT)
     },
 
     pressMenuUp(entity) {
-      scrollLetter(entity, ONE)
+      scrollLetter(entity, 1)
     },
 
     pressMenuDown(entity) {
-      scrollLetter(entity, -ONE)
+      scrollLetter(entity, -1)
     },
 
     // Enter takes the name as it stands, puts it in the table where it earned its place,
@@ -221,22 +226,15 @@ export const Game = fsm({
 // What has to have gone for the level to be over.
 const BRICK = "Brick"
 
-const ONE_BRICK = 1
 const BRICKS_STILL_STANDING = 0
 
-const NEXT_LEVEL = 1
-const ONE = 1
-
 // The three letters of a name, and which of them is being changed.
-const FIRST_LETTER_SLOT = 1
-const LAST_LETTER_SLOT = 3
-
 // A letter scrolls up and down from A to Z and wraps round at both ends, the way the
 // original's three slots do.
 function scrollLetter(entity, step) {
   // Which letter is being changed is counted from one, as the original counts it, and a
   // name is counted from zero.
-  entity.name = scrollName(entity.name, entity.letter - ONE, step)
+  entity.name = scrollName(entity.name, entity.letter - 1, step)
 }
 
 /** The menu wraps, so pressing up from the first item lands on the last. */
