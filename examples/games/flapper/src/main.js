@@ -1,21 +1,13 @@
 import { Engine } from "@inglorious/engine/core/engine.js"
 import { createRenderer } from "@inglorious/renderer-2d/index.js"
 
-import {
-  FONT_FAMILY,
-  FONT_SIZE_HUGE,
-  FONT_SIZE_LARGE,
-  FONT_SIZE_MEDIUM,
-  FONT_SIZE_SMALL,
-  FONT_SMALL_FAMILY,
-} from "./constants.js"
 import game from "./game.ijs"
 
 const FONTS = [
-  [FONT_SIZE_SMALL, FONT_SMALL_FAMILY],
-  [FONT_SIZE_MEDIUM, FONT_FAMILY],
-  [FONT_SIZE_LARGE, FONT_FAMILY],
-  [FONT_SIZE_HUGE, FONT_FAMILY],
+  [8, "'Fifty Bird'"],
+  [14, "'Flappy'"],
+  [28, "'Flappy'"],
+  [56, "'Flappy'"],
 ].map(([size, family]) => `${size}px ${family}`)
 
 window.addEventListener("load", async () => {

@@ -10,20 +10,5 @@ export const HEIGHT = 288
 export const CEILING_MARGIN = 10
 
 export const BIRD_WIDTH = 38
-export const PIPE_HEIGHT = HEIGHT
 export const INITIAL_GAP_Y = HEIGHT - CEILING_MARGIN * 2
 export const COUNTDOWN_START = 3
-
-export const GAME_STATE = {
-  title: "title",
-  countdown: "countdown",
-  play: "play",
-  score: "score",
-}
-
-export const FONT_FAMILY = "'Flappy'"
-export const FONT_SMALL_FAMILY = "'Fifty Bird'"
-export const FONT_SIZE_SMALL = 8
-export const FONT_SIZE_MEDIUM = 14
-export const FONT_SIZE_LARGE = 28
-export const FONT_SIZE_HUGE = 56

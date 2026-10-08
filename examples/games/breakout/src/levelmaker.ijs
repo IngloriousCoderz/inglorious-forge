@@ -1,3 +1,4 @@
+import { BOTTOM_LEFT } from "@inglorious/engine/physics/anchor.js"
 import { random } from "@inglorious/utils/math/rng.js"
 import { v } from "@inglorious/utils/v.js"
 
@@ -9,8 +10,6 @@ import {
   BRICK_MAX_COLS,
   BRICK_WIDTH,
   HEIGHT,
-  LEFT_EDGE,
-  TOP_EDGE,
 } from "./constants.js"
 
 const BRICK_ID_PREFIX = "brick"
@@ -120,7 +119,7 @@ export function createLevel(level, layer) {
           HEIGHT - (row + 1) * BRICK_HEIGHT,
           0,
         ),
-        anchor: [LEFT_EDGE, TOP_EDGE],
+        anchor: BOTTOM_LEFT,
         size: v(BRICK_WIDTH, BRICK_HEIGHT, 0),
         solid: true,
       })

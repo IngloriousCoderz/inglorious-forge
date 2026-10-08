@@ -1,3 +1,4 @@
+import { BOTTOM_LEFT } from "@inglorious/engine/physics/anchor.js"
 import { v } from "@inglorious/utils/v.js"
 
 import {
@@ -7,10 +8,8 @@ import {
   HEIGHT,
   LAYER_BRICK,
   LEFT_ARROW,
-  LEFT_EDGE,
   PADDLE_HEIGHT,
   PADDLE_WIDTH,
-  TOP_EDGE,
   WIDTH,
 } from "../constants.js"
 import { ENTRIES as HIGH_SCORE_ROWS } from "../high-scores.js"
@@ -147,7 +146,7 @@ export function createPaddleSelectEntities() {
       skin: FIRST_PADDLE_SKIN,
       layer: LAYER_BRICK,
       position: v(SELECT_PADDLE_X, SELECT_ROW_ALTITUDE, NO_DEPTH),
-      anchor: [LEFT_EDGE, TOP_EDGE],
+      anchor: BOTTOM_LEFT,
       size: v(PADDLE_WIDTH, PADDLE_HEIGHT, NO_DEPTH),
     },
   ]
@@ -164,7 +163,7 @@ function selectArrow(arrow) {
       SELECT_ROW_ALTITUDE,
       NO_DEPTH,
     ),
-    anchor: [LEFT_EDGE, TOP_EDGE],
+    anchor: BOTTOM_LEFT,
     size: v(ARROW_SIZE, ARROW_SIZE, NO_DEPTH),
     image: { id: "arrows", imageSize: ARROWS_SHEET },
     arrow,

@@ -12,11 +12,6 @@ export const PADDLE_HEIGHT = 16
 export const FIRST_PADDLE_SKIN = 1
 export const LAST_PADDLE_SKIN = 4
 
-// The original draws every sprite from its top left corner, which in a world counting
-// up from the floor is a top-left anchor.
-export const LEFT_EDGE = 0
-export const TOP_EDGE = 1
-
 // The ball is square and small, and it is served from just above the paddle.
 export const BALL_SIZE = 8
 

@@ -1,3 +1,4 @@
+import { BOTTOM_LEFT } from "@inglorious/engine/physics/anchor.js"
 import { v } from "@inglorious/utils/v.js"
 
 import {
@@ -6,11 +7,9 @@ import {
   HEART_HEIGHT,
   HEART_WIDTH,
   HEIGHT,
-  LEFT_EDGE,
   MAX_HEALTH,
   PADDLE_HEIGHT,
   PADDLE_WIDTH,
-  TOP_EDGE,
 } from "../constants.js"
 
 const CEILING = HEIGHT - 5
@@ -22,7 +21,7 @@ export function createPaddleEntity(skin = FIRST_PADDLE_SKIN) {
     layer: 1,
     skin,
     position: v(432 / 2 - 32, 16 * 2, 0),
-    anchor: [LEFT_EDGE, TOP_EDGE],
+    anchor: BOTTOM_LEFT,
     size: v(PADDLE_WIDTH, PADDLE_HEIGHT, 0),
     solid: true,
     movement: {},
@@ -36,7 +35,7 @@ export function createBallEntity() {
     skin: 1,
     layer: 2,
     position: v(432 / 2 - 4, 42, 0),
-    anchor: [LEFT_EDGE, TOP_EDGE],
+    anchor: BOTTOM_LEFT,
     size: v(BALL_SIZE, BALL_SIZE, 0),
     solid: true,
   }
@@ -49,7 +48,7 @@ export function createHeartEntity(index) {
     type: "Heart",
     layer: 2,
     position: v(432 - 100 + index * 11, CEILING, 0),
-    anchor: [LEFT_EDGE, TOP_EDGE],
+    anchor: BOTTOM_LEFT,
     size: v(HEART_WIDTH, HEART_HEIGHT, 0),
     heart: index,
   }

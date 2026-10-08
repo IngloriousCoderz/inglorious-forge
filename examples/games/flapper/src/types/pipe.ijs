@@ -1,3 +1,4 @@
+import { BOTTOM_CENTER, TOP_CENTER } from "@inglorious/engine/physics/anchor.js"
 import { renderImage } from "@inglorious/renderer-2d/image/image.js"
 import { v } from "@inglorious/utils/v.js"
 
@@ -5,27 +6,14 @@ import { BIRD_WIDTH, HEIGHT } from "../constants"
 
 const X = 0
 const Y = 1
-const CENTERED = 0.5
-const BOTTOM_EDGE = 0
-const TOP_EDGE = 1
-const LEFT_EDGE = 0
-
-// Vertically the pipe is pinned to the gap, which is where its cap belongs, so
-// each pipe grows away from the opening: the ceiling one upwards from the gap,
-// the floor one downwards from it.
-const TOP_ANCHOR = [CENTERED, TOP_EDGE]
-const BOTTOM_ANCHOR = [CENTERED, BOTTOM_EDGE]
-
-const CEILING = "ceiling"
-const FLOOR = "floor"
 
 // The side a pipe sits against decides both how it is anchored and which way it
 // faces, because the texture carries its cap on top and only the pipe hanging
 // from the ceiling is mirrored. Keeping the two together in one lookup is what
 // stops the cap and the hitbox from drifting apart.
 const SIDES = {
-  [CEILING]: { anchor: BOTTOM_ANCHOR, flipY: true },
-  [FLOOR]: { anchor: TOP_ANCHOR, flipY: false },
+  ceiling: { anchor: TOP_CENTER, flipY: true },
+  floor: { anchor: BOTTOM_CENTER, flipY: false },
 }
 
 export const Pipe = {
@@ -38,7 +26,7 @@ export const Pipe = {
     entity.position[X] += entity.velocity[X] * dt
 
     if (
-      entity.side === CEILING &&
+      entity.side === "ceiling" &&
       !entity.scored &&
       hasPassedBird(entity, api)
     ) {
@@ -47,7 +35,7 @@ export const Pipe = {
     }
 
     // Recycled once the whole pipe has left the screen on the left.
-    if (entity.position[X] + 70 / 2 <= LEFT_EDGE) {
+    if (entity.position[X] + 70 / 2 <= 0) {
       api.notify("despawn", entity)
     }
   },
@@ -59,8 +47,8 @@ export const Pipe = {
  * one hangs from the bottom of the gap.
  */
 export function spawnPipePair(api, gapY) {
-  spawnPipe(api, CEILING, gapY)
-  spawnPipe(api, FLOOR, gapY - 90)
+  spawnPipe(api, "ceiling", gapY)
+  spawnPipe(api, "floor", gapY - 90)
 }
 
 function spawnPipe(api, side, altitude) {
