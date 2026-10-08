@@ -1,5 +1,6 @@
 import "./test-setup.js"
 
+import { createGame } from "@inglorious/engine/test"
 import { beforeEach, describe, expect, test } from "vitest"
 
 import { brickColourOf, brickTierOf } from "../src/atlas.js"
@@ -7,7 +8,6 @@ import { LAYER_BRICK } from "../src/constants.js"
 import gameConfig from "../src/game.ijs"
 import { createLevel } from "../src/levelmaker.ijs"
 import { BRICK_COLORS } from "../src/types/brick.ijs"
-import { createGame } from "./test-harness.js"
 
 const TEN = 10
 const ARROW_SIZE = 24
@@ -18,8 +18,6 @@ const TWENTY_FOUR = 24
 const BRICK_WIDTH = 32
 const FIFTEEN = 15
 const BRICK_MAX_COLS = 13
-
-gameConfig.entities.game.devMode = false
 
 /**
  * A game of its own, with nothing said to it yet.
@@ -82,11 +80,24 @@ function paddedForOddColumns(leftEdge) {
 const check = (condition, description) =>
   expect(condition, description).toBe(true)
 
+/**
+ * Falling off the bottom of the world costs a life, announced by the ball rather than
+ * decided by it.
+ */
+function dropTheBall() {
+  if (this.entity("game").state !== "play") this.press("Enter")
+
+  this.entity("ball").position[1] = 0
+  this.entity("ball").velocity = [0, -200, 0]
+
+  return this.step(1)
+}
+
 describe("Breakout", () => {
   let game
 
   beforeEach(() => {
-    game = createGame(gameConfig)
+    game = createGame(gameConfig, { dropTheBall })
   })
 
   test("the menu, the table and being served", () => {
@@ -749,7 +760,7 @@ describe("Breakout", () => {
 
     // A new game rolls a new level rather than beginning again on the one it left behind.
     game.notify("quit")
-    game = createGame(gameConfig)
+    game = createGame(gameConfig, { dropTheBall })
     game.step(4)
     game.press("Enter")
     game.press("Enter")

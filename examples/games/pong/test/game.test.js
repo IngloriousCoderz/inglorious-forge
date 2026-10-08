@@ -1,14 +1,12 @@
 import "./test-setup.js"
 
+import { createGame } from "@inglorious/engine/test"
 import { beforeEach, describe, expect, test } from "vitest"
 
 import gameConfig from "../src/game.ijs"
-import { createGame } from "./test-harness.js"
 
 const X = 0
 const Z = 2
-
-gameConfig.entities.game.devMode = false
 
 /** Start, choose a paddle, and get into the play. */
 const intoPlay = (_game) => _game.step(4).press("Space").press("Space")

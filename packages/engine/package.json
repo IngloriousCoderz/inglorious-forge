@@ -43,8 +43,7 @@
     "@inglorious/utils": "workspace:*"
   },
   "peerDependencies": {
-    "@inglorious/store": "workspace:*",
-    "@inglorious/utils": "workspace:*"
+    "vitest": "^5.0.0"
   },
   "devDependencies": {
     "@inglorious/eslint-config": "workspace:*",
@@ -55,5 +54,10 @@
   "packageManager": "pnpm@10.15.0",
   "engines": {
     "node": ">= 22"
+  },
+  "peerDependenciesMeta": {
+    "vitest": {
+      "optional": true
+    }
   }
 }

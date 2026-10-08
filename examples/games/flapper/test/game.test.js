@@ -1,11 +1,9 @@
 import "./test-setup.js"
 
+import { createGame } from "@inglorious/engine/test"
 import { beforeEach, describe, expect, test } from "vitest"
 
 import gameConfig from "../src/game.ijs"
-import { createGame } from "./test-harness.js"
-
-gameConfig.entities.game.devMode = false
 
 /**
  * Every state the game passes through, in order.
