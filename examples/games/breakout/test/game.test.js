@@ -1,7 +1,5 @@
-import "./test-setup.js"
-
 import { createGame } from "@inglorious/engine/test"
-import { beforeEach, describe, expect, test } from "vitest"
+import { beforeEach, describe, test } from "vitest"
 
 import { brickColourOf, brickTierOf } from "../src/atlas.js"
 import { LAYER_BRICK } from "../src/constants.js"
@@ -29,7 +27,6 @@ const BRICK_MAX_COLS = 13
 // Every line says itself in white, or in the colour the menu picks an item out with. The
 // renderer defaults text to black, so a line that leaves its colour out is black rather
 // than white, and a screen of black lines on a dark backdrop looks like nothing at all.
-const PICKED_OUT = "rgb(103, 255, 255)"
 const whiteLines = (state) =>
   Object.entries(state).filter(
     ([, entity]) =>
@@ -37,7 +34,7 @@ const whiteLines = (state) =>
       typeof entity?.value === "string" &&
       entity.value !== "" &&
       entity.color !== "white" &&
-      entity.color !== PICKED_OUT,
+      entity.color !== "rgb(103, 255, 255)",
   )
 
 // The debris a brick throws off when it is hit.
@@ -48,12 +45,12 @@ const scoreOf = (hp) => brickTierOf(hp) * 200 + brickColourOf(hp) * 25
 // Text is anchored by the top edge of its line, so a line whose altitude is too low hangs
 // off the bottom of the screen and cannot be read at all. Every line standing on any
 // screen is checked for being wholly inside it.
-const linesFit = (screen, where) => {
+const linesFit = (game, screen, where) => {
   for (const [id, line] of Object.entries(screen)) {
     if (typeof line.value !== "string" || typeof line.size !== "number")
       continue
 
-    check(
+    game.check(
       line.position[1] - line.size >= 0 && line.position[1] <= 243,
       `${where}: ${id} is drawn inside the screen (top at ${line.position[1]})`,
     )
@@ -77,9 +74,6 @@ function paddedForOddColumns(leftEdge) {
 // Long enough for the last frame of a piece to have been lived, and a little past it.
 const A_MARGIN = 0.1
 
-const check = (condition, description) =>
-  expect(condition, description).toBe(true)
-
 /**
  * Falling off the bottom of the world costs a life, announced by the ball rather than
  * decided by it.
@@ -102,28 +96,43 @@ describe("Breakout", () => {
 
   test("the menu, the table and being served", () => {
     game.step(4)
-    check(game.entity("game").menuItem === "start", "the menu starts on START")
-    check(game.entity("title").value === "BREAKOUT", "the title reads BREAKOUT")
+    game.check(
+      game.entity("game").menuItem === "start",
+      "the menu starts on START",
+    )
+    game.check(
+      game.entity("title").value === "BREAKOUT",
+      "the title reads BREAKOUT",
+    )
 
-    check(
+    game.check(
       whiteLines(game.state()).length === 0,
       "every line on the start screen is white",
     )
-    check(game.entity("title").size === 32, "the title is the large font")
-    check(game.entity("start").value === "START", "the first item reads START")
-    check(game.entity("start").size === 16, "menu items use the medium font")
-    check(
+    game.check(game.entity("title").size === 32, "the title is the large font")
+    game.check(
+      game.entity("start").value === "START",
+      "the first item reads START",
+    )
+    game.check(
+      game.entity("start").size === 16,
+      "menu items use the medium font",
+    )
+    game.check(
       game.entity("start").color === "rgb(103, 255, 255)",
       "START is picked out to begin with",
     )
-    check(game.entity("highScores").color === "white", "HIGH SCORES is not")
+    game.check(
+      game.entity("highScores").color === "white",
+      "HIGH SCORES is not",
+    )
     game.press("ArrowDown")
     game.step(4)
-    check(
+    game.check(
       game.entity("game").menuItem === "high-scores",
       "down moves to HIGH SCORES",
     )
-    check(
+    game.check(
       game.entity("highScores").color === "rgb(103, 255, 255)",
       "the pick-out follows",
     )
@@ -131,122 +140,140 @@ describe("Breakout", () => {
     // tie is invisible until the pick-out stops following one of them.
     game.press("ArrowUp")
     game.step(2)
-    check(
+    game.check(
       game.entity("start").color === "rgb(103, 255, 255)",
       "and comes back to START",
     )
     game.press("ArrowDown")
     game.step(2)
-    check(game.entity("start").color === "white", "and leaves the other one")
+    game.check(
+      game.entity("start").color === "white",
+      "and leaves the other one",
+    )
     // The paddle belongs to a game in progress, so the title screen must not show one
     // sitting on the floor behind the menu.
-    check(
+    game.check(
       game.entity("paddle") === undefined,
       "the title screen has no paddle yet",
     )
     game.press("ArrowUp")
-    check(game.entity("game").menuItem === "start", "up moves back to START")
+    game.check(
+      game.entity("game").menuItem === "start",
+      "up moves back to START",
+    )
     game.press("ArrowUp")
-    check(
+    game.check(
       game.entity("game").menuItem === "high-scores",
       "the menu wraps upwards",
     )
     game.press("ArrowDown")
-    check(game.entity("game").menuItem === "start", "and downwards")
+    game.check(game.entity("game").menuItem === "start", "and downwards")
 
     // The scores kept between games. The second item of the menu reads them rather than
     // starting a game.
-    check(
+    game.check(
       game.entity("highScoresTitle") === undefined,
       "the table is not up on the title screen",
     )
     game.press("ArrowDown")
     game.press("Enter")
     game.step(4)
-    check(
+    game.check(
       game.entity("game").state === "highScores",
       "choosing HIGH SCORES reads the table",
     )
-    check(
+    game.check(
       game.entity("highScoresTitle").value === "High Scores",
       "the table is titled",
     )
-    check(game.entity("highScoresTitle").size === 32, "in the large font")
-    check(
+    game.check(game.entity("highScoresTitle").size === 32, "in the large font")
+    game.check(
       game.entity("highScoresPrompt").value ===
         "Press Escape to return to the main menu!",
       "and says how to leave",
     )
-    check(game.entity("highScoresPrompt").size === 8, "in the small font")
+    game.check(game.entity("highScoresPrompt").size === 8, "in the small font")
     // Ten rows, and each row is three separately aligned pieces, so thirty entities.
-    check(
+    game.check(
       Object.keys(game.state()).filter((id) =>
         /^highScore\d+Position$/.test(id),
       ).length === TEN,
       "ten rows",
     )
-    check(
+    game.check(
       game.entity("highScore0Position").value === "1.",
       "the first row is numbered from one",
     )
-    check(
+    game.check(
       game.entity("highScore9Position").value === "10.",
       "and the tenth from ten",
     )
-    check(
+    game.check(
       game.entity("highScore0Position").textAlign === "left",
       "the position runs left",
     )
-    check(
+    game.check(
       game.entity("highScore0Name").textAlign === "right",
       "the name runs back from its own box",
     )
-    check(
+    game.check(
       game.entity("highScore0Score").textAlign === "right",
       "and the score runs back from another",
     )
     // The boxes are the original's, so these are where each ends rather than where a line of
     // text is centred: 108, 108 + 50 + 38, and 216 + 100.
-    check(
+    game.check(
       game.entity("highScore0Position").position[0] === 108,
       "the position column sits at a quarter",
     )
-    check(
+    game.check(
       game.entity("highScore0Name").position[0] === 196,
       "the name ends where its box does",
     )
-    check(
+    game.check(
       game.entity("highScore0Score").position[0] === 316,
       "and the score where its own does",
     )
     // Seeded from nothing, the table reads ten thousand down to a thousand, all one name.
-    check(game.entity("highScore0Name").value === "CTO", "the seed is one name")
-    check(game.entity("highScore0Score").value === "10000", "from ten thousand")
-    check(game.entity("highScore9Score").value === "1000", "down to a thousand")
-    check(game.entity("game").highScores.length === TEN, "ten entries are kept")
+    game.check(
+      game.entity("highScore0Name").value === "CTO",
+      "the seed is one name",
+    )
+    game.check(
+      game.entity("highScore0Score").value === "10000",
+      "from ten thousand",
+    )
+    game.check(
+      game.entity("highScore9Score").value === "1000",
+      "down to a thousand",
+    )
+    game.check(
+      game.entity("game").highScores.length === TEN,
+      "ten entries are kept",
+    )
     // The title belongs at the top of the screen with the rows below it, and the rows belong
     // in order from the first to the tenth. Asking that the title clears the first row is
     // what catches a title laid out at the height of the middle of the table.
     const titleAltitude = game.entity("highScoresTitle").position[1]
     const firstRowAltitude = game.entity("highScore0Position").position[1]
     const lastRowAltitude = game.entity("highScore9Position").position[1]
-    check(
+    game.check(
       titleAltitude > firstRowAltitude,
       `the title stands above the first row (${titleAltitude} against ${firstRowAltitude})`,
     )
-    check(
+    game.check(
       firstRowAltitude > lastRowAltitude,
       "and the rows run down the screen in order",
     )
     const SCREEN_HEIGHT = 243
-    check(
+    game.check(
       titleAltitude + game.entity("highScoresTitle").size / 2 <=
         SCREEN_HEIGHT &&
         titleAltitude - game.entity("highScoresTitle").size / 2 >
           firstRowAltitude,
       "and the whole of it is on the screen, above the first row",
     )
-    check(
+    game.check(
       game.entity("highScoresPrompt").position[1] < lastRowAltitude,
       "with the prompt at the bottom, below the last row",
     )
@@ -255,59 +282,62 @@ describe("Breakout", () => {
     // the menu instead of out of the game.
     game.press("Escape")
     game.step(2)
-    check(game.entity("game").state === "start", "Escape leaves the table")
-    check(
+    game.check(game.entity("game").state === "start", "Escape leaves the table")
+    game.check(
       game.entity("game").quit !== true,
       "and does not quit the game with it",
     )
-    check(
+    game.check(
       game.entity("highScoresTitle") === undefined,
       "the table is taken off the screen",
     )
     // Left back on START, which is where this section began, so the rest of the title screen
     // is walked from the same place it would otherwise have been.
     game.press("ArrowDown")
-    check(
+    game.check(
       game.entity("game").menuItem === "start",
       "and the menu is back on START",
     )
-    check(
+    game.check(
       game.entity("background").image.imageSize.join() === "302,129",
       "the backdrop is drawn at its native size",
     )
-    check(
+    game.check(
       game.entity("background").anchor.join() === "0,0",
       "anchored at the bottom left",
     )
     const scale = game.entity("background").image.scale
-    check(scale[0] > 1 && scale[1] > 1, "the backdrop is stretched to fill")
+    game.check(
+      scale[0] > 1 && scale[1] > 1,
+      "the backdrop is stretched to fill",
+    )
     // The original scales by one pixel less than the image on purpose, so this
     // overshoots the screen slightly rather than landing exactly on it.
-    check(
+    game.check(
       scale[0] === 432 / 301 && scale[1] === 243 / 128,
       "and is scaled by the original's one-pixel-short factor",
     )
 
     // The altitudes are the original's y-down positions turned the right way up.
-    check(
+    game.check(
       game.entity("title").position[1] > game.entity("start").position[1],
       "the title sits above the menu",
     )
-    check(
+    game.check(
       game.entity("start").position[1] > game.entity("highScores").position[1],
       "START sits above HIGH SCORES",
     )
 
     // renderText is left-aligned and sans-serif by default, so both have to be set.
-    check(
+    game.check(
       game.entity("title").textAlign === "center",
       "text is centred horizontally",
     )
-    check(
+    game.check(
       game.entity("title").font === "'Breakout'",
       "text uses the loaded font",
     )
-    check(
+    game.check(
       game.entity("title").position[0] === 216,
       "text is centred on the screen",
     )
@@ -316,7 +346,7 @@ describe("Breakout", () => {
     // than whether it was the last thing to happen.
     const beforeConfirm = game.playedSounds.length
     game.press("Enter")
-    check(
+    game.check(
       game.entity("game").state === "paddleSelect",
       "Enter leaves the start screen for the choice of paddle",
     )
@@ -324,200 +354,224 @@ describe("Breakout", () => {
     // The choice of paddle. Four of them, the same width in four colours, so what is being
     // chosen is a look. The arrows either side of it are dimmed when the choice is already as
     // far that way as it goes, and reaching one says so rather than doing nothing.
-    check(
+    game.check(
       game.entity("selectPaddlePrompt").value ===
         "Select your paddle with left and right!",
       "which says how",
     )
-    check(game.entity("selectPaddlePrompt").size === 16, "in the medium font")
-    check(
+    game.check(
+      game.entity("selectPaddlePrompt").size === 16,
+      "in the medium font",
+    )
+    game.check(
       game.entity("selectPaddleHint").value === "(Press Enter to continue!)",
       "and that Enter carries on",
     )
-    check(game.entity("selectPaddleHint").size === 8, "in the small font")
-    check(
+    game.check(game.entity("selectPaddleHint").size === 8, "in the small font")
+    game.check(
       game.entity("game").paddleSkin === 1,
       "the first paddle is chosen to begin with",
     )
-    check(
+    game.check(
       game.entity("selectPaddle").position[0] === 184,
       "the paddle is shown in the middle",
     )
-    check(
+    game.check(
       game.entity("selectPaddle").position[1] === 81,
       "on the row below the two lines of text",
     )
-    check(
+    game.check(
       game.entity("selectLeftArrow").position[0] === 84,
       "with an arrow to the left",
     )
-    check(
+    game.check(
       game.entity("selectRightArrow").position[0] === 324,
       "and one to the right",
     )
     // The arrows sheet holds two of them side by side, so the one on each side is cut from
     // its own half of it.
-    check(
+    game.check(
       game.entity("selectLeftArrow").image.id === "arrows",
       "cut from the arrows sheet",
     )
-    check(
+    game.check(
       game.entity("selectLeftArrow").image.frameSize.join() === "24,24",
       "both a cell wide",
     )
-    check(
+    game.check(
       game.entity("selectLeftArrow").image.x === 0,
       "the left one from the left of it",
     )
-    check(
+    game.check(
       game.entity("selectRightArrow").image.x === ARROW_SIZE,
       "and the right one from the right",
     )
     // Darkened and faded, which is what the original does: a dark grey laid over the arrow at
     // half opacity. A white tint leaves an arrow equal to itself, which is the other half of
     // saying the same thing.
-    check(
+    game.check(
       game.entity("selectLeftArrow").tint === "rgb(40, 40, 40)",
       "the left one darkened, being already as far left as it goes",
     )
-    check(game.entity("selectLeftArrow").opacity === 128 / 255, "and faded")
-    check(
+    game.check(
+      game.entity("selectLeftArrow").opacity === 128 / 255,
+      "and faded",
+    )
+    game.check(
       game.entity("selectRightArrow").tint === "white",
       "and the right one is not darkened",
     )
-    check(game.entity("selectRightArrow").opacity === 1, "nor faded")
-    check(
+    game.check(game.entity("selectRightArrow").opacity === 1, "nor faded")
+    game.check(
       game.entity("selectRightArrow").opacity === 1,
       "and is drawn as it comes",
     )
 
     game.press("ArrowLeft")
-    check(
+    game.check(
       game.entity("game").paddleSkin === 1,
       "left at the first paddle stays there",
     )
-    check(
+    game.check(
       game.playedSounds.includes("noSelect"),
       "and says it cannot go further",
     )
     game.press("ArrowRight")
-    check(game.entity("game").paddleSkin === 2, "right moves along")
-    check(game.playedSounds.includes("select"), "with the sound of moving")
-    check(
+    game.check(game.entity("game").paddleSkin === 2, "right moves along")
+    game.check(game.playedSounds.includes("select"), "with the sound of moving")
+    game.check(
       game.entity("selectLeftArrow").tint === "white",
       "so the left arrow is no longer darkened",
     )
-    check(
+    game.check(
       game.entity("selectRightArrow").tint === "white",
       "and neither is darkened while there is room both ways",
     )
-    check(
+    game.check(
       game.entity("selectPaddle").skin === 2,
       "the paddle shown is the one chosen",
     )
     for (let i = 0; i < 2; i++) game.press("ArrowRight")
-    check(game.entity("game").paddleSkin === 4, "to the last")
-    check(
+    game.check(game.entity("game").paddleSkin === 4, "to the last")
+    game.check(
       game.entity("selectRightArrow").tint === "rgb(40, 40, 40)",
       "where the right arrow is darkened too",
     )
-    check(
+    game.check(
       game.entity("selectPaddle").skin === 4,
       "and the paddle shown has followed the choice",
     )
     game.press("ArrowRight")
-    check(
+    game.check(
       game.entity("game").paddleSkin === 4,
       "and pressing on stays at the last",
     )
 
     game.press("Enter")
-    check(
+    game.check(
       game.entity("game").state === "serve",
       "Enter leaves the choice for the serve",
     )
     // The paddle that gets played with is the one that was chosen, not simply the first.
-    check(
+    game.check(
       game.entity("paddle").skin === 4,
       "and it is played with the paddle chosen",
     )
-    check(
+    game.check(
       game.entity("paddle").image.y === 160,
       "cut from its own band of the sheet",
     )
-    check(
+    game.check(
       Object.keys(game.state()).filter((id) => id === "paddle").length === 1,
       "with one paddle standing, not one chosen and one default",
     )
-    check(
+    game.check(
       game.playedSounds.slice(beforeConfirm).includes("confirm"),
       "Enter sounds the confirm",
     )
-    check(game.entity("paddle") !== undefined, "and the paddle arrives with it")
-    check(
+    game.check(
+      game.entity("paddle") !== undefined,
+      "and the paddle arrives with it",
+    )
+    game.check(
       game.entity("paddle").position[0] === 184,
       "the paddle starts centred",
     )
     // The original puts the paddle's centre at VIRTUAL_HEIGHT - 32, an altitude of 32.
-    check(
+    game.check(
       game.entity("paddle").position[1] === 32,
       "and floats a paddle's height clear",
     )
     // In the original the menu is drawn by the start state, so leaving it takes the menu
     // away. Here the game adds and removes the entities instead, so they are gone from
     // the store rather than sitting in it with nothing to say.
-    check(game.entity("title") === undefined, "the title leaves with the menu")
-    check(game.entity("start") === undefined, "and so does START")
-    check(game.entity("highScores") === undefined, "and HIGH SCORES")
+    game.check(
+      game.entity("title") === undefined,
+      "the title leaves with the menu",
+    )
+    game.check(game.entity("start") === undefined, "and so does START")
+    game.check(game.entity("highScores") === undefined, "and HIGH SCORES")
 
     // The serve is the wait between two games. It stands on the same field the play does,
     // with the ball on the paddle and everything the play would show already showing.
-    check(game.entity("ball") !== undefined, "a ball is served")
-    check(
+    game.check(game.entity("ball") !== undefined, "a ball is served")
+    game.check(
       game.entity("servePrompt").value === "Press Enter to serve!",
       "the serve says so",
     )
-    check(game.entity("servePrompt").size === 16, "in the medium font")
-    check(game.entity("score") !== undefined, "the score stands on the serve")
-    check(game.entity("scoreLabel").value === "Score:", "labelled Score")
-    check(game.entity("score").size === 8, "in the small font")
-    check(game.entity("score").value === "0", "starting at nothing scored")
-    check(game.entity("game").health === 3, "with three lives in hand")
-    check(
+    game.check(game.entity("servePrompt").size === 16, "in the medium font")
+    game.check(
+      game.entity("score") !== undefined,
+      "the score stands on the serve",
+    )
+    game.check(game.entity("scoreLabel").value === "Score:", "labelled Score")
+    game.check(game.entity("score").size === 8, "in the small font")
+    game.check(game.entity("score").value === "0", "starting at nothing scored")
+    game.check(game.entity("game").health === 3, "with three lives in hand")
+    game.check(
       ["heart0", "heart1", "heart2"].every(
         (id) => game.state()[id] !== undefined,
       ),
       "and a heart for each of them",
     )
-    check(
+    game.check(
       game.entity("paused") === undefined,
       "no pause overlay before the play",
     )
-    check(game.entity("gameOverTitle") === undefined, "nor a game over screen")
+    game.check(
+      game.entity("gameOverTitle") === undefined,
+      "nor a game over screen",
+    )
 
     // The ball rides the paddle rather than moving under its own power, so sliding the
     // paddle carries it along.
     const ballBeforeRide = game.entity("ball").position[0]
     game.hold("ArrowLeft", 10)
-    check(
+    game.check(
       game.entity("ball").position[0] < ballBeforeRide,
       "the ball rides the paddle while serving",
     )
-    check(
+    game.check(
       game.entity("ball").position[0] ===
         game.entity("paddle").position[0] + 32 - 4,
       "sitting on the middle of it, a ball's width clear",
     )
-    check(game.entity("ball").position[1] === 40, "and resting on top of it")
-    check(
+    game.check(
+      game.entity("ball").position[1] === 40,
+      "and resting on top of it",
+    )
+    game.check(
       game.entity("servePrompt") !== undefined,
       "the wait is still being waited out",
     )
 
     // Every serve is a new ball, with a skin of its own.
     const firstSkin = game.entity("ball").skin
-    check(firstSkin >= 1 && firstSkin <= 7, "served with a skin of its own")
-    check(
+    game.check(
+      firstSkin >= 1 && firstSkin <= 7,
+      "served with a skin of its own",
+    )
+    game.check(
       game.entity("ball").image.id === "breakout",
       "the skin is cut from the breakout atlas",
     )
@@ -525,14 +579,14 @@ describe("Breakout", () => {
     const before = game.entity("paddle").position[0]
     game.hold("ArrowRight")
     const movedRight = game.entity("paddle").position[0]
-    check(
+    game.check(
       movedRight > before,
       `the right arrow moves the paddle (${before} to ${movedRight})`,
     )
 
     game.hold("ArrowLeft", 60)
     const movedLeft = game.entity("paddle").position[0]
-    check(
+    game.check(
       movedLeft < movedRight,
       `the left arrow moves it back (${movedRight} to ${movedLeft})`,
     )
@@ -540,7 +594,7 @@ describe("Breakout", () => {
     game.notify("keyboardKeyDown", "ArrowRight")
     const held = game.entity("paddle").position[0]
     game.step(30)
-    check(
+    game.check(
       game.entity("paddle").position[0] > held,
       "it keeps moving while the key is held",
     )
@@ -550,7 +604,7 @@ describe("Breakout", () => {
     game.step(400)
     game.notify("keyboardKeyUp", "ArrowRight")
     game.step(2)
-    check(
+    game.check(
       game.entity("paddle").position[0] === 368,
       "the paddle stops at the right edge",
     )
@@ -559,19 +613,22 @@ describe("Breakout", () => {
     game.step(400)
     game.notify("keyboardKeyUp", "ArrowLeft")
     game.step(2)
-    check(game.entity("paddle").position[0] === 0, "and at the left edge")
+    game.check(game.entity("paddle").position[0] === 0, "and at the left edge")
 
     game.press("Enter")
-    check(game.entity("game").state === "play", "Enter answers the serve")
-    check(
+    game.check(game.entity("game").state === "play", "Enter answers the serve")
+    game.check(
       game.entity("servePrompt") === undefined,
       "the wait is over and its line goes",
     )
-    check(
+    game.check(
       game.entity("ball").skin === firstSkin,
       "the same ball is played, skin and all",
     )
-    check(game.entity("paused") !== undefined, "and the pause overlay arrives")
+    game.check(
+      game.entity("paused") !== undefined,
+      "and the pause overlay arrives",
+    )
 
     game.notify("keyboardKeyDown", "ArrowRight")
     game.step(10)
@@ -579,12 +636,12 @@ describe("Breakout", () => {
     game.notify("keyboardKeyUp", "ArrowRight")
     const pausedAt = game.entity("paddle").position[0]
     game.step(30)
-    check(game.entity("game").paused === true, "space pauses")
-    check(
+    game.check(game.entity("game").paused === true, "space pauses")
+    game.check(
       game.entity("paddle").position[0] === pausedAt,
       "a paused paddle does not move",
     )
-    check(
+    game.check(
       game.entity("paused").value === "PAUSED",
       "PAUSED is shown while paused",
     )
@@ -594,9 +651,9 @@ describe("Breakout", () => {
     // may have reached something: whether the pause was sounded at all is.
     const beforeResume = game.playedSounds.length
     game.press("Space")
-    check(game.entity("game").state === "play", "space resumes")
-    check(game.entity("paused").value === "", "and PAUSED goes away")
-    check(
+    game.check(game.entity("game").state === "play", "space resumes")
+    game.check(game.entity("paused").value === "", "and PAUSED goes away")
+    game.check(
       game.playedSounds.slice(beforeResume).includes("pause"),
       "resuming sounds the pause again",
     )
@@ -605,65 +662,74 @@ describe("Breakout", () => {
     // These are all placed by hand and all sit in the same corner, so they are checked
     // against each other rather than against nothing.
     const hud = game.state()
-    check(hud.heart0.position[1] === 238, "the hearts hang from the ceiling")
-    check(
+    game.check(
+      hud.heart0.position[1] === 238,
+      "the hearts hang from the ceiling",
+    )
+    game.check(
       hud.heart1.position[0] === hud.heart0.position[0] + 11 &&
         hud.heart2.position[0] === hud.heart1.position[0] + 11,
       "eleven pixels apart",
     )
-    check(
+    game.check(
       hud.heart2.position[0] + 10 < hud.scoreLabel.position[0],
       "and stand to the left of the score label",
     )
     // The label and the number are one line of interface, so they hang from one height --
     // and from one edge of the line, because two entities can share a position and still be
     // drawn half a font apart if one is anchored by its top and the other by its middle.
-    check(
+    game.check(
       hud.score.value === "0" &&
         hud.scoreLabel.position[1] === hud.score.position[1],
       `the label and the number share a height (${hud.scoreLabel.position[1]})`,
     )
-    check(
+    game.check(
       hud.scoreLabel.baseline === hud.score.baseline,
       "and share a baseline, so they are one line and not two",
     )
-    check(
+    game.check(
       hud.scoreLabel.baseline === "top" && hud.paused.baseline === "middle",
       "with the printed lines anchored by their top and the centred ones by their middle",
     )
-    check(
+    game.check(
       hud.scoreLabel.textAlign === "left",
       "the label runs left from its own edge",
     )
-    check(
+    game.check(
       hud.score.textAlign === "right",
       "the number runs back from the far one",
     )
     // The counter is ours rather than the original's, so it goes where the play never draws:
     // the bottom left, well below the paddle and clear of the score in the top right.
-    check(
+    game.check(
       hud.fps.position[0] < 100 && hud.fps.position[1] > 200,
       `the counter is in the bottom left (${hud.fps.position.join()})`,
     )
-    check(hud.fps.textAlign === "left", "reading inwards from the corner")
+    game.check(hud.fps.textAlign === "left", "reading inwards from the corner")
 
-    linesFit(hud, "on the serve")
+    linesFit(game, hud, "on the serve")
   })
 
   test("clearing a level and starting the next", () => {
     game.step(4)
     game.press("Enter")
-    check(
+    game.check(
       game.entity("game").state === "paddleSelect",
       "and the choice of paddle comes before the serve",
     )
     game.press("Enter")
 
-    check(game.entity("game").level === 1, "a new game is on the first level")
-    check(game.entity("level").value === "Level 1", "and the serve says so")
+    game.check(
+      game.entity("game").level === 1,
+      "a new game is on the first level",
+    )
+    game.check(
+      game.entity("level").value === "Level 1",
+      "and the serve says so",
+    )
 
     game.press("Enter")
-    check(game.entity("game").state === "play", "the serve is answered")
+    game.check(game.entity("game").state === "play", "the serve is answered")
 
     // Every brick but the last is taken away, and the last one is hit for real. A brick that
     // is only knocked back must not finish the level.
@@ -679,11 +745,11 @@ describe("Breakout", () => {
     // Those removals announce themselves, so the level counts itself down to the one brick
     // left standing without being told to.
     game.step(1)
-    check(
+    game.check(
       game.entity("game").bricksLeft === 1,
       "and the level counts what is left",
     )
-    check(
+    game.check(
       game.entity("game").state === "play",
       "and the level is not finished while a brick is still standing",
     )
@@ -695,25 +761,28 @@ describe("Breakout", () => {
     game.entity("ball").velocity = [0, 0, 0]
     game.step(2)
 
-    check(game.state()[survivor] === undefined, "the last brick is gone")
-    check(
+    game.check(game.state()[survivor] === undefined, "the last brick is gone")
+    game.check(
       game.entity("game").state === "victory",
       `and the level is finished (${game.entity("game").state})`,
     )
-    check(game.playedSounds.includes("victory"), "having sounded the victory")
-    check(
+    game.check(
+      game.playedSounds.includes("victory"),
+      "having sounded the victory",
+    )
+    game.check(
       game.entity("victoryTitle").value === "Level 1 complete!",
       "the victory says so",
     )
-    check(
+    game.check(
       game.entity("victoryPrompt").value === "Press Enter to serve!",
       "and how to carry on",
     )
-    check(
+    game.check(
       game.entity("score") !== undefined && game.entity("heart0") !== undefined,
       "with the score and the lives still standing under it",
     )
-    check(
+    game.check(
       game.entity("paused") === undefined &&
         game.entity("servePrompt") === undefined,
       "but none of the serve's own lines",
@@ -721,7 +790,10 @@ describe("Breakout", () => {
 
     game.press("Enter")
 
-    check(game.entity("game").state === "serve", "Enter starts the next level")
+    game.check(
+      game.entity("game").state === "serve",
+      "Enter starts the next level",
+    )
 
     // A line placed at the middle of the screen is centred on it. Anything else pushes the
     // whole line to one side of where it was put -- which reads as misplaced rather than as
@@ -734,15 +806,15 @@ describe("Breakout", () => {
           entity.position?.[0] === 432 / 2 &&
           entity.textAlign !== "center",
       )
-    check(
+    game.check(
       centredLines(game.state()).length === 0,
       `every line at the middle is centred on it (${centredLines(game.state())
         .map(([id]) => id)
         .join(", ")})`,
     )
-    check(game.entity("game").level === 2, "and it is the second")
-    check(game.entity("level").value === "Level 2", "which the serve says")
-    check(
+    game.check(game.entity("game").level === 2, "and it is the second")
+    game.check(game.entity("level").value === "Level 2", "which the serve says")
+    game.check(
       game.entity("victoryTitle") === undefined,
       "with the victory screen taken away",
     )
@@ -751,12 +823,12 @@ describe("Breakout", () => {
     )
     // Every brick of the first level had been knocked out, so standing the same ones back up
     // would mean the second level is the first one again.
-    check(
+    game.check(
       secondLevelBricks.length > 0 &&
         secondLevelBricks.every((id) => !levelBricks.includes(id)),
       `and a level of its own standing up (${secondLevelBricks.length})`,
     )
-    check(
+    game.check(
       secondLevelBricks.every((id) => id.startsWith("brick2-")),
       "whose bricks are named for the level they belong to",
     )
@@ -768,11 +840,11 @@ describe("Breakout", () => {
     game.press("Enter")
     game.press("Enter")
     game.press("Enter")
-    check(
+    game.check(
       game.entity("game").level === 1,
       "a new game is back on the first level",
     )
-    check(
+    game.check(
       Object.keys(game.state()).some((id) => id.startsWith("brick1-")),
       "with a level rolled for it",
     )
@@ -784,9 +856,12 @@ describe("Breakout", () => {
     game.press("Enter")
     // Two Enters reach the serve, not the play: the menu asks which paddle first, so the
     // serve is the second screen and answering it is a third.
-    check(game.entity("game").state === "serve", "two Enters reach the serve")
+    game.check(
+      game.entity("game").state === "serve",
+      "two Enters reach the serve",
+    )
     game.press("Enter")
-    check(game.entity("game").state === "play", "and a third answers it")
+    game.check(game.entity("game").state === "play", "and a third answers it")
     const bricks = Object.keys(game.state()).filter((id) =>
       id.startsWith("brick"),
     )
@@ -798,7 +873,7 @@ describe("Breakout", () => {
     game.entity("ball").position = [cx + 12, cy - 4, 0]
     game.entity("ball").velocity = [0, 400, 0]
     game.step(1)
-    check(
+    game.check(
       game.entity("ball").velocity[1] <= 150,
       `a ball already at the ceiling does not quicken (${game.entity("ball").velocity[1].toFixed(0)})`,
     )
@@ -807,7 +882,7 @@ describe("Breakout", () => {
     game.entity("ball").position = [cx + 12, cy - 4, 0]
     game.entity("ball").velocity = [0, 100, 0]
     game.step(1)
-    check(
+    game.check(
       Math.abs(game.entity("ball").velocity[1]) > 100,
       `and one under it still does (${game.entity("ball").velocity[1].toFixed(1)})`,
     )
@@ -815,23 +890,26 @@ describe("Breakout", () => {
     // Escape quits, and it quits from any state rather than from the play alone -- the
     // original checks it in all four of its states, so a way out is never behind a particular
     // screen. Quitting is the engine's own: the game only announces it.
-    check(
+    game.check(
       game.entity("game").quit === undefined,
       "nothing has asked to quit yet",
     )
 
     game.press("Escape")
-    check(game.entity("game").quit === true, "Escape asks the engine to quit")
+    game.check(
+      game.entity("game").quit === true,
+      "Escape asks the engine to quit",
+    )
 
     // And it is the loop that stops rather than the world being halted, so the game is still
     // in the state it was in.
     // The flag is on the game entity; `paused` on its own is the overlay that says PAUSED.
-    check(
+    game.check(
       game.entity("game").state === "play",
       "leaving the game exactly where it was",
     )
 
-    check(
+    game.check(
       !game.entity("game").paused && game.entity("paused").value === "",
       "leaving the game not paused",
     )
@@ -840,7 +918,7 @@ describe("Breakout", () => {
     // processed on still runs to its end -- and after it, nothing is asked to move again.
     const frozenAt = game.entity("ball").position.join()
     game.step(60)
-    check(
+    game.check(
       game.entity("ball").position.join() === frozenAt,
       `and the world is never updated again (${frozenAt})`,
     )
@@ -851,14 +929,14 @@ describe("Breakout", () => {
     game.press("Enter")
     game.press("Enter")
     game.press("Enter")
-    check(
+    game.check(
       game.entity("game").state === "play",
       "a game of its own reaches the play",
     )
     const lifeBricks = Object.keys(game.state()).filter((id) =>
       id.startsWith("brick"),
     )
-    check(lifeBricks.length > 0, "with a level standing above it")
+    game.check(lifeBricks.length > 0, "with a level standing above it")
 
     // A brick hit is worth the tier and the colour it was hit at. Rather than wait for the
     // ball to find one, a brick is put where the ball already is, which is the collision the
@@ -902,11 +980,11 @@ describe("Breakout", () => {
 
     game.entity("game").score = 0
     hitBrick(study)
-    check(
+    game.check(
       game.entity("score").value === String(scoreOf(5)),
       `a brick scores what it was worth before the hit (${game.entity("score").value})`,
     )
-    check(
+    game.check(
       game.state()[study] !== undefined && game.state()[study].hp === 4,
       "and a hit takes one off it rather than taking it away",
     )
@@ -929,15 +1007,15 @@ describe("Breakout", () => {
     }
     // Two of one tier's five colours, then the last four of the tier below, and then nothing
     // left to knock off.
-    check(
+    game.check(
       seen.map(([, color]) => color).join() === "2,1,5,4,3,2,1",
       `and the colours run down and round (${seen.map(([, c]) => c).join(",")})`,
     )
-    check(
+    game.check(
       seen.every(([tier], i) => tier === (i < 2 ? 1 : 0)),
       `the tier dropping once the colours are used up (${seen.map(([t]) => t).join(",")})`,
     )
-    check(
+    game.check(
       game.state()[walk] === undefined,
       "and a brick with nothing left on it leaves",
     )
@@ -950,7 +1028,7 @@ describe("Breakout", () => {
     const brokenCount = game.playedSounds.filter(
       (name) => name === "brickBroken",
     ).length
-    check(
+    game.check(
       hitCount > brokenCount && brokenCount >= 1,
       `every hit sounds, and only the one that breaks a brick sounds the break (${hitCount} hits, ${brokenCount} breaks)`,
     )
@@ -965,7 +1043,7 @@ describe("Breakout", () => {
       // Two Enters reach the serve, because the menu asks which paddle first; this one is
       // about hits landing, so it wants the play.
       game.press("Enter")
-      check(
+      game.check(
         game.entity("game").state === "play",
         "the brick of a given number of hits is being played at",
       )
@@ -993,13 +1071,13 @@ describe("Breakout", () => {
       return hits
     }
 
-    check(hitsToBreak(1) === 1, "the plainest brick takes one hit")
-    check(hitsToBreak(5) === 5, "the last colour of a tier takes five")
-    check(
+    game.check(hitsToBreak(1) === 1, "the plainest brick takes one hit")
+    game.check(hitsToBreak(5) === 5, "the last colour of a tier takes five")
+    game.check(
       hitsToBreak(6) === 6,
       "and the first colour of the tier above takes six",
     )
-    check(
+    game.check(
       hitsToBreak(10) === 10,
       "while the hardest brick on the sheet takes ten",
     )
@@ -1022,7 +1100,7 @@ describe("Breakout", () => {
     )
     game.state()[dustBrick].hp = 8
 
-    check(
+    game.check(
       game.pooled("Particle").length === 0,
       "a level on its own throws off no debris",
     )
@@ -1033,32 +1111,32 @@ describe("Breakout", () => {
     game.step(1)
 
     const debris = game.pooled("Particle")
-    check(
+    game.check(
       debris.length === 64,
       `a brick hit throws off ${64} pieces (${debris.length})`,
     )
     // The debris is tinted. The brick it came off is *not*: a brick's own `color` is a number
     // saying where it sits in the palette, and a renderer reading that as a colour to draw it
     // in is handed something the canvas ignores without complaint, leaving the brick black.
-    check(
+    game.check(
       debris.every((p) => p.tint === BRICK_COLORS[3]),
       "every piece tinted with the colour of the brick it came off",
     )
-    check(
+    game.check(
       debris.every((p) =>
         p.tint === undefined ? false : typeof p.tint === "string",
       ),
       "in a colour the canvas understands rather than a number",
     )
-    check(
+    game.check(
       game.state()[dustBrick].tint === undefined,
       "while the brick itself is left untinted",
     )
-    check(
+    game.check(
       debris.every((p) => p.startOpacity === (55 / 255) * 2),
       "and as opaque as the tier it was hit at says",
     )
-    check(
+    game.check(
       debris.every(
         (p) =>
           Math.abs(p.position[0] - (dustX + 16)) <= 10 &&
@@ -1067,7 +1145,7 @@ describe("Breakout", () => {
       "thrown from the middle of it, scattered within a box",
     )
     // Downwards here, where the original counts the other way up the screen.
-    check(
+    game.check(
       debris.every(
         (p) =>
           p.acceleration[1] <= 0 &&
@@ -1076,12 +1154,12 @@ describe("Breakout", () => {
       ),
       "every piece falling, and within the sideways spread it is given",
     )
-    check(
+    game.check(
       debris.every((p) => p.life >= [0.5, 1][0] && p.life <= [0.5, 1][1]),
       "each lasting its own time, between half a second and a second",
     )
     // Drawn after the bricks and before the paddle, which is where the original draws them.
-    check(
+    game.check(
       debris.every((p) => p.layer === 0.5) && LAYER_BRICK < 0.5 && 0.5 < 1,
       "drawn over the bricks and under the paddle",
     )
@@ -1096,7 +1174,7 @@ describe("Breakout", () => {
     // has all gone.
     const longestLife = Math.max(...game.pooled("Particle").map((p) => p.life))
     game.advance(longestLife + A_MARGIN)
-    check(
+    game.check(
       game.pooled("Particle").length === 0,
       "and gone again once they have lived their time",
     )
@@ -1132,14 +1210,14 @@ describe("Breakout", () => {
     game.step(1)
 
     const debris = debrisOf(game)
-    check(
+    game.check(
       debris.length > 0 && debris[0].startOpacity > lowTier[0],
       `a brick higher up the sheet throws brighter debris (${debris[0]?.startOpacity} against ${lowTier[0]})`,
     )
 
     // A higher brick is worth knocking down than a low one, which is the whole reason a level
     // bothers with colour.
-    check(scoreOf(20) > scoreOf(5), "a tier is worth more than a colour")
+    game.check(scoreOf(20) > scoreOf(5), "a tier is worth more than a colour")
 
     // The level is one level across the whole game, so losing a life does not roll a new one
     // and quietly put back every brick knocked out so far.
@@ -1147,19 +1225,19 @@ describe("Breakout", () => {
       id.startsWith("brick"),
     )
     const knockedOut = bricks.length - remaining.length
-    check(
+    game.check(
       knockedOut === 1,
       `and only the broken one is gone (${knockedOut} of ${bricks.length})`,
     )
 
     const hurtBefore = game.playedSounds.length
     game.dropTheBall()
-    check(
+    game.check(
       game.entity("game").state === "serve",
       "a ball past the floor means another serve",
     )
-    check(game.entity("game").health === 2, "and costs a life")
-    check(
+    game.check(game.entity("game").health === 2, "and costs a life")
+    game.check(
       game.playedSounds.slice(hurtBefore).includes("hurt"),
       "having sounded the hurt",
     )
@@ -1167,8 +1245,11 @@ describe("Breakout", () => {
     // frame after the loss, because whichever entity asks first in a frame sees the life
     // count as it was when the frame began.
     game.step(1)
-    check(game.entity("heart0").image.x === 0, "the first heart is still full")
-    check(
+    game.check(
+      game.entity("heart0").image.x === 0,
+      "the first heart is still full",
+    )
+    game.check(
       game.entity("heart2").image.x === HEART_WIDTH,
       "and the last one has emptied",
     )
@@ -1179,59 +1260,62 @@ describe("Breakout", () => {
     game.step(2)
     skins.add(game.entity("ball").skin)
 
-    check(game.entity("game").health === 1, "a second life goes the same way")
+    game.check(
+      game.entity("game").health === 1,
+      "a second life goes the same way",
+    )
 
     // The last life ends the game.
     const finalScore = game.entity("game").score
     const gameOverSounds = game.playedSounds.length
     game.dropTheBall()
-    check(game.entity("game").health === 0, "the last life is spent")
-    check(game.entity("game").state === "gameOver", "and the game is over")
-    check(
+    game.check(game.entity("game").health === 0, "the last life is spent")
+    game.check(game.entity("game").state === "gameOver", "and the game is over")
+    game.check(
       game.playedSounds.slice(gameOverSounds).includes("hurt"),
       "having sounded the hurt one last time",
     )
     // The screen is put up by the transition itself, so it needs the frame after before it
     // has said anything.
     game.step(1)
-    linesFit(game.state(), "on the game over screen")
-    check(
+    linesFit(game, game.state(), "on the game over screen")
+    game.check(
       game.entity("gameOverTitle").value === "GAME OVER",
       "the title says GAME OVER",
     )
-    check(
+    game.check(
       game.entity("gameOverScore").value === `Final Score: ${finalScore}`,
       `and the score it came to (${game.entity("gameOverScore").value})`,
     )
-    check(
+    game.check(
       game.entity("gameOverPrompt").value === "Press Enter!",
       "with a prompt",
     )
-    check(
+    game.check(
       game.entity("gameOverTitle").position[1] >
         game.entity("gameOverScore").position[1],
       "the title sits above the score",
     )
-    check(
+    game.check(
       game.entity("gameOverScore").position[1] >
         game.entity("gameOverPrompt").position[1],
       "and the prompt below it",
     )
     // Nothing of the game in progress is left standing behind the game over screen.
-    check(game.entity("ball") === undefined, "the ball is gone")
-    check(game.entity("paddle") === undefined, "and the paddle")
-    check(
+    game.check(game.entity("ball") === undefined, "the ball is gone")
+    game.check(game.entity("paddle") === undefined, "and the paddle")
+    game.check(
       Object.keys(game.state()).filter((id) => id.startsWith("brick"))
         .length === 0,
       "and so is the level",
     )
 
     game.press("Enter")
-    check(
+    game.check(
       game.entity("game").state === "start",
       "Enter goes back to the start screen",
     )
-    check(
+    game.check(
       game.entity("gameOverTitle") === undefined,
       "the game over screen goes with it",
     )
@@ -1242,54 +1326,57 @@ describe("Breakout", () => {
     game.entity("game").state = "gameOver"
     game.entity("game").score = 10500
     game.step(2)
-    check(game.entity("game").state === "gameOver", "the game is over")
+    game.check(game.entity("game").state === "gameOver", "the game is over")
     game.press("Enter")
-    check(
+    game.check(
       game.entity("game").state === "enterHighScore",
       "a score past all of them earns a name",
     )
-    check(
+    game.check(
       game.playedSounds.includes("highScore"),
       "and says so with the high score sound",
     )
-    check(
+    game.check(
       game.entity("yourScore").value === "Your score: 10500",
       "the score it came to is said across the top",
     )
-    check(game.entity("yourScore").size === 16, "in the medium font")
-    check(
+    game.check(game.entity("yourScore").size === 16, "in the medium font")
+    game.check(
       game.entity("enterScorePrompt").value === "Press Enter to confirm!",
       "and a line at the bottom says how to finish",
     )
-    check(game.entity("enterScorePrompt").size === 8, "in the small font")
+    game.check(game.entity("enterScorePrompt").size === 8, "in the small font")
 
     // Three letters, all on A, with the first picked out as the one being changed.
-    check(
+    game.check(
       game.entity("game").name === "AAA",
       "the name starts as three letters of A",
     )
-    check(game.entity("enteredLetter0").value === "A", "the first reads A")
-    check(game.entity("enteredLetter1").value === "A", "and so does the second")
-    check(game.entity("enteredLetter2").value === "A", "and the third")
-    check(
+    game.check(game.entity("enteredLetter0").value === "A", "the first reads A")
+    game.check(
+      game.entity("enteredLetter1").value === "A",
+      "and so does the second",
+    )
+    game.check(game.entity("enteredLetter2").value === "A", "and the third")
+    game.check(
       game.entity("enteredLetter0").color === "rgb(103, 255, 255)",
       "the first is picked out",
     )
-    check(
+    game.check(
       game.entity("enteredLetter1").color === "white",
       "and the second is not",
     )
-    check(game.entity("enteredLetter2").color === "white", "nor the third")
+    game.check(game.entity("enteredLetter2").color === "white", "nor the third")
     // The letters are laid out about the middle of the screen with a gap either side.
-    check(
+    game.check(
       game.entity("enteredLetter0").position[0] === 188,
       "the first letter stands left",
     )
-    check(
+    game.check(
       game.entity("enteredLetter1").position[0] === 210,
       "the second after it",
     )
-    check(
+    game.check(
       game.entity("enteredLetter2").position[0] === 236,
       "and the third last",
     )
@@ -1298,80 +1385,89 @@ describe("Breakout", () => {
     // the original plays one only for moving between the letters.
     const soundsBeforeScroll = game.playedSounds.length
     game.press("ArrowUp")
-    check(game.entity("game").name === "BAA", "up scrolls the letter on")
-    check(
+    game.check(game.entity("game").name === "BAA", "up scrolls the letter on")
+    game.check(
       game.playedSounds.length === soundsBeforeScroll,
       "and says nothing while doing it",
     )
     for (let i = 0; i < TWENTY_FOUR; i++) game.press("ArrowUp")
-    check(game.entity("game").name === "ZAA", "up to Z")
+    game.check(game.entity("game").name === "ZAA", "up to Z")
     game.press("ArrowUp")
-    check(game.entity("game").name === "AAA", "and wraps round to A")
+    game.check(game.entity("game").name === "AAA", "and wraps round to A")
     game.press("ArrowDown")
-    check(game.entity("game").name === "ZAA", "down from A wraps round to Z")
+    game.check(
+      game.entity("game").name === "ZAA",
+      "down from A wraps round to Z",
+    )
     game.press("ArrowUp")
-    check(game.entity("game").name === "AAA", "and up again comes back to A")
+    game.check(
+      game.entity("game").name === "AAA",
+      "and up again comes back to A",
+    )
 
     // Left and right choose which letter is being changed, and say so.
     const soundsBeforeMove = game.playedSounds.length
     game.press("ArrowLeft")
-    check(
+    game.check(
       game.entity("game").letter === 1,
       "the first letter is already being changed",
     )
-    check(
+    game.check(
       game.playedSounds.length === soundsBeforeMove,
       "and moving onto it says nothing",
     )
     game.press("ArrowRight")
-    check(game.entity("game").letter === 2, "right moves to the second")
-    check(game.playedSounds.includes("select"), "with the select sound")
-    check(
+    game.check(game.entity("game").letter === 2, "right moves to the second")
+    game.check(game.playedSounds.includes("select"), "with the select sound")
+    game.check(
       game.entity("enteredLetter0").color === "white",
       "leaving the first unpicked",
     )
-    check(
+    game.check(
       game.entity("enteredLetter1").color === "rgb(103, 255, 255)",
       "and picking out the second",
     )
     game.press("ArrowRight")
     game.press("ArrowRight")
-    check(game.entity("game").letter === 3, "and on to the third")
+    game.check(game.entity("game").letter === 3, "and on to the third")
     game.press("ArrowRight")
-    check(game.entity("game").letter === 3, "which will not go past the third")
+    game.check(
+      game.entity("game").letter === 3,
+      "which will not go past the third",
+    )
 
     // Scrolling now changes the third letter, not the first.
     game.press("ArrowDown")
-    check(
+    game.check(
       game.entity("game").name === "AAZ",
       "so it is the third that is changed",
     )
     game.press("ArrowDown")
-    check(game.entity("game").name === "AAY", "and down again")
+    game.check(game.entity("game").name === "AAY", "and down again")
 
     // Enter writes the name in at the place it earned and shows the table.
     game.press("Enter")
-    check(
+    game.check(
       game.entity("game").state === "highScores",
       "confirming writes the name in and shows the table",
     )
-    check(
+    game.check(
       game.entity("game").highScores.length === TEN,
       "which is still ten entries long",
     )
-    check(
+    game.check(
       game.entity("highScore0Name").value === "AAY",
       "the new name is at the top, having beaten everything",
     )
-    check(
+    game.check(
       game.entity("highScore0Score").value === "10500",
       "with the score it came to",
     )
-    check(
+    game.check(
       game.entity("highScore1Name").value === "CTO",
       "and the rest moved down",
     )
-    check(
+    game.check(
       game.entity("highScore1Score").value === "10000",
       "carrying their scores with them",
     )
@@ -1382,17 +1478,17 @@ describe("Breakout", () => {
     game.entity("game").score = 500
     game.step(2)
     game.press("Enter")
-    check(
+    game.check(
       game.entity("game").state === "start",
       "a score beating nothing goes back to the menu",
     )
     // The table's own entities are off the screen at the menu, so this asks the table rather
     // than what is drawn of it.
-    check(
+    game.check(
       !game.entity("game").highScores.some((entry) => entry.score === 500),
       "and is not written into the table",
     )
-    check(
+    game.check(
       game.entity("game").highScores[0].name === "AAY",
       "which still has the score written in earlier at the top of it",
     )
@@ -1401,17 +1497,17 @@ describe("Breakout", () => {
     // The first Enter only reaches the choice of paddle: a new game's lives and score are
     // settled when that choice is confirmed, not before, so nothing is back yet.
     game.press("Enter")
-    check(
+    game.check(
       game.entity("game").state === "paddleSelect",
       "and asks which paddle first",
     )
     game.press("Enter")
-    check(game.entity("game").state === "serve", "and then it starts")
-    check(game.entity("game").health === 3, "with every life back")
-    check(game.entity("score").value === "0", "and back to nothing scored")
+    game.check(game.entity("game").state === "serve", "and then it starts")
+    game.check(game.entity("game").health === 3, "with every life back")
+    game.check(game.entity("score").value === "0", "and back to nothing scored")
     // A new game makes a new level, which is rolled afresh and so need not be the size the
     // last one happened to be.
-    check(
+    game.check(
       Object.keys(game.state()).filter((id) => id.startsWith("brick")).length >
         0,
       "over a level of its own",
@@ -1422,7 +1518,7 @@ describe("Breakout", () => {
     // The ball gets a game of its own, so that it is served fresh rather than wherever the
     // checks above left it.
     game.step(4)
-    check(
+    game.check(
       game.entity("ball") === undefined,
       "the title screen has no ball either",
     )
@@ -1430,7 +1526,7 @@ describe("Breakout", () => {
     const bricksBefore = Object.keys(game.state()).filter((id) =>
       id.startsWith("brick"),
     )
-    check(bricksBefore.length === 0, "and no bricks either")
+    game.check(bricksBefore.length === 0, "and no bricks either")
 
     // Three Enters reach the play: one leaves the menu, one confirms the paddle, and one
     // answers the serve. Each is given its own update so the field is standing up before the
@@ -1438,21 +1534,21 @@ describe("Breakout", () => {
     game.notify("keyboardKeyDown", "Enter")
     game.notify("keyboardKeyUp", "Enter")
     game.step(2)
-    check(
+    game.check(
       game.entity("game").state === "paddleSelect",
       "the ball's game reaches the choice of paddle",
     )
     game.notify("keyboardKeyDown", "Enter")
     game.notify("keyboardKeyUp", "Enter")
     game.step(2)
-    check(game.entity("game").state === "serve", "and then the serve")
+    game.check(game.entity("game").state === "serve", "and then the serve")
 
     game.notify("keyboardKeyDown", "Enter")
     game.notify("keyboardKeyUp", "Enter")
     // One update is needed to process the key, and the ball is served inside it but not
     // moved until the next, so this is the serve itself.
     game.step(1)
-    check(game.entity("game").state === "play", "and then the play")
+    game.check(game.entity("game").state === "play", "and then the play")
 
     const servedBall = game.entity("ball")
     // The skin is picked at random on every serve, so where the ball is cut from is worked
@@ -1463,11 +1559,11 @@ describe("Breakout", () => {
 
     // The ball is cropped from the sheet at the pixel the original's quad table puts it,
     // which is not the same as the skin's number: that table starts at one.
-    check(
+    game.check(
       from === `${96 + skinColumn * 8},${48 + skinRow * 8}`,
       `the ball is cropped from where its skin sits (${from})`,
     )
-    check(
+    game.check(
       servedBall.image.frameSize.join() === "8,8",
       `and is 8x8 (${servedBall.image.frameSize.join("x")})`,
     )
@@ -1479,7 +1575,7 @@ describe("Breakout", () => {
     )
     const rows = new Set(brickList.map(({ position }) => position[1])).size
 
-    check(
+    game.check(
       rows >= 1 && rows <= 5,
       `the level has between 1 and 5 rows (${rows})`,
     )
@@ -1487,11 +1583,11 @@ describe("Breakout", () => {
     // first cell moves the leftmost brick a whole cell right, which is exactly the gap
     // between one possible padding and the next -- so all that can be said is that it is no
     // fuller than the widest level, and not empty.
-    check(
+    game.check(
       brickList.length > 0 && brickList.length <= rows * BRICK_MAX_COLS,
       `with a brick for most cells, and none at all for some (${brickList.length})`,
     )
-    check(
+    game.check(
       brickList.every(({ size }) => size[0] === 32 && size[1] === 16),
       "each 32x16",
     )
@@ -1501,23 +1597,23 @@ describe("Breakout", () => {
     const xs = [...new Set(brickList.map(({ position }) => position[0]))].sort(
       (a, b) => a - b,
     )
-    check(
+    game.check(
       xs.every(
         (x, i) => i === 0 || x - xs[i - 1] === 32 || x - xs[i - 1] === 64,
       ),
       `laid out on the grid, touching or one cell apart (${xs.join(", ")})`,
     )
     // And no two bricks share a cell, whichever row they are in.
-    check(
+    game.check(
       new Set(brickList.map(({ position }) => position.join(","))).size ===
         brickList.length,
       "with no cell holding two bricks",
     )
-    check(
+    game.check(
       paddedForOddColumns(xs[0]),
       `and padded for an odd number of columns (${xs[0]})`,
     )
-    check(
+    game.check(
       xs.every((x) => x >= xs[0] && (x - xs[0]) % BRICK_WIDTH === 0),
       "with every brick on the same grid of cells",
     )
@@ -1525,7 +1621,7 @@ describe("Breakout", () => {
     const ys = [...new Set(brickList.map(({ position }) => position[1]))].sort(
       (a, b) => b - a,
     )
-    check(
+    game.check(
       ys[0] === 227 && ys[ys.length - 1] === 243 - rows * 16,
       `from just under the ceiling down (${ys.join(", ")})`,
     )
@@ -1539,11 +1635,11 @@ describe("Breakout", () => {
       const quad = (brickColourOf(hp) - 1) * 4 + brickTierOf(hp)
       return `${(quad % 6) * BRICK_WIDTH},${Math.floor(quad / 6) * BRICK_HEIGHT}`
     }
-    check(
+    game.check(
       brickList.every(({ hp }) => hp >= 1 && hp <= 4),
       `every brick is worth between one and four hits on the first level (${[...new Set(brickList.map((b) => b.hp))].sort().join(", ")})`,
     )
-    check(
+    game.check(
       brickList.every(
         ({ image, hp }) => `${image.x},${image.y}` === frameOf(hp),
       ),
@@ -1556,7 +1652,7 @@ describe("Breakout", () => {
       const row = Math.round((243 - brick.position[1]) / 16) - 1
       byRow.set(row, [...(byRow.get(row) ?? []), brick])
     }
-    check(
+    game.check(
       [...byRow.values()].every((bricks) => {
         const cells = bricks.map(({ position }) => position[0])
         const skipping = cells.some((x, i) => i > 0 && x - cells[i - 1] === 64)
@@ -1583,11 +1679,11 @@ describe("Breakout", () => {
     const rolled = LEVELS.flatMap((level) =>
       Array.from({ length: LEVEL_ROLLS }, () => createLevel(level, 0)),
     )
-    check(
+    game.check(
       rolled.every((bricks) => bricks.length > 0),
       `every level made something (${rolled.length} levels)`,
     )
-    check(
+    game.check(
       LEVELS.every((level) => {
         const highestTier = Math.min(3, Math.floor(level / 5))
         const highestColor = Math.min(5, (level % 5) + 3)
@@ -1602,7 +1698,7 @@ describe("Breakout", () => {
       }),
       "and nothing on it went past the colours and tiers its level allows",
     )
-    check(
+    game.check(
       rolled.every(
         (bricks) => new Set(bricks.map(({ id }) => id)).size === bricks.length,
       ),
@@ -1611,11 +1707,11 @@ describe("Breakout", () => {
     // The palette is rolled rather than fixed, so across enough levels more than one colour
     // has to turn up -- which a single level cannot promise, since every one of its rows may
     // roll solid on the same colour.
-    check(
+    game.check(
       new Set(rolled.flat().map(({ hp }) => hp)).size > 1,
       `and the bricks are rolled, not fixed (${[...new Set(rolled.flat().map((b) => b.hp))].sort().join(", ")})`,
     )
-    check(
+    game.check(
       Array.from({ length: LEVEL_ROLLS }, () => createLevel(1, 0)).every(
         (bricks) =>
           paddedForOddColumns(
@@ -1628,16 +1724,19 @@ describe("Breakout", () => {
     // The serve. While the serve is being waited out the ball is parked on the paddle, and
     // answering it puts it where PlayState:init used to.
     const served = game.entity("ball")
-    check(
+    game.check(
       served.position[0] === 212,
       `served from the middle (${served.position[0]})`,
     )
-    check(
+    game.check(
       served.position[1] === 40,
       `and resting on the paddle, 40 up (${served.position[1]})`,
     )
-    check(Math.abs(served.velocity[0]) <= 200, "served sideways within 200")
-    check(
+    game.check(
+      Math.abs(served.velocity[0]) <= 200,
+      "served sideways within 200",
+    )
+    game.check(
       served.velocity[1] >= 50 && served.velocity[1] <= 60,
       `and upwards between 50 and 60 (${served.velocity[1]})`,
     )
@@ -1654,21 +1753,27 @@ describe("Breakout", () => {
       game.step(1)
       climbed++
     }
-    check(
+    game.check(
       game.entity("ball").position[1] === 243,
       `it stops flush with the ceiling (${game.entity("ball").position[1]})`,
     )
-    check(game.entity("ball").velocity[1] < 0, "and comes back down")
-    check(game.playedSounds.includes("wallHit"), "having sounded the wall hit")
+    game.check(game.entity("ball").velocity[1] < 0, "and comes back down")
+    game.check(
+      game.playedSounds.includes("wallHit"),
+      "having sounded the wall hit",
+    )
 
     // A wall flips only the axis that ran into it, so the sideways speed survives it.
     game.step(600)
     const inFlight = game.entity("ball")
-    check(
+    game.check(
       inFlight.position[0] >= 0 && inFlight.position[0] <= 424,
       `it stays between the walls (${inFlight.position[0]})`,
     )
-    check(Math.abs(inFlight.velocity[0]) <= 200, "and keeps its sideways speed")
+    game.check(
+      Math.abs(inFlight.velocity[0]) <= 200,
+      "and keeps its sideways speed",
+    )
 
     // The ball is a thing that can now be lost, so a run long enough to watch it bounce
     // about can also watch it fall out of the world. Every check from here on needs the game
@@ -1682,16 +1787,16 @@ describe("Breakout", () => {
 
       return game.entity("game").state
     }
-    check(toPlay() === "play", "the ball's game is back in play")
+    game.check(toPlay() === "play", "the ball's game is back in play")
 
     // A halted world stops it, which is the whole point of not asking.
     game.notify("keyboardKeyDown", "Space")
     game.notify("keyboardKeyUp", "Space")
     game.step(2)
-    check(game.entity("game").paused === true, "it can be paused")
+    game.check(game.entity("game").paused === true, "it can be paused")
     const running = game.entity("ball").position[1]
     game.step(60)
-    check(
+    game.check(
       game.entity("ball").position[1] === running,
       "and does not move while paused",
     )
@@ -1718,12 +1823,12 @@ describe("Breakout", () => {
       signs.add(Math.sign(game.entity("ball").velocity[1]))
     }
 
-    check(signs.has(1), "the paddle sends it back up")
-    check(
+    game.check(signs.has(1), "the paddle sends it back up")
+    game.check(
       game.entity("ball").velocity[0] === sidewaysBefore,
       "and flips nothing but the vertical axis",
     )
-    check(
+    game.check(
       game.playedSounds.slice(beforeHit).includes("paddleHit"),
       "having sounded the paddle hit",
     )
@@ -1740,21 +1845,21 @@ describe("Breakout", () => {
     const afterPaddle = game.playedSounds.length
     game.step(1)
 
-    check(
+    game.check(
       game.entity("ball").position[1] === paddleTop + 8,
       `and lifted clear of it (${game.entity("ball").position[1]})`,
     )
-    check(
+    game.check(
       game.entity("ball").velocity[1] === 50,
       `going back up (${game.entity("ball").velocity[1]})`,
     )
-    check(
+    game.check(
       game.playedSounds.slice(afterPaddle).filter((s) => s === "paddleHit")
         .length === 1,
       "having sounded the paddle hit exactly once",
     )
     game.step(3)
-    check(
+    game.check(
       game.playedSounds.slice(afterPaddle).filter((s) => s === "paddleHit")
         .length === 1,
       "and not again on the frames after",
@@ -1785,21 +1890,21 @@ describe("Breakout", () => {
     }
 
     const above = strike(true)
-    check(
+    game.check(
       above.after.velocity[1] > 0,
       `a ball from above bounces up (${above.after.velocity[1]})`,
     )
-    check(
+    game.check(
       above.after.position[1] > above.altitude,
       `and is pushed away from the brick (${above.altitude} to ${above.after.position[1].toFixed(1)})`,
     )
 
     const below = strike(false)
-    check(
+    game.check(
       below.after.velocity[1] < 0,
       `a ball from below bounces down (${below.after.velocity[1]})`,
     )
-    check(
+    game.check(
       below.after.position[1] < below.altitude,
       `and is pushed away from the brick (${below.altitude} to ${below.after.position[1].toFixed(1)})`,
     )
@@ -1813,22 +1918,25 @@ describe("Breakout", () => {
     game.press("Enter")
     game.press("Enter")
     game.press("Enter")
-    check(
+    game.check(
       game.entity("game").state === "play",
       "a game of its own reaches the play",
     )
-    check(
+    game.check(
       whiteLines(game.state()).length === 0,
       `and every line in play is white too (${whiteLines(game.state())
         .map(([id]) => id)
         .join(", ")})`,
     )
-    check(
+    game.check(
       game.entity("game").recoverPoints === 3000,
       "healing starts at three thousand points",
     )
-    check(game.entity("game").health === 3, "with every life already in hand")
-    check(
+    game.check(
+      game.entity("game").health === 3,
+      "with every life already in hand",
+    )
+    game.check(
       game.playedSounds.includes("music"),
       "and the music running under it all",
     )
@@ -1846,11 +1954,11 @@ describe("Breakout", () => {
     ]
     game.entity("ball").velocity = [0, 0, 0]
     game.step(1)
-    check(
+    game.check(
       game.entity("game").score < 3000,
       `a first brick is under the bar (${game.entity("game").score})`,
     )
-    check(game.entity("game").health === 3, "so no life is recovered")
+    game.check(game.entity("game").health === 3, "so no life is recovered")
 
     // Over it, a life is.
     const recoverSoundsBefore = game.playedSounds.length
@@ -1867,19 +1975,19 @@ describe("Breakout", () => {
     ]
     game.entity("ball").velocity = [0, 0, 0]
     game.step(1)
-    check(
+    game.check(
       game.entity("game").health === 3,
       "still no life at three lives already in hand",
     )
-    check(
+    game.check(
       game.entity("game").recoverPoints === 6000,
       "but the bar has doubled to six thousand",
     )
-    check(
+    game.check(
       game.playedSounds.slice(recoverSoundsBefore).includes("recover"),
       "and the recovering sound",
     )
-    check(
+    game.check(
       game.playedSounds.filter((name) => name === "music").length === 1,
       "the music played once, not per state",
     )

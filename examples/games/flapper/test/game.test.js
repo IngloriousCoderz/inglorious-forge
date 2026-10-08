@@ -1,7 +1,5 @@
-import "./test-setup.js"
-
 import { createGame } from "@inglorious/engine/test"
-import { beforeEach, describe, expect, test } from "vitest"
+import { beforeEach, describe, test } from "vitest"
 
 import gameConfig from "../src/game.ijs"
 
@@ -25,9 +23,6 @@ const states = (game, frames = 400) => {
   return seen
 }
 
-const check = (condition, description) =>
-  expect(condition, description).toBe(true)
-
 describe("Flapper", () => {
   let game
 
@@ -43,15 +38,18 @@ describe("Flapper", () => {
     game.step()
 
     // then
-    check(
+    game.check(
       game.entity("game").state === "title",
       "the game waits on the title screen",
     )
-    check(
+    game.check(
       game.entity("title").value === "Inglorious Flapper",
       "which says what it is",
     )
-    check(game.entity("countdown").value === "", "and nothing else is said yet")
+    game.check(
+      game.entity("countdown").value === "",
+      "and nothing else is said yet",
+    )
   })
 
   test("begins the countdown on a press", () => {
@@ -62,11 +60,11 @@ describe("Flapper", () => {
     game.press("Enter")
 
     // then
-    check(
+    game.check(
       game.entity("game").state === "countdown",
       "pressing begins the countdown",
     )
-    check(game.entity("countdown").value !== "", "which is counted down")
+    game.check(game.entity("countdown").value !== "", "which is counted down")
   })
 
   test("counts down into the play", () => {
@@ -78,8 +76,8 @@ describe("Flapper", () => {
     const seen = states(game)
 
     // then
-    check(seen[0] === "countdown", "the countdown runs")
-    check(seen.includes("play"), "and it runs into the play")
+    game.check(seen[0] === "countdown", "the countdown runs")
+    game.check(seen.includes("play"), "and it runs into the play")
   })
 
   test("ends an unplayed bird", () => {
@@ -91,7 +89,7 @@ describe("Flapper", () => {
     const seen = states(game)
 
     // then
-    check(
+    game.check(
       seen.includes("score"),
       "an unplayed bird reaches the end of the game",
     )
@@ -107,9 +105,12 @@ describe("Flapper", () => {
     game.step()
 
     // then
-    check(game.entity("game").state === "score", "the game is over")
-    check(game.entity("gameOver").value === "Oof! You lost!", "which says so")
-    check(
+    game.check(game.entity("game").state === "score", "the game is over")
+    game.check(
+      game.entity("gameOver").value === "Oof! You lost!",
+      "which says so",
+    )
+    game.check(
       game.entity("gameOverScore").value !== "",
       "and shows what it came to",
     )

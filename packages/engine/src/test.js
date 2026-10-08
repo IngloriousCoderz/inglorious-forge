@@ -6,7 +6,6 @@ const DEFAULT_DT = 0.016
 const DEFAULT_STEP_FRAMES = 1
 const KEY_PRESS_SETTLING_FRAMES = 2
 const DEFAULT_HOLD_FRAMES = 30
-
 /**
  * A game to drive, with its sounds watched.
  *
@@ -39,6 +38,11 @@ export function createGame(gameConfig, extendWith = {}) {
   // first game is made.
   gameConfig.entities.game.devMode = false
 
+  // What the browser would have given the game, so that a test file has nothing to set up
+  // before it makes one. Doing it here rather than leaving it to the caller means a test
+  // cannot forget and be met with "AudioContext is not a constructor".
+  setupBrowser()
+
   const engine = new Engine(gameConfig)
   const playedSounds = []
 
@@ -53,6 +57,20 @@ export function createGame(gameConfig, extendWith = {}) {
 
   return {
     playedSounds,
+
+    /**
+     * An assertion that says what it was about.
+     *
+     * A failing `expect` without a description is one you have to go and find; a game
+     * saying it checks something reads as the game checking something.
+     *
+     * @param {boolean} condition - What is being claimed.
+     * @param {string} description - What is claimed, said as a fact about the game.
+     * @returns {void}
+     */
+    check(condition, description) {
+      expect(condition, description).toBe(true)
+    },
 
     /** One entity, by the name the game knows it by. */
     entity: (id) => engine._store.getEntity(id),
@@ -122,15 +140,34 @@ export function createGame(gameConfig, extendWith = {}) {
 }
 
 /**
- * An assertion that says what it was about.
+ * Mocks what a browser gives a game and a test environment does not.
  *
- * A failing `expect` without a description is one you have to go and find; with one, the
- * failure names the thing that stopped being true.
+ * Run this once per test file, from a setup module. Web Audio is the thing jsdom has
+ * never had, and the audio behaviour asks for a context as soon as an entity carries
+ * sounds; `navigator.getGamepads` is the other, and is defined rather than spied on
+ * because jsdom's navigator has no such property to spy on.
  *
- * @param {boolean} condition - What is being claimed.
- * @param {string} description - What is claimed, said as a fact about the game.
  * @returns {void}
  */
-export function check(condition, description) {
-  expect(condition, description).toBe(true)
+function setupBrowser() {
+  vi.stubGlobal(
+    "AudioContext",
+    class {
+      state = "running"
+      destination = {}
+      resume = () => Promise.resolve()
+      createGain = () => ({ gain: { value: 1 }, connect: vi.fn() })
+      createBufferSource = () => ({
+        connect: vi.fn(),
+        start: vi.fn(),
+        stop: vi.fn(),
+      })
+      decodeAudioData = () => Promise.resolve({})
+    },
+  )
+
+  Object.defineProperty(navigator, "getGamepads", {
+    value: () => [],
+    configurable: true,
+  })
 }

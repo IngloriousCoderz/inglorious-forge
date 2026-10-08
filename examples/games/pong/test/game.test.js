@@ -1,7 +1,5 @@
-import "./test-setup.js"
-
 import { createGame } from "@inglorious/engine/test"
-import { beforeEach, describe, expect, test } from "vitest"
+import { beforeEach, describe, test } from "vitest"
 
 import gameConfig from "../src/game.ijs"
 
@@ -10,9 +8,6 @@ const Z = 2
 
 /** Start, choose a paddle, and get into the play. */
 const intoPlay = (game) => game.step(4).press("Space").press("Space")
-
-const check = (condition, description) =>
-  expect(condition, description).toBe(true)
 
 describe("Pong", () => {
   let game
@@ -29,12 +24,15 @@ describe("Pong", () => {
     game.step()
 
     // then
-    check(game.entity("game").state === "start", "the game waits to be started")
-    check(
+    game.check(
+      game.entity("game").state === "start",
+      "the game waits to be started",
+    )
+    game.check(
       game.entity("game").servingPlayer === "player1",
       "with player one to serve",
     )
-    check(
+    game.check(
       game.entity("score").player1 === 0 && game.entity("score").player2 === 0,
       "and no score",
     )
@@ -48,8 +46,8 @@ describe("Pong", () => {
     game.press("Space")
 
     // then
-    check(game.entity("game").state === "serve", "space begins the serve")
-    check(
+    game.check(game.entity("game").state === "serve", "space begins the serve")
+    game.check(
       game.entity("message").value.includes("Player 1's serve"),
       "which says who is serving",
     )
@@ -64,9 +62,12 @@ describe("Pong", () => {
     game.press("Space")
 
     // then
-    check(game.entity("game").state === "play", "space again puts it in play")
-    check(game.entity("message").value === "", "and the message goes away")
-    check(game.entity("game").paused === undefined, "nothing is paused")
+    game.check(
+      game.entity("game").state === "play",
+      "space again puts it in play",
+    )
+    game.check(game.entity("message").value === "", "and the message goes away")
+    game.check(game.entity("game").paused === undefined, "nothing is paused")
   })
 
   test("serves a ball that travels", () => {
@@ -80,8 +81,8 @@ describe("Pong", () => {
     game.step(10)
 
     // then
-    check(game.entity("ball").position !== from, "the ball moves")
-    check(
+    game.check(game.entity("ball").position !== from, "the ball moves")
+    game.check(
       game.entity("ball").orientation === heading,
       "on the heading it was served",
     )
@@ -100,7 +101,7 @@ describe("Pong", () => {
     // then
     // Nothing clamps the position: a ball is reflected while it is still inside, so being
     // put back would never be needed.
-    check(
+    game.check(
       game.entity("ball").orientation !== heading,
       "a ball past a wall is turned back",
     )
@@ -119,12 +120,15 @@ describe("Pong", () => {
     game.step()
 
     // then
-    check(
+    game.check(
       game.entity("score")[scoring] === 1,
       `a ball off the far side scores to ${scoring}`,
     )
-    check(game.entity("game").state === "serve", "and the game serves again")
-    check(
+    game.check(
+      game.entity("game").state === "serve",
+      "and the game serves again",
+    )
+    game.check(
       game.entity("game").servingPlayer !== scoring,
       "with the player who conceded serving",
     )
@@ -142,11 +146,14 @@ describe("Pong", () => {
     game.step()
 
     // then
-    check(
+    game.check(
       game.entity("game").state === "gameOver",
       "the game is over once the score is reached",
     )
-    check(game.entity("message").value.includes("wins"), "and it says who won")
+    game.check(
+      game.entity("message").value.includes("wins"),
+      "and it says who won",
+    )
   })
 
   test("serves again with the score put back", () => {
@@ -161,7 +168,7 @@ describe("Pong", () => {
     game.press("Space")
 
     // then
-    check(game.entity("game").state === "serve", "and space serves again")
-    check(game.entity("score").player1 === 0, "with the score put back")
+    game.check(game.entity("game").state === "serve", "and space serves again")
+    game.check(game.entity("score").player1 === 0, "with the score put back")
   })
 })

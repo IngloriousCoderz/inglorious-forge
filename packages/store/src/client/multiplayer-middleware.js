@@ -1,15 +1,25 @@
 import { deserialize, extend, serialize } from "@inglorious/utils/object.js"
 
-// A constant for the server's WebSocket URL.
-const DEFAULT_SERVER_URL = `ws://${window.location.hostname}:3000`
 const DEFAULT_RECONNECTION_DELAY = 1000
+
+/**
+ * Where the server is, when the caller has not said.
+ *
+ * Read when it is asked for rather than when this module is imported, so that importing it
+ * does not require a browser -- which is what lets the store be imported anywhere.
+ *
+ * @returns {string} The server's WebSocket URL.
+ */
+function defaultServerUrl() {
+  return `ws://${window.location.hostname}:3000`
+}
 
 /**
  * Creates and returns the multiplayer middleware.
  * @returns {Function} The middleware function.
  */
 export function multiplayerMiddleware(config = {}) {
-  const serverUrl = config.serverUrl ?? DEFAULT_SERVER_URL
+  const serverUrl = config.serverUrl ?? defaultServerUrl()
   const reconnectionDelay =
     config.reconnectionDelay ?? DEFAULT_RECONNECTION_DELAY
 

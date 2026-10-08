@@ -165,6 +165,91 @@ const Paused = [
 
 The default is to **stop**. Anything that keeps going has to say so, so forgetting a flag pauses the thing you meant to pause rather than freezing the menu. See the [store's built-in events](https://github.com/iceonfire/inglorious-forge/tree/main/packages/store#built-in-events) for the full behaviour.
 
+## Testing a game
+
+`@inglorious/engine/test` is the harness for testing a game against its own store: no
+canvas, no browser, no loop.
+
+```javascript
+// test/game.test.js
+import { beforeEach, describe, expect, test } from "vitest"
+
+import { createGame } from "@inglorious/engine/test"
+
+import gameConfig from "../src/game.ijs"
+
+describe("Pong", () => {
+  let game
+
+  beforeEach(() => {
+    game = createGame(gameConfig)
+  })
+
+  test("begins the serve on space", () => {
+    // given
+    game.step(4)
+
+    // when
+    game.press("Space")
+
+    // then
+    expect(game.entity("game").state).toBe("serve")
+  })
+})
+```
+
+Each test makes its own game in `beforeEach`, and states what it needs in its `given`. A
+test that inherits from the one before it can only be run in one order.
+
+### The game under test
+
+|                                                |                                                                          |
+| ---------------------------------------------- | ------------------------------------------------------------------------ |
+| `game.entity(id)`                              | one entity, by the name the game knows it by                             |
+| `game.state()`                                 | the lot, for keys and for `Object.keys`                                  |
+| `game.pooled(type?)`                           | the pooled entities in play — drawn from a pool rather than in the state |
+| `game.check(condition, description)`           | assert, in a failure that says what it was about                         |
+| `game.playedSounds`                            | the sounds the game reached for, in order                                |
+| `game.notify(event, ...args)`                  | the one way anything is said to it                                       |
+| `game.step(frames)`                            | run frames                                                               |
+| `game.advance(seconds)`                        | run for a length of time                                                 |
+| `game.press(code)` / `game.hold(code, frames)` | tap a key / hold it down                                                 |
+
+`advance` is there because a test that waits something out is waiting for a lifetime, and
+a lifetime is in seconds. Converting that to frames by hand means assuming how many frames
+there are to a second — and that assumption is wrong by however far the step is from a
+sixtieth, which shows up as flakiness rather than as a failure.
+
+### Testing a game of your own
+
+`createGame` takes additions, so a game with a move of its own adds it rather than editing
+the harness:
+
+```javascript
+game = createGame(gameConfig, {
+  dropTheBall() {
+    this.entity("ball").position[1] = 0
+    return this.step(1)
+  },
+})
+```
+
+### Watching and saying
+
+`check` is `expect(condition, description)` — the message is what turns a failure into one
+you can read, and the game saying it checks something reads as the game checking something.
+
+`playedSounds` is a spy on where sounds are _handled_ rather than where they are asked for, so a
+sound wired to the wrong state is caught.
+
+`notify` is the single door into the store, so a test never reaches for `engine._store` —
+which is private, and whose `extras` are the engine's own.
+
+### Two things worth knowing
+
+**Dev mode freezes what the store publishes**, which is right for a game in a browser and
+wrong for a test that has to put a ball where a brick is. `createGame` turns it off.
+
 ## Documentation
 
 The best way to get started is with the official documentation, which includes a **[Quick Start Guide](https://inglorious-engine.vercel.app/?path=/docs/quick-start--docs)**.

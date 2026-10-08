@@ -25,15 +25,25 @@ async function load(context, cache, name, url) {
 }
 
 export function audio() {
-  const audioContext = new (window.AudioContext || window.webkitAudioContext)()
-
   const audioBufferCache = new Map()
   const activeSources = new Map()
+
+  // The context is made when something first asks for sound rather than when this is
+  // called, because the engine's own default configuration builds every behaviour as it is
+  // imported -- and a module that reaches for `window` on the way in cannot be imported
+  // where there is no window, which is anywhere a test runs.
+  let audioContext
+
+  function context() {
+    audioContext ??= new (window.AudioContext || window.webkitAudioContext)()
+
+    return audioContext
+  }
 
   function resume() {
     window.removeEventListener("pointerdown", resume)
     window.removeEventListener("keydown", resume)
-    audioContext.resume()
+    context().resume()
   }
 
   // Both stopping the game and being taken off the world have to let go of the window and
@@ -64,7 +74,7 @@ export function audio() {
 
       await Promise.all(
         Object.entries(sounds).map(([name, { url }]) =>
-          load(audioContext, audioBufferCache, name, url),
+          load(context(), audioBufferCache, name, url),
         ),
       )
     },
@@ -79,14 +89,14 @@ export function audio() {
       // replaces the previous one instead of stacking a new copy on top of it.
       activeSources.get(name)?.stop()
 
-      const source = audioContext.createBufferSource()
-      const gainNode = audioContext.createGain()
+      const source = context().createBufferSource()
+      const gainNode = context().createGain()
 
       source.buffer = audioBuffer
       gainNode.gain.value = volume
 
       source.connect(gainNode)
-      gainNode.connect(audioContext.destination)
+      gainNode.connect(context().destination)
 
       source.loop = loop
       source.start()
