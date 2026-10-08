@@ -9,7 +9,7 @@ const X = 0
 const Z = 2
 
 /** Start, choose a paddle, and get into the play. */
-const intoPlay = (_game) => _game.step(4).press("Space").press("Space")
+const intoPlay = (game) => game.step(4).press("Space").press("Space")
 
 const check = (condition, description) =>
   expect(condition, description).toBe(true)

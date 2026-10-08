@@ -11,13 +11,13 @@ import gameConfig from "../src/game.ijs"
  * Nothing is flown here, so the bird falls, misses a pipe and the game ends: the states
  * are recorded as they pass rather than waited for one at a time.
  */
-const states = (_game, frames = 400) => {
-  const seen = [_game.entity("game").state]
+const states = (game, frames = 400) => {
+  const seen = [game.entity("game").state]
 
   for (let i = 0; i < frames; i++) {
-    _game.step()
+    game.step()
 
-    const now = _game.entity("game").state
+    const now = game.entity("game").state
 
     if (seen.at(-1) !== now) seen.push(now)
   }

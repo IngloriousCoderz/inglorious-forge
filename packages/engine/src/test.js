@@ -40,25 +40,38 @@ export function createGame(gameConfig, extendWith = {}) {
   gameConfig.entities.game.devMode = false
 
   const engine = new Engine(gameConfig)
-  const played = []
+  const playedSounds = []
 
   // Sounds are watched where they are handled rather than where they are asked for, so
   // this records what the game actually reached for. Recording the request instead would
   // not catch a sound wired to the wrong state.
   vi.spyOn(engine._store.getType("Audio"), "soundPlay").mockImplementation(
-    function soundPlay(entity, name) {
-      played.push(name)
+    function soundPlay(_, name) {
+      playedSounds.push(name)
     },
   )
 
   return {
-    engine,
-    store: engine._store,
-    played,
+    playedSounds,
 
     /** One entity, by the name the game knows it by. */
     entity: (id) => engine._store.getEntity(id),
     state: () => engine._store.getState(),
+
+    /**
+     * The pooled entities of a type that are in play right now.
+     *
+     * Pooled entities live outside the store's state -- they are drawn from a pool and put
+     * back rather than being added and removed -- so one is not read by looking up an id.
+     *
+     * @param {string} [typeName] - Which type of pooled entity to answer with.
+     * @returns {Object[]} The entities currently in play.
+     */
+    pooled(typeName) {
+      const active = engine._store.extras.getAllActivePoolEntities()
+
+      return typeName ? active.filter(({ type }) => type === typeName) : active
+    },
 
     /** The one way anything is said to the game. */
     notify(event, ...args) {
@@ -72,6 +85,21 @@ export function createGame(gameConfig, extendWith = {}) {
       for (let i = 0; i < frames; i++) engine.update(DEFAULT_DT)
 
       return this
+    },
+
+    /**
+     * Run the game for a length of time, rather than for a number of frames.
+     *
+     * A test that waits something out is waiting for a lifetime, and a lifetime is in
+     * seconds. Working it out in frames means assuming how many of them there are to a
+     * second -- and that assumption is wrong by as much as the step is away from a
+     * sixtieth.
+     *
+     * @param {number} seconds - How long to run for.
+     * @returns {Object} The game, to keep a chain going.
+     */
+    advance(seconds) {
+      return this.step(Math.ceil(seconds / DEFAULT_DT))
     },
 
     /** Tap a key: down, up, then a short settling period for it to be seen in. */

@@ -41,10 +41,7 @@ const whiteLines = (state) =>
   )
 
 // The debris a brick throws off when it is hit.
-const debrisOf = (_game) =>
-  _game.engine._store.extras
-    .getAllActivePoolEntities()
-    .filter((p) => p.type === "Particle")
+const debrisOf = (game) => game.pooled("Particle")
 
 const scoreOf = (hp) => brickTierOf(hp) * 200 + brickColourOf(hp) * 25
 
@@ -76,6 +73,9 @@ const linesFit = (screen, where) => {
 function paddedForOddColumns(leftEdge) {
   return leftEdge >= 8 && (leftEdge - 8) % BRICK_WIDTH === 0
 }
+
+// Long enough for the last frame of a piece to have been lived, and a little past it.
+const A_MARGIN = 0.1
 
 const check = (condition, description) =>
   expect(condition, description).toBe(true)
@@ -314,7 +314,7 @@ describe("Breakout", () => {
 
     // The ball plays sounds as it goes, so this asks whether the confirm happened rather
     // than whether it was the last thing to happen.
-    const beforeConfirm = game.played.length
+    const beforeConfirm = game.playedSounds.length
     game.press("Enter")
     check(
       game.entity("game").state === "paddleSelect",
@@ -396,10 +396,13 @@ describe("Breakout", () => {
       game.entity("game").paddleSkin === 1,
       "left at the first paddle stays there",
     )
-    check(game.played.includes("noSelect"), "and says it cannot go further")
+    check(
+      game.playedSounds.includes("noSelect"),
+      "and says it cannot go further",
+    )
     game.press("ArrowRight")
     check(game.entity("game").paddleSkin === 2, "right moves along")
-    check(game.played.includes("select"), "with the sound of moving")
+    check(game.playedSounds.includes("select"), "with the sound of moving")
     check(
       game.entity("selectLeftArrow").tint === "white",
       "so the left arrow is no longer darkened",
@@ -447,7 +450,7 @@ describe("Breakout", () => {
       "with one paddle standing, not one chosen and one default",
     )
     check(
-      game.played.slice(beforeConfirm).includes("confirm"),
+      game.playedSounds.slice(beforeConfirm).includes("confirm"),
       "Enter sounds the confirm",
     )
     check(game.entity("paddle") !== undefined, "and the paddle arrives with it")
@@ -589,12 +592,12 @@ describe("Breakout", () => {
     // The original plays its pause sound both pausing and resuming. Which sound came out
     // last is not the question, because the ball is live again by the end of the press and
     // may have reached something: whether the pause was sounded at all is.
-    const beforeResume = game.played.length
+    const beforeResume = game.playedSounds.length
     game.press("Space")
     check(game.entity("game").state === "play", "space resumes")
     check(game.entity("paused").value === "", "and PAUSED goes away")
     check(
-      game.played.slice(beforeResume).includes("pause"),
+      game.playedSounds.slice(beforeResume).includes("pause"),
       "resuming sounds the pause again",
     )
 
@@ -697,7 +700,7 @@ describe("Breakout", () => {
       game.entity("game").state === "victory",
       `and the level is finished (${game.entity("game").state})`,
     )
-    check(game.played.includes("victory"), "having sounded the victory")
+    check(game.playedSounds.includes("victory"), "having sounded the victory")
     check(
       game.entity("victoryTitle").value === "Level 1 complete!",
       "the victory says so",
@@ -941,8 +944,10 @@ describe("Breakout", () => {
 
     // Every hit sounds the hit, and only the hit that finally breaks a brick sounds the
     // break as well -- so a brick that took seven hits was heard six times and broken once.
-    const hitCount = game.played.filter((name) => name === "brickHit").length
-    const brokenCount = game.played.filter(
+    const hitCount = game.playedSounds.filter(
+      (name) => name === "brickHit",
+    ).length
+    const brokenCount = game.playedSounds.filter(
       (name) => name === "brickBroken",
     ).length
     check(
@@ -1018,7 +1023,7 @@ describe("Breakout", () => {
     game.state()[dustBrick].hp = 8
 
     check(
-      debrisOf(game).length === 0,
+      game.pooled("Particle").length === 0,
       "a level on its own throws off no debris",
     )
 
@@ -1027,7 +1032,7 @@ describe("Breakout", () => {
     game.entity("ball").velocity = [0, 0, 0]
     game.step(1)
 
-    const debris = debrisOf(game)
+    const debris = game.pooled("Particle")
     check(
       debris.length === 64,
       `a brick hit throws off ${64} pieces (${debris.length})`,
@@ -1089,10 +1094,10 @@ describe("Breakout", () => {
 
     // Each piece has its own lifetime, so the longest has to be waited out before the burst
     // has all gone.
-    const longestLife = Math.max(...debris.map((p) => p.life))
-    game.step(Math.ceil(longestLife * 60) + 2)
+    const longestLife = Math.max(...game.pooled("Particle").map((p) => p.life))
+    game.advance(longestLife + A_MARGIN)
     check(
-      debrisOf(game).length === 0,
+      game.pooled("Particle").length === 0,
       "and gone again once they have lived their time",
     )
   })
@@ -1115,9 +1120,8 @@ describe("Breakout", () => {
 
     // The first burst is waited out, so what the second one is compared against is debris
     // and not what is left of the last of the last one.
-    game.step(
-      Math.ceil(Math.max(...debrisOf(game).map((p) => p.life)) * 60) + 2,
-    )
+    const longestLife = Math.max(...game.pooled("Particle").map((p) => p.life))
+    game.advance(longestLife + A_MARGIN)
 
     // A brick from a tier further up the sheet, thrown debris brighter than the one above.
     const [higher] = bricks.slice(1)
@@ -1148,7 +1152,7 @@ describe("Breakout", () => {
       `and only the broken one is gone (${knockedOut} of ${bricks.length})`,
     )
 
-    const hurtBefore = game.played.length
+    const hurtBefore = game.playedSounds.length
     game.dropTheBall()
     check(
       game.entity("game").state === "serve",
@@ -1156,7 +1160,7 @@ describe("Breakout", () => {
     )
     check(game.entity("game").health === 2, "and costs a life")
     check(
-      game.played.slice(hurtBefore).includes("hurt"),
+      game.playedSounds.slice(hurtBefore).includes("hurt"),
       "having sounded the hurt",
     )
     // The hearts fill from the left, so only the last one empties. They are asked on the
@@ -1179,12 +1183,12 @@ describe("Breakout", () => {
 
     // The last life ends the game.
     const finalScore = game.entity("game").score
-    const gameOverSounds = game.played.length
+    const gameOverSounds = game.playedSounds.length
     game.dropTheBall()
     check(game.entity("game").health === 0, "the last life is spent")
     check(game.entity("game").state === "gameOver", "and the game is over")
     check(
-      game.played.slice(gameOverSounds).includes("hurt"),
+      game.playedSounds.slice(gameOverSounds).includes("hurt"),
       "having sounded the hurt one last time",
     )
     // The screen is put up by the transition itself, so it needs the frame after before it
@@ -1245,7 +1249,7 @@ describe("Breakout", () => {
       "a score past all of them earns a name",
     )
     check(
-      game.played.includes("highScore"),
+      game.playedSounds.includes("highScore"),
       "and says so with the high score sound",
     )
     check(
@@ -1292,11 +1296,11 @@ describe("Breakout", () => {
 
     // Up and down scroll the letter being changed, wrapping round at A and at Z. No sound:
     // the original plays one only for moving between the letters.
-    const soundsBeforeScroll = game.played.length
+    const soundsBeforeScroll = game.playedSounds.length
     game.press("ArrowUp")
     check(game.entity("game").name === "BAA", "up scrolls the letter on")
     check(
-      game.played.length === soundsBeforeScroll,
+      game.playedSounds.length === soundsBeforeScroll,
       "and says nothing while doing it",
     )
     for (let i = 0; i < TWENTY_FOUR; i++) game.press("ArrowUp")
@@ -1309,19 +1313,19 @@ describe("Breakout", () => {
     check(game.entity("game").name === "AAA", "and up again comes back to A")
 
     // Left and right choose which letter is being changed, and say so.
-    const soundsBeforeMove = game.played.length
+    const soundsBeforeMove = game.playedSounds.length
     game.press("ArrowLeft")
     check(
       game.entity("game").letter === 1,
       "the first letter is already being changed",
     )
     check(
-      game.played.length === soundsBeforeMove,
+      game.playedSounds.length === soundsBeforeMove,
       "and moving onto it says nothing",
     )
     game.press("ArrowRight")
     check(game.entity("game").letter === 2, "right moves to the second")
-    check(game.played.includes("select"), "with the select sound")
+    check(game.playedSounds.includes("select"), "with the select sound")
     check(
       game.entity("enteredLetter0").color === "white",
       "leaving the first unpicked",
@@ -1417,8 +1421,6 @@ describe("Breakout", () => {
   test("the ball and what it bounces off", () => {
     // The ball gets a game of its own, so that it is served fresh rather than wherever the
     // checks above left it.
-    const ballNotify = game.engine._store.notify.bind(game.engine)
-
     game.step(4)
     check(
       game.entity("ball") === undefined,
@@ -1433,20 +1435,20 @@ describe("Breakout", () => {
     // Three Enters reach the play: one leaves the menu, one confirms the paddle, and one
     // answers the serve. Each is given its own update so the field is standing up before the
     // next is pressed.
-    ballNotify("keyboardKeyDown", "Enter")
-    ballNotify("keyboardKeyUp", "Enter")
+    game.notify("keyboardKeyDown", "Enter")
+    game.notify("keyboardKeyUp", "Enter")
     game.step(2)
     check(
       game.entity("game").state === "paddleSelect",
       "the ball's game reaches the choice of paddle",
     )
-    ballNotify("keyboardKeyDown", "Enter")
-    ballNotify("keyboardKeyUp", "Enter")
+    game.notify("keyboardKeyDown", "Enter")
+    game.notify("keyboardKeyUp", "Enter")
     game.step(2)
     check(game.entity("game").state === "serve", "and then the serve")
 
-    ballNotify("keyboardKeyDown", "Enter")
-    ballNotify("keyboardKeyUp", "Enter")
+    game.notify("keyboardKeyDown", "Enter")
+    game.notify("keyboardKeyUp", "Enter")
     // One update is needed to process the key, and the ball is served inside it but not
     // moved until the next, so this is the serve itself.
     game.step(1)
@@ -1657,7 +1659,7 @@ describe("Breakout", () => {
       `it stops flush with the ceiling (${game.entity("ball").position[1]})`,
     )
     check(game.entity("ball").velocity[1] < 0, "and comes back down")
-    check(game.played.includes("wallHit"), "having sounded the wall hit")
+    check(game.playedSounds.includes("wallHit"), "having sounded the wall hit")
 
     // A wall flips only the axis that ran into it, so the sideways speed survives it.
     game.step(600)
@@ -1673,8 +1675,8 @@ describe("Breakout", () => {
     // to be playing, so it is put back in play if the ball has ended it.
     const toPlay = () => {
       if (game.entity("game").state !== "play") {
-        ballNotify("keyboardKeyDown", "Enter")
-        ballNotify("keyboardKeyUp", "Enter")
+        game.notify("keyboardKeyDown", "Enter")
+        game.notify("keyboardKeyUp", "Enter")
         game.step(2)
       }
 
@@ -1683,8 +1685,8 @@ describe("Breakout", () => {
     check(toPlay() === "play", "the ball's game is back in play")
 
     // A halted world stops it, which is the whole point of not asking.
-    ballNotify("keyboardKeyDown", "Space")
-    ballNotify("keyboardKeyUp", "Space")
+    game.notify("keyboardKeyDown", "Space")
+    game.notify("keyboardKeyUp", "Space")
     game.step(2)
     check(game.entity("game").paused === true, "it can be paused")
     const running = game.entity("ball").position[1]
@@ -1693,8 +1695,8 @@ describe("Breakout", () => {
       game.entity("ball").position[1] === running,
       "and does not move while paused",
     )
-    ballNotify("keyboardKeyDown", "Space")
-    ballNotify("keyboardKeyUp", "Space")
+    game.notify("keyboardKeyDown", "Space")
+    game.notify("keyboardKeyUp", "Space")
     game.step(2)
 
     // Coming down onto the paddle flips the vertical axis and nothing else. Rather than
@@ -1708,7 +1710,7 @@ describe("Breakout", () => {
     // The ball is left sitting in the paddle rather than pushed out of it, because the
     // original does not separate them either, so it flips on every frame it is inside. What
     // matters is that it flipped at all.
-    const beforeHit = game.played.length
+    const beforeHit = game.playedSounds.length
     const sidewaysBefore = game.entity("ball").velocity[0]
     const signs = new Set()
     for (let i = 0; i < 6; i++) {
@@ -1722,7 +1724,7 @@ describe("Breakout", () => {
       "and flips nothing but the vertical axis",
     )
     check(
-      game.played.slice(beforeHit).includes("paddleHit"),
+      game.playedSounds.slice(beforeHit).includes("paddleHit"),
       "having sounded the paddle hit",
     )
 
@@ -1735,7 +1737,7 @@ describe("Breakout", () => {
     toPaddle.position[1] = paddleTop - 1
     toPaddle.velocity[1] = -50
 
-    const afterPaddle = game.played.length
+    const afterPaddle = game.playedSounds.length
     game.step(1)
 
     check(
@@ -1747,14 +1749,14 @@ describe("Breakout", () => {
       `going back up (${game.entity("ball").velocity[1]})`,
     )
     check(
-      game.played.slice(afterPaddle).filter((s) => s === "paddleHit").length ===
-        1,
+      game.playedSounds.slice(afterPaddle).filter((s) => s === "paddleHit")
+        .length === 1,
       "having sounded the paddle hit exactly once",
     )
     game.step(3)
     check(
-      game.played.slice(afterPaddle).filter((s) => s === "paddleHit").length ===
-        1,
+      game.playedSounds.slice(afterPaddle).filter((s) => s === "paddleHit")
+        .length === 1,
       "and not again on the frames after",
     )
 
@@ -1826,7 +1828,10 @@ describe("Breakout", () => {
       "healing starts at three thousand points",
     )
     check(game.entity("game").health === 3, "with every life already in hand")
-    check(game.played.includes("music"), "and the music running under it all")
+    check(
+      game.playedSounds.includes("music"),
+      "and the music running under it all",
+    )
 
     // Under the bar, a life is not earned.
     const healBricks = Object.keys(game.state()).filter((id) =>
@@ -1848,7 +1853,7 @@ describe("Breakout", () => {
     check(game.entity("game").health === 3, "so no life is recovered")
 
     // Over it, a life is.
-    const recoverSoundsBefore = game.played.length
+    const recoverSoundsBefore = game.playedSounds.length
     game.entity("game").score = 3001
     const healBricksAfter = Object.keys(game.state()).filter((id) =>
       id.startsWith("brick"),
@@ -1871,11 +1876,11 @@ describe("Breakout", () => {
       "but the bar has doubled to six thousand",
     )
     check(
-      game.played.slice(recoverSoundsBefore).includes("recover"),
+      game.playedSounds.slice(recoverSoundsBefore).includes("recover"),
       "and the recovering sound",
     )
     check(
-      game.played.filter((name) => name === "music").length === 1,
+      game.playedSounds.filter((name) => name === "music").length === 1,
       "the music played once, not per state",
     )
   })
