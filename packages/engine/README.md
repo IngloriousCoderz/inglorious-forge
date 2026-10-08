@@ -103,12 +103,21 @@ box smaller than itself, or shaped like a point or a circle.
 A block may also carry its own `size` and `offset`, so the shape can be measured from a
 different place than the sprite is drawn from:
 
+All nine anchors are exported by name from `@inglorious/engine/physics/anchor.js` --
+`TOP_LEFT`, `TOP_CENTER`, `TOP_RIGHT`, `LEFT`, `CENTER`, `RIGHT`, `BOTTOM_LEFT`,
+`BOTTOM_CENTER` and `BOTTOM_RIGHT`. Write those rather than the numbers: an anchor
+counts from the low end of every axis, so `[0, 1]` is `TOP_LEFT` and not
+`BOTTOM_LEFT`, and getting it backwards changes where things are drawn _and_ where
+they collide.
+
 ```javascript
+import { TOP_LEFT } from "@inglorious/engine/physics/anchor.js"
+
 ball: {
   type: "Ball",
   position: v(100, 100, 0),
   size: v(16, 16, 0),
-  anchor: [0, 0], // the sprite is drawn from its corner
+  anchor: TOP_LEFT, // the sprite is drawn from its top left corner
   collisions: {
     // ...but the circle is measured from its middle, so it is pushed there
     hitbox: { shape: "circle", radius: 8, offset: v(8, 8, 0) },

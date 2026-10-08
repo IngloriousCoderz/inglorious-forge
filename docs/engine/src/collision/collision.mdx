@@ -2,6 +2,7 @@ import { Canvas, Meta, Source } from "@storybook/addon-docs/blocks";
 import * as CollisionStories from "./collision.stories.js";
 
 import circles from './circles?raw'
+import anchors from './anchors?raw'
 import platform from './platform?raw'
 import tilemap from './tilemap?raw'
 
@@ -36,3 +37,31 @@ The example below demonstrates a player colliding with a tilemap. It also uses t
 <Canvas of={CollisionStories.Tilemap} />
 
 <Source dark code={tilemap} />
+
+## Anchors
+
+An `anchor` picks the point of a shape that sits on its `position`, and it moves the
+sprite, the drawn shapes and the collision shapes together, so a hitbox cannot drift
+away from what you can see.
+
+All nine are exported by name. Write the name rather than the pair of numbers: an anchor
+counts from the **low** end of every axis, so `[0, 1]` is `TOP_LEFT` and not
+`BOTTOM_LEFT` — and getting it backwards changes where things are drawn *and* where
+they collide, which is quiet enough not to notice until something passes through
+something else.
+
+| name | is |
+|---|---|
+| `BOTTOM_LEFT` | `[0, 0]` |
+| `BOTTOM_CENTER` | `[0.5, 0]` |
+| `BOTTOM_RIGHT` | `[1, 0]` |
+| `LEFT` | `[0, 0.5]` |
+| `CENTER` (the default) | `[0.5, 0.5]` |
+| `RIGHT` | `[1, 0.5]` |
+| `TOP_LEFT` | `[0, 1]` |
+| `TOP_CENTER` | `[0.5, 1]` |
+| `TOP_RIGHT` | `[1, 1]` |
+
+A third coordinate may be given for the depth axis, and defaults to the middle.
+
+<Source dark code={anchors} />
