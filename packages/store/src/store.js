@@ -75,6 +75,7 @@ export function createStore({
     getType,
     setType,
     getState,
+    getEntity,
     setState,
     reset,
   }
@@ -357,6 +358,20 @@ export function createStore({
    */
   function getState() {
     return state
+  }
+
+  /**
+   * One entity by its id, or `undefined` if there is no such entity.
+   *
+   * This is what `api.getEntity` answers with during a handler, exposed here for the
+   * code that runs outside one: a test looking at a world it is driving, or anything else
+   * holding the store rather than an event's `api`.
+   *
+   * @param {string} id - The entity's id.
+   * @returns {Object|undefined} The entity, as the last finished pass left it.
+   */
+  function getEntity(id) {
+    return state?.[id]
   }
 
   /**

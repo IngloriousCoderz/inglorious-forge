@@ -13,11 +13,11 @@ import { renderFps } from "@inglorious/renderer-2d/fps"
 import { renderRectangle } from "@inglorious/renderer-2d/shapes/rectangle"
 import { magnitude } from "@inglorious/utils/vector.js"
 
-import { Ball } from "./types/ball"
-import { Game } from "./types/game"
-import { paddle } from "./types/paddle"
-import { Score } from "./types/score"
-import { Text } from "./types/text"
+import { Ball } from "./types/ball.ijs"
+import { Game } from "./types/game.ijs"
+import { paddle } from "./types/paddle.ijs"
+import { Score } from "./types/score.ijs"
+import { Text } from "./types/text.ijs"
 
 const WIDTH = 432
 const HEIGHT = 243

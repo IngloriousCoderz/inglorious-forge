@@ -684,6 +684,19 @@ The wrapper snapshots the keys in the patch, applies them in `Start`, restores t
 
 ---
 
+### Reading a store from outside a handler
+
+`api.getEntity` is the answer during a handler. Outside one — a test driving a world, or
+anything else holding the store rather than an event — the store says the same thing
+itself:
+
+```javascript
+store.getEntity("user") // one entity, or undefined
+store.getState() // the lot
+```
+
+There is one lookup rather than two spellings of it: `api.getEntity` asks the store.
+
 ### Event scoping
 
 By default, lifecycle events are **scoped to the triggering entity**:

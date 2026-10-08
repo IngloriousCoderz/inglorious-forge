@@ -555,3 +555,37 @@ test("it should ignore a patch or a replacement for something that is not there"
     store.update()
   }).not.toThrow()
 })
+
+test("it should read one entity by its id", () => {
+  const store = createStore({
+    entities: { user: { id: "user", type: "User", name: "Ada" } },
+  })
+
+  expect(store.getEntity("user")).toMatchObject({ name: "Ada" })
+})
+
+test("it should answer with undefined for an entity that is not there", () => {
+  const store = createStore({
+    entities: { user: { id: "user", type: "User" } },
+  })
+
+  expect(store.getEntity("nobody")).toBeUndefined()
+})
+
+test("it should say the same thing as the api does during a handler", () => {
+  const store = createStore({
+    entities: { user: { id: "user", type: "User", name: "Ada" } },
+    types: {
+      User: {
+        read(entity) {
+          seen = store.getEntity("user").name
+        },
+      },
+    },
+  })
+
+  let seen
+  store.notify("read", { id: "user" })
+
+  expect(seen).toBe("Ada")
+})

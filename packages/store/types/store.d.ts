@@ -112,6 +112,7 @@ export interface Store<
   getType: (typeName: string) => EntityType<TEntity>
   setType: (typeName: string, type: EntityType<TEntity>) => void
   getState: () => TState
+  getEntity: (id: string) => TState[string] | undefined
   setState: (nextState: TState) => void
   reset: () => void
   _api?: Api<TEntity, TState>

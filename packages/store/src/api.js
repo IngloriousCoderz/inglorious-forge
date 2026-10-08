@@ -37,10 +37,14 @@ export function createApi(store, extras) {
     },
     /**
      * Retrieves a single entity by ID.
+     *
+     * The store answers this for itself, so there is one lookup rather than two
+     * spellings of the same one.
+     *
      * @param {string} id
      * @returns {Object | undefined}
      */
-    getEntity: (id) => store.getState()[id],
+    getEntity: store.getEntity,
     /**
      * Runs a selector against the current state.
      *

@@ -1,7 +1,7 @@
 import { Engine } from "@inglorious/engine/core/engine"
 import { createRenderer } from "@inglorious/renderer-2d"
 
-import game from "./game"
+import game from "./game.ijs"
 
 window.addEventListener("load", async () => {
   const isMobile = /Mobi/i.test(navigator.userAgent)
