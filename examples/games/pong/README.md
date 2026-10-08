@@ -16,11 +16,10 @@ pnpm dev
 ## Checking it
 
 ```sh
-npx vite-node smoke.js
+pnpm test
 ```
 
-Sixteen headless checks walk the serve, the play, a wall, a point and the end of the game,
-and report `all checks passed`.
+16 headless checks, run by `pnpm test` at the root.
 
 ## What this port is
 

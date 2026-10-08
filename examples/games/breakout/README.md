@@ -27,11 +27,10 @@ The game is covered by a headless harness that drives the store directly, with n
 and no browser:
 
 ```sh
-npx vite-node smoke.js
+pnpm test
 ```
 
-It walks the states, breaks bricks, recovers lives, records scores and types names, and
-reports `all checks passed`. There are 324 checks.
+It walks the states, breaks bricks, recovers lives, records scores and types names — 324 checks, run by `pnpm test` at the root.
 
 ## What changed, and why
 

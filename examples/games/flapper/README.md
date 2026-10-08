@@ -13,6 +13,14 @@ pnpm install
 pnpm dev
 ```
 
+## Checking it
+
+```sh
+pnpm test
+```
+
+Ten headless checks: the title, the countdown, the play and the end of an unplayed game.
+
 ## About this port
 
 Flapper is CS50's second lecture game: a bird that falls, a flap that pushes it up, and
