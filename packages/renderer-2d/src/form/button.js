@@ -1,8 +1,10 @@
 /* eslint-disable no-magic-numbers */
 
+const DEFAULT_SIZE = [100, 50]
+
 export function renderButton(entity, ctx) {
-  const { size, color = "black", thickness = 1 } = entity
-  const [width = 100, height = 50] = size
+  const { size = DEFAULT_SIZE, color = "black", thickness = 1 } = entity
+  const [width = DEFAULT_SIZE[0], height = DEFAULT_SIZE[1]] = size
 
   ctx.save()
 
