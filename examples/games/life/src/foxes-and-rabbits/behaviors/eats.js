@@ -1,5 +1,5 @@
-import { FOX, SPECIES } from "../constants.js"
-import { findAdjacentRabbit } from "../grid.js"
+import { SPECIES } from "../constants.js"
+import { findAdjacentRabbit } from "../index.js"
 
 export function eats(grid) {
   return (type) => ({
@@ -14,7 +14,7 @@ export function eats(grid) {
 
       if (prey) {
         api.notify(`#${prey.id}:eaten`, prey.id)
-        entity.energy += SPECIES[FOX].energyGain
+        entity.energy += SPECIES.Fox.energyGain
       }
     },
   })

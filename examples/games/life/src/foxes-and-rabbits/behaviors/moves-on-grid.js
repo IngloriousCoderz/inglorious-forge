@@ -1,4 +1,5 @@
-import { toPosition } from "../grid.js"
+import { toPosition } from "../../grid.js"
+import { getRandomNeighbor } from "../index.js"
 
 export function movesOnGrid(grid) {
   return (type) => ({
@@ -9,7 +10,7 @@ export function movesOnGrid(grid) {
         return
       }
 
-      const target = grid.getRandomNeighbor([entity.row, entity.column])
+      const target = getRandomNeighbor(grid, [entity.row, entity.column])
 
       if (!target) {
         return

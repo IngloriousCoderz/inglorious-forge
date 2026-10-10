@@ -1,7 +1,8 @@
 import { random } from "@inglorious/utils/math/rng"
 
-import { ONE, SPECIES, ZERO } from "../constants.js"
-import { createAnimal } from "../grid.js"
+import { SPECIES } from "../constants.js"
+import { getAvailableNeighbors } from "../index.js"
+import { createAnimal } from "../index.js"
 
 export function breeds(grid) {
   return (type) => ({
@@ -21,17 +22,17 @@ export function breeds(grid) {
         return
       }
 
-      let remaining = random(ONE, species.maxLitter)
+      let remaining = random(1, species.maxLitter)
 
-      if (!grid.canAddAnimal()) {
+      if (grid.isFull()) {
         return
       }
 
-      for (const [row, column] of grid.getAvailableNeighbors([
+      for (const [row, column] of getAvailableNeighbors(grid, [
         entity.row,
         entity.column,
       ])) {
-        if (remaining === ZERO || !grid.canAddAnimal()) {
+        if (remaining === 0 || grid.isFull()) {
           return
         }
 
@@ -41,7 +42,7 @@ export function breeds(grid) {
           api.notify("add", animal)
         }
 
-        remaining -= ONE
+        remaining -= 1
       }
     },
   })

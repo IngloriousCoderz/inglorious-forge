@@ -9,6 +9,8 @@
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
@@ -22,7 +24,9 @@
     "@inglorious/eslint-config": "workspace:*",
     "eslint": "^10.11.0",
     "prettier": "^3.9.9",
-    "vite": "^8.3.1"
+    "vite": "^8.3.1",
+    "vitest": "^5.0.0",
+    "jsdom": "^30.0.1"
   },
   "packageManager": "pnpm@10.15.0",
   "engines": {

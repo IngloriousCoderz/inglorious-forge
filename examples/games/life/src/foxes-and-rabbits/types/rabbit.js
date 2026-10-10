@@ -1,10 +1,11 @@
 import { renderRectangle } from "@inglorious/renderer-2d/shapes/rectangle"
 
+import { CELL_SIZE } from "../../constants.js"
 import { aged } from "../behaviors/aged.js"
 import { breeds } from "../behaviors/breeds.js"
 import { dies } from "../behaviors/dies.js"
 import { movesOnGrid } from "../behaviors/moves-on-grid.js"
-import { CELL_SIZE, RABBIT_COLOR, ZERO } from "../constants.js"
+import { RABBIT_COLOR } from "../constants.js"
 
 export function createRabbit(grid) {
   return [
@@ -18,7 +19,7 @@ export function createRabbit(grid) {
       render(entity, ctx) {
         renderRectangle(
           {
-            size: [CELL_SIZE, ZERO, CELL_SIZE],
+            size: [CELL_SIZE, 0, CELL_SIZE],
             color: "transparent",
             backgroundColor: RABBIT_COLOR,
             ...entity,

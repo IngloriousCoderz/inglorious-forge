@@ -1,4 +1,4 @@
-import { FOX, SPECIES, ZERO } from "../constants.js"
+import { SPECIES } from "../constants.js"
 
 export function aged() {
   return (type) => ({
@@ -11,13 +11,13 @@ export function aged() {
 
       entity.age += 1
 
-      if (entity.type === FOX) {
-        entity.energy -= SPECIES[FOX].energyDecay
+      if (entity.type === "Fox") {
+        entity.energy -= SPECIES.Fox.energyDecay
       }
 
       if (
         entity.age > SPECIES[entity.type].maxAge ||
-        (entity.type === FOX && entity.energy <= ZERO)
+        (entity.type === "Fox" && entity.energy <= 0)
       ) {
         entity.isDying = true
       }

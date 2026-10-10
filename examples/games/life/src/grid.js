@@ -1,6 +1,8 @@
 import { v } from "@inglorious/utils"
-import { getIndex, neighbors } from "@inglorious/utils/data-structures/board"
-import { random } from "@inglorious/utils/math/rng"
+import {
+  countNeighbors,
+  getIndex,
+} from "@inglorious/utils/data-structures/board"
 
 import {
   BOARD_COLUMNS,
@@ -9,34 +11,29 @@ import {
   BOARD_Z,
   CELL_SIZE,
   EMPTY,
-  FOX,
-  FOX_INITIAL_THRESHOLD,
-  INITIAL_ANIMAL_THRESHOLD,
-  ONE,
-  RABBIT,
-  SPECIES,
-  TWO,
-  ZERO,
 } from "./constants.js"
 
-let nextAnimalId = ZERO
+let nextId = 0
 const MAX_POPULATION = BOARD_ROWS * BOARD_COLUMNS
+const NO_WRAP = undefined
 
-export function createGrid() {
+/**
+ * A fixed board that remembers what stands where.
+ *
+ * The board is what both worlds have in common, so it knows nothing about foxes or
+ * rabbits or cells: it knows which square is taken and how full it is, and leaves what
+ * stands there to the game.
+ */
+export function createGrid({ wrap = NO_WRAP } = {}) {
   const entityAt = new Array(MAX_POPULATION).fill(EMPTY)
-  let population = ZERO
+  let population = 0
 
   function indexOf(row, column) {
     return getIndex(row, column, BOARD_COLUMNS)
   }
 
   function isInside(row, column) {
-    return (
-      row >= ZERO &&
-      row < BOARD_ROWS &&
-      column >= ZERO &&
-      column < BOARD_COLUMNS
-    )
+    return row >= 0 && row < BOARD_ROWS && column >= 0 && column < BOARD_COLUMNS
   }
 
   function isOccupied(row, column) {
@@ -59,7 +56,7 @@ export function createGrid() {
     }
 
     entityAt[index] = id
-    population += ONE
+    population += 1
     return true
   }
 
@@ -69,43 +66,46 @@ export function createGrid() {
     }
 
     entityAt[indexOf(row, column)] = EMPTY
-    population -= ONE
+    population -= 1
   }
 
-  function canAddAnimal() {
-    return population < MAX_POPULATION
-  }
-
-  function getAvailableNeighbors(coords) {
-    return neighbors(coords, [BOARD_ROWS, BOARD_COLUMNS]).filter(
-      ([row, column]) => !isOccupied(row, column),
+  function countOccupiedNeighbors(row, column) {
+    return countNeighbors(
+      entityAt,
+      [row, column],
+      [BOARD_ROWS, BOARD_COLUMNS],
+      {
+        wrap,
+        predicate: (cell) => cell !== EMPTY,
+      },
     )
   }
 
-  function getRandomNeighbor(coords) {
-    const available = getAvailableNeighbors(coords)
-    return available[Math.floor(random() * available.length)]
+  // Whether there is anywhere left to put one. It says nothing about whether any
+  // particular square is free -- that is `occupy`'s business, and it answers that
+  // separately, so a caller that wants to know can ask both questions.
+  function isFull() {
+    return population >= MAX_POPULATION
   }
 
   function reset(entities) {
     entityAt.fill(EMPTY)
-    population = ZERO
+    population = 0
 
     for (const id in entities) {
       const entity = entities[id]
 
-      if (entity.type === FOX || entity.type === RABBIT) {
+      if (entity.row !== undefined && entity.column !== undefined) {
         entityAt[indexOf(entity.row, entity.column)] = id
-        population += ONE
+        population += 1
       }
     }
   }
 
   return {
-    canAddAnimal,
-    getAvailableNeighbors,
+    isFull,
+    countOccupiedNeighbors,
     getEntityIdAt,
-    getRandomNeighbor,
     isOccupied,
     occupy,
     reset,
@@ -115,14 +115,19 @@ export function createGrid() {
 
 export function toPosition(row, column) {
   return v(
-    BOARD_X + column * CELL_SIZE + CELL_SIZE / TWO,
-    ZERO,
-    BOARD_Z - row * CELL_SIZE - CELL_SIZE / TWO,
+    BOARD_X + column * CELL_SIZE + CELL_SIZE / 2,
+    0,
+    BOARD_Z - row * CELL_SIZE - CELL_SIZE / 2,
   )
 }
 
-export function createAnimal(grid, type, row, column) {
-  const id = `${type.toLowerCase()}-${nextAnimalId++}`
+/**
+ * Puts something on the board at a square, if that square will take it.
+ *
+ * The board does not care what it is; the world that asked for it does.
+ */
+export function place(grid, type, row, column) {
+  const id = `${type.toLowerCase()}-${nextId++}`
 
   if (!grid.occupy(row, column, id)) {
     return undefined
@@ -133,63 +138,7 @@ export function createAnimal(grid, type, row, column) {
     type,
     row,
     column,
-    age: randomInitialAge(type),
-    energy: SPECIES[type].initialEnergy,
     isDying: false,
     position: toPosition(row, column),
   }
-}
-
-export function createInitialAnimals(grid) {
-  const animals = {}
-
-  for (let row = ZERO; row < BOARD_ROWS; row += ONE) {
-    for (let column = ZERO; column < BOARD_COLUMNS; column += ONE) {
-      const value = random()
-      const type =
-        value < FOX_INITIAL_THRESHOLD
-          ? FOX
-          : value < INITIAL_ANIMAL_THRESHOLD
-            ? RABBIT
-            : EMPTY
-
-      if (type) {
-        const animal = createAnimal(grid, type, row, column)
-
-        if (animal) {
-          animals[animal.id] = animal
-        }
-      }
-    }
-  }
-
-  grid.reset(animals)
-  return animals
-}
-
-export function findAdjacentRabbit(entity, grid, api) {
-  const adjacent = neighbors(
-    [entity.row, entity.column],
-    [BOARD_ROWS, BOARD_COLUMNS],
-  )
-
-  for (const [row, column] of adjacent) {
-    const preyId = grid.getEntityIdAt(row, column)
-
-    if (!preyId) {
-      continue
-    }
-
-    const prey = api.getEntity(preyId)
-
-    if (prey?.type === RABBIT && !prey.isDying) {
-      return prey
-    }
-  }
-
-  return undefined
-}
-
-function randomInitialAge(type) {
-  return Math.floor(random() * SPECIES[type].maxAge)
 }
