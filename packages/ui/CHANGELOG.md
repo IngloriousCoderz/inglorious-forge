@@ -1,5 +1,11 @@
 # @inglorious/ui
 
+## 7.1.4
+
+### Patch Changes
+
+- Fix FAB paddings
+
 ## 7.1.3
 
 ### Patch Changes

@@ -29,7 +29,7 @@ export function render({
   return html`<span
     class=${classMap({
       "iw-icon": true,
-      [`iw-icon-${size}`]: size !== "md",
+      [`iw-icon-${size}`]: true,
       "iw-icon-current": color === "current",
       ...extraClasses,
     })}

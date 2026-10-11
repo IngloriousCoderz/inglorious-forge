@@ -1,13 +1,17 @@
 .iw-button.iw-fab {
   box-shadow: var(--iw-shadow-lg);
+  margin: var(--iw-space-2);
   border: 0;
+  padding: 0;
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.65em;
-  line-height: 1;
-  font-weight: var(--iw-font-weight-normal);
+
+  font-size: var(--iw-font-size-sm);
+  font-weight: var(--iw-font-weight-medium);
+  line-height: var(--iw-line-height-normal);
+  text-transform: uppercase;
 
   &:hover:not(:disabled) {
     transform: translateY(-1px);
@@ -30,15 +34,18 @@
   }
 
   &.iw-fab-extended {
-    min-height: var(--iw-space-10);
+    height: var(--iw-space-10);
+    padding: 0 var(--iw-space-4);
     gap: var(--iw-space-2);
 
     &.iw-button-sm {
-      min-height: var(--iw-space-8);
+      height: var(--iw-space-8);
+      padding: 0 var(--iw-space-2);
     }
 
     &.iw-button-lg {
-      min-height: var(--iw-space-12);
+      height: var(--iw-space-12);
+      padding: 0 var(--iw-space-4);
     }
   }
 }
