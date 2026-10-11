@@ -1,5 +1,11 @@
 # @inglorious/ui
 
+## 7.1.3
+
+### Patch Changes
+
+- Fix FAB sizes
+
 ## 7.1.2
 
 ### Patch Changes

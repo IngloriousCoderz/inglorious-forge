@@ -3,8 +3,6 @@
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
-import { html } from "@inglorious/web"
-
 import { Button } from "../button/index.js"
 
 /**
@@ -27,9 +25,7 @@ export function render(props) {
     shape: isExtended ? "pill" : "round",
     className:
       `iw-fab ${isExtended ? "iw-fab-extended" : ""} ${className}`.trim(),
-    children: isExtended
-      ? children
-      : html`<span class="iw-fab-content">${children}</span>`,
+    children,
     onClick,
   })
 }

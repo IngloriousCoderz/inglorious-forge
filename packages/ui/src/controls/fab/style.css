@@ -1,76 +1,44 @@
 .iw-button.iw-fab {
   box-shadow: var(--iw-shadow-lg);
   border: 0;
-  width: 3.5rem;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.65em;
+  line-height: 1;
+  font-weight: var(--iw-font-weight-normal);
 
   &:hover:not(:disabled) {
     transform: translateY(-1px);
     box-shadow: var(--iw-shadow-xl);
   }
 
-  .iw-fab-content {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.65em;
-    line-height: 1;
-    font-weight: var(--iw-font-weight-normal);
-    transform: translateY(-0.04em);
-  }
+  &.iw-button-shape-round {
+    width: var(--iw-space-12);
+    height: var(--iw-space-12);
 
-  &.iw-button-sm {
-    width: 2.75rem;
-
-    .iw-fab-content {
-      font-size: 1.55em;
+    &.iw-button-sm {
+      width: var(--iw-space-10);
+      height: var(--iw-space-10);
     }
-  }
 
-  &.iw-button-lg {
-    width: 4.25rem;
-
-    .iw-fab-content {
-      font-size: 1.75em;
+    &.iw-button-lg {
+      width: var(--iw-space-14);
+      height: var(--iw-space-14);
     }
   }
 
   &.iw-fab-extended {
-    width: auto;
-    min-height: 2.5rem;
-    padding: var(--iw-space-2) var(--iw-space-4);
+    min-height: var(--iw-space-10);
     gap: var(--iw-space-2);
 
-    .iw-fab-content {
-      font-size: inherit;
-      transform: none;
+    &.iw-button-sm {
+      min-height: var(--iw-space-8);
     }
-  }
 
-  &.iw-fab-extended.iw-button-sm {
-    min-height: 2rem;
-    padding: var(--iw-space-1) var(--iw-space-3);
-  }
-
-  &.iw-fab-extended.iw-button-lg {
-    min-height: 3rem;
-    padding: var(--iw-space-3) var(--iw-space-5);
-  }
-
-  &.iw-fab-extended .iw-fab-content {
-    transform: none;
-  }
-
-  &.iw-fab-extended .iw-button-icon {
-    width: 1.1em;
-    height: 1.1em;
-    transform: translateY(-0.02em);
-  }
-
-  &.iw-fab-extended.iw-button-sm .iw-button-icon {
-    transform: none;
-  }
-
-  &.iw-fab-extended.iw-button-lg .iw-button-icon {
-    transform: translateY(-0.03em);
+    &.iw-button-lg {
+      min-height: var(--iw-space-12);
+    }
   }
 }
