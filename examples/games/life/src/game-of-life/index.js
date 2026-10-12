@@ -45,11 +45,11 @@ const PATTERNS = [
  * argument rather than a fixed arrangement: that is what lets the same world be set up
  * with one pattern on it while being worked out, and with three on it to be looked at.
  */
-export function createGameOfLife({ patterns = PATTERNS } = {}) {
+export function createGameOfLife({ patterns = PATTERNS, fps } = {}) {
   const grid = createGrid({ wrap: WRAPS })
 
   return createLifeGame({
-    systems: [generations(grid)],
+    systems: [generations(grid, { fps })],
 
     types: {
       Cell: createCell(),

@@ -36,6 +36,14 @@ export function buttonType() {
         entity.collisions ??= {}
         entity.collisions.hitbox ??= { shape: "rectangle" }
       },
+
+      pause(entity) {
+        if (entity.id === "pause") entity.label = "Resume"
+      },
+
+      resume(entity) {
+        if (entity.id === "pause") entity.label = "Pause"
+      },
     },
     button(),
     pressable(),

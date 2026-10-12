@@ -13,7 +13,7 @@ import { createRabbit } from "./types/rabbit.js"
  * Foxes and rabbits: each animal eats, ages and breeds on its own, and the world is
  * whatever results from all of them happening at once.
  */
-export function createFoxesAndRabbits({ animals } = {}) {
+export function createFoxesAndRabbits({ animals, fps } = {}) {
   const grid = createGrid()
   const rules = createRules()
   const initialAnimals = placeAnimals(
@@ -24,8 +24,8 @@ export function createFoxesAndRabbits({ animals } = {}) {
 
   return createLifeGame({
     types: {
-      Fox: createFox(grid, rules),
-      Rabbit: createRabbit(grid, rules),
+      Fox: createFox(grid, rules, { fps }),
+      Rabbit: createRabbit(grid, rules, { fps }),
       Board: [restarting(grid, rules)],
     },
     entities: initialAnimals,

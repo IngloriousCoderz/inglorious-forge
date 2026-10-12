@@ -147,3 +147,33 @@ test("it should keep running when nobody has asked to quit", () => {
 
   expect(stop).not.toHaveBeenCalled()
 })
+
+test("an update should process the queue once", () => {
+  // An update notifies the store of the frame and then asks it to process the queue.
+  // Those are one pass between them, not two: on an automatic store they would be, and
+  // the world would move twice for one frame.
+  const engine = new Engine(config())
+  const updates = vi.spyOn(engine._store, "update")
+
+  engine.update(1 / 60)
+
+  expect(updates).toHaveBeenCalledTimes(1)
+})
+
+test("an update should be heard once, not once for the notify and once for the pass", () => {
+  // The frame says `update`, and the world hears it through the pass that follows.
+  // Hearing it twice would be the world moving twice, which is what making the store's
+  // mode manual is what prevents.
+  let heard = 0
+  const engine = new Engine({
+    types: { Ear: { update: () => (heard += 1) } },
+    entities: {
+      game: { type: "Game", devMode: false },
+      ear: { type: "Ear" },
+    },
+  })
+
+  engine.update(1 / 60)
+
+  expect(heard).toBe(1)
+})

@@ -119,6 +119,14 @@ export function createStore({
       return []
     }
 
+    // Nothing queued means nothing to apply and nothing to publish: skipping the draft
+    // entirely, rather than copying the world just to arrive back where it started.
+    // This is what keeps a loop that pumps every animation frame cheap on the frames
+    // where neither the game nor the player had anything to say.
+    if (!incomingEvents.length) {
+      return []
+    }
+
     isProcessing = true
     const processedEvents = []
     let nextState

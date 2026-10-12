@@ -6,12 +6,17 @@ import { createGameOfLife } from "../src/game-of-life/index.js"
 
 const A_FRAME = 1
 
+// A world in a test turns every frame: these tests are about the rules and the
+// controls, and a step is meant to be one of them rather than one tenth of a second's
+// worth.
+const EVERY_FRAME = Infinity
+
 describe("the controls on the screen", () => {
   let game
 
   beforeEach(() => {
     vi.spyOn(Math, "random").mockReturnValue(0)
-    game = createGame(createGameOfLife())
+    game = createGame(createGameOfLife({ fps: EVERY_FRAME }))
   })
 
   test("there is a pause button and a reset button", () => {
@@ -153,7 +158,7 @@ describe("the sliders on the screen", () => {
 
   beforeEach(() => {
     vi.spyOn(Math, "random").mockReturnValue(0)
-    game = createGame(createFoxesAndRabbits())
+    game = createGame(createFoxesAndRabbits({ fps: EVERY_FRAME }))
   })
 
   test("there is a slider for every number the world runs on", () => {

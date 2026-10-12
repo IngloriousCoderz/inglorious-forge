@@ -57,6 +57,29 @@ describe("updateStrategy", () => {
     expect(after.counter).not.toBe(before.counter)
   })
 
+  test("an update with nothing queued leaves the state alone", () => {
+    // Nothing to apply means nothing to publish: skipping the draft entirely, rather
+    // than copying the world just to arrive back where it started. This is what keeps
+    // a loop that pumps every animation frame cheap on the frames where neither the
+    // game nor the player had anything to say.
+    for (const updateStrategy of STRATEGIES) {
+      const store = createCounterStore(updateStrategy)
+
+      // Once, to build the world: a fresh store still has the initial creates queued.
+      store.update()
+
+      const before = store.getState()
+      const seen = []
+
+      store.subscribe(() => seen.push(store.getState().counter.count))
+      const processed = store.update()
+
+      expect(processed).toEqual([])
+      expect(store.getState()).toBe(before)
+      expect(seen).toEqual([])
+    }
+  })
+
   test("both strategies add and remove entities", () => {
     for (const updateStrategy of STRATEGIES) {
       const store = createStore({

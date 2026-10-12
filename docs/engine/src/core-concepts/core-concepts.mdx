@@ -186,6 +186,32 @@ What if you want to provide a more retro feel to your game? You can use a fixed 
 
 <Source dark code={framerate} />
 
+## Entity Rates
+
+A fixed loop caps everything at once, the pointer included: a mouse drawn on the canvas
+moves at the loop's rate, because the renderer draws when the game updates. For a world
+that turns slowly and a pointer that should not, the rate belongs to the entity rather
+than to the loop. `atFps` gives an entity its own clock, and leaves the loop as fast as
+the screen takes it.
+
+```javascript
+import { atFps } from "@inglorious/engine/behaviors/at-fps.js";
+
+const Fox = [
+  { render: renderFox },
+  eats(grid, rules),
+  movesOnGrid(grid),
+  // Put it last: each behavior wraps the ones before it, so the last one is the one
+  // the store reaches first.
+  atFps(10),
+];
+```
+
+Two foxes can then move at different rates, and the screen keeps repainting at whatever
+the browser can manage in between. Each entity is told how long it has been since its
+last update rather than how long the frame that updated it took, so one moving by
+`velocity * dt` still moves by the whole of its tenth of a second.
+
 ## What's Next?
 
 You've now seen the core features of the engine. Here's where you can go from here:

@@ -8,7 +8,7 @@ import { v } from "@inglorious/utils/v.js"
 import { zero } from "@inglorious/utils/vector.js"
 
 export default {
-  loop: { type: "Fixed", fps: 10 },
+  loop: { type: "fixed", fps: 10 },
 
   types: {
     Character: [

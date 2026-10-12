@@ -21,7 +21,12 @@ import { entityPoolMiddleware } from "./middlewares/entity-pool/entity-pool-midd
 import { assertTypesAreDeclared } from "./types.js"
 
 // Default game configuration
-// loop.type specifies the type of loop to use (defaults to "animationFrame").
+/**
+ * @type {{loop: {type: LoopType, fps: number}, systems: Array, types: Object, entities: Object}}
+ *   `loop.type` is a {@link LoopType} and defaults to "animationFrame"; `loop.fps` is
+ *   what the loops that have a rate measure themselves against, and is ignored by the
+ *   ones that do not.
+ */
 const DEFAULT_GAME_CONFIG = {
   loop: { type: "animationFrame", fps: 60 },
 
@@ -132,6 +137,7 @@ export class Engine {
 
   /**
    * Updates the game state.
+   *
    * @param {number} dt - Delta time since the last update in milliseconds.
    */
   update(dt) {
@@ -139,9 +145,12 @@ export class Engine {
     // asked is cancelled on the way past. Checking before the world moves is what makes
     // quitting mean the game is finished, rather than leaving the engine running a frame
     // behind a loop that has stopped asking.
+    //
+    // Before the notify rather than after it, because `stop` drains the queue on its way
+    // out: an `update` queued and then abandoned would be picked up by that drain and
+    // handed to the world as a last tick from a game that is already over.
     if (this._store.getState().game?.quit) {
       this.stop()
-
       return
     }
 
@@ -154,7 +163,6 @@ export class Engine {
     // still ran to its end: a quit is given between frames, not in the middle of one.
     if (entities.game?.quit) {
       this.stop()
-
       return
     }
 
@@ -202,3 +210,9 @@ function isBehavior(value) {
 
   return isObject(value) || isFunction(value)
 }
+
+/**
+ * @typedef {Object.<string, Object>} Entity - An object representing an entity.
+ * @typedef {Object.<string, Entity>} Entities - A collection of entities indexed by id.
+ * @typedef {import("./loops/index.js").LoopType} LoopType - Which loop drives the game.
+ */

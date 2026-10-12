@@ -5,6 +5,16 @@ import { createGameOfLife } from "../src/game-of-life/index.js"
 
 const A_GENERATION = 1
 
+// A world in a test turns every frame: these tests are about the rules, and a
+// step is meant to be one of them rather than one tenth of a second's worth.
+const EVERY_FRAME = Infinity
+
+// The rate the board actually turns at, and how many steps of a test it takes to reach
+// one -- for the one test that is about the rate rather than the rules. A step is the
+// harness's sixteenth of a second, so seven of them is the first whole tenth.
+const FRAMES_SHORT_OF_A_TENTH = 6
+const FRAMES_A_TENTH = 7
+
 // A blinker turns over once every two generations, so it is back where it started after
 // two, and a glider walks one square across and one square down every four.
 const A_BLINKER_CYCLE = 2
@@ -22,7 +32,9 @@ const ACROSS_THE_EDGE = [
 describe("Conway's Game of Life", () => {
   test("a cell on its own dies, having nothing to keep it alive", () => {
     // given one cell, alone on an empty board
-    const game = createGame(createGameOfLife({ patterns: [[[10, 10]]] }))
+    const game = createGame(
+      createGameOfLife({ patterns: [[[10, 10]]], fps: EVERY_FRAME }),
+    )
 
     // when a generation passes
     game.step(A_GENERATION)
@@ -43,6 +55,7 @@ describe("Conway's Game of Life", () => {
             [11, 11],
           ],
         ],
+        fps: EVERY_FRAME,
       }),
     )
 
@@ -64,6 +77,7 @@ describe("Conway's Game of Life", () => {
             [20, 22],
           ],
         ],
+        fps: EVERY_FRAME,
       }),
     )
 
@@ -95,6 +109,7 @@ describe("Conway's Game of Life", () => {
             [11, 12],
           ],
         ],
+        fps: EVERY_FRAME,
       }),
     )
 
@@ -124,6 +139,7 @@ describe("Conway's Game of Life", () => {
             [11, 10],
           ],
         ],
+        fps: EVERY_FRAME,
       }),
     )
 
@@ -147,6 +163,7 @@ describe("Conway's Game of Life", () => {
             [32, 52],
           ],
         ],
+        fps: EVERY_FRAME,
       }),
     )
 
@@ -160,7 +177,9 @@ describe("Conway's Game of Life", () => {
 
   test("the world counts the far side of the board as next door", () => {
     // given two cells in opposite corners, which are neighbours on a board that wraps
-    const game = createGame(createGameOfLife({ patterns: ACROSS_THE_EDGE }))
+    const game = createGame(
+      createGameOfLife({ patterns: ACROSS_THE_EDGE, fps: EVERY_FRAME }),
+    )
 
     // when a generation passes
     game.step(A_GENERATION)
@@ -179,6 +198,7 @@ describe("Conway's Game of Life", () => {
             [20, 22],
           ],
         ],
+        fps: EVERY_FRAME,
       }),
     )
 
@@ -189,7 +209,7 @@ describe("Conway's Game of Life", () => {
 
   test("the three patterns the game starts with do not fight each other", () => {
     // given the world as it actually ships
-    const game = createGame(createGameOfLife())
+    const game = createGame(createGameOfLife({ fps: EVERY_FRAME }))
 
     // when the world turns for a good while
     game.step(20 * A_GENERATION)
@@ -211,6 +231,23 @@ function living(game) {
     .map(({ row, column }) => `${row},${column}`)
     .toSorted()
 }
+
+test("the board turns at its own rate rather than at the loop's", () => {
+  // Every other world in this file is asked to turn every frame, which is the point of
+  // them: a step is a generation. This one is built the way a browser would build it, so
+  // that the rate itself is what is under test.
+  const game = createGame(createGameOfLife({ patterns: [[[10, 10]]] }))
+
+  // Six steps is under a tenth of a second, so the board has not turned yet -- which is
+  // the whole difference between a board that turns ten times a second and one that
+  // turns with whatever the browser manages.
+  game.step(FRAMES_SHORT_OF_A_TENTH)
+  expect(cells(game)).toHaveLength(1)
+
+  // And on the seventh the board turns, which is the lonely cell dying of it.
+  game.step(FRAMES_A_TENTH - FRAMES_SHORT_OF_A_TENTH)
+  expect(cells(game)).toHaveLength(0)
+})
 
 /** Every living cell in the world. */
 function cells(game) {

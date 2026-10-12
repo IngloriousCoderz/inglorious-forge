@@ -4,6 +4,10 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest"
 import { createFoxesAndRabbits } from "../src/foxes-and-rabbits/index.js"
 
 const A_FRAME = 1
+
+// A world in a test turns every frame: these tests are about the rules, and a
+// step is meant to be one of them rather than one tenth of a second's worth.
+const EVERY_FRAME = Infinity
 const A_ROW = 10
 const A_COLUMN = 10
 const A_NEARBY_ROW = 10
@@ -146,7 +150,7 @@ describe("Foxes and rabbits", () => {
 
 /** A game with the given animals on an otherwise empty board. */
 function startWith(animals) {
-  return createGame(createFoxesAndRabbits({ animals }))
+  return createGame(createFoxesAndRabbits({ animals, fps: EVERY_FRAME }))
 }
 
 /** Every animal in the world, of one kind if asked. */

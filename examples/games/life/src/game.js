@@ -10,7 +10,6 @@ import { renderMouse } from "@inglorious/renderer-2d/mouse.js"
 import {
   BOARD_COLUMNS,
   BOARD_ROWS,
-  FPS,
   SCREEN_HEIGHT,
   SCREEN_WIDTH,
 } from "./constants.js"
@@ -64,7 +63,10 @@ export function createLifeGame({
 }) {
   return {
     updateStrategy: "full-clone",
-    loop: { type: "fixed", fps: FPS },
+    // As fast as the screen will take it. Anything that wants to move slower says so
+    // for itself -- a fixed loop here would hold the pointer to the same rate as the
+    // world, which is the one thing a pointer should not be.
+    loop: { type: "animationFrame" },
 
     systems: [...systems, ...(readout ? [readouts(readout)] : [])],
 
