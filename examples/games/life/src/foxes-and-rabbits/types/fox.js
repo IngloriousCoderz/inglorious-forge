@@ -8,7 +8,11 @@ import { eats } from "../behaviors/eats.js"
 import { movesOnGrid } from "../behaviors/moves-on-grid.js"
 import { FOX_COLOR } from "../constants.js"
 
-export function createFox(grid) {
+/**
+ * @param {Object} grid - The board the animals stand on.
+ * @param {Object} rules - The numbers this world is living by.
+ */
+export function createFox(grid, rules) {
   return [
     {
       render(entity, ctx) {
@@ -24,10 +28,10 @@ export function createFox(grid) {
       },
     },
     dies(grid),
-    aged(),
-    eats(grid),
+    aged(rules),
+    eats(grid, rules),
     movesOnGrid(grid),
-    breeds(grid),
+    breeds(grid, rules),
   ]
 }
 

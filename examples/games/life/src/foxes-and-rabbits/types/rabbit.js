@@ -7,7 +7,11 @@ import { dies } from "../behaviors/dies.js"
 import { movesOnGrid } from "../behaviors/moves-on-grid.js"
 import { RABBIT_COLOR } from "../constants.js"
 
-export function createRabbit(grid) {
+/**
+ * @param {Object} grid - The board the animals stand on.
+ * @param {Object} rules - The numbers this world is living by.
+ */
+export function createRabbit(grid, rules) {
   return [
     {
       eaten(entity, preyId) {
@@ -29,9 +33,9 @@ export function createRabbit(grid) {
       },
     },
     dies(grid),
-    aged(),
+    aged(rules),
     movesOnGrid(grid),
-    breeds(grid),
+    breeds(grid, rules),
   ]
 }
 

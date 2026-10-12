@@ -49,6 +49,95 @@ test("it should let go of the context when it is done", () => {
   expect(calls.at(-1)[0]).toBe("restore")
 })
 
+test("it should draw a crosshair when it is not told what to draw", () => {
+  // What it has always drawn, so games already out there keep pointing with it.
+  expect(callsTo(drawing(), "lineTo").length).toBe(4)
+})
+
+test("an arrow should be one filled shape rather than a handful of lines", () => {
+  const calls = drawing({ cursor: "arrow" })
+
+  expect(callsTo(calls, "lineTo").length).toBeGreaterThan(2)
+  expect(callsTo(calls, "fill").length).toBe(1)
+})
+
+test("an arrow should start where the finger is", () => {
+  // The tip is the top-left corner of the shape, because that is where a pointer
+  // points from.
+  const [, x, y] = callsTo(drawing({ cursor: "arrow" }), "moveTo")[0]
+
+  expect([x, y]).toEqual([0, 0])
+})
+
+test("a hand should be one filled shape rather than a handful of lines", () => {
+  const calls = drawing({ cursor: "hand" })
+
+  expect(callsTo(calls, "lineTo").length).toBeGreaterThan(2)
+  expect(callsTo(calls, "fill").length).toBe(1)
+})
+
+test("a hand should hold its finger up", () => {
+  // The finger is the only thing reaching the top edge: everything else stays below
+  // it, which is what makes it a pointing hand rather than a mitten.
+  const lines = callsTo(drawing({ cursor: "hand" }), "lineTo")
+  const tops = lines.map(([, , y]) => y)
+
+  expect(Math.min(...tops)).toBe(0)
+  expect(tops.filter((y) => y === 0).length).toBeLessThanOrEqual(2)
+})
+
+test("the fingers beside the index should be fingers rather than steps", () => {
+  // Each knuckle is about as wide as the index itself, so what stands to its right
+  // reads as more fingers rather than as a fist with one big middle finger.
+  const calls = drawing({ cursor: "hand" })
+  const starts = callsTo(calls, "moveTo").map(([, x, y]) => [x, y])
+  const lines = callsTo(calls, "lineTo").map(([, x, y]) => [x, y])
+  const points = [...starts, ...lines]
+
+  // The flat runs along the top, in the order they are drawn: the index first, then a
+  // knuckle each.
+  const flats = points
+    .slice(1)
+    .map(([x, y], index) =>
+      y === points[index][1] ? Math.abs(x - points[index][0]) : null,
+    )
+    .filter((width) => width !== null)
+    .slice(0, 3)
+
+  expect(flats.length).toBe(3)
+  expect(flats.every((width) => width >= 2)).toBe(true)
+})
+
+test("every cursor should be drawn in the colour it was given", () => {
+  for (const cursor of ["crosshair", "arrow", "hand"]) {
+    const calls = drawing({ cursor, color: "white" })
+
+    expect(callsTo(calls, "fillStyle")[0]).toEqual(["fillStyle", "white"])
+  }
+})
+
+test("the arrow and the hand should be outlined in black", () => {
+  // A white pointer with no outline washes out wherever the game is light, so the two
+  // filled cursors carry a dark edge while the crosshair stays one colour throughout.
+  for (const cursor of ["arrow", "hand"]) {
+    const calls = drawing({ cursor, color: "white" })
+
+    expect(callsTo(calls, "strokeStyle")[0]).toEqual(["strokeStyle", "black"])
+  }
+})
+
+test("it should outline in the colour it was given", () => {
+  const calls = drawing({ cursor: "hand", outlineColor: "red" })
+
+  expect(callsTo(calls, "strokeStyle")[0]).toEqual(["strokeStyle", "red"])
+})
+
+test("the crosshair should stay one colour throughout", () => {
+  const calls = drawing({ outlineColor: "red" })
+
+  expect(callsTo(calls, "strokeStyle")[0]).toEqual(["strokeStyle", "black"])
+})
+
 /** What the cursor asks a canvas to do. */
 function drawing(entity = {}) {
   const { calls, ctx } = createContext()

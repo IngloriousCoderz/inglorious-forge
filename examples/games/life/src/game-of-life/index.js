@@ -47,11 +47,31 @@ const PATTERNS = [
  */
 export function createGameOfLife({ patterns = PATTERNS } = {}) {
   const grid = createGrid({ wrap: WRAPS })
+
+  return createLifeGame({
+    systems: [generations(grid)],
+
+    types: {
+      Cell: createCell(),
+      Board: [restarting(grid, patterns)],
+    },
+
+    entities: seed(grid, patterns),
+
+    readout: (entities) => {
+      const { generation } = entities.board
+      return `Generation ${generation} - ${countCells(entities)} cells`
+    },
+  })
+}
+
+/** Puts the starting cells on the board, skipping any square already taken. */
+function seed(grid, patterns) {
   const cells = {}
 
   for (const pattern of patterns) {
     for (const [row, column] of pattern) {
-      const cell = placeCell(grid, row, column)
+      const cell = place(grid, "Cell", row, column)
 
       if (cell) {
         cells[cell.id] = cell
@@ -59,18 +79,37 @@ export function createGameOfLife({ patterns = PATTERNS } = {}) {
     }
   }
 
-  return createLifeGame({
-    systems: [generations(grid)],
-
-    types: {
-      Cell: createCell(),
-    },
-
-    entities: cells,
-  })
+  return cells
 }
 
-/** Puts a cell on the board at a square, if that square will take it. */
-export function placeCell(grid, row, column) {
-  return place(grid, "Cell", row, column)
+/**
+ * Puts the board back to how it started.
+ *
+ * The squares are freed before the new cells are put down, because a square will not
+ * take a cell while it still holds the old one -- which is the same rule that made a
+ * dying animal vacate before its successor arrived.
+ */
+function restarting(grid, patterns) {
+  return {
+    reset(board, event, api) {
+      for (const [id, cell] of Object.entries(api.getEntities())) {
+        if (cell.type !== "Cell") continue
+
+        grid.vacate(cell.row, cell.column)
+        api.notify("remove", id)
+      }
+
+      for (const cell of Object.values(seed(grid, patterns))) {
+        api.notify("add", cell)
+      }
+
+      board.generation = 0
+    },
+  }
+}
+
+/** How many cells are alive. */
+function countCells(entities) {
+  return Object.values(entities).filter((entity) => entity.type === "Cell")
+    .length
 }

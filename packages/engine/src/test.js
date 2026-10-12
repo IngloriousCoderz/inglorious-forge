@@ -150,6 +150,18 @@ export function createGame(gameConfig, extendWith = {}) {
  * @returns {void}
  */
 function setupBrowser() {
+  // A store grows an audio entity of its own accord, and audio waits for the player to
+  // touch the page before it will make a sound -- so stepping any game at all reaches
+  // for `window`. Under node there is none, so a stand-in is put up; under jsdom there
+  // already is one, and replacing it would take away everything the real one is for.
+  if (typeof window === "undefined") {
+    vi.stubGlobal("window", {
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      location: { search: "" },
+    })
+  }
+
   vi.stubGlobal(
     "AudioContext",
     class {

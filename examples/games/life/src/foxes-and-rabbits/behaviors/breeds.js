@@ -1,10 +1,18 @@
 import { random } from "@inglorious/utils/math/rng"
 
-import { SPECIES } from "../constants.js"
 import { getAvailableNeighbors } from "../index.js"
 import { createAnimal } from "../index.js"
 
-export function breeds(grid) {
+/**
+ * Breeds an animal once it is old enough, if the dice agree and there is room.
+ *
+ * The rules are handed in rather than reached for, because they are something a player
+ * can change while the world is running.
+ *
+ * @param {Object} grid - The board the animals stand on.
+ * @param {Object} rules - The numbers this world is living by.
+ */
+export function breeds(grid, rules) {
   return (type) => ({
     update(entity, dt, api) {
       type.update?.(entity, dt, api)
@@ -13,7 +21,7 @@ export function breeds(grid) {
         return
       }
 
-      const species = SPECIES[entity.type]
+      const species = rules[entity.type]
 
       if (
         entity.age < species.breedingAge ||
@@ -36,7 +44,7 @@ export function breeds(grid) {
           return
         }
 
-        const animal = createAnimal(grid, entity.type, row, column)
+        const animal = createAnimal(grid, entity.type, row, column, rules)
 
         if (animal) {
           api.notify("add", animal)

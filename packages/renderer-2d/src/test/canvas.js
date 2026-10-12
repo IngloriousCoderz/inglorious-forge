@@ -112,9 +112,15 @@ export function createContext() {
       stroke: (...args) => record("stroke")(...args),
       fillText: (...args) => record("fillText")(...args),
       set fillText_(value) {},
-      font: "",
-      textAlign: "",
-      textBaseline: "",
+      set font(value) {
+        record("font")(value)
+      },
+      set textAlign(value) {
+        record("textAlign")(value)
+      },
+      set textBaseline(value) {
+        record("textBaseline")(value)
+      },
       drawImage: (...args) => {
         record("drawImage")(...args)
         // The last four of the nine are where it lands; the four before them are where it

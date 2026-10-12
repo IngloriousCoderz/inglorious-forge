@@ -1,6 +1,13 @@
-import { SPECIES } from "../constants.js"
-
-export function aged() {
+/**
+ * Ages every animal, and takes a fox's energy down by what a day costs it.
+ *
+ * The rules are handed in rather than reached for, because they are something a player
+ * can change while the world is running: a behaviour that read a constant would carry
+ * on ageing animals to a maximum the slider had already moved.
+ *
+ * @param {Object} rules - The numbers this world is living by.
+ */
+export function aged(rules) {
   return (type) => ({
     update(entity, dt, api) {
       type.update?.(entity, dt, api)
@@ -9,14 +16,16 @@ export function aged() {
         return
       }
 
+      const species = rules[entity.type]
+
       entity.age += 1
 
       if (entity.type === "Fox") {
-        entity.energy -= SPECIES.Fox.energyDecay
+        entity.energy -= species.energyDecay
       }
 
       if (
-        entity.age > SPECIES[entity.type].maxAge ||
+        entity.age > species.maxAge ||
         (entity.type === "Fox" && entity.energy <= 0)
       ) {
         entity.isDying = true

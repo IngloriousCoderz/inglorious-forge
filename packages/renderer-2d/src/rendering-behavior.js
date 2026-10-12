@@ -12,8 +12,10 @@ export function rendering(canvas) {
   const ctx = canvas.getContext("2d")
 
   let _onMouseMove = null
+  let _onMouseDown = null
+  let _onMouseUp = null
   let _onClick = null
-  let _onWheel = null
+  let _onMouseWheel = null
 
   let _onTouchStart = null
   let _onTouchMove = null
@@ -49,24 +51,24 @@ export function rendering(canvas) {
 
       if (game.pixelated) {
         canvas.style.imageRendering = "pixelated"
-        ctx.textRendering = "geometricPrecision"
         ctx.imageSmoothingEnabled = false
       }
 
       const toGamePosition = createCoordinateConverter(canvas, api)
 
-      const { onMouseMove, onClick, onWheel } = trackMouse(
-        canvas,
-        api,
-        toGamePosition,
-      )
+      const { onMouseMove, onMouseDown, onMouseUp, onClick, onMouseWheel } =
+        trackMouse(canvas, api, toGamePosition)
       _onMouseMove = onMouseMove
+      _onMouseDown = onMouseDown
+      _onMouseUp = onMouseUp
       _onClick = onClick
-      _onWheel = onWheel
+      _onMouseWheel = onMouseWheel
 
       canvas.addEventListener("mousemove", _onMouseMove)
+      canvas.addEventListener("mousedown", _onMouseDown)
+      canvas.addEventListener("mouseup", _onMouseUp)
       canvas.addEventListener("click", _onClick)
-      canvas.addEventListener("wheel", _onWheel)
+      canvas.addEventListener("wheel", _onMouseWheel)
 
       const { onTouchStart, onTouchMove, onTouchEnd } = trackTouch(
         canvas,
@@ -103,11 +105,17 @@ export function rendering(canvas) {
       if (_onMouseMove) {
         canvas.removeEventListener("mousemove", _onMouseMove)
       }
+      if (_onMouseDown) {
+        canvas.removeEventListener("mousedown", _onMouseDown)
+      }
+      if (_onMouseUp) {
+        canvas.removeEventListener("mouseup", _onMouseUp)
+      }
       if (_onClick) {
         canvas.removeEventListener("click", _onClick)
       }
-      if (_onWheel) {
-        canvas.removeEventListener("wheel", _onWheel)
+      if (_onMouseWheel) {
+        canvas.removeEventListener("wheel", _onMouseWheel)
       }
 
       if (_onTouchStart) {

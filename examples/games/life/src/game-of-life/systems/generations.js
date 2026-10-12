@@ -7,6 +7,17 @@ const SURVIVES_ON = [2, 3]
 const IS_BORN_ON = 3
 
 /**
+ * How many turns the world has taken, kept on the board that was turned.
+ *
+ * The board is taken from the draft rather than asked for by name: a system that writes
+ * through the api is writing to a copy, and the number would go nowhere.
+ */
+function countGeneration(entities) {
+  const board = entities.board
+  board.generation = (board.generation ?? 0) + 1
+}
+
+/**
  * Steps the whole board one generation at a time.
  *
  * Conway's rule cannot be written as a behaviour on a cell, because a cell is born in a
@@ -16,8 +27,25 @@ const IS_BORN_ON = 3
  * decided everything.
  */
 export function generations(grid) {
+  // Halting the store stops the entities updating, but systems are still asked, so a
+  // generation has to hear the pause for itself. Without this the board carries on
+  // turning underneath a pause that everything else is honouring.
+  let halted = false
+
   return {
+    pause() {
+      halted = true
+    },
+
+    resume() {
+      halted = false
+    },
+
     update(entities, dt, api) {
+      if (halted) return
+
+      countGeneration(entities)
+
       const born = []
       const died = []
 

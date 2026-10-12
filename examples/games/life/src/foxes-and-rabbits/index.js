@@ -4,11 +4,8 @@ import { random } from "@inglorious/utils/math/rng"
 import { BOARD_COLUMNS, BOARD_ROWS, EMPTY } from "../constants.js"
 import { createLifeGame } from "../game.js"
 import { createGrid, place } from "../grid.js"
-import {
-  FOX_INITIAL_THRESHOLD,
-  INITIAL_ANIMAL_THRESHOLD,
-  SPECIES,
-} from "./constants.js"
+import { createRules } from "./constants.js"
+import { describeSliders } from "./parameters.js"
 import { createFox } from "./types/fox.js"
 import { createRabbit } from "./types/rabbit.js"
 
@@ -18,18 +15,32 @@ import { createRabbit } from "./types/rabbit.js"
  */
 export function createFoxesAndRabbits({ animals } = {}) {
   const grid = createGrid()
-  const initialAnimals = placeAnimals(grid, animals || scatterAcrossTheBoard())
+  const rules = createRules()
+  const initialAnimals = placeAnimals(
+    grid,
+    animals || scatterAcrossTheBoard(rules.start),
+    rules,
+  )
 
   return createLifeGame({
     types: {
-      Fox: createFox(grid),
-      Rabbit: createRabbit(grid),
+      Fox: createFox(grid, rules),
+      Rabbit: createRabbit(grid, rules),
+      Board: [restarting(grid, rules)],
     },
     entities: initialAnimals,
+
+    readout: (entities) => {
+      const { foxes, rabbits } = countAnimals(entities)
+      return `${foxes} foxes - ${rabbits} rabbits`
+    },
+
+    parameters: rules,
+    sliders: describeSliders(rules),
   })
 }
 
-export function createAnimal(grid, type, row, column) {
+export function createAnimal(grid, type, row, column, rules) {
   const animal = place(grid, type, row, column)
 
   if (!animal) {
@@ -38,8 +49,8 @@ export function createAnimal(grid, type, row, column) {
 
   return {
     ...animal,
-    age: randomInitialAge(type),
-    energy: SPECIES[type].initialEnergy,
+    age: randomInitialAge(type, rules),
+    energy: rules[type].initialEnergy,
   }
 }
 
@@ -49,13 +60,14 @@ export function createAnimal(grid, type, row, column) {
  *
  * @param {Object} grid - The board to put them on.
  * @param {Array[]} animals - Each one as `[type, row, column]`.
+ * @param {Object} rules - The numbers this world is living by.
  * @returns {Object} The animals that found a square.
  */
-export function placeAnimals(grid, animals) {
+export function placeAnimals(grid, animals, rules) {
   const placed = {}
 
   for (const [type, row, column] of animals) {
-    const animal = createAnimal(grid, type, row, column)
+    const animal = createAnimal(grid, type, row, column, rules)
 
     if (animal) {
       placed[animal.id] = animal
@@ -66,17 +78,54 @@ export function placeAnimals(grid, animals) {
   return placed
 }
 
+/**
+ * Puts the board back to a fresh scattering of animals.
+ *
+ * As in Conway's, the squares are freed before anything new is put on them, so nothing
+ * is ever asked to stand somewhere another animal is already standing.
+ */
+function restarting(grid, rules) {
+  return {
+    reset(entity, event, api) {
+      for (const [id, animal] of Object.entries(api.getEntities())) {
+        if (animal.type !== "Fox" && animal.type !== "Rabbit") continue
+
+        grid.vacate(animal.row, animal.column)
+        api.notify("remove", id)
+      }
+
+      for (const animal of Object.values(
+        placeAnimals(grid, scatterAcrossTheBoard(rules.start), rules),
+      )) {
+        api.notify("add", animal)
+      }
+    },
+  }
+}
+
+/** How many of each animal there are. */
+function countAnimals(entities) {
+  const animals = Object.values(entities).filter((entity) =>
+    ["Fox", "Rabbit"].includes(entity.type),
+  )
+
+  return {
+    foxes: animals.filter((animal) => animal.type === "Fox").length,
+    rabbits: animals.filter((animal) => animal.type === "Rabbit").length,
+  }
+}
+
 /** A few foxes and a good many rabbits, scattered thinly over an empty board. */
-function scatterAcrossTheBoard() {
+function scatterAcrossTheBoard(startingRules) {
   const animals = []
 
   for (let row = 0; row < BOARD_ROWS; row += 1) {
     for (let column = 0; column < BOARD_COLUMNS; column += 1) {
       const value = random()
       const type =
-        value < FOX_INITIAL_THRESHOLD
+        value < startingRules.fox
           ? "Fox"
-          : value < INITIAL_ANIMAL_THRESHOLD
+          : value < startingRules.rabbit
             ? "Rabbit"
             : EMPTY
 
@@ -125,6 +174,6 @@ export function findAdjacentRabbit(entity, grid, api) {
   return undefined
 }
 
-function randomInitialAge(type) {
-  return Math.floor(random() * SPECIES[type].maxAge)
+function randomInitialAge(type, rules) {
+  return Math.floor(random() * rules[type].maxAge)
 }

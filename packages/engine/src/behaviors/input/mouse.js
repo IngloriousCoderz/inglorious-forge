@@ -6,22 +6,58 @@ export function mouse() {
   return {
     create(entity) {
       entity.collisions ??= {}
+
+      // Two shapes, for two different jobs. `bounds` is what the pointer is kept inside,
+      // and `hitbox` is the point that is tested against everything else -- so a mouse
+      // with only the first of them is a cursor that never touches anything, and every
+      // press it makes lands on the scene rather than on the control under it.
       entity.collisions.bounds ??= { shape: "point" }
+      entity.collisions.hitbox ??= { shape: "point" }
     },
 
     mouseMove(entity, position, api) {
-      const game = api.getEntity("game")
+      move(entity, position, api)
+    },
 
-      entity.position = position
+    mouseDown(entity, position, api) {
+      move(entity, position, api)
 
-      clampToBounds(entity, game.size)
+      const pressed = findCollision(entity, api.getEntities())
+
+      // Remembered, because a release belongs to the press that started it rather than
+      // to whatever the pointer happens to be over when it is let go. Without this, a
+      // press that slides off its target -- which is what dragging a slider does -- is
+      // never released at all, and whatever was pressed stays pressed for good.
+      entity.pressedId = pressed?.id
+
+      if (pressed) {
+        api.notify("entityPress", pressed.id)
+      } else {
+        api.notify("scenePress", position)
+      }
+    },
+
+    mouseUp(entity, position, api) {
+      move(entity, position, api)
+
+      const released = entity.pressedId
+
+      entity.pressedId = undefined
+
+      if (released) {
+        api.notify("entityRelease", released)
+      } else {
+        api.notify("sceneRelease", position)
+      }
     },
 
     mouseClick(entity, position, api) {
-      const entities = api.getEntities()
-      const clickedEntity = findCollision(entity, entities)
-      if (clickedEntity) {
-        api.notify("entityClick", clickedEntity.id)
+      move(entity, position, api)
+
+      const clicked = findCollision(entity, api.getEntities())
+
+      if (clicked) {
+        api.notify("entityClick", clicked.id)
       } else {
         api.notify("sceneClick", position)
       }
@@ -36,13 +72,27 @@ export function trackMouse(parent, api, toGamePosition) {
     api,
     toGamePosition,
   )
+  const handleMouseDown = createHandler(
+    "mouseDown",
+    parent,
+    api,
+    toGamePosition,
+  )
+  const handleMouseUp = createHandler("mouseUp", parent, api, toGamePosition)
   const handleClick = createHandler("mouseClick", parent, api, toGamePosition)
-  const handleWheel = createHandler("mouseWheel", parent, api, toGamePosition)
+  const handleMouseWheel = createHandler(
+    "mouseWheel",
+    parent,
+    api,
+    toGamePosition,
+  )
 
   return {
     onMouseMove: handleMouseMove,
     onClick: handleClick,
-    onWheel: handleWheel,
+    onMouseDown: handleMouseDown,
+    onMouseUp: handleMouseUp,
+    onMouseWheel: handleMouseWheel,
   }
 }
 
@@ -72,4 +122,19 @@ function createHandler(type, parent, api, toGamePosition) {
     const position = toGamePosition(event.clientX, event.clientY)
     api.notify(type, position)
   }
+}
+
+/**
+ * Puts the pointer where the browser last said it was.
+ *
+ * Every event that carries a position moves the mouse as well, not just the move: a
+ * press reports where the pointer is, and a mouse that stayed where it last drifted to
+ * draws the cursor somewhere other than where the finger is.
+ */
+function move(entity, position, api) {
+  const game = api.getEntity("game")
+
+  entity.position = position
+
+  clampToBounds(entity, game.size)
 }
