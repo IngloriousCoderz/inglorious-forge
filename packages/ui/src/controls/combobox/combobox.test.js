@@ -107,4 +107,88 @@ describe("combobox", () => {
     Combobox.optionSelect(entity, { label: "A", value: "a" })
     expect(entity.selectedValue).toEqual(["b"])
   })
+
+  it("calls onClose when clicking outside the dropdown", () => {
+    const entity = {
+      id: "sel",
+      type: "select",
+      isOpen: true,
+      options: [
+        { label: "A", value: "a" },
+        { label: "B", value: "b" },
+      ],
+    }
+    const api = createMockApi({ [entity.id]: entity })
+    api.getType = () => Combobox
+    const container = document.createElement("div")
+
+    render(Combobox.render(entity, api), container)
+
+    const outside = document.createElement("div")
+    document.body.appendChild(outside)
+    outside.click()
+    document.body.removeChild(outside)
+
+    expect(api.getEvents()).toEqual([{ type: "#sel:close" }])
+  })
+
+  it("does not call onClose when clicking inside the dropdown", () => {
+    const entity = {
+      id: "sel",
+      type: "select",
+      isOpen: true,
+      options: [
+        { label: "A", value: "a" },
+        { label: "B", value: "b" },
+      ],
+    }
+    const api = createMockApi({ [entity.id]: entity })
+    api.getType = () => Combobox
+    const container = document.createElement("div")
+
+    render(Combobox.render(entity, api), container)
+
+    container.querySelector(".iw-combobox-dropdown").click()
+
+    expect(api.getEvents()).toEqual([])
+  })
+
+  it("can reopen after selecting an option (stale listener bug)", () => {
+    const entity = {
+      id: "sel",
+      type: "select",
+      isOpen: true,
+      options: [
+        { label: "A", value: "a" },
+        { label: "B", value: "b" },
+      ],
+    }
+    const api = createMockApi({ [entity.id]: entity })
+    api.getType = () => Combobox
+    const container = document.createElement("div")
+
+    render(Combobox.render(entity, api), container)
+
+    container.querySelector(".iw-combobox-dropdown-options-option").click()
+
+    expect(api.getEvents()).toEqual([
+      {
+        type: "#sel:optionSelect",
+        payload: { label: "A", value: "a", isDisabled: false },
+      },
+    ])
+
+    Combobox.close(entity)
+    render(Combobox.render(entity, api), container)
+
+    container.querySelector(".iw-combobox-control").click()
+
+    expect(api.getEvents()).toEqual([
+      {
+        type: "#sel:optionSelect",
+        payload: { label: "A", value: "a", isDisabled: false },
+      },
+      { type: "#sel:toggle" },
+    ])
+  })
 })

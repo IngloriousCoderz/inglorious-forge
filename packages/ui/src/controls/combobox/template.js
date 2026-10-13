@@ -21,6 +21,26 @@ import {
 
 const NO_FOCUSED_INDEX = -1
 
+const outsideClickListeners = new Map()
+
+function trackOutsideClick(props, el) {
+  const previous = outsideClickListeners.get(props.id)
+  if (previous) {
+    document.removeEventListener("click", previous)
+    outsideClickListeners.delete(props.id)
+  }
+
+  if (!el) return
+
+  const root = el.closest(".iw-combobox")
+  const listener = (event) => {
+    if (!event.composedPath().includes(root)) props.onClose?.()
+  }
+
+  outsideClickListeners.set(props.id, listener)
+  document.addEventListener("click", listener)
+}
+
 export const Combobox = {
   /**
    * Main entrypoint for the combobox control. It renders the wrapper, label, control, and dropdown when open.
@@ -191,21 +211,7 @@ export const Combobox = {
 
     return html`<div
       class="iw-combobox-dropdown"
-      ${ref((el) => {
-        if (el) {
-          setTimeout(() => {
-            document.addEventListener(
-              "click",
-              (event) => {
-                if (!el.contains(event.target)) {
-                  props.onClose?.()
-                }
-              },
-              { once: true },
-            )
-          })
-        }
-      })}
+      ${ref((el) => trackOutsideClick(props, el))}
     >
       ${when(props.isSearchable, () => this.renderSearchInput?.(props))}
       ${when(props.isLoading, () => this.renderLoading?.(props))}

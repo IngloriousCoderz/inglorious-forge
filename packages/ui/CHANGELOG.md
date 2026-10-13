@@ -1,5 +1,11 @@
 # @inglorious/ui
 
+## 7.1.5
+
+### Patch Changes
+
+- Fix Combobox not reopening dropdown
+
 ## 7.1.4
 
 ### Patch Changes
