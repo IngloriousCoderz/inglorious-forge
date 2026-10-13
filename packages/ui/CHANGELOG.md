@@ -1,5 +1,11 @@
 # @inglorious/ui
 
+## 7.1.6
+
+### Patch Changes
+
+- Fix Combobox not listening to pointer events
+
 ## 7.1.5
 
 ### Patch Changes

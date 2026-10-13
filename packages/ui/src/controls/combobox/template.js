@@ -21,24 +21,72 @@ import {
 
 const NO_FOCUSED_INDEX = -1
 
-const outsideClickListeners = new Map()
+/**
+ * Window in which an emulated click is treated as the tail of a pointer
+ * interaction that already handled the gesture.
+ */
+const GHOST_CLICK_MS = 700
 
+/**
+ * Last pointer activation per control element, used to stop the click that
+ * browsers synthesise after a tap from toggling the dropdown a second time.
+ * @type {WeakMap<Element, number>}
+ */
+const pointerActivations = new WeakMap()
+
+/**
+ * Pending outside-pointer listeners, keyed by combobox id. Each entry owns both
+ * the deferred timer and the listener so both can be torn down on unmount.
+ * @type {Map<string|number, { timer: any, listener: (event: Event) => void }>}
+ */
+const outsideClicks = new Map()
+
+/**
+ * Attach (or tear down) the document listener that closes the dropdown when the
+ * user interacts outside of it.
+ *
+ * This listens for `pointerdown` rather than `click` on purpose. Mobile browsers
+ * synthesise `click` asynchronously after `touchend`, and drop it entirely when
+ * the touch drifts into a scroll gesture or the target is replaced meanwhile.
+ * A suppressed click leaves the listener armed, so it then closes the *next*
+ * dropdown on the tap that opened it and the combobox looks stuck. `pointerdown`
+ * is dispatched synchronously for mouse, touch and pen, so there is no race.
+ *
+ * The registration is deferred by a macrotask because the pointerdown that opens
+ * the dropdown is already travelling towards the document. The downside is that
+ * the dropdown can unmount before the timer runs, which would leave a listener
+ * bound to a detached node behind; tearing the pending timer down on unmount
+ * avoids that.
+ * @param {ComboboxProps} props
+ * @param {Element|null|undefined} el dropdown element, or undefined on unmount
+ */
 function trackOutsideClick(props, el) {
-  const previous = outsideClickListeners.get(props.id)
+  const key = props.id
+  const previous = outsideClicks.get(key)
+
   if (previous) {
-    document.removeEventListener("click", previous)
-    outsideClickListeners.delete(props.id)
+    clearTimeout(previous.timer)
+    document.removeEventListener("pointerdown", previous.listener)
+    outsideClicks.delete(key)
   }
 
   if (!el) return
 
-  const root = el.closest(".iw-combobox")
+  // Resolve the root so the control and the dropdown both count as inside.
+  const root = el.closest(".iw-combobox") ?? el
   const listener = (event) => {
+    outsideClicks.delete(key)
+    // composedPath is captured at dispatch time, so it still reports the
+    // combobox as an ancestor even when the pressed node was removed from the
+    // DOM while the event was bubbling.
     if (!event.composedPath().includes(root)) props.onClose?.()
   }
 
-  outsideClickListeners.set(props.id, listener)
-  document.addEventListener("click", listener)
+  const timer = setTimeout(() => {
+    document.addEventListener("pointerdown", listener, { once: true })
+  })
+
+  outsideClicks.set(key, { timer, listener })
 }
 
 export const Combobox = {
@@ -92,7 +140,22 @@ export const Combobox = {
           Array.isArray(props.selectedValue) &&
           props.selectedValue.length,
       })}"
-      @click=${() => !props.isDisabled && props.onToggle?.()}
+      @pointerdown=${(event) => {
+        // Touch and pen only: the mouse keeps using click, so a mouse press
+        // never runs the toggle twice.
+        if (props.isDisabled) return
+        if (event.pointerType === "mouse") return
+        pointerActivations.set(event.currentTarget, Date.now())
+        props.onToggle?.()
+      }}
+      @click=${(event) => {
+        if (props.isDisabled) return
+        // Swallow the click a browser synthesises after a tap that the
+        // pointerdown above already handled.
+        const lastActivation = pointerActivations.get(event.currentTarget) ?? 0
+        if (Date.now() - lastActivation < GHOST_CLICK_MS) return
+        props.onToggle?.()
+      }}
     >
       ${when(
         props.isMulti,
@@ -109,6 +172,7 @@ export const Combobox = {
           html`<button
             class="iw-combobox-clear"
             type="button"
+            @pointerdown=${(event) => event.stopPropagation()}
             @click=${(event) => {
               event.stopPropagation()
               props.onClear?.()
@@ -184,6 +248,7 @@ export const Combobox = {
 
     return html`<span
       class="iw-combobox-multi-value-tag"
+      @pointerdown=${(event) => event.stopPropagation()}
       @click=${(event) => event.stopPropagation()}
     >
       ${Chip.render({
@@ -239,7 +304,9 @@ export const Combobox = {
       @input=${(event) => props.onSearchChange?.(event.target.value)}
       @keydown=${(event) => handleKeyDown(props, event)}
       ${ref((el) => {
-        if (el && props.isOpen) queueMicrotask(() => el.focus())
+        if (el && props.isOpen && shouldFocusSearch()) {
+          queueMicrotask(() => el.focus())
+        }
       })}
     />`
   },
@@ -325,6 +392,25 @@ export const Combobox = {
       ${props.noOptionsMessage}
     </div>`
   },
+}
+
+/**
+ * Whether opening the dropdown should move focus into the search field.
+ *
+ * Focusing it is what lets keyboard users start typing straight away, but on a
+ * touch device it raises the on-screen keyboard, which covers the very option
+ * list the dropdown was opened to read. Coarse pointers therefore open the
+ * dropdown without focusing the search field.
+ * @returns {boolean}
+ */
+function shouldFocusSearch() {
+  if (
+    typeof window === "undefined" ||
+    typeof window.matchMedia !== "function"
+  ) {
+    return true
+  }
+  return window.matchMedia("(hover: hover) and (pointer: fine)").matches
 }
 
 /**
