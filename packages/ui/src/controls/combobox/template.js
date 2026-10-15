@@ -116,11 +116,18 @@ export const Combobox = {
   /**
    * Renders the clickable control element that shows the current selection and toggles the dropdown.
    * Handles placeholder, clear button, and the open/disabled state.
+   *
+   * The control is the only way into a closed combobox, so it has to be
+   * focusable: it was a plain div with a click handler, which meant tabbing
+   * skipped the field entirely and none of the keyboard handling was reachable.
+   * It keeps focus while the dropdown is open unless a search input takes it.
    * @param {ComboboxProps} props
    * @returns {TemplateResult}
    */
   renderControl(props) {
+    const controlId = props.id ? `${props.id}-control` : undefined
     return html`<div
+      id=${controlId ?? ""}
       class="iw-combobox-control ${classMap({
         "iw-combobox-control-open": props.isOpen,
         "iw-combobox-control-disabled": props.isDisabled,
@@ -129,6 +136,12 @@ export const Combobox = {
           Array.isArray(props.selectedValue) &&
           props.selectedValue.length,
       })}"
+      role="combobox"
+      aria-haspopup="listbox"
+      aria-expanded=${props.isOpen ? "true" : "false"}
+      aria-controls=${controlId ? `${controlId}-listbox` : ""}
+      tabindex=${props.isDisabled ? -1 : 0}
+      @keydown=${(event) => handleControlKeyDown(props, event)}
       @click=${() => !props.isDisabled && props.onToggle?.()}
     >
       ${when(
@@ -247,7 +260,9 @@ export const Combobox = {
     const filteredOptions = filterOptions(props.options, props.searchTerm)
 
     return html`<div
+      id=${props.id ? `${props.id}-control-listbox` : ""}
       class="iw-combobox-dropdown"
+      role="listbox"
       ${ref((el) => trackOutsideClick(props, el))}
     >
       ${when(props.isSearchable, () => this.renderSearchInput?.(props))}
@@ -316,6 +331,9 @@ export const Combobox = {
     const isFocused = index === props.focusedIndex
 
     return html`<div
+      id=${props.id ? `${props.id}-option-${index}` : ""}
+      role="option"
+      aria-selected=${isSelected ? "true" : "false"}
       class="iw-combobox-dropdown-options-option ${classMap({
         "iw-combobox-dropdown-options-option-selected": isSelected,
         "iw-combobox-dropdown-options-option-focused": isFocused,
@@ -362,6 +380,31 @@ export const Combobox = {
       ${props.noOptionsMessage}
     </div>`
   },
+}
+
+/**
+ * Opens a closed combobox from the keyboard, and navigates an open one.
+ *
+ * The control keeps DOM focus whenever the combobox is not searchable — there
+ * is no search input to hand focus to — so while open it drives the same
+ * navigation handleKeyDown() gives the search input, rather than toggling.
+ * @param {ComboboxProps} props
+ * @param {KeyboardEvent} event
+ */
+function handleControlKeyDown(props, event) {
+  if (props.isDisabled) return
+
+  if (props.isOpen) {
+    handleKeyDown(props, event)
+    return
+  }
+
+  if (event.key !== "Enter" && event.key !== " " && event.key !== "ArrowDown") {
+    return
+  }
+  // Space would otherwise scroll the page out from under the dropdown.
+  event.preventDefault()
+  props.onToggle?.()
 }
 
 /**

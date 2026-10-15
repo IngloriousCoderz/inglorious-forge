@@ -39,6 +39,13 @@
       background: var(--iw-input-bg-hover);
     }
 
+    /* The control is focusable so it can be opened from the keyboard. */
+    &:focus-visible {
+      outline: none;
+      border-color: var(--iw-input-border-focus);
+      box-shadow: var(--iw-input-shadow-focus);
+    }
+
     &.iw-combobox-control-open {
       border-color: var(--iw-input-border-focus);
       box-shadow: var(--iw-input-shadow-focus);

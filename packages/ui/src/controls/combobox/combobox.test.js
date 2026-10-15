@@ -90,6 +90,111 @@ describe("combobox", () => {
     expect(api.getEvents()).toEqual([{ type: "#sel:toggle" }])
   })
 
+  it("makes the control reachable by keyboard", () => {
+    const entity = { id: "sel", type: "select", options: [] }
+    const api = createMockApi({ [entity.id]: entity })
+    api.getType = () => Combobox
+    const container = document.createElement("div")
+
+    render(Combobox.render(entity, api), container)
+
+    const control = container.querySelector(".iw-combobox-control")
+    // A plain div with no tabindex is skipped by tab entirely, which is how
+    // this went unnoticed: the field worked with a mouse and nowhere else.
+    expect(control.getAttribute("tabindex")).toBe("0")
+    expect(control.getAttribute("role")).toBe("combobox")
+    expect(control.getAttribute("aria-expanded")).toBe("false")
+  })
+
+  it("takes the control out of the tab order when disabled", () => {
+    const entity = { id: "sel", type: "select", options: [], isDisabled: true }
+    const api = createMockApi({ [entity.id]: entity })
+    api.getType = () => Combobox
+    const container = document.createElement("div")
+
+    render(Combobox.render(entity, api), container)
+
+    expect(
+      container.querySelector(".iw-combobox-control").getAttribute("tabindex"),
+    ).toBe("-1")
+  })
+
+  it("opens on Enter, Space or ArrowDown", () => {
+    for (const key of ["Enter", " ", "ArrowDown"]) {
+      const entity = { id: "sel", type: "select", options: [] }
+      const api = createMockApi({ [entity.id]: entity })
+      api.getType = () => Combobox
+      const container = document.createElement("div")
+
+      render(Combobox.render(entity, api), container)
+      container
+        .querySelector(".iw-combobox-control")
+        .dispatchEvent(new KeyboardEvent("keydown", { key, bubbles: true }))
+
+      expect(api.getEvents()).toEqual([{ type: "#sel:toggle" }])
+    }
+  })
+
+  it("ignores keys that are not an attempt to open", () => {
+    const entity = { id: "sel", type: "select", options: [] }
+    const api = createMockApi({ [entity.id]: entity })
+    api.getType = () => Combobox
+    const container = document.createElement("div")
+
+    render(Combobox.render(entity, api), container)
+    container
+      .querySelector(".iw-combobox-control")
+      .dispatchEvent(new KeyboardEvent("keydown", { key: "a", bubbles: true }))
+
+    expect(api.getEvents()).toEqual([])
+  })
+
+  it("navigates instead of toggling once open", () => {
+    // A non-searchable combobox keeps focus on the control, so it has to drive
+    // the same navigation the search input does — toggling here would close the
+    // list on the first arrow press and leave no way to pick an option.
+    const entity = {
+      id: "sel",
+      type: "select",
+      options: [{ label: "A", value: "a" }],
+      isOpen: true,
+    }
+    const api = createMockApi({ [entity.id]: entity })
+    api.getType = () => Combobox
+    const container = document.createElement("div")
+
+    render(Combobox.render(entity, api), container)
+    const control = container.querySelector(".iw-combobox-control")
+
+    expect(control.getAttribute("aria-expanded")).toBe("true")
+
+    control.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }),
+    )
+    expect(api.getEvents()).toEqual([{ type: "#sel:focusNext" }])
+  })
+
+  it("closes on Escape from the control", () => {
+    const entity = {
+      id: "sel",
+      type: "select",
+      options: [{ label: "A", value: "a" }],
+      isOpen: true,
+    }
+    const api = createMockApi({ [entity.id]: entity })
+    api.getType = () => Combobox
+    const container = document.createElement("div")
+
+    render(Combobox.render(entity, api), container)
+    container
+      .querySelector(".iw-combobox-control")
+      .dispatchEvent(
+        new KeyboardEvent("keydown", { key: "Escape", bubbles: true }),
+      )
+
+    expect(api.getEvents()).toEqual([{ type: "#sel:close" }])
+  })
+
   it("select handlers support multi selection", () => {
     const entity = {
       id: "sel",

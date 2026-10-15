@@ -1,5 +1,11 @@
 # @inglorious/ui
 
+## 7.2.1
+
+### Patch Changes
+
+- Make combobox fully navigatable by keyboard
+
 ## 7.2.0
 
 ### Minor Changes
