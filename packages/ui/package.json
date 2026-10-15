@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/ui",
-  "version": "7.1.6",
+  "version": "7.2.0",
   "description": "A design system for Inglorious Web with render-function components and customizable themes",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -286,7 +286,12 @@
       "types": "./types/navigation/tabs.d.ts",
       "import": "./src/navigation/tabs/index.js"
     },
-    "./tabs.css": "./src/navigation/tabs/style.css"
+    "./tabs.css": "./src/navigation/tabs/style.css",
+    "./view-transitions": {
+      "types": "./types/navigation/view-transitions.d.ts",
+      "import": "./src/navigation/view-transitions/index.js"
+    },
+    "./view-transitions.css": "./src/navigation/view-transitions/style.css"
   },
   "files": [
     "src",

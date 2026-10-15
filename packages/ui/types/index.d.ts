@@ -45,6 +45,11 @@ export type {
 export type { StepperProps, StepperType, Step } from "./navigation/stepper"
 export type { TabsProps, TabsType, TabItem } from "./navigation/tabs"
 export type {
+  ViewTransitionType,
+  TransitionsStore,
+  WithTransitions,
+} from "./navigation/view-transitions"
+export type {
   AccordionProps,
   AccordionType,
   AccordionItem,

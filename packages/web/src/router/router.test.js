@@ -247,4 +247,88 @@ describe("router", () => {
       consoleSpy.mockRestore()
     })
   })
+
+  describe("history index", () => {
+    const stubState = (state) => {
+      vi.spyOn(history, "state", "get").mockReturnValue(state)
+    }
+
+    it("should stamp the starting entry so a reload keeps its place", () => {
+      stubState(null)
+
+      Router.init(entity, undefined, api)
+
+      expect(history.replaceState).toHaveBeenCalledWith({ idx: 0 }, "")
+      expect(entity.idx).toBe(0)
+    })
+
+    it("should keep an index the session history already carries", () => {
+      stubState({ idx: 7 })
+
+      Router.init(entity, undefined, api)
+
+      expect(history.replaceState).not.toHaveBeenCalled()
+      expect(entity.idx).toBe(7)
+    })
+
+    it("should advance the index on a push", () => {
+      stubState({ idx: 3 })
+      entity.idx = 3
+
+      Router.navigate(entity, "/users", api)
+
+      expect(history.pushState).toHaveBeenCalledWith(
+        expect.objectContaining({ idx: 4 }),
+        "",
+        "/users",
+      )
+    })
+
+    it("should hold the index on a replacement", () => {
+      stubState({ idx: 3 })
+      entity.idx = 3
+
+      Router.navigate(entity, { to: "/users", replace: true }, api)
+
+      expect(history.replaceState).toHaveBeenCalledWith(
+        expect.objectContaining({ idx: 3 }),
+        "",
+        "/users",
+      )
+    })
+
+    it("should advance its own index, not just the one it writes", () => {
+      stubState({ idx: 0 })
+      entity.idx = 0
+
+      Router.navigate(entity, "/users", api)
+      expect(entity.idx).toBe(1)
+
+      Router.navigate(entity, "/posts", api)
+      expect(history.pushState).toHaveBeenLastCalledWith(
+        expect.objectContaining({ idx: 2 }),
+        "",
+        "/posts",
+      )
+    })
+
+    it("should leave its own index alone on a replacement", () => {
+      stubState({ idx: 3 })
+      entity.idx = 3
+
+      Router.navigate(entity, { to: "/users", replace: true }, api)
+      Router.navigate(entity, { to: "/posts", replace: true }, api)
+
+      expect(entity.idx).toBe(3)
+    })
+
+    it("should adopt the index of the entry traversed on popstate", () => {
+      stubState({ idx: 1 })
+      entity.idx = 5
+
+      Router.popstate(entity, undefined, api)
+
+      expect(entity.idx).toBe(1)
+    })
+  })
 })

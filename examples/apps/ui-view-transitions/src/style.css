@@ -1,0 +1,39 @@
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: var(--iw-color-bg);
+  color: var(--iw-color-text);
+}
+
+/* The chrome sits outside the view transition. A page slide snapshots the whole
+   viewport, so anything pinned here would travel with the page unless it is
+   taken out of the snapshot by naming it separately. */
+.chrome {
+  flex: 0 0 auto;
+}
+
+.content {
+  flex: 1 1 auto;
+}
+
+.link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.link:focus-visible {
+  outline: 2px solid var(--iw-color-primary);
+  outline-offset: 2px;
+}
+
+.step + .step {
+  margin-top: var(--iw-space-4);
+}
+
+.actions {
+  display: flex;
+  gap: var(--iw-space-3);
+  margin-top: var(--iw-space-5);
+}

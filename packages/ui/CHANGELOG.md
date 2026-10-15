@@ -1,5 +1,17 @@
 # @inglorious/ui
 
+## 7.2.0
+
+### Minor Changes
+
+- Enable view transitions
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/web@6.5.0
+  - @inglorious/charts@10.0.3
+
 ## 7.1.6
 
 ### Patch Changes

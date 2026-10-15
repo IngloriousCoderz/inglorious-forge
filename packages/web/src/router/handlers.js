@@ -8,6 +8,8 @@ import { toCamelCase } from "@inglorious/utils/data-structures/string.js"
 
 const SKIP_FULL_MATCH_GROUP = 1 // .match() result at index 0 is the full string
 const REMOVE_COLON_PREFIX = 1
+const FIRST_HISTORY_INDEX = 0 // The entry an app starts on, and the fallback for an entry that carries no index.
+const PUSH_HISTORY_STEP = 1 // How far a push advances the index. A replacement leaves it where it is.
 
 export function createHandlers(routeConfig) {
   /**
@@ -25,6 +27,18 @@ export function createHandlers(routeConfig) {
      * @param {Api} api - The application API.
      */
     init(entity, payload, api) {
+      /* Stamp the entry the app starts on, so that reloading keeps the app in
+         its place in the session history instead of restarting the count.
+         `withTransitions` reads this index back to tell a push from a traversal
+         and in which direction, so it has to be set before anything navigates. */
+      if (window.history.state?.idx == null) {
+        window.history.replaceState(
+          { ...window.history.state, idx: FIRST_HISTORY_INDEX },
+          "",
+        )
+      }
+      entity.idx = window.history.state?.idx ?? FIRST_HISTORY_INDEX
+
       // Handle initial route
       const { pathname, search } = window.location
       const initialPath = pathname + search
@@ -107,6 +121,9 @@ export function createHandlers(routeConfig) {
         }
 
         updateRouter(entity, route)
+        // Adopt the index of the entry just traversed, so the next push counts
+        // from where the history actually is rather than from where it was.
+        entity.idx = window.history.state?.idx ?? FIRST_HISTORY_INDEX
 
         api.notify("routeChange", {
           route: entity.route,
@@ -184,6 +201,10 @@ export function createHandlers(routeConfig) {
       // Prepare history state
       const historyState = {
         ...state,
+        /* Written before the notification that triggers the render, so that
+           anything reading the history entry during that render sees the new
+           index. `withTransitions` depends on this ordering. */
+        idx: replace ? entity.idx : entity.idx + PUSH_HISTORY_STEP,
         route: entity.route,
         params: entity.params,
         query: entity.query,
@@ -193,6 +214,9 @@ export function createHandlers(routeConfig) {
       // Navigate
       const method = replace ? "replaceState" : "pushState"
       history[method](historyState, "", path)
+      // Advance the counter as well as stamping the entry, or the next push
+      // writes the same index and reads as a replacement.
+      entity.idx = historyState.idx
 
       api.notify("routeChange", historyState)
     },

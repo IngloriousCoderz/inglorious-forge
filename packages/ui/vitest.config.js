@@ -10,5 +10,8 @@ export default defineConfig({
   },
   test: {
     environment: "jsdom",
+    /* So a stylesheet can be imported as text and asserted on. Vitest hands back
+       an empty string otherwise, which turns a check into a silent pass. */
+    css: true,
   },
 })

@@ -126,9 +126,26 @@
   /* ========================================
      TRANSITIONS
      ======================================== */
-  --iw-transition-fast: 150ms ease;
-  --iw-transition-normal: 200ms ease;
-  --iw-transition-slow: 300ms ease;
+  /* A duration and an easing, so that motion can pick one of each. Anything
+     that has to vary them separately — a page arriving is not eased the way a
+     page leaving is — composes them rather than reaching for the shorthands. */
+  --iw-duration-fast: 150ms;
+  --iw-duration-normal: 200ms;
+  --iw-duration-page: 250ms;
+  --iw-duration-slow: 300ms;
+  --iw-easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --iw-easing-accelerate: cubic-bezier(0.4, 0, 1, 1);
+  --iw-easing-decelerate: cubic-bezier(0, 0, 0.2, 1);
+
+  /* Shorthands for a plain `ease` at one of the durations above. These keep
+     working as they always have; reach for the tokens above instead when the
+     easing has to be anything other than `ease`. The page transitions in
+     `view-transitions` compose the two on purpose — a page arriving decelerates
+     and a page leaving accelerates — so they are not a shorthand case. */
+  --iw-transition-fast: var(--iw-duration-fast) ease;
+  --iw-transition-normal: var(--iw-duration-normal) ease;
+  --iw-transition-page: var(--iw-duration-page) ease;
+  --iw-transition-slow: var(--iw-duration-slow) ease;
 
   /* ========================================
      Z-INDEX SCALE

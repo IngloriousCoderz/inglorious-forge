@@ -5,6 +5,7 @@ export interface MaterialIconProps {
   name?: string
   size?: "sm" | "md" | "lg"
   isFilled?: boolean
+  onClick?: () => void
   [key: string]: unknown
 }
 

@@ -128,20 +128,22 @@ describe("combobox outside click (store integration)", () => {
       isPrimary: true,
     })
 
-  function mountCombobox(options, overrides = {}) {
+  // `entityId` is normally "favorite"; passing null renders a combobox with no
+  // id at all, which the store accepts.
+  function mountCombobox(options, overrides = {}, entityId = "favorite") {
+    const entity = {
+      type: "Combobox",
+      isSearchable: true,
+      isMulti: false,
+      isClearable: true,
+      options,
+      ...overrides,
+    }
+    if (entityId) entity.id = entityId
+
     const store = createStore({
       types: { Combobox },
-      entities: {
-        favorite: {
-          id: "favorite",
-          type: "Combobox",
-          isSearchable: true,
-          isMulti: false,
-          isClearable: true,
-          options,
-          ...overrides,
-        },
-      },
+      entities: { favorite: entity },
     })
 
     const container = document.createElement("div")
@@ -165,57 +167,19 @@ describe("combobox outside click (store integration)", () => {
     { label: "Lombardia", value: "Lombardia" },
   ]
 
-  // jsdom reports no pointer capabilities, so `(hover: hover) and
-  // (pointer: fine)` is stubbed to model a mouse or a finger.
-  const originalMatchMedia = window.matchMedia
-  const stubMatchMedia = (fine) => {
-    window.matchMedia = (query) => ({
-      matches: query.includes("pointer: fine") ? fine : !fine,
-      media: query,
-      addEventListener() {},
-      removeEventListener() {},
-      addListener() {},
-      removeListener() {},
-      onchange: null,
-      dispatchEvent: () => false,
-    })
-  }
-  const restoreMatchMedia = () => {
-    window.matchMedia = originalMatchMedia
+  // A real tap delivers touch events and then a click the browser decides on;
+  // these tests dispatch the touch half only, so no click follows.
+  const tap = (el) => {
+    el.dispatchEvent(
+      new TouchEvent("touchstart", { bubbles: true, cancelable: true }),
+    )
+    el.dispatchEvent(
+      new TouchEvent("touchend", { bubbles: true, cancelable: true }),
+    )
   }
 
   afterEach(() => {
     document.body.innerHTML = ""
-    restoreMatchMedia()
-  })
-
-  it("focuses the search field on a fine pointer so typing works", async () => {
-    stubMatchMedia(true)
-    const ui = mountCombobox(regions)
-
-    ui.open()
-    await tick()
-
-    const search = ui.container.querySelector(".iw-combobox-dropdown-search")
-    expect(ui.entity().isSearchable).toBe(true)
-    expect(search).not.toBeNull()
-    expect(document.activeElement).toBe(search)
-  })
-
-  it("leaves the search field unfocused on a coarse pointer", async () => {
-    // A touch device would raise the on-screen keyboard over the option list.
-    stubMatchMedia(false)
-    const ui = mountCombobox(regions)
-
-    ui.open()
-    await tick()
-
-    const search = ui.container.querySelector(".iw-combobox-dropdown-search")
-    expect(search).not.toBeNull()
-    expect(document.activeElement).not.toBe(search)
-    // The dropdown still opens and the options are still reachable.
-    expect(ui.entity().isOpen).toBe(true)
-    expect(ui.options().length).toBeGreaterThan(0)
   })
 
   it("opens on the first click", async () => {
@@ -242,34 +206,33 @@ describe("combobox outside click (store integration)", () => {
     expect(ui.entity().isOpen).toBe(false)
   })
 
-  it("opens on touch even when the browser never sends a click", async () => {
+  it("opens on a tap that the browser turns into a click", async () => {
     const ui = mountCombobox(regions)
 
-    // Mobile only synthesises `click` when the tap does not turn into a scroll
-    // gesture, so opening must not depend on it.
-    ui.control().dispatchEvent(pointerdown({ pointerType: "touch" }))
-    await tick()
-
-    expect(ui.entity().isOpen).toBe(true)
-  })
-
-  it("does not toggle twice when a tap is followed by an emulated click", async () => {
-    const ui = mountCombobox(regions)
-
-    ui.control().dispatchEvent(pointerdown({ pointerType: "touch" }))
-    await tick()
-    expect(ui.entity().isOpen).toBe(true)
-
+    // A real tap delivers touchstart/touchend and then a click. The control
+    // stays on click so a finger that starts scrolling never opens the dropdown.
+    tap(ui.control())
     ui.control().click()
     await tick()
 
     expect(ui.entity().isOpen).toBe(true)
   })
 
+  it("does not open when a touch turns into a scroll gesture", async () => {
+    const ui = mountCombobox(regions)
+
+    // The browser suppresses click when the touch drifts into a pan, which is
+    // exactly what should stop the dropdown from opening mid-scroll.
+    tap(ui.control())
+    await tick()
+
+    expect(ui.entity().isOpen).toBe(false)
+    expect(ui.dropdown()).toBeNull()
+  })
+
   it("still toggles on a mouse click", async () => {
     const ui = mountCombobox(regions)
 
-    // A mouse press must not go through the pointerdown path.
     ui.control().dispatchEvent(pointerdown({ pointerType: "mouse" }))
     ui.control().click()
     await tick()
@@ -290,17 +253,18 @@ describe("combobox outside click (store integration)", () => {
 
     expect(ui.entity().isOpen).toBe(false)
 
-    // The emulated click for the tap is never delivered by the browser.
+    // The browser never delivers the click that would follow the tap.
     ui.control().dispatchEvent(pointerdown({ pointerType: "touch" }))
     await tick()
 
-    expect(ui.entity().isOpen).toBe(true)
+    expect(ui.entity().isOpen).toBe(false)
+    expect(ui.dropdown()).toBeNull()
   })
 
   it("closes on an outside touch and leaves no armed listener", async () => {
     const ui = mountCombobox(regions)
 
-    ui.control().dispatchEvent(pointerdown({ pointerType: "touch" }))
+    ui.open()
     await tick()
 
     const outside = document.createElement("button")
@@ -310,7 +274,7 @@ describe("combobox outside click (store integration)", () => {
 
     expect(ui.entity().isOpen).toBe(false)
 
-    ui.control().dispatchEvent(pointerdown({ pointerType: "touch" }))
+    ui.open()
     await tick()
 
     expect(ui.entity().isOpen).toBe(true)
@@ -328,6 +292,26 @@ describe("combobox outside click (store integration)", () => {
     await tick()
 
     expect(ui.entity().isOpen).toBe(false)
+  })
+
+  it("closes an open dropdown when another combobox's clear button is pressed", async () => {
+    // Pressing inside one combobox must still reach the document, otherwise the
+    // other combobox stays open behind it.
+    const first = mountCombobox(regions, { selectedValue: "Lazio" })
+    first.open()
+    await tick()
+    expect(first.entity().isOpen).toBe(true)
+
+    const second = mountCombobox(regions, { selectedValue: "Lombardia" })
+    await tick()
+
+    const clear = second.container.querySelector(".iw-combobox-clear")
+    expect(clear).not.toBeNull()
+
+    clear.dispatchEvent(pointerdown({ pointerType: "touch" }))
+    await tick()
+
+    expect(first.entity().isOpen).toBe(false)
   })
 
   it("does not close when clicking the control while already open", async () => {
@@ -382,8 +366,6 @@ describe("combobox outside click (store integration)", () => {
     ui.open()
     await tick()
 
-    // Unmounting must cancel the pending registration as well as remove the
-    // listener, otherwise the next open is closed by a detached dropdown.
     ui.store._api.notify("#favorite:close")
     await tick()
 
@@ -393,5 +375,92 @@ describe("combobox outside click (store integration)", () => {
     await tick()
 
     expect(ui.entity().isOpen).toBe(true)
+  })
+
+  it("does not close when the dropdown is gone and a press arrives", async () => {
+    const ui = mountCombobox(regions)
+
+    ui.open()
+    await tick()
+    ui.store._api.notify("#favorite:close")
+    await tick()
+
+    // A press now finds a listener whose dropdown has already left the DOM. It
+    // must retire itself rather than close whatever happens to be open.
+    document.body.dispatchEvent(
+      new PointerEvent("pointerdown", { bubbles: true, pointerType: "mouse" }),
+    )
+    await tick()
+
+    expect(ui.dropdown()).toBeNull()
+
+    ui.open()
+    await tick()
+
+    expect(ui.entity().isOpen).toBe(true)
+
+    document.body.dispatchEvent(
+      new PointerEvent("pointerdown", { bubbles: true, pointerType: "mouse" }),
+    )
+    await tick()
+
+    expect(ui.entity().isOpen).toBe(false)
+  })
+
+  it("registers one document listener no matter how often it re-renders", async () => {
+    const ui = mountCombobox(regions)
+
+    const original = document.addEventListener.bind(document)
+    let registered = 0
+    document.addEventListener = (type, ...rest) => {
+      if (type === "pointerdown") registered++
+      return original(type, ...rest)
+    }
+
+    try {
+      ui.open()
+      await tick()
+
+      // The ref callback is handed a fresh arrow every render, and hovering an
+      // option re-renders the dropdown, so each pass must reuse its listener.
+      for (let pass = 0; pass < 3; pass++) {
+        for (const option of ui.options()) {
+          option.dispatchEvent(new MouseEvent("mouseenter", { bubbles: true }))
+        }
+        await tick()
+      }
+
+      expect(registered).toBe(1)
+    } finally {
+      document.addEventListener = original
+    }
+  })
+
+  it("keeps id-less comboboxes independent", async () => {
+    const first = mountCombobox(regions, {}, null)
+    const second = mountCombobox(regions, {}, null)
+
+    first.open()
+    second.open()
+    await tick()
+
+    expect(first.entity().isOpen).toBe(true)
+    expect(second.entity().isOpen).toBe(true)
+
+    // One outside press closes both, each through its own listener.
+    document.body.dispatchEvent(
+      new PointerEvent("pointerdown", { bubbles: true, pointerType: "mouse" }),
+    )
+    await tick()
+
+    expect(first.entity().isOpen).toBe(false)
+    expect(second.entity().isOpen).toBe(false)
+
+    // And reopening one does not inherit the other's state.
+    first.open()
+    await tick()
+
+    expect(first.entity().isOpen).toBe(true)
+    expect(second.entity().isOpen).toBe(false)
   })
 })

@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 6.5.0
+
+### Minor Changes
+
+- Enable view transitions
+
 ## 6.4.2
 
 ### Patch Changes

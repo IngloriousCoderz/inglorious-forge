@@ -1,0 +1,124 @@
+/* Directional page transitions for the whole document, driven by the types that
+   `withTransitions` tags each transition with. Pair the two: without the
+   JavaScript nothing sets a type and the browser runs its own cross-fade,
+   without this file the tags are inert and the browser does the same.
+
+   The transition pseudo-elements have to be written as one compound selector
+   glued straight onto the document element. The nested form that reads so much
+   better — `:root:active-view-transition-type(forward) { ::view-transition-old(root)
+   { … } }` — compiles to a descendant combinator, which does not reach a
+   pseudo-element that hangs off the root, and silently leaves the browser's own
+   cross-fade in place. */
+
+@media (prefers-reduced-motion: no-preference) {
+  :is(
+      :root:active-view-transition-type(forward),
+      :root:active-view-transition-type(back),
+      :root:active-view-transition-type(replace)
+    )
+    ::view-transition-group(root) {
+    animation-duration: var(--iw-duration-page);
+  }
+
+  /* The user agent isolates the image pair and blends the old snapshot onto the
+     new one with `plus-lighter`, so that two opaque snapshots cross-fading never
+     let the page show through. That is right for a fade and wrong for a slide:
+     the two snapshots do not overlap while they travel, so adding their pixels
+     only shifts their brightness. Undo both. */
+  :is(
+      :root:active-view-transition-type(forward),
+      :root:active-view-transition-type(back),
+      :root:active-view-transition-type(replace)
+    )
+    ::view-transition-image-pair(root) {
+    isolation: auto;
+  }
+
+  :is(
+      :root:active-view-transition-type(forward),
+      :root:active-view-transition-type(back),
+      :root:active-view-transition-type(replace)
+    )
+    ::view-transition-old(root) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+
+  :is(
+      :root:active-view-transition-type(forward),
+      :root:active-view-transition-type(back),
+      :root:active-view-transition-type(replace)
+    )
+    ::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+
+  :root:active-view-transition-type(forward)::view-transition-old(root) {
+    animation: iw-view-transition-out-left var(--iw-duration-page)
+      var(--iw-easing-accelerate) both;
+  }
+
+  :root:active-view-transition-type(forward)::view-transition-new(root) {
+    animation: iw-view-transition-in-right var(--iw-duration-page)
+      var(--iw-easing-decelerate) both;
+  }
+
+  :root:active-view-transition-type(back)::view-transition-old(root) {
+    animation: iw-view-transition-out-right var(--iw-duration-page)
+      var(--iw-easing-accelerate) both;
+  }
+
+  :root:active-view-transition-type(back)::view-transition-new(root) {
+    animation: iw-view-transition-in-left var(--iw-duration-page)
+      var(--iw-easing-decelerate) both;
+  }
+
+  /* A replacement navigates in place rather than arriving from a side, so it
+     cross-fades instead of sliding. */
+  :root:active-view-transition-type(replace)::view-transition-old(root) {
+    animation: iw-view-transition-fade-out var(--iw-duration-page)
+      var(--iw-easing-standard) both;
+  }
+
+  :root:active-view-transition-type(replace)::view-transition-new(root) {
+    animation: iw-view-transition-fade-in var(--iw-duration-page)
+      var(--iw-easing-standard) both;
+  }
+}
+
+@keyframes iw-view-transition-out-left {
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes iw-view-transition-in-right {
+  from {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes iw-view-transition-out-right {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes iw-view-transition-in-left {
+  from {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes iw-view-transition-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes iw-view-transition-fade-in {
+  from {
+    opacity: 0;
+  }
+}

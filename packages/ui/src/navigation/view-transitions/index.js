@@ -1,0 +1,141 @@
+/**
+ * @typedef {import("../../../types/navigation/view-transitions").TransitionsStore} Store
+ * @typedef {import("../../../types/navigation/view-transitions").ViewTransitionType} ViewTransitionType
+ */
+
+/** The path the router matches against. Hashes are deliberately excluded: they
+ * change the fragment, not the page, so they must not animate one. */
+function getPath() {
+  return window.location.pathname + window.location.search
+}
+
+/** The position of the current entry in the session history, stamped by the
+ * Router as it navigates. Comparing it to the previous one is what tells a push
+ * from a traversal, and in which direction. */
+function getIndex() {
+  return window.history.state?.idx ?? 0
+}
+
+function supportsViewTransitions() {
+  return typeof document.startViewTransition === "function"
+}
+
+/** `types` landed after `startViewTransition` itself, so an engine can have the
+ * method and still throw when handed the object form of the argument. */
+function supportsTransitionTypes() {
+  return (
+    typeof ViewTransition !== "undefined" && "types" in ViewTransition.prototype
+  )
+}
+
+/**
+ * @param {number} index - The index of the entry now current.
+ * @param {number} previousIndex - The index of the entry before this render.
+ * @returns {ViewTransitionType}
+ */
+function getTransitionType(index, previousIndex) {
+  if (index < previousIndex) return "back"
+  if (index > previousIndex) return "forward"
+  return "replace"
+}
+
+/**
+ * Wraps a store so that the renders which follow a navigation are run inside a
+ * view transition, tagged with the direction they navigated in. Pair it with
+ * `style.css` from this package, which turns those tags into a slide.
+ *
+ * The store is returned unchanged apart from its `subscribe`, which fans out to
+ * every listener instead of subscribing to the store once per listener.
+ *
+ * Requires the `Router` type from `@inglorious/web`: direction is read from the
+ * index the Router stamps into each history entry, and without it every
+ * navigation looks like a replacement and slides the wrong way.
+ *
+ * @example
+ * import { withTransitions } from "@inglorious/ui/view-transitions"
+ * import "@inglorious/ui/view-transitions.css"
+ *
+ * mount(withTransitions(store), renderApp, document.getElementById("root"))
+ *
+ * @param {Store} store - The store to wrap.
+ * @returns {Store} The same store, with a wrapped `subscribe`.
+ * @throws {Error} If the store has no `Router` type.
+ */
+export function withTransitions(store) {
+  if (!store.getType("Router")) {
+    throw new Error(
+      '[withTransitions] Requires the "Router" type from @inglorious/web. The ' +
+        "direction of a transition is read from the index the Router stamps " +
+        "into each history entry.",
+    )
+  }
+
+  const subscribe = store.subscribe
+  const listeners = new Set()
+
+  let currentPath = ""
+  let currentIndex = 0
+  let unsubscribeStore = null
+
+  /* The update callback of a view transition does not run synchronously: the
+   * browser captures the old state first and calls it on a later task. Reading
+   * the state here rather than in the subscription keeps a listener from
+   * replaying whatever the store held when the transition started. */
+  function notify() {
+    const state = store.getState()
+    // Copied, so that a listener subscribing during this pass waits for the
+    // next one instead of being notified by the pass that added it.
+    ;[...listeners].forEach((listener) => listener(state))
+  }
+
+  function onStateChange() {
+    const path = getPath()
+    const index = getIndex()
+    /* Both are compared against the baseline before it moves forward,
+     * otherwise the comparison would always be against itself and every
+     * navigation would read as a replacement. */
+    const hasNavigated = path !== currentPath
+    const previousIndex = currentIndex
+
+    currentPath = path
+    currentIndex = index
+
+    if (!hasNavigated || !supportsViewTransitions()) return notify()
+
+    const types = [getTransitionType(index, previousIndex)]
+
+    if (supportsTransitionTypes()) {
+      document.startViewTransition({ update: notify, types })
+    } else {
+      // Without `types` the browser falls back to its own cross-fade, which is
+      // a reasonable way to change page when the slide is unavailable.
+      document.startViewTransition(notify)
+    }
+  }
+
+  store.subscribe = (listener) => {
+    /* Taken here rather than when the store is wrapped, so that anything that
+       navigated in between — an initial redirect, a renderer mounting late — is
+       part of the baseline instead of a navigation in its own right. It also
+       keeps `window` untouched until something subscribes, so wrapping a store
+       during a server render is harmless. */
+    if (!unsubscribeStore) {
+      currentPath = getPath()
+      currentIndex = getIndex()
+      unsubscribeStore = subscribe.call(store, onStateChange)
+    }
+
+    listeners.add(listener)
+
+    return () => {
+      listeners.delete(listener)
+
+      if (!listeners.size) {
+        unsubscribeStore?.()
+        unsubscribeStore = null
+      }
+    }
+  }
+
+  return store
+}
