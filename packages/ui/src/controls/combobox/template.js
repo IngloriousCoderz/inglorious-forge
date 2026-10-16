@@ -21,6 +21,470 @@ import {
 
 const NO_FOCUSED_INDEX = -1
 
+export const Combobox = {
+  /**
+   * Main entrypoint for the combobox control. It renders the frame, label, control, and dropdown when open.
+   * Comboboxes support search, single or multi-select values, and clearable selection.
+   * @param {ComboboxProps} props
+   * @returns {TemplateResult}
+   */
+  render(props) {
+    return this.renderCombobox(props)
+  },
+
+  /**
+   * Main entrypoint for the combobox control. It renders the frame, label, control, and dropdown when open.
+   * Comboboxes support search, single or multi-select values, and clearable selection.
+   * @param {ComboboxProps} props
+   * @returns {TemplateResult}
+   */
+  renderCombobox(props) {
+    const {
+      id,
+      type, // eslint-disable-line no-unused-vars
+      label,
+      hint,
+      error,
+      isRequired = false,
+      isFullWidth = false,
+      isOpen = false,
+    } = props
+    // The control is a div, not a labellable element, so a `for` binding is not
+    // available. It is referenced by id from the control's aria-labelledby
+    // instead, which is what a screen reader actually reads here.
+    // Only minted when there is something to point at. A reference to an id
+    // that is not in the DOM is worse than no reference at all.
+    const labelId = label && id ? `${id}-label` : ""
+    const messageId = (error || hint) && id ? `${id}-message` : ""
+
+    const comboboxClasses = {
+      "iw-combobox": true,
+      "iw-combobox-full-width": !!isFullWidth,
+    }
+
+    return html`<div class=${classMap(comboboxClasses)}>
+      ${when(
+        label,
+        () =>
+          html`<label id=${labelId || ""} class="iw-combobox-label">
+            ${label}
+            ${when(
+              isRequired,
+              () => html`<span class="iw-combobox-required">*</span>`,
+            )}
+          </label>`,
+      )}
+      ${this.renderControl?.({ ...props, labelId, messageId })}
+      ${when(isOpen, () => this.renderDropdown?.(props))}
+      ${when(
+        error,
+        () =>
+          html`<span id=${messageId ?? ""} class="iw-combobox-error-message"
+            >${error}</span
+          >`,
+      )}
+      ${when(
+        !error && hint,
+        () =>
+          html`<span id=${messageId || ""} class="iw-combobox-hint"
+            >${hint}</span
+          >`,
+      )}
+    </div>`
+  },
+
+  /**
+   * Renders the clickable control element that shows the current selection and toggles the dropdown.
+   * Handles placeholder, clear button, and the open/disabled state.
+   *
+   * The control is the only way into a closed combobox, so it has to be
+   * focusable: it was a plain div with a click handler, which meant tabbing
+   * skipped the field entirely and none of the keyboard handling was reachable.
+   * It keeps focus while the dropdown is open unless a search input takes it.
+   * @param {ComboboxProps} props
+   * @returns {TemplateResult}
+   */
+  renderControl(props) {
+    const {
+      id,
+      labelId,
+      messageId,
+      selectedValue,
+      error,
+      size = "md",
+      isDisabled = false,
+      isRequired = false,
+      isOpen = false,
+      isMulti = false,
+      isClearable = false,
+      onToggle,
+      onClear,
+    } = props
+
+    const controlId = id ? `${id}-control` : ""
+
+    const frameClasses = {
+      "iw-combobox-frame": true,
+      [`iw-combobox-${size}`]: true,
+      "iw-combobox-frame-open": isOpen,
+      "iw-combobox-frame-disabled": isDisabled,
+      "iw-combobox-frame-error": !!error,
+      "iw-combobox-frame-selection":
+        isMulti && Array.isArray(selectedValue) && selectedValue.length,
+    }
+
+    return html`<div
+      id=${controlId}
+      class="${classMap(frameClasses)}"
+      role="combobox"
+      aria-haspopup="listbox"
+      aria-expanded=${isOpen ? "true" : "false"}
+      aria-controls=${controlId ? `${controlId}-listbox` : ""}
+      aria-labelledby=${labelId || ""}
+      aria-describedby=${messageId || ""}
+      aria-required=${isRequired ? "true" : "false"}
+      aria-invalid=${error ? "true" : "false"}
+      tabindex=${isDisabled ? -1 : 0}
+      @keydown=${(event) => handleControlKeyDown(props, event)}
+      @click=${() => !isDisabled && onToggle?.()}
+    >
+      ${when(
+        isMulti,
+        () => this.renderMultiValue?.(props),
+        () => this.renderSingleValue?.(props),
+      )}
+      ${when(
+        isClearable &&
+          ((isMulti && Array.isArray(selectedValue) && selectedValue.length) ||
+            (!isMulti && selectedValue !== null)),
+        () =>
+          html`<button
+            class="iw-combobox-clear"
+            type="button"
+            @click=${(event) => {
+              event.stopPropagation()
+              onClear?.()
+            }}
+          >
+            ×
+          </button>`,
+      )}
+
+      <span class="iw-combobox-arrow" aria-hidden="true">▼</span>
+    </div>`
+  },
+
+  /**
+   * Renders the currently selected value in single-select mode.
+   * Falls back to the placeholder when no value is selected.
+   * @param {ComboboxProps} props
+   * @returns {TemplateResult}
+   */
+  renderSingleValue(props) {
+    const { options, selectedValue, placeholder } = props
+
+    if (selectedValue === null) {
+      return html`<span class="iw-combobox-control iw-combobox-placeholder"
+        >${placeholder}</span
+      >`
+    }
+
+    const selectedOption = options.find(
+      (option) => getOptionValue(option) === selectedValue,
+    )
+
+    return html`<span class="iw-combobox-control iw-combobox-value"
+      >${
+        selectedOption ? getOptionLabel(selectedOption) : String(selectedValue)
+      }</span
+    >`
+  },
+
+  /**
+   * Renders the selected values in multi-select mode as a row of tags.
+   * Falls back to the placeholder when the selection is empty.
+   * @param {ComboboxProps} props
+   * @returns {TemplateResult}
+   */
+  renderMultiValue(props) {
+    const { selectedValue, placeholder } = props
+
+    if (!Array.isArray(selectedValue) || !selectedValue.length) {
+      return html`<span class="iw-combobox-control iw-combobox-placeholder"
+        >${placeholder}</span
+      >`
+    }
+
+    return html`<div class="iw-combobox-control iw-combobox-multi-value">
+      ${repeat(
+        selectedValue,
+        (value) => value,
+        (value) => this.renderMultiValueTag?.(props, value),
+      )}
+    </div>`
+  },
+
+  /**
+   * Renders a single selected tag in multi-select mode.
+   * Used to customize chip styling and remove behavior.
+   * @param {ComboboxProps} props
+   * @param {string|number} value
+   * @returns {TemplateResult}
+   */
+  renderMultiValueTag(props, value) {
+    const { id, options, size, onOptionSelect, onChange } = props
+
+    const option = options.find((opt) => getOptionValue(opt) === value)
+    const tagId = `${id}-tag-${String(value)}`
+    const chipSize = size === "lg" ? "md" : "sm"
+
+    return html`<span
+      class="iw-combobox-multi-value-tag"
+      @click=${(event) => event.stopPropagation()}
+    >
+      ${Chip.render({
+        id: tagId,
+        children: option ? getOptionLabel(option) : String(value),
+        isRemovable: true,
+        size: chipSize,
+        shape: "rounded",
+        onClick: () => {
+          onOptionSelect?.(option)
+          onChange?.(option)
+        },
+      })}
+    </span>`
+  },
+
+  /**
+   * Renders the dropdown panel that contains search input, options, and empty/loading states.
+   * Shown only when the combobox is open.
+   * @param {ComboboxProps} props
+   * @returns {TemplateResult}
+   */
+  renderDropdown(props) {
+    const { id, options, searchTerm, isSearchable, isLoading } = props
+
+    const filteredOptions = filterOptions(options, searchTerm)
+
+    return html`<div
+      id=${id ? `${id}-control-listbox` : ""}
+      class="iw-combobox-dropdown"
+      role="listbox"
+      ${ref((el) => trackOutsideClick(props, el))}
+    >
+      ${when(isSearchable, () => this.renderSearchInput?.(props))}
+      ${when(isLoading, () => this.renderLoading?.(props))}
+      ${when(!isLoading && !filteredOptions.length, () =>
+        this.renderNoOptions?.(props),
+      )}
+      ${when(!isLoading && filteredOptions.length, () =>
+        this.renderOptions?.(props),
+      )}
+    </div>`
+  },
+
+  /**
+   * Renders the optional search input used to filter options.
+   * Emits search change events as the user types.
+   * @param {ComboboxProps} props
+   * @returns {TemplateResult}
+   */
+  renderSearchInput(props) {
+    const { searchTerm, isOpen, onSearchChange } = props
+
+    return html`<input
+      class="iw-combobox-dropdown-search"
+      type="text"
+      placeholder="Search..."
+      .value=${searchTerm ?? ""}
+      @input=${(event) => onSearchChange?.(event.target.value)}
+      @keydown=${(event) => handleKeyDown(props, event)}
+      ${ref((el) => {
+        if (el && isOpen) queueMicrotask(() => el.focus())
+      })}
+    />`
+  },
+
+  /**
+   * Renders the list of available options in the dropdown.
+   * Delegates each option to `renderOption` for customization.
+   * @param {ComboboxProps} props
+   * @returns {TemplateResult}
+   */
+  renderOptions(props) {
+    const { options, searchTerm } = props
+
+    const filteredOptions = filterOptions(options, searchTerm)
+
+    return html`<div class="iw-combobox-dropdown-options">
+      ${repeat(
+        filteredOptions,
+        (option) => getOptionValue(option),
+        (option, index) => this.renderOption?.(props, { option, index }),
+      )}
+    </div>`
+  },
+
+  /**
+   * Renders a single option row, including selection and focus styling.
+   * Handles click/selection for the option.
+   * @param {ComboboxProps} props
+   * @param {{ option: ComboboxOption, index: number }} payload
+   * @returns {TemplateResult}
+   */
+  renderOption(props, { option, index }) {
+    const {
+      id,
+      selectedValue,
+      focusedIndex,
+      isMulti,
+      onOptionSelect,
+      onChange,
+      onFocusSet,
+    } = props
+
+    const normalized = formatOption(option)
+    const isSelected = isOptionSelected(option, selectedValue, isMulti)
+    const isFocused = index === focusedIndex
+
+    return html`<div
+      id=${id ? `${id}-option-${index}` : ""}
+      role="option"
+      aria-selected=${isSelected ? "true" : "false"}
+      class="iw-combobox-dropdown-options-option ${classMap({
+        "iw-combobox-dropdown-options-option-selected": isSelected,
+        "iw-combobox-dropdown-options-option-focused": isFocused,
+        "iw-combobox-dropdown-options-option-disabled": !!normalized.isDisabled,
+      })}"
+      @click=${() => {
+        if (normalized.isDisabled) return
+        onOptionSelect?.(normalized)
+        onChange?.(normalized)
+      }}
+      @mouseenter=${() => onFocusSet?.(index)}
+    >
+      ${when(
+        isMulti,
+        () =>
+          html`<input
+            type="checkbox"
+            .checked=${isSelected}
+            ?disabled=${!!normalized.isDisabled}
+          />`,
+      )}
+      <span>${getOptionLabel(normalized)}</span>
+    </div>`
+  },
+
+  /**
+   * Renders the loading state shown while options are being fetched or filtered.
+   * Displayed when `isLoading` is true.
+   * @param {ComboboxProps} props
+   * @returns {TemplateResult}
+   */
+  renderLoading(props) {
+    const { loadingMessage } = props
+
+    return html`<div class="iw-combobox-loading">${loadingMessage}</div>`
+  },
+
+  /**
+   * Renders the empty state when no options match the search or list is empty.
+   * Uses the `noOptionsMessage` prop when provided.
+   * @param {ComboboxProps} props
+   * @returns {TemplateResult}
+   */
+  renderNoOptions(props) {
+    const { noOptionsMessage } = props
+    return html`<div class="iw-combobox-no-options">${noOptionsMessage}</div>`
+  },
+}
+
+/**
+ * Opens a closed combobox from the keyboard, and navigates an open one.
+ *
+ * The control keeps DOM focus whenever the combobox is not searchable — there
+ * is no search input to hand focus to — so while open it drives the same
+ * navigation handleKeyDown() gives the search input, rather than toggling.
+ * @param {ComboboxProps} props
+ * @param {KeyboardEvent} event
+ */
+function handleControlKeyDown(props, event) {
+  const { isDisabled, isOpen, onToggle } = props
+
+  if (isDisabled) return
+
+  if (isOpen) {
+    handleKeyDown(props, event)
+    return
+  }
+
+  if (event.key !== "Enter" && event.key !== " " && event.key !== "ArrowDown") {
+    return
+  }
+  // Space would otherwise scroll the page out from under the dropdown.
+  event.preventDefault()
+  onToggle?.()
+}
+
+/**
+ * Handle key navigation.
+ * @param {ComboboxProps} props
+ * @param {KeyboardEvent} event
+ */
+function handleKeyDown(props, event) {
+  const {
+    options,
+    searchTerm,
+    focusedIndex,
+    onFocusFirst,
+    onFocusPrev,
+    onFocusNext,
+    onFocusLast,
+    onOptionSelect,
+    onChange,
+    onClose,
+  } = props
+
+  const filteredOptions = filterOptions(options, searchTerm)
+
+  switch (event.key) {
+    case "ArrowDown":
+      event.preventDefault()
+      onFocusNext?.()
+      break
+    case "ArrowUp":
+      event.preventDefault()
+      onFocusPrev?.()
+      break
+    case "Enter":
+      event.preventDefault()
+      if (focusedIndex > NO_FOCUSED_INDEX && filteredOptions[focusedIndex]) {
+        const option = formatOption(filteredOptions[focusedIndex])
+        if (!option.isDisabled) {
+          onOptionSelect?.(option)
+          onChange?.(option)
+        }
+      }
+      break
+    case "Escape":
+      event.preventDefault()
+      onClose?.()
+      break
+    case "Home":
+      event.preventDefault()
+      onFocusFirst?.()
+      break
+    case "End":
+      event.preventDefault()
+      onFocusLast?.()
+      break
+    default:
+      break
+  }
+}
+
 /**
  * Registered outside-pointer listeners, keyed by the dropdown element they
  * belong to. Used only to deduplicate: the ref callback is handed a fresh arrow
@@ -76,380 +540,4 @@ function trackOutsideClick(props, el) {
 
   outsideListeners.set(el, entry)
   document.addEventListener("pointerdown", entry.listener)
-}
-
-export const Combobox = {
-  /**
-   * Main entrypoint for the combobox control. It renders the wrapper, label, control, and dropdown when open.
-   * Comboboxes support search, single or multi-select values, and clearable selection.
-   * @param {ComboboxProps} props
-   * @returns {TemplateResult}
-   */
-  render(props) {
-    return this.renderCombobox(props)
-  },
-
-  /**
-   * Main entrypoint for the combobox control. It renders the wrapper, label, control, and dropdown when open.
-   * Comboboxes support search, single or multi-select values, and clearable selection.
-   * @param {ComboboxProps} props
-   * @returns {TemplateResult}
-   */
-  renderCombobox(props) {
-    return html`<div
-      class=${classMap({
-        "iw-combobox": true,
-        "iw-combobox-full-width": !!props.isFullWidth,
-        [`iw-combobox-${props.size}`]: props.size !== "md",
-      })}
-    >
-      ${
-        props.label
-          ? html`<label class="iw-combobox-label">${props.label}</label>`
-          : null
-      }
-      ${this.renderControl?.(props)}
-      ${when(props.isOpen, () => this.renderDropdown?.(props))}
-    </div>`
-  },
-
-  /**
-   * Renders the clickable control element that shows the current selection and toggles the dropdown.
-   * Handles placeholder, clear button, and the open/disabled state.
-   *
-   * The control is the only way into a closed combobox, so it has to be
-   * focusable: it was a plain div with a click handler, which meant tabbing
-   * skipped the field entirely and none of the keyboard handling was reachable.
-   * It keeps focus while the dropdown is open unless a search input takes it.
-   * @param {ComboboxProps} props
-   * @returns {TemplateResult}
-   */
-  renderControl(props) {
-    const controlId = props.id ? `${props.id}-control` : undefined
-    return html`<div
-      id=${controlId ?? ""}
-      class="iw-combobox-control ${classMap({
-        "iw-combobox-control-open": props.isOpen,
-        "iw-combobox-control-disabled": props.isDisabled,
-        "iw-combobox-control-selection":
-          props.isMulti &&
-          Array.isArray(props.selectedValue) &&
-          props.selectedValue.length,
-      })}"
-      role="combobox"
-      aria-haspopup="listbox"
-      aria-expanded=${props.isOpen ? "true" : "false"}
-      aria-controls=${controlId ? `${controlId}-listbox` : ""}
-      tabindex=${props.isDisabled ? -1 : 0}
-      @keydown=${(event) => handleControlKeyDown(props, event)}
-      @click=${() => !props.isDisabled && props.onToggle?.()}
-    >
-      ${when(
-        props.isMulti,
-        () => this.renderMultiValue?.(props),
-        () => this.renderSingleValue?.(props),
-      )}
-      ${when(
-        props.isClearable &&
-          ((props.isMulti &&
-            Array.isArray(props.selectedValue) &&
-            props.selectedValue.length) ||
-            (!props.isMulti && props.selectedValue !== null)),
-        () =>
-          html`<button
-            class="iw-combobox-clear"
-            type="button"
-            @click=${(event) => {
-              event.stopPropagation()
-              props.onClear?.()
-            }}
-          >
-            ×
-          </button>`,
-      )}
-
-      <div class="iw-combobox-arrow"><span>▼</span></div>
-    </div>`
-  },
-
-  /**
-   * Renders the currently selected value in single-select mode.
-   * Falls back to the placeholder when no value is selected.
-   * @param {ComboboxProps} props
-   * @returns {TemplateResult}
-   */
-  renderSingleValue(props) {
-    if (props.selectedValue === null) {
-      return html`<span class="iw-combobox-placeholder"
-        >${props.placeholder}</span
-      >`
-    }
-
-    const selectedOption = props.options.find(
-      (option) => getOptionValue(option) === props.selectedValue,
-    )
-
-    return html`<span class="iw-combobox-value"
-      >${
-        selectedOption
-          ? getOptionLabel(selectedOption)
-          : String(props.selectedValue)
-      }</span
-    >`
-  },
-
-  /**
-   * Renders the selected values in multi-select mode as a row of tags.
-   * Falls back to the placeholder when the selection is empty.
-   * @param {ComboboxProps} props
-   * @returns {TemplateResult}
-   */
-  renderMultiValue(props) {
-    if (!Array.isArray(props.selectedValue) || !props.selectedValue.length) {
-      return html`<span class="iw-combobox-placeholder"
-        >${props.placeholder}</span
-      >`
-    }
-
-    return html`<div class="iw-combobox-multi-value">
-      ${repeat(
-        props.selectedValue,
-        (value) => value,
-        (value) => this.renderMultiValueTag?.(props, value),
-      )}
-    </div>`
-  },
-
-  /**
-   * Renders a single selected tag in multi-select mode.
-   * Used to customize chip styling and remove behavior.
-   * @param {ComboboxProps} props
-   * @param {string|number} value
-   * @returns {TemplateResult}
-   */
-  renderMultiValueTag(props, value) {
-    const option = props.options.find((opt) => getOptionValue(opt) === value)
-    const tagId = `${props.id}-tag-${String(value)}`
-    const chipSize = props.size === "lg" ? "md" : "sm"
-
-    return html`<span
-      class="iw-combobox-multi-value-tag"
-      @click=${(event) => event.stopPropagation()}
-    >
-      ${Chip.render({
-        id: tagId,
-        children: option ? getOptionLabel(option) : String(value),
-        isRemovable: true,
-        size: chipSize,
-        shape: "rounded",
-        onClick: () => {
-          props.onOptionSelect?.(option)
-          props.onChange?.(option)
-        },
-      })}
-    </span>`
-  },
-
-  /**
-   * Renders the dropdown panel that contains search input, options, and empty/loading states.
-   * Shown only when the combobox is open.
-   * @param {ComboboxProps} props
-   * @returns {TemplateResult}
-   */
-  renderDropdown(props) {
-    const filteredOptions = filterOptions(props.options, props.searchTerm)
-
-    return html`<div
-      id=${props.id ? `${props.id}-control-listbox` : ""}
-      class="iw-combobox-dropdown"
-      role="listbox"
-      ${ref((el) => trackOutsideClick(props, el))}
-    >
-      ${when(props.isSearchable, () => this.renderSearchInput?.(props))}
-      ${when(props.isLoading, () => this.renderLoading?.(props))}
-      ${when(!props.isLoading && !filteredOptions.length, () =>
-        this.renderNoOptions?.(props),
-      )}
-      ${when(!props.isLoading && filteredOptions.length, () =>
-        this.renderOptions?.(props),
-      )}
-    </div>`
-  },
-
-  /**
-   * Renders the optional search input used to filter options.
-   * Emits search change events as the user types.
-   * @param {ComboboxProps} props
-   * @returns {TemplateResult}
-   */
-  renderSearchInput(props) {
-    return html`<input
-      class="iw-combobox-dropdown-search"
-      type="text"
-      placeholder="Search..."
-      .value=${props.searchTerm ?? ""}
-      @input=${(event) => props.onSearchChange?.(event.target.value)}
-      @keydown=${(event) => handleKeyDown(props, event)}
-      ${ref((el) => {
-        if (el && props.isOpen) queueMicrotask(() => el.focus())
-      })}
-    />`
-  },
-
-  /**
-   * Renders the list of available options in the dropdown.
-   * Delegates each option to `renderOption` for customization.
-   * @param {ComboboxProps} props
-   * @returns {TemplateResult}
-   */
-  renderOptions(props) {
-    const filteredOptions = filterOptions(props.options, props.searchTerm)
-
-    return html`<div class="iw-combobox-dropdown-options">
-      ${repeat(
-        filteredOptions,
-        (option) => getOptionValue(option),
-        (option, index) => this.renderOption?.(props, { option, index }),
-      )}
-    </div>`
-  },
-
-  /**
-   * Renders a single option row, including selection and focus styling.
-   * Handles click/selection for the option.
-   * @param {ComboboxProps} props
-   * @param {{ option: ComboboxOption, index: number }} payload
-   * @returns {TemplateResult}
-   */
-  renderOption(props, { option, index }) {
-    const normalized = formatOption(option)
-    const isSelected = isOptionSelected(
-      option,
-      props.selectedValue,
-      props.isMulti,
-    )
-    const isFocused = index === props.focusedIndex
-
-    return html`<div
-      id=${props.id ? `${props.id}-option-${index}` : ""}
-      role="option"
-      aria-selected=${isSelected ? "true" : "false"}
-      class="iw-combobox-dropdown-options-option ${classMap({
-        "iw-combobox-dropdown-options-option-selected": isSelected,
-        "iw-combobox-dropdown-options-option-focused": isFocused,
-        "iw-combobox-dropdown-options-option-disabled": !!normalized.isDisabled,
-      })}"
-      @click=${() => {
-        if (normalized.isDisabled) return
-        props.onOptionSelect?.(normalized)
-        props.onChange?.(normalized)
-      }}
-      @mouseenter=${() => props.onFocusSet?.(index)}
-    >
-      ${when(
-        props.isMulti,
-        () =>
-          html`<input
-            type="checkbox"
-            .checked=${isSelected}
-            ?disabled=${!!normalized.isDisabled}
-          />`,
-      )}
-      <span>${getOptionLabel(normalized)}</span>
-    </div>`
-  },
-
-  /**
-   * Renders the loading state shown while options are being fetched or filtered.
-   * Displayed when `isLoading` is true.
-   * @param {ComboboxProps} props
-   * @returns {TemplateResult}
-   */
-  renderLoading(props) {
-    return html`<div class="iw-combobox-loading">${props.loadingMessage}</div>`
-  },
-
-  /**
-   * Renders the empty state when no options match the search or list is empty.
-   * Uses the `noOptionsMessage` prop when provided.
-   * @param {ComboboxProps} props
-   * @returns {TemplateResult}
-   */
-  renderNoOptions(props) {
-    return html`<div class="iw-combobox-no-options">
-      ${props.noOptionsMessage}
-    </div>`
-  },
-}
-
-/**
- * Opens a closed combobox from the keyboard, and navigates an open one.
- *
- * The control keeps DOM focus whenever the combobox is not searchable — there
- * is no search input to hand focus to — so while open it drives the same
- * navigation handleKeyDown() gives the search input, rather than toggling.
- * @param {ComboboxProps} props
- * @param {KeyboardEvent} event
- */
-function handleControlKeyDown(props, event) {
-  if (props.isDisabled) return
-
-  if (props.isOpen) {
-    handleKeyDown(props, event)
-    return
-  }
-
-  if (event.key !== "Enter" && event.key !== " " && event.key !== "ArrowDown") {
-    return
-  }
-  // Space would otherwise scroll the page out from under the dropdown.
-  event.preventDefault()
-  props.onToggle?.()
-}
-
-/**
- * Handle key navigation.
- * @param {ComboboxProps} props
- * @param {KeyboardEvent} event
- */
-function handleKeyDown(props, event) {
-  const filteredOptions = filterOptions(props.options, props.searchTerm)
-
-  switch (event.key) {
-    case "ArrowDown":
-      event.preventDefault()
-      props.onFocusNext?.()
-      break
-    case "ArrowUp":
-      event.preventDefault()
-      props.onFocusPrev?.()
-      break
-    case "Enter":
-      event.preventDefault()
-      if (
-        props.focusedIndex > NO_FOCUSED_INDEX &&
-        filteredOptions[props.focusedIndex]
-      ) {
-        const option = formatOption(filteredOptions[props.focusedIndex])
-        if (!option.isDisabled) {
-          props.onOptionSelect?.(option)
-          props.onChange?.(option)
-        }
-      }
-      break
-    case "Escape":
-      event.preventDefault()
-      props.onClose?.()
-      break
-    case "Home":
-      event.preventDefault()
-      props.onFocusFirst?.()
-      break
-    case "End":
-      event.preventDefault()
-      props.onFocusLast?.()
-      break
-    default:
-      break
-  }
 }

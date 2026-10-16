@@ -174,6 +174,25 @@ WithError.args = {
   error: "Please enter a valid email address",
 }
 
+export const WithIcon = {}
+WithIcon.args = {
+  ...Default.args,
+  icon: "@",
+}
+
+export const WithIconAfter = {}
+WithIconAfter.args = {
+  ...Default.args,
+  iconAfter: "@",
+}
+
+export const WithBothIcons = {}
+WithBothIcons.args = {
+  ...Default.args,
+  icon: "@",
+  iconAfter: "@",
+}
+
 export const Required = {}
 Required.args = {
   ...Default.args,
@@ -204,6 +223,13 @@ Small.args = {
   ...Default.args,
   label: "Small Input",
   size: "sm",
+}
+
+export const Medium = {}
+Medium.args = {
+  ...Default.args,
+  label: "Medium Input",
+  size: "md",
 }
 
 export const Large = {}
@@ -285,4 +311,13 @@ Color.args = {
   label: "Color",
   inputType: "color",
   value: "#7c3aed",
+}
+
+export const Password = {}
+Password.args = {
+  ...Default.args,
+  label: "Password",
+  inputType: "password",
+  placeholder: "••••••••",
+  iconAfter: "@",
 }

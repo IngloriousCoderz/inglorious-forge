@@ -1,11 +1,11 @@
 @import "../../data-display/chip/style.css";
 
 .iw-combobox {
-  position: relative;
   display: inline-flex;
   flex-direction: column;
   gap: var(--iw-space-1);
   font-family: var(--iw-font-family-sans);
+  position: relative; /* required for dropdown positioning */
 
   &.iw-combobox-full-width {
     width: 100%;
@@ -13,20 +13,40 @@
 
   .iw-combobox-label {
     font-size: var(--iw-font-size-sm);
+    font-weight: var(--iw-font-weight-normal);
     color: var(--iw-color-text);
     line-height: var(--iw-line-height-normal);
   }
 
-  .iw-combobox-control {
-    height: 2.25rem;
+  .iw-combobox-required {
+    color: var(--iw-color-error);
+    margin-left: var(--iw-space-1);
+  }
+
+  .iw-combobox-hint,
+  .iw-combobox-error-message {
+    font-size: var(--iw-font-size-sm);
+    line-height: var(--iw-line-height-normal);
+  }
+
+  .iw-combobox-hint {
+    color: var(--iw-color-text-muted);
+  }
+
+  .iw-combobox-error-message {
+    color: var(--iw-color-error);
+  }
+
+  .iw-combobox-frame {
     display: flex;
     align-items: center;
+    /* The gap spaces the text from the arrow, as it does for Input's icons. */
     gap: var(--iw-space-2);
-    padding: 0 var(--iw-space-10) 0 var(--iw-space-3);
+    padding: 0 var(--iw-space-3);
     border: 1px solid var(--iw-input-border);
     border-radius: var(--iw-input-radius);
-    background: var(--iw-input-bg);
     color: var(--iw-input-text);
+    background-color: var(--iw-input-bg);
     cursor: pointer;
     user-select: none;
     transition:
@@ -34,9 +54,30 @@
       box-shadow var(--iw-transition-fast),
       background-color var(--iw-transition-fast);
 
-    &:hover {
+    &.iw-combobox-sm {
+      height: 2rem;
+      font-size: var(--iw-font-size-sm);
+    }
+
+    &.iw-combobox-md {
+      height: 2.25rem;
+      font-size: var(--iw-font-size-base);
+    }
+
+    &.iw-combobox-lg {
+      height: 2.75rem;
+      font-size: var(--iw-font-size-lg);
+    }
+
+    &:hover:not(.iw-combobox-frame-disabled) {
       border-color: var(--iw-input-border-hover);
       background: var(--iw-input-bg-hover);
+    }
+
+    &:focus-within:not(.iw-combobox-frame-disabled) {
+      background-color: var(--iw-input-bg-focus);
+      border-color: var(--iw-input-border-focus);
+      box-shadow: var(--iw-input-shadow-focus);
     }
 
     /* The control is focusable so it can be opened from the keyboard. */
@@ -46,7 +87,7 @@
       box-shadow: var(--iw-input-shadow-focus);
     }
 
-    &.iw-combobox-control-open {
+    &.iw-combobox-frame-open {
       border-color: var(--iw-input-border-focus);
       box-shadow: var(--iw-input-shadow-focus);
       background: var(--iw-input-bg-focus);
@@ -54,14 +95,23 @@
       border-bottom-right-radius: 0;
     }
 
-    &.iw-combobox-control-disabled {
+    &.iw-combobox-frame-disabled {
       opacity: 0.6;
       cursor: not-allowed;
     }
 
-    .iw-combobox-value,
-    .iw-combobox-placeholder,
-    .iw-combobox-multi-value {
+    &.iw-combobox-frame-error {
+      border-color: var(--iw-color-error);
+
+      &:focus-visible {
+        border-color: var(--iw-color-error);
+      }
+    }
+
+    /* The text element, whatever it is showing. Same role as
+       .iw-input-control in Input, so the shared rules live here and the
+       variant classes only add what is specific to them. */
+    .iw-combobox-control {
       flex: 1;
       min-width: 0;
     }
@@ -114,19 +164,20 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      font-size: var(--iw-font-size-sm);
+      line-height: 1;
+      /* A flex child, like Input's icons and the Select arrow. Absolutely
+         positioning it anchored to .iw-combobox rather than the frame, so
+         the glyph drifted whenever a label sat above the control, and it
+         needed a reserved padding strip to stop text running under it. The
+         row's gap does both. */
+      flex: none;
       pointer-events: none;
-      position: absolute;
-      right: var(--iw-space-3);
       color: var(--iw-color-text-muted);
       transition: transform var(--iw-transition-fast);
-
-      span {
-        font-size: 0.65rem;
-        line-height: 1;
-      }
     }
 
-    &.iw-combobox-control-open .iw-combobox-arrow {
+    &.iw-combobox-frame-open .iw-combobox-arrow {
       transform: rotate(180deg);
     }
   }
@@ -198,13 +249,13 @@
     }
   }
 
-  &.iw-combobox-sm .iw-combobox-control {
+  &.iw-combobox-sm .iw-combobox-frame {
     height: 2rem;
-    padding: 0 var(--iw-space-8) 0 var(--iw-space-2);
+    padding: 0 var(--iw-space-2);
   }
 
-  &.iw-combobox-lg .iw-combobox-control {
+  &.iw-combobox-lg .iw-combobox-frame {
     height: 2.75rem;
-    padding: 0 var(--iw-space-12) 0 var(--iw-space-4);
+    padding: 0 var(--iw-space-4);
   }
 }

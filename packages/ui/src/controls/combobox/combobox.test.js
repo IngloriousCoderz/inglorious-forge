@@ -85,7 +85,7 @@ describe("combobox", () => {
 
     render(Combobox.render(entity, api), container)
 
-    container.querySelector(".iw-combobox-control").click()
+    container.querySelector(".iw-combobox-frame").click()
 
     expect(api.getEvents()).toEqual([{ type: "#sel:toggle" }])
   })
@@ -98,7 +98,7 @@ describe("combobox", () => {
 
     render(Combobox.render(entity, api), container)
 
-    const control = container.querySelector(".iw-combobox-control")
+    const control = container.querySelector(".iw-combobox-frame")
     // A plain div with no tabindex is skipped by tab entirely, which is how
     // this went unnoticed: the field worked with a mouse and nowhere else.
     expect(control.getAttribute("tabindex")).toBe("0")
@@ -115,7 +115,7 @@ describe("combobox", () => {
     render(Combobox.render(entity, api), container)
 
     expect(
-      container.querySelector(".iw-combobox-control").getAttribute("tabindex"),
+      container.querySelector(".iw-combobox-frame").getAttribute("tabindex"),
     ).toBe("-1")
   })
 
@@ -128,7 +128,7 @@ describe("combobox", () => {
 
       render(Combobox.render(entity, api), container)
       container
-        .querySelector(".iw-combobox-control")
+        .querySelector(".iw-combobox-frame")
         .dispatchEvent(new KeyboardEvent("keydown", { key, bubbles: true }))
 
       expect(api.getEvents()).toEqual([{ type: "#sel:toggle" }])
@@ -143,7 +143,7 @@ describe("combobox", () => {
 
     render(Combobox.render(entity, api), container)
     container
-      .querySelector(".iw-combobox-control")
+      .querySelector(".iw-combobox-frame")
       .dispatchEvent(new KeyboardEvent("keydown", { key: "a", bubbles: true }))
 
     expect(api.getEvents()).toEqual([])
@@ -164,7 +164,7 @@ describe("combobox", () => {
     const container = document.createElement("div")
 
     render(Combobox.render(entity, api), container)
-    const control = container.querySelector(".iw-combobox-control")
+    const control = container.querySelector(".iw-combobox-frame")
 
     expect(control.getAttribute("aria-expanded")).toBe("true")
 
@@ -187,7 +187,7 @@ describe("combobox", () => {
 
     render(Combobox.render(entity, api), container)
     container
-      .querySelector(".iw-combobox-control")
+      .querySelector(".iw-combobox-frame")
       .dispatchEvent(
         new KeyboardEvent("keydown", { key: "Escape", bubbles: true }),
       )
@@ -259,8 +259,8 @@ describe("combobox outside click (store integration)", () => {
       store,
       container,
       entity: () => store._api.getEntity("favorite"),
-      control: () => container.querySelector(".iw-combobox-control"),
-      open: () => container.querySelector(".iw-combobox-control").click(),
+      control: () => container.querySelector(".iw-combobox-frame"),
+      open: () => container.querySelector(".iw-combobox-frame").click(),
       options: () =>
         container.querySelectorAll(".iw-combobox-dropdown-options-option"),
       dropdown: () => container.querySelector(".iw-combobox-dropdown"),
@@ -567,5 +567,139 @@ describe("combobox outside click (store integration)", () => {
 
     expect(first.entity().isOpen).toBe(true)
     expect(second.entity().isOpen).toBe(false)
+  })
+})
+
+describe("combobox label, hint and error", () => {
+  it("labels the control by id, since a div cannot take a for binding", () => {
+    const container = document.createElement("div")
+
+    render(
+      Combobox.render({ id: "c", label: "Country", options: [] }),
+      container,
+    )
+
+    const label = container.querySelector(".iw-combobox-label")
+    expect(label.id).toBe("c-label")
+    expect(label.textContent.trim()).toBe("Country")
+    expect(
+      container
+        .querySelector(".iw-combobox-frame")
+        .getAttribute("aria-labelledby"),
+    ).toBe("c-label")
+  })
+
+  it("marks a required combobox for assistive tech", () => {
+    const container = document.createElement("div")
+
+    render(
+      Combobox.render({
+        id: "c",
+        label: "Country",
+        isRequired: true,
+        options: [],
+      }),
+      container,
+    )
+
+    expect(container.querySelector(".iw-combobox-required")).toBeTruthy()
+    expect(
+      container
+        .querySelector(".iw-combobox-frame")
+        .getAttribute("aria-required"),
+    ).toBe("true")
+  })
+
+  it("shows a hint and points the control at it", () => {
+    const container = document.createElement("div")
+
+    render(
+      Combobox.render({ id: "c", hint: "Start typing", options: [] }),
+      container,
+    )
+
+    const hint = container.querySelector(".iw-combobox-hint")
+    expect(hint.textContent).toBe("Start typing")
+    expect(
+      container
+        .querySelector(".iw-combobox-frame")
+        .getAttribute("aria-describedby"),
+    ).toBe(hint.id)
+  })
+
+  it("shows an error, marks the control invalid, and drops the hint", () => {
+    const container = document.createElement("div")
+
+    render(
+      Combobox.render({
+        id: "c",
+        hint: "Start typing",
+        error: "Pick a country",
+        options: [],
+      }),
+      container,
+    )
+
+    const control = container.querySelector(".iw-combobox-frame")
+    expect(control.getAttribute("aria-invalid")).toBe("true")
+    expect(control.classList.contains("iw-combobox-frame-error")).toBe(true)
+    expect(
+      container.querySelector(".iw-combobox-error-message").textContent,
+    ).toBe("Pick a country")
+    // Showing both tells someone how to fix a field they already got wrong.
+    expect(container.querySelector(".iw-combobox-hint")).toBeNull()
+  })
+
+  it("does not point at a label or message that is not there", () => {
+    const container = document.createElement("div")
+
+    render(Combobox.render({ id: "c", options: [] }), container)
+
+    const control = container.querySelector(".iw-combobox-frame")
+    // A reference to an id that is not in the DOM is worse than none.
+    expect(control.getAttribute("aria-labelledby")).toBe("")
+    expect(control.getAttribute("aria-describedby")).toBe("")
+  })
+
+  it("reports required and valid explicitly rather than omitting them", () => {
+    const container = document.createElement("div")
+
+    render(Combobox.render({ id: "c", options: [] }), container)
+
+    const control = container.querySelector(".iw-combobox-frame")
+    // An absent aria-invalid reads as ambiguous, and aria-invalid="" is not a
+    // valid token. Both booleans state their value.
+    expect(control.getAttribute("aria-required")).toBe("false")
+    expect(control.getAttribute("aria-invalid")).toBe("false")
+  })
+
+  it("styles the hint muted and the error as danger", async () => {
+    const css = await import("./style.css?raw")
+
+    expect(css.default).toMatch(
+      /\.iw-combobox-hint\s*\{[^}]*--iw-color-text-muted/,
+    )
+    expect(css.default).toMatch(
+      /\.iw-combobox-error-message\s*\{[^}]*--iw-color-error/,
+    )
+    expect(css.default).toMatch(/\.iw-combobox-frame-error/)
+  })
+})
+
+describe("combobox arrow", () => {
+  it("pins its glyph size so it matches the select arrow", async () => {
+    const css = (await import("./style.css?raw")).default.replace(
+      /\/\*[\s\S]*?\*\//g,
+      "",
+    )
+
+    // The glyph is a text character, so an unpinned font-size lets each arrow
+    // inherit whatever context it was dropped into and the two stop matching.
+    // Captured per block rather than scanned whole-file: a bare
+    // `toMatch(/\.iw-combobox-arrow\s*\{[^}]*font-size:/)` can be satisfied by
+    // a *different* rule and silently stop checking this one.
+    const block = css.match(/\.iw-combobox-arrow \{([^}]*)\}/)
+    expect(block).toBeTruthy()
+    expect(block[1]).toMatch(/font-size:/)
   })
 })

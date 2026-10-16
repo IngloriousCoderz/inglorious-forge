@@ -1,5 +1,5 @@
 import { createRender } from "../../stories/notifyStory.js"
-import { Select } from "./index.js"
+import { Select } from "."
 
 export default {
   title: "Controls/Select",
@@ -34,7 +34,8 @@ export default {
   parameters: {
     docs: {
       description: {
-        component: "Select field control.",
+        component:
+          "Select field control with labels, hints, errors, and semantic states.",
       },
     },
   },
@@ -42,9 +43,11 @@ export default {
 
 export const Default = {}
 Default.args = {
+  label: "Animals",
   name: "animals",
   options: ["Cat", "Dog", "Seal"],
   value: "",
+  error: "",
   size: "md",
   isDisabled: false,
   isFullWidth: false,
@@ -60,10 +63,33 @@ ComplexOptions.args = {
   ],
 }
 
+export const WithHint = {}
+WithHint.args = {
+  ...Default.args,
+  hint: "Please select an animal",
+}
+
+export const WithError = {}
+WithError.args = {
+  ...Default.args,
+  error: "You cannot select this one!",
+}
+
+export const WithHintAndError = {}
+WithHintAndError.args = {
+  ...WithHint.args,
+  error: "You cannot select this one!",
+}
+
+export const Required = {}
+Required.args = {
+  ...Default.args,
+  isRequired: true,
+}
+
 export const Disabled = {}
 Disabled.args = {
   ...Default.args,
-  value: "Cat",
   isDisabled: true,
 }
 
@@ -79,6 +105,12 @@ export const Small = {}
 Small.args = {
   ...Default.args,
   size: "sm",
+}
+
+export const Medium = {}
+Medium.args = {
+  ...Default.args,
+  size: "md",
 }
 
 export const Large = {}

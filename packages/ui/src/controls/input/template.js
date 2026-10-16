@@ -6,7 +6,9 @@
 import { html } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
 import { ref } from "@inglorious/web/directives/ref"
+import { when } from "@inglorious/web/directives/when"
 
+import { Icon } from "../../data-display/icon/index.js"
 import { applyElementProps } from "../../shared/applyElementProps.js"
 
 /**
@@ -19,100 +21,122 @@ import { applyElementProps } from "../../shared/applyElementProps.js"
  * @param {InputProps} props
  * @returns {TemplateResult}
  */
-export function render(props) {
-  const {
-    id,
-    type, // eslint-disable-line no-unused-vars
-    name = "",
-    inputType = "text",
-    value = "",
-    placeholder = "",
-    label,
-    hint,
-    error,
-    size = "md",
-    isDisabled = false,
-    isReadOnly = false,
-    isRequired = false,
-    isFullWidth = false,
-    icon,
-    iconAfter,
-    onChange,
-    onBlur,
-    onFocus,
-    ...rest
-  } = props
+export const Input = {
+  render(props) {
+    return this.renderInput(props)
+  },
 
-  const inputId = id || name
+  renderInput(props) {
+    const {
+      id,
+      type, // eslint-disable-line no-unused-vars
+      name = "",
+      label,
+      hint,
+      error,
+      isDisabled = false,
+      isRequired = false,
+      isFullWidth = false,
+      icon,
+      iconAfter,
+    } = props
 
-  const wrapperClasses = {
-    "iw-input-field": true,
-    "iw-input-full-width": isFullWidth,
-    "iw-input-disabled": isDisabled,
-    "iw-input-has-error": !!error,
-    "iw-input-has-icon": !!icon,
-    "iw-input-has-icon-after": !!iconAfter,
-  }
+    const controlId = id || name
+    const messageId = (error || hint) && id ? `${id}-message` : ""
 
-  const inputClasses = {
-    "iw-input": true,
-    [`iw-input-${size}`]: size !== "md",
-    "iw-input-error": !!error,
-    "iw-input-number": inputType === "number",
-  }
+    const inputClasses = {
+      "iw-input": true,
+      "iw-input-full-width": isFullWidth,
+      "iw-input-disabled": isDisabled,
+      "iw-input-has-error": !!error,
+      "iw-input-has-icon": !!icon,
+      "iw-input-has-icon-after": !!iconAfter,
+    }
 
-  return html`
-    <div class=${classMap(wrapperClasses)}>
-      ${
-        label
-          ? html`
-              <label for=${inputId} class="iw-input-label">
-                ${label}
-                ${
-                  isRequired
-                    ? html`<span class="iw-input-required">*</span>`
-                    : null
-                }
-              </label>
-            `
-          : null
-      }
-
-      <div class="iw-input-frame">
-        ${icon ? html`<span class="iw-input-icon">${icon}</span>` : null}
-
-        <input
-          id=${inputId}
-          name=${name}
-          type=${inputType}
-          .value=${value}
-          placeholder=${placeholder}
-          ?disabled=${isDisabled}
-          ?readonly=${isReadOnly}
-          ?required=${isRequired}
-          class=${classMap(inputClasses)}
-          @input=${(event) => onChange?.(event.target.value)}
-          @blur=${onBlur}
-          @focus=${onFocus}
-          ${ref((element) => applyElementProps(element, rest))}
-        />
-
-        ${
-          iconAfter
-            ? html`<span class="iw-input-icon iw-input-icon-after"
-                >${iconAfter}</span
-              >`
-            : null
-        }
+    return html`
+      <div class=${classMap(inputClasses)}>
+        ${when(
+          label,
+          () => html`
+            <label for=${controlId} class="iw-input-label">
+              ${label}
+              ${when(
+                isRequired,
+                () => html`<span class="iw-input-required">*</span>`,
+              )}
+            </label>
+          `,
+        )}
+        ${this.renderControl?.(props)}
+        ${when(
+          error,
+          () =>
+            html`<span id=${messageId || ""} class="iw-input-error-message"
+              >${error}</span
+            >`,
+        )}
+        ${when(
+          !error && hint,
+          () =>
+            html`<span id=${messageId || ""} class="iw-input-hint"
+              >${hint}</span
+            >`,
+        )}
       </div>
+    `
+  },
 
-      ${
-        error
-          ? html`<span class="iw-input-error-message">${error}</span>`
-          : hint
-            ? html`<span class="iw-input-hint">${hint}</span>`
-            : null
-      }
-    </div>
-  `
+  renderControl(props) {
+    const {
+      id,
+      type, // eslint-disable-line no-unused-vars
+      name = "",
+      inputType = "text",
+      value = "",
+      placeholder = "",
+      error,
+      size = "md",
+      isDisabled = false,
+      isReadOnly = false,
+      isRequired = false,
+      icon,
+      iconAfter,
+      onChange,
+      onBlur,
+      onFocus,
+      ...rest
+    } = props
+
+    const controlId = id || name
+
+    const controlClasses = {
+      "iw-input-control": true,
+      [`iw-input-${size}`]: true,
+      "iw-input-control-disabled": isDisabled,
+      "iw-input-control-error": !!error,
+      "iw-input-number": inputType === "number",
+    }
+
+    return html`<div class="iw-input-frame">
+      ${when(icon, () => Icon.render({ children: icon, color: "var(--iw-color-text-muted)", size }))}
+
+      <input
+        id=${controlId}
+        name=${name}
+        type=${inputType}
+        .value=${value}
+        placeholder=${placeholder}
+        ?disabled=${isDisabled}
+        ?readonly=${isReadOnly}
+        ?required=${isRequired}
+        class=${classMap(controlClasses)}
+        @input=${(event) => onChange?.(event.target.value)}
+        @blur=${onBlur}
+        @focus=${onFocus}
+        ${ref((element) => applyElementProps(element, rest))}
+      />
+
+      ${when(iconAfter, () => Icon.render({ children: iconAfter, color: "var(--iw-color-text-muted)", size }))}
+    </div>`
+  },
 }

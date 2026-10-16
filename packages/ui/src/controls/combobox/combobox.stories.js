@@ -56,8 +56,8 @@ export default {
   },
 }
 
-export const SingleClosed = {}
-SingleClosed.args = {
+export const Default = {}
+Default.args = {
   id: "combobox",
   type: "Combobox",
   label: "Country",
@@ -79,14 +79,76 @@ SingleClosed.args = {
 
 export const SingleOpen = {}
 SingleOpen.args = {
-  ...SingleClosed.args,
+  ...Default.args,
   isOpen: true,
 }
 
 export const MultiOpen = {}
 MultiOpen.args = {
-  ...SingleClosed.args,
+  ...Default.args,
   isMulti: true,
   selectedValue: ["it", "fr"],
   isOpen: true,
+}
+
+export const WithHint = {}
+WithHint.args = {
+  ...Default.args,
+  hint: "Please select a country",
+}
+
+export const WithError = {}
+WithError.args = {
+  ...Default.args,
+  error: "You cannot select this one!",
+}
+
+export const WithHintAndError = {}
+WithHintAndError.args = {
+  ...WithHint.args,
+  error: "You cannot select this one!",
+}
+
+export const Required = {}
+Required.args = {
+  ...Default.args,
+  isRequired: true,
+}
+
+export const Disabled = {}
+Disabled.args = {
+  ...Default.args,
+  isDisabled: true,
+}
+
+export const DisabledOption = {}
+DisabledOption.args = {
+  ...Default.args,
+  options: Default.args.options.map((option, index) =>
+    index % 2 ? { ...option, isDisabled: true } : option,
+  ),
+}
+
+export const Small = {}
+Small.args = {
+  ...Default.args,
+  size: "sm",
+}
+
+export const Medium = {}
+Medium.args = {
+  ...Default.args,
+  size: "md",
+}
+
+export const Large = {}
+Large.args = {
+  ...Default.args,
+  size: "lg",
+}
+
+export const FullWidth = {}
+FullWidth.args = {
+  ...Default.args,
+  isFullWidth: true,
 }

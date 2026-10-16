@@ -1,3 +1,3 @@
-import * as renderers from "./template.js"
+import { Select as renderers } from "./template.js"
 
 export const Select = { ...renderers }

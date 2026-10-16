@@ -1,5 +1,11 @@
 # @inglorious/ui
 
+## 7.2.2
+
+### Patch Changes
+
+- Align input, select, and combobox look&feel
+
 ## 7.2.1
 
 ### Patch Changes

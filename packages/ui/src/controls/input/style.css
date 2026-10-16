@@ -1,10 +1,10 @@
-.iw-input-field {
-  display: flex;
+.iw-input {
+  display: inline-flex;
   flex-direction: column;
   gap: var(--iw-space-1);
   font-family: var(--iw-font-family-sans);
 
-  &.iw-input-full-width .iw-input {
+  &.iw-input-full-width {
     width: 100%;
   }
 
@@ -12,6 +12,7 @@
     font-size: var(--iw-font-size-sm);
     font-weight: var(--iw-font-weight-normal);
     color: var(--iw-color-text);
+    line-height: var(--iw-line-height-normal);
   }
 
   .iw-input-required {
@@ -23,88 +24,74 @@
     position: relative;
     display: flex;
     align-items: center;
-  }
-
-  .iw-input {
-    height: 2.25rem;
+    gap: var(--iw-space-2);
     padding: 0 var(--iw-space-3);
-    font-family: inherit;
-    font-size: var(--iw-font-size-base);
-    line-height: 1.2;
-    color: var(--iw-input-text);
-    background-color: var(--iw-input-bg);
     border: 1px solid var(--iw-input-border);
     border-radius: var(--iw-input-radius);
-    outline: none;
-    transition: all var(--iw-transition-fast);
+    transition:
+      border-color var(--iw-transition-fast),
+      box-shadow var(--iw-transition-fast),
+      background-color var(--iw-transition-fast);
 
-    &::placeholder {
-      color: var(--iw-input-text-placeholder);
-    }
-
-    &:hover:not(:disabled) {
+    &:hover:not(:has(.iw-input-control:disabled)) {
       background-color: var(--iw-input-bg-hover);
       border-color: var(--iw-input-border-hover);
     }
 
-    &:focus:not(:disabled) {
+    &:focus-within:not(:has(.iw-input-control:disabled)) {
       background-color: var(--iw-input-bg-focus);
       border-color: var(--iw-input-border-focus);
       box-shadow: var(--iw-input-shadow-focus);
     }
 
-    &:disabled {
+    &:has(.iw-input-control-disabled) {
       opacity: 0.5;
       cursor: not-allowed;
     }
 
-    &.iw-input-error {
+    &:has(.iw-input-control-error) {
       border-color: var(--iw-color-error);
 
-      &:focus {
+      &:focus-within {
         border-color: var(--iw-color-error);
         box-shadow: 0 0 0 1px var(--iw-color-error);
       }
     }
 
-    &.iw-input-number {
-      text-align: right;
+    .iw-input-control {
+      /* Fills the frame, which is now the box. */
+      flex: 1;
+      min-width: 0;
+      font-family: inherit;
+      line-height: 1.2;
+      color: var(--iw-input-text);
+      background-color: transparent;
+      border: none;
+      outline: none;
+
+      &::placeholder {
+        color: var(--iw-input-text-placeholder);
+      }
+
+      &.iw-input-number {
+        text-align: right;
+      }
+
+      &.iw-input-sm {
+        height: 2rem;
+        font-size: var(--iw-font-size-sm);
+      }
+
+      &.iw-input-md {
+        height: 2.25rem;
+        font-size: var(--iw-font-size-base);
+      }
+
+      &.iw-input-lg {
+        height: 2.75rem;
+        font-size: var(--iw-font-size-lg);
+      }
     }
-
-    &.iw-input-sm {
-      height: 2rem;
-      padding: 0 var(--iw-space-2);
-      font-size: var(--iw-font-size-sm);
-    }
-
-    &.iw-input-lg {
-      height: 2.75rem;
-      padding: 0 var(--iw-space-4);
-      font-size: var(--iw-font-size-lg);
-    }
-  }
-
-  .iw-input-icon {
-    position: absolute;
-    left: var(--iw-space-3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--iw-color-text-muted);
-    pointer-events: none;
-
-    &.iw-input-icon-after {
-      left: auto;
-      right: var(--iw-space-3);
-    }
-  }
-
-  &.iw-input-has-icon .iw-input {
-    padding-left: calc(var(--iw-space-3) * 2 + 1em);
-  }
-
-  &.iw-input-has-icon-after .iw-input {
-    padding-right: calc(var(--iw-space-3) * 2 + 1em);
   }
 
   .iw-input-hint,

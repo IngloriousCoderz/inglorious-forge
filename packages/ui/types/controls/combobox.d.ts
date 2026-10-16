@@ -6,7 +6,10 @@ export type ComboboxOption =
   | {
       value: string | number
       label?: string
+      hint?: string
+      error?: string
       isDisabled?: boolean
+      isRequired?: boolean
       [key: string]: unknown
     }
 

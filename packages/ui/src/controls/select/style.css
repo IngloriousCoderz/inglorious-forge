@@ -1,88 +1,167 @@
 .iw-select {
-  appearance: none;
+  display: inline-flex;
+  flex-direction: column;
+  gap: var(--iw-space-1);
   font-family: var(--iw-font-family-sans);
-  font-size: var(--iw-font-size-sm);
-  line-height: var(--iw-line-height-normal);
-  height: 2.25rem;
-  border: 1px solid var(--iw-input-border);
-  border-radius: var(--iw-input-radius);
-  padding: 0 var(--iw-space-10) 0 var(--iw-space-3);
-  background: var(--iw-input-bg);
-  background-image:
-    linear-gradient(
-      45deg,
-      transparent 50%,
-      var(--iw-input-text, var(--iw-color-text)) 50%
-    ),
-    linear-gradient(
-      135deg,
-      var(--iw-input-text, var(--iw-color-text)) 50%,
-      transparent 50%
-    );
-  background-position:
-    right calc(var(--iw-space-4) + 0.3125rem) center,
-    right var(--iw-space-4) center;
-  background-size:
-    0.375rem 0.375rem,
-    0.375rem 0.375rem;
-  background-repeat: no-repeat;
-  color: var(--iw-input-text);
-  cursor: pointer;
-  user-select: none;
-  transition:
-    border-color var(--iw-transition-fast),
-    box-shadow var(--iw-transition-fast),
-    background-color var(--iw-transition-fast);
 
   &.iw-select-full-width {
     width: 100%;
   }
 
-  &:hover {
-    border-color: var(--iw-input-border-hover);
-    background: var(--iw-input-bg-hover);
+  .iw-select-label {
+    font-size: var(--iw-font-size-sm);
+    font-weight: var(--iw-font-weight-normal);
+    color: var(--iw-color-text);
+    line-height: var(--iw-line-height-normal);
   }
 
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+  .iw-select-required {
+    color: var(--iw-color-error);
+    margin-left: var(--iw-space-1);
   }
 
-  &[multiple] {
-    appearance: auto;
-    background-image: none;
+  .iw-select-hint,
+  .iw-select-error-message {
+    font-size: var(--iw-font-size-sm);
+    line-height: var(--iw-line-height-normal);
   }
 
-  .iw-select-option {
+  .iw-select-hint {
+    color: var(--iw-color-text-muted);
+  }
+
+  .iw-select-error-message {
+    color: var(--iw-color-error);
+  }
+
+  .iw-select-frame {
+    display: flex;
+    align-items: center;
+    /* The gap spaces the text from the arrow, the same way it spaces an
+       Input's text from its icons. */
+    gap: var(--iw-space-2);
+    padding: 0 var(--iw-space-3);
+    border: 1px solid var(--iw-input-border);
+    border-radius: var(--iw-input-radius);
+    color: var(--iw-input-text);
+    background-color: var(--iw-input-bg);
+    cursor: pointer;
     user-select: none;
-    padding: var(--iw-space-2) var(--iw-space-3);
+    transition:
+      border-color var(--iw-transition-fast),
+      box-shadow var(--iw-transition-fast),
+      background-color var(--iw-transition-fast);
 
-    &:focused {
-      background: var(--iw-color-bg-secondary);
+    &:hover:not(:has(.iw-select-control:disabled)) {
+      background-color: var(--iw-input-bg-hover);
+      border-color: var(--iw-input-border-hover);
     }
 
-    &.iw-select-option-selected {
-      background: color-mix(
-        in srgb,
-        var(--iw-color-primary) 16%,
-        var(--iw-color-bg) 84%
-      );
+    &:focus-within:not(:has(.iw-select-control:disabled)) {
+      background-color: var(--iw-input-bg-focus);
+      border-color: var(--iw-input-border-focus);
+      box-shadow: var(--iw-input-shadow-focus);
+    }
+
+    &:has(.iw-select-control-disabled) {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    &:has(.iw-select-control-error) {
+      border-color: var(--iw-color-error);
+
+      &:focus-within {
+        border-color: var(--iw-color-error);
+        box-shadow: 0 0 0 1px var(--iw-color-error);
+      }
+    }
+
+    /* The control is focusable so it can be opened from the keyboard. */
+    &:focus-visible {
+      outline: none;
+      border-color: var(--iw-input-border-focus);
+      box-shadow: var(--iw-input-shadow-focus);
+    }
+
+    .iw-select-control {
+      appearance: none;
+      flex: 1;
+      min-width: 0;
+      font-family: inherit;
+      line-height: 1.2;
+      background-color: transparent;
+      border: none;
+      outline: none;
+
+      background-color: var(--iw-input-bg);
+      color: var(--iw-input-text);
+      cursor: pointer;
+      user-select: none;
+      transition:
+        border-color var(--iw-transition-fast),
+        box-shadow var(--iw-transition-fast),
+        background-color var(--iw-transition-fast);
+
+      &[multiple] {
+        appearance: auto;
+        background-image: none;
+      }
+
+      &.iw-select-sm {
+        height: 2rem;
+        font-size: var(--iw-font-size-sm);
+      }
+
+      &.iw-select-md {
+        height: 2.25rem;
+        font-size: var(--iw-font-size-base);
+      }
+
+      &.iw-select-lg {
+        height: 2.75rem;
+        font-size: var(--iw-font-size-lg);
+      }
+
+      .iw-select-option {
+        user-select: none;
+        padding: var(--iw-space-2) var(--iw-space-3);
+
+        &:focused {
+          background-color: var(--iw-color-bg-secondary);
+        }
+
+        &.iw-select-option-selected {
+          background-color: color-mix(
+            in srgb,
+            var(--iw-color-primary) 16%,
+            var(--iw-color-bg) 84%
+          );
+        }
+      }
+    }
+
+    .iw-select-arrow {
+      width: 1.25rem;
+      height: 1.25rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--iw-font-size-sm);
+      line-height: 1;
+      /* A flex child, like Input's icons. Absolutely positioning it needed a
+         positioning context on the frame and a reserved padding strip so the
+         text would not run underneath it; the row's gap does both. */
+      flex: none;
+      /* Decorative. A popup only opens from a trusted gesture on the select
+         itself, so the arrow cannot open it; leaving clicks to pass through
+         keeps the strip from swallowing them. */
+      pointer-events: none;
+      color: var(--iw-color-text-muted);
     }
   }
+}
 
-  &.iw-select-sm {
-    height: 2rem;
-    padding: 0 var(--iw-space-10) 0 var(--iw-space-2);
-    background-position:
-      right calc(var(--iw-space-3) + 0.3125rem) center,
-      right var(--iw-space-3) center;
-  }
-
-  &.iw-select-lg {
-    height: 2.75rem;
-    padding: 0 var(--iw-space-12) 0 var(--iw-space-4);
-    background-position:
-      right calc(var(--iw-space-5) + 0.3125rem) center,
-      right var(--iw-space-5) center;
-  }
+.iw-select-frame:has(.iw-select-control:disabled) .iw-select-arrow {
+  opacity: 0.6;
 }

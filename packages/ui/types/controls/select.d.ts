@@ -19,7 +19,11 @@ export interface SelectProps {
   size?: "sm" | "md" | "lg"
   isDisabled?: boolean
   isFullWidth?: boolean
+  label?: string
+  hint?: string
+  error?: string
   isMulti?: boolean
+  isRequired?: boolean
   onChange?: (value: string) => void
   onBlur?: () => void
   onFocus?: () => void

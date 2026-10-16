@@ -1,3 +1,4 @@
+import { html } from "@inglorious/web"
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
@@ -35,7 +36,9 @@ describe("input", () => {
 
       const inputElement = container.querySelector("input")
       const errorElement = container.querySelector(".iw-input-error-message")
-      expect(inputElement.classList.contains("iw-input-error")).toBe(true)
+      expect(inputElement.classList.contains("iw-input-control-error")).toBe(
+        true,
+      )
       expect(errorElement.textContent).toBe("Required")
     })
 
@@ -65,9 +68,13 @@ describe("input", () => {
 
       render(Input.render(props), container)
 
-      const icons = container.querySelectorAll(".iw-input-icon")
-      expect(icons.length).toBe(2)
-      expect(icons[1].classList.contains("iw-input-icon-after")).toBe(true)
+      // No wrapper class: the Icon component is a plain flex child of the
+      // frame, which is what replaced the absolutely positioned icon span.
+      const frame = container.querySelector(".iw-input-frame")
+      expect(frame).toBeTruthy()
+      expect(frame.querySelector("input")).toBeTruthy()
+      expect(frame.children.length).toBe(3)
+      expect(frame.children[1].tagName).toBe("INPUT")
     })
 
     it("applies number class for numeric fields", () => {
@@ -128,7 +135,7 @@ describe("input", () => {
       expect(inputElement.hasAttribute("readonly")).toBe(true)
       expect(
         container
-          .querySelector(".iw-input-field")
+          .querySelector(".iw-input")
           .classList.contains("iw-input-full-width"),
       ).toBe(true)
     })
@@ -191,5 +198,75 @@ describe("input", () => {
       expect(focusCount).toBe(1)
       expect(blurCount).toBe(1)
     })
+  })
+})
+
+describe("input frame and control split", () => {
+  it("styles the element itself, not the root wrapper", async () => {
+    const { default: raw } = await import("./style.css?raw")
+    const css = raw.replace(/\/\*[\s\S]*?\*\//g, "")
+
+    // `.iw-input` is the root wrapper. Styling the element under that name
+    // matches the wrapper instead, so the <input> silently loses every style.
+    // The root appears once, unindented. The element's rule is indented inside
+    // the frame and must use its own name: styled under the root's name it
+    // matches the wrapper instead, and the <input> loses every style.
+    expect(css.match(/^\.iw-input \{/gm)).toHaveLength(1)
+    expect(css).toMatch(/^ {4}\.iw-input-control \{/m)
+    expect(css).not.toMatch(/^ {4}\.iw-input \{/m)
+  })
+
+  it("guards its disabled state on the element", async () => {
+    const { default: raw } = await import("./style.css?raw")
+    const css = raw.replace(/\/\*[\s\S]*?\*\//g, "")
+
+    // The root is never :disabled, so a guard written against it never matches:
+    // disabled fields kept their hover and focus backgrounds and never dimmed.
+    expect(css).not.toMatch(/:has\(\.iw-input:disabled\)/)
+    expect(css).toMatch(/:has\(\.iw-input-control:disabled\)/)
+  })
+
+  it("always carries its size class, default included", () => {
+    // The stylesheet spells out .iw-input-md as well as sm and lg, so the class
+    // is applied at every size — otherwise a default input picks up no height
+    // or font-size from the control rules.
+    for (const size of ["sm", "md", "lg"]) {
+      const container = document.createElement("div")
+      render(Input.render({ id: `s-${size}`, size }), container)
+      expect(
+        container.querySelector("input").classList.contains(`iw-input-${size}`),
+      ).toBe(true)
+    }
+  })
+
+  it("spaces its icons with a gap on the row, not padding on the input", async () => {
+    const { default: raw } = await import("./style.css?raw")
+    const css = raw.replace(/\/\*[\s\S]*?\*\//g, "")
+
+    // The icons are flex children now, so a gap on the row is what separates
+    // them from the text. Padding on the input was a workaround for when they
+    // were absolutely positioned over it, and only doubled the inset.
+    // Checked against the file rather than an extracted block: the nesting
+    // makes block extraction brittle, and an earlier version of this assertion
+    // silently matched the wrong rule.
+    // Anchored on the two-space indent of the nested rule, so it cannot match
+    // the `.iw-input-full-width .iw-input-frame` descendant selector above it.
+    const frame = css.indexOf("\n  .iw-input-frame {")
+    expect(frame).toBeGreaterThan(-1)
+    const body = css.slice(frame, css.indexOf("\n  }", frame))
+    expect(body).toMatch(/gap: var\(--iw-space-2\)/)
+    expect(css).not.toMatch(/has-icon \.iw-input/)
+    expect(css).not.toMatch(/has-icon-after \.iw-input/)
+  })
+
+  it("fills the frame, which is the box", () => {
+    const container = document.createElement("div")
+
+    render(Input.render({ id: "c", icon: "@" }), container)
+
+    // The frame draws the border now, so the input has to stretch to it —
+    // otherwise it keeps its intrinsic ~20-character width inside it.
+    const input = container.querySelector(".iw-input-control")
+    expect(input.closest(".iw-input-frame")).toBeTruthy()
   })
 })
