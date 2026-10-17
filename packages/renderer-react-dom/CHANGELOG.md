@@ -1,5 +1,13 @@
 # @inglorious/renderer-react-dom
 
+## 22.0.3
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/utils@5.0.0
+  - @inglorious/engine@23.0.3
+
 ## 22.0.2
 
 ### Patch Changes

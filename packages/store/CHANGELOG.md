@@ -1,5 +1,12 @@
 # @inglorious/store
 
+## 11.0.3
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/utils@5.0.0
+
 ## 11.0.2
 
 ### Patch Changes

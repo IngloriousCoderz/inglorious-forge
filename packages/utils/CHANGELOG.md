@@ -1,5 +1,19 @@
 # @inglorious/utils
 
+## 5.0.0
+
+### Major Changes
+
+- Make all utils modules singular. The plural paths are gone:
+
+  - `@inglorious/utils/objects.js` → `@inglorious/utils/object.js` (and `data-structures/objects.js` → `data-structures/object.js`)
+  - `@inglorious/utils/vectors.js` → `@inglorious/utils/vector.js` (and `math/vectors.js` → `math/vector.js`)
+  - `@inglorious/utils/quaternions.js` → `@inglorious/utils/quaternion.js` (and `math/quaternions.js` → `math/quaternion.js`)
+  - `math/numbers.js` → `math/number.js`
+  - `functions/functions.js` → `functions/function.js`
+
+  New shortcuts: `@inglorious/utils/array.js` and `@inglorious/utils/function.js`.
+
 ## 4.0.0
 
 ### Major Changes
