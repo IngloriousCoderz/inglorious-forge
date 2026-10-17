@@ -38,6 +38,8 @@ export interface RouterEntity {
   query?: QueryParams
   /** The hash from the current URL. */
   hash?: string
+  /** The position of the current entry in the session history, counted from the entry the app started on. */
+  idx?: number
   /** Whether a route is currently loading asynchronously. */
   isLoading?: boolean
   /** An error that occurred during route loading. */
@@ -103,6 +105,19 @@ export interface RouterType {
     payload: string | number | NavigatePayload,
     api: Api,
   ): void | Promise<void>
+
+  /**
+   * Goes back one history entry when the app pushed one, and otherwise
+   * navigates to the fallback, replacing the current entry.
+   * @param {RouterEntity} entity - The router entity.
+   * @param {string|Omit<NavigatePayload, "replace">} [fallback] - Where to go when there is nothing to go back to.
+   * @param {StoreApi} api - The store API.
+   */
+  back(
+    entity: RouterEntity,
+    fallback: string | Omit<NavigatePayload, "replace"> | undefined,
+    api: Api,
+  ): void
 
   /**
    * Synchronizes the router entity's state with data from a routing event,

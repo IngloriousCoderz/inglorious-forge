@@ -222,6 +222,27 @@ export function createHandlers(routeConfig) {
     },
 
     /**
+     * Goes back one entry when the app has an entry of its own to go back to,
+     * and otherwise navigates to the fallback in place. An app opened on a deep
+     * link starts at the first index, where `history.back()` would leave the
+     * app or do nothing at all.
+     * @param {RouterEntity} entity - The router entity.
+     * @param {string|{to: string, params?: object, state?: object}} [fallback] - Where to go when there is nothing to go back to.
+     * @param {Api} api - The application API.
+     */
+    back(entity, fallback, api) {
+      if (entity.idx > FIRST_HISTORY_INDEX) {
+        history.back()
+        return
+      }
+
+      if (fallback == null) return
+
+      const options = typeof fallback === "string" ? { to: fallback } : fallback
+      api.notify(`#${entity.id}:navigate`, { ...options, replace: true })
+    },
+
+    /**
      * Handles successful loading of a lazily-loaded route module.
      * Registers the loaded type in the runtime type registry via `api.setType`
      * and updates the `routeConfig` entry for the pattern.

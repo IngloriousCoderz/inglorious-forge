@@ -331,4 +331,52 @@ describe("router", () => {
       expect(entity.idx).toBe(1)
     })
   })
+
+  describe("back()", () => {
+    beforeEach(() => {
+      vi.spyOn(history, "back").mockImplementation(() => {})
+    })
+
+    it("should go back when the app pushed an entry", () => {
+      entity.idx = 2
+
+      Router.back(entity, "/users", api)
+
+      expect(history.back).toHaveBeenCalled()
+      expect(api.notify).not.toHaveBeenCalled()
+    })
+
+    it("should replace the entry with the fallback on the first entry", () => {
+      entity.idx = 0
+
+      Router.back(entity, "/users", api)
+
+      expect(history.back).not.toHaveBeenCalled()
+      expect(api.notify).toHaveBeenCalledWith("#router:navigate", {
+        to: "/users",
+        replace: true,
+      })
+    })
+
+    it("should pass navigation options through to the fallback", () => {
+      entity.idx = 0
+
+      Router.back(entity, { to: "/users/:id", params: { id: "1" } }, api)
+
+      expect(api.notify).toHaveBeenCalledWith("#router:navigate", {
+        to: "/users/:id",
+        params: { id: "1" },
+        replace: true,
+      })
+    })
+
+    it("should do nothing on the first entry without a fallback", () => {
+      entity.idx = 0
+
+      Router.back(entity, undefined, api)
+
+      expect(history.back).not.toHaveBeenCalled()
+      expect(api.notify).not.toHaveBeenCalled()
+    })
+  })
 })

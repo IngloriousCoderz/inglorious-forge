@@ -1045,6 +1045,10 @@ api.notify("navigate", "/users/456")
 // Or navigate back in history
 api.notify("navigate", -1)
 
+// Go back, or to "/users" when the app was opened on this page and has
+// nothing of its own to go back to (a deep link, a fresh tab)
+api.notify("back", "/users")
+
 // With options
 api.notify("navigate", {
   to: "/users/456",

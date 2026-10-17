@@ -1,5 +1,14 @@
 # @inglorious/ui
 
+## 7.2.3
+
+### Patch Changes
+
+- Add "back" router event
+- Updated dependencies
+  - @inglorious/web@6.5.1
+  - @inglorious/charts@10.0.4
+
 ## 7.2.2
 
 ### Patch Changes

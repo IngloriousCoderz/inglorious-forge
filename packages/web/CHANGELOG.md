@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 6.5.1
+
+### Patch Changes
+
+- Add "back" router event
+
 ## 6.5.0
 
 ### Minor Changes
