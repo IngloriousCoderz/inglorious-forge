@@ -1,12 +1,24 @@
 // The app's components in JSX: .jsx or .tsx files, compiled to lit-html by
-// @inglorious/vite-plugin-jsx. Capitalized tags render store entities;
-// Inglorious UI components are called as functions inside braces.
+// @inglorious/vite-plugin-jsx. A capitalized tag with props renders a
+// component; `<Message entityId="message1" />` renders an entity. TypeScript
+// expects components to be functions, so in .tsx each capitalized tag is
+// preceded by a `@ts-expect-error`.
 
 import { renderLocals } from "./app-lit.js"
 import { importBlock } from "./imports.js"
-import { LINE_WIDTH } from "./source.js"
 
 export const extension = (app) => (app.isTypeScript ? "tsx" : "jsx")
+
+const EXPECT_ERROR =
+  "@ts-expect-error - Inglorious components are objects, not functions"
+
+// The comment line before a capitalized tag in .tsx: `{/* */}` among JSX
+// children, `//` inside code.
+function expectError(app, indent, isChild = true) {
+  if (!app.isTypeScript) return ""
+  const comment = isChild ? `{/* ${EXPECT_ERROR} */}` : `// ${EXPECT_ERROR}`
+  return `${indent}${comment}\n`
+}
 
 export function appSource(app, { pages, navIcons }) {
   const imports = []
@@ -32,7 +44,6 @@ export function appSource(app, { pages, navIcons }) {
   if (app.isTypeScript) imports.push('import type { AppApi } from "../types"')
   if (app.i18n) imports.push('import { t } from "./i18n"')
 
-  const label = (key, text) => (app.i18n ? `t("${key}")` : `"${text}"`)
   const signature = app.isTypeScript
     ? "render(props: Record<string, unknown> | null, api: AppApi)"
     : "render(props, api)"
@@ -41,8 +52,8 @@ export function appSource(app, { pages, navIcons }) {
     : 'api.render("home")'
 
   const shell = app.ui
-    ? uiShell(app, { label, pages, content })
-    : plainShell(app, { label, pages, content })
+    ? uiShell(app, { pages, content })
+    : plainShell(app, { pages, content })
 
   return `${importBlock(imports)}
 
@@ -58,86 +69,85 @@ ${shell}
 `
 }
 
-function uiShell(app, { label, pages, content }) {
+// A page's label: translated, or the English text.
+function labelText(app, page) {
+  return app.i18n ? `{t("${page.key}")}` : page.text
+}
+
+function labelValue(app, page) {
+  return app.i18n ? `t("${page.key}")` : `"${page.text}"`
+}
+
+function uiShell(app, { pages, content }) {
   const nav = []
   if (app.links) {
     nav.push(
       ...pages.map(
         (page) =>
-          `                {Link.render({ href: "${page.path}", children: ${label(page.key, page.text)} })}`,
+          `${expectError(app, "                ")}                <Link href="${page.path}">${labelText(app, page)}</Link>`,
       ),
     )
   }
   if (app.i18n) {
-    nav.push(`                {Select.render({
-                  value: i18n.locale,
-                  options: i18n.languages,
-                  size: "sm",
-                  "aria-label": t("language"),
-                  onChange: (locale) =>
-                    api.notify("#i18n:localeChange", locale),
-                })}`)
+    nav.push(`${expectError(app, "                ")}                <Select
+                  value={i18n.locale}
+                  options={i18n.languages}
+                  size="sm"
+                  aria-label={t("language")}
+                  onChange={(locale) =>
+                    api.notify("#i18n:localeChange", locale)
+                  }
+                />`)
   }
 
-  const trailing = nav.length
-    ? `
-            trailing: (
+  const appBar = nav.length
+    ? `${expectError(app, "          ")}          <AppBar
+            title="${app.projectName}"
+            trailing={
               <nav class="app-nav">
 ${nav.join("\n")}
               </nav>
-            ),`
-    : ""
+            }
+          />`
+    : `${expectError(app, "          ")}          <AppBar title="${app.projectName}" />`
 
   const header = `        <header${app.mobile ? ' class="pt-safe"' : ""}>
-          {AppBar.render({
-            title: "${app.projectName}",${trailing}
-          })}
+${appBar}
         </header>
         <main>
-${containerCall(content)}
+${expectError(app, "          ")}          <Container maxWidth="md">{${content}}</Container>
         </main>`
 
   if (!app.tabs) return header
 
-  const actions = pages.map(
-    (page) => `              {
+  const actions = pages.map((page) => {
+    const icon = page.icon
+      ? `
+${expectError(app, "                ", false)}                icon: <Icon icon={${page.icon.name}} size="lg" />,`
+      : ""
+    return `              {
                 value: "${page.path}",
-                label: ${label(page.key, page.text)},${
-                  page.icon
-                    ? `
-                icon: Icon.render({ icon: ${page.icon.name}, size: "lg" }),`
-                    : ""
-                }
-              },`,
-  )
+                label: ${labelValue(app, page)},${icon}
+              },`
+  })
 
   return `${header}
         <footer class="pb-safe">
-          {BottomNavigation.render({
-            value: router.path,
-            actions: [
+${expectError(app, "          ")}          <BottomNavigation
+            value={router.path}
+            actions={[
 ${actions.join("\n")}
-            ],
-            onChange: (path) => api.notify("#router:navigate", path),
-          })}
+            ]}
+            onChange={(path) => api.notify("#router:navigate", path)}
+          />
         </footer>`
 }
 
-// The page in a Container, on one line when it fits.
-function containerCall(content) {
-  const line = `          {Container.render({ maxWidth: "md", children: ${content} })}`
-  if (line.length <= LINE_WIDTH) return line
-  return `          {Container.render({
-            maxWidth: "md",
-            children: ${content},
-          })}`
-}
-
-function plainShell(app, { label, pages, content }) {
+function plainShell(app, { pages, content }) {
   const nav = app.routing
     ? pages.map(
         (page) =>
-          `            <a href="${page.path}">${app.i18n ? `{${label(page.key, page.text)}}` : page.text}</a>`,
+          `            <a href="${page.path}">${labelText(app, page)}</a>`,
       )
     : []
   if (app.i18n) {
@@ -179,7 +189,7 @@ export function homeSource(app, { showcase }) {
     imports.push('import { Icon } from "@inglorious/ui/icon"')
   }
   if (app.isTypeScript) {
-    imports.push('import type { AppApi, HomeEntity } from "../../types"')
+    imports.push('import type { HomeEntity } from "../../types"')
   }
   if (app.i18n) imports.push('import { t } from "../i18n"')
 
@@ -189,23 +199,14 @@ export function homeSource(app, { showcase }) {
         <p class="app-icons">
 ${showcase
   .map(
-    (icon) => `          {Icon.render({
-            icon: ${icon.name},
-            size: "lg",
-            label: "${icon.label}",
-          })}`,
+    (icon) =>
+      `${expectError(app, "          ")}          <Icon icon={${icon.name}} size="lg" label="${icon.label}" />`,
   )
   .join("\n")}
         </p>`
     : ""
 
-  // Capitalized tags render entities, which TypeScript takes for components.
-  const expectError = app.isTypeScript
-    ? "          {/* @ts-expect-error - JSX components are entity type names, not imports */}\n"
-    : ""
-  const signature = app.isTypeScript
-    ? "render(entity: HomeEntity, api: AppApi)"
-    : "render(entity, api)"
+  const signature = app.isTypeScript ? "render(entity: HomeEntity)" : "render()"
 
   return `${importBlock(imports)}
 
@@ -215,8 +216,8 @@ export const Home = {
       <>
         <h1>${text("home.title", "Welcome")}</h1>
         <p>
-${expectError}          <Message entityId="message1" />, <Message entityId="message2" />,{" "}
-${expectError}          <Message entityId="message3" />!
+${expectError(app, "          ")}          <Message entityId="message1" />, <Message entityId="message2" />,{" "}
+${expectError(app, "          ")}          <Message entityId="message3" />!
         </p>
         <p>${text("home.hint", "Click a greeting to shout it.")}</p>${icons}
       </>
@@ -261,13 +262,14 @@ export function messageSource(app) {
   const declaration = app.isTypeScript
     ? "export const Message: MessageType = {"
     : "export const Message = {"
-  const head = imports.length ? `${importBlock(imports)}\n\n` : ""
 
   const span = app.i18n
     ? `      <span onClick={() => api.notify(\`#\${entity.id}:click\`)}>
         ${greeting}
       </span>`
     : `      <span onClick={() => api.notify(\`#\${entity.id}:click\`)}>${greeting}</span>`
+
+  const head = imports.length ? `${importBlock(imports)}\n\n` : ""
 
   return `${head}${declaration}
   click(entity) {
