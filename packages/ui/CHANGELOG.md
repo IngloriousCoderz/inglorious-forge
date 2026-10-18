@@ -1,5 +1,12 @@
 # @inglorious/ui
 
+## 7.7.0
+
+### Minor Changes
+
+- - Bottom navigation labels stay on one line and are cut short with an ellipsis when too long, instead of wrapping: in Japanese or Chinese a wrap split a word and made the bar taller.
+  - `Combobox` takes `searchPlaceholder` for the search box in its panel, so it can be translated. It still defaults to "Search...".
+
 ## 7.6.1
 
 ### Patch Changes

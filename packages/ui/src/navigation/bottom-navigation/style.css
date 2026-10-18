@@ -29,4 +29,11 @@
 
 .iw-bottom-navigation-label {
   font-size: var(--iw-font-size-sm);
+  /* One line, like its neighbours: a label too long for its tab is cut short
+     rather than wrapping, which in languages that break between any two
+     characters (Japanese, Chinese) splits a word and makes the bar taller. */
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

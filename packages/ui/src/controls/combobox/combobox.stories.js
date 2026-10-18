@@ -33,6 +33,10 @@ export default {
     isLoading: { control: "boolean", description: "Show loading state." },
     searchTerm: { control: "text", description: "Current search filter." },
     placeholder: { control: "text", description: "Placeholder text." },
+    searchPlaceholder: {
+      control: "text",
+      description: "Placeholder of the search box in the panel.",
+    },
     noOptionsMessage: { control: "text", description: "No results message." },
     loadingMessage: { control: "text", description: "Loading message." },
     isFullWidth: {

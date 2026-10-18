@@ -25,6 +25,29 @@ describe("combobox", () => {
     expect(container.querySelector(".iw-combobox-value").textContent).toBe("B")
   })
 
+  it("labels the search box with searchPlaceholder", () => {
+    const entity = {
+      id: "sel",
+      type: "select",
+      isOpen: true,
+      isSearchable: true,
+      options: [{ label: "A", value: "a" }],
+    }
+    const api = createMockApi({ [entity.id]: entity })
+    api.getType = () => Combobox
+    const search = () => container.querySelector(".iw-combobox-dropdown-search")
+    const container = document.createElement("div")
+
+    render(Combobox.render(entity, api), container)
+    expect(search().placeholder).toBe("Search...")
+
+    render(
+      Combobox.render({ ...entity, searchPlaceholder: "Cerca…" }, api),
+      container,
+    )
+    expect(search().placeholder).toBe("Cerca…")
+  })
+
   it("renders multi tags", () => {
     const entity = {
       id: "sel",

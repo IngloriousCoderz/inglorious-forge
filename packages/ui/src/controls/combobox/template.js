@@ -291,12 +291,17 @@ export const Combobox = {
    * @returns {TemplateResult}
    */
   renderSearchInput(props) {
-    const { searchTerm, isOpen, onSearchChange } = props
+    const {
+      searchTerm,
+      searchPlaceholder = "Search...",
+      isOpen,
+      onSearchChange,
+    } = props
 
     return html`<input
       class="iw-combobox-dropdown-search"
       type="text"
-      placeholder="Search..."
+      placeholder=${searchPlaceholder}
       .value=${searchTerm ?? ""}
       @input=${(event) => onSearchChange?.(event.target.value)}
       @keydown=${(event) => handleKeyDown(props, event)}

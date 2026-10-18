@@ -32,6 +32,8 @@ export interface ComboboxProps {
   isClearable?: boolean
 
   placeholder?: string
+  /** Placeholder of the search box in the panel. Defaults to "Search...". */
+  searchPlaceholder?: string
   noOptionsMessage?: string
   loadingMessage?: string
 
