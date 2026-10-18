@@ -240,7 +240,13 @@ export function buildTemplate(node, path, isSvg = false) {
         value = attr.value
       }
 
-      props.push(t.objectProperty(t.identifier(key), value))
+      // `aria-label` and other kebab-case names are quoted, to stay valid keys.
+      props.push(
+        t.objectProperty(
+          t.isValidIdentifier(key) ? t.identifier(key) : t.stringLiteral(key),
+          value,
+        ),
+      )
     }
 
     const filteredChildren = node.children.filter(

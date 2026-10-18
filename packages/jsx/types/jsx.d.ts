@@ -1,6 +1,7 @@
 declare global {
   namespace JSX {
-    interface Element {}
+    /** What a JSX expression compiles to: a lit-html template. */
+    type Element = any
 
     interface IntrinsicElements {
       [elemName: string]: any

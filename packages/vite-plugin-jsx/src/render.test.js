@@ -100,6 +100,21 @@ describe("babel render", () => {
     ).toMatchSnapshot()
   })
 
+  it("quotes kebab-case props on components", async () => {
+    const code = await transform(`
+      import { Select } from "./select.js"
+
+      export const App = {
+        render() {
+          return <Select aria-label="Language" data-test={id} />
+        },
+      }
+    `)
+
+    expect(code).toContain('"aria-label": "Language"')
+    expect(code).toContain('"data-test": id')
+  })
+
   it("renders bound capitalized components with an explicit entity id", async () => {
     expect(
       await transform(`
