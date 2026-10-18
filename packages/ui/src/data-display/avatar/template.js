@@ -32,7 +32,7 @@ export function render(props) {
     color === "auto" && !hasCustomBackground ? "default" : color
   const classes = {
     "iw-avatar": true,
-    [`iw-avatar-${size}`]: size !== "md",
+    [`iw-avatar-${size}`]: true,
     [`iw-avatar-${shape}`]: shape !== "circle",
     [`iw-avatar-color-${resolvedColor}`]:
       resolvedColor !== "default" && !hasCustomBackground,

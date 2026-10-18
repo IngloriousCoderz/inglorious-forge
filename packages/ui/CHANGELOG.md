@@ -1,5 +1,11 @@
 # @inglorious/ui
 
+## 7.8.1
+
+### Patch Changes
+
+- Fix text sizes in Avatar component
+
 ## 7.8.0
 
 ### Minor Changes

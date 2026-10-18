@@ -1,13 +1,10 @@
 .iw-avatar {
   display: inline-grid;
   place-items: center;
-  width: 2rem;
-  height: 2rem;
   flex: 0 0 auto;
   border-radius: 999px;
   background: var(--iw-color-bg-secondary);
   color: var(--iw-color-text);
-  font-size: var(--iw-font-size-sm);
   font-weight: var(--iw-font-weight-medium);
   line-height: 1;
   overflow: hidden;
@@ -21,11 +18,19 @@
   &.iw-avatar-sm {
     width: 1.5rem;
     height: 1.5rem;
+    font-size: var(--iw-font-size-xs);
+  }
+
+  &.iw-avatar-md {
+    width: 2rem;
+    height: 2rem;
+    font-size: var(--iw-font-size-sm);
   }
 
   &.iw-avatar-lg {
     width: 3rem;
     height: 3rem;
+    font-size: var(--iw-font-size-base);
   }
 
   &.iw-avatar-square {
