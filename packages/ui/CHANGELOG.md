@@ -1,5 +1,12 @@
 # @inglorious/ui
 
+## 7.6.1
+
+### Patch Changes
+
+- Default outline buttons keep their text colour on hover. The hover turned it into the surface colour, which all but disappeared into the hover tint.
+- Primary ghost and outline buttons show their hover again: the tint was mixed from the text colour of a filled primary button, white, and vanished on light backgrounds. It now comes from the primary colour, like every other colour's.
+
 ## 7.6.0
 
 ### Minor Changes
