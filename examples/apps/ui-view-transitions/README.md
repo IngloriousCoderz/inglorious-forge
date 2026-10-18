@@ -35,6 +35,27 @@ Direction is not guessed. The `Router` stamps an index into every history entry
 as it navigates, and `withTransitions` compares that index across renders — a
 raise is a push, a drop is a traversal, no change is a replacement.
 
+To animate only some navigations, pass `routes`. A list of route names animates
+every navigation into or out of one of them; the others change page instantly:
+
+```js
+// Slide into and out of detail pages; switch between top-level pages instantly.
+withTransitions(store, { routes: ["eventDetail", "userDetail"] })
+```
+
+For anything a list can't express, pass a function instead. It receives the
+direction read from the history and both sides of the navigation, each with its
+`path`, `index` and the `route` the Router resolved, and returns whether to
+animate:
+
+```js
+// Slide only when going deeper or coming back up, never sideways.
+withTransitions(store, {
+  routes: ({ from, to }) =>
+    from.path.startsWith(to.path) || to.path.startsWith(from.path),
+})
+```
+
 Quick start:
 
 ```bash

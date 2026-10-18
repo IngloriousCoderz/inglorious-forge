@@ -1,5 +1,11 @@
 # @inglorious/ui
 
+## 7.5.0
+
+### Minor Changes
+
+- `withTransitions` takes a `routes` option to choose which navigations animate: a list of route names animates every navigation into or out of one of them, and a function receives the direction and both sides of the navigation (path, history index, route) and returns whether to animate.
+
 ## 7.4.0
 
 ### Minor Changes

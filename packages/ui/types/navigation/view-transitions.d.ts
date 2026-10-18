@@ -10,8 +10,33 @@ export interface TransitionsStore<S = unknown> {
   getType(name: string): unknown
 }
 
+/** One side of a navigation. */
+export interface NavigationSide {
+  path: string
+  /** The history index the Router stamped on the entry. */
+  index: number
+  /** The route the Router resolved, if any. */
+  route?: string
+}
+
+export interface Navigation {
+  /** The direction read from the history. */
+  type: ViewTransitionType
+  from: NavigationSide
+  to: NavigationSide
+}
+
+export interface TransitionsOptions {
+  /** Which navigations animate: those into or out of the named routes, or
+   * those the function accepts. Omit it to animate every navigation. */
+  routes?: string[] | ((navigation: Navigation) => boolean)
+}
+
 export interface WithTransitions {
-  <S>(store: TransitionsStore<S>): TransitionsStore<S>
+  <S>(
+    store: TransitionsStore<S>,
+    options?: TransitionsOptions,
+  ): TransitionsStore<S>
 }
 
 export declare const withTransitions: WithTransitions

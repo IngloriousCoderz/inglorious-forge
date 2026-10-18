@@ -4,33 +4,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest"
 
 import { withTransitions } from "."
 
-const Counter = {
-  increment(entity) {
-    entity.value++
-  },
-}
-
-function createTestStore() {
-  return createStore({
-    types: { Counter, Router },
-    entities: {
-      counter1: { type: "Counter", value: 0 },
-      router: { type: "Router" },
-    },
-  })
-}
-
-function navigateTo(path, idx) {
-  window.history.pushState({ idx }, "", path)
-}
-
-/* Spying has to happen before wrapping: `withTransitions` replaces `subscribe`
- * with its own, so a spy installed afterwards would only count calls to the
- * wrapper and never reach the store. */
-function spyOnSubscribe(store) {
-  return vi.spyOn(store, "subscribe")
-}
-
 describe("view-transitions", () => {
   let startViewTransition
 
@@ -312,4 +285,97 @@ describe("view-transitions", () => {
       expect(lastType()).toEqual(["forward"])
     })
   })
+
+  describe("routes", () => {
+    const View = { render: () => "" }
+
+    function createRoutedStore() {
+      const store = createStore({
+        types: { Router, View },
+        entities: {
+          router: { type: "Router" },
+          home: { type: "View" },
+          list: { type: "View" },
+          detail: { type: "View" },
+        },
+      })
+      setRoutes({ "/": "home", "/list": "list", "/list/42": "detail" })
+      return store
+    }
+
+    it("animates only navigations into or out of the listed routes", () => {
+      const store = createRoutedStore()
+      const listener = vi.fn()
+
+      withTransitions(store, { routes: ["detail"] }).subscribe(listener)
+      store.notify("init")
+      startViewTransition.mockClear()
+
+      store.notify("#router:navigate", "/list")
+      expect(startViewTransition).not.toHaveBeenCalled()
+      expect(listener).toHaveBeenCalled()
+
+      store.notify("#router:navigate", "/list/42")
+      expect(startViewTransition).toHaveBeenLastCalledWith(
+        expect.objectContaining({ types: ["forward"] }),
+      )
+    })
+
+    it("passes the direction and both sides of the navigation to a function", () => {
+      const store = createRoutedStore()
+      const routes = vi.fn(() => true)
+
+      withTransitions(store, { routes }).subscribe(vi.fn())
+      store.notify("init")
+      store.notify("#router:navigate", "/list/42")
+
+      expect(routes).toHaveBeenLastCalledWith({
+        type: "forward",
+        from: { path: "/", index: 0, route: "home" },
+        to: { path: "/list/42", index: 1, route: "detail" },
+      })
+      expect(startViewTransition).toHaveBeenLastCalledWith(
+        expect.objectContaining({ types: ["forward"] }),
+      )
+    })
+
+    it("navigates without a transition when the function says no", () => {
+      const store = createRoutedStore()
+      const listener = vi.fn()
+
+      withTransitions(store, { routes: () => false }).subscribe(listener)
+      store.notify("init")
+      store.notify("#router:navigate", "/list")
+
+      expect(startViewTransition).not.toHaveBeenCalled()
+      expect(listener).toHaveBeenCalled()
+    })
+  })
 })
+
+const Counter = {
+  increment(entity) {
+    entity.value++
+  },
+}
+
+function createTestStore() {
+  return createStore({
+    types: { Counter, Router },
+    entities: {
+      counter1: { type: "Counter", value: 0 },
+      router: { type: "Router" },
+    },
+  })
+}
+
+function navigateTo(path, idx) {
+  window.history.pushState({ idx }, "", path)
+}
+
+/* Spying has to happen before wrapping: `withTransitions` replaces `subscribe`
+ * with its own, so a spy installed afterwards would only count calls to the
+ * wrapper and never reach the store. */
+function spyOnSubscribe(store) {
+  return vi.spyOn(store, "subscribe")
+}
