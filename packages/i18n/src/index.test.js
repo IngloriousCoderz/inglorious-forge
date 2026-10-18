@@ -123,3 +123,290 @@ describe("createI18n", () => {
     expect(t("hello")).toBe("Ciao")
   })
 })
+
+describe("loadLocale", () => {
+  const { en, it: italian } = resources
+
+  // A loader whose loads resolve or fail when the test says so.
+  function controlledLoader() {
+    const loads = {}
+    const loadLocale = vi.fn(
+      (locale) =>
+        new Promise((resolve, reject) => {
+          loads[locale] = { resolve, reject }
+        }),
+    )
+    return { loads, loadLocale }
+  }
+
+  function createI18nStore(options) {
+    const i18n = createI18n({
+      resources: { en },
+      locales: ["en", "it", "fr"],
+      ...options,
+    })
+    const store = createStore({
+      types: { I18n: i18n.I18n },
+      entities: { i18n: { type: "I18n" } },
+    })
+    store.notify("init")
+    return { ...i18n, store }
+  }
+
+  const settle = () => new Promise((resolve) => setTimeout(resolve))
+
+  it("loads the starting locale before ready resolves", async () => {
+    stubBrowser({ languages: ["it-IT"] })
+    const { ready, t } = createI18n({
+      resources: { en },
+      locales: ["en", "it"],
+      loadLocale: async () => italian,
+    })
+
+    await ready
+
+    expect(t("hello")).toBe("Ciao")
+  })
+
+  it("is ready at once when the starting locale is bundled", async () => {
+    stubBrowser({ languages: ["en"] })
+    const loadLocale = vi.fn()
+    const { ready } = createI18n({ resources: { en }, loadLocale })
+
+    await ready
+
+    expect(loadLocale).not.toHaveBeenCalled()
+  })
+
+  it("loads a locale before switching to it", async () => {
+    stubBrowser({ languages: ["en"] })
+    const { loads, loadLocale } = controlledLoader()
+    const { store, t } = createI18nStore({ loadLocale })
+
+    store.notify("#i18n:localeChange", "it")
+
+    expect(store.getState().i18n.locale).toBe("en")
+    expect(store.getState().i18n.loadingLocale).toBe("it")
+    expect(t("hello")).toBe("Hello")
+
+    loads.it.resolve(italian)
+    await settle()
+
+    expect(store.getState().i18n.locale).toBe("it")
+    expect(store.getState().i18n.loadingLocale).toBe(null)
+    expect(t("hello")).toBe("Ciao")
+  })
+
+  it("switches only to the latest choice", async () => {
+    stubBrowser({ languages: ["en"] })
+    const { loads, loadLocale } = controlledLoader()
+    const { store } = createI18nStore({ loadLocale })
+
+    store.notify("#i18n:localeChange", "it")
+    store.notify("#i18n:localeChange", "fr")
+    loads.fr.resolve({ translation: { hello: "Bonjour" } })
+    await settle()
+    loads.it.resolve(italian)
+    await settle()
+
+    expect(store.getState().i18n.locale).toBe("fr")
+  })
+
+  it("loads each locale once", async () => {
+    stubBrowser({ languages: ["en"] })
+    const loadLocale = vi.fn(async () => italian)
+    const { store } = createI18nStore({ loadLocale })
+
+    store.notify("#i18n:localeChange", "it")
+    await settle()
+    store.notify("#i18n:localeChange", "en")
+    store.notify("#i18n:localeChange", "it")
+
+    expect(store.getState().i18n.locale).toBe("it")
+    expect(loadLocale).toHaveBeenCalledTimes(1)
+  })
+
+  it("keeps the current locale when a load fails, and tries again later", async () => {
+    stubBrowser({ languages: ["en"] })
+    vi.spyOn(console, "warn").mockImplementation(() => {})
+    const { loads, loadLocale } = controlledLoader()
+    const { store } = createI18nStore({ loadLocale })
+
+    store.notify("#i18n:localeChange", "it")
+    loads.it.reject(new Error("offline"))
+    await settle()
+
+    expect(store.getState().i18n.locale).toBe("en")
+    expect(store.getState().i18n.loadingLocale).toBe(null)
+
+    store.notify("#i18n:localeChange", "it")
+    loads.it.resolve(italian)
+    await settle()
+
+    expect(store.getState().i18n.locale).toBe("it")
+    expect(loadLocale).toHaveBeenCalledTimes(2)
+  })
+})
+
+describe("catalogues", () => {
+  const { en, it: italian } = resources
+
+  it("takes a lazy glob: a locale per file, loaded when needed", async () => {
+    stubBrowser({ languages: ["it-IT"] })
+    const load = {
+      en: vi.fn(async () => ({ default: en.translation })),
+      it: vi.fn(async () => ({ default: italian.translation })),
+      fr: vi.fn(),
+    }
+    const { I18n, ready, t } = createI18n({
+      catalogues: {
+        "./locales/en.json": load.en,
+        "./locales/fr.json": load.fr,
+        "./locales/it.json": load.it,
+      },
+      defaultLocale: "en",
+    })
+    const entity = {}
+    I18n.create(entity)
+
+    expect(entity.locales).toEqual(["en", "fr", "it"])
+
+    await ready
+
+    expect(t("hello")).toBe("Ciao")
+    expect(load.en).toHaveBeenCalled()
+    expect(load.fr).not.toHaveBeenCalled()
+  })
+
+  it("takes an eager glob: every catalogue bundled", () => {
+    stubBrowser({ languages: ["en"] })
+    const { I18n, t } = createI18n({
+      catalogues: {
+        "./locales/en.json": { default: en.translation },
+        "./locales/it.json": { default: italian.translation },
+      },
+    })
+    const entity = {}
+    I18n.create(entity)
+
+    I18n.localeChange(entity, "it")
+
+    expect(t("hello")).toBe("Ciao")
+  })
+})
+
+describe("languages", () => {
+  it("names each language in itself, for a picker", () => {
+    stubBrowser({ languages: ["en"] })
+    const { languages } = createI18n({ resources, locales: ["en", "it", "fr"] })
+
+    expect(languages).toEqual([
+      { value: "en", label: "English" },
+      { value: "it", label: "Italiano" },
+      { value: "fr", label: "Français" },
+    ])
+  })
+
+  it("takes a picker's { value } as the locale", () => {
+    stubBrowser({ languages: ["en"] })
+    const { I18n } = createI18n({ resources })
+    const entity = {}
+    I18n.create(entity)
+
+    I18n.localeChange(entity, { value: "it" })
+
+    expect(entity.locale).toBe("it")
+  })
+})
+
+describe("saveUserLocale", () => {
+  function setup() {
+    stubBrowser({ languages: ["en"] })
+    const saveUserLocale = vi.fn()
+    const { I18n } = createI18n({ resources, saveUserLocale })
+    const api = { notify: vi.fn() }
+    const entity = { id: "i18n" }
+    I18n.create(entity)
+    return { I18n, entity, api, saveUserLocale }
+  }
+
+  it("saves a change at once for a signed-in user", () => {
+    const { I18n, entity, api, saveUserLocale } = setup()
+    I18n.userLocaleLoad(entity, { userId: "u1", locale: "en" }, api)
+
+    I18n.localeChange(entity, "it", api)
+
+    expect(saveUserLocale).toHaveBeenCalledWith("it", api)
+  })
+
+  it("applies the user's saved locale", () => {
+    const { I18n, entity, api, saveUserLocale } = setup()
+
+    I18n.userLocaleLoad(entity, { userId: "u1", locale: "it" }, api)
+
+    expect(entity.locale).toBe("it")
+    expect(saveUserLocale).not.toHaveBeenCalled()
+  })
+
+  it("saves a choice made before signing in instead", () => {
+    const { I18n, entity, api, saveUserLocale } = setup()
+    I18n.localeChange(entity, "it", api)
+
+    expect(saveUserLocale).not.toHaveBeenCalled()
+
+    I18n.userLocaleLoad(entity, { userId: "u1", locale: "en" }, api)
+
+    expect(entity.locale).toBe("it")
+    expect(saveUserLocale).toHaveBeenCalledWith("it", api)
+  })
+
+  it("saves the current locale for a user with none", () => {
+    const { I18n, entity, api, saveUserLocale } = setup()
+
+    I18n.userLocaleLoad(entity, { userId: "u1", locale: null }, api)
+
+    expect(saveUserLocale).toHaveBeenCalledWith("en", api)
+  })
+
+  it("applies once per user", () => {
+    const { I18n, entity, api } = setup()
+    I18n.userLocaleLoad(entity, { userId: "u1", locale: "it" }, api)
+    I18n.localeChange(entity, "en", api)
+
+    I18n.userLocaleLoad(entity, { userId: "u1", locale: "it" }, api)
+
+    expect(entity.locale).toBe("en")
+  })
+
+  it("keeps choices made after signing out for the next user", () => {
+    const { I18n, entity, api, saveUserLocale } = setup()
+    I18n.userLocaleLoad(entity, { userId: "u1", locale: "en" }, api)
+    I18n.userLocaleClear(entity)
+
+    I18n.localeChange(entity, "it", api)
+
+    expect(saveUserLocale).not.toHaveBeenCalled()
+    expect(entity.isUnsaved).toBe(true)
+  })
+})
+
+describe("helpers", () => {
+  it("labels data in the active language, and keeps the key", () => {
+    stubBrowser({ languages: ["en"] })
+    const { I18n, labelled, translatedLabel, currentLocale } = createI18n({
+      resources,
+    })
+    const entity = {}
+    I18n.create(entity)
+    const option = labelled("hello", { value: "greeting" })
+
+    expect(option.label).toBe("Hello")
+
+    I18n.localeChange(entity, "it")
+
+    expect(option.label).toBe("Ciao")
+    expect(currentLocale()).toBe("it")
+    expect(translatedLabel({ ...option })).toBe("Ciao")
+    expect(translatedLabel({ label: "Lombardy" })).toBe("Lombardy")
+  })
+})

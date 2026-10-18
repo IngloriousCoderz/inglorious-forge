@@ -12,27 +12,60 @@ import { parseTrans } from "./trans.js"
  *
  * The locale lives in a store entity, so changing language is an ordinary
  * event: the handler switches i18next and updates the entity, and the render
- * that follows reads every string in the new language. With the catalogues
- * passed in `resources`, i18next initialises and switches synchronously, so
- * nothing has to wait for a promise.
+ * that follows reads every string in the new language.
+ *
+ * Catalogues come in `catalogues`, typically straight from Vite:
+ * `import.meta.glob("./locales/*.json")`. Each file is a locale named after
+ * it, loaded only when needed; the starting locale and the fallback are loaded
+ * before `ready` resolves, so mount after it and the first render is already
+ * translated. A change to a locale not loaded yet loads it first and switches
+ * when it arrives; `entity.loadingLocale` names it meanwhile. `resources` and
+ * `loadLocale` are the lower-level way to the same, and catalogues passed in
+ * `resources` are bundled and switch synchronously.
+ *
+ * With `saveUserLocale`, the language also follows the signed-in user: see
+ * `userLocaleLoad` below.
  *
  * @param {I18nOptions} options
  * @returns {I18n}
  */
 export function createI18n({
-  resources,
-  locales = Object.keys(resources ?? {}),
+  catalogues,
+  resources: givenResources = {},
+  loadLocale: givenLoadLocale,
+  locales: givenLocales,
   defaultLocale,
   storageKey,
+  saveUserLocale,
   i18nextOptions = {},
 }) {
+  const { resources, loadLocale, cataloguedLocales } = fromCatalogues(
+    catalogues,
+    givenResources,
+    givenLoadLocale,
+  )
+  const locales = givenLocales ?? [
+    ...new Set([...Object.keys(resources), ...cataloguedLocales]),
+  ]
   const [firstLocale = "en"] = locales
   const fallbackLocale = defaultLocale ?? firstLocale
+  const startLocale = detectLocale({
+    locales,
+    defaultLocale: fallbackLocale,
+    storageKey,
+  })
+  const languages = locales.map((locale) => ({
+    value: locale,
+    label: languageName(locale),
+  }))
+
   const instance = i18next.createInstance()
   instance.init({
     ...i18nextOptions,
     resources,
-    lng: detectLocale({ locales, defaultLocale: fallbackLocale, storageKey }),
+    // Until a loaded catalogue arrives, keys fall back rather than wait.
+    partialBundledLanguages: true,
+    lng: startLocale,
     fallbackLng: fallbackLocale,
     supportedLngs: locales,
     // lit-html escapes every text binding already; escaping here too would
@@ -41,20 +74,108 @@ export function createI18n({
     initAsync: false,
   })
 
+  const loader = createLoader(instance, resources, loadLocale)
+
+  // The fallback too: it fills in whatever the starting locale is missing.
+  const ready = Promise.all(
+    [...new Set([startLocale, fallbackLocale])].map((locale) =>
+      loader.load(locale).catch((error) => {
+        // The app still starts, with whatever did load.
+        console.warn(`[i18n] could not load "${locale}":`, error)
+      }),
+    ),
+  ).then(() => {})
+
   const I18n = {
     create(entity) {
       entity.locale = instance.language
       entity.locales = locales
+      entity.languages = languages
+      entity.loadingLocale = null
+      entity.userId = null
+      entity.isUnsaved = false
       applyDocumentLanguage(entity.locale)
     },
 
-    localeChange(entity, locale) {
-      if (!locales.includes(locale) || locale === entity.locale) return
-      instance.changeLanguage(locale)
-      entity.locale = locale
-      saveLocale(storageKey, locale)
-      applyDocumentLanguage(locale)
+    // The user's choice: a locale, or a picker's `{ value }`. With
+    // `saveUserLocale` it is saved for the signed-in user at once, and kept
+    // for whoever signs in next otherwise.
+    localeChange(entity, payload, api) {
+      const locale = payload?.value ?? payload
+      if (!requestLocale(entity, locale, api)) return
+      if (!saveUserLocale) return
+
+      if (entity.userId) saveUserLocale(locale, api)
+      else entity.isUnsaved = true
     },
+
+    // Only the latest request switches: a slower load for a locale the user
+    // has since moved away from is kept for later, but not applied.
+    localeLoadSuccess(entity, locale) {
+      if (entity.loadingLocale !== locale) return
+      entity.loadingLocale = null
+      switchLocale(entity, locale)
+    },
+
+    localeLoadError(entity, { locale, error }) {
+      if (entity.loadingLocale !== locale) return
+      entity.loadingLocale = null
+      console.warn(`[i18n] could not load "${locale}":`, error)
+    },
+
+    // The signed-in user and the locale saved for them, or none yet. A choice
+    // made before they signed in is the more recent, so it is saved instead
+    // of applying theirs; with nothing saved, the current one is. Once per
+    // user, so reloading their data does not undo a change still being saved.
+    userLocaleLoad(entity, { userId, locale }, api) {
+      if (entity.userId === userId) return
+      entity.userId = userId
+
+      if (entity.isUnsaved || !locale) {
+        entity.isUnsaved = false
+        saveUserLocale?.(entity.loadingLocale ?? entity.locale, api)
+        return
+      }
+
+      requestLocale(entity, locale, api)
+    },
+
+    // Signed out: later choices wait for the next user.
+    userLocaleClear(entity) {
+      entity.userId = null
+      entity.isUnsaved = false
+    },
+  }
+
+  // Switches to `locale`, loading it first if needed. Whether it is a change.
+  function requestLocale(entity, locale, api) {
+    if (!locales.includes(locale)) return false
+    const isChange = locale !== entity.locale
+    // Choosing the current locale again also cancels a pending change.
+    entity.loadingLocale = null
+    if (!isChange) return false
+
+    if (loader.isLoaded(locale)) {
+      switchLocale(entity, locale)
+      return true
+    }
+
+    // The id is taken now: the promise settles after this batch, when the
+    // entity here is no longer the live one.
+    const id = entity.id
+    entity.loadingLocale = locale
+    loader.load(locale).then(
+      () => api.notify(`#${id}:localeLoadSuccess`, locale),
+      (error) => api.notify(`#${id}:localeLoadError`, { locale, error }),
+    )
+    return true
+  }
+
+  function switchLocale(entity, locale) {
+    instance.changeLanguage(locale)
+    entity.locale = locale
+    saveLocale(storageKey, locale)
+    applyDocumentLanguage(locale)
   }
 
   /**
@@ -79,10 +200,31 @@ export function createI18n({
     )
   }
 
+  function t(key, options) {
+    return instance.t(key, options)
+  }
+
   return {
     I18n,
-    t: (key, options) => instance.t(key, options),
+    ready,
+    languages,
+    t,
     trans,
+    // The active locale, for `Intl` formatters.
+    currentLocale: () => instance.language,
+    // A data item whose label follows the language: `label` reads through `t`
+    // every time, and `labelKey` survives being copied into store state,
+    // where the getter would freeze into the text of the moment.
+    labelled: (labelKey, fields = {}) => ({
+      ...fields,
+      labelKey,
+      get label() {
+        return t(labelKey)
+      },
+    }),
+    // An option's label: translated when it carries a key, as is otherwise.
+    translatedLabel: (option) =>
+      option.labelKey ? t(option.labelKey) : option.label,
     i18next: instance,
   }
 }
@@ -110,6 +252,92 @@ export function detectLocale({ locales, defaultLocale, storageKey }) {
   }
 
   return defaultLocale
+}
+
+/**
+ * Turns `catalogues`, a map from file path to catalogue such as
+ * `import.meta.glob` returns, into the resources and loader i18next needs.
+ * Each file is a locale named after it: `./locales/it.json` is `it`. A lazy
+ * glob gives functions, loaded on demand; an eager one gives the modules,
+ * bundled. Either way the file is the `translation` namespace.
+ */
+function fromCatalogues(catalogues, resources, loadLocale) {
+  if (!catalogues) return { resources, loadLocale, cataloguedLocales: [] }
+
+  const eager = { ...resources }
+  const lazy = {}
+  for (const [path, entry] of Object.entries(catalogues)) {
+    const locale = localeOfPath(path)
+    if (typeof entry === "function") lazy[locale] = entry
+    else eager[locale] = { translation: entry.default ?? entry }
+  }
+
+  return {
+    resources: eager,
+    loadLocale: async (locale) => {
+      if (!lazy[locale]) return loadLocale?.(locale)
+      const module = await lazy[locale]()
+      return { translation: module.default ?? module }
+    },
+    cataloguedLocales: Object.keys(catalogues).map(localeOfPath),
+  }
+}
+
+function localeOfPath(path) {
+  return path
+    .split("/")
+    .pop()
+    .replace(/\.[^.]+$/, "")
+}
+
+/**
+ * Loads each locale's catalogues once, through `loadLocale`. Locales in
+ * `resources` are loaded already, and without `loadLocale` every locale counts
+ * as loaded. A failed load is forgotten, so the next request tries again.
+ */
+function createLoader(instance, resources, loadLocale) {
+  const loaded = new Set(Object.keys(resources))
+  const pending = new Map()
+
+  function isLoaded(locale) {
+    return !loadLocale || loaded.has(locale)
+  }
+
+  function load(locale) {
+    if (isLoaded(locale)) return Promise.resolve()
+    if (pending.has(locale)) return pending.get(locale)
+
+    // Called right away; a loader that throws rejects like one that fails.
+    const promise = new Promise((resolve) => resolve(loadLocale(locale)))
+      .then((bundles) => {
+        for (const [namespace, catalogue] of Object.entries(bundles ?? {})) {
+          instance.addResourceBundle(locale, namespace, catalogue, true, true)
+        }
+        loaded.add(locale)
+      })
+      .finally(() => pending.delete(locale))
+    pending.set(locale, promise)
+    return promise
+  }
+
+  return { isLoaded, load }
+}
+
+/**
+ * A language by its own name, as whoever speaks it looks for it in a picker:
+ * "Italiano", "Français". Falls back to the code where `Intl` cannot name it.
+ */
+function languageName(locale) {
+  try {
+    const name = new Intl.DisplayNames([locale], { type: "language" }).of(
+      locale,
+    )
+    return name.replace(/^\p{Ll}/u, (letter) =>
+      letter.toLocaleUpperCase(locale),
+    )
+  } catch {
+    return locale
+  }
 }
 
 function readLocale(storageKey) {

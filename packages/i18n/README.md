@@ -12,19 +12,26 @@ pnpm add @inglorious/i18n
 
 ## Usage
 
+Put one JSON catalogue per language in a folder, named after it (`en.json`, `it.json`, …), and hand the folder to `createI18n`:
+
 ```javascript
 // src/i18n.js
 import { createI18n } from "@inglorious/i18n"
 
-import en from "./locales/en.json"
-import it from "./locales/it.json"
-
-export const { I18n, t } = createI18n({
-  resources: { en: { translation: en }, it: { translation: it } },
+export const { I18n, t, trans, ready } = createI18n({
+  catalogues: import.meta.glob("./locales/*.json"),
   defaultLocale: "en",
   storageKey: "my-app-locale",
 })
 ```
+
+Each catalogue is its own chunk, loaded when it is needed. Mount once `ready` resolves: by then the user's language and the fallback are loaded, so the first render is already translated.
+
+```javascript
+ready.then(() => mount(store, renderApp, document.getElementById("root")))
+```
+
+Adding a language is adding its file.
 
 Register the type and an entity for it:
 
@@ -60,26 +67,68 @@ Switch language from anywhere:
 api.notify("#i18n:localeChange", "it")
 ```
 
+Switching to a locale that is not loaded yet loads it first: `entity.loadingLocale` names it until it arrives, then the switch happens as usual. Only the latest choice switches, each locale is loaded once, and a failed load leaves the current language in place and is tried again on the next change.
+
+## A language picker
+
+`entity.languages` lists the supported locales as picker options, each named in itself so whoever needs it finds it whatever language is showing: `[{ value: "en", label: "English" }, { value: "it", label: "Italiano" }, …]`. The names come from `Intl.DisplayNames`. `localeChange` takes a picker's `{ value }` as well as a plain locale, so a select can notify it directly.
+
+## The user's language
+
+The choice is remembered on the device with `storageKey`. To keep it with the user's account instead, so it follows them to every device, pass `saveUserLocale` and tell the entity who signed in:
+
+```javascript
+createI18n({
+  catalogues: import.meta.glob("./locales/*.json"),
+  saveUserLocale: (locale, api) => api.notify("#profile:localeSave", locale),
+})
+
+// When the user's data arrives:
+api.notify("#i18n:userLocaleLoad", { userId: user.id, locale: user.locale })
+// When they sign out:
+api.notify("#i18n:userLocaleClear")
+```
+
+- A change while signed in is saved at once.
+- A change made before signing in, such as on the login screen, is saved when the user arrives: it is the more recent choice.
+- Otherwise the user's saved locale is applied, or the current one is saved if they have none.
+- It happens once per user, so reloading their data does not undo a change still being saved.
+
+## Labels in data
+
+Options defined in data would freeze in the language of the moment they were created. `labelled(key, fields)` gives an item whose `label` is translated every time it is read, and which keeps `labelKey` when it is copied into store state; `translatedLabel(option)` reads either kind:
+
+```javascript
+const periods = [labelled("periods.week", { value: "week" })]
+
+translatedLabel(periods[0]) // "This week", or "Questa settimana"
+translatedLabel({ label: "Lombardy" }) // data, not copy: as is
+```
+
 ## API
 
 ### `createI18n(options)`
 
-Returns `{ I18n, t, trans, i18next }`.
+Returns `{ I18n, ready, languages, t, trans, currentLocale, labelled, translatedLabel, i18next }`.
 
-- `resources`: the catalogues, `{ [locale]: { translation: { … } } }`.
-- `locales`: the supported locales. Defaults to the keys of `resources`.
+- `catalogues`: the catalogues by file path, as `import.meta.glob("./locales/*.json")` returns them. A lazy glob loads each on demand; an eager one (`{ eager: true }`) bundles them all.
+- `resources`: catalogues bundled with the app, `{ [locale]: { translation: { … } } }`. The lower-level alternative to `catalogues`.
+- `loadLocale`: loads a locale that is not in `resources`, resolving to `{ translation: { … } }`. The lower-level alternative to a lazy glob.
+- `locales`: the supported locales, in picker order. Defaults to those in `catalogues` and `resources`.
+- `saveUserLocale`: saves the locale for the signed-in user. See [The user's language](#the-users-language).
 - `defaultLocale`: the fallback, and the locale when nothing else matches. Defaults to the first locale.
 - `storageKey`: where to remember the user's choice in `localStorage`. Omit it to not remember the choice.
 - `i18nextOptions`: any further i18next options.
 
 The starting locale is the saved choice, else the first of the device's languages that is supported (`it-CH` picks `it`), else `defaultLocale`.
 
-With the catalogues passed in `resources`, i18next initialises and switches synchronously, so there is no loading state to handle.
+`ready` resolves once the starting locale and the fallback are loaded: at once when they are bundled. With every catalogue bundled, i18next also switches synchronously, so there is no loading state to handle.
 
 ### The `I18n` type
 
-- `create(entity)`: sets `entity.locale` and `entity.locales`, and `<html lang>`.
-- `localeChange(entity, locale)`: switches i18next, updates `entity.locale`, remembers the choice and sets `<html lang>`. Unsupported locales are ignored.
+- `create(entity)`: sets `entity.locale`, `entity.locales` and `entity.languages`, and `<html lang>`.
+- `localeChange(entity, locale)`: switches i18next, updates `entity.locale`, remembers the choice and sets `<html lang>`. Takes a locale or a picker's `{ value }`; unsupported locales are ignored. A locale not loaded yet is loaded first (`entity.loadingLocale`), and the switch follows in `localeLoadSuccess`.
+- `userLocaleLoad(entity, { userId, locale })` and `userLocaleClear(entity)`: the signed-in user's locale. See [The user's language](#the-users-language).
 
 ### `t(key, options)`
 
