@@ -1,5 +1,11 @@
 # @inglorious/i18n
 
+## 1.2.0
+
+### Minor Changes
+
+- The writing direction follows the language: `<html dir>` and `entity.dir` are `rtl` for Arabic, Hebrew, Persian and the other right-to-left languages, `ltr` otherwise.
+
 ## 1.1.0
 
 ### Minor Changes

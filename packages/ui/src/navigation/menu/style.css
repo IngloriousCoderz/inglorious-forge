@@ -19,7 +19,7 @@
   width: 100%;
   padding: var(--iw-space-2) var(--iw-space-3);
   border-radius: var(--iw-radius-sm);
-  text-align: left;
+  text-align: start;
   cursor: pointer;
 }
 
@@ -29,7 +29,7 @@
 }
 
 .iw-menu-item-trailing {
-  margin-left: auto;
+  margin-inline-start: auto;
   color: var(--iw-color-text-muted, var(--iw-color-text));
 }
 

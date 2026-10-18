@@ -31,7 +31,7 @@ function stubBrowser({ languages = [], saved = {} } = {}) {
       store[key] = value
     },
   })
-  vi.stubGlobal("document", { documentElement: { lang: "" } })
+  vi.stubGlobal("document", { documentElement: { lang: "", dir: "" } })
   return store
 }
 
@@ -387,6 +387,25 @@ describe("saveUserLocale", () => {
 
     expect(saveUserLocale).not.toHaveBeenCalled()
     expect(entity.isUnsaved).toBe(true)
+  })
+})
+
+describe("direction", () => {
+  it("sets the direction of the language, on the entity and the document", () => {
+    stubBrowser({ languages: ["en"] })
+    const { I18n } = createI18n({
+      resources: { ...resources, ar: { translation: { hello: "مرحبا" } } },
+    })
+    const entity = {}
+    I18n.create(entity)
+
+    expect(entity.dir).toBe("ltr")
+    expect(document.documentElement.dir).toBe("ltr")
+
+    I18n.localeChange(entity, "ar")
+
+    expect(entity.dir).toBe("rtl")
+    expect(document.documentElement.dir).toBe("rtl")
   })
 })
 

@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/i18n",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Internationalization for Inglorious Web: an i18next instance driven by a store entity.",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",

@@ -1,3 +1,16 @@
+/* The writing direction as a number, for what moves sideways: a slide that
+   goes `translateX(calc(-100% * var(--iw-dir-sign)))` leaves to the left in
+   English and to the right in Arabic. Set again on any element with a `dir`,
+   so a subtree in the other direction gets its own. */
+:root,
+[dir="ltr"] {
+  --iw-dir-sign: 1;
+}
+
+[dir="rtl"] {
+  --iw-dir-sign: -1;
+}
+
 :root {
   /* ========================================
      COLOR PALETTE - Primitive Colors

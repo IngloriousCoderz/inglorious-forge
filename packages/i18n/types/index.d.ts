@@ -40,6 +40,8 @@ export interface I18nEntity {
   type: string
   /** The active locale. */
   locale?: string
+  /** Its writing direction, also set on `<html dir>`. */
+  dir?: "ltr" | "rtl"
   /** The supported locales, for a language picker. */
   locales?: string[]
   /** The supported locales named in themselves, as options for a picker. */

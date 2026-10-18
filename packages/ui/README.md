@@ -44,6 +44,27 @@ The public CSS exports are:
 - `@inglorious/ui/themes/bootstrap.css`
 - `@inglorious/ui/all.css`
 
+## Right-to-left
+
+The components mirror in a right-to-left page (`<html dir="rtl">`, which `@inglorious/i18n` sets for Arabic, Hebrew and the like): their spacing, borders and corners use logical properties, and a `left` drawer sits at the start of the line.
+
+For your own styles, use logical properties too (`margin-inline-start`, `inset-inline-end`, `text-align: start`). For anything that moves sideways, multiply by `--iw-dir-sign`, which is `1` in left-to-right and `-1` in right-to-left:
+
+```css
+.slide-in {
+  transform: translateX(calc(100% * var(--iw-dir-sign)));
+}
+```
+
+Icons that point along the line, such as a back arrow or a chevron, take the `direction` of the text they sit in and are mirrored with `"rtl"`. With `@inglorious/i18n`, that is the i18n entity's `dir`:
+
+```javascript
+MaterialIcon.render({
+  name: "arrow_back",
+  direction: api.getEntity("i18n").dir,
+})
+```
+
 ## Safe-area utilities
 
 The base styles also expose CSS variables and utility classes for the system bars' insets: the notch, rounded corners, the home indicator and Android's status and navigation bars. They are in `base.css`, or on their own in `@inglorious/ui/safe-area.css`.

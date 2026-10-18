@@ -40,7 +40,7 @@
   }
 
   .iw-switch-input:checked + .iw-switch-track .iw-switch-thumb {
-    transform: translateX(1rem);
+    transform: translateX(calc(1rem * var(--iw-dir-sign, 1)));
   }
 
   .iw-switch-label {
@@ -59,7 +59,7 @@
   }
 
   &.iw-switch-sm .iw-switch-input:checked + .iw-switch-track .iw-switch-thumb {
-    transform: translateX(0.875rem);
+    transform: translateX(calc(0.875rem * var(--iw-dir-sign, 1)));
   }
 
   &.iw-switch-lg .iw-switch-track {
@@ -73,7 +73,7 @@
   }
 
   &.iw-switch-lg .iw-switch-input:checked + .iw-switch-track .iw-switch-thumb {
-    transform: translateX(1.25rem);
+    transform: translateX(calc(1.25rem * var(--iw-dir-sign, 1)));
   }
 
   &.iw-switch-disabled {

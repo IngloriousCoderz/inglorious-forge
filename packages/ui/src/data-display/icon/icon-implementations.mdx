@@ -71,14 +71,14 @@ Use this page as a quick reference for supported icon strategies in `@inglorious
   <input id="iw-icon-tab-lucide" type="radio" name="iw-icon-tab" />
   <input id="iw-icon-tab-a11y" type="radio" name="iw-icon-tab" />
 
-  <div className="iw-icon-tab-labels">
-    <label htmlFor="iw-icon-tab-generic">Generic</label>
-    <label htmlFor="iw-icon-tab-svg">Inline SVG</label>
-    <label htmlFor="iw-icon-tab-material">Material</label>
-    <label htmlFor="iw-icon-tab-fa">Font Awesome</label>
-    <label htmlFor="iw-icon-tab-lucide">Lucide</label>
-    <label htmlFor="iw-icon-tab-a11y">Accessibility</label>
-  </div>
+<div className="iw-icon-tab-labels">
+  <label htmlFor="iw-icon-tab-generic">Generic</label>
+  <label htmlFor="iw-icon-tab-svg">Inline SVG</label>
+  <label htmlFor="iw-icon-tab-material">Material</label>
+  <label htmlFor="iw-icon-tab-fa">Font Awesome</label>
+  <label htmlFor="iw-icon-tab-lucide">Lucide</label>
+  <label htmlFor="iw-icon-tab-a11y">Accessibility</label>
+</div>
 
   <div className="iw-icon-tab-panels">
     <section className="iw-icon-tab-panel iw-icon-tab-panel-generic">
@@ -92,6 +92,7 @@ Use this page as a quick reference for supported icon strategies in `@inglorious
       <pre><code>{`Icon.render({
     children: html\`<svg viewBox="0 0 24 24" ...>...</svg>\`,
     size: "md",
+
 })`}</code></pre>
 
 <div className="iw-icon-example">
@@ -121,6 +122,7 @@ Use this page as a quick reference for supported icon strategies in `@inglorious
       <p>Load Font Awesome CSS globally, then pass an icon element as <code>children</code>. Reference: <a href="https://fontawesome.com/search" target="_blank">Font Awesome Icons</a></p>
       <pre><code>{`Icon.render({
     children: html\`<i class="fa-solid fa-user" aria-hidden="true"></i>\`,
+
 })`}</code></pre>
 
 <div className="iw-icon-example">
@@ -133,9 +135,10 @@ Use this page as a quick reference for supported icon strategies in `@inglorious
     <section className="iw-icon-tab-panel iw-icon-tab-panel-lucide">
       <p>Lucide requires runtime bootstrapping before icons render. Reference: <a href="https://lucide.dev/icons/?focus" target="_blank">Lucide Icons</a></p>
       <pre><code>{`import { createIcons, icons } from "lucide"
+
 createIcons({
-    icons,
-    attrs: { "stroke-width": 1.75 },
+icons,
+attrs: { "stroke-width": 1.75 },
 })`}</code></pre>
       <p>Then render nodes such as <code>{`<i data-lucide="user"></i>`}</code>.</p>
 

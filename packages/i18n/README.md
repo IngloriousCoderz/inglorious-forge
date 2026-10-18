@@ -126,7 +126,7 @@ The starting locale is the saved choice, else the first of the device's language
 
 ### The `I18n` type
 
-- `create(entity)`: sets `entity.locale`, `entity.locales` and `entity.languages`, and `<html lang>`.
+- `create(entity)`: sets `entity.locale`, `entity.dir`, `entity.locales` and `entity.languages`, and `<html lang>` and `<html dir>`. `dir` is `rtl` for right-to-left languages such as Arabic or Hebrew; styles written with logical properties (`margin-inline-start`, `text-align: start`) mirror on their own.
 - `localeChange(entity, locale)`: switches i18next, updates `entity.locale`, remembers the choice and sets `<html lang>`. Takes a locale or a picker's `{ value }`; unsupported locales are ignored. A locale not loaded yet is loaded first (`entity.loadingLocale`), and the switch follows in `localeLoadSuccess`.
 - `userLocaleLoad(entity, { userId, locale })` and `userLocaleClear(entity)`: the signed-in user's locale. See [The user's language](#the-users-language).
 

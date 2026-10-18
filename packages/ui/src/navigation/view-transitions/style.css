@@ -89,25 +89,25 @@
 
 @keyframes iw-view-transition-out-left {
   to {
-    transform: translateX(-100%);
+    transform: translateX(calc(-100% * var(--iw-dir-sign, 1)));
   }
 }
 
 @keyframes iw-view-transition-in-right {
   from {
-    transform: translateX(100%);
+    transform: translateX(calc(100% * var(--iw-dir-sign, 1)));
   }
 }
 
 @keyframes iw-view-transition-out-right {
   to {
-    transform: translateX(100%);
+    transform: translateX(calc(100% * var(--iw-dir-sign, 1)));
   }
 }
 
 @keyframes iw-view-transition-in-left {
   from {
-    transform: translateX(-100%);
+    transform: translateX(calc(-100% * var(--iw-dir-sign, 1)));
   }
 }
 

@@ -24,4 +24,10 @@
   &.iw-material-icon-lg {
     font-size: 1.5rem;
   }
+
+  /* `scale` rather than `transform`, so it adds to a rotation set elsewhere
+     instead of replacing it. */
+  &.iw-material-icon-rtl {
+    scale: -1 1;
+  }
 }

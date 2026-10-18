@@ -1,5 +1,15 @@
 # @inglorious/ui
 
+## 7.8.0
+
+### Minor Changes
+
+- Right-to-left support:
+
+  - The drawer, app bar, list, menu, alert, divider, container, input, select, textarea, combobox and button group use logical properties, so they mirror in a right-to-left page. A `left` drawer sits at the start of the line: on the right in Arabic.
+  - `--iw-dir-sign` is `1` in left-to-right and `-1` in right-to-left, for anything that moves sideways. The drawer, page transitions and switch use it, so they slide the mirrored way.
+  - `MaterialIcon` takes `direction` (`"ltr"` by default, or `"rtl"`): an icon that points along the line, such as a back arrow, is mirrored in right-to-left text. The drawer's collapse toggle mirrors with the page.
+
 ## 7.7.0
 
 ### Minor Changes

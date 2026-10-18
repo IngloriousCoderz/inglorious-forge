@@ -16,7 +16,7 @@
 
   .iw-textarea-required {
     color: var(--iw-color-error);
-    margin-left: var(--iw-space-1);
+    margin-inline-start: var(--iw-space-1);
   }
 
   .iw-textarea {

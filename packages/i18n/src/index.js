@@ -89,12 +89,13 @@ export function createI18n({
   const I18n = {
     create(entity) {
       entity.locale = instance.language
+      entity.dir = instance.dir(entity.locale)
       entity.locales = locales
       entity.languages = languages
       entity.loadingLocale = null
       entity.userId = null
       entity.isUnsaved = false
-      applyDocumentLanguage(entity.locale)
+      applyDocumentLanguage(entity.locale, entity.dir)
     },
 
     // The user's choice: a locale, or a picker's `{ value }`. With
@@ -174,8 +175,9 @@ export function createI18n({
   function switchLocale(entity, locale) {
     instance.changeLanguage(locale)
     entity.locale = locale
+    entity.dir = instance.dir(locale)
     saveLocale(storageKey, locale)
-    applyDocumentLanguage(locale)
+    applyDocumentLanguage(locale, entity.dir)
   }
 
   /**
@@ -361,8 +363,11 @@ function saveLocale(storageKey, locale) {
 }
 
 // Screen readers, hyphenation and the browser's own spell checking read the
-// document language, so it follows the app's.
-function applyDocumentLanguage(locale) {
+// document language, so it follows the app's. So does the direction: in
+// Arabic, Hebrew or Persian the whole page reads right to left, and CSS that
+// uses logical properties (`margin-inline-start`, `text-align: start`) follows.
+function applyDocumentLanguage(locale, dir) {
   if (typeof document === "undefined") return
   document.documentElement.lang = locale
+  document.documentElement.dir = dir
 }

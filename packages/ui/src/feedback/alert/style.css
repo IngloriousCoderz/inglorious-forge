@@ -34,7 +34,7 @@
 }
 
 .iw-alert-trailing {
-  margin-left: auto;
+  margin-inline-start: auto;
   display: inline-flex;
   align-items: center;
   gap: var(--iw-space-2);

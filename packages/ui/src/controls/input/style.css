@@ -17,7 +17,7 @@
 
   .iw-input-required {
     color: var(--iw-color-error);
-    margin-left: var(--iw-space-1);
+    margin-inline-start: var(--iw-space-1);
   }
 
   .iw-input-frame {
@@ -74,7 +74,7 @@
       }
 
       &.iw-input-number {
-        text-align: right;
+        text-align: end;
       }
 
       &.iw-input-sm {

@@ -42,6 +42,12 @@
     transition: transform var(--iw-transition-fast);
   }
 
+  /* The toggle points at the edge the drawer sits on, which a right-to-left
+     page mirrors. `scale`, so the collapsed state's rotation still applies. */
+  .iw-drawer-toggler > span:dir(rtl) {
+    scale: -1 1;
+  }
+
   .iw-list-item-inset,
   .iw-list-item-content,
   .iw-list-item-trailing,
@@ -96,16 +102,18 @@
   }
 }
 
+/* `left` and `right` are the start and end of the line: the left drawer
+   sits on the right in a right-to-left page, and slides off that way. */
 .iw-drawer-left {
-  left: 0;
-  border-right: 1px solid var(--iw-color-border);
-  transform: translateX(-100%);
+  inset-inline-start: 0;
+  border-inline-end: 1px solid var(--iw-color-border);
+  transform: translateX(calc(-100% * var(--iw-dir-sign, 1)));
 }
 
 .iw-drawer-right {
-  right: 0;
-  border-left: 1px solid var(--iw-color-border);
-  transform: translateX(100%);
+  inset-inline-end: 0;
+  border-inline-start: 1px solid var(--iw-color-border);
+  transform: translateX(calc(100% * var(--iw-dir-sign, 1)));
 }
 
 @media (min-width: 0rem) {
@@ -128,11 +136,11 @@
     box-shadow: none;
 
     &.iw-drawer-left.iw-drawer-hidden {
-      transform: translateX(-100%);
+      transform: translateX(calc(-100% * var(--iw-dir-sign, 1)));
     }
 
     &.iw-drawer-right.iw-drawer-hidden {
-      transform: translateX(100%);
+      transform: translateX(calc(100% * var(--iw-dir-sign, 1)));
     }
 
     & ~ .iw-drawer-backdrop {

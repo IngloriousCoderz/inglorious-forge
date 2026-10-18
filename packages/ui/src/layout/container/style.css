@@ -18,7 +18,7 @@
 }
 
 .iw-container-padding-sm {
-  padding-left: var(--iw-space-2);
+  padding-inline-start: var(--iw-space-2);
 }
 
 .iw-container-padding-md {
