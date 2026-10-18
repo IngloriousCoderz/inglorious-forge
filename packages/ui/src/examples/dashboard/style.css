@@ -55,11 +55,12 @@
 
   .iw-dashboard-header-row {
     width: 100%;
-    padding-inline: var(--iw-space-4);
   }
 
+  /* Outside the app bar, so it pads itself to line up with it. */
   .iw-dashboard-breadcrumbs {
     min-height: var(--iw-space-12);
+    padding-inline: var(--iw-space-4);
   }
 }
 
@@ -324,6 +325,8 @@
 @media (max-width: 64rem) {
   .iw-dashboard-header-row {
     flex-wrap: wrap;
+  }
+  .iw-dashboard-header .iw-dashboard-breadcrumbs {
     padding-inline: var(--iw-space-3);
   }
   .iw-dashboard-content {

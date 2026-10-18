@@ -6,6 +6,11 @@
 
 .iw-theme-inglorious {
   --iw-font-family-sans: var(--iw-font-family);
+  /* The theme on the page itself: the element with the theme class, usually
+     <body>, takes its background, text color and font. */
+  background-color: var(--iw-color-bg);
+  color: var(--iw-color-text);
+  font-family: var(--iw-font-family-sans);
 
   /* ========================================
      INGLORIOUS THEME - Neon Videogame Aesthetic
