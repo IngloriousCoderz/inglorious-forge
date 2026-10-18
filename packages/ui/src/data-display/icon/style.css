@@ -1,3 +1,7 @@
+/* The size is a floor, not a fixed box. A font glyph takes the size's
+   font-size and fits it exactly; content that sizes itself (a Material icon
+   at lg, an SVG with its own width, a button) grows the box instead of
+   overflowing it or being squeezed into it. */
 .iw-icon {
   display: inline-flex;
   align-items: center;
@@ -5,20 +9,20 @@
   cursor: pointer;
 
   &.iw-icon-sm {
-    width: var(--iw-space-3);
-    height: var(--iw-space-3);
+    min-width: var(--iw-space-3);
+    min-height: var(--iw-space-3);
     font-size: var(--iw-font-size-sm);
   }
 
   &.iw-icon-md {
-    width: var(--iw-space-4);
-    height: var(--iw-space-4);
+    min-width: var(--iw-space-4);
+    min-height: var(--iw-space-4);
     font-size: var(--iw-font-size-base);
   }
 
   &.iw-icon-lg {
-    width: var(--iw-space-6);
-    height: var(--iw-space-6);
+    min-width: var(--iw-space-6);
+    min-height: var(--iw-space-6);
     font-size: var(--iw-font-size-2xl);
   }
 }

@@ -65,6 +65,28 @@
       opacity: 0;
     }
 
+    /* The header keeps only what fits the rail, such as a brand mark, so
+       it centres it. */
+    .iw-drawer-header {
+      justify-content: center;
+    }
+
+    /* Only the icon is left, centred in the rail. The label also has to
+       leave the row: faded out, it still took its width and pushed the
+       icon off centre, as did the icon's side margin. */
+    .iw-list-item > .iw-flex {
+      justify-content: center;
+    }
+
+    .iw-list-item-icon {
+      margin-inline: 0;
+    }
+
+    .iw-list-item-content,
+    .iw-list-item-trailing {
+      display: none;
+    }
+
     .iw-drawer-toggler > span {
       transform: rotate(180deg);
     }

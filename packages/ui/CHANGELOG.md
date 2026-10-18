@@ -1,5 +1,11 @@
 # @inglorious/ui
 
+## 7.3.1
+
+### Patch Changes
+
+- Fix UI icon sizes
+
 ## 7.3.0
 
 ### Minor Changes
