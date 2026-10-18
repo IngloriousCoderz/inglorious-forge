@@ -48,25 +48,38 @@ export function transformTemplate(
   vueImports = new Set(),
 ) {
   const imports = new Set()
-  const parts = []
+  // Several root elements (a header, a main, a footer) render as one
+  // template, each compiled as a child of it.
+  // A `v-else` or `v-else-if` belongs to the `v-if` before it.
+  const roots = nodes.filter((node) =>
+    node.type === "text"
+      ? node.data.trim() !== ""
+      : !("v-else" in (node.attribs ?? {})) &&
+        !("v-else-if" in (node.attribs ?? {})),
+  )
+  const [, secondRoot] = roots
+  const hasSeveralRoots = secondRoot !== undefined
 
-  for (const node of nodes) {
-    parts.push(
-      transformNode(
-        node,
-        imports,
-        methodNames,
-        scriptImports,
-        renderScopeNames,
-        vueImports,
-        {},
-        false,
-      ),
-    )
-  }
+  const parts = nodes.map((node) =>
+    transformNode(
+      node,
+      imports,
+      methodNames,
+      scriptImports,
+      renderScopeNames,
+      vueImports,
+      {},
+      hasSeveralRoots,
+    ),
+  )
 
   if (!parts.length) {
     return { code: "html``", imports }
+  }
+
+  if (hasSeveralRoots) {
+    imports.add("html")
+    return { code: `html\`${parts.join("").trim()}\``, imports }
   }
 
   const [singlePart, secondPart] = parts
@@ -89,7 +102,7 @@ function transformNode(
   isChild = false,
 ) {
   if (node.type === "text") {
-    return transformTextNode(node, context, renderScopeNames)
+    return transformTextNode(node, context, renderScopeNames, scriptImports)
   }
 
   if (node.type === "tag") {
@@ -158,13 +171,20 @@ function renderChildren(
  * @param {Object} node - DOM text node.
  * @param {Object} context - Rendering context.
  * @param {Set<string>} renderScopeNames - Names declared in the render scope.
+ * @param {Set<string>} scriptImports - Imported names from the script block.
  * @returns {string} Transformed text.
  */
-export function transformTextNode(node, context, renderScopeNames = new Set()) {
+export function transformTextNode(
+  node,
+  context,
+  renderScopeNames = new Set(),
+  scriptImports = new Set(),
+) {
   const text = node.data
   const parts = []
   let lastIndex = 0
-  const regex = /\{\{(.+?)\}\}/g
+  // Across line breaks too: Prettier wraps a long interpolation.
+  const regex = /\{\{([\s\S]+?)\}\}/g
   let match
 
   while ((match = regex.exec(text)) !== null) {
@@ -174,7 +194,7 @@ export function transformTextNode(node, context, renderScopeNames = new Set()) {
 
     const [fullMatch, expr] = match
     parts.push(
-      `\${${wrapWithEntity(expr, context, new Set(), renderScopeNames)}}`,
+      `\${${wrapWithEntity(expr, context, scriptImports, renderScopeNames)}}`,
     )
     lastIndex = match.index + fullMatch.length
   }
@@ -386,8 +406,12 @@ export function buildElement(
       props.children = childrenTemplate
     }
 
+    // `aria-label` and other kebab-case names are quoted, to stay valid keys.
     const propsStr = Object.entries(props)
-      .map(([key, value]) => `${key}: ${value}`)
+      .map(
+        ([key, value]) =>
+          `${/^[A-Za-z_$][\w$]*$/.test(key) ? key : JSON.stringify(key)}: ${value}`,
+      )
       .join(", ")
     const spreadArg = spreadValue
       ? wrapWithEntity(spreadValue, context, scriptImports, renderScopeNames)
@@ -540,6 +564,10 @@ export function wrapWithEntity(
   if (trimmed.startsWith("api.")) return trimmed
   if (trimmed.startsWith("!api.")) return trimmed
 
+  // An inline function, such as a callback passed to a component, is code in
+  // its own right: its parameters and body are not entity fields.
+  if (isFunctionExpression(trimmed)) return trimmed
+
   if (
     trimmed.startsWith("{") ||
     trimmed.startsWith("[") ||
@@ -560,6 +588,19 @@ export function wrapWithEntity(
   if (rootIdent && scriptImports.has(rootIdent)) return trimmed
 
   return `entity.${trimmed}`
+}
+
+/**
+ * Whether an expression is an inline function: `(a) => …`, `a => …`,
+ * `async (a) => …` or `function (a) { … }`.
+ *
+ * @param {string} expr - A trimmed template expression.
+ * @returns {boolean}
+ */
+function isFunctionExpression(expr) {
+  return /^(async\s+)?(\([^)]*\)|[a-zA-Z_$][\w$]*)\s*=>|^(async\s+)?function\b/.test(
+    expr,
+  )
 }
 
 /**

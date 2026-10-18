@@ -816,4 +816,95 @@ import { DataGrid } from "./components";
     const result = await transform(code)
     expect(result).toMatchSnapshot()
   })
+
+  describe("app shells", () => {
+    it("keeps imported functions in interpolations", async () => {
+      const code = `
+<template>
+  <h1>{{ t("home.title") }}</h1>
+</template>
+
+<script>
+import { t } from "./i18n"
+</script>
+`
+      const result = await transform(code)
+      expect(result).toContain('${t("home.title")}')
+      expect(result).not.toContain("entity.t(")
+    })
+
+    it("passes arrow functions in bound props through", async () => {
+      const code = `
+<template>
+  <Select :onChange="(locale) => api.notify('#i18n:localeChange', locale)" />
+</template>
+
+<script>
+import { Select } from "@inglorious/ui/select"
+</script>
+`
+      const result = await transform(code)
+      expect(result).toContain(
+        "onChange: (locale) => api.notify('#i18n:localeChange', locale)",
+      )
+      expect(result).not.toContain("entity.(")
+    })
+
+    it("reads interpolations spread over several lines", async () => {
+      const code = `
+<template>
+  <span>{{
+    t("message.hello", {
+      who: who,
+    })
+  }}</span>
+</template>
+
+<script>
+import { t } from "./i18n"
+</script>
+`
+      const result = await transform(code)
+      expect(result).toContain('${t("message.hello"')
+      expect(result).not.toContain("{{")
+    })
+
+    it("quotes kebab-case props on components", async () => {
+      const code = `
+<template>
+  <Select :aria-label="label" data-test="picker" />
+</template>
+
+<script>
+import { Select } from "@inglorious/ui/select"
+</script>
+`
+      const result = await transform(code)
+      expect(result).toContain('"aria-label": entity.label')
+      expect(result).toContain('"data-test": "picker"')
+    })
+
+    it("renders several root elements as one template", async () => {
+      const code = `
+<template>
+  <header>{{ title }}</header>
+  <main>Body</main>
+  <footer>End</footer>
+</template>
+`
+      const result = await transform(code)
+      expect(result).toContain("return html`<header>${entity.title}</header>")
+      expect(result).toContain("<main>Body</main>")
+      expect(result).toContain("<footer>End</footer>`")
+      expect(result).not.toContain("html`html`")
+      expect(
+        () =>
+          new Function(
+            result
+              .replace(/^import .*$/gm, "")
+              .replace("export const", "const"),
+          ),
+      ).not.toThrow()
+    })
+  })
 })
