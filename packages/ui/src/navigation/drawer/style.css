@@ -14,7 +14,10 @@
   bottom: 0;
   z-index: var(--iw-z-modal, 1050);
 
+  /* As tall as an app bar, so the line under a drawer and the app bar beside
+     it runs straight across. */
   .iw-drawer-header {
+    min-height: var(--iw-space-16);
     border-bottom: 1px solid var(--iw-color-border);
     flex-shrink: 0;
 

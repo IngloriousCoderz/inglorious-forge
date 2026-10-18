@@ -40,7 +40,6 @@ export const AppDrawer = {
       title: Flex.render({
         align: "center",
         gap: "sm",
-        padding: "md",
         className: "iw-dashboard-brand",
         children: [
           Avatar.render({ src: "/transparent.png", shape: "square" }),

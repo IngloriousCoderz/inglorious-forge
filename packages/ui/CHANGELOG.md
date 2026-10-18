@@ -1,5 +1,11 @@
 # @inglorious/ui
 
+## 7.4.0
+
+### Minor Changes
+
+- The drawer header is as tall as an app bar and has its own inline padding, so the line under a drawer and an app bar beside it runs straight across, and a title no longer sits on the drawer's edge.
+
 ## 7.3.1
 
 ### Patch Changes

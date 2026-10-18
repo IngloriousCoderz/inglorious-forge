@@ -65,6 +65,7 @@ export function render(props) {
               align: "center",
               justify: "between",
               gap: "sm",
+              padding: "sm",
               className: "iw-drawer-header",
               children: [
                 when(
