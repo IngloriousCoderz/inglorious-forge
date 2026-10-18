@@ -5,7 +5,7 @@ export type ViewTransitionType = "forward" | "back" | "replace"
 /** The part of a store this module needs. Declared structurally rather than
  * imported, so any store-shaped object works. */
 export interface TransitionsStore<S = unknown> {
-  subscribe(listener: (state: S) => void): () => void
+  subscribe(listener: () => void): () => void
   getState(): S
   getType(name: string): unknown
 }
@@ -33,10 +33,11 @@ export interface TransitionsOptions {
 }
 
 export interface WithTransitions {
-  <S>(
-    store: TransitionsStore<S>,
+  /** Returns the store it was given, so it still fits wherever the store did, such as `mount`. */
+  <Store extends TransitionsStore<any>>(
+    store: Store,
     options?: TransitionsOptions,
-  ): TransitionsStore<S>
+  ): Store
 }
 
 export declare const withTransitions: WithTransitions

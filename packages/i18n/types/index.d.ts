@@ -1,8 +1,11 @@
 import type { i18n, InitOptions, Resource, TOptions } from "i18next"
 
-/** A catalogue file as a glob gives it: the module, or a function loading it. */
-export type CatalogueEntry =
-  Record<string, unknown> | (() => Promise<Record<string, unknown>>)
+/**
+ * A catalogue file as a glob gives it: the module, or a function loading it.
+ * As loose as Vite's own types for `import.meta.glob`, which leave the
+ * module `unknown`.
+ */
+export type CatalogueEntry = unknown
 
 export interface I18nOptions {
   /**
