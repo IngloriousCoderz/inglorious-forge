@@ -1,5 +1,14 @@
 # @inglorious/ui
 
+## 7.3.0
+
+### Minor Changes
+
+- Let surfaces take their colour from the theme:
+
+  - Add the `--iw-app-bar-bg` and `--iw-drawer-bg` component tokens. Both default to `--iw-color-surface`, as before.
+  - List items are transparent by default, and the selected tint is mixed over transparent, so a list shows the container it sits in (a drawer, a card, the page). Every built-in theme painted items in its surface colour, so lists on a surface look the same; a list placed straight on the page background now shows the page instead of surface-coloured boxes.
+
 ## 7.2.4
 
 ### Patch Changes

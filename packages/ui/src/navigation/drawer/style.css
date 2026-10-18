@@ -1,6 +1,6 @@
 .iw-drawer {
   width: 16rem;
-  background: var(--iw-color-surface);
+  background: var(--iw-drawer-bg, var(--iw-color-surface));
   color: var(--iw-color-text);
   transition:
     margin var(--iw-transition-fast),

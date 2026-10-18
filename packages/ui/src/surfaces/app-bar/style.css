@@ -3,7 +3,7 @@
   align-items: center;
   min-height: var(--iw-space-16);
   /* gap: var(--iw-space-3); */
-  background: var(--iw-color-surface);
+  background: var(--iw-app-bar-bg, var(--iw-color-surface));
   color: var(--iw-color-text);
   border-bottom: 1px solid var(--iw-color-border);
 }
@@ -51,7 +51,7 @@
 }
 
 .iw-app-bar-color-default {
-  background: var(--iw-color-surface);
+  background: var(--iw-app-bar-bg, var(--iw-color-surface));
   color: var(--iw-color-text);
 }
 

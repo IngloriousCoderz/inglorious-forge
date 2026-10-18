@@ -67,6 +67,12 @@
   --iw-input-radius: var(--iw-radius-md);
   --iw-input-shadow-focus: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 
+  /* App bar */
+  --iw-app-bar-bg: var(--iw-color-surface);
+
+  /* Drawer */
+  --iw-drawer-bg: var(--iw-color-surface);
+
   /* Card */
   --iw-card-bg: var(--iw-color-surface);
   --iw-card-border: var(--iw-color-border);
@@ -78,11 +84,11 @@
   --iw-badge-radius: var(--iw-radius-md);
 
   /* List */
-  --iw-list-item: var(--iw-color-white);
+  --iw-list-item: transparent;
   --iw-list-item-selected: color-mix(
     in srgb,
     var(--iw-color-primary) 8%,
-    var(--iw-color-white)
+    transparent
   );
 
   /* Alert */
@@ -126,11 +132,11 @@
   --iw-button-ghost-bg-hover: #343a40;
   --iw-button-ghost-text: var(--iw-color-text);
 
-  --iw-list-item: #2c3036;
+  --iw-list-item: transparent;
   --iw-list-item-active: #343a40;
   --iw-list-item-selected: color-mix(
     in srgb,
     var(--iw-color-primary) 12%,
-    #2c3036
+    transparent
   );
 }
