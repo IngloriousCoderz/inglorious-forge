@@ -79,6 +79,7 @@ export default defineConfig({
           text: "Integration",
           items: [
             { text: "Component Libraries", link: "/featured/libraries" },
+            { text: "Internationalization", link: "/featured/i18n" },
             {
               text: "AG Grid (No Adapter)",
               link: "/featured/ag-grid-no-adapter",

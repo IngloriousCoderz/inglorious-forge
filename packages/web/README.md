@@ -1851,6 +1851,7 @@ Check out these demos to see `@inglorious/web` in action:
 
 - [**@inglorious/ssx**](https://www.npmjs.com/package/@inglorious/ssx) - Static site generation with pre-rendering and client hydration
 - [**@inglorious/store**](https://www.npmjs.com/package/@inglorious/store) - Entity-based state management (used by @inglorious/web)
+- [**@inglorious/i18n**](https://www.npmjs.com/package/@inglorious/i18n) - Internationalization: translations, plurals and formatting driven by a store entity
 - [**@inglorious/engine**](https://www.npmjs.com/package/@inglorious/engine) - Game engine with the same entity architecture
 - [**@inglorious/create-app**](https://www.npmjs.com/package/@inglorious/create-app) - Scaffolding tool for quick project setup
 

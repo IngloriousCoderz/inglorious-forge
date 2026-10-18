@@ -77,6 +77,10 @@ A declarative SVG charting library for `@inglorious/web`, inspired by Recharts. 
 
 CSS-first motion primitives for `@inglorious/web`, implemented via type composition. Animate entities without leaving the store-driven model.
 
+#### `@inglorious/i18n`
+
+Internationalization for `@inglorious/web`: an i18next instance driven by a store entity, so changing language is an ordinary event. Detects the device language, remembers the user's choice, and renders translations with markup in them safely through `trans`.
+
 #### `@inglorious/ag-grid`
 
 Direct AG Grid integration for `@inglorious/web` — no adapter required.

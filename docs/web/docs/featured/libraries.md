@@ -295,6 +295,7 @@ The Inglorious ecosystem includes libraries built this way:
 - **[@inglorious/web](https://npmjs.com/@inglorious/web)** — Form, Table, Router, etc.
 - **[Inglorious Motion](https://npmjs.com/@inglorious/motion)** — Motion behaviors for variants, presence, and layout transitions in Inglorious Web apps
 - **[Inglorious Charts](https://npmjs.com/@inglorious/charts)** — Declarative chart types and composition helpers for Inglorious Web
+- **[Inglorious i18n](https://npmjs.com/@inglorious/i18n)** — Translations, plurals and formatting, with the active locale held in a store entity
 - **[Inglorious Engine](https://npmjs.com/@inglorious/engine)** — Game entity types
 
 Check them out for inspiration!
