@@ -34,7 +34,7 @@ export function injectServiceWorkerRegistration(targetDir) {
   let main = fs.readFileSync(mainPath, "utf-8")
 
   if (!main.includes("./pwa")) {
-    main = injectAfterImport(main, "@inglorious/web", `import "./pwa"`)
+    main = injectSideEffectImport(main, `import "./pwa"`)
   }
 
   fs.writeFileSync(mainPath, main)
@@ -50,17 +50,28 @@ export function injectPwaPluginConfig(targetDir, projectName) {
   let viteConfig = fs.readFileSync(viteConfigPath, "utf-8")
 
   if (!viteConfig.includes("vite-plugin-pwa")) {
+    // Right after the image optimizer, where the imports' alphabetical order
+    // puts it.
     viteConfig = injectAfterImport(
       viteConfig,
-      "vite",
+      viteConfig.includes("vite-plugin-image-optimizer")
+        ? "vite-plugin-image-optimizer"
+        : "vite",
       `import { VitePWA } from "vite-plugin-pwa"`,
     )
   }
 
   if (!viteConfig.includes("VitePWA(")) {
+    // One plugin per line, as Prettier prints a list this long.
     viteConfig = viteConfig.replace(
-      /plugins: \[/,
-      `plugins: [${EOL}    ${createVitePwaConfig(projectName)},`,
+      /plugins: \[(.*)\],/,
+      (_, plugins) =>
+        `plugins: [${EOL}${[
+          createVitePwaConfig(projectName),
+          ...splitPlugins(plugins),
+        ]
+          .map((plugin) => `    ${plugin},`)
+          .join(EOL)}${EOL}  ],`,
     )
   }
 
@@ -119,4 +130,39 @@ export function createVitePwaConfig(projectName) {
         start_url: "/",
       },
     })`
+}
+
+// The plugins of a one-line `plugins: [a(), b({ c: 1 })]`, split at the
+// top-level commas.
+function splitPlugins(source) {
+  const plugins = []
+  let depth = 0
+  let current = ""
+  for (const char of source) {
+    if ("([{".includes(char)) depth++
+    if (")]}".includes(char)) depth--
+    if (char === "," && !depth) {
+      plugins.push(current.trim())
+      current = ""
+    } else {
+      current += char
+    }
+  }
+  if (current.trim()) plugins.push(current.trim())
+  return plugins
+}
+
+// A side-effect import goes with the others at the top, in the order they
+// come, as eslint-plugin-simple-import-sort keeps them.
+function injectSideEffectImport(source, newImport) {
+  const lastSideEffect = source
+    .split(EOL)
+    .findLast((line) => /^import ["']/.test(line))
+  if (lastSideEffect) {
+    return source.replace(
+      `${lastSideEffect}${EOL}`,
+      `${lastSideEffect}${EOL}${newImport}${EOL}`,
+    )
+  }
+  return `${newImport}${EOL}${EOL}${source}`
 }

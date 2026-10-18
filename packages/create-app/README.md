@@ -23,16 +23,24 @@ pnpm create @inglorious/app
 
 The CLI will guide you through the setup process, asking for a project name and which template you'd like to use.
 
-For JavaScript and TypeScript Vite app templates, the CLI can also add optional app targets:
+For the JavaScript and TypeScript Vite templates, the CLI then asks about the app's features:
+
+| Question                  | Flag                                                 | Adds                                                                                                  |
+| ------------------------- | ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Use Inglorious UI?        | `--ui` / `--no-ui`                                   | `@inglorious/ui`, its base styles and an app bar                                                      |
+| Which theme?              | `--theme=inglorious\|material\|bootstrap`            | The theme's stylesheet and class                                                                      |
+| Is it a mobile app?       | `--mobile` / `--no-mobile`                           | Capacitor for Android and iOS; with Inglorious UI, a bottom tab bar and safe-area spacing             |
+| Add routing?              | `--routing` / `--no-routing`                         | The Router, a home and an about page, and navigation between them                                     |
+| Animate page transitions? | `--transitions` / `--no-transitions`                 | View transitions between pages (with routing and Inglorious UI)                                       |
+| Which icon packs?         | `--icons=material,fontawesome,lucide` / `--no-icons` | Iconify icon sets, drawn by Inglorious UI's `Icon` (with Inglorious UI)                               |
+| Translate the app?        | `--i18n` / `--no-i18n`, `--languages=en,it`          | `@inglorious/i18n`, a catalogue per language and a language picker; the first language is the default |
+| Enable PWA support?       | `--pwa` / `--no-pwa`                                 | `vite-plugin-pwa`, a manifest, icons and service worker registration                                  |
+
+Inglorious UI, routing, transitions, icons and i18n are generated for the lit-html syntax; JSX and Vue templates are asked about mobile and PWA support. Every question answered by a flag is skipped:
 
 ```bash
-npm create @inglorious/app@latest -- --pwa
-npm create @inglorious/app@latest -- --mobile
-npm create @inglorious/app@latest -- --pwa --mobile
+npm create @inglorious/app@latest -- --ui --theme=material --routing --transitions --icons=material --languages=en,it --mobile
 ```
-
-- `--pwa` adds `vite-plugin-pwa`, a basic web app manifest configuration, PWA icons, and browser-only service worker registration.
-- `--mobile` adds Capacitor dependencies, config, and mobile scripts for iOS and Android.
 
 ## Templates
 

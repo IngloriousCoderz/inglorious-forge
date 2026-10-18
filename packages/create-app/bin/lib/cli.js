@@ -2,6 +2,13 @@ export function parseCliOptions(args) {
   return {
     mobile: readBooleanFlag(args, "mobile"),
     pwa: readBooleanFlag(args, "pwa"),
+    ui: readBooleanFlag(args, "ui"),
+    theme: readValueFlag(args, "theme"),
+    routing: readBooleanFlag(args, "routing"),
+    transitions: readBooleanFlag(args, "transitions"),
+    icons: readListFlag(args, "icons"),
+    i18n: readBooleanFlag(args, "i18n"),
+    languages: readListFlag(args, "languages"),
   }
 }
 
@@ -15,4 +22,28 @@ export function readBooleanFlag(args, name) {
   }
 
   return null
+}
+
+// `--name=value`, or null when the flag is not given.
+export function readValueFlag(args, name) {
+  const prefix = `--${name}=`
+  const arg = args.find((value) => value.startsWith(prefix))
+  return arg ? arg.slice(prefix.length) : null
+}
+
+// `--name=a,b`, `--no-name` for an empty list, or null when neither is given.
+export function readListFlag(args, name) {
+  if (args.includes(`--no-${name}`)) {
+    return []
+  }
+
+  const value = readValueFlag(args, name)
+  if (value === null) {
+    return null
+  }
+
+  return value
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean)
 }

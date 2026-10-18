@@ -8,9 +8,9 @@ import path from "path"
 import prompts from "prompts"
 import { fileURLToPath } from "url"
 
+import { addAppFeatures } from "./lib/app.js"
 import { parseCliOptions } from "./lib/cli.js"
 import {
-  EMPTY_LENGTH,
   INDENTATION,
   NPM_VIEW_TIMEOUT_MS,
   USER_ARG_START_INDEX,
@@ -19,6 +19,7 @@ import {
 import { copyDir } from "./lib/file.js"
 import { addMobileSupport } from "./lib/mobile.js"
 import { addPwaSupport } from "./lib/pwa.js"
+import { askAppFeatures } from "./lib/questions.js"
 
 async function main() {
   const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -82,8 +83,6 @@ async function main() {
   }
 
   let renderer = "lit-html"
-  let pwa = cliOptions.pwa === true
-  let mobile = cliOptions.mobile === true
 
   if (baseTemplate !== "minimal") {
     const { selectedRenderer } = await prompts(
@@ -120,46 +119,28 @@ async function main() {
     renderer = selectedRenderer
   }
 
-  const supportsAppFeatures = VITE_APP_TEMPLATES.has(baseTemplate)
+  let features = {
+    ui: false,
+    routing: false,
+    icons: [],
+    languages: [],
+    mobile: false,
+    pwa: false,
+  }
 
-  if (supportsAppFeatures) {
-    const featureQuestions = []
+  if (VITE_APP_TEMPLATES.has(baseTemplate)) {
+    features = await askAppFeatures(cliOptions, {
+      isLitHtml: renderer === "lit-html",
+    })
 
-    if (cliOptions.pwa === null) {
-      featureQuestions.push({
-        type: "confirm",
-        name: "pwa",
-        message: "Enable PWA support?",
-        initial: false,
-      })
+    if (!features) {
+      console.log("Operation canceled.")
+      return
     }
-
-    if (cliOptions.mobile === null) {
-      featureQuestions.push({
-        type: "confirm",
-        name: "mobile",
-        message: "Add hybrid mobile support with Capacitor?",
-        initial: false,
-      })
-    }
-
-    if (featureQuestions.length > EMPTY_LENGTH) {
-      const answers = await prompts(featureQuestions, { onCancel })
-
-      if (canceled) {
-        console.log("Operation canceled.")
-        return
-      }
-
-      pwa = cliOptions.pwa === true ? true : answers.pwa === true
-      mobile = cliOptions.mobile === true ? true : answers.mobile === true
-    }
-  } else if (pwa || mobile) {
+  } else if (cliOptions.pwa || cliOptions.mobile) {
     console.warn(
       "PWA and mobile options are only available for JavaScript and TypeScript Vite app templates.",
     )
-    pwa = false
-    mobile = false
   }
 
   const spinner = ora(`Creating project "${projectName}"...`).start()
@@ -194,12 +175,27 @@ async function main() {
     const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf-8"))
     pkg.name = projectName
 
-    if (pwa) {
+    const hasAppFeatures =
+      features.ui ||
+      features.routing ||
+      Boolean(features.icons.length) ||
+      Boolean(features.languages.length)
+
+    if (hasAppFeatures) {
+      spinner.text = "Adding app features..."
+      addAppFeatures(targetDir, pkg, {
+        ...features,
+        projectName,
+        isTypeScript: baseTemplate === "ts",
+      })
+    }
+
+    if (features.pwa) {
       spinner.text = "Adding PWA support..."
       addPwaSupport(targetDir, pkg, projectName)
     }
 
-    if (mobile) {
+    if (features.mobile) {
       spinner.text = "Adding Capacitor support..."
       addMobileSupport(targetDir, pkg, projectName)
     }
