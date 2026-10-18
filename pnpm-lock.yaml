@@ -2177,12 +2177,18 @@ importers:
         specifier: workspace:*
         version: link:../utils
     devDependencies:
-      "@fontsource/material-symbols-outlined":
-        specifier: ^5.3.5
-        version: 5.3.5
-      "@fortawesome/fontawesome-free":
-        specifier: ^7.3.1
-        version: 7.3.1
+      "@iconify-icons/fa7-brands":
+        specifier: ^2.0.0
+        version: 2.0.0
+      "@iconify-icons/fa7-regular":
+        specifier: ^2.0.0
+        version: 2.0.0
+      "@iconify-icons/fa7-solid":
+        specifier: ^2.0.0
+        version: 2.0.0
+      "@iconify-icons/material-symbols":
+        specifier: ^2.0.6
+        version: 2.0.6
       "@inglorious/eslint-config":
         specifier: workspace:*
         version: link:../eslint-config
@@ -2210,9 +2216,6 @@ importers:
       jsdom:
         specifier: ^30.0.1
         version: 30.0.1
-      lucide:
-        specifier: ^1.41.0
-        version: 1.41.0
       prettier:
         specifier: ^3.9.6
         version: 3.9.6
@@ -3936,19 +3939,6 @@ packages:
         integrity: sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww==,
       }
 
-  "@fontsource/material-symbols-outlined@5.3.5":
-    resolution:
-      {
-        integrity: sha512-E0r+sqwMe75Pfu98PzO5n5od56rukib6cVnhktVmJtKzFxvQ0pbFbQKM4QrLmRbxR9g7xG23UzP56JlQRtFjiA==,
-      }
-
-  "@fortawesome/fontawesome-free@7.3.1":
-    resolution:
-      {
-        integrity: sha512-wmglKKPDIkgV3aWlZzWECCPoGIkYCulzBwxG9+w7rc5BGapZ6cPMpoPOT8k36J0Ni7PPX6c/rsoMWfS4d1MUMg==,
-      }
-    engines: { node: ">=6" }
-
   "@humanfs/core@0.19.2":
     resolution:
       {
@@ -3983,6 +3973,30 @@ packages:
         integrity: sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ==,
       }
     engines: { node: ">=18.18" }
+
+  "@iconify-icons/fa7-brands@2.0.0":
+    resolution:
+      {
+        integrity: sha512-a6oBincCS8UBnS0tSSZv4OK41z8Kqxd88RbvLXnVwzkRMOKUq4Ge43L9HCW2Lh02yxIFYqfpLeXMKMjmGU6Hng==,
+      }
+
+  "@iconify-icons/fa7-regular@2.0.0":
+    resolution:
+      {
+        integrity: sha512-Dw/20cj1sGhaazemQBPyHNWMo2mmM6X9G1QX88e+ah25MB7NIXiLXs27kByEoCvJU+lUrw0dxTKoLQLu3bcdOA==,
+      }
+
+  "@iconify-icons/fa7-solid@2.0.0":
+    resolution:
+      {
+        integrity: sha512-V5S72tmzV9Un0gTv9hX0b+s2UaLmBtsG7hqFRYE7NROcKzhomlADAXx11OSg1R+oZ/w/1toHfNdx5W9zfwgYiQ==,
+      }
+
+  "@iconify-icons/material-symbols@2.0.6":
+    resolution:
+      {
+        integrity: sha512-Q1VS2nFm3cGin1OpSnUhptUgU+9vs3fx2+RM3Pc6BoNJXs6vaAIjot2uxZ5RBnMqwtpc/gKvRDa+5kGFLlx9EQ==,
+      }
 
   "@iconify-json/simple-icons@1.2.94":
     resolution:
@@ -9753,12 +9767,6 @@ packages:
         integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==,
       }
 
-  lucide@1.41.0:
-    resolution:
-      {
-        integrity: sha512-fIXP7JzC1vehdqOrMhwpbcXzX6CvUMuoDf16HY1FmC4sDBeuwrH2A0c6QmLn3wnSvaMchpEyM+JWijyTvOs3kw==,
-      }
-
   lz-string@1.5.0:
     resolution:
       {
@@ -13325,10 +13333,6 @@ snapshots:
 
   "@floating-ui/utils@0.2.12": {}
 
-  "@fontsource/material-symbols-outlined@5.3.5": {}
-
-  "@fortawesome/fontawesome-free@7.3.1": {}
-
   "@humanfs/core@0.19.2":
     dependencies:
       "@humanfs/types": 0.15.0
@@ -13344,6 +13348,22 @@ snapshots:
   "@humanwhocodes/module-importer@1.0.1": {}
 
   "@humanwhocodes/retry@0.4.3": {}
+
+  "@iconify-icons/fa7-brands@2.0.0":
+    dependencies:
+      "@iconify/types": 2.0.0
+
+  "@iconify-icons/fa7-regular@2.0.0":
+    dependencies:
+      "@iconify/types": 2.0.0
+
+  "@iconify-icons/fa7-solid@2.0.0":
+    dependencies:
+      "@iconify/types": 2.0.0
+
+  "@iconify-icons/material-symbols@2.0.6":
+    dependencies:
+      "@iconify/types": 2.0.0
 
   "@iconify-json/simple-icons@1.2.94":
     dependencies:
@@ -16776,8 +16796,6 @@ snapshots:
   lru-cache@5.1.1:
     dependencies:
       yallist: 3.1.1
-
-  lucide@1.41.0: {}
 
   lz-string@1.5.0: {}
 

@@ -1,8 +1,9 @@
+import moreVertOutline from "@iconify-icons/material-symbols/more-vert-outline"
 import { Chart } from "@inglorious/charts"
 import { html } from "@inglorious/web"
 
 import { Button } from "../../controls/button"
-import { MaterialIcon } from "../../data-display/material-icon"
+import { Icon } from "../../data-display/icon"
 import { Typography } from "../../data-display/typography"
 import { Card } from "../../surfaces/card"
 
@@ -22,8 +23,8 @@ export const StatCard = {
                     variant: "caption",
                     children: html`<span class="iw-dashboard-stat-change">
                       ${entity.change}
-                      ${MaterialIcon.render({
-                        name: entity.direction,
+                      ${Icon.render({
+                        icon: entity.trendIcon,
                         size: "sm",
                       })}
                     </span>`,
@@ -40,7 +41,7 @@ export const StatCard = {
             variant: "ghost",
             shape: "square",
             className: "iw-dashboard-stat-more",
-            children: MaterialIcon.render({ name: "more_vert", size: "lg" }),
+            children: Icon.render({ icon: moreVertOutline, size: "lg" }),
             "aria-label": "More options",
           })}
         </div>

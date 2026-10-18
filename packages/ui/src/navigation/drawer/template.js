@@ -7,9 +7,10 @@ import { html } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 
 import { Button } from "../../controls/button"
-import { MaterialIcon } from "../../data-display/material-icon"
+import { Icon } from "../../data-display/icon"
 import { Backdrop } from "../../feedback/backdrop"
 import { Flex } from "../../layout/flex"
+import { close, leftPanelClose } from "../../shared/icons.js"
 
 /**
  * Renders a side drawer panel with optional header, body, and collapse controls.
@@ -80,10 +81,7 @@ export function render(props) {
                     className: "iw-drawer-close",
                     "aria-label": "Close",
                     onClick: onClose,
-                    children: MaterialIcon.render({
-                      name: "close",
-                      size: "lg",
-                    }),
+                    children: Icon.render({ icon: close, size: "lg" }),
                   }),
                 ),
               ],
@@ -113,10 +111,7 @@ export function render(props) {
                   ? "Expand sidebar"
                   : "Collapse sidebar",
                 onClick: onCollapseToggle,
-                children: MaterialIcon.render({
-                  name: "left_panel_close",
-                  size: "lg",
-                }),
+                children: Icon.render({ icon: leftPanelClose, size: "lg" }),
               }),
             })}
           `,

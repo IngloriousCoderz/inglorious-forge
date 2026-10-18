@@ -44,6 +44,26 @@ The public CSS exports are:
 - `@inglorious/ui/themes/bootstrap.css`
 - `@inglorious/ui/all.css`
 
+## Icons
+
+`Icon` draws icons from any [Iconify](https://icon-sets.iconify.design/) set as inline SVG: no icon font to load, and only the icons you import end up in the bundle. Install a set and import each icon as its own module:
+
+```bash
+pnpm add @iconify-icons/material-symbols
+```
+
+```javascript
+import { Icon } from "@inglorious/ui/icon"
+import arrowBack from "@iconify-icons/material-symbols/arrow-back"
+import settingsOutline from "@iconify-icons/material-symbols/settings-outline"
+
+Icon.render({ icon: settingsOutline, size: "lg" })
+```
+
+The variant is part of the name: in Material Symbols the plain name is filled and `-outline` outlined, with `-rounded` and `-sharp` styles too. Font Awesome is `@iconify-icons/fa7-solid`, `fa7-regular` and `fa7-brands`; Lucide is `@iconify-icons/lucide`. Without `icon`, `Icon` shows its `children`: an emoji, a glyph, your own SVG.
+
+An icon is decorative unless it has a `label`, which makes it an image with that name for assistive technology.
+
 ## Right-to-left
 
 The components mirror in a right-to-left page (`<html dir="rtl">`, which `@inglorious/i18n` sets for Arabic, Hebrew and the like): their spacing, borders and corners use logical properties, and a `left` drawer sits at the start of the line.
@@ -59,10 +79,7 @@ For your own styles, use logical properties too (`margin-inline-start`, `inset-i
 Icons that point along the line, such as a back arrow or a chevron, take the `direction` of the text they sit in and are mirrored with `"rtl"`. With `@inglorious/i18n`, that is the i18n entity's `dir`:
 
 ```javascript
-MaterialIcon.render({
-  name: "arrow_back",
-  direction: api.getEntity("i18n").dir,
-})
+Icon.render({ icon: arrowBack, direction: api.getEntity("i18n").dir })
 ```
 
 ## Safe-area utilities

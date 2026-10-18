@@ -1,10 +1,10 @@
+import moreVertOutline from "@iconify-icons/material-symbols/more-vert-outline"
 import { html } from "@inglorious/web"
 
 import { Button } from "../../controls/button"
 import { Avatar } from "../../data-display/avatar"
 import { Badge } from "../../data-display/badge"
 import { Icon } from "../../data-display/icon"
-import { MaterialIcon } from "../../data-display/material-icon"
 import { Table } from "../../data-display/table"
 import { Typography } from "../../data-display/typography"
 import { Progress } from "../../feedback/progress"
@@ -123,8 +123,8 @@ export const TrafficSalesCard = {
                               align: "center",
                               gap: "sm",
                               children: [
-                                MaterialIcon.render({
-                                  name: iconName,
+                                Icon.render({
+                                  icon: iconName,
                                   size: "lg",
                                 }),
                                 html`<span class="iw-typography"
@@ -233,13 +233,7 @@ export const TrafficSalesCard = {
               })}
             `,
             payment: html`<div class="iw-dashboard-payment">
-              ${Icon.render({
-                size: "lg",
-                children: html`<i
-                  class="fa-brands fa-${row.payment}"
-                  aria-hidden="true"
-                ></i>`,
-              })}
+              ${Icon.render({ icon: row.payment, size: "lg" })}
             </div>`,
             activity: html`
               <div>
@@ -254,7 +248,7 @@ export const TrafficSalesCard = {
                 ${Button.render({
                   variant: "ghost",
                   color: "secondary",
-                  children: MaterialIcon.render({ name: "more_vert" }),
+                  children: Icon.render({ icon: moreVertOutline }),
                   "aria-label": "Row actions",
                 })}
               </div>

@@ -1,5 +1,19 @@
 # @inglorious/ui
 
+## 8.0.0
+
+### Major Changes
+
+- Icons are SVG:
+
+  - `Icon` takes `icon`, an icon from any Iconify set (`import arrowBack from "@iconify-icons/material-symbols/arrow-back"`), and draws it as inline SVG one em square. No icon font is loaded, and only the icons an app imports are bundled. It also takes `direction`, to mirror an icon that points along the line in right-to-left text, and `label`, for an icon that means something on its own.
+  - `MaterialIcon` is removed. `MaterialIcon.render({ name: "arrow_back" })` becomes `Icon.render({ icon: arrowBack })` with the icon imported from `@iconify-icons/material-symbols`; the outlined look is the `-outline` icon. `@inglorious/ui/material-icon.css` is gone too.
+  - The drawer draws its close and collapse icons itself, so it needs no icon font.
+
+### Patch Changes
+
+- Bottom navigation labels are 12px, as Material sizes them, and tabs have narrower sides, so labels such as "Applications" or "Candidatures" fit a quarter of a 360px phone instead of being cut short.
+
 ## 7.8.1
 
 ### Patch Changes

@@ -19,7 +19,9 @@
   align-items: center;
   justify-content: center;
   gap: var(--iw-space-1);
-  padding: var(--iw-space-2);
+  /* Narrow sides: a tab is a quarter or a fifth of a phone, and its label
+     needs every pixel of it. */
+  padding: var(--iw-space-2) var(--iw-space-1);
   cursor: pointer;
 }
 
@@ -27,8 +29,10 @@
   color: var(--iw-color-primary);
 }
 
+/* 12px, as Material sizes navigation labels: at 14px, "Applications" or
+   "Candidatures" does not fit a quarter of a 360px phone. */
 .iw-bottom-navigation-label {
-  font-size: var(--iw-font-size-sm);
+  font-size: var(--iw-font-size-xs);
   /* One line, like its neighbours: a label too long for its tab is cut short
      rather than wrapping, which in languages that break between any two
      characters (Japanese, Chinese) splits a word and makes the bar taller. */

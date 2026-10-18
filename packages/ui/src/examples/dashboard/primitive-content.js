@@ -1,3 +1,15 @@
+import gamepad from "@iconify-icons/fa7-solid/gamepad"
+import barChartOutline from "@iconify-icons/material-symbols/bar-chart-outline"
+import boltOutline from "@iconify-icons/material-symbols/bolt-outline"
+import contentCopyOutline from "@iconify-icons/material-symbols/content-copy-outline"
+import favoriteOutline from "@iconify-icons/material-symbols/favorite-outline"
+import homeOutline from "@iconify-icons/material-symbols/home-outline"
+import menuOutline from "@iconify-icons/material-symbols/menu-outline"
+import pauseOutline from "@iconify-icons/material-symbols/pause-outline"
+import personOutline from "@iconify-icons/material-symbols/person-outline"
+import searchOutline from "@iconify-icons/material-symbols/search-outline"
+import settingsOutline from "@iconify-icons/material-symbols/settings-outline"
+import speedOutline from "@iconify-icons/material-symbols/speed-outline"
 import { createStore } from "@inglorious/store"
 import { html, mount } from "@inglorious/web"
 
@@ -24,7 +36,6 @@ import { DataGrid } from "../../data-display/data-grid/index.js"
 import { Divider } from "../../data-display/divider/index.js"
 import { Icon } from "../../data-display/icon/index.js"
 import { List } from "../../data-display/list/index.js"
-import { MaterialIcon } from "../../data-display/material-icon/index.js"
 import { Table } from "../../data-display/table/index.js"
 import { Tooltip } from "../../data-display/tooltip/index.js"
 import { Typography } from "../../data-display/typography/index.js"
@@ -462,22 +473,23 @@ Fab.render({
     useCases: ["Toolbar controls", "Inline actions", "Overflow triggers"],
     example: {
       code: `import { IconButton } from "@inglorious/ui/icon-button"
-import { MaterialIcon } from "@inglorious/ui/material-icon"
+import { Icon } from "@inglorious/ui/icon"
+import settingsOutline from "@iconify-icons/material-symbols/settings-outline"
 
 IconButton.render({
-  icon: MaterialIcon.render({ name: "settings" }),
+  icon: Icon.render({ icon: settingsOutline }),
   label: "Settings",
   variant: "ghost"
 })`,
       preview: () =>
         previewRow([
           IconButton.render({
-            icon: MaterialIcon.render({ name: "settings" }),
+            icon: Icon.render({ icon: settingsOutline }),
             label: "Settings",
             variant: "ghost",
           }),
           IconButton.render({
-            icon: MaterialIcon.render({ name: "favorite" }),
+            icon: Icon.render({ icon: favoriteOutline }),
             label: "Favorite",
             variant: "ghost",
           }),
@@ -814,21 +826,23 @@ Divider.render({ orientation: "horizontal" })`,
     },
   },
   "/data-display/icon": {
-    summary: "Generic icon wrapper with size and color control.",
+    summary: "Icons from any Iconify set, drawn as inline SVG.",
     description:
-      "Icon is a neutral wrapper for SVGs or glyphs within UI layouts.",
+      "Icon draws an icon from Material Symbols, Font Awesome or any other Iconify set at the size of the text, or wraps a glyph.",
     useCases: ["Inline cues", "Status indicators", "UI affordances"],
     example: {
       code: `import { Icon } from "@inglorious/ui/icon"
+import boltOutline from "@iconify-icons/material-symbols/bolt-outline"
+import gamepad from "@iconify-icons/fa7-solid/gamepad"
 
-Icon.render({
-  size: "lg",
-  children: "★"
-})`,
+Icon.render({ icon: boltOutline, size: "lg" })
+Icon.render({ icon: gamepad, size: "lg" })
+Icon.render({ children: "★", size: "lg" })`,
       preview: () =>
         previewRow([
+          Icon.render({ icon: boltOutline, size: "lg" }),
+          Icon.render({ icon: gamepad, size: "lg" }),
           Icon.render({ size: "lg", children: "★" }),
-          Icon.render({ size: "lg", children: "⚡" }),
         ]),
     },
   },
@@ -854,33 +868,16 @@ List.render({
               id: "alpha",
               primary: "Alpha",
               secondary: "Ready",
-              icon: MaterialIcon.render({ name: "bolt", size: "sm" }),
+              icon: Icon.render({ icon: boltOutline, size: "sm" }),
             },
             {
               id: "beta",
               primary: "Beta",
               secondary: "Paused",
-              icon: MaterialIcon.render({ name: "pause", size: "sm" }),
+              icon: Icon.render({ icon: pauseOutline, size: "sm" }),
             },
           ],
         }),
-    },
-  },
-  "/data-display/material-icon": {
-    summary: "Material Symbols integration with consistent sizing.",
-    description:
-      "Material Icon renders Material Symbols with predefined size tokens.",
-    useCases: ["Standard iconography", "Toolbar actions", "Menus"],
-    example: {
-      code: `import { MaterialIcon } from "@inglorious/ui/material-icon"
-
-MaterialIcon.render({ name: "bolt", size: "lg" })`,
-      preview: () =>
-        previewRow([
-          MaterialIcon.render({ name: "bolt", size: "lg" }),
-          MaterialIcon.render({ name: "settings", size: "lg" }),
-          MaterialIcon.render({ name: "layers", size: "lg" }),
-        ]),
     },
   },
   "/data-display/table": {
@@ -934,7 +931,7 @@ Tooltip.render({
           isOpen: true,
           content: "Copy to clipboard",
           children: IconButton.render({
-            icon: MaterialIcon.render({ name: "content_copy" }),
+            icon: Icon.render({ icon: contentCopyOutline }),
             label: "Copy",
             variant: "ghost",
           }),
@@ -1120,9 +1117,9 @@ BottomNavigation.render({
         BottomNavigation.render({
           value: 1,
           actions: [
-            { label: "Home", icon: MaterialIcon.render({ name: "home" }) },
-            { label: "Search", icon: MaterialIcon.render({ name: "search" }) },
-            { label: "Profile", icon: MaterialIcon.render({ name: "person" }) },
+            { label: "Home", icon: Icon.render({ icon: homeOutline }) },
+            { label: "Search", icon: Icon.render({ icon: searchOutline }) },
+            { label: "Profile", icon: Icon.render({ icon: personOutline }) },
           ],
         }),
     },
@@ -1179,12 +1176,12 @@ Drawer.render({
               {
                 id: "home",
                 primary: "Dashboard",
-                icon: MaterialIcon.render({ name: "speed" }),
+                icon: Icon.render({ icon: speedOutline }),
               },
               {
                 id: "reports",
                 primary: "Reports",
-                icon: MaterialIcon.render({ name: "bar_chart" }),
+                icon: Icon.render({ icon: barChartOutline }),
               },
             ],
           }),
@@ -1391,7 +1388,7 @@ AppBar.render({
         AppBar.render({
           title: "Project Ops",
           subtitle: "SLA dashboard",
-          leading: MaterialIcon.render({ name: "menu" }),
+          leading: Icon.render({ icon: menuOutline }),
           trailing: Button.render({
             variant: "ghost",
             color: "secondary",

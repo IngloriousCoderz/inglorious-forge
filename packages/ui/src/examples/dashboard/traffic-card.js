@@ -1,9 +1,10 @@
+import downloadOutline from "@iconify-icons/material-symbols/download-outline"
 import { Chart } from "@inglorious/charts"
 import { html } from "@inglorious/web"
 
 import { Button } from "../../controls/button"
 import { ButtonGroup } from "../../controls/button-group"
-import { MaterialIcon } from "../../data-display/material-icon"
+import { Icon } from "../../data-display/icon"
 import { Typography } from "../../data-display/typography"
 import { Progress } from "../../feedback/progress"
 import { Flex } from "../../layout/flex"
@@ -44,7 +45,7 @@ export const TrafficCard = {
               Button.render({
                 size: "md",
                 color: "primary",
-                children: MaterialIcon.render({ name: "download" }),
+                children: Icon.render({ icon: downloadOutline }),
                 "aria-label": "Download report",
               }),
             ],

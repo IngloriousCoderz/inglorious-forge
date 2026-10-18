@@ -1,6 +1,6 @@
-/* The size is a floor, not a fixed box. A font glyph takes the size's
-   font-size and fits it exactly; content that sizes itself (a Material icon
-   at lg, an SVG with its own width, a button) grows the box instead of
+/* The size is a floor, not a fixed box. A glyph or an `icon` takes the size's
+   font-size and fits it exactly, an SVG being drawn at 1em; content that sizes
+   itself (an SVG with its own width, a button) grows the box instead of
    overflowing it or being squeezed into it. */
 .iw-icon {
   display: inline-flex;
@@ -24,5 +24,12 @@
     min-width: var(--iw-space-6);
     min-height: var(--iw-space-6);
     font-size: var(--iw-font-size-2xl);
+  }
+
+  /* An icon that points along the line, in right-to-left text. `scale`
+     rather than `transform`, so it adds to a rotation set elsewhere instead
+     of replacing it. */
+  &.iw-icon-rtl {
+    scale: -1 1;
   }
 }

@@ -80,9 +80,9 @@
   overflow: hidden;
 
   .iw-typography,
-  .iw-material-icon,
+  .iw-icon,
   .iw-button,
-  .iw-button .iw-material-icon {
+  .iw-button .iw-icon {
     color: white;
   }
 }

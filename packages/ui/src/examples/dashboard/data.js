@@ -1,10 +1,27 @@
+import ccAmex from "@iconify-icons/fa7-brands/cc-amex"
+import ccApplePay from "@iconify-icons/fa7-brands/cc-apple-pay"
+import ccMastercard from "@iconify-icons/fa7-brands/cc-mastercard"
+import ccPaypal from "@iconify-icons/fa7-brands/cc-paypal"
+import ccStripe from "@iconify-icons/fa7-brands/cc-stripe"
+import ccVisa from "@iconify-icons/fa7-brands/cc-visa"
+import alternateEmailOutline from "@iconify-icons/material-symbols/alternate-email-outline"
+import businessCenterOutline from "@iconify-icons/material-symbols/business-center-outline"
+import northOutline from "@iconify-icons/material-symbols/north-outline"
+import person2Outline from "@iconify-icons/material-symbols/person-2-outline"
+import personOutline from "@iconify-icons/material-symbols/person-outline"
+import publicOutline from "@iconify-icons/material-symbols/public-outline"
+import southOutline from "@iconify-icons/material-symbols/south-outline"
+import tagOutline from "@iconify-icons/material-symbols/tag-outline"
+import thumbUpOutline from "@iconify-icons/material-symbols/thumb-up-outline"
+import travelExploreOutline from "@iconify-icons/material-symbols/travel-explore-outline"
+import workOutline from "@iconify-icons/material-symbols/work-outline"
 export const statCards = [
   {
     id: "users",
     label: "Users",
     value: "26K",
     change: "-12.4%",
-    direction: "south",
+    trendIcon: southOutline,
     className: "iw-dashboard-stat-primary",
     chartType: "line",
     data: [65, 59, 84, 84, 51, 55, 40],
@@ -14,7 +31,7 @@ export const statCards = [
     label: "Income",
     value: "$6.2K",
     change: "40.9%",
-    direction: "north",
+    trendIcon: northOutline,
     className: "iw-dashboard-stat-info",
     chartType: "line",
     hasDots: true,
@@ -25,7 +42,7 @@ export const statCards = [
     label: "Conversion Rate",
     value: "2.49%",
     change: "84.7%",
-    direction: "north",
+    trendIcon: northOutline,
     className: "iw-dashboard-stat-warning",
     chartType: "area",
     data: [78, 81, 80, 45, 34, 12, 40],
@@ -35,7 +52,7 @@ export const statCards = [
     label: "Sessions",
     value: "44K",
     change: "-23.6%",
-    direction: "south",
+    trendIcon: southOutline,
     className: "iw-dashboard-stat-danger",
     chartType: "bar",
     data: [78, 81, 80, 45, 34, 12, 40, 85, 65, 23, 12, 98, 34, 84, 67, 82],
@@ -82,7 +99,7 @@ export const trafficSummary = [
 
 export const socialCards = [
   {
-    icon: "thumb_up",
+    icon: thumbUpOutline,
     capClass: "iw-dashboard-social-cap-facebook",
     top: "89k",
     bottom: "459",
@@ -91,7 +108,7 @@ export const socialCards = [
     data: [24, 28, 20, 30, 26, 34, 29],
   },
   {
-    icon: "alternate_email",
+    icon: alternateEmailOutline,
     capClass: "iw-dashboard-social-cap-twitter",
     top: "973k",
     bottom: "1.792",
@@ -100,7 +117,7 @@ export const socialCards = [
     data: [12, 19, 16, 22, 24, 28, 32],
   },
   {
-    icon: "work",
+    icon: workOutline,
     capClass: "iw-dashboard-social-cap-linkedin",
     top: "500+",
     bottom: "292",
@@ -121,12 +138,12 @@ export const clientBars = [
 ]
 
 export const sourceBars = [
-  ["Male", 43, "person", "warning", "", ""],
-  ["Female", 37, "person_2", "warning", "", ""],
-  ["Organic Search", 56, "travel_explore", "success", "191.235", "(56%)"],
-  ["Facebook", 15, "public", "success", "51.223", "(15%)"],
-  ["Twitter", 11, "tag", "success", "37.564", "(11%)"],
-  ["LinkedIn", 8, "business_center", "success", "27.319", "(8%)"],
+  ["Male", 43, personOutline, "warning", "", ""],
+  ["Female", 37, person2Outline, "warning", "", ""],
+  ["Organic Search", 56, travelExploreOutline, "success", "191.235", "(56%)"],
+  ["Facebook", 15, publicOutline, "success", "51.223", "(15%)"],
+  ["Twitter", 11, tagOutline, "success", "37.564", "(11%)"],
+  ["LinkedIn", 8, businessCenterOutline, "success", "27.319", "(8%)"],
 ]
 
 export const userRows = [
@@ -139,7 +156,7 @@ export const userRows = [
     country: "🇺🇸",
     usage: 50,
     range: "Jun 11, 2023 - Jul 10, 2023",
-    payment: "cc-mastercard",
+    payment: ccMastercard,
     activity: "10 sec ago",
   },
   {
@@ -151,7 +168,7 @@ export const userRows = [
     country: "🇧🇷",
     usage: 10,
     range: "Jun 11, 2023 - Jul 10, 2023",
-    payment: "cc-visa",
+    payment: ccVisa,
     activity: "5 minutes ago",
   },
   {
@@ -163,7 +180,7 @@ export const userRows = [
     country: "🇮🇳",
     usage: 74,
     range: "Jun 11, 2023 - Jul 10, 2023",
-    payment: "cc-stripe",
+    payment: ccStripe,
     activity: "1 hour ago",
   },
   {
@@ -175,7 +192,7 @@ export const userRows = [
     country: "🇫🇷",
     usage: 98,
     range: "Jun 11, 2023 - Jul 10, 2023",
-    payment: "cc-paypal",
+    payment: ccPaypal,
     activity: "Last month",
   },
   {
@@ -187,7 +204,7 @@ export const userRows = [
     country: "🇪🇸",
     usage: 22,
     range: "Jun 11, 2023 - Jul 10, 2023",
-    payment: "cc-apple-pay",
+    payment: ccApplePay,
     activity: "Last week",
   },
   {
@@ -199,7 +216,7 @@ export const userRows = [
     country: "🇵🇱",
     usage: 43,
     range: "Jun 11, 2023 - Jul 10, 2023",
-    payment: "cc-amex",
+    payment: ccAmex,
     activity: "Yesterday",
   },
 ]

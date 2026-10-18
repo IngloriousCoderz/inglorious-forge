@@ -4,160 +4,63 @@ import { Meta } from "@storybook/addon-docs/blocks"
 
 <div className="iw-theme-content">
 
-# Icon Implementations
-
-Use this page as a quick reference for supported icon strategies in `@inglorious/ui`.
-
 <style>{`
-  .iw-icon-tabs { display: grid; gap: 0.75rem; }
-  .iw-icon-tabs > input { position: absolute; opacity: 0; pointer-events: none; }
-  .iw-icon-tab-labels { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-  .iw-icon-tab-labels label {
-    border: 1px solid var(--iw-color-border);
-    border-radius: var(--iw-radius-md);
-    background: var(--iw-color-bg-secondary);
-    color: var(--iw-color-text);
-    padding: 0.35rem 0.65rem;
-    cursor: pointer;
-    font-size: 0.875rem;
-  }
-  .iw-icon-tab-panels {
-    border: 1px solid var(--iw-color-border);
-    border-radius: var(--iw-radius-md);
-    background: var(--iw-color-surface);
-    padding: 0.85rem;
-  }
-  .iw-icon-tab-panel { display: none; line-height: 1.45; }
-  #iw-icon-tab-generic:checked ~ .iw-icon-tab-panels .iw-icon-tab-panel-generic,
-  #iw-icon-tab-svg:checked ~ .iw-icon-tab-panels .iw-icon-tab-panel-svg,
-  #iw-icon-tab-material:checked ~ .iw-icon-tab-panels .iw-icon-tab-panel-material,
-  #iw-icon-tab-fa:checked ~ .iw-icon-tab-panels .iw-icon-tab-panel-fa,
-  #iw-icon-tab-lucide:checked ~ .iw-icon-tab-panels .iw-icon-tab-panel-lucide,
-  #iw-icon-tab-a11y:checked ~ .iw-icon-tab-panels .iw-icon-tab-panel-a11y { display: block; }
-  #iw-icon-tab-generic:checked ~ .iw-icon-tab-labels label[for="iw-icon-tab-generic"],
-  #iw-icon-tab-svg:checked ~ .iw-icon-tab-labels label[for="iw-icon-tab-svg"],
-  #iw-icon-tab-material:checked ~ .iw-icon-tab-labels label[for="iw-icon-tab-material"],
-  #iw-icon-tab-fa:checked ~ .iw-icon-tab-labels label[for="iw-icon-tab-fa"],
-  #iw-icon-tab-lucide:checked ~ .iw-icon-tab-labels label[for="iw-icon-tab-lucide"],
-  #iw-icon-tab-a11y:checked ~ .iw-icon-tab-labels label[for="iw-icon-tab-a11y"] {
-    border-color: var(--iw-color-primary);
-    box-shadow: inset 0 0 0 1px var(--iw-color-primary);
-  }
-  .iw-icon-example { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 1.5rem; margin-top: 0.35rem; }
-  .iw-material-symbol {
-    font-family: "Material Symbols Outlined";
-    font-weight: 400;
-    font-style: normal;
-    font-size: 1.5rem;
-    line-height: 1;
-    letter-spacing: normal;
-    text-transform: none;
-    display: inline-block;
-    white-space: nowrap;
-    word-wrap: normal;
-    direction: ltr;
-    font-feature-settings: "liga";
-    -webkit-font-smoothing: antialiased;
-  }
   .iw-theme-content { background: var(--iw-color-bg, #ffffff); color: var(--iw-color-text, #000000); padding: 1rem; border-radius: var(--iw-radius-md); }
-  .iw-theme-content h1, .iw-theme-content p, .iw-theme-content li, .iw-theme-content pre, .iw-theme-content code { background: var(--iw-color-surface, #ffffff); color: var(--iw-color-text, #000000); }
+  .iw-theme-content h1, .iw-theme-content h2, .iw-theme-content p, .iw-theme-content li, .iw-theme-content pre, .iw-theme-content code { color: var(--iw-color-text, #000000); }
 `}</style>
 
-<div className="iw-icon-tabs">
-  <input id="iw-icon-tab-generic" type="radio" name="iw-icon-tab" defaultChecked />
-  <input id="iw-icon-tab-svg" type="radio" name="iw-icon-tab" />
-  <input id="iw-icon-tab-material" type="radio" name="iw-icon-tab" />
-  <input id="iw-icon-tab-fa" type="radio" name="iw-icon-tab" />
-  <input id="iw-icon-tab-lucide" type="radio" name="iw-icon-tab" />
-  <input id="iw-icon-tab-a11y" type="radio" name="iw-icon-tab" />
+# Icon Implementations
 
-<div className="iw-icon-tab-labels">
-  <label htmlFor="iw-icon-tab-generic">Generic</label>
-  <label htmlFor="iw-icon-tab-svg">Inline SVG</label>
-  <label htmlFor="iw-icon-tab-material">Material</label>
-  <label htmlFor="iw-icon-tab-fa">Font Awesome</label>
-  <label htmlFor="iw-icon-tab-lucide">Lucide</label>
-  <label htmlFor="iw-icon-tab-a11y">Accessibility</label>
-</div>
+`Icon` draws icons as inline SVG. No icon font is loaded, so nothing waits on a download and only the icons an app imports end up in its bundle.
 
-  <div className="iw-icon-tab-panels">
-    <section className="iw-icon-tab-panel iw-icon-tab-panel-generic">
-      <p>Use <code>@inglorious/ui/icon</code> for glyphs, emoji, and simple symbols. Reference: <a href="/?path=/story/data-display-icon--unicode">UTF-8 Icons</a></p>
-      <pre><code>{`Icon.render({ children: "★", size: "md", color: "primary" })`}</code></pre>
-      <div className="iw-icon-example">★ ⚑ ♫</div>
-    </section>
+## Icon sets
 
-    <section className="iw-icon-tab-panel iw-icon-tab-panel-svg">
-      <p>Use inline SVG when you want a custom icon pack without font dependencies.</p>
-      <pre><code>{`Icon.render({
-    children: html\`<svg viewBox="0 0 24 24" ...>...</svg>\`,
-    size: "md",
+Any set published by [Iconify](https://icon-sets.iconify.design/) works in the same way: install the set, import each icon as its own module, pass it as `icon`.
 
-})`}</code></pre>
+```bash
+pnpm add @iconify-icons/material-symbols
+```
 
-<div className="iw-icon-example">
-<svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-<path d="M12 2v20M2 12h20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-</svg>
-<svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-<path d="M3 12l6 6 12-12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-</svg>
-<svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-<path d="M12 21s-7-4.35-9-8.5C1.25 8.6 3.8 5 7.6 5c2.1 0 3.4 1.1 4.4 2.5C13 6.1 14.3 5 16.4 5 20.2 5 22.75 8.6 21 12.5 19 16.65 12 21 12 21Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-</svg>
-</div>
-</section>
+```javascript
+import { Icon } from "@inglorious/ui/icon"
+import arrowBack from "@iconify-icons/material-symbols/arrow-back"
+import settingsOutline from "@iconify-icons/material-symbols/settings-outline"
 
-    <section className="iw-icon-tab-panel iw-icon-tab-panel-material">
-      <p>Use <code>@inglorious/ui/material-icon</code> when Material Symbols fonts are loaded. Reference: <a href="https://fonts.google.com/icons?icon.set=Material+Symbols&icon.style=Outlined" target="_blank">Material Symbols</a></p>
-      <pre><code>{`MaterialIcon.render({ name: "home", isFilled: true, size: "md" })`}</code></pre>
-      <div className="iw-icon-example">
-        <span className="iw-material-symbol" aria-hidden="true">home</span>
-        <span className="iw-material-symbol" aria-hidden="true">settings</span>
-        <span className="iw-material-symbol" aria-hidden="true">favorite</span>
-      </div>
-    </section>
+Icon.render({ icon: arrowBack, size: "lg" })
+```
 
-    <section className="iw-icon-tab-panel iw-icon-tab-panel-fa">
-      <p>Load Font Awesome CSS globally, then pass an icon element as <code>children</code>. Reference: <a href="https://fontawesome.com/search" target="_blank">Font Awesome Icons</a></p>
-      <pre><code>{`Icon.render({
-    children: html\`<i class="fa-solid fa-user" aria-hidden="true"></i>\`,
+The icon is one em square, so `size` sets it, and it takes the color of the text unless `color` says otherwise.
 
-})`}</code></pre>
+| Set                                                           | Package                                                 | Example imports                                                               |
+| ------------------------------------------------------------- | ------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| [Material Symbols](https://fonts.google.com/icons)            | `@iconify-icons/material-symbols`                       | `settings` (filled), `settings-outline`, `settings-rounded`, `settings-sharp` |
+| [Font Awesome 7 Free](https://fontawesome.com/search?ic=free) | `@iconify-icons/fa7-solid`, `fa7-regular`, `fa7-brands` | `user`, `heart`, `instagram`                                                  |
+| [Lucide](https://lucide.dev/icons/)                           | `@iconify-icons/lucide`                                 | `user`, `settings`, `heart`                                                   |
 
-<div className="iw-icon-example">
-<i className="fa-solid fa-user" aria-hidden="true"></i>
-<i className="fa-solid fa-gear" aria-hidden="true"></i>
-<i className="fa-solid fa-heart" aria-hidden="true"></i>
-</div>
-</section>
+The variant is part of the name, not a prop: in Material Symbols the plain name is the filled icon and `-outline` the outlined one. Font Awesome's icons are under CC BY 4.0, which asks for attribution.
 
-    <section className="iw-icon-tab-panel iw-icon-tab-panel-lucide">
-      <p>Lucide requires runtime bootstrapping before icons render. Reference: <a href="https://lucide.dev/icons/?focus" target="_blank">Lucide Icons</a></p>
-      <pre><code>{`import { createIcons, icons } from "lucide"
+## Glyphs and custom markup
 
-createIcons({
-icons,
-attrs: { "stroke-width": 1.75 },
-})`}</code></pre>
-      <p>Then render nodes such as <code>{`<i data-lucide="user"></i>`}</code>.</p>
+Without `icon`, `children` is shown instead: an emoji, a Unicode glyph, or SVG of your own.
 
-<div className="iw-icon-example">
-<i data-lucide="user" aria-hidden="true"></i>
-<i data-lucide="settings" aria-hidden="true"></i>
-<i data-lucide="heart" aria-hidden="true"></i>
-</div>
-</section>
+```javascript
+Icon.render({ children: "★", size: "lg" })
+```
 
-    <section className="iw-icon-tab-panel iw-icon-tab-panel-a11y">
-      <ul>
-        <li>Decorative icons: use <code>aria-hidden="true"</code>.</li>
-        <li>Meaningful icons: include an <code>aria-label</code> or visible text.</li>
-        <li>Do not rely on icon shape alone for state; pair with text/color contrast.</li>
-      </ul>
-      <p>Unicode glyph explorer lives in the <strong>Data Display/Icon/Unicode</strong> story.</p>
-    </section>
+The Unicode glyph explorer is in the **Data Display/Icon/Unicode** story.
 
-</div>
-</div>
+## Direction
+
+An icon that points along the line, such as a back arrow or a chevron, should point the other way in right-to-left text. Pass the direction of the text it sits in; with `@inglorious/i18n`, that is the i18n entity's `dir`:
+
+```javascript
+Icon.render({ icon: arrowBack, direction: api.getEntity("i18n").dir })
+```
+
+## Accessibility
+
+- An icon is decorative by default: it is hidden from assistive technology.
+- An icon that means something on its own, with no text next to it, takes a `label`: it is then announced as an image with that name. On an icon-only button, label the button instead.
+- Do not rely on an icon's shape alone for state; pair it with text or color contrast.
+
 </div>

@@ -1,11 +1,7 @@
-import "@fontsource/material-symbols-outlined"
-import "@fortawesome/fontawesome-free/css/all.min.css"
 import "@inglorious/ui/themes/inglorious.css"
 import "@inglorious/ui/themes/material.css"
 import "@inglorious/ui/themes/bootstrap.css"
 import "@inglorious/ui/all.css"
-
-import { createIcons, Heart, Settings, User } from "lucide"
 
 export default {
   tags: ["autodocs"],
@@ -78,46 +74,11 @@ function applyTheme(theme, mode) {
   }
 }
 
-createIcons({
-  icons: {
-    User,
-    Settings,
-    Heart,
-  },
-  attrs: {
-    "stroke-width": 1.75,
-  },
-})
-
-function hydrateLucide() {
-  const run = () => {
-    createIcons({
-      icons: {
-        User,
-        Settings,
-        Heart,
-      },
-      attrs: {
-        "stroke-width": 1.75,
-      },
-    })
-  }
-
-  // MDX docs can mount content after the initial story return.
-  queueMicrotask(run)
-  requestAnimationFrame(run)
-  setTimeout(run, 0)
-  setTimeout(run, 80)
-}
-
 export const decorators = [
   (story, context) => {
     applyTheme(context.globals.theme, context.globals.mode)
 
-    const result = story()
-    hydrateLucide()
-
-    return result
+    return story()
   },
 ]
 

@@ -1,5 +1,3 @@
-import "@fontsource/material-symbols-outlined"
-import "@fortawesome/fontawesome-free/css/all.min.css"
 import "@inglorious/ui/themes/inglorious.css"
 import "@inglorious/ui/themes/material.css"
 import "@inglorious/ui/themes/bootstrap.css"

@@ -1,9 +1,16 @@
+import buttonsAltOutline from "@iconify-icons/material-symbols/buttons-alt-outline"
+import databaseOutline from "@iconify-icons/material-symbols/database-outline"
+import exploreOutline from "@iconify-icons/material-symbols/explore-outline"
+import gridViewOutline from "@iconify-icons/material-symbols/grid-view-outline"
+import layersOutline from "@iconify-icons/material-symbols/layers-outline"
+import notificationsOutline from "@iconify-icons/material-symbols/notifications-outline"
+import speedOutline from "@iconify-icons/material-symbols/speed-outline"
 import { html } from "@inglorious/web"
 
 import { Avatar } from "../../data-display/avatar"
 import { Badge } from "../../data-display/badge"
+import { Icon } from "../../data-display/icon"
 import { List } from "../../data-display/list"
-import { MaterialIcon } from "../../data-display/material-icon"
 import { Flex } from "../../layout/flex"
 import { Drawer } from "../../navigation/drawer"
 
@@ -72,7 +79,7 @@ function mapItemsForRender(entity, items, api) {
     const mappedItem = { ...item }
 
     if (item.icon) {
-      mappedItem.icon = MaterialIcon.render({ name: item.icon, size: "lg" })
+      mappedItem.icon = Icon.render({ icon: item.icon, size: "lg" })
     }
 
     if (item.badge) {
@@ -107,7 +114,7 @@ function getDefaultItems() {
     {
       id: "dashboard",
       primary: "Dashboard",
-      icon: "speed",
+      icon: speedOutline,
       href: "/",
       badge: {
         color: "info",
@@ -119,7 +126,7 @@ function getDefaultItems() {
     {
       id: "layout",
       primary: "Layout",
-      icon: "grid_view",
+      icon: gridViewOutline,
       children: [
         { id: "container", primary: "Container", href: "/layout/container" },
         { id: "flex", primary: "Flex", href: "/layout/flex" },
@@ -129,7 +136,7 @@ function getDefaultItems() {
     {
       id: "controls",
       primary: "Controls",
-      icon: "buttons_alt",
+      icon: buttonsAltOutline,
       children: [
         { id: "button", primary: "Button", href: "/controls/button" },
         {
@@ -166,7 +173,7 @@ function getDefaultItems() {
     {
       id: "data-display",
       primary: "Data Display",
-      icon: "database",
+      icon: databaseOutline,
       children: [
         { id: "avatar", primary: "Avatar", href: "/data-display/avatar" },
         { id: "badge", primary: "Badge", href: "/data-display/badge" },
@@ -185,11 +192,6 @@ function getDefaultItems() {
         { id: "divider", primary: "Divider", href: "/data-display/divider" },
         { id: "icon", primary: "Icon", href: "/data-display/icon" },
         { id: "list", primary: "List", href: "/data-display/list" },
-        {
-          id: "material-icon",
-          primary: "Material Icon",
-          href: "/data-display/material-icon",
-        },
         { id: "table", primary: "Table", href: "/data-display/table" },
         { id: "tooltip", primary: "Tooltip", href: "/data-display/tooltip" },
         {
@@ -202,7 +204,7 @@ function getDefaultItems() {
     {
       id: "feedback",
       primary: "Feedback",
-      icon: "notifications",
+      icon: notificationsOutline,
       children: [
         { id: "alert", primary: "Alert", href: "/feedback/alert" },
         { id: "backdrop", primary: "Backdrop", href: "/feedback/backdrop" },
@@ -215,7 +217,7 @@ function getDefaultItems() {
     {
       id: "navigation",
       primary: "Navigation",
-      icon: "explore",
+      icon: exploreOutline,
       children: [
         {
           id: "bottom-navigation",
@@ -247,7 +249,7 @@ function getDefaultItems() {
     {
       id: "surfaces",
       primary: "Surfaces",
-      icon: "layers",
+      icon: layersOutline,
       children: [
         { id: "accordion", primary: "Accordion", href: "/surfaces/accordion" },
         { id: "app-bar", primary: "App Bar", href: "/surfaces/app-bar" },

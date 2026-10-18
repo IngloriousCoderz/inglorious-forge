@@ -2,7 +2,7 @@ import { Chart } from "@inglorious/charts"
 import { html } from "@inglorious/web"
 
 import { Divider } from "../../data-display/divider"
-import { MaterialIcon } from "../../data-display/material-icon"
+import { Icon } from "../../data-display/icon"
 import { Typography } from "../../data-display/typography"
 import { Grid } from "../../layout/grid"
 import { Card } from "../../surfaces/card"
@@ -14,7 +14,7 @@ export const SocialCard = {
       headerPadding: "none",
       header: html`
         <div class="iw-dashboard-social-cap ${entity.capClass}">
-          ${MaterialIcon.render({ name: entity.icon, size: "lg" })}
+          ${Icon.render({ icon: entity.icon, size: "lg" })}
           <div class="iw-dashboard-social-chart">
             ${this.renderAreaSpark(entity, api)}
           </div>

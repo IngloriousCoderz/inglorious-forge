@@ -1,10 +1,19 @@
+import android from "@iconify-icons/fa7-brands/android"
+import bootstrap from "@iconify-icons/fa7-brands/bootstrap"
+import gamepad from "@iconify-icons/fa7-solid/gamepad"
+import contrastOutline from "@iconify-icons/material-symbols/contrast-outline"
+import darkModeOutline from "@iconify-icons/material-symbols/dark-mode-outline"
+import formatListBulletedOutline from "@iconify-icons/material-symbols/format-list-bulleted-outline"
+import lightModeOutline from "@iconify-icons/material-symbols/light-mode-outline"
+import mailOutline from "@iconify-icons/material-symbols/mail-outline"
+import menuOutline from "@iconify-icons/material-symbols/menu-outline"
+import notificationsOutline from "@iconify-icons/material-symbols/notifications-outline"
 import { html } from "@inglorious/web"
 
 import { Button } from "../../controls/button"
 import { Avatar } from "../../data-display/avatar"
 import { Divider } from "../../data-display/divider"
 import { Icon } from "../../data-display/icon"
-import { MaterialIcon } from "../../data-display/material-icon"
 import { Flex } from "../../layout/flex"
 import { Breadcrumbs } from "../../navigation/breadcrumbs"
 import { AppBar } from "../../surfaces/app-bar"
@@ -17,16 +26,16 @@ export const AppHeader = {
     const themeName = themeEntity?.theme ?? "inglorious"
     const themeIcon =
       themeName === "bootstrap"
-        ? "fa-brands fa-bootstrap"
+        ? bootstrap
         : themeName === "material"
-          ? "fa-brands fa-android"
-          : "fa-solid fa-gamepad"
+          ? android
+          : gamepad
     const modeIcon =
       themeMode === "light"
-        ? "light_mode"
+        ? lightModeOutline
         : themeMode === "dark"
-          ? "dark_mode"
-          : "contrast"
+          ? darkModeOutline
+          : contrastOutline
 
     return html`
       <div class="iw-dashboard-header">
@@ -44,7 +53,7 @@ export const AppHeader = {
                   color: "secondary",
                   variant: "ghost",
                   shape: "square",
-                  children: MaterialIcon.render({ name: "menu", size: "lg" }),
+                  children: Icon.render({ icon: menuOutline, size: "lg" }),
                   "aria-label": "Toggle navigation",
                   onClick: () => api.notify(`#appDrawer:toggle`),
                 }),
@@ -79,8 +88,8 @@ export const AppHeader = {
                       color: "secondary",
                       variant: "ghost",
                       shape: "square",
-                      children: MaterialIcon.render({
-                        name: "notifications",
+                      children: Icon.render({
+                        icon: notificationsOutline,
                         size: "lg",
                       }),
                       "aria-label": "Notifications",
@@ -89,8 +98,8 @@ export const AppHeader = {
                       color: "secondary",
                       variant: "ghost",
                       shape: "square",
-                      children: MaterialIcon.render({
-                        name: "format_list_bulleted",
+                      children: Icon.render({
+                        icon: formatListBulletedOutline,
                       }),
                       "aria-label": "Tasks",
                     }),
@@ -98,8 +107,8 @@ export const AppHeader = {
                       color: "secondary",
                       variant: "ghost",
                       shape: "square",
-                      children: MaterialIcon.render({
-                        name: "mail",
+                      children: Icon.render({
+                        icon: mailOutline,
                         size: "lg",
                       }),
                       "aria-label": "Messages",
@@ -111,7 +120,7 @@ export const AppHeader = {
                       variant: "ghost",
                       shape: "square",
                       children: Icon.render({
-                        children: html`<i class=${themeIcon}></i>`,
+                        icon: themeIcon,
                         size: "lg",
                       }),
                       "aria-label": `Theme: ${themeName}`,
@@ -121,8 +130,8 @@ export const AppHeader = {
                       color: "secondary",
                       variant: "ghost",
                       shape: "square",
-                      children: MaterialIcon.render({
-                        name: modeIcon,
+                      children: Icon.render({
+                        icon: modeIcon,
                         size: "lg",
                       }),
                       "aria-label": `Mode: ${themeMode}`,

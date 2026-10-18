@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/ui",
-  "version": "7.8.1",
+  "version": "8.0.0",
   "description": "A design system for Inglorious Web with render-function components and customizable themes",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -169,11 +169,6 @@
       "import": "./src/data-display/list/index.js"
     },
     "./list.css": "./src/data-display/list/style.css",
-    "./material-icon": {
-      "types": "./types/data-display/material-icon.d.ts",
-      "import": "./src/data-display/material-icon/index.js"
-    },
-    "./material-icon.css": "./src/data-display/material-icon/style.css",
     "./table": {
       "types": "./types/data-display/table.d.ts",
       "import": "./src/data-display/table/index.js"
@@ -323,8 +318,10 @@
     "@inglorious/web": "workspace:*"
   },
   "devDependencies": {
-    "@fontsource/material-symbols-outlined": "^5.3.5",
-    "@fortawesome/fontawesome-free": "^7.3.1",
+    "@iconify-icons/fa7-brands": "^2.0.0",
+    "@iconify-icons/fa7-regular": "^2.0.0",
+    "@iconify-icons/fa7-solid": "^2.0.0",
+    "@iconify-icons/material-symbols": "^2.0.6",
     "@inglorious/eslint-config": "workspace:*",
     "@inglorious/store": "workspace:*",
     "@inglorious/vite-plugin-jsx": "workspace:*",
@@ -334,7 +331,6 @@
     "@storybook/web-components-vite": "^10.6.0",
     "happy-dom": "^20.14.0",
     "jsdom": "^30.0.1",
-    "lucide": "^1.41.0",
     "prettier": "^3.9.6",
     "storybook": "^10.6.0",
     "vite": "^8.2.2",
