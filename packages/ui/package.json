@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/ui",
-  "version": "7.5.0",
+  "version": "7.6.0",
   "description": "A design system for Inglorious Web with render-function components and customizable themes",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -35,6 +35,7 @@
     "./navigation.css": "./src/navigation/navigation.css",
     "./surfaces.css": "./src/surfaces/surfaces.css",
     "./tokens.css": "./src/styles/tokens.css",
+    "./safe-area.css": "./src/styles/safe-area.css",
     "./themes/inglorious.css": "./src/styles/themes/inglorious.css",
     "./themes/material.css": "./src/styles/themes/material.css",
     "./themes/bootstrap.css": "./src/styles/themes/bootstrap.css",

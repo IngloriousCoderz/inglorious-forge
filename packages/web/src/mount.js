@@ -5,6 +5,8 @@
 
 import { html, render } from "lit-html"
 
+import { isNative } from "./mobile/index.js"
+
 /**
  * Mounts a lit-html template to the DOM and subscribes to a store for re-rendering.
  * @param {Store} store - The application state store.
@@ -23,6 +25,10 @@ export async function mount(store, renderFn, element, options = {}) {
     fallback,
     hydrate: allowHydrate = true,
   } = options
+
+  // Tells CSS the native app from a browser tab, which env() cannot: the
+  // safe-area tokens of @inglorious/ui key off it.
+  document.documentElement.classList.toggle("iw-native", isNative())
 
   const api = { ...store._api }
   api.render = createRender(api)

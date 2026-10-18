@@ -1,8 +1,39 @@
+/* The system bars' insets.
+
+   In a native app on Android, Capacitor's SystemBars plugin injects
+   --safe-area-inset-* with the right value in every case: 0 where it pads the
+   WebView natively (WebView < 140), the real inset where the app is
+   edge-to-edge. env() is only right on the newer WebViews, and adding it on top
+   of that native padding doubles the status bar. Everywhere else there is no
+   injected variable, and env() is the fallback.
+
+   The top inset is the exception: in a browser tab the browser's own chrome
+   always sits between the page and the status bar, so it is 0 there even when
+   the browser reports otherwise. Browsers that embed a WebView can (DuckDuckGo
+   on Android says 37px with its toolbar in the way). It only applies where the
+   page can reach the status bar: the installed PWA, and the native app, which
+   `mount` from @inglorious/web marks with `iw-native`. */
 :root {
-  --safe-area-top: env(safe-area-inset-top, 0px);
-  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
-  --safe-area-left: env(safe-area-inset-left, 0px);
-  --safe-area-right: env(safe-area-inset-right, 0px);
+  --safe-area-top: var(--safe-area-inset-top, 0px);
+  --safe-area-bottom: var(
+    --safe-area-inset-bottom,
+    env(safe-area-inset-bottom, 0px)
+  );
+  --safe-area-left: var(--safe-area-inset-left, env(safe-area-inset-left, 0px));
+  --safe-area-right: var(
+    --safe-area-inset-right,
+    env(safe-area-inset-right, 0px)
+  );
+}
+
+@media (display-mode: standalone), (display-mode: fullscreen) {
+  :root {
+    --safe-area-top: env(safe-area-inset-top, 0px);
+  }
+}
+
+:root.iw-native {
+  --safe-area-top: var(--safe-area-inset-top, env(safe-area-inset-top, 0px));
 }
 
 .pt-safe {

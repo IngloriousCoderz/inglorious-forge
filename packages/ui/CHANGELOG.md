@@ -1,5 +1,17 @@
 # @inglorious/ui
 
+## 7.6.0
+
+### Minor Changes
+
+- The safe-area tokens are right in more places: in a browser tab the top inset is 0, even in browsers that report the status bar under their own toolbar (DuckDuckGo on Android), and in a Capacitor app on Android they use the insets Capacitor injects instead of doubling the status bar. `safe-area.css` is exported on its own for apps that don't import `base.css`.
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/web@6.6.0
+  - @inglorious/charts@10.0.6
+
 ## 7.5.0
 
 ### Minor Changes

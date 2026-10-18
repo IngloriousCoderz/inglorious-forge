@@ -46,16 +46,21 @@ The public CSS exports are:
 
 ## Safe-area utilities
 
-The base styles also expose CSS variables and utility classes for iPhone notch and home-indicator safe areas.
+The base styles also expose CSS variables and utility classes for the system bars' insets: the notch, rounded corners, the home indicator and Android's status and navigation bars. They are in `base.css`, or on their own in `@inglorious/ui/safe-area.css`.
 
 ```css
 :root {
-  --safe-area-top: env(safe-area-inset-top, 0px);
-  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
-  --safe-area-left: env(safe-area-inset-left, 0px);
-  --safe-area-right: env(safe-area-inset-right, 0px);
+  --safe-area-top: …;
+  --safe-area-bottom: …;
+  --safe-area-left: …;
+  --safe-area-right: …;
 }
 ```
+
+They are `env(safe-area-inset-*)`, with two corrections:
+
+- **In a Capacitor app on Android**, they use the `--safe-area-inset-*` variables Capacitor's SystemBars plugin injects. `env()` alone doubles the status bar on WebViews that Capacitor already pads natively.
+- **In a browser tab, the top inset is 0.** The browser's chrome always sits between the page and the status bar, but browsers that embed a WebView can still report one (DuckDuckGo on Android reports 37px under its toolbar). The top inset applies in the installed PWA and in the native app, which `mount` from `@inglorious/web` marks with the `iw-native` class on `<html>`.
 
 The following utility classes are available:
 
@@ -73,5 +78,3 @@ The following utility classes are available:
   padding-right: var(--safe-area-right);
 }
 ```
-
-These are useful for mobile layouts that need to respect notches, rounded corners, and the home indicator. They are intentionally generic utilities so apps can opt into them without having to define custom safe-area values repeatedly.

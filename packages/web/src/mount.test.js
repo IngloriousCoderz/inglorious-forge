@@ -68,6 +68,23 @@ describe("mount", () => {
     hydrateSpy.mockReset()
   })
 
+  it("marks the document as native inside a Capacitor app", async () => {
+    globalThis.Capacitor = { isNativePlatform: () => true }
+
+    await mount(store, () => "template", element)
+
+    expect(document.documentElement.classList.contains("iw-native")).toBe(true)
+    delete globalThis.Capacitor
+  })
+
+  it("leaves the document unmarked in a browser", async () => {
+    document.documentElement.classList.add("iw-native")
+
+    await mount(store, () => "template", element)
+
+    expect(document.documentElement.classList.contains("iw-native")).toBe(false)
+  })
+
   it("lazily registers a missing type passed to api.render", async () => {
     await mount(
       store,

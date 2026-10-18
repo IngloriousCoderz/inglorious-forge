@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 6.6.0
+
+### Minor Changes
+
+- `mount` marks `<html>` with the `iw-native` class inside a Capacitor app, so CSS can tell the native app from a browser tab.
+
 ## 6.5.2
 
 ### Patch Changes
