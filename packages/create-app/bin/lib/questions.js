@@ -4,14 +4,11 @@ import { ICON_PACKS, LANGUAGES, THEMES } from "./features.js"
 
 /**
  * Asks about the app's features, skipping any a command-line flag answered.
- * Inglorious UI, routing, transitions, icons and i18n are offered for
- * lit-html; mobile and PWA for every renderer. Resolves to null when the user
- * cancels.
+ * Resolves to null when the user cancels.
  *
  * @param {ReturnType<import("./cli.js").parseCliOptions>} flags
- * @param {{ isLitHtml: boolean }} context
  */
-export async function askAppFeatures(flags, { isLitHtml }) {
+export async function askAppFeatures(flags) {
   let canceled = false
   const onCancel = () => {
     canceled = true
@@ -33,29 +30,27 @@ export async function askAppFeatures(flags, { isLitHtml }) {
     pwa: false,
   }
 
-  if (isLitHtml) {
-    features.ui =
-      flags.ui ??
+  features.ui =
+    flags.ui ??
+    (await ask({
+      type: "confirm",
+      message: "Use Inglorious UI?",
+      initial: true,
+    }))
+  if (canceled) return null
+
+  if (features.ui) {
+    features.theme =
+      flags.theme ??
       (await ask({
-        type: "confirm",
-        message: "Use Inglorious UI?",
-        initial: true,
+        type: "select",
+        message: "Which theme?",
+        choices: Object.entries(THEMES).map(([value, theme]) => ({
+          value,
+          ...theme,
+        })),
       }))
     if (canceled) return null
-
-    if (features.ui) {
-      features.theme =
-        flags.theme ??
-        (await ask({
-          type: "select",
-          message: "Which theme?",
-          choices: Object.entries(THEMES).map(([value, theme]) => ({
-            value,
-            ...theme,
-          })),
-        }))
-      if (canceled) return null
-    }
   }
 
   features.mobile =
@@ -67,59 +62,57 @@ export async function askAppFeatures(flags, { isLitHtml }) {
     }))
   if (canceled) return null
 
-  if (isLitHtml) {
-    features.routing =
-      flags.routing ??
+  features.routing =
+    flags.routing ??
+    (await ask({
+      type: "confirm",
+      message: "Add routing?",
+      initial: true,
+    }))
+  if (canceled) return null
+
+  if (features.routing && features.ui) {
+    features.transitions =
+      flags.transitions ??
       (await ask({
         type: "confirm",
-        message: "Add routing?",
+        message: "Animate page transitions?",
         initial: true,
       }))
     if (canceled) return null
+  }
 
-    if (features.routing && features.ui) {
-      features.transitions =
-        flags.transitions ??
-        (await ask({
-          type: "confirm",
-          message: "Animate page transitions?",
-          initial: true,
-        }))
-      if (canceled) return null
-    }
-
-    if (features.ui) {
-      features.icons =
-        flags.icons ??
-        (await ask({
-          type: "multiselect",
-          message: "Which icon packs?",
-          hint: "Space to select, Enter to confirm. None is fine too.",
-          instructions: false,
-          choices: Object.entries(ICON_PACKS).map(([value, pack]) => ({
-            value,
-            title: pack.title,
-            selected: value === "material",
-          })),
-        }))
-      if (canceled) return null
-    }
-
-    const i18n =
-      flags.i18n ??
-      (flags.languages ? Boolean(flags.languages.length) : null) ??
+  if (features.ui) {
+    features.icons =
+      flags.icons ??
       (await ask({
-        type: "confirm",
-        message: "Translate the app into several languages?",
-        initial: false,
+        type: "multiselect",
+        message: "Which icon packs?",
+        hint: "Space to select, Enter to confirm. None is fine too.",
+        instructions: false,
+        choices: Object.entries(ICON_PACKS).map(([value, pack]) => ({
+          value,
+          title: pack.title,
+          selected: value === "material",
+        })),
       }))
     if (canceled) return null
+  }
 
-    if (i18n) {
-      features.languages =
-        flags.languages ?? (await askLanguages(ask, () => canceled))
-      if (canceled || !features.languages) return null
-    }
+  const i18n =
+    flags.i18n ??
+    (flags.languages ? Boolean(flags.languages.length) : null) ??
+    (await ask({
+      type: "confirm",
+      message: "Translate the app into several languages?",
+      initial: false,
+    }))
+  if (canceled) return null
+
+  if (i18n) {
+    features.languages =
+      flags.languages ?? (await askLanguages(ask, () => canceled))
+    if (canceled || !features.languages) return null
   }
 
   features.pwa =

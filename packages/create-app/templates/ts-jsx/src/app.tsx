@@ -1,4 +1,4 @@
-import type { AppApi } from "../../types"
+import type { AppApi } from "../types"
 
 import { Message } from "./types/message"
 

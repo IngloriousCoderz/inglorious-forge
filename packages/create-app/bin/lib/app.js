@@ -2,25 +2,33 @@ import fs from "fs"
 import { EOL } from "os"
 import path from "path"
 
+import * as jsxComponents from "./app-jsx.js"
+import * as litComponents from "./app-lit.js"
+import * as vueComponents from "./app-vue.js"
 import { INDENTATION } from "./constants.js"
 import { ICON_PACKS, LANGUAGES } from "./features.js"
 import { importBlock } from "./imports.js"
+import { appModel, call, LINE_WIDTH, union } from "./source.js"
 
-// Prettier's line width, which generated files are written to fit.
-const LINE_WIDTH = 80
+const COMPONENTS = {
+  "lit-html": litComponents,
+  jsx: jsxComponents,
+  vue: vueComponents,
+}
 
 /**
- * Writes the source of a lit-html app with the features chosen: Inglorious UI,
+ * Writes the source of an app with the features chosen: Inglorious UI,
  * routing, page transitions, icon packs, internationalization and a mobile
- * layout. It replaces the template's hello world, keeping its message type as
- * the example on the home page. The files come out as Prettier and the
- * template's ESLint config would leave them.
+ * layout, in lit-html, JSX or Vue. It replaces the template's hello world,
+ * keeping its message type as the example on the home page. The files come
+ * out as Prettier and the template's ESLint config would leave them.
  *
  * @param {string} targetDir
  * @param {object} pkg - The package.json being built; dependencies are added.
  * @param {object} options
  * @param {string} options.projectName
  * @param {boolean} options.isTypeScript
+ * @param {"lit-html" | "jsx" | "vue"} options.renderer
  * @param {boolean} options.ui
  * @param {string} options.theme - A key of THEMES.
  * @param {boolean} options.mobile
@@ -35,20 +43,25 @@ export function addAppFeatures(targetDir, pkg, options) {
   // On a phone the pages are tabs at the bottom; elsewhere, links on top.
   app.tabs = app.ui && app.routing && app.mobile
   app.links = app.routing && !app.tabs
+  app.isVue = app.renderer === "vue"
+
+  const components = COMPONENTS[app.renderer]
+  const componentExt = components.extension(app)
+  const model = appModel(app)
 
   addDependencies(pkg, app)
 
   const files = {
     [`src/main.${app.ext}`]: mainSource(app),
-    [`src/app.${app.ext}`]: appSource(app),
+    [`src/app.${componentExt}`]: components.appSource(app, model),
     "src/app.css": appStyles(app),
-    [`src/pages/home.${app.ext}`]: homeSource(app),
-    [`src/types/message.${app.ext}`]: messageSource(app),
+    [`src/pages/home.${componentExt}`]: components.homeSource(app, model),
+    [`src/types/message.${componentExt}`]: components.messageSource(app),
     [`src/store/index.${app.ext}`]: storeSource(app),
     [`src/store/entities.${app.ext}`]: entitiesSource(app),
   }
   if (app.routing) {
-    files[`src/pages/about.${app.ext}`] = aboutSource(app)
+    files[`src/pages/about.${componentExt}`] = components.aboutSource(app)
     files[`src/store/routes.${app.ext}`] = routesSource(app)
   }
   if (app.i18n) {
@@ -91,6 +104,16 @@ function applyTheme(targetDir, app) {
   )
 }
 
+// An import of one of the app's components: Vue's name their file, and
+// TypeScript cannot read .vue files, so it is told to expect that.
+function componentImport(app, names, from) {
+  if (!app.isVue) return `import { ${names} } from "${from}"`
+  const line = `import { ${names} } from "${from}.vue"`
+  return app.isTypeScript
+    ? `// @ts-expect-error - Handled by @inglorious/vite-plugin-vue\n${line}`
+    : line
+}
+
 // ---------------------------------------------------------------- main
 
 function mainSource(app) {
@@ -113,7 +136,7 @@ function mainSource(app) {
   }
   imports.push(
     'import { mount } from "@inglorious/web"',
-    'import { App } from "./app"',
+    componentImport(app, "App", "./app"),
     'import { store } from "./store"',
   )
   if (app.i18n) imports.push('import { ready } from "./i18n"')
@@ -140,16 +163,6 @@ ${body}
 `
 }
 
-// `name(args)` on one line when it fits, one argument per line otherwise, as
-// Prettier prints a call.
-function call(name, args, indent, trailing) {
-  const line = `${indent}${name}(${args.join(", ")})${trailing}`
-  if (line.length <= LINE_WIDTH) return line
-  return `${indent}${name}(
-${args.map((arg) => `${indent}  ${arg},`).join("\n")}
-${indent})${trailing}`
-}
-
 // The Inglorious UI components the app uses, for their stylesheets.
 function uiComponents(app) {
   const names = ["app-bar", "container"]
@@ -158,176 +171,6 @@ function uiComponents(app) {
   if (app.icons.length) names.push("icon")
   if (app.i18n) names.push("select")
   return names
-}
-
-// ---------------------------------------------------------------- app
-
-function appSource(app) {
-  const [navPack] = app.icons
-  const navIcons = app.tabs && navPack ? ICON_PACKS[navPack].nav : null
-
-  const imports = ['import { html } from "@inglorious/web"']
-  if (navIcons) {
-    for (const icon of Object.values(navIcons)) {
-      imports.push(`import ${icon.name} from "${icon.from}"`)
-    }
-    imports.push('import { Icon } from "@inglorious/ui/icon"')
-  }
-  if (app.ui) {
-    imports.push(
-      'import { AppBar } from "@inglorious/ui/app-bar"',
-      'import { Container } from "@inglorious/ui/container"',
-    )
-    if (app.tabs) {
-      imports.push(
-        'import { BottomNavigation } from "@inglorious/ui/bottom-navigation"',
-      )
-    }
-    if (app.links) imports.push('import { Link } from "@inglorious/ui/link"')
-    if (app.i18n) imports.push('import { Select } from "@inglorious/ui/select"')
-  }
-  if (app.isTypeScript) imports.push('import type { AppApi } from "../types"')
-  if (app.i18n) imports.push('import { t } from "./i18n"')
-
-  const label = (key, text) => (app.i18n ? `t("${key}")` : `"${text}"`)
-  const pages = [
-    { path: "/", key: "nav.home", text: "Home", icon: navIcons?.home },
-    { path: "/about", key: "nav.about", text: "About", icon: navIcons?.about },
-  ]
-
-  const signature = app.isTypeScript
-    ? "render(props: Record<string, unknown> | null, api: AppApi)"
-    : "render(props, api)"
-
-  // The app's own entities are always there; TypeScript cannot know that.
-  const always = app.isTypeScript ? "!" : ""
-  const locals = []
-  if (app.routing) {
-    locals.push(`    const router = api.getEntity("router")${always}`)
-  }
-  if (app.i18n) locals.push(`    const i18n = api.getEntity("i18n")${always}`)
-
-  const content = app.routing
-    ? "api.render(router.route)"
-    : 'api.render("home")'
-
-  const template = app.ui
-    ? uiShell(app, { label, pages, content })
-    : plainShell(app, { label, pages, content })
-
-  return `${importBlock(imports)}
-
-export const App = {
-  ${signature} {
-${locals.join("\n")}${locals.length ? "\n\n" : ""}    return html\`
-${template}
-    \`
-  },
-}
-`
-}
-
-function uiShell(app, { label, pages, content }) {
-  const nav = []
-  if (app.links) {
-    nav.push(
-      ...pages.map(
-        (page) =>
-          `Link.render({ href: "${page.path}", children: ${label(page.key, page.text)} })`,
-      ),
-    )
-  }
-  if (app.i18n) nav.push(languageSelect())
-
-  const trailing = nav.length
-    ? `
-          trailing: html\`<nav class="app-nav">
-            \${[
-              ${nav.join(",\n              ")},
-            ]}
-          </nav>\`,`
-    : ""
-
-  const header = `      <header${app.mobile ? ' class="pt-safe"' : ""}>
-        \${AppBar.render({
-          title: "${app.projectName}",${trailing}
-        })}
-      </header>
-      <main>
-        \${Container.render({ maxWidth: "md", children: ${content} })}
-      </main>`
-
-  if (!app.tabs) return header
-
-  const actions = pages.map(
-    (page) => `            {
-              value: "${page.path}",
-              label: ${label(page.key, page.text)},${
-                page.icon
-                  ? `
-              icon: Icon.render({ icon: ${page.icon.name}, size: "lg" }),`
-                  : ""
-              }
-            },`,
-  )
-
-  return `${header}
-      <footer class="pb-safe">
-        \${BottomNavigation.render({
-          value: router.path,
-          actions: [
-${actions.join("\n")}
-          ],
-          onChange: (path) => api.notify("#router:navigate", path),
-        })}
-      </footer>`
-}
-
-function languageSelect() {
-  return `Select.render({
-                value: i18n.locale,
-                options: i18n.languages,
-                size: "sm",
-                "aria-label": t("language"),
-                onChange: (locale) => api.notify("#i18n:localeChange", locale),
-              })`
-}
-
-function plainShell(app, { label, pages, content }) {
-  const nav = app.routing
-    ? pages.map(
-        (page) =>
-          `          <a href="${page.path}">\${${label(page.key, page.text)}}</a>`,
-      )
-    : []
-  if (app.i18n) {
-    nav.push(`          <select
-            aria-label=\${t("language")}
-            @change=\${(event) =>
-              api.notify("#i18n:localeChange", event.target.value)}
-          >
-            \${i18n.languages.map(
-              (language) =>
-                html\`<option
-                  value=\${language.value}
-                  ?selected=\${language.value === i18n.locale}
-                >
-                  \${language.label}
-                </option>\`,
-            )}
-          </select>`)
-  }
-  const navBlock = nav.length
-    ? `
-        <nav class="app-nav">
-${nav.join("\n")}
-        </nav>`
-    : ""
-
-  return `      <header>
-        <strong>${app.projectName}</strong>${navBlock}
-      </header>
-      <main>\${${content}}</main>`
 }
 
 function appStyles(app) {
@@ -354,7 +197,17 @@ main {
   gap: 1rem;
 }
 `
-  if (app.ui) return layout
+  if (app.ui) {
+    // In Vue the navigation is the app bar's content rather than its trailing
+    // slot, so it pushes itself to the end.
+    return app.isVue
+      ? `${layout}
+.iw-app-bar .app-nav {
+  margin-inline-start: auto;
+}
+`
+      : layout
+  }
   return `${layout}
 header {
   display: flex;
@@ -370,110 +223,6 @@ main {
 `
 }
 
-// ---------------------------------------------------------------- pages
-
-function homeSource(app) {
-  const showcase = app.icons.map((key) => ICON_PACKS[key].showcase)
-  const imports = ['import { html } from "@inglorious/web"']
-  for (const icon of showcase) {
-    imports.push(`import ${icon.name} from "${icon.from}"`)
-  }
-  if (showcase.length)
-    imports.push('import { Icon } from "@inglorious/ui/icon"')
-  if (app.isTypeScript) {
-    imports.push('import type { AppApi, HomeEntity } from "../../types"')
-  }
-  if (app.i18n) imports.push('import { t } from "../i18n"')
-
-  const text = (key, fallback) => (app.i18n ? `\${t("${key}")}` : fallback)
-  const icons = showcase.length
-    ? `
-      <p class="app-icons">
-${showcase
-  .map(
-    (icon) => `        \${Icon.render({
-          icon: ${icon.name},
-          size: "lg",
-          label: "${icon.label}",
-        })}`,
-  )
-  .join("\n")}
-      </p>`
-    : ""
-
-  const signature = app.isTypeScript
-    ? "render(entity: HomeEntity, api: AppApi)"
-    : "render(entity, api)"
-
-  return `${importBlock(imports)}
-
-export const Home = {
-  ${signature} {
-    return html\`
-      <h1>${text("home.title", "Welcome")}</h1>
-      <p>
-        \${api.render("message1")}, \${api.render("message2")},
-        \${api.render("message3")}!
-      </p>
-      <p>${text("home.hint", "Click a greeting to shout it.")}</p>${icons}
-    \`
-  },
-}
-`
-}
-
-function aboutSource(app) {
-  const imports = ['import { html } from "@inglorious/web"']
-  if (app.isTypeScript) {
-    imports.push('import type { AboutEntity } from "../../types"')
-  }
-  if (app.i18n) imports.push('import { t } from "../i18n"')
-  const text = (key, fallback) => (app.i18n ? `\${t("${key}")}` : fallback)
-  const signature = app.isTypeScript
-    ? "render(entity: AboutEntity)"
-    : "render()"
-
-  return `${importBlock(imports)}
-
-export const About = {
-  ${signature} {
-    return html\`
-      <h1>${text("about.title", "About")}</h1>
-      <p>${text("about.body", "A page of its own, at its own address.")}</p>
-    \`
-  },
-}
-`
-}
-
-function messageSource(app) {
-  const imports = ['import { html } from "@inglorious/web"']
-  if (app.isTypeScript) {
-    imports.push('import type { MessageType } from "../../types"')
-  }
-  if (app.i18n) imports.push('import { t } from "../i18n"')
-  const greeting = app.i18n ? '${t("message.hello", { who })}' : "Hello ${who}"
-  const declaration = app.isTypeScript
-    ? "export const Message: MessageType = {"
-    : "export const Message = {"
-
-  return `${importBlock(imports)}
-
-${declaration}
-  click(entity) {
-    entity.isUpperCase = !entity.isUpperCase
-  },
-
-  render(entity, api) {
-    const who = entity.isUpperCase ? entity.who.toUpperCase() : entity.who
-    return html\`<span @click=\${() => api.notify(\`#\${entity.id}:click\`)}
-      >${greeting}</span
-    >\`
-  },
-}
-`
-}
-
 // ---------------------------------------------------------------- store
 
 function storeSource(app) {
@@ -481,15 +230,15 @@ function storeSource(app) {
     app.isTypeScript
       ? 'import { createStore, type TypesConfig } from "@inglorious/store"'
       : 'import { createStore } from "@inglorious/store"',
-    'import { Home } from "../pages/home"',
-    'import { Message } from "../types/message"',
+    componentImport(app, "Home", "../pages/home"),
+    componentImport(app, "Message", "../types/message"),
     'import { entities } from "./entities"',
     'import { middlewares } from "./middlewares"',
   ]
   if (app.routing) {
     imports.push(
       'import { Router, setRoutes } from "@inglorious/web/router"',
-      'import { About } from "../pages/about"',
+      componentImport(app, "About", "../pages/about"),
       'import { routes } from "./routes"',
     )
   }
@@ -645,13 +394,4 @@ export interface MessageType {
   render: (entity: MessageEntity, api: AppApi) => TemplateResult | null
 }
 `
-}
-
-// `export type Name = A | B`, broken after the `=` when too long, as Prettier
-// prints it.
-function union(name, members) {
-  const line = `export type ${name} = ${members.join(" | ")}`
-  if (line.length <= LINE_WIDTH) return line
-  return `export type ${name} =
-  ${members.join(" | ")}`
 }

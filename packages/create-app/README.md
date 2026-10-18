@@ -36,7 +36,7 @@ For the JavaScript and TypeScript Vite templates, the CLI then asks about the ap
 | Translate the app?        | `--i18n` / `--no-i18n`, `--languages=en,it`          | `@inglorious/i18n`, a catalogue per language and a language picker; the first language is the default |
 | Enable PWA support?       | `--pwa` / `--no-pwa`                                 | `vite-plugin-pwa`, a manifest, icons and service worker registration                                  |
 
-Inglorious UI, routing, transitions, icons and i18n are generated for the lit-html syntax; JSX and Vue templates are asked about mobile and PWA support. Every question answered by a flag is skipped:
+The app is generated in the syntax you chose: lit-html, JSX or Vue. Every question answered by a flag is skipped:
 
 ```bash
 npm create @inglorious/app@latest -- --ui --theme=material --routing --transitions --icons=material --languages=en,it --mobile

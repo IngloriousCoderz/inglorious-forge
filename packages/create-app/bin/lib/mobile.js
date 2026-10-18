@@ -14,7 +14,9 @@ export function addMobileSupport(targetDir, pkg, projectName) {
   pkg.devDependencies["@capacitor/android"] = CAPACITOR_VERSION
   pkg.devDependencies["@capacitor/cli"] = CAPACITOR_VERSION
   pkg.devDependencies["@capacitor/ios"] = CAPACITOR_VERSION
-  pkg.devDependencies["typescript"] = TYPESCRIPT_VERSION
+  // For capacitor.config.ts. A TypeScript template already has its own, which
+  // its code is written against.
+  pkg.devDependencies["typescript"] ??= TYPESCRIPT_VERSION
 
   pkg.scripts.cap = "cap"
   pkg.scripts["mobile:init:ios"] = "cap add ios"

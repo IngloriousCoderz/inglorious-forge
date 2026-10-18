@@ -129,9 +129,7 @@ async function main() {
   }
 
   if (VITE_APP_TEMPLATES.has(baseTemplate)) {
-    features = await askAppFeatures(cliOptions, {
-      isLitHtml: renderer === "lit-html",
-    })
+    features = await askAppFeatures(cliOptions)
 
     if (!features) {
       console.log("Operation canceled.")
@@ -187,6 +185,7 @@ async function main() {
         ...features,
         projectName,
         isTypeScript: baseTemplate === "ts",
+        renderer,
       })
     }
 
