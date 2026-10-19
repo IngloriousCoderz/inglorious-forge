@@ -52,46 +52,48 @@ describe("brush renderer", () => {
   })
 
   it("renders drag handlers when the brush is visible", () => {
-    const result = renderBrush(
-      { props: {} },
-      {
-        api: { notify() {} },
-        entity: {
-          id: "brush-chart",
-          brush: {
-            enabled: true,
-            visible: true,
-            startIndex: 1,
-            endIndex: 3,
-            height: 30,
-          },
-          fullData: [
-            { name: "0", value: 10 },
-            { name: "1", value: 20 },
-            { name: "2", value: 15 },
-            { name: "3", value: 30 },
-          ],
-          seriesKeys: ["value"],
-        },
-        scales: {
-          plottedKeys: ["value"],
-        },
-        dimensions: {
-          plotLeft: 40,
-          plotWidth: 320,
-          brushTop: 220,
-        },
-      },
-    )
+    const handlers = getDragHandlers(renderBrush({ props: {} }, createFrame()))
 
-    expect(typeof result.values[9]).toBe("function")
-    expect(typeof result.values[13]).toBe("function")
-    expect(typeof result.values[17]).toBe("function")
+    expect(handlers).toHaveLength(3)
   })
 
-  it("updates the interaction entity and notifies when dragging the selection", () => {
-    const interactionEntity = {
-      id: "brush-chart",
+  it("dispatches brushChange to the entity while dragging, writing nothing", () => {
+    const notify = vi.fn()
+    const frame = createFrame(notify)
+    const [onPan] = getDragHandlers(renderBrush({ props: {} }, frame))
+    const brushBefore = { ...frame.entity.brush }
+    const doc = startDrag(onPan, 100)
+
+    doc.move(220)
+    doc.move(220)
+
+    expect(notify).toHaveBeenCalledTimes(1)
+    const [event, range] = notify.mock.calls[0]
+    expect(event).toBe("#brush-chart:brushChange")
+    expect(range.startIndex).toBeGreaterThan(1)
+    expect(range.endIndex).toBeGreaterThan(3)
+    expect(frame.entity.brush).toEqual(brushBefore)
+  })
+
+  it("stops dispatching once the mouse is released", () => {
+    const notify = vi.fn()
+    const [onPan] = getDragHandlers(
+      renderBrush({ props: {} }, createFrame(notify)),
+    )
+    const doc = startDrag(onPan, 100)
+
+    doc.release()
+
+    expect(doc.listeners.size).toBe(0)
+    expect(notify).not.toHaveBeenCalled()
+  })
+})
+
+function createFrame(notify = () => {}) {
+  return {
+    api: { notify },
+    entityId: "brush-chart",
+    entity: {
       brush: {
         enabled: true,
         visible: true,
@@ -99,136 +101,39 @@ describe("brush renderer", () => {
         endIndex: 3,
         height: 30,
       },
-      data: [
-        { name: "0", value: 10 },
-        { name: "1", value: 20 },
-        { name: "2", value: 15 },
-        { name: "3", value: 30 },
-        { name: "4", value: 22 },
-        { name: "5", value: 28 },
-      ],
-    }
-    const notify = vi.fn()
-    const moveListeners = new Map()
-    const doc = {
-      addEventListener(type, handler) {
-        moveListeners.set(type, handler)
-      },
-      removeEventListener(type) {
-        moveListeners.delete(type)
-      },
-    }
-    const result = renderBrush(
-      { props: {} },
-      {
-        api: { notify },
-        entity: {
-          id: "brush-chart",
-          brush: { ...interactionEntity.brush },
-          fullData: interactionEntity.data,
-          seriesKeys: ["value"],
-        },
-        interactionEntity,
-        scales: { plottedKeys: ["value"] },
-        dimensions: {
-          plotLeft: 40,
-          plotWidth: 320,
-          brushTop: 220,
-        },
-      },
-    )
+      fullData: [10, 20, 15, 30, 22, 28].map((value, index) => ({
+        name: `${index}`,
+        value,
+      })),
+      seriesKeys: ["value"],
+    },
+    scales: { plottedKeys: ["value"] },
+    dimensions: { plotLeft: 40, plotWidth: 320, brushTop: 220 },
+  }
+}
 
-    const onPan = result.values[9]
-    onPan({
-      clientX: 100,
-      currentTarget: {
-        closest() {
-          return {
-            getBoundingClientRect() {
-              return { left: 0 }
-            },
-          }
-        },
-      },
-      preventDefault() {},
-      stopPropagation() {},
-      view: { document: doc },
-    })
+// The pan, resize-left and resize-right handlers, in that order.
+function getDragHandlers(template) {
+  return template.values.filter((value) => typeof value === "function")
+}
 
-    moveListeners.get("mousemove")({ clientX: 220 })
-
-    expect(interactionEntity.brush.startIndex).toBeGreaterThan(1)
-    expect(interactionEntity.brush.endIndex).toBeGreaterThan(3)
-    expect(notify).toHaveBeenCalledWith("#brush-chart:update")
+function startDrag(onMouseDown, clientX) {
+  const listeners = new Map()
+  const doc = {
+    listeners,
+    addEventListener: (type, handler) => listeners.set(type, handler),
+    removeEventListener: (type) => listeners.delete(type),
+    move: (x) => listeners.get("mousemove")({ clientX: x }),
+    release: () => listeners.get("mouseup")(),
+  }
+  onMouseDown({
+    clientX,
+    currentTarget: {
+      closest: () => ({ getBoundingClientRect: () => ({ left: 0 }) }),
+    },
+    preventDefault() {},
+    stopPropagation() {},
+    view: { document: doc },
   })
-
-  it("hydrates a missing interaction brush before dragging", () => {
-    const interactionEntity = {
-      id: "brush-chart",
-      data: [
-        { name: "0", value: 10 },
-        { name: "1", value: 20 },
-        { name: "2", value: 15 },
-        { name: "3", value: 30 },
-      ],
-    }
-    const notify = vi.fn()
-    const moveListeners = new Map()
-    const doc = {
-      addEventListener(type, handler) {
-        moveListeners.set(type, handler)
-      },
-      removeEventListener(type) {
-        moveListeners.delete(type)
-      },
-    }
-    const result = renderBrush(
-      { props: {} },
-      {
-        api: { notify },
-        entity: {
-          id: "brush-chart",
-          brush: {
-            enabled: true,
-            visible: true,
-            startIndex: 0,
-            endIndex: 2,
-            height: 30,
-          },
-          fullData: interactionEntity.data,
-          seriesKeys: ["value"],
-        },
-        interactionEntity,
-        scales: { plottedKeys: ["value"] },
-        dimensions: {
-          plotLeft: 40,
-          plotWidth: 320,
-          brushTop: 220,
-        },
-      },
-    )
-
-    const onPan = result.values[9]
-    onPan({
-      clientX: 100,
-      currentTarget: {
-        closest() {
-          return {
-            getBoundingClientRect() {
-              return { left: 0 }
-            },
-          }
-        },
-      },
-      preventDefault() {},
-      stopPropagation() {},
-      view: { document: doc },
-    })
-
-    moveListeners.get("mousemove")({ clientX: 160 })
-
-    expect(interactionEntity.brush.startIndex).toBeGreaterThanOrEqual(0)
-    expect(interactionEntity.brush.endIndex).toBeGreaterThan(2)
-    expect(notify).toHaveBeenCalledWith("#brush-chart:update")
-  })
-})
+  return doc
+}

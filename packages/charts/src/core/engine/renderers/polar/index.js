@@ -1,146 +1,115 @@
 /* eslint-disable no-magic-numbers */
 
 import { svg } from "@inglorious/web"
-import { unsafeSVG } from "@inglorious/web/directives/unsafe-svg"
 import { arc, pie as createPieLayout } from "d3-shape"
 
-import { hideTooltip, showTooltip } from "../overlays/tooltip.js"
+import { themeColor } from "../../theme.js"
+import { canShowTooltip, getTooltipBindings } from "../cartesian/shared.js"
 
-// Escapes text for safe inclusion in raw SVG markup.
-function escapeXml(value) {
-  return String(value)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-}
+const LABEL_COLOR = themeColor("text", "#0f172a")
+const SECONDARY_COLOR = themeColor("text-muted", "#64748b")
+const CONNECTOR_COLOR = themeColor("axis", "#94a3b8")
 
 export function renderPieSeries(primitive, frame) {
-  const { entity, scales } = frame
-  const dataKey = primitive.props?.dataKey || entity.dataKey
-  const nameKey = primitive.props?.nameKey || entity.nameKey
+  const { scales } = frame
+  const { slices, dataKey, nameKey } = createPieSlices(primitive, frame)
   const hasLabel = primitive.props?.hasLabel
   const labelPosition = primitive.props?.labelPosition || "outside"
-  const layout = createPieLayout()
-    .sort(null)
-    .value((row) => row?.[dataKey] ?? 0)(entity.data)
-  const total = layout.reduce((sum, slice) => sum + (slice.value || 0), 0)
+  const hasPercentage = primitive.props?.hasPercentage !== false
   const createArc = arc()
     .innerRadius(scales.innerRadius)
     .outerRadius(scales.outerRadius)
-  const innerLabelArc = arc()
-    .innerRadius((scales.innerRadius + scales.outerRadius) / 2)
-    .outerRadius((scales.innerRadius + scales.outerRadius) / 2)
-  const connectorArc = arc()
-    .innerRadius(scales.outerRadius)
-    .outerRadius(scales.outerRadius)
-  const outerLabelArc = arc()
-    .innerRadius(scales.outerRadius + 18)
-    .outerRadius(scales.outerRadius + 18)
+  const innerLabelArc = createLabelArc(
+    (scales.innerRadius + scales.outerRadius) / 2,
+  )
+  const connectorArc = createLabelArc(scales.outerRadius)
+  const outerLabelArc = createLabelArc(scales.outerRadius + 18)
 
   return svg`
     <g
       class="iw-chart-pie"
       transform="translate(${scales.centerX}, ${scales.centerY})"
     >
-      ${layout.map((slice, index) => {
-        const fill =
-          entity.data[index]?.color ||
-          entity.colors[index % entity.colors.length]
-        const label = entity.data[index]?.[nameKey] ?? entity.data[index]?.label
-        const value = entity.data[index]?.[dataKey] ?? 0
-        const percentage = getSlicePercentage(value, total)
-        const [insideLabelX, insideLabelY] = innerLabelArc.centroid(slice)
-        const [connectorStartX, connectorStartY] = connectorArc.centroid(slice)
-        const [connectorEndX, connectorEndY] = outerLabelArc.centroid(slice)
-        const labelOffsetX = connectorEndX >= 0 ? 14 : -14
-        const outsideLabelX = connectorEndX + labelOffsetX
-        const outsideLabelY = connectorEndY
+      ${slices.map((slice) => {
+        const { index, row, fill, label, percentage } = slice
+        const tooltip = getTooltipBindings(
+          frame,
+          primitive,
+          { index },
+          getPieTooltipText(row, nameKey, dataKey, percentage),
+        )
+        const [insideLabelX, insideLabelY] = innerLabelArc.centroid(slice.arc)
+        const [connectorStartX, connectorStartY] = connectorArc.centroid(
+          slice.arc,
+        )
+        const [connectorEndX, connectorEndY] = outerLabelArc.centroid(slice.arc)
+        const outsideLabelX = connectorEndX + (connectorEndX >= 0 ? 14 : -14)
         const textAnchor = connectorEndX >= 0 ? "start" : "end"
 
         return svg`
           <g>
-            <path d=${createArc(slice) || ""} fill=${fill}>
-              ${
-                !frame.entity.isTooltipEnabled && primitive.props?.hasTooltip
-                  ? svg`${unsafeSVG(`<title>${escapeXml(`${label}: ${value}`)}</title>`)}`
-                  : ""
-              }
-            </path>
             <path
-              d=${createArc(slice) || ""}
-              fill="transparent"
+              d=${createArc(slice.arc) || ""}
+              fill=${fill}
               pointer-events="all"
-              style="cursor: pointer;"
-              @mouseenter=${(event) =>
-                updatePolarTooltip(event, frame, {
-                  label,
-                  value,
-                  fill,
-                  percentage,
-                })}
-              @mousemove=${(event) =>
-                updatePolarTooltip(event, frame, {
-                  label,
-                  value,
-                  fill,
-                  percentage,
-                })}
-              @mouseleave=${(event) => clearPolarTooltip(event)}
-            />
+              style=${
+                canShowTooltip(primitive, frame)
+                  ? "cursor: pointer;"
+                  : undefined
+              }
+              @mouseenter=${tooltip.onEnter}
+              @mouseleave=${tooltip.onLeave}
+            >
+              ${tooltip.title}
+            </path>
             ${
-              hasLabel
-                ? labelPosition === "inside"
+              !hasLabel
+                ? ""
+                : labelPosition === "inside"
                   ? svg`
                       <text
                         x=${insideLabelX}
                         y=${insideLabelY}
-                        fill="#0f172a"
+                        style="fill: ${LABEL_COLOR}"
                         font-size="12"
                         text-anchor="middle"
                         dominant-baseline="middle"
                       >
-                        ${
-                          primitive.props?.hasPercentage === false
-                            ? label
-                            : `${label} ${percentage}`
-                        }
+                        ${hasPercentage ? `${label} ${percentage}` : label}
                       </text>
                     `
                   : svg`
                       <polyline
-                        points=${`${connectorStartX},${connectorStartY} ${connectorEndX},${connectorEndY} ${outsideLabelX},${outsideLabelY}`}
+                        points=${`${connectorStartX},${connectorStartY} ${connectorEndX},${connectorEndY} ${outsideLabelX},${connectorEndY}`}
                         fill="none"
-                        stroke="#94a3b8"
+                        style="stroke: ${CONNECTOR_COLOR}"
                         stroke-width="1.5"
                       />
                       <text
                         x=${outsideLabelX}
-                        y=${outsideLabelY}
-                        fill="#0f172a"
+                        y=${connectorEndY}
+                        style="fill: ${LABEL_COLOR}"
                         font-size="12"
                         text-anchor=${textAnchor}
-                        dominant-baseline="auto"
                       >
                         ${label}
                       </text>
                       ${
-                        primitive.props?.hasPercentage === false
-                          ? ""
-                          : svg`
+                        hasPercentage
+                          ? svg`
                               <text
                                 x=${outsideLabelX}
-                                y=${outsideLabelY + 14}
-                                fill="#64748b"
+                                y=${connectorEndY + 14}
+                                style="fill: ${SECONDARY_COLOR}"
                                 font-size="12"
                                 text-anchor=${textAnchor}
-                                dominant-baseline="auto"
                               >
                                 ${percentage}
                               </text>
                             `
+                          : ""
                       }
                     `
-                : ""
             }
           </g>
         `
@@ -156,7 +125,7 @@ export function renderCenterText(frame) {
       y=${frame.scales.centerY}
       text-anchor="middle"
       dominant-baseline="middle"
-      fill="#0f172a"
+      style="fill: ${LABEL_COLOR}"
       font-size="18"
       font-weight="600"
     >
@@ -165,33 +134,62 @@ export function renderCenterText(frame) {
   `
 }
 
-function updatePolarTooltip(event, frame, { label, fill, percentage }) {
-  if (!frame.entity?.isTooltipEnabled) return
+/**
+ * The tooltip for a hovered slice: where it points (the middle of the slice's
+ * edge) and what it says. Null when the slice is not drawn.
+ */
+export function getPieTooltip(frame, { index }) {
+  const primitive = frame.primitives.find((item) => item.type === "pie")
+  if (!primitive) return null
 
-  const svgEl = event.currentTarget?.closest?.("svg") || event.target
-  const svgRect = svgEl?.getBoundingClientRect?.()
-  if (!svgRect) return
+  const { slices, dataKey, nameKey } = createPieSlices(primitive, frame)
+  const slice = slices[index]
+  if (!slice) return null
 
-  const relativeX = event.clientX - svgRect.left
-  const relativeY = event.clientY - svgRect.top
-  const offset = 15
-  const x = Math.max(
-    0,
-    Math.min((frame.dimensions?.width ?? 0) - 140, relativeX + offset),
-  )
-  const y = Math.max(
-    0,
-    Math.min((frame.dimensions?.height ?? 0) - 56, relativeY - offset),
-  )
-
-  showTooltip(svgEl, x, y, label, percentage, fill)
+  const [x, y] = createLabelArc(frame.scales.outerRadius).centroid(slice.arc)
+  return {
+    anchor: { x: frame.scales.centerX + x, y: frame.scales.centerY + y },
+    color: slice.fill,
+    text: getPieTooltipText(slice.row, nameKey, dataKey, slice.percentage),
+  }
 }
 
-function clearPolarTooltip(event) {
-  hideTooltip(event?.currentTarget?.closest?.("svg"))
+function createPieSlices(primitive, frame) {
+  const { entity } = frame
+  const dataKey = primitive.props?.dataKey || entity.dataKey
+  const nameKey = primitive.props?.nameKey || entity.nameKey
+  const arcs = createPieLayout()
+    .sort(null)
+    .value((row) => (Number.isFinite(row?.[dataKey]) ? row[dataKey] : 0))(
+    entity.data,
+  )
+  const total = arcs.reduce((sum, slice) => sum + slice.value, 0)
+
+  const slices = arcs.map((sliceArc, index) => {
+    const row = entity.data[index]
+    return {
+      arc: sliceArc,
+      index,
+      row,
+      fill: row?.color || entity.colors[index % entity.colors.length],
+      label: row?.[nameKey] ?? row?.label,
+      percentage: total
+        ? `${Math.round((sliceArc.value / total) * 100)}%`
+        : "0%",
+    }
+  })
+
+  return { slices, dataKey, nameKey }
 }
 
-function getSlicePercentage(value, total) {
-  if (!total) return "0%"
-  return `${Math.round((value / total) * 100)}%`
+function getPieTooltipText(row, nameKey, dataKey, percentage) {
+  const value = row?.[dataKey]
+  return {
+    label: String(row?.[nameKey] ?? row?.label ?? ""),
+    value: value == null ? percentage : `${value} (${percentage})`,
+  }
+}
+
+function createLabelArc(radius) {
+  return arc().innerRadius(radius).outerRadius(radius)
 }

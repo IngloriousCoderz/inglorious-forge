@@ -24,9 +24,9 @@ describe("primitive factories", () => {
       type: "x-axis",
       props: { dataKey: "name" },
     })
-    expect(YAxis({ width: "auto" })).toEqual({
+    expect(YAxis()).toEqual({
       type: "y-axis",
-      props: { width: "auto" },
+      props: {},
     })
   })
 

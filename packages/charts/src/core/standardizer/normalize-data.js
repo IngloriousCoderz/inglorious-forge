@@ -1,21 +1,31 @@
 /* eslint-disable no-magic-numbers */
 
+import { DEFAULT_COLORS, DEFAULT_HEIGHT, DEFAULT_WIDTH } from "../defaults.js"
+
 export function createChartEntity(entity, requestedKeys) {
   const colors = resolveColors(entity.colors)
+  // A chart rendered without going through `create` may have no size.
+  const width = entity.width || DEFAULT_WIDTH
+  const height = entity.height || DEFAULT_HEIGHT
+  const padding = createPadding(entity.padding, width, height)
 
   if (entity.type === "pie" || entity.type === "donut") {
-    const pieData = createPieData(entity.data)
+    const dataKey = entity.dataKey || "value"
+    const nameKey = entity.nameKey || "label"
+    const pieData = createPieData(entity.data, dataKey, nameKey)
 
     return {
       ...entity,
+      width,
+      height,
       colors,
       data: pieData,
       fullData: pieData,
-      dataKey: entity.dataKey || "value",
-      nameKey: entity.nameKey || "label",
+      dataKey,
+      nameKey,
       seriesKeys: [],
       xKey: null,
-      padding: createPadding(entity.padding, entity.width, entity.height),
+      padding,
       isTooltipEnabled: entity.hasTooltip === true,
     }
   }
@@ -24,12 +34,14 @@ export function createChartEntity(entity, requestedKeys) {
 
   return {
     ...entity,
+    width,
+    height,
     colors,
     data: cartesianData.rows,
     fullData: cartesianData.rows,
     seriesKeys: cartesianData.seriesKeys,
     xKey: cartesianData.xKey,
-    padding: createPadding(entity.padding, entity.width, entity.height),
+    padding,
     isTooltipEnabled: entity.hasTooltip === true,
   }
 }
@@ -45,13 +57,16 @@ export function getDataKeys(primitives, configDataKeys) {
   return [...keys]
 }
 
-function createPieData(rawData) {
+// Keeps each row whole, so a pie primitive can read its own `dataKey`, and
+// fills in the label and value under the chart's keys.
+function createPieData(rawData, dataKey, nameKey) {
   if (!Array.isArray(rawData)) return []
 
   return rawData.map((row, index) => ({
-    label: row?.label ?? row?.name ?? `Slice ${index + 1}`,
-    value: Number.isFinite(row?.value) ? row.value : 0,
-    color: row?.color,
+    ...row,
+    [nameKey]:
+      row?.[nameKey] ?? row?.label ?? row?.name ?? `Slice ${index + 1}`,
+    [dataKey]: Number.isFinite(row?.[dataKey]) ? row[dataKey] : 0,
   }))
 }
 
@@ -150,17 +165,9 @@ function inferSeriesKeys(rows, xKey) {
 }
 
 function resolveColors(colors) {
-  const PALETTE = [
-    "#3b82f6",
-    "#8b5cf6",
-    "#10b981",
-    "#f59e0b",
-    "#ef4444",
-    "#06b6d4",
-    "#ec4899",
-    "#64748b",
-  ]
-  return Array.isArray(colors) && colors.length > 0 ? colors : [...PALETTE]
+  return Array.isArray(colors) && colors.length > 0
+    ? colors
+    : [...DEFAULT_COLORS]
 }
 
 function createPadding(padding, width, height) {
@@ -185,11 +192,13 @@ function createPadding(padding, width, height) {
   }
 }
 
+// A missing value stays missing, so a line breaks there instead of dropping
+// to zero.
 function resolveNumericValue(point) {
   if (Number.isFinite(point?.value)) return point.value
   if (Number.isFinite(point?.y)) return point.y
   if (Number.isFinite(point)) return point
-  return 0
+  return undefined
 }
 
 function hasPointShape(data) {

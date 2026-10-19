@@ -3,13 +3,13 @@ import { describe, expect, it } from "vitest"
 import { streamSlide } from "./stream-slide.js"
 
 describe("streamSlide", () => {
-  it("does nothing when the entity has no seeded data", () => {
+  it("starts a stream from no data", () => {
     const entity = { data: [] }
 
     streamSlide(entity, { value: 10 })
 
-    expect(entity.data).toEqual([])
-    expect(entity.streamIndex).toBe(undefined)
+    expect(entity.data).toEqual([{ name: "0", value: 10 }])
+    expect(entity.streamIndex).toBe(0)
   })
 
   it("appends a new point using the default stream keys", () => {

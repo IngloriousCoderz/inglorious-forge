@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest"
 
+import { resolveLegendItems } from "../cartesian/shared.js"
 import { renderLegend } from "./legend.js"
 
 describe("legend renderer", () => {
@@ -40,6 +41,7 @@ describe("legend renderer", () => {
         entity: {
           colors: ["#8884d8", "#82ca9d"],
         },
+        primitives: [],
         scales: {
           plottedKeys: ["productA", "productB"],
         },
@@ -53,5 +55,26 @@ describe("legend renderer", () => {
     const items = result.values.find(Array.isArray)
 
     expect(items).toHaveLength(2)
+  })
+
+  it("shows each series in the color it is drawn with", () => {
+    const items = resolveLegendItems(
+      { props: {} },
+      {
+        entity: { colors: ["#111111", "#222222", "#333333"] },
+        primitives: [
+          { type: "line", props: { dataKey: "revenue", stroke: "#ff0000" } },
+          { type: "bar", props: { dataKey: "cost", fill: "#00ff00" } },
+          { type: "area", props: { dataKey: "profit" } },
+        ],
+        scales: { plottedKeys: ["revenue", "cost", "profit"] },
+      },
+    )
+
+    expect(items.map((item) => item.color)).toEqual([
+      "#ff0000",
+      "#00ff00",
+      "#333333",
+    ])
   })
 })

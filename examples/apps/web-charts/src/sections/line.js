@@ -1,5 +1,15 @@
 import { html } from "@inglorious/web"
-import { Chart } from "@inglorious/charts"
+import {
+  Brush,
+  CartesianGrid,
+  Chart,
+  Dots,
+  Legend,
+  Line,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "@inglorious/charts"
 
 const inlineLineData = [
   { name: "0", value: 40 },
@@ -27,12 +37,12 @@ export function renderLineSections(api, status) {
             height: 400,
             dataKeys: ["value"],
             children: [
-              Chart.CartesianGrid(),
-              Chart.XAxis({ dataKey: "name" }),
-              Chart.YAxis(),
-              Chart.Line({ dataKey: "value", stroke: "#8884d8" }),
-              Chart.Dots({ dataKey: "value", fill: "#8884d8" }),
-              Chart.Tooltip(),
+              CartesianGrid(),
+              XAxis({ dataKey: "name" }),
+              YAxis(),
+              Line({ dataKey: "value", stroke: "#8884d8" }),
+              Dots({ dataKey: "value", fill: "#8884d8" }),
+              Tooltip(),
             ],
           },
           api,
@@ -50,12 +60,12 @@ export function renderLineSections(api, status) {
             height: 240,
             dataKeys: ["value"],
             children: [
-              Chart.CartesianGrid(),
-              Chart.XAxis({ dataKey: "name" }),
-              Chart.YAxis(),
-              Chart.Line({ dataKey: "value", stroke: "#2563eb" }),
-              Chart.Dots({ dataKey: "value", fill: "#2563eb" }),
-              Chart.Tooltip(),
+              CartesianGrid(),
+              XAxis({ dataKey: "name" }),
+              YAxis(),
+              Line({ dataKey: "value", stroke: "#2563eb" }),
+              Dots({ dataKey: "value", fill: "#2563eb" }),
+              Tooltip(),
             ],
           },
           api,
@@ -81,13 +91,13 @@ export function renderLineSections(api, status) {
             height: 400,
             dataKeys: ["value"],
             children: [
-              Chart.CartesianGrid(),
-              Chart.XAxis({ dataKey: "name" }),
-              Chart.YAxis(),
-              Chart.Line({ dataKey: "value", stroke: "#8884d8" }),
-              Chart.Dots({ dataKey: "value", fill: "#8884d8" }),
-              Chart.Tooltip(),
-              Chart.Brush(),
+              CartesianGrid(),
+              XAxis({ dataKey: "name" }),
+              YAxis(),
+              Line({ dataKey: "value", stroke: "#8884d8" }),
+              Dots({ dataKey: "value", fill: "#8884d8" }),
+              Tooltip(),
+              Brush(),
             ],
           },
           api,
@@ -113,46 +123,46 @@ export function renderLineSections(api, status) {
             height: 400,
             dataKeys: ["productA", "productB", "productC", "productD"],
             children: [
-              Chart.CartesianGrid(),
-              Chart.XAxis({ dataKey: "name" }),
-              Chart.YAxis(),
-              Chart.Line({
+              CartesianGrid(),
+              XAxis({ dataKey: "name" }),
+              YAxis(),
+              Line({
                 dataKey: "productA",
                 stroke: "#8884d8",
               }),
-              Chart.Line({
+              Line({
                 dataKey: "productB",
                 stroke: "#82ca9d",
               }),
-              Chart.Line({
+              Line({
                 dataKey: "productC",
                 stroke: "#ffc658",
               }),
-              Chart.Line({
+              Line({
                 dataKey: "productD",
                 stroke: "#ff8042",
               }),
-              Chart.Dots({
+              Dots({
                 dataKey: "productA",
                 fill: "#8884d8",
               }),
-              Chart.Dots({
+              Dots({
                 dataKey: "productB",
                 fill: "#82ca9d",
               }),
-              Chart.Dots({
+              Dots({
                 dataKey: "productC",
                 fill: "#ffc658",
               }),
-              Chart.Dots({
+              Dots({
                 dataKey: "productD",
                 fill: "#ff8042",
               }),
-              Chart.Legend({
+              Legend({
                 dataKeys: ["productA", "productB", "productC", "productD"],
                 colors: ["#8884d8", "#82ca9d", "#ffc658", "#ff8042"],
               }),
-              Chart.Tooltip(),
+              Tooltip(),
             ],
           },
           api,
@@ -221,13 +231,13 @@ export function renderLineSections(api, status) {
             height: 400,
             dataKeys: ["value"],
             children: [
-              Chart.CartesianGrid(),
-              Chart.XAxis({ dataKey: "name" }),
-              Chart.YAxis(),
-              Chart.Line({ dataKey: "value", stroke: "#2563eb" }),
-              Chart.Dots({ dataKey: "value", fill: "#2563eb" }),
-              Chart.Tooltip(),
-              ...(isRealtimeCompositionPaused ? [Chart.Brush()] : []),
+              CartesianGrid(),
+              XAxis({ dataKey: "name" }),
+              YAxis(),
+              Line({ dataKey: "value", stroke: "#2563eb" }),
+              Dots({ dataKey: "value", fill: "#2563eb" }),
+              Tooltip(),
+              ...(isRealtimeCompositionPaused ? [Brush()] : []),
             ],
           },
           api,

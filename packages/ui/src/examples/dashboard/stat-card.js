@@ -1,5 +1,5 @@
 import moreVertOutline from "@iconify-icons/material-symbols/more-vert-outline"
-import { Chart } from "@inglorious/charts"
+import { Area, Bar, Chart, Dots, Line } from "@inglorious/charts"
 import { html } from "@inglorious/web"
 
 import { Button } from "../../controls/button"
@@ -66,20 +66,16 @@ export const StatCard = {
     const children = []
 
     if (entity.chartType === "area") {
-      children.push(
-        Chart.Area({ dataKey: "value", fill: "rgba(255,255,255,0.3)" }),
-      )
+      children.push(Area({ dataKey: "value", fill: "rgba(255,255,255,0.3)" }))
     } else if (entity.chartType === "bar") {
-      children.push(
-        Chart.Bar({ dataKey: "value", fill: "rgba(255,255,255,0.3)" }),
-      )
+      children.push(Bar({ dataKey: "value", fill: "rgba(255,255,255,0.3)" }))
     } else if (entity.chartType === "line") {
-      children.push(Chart.Line({ dataKey: "value", stroke: "white" }))
+      children.push(Line({ dataKey: "value", stroke: "white" }))
     }
 
     if (entity.hasDots) {
       children.push(
-        Chart.Dots({ dataKey: "value", stroke: "white", fill: "#39a2f1" }),
+        Dots({ dataKey: "value", stroke: "white", fill: "#39a2f1" }),
       )
     }
 

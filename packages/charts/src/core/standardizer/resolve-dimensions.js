@@ -1,5 +1,11 @@
 /* eslint-disable no-magic-numbers */
 
+import {
+  DEFAULT_BRUSH_HEIGHT,
+  DEFAULT_HEIGHT,
+  DEFAULT_WIDTH,
+} from "../defaults.js"
+
 /**
  * Computes layout dimensions for the engine renderer.
  *
@@ -13,8 +19,8 @@
  * @returns {{width:number,height:number,padding:any,plotTop:number,plotRight:number,plotBottom:number,plotLeft:number,plotWidth:number,plotHeight:number,legendHeight:number,brushHeight:number,brushTop:number|null}}
  */
 export function createDimensions(entity, primitives) {
-  const width = entity.width || 800
-  const height = entity.height || 400
+  const width = entity.width || DEFAULT_WIDTH
+  const height = entity.height || DEFAULT_HEIGHT
   const hasLegend = primitives.some((primitive) => primitive.type === "legend")
   const brushPrimitive = primitives.find(
     (primitive) => primitive.type === "brush",
@@ -24,7 +30,9 @@ export function createDimensions(entity, primitives) {
     entity.brush?.visible !== false &&
     Boolean(brushPrimitive)
   const brushHeight = hasVisibleBrush
-    ? brushPrimitive?.props?.height || entity.brush?.height || 30
+    ? brushPrimitive?.props?.height ||
+      entity.brush?.height ||
+      DEFAULT_BRUSH_HEIGHT
     : 0
   const legendHeight = hasLegend ? 40 : 0
   const plotTop = entity.padding.top + legendHeight

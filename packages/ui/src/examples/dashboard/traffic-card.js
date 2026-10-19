@@ -1,5 +1,12 @@
 import downloadOutline from "@iconify-icons/material-symbols/download-outline"
-import { Chart } from "@inglorious/charts"
+import {
+  Area,
+  CartesianGrid,
+  Chart,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "@inglorious/charts"
 import { html } from "@inglorious/web"
 
 import { Button } from "../../controls/button"
@@ -94,15 +101,15 @@ export const TrafficCard = {
         height: 320,
         dataKeys: ["visits", "unique"],
         children: [
-          Chart.CartesianGrid({
+          CartesianGrid({
             stroke: "rgba(255,255,255,0.08)",
             strokeDasharray: "4 4",
           }),
-          Chart.XAxis({ dataKey: "month" }),
-          Chart.YAxis({ width: "auto" }),
-          Chart.Area({ dataKey: "visits", stroke: "#39a2f1", strokeWidth: 3 }),
-          Chart.Area({ dataKey: "unique", stroke: "#2eb85c", strokeWidth: 3 }),
-          Chart.Tooltip({}),
+          XAxis({ dataKey: "month" }),
+          YAxis(),
+          Area({ dataKey: "visits", stroke: "#39a2f1", strokeWidth: 3 }),
+          Area({ dataKey: "unique", stroke: "#2eb85c", strokeWidth: 3 }),
+          Tooltip({}),
         ],
       },
       api,

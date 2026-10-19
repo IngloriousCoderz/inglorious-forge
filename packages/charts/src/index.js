@@ -31,22 +31,26 @@ function renderChart(source, api) {
   return renderFrame(createFrameFromEntity(source, api))
 }
 
+// The chart type: its event handlers and render. The primitives are separate
+// exports, so the store does not take them for event handlers.
 export const Chart = {
   ...handlers,
   render(source, api) {
     return renderChart(source, api)
   },
-  CartesianGrid,
-  XAxis,
-  YAxis,
-  Line,
-  Area,
-  Bar,
-  Pie,
-  Dots,
-  Tooltip,
-  Legend,
-  Brush,
 }
 
-export { streamSlide }
+export {
+  Area,
+  Bar,
+  Brush,
+  CartesianGrid,
+  Dots,
+  Legend,
+  Line,
+  Pie,
+  streamSlide,
+  Tooltip,
+  XAxis,
+  YAxis,
+}

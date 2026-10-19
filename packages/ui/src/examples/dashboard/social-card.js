@@ -1,4 +1,4 @@
-import { Chart } from "@inglorious/charts"
+import { Area, Chart } from "@inglorious/charts"
 import { html } from "@inglorious/web"
 
 import { Divider } from "../../data-display/divider"
@@ -55,7 +55,7 @@ export const SocialCard = {
         height: 200,
         padding: 0,
         children: [
-          Chart.Area({
+          Area({
             dataKey: "value",
             stroke: "rgba(255,255,255,0.9)",
             fill: "rgba(255,255,255,0.35)",

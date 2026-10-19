@@ -1,5 +1,16 @@
 import { html } from "@inglorious/web"
-import { Chart } from "@inglorious/charts"
+import {
+  Area,
+  Bar,
+  CartesianGrid,
+  Chart,
+  Dots,
+  Legend,
+  Line,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "@inglorious/charts"
 
 const composedData = [
   { name: "Jan", revenue: 120, target: 80, forecast: 110 },
@@ -28,17 +39,17 @@ export function renderAreaSections(api) {
             height: 400,
             dataKeys: ["value"],
             children: [
-              Chart.CartesianGrid(),
-              Chart.XAxis({ dataKey: "name" }),
-              Chart.YAxis(),
-              Chart.Area({
+              CartesianGrid(),
+              XAxis({ dataKey: "name" }),
+              YAxis(),
+              Area({
                 dataKey: "value",
                 fill: "#8884d8",
                 fillOpacity: "0.6",
                 stroke: "#8884d8",
               }),
-              Chart.Dots({ dataKey: "value", fill: "#8884d8" }),
-              Chart.Tooltip({}),
+              Dots({ dataKey: "value", fill: "#8884d8" }),
+              Tooltip({}),
             ],
           },
           api,
@@ -60,10 +71,10 @@ export function renderAreaSections(api) {
             height: 400,
             data: composedData,
             children: [
-              Chart.CartesianGrid(),
-              Chart.XAxis({ dataKey: "name" }),
-              Chart.YAxis(),
-              Chart.Area({
+              CartesianGrid(),
+              XAxis({ dataKey: "name" }),
+              YAxis(),
+              Area({
                 dataKey: "revenue",
                 fill: "#8884d8",
                 fillOpacity: "0.3",
@@ -71,12 +82,12 @@ export function renderAreaSections(api) {
                 hasDots: true,
                 hasTooltip: true,
               }),
-              Chart.Bar({
+              Bar({
                 dataKey: "target",
                 fill: "#82ca9d",
                 hasTooltip: true,
               }),
-              Chart.Line({
+              Line({
                 dataKey: "forecast",
                 stroke: "#ff7300",
                 hasDots: true,
@@ -106,44 +117,44 @@ export function renderAreaSections(api) {
             height: 400,
             dataKeys: ["Revenue", "Expenses", "Profit"],
             children: [
-              Chart.CartesianGrid(),
-              Chart.XAxis({ dataKey: "name" }),
-              Chart.YAxis(),
-              Chart.Area({
+              CartesianGrid(),
+              XAxis({ dataKey: "name" }),
+              YAxis(),
+              Area({
                 dataKey: "Revenue",
                 fill: "#8884d8",
                 fillOpacity: "0.6",
                 stroke: "#8884d8",
               }),
-              Chart.Area({
+              Area({
                 dataKey: "Expenses",
                 fill: "#82ca9d",
                 fillOpacity: "0.6",
                 stroke: "#82ca9d",
               }),
-              Chart.Area({
+              Area({
                 dataKey: "Profit",
                 fill: "#ffc658",
                 fillOpacity: "0.6",
                 stroke: "#ffc658",
               }),
-              Chart.Dots({
+              Dots({
                 dataKey: "Revenue",
                 fill: "#8884d8",
               }),
-              Chart.Dots({
+              Dots({
                 dataKey: "Expenses",
                 fill: "#82ca9d",
               }),
-              Chart.Dots({
+              Dots({
                 dataKey: "Profit",
                 fill: "#ffc658",
               }),
-              Chart.Legend({
+              Legend({
                 dataKeys: ["Revenue", "Expenses", "Profit"],
                 colors: ["#8884d8", "#82ca9d", "#ffc658"],
               }),
-              Chart.Tooltip({}),
+              Tooltip({}),
             ],
           },
           api,
@@ -168,50 +179,50 @@ export function renderAreaSections(api) {
             height: 400,
             dataKeys: ["Revenue", "Expenses", "Profit"],
             children: [
-              Chart.CartesianGrid(),
-              Chart.XAxis({ dataKey: "name" }),
-              Chart.YAxis(),
-              Chart.Area({
+              CartesianGrid(),
+              XAxis({ dataKey: "name" }),
+              YAxis(),
+              Area({
                 dataKey: "Revenue",
                 fill: "#8884d8",
                 fillOpacity: "0.6",
                 stroke: "#8884d8",
                 stackId: "1",
               }),
-              Chart.Area({
+              Area({
                 dataKey: "Expenses",
                 fill: "#82ca9d",
                 fillOpacity: "0.6",
                 stroke: "#82ca9d",
                 stackId: "1",
               }),
-              Chart.Area({
+              Area({
                 dataKey: "Profit",
                 fill: "#ffc658",
                 fillOpacity: "0.6",
                 stroke: "#ffc658",
                 stackId: "1",
               }),
-              Chart.Dots({
+              Dots({
                 dataKey: "Revenue",
                 fill: "#8884d8",
                 stackId: "1",
               }),
-              Chart.Dots({
+              Dots({
                 dataKey: "Expenses",
                 fill: "#82ca9d",
                 stackId: "1",
               }),
-              Chart.Dots({
+              Dots({
                 dataKey: "Profit",
                 fill: "#ffc658",
                 stackId: "1",
               }),
-              Chart.Legend({
+              Legend({
                 dataKeys: ["Revenue", "Expenses", "Profit"],
                 colors: ["#8884d8", "#82ca9d", "#ffc658"],
               }),
-              Chart.Tooltip({}),
+              Tooltip({}),
             ],
           },
           api,

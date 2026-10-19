@@ -9,7 +9,7 @@ import {
 } from "./index.js"
 
 function createFrame() {
-  const xScale = scaleBand().domain(["Jan", "Feb"]).range([0, 200]).padding(0)
+  const xScale = scaleBand().domain([0, 1]).range([0, 200]).padding(0)
 
   return {
     entity: {
@@ -88,30 +88,26 @@ describe("cartesian renderers", () => {
     expect(rects).toHaveLength(2)
   })
 
-  it("wires runtime tooltip handlers for bars that opt in", () => {
+  it("wires tooltip events for bars that opt in, on a chart with an entity", () => {
     const result = renderBarSeries(
-      {
-        type: "bar",
-        props: {
-          dataKey: "revenue",
-          hasTooltip: true,
-        },
-      },
+      { type: "bar", props: { dataKey: "revenue", hasTooltip: true } },
       {
         ...createFrame(),
-        entity: {
-          ...createFrame().entity,
-          isTooltipEnabled: false,
-        },
+        entityId: "sales",
+        api: { notify() {} },
+        entity: { ...createFrame().entity, isTooltipEnabled: false },
       },
     )
 
     const rects = result.values.find(Array.isArray)
     const rectMarkup = String(rects[0].strings.join(""))
+    const handlers = rects[0].values.filter(
+      (value) => typeof value === "function",
+    )
 
     expect(rectMarkup).toContain("@mouseenter=")
-    expect(rectMarkup).toContain("@mousemove=")
     expect(rectMarkup).toContain("@mouseleave=")
+    expect(handlers).toHaveLength(2)
   })
 
   it("renders dots for each series point", () => {

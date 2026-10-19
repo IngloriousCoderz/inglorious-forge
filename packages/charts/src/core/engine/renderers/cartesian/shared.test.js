@@ -6,15 +6,16 @@ import {
   createSeriesPoints,
   getBarGroupWidth,
   getCategoryX,
+  getTooltipBindings,
+  getTooltipText,
   maximumValue,
   minimumValue,
   resolveLegendItems,
   resolveSeriesColor,
-  resolveTooltipTitle,
 } from "./shared.js"
 
 function createBaseFrame() {
-  const xScale = scaleBand().domain(["Jan", "Feb"]).range([0, 200]).padding(0)
+  const xScale = scaleBand().domain([0, 1]).range([0, 200]).padding(0)
 
   return {
     entity: {
@@ -44,10 +45,10 @@ function createBaseFrame() {
 
 describe("shared render helpers", () => {
   it("computes band centers and category positions", () => {
-    const xScale = scaleBand().domain(["Jan"]).range([0, 100]).padding(0)
+    const xScale = scaleBand().domain([0]).range([0, 100]).padding(0)
 
     expect(bandCenter(10, 20)).toBe(20)
-    expect(getCategoryX({ xScale }, "Jan")).toBe(50)
+    expect(getCategoryX({ xScale }, 0)).toBe(50)
   })
 
   it("returns band width for bar groups when using a band scale", () => {
@@ -94,25 +95,28 @@ describe("shared render helpers", () => {
     ])
   })
 
-  it("creates tooltip titles only when enabled", () => {
-    const enabled = resolveTooltipTitle(
-      { xKey: "name", isTooltipEnabled: true },
-      { props: {} },
-      { name: "Jan", revenue: 10 },
-      "revenue",
-    )
-    const disabled = resolveTooltipTitle(
-      { xKey: "name", isTooltipEnabled: false },
-      { props: {} },
+  it("uses a native <title> as tooltip on a chart without an entity", () => {
+    const frame = { ...createBaseFrame(), entityId: null }
+    const text = getTooltipText(
+      frame.entity,
       { name: "Jan", revenue: 10 },
       "revenue",
     )
 
+    const enabled = getTooltipBindings(frame, { props: {} }, { index: 0 }, text)
+    frame.entity = { ...frame.entity, isTooltipEnabled: false }
+    const disabled = getTooltipBindings(
+      frame,
+      { props: {} },
+      { index: 0 },
+      text,
+    )
+
     // The <title> markup lives in the unsafeSVG directive's values, not the template strings.
-    const titleMarkup = enabled.values[0].values[0]
-    expect(titleMarkup).toContain("<title>")
-    expect(titleMarkup).toContain("Jan: 10")
-    expect(disabled).toBe("")
+    const titleMarkup = enabled.title.values[0].values[0]
+    expect(titleMarkup).toBe("<title>Jan: 10</title>")
+    expect(enabled.onEnter).toBeUndefined()
+    expect(disabled).toEqual({ title: "" })
   })
 
   it("creates stacked series points for area stacks", () => {
@@ -137,5 +141,27 @@ describe("shared render helpers", () => {
 
     expect(maximumValue(rows, "value")).toBe(18)
     expect(minimumValue(rows, "value")).toBe(3)
+  })
+
+  it("leaves a gap for a missing value instead of drawing zero", () => {
+    const frame = createBaseFrame()
+    frame.entity.data = [{ name: "Jan", revenue: 10 }, { name: "Feb" }]
+
+    const points = createSeriesPoints({ props: { dataKey: "revenue" } }, frame)
+
+    expect(Number.isFinite(points[0].y)).toBe(true)
+    expect(points[1].y).toBeNaN()
+  })
+
+  it("places points by row, so rows sharing a label stay apart", () => {
+    const frame = createBaseFrame()
+    frame.entity.data = [
+      { name: "Mon", revenue: 1 },
+      { name: "Mon", revenue: 2 },
+    ]
+
+    const points = createSeriesPoints({ props: { dataKey: "revenue" } }, frame)
+
+    expect(points[0].x).not.toBe(points[1].x)
   })
 })

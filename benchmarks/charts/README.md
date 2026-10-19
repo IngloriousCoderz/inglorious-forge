@@ -1,148 +1,84 @@
 # Charts Benchmark: Inglorious Charts vs Recharts
 
-A performance benchmark comparing Inglorious Charts (Config and Composition modes) against Recharts.
+How much work each library does to keep a small live dashboard up to date: Recharts, and Inglorious Charts in its config and composition modes.
 
-## 🎯 What This Benchmarks
+## The workload
 
-A dashboard with **4 live-updating charts**:
+Four charts, 400 × 300 each:
 
-- **Line Chart** - 100 data points
-- **Area Chart** - 100 data points
-- **Bar Chart** - 100 data points
-- **Pie Chart** - 10 data points
+- a **line chart** of 100 points
+- an **area chart** of 100 points
+- a **bar chart** of 100 points
+- a **pie chart** of 10 slices
 
-**Update frequency:** 2 random charts updated every 100ms (10 updates/second)
+Every 100 ms, 2 random points of **each** chart change, and all four charts update together.
 
-This simulates real-world scenarios like monitoring dashboards, analytics panels, or live data visualization.
+All three implementations draw the same thing, so they do the same job:
 
-## 📊 Results
+- **The same data, in the same order**, from a seeded random generator (`src/shared/workload.js`).
+- **The same charts:** straight segments without dots, the same colors, stroke widths and fill opacity, a grid, both axes, tooltips on every chart, and a labelled pie. The x axes show only the labels that fit, as both libraries do by default.
+- **No animations.** Inglorious Charts does not animate, so Recharts' animations are turned off. Left on, they would also restart on every update, and keep the pie from ever showing.
+- **One render per update.** React batches the four state updates into one render; the Inglorious variants send one event that all four charts handle.
+- **The same update loop and frame counter** (`src/shared/harness.js`), in plain DOM outside both libraries, so neither re-renders to show its frame rate.
 
-Benchmark with **4 charts**, **100 data points each**, **100ms update interval** (10 updates/second):
+## Results
 
-| Implementation              | FPS (120Hz monitor) | Performance vs Recharts | Mental Overhead | Testability |
-| --------------------------- | ------------------- | ----------------------- | --------------- | ----------- |
-| 🚀 Inglorious (Config)      | **115-120 FPS**     | **+35% faster**         | Low             | Easy        |
-| 🚀 Inglorious (Composition) | **115-120 FPS**     | **+35% faster**         | Medium          | Easy        |
-| 📊 Recharts                 | **85-95 FPS**       | Baseline                | Low             | Hard        |
+Medians of 3 runs of 20 s each, after 3 s of warm-up, on a production build:
 
-### 🎯 Key Findings
+| Implementation           | Main thread per update | Scripting | Style + layout | FPS | JS heap after GC | JS bundle (gzip) |
+| ------------------------ | ---------------------- | --------- | -------------- | --- | ---------------- | ---------------- |
+| Recharts                 | 22.95 ms               | 19.61 ms  | 0.77 ms        | 60  | 9.9 MB           | 167.9 kB         |
+| Inglorious (config)      | 6.79 ms                | 3.16 ms   | 1.08 ms        | 60  | 2.5 MB           | 33.6 kB          |
+| Inglorious (composition) | 6.91 ms                | 3.14 ms   | 1.06 ms        | 60  | 2.5 MB           | 33.8 kB          |
 
-- **Inglorious Charts performs 35% better** than Recharts on high refresh rate monitors
-- Both Config and Composition modes achieve **near-maximum FPS** (120Hz monitor limit)
-- Recharts struggles to maintain consistent 60+ FPS, averaging **85-95 FPS**
-- Inglorious Charts maintains stable performance even with **4 simultaneous chart updates**
+Measured on an Apple M2 Pro, with Chrome 155 in headless mode and Node 22, on October 19, 2026.
 
-### Key Metrics to Measure
+- Recharts does **about 3.4 times the main-thread work** of Inglorious Charts for each update, nearly all of it JavaScript: about 20 ms against 3.
+- Inglorious Charts loads **about a fifth of the JavaScript** and uses **about a quarter of the memory**.
+- Config and composition modes cost the same: the difference between them is within run-to-run variation, and changes direction between runs.
+- All three keep up at this load, drawing 60 frames per second. The difference is how much of each update's budget is left for the rest of the app: at 10 updates a second, Recharts keeps the main thread busy about 23% of the time, Inglorious Charts about 7%.
 
-- **FPS (Frames Per Second)**: Rendering performance during updates
-- **Bundle Size**: JavaScript bundle size impact
-- **Memory Usage**: Memory consumption during runtime
-- **Initial Render Time**: Time to first paint
-- **Update Latency**: Time between data change and visual update
+Your numbers will differ with the hardware; the ratios are what to compare.
 
-## 🚀 Quick Start
+## What is measured
 
-### Prerequisites
+`pnpm bench` builds the pages for production, serves the build, and opens each one in Chrome. After a warm-up, it reads Chrome's own counters of main-thread work (the DevTools Protocol's `Performance.getMetrics`) at the start and end of a window, and divides by the number of updates in between:
+
+- **Main thread per update**: all the main-thread work done during the window (scripting, style, layout and the browser's own tasks), divided by the updates made in it. Lower means more room for the rest of the app, and less battery.
+- **Scripting**: the JavaScript part of it: the libraries, and the shared harness, which costs the same for all.
+- **Style + layout**: the browser recalculating styles and laying out the charts.
+- **FPS**: frames drawn per second. All implementations reach the display's rate at this load, so it does not tell them apart; it is there to show that none of them drops frames.
+- **JS heap after GC**: memory in use at the end, after a garbage collection.
+- **JS bundle (gzip)**: the JavaScript the page loads.
+
+Each page runs 3 times, and the table shows the medians. A run in which Chrome drew fewer than 50 frames per second is redone: Chrome was holding frames back, for example because the display went to sleep, and the run would leave part of the rendering out. On a Mac, `caffeinate -d pnpm bench` keeps the display awake.
+
+What this does **not** measure: the first render, interactions such as hovering for tooltips or dragging a brush, larger data sets, and painting, which happens off the main thread.
+
+## Running it
 
 ```bash
 pnpm install
+pnpm bench
 ```
 
-### Running the Benchmark
-
-1. Open `index.html`
-2. **Comment/uncomment** the script you want to test:
-
-```html
-<!-- Uncomment ONE of these: -->
-<!-- <script type="module" src="/src/inglorious-config/main.js"></script> -->
-<!-- <script type="module" src="/src/inglorious-composition/main.js"></script> -->
-<script type="module" src="/src/recharts/main.jsx"></script>
-```
-
-3. Start the dev server:
+It uses the installed Chrome, or Playwright's Chromium (`npx playwright install chromium`). `DURATION_MS` (default 20000), `WARMUP_MS` (default 3000) and `RUNS` (default 3) set the length of the measurement:
 
 ```bash
-pnpm dev
+RUNS=5 DURATION_MS=30000 pnpm bench
 ```
 
-4. Watch the **FPS counter** in the top-right corner
-5. Observe performance for at least 30 seconds to get stable readings
+To look at the charts, run `pnpm dev` and open the index page, which links to each implementation. Measure the build, not the dev server: React's development build is several times slower than its production build.
 
-### Building for Production
+## Earlier results
 
-```bash
-pnpm run build
-pnpm run preview
-```
+An earlier version of this benchmark reported Inglorious Charts 35% faster than Recharts, in frames per second. Those numbers were withdrawn:
 
-This builds optimized bundles for accurate production measurements.
+- they were measured on the dev server, so React ran its development build
+- Recharts animated every chart on every update
+- the implementations drew different charts
+- frames per second reach the display's rate and stop telling implementations apart
 
-## 📈 Measuring Performance
-
-### FPS Counter
-
-Each implementation includes a built-in FPS counter. Watch it for 30+ seconds to see stable performance.
-
-**Expected Results:**
-
-- **60Hz monitors**: Inglorious Charts ~60 FPS, Recharts ~51 FPS
-- **120Hz monitors**: Inglorious Charts 115-120 FPS, Recharts 85-95 FPS
-
-### Browser DevTools
-
-1. Open Chrome DevTools → Performance tab
-2. Click Record
-3. Let it run for 10-30 seconds
-4. Stop recording
-5. Analyze:
-   - **FPS chart**: Inglorious Charts should maintain higher FPS
-   - **Main thread activity**: Look for long tasks (Inglorious Charts should have fewer)
-   - **Memory**: Check for memory leaks (both should be stable)
-
-### Bundle Size
-
-```bash
-npm run build
-ls -lh dist/assets/*.js
-```
-
-Compare the JavaScript bundle sizes between implementations.
-
-## 🎓 What to Look For
-
-### Development Experience
-
-- **Smooth updates**: Charts should update without stuttering
-- **FPS stability**: Should maintain 60 FPS in dev mode
-- **No jank**: No visible lag or frame drops
-
-### Production Performance
-
-- **Bundle size**: Smaller is better (faster page loads)
-- **Memory efficiency**: Lower memory usage = better for long-running dashboards
-- **Update latency**: How quickly charts reflect data changes
-
-### Code Quality
-
-- **Simplicity**: Less code = easier to maintain
-- **Testability**: Can you easily test chart rendering?
-- **Flexibility**: Can you customize without fighting the library?
-
-## 🖥️ Hardware Used for Results
-
-Results above were measured on:
-
-- **Device:** Mac (high refresh rate monitor - 120Hz)
-- **Browser:** Chrome (latest)
-- **Node:** v[version] with Vite dev server
-- **OS:** macOS
-- **Monitor:** 120Hz refresh rate
-
-**Note:** On standard 60Hz monitors, Inglorious Charts consistently achieves **60 FPS** (the browser limit), while Recharts typically runs at **~51 FPS**. The advantage becomes more pronounced on high refresh rate displays.
-
-Your results may vary based on hardware. Test on multiple devices!
-
-## 📝 License
+## License
 
 MIT

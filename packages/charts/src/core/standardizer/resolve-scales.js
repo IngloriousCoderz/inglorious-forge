@@ -29,7 +29,8 @@ export function createScales(entity, primitives, dimensions) {
   }
 
   const rows = entity.data
-  const xDomain = rows.map((row, index) => `${row?.[entity.xKey] ?? index}`)
+  // Positions go by row, not by label: two rows may share a label.
+  const xDomain = rows.map((row, index) => index)
   const hasBars = primitives.some((primitive) => primitive.type === "bar")
   const xScale = hasBars
     ? scaleBand()

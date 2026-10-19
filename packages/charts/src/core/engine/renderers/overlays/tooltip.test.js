@@ -1,97 +1,74 @@
-import { describe, expect, it } from "vitest"
+import { describe, expect, it, vi } from "vitest"
 
-import { hideTooltip, showTooltip } from "./tooltip.js"
+import { createFrameFromEntity } from "../../../standardizer/index.js"
+import { getTooltipBindings } from "../cartesian/shared.js"
+import { renderTooltip } from "./tooltip.js"
 
-function createSvgStub() {
-  const state = {
-    transform: null,
-    display: null,
-    dotFill: null,
-    labelText: "",
-    valueText: "",
-  }
+const data = [
+  { name: "Jan", value: 10 },
+  { name: "Feb", value: 20 },
+]
 
-  const group = {
-    setAttribute(name, value) {
-      if (name === "transform") state.transform = value
-      if (name === "display") state.display = value
-    },
-    getAttribute(name) {
-      if (name === "transform") return state.transform
-      if (name === "display") return state.display
-      return null
-    },
-    querySelector(selector) {
-      if (selector === '[data-role="dot"]') {
-        return {
-          setAttribute(name, value) {
-            if (name === "fill") state.dotFill = value
-          },
-        }
-      }
-
-      if (selector === '[data-role="label"]') {
-        return {
-          set textContent(value) {
-            state.labelText = value
-          },
-          get textContent() {
-            return state.labelText
-          },
-        }
-      }
-
-      if (selector === '[data-role="value"]') {
-        return {
-          set textContent(value) {
-            state.valueText = value
-          },
-          get textContent() {
-            return state.valueText
-          },
-        }
-      }
-      return null
-    },
-  }
-
-  return {
-    state,
-    svgEl: {
-      inserted: false,
-      querySelector(selector) {
-        if (selector === ".iw-chart-modal-fallback" && this.inserted) {
-          return group
-        }
-
-        return null
-      },
-      insertAdjacentHTML() {
-        this.inserted = true
-      },
-    },
-  }
+function createFrame(entity, api = { notify: vi.fn() }) {
+  return createFrameFromEntity(
+    { id: "sales", type: "Line", width: 400, height: 200, data, ...entity },
+    api,
+  )
 }
 
-describe("tooltip runtime", () => {
-  it("shows tooltip content inside the svg", () => {
-    const { svgEl, state } = createSvgStub()
+describe("tooltip", () => {
+  it("dispatches tooltipShow and tooltipHide to the chart's entity", () => {
+    const api = { notify: vi.fn() }
+    const frame = createFrame({ hasTooltip: true }, api)
+    const line = frame.primitives.find((item) => item.type === "line")
 
-    showTooltip(svgEl, 10, 20, "Revenue", "60%", "#ff0000")
+    const tooltip = getTooltipBindings(
+      frame,
+      line,
+      { index: 1, dataKey: "value" },
+      { label: "Feb", value: "20" },
+    )
+    tooltip.onEnter()
+    tooltip.onLeave()
 
-    expect(state.transform).toBe("translate(10, 20)")
-    expect(state.display).toBe("inline")
-    expect(state.dotFill).toBe("#ff0000")
-    expect(state.labelText).toBe("Revenue")
-    expect(state.valueText).toBe("60%")
+    expect(api.notify.mock.calls).toEqual([
+      ["#sales:tooltipShow", { index: 1, dataKey: "value" }],
+      ["#sales:tooltipHide"],
+    ])
   })
 
-  it("hides tooltip content", () => {
-    const { svgEl, state } = createSvgStub()
+  it("has no bindings when the tooltip is off", () => {
+    const frame = createFrame({ hasTooltip: false })
+    const line = frame.primitives.find((item) => item.type === "line")
 
-    showTooltip(svgEl, 10, 20, "Revenue", 123, "#ff0000")
-    hideTooltip(svgEl)
+    expect(
+      getTooltipBindings(frame, line, { index: 0 }, { label: "", value: "" }),
+    ).toEqual({ title: "" })
+  })
 
-    expect(state.display).toBe("none")
+  it("draws nothing until a datum is hovered", () => {
+    expect(renderTooltip(createFrame({ hasTooltip: true }))).toBe("")
+  })
+
+  it("draws nothing for a datum that is gone", () => {
+    const frame = createFrame({
+      hasTooltip: true,
+      tooltip: { index: 5, dataKey: "value" },
+    })
+
+    expect(renderTooltip(frame)).toBe("")
+  })
+
+  it("stays inside the chart near its right edge", () => {
+    const frame = createFrame({
+      hasTooltip: true,
+      tooltip: { index: 1, dataKey: "value" },
+    })
+
+    // The template's first bindings: the translate's x and y, then the width.
+    const [x, , width] = renderTooltip(frame).values
+
+    expect(x).toBeGreaterThanOrEqual(0)
+    expect(x + width).toBeLessThanOrEqual(frame.dimensions.width)
   })
 })

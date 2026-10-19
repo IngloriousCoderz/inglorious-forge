@@ -22,6 +22,6 @@ Register `Chart` for each entity kind in the store (e.g. `Line: Chart`, `Area: C
 
 ### Composition
 
-Use the exported `Chart` helper (`Chart.render`, `Chart.XAxis`, `Chart.Tooltip`, etc.) for finer control.
+Use `Chart.render` with the exported primitives (`XAxis`, `Line`, `Tooltip`, etc.) for finer control.
 
 Both styles can coexist in the same app.

@@ -8,7 +8,7 @@ import { renderPieSection } from "./sections/pie.js"
 
 export const app = {
   render(api) {
-    const isPaused = (id) => Boolean(api.getEntity(id)?.realtime?.paused)
+    const isPaused = (id) => Boolean(api.getEntity(id)?.realtime?.isPaused)
     const status = {
       isRealtimeConfigPaused: isPaused("realtimeLineChartConfig"),
       isRealtimeCompositionPaused: isPaused("realtimeLineChart"),

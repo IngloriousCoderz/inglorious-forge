@@ -1,0 +1,311 @@
+import type { Api, TemplateResult } from "@inglorious/web"
+
+/**
+ * One row of chart data. Cartesian charts take any of these shapes:
+ * - rows with an x value (`name`, `label`, `date` or `x`) and one numeric
+ *   field per series: `{ name: "Jan", sales: 10, costs: 4 }`
+ * - points with a single value: `{ name: "Jan", value: 10 }`, `{ x: 0, y: 10 }`
+ *   or a bare number
+ * - one entry per series: `{ dataKey: "sales", values: [{ name: "Jan", value: 10 }] }`
+ *
+ * Pie and donut charts take slices: `{ label: "Apples", value: 10, color?: "#f00" }`.
+ */
+export type ChartDatum = Record<string, unknown> | number
+
+/** Space around the plot: the same on every side, or per side. */
+export type ChartPadding =
+  number | { top?: number; right?: number; bottom?: number; left?: number }
+
+/** A length in pixels, or a percentage of the chart as a string: `"50%"`. */
+export type ChartLength = number | string
+
+/** A value for an SVG presentation attribute, such as `strokeWidth`. */
+export type SvgNumber = number | string
+
+/** The visible window of the data, which a `Brush` lets the user drag. */
+export interface ChartBrush {
+  enabled?: boolean
+  /** Defaults to 30. */
+  height?: number
+  /** The first row in the window. Defaults to 0. */
+  startIndex?: number
+  /** The last row in the window. Defaults to the last row. */
+  endIndex?: number
+  /** Whether the brush itself is drawn. Defaults to true. */
+  visible?: boolean
+}
+
+/** One series of a `Composed` chart in config mode. */
+export interface ChartSeries {
+  kind: "line" | "area" | "bar"
+  dataKey: string
+  [prop: string]: unknown
+}
+
+/** What both a chart entity and composition props can configure. */
+export interface ChartConfig {
+  /** Names the chart for assistive tech. Defaults to its type: `"line chart"`. */
+  ariaLabel?: string
+  /** Defaults to 800. */
+  width?: number
+  /** Defaults to 400. */
+  height?: number
+  data?: ChartDatum[]
+  /** The series to plot. Inferred from the data when left out. */
+  dataKeys?: string[]
+  /** The series colors, in order. Defaults to a palette of eight. */
+  colors?: string[]
+  padding?: ChartPadding
+  /** Defaults to true. */
+  hasGrid?: boolean
+  /** Defaults to false. */
+  hasLegend?: boolean
+  /** Defaults to false. */
+  hasTooltip?: boolean
+  brush?: ChartBrush
+  /** Stacks the series of an area chart. */
+  stacked?: boolean
+  /** Draws a dot on each point of a line or area chart. Defaults to true for lines, false for areas. */
+  hasDots?: boolean
+  /** The series of a `Composed` chart. */
+  series?: ChartSeries[]
+
+  /** Pie and donut charts: the field with each slice's value. Defaults to `"value"`. */
+  dataKey?: string
+  /** Pie and donut charts: the field with each slice's label. Defaults to `"label"`. */
+  nameKey?: string
+  /** Pie and donut charts: labels the slices. */
+  hasLabel?: boolean
+  /** Donut charts: the text in the middle. A pie with it becomes a donut. */
+  centerText?: string
+  /** Pie and donut charts: the center. Defaults to `"50%"`. */
+  cx?: ChartLength
+  cy?: ChartLength
+  /** Pie and donut charts. Defaults to `"70%"`. */
+  outerRadius?: ChartLength
+  /** Pie and donut charts: a donut's hole. Defaults to 0. */
+  innerRadius?: ChartLength
+}
+
+/**
+ * A chart entity in config mode. Its `type` picks the chart: `"Line"`,
+ * `"Area"`, `"Bar"`, `"Composed"`, `"Pie"` or `"Donut"`, or a name containing
+ * one, such as `"LineRT"`.
+ */
+export interface ChartEntity extends ChartConfig {
+  id?: string
+  type: string
+  /** The hovered datum, set by `tooltipShow` and cleared by `tooltipHide`. */
+  tooltip?: ChartTooltipTarget | null
+  [key: string]: unknown
+}
+
+/** A hovered datum: its row, and the series it belongs to (none for a pie slice). */
+export interface ChartTooltipTarget {
+  index: number
+  dataKey?: string | null
+}
+
+/** The props of `Chart.render` in composition mode. */
+export interface ChartRenderProps extends ChartConfig {
+  /** The primitives to draw. The chart type is inferred from them. */
+  children: ChartPrimitive | ChartPrimitive[]
+  /**
+   * The id of the entity the chart reads its data from and keeps its state in:
+   * the brush window, the hovered datum. Required for a `Brush`. Without one,
+   * tooltips are the browser's own.
+   */
+  entity?: string
+  id?: string
+  /** Forces a chart type instead of inferring it from the children. */
+  type?: string
+  [key: string]: unknown
+}
+
+/** A building block of a composed chart, as the `Chart` factories return it. */
+export interface ChartPrimitive<
+  TType extends string = string,
+  TProps extends object = object,
+> {
+  type: TType
+  props: TProps
+}
+
+export interface CartesianGridProps {
+  /** Defaults to `"#e5e7eb"`. */
+  stroke?: string
+  /** Defaults to `"5 5"`. */
+  strokeDasharray?: string
+}
+
+export interface XAxisProps {
+  /** The field with the x values. Defaults to the data's x key. */
+  dataKey?: string
+  /** Turns each x value into its label. Defaults to `String`. */
+  tickFormatter?: (value: unknown) => string
+  /**
+   * How many labels to skip between the ones shown: 0 shows them all. By
+   * default, as many are shown as fit without overlapping, keeping the last.
+   */
+  interval?: number
+  /** The least space between labels, in pixels, when fitting them. Defaults to 5. */
+  minTickGap?: number
+}
+
+export interface YAxisProps {
+  /** Turns each tick value into its label. Defaults to thousands separators: `1,000`. */
+  tickFormatter?: (value: number) => string
+}
+
+/** What every series primitive shares. */
+interface SeriesProps {
+  /** The field to plot. */
+  dataKey?: string
+  /** Shows a tooltip for this series even when the chart has none. */
+  hasTooltip?: boolean
+}
+
+export interface LineProps extends SeriesProps {
+  stroke?: string
+  /** Defaults to 3. */
+  strokeWidth?: SvgNumber
+  hasDots?: boolean
+}
+
+export interface AreaProps extends SeriesProps {
+  fill?: string
+  stroke?: string
+  /** Defaults to 0.3. */
+  fillOpacity?: SvgNumber
+  /** Defaults to 3. */
+  strokeWidth?: SvgNumber
+  hasDots?: boolean
+  /** Areas with the same `stackId` stack on each other. */
+  stackId?: string
+}
+
+export interface BarProps extends SeriesProps {
+  fill?: string
+}
+
+export interface DotsProps extends SeriesProps {
+  fill?: string
+  stroke?: string
+  /** Defaults to 2. */
+  strokeWidth?: SvgNumber
+  /** The dots' radius. Defaults to 4. */
+  r?: SvgNumber
+  /** Places the dots on the areas with the same `stackId`. */
+  stackId?: string
+}
+
+export interface PieProps {
+  /** The field with each slice's value. */
+  dataKey?: string
+  /** The field with each slice's label. */
+  nameKey?: string
+  hasLabel?: boolean
+  /** Defaults to `"outside"`. */
+  labelPosition?: "inside" | "outside"
+  /** Whether labels show each slice's share. Defaults to true. */
+  hasPercentage?: boolean
+  hasTooltip?: boolean
+  cx?: ChartLength
+  cy?: ChartLength
+  outerRadius?: ChartLength
+  innerRadius?: ChartLength
+}
+
+export type TooltipProps = Record<string, never>
+
+export interface LegendProps {
+  /** The series to list. Defaults to the plotted ones. */
+  dataKeys?: string[]
+  /** Their colors, in order. Defaults to the series colors. */
+  colors?: string[]
+}
+
+export interface BrushProps {
+  /** The field labelling the brush. Defaults to the data's x key. */
+  dataKey?: string
+  height?: number
+}
+
+// A type alias rather than an interface, so `Chart` fits the store's `types`
+// without a cast.
+export type ChartType = {
+  /** Fills in the defaults of a chart entity. */
+  create(entity: ChartEntity): void
+  /** Replaces the chart's data. */
+  dataUpdate(entity: ChartEntity, data: ChartDatum[]): void
+  /** Resizes the chart, keeping the size it does not name. */
+  sizeUpdate(
+    entity: ChartEntity,
+    payload: { width?: number; height?: number },
+  ): void
+  /** Moves the brush window, kept within the data. */
+  brushChange(
+    entity: ChartEntity,
+    payload: { startIndex?: number; endIndex?: number },
+  ): void
+  /** Shows the tooltip of a hovered datum. */
+  tooltipShow(entity: ChartEntity, payload: ChartTooltipTarget): void
+  tooltipHide(entity: ChartEntity): void
+
+  /**
+   * Draws a chart. With `children`, composes it from primitives; without,
+   * draws an entity as configured.
+   */
+  render(source: ChartEntity | ChartRenderProps, api?: Api): TemplateResult
+}
+
+/**
+ * The chart type: register it for each chart entity's type
+ * (`types: { Line: Chart, Pie: Chart }`), or call `Chart.render` with
+ * primitives as `children`.
+ */
+export declare const Chart: ChartType
+
+export function CartesianGrid(
+  props?: CartesianGridProps,
+): ChartPrimitive<"cartesian-grid", CartesianGridProps>
+export function XAxis(props?: XAxisProps): ChartPrimitive<"x-axis", XAxisProps>
+export function YAxis(props?: YAxisProps): ChartPrimitive<"y-axis", YAxisProps>
+export function Line(props?: LineProps): ChartPrimitive<"line", LineProps>
+export function Area(props?: AreaProps): ChartPrimitive<"area", AreaProps>
+export function Bar(props?: BarProps): ChartPrimitive<"bar", BarProps>
+export function Pie(props?: PieProps): ChartPrimitive<"pie", PieProps>
+export function Dots(props?: DotsProps): ChartPrimitive<"dots", DotsProps>
+/** Turns on tooltips for every series. */
+export function Tooltip(
+  props?: TooltipProps,
+): ChartPrimitive<"tooltip", TooltipProps>
+export function Legend(
+  props?: LegendProps,
+): ChartPrimitive<"legend", LegendProps>
+/** A brush to choose the visible window of the data. Needs the chart's `entity`. */
+export function Brush(props?: BrushProps): ChartPrimitive<"brush", BrushProps>
+
+/** The fields a streamed chart keeps on its entity. */
+export interface StreamEntity extends ChartEntity {
+  /** The field the x values go in. Defaults to `"name"`. */
+  streamXKey?: string
+  /** The field the y values go in. Defaults to `"value"`. */
+  streamYKey?: string
+  /** The index of the last point added. */
+  streamIndex?: number
+  /** Writes x values as numbers rather than strings. */
+  streamIndexAsNumber?: boolean
+  /** The most points to keep. */
+  maxHistory?: number
+}
+
+/**
+ * Appends a point to a chart's data, dropping the oldest beyond `maxHistory`.
+ * The point is `payload.point`, or one built from `payload.value` at the next
+ * index.
+ */
+export function streamSlide(
+  entity: StreamEntity,
+  payload?: { point?: ChartDatum; value?: number; maxHistory?: number },
+): void

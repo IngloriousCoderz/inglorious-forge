@@ -15,6 +15,7 @@ import {
 } from "./renderers/cartesian/index.js"
 import { renderBrush } from "./renderers/overlays/brush.js"
 import { renderLegend } from "./renderers/overlays/legend.js"
+import { renderTooltip } from "./renderers/overlays/tooltip.js"
 import { renderCenterText, renderPieSeries } from "./renderers/polar/index.js"
 
 export function renderFrame(frame) {
@@ -28,7 +29,7 @@ export function renderFrame(frame) {
       height=${dimensions.height}
       viewBox="0 0 ${dimensions.width} ${dimensions.height}"
       role="img"
-      aria-label=${entity.id}
+      aria-label=${entity.ariaLabel || `${entity.type} chart`}
     >
       ${orderedPrimitives.map((primitive) => renderPrimitive(primitive, frame))}
       ${
@@ -36,6 +37,7 @@ export function renderFrame(frame) {
           ? renderCenterText(frame)
           : ""
       }
+      ${renderTooltip(frame)}
     </svg>
   `
 }

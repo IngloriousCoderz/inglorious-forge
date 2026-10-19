@@ -12,6 +12,7 @@ import {
   XAxis,
   YAxis,
 } from "../primitives/factories.js"
+import { DEFAULT_BRUSH_HEIGHT } from "./defaults.js"
 
 export const DEFAULT_PRIMITIVES = {
   line: buildDefaultLinePrimitives,
@@ -33,7 +34,11 @@ function buildDefaultLinePrimitives(entity) {
 
   entity.seriesKeys.forEach((dataKey, index) => {
     primitives.push(
-      Line({ dataKey, stroke: entity.colors[index], hasDots: true }),
+      Line({
+        dataKey,
+        stroke: entity.colors[index],
+        hasDots: entity.hasDots !== false,
+      }),
     )
   })
 
@@ -51,6 +56,7 @@ function buildDefaultAreaPrimitives(entity) {
         fill: entity.colors[index],
         fillOpacity: entity.stacked ? 0.45 : 0.3,
         stackId: entity.stacked ? "default-stack" : undefined,
+        hasDots: entity.hasDots === true,
       }),
     )
   })
@@ -135,7 +141,8 @@ function addSharedCartesianOverlays(primitives, entity) {
   const overlays = [
     entity.hasLegend !== false && entity.seriesKeys.length > 1 && Legend({}),
     entity.hasTooltip === true && Tooltip({}),
-    shouldShowBrush(entity) && Brush({ height: entity.brush.height || 30 }),
+    shouldShowBrush(entity) &&
+      Brush({ height: entity.brush.height || DEFAULT_BRUSH_HEIGHT }),
   ].filter(Boolean)
 
   primitives.push(...overlays)

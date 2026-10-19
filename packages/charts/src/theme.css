@@ -1,6 +1,14 @@
+/*
+ * The colors charts draw with besides their series. Override any of them on
+ * `.iw-chart`, or on an ancestor, to restyle charts: for a dark theme, say.
+ * With an Inglorious UI theme loaded, they follow its tokens.
+ */
 .iw-chart {
-  --iw-chart-axis: #cbd5e1;
-  --iw-chart-text: #475569;
-  --iw-chart-grid: #e2e8f0;
-  --iw-chart-surface: #ffffff;
+  --iw-chart-text: var(--iw-color-text, #0f172a);
+  --iw-chart-text-muted: var(--iw-color-text-muted, #64748b);
+  --iw-chart-axis: var(--iw-color-border, #cbd5e1);
+  --iw-chart-grid: var(--iw-color-border, #e5e7eb);
+  --iw-chart-surface: var(--iw-color-surface, #ffffff);
+  --iw-chart-border: var(--iw-color-border, #cbd5e1);
+  --iw-chart-accent: var(--iw-color-primary, #3b82f6);
 }

@@ -1,5 +1,5 @@
 import { html } from "@inglorious/web"
-import { Chart } from "@inglorious/charts"
+import { Chart, Pie } from "@inglorious/charts"
 
 export function renderDonutSection(api) {
   const inlineDonutDataA = [
@@ -29,14 +29,14 @@ export function renderDonutSection(api) {
             height: 400,
             centerText: "Total",
             children: [
-              Chart.Pie({
+              Pie({
                 dataKey: "value",
                 nameKey: "name",
                 cx: "50%",
                 cy: "50%",
                 outerRadius: 140,
                 innerRadius: 84,
-                label: true,
+                hasLabel: true,
               }),
             ],
           },
@@ -57,14 +57,14 @@ export function renderDonutSection(api) {
             hasTooltip: true,
             centerText: "Total",
             children: [
-              Chart.Pie({
+              Pie({
                 dataKey: "value",
                 nameKey: "name",
                 cx: "50%",
                 cy: "50%",
                 outerRadius: 90,
                 innerRadius: 54,
-                label: true,
+                hasLabel: true,
               }),
             ],
           },
@@ -83,14 +83,14 @@ export function renderDonutSection(api) {
             hasTooltip: true,
             centerText: "Total",
             children: [
-              Chart.Pie({
+              Pie({
                 dataKey: "value",
                 nameKey: "name",
                 cx: "50%",
                 cy: "50%",
                 outerRadius: 90,
                 innerRadius: 54,
-                label: true,
+                hasLabel: true,
               }),
             ],
           },

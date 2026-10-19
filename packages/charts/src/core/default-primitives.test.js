@@ -109,4 +109,25 @@ describe("default primitives", () => {
       "tooltip",
     ])
   })
+
+  it("turns a line's dots off, and an area's on, with hasDots", () => {
+    const BASE_ENTITY = {
+      xKey: "name",
+      seriesKeys: ["value"],
+      colors: ["#111111"],
+    }
+    const line = (entity) =>
+      DEFAULT_PRIMITIVES.line({ ...BASE_ENTITY, ...entity }).find(
+        (primitive) => primitive.type === "line",
+      )
+    const area = (entity) =>
+      DEFAULT_PRIMITIVES.area({ ...BASE_ENTITY, ...entity }).find(
+        (primitive) => primitive.type === "area",
+      )
+
+    expect(line({}).props.hasDots).toBe(true)
+    expect(line({ hasDots: false }).props.hasDots).toBe(false)
+    expect(area({}).props.hasDots).toBe(false)
+    expect(area({ hasDots: true }).props.hasDots).toBe(true)
+  })
 })

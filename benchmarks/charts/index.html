@@ -2,16 +2,28 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Charts Benchmark: Inglorious Charts vs Recharts</title>
     <link rel="stylesheet" href="/style.css" />
   </head>
   <body>
-    <div id="root"></div>
-    <!-- Uncomment ONE of these to test: -->
-    <script type="module" src="/src/recharts/main.jsx"></script>
-    <!-- <script type="module" src="/src/inglorious-config/main.js"></script> -->
-    <!-- <script type="module" src="/src/inglorious-composition/main.js"></script> -->
+    <div class="benchmark-container">
+      <h1 class="title">Charts Benchmark</h1>
+      <p>
+        The same four live charts in each implementation. Run
+        <code>pnpm bench</code> to measure them; see the README.
+      </p>
+      <ul>
+        <li><a href="/recharts.html">Recharts</a></li>
+        <li>
+          <a href="/inglorious-config.html">Inglorious Charts (config)</a>
+        </li>
+        <li>
+          <a href="/inglorious-composition.html">
+            Inglorious Charts (composition)
+          </a>
+        </li>
+      </ul>
+    </div>
   </body>
 </html>

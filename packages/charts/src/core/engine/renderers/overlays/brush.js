@@ -3,10 +3,12 @@
 import { svg } from "@inglorious/web"
 import { line as createLinePath } from "d3-shape"
 
-import { brushChange } from "../../../../handlers/chart-handlers.js"
+import { DEFAULT_BRUSH_HEIGHT } from "../../../defaults.js"
+import { themeColor } from "../../theme.js"
 import { maximumValue, minimumValue } from "../cartesian/shared.js"
 
-const DEFAULT_BRUSH_HEIGHT = 30
+const ACCENT = themeColor("accent", "#3b82f6")
+const HANDLE_BORDER = themeColor("surface", "#ffffff")
 
 export function renderBrush(primitive, frame) {
   const layout = getBrushLayout(primitive, frame)
@@ -27,13 +29,12 @@ export function renderBrush(primitive, frame) {
         y=${layout.brushY}
         width=${layout.brushAreaWidth}
         height=${layout.brushHeight}
-        fill="#f8fafc"
-        stroke="#cbd5e1"
+        style="fill: ${themeColor("surface", "#f8fafc")}; stroke: ${themeColor("border", "#cbd5e1")}"
       />
       <path
         d=${layout.previewPath(layout.previewPoints) || ""}
         fill="none"
-        stroke="#94a3b8"
+        style="stroke: ${themeColor("text-muted", "#94a3b8")}"
         stroke-width="1.5"
       />
       <rect
@@ -41,9 +42,8 @@ export function renderBrush(primitive, frame) {
         y=${layout.brushY}
         width=${layout.selectionWidth}
         height=${layout.brushHeight}
-        fill="rgba(59, 130, 246, 0.16)"
-        stroke="#3b82f6"
-        style="cursor: move;"
+        fill-opacity="0.16"
+        style="fill: ${ACCENT}; stroke: ${ACCENT}; cursor: move;"
         @mousedown=${onPan}
       />
       <rect
@@ -51,9 +51,7 @@ export function renderBrush(primitive, frame) {
         y=${layout.brushY}
         width="8"
         height=${layout.brushHeight}
-        fill="#3b82f6"
-        stroke="#ffffff"
-        style="cursor: ew-resize;"
+        style="fill: ${ACCENT}; stroke: ${HANDLE_BORDER}; cursor: ew-resize;"
         @mousedown=${onResizeLeft}
       />
       <rect
@@ -61,9 +59,7 @@ export function renderBrush(primitive, frame) {
         y=${layout.brushY}
         width="8"
         height=${layout.brushHeight}
-        fill="#3b82f6"
-        stroke="#ffffff"
-        style="cursor: ew-resize;"
+        style="fill: ${ACCENT}; stroke: ${HANDLE_BORDER}; cursor: ew-resize;"
         @mousedown=${onResizeRight}
       />
     </g>
@@ -172,7 +168,9 @@ function getBrushLayout(primitive, frame) {
     y:
       brushY +
       brushHeight -
-      (((row?.[dataKey] ?? 0) - previewMin) / previewRange) * brushHeight,
+      (((Number.isFinite(row?.[dataKey]) ? row[dataKey] : NaN) - previewMin) /
+        previewRange) *
+        brushHeight,
   }))
   const startRatio =
     entity.fullData.length > 1
@@ -198,6 +196,9 @@ function getBrushLayout(primitive, frame) {
   }
 }
 
+// Dragging dispatches brushChange to the chart's entity, once per change of
+// range. The range is computed from where the drag started, so the frames
+// rendered while dragging do not affect it.
 function createBrushMouseDownHandler(frame, layout, action) {
   return (event) => {
     event.preventDefault()
@@ -210,15 +211,14 @@ function createBrushMouseDownHandler(frame, layout, action) {
 
     const svgRect = svgElement.getBoundingClientRect()
     const startMouseX = event.clientX - svgRect.left
-    const brushEntity = getBrushEntity(frame)
-    const initialStartIndex = brushEntity.brush.startIndex
-    const initialEndIndex = brushEntity.brush.endIndex
+    const { startIndex, endIndex } = frame.entity.brush
+    let lastRange = { startIndex, endIndex }
 
     const handleMouseMove = (moveEvent) => {
       const currentMouseX = moveEvent.clientX - svgRect.left
       const nextRange = getBrushRangeAfterDrag({
-        startIndex: initialStartIndex,
-        endIndex: initialEndIndex,
+        startIndex,
+        endIndex,
         action,
         deltaX: currentMouseX - startMouseX,
         brushAreaWidth: layout.brushAreaWidth,
@@ -226,14 +226,14 @@ function createBrushMouseDownHandler(frame, layout, action) {
       })
 
       if (
-        nextRange.startIndex === brushEntity.brush.startIndex &&
-        nextRange.endIndex === brushEntity.brush.endIndex
+        nextRange.startIndex === lastRange.startIndex &&
+        nextRange.endIndex === lastRange.endIndex
       ) {
         return
       }
 
-      brushChange(brushEntity, nextRange)
-      notifyBrushUpdate(frame)
+      lastRange = nextRange
+      frame.api.notify(`#${frame.entityId}:brushChange`, nextRange)
     }
 
     const handleMouseUp = () => {
@@ -244,35 +244,4 @@ function createBrushMouseDownHandler(frame, layout, action) {
     doc.addEventListener("mousemove", handleMouseMove)
     doc.addEventListener("mouseup", handleMouseUp)
   }
-}
-
-function notifyBrushUpdate(frame) {
-  const brushEntity = getBrushEntity(frame)
-  if (!frame.api?.notify || !brushEntity?.id) return
-  frame.api.notify(`#${brushEntity.id}:update`)
-}
-
-function getBrushEntity(frame) {
-  const candidate = frame.interactionEntity
-
-  if (candidate && typeof candidate === "object") {
-    candidate.brush ??= {}
-    candidate.brush.enabled ??= true
-    candidate.brush.height ??=
-      frame.entity.brush?.height ?? DEFAULT_BRUSH_HEIGHT
-    candidate.brush.visible ??= frame.entity.brush?.visible ?? true
-    candidate.brush.startIndex ??= frame.entity.brush?.startIndex ?? 0
-    candidate.brush.endIndex ??=
-      frame.entity.brush?.endIndex ??
-      Math.max(
-        0,
-        (candidate.data?.length || frame.entity.fullData?.length || 1) - 1,
-      )
-    return candidate
-  }
-
-  frame.entity.brush ??= {}
-  frame.entity.brush.enabled ??= true
-  frame.entity.brush.height ??= DEFAULT_BRUSH_HEIGHT
-  return frame.entity
 }

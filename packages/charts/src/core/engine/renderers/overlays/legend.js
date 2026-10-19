@@ -2,6 +2,7 @@
 
 import { svg } from "@inglorious/web"
 
+import { themeColor } from "../../theme.js"
 import { resolveLegendItems } from "../cartesian/shared.js"
 
 export function renderLegend(primitive, frame) {
@@ -15,7 +16,12 @@ export function renderLegend(primitive, frame) {
         (item, index) => svg`
           <g transform="translate(${startX + index * 130}, ${y})">
             <circle cx="0" cy="0" r="5" fill=${item.color} />
-            <text x="12" y="4" fill="#475569" font-size="12">${item.label}</text>
+            <text
+              x="12"
+              y="4"
+              style="fill: ${themeColor("text-muted", "#475569")}"
+              font-size="12"
+            >${item.label}</text>
           </g>
         `,
       )}

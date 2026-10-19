@@ -1,7 +1,12 @@
 /* eslint-disable no-magic-numbers */
 
+/**
+ * Appends a point to the entity's data, dropping the oldest beyond
+ * `maxHistory`. The point is `payload.point`, or one built from
+ * `payload.value` at the next index.
+ */
 export function streamSlide(entity, payload = {}) {
-  if (!Array.isArray(entity.data) || entity.data.length === 0) return
+  if (!Array.isArray(entity.data)) entity.data = []
 
   const nextIndex = Number.isFinite(entity.streamIndex)
     ? entity.streamIndex + 1

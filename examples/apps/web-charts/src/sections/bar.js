@@ -1,5 +1,12 @@
 import { html } from "@inglorious/web"
-import { Chart } from "@inglorious/charts"
+import {
+  Bar,
+  CartesianGrid,
+  Chart,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "@inglorious/charts"
 
 export function renderBarSection(api) {
   return html`
@@ -17,13 +24,13 @@ export function renderBarSection(api) {
             width: 800,
             height: 400,
             children: [
-              Chart.CartesianGrid({
+              CartesianGrid({
                 strokeDasharray: "3 3",
               }),
-              Chart.XAxis({ dataKey: "label" }),
-              Chart.YAxis(),
-              Chart.Bar({ dataKey: "value" }),
-              Chart.Tooltip(),
+              XAxis({ dataKey: "label" }),
+              YAxis(),
+              Bar({ dataKey: "value" }),
+              Tooltip(),
             ],
           },
           api,
@@ -41,13 +48,13 @@ export function renderBarSection(api) {
             height: 400,
             padding: { top: 0, right: 0, bottom: 0, left: 0 },
             children: [
-              Chart.CartesianGrid({
+              CartesianGrid({
                 strokeDasharray: "3 3",
               }),
-              Chart.XAxis({ dataKey: "label" }),
-              Chart.YAxis(),
-              Chart.Bar({ dataKey: "value" }),
-              Chart.Tooltip(),
+              XAxis({ dataKey: "label" }),
+              YAxis(),
+              Bar({ dataKey: "value" }),
+              Tooltip(),
             ],
           },
           api,

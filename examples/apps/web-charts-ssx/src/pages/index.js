@@ -1,4 +1,11 @@
-import { Chart } from "@inglorious/charts"
+import {
+  Bar,
+  CartesianGrid,
+  Chart,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "@inglorious/charts"
 import { html } from "@inglorious/web"
 
 // Chart theme (plain CSS) — applies on the server-rendered page and after hydration.
@@ -68,11 +75,11 @@ export const Index = {
               width: 800,
               height: 400,
               children: [
-                Chart.CartesianGrid({ strokeDasharray: "3 3" }),
-                Chart.XAxis({ dataKey: "label" }),
-                Chart.YAxis(),
-                Chart.Bar({ dataKey: "value" }),
-                Chart.Tooltip(),
+                CartesianGrid({ strokeDasharray: "3 3" }),
+                XAxis({ dataKey: "label" }),
+                YAxis(),
+                Bar({ dataKey: "value" }),
+                Tooltip(),
               ],
             },
             api,

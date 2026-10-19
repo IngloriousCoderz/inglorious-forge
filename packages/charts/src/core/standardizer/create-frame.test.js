@@ -76,21 +76,25 @@ describe("standardizer", () => {
   })
 
   it("hides brush defaults and layout when brush is not visible", () => {
-    const frame = createFrameFromEntity({
-      type: "line",
-      width: 800,
-      height: 400,
-      data: [
-        { name: "Jan", value: 10 },
-        { name: "Feb", value: 20 },
-      ],
-      brush: {
-        enabled: true,
-        visible: false,
-        startIndex: 0,
-        endIndex: 1,
+    const frame = createFrameFromEntity(
+      {
+        id: "chart",
+        type: "line",
+        width: 800,
+        height: 400,
+        data: [
+          { name: "Jan", value: 10 },
+          { name: "Feb", value: 20 },
+        ],
+        brush: {
+          enabled: true,
+          visible: false,
+          startIndex: 0,
+          endIndex: 1,
+        },
       },
-    })
+      { notify() {} },
+    )
 
     expect(
       frame.primitives.some((primitive) => primitive.type === "brush"),
@@ -100,21 +104,25 @@ describe("standardizer", () => {
   })
 
   it("includes brush defaults and layout when brush is visible", () => {
-    const frame = createFrameFromEntity({
-      type: "line",
-      width: 800,
-      height: 400,
-      data: [
-        { name: "Jan", value: 10 },
-        { name: "Feb", value: 20 },
-      ],
-      brush: {
-        enabled: true,
-        visible: true,
-        startIndex: 0,
-        endIndex: 1,
+    const frame = createFrameFromEntity(
+      {
+        id: "chart",
+        type: "line",
+        width: 800,
+        height: 400,
+        data: [
+          { name: "Jan", value: 10 },
+          { name: "Feb", value: 20 },
+        ],
+        brush: {
+          enabled: true,
+          visible: true,
+          startIndex: 0,
+          endIndex: 1,
+        },
       },
-    })
+      { notify() {} },
+    )
 
     expect(
       frame.primitives.some((primitive) => primitive.type === "brush"),
@@ -123,8 +131,9 @@ describe("standardizer", () => {
     expect(frame.dimensions.brushTop).not.toBe(null)
   })
 
-  it("hydrates the interaction entity brush for composition charts", () => {
-    const source = {
+  it("gives a composition's brush a full window, without writing to the entity", () => {
+    const entity = Object.freeze({
+      id: "chart",
       type: "line",
       data: [
         { name: "Jan", value: 10 },
@@ -133,18 +142,23 @@ describe("standardizer", () => {
       ],
       width: 800,
       height: 400,
-      children: [{ type: "brush", props: {} }],
-    }
+    })
+    const api = { notify() {}, getEntity: () => entity }
 
-    const frame = createFrameFromRender(source)
+    const frame = createFrameFromRender(
+      { entity: "chart", children: [{ type: "brush", props: {} }] },
+      api,
+    )
 
-    expect(frame.interactionEntity.brush).toEqual({
+    expect(frame.entityId).toBe("chart")
+    expect(frame.entity.brush).toEqual({
       enabled: true,
       height: 30,
       startIndex: 0,
       endIndex: 2,
       visible: true,
     })
+    expect(entity.brush).toBeUndefined()
   })
 
   it("uses pie primitive radii for composition donut charts", () => {
@@ -171,5 +185,58 @@ describe("standardizer", () => {
 
     expect(frame.scales.outerRadius).toBe(140)
     expect(frame.scales.innerRadius).toBe(84)
+  })
+
+  it("lays out a chart that has no size, as one rendered without create", () => {
+    const frame = createFrameFromEntity({
+      type: "Line",
+      data: [
+        { name: "Jan", value: 10 },
+        { name: "Feb", value: 20 },
+      ],
+    })
+
+    expect(frame.entity.width).toBe(800)
+    expect(frame.entity.height).toBe(400)
+    expect(Object.values(frame.entity.padding).every(Number.isFinite)).toBe(
+      true,
+    )
+    expect(Number.isFinite(frame.dimensions.plotWidth)).toBe(true)
+  })
+
+  it("keeps a pie's own value and label fields", () => {
+    const frame = createFrameFromEntity({
+      type: "Pie",
+      width: 400,
+      height: 400,
+      dataKey: "amount",
+      nameKey: "fruit",
+      data: [
+        { fruit: "Apples", amount: 3 },
+        { fruit: "Pears", amount: 1 },
+      ],
+    })
+
+    expect(frame.entity.data).toEqual([
+      { fruit: "Apples", amount: 3 },
+      { fruit: "Pears", amount: 1 },
+    ])
+  })
+
+  it("places rows that share a label at their own positions", () => {
+    const frame = createFrameFromEntity({
+      type: "Line",
+      width: 800,
+      height: 400,
+      dataKeys: ["value"],
+      data: [
+        { name: "Mon", value: 1 },
+        { name: "Mon", value: 5 },
+        { name: "Tue", value: 2 },
+      ],
+    })
+    const xs = frame.entity.data.map((row, index) => frame.scales.xScale(index))
+
+    expect(new Set(xs).size).toBe(3)
   })
 })

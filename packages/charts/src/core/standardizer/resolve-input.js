@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 
-const DEFAULT_BRUSH_HEIGHT = 30
+import { DEFAULT_BRUSH_HEIGHT } from "../defaults.js"
 
 const SUPPORTED_CHART_TYPES = new Set([
   "donut",
@@ -12,28 +12,6 @@ const SUPPORTED_CHART_TYPES = new Set([
 ])
 
 const SUPPORTED_CHART_TYPE_TOKENS = [...SUPPORTED_CHART_TYPES]
-
-export function mergeEntityInput(source, config) {
-  return {
-    ...source,
-    ...config,
-    children: undefined,
-    data: config.data ?? source.data ?? [],
-    series: config.series ?? source.series,
-    brush: config.brush ?? source.brush,
-    width: config.width ?? source.width ?? 800,
-    height: config.height ?? source.height ?? 400,
-    hasGrid: config.hasGrid ?? source.hasGrid,
-    hasLegend: config.hasLegend ?? source.hasLegend,
-    hasTooltip: config.hasTooltip ?? source.hasTooltip,
-    hasLabel: config.hasLabel ?? source.hasLabel,
-    padding: config.padding ?? source.padding,
-    centerText: config.centerText ?? source.centerText,
-    stacked: config.stacked ?? source.stacked,
-    colors: config.colors ?? source.colors,
-    dataKeys: config.dataKeys ?? source.dataKeys,
-  }
-}
 
 export function getChartType(entity, primitives) {
   const normalizedType = getChartTypeAlias(entity.type)
@@ -126,20 +104,12 @@ export function getTooltipState(entity, primitives) {
     return true
   }
 
-  if (primitives.some((primitive) => primitive.props?.showTooltip === true)) {
-    return true
-  }
-
   return entity.hasTooltip === true
 }
 
 export function getPrimitives(children) {
   if (!children) return []
   return Array.isArray(children) ? children.filter(Boolean) : [children]
-}
-
-export function createStableId(entity, chartType) {
-  return `inline-chart-${chartType}-${entity.id || "anonymous"}`
 }
 
 export function isObject(value) {

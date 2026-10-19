@@ -1,166 +1,98 @@
 /* eslint-disable no-magic-numbers */
 
+import { DEFAULT_BRUSH_HEIGHT } from "../core/defaults.js"
 import { brushChange } from "../handlers/chart-handlers.js"
 import { streamSlide } from "../realtime/stream-slide.js"
 
-const STREAM_DEFAULTS = {
-  intervalMs: 1000,
-  visibleWindow: 30,
-  min: -80,
-  max: 220,
-  variation: 25,
-  currentValue: 220,
-  maxHistory: 2000,
-}
-const runtimeTypeTargets = new Set()
-const runtimeEntityTypes = new Map()
-let runtimeApi = null
-let runtimePulseId = null
+const DEFAULT_VISIBLE_WINDOW = 30
+const DEFAULT_MAX_HISTORY = 2000
 
+/**
+ * Makes a chart type follow a stream of data that the app pushes with
+ * `streamPush`. While live, the chart shows the latest `visibleWindow` points.
+ * Paused, it stays as it is and shows a brush to look back through it: points
+ * pushed meanwhile wait in `realtime.pending`, and join the data on play.
+ *
+ * Configured by the entity's `realtime`: `visibleWindow` (default 30) and
+ * `maxHistory` (default 2000), the most points kept.
+ *
+ * @param {object} chartType - Usually `Chart`.
+ * @returns {object} The chart type with the stream events.
+ */
 export function withRealtime(chartType) {
   return {
     ...chartType,
 
     create(entity, payload, api) {
       chartType.create?.(entity, payload, api)
+
+      entity.data ??= []
       entity.realtime ??= {}
-
-      ensureRealtimeSeed(entity)
-      registerRuntime(entity, api)
-      syncRealtimeWindow(entity, entity.realtime?.paused ? "paused" : "live")
+      entity.realtime.visibleWindow ??= DEFAULT_VISIBLE_WINDOW
+      entity.realtime.maxHistory ??= DEFAULT_MAX_HISTORY
+      entity.realtime.isPaused ??= false
+      entity.realtime.pending ??= []
+      showWindow(entity)
     },
 
-    destroy(entity, payload, api) {
-      chartType.destroy?.(entity, payload, api)
-      unregisterRuntime(entity)
-    },
+    /**
+     * Adds a point: a number, put at the next index, or a whole data point.
+     */
+    streamPush(entity, payload) {
+      const { realtime } = entity
 
-    streamTick(entity) {
-      if (!entity) return
-
-      ensureRealtimeSeed(entity)
-      const realtime = getRealtimeConfig(entity)
-      const now = Date.now()
-      const lastTickAt = entity.realtime.lastTickAt
-
-      if (Number.isFinite(lastTickAt) && now - lastTickAt < realtime.intervalMs)
-        return
-
-      entity.realtime.lastTickAt = now
-
-      if (entity.realtime.paused) {
-        syncRealtimeWindow(entity, "paused")
+      // A paused chart does not change; the point waits for play. Beyond
+      // maxHistory the oldest waiting points would be dropped on play anyway.
+      if (realtime.isPaused) {
+        realtime.pending.push(payload)
+        if (realtime.pending.length > realtime.maxHistory) {
+          realtime.pending.shift()
+        }
         return
       }
 
-      const delta = Math.round((Math.random() - 0.5) * realtime.variation * 2)
-      const currentValue = Number.isFinite(entity.realtime.currentValue)
-        ? entity.realtime.currentValue
-        : realtime.currentValue
-      const nextValue = Math.max(
-        realtime.min,
-        Math.min(realtime.max, currentValue + delta),
-      )
-
-      entity.realtime.currentValue = nextValue
-      streamSlide(entity, { value: nextValue, maxHistory: realtime.maxHistory })
-      syncRealtimeWindow(entity, "live")
+      addPoint(entity, payload)
+      showWindow(entity)
     },
 
     streamPause(entity) {
-      entity.realtime ??= {}
-      entity.realtime.paused = true
-      syncRealtimeWindow(entity, "paused")
+      entity.realtime.isPaused = true
+      showWindow(entity)
     },
 
     streamPlay(entity) {
-      entity.realtime ??= {}
-      entity.realtime.paused = false
-      syncRealtimeWindow(entity, "live")
+      const { realtime } = entity
+      realtime.isPaused = false
+      realtime.pending.forEach((payload) => addPoint(entity, payload))
+      realtime.pending = []
+      showWindow(entity)
     },
   }
 }
 
-function ensureRealtimeSeed(entity) {
-  const realtime = getRealtimeConfig(entity)
-
-  entity.streamXKey ??= "name"
-  entity.streamYKey ??= "value"
-  entity.maxHistory ??= realtime.maxHistory
-
-  if (Array.isArray(entity.data) && entity.data.length > 0) {
-    entity.streamIndex ??= entity.data.length - 1
-    entity.realtime.currentValue ??= realtime.currentValue
-    return
-  }
-
-  const visibleWindow = Math.max(1, realtime.visibleWindow)
-  entity.data = Array.from({ length: visibleWindow }, (_, index) => ({
-    [entity.streamXKey]: `${index}`,
-    [entity.streamYKey]: realtime.currentValue,
-  }))
-  entity.streamIndex = visibleWindow - 1
-  entity.realtime.currentValue = realtime.currentValue
+// A number goes at the next index; anything else is a whole data point.
+function addPoint(entity, payload) {
+  streamSlide(entity, {
+    ...(typeof payload === "number" ? { value: payload } : { point: payload }),
+    maxHistory: entity.realtime.maxHistory,
+  })
 }
 
-function syncRealtimeWindow(entity, mode) {
-  const realtime = getRealtimeConfig(entity)
-  entity.brush ??= { enabled: true, height: 30 }
+// Live, the brush is hidden and follows the newest points; paused, it shows
+// and stays where it is.
+function showWindow(entity) {
+  entity.brush ??= { height: DEFAULT_BRUSH_HEIGHT }
   entity.brush.enabled = true
+  entity.brush.visible = entity.realtime.isPaused
 
-  if (mode === "paused") {
-    entity.brush.visible = true
+  if (entity.realtime.isPaused && Number.isInteger(entity.brush.startIndex)) {
     return
   }
-
-  entity.brush.visible = false
 
   const endIndex = Math.max(0, entity.data.length - 1)
   const startIndex = Math.max(
     0,
-    endIndex - (Math.max(1, realtime.visibleWindow) - 1),
+    endIndex - Math.max(1, entity.realtime.visibleWindow) + 1,
   )
-
   brushChange(entity, { startIndex, endIndex })
-}
-
-function registerRuntime(entity, api) {
-  if (!entity?.id || !entity?.type || !api) return
-
-  runtimeEntityTypes.set(entity.id, entity.type)
-  runtimeTypeTargets.add(entity.type)
-  runtimeApi = api
-
-  if (runtimePulseId) return
-
-  runtimePulseId = setInterval(() => {
-    runtimeTypeTargets.forEach((type) => {
-      runtimeApi?.notify?.(`${type}:streamTick`)
-    })
-  }, 100)
-}
-
-function unregisterRuntime(entity) {
-  if (!entity?.id) return
-
-  const entityType = runtimeEntityTypes.get(entity.id)
-  if (!entityType) return
-
-  runtimeEntityTypes.delete(entity.id)
-
-  const hasRemainingType = Array.from(runtimeEntityTypes.values()).includes(
-    entityType,
-  )
-  if (!hasRemainingType) {
-    runtimeTypeTargets.delete(entityType)
-  }
-
-  if (runtimeTypeTargets.size > 0) return
-
-  clearInterval(runtimePulseId)
-  runtimePulseId = null
-}
-
-function getRealtimeConfig(entity) {
-  return { ...STREAM_DEFAULTS, ...(entity.realtime || {}) }
 }

@@ -1,8 +1,11 @@
 /* eslint-disable no-magic-numbers */
 
-const DEFAULT_BRUSH_HEIGHT = 30
-const DEFAULT_HEIGHT = 400
-const DEFAULT_WIDTH = 800
+import {
+  DEFAULT_BRUSH_HEIGHT,
+  DEFAULT_COLORS,
+  DEFAULT_HEIGHT,
+  DEFAULT_WIDTH,
+} from "../core/defaults.js"
 
 export function create(entity) {
   entity.width ??= DEFAULT_WIDTH
@@ -11,16 +14,7 @@ export function create(entity) {
   entity.hasGrid ??= true
   entity.hasLegend ??= false
   entity.hasTooltip ??= false
-  entity.colors ??= [
-    "#3b82f6",
-    "#8b5cf6",
-    "#10b981",
-    "#f59e0b",
-    "#ef4444",
-    "#06b6d4",
-    "#ec4899",
-    "#64748b",
-  ]
+  entity.colors ??= [...DEFAULT_COLORS]
 
   if (entity.brush?.enabled) {
     entity.brush.height ??= DEFAULT_BRUSH_HEIGHT
@@ -32,6 +26,7 @@ export function create(entity) {
 
 export function dataUpdate(entity, data) {
   entity.data = Array.isArray(data) ? data : []
+  entity.tooltip = null
 }
 
 export function sizeUpdate(entity, payload) {
@@ -53,4 +48,18 @@ export function brushChange(entity, payload) {
 
   entity.brush.startIndex = nextStart
   entity.brush.endIndex = nextEnd
+  // The hovered datum's index is within the window, which has moved.
+  entity.tooltip = null
+}
+
+/**
+ * Shows the tooltip of a hovered datum: its row `index`, and the `dataKey` of
+ * its series (none for a pie slice).
+ */
+export function tooltipShow(entity, payload) {
+  entity.tooltip = { index: payload.index, dataKey: payload.dataKey ?? null }
+}
+
+export function tooltipHide(entity) {
+  entity.tooltip = null
 }

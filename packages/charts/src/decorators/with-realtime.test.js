@@ -1,101 +1,97 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
+import { describe, expect, it } from "vitest"
 
+import { Chart } from "../index.js"
 import { withRealtime } from "./with-realtime.js"
 
+function createLiveChart(realtime = {}) {
+  const type = withRealtime(Chart)
+  const entity = { id: "live", type: "Line", realtime }
+  type.create(entity)
+  return { type, entity }
+}
+
 describe("withRealtime", () => {
-  beforeEach(() => {
-    vi.useFakeTimers()
-    vi.setSystemTime(new Date("2026-01-01T00:00:00.000Z"))
-  })
+  it("starts empty and live, with the brush hidden", () => {
+    const { entity } = createLiveChart()
 
-  afterEach(() => {
-    vi.useRealTimers()
-    vi.restoreAllMocks()
-  })
-
-  it("seeds realtime data and hides the brush while the stream is live", () => {
-    const type = withRealtime({
-      create(entity) {
-        entity.data ??= []
-      },
+    expect(entity.data).toEqual([])
+    expect(entity.realtime).toEqual({
+      visibleWindow: 30,
+      maxHistory: 2000,
+      isPaused: false,
+      pending: [],
     })
-    const entity = {
-      id: "chart-a",
-      type: "line",
-      realtime: { visibleWindow: 4, currentValue: 7 },
-      data: [],
-    }
-
-    type.create(entity)
-
-    expect(entity.data).toEqual([
-      { name: "0", value: 7 },
-      { name: "1", value: 7 },
-      { name: "2", value: 7 },
-      { name: "3", value: 7 },
-    ])
+    expect(entity.brush.enabled).toBe(true)
     expect(entity.brush.visible).toBe(false)
-    expect(entity.brush.startIndex).toBe(0)
-    expect(entity.brush.endIndex).toBe(3)
   })
 
-  it("shows the brush on pause and hides it again on play", () => {
-    const type = withRealtime({
-      create(entity) {
-        entity.data ??= []
-      },
-    })
-    const entity = {
-      id: "chart-b",
-      type: "line",
-      realtime: { visibleWindow: 3 },
-      data: [],
-    }
+  it("adds pushed values and follows the newest ones", () => {
+    const { type, entity } = createLiveChart({ visibleWindow: 2 })
 
-    type.create(entity)
+    type.streamPush(entity, 10)
+    type.streamPush(entity, 20)
+    type.streamPush(entity, 30)
+
+    expect(entity.data.map((point) => point.value)).toEqual([10, 20, 30])
+    expect(entity.brush.startIndex).toBe(1)
+    expect(entity.brush.endIndex).toBe(2)
+  })
+
+  it("adds a pushed point as it is", () => {
+    const { type, entity } = createLiveChart()
+
+    type.streamPush(entity, { time: "12:00", value: 5 })
+
+    expect(entity.data).toEqual([{ time: "12:00", value: 5 }])
+  })
+
+  it("does not change while paused, keeping pushed points for later", () => {
+    const { type, entity } = createLiveChart({ visibleWindow: 2 })
+    type.streamPush(entity, 10)
+    type.streamPush(entity, 20)
+
     type.streamPause(entity)
+    const pausedData = entity.data
+    const pausedBrush = { ...entity.brush }
+    type.streamPush(entity, 30)
+    type.streamPush(entity, { name: "x", value: 40 })
 
-    expect(entity.realtime.paused).toBe(true)
-    expect(entity.brush.visible).toBe(true)
+    expect(entity.data).toBe(pausedData)
+    expect(entity.data.map((point) => point.value)).toEqual([10, 20])
+    expect(entity.brush).toEqual({ ...pausedBrush, visible: true })
+    expect(entity.realtime.pending).toEqual([30, { name: "x", value: 40 }])
+  })
+
+  it("adds the points pushed while paused on play, and follows the newest", () => {
+    const { type, entity } = createLiveChart({ visibleWindow: 2 })
+    type.streamPush(entity, 10)
+    type.streamPause(entity)
+    type.streamPush(entity, 20)
+    type.streamPush(entity, 30)
 
     type.streamPlay(entity)
 
-    expect(entity.realtime.paused).toBe(false)
+    expect(entity.data.map((point) => point.value)).toEqual([10, 20, 30])
+    expect(entity.realtime.pending).toEqual([])
     expect(entity.brush.visible).toBe(false)
+    expect([entity.brush.startIndex, entity.brush.endIndex]).toEqual([1, 2])
   })
 
-  it("advances the stream only after the realtime interval elapses", () => {
-    vi.spyOn(Math, "random").mockReturnValue(1)
+  it("keeps at most maxHistory points waiting while paused", () => {
+    const { type, entity } = createLiveChart({ maxHistory: 2 })
+    type.streamPause(entity)
 
-    const type = withRealtime({
-      create(entity) {
-        entity.data ??= []
-      },
-    })
-    const entity = {
-      id: "chart-c",
-      type: "line",
-      realtime: {
-        visibleWindow: 2,
-        intervalMs: 1000,
-        currentValue: 100,
-        variation: 10,
-        maxHistory: 10,
-      },
-      data: [],
-    }
+    type.streamPush(entity, 1)
+    type.streamPush(entity, 2)
+    type.streamPush(entity, 3)
 
-    type.create(entity)
-    type.streamTick(entity)
-    const firstIndex = entity.streamIndex
+    expect(entity.realtime.pending).toEqual([2, 3])
+  })
 
-    type.streamTick(entity)
-    expect(entity.streamIndex).toBe(firstIndex)
+  it("runs no timers of its own", () => {
+    const { type } = createLiveChart()
 
-    vi.setSystemTime(new Date("2026-01-01T00:00:01.001Z"))
-    type.streamTick(entity)
-
-    expect(entity.streamIndex).toBe(firstIndex + 1)
-    expect(entity.realtime.currentValue).toBe(120)
+    expect(type.streamTick).toBeUndefined()
+    expect(type.destroy).toBe(Chart.destroy)
   })
 })

@@ -1,4 +1,12 @@
-import { Chart } from "@inglorious/charts"
+import {
+  CartesianGrid,
+  Chart,
+  Dots,
+  Line,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "@inglorious/charts"
 import { handleAsync } from "@inglorious/store/async"
 import { html } from "@inglorious/web"
 
@@ -109,12 +117,12 @@ export const AssetPage = {
                   height: 360,
                   dataKeys: ["value"],
                   children: [
-                    Chart.CartesianGrid({ stroke: "#334155" }),
-                    Chart.XAxis({ dataKey: "name" }),
-                    Chart.YAxis(),
-                    Chart.Line({ dataKey: "value", stroke: trendColor }),
-                    Chart.Dots({ dataKey: "value", fill: trendColor }),
-                    Chart.Tooltip(),
+                    CartesianGrid({ stroke: "#334155" }),
+                    XAxis({ dataKey: "name" }),
+                    YAxis(),
+                    Line({ dataKey: "value", stroke: trendColor }),
+                    Dots({ dataKey: "value", fill: trendColor }),
+                    Tooltip(),
                   ],
                 },
                 api,

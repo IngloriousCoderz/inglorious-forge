@@ -8,7 +8,15 @@ description: Build charts with reusable chart helper primitives.
 Composition mode gives control over chart internals.
 
 ```js
-import { Chart } from "@inglorious/charts"
+import {
+  CartesianGrid,
+  Chart,
+  Dots,
+  Line,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "@inglorious/charts"
 
 Chart.render(
   {
@@ -17,17 +25,19 @@ Chart.render(
     height: 400,
     dataKeys: ["value"],
     children: [
-      Chart.CartesianGrid({ stroke: "#eee", strokeDasharray: "5 5" }),
-      Chart.XAxis({ dataKey: "name" }),
-      Chart.YAxis({ width: "auto" }),
-      Chart.Line({ dataKey: "value", stroke: "#8884d8" }),
-      Chart.Dots({ dataKey: "value", fill: "#8884d8" }),
-      Chart.Tooltip({}),
+      CartesianGrid({ stroke: "#eee", strokeDasharray: "5 5" }),
+      XAxis({ dataKey: "name" }),
+      YAxis(),
+      Line({ dataKey: "value", stroke: "#8884d8" }),
+      Dots({ dataKey: "value", fill: "#8884d8" }),
+      Tooltip(),
     ],
   },
   api,
 )
 ```
+
+`entity` names the store entity the chart reads its data from and keeps its state in: the hovered datum, and the window of a `Brush`. A chart without one can still show tooltips, the browser's own, but cannot have a brush.
 
 ## Good fit
 

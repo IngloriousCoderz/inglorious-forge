@@ -1,4 +1,14 @@
-import { Chart } from "@inglorious/charts"
+import {
+  Area,
+  Bar,
+  Brush,
+  CartesianGrid,
+  Chart,
+  Line,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "@inglorious/charts"
 import { handleAsync } from "@inglorious/store/async"
 import { html } from "@inglorious/web"
 
@@ -201,18 +211,18 @@ export const DashboardPage = {
                     height: 340,
                     dataKeys: ["value"],
                     children: [
-                      Chart.CartesianGrid({ stroke: "#334155" }),
-                      Chart.XAxis({ dataKey: "name" }),
-                      Chart.YAxis(),
-                      Chart.Area({
+                      CartesianGrid({ stroke: "#334155" }),
+                      XAxis({ dataKey: "name" }),
+                      YAxis(),
+                      Area({
                         dataKey: "value",
                         fill: "#3b82f6",
                         fillOpacity: "0.1",
                         stroke: "none",
                       }),
-                      Chart.Line({ dataKey: "value", stroke: "#2563eb" }),
-                      Chart.Tooltip(),
-                      Chart.Brush({ dataKey: "name", height: 28 }),
+                      Line({ dataKey: "value", stroke: "#2563eb" }),
+                      Tooltip(),
+                      Brush({ dataKey: "name", height: 28 }),
                     ],
                   },
                   api,
@@ -272,11 +282,11 @@ export const DashboardPage = {
                     width: 640,
                     height: 270,
                     children: [
-                      Chart.CartesianGrid({ stroke: "#334155" }),
-                      Chart.XAxis({ dataKey: "label" }),
-                      Chart.YAxis(),
-                      Chart.Bar({ dataKey: "value" }),
-                      Chart.Tooltip(),
+                      CartesianGrid({ stroke: "#334155" }),
+                      XAxis({ dataKey: "label" }),
+                      YAxis(),
+                      Bar({ dataKey: "value" }),
+                      Tooltip(),
                     ],
                   },
                   api,

@@ -1,4 +1,4 @@
-import { StrictMode, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { createRoot } from "react-dom/client"
 import {
   Area,
@@ -6,6 +6,7 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
+  Cell,
   Line,
   LineChart,
   Pie,
@@ -15,138 +16,111 @@ import {
   YAxis,
 } from "recharts"
 
-import { generateChartData, updateChartData } from "../utils.js"
+import { runBenchmark } from "../shared/harness.js"
+import {
+  AREA_OPACITY,
+  CHART_HEIGHT,
+  CHART_WIDTH,
+  createWorkload,
+  GRID_COLOR,
+  GRID_DASHARRAY,
+  PIE_COLORS,
+  PIE_RADIUS,
+  SERIES_COLOR,
+  STROKE_WIDTH,
+} from "../shared/workload.js"
+
+// Set up to draw what Inglorious Charts draws: straight segments without dots,
+// the same colors, widths and labels. Animations are off: Inglorious Charts
+// does not animate, so they would only make Recharts do more on each update.
+
+const workload = createWorkload()
+
+const size = { width: CHART_WIDTH, height: CHART_HEIGHT }
+
+function Axes() {
+  return [
+    <CartesianGrid
+      key="grid"
+      stroke={GRID_COLOR}
+      strokeDasharray={GRID_DASHARRAY}
+    />,
+    <XAxis key="x" dataKey="name" />,
+    <YAxis key="y" />,
+    <Tooltip key="tooltip" />,
+  ]
+}
 
 function App() {
-  const [lineData, setLineData] = useState(generateChartData())
-  const [areaData, setAreaData] = useState(generateChartData())
-  const [barData, setBarData] = useState(generateChartData())
-  const [pieData, setPieData] = useState(
-    generateChartData(10).map((d) => ({
-      name: d.name,
-      value: d.value,
-    })),
-  )
-  const [fps, setFps] = useState(0)
+  const [datasets, setDatasets] = useState(workload.initial)
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setLineData((prev) => updateChartData(prev))
-      setAreaData((prev) => updateChartData(prev))
-      setBarData((prev) => updateChartData(prev))
-      setPieData((prev) =>
-        updateChartData(
-          prev.map((d) => ({
-            name: d.name,
-            value: d.value,
-          })),
-        ).map((d) => ({
-          name: d.name,
-          value: d.value,
-        })),
-      )
-    }, 100)
-
-    return () => clearInterval(interval)
-  }, [])
-
-  useEffect(() => {
-    let frameCount = 0
-    let lastTime = performance.now()
-    let lastDisplayedFps = 0
-
-    const countFPS = () => {
-      frameCount++
-      const now = performance.now()
-
-      if (now >= lastTime + 1000) {
-        const newFps = Math.round((frameCount * 1000) / (now - lastTime))
-        frameCount = 0
-        lastTime = now
-
-        // Only trigger re-render if FPS changed significantly (avoid unnecessary renders)
-        // This matches the optimization in Inglorious Charts benchmarks
-        if (Math.abs(newFps - lastDisplayedFps) >= 1) {
-          setFps(newFps)
-          lastDisplayedFps = newFps
-        }
-      }
-
-      requestAnimationFrame(countFPS)
-    }
-
-    const rafId = requestAnimationFrame(countFPS)
-    return () => cancelAnimationFrame(rafId)
-  }, [])
+  useEffect(() => runBenchmark(setDatasets, workload), [])
 
   return (
     <div className="benchmark-container">
-      <div className="header">
-        <h1 className="title">Recharts</h1>
-        <div className="metrics">
-          <div
-            className={`metric fps ${
-              fps < 30 ? "error" : fps < 60 ? "warning" : ""
-            }`}
-          >
-            FPS: {fps}
-          </div>
-        </div>
-      </div>
+      <h1 className="title">Recharts</h1>
       <div className="charts-grid">
         <div className="chart-container">
           <div className="chart-title">Line Chart</div>
-          <LineChart width={400} height={300} data={lineData}>
-            <CartesianGrid strokeDasharray="5 5" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
+          <LineChart {...size} data={datasets.line}>
+            {Axes()}
             <Line
-              type="monotone"
+              type="linear"
               dataKey="value"
-              stroke="#8884d8"
-              dot={{ r: 3 }}
+              stroke={SERIES_COLOR}
+              strokeWidth={STROKE_WIDTH}
+              dot={false}
+              isAnimationActive={false}
             />
           </LineChart>
         </div>
         <div className="chart-container">
           <div className="chart-title">Area Chart</div>
-          <AreaChart width={400} height={300} data={areaData}>
-            <CartesianGrid strokeDasharray="5 5" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
+          <AreaChart {...size} data={datasets.area}>
+            {Axes()}
             <Area
-              type="monotone"
+              type="linear"
               dataKey="value"
-              stroke="#8884d8"
-              fill="#8884d8"
-              fillOpacity={0.6}
-              dot={{ r: 3 }}
+              stroke={SERIES_COLOR}
+              fill={SERIES_COLOR}
+              fillOpacity={AREA_OPACITY}
+              strokeWidth={STROKE_WIDTH}
+              dot={false}
+              isAnimationActive={false}
             />
           </AreaChart>
         </div>
         <div className="chart-container">
           <div className="chart-title">Bar Chart</div>
-          <BarChart width={400} height={300} data={barData}>
-            <CartesianGrid strokeDasharray="5 5" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Bar dataKey="value" fill="#8884d8" />
+          <BarChart {...size} data={datasets.bar}>
+            {Axes()}
+            <Bar
+              dataKey="value"
+              fill={SERIES_COLOR}
+              isAnimationActive={false}
+            />
           </BarChart>
         </div>
         <div className="chart-container">
           <div className="chart-title">Pie Chart</div>
-          <PieChart width={400} height={300}>
+          <PieChart {...size}>
             <Pie
-              data={pieData}
+              data={datasets.pie}
               dataKey="value"
               nameKey="name"
-              cx="50%"
-              cy="50%"
-              outerRadius={80}
-            />
+              outerRadius={PIE_RADIUS}
+              label={({ name, percent }) =>
+                `${name} ${Math.round(percent * 100)}%`
+              }
+              isAnimationActive={false}
+            >
+              {datasets.pie.map((slice, index) => (
+                <Cell
+                  key={slice.name}
+                  fill={PIE_COLORS[index % PIE_COLORS.length]}
+                />
+              ))}
+            </Pie>
             <Tooltip />
           </PieChart>
         </div>
@@ -155,8 +129,4 @@ function App() {
   )
 }
 
-createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-)
+createRoot(document.getElementById("root")).render(<App />)

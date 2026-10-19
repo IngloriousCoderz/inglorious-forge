@@ -4,7 +4,6 @@ import { createChartEntity, getDataKeys } from "./normalize-data.js"
 import { createDimensions } from "./resolve-dimensions.js"
 import {
   applyBrushWindow,
-  createStableId,
   getChartType,
   getPrimitives,
   getTooltipState,
@@ -12,24 +11,18 @@ import {
 } from "./resolve-input.js"
 import { createScales } from "./resolve-scales.js"
 
+// Rendering only reads: the source, and the store entity behind it, are never
+// written to. What the user does on a chart (dragging its brush, hovering it)
+// reaches its entity as events, so a chart that keeps such state needs one.
+
 export function createFrameFromEntity(entity, api = null) {
-  return createFrame(entity, api)
+  return createFrame(entity, entity?.id ?? null, api)
 }
 
 export function createFrameFromRender(props, api = null) {
-  const source = isObject(props) ? { ...props } : {}
-  let interactionTarget = source
-
-  if (
-    typeof source.entity === "string" &&
-    typeof api?.getEntity === "function"
-  ) {
-    const resolved = api.getEntity(source.entity)
-    if (resolved) {
-      Object.assign(source, resolved, props)
-      interactionTarget = resolved
-    }
-  }
+  const source = isObject(props) ? props : {}
+  const entityId = typeof source.entity === "string" ? source.entity : null
+  const resolved = entityId ? api?.getEntity?.(entityId) : null
 
   const explicitPrimitives = getPrimitives(source.children)
   if (!Object.hasOwn(source, "children") || explicitPrimitives.length === 0) {
@@ -38,17 +31,14 @@ export function createFrameFromRender(props, api = null) {
     )
   }
 
-  const frame = createFrame(source, api)
-
-  if (interactionTarget !== frame.interactionEntity) {
-    frame.interactionEntity = interactionTarget
-    syncInteractionEntity(frame.interactionEntity, frame.entity)
-  }
-
-  return frame
+  return createFrame(
+    resolved ? { ...resolved, ...source } : source,
+    resolved ? entityId : null,
+    api,
+  )
 }
 
-function createFrame(source, api) {
+function createFrame(source, entityId, api) {
   const input = isObject(source) ? source : {}
   const explicitPrimitives = getPrimitives(input.children)
 
@@ -57,11 +47,7 @@ function createFrame(source, api) {
 
   const chartType = getChartType(input, explicitPrimitives)
   const chartEntity = createChartEntity(
-    {
-      ...input,
-      id: input.id || createStableId(input, chartType),
-      type: chartType,
-    },
+    { ...input, type: chartType },
     getDataKeys(explicitPrimitives, input.dataKeys),
   )
 
@@ -74,28 +60,23 @@ function createFrame(source, api) {
     primitives,
     isTooltipEnabled,
   )
-  const dimensions = createDimensions(filteredEntity, primitives)
 
-  syncInteractionEntity(input, filteredEntity)
+  // Events need an entity to reach, and an api to send them with.
+  const isInteractive = Boolean(entityId && api?.notify)
+  if (filteredEntity.brush?.enabled && !isInteractive) {
+    throw new Error(
+      '[charts] A chart with a brush needs an entity to keep the brush\'s state: pass `entity: "<id>"` and `api` to Chart.render, or render it with api.render(id).',
+    )
+  }
+
+  const dimensions = createDimensions(filteredEntity, primitives)
 
   return {
     api,
     entity: filteredEntity,
-    interactionEntity: input,
+    entityId: isInteractive ? entityId : null,
     primitives,
     dimensions,
     scales: createScales(filteredEntity, primitives, dimensions),
-  }
-}
-
-function syncInteractionEntity(source, filteredEntity) {
-  if (!isObject(source)) return
-
-  // Brush overlay dispatches `#id:update`, so interaction state must carry
-  // the resolved chart id even for inline composition sources.
-  source.id ??= filteredEntity.id
-
-  if (filteredEntity.brush) {
-    source.brush = { ...filteredEntity.brush, ...source.brush }
   }
 }

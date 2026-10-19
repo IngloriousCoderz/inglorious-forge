@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/charts",
-  "version": "10.0.7",
+  "version": "11.0.0",
   "description": "Chart components for Inglorious Web, inspired by Recharts",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "contributors": [
@@ -28,16 +28,19 @@
   "type": "module",
   "exports": {
     ".": {
+      "types": "./types/index.d.ts",
       "import": "./src/index.js"
     },
     "./realtime": {
+      "types": "./types/realtime.d.ts",
       "import": "./src/decorators/with-realtime.js"
     },
     "./base.css": "./src/base.css",
     "./theme.css": "./src/theme.css"
   },
   "files": [
-    "src"
+    "src",
+    "types"
   ],
   "publishConfig": {
     "access": "public"
@@ -61,6 +64,7 @@
   },
   "devDependencies": {
     "@inglorious/eslint-config": "workspace:*",
+    "@lit-labs/ssr": "^4.1.0",
     "prettier": "^3.9.6",
     "vite": "^8.2.2",
     "vitest": "^5.0.0"

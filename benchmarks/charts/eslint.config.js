@@ -33,4 +33,8 @@ export default [
       "react-refresh/only-export-components": "off", // Benchmark files don't need fast refresh
     },
   },
+  {
+    files: ["scripts/**/*.js"],
+    languageOptions: { ecmaVersion: "latest", globals: globals.node },
+  },
 ]
