@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/ui",
-  "version": "8.2.0",
+  "version": "8.2.1",
   "description": "A design system for Inglorious Web with render-function components and customizable themes",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -332,6 +332,7 @@
     "happy-dom": "^20.14.0",
     "jsdom": "^30.0.1",
     "prettier": "^3.9.6",
+    "remark-gfm": "^4.0.1",
     "storybook": "^10.6.0",
     "vite": "^8.2.2",
     "vitest": "^5.0.0"

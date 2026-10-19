@@ -1,5 +1,11 @@
 # @inglorious/ui
 
+## 8.2.1
+
+### Patch Changes
+
+- `VirtualList` no longer freezes the page when it mounts. It measured its first item in a microtask on every render, and measuring re-renders, so a list not yet in the document looped forever; it then measured 0 and rendered every item. It now measures once, after a frame and once the list is in the document, and keeps its estimated height when it measures 0.
+
 ## 8.2.0
 
 ### Minor Changes

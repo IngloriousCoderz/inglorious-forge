@@ -131,6 +131,17 @@ describe("virtualList", () => {
       expect(entity).toEqual(snapshot)
     })
 
+    it("should keep the estimate if the list is not laid out yet", () => {
+      VirtualList.create(entity)
+      const snapshot = { ...entity }
+
+      VirtualList.mount(entity, {
+        querySelector: () => ({ offsetHeight: 0 }),
+      })
+
+      expect(entity).toEqual(snapshot)
+    })
+
     it("should overwrite itemHeight when mounting", () => {
       VirtualList.create(entity)
       entity.itemHeight = 42

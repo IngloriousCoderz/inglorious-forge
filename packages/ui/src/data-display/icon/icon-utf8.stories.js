@@ -9,7 +9,7 @@ import {
 } from "../../stories/notifyStory.js"
 import { Icon } from "."
 
-const unicodeList = {
+const UnicodeList = {
   ...VirtualList,
 
   create(entity) {
@@ -38,7 +38,7 @@ const unicodeList = {
   render(entity, api) {
     return VirtualList.render(entity, {
       ...api,
-      getType: () => unicodeList,
+      getType: () => UnicodeList,
     })
   },
 
@@ -88,7 +88,7 @@ const unicodeList = {
 
 export default {
   title: "Data Display/Icon",
-  render: createEntityRender({ unicodeList }),
+  render: createEntityRender({ UnicodeList }),
   argTypes: {
     ...notifyActionArgType,
     start: {

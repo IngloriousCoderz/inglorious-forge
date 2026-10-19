@@ -11,6 +11,31 @@ import { styleMap } from "@inglorious/web/directives/style-map"
 
 const PRETTY_INDEX = 1
 
+// The list elements already being measured. Every update re-renders, and
+// measuring is an update, so measuring on each render would loop forever.
+const measured = new WeakSet()
+
+/**
+ * Notifies `mount` once per list element, after a frame and once it is in the
+ * document: before that it has no layout to measure.
+ * @param {HTMLElement} el
+ * @param {VirtualListEntity} entity
+ * @param {Api} api
+ */
+function measureOnce(el, entity, api) {
+  if (measured.has(el)) return
+  measured.add(el)
+
+  const measure = () => {
+    if (!el.isConnected) {
+      requestAnimationFrame(measure)
+      return
+    }
+    api.notify(`#${entity.id}:mount`, el)
+  }
+  requestAnimationFrame(measure)
+}
+
 /**
  * Renders a virtualized list that only mounts visible items for performance.
  * Uses item height estimates to compute scroll ranges and notifies on mount/scroll.
@@ -49,11 +74,7 @@ export function render(entity, api) {
       style=${styleMap({ height: `${viewportHeight}px`, overflow: "auto" })}
       @scroll=${(e) => api.notify(`#${entity.id}:scroll`, e.currentTarget)}
       ${ref((el) => {
-        if (el && !itemHeight) {
-          queueMicrotask(() => {
-            api.notify(`#${entity.id}:mount`, el)
-          })
-        }
+        if (el && !itemHeight) measureOnce(el, entity, api)
       })}
     >
       <div

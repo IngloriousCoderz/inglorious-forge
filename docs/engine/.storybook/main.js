@@ -1,6 +1,7 @@
 /** @typedef {import('@storybook/react-vite').StorybookConfig} StorybookConfig */
 
 import { dirname } from "path"
+import remarkGfm from "remark-gfm"
 import { fileURLToPath } from "url"
 
 /**
@@ -23,7 +24,13 @@ const config = {
     getAbsolutePath("@chromatic-com/storybook"),
     getAbsolutePath("@storybook/addon-vitest"),
     getAbsolutePath("@storybook/addon-a11y"),
-    getAbsolutePath("@storybook/addon-docs"),
+    {
+      name: getAbsolutePath("@storybook/addon-docs"),
+      // GitHub Flavored Markdown, for the tables in MDX docs.
+      options: {
+        mdxPluginOptions: { mdxCompileOptions: { remarkPlugins: [remarkGfm] } },
+      },
+    },
   ],
 
   framework: getAbsolutePath("@storybook/react-vite"),

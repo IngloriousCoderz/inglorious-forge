@@ -45,12 +45,17 @@ export function scroll(entity, containerEl) {
  */
 export function mount(entity, containerEl) {
   const firstItem = containerEl.querySelector("[data-index]")
-  if (!firstItem) return
+  // A list not laid out yet, such as one rendered into a detached element,
+  // measures 0: keep the estimate, and measure again on a later render.
+  if (!firstItem?.offsetHeight) return
 
   entity.itemHeight = firstItem.offsetHeight
   entity.visibleRange = {
     start: 0,
-    end: Math.ceil(entity.viewportHeight / entity.itemHeight),
+    end: Math.min(
+      Math.ceil(entity.viewportHeight / entity.itemHeight),
+      entity.items?.length ?? Infinity,
+    ),
   }
 }
 
