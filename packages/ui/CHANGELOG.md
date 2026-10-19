@@ -1,5 +1,11 @@
 # @inglorious/ui
 
+## 8.2.4
+
+### Patch Changes
+
+- Fix UI list item spacings
+
 ## 8.2.3
 
 ### Patch Changes

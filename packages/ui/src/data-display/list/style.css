@@ -42,21 +42,12 @@
     color 0.15s ease;
 }
 
-/* The leading icon is an Icon of size lg, which fixes its own width and
-   height. Its spacing therefore goes outside it, as margin: padding on the
-   same element fought that fixed size, and under border-box it ate the box,
-   leaving 32px of padding around a glyph that overflowed. */
 .iw-list-item-icon {
-  margin: var(--iw-list-icon-spacing, var(--iw-space-4));
+  padding: var(--iw-space-1);
 }
 
-/* An item without an icon lines its text up with the items that have one:
-   the icon, the margin either side of it, and the row gap. */
 .iw-list-item-inset .iw-list-item-content {
-  margin-inline-start: calc(
-    var(--iw-list-icon-size, var(--iw-space-6)) + 2 *
-      var(--iw-list-icon-spacing, var(--iw-space-4)) + var(--iw-space-2)
-  );
+  margin-inline-start: var(--iw-space-6);
 }
 
 .iw-list-title {
@@ -126,7 +117,6 @@
 }
 
 .iw-list-nested {
-  margin-top: var(--iw-space-1);
   padding-inline-start: var(--iw-space-4);
 }
 
