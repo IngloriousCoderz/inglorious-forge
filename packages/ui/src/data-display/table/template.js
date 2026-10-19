@@ -37,6 +37,7 @@ export const Table = {
       rows = [],
       isFullWidth = false,
       isStriped = false,
+      isWrapping = false,
       onRowClick,
       ...rest
     } = props
@@ -45,6 +46,7 @@ export const Table = {
       "iw-table": true,
       "iw-table-full-width": isFullWidth,
       "iw-table-striped": isStriped,
+      "iw-table-wrapping": isWrapping,
     }
 
     return html`

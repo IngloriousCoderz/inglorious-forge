@@ -28,4 +28,22 @@ describe("tabs", () => {
 
     expect(container.querySelector(".iw-tab-panel").textContent).toBe("Panel B")
   })
+
+  it("selects no tab when value is null", () => {
+    const container = document.createElement("div")
+
+    render(
+      Tabs.render({
+        value: null,
+        items: [
+          { value: "a", label: "A", panel: "Panel A" },
+          { value: "b", label: "B", panel: "Panel B" },
+        ],
+      }),
+      container,
+    )
+
+    expect(container.querySelector(".iw-tab-selected")).toBeNull()
+    expect(container.querySelector(".iw-tab-panel")).toBeNull()
+  })
 })

@@ -33,6 +33,10 @@
   --iw-color-accent-hover: #c2185b;
   --iw-color-accent-active: #ad1457;
 
+  /* Buttons and tabs carry their labels in capitals, as Material does. */
+  --iw-label-text-transform: uppercase;
+  --iw-label-letter-spacing: 0.06em;
+
   /* ========================================
      COMPONENT TOKENS
      ======================================== */

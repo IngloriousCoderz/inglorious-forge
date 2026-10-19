@@ -157,8 +157,11 @@ function buildCartesianScaffold(entity) {
     primitives.push(CartesianGrid())
   }
 
-  primitives.push(XAxis({ dataKey: entity.xKey }))
-  primitives.push(YAxis())
+  // Formatters are functions, so they come with the render, not the entity.
+  primitives.push(
+    XAxis({ dataKey: entity.xKey, tickFormatter: entity.xTickFormatter }),
+  )
+  primitives.push(YAxis({ tickFormatter: entity.yTickFormatter }))
 
   return primitives
 }

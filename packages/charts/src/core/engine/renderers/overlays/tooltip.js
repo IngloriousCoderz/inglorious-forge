@@ -93,10 +93,6 @@ function resolveTooltip(frame) {
     color:
       getSeriesPrimitiveColor(frame, state.dataKey) ||
       resolveSeriesColor(frame, state.dataKey),
-    text: getTooltipText(
-      frame.entity,
-      frame.entity.data[state.index],
-      state.dataKey,
-    ),
+    text: getTooltipText(frame, frame.entity.data[state.index], state.dataKey),
   }
 }

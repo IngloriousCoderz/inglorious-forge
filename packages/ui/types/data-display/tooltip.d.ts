@@ -9,7 +9,7 @@ export interface TooltipProps {
   isOpen?: boolean
   maxWidth?: string
   className?: string
-  onClick: () => void
+  onClick?: () => void
   [key: string]: unknown
 }
 

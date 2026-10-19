@@ -1,5 +1,8 @@
 export function parseCliOptions(args) {
   return {
+    projectName: args.find((arg) => !arg.startsWith("-")) ?? null,
+    template: readValueFlag(args, "template"),
+    syntax: readValueFlag(args, "syntax"),
     mobile: readBooleanFlag(args, "mobile"),
     pwa: readBooleanFlag(args, "pwa"),
     ui: readBooleanFlag(args, "ui"),

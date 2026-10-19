@@ -5,7 +5,14 @@ export interface ButtonProps {
   type: "Button"
   children?: TemplateResult | string | number
   variant?: "default" | "outline" | "ghost"
-  color?: "primary" | "secondary" | "success" | "warning" | "error" | "info"
+  color?:
+    | "default"
+    | "primary"
+    | "secondary"
+    | "success"
+    | "warning"
+    | "error"
+    | "info"
   size?: "sm" | "md" | "lg"
   shape?: "rectangle" | "pill" | "round" | "square"
   isDisabled?: boolean

@@ -36,10 +36,16 @@ For the JavaScript and TypeScript Vite templates, the CLI then asks about the ap
 | Translate the app?        | `--i18n` / `--no-i18n`, `--languages=en,it`          | `@inglorious/i18n`, a catalogue per language and a language picker; the first language is the default |
 | Enable PWA support?       | `--pwa` / `--no-pwa`                                 | `vite-plugin-pwa`, a manifest, icons and service worker registration                                  |
 
-The app is generated in the syntax you chose: lit-html, JSX or Vue. Every question answered by a flag is skipped:
+The app is generated in the syntax you chose: lit-html, JSX or Vue. Every question answered on the command line is skipped, so a project can be created without any prompt:
+
+| Question                    | Argument or flag                             |
+| --------------------------- | -------------------------------------------- |
+| What is your project named? | The first argument, such as `my-app`         |
+| Select a template           | `--template=minimal\|js\|ts\|ssx-js\|ssx-ts` |
+| Select a rendering syntax   | `--syntax=lit-html\|jsx\|vue`                |
 
 ```bash
-npm create @inglorious/app@latest -- --ui --theme=material --routing --transitions --icons=material --languages=en,it --mobile
+npm create @inglorious/app@latest -- my-app --template=ts --syntax=jsx --ui --theme=material --routing --transitions --icons=material --languages=en,it --no-mobile --no-pwa
 ```
 
 ## Templates

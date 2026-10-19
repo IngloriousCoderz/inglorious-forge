@@ -8,6 +8,8 @@
   font-size: var(--iw-font-size-base);
   font-weight: var(--iw-font-weight-normal);
   line-height: var(--iw-line-height-normal);
+  text-transform: var(--iw-label-text-transform);
+  letter-spacing: var(--iw-label-letter-spacing);
   text-decoration: none;
   white-space: nowrap;
   cursor: pointer;

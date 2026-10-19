@@ -24,12 +24,13 @@ describe("table", () => {
     expect(container.querySelectorAll("thead th")).toHaveLength(2)
   })
 
-  it("applies full width and striped classes", () => {
+  it("applies full width, striped and wrapping classes", () => {
     const props = {
       columns: [{ id: "name" }],
       rows: [{ id: "a", name: "Ada" }],
       isFullWidth: true,
       isStriped: true,
+      isWrapping: true,
     }
     const container = document.createElement("div")
 
@@ -38,6 +39,7 @@ describe("table", () => {
     const tableElement = container.querySelector(".iw-table")
     expect(tableElement.classList.contains("iw-table-full-width")).toBe(true)
     expect(tableElement.classList.contains("iw-table-striped")).toBe(true)
+    expect(tableElement.classList.contains("iw-table-wrapping")).toBe(true)
   })
 
   it("dispatches row click", () => {

@@ -10,6 +10,11 @@ export default {
     rows: { control: "object", description: "Row records." },
     isFullWidth: { control: "boolean", description: "Stretch table width." },
     isStriped: { control: "boolean", description: "Enable zebra rows." },
+    isWrapping: {
+      control: "boolean",
+      description:
+        "Wrap cell content to fit the container instead of scrolling.",
+    },
     onRowClick: { action: "onRowClick" },
   },
   parameters: {

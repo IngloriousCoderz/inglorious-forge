@@ -100,6 +100,29 @@ export interface ChartEntity extends ChartConfig {
   [key: string]: unknown
 }
 
+/**
+ * What a chart entity's render can add to it: functions, which do not belong
+ * in the store. A type wrapping `Chart` passes them in its own `render`:
+ * `render: (entity, api) => Chart.render({ ...entity, yTickFormatter }, api)`.
+ */
+export interface ChartEntityRenderProps extends ChartEntity {
+  /** Turns each x value into its label. Defaults to `String`. */
+  xTickFormatter?: (value: unknown) => string
+  /** Turns each y tick value into its label. Defaults to thousands separators: `1,000`. */
+  yTickFormatter?: (value: number) => string
+  /** Formats the tooltip's value, as `Tooltip`'s `formatter` does. */
+  tooltipFormatter?: ChartTooltipFormatter
+}
+
+/**
+ * Turns a tooltip's value into its text. `name` is the series' data key, or a
+ * pie slice's name. A slice keeps its percentage after the formatted value.
+ */
+export type ChartTooltipFormatter = (
+  value: unknown,
+  name: string | null,
+) => string
+
 /** A hovered datum: its row, and the series it belongs to (none for a pie slice). */
 export interface ChartTooltipTarget {
   index: number
@@ -216,7 +239,10 @@ export interface PieProps {
   innerRadius?: ChartLength
 }
 
-export type TooltipProps = Record<string, never>
+export interface TooltipProps {
+  /** Formats the value. Defaults to `String`. */
+  formatter?: ChartTooltipFormatter
+}
 
 export interface LegendProps {
   /** The series to list. Defaults to the plotted ones. */
@@ -256,7 +282,10 @@ export type ChartType = {
    * Draws a chart. With `children`, composes it from primitives; without,
    * draws an entity as configured.
    */
-  render(source: ChartEntity | ChartRenderProps, api?: Api): TemplateResult
+  render(
+    source: ChartEntityRenderProps | ChartRenderProps,
+    api?: Api,
+  ): TemplateResult
 }
 
 /**

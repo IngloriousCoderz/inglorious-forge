@@ -14,6 +14,18 @@ describe("progress", () => {
     expect(bar.style.width).toBe("50%")
   })
 
+  it("applies color to the linear variant", () => {
+    const container = document.createElement("div")
+
+    render(
+      Progress.render({ variant: "linear", value: 50, color: "success" }),
+      container,
+    )
+
+    const progress = container.querySelector(".iw-progress-linear")
+    expect(progress.classList.contains("iw-progress-success")).toBe(true)
+  })
+
   it("renders circular determinate", () => {
     const props = { variant: "circular", value: 50, size: 40, thickness: 4 }
     const container = document.createElement("div")

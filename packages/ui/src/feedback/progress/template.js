@@ -77,6 +77,7 @@ export function render(props) {
     class=${classMap({
       "iw-progress": true,
       "iw-progress-linear": true,
+      [`iw-progress-${color}`]: true,
       "iw-progress-indeterminate": progress == null,
       ...extraClasses,
     })}

@@ -7,7 +7,14 @@ export interface ButtonGroupItem {
   children?: TemplateResult | string | number
   isDisabled?: boolean
   variant?: "default" | "outline" | "ghost"
-  color?: "primary" | "secondary" | "success" | "warning" | "error" | "info"
+  color?:
+    | "default"
+    | "primary"
+    | "secondary"
+    | "success"
+    | "warning"
+    | "error"
+    | "info"
   size?: "sm" | "md" | "lg"
   icon?: string
   iconAfter?: string
@@ -23,7 +30,14 @@ export interface ButtonGroupProps {
   isAttached?: boolean
   size?: "sm" | "md" | "lg"
   variant?: "default" | "outline" | "ghost"
-  color?: "primary" | "secondary" | "success" | "warning" | "error" | "info"
+  color?:
+    | "default"
+    | "primary"
+    | "secondary"
+    | "success"
+    | "warning"
+    | "error"
+    | "info"
   isDisabled?: boolean
   onChange?: (value?: string | string[]) => void
   [key: string]: unknown

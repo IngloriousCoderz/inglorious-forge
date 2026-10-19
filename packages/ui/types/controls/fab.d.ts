@@ -3,7 +3,14 @@ import type { TemplateResult } from "@inglorious/web"
 export interface FabProps {
   id?: string
   children?: TemplateResult | string | number
-  color?: "primary" | "secondary" | "success" | "warning" | "error" | "info"
+  color?:
+    | "default"
+    | "primary"
+    | "secondary"
+    | "success"
+    | "warning"
+    | "error"
+    | "info"
   size?: "sm" | "md" | "lg"
   isDisabled?: boolean
   type?: "button" | "submit" | "reset" | "menu"

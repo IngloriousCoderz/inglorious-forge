@@ -31,6 +31,26 @@ Render it with:
 api.render("salesBarChart")
 ```
 
+## Formatting ticks and tooltips
+
+Functions do not go in the entity. To format the axis labels or the tooltip's value, give the chart a type that wraps `Chart` and passes `xTickFormatter`, `yTickFormatter` or `tooltipFormatter` in its `render`:
+
+```js
+const PercentLine = {
+  ...Chart,
+  render(entity, api) {
+    return Chart.render(
+      {
+        ...entity,
+        yTickFormatter: (value) => `${value}%`,
+        tooltipFormatter: (value) => `${value}%`,
+      },
+      api,
+    )
+  },
+}
+```
+
 ## Good fit
 
 - Standard dashboards

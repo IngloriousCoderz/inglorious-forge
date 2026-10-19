@@ -97,11 +97,7 @@ describe("shared render helpers", () => {
 
   it("uses a native <title> as tooltip on a chart without an entity", () => {
     const frame = { ...createBaseFrame(), entityId: null }
-    const text = getTooltipText(
-      frame.entity,
-      { name: "Jan", revenue: 10 },
-      "revenue",
-    )
+    const text = getTooltipText(frame, { name: "Jan", revenue: 10 }, "revenue")
 
     const enabled = getTooltipBindings(frame, { props: {} }, { index: 0 }, text)
     frame.entity = { ...frame.entity, isTooltipEnabled: false }

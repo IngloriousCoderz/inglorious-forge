@@ -15,6 +15,15 @@
     width: 100%;
   }
 
+  &.iw-table-wrapping {
+    min-width: 0;
+
+    .iw-table-header-cell,
+    .iw-table-cell {
+      overflow-wrap: anywhere;
+    }
+  }
+
   &.iw-table-striped {
     .iw-table-row-even {
       background: color-mix(

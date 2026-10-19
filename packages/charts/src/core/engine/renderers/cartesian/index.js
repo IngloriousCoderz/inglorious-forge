@@ -93,7 +93,7 @@ export function renderBarSeries(primitive, frame) {
           frame,
           primitive,
           { index, dataKey },
-          getTooltipText(entity, row, dataKey),
+          getTooltipText(frame, row, dataKey),
         )
 
         return svg`
@@ -135,7 +135,7 @@ export function renderDots(primitive, frame) {
           frame,
           primitive,
           { index: point.index, dataKey },
-          getTooltipText(frame.entity, point.row, dataKey),
+          getTooltipText(frame, point.row, dataKey),
         )
 
         return svg`

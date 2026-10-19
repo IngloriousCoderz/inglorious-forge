@@ -1,5 +1,4 @@
 import type { AppApi } from "../types"
-
 import { Message } from "./types/message"
 
 export const App = {

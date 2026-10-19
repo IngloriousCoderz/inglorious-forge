@@ -48,6 +48,70 @@ describe("charts public api", () => {
     ])
   })
 
+  it("formats an entity's ticks with formatters its type's render passes", () => {
+    const PercentLine = {
+      ...Chart,
+      render(entity, api) {
+        return Chart.render(
+          {
+            ...entity,
+            xTickFormatter: (month) => month.toUpperCase(),
+            yTickFormatter: (value) => `${value}%`,
+          },
+          api,
+        )
+      },
+    }
+
+    const html = toHtml(PercentLine.render({ id: "chart", type: "line", data }))
+
+    expect(html).toContain("JAN")
+    expect(html).toContain("20%")
+  })
+
+  it("formats tooltips with a formatter passed by the render or the Tooltip", () => {
+    const formatter = (value, name) => `${name}: ${value}%`
+    const configured = toHtml(
+      Chart.render({
+        id: "chart",
+        type: "line",
+        data,
+        tooltip: { index: 1, dataKey: "value" },
+        hasTooltip: true,
+        tooltipFormatter: formatter,
+      }),
+    )
+    const composed = toHtml(
+      Chart.render({
+        data,
+        children: [
+          XAxis({ dataKey: "name" }),
+          Line({ dataKey: "value" }),
+          Tooltip({ formatter }),
+        ],
+      }),
+    )
+
+    expect(configured).toContain("value: 20%")
+    expect(composed).toContain("value: 20%")
+  })
+
+  it("formats a pie slice's value and keeps its percentage", () => {
+    const html = toHtml(
+      Chart.render({
+        type: "pie",
+        data: [
+          { label: "A", value: 1 },
+          { label: "B", value: 3 },
+        ],
+        hasTooltip: true,
+        tooltipFormatter: (value) => `€${value}`,
+      }),
+    )
+
+    expect(html).toContain("B: €3 (75%)")
+  })
+
   it("renders a composition", () => {
     const html = toHtml(
       Chart.render({

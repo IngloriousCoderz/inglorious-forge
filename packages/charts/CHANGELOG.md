@@ -1,5 +1,16 @@
 # @inglorious/charts
 
+## 11.1.0
+
+### Minor Changes
+
+- - Config mode takes `xTickFormatter`, `yTickFormatter` and `tooltipFormatter`. They are functions, so they are passed at render time rather than stored in the entity: a type wrapping `Chart` adds them in its own `render`.
+  - `Tooltip` takes a `formatter(value, name)` for the value it shows. A pie slice keeps its percentage after the formatted value.
+
+### Patch Changes
+
+- @inglorious/web@6.6.1
+
 ## 11.0.0
 
 ### Major Changes

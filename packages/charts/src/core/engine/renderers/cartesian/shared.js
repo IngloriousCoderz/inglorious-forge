@@ -27,7 +27,7 @@ export function renderHoverTargets(primitive, frame) {
         frame,
         primitive,
         { index: point.index, dataKey },
-        getTooltipText(frame.entity, point.row, dataKey),
+        getTooltipText(frame, point.row, dataKey),
       )
       return svg`
         <circle
@@ -74,10 +74,30 @@ export function getTooltipBindings(frame, primitive, target, text) {
 const NO_TOOLTIP = { title: "" }
 
 /** The label and value a tooltip shows for a row. */
-export function getTooltipText(entity, row, dataKey) {
+export function getTooltipText(frame, row, dataKey) {
+  const { entity } = frame
   const label = row?.[entity.xKey] ?? row?.label ?? row?.name ?? ""
   const value = dataKey ? row?.[dataKey] : row?.value
-  return { label: String(label), value: value == null ? "" : String(value) }
+  return {
+    label: String(label),
+    value: value == null ? "" : formatTooltipValue(frame, value, dataKey),
+  }
+}
+
+/**
+ * A tooltip's value, through the `Tooltip` primitive's `formatter` or, in
+ * config mode, the `tooltipFormatter` the chart's render passes.
+ *
+ * @param {object} frame
+ * @param {unknown} value
+ * @param {string | null} name - The series' data key, or the slice's name.
+ * @returns {string}
+ */
+export function formatTooltipValue(frame, value, name) {
+  const tooltip = frame.primitives?.find((item) => item.type === "tooltip")
+  const formatter =
+    tooltip?.props?.formatter || frame.entity.tooltipFormatter || String
+  return String(formatter(value, name))
 }
 
 export function renderTitle({ label, value }) {

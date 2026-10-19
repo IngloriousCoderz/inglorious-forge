@@ -1,5 +1,34 @@
 // The choices create-app offers for lit-html apps, and what each one brings.
 
+export const TEMPLATES = {
+  minimal: {
+    title: "Minimal",
+    description: "A single HTML file for a zero-build setup",
+  },
+  js: {
+    title: "JavaScript",
+    description: "A vanilla JavaScript setup with Vite",
+  },
+  ts: { title: "TypeScript", description: "A TypeScript setup with Vite" },
+  "ssx-js": {
+    title: "SSX (JavaScript)",
+    description: "Static Site Xecution with JavaScript",
+  },
+  "ssx-ts": {
+    title: "SSX (TypeScript)",
+    description: "Static Site Xecution with TypeScript",
+  },
+}
+
+export const SYNTAXES = {
+  "lit-html": {
+    title: "lit-html (default)",
+    description: "Tagged template literals (html`<div>...</div>`)",
+  },
+  jsx: { title: "JSX", description: "JSX/TSX syntax (<div>...</div>)" },
+  vue: { title: "Vue", description: "Vue SFC-style templates" },
+}
+
 export const THEMES = {
   inglorious: { title: "Inglorious", description: "Neon, videogame-inspired" },
   material: { title: "Material", description: "Material Design inspired" },

@@ -125,6 +125,10 @@
   --iw-line-height-normal: 1.5;
   --iw-line-height-relaxed: 1.75;
 
+  /* Labels of buttons and tabs: a theme can set them in capitals. */
+  --iw-label-text-transform: none;
+  --iw-label-letter-spacing: normal;
+
   /* ========================================
      SHADOWS
      ======================================== */

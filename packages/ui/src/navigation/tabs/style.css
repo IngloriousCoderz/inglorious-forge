@@ -22,6 +22,8 @@
   align-items: center;
   gap: var(--iw-space-2);
   padding: var(--iw-space-3) var(--iw-space-4);
+  text-transform: var(--iw-label-text-transform);
+  letter-spacing: var(--iw-label-letter-spacing);
   cursor: pointer;
 }
 

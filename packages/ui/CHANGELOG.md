@@ -1,5 +1,22 @@
 # @inglorious/ui
 
+## 8.2.0
+
+### Minor Changes
+
+- - Linear `Progress` applies `color`, as the circular variant already did.
+  - `Button`, `IconButton`, `ButtonGroup` and `Fab` types accept `color: "default"`, their runtime default.
+  - `Tooltip`'s `onClick` is optional.
+  - `Tabs` accepts `value: null` for no tab selected.
+  - `Table` takes `isWrapping`, which wraps cell content to fit its container instead of scrolling.
+  - Buttons and tabs read `--iw-label-text-transform` and `--iw-label-letter-spacing`; the Material theme sets their labels in capitals.
+
+### Patch Changes
+
+- @inglorious/store@11.0.4
+  - @inglorious/utils@5.0.0
+  - @inglorious/web@6.6.1
+
 ## 8.1.1
 
 ### Patch Changes

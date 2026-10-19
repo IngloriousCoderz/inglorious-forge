@@ -9,7 +9,14 @@ export interface IconButtonProps {
   direction?: "row" | "column"
   ariaLabel?: string
   variant?: "default" | "outline" | "ghost"
-  color?: "primary" | "secondary" | "success" | "warning" | "error" | "info"
+  color?:
+    | "default"
+    | "primary"
+    | "secondary"
+    | "success"
+    | "warning"
+    | "error"
+    | "info"
   size?: "sm" | "md" | "lg"
   isDisabled?: boolean
   isFullWidth?: boolean

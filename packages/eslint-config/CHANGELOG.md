@@ -1,5 +1,11 @@
 # @inglorious/eslint-config
 
+## 1.1.3
+
+### Patch Changes
+
+- Publish `typescript.js`, `typescript.d.ts` and `browser.d.ts`, which 1.1.2 declared but left out of the package. `@typescript-eslint/parser` and `@typescript-eslint/eslint-plugin` are now peer dependencies, so a project importing `@inglorious/eslint-config/typescript` gets them installed, and unused variables are warnings in TypeScript as they already are in JavaScript.
+
 ## 1.1.2
 
 ### Patch Changes

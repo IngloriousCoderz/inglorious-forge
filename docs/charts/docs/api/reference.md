@@ -33,6 +33,7 @@ The chart type, for **config mode** (`api.render(entityId)`) and **composition**
 - Register it for each chart entity's type in the store (`Line: Chart`, `Area: Chart`, …). The entity's `type` (`"Line"`, `"Area"`, `"Bar"`, `"Composed"`, `"Pie"`, `"Donut"`) drives its defaults and primitives. In TypeScript it fits the store's `types` as it is, without a cast.
 - **`Chart.render(props, api)`**: with `props.children`, composes the chart from primitives; without, draws `props` as a configured entity.
 - **`ariaLabel`** (entity or props): names the chart for assistive tech. Defaults to its type, such as `"line chart"`.
+- **`xTickFormatter`, `yTickFormatter`, `tooltipFormatter`** (config mode): format the axis labels and the tooltip's value, as `tickFormatter` does on `XAxis` and `YAxis` and `formatter` on `Tooltip`. They are functions, so they do not go in the entity: a type wrapping `Chart` passes them in its own `render` (see [Formatting ticks in config mode](#formatting-ticks-in-config-mode)).
 
 Rendering only reads: it never writes to the entity it draws. What the user does on a chart reaches its entity as events (see [Events](#events)).
 
@@ -40,19 +41,19 @@ Rendering only reads: it never writes to the entity it draws. What the user does
 
 Composition builds a chart from primitives, passed as `children`:
 
-| Primitive              | Props                                                                                                                                                  |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `CartesianGrid(props)` | `stroke`, `strokeDasharray`                                                                                                                            |
-| `XAxis(props)`         | `dataKey`, `tickFormatter`, `interval` (labels skipped between shown ones; by default as many as fit), `minTickGap`                                    |
-| `YAxis(props)`         | `tickFormatter` (default: thousands separators)                                                                                                        |
-| `Line(props)`          | `dataKey`, `stroke`, `strokeWidth`, `hasDots`, `hasTooltip`                                                                                            |
-| `Area(props)`          | `dataKey`, `fill`, `stroke`, `fillOpacity`, `strokeWidth`, `hasDots`, `stackId`, `hasTooltip`                                                          |
-| `Bar(props)`           | `dataKey`, `fill`, `hasTooltip`                                                                                                                        |
-| `Dots(props)`          | `dataKey`, `fill`, `stroke`, `strokeWidth`, `r`, `stackId`, `hasTooltip`                                                                               |
-| `Pie(props)`           | `dataKey`, `nameKey`, `hasLabel`, `labelPosition` (`"inside"` or `"outside"`), `hasPercentage`, `cx`, `cy`, `innerRadius`, `outerRadius`, `hasTooltip` |
-| `Tooltip()`            | Turns on tooltips for every series.                                                                                                                    |
-| `Legend(props)`        | `dataKeys`, `colors`                                                                                                                                   |
-| `Brush(props)`         | `dataKey`, `height`. Needs the chart's `entity`.                                                                                                       |
+| Primitive              | Props                                                                                                                                                                          |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `CartesianGrid(props)` | `stroke`, `strokeDasharray`                                                                                                                                                    |
+| `XAxis(props)`         | `dataKey`, `tickFormatter`, `interval` (labels skipped between shown ones; by default as many as fit), `minTickGap`                                                            |
+| `YAxis(props)`         | `tickFormatter` (default: thousands separators)                                                                                                                                |
+| `Line(props)`          | `dataKey`, `stroke`, `strokeWidth`, `hasDots`, `hasTooltip`                                                                                                                    |
+| `Area(props)`          | `dataKey`, `fill`, `stroke`, `fillOpacity`, `strokeWidth`, `hasDots`, `stackId`, `hasTooltip`                                                                                  |
+| `Bar(props)`           | `dataKey`, `fill`, `hasTooltip`                                                                                                                                                |
+| `Dots(props)`          | `dataKey`, `fill`, `stroke`, `strokeWidth`, `r`, `stackId`, `hasTooltip`                                                                                                       |
+| `Pie(props)`           | `dataKey`, `nameKey`, `hasLabel`, `labelPosition` (`"inside"` or `"outside"`), `hasPercentage`, `cx`, `cy`, `innerRadius`, `outerRadius`, `hasTooltip`                         |
+| `Tooltip(props)`       | Turns on tooltips for every series. `formatter(value, name)` formats the value; `name` is the series' data key or the slice's name, and a slice keeps its percentage after it. |
+| `Legend(props)`        | `dataKeys`, `colors`                                                                                                                                                           |
+| `Brush(props)`         | `dataKey`, `height`. Needs the chart's `entity`.                                                                                                                               |
 
 ```js
 Chart.render(
@@ -70,6 +71,28 @@ Chart.render(
   },
   api,
 )
+```
+
+### Formatting ticks in config mode
+
+Like any function, a formatter is passed at render time rather than stored in the entity. A type for the chart wraps `Chart` and adds it in its own `render`:
+
+```js
+const PercentLine = {
+  ...Chart,
+  render(entity, api) {
+    return Chart.render(
+      {
+        ...entity,
+        yTickFormatter: (value) => `${value}%`,
+        tooltipFormatter: (value) => `${value}%`,
+      },
+      api,
+    )
+  },
+}
+
+createStore({ types: { PercentLine }, entities })
 ```
 
 ## State: `entity`

@@ -15,7 +15,7 @@ export interface TabsProps {
   id?: string
   type?: string
   items?: TabItem[]
-  value?: string | number
+  value?: string | number | null
   isCentered?: boolean
   isFullWidth?: boolean
   onChange?: (value: string | number) => void

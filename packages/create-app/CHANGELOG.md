@@ -1,5 +1,13 @@
 # @inglorious/create-game
 
+## 1.3.0
+
+### Minor Changes
+
+- - The project name can be passed as the first argument, and the template and syntax as `--template` and `--syntax`, so a project can be created without any prompt.
+  - TypeScript templates install `typescript` as TypeScript 6 (`@typescript/typescript6`) and TypeScript 7 as `@typescript/native`: TypeScript 7 has no JavaScript API, which typescript-eslint and the Capacitor CLI need. `tsc` is still TypeScript 7.
+  - Fix a lint warning in the TSX template and a type error in the TypeScript Vue template.
+
 ## 1.2.0
 
 ### Minor Changes

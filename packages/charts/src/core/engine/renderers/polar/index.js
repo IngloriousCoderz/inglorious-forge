@@ -4,7 +4,11 @@ import { svg } from "@inglorious/web"
 import { arc, pie as createPieLayout } from "d3-shape"
 
 import { themeColor } from "../../theme.js"
-import { canShowTooltip, getTooltipBindings } from "../cartesian/shared.js"
+import {
+  canShowTooltip,
+  formatTooltipValue,
+  getTooltipBindings,
+} from "../cartesian/shared.js"
 
 const LABEL_COLOR = themeColor("text", "#0f172a")
 const SECONDARY_COLOR = themeColor("text-muted", "#64748b")
@@ -31,12 +35,12 @@ export function renderPieSeries(primitive, frame) {
       transform="translate(${scales.centerX}, ${scales.centerY})"
     >
       ${slices.map((slice) => {
-        const { index, row, fill, label, percentage } = slice
+        const { index, fill, label, percentage } = slice
         const tooltip = getTooltipBindings(
           frame,
           primitive,
           { index },
-          getPieTooltipText(row, nameKey, dataKey, percentage),
+          getPieTooltipText(frame, slice, nameKey, dataKey),
         )
         const [insideLabelX, insideLabelY] = innerLabelArc.centroid(slice.arc)
         const [connectorStartX, connectorStartY] = connectorArc.centroid(
@@ -150,7 +154,7 @@ export function getPieTooltip(frame, { index }) {
   return {
     anchor: { x: frame.scales.centerX + x, y: frame.scales.centerY + y },
     color: slice.fill,
-    text: getPieTooltipText(slice.row, nameKey, dataKey, slice.percentage),
+    text: getPieTooltipText(frame, slice, nameKey, dataKey),
   }
 }
 
@@ -182,11 +186,15 @@ function createPieSlices(primitive, frame) {
   return { slices, dataKey, nameKey }
 }
 
-function getPieTooltipText(row, nameKey, dataKey, percentage) {
+function getPieTooltipText(frame, { row, percentage }, nameKey, dataKey) {
+  const name = String(row?.[nameKey] ?? row?.label ?? "")
   const value = row?.[dataKey]
   return {
-    label: String(row?.[nameKey] ?? row?.label ?? ""),
-    value: value == null ? percentage : `${value} (${percentage})`,
+    label: name,
+    value:
+      value == null
+        ? percentage
+        : `${formatTooltipValue(frame, value, name)} (${percentage})`,
   }
 }
 

@@ -16,6 +16,7 @@ import {
   USER_ARG_START_INDEX,
   VITE_APP_TEMPLATES,
 } from "./lib/constants.js"
+import { SYNTAXES, TEMPLATES } from "./lib/features.js"
 import { copyDir } from "./lib/file.js"
 import { addMobileSupport } from "./lib/mobile.js"
 import { addPwaSupport } from "./lib/pwa.js"
@@ -25,6 +26,8 @@ async function main() {
   const __dirname = path.dirname(fileURLToPath(import.meta.url))
   const templatesRoot = path.join(__dirname, "../templates")
   const cliOptions = parseCliOptions(process.argv.slice(USER_ARG_START_INDEX))
+  validateChoice("template", cliOptions.template, TEMPLATES)
+  validateChoice("syntax", cliOptions.syntax, SYNTAXES)
 
   let canceled = false
 
@@ -33,45 +36,19 @@ async function main() {
     return false
   }
 
-  const { projectName, baseTemplate } = await prompts(
+  const answers = await prompts(
     [
       {
-        type: "text",
+        type: cliOptions.projectName ? null : "text",
         name: "projectName",
         message: "What is your project named?",
         initial: "my-app",
       },
       {
-        type: "select",
+        type: cliOptions.template ? null : "select",
         name: "baseTemplate",
         message: "Select a template",
-        choices: [
-          {
-            title: "Minimal",
-            description: "A single HTML file for a zero-build setup",
-            value: "minimal",
-          },
-          {
-            title: "JavaScript",
-            description: "A vanilla JavaScript setup with Vite",
-            value: "js",
-          },
-          {
-            title: "TypeScript",
-            description: "A TypeScript setup with Vite",
-            value: "ts",
-          },
-          {
-            title: "SSX (JavaScript)",
-            description: "Static Site Xecution with JavaScript",
-            value: "ssx-js",
-          },
-          {
-            title: "SSX (TypeScript)",
-            description: "Static Site Xecution with TypeScript",
-            value: "ssx-ts",
-          },
-        ],
+        choices: toChoices(TEMPLATES),
       },
     ],
     { onCancel },
@@ -82,31 +59,18 @@ async function main() {
     return
   }
 
+  const projectName = cliOptions.projectName ?? answers.projectName
+  const baseTemplate = cliOptions.template ?? answers.baseTemplate
+
   let renderer = "lit-html"
 
   if (baseTemplate !== "minimal") {
     const { selectedRenderer } = await prompts(
       {
-        type: "select",
+        type: cliOptions.syntax ? null : "select",
         name: "selectedRenderer",
         message: "Select a rendering syntax",
-        choices: [
-          {
-            title: "lit-html (default)",
-            description: "Tagged template literals (html`<div>...</div>`)",
-            value: "lit-html",
-          },
-          {
-            title: "JSX",
-            description: "JSX/TSX syntax (<div>...</div>)",
-            value: "jsx",
-          },
-          {
-            title: "Vue",
-            description: "Vue SFC-style templates",
-            value: "vue",
-          },
-        ],
+        choices: toChoices(SYNTAXES),
       },
       { onCancel },
     )
@@ -116,7 +80,9 @@ async function main() {
       return
     }
 
-    renderer = selectedRenderer
+    renderer = cliOptions.syntax ?? selectedRenderer
+  } else if (cliOptions.syntax && cliOptions.syntax !== "lit-html") {
+    console.warn("The minimal template is only available with lit-html.")
   }
 
   let features = {
@@ -220,6 +186,21 @@ async function main() {
   } catch (error) {
     spinner.fail("Operation failed.")
     console.error(error)
+  }
+}
+
+function toChoices(options) {
+  return Object.entries(options).map(([value, option]) => ({
+    value,
+    ...option,
+  }))
+}
+
+function validateChoice(flag, value, options) {
+  if (value !== null && !options[value]) {
+    throw new Error(
+      `Unknown ${flag} "${value}". Choose one of: ${Object.keys(options).join(", ")}.`,
+    )
   }
 }
 
