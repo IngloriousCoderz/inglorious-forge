@@ -1,5 +1,11 @@
 # @inglorious/ui
 
+## 8.1.1
+
+### Patch Changes
+
+- `@inglorious/charts` is no longer a peer dependency: only the dashboard example and the playground use it, so installing Inglorious UI no longer pulls in or warns about the charts package.
+
 ## 8.1.0
 
 ### Minor Changes

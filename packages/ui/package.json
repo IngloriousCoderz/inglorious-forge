@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/ui",
-  "version": "8.1.0",
+  "version": "8.1.1",
   "description": "A design system for Inglorious Web with render-function components and customizable themes",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -312,7 +312,6 @@
     "build-storybook": "storybook build"
   },
   "peerDependencies": {
-    "@inglorious/charts": "workspace:*",
     "@inglorious/store": "workspace:*",
     "@inglorious/utils": "workspace:*",
     "@inglorious/web": "workspace:*"
@@ -322,6 +321,7 @@
     "@iconify-icons/fa7-regular": "^2.0.0",
     "@iconify-icons/fa7-solid": "^2.0.0",
     "@iconify-icons/material-symbols": "^2.0.6",
+    "@inglorious/charts": "workspace:*",
     "@inglorious/eslint-config": "workspace:*",
     "@inglorious/store": "workspace:*",
     "@inglorious/vite-plugin-jsx": "workspace:*",

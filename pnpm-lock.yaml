@@ -2170,9 +2170,6 @@ importers:
 
   packages/ui:
     dependencies:
-      "@inglorious/charts":
-        specifier: workspace:*
-        version: link:../charts
       "@inglorious/utils":
         specifier: workspace:*
         version: link:../utils
@@ -2189,6 +2186,9 @@ importers:
       "@iconify-icons/material-symbols":
         specifier: ^2.0.6
         version: 2.0.6
+      "@inglorious/charts":
+        specifier: workspace:*
+        version: link:../charts
       "@inglorious/eslint-config":
         specifier: workspace:*
         version: link:../eslint-config
@@ -15610,7 +15610,7 @@ snapshots:
   css-tree@3.2.1:
     dependencies:
       mdn-data: 2.27.1
-      source-map-js: 1.2.1
+      source-map-js: 1.2.2
 
   css-what@7.0.0: {}
 
@@ -17938,7 +17938,7 @@ snapshots:
     dependencies:
       chokidar: 5.0.0
       immutable: 5.1.9
-      source-map-js: 1.2.1
+      source-map-js: 1.2.2
     optionalDependencies:
       "@parcel/watcher": 2.6.0
 
@@ -18687,7 +18687,7 @@ snapshots:
       esbuild: 0.27.2
       fdir: 6.5.0(picomatch@4.0.7)
       picomatch: 4.0.7
-      postcss: 8.5.28
+      postcss: 8.5.30
       rollup: 4.63.1
       tinyglobby: 0.2.17
     optionalDependencies:
