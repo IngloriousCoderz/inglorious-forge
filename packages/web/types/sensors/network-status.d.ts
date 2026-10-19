@@ -1,14 +1,14 @@
 import { Api } from "../mount"
 
 export interface NetworkStatusEntity {
-  id: string | number
-  type?: "NetworkStatus"
+  id?: string
+  type: string
   isOnline: boolean
   isSupported: boolean
   isWatching: boolean
 }
 
-export interface NetworkStatusType {
+export type NetworkStatusType = {
   create(entity: NetworkStatusEntity, payload: unknown, api: Api): void
   destroy(entity: NetworkStatusEntity, payload: unknown, api: Api): void
   networkStatusChange(entity: NetworkStatusEntity, value: boolean): void

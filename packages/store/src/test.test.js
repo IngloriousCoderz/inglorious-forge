@@ -181,6 +181,19 @@ describe("trigger", () => {
     expect(events).toStrictEqual(eventsAfter)
   })
 
+  it("should let the handler read its own entity through the default API", () => {
+    const entityBefore = { id: "counter", type: "Counter", value: 1 }
+    let seen
+
+    function inspect(entity, payload, api) {
+      seen = api.getEntity("counter")
+    }
+
+    trigger(entityBefore, inspect)
+
+    expect(seen).toStrictEqual(entityBefore)
+  })
+
   it("should allow handler to read other entities via API", () => {
     const entityBefore = { id: "counter2", type: "Counter", value: 20 }
     const entityAfter = { id: "counter2", type: "Counter", value: 30 }

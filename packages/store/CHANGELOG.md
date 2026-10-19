@@ -1,5 +1,18 @@
 # @inglorious/store
 
+## 11.1.0
+
+### Minor Changes
+
+- TypeScript checks a whole app with no casts. This changes types that TypeScript apps use; nothing changes at runtime.
+
+  - `createStore<AppEntity, AppState>({ types: { Counter } })` checks each type against the entities of its name. Drop `types as unknown as TypesConfig<AppEntity>`: the cast no longer fits.
+  - Declare a type's events and payloads with a `type` alias and write the type against it, `const Counter: CounterType = { ... }`: its parameters are inferred, and misspelled handlers and wrong payloads are errors. Turn existing `interface CounterType` declarations into `type CounterType =`: an interface does not fit `types`. As a less rigorous shorthand, `{ ... } satisfies EntityType<CounterEntity, AppApi>` infers the entity and the api without a declaration. `render` gets the api second, and behavior arrays, such as `[Chart, withRealtime]`, type too.
+  - `BaseEntity` no longer accepts any field: declare each one on the entity, so a misspelled field is an error. It declares `id?: string` and `updatesWhilePaused?: boolean`. Handlers receive the entity with `id: string` (`Stored<TEntity>`), and so do `api.getEntity` and `api.getEntities`.
+  - An app's `Api<AppEntity, AppState>` is accepted wherever the plain `Api` is, without the method bivariance the previous version relied on.
+  - `compute` and `createSelector` infer the result function's arguments and the state; explicit type arguments still work.
+  - `trigger` and `createMockApi` are typed as they work: `trigger(entity, Counter.add, 2)` returns `{ entity, events }`. `trigger`'s default mock api now holds the entity, so a handler can read it with `api.getEntity`.
+
 ## 11.0.5
 
 ### Patch Changes

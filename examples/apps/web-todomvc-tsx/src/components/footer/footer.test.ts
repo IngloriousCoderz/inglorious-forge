@@ -2,7 +2,7 @@ import type { Event } from "@inglorious/store"
 import { trigger } from "@inglorious/web/test"
 import { expect, it } from "vitest"
 
-import type { FooterEntity, FooterType } from "../../../types"
+import type { FooterEntity } from "../../../types"
 import { Footer } from "./footer"
 
 it("should update the filter on filterClick", () => {
@@ -18,11 +18,7 @@ it("should update the filter on filterClick", () => {
     activeFilter: "completed",
   }
 
-  const { entity } = trigger(
-    entityBefore,
-    Footer[event.type as keyof typeof Footer] as FooterType["filterClick"],
-    event.payload,
-  ) as unknown as { entity: FooterEntity }
+  const { entity } = trigger(entityBefore, Footer.filterClick, event.payload)
 
   expect(entity).toEqual(entityAfter)
 })

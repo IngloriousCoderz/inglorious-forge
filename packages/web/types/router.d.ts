@@ -27,7 +27,7 @@ export type QueryParams = Record<string, string>
  */
 export interface RouterEntity {
   /** A unique identifier for the router entity. */
-  id: string | number
+  id?: string
   /** The current active path, without query string or hash. */
   path?: string
   /** The entity type of the current active route. */
@@ -79,7 +79,7 @@ export type { Api as StoreApi } from "@inglorious/store"
 /**
  * Client-side router for entity-based systems. Handles URL changes, link interception, and browser history management.
  */
-export interface RouterType {
+export type RouterType = {
   /**
    * Initializes the router, sets up a popstate listener to handle browser navigation,
    * and intercepts clicks on local links.

@@ -12,12 +12,12 @@ export interface GeolocationCoordinates {
 
 export interface GeolocationEntity {
   error: GeolocationError | null
-  id: string | number
+  id?: string
   isLoading: boolean
   isSupported: boolean
   isWatching: boolean
   position: GeolocationPosition | null
-  type?: "Geolocation"
+  type: string
   watchId: number | null
 }
 
@@ -37,7 +37,7 @@ export interface GeolocationPosition {
   timestamp: number
 }
 
-export interface GeolocationType {
+export type GeolocationType = {
   unwatch(entity: GeolocationEntity): void
   create(entity: GeolocationEntity): void
   destroy(entity: GeolocationEntity): void

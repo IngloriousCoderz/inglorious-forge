@@ -1,4 +1,4 @@
-import { BaseEntity, EntitiesState } from "@inglorious/store"
+import type { BaseEntity, EntitiesState } from "@inglorious/store"
 
 export type Filter = "all" | "active" | "completed"
 
@@ -35,8 +35,9 @@ export interface AppState extends EntitiesState<AppEntity> {
   footer: FooterEntity
 }
 
-// Types configuration
-export interface AppTypes {
+// Each type's events and their payloads. Declare them with `type`, not
+// `interface`: an interface does not fit the store's `types`.
+export type AppTypes = {
   Form: {
     inputChange: (entity: FormEntity, value: string) => void
     formSubmit: (entity: FormEntity) => void

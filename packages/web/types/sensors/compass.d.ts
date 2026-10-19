@@ -1,8 +1,8 @@
 import { Api } from "../mount"
 
 export interface CompassEntity {
-  id: string | number
-  type?: "Compass"
+  id?: string
+  type: string
   error: CompassError | null
   heading: number | null
   isActive: boolean
@@ -21,7 +21,7 @@ export interface CompassError {
   message: string
 }
 
-export interface CompassType {
+export type CompassType = {
   create(entity: CompassEntity, payload: unknown, api: Api): void
   destroy(entity: CompassEntity, payload: unknown, api: Api): void
   compassUnwatch(entity: CompassEntity, payload: unknown, api: Api): void

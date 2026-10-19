@@ -667,45 +667,66 @@ function TodoList() {
 
 ## Type Safety (TypeScript)
 
-Define types for your store:
+Describe your entities and state, declare each type's events and payloads with a `type` alias, and write the type against it: its handlers' parameters are inferred, and `createStore` checks each type against its entities, with no casts.
 
 ```typescript
-import type { TypesConfig } from "@inglorious/store"
+import {
+  type Api,
+  type BaseEntity,
+  createStore,
+  type EntitiesState,
+} from "@inglorious/store"
 
-interface TodoListEntity {
-  type: "TodoList"
-  todos: Array<{ id: number; text: string; done: boolean }>
+interface Todo {
+  id: number
+  text: string
+  done: boolean
 }
 
-interface TodoListState {
+interface TodoListEntity extends BaseEntity {
+  type: "TodoList"
+  todos: Todo[]
+}
+
+interface TodoState extends EntitiesState<TodoListEntity> {
   workTodos: TodoListEntity
   personalTodos: TodoListEntity
 }
 
-interface TodoListTypes extends TypesConfig<TodoListEntity> {
-  todoList: {
-    addTodo(entity: TodoListEntity, text: string): void
-    toggle(entity: TodoListEntity, id: number): void
-  }
+type TodoApi = Api<TodoListEntity, TodoState>
+
+// The events and their payloads. Use `type`: an interface does not fit `types`.
+type TodoListType = {
+  addTodo: (entity: TodoListEntity, text: string) => void
+  toggle: (entity: TodoListEntity, id: number) => void
 }
 
-const types: TodoListTypes = {
-  todoList: {
-    addTodo(entity, text) {
-      entity.todos.push({ id: Date.now(), text, done: false })
-    },
-    toggle(entity, id) {
-      const todo = entity.todos.find((t) => t.id === id)
-      if (todo) todo.done = !todo.done
-    },
+const TodoList: TodoListType = {
+  addTodo(entity, text) {
+    entity.todos.push({ id: Date.now(), text, done: false })
+  },
+  toggle(entity, id) {
+    const todo = entity.todos.find((todo) => todo.id === id)
+    if (todo) todo.done = !todo.done
   },
 }
 
-const store = createStore<TodoListEntity, TodoListState>({
-  types: types as unknown as TypesConfig<TodoListEntity>,
-  entities,
+const store = createStore<TodoListEntity, TodoState>({
+  types: { TodoList },
+  entities: {
+    workTodos: { type: "TodoList", todos: [] },
+    personalTodos: { type: "TodoList", todos: [] },
+  },
 })
 ```
+
+- A misspelled or missing handler is an error, and so is a wrong payload: `TodoList.addTodo(todos, 42)`.
+- As a shorthand, write `const TodoList = { ... } satisfies EntityType<TodoListEntity, TodoApi>`: it infers the entity and the api, but neither lists the events nor types payloads you do not annotate.
+- Every entity field is declared: `BaseEntity` holds only `type`, `id` and `updatesWhilePaused`, so a misspelled field is an error.
+- `api.getEntity("workTodos")` gives a `TodoListEntity`; an unknown id gives the union.
+- A name no entity has, such as a page, takes any type. A type can be an array of behaviors: `Live: [Chart, withRealtime]`.
+- An entity drawn by a library type extends its entity interface: `interface AppRouterEntity extends RouterEntity { type: "Router" }`.
+- `trigger(entity, TodoList.addTodo, "Write docs")` from `@inglorious/store/test` checks the payload and returns the updated entity.
 
 ## RTK Migration Utilities
 

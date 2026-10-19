@@ -13,7 +13,7 @@ export interface VirtualListEntity<
   T extends VirtualListItem = VirtualListItem,
 > {
   /** A unique identifier for the list entity. */
-  id: string | number
+  id?: string
 
   /** The entity type, used to look up rendering logic. */
   type: string

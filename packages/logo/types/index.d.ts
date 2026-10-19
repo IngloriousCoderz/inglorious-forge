@@ -46,7 +46,7 @@ export interface LogoEntity {
   isScrollPrevented?: boolean
 }
 
-export interface LogoType {
+export type LogoType = {
   render(entity: LogoEntity, api: Api): TemplateResult
   create(entity: LogoEntity, payload: unknown, api: Api): void
   coordsChange(entity: LogoEntity, payload: { x: number; y: number }): void

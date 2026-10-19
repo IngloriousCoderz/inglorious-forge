@@ -1,1 +1,1 @@
-export { repeat } from "lit-html/directives/repeat"
+export { repeat } from "lit-html/directives/repeat.js"

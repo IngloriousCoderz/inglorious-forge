@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.4.0
+
+### Minor Changes
+
+- TypeScript apps type themselves with no casts: `types/index.d.ts` declares each type's events and payloads as a `type` alias (`MessageType`), types are written `const Message: MessageType = { ... }`, and the store takes `types: { Message }`. `AppType<TEntity>` is exported as a shorthand, for `{ ... } satisfies AppType<MessageEntity>`. The PWA registration references only `vite-plugin-pwa/vanillajs`, whose typings do not replace JSX's.
+
 ## 1.3.0
 
 ### Minor Changes

@@ -42,7 +42,7 @@ export const List: ListType = {
         (task) =>
           html`<li>
             <span
-              class=${classMap({ [classes.completed]: task.completed })}
+              class=${classMap({ [classes.completed]: Boolean(task.completed) })}
               @click=${() => api.notify("toggleClick", task.id)}
               >${task.text}</span
             >

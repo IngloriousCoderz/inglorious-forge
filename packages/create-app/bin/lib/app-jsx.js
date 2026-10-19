@@ -252,9 +252,7 @@ export function messageSource(app) {
   }
   if (app.i18n) imports.push('import { t } from "../i18n"')
   const greeting = app.i18n ? '{t("message.hello", { who })}' : "Hello {who}"
-  const declaration = app.isTypeScript
-    ? "export const Message: MessageType = {"
-    : "export const Message = {"
+  const annotation = app.isTypeScript ? ": MessageType" : ""
 
   const span = app.i18n
     ? `      <span onClick={() => api.notify(\`#\${entity.id}:click\`)}>
@@ -264,7 +262,7 @@ export function messageSource(app) {
 
   const head = imports.length ? `${importBlock(imports)}\n\n` : ""
 
-  return `${head}${declaration}
+  return `${head}export const Message${annotation} = {
   click(entity) {
     entity.isUpperCase = !entity.isUpperCase
   },

@@ -1,14 +1,14 @@
 import { Api } from "../mount"
 
 export interface PageVisibilityEntity {
-  id: string | number
-  type?: "PageVisibility"
+  id?: string
+  type: string
   isSupported: boolean
   isVisible: boolean
   isWatching: boolean
 }
 
-export interface PageVisibilityType {
+export type PageVisibilityType = {
   create(entity: PageVisibilityEntity, payload: unknown, api: Api): void
   destroy(entity: PageVisibilityEntity, payload: unknown, api: Api): void
   pageVisibilityChange(entity: PageVisibilityEntity, value: boolean): void

@@ -1,4 +1,4 @@
-import type { ChartType, StreamEntity } from "./index"
+import type { StreamEntity } from "./index"
 
 /** How a realtime chart streams, on its entity's `realtime` field. */
 export interface RealtimeConfig {
@@ -38,6 +38,6 @@ export type RealtimeHandlers = {
  * compose it in the store (`LiveLine: [Chart, withRealtime]`) or wrap it
  * (`withRealtime(Chart)`).
  */
-export function withRealtime<TType extends Partial<ChartType>>(
+export function withRealtime<TType extends object>(
   chartType: TType,
 ): Omit<TType, keyof RealtimeHandlers> & RealtimeHandlers

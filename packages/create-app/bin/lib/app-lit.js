@@ -187,7 +187,7 @@ export function homeSource(app, { showcase }) {
     imports.push('import { Icon } from "@inglorious/ui/icon"')
   }
   if (app.isTypeScript) {
-    imports.push('import type { AppApi, HomeEntity } from "../../types"')
+    imports.push('import type { HomeType } from "../../types"')
   }
   if (app.i18n) imports.push('import { t } from "../i18n"')
 
@@ -207,14 +207,12 @@ ${showcase
       </p>`
     : ""
 
-  const signature = app.isTypeScript
-    ? "render(entity: HomeEntity, api: AppApi)"
-    : "render(entity, api)"
+  const annotation = app.isTypeScript ? ": HomeType" : ""
 
   return `${importBlock(imports)}
 
-export const Home = {
-  ${signature} {
+export const Home${annotation} = {
+  render(entity, api) {
     return html\`
       <h1>${text("home.title", "Welcome")}</h1>
       <p>
@@ -253,13 +251,11 @@ export function messageSource(app) {
   }
   if (app.i18n) imports.push('import { t } from "../i18n"')
   const greeting = app.i18n ? '${t("message.hello", { who })}' : "Hello ${who}"
-  const declaration = app.isTypeScript
-    ? "export const Message: MessageType = {"
-    : "export const Message = {"
+  const annotation = app.isTypeScript ? ": MessageType" : ""
 
   return `${importBlock(imports)}
 
-${declaration}
+export const Message${annotation} = {
   click(entity) {
     entity.isUpperCase = !entity.isUpperCase
   },

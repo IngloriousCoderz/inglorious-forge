@@ -1,5 +1,11 @@
 # @inglorious/renderer-react-dom
 
+## 22.0.6
+
+### Patch Changes
+
+- @inglorious/engine@23.0.6
+
 ## 22.0.5
 
 ### Patch Changes

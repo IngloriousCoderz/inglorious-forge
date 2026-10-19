@@ -227,9 +227,7 @@ main {
 
 function storeSource(app) {
   const imports = [
-    app.isTypeScript
-      ? 'import { createStore, type TypesConfig } from "@inglorious/store"'
-      : 'import { createStore } from "@inglorious/store"',
+    'import { createStore } from "@inglorious/store"',
     componentImport(app, "Home", "../pages/home"),
     componentImport(app, "Message", "../types/message"),
     'import { entities } from "./entities"',
@@ -250,14 +248,13 @@ function storeSource(app) {
   const types = ["Message", "Home"]
   if (app.routing) types.push("About", "Router")
   if (app.i18n) types.push("I18n")
-  const cast = app.isTypeScript ? " as unknown as TypesConfig<AppEntity>" : ""
-  const oneLine = `  types: { ${types.join(", ")} }${cast},`
+  const oneLine = `  types: { ${types.join(", ")} },`
   const typesValue =
     oneLine.length <= LINE_WIDTH
       ? oneLine
       : `  types: {
 ${types.map((type) => `    ${type},`).join("\n")}
-  }${cast},`
+  },`
   const generics = app.isTypeScript ? "<AppEntity, AppState>" : ""
 
   return `${importBlock(imports)}
@@ -333,14 +330,13 @@ export const { I18n, t, ready } = createI18n({
 function typesSource(app) {
   const imports = [
     'import "./vite-end"',
-    'import type { BaseEntity, EntitiesState } from "@inglorious/store"',
+    'import type {\n  BaseEntity,\n  EntitiesState,\n  EntityType,\n} from "@inglorious/store"',
     'import type { Api, TemplateResult } from "@inglorious/web"',
   ]
   const entities = ["MessageEntity", "HomeEntity"]
   const declarations = [
     `export interface MessageEntity extends BaseEntity {
   type: "Message"
-  id?: string
   who: string
   isUpperCase?: boolean
 }`,
@@ -362,7 +358,7 @@ function typesSource(app) {
       `export interface AboutEntity extends BaseEntity {
   type: "About"
 }`,
-      `export interface AppRouterEntity extends BaseEntity, Omit<RouterEntity, "id"> {
+      `export interface AppRouterEntity extends RouterEntity {
   type: "Router"
 }`,
     )
@@ -373,7 +369,7 @@ function typesSource(app) {
     imports.push('import type { I18nEntity } from "@inglorious/i18n"')
     entities.push("AppI18nEntity")
     declarations.push(
-      `export interface AppI18nEntity extends BaseEntity, Omit<I18nEntity, "id"> {
+      `export interface AppI18nEntity extends I18nEntity {
   type: "I18n"
 }`,
     )
@@ -394,9 +390,23 @@ ${state.join("\n")}
 
 export type AppApi = Api<AppEntity, AppState>
 
-export interface MessageType {
+// Each type's events and their payloads. Declare types with \`type\`, not
+// \`interface\`: an interface does not fit the store's \`types\`.
+export type MessageType = {
   click: (entity: MessageEntity) => void
-  render: (entity: MessageEntity, api: AppApi) => TemplateResult | null
+  render: (entity: MessageEntity, api: AppApi) => TemplateResult
 }
+${
+  app.renderer === "lit-html"
+    ? `
+export type HomeType = {
+  render: (entity: HomeEntity, api: AppApi) => TemplateResult
+}
+`
+    : ""
+}
+// A shorthand for a type: \`{ ... } satisfies AppType<MessageEntity>\` infers
+// its handlers' parameters, but neither lists its events nor types payloads.
+export type AppType<TEntity extends AppEntity> = EntityType<TEntity, AppApi>
 `
 }

@@ -50,7 +50,7 @@ export interface Column {
 }
 
 export interface DataGridProps<T extends Row = Row> {
-  id: string | number
+  id?: string
   type: string
   data: T[]
   columns: Column[]

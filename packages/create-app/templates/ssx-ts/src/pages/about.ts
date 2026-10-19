@@ -1,13 +1,13 @@
-import { Api, html } from "@inglorious/web"
+import { html } from "@inglorious/web"
 
-import type { AboutEntity } from "../../types"
+import type { AboutType } from "../../types"
 
-export const About = {
-  click(entity: AboutEntity) {
+export const About: AboutType = {
+  click(entity) {
     entity.name += "!"
   },
 
-  render(entity: AboutEntity, api: Api) {
+  render(entity, api) {
     return html`
       <div>
         <h1>

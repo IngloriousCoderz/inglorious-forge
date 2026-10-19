@@ -1,1 +1,1 @@
-export { unsafeHTML } from "lit-html/directives/unsafe-html"
+export { unsafeHTML } from "lit-html/directives/unsafe-html.js"

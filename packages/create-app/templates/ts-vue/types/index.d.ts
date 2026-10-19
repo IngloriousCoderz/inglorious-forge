@@ -1,12 +1,11 @@
 import "./vite-end"
 
-import { BaseEntity, EntitiesState } from "@inglorious/store"
-import { Api, TemplateResult } from "@inglorious/web"
+import type { BaseEntity, EntitiesState, EntityType } from "@inglorious/store"
+import type { Api } from "@inglorious/web"
 
 // Define your entity types
 export interface MessageEntity extends BaseEntity {
   type: "Message"
-  id?: string
   who: string
   isUpperCase?: boolean
 }
@@ -23,8 +22,7 @@ export interface AppState extends EntitiesState<AppEntity> {
 
 export type AppApi = Api<AppEntity, AppState>
 
-// Types configuration
-export interface MessageType {
-  click: (entity: MessageEntity) => void
-  render: (entity: MessageEntity, api: AppApi) => TemplateResult | null
-}
+// A type for one of the app's entities. For rigour, declare a type alias
+// listing its events and payloads; this shorthand infers its handlers'
+// parameters with `{ ... } satisfies AppType<MessageEntity>`.
+export type AppType<TEntity extends AppEntity> = EntityType<TEntity, AppApi>

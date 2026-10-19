@@ -1,8 +1,8 @@
 import { Api } from "../mount"
 
 export interface MediaQueryEntity {
-  id: string | number
-  type?: "MediaQuery"
+  id?: string
+  type: string
   media: string
   matches: boolean
   isSupported: boolean
@@ -13,7 +13,7 @@ export interface MediaQueryMatchEvent {
   matches: boolean
 }
 
-export interface MediaQueryType {
+export type MediaQueryType = {
   create(entity: MediaQueryEntity, payload: unknown, api: Api): void
   destroy(entity: MediaQueryEntity): void
   mediaQueryChange(entity: MediaQueryEntity, event: MediaQueryMatchEvent): void

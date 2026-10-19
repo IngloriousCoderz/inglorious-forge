@@ -31,7 +31,7 @@ export type FormTouched<T> = T extends (infer U)[]
  */
 export interface FormEntity<T extends FormValues = FormValues> {
   /** A unique identifier for the form entity. */
-  id: string | number
+  id?: string
   /** The initial values of the form, used for resetting. */
   initialValues: T
   /** The current values of the form fields. */
@@ -191,7 +191,7 @@ export interface FormValidationErrorPayload {
 /**
  * The form type implementation for the entity-based state manager.
  */
-export interface FormType {
+export type FormType = {
   /**
    * Initializes the form entity with default state.
    * @param entity The form entity.

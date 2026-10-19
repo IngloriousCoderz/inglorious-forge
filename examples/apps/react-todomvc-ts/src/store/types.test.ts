@@ -1,6 +1,6 @@
 import { it, expect } from "vitest"
 import { createStore } from "@inglorious/store"
-import type { Event, TypesConfig } from "@inglorious/store"
+import type { Event } from "@inglorious/store"
 
 import { types } from "./types"
 import { entities } from "./entities"
@@ -109,7 +109,7 @@ it("should update the filter on filterClick", () => {
 
 function doTest(stateBefore: AppState, event: Event, stateAfter: AppState) {
   const store = createStore<AppEntity, AppState>({
-    types: types as unknown as TypesConfig<AppEntity>,
+    types,
     entities: stateBefore,
   })
 

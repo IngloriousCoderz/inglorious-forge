@@ -1,7 +1,7 @@
 import "./vite-end"
 
-import { BaseEntity, EntitiesState } from "@inglorious/store"
-import { Api, TemplateResult } from "@inglorious/web"
+import type { BaseEntity, EntitiesState } from "@inglorious/store"
+import type { Api, TemplateResult } from "@inglorious/web"
 
 export type Filter = "all" | "active" | "completed"
 
@@ -40,15 +40,16 @@ export interface AppState extends EntitiesState<AppEntity> {
 
 export type AppApi = Api<AppEntity, AppState>
 
-// Types configuration
-export interface FormType {
+// Each type's events and their payloads. Declare types with `type`, not
+// `interface`: an interface does not fit the store's `types`.
+export type FormType = {
   create: (entity: FormEntity) => void
   inputChange: (entity: FormEntity, value: string) => void
   formSubmit: (entity: FormEntity) => void
   render: (entity: FormEntity, api: AppApi) => TemplateResult | null
 }
 
-export interface ListType {
+export type ListType = {
   create: (entity: ListEntity) => void
   formSubmit: (entity: ListEntity, value: string) => void
   toggleClick: (entity: ListEntity, id: number) => void
@@ -57,7 +58,7 @@ export interface ListType {
   render: (entity: ListEntity, api: AppApi) => TemplateResult | null
 }
 
-export interface FooterType {
+export type FooterType = {
   create: (entity: FooterEntity) => void
   filterClick: (entity: FooterEntity, id: Filter) => void
   clearClick: (entity: FooterEntity) => void

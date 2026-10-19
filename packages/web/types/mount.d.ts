@@ -1,33 +1,43 @@
 import type { TemplateResult } from "lit-html"
 import type {
+  AnyTypeDefinition,
   BaseEntity,
   EntitiesState,
-  EntityType,
   Store,
   Api as StoreApi,
 } from "@inglorious/store"
 
+// `mount` gives the store's api a `render`, so loading these types gives the
+// store's `Api` one too. There is a single `Api`: the one handlers receive,
+// and the one components take.
+declare module "@inglorious/store" {
+  interface Api<
+    TEntity extends BaseEntity = BaseEntity,
+    TState extends EntitiesState<TEntity> = EntitiesState<TEntity>,
+  > {
+    /**
+     * Renders an entity or a type component by its ID.
+     * @param id The ID of the entity or type to render. None, such as the route
+     *   of an unmatched path, renders nothing.
+     * @param typeName Optional type name to lazy-register.
+     * @param type Optional type definition to register when typeName is provided.
+     * @returns The rendered template or an empty string if not found.
+     */
+    render: {
+      (id: string | undefined): TemplateResult | string
+      (
+        id: string,
+        typeName: string,
+        type: AnyTypeDefinition,
+      ): TemplateResult | string
+    }
+  }
+}
+
 export type Api<
   TEntity extends BaseEntity = BaseEntity,
   TState extends EntitiesState<TEntity> = EntitiesState<TEntity>,
-> = StoreApi<TEntity, TState> & {
-  /**
-   * Renders an entity or a type component by its ID.
-   * @param id The ID of the entity or type to render. None, such as the route
-   *   of an unmatched path, renders nothing.
-   * @param typeName Optional type name to lazy-register.
-   * @param type Optional type definition to register when typeName is provided.
-   * @returns The rendered template or an empty string if not found.
-   */
-  render: {
-    (id: string | undefined): TemplateResult | string
-    (
-      id: string,
-      typeName: string,
-      type: EntityType<TEntity>,
-    ): TemplateResult | string
-  }
-}
+> = StoreApi<TEntity, TState>
 
 /**
  * Root error-boundary options for `mount`.

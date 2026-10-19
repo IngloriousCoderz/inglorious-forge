@@ -93,7 +93,9 @@ export function writePwaRegistration(targetDir) {
 
 export function createPwaRegistrationSource(extension) {
   if (extension === ".ts") {
-    return `/// <reference types="vite-plugin-pwa/client" />
+    return `// Only the framework-free helpers: "client" also loads React's and Preact's
+// typings, whose global JSX would replace Inglorious's.
+/// <reference types="vite-plugin-pwa/vanillajs" />
 import { isNative } from "@inglorious/web/mobile"
 import { registerSW } from "virtual:pwa-register"
 

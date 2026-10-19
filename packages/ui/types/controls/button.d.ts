@@ -2,7 +2,7 @@ import type { TemplateResult } from "@inglorious/web"
 
 export interface ButtonProps {
   id?: string
-  type: "Button"
+  type?: string
   children?: TemplateResult | string | number
   variant?: "default" | "outline" | "ghost"
   color?:

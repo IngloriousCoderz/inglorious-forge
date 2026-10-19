@@ -1,5 +1,9 @@
-import type { Store, BaseEntity, EntitiesState } from "@inglorious/store"
-import type { useSelector } from "react-redux"
+import type {
+  BaseEntity,
+  EntitiesState,
+  Store,
+  Stored,
+} from "@inglorious/store"
 import type { FC, ReactNode } from "react"
 
 type Notify = (type: string, payload?: any) => void
@@ -11,7 +15,12 @@ export function createReactStore<
   store: Store<T, S>,
 ): {
   Provider: FC<{ children: ReactNode }>
-  useSelector: typeof useSelector
-  useEntity: (id: string) => T
+  /** Reads the state, re-rendering when what the selector returns changes. */
+  useSelector: <TResult>(selector: (state: S) => TResult) => TResult
+  /** A known id gives that entity's own type; any other id, the union. */
+  useEntity: {
+    <TId extends keyof S & string>(id: TId): Stored<S[TId]>
+    (id: string): Stored<T> | undefined
+  }
   useNotify: () => Notify
 }

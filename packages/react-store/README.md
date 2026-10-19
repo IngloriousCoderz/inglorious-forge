@@ -350,8 +350,12 @@ interface AppState {
 // Create typed store
 const store = createStore<CounterEntity, AppState>({ types, entities })
 
-// Everything else works the same!
-const { Provider, useSelector, useNotify } = createReactStore(store)
+// The hooks know your state
+const { Provider, useSelector, useEntity, useNotify } = createReactStore(store)
+
+// In a component: a known id gives that entity's own type
+const { value } = useEntity("myCounter")
+const doubled = useSelector((state) => state.myCounter.value * 2)
 ```
 
 For complete TypeScript examples, see the [@inglorious/store TypeScript documentation](https://www.npmjs.com/package/@inglorious/store#-type-safety).

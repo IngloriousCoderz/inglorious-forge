@@ -130,7 +130,7 @@ export function createMockApi(entities) {
  * expect(entity.value).toBe(10)
  */
 export function trigger(entity, eventHandler, eventPayload, api) {
-  api ??= createMockApi({ entities: { [entity.id]: entity } })
+  api ??= createMockApi({ [entity.id]: entity })
 
   return {
     entity: create(entity, (draft) => {

@@ -1,12 +1,32 @@
 import type { Api } from "./api"
 
 /**
- * Base entity structure
+ * What every entity has. Declare an entity's other fields on its own interface:
+ *
+ * ```ts
+ * interface CounterEntity extends BaseEntity {
+ *   type: "Counter"
+ *   value: number
+ * }
+ * ```
+ *
+ * The store gives each entity its key in the state as `id`, so it can be left
+ * out of the initial entities; handlers always receive it (see `Stored`).
  */
 export interface BaseEntity {
   type: string
-  [key: string]: any
+  id?: string
+  /**
+   * Opts the entity out of a pause: the store stops handing out `update`
+   * events while the world is halted, and an entity that says this keeps
+   * receiving them. It is for overlays and menus; anything that moves should
+   * leave it off so that it stops.
+   */
+  updatesWhilePaused?: boolean
 }
+
+/** An entity as the store holds it, and as handlers receive it: with its id. */
+export type Stored<TEntity extends BaseEntity> = TEntity & { id: string }
 
 /**
  * Event structure
@@ -17,25 +37,79 @@ export interface Event<T = any> {
 }
 
 /**
- * Entity type definition with event handlers.
- *
- * `updatesWhilePaused` opts the type out of a pause: the store stops handing out
- * `update` events while the world is halted, and a type that says this keeps
- * receiving them. It is for overlays and menus; anything that moves should leave it
- * off so that it stops.
+ * An event handler: it receives the entity, the event's payload and the api.
  */
-export type EntityType<TEntity extends BaseEntity = BaseEntity> = {
-  [K: string]: EventHandler<TEntity>
-}
+export type EventHandler<
+  TEntity extends BaseEntity = BaseEntity,
+  TApi extends Api<any, any> = Api,
+> = (entity: Stored<TEntity>, payload: any, api: TApi) => unknown
 
 /**
- * A handler, checked as a method is: a type for a specific entity, such as
- * `Api<AppEntity>`'s, then fits where `BaseEntity`'s is expected, so a component
- * typed with the plain `Api` accepts an app's.
+ * Any type for one kind of entity: its event handlers, by event name, and its
+ * `render`. The store checks `types` against it.
+ *
+ * For rigour, declare a type's events and payloads with a `type` alias (an
+ * interface does not fit `types`) and write the type against it:
+ *
+ * ```ts
+ * type CounterType = {
+ *   add: (entity: CounterEntity, amount: number) => void
+ * }
+ * const Counter: CounterType = {
+ *   add(entity, amount) {
+ *     entity.value += amount
+ *   },
+ * }
+ * ```
+ *
+ * As a shorthand, `satisfies` infers the entity and the api without the
+ * declaration, but neither lists the events nor types unannotated payloads:
+ *
+ * ```ts
+ * const Counter = {
+ *   add(entity, amount: number) {
+ *     entity.value += amount
+ *   },
+ * } satisfies EntityType<CounterEntity, AppApi>
+ * ```
  */
-type EventHandler<TEntity extends BaseEntity> = {
-  bivarianceHack(entity: TEntity, payload: any, api: Api): void
-}["bivarianceHack"]
+export type EntityType<
+  TEntity extends BaseEntity = BaseEntity,
+  TApi extends Api<any, any> = Api,
+> = {
+  /** Draws the entity. Unlike an event handler, it receives the api second. */
+  render?: Renderer<TEntity, TApi>
+  [member: string]: EventHandler<TEntity, TApi> | undefined
+}
+
+/** A type's `render`: it receives the entity and the api. */
+export type Renderer<
+  TEntity extends BaseEntity = BaseEntity,
+  TApi extends Api<any, any> = Api,
+> = (entity: Stored<TEntity>, api: TApi) => unknown
+
+/**
+ * A behavior: a type, or a function that extends the type it is given. A type
+ * can also be an array of behaviors, applied in order: `[Chart, withRealtime]`.
+ */
+export type Behavior<
+  TEntity extends BaseEntity = BaseEntity,
+  TApi extends Api<any, any> = Api,
+> =
+  | EntityType<TEntity, TApi>
+  | ((type: EntityType<TEntity, TApi>) => EntityType<TEntity, TApi>)
+
+/** What the store's `types` holds for one type name: a behavior, or several. */
+export type TypeDefinition<
+  TEntity extends BaseEntity = BaseEntity,
+  TApi extends Api<any, any> = Api,
+> = Behavior<TEntity, TApi> | Behavior<TEntity, TApi>[]
+
+/**
+ * A type definition for any entity. A handler that accepts some entity also
+ * accepts `never`, so every type fits here, whatever entity it is for.
+ */
+export type AnyTypeDefinition = TypeDefinition<never, never>
 
 /**
  * System definition with event handlers
@@ -52,11 +126,23 @@ export type EntitiesState<TEntity extends BaseEntity = BaseEntity> = {
 }
 
 /**
- * Types configuration
+ * The store's `types`. In a typed store, each entity's type name takes a type
+ * for that entity, so `types: { Counter }` checks `Counter` against
+ * `CounterEntity`. Names no entity has, such as a page rendered by name, take
+ * any type.
  */
-export type TypesConfig<TEntity extends BaseEntity = BaseEntity> = {
-  [typeName: string]: EntityType<TEntity>
-}
+export type TypesConfig<
+  TEntity extends BaseEntity = BaseEntity,
+  TState extends EntitiesState<TEntity> = EntitiesState<TEntity>,
+> = string extends TEntity["type"]
+  ? { [typeName: string]: AnyTypeDefinition }
+  : {
+      [TName in TEntity["type"]]?: TypeDefinition<
+        Extract<TEntity, { type: TName }>,
+        Api<TEntity, TState>
+      >
+    } & { [typeName: string]: unknown }
+
 /**
  * Whether each event triggers an update, or updates are batched until `update()` is called.
  */
@@ -87,9 +173,9 @@ export interface StoreConfig<
   TEntity extends BaseEntity = BaseEntity,
   TState extends EntitiesState<TEntity> = EntitiesState<TEntity>,
 > {
-  // Types do not pick the entity type: their handlers accept any entity, so
-  // it comes from `entities`, `middlewares` or the explicit type arguments.
-  types?: TypesConfig<NoInfer<TEntity>>
+  // The entity type comes from the type arguments, `entities` or
+  // `middlewares`, never from `types`, which are checked against it.
+  types?: NoInfer<TypesConfig<TEntity, TState>>
   /** The initial entities. With `autoCreateEntities`, those the store creates itself can be left out. */
   entities?: Partial<TState>
   systems?: System<TState>[]
@@ -120,13 +206,15 @@ export interface Store<
   update: () => Event[]
   notify: (type: string, payload?: any) => void
   dispatch: (event: Event) => void
-  getTypes: () => TypesConfig<TEntity>
-  getType: (typeName: string) => EntityType<TEntity>
-  setType: (typeName: string, type: EntityType<TEntity>) => void
+  getTypes: () => Record<string, EntityType>
+  getType: (typeName: string) => EntityType
+  setType: (typeName: string, type: AnyTypeDefinition) => void
   getState: () => TState
   getEntity: {
-    <TId extends keyof TState & string>(id: TId): TState[TId] | undefined
-    (id: string): TState[string] | undefined
+    <TId extends keyof TState & string>(
+      id: TId,
+    ): Stored<TState[TId]> | undefined
+    (id: string): Stored<TEntity> | undefined
   }
   setState: (nextState: TState) => void
   reset: () => void

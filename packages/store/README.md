@@ -1381,75 +1381,145 @@ store.dispatch({ type: "eventName", payload }) // Redux-compatible alternative
 
 ### 🧩 Type Safety
 
-Inglorious Store is written in JavaScript but comes with powerful TypeScript support out of the box, allowing for a fully type-safe experience similar to Redux Toolkit, but with less boilerplate.
+Inglorious Store is written in JavaScript but comes with TypeScript types that check your whole app with no casts: each type against its entity, each handler's parameters, and every entity read through the api.
 
-You can achieve strong type safety by defining an interface for your `types` configuration. This allows you to statically define the shape of your entity handlers, ensuring that all required handlers are present and correctly typed.
-
-Here’s how you can set it up for a TodoMVC-style application:
-
-**1. Define Your Types**
-
-First, create an interface that describes your entire `types` configuration. This interface will enforce the structure of your event handlers.
+**1. Describe your entities and state**
 
 ```typescript
-// src/store/types.ts
+// types/index.d.ts
 import type {
-  FormEntity,
-  ListEntity,
-  FooterEntity,
-  // ... other payload types
-} from "../../types"
+  Api,
+  BaseEntity,
+  EntitiesState,
+  EntityType,
+} from "@inglorious/store"
 
-// Define the static shape of the types configuration
-interface TodoListTypes {
-  form: {
-    inputChange: (entity: FormEntity, value: string) => void
-    formSubmit: (entity: FormEntity) => void
-  }
-  list: {
-    formSubmit: (entity: ListEntity, value: string) => void
-    toggleClick: (entity: ListEntity, id: number) => void
-    // ... other handlers
-  }
-  footer: {
-    filterClick: (entity: FooterEntity, id: string) => void
-  }
+export interface CounterEntity extends BaseEntity {
+  type: "Counter"
+  value: number
 }
 
-export const types: TodoListTypes = {
-  form: {
-    inputChange(entity, value) {
-      entity.value = value
-    },
-    formSubmit(entity) {
-      entity.value = ""
-    },
-  },
-  // ... other type implementations
+export interface LabelEntity extends BaseEntity {
+  type: "Label"
+  text: string
+}
+
+export type AppEntity = CounterEntity | LabelEntity
+
+// The entities by id
+export interface AppState extends EntitiesState<AppEntity> {
+  counter: CounterEntity
+  label: LabelEntity
+}
+
+export type AppApi = Api<AppEntity, AppState>
+
+// A type for one of the app's entities
+export type AppType<TEntity extends AppEntity> = EntityType<TEntity, AppApi>
+```
+
+Every field of an entity is declared, so a misspelled one is an error. The store gives each entity its key in the state as `id`: leave it out of the initial entities, and handlers receive it as a `string`. With `@inglorious/web`, import `Api` from there instead: it is the same type, with `render`.
+
+**2. Write your types**
+
+Declare each type's events and their payloads, then write the type against that declaration:
+
+```typescript
+// types/index.d.ts
+export type CounterType = {
+  increment: (entity: CounterEntity) => void
+  add: (entity: CounterEntity, amount: number) => void
+  copyLabel: (entity: CounterEntity, payload: void, api: AppApi) => void
 }
 ```
 
-With `TodoListTypes`, TypeScript will throw an error if you forget a handler (e.g., `formSubmit`) or if its signature is incorrect.
+```typescript
+// src/store/counter.ts
+import type { CounterType } from "../../types"
 
-**2. Create the Store**
+export const Counter: CounterType = {
+  increment(entity) {
+    entity.value++
+  },
 
-When creating your store, you'll pass the `types` object. To satisfy the store's generic `TypesConfig`, you may need to use a double cast (`as unknown as`). This is a safe and intentional way to bridge your specific, statically-checked configuration with the store's more generic type.
+  add(entity, amount) {
+    entity.value += amount
+  },
+
+  copyLabel(entity, _payload, api) {
+    entity.value = api.getEntity("label")?.text.length ?? 0
+  },
+}
+```
+
+The parameters are inferred from `CounterType`, and TypeScript checks the type against it: a misspelled or missing handler is an error, and so is `Counter.add(counter, "2")`. Declare it with `type`, not `interface`: an interface does not fit the store's `types`.
+
+For less rigour with less to write, skip the declaration and use the shorthand, `satisfies`. It still infers the entity and the api, but it neither lists the events nor types a payload you do not annotate:
+
+```typescript
+export const Counter = {
+  increment(entity) {
+    entity.value++
+  },
+  add(entity, amount: number) {
+    entity.value += amount
+  },
+} satisfies AppType<CounterEntity>
+```
+
+**3. Create the store**
 
 ```typescript
 // src/store/index.ts
-import { createStore, type TypesConfig } from "@inglorious/store"
-import { types } from "./types"
-import type { TodoListEntity, TodoListState } from "../../types"
+import { createStore } from "@inglorious/store"
 
-export const store = createStore<TodoListEntity, TodoListState>({
-  types: types as unknown as TypesConfig<TodoListEntity>,
-  // ... other store config
+import type { AppEntity, AppState } from "../../types"
+import { Counter } from "./counter"
+import { Label } from "./label"
+
+export const store = createStore<AppEntity, AppState>({
+  types: { Counter, Label },
+  entities: {
+    counter: { type: "Counter", value: 0 },
+    label: { type: "Label", text: "Hello" },
+  },
 })
 ```
 
-**3. Enjoy Full Type Safety**
+Each type is checked against the entities of its name: `Counter` against `CounterEntity`. A name no entity has, such as a page rendered by name, takes any type. Behaviors type the same way: `Live: [Chart, withRealtime]`.
 
-Now, your store is fully type-safe. The hooks provided by `@inglorious/react-store` will also be correctly typed.
+**4. Use types from libraries**
+
+An entity drawn by a library type extends that type's entity interface:
+
+```typescript
+import type { ChartEntity } from "@inglorious/charts"
+import type { RouterEntity } from "@inglorious/web/router"
+
+interface AppRouterEntity extends RouterEntity {
+  type: "Router"
+}
+
+interface SalesEntity extends ChartEntity {
+  type: "Sales"
+}
+
+// types: { Router, Sales: Chart }
+```
+
+**5. Test your handlers**
+
+```typescript
+import { trigger } from "@inglorious/store/test"
+
+const { entity, events } = trigger(counter, Counter.add, 2)
+```
+
+`trigger` checks the payload against the handler, and returns the updated entity, typed.
+
+**Upgrading from casts**
+
+Older apps passed `types` as `types as unknown as TypesConfig<AppEntity>` and described each type with an interface. Drop the cast, turn each `interface CounterType {` into `type CounterType = {`, and declare every entity field, which `BaseEntity` no longer allows by default. An entity that extended `BaseEntity, Omit<RouterEntity, "id">` now just extends `RouterEntity`.
 
 ---
 

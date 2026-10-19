@@ -1,6 +1,6 @@
 import { classMap } from "@inglorious/web/directives/class-map"
 
-import type { ListType } from "../../../types"
+import type { ListType, Task } from "../../../types"
 import { filteredTasks } from "../../store/select"
 import classes from "./list.module.css"
 
@@ -20,6 +20,7 @@ export const List: ListType = {
 
   toggleClick(entity, id) {
     const task = entity.tasks.find((task) => task.id === id)
+    if (!task) return
     task.completed = !task.completed
   },
 
@@ -40,7 +41,9 @@ export const List: ListType = {
         {tasks.map((task) => (
           <li key={task.id}>
             <span
-              className={classMap({ [classes.completed]: task.completed })}
+              className={classMap({
+                [classes.completed]: Boolean(task.completed),
+              })}
               onClick={() => api.notify("toggleClick", task.id)}
             >
               {task.text}
@@ -55,7 +58,7 @@ export const List: ListType = {
   },
 }
 
-function nextId(tasks) {
+function nextId(tasks: Task[]) {
   if (!tasks.length) return DEFAULT_ID
   return tasks[tasks.length - LAST_TASK].id + NEXT_ID
 }

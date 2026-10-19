@@ -39,7 +39,7 @@ export interface I18nOptions {
 }
 
 export interface I18nEntity {
-  id: string
+  id?: string
   type: string
   /** The active locale. */
   locale?: string
@@ -65,7 +65,7 @@ export type LanguageOption = {
   label: string
 }
 
-export interface I18nType {
+export type I18nType = {
   create(entity: I18nEntity): void
   /**
    * Switches to `locale`, remembers it and sets `<html lang>`. Unsupported

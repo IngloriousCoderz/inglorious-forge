@@ -1,1 +1,1 @@
-export { when } from "lit-html/directives/when"
+export { when } from "lit-html/directives/when.js"

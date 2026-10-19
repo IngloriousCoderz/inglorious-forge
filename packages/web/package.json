@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/web",
-  "version": "6.6.2",
+  "version": "6.7.0",
   "description": "A new web framework that leverages the power of the Inglorious Store combined with the performance and simplicity of lit-html.",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "contributors": [
@@ -91,6 +91,7 @@
       "import": "./src/static.js"
     },
     "./test": {
+      "types": "./types/test.d.ts",
       "import": "./src/test.js"
     }
   },
@@ -107,7 +108,8 @@
     "format": "prettier --write .",
     "lint": "eslint .",
     "test:watch": "vitest",
-    "test": "vitest run"
+    "test": "vitest run && tsc -p type-tests",
+    "test:types": "tsc -p type-tests"
   },
   "dependencies": {
     "@inglorious/utils": "workspace:*",
@@ -120,6 +122,7 @@
   "devDependencies": {
     "@inglorious/eslint-config": "workspace:*",
     "prettier": "^3.9.6",
+    "typescript": "~7.0.2",
     "vitest": "^5.0.0"
   },
   "packageManager": "pnpm@10.15.0",
