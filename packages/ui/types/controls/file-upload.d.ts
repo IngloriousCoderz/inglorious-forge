@@ -20,7 +20,7 @@ export interface FileUploadProps {
   [key: string]: unknown
 }
 
-export interface FileUploadType {
+export type FileUploadType = {
   render(props: FileUploadProps): TemplateResult
 }
 

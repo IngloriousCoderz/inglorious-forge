@@ -37,7 +37,7 @@ export interface ListProps {
   [key: string]: unknown
 }
 
-export interface ListType {
+export type ListType = {
   render(props: ListProps): TemplateResult
   renderList(props: ListProps): TemplateResult
   renderItem(

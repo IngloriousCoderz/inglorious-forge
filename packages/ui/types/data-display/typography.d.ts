@@ -16,7 +16,7 @@ export interface TypographyProps {
   [key: string]: unknown
 }
 
-export interface TypographyType {
+export type TypographyType = {
   render(props: TypographyProps): TemplateResult
 }
 

@@ -21,7 +21,7 @@ export interface ContainerProps {
   [key: string]: unknown
 }
 
-export interface ContainerType {
+export type ContainerType = {
   render(props: ContainerProps): TemplateResult
 }
 

@@ -21,7 +21,7 @@ export interface BottomNavigationProps {
   [key: string]: unknown
 }
 
-export interface BottomNavigationType {
+export type BottomNavigationType = {
   render(props: BottomNavigationProps): TemplateResult
   renderBottomNavigation(props: BottomNavigationProps): TemplateResult
   renderAction(

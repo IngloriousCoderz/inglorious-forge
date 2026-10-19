@@ -20,7 +20,7 @@ export interface AccordionProps {
   [key: string]: unknown
 }
 
-export interface AccordionType {
+export type AccordionType = {
   render(props: AccordionProps): TemplateResult
   renderAccordion(props: AccordionProps): TemplateResult
   renderItem(

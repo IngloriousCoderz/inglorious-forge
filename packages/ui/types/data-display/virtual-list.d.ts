@@ -46,7 +46,7 @@ export interface VirtualListEntity<
 /**
  * The virtual list type implementation, combining logic and rendering.
  */
-export interface VirtualListType {
+export type VirtualListType = {
   /**
    * Initializes the list entity with default state.
    * @param entity The list entity to initialize.

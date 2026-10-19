@@ -32,7 +32,7 @@ export interface SelectProps {
   [key: string]: unknown
 }
 
-export interface SelectType {
+export type SelectType = {
   render(props: SelectProps): TemplateResult
 }
 

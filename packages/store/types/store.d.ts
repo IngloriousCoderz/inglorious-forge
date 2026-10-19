@@ -25,8 +25,17 @@ export interface Event<T = any> {
  * off so that it stops.
  */
 export type EntityType<TEntity extends BaseEntity = BaseEntity> = {
-  [K: string]: (entity: TEntity, payload: any, api: Api) => void
+  [K: string]: EventHandler<TEntity>
 }
+
+/**
+ * A handler, checked as a method is: a type for a specific entity, such as
+ * `Api<AppEntity>`'s, then fits where `BaseEntity`'s is expected, so a component
+ * typed with the plain `Api` accepts an app's.
+ */
+type EventHandler<TEntity extends BaseEntity> = {
+  bivarianceHack(entity: TEntity, payload: any, api: Api): void
+}["bivarianceHack"]
 
 /**
  * System definition with event handlers
@@ -78,7 +87,9 @@ export interface StoreConfig<
   TEntity extends BaseEntity = BaseEntity,
   TState extends EntitiesState<TEntity> = EntitiesState<TEntity>,
 > {
-  types?: TypesConfig<TEntity>
+  // Types do not pick the entity type: their handlers accept any entity, so
+  // it comes from `entities`, `middlewares` or the explicit type arguments.
+  types?: TypesConfig<NoInfer<TEntity>>
   /** The initial entities. With `autoCreateEntities`, those the store creates itself can be left out. */
   entities?: Partial<TState>
   systems?: System<TState>[]

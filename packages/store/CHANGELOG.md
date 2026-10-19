@@ -1,5 +1,14 @@
 # @inglorious/store
 
+## 11.0.5
+
+### Patch Changes
+
+- - An app's own `Api<AppEntity, AppState>` is accepted wherever the plain `Api` is, so passing it to `Chart.render`, `DataGrid.render` and the like no longer needs a cast. Event handlers in `EntityType` are checked as methods are, and `createStore` no longer infers the entity type from `types`.
+  - UI component types (`ButtonType`, `DataGridType`, …) are type aliases rather than interfaces, so they fit a store's `types` as `ChartType` does.
+  - `@inglorious/ui` declares its components for TypeScript at the root too: `import { Button } from "@inglorious/ui"` typechecks.
+- @inglorious/utils@5.0.0
+
 ## 11.0.4
 
 ### Patch Changes

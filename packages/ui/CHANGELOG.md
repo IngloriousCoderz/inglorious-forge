@@ -1,5 +1,21 @@
 # @inglorious/ui
 
+## 8.2.2
+
+### Patch Changes
+
+- - An app's own `Api<AppEntity, AppState>` is accepted wherever the plain `Api` is, so passing it to `Chart.render`, `DataGrid.render` and the like no longer needs a cast. Event handlers in `EntityType` are checked as methods are, and `createStore` no longer infers the entity type from `types`.
+  - UI component types (`ButtonType`, `DataGridType`, …) are type aliases rather than interfaces, so they fit a store's `types` as `ChartType` does.
+  - `@inglorious/ui` declares its components for TypeScript at the root too: `import { Button } from "@inglorious/ui"` typechecks.
+- - `DataGrid`'s types declare `DataGrid` and its helpers (`getRows`, `getTotalRows`, `getPaginationInfo`, `getSortDirection`, `isAllSelected`, `isSomeSelected`), which TypeScript could not import before.
+  - A default `Chip` reads `--iw-chip-bg`. The Material theme sets it to a tint of the text, so the chip shows on white surfaces, and chip labels stay on one line.
+  - With `isWrapping`, `Table` wraps cells between words, breaking a word only when it cannot fit alone, so short values such as percentages stay whole.
+  - The Material theme follows Material UI more closely: a button's default color is primary (through the new `--iw-button-default-*` tokens), and button and tab labels are medium weight (`--iw-label-font-weight`) with Material UI's letter spacing.
+- Updated dependencies
+  - @inglorious/store@11.0.5
+  - @inglorious/web@6.6.2
+  - @inglorious/utils@5.0.0
+
 ## 8.2.1
 
 ### Patch Changes

@@ -23,7 +23,7 @@ export interface SpeedDialProps {
   [key: string]: unknown
 }
 
-export interface SpeedDialType {
+export type SpeedDialType = {
   render(props: SpeedDialProps): TemplateResult
   renderSpeedDial(props: SpeedDialProps): TemplateResult
   renderAction(

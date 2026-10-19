@@ -1,5 +1,14 @@
 # @inglorious/ssx
 
+## 2.1.14
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/store@11.0.5
+  - @inglorious/web@6.6.2
+  - @inglorious/utils@5.0.0
+
 ## 2.1.13
 
 ### Patch Changes

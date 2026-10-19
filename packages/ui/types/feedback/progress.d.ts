@@ -19,7 +19,7 @@ export interface ProgressProps {
   [key: string]: unknown
 }
 
-export interface ProgressType {
+export type ProgressType = {
   render(props: ProgressProps): TemplateResult
 }
 

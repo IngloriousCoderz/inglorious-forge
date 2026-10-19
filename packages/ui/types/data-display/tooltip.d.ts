@@ -13,7 +13,7 @@ export interface TooltipProps {
   [key: string]: unknown
 }
 
-export interface TooltipType {
+export type TooltipType = {
   render(props: TooltipProps): TemplateResult
 }
 

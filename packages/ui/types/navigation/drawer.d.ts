@@ -16,7 +16,7 @@ export interface DrawerProps {
   [key: string]: unknown
 }
 
-export interface DrawerType {
+export type DrawerType = {
   render(props: DrawerProps): TemplateResult | null
 }
 

@@ -21,7 +21,7 @@ export interface PaperProps {
   [key: string]: unknown
 }
 
-export interface PaperType {
+export type PaperType = {
   render(props: PaperProps): TemplateResult
 }
 

@@ -42,7 +42,7 @@ export interface CarouselProps {
   [key: string]: unknown
 }
 
-export interface CarouselType {
+export type CarouselType = {
   create(entity: CarouselProps): void
   indicatorSelect(
     props: CarouselProps,

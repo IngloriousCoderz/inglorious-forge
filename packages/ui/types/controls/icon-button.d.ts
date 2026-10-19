@@ -24,7 +24,7 @@ export interface IconButtonProps {
   onClick?: () => void
 }
 
-export interface IconButtonType {
+export type IconButtonType = {
   render(props: IconButtonProps): TemplateResult
 }
 

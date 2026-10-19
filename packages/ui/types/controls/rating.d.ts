@@ -12,7 +12,7 @@ export interface RatingProps {
   size?: "sm" | "md" | "lg"
 }
 
-export interface RatingType {
+export type RatingType = {
   render(props: RatingProps): TemplateResult
 }
 

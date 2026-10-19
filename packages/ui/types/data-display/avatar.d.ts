@@ -23,7 +23,7 @@ export interface AvatarProps {
   [key: string]: unknown
 }
 
-export interface AvatarType {
+export type AvatarType = {
   render(props: AvatarProps): TemplateResult
 }
 

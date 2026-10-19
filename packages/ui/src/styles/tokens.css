@@ -128,6 +128,7 @@
   /* Labels of buttons and tabs: a theme can set them in capitals. */
   --iw-label-text-transform: none;
   --iw-label-letter-spacing: normal;
+  --iw-label-font-weight: var(--iw-font-weight-normal);
 
   /* ========================================
      SHADOWS

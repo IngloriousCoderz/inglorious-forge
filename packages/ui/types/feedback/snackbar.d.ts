@@ -12,7 +12,7 @@ export interface SnackbarProps {
   [key: string]: unknown
 }
 
-export interface SnackbarType {
+export type SnackbarType = {
   render(props: SnackbarProps): TemplateResult | null
 }
 

@@ -1900,18 +1900,12 @@ importers:
       eslint-plugin-react:
         specifier: ^7.37.5
         version: 7.37.5(eslint@10.10.0(jiti@2.5.1)(supports-color@7.2.0))
-      eslint-plugin-react-hooks:
-        specifier: ^5.2.0
-        version: 5.2.0(eslint@10.10.0(jiti@2.5.1)(supports-color@7.2.0))
       eslint-plugin-simple-import-sort:
         specifier: ^12.1.1
         version: 12.1.1(eslint@10.10.0(jiti@2.5.1)(supports-color@7.2.0))
       eslint-plugin-tailwindcss:
         specifier: 4.0.0-beta.0
         version: 4.0.0-beta.0(tailwindcss@4.1.13)
-      eslint-plugin-turbo:
-        specifier: ^2.5.0
-        version: 2.5.8(eslint@10.10.0(jiti@2.5.1)(supports-color@7.2.0))(turbo@2.10.12)
       globals:
         specifier: ^17.12.0
         version: 17.12.0
@@ -8298,13 +8292,6 @@ packages:
       }
     engines: { node: ">=20" }
 
-  dotenv@16.0.3:
-    resolution:
-      {
-        integrity: sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==,
-      }
-    engines: { node: ">=12" }
-
   dunder-proto@1.0.1:
     resolution:
       {
@@ -8545,15 +8532,6 @@ packages:
         integrity: sha512-j37hwfaQDEOfkZ1Dpvu/HnWLavlzQxQxfbrU/9Jb4R9qzrE1eTYuRJyrxq7LzLRI8miG5FOV6veoUVhx7AI84w==,
       }
 
-  eslint-plugin-react-hooks@5.2.0:
-    resolution:
-      {
-        integrity: sha512-+f15FfK64YQwZdJNELETdn5ibXEUQmW1DZL6KXhNnc2heoy/sg9VJJeT7n8TlMWouzWqSWavFkIhHyIbIAEapg==,
-      }
-    engines: { node: ">=10" }
-    peerDependencies:
-      eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0 || ^9.0.0
-
   eslint-plugin-react-hooks@7.1.1:
     resolution:
       {
@@ -8612,15 +8590,6 @@ packages:
     engines: { node: ">=18.12.0" }
     peerDependencies:
       tailwindcss: ^3.4.0 || ^4.0.0
-
-  eslint-plugin-turbo@2.5.8:
-    resolution:
-      {
-        integrity: sha512-bVjx4vTH0oTKIyQ7EGFAXnuhZMrKIfu17qlex/dps7eScPnGQLJ3r1/nFq80l8xA+8oYjsSirSQ2tXOKbz3kEw==,
-      }
-    peerDependencies:
-      eslint: ">6.6.0"
-      turbo: ">2.0.0"
 
   eslint-scope@9.1.2:
     resolution:
@@ -16290,8 +16259,6 @@ snapshots:
     dependencies:
       type-fest: 5.9.0
 
-  dotenv@16.0.3: {}
-
   dunder-proto@1.0.1:
     dependencies:
       call-bind-apply-helpers: 1.0.2
@@ -16546,10 +16513,6 @@ snapshots:
 
   eslint-plugin-only-warn@1.2.1: {}
 
-  eslint-plugin-react-hooks@5.2.0(eslint@10.10.0(jiti@2.5.1)(supports-color@7.2.0)):
-    dependencies:
-      eslint: 10.10.0(jiti@2.5.1)(supports-color@7.2.0)
-
   eslint-plugin-react-hooks@7.1.1(eslint@10.10.0(jiti@2.5.1)(supports-color@7.2.0))(supports-color@7.2.0):
     dependencies:
       "@babel/core": 7.29.7(supports-color@7.2.0)
@@ -16611,12 +16574,6 @@ snapshots:
       synckit: 0.11.11
       tailwind-api-utils: 1.0.3(tailwindcss@4.1.13)
       tailwindcss: 4.1.13
-
-  eslint-plugin-turbo@2.5.8(eslint@10.10.0(jiti@2.5.1)(supports-color@7.2.0))(turbo@2.10.12):
-    dependencies:
-      dotenv: 16.0.3
-      eslint: 10.10.0(jiti@2.5.1)(supports-color@7.2.0)
-      turbo: 2.10.12
 
   eslint-scope@9.1.2:
     dependencies:

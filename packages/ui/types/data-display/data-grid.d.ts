@@ -89,7 +89,7 @@ export interface DataGridProps<T extends Row = Row> {
   [key: string]: any
 }
 
-export interface DataGridType {
+export type DataGridType = {
   create(entity: DataGridProps): void
   sortChange(entity: DataGridProps, columnId: string): void
   sortsClear(entity: DataGridProps): void
@@ -150,3 +150,34 @@ export interface DataGridType {
     api: Api,
   ): any
 }
+
+export declare const DataGrid: DataGridType
+
+export interface DataGridPaginationInfo {
+  page: number
+  pageSize: number
+  pageSizes: number[]
+  totalPages: number
+  totalRows: number
+  start: number
+  end: number
+  hasNextPage: boolean
+  hasPrevPage: boolean
+}
+
+/** The rows to show: filtered, searched, sorted and paginated. */
+export declare function getRows<T extends Row = Row>(
+  entity: DataGridProps<T>,
+): T[]
+/** How many rows match the filters and search, across all pages. */
+export declare function getTotalRows(entity: DataGridProps): number
+/** The current page, or null without pagination. */
+export declare function getPaginationInfo(
+  entity: DataGridProps,
+): DataGridPaginationInfo | null
+export declare function getSortDirection(
+  entity: DataGridProps,
+  columnId: string,
+): "asc" | "desc" | null
+export declare function isAllSelected(entity: DataGridProps): boolean
+export declare function isSomeSelected(entity: DataGridProps): boolean

@@ -1,5 +1,11 @@
 # @inglorious/motion
 
+## 9.0.8
+
+### Patch Changes
+
+- @inglorious/web@6.6.2
+
 ## 9.0.7
 
 ### Patch Changes

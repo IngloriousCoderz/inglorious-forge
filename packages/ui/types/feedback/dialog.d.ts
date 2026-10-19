@@ -14,7 +14,7 @@ export interface DialogProps {
   [key: string]: unknown
 }
 
-export interface DialogType {
+export type DialogType = {
   render(props: DialogProps): TemplateResult | null
 }
 

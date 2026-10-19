@@ -8,7 +8,7 @@ export default defineConfig([
   globalIgnores(["storybook-static"]),
 
   {
-    files: ["**/*.stories.js"],
+    files: ["**/*.stories.{js,jsx,ts,tsx}"],
     rules: {
       "no-magic-numbers": "off",
     },

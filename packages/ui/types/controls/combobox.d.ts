@@ -53,7 +53,7 @@ export interface ComboboxProps {
   [key: string]: unknown
 }
 
-export interface ComboboxType {
+export type ComboboxType = {
   create(entity: ComboboxProps): void
   render(entity: ComboboxProps, api: Api): TemplateResult
   renderCombobox(props: ComboboxProps): TemplateResult

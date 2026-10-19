@@ -15,7 +15,7 @@ export interface AlertProps {
   [key: string]: unknown
 }
 
-export interface AlertType {
+export type AlertType = {
   render(props: AlertProps): TemplateResult
 }
 

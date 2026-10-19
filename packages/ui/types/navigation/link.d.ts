@@ -15,7 +15,7 @@ export interface LinkProps {
   [key: string]: unknown
 }
 
-export interface LinkType {
+export type LinkType = {
   render(props: LinkProps): TemplateResult
 }
 

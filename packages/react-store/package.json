@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/react-store",
-  "version": "19.0.4",
+  "version": "19.0.5",
   "description": "Official React bindings for @inglorious/store. Provides hooks and a Provider to connect your React components to the store.",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",

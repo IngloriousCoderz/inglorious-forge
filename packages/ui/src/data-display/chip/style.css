@@ -4,10 +4,11 @@
   gap: var(--iw-space-1);
   padding: var(--iw-space-1) var(--iw-space-2);
   border-radius: 999px;
-  background: var(--iw-color-bg-secondary);
+  background: var(--iw-chip-bg, var(--iw-color-bg-secondary));
   color: var(--iw-color-text);
   font-size: var(--iw-font-size-sm);
   line-height: 1;
+  white-space: nowrap;
 
   .iw-chip-label {
     display: inline-flex;

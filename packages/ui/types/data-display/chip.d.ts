@@ -18,7 +18,7 @@ export interface ChipProps {
   [key: string]: unknown
 }
 
-export interface ChipType {
+export type ChipType = {
   render(props: ChipProps): TemplateResult
 }
 

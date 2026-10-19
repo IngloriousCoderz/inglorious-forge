@@ -20,7 +20,7 @@ export interface FabProps {
   [key: string]: unknown
 }
 
-export interface FabType {
+export type FabType = {
   render(props: FabProps): TemplateResult
 }
 

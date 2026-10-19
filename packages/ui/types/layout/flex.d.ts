@@ -25,7 +25,7 @@ export interface FlexProps {
   onClick?: () => void
 }
 
-export interface FlexType {
+export type FlexType = {
   render(props: FlexProps): TemplateResult
 }
 

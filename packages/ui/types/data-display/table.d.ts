@@ -22,7 +22,7 @@ export interface TableProps {
   [key: string]: unknown
 }
 
-export interface TableType {
+export type TableType = {
   render(props: TableProps): TemplateResult
   renderTable(props: TableProps): TemplateResult
   renderHeaderCell(

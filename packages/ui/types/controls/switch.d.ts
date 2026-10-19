@@ -12,7 +12,7 @@ export interface SwitchProps {
   [key: string]: unknown
 }
 
-export interface SwitchType {
+export type SwitchType = {
   render(props: SwitchProps): TemplateResult
 }
 

@@ -1,5 +1,11 @@
 # @inglorious/charts
 
+## 11.1.1
+
+### Patch Changes
+
+- @inglorious/web@6.6.2
+
 ## 11.1.0
 
 ### Minor Changes

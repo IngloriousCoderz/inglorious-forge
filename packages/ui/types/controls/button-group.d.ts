@@ -43,7 +43,7 @@ export interface ButtonGroupProps {
   [key: string]: unknown
 }
 
-export interface ButtonGroupType {
+export type ButtonGroupType = {
   render(props: ButtonGroupProps): TemplateResult
 }
 

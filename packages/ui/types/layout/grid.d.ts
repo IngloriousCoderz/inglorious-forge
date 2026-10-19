@@ -23,7 +23,7 @@ export interface GridProps {
   onClick?: () => void
 }
 
-export interface GridType {
+export type GridType = {
   render(props: GridProps): TemplateResult
 }
 

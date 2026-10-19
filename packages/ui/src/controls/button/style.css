@@ -6,8 +6,8 @@
   padding: var(--iw-space-2) var(--iw-space-4);
   font-family: var(--iw-font-family-sans);
   font-size: var(--iw-font-size-base);
-  font-weight: var(--iw-font-weight-normal);
   line-height: var(--iw-line-height-normal);
+  font-weight: var(--iw-label-font-weight, var(--iw-font-weight-normal));
   text-transform: var(--iw-label-text-transform);
   letter-spacing: var(--iw-label-letter-spacing);
   text-decoration: none;
@@ -60,13 +60,20 @@
     }
   }
 
+  /* Neutral, unless a theme gives the default color its own tokens */
   &.iw-button-default {
-    --iw-button-color: var(--iw-color-text);
-    --iw-button-bg: var(--iw-color-surface);
-    --iw-button-bg-hover: var(--iw-color-surface-hover);
-    --iw-button-bg-active: var(--iw-color-surface-active);
-    --iw-button-border: var(--iw-color-border);
-    --iw-button-text: var(--iw-color-text);
+    --iw-button-color: var(--iw-button-default-color, var(--iw-color-text));
+    --iw-button-bg: var(--iw-button-default-bg, var(--iw-color-surface));
+    --iw-button-bg-hover: var(
+      --iw-button-default-bg-hover,
+      var(--iw-color-surface-hover)
+    );
+    --iw-button-bg-active: var(
+      --iw-button-default-bg-active,
+      var(--iw-color-surface-active)
+    );
+    --iw-button-border: var(--iw-button-default-border, var(--iw-color-border));
+    --iw-button-text: var(--iw-button-default-text, var(--iw-color-text));
 
     &.iw-button-outline,
     &.iw-button-ghost {

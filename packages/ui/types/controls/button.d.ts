@@ -26,7 +26,7 @@ export interface ButtonProps {
   [key: string]: unknown
 }
 
-export interface ButtonType {
+export type ButtonType = {
   render(props: ButtonProps): TemplateResult
 }
 

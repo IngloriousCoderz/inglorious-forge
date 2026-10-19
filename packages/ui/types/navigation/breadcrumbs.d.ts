@@ -17,7 +17,7 @@ export interface BreadcrumbsProps {
   [key: string]: unknown
 }
 
-export interface BreadcrumbsType {
+export type BreadcrumbsType = {
   render(props: BreadcrumbsProps): TemplateResult
   renderBreadcrumbs(props: BreadcrumbsProps): TemplateResult
   renderItem(

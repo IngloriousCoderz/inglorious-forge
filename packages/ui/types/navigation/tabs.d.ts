@@ -22,7 +22,7 @@ export interface TabsProps {
   [key: string]: unknown
 }
 
-export interface TabsType {
+export type TabsType = {
   render(props: TabsProps): TemplateResult
   renderTabs(props: TabsProps): TemplateResult
   renderTab(item: TabItem, index: number, props: TabsProps): TemplateResult

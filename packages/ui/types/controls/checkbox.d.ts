@@ -13,7 +13,7 @@ export interface CheckboxProps {
   [key: string]: unknown
 }
 
-export interface CheckboxType {
+export type CheckboxType = {
   render(props: CheckboxProps): TemplateResult
 }
 

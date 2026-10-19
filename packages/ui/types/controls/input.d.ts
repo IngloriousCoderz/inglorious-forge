@@ -35,7 +35,7 @@ export interface InputProps {
   [key: string]: unknown
 }
 
-export interface InputType {
+export type InputType = {
   render(props: InputProps): TemplateResult
 }
 

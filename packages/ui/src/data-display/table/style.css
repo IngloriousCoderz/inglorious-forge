@@ -18,9 +18,11 @@
   &.iw-table-wrapping {
     min-width: 0;
 
+    /* Wrap between words; break a word only when it cannot fit alone, so
+       short values such as percentages stay whole. */
     .iw-table-header-cell,
     .iw-table-cell {
-      overflow-wrap: anywhere;
+      overflow-wrap: break-word;
     }
   }
 

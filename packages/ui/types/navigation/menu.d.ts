@@ -24,7 +24,7 @@ export interface MenuProps {
   [key: string]: unknown
 }
 
-export interface MenuType {
+export type MenuType = {
   render(props: MenuProps): TemplateResult | null
   renderMenu(props: MenuProps): TemplateResult | null
   renderItem(item: MenuItem, index: number, props: MenuProps): TemplateResult

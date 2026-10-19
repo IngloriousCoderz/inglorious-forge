@@ -13,7 +13,7 @@ export interface BadgeProps {
   [key: string]: unknown
 }
 
-export interface BadgeType {
+export type BadgeType = {
   render(props: BadgeProps): TemplateResult
 }
 

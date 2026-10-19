@@ -10,7 +10,7 @@ export interface BackdropProps {
   [key: string]: unknown
 }
 
-export interface BackdropType {
+export type BackdropType = {
   render(props: BackdropProps): TemplateResult | null
 }
 

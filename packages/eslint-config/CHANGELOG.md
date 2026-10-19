@@ -1,5 +1,12 @@
 # @inglorious/eslint-config
 
+## 1.1.4
+
+### Patch Changes
+
+- - `no-magic-numbers` is off in every test and spec file, TypeScript and JSX included, and in TypeScript and JSX stories.
+  - `eslint-plugin-react-hooks` and `eslint-plugin-turbo` are no longer peer dependencies: no config used them. `eslint-plugin-tailwindcss` is an optional one, so it is installed only by projects using the `tailwind` config.
+
 ## 1.1.3
 
 ### Patch Changes

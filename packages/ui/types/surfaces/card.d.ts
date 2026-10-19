@@ -29,7 +29,7 @@ export interface CardProps {
   [key: string]: unknown
 }
 
-export interface CardType {
+export type CardType = {
   render(props: CardProps): TemplateResult
   renderCard(props: CardProps): TemplateResult
   renderHeader(props: CardProps): TemplateResult | null

@@ -18,7 +18,7 @@ export interface AppBarProps {
   [key: string]: unknown
 }
 
-export interface AppBarType {
+export type AppBarType = {
   render(props: AppBarProps): TemplateResult
 }
 

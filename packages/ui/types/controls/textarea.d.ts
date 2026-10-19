@@ -22,7 +22,7 @@ export interface TextareaProps {
   [key: string]: unknown
 }
 
-export interface TextareaType {
+export type TextareaType = {
   render(props: TextareaProps): TemplateResult
 }
 

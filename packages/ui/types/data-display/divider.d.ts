@@ -7,7 +7,7 @@ export interface DividerProps {
   [key: string]: unknown
 }
 
-export interface DividerType {
+export type DividerType = {
   render(props: DividerProps): TemplateResult
 }
 

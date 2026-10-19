@@ -20,7 +20,7 @@ export interface RadioGroupProps {
   [key: string]: unknown
 }
 
-export interface RadioGroupType {
+export type RadioGroupType = {
   render(props: RadioGroupProps): TemplateResult
 }
 

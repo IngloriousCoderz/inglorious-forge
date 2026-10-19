@@ -34,7 +34,7 @@ export interface IconProps {
   [key: string]: unknown
 }
 
-export interface IconType {
+export type IconType = {
   render(props: IconProps): TemplateResult
 }
 

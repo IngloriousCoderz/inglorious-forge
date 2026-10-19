@@ -30,7 +30,7 @@ export interface PaginationControlRenderProps {
   onChange?: (page: number) => void
 }
 
-export interface PaginationType {
+export type PaginationType = {
   render(props: PaginationProps): TemplateResult
   renderPagination(props: PaginationProps): TemplateResult
   renderItem(

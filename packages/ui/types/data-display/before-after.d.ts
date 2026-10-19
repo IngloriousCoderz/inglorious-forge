@@ -25,7 +25,7 @@ export interface BeforeAfterProps {
   [key: string]: unknown
 }
 
-export interface BeforeAfterType {
+export type BeforeAfterType = {
   create(entity: BeforeAfterProps): void
   positionChange(entity: BeforeAfterProps, position: number): void
   render(entity: BeforeAfterProps, api: Api): TemplateResult

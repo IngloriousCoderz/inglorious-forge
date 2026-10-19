@@ -11,7 +11,7 @@ export interface SkeletonProps {
   [key: string]: unknown
 }
 
-export interface SkeletonType {
+export type SkeletonType = {
   render(props: SkeletonProps): TemplateResult
 }
 

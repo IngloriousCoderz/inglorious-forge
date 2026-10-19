@@ -16,7 +16,7 @@ export interface SliderProps {
   [key: string]: unknown
 }
 
-export interface SliderType {
+export type SliderType = {
   render(props: SliderProps): TemplateResult
 }
 

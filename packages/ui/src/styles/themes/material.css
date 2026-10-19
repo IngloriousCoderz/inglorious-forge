@@ -33,9 +33,10 @@
   --iw-color-accent-hover: #c2185b;
   --iw-color-accent-active: #ad1457;
 
-  /* Buttons and tabs carry their labels in capitals, as Material does. */
+  /* Buttons and tabs carry their labels as Material UI does */
   --iw-label-text-transform: uppercase;
-  --iw-label-letter-spacing: 0.06em;
+  --iw-label-letter-spacing: 0.02857em;
+  --iw-label-font-weight: var(--iw-font-weight-medium);
 
   /* ========================================
      COMPONENT TOKENS
@@ -53,6 +54,14 @@
   --iw-button-shadow-hover:
     0 1px 2px rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
   --iw-button-shadow-active: 0 1px 3px rgba(60, 64, 67, 0.4);
+
+  /* A button's default color is primary, as in Material UI */
+  --iw-button-default-color: var(--iw-color-primary);
+  --iw-button-default-bg: var(--iw-color-primary);
+  --iw-button-default-bg-hover: var(--iw-color-primary-hover);
+  --iw-button-default-bg-active: var(--iw-color-primary-active);
+  --iw-button-default-border: var(--iw-color-primary);
+  --iw-button-default-text: var(--iw-color-primary-text);
 
   --iw-button-outline-bg: transparent;
   --iw-button-outline-bg-hover: rgba(26, 115, 232, 0.08);
@@ -94,6 +103,9 @@
 
   /* Badge */
   --iw-badge-radius: var(--iw-radius-sm);
+
+  /* Chip: a tint of the text, as cards and tables share the white background */
+  --iw-chip-bg: color-mix(in srgb, var(--iw-color-text) 8%, transparent);
 
   /* List */
   --iw-list-item: transparent;
@@ -145,6 +157,8 @@
 
   --iw-card-shadow:
     0 1px 2px 0 rgba(0, 0, 0, 0.3), 0 1px 3px 1px rgba(0, 0, 0, 0.15);
+
+  --iw-chip-bg: color-mix(in srgb, var(--iw-color-text) 16%, transparent);
 
   --iw-list-item: transparent;
   --iw-list-item-active: #2d2d2d;

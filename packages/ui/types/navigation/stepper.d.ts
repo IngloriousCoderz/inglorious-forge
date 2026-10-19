@@ -18,7 +18,7 @@ export interface StepperProps {
   [key: string]: unknown
 }
 
-export interface StepperType {
+export type StepperType = {
   render(props: StepperProps): TemplateResult
   renderStepper(props: StepperProps): TemplateResult
   renderStep(step: Step, index: number, props: StepperProps): TemplateResult
