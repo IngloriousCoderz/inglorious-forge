@@ -1,5 +1,13 @@
 # @inglorious/engine
 
+## 23.0.4
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies
+  - @inglorious/store@11.0.4
+
 ## 23.0.3
 
 ### Patch Changes

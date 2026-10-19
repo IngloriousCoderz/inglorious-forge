@@ -20,6 +20,8 @@ export interface SelectProps {
   isDisabled?: boolean
   isFullWidth?: boolean
   label?: string
+  /** Names the control for assistive tech when it has no visible `label`. */
+  ariaLabel?: string
   hint?: string
   error?: string
   isMulti?: boolean

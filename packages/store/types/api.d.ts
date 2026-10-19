@@ -21,7 +21,11 @@ export interface Api<
     (): TState
     (typeName: string): TEntity[]
   }
-  getEntity: (id: string) => TEntity | undefined
+  /** A known id gives that entity's own type; any other id, the union. */
+  getEntity: {
+    <TId extends keyof TState & string>(id: TId): TState[TId] | undefined
+    (id: string): TEntity | undefined
+  }
   select: <TResult>(selector: (state: TState) => TResult) => TResult
   dispatch: (event: Event) => void
   notify: (type: string, payload?: any) => void

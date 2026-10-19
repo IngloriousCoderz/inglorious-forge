@@ -1,5 +1,13 @@
 # @inglorious/react-store
 
+## 19.0.4
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies
+  - @inglorious/store@11.0.4
+
 ## 19.0.3
 
 ### Patch Changes

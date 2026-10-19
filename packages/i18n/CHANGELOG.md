@@ -1,5 +1,12 @@
 # @inglorious/i18n
 
+## 1.2.1
+
+### Patch Changes
+
+- e026829: `catalogues` accepts what `import.meta.glob` returns in TypeScript.
+- `LanguageOption` fits option types that allow extra fields, so `languages` can be passed to Inglorious UI's `Select` in TypeScript.
+
 ## 1.2.0
 
 ### Minor Changes

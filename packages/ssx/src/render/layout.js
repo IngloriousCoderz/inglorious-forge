@@ -6,6 +6,7 @@
  * @param {string} [options.lang="en"] - Language attribute.
  * @param {string} [options.charset="UTF-8"] - Character set.
  * @param {string} [options.title=""] - Page title.
+ * @param {string} [options.favicon=""] - Favicon URL; without one, no icon link is rendered.
  * @param {Object} [options.meta={}] - Meta tags.
  * @param {string[]} [options.styles=[]] - Stylesheets.
  * @param {string} [options.head=""] - Additional head content.
@@ -35,7 +36,7 @@ export function layout(body, options) {
         .join("\n")}
         <meta charset="${charset}" />
         <title>${title}</title>
-        <link rel="icon" type="image/x-icon" href="${favicon}">
+        ${favicon ? `<link rel="icon" href="${favicon}">` : ""}
         ${Object.entries(meta)
           .map(
             ([key, content]) =>

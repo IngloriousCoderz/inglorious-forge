@@ -79,7 +79,8 @@ export interface StoreConfig<
   TState extends EntitiesState<TEntity> = EntitiesState<TEntity>,
 > {
   types?: TypesConfig<TEntity>
-  entities?: TState
+  /** The initial entities. With `autoCreateEntities`, those the store creates itself can be left out. */
+  entities?: Partial<TState>
   systems?: System<TState>[]
   middlewares?: Middleware<TEntity, TState>[]
   autoCreateEntities?: boolean
@@ -112,7 +113,10 @@ export interface Store<
   getType: (typeName: string) => EntityType<TEntity>
   setType: (typeName: string, type: EntityType<TEntity>) => void
   getState: () => TState
-  getEntity: (id: string) => TState[string] | undefined
+  getEntity: {
+    <TId extends keyof TState & string>(id: TId): TState[TId] | undefined
+    (id: string): TState[string] | undefined
+  }
   setState: (nextState: TState) => void
   reset: () => void
   _api?: Api<TEntity, TState>

@@ -1,7 +1,10 @@
+import type { Middleware } from "@inglorious/store"
 import { createDevtools } from "@inglorious/store/client/devtools"
 
-export const middlewares = []
+import type { AppEntity, AppState } from "../../types"
+
+export const middlewares: Middleware<AppEntity, AppState>[] = []
 
 if (import.meta.env.DEV) {
-  middlewares.push(createDevtools().middleware)
+  middlewares.push(createDevtools<AppEntity, AppState>().middleware)
 }

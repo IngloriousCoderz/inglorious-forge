@@ -1,5 +1,14 @@
 # @inglorious/react-store
 
+## 6.6.1
+
+### Patch Changes
+
+- `api.render` accepts `undefined` in TypeScript, as it already did at runtime, so `api.render(router.route)` type-checks when no route matches.
+- Updated dependencies
+- Updated dependencies
+  - @inglorious/store@11.0.4
+
 ## 6.6.0
 
 ### Minor Changes

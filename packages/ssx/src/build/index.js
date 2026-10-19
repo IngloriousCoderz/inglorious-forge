@@ -60,6 +60,9 @@ export async function build(options = {}) {
     mode: "production",
     server: { middlewareMode: true, hmr: false },
     appType: "custom",
+    // This server only loads modules for SSR. Discovering client deps would
+    // scan the client entry, which is not written yet.
+    optimizeDeps: { noDiscovery: true },
   })
   const loader = (p) => vite.ssrLoadModule(p)
 

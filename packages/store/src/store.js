@@ -332,7 +332,10 @@ export function createStore({
   }
 
   /**
-   * Sets an augmented type configuration given its name.
+   * Sets an augmented type configuration given its name. Replacing a type, as
+   * hot module reloading does, notifies subscribers, since what its entities
+   * render may have changed. Adding a type does not: the store is unchanged,
+   * and a type can be added while rendering.
    * @param {string} typeName - The name of the type to set.
    * @param {Type} type - The type configuration.
    * @returns {void}
@@ -357,6 +360,10 @@ export function createStore({
         id: entityId,
         type: typeName,
       })
+    }
+
+    if (oldType) {
+      listeners.forEach((onUpdate) => onUpdate())
     }
   }
 

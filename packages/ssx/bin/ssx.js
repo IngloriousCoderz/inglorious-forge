@@ -31,12 +31,13 @@ program
   .description("Start development server with hot reload")
   .option("-c, --config <file>", "config file name", "site.config.js")
   .option("-r, --root <dir>", "root directory", ".")
-  .option("-p, --port <port>", "dev server port", 3000)
+  // No default here: an explicit port overrides the config's, 3000 otherwise.
+  .option("-p, --port <port>", "dev server port (default: 3000)")
   .action(async (options) => {
     const cwd = process.cwd()
     const rootDir = path.resolve(cwd, options.root)
     const configPath = resolveConfigFile(rootDir, options.config)
-    const port = Number(options.port)
+    const port = options.port ? Number(options.port) : undefined
 
     try {
       await dev({
@@ -149,10 +150,12 @@ program
 
 program.parse()
 
+// The config lives in src/, where it is loaded from: site.config.ts is used
+// when there is no site.config.js.
 function resolveConfigFile(rootDir, configFile) {
   if (configFile === "site.config.js") {
-    const jsPath = path.resolve(rootDir, "site.config.js")
-    const tsPath = path.resolve(rootDir, "site.config.ts")
+    const jsPath = path.resolve(rootDir, "src", "site.config.js")
+    const tsPath = path.resolve(rootDir, "src", "site.config.ts")
 
     if (!existsSync(jsPath) && existsSync(tsPath)) {
       return "site.config.ts"

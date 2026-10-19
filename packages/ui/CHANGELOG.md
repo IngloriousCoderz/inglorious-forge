@@ -1,5 +1,23 @@
 # @inglorious/ui
 
+## 8.1.0
+
+### Minor Changes
+
+- 8e437e4: - The theme classes paint the element they are on, usually `<body>`: its background, text color and font come from the theme's tokens, so an app no longer writes those rules itself.
+  - The app bar has inline padding, so its title and controls no longer touch the edges of the screen.
+
+### Patch Changes
+
+- `Select` takes an `ariaLabel` prop, which names the control for assistive tech when it has no visible label. Also fixed: a select with a `name` and no `id` binds its label to that name.
+- e026829: `withTransitions` is typed as returning the store it was given, so in TypeScript its result can be passed to `mount`.
+- Updated dependencies
+- Updated dependencies
+- Updated dependencies
+  - @inglorious/store@11.0.4
+  - @inglorious/web@6.6.1
+  - @inglorious/charts@10.0.7
+
 ## 8.0.0
 
 ### Major Changes

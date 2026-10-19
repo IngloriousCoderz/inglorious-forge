@@ -1,5 +1,29 @@
 # @inglorious/create-game
 
+## 1.2.0
+
+### Minor Changes
+
+- bae1af1: The CLI asks about the app's features: Inglorious UI and its theme, a mobile app, routing, page transitions, icon packs (Material Symbols, Font Awesome, Lucide) and translation into several languages, with a flag for each. For lit-html apps it generates the matching source: an app shell, pages, routes, a store, catalogues and a language picker, in JavaScript or TypeScript, already formatted and lint-clean. PWA projects no longer come out with misformatted `vite.config` and `main` files.
+- df12e37: The app's features are generated for JSX and Vue too, not only lit-html: the same app shell, pages, store, catalogues and icons, written in the syntax chosen. Also fixed: mobile support no longer replaces a TypeScript template's own `typescript` version, and the TSX template imports its types from the right path.
+
+### Patch Changes
+
+- Fixes to the generated apps:
+
+  - The store creates the app's singletons (pages, router, i18n) with `autoCreateEntities`, so `entities` only lists the messages.
+  - The language picker is named for assistive tech through `Select`'s `ariaLabel`.
+  - In TSX, the language picker's and the tabs' `onChange` parameters are typed instead of `any`.
+  - JSX uses `className` and keys the language options, so JavaScript JSX apps pass the React lint rules.
+  - Pages no longer declare an `entity` parameter they do not use, which failed lint.
+  - TypeScript Vue apps type their middlewares, and their ESLint config no longer tries to parse `.vue` files.
+  - TypeScript templates depend on `jiti`, which ESLint needs to load `eslint.config.ts`; it used to come only with PWA support.
+  - Vite configs include `@inglorious/vite-plugin-hmr`, which the apps already depended on but did not use.
+  - SSX apps build: they depend on `@inglorious/store`, which their client bundle imports, and TypeScript ones on `typescript`. Their config sets the favicon to the logo, and the JavaScript one's type annotation points at `@inglorious/ssx`.
+  - Mobile apps add `capacitor.config.ts` to `tsconfig.node.json`, so it is type-checked and linted.
+  - Templates use the latest version of every dependency, among them TypeScript 7, Vite 8.3, vite-plugin-pwa 2, Capacitor 8.5.3 and, for SSX, KaTeX 0.19, Mermaid 12 and markdown-it 15. `@types/node` stays on Node 22, the oldest version the apps support.
+  - Generated TypeScript passes TypeScript 7's default `strict` mode: the native language picker's change handler is typed, and optional entity fields are checked.
+
 ## 1.1.2
 
 ### Patch Changes

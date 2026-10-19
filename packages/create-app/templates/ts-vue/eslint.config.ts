@@ -7,7 +7,7 @@ export default defineConfig([
   ...typescriptConfig,
 
   {
-    files: ["**/*.ts", "**/*.vue"],
+    files: ["**/*.ts"],
     languageOptions: {
       parserOptions: {
         project: ["./tsconfig.app.json", "./tsconfig.node.json"],

@@ -1,5 +1,16 @@
 # @inglorious/store
 
+## 11.0.4
+
+### Patch Changes
+
+- TypeScript improvements:
+
+  - `entities` can leave out the entities `autoCreateEntities` creates, instead of having to list every one in the state type.
+  - `api.getEntity("i18n")` is typed as the state's `i18n` entity rather than the union of all entities, so its fields have their own types instead of `any`. Ids the state type does not name still give the union.
+
+- `setType` notifies subscribers when it replaces a type, so a hot-reloaded type re-renders right away instead of at the next event. Adding a type, as a lazy `api.render` does, still notifies no one.
+
 ## 11.0.3
 
 ### Patch Changes

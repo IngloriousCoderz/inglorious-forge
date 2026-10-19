@@ -117,6 +117,20 @@ describe("select", () => {
     expect(container.querySelector("#s")).toBeTruthy()
   })
 
+  it("names the select with ariaLabel when it has no visible label", () => {
+    const container = document.createElement("div")
+
+    render(Select.render({ ariaLabel: "Language", options: [] }), container)
+    expect(container.querySelector("select").getAttribute("aria-label")).toBe(
+      "Language",
+    )
+
+    render(Select.render({ options: [] }), container)
+    expect(container.querySelector("select").hasAttribute("aria-label")).toBe(
+      false,
+    )
+  })
+
   it("marks a required select and sets the attribute", () => {
     const container = document.createElement("div")
 

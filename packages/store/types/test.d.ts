@@ -11,7 +11,10 @@ export interface MockApi<
     (): TState
     (typeName: string): TEntity[]
   }
-  getEntity: (id: string) => TEntity | undefined
+  getEntity: {
+    <TId extends keyof TState & string>(id: TId): TState[TId] | undefined
+    (id: string): TEntity | undefined
+  }
   select: <TResult>(selector: (state: TState) => TResult) => TResult
   dispatch: (event: Event) => void
   notify: (type: string, payload?: any) => void

@@ -40,7 +40,9 @@ export function hmr() {
 
     async transform(code, id) {
       if (!isServe) return null
-      if (!/\.[jt]sx?$/.test(id)) return null
+      // .vue files arrive here already compiled to JavaScript by
+      // @inglorious/vite-plugin-vue, which runs before this plugin.
+      if (!/\.([jt]sx?|vue)$/.test(id)) return null
 
       if (typeFileMap.has(id)) {
         return rewriteTypeModule(code, typeFileMap.get(id))
@@ -53,22 +55,28 @@ export function hmr() {
       const mountLocalName = findImportName(ast, "@inglorious/web", "mount")
       if (!mountLocalName) return null
 
-      const mountCall = findTopLevelMountCall(ast, mountLocalName)
-      if (!mountCall) return null
+      const mount = findMountCall(ast, mountLocalName)
+      if (!mount) return null
 
-      const [storeArg] = mountCall.arguments
-      const storeFilePath =
-        storeArg?.type === "Identifier"
-          ? await resolveStoreFilePath(this, ast, storeArg.name, id)
-          : null
+      const [storeArg] = mount.call.arguments
+      const store = findStoreIdentifier(storeArg)
+      const storeFilePath = store
+        ? await resolveStoreFilePath(this, ast, store.name, id)
+        : null
 
       typeFileMap = storeFilePath
         ? await resolveTypeFiles(this, storeFilePath)
         : new Map()
 
-      if (storeArg?.type !== "Identifier") return null
+      if (!store) return null
+      // Registering happens before the statement that mounts. When mount()
+      // is nested, as in \`ready.then(() => mount(store, ...))\`, that is only
+      // safe for a store that exists at module scope: an imported one.
+      if (mount.isNested && !findImportInfoForLocal(ast, store.name)) {
+        return null
+      }
 
-      return registerStoreGlobally(code, mountCall)
+      return registerStoreGlobally(code, mount.statement, store)
     },
   }
 }
@@ -89,18 +97,76 @@ function findImportName(ast, source, importedName) {
   return null
 }
 
-function findTopLevelMountCall(ast, mountLocalName) {
-  for (const node of ast.body) {
-    const expr = node.type === "ExpressionStatement" ? node.expression : null
-    if (
-      expr?.type === "CallExpression" &&
-      expr.callee.type === "Identifier" &&
-      expr.callee.name === mountLocalName
-    ) {
-      return expr
+/**
+ * Finds the mount() call: a top-level statement, or a call nested in one,
+ * such as \`ready.then(() => mount(...))\`.
+ *
+ * @returns {{ call: object, statement: object, isNested: boolean } | null}
+ */
+function findMountCall(ast, mountLocalName) {
+  for (const statement of ast.body) {
+    const call = findCall(statement, mountLocalName)
+    if (call) {
+      const isNested =
+        statement.type !== "ExpressionStatement" ||
+        statement.expression !== call
+      return { call, statement, isNested }
     }
   }
   return null
+}
+
+function findCall(node, calleeName) {
+  if (!node || typeof node.type !== "string") return null
+  if (
+    node.type === "CallExpression" &&
+    node.callee.type === "Identifier" &&
+    node.callee.name === calleeName
+  ) {
+    return node
+  }
+  for (const [key, value] of Object.entries(node)) {
+    if (key === "loc" || key === "range") continue
+    const children = Array.isArray(value) ? value : [value]
+    for (const child of children) {
+      if (child && typeof child === "object") {
+        const call = findCall(child, calleeName)
+        if (call) return call
+      }
+    }
+  }
+  return null
+}
+
+/**
+ * The store passed to mount(): the identifier itself, or the one a store
+ * enhancer wraps, as in \`withTransitions(store)\`. Anything else, such as
+ * \`createStore({ ... })\`, has no store to register without evaluating it
+ * twice.
+ */
+function findStoreIdentifier(node) {
+  const expr = unwrapTypeScript(node)
+  if (expr?.type === "Identifier") return expr
+  if (expr?.type === "CallExpression") {
+    const [wrapped] = expr.arguments
+    return findStoreIdentifier(wrapped)
+  }
+  return null
+}
+
+// The expression under TypeScript-only syntax: \`x as T\`, \`x satisfies T\`,
+// \`x!\`, \`<T>x\`.
+function unwrapTypeScript(node) {
+  let expr = node
+  while (
+    expr?.type === "TSAsExpression" ||
+    expr?.type === "TSSatisfiesExpression" ||
+    expr?.type === "TSNonNullExpression" ||
+    expr?.type === "TSTypeAssertion"
+  ) {
+    expr = expr.expression
+  }
+  return expr
 }
 
 function findImportInfoForLocal(ast, localName) {
@@ -176,13 +242,14 @@ function findConfigPropertyValue(ast, createStoreLocalName, propName) {
         continue
       }
 
-      const [configArg] = init.arguments
+      const [configNode] = init.arguments
+      const configArg = unwrapTypeScript(configNode)
       if (configArg?.type !== "ObjectExpression") continue
 
       for (const prop of configArg.properties) {
         if (prop.type !== "Property") continue
         const keyName = prop.key.name ?? prop.key.value
-        if (keyName === propName) return prop.value
+        if (keyName === propName) return unwrapTypeScript(prop.value)
       }
     }
   }
@@ -265,7 +332,7 @@ function findExportedObjectEntries(ast, exportName) {
     let objectExpr = null
 
     if (exportName === "default" && node.type === "ExportDefaultDeclaration") {
-      objectExpr = node.declaration
+      objectExpr = unwrapTypeScript(node.declaration)
     }
 
     if (
@@ -277,7 +344,7 @@ function findExportedObjectEntries(ast, exportName) {
           declarator.id.type === "Identifier" &&
           declarator.id.name === exportName
         ) {
-          objectExpr = declarator.init
+          objectExpr = unwrapTypeScript(declarator.init)
         }
       }
     }
@@ -323,14 +390,11 @@ if (import.meta.hot) {
  * boundary anymore; anything that reaches it falls through to a plain
  * full reload, which is the correct outcome for structural changes.
  */
-function registerStoreGlobally(code, mountCall) {
-  const [storeArg] = mountCall.arguments
-  const storeSrc = code.slice(storeArg.start, storeArg.end)
-
+function registerStoreGlobally(code, mountStatement, store) {
   const s = new MagicString(code)
   s.appendLeft(
-    mountCall.start,
-    `if (import.meta.hot) globalThis.__INGLORIOUS_HMR_STORE__ = ${storeSrc}
+    mountStatement.start,
+    `if (import.meta.hot) globalThis.__INGLORIOUS_HMR_STORE__ = ${store.name}
 
 `,
   )

@@ -13,13 +13,14 @@ export type Api<
 > = StoreApi<TEntity, TState> & {
   /**
    * Renders an entity or a type component by its ID.
-   * @param id The ID of the entity or type to render.
+   * @param id The ID of the entity or type to render. None, such as the route
+   *   of an unmatched path, renders nothing.
    * @param typeName Optional type name to lazy-register.
    * @param type Optional type definition to register when typeName is provided.
    * @returns The rendered template or an empty string if not found.
    */
   render: {
-    (id: string): TemplateResult | string
+    (id: string | undefined): TemplateResult | string
     (
       id: string,
       typeName: string,

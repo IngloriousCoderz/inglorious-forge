@@ -1,5 +1,21 @@
 # @inglorious/ssx
 
+## 2.1.13
+
+### Patch Changes
+
+- - A TypeScript `src/site.config.ts` is found and loaded, through Vite, so it can import other TypeScript modules. Before, only the project root was checked for it while the config is loaded from `src/`.
+  - A missing config falls back to the defaults instead of failing, and an error inside the config is reported instead of being taken for a missing file.
+  - `ssx dev --port` is honored, and overrides the config's port.
+  - The first build no longer warns that it failed to run the dependency scan.
+  - Pages no longer render an empty `<link rel="icon">` when no favicon is configured.
+  - Update Vite to 8.3, KaTeX to 0.19, Mermaid to 12 and markdown-it to 15.0.3.
+- Updated dependencies
+- Updated dependencies
+- Updated dependencies
+  - @inglorious/store@11.0.4
+  - @inglorious/web@6.6.1
+
 ## 2.1.12
 
 ### Patch Changes

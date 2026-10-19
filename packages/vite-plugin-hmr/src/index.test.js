@@ -100,7 +100,7 @@ describe("@inglorious/vite-plugin-hmr", () => {
     ).resolves.toBe(null)
   })
 
-  it("skips files without a top-level mount() call", async () => {
+  it("skips a mount() nested in a function when the store is not imported", async () => {
     const plugin = hmr()
     plugin.configResolved({ command: "serve" })
 
@@ -186,6 +186,60 @@ describe("@inglorious/vite-plugin-hmr", () => {
     expect(result.code).toContain(
       'mount(store, render, document.getElementById("root")!)',
     )
+  })
+
+  it("registers an imported store before the statement a nested mount() is in", async () => {
+    const plugin = hmr()
+    plugin.configResolved({ command: "serve" })
+
+    readFileSync.mockImplementation(() => {
+      throw new Error("ENOENT")
+    })
+
+    const context = createContext(
+      resolveMap({ "./store": "/project/src/store.js" }),
+    )
+    const code = `
+      import { mount } from "@inglorious/web"
+      import { ready } from "./i18n"
+      import { store } from "./store"
+
+      ready.then(() => mount(store, render, element))
+    `
+
+    const result = await plugin.transform.call(context, code, "main.js")
+
+    expect(result).not.toBeNull()
+    expect(result.code).toMatch(
+      /globalThis\.__INGLORIOUS_HMR_STORE__ = store\s+ready\.then/,
+    )
+  })
+
+  it("registers the store a store enhancer wraps, without calling the enhancer again", async () => {
+    const plugin = hmr()
+    plugin.configResolved({ command: "serve" })
+
+    readFileSync.mockImplementation(() => {
+      throw new Error("ENOENT")
+    })
+
+    const context = createContext(
+      resolveMap({ "./store": "/project/src/store.js" }),
+    )
+    const code = `
+      import { withTransitions } from "@inglorious/ui/view-transitions"
+      import { mount } from "@inglorious/web"
+      import { store } from "./store"
+
+      mount(withTransitions(store), render, element)
+    `
+
+    const result = await plugin.transform.call(context, code, "main.js")
+
+    expect(result.code).toContain(
+      "if (import.meta.hot) globalThis.__INGLORIOUS_HMR_STORE__ = store\n",
+    )
+    expect(result.code.match(/withTransitions\(/g)).toHaveLength(1)
   })
 
   describe("per-type HMR boundary", () => {
@@ -295,6 +349,44 @@ describe("@inglorious/vite-plugin-hmr", () => {
 
       expect(result).not.toBeNull()
       expect(result.code).toContain('store.setType("Footer", nextType)')
+    })
+
+    it("resolves type files from a types object cast in TypeScript", async () => {
+      const plugin = hmr()
+      plugin.configResolved({ command: "serve" })
+
+      readFileSync.mockImplementation((filePath) => {
+        if (filePath === "/project/src/store.ts") {
+          return `
+            import { createStore, type TypesConfig } from "@inglorious/store"
+            import { Home } from "../pages/home.vue"
+            import type { AppEntity, AppState } from "../types"
+
+            export const store = createStore<AppEntity, AppState>({
+              types: { Home } as unknown as TypesConfig<AppEntity>,
+            })
+          `
+        }
+        throw new Error("ENOENT")
+      })
+
+      const context = createContext(
+        resolveMap({
+          "./store": "/project/src/store.ts",
+          "../pages/home.vue": "/project/src/pages/home.vue",
+        }),
+      )
+
+      await plugin.transform.call(context, MAIN_CODE, "main.ts")
+
+      const result = await plugin.transform.call(
+        context,
+        `export const Home = { render: () => null }`,
+        "/project/src/pages/home.vue",
+      )
+
+      expect(result).not.toBeNull()
+      expect(result.code).toContain('store.setType("Home", nextType)')
     })
 
     it("falls back to the root mount registration when types can't be resolved statically", async () => {

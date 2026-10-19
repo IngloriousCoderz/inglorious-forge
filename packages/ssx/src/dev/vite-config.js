@@ -11,21 +11,22 @@ import { markdownPlugin } from "../utils/markdown.js"
  * @param {Object} options - SSX configuration options.
  * @param {string} [options.rootDir="src"] - The source root directory.
  * @param {string} [options.publicDir="public"] - The public assets directory (relative to rootDir).
+ * @param {number} [options.port] - The port from the command line, which overrides the config's.
  * @param {Object} [options.vite={}] - Additional Vite configuration to merge.
  * @returns {Object} The merged Vite configuration.
  */
 export function createViteConfig(options = {}) {
-  const { rootDir = ".", vite = {}, markdown = {} } = options
-  const { port = 3000 } = vite.dev ?? {}
+  const { rootDir = ".", port, vite = {}, markdown = {} } = options
+  const { port: defaultPort = 3000 } = vite.dev ?? {}
 
   const srcDir = path.resolve(process.cwd(), rootDir, "src")
   const publicDir = path.resolve(process.cwd(), rootDir, "public")
 
-  return mergeConfig(
+  const config = mergeConfig(
     {
       root: process.cwd(),
       publicDir,
-      server: { port, middlewareMode: true },
+      server: { port: defaultPort, middlewareMode: true },
       appType: "custom",
       plugins: [virtualPlugin(), markdownPlugin(markdown)],
       resolve: {
@@ -36,6 +37,10 @@ export function createViteConfig(options = {}) {
     },
     vite,
   )
+
+  // A port given on the command line wins over the config's.
+  if (port) config.server.port = port
+  return config
 }
 
 /**

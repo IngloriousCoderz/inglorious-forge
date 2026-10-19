@@ -266,28 +266,33 @@ export const store = createStore${generics}({
 ${typesValue}
   entities,
   middlewares,
+  // Creates an entity for each type that has none: ${singletons(app).join(", ")}.
+  autoCreateEntities: true,
 })
 `
 }
 
+// The entities the store creates on its own, as the comment in the store
+// lists them.
+function singletons(app) {
+  const ids = ["home"]
+  if (app.routing) ids.push("about", "router")
+  if (app.i18n) ids.push("i18n")
+  return ids
+}
+
+// Only the entities that need data, or come more than one to a type; the
+// store creates the rest.
 function entitiesSource(app) {
-  const entries = []
-  if (app.routing) entries.push('  router: { type: "Router" },')
-  if (app.i18n) entries.push('  i18n: { type: "I18n" },')
-  entries.push('  home: { type: "Home" },')
-  if (app.routing) entries.push('  about: { type: "About" },')
-  entries.push(
-    '  message1: { type: "Message", who: "world" },',
-    '  message2: { type: "Message", who: "wide" },',
-    '  message3: { type: "Message", who: "web" },',
-  )
   const head = app.isTypeScript
     ? `import type { AppState } from "../../types"
 
-export const entities: AppState = {`
+export const entities: Partial<AppState> = {`
     : "export const entities = {"
   return `${head}
-${entries.join("\n")}
+  message1: { type: "Message", who: "world" },
+  message2: { type: "Message", who: "wide" },
+  message3: { type: "Message", who: "web" },
 }
 `
 }

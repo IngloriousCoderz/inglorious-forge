@@ -1,5 +1,12 @@
 # @inglorious/vite-plugin-jsx
 
+## 2.0.4
+
+### Patch Changes
+
+- c81d687: Kebab-case props on components, such as `aria-label`, are quoted object keys instead of invalid code.
+- Ship type declarations, so a `vite.config.ts` importing the plugin type-checks under `strict`.
+
 ## 2.0.3
 
 ### Patch Changes

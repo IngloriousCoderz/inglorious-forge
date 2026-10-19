@@ -29,6 +29,14 @@ describe("createViteConfig", () => {
     expect(config.server.port).toBe(4000)
     expect(config.define.__TEST__).toBe(true)
   })
+
+  it("should let the command-line port override the config's", () => {
+    const config = createViteConfig({
+      port: 5000,
+      vite: { server: { port: 4000 } },
+    })
+    expect(config.server.port).toBe(5000)
+  })
 })
 
 describe("virtualPlugin", () => {

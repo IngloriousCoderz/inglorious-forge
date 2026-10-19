@@ -79,7 +79,7 @@ function uiShell(app, { label, pages, content }) {
                 value: i18n.locale,
                 options: i18n.languages,
                 size: "sm",
-                "aria-label": t("language"),
+                ariaLabel: t("language"),
                 onChange: (locale) => api.notify("#i18n:localeChange", locale),
               })`)
   }
@@ -128,6 +128,20 @@ ${actions.join("\n")}
       </footer>`
 }
 
+// The native language picker's change handler, laid out as Prettier would at
+// `indent`. TypeScript has to be told what the event's target is.
+export function selectChange(app, indent) {
+  if (!app.isTypeScript) {
+    return `(event) =>
+${indent}  api.notify("#i18n:localeChange", event.target.value)`
+  }
+  return `(event: Event) =>
+${indent}  api.notify(
+${indent}    "#i18n:localeChange",
+${indent}    (event.target as HTMLSelectElement).value,
+${indent}  )`
+}
+
 function plainShell(app, { label, pages, content }) {
   const nav = app.routing
     ? pages.map(
@@ -138,10 +152,9 @@ function plainShell(app, { label, pages, content }) {
   if (app.i18n) {
     nav.push(`          <select
             aria-label=\${t("language")}
-            @change=\${(event) =>
-              api.notify("#i18n:localeChange", event.target.value)}
+            @change=\${${selectChange(app, "            ")}}
           >
-            \${i18n.languages.map(
+            \${i18n.languages${app.isTypeScript ? "?." : "."}map(
               (language) =>
                 html\`<option
                   value=\${language.value}
@@ -217,19 +230,13 @@ export const Home = {
 
 export function aboutSource(app) {
   const imports = ['import { html } from "@inglorious/web"']
-  if (app.isTypeScript) {
-    imports.push('import type { AboutEntity } from "../../types"')
-  }
   if (app.i18n) imports.push('import { t } from "../i18n"')
   const text = (key, fallback) => (app.i18n ? `\${t("${key}")}` : fallback)
-  const signature = app.isTypeScript
-    ? "render(entity: AboutEntity)"
-    : "render()"
 
   return `${importBlock(imports)}
 
 export const About = {
-  ${signature} {
+  render() {
     return html\`
       <h1>${text("about.title", "About")}</h1>
       <p>${text("about.body", "A page of its own, at its own address.")}</p>

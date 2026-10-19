@@ -5,10 +5,12 @@
 
 import { html } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
+import { ref } from "@inglorious/web/directives/ref"
 import { repeat } from "@inglorious/web/directives/repeat"
 import { when } from "@inglorious/web/directives/when"
 
 import { Icon } from "../../data-display/icon/index.js"
+import { applyElementProps } from "../../shared/applyElementProps.js"
 import { formatOption, getOptionValue, isOptionSelected } from "./helpers.js"
 
 /**
@@ -63,6 +65,7 @@ export const Select = {
   renderSelect(props) {
     const {
       id,
+      name,
       label,
       hint,
       error,
@@ -121,6 +124,7 @@ export const Select = {
       error,
       icon,
       size = "md",
+      ariaLabel,
       isOpen,
       isMulti,
       isRequired,
@@ -157,6 +161,9 @@ export const Select = {
         @change=${(event) => onChange?.(event.target.value)}
         @blur=${onBlur}
         @focus=${onFocus}
+        ${ref((element) =>
+          applyElementProps(element, { "aria-label": ariaLabel || null }),
+        )}
       >
         ${repeat(
           options,

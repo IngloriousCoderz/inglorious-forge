@@ -1,4 +1,4 @@
-import { expect, test } from "vitest"
+import { expect, test, vi } from "vitest"
 
 import { createStore } from "./store.js"
 
@@ -175,6 +175,21 @@ test("it should change an entity's behavior via setType", () => {
   expect(store.getState()).toStrictEqual({
     bug: { id: "bug", type: "Bug", isFull: true, hasFlown: true },
   })
+})
+
+test("it should notify subscribers when setType replaces a type, not when it adds one", () => {
+  const store = createStore({
+    types: { Bug: {} },
+    entities: { bug: { type: "Bug" } },
+  })
+  const listener = vi.fn()
+  store.subscribe(listener)
+
+  store.setType("Moth", {})
+  expect(listener).not.toHaveBeenCalled()
+
+  store.setType("Bug", { render: () => "new" })
+  expect(listener).toHaveBeenCalledTimes(1)
 })
 
 test("it should auto-create entities when autoCreateEntities is enabled", () => {

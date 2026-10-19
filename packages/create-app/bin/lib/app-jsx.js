@@ -4,7 +4,7 @@
 // expects components to be functions, so in .tsx each capitalized tag is
 // preceded by a `@ts-expect-error`.
 
-import { renderLocals } from "./app-lit.js"
+import { renderLocals, selectChange } from "./app-lit.js"
 import { importBlock } from "./imports.js"
 
 export const extension = (app) => (app.isTypeScript ? "tsx" : "jsx")
@@ -69,6 +69,12 @@ ${shell}
 `
 }
 
+// A callback's parameter. The components' props are not typed in .tsx, so
+// TypeScript cannot infer it.
+function typed(app, name, type) {
+  return app.isTypeScript ? `${name}: ${type}` : name
+}
+
 // A page's label: translated, or the English text.
 function labelText(app, page) {
   return app.i18n ? `{t("${page.key}")}` : page.text
@@ -93,8 +99,8 @@ function uiShell(app, { pages, content }) {
                   value={i18n.locale}
                   options={i18n.languages}
                   size="sm"
-                  aria-label={t("language")}
-                  onChange={(locale) =>
+                  ariaLabel={t("language")}
+                  onChange={(${typed(app, "locale", "string")}) =>
                     api.notify("#i18n:localeChange", locale)
                   }
                 />`)
@@ -104,14 +110,14 @@ function uiShell(app, { pages, content }) {
     ? `${expectError(app, "          ")}          <AppBar
             title="${app.projectName}"
             trailing={
-              <nav class="app-nav">
+              <nav className="app-nav">
 ${nav.join("\n")}
               </nav>
             }
           />`
     : `${expectError(app, "          ")}          <AppBar title="${app.projectName}" />`
 
-  const header = `        <header${app.mobile ? ' class="pt-safe"' : ""}>
+  const header = `        <header${app.mobile ? ' className="pt-safe"' : ""}>
 ${appBar}
         </header>
         <main>
@@ -132,13 +138,13 @@ ${expectError(app, "                ", false)}                icon: <Icon icon={
   })
 
   return `${header}
-        <footer class="pb-safe">
+        <footer className="pb-safe">
 ${expectError(app, "          ")}          <BottomNavigation
             value={router.path}
             actions={[
 ${actions.join("\n")}
             ]}
-            onChange={(path) => api.notify("#router:navigate", path)}
+            onChange={(${typed(app, "path", "string")}) => api.notify("#router:navigate", path)}
           />
         </footer>`
 }
@@ -153,12 +159,12 @@ function plainShell(app, { pages, content }) {
   if (app.i18n) {
     nav.push(`            <select
               aria-label={t("language")}
-              onChange={(event) =>
-                api.notify("#i18n:localeChange", event.target.value)
+              onChange={${selectChange(app, "              ")}
               }
             >
-              {i18n.languages.map((language) => (
+              {i18n.languages${app.isTypeScript ? "?." : "."}map((language) => (
                 <option
+                  key={language.value}
                   value={language.value}
                   selected={language.value === i18n.locale}
                 >
@@ -169,7 +175,7 @@ function plainShell(app, { pages, content }) {
   }
   const navBlock = nav.length
     ? `
-          <nav class="app-nav">
+          <nav className="app-nav">
 ${nav.join("\n")}
           </nav>`
     : ""
@@ -188,15 +194,12 @@ export function homeSource(app, { showcase }) {
   if (showcase.length) {
     imports.push('import { Icon } from "@inglorious/ui/icon"')
   }
-  if (app.isTypeScript) {
-    imports.push('import type { HomeEntity } from "../../types"')
-  }
   if (app.i18n) imports.push('import { t } from "../i18n"')
 
   const text = (key, fallback) => (app.i18n ? `{t("${key}")}` : fallback)
   const icons = showcase.length
     ? `
-        <p class="app-icons">
+        <p className="app-icons">
 ${showcase
   .map(
     (icon) =>
@@ -206,12 +209,10 @@ ${showcase
         </p>`
     : ""
 
-  const signature = app.isTypeScript ? "render(entity: HomeEntity)" : "render()"
-
   return `${importBlock(imports)}
 
 export const Home = {
-  ${signature} {
+  render() {
     return (
       <>
         <h1>${text("home.title", "Welcome")}</h1>
@@ -228,19 +229,11 @@ ${expectError(app, "          ")}          <Message entityId="message3" />!
 }
 
 export function aboutSource(app) {
-  const imports = []
-  if (app.isTypeScript) {
-    imports.push('import type { AboutEntity } from "../../types"')
-  }
-  if (app.i18n) imports.push('import { t } from "../i18n"')
+  const head = app.i18n ? 'import { t } from "../i18n"\n\n' : ""
   const text = (key, fallback) => (app.i18n ? `{t("${key}")}` : fallback)
-  const signature = app.isTypeScript
-    ? "render(entity: AboutEntity)"
-    : "render()"
-  const head = imports.length ? `${importBlock(imports)}\n\n` : ""
 
   return `${head}export const About = {
-  ${signature} {
+  render() {
     return (
       <>
         <h1>${text("about.title", "About")}</h1>

@@ -29,8 +29,24 @@ export function addMobileSupport(targetDir, pkg, projectName) {
     path.join(targetDir, "capacitor.config.ts"),
     createCapacitorConfigSource(projectName),
   )
+  includeInNodeProject(targetDir, "capacitor.config.ts")
 
   appendMobileSetupToReadme(targetDir)
+}
+
+// A TypeScript template type-checks and lints its config files through
+// tsconfig.node.json, so a new one has to be listed there. Edited as text, so
+// the `include` line keeps the one-line layout Prettier gives it.
+function includeInNodeProject(targetDir, file) {
+  const tsconfigPath = path.join(targetDir, "tsconfig.node.json")
+  if (!fs.existsSync(tsconfigPath)) return
+
+  const tsconfig = fs.readFileSync(tsconfigPath, "utf-8")
+  if (tsconfig.includes(`"${file}"`)) return
+  fs.writeFileSync(
+    tsconfigPath,
+    tsconfig.replace(/("include": \[[^\]]*)\]/, `$1, "${file}"]`),
+  )
 }
 
 export function appendMobileSetupToReadme(targetDir) {

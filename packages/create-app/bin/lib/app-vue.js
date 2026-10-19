@@ -78,7 +78,7 @@ function uiShell(app, { label, quotedLabel, pages, content }) {
           :value="i18n.locale"
           :options="i18n.languages"
           size="sm"
-          :aria-label="t('language')"
+          :ariaLabel="t('language')"
           :onChange="(locale) => api.notify('#i18n:localeChange', locale)"
         />`)
   }
