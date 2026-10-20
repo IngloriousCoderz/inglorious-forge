@@ -1,5 +1,13 @@
 # @inglorious/ui
 
+## 8.2.5
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/store@11.2.0
+  - @inglorious/web@6.7.1
+
 ## 8.2.4
 
 ### Patch Changes

@@ -481,11 +481,10 @@ import { handleAsync } from "@inglorious/store/async"
 const types = {
   todoList: {
     ...handleAsync("fetchTodos", {
-      async run(entity, userId, api) {
-        const todos = await fetch(`/api/users/${userId}/todos`).then((r) =>
-          r.json(),
-        )
-        api.notify("success", todos)
+      // run receives the payload, not the entity; what it returns goes to success
+      async run(userId) {
+        const response = await fetch(`/api/users/${userId}/todos`)
+        return response.json()
       },
       start(entity) {
         entity.loading = true
@@ -516,10 +515,40 @@ Think of the flow like a newspaper article:
 Generated events:
 
 - `fetchTodos` - Trigger the async operation
+- `fetchTodosStart` - Start handler fires (only when `start` is given)
 - `fetchTodosRun` - The async function runs
 - `fetchTodosSuccess` - Success handler fires
 - `fetchTodosError` - Error handler fires
 - `fetchTodosFinally` - Always fires (optional)
+
+### TypeScript
+
+`handleAsync` names and types each generated event. With the `satisfies` shorthand, the handlers get the entity and the app's api from the type, and `success` gets the result of `run`:
+
+```typescript
+export const TodoList = {
+  ...handleAsync("fetchTodos", {
+    run: (userId: string) => fetchTodos(userId),
+    success(entity, todos, api) {
+      entity.todos = todos
+    },
+  }),
+} satisfies EntityType<TodoListEntity, AppApi>
+
+TodoList.fetchTodosSuccess // typed; a misspelled event is an error
+```
+
+To declare a type with a `type` alias, `AsyncEvents` lists the generated events in one go: the event name, then the entity, the payload, the result and the api:
+
+```typescript
+import { type AsyncEvents, handleAsync } from "@inglorious/store/async"
+
+type TodoListType = {
+  render: (entity: TodoListEntity, api: AppApi) => TemplateResult
+} & AsyncEvents<"fetchTodos", TodoListEntity, string, Todo[], AppApi>
+```
+
+`optimistic` keeps the events' names and types. Explicit type arguments, `handleAsync<TodoListEntity, string, Todo[]>(...)`, still work, but the event names are then plain strings.
 
 ### Optimistic Updates
 

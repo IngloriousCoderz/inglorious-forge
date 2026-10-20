@@ -271,4 +271,31 @@ describe("optimistic", () => {
 
     expect(afterFinally.finished).toBe(true)
   })
+
+  it("should pass the api to the finally handler", () => {
+    const handlers = {
+      run: vi.fn(async () => ({})),
+      finally: vi.fn((entity, api) => {
+        api.notify("saveItemDone", entity.id)
+      }),
+    }
+
+    const asyncHandlers = optimistic(handleAsync("saveItem", handlers), {
+      pending: true,
+    })
+
+    const entity = { type: "ItemList", id: "items" }
+    const api = createMockApi({ items: entity })
+
+    const { events } = trigger(
+      entity,
+      asyncHandlers.saveItemFinally,
+      undefined,
+      api,
+    )
+
+    // The entity argument is a draft, revoked by now: check the api only
+    expect(handlers.finally.mock.calls[0][1]).toBe(api)
+    expect(events).toEqual([{ type: "saveItemDone", payload: "items" }])
+  })
 })

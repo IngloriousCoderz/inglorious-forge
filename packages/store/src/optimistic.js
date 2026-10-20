@@ -11,12 +11,13 @@ const START = 0
  * @template {import('./store').BaseEntity} TEntity
  * @template TPayload
  * @template TResult
+ * @template {string} TType
  *
- * @param {import('./async').AsyncEventHandlers<TEntity, TPayload, TResult>} behavior
+ * @param {import('./async').AsyncEvents<TType, TEntity, TPayload, TResult>} behavior
  * @param {Record<string, any> | ((entity: TEntity, payload: TPayload, api: import('./store').Api) => Record<string, any> | null | undefined)} optimistic
  *   Shallow patch applied optimistically on start, or a factory that returns it.
  *
- * @returns {import('./async').AsyncEventHandlers<TEntity, TPayload, TResult>}
+ * @returns {import('./async').AsyncEvents<TType, TEntity, TPayload, TResult>}
  *
  * @example
  * const saveItem = optimistic(
@@ -108,9 +109,9 @@ export function optimistic(behavior, optimistic) {
       behavior[errorEvent]?.(entity, error, api)
     },
 
-    [finallyEvent](entity, api) {
+    [finallyEvent](entity, payload, api) {
       try {
-        behavior[finallyEvent]?.(entity, api)
+        behavior[finallyEvent]?.(entity, payload, api)
       } finally {
         snapshots.delete(getEntityKey(entity))
       }

@@ -27,57 +27,83 @@ export interface AsyncHandlers<
   TEntity extends BaseEntity = BaseEntity,
   TPayload = any,
   TResult = any,
+  TApi extends Api = Api,
 > {
   /**
    * Called synchronously before the async operation starts
    * Use for setting loading states
    */
-  start?: (entity: TEntity, payload: TPayload, api: Api) => void
+  start?: (entity: TEntity, payload: TPayload, api: TApi) => void
 
   /**
    * The async operation to perform
    * Receives payload and api (NOT entity - entity state should be modified in other handlers)
    * @returns Promise or synchronous result
    */
-  run: (payload: TPayload, api: Api) => Promise<TResult> | TResult
+  run: (payload: TPayload, api: TApi) => Promise<TResult> | TResult
 
   /**
    * Called when the operation succeeds
    * Receives the entity, the result from run(), and api
    */
-  success?: (entity: TEntity, result: TResult, api: Api) => void
+  success?: (entity: TEntity, result: TResult, api: TApi) => void
 
   /**
    * Called when the operation fails
    * Receives the entity, the error, and api
    */
-  error?: (entity: TEntity, error: any, api: Api) => void
+  error?: (entity: TEntity, error: any, api: TApi) => void
 
   /**
    * Called after the operation completes (success or failure)
    * Use for cleanup, resetting loading states, etc.
    */
-  finally?: (entity: TEntity, api: Api) => void
+  finally?: (entity: TEntity, api: TApi) => void
 }
 
 /**
- * Generated event handlers returned by handleAsync
- * Contains handlers for all lifecycle stages
+ * The events `handleAsync(type, ...)` generates, by name: `type`, `typeRun`,
+ * `typeSuccess`, `typeError`, `typeFinally` and, when a `start` handler is
+ * given, `typeStart`. A type alias can list them all in one go:
+ *
+ * ```ts
+ * type TodoListType = {
+ *   render: (entity: TodoListEntity, api: AppApi) => TemplateResult
+ * } & AsyncEvents<"fetchTodos", TodoListEntity, void, Todo[], AppApi>
+ * ```
+ *
+ * The `scope` option changes where the events are sent, not their names.
  */
-export interface AsyncEventHandlers<
+export type AsyncEvents<
+  TType extends string,
   TEntity extends BaseEntity = BaseEntity,
   TPayload = any,
   TResult = any,
-> {
-  /**
-   * Main trigger handler
-   * Dispatches start (if defined) and run events
-   */
-  [key: string]: (
+  TApi extends Api = Api,
+> = {
+  [K in TType]: (entity: TEntity, payload: TPayload, api: TApi) => void
+} & {
+  [K in `${TType}Start`]?: (
     entity: TEntity,
     payload: TPayload,
-    api: Api,
-  ) => void | Promise<void>
+    api: TApi,
+  ) => void
+} & {
+  [K in `${TType}Run`]: (
+    entity: TEntity,
+    payload: TPayload,
+    api: TApi,
+  ) => Promise<void>
+} & {
+  [K in `${TType}Success`]: (
+    entity: TEntity,
+    result: TResult,
+    api: TApi,
+  ) => void
+} & {
+  [K in `${TType}Error`]: (entity: TEntity, error: any, api: TApi) => void
+} & {
+  [K in `${TType}Finally`]: (entity: TEntity, payload: void, api: TApi) => void
 }
 
 /**
@@ -86,9 +112,16 @@ export interface AsyncEventHandlers<
  * Generates handlers for: trigger, start, run, success, error, finally
  * These can be spread into an entity type definition.
  *
+ * The event name, the entity, the payload, the result and the api are inferred
+ * from `type` and from the handlers' parameters, or from the type the handlers
+ * are spread into (`satisfies EntityType<TodoListEntity, AppApi>`). Explicit
+ * type arguments still work, but the event names are then plain strings.
+ *
  * @template TEntity - The entity type (must extend BaseEntity)
  * @template TPayload - The payload type passed to the operation
  * @template TResult - The result type returned by the async operation
+ * @template TApi - The api the handlers receive, such as the app's own
+ * @template TType - The base event name, inferred from `type`
  *
  * @param type - The base event name (e.g., 'fetchTodos')
  * @param handlers - Handler functions for each lifecycle stage
@@ -104,23 +137,23 @@ export interface AsyncEventHandlers<
  * }
  *
  * interface TodoListEntity extends BaseEntity {
- *   type: 'todoList'
+ *   type: 'TodoList'
  *   todos: Todo[]
  *   status: 'idle' | 'loading' | 'success' | 'error'
  *   error?: string
  * }
  *
- * const todoList = {
- *   init(entity: TodoListEntity) {
+ * const TodoList = {
+ *   create(entity) {
  *     entity.todos = []
  *     entity.status = 'idle'
  *   },
  *
- *   ...handleAsync<TodoListEntity, void, Todo[]>('fetchTodos', {
+ *   ...handleAsync('fetchTodos', {
  *     start(entity) {
  *       entity.status = 'loading'
  *     },
- *     async run(_, api) {
+ *     async run(_: void, api): Promise<Todo[]> {
  *       const response = await fetch('/api/todos')
  *       return response.json()
  *     },
@@ -133,15 +166,17 @@ export interface AsyncEventHandlers<
  *       entity.error = error.message
  *     }
  *   })
- * }
+ * } satisfies EntityType<TodoListEntity, AppApi>
  * ```
  */
 export function handleAsync<
   TEntity extends BaseEntity = BaseEntity,
   TPayload = any,
   TResult = any,
+  TApi extends Api = Api,
+  TType extends string = string,
 >(
-  type: string,
-  handlers: AsyncHandlers<TEntity, TPayload, TResult>,
+  type: TType,
+  handlers: AsyncHandlers<TEntity, TPayload, TResult, TApi>,
   options?: AsyncOptions,
-): AsyncEventHandlers<TEntity, TPayload, TResult>
+): AsyncEvents<TType, TEntity, TPayload, TResult, TApi>

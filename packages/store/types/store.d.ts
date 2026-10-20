@@ -41,7 +41,7 @@ export interface Event<T = any> {
  */
 export type EventHandler<
   TEntity extends BaseEntity = BaseEntity,
-  TApi extends Api<any, any> = Api,
+  TApi extends Api = Api,
 > = (entity: Stored<TEntity>, payload: any, api: TApi) => unknown
 
 /**
@@ -75,7 +75,7 @@ export type EventHandler<
  */
 export type EntityType<
   TEntity extends BaseEntity = BaseEntity,
-  TApi extends Api<any, any> = Api,
+  TApi extends Api = Api,
 > = {
   /** Draws the entity. Unlike an event handler, it receives the api second. */
   render?: Renderer<TEntity, TApi>
@@ -85,7 +85,7 @@ export type EntityType<
 /** A type's `render`: it receives the entity and the api. */
 export type Renderer<
   TEntity extends BaseEntity = BaseEntity,
-  TApi extends Api<any, any> = Api,
+  TApi extends Api = Api,
 > = (entity: Stored<TEntity>, api: TApi) => unknown
 
 /**
@@ -94,7 +94,7 @@ export type Renderer<
  */
 export type Behavior<
   TEntity extends BaseEntity = BaseEntity,
-  TApi extends Api<any, any> = Api,
+  TApi extends Api = Api,
 > =
   | EntityType<TEntity, TApi>
   | ((type: EntityType<TEntity, TApi>) => EntityType<TEntity, TApi>)
@@ -102,7 +102,7 @@ export type Behavior<
 /** What the store's `types` holds for one type name: a behavior, or several. */
 export type TypeDefinition<
   TEntity extends BaseEntity = BaseEntity,
-  TApi extends Api<any, any> = Api,
+  TApi extends Api = Api,
 > = Behavior<TEntity, TApi> | Behavior<TEntity, TApi>[]
 
 /**

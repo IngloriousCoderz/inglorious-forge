@@ -1,5 +1,18 @@
 # @inglorious/store
 
+## 11.2.0
+
+### Minor Changes
+
+- `handleAsync` names and types the events it generates, so TypeScript checks them. At runtime, a `finally` handler wrapped in `optimistic` receives the api, which it got as `undefined` before.
+
+  - `handleAsync("load", ...)` returns `load`, `loadRun`, `loadSuccess`, `loadError`, `loadFinally` and an optional `loadStart`, each with its payload, rather than handlers by any name. A misspelled event, such as `loadSucess`, is an error.
+  - The handlers receive the app's api: with `satisfies EntityType<ModelEntity, AppApi>`, or with `api: AppApi` annotated, which was an error before.
+  - `AsyncEvents<"load", ModelEntity, void, Manifest, AppApi>` lists the generated events in a type alias in one go.
+  - `optimistic` keeps the events' names and types, and types its factory's payload and api.
+  - The api type that `EntityType`, `EventHandler`, `Renderer`, `Behavior`, `TypeDefinition`, `handleAsync` and `optimistic` take must be an `Api`, such as the app's `Api<AppEntity, AppState>`, rather than any `Api<any, any>`.
+  - Explicit type arguments, `handleAsync<TodoListEntity, void, Todo[]>(...)`, still work, but the event names are then plain strings.
+
 ## 11.1.0
 
 ### Minor Changes
