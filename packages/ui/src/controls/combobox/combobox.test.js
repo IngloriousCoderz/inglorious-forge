@@ -9,7 +9,7 @@ describe("combobox", () => {
   it("renders control with selected value", () => {
     const entity = {
       id: "sel",
-      type: "select",
+      type: "Combobox",
       options: [
         { label: "A", value: "a" },
         { label: "B", value: "b" },
@@ -28,7 +28,7 @@ describe("combobox", () => {
   it("labels the search box with searchPlaceholder", () => {
     const entity = {
       id: "sel",
-      type: "select",
+      type: "Combobox",
       isOpen: true,
       isSearchable: true,
       options: [{ label: "A", value: "a" }],
@@ -51,7 +51,7 @@ describe("combobox", () => {
   it("renders multi tags", () => {
     const entity = {
       id: "sel",
-      type: "select",
+      type: "Combobox",
       isMulti: true,
       selectedValue: ["a", "b"],
       options: [
@@ -79,7 +79,7 @@ describe("combobox", () => {
   it("removes a multi tag through chip remove action", () => {
     const entity = {
       id: "sel",
-      type: "select",
+      type: "Combobox",
       isMulti: true,
       selectedValue: ["a"],
       options: [{ label: "A", value: "a" }],
@@ -101,7 +101,7 @@ describe("combobox", () => {
   })
 
   it("dispatches toggle event from control click", () => {
-    const entity = { id: "sel", type: "select", options: [] }
+    const entity = { id: "sel", type: "Combobox", options: [] }
     const api = createMockApi({ [entity.id]: entity })
     api.getType = () => Combobox
     const container = document.createElement("div")
@@ -114,7 +114,7 @@ describe("combobox", () => {
   })
 
   it("makes the control reachable by keyboard", () => {
-    const entity = { id: "sel", type: "select", options: [] }
+    const entity = { id: "sel", type: "Combobox", options: [] }
     const api = createMockApi({ [entity.id]: entity })
     api.getType = () => Combobox
     const container = document.createElement("div")
@@ -130,7 +130,12 @@ describe("combobox", () => {
   })
 
   it("takes the control out of the tab order when disabled", () => {
-    const entity = { id: "sel", type: "select", options: [], isDisabled: true }
+    const entity = {
+      id: "sel",
+      type: "Combobox",
+      options: [],
+      isDisabled: true,
+    }
     const api = createMockApi({ [entity.id]: entity })
     api.getType = () => Combobox
     const container = document.createElement("div")
@@ -144,7 +149,7 @@ describe("combobox", () => {
 
   it("opens on Enter, Space or ArrowDown", () => {
     for (const key of ["Enter", " ", "ArrowDown"]) {
-      const entity = { id: "sel", type: "select", options: [] }
+      const entity = { id: "sel", type: "Combobox", options: [] }
       const api = createMockApi({ [entity.id]: entity })
       api.getType = () => Combobox
       const container = document.createElement("div")
@@ -159,7 +164,7 @@ describe("combobox", () => {
   })
 
   it("ignores keys that are not an attempt to open", () => {
-    const entity = { id: "sel", type: "select", options: [] }
+    const entity = { id: "sel", type: "Combobox", options: [] }
     const api = createMockApi({ [entity.id]: entity })
     api.getType = () => Combobox
     const container = document.createElement("div")
@@ -178,7 +183,7 @@ describe("combobox", () => {
     // list on the first arrow press and leave no way to pick an option.
     const entity = {
       id: "sel",
-      type: "select",
+      type: "Combobox",
       options: [{ label: "A", value: "a" }],
       isOpen: true,
     }
@@ -200,7 +205,7 @@ describe("combobox", () => {
   it("closes on Escape from the control", () => {
     const entity = {
       id: "sel",
-      type: "select",
+      type: "Combobox",
       options: [{ label: "A", value: "a" }],
       isOpen: true,
     }

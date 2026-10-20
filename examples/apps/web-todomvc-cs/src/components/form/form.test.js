@@ -6,13 +6,13 @@ import * as handlers from "./handlers"
 it("should update the form value on inputChange", () => {
   const entityBefore = {
     id: "form",
-    type: "form",
+    type: "Form",
     value: "",
   }
   const event = { type: "inputChange", payload: "Hello world!" }
   const entityAfter = {
     id: "form",
-    type: "form",
+    type: "Form",
     value: "Hello world!",
   }
 
@@ -24,13 +24,13 @@ it("should update the form value on inputChange", () => {
 it("should clear the form value on formSubmit", () => {
   const entityBefore = {
     id: "form",
-    type: "form",
+    type: "Form",
     value: "Hello world!",
   }
   const event = { type: "formSubmit", payload: "Hello world!" }
   const entityAfter = {
     id: "form",
-    type: "form",
+    type: "Form",
     value: "",
   }
 

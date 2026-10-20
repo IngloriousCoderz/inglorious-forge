@@ -1,18 +1,18 @@
 import { createStore } from "@inglorious/store"
 
 import { CHARTS } from "@benchmarks/dashboard-shared"
-import { table } from "./data.slice"
-import { metrics } from "./metrics.slice"
+import { Table } from "./data.slice"
+import { Metrics } from "./metrics.slice"
 
 export const store = createStore({
   types: {
-    table,
-    metrics,
-    chart: {},
+    Table,
+    Metrics,
+    Chart: {},
   },
   entities: {
-    table: { id: "table", type: "table" },
-    metrics: { id: "metrics", type: "metrics" },
+    table: { id: "table", type: "Table" },
+    metrics: { id: "metrics", type: "Metrics" },
     ...CHARTS,
   },
 })

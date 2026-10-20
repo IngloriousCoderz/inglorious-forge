@@ -41,6 +41,6 @@ const metricsSlice = createSlice({
 
 export const { setFPS, setFilter, setSort } = metricsSlice.actions
 
-export const metrics = convertSlice(metricsSlice, {
+export const Metrics = convertSlice(metricsSlice, {
   extraActions: [randomUpdate],
 })

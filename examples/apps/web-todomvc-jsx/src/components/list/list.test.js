@@ -4,11 +4,11 @@ import { expect, it } from "vitest"
 import { List } from "."
 
 it("should add a new task on formSubmit", () => {
-  const entityBefore = { id: "list", type: "list", tasks: [] }
+  const entityBefore = { id: "list", type: "List", tasks: [] }
   const event = { type: "formSubmit", payload: "Hello world!" }
   const entityAfter = {
     id: "list",
-    type: "list",
+    type: "List",
     tasks: [{ id: 1, text: "Hello world!" }],
   }
 
@@ -20,13 +20,13 @@ it("should add a new task on formSubmit", () => {
 it("should toggle a task as completed on toggleClick", () => {
   const entityBefore = {
     id: "list",
-    type: "list",
+    type: "List",
     tasks: [{ id: 1, text: "Hello world!", completed: false }],
   }
   const event = { type: "toggleClick", payload: 1 }
   const entityAfter = {
     id: "list",
-    type: "list",
+    type: "List",
     tasks: [{ id: 1, text: "Hello world!", completed: true }],
   }
 
@@ -38,11 +38,11 @@ it("should toggle a task as completed on toggleClick", () => {
 it("should delete a task on deleteClick", () => {
   const entityBefore = {
     id: "list",
-    type: "list",
+    type: "List",
     tasks: [{ id: 1, text: "Hello world!", completed: false }],
   }
   const event = { type: "deleteClick", payload: 1 }
-  const entityAfter = { id: "list", type: "list", tasks: [] }
+  const entityAfter = { id: "list", type: "List", tasks: [] }
 
   const { entity } = trigger(entityBefore, List[event.type], event.payload)
 
@@ -52,13 +52,13 @@ it("should delete a task on deleteClick", () => {
 it("should clear all completed tasks on clearClick", () => {
   const entityBefore = {
     id: "list",
-    type: "list",
+    type: "List",
     tasks: [{ id: 1, text: "Hello world!", completed: true }],
   }
   const event = { type: "clearClick" }
   const entityAfter = {
     id: "list",
-    type: "list",
+    type: "List",
     tasks: [],
   }
 

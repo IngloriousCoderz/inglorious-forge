@@ -33,6 +33,6 @@ const tableSlice = createSlice({
 
 export const { tableClick } = tableSlice.actions
 
-export const table = convertSlice(tableSlice, {
+export const Table = convertSlice(tableSlice, {
   extraActions: [randomUpdate],
 })

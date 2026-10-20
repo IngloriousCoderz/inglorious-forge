@@ -1,7 +1,7 @@
 import { createStore } from "@inglorious/store"
 import { beforeEach, expect, it, vi } from "vitest"
 
-import * as list from "@/components/list/handlers"
+import * as List from "@/components/list/handlers"
 import * as client from "@/services/client"
 
 const mockTasks = [
@@ -11,7 +11,7 @@ const mockTasks = [
 ]
 const mockNewTask = { id: 4, text: "New task" }
 
-const types = { list }
+const types = { List }
 let store = null
 
 vi.mock("@/services/client", () => ({
@@ -34,7 +34,7 @@ beforeEach(() => {
 
 it("should fetch tasks on create and update the store on tasksFetched", async () => {
   expect(store.getState()).toEqual({
-    list: { id: "list", type: "list", tasks: mockTasks },
+    list: { id: "list", type: "List", tasks: mockTasks },
   })
 })
 
@@ -42,7 +42,7 @@ it("should create a task on formSubmit and update the store on taskCreated", asy
   await store.notify("formSubmit", "New Task")
 
   expect(store.getState()).toEqual({
-    list: { id: "list", type: "list", tasks: [...mockTasks, mockNewTask] },
+    list: { id: "list", type: "List", tasks: [...mockTasks, mockNewTask] },
   })
 })
 
@@ -52,7 +52,7 @@ it("should toggle a task on toggleClick and update the store on taskUpdated", as
   expect(store.getState()).toEqual({
     list: {
       id: "list",
-      type: "list",
+      type: "List",
       tasks: mockTasks.map((task) =>
         task.id === 2 ? { ...task, completed: true } : task,
       ),
@@ -66,7 +66,7 @@ it("should delete a task on deleteClick and update the store on taskDeleted", as
   expect(store.getState()).toEqual({
     list: {
       id: "list",
-      type: "list",
+      type: "List",
       tasks: mockTasks.filter((task) => task.id !== 2),
     },
   })
@@ -80,7 +80,7 @@ it("should clear completed tasks on clearClick and update the store on tasksClea
   expect(store.getState()).toEqual({
     list: {
       id: "list",
-      type: "list",
+      type: "List",
       tasks: mockTasks.filter((task) => !task.completed),
     },
   })

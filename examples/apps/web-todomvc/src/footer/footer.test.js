@@ -6,13 +6,13 @@ import { Footer } from "./footer"
 it("should update the filter on filterClick", () => {
   const entityBefore = {
     id: "footer",
-    type: "footer",
+    type: "Footer",
     activeFilter: "all",
   }
   const event = { type: "filterClick", payload: "completed" }
   const entityAfter = {
     id: "footer",
-    type: "footer",
+    type: "Footer",
     activeFilter: "completed",
   }
 
