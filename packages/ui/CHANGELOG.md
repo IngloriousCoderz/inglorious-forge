@@ -1,5 +1,11 @@
 # @inglorious/ui
 
+## 8.3.0
+
+### Minor Changes
+
+- Add `ImageCropper`: a movable, resizable crop frame over a whole image, free or locked to an aspect ratio. Drag to move or resize, pinch or scroll to scale, and use the keyboard (arrows move, Shift+arrows resize, +/- scale, Home resets). The frame is kept in image fractions, and `cropImage(file, rect, options)` crops and encodes the result in the browser.
+
 ## 8.2.5
 
 ### Patch Changes

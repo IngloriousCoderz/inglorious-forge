@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/ui",
-  "version": "8.2.5",
+  "version": "8.3.0",
   "description": "A design system for Inglorious Web with render-function components and customizable themes",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -84,6 +84,11 @@
       "import": "./src/controls/icon-button/index.js"
     },
     "./icon-button.css": "./src/controls/icon-button/style.css",
+    "./image-cropper": {
+      "types": "./types/controls/image-cropper.d.ts",
+      "import": "./src/controls/image-cropper/index.js"
+    },
+    "./image-cropper.css": "./src/controls/image-cropper/style.css",
     "./input": {
       "types": "./types/controls/input.d.ts",
       "import": "./src/controls/input/index.js"

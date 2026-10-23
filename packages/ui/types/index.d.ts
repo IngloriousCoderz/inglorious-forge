@@ -4,6 +4,7 @@ export { Checkbox } from "./controls/checkbox"
 export { Fab } from "./controls/fab"
 export { FileUpload } from "./controls/file-upload"
 export { IconButton } from "./controls/icon-button"
+export { cropImage, decodeImage, ImageCropper } from "./controls/image-cropper"
 export { Input } from "./controls/input"
 export { RadioGroup } from "./controls/radio-group"
 export { Rating } from "./controls/rating"
@@ -58,6 +59,12 @@ export type {
 } from "./controls/combobox"
 export type { FabProps, FabType } from "./controls/fab"
 export type { IconButtonProps, IconButtonType } from "./controls/icon-button"
+export type {
+  CropImageOptions,
+  CropRect,
+  ImageCropperProps,
+  ImageCropperType,
+} from "./controls/image-cropper"
 export type { InputProps, InputType } from "./controls/input"
 export type {
   RadioGroupProps,

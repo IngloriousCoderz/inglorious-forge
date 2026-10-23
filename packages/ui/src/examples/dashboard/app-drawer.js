@@ -152,6 +152,11 @@ function getDefaultItems() {
           primary: "Icon Button",
           href: "/controls/icon-button",
         },
+        {
+          id: "image-cropper",
+          primary: "Image Cropper",
+          href: "/controls/image-cropper",
+        },
         { id: "input", primary: "Input", href: "/controls/input" },
         {
           id: "file-upload",

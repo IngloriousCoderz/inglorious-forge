@@ -10,6 +10,11 @@ import {
 import type { Api } from "@inglorious/web"
 
 import { Button, Chip, type DataGridProps } from "../types"
+import {
+  cropImage,
+  ImageCropper,
+  type ImageCropperProps,
+} from "../types/controls/image-cropper"
 import { DataGrid, getRows } from "../types/data-display/data-grid"
 import {
   VirtualList,
@@ -20,6 +25,9 @@ import { Tabs } from "../types/navigation/tabs"
 interface GridEntity extends DataGridProps<{ name: string }> {
   type: "DataGrid"
 }
+interface CropperEntity extends ImageCropperProps {
+  type: "Cropper"
+}
 interface ListEntity extends VirtualListEntity {
   type: "List"
 }
@@ -28,10 +36,11 @@ interface CounterEntity extends BaseEntity {
   value: number
 }
 
-type AppEntity = GridEntity | ListEntity | CounterEntity
+type AppEntity = GridEntity | CropperEntity | ListEntity | CounterEntity
 
 interface AppState extends EntitiesState<AppEntity> {
   grid: GridEntity
+  cropper: CropperEntity
   list: ListEntity
   counter: CounterEntity
 }
@@ -56,7 +65,7 @@ const Counter = {
 
 // Stateful components register under the app's names, with no cast
 export const store = createStore<AppEntity, AppState>({
-  types: { DataGrid, List: VirtualList, Counter },
+  types: { DataGrid, Cropper: ImageCropper, List: VirtualList, Counter },
   entities: { counter: { type: "Counter", value: 0 } },
 })
 
@@ -66,3 +75,12 @@ declare const grid: GridEntity
 DataGrid.render(grid, api)
 export const names: string[] = getRows(grid).map((row) => row.name)
 export const tabs = Tabs.render({ value: null })
+
+// The crop rect the cropper reports is what cropImage takes
+declare const cropper: CropperEntity
+export const cropped: Promise<Blob> = cropImage(new Blob(), cropper.rect, {
+  aspectRatio: 1,
+  maxWidth: 512,
+})
+// @ts-expect-error: a rect has all four sides
+cropImage(new Blob(), { x: 0, y: 0 })

@@ -20,6 +20,7 @@ import { Combobox } from "../../controls/combobox/index.js"
 import { Fab } from "../../controls/fab/index.js"
 import { FileUpload } from "../../controls/file-upload/index.js"
 import { IconButton } from "../../controls/icon-button/index.js"
+import { ImageCropper } from "../../controls/image-cropper/index.js"
 import { Input } from "../../controls/input/index.js"
 import { RadioGroup } from "../../controls/radio-group/index.js"
 import { Rating } from "../../controls/rating/index.js"
@@ -494,6 +495,40 @@ IconButton.render({
             variant: "ghost",
           }),
         ]),
+    },
+  },
+  "/controls/image-cropper": {
+    name: "Image Cropper",
+    summary: "Movable, resizable crop frame over a whole image.",
+    description:
+      "Image Cropper shows the whole image with a frame the user moves, resizes, pinches and scrolls, freely or locked to an aspect ratio. The frame is kept in image fractions, and cropImage turns it into an encoded Blob in the browser.",
+    useCases: [
+      "Profile photos",
+      "Cover images",
+      "Uploads framed before saving",
+    ],
+    example: {
+      code: `import { cropImage, ImageCropper } from "@inglorious/ui/image-cropper"
+
+ImageCropper.render({
+  id: "demo",
+  src: URL.createObjectURL(file),
+  aspectRatio: 1
+})
+
+// Later, with the entity's rect:
+const blob = await cropImage(file, entity.rect, { maxWidth: 512, maxHeight: 512 })`,
+      preview: () =>
+        livePreview(
+          { ImageCropper },
+          {
+            id: "imageCropper",
+            type: "ImageCropper",
+            label: "Crop the photo",
+            src: beforeAfterImages.after.src,
+            aspectRatio: 1,
+          },
+        ),
     },
   },
   "/controls/input": {

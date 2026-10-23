@@ -4,6 +4,11 @@ export { Checkbox } from "./controls/checkbox/index.js"
 export { Fab } from "./controls/fab/index.js"
 export { FileUpload } from "./controls/file-upload/index.js"
 export { IconButton } from "./controls/icon-button/index.js"
+export {
+  cropImage,
+  decodeImage,
+  ImageCropper,
+} from "./controls/image-cropper/index.js"
 export { Input } from "./controls/input/index.js"
 export { RadioGroup } from "./controls/radio-group/index.js"
 export { Rating } from "./controls/rating/index.js"
