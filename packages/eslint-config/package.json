@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/eslint-config",
-  "version": "1.1.5",
+  "version": "1.2.0",
   "type": "module",
   "files": [
     "base.js",
@@ -43,10 +43,19 @@
     "@typescript-eslint/parser": "^8.69.0",
     "eslint": "^9.34.0 || ^10.0.0",
     "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "eslint-plugin-simple-import-sort": "^12.1.1 || ^14.0.0",
     "eslint-plugin-tailwindcss": "4.0.0-beta.0"
   },
   "peerDependenciesMeta": {
+    "@typescript-eslint/eslint-plugin": {
+      "optional": true
+    },
+    "@typescript-eslint/parser": {
+      "optional": true
+    },
+    "eslint-plugin-react": {
+      "optional": true
+    },
     "eslint-plugin-tailwindcss": {
       "optional": true
     }
@@ -55,6 +64,7 @@
     "@eslint/js": "^10.0.1",
     "@typescript-eslint/eslint-plugin": "^8.69.0",
     "@typescript-eslint/parser": "^8.69.0",
-    "eslint": "^10.10.0"
+    "eslint": "^10.10.0",
+    "eslint-plugin-react": "^7.37.5"
   }
 }

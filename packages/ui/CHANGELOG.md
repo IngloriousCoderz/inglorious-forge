@@ -1,5 +1,14 @@
 # @inglorious/ui
 
+## 8.4.2
+
+### Patch Changes
+
+- Relative imports name the file they import, such as `../../controls/button/index.js` rather than `../../controls/button`. Since 8.4.1, `Drawer`, `List` and the `DataGrid` filters could only be imported through a bundler: Node refused the directory imports, so a test or script that loaded them outside Vite failed.
+- @inglorious/store@12.0.0
+  - @inglorious/utils@5.1.0
+  - @inglorious/web@6.8.1
+
 ## 8.4.1
 
 ### Patch Changes

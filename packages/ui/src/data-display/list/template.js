@@ -25,9 +25,9 @@ import { ref } from "@inglorious/web/directives/ref"
 import { repeat } from "@inglorious/web/directives/repeat"
 import { when } from "@inglorious/web/directives/when"
 
-import { IconButton } from "../../controls/icon-button"
-import { Icon } from "../../data-display/icon"
-import { Flex } from "../../layout/flex"
+import { IconButton } from "../../controls/icon-button/index.js"
+import { Icon } from "../../data-display/icon/index.js"
+import { Flex } from "../../layout/flex/index.js"
 import { applyElementProps } from "../../shared/apply-element-props.js"
 
 const PRETTY_INDEX = 1

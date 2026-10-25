@@ -9,15 +9,15 @@ import {
 } from "@inglorious/charts"
 import { html } from "@inglorious/web"
 
-import { Button } from "../../controls/button"
-import { ButtonGroup } from "../../controls/button-group"
-import { Icon } from "../../data-display/icon"
-import { Typography } from "../../data-display/typography"
-import { Progress } from "../../feedback/progress"
-import { Flex } from "../../layout/flex"
-import { Grid } from "../../layout/grid"
-import { Card } from "../../surfaces/card"
-import { trafficSeries, trafficSummary } from "./data"
+import { Button } from "../../controls/button/index.js"
+import { ButtonGroup } from "../../controls/button-group/index.js"
+import { Icon } from "../../data-display/icon/index.js"
+import { Typography } from "../../data-display/typography/index.js"
+import { Progress } from "../../feedback/progress/index.js"
+import { Flex } from "../../layout/flex/index.js"
+import { Grid } from "../../layout/grid/index.js"
+import { Card } from "../../surfaces/card/index.js"
+import { trafficSeries, trafficSummary } from "./data.js"
 
 export const TrafficCard = {
   render(entity, api) {

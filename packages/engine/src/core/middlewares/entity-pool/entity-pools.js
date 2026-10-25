@@ -1,4 +1,4 @@
-import { EntityPool } from "./entity-pool"
+import { EntityPool } from "./entity-pool.js"
 
 export class EntityPools {
   _pools = new Map()

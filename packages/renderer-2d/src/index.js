@@ -1,5 +1,5 @@
-import { rendering } from "./rendering-behavior"
-import { renderingSystem } from "./rendering-system"
+import { rendering } from "./rendering-behavior.js"
+import { renderingSystem } from "./rendering-system.js"
 
 export function createRenderer(canvas) {
   return {

@@ -23,6 +23,8 @@
     "@inglorious/vite-plugin-hmr": "workspace:*",
     "@inglorious/vite-plugin-jsx": "workspace:*",
     "@types/node": "^22.20.5",
+    "@typescript-eslint/eslint-plugin": "^8.72.0",
+    "@typescript-eslint/parser": "^8.72.0",
     "@typescript/native": "npm:typescript@^7.0.2",
     "eslint": "^10.13.0",
     "jiti": "^2.7.0",

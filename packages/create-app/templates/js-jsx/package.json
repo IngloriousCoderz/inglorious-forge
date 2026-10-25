@@ -22,6 +22,7 @@
     "@inglorious/vite-plugin-hmr": "workspace:*",
     "@inglorious/vite-plugin-jsx": "workspace:*",
     "eslint": "^10.13.0",
+    "eslint-plugin-react": "^7.37.5",
     "prettier": "^3.9.10",
     "rollup-plugin-minify-template-literals": "^2.2.0",
     "sharp": "^0.35.5",

@@ -10,13 +10,13 @@ import menuOutline from "@iconify-icons/material-symbols/menu-outline"
 import notificationsOutline from "@iconify-icons/material-symbols/notifications-outline"
 import { html } from "@inglorious/web"
 
-import { Button } from "../../controls/button"
-import { Avatar } from "../../data-display/avatar"
-import { Divider } from "../../data-display/divider"
-import { Icon } from "../../data-display/icon"
-import { Flex } from "../../layout/flex"
-import { Breadcrumbs } from "../../navigation/breadcrumbs"
-import { AppBar } from "../../surfaces/app-bar"
+import { Button } from "../../controls/button/index.js"
+import { Avatar } from "../../data-display/avatar/index.js"
+import { Divider } from "../../data-display/divider/index.js"
+import { Icon } from "../../data-display/icon/index.js"
+import { Flex } from "../../layout/flex/index.js"
+import { Breadcrumbs } from "../../navigation/breadcrumbs/index.js"
+import { AppBar } from "../../surfaces/app-bar/index.js"
 
 export const AppHeader = {
   render(entity, api) {

@@ -19,6 +19,12 @@ import browserConfig from "@inglorious/eslint-config/browser"
 export default browserConfig
 ```
 
-The plugins are peer dependencies, which pnpm installs for you. `eslint-plugin-tailwindcss` is optional: install it yourself to use the `tailwind` config.
+The plugins are peer dependencies. The ones every config uses are installed for you; the others are optional, so install them yourself for the config that needs them:
+
+| Config       | Install                                                         |
+| ------------ | --------------------------------------------------------------- |
+| `react`      | `eslint-plugin-react`                                           |
+| `tailwind`   | `eslint-plugin-react`, `eslint-plugin-tailwindcss`              |
+| `typescript` | `@typescript-eslint/parser`, `@typescript-eslint/eslint-plugin` |
 
 `no-magic-numbers` is off in tests (`*.test.*`, `*.spec.*`) and stories.

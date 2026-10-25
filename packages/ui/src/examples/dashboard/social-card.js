@@ -1,11 +1,11 @@
 import { Area, Chart } from "@inglorious/charts"
 import { html } from "@inglorious/web"
 
-import { Divider } from "../../data-display/divider"
-import { Icon } from "../../data-display/icon"
-import { Typography } from "../../data-display/typography"
-import { Grid } from "../../layout/grid"
-import { Card } from "../../surfaces/card"
+import { Divider } from "../../data-display/divider/index.js"
+import { Icon } from "../../data-display/icon/index.js"
+import { Typography } from "../../data-display/typography/index.js"
+import { Grid } from "../../layout/grid/index.js"
+import { Card } from "../../surfaces/card/index.js"
 
 export const SocialCard = {
   render(entity, api) {

@@ -14,7 +14,7 @@ import { Input } from "../../controls/input/index.js"
 import { Select } from "../../controls/select/index.js"
 import { Pagination } from "../../navigation/pagination/index.js"
 import { VirtualList } from "../virtual-list/index.js"
-import { Filters } from "./filters"
+import { Filters } from "./filters/index.js"
 import {
   getPaginationInfo,
   getRowKeyValue,

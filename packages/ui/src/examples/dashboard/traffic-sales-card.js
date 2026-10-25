@@ -1,17 +1,17 @@
 import moreVertOutline from "@iconify-icons/material-symbols/more-vert-outline"
 import { html } from "@inglorious/web"
 
-import { Button } from "../../controls/button"
-import { Avatar } from "../../data-display/avatar"
-import { Badge } from "../../data-display/badge"
-import { Icon } from "../../data-display/icon"
-import { Table } from "../../data-display/table"
-import { Typography } from "../../data-display/typography"
-import { Progress } from "../../feedback/progress"
-import { Flex } from "../../layout/flex"
-import { Grid } from "../../layout/grid"
-import { Card } from "../../surfaces/card"
-import { clientBars, sourceBars, userRows } from "./data"
+import { Button } from "../../controls/button/index.js"
+import { Avatar } from "../../data-display/avatar/index.js"
+import { Badge } from "../../data-display/badge/index.js"
+import { Icon } from "../../data-display/icon/index.js"
+import { Table } from "../../data-display/table/index.js"
+import { Typography } from "../../data-display/typography/index.js"
+import { Progress } from "../../feedback/progress/index.js"
+import { Flex } from "../../layout/flex/index.js"
+import { Grid } from "../../layout/grid/index.js"
+import { Card } from "../../surfaces/card/index.js"
+import { clientBars, sourceBars, userRows } from "./data.js"
 
 export const TrafficSalesCard = {
   render(entity, api) {

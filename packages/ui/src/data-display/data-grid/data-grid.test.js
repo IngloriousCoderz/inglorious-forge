@@ -2,7 +2,7 @@ import { createStore } from "@inglorious/store"
 import { mount } from "@inglorious/web"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
 
-import { Select } from "../../controls/select"
+import { Select } from "../../controls/select/index.js"
 import {
   DataGrid,
   getPaginationInfo,

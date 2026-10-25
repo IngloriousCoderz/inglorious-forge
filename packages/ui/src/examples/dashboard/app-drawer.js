@@ -7,12 +7,12 @@ import notificationsOutline from "@iconify-icons/material-symbols/notifications-
 import speedOutline from "@iconify-icons/material-symbols/speed-outline"
 import { html } from "@inglorious/web"
 
-import { Avatar } from "../../data-display/avatar"
-import { Badge } from "../../data-display/badge"
-import { Icon } from "../../data-display/icon"
-import { List } from "../../data-display/list"
-import { Flex } from "../../layout/flex"
-import { Drawer } from "../../navigation/drawer"
+import { Avatar } from "../../data-display/avatar/index.js"
+import { Badge } from "../../data-display/badge/index.js"
+import { Icon } from "../../data-display/icon/index.js"
+import { List } from "../../data-display/list/index.js"
+import { Flex } from "../../layout/flex/index.js"
+import { Drawer } from "../../navigation/drawer/index.js"
 
 export const AppDrawer = {
   create(entity) {

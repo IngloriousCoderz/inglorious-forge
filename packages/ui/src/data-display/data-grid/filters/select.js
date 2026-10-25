@@ -1,5 +1,5 @@
-import { Select } from "../../../controls/select"
-import { format } from "./helpers"
+import { Select } from "../../../controls/select/index.js"
+import { format } from "./helpers.js"
 
 export const SelectFilter = {
   render(entity, column) {

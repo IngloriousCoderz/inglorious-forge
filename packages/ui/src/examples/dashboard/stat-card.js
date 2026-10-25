@@ -2,10 +2,10 @@ import moreVertOutline from "@iconify-icons/material-symbols/more-vert-outline"
 import { Area, Bar, Chart, Dots, Line } from "@inglorious/charts"
 import { html } from "@inglorious/web"
 
-import { Button } from "../../controls/button"
-import { Icon } from "../../data-display/icon"
-import { Typography } from "../../data-display/typography"
-import { Card } from "../../surfaces/card"
+import { Button } from "../../controls/button/index.js"
+import { Icon } from "../../data-display/icon/index.js"
+import { Typography } from "../../data-display/typography/index.js"
+import { Card } from "../../surfaces/card/index.js"
 
 export const StatCard = {
   render(entity, api) {

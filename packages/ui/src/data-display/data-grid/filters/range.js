@@ -1,7 +1,7 @@
 import { html } from "@inglorious/web"
 
-import { Input } from "../../../controls/input"
-import { format } from "./helpers"
+import { Input } from "../../../controls/input/index.js"
+import { format } from "./helpers.js"
 
 const RANGE_TYPE = {
   range: "number",

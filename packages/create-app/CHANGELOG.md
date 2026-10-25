@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.4.2
+
+### Patch Changes
+
+- The JSX and TypeScript templates install the ESLint plugins their config needs, now that `@inglorious/eslint-config` no longer installs them for every project.
+
 ## 1.4.1
 
 ### Patch Changes

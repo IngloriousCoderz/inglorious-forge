@@ -1,6 +1,6 @@
 import { html } from "@inglorious/web"
 
-import { Icon } from "../../data-display/icon"
+import { Icon } from "../../data-display/icon/index.js"
 import { createRender } from "../../stories/notify-story.js"
 import { Fab } from "."
 

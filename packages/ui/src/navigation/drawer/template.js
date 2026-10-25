@@ -6,10 +6,10 @@
 import { html } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 
-import { Button } from "../../controls/button"
-import { Icon } from "../../data-display/icon"
-import { Backdrop } from "../../feedback/backdrop"
-import { Flex } from "../../layout/flex"
+import { Button } from "../../controls/button/index.js"
+import { Icon } from "../../data-display/icon/index.js"
+import { Backdrop } from "../../feedback/backdrop/index.js"
+import { Flex } from "../../layout/flex/index.js"
 import { close, leftPanelClose } from "../../shared/icons.js"
 
 /**

@@ -2,7 +2,7 @@ import { VirtualList } from "@inglorious/ui/virtual-list"
 import { html } from "@inglorious/web"
 import { repeat } from "@inglorious/web/directives/repeat"
 
-import { Button } from "../../controls/button"
+import { Button } from "../../controls/button/index.js"
 import {
   createEntityRender,
   notifyActionArgType,

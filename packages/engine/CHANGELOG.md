@@ -1,5 +1,13 @@
 # @inglorious/engine
 
+## 24.1.1
+
+### Patch Changes
+
+- Relative imports name the file they import, so the entity pool middleware and the 2D renderer load in Node without a bundler.
+- @inglorious/store@12.0.0
+  - @inglorious/utils@5.1.0
+
 ## 24.1.0
 
 ### Minor Changes

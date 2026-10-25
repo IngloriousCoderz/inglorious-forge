@@ -1,4 +1,4 @@
-import { renderText } from "./text"
+import { renderText } from "./text.js"
 
 const ONE_SECOND = 1
 

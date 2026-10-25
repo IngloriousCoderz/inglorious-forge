@@ -1,5 +1,11 @@
 # @inglorious/eslint-config
 
+## 1.2.0
+
+### Minor Changes
+
+- `eslint-plugin-react`, `@typescript-eslint/parser` and `@typescript-eslint/eslint-plugin` are optional peer dependencies, like `eslint-plugin-tailwindcss`. Only the `react`, `tailwind` and `typescript` configs use them, and as required peers they were installed into every project, along with their peer warnings: `eslint-plugin-react` does not accept ESLint 10, and typescript-eslint does not accept TypeScript 7. A project using one of those configs now installs its plugins itself. `eslint-plugin-simple-import-sort` 14 is accepted as well as 12.
+
 ## 1.1.5
 
 ### Patch Changes
