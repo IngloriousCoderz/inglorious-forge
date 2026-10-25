@@ -7,8 +7,8 @@ import {
   type EntitiesState,
   type EntityType,
 } from "../types"
-import { type AsyncEvents, handleAsync } from "../types/async"
-import { optimistic } from "../types/optimistic"
+import { type AsyncEvents, handleAsync } from "../types/behaviors/async"
+import { optimistic } from "../types/behaviors/optimistic"
 import { trigger } from "../types/test"
 
 interface Todo {

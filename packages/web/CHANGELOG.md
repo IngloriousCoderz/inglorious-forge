@@ -1,5 +1,13 @@
 # @inglorious/react-store
 
+## 6.7.2
+
+### Patch Changes
+
+- Documented imports point to paths that exist: `createReactStore`'s JSDoc types come from `@inglorious/store`, and the Web README imports `optimistic` from `@inglorious/store/optimistic` rather than a `withOptimistic` that it does not export.
+- Updated dependencies
+  - @inglorious/store@11.3.0
+
 ## 6.7.1
 
 ### Patch Changes

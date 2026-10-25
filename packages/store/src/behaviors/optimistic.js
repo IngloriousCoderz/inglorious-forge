@@ -8,13 +8,13 @@ const START = 0
  * Pass either a static shallow patch object or a factory that returns one.
  * The wrapper applies the patch during `Start` and rolls it back during `Error`.
  *
- * @template {import('./store').BaseEntity} TEntity
+ * @template {import('../store').BaseEntity} TEntity
  * @template TPayload
  * @template TResult
  * @template {string} TType
  *
  * @param {import('./async').AsyncEvents<TType, TEntity, TPayload, TResult>} behavior
- * @param {Record<string, any> | ((entity: TEntity, payload: TPayload, api: import('./store').Api) => Record<string, any> | null | undefined)} optimistic
+ * @param {Record<string, any> | ((entity: TEntity, payload: TPayload, api: import('../store').Api) => Record<string, any> | null | undefined)} optimistic
  *   Shallow patch applied optimistically on start, or a factory that returns it.
  *
  * @returns {import('./async').AsyncEvents<TType, TEntity, TPayload, TResult>}

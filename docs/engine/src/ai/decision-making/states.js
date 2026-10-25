@@ -1,6 +1,5 @@
 import { arrive } from "@inglorious/engine/ai/movement/kinematic/arrive.js"
 import { wander } from "@inglorious/engine/ai/movement/kinematic/wander.js"
-import { fsm } from "@inglorious/engine/behaviors/state-machine/fsm.js"
 import {
   createMouseEntity,
   mouse,
@@ -8,6 +7,7 @@ import {
 import { clampToBounds, flip } from "@inglorious/engine/physics/bounds.js"
 import { renderCharacter } from "@inglorious/renderer-2d/character.js"
 import { renderMouse } from "@inglorious/renderer-2d/mouse.js"
+import { fsm } from "@inglorious/store/fsm"
 import { pi } from "@inglorious/utils/math/trigonometry.js"
 import { merge } from "@inglorious/utils/object.js"
 import { v } from "@inglorious/utils/v.js"

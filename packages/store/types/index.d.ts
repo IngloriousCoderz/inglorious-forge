@@ -1,5 +1,5 @@
 export * from "./api"
-export * from "./async"
+export * from "./behaviors/async"
 export * from "./select"
 export * from "./store"
 export * from "./test"

@@ -1,4 +1,4 @@
-import { fsm } from "@inglorious/engine/behaviors/state-machine/fsm.js"
+import { fsm } from "@inglorious/store/fsm"
 import { clamp } from "@inglorious/utils/math/number.js"
 import { random } from "@inglorious/utils/math/rng.js"
 

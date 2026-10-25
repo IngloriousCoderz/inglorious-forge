@@ -312,7 +312,7 @@ Inglorious Store provides helpers to automate migration from RTK:
 Convert Redux async thunks to Inglorious handlers:
 
 ```javascript
-import { convertAsyncThunk } from "@inglorious/store/rtk"
+import { convertAsyncThunk } from "@inglorious/store/migration/rtk"
 
 const fetchTodos = async (userId) => {
   const res = await fetch(`/api/users/${userId}/todos`)
@@ -336,7 +336,7 @@ const types = {
 Convert Redux Toolkit slices to Inglorious types:
 
 ```javascript
-import { convertSlice } from "@inglorious/store/rtk"
+import { convertSlice } from "@inglorious/store/migration/rtk"
 
 const todoListType = convertSlice(todosSlice, {
   asyncThunks: {
@@ -355,7 +355,7 @@ const types = {
 For gradual migration, use Redux-style dispatch:
 
 ```javascript
-import { createRTKCompatDispatch } from "@inglorious/store/rtk"
+import { createRTKCompatDispatch } from "@inglorious/store/migration/rtk"
 
 const api = store.api // from context or plugin
 const dispatch = createRTKCompatDispatch(api, "todos")

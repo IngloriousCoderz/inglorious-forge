@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/store",
-  "version": "11.2.0",
+  "version": "11.3.0",
   "description": "A state manager for real-time, collaborative apps, inspired by game development patterns and compatible with Redux.",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -40,9 +40,29 @@
       "types": "./types/migration/rtk.d.ts",
       "import": "./src/migration/rtk.js"
     },
+    "./async": {
+      "types": "./types/behaviors/async.d.ts",
+      "import": "./src/behaviors/async.js"
+    },
+    "./optimistic": {
+      "types": "./types/behaviors/optimistic.d.ts",
+      "import": "./src/behaviors/optimistic.js"
+    },
+    "./fsm": {
+      "types": "./types/behaviors/state-machine/fsm.d.ts",
+      "import": "./src/behaviors/state-machine/fsm.js"
+    },
+    "./scenes": {
+      "types": "./types/behaviors/state-machine/scenes.d.ts",
+      "import": "./src/behaviors/state-machine/scenes.js"
+    },
+    "./*.js": {
+      "types": "./types/*.d.ts",
+      "import": "./src/*.js"
+    },
     "./*": {
       "types": "./types/*.d.ts",
-      "import": "./src/*"
+      "import": "./src/*.js"
     }
   },
   "files": [

@@ -1,5 +1,22 @@
 # @inglorious/engine
 
+## 24.0.0
+
+### Major Changes
+
+- `fsm` and `scenes` move to `@inglorious/store`, and `mappings` moves into the input behaviors. The `behaviors/state-machine/` folder is gone.
+
+  - `@inglorious/engine/behaviors/state-machine/fsm.js` becomes `@inglorious/store/fsm`.
+  - `@inglorious/engine/behaviors/state-machine/scenes.js` becomes `@inglorious/store/scenes`.
+  - `@inglorious/engine/behaviors/state-machine/mappings.js` becomes `@inglorious/engine/behaviors/input/mappings.js`.
+
+  A game that imports `fsm` or `scenes` needs `@inglorious/store` among its own dependencies. Without a bundler, import them by their file paths, such as `@inglorious/store/behaviors/state-machine/fsm.js`, since an import map does not read a package's `exports`.
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/store@11.3.0
+
 ## 23.0.7
 
 ### Patch Changes

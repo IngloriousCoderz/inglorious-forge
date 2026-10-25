@@ -1,4 +1,4 @@
-import { createGame } from "@inglorious/engine/test"
+import { createGame } from "@inglorious/engine/test.js"
 import { beforeEach, describe, expect, test } from "vitest"
 
 import { button } from "./button.js"

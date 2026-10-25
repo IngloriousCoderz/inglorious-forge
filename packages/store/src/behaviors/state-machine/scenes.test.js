@@ -1,6 +1,6 @@
-import { createStore } from "@inglorious/store/store.js"
 import { expect, test } from "vitest"
 
+import { createStore } from "../../store.js"
 import { fsm } from "./fsm.js"
 import { scenes } from "./scenes.js"
 

@@ -27,6 +27,7 @@
     "@inglorious/eslint-config": "workspace:*",
     "@inglorious/renderer-2d": "workspace:*",
     "@inglorious/renderer-react-dom": "workspace:*",
+    "@inglorious/store": "workspace:*",
     "@inglorious/utils": "workspace:*",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",

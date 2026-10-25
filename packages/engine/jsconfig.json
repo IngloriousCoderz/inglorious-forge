@@ -1,9 +1,7 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@inglorious/*": ["./src/*"]
-    },
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "allowJs": true
   },
   "exclude": ["**/*.mdx"]

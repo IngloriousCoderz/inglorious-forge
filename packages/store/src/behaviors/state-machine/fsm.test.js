@@ -1,6 +1,6 @@
-import { createStore } from "@inglorious/store/store.js"
 import { expect, test } from "vitest"
 
+import { createStore } from "../../store.js"
 import { fsm } from "./fsm.js"
 
 test("it should add a finite state machine", () => {

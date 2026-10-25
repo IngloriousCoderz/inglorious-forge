@@ -1,4 +1,4 @@
-import { fsm } from "@inglorious/engine/behaviors/state-machine/fsm.js"
+import { fsm } from "@inglorious/store/fsm"
 import { cycleIndex } from "@inglorious/utils/array.js"
 
 import { brickColourOf, brickTierOf } from "../atlas.js"

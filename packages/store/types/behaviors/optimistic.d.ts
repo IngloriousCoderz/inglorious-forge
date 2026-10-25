@@ -1,6 +1,6 @@
-import { Api } from "./api"
+import { Api } from "../api"
 import { AsyncEvents } from "./async"
-import { BaseEntity } from "./store"
+import { BaseEntity } from "../store"
 
 /**
  * Decorates an async behavior with optimistic update boilerplate.

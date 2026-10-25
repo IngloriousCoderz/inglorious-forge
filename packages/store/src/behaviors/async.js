@@ -5,7 +5,7 @@
  * success, error, and finally. The lifecycle events are automatically scoped based
  * on the provided options.
  *
- * @template {import('./store').BaseEntity} TEntity - The entity type
+ * @template {import('../store').BaseEntity} TEntity - The entity type
  * @template TPayload - The payload type passed to the operation
  * @template TResult - The result type returned by the async operation
  *
@@ -13,19 +13,19 @@
  *   Generated handlers will be named: `type`, `typeStart`, `typeRun`, `typeSuccess`, `typeError`, `typeFinally`
  *
  * @param {Object} handlers - The handler functions for each lifecycle stage.
- * @param {(entity: TEntity, payload: TPayload, api: import('./store').Api) => void} [handlers.start]
+ * @param {(entity: TEntity, payload: TPayload, api: import('../store').Api) => void} [handlers.start]
  *   Called synchronously before the async operation starts.
  *   Use for setting loading states. Receives: (entity, payload, api)
- * @param {(payload: TPayload, api: import('./store').Api) => Promise<TResult> | TResult} handlers.run
+ * @param {(payload: TPayload, api: import('../store').Api) => Promise<TResult> | TResult} handlers.run
  *   The async operation to perform. Must return a Promise or value.
  *   **Note:** Receives (payload, api) - NOT entity. Entity state should be modified in other handlers.
- * @param {(entity: TEntity, result: TResult, api: import('./store').Api) => void} [handlers.success]
+ * @param {(entity: TEntity, result: TResult, api: import('../store').Api) => void} [handlers.success]
  *   Called when the operation succeeds.
  *   Receives: (entity, result, api) where result is the resolved value from run()
- * @param {(entity: TEntity, error: any, api: import('./store').Api) => void} [handlers.error]
+ * @param {(entity: TEntity, error: any, api: import('../store').Api) => void} [handlers.error]
  *   Called when the operation fails.
  *   Receives: (entity, error, api) where error is the caught exception
- * @param {(entity: TEntity, api: import('./store').Api) => void} [handlers.finally]
+ * @param {(entity: TEntity, api: import('../store').Api) => void} [handlers.finally]
  *   Called after the operation completes (success or failure).
  *   Use for cleanup, resetting loading states. Receives: (entity, api)
  *

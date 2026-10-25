@@ -7,7 +7,7 @@
 
 import { extend } from "@inglorious/utils/object.js"
 
-import { handleAsync } from "../async"
+import { handleAsync } from "../behaviors/async.js"
 
 const SEP_LENGTH = 50
 const INDENT_SPACES = 2

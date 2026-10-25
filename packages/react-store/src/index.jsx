@@ -2,8 +2,8 @@ import { Provider, useSelector } from "react-redux"
 
 /**
  * Creates a set of React hooks and a Provider component tailored to an Inglorious Store instance.
- * @param {import('@inglorious/store/types/store').Store} store The Inglorious Store instance.
- * @returns {{Provider: ({children}: {children: any}) => JSX.Element, useSelector: import('react-redux').useSelector, useEntity: (id: string | number) => object | undefined, useNotify: () => import('@inglorious/store/types/store').Notify}}
+ * @param {import('@inglorious/store').Store} store The Inglorious Store instance.
+ * @returns {{Provider: ({children}: {children: any}) => JSX.Element, useSelector: import('react-redux').useSelector, useEntity: (id: string | number) => object | undefined, useNotify: () => import('@inglorious/store').Store['notify']}}
  */
 export function createReactStore(store) {
   /**
@@ -27,7 +27,7 @@ export function createReactStore(store) {
   /**
    * A hook that returns the `notify` function from the Inglorious Store.
    * This is the primary way to dispatch events to the store from your components.
-   * @returns {import('@inglorious/store/types/store').Notify} The `notify` function.
+   * @returns {import('@inglorious/store').Store['notify']} The `notify` function.
    */
   function useNotify() {
     return store._api.notify

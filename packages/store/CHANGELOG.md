@@ -1,5 +1,17 @@
 # @inglorious/store
 
+## 11.3.0
+
+### Minor Changes
+
+- `fsm` and `scenes` move here from `@inglorious/engine`, since neither is game-specific: import them from `@inglorious/store/fsm` and `@inglorious/store/scenes`. Store subpaths without an extension, such as `@inglorious/store/async`, now resolve outside a bundler too.
+
+  - `fsm(states)` turns a type into a finite state machine in the manner of the OOP State pattern. A state's handler replaces the type's handler for the same event, a handler moves the entity by assigning `entity.state` (`"default"` when it has none), and a move broadcasts `stateChange` with `{ entityId, from, to }`.
+  - `scenes(scenesByState)` puts each state's entities up and takes the previous state's down, patching those both states share. In a web app it gives entities a lifetime tied to a state: page-scoped entities, wizard steps, auth and edit modes.
+  - TypeScript: both infer the entity and the api inside a typed store's `types`. Declaring `state: "closed" | "open"` on the entity checks state names, in the states object and in assignments. `StateChangePayload` types a listener's payload.
+  - `@inglorious/store/async`, `/optimistic`, `/select`, `/test` and `/api` failed to resolve in Node, because the `./*` export pointed to files without `.js`; they resolve now. Paths with `.js`, such as `@inglorious/store/store.js`, still resolve, for import maps.
+  - `async.js` and `optimistic.js` move to `src/behaviors/`, and `fsm.js` and `scenes.js` to `src/behaviors/state-machine/`, with their type declarations mirrored under `types/`. Import them by their short paths; `@inglorious/store/async.js` and `@inglorious/store/optimistic.js` no longer exist.
+
 ## 11.2.0
 
 ### Minor Changes

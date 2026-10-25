@@ -4,12 +4,12 @@ import {
   controlTypes,
   createControlEntities,
 } from "@inglorious/engine/behaviors/input/controls.js"
+import { mappings } from "@inglorious/engine/behaviors/input/mappings.js"
 import { particle } from "@inglorious/engine/behaviors/particles.js"
-import { mappings } from "@inglorious/engine/behaviors/state-machine/mappings.js"
-import { scenes } from "@inglorious/engine/behaviors/state-machine/scenes.js"
 import { renderFps } from "@inglorious/renderer-2d/fps.js"
 import { renderImage } from "@inglorious/renderer-2d/image/image.js"
 import { renderRectangle } from "@inglorious/renderer-2d/shapes/rectangle.js"
+import { scenes } from "@inglorious/store/scenes"
 import { v } from "@inglorious/utils/v.js"
 
 import { HEIGHT, WIDTH } from "./constants.js"

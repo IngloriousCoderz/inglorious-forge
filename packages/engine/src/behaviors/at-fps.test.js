@@ -1,4 +1,4 @@
-import { createGame } from "@inglorious/engine/test"
+import { createGame } from "@inglorious/engine/test.js"
 import { augmentType } from "@inglorious/store/types.js"
 import { describe, expect, test, vi } from "vitest"
 

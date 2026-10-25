@@ -18,6 +18,7 @@
   "dependencies": {
     "@inglorious/engine": "workspace:*",
     "@inglorious/renderer-2d": "workspace:*",
+    "@inglorious/store": "workspace:*",
     "@inglorious/utils": "workspace:*"
   },
   "devDependencies": {

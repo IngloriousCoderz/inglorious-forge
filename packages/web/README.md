@@ -1741,7 +1741,7 @@ Import everything else from the package that owns it, or from an explicit `@ingl
 ```javascript
 import { createStore } from "@inglorious/store"
 import { handleAsync } from "@inglorious/store/async"
-import { withOptimistic } from "@inglorious/store/optimistic"
+import { optimistic } from "@inglorious/store/optimistic"
 import { compute, createSelector } from "@inglorious/store/select"
 import { createDevtools } from "@inglorious/store/client/devtools"
 

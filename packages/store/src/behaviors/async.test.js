@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest"
 
-import { handleAsync } from "./async"
-import { createMockApi, trigger } from "./test"
+import { createMockApi, trigger } from "../test.js"
+import { handleAsync } from "./async.js"
 
 describe("handleAsync", () => {
   describe("basic async lifecycle", () => {

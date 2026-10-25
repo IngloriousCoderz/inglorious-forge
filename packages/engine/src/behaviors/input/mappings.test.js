@@ -1,9 +1,9 @@
+import { fsm } from "@inglorious/store/behaviors/state-machine/fsm.js"
 import { createStore } from "@inglorious/store/store.js"
 import { beforeEach, expect, test, vi } from "vitest"
 
-import { gamepad } from "../input/gamepad.js"
-import { keyboard } from "../input/keyboard.js"
-import { fsm } from "./fsm.js"
+import { gamepad } from "./gamepad.js"
+import { keyboard } from "./keyboard.js"
 import { mappings } from "./mappings.js"
 
 // The keyboard reads the document when it is made. What is being tested is what it is

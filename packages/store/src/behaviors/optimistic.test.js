@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from "vitest"
 
-import { handleAsync } from "./async"
-import { optimistic } from "./optimistic"
-import { createMockApi, trigger } from "./test"
+import { createMockApi, trigger } from "../test.js"
+import { handleAsync } from "./async.js"
+import { optimistic } from "./optimistic.js"
 
 describe("optimistic", () => {
   it("should add a temporary item on start and remove it again on error", async () => {

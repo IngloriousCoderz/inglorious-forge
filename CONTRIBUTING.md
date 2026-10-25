@@ -128,7 +128,7 @@ Aggregate lists, like the `@import`s in `controls.css`, are easier to scan and t
 
 ### Name files and folders in kebab-case
 
-Every file and every folder: `keys-per-state.js`, `infinite-scroll.js`, `state-machine/`. Names are always **kebab-case**, never camelCase and never snake_case.
+Every file and every folder: `keys-per-state.js`, `infinite-scroll.js`, `data-structures/`. Names are always **kebab-case**, never camelCase and never snake_case.
 
 This is a rule about _paths_, not about the things inside them. A file may export a camelCase name and should, since that is what reads at the import site:
 

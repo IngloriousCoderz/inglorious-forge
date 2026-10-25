@@ -19,8 +19,8 @@ import { isDeepEqual } from "@inglorious/utils/object.js"
  *
  * @example
  * ```js
- * import { scenes } from "@inglorious/engine/behaviors/state-machine/scenes.js"
- * import { fsm } from "@inglorious/engine/behaviors/state-machine/fsm.js"
+ * import { fsm } from "@inglorious/store/fsm"
+ * import { scenes } from "@inglorious/store/scenes"
  *
  * const SCENES = {
  *   title: () => [createTitleEntity(), createMenuEntity()],

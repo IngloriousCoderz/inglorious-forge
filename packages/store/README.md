@@ -400,6 +400,9 @@ The practical use is a world whose rules change with its state — a keyboard wh
 mean one thing on a menu and another in play:
 
 ```javascript
+import { fsm } from "@inglorious/store/fsm"
+import { scenes } from "@inglorious/store/scenes"
+
 const types = {
   Keyboard: { keyDown: (entity, key) => report(key) },
   Game: [
@@ -730,7 +733,7 @@ Inglorious Store now provides utilities to **gradually migrate from RTK slices a
 ### Converting Async Thunks
 
 ```javascript
-import { convertAsyncThunk } from "@inglorious/store/rtk"
+import { convertAsyncThunk } from "@inglorious/store/migration/rtk"
 
 const fetchTodos = async (userId) => {
   const res = await fetch(`/api/users/${userId}/todos`)
@@ -765,7 +768,7 @@ const todoList = {
 ### Converting Slices
 
 ```javascript
-import { convertSlice } from "@inglorious/store/rtk"
+import { convertSlice } from "@inglorious/store/migration/rtk"
 
 const todoListType = convertSlice(todosSlice, {
   asyncThunks: {
@@ -806,7 +809,7 @@ dispatch({ type: "todos/addTodo", payload: "Buy milk" })
 ### Migration Guide
 
 ```javascript
-import { createMigrationGuide } from "@inglorious/store/rtk"
+import { createMigrationGuide } from "@inglorious/store/migration/rtk"
 
 const guide = createMigrationGuide(todosSlice)
 console.log(guide)
@@ -968,7 +971,108 @@ const withLoading = (type) => ({
 const form = [resettable, validated, withLoading]
 ```
 
-When multiple behaviors define the same event, they all run in order. This allows you to build middleware-like patterns: validation, logging, error handling, loading states, etc.
+When multiple behaviors define the same event, the later one replaces the earlier: a type has one handler per event. That is why a wrapper like `validated` receives the type built so far and calls `type.submit?.(...)` itself, which is how you build middleware-like patterns: validation, logging, error handling, loading states, etc.
+
+### 🚦 State Machines
+
+Some entities answer the same event differently depending on the state they are in: a door
+opens when it is closed and does nothing when it is locked. `fsm()` turns a type into a
+finite state machine in the manner of the OOP State pattern, where each state says what it
+answers and the entity's `state` field says which state is in charge:
+
+```javascript
+import { fsm } from "@inglorious/store/fsm"
+
+const types = {
+  Door: [
+    {
+      // What every state does, unless a state says otherwise
+      knock(entity) {
+        entity.knocks++
+      },
+    },
+    fsm({
+      closed: {
+        open(entity) {
+          entity.state = "open"
+        },
+        lock(entity) {
+          entity.state = "locked"
+        },
+      },
+      open: {
+        close(entity) {
+          entity.state = "closed"
+        },
+      },
+      locked: {
+        // Takes over knock while locked
+        knock(entity, _, api) {
+          api.notify("bark")
+        },
+        unlock(entity) {
+          entity.state = "closed"
+        },
+      },
+    }),
+  ],
+}
+
+const entities = { door: { type: "Door", state: "closed", knocks: 0 } }
+```
+
+- A state's handler **replaces** the type's handler for the same event, so the type's
+  handler is the default and a state takes it over by naming the event. An event that
+  neither the current state nor the type answers is ignored.
+- A handler moves the entity by assigning `entity.state`. An entity with no `state` starts
+  in `"default"`.
+- When a handler has actually moved the entity, `fsm` broadcasts
+  `stateChange` with `{ entityId, from, to }`. It is broadcast rather than addressed to the
+  entity, because what wants to hear it is usually something else, so a listener checks
+  `entityId`.
+
+Typical uses: request and connection status, wizards, editors that are viewing, editing or
+saving, media players, drag and drop, and the screens of a game.
+
+#### Scenes
+
+`scenes()` is the usual partner of `fsm()`: the machine says when it moves, and `scenes()`
+says which entities stand in each state. On `create` and on its own `stateChange` it `add`s
+what the new state has, `remove`s what only the old one had, and `patch`es what both have
+but configure differently, comparing entities by `id`:
+
+```javascript
+import { fsm } from "@inglorious/store/fsm"
+import { scenes } from "@inglorious/store/scenes"
+
+const types = {
+  Wizard: [
+    scenes({
+      account: () => [{ id: "accountForm", type: "AccountForm" }],
+      billing: (wizard) => [
+        { id: "billingForm", type: "BillingForm", plan: wizard.plan },
+      ],
+    }),
+    fsm({
+      account: {
+        next(entity) {
+          entity.state = "billing"
+        },
+      },
+    }),
+  ],
+}
+
+const entities = { wizard: { type: "Wizard", state: "account", plan: "pro" } }
+```
+
+The entity running the machine keeps what it has up in `scene`.
+
+The name comes from games, where each screen is a scene, but nothing about it is game-specific.
+In a web app it gives entities a lifetime tied to a state: a page's forms and lists exist only
+while you are on it (their `create` and `destroy` can open and close subscriptions), each wizard
+step has its own form, and a logged-out app has a `loginForm` that a logged-in one does not —
+while anything both states share, like a header or a cart, survives the move untouched.
 
 ### ⏱️ Batched Mode
 
@@ -1325,6 +1429,7 @@ Each handler receives three arguments:
 - **`patch` / `replace`** - change a thing that is already standing, the first touching only
   what it names and the second installing all of it
 - **`update`** - the frame tick, disabled while the world is paused
+- **`stateChange`** - broadcast by `fsm()` when an entity moves, with `{ entityId, from, to }`
 
 #### Pausing the world
 

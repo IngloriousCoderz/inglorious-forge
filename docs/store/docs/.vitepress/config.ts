@@ -22,6 +22,7 @@ export default defineConfig({
         items: [
           { text: "Core Concepts", link: "/guide/core-concepts" },
           { text: "Async Operations", link: "/advanced/async-operations" },
+          { text: "State Machines", link: "/advanced/state-machines" },
           { text: "Testing", link: "/advanced/testing" },
           { text: "Migration from Redux", link: "/advanced/migration" },
         ],
@@ -60,6 +61,7 @@ export default defineConfig({
           text: "Advanced Topics",
           items: [
             { text: "Async Operations", link: "/advanced/async-operations" },
+            { text: "State Machines", link: "/advanced/state-machines" },
             { text: "Systems", link: "/advanced/systems" },
             { text: "Testing", link: "/advanced/testing" },
           ],

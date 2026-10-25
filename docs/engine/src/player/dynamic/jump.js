@@ -1,5 +1,4 @@
 import { modernControls } from "@inglorious/engine/behaviors/controls/dynamic/modern.js"
-import { fsm } from "@inglorious/engine/behaviors/state-machine/fsm.js"
 import {
   controlTypes,
   createControlEntities,
@@ -7,6 +6,7 @@ import {
 import { clamped } from "@inglorious/engine/behaviors/physics/clamped.js"
 import { jumpable } from "@inglorious/engine/behaviors/physics/jumpable.js"
 import { renderCharacter } from "@inglorious/renderer-2d/character.js"
+import { fsm } from "@inglorious/store/fsm"
 import { v } from "@inglorious/utils/v.js"
 
 const Y = 1

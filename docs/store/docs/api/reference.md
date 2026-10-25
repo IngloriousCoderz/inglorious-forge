@@ -471,6 +471,60 @@ store.notify("remove", { id: "workTodos" })
 // Result: workTodos entity removed from state
 ```
 
+### `stateChange`
+
+Broadcast by [`fsm()`](#fsm-states) when a handler has moved an entity to another state. The payload names the entity, since every entity hears it:
+
+```javascript
+const types = {
+  logger: {
+    stateChange(entity, { entityId, from, to }) {
+      console.log(`${entityId}: ${from} → ${to}`)
+    },
+  },
+}
+```
+
+## `fsm(states)`
+
+Turns a type into a finite state machine. See [State Machines](/advanced/state-machines).
+
+```javascript
+import { fsm } from "@inglorious/store/fsm"
+
+const types = {
+  door: [
+    { knock: (entity) => entity.knocks++ },
+    fsm({
+      closed: { open: (entity) => (entity.state = "open") },
+      open: { close: (entity) => (entity.state = "closed") },
+    }),
+  ],
+}
+```
+
+- `states`: each state's handlers, by state name. A state's handler replaces the type's handler for the same event.
+- The entity's `state` field says which state is in charge, `"default"` when it has none. Handlers move the entity by assigning it.
+- Returns a behavior (a decorator) to put in a type's array after the behaviors it falls back to.
+- Broadcasts [`stateChange`](#statechange) whenever the state actually changes.
+
+## `scenes(scenesByState)`
+
+Puts each state's entities up and takes the previous state's down. See [Scenes](/advanced/state-machines#scenes).
+
+```javascript
+import { scenes } from "@inglorious/store/scenes"
+
+scenes({
+  account: () => [{ id: "accountForm", type: "AccountForm" }],
+  billing: (wizard) => [{ id: "billingForm", type: "BillingForm" }],
+})
+```
+
+- `scenesByState`: for each state, a function of the entity running the machine that returns the entities to have standing, each with an `id`.
+- Entities only the new state has are added, entities only the old one had are removed, and entities both have are patched with whatever changed.
+- Handles `create` and the entity's own `stateChange`, so pair it with `fsm()`.
+
 ## `handleAsync(eventName, handlers, options?)`
 
 Helper to generate lifecycle events for async operations:
@@ -764,7 +818,7 @@ Inglorious Store provides utilities to help migrate from Redux Toolkit:
 ### `convertAsyncThunk(eventName, asyncFn, options?)`
 
 ```typescript
-import { convertAsyncThunk } from "@inglorious/store/rtk"
+import { convertAsyncThunk } from "@inglorious/store/migration/rtk"
 
 const handlers = convertAsyncThunk("fetchTodos", fetchTodosAsync, {
   onPending: (entity) => (entity.loading = true),
@@ -780,7 +834,7 @@ const types = {
 ### `convertSlice(slice, options?)`
 
 ```typescript
-import { convertSlice } from "@inglorious/store/rtk"
+import { convertSlice } from "@inglorious/store/migration/rtk"
 
 const todoListType = convertSlice(todosSlice, {
   asyncThunks: {
@@ -796,7 +850,7 @@ const types = {
 ### `createRTKCompatDispatch(api, entityId)`
 
 ```typescript
-import { createRTKCompatDispatch } from "@inglorious/store/rtk"
+import { createRTKCompatDispatch } from "@inglorious/store/migration/rtk"
 
 const dispatch = createRTKCompatDispatch(api, "todos")
 dispatch({ type: "todos/addTodo", payload: "Buy milk" })

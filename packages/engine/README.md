@@ -29,17 +29,18 @@ This will set up a complete project with a development server ready to go.
 - **Pausing without permission checks**: `notify("pause")` halts the world, so nothing that moves has to ask whether it is allowed to.
 - **A way out that works anywhere**: `notify("quit")` ends the game, from any state, without a handler of its own.
 - **Sprites in one call**: `crop()` points an entity at a frame of a sheet without you having to remember which half of the crop lives where. See [renderer-2d](https://github.com/iceonfire/inglorious-forge/tree/main/packages/renderer-2d).
-- **Screens that share a world**: `scenes()` puts a state's entities up and takes the last state's down, leaving whatever the two have in common standing.
+- **Screens that share a world**: `scenes()` puts a state's entities up and takes the last state's down, leaving whatever the two have in common standing. It and `fsm()` are general-purpose behaviors, so they live in [Inglorious Store](https://github.com/IngloriousCoderz/inglorious-forge/tree/main/packages/store).
 - **A mistyped type is an error**: the engine refuses a configuration whose entity names a type nothing declared, and says which type was nearly meant.
 
 ### Scenes
 
 A state machine says when it moves; `scenes()` says what each state is made of. Pair them
-and each screen is a description of what should be standing there:
+and each screen is a description of what should be standing there. Neither knows anything
+about games, so both come from `@inglorious/store`:
 
 ```javascript
-import { fsm } from "@inglorious/engine/behaviors/fsm.js"
-import { scenes } from "@inglorious/engine/behaviors/scenes.js"
+import { fsm } from "@inglorious/store/fsm"
+import { scenes } from "@inglorious/store/scenes"
 
 const SCENES = {
   title: () => [createTitleEntity(), createMenuEntity()],
@@ -408,6 +409,8 @@ The core engine relies on a few key, lightweight packages:
 ## Usage without a Build Step
 
 If you prefer to avoid a build step, you can run the engine directly in the browser. The example below demonstrates how to set up a minimal game using ES modules, an `importmap`, and the 2D canvas renderer.
+
+An import map knows nothing of a package's `exports`, so without a bundler import files by their real path: `@inglorious/store/behaviors/state-machine/fsm.js` rather than `@inglorious/store/fsm`.
 
 ```html
 <!DOCTYPE html>
