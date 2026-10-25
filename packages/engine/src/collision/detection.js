@@ -1,4 +1,3 @@
-import { anchorOffset, shapeAnchor } from "@inglorious/engine/physics/anchor.js"
 import * as circle from "@inglorious/utils/math/circle.js"
 import * as hitmask from "@inglorious/utils/math/hitmask.js"
 import * as line from "@inglorious/utils/math/line.js"
@@ -7,6 +6,8 @@ import * as rectangle from "@inglorious/utils/math/rectangle.js"
 import * as segment from "@inglorious/utils/math/segment.js"
 import { filter } from "@inglorious/utils/object.js"
 import { add, zero } from "@inglorious/utils/vector.js"
+
+import { anchorOffset, shapeAnchor } from "../physics/anchor.js"
 
 const Z = 2 // Z-axis index.
 const RECTANGLE = "rectangle"
@@ -47,27 +48,6 @@ export function collidesWith(entity, target, collisionGroup = "hitbox") {
   }
 
   return shapeCollidesWith(entityShape, targetShape)
-}
-
-function shapeCollidesWith(entity, target) {
-  const shapeFns = Shape[entity.shape]
-
-  switch (target.shape) {
-    case "circle":
-      return shapeFns.intersectsCircle(entity, target)
-
-    case "line":
-      return shapeFns.intersectsLine(entity, target)
-
-    case "point":
-      return shapeFns.intersectsPoint(entity, target)
-
-    case "rectangle":
-      return shapeFns.intersectsRectangle(entity, target)
-
-    case "segment":
-      return shapeFns.intersectsSegment(entity, target)
-  }
 }
 
 export function findCollisions(entity, target, collisionGroup = "hitbox") {
@@ -136,5 +116,26 @@ function getCollisionShape(entity, collisionGroup = "hitbox") {
     position,
     size,
     radius: collision.radius ?? entity.radius,
+  }
+}
+
+function shapeCollidesWith(entity, target) {
+  const shapeFns = Shape[entity.shape]
+
+  switch (target.shape) {
+    case "circle":
+      return shapeFns.intersectsCircle(entity, target)
+
+    case "line":
+      return shapeFns.intersectsLine(entity, target)
+
+    case "point":
+      return shapeFns.intersectsPoint(entity, target)
+
+    case "rectangle":
+      return shapeFns.intersectsRectangle(entity, target)
+
+    case "segment":
+      return shapeFns.intersectsSegment(entity, target)
   }
 }

@@ -23,9 +23,10 @@ export function createFoxesAndRabbits({ animals, fps } = {}) {
   )
 
   return createLifeGame({
+    fps,
     types: {
-      Fox: createFox(grid, rules, { fps }),
-      Rabbit: createRabbit(grid, rules, { fps }),
+      Fox: createFox(grid, rules),
+      Rabbit: createRabbit(grid, rules),
       Board: [restarting(grid, rules)],
     },
     entities: initialAnimals,
@@ -76,6 +77,46 @@ export function placeAnimals(grid, animals, rules) {
 
   grid.reset(placed)
   return placed
+}
+
+/** The empty squares beside a square, which is where a fox or a rabbit can go. */
+export function getAvailableNeighbors(grid, coords) {
+  return neighbors(coords, [BOARD_ROWS, BOARD_COLUMNS]).filter(
+    ([row, column]) => !grid.isOccupied(row, column),
+  )
+}
+
+/** Somewhere to go, picked at random, or nothing at all if the animal is boxed in. */
+export function getRandomNeighbor(grid, coords) {
+  const available = getAvailableNeighbors(grid, coords)
+  return available[Math.floor(random() * available.length)]
+}
+
+export function findAdjacentRabbit(entity, grid, api) {
+  const adjacent = neighbors(
+    [entity.row, entity.column],
+    [BOARD_ROWS, BOARD_COLUMNS],
+  )
+
+  for (const [row, column] of adjacent) {
+    const preyId = grid.getEntityIdAt(row, column)
+
+    if (!preyId) {
+      continue
+    }
+
+    const prey = api.getEntity(preyId)
+
+    if (prey?.type === "Rabbit" && !prey.isDying) {
+      return prey
+    }
+  }
+
+  return undefined
+}
+
+function randomInitialAge(type, rules) {
+  return Math.floor(random() * rules[type].maxAge)
 }
 
 /**
@@ -136,44 +177,4 @@ function scatterAcrossTheBoard(startingRules) {
   }
 
   return animals
-}
-
-/** The empty squares beside a square, which is where a fox or a rabbit can go. */
-export function getAvailableNeighbors(grid, coords) {
-  return neighbors(coords, [BOARD_ROWS, BOARD_COLUMNS]).filter(
-    ([row, column]) => !grid.isOccupied(row, column),
-  )
-}
-
-/** Somewhere to go, picked at random, or nothing at all if the animal is boxed in. */
-export function getRandomNeighbor(grid, coords) {
-  const available = getAvailableNeighbors(grid, coords)
-  return available[Math.floor(random() * available.length)]
-}
-
-export function findAdjacentRabbit(entity, grid, api) {
-  const adjacent = neighbors(
-    [entity.row, entity.column],
-    [BOARD_ROWS, BOARD_COLUMNS],
-  )
-
-  for (const [row, column] of adjacent) {
-    const preyId = grid.getEntityIdAt(row, column)
-
-    if (!preyId) {
-      continue
-    }
-
-    const prey = api.getEntity(preyId)
-
-    if (prey?.type === "Rabbit" && !prey.isDying) {
-      return prey
-    }
-  }
-
-  return undefined
-}
-
-function randomInitialAge(type, rules) {
-  return Math.floor(random() * rules[type].maxAge)
 }

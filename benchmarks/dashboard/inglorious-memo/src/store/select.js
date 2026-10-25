@@ -4,9 +4,6 @@ const SAME = 0
 const DEFAULT_AVG = 0
 
 export const rows = (entities) => entities.table.data
-const filter = (entities) => entities.metrics.filter
-const sortBy = (entities) => entities.metrics.sortBy
-
 export const filteredRows = compute(
   (rows, filter, sortBy) =>
     rows
@@ -37,3 +34,11 @@ export const chartData = ({ rangeStart, rangeEnd }) =>
     },
     [filteredRows],
   )
+
+function filter(entities) {
+  return entities.metrics.filter
+}
+
+function sortBy(entities) {
+  return entities.metrics.sortBy
+}

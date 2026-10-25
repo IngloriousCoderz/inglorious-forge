@@ -51,6 +51,77 @@ ${template}
 `
 }
 
+export function homeSource(app, { showcase }) {
+  const imports = ['import { Message } from "../types/message.vue"']
+  for (const icon of showcase) {
+    imports.push(`import ${icon.name} from "${icon.from}"`)
+  }
+  if (showcase.length) {
+    imports.push('import { Icon } from "@inglorious/ui/icon"')
+  }
+  if (app.i18n) imports.push('import { t } from "../i18n"')
+
+  const text = (key, fallback) => (app.i18n ? `{{ t("${key}") }}` : fallback)
+  const icons = showcase.length
+    ? `
+  <p class="app-icons">
+${showcase
+  .map(
+    (icon) =>
+      `    <Icon :icon="${icon.name}" size="lg" label="${icon.label}" />`,
+  )
+  .join("\n")}
+  </p>`
+    : ""
+
+  return `${script(imports, [])}<template>
+  <h1>${text("home.title", "Welcome")}</h1>
+  <p>
+    <Message v-bind="message1" />, <Message v-bind="message2" />,
+    <Message v-bind="message3" />!
+  </p>
+  <p>${text("home.hint", "Click a greeting to shout it.")}</p>${icons}
+</template>
+`
+}
+
+export function aboutSource(app) {
+  const imports = app.i18n ? ['import { t } from "../i18n"'] : []
+  const text = (key, fallback) => (app.i18n ? `{{ t("${key}") }}` : fallback)
+  return `${script(imports, [])}<template>
+  <h1>${text("about.title", "About")}</h1>
+  <p>${text("about.body", "A page of its own, at its own address.")}</p>
+</template>
+`
+}
+
+export function messageSource(app) {
+  const imports = app.i18n ? ['import { t } from "../i18n"'] : []
+  const who = "entity.isUpperCase ? entity.who.toUpperCase() : entity.who"
+  const span = app.i18n
+    ? `  <span @click="click">{{
+    t("message.hello", {
+      who: ${who},
+    })
+  }}</span>`
+    : `  <span @click="click"
+    >Hello
+    {{ ${who} }}</span
+  >`
+  const scriptBody = [
+    ...(imports.length ? [importBlock(imports), ""] : []),
+    "const click = (entity) => (entity.isUpperCase = !entity.isUpperCase)",
+  ]
+  return `<script>
+${scriptBody.join("\n")}
+</script>
+
+<template>
+${span}
+</template>
+`
+}
+
 function script(imports, locals) {
   if (!imports.length && !locals.length) return ""
   const parts = []
@@ -165,75 +236,4 @@ ${nav.join("\n")}
     <strong>${app.projectName}</strong>${navBlock}
   </header>
   <main>{{ ${content} }}</main>`
-}
-
-export function homeSource(app, { showcase }) {
-  const imports = ['import { Message } from "../types/message.vue"']
-  for (const icon of showcase) {
-    imports.push(`import ${icon.name} from "${icon.from}"`)
-  }
-  if (showcase.length) {
-    imports.push('import { Icon } from "@inglorious/ui/icon"')
-  }
-  if (app.i18n) imports.push('import { t } from "../i18n"')
-
-  const text = (key, fallback) => (app.i18n ? `{{ t("${key}") }}` : fallback)
-  const icons = showcase.length
-    ? `
-  <p class="app-icons">
-${showcase
-  .map(
-    (icon) =>
-      `    <Icon :icon="${icon.name}" size="lg" label="${icon.label}" />`,
-  )
-  .join("\n")}
-  </p>`
-    : ""
-
-  return `${script(imports, [])}<template>
-  <h1>${text("home.title", "Welcome")}</h1>
-  <p>
-    <Message v-bind="message1" />, <Message v-bind="message2" />,
-    <Message v-bind="message3" />!
-  </p>
-  <p>${text("home.hint", "Click a greeting to shout it.")}</p>${icons}
-</template>
-`
-}
-
-export function aboutSource(app) {
-  const imports = app.i18n ? ['import { t } from "../i18n"'] : []
-  const text = (key, fallback) => (app.i18n ? `{{ t("${key}") }}` : fallback)
-  return `${script(imports, [])}<template>
-  <h1>${text("about.title", "About")}</h1>
-  <p>${text("about.body", "A page of its own, at its own address.")}</p>
-</template>
-`
-}
-
-export function messageSource(app) {
-  const imports = app.i18n ? ['import { t } from "../i18n"'] : []
-  const who = "entity.isUpperCase ? entity.who.toUpperCase() : entity.who"
-  const span = app.i18n
-    ? `  <span @click="click">{{
-    t("message.hello", {
-      who: ${who},
-    })
-  }}</span>`
-    : `  <span @click="click"
-    >Hello
-    {{ ${who} }}</span
-  >`
-  const scriptBody = [
-    ...(imports.length ? [importBlock(imports), ""] : []),
-    "const click = (entity) => (entity.isUpperCase = !entity.isUpperCase)",
-  ]
-  return `<script>
-${scriptBody.join("\n")}
-</script>
-
-<template>
-${span}
-</template>
-`
 }

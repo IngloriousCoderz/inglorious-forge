@@ -1,6 +1,6 @@
-import { renderFps } from "@inglorious/renderer-2d/fps.js"
 import { expect, test } from "vitest"
 
+import { renderFps } from "./fps.js"
 import { callsTo, createContext } from "./test/canvas.js"
 
 const SIXTY_FPS = 1 / 60

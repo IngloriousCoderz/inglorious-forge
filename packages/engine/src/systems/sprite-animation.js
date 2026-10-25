@@ -1,4 +1,4 @@
-import { Sprite } from "@inglorious/engine/animation/sprite.js"
+import { Sprite } from "../animation/sprite.js"
 
 /**
  * Advances sprite animations for entities that have a sprite component

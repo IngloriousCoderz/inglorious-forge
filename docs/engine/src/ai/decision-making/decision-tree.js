@@ -14,20 +14,6 @@ import { merge } from "@inglorious/utils/object.js"
 import { v } from "@inglorious/utils/v.js"
 import { length, subtract } from "@inglorious/utils/vector.js"
 
-// A reusable decision tree node
-const wakeUp = () => ({
-  test({ entity, target }) {
-    const distance = length(subtract(target.position, entity.position))
-    return distance >= 10
-  },
-  true() {
-    return "aware"
-  },
-  false({ entity }) {
-    return entity.state
-  },
-})
-
 // Our decision tree
 const nextState = {
   test({ entity }) {
@@ -197,4 +183,20 @@ export default {
       },
     },
   },
+}
+
+// A reusable decision tree node
+function wakeUp() {
+  return {
+    test({ entity, target }) {
+      const distance = length(subtract(target.position, entity.position))
+      return distance >= 10
+    },
+    true() {
+      return "aware"
+    },
+    false({ entity }) {
+      return entity.state
+    },
+  }
 }

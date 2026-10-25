@@ -8,57 +8,59 @@ const NEXT_KEY_OFFSET = 1
 const NEXT_LEVEL = 2
 
 /**
- * Creates a deep clone of a given value using the structured clone algorithm.
- * This is a modern and efficient way to deep-clone objects.
+ * Creates a deep clone of a given value.
  *
- * Note: `structuredClone` has some limitations. It cannot clone functions,
- * DOM nodes, property descriptors, getters, setters, or certain other
- * non-serializable objects. It will throw a `DataCloneError` in such cases.
+ * Plain objects, arrays and primitives -- what state is nearly always made of -- are
+ * copied by hand, because a general algorithm pays for being one: across thousands of
+ * small objects, `structuredClone` takes about twice as long and a JSON round trip
+ * longer still. Vectors stay vectors, which neither of those keeps: the tag that marks
+ * one is not enumerable, so anything that copies only what it can see drops it.
  *
- * For more details, see:
- * https://developer.mozilla.org/en-US/docs/Web/API/structuredClone
+ * Anything else is handed to `structuredClone`, so a `Date` or a `Map` is still copied
+ * properly, and DOM nodes or class instances with non-cloneable internals still throw a
+ * `DataCloneError`. Functions are kept as they are rather than copied, since there is
+ * nothing in one to copy.
  *
  * This is similar to Lodash's `_.cloneDeep`.
  *
  * @template T
- * @param {T} obj - The value to clone.
+ * @param {T} value - The value to clone.
  * @returns {T} A deep clone of the input value.
  */
-export function clone(obj) {
-  return deserialize(serialize(obj))
-}
-
-/**
- * Recursively merges properties from a source object into a target object.
- * This is a helper function for `merge` and `extend`.
- *
- * @param {Object} target - The target object to merge into.
- * @param {Object} source - The source object to merge from.
- * @param {Function} [merger] - An optional function to customize merging behavior for specific keys.
- * @returns {Object} - The modified target object.
- */
-function deepMerge(target, source, merger) {
-  for (const [key, value] of Object.entries(source)) {
-    if (isFunction(merger)) {
-      const mergedValue = merger(target[key], value)
-      if (mergedValue !== undefined) {
-        target[key] = mergedValue
-        continue
-      }
-    }
-
-    if (isArray(value)) {
-      target[key] = value
-    } else if (isObject(value)) {
-      if (!isObject(target[key])) {
-        target[key] = {}
-      }
-      target[key] = deepMerge(target[key], value, merger)
-    } else {
-      target[key] = value
-    }
+export function clone(value) {
+  // A vector holds numbers and nothing else, so it needs no copying below the top -- and
+  // building it in one go is noticeably cheaper than copying it and tagging the copy.
+  if (value?.__isVector__) {
+    return v(...value)
   }
-  return target
+
+  if (isArray(value)) {
+    const copy = new Array(value.length)
+
+    for (let index = 0; index < value.length; index++) {
+      copy[index] = clone(value[index])
+    }
+
+    return copy
+  }
+
+  if (value === null || typeof value !== "object") {
+    return value
+  }
+
+  const prototype = Object.getPrototypeOf(value)
+
+  if (prototype !== Object.prototype && prototype !== null) {
+    return structuredClone(value)
+  }
+
+  const copy = {}
+
+  for (const key in value) {
+    copy[key] = clone(value[key])
+  }
+
+  return copy
 }
 
 /**
@@ -326,7 +328,7 @@ export function mergeWith(merger, target, ...sources) {
  *
  * **Important:** Unlike Immer, which uses structural sharing via proxies for
  * high performance, this implementation performs a full deep clone of the base
- * state on every call using `deserialize(serialize())`. This can be
+ * state on every call using `clone`. This can be
  * inefficient for large or complex states. It is intended for simple use cases
  * where the convenience of the API outweighs the performance cost.
  *
@@ -479,4 +481,37 @@ ${" ".repeat(indentationLevel)}}`
   }
 
   return obj
+}
+
+/**
+ * Recursively merges properties from a source object into a target object.
+ * This is a helper function for `merge` and `extend`.
+ *
+ * @param {Object} target - The target object to merge into.
+ * @param {Object} source - The source object to merge from.
+ * @param {Function} [merger] - An optional function to customize merging behavior for specific keys.
+ * @returns {Object} - The modified target object.
+ */
+function deepMerge(target, source, merger) {
+  for (const [key, value] of Object.entries(source)) {
+    if (isFunction(merger)) {
+      const mergedValue = merger(target[key], value)
+      if (mergedValue !== undefined) {
+        target[key] = mergedValue
+        continue
+      }
+    }
+
+    if (isArray(value)) {
+      target[key] = value
+    } else if (isObject(value)) {
+      if (!isObject(target[key])) {
+        target[key] = {}
+      }
+      target[key] = deepMerge(target[key], value, merger)
+    } else {
+      target[key] = value
+    }
+  }
+  return target
 }

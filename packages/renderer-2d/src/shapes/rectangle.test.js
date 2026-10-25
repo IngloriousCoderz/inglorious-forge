@@ -1,7 +1,7 @@
 import { anchorMargins } from "@inglorious/engine/physics/anchor.js"
-import { renderImage } from "@inglorious/renderer-2d/image/image.js"
 import { expect, test } from "vitest"
 
+import { renderImage } from "../image/image.js"
 import { renderRectangle } from "./rectangle.js"
 
 const X = 0

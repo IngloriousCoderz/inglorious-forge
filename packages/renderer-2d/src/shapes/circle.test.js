@@ -1,7 +1,7 @@
-import { renderCircle } from "@inglorious/renderer-2d/shapes/circle.js"
 import { expect, test } from "vitest"
 
 import { callsTo, createContext } from "../test/canvas.js"
+import { renderCircle } from "./circle.js"
 
 const A_RADIUS = 10
 const A_STROKE = 3

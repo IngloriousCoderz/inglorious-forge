@@ -82,6 +82,39 @@ export function destroyGrid(entityId) {
   gridInstances.delete(entityId)
 }
 
+/**
+ * Invokes a method on the underlying AG Grid API.
+ * @param {string} entityId
+ * @param {string | { method: string, args?: any[] }} payload
+ */
+export function callGridApi(entityId, payload) {
+  const instance = gridInstances.get(entityId)
+  if (!instance || !instance.api) return
+
+  const method = typeof payload === "string" ? payload : payload?.method
+  if (!method || typeof instance.api[method] !== "function") return
+
+  const args =
+    typeof payload === "object" && Array.isArray(payload.args)
+      ? payload.args
+      : []
+  instance.api[method](...args)
+}
+
+/**
+ * Returns a stable numeric identifier for a grid API instance.
+ * @param {any} api
+ * @returns {number}
+ */
+function getApiId(api) {
+  if (!apiIds.has(api)) {
+    apiIds.set(api, nextApiId)
+    nextApiId += 1
+  }
+
+  return apiIds.get(api)
+}
+
 function registerModulesOnce() {
   if (modulesRegistered) return
   getAgGridRuntimeConfig().registerModules?.()
@@ -128,37 +161,4 @@ function syncGrid(instance, entity) {
   instance.lastGridOptions = entity.gridOptions
   instance.lastRowData = entity.rowData
   instance.lastColumnDefs = entity.columnDefs
-}
-
-/**
- * Invokes a method on the underlying AG Grid API.
- * @param {string} entityId
- * @param {string | { method: string, args?: any[] }} payload
- */
-export function callGridApi(entityId, payload) {
-  const instance = gridInstances.get(entityId)
-  if (!instance || !instance.api) return
-
-  const method = typeof payload === "string" ? payload : payload?.method
-  if (!method || typeof instance.api[method] !== "function") return
-
-  const args =
-    typeof payload === "object" && Array.isArray(payload.args)
-      ? payload.args
-      : []
-  instance.api[method](...args)
-}
-
-/**
- * Returns a stable numeric identifier for a grid API instance.
- * @param {any} api
- * @returns {number}
- */
-function getApiId(api) {
-  if (!apiIds.has(api)) {
-    apiIds.set(api, nextApiId)
-    nextApiId += 1
-  }
-
-  return apiIds.get(api)
 }

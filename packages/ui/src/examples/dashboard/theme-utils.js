@@ -61,6 +61,11 @@ export function nextMode(mode) {
   return MODE_CYCLE[(index + 1) % MODE_CYCLE.length]
 }
 
+export const DEFAULTS = {
+  theme: DEFAULT_THEME,
+  mode: DEFAULT_MODE,
+}
+
 function resolveMode(mode) {
   if (mode !== "auto") return mode
   return getSystemMode()
@@ -87,9 +92,4 @@ function ensureSystemListener() {
   } else if (typeof systemMedia.addListener === "function") {
     systemMedia.addListener(systemListener)
   }
-}
-
-export const DEFAULTS = {
-  theme: DEFAULT_THEME,
-  mode: DEFAULT_MODE,
 }

@@ -13,40 +13,6 @@ import { fallbackLabel } from "../../shared/fallback-label.js"
 import { formatOption, getOptionValue, isOptionSelected } from "./helpers.js"
 
 /**
- * Opens the native dropdown when the arrow strip is pressed.
- *
- * The arrow is a sibling of the select, not an overlay on it, so a press on it
- * has no control underneath to hit. A native popup only opens from a trusted
- * gesture on the select itself, and the strip is outside it.
- *
- * `showPicker()` is the API for that. It needs transient user activation, which
- * a real click has and a dispatched event does not, and it throws rather than
- * silently doing nothing, so the fallback covers the browsers without it.
- *
- * Deliberately on `click`, not `pointerdown`: focusing from pointerdown gets
- * the focus moved away again by the browser's own mousedown handling, which
- * showed up as a focus immediately followed by a blur.
- *
- * @param {MouseEvent} event
- */
-function openFromArrowStrip(event) {
-  const frame = event.currentTarget
-  const select = frame?.querySelector("select")
-  if (!select || select.disabled || event.target === select) return
-
-  event.preventDefault()
-  if (typeof select.showPicker === "function") {
-    try {
-      select.showPicker()
-      return
-    } catch {
-      // No user activation, or the popup is already showing.
-    }
-  }
-  select.focus()
-}
-
-/**
  * Renders a styled native select control with optional single or multi-select modes.
  * Options can be primitives or objects and are rendered with consistent theming.
  * @example
@@ -207,4 +173,38 @@ export const Select = {
       <span class="iw-select-arrow" aria-hidden="true">▼</span>
     </div>`
   },
+}
+
+/**
+ * Opens the native dropdown when the arrow strip is pressed.
+ *
+ * The arrow is a sibling of the select, not an overlay on it, so a press on it
+ * has no control underneath to hit. A native popup only opens from a trusted
+ * gesture on the select itself, and the strip is outside it.
+ *
+ * `showPicker()` is the API for that. It needs transient user activation, which
+ * a real click has and a dispatched event does not, and it throws rather than
+ * silently doing nothing, so the fallback covers the browsers without it.
+ *
+ * Deliberately on `click`, not `pointerdown`: focusing from pointerdown gets
+ * the focus moved away again by the browser's own mousedown handling, which
+ * showed up as a focus immediately followed by a blur.
+ *
+ * @param {MouseEvent} event
+ */
+function openFromArrowStrip(event) {
+  const frame = event.currentTarget
+  const select = frame?.querySelector("select")
+  if (!select || select.disabled || event.target === select) return
+
+  event.preventDefault()
+  if (typeof select.showPicker === "function") {
+    try {
+      select.showPicker()
+      return
+    } catch {
+      // No user activation, or the popup is already showing.
+    }
+  }
+  select.focus()
 }

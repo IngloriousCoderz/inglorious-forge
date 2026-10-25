@@ -64,70 +64,6 @@ export function renderLocals(app) {
   return locals.length ? `${locals.join("\n")}\n\n` : ""
 }
 
-function uiShell(app, { label, pages, content }) {
-  const nav = []
-  if (app.links) {
-    nav.push(
-      ...pages.map(
-        (page) =>
-          `Link.render({ href: "${page.path}", children: ${label(page.key, page.text)} })`,
-      ),
-    )
-  }
-  if (app.i18n) {
-    nav.push(`Select.render({
-                value: i18n.locale,
-                options: i18n.languages,
-                size: "sm",
-                ariaLabel: t("language"),
-                onChange: (locale) => api.notify("#i18n:localeChange", locale),
-              })`)
-  }
-
-  const trailing = nav.length
-    ? `
-          trailing: html\`<nav class="app-nav">
-            \${[
-              ${nav.join(",\n              ")},
-            ]}
-          </nav>\`,`
-    : ""
-
-  const header = `      <header${app.mobile ? ' class="pt-safe"' : ""}>
-        \${AppBar.render({
-          title: "${app.projectName}",${trailing}
-        })}
-      </header>
-      <main>
-        \${Container.render({ maxWidth: "md", children: ${content} })}
-      </main>`
-
-  if (!app.tabs) return header
-
-  const actions = pages.map(
-    (page) => `            {
-              value: "${page.path}",
-              label: ${label(page.key, page.text)},${
-                page.icon
-                  ? `
-              icon: Icon.render({ icon: ${page.icon.name}, size: "lg" }),`
-                  : ""
-              }
-            },`,
-  )
-
-  return `${header}
-      <footer class="pb-safe">
-        \${BottomNavigation.render({
-          value: router.path,
-          actions: [
-${actions.join("\n")}
-          ],
-          onChange: (path) => api.notify("#router:navigate", path),
-        })}
-      </footer>`
-}
-
 // The native language picker's change handler, laid out as Prettier would at
 // `indent`. TypeScript has to be told what the event's target is.
 export function selectChange(app, indent) {
@@ -140,42 +76,6 @@ ${indent}  api.notify(
 ${indent}    "#i18n:localeChange",
 ${indent}    (event.target as HTMLSelectElement).value,
 ${indent}  )`
-}
-
-function plainShell(app, { label, pages, content }) {
-  const nav = app.routing
-    ? pages.map(
-        (page) =>
-          `          <a href="${page.path}">\${${label(page.key, page.text)}}</a>`,
-      )
-    : []
-  if (app.i18n) {
-    nav.push(`          <select
-            aria-label=\${t("language")}
-            @change=\${${selectChange(app, "            ")}}
-          >
-            \${i18n.languages${app.isTypeScript ? "?." : "."}map(
-              (language) =>
-                html\`<option
-                  value=\${language.value}
-                  ?selected=\${language.value === i18n.locale}
-                >
-                  \${language.label}
-                </option>\`,
-            )}
-          </select>`)
-  }
-  const navBlock = nav.length
-    ? `
-        <nav class="app-nav">
-${nav.join("\n")}
-        </nav>`
-    : ""
-
-  return `      <header>
-        <strong>${app.projectName}</strong>${navBlock}
-      </header>
-      <main>\${${content}}</main>`
 }
 
 export function homeSource(app, { showcase }) {
@@ -268,4 +168,104 @@ export const Message${annotation} = {
   },
 }
 `
+}
+
+function uiShell(app, { label, pages, content }) {
+  const nav = []
+  if (app.links) {
+    nav.push(
+      ...pages.map(
+        (page) =>
+          `Link.render({ href: "${page.path}", children: ${label(page.key, page.text)} })`,
+      ),
+    )
+  }
+  if (app.i18n) {
+    nav.push(`Select.render({
+                value: i18n.locale,
+                options: i18n.languages,
+                size: "sm",
+                ariaLabel: t("language"),
+                onChange: (locale) => api.notify("#i18n:localeChange", locale),
+              })`)
+  }
+
+  const trailing = nav.length
+    ? `
+          trailing: html\`<nav class="app-nav">
+            \${[
+              ${nav.join(",\n              ")},
+            ]}
+          </nav>\`,`
+    : ""
+
+  const header = `      <header${app.mobile ? ' class="pt-safe"' : ""}>
+        \${AppBar.render({
+          title: "${app.projectName}",${trailing}
+        })}
+      </header>
+      <main>
+        \${Container.render({ maxWidth: "md", children: ${content} })}
+      </main>`
+
+  if (!app.tabs) return header
+
+  const actions = pages.map(
+    (page) => `            {
+              value: "${page.path}",
+              label: ${label(page.key, page.text)},${
+                page.icon
+                  ? `
+              icon: Icon.render({ icon: ${page.icon.name}, size: "lg" }),`
+                  : ""
+              }
+            },`,
+  )
+
+  return `${header}
+      <footer class="pb-safe">
+        \${BottomNavigation.render({
+          value: router.path,
+          actions: [
+${actions.join("\n")}
+          ],
+          onChange: (path) => api.notify("#router:navigate", path),
+        })}
+      </footer>`
+}
+
+function plainShell(app, { label, pages, content }) {
+  const nav = app.routing
+    ? pages.map(
+        (page) =>
+          `          <a href="${page.path}">\${${label(page.key, page.text)}}</a>`,
+      )
+    : []
+  if (app.i18n) {
+    nav.push(`          <select
+            aria-label=\${t("language")}
+            @change=\${${selectChange(app, "            ")}}
+          >
+            \${i18n.languages${app.isTypeScript ? "?." : "."}map(
+              (language) =>
+                html\`<option
+                  value=\${language.value}
+                  ?selected=\${language.value === i18n.locale}
+                >
+                  \${language.label}
+                </option>\`,
+            )}
+          </select>`)
+  }
+  const navBlock = nav.length
+    ? `
+        <nav class="app-nav">
+${nav.join("\n")}
+        </nav>`
+    : ""
+
+  return `      <header>
+        <strong>${app.projectName}</strong>${navBlock}
+      </header>
+      <main>\${${content}}</main>`
 }

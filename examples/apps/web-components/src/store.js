@@ -16,53 +16,6 @@ const initialInstances = {
   slSwitch: null,
 }
 
-function getVerificationStatus() {
-  const hasInitialized =
-    initialInstances.mdButton !== null &&
-    initialInstances.mdSwitch !== null &&
-    initialInstances.slButton !== null &&
-    initialInstances.slSwitch !== null
-
-  if (!hasInitialized) {
-    return {
-      status: "pending",
-      message:
-        "Components not yet initialized. Click a button to trigger first render.",
-    }
-  }
-
-  const allMatch =
-    componentInstances.mdButton === initialInstances.mdButton &&
-    componentInstances.mdSwitch === initialInstances.mdSwitch &&
-    componentInstances.slButton === initialInstances.slButton &&
-    componentInstances.slSwitch === initialInstances.slSwitch
-
-  if (allMatch) {
-    return {
-      status: "success",
-      message:
-        "SUCCESS: All web component instances preserved! Same DOM elements after re-render.",
-    }
-  }
-
-  return {
-    status: "warning",
-    message:
-      "WARNING: Some component instances changed. Web components may have been recreated.",
-  }
-}
-
-function createInstanceRef(key) {
-  return (element) => {
-    if (element) {
-      componentInstances[key] = element
-      if (initialInstances[key] === null) {
-        initialInstances[key] = element
-      }
-    }
-  }
-}
-
 export const store = createStore({
   types: {
     App: {
@@ -195,3 +148,50 @@ export const store = createStore({
   },
   autoCreateEntities: true,
 })
+
+function getVerificationStatus() {
+  const hasInitialized =
+    initialInstances.mdButton !== null &&
+    initialInstances.mdSwitch !== null &&
+    initialInstances.slButton !== null &&
+    initialInstances.slSwitch !== null
+
+  if (!hasInitialized) {
+    return {
+      status: "pending",
+      message:
+        "Components not yet initialized. Click a button to trigger first render.",
+    }
+  }
+
+  const allMatch =
+    componentInstances.mdButton === initialInstances.mdButton &&
+    componentInstances.mdSwitch === initialInstances.mdSwitch &&
+    componentInstances.slButton === initialInstances.slButton &&
+    componentInstances.slSwitch === initialInstances.slSwitch
+
+  if (allMatch) {
+    return {
+      status: "success",
+      message:
+        "SUCCESS: All web component instances preserved! Same DOM elements after re-render.",
+    }
+  }
+
+  return {
+    status: "warning",
+    message:
+      "WARNING: Some component instances changed. Web components may have been recreated.",
+  }
+}
+
+function createInstanceRef(key) {
+  return (element) => {
+    if (element) {
+      componentInstances[key] = element
+      if (initialInstances[key] === null) {
+        initialInstances[key] = element
+      }
+    }
+  }
+}

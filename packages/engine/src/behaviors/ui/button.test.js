@@ -1,6 +1,6 @@
-import { createGame } from "@inglorious/engine/test.js"
 import { beforeEach, describe, expect, test } from "vitest"
 
+import { createGame } from "../../test.js"
 import { button } from "./button.js"
 
 describe("a button", () => {

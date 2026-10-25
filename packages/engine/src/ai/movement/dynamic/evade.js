@@ -1,4 +1,3 @@
-import { flee } from "@inglorious/engine/ai/movement/dynamic/flee.js"
 import {
   magnitude,
   multiply,
@@ -6,6 +5,8 @@ import {
   sum,
   zero,
 } from "@inglorious/utils/vector.js"
+
+import { flee } from "./flee.js"
 
 export const DEFAULT_MAX_PREDICTION = 10
 

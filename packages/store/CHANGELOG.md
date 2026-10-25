@@ -1,5 +1,24 @@
 # @inglorious/store
 
+## 12.0.0
+
+### Major Changes
+
+- The `"full-clone"` update strategy is now `"copy-on-dispatch"`, and it no longer copies the whole state on every update: it copies each entity the first time an event is dispatched to it. A game that changes thousands of entities per turn pays only for the ones it touches, and a frame on which only the pointer moves copies only the pointer.
+
+  - Rename `updateStrategy: "full-clone"` to `updateStrategy: "copy-on-dispatch"`. `"full-clone"` throws a `TypeError`, like any other unsupported strategy.
+  - Entities that no handler is given and no system reads keep their previous reference, as they do under structural sharing.
+  - Handlers still receive a plain object without a proxy, so writing to it costs nothing however often it happens. This is what makes the strategy faster than structural sharing when most entities change at once.
+  - A system receives every entity, so each entity it reads through its first argument is copied in case it is written to. A system that only needs to look, such as a readout counting entities, should read from `api.getEntities()` and write through its first argument only what it changes.
+  - A `patch` takes a copy of the entity before merging, so nothing it keeps is shared with the previous state.
+  - Entities are copied with `clone` from `@inglorious/utils`, so vectors stay vectors. `structuredClone`, which the strategy used before, dropped the tag that marks an array as a vector.
+  - Writing to an entity fetched with `api.getEntity()` during an update still mutates the previous state. Whether the write also survives depends on whether that entity has been copied yet, so mutate the entity passed to the handler instead.
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/utils@5.1.0
+
 ## 11.3.0
 
 ### Minor Changes

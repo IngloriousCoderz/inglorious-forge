@@ -212,6 +212,28 @@ the browser can manage in between. Each entity is told how long it has been sinc
 last update rather than how long the frame that updated it took, so one moving by
 `velocity * dt` still moves by the whole of its tenth of a second.
 
+When the whole world turns in step -- a board game, a cellular automaton, a simulation
+of thousands of animals -- give the world one clock instead. The `ticks` system keeps it
+and notifies `tick` whenever a turn is due, carrying the time the turn covers. Whatever
+turns with the world handles `tick` instead of `update`:
+
+```javascript
+import { ticks } from "@inglorious/engine/systems/ticks.js";
+
+const game = {
+  systems: [ticks({ fps: 10 })],
+  types: {
+    Fox: [{ render: renderFox }, eats(grid, rules), movesOnGrid(grid)],
+  },
+};
+// ...where each behavior handles `tick(entity, elapsed, api)`.
+```
+
+It is also much cheaper for a large world. An entity with `atFps` is still handed every
+`update` to keep its own time, so every one of them is written to on every frame; an
+entity that only handles `tick` is left alone until the world turns. The clock stops
+while the game is paused.
+
 ## What's Next?
 
 You've now seen the core features of the engine. Here's where you can go from here:

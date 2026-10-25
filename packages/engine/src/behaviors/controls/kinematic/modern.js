@@ -1,7 +1,7 @@
-import { modernMove } from "@inglorious/engine/movement/kinematic/modern.js"
 import { extend, merge } from "@inglorious/utils/object.js"
 import { zero } from "@inglorious/utils/vector.js"
 
+import { modernMove } from "../../../movement/kinematic/modern.js"
 import { createMovementEventHandlers } from "../event-handlers.js"
 
 const DEFAULT_PARAMS = {

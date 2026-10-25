@@ -17,8 +17,6 @@ const ONE_SECOND = 1000
 
 const model = createTreeModel()
 
-const createRandomValue = () => Math.floor(Math.random() * 1001)
-
 export function App() {
   const [metrics, setMetrics] = createSignal(createInitialMetrics())
   const [leafValues, setLeafValues] = createStore(
@@ -93,4 +91,8 @@ export function App() {
       </div>
     </div>
   )
+}
+
+function createRandomValue() {
+  return Math.floor(Math.random() * 1001)
 }

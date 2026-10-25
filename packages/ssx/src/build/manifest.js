@@ -4,17 +4,6 @@ import path from "node:path"
 
 const MANIFEST_FILE = ".ssx-manifest.json"
 
-/**
- * Degraded page hasher used when no Vite server is available: hashes the page
- * module on its own, ignoring everything it imports.
- *
- * @param {Object} page - Page to hash.
- * @returns {Promise<string|null>} Hash of the page module.
- */
-async function hashPageAlone(page) {
-  return await hashFile(page.filePath)
-}
-
 const RUNTIME_FILES = [
   "../scripts/app.js",
   "./pages.js",
@@ -130,26 +119,6 @@ export async function hashRuntime() {
   )
 
   return crypto.createHash("md5").update(contents.join("\n")).digest("hex")
-}
-
-/**
- * Determines whether a module id refers to a real source file that should take
- * part in change detection.
- *
- * Virtual modules (Vite internals, `\0`-prefixed) and anything installed under
- * `node_modules` are excluded: they are not the site's own source, and
- * pre-bundled dependency ids are not stable between installs.
- *
- * @param {string|null|undefined} id - Module id from the Vite module graph.
- * @returns {boolean} True if the module should be hashed.
- */
-function isTrackableModule(id) {
-  if (!id || typeof id !== "string") return false
-  if (id.startsWith("\0")) return false
-  if (!path.isAbsolute(id)) return false
-  if (id.split(path.sep).includes("node_modules")) return false
-
-  return true
 }
 
 /**
@@ -295,4 +264,35 @@ export async function createManifest(
     runtime: runtimeHash,
     buildTime: new Date().toISOString(),
   }
+}
+
+/**
+ * Degraded page hasher used when no Vite server is available: hashes the page
+ * module on its own, ignoring everything it imports.
+ *
+ * @param {Object} page - Page to hash.
+ * @returns {Promise<string|null>} Hash of the page module.
+ */
+async function hashPageAlone(page) {
+  return await hashFile(page.filePath)
+}
+
+/**
+ * Determines whether a module id refers to a real source file that should take
+ * part in change detection.
+ *
+ * Virtual modules (Vite internals, `\0`-prefixed) and anything installed under
+ * `node_modules` are excluded: they are not the site's own source, and
+ * pre-bundled dependency ids are not stable between installs.
+ *
+ * @param {string|null|undefined} id - Module id from the Vite module graph.
+ * @returns {boolean} True if the module should be hashed.
+ */
+function isTrackableModule(id) {
+  if (!id || typeof id !== "string") return false
+  if (id.startsWith("\0")) return false
+  if (!path.isAbsolute(id)) return false
+  if (id.split(path.sep).includes("node_modules")) return false
+
+  return true
 }

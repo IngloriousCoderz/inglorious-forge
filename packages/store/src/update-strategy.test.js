@@ -18,7 +18,7 @@ function createCounterStore(updateStrategy) {
 }
 
 describe("updateStrategy", () => {
-  const STRATEGIES = ["structural-sharing", "full-clone"]
+  const STRATEGIES = ["structural-sharing", "copy-on-dispatch"]
 
   test("defaults to structural sharing", () => {
     const store = createCounterStore(undefined)
@@ -43,8 +43,8 @@ describe("updateStrategy", () => {
     expect(after.counter).not.toBe(before.counter)
   })
 
-  test("full clone copies the state before applying events", () => {
-    const store = createCounterStore("full-clone")
+  test("copy on dispatch copies the state before applying events", () => {
+    const store = createCounterStore("copy-on-dispatch")
     const before = store.getState()
 
     store.notify("increment", 5)
@@ -55,6 +55,77 @@ describe("updateStrategy", () => {
     expect(before.counter.count).toBe(0)
     expect(after).not.toBe(before)
     expect(after.counter).not.toBe(before.counter)
+  })
+
+  describe("copy on dispatch copies only what it hands out", () => {
+    function createWorld(systems = []) {
+      return createStore({
+        types: {
+          Mover: {
+            move(entity) {
+              entity.position[0] += 1
+            },
+          },
+          Rock: {},
+        },
+        entities: {
+          mover: { type: "Mover", position: [0, 0, 0] },
+          rock: { type: "Rock", position: [5, 0, 0] },
+        },
+        systems,
+        updateMode: "manual",
+        updateStrategy: "copy-on-dispatch",
+      })
+    }
+
+    test("an entity no handler is given keeps its reference", () => {
+      const store = createWorld()
+      store.update()
+      const before = store.getState()
+
+      store.notify("move")
+      store.update()
+
+      const after = store.getState()
+      expect(after.mover).not.toBe(before.mover)
+      expect(after.mover.position).toEqual([1, 0, 0])
+      expect(before.mover.position).toEqual([0, 0, 0])
+      expect(after.rock).toBe(before.rock)
+    })
+
+    test("a system writing through the draft leaves the previous state alone", () => {
+      const store = createWorld([
+        {
+          move(entities) {
+            entities.rock.position[0] = 9
+          },
+        },
+      ])
+      store.update()
+      const before = store.getState()
+
+      store.notify("move")
+      store.update()
+
+      expect(store.getState().rock.position).toEqual([9, 0, 0])
+      expect(before.rock.position).toEqual([5, 0, 0])
+    })
+
+    test("a patch shares nothing with the previous state", () => {
+      const store = createWorld()
+      store.update()
+      const before = store.getState()
+
+      store.notify("patch", { id: "mover", speed: 2 })
+      store.notify("move")
+      store.update()
+
+      expect(store.getState().mover).toMatchObject({
+        speed: 2,
+        position: [1, 0, 0],
+      })
+      expect(before.mover.position).toEqual([0, 0, 0])
+    })
   })
 
   test("an update with nothing queued leaves the state alone", () => {
@@ -99,7 +170,7 @@ describe("updateStrategy", () => {
     }
   })
 
-  test("full clone does not freeze the state even in devMode", () => {
+  test("copy on dispatch does not freeze the state even in devMode", () => {
     const store = createStore({
       types: {
         Counter: {
@@ -113,7 +184,7 @@ describe("updateStrategy", () => {
         counter: { type: "Counter", count: 0 },
       },
       updateMode: "manual",
-      updateStrategy: "full-clone",
+      updateStrategy: "copy-on-dispatch",
     })
 
     store.notify("increment")

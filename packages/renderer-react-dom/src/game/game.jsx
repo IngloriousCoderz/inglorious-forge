@@ -1,6 +1,6 @@
-import { withAbsolutePosition } from "@inglorious/renderer-react-dom/hocs/with-absolute-position/index.jsx"
 import { useSelector } from "react-redux"
 
+import { withAbsolutePosition } from "../hocs/with-absolute-position/index.jsx"
 import Character from "./character/index.jsx"
 import Cursor from "./cursor/index.jsx"
 import Form from "./form/index.jsx"

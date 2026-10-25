@@ -1,6 +1,6 @@
-import { absolutePosition } from "@inglorious/renderer-2d/absolute-position.js"
 import { expect, test } from "vitest"
 
+import { absolutePosition } from "./absolute-position.js"
 import { callsTo, createContext } from "./test/canvas.js"
 
 const GAME_HEIGHT = 243

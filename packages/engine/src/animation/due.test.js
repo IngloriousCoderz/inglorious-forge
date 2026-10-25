@@ -1,5 +1,6 @@
-import { dueAt } from "@inglorious/engine/animation/due.js"
 import { describe, expect, test } from "vitest"
+
+import { dueAt } from "./due.js"
 
 const A_TENTH = 0.1
 const A_SIXTIETH = 1 / 60

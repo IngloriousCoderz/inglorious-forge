@@ -8,14 +8,6 @@ import { Carousel } from "./index.js"
 
 const COLORS = ["#22d3ee", "#4f46e5", "#f59e0b", "#10b981", "#ef4444"]
 
-const slide = (index) =>
-  html`<div
-    style="display:grid;place-items:center;height:14rem;border-radius:0.5rem;
-           background:${COLORS[index]};color:#fff;font:700 2rem sans-serif;"
-  >
-    ${index + 1}
-  </div>`
-
 const items = COLORS.map((color, index) => slide(index))
 
 export default {
@@ -164,3 +156,12 @@ ManyPerView.args = {
 ManyPerView.decorators = [
   (story) => html`<div style="--iw-carousel-item-size: 14rem">${story()}</div>`,
 ]
+
+function slide(index) {
+  return html`<div
+    style="display:grid;place-items:center;height:14rem;border-radius:0.5rem;
+           background:${COLORS[index]};color:#fff;font:700 2rem sans-serif;"
+  >
+    ${index + 1}
+  </div>`
+}

@@ -26,152 +26,6 @@ const VOID_TAGS = [
 ]
 
 /**
- * Create a lit-html tagged template expression node.
- *
- * @param {Array} quasis - Template chunks.
- * @param {Array} expressions - Template expressions.
- * @returns {import("@babel/types").TaggedTemplateExpression} The template expression.
- */
-function createTemplateExpression(quasis, expressions) {
-  return {
-    type: "TaggedTemplateExpression",
-    tag: { type: "Identifier", name: "html" },
-    quasi: { type: "TemplateLiteral", quasis, expressions },
-  }
-}
-
-/**
- * Ensure a render method has `props` and `api` parameters in the right position.
- *
- * @param {import("@babel/core").NodePath} fn - The render function path.
- */
-function ensureRenderApiParameter(fn) {
-  const params = fn.node.params
-  const hadNoParams = !params.length
-  const apiIndex = params.findIndex(
-    (param) =>
-      (t.isIdentifier(param) && param.name === "api") ||
-      (t.isAssignmentPattern(param) &&
-        t.isIdentifier(param.left) &&
-        param.left.name === "api"),
-  )
-  const propsParam = t.identifier("props")
-
-  if (apiIndex !== NOT_FOUND) {
-    if (apiIndex !== params.length - LAST) {
-      const lastParam = params[params.length - LAST]
-      if (t.isRestElement(lastParam)) {
-        throw fn.buildCodeFrameError(
-          "Cannot move 'api' parameter to the end because of a rest element.",
-        )
-      }
-
-      const apiPath = fn.get("params")[apiIndex]
-      const apiNode = apiPath.node
-      apiPath.remove()
-      fn.pushContainer("params", apiNode)
-    }
-    return
-  }
-
-  if (!params.length) {
-    fn.pushContainer("params", propsParam)
-  }
-
-  const lastParam = params[params.length - LAST]
-  if (lastParam && t.isRestElement(lastParam)) {
-    throw fn.buildCodeFrameError(
-      "Cannot inject 'api' parameter because of a rest element.",
-    )
-  }
-
-  fn.pushContainer(
-    "params",
-    hadNoParams
-      ? t.assignmentPattern(t.identifier("api"), t.identifier("props"))
-      : t.identifier("api"),
-  )
-}
-
-/**
- * Inline a nested template literal into the current template buffers.
- *
- * @param {string} text - The accumulated text buffer.
- * @param {import("@babel/types").TaggedTemplateExpression} childTemplate - The child template.
- * @param {Array} quasis - Parent template quasis.
- * @param {Array} exprs - Parent template expressions.
- * @returns {string} The new accumulated text buffer.
- */
-function inlineChildTemplate(text, childTemplate, quasis, exprs) {
-  const { quasis: childQuasis, expressions: childExpressions } =
-    childTemplate.quasi
-  const [firstChildQuasi] = childQuasis
-
-  if (!childExpressions.length) {
-    return text + firstChildQuasi.value.raw
-  }
-
-  quasis.push(tpl(text + firstChildQuasi.value.raw))
-
-  for (let index = 0; index < childExpressions.length - LAST; index++) {
-    exprs.push(childExpressions[index])
-    quasis.push(childQuasis[index + NEXT])
-  }
-
-  const lastIndex = childExpressions.length - LAST
-  exprs.push(childExpressions[lastIndex])
-
-  return childQuasis[childQuasis.length - LAST].value.raw
-}
-
-/**
- * Determine whether a tag name is a capitalized component.
- *
- * @param {string} tag - The JSX tag name.
- * @returns {boolean} True when the tag should be treated as a component.
- */
-function isCapitalizedComponent(tag) {
-  return /^[A-Z]/.test(tag)
-}
-
-/**
- * Read the child NodePaths for a JSX node when the caller has a path.
- *
- * @param {import("@babel/core").NodePath | null | undefined} path - The JSX path.
- * @returns {Array} Child paths or an empty array.
- */
-function getChildrenPaths(path) {
-  return path ? path.get("children") : []
-}
-
-/**
- * Find the surrounding render method or render property function for a JSX path.
- *
- * @param {import("@babel/core").NodePath | null | undefined} path - The current JSX path.
- * @returns {import("@babel/core").NodePath | null} The function path that owns the render method.
- */
-function findRenderFunction(path) {
-  if (!path) return null
-
-  const objectMethod = path.findParent(
-    (parent) => parent.isObjectMethod() && parent.node.key.name === "render",
-  )
-  if (objectMethod) return objectMethod
-
-  const objectProperty = path.findParent(
-    (parent) => parent.isObjectProperty() && parent.node.key.name === "render",
-  )
-  if (!objectProperty) return null
-
-  const value = objectProperty.get("value")
-  if (value.isFunctionExpression() || value.isArrowFunctionExpression()) {
-    return value
-  }
-
-  return null
-}
-
-/**
  * Convert a JSXElement node into a lit-html template or component call.
  *
  * @param {import("@babel/types").JSXElement} node - The JSX element node.
@@ -515,4 +369,150 @@ export function buildFragment(node, path, isSvg = false) {
   quasis.push(tpl(text, true))
 
   return createTemplateExpression(quasis, exprs)
+}
+
+/**
+ * Create a lit-html tagged template expression node.
+ *
+ * @param {Array} quasis - Template chunks.
+ * @param {Array} expressions - Template expressions.
+ * @returns {import("@babel/types").TaggedTemplateExpression} The template expression.
+ */
+function createTemplateExpression(quasis, expressions) {
+  return {
+    type: "TaggedTemplateExpression",
+    tag: { type: "Identifier", name: "html" },
+    quasi: { type: "TemplateLiteral", quasis, expressions },
+  }
+}
+
+/**
+ * Ensure a render method has `props` and `api` parameters in the right position.
+ *
+ * @param {import("@babel/core").NodePath} fn - The render function path.
+ */
+function ensureRenderApiParameter(fn) {
+  const params = fn.node.params
+  const hadNoParams = !params.length
+  const apiIndex = params.findIndex(
+    (param) =>
+      (t.isIdentifier(param) && param.name === "api") ||
+      (t.isAssignmentPattern(param) &&
+        t.isIdentifier(param.left) &&
+        param.left.name === "api"),
+  )
+  const propsParam = t.identifier("props")
+
+  if (apiIndex !== NOT_FOUND) {
+    if (apiIndex !== params.length - LAST) {
+      const lastParam = params[params.length - LAST]
+      if (t.isRestElement(lastParam)) {
+        throw fn.buildCodeFrameError(
+          "Cannot move 'api' parameter to the end because of a rest element.",
+        )
+      }
+
+      const apiPath = fn.get("params")[apiIndex]
+      const apiNode = apiPath.node
+      apiPath.remove()
+      fn.pushContainer("params", apiNode)
+    }
+    return
+  }
+
+  if (!params.length) {
+    fn.pushContainer("params", propsParam)
+  }
+
+  const lastParam = params[params.length - LAST]
+  if (lastParam && t.isRestElement(lastParam)) {
+    throw fn.buildCodeFrameError(
+      "Cannot inject 'api' parameter because of a rest element.",
+    )
+  }
+
+  fn.pushContainer(
+    "params",
+    hadNoParams
+      ? t.assignmentPattern(t.identifier("api"), t.identifier("props"))
+      : t.identifier("api"),
+  )
+}
+
+/**
+ * Inline a nested template literal into the current template buffers.
+ *
+ * @param {string} text - The accumulated text buffer.
+ * @param {import("@babel/types").TaggedTemplateExpression} childTemplate - The child template.
+ * @param {Array} quasis - Parent template quasis.
+ * @param {Array} exprs - Parent template expressions.
+ * @returns {string} The new accumulated text buffer.
+ */
+function inlineChildTemplate(text, childTemplate, quasis, exprs) {
+  const { quasis: childQuasis, expressions: childExpressions } =
+    childTemplate.quasi
+  const [firstChildQuasi] = childQuasis
+
+  if (!childExpressions.length) {
+    return text + firstChildQuasi.value.raw
+  }
+
+  quasis.push(tpl(text + firstChildQuasi.value.raw))
+
+  for (let index = 0; index < childExpressions.length - LAST; index++) {
+    exprs.push(childExpressions[index])
+    quasis.push(childQuasis[index + NEXT])
+  }
+
+  const lastIndex = childExpressions.length - LAST
+  exprs.push(childExpressions[lastIndex])
+
+  return childQuasis[childQuasis.length - LAST].value.raw
+}
+
+/**
+ * Determine whether a tag name is a capitalized component.
+ *
+ * @param {string} tag - The JSX tag name.
+ * @returns {boolean} True when the tag should be treated as a component.
+ */
+function isCapitalizedComponent(tag) {
+  return /^[A-Z]/.test(tag)
+}
+
+/**
+ * Read the child NodePaths for a JSX node when the caller has a path.
+ *
+ * @param {import("@babel/core").NodePath | null | undefined} path - The JSX path.
+ * @returns {Array} Child paths or an empty array.
+ */
+function getChildrenPaths(path) {
+  return path ? path.get("children") : []
+}
+
+/**
+ * Find the surrounding render method or render property function for a JSX path.
+ *
+ * @param {import("@babel/core").NodePath | null | undefined} path - The current JSX path.
+ * @returns {import("@babel/core").NodePath | null} The function path that owns the render method.
+ */
+function findRenderFunction(path) {
+  if (!path) return null
+
+  const objectMethod = path.findParent(
+    (parent) => parent.isObjectMethod() && parent.node.key.name === "render",
+  )
+  if (objectMethod) return objectMethod
+
+  const objectProperty = path.findParent(
+    (parent) => parent.isObjectProperty() && parent.node.key.name === "render",
+  )
+  if (!objectProperty) return null
+
+  const value = objectProperty.get("value")
+  if (value.isFunctionExpression() || value.isArrowFunctionExpression()) {
+    return value
+  }
+
+  return null
 }

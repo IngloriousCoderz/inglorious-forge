@@ -1,5 +1,12 @@
 # @inglorious/charts
 
+## 11.1.6
+
+### Patch Changes
+
+- Source files read top-down: the functions a module exports come first, and the helpers they use are defined below them. Modules import other files of their own package by relative path rather than by the package's name. Behaviour is unchanged.
+- @inglorious/web@6.8.1
+
 ## 11.1.5
 
 ### Patch Changes

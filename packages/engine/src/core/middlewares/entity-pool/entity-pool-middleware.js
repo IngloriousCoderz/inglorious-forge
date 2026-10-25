@@ -1,7 +1,7 @@
-import { findCollision } from "@inglorious/engine/collision/detection.js"
 import { createApi } from "@inglorious/store/api.js"
 import { EventMap } from "@inglorious/store/event-map.js"
 
+import { findCollision } from "../../../collision/detection.js"
 import { EntityPools } from "./entity-pools"
 
 export function entityPoolMiddleware() {

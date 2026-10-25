@@ -42,6 +42,32 @@ test("it should deep clone an object", () => {
   expect(result.object).not.toBe(expectedResult.object)
 })
 
+test("it should keep a vector a vector when cloning it", () => {
+  const position = v(1, 2, 3)
+
+  const result = clone({ position })
+
+  expect(result.position).toEqual([1, 2, 3])
+  expect(result.position).not.toBe(position)
+  expect(result.position.__isVector__).toBe(true)
+})
+
+test("it should clone what is not plain data with structuredClone", () => {
+  const date = new Date(0)
+
+  const result = clone({ date })
+
+  expect(result.date).toBeInstanceOf(Date)
+  expect(result.date).not.toBe(date)
+  expect(result.date.getTime()).toBe(0)
+})
+
+test("it should keep a key that is set to nothing when cloning", () => {
+  const result = clone({ missing: undefined })
+
+  expect(Object.hasOwn(result, "missing")).toBe(true)
+})
+
 test("it should behave like Array.prototype.filter, but on an object", () => {
   const obj = {
     key1: "value1",

@@ -1,6 +1,7 @@
-import { arrive } from "@inglorious/engine/ai/movement/dynamic/arrive.js"
 import { lerp } from "@inglorious/utils/math/linear-interpolation.js"
 import { defaults, extend, merge } from "@inglorious/utils/object.js"
+
+import { arrive } from "../ai/movement/dynamic/arrive.js"
 
 const DEFAULT_PARAMS = {
   zoom: 1,

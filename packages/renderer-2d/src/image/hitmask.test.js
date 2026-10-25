@@ -1,7 +1,7 @@
-import { renderHitmask } from "@inglorious/renderer-2d/image/hitmask.js"
 import { expect, test } from "vitest"
 
 import { callsTo, createContext } from "../test/canvas.js"
+import { renderHitmask } from "./hitmask.js"
 
 const TILE = [16, 16]
 const COLUMNS = 4

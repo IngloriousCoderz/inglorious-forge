@@ -15,27 +15,6 @@ import {
 const BRICK_ID_PREFIX = "brick"
 
 /**
- * A fair coin, which is what the original's `math.random(2) == 1` is.
- *
- * `random(2)` counts from zero and `math.random(2)` counts from one, so the face this
- * asks for is zero rather than one.
- */
-function flip() {
-  return random(2) === 0
-}
-
-/**
- * The number of columns has to be odd.
- *
- * The screen is padded by sixteen for every column a level is short of the widest one,
- * which centres a level only while the count is odd. An even count would be padded on
- * one side twice as much as the other, putting the level off to one side.
- */
-function oddColumns(columns) {
-  return columns % 2 === 0 ? columns + 1 : columns
-}
-
-/**
  * Makes a level of bricks at random, the way `LevelMaker.createMap` does.
  *
  * Unlike the earlier levels, this one is rolled per row rather than as a single block.
@@ -141,4 +120,25 @@ export function createLevel(level, layer) {
  */
 function brickId(level, row, column, columns) {
   return `${BRICK_ID_PREFIX}${level}-${row * columns + column + 1}`
+}
+
+/**
+ * A fair coin, which is what the original's `math.random(2) == 1` is.
+ *
+ * `random(2)` counts from zero and `math.random(2)` counts from one, so the face this
+ * asks for is zero rather than one.
+ */
+function flip() {
+  return random(2) === 0
+}
+
+/**
+ * The number of columns has to be odd.
+ *
+ * The screen is padded by sixteen for every column a level is short of the widest one,
+ * which centres a level only while the count is odd. An even count would be padded on
+ * one side twice as much as the other, putting the level off to one side.
+ */
+function oddColumns(columns) {
+  return columns % 2 === 0 ? columns + 1 : columns
 }

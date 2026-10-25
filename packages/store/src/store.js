@@ -1,3 +1,4 @@
+import { clone } from "@inglorious/utils/data-structures/object.js"
 import { toCamelCase } from "@inglorious/utils/data-structures/string.js"
 import { create } from "mutative"
 
@@ -10,10 +11,10 @@ import { augmentType, augmentTypes } from "./types.js"
 /** Copies only the entities that change, using a draft proxy. */
 const STRUCTURAL_SHARING = "structural-sharing"
 
-/** Deep-clones the whole state and applies events to the copy, without a proxy. */
-const FULL_CLONE = "full-clone"
+/** Deep-copies each entity as it is handed out, and applies events to the copy, without a proxy. */
+const COPY_ON_DISPATCH = "copy-on-dispatch"
 
-const UPDATE_STRATEGIES = [STRUCTURAL_SHARING, FULL_CLONE]
+const UPDATE_STRATEGIES = [STRUCTURAL_SHARING, COPY_ON_DISPATCH]
 
 /**
  * Creates a store to manage state and events.
@@ -25,10 +26,10 @@ const UPDATE_STRATEGIES = [STRUCTURAL_SHARING, FULL_CLONE]
  *   that actually changed are copied. Unchanged entities keep their previous reference, which
  *   makes change detection cheap for consumers that rely on reference equality. This is the
  *   right choice for UI stores, where a small number of entities change at a time.
- * - `"full-clone"` - Deep-clones the whole state with `structuredClone` and applies events directly
- *   to the copy, without a proxy. The cost is proportional to the total state size on every
- *   update, but there is no per-entity proxy overhead, so it scales better when thousands of
- *   entities change every frame, as in a game simulation.
+ * - `"copy-on-dispatch"` - Deep-copies each entity the first time it is handed to a handler or read by
+ *   a system, and applies events directly to the copy, without a proxy. Entities nothing touches
+ *   are not copied, and there is no per-entity proxy overhead, so it scales better when
+ *   thousands of entities change every frame, as in a game simulation.
  *
  * Under both strategies the current state is kept intact while the queued events are applied to a
  * separate draft, and the two are swapped only once every event has been processed. Handlers and
@@ -132,14 +133,14 @@ export function createStore({
     let nextState
 
     if (updateStrategy === STRUCTURAL_SHARING) {
-      nextState = create(state, patch, {
+      nextState = create(state, (draft) => patch(writeThrough(draft)), {
         enableAutoFreeze: state.game?.devMode,
       })
     } else {
-      const draft = structuredClone(state)
+      const draft = copyOnDispatch(state)
 
       patch(draft)
-      nextState = draft
+      nextState = draft.entities
     }
 
     state = nextState
@@ -152,9 +153,10 @@ export function createStore({
     /**
      * Applies every queued event to the given draft.
      *
-     * The draft is either the proxy returned by `create` (structural sharing) or the
-     * deep copy produced by `structuredClone` (full clone). The current state is not
-     * modified, and only becomes the new state once this function returns.
+     * The draft wraps either the proxy returned by `create` (structural sharing) or a
+     * copy of the entity map whose entities are copied as they are handed out (copy on
+     * dispatch). The current state is not modified, and only becomes the new state once
+     * this function returns.
      *
      * A change made by a handler is not visible to the next handler in the same pass:
      * `getState` still returns the state as it was before the pass began. This is on
@@ -163,7 +165,7 @@ export function createStore({
      * left is asking about the past. Anything reacting to a change should be told the
      * change rather than go looking for it.
      *
-     * @param {Entities} draft - The draft to apply the queued events to.
+     * @param {Draft} draft - The draft to apply the queued events to.
      * @returns {void}
      */
     function patch(draft) {
@@ -247,24 +249,26 @@ export function createStore({
         const halted = isHalted && handlerName === "update"
 
         for (const id of entityIds) {
-          const entity = draft[id]
+          // Looked at before it is taken, because an entity the pause holds back is
+          // not going to be written to, and taking it would copy it for nothing.
+          const entity = draft.entities[id]
           const type = types[entity.type]
 
           if (halted && !entity.updatesWhilePaused) continue
 
           const handle = type[handlerName]
 
-          handle?.(entity, event.payload, api)
+          handle?.(draft.take(id), event.payload, api)
         }
 
         if (event.type.endsWith(":destroy")) {
           const [target] = event.type.split(":")
           const [, id] = target.split("#")
-          const entity = draft[id]
+          const entity = draft.entities[id]
           if (entity) {
             const type = types[entity.type]
             const typeName = entity.type
-            delete draft[id]
+            delete draft.entities[id]
 
             eventMap.removeEntity(id, type, typeName)
           }
@@ -273,7 +277,7 @@ export function createStore({
         // Systems process events by handler name (not scoped)
         systems.forEach((system) => {
           const handle = system[handlerName]
-          handle?.(draft, event.payload, api)
+          handle?.(draft.forSystems, event.payload, api)
         })
       }
     }
@@ -423,7 +427,7 @@ export function createStore({
 
     entitiesToCreate.forEach((id) => {
       const entity = newEntities[id]
-      addEntity(state, { id, ...entity })
+      addEntity(writeThrough(state), { id, ...entity })
     })
 
     entitiesToUpdate.forEach((id) => {
@@ -445,7 +449,7 @@ export function createStore({
         )
 
         if (!hasEntity) {
-          addEntity(state, { id: entityId, type: typeName })
+          addEntity(writeThrough(state), { id: entityId, type: typeName })
         }
       }
     }
@@ -462,13 +466,13 @@ export function createStore({
 
   /**
    * Adds an entity to the state and registers its event handlers.
-   * @param {Entities} draft - The draft (structural sharing) or the copy (full clone) to mutate.
+   * @param {Draft} draft - The draft to put it in.
    * @param {Entity} payload - The entity to add, including its id.
    * @returns {void}
    */
   function addEntity(draft, payload) {
     const { id, ...entity } = payload
-    draft[id] = augmentEntity(id, entity)
+    draft.put(id, augmentEntity(id, entity))
     const type = types[entity.type]
 
     eventMap.addEntity(id, type, entity.type)
@@ -482,7 +486,7 @@ export function createStore({
    * as being half a sort, so naming a different one means taking the thing out of the old
    * one's list of entities before putting it in the new one.
    *
-   * @param {Entities} draft - The draft (structural sharing) or the copy (full clone) to mutate.
+   * @param {Draft} draft - The draft it stands in.
    * @param {string} id - The thing being moved.
    * @param {string} previousType - The type it was under.
    * @param {string|undefined} type - The type it is under now, if it has named one.
@@ -503,20 +507,22 @@ export function createStore({
    * new configuration says otherwise. A field named as `undefined` is set to nothing,
    * which is what taking a key off a mapping means.
    *
-   * @param {Entities} draft - The draft (structural sharing) or the copy (full clone) to mutate.
+   * @param {Draft} draft - The draft to change it in.
    * @param {Entity} payload - The thing and the fields to merge into it.
    * @returns {void}
    */
   function patchEntity(draft, payload) {
     const { id, ...config } = payload
-    const existing = draft[id]
+    // Taken rather than looked at, because the merge keeps whatever the configuration
+    // does not mention, and what it keeps must not be shared with the previous state.
+    const existing = draft.take(id)
 
     // Configuring something that is not there is not a thing that can be done. The world
     // is built in one pass, so a scene naming a thing another scene is yet to put up is
     // ordinary rather than a mistake, and is not worth failing over.
     if (!existing) return
 
-    draft[id] = augmentEntity(id, { ...existing, ...config })
+    draft.put(id, augmentEntity(id, { ...existing, ...config }))
 
     moveToType(draft, id, existing.type, config.type)
   }
@@ -529,30 +535,108 @@ export function createStore({
    * nothing here as much as it is in a patch -- the difference between the two is what
    * happens to the fields neither mentions.
    *
-   * @param {Entities} draft - The draft (structural sharing) or the copy (full clone) to mutate.
+   * @param {Draft} draft - The draft to change it in.
    * @param {Entity} payload - The thing and the fields it is to be.
    * @returns {void}
    */
   function replaceEntity(draft, payload) {
     const { id, ...config } = payload
-    const existing = draft[id]
+    const existing = draft.entities[id]
 
     if (!existing) return
 
-    draft[id] = augmentEntity(id, config)
+    draft.put(id, augmentEntity(id, config))
 
     moveToType(draft, id, existing.type, config.type)
   }
 
   /**
    * Queues the destruction of an entity. The entity is removed by the `#id:destroy` event.
-   * @param {Entities} draft - The draft (structural sharing) or the copy (full clone) to mutate.
+   * @param {Draft|Entities} draft - Where it stands. The removal itself is queued, so
+   *   nothing is written to it here.
    * @param {string} id - The id of the entity to remove.
    * @returns {void}
    */
   function removeEntity(draft, id) {
     incomingEvents.unshift({ type: `#${id}:destroy` })
   }
+}
+
+/**
+ * A draft that writes straight into the entities it is given.
+ *
+ * This is the whole of structural sharing's draft, because Mutative's proxy already copies
+ * an entity the moment it is written to, and of the state being built by `setState`,
+ * which has no previous state to protect.
+ *
+ * @param {Entities} entities - The entities to write into.
+ * @returns {Draft} The draft.
+ */
+function writeThrough(entities) {
+  return {
+    entities,
+    forSystems: entities,
+    take: (id) => entities[id],
+    put(id, entity) {
+      entities[id] = entity
+    },
+  }
+}
+
+/**
+ * A draft that copies an entity the first time it is handed to anything that could
+ * write to it.
+ *
+ * This is what `copy-on-dispatch` is named after: an entity is copied when an event is
+ * dispatched to it, and the entities that nothing touches are never paid for. The map is
+ * copied straight away, which is cheap -- a reference for every entity -- and an entity
+ * is deep-copied only when it is taken: handed to one of its handlers, merged by a
+ * `patch`, or read by a system. A frame on which only the pointer moves copies the
+ * pointer, and a frame on which nothing at all happens copies nothing but the map.
+ *
+ * There is no proxy on the entities themselves, which is what still sets this apart
+ * from structural sharing: a handler is given a plain object, and pays nothing for
+ * writing to it however many times it does. The one proxy is over the map handed to
+ * systems, which have no single entity to be given and so have to be given all of them.
+ * Each entity a system reads through it is taken, which means a system that walks every
+ * entity copies every entity: one that only needs to know how things stood can ask
+ * `api.getEntities()` instead, and take only what it writes to.
+ *
+ * @param {Entities} state - The state to leave as it is.
+ * @returns {Draft} The draft.
+ */
+function copyOnDispatch(state) {
+  const entities = { ...state }
+  const taken = new Set()
+
+  function take(id) {
+    if (!taken.has(id) && Object.hasOwn(entities, id)) {
+      entities[id] = clone(entities[id])
+      taken.add(id)
+    }
+
+    return entities[id]
+  }
+
+  function put(id, entity) {
+    entities[id] = entity
+    taken.add(id)
+  }
+
+  const forSystems = new Proxy(entities, {
+    get(target, key, receiver) {
+      return typeof key === "string" && Object.hasOwn(target, key)
+        ? take(key)
+        : Reflect.get(target, key, receiver)
+    },
+
+    set(target, key, value) {
+      put(key, value)
+      return true
+    },
+  })
+
+  return { entities, forSystems, take, put }
 }
 
 /**
@@ -572,12 +656,17 @@ function assertUpdateStrategy(updateStrategy) {
 }
 
 /**
- * @typedef {"structural-sharing" | "full-clone"} UpdateStrategy - How the state is copied before events are applied.
+ * @typedef {"structural-sharing" | "copy-on-dispatch"} UpdateStrategy - How the state is copied before events are applied.
  * @typedef {Object} StoreConfig - Configuration options accepted by {@link createStore}.
  * @typedef {Object.<string, any>} Type - An augmented entity type.
  * @typedef {Object.<string, Type>} Types - A collection of augmented types.
  * @typedef {Object.<string, any>} Entity - An object representing an entity.
  * @typedef {Object.<string, Entity>} Entities - A collection of entities indexed by id.
+ * @typedef {Object} Draft - The entities an update writes to, and how it gets at them.
+ * @property {Entities} Draft.entities - The entities being built, read without copying.
+ * @property {Entities} Draft.forSystems - The entities as handed to systems.
+ * @property {(id: string) => Entity|undefined} Draft.take - The entity to write to.
+ * @property {(id: string, entity: Entity) => void} Draft.put - Sets an entity outright.
  * @typedef {(listener: () => void) => () => void} Listener - Subscribes to state updates and returns an unsubscribe function.
  * @typedef {Object} Store - The store returned by {@link createStore}.
  */

@@ -1,5 +1,17 @@
 # @inglorious/utils
 
+## 5.1.0
+
+### Minor Changes
+
+- `clone` copies plain data by hand rather than through a JSON round trip, which is several times faster across thousands of small objects, and copies more of what it is given.
+
+  - Vectors stay vectors. The tag that marks an array as one is not enumerable, so the JSON round trip and `structuredClone` both drop it.
+  - A `Date`, a `Map`, a `Set` and anything else that is not a plain object or an array goes through `structuredClone`, so it is copied as what it is rather than turned into a string or an empty object.
+  - A key set to `undefined` is kept, where JSON dropped it.
+  - Functions are kept by reference rather than dropped.
+  - `produce` uses `clone`, so it gets the same speed and the same copies.
+
 ## 5.0.0
 
 ### Major Changes

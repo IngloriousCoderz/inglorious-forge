@@ -10,56 +10,6 @@ const IMPORT_SOURCES = {
 }
 
 /**
- * Add the `@inglorious/web` imports required by a transformed file.
- *
- * @param {import("@babel/core").NodePath} path - The Program path being finalized.
- */
-function ensureWebImports(path) {
-  const needed = {
-    html: path.__needsHtml,
-    when: path.__needsWhen,
-    repeat: path.__needsRepeat,
-  }
-
-  const importDecls = { html: null, when: null, repeat: null }
-
-  path.get("body").forEach((nodePath) => {
-    if (!nodePath.isImportDeclaration() || nodePath.node.importKind === "type")
-      return
-
-    const name = Object.keys(IMPORT_SOURCES).find(
-      (key) => IMPORT_SOURCES[key] === nodePath.node.source.value,
-    )
-
-    if (name) {
-      importDecls[name] = nodePath
-      nodePath.get("specifiers").forEach((specifier) => {
-        if (
-          specifier.isImportSpecifier() &&
-          specifier.node.imported.name === name
-        ) {
-          needed[name] = false
-        }
-      })
-    }
-  })
-
-  Object.keys(IMPORT_SOURCES).forEach((name) => {
-    if (!needed[name]) return
-
-    const specifier = createImportSpecifier(name)
-    if (importDecls[name]) {
-      importDecls[name].pushContainer("specifiers", [specifier])
-    } else {
-      path.unshiftContainer(
-        "body",
-        t.importDeclaration([specifier], t.stringLiteral(IMPORT_SOURCES[name])),
-      )
-    }
-  })
-}
-
-/**
  * Build the Babel visitor that rewrites JSX into lit-html calls.
  *
  * @returns {import("@babel/core").PluginObj} The Babel plugin object.
@@ -168,4 +118,54 @@ export function jsxToLit() {
       },
     },
   }
+}
+
+/**
+ * Add the `@inglorious/web` imports required by a transformed file.
+ *
+ * @param {import("@babel/core").NodePath} path - The Program path being finalized.
+ */
+function ensureWebImports(path) {
+  const needed = {
+    html: path.__needsHtml,
+    when: path.__needsWhen,
+    repeat: path.__needsRepeat,
+  }
+
+  const importDecls = { html: null, when: null, repeat: null }
+
+  path.get("body").forEach((nodePath) => {
+    if (!nodePath.isImportDeclaration() || nodePath.node.importKind === "type")
+      return
+
+    const name = Object.keys(IMPORT_SOURCES).find(
+      (key) => IMPORT_SOURCES[key] === nodePath.node.source.value,
+    )
+
+    if (name) {
+      importDecls[name] = nodePath
+      nodePath.get("specifiers").forEach((specifier) => {
+        if (
+          specifier.isImportSpecifier() &&
+          specifier.node.imported.name === name
+        ) {
+          needed[name] = false
+        }
+      })
+    }
+  })
+
+  Object.keys(IMPORT_SOURCES).forEach((name) => {
+    if (!needed[name]) return
+
+    const specifier = createImportSpecifier(name)
+    if (importDecls[name]) {
+      importDecls[name].pushContainer("specifiers", [specifier])
+    } else {
+      path.unshiftContainer(
+        "body",
+        t.importDeclaration([specifier], t.stringLiteral(IMPORT_SOURCES[name])),
+      )
+    }
+  })
 }

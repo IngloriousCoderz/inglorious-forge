@@ -1,7 +1,7 @@
-import { renderButton } from "@inglorious/renderer-2d/form/button.js"
 import { expect, test } from "vitest"
 
 import { callsTo, createContext } from "../test/canvas.js"
+import { renderButton } from "./button.js"
 
 const A_SIZE = [80, 40]
 

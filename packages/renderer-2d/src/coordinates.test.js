@@ -1,5 +1,6 @@
-import { createCoordinateConverter } from "@inglorious/renderer-2d/coordinates.js"
 import { expect, test } from "vitest"
+
+import { createCoordinateConverter } from "./coordinates.js"
 
 const GAME_WIDTH = 432
 const GAME_HEIGHT = 243

@@ -1,7 +1,7 @@
-import { renderSlider } from "@inglorious/renderer-2d/form/slider.js"
 import { expect, test } from "vitest"
 
 import { callsTo, createContext } from "../test/canvas.js"
+import { renderSlider } from "./slider.js"
 
 const A_SIZE = [100, 20]
 

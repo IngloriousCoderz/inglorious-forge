@@ -1,6 +1,6 @@
-import { renderCharacter } from "@inglorious/renderer-2d/character.js"
 import { expect, test } from "vitest"
 
+import { renderCharacter } from "./character.js"
 import { callsTo, createContext } from "./test/canvas.js"
 
 const A_SIZE = 40

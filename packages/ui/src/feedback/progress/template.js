@@ -6,10 +6,6 @@
 import { html } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
 
-function clamp(value) {
-  return Math.max(0, Math.min(100, value))
-}
-
 /**
  * Renders a linear or circular progress indicator.
  * Indeterminate mode is used when no explicit value is provided.
@@ -89,4 +85,8 @@ export function render(props) {
       ></div>
     </div>
   </div>`
+}
+
+function clamp(value) {
+  return Math.max(0, Math.min(100, value))
 }

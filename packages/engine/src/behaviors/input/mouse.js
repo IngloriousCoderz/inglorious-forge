@@ -1,6 +1,7 @@
-import { findCollision } from "@inglorious/engine/collision/detection.js"
-import { clampToBounds } from "@inglorious/engine/physics/bounds.js"
 import { zero } from "@inglorious/utils/vector.js"
+
+import { findCollision } from "../../collision/detection.js"
+import { clampToBounds } from "../../physics/bounds.js"
 
 export function mouse() {
   return {

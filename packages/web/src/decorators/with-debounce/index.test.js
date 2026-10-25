@@ -1,5 +1,6 @@
-import { withDebounce } from "@inglorious/web/decorators/with-debounce"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
+
+import { withDebounce } from "./index.js"
 
 describe("withDebounce", () => {
   beforeEach(() => {

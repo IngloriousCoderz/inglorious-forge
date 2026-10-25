@@ -1,6 +1,7 @@
-import { seek } from "@inglorious/engine/ai/movement/dynamic/seek.js"
 import { randomBinomial } from "@inglorious/utils/math/rng.js"
 import { createVector, sum } from "@inglorious/utils/vector.js"
+
+import { seek } from "./seek.js"
 
 export const DEFAULT_WANDER_OFFSET = 100
 export const DEFAULT_WANDER_RADIUS = 100

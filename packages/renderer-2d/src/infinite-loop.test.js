@@ -1,6 +1,6 @@
-import { infiniteLoop } from "@inglorious/renderer-2d/infinite-loop.js"
 import { expect, test } from "vitest"
 
+import { infiniteLoop } from "./infinite-loop.js"
 import { callsTo as recorded, createContext } from "./test/canvas.js"
 
 const A_LOOP = [64, 32, 0]

@@ -3,8 +3,8 @@ import { getRandomNeighbor } from "../index.js"
 
 export function movesOnGrid(grid) {
   return (type) => ({
-    update(entity, dt, api) {
-      type.update?.(entity, dt, api)
+    tick(entity, elapsed, api) {
+      type.tick?.(entity, elapsed, api)
 
       if (entity.isDying) {
         return

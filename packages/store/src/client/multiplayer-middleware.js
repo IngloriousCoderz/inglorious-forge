@@ -3,18 +3,6 @@ import { deserialize, extend, serialize } from "@inglorious/utils/object.js"
 const DEFAULT_RECONNECTION_DELAY = 1000
 
 /**
- * Where the server is, when the caller has not said.
- *
- * Read when it is asked for rather than when this module is imported, so that importing it
- * does not require a browser -- which is what lets the store be imported anywhere.
- *
- * @returns {string} The server's WebSocket URL.
- */
-function defaultServerUrl() {
-  return `ws://${window.location.hostname}:3000`
-}
-
-/**
  * Creates and returns the multiplayer middleware.
  * @returns {Function} The middleware function.
  */
@@ -101,4 +89,16 @@ export function multiplayerMiddleware(config = {}) {
       ws.close() // The 'onclose' handler will trigger the reconnect.
     }
   }
+}
+
+/**
+ * Where the server is, when the caller has not said.
+ *
+ * Read when it is asked for rather than when this module is imported, so that importing it
+ * does not require a browser -- which is what lets the store be imported anywhere.
+ *
+ * @returns {string} The server's WebSocket URL.
+ */
+function defaultServerUrl() {
+  return `ws://${window.location.hostname}:3000`
 }

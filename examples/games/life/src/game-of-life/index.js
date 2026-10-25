@@ -49,7 +49,8 @@ export function createGameOfLife({ patterns = PATTERNS, fps } = {}) {
   const grid = createGrid({ wrap: WRAPS })
 
   return createLifeGame({
-    systems: [generations(grid, { fps })],
+    fps,
+    systems: [generations(grid)],
 
     types: {
       Cell: createCell(),
@@ -59,7 +60,8 @@ export function createGameOfLife({ patterns = PATTERNS, fps } = {}) {
     entities: seed(grid, patterns),
 
     readout: (entities) => {
-      const { generation } = entities.board
+      // Nothing until the first generation has been counted.
+      const { generation = 0 } = entities.board
       return `Generation ${generation} - ${countCells(entities)} cells`
     },
   })

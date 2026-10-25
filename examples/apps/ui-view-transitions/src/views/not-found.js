@@ -3,10 +3,6 @@ import { Container } from "@inglorious/ui/container"
 import { Typography } from "@inglorious/ui/typography"
 import { html } from "@inglorious/web"
 
-function goHome(api) {
-  return () => api.notify("#router:navigate", "/")
-}
-
 export const NotFound = {
   render(entity, api) {
     return Container.render({
@@ -32,4 +28,8 @@ export const NotFound = {
       `,
     })
   },
+}
+
+function goHome(api) {
+  return () => api.notify("#router:navigate", "/")
 }

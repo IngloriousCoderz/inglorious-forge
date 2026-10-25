@@ -16,27 +16,6 @@ const PRETTY_INDEX = 1
 const measured = new WeakSet()
 
 /**
- * Notifies `mount` once per list element, after a frame and once it is in the
- * document: before that it has no layout to measure.
- * @param {HTMLElement} el
- * @param {VirtualListEntity} entity
- * @param {Api} api
- */
-function measureOnce(el, entity, api) {
-  if (measured.has(el)) return
-  measured.add(el)
-
-  const measure = () => {
-    if (!el.isConnected) {
-      requestAnimationFrame(measure)
-      return
-    }
-    api.notify(`#${entity.id}:mount`, el)
-  }
-  requestAnimationFrame(measure)
-}
-
-/**
  * Renders a virtualized list that only mounts visible items for performance.
  * Uses item height estimates to compute scroll ranges and notifies on mount/scroll.
  * @param {VirtualListEntity} entity The list entity state.
@@ -124,4 +103,25 @@ export function renderItem(entity, { item, index }, api) {
   return html`<div class="iw-list-item">
     ${index + PRETTY_INDEX}. ${JSON.stringify(item)}
   </div>`
+}
+
+/**
+ * Notifies `mount` once per list element, after a frame and once it is in the
+ * document: before that it has no layout to measure.
+ * @param {HTMLElement} el
+ * @param {VirtualListEntity} entity
+ * @param {Api} api
+ */
+function measureOnce(el, entity, api) {
+  if (measured.has(el)) return
+  measured.add(el)
+
+  const measure = () => {
+    if (!el.isConnected) {
+      requestAnimationFrame(measure)
+      return
+    }
+    api.notify(`#${entity.id}:mount`, el)
+  }
+  requestAnimationFrame(measure)
 }

@@ -1,6 +1,6 @@
-import { renderMouse } from "@inglorious/renderer-2d/mouse.js"
 import { expect, test } from "vitest"
 
+import { renderMouse } from "./mouse.js"
 import { callsTo, createContext } from "./test/canvas.js"
 
 const A_QUARTER_TURN = Math.PI / 2

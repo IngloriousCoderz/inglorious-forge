@@ -154,17 +154,17 @@ export type UpdateMode = "auto" | "manual"
  * - `"structural-sharing"` (default) applies events to a draft proxy, so only the entities that
  *   actually changed are copied. Unchanged entities keep their previous reference, which keeps
  *   reference-equality change detection cheap. Best for UI stores.
- * - `"full-clone"` deep-clones the whole state with `structuredClone` and applies events to the
- *   copy without a proxy. Cost is proportional to the total state size per update, but there is
- *   no per-entity proxy overhead, so it scales better when thousands of entities change every
- *   frame, as in a game simulation.
+ * - `"copy-on-dispatch"` deep-copies each entity the first time it is handed to a handler or read by a
+ *   system, and applies events to the copy without a proxy. Entities nothing touches are not
+ *   copied, and there is no per-entity proxy overhead, so it scales better when thousands of
+ *   entities change every frame, as in a game simulation.
  *
  * Under both strategies the current state is left intact while the queued events are applied to
  * a separate draft, and the two are swapped only once every event has been processed. This means
  * that during an update `api.getEntity()` and `api.getEntities()` read the previous state rather
  * than the in-flight changes.
  */
-export type UpdateStrategy = "structural-sharing" | "full-clone"
+export type UpdateStrategy = "structural-sharing" | "copy-on-dispatch"
 
 /**
  * Store configuration

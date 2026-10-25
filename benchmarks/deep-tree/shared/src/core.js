@@ -9,9 +9,6 @@ export const FPS_BENCHMARK_SAMPLES = 30
 const MIN_VALUE = 0
 const MAX_VALUE = 1000
 
-const randomValue = () =>
-  Math.floor(Math.random() * (MAX_VALUE - MIN_VALUE + 1)) + MIN_VALUE
-
 export const createTreeModel = () => {
   const leafIds = []
   const counter = { totalNodes: 0, totalLeaves: 0 }
@@ -23,36 +20,6 @@ export const createTreeModel = () => {
     leafIds,
     totalNodes: counter.totalNodes,
     totalLeaves: counter.totalLeaves,
-  }
-}
-
-const buildNode = (depth, path, leafIds, counter) => {
-  counter.totalNodes += 1
-
-  const isLeaf = depth >= TREE_DEPTH
-  const id = path.length ? `node_${path.join("_")}` : "node_root"
-
-  if (isLeaf) {
-    counter.totalLeaves += 1
-    const leafId = path.length ? `leaf_${path.join("_")}` : "leaf_root"
-    leafIds.push(leafId)
-
-    return {
-      id,
-      depth,
-      leafId,
-      children: [],
-    }
-  }
-
-  const children = Array.from({ length: BRANCHING_FACTOR }, (_, index) =>
-    buildNode(depth + 1, [...path, index], leafIds, counter),
-  )
-
-  return {
-    id,
-    depth,
-    children,
   }
 }
 
@@ -95,4 +62,38 @@ export const updateLeafValuesMutative = (leafValues, leafIds) => {
     version: current.version + 1,
   }
   return leafId
+}
+
+function randomValue() {
+  return Math.floor(Math.random() * (MAX_VALUE - MIN_VALUE + 1)) + MIN_VALUE
+}
+
+function buildNode(depth, path, leafIds, counter) {
+  counter.totalNodes += 1
+
+  const isLeaf = depth >= TREE_DEPTH
+  const id = path.length ? `node_${path.join("_")}` : "node_root"
+
+  if (isLeaf) {
+    counter.totalLeaves += 1
+    const leafId = path.length ? `leaf_${path.join("_")}` : "leaf_root"
+    leafIds.push(leafId)
+
+    return {
+      id,
+      depth,
+      leafId,
+      children: [],
+    }
+  }
+
+  const children = Array.from({ length: BRANCHING_FACTOR }, (_, index) =>
+    buildNode(depth + 1, [...path, index], leafIds, counter),
+  )
+
+  return {
+    id,
+    depth,
+    children,
+  }
 }

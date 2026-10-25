@@ -1,4 +1,4 @@
-import { findCollision } from "@inglorious/engine/collision/detection.js"
+import { findCollision } from "../../collision/detection.js"
 
 const HAND = "hand"
 const DEFAULT_CURSOR = "arrow"

@@ -1,5 +1,6 @@
-import { renderRectangle } from "@inglorious/renderer-2d/shapes/rectangle.js"
 import { max } from "@inglorious/utils/data-structures/array.js"
+
+import { renderRectangle } from "../shapes/rectangle.js"
 
 const HALF = 2
 const NO_Y = 0

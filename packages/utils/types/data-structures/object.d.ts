@@ -71,9 +71,10 @@ export type DefaultsResult<T extends object, D extends object> = Omit<
 }
 
 /**
- * Creates a deep clone of a value.
+ * Creates a deep clone of a value. Plain data is copied by hand and vectors stay
+ * vectors; anything else goes through `structuredClone`.
  */
-export function clone<T>(obj: T): T
+export function clone<T>(value: T): T
 
 /**
  * Assigns default properties to a target in place.

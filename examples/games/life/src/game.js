@@ -4,12 +4,14 @@ import {
   createMouseEntity,
   mouse,
 } from "@inglorious/engine/behaviors/input/mouse.js"
+import { ticks } from "@inglorious/engine/systems/ticks.js"
 import { renderFps } from "@inglorious/renderer-2d/fps.js"
 import { renderMouse } from "@inglorious/renderer-2d/mouse.js"
 
 import {
   BOARD_COLUMNS,
   BOARD_ROWS,
+  FPS,
   SCREEN_HEIGHT,
   SCREEN_WIDTH,
 } from "./constants.js"
@@ -52,8 +54,13 @@ const PANEL_LAYER = 100
  * means, how a thing is drawn -- is handed in. This keeps the parts that have nothing to
  * do with the rules in one place, so that adding a world is a matter of describing it
  * rather than of copying the engine setup.
+ *
+ * Both worlds turn in step, everything on the board at once, so the world keeps one
+ * clock for all of it: whatever turns with the world handles `tick`, at `fps` turns a
+ * second, while the loop and the controls run as fast as the screen takes them.
  */
 export function createLifeGame({
+  fps: turnsPerSecond = FPS,
   systems = [],
   types,
   entities,
@@ -62,13 +69,17 @@ export function createLifeGame({
   sliders = [],
 }) {
   return {
-    updateStrategy: "full-clone",
-    // As fast as the screen will take it. Anything that wants to move slower says so
-    // for itself -- a fixed loop here would hold the pointer to the same rate as the
-    // world, which is the one thing a pointer should not be.
+    updateStrategy: "copy-on-dispatch",
+    // As fast as the screen will take it. The world turns at its own clock instead -- a
+    // fixed loop here would hold the pointer to the same rate as the world, which is the
+    // one thing a pointer should not be.
     loop: { type: "animationFrame" },
 
-    systems: [...systems, ...(readout ? [readouts(readout)] : [])],
+    systems: [
+      ticks({ fps: turnsPerSecond }),
+      ...systems,
+      ...(readout ? [readouts(readout)] : []),
+    ],
 
     types: {
       Game: [pausable()],

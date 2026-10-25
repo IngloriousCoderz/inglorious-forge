@@ -81,32 +81,6 @@ export async function getPages(pagesDir = "pages", options, loader) {
   return pages
 }
 
-function addPages(pages, options = {}, pageData) {
-  const { i18n = {} } = options
-
-  if (!i18n.locales?.length) {
-    pages.push(pageData)
-    return
-  }
-
-  for (const locale of i18n.locales) {
-    const isDefault = locale === i18n.defaultLocale
-    const prefix = isDefault ? "" : `/${locale}`
-
-    let localizedPath = prefix + pageData.path
-    // Handle root path: / -> / (default), /fr (fr)
-    if (pageData.path === "/" && !isDefault) {
-      localizedPath = prefix
-    }
-
-    pages.push({
-      ...pageData,
-      path: localizedPath,
-      locale,
-    })
-  }
-}
-
 /**
  * Discovers all page files and converts them into route definitions.
  * Routes are sorted by specificity so that more specific routes match first.
@@ -284,4 +258,30 @@ function extractParams(route, url) {
   })
 
   return params
+}
+
+function addPages(pages, options = {}, pageData) {
+  const { i18n = {} } = options
+
+  if (!i18n.locales?.length) {
+    pages.push(pageData)
+    return
+  }
+
+  for (const locale of i18n.locales) {
+    const isDefault = locale === i18n.defaultLocale
+    const prefix = isDefault ? "" : `/${locale}`
+
+    let localizedPath = prefix + pageData.path
+    // Handle root path: / -> / (default), /fr (fr)
+    if (pageData.path === "/" && !isDefault) {
+      localizedPath = prefix
+    }
+
+    pages.push({
+      ...pageData,
+      path: localizedPath,
+      locale,
+    })
+  }
 }

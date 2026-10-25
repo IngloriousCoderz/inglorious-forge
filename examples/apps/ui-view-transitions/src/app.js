@@ -6,12 +6,6 @@ import { when } from "@inglorious/web/directives/when"
 
 const BACK = -1
 
-/* Curried rather than written inline, so the handler is built once per render
- * from the api instead of being a new closure on every notification. */
-function goBack(api) {
-  return () => api.notify("#router:navigate", BACK)
-}
-
 export const app = {
   render(api) {
     const router = api.getEntity("router")
@@ -48,4 +42,10 @@ export const app = {
       </footer>
     `
   },
+}
+
+/* Curried rather than written inline, so the handler is built once per render
+ * from the api instead of being a new closure on every notification. */
+function goBack(api) {
+  return () => api.notify("#router:navigate", BACK)
 }

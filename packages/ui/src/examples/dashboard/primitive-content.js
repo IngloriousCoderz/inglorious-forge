@@ -114,37 +114,7 @@ const categoryMeta = {
   },
 }
 
-const previewRow = (children) =>
-  html`<div class="iw-primitive-preview-row">${children}</div>`
-
-const previewColumn = (children) =>
-  html`<div class="iw-primitive-preview-column">${children}</div>`
-
 const livePreviews = new Map()
-
-/**
- * Entity-driven primitives render their controls from state, so a preview
- * without a store freezes: a carousel arrow would recompute from the same page
- * forever, and a dragged divider would never move. Give each one its own store,
- * created once and reused on every re-render so the preview keeps its state.
- * @param {Object.<string, any>} types
- * @param {Object.<string, any>} entity
- * @returns {HTMLElement}
- */
-function livePreview(types, entity) {
-  if (!livePreviews.has(entity.id)) {
-    const container = document.createElement("div")
-    // The mount needs an element, but it must not become a box of its own:
-    // as a flex item it would shrink and take the primitive down with it.
-    container.style.display = "contents"
-
-    const store = createStore({ types, entities: { [entity.id]: entity } })
-    mount(store, (api) => api.render(entity.id), container)
-    livePreviews.set(entity.id, container)
-  }
-
-  return livePreviews.get(entity.id)
-}
 
 const carouselSlides = [
   "#22d3ee",
@@ -1541,4 +1511,36 @@ function toTitleCase(slug) {
     .split("-")
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join(" ")
+}
+
+/**
+ * Entity-driven primitives render their controls from state, so a preview
+ * without a store freezes: a carousel arrow would recompute from the same page
+ * forever, and a dragged divider would never move. Give each one its own store,
+ * created once and reused on every re-render so the preview keeps its state.
+ * @param {Object.<string, any>} types
+ * @param {Object.<string, any>} entity
+ * @returns {HTMLElement}
+ */
+function livePreview(types, entity) {
+  if (!livePreviews.has(entity.id)) {
+    const container = document.createElement("div")
+    // The mount needs an element, but it must not become a box of its own:
+    // as a flex item it would shrink and take the primitive down with it.
+    container.style.display = "contents"
+
+    const store = createStore({ types, entities: { [entity.id]: entity } })
+    mount(store, (api) => api.render(entity.id), container)
+    livePreviews.set(entity.id, container)
+  }
+
+  return livePreviews.get(entity.id)
+}
+
+function previewRow(children) {
+  return html`<div class="iw-primitive-preview-row">${children}</div>`
+}
+
+function previewColumn(children) {
+  return html`<div class="iw-primitive-preview-column">${children}</div>`
 }

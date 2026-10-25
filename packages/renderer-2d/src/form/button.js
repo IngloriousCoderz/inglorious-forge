@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 
-import { renderText } from "@inglorious/renderer-2d/text.js"
+import { renderText } from "../text.js"
 
 const DEFAULT_SIZE = [100, 50]
 const NO_DEPTH = 0

@@ -1,6 +1,6 @@
-import { createGame } from "@inglorious/engine/test.js"
 import { beforeEach, describe, expect, test } from "vitest"
 
+import { createGame } from "../../test.js"
 import { createMouseEntity, mouse } from "./mouse.js"
 
 const ON_THE_BUTTON = [400, 0, 300]

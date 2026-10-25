@@ -6,20 +6,6 @@ import { html } from "@inglorious/web"
 
 const BACK = -1
 
-/* Marking an article read replaces the current history entry instead of pushing
- * a new one, which is what makes the page cross-fade rather than slide. */
-function markAsRead(api, articleId) {
-  return () =>
-    api.notify("#router:navigate", {
-      to: `/articles/${articleId}?read=1`,
-      replace: true,
-    })
-}
-
-function goBack(api) {
-  return () => api.notify("#router:navigate", BACK)
-}
-
 export const ArticleDetail = {
   /* The router hands the matched params to whoever is listening for a route
      change, so the article is looked up here rather than read off the router. */
@@ -82,4 +68,18 @@ export const ArticleDetail = {
       `,
     })
   },
+}
+
+/* Marking an article read replaces the current history entry instead of pushing
+ * a new one, which is what makes the page cross-fade rather than slide. */
+function markAsRead(api, articleId) {
+  return () =>
+    api.notify("#router:navigate", {
+      to: `/articles/${articleId}?read=1`,
+      replace: true,
+    })
+}
+
+function goBack(api) {
+  return () => api.notify("#router:navigate", BACK)
 }

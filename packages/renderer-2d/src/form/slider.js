@@ -1,7 +1,8 @@
 /* eslint-disable no-magic-numbers */
 
-import { renderText } from "@inglorious/renderer-2d/text.js"
 import { clamp } from "@inglorious/utils/math/number.js"
+
+import { renderText } from "../text.js"
 
 const NO_OFFSET = 0
 const DEFAULT_SIZE = [100, 20]

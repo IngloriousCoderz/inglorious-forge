@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.4.1
+
+### Patch Changes
+
+- Source files read top-down: the functions a module exports come first, and the helpers they use are defined below them. Modules import other files of their own package by relative path rather than by the package's name. Behaviour is unchanged.
+
 ## 1.4.0
 
 ### Minor Changes

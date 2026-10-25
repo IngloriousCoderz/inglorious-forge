@@ -1,9 +1,5 @@
 const DEFAULT_STORAGE = () => globalThis.localStorage
 
-function store(storage) {
-  return storage ?? DEFAULT_STORAGE()
-}
-
 /**
  * Reads a value back as JSON.
  *
@@ -50,4 +46,8 @@ export function writeJSON(key, value, storage) {
   } catch {
     return false
   }
+}
+
+function store(storage) {
+  return storage ?? DEFAULT_STORAGE()
 }

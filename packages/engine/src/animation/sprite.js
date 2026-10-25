@@ -1,7 +1,8 @@
 /* eslint-disable no-magic-numbers */
-import { Ticker } from "@inglorious/engine/animation/ticker.js"
 import { mod } from "@inglorious/utils/math/number.js"
 import { pi, toRange } from "@inglorious/utils/math/trigonometry.js"
+
+import { Ticker } from "./ticker.js"
 
 export const Sprite = {
   fromAngle,

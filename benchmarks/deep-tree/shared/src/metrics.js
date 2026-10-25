@@ -1,7 +1,5 @@
 import { FPS_BENCHMARK_SAMPLES, FPS_WINDOW } from "./core"
 
-const round = (value) => Math.round(value * 10) / 10
-
 export const createFpsBenchmark = (target = FPS_BENCHMARK_SAMPLES) => ({
   target,
   done: false,
@@ -79,4 +77,8 @@ const computeNextBenchmark = (benchmark, fpsSample) => {
     max,
     done,
   }
+}
+
+function round(value) {
+  return Math.round(value * 10) / 10
 }

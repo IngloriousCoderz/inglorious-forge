@@ -1,7 +1,7 @@
-import { createGame } from "@inglorious/engine/test.js"
 import { augmentType } from "@inglorious/store/types.js"
 import { describe, expect, test, vi } from "vitest"
 
+import { createGame } from "../test.js"
 import { atFps } from "./at-fps.js"
 
 const A_FRAME = 1 / 60

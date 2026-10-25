@@ -83,53 +83,6 @@ const instruments = [
 
 const DEFAULT_MOCK_SYMBOLS = ["AAPL", "MSFT", "NVDA", "GOOGL", "TSLA"]
 
-function seededValue(seed, min, max) {
-  const x = Math.sin(seed) * 10000
-  const ratio = x - Math.floor(x)
-  return min + ratio * (max - min)
-}
-
-function buildHistory(isin, days = 500) {
-  const seedBase = isin
-    .split("")
-    .reduce((acc, char) => acc + char.charCodeAt(0), 0)
-
-  const now = new Date()
-  const series = []
-  let current = seededValue(seedBase, 65, 95)
-
-  for (let i = days - 1; i >= 0; i -= 1) {
-    const date = new Date(now.getTime() - i * DAY_MS).toISOString().slice(0, 10)
-    const delta = seededValue(seedBase + i, -2.2, 2.2)
-    current = Math.max(25, current + delta)
-    series.push({ t: date, mid: Number(current.toFixed(2)) })
-  }
-
-  return series
-}
-
-function buildInstrumentData() {
-  return Object.fromEntries(
-    instruments.map((item) => {
-      const history = buildHistory(item.isin)
-      const latest = history[history.length - 1]
-      const mid = latest?.mid ?? 80
-      return [
-        item.isin,
-        {
-          instrument: item,
-          history,
-          quote: {
-            ask: Number((mid + 0.35).toFixed(2)),
-            bid: Number((mid - 0.28).toFixed(2)),
-            mid,
-          },
-        },
-      ]
-    }),
-  )
-}
-
 const instrumentDataMap = buildInstrumentData()
 
 export function getMarkets() {
@@ -187,4 +140,51 @@ export function getMockAssetUniverse(limit = 5) {
       quote: data.quote || null,
     }
   })
+}
+
+function seededValue(seed, min, max) {
+  const x = Math.sin(seed) * 10000
+  const ratio = x - Math.floor(x)
+  return min + ratio * (max - min)
+}
+
+function buildHistory(isin, days = 500) {
+  const seedBase = isin
+    .split("")
+    .reduce((acc, char) => acc + char.charCodeAt(0), 0)
+
+  const now = new Date()
+  const series = []
+  let current = seededValue(seedBase, 65, 95)
+
+  for (let i = days - 1; i >= 0; i -= 1) {
+    const date = new Date(now.getTime() - i * DAY_MS).toISOString().slice(0, 10)
+    const delta = seededValue(seedBase + i, -2.2, 2.2)
+    current = Math.max(25, current + delta)
+    series.push({ t: date, mid: Number(current.toFixed(2)) })
+  }
+
+  return series
+}
+
+function buildInstrumentData() {
+  return Object.fromEntries(
+    instruments.map((item) => {
+      const history = buildHistory(item.isin)
+      const latest = history[history.length - 1]
+      const mid = latest?.mid ?? 80
+      return [
+        item.isin,
+        {
+          instrument: item,
+          history,
+          quote: {
+            ask: Number((mid + 0.35).toFixed(2)),
+            bid: Number((mid - 0.28).toFixed(2)),
+            mid,
+          },
+        },
+      ]
+    }),
+  )
 }

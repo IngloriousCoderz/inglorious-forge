@@ -1,6 +1,6 @@
-import { renderCamera } from "@inglorious/renderer-2d/camera.js"
 import { expect, test } from "vitest"
 
+import { renderCamera } from "./camera.js"
 import { createContext } from "./test/canvas.js"
 
 const A_VIEWPORT = [800, 600]

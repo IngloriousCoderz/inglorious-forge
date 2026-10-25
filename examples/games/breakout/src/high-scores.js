@@ -15,11 +15,6 @@ const SEED_SCORES = Array.from({ length: ENTRIES }, (_, index) => ({
   score: (ENTRIES - index) * SEED_STEP,
 }))
 
-/** The ten entries the original starts a fresh table with, best first. */
-function seed() {
-  return SEED_SCORES.map((entry) => ({ ...entry }))
-}
-
 /**
  * The scores kept between games, seeded on first run.
  *
@@ -99,4 +94,9 @@ export function scrollName(name, index, step) {
 /** Writes the table back down, so that the next game to start reads this one. */
 export function saveHighScores(scores, storage = globalThis.localStorage) {
   writeJSON(KEY, scores, storage)
+}
+
+/** The ten entries the original starts a fresh table with, best first. */
+function seed() {
+  return SEED_SCORES.map((entry) => ({ ...entry }))
 }

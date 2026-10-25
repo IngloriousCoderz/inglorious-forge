@@ -44,16 +44,6 @@ const baseColumns = [
   },
 ]
 
-function createRows(count) {
-  return Array.from({ length: count }, (_, index) => ({
-    id: index + 1,
-    name: `User ${index + 1}`,
-    age: 20 + (index % 35),
-    active: index % 3 !== 0,
-    role: index % 4 === 0 ? "Admin" : "User",
-  }))
-}
-
 export default {
   title: "Data Display/DataGrid",
   tags: ["autodocs"],
@@ -155,4 +145,14 @@ export const Virtualized = {
       },
     },
   },
+}
+
+function createRows(count) {
+  return Array.from({ length: count }, (_, index) => ({
+    id: index + 1,
+    name: `User ${index + 1}`,
+    age: 20 + (index % 35),
+    active: index % 3 !== 0,
+    role: index % 4 === 0 ? "Admin" : "User",
+  }))
 }

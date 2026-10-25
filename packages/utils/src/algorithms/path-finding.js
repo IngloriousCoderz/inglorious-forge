@@ -37,24 +37,6 @@ export const eucledianDistance = (a, b) =>
 export const manhattanDistance = (a, b) => abs(subtract(a.position, b.position))
 
 /**
- * Compares the cost of two nodes.
- *
- * @param {Node} a - The first node.
- * @param {Node} b - The second node.
- * @returns {number} - The difference in cost between the two nodes.
- */
-const compareCost = (a, b) => b.cost - a.cost
-
-/**
- * Compares the total cost of two nodes.
- *
- * @param {Node} a - The first node.
- * @param {Node} b - The second node.
- * @returns {number} - The difference in total cost between the two nodes.
- */
-const compareTotalCost = (a, b) => b.totalCost - a.totalCost
-
-/**
  * Finds the shortest path in a graph from a start node to an end node using a heuristic.
  *
  * @param {Graph} graph - The graph containing nodes and arcs.
@@ -147,4 +129,26 @@ function adaptGraph(graph) {
  */
 function createFindNode(nodes) {
   return (id) => nodes.find((node) => node.id === id)
+}
+
+/**
+ * Compares the cost of two nodes.
+ *
+ * @param {Node} a - The first node.
+ * @param {Node} b - The second node.
+ * @returns {number} - The difference in cost between the two nodes.
+ */
+function compareCost(a, b) {
+  return b.cost - a.cost
+}
+
+/**
+ * Compares the total cost of two nodes.
+ *
+ * @param {Node} a - The first node.
+ * @param {Node} b - The second node.
+ * @returns {number} - The difference in total cost between the two nodes.
+ */
+function compareTotalCost(a, b) {
+  return b.totalCost - a.totalCost
 }

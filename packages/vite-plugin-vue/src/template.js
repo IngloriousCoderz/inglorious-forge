@@ -91,80 +91,6 @@ export function transformTemplate(
   return { code, imports }
 }
 
-function transformNode(
-  node,
-  imports,
-  methodNames,
-  scriptImports,
-  renderScopeNames,
-  vueImports,
-  context = {},
-  isChild = false,
-) {
-  if (node.type === "text") {
-    return transformTextNode(node, context, renderScopeNames, scriptImports)
-  }
-
-  if (node.type === "tag") {
-    return transformElementNode(
-      node,
-      imports,
-      methodNames,
-      scriptImports,
-      renderScopeNames,
-      vueImports,
-      context,
-      isChild,
-    )
-  }
-
-  return ""
-}
-
-/**
- * Render a child node list into a lit-html template expression.
- *
- * @param {Array} children - Child DOM nodes.
- * @param {Set<string>} imports - Required lit-html imports.
- * @param {Array<string>} methodNames - Recognized method names.
- * @param {Set<string>} scriptImports - Imported names from the script block.
- * @param {Set<string>} renderScopeNames - Names declared in the render scope.
- * @param {Object} context - Rendering context.
- * @returns {string} The rendered child template expression.
- */
-function renderChildren(
-  children,
-  imports,
-  methodNames,
-  scriptImports,
-  renderScopeNames,
-  vueImports,
-  context,
-) {
-  if (!children.length) {
-    return ""
-  }
-
-  const parts = []
-
-  for (const child of children) {
-    parts.push(
-      transformNode(
-        child,
-        imports,
-        methodNames,
-        scriptImports,
-        renderScopeNames,
-        vueImports,
-        context,
-        true,
-      ),
-    )
-  }
-
-  return `html\`${parts.join("")}\``
-}
-
 /**
  * Transform a text node, preserving static text and interpolating `{{ }}` expressions.
  *
@@ -591,19 +517,6 @@ export function wrapWithEntity(
 }
 
 /**
- * Whether an expression is an inline function: `(a) => …`, `a => …`,
- * `async (a) => …` or `function (a) { … }`.
- *
- * @param {string} expr - A trimmed template expression.
- * @returns {boolean}
- */
-function isFunctionExpression(expr) {
-  return /^(async\s+)?(\([^)]*\)|[a-zA-Z_$][\w$]*)\s*=>|^(async\s+)?function\b/.test(
-    expr,
-  )
-}
-
-/**
  * Find the next `v-else-if` or `v-else` sibling for a `v-if` node.
  *
  * @param {Object} node - The current node.
@@ -701,6 +614,103 @@ export function findAlternate(
 }
 
 /**
+ * Collapse repeated whitespace into single spaces.
+ *
+ * @param {string} str - Raw attribute value.
+ * @returns {string} Normalized string.
+ */
+export function normalizeWhitespace(str) {
+  return str.replace(/\s+/g, " ").trim()
+}
+
+function transformNode(
+  node,
+  imports,
+  methodNames,
+  scriptImports,
+  renderScopeNames,
+  vueImports,
+  context = {},
+  isChild = false,
+) {
+  if (node.type === "text") {
+    return transformTextNode(node, context, renderScopeNames, scriptImports)
+  }
+
+  if (node.type === "tag") {
+    return transformElementNode(
+      node,
+      imports,
+      methodNames,
+      scriptImports,
+      renderScopeNames,
+      vueImports,
+      context,
+      isChild,
+    )
+  }
+
+  return ""
+}
+
+/**
+ * Render a child node list into a lit-html template expression.
+ *
+ * @param {Array} children - Child DOM nodes.
+ * @param {Set<string>} imports - Required lit-html imports.
+ * @param {Array<string>} methodNames - Recognized method names.
+ * @param {Set<string>} scriptImports - Imported names from the script block.
+ * @param {Set<string>} renderScopeNames - Names declared in the render scope.
+ * @param {Object} context - Rendering context.
+ * @returns {string} The rendered child template expression.
+ */
+function renderChildren(
+  children,
+  imports,
+  methodNames,
+  scriptImports,
+  renderScopeNames,
+  vueImports,
+  context,
+) {
+  if (!children.length) {
+    return ""
+  }
+
+  const parts = []
+
+  for (const child of children) {
+    parts.push(
+      transformNode(
+        child,
+        imports,
+        methodNames,
+        scriptImports,
+        renderScopeNames,
+        vueImports,
+        context,
+        true,
+      ),
+    )
+  }
+
+  return `html\`${parts.join("")}\``
+}
+
+/**
+ * Whether an expression is an inline function: `(a) => …`, `a => …`,
+ * `async (a) => …` or `function (a) { … }`.
+ *
+ * @param {string} expr - A trimmed template expression.
+ * @returns {boolean}
+ */
+function isFunctionExpression(expr) {
+  return /^(async\s+)?(\([^)]*\)|[a-zA-Z_$][\w$]*)\s*=>|^(async\s+)?function\b/.test(
+    expr,
+  )
+}
+
+/**
  * Remove template interpolation wrappers from a raw expression string.
  *
  * @param {string} code - Rendered snippet.
@@ -712,14 +722,4 @@ function unwrapTemplateExpression(code) {
   }
 
   return code
-}
-
-/**
- * Collapse repeated whitespace into single spaces.
- *
- * @param {string} str - Raw attribute value.
- * @returns {string} Normalized string.
- */
-export function normalizeWhitespace(str) {
-  return str.replace(/\s+/g, " ").trim()
 }

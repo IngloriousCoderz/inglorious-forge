@@ -1,4 +1,4 @@
-import { dueAt } from "@inglorious/engine/animation/due.js"
+import { dueAt } from "../animation/due.js"
 
 const ONE_SECOND = 1
 

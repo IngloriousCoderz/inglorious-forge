@@ -94,20 +94,24 @@ export function tweakable(parameters) {
 /**
  * Keeps every readout up to date, once a frame, from whatever the world wants to report.
  *
- * The world is handed the entities as they stand this frame rather than asked for them
- * through the api, because a readout that reads a copy says what was true before the
- * frame it is meant to be reporting on.
+ * The world is described from the api rather than from the draft, and only the readouts
+ * are written through the draft. Every entity a system reads through the draft is copied
+ * in case it is written to, so describing thousands of animals from it would copy every
+ * one of them on every frame just to count them. The api says how things stood when the
+ * frame began, which puts the readout one frame behind the world -- a sixtieth of a
+ * second nobody can see.
  *
  * @param {Function} describe - Told the entities, returns what the readouts should say.
  */
 export function readouts(describe) {
   return {
     update(entities, dt, api) {
-      const value = describe(entities, api)
+      const current = api.getEntities()
+      const value = describe(current, api)
 
-      for (const entity of Object.values(entities)) {
-        if (entity.type === "Readout") {
-          entity.value = value
+      for (const id in current) {
+        if (current[id].type === "Readout") {
+          entities[id].value = value
         }
       }
     },

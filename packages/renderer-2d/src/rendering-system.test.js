@@ -1,6 +1,6 @@
-import { renderingSystem } from "@inglorious/renderer-2d/rendering-system.js"
 import { expect, test } from "vitest"
 
+import { renderingSystem } from "./rendering-system.js"
 import { callsTo, createContext } from "./test/canvas.js"
 
 const A_VIEWPORT = [800, 600]

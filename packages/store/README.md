@@ -1239,7 +1239,7 @@ const store = createStore({
   systems, // Array (optional): global state handlers
   autoCreateEntities, // Boolean (optional): false (default) or true
   updateMode, // String (optional): 'auto' (default) or 'manual'
-  updateStrategy, // String (optional): 'structural-sharing' (default) or 'full-clone'
+  updateStrategy, // String (optional): 'structural-sharing' (default) or 'copy-on-dispatch'
 })
 ```
 
@@ -1258,7 +1258,7 @@ const store = createStore({
   - `'manual'` - Manual control via `api.update()`
 - **`updateStrategy`** (optional) - Controls how the state is copied before queued events are applied:
   - `'structural-sharing'` (default) - Only the entities that actually changed are copied
-  - `'full-clone'` - The whole state is deep-cloned and updated without a proxy
+  - `'copy-on-dispatch'` - Each entity is deep-copied as it is handed out, and updated without a proxy
 
 #### Update Strategy
 
@@ -1271,10 +1271,26 @@ get copied. Untouched entities keep their previous object reference, which makes
 reference-equality change detection nearly free. This is what you want for UI stores, where a
 handful of entities change per interaction.
 
-**`'full-clone'`** deep-clones the entire state with `structuredClone` and applies events directly to
-the copy, with no proxy involved. Every update costs time proportional to the total state size,
-but there's no per-entity proxy overhead, so it scales much better when thousands of entities
-change every frame — the typical case for a game simulation.
+**`'copy-on-dispatch'`** deep-copies an entity the first time it is handed to one of its handlers, or read
+by a system, and applies events directly to the copy, with no proxy involved. Entities that nothing
+touches during an update are not copied and keep their previous reference. Writing to a copy costs
+nothing however often it happens, so it scales much better when thousands of entities change every
+frame — the typical case for a game simulation.
+
+Systems receive every entity at once, so each entity a system reads through its first argument is
+copied in case it is written to. A system that only needs to know how things stood should read
+them from `api.getEntities()` and go through its first argument only for what it writes:
+
+```javascript
+const readouts = {
+  update(entities, dt, api) {
+    const current = api.getEntities() // read without copying
+    const count = Object.keys(current).length
+
+    entities.readout.value = `${count} entities` // copies only the readout
+  },
+}
+```
 
 ```javascript
 // A UI store: few entities change, reference equality matters
@@ -1285,7 +1301,11 @@ const store = createStore({
 })
 
 // A game simulation: thousands of entities change every frame
-const store = createStore({ types, entities, updateStrategy: "full-clone" })
+const store = createStore({
+  types,
+  entities,
+  updateStrategy: "copy-on-dispatch",
+})
 ```
 
 #### State swapping
@@ -1311,23 +1331,23 @@ const types = {
 }
 ```
 
-**Caveats for `'full-clone'`:**
+**Caveats for `'copy-on-dispatch'`:**
 
-- Every value in the state must be [structured-cloneable](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm).
-  Functions, DOM nodes, and class instances with non-cloneable internals throw a
-  `DataCloneError`. Keep such values in module scope or in a closure inside a behavior factory
+- Plain objects, arrays, vectors and primitives are copied directly. Anything else must be
+  [structured-cloneable](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm):
+  DOM nodes and class instances with non-cloneable internals throw a `DataCloneError`. Keep such values in module scope or in a closure inside a behavior factory
   (as the `images()` and `audio()` engine behaviors do) rather than in the state.
 - The state is not frozen, even in `devMode`.
 - Writing to an entity obtained from `api.getEntity()` during an update mutates the _previous_
-  state and is discarded, because the draft is a deep copy. Under `'structural-sharing'` the
-  draft may still share that reference, so the write happens to survive. Always mutate the
-  entity passed to your handler rather than one fetched through the api.
+  state. Whether the write also survives depends on whether that entity has been copied yet, under
+  either strategy. Always mutate the entity passed to your handler rather than one fetched through
+  the api.
 
 An unsupported strategy throws a `TypeError` at store creation:
 
 ```javascript
 createStore({ types, entities, updateStrategy: "immutable" })
-// TypeError: Unsupported update strategy: immutable. Expected one of: structural-sharing, full-clone.
+// TypeError: Unsupported update strategy: immutable. Expected one of: structural-sharing, copy-on-dispatch.
 ```
 
 #### Auto-Create Entities

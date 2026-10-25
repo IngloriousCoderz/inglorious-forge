@@ -84,19 +84,6 @@ export function applyBrushWindow(entity, primitives, isTooltipEnabled) {
   }
 }
 
-function getChartTypeAlias(type) {
-  if (typeof type !== "string") return null
-
-  if (SUPPORTED_CHART_TYPES.has(type)) return type
-
-  const tokens = type.toLowerCase().split("-")
-  const match = SUPPORTED_CHART_TYPE_TOKENS.find((chartType) =>
-    tokens.includes(chartType),
-  )
-
-  return match || null
-}
-
 export function getTooltipState(entity, primitives) {
   if (primitives.some((primitive) => primitive.type === "tooltip")) return true
 
@@ -119,4 +106,17 @@ export function isObject(value) {
 function clampIndex(value, length) {
   if (length <= 0) return 0
   return Math.max(0, Math.min(length - 1, value))
+}
+
+function getChartTypeAlias(type) {
+  if (typeof type !== "string") return null
+
+  if (SUPPORTED_CHART_TYPES.has(type)) return type
+
+  const tokens = type.toLowerCase().split("-")
+  const match = SUPPORTED_CHART_TYPE_TOKENS.find((chartType) =>
+    tokens.includes(chartType),
+  )
+
+  return match || null
 }

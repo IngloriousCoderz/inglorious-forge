@@ -1,5 +1,6 @@
-import { withErrorBoundary } from "@inglorious/web/decorators/with-error-boundary"
 import { afterEach, describe, expect, it, vi } from "vitest"
+
+import { withErrorBoundary } from "./index.js"
 
 describe("withErrorBoundary", () => {
   afterEach(() => {

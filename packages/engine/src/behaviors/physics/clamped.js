@@ -1,5 +1,6 @@
-import { clampToBounds } from "@inglorious/engine/physics/bounds.js"
 import { extend, merge } from "@inglorious/utils/object.js"
+
+import { clampToBounds } from "../../physics/bounds.js"
 
 const DEFAULT_PARAMS = {
   collisionGroup: "bounds",

@@ -1,8 +1,3 @@
-import {
-  anchorMargins,
-  entityAnchor,
-  shapeAnchor,
-} from "@inglorious/engine/physics/anchor.js"
 import { abs } from "@inglorious/utils/math/number.js"
 import { v } from "@inglorious/utils/v.js"
 import {
@@ -14,6 +9,8 @@ import {
   sum,
   zero,
 } from "@inglorious/utils/vector.js"
+
+import { anchorMargins, entityAnchor, shapeAnchor } from "./anchor.js"
 
 const ORIGIN = 0
 const DOUBLE = 2

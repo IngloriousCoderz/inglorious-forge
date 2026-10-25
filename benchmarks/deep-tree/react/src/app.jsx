@@ -17,43 +17,6 @@ const ONE_SECOND = 1000
 
 const model = createTreeModel()
 
-const createLeafStore = (initialLeafValues) => {
-  const values = { ...initialLeafValues }
-  const listenersByLeaf = new Map()
-
-  const get = (leafId) => values[leafId]
-
-  const subscribe = (leafId, listener) => {
-    if (!listenersByLeaf.has(leafId)) {
-      listenersByLeaf.set(leafId, new Set())
-    }
-
-    const leafListeners = listenersByLeaf.get(leafId)
-    leafListeners.add(listener)
-
-    return () => {
-      leafListeners.delete(listener)
-      if (leafListeners.size === 0) {
-        listenersByLeaf.delete(leafId)
-      }
-    }
-  }
-
-  const updateRandomLeaf = () => {
-    const updatedLeafId = updateLeafValuesMutative(values, model.leafIds)
-    const leafListeners = listenersByLeaf.get(updatedLeafId)
-    if (leafListeners) {
-      leafListeners.forEach((listener) => listener())
-    }
-  }
-
-  return {
-    get,
-    subscribe,
-    updateRandomLeaf,
-  }
-}
-
 export const App = () => {
   const [metrics, setMetrics] = useState(createInitialMetrics)
   const leafStore = useMemo(
@@ -116,4 +79,41 @@ export const App = () => {
       </div>
     </div>
   )
+}
+
+function createLeafStore(initialLeafValues) {
+  const values = { ...initialLeafValues }
+  const listenersByLeaf = new Map()
+
+  const get = (leafId) => values[leafId]
+
+  const subscribe = (leafId, listener) => {
+    if (!listenersByLeaf.has(leafId)) {
+      listenersByLeaf.set(leafId, new Set())
+    }
+
+    const leafListeners = listenersByLeaf.get(leafId)
+    leafListeners.add(listener)
+
+    return () => {
+      leafListeners.delete(listener)
+      if (leafListeners.size === 0) {
+        listenersByLeaf.delete(leafId)
+      }
+    }
+  }
+
+  const updateRandomLeaf = () => {
+    const updatedLeafId = updateLeafValuesMutative(values, model.leafIds)
+    const leafListeners = listenersByLeaf.get(updatedLeafId)
+    if (leafListeners) {
+      leafListeners.forEach((listener) => listener())
+    }
+  }
+
+  return {
+    get,
+    subscribe,
+    updateRandomLeaf,
+  }
 }

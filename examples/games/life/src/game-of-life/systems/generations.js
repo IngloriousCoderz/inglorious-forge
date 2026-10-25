@@ -1,6 +1,4 @@
-import { dueAt } from "@inglorious/engine/animation/due.js"
-
-import { BOARD_COLUMNS, BOARD_ROWS, FPS } from "../../constants.js"
+import { BOARD_COLUMNS, BOARD_ROWS } from "../../constants.js"
 import { place } from "../../grid.js"
 
 // A cell that is already alive stays alive on two or three neighbours, and nothing else
@@ -8,66 +6,22 @@ import { place } from "../../grid.js"
 const SURVIVES_ON = [2, 3]
 const IS_BORN_ON = 3
 
-const ONE_SECOND = 1
-
-/**
- * How many turns the world has taken, kept on the board that was turned.
- *
- * The board is taken from the draft rather than asked for by name: a system that writes
- * through the api is writing to a copy, and the number would go nowhere.
- */
-function countGeneration(entities) {
-  const board = entities.board
-  board.generation = (board.generation ?? 0) + 1
-}
-
 /**
  * Steps the whole board one generation at a time.
  *
  * Conway's rule cannot be written as a behaviour on a cell, because a cell is born in a
  * square that is currently empty, and an empty square has nothing in it to run a
  * behaviour. The decision has to be the board's, so it is a system: it runs once per
- * frame, after every cell has had its turn, and nobody changes anything until it has
- * decided everything.
+ * turn of the world, and nobody changes anything until it has decided everything.
  *
- * The board turns at `fps` of its own rather than at the loop's, which is what an
- * entity would say with `atFps` and a system cannot: it has no entity of its own to
- * keep the time on, so it keeps it here -- and asks `dueAt` the same question, so that
- * "has a generation arrived" is written down once rather than twice.
+ * A generation is a `tick` of the world's clock rather than an `update` of the loop,
+ * so the board turns at the world's rate and the pointer is never held to it.
  *
  * @param {Object} grid - The board being turned.
- * @param {Object} [rate] - How fast the board turns.
- * @param {number} [rate.fps] - Generations a second. `Infinity` for one a frame.
  */
-export function generations(grid, { fps = FPS } = {}) {
-  // Halting the store stops the entities updating, but systems are still asked, so a
-  // generation has to hear the pause for itself. Without this the board carries on
-  // turning underneath a pause that everything else is honouring.
-  let halted = false
-  let clock = 0
-
-  const isDue = dueAt(ONE_SECOND / fps)
-
+export function generations(grid) {
   return {
-    pause() {
-      halted = true
-    },
-
-    resume() {
-      halted = false
-    },
-
-    update(entities, dt, api) {
-      if (halted) return
-
-      // A generation a second is ten turns a second here, whatever the browser manages
-      // in between, and the board is not waiting on the pointer for any of it.
-      const { since, elapsed } = isDue(clock, dt)
-
-      clock = since
-
-      if (elapsed === undefined) return
-
+    tick(entities, elapsed, api) {
       countGeneration(entities)
 
       const born = []
@@ -110,4 +64,15 @@ export function generations(grid, { fps = FPS } = {}) {
       }
     },
   }
+}
+
+/**
+ * How many turns the world has taken, kept on the board that was turned.
+ *
+ * The board is taken from the draft rather than asked for by name: a system that writes
+ * through the api is writing to a copy, and the number would go nowhere.
+ */
+function countGeneration(entities) {
+  const board = entities.board
+  board.generation = (board.generation ?? 0) + 1
 }

@@ -113,43 +113,6 @@ export function parseScript(script, lang) {
 }
 
 /**
- * Determine whether an initializer reads from render-scope bindings.
- *
- * @param {import("@babel/types").Node | null | undefined} node - Initializer node.
- * @param {Set<string>} renderScopeNames - Names available in render scope.
- * @returns {boolean} Whether the initializer should be emitted inside render().
- */
-function referencesRenderScope(node, renderScopeNames) {
-  const stack = [node]
-  const visited = new Set()
-
-  while (stack.length) {
-    const current = stack.pop()
-
-    if (!current || typeof current !== "object") continue
-    if (visited.has(current)) continue
-    visited.add(current)
-
-    if (Array.isArray(current)) {
-      stack.push(...current)
-      continue
-    }
-
-    if (t.isIdentifier(current) && renderScopeNames.has(current.name)) {
-      return true
-    }
-
-    for (const value of Object.values(current)) {
-      if (value && typeof value === "object") {
-        stack.push(value)
-      }
-    }
-  }
-
-  return false
-}
-
-/**
  * Convert a function node's parameters into a comma-separated parameter list.
  *
  * @param {import("@babel/types").FunctionDeclaration | import("@babel/types").FunctionExpression | import("@babel/types").ArrowFunctionExpression} node - Function node.
@@ -237,4 +200,41 @@ export function extractFunctionBody(node, source) {
 export function extractValue(node, source) {
   if (!node) return "undefined"
   return source.slice(node.start, node.end)
+}
+
+/**
+ * Determine whether an initializer reads from render-scope bindings.
+ *
+ * @param {import("@babel/types").Node | null | undefined} node - Initializer node.
+ * @param {Set<string>} renderScopeNames - Names available in render scope.
+ * @returns {boolean} Whether the initializer should be emitted inside render().
+ */
+function referencesRenderScope(node, renderScopeNames) {
+  const stack = [node]
+  const visited = new Set()
+
+  while (stack.length) {
+    const current = stack.pop()
+
+    if (!current || typeof current !== "object") continue
+    if (visited.has(current)) continue
+    visited.add(current)
+
+    if (Array.isArray(current)) {
+      stack.push(...current)
+      continue
+    }
+
+    if (t.isIdentifier(current) && renderScopeNames.has(current.name)) {
+      return true
+    }
+
+    for (const value of Object.values(current)) {
+      if (value && typeof value === "object") {
+        stack.push(value)
+      }
+    }
+  }
+
+  return false
 }

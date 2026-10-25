@@ -46,34 +46,6 @@ const themeClasses = {
   bootstrap: "iw-theme-bootstrap",
 }
 
-function applyTheme(theme, mode) {
-  const themeClass = themeClasses[theme] || themeClasses.inglorious
-  const modeClass = mode === "light" ? "iw-theme-light" : "iw-theme-dark"
-
-  document.body.className = document.body.className
-    .replace(/iw-theme-(\\w+)/g, "")
-    .trim()
-  document.body.className =
-    `${document.body.className} ${themeClass} ${modeClass}`.trim()
-
-  const background =
-    getComputedStyle(document.body).getPropertyValue("--iw-color-bg").trim() ||
-    (mode === "dark" ? "#111827" : "#ffffff")
-  const foreground =
-    getComputedStyle(document.body)
-      .getPropertyValue("--iw-color-text")
-      .trim() || (mode === "dark" ? "#f9fafb" : "#111827")
-
-  document.body.style.backgroundColor = background
-  document.body.style.color = foreground
-
-  const root = document.getElementById("storybook-root")
-  if (root) {
-    root.style.backgroundColor = background
-    root.style.color = foreground
-  }
-}
-
 export const decorators = [
   (story, context) => {
     applyTheme(context.globals.theme, context.globals.mode)
@@ -100,4 +72,32 @@ export const parameters = {
   backgrounds: {
     disabled: true,
   },
+}
+
+function applyTheme(theme, mode) {
+  const themeClass = themeClasses[theme] || themeClasses.inglorious
+  const modeClass = mode === "light" ? "iw-theme-light" : "iw-theme-dark"
+
+  document.body.className = document.body.className
+    .replace(/iw-theme-(\\w+)/g, "")
+    .trim()
+  document.body.className =
+    `${document.body.className} ${themeClass} ${modeClass}`.trim()
+
+  const background =
+    getComputedStyle(document.body).getPropertyValue("--iw-color-bg").trim() ||
+    (mode === "dark" ? "#111827" : "#ffffff")
+  const foreground =
+    getComputedStyle(document.body)
+      .getPropertyValue("--iw-color-text")
+      .trim() || (mode === "dark" ? "#f9fafb" : "#111827")
+
+  document.body.style.backgroundColor = background
+  document.body.style.color = foreground
+
+  const root = document.getElementById("storybook-root")
+  if (root) {
+    root.style.backgroundColor = background
+    root.style.color = foreground
+  }
 }

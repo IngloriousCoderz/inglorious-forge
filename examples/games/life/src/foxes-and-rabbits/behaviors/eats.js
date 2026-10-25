@@ -11,8 +11,8 @@ import { findAdjacentRabbit } from "../index.js"
  */
 export function eats(grid, rules) {
   return (type) => ({
-    update(entity, dt, api) {
-      type.update?.(entity, dt, api)
+    tick(entity, elapsed, api) {
+      type.tick?.(entity, elapsed, api)
 
       if (entity.isDying) {
         return

@@ -1,7 +1,6 @@
-import { atFps } from "@inglorious/engine/behaviors/at-fps.js"
 import { renderRectangle } from "@inglorious/renderer-2d/shapes/rectangle"
 
-import { CELL_SIZE, FPS } from "../../constants.js"
+import { CELL_SIZE } from "../../constants.js"
 import { aged } from "../behaviors/aged.js"
 import { breeds } from "../behaviors/breeds.js"
 import { dies } from "../behaviors/dies.js"
@@ -11,10 +10,8 @@ import { RABBIT_COLOR } from "../constants.js"
 /**
  * @param {Object} grid - The board the animals stand on.
  * @param {Object} rules - The numbers this world is living by.
- * @param {Object} [rate] - How fast a rabbit lives.
- * @param {number} [rate.fps] - Turns a second. `Infinity` for one every frame.
  */
-export function createRabbit(grid, rules, { fps = FPS } = {}) {
+export function createRabbit(grid, rules) {
   return [
     {
       eaten(entity, preyId) {
@@ -39,10 +36,6 @@ export function createRabbit(grid, rules, { fps = FPS } = {}) {
     aged(rules),
     movesOnGrid(grid),
     breeds(grid, rules),
-
-    // Last, so that it holds the whole of the above back: a rabbit ages and breeds at
-    // the world's rate rather than once for every frame the browser manages.
-    atFps(fps),
   ]
 }
 

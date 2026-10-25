@@ -19,18 +19,6 @@ import {
 } from "./primitives/factories.js"
 import { streamSlide } from "./realtime/index.js"
 
-function renderChart(source, api) {
-  if (
-    source &&
-    typeof source === "object" &&
-    Object.hasOwn(source, "children")
-  ) {
-    return renderFrame(createFrameFromRender(source, api))
-  }
-
-  return renderFrame(createFrameFromEntity(source, api))
-}
-
 // The chart type: its event handlers and render. The primitives are separate
 // exports, so the store does not take them for event handlers.
 export const Chart = {
@@ -53,4 +41,16 @@ export {
   Tooltip,
   XAxis,
   YAxis,
+}
+
+function renderChart(source, api) {
+  if (
+    source &&
+    typeof source === "object" &&
+    Object.hasOwn(source, "children")
+  ) {
+    return renderFrame(createFrameFromRender(source, api))
+  }
+
+  return renderFrame(createFrameFromEntity(source, api))
 }

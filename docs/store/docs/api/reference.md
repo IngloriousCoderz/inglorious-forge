@@ -16,7 +16,7 @@ const store = createStore({
   systems, // Array: global state handlers (optional)
   autoCreateEntities, // Boolean: auto-create singleton entities (optional)
   updateMode, // String: 'auto' | 'manual' (optional)
-  updateStrategy, // String: 'structural-sharing' | 'full-clone' (optional)
+  updateStrategy, // String: 'structural-sharing' | 'copy-on-dispatch' (optional)
 })
 ```
 
@@ -133,16 +133,16 @@ Controls how the state is copied before queued events are applied:
 - **`'structural-sharing'`** (default) - Events are applied to a draft proxy, so only the
   entities that actually changed are copied. Untouched entities keep their previous reference,
   which makes reference-equality change detection cheap. Best for UI stores.
-- **`'full-clone'`** - The whole state is deep-cloned with `structuredClone` and events are applied
-  to the copy without a proxy. Each update costs time proportional to the total state size, but
-  there's no per-entity proxy overhead, so it scales better when thousands of entities change
-  every frame, as in a game simulation.
+- **`'copy-on-dispatch'`** - Each entity is deep-copied the first time an event is dispatched to
+  it, or a system reads it, and events are applied to the copy without a proxy. Entities nothing
+  touches are not copied. Writing to a plain copy costs nothing however often it happens, so it
+  scales better when thousands of entities change every frame, as in a game simulation.
 
 ```javascript
 const store = createStore({
   types,
   entities,
-  updateStrategy: "full-clone",
+  updateStrategy: "copy-on-dispatch",
 })
 ```
 
@@ -151,17 +151,17 @@ separate draft, and the two are swapped only once every event has been processed
 notified only after the swap. As a result, `api.getEntity()` and `api.getEntities()` read the
 **previous** state during an update, under either strategy.
 
-**Caveats for `'full-clone'`:**
+**Caveats for `'copy-on-dispatch'`:**
 
-- Every value in the state must be
-  [structured-cloneable](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm).
-  Functions, DOM nodes, and class instances with non-cloneable internals throw a
-  `DataCloneError`. Keep such values in module scope or in a behavior factory closure instead
-  of in the state.
+- Plain objects, arrays, vectors and primitives are copied directly. Anything else must be
+  [structured-cloneable](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm):
+  DOM nodes and class instances with non-cloneable internals throw a `DataCloneError`. Keep such
+  values in module scope or in a behavior factory closure instead of in the state.
+- Each entity a system reads through its first argument is copied, in case it is written to. A
+  system that only needs to look should read from `api.getEntities()`.
 - The state is not frozen, even in `devMode`.
 - Writing to an entity obtained from `api.getEntity()` during an update mutates the previous
-  state and is discarded, since the draft is a deep copy. Mutate the entity passed to your
-  handler instead.
+  state. Mutate the entity passed to your handler instead.
 
 An unsupported strategy throws a `TypeError` when the store is created.
 

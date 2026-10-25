@@ -1,17 +1,5 @@
 const emittedWarnings = new Set()
 
-function isDevEnvironment() {
-  if (
-    typeof import.meta !== "undefined" &&
-    import.meta.env &&
-    typeof import.meta.env.DEV === "boolean"
-  ) {
-    return import.meta.env.DEV
-  }
-
-  return false
-}
-
 /**
  * Emits a warning once in development environments.
  * @param {string} key
@@ -23,4 +11,16 @@ export function warnOnce(key, message) {
   emittedWarnings.add(key)
 
   console.warn(`[inglorious/ag-grid] ${message}`)
+}
+
+function isDevEnvironment() {
+  if (
+    typeof import.meta !== "undefined" &&
+    import.meta.env &&
+    typeof import.meta.env.DEV === "boolean"
+  ) {
+    return import.meta.env.DEV
+  }
+
+  return false
 }

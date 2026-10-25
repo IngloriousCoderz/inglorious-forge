@@ -12,14 +12,6 @@ export const extension = (app) => (app.isTypeScript ? "tsx" : "jsx")
 const EXPECT_ERROR =
   "@ts-expect-error - Inglorious components are objects, not functions"
 
-// The comment line before a capitalized tag in .tsx: `{/* */}` among JSX
-// children, `//` inside code.
-function expectError(app, indent, isChild = true) {
-  if (!app.isTypeScript) return ""
-  const comment = isChild ? `{/* ${EXPECT_ERROR} */}` : `// ${EXPECT_ERROR}`
-  return `${indent}${comment}\n`
-}
-
 export function appSource(app, { pages, navIcons }) {
   const imports = []
   if (navIcons) {
@@ -67,6 +59,105 @@ ${shell}
   },
 }
 `
+}
+
+export function homeSource(app, { showcase }) {
+  const imports = ['import { Message } from "../types/message"']
+  for (const icon of showcase) {
+    imports.push(`import ${icon.name} from "${icon.from}"`)
+  }
+  if (showcase.length) {
+    imports.push('import { Icon } from "@inglorious/ui/icon"')
+  }
+  if (app.i18n) imports.push('import { t } from "../i18n"')
+
+  const text = (key, fallback) => (app.i18n ? `{t("${key}")}` : fallback)
+  const icons = showcase.length
+    ? `
+        <p className="app-icons">
+${showcase
+  .map(
+    (icon) =>
+      `${expectError(app, "          ")}          <Icon icon={${icon.name}} size="lg" label="${icon.label}" />`,
+  )
+  .join("\n")}
+        </p>`
+    : ""
+
+  return `${importBlock(imports)}
+
+export const Home = {
+  render() {
+    return (
+      <>
+        <h1>${text("home.title", "Welcome")}</h1>
+        <p>
+${expectError(app, "          ")}          <Message entityId="message1" />, <Message entityId="message2" />,{" "}
+${expectError(app, "          ")}          <Message entityId="message3" />!
+        </p>
+        <p>${text("home.hint", "Click a greeting to shout it.")}</p>${icons}
+      </>
+    )
+  },
+}
+`
+}
+
+export function aboutSource(app) {
+  const head = app.i18n ? 'import { t } from "../i18n"\n\n' : ""
+  const text = (key, fallback) => (app.i18n ? `{t("${key}")}` : fallback)
+
+  return `${head}export const About = {
+  render() {
+    return (
+      <>
+        <h1>${text("about.title", "About")}</h1>
+        <p>${text("about.body", "A page of its own, at its own address.")}</p>
+      </>
+    )
+  },
+}
+`
+}
+
+export function messageSource(app) {
+  const imports = []
+  if (app.isTypeScript) {
+    imports.push('import type { MessageType } from "../../types"')
+  }
+  if (app.i18n) imports.push('import { t } from "../i18n"')
+  const greeting = app.i18n ? '{t("message.hello", { who })}' : "Hello {who}"
+  const annotation = app.isTypeScript ? ": MessageType" : ""
+
+  const span = app.i18n
+    ? `      <span onClick={() => api.notify(\`#\${entity.id}:click\`)}>
+        ${greeting}
+      </span>`
+    : `      <span onClick={() => api.notify(\`#\${entity.id}:click\`)}>${greeting}</span>`
+
+  const head = imports.length ? `${importBlock(imports)}\n\n` : ""
+
+  return `${head}export const Message${annotation} = {
+  click(entity) {
+    entity.isUpperCase = !entity.isUpperCase
+  },
+
+  render(entity, api) {
+    const who = entity.isUpperCase ? entity.who.toUpperCase() : entity.who
+    return (
+${span}
+    )
+  },
+}
+`
+}
+
+// The comment line before a capitalized tag in .tsx: `{/* */}` among JSX
+// children, `//` inside code.
+function expectError(app, indent, isChild = true) {
+  if (!app.isTypeScript) return ""
+  const comment = isChild ? `{/* ${EXPECT_ERROR} */}` : `// ${EXPECT_ERROR}`
+  return `${indent}${comment}\n`
 }
 
 // A callback's parameter. The components' props are not typed in .tsx, so
@@ -184,95 +275,4 @@ ${nav.join("\n")}
           <strong>${app.projectName}</strong>${navBlock}
         </header>
         <main>{${content}}</main>`
-}
-
-export function homeSource(app, { showcase }) {
-  const imports = ['import { Message } from "../types/message"']
-  for (const icon of showcase) {
-    imports.push(`import ${icon.name} from "${icon.from}"`)
-  }
-  if (showcase.length) {
-    imports.push('import { Icon } from "@inglorious/ui/icon"')
-  }
-  if (app.i18n) imports.push('import { t } from "../i18n"')
-
-  const text = (key, fallback) => (app.i18n ? `{t("${key}")}` : fallback)
-  const icons = showcase.length
-    ? `
-        <p className="app-icons">
-${showcase
-  .map(
-    (icon) =>
-      `${expectError(app, "          ")}          <Icon icon={${icon.name}} size="lg" label="${icon.label}" />`,
-  )
-  .join("\n")}
-        </p>`
-    : ""
-
-  return `${importBlock(imports)}
-
-export const Home = {
-  render() {
-    return (
-      <>
-        <h1>${text("home.title", "Welcome")}</h1>
-        <p>
-${expectError(app, "          ")}          <Message entityId="message1" />, <Message entityId="message2" />,{" "}
-${expectError(app, "          ")}          <Message entityId="message3" />!
-        </p>
-        <p>${text("home.hint", "Click a greeting to shout it.")}</p>${icons}
-      </>
-    )
-  },
-}
-`
-}
-
-export function aboutSource(app) {
-  const head = app.i18n ? 'import { t } from "../i18n"\n\n' : ""
-  const text = (key, fallback) => (app.i18n ? `{t("${key}")}` : fallback)
-
-  return `${head}export const About = {
-  render() {
-    return (
-      <>
-        <h1>${text("about.title", "About")}</h1>
-        <p>${text("about.body", "A page of its own, at its own address.")}</p>
-      </>
-    )
-  },
-}
-`
-}
-
-export function messageSource(app) {
-  const imports = []
-  if (app.isTypeScript) {
-    imports.push('import type { MessageType } from "../../types"')
-  }
-  if (app.i18n) imports.push('import { t } from "../i18n"')
-  const greeting = app.i18n ? '{t("message.hello", { who })}' : "Hello {who}"
-  const annotation = app.isTypeScript ? ": MessageType" : ""
-
-  const span = app.i18n
-    ? `      <span onClick={() => api.notify(\`#\${entity.id}:click\`)}>
-        ${greeting}
-      </span>`
-    : `      <span onClick={() => api.notify(\`#\${entity.id}:click\`)}>${greeting}</span>`
-
-  const head = imports.length ? `${importBlock(imports)}\n\n` : ""
-
-  return `${head}export const Message${annotation} = {
-  click(entity) {
-    entity.isUpperCase = !entity.isUpperCase
-  },
-
-  render(entity, api) {
-    const who = entity.isUpperCase ? entity.who.toUpperCase() : entity.who
-    return (
-${span}
-    )
-  },
-}
-`
 }

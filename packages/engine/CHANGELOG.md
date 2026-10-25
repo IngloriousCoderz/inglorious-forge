@@ -1,5 +1,25 @@
 # @inglorious/engine
 
+## 24.1.0
+
+### Minor Changes
+
+- `ticks({ fps, event })` in `@inglorious/engine/systems/ticks.js` gives a whole world one clock, for games where everything turns in step: a generation of Life, a day of a simulation, a turn of a board game.
+
+  - It notifies `tick` whenever a turn is due, carrying the time the turn covers, and whatever turns with the world handles `tick` instead of `update`. The loop keeps running as fast as the screen takes it, so the pointer and the controls never wait on the world.
+  - It is much cheaper than `atFps` on every entity for a large world. An entity with `atFps` is handed every `update` to keep its own time, so every one of them is written to on every frame; an entity that only handles `tick` is left alone until the world turns.
+  - It stops while the game is paused, and starts again when it resumes.
+  - `event` names the turn something else, such as `"generation"`. `fps` defaults to `Infinity`, a turn every frame.
+  - `atFps` stays, for entities that each move at a rate of their own.
+
+### Patch Changes
+
+- Source files read top-down: the functions a module exports come first, and the helpers they use are defined below them. Modules import other files of their own package by relative path rather than by the package's name. Behaviour is unchanged.
+- Updated dependencies
+- Updated dependencies
+  - @inglorious/store@12.0.0
+  - @inglorious/utils@5.1.0
+
 ## 24.0.0
 
 ### Major Changes

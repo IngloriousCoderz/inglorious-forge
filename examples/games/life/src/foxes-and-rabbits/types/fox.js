@@ -1,7 +1,6 @@
-import { atFps } from "@inglorious/engine/behaviors/at-fps.js"
 import { renderCircle } from "@inglorious/renderer-2d/shapes/circle"
 
-import { CELL_SIZE, FPS } from "../../constants.js"
+import { CELL_SIZE } from "../../constants.js"
 import { aged } from "../behaviors/aged.js"
 import { breeds } from "../behaviors/breeds.js"
 import { dies } from "../behaviors/dies.js"
@@ -12,10 +11,8 @@ import { FOX_COLOR } from "../constants.js"
 /**
  * @param {Object} grid - The board the animals stand on.
  * @param {Object} rules - The numbers this world is living by.
- * @param {Object} [rate] - How fast a fox lives.
- * @param {number} [rate.fps] - Turns a second. `Infinity` for one every frame.
  */
-export function createFox(grid, rules, { fps = FPS } = {}) {
+export function createFox(grid, rules) {
   return [
     {
       render(entity, ctx) {
@@ -35,10 +32,6 @@ export function createFox(grid, rules, { fps = FPS } = {}) {
     eats(grid, rules),
     movesOnGrid(grid),
     breeds(grid, rules),
-
-    // Last, so that it holds the whole of the above back: a fox eats, ages and breeds
-    // at the world's rate rather than once for every frame the browser manages.
-    atFps(fps),
   ]
 }
 

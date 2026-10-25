@@ -1,6 +1,6 @@
-import { createGame } from "@inglorious/engine/test.js"
 import { beforeEach, describe, expect, test } from "vitest"
 
+import { createGame } from "../../test.js"
 import { slider } from "./slider.js"
 
 // A slider 100 wide, centred on x = 500, so its track runs from 450 to 550.

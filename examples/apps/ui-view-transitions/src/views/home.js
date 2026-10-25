@@ -23,12 +23,6 @@ const STEPS = [
   },
 ]
 
-/* Curried rather than written inline, so the handler is built once per render
- * from the api instead of being a new closure on every notification. */
-function navigate(api, payload) {
-  return () => api.notify("#router:navigate", payload)
-}
-
 export const Home = {
   render(entity, api) {
     return Container.render({
@@ -66,4 +60,10 @@ export const Home = {
       `,
     })
   },
+}
+
+/* Curried rather than written inline, so the handler is built once per render
+ * from the api instead of being a new closure on every notification. */
+function navigate(api, payload) {
+  return () => api.notify("#router:navigate", payload)
 }

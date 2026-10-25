@@ -1,9 +1,9 @@
-import { face } from "@inglorious/engine/ai/movement/dynamic/face.js"
-import { tankMove } from "@inglorious/engine/movement/dynamic/tank.js"
 import { pi } from "@inglorious/utils/math/trigonometry.js"
 import { extend, merge } from "@inglorious/utils/object.js"
 import { zero } from "@inglorious/utils/vector.js"
 
+import { face } from "../../../ai/movement/dynamic/face.js"
+import { tankMove } from "../../../movement/dynamic/tank.js"
 import { createMovementEventHandlers } from "../event-handlers.js"
 
 const FULL_CIRCLE = 2
