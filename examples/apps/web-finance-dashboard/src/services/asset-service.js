@@ -12,6 +12,8 @@ import {
 export const DEFAULT_ASSET_SYMBOL = "AAPL"
 const MOCK_SET_SIZE = 5
 const SERIES_LIMIT = 40
+const NO_PRICE = 0
+const FIRST = 0
 const EMPTY_FUNDAMENTALS = {
   pe: null,
   eps: null,
@@ -82,7 +84,7 @@ function buildMockAssetPayload(symbol, fallbackSymbols, reason) {
   const requested = getInstrumentDataBySymbol(symbol)
   const selectedSymbol = requested?.instrument
     ? symbol
-    : fallbackSymbols[0] || DEFAULT_ASSET_SYMBOL
+    : fallbackSymbols.at(FIRST) || DEFAULT_ASSET_SYMBOL
   const mockData = getInstrumentDataBySymbol(selectedSymbol)
 
   const history = Array.isArray(mockData.history) ? mockData.history : []
@@ -106,7 +108,7 @@ function buildMockAssetPayload(symbol, fallbackSymbols, reason) {
     fundamentals: { ...EMPTY_FUNDAMENTALS },
     priceSeries: history.slice(-SERIES_LIMIT).map((row, index) => ({
       name: row.t || `${index}`,
-      value: Number(row.mid ?? 0),
+      value: Number(row.mid ?? NO_PRICE),
     })),
     source: "mock",
     fallbackSymbols,
@@ -130,10 +132,13 @@ function buildHistoricalWarning(reason) {
 
 function isValidQuotePayload(payload) {
   if (!Array.isArray(payload) || !payload.length) return false
-  return typeof payload[0] === "object" && payload[0] !== null
+  const [first] = payload
+  return typeof first === "object" && first !== null
 }
 
 function isValidHistoryPayload(payload) {
-  if (Array.isArray(payload)) return payload.length > 0
-  return Array.isArray(payload?.historical) && payload.historical.length > 0
+  if (Array.isArray(payload)) return Boolean(payload.length)
+  return (
+    Array.isArray(payload?.historical) && Boolean(payload.historical.length)
+  )
 }

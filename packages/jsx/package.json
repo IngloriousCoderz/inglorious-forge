@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/jsx",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "A shim for JSX syntax, to please the TypeScript gods.",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -34,5 +34,12 @@
   },
   "engines": {
     "node": ">= 22"
+  },
+  "scripts": {
+    "lint": "eslint ."
+  },
+  "devDependencies": {
+    "@inglorious/eslint-config": "workspace:*",
+    "eslint": "^10.10.0"
   }
 }

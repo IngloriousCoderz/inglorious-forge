@@ -1,5 +1,5 @@
-import { html } from "@inglorious/web"
 import { Chart, Pie } from "@inglorious/charts"
+import { html } from "@inglorious/web"
 
 export function renderPieSection(api) {
   const inlinePieDataA = [

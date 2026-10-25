@@ -1,5 +1,13 @@
 # @inglorious/renderer-2d
 
+## 22.0.10
+
+### Patch Changes
+
+- The packages lint clean, with no warnings. `@inglorious/jsx` and `@inglorious/babel-preset-inglorious-script` are linted for the first time. Behaviour is unchanged.
+- @inglorious/engine@24.1.0
+  - @inglorious/utils@5.1.0
+
 ## 22.0.9
 
 ### Patch Changes

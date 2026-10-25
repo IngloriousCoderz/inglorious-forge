@@ -592,7 +592,7 @@ test("it should say the same thing as the api does during a handler", () => {
     entities: { user: { id: "user", type: "User", name: "Ada" } },
     types: {
       User: {
-        read(entity) {
+        read() {
           seen = store.getEntity("user").name
         },
       },

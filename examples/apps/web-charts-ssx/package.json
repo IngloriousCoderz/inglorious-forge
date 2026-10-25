@@ -6,8 +6,9 @@
   "author": "IceOnFire <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
   "scripts": {
-    "dev": "ssx dev",
     "build": "ssx build",
+    "dev": "ssx dev",
+    "lint": "eslint .",
     "preview": "ssx serve"
   },
   "dependencies": {
@@ -17,6 +18,8 @@
     "@inglorious/web": "workspace:*"
   },
   "devDependencies": {
+    "@inglorious/eslint-config": "workspace:*",
+    "eslint": "^10.10.0",
     "vite": "^8.2.2"
   },
   "packageManager": "pnpm@10.15.0",

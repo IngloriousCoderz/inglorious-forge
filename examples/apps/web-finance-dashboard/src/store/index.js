@@ -2,8 +2,8 @@ import "./routes.js"
 
 import { Chart } from "@inglorious/charts"
 import { createStore } from "@inglorious/store"
-import { Router } from "@inglorious/web/router"
 import { DataGrid } from "@inglorious/ui/data-grid"
+import { Router } from "@inglorious/web/router"
 
 import { AssetPage } from "../pages/asset.js"
 import { DashboardPage } from "../pages/dashboard.js"
@@ -11,6 +11,12 @@ import { NotFoundPage } from "../pages/not-found.js"
 import { ScreenerPage } from "../pages/screener.js"
 import { entities } from "./entities.js"
 import { middlewares } from "./middlewares.js"
+
+const FIRST = 0
+const LAST = -1
+const LAST_INDEX_OFFSET = 1
+// How many points the brush shows when new data arrives.
+const VISIBLE_WINDOW = 20
 
 export const Line = {
   create: Chart.create,
@@ -20,14 +26,16 @@ export const Line = {
     entity.brush.enabled = true
 
     if (!Array.isArray(rows) || !rows.length) {
-      entity.brush.startIndex = 0
-      entity.brush.endIndex = 0
+      entity.brush.startIndex = FIRST
+      entity.brush.endIndex = FIRST
       return
     }
 
-    const visibleWindow = 20
-    const endIndex = rows.length - 1
-    const startIndex = Math.max(0, endIndex - (visibleWindow - 1))
+    const endIndex = rows.length - LAST_INDEX_OFFSET
+    const startIndex = Math.max(
+      FIRST,
+      endIndex - VISIBLE_WINDOW + LAST_INDEX_OFFSET,
+    )
 
     entity.brush.startIndex = startIndex
     entity.brush.endIndex = endIndex
@@ -53,7 +61,7 @@ export const FinanceTable = {
     DataGrid.rowClick(entity, payload)
     if (!entity.ownerId || !entity.selectEvent) return
 
-    const selectedId = entity.selection[entity.selection.length - 1]
+    const selectedId = entity.selection.at(LAST)
     const row = entity.rows.find((item) => item[entity.rowId] === selectedId)
     api.notify(`#${entity.ownerId}:${entity.selectEvent}`, {
       rowId: selectedId,

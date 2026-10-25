@@ -1,12 +1,11 @@
-import { html } from "@inglorious/web"
-
 // Shoelace theme CSS (works on both SSR and client)
 import "@shoelace-style/shoelace/dist/themes/light.css"
-
 // Material Web components - these have SSR support via lit-element-hydrate-support.js
 import "@material/web/button/filled-button.js"
 import "@material/web/button/outlined-button.js"
 import "@material/web/switch/switch.js"
+
+import { html } from "@inglorious/web"
 
 // Shoelace components - NO SSR support, only import on client
 // They will render as plain <sl-*> tags on server and upgrade on client

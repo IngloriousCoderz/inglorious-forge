@@ -71,7 +71,6 @@ export const entities = {
     filters: {},
     search: null,
     selection: [],
-    isMultiSelect: false,
     pagination: { pageSize: 10 },
   },
 
@@ -95,7 +94,6 @@ export const entities = {
     filters: {},
     search: null,
     selection: [],
-    isMultiSelect: false,
     pagination: { pageSize: 10 },
   },
 
@@ -140,7 +138,6 @@ export const entities = {
     filters: {},
     search: null,
     selection: [],
-    isMultiSelect: false,
     pagination: { pageSize: 10 },
   },
 
@@ -164,7 +161,6 @@ export const entities = {
     filters: {},
     search: null,
     selection: [],
-    isMultiSelect: false,
     pagination: { pageSize: 25 },
   },
 

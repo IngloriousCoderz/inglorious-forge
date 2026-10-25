@@ -1,10 +1,10 @@
 import { expect, test } from "vitest"
 
 import {
-  flippedHorizontally,
-  flippedVertically,
   FLIPPED_HORIZONTALLY_FLAG,
   FLIPPED_VERTICALLY_FLAG,
+  flippedHorizontally,
+  flippedVertically,
 } from "./flags.js"
 
 test("it should say that a frame is a mirror of another", () => {

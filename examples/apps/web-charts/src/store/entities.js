@@ -1,3 +1,7 @@
+// The brush charts start from random values between these two.
+const RANDOM_MIN = 100
+const RANDOM_RANGE = 1000
+
 export const entities = {
   // ============================================
   // LINE CHARTS
@@ -55,7 +59,7 @@ export const entities = {
     type: "Line",
     data: Array.from({ length: 30 }, (_, i) => ({
       name: `${i}`,
-      value: Math.floor(Math.random() * 1000) + 100,
+      value: Math.floor(Math.random() * RANDOM_RANGE) + RANDOM_MIN,
     })),
     width: 800,
     height: 400,
@@ -72,7 +76,7 @@ export const entities = {
     type: "Line",
     data: Array.from({ length: 30 }, (_, i) => ({
       name: `${i}`,
-      value: Math.floor(Math.random() * 1000) + 100,
+      value: Math.floor(Math.random() * RANDOM_RANGE) + RANDOM_MIN,
     })),
   },
 

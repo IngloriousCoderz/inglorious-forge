@@ -1,5 +1,13 @@
 const DEFAULT_BASE_URL = "https://financialmodelingprep.com/stable"
 const DEFAULT_TIMEOUT_MS = 12_000
+const TRILLION = 1_000_000_000_000
+const BILLION = 1_000_000_000
+const MILLION = 1_000_000
+const CENTS = 2
+const DEFAULT_HISTORY_LENGTH = 30
+const DEFAULT_INCOME_PERIODS = 4
+const FIRST = 0
+const NO_PRICE = 0
 const env = import.meta.env || {}
 
 const baseUrl = env.VITE_FMP_BASE_URL || DEFAULT_BASE_URL
@@ -26,10 +34,13 @@ export async function fmpGet(path, params = {}) {
     response = await fetch(url.toString(), { signal: controller.signal })
   } catch (error) {
     if (error?.name === "AbortError") {
-      throw new Error(`FMP request timeout after ${DEFAULT_TIMEOUT_MS}ms`)
+      throw new Error(`FMP request timeout after ${DEFAULT_TIMEOUT_MS}ms`, {
+        cause: error,
+      })
     }
     throw new Error(
       "FMP network error (check API key, CORS policy, or internet connection)",
+      { cause: error },
     )
   } finally {
     clearTimeout(timeoutId)
@@ -46,24 +57,27 @@ export async function fmpGet(path, params = {}) {
 export function formatMoney(value) {
   if (!Number.isFinite(value)) return "N/A"
 
-  if (value >= 1_000_000_000_000) {
-    return `$${(value / 1_000_000_000_000).toFixed(2)}T`
+  if (value >= TRILLION) {
+    return `$${(value / TRILLION).toFixed(CENTS)}T`
   }
-  if (value >= 1_000_000_000) {
-    return `$${(value / 1_000_000_000).toFixed(2)}B`
+  if (value >= BILLION) {
+    return `$${(value / BILLION).toFixed(CENTS)}B`
   }
-  if (value >= 1_000_000) {
-    return `$${(value / 1_000_000).toFixed(2)}M`
+  if (value >= MILLION) {
+    return `$${(value / MILLION).toFixed(CENTS)}M`
   }
-  return `$${value.toFixed(2)}`
+  return `$${value.toFixed(CENTS)}`
 }
 
 export function normalizeQuote(payload) {
-  if (Array.isArray(payload)) return payload[0] || null
+  if (Array.isArray(payload)) {
+    const [first] = payload
+    return first || null
+  }
   return payload || null
 }
 
-export function normalizeHistory(payload, limit = 30) {
+export function normalizeHistory(payload, limit = DEFAULT_HISTORY_LENGTH) {
   const rows = Array.isArray(payload)
     ? payload
     : Array.isArray(payload?.historical)
@@ -77,18 +91,18 @@ export function normalizeHistory(payload, limit = 30) {
   })
 
   return sortedDesc
-    .slice(0, limit)
+    .slice(FIRST, limit)
     .reverse()
     .map((row, index) => ({
       name: row.date || `${index}`,
-      value: Number(row.close ?? row.price ?? 0),
+      value: Number(row.close ?? row.price ?? NO_PRICE),
     }))
     .filter((row) => Number.isFinite(row.value))
 }
 
-export function normalizeIncomeRows(payload, limit = 4) {
+export function normalizeIncomeRows(payload, limit = DEFAULT_INCOME_PERIODS) {
   const rows = Array.isArray(payload) ? payload : []
-  return rows.slice(0, limit).reverse()
+  return rows.slice(FIRST, limit).reverse()
 }
 
 export function toNumber(value) {

@@ -29,6 +29,14 @@ const EMPTY_INSTRUMENT = {
 }
 
 const EMPTY_QUOTE = { ask: 0, bid: 0, mid: 0 }
+const CENTS = 2
+const LAST = -1
+const FIRST = 0
+const NO_PRICE = 0
+const HISTORY_LENGTH = 500
+// The mock market's bid/ask spread around the mid price.
+const ASK_SPREAD = 0.35
+const BID_SPREAD = 0.28
 
 export const DashboardPage = {
   // Headline: page lifecycle
@@ -106,7 +114,10 @@ export const DashboardPage = {
         if (!isValidDashboardHistoryPayload(historyPayload)) {
           throw new Error("Invalid API response structure")
         }
-        const apiHistory = normalizeDashboardHistory(historyPayload, 500)
+        const apiHistory = normalizeDashboardHistory(
+          historyPayload,
+          HISTORY_LENGTH,
+        )
         const apiQuote = quoteFromHistory(apiHistory)
 
         return createInstrumentPayload({
@@ -169,7 +180,7 @@ export const DashboardPage = {
           <span>ISIN: ${entity.selectedIsin || "-"}</span>
           <span
             >DS1_Mid_t1:
-            ${Number.isFinite(latest.mid) ? latest.mid.toFixed(2) : "-"}</span
+            ${Number.isFinite(latest.mid) ? latest.mid.toFixed(CENTS) : "-"}</span
           >
           <span>Source: ${entity.dataSource || "mock"}</span>
           ${entity.loading ? html`<span>Loading...</span>` : null}
@@ -254,9 +265,9 @@ export const DashboardPage = {
                 <tbody>
                   <tr>
                     <td>${instrument.isin}</td>
-                    <td>${Number(latest.ask).toFixed(2)}</td>
-                    <td>${Number(latest.bid).toFixed(2)}</td>
-                    <td>${Number(latest.mid).toFixed(2)}</td>
+                    <td>${Number(latest.ask).toFixed(CENTS)}</td>
+                    <td>${Number(latest.bid).toFixed(CENTS)}</td>
+                    <td>${Number(latest.mid).toFixed(CENTS)}</td>
                   </tr>
                 </tbody>
               </table>
@@ -319,7 +330,7 @@ function dashboardBootstrap(entityId, api) {
 
   if (!markets.length) return
 
-  const firstMarket = markets[0].market
+  const [{ market: firstMarket }] = markets
   api.notify("#marketsTable:tableSelect", firstMarket)
   api.notify(`#${entityId}:marketSelect`, { rowId: firstMarket })
 }
@@ -346,7 +357,7 @@ function dashboardMarketApply(entity, market, api) {
 
   if (!currencies.length) return
 
-  const firstCurrency = currencies[0].currency
+  const [{ currency: firstCurrency }] = currencies
   api.notify("#currenciesTable:tableSelect", firstCurrency)
   api.notify(`#${entity.id}:currencySelect`, { rowId: firstCurrency })
 }
@@ -363,7 +374,7 @@ function dashboardCurrencyApply(entity, currency, api) {
 
   if (!isins.length) return
 
-  const firstIsin = isins[0].isin
+  const [{ isin: firstIsin }] = isins
   api.notify("#isinsTable:tableSelect", firstIsin)
   api.notify(`#${entity.id}:isinSelect`, { rowId: firstIsin })
 }
@@ -407,7 +418,7 @@ function buildBrushSeries(history) {
 
   return rows.map((row) => ({
     name: row.name || row.t || row.date,
-    value: Number(row.mid ?? row.close ?? 0),
+    value: Number(row.mid ?? row.close ?? NO_PRICE),
   }))
 }
 
@@ -419,11 +430,11 @@ function buildHistoryTableRows(isin, history) {
       rowId: `${isin}-${index}`,
       isin,
       t: formatDateLabel(row.name || row.t || row.date),
-      mid: Number(row.mid ?? row.close ?? 0),
+      mid: Number(row.mid ?? row.close ?? NO_PRICE),
     }))
 }
 
-function normalizeDashboardHistory(payload, limit = 500) {
+function normalizeDashboardHistory(payload, limit = HISTORY_LENGTH) {
   const rows = Array.isArray(payload)
     ? payload
     : Array.isArray(payload?.historical)
@@ -431,30 +442,32 @@ function normalizeDashboardHistory(payload, limit = 500) {
       : []
 
   return rows
-    .slice(0, limit)
+    .slice(FIRST, limit)
     .reverse()
     .map((row) => ({
       name: row.date,
-      mid: Number(row.close ?? row.price ?? 0),
+      mid: Number(row.close ?? row.price ?? NO_PRICE),
     }))
     .filter((row) => row.name && Number.isFinite(row.mid))
 }
 
 function quoteFromHistory(history) {
-  const latest = history[history.length - 1]
-  const mid = Number(latest?.mid ?? 0)
+  const latest = history.at(LAST)
+  const mid = Number(latest?.mid ?? NO_PRICE)
   if (!Number.isFinite(mid)) return EMPTY_QUOTE
 
   return {
-    ask: Number((mid + 0.35).toFixed(2)),
-    bid: Number((mid - 0.28).toFixed(2)),
-    mid: Number(mid.toFixed(2)),
+    ask: Number((mid + ASK_SPREAD).toFixed(CENTS)),
+    bid: Number((mid - BID_SPREAD).toFixed(CENTS)),
+    mid: Number(mid.toFixed(CENTS)),
   }
 }
 
 function isValidDashboardHistoryPayload(payload) {
-  if (Array.isArray(payload)) return payload.length > 0
-  return Array.isArray(payload?.historical) && payload.historical.length > 0
+  if (Array.isArray(payload)) return Boolean(payload.length)
+  return (
+    Array.isArray(payload?.historical) && Boolean(payload.historical.length)
+  )
 }
 
 // --- View helper ------------------------------------------------------------

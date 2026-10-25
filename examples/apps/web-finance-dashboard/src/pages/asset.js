@@ -10,8 +10,8 @@ import {
 import { handleAsync } from "@inglorious/store/async"
 import { html } from "@inglorious/web"
 
-import { renderInlineLoader } from "../components/loading.js"
 import { renderKpiCard } from "../components/kpi-card.js"
+import { renderInlineLoader } from "../components/loading.js"
 import { renderSectionCard } from "../components/section-card.js"
 import {
   DEFAULT_ASSET_SYMBOL,
@@ -19,6 +19,11 @@ import {
   getFallbackSymbols,
 } from "../services/asset-service.js"
 import { formatMoney, toNumber } from "../services/fmp.js"
+
+const CENTS = 2
+const LAST = -1
+// A trend needs a start and an end to compare.
+const MIN_TREND_POINTS = 2
 
 export const AssetPage = {
   // Headline: route lifecycle
@@ -97,7 +102,7 @@ export const AssetPage = {
           ${renderKpiCard(
             "Day %",
             Number.isFinite(toNumber(quote.changesPercentage))
-              ? `${toNumber(quote.changesPercentage).toFixed(2)}%`
+              ? `${toNumber(quote.changesPercentage).toFixed(CENTS)}%`
               : "N/A",
           )}
           ${renderKpiCard("Market Cap", formatMoney(Number(quote.marketCap)))}
@@ -149,7 +154,7 @@ export const AssetPage = {
               P/E:
               ${
                 Number.isFinite(Number(fundamentals.pe))
-                  ? Number(fundamentals.pe).toFixed(2)
+                  ? Number(fundamentals.pe).toFixed(CENTS)
                   : "N/A"
               }
             </p>
@@ -157,7 +162,7 @@ export const AssetPage = {
               EPS:
               ${
                 Number.isFinite(Number(fundamentals.eps))
-                  ? Number(fundamentals.eps).toFixed(2)
+                  ? Number(fundamentals.eps).toFixed(CENTS)
                   : "N/A"
               }
             </p>
@@ -197,9 +202,11 @@ function renderMockSelector(symbols) {
 }
 
 function getTrendColor(priceSeries) {
-  if (!Array.isArray(priceSeries) || priceSeries.length < 2) return "#10b981"
-  const first = Number(priceSeries[0]?.value)
-  const last = Number(priceSeries[priceSeries.length - 1]?.value)
+  if (!Array.isArray(priceSeries) || priceSeries.length < MIN_TREND_POINTS)
+    return "#10b981"
+  const [start] = priceSeries
+  const first = Number(start?.value)
+  const last = Number(priceSeries.at(LAST)?.value)
   if (!Number.isFinite(first) || !Number.isFinite(last)) return "#10b981"
   return last >= first ? "#10b981" : "#f43f5e"
 }

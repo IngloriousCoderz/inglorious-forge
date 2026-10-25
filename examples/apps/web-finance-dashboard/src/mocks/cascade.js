@@ -1,4 +1,23 @@
-const DAY_MS = 24 * 60 * 60 * 1000
+const DAY_MS = 86_400_000 // 24 hours
+const DEFAULT_UNIVERSE_SIZE = 5
+const MIN_UNIVERSE_SIZE = 1
+const FIRST = 0
+const LAST = -1
+const LAST_DAY_OFFSET = 1
+const TODAY = 0
+const DEFAULT_HISTORY_DAYS = 500
+// Scales a sine up until its fractional part stops looking like a sine.
+const SEED_SCALE = 10_000
+const NO_SEED = 0
+const OPENING_PRICE_MIN = 65
+const OPENING_PRICE_MAX = 95
+const MAX_DAILY_MOVE = 2.2
+const PRICE_FLOOR = 25
+const FALLBACK_MID = 80
+const ASK_SPREAD = 0.35
+const BID_SPREAD = 0.28
+const CENTS = 2
+const ISO_DATE_LENGTH = 10 // YYYY-MM-DD
 
 export const markets = [
   { market: "AF", description: "Africa" },
@@ -123,13 +142,16 @@ export function getInstrumentDataBySymbol(symbol) {
   return getInstrumentData(instrument.isin)
 }
 
-export function getMockAssetUniverse(limit = 5) {
-  const normalizedLimit = Math.max(1, Number(limit) || 5)
+export function getMockAssetUniverse(limit = DEFAULT_UNIVERSE_SIZE) {
+  const normalizedLimit = Math.max(
+    MIN_UNIVERSE_SIZE,
+    Number(limit) || DEFAULT_UNIVERSE_SIZE,
+  )
   const preferred = DEFAULT_MOCK_SYMBOLS.map((symbol) =>
     instruments.find((item) => item.symbol === symbol),
   ).filter(Boolean)
 
-  const selected = preferred.slice(0, normalizedLimit)
+  const selected = preferred.slice(FIRST, normalizedLimit)
   return selected.map((instrument) => {
     const data = getInstrumentData(instrument.isin)
     return {
@@ -143,25 +165,27 @@ export function getMockAssetUniverse(limit = 5) {
 }
 
 function seededValue(seed, min, max) {
-  const x = Math.sin(seed) * 10000
+  const x = Math.sin(seed) * SEED_SCALE
   const ratio = x - Math.floor(x)
   return min + ratio * (max - min)
 }
 
-function buildHistory(isin, days = 500) {
+function buildHistory(isin, days = DEFAULT_HISTORY_DAYS) {
   const seedBase = isin
     .split("")
-    .reduce((acc, char) => acc + char.charCodeAt(0), 0)
+    .reduce((acc, char) => acc + char.charCodeAt(FIRST), NO_SEED)
 
   const now = new Date()
   const series = []
-  let current = seededValue(seedBase, 65, 95)
+  let current = seededValue(seedBase, OPENING_PRICE_MIN, OPENING_PRICE_MAX)
 
-  for (let i = days - 1; i >= 0; i -= 1) {
-    const date = new Date(now.getTime() - i * DAY_MS).toISOString().slice(0, 10)
-    const delta = seededValue(seedBase + i, -2.2, 2.2)
-    current = Math.max(25, current + delta)
-    series.push({ t: date, mid: Number(current.toFixed(2)) })
+  for (let i = days - LAST_DAY_OFFSET; i >= TODAY; i--) {
+    const date = new Date(now.getTime() - i * DAY_MS)
+      .toISOString()
+      .slice(FIRST, ISO_DATE_LENGTH)
+    const delta = seededValue(seedBase + i, -MAX_DAILY_MOVE, MAX_DAILY_MOVE)
+    current = Math.max(PRICE_FLOOR, current + delta)
+    series.push({ t: date, mid: Number(current.toFixed(CENTS)) })
   }
 
   return series
@@ -171,16 +195,16 @@ function buildInstrumentData() {
   return Object.fromEntries(
     instruments.map((item) => {
       const history = buildHistory(item.isin)
-      const latest = history[history.length - 1]
-      const mid = latest?.mid ?? 80
+      const latest = history.at(LAST)
+      const mid = latest?.mid ?? FALLBACK_MID
       return [
         item.isin,
         {
           instrument: item,
           history,
           quote: {
-            ask: Number((mid + 0.35).toFixed(2)),
-            bid: Number((mid - 0.28).toFixed(2)),
+            ask: Number((mid + ASK_SPREAD).toFixed(CENTS)),
+            bid: Number((mid - BID_SPREAD).toFixed(CENTS)),
             mid,
           },
         },

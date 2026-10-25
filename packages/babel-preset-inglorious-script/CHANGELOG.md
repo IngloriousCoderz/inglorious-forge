@@ -1,5 +1,12 @@
 # @inglorious/babel-preset-inglorious-script
 
+## 1.0.8
+
+### Patch Changes
+
+- The packages lint clean, with no warnings. `@inglorious/jsx` and `@inglorious/babel-preset-inglorious-script` are linted for the first time. Behaviour is unchanged.
+- @inglorious/babel-plugin-inglorious-script@1.4.2
+
 ## 1.0.7
 
 ### Patch Changes

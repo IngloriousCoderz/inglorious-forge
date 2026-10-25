@@ -1,6 +1,7 @@
-import { createStore } from "@inglorious/store"
 import { Chart } from "@inglorious/charts"
 import { withRealtime } from "@inglorious/charts/realtime"
+import { createStore } from "@inglorious/store"
+
 import { entities } from "./entities.js"
 
 export const store = createStore({

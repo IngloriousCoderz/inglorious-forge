@@ -1,4 +1,3 @@
-import { html } from "@inglorious/web"
 import {
   Bar,
   CartesianGrid,
@@ -7,6 +6,7 @@ import {
   XAxis,
   YAxis,
 } from "@inglorious/charts"
+import { html } from "@inglorious/web"
 
 export function renderBarSection(api) {
   return html`

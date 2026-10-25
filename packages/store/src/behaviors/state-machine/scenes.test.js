@@ -97,7 +97,7 @@ test("it should not re-add what is already standing", () => {
   // not made again, though it may be told a different configuration afterwards.
   let made = 0
   const Actor = {
-    create(entity) {
+    create() {
       made++
     },
   }

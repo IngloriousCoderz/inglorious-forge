@@ -1,6 +1,8 @@
 import { entityAnchor } from "@inglorious/engine/physics/anchor.js"
 
 const DEFAULT_POSITION = 0
+const ORIGIN = 0
+const NO_PIXELS = 0
 const WHOLE = 1
 const OPAQUE = 1
 const NATIVE_SCALE = 1
@@ -152,7 +154,7 @@ function tinted(img, params, tint) {
 
   const copyCtx = copy.getContext("2d")
 
-  copyCtx.drawImage(img, sx, sy, width, height, 0, 0, width, height)
+  copyCtx.drawImage(img, sx, sy, width, height, ORIGIN, ORIGIN, width, height)
 
   // Mixed, not painted over. Filling the colour in with `source-in` would keep only the
   // sprite's outline and throw its pixels away, which is a recolour rather than a tint:
@@ -164,10 +166,10 @@ function tinted(img, params, tint) {
   // is drawn once more over the top to put its own outline back.
   copyCtx.globalCompositeOperation = "multiply"
   copyCtx.fillStyle = tint
-  copyCtx.fillRect(0, 0, width, height)
+  copyCtx.fillRect(ORIGIN, ORIGIN, width, height)
 
   copyCtx.globalCompositeOperation = "destination-in"
-  copyCtx.drawImage(img, sx, sy, width, height, 0, 0, width, height)
+  copyCtx.drawImage(img, sx, sy, width, height, ORIGIN, ORIGIN, width, height)
 
   frames.set(key, copy)
 
@@ -184,5 +186,7 @@ function tintedFramesFor(img) {
 function isReady(img) {
   // A canvas-backed or already-resolved image has no `complete` to read, and an image
   // that has loaded always reports at least one pixel of width.
-  return img.complete === undefined || (img.complete && img.naturalWidth > 0)
+  return (
+    img.complete === undefined || (img.complete && img.naturalWidth > NO_PIXELS)
+  )
 }

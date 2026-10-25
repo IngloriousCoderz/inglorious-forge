@@ -6,14 +6,16 @@ const INTERVAL_MS = 1000
 const PREFILLED_POINTS = 30
 const MIN = 0
 const MAX = 200
+const START = 100 // halfway between MIN and MAX
+const MIN_STEP = -25
 const MAX_STEP = 25
 
 export function startDemoStream(store) {
-  const values = new Map(STREAM_IDS.map((id) => [id, (MIN + MAX) / 2]))
+  const values = new Map(STREAM_IDS.map((id) => [id, START]))
 
   const push = () => {
     for (const id of STREAM_IDS) {
-      const step = Math.round((Math.random() - 0.5) * 2 * MAX_STEP)
+      const step = Math.round(Math.random() * (MAX_STEP - MIN_STEP) + MIN_STEP)
       const value = Math.min(MAX, Math.max(MIN, values.get(id) + step))
       values.set(id, value)
       store.notify(`#${id}:streamPush`, value)

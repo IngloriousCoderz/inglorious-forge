@@ -29,7 +29,8 @@ export default defineConfig([
   },
 
   {
-    files: ["**/*.{test,spec}.{js,mjs,cjs,jsx,ts,mts,cts,tsx}"],
+    // Test helpers, such as a fake canvas, are test code too: there a number is the example.
+    files: ["**/*.{test,spec}.{js,mjs,cjs,jsx,ts,mts,cts,tsx}", "**/test/**"],
     rules: {
       "no-magic-numbers": "off",
     },

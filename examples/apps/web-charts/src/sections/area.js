@@ -1,4 +1,3 @@
-import { html } from "@inglorious/web"
 import {
   Area,
   Bar,
@@ -11,6 +10,7 @@ import {
   XAxis,
   YAxis,
 } from "@inglorious/charts"
+import { html } from "@inglorious/web"
 
 const composedData = [
   { name: "Jan", revenue: 120, target: 80, forecast: 110 },

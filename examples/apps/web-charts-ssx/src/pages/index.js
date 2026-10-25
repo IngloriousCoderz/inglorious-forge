@@ -1,3 +1,7 @@
+// Chart theme (plain CSS) — applies on the server-rendered page and after hydration.
+import "@inglorious/charts/base.css"
+import "@inglorious/charts/theme.css"
+
 import {
   Bar,
   CartesianGrid,
@@ -7,10 +11,6 @@ import {
   YAxis,
 } from "@inglorious/charts"
 import { html } from "@inglorious/web"
-
-// Chart theme (plain CSS) — applies on the server-rendered page and after hydration.
-import "@inglorious/charts/base.css"
-import "@inglorious/charts/theme.css"
 
 export const Index = {
   render(_, api) {

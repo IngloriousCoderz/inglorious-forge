@@ -1,4 +1,3 @@
-import { html } from "@inglorious/web"
 import {
   Brush,
   CartesianGrid,
@@ -10,6 +9,7 @@ import {
   XAxis,
   YAxis,
 } from "@inglorious/charts"
+import { html } from "@inglorious/web"
 
 const inlineLineData = [
   { name: "0", value: 40 },

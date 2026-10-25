@@ -108,10 +108,10 @@ test("it should not displace the behaviour it is composed with", () => {
       Game: [
         mappings({ menu: { Enter: "choose" } }),
         {
-          create(entity, payload, api) {
+          create(entity) {
             built.push(entity.state)
           },
-          stateChange(entity, { to }, api) {
+          stateChange(entity, { to }) {
             built.push(to)
           },
         },

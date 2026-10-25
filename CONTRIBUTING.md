@@ -21,7 +21,7 @@ We love pull requests! If you're ready to contribute code, here's how to do it:
 1.  Fork the repository and create your branch from `main`.
 2.  Make your changes and add tests for any new functionality.
 3.  Ensure the test suite passes (`pnpm test`).
-4.  Make sure your code lints. The project uses ESLint for linting and Prettier for formatting.
+4.  Run `pnpm format` and `pnpm lint` before every commit, and fix what they report in the files you touched -- warnings included, not only errors. The project uses Prettier for formatting and ESLint for linting. The pre-commit hook formats and lints the files you stage, fixing what it can and refusing the commit while any warning is left, so never commit with `--no-verify`. A new workspace needs an `eslint.config.js` and a `"lint": "eslint ."` script, or `pnpm lint` skips it.
 5.  Issue that pull request!
 
 ## Development Setup
@@ -47,9 +47,30 @@ We love pull requests! If you're ready to contribute code, here's how to do it:
 
 ## Code Style
 
-### Vectors and magic numbers
+### Name your numbers
 
-A note on code style, particularly regarding "magic numbers" for vector components. Instead of creating a constant for each vector index:
+A bare number in the middle of the code says how much but not why. Give it a name, as a constant on top of the file, right below the imports:
+
+```js
+const ONE_SECOND = 1
+const NO_TIME_PASSED = 0
+
+export function dueAt(interval) {
+  return function isDue(clock, dt) {
+    const since = clock + dt
+    if (since < interval) return { since }
+    return { elapsed: since, since: NO_TIME_PASSED }
+  }
+}
+```
+
+ESLint's `no-magic-numbers` rule warns about the ones you miss. Tests and Storybook stories are exempt: there a number is the example, and naming it would only hide it.
+
+Name a number after what it means, not after its value. `ONE_SECOND` is better than `ONE`, and two constants that both happen to be `0` -- `NO_TIME_PASSED` and `FIRST_ROW` -- stay two constants, because they would change for different reasons.
+
+#### Vectors
+
+Vector components are the exception. Instead of creating a constant for each vector index:
 
 ```js
 const X = 0
@@ -71,9 +92,18 @@ There are a few exceptions: in the `/docs` folder we prefer the first version be
 
 ### The Newspaper Metaphor
 
-A file should read like a newspaper: the headline first, the details later. We put the main function or object at the top of the file, and any support function right after it. Opening a file should tell you what it is for without scrolling to the bottom.
+A file should read like a newspaper: the headline first, the details later. Opening `form.js` should show `Form` first, not `validate()` or `parseRegex()` or whatever private function happens to support it. From the top down, a module is laid out as:
+
+1. its imports;
+2. its constants;
+3. what it exports -- the headline;
+4. the support functions the exports use -- the details.
 
 ```js
+import { html } from "lit-html"
+
+const STEP = 0.01
+
 // The headline: what this file is about.
 export const BeforeAfter = {
   render(props) {
@@ -87,6 +117,10 @@ function positionFromEvent(event) {
   // ...
 }
 ```
+
+The order among the exports themselves is free: when none of them supports another, alphabetical is a good default.
+
+This works because function declarations hoist: an export can call a support function defined further down, even while the module is still loading -- `export const setFPS = withPayload("setFPS")` is fine with `withPayload` at the bottom. Arrow functions assigned to a `const` do not hoist, so write support functions as `function` declarations. A `const` that has to exist before the exports run, such as a default value, stays with the constants on top.
 
 ### Define functions once
 
@@ -122,9 +156,9 @@ positionFromEvent(event, event.currentTarget)
 positionFromEvent(event)
 ```
 
-### Keep lists alphabetical
+### Keep imports sorted
 
-Aggregate lists, like the `@import`s in `controls.css`, are easier to scan and to extend when they are sorted alphabetically. This goes for the declarations in a file too, exported or not: a support function sits where its name sorts, not banished to the bottom, because function declarations hoist and so its position is free.
+Imports and re-exports are sorted, and [eslint-plugin-simple-import-sort](https://github.com/lydell/eslint-plugin-simple-import-sort) enforces it: run `npx eslint --fix` on the files you touched rather than ordering them by hand.
 
 ### Name files and folders in kebab-case
 

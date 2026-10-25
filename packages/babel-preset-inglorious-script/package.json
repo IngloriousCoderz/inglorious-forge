@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/babel-preset-inglorious-script",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Babel preset for the IngloriousScript language.",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -31,5 +31,12 @@
   "sideEffects": false,
   "dependencies": {
     "@inglorious/babel-plugin-inglorious-script": "workspace:*"
+  },
+  "scripts": {
+    "lint": "eslint ."
+  },
+  "devDependencies": {
+    "@inglorious/eslint-config": "workspace:*",
+    "eslint": "^10.10.0"
   }
 }

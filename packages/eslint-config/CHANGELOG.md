@@ -1,5 +1,11 @@
 # @inglorious/eslint-config
 
+## 1.1.5
+
+### Patch Changes
+
+- `no-magic-numbers` is off in `test/` folders as well as in `*.test.*` and `*.spec.*` files. A test helper, such as a fake canvas context, is test code: there a number is the example, and naming it would only hide it.
+
 ## 1.1.4
 
 ### Patch Changes
