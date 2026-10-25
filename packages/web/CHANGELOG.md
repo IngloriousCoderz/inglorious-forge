@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 6.8.0
+
+### Minor Changes
+
+- Export `nothing` from `@inglorious/web`. Bind it to leave an attribute off: `id=${id || nothing}` renders no `id` at all, rather than an invalid `id=""`.
+
 ## 6.7.2
 
 ### Patch Changes

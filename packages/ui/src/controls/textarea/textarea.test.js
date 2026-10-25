@@ -64,3 +64,28 @@ describe("textarea", () => {
     })
   })
 })
+
+describe("textarea accessibility", () => {
+  it("names itself after its label when there is no id to tie them", () => {
+    const container = document.createElement("div")
+
+    render(Textarea.render({ label: "Notes" }), container)
+
+    const textarea = container.querySelector("textarea")
+    expect(textarea.hasAttribute("id")).toBe(false)
+    expect(textarea.getAttribute("aria-label")).toBe("Notes")
+  })
+
+  it("points at its message when it has an id", () => {
+    const container = document.createElement("div")
+
+    render(Textarea.render({ id: "notes", hint: "Optional" }), container)
+
+    expect(
+      container.querySelector("textarea").getAttribute("aria-describedby"),
+    ).toBe("notes-message")
+    expect(container.querySelector("#notes-message").textContent).toBe(
+      "Optional",
+    )
+  })
+})

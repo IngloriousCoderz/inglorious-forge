@@ -19,7 +19,7 @@ vi.mock("node:fs", async (importOriginal) => {
   }
 })
 
-const ROOT_DIR = path.join(import.meta.dirname, "..", "__fixtures__")
+const ROOT_DIR = path.join(import.meta.dirname, "..", "fixtures")
 const PAGES_DIR = path.join(ROOT_DIR, "src", "pages")
 
 describe("generateStore", () => {

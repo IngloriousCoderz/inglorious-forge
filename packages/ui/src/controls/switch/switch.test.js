@@ -66,3 +66,31 @@ describe("switch", () => {
     expect(container.querySelector(".iw-switch-label")).toBeNull()
   })
 })
+
+describe("switch without an id", () => {
+  it("toggles from its label", () => {
+    let newValue = null
+    const container = document.createElement("div")
+
+    render(
+      Switch.render({
+        label: "Online",
+        onChange: (value) => (newValue = value),
+      }),
+      container,
+    )
+
+    const label = container.querySelector(".iw-switch")
+    expect(label.hasAttribute("for")).toBe(false)
+    expect(container.querySelector(".iw-switch-input").hasAttribute("id")).toBe(
+      false,
+    )
+
+    // A label only clicks through to its control once it is in the document.
+    document.body.append(container)
+    container.querySelector(".iw-switch-label").click()
+    container.remove()
+
+    expect(newValue).toBe(true)
+  })
+})

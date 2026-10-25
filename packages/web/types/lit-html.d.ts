@@ -1,1 +1,1 @@
-export { html, svg, TemplateResult } from "lit-html"
+export { html, nothing, svg, TemplateResult } from "lit-html"

@@ -144,9 +144,9 @@ export default {
     audio: {
       type: "Audio",
       sounds: {
-        paddleHit: { url: "/sounds/paddle_hit.ogg" },
+        paddleHit: { url: "/sounds/paddle-hit.ogg" },
         score: { url: "/sounds/score.ogg" },
-        wallHit: { url: "/sounds/wall_hit.ogg" },
+        wallHit: { url: "/sounds/wall-hit.ogg" },
       },
     },
   },

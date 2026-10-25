@@ -62,7 +62,7 @@ export default {
       type: "Images",
       images: {
         dungeon: { url: "/tilemaps/dungeon.png" },
-        dungeonCharacter: { url: "/sprites/dungeon_character.png" },
+        dungeonCharacter: { url: "/sprites/dungeon-character.png" },
       },
     },
 

@@ -90,3 +90,15 @@ describe("slider", () => {
     expect(input.name).toBe("volume")
   })
 })
+
+describe("slider accessibility", () => {
+  it("names itself after its label when there is no id to tie them", () => {
+    const container = document.createElement("div")
+
+    render(Slider.render({ label: "Volume" }), container)
+
+    const input = container.querySelector("input")
+    expect(input.hasAttribute("id")).toBe(false)
+    expect(input.getAttribute("aria-label")).toBe("Volume")
+  })
+})

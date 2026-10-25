@@ -3,11 +3,12 @@
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
-import { html } from "@inglorious/web"
+import { html, nothing } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
 import { ref } from "@inglorious/web/directives/ref"
 
-import { applyElementProps } from "../../shared/applyElementProps.js"
+import { applyElementProps } from "../../shared/apply-element-props.js"
+import { fallbackLabel } from "../../shared/fallback-label.js"
 
 /**
  * Renders a labeled file upload area with optional summary, hint, and error text.
@@ -36,7 +37,8 @@ export function render(props) {
     ...rest
   } = props
 
-  const uploadId = id || name || "file-upload"
+  const uploadId = id || name
+  const messageId = (error || hint) && id ? `${id}-message` : ""
 
   const wrapperClasses = {
     "iw-upload": true,
@@ -58,7 +60,7 @@ export function render(props) {
       ${
         label
           ? html`
-              <label for=${uploadId} class="iw-upload-label">
+              <label for=${uploadId || nothing} class="iw-upload-label">
                 ${label}
                 ${
                   isRequired
@@ -72,8 +74,11 @@ export function render(props) {
 
       <div class=${classMap(fieldClasses)}>
         <input
-          id=${uploadId}
+          id=${uploadId || nothing}
           name=${name}
+          aria-label=${fallbackLabel(uploadId, label)}
+          aria-describedby=${messageId || nothing}
+          aria-invalid=${error ? "true" : "false"}
           type="file"
           accept=${accept ?? ""}
           ?multiple=${isMultiple}
@@ -96,9 +101,15 @@ export function render(props) {
 
       ${
         error
-          ? html`<span class="iw-upload-error-message">${error}</span>`
+          ? html`<span
+              id=${messageId || nothing}
+              class="iw-upload-error-message"
+              >${error}</span
+            >`
           : hint
-            ? html`<span class="iw-upload-hint">${hint}</span>`
+            ? html`<span id=${messageId || nothing} class="iw-upload-hint"
+                >${hint}</span
+              >`
             : null
       }
     </div>

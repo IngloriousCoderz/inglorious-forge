@@ -1,5 +1,13 @@
 # @inglorious/logo
 
+## 3.0.21
+
+### Patch Changes
+
+- Rename the face images to kebab-case (`a.svg` to `z.svg`). Faces are still chosen by letter, so nothing changes for users.
+- Updated dependencies
+  - @inglorious/web@6.8.0
+
 ## 3.0.20
 
 ### Patch Changes

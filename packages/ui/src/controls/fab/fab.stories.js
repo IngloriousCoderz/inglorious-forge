@@ -1,7 +1,7 @@
 import { html } from "@inglorious/web"
 
 import { Icon } from "../../data-display/icon"
-import { createRender } from "../../stories/notifyStory.js"
+import { createRender } from "../../stories/notify-story.js"
 import { Fab } from "."
 
 export default {

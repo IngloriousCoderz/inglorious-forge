@@ -684,9 +684,10 @@ describe("combobox label, hint and error", () => {
     render(Combobox.render({ id: "c", options: [] }), container)
 
     const control = container.querySelector(".iw-combobox-frame")
-    // A reference to an id that is not in the DOM is worse than none.
-    expect(control.getAttribute("aria-labelledby")).toBe("")
-    expect(control.getAttribute("aria-describedby")).toBe("")
+    // A reference to an id that is not in the DOM is worse than none, and an
+    // empty reference is still a reference: the attribute is left off.
+    expect(control.hasAttribute("aria-labelledby")).toBe(false)
+    expect(control.hasAttribute("aria-describedby")).toBe(false)
   })
 
   it("reports required and valid explicitly rather than omitting them", () => {

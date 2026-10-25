@@ -6,7 +6,7 @@ import { describe, expect, it } from "vitest"
 
 import { renderPage } from "."
 
-const ROOT_DIR = path.join(import.meta.dirname, "..", "__fixtures__")
+const ROOT_DIR = path.join(import.meta.dirname, "..", "fixtures")
 const PAGES_DIR = path.join(ROOT_DIR, "src", "pages")
 
 const DEFAULT_OPTIONS = { stripLitMarkers: true }

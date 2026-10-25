@@ -3,14 +3,13 @@
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
-import { html } from "@inglorious/web"
+import { html, nothing } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
-import { ref } from "@inglorious/web/directives/ref"
 import { repeat } from "@inglorious/web/directives/repeat"
 import { when } from "@inglorious/web/directives/when"
 
 import { Icon } from "../../data-display/icon/index.js"
-import { applyElementProps } from "../../shared/applyElementProps.js"
+import { fallbackLabel } from "../../shared/fallback-label.js"
 import { formatOption, getOptionValue, isOptionSelected } from "./helpers.js"
 
 /**
@@ -73,7 +72,6 @@ export const Select = {
       isFullWidth = false,
     } = props
 
-    const labelId = label && id ? `${id}-label` : ""
     const messageId = (error || hint) && id ? `${id}-message` : ""
 
     const selectClasses = {
@@ -86,7 +84,7 @@ export const Select = {
         ${when(
           label,
           () => html`
-            <label for=${id || name || ""} class="iw-select-label">
+            <label for=${id || name || nothing} class="iw-select-label">
               ${label}
               ${
                 isRequired
@@ -96,18 +94,20 @@ export const Select = {
             </label>
           `,
         )}
-        ${this.renderControl?.({ ...props, labelId, messageId })}
+        ${this.renderControl?.({ ...props, messageId })}
         ${when(
           error,
           () =>
-            html`<span id=${messageId || ""} class="iw-select-error-message"
+            html`<span
+              id=${messageId || nothing}
+              class="iw-select-error-message"
               >${error}</span
             >`,
         )}
         ${when(
           !error && hint,
           () =>
-            html`<span id=${messageId || ""} class="iw-select-hint"
+            html`<span id=${messageId || nothing} class="iw-select-hint"
               >${hint}</span
             >`,
         )}
@@ -119,6 +119,8 @@ export const Select = {
     const {
       id,
       name,
+      label,
+      messageId,
       options,
       value,
       error,
@@ -152,8 +154,11 @@ export const Select = {
       ${icon ? Icon.render({ children: icon, size }) : null}
 
       <select
-        id=${controlId}
+        id=${controlId || nothing}
         name=${name}
+        aria-label=${ariaLabel || fallbackLabel(controlId, label)}
+        aria-describedby=${messageId || nothing}
+        aria-invalid=${error ? "true" : "false"}
         ?multiple=${isMulti}
         ?disabled=${isDisabled}
         ?required=${isRequired}
@@ -161,9 +166,6 @@ export const Select = {
         @change=${(event) => onChange?.(event.target.value)}
         @blur=${onBlur}
         @focus=${onFocus}
-        ${ref((element) =>
-          applyElementProps(element, { "aria-label": ariaLabel || null }),
-        )}
       >
         ${repeat(
           options,

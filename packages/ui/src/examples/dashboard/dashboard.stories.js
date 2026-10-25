@@ -5,7 +5,7 @@ import { Chart } from "@inglorious/charts"
 import {
   createEntityRender,
   notifyActionArgType,
-} from "../../stories/notifyStory.js"
+} from "../../stories/notify-story.js"
 import { AppDrawer } from "./app-drawer.js"
 import { AppHeader } from "./app-header.js"
 import { Dashboard } from "./dashboard.js"

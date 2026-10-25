@@ -6,7 +6,7 @@ import { Button } from "../../controls/button"
 import {
   createEntityRender,
   notifyActionArgType,
-} from "../../stories/notifyStory.js"
+} from "../../stories/notify-story.js"
 import { Icon } from "."
 
 const UnicodeList = {

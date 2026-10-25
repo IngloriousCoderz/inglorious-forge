@@ -1,6 +1,6 @@
 import { render } from "@inglorious/web/test"
 
-import { createRender } from "../../stories/notifyStory.js"
+import { createRender } from "../../stories/notify-story.js"
 import { Divider } from "."
 
 export default {

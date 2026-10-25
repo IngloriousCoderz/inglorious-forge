@@ -3,11 +3,11 @@
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
-import { html } from "@inglorious/web"
+import { html, nothing } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
 import { ref } from "@inglorious/web/directives/ref"
 
-import { applyElementProps } from "../../shared/applyElementProps.js"
+import { applyElementProps } from "../../shared/apply-element-props.js"
 
 /**
  * Renders a group of radio options for single selection.
@@ -30,7 +30,9 @@ export function render(props) {
     ...rest
   } = props
 
-  const inputId = id || name
+  // Radios are a group by sharing a name: without one, checking an option does not
+  // uncheck the others and the arrow keys do not move between them.
+  const groupName = name || id
 
   const rootClasses = {
     "iw-radio-group": true,
@@ -50,7 +52,7 @@ export function render(props) {
           ? html`<legend class="iw-radio-group-label">${label}</legend>`
           : null
       }
-      ${options.map((option) => {
+      ${options.map((option, index) => {
         const {
           label: optionLabel,
           value: optionValue,
@@ -61,10 +63,10 @@ export function render(props) {
         return html`
           <label class="iw-radio-option">
             <input
-              id=${inputId}
+              id=${groupName ? `${groupName}-${index}` : nothing}
               class="iw-radio"
               type="radio"
-              name=${name}
+              name=${groupName || nothing}
               value=${optionValue}
               .checked=${value === optionValue}
               ?disabled=${isDisabled || optionDisabled}

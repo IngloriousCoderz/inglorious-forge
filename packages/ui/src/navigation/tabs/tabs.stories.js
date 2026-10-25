@@ -1,4 +1,4 @@
-import { createRender } from "../../stories/notifyStory.js"
+import { createRender } from "../../stories/notify-story.js"
 import { Tabs } from "."
 
 export default {

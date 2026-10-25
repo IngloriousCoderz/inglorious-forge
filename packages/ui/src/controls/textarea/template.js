@@ -3,11 +3,12 @@
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
-import { html } from "@inglorious/web"
+import { html, nothing } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
 import { ref } from "@inglorious/web/directives/ref"
 
-import { applyElementProps } from "../../shared/applyElementProps.js"
+import { applyElementProps } from "../../shared/apply-element-props.js"
+import { fallbackLabel } from "../../shared/fallback-label.js"
 
 /**
  * Renders a labeled textarea field with optional hint and error messaging.
@@ -39,6 +40,7 @@ export function render(props) {
   } = props
 
   const textareaId = id || name
+  const messageId = (error || hint) && id ? `${id}-message` : ""
 
   const wrapperClasses = {
     "iw-textarea-field": true,
@@ -60,7 +62,7 @@ export function render(props) {
       ${
         label
           ? html`
-              <label for=${textareaId} class="iw-textarea-label">
+              <label for=${textareaId || nothing} class="iw-textarea-label">
                 ${label}
                 ${
                   isRequired
@@ -73,8 +75,11 @@ export function render(props) {
       }
 
       <textarea
-        id=${textareaId}
+        id=${textareaId || nothing}
         name=${name}
+        aria-label=${fallbackLabel(textareaId, label)}
+        aria-describedby=${messageId || nothing}
+        aria-invalid=${error ? "true" : "false"}
         rows=${rows}
         .value=${value}
         placeholder=${placeholder}
@@ -90,9 +95,15 @@ export function render(props) {
 
       ${
         error
-          ? html`<span class="iw-textarea-error-message">${error}</span>`
+          ? html`<span
+              id=${messageId || nothing}
+              class="iw-textarea-error-message"
+              >${error}</span
+            >`
           : hint
-            ? html`<span class="iw-textarea-hint">${hint}</span>`
+            ? html`<span id=${messageId || nothing} class="iw-textarea-hint"
+                >${hint}</span
+              >`
             : null
       }
     </div>

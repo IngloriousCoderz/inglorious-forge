@@ -7,7 +7,7 @@ import { classMap } from "@inglorious/web/directives/class-map"
 import { ref } from "@inglorious/web/directives/ref"
 import { staticHtml, unsafeStatic } from "@inglorious/web/static"
 
-import { applyElementProps } from "../../shared/applyElementProps.js"
+import { applyElementProps } from "../../shared/apply-element-props.js"
 
 /**
  * Renders a flexible layout container with direction, alignment, spacing, and wrap control.

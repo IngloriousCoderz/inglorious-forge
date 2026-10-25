@@ -1,7 +1,7 @@
 import {
   createEntityRender,
   notifyActionArgType,
-} from "../../stories/notifyStory.js"
+} from "../../stories/notify-story.js"
 import { Combobox } from "./index.js"
 
 const options = [

@@ -65,3 +65,40 @@ describe("checkbox", () => {
     expect(input.id).toBe("cb")
   })
 })
+
+describe("checkbox without an id", () => {
+  it("toggles from its label", () => {
+    let newValue = null
+    const container = document.createElement("div")
+
+    render(
+      Checkbox.render({
+        label: "Agree",
+        onChange: (value) => (newValue = value),
+      }),
+      container,
+    )
+
+    expect(container.querySelector("label").hasAttribute("for")).toBe(false)
+    expect(container.querySelector("input").hasAttribute("id")).toBe(false)
+
+    // A label only clicks through to its control once it is in the document.
+    document.body.append(container)
+    container.querySelector(".iw-checkbox-label").click()
+    container.remove()
+
+    expect(newValue).toBe(true)
+  })
+})
+
+describe("checkbox classes", () => {
+  it("does not give the input the root class, so color variants reach it", () => {
+    const container = document.createElement("div")
+
+    render(Checkbox.render({ color: "success" }), container)
+
+    const input = container.querySelector("input")
+    expect(input.classList.contains("iw-checkbox-input")).toBe(true)
+    expect(input.classList.contains("iw-checkbox")).toBe(false)
+  })
+})

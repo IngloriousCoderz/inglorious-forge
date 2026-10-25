@@ -4,7 +4,7 @@ import arrowBack from "@iconify-icons/material-symbols/arrow-back"
 import settingsFilled from "@iconify-icons/material-symbols/settings"
 import settingsOutline from "@iconify-icons/material-symbols/settings-outline"
 
-import { createRender } from "../../stories/notifyStory.js"
+import { createRender } from "../../stories/notify-story.js"
 import { Icon } from "."
 
 export default {

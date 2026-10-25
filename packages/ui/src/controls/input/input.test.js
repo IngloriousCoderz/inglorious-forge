@@ -269,3 +269,48 @@ describe("input frame and control split", () => {
     expect(input.closest(".iw-input-frame")).toBeTruthy()
   })
 })
+
+describe("input accessibility", () => {
+  it("names itself after its label when there is no id to tie them", () => {
+    const container = document.createElement("div")
+
+    render(Input.render({ label: "Email" }), container)
+
+    const input = container.querySelector("input")
+    expect(input.hasAttribute("id")).toBe(false)
+    expect(container.querySelector("label").hasAttribute("for")).toBe(false)
+    expect(input.getAttribute("aria-label")).toBe("Email")
+  })
+
+  it("is tied to its label and message by id when it has one", () => {
+    const container = document.createElement("div")
+
+    render(
+      Input.render({ id: "email", label: "Email", hint: "Work address" }),
+      container,
+    )
+
+    const input = container.querySelector("input")
+    expect(container.querySelector("label").getAttribute("for")).toBe("email")
+    expect(input.hasAttribute("aria-label")).toBe(false)
+    expect(input.getAttribute("aria-describedby")).toBe("email-message")
+    expect(container.querySelector("#email-message").textContent).toBe(
+      "Work address",
+    )
+    expect(input.getAttribute("aria-invalid")).toBe("false")
+  })
+
+  it("does not leak field props onto the input element", () => {
+    const container = document.createElement("div")
+
+    render(
+      Input.render({ label: "Email", hint: "Work", isFullWidth: true }),
+      container,
+    )
+
+    const input = container.querySelector("input")
+    expect(input.hasAttribute("label")).toBe(false)
+    expect(input.hasAttribute("hint")).toBe(false)
+    expect(input.hasAttribute("isfullwidth")).toBe(false)
+  })
+})

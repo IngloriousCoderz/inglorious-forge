@@ -3,11 +3,12 @@
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
-import { html } from "@inglorious/web"
+import { html, nothing } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
 import { ref } from "@inglorious/web/directives/ref"
 
-import { applyElementProps } from "../../shared/applyElementProps.js"
+import { applyElementProps } from "../../shared/apply-element-props.js"
+import { fallbackLabel } from "../../shared/fallback-label.js"
 
 const DEFAULT_VALUE = 0
 const DEFAULT_MIN = 0
@@ -53,7 +54,7 @@ export function render(props) {
         html`<div class="iw-slider-header">
           ${
             label
-              ? html`<label for=${inputId}>${label}</label>`
+              ? html`<label for=${inputId || nothing}>${label}</label>`
               : html`<span></span>`
           }
           ${
@@ -64,8 +65,9 @@ export function render(props) {
         </div>`
       }
       <input
-        id=${inputId}
+        id=${inputId || nothing}
         class="iw-slider-input"
+        aria-label=${fallbackLabel(inputId, label)}
         type="range"
         name=${name}
         min=${min}

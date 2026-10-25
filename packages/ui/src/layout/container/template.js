@@ -8,7 +8,7 @@ import { classMap } from "@inglorious/web/directives/class-map"
 import { ref } from "@inglorious/web/directives/ref"
 import { styleMap } from "@inglorious/web/directives/style-map"
 
-import { applyElementProps } from "../../shared/applyElementProps.js"
+import { applyElementProps } from "../../shared/apply-element-props.js"
 
 const SIZE_TO_MAX_WIDTH = {
   xs: "32rem",

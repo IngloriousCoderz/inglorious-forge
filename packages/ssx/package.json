@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/ssx",
-  "version": "2.1.17",
+  "version": "2.1.18",
   "description": "Server-Side-X. Xecution? Xperience? Who knows.",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -40,7 +40,7 @@
     "bin",
     "src",
     "types",
-    "!src/**/__fixtures__",
+    "!src/**/fixtures",
     "!src/**/__snapshots__"
   ],
   "publishConfig": {
@@ -52,10 +52,10 @@
     "lint": "eslint .",
     "test:watch": "vitest",
     "test": "vitest run",
-    "dev": "node ./bin/ssx.js dev -r ./src/__fixtures__",
-    "build": "node ./bin/ssx.js build -r ./src/__fixtures__",
-    "preview": "node ./bin/ssx.js serve -r ./src/__fixtures__",
-    "ssr": "node ./bin/ssx.js ssr -r ./src/__fixtures__"
+    "dev": "node ./bin/ssx.js dev -r ./src/fixtures",
+    "build": "node ./bin/ssx.js build -r ./src/fixtures",
+    "preview": "node ./bin/ssx.js serve -r ./src/fixtures",
+    "ssr": "node ./bin/ssx.js ssr -r ./src/fixtures"
   },
   "dependencies": {
     "@inglorious/store": "workspace:*",

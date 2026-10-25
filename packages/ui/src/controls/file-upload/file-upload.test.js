@@ -62,3 +62,15 @@ describe("file upload", () => {
     })
   })
 })
+
+describe("file upload ids", () => {
+  it("does not invent an id that two uploads would share", () => {
+    const container = document.createElement("div")
+
+    render(FileUpload.render({ label: "Photo" }), container)
+
+    const input = container.querySelector("input")
+    expect(input.hasAttribute("id")).toBe(false)
+    expect(input.getAttribute("aria-label")).toBe("Photo")
+  })
+})

@@ -1,6 +1,6 @@
 import { html } from "@inglorious/web"
 
-import { createRender } from "../../stories/notifyStory.js"
+import { createRender } from "../../stories/notify-story.js"
 import { Drawer } from "."
 
 export default {

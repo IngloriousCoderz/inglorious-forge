@@ -3,7 +3,7 @@ import { html } from "@inglorious/web"
 import {
   createEntityRender,
   notifyActionArgType,
-} from "../../stories/notifyStory.js"
+} from "../../stories/notify-story.js"
 import { Carousel } from "./index.js"
 
 const COLORS = ["#22d3ee", "#4f46e5", "#f59e0b", "#10b981", "#ef4444"]

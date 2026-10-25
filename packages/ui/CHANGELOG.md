@@ -1,5 +1,24 @@
 # @inglorious/ui
 
+## 8.4.0
+
+### Minor Changes
+
+- Fix how form controls tie labels, ids and messages together, so every control works without an `id`:
+
+  - `Switch` and `Checkbox` without an `id` toggle from their label again. They rendered `for=""`, which points at nothing and broke the click-through even though the label wraps the input.
+  - `Checkbox` color variants reach the checkbox. The input shared the root's `iw-checkbox` class and reset the accent color on itself; it is now `iw-checkbox-input`, like `iw-switch-input`.
+  - `RadioGroup` gives each option its own id (`<name-or-id>-<index>`) instead of one id for all, and groups its radios by `id` when no `name` is given.
+  - `FileUpload` no longer falls back to the id `"file-upload"`, which two uploads on one page would share.
+  - `Input` no longer leaks `label`, `hint` and `isFullWidth` onto the `<input>` as attributes.
+  - No control renders an empty `id=""` or `for=""` any more. Without an id, `Input`, `Select`, `Textarea`, `Slider`, `FileUpload` and `Combobox` take a plain-text `label` as their `aria-label`, so they are still announced.
+  - With an id, `Input`, `Select`, `Textarea` and `FileUpload` point at their hint or error (`<id>-message`) with `aria-describedby`, and state `aria-invalid` as `"true"` or `"false"`.
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/web@6.8.0
+
 ## 8.3.1
 
 ### Patch Changes

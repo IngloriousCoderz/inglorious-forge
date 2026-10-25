@@ -1,2 +1,2 @@
 export { mount } from "./mount.js"
-export { html, svg } from "lit-html"
+export { html, nothing, svg } from "lit-html"

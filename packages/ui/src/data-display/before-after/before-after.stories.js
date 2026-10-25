@@ -1,7 +1,7 @@
 import {
   createEntityRender,
   notifyActionArgType,
-} from "../../stories/notifyStory.js"
+} from "../../stories/notify-story.js"
 import { BeforeAfter } from "./index.js"
 
 const before = {

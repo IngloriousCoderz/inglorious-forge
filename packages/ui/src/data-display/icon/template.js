@@ -9,7 +9,7 @@ import { classMap } from "@inglorious/web/directives/class-map"
 import { ref } from "@inglorious/web/directives/ref"
 import { unsafeSVG } from "@inglorious/web/directives/unsafe-svg"
 
-import { applyElementProps } from "../../shared/applyElementProps.js"
+import { applyElementProps } from "../../shared/apply-element-props.js"
 
 /**
  * Renders an inline icon with size and color control.

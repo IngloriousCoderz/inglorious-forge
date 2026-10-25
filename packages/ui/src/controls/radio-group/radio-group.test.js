@@ -71,3 +71,32 @@ describe("radioGroup", () => {
     expect(radios[1].disabled).toBe(true)
   })
 })
+
+describe("radio group ids", () => {
+  const options = [
+    { label: "A", value: "a" },
+    { label: "B", value: "b" },
+  ]
+
+  it("gives each option its own id", () => {
+    const container = document.createElement("div")
+
+    render(RadioGroup.render({ id: "choice", options }), container)
+
+    const ids = [...container.querySelectorAll("input")].map(
+      (input) => input.id,
+    )
+    expect(ids).toEqual(["choice-0", "choice-1"])
+  })
+
+  it("groups the options by id when no name is given", () => {
+    const container = document.createElement("div")
+
+    render(RadioGroup.render({ id: "choice", options }), container)
+
+    const names = [...container.querySelectorAll("input")].map(
+      (input) => input.name,
+    )
+    expect(names).toEqual(["choice", "choice"])
+  })
+})

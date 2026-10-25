@@ -9,7 +9,7 @@ import { classMap } from "@inglorious/web/directives/class-map"
 import { ref } from "@inglorious/web/directives/ref"
 import { repeat } from "@inglorious/web/directives/repeat"
 
-import { applyElementProps } from "../../shared/applyElementProps.js"
+import { applyElementProps } from "../../shared/apply-element-props.js"
 
 const EVEN_ROW_DIVISOR = 2
 const STRIPED_OFFSET = 1

@@ -4,13 +4,14 @@
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
-import { html } from "@inglorious/web"
+import { html, nothing } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
 import { ref } from "@inglorious/web/directives/ref"
 import { repeat } from "@inglorious/web/directives/repeat"
 import { when } from "@inglorious/web/directives/when"
 
 import { Chip } from "../../data-display/chip/index.js"
+import { fallbackLabel } from "../../shared/fallback-label.js"
 import {
   filterOptions,
   formatOption,
@@ -66,7 +67,7 @@ export const Combobox = {
       ${when(
         label,
         () =>
-          html`<label id=${labelId || ""} class="iw-combobox-label">
+          html`<label id=${labelId || nothing} class="iw-combobox-label">
             ${label}
             ${when(
               isRequired,
@@ -79,14 +80,16 @@ export const Combobox = {
       ${when(
         error,
         () =>
-          html`<span id=${messageId ?? ""} class="iw-combobox-error-message"
+          html`<span
+            id=${messageId || nothing}
+            class="iw-combobox-error-message"
             >${error}</span
           >`,
       )}
       ${when(
         !error && hint,
         () =>
-          html`<span id=${messageId || ""} class="iw-combobox-hint"
+          html`<span id=${messageId || nothing} class="iw-combobox-hint"
             >${hint}</span
           >`,
       )}
@@ -107,6 +110,7 @@ export const Combobox = {
   renderControl(props) {
     const {
       id,
+      label,
       labelId,
       messageId,
       selectedValue,
@@ -134,14 +138,15 @@ export const Combobox = {
     }
 
     return html`<div
-      id=${controlId}
+      id=${controlId || nothing}
       class="${classMap(frameClasses)}"
       role="combobox"
       aria-haspopup="listbox"
       aria-expanded=${isOpen ? "true" : "false"}
-      aria-controls=${controlId ? `${controlId}-listbox` : ""}
-      aria-labelledby=${labelId || ""}
-      aria-describedby=${messageId || ""}
+      aria-controls=${controlId ? `${controlId}-listbox` : nothing}
+      aria-labelledby=${labelId || nothing}
+      aria-label=${fallbackLabel(labelId, label)}
+      aria-describedby=${messageId || nothing}
       aria-required=${isRequired ? "true" : "false"}
       aria-invalid=${error ? "true" : "false"}
       tabindex=${isDisabled ? -1 : 0}
@@ -235,7 +240,7 @@ export const Combobox = {
     const { id, options, size, onOptionSelect, onChange } = props
 
     const option = options.find((opt) => getOptionValue(opt) === value)
-    const tagId = `${id}-tag-${String(value)}`
+    const tagId = id ? `${id}-tag-${String(value)}` : undefined
     const chipSize = size === "lg" ? "md" : "sm"
 
     return html`<span
@@ -268,7 +273,7 @@ export const Combobox = {
     const filteredOptions = filterOptions(options, searchTerm)
 
     return html`<div
-      id=${id ? `${id}-control-listbox` : ""}
+      id=${id ? `${id}-control-listbox` : nothing}
       class="iw-combobox-dropdown"
       role="listbox"
       ${ref((el) => trackOutsideClick(props, el))}
@@ -354,7 +359,7 @@ export const Combobox = {
     const isFocused = index === focusedIndex
 
     return html`<div
-      id=${id ? `${id}-option-${index}` : ""}
+      id=${id ? `${id}-option-${index}` : nothing}
       role="option"
       aria-selected=${isSelected ? "true" : "false"}
       class="iw-combobox-dropdown-options-option ${classMap({

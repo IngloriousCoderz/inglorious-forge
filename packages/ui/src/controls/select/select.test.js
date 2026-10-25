@@ -295,3 +295,29 @@ describe("select arrow", () => {
     )
   })
 })
+
+describe("select accessibility", () => {
+  it("names itself after its label when there is no id to tie them", () => {
+    const container = document.createElement("div")
+
+    render(Select.render({ label: "Policy", options: ["a"] }), container)
+
+    const select = container.querySelector("select")
+    expect(select.hasAttribute("id")).toBe(false)
+    expect(container.querySelector("label").hasAttribute("for")).toBe(false)
+    expect(select.getAttribute("aria-label")).toBe("Policy")
+  })
+
+  it("points at its message and reports it is invalid", () => {
+    const container = document.createElement("div")
+
+    render(
+      Select.render({ id: "policy", options: ["a"], error: "Required" }),
+      container,
+    )
+
+    const select = container.querySelector("select")
+    expect(select.getAttribute("aria-describedby")).toBe("policy-message")
+    expect(select.getAttribute("aria-invalid")).toBe("true")
+  })
+})

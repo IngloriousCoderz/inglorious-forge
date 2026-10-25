@@ -28,7 +28,7 @@ import { when } from "@inglorious/web/directives/when"
 import { IconButton } from "../../controls/icon-button"
 import { Icon } from "../../data-display/icon"
 import { Flex } from "../../layout/flex"
-import { applyElementProps } from "../../shared/applyElementProps.js"
+import { applyElementProps } from "../../shared/apply-element-props.js"
 
 const PRETTY_INDEX = 1
 
