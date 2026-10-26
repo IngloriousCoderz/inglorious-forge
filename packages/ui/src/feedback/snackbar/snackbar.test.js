@@ -38,4 +38,22 @@ describe("snackbar", () => {
     container.querySelector(".iw-snackbar-close").click()
     expect(closed).toBe(true)
   })
+
+  it("centers at the bottom", () => {
+    const props = { isOpen: true, message: "Saved", position: "bottom-center" }
+    const container = document.createElement("div")
+
+    render(Snackbar.render(props), container)
+
+    expect(container.querySelector(".iw-snackbar-bottom-center")).not.toBeNull()
+  })
+
+  it("has no close button without a close handler", () => {
+    const props = { isOpen: true, message: "Saved" }
+    const container = document.createElement("div")
+
+    render(Snackbar.render(props), container)
+
+    expect(container.querySelector(".iw-snackbar-close")).toBeNull()
+  })
 })

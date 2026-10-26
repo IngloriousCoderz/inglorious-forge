@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 6.9.0
+
+### Minor Changes
+
+- `@inglorious/web/pwa` keeps an installed PWA on its latest version. `watchPwaUpdate(registration)` checks for a new version hourly and on every return to the foreground, and applies a downloaded one at launch and on each trip to or from the background, when nobody is mid-task. Given the store, it announces a version that lands mid-session to the `PwaUpdate` type, whose `isUpdateReady` flag and `pwaUpdateApply` event power an "Update now" button.
+
 ## 6.8.1
 
 ### Patch Changes

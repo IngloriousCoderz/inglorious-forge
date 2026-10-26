@@ -1,5 +1,12 @@
 # @inglorious/logo
 
+## 3.0.23
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/web@6.9.0
+
 ## 3.0.22
 
 ### Patch Changes

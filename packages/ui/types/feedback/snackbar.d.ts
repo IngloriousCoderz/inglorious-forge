@@ -6,7 +6,13 @@ export interface SnackbarProps {
   isOpen?: boolean
   message?: TemplateResult | string | number
   action?: TemplateResult | string | number
-  position?: "bottom-left" | "bottom-right" | "top-left" | "top-right"
+  position?:
+    | "bottom-left"
+    | "bottom-center"
+    | "bottom-right"
+    | "top-left"
+    | "top-center"
+    | "top-right"
   className?: string
   onClose?: () => void
   [key: string]: unknown

@@ -10,6 +10,7 @@ import {
 
 import { type Api, html, type TemplateResult } from "../types"
 import { Form, type FormEntity } from "../types/form"
+import { PwaUpdate, type PwaUpdateEntity, watchPwaUpdate } from "../types/pwa"
 import { Router, type RouterEntity } from "../types/router"
 import { MediaQuery, type MediaQueryEntity } from "../types/sensors/media-query"
 
@@ -22,17 +23,22 @@ interface LoginEntity extends FormEntity<{ email: string }> {
 interface WideEntity extends MediaQueryEntity {
   type: "Wide"
 }
+interface UpdateEntity extends PwaUpdateEntity {
+  type: "Update"
+}
 interface CounterEntity extends BaseEntity {
   type: "Counter"
   value: number
 }
 
-type AppEntity = AppRouterEntity | LoginEntity | WideEntity | CounterEntity
+type AppEntity =
+  AppRouterEntity | LoginEntity | WideEntity | UpdateEntity | CounterEntity
 
 interface AppState extends EntitiesState<AppEntity> {
   router: AppRouterEntity
   login: LoginEntity
   wide: WideEntity
+  update: UpdateEntity
   counter: CounterEntity
 }
 
@@ -78,12 +84,20 @@ export const greetingTypes = createStore<AppEntity, AppState>({
 
 // Library types register under the app's names, with no cast
 export const store = createStore<AppEntity, AppState>({
-  types: { Router, Login: Form, Wide: MediaQuery, Counter },
+  types: { Router, Login: Form, Wide: MediaQuery, Update: PwaUpdate, Counter },
   entities: {
     router: { type: "Router" },
     counter: { type: "Counter", value: 0 },
   },
 })
+
+// The store is where a mid-session version is announced
+declare const registration: ServiceWorkerRegistration
+export const stopWatching: () => void = watchPwaUpdate(registration, store, {
+  id: "update",
+})
+// @ts-expect-error: checkEveryMs is a number of milliseconds
+watchPwaUpdate(registration, store, { checkEveryMs: "1h" })
 
 // The api handlers receive renders: there is a single Api
 declare const api: AppApi

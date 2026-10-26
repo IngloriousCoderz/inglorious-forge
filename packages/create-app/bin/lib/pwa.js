@@ -91,33 +91,37 @@ export function writePwaRegistration(targetDir) {
   fs.writeFileSync(pwaPath, createPwaRegistrationSource(extension))
 }
 
+// The worker waits for the SKIP_WAITING message `watchPwaUpdate` sends: on
+// its own, a new version would wait for every tab of the app to close, which
+// for a PWA installed on a phone is never.
 export function createPwaRegistrationSource(extension) {
+  const registration = `import { isNative } from "@inglorious/web/mobile"
+import { watchPwaUpdate } from "@inglorious/web/pwa"
+import { registerSW } from "virtual:pwa-register"
+
+if (!isNative()) {
+  registerSW({
+    onRegisteredSW(url, registration) {
+      if (registration) watchPwaUpdate(registration)
+    },
+  })
+}
+`
+
   if (extension === ".ts") {
     return `// Only the framework-free helpers: "client" also loads React's and Preact's
 // typings, whose global JSX would replace Inglorious's.
 /// <reference types="vite-plugin-pwa/vanillajs" />
-import { isNative } from "@inglorious/web/mobile"
-import { registerSW } from "virtual:pwa-register"
-
-if (!isNative()) {
-  registerSW()
-}
-`
+${registration}`
   }
 
-  return `import { isNative } from "@inglorious/web/mobile"
-import { registerSW } from "virtual:pwa-register"
-
-if (!isNative()) {
-  registerSW()
-}
-`
+  return registration
 }
 
 export function createVitePwaConfig(projectName) {
   return `VitePWA({
       injectRegister: false,
-      registerType: "autoUpdate",
+      registerType: "prompt",
       pwaAssets: {
         image: "public/logo.png",
         preset: "minimal-2023",

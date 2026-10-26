@@ -1,5 +1,12 @@
 # @inglorious/ag-grid
 
+## 9.0.14
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/web@6.9.0
+
 ## 9.0.13
 
 ### Patch Changes

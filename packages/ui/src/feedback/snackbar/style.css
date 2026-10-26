@@ -1,26 +1,47 @@
+/* Fixed to the viewport, clear of the system bars. A bottom snackbar also
+   clears whatever bar the app keeps at the bottom: the app sets
+   --iw-snackbar-offset-bottom to that bar's height while it shows, and the
+   offset then stands in for the safe area, which the bar already covers.
+   Only the app knows when its bar is on screen, so nothing is guessed here. */
 .iw-snackbar {
+  --iw-snackbar-gap: var(--iw-space-4);
   position: fixed;
   z-index: var(--iw-z-popover, 1060);
+  max-width: calc(100vw - 2 * var(--iw-snackbar-gap));
 }
 
-.iw-snackbar-bottom-left {
-  left: var(--iw-space-4);
-  bottom: var(--iw-space-4);
-}
-
+.iw-snackbar-bottom-left,
+.iw-snackbar-bottom-center,
 .iw-snackbar-bottom-right {
-  right: var(--iw-space-4);
-  bottom: var(--iw-space-4);
+  bottom: calc(
+    var(--iw-snackbar-gap) +
+      var(--iw-snackbar-offset-bottom, var(--safe-area-bottom, 0px))
+  );
 }
 
-.iw-snackbar-top-left {
-  left: var(--iw-space-4);
-  top: var(--iw-space-4);
-}
-
+.iw-snackbar-top-left,
+.iw-snackbar-top-center,
 .iw-snackbar-top-right {
-  right: var(--iw-space-4);
-  top: var(--iw-space-4);
+  top: calc(var(--iw-snackbar-gap) + var(--safe-area-top, 0px));
+}
+
+.iw-snackbar-bottom-left,
+.iw-snackbar-top-left {
+  left: var(--iw-snackbar-gap);
+}
+
+.iw-snackbar-bottom-right,
+.iw-snackbar-top-right {
+  right: var(--iw-snackbar-gap);
+}
+
+/* Both insets and auto margins: the snackbar is as wide as its content, up
+   to the gutters, and centered within them. */
+.iw-snackbar-bottom-center,
+.iw-snackbar-top-center {
+  inset-inline: var(--iw-snackbar-gap);
+  width: fit-content;
+  margin-inline: auto;
 }
 
 .iw-snackbar-content {

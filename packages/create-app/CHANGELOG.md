@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.4.3
+
+### Patch Changes
+
+- PWA projects update once installed. The generated worker was never told to take over, so a new version waited for every tab of the app to close, which for a PWA installed on a phone is never. `src/pwa` now registers the worker with `watchPwaUpdate` from `@inglorious/web/pwa`, and `vite.config` asks for `registerType: "prompt"`, the mode that matches it.
+
 ## 1.4.2
 
 ### Patch Changes

@@ -1,5 +1,16 @@
 # @inglorious/ui
 
+## 8.5.0
+
+### Minor Changes
+
+- `Snackbar` takes `position: "bottom-center"` and `"top-center"`, and keeps clear of the system bars: the home indicator at the bottom, the status bar at the top. Set `--iw-snackbar-offset-bottom` to the height of a bar the app keeps at the bottom, such as a `BottomNavigation`, while it shows, and a bottom snackbar rises above it.
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/web@6.9.0
+
 ## 8.4.2
 
 ### Patch Changes
