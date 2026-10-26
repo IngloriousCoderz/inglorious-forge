@@ -1,6 +1,6 @@
 # my-app
 
-This project is a minimal starter template for creating an app with the Inglorious Web framework using plain JavaScript and Vite.
+This project is a minimal starter template for creating an app with the Inglorious Web framework using JavaScript and Vue-like templates, bundled with Vite.
 
 ## Getting Started
 
@@ -24,6 +24,6 @@ This will start a Vite development server. Open your browser to the local URL pr
 ## Project Setup
 
 - `index.html`: The main entry point for your app.
-- `src/`: Contains your app's JavaScript source code.
+- `src/`: Contains your app's JavaScript source code (templates in `.vue` files).
 - `vite.config.js`: Vite configuration file.
 - `package.json`: Project metadata and dependencies.

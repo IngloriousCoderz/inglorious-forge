@@ -1,5 +1,15 @@
 # @inglorious/create-game
 
+## 1.6.0
+
+### Minor Changes
+
+- The SSX templates come in JSX and Vue too, so `--template=ssx-js --syntax=jsx` (or `vue`) no longer fails on a missing template. JSX pages are `.jsx`/`.tsx` files; a Vue page is a module that re-exports its `.vue` file's type next to its `metadata`.
+
+### Patch Changes
+
+- The SSX TypeScript templates lint their TypeScript, with typescript-eslint on TypeScript 6's API beside TypeScript 7, as the Vite TypeScript templates do. Every template's README now names its language and syntax and lists its own files, and every template's package has its own name.
+
 ## 1.5.0
 
 ### Minor Changes

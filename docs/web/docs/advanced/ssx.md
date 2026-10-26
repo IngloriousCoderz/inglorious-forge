@@ -42,10 +42,12 @@ SSX supports both **SSG and SSR**: it generates static HTML by default for fast,
 ## Quick Start
 
 ```bash
-npm create @inglorious/create-app@latest -- --template ssx-js
+npm create @inglorious/app@latest -- --template=ssx-js
 # or with TypeScript
-npm create @inglorious/create-app@latest -- --template ssx-ts
+npm create @inglorious/app@latest -- --template=ssx-ts
 ```
+
+Add `--syntax=jsx` or `--syntax=vue` to write the pages in JSX or Vue-like templates instead of lit-html.
 
 ## Key Features
 

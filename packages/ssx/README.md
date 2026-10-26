@@ -520,6 +520,35 @@ title: My Post
 This is a markdown page.
 ```
 
+### 🧩 JSX and Vue Pages
+
+Pages can be written in JSX or Vue-like templates instead of lit-html. Add the plugin to the `vite` config in `site.config.js`, and SSX uses it both to render pages at build time and to hydrate them in the browser:
+
+```javascript
+import { jsx } from "@inglorious/vite-plugin-jsx"
+
+export default {
+  vite: {
+    plugins: [jsx()],
+  },
+}
+```
+
+With [`@inglorious/vite-plugin-jsx`](https://www.npmjs.com/package/@inglorious/vite-plugin-jsx), pages are `.jsx` or `.tsx` files, exporting their type and `metadata` as usual.
+
+With [`@inglorious/vite-plugin-vue`](https://www.npmjs.com/package/@inglorious/vite-plugin-vue), a `.vue` file only exports its type, so SSX does not route it. Each page is a `.js` or `.ts` module that re-exports the type from its `.vue` file, next to its `metadata`:
+
+```javascript
+// src/pages/about.js
+export { About } from "./about.vue"
+
+export const metadata = {
+  title: "About",
+}
+```
+
+`create-app` sets either up with `--template=ssx-js --syntax=jsx` or `--syntax=vue`.
+
 ### ⚡ Serverless Functions (API Routes)
 
 SSX supports serverless functions for dynamic API endpoints. Create files in `src/api/` that export HTTP method handlers:
