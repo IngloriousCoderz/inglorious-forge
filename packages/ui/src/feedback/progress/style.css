@@ -24,41 +24,65 @@
   }
 }
 
+/* A native <progress>, restyled. Browsers draw its value through their own
+   pseudo-elements, so the look is set once here: the bar takes `color`, like
+   the color variants above, and an app adjusts the rest through
+   --iw-progress-height, --iw-progress-radius and --iw-progress-track-color. */
 .iw-progress-linear {
-  width: 100%;
-}
-
-.iw-progress-linear-track {
-  width: 100%;
-  height: 8px;
-  background: color-mix(in srgb, currentColor 24%, transparent);
-  border-radius: var(--iw-radius-sm);
-  overflow: hidden;
-}
-
-.iw-progress-linear-bar {
-  display: block;
-  height: 100%;
-  background: linear-gradient(
+  --iw-progress-bar: linear-gradient(
     90deg,
     color-mix(in srgb, currentColor 84%, white),
     currentColor
   );
-  transition: width 0.2s ease;
-  min-width: 8px;
-}
+  --iw-progress-track: var(
+    --iw-progress-track-color,
+    color-mix(in srgb, currentColor 24%, transparent)
+  );
 
-.iw-progress-linear.iw-progress-indeterminate .iw-progress-linear-bar {
-  width: 30%;
-  animation: iw-progress-linear 1.4s ease-in-out infinite;
+  appearance: none;
+  display: block;
+  width: 100%;
+  height: var(--iw-progress-height, 8px);
+  border: 0;
+  border-radius: var(--iw-progress-radius, var(--iw-radius-sm));
+  overflow: hidden;
+  background: var(--iw-progress-track);
+
+  &::-webkit-progress-bar {
+    background: transparent;
+  }
+
+  &::-webkit-progress-value {
+    background: var(--iw-progress-bar);
+    border-radius: var(--iw-progress-radius, var(--iw-radius-sm));
+    transition: width 0.2s ease;
+  }
+
+  &::-moz-progress-bar {
+    background: var(--iw-progress-bar);
+    border-radius: var(--iw-progress-radius, var(--iw-radius-sm));
+  }
+
+  /* Indeterminate: no value to draw, so a sliver of the bar sweeps across
+     the track, painted on the element itself. */
+  &:indeterminate {
+    background:
+      var(--iw-progress-bar) no-repeat 0 0 / 30% 100%,
+      var(--iw-progress-track);
+    animation: iw-progress-linear 1.4s ease-in-out infinite;
+
+    &::-moz-progress-bar {
+      background: transparent;
+    }
+  }
 }
 
 @keyframes iw-progress-linear {
   0% {
-    transform: translateX(-100%);
+    background-position-x: -50%;
   }
   100% {
-    transform: translateX(350%);
+    background-position-x: 150%;
   }
 }
 

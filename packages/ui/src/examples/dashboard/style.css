@@ -251,15 +251,21 @@
 }
 
 .iw-primitive-preview .iw-backdrop,
-.iw-primitive-preview .iw-dialog-backdrop,
 .iw-primitive-preview .iw-snackbar,
 .iw-primitive-preview .iw-drawer {
   position: absolute;
 }
 
-.iw-primitive-preview .iw-backdrop,
-.iw-primitive-preview .iw-dialog-backdrop {
+.iw-primitive-preview .iw-backdrop {
   inset: 0;
+}
+
+/* Shown in place (isModal: false), so it can sit in the preview's flow
+   rather than where the browser positions a non-modal dialog. */
+.iw-primitive-preview .iw-dialog {
+  position: static;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .iw-primitive-preview .iw-drawer {
@@ -278,8 +284,8 @@
   color: var(--iw-color-text-secondary);
 }
 
-.iw-dashboard-progress-list .iw-progress-linear-track {
-  height: 0.25rem;
+.iw-dashboard-progress-list .iw-progress-linear {
+  --iw-progress-height: 0.25rem;
 }
 
 .iw-dashboard-user-subtitle {

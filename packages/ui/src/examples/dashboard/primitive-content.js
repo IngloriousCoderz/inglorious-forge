@@ -1028,6 +1028,7 @@ Dialog.render({
       preview: () =>
         Dialog.render({
           isOpen: true,
+          isModal: false,
           title: "Delete record",
           description: "This action cannot be undone.",
           actions: previewRow([
@@ -1173,8 +1174,7 @@ Drawer.render({
 })`,
       preview: () =>
         Drawer.render({
-          isOpen: true,
-          hasBackdrop: false,
+          variant: "permanent",
           title: "Navigation",
           children: List.render({
             items: [
@@ -1225,7 +1225,8 @@ Link.render({
       code: `import { Menu } from "@inglorious/ui/menu"
 
 Menu.render({
-  isOpen: true,
+  id: "record-actions",
+  trigger: "Actions",
   items: [
     { label: "Edit" },
     { label: "Duplicate" },
@@ -1235,7 +1236,8 @@ Menu.render({
 })`,
       preview: () =>
         Menu.render({
-          isOpen: true,
+          id: "record-actions",
+          trigger: "Actions",
           items: [
             { label: "Edit" },
             { label: "Duplicate" },
@@ -1268,7 +1270,6 @@ Pagination.render({
       code: `import { SpeedDial } from "@inglorious/ui/speed-dial"
 
 SpeedDial.render({
-  isOpen: true,
   actions: [
     { label: "Add", icon: "+" },
     { label: "Share", icon: "↗" }
@@ -1276,7 +1277,6 @@ SpeedDial.render({
 })`,
       preview: () =>
         SpeedDial.render({
-          isOpen: true,
           actions: [
             { label: "Add", icon: "+" },
             { label: "Share", icon: "↗" },

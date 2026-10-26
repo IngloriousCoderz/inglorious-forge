@@ -3,18 +3,31 @@
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
-import { html } from "@inglorious/web"
+import { html, nothing } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
+import { ref } from "@inglorious/web/directives/ref"
+
+import { syncDialog } from "../../shared/top-layer.js"
 
 /**
- * Renders a modal dialog with header, body, and actions when open.
- * Clicking the backdrop can close the dialog when handlers are provided.
+ * Whether the last press on each dialog started on its backdrop.
+ * @type {WeakMap<HTMLDialogElement, boolean>}
+ */
+const backdropPresses = new WeakMap()
+
+/**
+ * Renders a native `<dialog>` with header, body, and actions.
+ * Modal by default: the browser traps focus, makes the page inert, closes on
+ * Esc and returns focus to the trigger. Clicking the backdrop can close the
+ * dialog when handlers are provided.
  * @param {DialogProps} props
- * @returns {TemplateResult | null}
+ * @returns {TemplateResult}
  */
 export function render(props) {
   const {
+    id,
     isOpen = false,
+    isModal = true,
     title,
     description,
     children,
@@ -24,8 +37,6 @@ export function render(props) {
     onBackdropClick,
   } = props
 
-  if (!isOpen) return null
-
   const extraClasses = Object.fromEntries(
     className
       .split(/\s+/)
@@ -33,20 +44,49 @@ export function render(props) {
       .map((name) => [name, true]),
   )
 
-  return html`<div
-    class=${classMap({ "iw-dialog-backdrop": true })}
-    @click=${onBackdropClick ?? onClose}
+  const titleId = id && title ? `${id}-title` : ""
+  const descriptionId = id && description ? `${id}-description` : ""
+  const onBackdrop = onBackdropClick ?? onClose
+
+  // The surface fills the dialog box, so a click that lands on the dialog
+  // itself can only have come from the backdrop around it. The press has to
+  // start there too: a drag from inside the surface that ends on the backdrop
+  // also clicks the dialog, and must not close it.
+  return html`<dialog
+    id=${id || nothing}
+    class=${classMap({ "iw-dialog": true, ...extraClasses })}
+    aria-labelledby=${titleId || nothing}
+    aria-describedby=${descriptionId || nothing}
+    @pointerdown=${(event) => {
+      backdropPresses.set(
+        event.currentTarget,
+        event.target === event.currentTarget,
+      )
+    }}
+    @click=${(event) => {
+      const isBackdropPress = backdropPresses.get(event.currentTarget)
+      backdropPresses.delete(event.currentTarget)
+      if (event.target === event.currentTarget && isBackdropPress) {
+        onBackdrop?.()
+      }
+    }}
+    @cancel=${(event) => {
+      // Without onClose nothing would take isOpen down, so Esc is refused.
+      if (!onClose) event.preventDefault()
+    }}
+    ${ref((element) => syncDialog(element, { isOpen, isModal, onClose }))}
   >
-    <div
-      class=${classMap({ "iw-dialog": true, ...extraClasses })}
-      role="dialog"
-      aria-modal="true"
-      @click=${(event) => event.stopPropagation()}
-    >
+    <div class="iw-dialog-surface">
       ${
         (title || onClose) &&
         html`<div class="iw-dialog-header">
-          ${title ? html`<div class="iw-dialog-title">${title}</div>` : null}
+          ${
+            title
+              ? html`<div id=${titleId || nothing} class="iw-dialog-title">
+                  ${title}
+                </div>`
+              : null
+          }
           ${
             onClose
               ? html`<button
@@ -63,11 +103,16 @@ export function render(props) {
       }
       ${
         description
-          ? html`<div class="iw-dialog-description">${description}</div>`
+          ? html`<div
+              id=${descriptionId || nothing}
+              class="iw-dialog-description"
+            >
+              ${description}
+            </div>`
           : null
       }
       ${children ? html`<div class="iw-dialog-body">${children}</div>` : null}
       ${actions ? html`<div class="iw-dialog-actions">${actions}</div>` : null}
     </div>
-  </div>`
+  </dialog>`
 }

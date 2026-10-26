@@ -10,7 +10,8 @@ import { ref } from "@inglorious/web/directives/ref"
 import { applyElementProps } from "../../shared/apply-element-props.js"
 
 /**
- * Renders a toggle switch backed by a checkbox input.
+ * Renders a toggle switch backed by a checkbox input, which `role="switch"`
+ * has assistive tech announce as on/off rather than checked.
  * Use it for boolean settings with optional labels and disabled state.
  * @param {SwitchProps} props
  * @returns {TemplateResult}
@@ -46,6 +47,7 @@ export function render(props) {
         id=${inputId || nothing}
         class="iw-switch-input"
         type="checkbox"
+        role="switch"
         name=${name}
         .checked=${isChecked}
         ?disabled=${isDisabled}

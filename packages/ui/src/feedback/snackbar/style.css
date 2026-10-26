@@ -10,6 +10,19 @@
   max-width: calc(100vw - 2 * var(--iw-snackbar-gap));
 }
 
+/* A manual popover in the top layer. The browser centres a popover in the
+   viewport as a bordered box, so its insets and box are reset, with no
+   specificity so the positions below still set their own sides. */
+:where(.iw-snackbar) {
+  inset: auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: visible;
+  color: inherit;
+  background: transparent;
+}
+
 .iw-snackbar-bottom-left,
 .iw-snackbar-bottom-center,
 .iw-snackbar-bottom-right {

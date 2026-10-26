@@ -4,7 +4,7 @@
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
-import { html } from "@inglorious/web"
+import { html, nothing } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
 
 export const Tabs = {
@@ -40,6 +40,7 @@ export const Tabs = {
           "iw-tabs-full-width": isFullWidth,
         })}
         role="tablist"
+        @keydown=${moveBetweenTabs}
       >
         ${items.map((item, index) =>
           this.renderTab(item, index, { ...props, value }),
@@ -47,7 +48,7 @@ export const Tabs = {
       </div>
       ${this.renderPanel(
         items.find((item, index) => (item.value ?? index) === value) ?? null,
-        props,
+        { ...props, value },
       )}
     </div>`
   },
@@ -63,15 +64,24 @@ export const Tabs = {
   renderTab(item, index, props) {
     const tabValue = item.value ?? index
     const selected = tabValue === props.value
+    // Only one tab is in the Tab order, and the arrow keys move between them:
+    // the selected tab, or the first one while none is.
+    const hasSelection = props.items.some(
+      (other, otherIndex) => (other.value ?? otherIndex) === props.value,
+    )
+    const isTabStop = selected || (!hasSelection && index === 0)
 
     return html`<button
       type="button"
       role="tab"
+      id=${props.id ? `${props.id}-tab-${tabValue}` : nothing}
       class=${classMap({
         "iw-tab": true,
         "iw-tab-selected": selected,
       })}
       aria-selected=${selected ? "true" : "false"}
+      aria-controls=${props.id && selected ? `${props.id}-panel` : nothing}
+      tabindex=${isTabStop ? 0 : -1}
       ?disabled=${item.isDisabled}
       @click=${() => {
         item.onClick?.(tabValue)
@@ -89,8 +99,46 @@ export const Tabs = {
    * @param {TabItem | null} item
    * @returns {TemplateResult | null}
    */
-  renderPanel(item) {
+  renderPanel(item, props) {
     if (!item?.panel) return null
-    return html`<div class="iw-tab-panel" role="tabpanel">${item.panel}</div>`
+    const { id, value } = props ?? {}
+    return html`<div
+      id=${id ? `${id}-panel` : nothing}
+      class="iw-tab-panel"
+      role="tabpanel"
+      aria-labelledby=${id ? `${id}-tab-${value}` : nothing}
+    >
+      ${item.panel}
+    </div>`
   },
+}
+
+/**
+ * Arrow keys move to the previous or next tab and select it, wrapping at
+ * either end; Home and End jump to the first and last. Left and right swap in
+ * a right-to-left page, where the tabs run the other way.
+ * @param {KeyboardEvent} event
+ */
+function moveBetweenTabs(event) {
+  const tabs = [
+    ...event.currentTarget.querySelectorAll('[role="tab"]:not(:disabled)'),
+  ]
+  const current = tabs.indexOf(event.target)
+  if (current === -1) return
+
+  const isRtl = getComputedStyle(event.currentTarget).direction === "rtl"
+  const forward = isRtl ? "ArrowLeft" : "ArrowRight"
+  const backward = isRtl ? "ArrowRight" : "ArrowLeft"
+
+  let next
+  if (event.key === forward) next = (current + 1) % tabs.length
+  else if (event.key === backward)
+    next = (current - 1 + tabs.length) % tabs.length
+  else if (event.key === "Home") next = 0
+  else if (event.key === "End") next = tabs.length - 1
+  else return
+
+  event.preventDefault()
+  tabs[next].focus()
+  tabs[next].click()
 }

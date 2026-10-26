@@ -11,20 +11,27 @@
   border-top: 1px solid var(--iw-color-border);
 }
 
+/* A <summary>: flex drops the browser's disclosure marker, and the caret
+   stands in for it. */
 .iw-accordion-trigger {
-  width: 100%;
-  border: 0 none;
-  background: transparent;
-  color: inherit;
   padding: var(--iw-space-3) var(--iw-space-4);
   display: flex;
   align-items: center;
   gap: var(--iw-space-2);
-  text-align: left;
+  text-align: start;
   cursor: pointer;
+
+  &::-webkit-details-marker {
+    display: none;
+  }
 }
 
-.iw-accordion-trigger:hover:enabled {
+.iw-accordion-item-disabled .iw-accordion-trigger {
+  cursor: default;
+}
+
+.iw-accordion-item:not(.iw-accordion-item-disabled)
+  .iw-accordion-trigger:hover {
   background: color-mix(
     in srgb,
     var(--iw-color-surface-hover) 75%,
@@ -50,7 +57,7 @@
   color: var(--iw-color-text-muted, var(--iw-color-text));
 }
 
-.iw-accordion-item-expanded .iw-accordion-caret {
+.iw-accordion-item[open] .iw-accordion-caret {
   transform: rotate(180deg);
 }
 

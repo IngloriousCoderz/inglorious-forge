@@ -1,17 +1,39 @@
+/* A fieldset of native radios: the inputs stay in the page for the keyboard
+   and assistive tech but out of sight, and each star is the label that
+   checks its radio. */
 .iw-rating {
   display: inline-flex;
   align-items: center;
   gap: var(--iw-space-1);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-inline-size: 0;
 
   .iw-rating-item {
-    border: 0;
-    background: transparent;
-    padding: 0;
-    margin: 0;
+    position: relative;
     cursor: pointer;
     color: var(--iw-color-warning);
     font-size: 1.25rem;
     line-height: 1;
+    border-radius: var(--iw-radius-sm);
+  }
+
+  .iw-rating-input {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    opacity: 0;
+    cursor: inherit;
+  }
+
+  .iw-rating-item:has(.iw-rating-input:focus-visible) {
+    outline: 2px solid var(--iw-color-primary);
+    outline-offset: 2px;
+  }
+
+  &:disabled .iw-rating-item {
+    cursor: default;
   }
 
   &.iw-rating-sm .iw-rating-item {

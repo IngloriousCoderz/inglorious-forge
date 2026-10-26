@@ -35,8 +35,8 @@ export function render(props) {
     isPressed = false,
     isFullWidth = false,
     buttonType = "button",
-    ariaLabel = "",
-    isAriaPressed = false,
+    ariaLabel,
+    isAriaPressed,
     className = "",
     accept,
     isMultiple = false,
@@ -74,8 +74,8 @@ export function render(props) {
   return html`
     <button
       type=${buttonType}
-      aria-label=${ariaLabel}
-      aria-pressed=${isAriaPressed}
+      aria-label=${ariaLabel || nothing}
+      aria-pressed=${isAriaPressed ?? nothing}
       class=${classMap(classes)}
       ?disabled=${isDisabled}
       @click=${handleClick}

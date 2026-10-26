@@ -1,15 +1,7 @@
-.iw-dialog-backdrop {
-  position: fixed;
-  inset: 0;
-  background: color-mix(in srgb, var(--iw-color-black) 55%, transparent);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: var(--iw-z-modal, 1050);
-  padding: var(--iw-space-4);
-  backdrop-filter: blur(2px);
-}
-
+/* A native <dialog>, so the browser's own box is reset: the surface inside
+   carries the padding, which leaves the dialog element itself reachable only
+   through the backdrop. Modal dialogs sit in the top layer, above any
+   z-index, and the browser centres them. */
 .iw-dialog {
   background: var(--iw-color-surface);
   color: var(--iw-color-text);
@@ -18,6 +10,15 @@
   min-width: min(32rem, 90vw);
   max-width: min(48rem, 90vw);
   box-shadow: var(--iw-shadow-lg, 0 12px 40px rgba(0, 0, 0, 0.3));
+  padding: 0;
+}
+
+.iw-dialog::backdrop {
+  background: color-mix(in srgb, var(--iw-color-black) 55%, transparent);
+  backdrop-filter: blur(2px);
+}
+
+.iw-dialog-surface {
   padding: var(--iw-space-4);
 }
 

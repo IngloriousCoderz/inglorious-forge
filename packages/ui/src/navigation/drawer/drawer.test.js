@@ -1,36 +1,95 @@
 import { render } from "@inglorious/web/test"
-import { describe, expect, it } from "vitest"
+import { afterEach, describe, expect, it, vi } from "vitest"
 
+import { isPopoverOpen } from "../../../vitest.setup.js"
 import { Drawer } from "."
 
 describe("drawer", () => {
-  it("fires onClose from the backdrop", () => {
-    let isOpen = true
-    const container = document.createElement("div")
+  afterEach(() => {
+    document.body.replaceChildren()
+  })
 
-    render(
-      Drawer.render({ isOpen, onClose: () => (isOpen = false) }),
-      container,
+  it("shows as a popover while open", async () => {
+    const container = mount(Drawer.render({ isOpen: true, onClose() {} }))
+    await settle()
+
+    const drawer = container.querySelector("aside.iw-drawer")
+    expect(drawer.getAttribute("popover")).toBe("auto")
+    expect(isPopoverOpen(drawer)).toBe(true)
+  })
+
+  it("hides the popover when isOpen turns false, without reporting a close", async () => {
+    const onClose = vi.fn()
+    const container = mount(Drawer.render({ isOpen: true, onClose }))
+    await settle()
+
+    render(Drawer.render({ isOpen: false, onClose }), container)
+
+    expect(isPopoverOpen(container.querySelector("aside"))).toBe(false)
+    expect(onClose).not.toHaveBeenCalled()
+  })
+
+  it("reports a dismissal the browser makes", async () => {
+    const onClose = vi.fn()
+    const container = mount(Drawer.render({ isOpen: true, onClose }))
+    await settle()
+
+    container.querySelector("aside").hidePopover()
+
+    expect(onClose).toHaveBeenCalledTimes(1)
+  })
+
+  it("is a manual popover without onClose, so the browser cannot dismiss it", () => {
+    const container = mount(Drawer.render({ isOpen: true }))
+
+    expect(container.querySelector("aside").getAttribute("popover")).toBe(
+      "manual",
     )
+  })
 
-    container.querySelector(".iw-drawer-backdrop").click()
-    expect(isOpen).toBe(false)
+  it("never overlays when permanent", async () => {
+    const container = mount(
+      Drawer.render({ isOpen: true, variant: "permanent", onClose() {} }),
+    )
+    await settle()
+
+    const drawer = container.querySelector("aside")
+    expect(drawer.hasAttribute("popover")).toBe(false)
+    expect(isPopoverOpen(drawer)).toBe(false)
+  })
+
+  it("does not overlay a responsive drawer where it docks", async () => {
+    vi.stubGlobal("matchMedia", () => ({
+      matches: true,
+      addEventListener() {},
+    }))
+    vi.resetModules()
+    const { Drawer: FreshDrawer } = await import(".")
+
+    const container = mount(FreshDrawer.render({ isOpen: true, onClose() {} }))
+    await settle()
+
+    expect(isPopoverOpen(container.querySelector("aside"))).toBe(false)
+    vi.unstubAllGlobals()
   })
 
   it("fires onCollapseToggle", () => {
-    let isCollapsed = false
-    const container = document.createElement("div")
-
-    render(
-      Drawer.render({
-        isOpen: true,
-        isCollapsed,
-        onCollapseToggle: () => (isCollapsed = true),
-      }),
-      container,
-    )
+    const onCollapseToggle = vi.fn()
+    const container = mount(Drawer.render({ isOpen: true, onCollapseToggle }))
 
     container.querySelector(".iw-drawer-toggler").click()
-    expect(isCollapsed).toBe(true)
+
+    expect(onCollapseToggle).toHaveBeenCalledTimes(1)
   })
 })
+
+function mount(template) {
+  const container = document.createElement("div")
+  document.body.append(container)
+  render(template, container)
+  return container
+}
+
+function settle() {
+  return Promise.resolve()
+}

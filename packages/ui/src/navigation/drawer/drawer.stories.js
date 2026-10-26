@@ -19,13 +19,9 @@ export default {
     },
     variant: {
       control: "select",
-      options: ["temporary", "persistent", "permanent", "responsive"],
-      description: "Drawer behavior model.",
-    },
-    breakpoint: {
-      control: "select",
-      options: ["sm", "md", "lg", "xl"],
-      description: "Desktop breakpoint for responsive drawers.",
+      options: ["responsive", "temporary", "permanent"],
+      description:
+        "When the drawer overlays the page: below 64rem, always, or never.",
     },
     isCollapsed: {
       control: "boolean",

@@ -12,6 +12,11 @@ export default {
     },
     items: { control: "object", description: "Menu items and separators." },
     isDense: { control: "boolean", description: "Compact item spacing." },
+    trigger: {
+      control: "text",
+      description: "Content of a button that opens the menu as a popover.",
+    },
+    onToggle: { action: "onToggle" },
     onItemClick: { action: "onItemClick" },
   },
   parameters: {
@@ -32,5 +37,15 @@ export const Default = {
       { hasDivider: true },
       { label: "Logout", trailing: "⌘Q" },
     ],
+  },
+}
+
+// Anchored to its trigger. Without onToggle wired to a store, the browser
+// keeps the open state on its own.
+export const WithTrigger = {
+  args: {
+    id: "story-menu",
+    trigger: "Actions",
+    items: Default.args.items,
   },
 }

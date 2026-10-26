@@ -16,6 +16,9 @@ describe("switch", () => {
     render(Switch.render(props), container)
 
     expect(container.querySelector(".iw-switch-input").checked).toBe(true)
+    expect(
+      container.querySelector(".iw-switch-input").getAttribute("role"),
+    ).toBe("switch")
     expect(container.querySelector(".iw-switch-label").textContent).toBe(
       "Enabled",
     )

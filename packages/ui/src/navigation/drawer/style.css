@@ -1,5 +1,16 @@
+/* While it overlays the page the drawer is a popover in the top layer. The
+   browser styles every popover as a centred, bordered box hidden until it
+   opens, so those defaults are reset here: the drawer stays displayed while
+   closed, off-screen or docked, and slides rather than appears. */
 .iw-drawer {
+  display: flex;
+  flex-direction: column;
   width: 16rem;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: visible;
   background: var(--iw-drawer-bg, var(--iw-color-surface));
   color: var(--iw-color-text);
   transition:
@@ -10,8 +21,7 @@
     max-width var(--iw-transition-fast);
 
   position: fixed;
-  top: 0;
-  bottom: 0;
+  inset-block: 0;
   z-index: var(--iw-z-modal, 1050);
 
   /* As tall as an app bar, so the line under a drawer and the app bar beside
@@ -105,33 +115,68 @@
 /* `left` and `right` are the start and end of the line: the left drawer
    sits on the right in a right-to-left page, and slides off that way. */
 .iw-drawer-left {
-  inset-inline-start: 0;
+  inset-inline: 0 auto;
   border-inline-end: 1px solid var(--iw-color-border);
   transform: translateX(calc(-100% * var(--iw-dir-sign, 1)));
 }
 
 .iw-drawer-right {
-  inset-inline-end: 0;
+  inset-inline: auto 0;
   border-inline-start: 1px solid var(--iw-color-border);
   transform: translateX(calc(100% * var(--iw-dir-sign, 1)));
 }
 
-@media (min-width: 0rem) {
-  .iw-drawer {
-    box-shadow: var(--iw-shadow-lg);
+.iw-drawer::backdrop {
+  background: color-mix(in srgb, var(--iw-color-black) 65%, transparent);
+  backdrop-filter: blur(3px);
+}
 
-    &.iw-drawer-open {
-      transform: translateX(0);
-    }
+.iw-drawer-no-backdrop::backdrop {
+  background: transparent;
+  backdrop-filter: none;
+}
 
-    .iw-drawer-footer {
-      display: none;
-    }
+/* Overlaying: a temporary drawer at every width, a responsive one below
+   64rem. Off-screen until open, raised, closed from its header. The collapse
+   toggle only makes sense for a rail, so the footer goes. */
+.iw-drawer {
+  box-shadow: var(--iw-shadow-lg);
+
+  &.iw-drawer-open {
+    transform: translateX(0);
+  }
+
+  .iw-drawer-footer {
+    display: none;
+  }
+}
+
+/* Docked: a permanent drawer at every width, a responsive one from 64rem
+   (keep in step with DOCKED_QUERY in template.js). In place, flat, and
+   hidden only on request. */
+.iw-drawer-permanent {
+  transform: none;
+  box-shadow: none;
+
+  &.iw-drawer-left.iw-drawer-hidden {
+    transform: translateX(calc(-100% * var(--iw-dir-sign, 1)));
+  }
+
+  &.iw-drawer-right.iw-drawer-hidden {
+    transform: translateX(calc(100% * var(--iw-dir-sign, 1)));
+  }
+
+  .iw-drawer-close {
+    display: none;
+  }
+
+  .iw-drawer-footer {
+    display: flex;
   }
 }
 
 @media (min-width: 64rem) {
-  .iw-drawer {
+  .iw-drawer-responsive {
     transform: none;
     box-shadow: none;
 
@@ -141,10 +186,6 @@
 
     &.iw-drawer-right.iw-drawer-hidden {
       transform: translateX(calc(100% * var(--iw-dir-sign, 1)));
-    }
-
-    & ~ .iw-drawer-backdrop {
-      display: none;
     }
 
     .iw-drawer-close {

@@ -5,10 +5,15 @@
 
 import { html } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
+import { ref } from "@inglorious/web/directives/ref"
+
+import { syncPopover } from "../../shared/top-layer.js"
 
 /**
  * Renders a transient snackbar message with optional action and dismiss control.
  * Position is configurable (for example bottom-left or top-right).
+ * A manual popover, so it shows in the top layer, above an open modal dialog,
+ * and only `isOpen` or its close button take it down.
  * @param {SnackbarProps} props
  * @returns {TemplateResult | null}
  */
@@ -39,6 +44,8 @@ export function render(props) {
     })}
     role="status"
     aria-live="polite"
+    popover="manual"
+    ${ref((element) => syncPopover(element, { isOpen: true }))}
   >
     <div class="iw-snackbar-content">
       <span class="iw-snackbar-message">${message}</span>

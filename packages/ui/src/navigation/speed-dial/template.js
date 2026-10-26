@@ -4,8 +4,11 @@
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
-import { html } from "@inglorious/web"
+import { html, nothing } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
+import { ref } from "@inglorious/web/directives/ref"
+
+import { syncPopover } from "../../shared/top-layer.js"
 
 export const SpeedDial = {
   /**
@@ -19,8 +22,10 @@ export const SpeedDial = {
   },
 
   /**
-   * Renders the speed dial container, trigger, and optional actions list.
+   * Renders the speed dial container, trigger, and actions list.
    * Actions are delegated to `renderAction`.
+   * The actions are a native popover anchored to the trigger, which toggles
+   * it as its invoker: Esc, a press outside or an action closes it.
    * @param {SpeedDialProps} props
    * @returns {TemplateResult}
    */
@@ -31,6 +36,7 @@ export const SpeedDial = {
       icon = "+",
       ariaLabel = "Speed dial",
       actions = [],
+      onToggle,
     } = props
 
     return html`<div
@@ -39,24 +45,36 @@ export const SpeedDial = {
         [`iw-speed-dial-${direction}`]: true,
         "iw-speed-dial-open": isOpen,
       })}
+      ${ref((element) => {
+        if (!element) return
+        const trigger = element.querySelector(".iw-speed-dial-trigger")
+        const popover = element.querySelector(".iw-speed-dial-actions")
+        // A property, not `commandfor`, so the link needs no id.
+        trigger.commandForElement = popover
+        // Without onToggle the browser alone opens and closes it.
+        if (onToggle) {
+          syncPopover(popover, {
+            isOpen,
+            onOpen: () => onToggle(true),
+            onClose: () => onToggle(false),
+          })
+        }
+      })}
     >
-      ${
-        isOpen
-          ? html`<div class="iw-speed-dial-actions">
-              ${actions.map((action, index) =>
-                this.renderAction(action, index, props),
-              )}
-            </div>`
-          : null
-      }
       <button
         type="button"
         class="iw-speed-dial-trigger"
         aria-label=${ariaLabel}
-        @click=${() => props.onToggle?.(!isOpen)}
+        aria-expanded=${onToggle ? String(isOpen) : nothing}
+        command="toggle-popover"
       >
         ${icon}
       </button>
+      <div class="iw-speed-dial-actions" popover="auto">
+        ${actions.map((action, index) =>
+          this.renderAction(action, index, props),
+        )}
+      </div>
     </div>`
   },
 
@@ -72,6 +90,17 @@ export const SpeedDial = {
     return html`<button
       type="button"
       class="iw-speed-dial-action"
+      command="hide-popover"
+      ${ref((element) => {
+        // Hides the popover once the action runs, like a menu item. Linked a
+        // microtask later: a new action is still outside the popover when its
+        // ref runs.
+        if (element) {
+          queueMicrotask(() => {
+            element.commandForElement = element.parentElement
+          })
+        }
+      })}
       aria-label=${action.label ?? `Speed dial action ${index + 1}`}
       ?disabled=${action.isDisabled}
       @click=${() => {

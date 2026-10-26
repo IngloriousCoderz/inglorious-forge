@@ -1,22 +1,49 @@
+/* The actions are a popover anchored to the trigger and placed on the side
+   `direction` names. The browser's popover box is centred in the viewport,
+   so its insets and box are reset; its hidden state has to be restated,
+   because the display below outranks it. */
 .iw-speed-dial {
+  anchor-scope: --iw-speed-dial;
+  display: inline-flex;
+}
+
+.iw-speed-dial-trigger {
+  anchor-name: --iw-speed-dial;
+}
+
+.iw-speed-dial-actions {
+  position-anchor: --iw-speed-dial;
+  position-area: top;
+  inset: auto;
+  margin: 0 0 var(--iw-space-2);
+  padding: 0;
+  border: 0;
+  overflow: visible;
+  background: transparent;
   display: inline-flex;
   flex-direction: column;
   align-items: center;
   gap: var(--iw-space-2);
-}
 
-.iw-speed-dial-actions {
-  display: inline-flex;
-  flex-direction: column;
-  gap: var(--iw-space-2);
+  &:not(:popover-open) {
+    display: none;
+  }
 }
 
 .iw-speed-dial-down .iw-speed-dial-actions {
-  order: 1;
+  position-area: bottom;
+  margin: var(--iw-space-2) 0 0;
 }
 
-.iw-speed-dial-left .iw-speed-dial-actions,
+.iw-speed-dial-left .iw-speed-dial-actions {
+  position-area: left;
+  margin: 0 var(--iw-space-2) 0 0;
+  flex-direction: row;
+}
+
 .iw-speed-dial-right .iw-speed-dial-actions {
+  position-area: right;
+  margin: 0 0 0 var(--iw-space-2);
   flex-direction: row;
 }
 

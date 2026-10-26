@@ -4,7 +4,7 @@
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
-import { html } from "@inglorious/web"
+import { html, nothing } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
 import { ref } from "@inglorious/web/directives/ref"
 
@@ -30,8 +30,10 @@ export const Accordion = {
   renderAccordion(props) {
     const {
       type, // eslint-disable-line no-unused-vars
+      name, // eslint-disable-line no-unused-vars
       items = [],
       className = "",
+      onItemToggle, // eslint-disable-line no-unused-vars
       ...rest
     } = props
 
@@ -54,8 +56,11 @@ export const Accordion = {
   },
 
   /**
-   * Renders a single accordion item with trigger and panel content.
-   * Handles expand/collapse behavior and item-level callbacks.
+   * Renders a single accordion item as a native `<details>`, whose `<summary>`
+   * is the trigger. The browser opens and closes it, keeps the panel's
+   * content findable (find-in-page opens the item that holds a match), and,
+   * when the accordion has a `name`, closes the other items as one opens.
+   * Each change is reported so the store can follow.
    * @param {AccordionItem} item
    * @param {number} index
    * @param {AccordionProps} props
@@ -71,33 +76,35 @@ export const Accordion = {
       icon,
     } = item
 
-    return html`<section
+    return html`<details
       class=${classMap({
         "iw-accordion-item": true,
         "iw-accordion-item-expanded": isExpanded,
         "iw-accordion-item-disabled": isDisabled,
       })}
+      name=${props.name || nothing}
+      .open=${isExpanded}
+      @toggle=${(event) => {
+        const isOpen = event.newState === "open"
+        // Also fires when isExpanded opened it, which needs no report.
+        if (isOpen === isExpanded) return
+        onToggle?.(item, index, isOpen)
+        props.onItemToggle?.(item, index, isOpen)
+      }}
     >
-      <button
+      <summary
         class="iw-accordion-trigger"
-        type="button"
-        aria-expanded=${isExpanded}
-        ?disabled=${isDisabled}
-        @click=${() => {
-          if (isDisabled) return
-          onToggle?.(item, index, !isExpanded)
-          props.onItemToggle?.(item, index, !isExpanded)
+        aria-disabled=${isDisabled ? "true" : nothing}
+        @click=${(event) => {
+          // A summary cannot be disabled, so its toggle is refused instead.
+          if (isDisabled) event.preventDefault()
         }}
       >
         ${icon ? html`<span class="iw-accordion-icon">${icon}</span>` : null}
         <span class="iw-accordion-title">${title}</span>
-        <span class="iw-accordion-caret">▾</span>
-      </button>
-      ${
-        isExpanded
-          ? html`<div class="iw-accordion-panel">${content}</div>`
-          : null
-      }
-    </section>`
+        <span class="iw-accordion-caret" aria-hidden="true">▾</span>
+      </summary>
+      <div class="iw-accordion-panel">${content}</div>
+    </details>`
   },
 }

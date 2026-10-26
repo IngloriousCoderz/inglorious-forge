@@ -18,6 +18,11 @@ export interface SpeedDialProps {
   ariaLabel?: string
   direction?: "up" | "down" | "left" | "right"
   actions?: SpeedDialAction[]
+  /**
+   * Called with the new state when the browser opens or closes the actions.
+   * Without it, the browser alone keeps the open state and `isOpen` is not
+   * applied.
+   */
   onToggle?: (isOpen: boolean) => void
   onAction?: (value: string | number, action: SpeedDialAction) => void
   [key: string]: unknown

@@ -3,12 +3,14 @@
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
-import { html } from "@inglorious/web"
+import { html, nothing } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
 
 /**
  * Renders a linear or circular progress indicator.
  * Indeterminate mode is used when no explicit value is provided.
+ * The linear bar is a native `<progress>`; the circle, which no native element
+ * draws, is an SVG with the same `progressbar` semantics.
  * @param {ProgressProps} props
  * @returns {TemplateResult}
  */
@@ -19,6 +21,7 @@ export function render(props) {
     size = 40,
     thickness = 4,
     color = "default",
+    ariaLabel,
     className = "",
   } = props
 
@@ -45,8 +48,13 @@ export function render(props) {
         ...extraClasses,
       })}
       style=${`width: ${size}px; height: ${size}px;`}
+      role="progressbar"
+      aria-label=${ariaLabel || nothing}
+      aria-valuemin="0"
+      aria-valuemax="100"
+      aria-valuenow=${progress ?? nothing}
     >
-      <svg viewBox="0 0 ${size} ${size}">
+      <svg aria-hidden="true" viewBox="0 0 ${size} ${size}">
         <circle
           class="iw-progress-track"
           cx=${size / 2}
@@ -69,7 +77,10 @@ export function render(props) {
 
   const progress = value == null ? null : clamp(value)
 
-  return html`<div
+  // An attribute, not a property: removing it is the only way back to
+  // indeterminate, which `:indeterminate` styles and assistive tech announces
+  // as busy.
+  return html`<progress
     class=${classMap({
       "iw-progress": true,
       "iw-progress-linear": true,
@@ -77,14 +88,10 @@ export function render(props) {
       "iw-progress-indeterminate": progress == null,
       ...extraClasses,
     })}
-  >
-    <div class="iw-progress-linear-track">
-      <div
-        class="iw-progress-linear-bar"
-        style=${progress == null ? "" : `width: ${progress}%;`}
-      ></div>
-    </div>
-  </div>`
+    max="100"
+    value=${progress ?? nothing}
+    aria-label=${ariaLabel || nothing}
+  ></progress>`
 }
 
 function clamp(value) {

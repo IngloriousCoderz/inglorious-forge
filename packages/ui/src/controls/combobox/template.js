@@ -12,6 +12,7 @@ import { when } from "@inglorious/web/directives/when"
 
 import { Chip } from "../../data-display/chip/index.js"
 import { fallbackLabel } from "../../shared/fallback-label.js"
+import { syncPopover } from "../../shared/top-layer.js"
 import {
   filterOptions,
   formatOption,
@@ -263,7 +264,12 @@ export const Combobox = {
 
   /**
    * Renders the dropdown panel that contains search input, options, and empty/loading states.
-   * Shown only when the combobox is open.
+   * Shown only when the combobox is open, as a popover in the top layer so no
+   * container can clip it, anchored under the control by CSS.
+   *
+   * A manual popover: the control that opens it is not a button, so it cannot
+   * be the popover's invoker, and a light dismiss would close the dropdown on
+   * the very press that toggles it. Outside presses and Esc are handled here.
    * @param {ComboboxProps} props
    * @returns {TemplateResult}
    */
@@ -276,7 +282,11 @@ export const Combobox = {
       id=${id ? `${id}-control-listbox` : nothing}
       class="iw-combobox-dropdown"
       role="listbox"
-      ${ref((el) => trackOutsideClick(props, el))}
+      popover="manual"
+      ${ref((el) => {
+        syncPopover(el, { isOpen: true })
+        trackOutsideClick(props, el)
+      })}
     >
       ${when(isSearchable, () => this.renderSearchInput?.(props))}
       ${when(isLoading, () => this.renderLoading?.(props))}

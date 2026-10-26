@@ -15,6 +15,8 @@ export interface ProgressProps {
     | "info"
   size?: number
   thickness?: number
+  /** Names the indicator for assistive tech, e.g. "Uploading photo". */
+  ariaLabel?: string
   className?: string
   [key: string]: unknown
 }

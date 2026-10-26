@@ -1,56 +1,146 @@
 import { render } from "@inglorious/web/test"
-import { describe, expect, it } from "vitest"
+import { afterEach, describe, expect, it, vi } from "vitest"
 
 import { Dialog } from "."
 
 describe("dialog", () => {
-  it("renders when open", () => {
-    const props = { isOpen: true, title: "Hello", description: "Details" }
-    const container = document.createElement("div")
+  afterEach(() => {
+    document.body.replaceChildren()
+  })
 
-    render(Dialog.render(props), container)
+  it("renders a native dialog, open when isOpen is set", async () => {
+    const container = mount(
+      Dialog.render({ isOpen: true, title: "Hello", description: "Details" }),
+    )
+    await settle()
 
-    expect(container.querySelector(".iw-dialog")).not.toBeNull()
-    expect(container.querySelector(".iw-dialog-title").textContent).toBe(
+    const dialog = container.querySelector("dialog.iw-dialog")
+    expect(dialog.open).toBe(true)
+    expect(container.querySelector(".iw-dialog-title").textContent.trim()).toBe(
       "Hello",
     )
   })
 
-  it("does not render when closed", () => {
-    const props = { isOpen: false }
-    const container = document.createElement("div")
+  it("stays in the DOM but closed when isOpen is false", async () => {
+    const container = mount(Dialog.render({ isOpen: false }))
+    await settle()
 
-    render(Dialog.render(props), container)
-
-    expect(container.querySelector(".iw-dialog")).toBeNull()
+    expect(container.querySelector("dialog").open).toBe(false)
   })
 
-  it("dispatches close on backdrop click", () => {
-    let closed = false
-    const props = { isOpen: true, onClose: () => (closed = true) }
-    const container = document.createElement("div")
+  it("opens modally by default and in place when isModal is false", async () => {
+    const showModal = vi.spyOn(HTMLDialogElement.prototype, "showModal")
+    const show = vi.spyOn(HTMLDialogElement.prototype, "show")
 
-    render(Dialog.render(props), container)
+    mount(Dialog.render({ isOpen: true }))
+    mount(Dialog.render({ isOpen: true, isModal: false }))
+    await settle()
 
-    container.querySelector(".iw-dialog-backdrop").click()
-    expect(closed).toBe(true)
+    expect(showModal).toHaveBeenCalledTimes(1)
+    expect(show).toHaveBeenCalledTimes(1)
+    vi.restoreAllMocks()
+  })
+
+  it("closes when isOpen turns false, without reporting a close", async () => {
+    const onClose = vi.fn()
+    const container = mount(Dialog.render({ isOpen: true, onClose }))
+    await settle()
+
+    render(Dialog.render({ isOpen: false, onClose }), container)
+
+    expect(container.querySelector("dialog").open).toBe(false)
+    expect(onClose).not.toHaveBeenCalled()
+  })
+
+  it("reports a close the browser makes on its own", async () => {
+    const onClose = vi.fn()
+    const container = mount(Dialog.render({ isOpen: true, onClose }))
+    await settle()
+
+    container.querySelector("dialog").close()
+
+    expect(onClose).toHaveBeenCalledTimes(1)
+  })
+
+  it("refuses Esc when nothing would close it", async () => {
+    const container = mount(Dialog.render({ isOpen: true }))
+    await settle()
+
+    const cancel = new Event("cancel", { cancelable: true })
+    container.querySelector("dialog").dispatchEvent(cancel)
+
+    expect(cancel.defaultPrevented).toBe(true)
+  })
+
+  it("closes on a press that starts and ends on the backdrop", () => {
+    const onClose = vi.fn()
+    const container = mount(Dialog.render({ isOpen: true, onClose }))
+    const dialog = container.querySelector("dialog")
+
+    dialog.dispatchEvent(new Event("pointerdown", { bubbles: true }))
+    dialog.click()
+
+    expect(onClose).toHaveBeenCalledTimes(1)
+  })
+
+  it("ignores a drag from the surface that ends on the backdrop", () => {
+    const onClose = vi.fn()
+    const container = mount(Dialog.render({ isOpen: true, onClose }))
+
+    container
+      .querySelector(".iw-dialog-surface")
+      .dispatchEvent(new Event("pointerdown", { bubbles: true }))
+    container.querySelector("dialog").click()
+
+    expect(onClose).not.toHaveBeenCalled()
+  })
+
+  it("ignores clicks inside the surface", () => {
+    const onClose = vi.fn()
+    const container = mount(
+      Dialog.render({ isOpen: true, title: "Hello", onClose }),
+    )
+
+    const title = container.querySelector(".iw-dialog-title")
+    title.dispatchEvent(new Event("pointerdown", { bubbles: true }))
+    title.click()
+
+    expect(onClose).not.toHaveBeenCalled()
   })
 
   it("prefers onBackdropClick over onClose", () => {
-    let closeCount = 0
-    let backdropCount = 0
-    const props = {
-      isOpen: true,
-      onClose: () => closeCount++,
-      onBackdropClick: () => backdropCount++,
-    }
-    const container = document.createElement("div")
+    const onClose = vi.fn()
+    const onBackdropClick = vi.fn()
+    const container = mount(
+      Dialog.render({ isOpen: true, onClose, onBackdropClick }),
+    )
+    const dialog = container.querySelector("dialog")
 
-    render(Dialog.render(props), container)
+    dialog.dispatchEvent(new Event("pointerdown", { bubbles: true }))
+    dialog.click()
 
-    container.querySelector(".iw-dialog-backdrop").click()
+    expect(onBackdropClick).toHaveBeenCalledTimes(1)
+    expect(onClose).not.toHaveBeenCalled()
+  })
 
-    expect(backdropCount).toBe(1)
-    expect(closeCount).toBe(0)
+  it("labels the dialog by its title and description", () => {
+    const container = mount(
+      Dialog.render({ id: "confirm", title: "Hello", description: "Details" }),
+    )
+    const dialog = container.querySelector("dialog")
+
+    expect(dialog.getAttribute("aria-labelledby")).toBe("confirm-title")
+    expect(dialog.getAttribute("aria-describedby")).toBe("confirm-description")
   })
 })
+
+function mount(template) {
+  const container = document.createElement("div")
+  document.body.append(container)
+  render(template, container)
+  return container
+}
+
+function settle() {
+  return Promise.resolve()
+}

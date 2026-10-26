@@ -1,10 +1,22 @@
+/* The bubble is anchored to the trigger by CSS: the browser places it on the
+   requested side and flips it to the opposite one when it would leave the
+   viewport. Fixed, so a container that clips its overflow does not cut it. */
 .iw-tooltip {
-  position: relative;
+  anchor-scope: --iw-tooltip;
   display: inline-flex;
   align-items: center;
 
+  .iw-tooltip-trigger {
+    anchor-name: --iw-tooltip;
+  }
+
   .iw-tooltip-bubble {
-    position: absolute;
+    position: fixed;
+    position-anchor: --iw-tooltip;
+    position-area: top;
+    position-try-fallbacks: flip-block;
+    margin-block-end: var(--iw-space-2);
+    width: max-content;
     z-index: var(--iw-z-tooltip);
     opacity: 0;
     pointer-events: none;
@@ -15,9 +27,6 @@
     padding: var(--iw-space-2) var(--iw-space-3);
     box-shadow: var(--iw-shadow-md);
     transition: opacity 150ms ease;
-    left: 50%;
-    bottom: calc(100% + var(--iw-space-2));
-    transform: translateX(-50%);
     white-space: normal;
   }
 
@@ -38,20 +47,19 @@
   }
 
   &.iw-tooltip-bottom .iw-tooltip-bubble {
-    top: calc(100% + var(--iw-space-2));
-    bottom: auto;
+    position-area: bottom;
+    margin: var(--iw-space-2) 0 0;
   }
 
   &.iw-tooltip-left .iw-tooltip-bubble {
-    left: auto;
-    right: calc(100% + var(--iw-space-2));
-    bottom: 50%;
-    transform: translateY(50%);
+    position-area: left;
+    position-try-fallbacks: flip-inline;
+    margin: 0 var(--iw-space-2) 0 0;
   }
 
   &.iw-tooltip-right .iw-tooltip-bubble {
-    left: calc(100% + var(--iw-space-2));
-    bottom: 50%;
-    transform: translateY(50%);
+    position-area: right;
+    position-try-fallbacks: flip-inline;
+    margin: 0 0 0 var(--iw-space-2);
   }
 }

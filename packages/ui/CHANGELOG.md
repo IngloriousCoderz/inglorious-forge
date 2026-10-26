@@ -1,5 +1,22 @@
 # @inglorious/ui
 
+## 9.0.0
+
+### Major Changes
+
+- Components use the browser's own features where it has them, instead of rebuilding them in JavaScript.
+
+  - `Dialog` is a native `<dialog>`, opened with `showModal()`: the browser traps focus, makes the page inert, closes on Esc and returns focus to the trigger. It stays in the page while closed. `isModal: false` shows it in place instead. The backdrop is `.iw-dialog::backdrop`, and `.iw-dialog-backdrop` is gone. With `id`, the dialog is labelled by its title and described by its description.
+  - `Drawer` overlays the page as a native popover, over a `::backdrop`, and closes on Esc or a press outside it. It no longer renders a `Backdrop`, so `.iw-drawer-backdrop` is gone. `variant` now works: `responsive` (the default) docks from 64rem and overlays below it, `temporary` overlays at every width, `permanent` never does. `breakpoint` and the `persistent` variant, which never did anything, are removed. Without `onClose` the drawer cannot be dismissed by the browser.
+  - `Progress`: the linear bar is a native `<progress>`. `.iw-progress-linear-track` and `.iw-progress-linear-bar` are gone: set `color`, `--iw-progress-height`, `--iw-progress-radius` and `--iw-progress-track-color` instead. The circle is a `progressbar` with its value, and both take `ariaLabel`.
+  - `Rating` is a fieldset of native radios: arrow keys move between the stars, and the value submits with a form under `name` (or `id`). Takes `ariaLabel`.
+  - `Accordion` items are `<details>` with a `<summary>` trigger. Items sharing the new `name` close each other. Changes the browser makes, such as find-in-page opening an item, reach `onToggle` and `onItemToggle`.
+  - `Menu` takes a `trigger`: it then renders a button that opens the menu as a popover anchored to it, which flips to stay on screen and closes on Esc, a press outside or a pick. `onToggle` keeps the store in step. Needs an `id`.
+  - `SpeedDial` actions are a popover anchored to the trigger on the side `direction` names, closing on Esc, a press outside or an action. `onToggle` now reports the browser's changes; without it the browser alone keeps the open state.
+  - `Combobox`, `Tooltip` and `Snackbar` are positioned by the browser: the combobox list is a popover anchored under its field, the tooltip bubble is anchored to its trigger and flips when there is no room, and the snackbar is a popover. None of them is cut off by a container that clips its overflow any more, and the snackbar shows above an open modal dialog.
+  - `Tabs` move with the arrow keys, Home and End, with only the selected tab in the Tab order. With `id`, each tab and its panel are linked.
+  - `Switch` is announced as a switch. `Button` only sets `aria-pressed` and `aria-label` when given.
+
 ## 8.6.0
 
 ### Minor Changes

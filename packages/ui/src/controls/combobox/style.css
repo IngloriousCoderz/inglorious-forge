@@ -5,7 +5,8 @@
   flex-direction: column;
   gap: var(--iw-space-1);
   font-family: var(--iw-font-family-sans);
-  position: relative; /* required for dropdown positioning */
+  /* Each combobox anchors its own dropdown to its own frame. */
+  anchor-scope: --iw-combobox;
 
   &.iw-combobox-full-width {
     width: 100%;
@@ -38,6 +39,7 @@
   }
 
   .iw-combobox-frame {
+    anchor-name: --iw-combobox;
     display: flex;
     align-items: center;
     /* The gap spaces the text from the arrow, as it does for Input's icons. */
@@ -182,12 +184,17 @@
     }
   }
 
+  /* A popover in the top layer, placed under the frame and as wide as it,
+     flipping above when there is no room below. The browser's popover box
+     is centred in the viewport, so its insets, margin and colours are reset. */
   .iw-combobox-dropdown {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    z-index: 1000;
+    position-anchor: --iw-combobox;
+    position-area: block-end span-inline-end;
+    position-try-fallbacks: flip-block;
+    inset: auto;
+    width: anchor-size(width);
+    padding: 0;
+    color: var(--iw-color-text);
     display: flex;
     flex-direction: column;
     max-height: 16rem;
@@ -198,7 +205,7 @@
     border-start-end-radius: 0;
     background: var(--iw-color-bg);
     box-shadow: var(--iw-shadow-lg);
-    margin-top: -1px;
+    margin: -1px 0 0;
 
     .iw-combobox-dropdown-search {
       width: 100%;

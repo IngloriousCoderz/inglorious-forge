@@ -15,6 +15,8 @@ export interface AccordionProps {
   id?: string
   type?: string
   className?: string
+  /** Items sharing a name close each other: at most one is open at a time. */
+  name?: string
   items?: AccordionItem[]
   onItemToggle?: (item: AccordionItem, index: number, expanded: boolean) => void
   [key: string]: unknown
