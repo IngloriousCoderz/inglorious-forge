@@ -1,5 +1,11 @@
 # @inglorious/ui
 
+## 8.6.0
+
+### Minor Changes
+
+- Button: add `onFileSelect`, `accept` and `isMultiple` to turn a button into a file picker. FileUpload: keep the pointer cursor over the whole drop area.
+
 ## 8.5.0
 
 ### Minor Changes

@@ -58,6 +58,10 @@
     inset: 0;
     opacity: 0;
     cursor: pointer;
+
+    &::file-selector-button {
+      cursor: inherit;
+    }
   }
 
   .iw-upload-content {

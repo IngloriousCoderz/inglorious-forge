@@ -22,7 +22,13 @@ export interface ButtonProps {
   ariaLabel?: string
   isAriaPressed?: boolean
   className?: string
-  onClick?: () => void
+  /** File types the picker offers, as in the native `accept` attribute */
+  accept?: string
+  /** Lets the picker select more than one file */
+  isMultiple?: boolean
+  onClick?: (event: MouseEvent) => void
+  /** Turns the button into a file picker; called with the chosen files */
+  onFileSelect?: (files: FileList) => void
   [key: string]: unknown
 }
 

@@ -190,4 +190,83 @@ describe("button", () => {
       expect(isClicked).toBe(true)
     })
   })
+
+  describe("file picker", () => {
+    it("renders no file input without onFileSelect", () => {
+      const container = document.createElement("div")
+
+      render(Button.render({ children: "Plain" }), container)
+
+      expect(container.querySelector('input[type="file"]')).toBeNull()
+    })
+
+    it("renders a hidden file input with accept and multiple", () => {
+      const props = {
+        children: "Upload",
+        accept: "image/*",
+        isMultiple: true,
+        onFileSelect: () => {},
+      }
+      const container = document.createElement("div")
+
+      render(Button.render(props), container)
+
+      const inputElement = container.querySelector('input[type="file"]')
+      expect(inputElement.hidden).toBe(true)
+      expect(inputElement.getAttribute("accept")).toBe("image/*")
+      expect(inputElement.multiple).toBe(true)
+    })
+
+    it("opens the picker and still calls onClick", () => {
+      let isClicked = false
+      let isPickerOpened = false
+      const props = {
+        children: "Upload",
+        onClick: () => (isClicked = true),
+        onFileSelect: () => {},
+      }
+      const container = document.createElement("div")
+
+      render(Button.render(props), container)
+
+      container
+        .querySelector('input[type="file"]')
+        .addEventListener("click", () => (isPickerOpened = true))
+      container.querySelector("button").click()
+
+      expect(isClicked).toBe(true)
+      expect(isPickerOpened).toBe(true)
+    })
+
+    it("calls onFileSelect with the chosen files", () => {
+      let selectedFiles = null
+      const props = {
+        children: "Upload",
+        onFileSelect: (files) => (selectedFiles = files),
+      }
+      const container = document.createElement("div")
+
+      render(Button.render(props), container)
+
+      const inputElement = container.querySelector('input[type="file"]')
+      const file = new File(["photo"], "photo.png", { type: "image/png" })
+      Object.defineProperty(inputElement, "files", { value: [file] })
+      inputElement.dispatchEvent(new Event("change"))
+
+      expect(selectedFiles).toEqual([file])
+    })
+
+    it("disables the file input with the button", () => {
+      const props = {
+        children: "Upload",
+        isDisabled: true,
+        onFileSelect: () => {},
+      }
+      const container = document.createElement("div")
+
+      render(Button.render(props), container)
+
+      expect(container.querySelector('input[type="file"]').disabled).toBe(true)
+    })
+  })
 })

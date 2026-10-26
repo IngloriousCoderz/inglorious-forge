@@ -57,7 +57,19 @@ export default {
       options: ["button", "submit", "reset", "menu"],
       description: "Native HTML button type attribute.",
     },
+    accept: {
+      control: "text",
+      description: "File types the picker offers (with `onFileSelect`).",
+    },
+    isMultiple: {
+      control: "boolean",
+      description: "Lets the picker select more than one file.",
+    },
     onClick: { action: "onClick" },
+    onFileSelect: {
+      action: "onFileSelect",
+      description: "Turns the button into a file picker.",
+    },
   },
   parameters: {
     docs: {
@@ -148,6 +160,16 @@ Round.args = {
   ...Default.args,
   shape: "round",
   children: "＋",
+}
+
+export const FilePicker = {}
+FilePicker.args = {
+  ...Default.args,
+  children: "Change photo",
+  variant: "outline",
+  shape: "pill",
+  accept: "image/jpeg,image/png,image/webp",
+  onFileSelect: () => {},
 }
 
 export const CustomContent = {}
