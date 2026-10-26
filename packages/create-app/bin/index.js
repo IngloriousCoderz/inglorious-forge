@@ -21,6 +21,7 @@ import { copyDir } from "./lib/file.js"
 import { addMobileSupport } from "./lib/mobile.js"
 import { addPwaSupport } from "./lib/pwa.js"
 import { askAppFeatures } from "./lib/questions.js"
+import { installSkills, skillsCommand, skillsFor } from "./lib/skills.js"
 
 async function main() {
   const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -107,6 +108,29 @@ async function main() {
     )
   }
 
+  let withSkills = false
+
+  if (baseTemplate !== "minimal") {
+    const { addSkills } = await prompts(
+      {
+        type: cliOptions.skills === null ? "confirm" : null,
+        name: "addSkills",
+        message: "Add agent skills for coding agents? (Claude Code, Codex...)",
+        initial: true,
+      },
+      { onCancel },
+    )
+
+    if (canceled) {
+      console.log("Operation canceled.")
+      return
+    }
+
+    withSkills = cliOptions.skills ?? addSkills
+  } else if (cliOptions.skills) {
+    console.warn("Agent skills are not available for the minimal template.")
+  }
+
   const spinner = ora(`Creating project "${projectName}"...`).start()
 
   try {
@@ -179,6 +203,16 @@ async function main() {
     fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, INDENTATION) + EOL)
 
     spinner.succeed(`Created ${projectName} at ${targetDir}`)
+
+    if (withSkills) {
+      const skills = skillsFor({ baseTemplate, renderer, ...features })
+      if (!installSkills(targetDir, skills)) {
+        console.warn(`\nCould not add the agent skills. To retry, run:`)
+        console.warn(`  cd ${projectName}`)
+        console.warn(`  ${skillsCommand(skills)}`)
+      }
+    }
+
     console.log(`\nNext steps:`)
     console.log(`  cd ${projectName}`)
     console.log(`  pnpm install`)

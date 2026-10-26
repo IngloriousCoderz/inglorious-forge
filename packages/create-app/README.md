@@ -36,6 +36,8 @@ For the JavaScript and TypeScript Vite templates, the CLI then asks about the ap
 | Translate the app?        | `--i18n` / `--no-i18n`, `--languages=en,it`          | `@inglorious/i18n`, a catalogue per language and a language picker; the first language is the default      |
 | Enable PWA support?       | `--pwa` / `--no-pwa`                                 | `vite-plugin-pwa`, a manifest, icons, and a service worker that keeps installed apps on the latest version |
 
+Every template except `minimal` then asks whether to add agent skills (`--skills` / `--no-skills`). Saying yes runs the [skills CLI](https://skills.sh) in the new project. It asks which coding agents to install for, and installs the [Inglorious Forge skills](https://github.com/IngloriousCoderz/forge-skills) that match your choices: `forge`, `forge-best-practices`, `store`, `web` and `web-best-practices` always, plus `ssx`, `vite-plugin-jsx` or `vite-plugin-vue`, `ui` and `ui-best-practices`, and `i18n` when the project uses them. If the install fails, the CLI prints the command to retry it.
+
 The app is generated in the syntax you chose: lit-html, JSX or Vue. Every question answered on the command line is skipped, so a project can be created without any prompt:
 
 | Question                    | Argument or flag                             |
@@ -45,7 +47,7 @@ The app is generated in the syntax you chose: lit-html, JSX or Vue. Every questi
 | Select a rendering syntax   | `--syntax=lit-html\|jsx\|vue`                |
 
 ```bash
-npm create @inglorious/app@latest -- my-app --template=ts --syntax=jsx --ui --theme=material --routing --transitions --icons=material --languages=en,it --no-mobile --no-pwa
+npm create @inglorious/app@latest -- my-app --template=ts --syntax=jsx --ui --theme=material --routing --transitions --icons=material --languages=en,it --no-mobile --no-pwa --skills
 ```
 
 ## Templates

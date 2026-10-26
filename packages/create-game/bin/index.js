@@ -9,6 +9,16 @@ import prompts from "prompts"
 import { fileURLToPath } from "url"
 
 const INDENTATION = 2
+const SKILLS_REPOSITORY = "IngloriousCoderz/forge-skills"
+const SKILLS = [
+  "forge",
+  "forge-best-practices",
+  "store",
+  "utils",
+  "engine",
+  "engine-best-practices",
+]
+const SKILLS_COMMAND = `pnpm dlx skills add ${SKILLS_REPOSITORY} --skill ${SKILLS.join(" ")}`
 
 async function main() {
   const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -21,7 +31,7 @@ async function main() {
     return false
   }
 
-  const { projectName, template } = await prompts(
+  const { projectName, template, addSkills } = await prompts(
     [
       {
         type: "text",
@@ -62,6 +72,12 @@ async function main() {
             value: "its",
           },
         ],
+      },
+      {
+        type: (template) => (template === "minimal" ? null : "confirm"),
+        name: "addSkills",
+        message: "Add agent skills for coding agents? (Claude Code, Codex...)",
+        initial: true,
       },
     ],
     { onCancel },
@@ -114,6 +130,13 @@ async function main() {
       fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, INDENTATION) + EOL)
 
       spinner.succeed(`Created ${projectName} at ${targetDir}`)
+
+      if (addSkills && !installSkills(targetDir)) {
+        console.warn(`\nCould not add the agent skills. To retry, run:`)
+        console.warn(`  cd ${projectName}`)
+        console.warn(`  ${SKILLS_COMMAND}`)
+      }
+
       console.log(`\nNext steps:`)
       console.log(`  cd ${projectName}`)
       console.log(`  pnpm install`)
@@ -144,6 +167,16 @@ async function main() {
       } else {
         fs.copyFileSync(srcPath, destPath)
       }
+    }
+  }
+
+  // The skills CLI asks which agents to install the skills for.
+  function installSkills(targetDir) {
+    try {
+      execSync(SKILLS_COMMAND, { cwd: targetDir, stdio: "inherit" })
+      return true
+    } catch {
+      return false
     }
   }
 

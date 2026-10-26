@@ -12,6 +12,7 @@ export function parseCliOptions(args) {
     icons: readListFlag(args, "icons"),
     i18n: readBooleanFlag(args, "i18n"),
     languages: readListFlag(args, "languages"),
+    skills: readBooleanFlag(args, "skills"),
   }
 }
 

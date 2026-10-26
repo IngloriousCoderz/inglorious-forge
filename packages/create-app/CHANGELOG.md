@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.5.0
+
+### Minor Changes
+
+- Asks whether to add agent skills (`--skills` / `--no-skills`), and installs the Inglorious Forge skills that match the project's template, syntax and features with the skills CLI.
+
 ## 1.4.3
 
 ### Patch Changes
