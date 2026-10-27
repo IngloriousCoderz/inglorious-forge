@@ -6,6 +6,7 @@
 
 import { html } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
+import { when } from "@inglorious/web/directives/when"
 
 export const Stepper = {
   /**
@@ -67,11 +68,10 @@ export const Stepper = {
       <span class="iw-stepper-indicator">${completed ? "✓" : index + 1}</span>
       <span class="iw-stepper-content">
         <span class="iw-stepper-label">${step.label}</span>
-        ${
-          step.optional
-            ? html`<span class="iw-stepper-optional">${step.optional}</span>`
-            : null
-        }
+        ${when(
+          step.optional,
+          () => html`<span class="iw-stepper-optional">${step.optional}</span>`,
+        )}
       </span>
     </li>`
   },

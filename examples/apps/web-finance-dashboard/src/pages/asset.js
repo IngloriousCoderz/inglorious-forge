@@ -9,6 +9,7 @@ import {
 } from "@inglorious/charts"
 import { handleAsync } from "@inglorious/store/async"
 import { html } from "@inglorious/web"
+import { when } from "@inglorious/web/directives/when"
 
 import { renderKpiCard } from "../components/kpi-card.js"
 import { renderInlineLoader } from "../components/loading.js"
@@ -112,9 +113,9 @@ export const AssetPage = {
           "Price History",
           html`
             <div class="chart-wrap">
-              ${
-                entity.loading ? renderInlineLoader("Switching asset...") : null
-              }
+              ${when(entity.loading, () =>
+                renderInlineLoader("Switching asset..."),
+              )}
               ${Chart.render(
                 {
                   data: priceSeries,
@@ -140,11 +141,10 @@ export const AssetPage = {
           "Fundamentals",
           html`
             ${renderMockSelector(entity.fallbackSymbols || [])}
-            ${
-              entity.warning
-                ? html`<p class="info-note">${entity.warning}</p>`
-                : null
-            }
+            ${when(
+              entity.warning,
+              () => html`<p class="info-note">${entity.warning}</p>`,
+            )}
             <p>Name: ${profile.companyName ?? "N/A"}</p>
             <p>
               Exchange:

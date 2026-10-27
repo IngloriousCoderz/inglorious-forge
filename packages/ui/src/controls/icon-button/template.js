@@ -4,6 +4,7 @@
  */
 
 import { html } from "@inglorious/web"
+import { when } from "@inglorious/web/directives/when"
 
 import { Button } from "../button/index.js"
 
@@ -25,13 +26,12 @@ export function render(props) {
 
   const children = html`
     <span class="iw-icon-button-content iw-icon-button-content-${direction}">
-      ${icon ? html`<span class="iw-button-icon">${icon}</span>` : null}
+      ${when(icon, () => html`<span class="iw-button-icon">${icon}</span>`)}
       ${label}
-      ${
-        iconAfter
-          ? html`<span class="iw-button-icon">${iconAfter}</span>`
-          : null
-      }
+      ${when(
+        iconAfter,
+        () => html`<span class="iw-button-icon">${iconAfter}</span>`,
+      )}
     </span>
   `
 

@@ -6,6 +6,7 @@
 import { html, nothing } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
 import { ref } from "@inglorious/web/directives/ref"
+import { when } from "@inglorious/web/directives/when"
 
 import { applyElementProps } from "../../shared/apply-element-props.js"
 import { fallbackLabel } from "../../shared/fallback-label.js"
@@ -60,51 +61,53 @@ export function render(props) {
 
   return html`
     <div class=${classMap(classes)}>
-      ${
-        (label || isValueVisible) &&
-        html`<div class="iw-slider-header">
-          ${
-            label
-              ? html`<label for=${inputId || nothing}>${label}</label>`
-              : html`<span></span>`
-          }
-          ${
-            isValueVisible
-              ? html`<output class="iw-slider-value">${shown}</output>`
-              : null
-          }
-        </div>`
-      }
-      ${
-        isRange
-          ? renderRange({
-              inputId,
-              name,
+      ${when(
+        label || isValueVisible,
+        () =>
+          html`<div class="iw-slider-header">
+            ${when(
               label,
-              value,
-              min,
-              max,
-              step,
-              isDisabled,
-              onChange,
-              rest,
-            })
-          : html`<input
-              id=${inputId || nothing}
-              class="iw-slider-input"
-              aria-label=${fallbackLabel(inputId, label)}
-              type="range"
-              name=${name}
-              min=${min}
-              max=${max}
-              step=${step}
-              .value=${String(value)}
-              ?disabled=${isDisabled}
-              @input=${(event) => onChange?.(Number(event.target.value))}
-              ${ref((element) => applyElementProps(element, rest))}
-            />`
-      }
-      ${hasMarks ? renderMarks({ min, max, step }) : nothing}
+              () => html`<label for=${inputId || nothing}>${label}</label>`,
+              () => html`<span></span>`,
+            )}
+            ${when(
+              isValueVisible,
+              () => html`<output class="iw-slider-value">${shown}</output>`,
+            )}
+          </div>`,
+      )}
+      ${when(
+        isRange,
+        () =>
+          renderRange({
+            inputId,
+            name,
+            label,
+            value,
+            min,
+            max,
+            step,
+            isDisabled,
+            onChange,
+            rest,
+          }),
+        () =>
+          html`<input
+            id=${inputId || nothing}
+            class="iw-slider-input"
+            aria-label=${fallbackLabel(inputId, label)}
+            type="range"
+            name=${name}
+            min=${min}
+            max=${max}
+            step=${step}
+            .value=${String(value)}
+            ?disabled=${isDisabled}
+            @input=${(event) => onChange?.(Number(event.target.value))}
+            ${ref((element) => applyElementProps(element, rest))}
+          />`,
+      )}
+      ${when(hasMarks, () => renderMarks({ min, max, step }))}
     </div>
   `
 }

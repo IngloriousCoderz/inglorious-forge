@@ -111,7 +111,7 @@ export const DataGrid = {
         ${column.title} ${getSortIcon(getSortDirection(props, column.id))}
       </div>
 
-      ${column.isFilterable && Filters.render(props, column)}
+      ${when(column.isFilterable, () => Filters.render(props, column))}
 
       <div
         class="iw-data-grid-column-resizer"

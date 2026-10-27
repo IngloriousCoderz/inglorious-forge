@@ -52,11 +52,10 @@ export const Select = {
           () => html`
             <label for=${id || name || nothing} class="iw-select-label">
               ${label}
-              ${
-                isRequired
-                  ? html`<span class="iw-select-required">*</span>`
-                  : null
-              }
+              ${when(
+                isRequired,
+                () => html`<span class="iw-select-required">*</span>`,
+              )}
             </label>
           `,
         )}
@@ -117,7 +116,7 @@ export const Select = {
     )
 
     return html`<div class="iw-select-frame" @click=${openFromArrowStrip}>
-      ${icon ? Icon.render({ children: icon, size }) : null}
+      ${when(icon, () => Icon.render({ children: icon, size }))}
 
       <select
         id=${controlId || nothing}

@@ -7,6 +7,7 @@
 import { html } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
 import { ref } from "@inglorious/web/directives/ref"
+import { when } from "@inglorious/web/directives/when"
 
 import { applyElementProps } from "../../shared/apply-element-props.js"
 
@@ -79,18 +80,16 @@ export const BottomNavigation = {
         props.onChange?.(currentValue)
       }}
     >
-      ${
-        action.icon
-          ? html`<span class="iw-bottom-navigation-icon">${action.icon}</span>`
-          : null
-      }
-      ${
-        props.hasLabels
-          ? html`<span class="iw-bottom-navigation-label"
-              >${action.label}</span
-            >`
-          : null
-      }
+      ${when(
+        action.icon,
+        () =>
+          html`<span class="iw-bottom-navigation-icon">${action.icon}</span>`,
+      )}
+      ${when(
+        props.hasLabels,
+        () =>
+          html`<span class="iw-bottom-navigation-label">${action.label}</span>`,
+      )}
     </button>`
   },
 }

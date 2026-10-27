@@ -1,5 +1,15 @@
 # @inglorious/charts
 
+## 12.1.0
+
+### Minor Changes
+
+- Pie and donut charts take a legend: `hasLegend: true` in config, or a `Legend()` primitive in composition, lists the slices above the pie in their colours, wrapping onto more rows when they do not fit on one. With a legend the slices go unlabelled, unless `hasLabel: true`.
+
+### Patch Changes
+
+- Templates render conditionally with `when()` from `@inglorious/web/directives/when` rather than ternaries and `&&`. Behaviour is unchanged, except that a condition that is a falsy number no longer renders a stray `0`.
+
 ## 12.0.0
 
 ### Major Changes

@@ -58,7 +58,7 @@ export interface ChartConfig {
   padding?: ChartPadding
   /** Defaults to true. */
   hasGrid?: boolean
-  /** Defaults to false. */
+  /** Defaults to false. On a pie or donut, it names the slices. */
   hasLegend?: boolean
   /** Defaults to false. */
   hasTooltip?: boolean
@@ -80,7 +80,7 @@ export interface ChartConfig {
   dataKey?: string
   /** Pie and donut charts: the field with each slice's label. Defaults to `"label"`. */
   nameKey?: string
-  /** Pie and donut charts: labels the slices. */
+  /** Pie and donut charts: labels the slices. Defaults to true, or false with a legend. */
   hasLabel?: boolean
   /** Donut charts: the text in the middle. A pie with it becomes a donut. */
   centerText?: string

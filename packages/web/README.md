@@ -1282,6 +1282,7 @@ api.notify("geolocationUnwatch")
 
 ```javascript
 import { mount, html } from "@inglorious/web"
+import { when } from "@inglorious/web/directives/when"
 import { store } from "./store.js"
 
 const renderApp = (api) => {
@@ -1295,12 +1296,13 @@ const renderApp = (api) => {
       <p>Loading: ${geolocation.isLoading ? "yes" : "no"}</p>
       <p>
         Position:
-        ${
-          position
-            ? html`${position.coords.latitude.toFixed(4)},
-              ${position.coords.longitude.toFixed(4)}`
-            : "unknown"
-        }
+        ${when(
+          position,
+          () =>
+            html`${position.coords.latitude.toFixed(4)},
+            ${position.coords.longitude.toFixed(4)}`,
+          () => "unknown",
+        )}
       </p>
       <p>Error: ${geolocation.error ? geolocation.error.message : "none"}</p>
       <button
@@ -1461,11 +1463,13 @@ Events:
 
 ```javascript
 const renderUpdate = (api) =>
-  api.getEntity("pwaUpdate").isUpdateReady
-    ? html`<button @click=${() => api.notify("#pwaUpdate:pwaUpdateApply")}>
+  when(
+    api.getEntity("pwaUpdate").isUpdateReady,
+    () =>
+      html`<button @click=${() => api.notify("#pwaUpdate:pwaUpdateApply")}>
         Update now
-      </button>`
-    : ""
+      </button>`,
+  )
 ```
 
 Inglorious UI's `Snackbar` is the usual place for it. `watchPwaUpdate` takes `{ id, checkEveryMs }` as a third argument, to announce to an entity with another id or to check more or less often, and returns a function that stops watching.

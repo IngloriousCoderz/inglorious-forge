@@ -6,6 +6,7 @@
 import { html } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
 import { ref } from "@inglorious/web/directives/ref"
+import { when } from "@inglorious/web/directives/when"
 
 import { applyElementProps } from "../../shared/apply-element-props.js"
 
@@ -95,8 +96,8 @@ export const Card = {
         [`iw-card-header-padding-${headerPadding}`]: headerPadding !== "md",
       })}
     >
-      ${title ? html`<h3 class="iw-card-title">${title}</h3>` : null}
-      ${subtitle ? html`<p class="iw-card-subtitle">${subtitle}</p>` : null}
+      ${when(title, () => html`<h3 class="iw-card-title">${title}</h3>`)}
+      ${when(subtitle, () => html`<p class="iw-card-subtitle">${subtitle}</p>`)}
     </div>`
   },
 

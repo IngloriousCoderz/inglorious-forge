@@ -6,6 +6,7 @@
 import { html, nothing } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
 import { ref } from "@inglorious/web/directives/ref"
+import { when } from "@inglorious/web/directives/when"
 
 import { applyElementProps } from "../../shared/apply-element-props.js"
 
@@ -83,18 +84,18 @@ export function render(props) {
     >
       ${children}
     </button>
-    ${
-      onFileSelect
-        ? html`<input
-            type="file"
-            accept=${accept ?? ""}
-            ?multiple=${isMultiple}
-            ?disabled=${isDisabled}
-            hidden
-            @change=${(event) => handleFileChange(event, onFileSelect)}
-          />`
-        : nothing
-    }
+    ${when(
+      onFileSelect,
+      () =>
+        html`<input
+          type="file"
+          accept=${accept ?? ""}
+          ?multiple=${isMultiple}
+          ?disabled=${isDisabled}
+          hidden
+          @change=${(event) => handleFileChange(event, onFileSelect)}
+        />`,
+    )}
   `
 }
 

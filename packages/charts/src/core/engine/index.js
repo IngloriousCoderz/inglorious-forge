@@ -1,6 +1,7 @@
 /* eslint-disable no-magic-numbers */
 
 import { svg } from "@inglorious/web"
+import { when } from "@inglorious/web/directives/when"
 
 import {
   renderCartesianGrid,
@@ -32,11 +33,9 @@ export function renderFrame(frame) {
       aria-label=${entity.ariaLabel || `${entity.type} chart`}
     >
       ${orderedPrimitives.map((primitive) => renderPrimitive(primitive, frame))}
-      ${
-        entity.centerText && isPolarChart(entity.type)
-          ? renderCenterText(frame)
-          : ""
-      }
+      ${when(entity.centerText && isPolarChart(entity.type), () =>
+        renderCenterText(frame),
+      )}
       ${renderTooltip(frame)}
     </svg>
   `

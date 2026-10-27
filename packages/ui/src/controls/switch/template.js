@@ -6,6 +6,7 @@
 import { html, nothing } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
 import { ref } from "@inglorious/web/directives/ref"
+import { when } from "@inglorious/web/directives/when"
 
 import { applyElementProps } from "../../shared/apply-element-props.js"
 
@@ -58,16 +59,19 @@ export function render(props) {
       <span class="iw-switch-track" aria-hidden="true">
         <span class="iw-switch-thumb"></span>
       </span>
-      ${
-        description
-          ? html`<span class="iw-switch-text">
-              ${label ? html`<span class="iw-switch-label">${label}</span>` : null}
-              <span class="iw-switch-description">${description}</span>
-            </span>`
-          : label
-            ? html`<span class="iw-switch-label">${label}</span>`
-            : null
-      }
+      ${when(
+        description,
+        () =>
+          html`<span class="iw-switch-text">
+            ${when(label, () => html`<span class="iw-switch-label">${label}</span>`)}
+            <span class="iw-switch-description">${description}</span>
+          </span>`,
+        () =>
+          when(
+            label,
+            () => html`<span class="iw-switch-label">${label}</span>`,
+          ),
+      )}
     </label>
   `
 }

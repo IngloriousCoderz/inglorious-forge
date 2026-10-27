@@ -6,6 +6,7 @@
 import { html } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
 import { ref } from "@inglorious/web/directives/ref"
+import { when } from "@inglorious/web/directives/when"
 
 import { syncPopover } from "../../shared/top-layer.js"
 
@@ -49,19 +50,19 @@ export function render(props) {
   >
     <div class="iw-snackbar-content">
       <span class="iw-snackbar-message">${message}</span>
-      ${action ? html`<span class="iw-snackbar-action">${action}</span>` : null}
-      ${
-        onClose
-          ? html`<button
-              type="button"
-              class="iw-snackbar-close"
-              aria-label="Dismiss"
-              @click=${onClose}
-            >
-              ×
-            </button>`
-          : null
-      }
+      ${when(action, () => html`<span class="iw-snackbar-action">${action}</span>`)}
+      ${when(
+        onClose,
+        () =>
+          html`<button
+            type="button"
+            class="iw-snackbar-close"
+            aria-label="Dismiss"
+            @click=${onClose}
+          >
+            ×
+          </button>`,
+      )}
     </div>
   </div>`
 }

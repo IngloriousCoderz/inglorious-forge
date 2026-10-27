@@ -5,6 +5,7 @@
 
 import { html } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
+import { when } from "@inglorious/web/directives/when"
 
 /**
  * Renders a compact chip label with an optional leading icon and remove action.
@@ -31,14 +32,14 @@ export function render(props) {
   }
 
   return html`<span class=${classMap(classes)}>
-    ${icon ? html`<span class="iw-chip-icon" aria-hidden="true">${icon}</span>` : null}
+    ${when(icon, () => html`<span class="iw-chip-icon" aria-hidden="true">${icon}</span>`)}
     <span class="iw-chip-label">${children}</span>
-    ${
-      isRemovable
-        ? html`<button type="button" class="iw-chip-remove" @click=${onClick}>
-            ×
-          </button>`
-        : null
-    }
+    ${when(
+      isRemovable,
+      () =>
+        html`<button type="button" class="iw-chip-remove" @click=${onClick}>
+          ×
+        </button>`,
+    )}
   </span>`
 }

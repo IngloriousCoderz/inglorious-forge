@@ -1,6 +1,7 @@
 /* eslint-disable no-magic-numbers */
 
 import { svg } from "@inglorious/web"
+import { when } from "@inglorious/web/directives/when"
 import { arc, pie as createPieLayout } from "d3-shape"
 
 import { themeColor } from "../../theme.js"
@@ -70,11 +71,10 @@ export function renderPieSeries(primitive, frame) {
             >
               ${tooltip.title}
             </path>
-            ${
-              !hasLabel
-                ? ""
-                : labelPosition === "inside"
-                  ? svg`
+            ${when(hasLabel, () =>
+              when(
+                labelPosition === "inside",
+                () => svg`
                       <text
                         x=${insideLabelX}
                         y=${insideLabelY}
@@ -85,8 +85,8 @@ export function renderPieSeries(primitive, frame) {
                       >
                         ${hasPercentage ? `${label} ${percentage}` : label}
                       </text>
-                    `
-                  : svg`
+                    `,
+                () => svg`
                       <polyline
                         points=${`${connectorStartX},${connectorStartY} ${connectorEndX},${connectorEndY} ${outsideLabelX},${connectorEndY}`}
                         fill="none"
@@ -102,9 +102,9 @@ export function renderPieSeries(primitive, frame) {
                       >
                         ${label}
                       </text>
-                      ${
-                        hasPercentage
-                          ? svg`
+                      ${when(
+                        hasPercentage,
+                        () => svg`
                               <text
                                 x=${outsideLabelX}
                                 y=${connectorEndY + 14}
@@ -114,11 +114,11 @@ export function renderPieSeries(primitive, frame) {
                               >
                                 ${percentage}
                               </text>
-                            `
-                          : ""
-                      }
-                    `
-            }
+                            `,
+                      )}
+                    `,
+              ),
+            )}
           </g>
         `
       })}
@@ -140,6 +140,17 @@ export function renderCenterText(frame) {
       ${frame.entity.centerText}
     </text>
   `
+}
+
+/** A legend item per slice: its name, in its color. */
+export function getPieLegendItems(frame) {
+  const primitive = frame.primitives.find((item) => item.type === "pie")
+  if (!primitive) return []
+
+  return createPieSlices(primitive, frame).slices.map(({ label, fill }) => ({
+    label,
+    color: fill,
+  }))
 }
 
 /**

@@ -7,23 +7,25 @@ export function createScales(entity, primitives, dimensions) {
   if (entity.type === "pie" || entity.type === "donut") {
     const piePrimitive = getPolarPrimitive(primitives)
     const polarProps = piePrimitive?.props || {}
+    // The pie fits in the room under its legend, if it has one.
+    const top = dimensions.legendHeight ? dimensions.plotTop : 0
+    const height = dimensions.height - top
+    const radiusBase = Math.min(dimensions.width, height) / 2
 
     return {
       centerX: resolveRadiusValue(
         polarProps.cx ?? entity.cx ?? "50%",
         dimensions.width,
       ),
-      centerY: resolveRadiusValue(
-        polarProps.cy ?? entity.cy ?? "50%",
-        dimensions.height,
-      ),
+      centerY:
+        top + resolveRadiusValue(polarProps.cy ?? entity.cy ?? "50%", height),
       outerRadius: resolveRadiusValue(
         polarProps.outerRadius ?? entity.outerRadius ?? "70%",
-        Math.min(dimensions.width, dimensions.height) / 2,
+        radiusBase,
       ),
       innerRadius: resolveRadiusValue(
         polarProps.innerRadius ?? entity.innerRadius ?? 0,
-        Math.min(dimensions.width, dimensions.height) / 2,
+        radiusBase,
       ),
     }
   }

@@ -6,6 +6,7 @@
 import { html, nothing } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
 import { ref } from "@inglorious/web/directives/ref"
+import { when } from "@inglorious/web/directives/when"
 
 import { applyElementProps } from "../../shared/apply-element-props.js"
 
@@ -55,14 +56,15 @@ export function render(props) {
         @change=${(event) => onChange?.(event.target.checked)}
         ${ref((element) => applyElementProps(element, rest))}
       />
-      ${
-        description
-          ? html`<span class="iw-checkbox-text">
-              <span class="iw-checkbox-label">${label}</span>
-              <span class="iw-checkbox-description">${description}</span>
-            </span>`
-          : html`<span class="iw-checkbox-label">${label}</span>`
-      }
+      ${when(
+        description,
+        () =>
+          html`<span class="iw-checkbox-text">
+            <span class="iw-checkbox-label">${label}</span>
+            <span class="iw-checkbox-description">${description}</span>
+          </span>`,
+        () => html`<span class="iw-checkbox-label">${label}</span>`,
+      )}
     </label>
   `
 }

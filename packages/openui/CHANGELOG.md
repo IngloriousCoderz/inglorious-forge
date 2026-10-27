@@ -1,5 +1,15 @@
 # @inglorious/openui
 
+## 0.2.1
+
+### Patch Changes
+
+- Templates render conditionally with `when()` from `@inglorious/web/directives/when` rather than ternaries and `&&`. Behaviour is unchanged, except that a condition that is a falsy number no longer renders a stray `0`.
+- Updated dependencies
+- Updated dependencies
+  - @inglorious/charts@12.1.0
+  - @inglorious/ui@9.1.1
+
 ## 0.2.0
 
 ### Minor Changes

@@ -5,6 +5,9 @@ import {
   DEFAULT_BRUSH_HEIGHT,
   DEFAULT_HEIGHT,
   DEFAULT_WIDTH,
+  LEGEND_HEIGHT,
+  LEGEND_ROW_HEIGHT,
+  legendItemsPerRow,
 } from "../defaults.js"
 
 /**
@@ -35,7 +38,9 @@ export function createDimensions(entity, primitives) {
       entity.brush?.height ||
       DEFAULT_BRUSH_HEIGHT
     : 0
-  const legendHeight = hasLegend ? 40 : 0
+  const legendHeight = hasLegend
+    ? LEGEND_HEIGHT + (countLegendRows(entity, width) - 1) * LEGEND_ROW_HEIGHT
+    : 0
   // An axis title takes room of its own, on its side of the plot.
   const titled = (type) =>
     primitives.some(
@@ -67,4 +72,17 @@ export function createDimensions(entity, primitives) {
     brushTop:
       brushHeight > 0 ? height - entity.padding.bottom - brushHeight : null,
   }
+}
+
+/**
+ * A pie's legend has an item per slice, so it may need more than one row. A
+ * cartesian one, an item per series, fits on one.
+ */
+function countLegendRows(entity, width) {
+  const isPolar = entity.type === "pie" || entity.type === "donut"
+  if (!isPolar) return 1
+
+  const plotWidth = width - entity.padding.left - entity.padding.right
+  const count = entity.data?.length ?? 0
+  return Math.max(1, Math.ceil(count / legendItemsPerRow(plotWidth)))
 }

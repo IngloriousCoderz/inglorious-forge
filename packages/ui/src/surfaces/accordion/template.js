@@ -7,6 +7,7 @@
 import { html, nothing } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
 import { ref } from "@inglorious/web/directives/ref"
+import { when } from "@inglorious/web/directives/when"
 
 import { applyElementProps } from "../../shared/apply-element-props.js"
 
@@ -104,7 +105,7 @@ export const Accordion = {
           if (isDisabled) event.preventDefault()
         }}
       >
-        ${icon ? html`<span class="iw-accordion-icon">${icon}</span>` : null}
+        ${when(icon, () => html`<span class="iw-accordion-icon">${icon}</span>`)}
         <span class="iw-accordion-title">${title}</span>
         <span class="iw-accordion-caret" aria-hidden="true">▾</span>
       </summary>

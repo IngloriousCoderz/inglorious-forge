@@ -6,6 +6,7 @@
 
 import { html } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
+import { when } from "@inglorious/web/directives/when"
 
 import {
   DEFAULT_MIN_SIZE,
@@ -84,7 +85,8 @@ export const ImageCropper = {
       @keydown=${handleKeyDown(props)}
       @wheel=${handleWheel(props)}
     >
-      ${this.renderImage?.(props)} ${isLoaded ? this.renderFrame?.(props) : ""}
+      ${this.renderImage?.(props)}
+      ${when(isLoaded, () => this.renderFrame?.(props))}
     </div>`
   },
 

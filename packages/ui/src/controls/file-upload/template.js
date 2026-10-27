@@ -6,6 +6,7 @@
 import { html, nothing } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
 import { ref } from "@inglorious/web/directives/ref"
+import { when } from "@inglorious/web/directives/when"
 
 import { applyElementProps } from "../../shared/apply-element-props.js"
 import { fallbackLabel } from "../../shared/fallback-label.js"
@@ -57,20 +58,18 @@ export function render(props) {
 
   return html`
     <div class=${classMap(wrapperClasses)}>
-      ${
-        label
-          ? html`
-              <label for=${uploadId || nothing} class="iw-upload-label">
-                ${label}
-                ${
-                  isRequired
-                    ? html`<span class="iw-upload-required">*</span>`
-                    : null
-                }
-              </label>
-            `
-          : null
-      }
+      ${when(
+        label,
+        () => html`
+          <label for=${uploadId || nothing} class="iw-upload-label">
+            ${label}
+            ${when(
+              isRequired,
+              () => html`<span class="iw-upload-required">*</span>`,
+            )}
+          </label>
+        `,
+      )}
 
       <div class=${classMap(fieldClasses)}>
         <input
@@ -99,19 +98,21 @@ export function render(props) {
 
       <div class="iw-upload-field-summary">${summaryText}</div>
 
-      ${
-        error
-          ? html`<span
-              id=${messageId || nothing}
-              class="iw-upload-error-message"
-              >${error}</span
-            >`
-          : hint
-            ? html`<span id=${messageId || nothing} class="iw-upload-hint"
+      ${when(
+        error,
+        () =>
+          html`<span id=${messageId || nothing} class="iw-upload-error-message"
+            >${error}</span
+          >`,
+        () =>
+          when(
+            hint,
+            () =>
+              html`<span id=${messageId || nothing} class="iw-upload-hint"
                 >${hint}</span
-              >`
-            : null
-      }
+              >`,
+          ),
+      )}
     </div>
   `
 }

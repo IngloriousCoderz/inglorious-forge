@@ -92,11 +92,16 @@ function buildDefaultPiePrimitives(entity) {
       cx: entity.cx || "50%",
       cy: entity.cy || "50%",
       outerRadius: entity.outerRadius || "70%",
-      hasLabel: entity.hasLabel !== false,
+      // A legend names the slices already, so they go unlabelled by default.
+      hasLabel: entity.hasLabel ?? !entity.hasLegend,
       startAngle: entity.startAngle,
       endAngle: entity.endAngle,
     }),
   ]
+
+  if (entity.hasLegend === true) {
+    primitives.push(Legend({}))
+  }
 
   if (entity.hasTooltip === true) {
     primitives.push(Tooltip({}))
@@ -106,22 +111,15 @@ function buildDefaultPiePrimitives(entity) {
 }
 
 function buildDefaultDonutPrimitives(entity) {
-  const [piePrimitive] = buildDefaultPiePrimitives({
-    ...entity,
-    innerRadius: entity.innerRadius || "55%",
-  })
-  const primitives = [
+  const [piePrimitive, ...overlays] = buildDefaultPiePrimitives(entity)
+
+  return [
     Pie({
       ...piePrimitive.props,
       innerRadius: entity.innerRadius || "55%",
     }),
+    ...overlays,
   ]
-
-  if (entity.hasTooltip === true) {
-    primitives.push(Tooltip({}))
-  }
-
-  return primitives
 }
 
 function buildDefaultComposedPrimitives(entity) {

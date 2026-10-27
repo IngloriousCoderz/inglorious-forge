@@ -1,4 +1,5 @@
 import { html } from "@inglorious/web"
+import { when } from "@inglorious/web/directives/when"
 
 export function render(entity, api) {
   return html`
@@ -10,21 +11,17 @@ export function render(entity, api) {
       </button>
 
       <div class="shared-scene">
-        ${
-          entity.expanded
-            ? html`
-                <div class="shared-large">
-                  ${api.render("sharedHeroExpanded")}
-                </div>
-                <div class="shared-small shared-placeholder"></div>
-              `
-            : html`
-                <div class="shared-small">
-                  ${api.render("sharedHeroCompact")}
-                </div>
-                <div class="shared-large shared-placeholder"></div>
-              `
-        }
+        ${when(
+          entity.expanded,
+          () => html`
+            <div class="shared-large">${api.render("sharedHeroExpanded")}</div>
+            <div class="shared-small shared-placeholder"></div>
+          `,
+          () => html`
+            <div class="shared-small">${api.render("sharedHeroCompact")}</div>
+            <div class="shared-large shared-placeholder"></div>
+          `,
+        )}
       </div>
     </section>
   `

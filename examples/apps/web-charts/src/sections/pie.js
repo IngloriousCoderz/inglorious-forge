@@ -95,7 +95,9 @@ export function renderPieSection(api) {
 
     <div class="charts-comparison">
       <section class="chart-section">
-        <h2>Half Donut Chart - Config Style (startAngle, endAngle)</h2>
+        <h2>
+          Half Donut Chart - Config Style (startAngle, endAngle, hasLegend)
+        </h2>
         ${api.render("halfPieChart")}
       </section>
     </div>

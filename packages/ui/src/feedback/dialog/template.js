@@ -6,6 +6,7 @@
 import { html, nothing } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
 import { ref } from "@inglorious/web/directives/ref"
+import { when } from "@inglorious/web/directives/when"
 
 import { syncDialog } from "../../shared/top-layer.js"
 
@@ -82,42 +83,43 @@ export function render(props) {
     ${ref((element) => syncDialog(element, { isOpen, isModal, onClose }))}
   >
     <div class="iw-dialog-surface">
-      ${
-        (title || onClose) &&
-        html`<div class="iw-dialog-header">
-          ${
-            title
-              ? html`<div id=${titleId || nothing} class="iw-dialog-title">
+      ${when(
+        title || onClose,
+        () =>
+          html`<div class="iw-dialog-header">
+            ${when(
+              title,
+              () =>
+                html`<div id=${titleId || nothing} class="iw-dialog-title">
                   ${title}
-                </div>`
-              : null
-          }
-          ${
-            onClose
-              ? html`<button
+                </div>`,
+            )}
+            ${when(
+              onClose,
+              () =>
+                html`<button
                   type="button"
                   class="iw-dialog-close"
                   aria-label="Close"
                   @click=${onClose}
                 >
                   ×
-                </button>`
-              : null
-          }
-        </div>`
-      }
-      ${
-        description
-          ? html`<div
-              id=${descriptionId || nothing}
-              class="iw-dialog-description"
-            >
-              ${description}
-            </div>`
-          : null
-      }
-      ${children ? html`<div class="iw-dialog-body">${children}</div>` : null}
-      ${actions ? html`<div class="iw-dialog-actions">${actions}</div>` : null}
+                </button>`,
+            )}
+          </div>`,
+      )}
+      ${when(
+        description,
+        () =>
+          html`<div
+            id=${descriptionId || nothing}
+            class="iw-dialog-description"
+          >
+            ${description}
+          </div>`,
+      )}
+      ${when(children, () => html`<div class="iw-dialog-body">${children}</div>`)}
+      ${when(actions, () => html`<div class="iw-dialog-actions">${actions}</div>`)}
     </div>
   </dialog>`
 }

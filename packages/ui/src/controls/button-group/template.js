@@ -6,6 +6,7 @@
 import { html } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
 import { ref } from "@inglorious/web/directives/ref"
+import { when } from "@inglorious/web/directives/when"
 
 import { applyElementProps } from "../../shared/apply-element-props.js"
 import { Button } from "../button/index.js"
@@ -73,13 +74,12 @@ export function render(props) {
 
         return Button.render({
           children: html`
-            ${icon ? html`<span class="iw-button-icon">${icon}</span>` : null}
+            ${when(icon, () => html`<span class="iw-button-icon">${icon}</span>`)}
             ${children ?? label}
-            ${
-              iconAfter
-                ? html`<span class="iw-button-icon">${iconAfter}</span>`
-                : null
-            }
+            ${when(
+              iconAfter,
+              () => html`<span class="iw-button-icon">${iconAfter}</span>`,
+            )}
           `,
           variant: itemVariant ?? variant,
           color: itemColor ?? color,

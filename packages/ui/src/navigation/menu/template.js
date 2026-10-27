@@ -7,6 +7,7 @@
 import { html, nothing } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
 import { ref } from "@inglorious/web/directives/ref"
+import { when } from "@inglorious/web/directives/when"
 
 import { Button } from "../../controls/button/index.js"
 import { anchorName } from "../../shared/anchor.js"
@@ -138,17 +139,15 @@ export const Menu = {
         props.onItemClick?.(item.value ?? index, item)
       }}
     >
-      ${
-        item.icon
-          ? html`<span class="iw-menu-item-icon">${item.icon}</span>`
-          : null
-      }
+      ${when(
+        item.icon,
+        () => html`<span class="iw-menu-item-icon">${item.icon}</span>`,
+      )}
       <span class="iw-menu-item-label">${item.label}</span>
-      ${
-        item.trailing
-          ? html`<span class="iw-menu-item-trailing">${item.trailing}</span>`
-          : null
-      }
+      ${when(
+        item.trailing,
+        () => html`<span class="iw-menu-item-trailing">${item.trailing}</span>`,
+      )}
     </button>`
   },
 }

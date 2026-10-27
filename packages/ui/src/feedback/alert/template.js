@@ -6,6 +6,7 @@
 import { html } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
 import { ref } from "@inglorious/web/directives/ref"
+import { when } from "@inglorious/web/directives/when"
 
 import { applyElementProps } from "../../shared/apply-element-props.js"
 
@@ -53,33 +54,32 @@ export function render(props) {
     role="alert"
     ${ref((el) => applyElementProps(el, rest))}
   >
-    ${icon ? html`<div class="iw-alert-icon">${icon}</div>` : null}
+    ${when(icon, () => html`<div class="iw-alert-icon">${icon}</div>`)}
     <div class="iw-alert-content">
-      ${title ? html`<div class="iw-alert-title">${title}</div>` : null}
-      ${
-        content
-          ? html`<div class="iw-alert-description">${content}</div>`
-          : null
-      }
+      ${when(title, () => html`<div class="iw-alert-title">${title}</div>`)}
+      ${when(
+        content,
+        () => html`<div class="iw-alert-description">${content}</div>`,
+      )}
     </div>
-    ${
-      hasTrailing
-        ? html`<div class="iw-alert-trailing">
-            ${action ? html`<div class="iw-alert-action">${action}</div>` : null}
-            ${
-              onClose
-                ? html`<button
-                    type="button"
-                    class="iw-alert-close"
-                    aria-label="Dismiss"
-                    @click=${onClose}
-                  >
-                    ×
-                  </button>`
-                : null
-            }
-          </div>`
-        : null
-    }
+    ${when(
+      hasTrailing,
+      () =>
+        html`<div class="iw-alert-trailing">
+          ${when(action, () => html`<div class="iw-alert-action">${action}</div>`)}
+          ${when(
+            onClose,
+            () =>
+              html`<button
+                type="button"
+                class="iw-alert-close"
+                aria-label="Dismiss"
+                @click=${onClose}
+              >
+                ×
+              </button>`,
+          )}
+        </div>`,
+    )}
   </div>`
 }

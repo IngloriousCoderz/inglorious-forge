@@ -1,5 +1,6 @@
 import { html } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
+import { when } from "@inglorious/web/directives/when"
 
 import { tasksCount } from "../store/select"
 
@@ -28,7 +29,7 @@ export const Footer = {
     return html`<footer>
       <span>
         ${activeTasksCount}
-        item${activeTasksCount === SINGLE_TASK ? "" : "s"}${" "} left
+        item${when(!(activeTasksCount === SINGLE_TASK), () => "s")}${" "} left
       </span>
 
       <span class="filters">

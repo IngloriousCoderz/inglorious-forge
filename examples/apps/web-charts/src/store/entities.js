@@ -470,6 +470,7 @@ export const entities = {
     cy: "75%",
     outerRadius: "90%",
     hasTooltip: true,
+    hasLegend: true,
   },
 
   // Pie Chart - Config Style

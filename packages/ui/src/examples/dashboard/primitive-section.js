@@ -1,4 +1,5 @@
 import { html } from "@inglorious/web"
+import { when } from "@inglorious/web/directives/when"
 
 import { Typography } from "../../data-display/typography/index.js"
 import { Container } from "../../layout/container/index.js"
@@ -77,24 +78,23 @@ export const PrimitiveSection = {
                       description ??
                       "This section is wired for per-primitive docs and examples.",
                   })}
-                  ${
-                    useCases.length
-                      ? html`
-                          <div style="margin-top: 16px; text-align: left;">
-                            ${Typography.render({
-                              variant: "body2",
-                              color: "secondary",
-                              children: "Common use cases",
-                            })}
-                            <ul style="margin: 8px 0 0; padding-left: 20px;">
-                              ${useCases.map(
-                                (useCase) => html`<li>${useCase}</li>`,
-                              )}
-                            </ul>
-                          </div>
-                        `
-                      : ""
-                  }
+                  ${when(
+                    useCases.length,
+                    () => html`
+                      <div style="margin-top: 16px; text-align: left;">
+                        ${Typography.render({
+                          variant: "body2",
+                          color: "secondary",
+                          children: "Common use cases",
+                        })}
+                        <ul style="margin: 8px 0 0; padding-left: 20px;">
+                          ${useCases.map(
+                            (useCase) => html`<li>${useCase}</li>`,
+                          )}
+                        </ul>
+                      </div>
+                    `,
+                  )}
                 </div>
               `,
             }),

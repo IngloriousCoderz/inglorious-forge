@@ -4,7 +4,8 @@ import { Chip } from "@inglorious/ui/chip"
 import { Flex } from "@inglorious/ui/flex"
 import { Icon as UiIcon } from "@inglorious/ui/icon"
 import { Typography } from "@inglorious/ui/typography"
-import { html, nothing } from "@inglorious/web"
+import { html } from "@inglorious/web"
+import { when } from "@inglorious/web/directives/when"
 import { defineComponent } from "@openuidev/lang-core"
 import { z } from "zod"
 
@@ -50,16 +51,14 @@ export const CardHeader = defineComponent({
     subtitle: z.string().optional(),
   }),
   component: ({ props }) =>
-    html`${props.title ? Typography.render({ variant: "h3", children: props.title }) : nothing}
-    ${
-      props.subtitle
-        ? Typography.render({
-            variant: "caption",
-            color: "secondary",
-            children: props.subtitle,
-          })
-        : nothing
-    }`,
+    html`${when(props.title, () => Typography.render({ variant: "h3", children: props.title }))}
+    ${when(props.subtitle, () =>
+      Typography.render({
+        variant: "caption",
+        color: "secondary",
+        children: props.subtitle,
+      }),
+    )}`,
 })
 
 export const TextContent = defineComponent({
@@ -95,14 +94,14 @@ export const Callout = defineComponent({
       `${statementId ?? "callout"}:visible`,
       props.visible,
     )
-    return visible.value === false
-      ? nothing
-      : Alert.render({
-          severity: props.variant,
-          variant: "outlined",
-          title: props.title,
-          description: props.description,
-        })
+    return when(visible.value !== false, () =>
+      Alert.render({
+        severity: props.variant,
+        variant: "outlined",
+        title: props.title,
+        description: props.description,
+      }),
+    )
   },
 })
 
@@ -125,7 +124,7 @@ export const Icon = defineComponent({
   // Drawn from the icons the app gives createOpenUI; an unknown one is left out.
   component: ({ props, iconFor }) => {
     const icon = iconFor(props.name)
-    return icon ? UiIcon.render({ icon }) : nothing
+    return when(icon, () => UiIcon.render({ icon }))
   },
 })
 
@@ -154,12 +153,14 @@ export const Image = defineComponent({
   description: "An image with alt text and an optional URL",
   props: z.object({ alt: z.string(), src: z.string().optional() }),
   component: ({ props }) =>
-    props.src
-      ? html`<img
+    when(
+      props.src,
+      () =>
+        html`<img
           src=${props.src}
           alt=${props.alt}
           loading="lazy"
           style="max-inline-size: 100%; block-size: auto;"
-        />`
-      : nothing,
+        />`,
+    ),
 })

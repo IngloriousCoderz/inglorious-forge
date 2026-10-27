@@ -11,6 +11,7 @@ import {
 } from "@inglorious/charts"
 import { handleAsync } from "@inglorious/store/async"
 import { html } from "@inglorious/web"
+import { when } from "@inglorious/web/directives/when"
 
 import { renderInlineLoader } from "../components/loading.js"
 import {
@@ -183,8 +184,8 @@ export const DashboardPage = {
             ${Number.isFinite(latest.mid) ? latest.mid.toFixed(CENTS) : "-"}</span
           >
           <span>Source: ${entity.dataSource || "mock"}</span>
-          ${entity.loading ? html`<span>Loading...</span>` : null}
-          ${entity.error ? html`<span>Error: ${entity.error}</span>` : null}
+          ${when(entity.loading, () => html`<span>Loading...</span>`)}
+          ${when(entity.error, () => html`<span>Error: ${entity.error}</span>`)}
         </div>
 
         <div class="iw-top-grid">
@@ -210,11 +211,9 @@ export const DashboardPage = {
             "Quotations",
             html`
               <div class="chart-wrap">
-                ${
-                  entity.loading
-                    ? renderInlineLoader("Loading instrument...")
-                    : null
-                }
+                ${when(entity.loading, () =>
+                  renderInlineLoader("Loading instrument..."),
+                )}
                 ${Chart.render(
                   {
                     entity: "financeQuotationChart",
@@ -278,11 +277,9 @@ export const DashboardPage = {
             "Price Comparison",
             html`
               <div class="chart-wrap">
-                ${
-                  entity.loading
-                    ? renderInlineLoader("Refreshing bars...")
-                    : null
-                }
+                ${when(entity.loading, () =>
+                  renderInlineLoader("Refreshing bars..."),
+                )}
                 ${Chart.render(
                   {
                     data: [

@@ -3,6 +3,7 @@ import { Card } from "@inglorious/ui/card"
 import { Input } from "@inglorious/ui/input"
 import { Select } from "@inglorious/ui/select"
 import { html } from "@inglorious/web"
+import { when } from "@inglorious/web/directives/when"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
 import { UNIT_OPTIONS, VAT_OPTIONS } from "./constants"
@@ -195,6 +196,6 @@ function renderSelectCell(
           validate,
         }),
     })}
-    ${error ? html`<div class="cell-error">${error}</div>` : ""}
+    ${when(error, () => html`<div class="cell-error">${error}</div>`)}
   </div>`
 }

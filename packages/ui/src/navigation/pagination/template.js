@@ -7,6 +7,7 @@
 
 import { html } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
+import { when } from "@inglorious/web/directives/when"
 
 import { Button } from "../../controls/button/index.js"
 
@@ -52,15 +53,13 @@ export const Pagination = {
       class=${classMap({ "iw-pagination": true, ...extraClasses })}
       aria-label="Pagination"
     >
-      ${
-        isFirstButtonVisible
-          ? this.renderControl(props, {
-              label: "«",
-              target: 1,
-              isDisabled: page <= PRETTY_PAGE || isDisabled,
-            })
-          : null
-      }
+      ${when(isFirstButtonVisible, () =>
+        this.renderControl(props, {
+          label: "«",
+          target: 1,
+          isDisabled: page <= PRETTY_PAGE || isDisabled,
+        }),
+      )}
       ${this.renderControl(props, {
         label: "‹",
         target: Math.max(PRETTY_PAGE, page - PRETTY_PAGE),
@@ -72,15 +71,13 @@ export const Pagination = {
         target: Math.min(count, page + PRETTY_PAGE),
         isDisabled: page >= count || isDisabled,
       })}
-      ${
-        isLastButtonVisible
-          ? this.renderControl(props, {
-              label: "»",
-              target: count,
-              isDisabled: page >= count || isDisabled,
-            })
-          : null
-      }
+      ${when(isLastButtonVisible, () =>
+        this.renderControl(props, {
+          label: "»",
+          target: count,
+          isDisabled: page >= count || isDisabled,
+        }),
+      )}
     </nav>`
   },
 

@@ -6,6 +6,7 @@
 import { html } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
 import { styleMap } from "@inglorious/web/directives/style-map"
+import { when } from "@inglorious/web/directives/when"
 
 /**
  * Renders an avatar with image, initials, or fallback content.
@@ -57,11 +58,11 @@ export function render(props) {
     style=${styleMap(styles)}
     @click=${onClick}
   >
-    ${
-      src
-        ? html`<img class="iw-avatar-img" src=${src} alt=${alt} />`
-        : (children ?? initials ?? "?")
-    }
+    ${when(
+      src,
+      () => html`<img class="iw-avatar-img" src=${src} alt=${alt} />`,
+      () => children ?? initials ?? "?",
+    )}
   </span>`
 }
 

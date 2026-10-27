@@ -6,6 +6,7 @@
 import { html, nothing } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
 import { ref } from "@inglorious/web/directives/ref"
+import { when } from "@inglorious/web/directives/when"
 
 import { applyElementProps } from "../../shared/apply-element-props.js"
 import { fallbackLabel } from "../../shared/fallback-label.js"
@@ -59,20 +60,18 @@ export function render(props) {
 
   return html`
     <div class=${classMap(wrapperClasses)}>
-      ${
-        label
-          ? html`
-              <label for=${textareaId || nothing} class="iw-textarea-label">
-                ${label}
-                ${
-                  isRequired
-                    ? html`<span class="iw-textarea-required">*</span>`
-                    : null
-                }
-              </label>
-            `
-          : null
-      }
+      ${when(
+        label,
+        () => html`
+          <label for=${textareaId || nothing} class="iw-textarea-label">
+            ${label}
+            ${when(
+              isRequired,
+              () => html`<span class="iw-textarea-required">*</span>`,
+            )}
+          </label>
+        `,
+      )}
 
       <textarea
         id=${textareaId || nothing}
@@ -93,19 +92,23 @@ export function render(props) {
         ${ref((element) => applyElementProps(element, rest))}
       ></textarea>
 
-      ${
-        error
-          ? html`<span
-              id=${messageId || nothing}
-              class="iw-textarea-error-message"
-              >${error}</span
-            >`
-          : hint
-            ? html`<span id=${messageId || nothing} class="iw-textarea-hint"
+      ${when(
+        error,
+        () =>
+          html`<span
+            id=${messageId || nothing}
+            class="iw-textarea-error-message"
+            >${error}</span
+          >`,
+        () =>
+          when(
+            hint,
+            () =>
+              html`<span id=${messageId || nothing} class="iw-textarea-hint"
                 >${hint}</span
-              >`
-            : null
-      }
+              >`,
+          ),
+      )}
     </div>
   `
 }

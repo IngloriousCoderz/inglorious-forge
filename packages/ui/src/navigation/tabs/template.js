@@ -6,6 +6,7 @@
 
 import { html, nothing } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
+import { when } from "@inglorious/web/directives/when"
 
 export const Tabs = {
   /**
@@ -88,7 +89,7 @@ export const Tabs = {
         props.onChange?.(tabValue)
       }}
     >
-      ${item.icon ? html`<span class="iw-tab-icon">${item.icon}</span>` : null}
+      ${when(item.icon, () => html`<span class="iw-tab-icon">${item.icon}</span>`)}
       <span>${item.label}</span>
     </button>`
   },

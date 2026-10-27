@@ -389,4 +389,79 @@ describe("chart state", () => {
       expect(half).toMatch(/<path d="M-[\d.]+,0A/)
     })
   })
+
+  describe("pie legend", () => {
+    const slices = [
+      { label: "Rent", value: 900 },
+      { label: "Food", value: 380 },
+      { label: "Fun", value: 120 },
+    ]
+    const legendLabels = (html) =>
+      [...html.matchAll(/font-size="12"\s*>([^<]+)<\/text>/g)].map(
+        ([, label]) => label,
+      )
+
+    it("names every slice in its legend, in place of slice labels", () => {
+      const html = toHtml(
+        Chart.render({ type: "pie", data: slices, hasLegend: true }),
+      )
+
+      expect(html).toContain("iw-chart-legend")
+      expect(legendLabels(html)).toEqual(["Rent", "Food", "Fun"])
+      expect(html).not.toContain("<polyline")
+    })
+
+    it("keeps slice labels when asked for both", () => {
+      const html = toHtml(
+        Chart.render({
+          type: "donut",
+          data: slices,
+          hasLegend: true,
+          hasLabel: true,
+        }),
+      )
+
+      expect(html).toContain("iw-chart-legend")
+      expect(html).toContain("<polyline")
+    })
+
+    it("has no legend unless asked", () => {
+      const html = toHtml(Chart.render({ type: "pie", data: slices }))
+
+      expect(html).not.toContain("iw-chart-legend")
+      expect(html).toContain("<polyline")
+    })
+
+    it("draws the pie under its legend", () => {
+      const center = (html) =>
+        Number(
+          html.match(
+            /class="iw-chart-pie"\s+transform="translate\([\d.]+, ([\d.]+)\)/,
+          )[1],
+        )
+      const options = { type: "pie", data: slices, height: 400 }
+
+      expect(center(toHtml(Chart.render(options)))).toBe(200)
+      expect(
+        center(toHtml(Chart.render({ ...options, hasLegend: true }))),
+      ).toBeGreaterThan(200)
+    })
+
+    it("wraps a legend too wide for one row", () => {
+      const many = Array.from({ length: 8 }, (_, index) => ({
+        label: `Slice ${index}`,
+        value: 1,
+      }))
+      const html = toHtml(
+        Chart.render({ type: "pie", data: many, width: 400, hasLegend: true }),
+      )
+      const rows = new Set(
+        [...html.matchAll(/translate\([\d.]+, ([\d.]+)\)">\s*<circle/g)].map(
+          ([, y]) => y,
+        ),
+      )
+
+      expect(rows.size).toBeGreaterThan(1)
+    })
+  })
 })

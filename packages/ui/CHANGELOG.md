@@ -1,5 +1,11 @@
 # @inglorious/ui
 
+## 9.1.1
+
+### Patch Changes
+
+- Templates render conditionally with `when()` from `@inglorious/web/directives/when` rather than ternaries and `&&`. Behaviour is unchanged, except that a condition that is a falsy number no longer renders a stray `0`.
+
 ## 9.1.0
 
 ### Minor Changes

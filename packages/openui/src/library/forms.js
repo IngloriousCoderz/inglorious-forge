@@ -8,7 +8,7 @@ import { Slider as UiSlider } from "@inglorious/ui/slider"
 import { Switch } from "@inglorious/ui/switch"
 import { Textarea } from "@inglorious/ui/textarea"
 import { Typography } from "@inglorious/ui/typography"
-import { nothing } from "@inglorious/web"
+import { when } from "@inglorious/web/directives/when"
 import { defineComponent } from "@openuidev/lang-core"
 import { z } from "zod"
 
@@ -324,9 +324,9 @@ function itemProps(items) {
 }
 
 function renderError(error) {
-  return error
-    ? Typography.render({ variant: "caption", color: "error", children: error })
-    : nothing
+  return when(error, () =>
+    Typography.render({ variant: "caption", color: "error", children: error }),
+  )
 }
 
 /** A group of named on/off controls whose value is an object of them. */
@@ -342,9 +342,9 @@ function renderToggles(
     direction: "column",
     gap: "sm",
     children: [
-      label
-        ? Typography.render({ variant: "caption", children: label })
-        : nothing,
+      when(label, () =>
+        Typography.render({ variant: "caption", children: label }),
+      ),
       ...items.map((item) =>
         Control.render({
           name: item.name,

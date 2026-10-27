@@ -1,6 +1,7 @@
 /* eslint-disable no-magic-numbers */
 
 import { svg } from "@inglorious/web"
+import { when } from "@inglorious/web/directives/when"
 import {
   area as createAreaPath,
   curveLinear,
@@ -51,12 +52,11 @@ export function renderLineSeries(primitive, frame) {
         stroke=${stroke}
         stroke-width=${primitive.props?.strokeWidth || 3}
       />
-      ${primitive.props?.hasDots ? renderDots(primitive, frame) : ""}
-      ${
-        canShowTooltip(primitive, frame) && !primitive.props?.hasDots
-          ? renderHoverTargets(primitive, frame)
-          : ""
-      }
+      ${when(primitive.props?.hasDots, () => renderDots(primitive, frame))}
+      ${when(
+        canShowTooltip(primitive, frame) && !primitive.props?.hasDots,
+        () => renderHoverTargets(primitive, frame),
+      )}
     </g>
   `
 }
@@ -88,12 +88,11 @@ export function renderAreaSeries(primitive, frame) {
         stroke=${stroke}
         stroke-width=${primitive.props?.strokeWidth || 3}
       />
-      ${primitive.props?.hasDots ? renderDots(primitive, frame) : ""}
-      ${
-        canShowTooltip(primitive, frame) && !primitive.props?.hasDots
-          ? renderHoverTargets(primitive, frame)
-          : ""
-      }
+      ${when(primitive.props?.hasDots, () => renderDots(primitive, frame))}
+      ${when(
+        canShowTooltip(primitive, frame) && !primitive.props?.hasDots,
+        () => renderHoverTargets(primitive, frame),
+      )}
     </g>
   `
 }

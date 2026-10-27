@@ -7,6 +7,7 @@
 import { html } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
 import { ref } from "@inglorious/web/directives/ref"
+import { when } from "@inglorious/web/directives/when"
 
 import { applyElementProps } from "../../shared/apply-element-props.js"
 
@@ -51,13 +52,13 @@ export const Breadcrumbs = {
       <ol class="iw-breadcrumbs-list">
         ${items.map(
           (item, index) =>
-            html`${this.renderItem(item, index, props)}${
-              index < items.length - 1
-                ? html`<li class="iw-breadcrumbs-separator" aria-hidden="true">
-                    ${separator}
-                  </li>`
-                : null
-            }`,
+            html`${this.renderItem(item, index, props)}${when(
+              index < items.length - 1,
+              () =>
+                html`<li class="iw-breadcrumbs-separator" aria-hidden="true">
+                  ${separator}
+                </li>`,
+            )}`,
         )}
       </ol>
     </nav>`
@@ -75,24 +76,26 @@ export const Breadcrumbs = {
     const isLast = index === props.items.length - 1
 
     return html`<li class="iw-breadcrumbs-item iw-typography">
-      ${
-        item.href && !isLast
-          ? html`<a
-              href=${item.href}
-              class="iw-breadcrumbs-link"
-              @click=${item.onClick ?? null}
-            >
-              ${item.label}
-            </a>`
-          : html`<span
-              class=${classMap({
-                "iw-breadcrumbs-current": isLast,
-              })}
-              aria-current=${isLast ? "page" : "false"}
-            >
-              ${item.label}
-            </span>`
-      }
+      ${when(
+        item.href && !isLast,
+        () =>
+          html`<a
+            href=${item.href}
+            class="iw-breadcrumbs-link"
+            @click=${item.onClick ?? null}
+          >
+            ${item.label}
+          </a>`,
+        () =>
+          html`<span
+            class=${classMap({
+              "iw-breadcrumbs-current": isLast,
+            })}
+            aria-current=${isLast ? "page" : "false"}
+          >
+            ${item.label}
+          </span>`,
+      )}
     </li>`
   },
 }

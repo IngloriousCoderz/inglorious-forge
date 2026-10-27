@@ -6,6 +6,7 @@
 import { html, nothing } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
 import { ref } from "@inglorious/web/directives/ref"
+import { when } from "@inglorious/web/directives/when"
 
 import { applyElementProps } from "../../shared/apply-element-props.js"
 
@@ -47,11 +48,10 @@ export function render(props) {
       ?disabled=${isDisabled}
       ${ref((element) => applyElementProps(element, rest))}
     >
-      ${
-        label
-          ? html`<legend class="iw-radio-group-label">${label}</legend>`
-          : null
-      }
+      ${when(
+        label,
+        () => html`<legend class="iw-radio-group-label">${label}</legend>`,
+      )}
       ${options.map((option, index) => {
         const {
           label: optionLabel,
@@ -74,16 +74,15 @@ export function render(props) {
               @change=${(event) => onChange?.(event.target.value)}
               ${ref((element) => applyElementProps(element, optionRest))}
             />
-            ${
-              optionDescription
-                ? html`<span class="iw-radio-text">
-                    <span>${optionLabel}</span>
-                    <span class="iw-radio-description"
-                      >${optionDescription}</span
-                    >
-                  </span>`
-                : html`<span>${optionLabel}</span>`
-            }
+            ${when(
+              optionDescription,
+              () =>
+                html`<span class="iw-radio-text">
+                  <span>${optionLabel}</span>
+                  <span class="iw-radio-description">${optionDescription}</span>
+                </span>`,
+              () => html`<span>${optionLabel}</span>`,
+            )}
           </label>
         `
       })}

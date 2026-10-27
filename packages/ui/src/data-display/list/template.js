@@ -96,11 +96,10 @@ export const List = {
             meta,
             index,
             path: [...path, index],
-          })}${
-            shouldDivide
-              ? html`<li class="iw-list-divider" role="separator"></li>`
-              : null
-          }`
+          })}${when(
+            shouldDivide,
+            () => html`<li class="iw-list-divider" role="separator"></li>`,
+          )}`
         },
       )
 
