@@ -2,6 +2,7 @@ import { Alert } from "@inglorious/ui/alert"
 import { Button } from "@inglorious/ui/button"
 import { Card } from "@inglorious/ui/card"
 import { html } from "@inglorious/web"
+import { when } from "@inglorious/web/directives/when"
 
 import { renderPatterns } from "../patterns/index.js"
 
@@ -41,12 +42,15 @@ export const Register = {
       subtitle: sale
         ? `Sale #${entity.saleCount} · ${STATE_LABELS[sale.state]}`
         : "No sale in progress",
-      children: sale
-        ? api.render(sale.id)
-        : Alert.render({
+      children: when(
+        sale,
+        () => api.render(sale.id),
+        () =>
+          Alert.render({
             severity: "neutral",
             description: "Press “New sale” to serve a customer.",
           }),
+      ),
       footer: html`<div class="register-footer">
         ${Button.render({
           children: "New sale",

@@ -102,7 +102,7 @@ const RENDERERS = {
 function renderPrimitive(primitive, frame) {
   const renderer = RENDERERS[primitive.type]
 
-  return renderer ? renderer(primitive, frame) : svg``
+  return when(renderer, () => renderer(primitive, frame))
 }
 
 function isPolarChart(type) {

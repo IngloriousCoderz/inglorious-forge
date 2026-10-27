@@ -74,6 +74,45 @@ export const Default = {
   },
 }
 
+/** Editable columns: change cells, then reset or save the edits in the footer. */
+export const Editable = {
+  args: {
+    ...Default.args,
+    id: "dataGridEditable",
+    search: null,
+    selection: [],
+    columns: [
+      { id: "name", title: "Name", isSortable: true, isEditable: true },
+      { id: "age", title: "Age", type: "number", isEditable: true },
+      {
+        id: "active",
+        title: "Active",
+        type: "boolean",
+        width: 100,
+        isEditable: true,
+      },
+      {
+        id: "role",
+        title: "Role",
+        width: 140,
+        isEditable: true,
+        options: [
+          { value: "Admin", label: "Admin" },
+          { value: "User", label: "User" },
+        ],
+      },
+    ],
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Columns with `isEditable` put an editor in each cell, by type, or a drop-down with `options`. Edits stay apart from the rows, counted in the footer, until saved.",
+      },
+    },
+  },
+}
+
 export const Paginated = {
   args: {
     ...Default.args,

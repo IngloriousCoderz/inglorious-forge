@@ -1,5 +1,22 @@
 # @inglorious/openui
 
+## 0.5.0
+
+### Minor Changes
+
+- The rest of OpenUI's standard library, and its chat library:
+
+  - `EditableTable`, drawn by Inglorious UI's `DataGrid`: a field in every cell by its column's type, a count of the cells changed, and Reset and Save Changes. Saving sends the rows to the assistant as a form named after the table, as OpenUI's does.
+  - The card blocks, `SnippetCardBlock`, `OverviewCardBlock`, `ContextCardBlock`, `CompositeCardBlock` and `VisualCardBlock`, and the parts of their items, `Text`, `BoldText`, `IconText`, `ImageText`, `ImageTextLarge` and the `MetricIndicator`s. They lay their items out in a grid or a carousel; a block's action is shared by every card, and says which one was picked.
+  - `chatLibrary`, with `chatRules` and `chatExamples` for its prompt: each answer is one `Card`, with `SectionBlock`s of `SectionItem`s and sources, cited in its text as `[1]`.
+
+  An action sent to the assistant carries the values as they are when it runs, including what the same click wrote. Captions, such as subtitles and the error messages of groups of options, now show in their colours.
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/ui@9.3.0
+
 ## 0.4.0
 
 ### Minor Changes

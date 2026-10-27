@@ -10,16 +10,21 @@ import { classMap } from "@inglorious/web/directives/class-map"
 import { repeat } from "@inglorious/web/directives/repeat"
 import { when } from "@inglorious/web/directives/when"
 
+import { Button } from "../../controls/button/index.js"
+import { Checkbox } from "../../controls/checkbox/index.js"
 import { Input } from "../../controls/input/index.js"
 import { Select } from "../../controls/select/index.js"
 import { Pagination } from "../../navigation/pagination/index.js"
 import { VirtualList } from "../virtual-list/index.js"
 import { Filters } from "./filters/index.js"
 import {
+  getCellValue,
+  getEditCount,
   getPaginationInfo,
   getRowKeyValue,
   getRows,
   getSortDirection,
+  isCellEdited,
 } from "./helpers.js"
 
 const DIVISOR = 2
@@ -27,6 +32,7 @@ const DIVISOR = 2
 const PRETTY_PAGE = 1
 const FIRST_PAGE = 0
 const LAST_PAGE = 1
+const ONE_EDIT = 1
 
 export const DataGrid = {
   /**
@@ -67,7 +73,7 @@ export const DataGrid = {
    */
   renderHeader(props) {
     return html`<div class="iw-data-grid-header">
-      ${props.search && this.renderToolbar?.(props)}
+      ${when(props.search, () => this.renderToolbar?.(props))}
       <div class="iw-data-grid-header-row">
         ${repeat(
           props.columns,
@@ -108,7 +114,10 @@ export const DataGrid = {
         @click=${() => column.isSortable && props.onSortChange?.(column.id)}
         class="iw-data-grid-header-title"
       >
-        ${column.title} ${getSortIcon(getSortDirection(props, column.id))}
+        ${column.title}
+        ${when(column.isSortable, () =>
+          getSortIcon(getSortDirection(props, column.id)),
+        )}
       </div>
 
       ${when(column.isFilterable, () => Filters.render(props, column))}
@@ -225,7 +234,11 @@ export const DataGrid = {
         props.columns,
         (column) => column.id,
         (column, index) =>
-          this.renderCell?.(props, { cell: row[column.id], index }),
+          this.renderCell?.(props, {
+            cell: getCellValue(props, row, column.id),
+            index,
+            row,
+          }),
       )}
     </div>`
   },
@@ -235,23 +248,85 @@ export const DataGrid = {
    * Override to customize per-column cell structure.
    * @param {DataGridProps} props The data grid props.
    * @param {object} payload The payload.
-   * @param {any} payload.cell The cell data.
+   * @param {any} payload.cell The cell data, with any unsaved edit.
    * @param {number} payload.index The column index.
+   * @param {Row} payload.row The row the cell is in.
    * @returns {TemplateResult} The rendered cell.
    */
-  renderCell(props, { cell, index }) {
+  renderCell(props, { cell, index, row }) {
     const column = props.columns[index]
+    const isEditable = Boolean(column.isEditable && row)
 
+    // Typing in a cell's editor is not picking its row.
     return html`<div
       class="iw-data-grid-cell ${classMap({
         "iw-data-grid-cell-number": column.type === "number",
         "iw-data-grid-cell-date": column.type === "date",
         "iw-data-grid-cell-boolean": column.type === "boolean",
+        "iw-data-grid-cell-editable": isEditable,
+        "iw-data-grid-cell-edited":
+          isEditable && isCellEdited(props, row, column.id),
       })}"
       style=${getColumnStyle(column)}
+      @click=${isEditable ? (event) => event.stopPropagation() : undefined}
     >
-      ${this.renderValue?.(props, { value: cell, column, index })}
+      ${when(
+        isEditable,
+        () => this.renderEditor?.(props, { value: cell, column, row, index }),
+        () => this.renderValue?.(props, { value: cell, column, index }),
+      )}
     </div>`
+  },
+
+  /**
+   * Renders the field that edits a cell of an `isEditable` column: a
+   * drop-down when the column has `options`, a checkbox for booleans, a date
+   * or number field for those types, and a text field otherwise.
+   * Override to edit some columns differently.
+   * @param {DataGridProps} props The data grid props.
+   * @param {object} payload The payload.
+   * @param {any} payload.value The cell's value, with any unsaved edit.
+   * @param {Column} payload.column The column definition.
+   * @param {Row} payload.row The row the cell is in.
+   * @returns {TemplateResult} The rendered editor.
+   */
+  renderEditor(props, { value, column, row }) {
+    const change = (next) =>
+      props.onCellChange?.({
+        rowId: getRowKeyValue(props, row),
+        columnId: column.id,
+        value: next,
+      })
+
+    if (column.options) {
+      return Select.render({
+        size: "sm",
+        ariaLabel: column.title,
+        value: value ?? "",
+        options: column.options,
+        isFullWidth: true,
+        onChange: change,
+      })
+    }
+
+    if (column.type === "boolean") {
+      return Checkbox.render({
+        "aria-label": column.title,
+        isChecked: Boolean(value),
+        onChange: change,
+      })
+    }
+
+    const isNumber = column.type === "number"
+    return Input.render({
+      size: "sm",
+      ariaLabel: column.title,
+      inputType: isNumber ? "number" : column.type === "date" ? "date" : "text",
+      value: value == null ? "" : String(value),
+      isFullWidth: true,
+      onChange: (text) =>
+        change(isNumber ? (text === "" ? null : Number(text)) : text),
+    })
   },
 
   /**
@@ -274,22 +349,57 @@ export const DataGrid = {
    */
   renderFooter(props) {
     const pagination = getPaginationInfo(props)
+    const editCount = getEditCount(props)
 
-    if (!pagination) {
+    if (!pagination && !editCount) {
       return null
     }
 
     return html`<div class="iw-data-grid-footer">
-      <div class="iw-data-grid-footer-row">
-        <div>
-          ${pagination.start + PRETTY_PAGE} to ${pagination.end} of
-          ${pagination.totalRows} entries
-        </div>
+      ${when(editCount, () => this.renderEdits?.(props, editCount))}
+      ${when(
+        pagination,
+        () =>
+          html`<div class="iw-data-grid-footer-row">
+            <div>
+              ${pagination.start + PRETTY_PAGE} to ${pagination.end} of
+              ${pagination.totalRows} entries
+            </div>
 
-        ${this.renderPagination?.(props, pagination)}
-        ${when(pagination.pageSizes, () =>
-          this.renderPageSize?.(props, pagination),
-        )}
+            ${this.renderPagination?.(props, pagination)}
+            ${when(pagination.pageSizes, () =>
+              this.renderPageSize?.(props, pagination),
+            )}
+          </div>`,
+      )}
+    </div>`
+  },
+
+  /**
+   * Renders the bar that counts the unsaved edits, with buttons to reset or
+   * save them. Shown only while there are edits.
+   * @param {DataGridProps} props The data grid props.
+   * @param {number} editCount How many cells have unsaved edits.
+   * @returns {TemplateResult} The rendered bar.
+   */
+  renderEdits(props, editCount) {
+    return html`<div class="iw-data-grid-footer-row iw-data-grid-edits">
+      <div role="status">
+        ${editCount} ${editCount === ONE_EDIT ? "change" : "changes"}
+      </div>
+      <div class="iw-data-grid-edits-actions">
+        ${Button.render({
+          children: "Reset",
+          variant: "ghost",
+          size: "sm",
+          onClick: () => props.onEditsReset?.(),
+        })}
+        ${Button.render({
+          children: props.saveLabel ?? "Save changes",
+          color: "primary",
+          size: "sm",
+          onClick: () => props.onEditsSave?.(),
+        })}
       </div>
     </div>`
   },

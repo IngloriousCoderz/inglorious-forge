@@ -131,7 +131,7 @@ export function findBoundVariables({
  *
  * @param {object} options
  * @param {OpenUIEntity} options.entity
- * @param {{ notify: (type: string, payload?: unknown) => void }} options.api
+ * @param {{ notify: (type: string, payload?: unknown) => void, getEntity?: (id: string) => OpenUIEntity | undefined }} options.api
  * @param {ParseResult} options.result
  * @param {Library} options.library
  * @param {Record<string, unknown>} options.functions
@@ -242,6 +242,8 @@ export function renderProgram({
       // Set by a FormControl for the field inside it.
       label: scope.label,
       hint: scope.hint,
+      // Set by a chat Card for the citations in its text.
+      sources: scope.sources ?? [],
       stateField,
       fieldError: (name) => entity.fieldErrors[formName ?? ""]?.[name],
       validateForm: scope.fields
@@ -358,7 +360,10 @@ async function runAction({
         : context.resolveRef(name),
   }
 
-  const announce = (event) =>
+  const announce = (event) => {
+    // The values as they are now, with what this click has written so far,
+    // such as an EditableTable's rows saved just before.
+    const values = api.getEntity?.(entity.id)?.values ?? entity.values
     api.notify("openuiAction", {
       id: entity.id,
       humanFriendlyMessage: "",
@@ -366,10 +371,11 @@ async function runAction({
       formName,
       // A form sends its own fields; anything else, every value there is.
       formState: formName
-        ? { [formName]: store.get(formName) ?? {} }
-        : { ...store.getSnapshot(), ...pendingValues },
+        ? { [formName]: values[formName] ?? {} }
+        : { ...defaults, ...values, ...pendingValues },
       ...event,
     })
+  }
 
   if (!action) {
     announce({

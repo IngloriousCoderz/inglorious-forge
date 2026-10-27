@@ -3,10 +3,18 @@ import { Flex } from "@inglorious/ui/flex"
 import { action, ACTION_STEPS, defineComponent } from "@openuidev/lang-core"
 import { z } from "zod"
 
-import { Icon } from "./content.js"
+export const VARIANTS = {
+  primary: "default",
+  secondary: "outline",
+  tertiary: "ghost",
+}
 
-const VARIANTS = { primary: "default", secondary: "outline", tertiary: "ghost" }
-const SIZES = { "extra-small": "xs", small: "sm", medium: "md", large: "lg" }
+export const SIZES = {
+  "extra-small": "xs",
+  small: "sm",
+  medium: "md",
+  large: "lg",
+}
 
 export const Button = defineComponent({
   name: "Button",
@@ -56,61 +64,6 @@ export const Buttons = defineComponent({
       gap: "sm",
       wrap: "wrap",
       children: renderNode(props.buttons),
-    }),
-})
-
-export const IconButton = defineComponent({
-  name: "IconButton",
-  description:
-    'A button showing only an Icon: IconButton("Delete", Icon("trash"), @Run(remove)). name labels it for screen readers and is the message sent when there is no action.',
-  props: z.object({
-    name: z.string(),
-    icon: Icon.ref,
-    action: action().optional(),
-    variant: z.enum(["primary", "secondary", "tertiary"]).optional(),
-    size: z.enum(["extra-small", "small", "medium", "large"]).optional(),
-    shape: z.enum(["square", "circle"]).optional(),
-  }),
-  component: ({ props, isStreaming, triggerAction, renderNode }) =>
-    UiButton.render({
-      children: renderNode(props.icon),
-      ariaLabel: props.name,
-      variant: VARIANTS[props.variant ?? "secondary"],
-      size: SIZES[props.size ?? "medium"],
-      shape: props.shape === "circle" ? "round" : "square",
-      isDisabled: isStreaming,
-      onClick: () => triggerAction(props.name, undefined, props.action),
-    }),
-})
-
-export const FollowUpItem = defineComponent({
-  name: "FollowUpItem",
-  description:
-    "A follow-up question: pressed, it is sent as the user's message",
-  props: z.object({ text: z.string() }),
-  // Rendered by its FollowUpBlock.
-  component: () => null,
-})
-
-export const FollowUpBlock = defineComponent({
-  name: "FollowUpBlock",
-  description:
-    'Follow-up questions the user may ask next, at the end of an answer: FollowUpBlock([FollowUpItem("Compare with last month")])',
-  props: z.object({ items: z.array(FollowUpItem.ref) }),
-  component: ({ props, isStreaming, triggerAction }) =>
-    Flex.render({
-      direction: "column",
-      align: "start",
-      gap: "xs",
-      children: (props.items ?? []).filter(Boolean).map(({ props: item }) =>
-        UiButton.render({
-          children: `${item.text} →`,
-          variant: "ghost",
-          size: "sm",
-          isDisabled: isStreaming,
-          onClick: () => triggerAction(item.text),
-        }),
-      ),
     }),
 })
 

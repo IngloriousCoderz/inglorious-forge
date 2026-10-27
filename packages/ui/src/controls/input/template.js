@@ -93,6 +93,7 @@ export const Input = {
       type, // eslint-disable-line no-unused-vars
       name = "",
       label,
+      ariaLabel,
       hint, // eslint-disable-line no-unused-vars
       messageId,
       inputType = "text",
@@ -129,7 +130,7 @@ export const Input = {
         id=${controlId || nothing}
         name=${name}
         type=${inputType}
-        aria-label=${fallbackLabel(controlId, label)}
+        aria-label=${ariaLabel || fallbackLabel(controlId, label)}
         aria-describedby=${messageId || nothing}
         aria-invalid=${error ? "true" : "false"}
         .value=${value}

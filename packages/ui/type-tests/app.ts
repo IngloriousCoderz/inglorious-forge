@@ -15,7 +15,12 @@ import {
   ImageCropper,
   type ImageCropperProps,
 } from "../types/controls/image-cropper"
-import { DataGrid, getRows } from "../types/data-display/data-grid"
+import {
+  DataGrid,
+  getEditCount,
+  getEditedRows,
+  getRows,
+} from "../types/data-display/data-grid"
 import {
   VirtualList,
   type VirtualListEntity,
@@ -74,6 +79,11 @@ declare const api: AppApi
 declare const grid: GridEntity
 DataGrid.render(grid, api)
 export const names: string[] = getRows(grid).map((row) => row.name)
+export const editCount: number = getEditCount(grid)
+export const saved: string[] = getEditedRows(grid).map((row) => row.name)
+DataGrid.cellChange(grid, { rowId: "1", columnId: "name", value: "Ada" })
+// @ts-expect-error: an edit names its column
+DataGrid.cellChange(grid, { rowId: "1", value: "Ada" })
 export const tabs = Tabs.render({ value: null })
 
 // The crop rect the cropper reports is what cropImage takes

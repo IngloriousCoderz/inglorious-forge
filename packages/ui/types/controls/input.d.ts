@@ -20,6 +20,8 @@ export interface InputProps {
   value?: string
   placeholder?: string
   label?: string
+  /** Names the field for assistive tech when it has no visible `label`. */
+  ariaLabel?: string
   hint?: string
   error?: string
   size?: "sm" | "md" | "lg"

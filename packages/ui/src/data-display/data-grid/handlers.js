@@ -3,7 +3,12 @@
  * @typedef {import('../../../types/data-display/data-grid').Column} Column
  */
 
-import { getRowKeyValue, getRows, getTotalRows } from "./helpers.js"
+import {
+  getEditedRows,
+  getRowKeyValue,
+  getRows,
+  getTotalRows,
+} from "./helpers.js"
 
 const MIN_COLUMN_WIDTH = 72
 const VIRTUAL_START = 0
@@ -286,6 +291,43 @@ export function selectionClear(entity) {
 }
 
 /**
+ * Records the user's edit of a cell, kept apart from the rows until saved. An
+ * edit back to the row's own value is no edit at all.
+ * @param {DataGridEntity} entity
+ * @param {{ rowId: string|number, columnId: string, value: any }} payload
+ */
+export function cellChange(entity, { rowId, columnId, value }) {
+  const row = entity.rows.find((item) => getRowKeyValue(entity, item) === rowId)
+  if (!row) return
+
+  entity.edits ??= {}
+  const edits = (entity.edits[rowId] ??= {})
+  if (Object.is(row[columnId], value)) {
+    delete edits[columnId]
+  } else {
+    edits[columnId] = value
+  }
+  if (!Object.keys(edits).length) delete entity.edits[rowId]
+}
+
+/**
+ * Drops every unsaved edit.
+ * @param {DataGridEntity} entity
+ */
+export function editsReset(entity) {
+  entity.edits = {}
+}
+
+/**
+ * Writes the unsaved edits into the rows.
+ * @param {DataGridEntity} entity
+ */
+export function editsSave(entity) {
+  entity.rows = getEditedRows(entity)
+  entity.edits = {}
+}
+
+/**
  * Handles the scroll event to update the virtualized visible range.
  * @param {DataGridEntity} entity
  * @param {HTMLElement} containerEl
@@ -394,6 +436,7 @@ function initDataGrid(entity) {
   }
   entity.selection ??= []
   entity.selectionAnchor ??= null
+  entity.edits ??= {}
   entity.isMultiSelect ??= true
   entity.isVirtualized ??= false
 

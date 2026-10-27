@@ -48,6 +48,10 @@
     display: flex;
   }
 
+  .iw-data-grid-edits-actions {
+    display: flex;
+  }
+
   .iw-data-grid-column-resizer {
     position: absolute;
     inset: 0 0 0 auto;

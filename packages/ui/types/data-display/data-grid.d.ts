@@ -42,6 +42,13 @@ export interface Column {
    * - number / CSS length string: fixed width
    */
   width?: number | string
+  /**
+   * Lets the user edit the column's cells: a text, number or date field by
+   * its `type`, a checkbox for booleans, or a drop-down with `options`.
+   */
+  isEditable?: boolean
+  /** The values an editable cell can take, picked from a drop-down. */
+  options?: SelectOption[]
   formatter?: string | ((value: any) => any)
   sortFn?: (a: Row, b: Row) => number
   filterFn?: (row: Row, filterValue: any) => boolean
@@ -52,7 +59,7 @@ export interface Column {
 export interface DataGridProps<T extends Row = Row> {
   id?: string
   type: string
-  data: T[]
+  rows: T[]
   columns: Column[]
   sorts: { column: string; direction: "asc" | "desc" }[]
   filters: Record<string, any>
@@ -65,6 +72,20 @@ export interface DataGridProps<T extends Row = Row> {
   pagination?: { page: number; pageSize: number; pageSizes: number[] } | null
   rowId?: string
   isMultiSelect: boolean
+  /**
+   * The user's unsaved edits, by row key and column id, shown over the rows
+   * until saved. Sorting, filtering and search go by the saved values.
+   */
+  edits?: Record<string | number, Record<string, any>>
+  /** The label of the button that saves the edits. Defaults to "Save changes". */
+  saveLabel?: string
+  onCellChange?: (payload: {
+    rowId: string | number
+    columnId: string
+    value: any
+  }) => void
+  onEditsReset?: () => void
+  onEditsSave?: () => void
   onSortChange?: (columnId: string) => void
   onFilterChange?: (payload: { columnId: string; value: any }) => void
   onSearchChange?: (value: string) => void
@@ -122,6 +143,15 @@ export type DataGridType = {
   rowsToggleAll(entity: DataGridProps): void
   rowsSelectAll(entity: DataGridProps): void
   selectionClear(entity: DataGridProps): void
+  /** Records an edit of a cell; an edit back to the saved value drops it. */
+  cellChange(
+    entity: DataGridProps,
+    payload: { rowId: string | number; columnId: string; value: any },
+  ): void
+  /** Drops every unsaved edit. */
+  editsReset(entity: DataGridProps): void
+  /** Writes the unsaved edits into the rows. */
+  editsSave(entity: DataGridProps): void
   virtualMount(entity: DataGridProps, containerEl: HTMLElement): void
   virtualScroll(entity: DataGridProps, containerEl: HTMLElement): void
   render(entity: DataGridProps, api: Api): TemplateResult
@@ -141,9 +171,15 @@ export type DataGridType = {
   ): TemplateResult
   renderCell(
     entity: DataGridProps,
-    payload: { cell: any; index: number },
+    payload: { cell: any; index: number; row?: Row },
     api: Api,
   ): TemplateResult
+  renderEditor(
+    entity: DataGridProps,
+    payload: { value: any; column: Column; row: Row; index: number },
+    api: Api,
+  ): TemplateResult
+  renderEdits(entity: DataGridProps, editCount: number): TemplateResult
   renderValue(
     entity: DataGridProps,
     payload: { value: any; column: Column; index: number },
@@ -181,3 +217,21 @@ export declare function getSortDirection(
 ): "asc" | "desc" | null
 export declare function isAllSelected(entity: DataGridProps): boolean
 export declare function isSomeSelected(entity: DataGridProps): boolean
+/** A cell's value as shown: its unsaved edit, or the row's own. */
+export declare function getCellValue(
+  entity: DataGridProps,
+  row: Row,
+  columnId: string,
+): any
+/** Whether a cell has an unsaved edit. */
+export declare function isCellEdited(
+  entity: DataGridProps,
+  row: Row,
+  columnId: string,
+): boolean
+/** How many cells have unsaved edits. */
+export declare function getEditCount(entity: DataGridProps): number
+/** Every row with its unsaved edits applied. */
+export declare function getEditedRows<T extends Row = Row>(
+  entity: DataGridProps<T>,
+): T[]

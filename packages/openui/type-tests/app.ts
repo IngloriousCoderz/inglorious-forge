@@ -7,6 +7,9 @@ import {
   createOpenUI,
   defineComponent,
   type OpenUIActionEvent,
+  chatExamples,
+  chatLibrary,
+  chatRules,
   uiLibrary,
 } from "../types/index.js"
 
@@ -57,4 +60,11 @@ defineComponent({
 
 export const WithCharts = createOpenUI({
   library: uiLibrary.extend({ components: { add: chartComponents } }),
+})
+
+// The chat library, with its own rules and examples
+export const Chat = createOpenUI({ library: chatLibrary })
+export const chatPrompt: string = chatLibrary.prompt({
+  additionalRules: chatRules,
+  examples: chatExamples,
 })

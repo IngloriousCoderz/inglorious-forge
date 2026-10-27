@@ -11,7 +11,7 @@ The model can only use the components in the library you give `createOpenUI`. Ea
 | Layout           | `Stack(children, direction, gap, align, justify, wrap)`, `Separator(orientation, decorative)`, `Tabs(items)` of `TabItem(value, trigger, content)`, `Accordion(items)` of `AccordionItem(value, trigger, content)`, `Steps(items)` of `StepsItem(title, details)`, `Carousel(children, variant)`, `Modal(title, open, children, size)`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | Content          | `Card(children, variant, direction, gap, align, justify, wrap)`, `CardHeader(title, subtitle)`, `InlineHeader(heading, description)`, `TextContent(text, size)`, `MarkDownRenderer(textMarkdown, variant)`, `Callout(variant, title, description, visible)`, `TextCallout(variant, title, description)`, `CodeBlock(language, codeString)`, `Tag(text, icon, size, variant)`, `TagBlock(tags, size)`, `Icon(name, category)`, `Image(alt, src)`, `ImageBlock(src, alt)`, `ImageGallery(images)`                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | Actions          | `Button(label, action, variant, type, size)`, `Buttons(buttons, direction)`, `IconButton(name, icon, action, variant, size, shape)`, `FollowUpBlock(items)` of `FollowUpItem(text)`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| Tables and lists | `Table(columns)`, `Col(label, data, type)`, `EntityList(rows, size, header, footer)`, `ListBlock(items, variant, size)` of `ListItem(title, subtitle, image, actionLabel, action)`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| Tables and lists | `Table(columns)`, `Col(label, data, type)`, `EditableTable(name, columns, data)`, `EntityList(rows, size, header, footer)`, `ListBlock(items, variant, size)` of `ListItem(title, subtitle, image, actionLabel, action)`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | Forms            | `Form(name, buttons, fields)`, `FormControl(label, input, hint)`, `Label(text)`, `Input(name, placeholder, type, rules, value)`, `TextArea(name, placeholder, rows, rules, value)`, `Select(name, items, placeholder, rules, value, size)` of `SelectItem(value, label)`, `RadioGroup(name, items, rules, value)` of `RadioItem(label, description, value)`, `CheckBoxGroup(name, items, rules, value)` of `CheckBoxItem(label, description, name, defaultChecked)`, `SwitchGroup(name, items, variant, value)` of `SwitchItem(label, description, name, defaultChecked)`, `Slider(name, variant, min, max, step, defaultValue, label, rules, value)`, `DatePicker(name, mode, rules, value)`, `Chips(name, type, items, rules, defaultValue)` of `ChipItem(value, label, icon, disabled)`, `OptionCards(name, type, items, rules, defaultValue)` of `OptionCard(value, title, subtitle, topContent, disabled)` |
 
 A `Card`'s `variant` is `"card"` (raised, the default), `"sunk"` or `"clear"`, and it lays its children out with the same arguments as `Stack`. A `Slider`'s value is a list, as in OpenUI: `[50]`, or `[20, 80]` for a range with two thumbs; `"discrete"` marks every step.
@@ -22,9 +22,40 @@ Text is markdown, as in OpenUI: `TextContent` and the descriptions of `Callout` 
 
 `DatePicker` is the browser's date field: its value is a date such as `"2026-10-27"`, or `{ from, to }` with mode `"range"`. `Chips` keep a list of values (`"multiple"`, the default) or one (`"single"`); `OptionCards` keep one (the default) or a list, and draw each option as a card with an optional `Icon` or `Image` on top. A field's `defaultValue` counts when its form checks its rules.
 
+`EditableTable` is drawn by Inglorious UI's `DataGrid`: a field in every cell, by its column's type (`text`, `number`, `date-single`, `url`, or `select` with `options`), and a count of the cells changed; its Save sends the rows to the assistant as a form named after the table, `{ prices: { prices: rows } }`, as OpenUI's does. Edits not saved yet stay in the entity's `view`.
+
 Tables are written column by column, as in OpenUI: each `Col` holds every value of its column, and a value can be a component, such as a `Tag` for a status.
 
 Which tab or section is open is kept apart from the values, in the entity's `view`, so it never goes to the model as something the user entered. Forms have a guide of their own: [Forms](forms.md).
+
+## Card blocks
+
+A card block lays out two or more items of one kind, two a row, narrowing to one on small screens unless `responsive` is false, or in a `"carousel"`:
+
+| Block                                                        | Its items                                                                                  |
+| ------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
+| `SnippetCardBlock(items, layout, responsive, action, gap)`   | `SnippetCardItem(id, lhs, rhs)`: a label (`IconText` or `ImageText`) and a value           |
+| `OverviewCardBlock(items, layout, responsive, action, gap)`  | `OverviewCardItem(id, top, bottom)`: a heading over a `MetricIndicatorInline`, for KPIs    |
+| `ContextCardBlock(items, layout, responsive, action, gap)`   | `ContextCardItem(id, title, body, bgColor, bgImageSrc, bgImageAlt)`: a summary             |
+| `CompositeCardBlock(items, layout, responsive, action, gap)` | `CompositeCardItem(id, header, body, footer)`: a product or offer, with a price and button |
+| `VisualCardBlock(items, layout, responsive, action, gap)`    | `VisualCardItem(body, id, bgImageSrc, tag, bgImageAlt)`: a photo card                      |
+
+The items are made of `Text`, `BoldText`, `IconText`, `ImageText`, `ImageTextLarge`, `MetricIndicatorInline` and `MetricIndicatorWithStrikethrough`. A block's `action` is shared by every card, which become buttons: pressing one runs it with the card's details (`itemIndex`, `itemId`, `itemTitle`, …) added to the context of its `@ToAssistant` steps.
+
+## The chat library
+
+`chatLibrary` is OpenUI's chat library: an answer is one `Card(children, sources)`, its content one under the other, with no `Stack`. `SectionBlock([SectionItem(value, trigger, content)], isFoldable)` divides a long answer into topics, all open as it streams and the first once it is whole. The Card's `sources`, `[{ title, sourceName, url }]`, are listed under it, and `[1]` in a `TextContent` links to the first; only web links are linked.
+
+```javascript
+import { chatExamples, chatLibrary, chatRules } from "@inglorious/openui"
+
+const systemPrompt = chatLibrary.prompt({
+  examples: chatExamples,
+  additionalRules: chatRules,
+})
+```
+
+Add the charts to it as to `uiLibrary`.
 
 ## Icons
 

@@ -145,4 +145,21 @@
       );
     }
   }
+
+  /* An editor fills its cell, which keeps less padding around it. */
+  .iw-data-grid-cell-editable {
+    padding: var(--iw-space-2);
+  }
+
+  .iw-data-grid-cell-edited {
+    background: color-mix(in srgb, var(--iw-color-warning) 12%, transparent);
+  }
+
+  .iw-data-grid-edits {
+    gap: var(--iw-space-3);
+
+    & + .iw-data-grid-footer-row {
+      margin-block-start: var(--iw-space-3);
+    }
+  }
 }

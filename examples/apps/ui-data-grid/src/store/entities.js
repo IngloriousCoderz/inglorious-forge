@@ -20,12 +20,14 @@ export const entities = {
         width: "100%",
         isSortable: true,
         isFilterable: true,
+        isEditable: true,
       },
       {
         id: "price",
         type: "number",
         isSortable: true,
         isFilterable: true,
+        isEditable: true,
       },
       {
         id: "isAvailable",

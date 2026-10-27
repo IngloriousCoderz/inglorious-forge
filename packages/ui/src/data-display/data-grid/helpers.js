@@ -9,6 +9,57 @@ export function getRowKeyValue(entity, row) {
 }
 
 /**
+ * A cell's value as shown: the user's unsaved edit if there is one, else the
+ * row's own.
+ * @param {TableEntity} entity
+ * @param {any} row
+ * @param {string} columnId
+ * @returns {any}
+ */
+export function getCellValue(entity, row, columnId) {
+  const edits = entity.edits?.[getRowKeyValue(entity, row)]
+  return edits && Object.hasOwn(edits, columnId)
+    ? edits[columnId]
+    : row?.[columnId]
+}
+
+/**
+ * Whether a cell has an unsaved edit.
+ * @param {TableEntity} entity
+ * @param {any} row
+ * @param {string} columnId
+ * @returns {boolean}
+ */
+export function isCellEdited(entity, row, columnId) {
+  const edits = entity.edits?.[getRowKeyValue(entity, row)]
+  return Boolean(edits && Object.hasOwn(edits, columnId))
+}
+
+/**
+ * How many cells have unsaved edits.
+ * @param {TableEntity} entity
+ * @returns {number}
+ */
+export function getEditCount(entity) {
+  return Object.values(entity.edits ?? {}).reduce(
+    (count, edits) => count + Object.keys(edits).length,
+    0,
+  )
+}
+
+/**
+ * Every row with its unsaved edits applied, in the rows' own order.
+ * @param {TableEntity} entity
+ * @returns {any[]}
+ */
+export function getEditedRows(entity) {
+  return entity.rows.map((row) => {
+    const edits = entity.edits?.[getRowKeyValue(entity, row)]
+    return edits ? { ...row, ...edits } : row
+  })
+}
+
+/**
  * Gets the processed rows (filtered, searched, sorted, paginated).
  * @param {TableEntity} entity
  * @returns {any[]}
@@ -69,7 +120,7 @@ export function getPaginationInfo(entity) {
  * @returns {"asc"|"desc"|null}
  */
 export function getSortDirection(entity, columnId) {
-  const sort = entity.sorts.find((s) => s.column === columnId)
+  const sort = entity.sorts?.find((s) => s.column === columnId)
   return sort?.direction || null
 }
 
@@ -136,7 +187,7 @@ export function isSomeSelected(entity) {
  * @returns {any[]}
  */
 function applyFilters(entity, rows) {
-  if (!Object.keys(entity.filters).length) {
+  if (!Object.keys(entity.filters ?? {}).length) {
     return rows
   }
 
@@ -201,7 +252,7 @@ function applySearch(entity, rows) {
  * @returns {any[]}
  */
 function applySorts(entity, rows) {
-  if (!entity.sorts.length) {
+  if (!entity.sorts?.length) {
     return rows
   }
 

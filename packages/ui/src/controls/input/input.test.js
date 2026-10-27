@@ -313,4 +313,14 @@ describe("input accessibility", () => {
     expect(input.hasAttribute("hint")).toBe(false)
     expect(input.hasAttribute("isfullwidth")).toBe(false)
   })
+
+  it("names a field without a visible label for assistive tech", () => {
+    const container = document.createElement("div")
+
+    render(Input.render({ name: "price", ariaLabel: "Price" }), container)
+
+    expect(container.querySelector("input").getAttribute("aria-label")).toBe(
+      "Price",
+    )
+  })
 })

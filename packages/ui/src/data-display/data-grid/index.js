@@ -19,6 +19,9 @@ export const DataGrid = {
       onPagePrev: () => api.notify(`#${id}:pagePrev`),
       onPageSizeChange: (pageSize) =>
         api.notify(`#${id}:pageSizeChange`, pageSize),
+      onCellChange: (payload) => api.notify(`#${id}:cellChange`, payload),
+      onEditsReset: () => api.notify(`#${id}:editsReset`),
+      onEditsSave: () => api.notify(`#${id}:editsSave`),
       onVirtualMount: (containerEl) =>
         api.notify(`#${id}:virtualMount`, containerEl),
       onVirtualScroll: (containerEl) =>
@@ -30,6 +33,10 @@ export const DataGrid = {
 }
 
 export const {
+  getCellValue,
+  getEditCount,
+  getEditedRows,
+  isCellEdited,
   getPaginationInfo,
   getRows,
   isSomeSelected,

@@ -41,20 +41,20 @@ export const PrimitiveSection = {
                 variant: "h4",
                 children: showEmpty ? "Choose a Primitive" : name,
               }),
-              category
-                ? Typography.render({
-                    variant: "body2",
-                    color: "secondary",
-                    children: `Category: ${category}`,
-                  })
-                : "",
-              summary
-                ? Typography.render({
-                    variant: "body1",
-                    color: "secondary",
-                    children: summary,
-                  })
-                : "",
+              when(category, () =>
+                Typography.render({
+                  variant: "body2",
+                  color: "secondary",
+                  children: `Category: ${category}`,
+                }),
+              ),
+              when(summary, () =>
+                Typography.render({
+                  variant: "body1",
+                  color: "secondary",
+                  children: summary,
+                }),
+              ),
             ],
           }),
           Card.render({
@@ -99,61 +99,61 @@ export const PrimitiveSection = {
               `,
             }),
           }),
-          showEmpty
-            ? ""
-            : Card.render({
-                padding: "xl",
-                className: "iw-primitive-example",
-                children: Flex.render({
-                  direction: "column",
-                  gap: "md",
-                  children: [
-                    Typography.render({
-                      variant: "h6",
-                      children: "Example",
-                    }),
-                    Grid.render({
-                      minColumnWidth: "18rem",
-                      gap: "lg",
-                      children: [
-                        Flex.render({
-                          direction: "column",
-                          gap: "sm",
-                          children: [
-                            Typography.render({
-                              variant: "body2",
-                              color: "secondary",
-                              children: "Code",
-                            }),
-                            html`<pre class="iw-primitive-code"><code>${
-                              exampleCode ?? "// Example coming soon."
-                            }</code></pre>`,
-                          ],
-                        }),
-                        Flex.render({
-                          direction: "column",
-                          gap: "sm",
-                          children: [
-                            Typography.render({
-                              variant: "body2",
-                              color: "secondary",
-                              children: "Result",
-                            }),
-                            html`<div class="iw-primitive-preview">
-                              ${
-                                examplePreview ??
-                                html`<div class="iw-primitive-preview-empty">
-                                  Preview coming soon.
-                                </div>`
-                              }
-                            </div>`,
-                          ],
-                        }),
-                      ],
-                    }),
-                  ],
-                }),
+          when(!showEmpty, () =>
+            Card.render({
+              padding: "xl",
+              className: "iw-primitive-example",
+              children: Flex.render({
+                direction: "column",
+                gap: "md",
+                children: [
+                  Typography.render({
+                    variant: "h6",
+                    children: "Example",
+                  }),
+                  Grid.render({
+                    minColumnWidth: "18rem",
+                    gap: "lg",
+                    children: [
+                      Flex.render({
+                        direction: "column",
+                        gap: "sm",
+                        children: [
+                          Typography.render({
+                            variant: "body2",
+                            color: "secondary",
+                            children: "Code",
+                          }),
+                          html`<pre class="iw-primitive-code"><code>${
+                            exampleCode ?? "// Example coming soon."
+                          }</code></pre>`,
+                        ],
+                      }),
+                      Flex.render({
+                        direction: "column",
+                        gap: "sm",
+                        children: [
+                          Typography.render({
+                            variant: "body2",
+                            color: "secondary",
+                            children: "Result",
+                          }),
+                          html`<div class="iw-primitive-preview">
+                            ${
+                              examplePreview ??
+                              html`<div class="iw-primitive-preview-empty">
+                                Preview coming soon.
+                              </div>`
+                            }
+                          </div>`,
+                        ],
+                      }),
+                    ],
+                  }),
+                ],
               }),
+            }),
+          ),
         ],
       }),
     })

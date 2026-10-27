@@ -90,6 +90,8 @@ export interface RenderContext<Props = Record<string, unknown>> {
   /** The label and hint a FormControl gives the field inside it. */
   label?: string
   hint?: string
+  /** The sources of the chat Card the component is in, which `[n]` cites. */
+  sources: ChatSource[]
   /** What failed the last time the field's form was checked. */
   fieldError: (name: string) => string | undefined
   /** In a Form: checks its fields' rules, records what fails, and says whether all passed. */
@@ -103,6 +105,14 @@ export interface RenderScope {
   fields?: { name: string; rules?: unknown; value?: unknown }[]
   label?: string
   hint?: string
+  sources?: ChatSource[]
+}
+
+/** A reference a chat answer relies on, listed under it and cited as `[n]`. */
+export interface ChatSource {
+  title: string
+  sourceName: string
+  url?: string
 }
 
 /** A component for the library: its props schema, and a render function of them. */
@@ -276,3 +286,15 @@ export declare const uiLibrary: Required<Library<AnyInglorousComponent>>
 
 /** Example answers for `uiLibrary.prompt({ examples: uiExamples })`; small models need them. */
 export declare const uiExamples: string[]
+
+/**
+ * Inglorious UI as OpenUI's chat library: every answer is one `Card`, with
+ * sections, follow-ups and sources. Prompt it with `chatRules` and `chatExamples`.
+ */
+export declare const chatLibrary: Required<Library<AnyInglorousComponent>>
+
+/** Rules for `chatLibrary.prompt({ additionalRules: chatRules })`. */
+export declare const chatRules: string[]
+
+/** Example answers in the chat library's shape. */
+export declare const chatExamples: string[]

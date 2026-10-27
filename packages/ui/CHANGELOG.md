@@ -1,5 +1,15 @@
 # @inglorious/ui
 
+## 9.3.0
+
+### Minor Changes
+
+- `DataGrid` cells can be edited. A column with `isEditable` puts an editor in each cell: a text, number or date field by its `type`, a checkbox for booleans, or a drop-down with the column's `options`. Edits are kept apart from the rows, in `edits`, through the `cellChange` event, and the footer counts them, with buttons to drop them (`editsReset`) or write them into the rows (`editsSave`); `saveLabel` renames the second. Sorting, filtering and search go by the saved values while edits are pending, and clicking an editor does not select its row. The `getCellValue`, `isCellEdited`, `getEditCount` and `getEditedRows` helpers read them. A grid rendered from props takes `onCellChange`, `onEditsReset` and `onEditsSave`, and no longer needs `sorts` or `filters`.
+
+  Only sortable columns show sort arrows in their header. The types name a grid's rows `rows`, as the grid reads them, rather than `data`.
+
+  `Input` takes an `ariaLabel`, naming a field with no visible label for assistive tech, as `Select` already does.
+
 ## 9.2.0
 
 ### Minor Changes

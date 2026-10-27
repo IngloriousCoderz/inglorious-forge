@@ -1,5 +1,6 @@
 import { createStore } from "@inglorious/store"
 import { html } from "@inglorious/web"
+import { when } from "@inglorious/web/directives/when"
 import { describe, expect, it } from "vitest"
 
 import { toHTML } from "./html.js"
@@ -99,9 +100,11 @@ describe("await toHTML", () => {
         types: {
           content: {
             render: (entity) =>
-              entity.isVisible
-                ? html`<p>Visible content</p>`
-                : html`<p>Hidden</p>`,
+              when(
+                entity.isVisible,
+                () => html`<p>Visible content</p>`,
+                () => html`<p>Hidden</p>`,
+              ),
           },
         },
         entities: {

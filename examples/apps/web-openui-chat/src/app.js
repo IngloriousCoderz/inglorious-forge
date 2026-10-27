@@ -7,6 +7,7 @@ import { Paper } from "@inglorious/ui/paper"
 import { Progress } from "@inglorious/ui/progress"
 import { Typography } from "@inglorious/ui/typography"
 import { html } from "@inglorious/web"
+import { when } from "@inglorious/web/directives/when"
 
 const SUGGESTIONS = [
   "Where did my money go this month?",
@@ -28,14 +29,14 @@ export const app = {
         children: [
           Typography.render({ variant: "h1", children: "OpenUI chat" }),
           ...chat.messages.map((message) => renderMessage(message, api)),
-          chat.error
-            ? Alert.render({
-                severity: "error",
-                title: "The model did not answer",
-                description: chat.error,
-              })
-            : "",
-          chat.messages.length ? "" : renderSuggestions(api),
+          when(chat.error, () =>
+            Alert.render({
+              severity: "error",
+              title: "The model did not answer",
+              description: chat.error,
+            }),
+          ),
+          when(!chat.messages.length, () => renderSuggestions(api)),
           renderComposer(chat, api),
         ],
       }),

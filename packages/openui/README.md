@@ -19,7 +19,7 @@ It is not for screens you can design ahead of time: those are better built by ha
 ## Features
 
 - **Streams.** The answer renders while it arrives; buttons wait for it to finish.
-- **Inglorious UI included.** `uiLibrary` offers layout, tabs, accordions, steps, modals, cards, text, callouts, tags, images, buttons, tables and form fields with validation, with the names and arguments of OpenUI's standard library; charts, stacked or curved, come with `@inglorious/charts`, and icons from any Iconify collection.
+- **Inglorious UI included.** `uiLibrary` covers OpenUI's standard library, with its names and arguments: layout, cards and card blocks, markdown text, callouts, tags, images, buttons, follow-ups, tables, editable tables, lists and form fields with validation; its charts come with `@inglorious/charts`, and icons from any Iconify collection. `chatLibrary` is OpenUI's chat variant, each answer one card with sections and cited sources.
 - **Live data.** `Query` and `Mutation` call the app's own tools, as functions or through an MCP client, and results land in the entity.
 - **Store-driven.** `$variables`, fields and `@Set`/`@Reset` live in the entity, and what the answer asks of the app arrives as an `openuiAction` event.
 - **Safe by construction.** The model can only use the components you register; it cannot run code or invent markup.

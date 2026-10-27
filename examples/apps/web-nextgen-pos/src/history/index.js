@@ -3,6 +3,7 @@ import { Chip } from "@inglorious/ui/chip"
 import { Icon } from "@inglorious/ui/icon"
 import { Table } from "@inglorious/ui/table"
 import { html } from "@inglorious/web"
+import { when } from "@inglorious/web/directives/when"
 
 import { formatMoney } from "../domain/money.js"
 import { renderPatterns } from "../patterns/index.js"
@@ -25,8 +26,10 @@ export const History = {
     return Card.render({
       title: "Completed sales",
       subtitle: `${accounting.posted.length} posted · ${accounting.queued.length} stored locally`,
-      children: sales.length
-        ? Table.render({
+      children: when(
+        sales.length,
+        () =>
+          Table.render({
             columns: COLUMNS,
             isFullWidth: true,
             rows: sales.map((sale) => ({
@@ -35,8 +38,9 @@ export const History = {
               total: formatMoney(sale.receipt.total),
               books: renderStatus(accounting, sale.id),
             })),
-          })
-        : html`<p class="empty">No sales yet.</p>`,
+          }),
+        () => html`<p class="empty">No sales yet.</p>`,
+      ),
       footer: renderPatterns([
         "Proxy",
         "Command",

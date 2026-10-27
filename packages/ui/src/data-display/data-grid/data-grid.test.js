@@ -5,6 +5,9 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest"
 import { Select } from "../../controls/select/index.js"
 import {
   DataGrid,
+  getCellValue,
+  getEditCount,
+  getEditedRows,
   getPaginationInfo,
   getRows,
   getSortDirection,
@@ -562,5 +565,136 @@ describe("DataGrid / template", () => {
         container.querySelectorAll(".iw-data-grid-body .iw-data-grid-row"),
       ).toHaveLength(2)
     })
+  })
+})
+
+// ---------------------------------------------------------------------------
+// Editing
+// ---------------------------------------------------------------------------
+
+const editableColumns = [
+  { id: "name", title: "Name", isEditable: true, isSortable: true },
+  { id: "age", title: "Age", type: "number", isEditable: true },
+  { id: "active", title: "Active", type: "boolean", isEditable: true },
+  {
+    id: "role",
+    title: "Role",
+    isEditable: true,
+    options: [
+      { value: "Admin", label: "Admin" },
+      { value: "User", label: "User" },
+    ],
+  },
+]
+
+describe("DataGrid / editing handlers", () => {
+  let entity
+
+  beforeEach(() => {
+    entity = {
+      id: GRID_ID,
+      type: "DataGrid",
+      rows: JSON.parse(JSON.stringify(sampleData)),
+      columns: JSON.parse(JSON.stringify(editableColumns)),
+    }
+    DataGrid.create(entity)
+  })
+
+  it("keeps edits apart from the rows, and shows them over them", () => {
+    DataGrid.cellChange(entity, { rowId: 2, columnId: "age", value: 31 })
+
+    expect(entity.rows[1].age).toBe(30)
+    expect(getCellValue(entity, entity.rows[1], "age")).toBe(31)
+    expect(getEditCount(entity)).toBe(1)
+  })
+
+  it("drops an edit back to the saved value", () => {
+    DataGrid.cellChange(entity, { rowId: 2, columnId: "age", value: 31 })
+    DataGrid.cellChange(entity, { rowId: 2, columnId: "age", value: 30 })
+
+    expect(entity.edits).toEqual({})
+    expect(getEditCount(entity)).toBe(0)
+  })
+
+  it("resets edits, or saves them into the rows", () => {
+    DataGrid.cellChange(entity, { rowId: 1, columnId: "name", value: "Carl" })
+    DataGrid.editsReset(entity)
+    expect(getEditCount(entity)).toBe(0)
+    expect(entity.rows[0].name).toBe("Charlie")
+
+    DataGrid.cellChange(entity, { rowId: 1, columnId: "name", value: "Carl" })
+    expect(getEditedRows(entity)[0].name).toBe("Carl")
+    DataGrid.editsSave(entity)
+    expect(entity.rows[0].name).toBe("Carl")
+    expect(getEditCount(entity)).toBe(0)
+  })
+
+  it("sorts by the saved values while edits are pending", () => {
+    entity.sorts = [{ column: "name", direction: "asc" }]
+    DataGrid.cellChange(entity, { rowId: 2, columnId: "name", value: "Zed" })
+
+    expect(getRows(entity)[0].id).toBe(2)
+  })
+})
+
+describe("DataGrid / editing template", () => {
+  let container, unsubscribe, getGrid
+
+  beforeEach(async () => {
+    ;({ container, unsubscribe, getGrid } = await setup({
+      columns: JSON.parse(JSON.stringify(editableColumns)),
+      pagination: null,
+      search: null,
+    }))
+  })
+
+  afterEach(() => {
+    unsubscribe()
+    container.remove()
+  })
+
+  it("puts an editor in every editable cell, by the column's type", () => {
+    expect(container.querySelectorAll('input[aria-label="Name"]')).toHaveLength(
+      4,
+    )
+    expect(container.querySelector('input[aria-label="Age"]').type).toBe(
+      "number",
+    )
+    expect(
+      container.querySelector('input[type="checkbox"][aria-label="Active"]'),
+    ).not.toBeNull()
+    expect(container.querySelector('select[aria-label="Role"]')).not.toBeNull()
+  })
+
+  it("counts edits in the footer, and resets or saves them", () => {
+    const age = container.querySelectorAll('input[aria-label="Age"]')[1]
+    age.value = "31"
+    age.dispatchEvent(new Event("input", { bubbles: true }))
+
+    expect(getGrid().edits).toEqual({ 2: { age: 31 } })
+    expect(
+      container.querySelector(".iw-data-grid-edits").textContent,
+    ).toContain("1 change")
+    expect(container.querySelector(".iw-data-grid-cell-edited")).not.toBeNull()
+
+    const [reset, save] = container.querySelectorAll(
+      ".iw-data-grid-edits button",
+    )
+    save.click()
+    expect(getGrid().rows[1].age).toBe(31)
+    expect(container.querySelector(".iw-data-grid-edits")).toBeNull()
+    expect(reset.textContent.trim()).toBe("Reset")
+  })
+
+  it("shows sort arrows only on sortable columns", () => {
+    const [name, age] = container.querySelectorAll(".iw-data-grid-header-title")
+    expect(name.textContent).toContain("▲▼")
+    expect(age.textContent).not.toContain("▲")
+  })
+
+  it("does not select a row when its editor is clicked", () => {
+    container.querySelector('input[aria-label="Name"]').click()
+
+    expect(getGrid().selection).toEqual([])
   })
 })
