@@ -25,6 +25,7 @@ Available demos:
 - [web-todomvc-tsx](./web-todomvc-tsx/README.md) — TodoMVC client-only demo in TSX with `@inglorious/web`
 - [web-components](./web-components/README.md) — web component preservation demo (Material Web, Shoelace)
 - [web-components-ssx](./web-components-ssx/README.md) — Material Web components with SSX (SSR support)
+- [web-openui-chat](./web-openui-chat/README.md) — a chat whose answers are interfaces, rendered from a local model's OpenUI Lang
 - [web-nextgen-pos](./web-nextgen-pos/README.md) — Craig Larman's NextGen POS, showing GRASP and GoF patterns as functional idioms
 
 Quick start (from repo root):

@@ -9,6 +9,8 @@ packages:
   - packages/*
 
 allowBuilds:
+  # Its postinstall only sends installation telemetry.
+  "@openuidev/lang-core": false
   "@parcel/watcher": true
   "@tailwindcss/oxide": true
   esbuild: true

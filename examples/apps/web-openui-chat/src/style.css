@@ -1,0 +1,18 @@
+.chat-user {
+  align-self: flex-end;
+  max-inline-size: 80%;
+}
+
+.chat-answer {
+  align-self: stretch;
+}
+
+.chat-composer {
+  display: flex;
+  gap: var(--iw-space-2);
+  align-items: flex-end;
+  position: sticky;
+  inset-block-end: 0;
+  padding-block: var(--iw-space-3);
+  background: var(--iw-color-bg);
+}

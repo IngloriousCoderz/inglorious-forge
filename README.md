@@ -81,6 +81,10 @@ CSS-first motion primitives for `@inglorious/web`, implemented via type composit
 
 Internationalization for `@inglorious/web`: an i18next instance driven by a store entity, so changing language is an ordinary event. Detects the device language, remembers the user's choice, and renders translations with markup in them safely through `trans`.
 
+#### `@inglorious/openui`
+
+Generative UI for `@inglorious/web`: a model answers in [OpenUI Lang](https://openui.com/docs/openui-lang) and the answer renders with Inglorious UI components as it streams in. Each answer is a store entity, so streaming, button presses and typed values are ordinary events.
+
 #### `@inglorious/ag-grid`
 
 Direct AG Grid integration for `@inglorious/web` — no adapter required.
