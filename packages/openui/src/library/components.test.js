@@ -361,6 +361,33 @@ pie = PieChart(["A", "B"], [1, 1], "pie", "semiCircular")
     expect(container.querySelectorAll(".iw-chart-axis-label")).toHaveLength(2)
     expect(container.querySelector(".iw-chart-area")).not.toBeNull()
   })
+
+  it("draws the rest of OpenUI's charts", async () => {
+    const library = uiLibrary.extend({ components: { add: chartComponents } })
+    const { container } = await setup({
+      library,
+      response: `root = Stack([ranking, budget, spread, skills, goals])
+ranking = HorizontalBarChart(["Rome", "Paris", "Oslo"], [Series("Votes", [30, 20, 10])], "grouped", "Votes")
+budget = SingleStackedBarChart(["Rent", "Food", "Fun"], [900, 400, 100])
+spread = ScatterChart([ScatterSeries("Cars", [Point(1200, 15), Point(1800, 11, 4)]), ScatterSeries("Vans", [Point(2500, 8)])], "Weight", "km/l")
+skills = RadarChart(["Speed", "Power", "Range"], [Series("A", [8, 5, 7]), Series("B", [4, 9, 6])])
+goals = RadialChart(["Move", "Exercise"], [80, 45])
+`,
+    })
+
+    expect(container.querySelectorAll("svg.iw-chart")).toHaveLength(5)
+    expect(container.querySelectorAll(".iw-chart-scatter circle")).toHaveLength(
+      3,
+    )
+    expect(container.querySelectorAll(".iw-chart-radar")).toHaveLength(2)
+    expect(container.querySelector(".iw-chart-radial")).not.toBeNull()
+    // The single bar: its three parts and a legend naming them.
+    const [, budget] = container.querySelectorAll("svg.iw-chart")
+    expect(budget.querySelectorAll(".iw-chart-bar rect")).toHaveLength(3)
+    expect(budget.querySelector(".iw-chart-legend").textContent).toContain(
+      "Food",
+    )
+  })
 })
 
 describe("More of OpenUI's standard library", () => {

@@ -8,7 +8,9 @@ import type { Api, TemplateResult } from "@inglorious/web"
  *   or a bare number
  * - one entry per series: `{ dataKey: "sales", values: [{ name: "Jan", value: 10 }] }`
  *
- * Pie and donut charts take slices: `{ label: "Apples", value: 10, color?: "#f00" }`.
+ * Pie, donut and radial charts take slices: `{ label: "Apples", value: 10, color?: "#f00" }`.
+ * Radar charts take rows, as bar charts do.
+ * Scatter charts take series of points: `{ name: "A", points: [{ x: 1, y: 2, z?: 3 }] }`.
  */
 export type ChartDatum = Record<string, unknown> | number
 
@@ -65,6 +67,11 @@ export interface ChartConfig {
   brush?: ChartBrush
   /** Stacks the series of an area or bar chart. */
   isStacked?: boolean
+  /**
+   * Bar charts: `"horizontal"` runs the bars sideways, the categories down
+   * the left and the values along the bottom. Defaults to `"vertical"`.
+   */
+  orientation?: "vertical" | "horizontal"
   /** How the lines of a line or area chart run between points. Defaults to `"linear"`. */
   curve?: ChartCurve
   /** A title under the x axis. */
@@ -76,11 +83,11 @@ export interface ChartConfig {
   /** The series of a `Composed` chart. */
   series?: ChartSeries[]
 
-  /** Pie and donut charts: the field with each slice's value. Defaults to `"value"`. */
+  /** Pie, donut and radial charts: the field with each slice's value. Defaults to `"value"`. */
   dataKey?: string
-  /** Pie and donut charts: the field with each slice's label. Defaults to `"label"`. */
+  /** Pie, donut and radial charts: the field with each slice's label. Defaults to `"label"`. */
   nameKey?: string
-  /** Pie and donut charts: labels the slices. Defaults to true, or false with a legend. */
+  /** Pie, donut and radial charts: labels the slices. Defaults to true, or false with a legend. */
   hasLabel?: boolean
   /** Donut charts: the text in the middle. A pie with it becomes a donut. */
   centerText?: string
@@ -89,7 +96,7 @@ export interface ChartConfig {
   cy?: ChartLength
   /** Pie and donut charts. Defaults to `"70%"`. */
   outerRadius?: ChartLength
-  /** Pie and donut charts: a donut's hole. Defaults to 0. */
+  /** Pie and donut charts: a donut's hole. Defaults to 0, or `"25%"` for radial charts. */
   innerRadius?: ChartLength
   /**
    * Pie and donut charts: where the slices start and end, in degrees
@@ -105,8 +112,8 @@ export type ChartCurve = "linear" | "natural" | "monotone" | "step"
 
 /**
  * A chart entity in config mode. Its `type` picks the chart: `"Line"`,
- * `"Area"`, `"Bar"`, `"Composed"`, `"Pie"` or `"Donut"`, or a name containing
- * one, such as `"LineRT"`.
+ * `"Area"`, `"Bar"`, `"Composed"`, `"Pie"`, `"Donut"`, `"Scatter"`, `"Radar"`
+ * or `"Radial"`, or a name containing one, such as `"LineRT"`.
  */
 export interface ChartEntity extends ChartConfig {
   id?: string
@@ -268,6 +275,54 @@ export interface PieProps {
   endAngle?: number
 }
 
+export interface ScatterProps {
+  /** The name of the series to draw. */
+  dataKey?: string
+  fill?: string
+  /** Defaults to 0.75. */
+  fillOpacity?: SvgNumber
+  /** The points' radius, for every point. Defaults to 5, or sized by each point's `z`. */
+  r?: SvgNumber
+  hasTooltip?: boolean
+}
+
+export interface PolarGridProps {
+  stroke?: string
+}
+
+export interface PolarAngleAxisProps {
+  /** Turns each category into its label. Defaults to `String`. */
+  tickFormatter?: (value: unknown) => string
+}
+
+export interface RadarProps extends SeriesProps {
+  fill?: string
+  stroke?: string
+  /** Defaults to 0.25. */
+  fillOpacity?: SvgNumber
+}
+
+export interface RadialBarProps {
+  /** The field with each ring's value. */
+  dataKey?: string
+  /** The field with each ring's label. */
+  nameKey?: string
+  /** Names each ring at its start. */
+  hasLabel?: boolean
+  hasTooltip?: boolean
+  cx?: ChartLength
+  cy?: ChartLength
+  outerRadius?: ChartLength
+  innerRadius?: ChartLength
+  /**
+   * Where the rings start, and where a full one ends, in degrees clockwise
+   * from twelve o'clock. Default to 0 and three quarters round, leaving the
+   * last quarter for the rings' names.
+   */
+  startAngle?: number
+  endAngle?: number
+}
+
 export interface TooltipProps {
   /** Formats the value. Defaults to `String`. */
   formatter?: ChartTooltipFormatter
@@ -334,6 +389,24 @@ export function Area(props?: AreaProps): ChartPrimitive<"area", AreaProps>
 export function Bar(props?: BarProps): ChartPrimitive<"bar", BarProps>
 export function Pie(props?: PieProps): ChartPrimitive<"pie", PieProps>
 export function Dots(props?: DotsProps): ChartPrimitive<"dots", DotsProps>
+/** One series of a scatter chart, by its name. */
+export function Scatter(
+  props?: ScatterProps,
+): ChartPrimitive<"scatter", ScatterProps>
+/** A radar chart's rings and spokes. */
+export function PolarGrid(
+  props?: PolarGridProps,
+): ChartPrimitive<"polar-grid", PolarGridProps>
+/** A radar chart's category names. */
+export function PolarAngleAxis(
+  props?: PolarAngleAxisProps,
+): ChartPrimitive<"polar-angle-axis", PolarAngleAxisProps>
+/** One series of a radar chart. */
+export function Radar(props?: RadarProps): ChartPrimitive<"radar", RadarProps>
+/** A radial chart's rings, one per row. */
+export function RadialBar(
+  props?: RadialBarProps,
+): ChartPrimitive<"radial-bar", RadialBarProps>
 /** Turns on tooltips for every series. */
 export function Tooltip(
   props?: TooltipProps,

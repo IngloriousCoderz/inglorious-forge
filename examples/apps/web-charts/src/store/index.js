@@ -15,6 +15,9 @@ export const store = createStore({
     Composed: Chart,
     Pie: Chart,
     Donut: Chart,
+    Scatter: Chart,
+    Radar: Chart,
+    Radial: Chart,
   },
   entities,
 })

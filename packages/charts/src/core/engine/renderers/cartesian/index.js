@@ -111,20 +111,16 @@ export function renderBarSeries(primitive, frame) {
     <g class="iw-chart-bar">
       ${entity.data.map((row, index) => {
         const value = Number.isFinite(row?.[dataKey]) ? row[dataKey] : 0
-        const x = getCategoryX(scales, index) + groupStart
+        const start = getCategoryX(scales, index) + groupStart
         const point = stacked?.[index]
-        const y = point
+        // Where the bar ends and where it starts on the value axis.
+        const end = point
           ? Number.isFinite(point.y)
             ? point.y
             : point.y0
-          : value >= 0
-            ? scales.yScale(value)
-            : scales.yScale(0)
-        const baseY = point
-          ? point.y0
-          : value >= 0
-            ? scales.yScale(0)
-            : scales.yScale(value)
+          : scales.yScale(Math.max(0, value))
+        const base = point ? point.y0 : scales.yScale(Math.min(0, value))
+        const length = Math.abs(base - end)
         const tooltip = getTooltipBindings(
           frame,
           primitive,
@@ -134,10 +130,10 @@ export function renderBarSeries(primitive, frame) {
 
         return svg`
           <rect
-            x=${x}
-            y=${Math.min(y, baseY)}
-            width=${barWidth}
-            height=${Math.abs(baseY - y)}
+            x=${scales.isHorizontal ? Math.min(base, end) : start}
+            y=${scales.isHorizontal ? start : Math.min(base, end)}
+            width=${scales.isHorizontal ? length : barWidth}
+            height=${scales.isHorizontal ? barWidth : length}
             fill=${fill}
             pointer-events="all"
             style=${
@@ -213,13 +209,13 @@ export function getCartesianTooltipAnchor(frame, { index, dataKey }) {
     const value = frame.entity.data[index][dataKey]
     if (!Number.isFinite(value)) return null
     const { barWidth, groupStart } = getBarGeometry(series, frame)
-    const top = series.props?.stackId
+    const end = series.props?.stackId
       ? createSeriesPoints(series, frame)[index].y
       : frame.scales.yScale(Math.max(0, value))
-    return {
-      x: getCategoryX(frame.scales, index) + groupStart + barWidth / 2,
-      y: top,
-    }
+    const middle = getCategoryX(frame.scales, index) + groupStart + barWidth / 2
+    return frame.scales.isHorizontal
+      ? { x: end, y: middle }
+      : { x: middle, y: end }
   }
 
   const point = createSeriesPoints(series, frame)[index]

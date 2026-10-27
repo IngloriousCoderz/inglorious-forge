@@ -8,6 +8,11 @@ import {
   Legend,
   Line,
   Pie,
+  PolarAngleAxis,
+  PolarGrid,
+  Radar,
+  RadialBar,
+  Scatter,
   Tooltip,
   XAxis,
   YAxis,
@@ -21,6 +26,9 @@ export const DEFAULT_PRIMITIVES = {
   pie: buildDefaultPiePrimitives,
   donut: buildDefaultDonutPrimitives,
   composed: buildDefaultComposedPrimitives,
+  scatter: buildDefaultScatterPrimitives,
+  radar: buildDefaultRadarPrimitives,
+  radial: buildDefaultRadialPrimitives,
 }
 
 const CARTESIAN_PRIMITIVES = {
@@ -80,6 +88,45 @@ function buildDefaultBarPrimitives(entity) {
   })
 
   return addSharedCartesianOverlays(primitives, entity)
+}
+
+function buildDefaultScatterPrimitives(entity) {
+  const primitives = buildCartesianScaffold(entity)
+
+  entity.seriesKeys.forEach((dataKey, index) => {
+    primitives.push(Scatter({ dataKey, fill: entity.colors[index] }))
+  })
+
+  return addSharedCartesianOverlays(primitives, entity)
+}
+
+function buildDefaultRadarPrimitives(entity) {
+  const primitives = [PolarGrid(), PolarAngleAxis()]
+
+  entity.seriesKeys.forEach((dataKey, index) => {
+    primitives.push(Radar({ dataKey, fill: entity.colors[index] }))
+  })
+
+  return addSharedCartesianOverlays(primitives, entity)
+}
+
+function buildDefaultRadialPrimitives(entity) {
+  const primitives = [
+    RadialBar({
+      dataKey: entity.dataKey,
+      nameKey: entity.nameKey,
+      innerRadius: entity.innerRadius ?? "25%",
+      // A legend names the rings already, so they go unlabelled by default.
+      hasLabel: entity.hasLabel ?? !entity.hasLegend,
+      startAngle: entity.startAngle,
+      endAngle: entity.endAngle,
+    }),
+  ]
+
+  if (entity.hasLegend === true) primitives.push(Legend({}))
+  if (entity.hasTooltip === true) primitives.push(Tooltip({}))
+
+  return primitives
 }
 
 function buildDefaultPiePrimitives(entity) {

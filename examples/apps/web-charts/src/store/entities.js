@@ -766,4 +766,133 @@ export const entities = {
       { name: "F", uv: 189, pv: 480 },
     ],
   },
+
+  // ============================================
+  // HORIZONTAL BAR, SCATTER, RADAR AND RADIAL CHARTS
+  // ============================================
+
+  // Horizontal Bar Chart - Config Style
+  horizontalBarChart: {
+    type: "Bar",
+    orientation: "horizontal",
+    data: [
+      { label: "Customer support", votes: 42 },
+      { label: "Faster checkout", votes: 35 },
+      { label: "Dark mode", votes: 28 },
+      { label: "Offline mode", votes: 17 },
+    ],
+    width: 800,
+    height: 300,
+    hasGrid: true,
+    hasTooltip: true,
+    xAxisLabel: "Votes",
+  },
+
+  // Horizontal Bar Chart - Composition Style
+  horizontalBarChartComposition: {
+    type: "Bar",
+    data: [
+      { label: "Customer support", online: 30, shop: 12 },
+      { label: "Faster checkout", online: 20, shop: 15 },
+      { label: "Dark mode", online: 18, shop: 10 },
+    ],
+  },
+
+  // Scatter Chart - Config Style
+  scatterChart: {
+    type: "Scatter",
+    data: [
+      {
+        name: "Cars",
+        points: [
+          { x: 1100, y: 17 },
+          { x: 1350, y: 15 },
+          { x: 1500, y: 13 },
+          { x: 1800, y: 11 },
+        ],
+      },
+      {
+        name: "Vans",
+        points: [
+          { x: 2100, y: 10 },
+          { x: 2400, y: 9 },
+          { x: 2900, y: 7 },
+        ],
+      },
+    ],
+    width: 800,
+    height: 400,
+    hasGrid: true,
+    hasTooltip: true,
+    hasLegend: true,
+    xAxisLabel: "Weight (kg)",
+    yAxisLabel: "km per litre",
+  },
+
+  // Scatter Chart sized by z - Composition Style
+  scatterChartComposition: {
+    type: "Scatter",
+    data: [
+      {
+        name: "Cities",
+        points: [
+          { x: 10, y: 30, z: 200 },
+          { x: 25, y: 45, z: 800 },
+          { x: 40, y: 20, z: 400 },
+          { x: 55, y: 60, z: 1200 },
+        ],
+      },
+    ],
+  },
+
+  // Radar Chart - Config Style
+  radarChart: {
+    type: "Radar",
+    data: [
+      { label: "Speed", modelA: 8, modelB: 5 },
+      { label: "Power", modelA: 5, modelB: 9 },
+      { label: "Range", modelA: 7, modelB: 6 },
+      { label: "Comfort", modelA: 6, modelB: 8 },
+      { label: "Price", modelA: 9, modelB: 4 },
+    ],
+    width: 800,
+    height: 400,
+    hasTooltip: true,
+    hasLegend: true,
+  },
+
+  // Radar Chart - Composition Style
+  radarChartComposition: {
+    type: "Radar",
+    data: [
+      { label: "Speed", modelA: 8 },
+      { label: "Power", modelA: 5 },
+      { label: "Range", modelA: 7 },
+      { label: "Comfort", modelA: 6 },
+      { label: "Price", modelA: 9 },
+    ],
+  },
+
+  // Radial Chart - Config Style
+  radialChart: {
+    type: "Radial",
+    data: [
+      { label: "Move", value: 84 },
+      { label: "Exercise", value: 50 },
+      { label: "Stand", value: 83 },
+    ],
+    width: 500,
+    height: 400,
+    hasTooltip: true,
+  },
+
+  // Radial Chart - Composition Style
+  radialChartComposition: {
+    type: "Radial",
+    data: [
+      { label: "Move", value: 84 },
+      { label: "Exercise", value: 50 },
+      { label: "Stand", value: 83 },
+    ],
+  },
 }

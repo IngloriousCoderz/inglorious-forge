@@ -10,11 +10,10 @@ import {
 import { themeColor } from "../../theme.js"
 import { resolveLegendItems } from "../cartesian/shared.js"
 import { getPieLegendItems } from "../polar/index.js"
+import { getRadialLegendItems } from "../polar/radial.js"
 
 export function renderLegend(primitive, frame) {
-  const items = isPie(frame)
-    ? getPieLegendItems(frame)
-    : resolveLegendItems(primitive, frame)
+  const items = getLegendItems(primitive, frame)
   const startX = frame.dimensions.plotLeft
   const y = frame.dimensions.padding.top + 12
   const perRow = legendItemsPerRow(frame.dimensions.plotWidth)
@@ -38,6 +37,10 @@ export function renderLegend(primitive, frame) {
   `
 }
 
-function isPie(frame) {
-  return frame.primitives?.some((item) => item.type === "pie")
+// A pie or radial chart names its rows; any other chart, its series.
+function getLegendItems(primitive, frame) {
+  const types = new Set(frame.primitives?.map((item) => item.type))
+  if (types.has("pie")) return getPieLegendItems(frame)
+  if (types.has("radial-bar")) return getRadialLegendItems(frame)
+  return resolveLegendItems(primitive, frame)
 }

@@ -3,7 +3,7 @@ import { scalePoint } from "d3-scale"
 import { describe, expect, it } from "vitest"
 
 import {
-  getXTicks,
+  getCategoryTicks,
   renderCartesianGrid,
   renderXAxis,
   renderYAxis,
@@ -89,7 +89,7 @@ describe("axes renderers", () => {
     }
 
     it("shows as many labels as fit without overlapping, keeping the last", () => {
-      const ticks = getXTicks(createCrowdedFrame())
+      const ticks = getCategoryTicks(createCrowdedFrame())
 
       expect(ticks.length).toBeGreaterThan(1)
       expect(ticks.length).toBeLessThan(100)
@@ -97,19 +97,20 @@ describe("axes renderers", () => {
       ticks.slice(1).forEach((tick, i) => {
         const previous = ticks[i]
         const halfWidths = ((previous.label.length + tick.label.length) * 7) / 2
-        expect(tick.x - previous.x).toBeGreaterThanOrEqual(halfWidths + 5)
+        expect(tick.position - previous.position).toBeGreaterThanOrEqual(
+          halfWidths + 5,
+        )
       })
     })
 
     it("shows every label when they fit", () => {
-      expect(getXTicks(createFrame()).map((tick) => tick.label)).toEqual([
-        "Jan",
-        "Feb",
-      ])
+      expect(getCategoryTicks(createFrame()).map((tick) => tick.label)).toEqual(
+        ["Jan", "Feb"],
+      )
     })
 
     it("skips `interval` labels between the ones shown", () => {
-      const ticks = getXTicks(createCrowdedFrame(), {
+      const ticks = getCategoryTicks(createCrowdedFrame(), {
         props: { interval: 24 },
       })
 
@@ -118,7 +119,7 @@ describe("axes renderers", () => {
 
     it("shows every label with an interval of 0", () => {
       expect(
-        getXTicks(createCrowdedFrame(), { props: { interval: 0 } }),
+        getCategoryTicks(createCrowdedFrame(), { props: { interval: 0 } }),
       ).toHaveLength(100)
     })
 
@@ -126,8 +127,8 @@ describe("axes renderers", () => {
       const frame = createCrowdedFrame()
 
       expect(
-        getXTicks(frame, { props: { minTickGap: 40 } }).length,
-      ).toBeLessThan(getXTicks(frame).length)
+        getCategoryTicks(frame, { props: { minTickGap: 40 } }).length,
+      ).toBeLessThan(getCategoryTicks(frame).length)
     })
 
     it("draws the vertical grid lines where the axis shows labels", () => {

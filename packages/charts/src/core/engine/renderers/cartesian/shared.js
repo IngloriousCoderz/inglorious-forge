@@ -176,7 +176,7 @@ export function resolveLegendItems(primitive, frame) {
 export function getSeriesPrimitiveColor(frame, dataKey) {
   const series = frame.primitives.find(
     (item) =>
-      ["line", "area", "bar"].includes(item.type) &&
+      ["line", "area", "bar", "scatter", "radar"].includes(item.type) &&
       item.props?.dataKey === dataKey,
   )
   if (!series) return null

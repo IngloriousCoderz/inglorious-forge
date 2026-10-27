@@ -9,6 +9,9 @@ const SUPPORTED_CHART_TYPES = new Set([
   "area",
   "bar",
   "composed",
+  "scatter",
+  "radar",
+  "radial",
 ])
 
 const SUPPORTED_CHART_TYPE_TOKENS = [...SUPPORTED_CHART_TYPES]
@@ -20,6 +23,16 @@ export function getChartType(entity, primitives) {
 
   if (primitives.some((primitive) => primitive.type === "pie")) {
     return entity.centerText ? "donut" : "pie"
+  }
+
+  if (primitives.some((primitive) => primitive.type === "scatter")) {
+    return "scatter"
+  }
+  if (primitives.some((primitive) => primitive.type === "radar")) {
+    return "radar"
+  }
+  if (primitives.some((primitive) => primitive.type === "radial-bar")) {
+    return "radial"
   }
 
   const hasArea = primitives.some((primitive) => primitive.type === "area")

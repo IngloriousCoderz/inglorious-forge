@@ -9,7 +9,8 @@ export function createChartEntity(entity, requestedKeys) {
   const height = entity.height || DEFAULT_HEIGHT
   const padding = createPadding(entity.padding, width, height)
 
-  if (entity.type === "pie" || entity.type === "donut") {
+  // A radial chart, a ring per row, takes its data as a pie does.
+  if (["pie", "donut", "radial"].includes(entity.type)) {
     const dataKey = entity.dataKey || "value"
     const nameKey = entity.nameKey || "label"
     const pieData = createPieData(entity.data, dataKey, nameKey)
@@ -25,6 +26,23 @@ export function createChartEntity(entity, requestedKeys) {
       nameKey,
       seriesKeys: [],
       xKey: null,
+      padding,
+      isTooltipEnabled: entity.hasTooltip === true,
+    }
+  }
+
+  if (entity.type === "scatter") {
+    const series = createScatterSeries(entity.data)
+
+    return {
+      ...entity,
+      width,
+      height,
+      colors,
+      data: series,
+      fullData: series,
+      seriesKeys: series.map(({ name }) => name),
+      xKey: "x",
       padding,
       isTooltipEnabled: entity.hasTooltip === true,
     }
@@ -67,6 +85,20 @@ function createPieData(rawData, dataKey, nameKey) {
     [nameKey]:
       row?.[nameKey] ?? row?.label ?? row?.name ?? `Slice ${index + 1}`,
     [dataKey]: Number.isFinite(row?.[dataKey]) ? row[dataKey] : 0,
+  }))
+}
+
+// A scatter chart's series each have points of their own, at any x: they are
+// kept as series, `{ name, points }`, rather than merged into rows. A series
+// may give its points as `points` or `values`, each `{ x, y, z? }`.
+function createScatterSeries(rawData) {
+  if (!Array.isArray(rawData)) return []
+
+  return rawData.map((series, index) => ({
+    name: String(series?.name ?? series?.dataKey ?? `Series ${index + 1}`),
+    points: (series?.points ?? series?.values ?? [])
+      .filter((point) => Number.isFinite(point?.x) && Number.isFinite(point?.y))
+      .map(({ x, y, z }) => ({ x, y, ...(Number.isFinite(z) && { z }) })),
   }))
 }
 

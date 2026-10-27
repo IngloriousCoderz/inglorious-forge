@@ -2,6 +2,7 @@
 
 import {
   AXIS_LABEL_ROOM,
+  CHAR_WIDTH,
   DEFAULT_BRUSH_HEIGHT,
   DEFAULT_HEIGHT,
   DEFAULT_WIDTH,
@@ -38,9 +39,6 @@ export function createDimensions(entity, primitives) {
       entity.brush?.height ||
       DEFAULT_BRUSH_HEIGHT
     : 0
-  const legendHeight = hasLegend
-    ? LEGEND_HEIGHT + (countLegendRows(entity, width) - 1) * LEGEND_ROW_HEIGHT
-    : 0
   // An axis title takes room of its own, on its side of the plot.
   const titled = (type) =>
     primitives.some(
@@ -48,14 +46,25 @@ export function createDimensions(entity, primitives) {
     )
   const xTitleRoom = titled("x-axis") ? AXIS_LABEL_ROOM : 0
   const yTitleRoom = titled("y-axis") ? AXIS_LABEL_ROOM : 0
+  // Horizontal bars put their categories' names on the left: room for the
+  // longest, estimated from its length as SVG text cannot be measured.
+  const categoryRoom =
+    entity.orientation === "horizontal"
+      ? Math.max(entity.padding.left, longestLabel(entity) * CHAR_WIDTH + 16)
+      : entity.padding.left
+  const plotLeft = categoryRoom + yTitleRoom
+  const plotRight = width - entity.padding.right
+  const legendHeight = hasLegend
+    ? LEGEND_HEIGHT +
+      (countLegendRows(entity, plotRight - plotLeft, primitives) - 1) *
+        LEGEND_ROW_HEIGHT
+    : 0
   const plotTop = entity.padding.top + legendHeight
   const plotBottom =
     height -
     entity.padding.bottom -
     xTitleRoom -
     (brushHeight > 0 ? brushHeight + 16 : 0)
-  const plotLeft = entity.padding.left + yTitleRoom
-  const plotRight = width - entity.padding.right
 
   return {
     width,
@@ -75,14 +84,23 @@ export function createDimensions(entity, primitives) {
 }
 
 /**
- * A pie's legend has an item per slice, so it may need more than one row. A
- * cartesian one, an item per series, fits on one.
+ * A legend has an item per series, or per row for a pie or radial chart, and
+ * wraps onto as many rows as they need.
  */
-function countLegendRows(entity, width) {
-  const isPolar = entity.type === "pie" || entity.type === "donut"
-  if (!isPolar) return 1
-
-  const plotWidth = width - entity.padding.left - entity.padding.right
-  const count = entity.data?.length ?? 0
+function countLegendRows(entity, plotWidth, primitives) {
+  const isPolar = ["pie", "donut", "radial"].includes(entity.type)
+  const legend = primitives.find((primitive) => primitive.type === "legend")
+  const count = isPolar
+    ? (entity.data?.length ?? 0)
+    : (legend?.props?.dataKeys?.length ?? entity.seriesKeys?.length ?? 0)
   return Math.max(1, Math.ceil(count / legendItemsPerRow(plotWidth)))
+}
+
+function longestLabel(entity) {
+  return Math.max(
+    0,
+    ...(entity.data ?? []).map(
+      (row) => String(row?.[entity.xKey] ?? "").length,
+    ),
+  )
 }

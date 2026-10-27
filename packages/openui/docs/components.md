@@ -52,12 +52,17 @@ import { chartComponents } from "@inglorious/openui/charts"
 const library = uiLibrary.extend({ components: { add: chartComponents } })
 ```
 
-| Component                                                    | What it draws                                                                        |
-| ------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
-| `BarChart(labels, series, variant, xLabel, yLabel, height)`  | Bars per label, one colour per `Series(category, values)`; `"stacked"` piles them up |
-| `LineChart(labels, series, variant, xLabel, yLabel, height)` | Lines over the labels; `"natural"` smooths them, `"step"` steps them                 |
-| `AreaChart(labels, series, variant, xLabel, yLabel, height)` | Filled areas under the lines, with the same variants                                 |
-| `PieChart(labels, values, variant, appearance)`              | Slices of a whole; `"donut"` leaves a hole, `"semiCircular"` draws a half            |
+| Component                                                                                     | What it draws                                                                        |
+| --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| `BarChart(labels, series, variant, xLabel, yLabel, height)`                                   | Bars per label, one colour per `Series(category, values)`; `"stacked"` piles them up |
+| `LineChart(labels, series, variant, xLabel, yLabel, height)`                                  | Lines over the labels; `"natural"` smooths them, `"step"` steps them                 |
+| `AreaChart(labels, series, variant, xLabel, yLabel, height)`                                  | Filled areas under the lines, with the same variants                                 |
+| `PieChart(labels, values, variant, appearance)`                                               | Slices of a whole; `"donut"` leaves a hole, `"semiCircular"` draws a half            |
+| `HorizontalBarChart(labels, series, variant, xLabel, yLabel)`                                 | Bars running sideways, for long category names or a ranking                          |
+| `SingleStackedBarChart(labels, values)`                                                       | One bar split into the parts of a whole, named in a legend                           |
+| `ScatterChart(datasets, xLabel, yLabel)` of `ScatterSeries(name, points)` of `Point(x, y, z)` | Points by two numbers; `z` sizes them                                                |
+| `RadarChart(labels, series)`                                                                  | A web of measures around a circle, a shape per `Series`                              |
+| `RadialChart(labels, values)`                                                                 | A ring per value, filled in proportion to the largest                                |
 
 Like tables, charts take their data column by column: `BarChart(["Jan", "Feb"], [Series("Sales", [10, 20])])`, or `BarChart(data.months, [Series("Sales", data.sales)])` from a query. `xLabel` and `yLabel` title the axes.
 

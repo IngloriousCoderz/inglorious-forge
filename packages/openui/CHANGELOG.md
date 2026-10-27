@@ -1,5 +1,17 @@
 # @inglorious/openui
 
+## 0.4.0
+
+### Minor Changes
+
+- The rest of OpenUI's charts, from `@inglorious/openui/charts`: `HorizontalBarChart`, `SingleStackedBarChart`, `ScatterChart` of `ScatterSeries` of `Point`s, `RadarChart` and `RadialChart`.
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/charts@12.2.0
+  - @inglorious/ui@9.2.0
+
 ## 0.3.0
 
 ### Minor Changes

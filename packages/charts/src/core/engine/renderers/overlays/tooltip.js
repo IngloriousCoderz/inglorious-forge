@@ -2,20 +2,21 @@
 
 import { svg } from "@inglorious/web"
 
+import { CHAR_WIDTH } from "../../../defaults.js"
 import { themeColor } from "../../theme.js"
 import { getCartesianTooltipAnchor } from "../cartesian/index.js"
+import { getScatterTooltip } from "../cartesian/scatter.js"
 import {
   getSeriesPrimitiveColor,
   getTooltipText,
   resolveSeriesColor,
 } from "../cartesian/shared.js"
 import { getPieTooltip } from "../polar/index.js"
+import { getRadarTooltip } from "../polar/radar.js"
+import { getRadialTooltip } from "../polar/radial.js"
 
 const HEIGHT = 50
 const GAP = 12
-// SVG text cannot be measured before it is drawn, so the box is sized from an
-// average character width.
-const CHAR_WIDTH = 7
 const MIN_WIDTH = 80
 
 /**
@@ -84,6 +85,9 @@ function resolveTooltip(frame) {
   if (frame.primitives.some((item) => item.type === "pie")) {
     return getPieTooltip(frame, state)
   }
+  if (frame.entity.type === "scatter") return getScatterTooltip(frame, state)
+  if (frame.entity.type === "radar") return getRadarTooltip(frame, state)
+  if (frame.entity.type === "radial") return getRadialTooltip(frame, state)
 
   const anchor = getCartesianTooltipAnchor(frame, state)
   if (!anchor) return null

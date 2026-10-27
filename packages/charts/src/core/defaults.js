@@ -3,6 +3,8 @@
 export const DEFAULT_WIDTH = 800
 export const DEFAULT_HEIGHT = 400
 export const DEFAULT_BRUSH_HEIGHT = 30
+/** The width of a character of 12px text, to estimate a label's width. */
+export const CHAR_WIDTH = 7
 /** The room an axis title takes, beside its tick labels. */
 export const AXIS_LABEL_ROOM = 20
 /** The room a legend takes above the plot, with one row of items. */

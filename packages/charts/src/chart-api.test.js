@@ -9,6 +9,11 @@ import {
   Chart,
   Line,
   Pie,
+  PolarAngleAxis,
+  PolarGrid,
+  Radar,
+  RadialBar,
+  Scatter,
   Tooltip,
   XAxis,
   YAxis,
@@ -462,6 +467,264 @@ describe("chart state", () => {
       )
 
       expect(rows.size).toBeGreaterThan(1)
+    })
+  })
+
+  describe("horizontal bars", () => {
+    const sales = [
+      { name: "North", online: 10, shop: 30 },
+      { name: "South", online: 20, shop: 20 },
+    ]
+    const bars = (html) =>
+      [
+        ...html.matchAll(
+          /<rect x="([\d.-]+)" y="([\d.-]+)" width="([\d.]+)" height="([\d.]+)"/g,
+        ),
+      ].map(([, x, y, width, height]) => ({
+        x: Number(x),
+        y: Number(y),
+        width: Number(width),
+        height: Number(height),
+      }))
+
+    it("runs bars sideways, as long as their values", () => {
+      const drawn = bars(
+        toHtml(
+          Chart.render({
+            type: "bar",
+            orientation: "horizontal",
+            data: [
+              { name: "A", value: 10 },
+              { name: "B", value: 30 },
+            ],
+          }),
+        ),
+      )
+
+      expect(drawn).toHaveLength(2)
+      expect(drawn[0].height).toBe(drawn[1].height)
+      expect(drawn[1].width).toBeCloseTo(drawn[0].width * 3)
+      expect(drawn[0].x).toBe(drawn[1].x)
+      expect(drawn[1].y).toBeGreaterThan(drawn[0].y)
+    })
+
+    it("names the categories down the left and the values along the bottom", () => {
+      const html = toHtml(
+        Chart.render({
+          type: "bar",
+          orientation: "horizontal",
+          data: sales,
+          xAxisLabel: "Sales",
+        }),
+      )
+
+      expect(html).toMatch(/text-anchor="end" >\s*North/)
+      expect(html).toMatch(/text-anchor="middle" >\s*0\s*</)
+      expect(html).toContain("Sales")
+    })
+
+    it("stacks horizontal bars end to end", () => {
+      const [northOnline, , northShop] = bars(
+        toHtml(
+          Chart.render({
+            type: "bar",
+            orientation: "horizontal",
+            isStacked: true,
+            data: sales,
+          }),
+        ),
+      )
+
+      expect(northShop.y).toBe(northOnline.y)
+      expect(northShop.x).toBeCloseTo(northOnline.x + northOnline.width)
+    })
+
+    it("makes room on the left for long category names", () => {
+      const left = (name) =>
+        bars(
+          toHtml(
+            Chart.render({
+              type: "bar",
+              orientation: "horizontal",
+              data: [{ name, value: 1 }],
+            }),
+          ),
+        )[0].x
+
+      expect(left("A rather long category name")).toBeGreaterThan(left("A"))
+    })
+  })
+
+  describe("scatter", () => {
+    const groups = [
+      {
+        name: "A",
+        points: [
+          { x: 10, y: 5 },
+          { x: 40, y: 25 },
+        ],
+      },
+      { name: "B", values: [{ x: 25, y: 15, z: 100 }] },
+    ]
+    // The points, leaving out the legend's swatches.
+    const circles = (html) =>
+      [
+        ...html
+          .split("iw-chart-legend")[0]
+          .matchAll(
+            /<circle cx="([\d.-]+)" cy="([\d.-]+)" r="([\d.]+)" fill="([^"]+)"/g,
+          ),
+      ].map(([, cx, cy, r, fill]) => ({
+        cx: Number(cx),
+        cy: Number(cy),
+        r: Number(r),
+        fill,
+      }))
+
+    it("places points by their x and y, a colour per series", () => {
+      const drawn = circles(
+        toHtml(Chart.render({ type: "scatter", data: groups })),
+      )
+
+      expect(drawn).toHaveLength(3)
+      const [low, high, middle] = drawn
+      expect(high.cx).toBeGreaterThan(middle.cx)
+      expect(middle.cx).toBeGreaterThan(low.cx)
+      expect(high.cy).toBeLessThan(low.cy)
+      expect(middle.fill).not.toBe(low.fill)
+    })
+
+    it("sizes points by z", () => {
+      const [plain, , sized] = circles(
+        toHtml(Chart.render({ type: "scatter", data: groups })),
+      )
+
+      expect(sized.r).toBeGreaterThan(plain.r)
+    })
+
+    it("numbers its x axis", () => {
+      const html = toHtml(
+        Chart.render({
+          type: "scatter",
+          data: groups,
+          xAxisLabel: "Weight",
+          yAxisLabel: "Height",
+        }),
+      )
+
+      expect(html).toMatch(/text-anchor="middle" >\s*40\s*</)
+      expect(html.match(/iw-chart-axis-label/g)).toHaveLength(2)
+    })
+
+    it("draws in composition from Scatter primitives", () => {
+      const html = toHtml(
+        Chart.render({
+          data: groups,
+          children: [XAxis(), YAxis(), Scatter({ dataKey: "A" })],
+        }),
+      )
+
+      expect(circles(html)).toHaveLength(2)
+    })
+  })
+
+  describe("radar", () => {
+    const skills = [
+      { name: "Speed", ada: 8, alan: 5 },
+      { name: "Power", ada: 4, alan: 9 },
+      { name: "Range", ada: 6, alan: 6 },
+    ]
+
+    it("draws a shape per series over a grid, naming every category", () => {
+      const html = toHtml(Chart.render({ type: "radar", data: skills }))
+
+      expect(html.match(/class="iw-chart-radar"/g)).toHaveLength(2)
+      expect(html).toContain("iw-chart-polar-grid")
+      for (const name of ["Speed", "Power", "Range"]) {
+        expect(html).toContain(name)
+      }
+    })
+
+    it("puts a larger value further out on its spoke", () => {
+      const html = toHtml(
+        Chart.render({
+          type: "radar",
+          data: [
+            { name: "A", value: 10 },
+            { name: "B", value: 5 },
+            { name: "C", value: 5 },
+          ],
+        }),
+      )
+      // The first spoke points up: its vertex' y is minus its distance out.
+      const [first] = [
+        ...html
+          .split('class="iw-chart-radar"')[1]
+          .matchAll(/<circle cx="([\d.-]+)" cy="([\d.-]+)"/g),
+      ].map(([, x, y]) => ({ x: Number(x), y: Number(y) }))
+
+      expect(first.x).toBeCloseTo(0)
+      expect(first.y).toBeLessThan(0)
+    })
+
+    it("draws in composition from Radar primitives", () => {
+      const html = toHtml(
+        Chart.render({
+          data: skills,
+          children: [PolarGrid(), PolarAngleAxis(), Radar({ dataKey: "ada" })],
+        }),
+      )
+
+      expect(html.match(/class="iw-chart-radar"/g)).toHaveLength(1)
+    })
+  })
+
+  describe("radial", () => {
+    const goals = [
+      { label: "Move", value: 50 },
+      { label: "Exercise", value: 100 },
+    ]
+
+    it("draws a ring per row, with a track behind each, and labels them", () => {
+      const html = toHtml(Chart.render({ type: "radial", data: goals }))
+      const paths = html
+        .split('class="iw-chart-radial"')[1]
+        .match(/<path d="[^"]+"/g)
+
+      expect(paths).toHaveLength(4)
+      expect(html).toContain("Move")
+      expect(html).toContain("Exercise")
+    })
+
+    it("fills the largest ring the whole way round", () => {
+      const html = toHtml(Chart.render({ type: "radial", data: goals }))
+      const [, , exerciseTrack, exerciseBar] = html
+        .split('class="iw-chart-radial"')[1]
+        .match(/<path d="([^"]+)"/g)
+
+      expect(exerciseBar.replace("d=", "")).toBe(
+        exerciseTrack.replace("d=", ""),
+      )
+    })
+
+    it("names the rings in a legend instead, when asked", () => {
+      const html = toHtml(
+        Chart.render({ type: "radial", data: goals, hasLegend: true }),
+      )
+
+      expect(html).toContain("iw-chart-legend")
+      const rings = html
+        .split('class="iw-chart-radial"')[1]
+        .split("iw-chart-legend")[0]
+      expect(rings).not.toContain("<text")
+    })
+
+    it("draws in composition from a RadialBar", () => {
+      const html = toHtml(
+        Chart.render({ data: goals, children: [RadialBar()] }),
+      )
+
+      expect(html).toContain("iw-chart-radial")
     })
   })
 })

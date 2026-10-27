@@ -14,10 +14,17 @@ import {
   renderDots,
   renderLineSeries,
 } from "./renderers/cartesian/index.js"
+import { renderScatterSeries } from "./renderers/cartesian/scatter.js"
 import { renderBrush } from "./renderers/overlays/brush.js"
 import { renderLegend } from "./renderers/overlays/legend.js"
 import { renderTooltip } from "./renderers/overlays/tooltip.js"
 import { renderCenterText, renderPieSeries } from "./renderers/polar/index.js"
+import {
+  renderPolarAngleAxis,
+  renderPolarGrid,
+  renderRadarSeries,
+} from "./renderers/polar/radar.js"
+import { renderRadialBars } from "./renderers/polar/radial.js"
 
 export function renderFrame(frame) {
   const { entity, dimensions } = frame
@@ -82,6 +89,11 @@ const RENDERERS = {
   area: renderAreaSeries,
   bar: renderBarSeries,
   dots: renderDots,
+  scatter: renderScatterSeries,
+  "polar-grid": renderPolarGrid,
+  "polar-angle-axis": renderPolarAngleAxis,
+  radar: renderRadarSeries,
+  "radial-bar": renderRadialBars,
   pie: renderPieSeries,
   legend: renderLegend,
   brush: renderBrush,

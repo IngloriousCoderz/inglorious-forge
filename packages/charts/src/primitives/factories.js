@@ -26,6 +26,10 @@ export function Pie(props = {}) {
   return { type: "pie", props }
 }
 
+export function Scatter(props = {}) {
+  return { type: "scatter", props }
+}
+
 export function Dots(props = {}) {
   return { type: "dots", props }
 }
@@ -40,4 +44,20 @@ export function Legend(props = {}) {
 
 export function Brush(props = {}) {
   return { type: "brush", props }
+}
+
+export function PolarGrid(props = {}) {
+  return { type: "polar-grid", props }
+}
+
+export function PolarAngleAxis(props = {}) {
+  return { type: "polar-angle-axis", props }
+}
+
+export function Radar(props = {}) {
+  return { type: "radar", props }
+}
+
+export function RadialBar(props = {}) {
+  return { type: "radial-bar", props }
 }

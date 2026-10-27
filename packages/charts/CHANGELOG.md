@@ -1,5 +1,18 @@
 # @inglorious/charts
 
+## 12.2.0
+
+### Minor Changes
+
+- More kinds of chart:
+
+  - Horizontal bars: `orientation: "horizontal"` runs a bar chart's bars sideways, its categories down the left, with room for their names, and its values along the bottom. They group and stack as vertical ones do.
+  - Scatter charts: the `"scatter"` type, or `Scatter` primitives, plot series of points, `{ name, points: [{ x, y, z? }] }`, on two number axes; a point's `z` sets its size.
+  - Radar charts: the `"radar"` type, or the `PolarGrid`, `PolarAngleAxis` and `Radar` primitives, draw a shape per series around a circle, from rows shaped as a bar chart's.
+  - Radial charts: the `"radial"` type, or a `RadialBar` primitive, draw a ring per row, filled as far round as its value is of the largest, from slices shaped as a pie's. A ring goes three quarters round by default, its name in the open quarter.
+
+  Every legend now wraps onto more rows when its items do not fit on one.
+
 ## 12.1.0
 
 ### Minor Changes

@@ -4,6 +4,7 @@ import { renderAreaSections } from "./sections/area.js"
 import { renderBarSection } from "./sections/bar.js"
 import { renderDonutSection } from "./sections/donut.js"
 import { renderLineSections } from "./sections/line.js"
+import { renderMoreSections } from "./sections/more.js"
 import { renderPieSection } from "./sections/pie.js"
 
 export const app = {
@@ -18,13 +19,16 @@ export const app = {
       <div class="app">
         <header>
           <h1>Charts Examples</h1>
-          <p>Examples of Line, Area, Bar, Pie, and Donut charts</p>
+          <p>
+            Examples of Line, Area, Bar, Pie, Donut, Scatter, Radar and Radial
+            charts
+          </p>
         </header>
 
         <main>
           ${renderLineSections(api, status)} ${renderAreaSections(api)}
           ${renderBarSection(api)} ${renderPieSection(api)}
-          ${renderDonutSection(api)}
+          ${renderDonutSection(api)} ${renderMoreSections(api)}
         </main>
       </div>
     `

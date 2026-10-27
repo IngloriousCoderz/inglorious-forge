@@ -17,6 +17,20 @@ export declare const LineChart: ChartComponent
 export declare const AreaChart: ChartComponent
 /** Slices of a whole: `PieChart(labels, values, variant, appearance)`. */
 export declare const PieChart: ChartComponent
+/** Horizontal bars: `HorizontalBarChart(labels, series, variant, xLabel, yLabel)`. */
+export declare const HorizontalBarChart: ChartComponent
+/** One bar split into the parts of a whole: `SingleStackedBarChart(labels, values)`. */
+export declare const SingleStackedBarChart: ChartComponent
+/** A web of measures: `RadarChart(labels, series)`. */
+export declare const RadarChart: ChartComponent
+/** A ring per value: `RadialChart(labels, values)`. */
+export declare const RadialChart: ChartComponent
+/** Points by two numbers: `ScatterChart(datasets, xLabel, yLabel)`. */
+export declare const ScatterChart: ChartComponent
+/** A named set of points: `ScatterSeries(name, points)`. */
+export declare const ScatterSeries: ChartComponent
+/** A point: `Point(x, y, z)`, `z` sizing it. */
+export declare const Point: ChartComponent
 
 /**
  * The charts, to add to a library:

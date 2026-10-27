@@ -8,7 +8,19 @@ import {
 } from "@inglorious/store"
 import type { Api } from "@inglorious/web"
 
-import { Chart, type ChartEntity, Line, Tooltip, YAxis } from "../types"
+import {
+  Chart,
+  type ChartEntity,
+  Line,
+  PolarAngleAxis,
+  PolarGrid,
+  Radar,
+  RadialBar,
+  Scatter,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "../types"
 import { withRealtime } from "../types/realtime"
 
 interface SharesEntity extends ChartEntity {
@@ -66,3 +78,25 @@ export const composed = Chart.render(
 
 // @ts-expect-error: tick formatters take numbers
 YAxis({ tickFormatter: (value: string) => value })
+
+// Horizontal bars, scatter, radar and radial
+export const sideways = Chart.render({
+  type: "bar",
+  orientation: "horizontal",
+  data: [{ name: "A", value: 1 }],
+})
+export const scatter = Chart.render({
+  data: [{ name: "A", points: [{ x: 1, y: 2, z: 3 }] }],
+  children: [XAxis(), YAxis(), Scatter({ dataKey: "A", r: 6 })],
+})
+export const radar = Chart.render({
+  data: [{ name: "Speed", ada: 8 }],
+  children: [PolarGrid(), PolarAngleAxis(), Radar({ dataKey: "ada" })],
+})
+export const radial = Chart.render({
+  data: [{ label: "Move", value: 50 }],
+  children: [RadialBar({ innerRadius: "30%", hasLabel: true })],
+})
+
+// @ts-expect-error: bars run vertically or horizontally
+Chart.render({ type: "bar", orientation: "diagonal" })
