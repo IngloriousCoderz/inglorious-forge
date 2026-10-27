@@ -2,7 +2,7 @@ import path from "node:path"
 
 import { afterEach, describe, expect, it, vi } from "vitest"
 
-import { getPages, getRoutes, matchRoute } from "./index.js"
+import { getPages, getRoutes, matchParams, matchRoute } from "./index.js"
 
 const ROOT_DIR = path.join(import.meta.dirname, "..", "fixtures")
 const PAGES_DIR = path.join(ROOT_DIR, "src", "pages")
@@ -125,6 +125,45 @@ describe("router", () => {
       // split('/').filter(Boolean) removes empty strings, so trailing slashes are ignored
       expect(matchRoute("/about/", "/about")).toBe(true)
       expect(matchRoute("/about", "/about/")).toBe(true)
+    })
+  })
+
+  describe("matchParams", () => {
+    it("reads a dynamic segment's value from the URL", () => {
+      expect(matchParams("/posts/:id", "/posts/42")).toEqual({ id: "42" })
+      expect(matchParams("/posts/:id", "/posts/caf%C3%A9")).toEqual({
+        id: "café",
+      })
+    })
+
+    it("takes the rest of the URL for a catch-all", () => {
+      expect(matchParams("/docs/*", "/docs/guide/intro")).toEqual({
+        path: "guide/intro",
+      })
+    })
+
+    it("is null when the URL does not match", () => {
+      expect(matchParams("/posts/:id", "/posts")).toBeNull()
+      expect(matchParams("/posts/:id", "/blog/42")).toBeNull()
+      expect(matchParams("/posts/:id", "/posts/42/edit")).toBeNull()
+    })
+  })
+
+  describe("server-rendered dynamic pages", () => {
+    it("are registered by their pattern, with no staticPaths", async () => {
+      const warn = vi.spyOn(console, "warn").mockImplementation(() => {})
+      const loader = async (filePath) =>
+        filePath.endsWith("_slug.js")
+          ? { ssr: true, Post: { render: () => "" } }
+          : import(filePath)
+
+      const pages = await getPages(PAGES_DIR, {}, loader)
+      const post = pages.find((page) => page.pattern === "/posts/:slug")
+
+      expect(post).toMatchObject({ path: "/posts/:slug", isDynamic: true })
+      expect(warn).not.toHaveBeenCalledWith(
+        expect.stringContaining("posts/_slug.js"),
+      )
     })
   })
 })

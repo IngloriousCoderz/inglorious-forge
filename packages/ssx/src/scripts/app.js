@@ -76,8 +76,24 @@ const pages = ${JSON.stringify(
     null,
     2,
   )}
+// A server-rendered dynamic page is listed by its pattern, such as /posts/:id.
+const matchesPattern = (pattern, path) => {
+  const patternParts = pattern.split("/").filter(Boolean)
+  const pathParts = path.split("/").filter(Boolean)
+  if (patternParts.includes("*")) {
+    const fixed = patternParts.slice(0, patternParts.indexOf("*"))
+    return fixed.every((part, i) => part.startsWith(":") || part === pathParts[i])
+  }
+  return (
+    patternParts.length === pathParts.length &&
+    patternParts.every((part, i) => part.startsWith(":") || part === pathParts[i])
+  )
+}
+
 const path = normalizeRoutePath(window.location.pathname)
-const page = pages.find((page) => normalizeRoutePath(page.path) === path)
+const page =
+  pages.find((page) => normalizeRoutePath(page.path) === path) ??
+  pages.find((page) => matchesPattern(page.path, path))
 
 const types = { Router }
 ${typesAssignment}

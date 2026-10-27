@@ -3,7 +3,7 @@ import { createServer } from "vite"
 
 import { renderRequest } from "../ssr/index.js"
 import { loadConfig } from "../utils/config.js"
-import { createApiMiddleware } from "./api.js"
+import { createApiMiddleware, createRequest } from "./api.js"
 import { createViteConfig } from "./vite-config.js"
 
 /**
@@ -55,6 +55,7 @@ export async function dev(options = {}) {
         options: { ...mergedOptions, isDev: true },
         loader,
         viteServer,
+        request: createRequest(req),
       })
 
       if (!result) {

@@ -9,8 +9,10 @@ It shows the whole of the package:
 - **Forms** whose fields are checked before they save.
 - **Icons** from Lucide, through `@iconify-json/lucide`.
 - **Follow-ups**: buttons in an answer set values on it or ask the model the next question.
+- **The chat** is Inglorious UI's `Chat`, with a behaviour of the app's own (`src/chat.js`) that answers each message: it adds an OpenUI answer and streams the model's reply into it.
+- **OpenUI's chat library**: each answer is one card, with sections and follow-ups.
 
-`src/library.js` holds what the model is told: the library with the charts, the tools, examples in the app's own terms, and a few rules small models need said outright.
+`src/library.js` holds what the model is told: `chatLibrary` with the charts, the tools, examples in the app's own terms, and a few rules small models need said outright.
 
 It talks to a local [Ollama](https://ollama.com), so it costs nothing to run.
 
@@ -32,4 +34,4 @@ VITE_OLLAMA_MODEL=qwen3:8b
 VITE_OLLAMA_URL=http://localhost:11434
 ```
 
-The prompt is about 9.5k tokens, so the model gets a 16k context. `qwen3:14b` (about 9 GB) answers questions about the expenses with live charts and tables, and writes forms that save through a mutation, on a laptop with 16 GB. The smaller `qwen3:8b` handles the questions too, but often gets forms that save wrong: it forgets to define the mutation it runs, or the `$variables` its fields bind. The whole of Lucide also goes into the bundle; an app with a few icons would give `createOpenUI` just those.
+The prompt is about 10k tokens, so the model gets a 16k context. `qwen3:14b` (about 9 GB) answers questions about the expenses with live charts and tables, and writes forms that save through a mutation, on a laptop with 16 GB. The smaller `qwen3:8b` handles the questions too, but often gets forms that save wrong: it forgets to define the mutation it runs, or the `$variables` its fields bind. The whole of Lucide also goes into the bundle; an app with a few icons would give `createOpenUI` just those.

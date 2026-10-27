@@ -1,0 +1,22 @@
+{
+  "name": "ssx-docs",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vitepress dev docs",
+    "build": "vitepress build docs && shx mkdir -p docs/.vitepress/dist-temp/ssx && shx mv docs/.vitepress/dist/* docs/.vitepress/dist-temp/ssx/ && shx rm -rf docs/.vitepress/dist && shx mv docs/.vitepress/dist-temp docs/.vitepress/dist",
+    "serve": "vitepress serve docs"
+  },
+  "devDependencies": {
+    "shx": "^0.4.0",
+    "vitepress": "1.6.4",
+    "vue": "3.5.42"
+  },
+  "pnpm": {
+    "peerDependencyRules": {
+      "ignoreMissing": [
+        "@algolia/client-search"
+      ]
+    }
+  }
+}

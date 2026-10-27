@@ -25,7 +25,7 @@ export default defineConfig({
           { text: "Type Composition", link: "/advanced/type-composition" },
           { text: "Testing", link: "/advanced/testing" },
           { text: "Performance", link: "/advanced/performance" },
-          { text: "SSX & Static Sites", link: "/advanced/ssx" },
+          { text: "SSX: Pre-rendered Sites", link: "/advanced/ssx" },
         ],
       },
       { text: "API Reference", link: "/api/reference" },
@@ -111,7 +111,7 @@ export default defineConfig({
         {
           text: "Advanced Topics",
           items: [
-            { text: "SSX & Static Sites", link: "/advanced/ssx" },
+            { text: "SSX: Pre-rendered Sites", link: "/advanced/ssx" },
             { text: "Engine Integration", link: "/advanced/engine" },
           ],
         },

@@ -291,7 +291,7 @@ const Toggle = {
 | **Base**           | React          | Inglorious Web       |
 | **Routing**        | File-based     | File-based           |
 | **SSR/SSG**        | ✅ Yes         | ✅ Yes               |
-| **API Routes**     | ✅ Yes         | ❌ No                |
+| **API Routes**     | ✅ Yes         | ✅ Yes               |
 | **Bundle Size**    | Large (React)  | Small                |
 | **Learning Curve** | High           | Low                  |
 | **Ecosystem**      | Huge           | Small                |
@@ -302,7 +302,6 @@ const Toggle = {
 **Choose Next.js if:**
 
 - Building with React
-- Need API routes
 - Want large ecosystem
 - Building large applications
 
@@ -310,7 +309,7 @@ const Toggle = {
 
 - Prefer simpler architecture
 - Want smaller bundle
-- Building static-heavy sites
+- Building static or server-rendered sites
 - Testing speed matters
 - Learning web development
 

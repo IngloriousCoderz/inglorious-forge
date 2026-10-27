@@ -1,5 +1,22 @@
 # @inglorious/ui
 
+## 9.5.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/web@6.9.1
+
+## 9.5.0
+
+### Minor Changes
+
+- `Chat`, from `@inglorious/ui/chat`: a conversation and a box to write in, for any assistant. Its messages are `{ id, role, content }`, or `{ id, role, entity }` to render another entity in their place, such as a generated answer. The box grows with the message; Enter sends it, and Shift+Enter starts a new line. The chat offers `suggestions` while it is empty, shows that a reply is coming while it is busy, shows why one failed, and keeps the latest message in view unless the user has scrolled up to read. The messages are a log, announced to assistive tech as they come.
+
+  The chat keeps the messages and the draft (`draftChange`, `messageSend`, `messageAdd`, `messagesClear`) and whether a reply is coming (`replyStart`, `replyEnd`, `replyFail`). Who answers is the app's to decide: it composes a behaviour that wraps `messageSend`.
+
+  `Textarea` takes `onKeyDown` and an `ariaLabel`, and with `isFullWidth` the whole field fills its container, not only the box inside it. Its height is its `rows`, or its content's with `isAutoSize`, with no 3rem minimum: a one-row textarea is one line tall.
+
 ## 9.4.0
 
 ### Minor Changes

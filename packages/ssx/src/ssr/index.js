@@ -3,10 +3,10 @@ import path from "node:path"
 import connect from "connect"
 import { createServer } from "vite"
 
-import { createApiMiddleware } from "../dev/api.js"
+import { createApiMiddleware, createRequest } from "../dev/api.js"
 import { createViteConfig, virtualFiles } from "../dev/vite-config.js"
 import { renderPage } from "../render/index.js"
-import { getPages, matchRoute } from "../router/index.js"
+import { getPages, matchParams, matchRoute } from "../router/index.js"
 import { generateApp } from "../scripts/app.js"
 import { generateStore } from "../store/index.js"
 import { loadConfig } from "../utils/config.js"
@@ -53,6 +53,7 @@ export async function ssr(options = {}) {
         loader,
         viteServer,
         pages,
+        request: createRequest(req),
       })
 
       if (!result) {
@@ -81,9 +82,18 @@ export async function ssr(options = {}) {
   }
 }
 
+/**
+ * Renders the page a URL asks for, with a store of its own: its `load` gets
+ * the entity and the page, with the URL's `params` and the `request`.
+ *
+ * @param {string} url - The URL requested.
+ * @param {Object} [context]
+ * @param {Request} [context.request] - The request, for `load` to read headers and cookies from.
+ * @returns {Promise<{html: string, page: Object, entity: Object, store: Object}|null>} Null when no page matches.
+ */
 export async function renderRequest(
   url,
-  { rootDir = ".", options = {}, loader, viteServer, pages } = {},
+  { rootDir = ".", options = {}, loader, viteServer, pages, request } = {},
 ) {
   const [pathname] = String(url || "").split("?")
 
@@ -103,16 +113,26 @@ export async function renderRequest(
     await registerApp(resolvedPages, options, loader, viteServer)
   }
 
-  const origPage = resolvedPages.find((candidate) =>
-    matchRoute(candidate.path, pathname),
-  )
+  // A page of its own path first, then one whose pattern matches the URL.
+  const origPage =
+    resolvedPages.find(
+      (candidate) =>
+        !candidate.isDynamic && matchRoute(candidate.path, pathname),
+    ) ??
+    resolvedPages.find(
+      (candidate) =>
+        candidate.isDynamic && matchParams(candidate.path, pathname),
+    )
   if (!origPage) {
     return null
   }
 
   const module = await loader(origPage.filePath)
-  const page = { ...origPage }
-  page.module = module
+  const page = { ...origPage, module, request }
+  if (origPage.isDynamic) {
+    page.path = pathname
+    page.params = matchParams(origPage.path, pathname)
+  }
 
   const store = await generateStore(resolvedPages, options, loader)
   const [entity] = store._api.getEntities(page.moduleName)

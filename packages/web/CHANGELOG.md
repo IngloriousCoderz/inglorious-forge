@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 6.9.1
+
+### Patch Changes
+
+- The README's quick start registers its `Counter` type under the name its entities use, so the example works as written.
+
 ## 6.9.0
 
 ### Minor Changes

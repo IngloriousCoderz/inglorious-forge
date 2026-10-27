@@ -1,5 +1,17 @@
 # @inglorious/ssx
 
+## 2.2.0
+
+### Minor Changes
+
+- Server-rendered pages get more of the request. A dynamic route that exports `ssr` needs no `staticPaths`: any path its pattern matches is rendered, with `page.params` read from the URL, so `src/pages/orders/_id.js` answers every order, including ones added after the server started. `load` also gets `page.request`, a Web Fetch API `Request` like the one API routes get, to read headers and cookies from. Both work with `ssx ssr` and `ssx dev`, and the page hydrates in the browser as before.
+
+### Patch Changes
+
+- The SSR server can be started from code, as the dev and production servers can: `import { ssr } from "@inglorious/ssx/ssr"`. The README describes server-side rendering on request as a rendering mode of its own, beside static generation, with which command serves which kind of site.
+- Updated dependencies
+  - @inglorious/web@6.9.1
+
 ## 2.1.20
 
 ### Patch Changes

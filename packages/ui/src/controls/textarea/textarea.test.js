@@ -88,4 +88,23 @@ describe("textarea accessibility", () => {
       "Optional",
     )
   })
+
+  it("names itself for assistive tech, and reports key presses", () => {
+    const keys = []
+    const container = document.createElement("div")
+
+    render(
+      Textarea.render({
+        name: "message",
+        ariaLabel: "Message",
+        onKeyDown: (event) => keys.push(event.key),
+      }),
+      container,
+    )
+    const textarea = container.querySelector("textarea")
+    textarea.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }))
+
+    expect(textarea.getAttribute("aria-label")).toBe("Message")
+    expect(keys).toEqual(["Enter"])
+  })
 })

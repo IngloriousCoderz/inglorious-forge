@@ -1,0 +1,114 @@
+@import "../../controls/button/style.css";
+@import "../../controls/textarea/style.css";
+@import "../../feedback/alert/style.css";
+
+.iw-chat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--iw-space-3);
+  block-size: 100%;
+  min-block-size: 0;
+  font-family: var(--iw-font-family-sans);
+  color: var(--iw-color-text);
+
+  .iw-chat-messages {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: var(--iw-space-4);
+    min-block-size: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .iw-chat-message {
+    display: flex;
+  }
+
+  .iw-chat-message-user {
+    justify-content: flex-end;
+
+    .iw-chat-message-content {
+      max-inline-size: 80%;
+      padding: var(--iw-space-2) var(--iw-space-3);
+      border-radius: var(--iw-radius-lg);
+      background: color-mix(in srgb, var(--iw-color-primary) 14%, transparent);
+      overflow-wrap: anywhere;
+    }
+  }
+
+  .iw-chat-message-assistant .iw-chat-message-content {
+    inline-size: 100%;
+    min-inline-size: 0;
+  }
+
+  /* A message's own line breaks show; the template's around it do not. */
+  .iw-chat-text {
+    white-space: pre-wrap;
+  }
+
+  .iw-chat-typing {
+    display: flex;
+    gap: var(--iw-space-1);
+    padding: var(--iw-space-2) 0;
+  }
+
+  .iw-chat-typing-dot {
+    inline-size: 0.5rem;
+    block-size: 0.5rem;
+    border-radius: 50%;
+    background: var(--iw-color-text-muted);
+    animation: iw-chat-typing 1.2s infinite ease-in-out;
+
+    &:nth-child(2) {
+      animation-delay: 0.15s;
+    }
+
+    &:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+  }
+
+  .iw-chat-suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--iw-space-2);
+  }
+
+  .iw-chat-composer {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--iw-space-2);
+
+    .iw-textarea-field {
+      flex: 1 1 auto;
+      min-inline-size: 0;
+    }
+
+    /* The box grows with the message up to a point, then scrolls. */
+    .iw-textarea {
+      max-block-size: 10rem;
+    }
+  }
+}
+
+@keyframes iw-chat-typing {
+  0%,
+  80%,
+  100% {
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+
+  40% {
+    opacity: 1;
+    transform: translateY(-0.2rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .iw-chat .iw-chat-typing-dot {
+    animation: none;
+    opacity: 0.6;
+  }
+}

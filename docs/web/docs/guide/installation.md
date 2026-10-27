@@ -51,8 +51,8 @@ npm run dev
 - **minimal** — No bundling, just HTML/CSS/JS
 - **js** — JavaScript + Vite
 - **ts** — TypeScript + Vite
-- **ssx-js** — Static site generation (JavaScript)
-- **ssx-ts** — Static site generation (TypeScript)
+- **ssx-js** — Pre-rendered site with SSX, static or server-rendered (JavaScript)
+- **ssx-ts** — Pre-rendered site with SSX, static or server-rendered (TypeScript)
 
 ---
 

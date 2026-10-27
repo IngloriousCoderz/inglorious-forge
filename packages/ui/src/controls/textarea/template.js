@@ -24,6 +24,7 @@ export function render(props) {
     value = "",
     placeholder = "",
     label,
+    ariaLabel,
     hint,
     error,
     size = "md",
@@ -37,6 +38,7 @@ export function render(props) {
     onChange,
     onBlur,
     onFocus,
+    onKeyDown,
     ...rest
   } = props
 
@@ -76,7 +78,7 @@ export function render(props) {
       <textarea
         id=${textareaId || nothing}
         name=${name}
-        aria-label=${fallbackLabel(textareaId, label)}
+        aria-label=${ariaLabel || fallbackLabel(textareaId, label)}
         aria-describedby=${messageId || nothing}
         aria-invalid=${error ? "true" : "false"}
         rows=${rows}
@@ -89,6 +91,7 @@ export function render(props) {
         @input=${(event) => onChange?.(event.target.value)}
         @blur=${onBlur}
         @focus=${onFocus}
+        @keydown=${onKeyDown}
         ${ref((element) => applyElementProps(element, rest))}
       ></textarea>
 

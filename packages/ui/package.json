@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/ui",
-  "version": "9.4.0",
+  "version": "9.5.1",
   "description": "A design system for Inglorious Web with render-function components and customizable themes",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -54,6 +54,11 @@
       "import": "./src/controls/button-group/index.js"
     },
     "./button-group.css": "./src/controls/button-group/style.css",
+    "./chat": {
+      "types": "./types/data-display/chat.d.ts",
+      "import": "./src/data-display/chat/index.js"
+    },
+    "./chat.css": "./src/data-display/chat/style.css",
     "./carousel": {
       "types": "./types/data-display/carousel.d.ts",
       "import": "./src/data-display/carousel/index.js"

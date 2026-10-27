@@ -1,18 +1,11 @@
-.chat-user {
-  align-self: flex-end;
-  max-inline-size: 80%;
-}
-
-.chat-answer {
-  align-self: stretch;
-}
-
-.chat-composer {
+/* The chat fills the page below the title, its messages scrolling between. */
+.app {
   display: flex;
-  gap: var(--iw-space-2);
-  align-items: flex-end;
-  position: sticky;
-  inset-block-end: 0;
-  padding-block: var(--iw-space-3);
-  background: var(--iw-color-bg);
+  flex-direction: column;
+  gap: var(--iw-space-4);
+  block-size: 100dvh;
+}
+
+.app .iw-chat {
+  flex: 1 1 auto;
 }

@@ -31,7 +31,19 @@ export async function getPages(pagesDir = "pages", options, loader) {
       const module = await load(route.filePath)
       const moduleName = getModuleName(module)
 
-      if (isDynamic(route.pattern)) {
+      if (isDynamic(route.pattern) && module.ssr) {
+        // Rendered on request: any path the pattern matches is a page, its
+        // params read from the URL then. No staticPaths needed.
+        addPages(pages, options, {
+          pattern: route.pattern,
+          path: route.pattern,
+          params: {},
+          isDynamic: true,
+          moduleName,
+          modulePath: route.modulePath,
+          filePath: route.filePath,
+        })
+      } else if (isDynamic(route.pattern)) {
         let { staticPaths = [] } = module
         if (typeof staticPaths === "function") {
           staticPaths = await staticPaths()
@@ -142,6 +154,36 @@ export function matchRoute(pattern, url) {
     }
     return part === urlParts[i]
   })
+}
+
+/**
+ * The params a URL gives a route pattern, such as `{ id: "42" }` for
+ * `/posts/:id` and `/posts/42`, or null when it does not match. A catch-all
+ * `*` takes the rest of the URL as `path`.
+ *
+ * @param {string} pattern - The route pattern (e.g. "/posts/:id").
+ * @param {string} url - The actual URL (e.g. "/posts/42").
+ * @returns {Object|null} The params, or null.
+ */
+export function matchParams(pattern, url) {
+  const patternParts = pattern.split("/").filter(Boolean)
+  const urlParts = url.split("/").filter(Boolean)
+  const params = {}
+
+  for (const [index, part] of patternParts.entries()) {
+    if (part === "*") {
+      params.path = urlParts.slice(index).map(decodeURIComponent).join("/")
+      return params
+    }
+    if (index >= urlParts.length) return null
+    if (part.startsWith(":")) {
+      params[part.slice(1)] = decodeURIComponent(urlParts[index])
+    } else if (part !== urlParts[index]) {
+      return null
+    }
+  }
+
+  return patternParts.length === urlParts.length ? params : null
 }
 
 /**

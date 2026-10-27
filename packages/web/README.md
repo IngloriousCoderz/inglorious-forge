@@ -89,7 +89,7 @@ It's that simple — and surprisingly fast in practice.
 - You want UI to be fully controlled by your entity-based store
 - You want to stay entirely in **JavaScript**, without DSLs or compilers
 - You want **React-like declarative UI** but without the cost and overhead of React
-- You want to build **static sites with SSX** — same entity patterns, pre-rendered HTML, and client hydration
+- You want **pre-rendered sites with SSX**, static or server-rendered on request — same entity patterns, HTML from the server, and client hydration
 
 This framework is ideal for both small apps and large business UIs.
 
@@ -289,7 +289,7 @@ import { createStore } from "@inglorious/store"
 import { html } from "@inglorious/web"
 
 const types = {
-  counter: {
+  Counter: {
     increment(entity) {
       entity.value++
     },

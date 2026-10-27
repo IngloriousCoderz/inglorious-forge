@@ -41,23 +41,24 @@ A button with no action sends its label back to the assistant.
 
 ## Handling openuiAction
 
-What is meant for the app is announced unscoped, for the type that talks to the model:
+What is meant for the app is announced unscoped, for the type that talks to the model, such as the chat [in a chat](answers.md#in-a-chat):
 
 ```javascript
-const Chat = {
+const withAssistant = (type) => ({
   openuiAction(chat, event, api) {
     if (event.type === "open_url") {
       window.open(event.params.url, "_blank", "noopener")
       return
     }
     if (event.type === "continue_conversation") {
-      api.notify("#chat:messageSend", {
-        text: event.humanFriendlyMessage,
-        state: event.formState,
-      })
+      const filled = JSON.stringify(event.formState)
+      api.notify(
+        `#${chat.id}:messageSend`,
+        `${event.humanFriendlyMessage}\n\n(Values on screen: ${filled})`,
+      )
     }
   },
-}
+})
 ```
 
 The event carries `id` (the answer it came from), `type`, `params`, `humanFriendlyMessage`, and `formState`, every value the answer holds at that moment, so the model knows what the user had filled in.

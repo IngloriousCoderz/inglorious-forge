@@ -3,9 +3,9 @@
 [![NPM version](https://img.shields.io/npm/v/@inglorious/ssx.svg)](https://www.npmjs.com/package/@inglorious/ssx)  
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Static Site Xecution** - Build blazing-fast static sites with [@inglorious/web](https://www.npmjs.com/package/@inglorious/web), complete with static-site generation, optional server-side rendering, client-side hydration, and zero-config routing.
+**Static Site Xecution** - Pre-rendered sites with [@inglorious/web](https://www.npmjs.com/package/@inglorious/web): static-site generation, server-side rendering on demand, client-side hydration, API routes and zero-config routing.
 
-SSX takes your entity-based web apps and generates optimized static HTML with full hydration support. By default, pages are generated during the build and written to `dist/`, but you can opt specific pages into request-time rendering when you need fresh data or per-request behavior. Think Next.js SSG or Astro, but with the simplicity and predictability of Inglorious Web's entity architecture.
+SSX renders your entity-based web apps to HTML on the server, then hydrates them in the browser. Pages are generated at build time as static files, or rendered on each request when they need fresh data or per-request behavior: one page can be static and the next server-rendered. Think Next.js or Astro, but with the simplicity and predictability of Inglorious Web's entity architecture.
 
 ---
 
@@ -13,14 +13,14 @@ SSX takes your entity-based web apps and generates optimized static HTML with fu
 
 ### ⚡️ Fast by Default
 
-- **Pre-rendered HTML** - Every page is built at compile time
-- **Instant load times** - No waiting for server responses
-- **CDN-ready** - Deploy anywhere static files are served
+- **Pre-rendered HTML** - Every page arrives as HTML, built ahead or rendered on request
+- **Instant load times** - Static pages need no server work at all
+- **CDN-ready** - A static site deploys anywhere static files are served
 - **Perfect Lighthouse scores** - SEO and performance out of the box
 
 ### 🎯 Simple Architecture
 
-- **No server required** - Pure static files
+- **Static or server-rendered** - Pure static files, or a server for the pages that need one
 - **No complex build configs** - Convention over configuration
 - **File-based routing** - Pages are just files in `src/pages/`
 - **Entity-based state** - Same familiar patterns from @inglorious/web
@@ -154,11 +154,12 @@ Deploy `dist/` to:
 
 ## Features
 
-### ⚙️ Rendering Modes: SSG by Default, SSR by Opt-In
+### ⚙️ Rendering Modes: SSG and SSR
 
-SSX is primarily a static-site generator. During `ssx build`, most pages are rendered once and emitted as static HTML files in `dist/`.
+Every page is rendered to HTML on the server and hydrated in the browser. What changes is _when_ it is rendered:
 
-If a page needs request-time rendering, export `ssr` from the page module:
+- **Static (the default).** `ssx build` renders the page once and writes it to `dist/`. Its `load` runs at build time.
+- **Server-rendered.** A page that exports `ssr` is rendered on each request, with its `load` run for that request, so it can show fresh data or vary per request:
 
 ```javascript
 // src/pages/checkout.js
@@ -178,7 +179,29 @@ export const Checkout = {
 }
 ```
 
-SSR pages are skipped during the static build, then rendered on demand by the dev server or by a dedicated runtime server started with `ssx ssr`. That keeps the build output focused on pages that should be statically generated.
+Each request gets a store of its own, so one visitor's data never reaches another's page. `load` gets the page with the `request`, a Web Fetch API `Request` like the one API routes get, to read headers and cookies from:
+
+```javascript
+export const ssr = true
+
+export async function load(entity, page) {
+  const session = page.request.headers.get("cookie")
+  entity.orders = await getOrders(session)
+}
+```
+
+A dynamic route that exports `ssr` needs no `staticPaths`: any path its pattern matches is a page, and `page.params` come from the URL. `src/pages/orders/_id.js` answers `/orders/42`, with `page.params.id === "42"`, and every other order alike.
+
+#### Deploying
+
+| The site has…           | Build       | Run in production                              | Serves                                                      |
+| ----------------------- | ----------- | ---------------------------------------------- | ----------------------------------------------------------- |
+| Only static pages       | `ssx build` | Any static host, or `ssx serve` for API routes | `dist/`, and `src/api/` with `ssx serve`                    |
+| Pages that export `ssr` | —           | `ssx ssr`                                      | Every page, rendered on request, the API routes, and assets |
+
+`ssx build` skips the pages that export `ssr`, and `ssx serve` only serves what the build wrote, so a site with server-rendered pages runs on `ssx ssr`. It renders every page on request, static ones included, from your sources through Vite, with no build step. In development, `ssx dev` renders every page on request as well.
+
+A static dynamic route lists its paths with [`staticPaths`](#-dynamic-routes-with-staticpaths), as the build has to know them; a server-rendered one does not.
 
 ### 🗺️ Sitemap & RSS Generation
 
@@ -325,7 +348,7 @@ export const entities = {
 
 ### 🔄 Data Loading
 
-Load data at build time with the `load` export:
+Load a page's data with the `load` export: at build time for a static page, on each request for one that exports `ssr`:
 
 ```javascript
 // src/pages/blog.js
@@ -348,7 +371,7 @@ export const Blog = {
   },
 }
 
-// SSR: Load data during build
+// Runs on the server, before the page renders
 export async function load(entity) {
   const response = await fetch("https://api.example.com/posts")
   entity.posts = await response.json()
@@ -359,7 +382,7 @@ export const metadata = {
 }
 ```
 
-The `load` function runs on the server during build. Data is serialized into the HTML and available immediately on the client.
+The `load` function runs on the server: during the build for a static page, on every request for a server-rendered one. Its data is serialized into the HTML and available immediately on the client.
 
 ### 🎨 Dynamic Routes with `staticPaths`
 
@@ -700,7 +723,7 @@ Options:
 
 ### `ssx serve`
 
-Serves the production build with static files and API routes:
+Serves the production build with static files and API routes. Pages that export `ssr` are not in the build: serve a site with them with `ssx ssr`.
 
 ```bash
 pnpm ssx serve [options]
@@ -714,7 +737,7 @@ Options:
 
 ### `ssx ssr`
 
-Starts a runtime server that renders SSR-marked pages on demand:
+Starts a server that renders every page on request, those that export `ssr` and static ones alike, and serves the API routes and assets. It renders from your sources through Vite, so it needs no `ssx build`:
 
 ```bash
 pnpm ssx ssr [options]
@@ -752,19 +775,20 @@ my-site/
 
 ## Comparison to Other Tools
 
-| Feature            | SSX         | Next.js (SSG) | Astro  | Eleventy |
-| ------------------ | ----------- | ------------- | ------ | -------- |
-| Pre-rendered HTML  | ✅          | ✅            | ✅     | ✅       |
-| Client hydration   | ✅ lit-html | ✅ React      | ✅ Any | ❌       |
-| Client routing     | ✅          | ✅            | ✅     | ❌       |
-| Lazy loading       | ✅          | ✅            | ✅     | ❌       |
-| Entity-based state | ✅          | ❌            | ❌     | ❌       |
-| Zero config        | ✅          | ❌            | ❌     | ❌       |
-| Framework agnostic | ❌          | ❌            | ✅     | ✅       |
+| Feature            | SSX         | Next.js  | Astro  | Eleventy |
+| ------------------ | ----------- | -------- | ------ | -------- |
+| Pre-rendered HTML  | ✅          | ✅       | ✅     | ✅       |
+| SSR on request     | ✅          | ✅       | ✅     | ❌       |
+| Client hydration   | ✅ lit-html | ✅ React | ✅ Any | ❌       |
+| Client routing     | ✅          | ✅       | ✅     | ❌       |
+| Lazy loading       | ✅          | ✅       | ✅     | ❌       |
+| Entity-based state | ✅          | ❌       | ❌     | ❌       |
+| Zero config        | ✅          | ❌       | ❌     | ❌       |
+| Framework agnostic | ❌          | ❌       | ✅     | ✅       |
 
 SSX is perfect if you:
 
-- Want static site performance
+- Want static site performance, with server rendering where it is needed
 - Love entity-based architecture
 - Prefer convention over configuration
 - Need full client-side interactivity
@@ -938,6 +962,22 @@ await dev({
 })
 ```
 
+### SSR Server API
+
+Renders every page on request, and serves the API routes:
+
+```javascript
+import { ssr } from "@inglorious/ssx/ssr"
+
+const server = await ssr({
+  rootDir: ".",
+  port: 3000,
+  configFile: "site.config.js",
+})
+
+server.close()
+```
+
 ### Production Server API
 
 ```javascript
@@ -971,6 +1011,7 @@ Check out these example projects:
 - [x] Markdown support
 - [x] i18n routing and locale-aware client navigation
 - [x] API routes (serverless functions)
+- [x] Server-side rendering on request
 
 ---
 
@@ -983,7 +1024,7 @@ SSX embraces the philosophy of [@inglorious/web](https://www.npmjs.com/package/@
 - **Predictability over magic** - Explicit is better than implicit
 - **Standards over abstractions** - Use the platform
 
-Static site generation should be simple. SSX makes it simple.
+Rendering on the server should be simple, at build time or on request. SSX makes it simple.
 
 ---
 

@@ -1,5 +1,12 @@
 # @inglorious/charts
 
+## 12.2.2
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/web@6.9.1
+
 ## 12.2.1
 
 ### Patch Changes

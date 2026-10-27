@@ -11,6 +11,36 @@ Each answer from the model is one entity of the type `createOpenUI` returns. It 
 
 A chat keeps one entity per message: add one with `api.notify("add", { id, type: "OpenUI" })` when the model starts answering, and render each in turn.
 
+## In a chat
+
+Inglorious UI's `Chat` keeps the conversation and the box to write in, and shows a message that names an entity by rendering it, so an answer goes in as `{ entity: answerId }`. The app answers each message by wrapping `messageSend`:
+
+```javascript
+import { Chat } from "@inglorious/ui/chat"
+
+const withAssistant = (type) => ({
+  messageSend(chat, text, api) {
+    const sent = chat.messages.length
+    type.messageSend(chat, text, api)
+    if (chat.messages.length === sent) return // nothing was sent
+
+    const answerId = `answer${chat.messageCount}`
+    type.messageAdd(chat, { entity: answerId })
+    type.replyStart(chat)
+    api.notify("add", { id: answerId, type: "OpenUI" })
+    // Stream the model's reply into the answer, then notify
+    // `#chat:replyEnd`, or `#chat:replyFail` with why it failed.
+  },
+})
+
+const store = createStore({
+  types: { Chat: [Chat, withAssistant], OpenUI: createOpenUI({ library }) },
+  entities: { chat: { type: "Chat", suggestions: ["Where did my money go?"] } },
+})
+```
+
+The chat shows that a reply is coming while it is busy, and holds the next message until it ends. The sample app, `examples/apps/web-openui-chat`, does it all with a local model.
+
 ## Streaming
 
 Three events, scoped to the entity:

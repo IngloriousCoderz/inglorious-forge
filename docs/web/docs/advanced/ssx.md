@@ -1,252 +1,53 @@
 ---
-title: SSX & Static Site Generation
-description: Static site generation with pre-rendering and client-side hydration
+title: "SSX: Pre-rendered Sites"
+description: "Render Inglorious Web apps on the server, at build time or on each request, with @inglorious/ssx."
 ---
 
-# SSX & Static Site Generation
+# SSX: Pre-rendered Sites
 
-For building static HTML sites with pre-rendering and client-side hydration, use **[@inglorious/ssx](https://npmjs.com/@inglorious/ssx)**.
+**[@inglorious/ssx](https://npmjs.com/package/@inglorious/ssx)** renders Inglorious Web apps to HTML on the server, then hydrates them in the browser. It has [docs of its own](https://inglorious.dev/ssx/); this page is how it fits with what you know from Inglorious Web.
 
-SSX supports both **SSG and SSR**: it generates static HTML by default for fast, SEO-friendly pages, and it can also render individual pages on demand with `export const ssr = true` when they depend on request-specific data such as cookies, headers, or authentication.
+## The same types, rendered on the server
 
-## What is SSX?
-
-**Static Site Xecution (SSX)** is a static site generator built on Inglorious Web. It combines:
-
-- **SSG by default** for fast pre-rendered HTML and zero-server deployment
-- **SSR on demand** for request-specific pages and runtime data
-- **Client-side hydration** for interactivity
-- **File-based routing** for simplicity
-- **Entity-based patterns** for consistency
-- **Automatic code splitting** for performance
-- **Sitemap and RSS** generation
-
-## When to Use SSX
-
-✅ **Perfect for:**
-
-- Blogs and documentation sites
-- Marketing pages
-- Portfolio sites
-- Content-heavy sites
-- Sites with pre-rendered static content
-- Projects that want consistency with Inglorious Web apps
-
-❌ **Not ideal for:**
-
-- Real-time applications (stock tickers, live chat)
-- Heavy server-side logic needed
-- Dynamic content on every page
-- User-generated content at scale
-
-## Quick Start
-
-```bash
-npm create @inglorious/app@latest -- --template=ssx-js
-# or with TypeScript
-npm create @inglorious/app@latest -- --template=ssx-ts
-```
-
-Add `--syntax=jsx` or `--syntax=vue` to write the pages in JSX or Vue-like templates instead of lit-html.
-
-## Key Features
-
-### File-Based Routing
-
-```
-pages/
-├── index.js       → /
-├── about.js       → /about
-├── blog/
-│   ├── index.js   → /blog
-│   ├── [id].js    → /blog/:id
-│   └── post.js    → /blog/post
-```
-
-### Pre-Rendered HTML
-
-Every regular page is generated as static HTML at build time:
-
-```bash
-npm run build
-# Generates:
-# dist/index.html
-# dist/about/index.html
-# dist/blog/index.html
-# dist/blog/post-1/index.html
-# ...
-```
-
-If you need request-time rendering for a specific page, mark it with `export const ssr = true`. Those pages are skipped during the static build and are instead rendered on demand by the dev server or by `ssx ssr`.
-
-### Client Hydration
-
-HTML is interactive after JavaScript loads:
-
-1. Server renders HTML (fast)
-2. JavaScript loads (background)
-3. App hydrates (becomes interactive)
-
-### Automatic Sitemap
-
-```bash
-# Generates dist/sitemap.xml automatically
-```
-
-### RSS Feed
-
-```bash
-# Generates dist/feed.xml for subscriptions
-```
-
-## Example: Blog Site
-
-### Page Component
+A page is a file in `src/pages/` that exports an Inglorious Web type, and its entity is filled by its `load` on the server:
 
 ```javascript
-// pages/blog/[id].js
-import { html } from "@inglorious/web"
-import { getPost, getAllPosts } from "../api/posts"
-
-export const Page = {
-  async create(entity, api) {
-    const { id } = entity.params
-    // In create(), it's safe to await and update since create() runs
-    // before the component is mounted to the DOM
-    try {
-      entity.post = await getPost(id)
-      entity.loading = false
-    } catch (error) {
-      entity.error = error.message
-      entity.loading = false
-    }
-  },
-
-  render(entity, api) {
-    if (!entity.post) {
-      return html`<h1>Loading...</h1>`
-    }
-
-    return html`
-      <article>
-        <h1>${entity.post.title}</h1>
-        <p>By ${entity.post.author}</p>
-        <div>${entity.post.content}</div>
-      </article>
-    `
-  },
-}
-```
-
-### Build Output
-
-```
-dist/blog/
-├── my-first-post/index.html
-├── another-post/index.html
-├── third-post/index.html
-```
-
-## Comparison: SSX vs Traditional Approaches
-
-| Feature              | SSX            | Next.js  | Astro      | Hugo   |
-| -------------------- | -------------- | -------- | ---------- | ------ |
-| Framework            | Inglorious Web | React    | Astro      | None   |
-| Pre-rendering        | ✅ Yes         | ✅ Yes   | ✅ Yes     | ✅ Yes |
-| Client interactivity | ✅ Full        | ✅ Full  | ✅ Partial | ❌ No  |
-| Entity-based state   | ✅ Yes         | ❌ No    | ❌ No      | ❌ No  |
-| Learning curve       | Low            | Medium   | Medium     | Low    |
-| Bundle size          | Small          | Large    | Small      | N/A    |
-| JavaScript           | Optional       | Required | Optional   | No     |
-
-## Advanced SSX Features
-
-### Per-Page SSR
-
-SSG is the default behavior. Use SSR when a page depends on request-specific data such as cookies, headers, authentication, or other runtime-only context:
-
-```javascript
-// pages/profile.js
+// src/pages/posts/_id.js
 import { html } from "@inglorious/web"
 
 export const ssr = true
 
 export async function load(entity, page) {
-  entity.user = await getCurrentUser(page.request)
+  entity.post = await getPost(page.params.id)
 }
 
-export const Profile = {
+export const Post = {
   render(entity) {
-    return html`<h1>${entity.user?.name}</h1>`
+    return html`<article>
+      <h1>${entity.post.title}</h1>
+      <div>${entity.post.body}</div>
+    </article>`
   },
 }
 ```
 
-Start the dedicated runtime server with:
+The HTML arrives rendered; when the JavaScript loads, the page becomes the same store-driven app as any other, with client-side navigation between pages.
+
+## Static or rendered on request
+
+- **Static, the default:** `ssx build` renders each page once to `dist/`, for any static host. A dynamic route lists its paths with `staticPaths`.
+- **On request:** a page that exports `ssr` is rendered for each request, with its `load` given the URL's `params` and the `request`, to read headers and cookies from. `ssx ssr` serves such a site.
+
+Both can live in one site, beside API routes in `src/api/`.
+
+## Get started
 
 ```bash
-npx ssx ssr
-```
-
-### Custom Metadata
-
-```javascript
-export const metadata = {
-  title: "My Blog",
-  description: "A blog about web development",
-  image: "/og-image.png",
-  twitterCard: "summary_large_image",
-}
-```
-
-## Performance Benefits
-
-### Time to First Paint (TTFP)
-
-- **Traditional SPA:** 1-2 seconds (load JS, render)
-- **SSG with SSX:** 200-400ms (pre-rendered HTML)
-
-### Search Engine Optimization (SEO)
-
-- **SPA:** Content not visible to crawlers until JS runs
-- **SSG:** Full HTML content visible immediately
-
-### Bandwidth
-
-- **SPA:** Full app bundle for every user
-- **SSG:** Only HTML + minimal JavaScript
-
-## Deployment
-
-SSX sites are static files — deploy anywhere:
-
-```bash
-# Vercel
-npm install -D @vercel/cli
-vercel
-
-# Netlify
-npm install -D netlify-cli
-netlify deploy --prod --dir=dist
-
-# GitHub Pages
-# Push dist/ to gh-pages branch
-```
-
-## Related
-
-- **[Inglorious Web](../guide/getting-started.md)** — Learn the entity-based patterns
-- **[Featured types](../featured/overview.md)** — Use all Inglorious Web's featured types in SSX
-- **[@inglorious/ssx Docs](https://npmjs.com/@inglorious/ssx)** — Full SSX documentation
-
-## Next Steps
-
-Get started:
-
-```bash
-npm create @inglorious/create-app@latest my-blog -- --template ssx-ts
-cd my-blog
+npm create @inglorious/app@latest -- my-site --template=ssx-js
+cd my-site
 npm run dev
 ```
 
-Happy static site building! 🚀
+Add `--syntax=jsx` or `--syntax=vue` to write the pages in JSX or Vue-like templates.
+
+Next: the [SSX guide](https://inglorious.dev/ssx/guide/getting-started), and its [rendering modes](https://inglorious.dev/ssx/guide/rendering-modes).

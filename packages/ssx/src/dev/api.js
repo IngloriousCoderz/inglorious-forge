@@ -53,7 +53,13 @@ export const createApiMiddleware = (rootDir, loader, onError) => {
   }
 }
 
-function createRequest(req) {
+/**
+ * The incoming request as a Web Fetch API `Request`, as API routes and
+ * server-rendered pages receive it.
+ * @param {import("node:http").IncomingMessage} req
+ * @returns {Request}
+ */
+export function createRequest(req) {
   const protocol = req.socket.encrypted ? "https" : "http"
   const host = req.headers.host || "localhost"
   const url = `${protocol}://${host}${req.url}`

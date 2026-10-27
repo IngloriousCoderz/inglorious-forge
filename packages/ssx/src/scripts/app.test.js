@@ -92,8 +92,12 @@ describe("generateApp", () => {
     expect(app).toContain(
       `const path = normalizeRoutePath(window.location.pathname)`,
     )
+    // Its own path first, then a server-rendered page's pattern.
     expect(app).toContain(
-      `const page = pages.find((page) => normalizeRoutePath(page.path) === path)`,
+      `pages.find((page) => normalizeRoutePath(page.path) === path) ??`,
+    )
+    expect(app).toContain(
+      `pages.find((page) => matchesPattern(page.path, path))`,
     )
   })
 })

@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-The official scaffolding tool to quickly create a new web app with the [@inglorious/web](https://www.npmjs.com/package/@inglorious/web) framework or a static site with [@inglorious/ssx](https://www.npmjs.com/package/@inglorious/ssx).
+The official scaffolding tool to quickly create a new web app with the [@inglorious/web](https://www.npmjs.com/package/@inglorious/web) framework or a pre-rendered site, static or server-rendered, with [@inglorious/ssx](https://www.npmjs.com/package/@inglorious/ssx).
 
 This package allows you to generate a new project from a set of pre-configured templates, so you can start developing your web app right away.
 
