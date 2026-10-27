@@ -15,6 +15,12 @@ const FULL_CIRCLE_START = 0
 const FULL_CIRCLE = 360
 const toRadians = (degrees) => (degrees * Math.PI) / 180
 
+/** The height of an outside label, one line or two with its share. */
+const LABEL_LINE = 14
+const LABEL_GAP = 2
+const LABEL_OFFSET = 14
+/** How far above its baseline a 12px label's middle is. */
+const LABEL_BASELINE = 4
 const LABEL_COLOR = themeColor("text", "#0f172a")
 const SECONDARY_COLOR = themeColor("text-muted", "#64748b")
 const CONNECTOR_COLOR = themeColor("axis", "#94a3b8")
@@ -31,8 +37,7 @@ export function renderPieSeries(primitive, frame) {
   const innerLabelArc = createLabelArc(
     (scales.innerRadius + scales.outerRadius) / 2,
   )
-  const connectorArc = createLabelArc(scales.outerRadius)
-  const outerLabelArc = createLabelArc(scales.outerRadius + 18)
+  const outsideLabels = layOutLabels(slices, scales, hasPercentage)
 
   return svg`
     <g
@@ -48,12 +53,10 @@ export function renderPieSeries(primitive, frame) {
           getPieTooltipText(frame, slice, nameKey, dataKey),
         )
         const [insideLabelX, insideLabelY] = innerLabelArc.centroid(slice.arc)
-        const [connectorStartX, connectorStartY] = connectorArc.centroid(
-          slice.arc,
-        )
-        const [connectorEndX, connectorEndY] = outerLabelArc.centroid(slice.arc)
-        const outsideLabelX = connectorEndX + (connectorEndX >= 0 ? 14 : -14)
-        const textAnchor = connectorEndX >= 0 ? "start" : "end"
+        const { startX, startY, elbowX, elbowY, labelX, labelY, anchor } =
+          outsideLabels[index]
+        // The line stops short of its label's text.
+        const lineEndX = labelX + (anchor === "start" ? -LABEL_GAP : LABEL_GAP)
 
         return svg`
           <g>
@@ -88,17 +91,17 @@ export function renderPieSeries(primitive, frame) {
                     `,
                 () => svg`
                       <polyline
-                        points=${`${connectorStartX},${connectorStartY} ${connectorEndX},${connectorEndY} ${outsideLabelX},${connectorEndY}`}
+                        points=${`${startX},${startY} ${elbowX},${elbowY} ${lineEndX},${labelY - LABEL_BASELINE}`}
                         fill="none"
                         style="stroke: ${CONNECTOR_COLOR}"
                         stroke-width="1.5"
                       />
                       <text
-                        x=${outsideLabelX}
-                        y=${connectorEndY}
+                        x=${labelX}
+                        y=${labelY}
                         style="fill: ${LABEL_COLOR}"
                         font-size="12"
-                        text-anchor=${textAnchor}
+                        text-anchor=${anchor}
                       >
                         ${label}
                       </text>
@@ -106,11 +109,11 @@ export function renderPieSeries(primitive, frame) {
                         hasPercentage,
                         () => svg`
                               <text
-                                x=${outsideLabelX}
-                                y=${connectorEndY + 14}
+                                x=${labelX}
+                                y=${labelY + LABEL_LINE}
                                 style="fill: ${SECONDARY_COLOR}"
                                 font-size="12"
-                                text-anchor=${textAnchor}
+                                text-anchor=${anchor}
                               >
                                 ${percentage}
                               </text>
@@ -216,6 +219,53 @@ function getPieTooltipText(frame, { row, percentage }, nameKey, dataKey) {
         ? percentage
         : `${formatTooltipValue(frame, value, name)} (${percentage})`,
   }
+}
+
+/**
+ * Where each slice's outside label goes: in a column on the slice's side of
+ * the pie, level with the slice. Labels of small slices next to each other
+ * would overlap, so on each side they are spread down, then back up if they
+ * ran past the bottom, until each has its own line; each connector runs from
+ * its slice, out past the pie, to its label.
+ */
+function layOutLabels(slices, scales, hasPercentage) {
+  const connectorArc = createLabelArc(scales.outerRadius)
+  const elbowArc = createLabelArc(scales.outerRadius + 18)
+  const height = (hasPercentage ? 2 * LABEL_LINE : LABEL_LINE) + LABEL_GAP
+  const lowest = scales.outerRadius + height
+  const column = scales.outerRadius + 18 + LABEL_OFFSET
+
+  const labels = slices.map((slice) => {
+    const [startX, startY] = connectorArc.centroid(slice.arc)
+    const [elbowX, elbowY] = elbowArc.centroid(slice.arc)
+    const isRight = elbowX >= 0
+    return {
+      index: slice.index,
+      startX,
+      startY,
+      elbowX,
+      elbowY,
+      labelX: isRight ? column : -column,
+      labelY: elbowY,
+      anchor: isRight ? "start" : "end",
+      isRight,
+    }
+  })
+
+  for (const isRight of [true, false]) {
+    const side = labels
+      .filter((label) => label.isRight === isRight)
+      .sort((a, b) => a.labelY - b.labelY)
+    side.forEach((label, i) => {
+      if (i) label.labelY = Math.max(label.labelY, side[i - 1].labelY + height)
+    })
+    for (let i = side.length - 1; i >= 0; i--) {
+      const limit = i === side.length - 1 ? lowest : side[i + 1].labelY - height
+      side[i].labelY = Math.min(side[i].labelY, limit)
+    }
+  }
+
+  return Object.fromEntries(labels.map((label) => [label.index, label]))
 }
 
 function createLabelArc(radius) {

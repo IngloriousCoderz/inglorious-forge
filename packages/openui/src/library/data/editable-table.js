@@ -3,7 +3,12 @@ import { defineComponent } from "@openuidev/lang-core"
 import { z } from "zod"
 
 /** An EditableTable's column types, as DataGrid's. */
-const CELL_TYPES = { text: "string", number: "number", "date-single": "date" }
+const CELL_TYPES = {
+  text: "string",
+  number: "number",
+  "date-single": "date",
+  url: "url",
+}
 
 const NO_EDITS = {}
 

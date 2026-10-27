@@ -88,6 +88,33 @@ describe("Form components", () => {
     })
   })
 
+  it("sends a form's fields bound to $variables with its state", async () => {
+    const onAction = vi.fn()
+    const { container } = await setup({
+      onAction,
+      response: `$category = ""
+$amount = ""
+root = Form("expense", Buttons([Button("Add", @ToAssistant("Added"))]), [category, amount])
+category = FormControl("Category", Select("category", [SelectItem("Food", "Food")], "Pick one", null, $category))
+amount = FormControl("Amount", Input("amount", "0", "number", null, $amount))
+`,
+    })
+
+    choose(container.querySelector("select"), "Food")
+    await flush()
+    type(container.querySelector("input[name=amount]"), "12")
+    await flush()
+    container.querySelector(".iw-button").click()
+    await flush()
+
+    expect(onAction).toHaveBeenCalledWith(
+      expect.objectContaining({
+        formName: "expense",
+        formState: { expense: { category: "Food", amount: "12" } },
+      }),
+    )
+  })
+
   it("clears the message of a field bound to a $variable as it changes", async () => {
     const { store, container } = await setup({
       response: `$email = ""

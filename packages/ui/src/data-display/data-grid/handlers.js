@@ -302,7 +302,7 @@ export function cellChange(entity, { rowId, columnId, value }) {
 
   entity.edits ??= {}
   const edits = (entity.edits[rowId] ??= {})
-  if (Object.is(row[columnId], value)) {
+  if (isSameValue(row[columnId], value)) {
     delete edits[columnId]
   } else {
     edits[columnId] = value
@@ -500,7 +500,7 @@ function getDefaultColumnFilter(type) {
  */
 function getDefaultColumnWidth(filterType) {
   if (filterType === "number") return 70
-  if (filterType === "range") return 120
+  if (filterType === "range") return 160
   if (filterType === "select") return 70
   if (filterType === "date") return 120
   if (filterType === "time") return 120
@@ -563,4 +563,15 @@ function assertRowKeys(entity) {
     }
     seen.add(rowKey)
   })
+}
+
+/**
+ * Whether two cell values are the same, dates by their time.
+ * @param {any} a
+ * @param {any} b
+ * @returns {boolean}
+ */
+function isSameValue(a, b) {
+  if (a instanceof Date && b instanceof Date) return a.getTime() === b.getTime()
+  return Object.is(a, b)
 }

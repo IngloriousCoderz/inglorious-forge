@@ -1,5 +1,13 @@
 # @inglorious/ui
 
+## 9.4.0
+
+### Minor Changes
+
+- `DataGrid` columns can be `type: "url"`: their cells show web addresses as links, opening in a new tab, and edit with a URL field; anything that is not an `http(s)` address stays text. A date column's editor gives dates back in the form the row keeps them, a `Date`, a timestamp or a `YYYY-MM-DD` string, keeping a time of day it had, and a date edited back to its saved day is no longer counted as a change.
+
+  The two fields of a range filter fit in their column instead of spilling into the next one, and range columns are 160px wide by default.
+
 ## 9.3.0
 
 ### Minor Changes

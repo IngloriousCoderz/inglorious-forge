@@ -19,7 +19,6 @@ export const RangeFilter = {
         placeholder: column.filter.placeholder ?? "≥",
         size: "sm",
         isFullWidth: true,
-        className: "iw-data-grid-filter-range-input",
         onChange: (value) => {
           const formattedValue = value ? format(value, column.type) : null
           entity.onFilterChange?.({
@@ -34,7 +33,6 @@ export const RangeFilter = {
         placeholder: column.filter.placeholder ?? "≤",
         size: "sm",
         isFullWidth: true,
-        className: "iw-data-grid-filter-range-input",
         onChange: (value) => {
           const formattedValue = value ? format(value, column.type) : null
           entity.onFilterChange?.({

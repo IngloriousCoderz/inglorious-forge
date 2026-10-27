@@ -33,6 +33,13 @@ const PRETTY_PAGE = 1
 const FIRST_PAGE = 0
 const LAST_PAGE = 1
 const ONE_EDIT = 1
+const WEB_URL = /^https?:\/\//i
+/** Fields edit dates as `YYYY-MM-DD`. */
+const DATE_LENGTH = 10
+const DATE_PART_LENGTH = 2
+/** Date's months count from zero, people's from one. */
+const MONTH_OFFSET = 1
+const INPUT_TYPES = { number: "number", date: "date", url: "url" }
 
 export const DataGrid = {
   /**
@@ -317,15 +324,14 @@ export const DataGrid = {
       })
     }
 
-    const isNumber = column.type === "number"
+    const saved = row[column.id]
     return Input.render({
       size: "sm",
       ariaLabel: column.title,
-      inputType: isNumber ? "number" : column.type === "date" ? "date" : "text",
-      value: value == null ? "" : String(value),
+      inputType: INPUT_TYPES[column.type] ?? "text",
+      value: column.type === "date" ? toDateField(value) : (value ?? ""),
       isFullWidth: true,
-      onChange: (text) =>
-        change(isNumber ? (text === "" ? null : Number(text)) : text),
+      onChange: (text) => change(fromField(text, column.type, saved)),
     })
   },
 
@@ -337,8 +343,16 @@ export const DataGrid = {
    * @param {any} payload.value The value to render.
    * @returns {any} The value to be rendered.
    */
-  renderValue(_props, { value }) {
-    return value
+  renderValue(_props, { value, column }) {
+    // A link only for a web address: a `javascript:` one must not run.
+    return when(
+      column.type === "url" && WEB_URL.test(String(value ?? "")),
+      () =>
+        html`<a href=${value} target="_blank" rel="noopener noreferrer"
+          >${value}</a
+        >`,
+      () => value,
+    )
   },
 
   /**
@@ -580,4 +594,39 @@ function getVirtualizationState(props, totalItems) {
     ...virtualState,
     visibleRange: { start, end },
   }
+}
+
+/**
+ * A date, in whatever form a row keeps it, as a date field shows it.
+ * @param {Date|number|string|null|undefined} value
+ * @returns {string}
+ */
+function toDateField(value) {
+  if (value == null || value === "") return ""
+  if (typeof value === "string") return value.slice(0, DATE_LENGTH)
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return ""
+  const pad = (part) => String(part).padStart(DATE_PART_LENGTH, "0")
+  return `${date.getFullYear()}-${pad(date.getMonth() + MONTH_OFFSET)}-${pad(date.getDate())}`
+}
+
+/**
+ * What a field holds, back in the form the row kept the value in: a number,
+ * or a date as a `Date`, a timestamp or a string, as it was. A date that had
+ * a time of day keeps it.
+ * @param {string} text
+ * @param {string} type The column's type.
+ * @param {any} saved The row's own value.
+ * @returns {any}
+ */
+function fromField(text, type, saved) {
+  if (type === "number") return text === "" ? null : Number(text)
+  if (type !== "date") return text
+  if (text === "") return null
+  if (!(saved instanceof Date) && typeof saved !== "number") return text
+
+  const [year, month, day] = text.split("-").map(Number)
+  const date = new Date(saved)
+  date.setFullYear(year, month - MONTH_OFFSET, day)
+  return saved instanceof Date ? date : date.getTime()
 }

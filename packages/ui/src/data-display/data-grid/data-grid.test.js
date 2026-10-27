@@ -698,3 +698,97 @@ describe("DataGrid / editing template", () => {
     expect(getGrid().selection).toEqual([])
   })
 })
+
+describe("DataGrid / urls and dates", () => {
+  let container, unsubscribe, getGrid
+
+  const edit = (input, text) => {
+    input.value = text
+    input.dispatchEvent(new Event("input", { bubbles: true }))
+  }
+
+  afterEach(() => {
+    unsubscribe()
+    container.remove()
+  })
+
+  it("links web addresses in url columns, and nothing else", async () => {
+    ;({ container, unsubscribe } = await setup({
+      columns: [{ id: "site", title: "Site", type: "url" }],
+      rows: [
+        { id: 1, site: "https://example.com" },
+        { id: 2, site: "javascript:alert(1)" },
+      ],
+      pagination: null,
+      search: null,
+    }))
+
+    const links = container.querySelectorAll(".iw-data-grid-body a")
+    expect(links).toHaveLength(1)
+    expect(links[0].getAttribute("href")).toBe("https://example.com")
+    expect(links[0].getAttribute("rel")).toBe("noopener noreferrer")
+    expect(container.textContent).toContain("javascript:alert(1)")
+  })
+
+  it("edits a url column with a url field", async () => {
+    ;({ container, unsubscribe } = await setup({
+      columns: [{ id: "site", title: "Site", type: "url", isEditable: true }],
+      rows: [{ id: 1, site: "https://example.com" }],
+      pagination: null,
+      search: null,
+    }))
+
+    expect(container.querySelector('input[aria-label="Site"]').type).toBe("url")
+  })
+
+  it("gives edited dates back in the form the row keeps them, time of day included", async () => {
+    const createdAt = new Date(2026, 9, 27, 15, 30)
+    ;({ container, unsubscribe, getGrid } = await setup({
+      columns: [
+        { id: "asDate", title: "As date", type: "date", isEditable: true },
+        { id: "asTime", title: "As time", type: "date", isEditable: true },
+        { id: "asText", title: "As text", type: "date", isEditable: true },
+      ],
+      rows: [
+        {
+          id: 1,
+          asDate: createdAt,
+          asTime: createdAt.getTime(),
+          asText: "2026-10-27",
+        },
+      ],
+      pagination: null,
+      search: null,
+    }))
+    const field = (label) =>
+      container.querySelector(`input[aria-label="${label}"]`)
+
+    expect(field("As date").value).toBe("2026-10-27")
+    expect(field("As time").value).toBe("2026-10-27")
+    edit(field("As date"), "2026-11-02")
+    edit(field("As time"), "2026-11-02")
+    edit(field("As text"), "2026-11-02")
+
+    const { asDate, asTime, asText } = getGrid().edits[1]
+    expect(asDate).toBeInstanceOf(Date)
+    expect([asDate.getDate(), asDate.getHours()]).toEqual([2, 15])
+    expect(typeof asTime).toBe("number")
+    expect(new Date(asTime).getMinutes()).toBe(30)
+    expect(asText).toBe("2026-11-02")
+  })
+
+  it("does not count a date edited back to its saved day", async () => {
+    const day = new Date(2026, 9, 27)
+    ;({ container, unsubscribe, getGrid } = await setup({
+      columns: [{ id: "day", title: "Day", type: "date", isEditable: true }],
+      rows: [{ id: 1, day }],
+      pagination: null,
+      search: null,
+    }))
+
+    edit(container.querySelector('input[aria-label="Day"]'), "2026-10-28")
+    edit(container.querySelector('input[aria-label="Day"]'), "2026-10-27")
+
+    expect(getGrid().edits).toEqual({})
+  })
+})

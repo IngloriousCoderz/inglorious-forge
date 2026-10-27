@@ -100,6 +100,11 @@ export function renderPieSection(api) {
         </h2>
         ${api.render("halfPieChart")}
       </section>
+
+      <section class="chart-section">
+        <h2>Pie Chart with small slices - Config Style</h2>
+        ${api.render("smallSlicesPieChart")}
+      </section>
     </div>
   `
 }

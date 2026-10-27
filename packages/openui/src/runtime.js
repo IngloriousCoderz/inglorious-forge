@@ -267,6 +267,9 @@ export function renderProgram({
           callTool,
           message,
           formName: actionFormName ?? formName,
+          // Only this scope's own form knows which fields are bound.
+          fields:
+            actionFormName && actionFormName !== formName ? [] : scope.fields,
           action,
         }),
       renderNode: (value, nextScope) =>
@@ -344,6 +347,7 @@ async function runAction({
   callTool,
   message,
   formName,
+  fields = [],
   action,
 }) {
   const pendingValues = {}
@@ -364,6 +368,19 @@ async function runAction({
     // The values as they are now, with what this click has written so far,
     // such as an EditableTable's rows saved just before.
     const values = api.getEntity?.(entity.id)?.values ?? entity.values
+    const valueOf = (name) =>
+      Object.hasOwn(pendingValues, name)
+        ? pendingValues[name]
+        : Object.hasOwn(values, name)
+          ? values[name]
+          : defaults[name]
+    // A field bound to a $variable keeps its value there, not in the form:
+    // the form's state has it too, under the field's name.
+    const bound = Object.fromEntries(
+      fields
+        .filter((field) => field?.value?.__reactive === "assign")
+        .map((field) => [field.name, valueOf(field.value.target)]),
+    )
     api.notify("openuiAction", {
       id: entity.id,
       humanFriendlyMessage: "",
@@ -371,7 +388,7 @@ async function runAction({
       formName,
       // A form sends its own fields; anything else, every value there is.
       formState: formName
-        ? { [formName]: values[formName] ?? {} }
+        ? { [formName]: { ...bound, ...values[formName] } }
         : { ...defaults, ...values, ...pendingValues },
       ...event,
     })

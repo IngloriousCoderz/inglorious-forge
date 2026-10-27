@@ -4,7 +4,7 @@
  */
 
 const OLLAMA_URL = import.meta.env.VITE_OLLAMA_URL ?? "http://localhost:11434"
-const MODEL = import.meta.env.VITE_OLLAMA_MODEL ?? "qwen3:8b"
+const MODEL = import.meta.env.VITE_OLLAMA_MODEL ?? "qwen3:14b"
 
 // Enough for the library's prompt with its tools and examples (about 7k
 // tokens), a few turns of history and the answer.

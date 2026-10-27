@@ -454,6 +454,22 @@ export const entities = {
   // PIE CHARTS
   // ============================================
 
+  // Pie Chart with small slices - Config Style
+  smallSlicesPieChart: {
+    type: "Pie",
+    data: [
+      { label: "Rent", value: 900 },
+      { label: "Food", value: 40 },
+      { label: "Transport", value: 25 },
+      { label: "Gifts", value: 15 },
+      { label: "Books", value: 10 },
+      { label: "Fun", value: 8 },
+    ],
+    width: 500,
+    height: 400,
+    hasTooltip: true,
+  },
+
   // Half Pie Chart - Config Style
   halfPieChart: {
     type: "Donut",

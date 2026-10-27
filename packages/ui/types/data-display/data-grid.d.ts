@@ -26,7 +26,11 @@ export interface DataGridVirtualization {
 export interface Column {
   id: string
   title: string
-  type?: "string" | "number" | "boolean" | "date"
+  /**
+   * `"url"` cells show web addresses as links. A date column's editor gives
+   * back dates in the form the row keeps them: `Date`, timestamp or string.
+   */
+  type?: "string" | "number" | "boolean" | "date" | "url"
   isSortable?: boolean
   isFilterable?: boolean
   filter?: {

@@ -17,7 +17,7 @@ It talks to a local [Ollama](https://ollama.com), so it costs nothing to run.
 Quick start:
 
 ```bash
-ollama pull qwen3:8b
+ollama pull qwen3:14b
 
 # from repository root
 cd examples/apps/web-openui-chat
@@ -28,8 +28,8 @@ pnpm dev
 Another model, or Ollama elsewhere, through `.env.local`:
 
 ```bash
-VITE_OLLAMA_MODEL=qwen3:14b
+VITE_OLLAMA_MODEL=qwen3:8b
 VITE_OLLAMA_URL=http://localhost:11434
 ```
 
-The prompt is about 7k tokens, so the model gets a 16k context. On a laptop, `qwen3:8b` answers questions about the expenses well, with live charts and tables, but it often gets forms that save wrong: it forgets to define the mutation it runs, or the `$variables` its fields bind. A larger model, such as `qwen3:14b`, follows the prompt more closely. The whole of Lucide also goes into the bundle; an app with a few icons would give `createOpenUI` just those.
+The prompt is about 9.5k tokens, so the model gets a 16k context. `qwen3:14b` (about 9 GB) answers questions about the expenses with live charts and tables, and writes forms that save through a mutation, on a laptop with 16 GB. The smaller `qwen3:8b` handles the questions too, but often gets forms that save wrong: it forgets to define the mutation it runs, or the `$variables` its fields bind. The whole of Lucide also goes into the bundle; an app with a few icons would give `createOpenUI` just those.

@@ -727,4 +727,38 @@ describe("chart state", () => {
       expect(html).toContain("iw-chart-radial")
     })
   })
+
+  describe("pie labels", () => {
+    it("spreads the labels of small slices apart, so none overlap", () => {
+      const html = toHtml(
+        Chart.render({
+          type: "pie",
+          data: [
+            { label: "Rent", value: 900 },
+            { label: "Food", value: 12 },
+            { label: "Fun", value: 10 },
+            { label: "Gifts", value: 8 },
+            { label: "Books", value: 6 },
+          ],
+        }),
+      )
+      // Each label's name line: where it is, and on which side.
+      const labels = [
+        ...html.matchAll(
+          /<text x="([\d.-]+)" y="([\d.-]+)" style="fill: var\(--iw-chart-text, [^"]*" font-size="12" text-anchor="(start|end)" >\s*(\w+)/g,
+        ),
+      ].map(([, , y, anchor, name]) => ({ y: Number(y), anchor, name }))
+      expect(labels).toHaveLength(5)
+
+      for (const anchor of ["start", "end"]) {
+        const side = labels
+          .filter((label) => label.anchor === anchor)
+          .sort((a, b) => a.y - b.y)
+        side.slice(1).forEach((label, i) => {
+          // Two lines, name and share, and a little gap.
+          expect(label.y - side[i].y).toBeGreaterThanOrEqual(30)
+        })
+      }
+    })
+  })
 })

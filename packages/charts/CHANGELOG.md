@@ -1,5 +1,11 @@
 # @inglorious/charts
 
+## 12.2.1
+
+### Patch Changes
+
+- A pie's outside labels no longer overlap: they sit in a column on each side of the pie, level with their slices, and the labels of small neighbouring slices are spread apart until each has its own line.
+
 ## 12.2.0
 
 ### Minor Changes

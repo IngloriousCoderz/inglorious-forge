@@ -1,5 +1,15 @@
 # @inglorious/openui
 
+## 0.5.1
+
+### Patch Changes
+
+- An action from a form sends the values of its fields bound to `$variables` too, under the fields' names, so the assistant sees what was filled in. `EditableTable`'s `url` columns show links and edit with a URL field.
+- Updated dependencies
+- Updated dependencies
+  - @inglorious/charts@12.2.1
+  - @inglorious/ui@9.4.0
+
 ## 0.5.0
 
 ### Minor Changes
