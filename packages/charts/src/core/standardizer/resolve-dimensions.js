@@ -1,6 +1,7 @@
 /* eslint-disable no-magic-numbers */
 
 import {
+  AXIS_LABEL_ROOM,
   DEFAULT_BRUSH_HEIGHT,
   DEFAULT_HEIGHT,
   DEFAULT_WIDTH,
@@ -35,10 +36,20 @@ export function createDimensions(entity, primitives) {
       DEFAULT_BRUSH_HEIGHT
     : 0
   const legendHeight = hasLegend ? 40 : 0
+  // An axis title takes room of its own, on its side of the plot.
+  const titled = (type) =>
+    primitives.some(
+      (primitive) => primitive.type === type && primitive.props?.label,
+    )
+  const xTitleRoom = titled("x-axis") ? AXIS_LABEL_ROOM : 0
+  const yTitleRoom = titled("y-axis") ? AXIS_LABEL_ROOM : 0
   const plotTop = entity.padding.top + legendHeight
   const plotBottom =
-    height - entity.padding.bottom - (brushHeight > 0 ? brushHeight + 16 : 0)
-  const plotLeft = entity.padding.left
+    height -
+    entity.padding.bottom -
+    xTitleRoom -
+    (brushHeight > 0 ? brushHeight + 16 : 0)
+  const plotLeft = entity.padding.left + yTitleRoom
   const plotRight = width - entity.padding.right
 
   return {

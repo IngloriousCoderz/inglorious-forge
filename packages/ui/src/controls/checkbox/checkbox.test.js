@@ -101,4 +101,17 @@ describe("checkbox classes", () => {
     expect(input.classList.contains("iw-checkbox-input")).toBe(true)
     expect(input.classList.contains("iw-checkbox")).toBe(false)
   })
+
+  it("shows a description under the label", () => {
+    const container = document.createElement("div")
+
+    render(
+      Checkbox.render({ label: "News", description: "Once a week" }),
+      container,
+    )
+
+    expect(
+      container.querySelector(".iw-checkbox-description").textContent,
+    ).toBe("Once a week")
+  })
 })

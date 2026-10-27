@@ -3,6 +3,8 @@
 export const DEFAULT_WIDTH = 800
 export const DEFAULT_HEIGHT = 400
 export const DEFAULT_BRUSH_HEIGHT = 30
+/** The room an axis title takes, beside its tick labels. */
+export const AXIS_LABEL_ROOM = 20
 
 export const DEFAULT_COLORS = [
   "#3b82f6",

@@ -4,19 +4,56 @@ The model can only use the components in the library you give `createOpenUI`. Ea
 
 ## uiLibrary
 
-`uiLibrary` is Inglorious UI as an OpenUI library. The components take the names and, where they can, the argument order of OpenUI's standard library, so prompts and examples written for that one mostly carry over. The authoritative list is what `uiLibrary.prompt()` says.
+`uiLibrary` is Inglorious UI as an OpenUI library. The components take the names and the arguments of OpenUI's standard library, in the same order, so prompts and examples written for that one carry over. The authoritative list is what `uiLibrary.prompt()` says.
 
-| Group   | Components                                                                                                                                                                                                                |
-| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Layout  | `Stack(children, direction, gap, align, justify, wrap)`, `Separator(orientation)`                                                                                                                                         |
-| Content | `Card(children, direction, gap, align, justify, wrap, variant)`, `CardHeader(title, subtitle)`, `TextContent(text, size)`, `Callout(variant, title, description, visible)`, `Tag(text, size, variant)`, `Image(alt, src)` |
-| Actions | `Button(label, action, variant, type, size)`, `Buttons(buttons, direction)`                                                                                                                                               |
-| Tables  | `Table(columns)`, `Col(label, data, type)`                                                                                                                                                                                |
-| Forms   | `Input(name, placeholder, type, value)`                                                                                                                                                                                   |
+| Group   | Components                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Layout  | `Stack(children, direction, gap, align, justify, wrap)`, `Separator(orientation, decorative)`, `Tabs(items)` of `TabItem(value, trigger, content)`, `Accordion(items)` of `AccordionItem(value, trigger, content)`, `Steps(items)` of `StepsItem(title, details)`, `Modal(title, open, children, size)`                                                                                                                                                                                                                                                                                                                                |
+| Content | `Card(children, variant, direction, gap, align, justify, wrap)`, `CardHeader(title, subtitle)`, `TextContent(text, size)`, `Callout(variant, title, description, visible)`, `Tag(text, icon, size, variant)`, `Icon(name, category)`, `Image(alt, src)`                                                                                                                                                                                                                                                                                                                                                                                |
+| Actions | `Button(label, action, variant, type, size)`, `Buttons(buttons, direction)`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| Tables  | `Table(columns)`, `Col(label, data, type)`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| Forms   | `Form(name, buttons, fields)`, `FormControl(label, input, hint)`, `Input(name, placeholder, type, rules, value)`, `TextArea(name, placeholder, rows, rules, value)`, `Select(name, items, placeholder, rules, value, size)` of `SelectItem(value, label)`, `RadioGroup(name, items, rules, value)` of `RadioItem(label, description, value)`, `CheckBoxGroup(name, items, rules, value)` of `CheckBoxItem(label, description, name, defaultChecked)`, `SwitchGroup(name, items, variant, value)` of `SwitchItem(label, description, name, defaultChecked)`, `Slider(name, variant, min, max, step, defaultValue, label, rules, value)` |
 
-`Card` takes its layout arguments in the same order as `Stack`, with `variant` last, unlike OpenUI's: models tend to write the two alike.
+A `Card`'s `variant` is `"card"` (raised, the default), `"sunk"` or `"clear"`, and it lays its children out with the same arguments as `Stack`. A `Slider`'s value is a list, as in OpenUI: `[50]`, or `[20, 80]` for a range with two thumbs; `"discrete"` marks every step.
 
 Tables are written column by column, as in OpenUI: each `Col` holds every value of its column, and a value can be a component, such as a `Tag` for a status.
+
+Which tab or section is open is kept apart from the values, in the entity's `view`, so it never goes to the model as something the user entered. Forms have a guide of their own: [Forms](forms.md).
+
+## Icons
+
+`Icon("circle-check")` names an icon, as OpenUI's does with [Lucide](https://lucide.dev)'s names. The app decides which icons there are, through `createOpenUI`: a map of names to [Iconify](https://iconify.design) icons, or a whole Iconify collection.
+
+```javascript
+import lucide from "@iconify-json/lucide/icons.json"
+
+const OpenUI = createOpenUI({ library: uiLibrary, icons: lucide })
+```
+
+A whole collection is the simplest and lets the model use any name, but it adds the collection to the app's bundle; a map of the few icons an app needs keeps it small. A name the app did not give draws nothing, so an answer never shows the wrong icon.
+
+## Charts
+
+The charts come from `@inglorious/charts`, so they are a separate import, added to the library when the app wants them:
+
+```javascript
+import "@inglorious/charts/base.css"
+import "@inglorious/charts/theme.css"
+
+import { uiLibrary } from "@inglorious/openui"
+import { chartComponents } from "@inglorious/openui/charts"
+
+const library = uiLibrary.extend({ components: { add: chartComponents } })
+```
+
+| Component                                                    | What it draws                                                                        |
+| ------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
+| `BarChart(labels, series, variant, xLabel, yLabel, height)`  | Bars per label, one colour per `Series(category, values)`; `"stacked"` piles them up |
+| `LineChart(labels, series, variant, xLabel, yLabel, height)` | Lines over the labels; `"natural"` smooths them, `"step"` steps them                 |
+| `AreaChart(labels, series, variant, xLabel, yLabel, height)` | Filled areas under the lines, with the same variants                                 |
+| `PieChart(labels, values, variant, appearance)`              | Slices of a whole; `"donut"` leaves a hole, `"semiCircular"` draws a half            |
+
+Like tables, charts take their data column by column: `BarChart(["Jan", "Feb"], [Series("Sales", [10, 20])])`, or `BarChart(data.months, [Series("Sales", data.sales)])` from a query. `xLabel` and `yLabel` title the axes.
 
 ## Examples for the model
 
@@ -54,14 +91,20 @@ Build a library from scratch with `createLibrary({ components, root })` instead,
 
 The render function receives:
 
-| Field                                      | What it is                                                                    |
-| ------------------------------------------ | ----------------------------------------------------------------------------- |
-| `props`                                    | The props, evaluated: expressions and `$variables` already resolved.          |
-| `renderNode(value)`                        | Renders a prop that holds components, a list of them, or text.                |
-| `isStreaming`                              | True while the answer arrives; disable what acts.                             |
-| `triggerAction(message, formName, action)` | Runs an action prop. See [Values and actions](values-and-actions.md#buttons). |
-| `stateField(name, value)`                  | A field's `{ value, setValue }`, bound to a `$variable` when `value` is one.  |
-| `statementId`                              | The statement the component came from, such as `header`.                      |
+| Field                                      | What it is                                                                                                                                 |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `props`                                    | The props, evaluated: expressions and `$variables` already resolved.                                                                       |
+| `renderNode(value, scope)`                 | Renders a prop that holds components, a list of them, or text. `scope` reaches the components inside, as a Form's name reaches its fields. |
+| `isStreaming`                              | True while the answer arrives; disable what acts.                                                                                          |
+| `triggerAction(message, formName, action)` | Runs an action prop. See [Values and actions](values-and-actions.md#buttons).                                                              |
+| `stateField(name, value)`                  | A field's `{ value, setValue }`, bound to a `$variable` when `value` is one.                                                               |
+| `statementId`                              | The statement the component came from, such as `header`.                                                                                   |
+| `isLoading`                                | True while any of the answer's queries fetches.                                                                                            |
+| `iconFor(name)`                            | The icon the app gave for `name`, or null.                                                                                                 |
+| `viewState(key, fallback)`                 | `{ value, setValue }` for state only the screen needs, such as the open tab.                                                               |
+| `formName`, `label`, `hint`                | The Form the component is in, and the label and hint a FormControl gives it.                                                               |
+| `fieldError(name)`                         | What failed the last time the field's form was checked.                                                                                    |
+| `validateForm()`                           | In a Form: checks its fields and says whether all passed.                                                                                  |
 
 A component with children declares them as an array, `children: z.array(z.any())`, or of specific components, `z.array(Button.ref)`, and renders them with `renderNode(props.children)`.
 

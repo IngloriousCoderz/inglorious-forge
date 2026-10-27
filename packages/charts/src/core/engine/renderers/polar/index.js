@@ -10,6 +10,10 @@ import {
   getTooltipBindings,
 } from "../cartesian/shared.js"
 
+const FULL_CIRCLE_START = 0
+const FULL_CIRCLE = 360
+const toRadians = (degrees) => (degrees * Math.PI) / 180
+
 const LABEL_COLOR = themeColor("text", "#0f172a")
 const SECONDARY_COLOR = themeColor("text-muted", "#64748b")
 const CONNECTOR_COLOR = themeColor("axis", "#94a3b8")
@@ -162,8 +166,13 @@ function createPieSlices(primitive, frame) {
   const { entity } = frame
   const dataKey = primitive.props?.dataKey || entity.dataKey
   const nameKey = primitive.props?.nameKey || entity.nameKey
+  // Degrees clockwise from twelve o'clock: -90 to 90 draws the top half.
+  const startAngle = primitive.props?.startAngle ?? FULL_CIRCLE_START
+  const endAngle = primitive.props?.endAngle ?? startAngle + FULL_CIRCLE
   const arcs = createPieLayout()
     .sort(null)
+    .startAngle(toRadians(startAngle))
+    .endAngle(toRadians(endAngle))
     .value((row) => (Number.isFinite(row?.[dataKey]) ? row[dataKey] : 0))(
     entity.data,
   )

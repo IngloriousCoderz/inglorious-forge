@@ -4,6 +4,8 @@ export interface CheckboxProps {
   id?: string
   name?: string
   label?: string
+  /** A line of detail under the label. */
+  description?: string
   isChecked?: boolean
   isDisabled?: boolean
   isRequired?: boolean

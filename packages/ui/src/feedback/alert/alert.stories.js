@@ -10,7 +10,7 @@ export default {
     description: { control: "text" },
     severity: {
       control: "select",
-      options: ["info", "success", "warning", "error"],
+      options: ["info", "success", "warning", "error", "neutral"],
     },
     variant: { control: "select", options: ["filled", "outlined"] },
     icon: { control: "text" },
@@ -47,6 +47,14 @@ export const Error = {
     title: "Error",
     description: "Something went wrong.",
     severity: "error",
+  },
+}
+
+export const Neutral = {
+  args: {
+    title: "Note",
+    description: "A plain remark, with no tone of its own.",
+    severity: "neutral",
   },
 }
 

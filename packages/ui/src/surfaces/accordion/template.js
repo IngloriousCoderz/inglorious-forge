@@ -85,7 +85,11 @@ export const Accordion = {
       name=${props.name || nothing}
       .open=${isExpanded}
       @toggle=${(event) => {
-        const isOpen = event.newState === "open"
+        // newState is what the browser says; an environment whose toggle
+        // event lacks it, such as jsdom, still has the element's own state.
+        const isOpen = event.newState
+          ? event.newState === "open"
+          : event.currentTarget.open
         // Also fires when isExpanded opened it, which needs no report.
         if (isOpen === isExpanded) return
         onToggle?.(item, index, isOpen)

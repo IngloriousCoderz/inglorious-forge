@@ -36,7 +36,7 @@ describe("default primitives", () => {
       xKey: "name",
       seriesKeys: ["Revenue", "Expenses"],
       colors: ["#111111", "#222222"],
-      stacked: true,
+      isStacked: true,
       hasTooltip: true,
     })
 

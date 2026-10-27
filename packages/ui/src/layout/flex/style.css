@@ -85,6 +85,10 @@
     gap: 0;
   }
 
+  &.iw-flex-gap-xs {
+    gap: var(--iw-space-1);
+  }
+
   &.iw-flex-gap-sm {
     gap: var(--iw-space-2);
   }
@@ -99,6 +103,10 @@
 
   &.iw-flex-gap-xl {
     gap: var(--iw-space-8);
+  }
+
+  &.iw-flex-gap-2xl {
+    gap: var(--iw-space-12);
   }
 
   &.iw-flex-padding-none {

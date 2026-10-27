@@ -43,6 +43,17 @@
     transform: translateX(calc(1rem * var(--iw-dir-sign, 1)));
   }
 
+  /* With a description, the label and it stack beside the track. */
+  .iw-switch-text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .iw-switch-description {
+    font-size: var(--iw-font-size-sm);
+    color: var(--iw-color-text-secondary);
+  }
+
   .iw-switch-label {
     color: var(--iw-color-text);
     font-size: var(--iw-font-size-base);

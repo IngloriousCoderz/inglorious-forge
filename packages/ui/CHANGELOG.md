@@ -1,5 +1,25 @@
 # @inglorious/ui
 
+## 9.1.0
+
+### Minor Changes
+
+- New optional props, so the components can show everything OpenUI's standard components describe:
+
+  - `Card` takes a `variant`: `"default"`, `"sunk"` into the page, or `"clear"` without a surface.
+  - `Alert` has a `"neutral"` severity.
+  - `Chip` takes an `icon`, shown before its label.
+  - `Button` has an `"xs"` size.
+  - `Divider` takes `isDecorative`, hiding it from assistive tech; a vertical one says so with `aria-orientation`.
+  - `Dialog` takes a `size`: `"sm"`, `"md"` or `"lg"`.
+  - `Checkbox`, `Switch` and each `RadioGroup` option take a `description`, shown under the label.
+  - `Slider` takes a `[low, high]` value for a range with two thumbs, and `hasMarks` for a tick at every step.
+  - `Flex` takes gaps `"xs"` and `"2xl"`.
+
+### Patch Changes
+
+- `Accordion` reads whether an item opened from the element itself when the `toggle` event does not say, as in jsdom, so tests of apps using it see the item open.
+
 ## 9.0.0
 
 ### Major Changes

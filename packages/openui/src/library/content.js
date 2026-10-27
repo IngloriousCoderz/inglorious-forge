@@ -2,11 +2,13 @@ import { Alert } from "@inglorious/ui/alert"
 import { Card as UiCard } from "@inglorious/ui/card"
 import { Chip } from "@inglorious/ui/chip"
 import { Flex } from "@inglorious/ui/flex"
+import { Icon as UiIcon } from "@inglorious/ui/icon"
 import { Typography } from "@inglorious/ui/typography"
 import { html, nothing } from "@inglorious/web"
 import { defineComponent } from "@openuidev/lang-core"
 import { z } from "zod"
 
+import { reactive } from "../reactive.js"
 import { flexProps, toFlex } from "./layout.js"
 
 /** OpenUI's text sizes as Typography variants and weights. */
@@ -18,25 +20,26 @@ const TEXT_SIZES = {
   "large-heavy": { variant: "h2", weight: 700 },
 }
 
+/** OpenUI's card surfaces in Card's names. */
+const CARD_VARIANTS = { card: "default", sunk: "sunk", clear: "clear" }
+
 export const Card = defineComponent({
   name: "Card",
   description:
-    'Groups related content on a surface. variant "clear" drops the surface and keeps the layout.',
-  // Laid out like Stack, with the variant last, so the two read alike.
+    'Groups related content on a surface: "card" (default) raised, "sunk" set into the page, "clear" with none. Lays its children out like Stack.',
   props: z.object({
     children: z.array(z.any()),
+    variant: z.enum(["card", "sunk", "clear"]).optional(),
     ...flexProps,
-    variant: z.enum(["card", "clear"]).optional(),
   }),
-  component: ({ props, renderNode }) => {
-    const content = Flex.render({
-      ...toFlex(props),
-      children: renderNode(props.children),
-    })
-    return props.variant === "clear"
-      ? content
-      : UiCard.render({ children: content })
-  },
+  component: ({ props, renderNode }) =>
+    UiCard.render({
+      variant: CARD_VARIANTS[props.variant ?? "card"],
+      children: Flex.render({
+        ...toFlex(props),
+        children: renderNode(props.children),
+      }),
+    }),
 })
 
 export const CardHeader = defineComponent({
@@ -84,17 +87,23 @@ export const Callout = defineComponent({
     variant: z.enum(["info", "warning", "error", "success", "neutral"]),
     title: z.string(),
     description: z.string(),
-    visible: z.boolean().optional(),
+    visible: reactive(z.boolean().optional()),
   }),
-  component: ({ props }) =>
-    props.visible === false
+  component: ({ props, stateField, statementId }) => {
+    // Bound to a $variable, as in Callout(..., $saved), it shows while true.
+    const visible = stateField(
+      `${statementId ?? "callout"}:visible`,
+      props.visible,
+    )
+    return visible.value === false
       ? nothing
       : Alert.render({
-          severity: props.variant === "neutral" ? "info" : props.variant,
+          severity: props.variant,
           variant: "outlined",
           title: props.title,
           description: props.description,
-        }),
+        })
+  },
 })
 
 const TAG_COLORS = {
@@ -105,19 +114,36 @@ const TAG_COLORS = {
   danger: "error",
 }
 
+export const Icon = defineComponent({
+  name: "Icon",
+  description:
+    "An icon by kebab-case name, such as 'circle-check' or 'rocket'. category, such as 'finance' or 'time', describes it when the name is unknown.",
+  props: z.object({
+    name: z.string(),
+    category: z.string().optional(),
+  }),
+  // Drawn from the icons the app gives createOpenUI; an unknown one is left out.
+  component: ({ props, iconFor }) => {
+    const icon = iconFor(props.name)
+    return icon ? UiIcon.render({ icon }) : nothing
+  },
+})
+
 export const Tag = defineComponent({
   name: "Tag",
-  description: "A small label, such as a status",
+  description: "A small label, such as a status, with an optional Icon",
   props: z.object({
     text: z.string(),
+    icon: Icon.ref.optional(),
     size: z.enum(["sm", "md", "lg"]).optional(),
     variant: z
       .enum(["neutral", "info", "success", "warning", "danger"])
       .optional(),
   }),
-  component: ({ props }) =>
+  component: ({ props, renderNode }) =>
     Chip.render({
       children: props.text,
+      icon: props.icon ? renderNode(props.icon) : undefined,
       size: props.size ?? "sm",
       color: TAG_COLORS[props.variant ?? "neutral"],
     }),

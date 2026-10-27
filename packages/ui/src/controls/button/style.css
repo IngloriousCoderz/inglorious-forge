@@ -153,6 +153,11 @@
     cursor: not-allowed;
   }
 
+  &.iw-button-xs {
+    padding: var(--iw-space-0) var(--iw-space-2);
+    font-size: var(--iw-font-size-xs);
+  }
+
   &.iw-button-sm {
     padding: var(--iw-space-1) var(--iw-space-3);
     font-size: var(--iw-font-size-sm);
@@ -177,6 +182,12 @@
 
   &.iw-button-shape-square {
     border-radius: var(--iw-radius-sm);
+  }
+
+  &.iw-button-xs.iw-button-shape-round,
+  &.iw-button-xs.iw-button-shape-square {
+    width: 1.5rem;
+    height: 1.5rem;
   }
 
   &.iw-button-sm.iw-button-shape-round,

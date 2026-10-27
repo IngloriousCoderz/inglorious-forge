@@ -38,6 +38,7 @@ function buildDefaultLinePrimitives(entity) {
         dataKey,
         stroke: entity.colors[index],
         hasDots: entity.hasDots !== false,
+        curve: entity.curve,
       }),
     )
   })
@@ -54,9 +55,10 @@ function buildDefaultAreaPrimitives(entity) {
         dataKey,
         stroke: entity.colors[index],
         fill: entity.colors[index],
-        fillOpacity: entity.stacked ? 0.45 : 0.3,
-        stackId: entity.stacked ? "default-stack" : undefined,
+        fillOpacity: entity.isStacked ? 0.45 : 0.3,
+        stackId: entity.isStacked ? "default-stack" : undefined,
         hasDots: entity.hasDots === true,
+        curve: entity.curve,
       }),
     )
   })
@@ -68,7 +70,13 @@ function buildDefaultBarPrimitives(entity) {
   const primitives = buildCartesianScaffold(entity)
 
   entity.seriesKeys.forEach((dataKey, index) => {
-    primitives.push(Bar({ dataKey, fill: entity.colors[index] }))
+    primitives.push(
+      Bar({
+        dataKey,
+        fill: entity.colors[index],
+        stackId: entity.isStacked ? "default-stack" : undefined,
+      }),
+    )
   })
 
   return addSharedCartesianOverlays(primitives, entity)
@@ -85,6 +93,8 @@ function buildDefaultPiePrimitives(entity) {
       cy: entity.cy || "50%",
       outerRadius: entity.outerRadius || "70%",
       hasLabel: entity.hasLabel !== false,
+      startAngle: entity.startAngle,
+      endAngle: entity.endAngle,
     }),
   ]
 
@@ -159,9 +169,15 @@ function buildCartesianScaffold(entity) {
 
   // Formatters are functions, so they come with the render, not the entity.
   primitives.push(
-    XAxis({ dataKey: entity.xKey, tickFormatter: entity.xTickFormatter }),
+    XAxis({
+      dataKey: entity.xKey,
+      tickFormatter: entity.xTickFormatter,
+      label: entity.xAxisLabel,
+    }),
   )
-  primitives.push(YAxis({ tickFormatter: entity.yTickFormatter }))
+  primitives.push(
+    YAxis({ tickFormatter: entity.yTickFormatter, label: entity.yAxisLabel }),
+  )
 
   return primitives
 }

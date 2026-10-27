@@ -10,6 +10,7 @@ export default {
   argTypes: {
     isOpen: { control: "boolean" },
     isModal: { control: "boolean" },
+    size: { control: "select", options: ["sm", "md", "lg"] },
     title: { control: "text" },
     description: { control: "text" },
     onClose: { action: "onClose" },
@@ -26,6 +27,27 @@ export const Open = {
     children: html`<p>Are you sure you want to continue?</p>`,
     actions: html`<button class="iw-button iw-button-outline">Cancel</button>
       <button class="iw-button iw-button-primary">Confirm</button>`,
+  },
+}
+
+export const Small = {
+  args: { ...Open.args, size: "sm" },
+}
+
+export const Medium = {
+  args: { ...Open.args, size: "md" },
+}
+
+export const Large = {
+  args: {
+    ...Open.args,
+    size: "lg",
+    title: "Release notes",
+    description: "What changed in this version.",
+    children: html`<p>
+      A wider dialog, for content that needs the room: tables, previews or
+      longer text.
+    </p>`,
   },
 }
 

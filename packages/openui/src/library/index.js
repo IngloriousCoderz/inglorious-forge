@@ -5,39 +5,102 @@ import {
   Callout,
   Card,
   CardHeader,
+  Icon,
   Image,
   Tag,
   TextContent,
 } from "./content.js"
 import { Col, Table } from "./data.js"
-import { Input } from "./forms.js"
-import { Separator, Stack } from "./layout.js"
+import {
+  CheckBoxGroup,
+  CheckBoxItem,
+  Form,
+  FormControl,
+  Input,
+  RadioGroup,
+  RadioItem,
+  Select,
+  SelectItem,
+  Slider,
+  SwitchGroup,
+  SwitchItem,
+  TextArea,
+} from "./forms.js"
+import {
+  Accordion,
+  AccordionItem,
+  Modal,
+  Separator,
+  Stack,
+  Steps,
+  StepsItem,
+  TabItem,
+  Tabs,
+} from "./layout.js"
 
 /**
  * Inglorious UI as an OpenUI library. The components take the names and the
  * argument order of OpenUI's standard ones, so an answer written for those
  * mostly renders here too; `uiLibrary.prompt()` describes exactly these.
- * Extend it with `uiLibrary.extend({ components: { add: [...] } })`.
+ * Extend it with `uiLibrary.extend({ components: { add: [...] } })`, such as
+ * with `chartComponents` from `@inglorious/openui/charts`.
  */
 export const uiLibrary = createLibrary({
   root: "Stack",
   components: [
     Stack,
     Separator,
+    Tabs,
+    TabItem,
+    Accordion,
+    AccordionItem,
+    Steps,
+    StepsItem,
+    Modal,
     Card,
     CardHeader,
     TextContent,
     Callout,
     Tag,
+    Icon,
     Image,
     Button,
     Buttons,
     Table,
     Col,
+    Form,
+    FormControl,
     Input,
+    TextArea,
+    Select,
+    SelectItem,
+    RadioGroup,
+    RadioItem,
+    CheckBoxGroup,
+    CheckBoxItem,
+    SwitchGroup,
+    SwitchItem,
+    Slider,
   ],
   componentGroups: [
-    { name: "Layout", components: ["Stack", "Separator"] },
+    {
+      name: "Layout",
+      components: [
+        "Stack",
+        "Separator",
+        "Tabs",
+        "TabItem",
+        "Accordion",
+        "AccordionItem",
+        "Steps",
+        "StepsItem",
+        "Modal",
+      ],
+      notes: [
+        "- Tabs for alternative views of one subject; Accordion for sections the user opens one by one.",
+        '- Show a Modal by setting its $variable: Button("Edit", @Set($editing, true)) with Modal("Edit", $editing, [content]).',
+      ],
+    },
     {
       name: "Content",
       components: [
@@ -46,6 +109,7 @@ export const uiLibrary = createLibrary({
         "TextContent",
         "Callout",
         "Tag",
+        "Icon",
         "Image",
       ],
       notes: [
@@ -59,10 +123,32 @@ export const uiLibrary = createLibrary({
       components: ["Table", "Col"],
       notes: [
         "- Table is column-oriented: each Col holds every value of its column, in row order.",
-        '- Cells can be components: Col("Status", [Tag("Open", "sm", "success"), Tag("Closed")])',
+        '- Cells can be components: Col("Status", [Tag("Open", null, "sm", "success"), Tag("Closed")])',
       ],
     },
-    { name: "Forms", components: ["Input"] },
+    {
+      name: "Forms",
+      components: [
+        "Form",
+        "FormControl",
+        "Input",
+        "TextArea",
+        "Select",
+        "SelectItem",
+        "RadioGroup",
+        "RadioItem",
+        "CheckBoxGroup",
+        "CheckBoxItem",
+        "SwitchGroup",
+        "SwitchItem",
+        "Slider",
+      ],
+      notes: [
+        "- A form: Form(name, Buttons([...]), [FormControl(label, field), ...]). Its primary button checks every field's rules first, then sends the values.",
+        '- Rules: Input("email", "you@example.com", "email", {required: true, email: true})',
+        '- A filter outside a form binds its value: Input("search", "Search", "text", null, $query)',
+      ],
+    },
   ],
 })
 
@@ -81,6 +167,6 @@ actions = Buttons([Button("Explain the drop in orders", @ToAssistant("Why did or
   `$query = ""
 root = Stack([title, search, tbl])
 title = CardHeader("Customers")
-search = Input("search", "Filter by name", "text", $query)
-tbl = Table([Col("Name", ["Ada", "Alan"]), Col("Total", [1200, 860], "number"), Col("Status", [Tag("Paid", "sm", "success"), Tag("Due", "sm", "warning")])])`,
+search = Input("search", "Filter by name", "text", null, $query)
+tbl = Table([Col("Name", ["Ada", "Alan"]), Col("Total", [1200, 860], "number"), Col("Status", [Tag("Paid", null, "sm", "success"), Tag("Due", null, "sm", "warning")])])`,
 ]

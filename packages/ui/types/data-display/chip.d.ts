@@ -3,6 +3,8 @@ import type { TemplateResult } from "@inglorious/web"
 export interface ChipProps {
   id?: string
   children?: TemplateResult | string | number
+  /** Shown before the label, such as an `Icon.render(...)`. Decorative. */
+  icon?: TemplateResult
   isRemovable?: boolean
   color?:
     | "default"

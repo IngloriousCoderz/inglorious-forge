@@ -9,9 +9,10 @@ import { Typography } from "@inglorious/ui/typography"
 import { html } from "@inglorious/web"
 
 const SUGGESTIONS = [
-  "My monthly budget: rent 900, food 400, transport 120",
+  "Where did my money go this month?",
+  "Show my food expenses",
+  "I want to add an expense",
   "Compare three laptops for programming",
-  "A sign-up form for a newsletter",
 ]
 
 export const app = {

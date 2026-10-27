@@ -8,6 +8,14 @@ export default {
   argTypes: {
     value: { control: "number", description: "Current rating value." },
     max: { control: "number", description: "Maximum rating value." },
+    name: {
+      control: "text",
+      description: "Groups the radios and names the value in a form.",
+    },
+    ariaLabel: {
+      control: "text",
+      description: 'Names the group for assistive tech. Defaults to "Rating".',
+    },
     isDisabled: { control: "boolean", description: "Disables interaction." },
     isReadOnly: {
       control: "boolean",

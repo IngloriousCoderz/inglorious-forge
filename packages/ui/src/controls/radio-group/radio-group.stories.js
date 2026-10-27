@@ -20,7 +20,11 @@ export default {
       description: "Semantic accent color.",
     },
     isDisabled: { control: "boolean", description: "Disables all options." },
-    options: { control: "object", description: "List of radio options." },
+    options: {
+      control: "object",
+      description:
+        "List of radio options: `label`, `value`, and an optional `description` under the label.",
+    },
     onChange: { action: "onChange" },
   },
   parameters: {
@@ -51,4 +55,20 @@ export const Row = {}
 Row.args = {
   ...Default.args,
   direction: "row",
+}
+
+export const WithDescriptions = {}
+WithDescriptions.args = {
+  ...Default.args,
+  label: "Shipping",
+  name: "shipping",
+  value: "standard",
+  options: [
+    {
+      label: "Standard",
+      value: "standard",
+      description: "3 to 5 working days, free",
+    },
+    { label: "Express", value: "express", description: "Next day, €9" },
+  ],
 }

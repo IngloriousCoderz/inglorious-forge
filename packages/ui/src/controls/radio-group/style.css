@@ -19,6 +19,17 @@
     cursor: pointer;
   }
 
+  /* With a description, the label and it stack beside the circle. */
+  .iw-radio-text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .iw-radio-description {
+    font-size: var(--iw-font-size-sm);
+    color: var(--iw-color-text-secondary);
+  }
+
   .iw-radio {
     margin: 0;
     accent-color: var(--iw-radio-accent);

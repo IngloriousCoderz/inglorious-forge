@@ -2,6 +2,8 @@ import type { TemplateResult } from "@inglorious/web"
 
 export interface RadioOption {
   label: string
+  /** A line of detail under the label. */
+  description?: string
   value: string
   isDisabled?: boolean
   [key: string]: unknown

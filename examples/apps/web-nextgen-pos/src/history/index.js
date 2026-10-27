@@ -1,5 +1,6 @@
 import { Card } from "@inglorious/ui/card"
 import { Chip } from "@inglorious/ui/chip"
+import { Icon } from "@inglorious/ui/icon"
 import { Table } from "@inglorious/ui/table"
 import { html } from "@inglorious/web"
 
@@ -49,12 +50,18 @@ export const History = {
 
 function renderStatus({ posted, queued, sending }, saleId) {
   if (posted.includes(saleId)) {
-    return Chip.render({ children: "Posted", size: "sm", color: "success" })
+    return Chip.render({
+      children: "Posted",
+      icon: Icon.render({ children: "✓", size: "sm" }),
+      size: "sm",
+      color: "success",
+    })
   }
 
   if (queued.some((receipt) => receipt.saleId === saleId)) {
     return Chip.render({
       children: "Stored locally",
+      icon: Icon.render({ children: "⇣", size: "sm" }),
       size: "sm",
       color: "warning",
     })

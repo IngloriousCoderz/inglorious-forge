@@ -244,5 +244,31 @@ export function renderLineSections(api, status) {
         )}
       </section>
     </div>
+
+    <div class="charts-comparison">
+      <section class="chart-section">
+        <h2>Smooth Line Chart - Config Style (curve, axis titles)</h2>
+        ${api.render("smoothLineChart")}
+      </section>
+
+      <section class="chart-section">
+        <h2>Step Line Chart - Composition (curve)</h2>
+        ${Chart.render(
+          {
+            entity: "stepLineChartComposition",
+            width: 800,
+            height: 400,
+            children: [
+              CartesianGrid(),
+              XAxis({ dataKey: "label", label: "Day" }),
+              YAxis({ label: "Orders" }),
+              Line({ dataKey: "value", stroke: "#2563eb", curve: "step" }),
+              Tooltip(),
+            ],
+          },
+          api,
+        )}
+      </section>
+    </div>
   `
 }

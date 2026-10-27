@@ -30,6 +30,7 @@ export const Card = {
     const {
       type, // eslint-disable-line no-unused-vars
       element = "article",
+      variant = "default",
       isHoverable = false,
       isClickable = false,
       isFullWidth = false,
@@ -47,6 +48,7 @@ export const Card = {
 
     const classes = {
       "iw-card": true,
+      [`iw-card-${variant}`]: variant !== "default",
       "iw-card-hoverable": isHoverable || isClickable,
       "iw-card-clickable": isClickable,
       "iw-card-full-width": isFullWidth,

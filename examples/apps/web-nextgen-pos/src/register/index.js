@@ -1,3 +1,4 @@
+import { Alert } from "@inglorious/ui/alert"
 import { Button } from "@inglorious/ui/button"
 import { Card } from "@inglorious/ui/card"
 import { html } from "@inglorious/web"
@@ -42,7 +43,10 @@ export const Register = {
         : "No sale in progress",
       children: sale
         ? api.render(sale.id)
-        : html`<p class="empty">Press “New sale” to serve a customer.</p>`,
+        : Alert.render({
+            severity: "neutral",
+            description: "Press “New sale” to serve a customer.",
+          }),
       footer: html`<div class="register-footer">
         ${Button.render({
           children: "New sale",

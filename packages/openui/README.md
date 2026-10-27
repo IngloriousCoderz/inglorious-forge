@@ -19,7 +19,8 @@ It is not for screens you can design ahead of time: those are better built by ha
 ## Features
 
 - **Streams.** The answer renders while it arrives; buttons wait for it to finish.
-- **Inglorious UI included.** `uiLibrary` offers layout, cards, text, callouts, tags, images, buttons, tables and inputs, under the names OpenUI's standard library uses.
+- **Inglorious UI included.** `uiLibrary` offers layout, tabs, accordions, steps, modals, cards, text, callouts, tags, images, buttons, tables and form fields with validation, with the names and arguments of OpenUI's standard library; charts, stacked or curved, come with `@inglorious/charts`, and icons from any Iconify collection.
+- **Live data.** `Query` and `Mutation` call the app's own tools, as functions or through an MCP client, and results land in the entity.
 - **Store-driven.** `$variables`, fields and `@Set`/`@Reset` live in the entity, and what the answer asks of the app arrives as an `openuiAction` event.
 - **Safe by construction.** The model can only use the components you register; it cannot run code or invent markup.
 
@@ -85,7 +86,9 @@ orders = Card([TextContent("Orders", "small"), TextContent("318", "large-heavy")
 
 1. [Answers](docs/answers.md): the entity, streaming, and answers restored from history.
 2. [Values and actions](docs/values-and-actions.md): `$variables`, fields, and what buttons do.
-3. [Components](docs/components.md): the components in `uiLibrary`, and adding your own.
+3. [Forms](docs/forms.md): fields, their rules, and what a form sends.
+4. [Data from tools](docs/tools.md): `Query` and `Mutation`, run with the app's tools.
+5. [Components](docs/components.md): the components in `uiLibrary`, charts, and adding your own.
 
 ## License
 

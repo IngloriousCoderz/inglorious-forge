@@ -4,7 +4,8 @@ export interface SliderProps {
   id?: string
   name?: string
   label?: string
-  value?: number
+  /** One number, or `[low, high]` for a range with a thumb at each end. */
+  value?: number | [number, number]
   min?: number
   max?: number
   step?: number
@@ -12,7 +13,10 @@ export interface SliderProps {
   isDisabled?: boolean
   isValueVisible?: boolean
   isFullWidth?: boolean
-  onChange?: (value: number) => void
+  /** Draws a tick at every step, for a slider that moves in clear steps. */
+  hasMarks?: boolean
+  /** The new value, in the shape `value` has: a number, or `[low, high]`. */
+  onChange?: (value: number | [number, number]) => void
   [key: string]: unknown
 }
 

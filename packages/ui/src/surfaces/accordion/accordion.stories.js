@@ -12,6 +12,11 @@ export default {
       control: "object",
       description: "Accordion sections with title, content, and state flags.",
     },
+    name: {
+      control: "text",
+      description:
+        "Items sharing a name close each other: at most one is open at a time.",
+    },
     onItemToggle: { action: "onItemToggle" },
   },
   parameters: {
@@ -42,6 +47,10 @@ export const Default = {
       },
     ],
   },
+}
+
+export const Exclusive = {
+  args: { ...Default.args, name: "settings" },
 }
 
 export const WithIcons = {

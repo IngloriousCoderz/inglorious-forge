@@ -53,6 +53,12 @@ export default {
       options: ["none", "sm", "md", "lg", "xl"],
       description: "Footer padding preset.",
     },
+    variant: {
+      control: "select",
+      options: ["default", "sunk", "clear"],
+      description:
+        "The surface: raised, sunk into the page for content inside another surface, or clear.",
+    },
     isHoverable: {
       control: "boolean",
       description: "Enable hover visual feedback.",
@@ -94,6 +100,24 @@ export const WithFooter = {
     title: "Card with footer",
     children: "Body content",
     footer: html`<button class="iw-button iw-button-sm">Save</button>`,
+  },
+}
+
+export const Sunk = {
+  args: {
+    title: "Sunk card",
+    subtitle: "Content inside another surface",
+    children: "Body content",
+    variant: "sunk",
+  },
+}
+
+export const Clear = {
+  args: {
+    title: "Clear card",
+    subtitle: "Groups content with no surface of its own",
+    children: "Body content",
+    variant: "clear",
   },
 }
 

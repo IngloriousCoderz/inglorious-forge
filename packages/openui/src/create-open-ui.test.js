@@ -75,7 +75,7 @@ describe("createOpenUI", () => {
     const { store, container } = setup({
       response: `$query = "tea"
 root = Stack([field, echo])
-field = Input("search", "Search", "text", $query)
+field = Input("search", "Search", "text", null, $query)
 echo = TextContent("Searching " + $query)
 `,
     })

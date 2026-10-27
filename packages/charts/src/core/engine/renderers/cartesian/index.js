@@ -1,7 +1,14 @@
 /* eslint-disable no-magic-numbers */
 
 import { svg } from "@inglorious/web"
-import { area as createAreaPath, line as createLinePath } from "d3-shape"
+import {
+  area as createAreaPath,
+  curveLinear,
+  curveMonotoneX,
+  curveNatural,
+  curveStep,
+  line as createLinePath,
+} from "d3-shape"
 
 import {
   canShowTooltip,
@@ -14,11 +21,24 @@ import {
   resolveSeriesColor,
 } from "./shared.js"
 
+/** How a line or area runs between its points, by the name its `curve` prop gives. */
+const CURVES = {
+  linear: curveLinear,
+  monotone: curveMonotoneX,
+  natural: curveNatural,
+  step: curveStep,
+}
+
+function curveOf(primitive) {
+  return CURVES[primitive.props?.curve] ?? curveLinear
+}
+
 export function renderLineSeries(primitive, frame) {
   const dataKey = primitive.props?.dataKey
   const stroke = primitive.props?.stroke || resolveSeriesColor(frame, dataKey)
   const series = createSeriesPoints(primitive, frame)
   const linePath = createLinePath()
+    .curve(curveOf(primitive))
     .defined((point) => Number.isFinite(point.y))
     .x((point) => point.x)
     .y((point) => point.y)
@@ -48,11 +68,13 @@ export function renderAreaSeries(primitive, frame) {
   const fillOpacity = primitive.props?.fillOpacity ?? 0.3
   const series = createSeriesPoints(primitive, frame)
   const areaPath = createAreaPath()
+    .curve(curveOf(primitive))
     .defined((point) => Number.isFinite(point.y))
     .x((point) => point.x)
     .y0((point) => point.y0)
     .y1((point) => point.y)
   const linePath = createLinePath()
+    .curve(curveOf(primitive))
     .defined((point) => Number.isFinite(point.y))
     .x((point) => point.x)
     .y((point) => point.y)
@@ -81,14 +103,29 @@ export function renderBarSeries(primitive, frame) {
   const dataKey = primitive.props?.dataKey
   const fill = primitive.props?.fill || resolveSeriesColor(frame, dataKey)
   const { barWidth, groupStart } = getBarGeometry(primitive, frame)
+  // A stacked bar starts where the bars below it in its stack end.
+  const stacked = primitive.props?.stackId
+    ? createSeriesPoints(primitive, frame)
+    : null
 
   return svg`
     <g class="iw-chart-bar">
       ${entity.data.map((row, index) => {
         const value = Number.isFinite(row?.[dataKey]) ? row[dataKey] : 0
         const x = getCategoryX(scales, index) + groupStart
-        const y = value >= 0 ? scales.yScale(value) : scales.yScale(0)
-        const baseY = value >= 0 ? scales.yScale(0) : scales.yScale(value)
+        const point = stacked?.[index]
+        const y = point
+          ? Number.isFinite(point.y)
+            ? point.y
+            : point.y0
+          : value >= 0
+            ? scales.yScale(value)
+            : scales.yScale(0)
+        const baseY = point
+          ? point.y0
+          : value >= 0
+            ? scales.yScale(0)
+            : scales.yScale(value)
         const tooltip = getTooltipBindings(
           frame,
           primitive,
@@ -177,9 +214,12 @@ export function getCartesianTooltipAnchor(frame, { index, dataKey }) {
     const value = frame.entity.data[index][dataKey]
     if (!Number.isFinite(value)) return null
     const { barWidth, groupStart } = getBarGeometry(series, frame)
+    const top = series.props?.stackId
+      ? createSeriesPoints(series, frame)[index].y
+      : frame.scales.yScale(Math.max(0, value))
     return {
       x: getCategoryX(frame.scales, index) + groupStart + barWidth / 2,
-      y: frame.scales.yScale(Math.max(0, value)),
+      y: top,
     }
   }
 
@@ -187,12 +227,20 @@ export function getCartesianTooltipAnchor(frame, { index, dataKey }) {
   return Number.isFinite(point?.y) ? { x: point.x, y: point.y } : null
 }
 
-// Bars of several series share each category, side by side. They always fit
-// within it: with many categories they get thin rather than overlapping.
+// Bars of several series share each category, side by side, except that the
+// bars of one stack share a single place, one on top of the other. They
+// always fit within the category: with many categories they get thin rather
+// than overlapping.
 function getBarGeometry(primitive, frame) {
-  const barPrimitives = frame.primitives.filter((item) => item.type === "bar")
-  const barIndex = barPrimitives.indexOf(primitive)
+  const slots = []
+  frame.primitives
+    .filter((item) => item.type === "bar")
+    .forEach((item) => {
+      const slot = item.props?.stackId ?? item
+      if (!slots.includes(slot)) slots.push(slot)
+    })
+  const slotIndex = slots.indexOf(primitive.props?.stackId ?? primitive)
   const groupWidth = getBarGroupWidth(frame)
-  const barWidth = groupWidth / Math.max(1, barPrimitives.length)
-  return { barWidth, groupStart: -groupWidth / 2 + barWidth * barIndex }
+  const barWidth = groupWidth / Math.max(1, slots.length)
+  return { barWidth, groupStart: -groupWidth / 2 + barWidth * slotIndex }
 }

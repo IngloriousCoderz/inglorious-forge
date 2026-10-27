@@ -69,7 +69,7 @@ function getPlottedKeys(entity, primitives) {
 function getYDomain(rows, plottedKeys, primitives) {
   if (!Array.isArray(rows) || rows.length === 0) return [0, 1]
 
-  const stackGroups = collectAreaStackGroups(primitives)
+  const stackGroups = collectStackGroups(primitives)
   const values = []
 
   rows.forEach((row) => {
@@ -92,18 +92,21 @@ function getYDomain(rows, plottedKeys, primitives) {
   return [lowerBound, upperBound]
 }
 
-function collectAreaStackGroups(primitives) {
+// Areas and bars stack, each with others of their kind sharing a `stackId`:
+// the axis has to reach the top of the tallest stack.
+function collectStackGroups(primitives) {
   const groups = new Map()
 
   primitives.forEach((primitive) => {
-    if (primitive.type !== "area") return
+    if (primitive.type !== "area" && primitive.type !== "bar") return
     const stackId = primitive.props?.stackId
     const dataKey = primitive.props?.dataKey
     if (!stackId || !dataKey) return
 
-    const keys = groups.get(stackId) || []
+    const group = `${primitive.type}:${stackId}`
+    const keys = groups.get(group) || []
     keys.push(dataKey)
-    groups.set(stackId, keys)
+    groups.set(group, keys)
   })
 
   return [...groups.values()]

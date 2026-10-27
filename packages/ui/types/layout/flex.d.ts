@@ -16,7 +16,7 @@ export interface FlexProps {
   wrap?: "nowrap" | "wrap" | "wrap-reverse"
   justify?: "start" | "center" | "end" | "between" | "around" | "evenly"
   align?: "stretch" | "start" | "center" | "end" | "baseline"
-  gap?: "none" | "sm" | "md" | "lg" | "xl"
+  gap?: "none" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl"
   padding?: "none" | "sm" | "md" | "lg" | "xl"
   overflow?: "visible" | "hidden" | "clip" | "scroll" | "auto"
   isInline?: boolean

@@ -13,6 +13,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@iconify-json/lucide": "^1.2.147",
+    "@inglorious/charts": "workspace:*",
     "@inglorious/openui": "workspace:*",
     "@inglorious/store": "workspace:*",
     "@inglorious/ui": "workspace:*",

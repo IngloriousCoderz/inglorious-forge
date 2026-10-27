@@ -1,4 +1,7 @@
+import sell from "@iconify-icons/material-symbols/sell"
+
 import { createRender } from "../../stories/notify-story.js"
+import { Icon } from "../icon"
 import { Chip } from "."
 
 export default {
@@ -7,6 +10,10 @@ export default {
   render: createRender(Chip),
   argTypes: {
     children: { control: "text", description: "Chip label content." },
+    icon: {
+      control: false,
+      description: "Shown before the label, such as an `Icon.render(...)`.",
+    },
     isRemovable: {
       control: "boolean",
       description: "Shows a remove affordance and emits `#id:remove`.",
@@ -53,5 +60,15 @@ export const Default = {
     color: "default",
     size: "md",
     shape: "pill",
+  },
+}
+
+export const WithIcon = {
+  args: {
+    ...Default.args,
+    children: "Paid",
+    icon: Icon.render({ icon: sell, size: "sm" }),
+    isRemovable: false,
+    color: "success",
   },
 }

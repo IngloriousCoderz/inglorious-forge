@@ -6,8 +6,9 @@
 const OLLAMA_URL = import.meta.env.VITE_OLLAMA_URL ?? "http://localhost:11434"
 const MODEL = import.meta.env.VITE_OLLAMA_MODEL ?? "qwen3:8b"
 
-// Enough for the library's prompt, its examples and a few turns of history.
-const CONTEXT_TOKENS = 8192
+// Enough for the library's prompt with its tools and examples (about 7k
+// tokens), a few turns of history and the answer.
+const CONTEXT_TOKENS = 16384
 // Low, so the model sticks to the syntax it was shown.
 const TEMPERATURE = 0.2
 

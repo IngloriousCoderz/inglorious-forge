@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/openui",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Generative UI for Inglorious Web: render OpenUI Lang from a model, streamed into a store entity, with Inglorious UI components.",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -24,6 +24,10 @@
     ".": {
       "types": "./types/index.d.ts",
       "import": "./src/index.js"
+    },
+    "./charts": {
+      "types": "./types/charts.d.ts",
+      "import": "./src/library/charts.js"
     }
   },
   "files": [
@@ -46,10 +50,17 @@
     "zod": "^4.6.7"
   },
   "peerDependencies": {
+    "@inglorious/charts": "workspace:*",
     "@inglorious/ui": "workspace:*",
     "@inglorious/web": "workspace:*"
   },
+  "peerDependenciesMeta": {
+    "@inglorious/charts": {
+      "optional": true
+    }
+  },
   "devDependencies": {
+    "@inglorious/charts": "workspace:*",
     "@inglorious/eslint-config": "workspace:*",
     "@inglorious/store": "workspace:*",
     "@inglorious/ui": "workspace:*",

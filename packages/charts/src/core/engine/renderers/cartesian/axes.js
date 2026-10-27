@@ -3,6 +3,7 @@
 import { svg } from "@inglorious/web"
 import { format } from "d3-format"
 
+import { AXIS_LABEL_ROOM } from "../../../defaults.js"
 import { themeColor } from "../../theme.js"
 import { getCategoryX } from "./shared.js"
 
@@ -80,6 +81,20 @@ export function renderXAxis(primitive, frame) {
           </text>
         `
       })}
+      ${
+        primitive.props?.label
+          ? svg`<text
+              class="iw-chart-axis-label"
+              x=${dimensions.plotLeft + dimensions.plotWidth / 2}
+              y=${dimensions.plotBottom + 24 + AXIS_LABEL_ROOM}
+              style="fill: ${TICK_COLOR}"
+              font-size=${TICK_FONT_SIZE}
+              text-anchor="middle"
+            >
+              ${primitive.props.label}
+            </text>`
+          : ""
+      }
     </g>
   `
 }
@@ -111,6 +126,19 @@ export function renderYAxis(primitive, frame) {
           </text>
         `
       })}
+      ${
+        primitive.props?.label
+          ? svg`<text
+              class="iw-chart-axis-label"
+              transform="translate(${TICK_FONT_SIZE}, ${dimensions.plotTop + dimensions.plotHeight / 2}) rotate(-90)"
+              style="fill: ${TICK_COLOR}"
+              font-size=${TICK_FONT_SIZE}
+              text-anchor="middle"
+            >
+              ${primitive.props.label}
+            </text>`
+          : ""
+      }
     </g>
   `
 }

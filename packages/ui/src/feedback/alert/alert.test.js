@@ -57,4 +57,12 @@ describe("alert", () => {
     expect(trailing.querySelector(".iw-alert-action").textContent).toBe("Undo")
     expect(trailing.querySelector(".iw-alert-close")).not.toBeNull()
   })
+
+  it("has a neutral severity", () => {
+    const container = document.createElement("div")
+
+    render(Alert.render({ severity: "neutral", title: "Note" }), container)
+
+    expect(container.querySelector(".iw-alert-neutral")).not.toBeNull()
+  })
 })

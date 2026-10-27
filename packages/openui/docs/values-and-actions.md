@@ -14,7 +14,7 @@ Here it lives in the entity's `values`, which keeps only what differs from the d
 A field bound to a `$variable` shows it and writes back to it as the user types:
 
 ```text
-search = Input("search", "Filter by customer", "text", $query)
+search = Input("search", "Filter by customer", "text", null, $query)
 matches = TextContent("Showing " + $query)
 ```
 
@@ -35,7 +35,7 @@ save = Button("Save report", Action([@Set($saved, true), @ToAssistant("Saved the
 | `@ToAssistant(message)` | Announced as `openuiAction`, for the app to send back to the model.            |
 | `@OpenUrl(url)`         | Announced as `openuiAction`.                                                   |
 | A custom action         | Announced as `openuiAction`, under its own name.                               |
-| `@Run(query)`           | Skipped for now: `Query` and `Mutation` are not supported yet.                 |
+| `@Run(query)`           | Fetches a query again, or runs a mutation. See [Data from tools](tools.md).    |
 
 A button with no action sends its label back to the assistant.
 
@@ -62,4 +62,4 @@ const Chat = {
 
 The event carries `id` (the answer it came from), `type`, `params`, `humanFriendlyMessage`, and `formState`, every value the answer holds at that moment, so the model knows what the user had filled in.
 
-Next: [Components](components.md)
+Next: [Forms](forms.md)

@@ -80,4 +80,14 @@ describe("card", () => {
     root.click()
     expect(clicked).toBe(true)
   })
+
+  it("takes a sunk or clear surface", () => {
+    const container = document.createElement("div")
+
+    render(Card.render({ variant: "sunk", children: "x" }), container)
+    expect(container.querySelector(".iw-card-sunk")).not.toBeNull()
+
+    render(Card.render({ children: "x" }), container)
+    expect(container.querySelector(".iw-card-sunk")).toBeNull()
+  })
 })

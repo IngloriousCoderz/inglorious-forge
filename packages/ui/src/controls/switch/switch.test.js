@@ -96,4 +96,17 @@ describe("switch without an id", () => {
 
     expect(newValue).toBe(true)
   })
+
+  it("shows a description under the label", () => {
+    const container = document.createElement("div")
+
+    render(
+      Switch.render({ label: "Dark mode", description: "Easier at night" }),
+      container,
+    )
+
+    expect(container.querySelector(".iw-switch-description").textContent).toBe(
+      "Easier at night",
+    )
+  })
 })

@@ -1,12 +1,5 @@
-import { uiExamples, uiLibrary } from "@inglorious/openui"
-
+import { systemPrompt } from "./library.js"
 import { streamChat } from "./model.js"
-
-const SYSTEM_PROMPT = uiLibrary.prompt({
-  preamble:
-    "You are a helpful assistant. Answer every request with a small interface: figures in cards, lists as tables, and buttons for the obvious follow-ups.",
-  examples: uiExamples,
-})
 
 /**
  * The conversation. User messages keep their text; each answer is an OpenUI
@@ -87,7 +80,7 @@ function toModelMessages(messages, api) {
 async function streamAnswer({ answerId, messages, api }) {
   api.notify(`#${answerId}:streamStart`)
   try {
-    for await (const text of streamChat({ system: SYSTEM_PROMPT, messages })) {
+    for await (const text of streamChat({ system: systemPrompt, messages })) {
       api.notify(`#${answerId}:chunk`, text)
     }
     api.notify("#chat:answerEnd")

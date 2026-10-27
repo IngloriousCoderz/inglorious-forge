@@ -66,6 +66,8 @@ export const Settings = {
           label: network.isOnline
             ? "Accounting system reachable"
             : "Accounting system offline",
+          description:
+            "Turn it off to see sales stored locally, then sent once it is back.",
           isChecked: network.isOnline,
           color: network.isOnline ? "success" : "error",
           onChange: (isOnline) => api.notify(`#${network.id}:change`, isOnline),

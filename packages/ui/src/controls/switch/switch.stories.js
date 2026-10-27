@@ -7,6 +7,10 @@ export default {
   render: createRender(Switch),
   argTypes: {
     label: { control: "text", description: "Label text." },
+    description: {
+      control: "text",
+      description: "A line of detail under the label.",
+    },
     name: { control: "text", description: "Native input name." },
     isChecked: { control: "boolean", description: "Current checked state." },
     isDisabled: { control: "boolean", description: "Disables interaction." },
@@ -45,4 +49,10 @@ export const On = {}
 On.args = {
   ...Default.args,
   isChecked: true,
+}
+
+export const WithDescription = {}
+WithDescription.args = {
+  ...Default.args,
+  description: "Alerts when a payment is due or a budget runs out.",
 }

@@ -28,6 +28,7 @@ export function render(props) {
     id,
     isOpen = false,
     isModal = true,
+    size = "md",
     title,
     description,
     children,
@@ -54,7 +55,11 @@ export function render(props) {
   // also clicks the dialog, and must not close it.
   return html`<dialog
     id=${id || nothing}
-    class=${classMap({ "iw-dialog": true, ...extraClasses })}
+    class=${classMap({
+      "iw-dialog": true,
+      [`iw-dialog-${size}`]: true,
+      ...extraClasses,
+    })}
     aria-labelledby=${titleId || nothing}
     aria-describedby=${descriptionId || nothing}
     @pointerdown=${(event) => {

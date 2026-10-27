@@ -4,6 +4,8 @@ export interface DividerProps {
   id?: string
   orientation?: "horizontal" | "vertical"
   isInset?: boolean
+  /** Only visual: hidden from assistive tech, which otherwise announces a separator. */
+  isDecorative?: boolean
   [key: string]: unknown
 }
 

@@ -99,4 +99,20 @@ describe("radio group ids", () => {
     )
     expect(names).toEqual(["choice", "choice"])
   })
+
+  it("shows an option's description", () => {
+    const container = document.createElement("div")
+
+    render(
+      RadioGroup.render({
+        name: "plan",
+        options: [{ label: "Pro", value: "pro", description: "For teams" }],
+      }),
+      container,
+    )
+
+    expect(container.querySelector(".iw-radio-description").textContent).toBe(
+      "For teams",
+    )
+  })
 })

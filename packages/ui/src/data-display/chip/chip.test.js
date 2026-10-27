@@ -1,3 +1,4 @@
+import { html } from "@inglorious/web"
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
@@ -26,5 +27,16 @@ describe("chip", () => {
     expect(element.classList.contains("iw-chip-warning")).toBe(true)
     expect(element.classList.contains("iw-chip-shape-square")).toBe(true)
     expect(isClicked).toBe(true)
+  })
+
+  it("shows an icon before the label", () => {
+    const container = document.createElement("div")
+
+    render(
+      Chip.render({ icon: html`<svg></svg>`, children: "Paid" }),
+      container,
+    )
+
+    expect(container.querySelector(".iw-chip-icon svg")).not.toBeNull()
   })
 })

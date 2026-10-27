@@ -23,4 +23,16 @@ describe("divider", () => {
     expect(root.classList.contains("iw-divider-vertical")).toBe(true)
     expect(root.classList.contains("iw-divider-inset")).toBe(true)
   })
+
+  it("hides a decorative divider from assistive tech", () => {
+    const container = document.createElement("div")
+
+    render(Divider.render({ isDecorative: true }), container)
+    expect(container.querySelector("hr").getAttribute("role")).toBe("none")
+
+    render(Divider.render({ orientation: "vertical" }), container)
+    expect(container.querySelector("hr").getAttribute("aria-orientation")).toBe(
+      "vertical",
+    )
+  })
 })

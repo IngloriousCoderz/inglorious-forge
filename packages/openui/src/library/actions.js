@@ -1,10 +1,10 @@
 import { Button as UiButton } from "@inglorious/ui/button"
 import { Flex } from "@inglorious/ui/flex"
-import { action, defineComponent } from "@openuidev/lang-core"
+import { action, ACTION_STEPS, defineComponent } from "@openuidev/lang-core"
 import { z } from "zod"
 
 const VARIANTS = { primary: "default", secondary: "outline", tertiary: "ghost" }
-const SIZES = { "extra-small": "sm", small: "sm", medium: "md", large: "lg" }
+const SIZES = { "extra-small": "xs", small: "sm", medium: "md", large: "lg" }
 
 export const Button = defineComponent({
   name: "Button",
@@ -17,7 +17,7 @@ export const Button = defineComponent({
     type: z.enum(["normal", "destructive"]).optional(),
     size: z.enum(["extra-small", "small", "medium", "large"]).optional(),
   }),
-  component: ({ props, isStreaming, triggerAction }) => {
+  component: ({ props, isStreaming, triggerAction, validateForm }) => {
     const variant = props.variant ?? "primary"
     return UiButton.render({
       children: props.label,
@@ -31,7 +31,12 @@ export const Button = defineComponent({
       size: SIZES[props.size ?? "medium"],
       // Until the answer is whole, an action could act on half of it.
       isDisabled: isStreaming,
-      onClick: () => triggerAction(props.label, undefined, props.action),
+      onClick: () => {
+        // In a Form, the primary button checks the fields before acting on them.
+        const isChecked = variant === "primary" && validateForm
+        if (isChecked && sendsFields(props.action) && !validateForm()) return
+        triggerAction(props.label, undefined, props.action)
+      },
     })
   },
 })
@@ -51,3 +56,18 @@ export const Buttons = defineComponent({
       children: renderNode(props.buttons),
     }),
 })
+
+/**
+ * Whether an action takes the form's values somewhere: to the assistant, to
+ * a mutation or to a custom action. Setting a value or opening a link does
+ * not need the fields to be valid.
+ */
+function sendsFields(action) {
+  if (!action?.steps) return true
+  return action.steps.some(
+    (step) =>
+      step.type === ACTION_STEPS.ToAssistant ||
+      step.type === "custom_action" ||
+      (step.type === ACTION_STEPS.Run && step.refType === "mutation"),
+  )
+}

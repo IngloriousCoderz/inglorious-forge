@@ -12,6 +12,11 @@ export interface CardProps {
     | "footer"
     | "nav"
     | "aside"
+  /**
+   * The surface: raised (`"default"`), `"sunk"` into the page for content
+   * inside another surface, or `"clear"` with none.
+   */
+  variant?: "default" | "sunk" | "clear"
   title?: TemplateResult | string | number
   subtitle?: TemplateResult | string | number
   header?: TemplateResult | string | number

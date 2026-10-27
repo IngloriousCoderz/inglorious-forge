@@ -7,7 +7,7 @@ import { html } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
 
 /**
- * Renders a compact chip label with optional remove action.
+ * Renders a compact chip label with an optional leading icon and remove action.
  * Use chips for tags, filters, or selected values.
  * @param {ChipProps} props
  * @returns {TemplateResult}
@@ -15,6 +15,7 @@ import { classMap } from "@inglorious/web/directives/class-map"
 export function render(props) {
   const {
     children,
+    icon,
     isRemovable = false,
     color = "default",
     size = "md",
@@ -30,6 +31,7 @@ export function render(props) {
   }
 
   return html`<span class=${classMap(classes)}>
+    ${icon ? html`<span class="iw-chip-icon" aria-hidden="true">${icon}</span>` : null}
     <span class="iw-chip-label">${children}</span>
     ${
       isRemovable

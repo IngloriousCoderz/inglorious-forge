@@ -101,4 +101,63 @@ describe("slider accessibility", () => {
     expect(input.hasAttribute("id")).toBe(false)
     expect(input.getAttribute("aria-label")).toBe("Volume")
   })
+
+  it("has two thumbs for a [low, high] value", () => {
+    let newValue = null
+    const container = document.createElement("div")
+    document.body.append(container)
+
+    render(
+      Slider.render({
+        name: "price",
+        label: "Price",
+        value: [20, 60],
+        onChange: (value) => (newValue = value),
+      }),
+      container,
+    )
+
+    const [low, high] = container.querySelectorAll('input[type="range"]')
+    expect(low.value).toBe("20")
+    expect(high.value).toBe("60")
+    expect(low.getAttribute("aria-label")).toBe("Price minimum")
+    expect(container.querySelector("output").textContent).toBe("20 – 60")
+
+    high.value = "80"
+    high.dispatchEvent(new Event("input", { bubbles: true }))
+    expect(newValue).toEqual([20, 80])
+    container.remove()
+  })
+
+  it("keeps a range's thumbs from crossing", () => {
+    let newValue = null
+    const container = document.createElement("div")
+    document.body.append(container)
+
+    render(
+      Slider.render({
+        value: [20, 60],
+        onChange: (value) => (newValue = value),
+      }),
+      container,
+    )
+
+    const [low] = container.querySelectorAll('input[type="range"]')
+    low.value = "90"
+    low.dispatchEvent(new Event("input", { bubbles: true }))
+
+    expect(newValue).toEqual([60, 60])
+    container.remove()
+  })
+
+  it("draws a mark per step", () => {
+    const container = document.createElement("div")
+
+    render(
+      Slider.render({ min: 0, max: 10, step: 2, hasMarks: true }),
+      container,
+    )
+
+    expect(container.querySelectorAll(".iw-slider-marks span")).toHaveLength(6)
+  })
 })

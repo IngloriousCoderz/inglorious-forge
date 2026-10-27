@@ -6,7 +6,7 @@ export interface AlertProps {
   title?: TemplateResult | string | number
   description?: TemplateResult | string | number
   children?: TemplateResult | string | number
-  severity?: "info" | "success" | "warning" | "error"
+  severity?: "info" | "success" | "warning" | "error" | "neutral"
   variant?: "filled" | "outlined"
   icon?: TemplateResult | string | number
   action?: TemplateResult | string | number

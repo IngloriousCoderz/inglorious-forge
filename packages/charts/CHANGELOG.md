@@ -1,5 +1,17 @@
 # @inglorious/charts
 
+## 12.0.0
+
+### Major Changes
+
+- A chart's `stacked` option is now `isStacked`, named like every other boolean.
+
+  **Breaking change, and how to migrate:** rename `stacked: true` to `isStacked: true` on stacked area charts in config mode.
+
+### Minor Changes
+
+- Bar charts stack: `Bar({ stackId })` in composition, or `isStacked: true` in config, puts the bars of a stack in one place per category, one on top of the other, and the y axis reaches the top of the tallest stack. Lines and areas take a `curve`, `"linear"` (the default), `"natural"`, `"monotone"` or `"step"`. Axes take a `label`, or `xAxisLabel` and `yAxisLabel` in config, drawn as a title beside them. Pies take `startAngle` and `endAngle`, in degrees clockwise from twelve o'clock, so `-90` to `90` draws a half pie.
+
 ## 11.1.7
 
 ### Patch Changes

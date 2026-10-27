@@ -2,6 +2,7 @@ import {
   Bar,
   CartesianGrid,
   Chart,
+  Legend,
   Tooltip,
   XAxis,
   YAxis,
@@ -54,6 +55,34 @@ export function renderBarSection(api) {
               XAxis({ dataKey: "label" }),
               YAxis(),
               Bar({ dataKey: "value" }),
+              Tooltip(),
+            ],
+          },
+          api,
+        )}
+      </section>
+    </div>
+
+    <div class="charts-comparison">
+      <section class="chart-section">
+        <h2>Stacked Bar Chart - Config Style (isStacked, axis titles)</h2>
+        ${api.render("stackedBarChart")}
+      </section>
+
+      <section class="chart-section">
+        <h2>Stacked Bar Chart - Composition (stackId)</h2>
+        ${Chart.render(
+          {
+            entity: "stackedBarChartComposition",
+            width: 800,
+            height: 400,
+            children: [
+              CartesianGrid({ strokeDasharray: "3 3" }),
+              XAxis({ dataKey: "label", label: "Quarter" }),
+              YAxis({ label: "Sales" }),
+              Bar({ dataKey: "online", stackId: "sales" }),
+              Bar({ dataKey: "shop", stackId: "sales" }),
+              Legend(),
               Tooltip(),
             ],
           },

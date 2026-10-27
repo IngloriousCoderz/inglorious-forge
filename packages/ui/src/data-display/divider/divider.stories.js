@@ -17,6 +17,11 @@ export default {
       control: "boolean",
       description: "Applies start inset for sectional separators.",
     },
+    isDecorative: {
+      control: "boolean",
+      description:
+        "Only visual: hidden from assistive tech, which otherwise announces a separator.",
+    },
   },
   parameters: {
     docs: {
@@ -29,6 +34,10 @@ export default {
 
 export const Default = {
   args: {},
+}
+
+export const Decorative = {
+  args: { isDecorative: true },
 }
 
 export const Vertical = {

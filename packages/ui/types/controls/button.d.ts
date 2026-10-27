@@ -13,7 +13,7 @@ export interface ButtonProps {
     | "warning"
     | "error"
     | "info"
-  size?: "sm" | "md" | "lg"
+  size?: "xs" | "sm" | "md" | "lg"
   shape?: "rectangle" | "pill" | "round" | "square"
   isDisabled?: boolean
   isPressed?: boolean

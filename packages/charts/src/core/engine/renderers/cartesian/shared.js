@@ -109,10 +109,12 @@ export function createSeriesPoints(primitive, frame) {
   const { entity, scales } = frame
   const dataKey = primitive.props?.dataKey
   const stackId = primitive.props?.stackId
+  // Bars stack with bars; areas, and the dots placed on them, with areas.
+  const stackKind = primitive.type === "bar" ? "bar" : "area"
   const stackedKeys = stackId
     ? frame.primitives
         .filter(
-          (item) => item.type === "area" && item.props?.stackId === stackId,
+          (item) => item.type === stackKind && item.props?.stackId === stackId,
         )
         .map((item) => item.props?.dataKey)
     : []

@@ -127,4 +127,23 @@ describe("accordion", () => {
     )
     expect(names).toEqual(["faq", "faq"])
   })
+
+  it("reads the element's state from a toggle event without newState", () => {
+    let payload = null
+    const container = document.createElement("div")
+
+    render(
+      Accordion.render({
+        items: [{ title: "A", isExpanded: false }],
+        onItemToggle: (_, __, expanded) => (payload = expanded),
+      }),
+      container,
+    )
+
+    const details = container.querySelector("details")
+    details.open = true
+    details.dispatchEvent(new Event("toggle"))
+
+    expect(payload).toBe(true)
+  })
 })

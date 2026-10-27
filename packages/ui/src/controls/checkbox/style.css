@@ -14,6 +14,17 @@
     accent-color: var(--iw-checkbox-accent);
   }
 
+  /* With a description, the label and it stack beside the box. */
+  .iw-checkbox-text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .iw-checkbox-description {
+    font-size: var(--iw-font-size-sm);
+    color: var(--iw-color-text-secondary);
+  }
+
   .iw-checkbox-label {
     font-size: var(--iw-font-size-base);
     line-height: var(--iw-line-height-normal);

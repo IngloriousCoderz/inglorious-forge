@@ -7,10 +7,23 @@
   color: var(--iw-color-text);
   border-radius: var(--iw-radius-md);
   border: 1px solid color-mix(in srgb, var(--iw-color-border) 70%, transparent);
-  min-width: min(32rem, 90vw);
-  max-width: min(48rem, 90vw);
   box-shadow: var(--iw-shadow-lg, 0 12px 40px rgba(0, 0, 0, 0.3));
   padding: 0;
+}
+
+.iw-dialog-sm {
+  min-width: min(20rem, 90vw);
+  max-width: min(28rem, 90vw);
+}
+
+.iw-dialog-md {
+  min-width: min(32rem, 90vw);
+  max-width: min(48rem, 90vw);
+}
+
+.iw-dialog-lg {
+  min-width: min(40rem, 90vw);
+  max-width: min(64rem, 90vw);
 }
 
 .iw-dialog::backdrop {

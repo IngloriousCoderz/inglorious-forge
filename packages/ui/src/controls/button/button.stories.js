@@ -32,7 +32,7 @@ export default {
     },
     size: {
       control: "select",
-      options: ["sm", "md", "lg"],
+      options: ["xs", "sm", "md", "lg"],
       description: "Size scale for paddings and font-size.",
     },
     shape: {
@@ -104,6 +104,12 @@ export const Ghost = {}
 Ghost.args = {
   ...Default.args,
   variant: "ghost",
+}
+
+export const ExtraSmall = {}
+ExtraSmall.args = {
+  ...Default.args,
+  size: "xs",
 }
 
 export const Small = {}

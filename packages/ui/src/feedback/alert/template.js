@@ -11,7 +11,8 @@ import { applyElementProps } from "../../shared/apply-element-props.js"
 
 /**
  * Renders an alert message with optional title, description, icon, and actions.
- * Supports severity and variant styles for info, success, warning, and error.
+ * Supports severity and variant styles for info, success, warning, error and
+ * neutral, a plain note.
  * @param {AlertProps} props
  * @returns {TemplateResult}
  */

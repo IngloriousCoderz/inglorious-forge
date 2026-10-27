@@ -63,8 +63,14 @@ export interface ChartConfig {
   /** Defaults to false. */
   hasTooltip?: boolean
   brush?: ChartBrush
-  /** Stacks the series of an area chart. */
-  stacked?: boolean
+  /** Stacks the series of an area or bar chart. */
+  isStacked?: boolean
+  /** How the lines of a line or area chart run between points. Defaults to `"linear"`. */
+  curve?: ChartCurve
+  /** A title under the x axis. */
+  xAxisLabel?: string
+  /** A title beside the y axis. */
+  yAxisLabel?: string
   /** Draws a dot on each point of a line or area chart. Defaults to true for lines, false for areas. */
   hasDots?: boolean
   /** The series of a `Composed` chart. */
@@ -85,7 +91,17 @@ export interface ChartConfig {
   outerRadius?: ChartLength
   /** Pie and donut charts: a donut's hole. Defaults to 0. */
   innerRadius?: ChartLength
+  /**
+   * Pie and donut charts: where the slices start and end, in degrees
+   * clockwise from twelve o'clock. `-90` to `90` draws the top half.
+   * Default to 0 and a full turn after the start.
+   */
+  startAngle?: number
+  endAngle?: number
 }
+
+/** How a line runs between points: straight, smoothed, or in steps. */
+export type ChartCurve = "linear" | "natural" | "monotone" | "step"
 
 /**
  * A chart entity in config mode. Its `type` picks the chart: `"Line"`,
@@ -173,11 +189,15 @@ export interface XAxisProps {
   interval?: number
   /** The least space between labels, in pixels, when fitting them. Defaults to 5. */
   minTickGap?: number
+  /** A title under the axis. */
+  label?: string
 }
 
 export interface YAxisProps {
   /** Turns each tick value into its label. Defaults to thousands separators: `1,000`. */
   tickFormatter?: (value: number) => string
+  /** A title beside the axis. */
+  label?: string
 }
 
 /** What every series primitive shares. */
@@ -193,6 +213,8 @@ export interface LineProps extends SeriesProps {
   /** Defaults to 3. */
   strokeWidth?: SvgNumber
   hasDots?: boolean
+  /** How the line runs between points. Defaults to `"linear"`. */
+  curve?: ChartCurve
 }
 
 export interface AreaProps extends SeriesProps {
@@ -205,10 +227,14 @@ export interface AreaProps extends SeriesProps {
   hasDots?: boolean
   /** Areas with the same `stackId` stack on each other. */
   stackId?: string
+  /** How the edge runs between points. Defaults to `"linear"`. */
+  curve?: ChartCurve
 }
 
 export interface BarProps extends SeriesProps {
   fill?: string
+  /** Bars with the same `stackId` stack on each other, in one place per category. */
+  stackId?: string
 }
 
 export interface DotsProps extends SeriesProps {
@@ -237,6 +263,9 @@ export interface PieProps {
   cy?: ChartLength
   outerRadius?: ChartLength
   innerRadius?: ChartLength
+  /** Where the slices start and end, in degrees clockwise from twelve o'clock. */
+  startAngle?: number
+  endAngle?: number
 }
 
 export interface TooltipProps {

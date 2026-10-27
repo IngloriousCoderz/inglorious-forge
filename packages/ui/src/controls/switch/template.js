@@ -22,6 +22,7 @@ export function render(props) {
     type, // eslint-disable-line no-unused-vars
     name = "",
     label = "",
+    description,
     isChecked = false,
     isDisabled = false,
     color = "primary",
@@ -57,7 +58,16 @@ export function render(props) {
       <span class="iw-switch-track" aria-hidden="true">
         <span class="iw-switch-thumb"></span>
       </span>
-      ${label ? html`<span class="iw-switch-label">${label}</span>` : null}
+      ${
+        description
+          ? html`<span class="iw-switch-text">
+              ${label ? html`<span class="iw-switch-label">${label}</span>` : null}
+              <span class="iw-switch-description">${description}</span>
+            </span>`
+          : label
+            ? html`<span class="iw-switch-label">${label}</span>`
+            : null
+      }
     </label>
   `
 }

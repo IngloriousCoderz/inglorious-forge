@@ -139,6 +139,37 @@ export const entities = {
     ],
   },
 
+  // Smooth Line Chart with axis titles - Config Style
+  smoothLineChart: {
+    type: "Line",
+    data: [
+      { label: "Mon", value: 12 },
+      { label: "Tue", value: 30 },
+      { label: "Wed", value: 18 },
+      { label: "Thu", value: 42 },
+      { label: "Fri", value: 26 },
+    ],
+    width: 800,
+    height: 400,
+    hasGrid: true,
+    hasTooltip: true,
+    curve: "natural",
+    xAxisLabel: "Day",
+    yAxisLabel: "Orders",
+  },
+
+  // Step Line Chart - Composition Style
+  stepLineChartComposition: {
+    type: "Line",
+    data: [
+      { label: "Mon", value: 12 },
+      { label: "Tue", value: 30 },
+      { label: "Wed", value: 18 },
+      { label: "Thu", value: 42 },
+      { label: "Fri", value: 26 },
+    ],
+  },
+
   // Realtime Line Chart - Sliding Window (Config Style)
   realtimeLineChartConfig: {
     type: "Line-rt",
@@ -324,7 +355,7 @@ export const entities = {
     height: 400,
     hasGrid: true,
     hasTooltip: true,
-    stacked: true,
+    isStacked: true,
     hasLegend: true,
   },
 
@@ -389,9 +420,57 @@ export const entities = {
     ],
   },
 
+  // Stacked Bar Chart with axis titles - Config Style
+  stackedBarChart: {
+    type: "Bar",
+    data: [
+      { label: "Q1", online: 120, shop: 80 },
+      { label: "Q2", online: 150, shop: 95 },
+      { label: "Q3", online: 110, shop: 130 },
+      { label: "Q4", online: 190, shop: 160 },
+    ],
+    width: 800,
+    height: 400,
+    hasGrid: true,
+    hasTooltip: true,
+    hasLegend: true,
+    isStacked: true,
+    xAxisLabel: "Quarter",
+    yAxisLabel: "Sales",
+  },
+
+  // Stacked Bar Chart - Composition Style
+  stackedBarChartComposition: {
+    type: "Bar",
+    data: [
+      { label: "Q1", online: 120, shop: 80 },
+      { label: "Q2", online: 150, shop: 95 },
+      { label: "Q3", online: 110, shop: 130 },
+      { label: "Q4", online: 190, shop: 160 },
+    ],
+  },
+
   // ============================================
   // PIE CHARTS
   // ============================================
+
+  // Half Pie Chart - Config Style
+  halfPieChart: {
+    type: "Donut",
+    data: [
+      { label: "Rent", value: 900 },
+      { label: "Food", value: 380 },
+      { label: "Transport", value: 160 },
+      { label: "Fun", value: 120 },
+    ],
+    width: 500,
+    height: 300,
+    startAngle: -90,
+    endAngle: 90,
+    cy: "75%",
+    outerRadius: "90%",
+    hasTooltip: true,
+  },
 
   // Pie Chart - Config Style
   categoryPieChart: {

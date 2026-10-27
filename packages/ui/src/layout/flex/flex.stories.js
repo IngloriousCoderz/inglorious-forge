@@ -30,7 +30,7 @@ export default {
     },
     gap: {
       control: "select",
-      options: ["none", "sm", "md", "lg", "xl"],
+      options: ["none", "xs", "sm", "md", "lg", "xl", "2xl"],
       description: "Spacing between children.",
     },
     padding: {

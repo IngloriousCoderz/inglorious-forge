@@ -55,6 +55,7 @@ export function render(props) {
       ${options.map((option, index) => {
         const {
           label: optionLabel,
+          description: optionDescription,
           value: optionValue,
           isDisabled: optionDisabled = false,
           ...optionRest
@@ -73,7 +74,16 @@ export function render(props) {
               @change=${(event) => onChange?.(event.target.value)}
               ${ref((element) => applyElementProps(element, optionRest))}
             />
-            <span>${optionLabel}</span>
+            ${
+              optionDescription
+                ? html`<span class="iw-radio-text">
+                    <span>${optionLabel}</span>
+                    <span class="iw-radio-description"
+                      >${optionDescription}</span
+                    >
+                  </span>`
+                : html`<span>${optionLabel}</span>`
+            }
           </label>
         `
       })}

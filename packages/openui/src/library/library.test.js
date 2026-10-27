@@ -47,7 +47,7 @@ tbl = Table([Col("Name", ["Ada", "Alan"]), Col("Born", [1815, 1912], "number")])
 
   it("renders components inside table cells", async () => {
     const container = await renderAnswer(
-      'root = Stack([Table([Col("Status", [Tag("Open", "sm", "success")])])])\n',
+      'root = Stack([Table([Col("Status", [Tag("Open", null, "sm", "success")])])])\n',
     )
 
     expect(container.querySelector("td .iw-chip").textContent.trim()).toBe(

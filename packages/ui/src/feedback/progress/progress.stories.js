@@ -8,6 +8,11 @@ export default {
   argTypes: {
     variant: { control: "select", options: ["linear", "circular"] },
     value: { control: "number" },
+    ariaLabel: {
+      control: "text",
+      description:
+        'Names the indicator for assistive tech, e.g. "Uploading photo".',
+    },
     size: { control: "number" },
     thickness: { control: "number" },
     color: {

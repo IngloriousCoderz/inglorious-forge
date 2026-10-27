@@ -1619,6 +1619,12 @@ importers:
 
   examples/apps/web-openui-chat:
     dependencies:
+      "@iconify-json/lucide":
+        specifier: ^1.2.147
+        version: 1.2.147
+      "@inglorious/charts":
+        specifier: workspace:*
+        version: link:../../../packages/charts
       "@inglorious/openui":
         specifier: workspace:*
         version: link:../../../packages/openui
@@ -2297,6 +2303,9 @@ importers:
         specifier: ^4.6.7
         version: 4.6.7
     devDependencies:
+      "@inglorious/charts":
+        specifier: workspace:*
+        version: link:../charts
       "@inglorious/eslint-config":
         specifier: workspace:*
         version: link:../eslint-config
@@ -4381,6 +4390,12 @@ packages:
     resolution:
       {
         integrity: sha512-Q1VS2nFm3cGin1OpSnUhptUgU+9vs3fx2+RM3Pc6BoNJXs6vaAIjot2uxZ5RBnMqwtpc/gKvRDa+5kGFLlx9EQ==,
+      }
+
+  "@iconify-json/lucide@1.2.147":
+    resolution:
+      {
+        integrity: sha512-7Qqa/joSBeUxihWsQJx5nKcqMWtV3YrH90Jldxcx4J9ciTLavRUlpexQwRTcx9dcb7CJpISfjZTj42zD/30sqA==,
       }
 
   "@iconify-json/simple-icons@1.2.94":
@@ -14283,6 +14298,10 @@ snapshots:
       "@iconify/types": 2.0.0
 
   "@iconify-icons/material-symbols@2.0.6":
+    dependencies:
+      "@iconify/types": 2.0.0
+
+  "@iconify-json/lucide@1.2.147":
     dependencies:
       "@iconify/types": 2.0.0
 

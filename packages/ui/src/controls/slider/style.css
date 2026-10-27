@@ -23,6 +23,108 @@
     accent-color: var(--iw-slider-accent);
   }
 
+  /* A tick per step, under the track: their ends sit under the thumb's ends
+     of travel, half a thumb in from the track's. */
+  .iw-slider-marks {
+    display: flex;
+    justify-content: space-between;
+    padding-inline: calc(var(--iw-slider-thumb, 1rem) / 2);
+
+    span {
+      inline-size: 1px;
+      block-size: var(--iw-space-2);
+      background: var(--iw-color-border);
+    }
+  }
+
+  /* Two thumbs on one track. The inputs lie on top of each other with their
+     own tracks hidden, and only their thumbs take presses, so either can be
+     dragged; the track below is drawn here, filled between the two. */
+  &.iw-slider-range {
+    --iw-slider-thumb: 1rem;
+
+    .iw-slider-track {
+      position: relative;
+      block-size: var(--iw-slider-thumb);
+
+      &::before,
+      &::after {
+        content: "";
+        position: absolute;
+        inset-block-start: 50%;
+        block-size: 0.25rem;
+        translate: 0 -50%;
+        border-radius: var(--iw-radius-full, 999px);
+      }
+
+      &::before {
+        inset-inline: 0;
+        background: color-mix(
+          in srgb,
+          var(--iw-slider-accent) 25%,
+          transparent
+        );
+      }
+
+      &::after {
+        inset-inline-start: var(--iw-slider-low);
+        inset-inline-end: calc(100% - var(--iw-slider-high));
+        background: var(--iw-slider-accent);
+      }
+    }
+
+    .iw-slider-input {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      margin: 0;
+      appearance: none;
+      background: transparent;
+      pointer-events: none;
+
+      &::-webkit-slider-runnable-track {
+        background: transparent;
+      }
+
+      &::-moz-range-track {
+        background: transparent;
+      }
+
+      &::-webkit-slider-thumb {
+        appearance: none;
+        inline-size: var(--iw-slider-thumb);
+        block-size: var(--iw-slider-thumb);
+        border: 2px solid var(--iw-color-surface);
+        border-radius: 50%;
+        background: var(--iw-slider-accent);
+        box-shadow: var(--iw-shadow-sm);
+        cursor: pointer;
+        pointer-events: auto;
+      }
+
+      &::-moz-range-thumb {
+        inline-size: var(--iw-slider-thumb);
+        block-size: var(--iw-slider-thumb);
+        border: 2px solid var(--iw-color-surface);
+        border-radius: 50%;
+        background: var(--iw-slider-accent);
+        box-shadow: var(--iw-shadow-sm);
+        cursor: pointer;
+        pointer-events: auto;
+      }
+
+      &:focus-visible::-webkit-slider-thumb {
+        outline: 2px solid var(--iw-slider-accent);
+        outline-offset: 2px;
+      }
+
+      &:focus-visible::-moz-range-thumb {
+        outline: 2px solid var(--iw-slider-accent);
+        outline-offset: 2px;
+      }
+    }
+  }
+
   &.iw-slider-full-width {
     width: 100%;
   }

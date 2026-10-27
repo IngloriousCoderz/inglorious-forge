@@ -7,6 +7,10 @@ export default {
   render: createRender(Checkbox),
   argTypes: {
     label: { control: "text", description: "Label text." },
+    description: {
+      control: "text",
+      description: "A line of detail under the label.",
+    },
     name: { control: "text", description: "Native HTML name attribute." },
     isChecked: { control: "boolean", description: "Current checked state." },
     isDisabled: { control: "boolean", description: "Disables interaction." },
@@ -47,4 +51,12 @@ export const Checked = {}
 Checked.args = {
   ...Default.args,
   isChecked: true,
+}
+
+export const WithDescription = {}
+WithDescription.args = {
+  ...Default.args,
+  label: "Weekly summary",
+  name: "summary",
+  description: "An email every Monday with last week's totals.",
 }

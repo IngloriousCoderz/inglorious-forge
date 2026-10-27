@@ -3,6 +3,7 @@ import { collectResultSync } from "@lit-labs/ssr/lib/render-result.js"
 import { describe, expect, it } from "vitest"
 
 import {
+  Bar,
   Brush,
   CartesianGrid,
   Chart,
@@ -279,5 +280,113 @@ describe("chart state", () => {
 
     expect(html).toContain("Apples")
     expect(html).toContain("3 (75%)")
+  })
+
+  describe("stacking, curves, axis titles and angles", () => {
+    const sales = [
+      { name: "Jan", online: 10, shop: 30 },
+      { name: "Feb", online: 20, shop: 20 },
+    ]
+
+    // Every bar's top and bottom edge, in drawing order.
+    const barEdges = (html) =>
+      [
+        ...html.matchAll(
+          /<rect x="([\d.-]+)" y="([\d.-]+)" width="[\d.]+" height="([\d.]+)"/g,
+        ),
+      ].map(([, x, y, height]) => ({
+        x: Number(x),
+        top: Number(y),
+        bottom: Number(y) + Number(height),
+      }))
+
+    it("stacks bars sharing a stackId in one place", () => {
+      const html = toHtml(
+        Chart.render({
+          data: sales,
+          children: [
+            XAxis({ dataKey: "name" }),
+            YAxis(),
+            Bar({ dataKey: "online", stackId: "a" }),
+            Bar({ dataKey: "shop", stackId: "a" }),
+          ],
+        }),
+      )
+
+      const [janOnline, , janShop] = barEdges(html)
+      expect(janShop.x).toBe(janOnline.x)
+      expect(janShop.bottom).toBeCloseTo(janOnline.top)
+    })
+
+    it("stacks bars in config mode with isStacked", () => {
+      const stacked = barEdges(
+        toHtml(Chart.render({ type: "bar", data: sales, isStacked: true })),
+      )
+      const grouped = barEdges(
+        toHtml(Chart.render({ type: "bar", data: sales })),
+      )
+
+      expect(new Set(stacked.map((bar) => bar.x)).size).toBe(2)
+      expect(new Set(grouped.map((bar) => bar.x)).size).toBe(4)
+    })
+
+    it("draws a line along the curve it names", () => {
+      // A curve needs three points: through two, every curve is straight.
+      const points = [
+        { name: "Jan", value: 10 },
+        { name: "Feb", value: 30 },
+        { name: "Mar", value: 15 },
+      ]
+      const path = (curve) =>
+        toHtml(
+          Chart.render({ type: "line", data: points, curve, hasDots: false }),
+        ).match(/<path d="([^"]+)" fill="none"/)[1]
+
+      expect(path("linear")).not.toContain("C")
+      expect(path("natural")).toContain("C")
+      expect(path("step")).not.toBe(path("linear"))
+    })
+
+    it("titles its axes", () => {
+      const html = toHtml(
+        Chart.render({
+          type: "bar",
+          data: sales,
+          xAxisLabel: "Month",
+          yAxisLabel: "Sales",
+        }),
+      )
+
+      expect(html).toContain("Month")
+      expect(html).toContain("Sales")
+      expect(html.match(/iw-chart-axis-label/g)).toHaveLength(2)
+    })
+
+    it("draws a pie between the angles it is given", () => {
+      const half = toHtml(
+        Chart.render({
+          type: "pie",
+          data: [
+            { label: "A", value: 1 },
+            { label: "B", value: 1 },
+          ],
+          startAngle: -90,
+          endAngle: 90,
+        }),
+      )
+      const full = toHtml(
+        Chart.render({
+          type: "pie",
+          data: [
+            { label: "A", value: 1 },
+            { label: "B", value: 1 },
+          ],
+        }),
+      )
+
+      expect(half).not.toBe(full)
+      // The first slice of the top half starts at nine o'clock.
+      expect(half).toMatch(/<path d="M-[\d.]+,0A/)
+    })
   })
 })

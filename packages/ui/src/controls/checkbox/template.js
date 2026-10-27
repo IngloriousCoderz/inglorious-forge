@@ -21,6 +21,7 @@ export function render(props) {
     type, // eslint-disable-line no-unused-vars
     name = "",
     label = "",
+    description,
     isChecked = false,
     isDisabled = false,
     isRequired = false,
@@ -54,7 +55,14 @@ export function render(props) {
         @change=${(event) => onChange?.(event.target.checked)}
         ${ref((element) => applyElementProps(element, rest))}
       />
-      <span class="iw-checkbox-label">${label}</span>
+      ${
+        description
+          ? html`<span class="iw-checkbox-text">
+              <span class="iw-checkbox-label">${label}</span>
+              <span class="iw-checkbox-description">${description}</span>
+            </span>`
+          : html`<span class="iw-checkbox-label">${label}</span>`
+      }
     </label>
   `
 }

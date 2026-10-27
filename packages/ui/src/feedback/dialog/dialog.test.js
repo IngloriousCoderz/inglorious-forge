@@ -132,6 +132,12 @@ describe("dialog", () => {
     expect(dialog.getAttribute("aria-labelledby")).toBe("confirm-title")
     expect(dialog.getAttribute("aria-describedby")).toBe("confirm-description")
   })
+
+  it("takes a size", () => {
+    const container = mount(Dialog.render({ size: "lg" }))
+
+    expect(container.querySelector("dialog.iw-dialog-lg")).not.toBeNull()
+  })
 })
 
 function mount(template) {
