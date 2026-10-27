@@ -1,6 +1,8 @@
 import { Card as UiCard } from "@inglorious/ui/card"
 import { Checkbox } from "@inglorious/ui/checkbox"
+import { Chip } from "@inglorious/ui/chip"
 import { Flex } from "@inglorious/ui/flex"
+import { Grid } from "@inglorious/ui/grid"
 import { Input as UiInput } from "@inglorious/ui/input"
 import { RadioGroup as UiRadioGroup } from "@inglorious/ui/radio-group"
 import { Select as UiSelect } from "@inglorious/ui/select"
@@ -14,6 +16,7 @@ import { z } from "zod"
 
 import { reactive } from "../reactive.js"
 import { Buttons } from "./actions.js"
+import { Icon, Image } from "./content.js"
 
 /** OpenUI's field sizes in Inglorious UI's names. */
 const SIZES = { small: "sm", medium: "md", large: "lg" }
@@ -226,12 +229,15 @@ export const SwitchGroup = defineComponent({
   component: (context) => {
     const toggles = renderToggles(context, Switch)
     const variant = context.props.variant ?? "clear"
-    return variant === "clear"
-      ? toggles
-      : UiCard.render({
+    return when(
+      variant === "clear",
+      () => toggles,
+      () =>
+        UiCard.render({
           variant: variant === "card" ? "default" : "sunk",
           children: toggles,
-        })
+        }),
+    )
   },
 })
 
@@ -272,6 +278,240 @@ export const Slider = defineComponent({
   },
 })
 
+export const Label = defineComponent({
+  name: "Label",
+  description: "A short text label, such as above a group of fields",
+  props: z.object({ text: z.string() }),
+  component: ({ props }) =>
+    Typography.render({
+      variant: "caption",
+      weight: 600,
+      children: props.text,
+    }),
+})
+
+export const DatePicker = defineComponent({
+  name: "DatePicker",
+  description:
+    'A date field. Its value is a date as "2026-10-27", or with mode "range" an object {from, to} of two.',
+  props: z.object({
+    name: z.string(),
+    mode: z.enum(["single", "range"]).optional(),
+    rules,
+    value: reactive(z.unknown().optional()),
+  }),
+  component: ({ props, isStreaming, stateField, fieldError, label, hint }) => {
+    const field = stateField(props.name, props.value)
+    const error = fieldError(props.name)
+    const dateField = (options) =>
+      UiInput.render({
+        inputType: "date",
+        isRequired: props.rules?.required,
+        isDisabled: isStreaming,
+        isFullWidth: true,
+        ...options,
+      })
+
+    if (props.mode !== "range") {
+      return dateField({
+        name: props.name,
+        label,
+        hint,
+        value: field.value ?? "",
+        error,
+        onChange: field.setValue,
+      })
+    }
+
+    const range = field.value ?? {}
+    return Flex.render({
+      direction: "column",
+      gap: "xs",
+      children: [
+        renderLabel(label),
+        Flex.render({
+          direction: "row",
+          gap: "sm",
+          wrap: "wrap",
+          children: [
+            dateField({
+              name: `${props.name}-from`,
+              label: "From",
+              value: range.from ?? "",
+              onChange: (from) => field.setValue({ ...range, from }),
+            }),
+            dateField({
+              name: `${props.name}-to`,
+              label: "To",
+              value: range.to ?? "",
+              onChange: (to) => field.setValue({ ...range, to }),
+            }),
+          ],
+        }),
+        renderError(error),
+      ],
+    })
+  },
+})
+
+export const ChipItem = defineComponent({
+  name: "ChipItem",
+  description: "One option of Chips: its value, label and optional Icon",
+  props: z.object({
+    value: z.string(),
+    label: z.string(),
+    icon: Icon.ref.optional(),
+    disabled: z.boolean().optional(),
+  }),
+  // Rendered by its Chips.
+  component: () => null,
+})
+
+export const Chips = defineComponent({
+  name: "Chips",
+  description:
+    'Compact pills to pick short options with: type "multiple" (default) keeps a list of values, "single" one value.',
+  props: z.object({
+    name: z.string(),
+    type: z.enum(["single", "multiple"]).optional(),
+    items: z.array(ChipItem.ref),
+    rules,
+    defaultValue: z.union([z.string(), z.array(z.string())]).optional(),
+  }),
+  component: ({
+    props,
+    isStreaming,
+    stateField,
+    fieldError,
+    label,
+    renderNode,
+  }) => {
+    const type = props.type ?? "multiple"
+    const field = stateField(props.name)
+    const selected = toSelection(field.value ?? props.defaultValue)
+
+    return Flex.render({
+      direction: "column",
+      gap: "xs",
+      children: [
+        renderLabel(label),
+        Flex.render({
+          direction: "row",
+          gap: "xs",
+          wrap: "wrap",
+          children: itemProps(props.items)
+            .filter((item) => item.value)
+            .map((item) =>
+              Chip.render({
+                children: item.label,
+                icon: when(item.icon, () => renderNode(item.icon)),
+                isSelected: selected.includes(item.value),
+                isDisabled: isStreaming || item.disabled,
+                onClick: () =>
+                  field.setValue(toggle(type, selected, item.value)),
+              }),
+            ),
+        }),
+        renderError(fieldError(props.name)),
+      ],
+    })
+  },
+})
+
+export const OptionCard = defineComponent({
+  name: "OptionCard",
+  description:
+    "One option of OptionCards: its value, title, optional subtitle, and an optional Icon or Image on top",
+  props: z.object({
+    value: z.string(),
+    title: z.string(),
+    subtitle: z.string().optional(),
+    topContent: z.union([Icon.ref, Image.ref]).optional(),
+    disabled: z.boolean().optional(),
+  }),
+  // Rendered by its OptionCards.
+  component: () => null,
+})
+
+export const OptionCards = defineComponent({
+  name: "OptionCards",
+  description:
+    'Options as cards in a grid, for choices worth a picture or a line of detail: type "single" (default) keeps one value, "multiple" a list.',
+  props: z.object({
+    name: z.string(),
+    type: z.enum(["single", "multiple"]).optional(),
+    items: z.array(OptionCard.ref),
+    rules,
+    defaultValue: z.union([z.string(), z.array(z.string())]).optional(),
+  }),
+  component: ({
+    props,
+    isStreaming,
+    stateField,
+    fieldError,
+    label,
+    renderNode,
+  }) => {
+    const field = stateField(props.name)
+    const items = itemProps(props.items).filter((item) => item.value)
+    const media = (item) =>
+      when(item.topContent, () => renderNode(item.topContent))
+    const error = renderError(fieldError(props.name))
+
+    if (props.type !== "multiple") {
+      return Flex.render({
+        direction: "column",
+        gap: "xs",
+        children: [
+          UiRadioGroup.render({
+            name: props.name,
+            label,
+            variant: "card",
+            value: field.value ?? props.defaultValue ?? "",
+            options: items.map((item) => ({
+              label: item.title,
+              description: item.subtitle,
+              value: item.value,
+              media: media(item),
+              isDisabled: item.disabled,
+            })),
+            isDisabled: isStreaming,
+            onChange: field.setValue,
+          }),
+          error,
+        ],
+      })
+    }
+
+    const selected = toSelection(field.value ?? props.defaultValue)
+    return Flex.render({
+      direction: "column",
+      gap: "xs",
+      children: [
+        renderLabel(label),
+        Grid.render({
+          minColumnWidth: "12rem",
+          gap: "sm",
+          children: items.map((item) =>
+            Checkbox.render({
+              name: `${props.name}-${item.value}`,
+              label: item.title,
+              description: item.subtitle,
+              media: media(item),
+              variant: "card",
+              isChecked: selected.includes(item.value),
+              isDisabled: isStreaming || item.disabled,
+              onChange: () =>
+                field.setValue(toggle("multiple", selected, item.value)),
+            }),
+          ),
+        }),
+        error,
+      ],
+    })
+  },
+})
+
 const fieldInputs = [
   Input,
   TextArea,
@@ -280,6 +520,9 @@ const fieldInputs = [
   CheckBoxGroup,
   SwitchGroup,
   Slider,
+  DatePicker,
+  Chips,
+  OptionCards,
 ]
 
 export const FormControl = defineComponent({
@@ -323,6 +566,27 @@ function itemProps(items) {
   return (items ?? []).filter(Boolean).map((item) => item.props)
 }
 
+/** What is picked, as a list, whether one value or several are kept. */
+function toSelection(value) {
+  if (Array.isArray(value)) return value
+  return value ? [value] : []
+}
+
+/** The value after pressing an option: one value, or a list of them. */
+function toggle(type, selected, value) {
+  const isPicked = selected.includes(value)
+  if (type === "single") return isPicked ? "" : value
+  return isPicked
+    ? selected.filter((item) => item !== value)
+    : [...selected, value]
+}
+
+function renderLabel(label) {
+  return when(label, () =>
+    Typography.render({ variant: "caption", children: label }),
+  )
+}
+
 function renderError(error) {
   return when(error, () =>
     Typography.render({ variant: "caption", color: "error", children: error }),
@@ -342,9 +606,7 @@ function renderToggles(
     direction: "column",
     gap: "sm",
     children: [
-      when(label, () =>
-        Typography.render({ variant: "caption", children: label }),
-      ),
+      renderLabel(label),
       ...items.map((item) =>
         Control.render({
           name: item.name,

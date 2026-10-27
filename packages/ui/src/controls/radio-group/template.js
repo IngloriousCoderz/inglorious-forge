@@ -25,6 +25,7 @@ export function render(props) {
     value,
     options = [],
     direction = "column",
+    variant = "default",
     color = "primary",
     isDisabled = false,
     onChange,
@@ -38,6 +39,7 @@ export function render(props) {
   const rootClasses = {
     "iw-radio-group": true,
     [`iw-radio-group-${direction}`]: true,
+    "iw-radio-group-card": variant === "card",
     [`iw-radio-group-${color}`]: color !== "primary",
     "iw-radio-group-disabled": isDisabled,
   }
@@ -56,6 +58,7 @@ export function render(props) {
         const {
           label: optionLabel,
           description: optionDescription,
+          media,
           value: optionValue,
           isDisabled: optionDisabled = false,
           ...optionRest
@@ -75,11 +78,21 @@ export function render(props) {
               ${ref((element) => applyElementProps(element, optionRest))}
             />
             ${when(
-              optionDescription,
+              optionDescription || media,
               () =>
                 html`<span class="iw-radio-text">
+                  ${when(
+                    media,
+                    () => html`<span class="iw-radio-media">${media}</span>`,
+                  )}
                   <span>${optionLabel}</span>
-                  <span class="iw-radio-description">${optionDescription}</span>
+                  ${when(
+                    optionDescription,
+                    () =>
+                      html`<span class="iw-radio-description"
+                        >${optionDescription}</span
+                      >`,
+                  )}
                 </span>`,
               () => html`<span>${optionLabel}</span>`,
             )}

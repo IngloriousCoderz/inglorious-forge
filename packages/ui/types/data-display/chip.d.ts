@@ -16,6 +16,13 @@ export interface ChipProps {
     | "info"
   size?: "sm" | "md" | "lg"
   shape?: "pill" | "rounded" | "square"
+  /**
+   * Makes the chip a toggle button, pressed while true, for picking options:
+   * `onClick` toggles it. Left out, the chip is a plain label.
+   */
+  isSelected?: boolean
+  /** Only for a chip with `isSelected`. */
+  isDisabled?: boolean
   onClick?: () => void
   [key: string]: unknown
 }

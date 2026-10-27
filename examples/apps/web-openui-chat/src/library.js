@@ -15,10 +15,11 @@ export const library = uiLibrary.extend({
 const appExamples = [
   `spending = Query("expenses_by_category", {}, {categories: [], totals: []})
 recent = Query("list_expenses", {}, {rows: []})
-root = Stack([title, chart, tbl])
+root = Stack([title, chart, tbl, next])
 title = CardHeader("October spending", "By category")
 chart = BarChart(spending.categories, [Series("Spent", spending.totals)], "grouped", "Category", "Euro")
-tbl = Table([Col("Date", recent.rows.date), Col("Category", @Each(recent.rows, "e", Tag(e.category, Icon("tag"), "sm"))), Col("Amount", recent.rows.amount, "number")])`,
+tbl = Table([Col("Date", recent.rows.date), Col("Category", @Each(recent.rows, "e", Tag(e.category, Icon("tag"), "sm"))), Col("Amount", recent.rows.amount, "number")])
+next = FollowUpBlock([FollowUpItem("Where can I save?"), FollowUpItem("Add an expense")])`,
   `$category = ""
 $amount = ""
 add = Mutation("add_expense", {category: $category, amount: $amount})
@@ -41,5 +42,6 @@ export const systemPrompt = library.prompt({
     'A button with several steps wraps them in Action([...]): Button("Save", Action([@Run(add), @ToAssistant("Saved")])).',
     'Every name is defined exactly once, and every $variable a field binds is declared first, such as $amount = "".',
     "Card's children all go in its first argument: Card([a, b]). Nothing follows its layout arguments.",
+    "End every answer with a FollowUpBlock of two or three questions the user may ask next.",
   ],
 })

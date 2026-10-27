@@ -70,4 +70,34 @@
   &.iw-radio-group-info {
     --iw-radio-accent: var(--iw-color-info);
   }
+
+  /* After the directions, which it overrides with a grid. */
+  &.iw-radio-group-card {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+    gap: var(--iw-space-3);
+
+    .iw-radio-option {
+      align-items: flex-start;
+      padding: var(--iw-space-3);
+      border: 1px solid var(--iw-color-border);
+      border-radius: var(--iw-radius-md);
+
+      &:has(:checked) {
+        border-color: var(--iw-radio-accent);
+        background: color-mix(in srgb, var(--iw-radio-accent) 8%, transparent);
+      }
+    }
+  }
+
+  .iw-radio-media {
+    display: block;
+    margin-block-end: var(--iw-space-2);
+
+    img {
+      display: block;
+      max-inline-size: 100%;
+      border-radius: var(--iw-radius-sm);
+    }
+  }
 }

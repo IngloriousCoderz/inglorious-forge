@@ -64,6 +64,66 @@ export function createContext({ entity, result, functions, actions }) {
 }
 
 /**
+ * The `$variables` a component's prop is bound to across the answer, such as
+ * the ones Callouts show while true, so their timers can be kept in step.
+ *
+ * @param {object} options
+ * @param {OpenUIEntity} options.entity
+ * @param {ParseResult} options.result
+ * @param {Library} options.library
+ * @param {Record<string, unknown>} options.functions
+ * @param {Record<string, unknown> | undefined} options.actions
+ * @param {string} options.typeName
+ * @param {string} options.prop
+ * @returns {Set<string>}
+ */
+export function findBoundVariables({
+  entity,
+  result,
+  library,
+  functions,
+  actions,
+  typeName,
+  prop,
+}) {
+  const { context, defaults, getValue } = createContext({
+    entity,
+    result,
+    functions,
+    actions,
+  })
+  const store = {
+    get: getValue,
+    set() {},
+    subscribe: () => () => {},
+    getSnapshot: () => ({ ...defaults, ...entity.values }),
+    initialize() {},
+    dispose() {},
+  }
+  const names = new Set()
+
+  let root
+  try {
+    root = evaluateRoot(result, { ctx: context, library, store, errors: [] })
+  } catch {
+    return names
+  }
+
+  const visit = (value) => {
+    if (Array.isArray(value)) return value.forEach(visit)
+    if (!value || typeof value !== "object") return
+    if (value.type !== "element") return
+    const binding = value.props?.[prop]
+    if (value.typeName === typeName && binding?.__reactive === "assign") {
+      names.add(binding.target)
+    }
+    Object.values(value.props ?? {}).forEach(visit)
+  }
+  visit(root)
+  return names
+}
+
+/**
  * Renders a parsed program against an entity.
  *
  * Everything that changes what it shows is an event on the entity, so the
@@ -249,7 +309,7 @@ function validateFields({ entity, api, formName, fields, stateField }) {
   for (const field of fields) {
     if (!field?.name || !field.rules) continue
     const message = validate(
-      stateField(field.name, field.value).value,
+      stateField(field.name, field.value).value ?? field.defaultValue,
       parseStructuredRules(field.rules),
     )
     if (message) errors[field.name] = message

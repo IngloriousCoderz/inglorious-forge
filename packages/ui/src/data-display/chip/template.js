@@ -21,6 +21,8 @@ export function render(props) {
     color = "default",
     size = "md",
     shape = "pill",
+    isSelected,
+    isDisabled = false,
     onClick,
   } = props
 
@@ -31,9 +33,30 @@ export function render(props) {
     [`iw-chip-shape-${shape}`]: shape !== "pill",
   }
 
+  const content = html`${when(
+      icon,
+      () => html`<span class="iw-chip-icon" aria-hidden="true">${icon}</span>`,
+    )} <span class="iw-chip-label">${children}</span>`
+
+  // A chip that can be picked is a toggle button, pressed while selected.
+  if (isSelected !== undefined) {
+    return html`<button
+      type="button"
+      class=${classMap({
+        ...classes,
+        "iw-chip-selectable": true,
+        "iw-chip-selected": isSelected,
+      })}
+      aria-pressed=${String(isSelected)}
+      ?disabled=${isDisabled}
+      @click=${onClick}
+    >
+      ${content}
+    </button>`
+  }
+
   return html`<span class=${classMap(classes)}>
-    ${when(icon, () => html`<span class="iw-chip-icon" aria-hidden="true">${icon}</span>`)}
-    <span class="iw-chip-label">${children}</span>
+    ${content}
     ${when(
       isRemovable,
       () =>

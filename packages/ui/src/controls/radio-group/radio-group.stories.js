@@ -14,6 +14,11 @@ export default {
       options: ["column", "row"],
       description: "Layout direction for options.",
     },
+    variant: {
+      control: "select",
+      options: ["default", "card"],
+      description: "`card` draws each option as a card in a grid.",
+    },
     color: {
       control: "select",
       options: ["primary", "secondary", "success", "warning", "error", "info"],
@@ -70,5 +75,19 @@ WithDescriptions.args = {
       description: "3 to 5 working days, free",
     },
     { label: "Express", value: "express", description: "Next day, €9" },
+  ],
+}
+
+export const Cards = {}
+Cards.args = {
+  ...Default.args,
+  label: "Room",
+  name: "room",
+  value: "double",
+  variant: "card",
+  options: [
+    { label: "Single", value: "single", description: "One bed, €80" },
+    { label: "Double", value: "double", description: "Two beds, €120" },
+    { label: "Suite", value: "suite", description: "With a view, €200" },
   ],
 }

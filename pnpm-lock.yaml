@@ -2299,6 +2299,9 @@ importers:
       "@openuidev/lang-core":
         specifier: ^1.0.1
         version: 1.0.1(zod@4.6.7)
+      markdown-it:
+        specifier: ^14.1.0
+        version: 14.1.0
       zod:
         specifier: ^4.6.7
         version: 4.6.7
@@ -7580,6 +7583,12 @@ packages:
         integrity: sha512-o5Roy6tNG4SL/FOkCAN6RzjiakZS25RLYFrcMttJqbdd8BWrnA+fGz57iN5Pb06pvBGvl5gQ0B48dJlslXvoTg==,
       }
 
+  argparse@2.0.1:
+    resolution:
+      {
+        integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==,
+      }
+
   argparse@3.0.3:
     resolution:
       {
@@ -10261,6 +10270,12 @@ packages:
       }
     engines: { node: ">= 12.0.0" }
 
+  linkify-it@5.0.2:
+    resolution:
+      {
+        integrity: sha512-ONTm2jCMAVZjgQa/Fy1kScXsuOoF5NPTsoFBdE1KVIZ2vAh/r9+Bqo+0jINCBYnavTPQZz38QzFTme79ENoN3Q==,
+      }
+
   linkify-it@6.1.0:
     resolution:
       {
@@ -10395,6 +10410,13 @@ packages:
       {
         integrity: sha512-4hhkiX8/gus+6e53PLCUmUrsa6ZWGgJW2XCW6O0ASvZUiezIK900ZicinTDtG3kAO2kon7oUA/ReWmpW2FByxg==,
       }
+
+  markdown-it@14.1.0:
+    resolution:
+      {
+        integrity: sha512-a54IwgWPaeBCAAsv13YgmALOF1elABB08FxO9i+r4VFk5Vl4pKokRPeX8u5TCgSsPi6ec1otfLjdOpVcgbpshg==,
+      }
+    hasBin: true
 
   markdown-it@15.0.3:
     resolution:
@@ -12564,6 +12586,12 @@ packages:
       }
     engines: { node: ">=16.20.0" }
     hasBin: true
+
+  uc.micro@2.1.0:
+    resolution:
+      {
+        integrity: sha512-ARDJmphmdvUk6Glw7y9DQ2bFkKBHwQHLi2lsaH6PPmz/Ka9sFOBsBluozhDltWmnv9u/cF6Rt87znRTPV+yp/A==,
+      }
 
   uc.micro@3.0.0:
     resolution:
@@ -16010,6 +16038,8 @@ snapshots:
     dependencies:
       sprintf-js: 1.0.3
 
+  argparse@2.0.1: {}
+
   argparse@3.0.3: {}
 
   aria-query@5.3.0:
@@ -17764,6 +17794,10 @@ snapshots:
       lightningcss-win32-arm64-msvc: 1.33.0
       lightningcss-win32-x64-msvc: 1.33.0
 
+  linkify-it@5.0.2:
+    dependencies:
+      uc.micro: 2.1.0
+
   linkify-it@6.1.0:
     dependencies:
       uc.micro: 3.0.0
@@ -17842,6 +17876,15 @@ snapshots:
   mark.js@8.11.1: {}
 
   markdown-it-texmath@1.0.0: {}
+
+  markdown-it@14.1.0:
+    dependencies:
+      argparse: 2.0.1
+      entities: 4.5.0
+      linkify-it: 5.0.2
+      mdurl: 2.1.0
+      punycode.js: 2.3.1
+      uc.micro: 2.1.0
 
   markdown-it@15.0.3:
     dependencies:
@@ -19545,6 +19588,8 @@ snapshots:
       "@typescript/typescript-sunos-x64": 7.0.2
       "@typescript/typescript-win32-arm64": 7.0.2
       "@typescript/typescript-win32-x64": 7.0.2
+
+  uc.micro@2.1.0: {}
 
   uc.micro@3.0.0: {}
 

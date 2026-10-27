@@ -4,6 +4,8 @@ export interface RadioOption {
   label: string
   /** A line of detail under the label. */
   description?: string
+  /** Shown above the label, such as an icon or an image. */
+  media?: TemplateResult
   value: string
   isDisabled?: boolean
   [key: string]: unknown
@@ -16,6 +18,8 @@ export interface RadioGroupProps {
   value?: string
   options?: RadioOption[]
   direction?: "column" | "row"
+  /** `"card"` draws each option as a card in a grid, outlined while checked. */
+  variant?: "default" | "card"
   color?: "primary" | "secondary" | "success" | "warning" | "error" | "info"
   isDisabled?: boolean
   onChange?: (value: string) => void

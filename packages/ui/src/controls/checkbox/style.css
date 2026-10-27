@@ -38,6 +38,30 @@
     font-size: var(--iw-font-size-lg);
   }
 
+  .iw-checkbox-media {
+    display: block;
+    margin-block-end: var(--iw-space-2);
+
+    img {
+      display: block;
+      max-inline-size: 100%;
+      border-radius: var(--iw-radius-sm);
+    }
+  }
+
+  &.iw-checkbox-card {
+    display: flex;
+    align-items: flex-start;
+    padding: var(--iw-space-3);
+    border: 1px solid var(--iw-color-border);
+    border-radius: var(--iw-radius-md);
+
+    &:has(:checked) {
+      border-color: var(--iw-checkbox-accent);
+      background: color-mix(in srgb, var(--iw-checkbox-accent) 8%, transparent);
+    }
+  }
+
   &.iw-checkbox-disabled {
     opacity: 0.6;
     cursor: not-allowed;

@@ -23,6 +23,8 @@ export function render(props) {
     name = "",
     label = "",
     description,
+    media,
+    variant = "default",
     isChecked = false,
     isDisabled = false,
     isRequired = false,
@@ -39,6 +41,7 @@ export function render(props) {
   const classes = {
     "iw-checkbox": true,
     "iw-checkbox-disabled": isDisabled,
+    "iw-checkbox-card": variant === "card",
     [`iw-checkbox-${color}`]: color !== "primary",
     [`iw-checkbox-${size}`]: size !== "md",
   }
@@ -57,11 +60,21 @@ export function render(props) {
         ${ref((element) => applyElementProps(element, rest))}
       />
       ${when(
-        description,
+        description || media,
         () =>
           html`<span class="iw-checkbox-text">
+            ${when(
+              media,
+              () => html`<span class="iw-checkbox-media">${media}</span>`,
+            )}
             <span class="iw-checkbox-label">${label}</span>
-            <span class="iw-checkbox-description">${description}</span>
+            ${when(
+              description,
+              () =>
+                html`<span class="iw-checkbox-description"
+                  >${description}</span
+                >`,
+            )}
           </span>`,
         () => html`<span class="iw-checkbox-label">${label}</span>`,
       )}

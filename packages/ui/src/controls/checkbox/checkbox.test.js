@@ -1,3 +1,4 @@
+import { html } from "@inglorious/web"
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
@@ -113,5 +114,24 @@ describe("checkbox classes", () => {
     expect(
       container.querySelector(".iw-checkbox-description").textContent,
     ).toBe("Once a week")
+  })
+
+  it("draws as a card with media above the label", () => {
+    const container = document.createElement("div")
+
+    render(
+      Checkbox.render({
+        label: "Breakfast",
+        variant: "card",
+        media: html`<img alt="" />`,
+      }),
+      container,
+    )
+
+    expect(container.querySelector(".iw-checkbox").classList).toContain(
+      "iw-checkbox-card",
+    )
+    expect(container.querySelector(".iw-checkbox-media img")).not.toBeNull()
+    expect(container.querySelector("input[type=checkbox]")).not.toBeNull()
   })
 })

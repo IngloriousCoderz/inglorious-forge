@@ -64,6 +64,28 @@
     border-radius: var(--iw-radius-none);
   }
 
+  &.iw-chip-selectable {
+    border: 1px solid var(--iw-color-border);
+    font: inherit;
+    font-size: var(--iw-font-size-sm);
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 2px solid var(--iw-color-primary);
+      outline-offset: 2px;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  &.iw-chip-selected {
+    border-color: var(--iw-color-primary);
+    background: color-mix(in srgb, var(--iw-color-primary) 20%, transparent);
+  }
+
   &.iw-chip-primary {
     background: color-mix(in srgb, var(--iw-color-primary) 20%, transparent);
   }

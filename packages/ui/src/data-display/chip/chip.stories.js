@@ -10,6 +10,10 @@ export default {
   render: createRender(Chip),
   argTypes: {
     children: { control: "text", description: "Chip label content." },
+    isSelected: {
+      control: "boolean",
+      description: "Makes the chip a toggle button, pressed while true.",
+    },
     icon: {
       control: false,
       description: "Shown before the label, such as an `Icon.render(...)`.",
@@ -70,5 +74,14 @@ export const WithIcon = {
     icon: Icon.render({ icon: sell, size: "sm" }),
     isRemovable: false,
     color: "success",
+  },
+}
+
+export const Selectable = {
+  args: {
+    ...Default.args,
+    children: "Vegan",
+    isRemovable: false,
+    isSelected: true,
   },
 }

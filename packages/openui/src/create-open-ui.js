@@ -2,7 +2,7 @@ import { nothing } from "@inglorious/web"
 import { createStreamingParser, evaluate } from "@openuidev/lang-core"
 
 import { createIconResolver } from "./icons.js"
-import { createContext, renderProgram } from "./runtime.js"
+import { createContext, findBoundVariables, renderProgram } from "./runtime.js"
 import { queryKey, toCallTool } from "./tools.js"
 
 /**
@@ -14,6 +14,8 @@ import { queryKey, toCallTool } from "./tools.js"
 const SECOND_MS = 1000
 /** A refresh interval of none: the query runs only when asked. */
 const NO_REFRESH = 0
+/** How long a Callout bound to a `$variable` shows before it clears it. */
+const CALLOUT_MS = 3000
 
 /**
  * Creates the Inglorious type that renders OpenUI Lang with a library.
@@ -45,10 +47,11 @@ export function createOpenUI({ library, toolProvider, icons }) {
   const iconFor = createIconResolver(icons)
 
   /**
-   * One streaming parser per entity, with its latest result, and the timers
-   * refreshing its queries. Neither is state the store should hold, so they
-   * live here, keyed by entity id, and go when the entity does.
-   * @type {Map<string, { parser: import('@openuidev/lang-core').StreamParser, response?: string, isComplete?: boolean, result?: import('@openuidev/lang-core').ParseResult, timers: Map<string, { seconds: number, timer: ReturnType<typeof setInterval> }> }>}
+   * One streaming parser per entity, with its latest result, the timers
+   * refreshing its queries and those hiding its Callouts. None is state the
+   * store should hold, so they live here, keyed by entity id, and go when the
+   * entity does.
+   * @type {Map<string, { parser: import('@openuidev/lang-core').StreamParser, response?: string, isComplete?: boolean, result?: import('@openuidev/lang-core').ParseResult, timers: Map<string, { seconds: number, timer: ReturnType<typeof setInterval> }>, dismissals: Map<string, ReturnType<typeof setTimeout>> }>}
    */
   const runtimes = new Map()
 
@@ -58,6 +61,7 @@ export function createOpenUI({ library, toolProvider, icons }) {
       runtime = {
         parser: createStreamingParser(schema, library.root),
         timers: new Map(),
+        dismissals: new Map(),
       }
       runtimes.set(entity.id, runtime)
     }
@@ -84,6 +88,54 @@ export function createOpenUI({ library, toolProvider, icons }) {
     entity.isStreaming = false
     entity.errors = parse(entity).meta.errors
     syncQueries(entity, api)
+    syncCallouts(entity, api)
+  }
+
+  /**
+   * A Callout bound to a `$variable`, as in `Callout(..., $saved)`, clears it
+   * a few seconds after it turns true, as OpenUI's does. Run after anything
+   * that changes values.
+   */
+  function syncCallouts(entity, api) {
+    if (entity.isStreaming) return
+
+    // The entity is only readable while the handler runs; the timer is not.
+    const { id } = entity
+    const { dismissals } = runtimeOf(entity)
+    const result = parse(entity)
+    const { getValue } = createContext({
+      entity,
+      result,
+      functions,
+      actions: schema.actions,
+    })
+    const shown = [
+      ...findBoundVariables({
+        entity,
+        result,
+        library,
+        functions,
+        actions: schema.actions,
+        typeName: "Callout",
+        prop: "visible",
+      }),
+    ].filter((name) => getValue(name) === true)
+
+    for (const [name, timer] of dismissals) {
+      if (shown.includes(name)) continue
+      clearTimeout(timer)
+      dismissals.delete(name)
+    }
+    for (const name of shown) {
+      if (dismissals.has(name)) continue
+      dismissals.set(
+        name,
+        setTimeout(() => {
+          dismissals.delete(name)
+          api.notify(`#${id}:valueChange`, { name, value: false })
+        }, CALLOUT_MS),
+      )
+    }
   }
 
   /**
@@ -192,11 +244,13 @@ export function createOpenUI({ library, toolProvider, icons }) {
     })
   }
 
-  function stopRefreshing(id) {
+  function stopTimers(id) {
     const runtime = runtimes.get(id)
     if (!runtime) return
     for (const { timer } of runtime.timers.values()) clearInterval(timer)
     runtime.timers.clear()
+    for (const timer of runtime.dismissals.values()) clearTimeout(timer)
+    runtime.dismissals.clear()
   }
 
   return {
@@ -213,13 +267,13 @@ export function createOpenUI({ library, toolProvider, icons }) {
     },
 
     destroy(entity) {
-      stopRefreshing(entity.id)
+      stopTimers(entity.id)
       runtimes.delete(entity.id)
     },
 
     /** A new answer starts arriving: what the last one held is gone. */
     streamStart(entity) {
-      stopRefreshing(entity.id)
+      stopTimers(entity.id)
       entity.response = ""
       entity.isStreaming = true
       entity.values = {}
@@ -240,7 +294,7 @@ export function createOpenUI({ library, toolProvider, icons }) {
 
     /** A whole answer at once, such as one restored from history. */
     responseChange(entity, response, api) {
-      stopRefreshing(entity.id)
+      stopTimers(entity.id)
       entity.response = response
       entity.values = {}
       entity.view = {}
@@ -253,6 +307,7 @@ export function createOpenUI({ library, toolProvider, icons }) {
     valueChange(entity, { name, value }, api) {
       entity.values[name] = value
       syncQueries(entity, api)
+      syncCallouts(entity, api)
     },
 
     /** A field inside a Form: its value is kept under the form's name. */
@@ -276,6 +331,7 @@ export function createOpenUI({ library, toolProvider, icons }) {
     valuesReset(entity, names, api) {
       for (const name of names) delete entity.values[name]
       syncQueries(entity, api)
+      syncCallouts(entity, api)
     },
 
     /** Fetches queries again, such as on `@Run` or a refresh interval. */

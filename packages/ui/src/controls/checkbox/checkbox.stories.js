@@ -12,6 +12,12 @@ export default {
       description: "A line of detail under the label.",
     },
     name: { control: "text", description: "Native HTML name attribute." },
+    variant: {
+      control: "select",
+      options: ["default", "card"],
+      description:
+        "`card` draws the checkbox as a card, outlined while checked.",
+    },
     isChecked: { control: "boolean", description: "Current checked state." },
     isDisabled: { control: "boolean", description: "Disables interaction." },
     isRequired: { control: "boolean", description: "Marks input as required." },
@@ -59,4 +65,14 @@ WithDescription.args = {
   label: "Weekly summary",
   name: "summary",
   description: "An email every Monday with last week's totals.",
+}
+
+export const Card = {}
+Card.args = {
+  ...Default.args,
+  label: "Breakfast",
+  name: "breakfast",
+  description: "Served from 7 to 10, €12",
+  variant: "card",
+  isChecked: true,
 }

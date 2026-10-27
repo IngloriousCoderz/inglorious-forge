@@ -6,6 +6,10 @@ export interface CheckboxProps {
   label?: string
   /** A line of detail under the label. */
   description?: string
+  /** Shown above the label, such as an icon or an image. */
+  media?: TemplateResult
+  /** `"card"` draws the checkbox as a card, outlined while checked. */
+  variant?: "default" | "card"
   isChecked?: boolean
   isDisabled?: boolean
   isRequired?: boolean

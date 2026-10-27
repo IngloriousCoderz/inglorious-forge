@@ -1,3 +1,4 @@
+import { html } from "@inglorious/web"
 import { render } from "@inglorious/web/test"
 import { describe, expect, it } from "vitest"
 
@@ -114,5 +115,27 @@ describe("radio group ids", () => {
     expect(container.querySelector(".iw-radio-description").textContent).toBe(
       "For teams",
     )
+  })
+
+  it("draws options as cards with media above the label", () => {
+    const container = document.createElement("div")
+
+    render(
+      RadioGroup.render({
+        name: "room",
+        variant: "card",
+        options: [
+          { label: "Single", value: "single", media: html`<img alt="" />` },
+          { label: "Double", value: "double" },
+        ],
+      }),
+      container,
+    )
+
+    expect(container.querySelector(".iw-radio-group").classList).toContain(
+      "iw-radio-group-card",
+    )
+    expect(container.querySelectorAll(".iw-radio-media img")).toHaveLength(1)
+    expect(container.querySelectorAll("input[type=radio]")).toHaveLength(2)
   })
 })

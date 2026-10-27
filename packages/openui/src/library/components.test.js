@@ -237,6 +237,43 @@ root = Stack([Callout("neutral", "Note", "Just so you know", $shown), Button("Hi
     expect(container.querySelector(".iw-alert")).toBeNull()
   })
 
+  it("clears a Callout's $variable after three seconds, as OpenUI does", async () => {
+    const { store, container } = await setup({
+      response: `$saved = false
+root = Stack([Callout("success", "Saved", "All done", $saved), Button("Save", @Set($saved, true))])
+`,
+    })
+    vi.useFakeTimers()
+    try {
+      container.querySelector(".iw-button").click()
+      await vi.advanceTimersByTimeAsync(0)
+      expect(container.querySelector(".iw-alert-success")).not.toBeNull()
+
+      await vi.advanceTimersByTimeAsync(2999)
+      expect(store.getState().answer.values.$saved).toBe(true)
+
+      await vi.advanceTimersByTimeAsync(1)
+      expect(store.getState().answer.values.$saved).toBe(false)
+      expect(container.querySelector(".iw-alert")).toBeNull()
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it("leaves a Callout with no $variable on screen", async () => {
+    const { container } = await setup({
+      response: `root = Stack([Callout("info", "Note", "Stays")])
+`,
+    })
+    vi.useFakeTimers()
+    try {
+      await vi.advanceTimersByTimeAsync(5000)
+      expect(container.querySelector(".iw-alert-info")).not.toBeNull()
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
   it("draws a Tag's Icon from the app's icons", async () => {
     const check = { body: '<path d="M0 0h1"/>', width: 24, height: 24 }
     const { container } = await setup({
@@ -323,6 +360,248 @@ pie = PieChart(["A", "B"], [1, 1], "pie", "semiCircular")
     expect(container.querySelectorAll("svg.iw-chart")).toHaveLength(4)
     expect(container.querySelectorAll(".iw-chart-axis-label")).toHaveLength(2)
     expect(container.querySelector(".iw-chart-area")).not.toBeNull()
+  })
+})
+
+describe("More of OpenUI's standard library", () => {
+  afterEach(() => {
+    vi.restoreAllMocks()
+    document.body.replaceChildren()
+  })
+
+  it("lays slides out in a Carousel, each on a card", async () => {
+    const { container } = await setup({
+      response: `root = Carousel([[TextContent("One")], [TextContent("Two")]], "sunk")
+`,
+    })
+
+    expect(container.querySelectorAll(".iw-carousel-item")).toHaveLength(2)
+    expect(container.querySelectorAll(".iw-card-sunk")).toHaveLength(2)
+  })
+
+  it("draws text blocks: TextCallout, InlineHeader, CodeBlock, TagBlock, Label", async () => {
+    const { container } = await setup({
+      response: `root = Stack([note, head, code, tags, label])
+note = TextCallout("danger", "Careful", "This cannot be undone")
+head = InlineHeader("Totals", "This month")
+code = CodeBlock("js", "const a = 1 < 2")
+tags = TagBlock(["Vegan", "Spicy"], "md")
+label = Label("Diet")
+`,
+    })
+
+    expect(container.querySelector(".iw-alert-error").textContent).toContain(
+      "Careful",
+    )
+    expect(container.textContent).toContain("This month")
+    expect(container.querySelector("pre code.language-js").textContent).toBe(
+      "const a = 1 < 2",
+    )
+    expect(container.querySelectorAll(".iw-chip")).toHaveLength(2)
+    expect(container.textContent).toContain("Diet")
+  })
+
+  it("opens a gallery image in a dialog, with its details", async () => {
+    const { store, container } = await setup({
+      response: `root = Stack([ImageBlock("cover.jpg", "Cover"), gallery])
+gallery = ImageGallery([{src: "a.jpg", alt: "Lake", details: "At dawn"}, {src: "b.jpg", alt: "Hill"}])
+`,
+    })
+    expect(container.querySelector('img[alt="Cover"]')).not.toBeNull()
+
+    container.querySelector('button[aria-label="Open Lake"]').click()
+    await flush()
+
+    expect(store.getState().answer.view["gallery:preview"]).toBe(0)
+    const dialog = container.querySelector("dialog")
+    expect(dialog.open).toBe(true)
+    expect(dialog.textContent).toContain("At dawn")
+  })
+
+  it("lists label and value pairs, with a header and footer only at default size", async () => {
+    const rows = `[{left: "Coffee", right: "3.50", rightVariant: "number"}]`
+    const ends = `{left: "Item", right: "Price"}, {left: "Total", right: "3.50"}`
+    const { container } = await setup({
+      response: `root = Stack([EntityList(${rows}, "default", ${ends}), EntityList(${rows}, "small")])
+`,
+    })
+
+    const text = container.textContent
+    expect(text.match(/Coffee/g)).toHaveLength(2)
+    expect(text.match(/Total/g)).toHaveLength(1)
+  })
+
+  it("lists ListItems, with a button for the ones that act", async () => {
+    const onAction = vi.fn()
+    const { container } = await setup({
+      onAction,
+      response: `root = ListBlock([ListItem("Rome", "Italy", null, "Visit", @ToAssistant("Plan Rome")), ListItem("Paris")])
+`,
+    })
+
+    expect(container.querySelector("ol")).not.toBeNull()
+    const buttons = container.querySelectorAll(".iw-button")
+    expect(buttons).toHaveLength(1)
+    buttons[0].click()
+    await flush()
+
+    expect(onAction).toHaveBeenCalledWith(
+      expect.objectContaining({ humanFriendlyMessage: "Plan Rome" }),
+    )
+  })
+
+  it("labels an IconButton and sends follow-ups as the user's message", async () => {
+    const onAction = vi.fn()
+    const { container } = await setup({
+      onAction,
+      icons: { trash: { body: "<path/>", width: 24, height: 24 } },
+      response: `root = Stack([IconButton("Delete", Icon("trash"), null, null, null, "circle"), FollowUpBlock([FollowUpItem("Show last month")])])
+`,
+    })
+
+    const iconButton = container.querySelector('[aria-label="Delete"]')
+    expect(iconButton.querySelector("svg")).not.toBeNull()
+
+    const followUp = [...container.querySelectorAll(".iw-button")].find(
+      (button) => button.textContent.includes("Show last month"),
+    )
+    followUp.click()
+    await flush()
+
+    expect(onAction).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "continue_conversation",
+        humanFriendlyMessage: "Show last month",
+      }),
+    )
+  })
+
+  it("keeps a date, or a range of two", async () => {
+    const { store, container } = await setup({
+      response: `root = Stack([DatePicker("day"), DatePicker("trip", "range")])
+`,
+    })
+    const [day, from, to] = container.querySelectorAll("input[type=date]")
+
+    type(day, "2026-10-27")
+    await flush()
+    type(from, "2026-11-01")
+    await flush()
+    type(to, "2026-11-08")
+    await flush()
+
+    expect(store.getState().answer.values).toEqual({
+      day: "2026-10-27",
+      trip: { from: "2026-11-01", to: "2026-11-08" },
+    })
+  })
+
+  it("picks Chips: several by default, one when single", async () => {
+    const { store, container } = await setup({
+      response: `root = Stack([diet, size])
+diet = Chips("diet", "multiple", [ChipItem("vegan", "Vegan"), ChipItem("spicy", "Spicy")])
+size = Chips("size", "single", [ChipItem("s", "Small"), ChipItem("l", "Large")], null, "s")
+`,
+    })
+    const chips = () => container.querySelectorAll("button.iw-chip")
+
+    chips()[0].click()
+    await flush()
+    chips()[1].click()
+    await flush()
+    chips()[3].click()
+    await flush()
+
+    expect(store.getState().answer.values).toEqual({
+      diet: ["vegan", "spicy"],
+      size: "l",
+    })
+    expect(chips()[2].getAttribute("aria-pressed")).toBe("false")
+    expect(chips()[3].getAttribute("aria-pressed")).toBe("true")
+  })
+
+  it("counts a field's defaultValue when checking its rules", async () => {
+    const onAction = vi.fn()
+    const { container } = await setup({
+      onAction,
+      response: `root = Form("order", Buttons([Button("Order", @ToAssistant("Order"))]), [size])
+size = FormControl("Size", Chips("size", "single", [ChipItem("s", "Small")], {required: true}, "s"))
+`,
+    })
+
+    container.querySelector(".iw-button").click()
+    await flush()
+
+    expect(onAction).toHaveBeenCalled()
+  })
+
+  it("picks OptionCards as radio cards, or checkbox cards when multiple", async () => {
+    const { store, container } = await setup({
+      response: `root = Stack([room, extras])
+room = OptionCards("room", "single", [OptionCard("single", "Single", "One bed"), OptionCard("double", "Double")])
+extras = OptionCards("extras", "multiple", [OptionCard("breakfast", "Breakfast"), OptionCard("parking", "Parking")])
+`,
+    })
+
+    expect(container.querySelector(".iw-radio-group-card")).not.toBeNull()
+    expect(container.querySelectorAll(".iw-checkbox-card")).toHaveLength(2)
+
+    container.querySelectorAll("input[type=radio]")[1].click()
+    await flush()
+    container.querySelectorAll("input[type=checkbox]")[1].click()
+    await flush()
+
+    expect(store.getState().answer.values).toEqual({
+      room: "double",
+      extras: ["parking"],
+    })
+  })
+})
+
+describe("Markdown", () => {
+  afterEach(() => {
+    document.body.replaceChildren()
+  })
+
+  it("renders inline markdown in TextContent and Callout descriptions", async () => {
+    const { container } = await setup({
+      response: `root = Stack([TextContent("Spent **€900** on *rent*"), Callout("info", "Tip", "Run \`npm test\` first")])
+`,
+    })
+
+    expect(container.querySelector("strong").textContent).toBe("€900")
+    expect(container.querySelector("em").textContent).toBe("rent")
+    expect(container.querySelector(".iw-alert code").textContent).toBe(
+      "npm test",
+    )
+    // Inline: no paragraph inside the text's own paragraph.
+    expect(container.querySelector("p p")).toBeNull()
+  })
+
+  it("renders block markdown in MarkDownRenderer, on a surface when asked", async () => {
+    const { container } = await setup({
+      response: `root = MarkDownRenderer("## Plan\n\n- Book flights\n- Pack", "sunk")
+`,
+    })
+
+    expect(container.querySelector(".iw-card-sunk h2").textContent).toBe("Plan")
+    expect(container.querySelectorAll("li")).toHaveLength(2)
+  })
+
+  it("escapes HTML and refuses script links", async () => {
+    const { container } = await setup({
+      response: `root = MarkDownRenderer("<img src=x onerror=alert(1)> [click](javascript:alert(1)) [ok](https://example.com)")
+`,
+    })
+
+    expect(container.querySelector("img")).toBeNull()
+    expect(container.textContent).toContain("<img src=x")
+    const links = [...container.querySelectorAll("a")]
+    expect(links.map((link) => link.getAttribute("href"))).toEqual([
+      "https://example.com",
+    ])
+    expect(links[0].getAttribute("target")).toBe("_blank")
+    expect(links[0].getAttribute("rel")).toBe("noopener noreferrer")
   })
 })
 

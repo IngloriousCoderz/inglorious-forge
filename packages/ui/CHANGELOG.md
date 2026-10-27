@@ -1,5 +1,11 @@
 # @inglorious/ui
 
+## 9.2.0
+
+### Minor Changes
+
+- Options can be picked from chips and cards. A `Chip` with `isSelected` is a toggle button, pressed while selected, that `onClick` toggles; without it, a chip is still a plain label. `RadioGroup` and `Checkbox` take `variant: "card"`, drawing each option as a card outlined while checked, in a grid for a radio group, and a `media`, such as an icon or an image, shown above the label. The inputs stay native radios and checkboxes.
+
 ## 9.1.1
 
 ### Patch Changes

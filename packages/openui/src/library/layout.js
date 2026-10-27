@@ -1,4 +1,6 @@
 import { Accordion as UiAccordion } from "@inglorious/ui/accordion"
+import { Card as UiCard } from "@inglorious/ui/card"
+import { Carousel as UiCarousel } from "@inglorious/ui/carousel"
 import { Dialog } from "@inglorious/ui/dialog"
 import { Divider } from "@inglorious/ui/divider"
 import { Flex } from "@inglorious/ui/flex"
@@ -12,6 +14,7 @@ import { reactive } from "../reactive.js"
 
 /** No step is current: Steps is a guide, not a progress tracker. */
 const NO_ACTIVE_STEP = -1
+const FIRST_SLIDE = 0
 
 /** OpenUI's gap scale, in Flex's names. */
 const GAPS = {
@@ -193,6 +196,39 @@ export const Modal = defineComponent({
         gap: "md",
         children: renderNode(props.children),
       }),
+    })
+  },
+})
+
+export const Carousel = defineComponent({
+  name: "Carousel",
+  description:
+    'Slides scrolled through sideways, each a list of components: Carousel([[img1, title1], [img2, title2]]). variant "card" (default) or "sunk" is the surface each slide sits on.',
+  props: z.object({
+    children: z.array(z.array(z.any())),
+    variant: z.enum(["card", "sunk"]).optional(),
+  }),
+  component: ({ props, renderNode, viewState, statementId }) => {
+    const page = viewState(`${statementId ?? "carousel"}:page`, FIRST_SLIDE)
+    const surface = props.variant === "sunk" ? "sunk" : "default"
+    return UiCarousel.renderCarousel({
+      label: "Carousel",
+      items: (props.children ?? []).filter(Boolean).map((slide) =>
+        UiCard.render({
+          variant: surface,
+          children: Flex.render({
+            direction: "column",
+            gap: "sm",
+            children: renderNode(slide),
+          }),
+        }),
+      ),
+      page: page.value,
+      gap: "md",
+      // Inside, the arrows would cover the slides' own text.
+      arrowPlacement: "outside",
+      isFullWidth: true,
+      onPageChange: page.setValue,
     })
   },
 })
