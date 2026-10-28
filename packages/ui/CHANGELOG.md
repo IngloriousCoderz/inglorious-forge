@@ -1,5 +1,14 @@
 # @inglorious/ui
 
+## 9.7.3
+
+### Patch Changes
+
+- Fix two `Switch` layout bugs:
+
+  - Toggling no longer scrolls an outer container: the switch now contains its visually hidden input, which was positioned against the nearest positioned ancestor and, once focused, could scroll even an `overflow: hidden` app shell to bring itself into view
+  - A long label or description no longer squeezes the track into a circle: the track keeps its size and the text wraps instead
+
 ## 9.7.2
 
 ### Patch Changes

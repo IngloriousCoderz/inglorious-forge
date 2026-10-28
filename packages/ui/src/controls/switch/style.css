@@ -1,5 +1,10 @@
 .iw-switch {
   --iw-switch-active-bg: var(--iw-color-primary);
+  /* Contains the visually hidden input below. Without it, the input is placed
+     against the nearest positioned ancestor, possibly outside the scroll
+     container the switch sits in, and focusing it on toggle scrolls that
+     ancestor, even one with overflow: hidden, to bring the input into view. */
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: var(--iw-space-2);
@@ -14,7 +19,10 @@
     pointer-events: none;
   }
 
+  /* Fixed size: a long label shrinks the text, never the track, which would
+     otherwise narrow until it is as round as a radio button. */
   .iw-switch-track {
+    flex-shrink: 0;
     width: 2.25rem;
     height: 1.25rem;
     border-radius: 999px;
@@ -47,6 +55,7 @@
   .iw-switch-text {
     display: flex;
     flex-direction: column;
+    min-width: 0;
   }
 
   .iw-switch-description {
