@@ -34,6 +34,7 @@ export function createI18n({
   resources: givenResources = {},
   loadLocale: givenLoadLocale,
   locales: givenLocales,
+  isServerRendered = false,
   defaultLocale,
   storageKey,
   saveUserLocale,
@@ -49,11 +50,12 @@ export function createI18n({
   ]
   const [firstLocale = "en"] = locales
   const fallbackLocale = defaultLocale ?? firstLocale
-  const startLocale = detectLocale({
-    locales,
-    defaultLocale: fallbackLocale,
-    storageKey,
-  })
+  // A server-rendered page is already in a language, which hydration must keep.
+  // In a page served as is, `<html lang>` is whatever the file says, so it is
+  // detected instead.
+  const startLocale =
+    (isServerRendered && matchLocale(getDocumentLanguage(), locales)) ||
+    detectLocale({ locales, defaultLocale: fallbackLocale, storageKey })
   const languages = locales.map((locale) => ({
     value: locale,
     label: languageName(locale),
@@ -251,13 +253,21 @@ export function detectLocale({ locales, defaultLocale, storageKey }) {
     typeof navigator === "undefined"
       ? []
       : (navigator.languages ?? [navigator.language])
-  for (const language of preferred.filter(Boolean)) {
-    if (locales.includes(language)) return language
-    const [base] = language.split("-")
-    if (locales.includes(base)) return base
+  for (const language of preferred) {
+    const locale = matchLocale(language, locales)
+    if (locale) return locale
   }
 
   return defaultLocale
+}
+
+// The supported locale for a language, exactly or by its base language, so
+// `it-CH` picks `it`; null when there is none.
+function matchLocale(language, locales) {
+  if (!language) return null
+  if (locales.includes(language)) return language
+  const [base] = language.split("-")
+  return locales.includes(base) ? base : null
 }
 
 /**
@@ -364,6 +374,10 @@ function saveLocale(storageKey, locale) {
   } catch {
     // Not persisting the choice is better than breaking the switch.
   }
+}
+
+function getDocumentLanguage() {
+  return globalThis.document?.documentElement.lang
 }
 
 // Screen readers, hyphenation and the browser's own spell checking read the

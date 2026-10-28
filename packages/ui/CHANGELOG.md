@@ -1,5 +1,12 @@
 # @inglorious/ui
 
+## 9.7.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/web@6.10.1
+
 ## 9.7.0
 
 ### Minor Changes

@@ -1,7 +1,7 @@
 /**
  * @vitest-environment jsdom
  */
-import { afterEach, beforeEach, describe, expect, it } from "vitest"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 import { createAccessibleNavigation } from "./accessible-navigation"
 
@@ -16,16 +16,21 @@ describe("createAccessibleNavigation", () => {
     document.getElementById("root").innerHTML = html
   }
 
-  const getAnnouncement = () =>
-    document.getElementById("iw-route-announcer").textContent
+  // The announcement lands a moment after the render.
+  const getAnnouncement = () => {
+    vi.runAllTimers()
+    return document.getElementById("iw-route-announcer").textContent
+  }
 
   beforeEach(() => {
+    vi.useFakeTimers()
     window.history.replaceState(null, "", "/")
     document.title = "Home"
     document.body.innerHTML = `<div id="root"><a href="/about">About</a></div>`
   })
 
   afterEach(() => {
+    vi.useRealTimers()
     document.getElementById("iw-route-announcer")?.remove()
   })
 
@@ -98,6 +103,18 @@ describe("createAccessibleNavigation", () => {
     navigate(afterRender, "/search")
 
     expect(document.activeElement).toBe(document.querySelector("input"))
+  })
+
+  it("should announce a page with the same name as the last one again", () => {
+    const afterRender = createAccessibleNavigation()
+    const announcer = document.getElementById("iw-route-announcer")
+
+    navigate(afterRender, "/one")
+    expect(getAnnouncement()).toBe("Home")
+
+    navigate(afterRender, "/two")
+    expect(announcer.textContent).toBe("")
+    expect(getAnnouncement()).toBe("Home")
   })
 
   it("should keep focus when the history state asks to", () => {

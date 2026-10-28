@@ -1,7 +1,7 @@
 /**
  * @vitest-environment jsdom
  */
-import { beforeEach, describe, expect, it, vi } from "vitest"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 const { renderSpy } = vi.hoisted(() => ({
   renderSpy: vi.fn(),
@@ -210,9 +210,14 @@ describe("mount", () => {
     const getAnnouncer = () => document.getElementById("iw-route-announcer")
 
     beforeEach(() => {
+      vi.useFakeTimers()
       window.history.replaceState(null, "", "/")
       document.title = "Home"
       getAnnouncer()?.remove()
+    })
+
+    afterEach(() => {
+      vi.useRealTimers()
     })
 
     it("announces navigations in an app with the Router type", async () => {
@@ -221,6 +226,7 @@ describe("mount", () => {
       document.title = "About"
 
       navigate("/about")
+      vi.runAllTimers()
 
       expect(getAnnouncer().textContent).toBe("About")
     })
@@ -232,6 +238,7 @@ describe("mount", () => {
       })
 
       navigate("/posts/1")
+      vi.runAllTimers()
 
       expect(getAnnouncer().textContent).toBe("Post")
     })

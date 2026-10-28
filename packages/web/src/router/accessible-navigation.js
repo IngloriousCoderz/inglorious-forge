@@ -1,4 +1,6 @@
 const ANNOUNCER_ID = "iw-route-announcer"
+// Long enough for screen readers to notice the live region emptied first.
+const ANNOUNCE_DELAY_MS = 100
 const VISUALLY_HIDDEN =
   "position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0"
 
@@ -26,6 +28,17 @@ export function createAccessibleNavigation({
   const announcer = getAnnouncer()
   let currentPath = window.location.pathname
   let hasPendingAnnouncement = false
+  let announceTimeout = null
+
+  // Screen readers speak only when the live region changes, so it is emptied first and
+  // filled on a later task: two pages with the same name are each announced.
+  function announce(message) {
+    announcer.textContent = ""
+    clearTimeout(announceTimeout)
+    announceTimeout = setTimeout(() => {
+      announcer.textContent = message
+    }, ANNOUNCE_DELAY_MS)
+  }
 
   return function afterRender() {
     const path = window.location.pathname
@@ -44,8 +57,7 @@ export function createAccessibleNavigation({
     if (name == null) return
 
     hasPendingAnnouncement = false
-    announcer.textContent =
-      name || document.querySelector("h1")?.textContent || path
+    announce(name || document.querySelector("h1")?.textContent || path)
   }
 }
 

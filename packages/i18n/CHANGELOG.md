@@ -1,5 +1,11 @@
 # @inglorious/i18n
 
+## 1.3.0
+
+### Minor Changes
+
+- Add the `isServerRendered` option to `createI18n`: a server-rendered page, as with SSX, starts in the language of `<html lang>` instead of detecting one, so hydration keeps the server's language and only its catalogue loads.
+
 ## 1.2.3
 
 ### Patch Changes

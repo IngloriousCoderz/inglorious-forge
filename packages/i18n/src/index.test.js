@@ -89,6 +89,45 @@ describe("createI18n", () => {
     expect(document.documentElement.lang).toBe("it")
   })
 
+  it("starts a server-rendered page in its language, ahead of the saved choice and the device", () => {
+    stubBrowser({ languages: ["en"], saved: { lang: "en" } })
+    document.documentElement.lang = "it-IT"
+    const { I18n, t } = createI18n({
+      resources,
+      isServerRendered: true,
+      storageKey: "lang",
+    })
+    const entity = {}
+
+    I18n.create(entity)
+
+    expect(entity.locale).toBe("it")
+    expect(document.documentElement.lang).toBe("it")
+    expect(t("hello")).toBe("Ciao")
+  })
+
+  it("detects the locale when the page's language is unsupported", () => {
+    stubBrowser({ languages: ["it"] })
+    document.documentElement.lang = "de"
+    const { I18n } = createI18n({ resources, isServerRendered: true })
+    const entity = {}
+
+    I18n.create(entity)
+
+    expect(entity.locale).toBe("it")
+  })
+
+  it("ignores the language of a page that is not server-rendered", () => {
+    stubBrowser({ languages: ["it"] })
+    document.documentElement.lang = "en"
+    const { I18n } = createI18n({ resources })
+    const entity = {}
+
+    I18n.create(entity)
+
+    expect(entity.locale).toBe("it")
+  })
+
   it("switches language, remembers it and ignores unsupported ones", () => {
     const saved = stubBrowser({ languages: ["en"] })
     const { I18n, t } = createI18n({ resources, storageKey: "lang" })
@@ -165,6 +204,24 @@ describe("loadLocale", () => {
 
     await ready
 
+    expect(t("hello")).toBe("Ciao")
+  })
+
+  it("loads only the server-rendered page's locale, not the device's", async () => {
+    stubBrowser({ languages: ["fr-FR"] })
+    document.documentElement.lang = "it"
+    const loadLocale = vi.fn(async () => italian)
+    const { ready, t } = createI18n({
+      resources: { en },
+      locales: ["en", "it", "fr"],
+      isServerRendered: true,
+      loadLocale,
+    })
+
+    await ready
+
+    expect(loadLocale).toHaveBeenCalledTimes(1)
+    expect(loadLocale).toHaveBeenCalledWith("it")
     expect(t("hello")).toBe("Ciao")
   })
 

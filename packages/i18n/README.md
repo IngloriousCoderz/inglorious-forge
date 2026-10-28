@@ -116,11 +116,12 @@ Returns `{ I18n, ready, languages, t, trans, currentLocale, labelled, translated
 - `loadLocale`: loads a locale that is not in `resources`, resolving to `{ translation: { … } }`. The lower-level alternative to a lazy glob.
 - `locales`: the supported locales, in picker order. Defaults to those in `catalogues` and `resources`.
 - `saveUserLocale`: saves the locale for the signed-in user. See [The user's language](#the-users-language).
+- `isServerRendered`: whether the page comes rendered from a server, as with SSX. It then starts in the language of `<html lang>`, the one the server rendered, so hydration keeps it and only its catalogue loads. Leave it off for a page served as is, whose `<html lang>` says nothing about the visitor.
 - `defaultLocale`: the fallback, and the locale when nothing else matches. Defaults to the first locale.
 - `storageKey`: where to remember the user's choice in `localStorage`. Omit it to not remember the choice.
 - `i18nextOptions`: any further i18next options.
 
-The starting locale is the saved choice, else the first of the device's languages that is supported (`it-CH` picks `it`), else `defaultLocale`.
+The starting locale is that of `<html lang>` on a server-rendered page, when supported, else the saved choice, else the first of the device's languages that is supported (`it-CH` picks `it`), else `defaultLocale`.
 
 `ready` resolves once the starting locale and the fallback are loaded: at once when they are bundled. With every catalogue bundled, i18next also switches synchronously, so there is no loading state to handle.
 

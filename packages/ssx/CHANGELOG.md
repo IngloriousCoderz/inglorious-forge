@@ -1,5 +1,13 @@
 # @inglorious/ssx
 
+## 2.3.1
+
+### Patch Changes
+
+- Document starting `@inglorious/i18n` in the language the server rendered, with its `isServerRendered` option.
+- Updated dependencies
+  - @inglorious/web@6.10.1
+
 ## 2.3.0
 
 ### Minor Changes

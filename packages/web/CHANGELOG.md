@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 6.10.1
+
+### Patch Changes
+
+- Announce a navigation to a page with the same name as the previous one, which screen readers skipped because the live region did not change.
+
 ## 6.10.0
 
 ### Minor Changes

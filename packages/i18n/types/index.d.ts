@@ -24,6 +24,12 @@ export interface I18nOptions {
    * catalogue is its own chunk.
    */
   loadLocale?: (locale: string) => Promise<Resource[string]>
+  /**
+   * Whether the page comes rendered from a server, as with SSX: it then starts in the
+   * language of `<html lang>`, the one the server rendered it in, instead of detecting
+   * one. Defaults to `false`.
+   */
+  isServerRendered?: boolean
   /** The fallback, and the locale when nothing else matches. Defaults to the first locale. */
   defaultLocale?: string
   /** Where to remember the user's choice in localStorage. Omit to not remember it. */
