@@ -17,16 +17,20 @@ lets you watch each navigation slide in the direction it travelled:
 
 ## How it is wired
 
-The store is wrapped once, where it is mounted:
+`withTransitions` is a store middleware, passed when the store is created:
 
 ```js
 import { withTransitions } from "@inglorious/ui/view-transitions"
 import "@inglorious/ui/view-transitions.css"
 
-mount(withTransitions(store), app.render, document.getElementById("root"))
+const store = createStore({
+  types,
+  entities,
+  middlewares: [withTransitions()],
+})
 ```
 
-The wrapper replaces the store's `subscribe` so that the render which follows a
+The middleware replaces the store's `subscribe` so that the render which follows a
 navigation runs inside a view transition, tagged with the direction. Nothing
 else in the app knows transitions exist: the views navigate with ordinary
 `<a href>` links and `api.notify("#router:navigate", …)`.
@@ -40,7 +44,7 @@ every navigation into or out of one of them; the others change page instantly:
 
 ```js
 // Slide into and out of detail pages; switch between top-level pages instantly.
-withTransitions(store, { routes: ["eventDetail", "userDetail"] })
+withTransitions({ routes: ["eventDetail", "userDetail"] })
 ```
 
 For anything a list can't express, pass a function instead. It receives the
@@ -50,7 +54,7 @@ animate:
 
 ```js
 // Slide only when going deeper or coming back up, never sideways.
-withTransitions(store, {
+withTransitions({
   routes: ({ from, to }) =>
     from.path.startsWith(to.path) || to.path.startsWith(from.path),
 })
