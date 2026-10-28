@@ -1,4 +1,7 @@
 .iw-theme-bootstrap {
+  --iw-font-family-sans:
+    system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans",
+    "Liberation Sans", Arial, sans-serif;
   /* The theme on the page itself: the element with the theme class, usually
      <body>, takes its background, text color and font. */
   background-color: var(--iw-color-bg);
@@ -6,20 +9,20 @@
   font-family: var(--iw-font-family-sans);
 
   /* ========================================
-     BOOTSTRAP THEME - Bootstrap Inspired
+     BOOTSTRAP THEME - Bootstrap 5 defaults
      ======================================== */
 
   /* Semantic Colors */
   --iw-color-bg: var(--iw-color-white);
-  --iw-color-bg-secondary: var(--iw-color-gray-100);
-  --iw-color-bg-tertiary: var(--iw-color-gray-200);
+  --iw-color-bg-secondary: #f8f9fa;
+  --iw-color-bg-tertiary: #e9ecef;
   --iw-color-surface: var(--iw-color-white);
-  --iw-color-surface-hover: var(--iw-color-gray-100);
-  --iw-color-surface-active: var(--iw-color-gray-200);
+  --iw-color-surface-hover: #f8f9fa;
+  --iw-color-surface-active: #e9ecef;
 
   --iw-color-text: #212529;
-  --iw-color-text-secondary: #495057;
-  --iw-color-text-muted: #6c757d;
+  --iw-color-text-secondary: rgba(33, 37, 41, 0.75);
+  --iw-color-text-muted: rgba(33, 37, 41, 0.75);
 
   --iw-color-border: #dee2e6;
   --iw-color-border-focus: #86b7fe;
@@ -29,9 +32,30 @@
   --iw-color-primary-active: #0a58ca;
   --iw-color-primary-text: var(--iw-color-white);
 
-  --iw-color-accent: #6f42c1;
-  --iw-color-accent-hover: #5a32a3;
-  --iw-color-accent-active: #4328a4;
+  /* Bootstrap's secondary color */
+  --iw-color-accent: #6c757d;
+  --iw-color-accent-hover: #5c636a;
+  --iw-color-accent-active: #565e64;
+
+  --iw-color-success: #198754;
+  --iw-color-success-dark: #157347;
+  --iw-color-warning: #ffc107;
+  --iw-color-warning-dark: #ffca2c;
+  --iw-color-error: #dc3545;
+  --iw-color-error-dark: #bb2d3b;
+  --iw-color-info: #0dcaf0;
+  --iw-color-info-dark: #31d2f2;
+
+  --iw-shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  --iw-shadow-md: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  --iw-shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.175);
+  --iw-shadow-xl: 0 1rem 3rem rgba(0, 0, 0, 0.175);
+
+  /* Bootstrap's border radii */
+  --iw-radius-sm: 0.25rem;
+  --iw-radius-md: 0.375rem;
+  --iw-radius-lg: 0.5rem;
+  --iw-radius-xl: 1rem;
 
   /* ========================================
      COMPONENT TOKENS
@@ -48,50 +72,46 @@
   --iw-button-shadow-hover: none;
   --iw-button-shadow-active: none;
 
-  --iw-button-outline-bg: transparent;
-  --iw-button-outline-bg-hover: var(--iw-color-primary);
-  --iw-button-outline-text: var(--iw-color-primary);
-  --iw-button-outline-text-hover: var(--iw-color-white);
-  --iw-button-outline-border: var(--iw-color-primary);
-
-  --iw-button-ghost-bg: transparent;
-  --iw-button-ghost-bg-hover: var(--iw-color-gray-100);
-  --iw-button-ghost-text: var(--iw-color-text);
-  --iw-button-ghost-border: transparent;
-
   /* Input */
-  --iw-input-bg: var(--iw-color-white);
-  --iw-input-bg-hover: var(--iw-color-white);
-  --iw-input-bg-focus: var(--iw-color-white);
+  --iw-input-bg: var(--iw-color-bg);
+  --iw-input-bg-hover: var(--iw-color-bg);
+  --iw-input-bg-focus: var(--iw-color-bg);
   --iw-input-text: var(--iw-color-text);
-  --iw-input-text-placeholder: var(--iw-color-text-muted);
-  --iw-input-border: #ced4da;
-  --iw-input-border-hover: #ced4da;
+  --iw-input-text-placeholder: var(--iw-color-text-secondary);
+  --iw-input-border: var(--iw-color-border);
+  --iw-input-border-hover: var(--iw-color-border);
   --iw-input-border-focus: var(--iw-color-border-focus);
   --iw-input-radius: var(--iw-radius-md);
   --iw-input-shadow-focus: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 
-  /* App bar */
-  --iw-app-bar-bg: var(--iw-color-surface);
+  /* App bar: a navbar on the tertiary background */
+  --iw-app-bar-bg: var(--iw-color-bg-secondary);
 
   /* Drawer */
   --iw-drawer-bg: var(--iw-color-surface);
 
   /* Card */
   --iw-card-bg: var(--iw-color-surface);
-  --iw-card-border: var(--iw-color-border);
-  --iw-card-radius: var(--iw-radius-lg);
+  --iw-card-border: color-mix(
+    in srgb,
+    var(--iw-color-black) 17.5%,
+    transparent
+  );
+  --iw-card-radius: var(--iw-radius-md);
   --iw-card-shadow: none;
-  --iw-card-shadow-hover: none;
+  --iw-card-shadow-hover: var(--iw-shadow-sm);
 
   /* Badge */
   --iw-badge-radius: var(--iw-radius-md);
+
+  /* Chip: a pill badge in a subtle tone */
+  --iw-chip-bg: var(--iw-color-bg-tertiary);
 
   /* List */
   --iw-list-item: transparent;
   --iw-list-item-selected: color-mix(
     in srgb,
-    var(--iw-color-primary) 8%,
+    var(--iw-color-primary) 10%,
     transparent
   );
 
@@ -101,46 +121,493 @@
   color-scheme: light;
 }
 
-/* Dark variant */
+/* Dark variant: Bootstrap's dark color mode */
 .iw-theme-bootstrap.iw-theme-dark {
   color-scheme: dark;
 
   --iw-color-bg: #212529;
-  --iw-color-bg-secondary: #2c3036;
+  --iw-color-bg-secondary: #2b3035;
   --iw-color-bg-tertiary: #343a40;
-  --iw-color-surface: #2c3036;
-  --iw-color-surface-hover: #343a40;
-  --iw-color-surface-active: #3d4450;
-  --iw-color-text: #f8f9fa;
-  --iw-color-text-secondary: #dee2e6;
-  --iw-color-text-muted: #adb5bd;
+  --iw-color-surface: #212529;
+  --iw-color-surface-hover: #2b3035;
+  --iw-color-surface-active: #343a40;
+  --iw-color-text: #dee2e6;
+  --iw-color-text-secondary: rgba(222, 226, 230, 0.75);
+  --iw-color-text-muted: rgba(222, 226, 230, 0.75);
   --iw-color-border: #495057;
 
-  --iw-color-primary: #5897fb;
-  --iw-color-primary-hover: #4a8bf7;
-  --iw-color-primary-active: #3c7ff3;
-  --iw-color-primary-text: var(--iw-color-black);
+  /* Buttons keep their colors; text in the primary color is lightened */
+  --iw-color-link: #6ea8fe;
 
-  --iw-color-border-focus: #5897fb;
+  --iw-card-border: color-mix(in srgb, var(--iw-color-white) 15%, transparent);
+}
 
-  --iw-input-bg: #2c3036;
-  --iw-input-bg-hover: #2c3036;
-  --iw-input-bg-focus: #2c3036;
-  --iw-input-border: #495057;
-  --iw-input-border-hover: #5a6268;
-  --iw-input-border-focus: var(--iw-color-primary);
-  --iw-input-shadow-focus: 0 0 0 0.25rem rgba(88, 151, 251, 0.25);
+.iw-theme-bootstrap {
+  /* Buttons: Bootstrap's sizes, a focus ring, and the text that reads on each
+     color */
+  .iw-button {
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
 
-  --iw-button-outline-text: var(--iw-color-primary);
-  --iw-button-outline-border: var(--iw-color-primary);
-  --iw-button-ghost-bg-hover: #343a40;
-  --iw-button-ghost-text: var(--iw-color-text);
+    &.iw-button-sm {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.875rem;
+      border-radius: var(--iw-radius-sm);
+    }
 
-  --iw-list-item: transparent;
-  --iw-list-item-active: #343a40;
-  --iw-list-item-selected: color-mix(
-    in srgb,
-    var(--iw-color-primary) 12%,
-    transparent
-  );
+    &.iw-button-lg {
+      padding: 0.5rem 1rem;
+      font-size: 1.25rem;
+      border-radius: var(--iw-radius-lg);
+    }
+
+    &.iw-button-xs {
+      padding: 0.125rem 0.375rem;
+      font-size: 0.75rem;
+      border-radius: var(--iw-radius-sm);
+    }
+
+    &.iw-button-shape-pill,
+    &.iw-button-shape-round {
+      border-radius: var(--iw-radius-full);
+    }
+
+    &.iw-button-default {
+      --iw-button-bg-hover: var(--iw-color-surface-active);
+      --iw-button-bg-active: var(--iw-color-border);
+    }
+
+    &.iw-button-secondary {
+      --iw-button-color: var(--iw-color-accent);
+      --iw-button-bg: var(--iw-color-accent);
+      --iw-button-bg-hover: var(--iw-color-accent-hover);
+      --iw-button-bg-active: var(--iw-color-accent-active);
+      --iw-button-border: var(--iw-color-accent);
+    }
+
+    &.iw-button-success {
+      --iw-button-bg-active: #146c43;
+    }
+
+    &.iw-button-error {
+      --iw-button-bg-active: #b02a37;
+    }
+
+    &.iw-button-warning {
+      --iw-button-bg-active: #ffcd39;
+    }
+
+    &.iw-button-info {
+      --iw-button-bg-active: #3dd5f3;
+    }
+
+    &.iw-button-secondary,
+    &.iw-button-success,
+    &.iw-button-error {
+      --iw-button-text: var(--iw-color-white);
+    }
+
+    &.iw-button-warning,
+    &.iw-button-info {
+      --iw-button-text: var(--iw-color-black);
+    }
+
+    &:focus-visible {
+      outline: 0;
+      box-shadow: 0 0 0 0.25rem
+        color-mix(
+          in srgb,
+          var(--iw-button-color, var(--iw-button-bg)) 50%,
+          transparent
+        );
+    }
+
+    /* Outline buttons fill with their color on hover */
+    &.iw-button-outline:hover:not(:disabled),
+    &.iw-button-outline:active:not(:disabled),
+    &.iw-button-outline.iw-button-pressed {
+      background-color: var(--iw-button-bg);
+      color: var(--iw-button-text);
+    }
+
+    &.iw-button-outline:active:not(:disabled),
+    &.iw-button-outline.iw-button-pressed {
+      background-color: var(--iw-button-bg-active);
+    }
+
+    /* Ghost buttons are link buttons */
+    &.iw-button-ghost {
+      text-decoration: underline;
+
+      &:hover:not(:disabled),
+      &:active:not(:disabled),
+      &.iw-button-pressed {
+        background-color: transparent;
+        color: var(--iw-button-bg-hover);
+      }
+    }
+
+    &:disabled,
+    &.iw-button-disabled {
+      opacity: 0.65;
+    }
+  }
+
+  &.iw-theme-dark .iw-button.iw-button-ghost.iw-button-primary {
+    color: var(--iw-color-link);
+
+    &:hover:not(:disabled) {
+      color: color-mix(
+        in srgb,
+        var(--iw-color-link) 80%,
+        var(--iw-color-white)
+      );
+    }
+  }
+
+  /* Form controls: labels and help text at Bootstrap's sizes, and a red focus
+     ring on invalid fields */
+  .iw-input,
+  .iw-select,
+  .iw-textarea-field {
+    gap: 0;
+
+    .iw-input-label,
+    .iw-select-label,
+    .iw-textarea-label {
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+    }
+
+    .iw-input-hint,
+    .iw-input-error-message,
+    .iw-select-hint,
+    .iw-select-error-message {
+      margin-top: 0.25rem;
+      font-size: 0.875em;
+    }
+
+    .iw-input-frame,
+    .iw-select-frame {
+      padding-inline: 0.75rem;
+    }
+
+    .iw-input-frame:has(.iw-input-control-error):focus-within,
+    .iw-select-frame:has(.iw-select-control-error):focus-within {
+      box-shadow: 0 0 0 0.25rem
+        color-mix(in srgb, var(--iw-color-error) 25%, transparent);
+    }
+  }
+
+  .iw-input .iw-input-frame .iw-input-control.iw-input-md {
+    height: calc(1.5em + 0.75rem);
+  }
+
+  /* Switch: an outlined track whose thumb fills in when checked */
+  .iw-switch {
+    .iw-switch-track {
+      width: 2rem;
+      height: 1rem;
+      padding: 1px;
+      border: 1px solid
+        color-mix(in srgb, var(--iw-color-text) 25%, transparent);
+      background: var(--iw-color-bg);
+      transition:
+        background-color var(--iw-transition-fast),
+        border-color var(--iw-transition-fast);
+    }
+
+    .iw-switch-thumb {
+      width: 0.75rem;
+      height: 0.75rem;
+      background: color-mix(in srgb, var(--iw-color-text) 25%, transparent);
+      box-shadow: none;
+    }
+
+    .iw-switch-input:focus-visible + .iw-switch-track {
+      border-color: var(--iw-color-border-focus);
+      box-shadow: var(--iw-input-shadow-focus);
+    }
+
+    .iw-switch-input:checked + .iw-switch-track {
+      border-color: var(--iw-switch-active-bg);
+      background: var(--iw-switch-active-bg);
+
+      .iw-switch-thumb {
+        background: var(--iw-color-white);
+        transform: translateX(calc(1rem * var(--iw-dir-sign, 1)));
+      }
+    }
+
+    &.iw-switch-sm {
+      .iw-switch-track {
+        width: 1.75rem;
+        height: 0.875rem;
+      }
+
+      .iw-switch-thumb {
+        width: 0.625rem;
+        height: 0.625rem;
+      }
+
+      .iw-switch-input:checked + .iw-switch-track .iw-switch-thumb {
+        transform: translateX(calc(0.875rem * var(--iw-dir-sign, 1)));
+      }
+    }
+
+    &.iw-switch-lg {
+      .iw-switch-track {
+        width: 2.5rem;
+        height: 1.25rem;
+      }
+
+      .iw-switch-thumb {
+        width: 1rem;
+        height: 1rem;
+      }
+
+      .iw-switch-input:checked + .iw-switch-track .iw-switch-thumb {
+        transform: translateX(calc(1.25rem * var(--iw-dir-sign, 1)));
+      }
+    }
+  }
+
+  /* Tabs: nav tabs, the selected one joined to the content below it */
+  .iw-tabs-list {
+    gap: 0;
+  }
+
+  .iw-tab {
+    margin-bottom: -1px;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    color: var(--iw-color-primary);
+    border: 1px solid transparent;
+    border-radius: var(--iw-radius-md) var(--iw-radius-md) 0 0;
+    transition:
+      color var(--iw-transition-fast),
+      border-color var(--iw-transition-fast);
+
+    &:hover {
+      color: var(--iw-color-primary-hover);
+      border-color: var(--iw-color-bg-tertiary) var(--iw-color-bg-tertiary)
+        var(--iw-color-border);
+      isolation: isolate;
+    }
+  }
+
+  .iw-tab.iw-tab-selected {
+    color: var(--iw-color-text);
+    background: var(--iw-color-bg);
+    border-color: var(--iw-color-border) var(--iw-color-border)
+      var(--iw-color-bg);
+  }
+
+  &.iw-theme-dark .iw-tab:not(.iw-tab-selected) {
+    color: var(--iw-color-link);
+  }
+
+  /* Chips and badges: Bootstrap badges, bold and white on their color */
+  .iw-chip {
+    &.iw-chip-primary,
+    &.iw-chip-success,
+    &.iw-chip-error {
+      color: var(--iw-color-white);
+    }
+
+    &.iw-chip-secondary {
+      background: var(--iw-color-accent);
+      color: var(--iw-color-white);
+    }
+
+    &.iw-chip-warning,
+    &.iw-chip-info {
+      color: var(--iw-color-black);
+    }
+
+    &.iw-chip-primary,
+    &.iw-chip-selected {
+      background: var(--iw-color-primary);
+    }
+
+    &.iw-chip-selected {
+      color: var(--iw-color-white);
+    }
+
+    &.iw-chip-success {
+      background: var(--iw-color-success);
+    }
+
+    &.iw-chip-warning {
+      background: var(--iw-color-warning);
+    }
+
+    &.iw-chip-error {
+      background: var(--iw-color-error);
+    }
+
+    &.iw-chip-info {
+      background: var(--iw-color-info);
+    }
+  }
+
+  .iw-badge {
+    font-weight: var(--iw-font-weight-bold);
+
+    &:not(.iw-badge-shape-circle, .iw-badge-shape-square) {
+      min-height: 0;
+      padding: 0.35em 0.65em;
+    }
+
+    &.iw-badge-secondary {
+      --iw-badge-accent: var(--iw-color-accent);
+    }
+
+    &.iw-badge-info {
+      --iw-badge-on-accent: var(--iw-color-black);
+    }
+  }
+
+  /* Cards: a header and a footer on a faint tint, ruled off from the body */
+  .iw-card-header,
+  .iw-card-footer {
+    border-color: var(--iw-card-border);
+    background-color: color-mix(in srgb, var(--iw-color-text) 3%, transparent);
+  }
+
+  /* Unless given a padding of their own */
+  .iw-card-header:not([class*="iw-card-header-padding-"]),
+  .iw-card-footer:not([class*="iw-card-footer-padding-"]) {
+    padding: 0.5rem 1rem;
+  }
+
+  .iw-card-title {
+    font-size: 1.25rem;
+    font-weight: var(--iw-font-weight-medium);
+    line-height: 1.2;
+  }
+
+  /* Alerts: a subtle background, an emphasized text and a border, all in the
+     tone of the alert */
+  .iw-alert {
+    padding: 1rem;
+  }
+
+  .iw-alert-title {
+    font-weight: var(--iw-font-weight-medium);
+  }
+
+  .iw-alert-description {
+    color: inherit;
+  }
+
+  .iw-alert-filled {
+    background: color-mix(
+      in srgb,
+      var(--iw-alert-color) 20%,
+      var(--iw-color-white)
+    );
+    border-color: color-mix(
+      in srgb,
+      var(--iw-alert-color) 40%,
+      var(--iw-color-white)
+    );
+    color: color-mix(in srgb, var(--iw-alert-color) 40%, var(--iw-color-black));
+  }
+
+  &.iw-theme-dark .iw-alert-filled {
+    background: color-mix(
+      in srgb,
+      var(--iw-alert-color) 20%,
+      var(--iw-color-black)
+    );
+    border-color: color-mix(
+      in srgb,
+      var(--iw-alert-color) 60%,
+      var(--iw-color-black)
+    );
+    color: color-mix(in srgb, var(--iw-alert-color) 60%, var(--iw-color-white));
+  }
+
+  .iw-alert-neutral.iw-alert-filled {
+    --iw-alert-color: var(--iw-color-accent);
+  }
+
+  /* Tables: no outer border, compact cells and bold headings */
+  .iw-table {
+    border: 0 none;
+  }
+
+  .iw-table-header-cell,
+  .iw-table-cell {
+    padding: 0.5rem;
+  }
+
+  .iw-table-header-cell {
+    font-weight: var(--iw-font-weight-bold);
+  }
+
+  .iw-table.iw-table-striped .iw-table-row-even {
+    background: color-mix(in srgb, var(--iw-color-text) 5%, transparent);
+  }
+
+  /* Dialogs: a modal with a ruled header and footer */
+  .iw-dialog {
+    border: 1px solid var(--iw-card-border);
+    border-radius: var(--iw-radius-lg);
+    box-shadow: none;
+
+    &::backdrop {
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: none;
+    }
+  }
+
+  .iw-dialog-surface {
+    padding: 0;
+  }
+
+  .iw-dialog-header {
+    padding: 1rem;
+    border-bottom: 1px solid var(--iw-color-border);
+  }
+
+  .iw-dialog-title {
+    font-size: 1.25rem;
+    font-weight: var(--iw-font-weight-medium);
+    line-height: 1.5;
+  }
+
+  .iw-dialog-description {
+    margin: 0;
+    padding: 1rem 1rem 0;
+    color: var(--iw-color-text);
+  }
+
+  .iw-dialog-body {
+    margin: 0;
+    padding: 1rem;
+  }
+
+  .iw-dialog-description + .iw-dialog-actions {
+    margin-top: 1rem;
+  }
+
+  .iw-dialog-actions {
+    margin-top: 0;
+    padding: 0.75rem;
+    gap: 0.5rem;
+    border-top: 1px solid var(--iw-color-border);
+  }
+
+  /* App bars: navbars, with no border */
+  .iw-app-bar {
+    border-bottom: 0 none;
+  }
+
+  .iw-app-bar-title {
+    font-size: 1.25rem;
+    font-weight: var(--iw-font-weight-normal);
+  }
 }

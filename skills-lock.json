@@ -29,7 +29,7 @@
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/forge/SKILL.md",
-      "computedHash": "c684f41b3567f1b86c65b5a121b79b18e0214f3fc7d548960eb96493bf3c072a"
+      "computedHash": "e45328a00d00142d425af6ad5c7b9229442c1f816285dee9ceb11985252f7279"
     },
     "react-store": {
       "source": "IngloriousCoderz/forge-skills",
@@ -59,7 +59,7 @@
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/ui/SKILL.md",
-      "computedHash": "b0b5d9ed6f31588b0b50065957e33395a271fa973f6c949dde5af6a4bb9c3e00"
+      "computedHash": "73f686fb4f176a1a4b52454cea9042c1c089b9b54a9456ca18e5524ab5045285"
     },
     "ui-best-practices": {
       "source": "IngloriousCoderz/forge-skills",
@@ -95,7 +95,7 @@
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/web-best-practices/SKILL.md",
-      "computedHash": "e3b6268d9b905d57dc489da1559a6aa24e35edb4a4fe38291ade2669575867f1"
+      "computedHash": "36732e0fe7fccb30f2e4e7d6e071ac233dcb00267b493059a544bb1b7526edce"
     }
   }
 }

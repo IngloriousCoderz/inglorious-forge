@@ -28,6 +28,7 @@
     padding: 0 var(--iw-space-3);
     border: 1px solid var(--iw-input-border);
     border-radius: var(--iw-input-radius);
+    background-color: var(--iw-input-bg);
     transition:
       border-color var(--iw-transition-fast),
       box-shadow var(--iw-transition-fast),

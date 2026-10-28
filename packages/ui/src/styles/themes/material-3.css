@@ -1,0 +1,748 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
+
+.iw-theme-material-3 {
+  --iw-font-family-sans: "Roboto", "Helvetica", "Arial", sans-serif;
+  /* The theme on the page itself: the element with the theme class, usually
+     <body>, takes its background, text color and font. */
+  background-color: var(--iw-color-bg);
+  color: var(--iw-color-text);
+  font-family: var(--iw-font-family-sans);
+
+  /* ========================================
+     MATERIAL 3 THEME - Material Design 3 baseline
+     ======================================== */
+
+  /* Material 3 color roles the shared tokens have no name for */
+  --iw-m3-outline: #79747e;
+  --iw-m3-surface-container-low: #f7f2fa;
+  --iw-m3-surface-container: #f3edf7;
+  --iw-m3-surface-container-high: #ece6f0;
+  --iw-m3-surface-container-highest: #e6e0e9;
+  --iw-m3-secondary-container: #e8def8;
+  --iw-m3-on-secondary-container: #4a4458;
+  --iw-m3-inverse-surface: #322f35;
+  --iw-m3-inverse-on-surface: #f5eff7;
+  --iw-m3-inverse-primary: #d0bcff;
+
+  /* Semantic Colors */
+  --iw-color-bg: #fef7ff;
+  --iw-color-bg-secondary: var(--iw-m3-surface-container);
+  --iw-color-bg-tertiary: var(--iw-m3-surface-container-highest);
+  --iw-color-surface: var(--iw-m3-surface-container-low);
+  --iw-color-surface-hover: color-mix(
+    in srgb,
+    var(--iw-color-text) 8%,
+    transparent
+  );
+  --iw-color-surface-active: color-mix(
+    in srgb,
+    var(--iw-color-text) 10%,
+    transparent
+  );
+
+  --iw-color-text: #1d1b20;
+  --iw-color-text-secondary: #49454f;
+  --iw-color-text-muted: #49454f;
+
+  --iw-color-border: #cac4d0;
+  --iw-color-border-focus: #6750a4;
+
+  --iw-color-primary: #6750a4;
+  --iw-color-primary-hover: color-mix(in srgb, #6750a4 92%, #ffffff);
+  --iw-color-primary-active: color-mix(in srgb, #6750a4 90%, #ffffff);
+  --iw-color-primary-text: var(--iw-color-white);
+
+  /* Material 3's secondary color */
+  --iw-color-accent: #625b71;
+  --iw-color-accent-hover: color-mix(in srgb, #625b71 92%, #ffffff);
+  --iw-color-accent-active: color-mix(in srgb, #625b71 90%, #ffffff);
+
+  /* Material 3 defines only an error color: the others are custom colors at
+     the same tones as the primary */
+  --iw-color-success: #386a20;
+  --iw-color-warning: #7d5700;
+  --iw-color-error: #b3261e;
+  --iw-color-info: #00639a;
+
+  /* Elevation levels 1 to 4 */
+  --iw-shadow-sm:
+    0 1px 2px 0 rgba(0, 0, 0, 0.3), 0 1px 3px 1px rgba(0, 0, 0, 0.15);
+  --iw-shadow-md:
+    0 1px 2px 0 rgba(0, 0, 0, 0.3), 0 2px 6px 2px rgba(0, 0, 0, 0.15);
+  --iw-shadow-lg:
+    0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 4px 8px 3px rgba(0, 0, 0, 0.15);
+  --iw-shadow-xl:
+    0 2px 3px 0 rgba(0, 0, 0, 0.3), 0 6px 10px 4px rgba(0, 0, 0, 0.15);
+
+  /* Material 3's shape scale: extra small to extra large */
+  --iw-radius-sm: 4px;
+  --iw-radius-md: 8px;
+  --iw-radius-lg: 12px;
+  --iw-radius-xl: 16px;
+  --iw-radius-2xl: 28px;
+
+  /* Labels in the label-large style: medium weight, as written */
+  --iw-label-text-transform: none;
+  --iw-label-letter-spacing: 0.00714em;
+  --iw-label-font-weight: var(--iw-font-weight-medium);
+
+  /* ========================================
+     COMPONENT TOKENS
+     ======================================== */
+
+  /* Button: filled, in a pill */
+  --iw-button-bg: var(--iw-color-primary);
+  --iw-button-bg-hover: var(--iw-color-primary-hover);
+  --iw-button-bg-active: var(--iw-color-primary-active);
+  --iw-button-text: var(--iw-color-primary-text);
+  --iw-button-border: var(--iw-color-primary);
+  --iw-button-radius: var(--iw-radius-full);
+  --iw-button-shadow: none;
+  --iw-button-shadow-hover: var(--iw-shadow-sm);
+  --iw-button-shadow-active: none;
+
+  /* A button's default color is a filled tonal button, whose outlined and
+     ghost forms take the primary color */
+  --iw-button-default-color: var(--iw-color-primary);
+  --iw-button-default-bg: var(--iw-m3-secondary-container);
+  --iw-button-default-bg-hover: var(--iw-m3-secondary-container);
+  --iw-button-default-bg-active: var(--iw-m3-secondary-container);
+  --iw-button-default-border: var(--iw-m3-secondary-container);
+  --iw-button-default-text: var(--iw-m3-on-secondary-container);
+
+  /* Input: a filled text field */
+  --iw-input-bg: var(--iw-m3-surface-container-highest);
+  --iw-input-bg-hover: color-mix(
+    in srgb,
+    var(--iw-m3-surface-container-highest) 92%,
+    var(--iw-color-text)
+  );
+  --iw-input-bg-focus: var(--iw-m3-surface-container-highest);
+  --iw-input-text: var(--iw-color-text);
+  --iw-input-text-placeholder: var(--iw-color-text-secondary);
+  --iw-input-border: var(--iw-color-text-secondary);
+  --iw-input-border-hover: var(--iw-color-text);
+  --iw-input-border-focus: var(--iw-color-primary);
+  --iw-input-radius: var(--iw-radius-sm) var(--iw-radius-sm) 0 0;
+  /* With the bottom border, a 2px active indicator */
+  --iw-input-shadow-focus: inset 0 -1px 0 var(--iw-input-border-focus);
+
+  /* App bar: a top app bar on the surface */
+  --iw-app-bar-bg: var(--iw-color-bg);
+
+  /* Drawer: a navigation drawer */
+  --iw-drawer-bg: var(--iw-m3-surface-container-low);
+
+  /* Card: an elevated card */
+  --iw-card-bg: var(--iw-m3-surface-container-low);
+  --iw-card-border: transparent;
+  --iw-card-radius: var(--iw-radius-lg);
+  --iw-card-shadow: var(--iw-shadow-sm);
+  --iw-card-shadow-hover: var(--iw-shadow-md);
+
+  /* Badge */
+  --iw-badge-radius: var(--iw-radius-full);
+
+  /* Chip: outlined, on no background of its own */
+  --iw-chip-bg: transparent;
+
+  /* List */
+  --iw-list-item: transparent;
+  --iw-list-item-active: var(--iw-color-surface-hover);
+  --iw-list-item-selected: var(--iw-m3-secondary-container);
+
+  /* Alert */
+  --iw-alert-radius: var(--iw-radius-lg);
+  --iw-alert-shadow: none;
+  color-scheme: light;
+}
+
+/* Dark variant */
+.iw-theme-material-3.iw-theme-dark {
+  color-scheme: dark;
+
+  --iw-m3-outline: #938f99;
+  --iw-m3-surface-container-low: #1d1b20;
+  --iw-m3-surface-container: #211f26;
+  --iw-m3-surface-container-high: #2b2930;
+  --iw-m3-surface-container-highest: #36343b;
+  --iw-m3-secondary-container: #4a4458;
+  --iw-m3-on-secondary-container: #e8def8;
+  --iw-m3-inverse-surface: #e6e0e9;
+  --iw-m3-inverse-on-surface: #322f35;
+  --iw-m3-inverse-primary: #6750a4;
+
+  --iw-color-bg: #141218;
+  --iw-color-text: #e6e0e9;
+  --iw-color-text-secondary: #cac4d0;
+  --iw-color-text-muted: #cac4d0;
+  --iw-color-border: #49454f;
+
+  --iw-color-primary: #d0bcff;
+  --iw-color-primary-hover: color-mix(in srgb, #d0bcff 92%, #381e72);
+  --iw-color-primary-active: color-mix(in srgb, #d0bcff 90%, #381e72);
+  --iw-color-primary-text: #381e72;
+
+  --iw-color-border-focus: #d0bcff;
+
+  --iw-color-accent: #ccc2dc;
+  --iw-color-accent-hover: color-mix(in srgb, #ccc2dc 92%, #332d41);
+  --iw-color-accent-active: color-mix(in srgb, #ccc2dc 90%, #332d41);
+
+  --iw-color-success: #9cd67d;
+  --iw-color-warning: #f8bd2a;
+  --iw-color-error: #f2b8b5;
+  --iw-color-info: #9ecaff;
+}
+
+.iw-theme-material-3 {
+  /* Buttons: pills 40px tall. Hovering and pressing lay the label's color
+     over the container, as Material 3's state layers */
+  .iw-button {
+    padding: 10px 24px;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+
+    &.iw-button-xs {
+      padding: 2px 8px;
+      font-size: 0.75rem;
+    }
+
+    &.iw-button-sm {
+      padding: 6px 16px;
+      font-size: 0.875rem;
+    }
+
+    &.iw-button-lg {
+      padding: 16px 24px;
+      font-size: 1rem;
+      line-height: 1.5rem;
+    }
+
+    &.iw-button-shape-square {
+      border-radius: var(--iw-radius-lg);
+    }
+
+    &.iw-button-secondary {
+      --iw-button-color: var(--iw-color-accent);
+      --iw-button-bg: var(--iw-color-accent);
+      --iw-button-border: var(--iw-color-accent);
+    }
+
+    &.iw-button-secondary,
+    &.iw-button-success,
+    &.iw-button-warning,
+    &.iw-button-error,
+    &.iw-button-info {
+      --iw-button-text: var(--iw-color-white);
+    }
+
+    &.iw-button-default,
+    &.iw-button-primary,
+    &.iw-button-secondary,
+    &.iw-button-success,
+    &.iw-button-warning,
+    &.iw-button-error,
+    &.iw-button-info {
+      --iw-button-bg-hover: color-mix(
+        in srgb,
+        var(--iw-button-bg) 92%,
+        var(--iw-button-text)
+      );
+      --iw-button-bg-active: color-mix(
+        in srgb,
+        var(--iw-button-bg) 90%,
+        var(--iw-button-text)
+      );
+    }
+
+    /* Outlined buttons have a neutral outline, whatever their color */
+    &.iw-button-outline {
+      border-color: var(--iw-m3-outline);
+    }
+
+    &.iw-button-ghost {
+      padding-inline: 12px;
+    }
+
+    &.iw-button-outline,
+    &.iw-button-ghost {
+      &:hover:not(:disabled) {
+        background-color: color-mix(
+          in srgb,
+          var(--iw-button-color) 8%,
+          transparent
+        );
+      }
+
+      &:active:not(:disabled),
+      &.iw-button-pressed {
+        color: var(--iw-button-color);
+        background-color: color-mix(
+          in srgb,
+          var(--iw-button-color) 10%,
+          transparent
+        );
+      }
+    }
+
+    &:disabled,
+    &.iw-button-disabled {
+      opacity: 1;
+      color: color-mix(in srgb, var(--iw-color-text) 38%, transparent);
+      background-color: color-mix(
+        in srgb,
+        var(--iw-color-text) 12%,
+        transparent
+      );
+      border-color: transparent;
+      box-shadow: none;
+
+      &.iw-button-outline {
+        background-color: transparent;
+        border-color: color-mix(in srgb, var(--iw-color-text) 12%, transparent);
+      }
+
+      &.iw-button-ghost {
+        background-color: transparent;
+      }
+    }
+  }
+
+  /* On dark, labels on a color are a deep tone of it */
+  &.iw-theme-dark .iw-button {
+    &.iw-button-secondary,
+    &.iw-button-success,
+    &.iw-button-warning,
+    &.iw-button-error,
+    &.iw-button-info {
+      --iw-button-text: color-mix(
+        in srgb,
+        var(--iw-button-color) 25%,
+        var(--iw-color-black)
+      );
+    }
+  }
+
+  /* Filled text fields: a tinted box with an indicator along its bottom,
+     2px and in the primary color while it has focus */
+  .iw-input .iw-input-frame,
+  .iw-select .iw-select-frame,
+  .iw-combobox .iw-combobox-frame,
+  .iw-textarea-field .iw-textarea {
+    border-width: 0 0 1px;
+  }
+
+  .iw-input,
+  .iw-select,
+  .iw-textarea-field {
+    .iw-input-label,
+    .iw-select-label,
+    .iw-textarea-label {
+      color: var(--iw-color-text-secondary);
+    }
+
+    .iw-input-frame,
+    .iw-select-frame {
+      padding-inline: 16px;
+    }
+
+    &:focus-within {
+      .iw-input-label,
+      .iw-select-label,
+      .iw-textarea-label {
+        color: var(--iw-color-primary);
+      }
+    }
+
+    .iw-input-hint,
+    .iw-input-error-message,
+    .iw-select-hint,
+    .iw-select-error-message {
+      margin-inline: 16px;
+      font-size: 0.75rem;
+      letter-spacing: 0.03333em;
+    }
+
+    .iw-input-hint,
+    .iw-select-hint {
+      color: var(--iw-color-text-secondary);
+    }
+
+    .iw-input-frame:has(.iw-input-control-error):focus-within,
+    .iw-select-frame:has(.iw-select-control-error):focus-within {
+      box-shadow: inset 0 -1px 0 var(--iw-color-error);
+    }
+  }
+
+  .iw-input:has(.iw-input-control-error),
+  .iw-select:has(.iw-select-control-error) {
+    .iw-input-label,
+    .iw-select-label {
+      color: var(--iw-color-error);
+    }
+  }
+
+  .iw-checkbox .iw-checkbox-input {
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+
+  /* Switch: a tall outlined track whose thumb grows and takes the track's
+     opposite color when on */
+  .iw-switch {
+    .iw-switch-track {
+      width: 3.25rem;
+      height: 2rem;
+      padding: 0 6px;
+      border: 2px solid var(--iw-m3-outline);
+      background: var(--iw-m3-surface-container-highest);
+      transition:
+        background-color var(--iw-transition-fast),
+        border-color var(--iw-transition-fast);
+    }
+
+    .iw-switch-thumb {
+      width: 1rem;
+      height: 1rem;
+      background: var(--iw-m3-outline);
+      box-shadow: none;
+      transition:
+        transform var(--iw-transition-fast),
+        width var(--iw-transition-fast),
+        height var(--iw-transition-fast);
+    }
+
+    .iw-switch-input:focus-visible + .iw-switch-track {
+      outline: 3px solid var(--iw-color-text-secondary);
+      outline-offset: 2px;
+    }
+
+    .iw-switch-input:checked + .iw-switch-track {
+      border-color: var(--iw-switch-active-bg);
+      background: var(--iw-switch-active-bg);
+
+      .iw-switch-thumb {
+        width: 1.5rem;
+        height: 1.5rem;
+        background: var(--iw-color-white);
+        transform: translateX(calc(1rem * var(--iw-dir-sign, 1)));
+      }
+    }
+
+    &.iw-switch-sm {
+      .iw-switch-track {
+        width: 2.5rem;
+        height: 1.5rem;
+        padding-inline: 4px;
+      }
+
+      .iw-switch-thumb {
+        width: 0.75rem;
+        height: 0.75rem;
+      }
+
+      .iw-switch-input:checked + .iw-switch-track .iw-switch-thumb {
+        width: 1.125rem;
+        height: 1.125rem;
+        transform: translateX(calc(0.8125rem * var(--iw-dir-sign, 1)));
+      }
+    }
+
+    &.iw-switch-lg {
+      .iw-switch-track {
+        width: 4rem;
+        height: 2.5rem;
+        padding-inline: 8px;
+      }
+
+      .iw-switch-thumb {
+        width: 1.25rem;
+        height: 1.25rem;
+      }
+
+      .iw-switch-input:checked + .iw-switch-track .iw-switch-thumb {
+        width: 1.875rem;
+        height: 1.875rem;
+        transform: translateX(calc(1.1875rem * var(--iw-dir-sign, 1)));
+      }
+    }
+  }
+
+  &.iw-theme-dark
+    .iw-switch
+    .iw-switch-input:checked
+    + .iw-switch-track
+    .iw-switch-thumb {
+    background: color-mix(
+      in srgb,
+      var(--iw-switch-active-bg) 25%,
+      var(--iw-color-black)
+    );
+  }
+
+  /* Tabs: primary tabs, with a rounded indicator as wide as the label */
+  .iw-tabs-list {
+    gap: 0;
+  }
+
+  .iw-tab {
+    position: relative;
+    min-height: 48px;
+    padding: 0 16px;
+    justify-content: center;
+    font-size: 0.875rem;
+    color: var(--iw-color-text-secondary);
+    border-bottom: 0 none;
+
+    &:hover {
+      background-color: var(--iw-color-surface-hover);
+    }
+  }
+
+  .iw-tab.iw-tab-selected {
+    color: var(--iw-color-primary);
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset-inline: 16px;
+      bottom: 0;
+      height: 3px;
+      border-radius: 3px 3px 0 0;
+      background: var(--iw-color-primary);
+    }
+  }
+
+  /* Chips: outlined, with small rounded corners, and filled with the
+     secondary container when selected */
+  .iw-chip {
+    min-height: 2rem;
+    padding-inline: 16px;
+    border: 1px solid var(--iw-color-border);
+    border-radius: var(--iw-radius-md);
+    font-size: 0.875rem;
+    font-weight: var(--iw-font-weight-medium);
+    letter-spacing: 0.00714em;
+    color: var(--iw-color-text-secondary);
+
+    &.iw-chip-sm {
+      min-height: 1.5rem;
+      padding-inline: 8px;
+      font-size: 0.75rem;
+    }
+
+    &.iw-chip-primary,
+    &.iw-chip-secondary,
+    &.iw-chip-success,
+    &.iw-chip-warning,
+    &.iw-chip-error,
+    &.iw-chip-info {
+      border-color: transparent;
+      color: var(--iw-color-text);
+    }
+
+    &.iw-chip-selected {
+      border-color: transparent;
+      background: var(--iw-m3-secondary-container);
+      color: var(--iw-m3-on-secondary-container);
+    }
+
+    &.iw-chip-shape-square {
+      border-radius: var(--iw-radius-none);
+    }
+  }
+
+  .iw-badge {
+    font-weight: var(--iw-font-weight-medium);
+  }
+
+  /* Cards: elevated, with no rules between their parts. A sunk card is a
+     filled one */
+  .iw-card-header,
+  .iw-card-footer {
+    border: 0 none;
+  }
+
+  .iw-card-footer {
+    background-color: transparent;
+  }
+
+  .iw-card.iw-card-sunk {
+    background-color: var(--iw-m3-surface-container-highest);
+  }
+
+  .iw-card-title {
+    font-size: 1.375rem;
+    font-weight: var(--iw-font-weight-normal);
+    line-height: 1.75rem;
+  }
+
+  .iw-card-subtitle {
+    font-size: 0.875rem;
+    color: var(--iw-color-text-secondary);
+  }
+
+  /* Alerts: Material 3 has none, so they are tonal containers of their
+     color, with rounded corners and no border */
+  .iw-alert {
+    padding: 12px 16px;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    border-color: var(--iw-color-border);
+
+    .iw-alert-title {
+      font-size: 1rem;
+      font-weight: var(--iw-font-weight-medium);
+      line-height: 1.5rem;
+    }
+
+    .iw-alert-description {
+      color: inherit;
+    }
+  }
+
+  .iw-alert-filled,
+  .iw-alert-outlined {
+    color: color-mix(in srgb, var(--iw-alert-color) 45%, var(--iw-color-black));
+  }
+
+  .iw-alert-filled {
+    border-color: transparent;
+    background: color-mix(
+      in srgb,
+      var(--iw-alert-color) 14%,
+      var(--iw-color-white)
+    );
+  }
+
+  .iw-alert-outlined {
+    border-color: var(--iw-alert-color);
+  }
+
+  &.iw-theme-dark {
+    .iw-alert-filled,
+    .iw-alert-outlined {
+      color: color-mix(
+        in srgb,
+        var(--iw-alert-color) 70%,
+        var(--iw-color-white)
+      );
+    }
+
+    .iw-alert-filled {
+      background: color-mix(
+        in srgb,
+        var(--iw-alert-color) 22%,
+        var(--iw-color-bg)
+      );
+    }
+  }
+
+  /* Tables: Material 3 has none either, so plain rows ruled by the outline
+     variant */
+  .iw-table {
+    border: 0 none;
+    background: transparent;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+
+  .iw-table-header-cell,
+  .iw-table-cell {
+    padding: 14px 16px;
+  }
+
+  .iw-table-header-cell {
+    font-weight: var(--iw-font-weight-medium);
+    color: var(--iw-color-text-secondary);
+  }
+
+  .iw-table.iw-table-striped .iw-table-row-even {
+    background: var(--iw-m3-surface-container);
+  }
+
+  /* Dialogs: a container with extra large corners */
+  .iw-dialog {
+    border: 0 none;
+    border-radius: var(--iw-radius-2xl);
+    background: var(--iw-m3-surface-container-high);
+    box-shadow: var(--iw-shadow-lg);
+
+    &::backdrop {
+      background: rgba(0, 0, 0, 0.32);
+      backdrop-filter: none;
+    }
+  }
+
+  .iw-dialog-surface {
+    padding: 24px;
+  }
+
+  .iw-dialog-title {
+    font-size: 1.5rem;
+    font-weight: var(--iw-font-weight-normal);
+    line-height: 2rem;
+  }
+
+  .iw-dialog-description {
+    margin-top: 16px;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--iw-color-text-secondary);
+  }
+
+  .iw-dialog-actions {
+    margin-top: 24px;
+    gap: 8px;
+  }
+
+  /* Menus, tooltips and snackbars */
+  .iw-menu {
+    padding: 8px 0;
+    border: 0 none;
+    border-radius: var(--iw-radius-sm);
+    background: var(--iw-m3-surface-container);
+    box-shadow: var(--iw-shadow-md);
+  }
+
+  .iw-tooltip .iw-tooltip-bubble {
+    border: 0 none;
+    border-radius: var(--iw-radius-sm);
+    background: var(--iw-m3-inverse-surface);
+    color: var(--iw-m3-inverse-on-surface);
+    box-shadow: none;
+  }
+
+  .iw-snackbar-content {
+    border: 0 none;
+    border-radius: var(--iw-radius-sm);
+    background: var(--iw-m3-inverse-surface);
+    color: var(--iw-m3-inverse-on-surface);
+    box-shadow: var(--iw-shadow-lg);
+  }
+
+  .iw-snackbar-action {
+    color: var(--iw-m3-inverse-primary);
+  }
+
+  /* App bars: top app bars, flat on the surface, which take a container
+     color instead of a shadow when raised */
+  .iw-app-bar {
+    border-bottom: 0 none;
+  }
+
+  .iw-app-bar-elevated {
+    box-shadow: none;
+  }
+
+  .iw-app-bar-elevated.iw-app-bar-color-default {
+    background: var(--iw-m3-surface-container);
+  }
+
+  .iw-app-bar-title {
+    font-size: 1.375rem;
+    font-weight: var(--iw-font-weight-normal);
+    line-height: 1.75rem;
+  }
+}

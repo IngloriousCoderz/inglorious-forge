@@ -31,8 +31,14 @@ export const SYNTAXES = {
 
 export const THEMES = {
   inglorious: { title: "Inglorious", description: "Neon, videogame-inspired" },
-  material: { title: "Material", description: "Material Design inspired" },
+  "material-ui": { title: "Material UI", description: "Material UI inspired" },
+  "material-3": {
+    title: "Material 3",
+    description: "Material Design 3 inspired",
+  },
   bootstrap: { title: "Bootstrap", description: "Bootstrap inspired" },
+  "ios-18": { title: "iOS 18", description: "Flat iOS inspired" },
+  "ios-26": { title: "iOS 26", description: "Liquid Glass inspired" },
 }
 
 // Icon sets from Iconify: one module per icon, so only the icons an app

@@ -1,0 +1,713 @@
+/* San Francisco is the system font on Apple devices, and cannot be served to
+   others: Inter stands in for it there. */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+.iw-theme-ios-18 {
+  --iw-font-family-sans:
+    -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Helvetica Neue",
+    Arial, sans-serif;
+  /* The theme on the page itself: the element with the theme class, usually
+     <body>, takes its background, text color and font. */
+  background-color: var(--iw-color-bg);
+  color: var(--iw-color-text);
+  font-family: var(--iw-font-family-sans);
+
+  /* ========================================
+     iOS 18 THEME - The flat iOS, 7 to 18
+     ======================================== */
+
+  /* iOS color roles the shared tokens have no name for */
+  --iw-ios-fill: rgba(118, 118, 128, 0.12);
+  --iw-ios-fill-secondary: rgba(120, 120, 128, 0.2);
+  --iw-ios-fill-quaternary: rgba(116, 116, 128, 0.08);
+  --iw-ios-gray: #8e8e93;
+  --iw-ios-tab-inactive: #999999;
+  --iw-ios-segment-selected: var(--iw-color-white);
+  /* Bars and menus: translucent, blurring what passes under them */
+  --iw-ios-bar-bg: rgba(249, 249, 249, 0.94);
+  --iw-ios-material: rgba(242, 242, 242, 0.8);
+  --iw-ios-blur: blur(20px) saturate(180%);
+
+  /* Semantic Colors: grouped content, white on grey */
+  --iw-color-bg: #f2f2f7;
+  --iw-color-bg-secondary: #f2f2f7;
+  --iw-color-bg-tertiary: #e5e5ea;
+  --iw-color-surface: var(--iw-color-white);
+  --iw-color-surface-hover: var(--iw-ios-fill-quaternary);
+  --iw-color-surface-active: #d1d1d6;
+
+  --iw-color-text: var(--iw-color-black);
+  --iw-color-text-secondary: rgba(60, 60, 67, 0.6);
+  --iw-color-text-muted: rgba(60, 60, 67, 0.6);
+
+  --iw-color-border: #c6c6c8;
+  --iw-color-border-focus: #007aff;
+
+  --iw-color-primary: #007aff;
+  --iw-color-primary-hover: color-mix(in srgb, #007aff 92%, #000000);
+  --iw-color-primary-active: color-mix(in srgb, #007aff 85%, #000000);
+  --iw-color-primary-text: var(--iw-color-white);
+
+  --iw-color-accent: #5856d6;
+  --iw-color-accent-hover: color-mix(in srgb, #5856d6 92%, #000000);
+  --iw-color-accent-active: color-mix(in srgb, #5856d6 85%, #000000);
+
+  --iw-color-success: #34c759;
+  --iw-color-warning: #ff9500;
+  --iw-color-error: #ff3b30;
+  --iw-color-info: #32ade6;
+
+  --iw-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --iw-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --iw-shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.12);
+  --iw-shadow-xl: 0 20px 50px rgba(0, 0, 0, 0.18);
+
+  --iw-radius-sm: 6px;
+  --iw-radius-md: 8px;
+  --iw-radius-lg: 10px;
+  --iw-radius-xl: 14px;
+  --iw-radius-2xl: 20px;
+
+  /* The Dynamic Type scale at its default size: footnote, subheadline,
+     body, title 3, title 2, title 1 and large title */
+  --iw-font-size-xs: 0.8125rem;
+  --iw-font-size-sm: 0.9375rem;
+  --iw-font-size-base: 1.0625rem;
+  --iw-font-size-lg: 1.25rem;
+  --iw-font-size-xl: 1.375rem;
+  --iw-font-size-2xl: 1.75rem;
+  --iw-font-size-3xl: 2.125rem;
+
+  /* ========================================
+     COMPONENT TOKENS
+     ======================================== */
+
+  /* Button: filled */
+  --iw-button-bg: var(--iw-color-primary);
+  --iw-button-bg-hover: var(--iw-color-primary-hover);
+  --iw-button-bg-active: var(--iw-color-primary);
+  --iw-button-text: var(--iw-color-primary-text);
+  --iw-button-border: transparent;
+  --iw-button-radius: var(--iw-radius-md);
+  --iw-button-shadow: none;
+  --iw-button-shadow-hover: none;
+  --iw-button-shadow-active: none;
+
+  /* A button's default color is a gray button, with a tinted label */
+  --iw-button-default-color: var(--iw-color-primary);
+  --iw-button-default-bg: var(--iw-ios-fill);
+  --iw-button-default-bg-hover: var(--iw-ios-fill-secondary);
+  --iw-button-default-bg-active: var(--iw-ios-fill);
+  --iw-button-default-border: transparent;
+  --iw-button-default-text: var(--iw-color-primary);
+
+  /* Input: a filled, borderless field */
+  --iw-input-bg: var(--iw-ios-fill);
+  --iw-input-bg-hover: var(--iw-ios-fill);
+  --iw-input-bg-focus: var(--iw-ios-fill);
+  --iw-input-text: var(--iw-color-text);
+  --iw-input-text-placeholder: rgba(60, 60, 67, 0.3);
+  --iw-input-border: transparent;
+  --iw-input-border-hover: transparent;
+  --iw-input-border-focus: transparent;
+  --iw-input-radius: var(--iw-radius-lg);
+  --iw-input-shadow-focus: 0 0 0 3px
+    color-mix(in srgb, var(--iw-color-primary) 35%, transparent);
+
+  /* App bar: a navigation bar */
+  --iw-app-bar-bg: var(--iw-ios-bar-bg);
+
+  /* Drawer: a sidebar */
+  --iw-drawer-bg: var(--iw-color-bg);
+
+  /* Card: an inset grouped section */
+  --iw-card-bg: var(--iw-color-surface);
+  --iw-card-border: transparent;
+  --iw-card-radius: var(--iw-radius-lg);
+  --iw-card-shadow: none;
+  --iw-card-shadow-hover: var(--iw-shadow-md);
+
+  /* Badge */
+  --iw-badge-radius: var(--iw-radius-full);
+
+  /* Chip: a gray capsule */
+  --iw-chip-bg: var(--iw-ios-fill);
+
+  /* List */
+  --iw-list-item: transparent;
+  --iw-list-item-active: var(--iw-color-surface-active);
+  --iw-list-item-selected: color-mix(
+    in srgb,
+    var(--iw-color-primary) 12%,
+    transparent
+  );
+
+  /* Progress: a thin bar */
+  --iw-progress-height: 4px;
+  --iw-progress-radius: var(--iw-radius-full);
+  --iw-progress-track-color: var(--iw-ios-fill-secondary);
+
+  /* Alert */
+  --iw-alert-radius: var(--iw-radius-lg);
+  --iw-alert-shadow: none;
+  color-scheme: light;
+}
+
+/* Dark variant */
+.iw-theme-ios-18.iw-theme-dark {
+  color-scheme: dark;
+
+  --iw-ios-fill: rgba(118, 118, 128, 0.24);
+  --iw-ios-fill-secondary: rgba(120, 120, 128, 0.36);
+  --iw-ios-fill-quaternary: rgba(116, 116, 128, 0.18);
+  --iw-ios-tab-inactive: #757575;
+  --iw-ios-segment-selected: #636366;
+  --iw-ios-bar-bg: rgba(29, 29, 29, 0.94);
+  --iw-ios-material: rgba(37, 37, 37, 0.8);
+
+  --iw-color-bg: var(--iw-color-black);
+  --iw-color-bg-secondary: #1c1c1e;
+  --iw-color-bg-tertiary: #2c2c2e;
+  --iw-color-surface: #1c1c1e;
+  --iw-color-surface-active: #3a3a3c;
+  --iw-color-text: var(--iw-color-white);
+  --iw-color-text-secondary: rgba(235, 235, 245, 0.6);
+  --iw-color-text-muted: rgba(235, 235, 245, 0.6);
+  --iw-color-border: #38383a;
+
+  --iw-color-primary: #0a84ff;
+  --iw-color-primary-hover: color-mix(in srgb, #0a84ff 88%, #ffffff);
+  --iw-color-primary-active: color-mix(in srgb, #0a84ff 80%, #ffffff);
+  --iw-color-border-focus: #0a84ff;
+
+  --iw-color-accent: #5e5ce6;
+  --iw-color-accent-hover: color-mix(in srgb, #5e5ce6 88%, #ffffff);
+  --iw-color-accent-active: color-mix(in srgb, #5e5ce6 80%, #ffffff);
+
+  --iw-color-success: #30d158;
+  --iw-color-warning: #ff9f0a;
+  --iw-color-error: #ff453a;
+  --iw-color-info: #64d2ff;
+
+  --iw-input-text-placeholder: rgba(235, 235, 245, 0.3);
+
+  --iw-drawer-bg: #1c1c1e;
+}
+
+.iw-theme-ios-18 {
+  /* Buttons: filled, gray, tinted and plain. Pressing one dims it */
+  .iw-button {
+    padding: 7px 14px;
+    font-size: var(--iw-font-size-base);
+    line-height: 1.375rem;
+
+    &.iw-button-xs {
+      padding: 2px 8px;
+      font-size: var(--iw-font-size-xs);
+      line-height: 1.125rem;
+      border-radius: var(--iw-radius-sm);
+    }
+
+    &.iw-button-sm {
+      padding: 4px 10px;
+      font-size: var(--iw-font-size-sm);
+      line-height: 1.25rem;
+      border-radius: var(--iw-radius-sm);
+    }
+
+    &.iw-button-lg {
+      padding: 14px 20px;
+      font-weight: var(--iw-font-weight-semibold);
+      border-radius: var(--iw-radius-xl);
+    }
+
+    &.iw-button-shape-pill,
+    &.iw-button-shape-round {
+      border-radius: var(--iw-radius-full);
+    }
+
+    &.iw-button-secondary {
+      --iw-button-color: var(--iw-ios-gray);
+      --iw-button-bg: var(--iw-ios-gray);
+      --iw-button-bg-hover: color-mix(in srgb, var(--iw-ios-gray) 90%, #000);
+      --iw-button-border: transparent;
+    }
+
+    &.iw-button-secondary,
+    &.iw-button-success,
+    &.iw-button-warning,
+    &.iw-button-error,
+    &.iw-button-info {
+      --iw-button-text: var(--iw-color-white);
+    }
+
+    &.iw-button-primary,
+    &.iw-button-secondary,
+    &.iw-button-success,
+    &.iw-button-warning,
+    &.iw-button-error,
+    &.iw-button-info {
+      --iw-button-border: transparent;
+      --iw-button-bg-hover: color-mix(in srgb, var(--iw-button-bg) 90%, #000);
+      --iw-button-bg-active: var(--iw-button-bg);
+    }
+
+    &:active:not(:disabled),
+    &.iw-button-pressed {
+      opacity: 0.7;
+    }
+
+    &:focus-visible {
+      outline: 3px solid
+        color-mix(in srgb, var(--iw-color-primary) 50%, transparent);
+      outline-offset: 1px;
+    }
+
+    /* Outlined buttons are tinted: iOS draws no outlines */
+    &.iw-button-outline {
+      border-color: transparent;
+      background-color: color-mix(
+        in srgb,
+        var(--iw-button-color) 15%,
+        transparent
+      );
+      color: var(--iw-button-color);
+
+      &:hover:not(:disabled),
+      &:active:not(:disabled),
+      &.iw-button-pressed {
+        color: var(--iw-button-color);
+        background-color: color-mix(
+          in srgb,
+          var(--iw-button-color) 22%,
+          transparent
+        );
+      }
+    }
+
+    /* Ghost buttons are plain */
+    &.iw-button-ghost {
+      &:hover:not(:disabled),
+      &:active:not(:disabled),
+      &.iw-button-pressed {
+        color: var(--iw-button-color);
+        background-color: var(--iw-ios-fill-quaternary);
+      }
+    }
+
+    &:disabled,
+    &.iw-button-disabled {
+      opacity: 1;
+      color: color-mix(in srgb, var(--iw-color-text) 30%, transparent);
+      background-color: var(--iw-ios-fill);
+
+      &.iw-button-ghost {
+        background-color: transparent;
+      }
+    }
+  }
+
+  /* Form fields: labels and notes in the footnote style around a filled
+     field */
+  .iw-input,
+  .iw-select,
+  .iw-textarea-field {
+    .iw-input-label,
+    .iw-select-label,
+    .iw-textarea-label {
+      font-size: var(--iw-font-size-sm);
+      color: var(--iw-color-text-secondary);
+    }
+
+    .iw-input-hint,
+    .iw-input-error-message,
+    .iw-select-hint,
+    .iw-select-error-message {
+      font-size: var(--iw-font-size-xs);
+    }
+
+    .iw-input-frame:has(.iw-input-control-error):focus-within,
+    .iw-select-frame:has(.iw-select-control-error):focus-within {
+      box-shadow: 0 0 0 3px
+        color-mix(in srgb, var(--iw-color-error) 35%, transparent);
+    }
+  }
+
+  /* Switch: the 51 by 31 point switch, green when on */
+  .iw-switch:not(
+    .iw-switch-secondary,
+    .iw-switch-success,
+    .iw-switch-warning,
+    .iw-switch-error,
+    .iw-switch-info
+  ) {
+    --iw-switch-active-bg: var(--iw-color-success);
+  }
+
+  .iw-switch {
+    .iw-switch-track {
+      width: 3.1875rem;
+      height: 1.9375rem;
+      padding: 2px;
+      background: var(--iw-ios-fill-secondary);
+      transition: background-color var(--iw-transition-normal);
+    }
+
+    .iw-switch-thumb {
+      width: 1.6875rem;
+      height: 1.6875rem;
+      background: var(--iw-color-white);
+      box-shadow:
+        0 3px 8px rgba(0, 0, 0, 0.15),
+        0 3px 1px rgba(0, 0, 0, 0.06);
+      transition: transform var(--iw-transition-normal);
+    }
+
+    .iw-switch-input:focus-visible + .iw-switch-track {
+      outline: 3px solid
+        color-mix(in srgb, var(--iw-color-primary) 50%, transparent);
+      outline-offset: 1px;
+    }
+
+    .iw-switch-input:checked + .iw-switch-track .iw-switch-thumb {
+      transform: translateX(calc(1.25rem * var(--iw-dir-sign, 1)));
+    }
+
+    &.iw-switch-sm {
+      .iw-switch-track {
+        width: 2.5625rem;
+        height: 1.5625rem;
+      }
+
+      .iw-switch-thumb {
+        width: 1.3125rem;
+        height: 1.3125rem;
+      }
+
+      .iw-switch-input:checked + .iw-switch-track .iw-switch-thumb {
+        transform: translateX(calc(1rem * var(--iw-dir-sign, 1)));
+      }
+    }
+
+    &.iw-switch-lg {
+      .iw-switch-track {
+        width: 3.8125rem;
+        height: 2.3125rem;
+      }
+
+      .iw-switch-thumb {
+        width: 2.0625rem;
+        height: 2.0625rem;
+      }
+
+      .iw-switch-input:checked + .iw-switch-track .iw-switch-thumb {
+        transform: translateX(calc(1.5rem * var(--iw-dir-sign, 1)));
+      }
+    }
+  }
+
+  /* Tabs: a segmented control, its segments equally wide */
+  .iw-tabs-list {
+    display: inline-grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    gap: 0;
+    padding: 2px;
+    border: 0 none;
+    border-radius: 9px;
+    background: var(--iw-ios-fill);
+
+    &.iw-tabs-full-width {
+      display: grid;
+    }
+
+    &.iw-tabs-centered {
+      display: grid;
+      width: fit-content;
+      margin-inline: auto;
+    }
+  }
+
+  .iw-tab {
+    justify-content: center;
+    padding: 5px 12px;
+    font-size: var(--iw-font-size-xs);
+    font-weight: var(--iw-font-weight-medium);
+    line-height: 1.125rem;
+    color: var(--iw-color-text);
+    border: 0 none;
+    border-radius: 7px;
+    transition: background-color var(--iw-transition-normal);
+  }
+
+  .iw-tab.iw-tab-selected {
+    color: var(--iw-color-text);
+    font-weight: var(--iw-font-weight-semibold);
+    background: var(--iw-ios-segment-selected);
+    box-shadow:
+      0 3px 8px rgba(0, 0, 0, 0.12),
+      0 3px 1px rgba(0, 0, 0, 0.04);
+  }
+
+  /* Chips: capsules, filled with the tint when selected */
+  .iw-chip {
+    padding: 5px 12px;
+    font-size: var(--iw-font-size-sm);
+
+    &.iw-chip-selectable {
+      border-color: transparent;
+    }
+
+    &.iw-chip-selected {
+      background: var(--iw-color-primary);
+      color: var(--iw-color-white);
+    }
+  }
+
+  .iw-badge {
+    font-weight: var(--iw-font-weight-semibold);
+  }
+
+  /* Cards: inset grouped sections, the footer ruled off below */
+  .iw-card-header {
+    border: 0 none;
+  }
+
+  .iw-card-footer {
+    background-color: transparent;
+  }
+
+  .iw-card-title {
+    font-size: var(--iw-font-size-base);
+    font-weight: var(--iw-font-weight-semibold);
+    line-height: 1.375rem;
+  }
+
+  .iw-card-subtitle {
+    font-size: var(--iw-font-size-sm);
+  }
+
+  /* Alerts: tinted, borderless boxes */
+  .iw-alert {
+    padding: 12px 16px;
+
+    &:not(.iw-alert-outlined) {
+      border-color: transparent;
+    }
+
+    .iw-alert-title {
+      font-weight: var(--iw-font-weight-semibold);
+    }
+
+    .iw-alert-description {
+      font-size: var(--iw-font-size-sm);
+      color: var(--iw-color-text);
+    }
+  }
+
+  .iw-alert-filled {
+    border-color: transparent;
+    color: var(--iw-color-text);
+    background: color-mix(
+      in srgb,
+      var(--iw-alert-color) 15%,
+      var(--iw-color-surface)
+    );
+
+    .iw-alert-title {
+      color: var(--iw-alert-color);
+    }
+  }
+
+  /* Tables: a plain list, with headers in the classic section style */
+  .iw-table {
+    border: 0 none;
+  }
+
+  .iw-table-header-cell,
+  .iw-table-cell {
+    padding: 11px 16px;
+  }
+
+  .iw-table-header-cell {
+    padding-block: 6px;
+    font-size: var(--iw-font-size-xs);
+    font-weight: var(--iw-font-weight-normal);
+    text-transform: uppercase;
+    color: var(--iw-color-text-secondary);
+  }
+
+  /* Dialogs: alerts, centered on a translucent material, with their actions
+     as a row of text buttons under a hairline */
+  .iw-dialog {
+    border: 0 none;
+    border-radius: var(--iw-radius-xl);
+    background: var(--iw-ios-material);
+    backdrop-filter: var(--iw-ios-blur);
+    box-shadow: none;
+
+    &::backdrop {
+      background: rgba(0, 0, 0, 0.2);
+      backdrop-filter: none;
+    }
+  }
+
+  &.iw-theme-dark .iw-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.48);
+  }
+
+  .iw-dialog-surface {
+    padding: 0;
+  }
+
+  .iw-dialog-header {
+    padding: 19px 16px 0;
+  }
+
+  .iw-dialog-title {
+    flex: 1;
+    text-align: center;
+    font-size: var(--iw-font-size-base);
+    font-weight: var(--iw-font-weight-semibold);
+  }
+
+  .iw-dialog-description {
+    margin: 2px 0 0;
+    padding: 0 16px;
+    text-align: center;
+    font-size: var(--iw-font-size-xs);
+    color: var(--iw-color-text);
+  }
+
+  .iw-dialog-body {
+    padding: 0 16px;
+  }
+
+  .iw-dialog-actions {
+    flex-wrap: nowrap;
+    gap: 0;
+    margin-top: 19px;
+    border-top: 1px solid var(--iw-color-border);
+  }
+
+  .iw-dialog .iw-dialog-actions .iw-button {
+    flex: 1;
+    padding: 11px 8px;
+    border: 0 none;
+    border-radius: 0;
+    background-color: transparent;
+    color: var(--iw-button-color, var(--iw-color-primary));
+    font-size: var(--iw-font-size-base);
+
+    &:hover:not(:disabled),
+    &:active:not(:disabled),
+    &.iw-button-pressed {
+      opacity: 1;
+      color: var(--iw-button-color, var(--iw-color-primary));
+      background-color: var(--iw-ios-fill-quaternary);
+    }
+
+    /* The preferred action is the filled one, and stands out in bold */
+    &:not(.iw-button-outline, .iw-button-ghost) {
+      font-weight: var(--iw-font-weight-semibold);
+    }
+
+    & + .iw-button {
+      border-inline-start: 1px solid var(--iw-color-border);
+    }
+  }
+
+  /* Menus and snackbars: on the translucent material */
+  .iw-menu {
+    min-width: 15rem;
+    padding: 0;
+    border: 0 none;
+    border-radius: 13px;
+    background: var(--iw-ios-material);
+    backdrop-filter: var(--iw-ios-blur);
+    box-shadow: var(--iw-shadow-lg);
+    overflow: hidden;
+  }
+
+  .iw-menu-item {
+    padding: 11px 16px;
+    border-radius: 0;
+    font-size: var(--iw-font-size-base);
+
+    &:not(:last-child) {
+      border-bottom: 1px solid var(--iw-color-border);
+    }
+  }
+
+  .iw-menu-item:hover:enabled,
+  .iw-menu-item-selected {
+    background: var(--iw-ios-fill);
+  }
+
+  .iw-menu-divider {
+    height: 8px;
+    margin: 0;
+    background: var(--iw-ios-fill);
+  }
+
+  .iw-snackbar-content {
+    border: 0 none;
+    border-radius: var(--iw-radius-xl);
+    background: var(--iw-ios-material);
+    backdrop-filter: var(--iw-ios-blur);
+    color: var(--iw-color-text);
+  }
+
+  /* App bars: translucent navigation bars over a hairline. A prominent one
+     has a large title */
+  .iw-app-bar {
+    backdrop-filter: var(--iw-ios-blur);
+  }
+
+  .iw-app-bar-elevated {
+    box-shadow: none;
+  }
+
+  .iw-app-bar-title {
+    font-size: var(--iw-font-size-base);
+    font-weight: var(--iw-font-weight-semibold);
+  }
+
+  .iw-app-bar-subtitle {
+    font-size: var(--iw-font-size-xs);
+  }
+
+  .iw-app-bar-prominent .iw-app-bar-title {
+    font-size: var(--iw-font-size-3xl);
+    font-weight: var(--iw-font-weight-bold);
+    line-height: 2.5625rem;
+  }
+
+  /* Bottom navigation: a tab bar */
+  .iw-bottom-navigation {
+    gap: 0;
+    padding: 0;
+    background: var(--iw-ios-bar-bg);
+    backdrop-filter: var(--iw-ios-blur);
+  }
+
+  .iw-bottom-navigation-action {
+    gap: 2px;
+    padding: 7px 2px 3px;
+    color: var(--iw-ios-tab-inactive);
+  }
+
+  .iw-bottom-navigation-action-selected {
+    color: var(--iw-color-primary);
+  }
+
+  .iw-bottom-navigation-icon {
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+
+  .iw-bottom-navigation-label {
+    font-size: 0.625rem;
+    font-weight: var(--iw-font-weight-medium);
+  }
+}

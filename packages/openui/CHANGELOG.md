@@ -1,5 +1,12 @@
 # @inglorious/openui
 
+## 0.5.4
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/ui@9.6.0
+
 ## 0.5.3
 
 ### Patch Changes

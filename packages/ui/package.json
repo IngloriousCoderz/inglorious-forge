@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/ui",
-  "version": "9.5.1",
+  "version": "9.6.0",
   "description": "A design system for Inglorious Web with render-function components and customizable themes",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -37,8 +37,11 @@
     "./tokens.css": "./src/styles/tokens.css",
     "./safe-area.css": "./src/styles/safe-area.css",
     "./themes/inglorious.css": "./src/styles/themes/inglorious.css",
-    "./themes/material.css": "./src/styles/themes/material.css",
+    "./themes/material-ui.css": "./src/styles/themes/material-ui.css",
+    "./themes/material-3.css": "./src/styles/themes/material-3.css",
     "./themes/bootstrap.css": "./src/styles/themes/bootstrap.css",
+    "./themes/ios-18.css": "./src/styles/themes/ios-18.css",
+    "./themes/ios-26.css": "./src/styles/themes/ios-26.css",
     "./before-after": {
       "types": "./types/data-display/before-after.d.ts",
       "import": "./src/data-display/before-after/index.js"

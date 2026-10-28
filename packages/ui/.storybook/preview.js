@@ -1,6 +1,9 @@
 import "@inglorious/ui/themes/inglorious.css"
-import "@inglorious/ui/themes/material.css"
+import "@inglorious/ui/themes/material-ui.css"
+import "@inglorious/ui/themes/material-3.css"
 import "@inglorious/ui/themes/bootstrap.css"
+import "@inglorious/ui/themes/ios-18.css"
+import "@inglorious/ui/themes/ios-26.css"
 import "@inglorious/ui/all.css"
 
 export default {
@@ -16,8 +19,11 @@ export const globalTypes = {
       icon: "paintbrush",
       items: [
         { value: "inglorious", title: "Inglorious" },
-        { value: "material", title: "Material" },
+        { value: "material-ui", title: "Material UI" },
+        { value: "material-3", title: "Material 3" },
         { value: "bootstrap", title: "Bootstrap" },
+        { value: "ios-18", title: "iOS 18" },
+        { value: "ios-26", title: "iOS 26" },
       ],
     },
   },
@@ -42,8 +48,11 @@ export const initialGlobals = {
 
 const themeClasses = {
   inglorious: "iw-theme-inglorious",
-  material: "iw-theme-material",
+  "material-ui": "iw-theme-material-ui",
+  "material-3": "iw-theme-material-3",
   bootstrap: "iw-theme-bootstrap",
+  "ios-18": "iw-theme-ios-18",
+  "ios-26": "iw-theme-ios-26",
 }
 
 export const decorators = [
@@ -78,26 +87,16 @@ function applyTheme(theme, mode) {
   const themeClass = themeClasses[theme] || themeClasses.inglorious
   const modeClass = mode === "light" ? "iw-theme-light" : "iw-theme-dark"
 
-  document.body.className = document.body.className
-    .replace(/iw-theme-(\\w+)/g, "")
-    .trim()
-  document.body.className =
-    `${document.body.className} ${themeClass} ${modeClass}`.trim()
+  // Only one theme and one mode at a time: the previous ones go first, or
+  // their rules would still apply wherever the new theme sets nothing.
+  const { classList } = document.body
+  const previous = [...classList].filter((name) => name.startsWith("iw-theme-"))
+  classList.remove(...previous)
+  classList.add(themeClass, modeClass)
 
-  const background =
-    getComputedStyle(document.body).getPropertyValue("--iw-color-bg").trim() ||
-    (mode === "dark" ? "#111827" : "#ffffff")
-  const foreground =
-    getComputedStyle(document.body)
-      .getPropertyValue("--iw-color-text")
-      .trim() || (mode === "dark" ? "#f9fafb" : "#111827")
-
-  document.body.style.backgroundColor = background
-  document.body.style.color = foreground
-
-  const root = document.getElementById("storybook-root")
-  if (root) {
-    root.style.backgroundColor = background
-    root.style.color = foreground
-  }
+  // The theme paints the body itself; colors a story left inline, as the
+  // dashboard's theme switcher does, would outlast the switch.
+  document.body.style.removeProperty("background-color")
+  document.body.style.removeProperty("color")
+  document.documentElement.style.removeProperty("color-scheme")
 }

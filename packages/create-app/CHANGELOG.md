@@ -1,5 +1,15 @@
 # @inglorious/create-game
 
+## 1.7.0
+
+### Minor Changes
+
+- The Material theme is now two: `themes/material-ui.css` (`iw-theme-material-ui`) follows Material UI, and the new `themes/material-3.css` (`iw-theme-material-3`) follows Material Design 3. `themes/material.css` and `iw-theme-material` are gone, and create-app's `--theme` takes `material-ui` or `material-3` instead of `material`.
+
+  Two iOS themes are new too: `themes/ios-18.css` (`iw-theme-ios-18`) follows the flat iOS of versions 7 to 18, with grouped cards on grey, the green switch, segmented-control tabs, a translucent tab bar, and alerts whose actions are text buttons; `themes/ios-26.css` (`iw-theme-ios-26`) follows Liquid Glass, with glass menus, dialogs, tooltips, snackbars and a floating tab bar, capsule buttons, the capsule switch and larger corners. Both use San Francisco on Apple devices and Inter elsewhere, and create-app's `--theme` takes them as `ios-18` and `ios-26`.
+
+  The themes follow their originals more closely. Material UI takes its defaults: Roboto, its palette, 4px corners, elevation shadows, outlined text fields, its switch, filled chips, and surface-colored app bars in dark mode. Material 3 takes the baseline scheme and shapes: pill buttons with a tonal default, filled text fields, its switch and tabs, outlined chips, elevated cards, dialogs with extra large corners, and inverse-surface tooltips and snackbars. Bootstrap takes Bootstrap 5's: its palette and dark color mode, radii, button sizes and focus rings, nav tabs, its switch, bold badges, subtle alerts, and cards and modals with ruled headers and footers. An Input now has its theme's background when it is not hovered or focused, as a Select and a Textarea do.
+
 ## 1.6.0
 
 ### Minor Changes

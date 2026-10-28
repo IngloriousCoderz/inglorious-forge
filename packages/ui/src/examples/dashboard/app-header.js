@@ -1,6 +1,9 @@
 import android from "@iconify-icons/fa7-brands/android"
+import apple from "@iconify-icons/fa7-brands/apple"
 import bootstrap from "@iconify-icons/fa7-brands/bootstrap"
+import react from "@iconify-icons/fa7-brands/react"
 import gamepad from "@iconify-icons/fa7-solid/gamepad"
+import mobile from "@iconify-icons/fa7-solid/mobile"
 import contrastOutline from "@iconify-icons/material-symbols/contrast-outline"
 import darkModeOutline from "@iconify-icons/material-symbols/dark-mode-outline"
 import formatListBulletedOutline from "@iconify-icons/material-symbols/format-list-bulleted-outline"
@@ -18,18 +21,22 @@ import { Flex } from "../../layout/flex/index.js"
 import { Breadcrumbs } from "../../navigation/breadcrumbs/index.js"
 import { AppBar } from "../../surfaces/app-bar/index.js"
 
+const THEME_ICONS = {
+  inglorious: gamepad,
+  "material-ui": react,
+  "material-3": android,
+  bootstrap,
+  "ios-18": mobile,
+  "ios-26": apple,
+}
+
 export const AppHeader = {
   render(entity, api) {
     const themeEntity = api.getEntity("theme")
     const modeEntity = api.getEntity("mode")
     const themeMode = modeEntity?.mode ?? "auto"
     const themeName = themeEntity?.theme ?? "inglorious"
-    const themeIcon =
-      themeName === "bootstrap"
-        ? bootstrap
-        : themeName === "material"
-          ? android
-          : gamepad
+    const themeIcon = THEME_ICONS[themeName] ?? gamepad
     const modeIcon =
       themeMode === "light"
         ? lightModeOutline

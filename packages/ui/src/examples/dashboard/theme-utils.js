@@ -1,6 +1,13 @@
 const DEFAULT_THEME = "inglorious"
 const DEFAULT_MODE = "auto"
-const THEME_CYCLE = ["inglorious", "material", "bootstrap"]
+const THEME_CYCLE = [
+  "inglorious",
+  "material-ui",
+  "material-3",
+  "bootstrap",
+  "ios-18",
+  "ios-26",
+]
 const MODE_CYCLE = ["auto", "light", "dark"]
 
 let currentTheme = DEFAULT_THEME
@@ -21,7 +28,7 @@ export function applyTheme(theme = currentTheme, mode = currentMode) {
     resolvedMode === "light" ? "iw-theme-light" : "iw-theme-dark"
 
   document.body.className = document.body.className.replace(
-    /iw-theme-(\w+)/g,
+    /iw-theme-([\w-]+)/g,
     "",
   )
   document.body.classList.add(themeClass, modeClass)

@@ -40,8 +40,11 @@ The public CSS exports are:
 - `@inglorious/ui/base.css`
 - `@inglorious/ui/tokens.css`
 - `@inglorious/ui/themes/inglorious.css`
-- `@inglorious/ui/themes/material.css`
+- `@inglorious/ui/themes/material-ui.css`
+- `@inglorious/ui/themes/material-3.css`
 - `@inglorious/ui/themes/bootstrap.css`
+- `@inglorious/ui/themes/ios-18.css`
+- `@inglorious/ui/themes/ios-26.css`
 - `@inglorious/ui/all.css`
 
 ## Icons
