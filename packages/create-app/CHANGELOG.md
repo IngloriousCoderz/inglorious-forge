@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.7.1
+
+### Patch Changes
+
+- Apps with page transitions add `withTransitions()` to the store's middlewares instead of wrapping the store passed to `mount`.
+
 ## 1.7.0
 
 ### Minor Changes

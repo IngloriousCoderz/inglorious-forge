@@ -226,6 +226,40 @@ describe("loadLocale", () => {
     expect(loadLocale).toHaveBeenCalledTimes(1)
   })
 
+  it("waits for the starting locale when asked for it while it loads", async () => {
+    stubBrowser({ languages: ["it-IT"] })
+    const { loads, loadLocale } = controlledLoader()
+    const { store, t } = createI18nStore({ loadLocale })
+
+    store.notify("#i18n:localeChange", "it")
+
+    expect(store.getState().i18n.loadingLocale).toBe("it")
+
+    loads.it.resolve(italian)
+    await settle()
+
+    expect(store.getState().i18n.loadingLocale).toBe(null)
+    expect(t("hello")).toBe("Ciao")
+  })
+
+  it("switches the shared instance back for a store already in the locale", () => {
+    stubBrowser({ languages: ["en"] })
+    const { I18n, t } = createI18n({ resources })
+    const createI18nStoreOf = () =>
+      createStore({
+        types: { I18n },
+        entities: { i18n: { type: "I18n" } },
+      })
+    const english = createI18nStoreOf()
+    const italianStore = createI18nStoreOf()
+
+    italianStore.notify("#i18n:localeChange", "it")
+    expect(t("hello")).toBe("Ciao")
+
+    english.notify("#i18n:localeChange", "en")
+    expect(t("hello")).toBe("Hello")
+  })
+
   it("keeps the current locale when a load fails, and tries again later", async () => {
     stubBrowser({ languages: ["en"] })
     vi.spyOn(console, "warn").mockImplementation(() => {})

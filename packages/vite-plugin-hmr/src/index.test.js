@@ -215,7 +215,7 @@ describe("@inglorious/vite-plugin-hmr", () => {
     )
   })
 
-  it("registers the store a store enhancer wraps, without calling the enhancer again", async () => {
+  it("registers the store a wrapper is given, without calling the wrapper again", async () => {
     const plugin = hmr()
     plugin.configResolved({ command: "serve" })
 
@@ -227,11 +227,11 @@ describe("@inglorious/vite-plugin-hmr", () => {
       resolveMap({ "./store": "/project/src/store.js" }),
     )
     const code = `
-      import { withTransitions } from "@inglorious/ui/view-transitions"
       import { mount } from "@inglorious/web"
       import { store } from "./store"
+      import { withLogging } from "./logging"
 
-      mount(withTransitions(store), render, element)
+      mount(withLogging(store), render, element)
     `
 
     const result = await plugin.transform.call(context, code, "main.js")
@@ -239,7 +239,7 @@ describe("@inglorious/vite-plugin-hmr", () => {
     expect(result.code).toContain(
       "if (import.meta.hot) globalThis.__INGLORIOUS_HMR_STORE__ = store\n",
     )
-    expect(result.code.match(/withTransitions\(/g)).toHaveLength(1)
+    expect(result.code.match(/withLogging\(/g)).toHaveLength(1)
   })
 
   describe("per-type HMR boundary", () => {

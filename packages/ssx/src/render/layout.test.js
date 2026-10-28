@@ -6,7 +6,7 @@ describe("layout", () => {
   it("should render default layout structure", () => {
     const html = layout("<h1>Hello</h1>", {})
     expect(html).toContain("<!DOCTYPE html>")
-    expect(html).toContain('<html lang="en">')
+    expect(html).toContain('<html lang="en" dir="ltr">')
     expect(html).toContain('<meta charset="UTF-8" />')
     expect(html).toContain('<div id="root"><h1>Hello</h1></div>')
     expect(html).toContain('<script type="module" src="/main.js"></script>')
@@ -15,7 +15,7 @@ describe("layout", () => {
   it("should render with custom title and language", () => {
     const html = layout("", { title: "My Page", lang: "fr" })
     expect(html).toContain("<title>My Page</title>")
-    expect(html).toContain('<html lang="fr">')
+    expect(html).toContain('<html lang="fr" dir="ltr">')
   })
 
   it("should render meta tags", () => {
@@ -78,5 +78,10 @@ describe("layout", () => {
   it("should not include vite client in prod mode", () => {
     const html = layout("", { isDev: false })
     expect(html).not.toContain("/@vite/client")
+  })
+
+  it("should set the text direction", () => {
+    const html = layout("", { lang: "he", dir: "rtl" })
+    expect(html).toContain('<html lang="he" dir="rtl">')
   })
 })

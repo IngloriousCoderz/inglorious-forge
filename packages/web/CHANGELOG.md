@@ -1,5 +1,16 @@
 # @inglorious/react-store
 
+## 6.10.0
+
+### Minor Changes
+
+- In an app with the `Router` type, `mount` announces each navigation to screen readers and moves focus back to the top of the new page, as a full page load would. `getPageName` chooses what is announced and `hasAccessibleNavigation: false` turns it off. Links with `data-is-focus-kept` navigate with `state: { isFocusKept: true }`, which keeps focus where it is.
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/store@12.1.0
+
 ## 6.9.1
 
 ### Patch Changes

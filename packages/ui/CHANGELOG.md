@@ -1,5 +1,18 @@
 # @inglorious/ui
 
+## 9.7.0
+
+### Minor Changes
+
+- `withTransitions` is now a store middleware: `createStore({ ..., middlewares: [withTransitions({ routes })] })` instead of wrapping the store passed to `mount`.
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies
+  - @inglorious/store@12.1.0
+  - @inglorious/web@6.10.0
+
 ## 9.6.0
 
 ### Minor Changes

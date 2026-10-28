@@ -223,7 +223,9 @@ export interface Store<
 }
 
 /**
- * Middleware function type
+ * Middleware function type: takes the store and returns it, changed or wrapped. One that
+ * only looks at events replaces `dispatch` with a function that calls the previous one.
+ * The first middleware wraps all the others, so events pass through them in order.
  */
 export type Middleware<
   TEntity extends BaseEntity = BaseEntity,

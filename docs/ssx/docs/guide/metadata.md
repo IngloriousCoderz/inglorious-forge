@@ -37,6 +37,14 @@ export const metadata = (entity) => ({
 })
 ```
 
+The server writes all of this into the HTML of each page. When the visitor then navigates on the client, SSX applies the new page's `title`, `meta` and `lang`, merged over the defaults in `src/site.config.js` the same way the server merges them. Values computed from entity data are applied once that data arrives. Only meta tags named by a page or the site config are touched; any others your layout writes stay as they are.
+
+The document language comes from the page's `lang`, then from its locale on an [internationalized](./i18n.md) site, then from the `lang` in `src/site.config.js`, so screen readers pronounce each page in its own language. The `dir` of `<html>` follows that language, `rtl` for scripts such as Arabic and Hebrew, unless the page's `dir` says otherwise. A custom `layout` receives both as `lang` and `dir`, and should write them on `<html>`.
+
+After each client-side navigation SSX also does what a full page load does for assistive technology, through the router's [accessible navigation](https://inglorious.dev/web/featured/router#accessible-navigation): it announces the new page title, once any data it depends on has arrived, and moves focus back to the top of the document. A link with `data-is-focus-kept` leaves focus where it is.
+
+`styles`, `scripts` and `head` are applied by the server only, so they reflect the page the visitor landed on. Import page-specific CSS from the page module instead, and Vite will load it when the page does.
+
 ## Sitemap & RSS Generation
 
 SSX automatically generates `sitemap.xml` and `rss.xml` based on your pages. Configure them in `src/site.config.js`:

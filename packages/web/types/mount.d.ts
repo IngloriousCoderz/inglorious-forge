@@ -57,6 +57,16 @@ export interface MountOptions<
     error: unknown,
     api: Api<TEntity, TState>,
   ) => TemplateResult | null
+  /**
+   * Whether navigations are announced to screen readers and move focus to the top of the
+   * new page. Only apps with the `Router` type navigate. Defaults to `true`.
+   */
+  hasAccessibleNavigation?: boolean
+  /**
+   * The name to announce for the current page, or `null` while it is not known yet.
+   * Defaults to the document title.
+   */
+  getPageName?: () => string | null
 }
 
 /**

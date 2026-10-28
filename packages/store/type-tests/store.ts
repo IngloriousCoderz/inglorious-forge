@@ -8,6 +8,7 @@ import {
   type EntitiesState,
   type EntityType,
   type Middleware,
+  type Store,
 } from "../types"
 import { trigger } from "../types/test"
 
@@ -139,6 +140,21 @@ export const inferred = createStore({
   middlewares,
 })
 
+// Middlewares take the store and return it, here with a wrapped dispatch
+const logEvents: Middleware<AppEntity, AppState> = (store) => {
+  const next = store.dispatch
+  store.dispatch = (event) => {
+    store.getState()
+    return next(event)
+  }
+  return store
+}
+export const logged = createStore<AppEntity, AppState>({
+  types: { Counter },
+  entities: {} as AppState,
+  middlewares: [logEvents],
+})
+
 // An app's Api is an Api: a component typed with the plain one accepts it
 declare function renderComponent(props: { title: string }, api: Api): string
 declare const api: AppApi
@@ -205,3 +221,8 @@ export const eventCount: number = events.length
 
 // @ts-expect-error: add takes a number
 trigger({ type: "Counter", value: 1 } as CounterEntity, Counter.add, "2")
+
+createStore<AppEntity, AppState>({
+  // @ts-expect-error: a middleware returns the store, not a function of next
+  middlewares: [(store: Store<AppEntity, AppState>) => () => store],
+})

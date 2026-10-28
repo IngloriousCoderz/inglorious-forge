@@ -19,7 +19,17 @@ export function multiplayerMiddleware(config = {}) {
   const localQueue = []
 
   // The middleware function that will be applied to the store.
-  return (store) => (next) => (event) => {
+  return (store) => {
+    const next = store.dispatch
+    store.dispatch = (event) => send(store, event, next)
+    return store
+  }
+
+  /**
+   * Sends an event to the server unless it is filtered out or came from there, then
+   * passes it on to the next middleware, and eventually to the store.
+   */
+  function send(store, event, next) {
     const shouldBeSent =
       (!blacklist.length || !blacklist.includes(event.type)) &&
       (!whitelist.length || whitelist.includes(event.type)) &&

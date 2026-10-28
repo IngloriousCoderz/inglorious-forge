@@ -21,13 +21,42 @@ describe("view-transitions", () => {
   it("throws when the store has no Router type", () => {
     const store = createStore({ types: { Counter }, entities: {} })
 
-    expect(() => withTransitions(store)).toThrow(/Router/)
+    expect(() => withTransitions()(store)).toThrow(/Router/)
   })
 
   it("returns the same store", () => {
     const store = createTestStore()
 
-    expect(withTransitions(store)).toBe(store)
+    expect(withTransitions()(store)).toBe(store)
+  })
+
+  it("works as a store middleware", () => {
+    const store = createStore({
+      types: { Counter, Router },
+      entities: {
+        counter1: { type: "Counter", value: 0 },
+        router: { type: "Router" },
+      },
+      middlewares: [withTransitions()],
+    })
+    const listener = vi.fn()
+
+    store.subscribe(listener)
+    navigateTo("/events", 1)
+    store.notify("#counter1:increment")
+
+    expect(startViewTransition).toHaveBeenCalledTimes(1)
+    expect(listener).toHaveBeenCalledTimes(1)
+  })
+
+  it("throws at store creation when the store has no Router type", () => {
+    expect(() =>
+      createStore({
+        types: { Counter },
+        entities: {},
+        middlewares: [withTransitions()],
+      }),
+    ).toThrow(/Router/)
   })
 
   it("notifies every listener from a single store subscription", () => {
@@ -36,7 +65,7 @@ describe("view-transitions", () => {
     const first = vi.fn()
     const second = vi.fn()
 
-    withTransitions(store).subscribe(first)
+    withTransitions()(store).subscribe(first)
     store.subscribe(second)
     navigateTo("/events", 1)
     store.notify("#counter1:increment")
@@ -48,7 +77,7 @@ describe("view-transitions", () => {
   })
 
   it("does not transition when the path is unchanged", () => {
-    const store = withTransitions(createTestStore())
+    const store = withTransitions()(createTestStore())
     const listener = vi.fn()
 
     store.subscribe(listener)
@@ -59,7 +88,7 @@ describe("view-transitions", () => {
   })
 
   it("does not transition when only the hash changes", () => {
-    const store = withTransitions(createTestStore())
+    const store = withTransitions()(createTestStore())
     const listener = vi.fn()
 
     store.subscribe(listener)
@@ -71,7 +100,7 @@ describe("view-transitions", () => {
   })
 
   it("transitions forward when the history index increases", () => {
-    const store = withTransitions(createTestStore())
+    const store = withTransitions()(createTestStore())
 
     store.subscribe(vi.fn())
     navigateTo("/events", 1)
@@ -83,7 +112,7 @@ describe("view-transitions", () => {
   })
 
   it("transitions back when the history index decreases", () => {
-    const store = withTransitions(createTestStore())
+    const store = withTransitions()(createTestStore())
 
     store.subscribe(vi.fn())
     navigateTo("/events", 1)
@@ -98,7 +127,7 @@ describe("view-transitions", () => {
   })
 
   it("transitions as a replacement when the history index is unchanged", () => {
-    const store = withTransitions(createTestStore())
+    const store = withTransitions()(createTestStore())
 
     store.subscribe(vi.fn())
     window.history.replaceState({ idx: 0 }, "", "/events")
@@ -111,7 +140,7 @@ describe("view-transitions", () => {
 
   it("falls back to the callback form when types are unsupported", () => {
     delete globalThis.ViewTransition.prototype.types
-    const store = withTransitions(createTestStore())
+    const store = withTransitions()(createTestStore())
 
     store.subscribe(vi.fn())
     navigateTo("/events", 1)
@@ -123,7 +152,7 @@ describe("view-transitions", () => {
 
   it("renders without a transition when the API is unavailable", () => {
     delete document.startViewTransition
-    const store = withTransitions(createTestStore())
+    const store = withTransitions()(createTestStore())
     const listener = vi.fn()
 
     store.subscribe(listener)
@@ -138,7 +167,7 @@ describe("view-transitions", () => {
     document.startViewTransition = vi.fn((options) => {
       update = options.update
     })
-    const store = withTransitions(createTestStore())
+    const store = withTransitions()(createTestStore())
     const states = []
 
     store.subscribe((state) => states.push(state.counter1.value))
@@ -159,7 +188,7 @@ describe("view-transitions", () => {
     const store = createTestStore()
     const subscribe = spyOnSubscribe(store)
 
-    withTransitions(store)
+    withTransitions()(store)
     const first = store.subscribe(vi.fn())
     const second = store.subscribe(vi.fn())
     expect(subscribe).toHaveBeenCalledTimes(1)
@@ -174,7 +203,7 @@ describe("view-transitions", () => {
   })
 
   it("rebases when it tears down, so a later subscriber does not animate", () => {
-    const store = withTransitions(createTestStore())
+    const store = withTransitions()(createTestStore())
 
     /* The path moves while the store is subscribed but never renders, so the
        last thing onStateChange saw is the old one. Re-subscribing has to rebase
@@ -191,7 +220,7 @@ describe("view-transitions", () => {
 
   it("baselines at the first subscribe, not when the store is wrapped", () => {
     const store = createTestStore()
-    withTransitions(store)
+    withTransitions()(store)
 
     /* Wrapping is not subscribing: anything that navigates in between belongs
        to the baseline rather than to a transition of its own. */
@@ -206,13 +235,13 @@ describe("view-transitions", () => {
   it("does not touch the history until something subscribes", () => {
     const state = vi.spyOn(window.history, "state", "get")
 
-    withTransitions(createTestStore())
+    withTransitions()(createTestStore())
 
     expect(state).not.toHaveBeenCalled()
   })
 
   it("does not notify a listener added during a notification", () => {
-    const store = withTransitions(createTestStore())
+    const store = withTransitions()(createTestStore())
     const late = vi.fn()
 
     store.subscribe(() => {
@@ -247,7 +276,7 @@ describe("view-transitions", () => {
       })
       setRoutes({ "/": "page", "/events": "page", "/events/42": "page" })
 
-      withTransitions(store).subscribe(vi.fn())
+      withTransitions()(store).subscribe(vi.fn())
       store.notify("init")
 
       store.notify("#router:navigate", "/events")
@@ -273,7 +302,7 @@ describe("view-transitions", () => {
       })
       setRoutes({ "/": "page", "/events": "page", "/events/42": "page" })
 
-      withTransitions(store).subscribe(vi.fn())
+      withTransitions()(store).subscribe(vi.fn())
       store.notify("init")
 
       store.notify("#router:navigate", "/events")
@@ -307,7 +336,7 @@ describe("view-transitions", () => {
       const store = createRoutedStore()
       const listener = vi.fn()
 
-      withTransitions(store, { routes: ["detail"] }).subscribe(listener)
+      withTransitions({ routes: ["detail"] })(store).subscribe(listener)
       store.notify("init")
       startViewTransition.mockClear()
 
@@ -325,7 +354,7 @@ describe("view-transitions", () => {
       const store = createRoutedStore()
       const routes = vi.fn(() => true)
 
-      withTransitions(store, { routes }).subscribe(vi.fn())
+      withTransitions({ routes })(store).subscribe(vi.fn())
       store.notify("init")
       store.notify("#router:navigate", "/list/42")
 
@@ -343,7 +372,7 @@ describe("view-transitions", () => {
       const store = createRoutedStore()
       const listener = vi.fn()
 
-      withTransitions(store, { routes: () => false }).subscribe(listener)
+      withTransitions({ routes: () => false })(store).subscribe(listener)
       store.notify("init")
       store.notify("#router:navigate", "/list")
 

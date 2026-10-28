@@ -33,11 +33,10 @@ export interface TransitionsOptions {
 }
 
 export interface WithTransitions {
-  /** Returns the store it was given, so it still fits wherever the store did, such as `mount`. */
-  <Store extends TransitionsStore<any>>(
-    store: Store,
+  /** A store middleware, for the `middlewares` of `createStore`. It returns the store it is given. */
+  (
     options?: TransitionsOptions,
-  ): Store
+  ): <Store extends TransitionsStore<any>>(store: Store) => Store
 }
 
 export declare const withTransitions: WithTransitions

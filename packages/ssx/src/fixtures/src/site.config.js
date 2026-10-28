@@ -30,6 +30,7 @@ export default {
   layout: (body, options) => {
     const {
       lang = "en",
+      dir = "ltr",
       head = "",
       prescripts = [],
       charset = "UTF-8",
@@ -42,7 +43,7 @@ export default {
 
     return `
       <!DOCTYPE html>
-      <html lang=${lang}>
+      <html lang=${lang} dir=${dir}>
         <head>
           ${prescripts
             .map(

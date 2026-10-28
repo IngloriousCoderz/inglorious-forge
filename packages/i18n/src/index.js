@@ -148,19 +148,23 @@ export function createI18n({
     },
   }
 
-  // Switches to `locale`, loading it first if needed. Whether it is a change.
+  // Switches to `locale`, loading it first if needed, so `loadingLocale` names
+  // it until its catalogue is in: what a server render or a hydration waits for.
+  // Whether it is a change.
   function requestLocale(entity, locale, api) {
     if (!locales.includes(locale)) return false
     const isChange = locale !== entity.locale
     // Choosing the current locale again also cancels a pending change.
     entity.loadingLocale = null
-    if (!isChange) return false
 
     if (loader.isLoaded(locale)) {
-      switchLocale(entity, locale)
-      return true
+      // The i18next instance is shared by every store, as on a server rendering
+      // pages in different languages, so it can be elsewhere when the entity is not.
+      if (isChange || locale !== instance.language) switchLocale(entity, locale)
+      return isChange
     }
 
+    // Also the current locale, while the catalogue it started with is loading.
     // The id is taken now: the promise settles after this batch, when the
     // entity here is no longer the live one.
     const id = entity.id
@@ -169,7 +173,7 @@ export function createI18n({
       () => api.notify(`#${id}:localeLoadSuccess`, locale),
       (error) => api.notify(`#${id}:localeLoadError`, { locale, error }),
     )
-    return true
+    return isChange
   }
 
   function switchLocale(entity, locale) {

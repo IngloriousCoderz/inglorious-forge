@@ -1,5 +1,11 @@
 # @inglorious/store
 
+## 12.1.0
+
+### Minor Changes
+
+- Middlewares now take the store and return it, changed or wrapped, so they can wrap any part of it, not only `dispatch`. One that only cares about events replaces `store.dispatch` with a function that calls the previous one. The first middleware wraps all the others, so events pass through them in the order listed. The devtools and multiplayer middlewares work the new way, and the `Middleware` type matches.
+
 ## 12.0.0
 
 ### Major Changes

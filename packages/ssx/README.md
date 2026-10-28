@@ -312,7 +312,7 @@ Notes:
 
 - The default locale is not prefixed (`/about`, not `/en/about`).
 - Locale-prefixed routes are handled in both build output and client-side navigation.
-- SSX picks the locale; to translate strings (catalogues, plurals, dates, markup in translations), use [`@inglorious/i18n`](https://www.npmjs.com/package/@inglorious/i18n) and switch it to the page's locale with `api.notify("#i18n:localeChange", entity.locale)`.
+- SSX picks the locale; to translate strings (catalogues, plurals, dates, markup in translations), use [`@inglorious/i18n`](https://www.npmjs.com/package/@inglorious/i18n) with its entity named `i18n`. SSX switches it to the locale of each page and loads that catalogue before `load` runs and the page renders, on the server and before the client hydrates, so translations always match the URL rather than the browser's language. Translate inside `render`, `load` or a `metadata` function rather than when a module is imported, so each page gets its own language.
 
 ### ⚛️ Entity-Based State and Behavior
 

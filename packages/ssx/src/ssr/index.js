@@ -10,6 +10,7 @@ import { getPages, matchParams, matchRoute } from "../router/index.js"
 import { generateApp } from "../scripts/app.js"
 import { generateStore } from "../store/index.js"
 import { loadConfig } from "../utils/config.js"
+import { waitForLocale } from "../utils/i18n.js"
 
 export async function ssr(options = {}) {
   const config = await loadConfig(options)
@@ -139,6 +140,8 @@ export async function renderRequest(
   if (page.locale) {
     entity.locale = page.locale
   }
+  // Translations in the page's locale, for `load` and the render.
+  await waitForLocale(store, page.locale)
 
   if (module.load) {
     await module.load(entity, page)

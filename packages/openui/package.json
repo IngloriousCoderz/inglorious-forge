@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/openui",
-  "version": "0.5.4",
+  "version": "0.5.5",
   "description": "Generative UI for Inglorious Web: render OpenUI Lang from a model, streamed into a store entity, with Inglorious UI components.",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",

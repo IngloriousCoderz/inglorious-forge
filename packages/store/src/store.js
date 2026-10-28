@@ -42,7 +42,8 @@ const UPDATE_STRATEGIES = [STRUCTURAL_SHARING, COPY_ON_DISPATCH]
  * @param {Types} [config.types] - The initial types configuration.
  * @param {Entities} [config.entities] - The initial entities configuration.
  * @param {Object[]} [config.systems] - The initial systems configuration.
- * @param {Function[]} [config.middlewares] - The initial middlewares configuration.
+ * @param {Function[]} [config.middlewares] - Functions that each take the store and return it,
+ *   changed or wrapped. The first wraps all the others, so events pass through them in order.
  * @param {boolean} [config.autoCreateEntities=false] - Creates entities if not defined in `config.entities`.
  * @param {"auto" | "manual"} [config.updateMode="auto"] - Whether each event triggers an update, or updates are batched until `update()` is called.
  * @param {UpdateStrategy} [config.updateStrategy="structural-sharing"] - How the state is copied before events are applied.
@@ -81,9 +82,7 @@ export function createStore({
     reset,
   }
 
-  const store = middlewares.length
-    ? applyMiddlewares(...middlewares)(baseStore)
-    : baseStore
+  const store = applyMiddlewares(baseStore, middlewares)
   const api = createApi(store, store.extras)
   store._api = api
 

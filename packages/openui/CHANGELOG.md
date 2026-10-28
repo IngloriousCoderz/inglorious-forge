@@ -1,5 +1,15 @@
 # @inglorious/openui
 
+## 0.5.5
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies
+  - @inglorious/ui@9.7.0
+  - @inglorious/web@6.10.0
+  - @inglorious/charts@12.2.3
+
 ## 0.5.4
 
 ### Patch Changes

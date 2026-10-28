@@ -4,6 +4,7 @@
  * @param {string} body - The body content HTML.
  * @param {Object} options - Layout options.
  * @param {string} [options.lang="en"] - Language attribute.
+ * @param {"ltr" | "rtl"} [options.dir="ltr"] - Text direction attribute.
  * @param {string} [options.charset="UTF-8"] - Character set.
  * @param {string} [options.title=""] - Page title.
  * @param {string} [options.favicon=""] - Favicon URL; without one, no icon link is rendered.
@@ -17,6 +18,7 @@
 export function layout(body, options) {
   const {
     lang = "en",
+    dir = "ltr",
     head = "",
     prescripts = [],
     charset = "UTF-8",
@@ -29,7 +31,7 @@ export function layout(body, options) {
   } = options
 
   return `<!DOCTYPE html>
-    <html lang="${lang}">
+    <html lang="${lang}" dir="${dir}">
       <head>
       ${prescripts
         .map((src) => `<script type="text/javascript" src="${src}"></script>`)

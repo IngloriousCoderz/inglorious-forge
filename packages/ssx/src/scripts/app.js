@@ -8,6 +8,9 @@ import { getStoreStuff } from "../store/stuff.js"
  * @param {Object} [options] - Runtime options.
  * @param {boolean} [options.hasTypesFile] - Whether src/store/types.js exists.
  * @param {boolean} [options.hasEntitiesFile] - Whether src/store/entities.js exists.
+ * @param {string} [options.title] - The site title, used when a page sets none.
+ * @param {string} [options.lang] - The site language, used when a page sets none.
+ * @param {Object} [options.meta] - Meta tags shared by every page.
  * @returns {string} The generated JavaScript code for the client entry point.
  */
 export async function generateApp(pages, options = {}, loader) {
@@ -26,7 +29,7 @@ export async function generateApp(pages, options = {}, loader) {
     if (routesByPattern.has(routePattern)) continue
     routesByPattern.set(
       routePattern,
-      `  "${routePattern}": () => import("@/pages/${page.modulePath}")`,
+      `  "${routePattern}": loadPage(${JSON.stringify(page.moduleName)}, () => import("@/pages/${page.modulePath}"))`,
     )
   }
   const routes = [...routesByPattern.values()]
@@ -52,7 +55,7 @@ import { createStore } from "@inglorious/store"
 import { createDevtools } from "@inglorious/store/client/devtools"
 import { mount } from "@inglorious/web"
 import { Router, getRoute, setRoutes } from "@inglorious/web/router"
-import { getLocaleFromPath } from "@inglorious/ssx/i18n"
+import { getLocaleFromPath, syncPageHead, waitForLocale } from "@inglorious/ssx/client"
 
 ${typesImport}
 ${entitiesImport}
@@ -108,7 +111,6 @@ const toCamelCase = (str) => {
 
 const entities = {
   router: { type: "Router", path, route: toCamelCase(page?.moduleName) },
-  i18n: { type: "I18n", ...i18n },
 }
 ${entitiesAssignment}
 Object.assign(entities, JSON.parse(document.getElementById("__SSX_PAGE__").textContent))
@@ -122,16 +124,29 @@ if (isDev) {
 const systems = []
 if (i18n.defaultLocale && i18n.locales?.length) {
   systems.push({
-    routeChange(state, payload) {
-      const routeType = payload?.route
-      if (!routeType) return
+    routeChange(state, payload, api) {
+      if (!payload?.path) return
+      const locale = getLocaleFromPath(payload.path, i18n)
 
-      const entity = state[routeType]
-      if (!entity) return
+      const entity = state[payload.route]
+      if (entity) entity.locale = locale
 
-      entity.locale = getLocaleFromPath(payload.path, i18n)
+      // The URL decides the locale, as it did for the page the server rendered, so
+      // an @inglorious/i18n entity follows it rather than the browser's language.
+      const translator = state.i18n
+      if (translator?.locale !== locale && api.getType(translator?.type)?.localeChange) {
+        api.notify("#i18n:localeChange", locale)
+      }
     },
   })
+}
+
+// Page modules by type name, kept so client navigation can read their metadata.
+const modules = {}
+const loadPage = (moduleName, load) => async () => {
+  const module = await load()
+  modules[moduleName] = module
+  return module
 }
 
 setRoutes({
@@ -146,10 +161,17 @@ const store = createStore({ types, entities, middlewares, systems, autoCreateEnt
 
 const root = document.getElementById("root")
 
+if (i18n.defaultLocale && i18n.locales?.length) {
+  // Hydrates in the language the server rendered, with its translations loaded.
+  await waitForLocale(store, getLocaleFromPath(path, i18n))
+}
+
+const getPageName = syncPageHead(store, modules, ${JSON.stringify({ title: options.title, lang: options.lang, meta: options.meta })})
+
 mount(store, (api) => {
   const { route } = api.getEntity("router")
   return api.render(route)
-}, root)
+}, root, { getPageName })
 `
 }
 

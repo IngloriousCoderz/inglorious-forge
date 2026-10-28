@@ -1,11 +1,14 @@
 import { toCamelCase } from "@inglorious/utils/data-structures/string.js"
 
+import { getTextDirection, selectLocale } from "../utils/i18n.js"
 import { createGetPageOption } from "../utils/page-options.js"
 import { toHTML } from "./html.js"
 
+// Empty, so the site options apply; the layout supplies the final defaults.
 const DEFAULT_OPTIONS = {
-  lang: "en",
-  charset: "UTF-8",
+  lang: "",
+  dir: "",
+  charset: "",
   title: "",
   favicon: "",
   meta: {},
@@ -28,9 +31,15 @@ export async function renderPage(store, page, entity, options = {}) {
   const { moduleName, module } = page
   const entityId = entity?.id ?? toCamelCase(moduleName)
 
+  // Before anything translates, and with nothing awaited until the templates are built,
+  // so that other renders sharing the translations cannot switch them in between.
+  selectLocale(store, entity?.locale)
+
   const getPageOption = createGetPageOption(store, module, entity)
 
-  const lang = getPageOption("lang", DEFAULT_OPTIONS) || options.lang
+  const lang =
+    getPageOption("lang", DEFAULT_OPTIONS) || entity?.locale || options.lang
+  const dir = getPageOption("dir", DEFAULT_OPTIONS) || getTextDirection(lang)
   const charset = getPageOption("charset", DEFAULT_OPTIONS) || options.charset
   const title = getPageOption("title", DEFAULT_OPTIONS) || options.title
   const favicon = getPageOption("favicon", DEFAULT_OPTIONS) || options.favicon
@@ -48,6 +57,7 @@ export async function renderPage(store, page, entity, options = {}) {
   return toHTML(store, (api) => api.render(entityId), {
     ...options,
     lang,
+    dir,
     charset,
     title,
     favicon,

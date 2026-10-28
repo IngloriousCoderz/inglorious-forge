@@ -129,11 +129,6 @@ function mainSource(app) {
     }
   }
   imports.push('import "./app.css"')
-  if (app.transitions) {
-    imports.push(
-      'import { withTransitions } from "@inglorious/ui/view-transitions"',
-    )
-  }
   imports.push(
     'import { mount } from "@inglorious/web"',
     componentImport(app, "App", "./app"),
@@ -142,7 +137,7 @@ function mainSource(app) {
   if (app.i18n) imports.push('import { ready } from "./i18n"')
 
   const args = [
-    app.transitions ? "withTransitions(store)" : "store",
+    "store",
     "(api) => App.render(null, api)",
     app.isTypeScript
       ? 'document.getElementById("root")!'
@@ -233,6 +228,11 @@ function storeSource(app) {
     'import { entities } from "./entities"',
     'import { middlewares } from "./middlewares"',
   ]
+  if (app.transitions) {
+    imports.push(
+      'import { withTransitions } from "@inglorious/ui/view-transitions"',
+    )
+  }
   if (app.routing) {
     imports.push(
       'import { Router, setRoutes } from "@inglorious/web/router"',
@@ -262,7 +262,7 @@ ${app.routing ? "\nsetRoutes(routes)\n" : ""}
 export const store = createStore${generics}({
 ${typesValue}
   entities,
-  middlewares,
+  middlewares: ${app.transitions ? "[withTransitions(), ...middlewares]" : "middlewares"},
   // Creates an entity for each type that has none: ${singletons(app).join(", ")}.
   autoCreateEntities: true,
 })

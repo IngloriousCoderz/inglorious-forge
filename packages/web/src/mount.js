@@ -6,17 +6,25 @@
 import { html, render } from "lit-html"
 
 import { isNative } from "./mobile/index.js"
+import { createAccessibleNavigation } from "./router/accessible-navigation.js"
 
 /**
  * Mounts a lit-html template to the DOM and subscribes to a store for re-rendering.
  * @param {Store} store - The application state store.
  * @param {(api: Api) => TemplateResult | null} renderFn - The root render function.
  * @param {HTMLElement | DocumentFragment} element - The DOM element to mount the template to.
- * @param {Object} [options] - Root error-boundary options.
+ * In an app with the `Router` type, each navigation is also announced to screen readers
+ * and moves focus back to the top of the new page, as a full page load would.
+ *
+ * @param {Object} [options] - Root error-boundary and navigation options.
  * @param {(error: unknown, api: Api) => void} [options.onError] - Called when the
  *   root render throws. Defaults to `console.error`.
  * @param {(error: unknown, api: Api) => TemplateResult | null} [options.fallback] -
  *   Optional fallback template rendered in place of the failed root render.
+ * @param {boolean} [options.hasAccessibleNavigation=true] - Whether navigations are
+ *   announced and move focus. Only apps with the `Router` type navigate.
+ * @param {() => string | null} [options.getPageName] - The name to announce for the
+ *   current page, or `null` while it is not known yet; by default the document title.
  * @returns {() => void} An unsubscribe function
  */
 export async function mount(store, renderFn, element, options = {}) {
@@ -24,6 +32,8 @@ export async function mount(store, renderFn, element, options = {}) {
     onError = defaultOnError,
     fallback,
     hydrate: allowHydrate = true,
+    hasAccessibleNavigation = true,
+    getPageName,
   } = options
 
   // Tells CSS the native app from a browser tab, which env() cannot: the
@@ -48,6 +58,11 @@ export async function mount(store, renderFn, element, options = {}) {
     }
   }
 
+  const afterRender =
+    hasAccessibleNavigation && store.getType("Router")
+      ? createAccessibleNavigation({ getPageName })
+      : null
+
   const unsubscribe = store.subscribe(() => {
     const result = renderRoot(renderFn, api, onError, fallback)
     if (result.ok) {
@@ -56,6 +71,7 @@ export async function mount(store, renderFn, element, options = {}) {
     } else if (fallback) {
       render(result.fallback, element)
     }
+    afterRender?.()
   })
 
   store.notify("init")

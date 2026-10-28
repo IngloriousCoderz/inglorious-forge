@@ -14,6 +14,7 @@ const store = createStore({
   types, // Object: entity type definitions (required)
   entities, // Object: initial entities (required)
   systems, // Array: global state handlers (optional)
+  middlewares, // Array: functions that wrap the store (optional)
   autoCreateEntities, // Boolean: auto-create singleton entities (optional)
   updateMode, // String: 'auto' | 'manual' (optional)
   updateStrategy, // String: 'structural-sharing' | 'copy-on-dispatch' (optional)
@@ -72,6 +73,29 @@ const systems = [
 
 const store = createStore({ types, entities, systems })
 ```
+
+#### `middlewares` (optional)
+
+Array of functions that each take the store and return it, changed or wrapped. One that only cares about events replaces `dispatch` with a function that calls the previous one; one that cares about rendering can wrap `subscribe`, as `withTransitions` from `@inglorious/ui` does. The first middleware wraps all the others, so events pass through them in the order they are listed:
+
+```javascript
+const logger = (store) => {
+  const next = store.dispatch
+  store.dispatch = (event) => {
+    console.log(event.type, event.payload)
+    return next(event)
+  }
+  return store
+}
+
+const store = createStore({
+  types,
+  entities,
+  middlewares: [logger, withTransitions()],
+})
+```
+
+`notify` goes through `dispatch`, so a middleware sees every event, including those handlers notify. Not calling `next` stops an event. Middlewares with options are factories that return the middleware, like `withTransitions({ routes })` and `multiplayerMiddleware(config)`.
 
 #### `autoCreateEntities` (optional)
 

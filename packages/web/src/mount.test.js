@@ -53,6 +53,7 @@ describe("mount", () => {
 
     store = {
       _api: api,
+      getType: vi.fn((typeName) => types[typeName]),
       subscribe: vi.fn((callback) => {
         listener = callback
         return vi.fn()
@@ -198,5 +199,56 @@ describe("mount", () => {
 
     expect(hydrateSpy).not.toHaveBeenCalled()
     expect(renderSpy).toHaveBeenCalledWith("root-fallback", element)
+  })
+
+  describe("accessible navigation", () => {
+    const navigate = (path) => {
+      window.history.pushState(null, "", path)
+      listener()
+    }
+
+    const getAnnouncer = () => document.getElementById("iw-route-announcer")
+
+    beforeEach(() => {
+      window.history.replaceState(null, "", "/")
+      document.title = "Home"
+      getAnnouncer()?.remove()
+    })
+
+    it("announces navigations in an app with the Router type", async () => {
+      types.Router = {}
+      await mount(store, () => "template", element)
+      document.title = "About"
+
+      navigate("/about")
+
+      expect(getAnnouncer().textContent).toBe("About")
+    })
+
+    it("announces the name getPageName gives", async () => {
+      types.Router = {}
+      await mount(store, () => "template", element, {
+        getPageName: () => "Post",
+      })
+
+      navigate("/posts/1")
+
+      expect(getAnnouncer().textContent).toBe("Post")
+    })
+
+    it("leaves an app without the Router type alone", async () => {
+      await mount(store, () => "template", element)
+
+      expect(getAnnouncer()).toBeNull()
+    })
+
+    it("can be turned off", async () => {
+      types.Router = {}
+      await mount(store, () => "template", element, {
+        hasAccessibleNavigation: false,
+      })
+
+      expect(getAnnouncer()).toBeNull()
+    })
   })
 })

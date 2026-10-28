@@ -604,3 +604,91 @@ test("it should say the same thing as the api does during a handler", () => {
 
   expect(seen).toBe("Ada")
 })
+
+test("middlewares wrap the store, the first one outermost", () => {
+  const calls = []
+  const withLog = (name) => (store) => {
+    const next = store.dispatch
+    store.dispatch = (event) => {
+      calls.push(`${name}:${event.type}`)
+      return next(event)
+    }
+    return store
+  }
+
+  const store = createStore({
+    types: { Counter: { increment: (entity) => entity.value++ } },
+    entities: { counter: { type: "Counter", value: 0 } },
+    middlewares: [withLog("outer"), withLog("inner")],
+  })
+  store.notify("increment")
+
+  expect(calls).toEqual(["outer:increment", "inner:increment"])
+  expect(store.getState().counter.value).toBe(1)
+})
+
+test("middlewares can stop an event", () => {
+  const blockReset = (store) => {
+    const next = store.dispatch
+    store.dispatch = (event) => {
+      if (event.type !== "reset") return next(event)
+    }
+    return store
+  }
+
+  const store = createStore({
+    types: {
+      Counter: {
+        increment: (entity) => entity.value++,
+        reset: (entity) => (entity.value = 0),
+      },
+    },
+    entities: { counter: { type: "Counter", value: 0 } },
+    middlewares: [blockReset],
+  })
+  store.notify("increment")
+  store.notify("reset")
+
+  expect(store.getState().counter.value).toBe(1)
+})
+
+test("middlewares can wrap any part of the store, and handlers notify through them", () => {
+  const seen = []
+  let renders = 0
+  const countRenders = (store) => {
+    const subscribe = store.subscribe
+    store.subscribe = (listener) =>
+      subscribe(() => {
+        renders++
+        listener()
+      })
+    return store
+  }
+  const logEvents = (store) => {
+    const next = store.dispatch
+    store.dispatch = (event) => {
+      seen.push(event.type)
+      return next(event)
+    }
+    return store
+  }
+
+  const store = createStore({
+    types: {
+      Counter: {
+        increment(entity, payload, api) {
+          entity.value++
+          api.notify("incremented")
+        },
+        incremented() {},
+      },
+    },
+    entities: { counter: { type: "Counter", value: 0 } },
+    middlewares: [countRenders, logEvents],
+  })
+  store.subscribe(() => {})
+  store.notify("increment")
+
+  expect(seen).toEqual(["increment", "incremented"])
+  expect(renders).toBeGreaterThan(0)
+})

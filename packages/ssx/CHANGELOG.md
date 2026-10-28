@@ -1,5 +1,24 @@
 # @inglorious/ssx
 
+## 2.3.0
+
+### Minor Changes
+
+- Keep the document in step with the current page during client-side navigation: apply the page's `title`, `meta`, `lang` and `dir` merged over the site defaults, and announce the page title once any data it depends on has arrived. The client runtime is now a single `@inglorious/ssx/client` export, replacing `@inglorious/ssx/i18n`.
+
+  Set `<html lang>` from the page's locale on internationalized sites, and `<html dir>` from the language, so right-to-left languages are laid out right to left; custom layouts receive `dir`. Apply the site's `lang` and `charset`, which pages without their own were ignoring in favour of `en` and `UTF-8`.
+
+  On internationalized sites, an `@inglorious/i18n` entity named `i18n` follows the locale of the URL on every navigation, and the generated client no longer creates an `i18n` entity of its own.
+
+  With an `@inglorious/i18n` entity named `i18n`, each page is translated in its own locale: SSX loads the page's catalogue before `load` and the render, on the server and before the client hydrates, so the first client render matches the server's.
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies
+  - @inglorious/store@12.1.0
+  - @inglorious/web@6.10.0
+
 ## 2.2.0
 
 ### Minor Changes

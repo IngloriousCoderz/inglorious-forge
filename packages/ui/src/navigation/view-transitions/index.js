@@ -2,10 +2,11 @@
  * @typedef {import("../../../types/navigation/view-transitions").TransitionsStore} Store
  * @typedef {import("../../../types/navigation/view-transitions").ViewTransitionType} ViewTransitionType
  * @typedef {import("../../../types/navigation/view-transitions").TransitionsOptions} TransitionsOptions
+ * @typedef {(store: Store) => Store} Middleware
  */
 
 /**
- * Wraps a store so that the renders which follow a navigation are run inside a
+ * A store middleware that runs the renders which follow a navigation inside a
  * view transition, tagged with the direction they navigated in. Pair it with
  * `style.css` from this package, which turns those tags into a slide.
  *
@@ -20,7 +21,7 @@
  * import { withTransitions } from "@inglorious/ui/view-transitions"
  * import "@inglorious/ui/view-transitions.css"
  *
- * mount(withTransitions(store), renderApp, document.getElementById("root"))
+ * const store = createStore({ types, entities, middlewares: [withTransitions()] })
  *
  * Pass `routes` to choose which navigations animate; the rest change page
  * without a transition. A list of route names animates every navigation into
@@ -30,20 +31,23 @@
  *
  * @example
  * // Slide into and out of detail pages; switch tabs instantly.
- * withTransitions(store, { routes: ["eventDetail", "userDetail"] })
+ * withTransitions({ routes: ["eventDetail", "userDetail"] })
  *
  * @example
  * // Slide only when going deeper or coming back up, never sideways.
- * withTransitions(store, {
+ * withTransitions({
  *   routes: ({ from, to }) => from.path.startsWith(to.path) || to.path.startsWith(from.path),
  * })
  *
- * @param {Store} store - The store to wrap.
  * @param {TransitionsOptions} [options]
- * @returns {Store} The same store, with a wrapped `subscribe`.
- * @throws {Error} If the store has no `Router` type.
+ * @returns {Middleware} The middleware, which returns the store it is given with a
+ *   wrapped `subscribe`, and throws if the store has no `Router` type.
  */
-export function withTransitions(store, { routes } = {}) {
+export function withTransitions({ routes } = {}) {
+  return (store) => wrapStore(store, routes)
+}
+
+function wrapStore(store, routes) {
   if (!store.getType("Router")) {
     throw new Error(
       '[withTransitions] Requires the "Router" type from @inglorious/web. The ' +

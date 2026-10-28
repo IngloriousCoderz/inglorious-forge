@@ -33,13 +33,17 @@ export function createDevtools(config = {}) {
 
     middleware(store) {
       connectDevTools(store, config)
-      return (next) => (event) => {
+
+      const next = store.dispatch
+      store.dispatch = (event) => {
         const result = next(event)
         if (shouldLogEvent(event, config)) {
           sendAction(event, store.getState())
         }
         return result
       }
+
+      return store
     },
   }
 }

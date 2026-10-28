@@ -27,7 +27,7 @@ exports[`renderPage > should render a page with entity 1`] = `
 
 exports[`renderPage > should render a page with metadata 1`] = `
 "<!DOCTYPE html>
-    <html lang="en">
+    <html lang="en" dir="ltr">
       <head>
       
         <meta charset="UTF-8" />

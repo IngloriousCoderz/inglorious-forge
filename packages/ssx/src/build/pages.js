@@ -2,6 +2,7 @@ import path from "node:path"
 import { pathToFileURL } from "node:url"
 
 import { renderPage } from "../render/index.js"
+import { waitForLocale } from "../utils/i18n.js"
 import { extractPageMetadata } from "./metadata.js"
 
 /**
@@ -42,6 +43,8 @@ export async function generatePages(store, pages, options = {}, loader) {
     if (page.locale) {
       entity.locale = page.locale
     }
+    // Translations in the page's locale, for `load` and the render.
+    await waitForLocale(store, page.locale)
 
     if (module.load) {
       await module.load(entity, page)

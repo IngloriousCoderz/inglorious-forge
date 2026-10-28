@@ -140,7 +140,7 @@ function findCall(node, calleeName) {
 
 /**
  * The store passed to mount(): the identifier itself, or the one a store
- * enhancer wraps, as in \`withTransitions(store)\`. Anything else, such as
+ * wrapper is given, as in \`withLogging(store)\`. Anything else, such as
  * \`createStore({ ... })\`, has no store to register without evaluating it
  * twice.
  */

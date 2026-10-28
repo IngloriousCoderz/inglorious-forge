@@ -32,7 +32,8 @@ export function entityPoolMiddleware() {
 
     const api = createApi(store)
 
-    return (next) => (event) => {
+    const next = store.dispatch
+    store.dispatch = (event) => {
       switch (event.type) {
         case "spawn": {
           const entity = pools.acquire(event.payload)
@@ -65,5 +66,7 @@ export function entityPoolMiddleware() {
 
       return next(event)
     }
+
+    return store
   }
 }

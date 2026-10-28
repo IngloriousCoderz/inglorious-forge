@@ -1,5 +1,11 @@
 # @inglorious/i18n
 
+## 1.2.3
+
+### Patch Changes
+
+- Asking for the current locale while its catalogue is still loading now waits for it, with `loadingLocale` naming it until it arrives. Asking for a locale also switches the shared i18next instance back when another store, such as another page rendered on the same server, has moved it.
+
 ## 1.2.2
 
 ### Patch Changes

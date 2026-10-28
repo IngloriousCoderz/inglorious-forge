@@ -42,7 +42,11 @@ describe("generatePages", () => {
 
   it("should generate HTML and metadata by default", async () => {
     const store = {
-      _api: { getEntities: vi.fn(() => []), getEntity: vi.fn(() => ({})) },
+      _api: {
+        getEntities: vi.fn(() => []),
+        getEntity: vi.fn(() => ({})),
+        getType: vi.fn(),
+      },
     }
     const pages = [{ path: "/p1", filePath: pageFile, moduleName: "p1" }]
 
@@ -60,7 +64,11 @@ describe("generatePages", () => {
 
   it("should skip HTML generation when disabled", async () => {
     const store = {
-      _api: { getEntities: vi.fn(() => []), getEntity: vi.fn(() => ({})) },
+      _api: {
+        getEntities: vi.fn(() => []),
+        getEntity: vi.fn(() => ({})),
+        getType: vi.fn(),
+      },
     }
     const pages = [{ path: "/p2", filePath: pageFile, moduleName: "p2" }]
 
@@ -76,7 +84,11 @@ describe("generatePages", () => {
 
   it("should skip metadata generation when disabled", async () => {
     const store = {
-      _api: { getEntities: vi.fn(() => []), getEntity: vi.fn(() => ({})) },
+      _api: {
+        getEntities: vi.fn(() => []),
+        getEntity: vi.fn(() => ({})),
+        getType: vi.fn(),
+      },
     }
     const pages = [{ path: "/p3", filePath: pageFile, moduleName: "p3" }]
 
@@ -97,6 +109,7 @@ describe("generatePages", () => {
       _api: {
         getEntities: vi.fn(() => [entity]),
         getEntity: vi.fn(() => entity),
+        getType: vi.fn(),
       },
     }
     const pages = [
@@ -124,6 +137,7 @@ describe("generatePages", () => {
       _api: {
         getEntities: vi.fn(() => [entity]),
         getEntity: vi.fn(() => entity),
+        getType: vi.fn(),
       },
     }
     const pages = [
@@ -156,6 +170,7 @@ describe("generatePages", () => {
       _api: {
         getEntities: vi.fn(() => [{}]),
         getEntity: vi.fn(() => ({})),
+        getType: vi.fn(),
       },
     }
     const pages = [{ path: "/ssr", filePath: pageFile, moduleName: "ssr" }]

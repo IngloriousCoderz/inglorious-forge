@@ -69,6 +69,64 @@ describe("router", () => {
     })
   })
 
+  describe("link clicks", () => {
+    // The click listener is added once per module, so each test loads a fresh one.
+    const initClickListener = async () => {
+      vi.resetModules()
+      const { Router, setRoutes } = await import(".")
+      setRoutes({ "/": "homePage", "/users": "userListPage" })
+      const documentSpy = vi.spyOn(document, "addEventListener")
+      Router.init(entity, undefined, api)
+      const [, onClick] = documentSpy.mock.calls.find(
+        ([type]) => type === "click",
+      )
+      api.notify.mockClear()
+      return onClick
+    }
+
+    const click = (onClick, attributes = "") => {
+      document.body.innerHTML = `<a href="http://localhost:3000/users?page=2" ${attributes}><span>Users</span></a>`
+      const event = new MouseEvent("click", { bubbles: true, cancelable: true })
+      Object.defineProperty(event, "target", {
+        value: document.querySelector("span"),
+      })
+      onClick(event)
+      return event
+    }
+
+    it("should navigate to the path of an internal link", async () => {
+      const onClick = await initClickListener()
+
+      const event = click(onClick)
+
+      expect(event.defaultPrevented).toBe(true)
+      expect(api.notify).toHaveBeenCalledWith(
+        "#router:navigate",
+        "/users?page=2",
+      )
+    })
+
+    it("should mark the navigation of a data-is-focus-kept link", async () => {
+      const onClick = await initClickListener()
+
+      click(onClick, "data-is-focus-kept")
+
+      expect(api.notify).toHaveBeenCalledWith("#router:navigate", {
+        to: "/users?page=2",
+        state: { isFocusKept: true },
+      })
+    })
+
+    it("should leave a data-external link to the browser", async () => {
+      const onClick = await initClickListener()
+
+      const event = click(onClick, "data-external")
+
+      expect(event.defaultPrevented).toBe(false)
+      expect(api.notify).not.toHaveBeenCalled()
+    })
+  })
+
   describe("navigate()", () => {
     it("should navigate to a new path and update the entity", () => {
       Router.navigate(entity, "/users/456?q=test", api)

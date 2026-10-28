@@ -4,7 +4,7 @@ exports[`await toHTML > API rendering within components > should support api.ren
 
 exports[`await toHTML > HTML wrapping > should default to empty title when not provided 1`] = `
 "<!DOCTYPE html>
-    <html lang="en">
+    <html lang="en" dir="ltr">
       <head>
       
         <meta charset="UTF-8" />
@@ -25,7 +25,7 @@ exports[`await toHTML > HTML wrapping > should default to empty title when not p
 
 exports[`await toHTML > HTML wrapping > should handle empty arrays for meta, styles, and scripts 1`] = `
 "<!DOCTYPE html>
-    <html lang="en">
+    <html lang="en" dir="ltr">
       <head>
       
         <meta charset="UTF-8" />
@@ -46,7 +46,7 @@ exports[`await toHTML > HTML wrapping > should handle empty arrays for meta, sty
 
 exports[`await toHTML > HTML wrapping > should include all options in wrapped HTML 1`] = `
 "<!DOCTYPE html>
-    <html lang="en">
+    <html lang="en" dir="ltr">
       <head>
       
         <meta charset="UTF-8" />
@@ -67,7 +67,7 @@ exports[`await toHTML > HTML wrapping > should include all options in wrapped HT
 
 exports[`await toHTML > HTML wrapping > should include meta tags in wrapped HTML 1`] = `
 "<!DOCTYPE html>
-    <html lang="en">
+    <html lang="en" dir="ltr">
       <head>
       
         <meta charset="UTF-8" />
@@ -89,7 +89,7 @@ exports[`await toHTML > HTML wrapping > should include meta tags in wrapped HTML
 
 exports[`await toHTML > HTML wrapping > should include scripts in wrapped HTML 1`] = `
 "<!DOCTYPE html>
-    <html lang="en">
+    <html lang="en" dir="ltr">
       <head>
       
         <meta charset="UTF-8" />
@@ -111,7 +111,7 @@ exports[`await toHTML > HTML wrapping > should include scripts in wrapped HTML 1
 
 exports[`await toHTML > HTML wrapping > should include stylesheets in wrapped HTML 1`] = `
 "<!DOCTYPE html>
-    <html lang="en">
+    <html lang="en" dir="ltr">
       <head>
       
         <meta charset="UTF-8" />
@@ -133,7 +133,7 @@ exports[`await toHTML > HTML wrapping > should include stylesheets in wrapped HT
 
 exports[`await toHTML > HTML wrapping > should wrap HTML with basic DOCTYPE and structure 1`] = `
 "<!DOCTYPE html>
-    <html lang="en">
+    <html lang="en" dir="ltr">
       <head>
       
         <meta charset="UTF-8" />
@@ -175,7 +175,7 @@ exports[`await toHTML > complex scenarios > should render a complete page struct
 
 exports[`await toHTML > complex scenarios > should render wrapped complex page with all assets 1`] = `
 "<!DOCTYPE html>
-    <html lang="en">
+    <html lang="en" dir="ltr">
       <head>
       
         <meta charset="UTF-8" />

@@ -1,5 +1,13 @@
 # @inglorious/engine
 
+## 24.1.2
+
+### Patch Changes
+
+- Write the entity pool middleware the new way, wrapping the store's `dispatch`.
+- Updated dependencies
+  - @inglorious/store@12.1.0
+
 ## 24.1.1
 
 ### Patch Changes

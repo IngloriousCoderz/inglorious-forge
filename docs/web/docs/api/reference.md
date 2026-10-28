@@ -83,6 +83,7 @@ mount(store, (api) => api.render("app"), document.getElementById("root"), {
 - Adds `api.render()` for entity rendering
 - Hydrates existing markup if the container already has child nodes
 - Subscribes to store updates and re-renders automatically
+- With the `Router` type, announces each navigation to screen readers and moves focus to the top of the new page ([accessible navigation](../featured/router.md#accessible-navigation)); `hasAccessibleNavigation: false` turns it off, and `getPageName` chooses what is announced
 - Emits the `init` event once mounted
 
 ## Rendering helpers

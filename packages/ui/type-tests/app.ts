@@ -26,6 +26,7 @@ import {
   type VirtualListEntity,
 } from "../types/data-display/virtual-list"
 import { Tabs } from "../types/navigation/tabs"
+import { withTransitions } from "../types/navigation/view-transitions"
 
 interface GridEntity extends DataGridProps<{ name: string }> {
   type: "DataGrid"
@@ -73,6 +74,15 @@ export const store = createStore<AppEntity, AppState>({
   types: { DataGrid, Cropper: ImageCropper, List: VirtualList, Counter },
   entities: { counter: { type: "Counter", value: 0 } },
 })
+
+// withTransitions is a middleware for the app's typed store
+export const transitioned = createStore<AppEntity, AppState>({
+  types: { Counter },
+  entities: { counter: { type: "Counter", value: 0 } },
+  middlewares: [withTransitions({ routes: ["detail"] })],
+})
+// @ts-expect-error: routes are names or a predicate
+withTransitions({ routes: 42 })
 
 // An app's Api is the Api components take
 declare const api: AppApi

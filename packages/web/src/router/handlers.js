@@ -86,6 +86,16 @@ export function createHandlers(routeConfig) {
         event.preventDefault()
 
         const path = link.pathname + link.search + link.hash
+
+        // Stored in the history entry, for whatever moves focus after navigating.
+        if (link.hasAttribute("data-is-focus-kept")) {
+          api.notify(`#${entityId}:navigate`, {
+            to: path,
+            state: { isFocusKept: true },
+          })
+          return
+        }
+
         api.notify(`#${entityId}:navigate`, path)
       })
     },

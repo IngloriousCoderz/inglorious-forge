@@ -1,9 +1,493 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`generateApp > should generate the app script for a dynamic page 1`] = `Promise {}`;
+exports[`generateApp > should generate the app script for a dynamic page 1`] = `
+"import "@inglorious/web/hydrate"
+import { createStore } from "@inglorious/store"
+import { createDevtools } from "@inglorious/store/client/devtools"
+import { mount } from "@inglorious/web"
+import { Router, getRoute, setRoutes } from "@inglorious/web/router"
+import { getLocaleFromPath, syncPageHead, waitForLocale } from "@inglorious/ssx/client"
 
-exports[`generateApp > should generate the app script for a page that has metadata 1`] = `Promise {}`;
 
-exports[`generateApp > should generate the app script for a page with an entity 1`] = `Promise {}`;
 
-exports[`generateApp > should generate the app script for a static page 1`] = `Promise {}`;
+
+const normalizePathname = (path = "/") => path.split("?")[0].split("#")[0]
+const normalizeRoutePath = (path = "/") => {
+  const pathname = normalizePathname(path)
+  if (pathname.length > 1 && pathname.endsWith("/")) {
+    return pathname.slice(0, -1)
+  }
+  return pathname
+}
+
+const pages = [
+  {
+    "pattern": "/posts/:slug",
+    "path": "/posts/my-first-post",
+    "moduleName": "Post"
+  }
+]
+// A server-rendered dynamic page is listed by its pattern, such as /posts/:id.
+const matchesPattern = (pattern, path) => {
+  const patternParts = pattern.split("/").filter(Boolean)
+  const pathParts = path.split("/").filter(Boolean)
+  if (patternParts.includes("*")) {
+    const fixed = patternParts.slice(0, patternParts.indexOf("*"))
+    return fixed.every((part, i) => part.startsWith(":") || part === pathParts[i])
+  }
+  return (
+    patternParts.length === pathParts.length &&
+    patternParts.every((part, i) => part.startsWith(":") || part === pathParts[i])
+  )
+}
+
+const path = normalizeRoutePath(window.location.pathname)
+const page =
+  pages.find((page) => normalizeRoutePath(page.path) === path) ??
+  pages.find((page) => matchesPattern(page.path, path))
+
+const types = { Router }
+
+
+const i18n = {}
+const isDev = false
+
+const toCamelCase = (str) => {
+  const [firstChar, ...rest] = str
+  return [firstChar.toLowerCase(), ...rest].join("")
+}
+
+const entities = {
+  router: { type: "Router", path, route: toCamelCase(page?.moduleName) },
+}
+
+Object.assign(entities, JSON.parse(document.getElementById("__SSX_PAGE__").textContent))
+
+
+const middlewares = []
+if (isDev) {
+  middlewares.push(createDevtools().middleware)
+}
+
+const systems = []
+if (i18n.defaultLocale && i18n.locales?.length) {
+  systems.push({
+    routeChange(state, payload, api) {
+      if (!payload?.path) return
+      const locale = getLocaleFromPath(payload.path, i18n)
+
+      const entity = state[payload.route]
+      if (entity) entity.locale = locale
+
+      // The URL decides the locale, as it did for the page the server rendered, so
+      // an @inglorious/i18n entity follows it rather than the browser's language.
+      const translator = state.i18n
+      if (translator?.locale !== locale && api.getType(translator?.type)?.localeChange) {
+        api.notify("#i18n:localeChange", locale)
+      }
+    },
+  })
+}
+
+// Page modules by type name, kept so client navigation can read their metadata.
+const modules = {}
+const loadPage = (moduleName, load) => async () => {
+  const module = await load()
+  modules[moduleName] = module
+  return module
+}
+
+setRoutes({
+  "/posts/:slug": loadPage("Post", () => import("@/pages/post.js"))
+})
+
+const module = await getRoute(page.pattern)()
+const type = module[page.moduleName]
+types[page.moduleName] = type
+
+const store = createStore({ types, entities, middlewares, systems, autoCreateEntities: true })
+
+const root = document.getElementById("root")
+
+if (i18n.defaultLocale && i18n.locales?.length) {
+  // Hydrates in the language the server rendered, with its translations loaded.
+  await waitForLocale(store, getLocaleFromPath(path, i18n))
+}
+
+const getPageName = syncPageHead(store, modules, {})
+
+mount(store, (api) => {
+  const { route } = api.getEntity("router")
+  return api.render(route)
+}, root, { getPageName })
+"
+`;
+
+exports[`generateApp > should generate the app script for a page that has metadata 1`] = `
+"import "@inglorious/web/hydrate"
+import { createStore } from "@inglorious/store"
+import { createDevtools } from "@inglorious/store/client/devtools"
+import { mount } from "@inglorious/web"
+import { Router, getRoute, setRoutes } from "@inglorious/web/router"
+import { getLocaleFromPath, syncPageHead, waitForLocale } from "@inglorious/ssx/client"
+
+
+
+
+const normalizePathname = (path = "/") => path.split("?")[0].split("#")[0]
+const normalizeRoutePath = (path = "/") => {
+  const pathname = normalizePathname(path)
+  if (pathname.length > 1 && pathname.endsWith("/")) {
+    return pathname.slice(0, -1)
+  }
+  return pathname
+}
+
+const pages = [
+  {
+    "pattern": "/blog",
+    "path": "/blog",
+    "moduleName": "Blog"
+  }
+]
+// A server-rendered dynamic page is listed by its pattern, such as /posts/:id.
+const matchesPattern = (pattern, path) => {
+  const patternParts = pattern.split("/").filter(Boolean)
+  const pathParts = path.split("/").filter(Boolean)
+  if (patternParts.includes("*")) {
+    const fixed = patternParts.slice(0, patternParts.indexOf("*"))
+    return fixed.every((part, i) => part.startsWith(":") || part === pathParts[i])
+  }
+  return (
+    patternParts.length === pathParts.length &&
+    patternParts.every((part, i) => part.startsWith(":") || part === pathParts[i])
+  )
+}
+
+const path = normalizeRoutePath(window.location.pathname)
+const page =
+  pages.find((page) => normalizeRoutePath(page.path) === path) ??
+  pages.find((page) => matchesPattern(page.path, path))
+
+const types = { Router }
+
+
+const i18n = {}
+const isDev = false
+
+const toCamelCase = (str) => {
+  const [firstChar, ...rest] = str
+  return [firstChar.toLowerCase(), ...rest].join("")
+}
+
+const entities = {
+  router: { type: "Router", path, route: toCamelCase(page?.moduleName) },
+}
+
+Object.assign(entities, JSON.parse(document.getElementById("__SSX_PAGE__").textContent))
+
+
+const middlewares = []
+if (isDev) {
+  middlewares.push(createDevtools().middleware)
+}
+
+const systems = []
+if (i18n.defaultLocale && i18n.locales?.length) {
+  systems.push({
+    routeChange(state, payload, api) {
+      if (!payload?.path) return
+      const locale = getLocaleFromPath(payload.path, i18n)
+
+      const entity = state[payload.route]
+      if (entity) entity.locale = locale
+
+      // The URL decides the locale, as it did for the page the server rendered, so
+      // an @inglorious/i18n entity follows it rather than the browser's language.
+      const translator = state.i18n
+      if (translator?.locale !== locale && api.getType(translator?.type)?.localeChange) {
+        api.notify("#i18n:localeChange", locale)
+      }
+    },
+  })
+}
+
+// Page modules by type name, kept so client navigation can read their metadata.
+const modules = {}
+const loadPage = (moduleName, load) => async () => {
+  const module = await load()
+  modules[moduleName] = module
+  return module
+}
+
+setRoutes({
+  "/blog": loadPage("Blog", () => import("@/pages/blog.js"))
+})
+
+const module = await getRoute(page.pattern)()
+const type = module[page.moduleName]
+types[page.moduleName] = type
+
+const store = createStore({ types, entities, middlewares, systems, autoCreateEntities: true })
+
+const root = document.getElementById("root")
+
+if (i18n.defaultLocale && i18n.locales?.length) {
+  // Hydrates in the language the server rendered, with its translations loaded.
+  await waitForLocale(store, getLocaleFromPath(path, i18n))
+}
+
+const getPageName = syncPageHead(store, modules, {})
+
+mount(store, (api) => {
+  const { route } = api.getEntity("router")
+  return api.render(route)
+}, root, { getPageName })
+"
+`;
+
+exports[`generateApp > should generate the app script for a page with an entity 1`] = `
+"import "@inglorious/web/hydrate"
+import { createStore } from "@inglorious/store"
+import { createDevtools } from "@inglorious/store/client/devtools"
+import { mount } from "@inglorious/web"
+import { Router, getRoute, setRoutes } from "@inglorious/web/router"
+import { getLocaleFromPath, syncPageHead, waitForLocale } from "@inglorious/ssx/client"
+
+
+
+
+const normalizePathname = (path = "/") => path.split("?")[0].split("#")[0]
+const normalizeRoutePath = (path = "/") => {
+  const pathname = normalizePathname(path)
+  if (pathname.length > 1 && pathname.endsWith("/")) {
+    return pathname.slice(0, -1)
+  }
+  return pathname
+}
+
+const pages = [
+  {
+    "pattern": "/about",
+    "path": "/about",
+    "moduleName": "About"
+  }
+]
+// A server-rendered dynamic page is listed by its pattern, such as /posts/:id.
+const matchesPattern = (pattern, path) => {
+  const patternParts = pattern.split("/").filter(Boolean)
+  const pathParts = path.split("/").filter(Boolean)
+  if (patternParts.includes("*")) {
+    const fixed = patternParts.slice(0, patternParts.indexOf("*"))
+    return fixed.every((part, i) => part.startsWith(":") || part === pathParts[i])
+  }
+  return (
+    patternParts.length === pathParts.length &&
+    patternParts.every((part, i) => part.startsWith(":") || part === pathParts[i])
+  )
+}
+
+const path = normalizeRoutePath(window.location.pathname)
+const page =
+  pages.find((page) => normalizeRoutePath(page.path) === path) ??
+  pages.find((page) => matchesPattern(page.path, path))
+
+const types = { Router }
+
+
+const i18n = {}
+const isDev = false
+
+const toCamelCase = (str) => {
+  const [firstChar, ...rest] = str
+  return [firstChar.toLowerCase(), ...rest].join("")
+}
+
+const entities = {
+  router: { type: "Router", path, route: toCamelCase(page?.moduleName) },
+}
+
+Object.assign(entities, JSON.parse(document.getElementById("__SSX_PAGE__").textContent))
+
+
+const middlewares = []
+if (isDev) {
+  middlewares.push(createDevtools().middleware)
+}
+
+const systems = []
+if (i18n.defaultLocale && i18n.locales?.length) {
+  systems.push({
+    routeChange(state, payload, api) {
+      if (!payload?.path) return
+      const locale = getLocaleFromPath(payload.path, i18n)
+
+      const entity = state[payload.route]
+      if (entity) entity.locale = locale
+
+      // The URL decides the locale, as it did for the page the server rendered, so
+      // an @inglorious/i18n entity follows it rather than the browser's language.
+      const translator = state.i18n
+      if (translator?.locale !== locale && api.getType(translator?.type)?.localeChange) {
+        api.notify("#i18n:localeChange", locale)
+      }
+    },
+  })
+}
+
+// Page modules by type name, kept so client navigation can read their metadata.
+const modules = {}
+const loadPage = (moduleName, load) => async () => {
+  const module = await load()
+  modules[moduleName] = module
+  return module
+}
+
+setRoutes({
+  "/about": loadPage("About", () => import("@/pages/about.js"))
+})
+
+const module = await getRoute(page.pattern)()
+const type = module[page.moduleName]
+types[page.moduleName] = type
+
+const store = createStore({ types, entities, middlewares, systems, autoCreateEntities: true })
+
+const root = document.getElementById("root")
+
+if (i18n.defaultLocale && i18n.locales?.length) {
+  // Hydrates in the language the server rendered, with its translations loaded.
+  await waitForLocale(store, getLocaleFromPath(path, i18n))
+}
+
+const getPageName = syncPageHead(store, modules, {})
+
+mount(store, (api) => {
+  const { route } = api.getEntity("router")
+  return api.render(route)
+}, root, { getPageName })
+"
+`;
+
+exports[`generateApp > should generate the app script for a static page 1`] = `
+"import "@inglorious/web/hydrate"
+import { createStore } from "@inglorious/store"
+import { createDevtools } from "@inglorious/store/client/devtools"
+import { mount } from "@inglorious/web"
+import { Router, getRoute, setRoutes } from "@inglorious/web/router"
+import { getLocaleFromPath, syncPageHead, waitForLocale } from "@inglorious/ssx/client"
+
+
+
+
+const normalizePathname = (path = "/") => path.split("?")[0].split("#")[0]
+const normalizeRoutePath = (path = "/") => {
+  const pathname = normalizePathname(path)
+  if (pathname.length > 1 && pathname.endsWith("/")) {
+    return pathname.slice(0, -1)
+  }
+  return pathname
+}
+
+const pages = [
+  {
+    "pattern": "/",
+    "path": "/",
+    "moduleName": "Index"
+  }
+]
+// A server-rendered dynamic page is listed by its pattern, such as /posts/:id.
+const matchesPattern = (pattern, path) => {
+  const patternParts = pattern.split("/").filter(Boolean)
+  const pathParts = path.split("/").filter(Boolean)
+  if (patternParts.includes("*")) {
+    const fixed = patternParts.slice(0, patternParts.indexOf("*"))
+    return fixed.every((part, i) => part.startsWith(":") || part === pathParts[i])
+  }
+  return (
+    patternParts.length === pathParts.length &&
+    patternParts.every((part, i) => part.startsWith(":") || part === pathParts[i])
+  )
+}
+
+const path = normalizeRoutePath(window.location.pathname)
+const page =
+  pages.find((page) => normalizeRoutePath(page.path) === path) ??
+  pages.find((page) => matchesPattern(page.path, path))
+
+const types = { Router }
+
+
+const i18n = {}
+const isDev = false
+
+const toCamelCase = (str) => {
+  const [firstChar, ...rest] = str
+  return [firstChar.toLowerCase(), ...rest].join("")
+}
+
+const entities = {
+  router: { type: "Router", path, route: toCamelCase(page?.moduleName) },
+}
+
+Object.assign(entities, JSON.parse(document.getElementById("__SSX_PAGE__").textContent))
+
+
+const middlewares = []
+if (isDev) {
+  middlewares.push(createDevtools().middleware)
+}
+
+const systems = []
+if (i18n.defaultLocale && i18n.locales?.length) {
+  systems.push({
+    routeChange(state, payload, api) {
+      if (!payload?.path) return
+      const locale = getLocaleFromPath(payload.path, i18n)
+
+      const entity = state[payload.route]
+      if (entity) entity.locale = locale
+
+      // The URL decides the locale, as it did for the page the server rendered, so
+      // an @inglorious/i18n entity follows it rather than the browser's language.
+      const translator = state.i18n
+      if (translator?.locale !== locale && api.getType(translator?.type)?.localeChange) {
+        api.notify("#i18n:localeChange", locale)
+      }
+    },
+  })
+}
+
+// Page modules by type name, kept so client navigation can read their metadata.
+const modules = {}
+const loadPage = (moduleName, load) => async () => {
+  const module = await load()
+  modules[moduleName] = module
+  return module
+}
+
+setRoutes({
+  "/": loadPage("Index", () => import("@/pages/index.js"))
+})
+
+const module = await getRoute(page.pattern)()
+const type = module[page.moduleName]
+types[page.moduleName] = type
+
+const store = createStore({ types, entities, middlewares, systems, autoCreateEntities: true })
+
+const root = document.getElementById("root")
+
+if (i18n.defaultLocale && i18n.locales?.length) {
+  // Hydrates in the language the server rendered, with its translations loaded.
+  await waitForLocale(store, getLocaleFromPath(path, i18n))
+}
+
+const getPageName = syncPageHead(store, modules, {})
+
+mount(store, (api) => {
+  const { route } = api.getEntity("router")
+  return api.render(route)
+}, root, { getPageName })
+"
+`;

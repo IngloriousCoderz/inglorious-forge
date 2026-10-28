@@ -52,6 +52,45 @@ const renderApp = (api) => {
 mount(store, renderApp, document.getElementById("root"))
 ```
 
+## Links
+
+The router handles clicks on plain `<a href>` links to the same origin, so they navigate without reloading the page. It leaves a link to the browser when it has `target="_blank"`, `rel="external"`, `data-external` or `download`, or points to another protocol such as `mailto:`.
+
+A link with `data-is-focus-kept` navigates with `state: { isFocusKept: true }`, which tells [accessible navigation](#accessible-navigation) to leave focus where it is.
+
+## Accessible Navigation
+
+A full page load tells screen readers that a new page has opened, and starts keyboard navigation from the top of it. A client-side navigation does neither on its own: the content changes silently, and focus stays on a link that may no longer exist. In an app with the `Router` type, `mount` restores both, with nothing to set up. After each navigation to a new path, once the new page has rendered:
+
+- **The page is announced** through a visually hidden `aria-live` region: the document title, or the first `<h1>` when there is none, or the path.
+- **Focus moves to the top of the document**, so the next Tab starts from the beginning of the new page. An element with `autofocus` on the new page gets the focus instead.
+
+Changes to the query string alone are not navigations to a new page, so they are neither announced nor move focus.
+
+Links that change part of the page rather than the whole of it, such as tabs or filters with their own URL, can keep focus where it is. The page is still announced:
+
+```javascript
+html`<a href="/products?view=grid" data-is-focus-kept>Grid</a>`
+
+// Or from code
+api.notify("navigate", {
+  to: "/products?view=grid",
+  state: { isFocusKept: true },
+})
+```
+
+The state belongs to that history entry, so focus is also kept when the visitor comes back to it with the back and forward buttons.
+
+If the page title is set later than the first render, for example from data fetched after navigating, pass `getPageName` to `mount`. It returns the name to announce, or `null` to be asked again after the next render. [SSX](../advanced/ssx.md) does this with the titles in page metadata:
+
+```javascript
+mount(store, renderApp, root, {
+  getPageName: () => store.getEntity("post").title ?? null,
+})
+```
+
+An app that handles all of this itself can turn it off with `hasAccessibleNavigation: false`.
+
 ## Dynamic Routes
 
 ```javascript
@@ -82,6 +121,7 @@ api.notify("navigate", {
   to: "/user/123",
   replace: true, // Replace instead of push
   force: true, // Force even if path is the same
+  state: { isFocusKept: true }, // Stored in the history entry
 })
 
 // Navigate back
