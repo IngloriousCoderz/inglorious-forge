@@ -8,7 +8,7 @@ import { classMap } from "@inglorious/web/directives/class-map"
 import { ref } from "@inglorious/web/directives/ref"
 import { when } from "@inglorious/web/directives/when"
 
-import { Button } from "../../controls/button/index.js"
+import { IconButton } from "../../controls/icon-button/index.js"
 import { Icon } from "../../data-display/icon/index.js"
 import { Flex } from "../../layout/flex/index.js"
 import { applyElementProps } from "../../shared/apply-element-props.js"
@@ -51,6 +51,9 @@ export function render(props) {
     title,
     children,
     className = "",
+    closeLabel = "Close",
+    collapseLabel = "Collapse sidebar",
+    expandLabel = "Expand sidebar",
     onClose,
     onCollapseToggle,
     ...rest
@@ -103,14 +106,14 @@ export function render(props) {
               () => html`<div class="iw-drawer-title">${title}</div>`,
             ),
             when(onClose, () =>
-              Button.render({
+              IconButton.render({
+                icon: Icon.render({ icon: close, size: "lg" }),
+                ariaLabel: closeLabel,
                 color: "secondary",
                 variant: "ghost",
                 shape: "square",
                 className: "iw-drawer-close",
-                "aria-label": "Close",
                 onClick: onClose,
-                children: Icon.render({ icon: close, size: "lg" }),
               }),
             ),
           ],
@@ -129,14 +132,14 @@ export function render(props) {
           justify: "end",
           padding: "sm",
           className: "iw-drawer-footer",
-          children: Button.render({
+          children: IconButton.render({
+            icon: Icon.render({ icon: leftPanelClose, size: "lg" }),
+            ariaLabel: isCollapsed ? expandLabel : collapseLabel,
             color: "secondary",
             variant: "ghost",
             shape: "square",
             className: "iw-drawer-toggler",
-            "aria-label": isCollapsed ? "Expand sidebar" : "Collapse sidebar",
             onClick: onCollapseToggle,
-            children: Icon.render({ icon: leftPanelClose, size: "lg" }),
           }),
         })}
       `,

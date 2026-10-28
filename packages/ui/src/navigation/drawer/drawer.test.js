@@ -81,6 +81,31 @@ describe("drawer", () => {
 
     expect(onCollapseToggle).toHaveBeenCalledTimes(1)
   })
+
+  it("names its buttons in the app's language", () => {
+    const labels = {
+      closeLabel: "Chiudi",
+      collapseLabel: "Comprimi",
+      expandLabel: "Espandi",
+    }
+    const container = mount(
+      Drawer.render({
+        isOpen: true,
+        ...labels,
+        onClose() {},
+        onCollapseToggle() {},
+      }),
+    )
+    const collapsed = mount(
+      Drawer.render({ isCollapsed: true, ...labels, onCollapseToggle() {} }),
+    )
+
+    const label = (root, selector) =>
+      root.querySelector(selector).getAttribute("aria-label")
+    expect(label(container, ".iw-drawer-close")).toBe("Chiudi")
+    expect(label(container, ".iw-drawer-toggler")).toBe("Comprimi")
+    expect(label(collapsed, ".iw-drawer-toggler")).toBe("Espandi")
+  })
 })
 
 function mount(template) {

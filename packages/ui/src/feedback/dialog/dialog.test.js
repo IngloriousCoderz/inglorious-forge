@@ -138,6 +138,28 @@ describe("dialog", () => {
 
     expect(container.querySelector("dialog.iw-dialog-lg")).not.toBeNull()
   })
+
+  it("names the close button in the app's language", () => {
+    const container = mount(
+      Dialog.render({ isOpen: true, closeLabel: "Chiudi", onClose: () => {} }),
+    )
+
+    expect(
+      container.querySelector(".iw-dialog-close").getAttribute("aria-label"),
+    ).toBe("Chiudi")
+  })
+
+  it("is a sheet only when asked", () => {
+    const container = mount(Dialog.render({ isOpen: true, variant: "sheet" }))
+    const plain = mount(Dialog.render({ isOpen: true }))
+
+    expect(
+      container.querySelector("dialog").classList.contains("iw-dialog-sheet"),
+    ).toBe(true)
+    expect(
+      plain.querySelector("dialog").classList.contains("iw-dialog-sheet"),
+    ).toBe(false)
+  })
 })
 
 function mount(template) {

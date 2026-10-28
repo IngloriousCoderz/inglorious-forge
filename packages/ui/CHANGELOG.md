@@ -1,5 +1,17 @@
 # @inglorious/ui
 
+## 9.8.0
+
+### Minor Changes
+
+- `Dialog` gains two props and an `IconButton` to close:
+
+  - `variant: "sheet"` (alongside the default `"dialog"`): below 48rem, the dialog becomes a sheet anchored to the bottom edge at full width, rising from below and clear of the home indicator; from 48rem it stays the centred dialog
+  - `closeLabel`: the close button's accessible name, so it can follow the app's language (defaults to `"Close"`)
+  - The close button is now an `IconButton` with the package's close icon, instead of a small hand-styled `×`
+
+  `Drawer`'s close and collapse buttons are `IconButton`s too, and take `closeLabel`, `collapseLabel` and `expandLabel` for their accessible names, which were fixed in English (`"Close"`, `"Collapse sidebar"`, `"Expand sidebar"` stay the defaults)
+
 ## 9.7.3
 
 ### Patch Changes

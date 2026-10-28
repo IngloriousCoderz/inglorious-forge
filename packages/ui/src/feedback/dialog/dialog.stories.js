@@ -10,9 +10,11 @@ export default {
   argTypes: {
     isOpen: { control: "boolean" },
     isModal: { control: "boolean" },
+    variant: { control: "select", options: ["dialog", "sheet"] },
     size: { control: "select", options: ["sm", "md", "lg"] },
     title: { control: "text" },
     description: { control: "text" },
+    closeLabel: { control: "text" },
     onClose: { action: "onClose" },
   },
 }
@@ -55,4 +57,11 @@ export const Large = {
 export const Modal = {
   tags: ["!autodocs"],
   args: { ...Open.args, isModal: true },
+}
+
+// A bottom sheet below 48rem: shrink the viewport to see it rise from the
+// bottom edge. Modal, like Modal, so it stays off the docs page.
+export const Sheet = {
+  tags: ["!autodocs"],
+  args: { ...Open.args, isModal: true, variant: "sheet" },
 }

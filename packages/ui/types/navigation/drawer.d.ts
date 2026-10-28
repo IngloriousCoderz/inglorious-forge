@@ -16,6 +16,12 @@ export interface DrawerProps {
   children?: TemplateResult | string | number
   hasBackdrop?: boolean
   className?: string
+  /** The close button's accessible name, for the app's language. Defaults to `"Close"`. */
+  closeLabel?: string
+  /** The collapse toggle's accessible name while expanded. Defaults to `"Collapse sidebar"`. */
+  collapseLabel?: string
+  /** The collapse toggle's accessible name while collapsed. Defaults to `"Expand sidebar"`. */
+  expandLabel?: string
   onClose?: () => void
   onCollapseToggle?: () => void
   [key: string]: unknown

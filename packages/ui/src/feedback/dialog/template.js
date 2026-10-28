@@ -8,6 +8,9 @@ import { classMap } from "@inglorious/web/directives/class-map"
 import { ref } from "@inglorious/web/directives/ref"
 import { when } from "@inglorious/web/directives/when"
 
+import { IconButton } from "../../controls/icon-button/index.js"
+import { Icon } from "../../data-display/icon/index.js"
+import { close } from "../../shared/icons.js"
 import { syncDialog } from "../../shared/top-layer.js"
 
 /**
@@ -29,12 +32,14 @@ export function render(props) {
     id,
     isOpen = false,
     isModal = true,
+    variant = "dialog",
     size = "md",
     title,
     description,
     children,
     actions,
     className = "",
+    closeLabel = "Close",
     onClose,
     onBackdropClick,
   } = props
@@ -59,6 +64,7 @@ export function render(props) {
     class=${classMap({
       "iw-dialog": true,
       [`iw-dialog-${size}`]: true,
+      "iw-dialog-sheet": variant === "sheet",
       ...extraClasses,
     })}
     aria-labelledby=${titleId || nothing}
@@ -94,17 +100,16 @@ export function render(props) {
                   ${title}
                 </div>`,
             )}
-            ${when(
-              onClose,
-              () =>
-                html`<button
-                  type="button"
-                  class="iw-dialog-close"
-                  aria-label="Close"
-                  @click=${onClose}
-                >
-                  ×
-                </button>`,
+            ${when(onClose, () =>
+              IconButton.render({
+                icon: Icon.render({ icon: close, size: "lg" }),
+                ariaLabel: closeLabel,
+                variant: "ghost",
+                color: "secondary",
+                shape: "round",
+                className: "iw-dialog-close",
+                onClick: onClose,
+              }),
             )}
           </div>`,
       )}
