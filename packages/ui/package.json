@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/ui",
-  "version": "9.7.1",
+  "version": "9.7.2",
   "description": "A design system for Inglorious Web with render-function components and customizable themes",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -326,9 +326,9 @@
     "test:types": "tsc -p type-tests"
   },
   "peerDependencies": {
-    "@inglorious/store": "workspace:*",
-    "@inglorious/utils": "workspace:*",
-    "@inglorious/web": "workspace:*"
+    "@inglorious/store": "workspace:^",
+    "@inglorious/utils": "workspace:^",
+    "@inglorious/web": "workspace:^"
   },
   "devDependencies": {
     "@iconify-icons/fa7-brands": "^2.0.0",

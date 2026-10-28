@@ -1,5 +1,11 @@
 # @inglorious/store
 
+## 12.1.1
+
+### Patch Changes
+
+- Publish internal dependencies and peer dependencies as caret ranges instead of exact versions, and stop also listing peer dependencies as regular dependencies, so upgrading one package no longer causes version mismatches or duplicate installs
+
 ## 12.1.0
 
 ### Minor Changes

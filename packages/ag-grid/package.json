@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/ag-grid",
-  "version": "9.0.17",
+  "version": "9.0.18",
   "description": "AG Grid integration for Inglorious Web.",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -37,15 +37,13 @@
     "test:watch": "vitest",
     "test": "vitest run"
   },
-  "dependencies": {
-    "@inglorious/web": "workspace:*"
-  },
   "peerDependencies": {
-    "@inglorious/web": "workspace:*",
+    "@inglorious/web": "workspace:^",
     "ag-grid-community": "^34.3.1"
   },
   "devDependencies": {
     "@inglorious/eslint-config": "workspace:*",
+    "@inglorious/web": "workspace:*",
     "prettier": "^3.9.6",
     "vitest": "^5.0.0"
   },

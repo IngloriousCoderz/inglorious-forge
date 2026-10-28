@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/renderer-react-dom",
-  "version": "22.0.11",
+  "version": "22.0.12",
   "description": "A renderer for the Inglorious Engine, using React components.",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -28,24 +28,22 @@
     "format": "prettier --write .",
     "lint": "eslint ."
   },
-  "dependencies": {
-    "@inglorious/engine": "workspace:*",
-    "@inglorious/utils": "workspace:*",
-    "react": "^19.2.8",
-    "react-dom": "^19.2.8",
-    "react-redux": "^9.3.0"
-  },
   "peerDependencies": {
-    "@inglorious/engine": "workspace:*",
-    "@inglorious/utils": "workspace:*",
+    "@inglorious/engine": "workspace:^",
+    "@inglorious/utils": "workspace:^",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-redux": "^9.2.0"
   },
   "devDependencies": {
+    "@inglorious/engine": "workspace:*",
     "@inglorious/eslint-config": "workspace:*",
+    "@inglorious/utils": "workspace:*",
     "eslint": "^10.10.0",
     "prettier": "^3.9.6",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-redux": "^9.3.0",
     "vitest": "^5.0.0"
   }
 }

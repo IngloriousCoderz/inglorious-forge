@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/ssx",
-  "version": "2.3.1",
+  "version": "2.3.2",
   "description": "Server-Side-X. Xecution? Xperience? Who knows.",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -59,9 +59,9 @@
     "ssr": "node ./bin/ssx.js ssr -r ./src/fixtures"
   },
   "dependencies": {
-    "@inglorious/store": "workspace:*",
-    "@inglorious/utils": "workspace:*",
-    "@inglorious/web": "workspace:*",
+    "@inglorious/store": "workspace:^",
+    "@inglorious/utils": "workspace:^",
+    "@inglorious/web": "workspace:^",
     "@lit-labs/ssr": "^4.1.0",
     "commander": "^15.0.0",
     "connect": "^3.7.0",

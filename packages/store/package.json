@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/store",
-  "version": "12.1.0",
+  "version": "12.1.1",
   "description": "A state manager for real-time, collaborative apps, inspired by game development patterns and compatible with Redux.",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -82,14 +82,14 @@
     "test:types": "tsc -p type-tests"
   },
   "dependencies": {
-    "@inglorious/utils": "workspace:*",
     "mutative": "^1.3.0"
   },
   "peerDependencies": {
-    "@inglorious/utils": "workspace:*"
+    "@inglorious/utils": "workspace:^"
   },
   "devDependencies": {
     "@inglorious/eslint-config": "workspace:*",
+    "@inglorious/utils": "workspace:*",
     "@reduxjs/toolkit": "^2.12.0",
     "prettier": "^3.9.6",
     "typescript": "~7.0.2",

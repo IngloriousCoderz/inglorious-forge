@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/vite-plugin-vue",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "A Vite plugin that transforms Vue-like template syntax into lit-html templates.",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -39,7 +39,7 @@
     "@babel/parser": "^8.0.4",
     "@babel/plugin-syntax-typescript": "^8.0.3",
     "@babel/types": "^8.0.4",
-    "@inglorious/utils": "workspace:*",
+    "@inglorious/utils": "workspace:^",
     "domhandler": "^6.0.1",
     "htmlparser2": "^12.0.0"
   },

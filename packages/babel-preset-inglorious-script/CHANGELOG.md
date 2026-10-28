@@ -1,5 +1,11 @@
 # @inglorious/babel-preset-inglorious-script
 
+## 1.0.9
+
+### Patch Changes
+
+- Publish internal dependencies and peer dependencies as caret ranges instead of exact versions, and stop also listing peer dependencies as regular dependencies, so upgrading one package no longer causes version mismatches or duplicate installs
+
 ## 1.0.8
 
 ### Patch Changes

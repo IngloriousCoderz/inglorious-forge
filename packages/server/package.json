@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/server",
-  "version": "21.0.10",
+  "version": "21.0.11",
   "description": "A real-time, lightweight server designed to enable multiplayer experiences for games built with the Inglorious Engine.",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -45,17 +45,17 @@
     "dev": "nodemon src/index.js"
   },
   "dependencies": {
-    "@inglorious/store": "workspace:*",
-    "@inglorious/utils": "workspace:*",
     "pino": "^10.3.1",
     "ws": "^8.21.3"
   },
   "peerDependencies": {
-    "@inglorious/store": "workspace:*",
-    "@inglorious/utils": "workspace:*"
+    "@inglorious/store": "workspace:^",
+    "@inglorious/utils": "workspace:^"
   },
   "devDependencies": {
     "@inglorious/eslint-config": "workspace:*",
+    "@inglorious/store": "workspace:*",
+    "@inglorious/utils": "workspace:*",
     "nodemon": "^3.1.14",
     "prettier": "^3.9.6"
   },

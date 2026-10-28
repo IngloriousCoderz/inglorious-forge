@@ -1,5 +1,13 @@
 # @inglorious/renderer-react-dom
 
+## 22.0.12
+
+### Patch Changes
+
+- Publish internal dependencies and peer dependencies as caret ranges instead of exact versions, and stop also listing peer dependencies as regular dependencies, so upgrading one package no longer causes version mismatches or duplicate installs
+- Updated dependencies
+  - @inglorious/engine@24.1.3
+
 ## 22.0.11
 
 ### Patch Changes

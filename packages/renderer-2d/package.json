@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/renderer-2d",
-  "version": "22.0.12",
+  "version": "22.0.13",
   "description": "A renderer for the Inglorious Engine, using the Context2D of the Canvas API.",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -30,16 +30,14 @@
     "test:watch": "vitest",
     "test": "vitest run"
   },
-  "dependencies": {
-    "@inglorious/engine": "workspace:*",
-    "@inglorious/utils": "workspace:*"
-  },
   "peerDependencies": {
-    "@inglorious/engine": "workspace:*",
-    "@inglorious/utils": "workspace:*"
+    "@inglorious/engine": "workspace:^",
+    "@inglorious/utils": "workspace:^"
   },
   "devDependencies": {
+    "@inglorious/engine": "workspace:*",
     "@inglorious/eslint-config": "workspace:*",
+    "@inglorious/utils": "workspace:*",
     "eslint": "^10.10.0",
     "prettier": "^3.9.6",
     "vitest": "^5.0.0"

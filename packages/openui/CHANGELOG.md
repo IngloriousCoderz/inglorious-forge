@@ -1,5 +1,15 @@
 # @inglorious/openui
 
+## 0.5.7
+
+### Patch Changes
+
+- Publish internal dependencies and peer dependencies as caret ranges instead of exact versions, and stop also listing peer dependencies as regular dependencies, so upgrading one package no longer causes version mismatches or duplicate installs
+- Updated dependencies
+  - @inglorious/charts@12.2.5
+  - @inglorious/ui@9.7.2
+  - @inglorious/web@6.10.2
+
 ## 0.5.6
 
 ### Patch Changes

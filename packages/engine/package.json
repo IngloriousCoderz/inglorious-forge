@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/engine",
-  "version": "24.1.2",
+  "version": "24.1.3",
   "description": "A JavaScript game engine written with global state, immutability, and pure functions in mind. Have fun(ctional programming) with it!",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -39,8 +39,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@inglorious/store": "workspace:*",
-    "@inglorious/utils": "workspace:*"
+    "@inglorious/store": "workspace:^",
+    "@inglorious/utils": "workspace:^"
   },
   "peerDependencies": {
     "vitest": "^5.0.0"

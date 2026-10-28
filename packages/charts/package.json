@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/charts",
-  "version": "12.2.4",
+  "version": "12.2.5",
   "description": "Chart components for Inglorious Web, inspired by Recharts",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "contributors": [
@@ -53,7 +53,6 @@
     "test:types": "tsc -p type-tests"
   },
   "dependencies": {
-    "@inglorious/web": "workspace:*",
     "d3-array": "^3.2.4",
     "d3-format": "^3.1.2",
     "d3-scale": "^4.0.2",
@@ -61,11 +60,12 @@
     "d3-time-format": "^4.1.0"
   },
   "peerDependencies": {
-    "@inglorious/web": "workspace:*"
+    "@inglorious/web": "workspace:^"
   },
   "devDependencies": {
     "@inglorious/eslint-config": "workspace:*",
     "@inglorious/store": "workspace:*",
+    "@inglorious/web": "workspace:*",
     "@lit-labs/ssr": "^4.1.0",
     "prettier": "^3.9.6",
     "typescript": "~7.0.2",

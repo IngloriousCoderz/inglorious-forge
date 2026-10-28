@@ -1,5 +1,11 @@
 # @inglorious/vite-plugin-jsx
 
+## 2.0.6
+
+### Patch Changes
+
+- Publish internal dependencies and peer dependencies as caret ranges instead of exact versions, and stop also listing peer dependencies as regular dependencies, so upgrading one package no longer causes version mismatches or duplicate installs
+
 ## 2.0.5
 
 ### Patch Changes
