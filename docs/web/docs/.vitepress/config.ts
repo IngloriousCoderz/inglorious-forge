@@ -59,6 +59,7 @@ export default defineConfig({
           items: [
             { text: "Overview", link: "/featured/overview" },
             { text: "Form", link: "/featured/form" },
+            { text: "Push", link: "/featured/push" },
             { text: "Router", link: "/featured/router" },
             {
               text: "Sensors",

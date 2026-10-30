@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 6.12.0
+
+### Minor Changes
+
+- New `createPushPrompt({ adapter })` (`@inglorious/web/push`): the type that asks a device for push notifications and keeps it registered. It asks in the app's own words first, since a refusal in the system's dialog may be for good: its entity's `isOpen` is a prompt for the app to render, `pushAsk` brings up the system's dialog, and `pushDecline` is remembered on the device. `pushStart` (at sign-in) registers a device already allowed, and `pushStop` (at sign-out) closes the prompt. The adapter supplies `isSupported`, `permission`, `request` and `register`, plus an optional `onTap` whose URLs open with `#router:navigate`.
+
 ## 6.11.0
 
 ### Minor Changes
