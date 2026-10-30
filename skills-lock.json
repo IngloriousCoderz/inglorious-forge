@@ -25,11 +25,35 @@
       "skillPath": "skills/engine/SKILL.md",
       "computedHash": "bc267e87ddea70274434426a1cd2f9b9b30d2a9d348f1f20c311d1cc8c544dbd"
     },
+    "engine-best-practices": {
+      "source": "IngloriousCoderz/forge-skills",
+      "sourceType": "github",
+      "skillPath": "skills/engine-best-practices/SKILL.md",
+      "computedHash": "e9e966e6c3e35f5975e074a93941e63a3ef24b02acf0e1859fc280e10973100f"
+    },
     "forge": {
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/forge/SKILL.md",
-      "computedHash": "e45328a00d00142d425af6ad5c7b9229442c1f816285dee9ceb11985252f7279"
+      "computedHash": "8778734e831d632823d73f020109d9a65ac686dd037e6ae9382b944a35a7a01f"
+    },
+    "forge-best-practices": {
+      "source": "IngloriousCoderz/forge-skills",
+      "sourceType": "github",
+      "skillPath": "skills/forge-best-practices/SKILL.md",
+      "computedHash": "790fb1698abaa7347105241aad924935fb31088814a09e180b22a7b35cf41b39"
+    },
+    "i18n": {
+      "source": "IngloriousCoderz/forge-skills",
+      "sourceType": "github",
+      "skillPath": "skills/i18n/SKILL.md",
+      "computedHash": "6c101cb779741003960a34e7be9691559c9ac623f1a8fc9a481287248e46fbbf"
+    },
+    "openui": {
+      "source": "IngloriousCoderz/forge-skills",
+      "sourceType": "github",
+      "skillPath": "skills/openui/SKILL.md",
+      "computedHash": "68192dd316624f81586475b7b87057acdaa7d80421d07861db4fc8186909b951"
     },
     "react-store": {
       "source": "IngloriousCoderz/forge-skills",
@@ -54,6 +78,12 @@
       "sourceType": "github",
       "skillPath": "skills/store/SKILL.md",
       "computedHash": "a616e3cf62592850a906c97c6e81c8364e2a57aad65210f2d9fe775dbe62d6e5"
+    },
+    "supabase": {
+      "source": "IngloriousCoderz/forge-skills",
+      "sourceType": "github",
+      "skillPath": "skills/supabase/SKILL.md",
+      "computedHash": "59cf9e6d5a940f0cfe5aee44e528c0e658aef505ef277abdbe23b55a156b4dff"
     },
     "ui": {
       "source": "IngloriousCoderz/forge-skills",

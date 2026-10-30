@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 6.11.0
+
+### Minor Changes
+
+- New `withLiveReload` decorator (`@inglorious/web/decorators/with-live-reload`): an entity reloads, by notifying its own `load` event, whenever a table it reads changes. The changes come from a `source` with `subscribe(table, onChange)`, such as `realtimeSource` from `@inglorious/supabase`. `payload` is what the event carries, `isLive` skips changes while the entity is off screen, and a burst of changes becomes one reload after `delay` (300 ms). Every live entity also reloads when the page comes back into view, since a backgrounded phone may have dropped the connection.
+
 ## 6.10.2
 
 ### Patch Changes

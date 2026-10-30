@@ -71,6 +71,50 @@ Use `withThrottle` for handlers such as:
 
 Use `hasTrailing: true` when you need to ensure the final state of a burst is never dropped (e.g., ending a resize or scroll and needing to capture the final position).
 
+## withLiveReload
+
+The built-in `withLiveReload` decorator keeps an entity in step with a backend. Whenever one of the tables it reads changes, the entity reloads, by notifying its own `load` event.
+
+```javascript
+import { realtimeSource } from "@inglorious/supabase"
+import { withLiveReload } from "@inglorious/web/decorators/with-live-reload"
+
+const live = realtimeSource(supabase)
+
+const types = {
+  ApplicationList: [
+    ApplicationList,
+    withLiveReload({ source: live, tables: ["applications", "events"] }),
+  ],
+  ApplicationDetail: [
+    ApplicationDetail,
+    withLiveReload({
+      source: live,
+      tables: ["applications", "events"],
+      payload: (entity) => entity.applicationId,
+      isLive: (entity, api) => api.getEntity("router").route === entity.id,
+    }),
+  ],
+}
+```
+
+### How it works
+
+- It never decides which rows changed. A change to a table the entity reads is enough to reload it. That costs a reload now and then, and it leaves out the per-type rules about which changes count, which is where live data tends to go wrong.
+- `payload(entity, api)` is what the reload event carries, such as the id of the record the entity shows. `event` names a different event than `load`.
+- `isLive(entity, api)` skips changes while the entity is off screen, since it loads when it opens anyway. It defaults to always.
+- A burst of changes becomes one reload, after `delay` (300 ms by default).
+- When the page comes back into view, every live entity reloads. A phone that put the app in the background may have dropped the connection, and the changes with it.
+- The subscriptions end when the entity is destroyed.
+
+### The source
+
+`source.subscribe(table, onChange)` calls `onChange` on every change to `table` and returns a function that unsubscribes. `@inglorious/supabase` provides one for Supabase Realtime. Any backend that can say "this table changed" can have its own.
+
+### When to use it
+
+Use `withLiveReload` for screens that show data other people change: feeds, inboxes, lists of applications, a record someone else can edit.
+
 ## withErrorBoundary
 
 The built-in `withErrorBoundary` decorator wraps a type's `render` in an error boundary. If the wrapped render throws, the caught error is handed to a `fallback` function and its template is rendered instead — so a single failing entity degrades to a fallback UI rather than taking down the whole app.
