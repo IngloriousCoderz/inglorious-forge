@@ -18,7 +18,6 @@ export default function Dashboard() {
   const filter = useSelector(selectFilter)
   const sortBy = useSelector(selectSortBy)
 
-  // FPS Counter
   useEffect(() => {
     let frameCount = 0
     let lastTime = performance.now()
@@ -41,7 +40,6 @@ export default function Dashboard() {
     return () => cancelAnimationFrame(rafId)
   }, [dispatch])
 
-  // Live data updates (single event, like the inglorious variant)
   useEffect(() => {
     const interval = setInterval(() => {
       dispatch({ type: "randomUpdate" })

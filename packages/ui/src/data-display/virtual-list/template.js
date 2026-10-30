@@ -11,8 +11,6 @@ import { styleMap } from "@inglorious/web/directives/style-map"
 
 const PRETTY_INDEX = 1
 
-// The list elements already being measured. Every update re-renders, and
-// measuring is an update, so measuring on each render would loop forever.
 const measured = new WeakSet()
 
 /**

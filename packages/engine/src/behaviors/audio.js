@@ -22,10 +22,6 @@ export function audio() {
     context().resume()
   }
 
-  // Both stopping the game and being taken off the world have to let go of the window and
-  // of anything still sounding over it. One function, because the two differ only in when
-  // they happen -- and a listener an entity that is no longer in the world forgot to take
-  // off would stay on the page for as long as the page is open.
   function release() {
     window.removeEventListener("pointerdown", resume)
     window.removeEventListener("keydown", resume)
@@ -61,8 +57,6 @@ export function audio() {
 
       if (!audioBuffer) return
 
-      // Only one source per sound can be tracked, so playing a sound again
-      // replaces the previous one instead of stacking a new copy on top of it.
       activeSources.get(name)?.stop()
 
       const source = context().createBufferSource()
@@ -88,8 +82,6 @@ export function audio() {
 
     stop: release,
 
-    // Taken off the world rather than the game stopping: the same letting go, because
-    // there is nothing left for anything still sounding to be sound over.
     destroy: release,
   }
 }

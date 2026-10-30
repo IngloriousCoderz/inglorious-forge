@@ -1,4 +1,3 @@
-// Deterministic data (no Math.random / function props) so SSR and client match.
 export const entities = {
   salesLineChart: {
     type: "Line",

@@ -9,7 +9,7 @@ import { add, zero } from "@inglorious/utils/vector.js"
 
 import { anchorOffset, shapeAnchor } from "../physics/anchor.js"
 
-const Z = 2 // Z-axis index.
+const Z = 2
 const RECTANGLE = "rectangle"
 
 const Shape = {

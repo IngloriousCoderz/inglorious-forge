@@ -66,7 +66,6 @@ test("it should emit particles all over the box when spread allows it", () => {
   const xs = spawned.map(([, p]) => p.position[X])
   const ys = spawned.map(([, p]) => p.position[Y])
 
-  // A burst should reach both ends of its box, not cluster in the middle.
   expect(Math.min(...xs)).toBeLessThan(-9)
   expect(Math.max(...xs)).toBeGreaterThan(9)
   expect(Math.min(...ys)).toBeLessThan(-9)
@@ -150,8 +149,6 @@ test("it should not share a size between separate bursts", () => {
   emitBurst(api, { count: 1 })
   emitBurst(api, { count: 1 })
 
-  // Vectors are mutable and entities hold on to them, so a default that lived in
-  // a module constant would be shared by every particle in the game.
   expect(spawned[0][1].size).not.toBe(spawned[1][1].size)
 })
 
@@ -168,7 +165,6 @@ test("a particle should fall as its acceleration acts on it", () => {
 
   step(entity, 0.5)
 
-  // v = a * dt, then p += v * dt
   expect(entity.velocity[Y]).toBeCloseTo(40)
   expect(entity.position[Y]).toBeCloseTo(120)
   expect(entity.position[X]).toBe(100)

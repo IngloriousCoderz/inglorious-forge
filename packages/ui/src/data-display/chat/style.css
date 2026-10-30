@@ -42,7 +42,6 @@
     min-inline-size: 0;
   }
 
-  /* A message's own line breaks show; the template's around it do not. */
   .iw-chat-text {
     white-space: pre-wrap;
   }
@@ -85,7 +84,6 @@
       min-inline-size: 0;
     }
 
-    /* The box grows with the message up to a point, then scrolls. */
     .iw-textarea {
       max-block-size: 10rem;
     }

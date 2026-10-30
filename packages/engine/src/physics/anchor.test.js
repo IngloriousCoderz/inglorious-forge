@@ -16,18 +16,13 @@ test("it should centre a box by default", () => {
 })
 
 test("it should shift a box off the point it hangs from", () => {
-  // A `[0, 0]` anchor leaves the box to the right of and above the position, so
-  // it stands on that point rather than straddling it.
   expect(anchorOffset([0, 0], [70, 24, 0])).toStrictEqual([35, 12, 0])
   expect(anchorOffset([1, 0], [70, 24, 0])).toStrictEqual([-35, 12, 0])
-  // The far corner, which leaves the box below and to the left.
   expect(anchorOffset([0, 1], [70, 24, 0])).toStrictEqual([35, -12, 0])
   expect(anchorOffset([1, 1], [70, 24, 0])).toStrictEqual([-35, -12, 0])
 })
 
 test("every axis should shift the same way", () => {
-  // The point of counting anchors from the low end of each axis: there is no
-  // vertical special case to remember.
   const [x, y, z] = anchorOffset([0, 0, 0], [70, 24, 10])
 
   expect([x, y, z]).toStrictEqual([35, 12, 5])
@@ -54,12 +49,10 @@ test("it should report the room a box needs on either side", () => {
     before: [5, 5, 0],
     after: [5, 5, 0],
   })
-  // Nothing below a box anchored at its bottom, all of it above.
   expect(anchorMargins([0, 0], [10, 10, 0])).toStrictEqual({
     before: [0, 0, 0],
     after: [10, 10, 0],
   })
-  // And the other way round for one anchored at its top.
   expect(anchorMargins([0, 1], [10, 10, 0])).toStrictEqual({
     before: [0, 10, 0],
     after: [10, 0, 0],

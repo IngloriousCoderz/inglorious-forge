@@ -6,8 +6,6 @@ import { renderHitmask } from "./hitmask.js"
 const TILE = [16, 16]
 const COLUMNS = 4
 
-// A hitmask draws a column of tiles per column, each tinted by how tall that column is --
-// so the shape of the terrain can be seen without playing it.
 const aLevel = (heights) => ({ tileSize: TILE, columns: COLUMNS, heights })
 
 test("it should draw one tile per column", () => {
@@ -17,8 +15,6 @@ test("it should draw one tile per column", () => {
 })
 
 test("it should spread the columns across the width it was given", () => {
-  // A row of tiles centred on the position, so the level straddles it rather than starting
-  // at it. The box of the whole thing is the first tile's left to the last tile's right.
   const [left, right] = tileSpan(aLevel([1, 2, 3, 4]), "x")
 
   expect([left, right]).toEqual([
@@ -28,7 +24,6 @@ test("it should spread the columns across the width it was given", () => {
 })
 
 test("it should lay the columns out in rows when there are more than fit across", () => {
-  // Four across, so eight columns of terrain are two rows deep rather than one long one.
   const eight = [1, 2, 3, 4, 5, 6, 7, 8]
   const rows = new Set(
     callsTo(drawing(aLevel(eight)), "fillRect").map(([, , y]) => y),
@@ -46,8 +41,6 @@ test("it should be one row deep when the columns fit across", () => {
 })
 
 test("it should tint a tall column differently from a short one", () => {
-  // The tint is the height turned into a hue, and the whole point of the drawing is being
-  // able to read the shape of the terrain off it.
   const [tintOf] = callsTo(drawing(aLevel([1, 10])), "fillStyle")
 
   expect(tintOf[1]).toMatch(/^hsla\(/)
@@ -57,17 +50,12 @@ test("it should tint a tall column differently from a short one", () => {
 })
 
 test("it should not let a level of one height take the top off every one of them", () => {
-  // A flat level has nothing to normalise against, and dividing by nothing would put every
-  // hue at nothing.
   const [tintOf] = callsTo(drawing(aLevel([5, 5, 5, 5])), "fillStyle")
 
   expect(tintOf[1]).toMatch(/^hsla\(/)
 })
 
 test("it should draw the tilemap in the collision docs", () => {
-  // `docs/engine/src/collision/tilemap.js` draws a dungeon with these very numbers, and the
-  // docs are read far more often than this file is, so a change that breaks them should
-  // break here first: five rows of six, walled in, 48 by 48 tiles.
   const dungeon = [
     2, 2, 2, 2, 2, 2, 2, 0, 1, 0, 0, 2, 2, 0, 0, 1, 0, 2, 2, 0, 0, 0, 0, 2, 2,
     2, 2, 2, 2, 2,

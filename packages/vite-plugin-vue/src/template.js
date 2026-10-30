@@ -48,9 +48,6 @@ export function transformTemplate(
   vueImports = new Set(),
 ) {
   const imports = new Set()
-  // Several root elements (a header, a main, a footer) render as one
-  // template, each compiled as a child of it.
-  // A `v-else` or `v-else-if` belongs to the `v-if` before it.
   const roots = nodes.filter((node) =>
     node.type === "text"
       ? node.data.trim() !== ""
@@ -109,7 +106,6 @@ export function transformTextNode(
   const text = node.data
   const parts = []
   let lastIndex = 0
-  // Across line breaks too: Prettier wraps a long interpolation.
   const regex = /\{\{([\s\S]+?)\}\}/g
   let match
 
@@ -332,7 +328,6 @@ export function buildElement(
       props.children = childrenTemplate
     }
 
-    // `aria-label` and other kebab-case names are quoted, to stay valid keys.
     const propsStr = Object.entries(props)
       .map(
         ([key, value]) =>
@@ -490,8 +485,6 @@ export function wrapWithEntity(
   if (trimmed.startsWith("api.")) return trimmed
   if (trimmed.startsWith("!api.")) return trimmed
 
-  // An inline function, such as a callback passed to a component, is code in
-  // its own right: its parameters and body are not entity fields.
   if (isFunctionExpression(trimmed)) return trimmed
 
   if (

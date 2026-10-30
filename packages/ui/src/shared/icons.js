@@ -1,7 +1,3 @@
-// The few icons the components draw themselves, so the library needs no icon
-// set of its own. From Material Symbols (Apache License 2.0), in the Iconify
-// format that `Icon` takes.
-
 export const close = {
   width: 24,
   height: 24,

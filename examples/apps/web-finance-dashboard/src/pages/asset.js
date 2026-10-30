@@ -23,11 +23,9 @@ import { formatMoney, toNumber } from "../services/fmp.js"
 
 const CENTS = 2
 const LAST = -1
-// A trend needs a start and an end to compare.
 const MIN_TREND_POINTS = 2
 
 export const AssetPage = {
-  // Headline: route lifecycle
   routeChange(entity, payload, api) {
     if (payload.route !== entity.id) {
       assetTransientClear(entity)
@@ -40,7 +38,6 @@ export const AssetPage = {
     api.notify(`#${entity.id}:assetFetch`, { symbol })
   },
 
-  // Headline: async lifecycle
   ...handleAsync("assetFetch", {
     start(entity, payload) {
       entity.symbol = payload?.symbol || DEFAULT_ASSET_SYMBOL
@@ -86,7 +83,6 @@ export const AssetPage = {
     },
   }),
 
-  // Body: render
   render(entity, api) {
     const symbol = entity.symbol || DEFAULT_ASSET_SYMBOL
     const quote = entity.quote || {}
@@ -177,7 +173,6 @@ export const AssetPage = {
   },
 }
 
-// Footer: view helpers
 function renderErrorState(errorMessage) {
   if (!errorMessage) return null
 

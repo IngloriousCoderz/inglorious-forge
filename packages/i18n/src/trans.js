@@ -28,7 +28,6 @@ export function parseTrans(raw, components, interpolate) {
 
     const component = components[name]
     if (!component) {
-      // Not one of the caller's tags: show it as it was written.
       current.children.push(source)
     } else if (selfClosing) {
       current.children.push(component([]))
@@ -39,14 +38,11 @@ export function parseTrans(raw, components, interpolate) {
       current = node.parent
       current.children.push(component(node.children))
     } else {
-      // A closing tag with nothing of its name open.
       current.children.push(source)
     }
   }
   addText(raw.slice(last))
 
-  // Tags left open were never components: put them back as text, contents
-  // and all.
   while (current !== root) {
     const node = current
     current = node.parent

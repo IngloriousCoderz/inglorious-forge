@@ -16,7 +16,6 @@ export const ListItem = defineComponent({
     actionLabel: z.string().optional(),
     action: action().optional(),
   }),
-  // Rendered by its ListBlock.
   component: () => null,
 })
 

@@ -22,7 +22,6 @@ const EMPTY_FUNDAMENTALS = {
   netIncome: null,
 }
 
-// Headline: public service API
 export async function fetchAssetData({ symbol = DEFAULT_ASSET_SYMBOL } = {}) {
   const fallbackSymbols = getFallbackSymbols()
 
@@ -59,7 +58,6 @@ export function getFallbackSymbols() {
   return getMockAssetUniverse(MOCK_SET_SIZE).map((item) => item.symbol)
 }
 
-// Body: payload builders
 function buildApiAssetPayload({
   symbol,
   quote,
@@ -116,7 +114,6 @@ function buildMockAssetPayload(symbol, fallbackSymbols, reason) {
   }
 }
 
-// Footer: internal guards
 function buildFundamentalsFromQuote(quote) {
   return {
     ...EMPTY_FUNDAMENTALS,

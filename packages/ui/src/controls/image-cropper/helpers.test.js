@@ -86,7 +86,6 @@ describe("hitTest", () => {
 
 describe("matchesAspect / normalizeAspect", () => {
   it("turns a pixel ratio into an image-fraction one", () => {
-    // A square crop of a 2:1 image is half as wide as it is tall in fractions.
     expect(normalizeAspect(1, 2000, 1000)).toBe(0.5)
     expect(normalizeAspect(null, 2000, 1000)).toBeNull()
     expect(normalizeAspect(1, 0, 0)).toBeNull()

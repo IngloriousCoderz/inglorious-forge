@@ -7,8 +7,6 @@ import { html } from "@inglorious/web"
 const BACK = -1
 
 export const ArticleDetail = {
-  /* The router hands the matched params to whoever is listening for a route
-     change, so the article is looked up here rather than read off the router. */
   routeChange(entity, payload, api) {
     if (payload.route !== entity.id) return
 
@@ -70,8 +68,6 @@ export const ArticleDetail = {
   },
 }
 
-/* Marking an article read replaces the current history entry instead of pushing
- * a new one, which is what makes the page cross-fade rather than slide. */
 function markAsRead(api, articleId) {
   return () =>
     api.notify("#router:navigate", {

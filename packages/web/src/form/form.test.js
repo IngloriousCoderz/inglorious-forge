@@ -39,14 +39,13 @@ describe("form", () => {
     })
 
     it("should reset the form to its initial state", () => {
-      // mess up the state first
       entity.values = {}
       entity.isPristine = false
 
       Form.create(entity)
 
       expect(entity.values).toEqual(entity.initialValues)
-      expect(entity.values).not.toBe(entity.initialValues) // should be a clone
+      expect(entity.values).not.toBe(entity.initialValues)
       expect(entity.isPristine).toBe(true)
       expect(entity.isValid).toBe(true)
       expect(entity.errors).toEqual({

@@ -39,10 +39,8 @@ export const Button = defineComponent({
             ? "primary"
             : "default",
       size: SIZES[props.size ?? "medium"],
-      // Until the answer is whole, an action could act on half of it.
       isDisabled: isStreaming,
       onClick: () => {
-        // In a Form, the primary button checks the fields before acting on them.
         const isChecked = variant === "primary" && validateForm
         if (isChecked && sendsFields(props.action) && !validateForm()) return
         triggerAction(props.label, undefined, props.action)

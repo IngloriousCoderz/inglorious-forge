@@ -1,5 +1,3 @@
-// @see https://jonathanwhiting.com/tutorial/collision/
-
 import { isBetween } from "./number.js"
 import { intersectsRectangle } from "./rectangle.js"
 

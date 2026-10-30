@@ -90,10 +90,8 @@ function fromAngle(entity, states) {
   const directions = states.length
   const slice = (2 * pi()) / directions
 
-  // Normalize orientation to [0, 2*PI)
   const normalizedOrientation = mod(toRange(entity.orientation), 2 * pi())
 
-  // Shift by half a slice so that 0 rad is in the middle of the first slice, then find the index
   const index = Math.floor(
     mod(normalizedOrientation + slice / 2, 2 * pi()) / slice,
   )

@@ -28,7 +28,7 @@ describe("compute() function", () => {
     const first = selector(state)
     const second = selector(state)
 
-    expect(second).toBe(first) // same reference
+    expect(second).toBe(first)
     expect(resultFn).toHaveBeenCalledTimes(1)
   })
 
@@ -54,7 +54,7 @@ describe("compute() function", () => {
     const selector = compute(resultFn, [obj])
 
     const state1 = { obj: { value: 1 } }
-    const state2 = { obj: { value: 1 } } // same shape, different reference
+    const state2 = { obj: { value: 1 } }
 
     selector(state1)
     selector(state2)

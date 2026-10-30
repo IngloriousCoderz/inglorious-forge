@@ -28,8 +28,6 @@ export function watchPwaUpdate(
   store,
   { id = DEFAULT_ID, checkEveryMs = ONE_HOUR_MS } = {},
 ) {
-  // A first-ever install has no older version to move from: nothing to
-  // announce while the page that installed it keeps running.
   const hadController = Boolean(navigator.serviceWorker?.controller)
   let announced = null
   let isApplying = false
@@ -44,7 +42,6 @@ export function watchPwaUpdate(
     document.removeEventListener(VISIBILITY_EVENT, handleVisibilityChange)
   }
 
-  // Offline, the check fails: the next one tries again.
   function check() {
     registration.update?.()?.catch?.(() => {})
   }

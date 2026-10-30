@@ -1,12 +1,9 @@
-// The realtime charts follow a made-up stream: a random walk, one point a
-// second. A real app pushes its own data with the same event.
-
 const STREAM_IDS = ["realtimeLineChartConfig", "realtimeLineChart"]
 const INTERVAL_MS = 1000
 const PREFILLED_POINTS = 30
 const MIN = 0
 const MAX = 200
-const START = 100 // halfway between MIN and MAX
+const START = 100
 const MIN_STEP = -25
 const MAX_STEP = 25
 

@@ -18,7 +18,6 @@ const VALUE_TICKS = 5
 
 export function renderCartesianGrid(primitive, frame) {
   const { scales, dimensions } = frame
-  // Lines across the categories go where their axis shows a label.
   const categoryLines = getAxisTicks(frame, findCategoryAxis(frame), true).map(
     ({ position }) => position,
   )
@@ -27,7 +26,6 @@ export function renderCartesianGrid(primitive, frame) {
     .map((tick) => scales.yScale(tick))
   const verticals = scales.isHorizontal ? valueLines : categoryLines
   const horizontals = scales.isHorizontal ? categoryLines : valueLines
-  // A stroke given to the grid wins over the theme's.
   const stroke = primitive.props?.stroke || themeColor("grid", "#e5e7eb")
   const dasharray = primitive.props?.strokeDasharray || "5 5"
 
@@ -158,7 +156,6 @@ export function renderYAxis(primitive, frame) {
 function getAxisTicks(frame, axis, isCategoryAxis) {
   const { scales } = frame
   if (!isCategoryAxis) return getValueTicks(scales.yScale, axis)
-  // A scatter chart's x axis is a number too.
   return scales.xScaleMode === "linear"
     ? getValueTicks(scales.xScale, axis)
     : getCategoryTicks(frame, axis)
@@ -203,8 +200,6 @@ export function getCategoryTicks(frame, axis) {
     return ticks.filter(({ index }) => index % stride === 0)
   }
 
-  // Stacked down the left, labels take a line's height; side by side along
-  // the bottom, their estimated width.
   const sizeOf = scales.isHorizontal
     ? () => TICK_FONT_SIZE
     : (tick) => tick.label.length * CHAR_WIDTH
@@ -215,8 +210,6 @@ export function getCategoryTicks(frame, axis) {
   )
 }
 
-// Walks back from the last tick, keeping each one whose label ends at least
-// `minTickGap` before the label kept after it starts.
 function keepTicksThatFit(ticks, minTickGap, sizeOf) {
   const kept = []
   let nextLabelStart = Infinity

@@ -18,8 +18,6 @@ const WHOLE = 1
 const DEFAULT_SIZE = 1
 const PARTICLE_TYPE = "Particle"
 
-// `size` and `spread` are rebuilt on every call rather than shared from a module
-// constant, because entities hold on to them and vectors are mutable.
 const DEFAULT_SIZE_VECTOR = () => v(DEFAULT_SIZE, DEFAULT_SIZE, NO_DEPTH)
 const NO_SPREAD_VECTOR = () => v(NO_SPREAD, NO_SPREAD, NO_SPREAD)
 
@@ -117,8 +115,6 @@ export function emitBurst(api, params) {
   }
 }
 
-// A random point inside the box `spread` radiates around `centre`, which is the
-// centre plus a random vector across the box's own range.
 function within(centre, spread) {
   return sum(centre, randomVector(negate(spread), spread))
 }

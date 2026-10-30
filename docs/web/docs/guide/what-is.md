@@ -17,11 +17,12 @@ description: Philosophy, design principles, ECS inspiration, and use cases
 - **Full-tree re-renders** with DOM diffing via lit-html
 - **Event-driven** — all state changes are explicit events
 - **Type composition** — types as arrays of behaviors for cross-cutting concerns
-- **Zero component state** — all state lives in the store
+- **Zero component state** — application state lives in the store; hover, focus and a gesture in progress stay with the browser ([where state lives](./where-state-lives.md))
 - **No signals** — no hidden reactivity graph, no automatic tracking
 - **No subscriptions** — no cleanup needed, no memory leaks
 - **No lifecycle hooks** — no special methods to manage
 - **Built-in features** — router and forms; UI primitives live in [Inglorious UI](https://inglorious.dev/ui)
+- **Part of [Inglorious Forge](https://github.com/IngloriousCoderz/inglorious-forge)** — the monorepo of every `@inglorious` package, from the store it is built on to UI, charts, motion, SSX, generative UI and the Supabase and Firebase bindings
 
 ## Built-in Features and Ecosystem
 

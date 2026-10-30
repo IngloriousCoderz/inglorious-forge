@@ -1,39 +1,25 @@
-/* San Francisco is the system font on Apple devices, and cannot be served to
-   others: Inter stands in for it there. */
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
 .iw-theme-ios-26 {
   --iw-font-family-sans:
     -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Helvetica Neue",
     Arial, sans-serif;
-  /* The theme on the page itself: the element with the theme class, usually
-     <body>, takes its background, text color and font. */
   background-color: var(--iw-color-bg);
   color: var(--iw-color-text);
   font-family: var(--iw-font-family-sans);
 
-  /* ========================================
-     iOS 26 THEME - Liquid Glass
-     ======================================== */
-
-  /* iOS color roles the shared tokens have no name for */
   --iw-ios-fill: rgba(118, 118, 128, 0.12);
   --iw-ios-fill-secondary: rgba(120, 120, 128, 0.2);
   --iw-ios-fill-quaternary: rgba(116, 116, 128, 0.08);
   --iw-ios-gray: #8e8e93;
   --iw-ios-segment-selected: var(--iw-color-white);
-  /* Glass: what passes under it is blurred and brightened, its edge catches
-     the light, and it floats on a soft shadow. Only controls and navigation
-     are glass, never content. */
   --iw-ios-glass-bg: rgba(255, 255, 255, 0.6);
   --iw-ios-glass-blur: blur(12px) saturate(180%);
   --iw-ios-glass-border: rgba(255, 255, 255, 0.7);
   --iw-ios-glass-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 8px 24px rgba(0, 0, 0, 0.1);
-  /* The highlight along the top of a filled control */
   --iw-ios-sheen: inset 0 1px 0 rgba(255, 255, 255, 0.3);
 
-  /* Semantic Colors: grouped content, white on grey */
   --iw-color-bg: #f2f2f7;
   --iw-color-bg-secondary: #f2f2f7;
   --iw-color-bg-tertiary: #e5e5ea;
@@ -48,7 +34,6 @@
   --iw-color-border: #c6c6c8;
   --iw-color-border-focus: #0088ff;
 
-  /* The system colors as iOS 26 retuned them */
   --iw-color-primary: #0088ff;
   --iw-color-primary-hover: color-mix(in srgb, #0088ff 92%, #000000);
   --iw-color-primary-active: color-mix(in srgb, #0088ff 85%, #000000);
@@ -68,15 +53,12 @@
   --iw-shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.14);
   --iw-shadow-xl: 0 24px 60px rgba(0, 0, 0, 0.2);
 
-  /* Larger corners, nested concentrically */
   --iw-radius-sm: 8px;
   --iw-radius-md: 12px;
   --iw-radius-lg: 16px;
   --iw-radius-xl: 24px;
   --iw-radius-2xl: 34px;
 
-  /* The Dynamic Type scale at its default size: footnote, subheadline,
-     body, title 3, title 2, title 1 and large title */
   --iw-font-size-xs: 0.8125rem;
   --iw-font-size-sm: 0.9375rem;
   --iw-font-size-base: 1.0625rem;
@@ -87,11 +69,6 @@
 
   --iw-label-font-weight: var(--iw-font-weight-medium);
 
-  /* ========================================
-     COMPONENT TOKENS
-     ======================================== */
-
-  /* Button: a filled capsule */
   --iw-button-bg: var(--iw-color-primary);
   --iw-button-bg-hover: var(--iw-color-primary-hover);
   --iw-button-bg-active: var(--iw-color-primary);
@@ -102,8 +79,6 @@
   --iw-button-shadow-hover: var(--iw-ios-sheen);
   --iw-button-shadow-active: var(--iw-ios-sheen);
 
-  /* A button's default color is a glass button, labelled in the text color;
-     its outlined and ghost forms take the tint */
   --iw-button-default-color: var(--iw-color-primary);
   --iw-button-default-bg: var(--iw-ios-glass-bg);
   --iw-button-default-bg-hover: var(--iw-ios-glass-bg);
@@ -111,7 +86,6 @@
   --iw-button-default-border: var(--iw-ios-glass-border);
   --iw-button-default-text: var(--iw-color-text);
 
-  /* Input: a filled, borderless field */
   --iw-input-bg: var(--iw-ios-fill);
   --iw-input-bg-hover: var(--iw-ios-fill);
   --iw-input-bg-focus: var(--iw-ios-fill);
@@ -124,26 +98,20 @@
   --iw-input-shadow-focus: 0 0 0 3px
     color-mix(in srgb, var(--iw-color-primary) 35%, transparent);
 
-  /* App bar: the content shows through, blurred, under the title */
   --iw-app-bar-bg: color-mix(in srgb, var(--iw-color-bg) 72%, transparent);
 
-  /* Drawer: a sidebar */
   --iw-drawer-bg: var(--iw-color-bg);
 
-  /* Card: an inset grouped section, with the larger corners */
   --iw-card-bg: var(--iw-color-surface);
   --iw-card-border: transparent;
   --iw-card-radius: var(--iw-radius-xl);
   --iw-card-shadow: none;
   --iw-card-shadow-hover: var(--iw-shadow-md);
 
-  /* Badge */
   --iw-badge-radius: var(--iw-radius-full);
 
-  /* Chip: a gray capsule */
   --iw-chip-bg: var(--iw-ios-fill);
 
-  /* List */
   --iw-list-item: transparent;
   --iw-list-item-active: var(--iw-color-surface-active);
   --iw-list-item-selected: color-mix(
@@ -152,18 +120,15 @@
     transparent
   );
 
-  /* Progress: a thin bar */
   --iw-progress-height: 4px;
   --iw-progress-radius: var(--iw-radius-full);
   --iw-progress-track-color: var(--iw-ios-fill-secondary);
 
-  /* Alert */
   --iw-alert-radius: var(--iw-radius-lg);
   --iw-alert-shadow: none;
   color-scheme: light;
 }
 
-/* Dark variant */
 .iw-theme-ios-26.iw-theme-dark {
   color-scheme: dark;
 
@@ -207,8 +172,6 @@
 }
 
 .iw-theme-ios-26 {
-  /* Buttons: capsules, filled, glass, tinted and plain. Pressing one
-     brightens it */
   .iw-button {
     padding: 7px 16px;
     font-size: var(--iw-font-size-base);
@@ -278,7 +241,6 @@
       outline-offset: 2px;
     }
 
-    /* Outlined buttons are tinted: iOS draws no outlines */
     &.iw-button-outline {
       border-color: transparent;
       background-color: color-mix(
@@ -301,7 +263,6 @@
       }
     }
 
-    /* Ghost buttons are plain */
     &.iw-button-ghost {
       backdrop-filter: none;
 
@@ -327,8 +288,6 @@
     }
   }
 
-  /* Form fields: labels and notes in the footnote style around a filled
-     field */
   .iw-input,
   .iw-select,
   .iw-textarea-field {
@@ -358,7 +317,6 @@
     }
   }
 
-  /* Switch: a wide, low track with a capsule for a thumb, green when on */
   .iw-switch:not(
     .iw-switch-secondary,
     .iw-switch-success,
@@ -432,7 +390,6 @@
     }
   }
 
-  /* Tabs: a segmented control in a capsule, its segments equally wide */
   .iw-tabs-list {
     display: inline-grid;
     grid-auto-flow: column;
@@ -474,7 +431,6 @@
       0 3px 1px rgba(0, 0, 0, 0.04);
   }
 
-  /* Chips: capsules, filled with the tint when selected */
   .iw-chip {
     padding: 6px 12px;
     font-size: var(--iw-font-size-sm);
@@ -493,7 +449,6 @@
     font-weight: var(--iw-font-weight-semibold);
   }
 
-  /* Cards: inset grouped sections, the footer ruled off below */
   .iw-card-header {
     border: 0 none;
   }
@@ -512,7 +467,6 @@
     font-size: var(--iw-font-size-sm);
   }
 
-  /* Alerts: tinted, borderless boxes */
   .iw-alert {
     padding: 14px 16px;
 
@@ -543,7 +497,6 @@
     }
   }
 
-  /* Tables: a plain list */
   .iw-table {
     border: 0 none;
   }
@@ -560,8 +513,6 @@
     color: var(--iw-color-text-secondary);
   }
 
-  /* Dialogs: alerts on glass, their text aligned to the start and their
-     actions a row of capsules */
   .iw-dialog {
     border: 1px solid var(--iw-ios-glass-border);
     border-radius: var(--iw-radius-2xl);
@@ -604,7 +555,6 @@
     flex: 1;
     padding-block: 13px;
 
-    /* Actions that are not the preferred one sit on a gray capsule */
     &.iw-button-outline,
     &.iw-button-ghost,
     &.iw-button-default {
@@ -635,7 +585,6 @@
     }
   }
 
-  /* Menus, tooltips and snackbars float on glass */
   .iw-menu {
     min-width: 15rem;
     padding: 6px;
@@ -678,8 +627,6 @@
     color: var(--iw-color-text);
   }
 
-  /* App bars: no bar at all, just a blur where the content passes under the
-     title. A prominent one has a large title */
   .iw-app-bar {
     border-bottom: 0 none;
     backdrop-filter: blur(8px);
@@ -704,8 +651,6 @@
     line-height: 2.5625rem;
   }
 
-  /* Bottom navigation: a tab bar floating on glass, the selected tab on a
-     capsule of its own */
   .iw-bottom-navigation {
     gap: 0;
     margin: 0 var(--iw-space-4) var(--iw-space-4);

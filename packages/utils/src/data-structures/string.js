@@ -12,8 +12,6 @@ export function toCamelCase(input) {
   return [firstChar.toLowerCase(), ...rest].join("")
 }
 
-// How long a row or column is by one, which is the whole of what the offsets below mean.
-// The grid's own edges are counted by the same one.
 const ONE = 1
 const NONE = 0
 const FIRST = 0
@@ -56,9 +54,6 @@ export function editDistance(a, b) {
   return grid[a.length][b.length]
 }
 
-// How far a string may be from the one asked about and still be worth suggesting. A
-// mistyped name is nearly always one or two edits away from the right one; anything
-// further off is a different string rather than a wrong one.
 const NEAR_ENOUGH = 3
 
 /**

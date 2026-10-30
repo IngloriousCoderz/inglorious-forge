@@ -16,7 +16,6 @@ export const Sale = [
       const { id } = entity
       const { products } = api.getEntity("catalog")
       const { policies, policyId } = api.getEntity("pricing")
-      // A completed sale shows what it was sold for, not what it would cost today.
       const summary =
         entity.receipt ?? summarize(entity, products, policies[policyId])
 

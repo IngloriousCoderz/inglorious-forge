@@ -28,9 +28,13 @@ features:
   - title: Type Composition
     details: Types as arrays of behaviors. Add logging, guards, or any cross-cutting concern without wrapper hell or HOCs.
   - title: Zero Component State
-    details: All state lives in the store. No refs, no lifecycle hooks, no framework-level memory leaks.
+    details: Application state lives in the store; hover, focus and a gesture in progress stay with the browser. No refs, no lifecycle hooks. See [where state lives](/guide/where-state-lives).
   - title: Built-in Components
     details: Router, forms, and geolocation in Web; UI primitives in [Inglorious UI](https://inglorious.dev/ui)—all entity-based, all customizable, all testable.
   - title: Transparent Architecture
     details: Pure JavaScript. No JSX required (though supported). No compiler. No magic. Just functions and events.
+  - title: Typed, If You Want
+    details: Every package ships its own type declarations. Entities, types and the api are checked without casts. See [TypeScript](/guide/typescript).
+  - title: Part of Inglorious Forge
+    details: Web is the framework of the [Inglorious Forge monorepo](https://github.com/IngloriousCoderz/inglorious-forge), next to the store, UI, charts, motion, SSX, generative UI, Supabase and Firebase bindings, and a game engine.
 ---

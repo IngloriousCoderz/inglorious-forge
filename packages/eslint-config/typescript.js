@@ -26,7 +26,6 @@ export default defineConfig([
     rules: {
       ...tsEslint.configs.recommended.rules,
       "@typescript-eslint/no-explicit-any": "warn",
-      // As in base.js: a render's `api` can be used only by compiled JSX.
       "@typescript-eslint/no-unused-vars": "warn",
     },
   },

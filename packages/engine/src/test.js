@@ -32,23 +32,13 @@ const DEFAULT_HOLD_FRAMES = 30
  * })
  */
 export function createGame(gameConfig, extendWith = {}) {
-  // Dev mode makes the store freeze what it publishes, which is right for a game being
-  // looked at in a browser and wrong for a test that has to put a ball where a brick is.
-  // Set here rather than in each test file, where it depends on being done before the
-  // first game is made.
   gameConfig.entities.game.devMode = false
 
-  // What the browser would have given the game, so that a test file has nothing to set up
-  // before it makes one. Doing it here rather than leaving it to the caller means a test
-  // cannot forget and be met with "AudioContext is not a constructor".
   setupBrowser()
 
   const engine = new Engine(gameConfig)
   const playedSounds = []
 
-  // Sounds are watched where they are handled rather than where they are asked for, so
-  // this records what the game actually reached for. Recording the request instead would
-  // not catch a sound wired to the wrong state.
   vi.spyOn(engine._store.getType("Audio"), "soundPlay").mockImplementation(
     function soundPlay(_, name) {
       playedSounds.push(name)
@@ -150,10 +140,6 @@ export function createGame(gameConfig, extendWith = {}) {
  * @returns {void}
  */
 function setupBrowser() {
-  // A store grows an audio entity of its own accord, and audio waits for the player to
-  // touch the page before it will make a sound -- so stepping any game at all reaches
-  // for `window`. Under node there is none, so a stand-in is put up; under jsdom there
-  // already is one, and replacing it would take away everything the real one is for.
   if (typeof window === "undefined") {
     vi.stubGlobal("window", {
       addEventListener: vi.fn(),

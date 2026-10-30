@@ -2,7 +2,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 import { withLiveReload } from "./index.js"
 
-// A source whose changes the test fires by hand.
 function fakeSource() {
   const listeners = new Map()
   return {
@@ -58,8 +57,6 @@ describe("withLiveReload", () => {
     expect(api.notify).toHaveBeenCalledWith("#received:load", "e1")
   })
 
-  // The draft that subscribed is revoked by then: the payload comes from the
-  // entity as it is when the change arrives.
   it("reads the live entity when the change comes", () => {
     const source = fakeSource()
     const entities = { detail: { id: "detail", recordId: "r1" } }
@@ -125,7 +122,6 @@ describe("withLiveReload", () => {
     expect(api.notify).not.toHaveBeenCalled()
   })
 
-  // Backgrounded, a phone may drop the connection and the changes with it.
   it("reloads when the page comes back into view", () => {
     const visibility = new EventTarget()
     visibility.visibilityState = "hidden"

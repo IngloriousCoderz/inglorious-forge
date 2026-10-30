@@ -1,5 +1,4 @@
 const ANNOUNCER_ID = "iw-route-announcer"
-// Long enough for screen readers to notice the live region emptied first.
 const ANNOUNCE_DELAY_MS = 100
 const VISUALLY_HIDDEN =
   "position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0"
@@ -24,14 +23,11 @@ const VISUALLY_HIDDEN =
 export function createAccessibleNavigation({
   getPageName = () => document.title,
 } = {}) {
-  // Screen readers only announce changes made after the live region is in the document.
   const announcer = getAnnouncer()
   let currentPath = window.location.pathname
   let hasPendingAnnouncement = false
   let announceTimeout = null
 
-  // Screen readers speak only when the live region changes, so it is emptied first and
-  // filled on a later task: two pages with the same name are each announced.
   function announce(message) {
     announcer.textContent = ""
     clearTimeout(announceTimeout)
@@ -74,8 +70,6 @@ function getAnnouncer() {
   return announcer
 }
 
-// Focusing the body makes the next Tab start from the top of the new page, rather
-// than from the link that was clicked, which may no longer exist.
 function resetFocus() {
   const autofocus = document.querySelector("[autofocus]")
   if (autofocus) {

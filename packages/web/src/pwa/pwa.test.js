@@ -191,8 +191,6 @@ describe("pwa update", () => {
   }
 })
 
-// Stand-ins for what the browser hands `onRegisteredSW`: plain objects whose
-// events are fired by hand.
 function createWorker(state = "installed") {
   return {
     state,
@@ -210,7 +208,6 @@ function createRegistration(waiting = null) {
   }
 }
 
-// A new worker finishes installing and is left waiting.
 function installWorker(registration) {
   const worker = createWorker()
   registration.installing = worker

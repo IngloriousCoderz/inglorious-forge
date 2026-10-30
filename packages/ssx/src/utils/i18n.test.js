@@ -8,7 +8,6 @@ import {
   waitForLocale,
 } from "./i18n"
 
-// Stands in for @inglorious/i18n: Italian loads later, English is loaded already.
 function createTranslatorStore({ loads = {} } = {}) {
   const loaded = new Set(["en"])
   const I18n = {

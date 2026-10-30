@@ -1,4 +1,4 @@
-const DAY_MS = 86_400_000 // 24 hours
+const DAY_MS = 86_400_000
 const DEFAULT_UNIVERSE_SIZE = 5
 const MIN_UNIVERSE_SIZE = 1
 const FIRST = 0
@@ -6,7 +6,6 @@ const LAST = -1
 const LAST_DAY_OFFSET = 1
 const TODAY = 0
 const DEFAULT_HISTORY_DAYS = 500
-// Scales a sine up until its fractional part stops looking like a sine.
 const SEED_SCALE = 10_000
 const NO_SEED = 0
 const OPENING_PRICE_MIN = 65
@@ -17,7 +16,7 @@ const FALLBACK_MID = 80
 const ASK_SPREAD = 0.35
 const BID_SPREAD = 0.28
 const CENTS = 2
-const ISO_DATE_LENGTH = 10 // YYYY-MM-DD
+const ISO_DATE_LENGTH = 10
 
 export const markets = [
   { market: "AF", description: "Africa" },

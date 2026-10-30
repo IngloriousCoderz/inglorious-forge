@@ -264,7 +264,6 @@ export const DataGrid = {
     const column = props.columns[index]
     const isEditable = Boolean(column.isEditable && row)
 
-    // Typing in a cell's editor is not picking its row.
     return html`<div
       class="iw-data-grid-cell ${classMap({
         "iw-data-grid-cell-number": column.type === "number",

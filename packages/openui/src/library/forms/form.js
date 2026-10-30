@@ -47,7 +47,6 @@ export const FormControl = defineComponent({
     input: z.union(fieldInputs.map((input) => input.ref)),
     hint: z.string().optional(),
   }),
-  // The field draws the label and hint, so they stay tied to it.
   component: ({ props, renderNode }) =>
     renderNode(props.input, { label: props.label, hint: props.hint }),
 })

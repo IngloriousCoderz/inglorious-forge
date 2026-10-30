@@ -38,7 +38,6 @@ export function createViteConfig(options = {}) {
     vite,
   )
 
-  // A port given on the command line wins over the config's.
   if (port) config.server.port = port
   return config
 }

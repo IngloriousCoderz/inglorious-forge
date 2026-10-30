@@ -7,8 +7,6 @@ let listeners
 beforeEach(() => {
   listeners = {}
 
-  // The behaviour reads `document` when it is created, so the listeners it
-  // registers are captured here rather than attached to anything real.
   vi.stubGlobal("document", {
     body: {},
     addEventListener: (name, handler) => {
@@ -64,7 +62,6 @@ test("it should report the shifted character, while the code stays put", () => {
 })
 
 test("it should report the character the layout produces", () => {
-  // AZERTY: the key a QWERTY user reaches for A produces Q.
   const { api } = press({ code: "KeyQ", key: "q" })
 
   expect(api.notify).toHaveBeenCalledWith("keyboardChar", {
@@ -83,7 +80,6 @@ test.each([
   const { api } = press({ code: key, key })
 
   expect(api.notify).not.toHaveBeenCalledWith("keyboardChar", expect.anything())
-  // It is still a key press, so the code-based mapping gets a look at it.
   expect(api.notify).toHaveBeenCalledWith("keyboardKeyDown", key)
 })
 
@@ -128,8 +124,6 @@ test("it should still map actions by code and hold them until key up", () => {
 })
 
 test("it should let go of the document when the entity is destroyed", () => {
-  // A keyboard that is created and destroyed -- a screen's own, say -- must not leave its
-  // listeners behind, or the next one added means two keyboards answering to one key.
   const added = []
   const removed = []
 
@@ -155,10 +149,6 @@ test("it should let go of the document when the entity is destroyed", () => {
 })
 
 test("it should let a key go even when the mapping changed while it was down", () => {
-  // A key can still be down when the thing it was pressed under is told a different
-  // mapping. Looking the release up in that new mapping would find nothing, and the
-  // action would stay held for ever -- swallowing every press of it from then on, with
-  // nothing to say so.
   const api = { notify: vi.fn() }
   const type = keyboard()
   const entity = createKeyboardEntity({ KeyW: "moveUp" })
@@ -167,7 +157,6 @@ test("it should let a key go even when the mapping changed while it was down", (
   type.keyboardKeyDown(entity, "KeyW", api)
   expect(entity.moveUp).toBe(true)
 
-  // The mapping changes under the key while it is still down.
   entity.mapping = { KeyW: "fire" }
   type.keyboardKeyUp(entity, "KeyW", api)
 

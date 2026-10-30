@@ -1,5 +1,3 @@
-// The app's components in lit-html: tagged templates in .js or .ts files.
-
 import { importBlock } from "./imports.js"
 
 export const extension = (app) => (app.isTypeScript ? "ts" : "js")
@@ -53,7 +51,6 @@ ${template}
 `
 }
 
-// The app's own entities are always there; TypeScript cannot know that.
 export function renderLocals(app) {
   const always = app.isTypeScript ? "!" : ""
   const locals = []
@@ -64,8 +61,6 @@ export function renderLocals(app) {
   return locals.length ? `${locals.join("\n")}\n\n` : ""
 }
 
-// The native language picker's change handler, laid out as Prettier would at
-// `indent`. TypeScript has to be told what the event's target is.
 export function selectChange(app, indent) {
   if (!app.isTypeScript) {
     return `(event) =>

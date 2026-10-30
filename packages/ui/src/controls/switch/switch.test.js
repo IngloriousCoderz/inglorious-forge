@@ -89,7 +89,6 @@ describe("switch without an id", () => {
       false,
     )
 
-    // A label only clicks through to its control once it is in the document.
     document.body.append(container)
     container.querySelector(".iw-switch-label").click()
     container.remove()

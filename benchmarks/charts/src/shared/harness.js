@@ -1,7 +1,3 @@
-// Drives the updates and shows the frame rate, in plain DOM outside any
-// framework, so every variant pays the same for them. `window.__benchmark`
-// is what the runner (scripts/run.mjs) reads.
-
 import { UPDATE_INTERVAL_MS } from "./workload.js"
 
 const ONE_SECOND = 1000
@@ -23,7 +19,6 @@ export function runBenchmark(applyDatasets, workload) {
     stats.updates++
   }, UPDATE_INTERVAL_MS)
 
-  // Shown before the first second is counted, so the box keeps its size.
   const fps = document.createElement("div")
   fps.className = "fps"
   fps.textContent = "– FPS"

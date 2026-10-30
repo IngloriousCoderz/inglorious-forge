@@ -3,8 +3,6 @@ import { beforeEach, expect, test, vi } from "vitest"
 
 import { Engine } from "./engine.js"
 
-// The engine builds its AudioContext while loading, so the globals have to be
-// in place before any import is evaluated.
 vi.hoisted(() => {
   const noop = () => {}
 
@@ -149,9 +147,6 @@ test("it should keep running when nobody has asked to quit", () => {
 })
 
 test("an update should process the queue once", () => {
-  // An update notifies the store of the frame and then asks it to process the queue.
-  // Those are one pass between them, not two: on an automatic store they would be, and
-  // the world would move twice for one frame.
   const engine = new Engine(config())
   const updates = vi.spyOn(engine._store, "update")
 
@@ -161,9 +156,6 @@ test("an update should process the queue once", () => {
 })
 
 test("an update should be heard once, not once for the notify and once for the pass", () => {
-  // The frame says `update`, and the world hears it through the pass that follows.
-  // Hearing it twice would be the world moving twice, which is what making the store's
-  // mode manual is what prevents.
   let heard = 0
   const engine = new Engine({
     types: { Ear: { update: () => (heard += 1) } },

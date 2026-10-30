@@ -29,7 +29,6 @@ export const TableRow = memo(
     )
   },
   (prevProps, nextProps) => {
-    // Custom comparison function - only re-render if data actually changed
     return (
       prevProps.row.id === nextProps.row.id &&
       prevProps.row.value === nextProps.row.value &&

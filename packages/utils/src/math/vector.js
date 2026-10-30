@@ -499,9 +499,7 @@ export function toSpherical(vector) {
     return zero()
   }
 
-  // In a Y-up system, inclination is the angle with the Y axis.
   const inclination = Math.acos(vector[Y] / r)
-  // Azimuth is the angle in the XZ plane, which `angle()` calculates.
   const azimuth = angle(vector)
 
   return v(r, inclination, azimuth)
@@ -666,7 +664,6 @@ function rotateWithQuaternion(vector, angle) {
     return vector
   }
 
-  // @see https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation#Performance_comparisons
   const [w, ...r] = quaternion(angle)
   const result = sum(
     vector,

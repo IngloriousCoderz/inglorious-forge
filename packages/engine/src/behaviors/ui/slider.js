@@ -3,13 +3,10 @@ import { clamp, snap } from "@inglorious/utils/math/number.js"
 const X = 0
 const NO_EXTENT = 0
 const HALF = 2
-// How far along the track a point is, from nothing of the way to all of it.
 const START_OF_TRACK = 0
 const END_OF_TRACK = 1
 const DEFAULT_MIN = 0
 const DEFAULT_MAX = 1
-// A step of nothing means every pixel the pointer moves is a step of its own, which is
-// what a slider wants when nothing has asked for round numbers.
 const WHOLE = 0
 
 /**
@@ -40,9 +37,6 @@ export function slider({
 
       entity.collisions ??= {}
 
-      // A slider with a size is a slider there is room to grab. Saying so here means a
-      // game does not have to describe the same rectangle twice: once to draw it and
-      // once to be hit by it.
       entity.collisions.hitbox ??= { shape: "rectangle" }
 
       entity.min ??= min
@@ -58,8 +52,6 @@ export function slider({
       entity.isDragging = true
     },
 
-    // The pointer is told to every entity, so a slider that is not being dragged has to
-    // ignore what it hears. Only a dragged one takes its value from where it stands.
     mouseMove(entity, position, api) {
       if (!entity.isDragging) return
 

@@ -6,7 +6,7 @@ description: Declarative charting for Inglorious Web.
 hero:
   name: Inglorious Charts
   text: Declarative SVG Charts
-  tagline: Config-first and composition APIs for line, area, bar, pie, and donut charts.
+  tagline: Config-first and composition APIs for line, area, bar, pie, donut, scatter, radar and radial charts.
   image:
     src: /transparent.png
   actions:

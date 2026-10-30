@@ -22,7 +22,6 @@ export const Slider = defineComponent({
   }),
   component: ({ props, isStreaming, stateField, label }) => {
     const field = stateField(props.name, props.value)
-    // OpenUI keeps a slider's value as a list: one number, or a range's two.
     const [low, high] = field.value ?? props.defaultValue ?? [props.min]
     const isRange = high !== undefined
     return UiSlider.render({

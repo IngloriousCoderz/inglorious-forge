@@ -13,7 +13,6 @@ export const Col = defineComponent({
     data: z.any(),
     type: z.enum(["string", "number", "action"]).optional(),
   }),
-  // Rendered by its Table, a cell at a time.
   component: () => null,
 })
 

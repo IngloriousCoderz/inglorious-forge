@@ -127,7 +127,6 @@ export async function askAppFeatures(flags) {
   return validate(features)
 }
 
-// The languages, with the default first.
 async function askLanguages(ask, isCanceled) {
   const languages = await ask({
     type: "multiselect",
@@ -157,7 +156,6 @@ async function askLanguages(ask, isCanceled) {
   return [defaultLanguage, ...languages.filter((l) => l !== defaultLanguage)]
 }
 
-// Flags can name things that do not exist, or combine what cannot go together.
 function validate(features) {
   if (!THEMES[features.theme]) {
     throw new Error(
@@ -176,8 +174,6 @@ function validate(features) {
       `Unknown languages: ${unknownLanguages.join(", ")}. Choose from: ${Object.keys(LANGUAGES).join(", ")}.`,
     )
   }
-  // Transitions animate navigations, with Inglorious UI's stylesheet; icons
-  // are drawn by its Icon component.
   if (!features.routing || !features.ui) features.transitions = false
   if (!features.ui) features.icons = []
   return features

@@ -14,7 +14,6 @@ import { merge } from "@inglorious/utils/object.js"
 import { v } from "@inglorious/utils/v.js"
 import { length, subtract } from "@inglorious/utils/vector.js"
 
-// Our decision tree
 const nextState = {
   test({ entity }) {
     return entity.state
@@ -87,7 +86,6 @@ export default {
           },
 
           spriteAnimationEnd(entity, { entityId, animation }) {
-            // always check who originated the event and which sprite is running!
             if (entityId === entity.id && animation === "aware") {
               entity.state = "chasing"
             }
@@ -117,7 +115,6 @@ export default {
           },
 
           spriteAnimationEnd(entity, { entityId, animation }) {
-            // always check who originated the event and which sprite is running!
             if (entityId === entity.id && animation === "sleepy") {
               entity.state = "sleeping"
             }
@@ -185,7 +182,6 @@ export default {
   },
 }
 
-// A reusable decision tree node
 function wakeUp() {
   return {
     test({ entity, target }) {

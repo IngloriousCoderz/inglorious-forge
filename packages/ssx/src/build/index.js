@@ -54,39 +54,29 @@ export async function build(options = {}) {
 
   console.log("🔨 Starting build...\n")
 
-  // Create a temporary Vite server to load modules (supports TS)
   const vite = await createServer({
     ...createViteConfig(mergedOptions),
     mode: "production",
     server: { middlewareMode: true, hmr: false },
     appType: "custom",
-    // This server only loads modules for SSR. Discovering client deps would
-    // scan the client entry, which is not written yet.
     optimizeDeps: { noDiscovery: true },
   })
   const loader = (p) => vite.ssrLoadModule(p)
 
-  // 0. Get all pages to build (Fail fast if source is broken)
   const allPages = await getPages(pagesDir, mergedOptions, loader)
   console.log(`📄 Found ${allPages.length} pages\n`)
 
-  // Load previous build manifest
   const manifest = incremental && !force ? await loadManifest(outDir) : null
 
-  // 1. Clean and create output directory
   if (force || !manifest) {
-    // Clean output directory if forced or first build
     await fs.rm(outDir, { recursive: true, force: true })
     await fs.mkdir(outDir, { recursive: true })
   } else {
-    // Ensure output directory exists
     await fs.mkdir(outDir, { recursive: true })
   }
 
-  // 2. Copy public assets before generating pages (could be useful if need to read `public/data.json`)
   await copyPublicDir(mergedOptions)
 
-  // Determine which pages need rebuilding
   const sharedHash = await hashSharedSources(rootDir)
   const runtimeHash = await hashRuntime()
   const getPageHash = createPageHasher(vite)
@@ -111,17 +101,14 @@ export async function build(options = {}) {
     }
   }
 
-  // 4. Generate store with all types and initial entities
   const store = await generateStore(allPages, mergedOptions, loader)
 
-  // 5. Render only pages that changed
   const changedPages = await generatePages(
     store,
     pagesToChange,
     mergedOptions,
     loader,
   )
-  // For skipped pages, load their metadata from disk if needed for sitemap/RSS
   const skippedPages = await generatePages(
     store,
     pagesToSkip,
@@ -134,21 +121,17 @@ export async function build(options = {}) {
     (page) => page.html || page.metadata,
   )
 
-  // Combine rendered and skipped pages for sitemap/RSS
   const allGeneratedPages = [...staticChangedPages, ...staticSkippedPages]
 
   if (staticChangedPages.length) {
-    // 6. Generate client-side JavaScript
     console.log("\n💾 Writing files...\n")
 
-    // 7. Write HTML pages
     for (const page of staticChangedPages) {
       const filePath = await writePageToDisk(page.path, page.html, outDir)
       console.log(`  ✓ ${filePath}`)
     }
   }
 
-  // 8. Always regenerate client-side JavaScript (it's cheap and ensures consistency)
   console.log("\n📝 Generating client scripts...\n")
 
   const app = await generateApp(
@@ -159,19 +142,16 @@ export async function build(options = {}) {
   await fs.writeFile(path.join(outDir, "main.js"), app, "utf-8")
   console.log(`  ✓ main.js\n`)
 
-  // 9. Generate sitemap if enabled
   if (sitemap?.hostname) {
     console.log("\n🗺️  Generating sitemap.xml...\n")
     await generateSitemap(allGeneratedPages, { outDir, ...sitemap })
   }
 
-  // 10. Generate RSS feed if enabled
   if (rss?.link) {
     console.log("\n📡 Generating RSS feed...\n")
     await generateRSS(allGeneratedPages, { outDir, ...rss })
   }
 
-  // 11. Bundle with Vite
   console.log("\n📦 Bundling with Vite...\n")
   const viteConfig = {
     ...createViteConfig(mergedOptions),
@@ -180,10 +160,7 @@ export async function build(options = {}) {
   await viteBuild(viteConfig)
 
   await vite.close()
-  // 12. Cleanup
-  // console.log("\n🧹 Cleaning up...\n")
 
-  // 13. Save manifest for next build
   if (incremental) {
     const newManifest = await createManifest(
       allGeneratedPages,
@@ -219,19 +196,11 @@ export async function build(options = {}) {
  * @returns {Promise<string>} The absolute path of the written file.
  */
 async function writePageToDisk(pagePath, html, outDir = "dist") {
-  // Convert URL path to file path
-  // / -> dist/index.html
-  // /about -> dist/about/index.html
-  // /blog/post-1 -> dist/blog/post-1/index.html
-
-  // Remove leading slash
   const cleanPath = pagePath.replace(/^\//, "")
   const filePath = path.join(outDir, cleanPath, "index.html")
 
-  // Ensure directory exists
   await fs.mkdir(path.dirname(filePath), { recursive: true })
 
-  // Write file
   await fs.writeFile(filePath, html, "utf-8")
 
   return filePath

@@ -36,8 +36,6 @@ export function jumpable(params) {
     jump(entity, payload, api) {
       type.jump?.(entity, payload, api)
 
-      // An action's name is its address, so a jump is for whichever entity handles
-      // it. There is no id to compare against: the notification carries none.
       if (entity.jumpsLeft) {
         entity.vy = jump(entity)
         entity.groundObject = undefined
@@ -63,7 +61,6 @@ export function jumpable(params) {
       }
       const [prevX, prevY] = [...entity.position]
 
-      // 1. HORIZONTAL MOVEMENT & RESOLUTION
       entity.position[X] += entity.velocity[X] * dt
       const entityLeft = entity.position[X] - width / HALF
       const entityRight = entity.position[X] + width / HALF
@@ -72,7 +69,6 @@ export function jumpable(params) {
       if (collisionX) {
         const vx = entity.velocity[X]
 
-        // Check if moving right and crossing the platform's left edge
         const prevRight = prevX + width / HALF
         const platformLeft = collisionX.position[X] - collisionX.size[X] / HALF
         if (vx > NO_VELOCITY && prevRight <= platformLeft) {
@@ -81,7 +77,6 @@ export function jumpable(params) {
           entity.velocity[X] = 0
         }
 
-        // Check if moving left and crossing the platform's right edge
         const prevLeft = prevX - width / HALF
         const platformRight = collisionX.position[X] + collisionX.size[X] / HALF
         if (vx < NO_VELOCITY && prevLeft >= platformRight) {
@@ -91,7 +86,6 @@ export function jumpable(params) {
         }
       }
 
-      // 2. VERTICAL MOVEMENT & RESOLUTION
       const wasOnGround = entity.groundObject
       entity.groundObject = undefined
 
@@ -104,7 +98,6 @@ export function jumpable(params) {
         const prevBottom = prevY - height / HALF
         const platformTop = collisionY.position[Y] + collisionY.size[Y] / HALF
 
-        // Landing on top of a platform (one-way platform logic)
         if (entity.vy <= NO_VELOCITY && prevBottom >= platformTop) {
           const entityBottom = entity.position[Y] - height / HALF
           const penetration = platformTop - entityBottom
@@ -113,7 +106,6 @@ export function jumpable(params) {
           entity.groundObject = collisionY
           entity.jumpsLeft = entity.maxJumps
 
-          // Only notify on the frame we actually land, not every frame we're on the ground.
           if (!wasOnGround) {
             api.notify("land", {
               entityId: entity.id,
@@ -121,19 +113,6 @@ export function jumpable(params) {
             })
           }
         }
-
-        // Hitting head on bottom of a platform
-        // else if (entity.vy > 0) {
-        //   const prevTop = prevY + height / HALF
-        //   const platformBottom =
-        //     collisionY.position[Y] - collisionY.size[Y] / HALF
-        //   if (prevTop <= platformBottom) {
-        //     const entityTop = entity.position[Y] + height / HALF
-        //     const penetration = entityTop - platformBottom
-        //     if (penetration > 0) entity.position[Y] -= penetration
-        //     entity.vy = 0
-        //   }
-        // }
       }
 
       entity.orientation = magnitude(entity.velocity)

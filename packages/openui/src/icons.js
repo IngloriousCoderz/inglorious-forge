@@ -16,8 +16,6 @@ const DEFAULT_SIZE = 24
 export function createIconResolver(icons) {
   if (!icons) return () => null
 
-  // An Iconify collection: icons by name, aliases for other names, and a
-  // size shared by those that do not give their own.
   if (icons.icons && typeof icons.icons === "object") {
     const width = icons.width ?? DEFAULT_SIZE
     const height = icons.height ?? DEFAULT_SIZE

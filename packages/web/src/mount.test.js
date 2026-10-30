@@ -148,8 +148,6 @@ describe("mount", () => {
     const error = new Error("root boom")
     const onError = vi.fn()
 
-    // subscribe fires the listener on notify("init"); the throwing renderFn
-    // must not propagate out of it.
     await expect(
       mount(
         store,
@@ -162,7 +160,6 @@ describe("mount", () => {
     ).resolves.toBeInstanceOf(Function)
 
     expect(onError).toHaveBeenCalledWith(error, expect.any(Object))
-    // No fallback provided → nothing is committed, but no throw either.
     expect(renderSpy).not.toHaveBeenCalled()
   })
 

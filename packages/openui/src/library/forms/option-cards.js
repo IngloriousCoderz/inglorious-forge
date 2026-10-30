@@ -28,7 +28,6 @@ export const OptionCard = defineComponent({
     topContent: z.union([Icon.ref, Image.ref]).optional(),
     disabled: z.boolean().optional(),
   }),
-  // Rendered by its OptionCards.
   component: () => null,
 })
 

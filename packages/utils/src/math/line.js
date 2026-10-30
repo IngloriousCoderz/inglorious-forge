@@ -20,7 +20,6 @@ export function distanceFromPoint(line, point) {
   return abs(a * x + b * z + c) / hypothenuse(a, b)
 }
 
-// @see https://math.stackexchange.com/questions/275529/check-if-line-intersects-with-circles-perimeter
 /**
  * Determines whether a line intersects with the perimeter of a circle.
  * @param {Line} line - The line represented by the equation ax + bz + c = 0, where `line` is [a, b, c].

@@ -4,8 +4,8 @@
 
 import { magnitude, setMagnitude, zero } from "../math/vector.js"
 
-const DEFAULT_DT = 1 // Default time delta for the applyFriction function.
-const NO_FRICTION = 0 // No friction constant.
+const DEFAULT_DT = 1
+const NO_FRICTION = 0
 
 /**
  * Applies friction to a given velocity vector.

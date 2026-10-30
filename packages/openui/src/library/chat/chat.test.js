@@ -26,7 +26,6 @@ sections = SectionBlock([SectionItem("food", "Food", [TextContent("Bistros")]), 
     )
     expect(citation.getAttribute("href")).toBe("https://example.com/visitors")
     expect(citation.getAttribute("title")).toBe("Tourist Office")
-    // A source with no web link is listed, but not linked.
     const listed = container.querySelectorAll("footer li")
     expect(listed).toHaveLength(2)
     expect(listed[1].querySelector("a")).toBeNull()

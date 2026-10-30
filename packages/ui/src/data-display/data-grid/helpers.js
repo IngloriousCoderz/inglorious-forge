@@ -196,12 +196,10 @@ function applyFilters(entity, rows) {
       const column = entity.columns.find((c) => c.id === columnId)
       if (!column) return true
 
-      // Custom filter function
       if (column.filterFn) {
         return column.filterFn(row, filterValue)
       }
 
-      // Default filters by type
       const value = row[columnId]
 
       if (["range", "date", "time", "datetime"].includes(column.filter.type)) {
@@ -215,7 +213,6 @@ function applyFilters(entity, rows) {
         return value === filterValue
       }
 
-      // String filtering (case-insensitive contains)
       return String(value)
         .toLowerCase()
         .includes(String(filterValue).toLowerCase())
@@ -262,7 +259,6 @@ function applySorts(entity, rows) {
       let aVal = a[columnId]
       let bVal = b[columnId]
 
-      // Custom sort function
       if (column?.sortFn) {
         const result =
           direction === "asc" ? column.sortFn(a, b) : column.sortFn(b, a)
@@ -270,7 +266,6 @@ function applySorts(entity, rows) {
         continue
       }
 
-      // Default sorting
       if (aVal === bVal) continue
       if (aVal == null) return 1
       if (bVal == null) return -1

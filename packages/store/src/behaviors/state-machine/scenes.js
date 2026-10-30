@@ -59,10 +59,6 @@ export function scenes(scenesByState) {
         continue
       }
 
-      // The same thing stands on both sides of the move, so it is neither added nor
-      // removed -- but it may be wanted to be a different thing now, and then only what
-      // has actually changed is merged over it. That is what leaves a shared thing where
-      // the world had put it when the next state says nothing different about it.
       const previous = leaving.find(({ id }) => id === added.id)
 
       if (!isDeepEqual(previous, added)) {
@@ -78,8 +74,6 @@ export function scenes(scenesByState) {
       build(entity, entity.state, api)
     },
 
-    // The announcement is broadcast and carries the id, so that anything else listening
-    // for it can tell which machine moved. This one is only interested in its own.
     stateChange(entity, { entityId, to }, api) {
       if (entityId !== entity.id) return
 

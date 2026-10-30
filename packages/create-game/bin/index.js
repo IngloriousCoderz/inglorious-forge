@@ -94,10 +94,8 @@ async function main() {
     const targetDir = path.join(process.cwd(), projectName)
     const templateDir = path.join(templatesRoot, template)
 
-    // Create project directory and copy template files
     copyDir(templateDir, targetDir)
 
-    // Update README.md with project name
     const readmePath = path.join(targetDir, "README.md")
     if (fs.existsSync(readmePath)) {
       let readme = fs.readFileSync(readmePath, "utf-8")
@@ -111,7 +109,6 @@ async function main() {
       console.log(`  cd ${projectName}`)
       console.log(`  Open index.html in your browser`)
     } else {
-      // Update package.json with project name
       const pkgPath = path.join(targetDir, "package.json")
       const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf-8"))
       pkg.name = projectName
@@ -156,7 +153,6 @@ async function main() {
       const srcPath = path.join(src, entry.name)
       const destPath = path.join(dest, entry.name)
 
-      // Rename gitignore to .gitignore
       if (entry.name === "gitignore") {
         fs.copyFileSync(srcPath, path.join(dest, ".gitignore"))
         continue
@@ -170,7 +166,6 @@ async function main() {
     }
   }
 
-  // The skills CLI asks which agents to install the skills for.
   function installSkills(targetDir) {
     try {
       execSync(SKILLS_COMMAND, { cwd: targetDir, stdio: "inherit" })
@@ -184,11 +179,11 @@ async function main() {
     try {
       const version = execSync(`npm view ${packageName} version`, {
         encoding: "utf-8",
-        stdio: "pipe", // Prevent npm view output from cluttering the console
+        stdio: "pipe",
       }).trim()
       return `^${version}`
     } catch {
-      return "latest" // fallback
+      return "latest"
     }
   }
 }

@@ -19,10 +19,6 @@ export function renderButton(entity, ctx) {
   const [width = DEFAULT_SIZE[0], height = DEFAULT_SIZE[1], depth = NO_DEPTH] =
     size ?? []
 
-  // Height is what the box measures on screen, which is the `y` extent and the `z`
-  // extent together: a button sized `[100, 0, 26]` stands twenty-six tall, not zero.
-  // Reading only the middle number draws a line through the label instead of a box
-  // around it.
   const boxHeight = height + depth
 
   ctx.save()
@@ -44,20 +40,10 @@ export function renderButton(entity, ctx) {
 
   ctx.restore()
 
-  // Drawn last, so a label is never painted over by the box it sits in. The middle of
-  // the line is put on the middle of the button rather than on its top edge, so that a
-  // label of any size sits in the middle of the thing it names.
-  //
-  // Skipped rather than left empty when there is no label: `renderText` draws an empty
-  // string as a real call, which on a canvas with no font metrics behind it asks for a
-  // line height it cannot measure.
   if (!label) return
 
   renderText(
     {
-      // The entity first, because a button's own `size` is the box it draws rather than
-      // the size of the lettering on it -- so the label size is said last, or the text
-      // would be asked to be drawn at "80,40px".
       ...entity,
       size: labelSize,
       color: labelColor,

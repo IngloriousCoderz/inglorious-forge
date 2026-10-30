@@ -55,17 +55,16 @@ export function withThrottle(
       : config
 
   return (type) => {
-    // one throttled-fn map per entity, so instances don't share windows
     const throttledByEntity = new Map()
 
     const behavior = {}
 
     for (const handlerName of Object.keys(delays)) {
       const originalHandler = type[handlerName]
-      if (!originalHandler) continue // nothing to wrap if the base type doesn't define it
+      if (!originalHandler) continue
 
       behavior[handlerName] = (entity, payload, api) => {
-        const entityId = entity.id // capture the primitive now, while the draft is live
+        const entityId = entity.id
 
         let perEntity = throttledByEntity.get(entityId)
         if (!perEntity) {
@@ -76,8 +75,8 @@ export function withThrottle(
         if (!perEntity[handlerName]) {
           perEntity[handlerName] = throttle(
             (entityId, payload, api) => {
-              const liveEntity = api.getEntity(entityId) // fresh, live reference
-              if (!liveEntity) return // entity was destroyed before this fired
+              const liveEntity = api.getEntity(entityId)
+              if (!liveEntity) return
               originalHandler(liveEntity, payload, api)
             },
             delays[handlerName],
@@ -89,9 +88,8 @@ export function withThrottle(
       }
     }
 
-    // clean up any pending windows/trailing calls when the entity is destroyed
     behavior.destroy = (entity, payload, api) => {
-      const entityId = entity.id // same rule applies here: capture before it's gone
+      const entityId = entity.id
 
       const perEntity = throttledByEntity.get(entityId)
       if (perEntity) {

@@ -1,8 +1,3 @@
-/* Fixed to the viewport, clear of the system bars. A bottom snackbar also
-   clears whatever bar the app keeps at the bottom: the app sets
-   --iw-snackbar-offset-bottom to that bar's height while it shows, and the
-   offset then stands in for the safe area, which the bar already covers.
-   Only the app knows when its bar is on screen, so nothing is guessed here. */
 .iw-snackbar {
   --iw-snackbar-gap: var(--iw-space-4);
   position: fixed;
@@ -10,9 +5,6 @@
   max-width: calc(100vw - 2 * var(--iw-snackbar-gap));
 }
 
-/* A manual popover in the top layer. The browser centres a popover in the
-   viewport as a bordered box, so its insets and box are reset, with no
-   specificity so the positions below still set their own sides. */
 :where(.iw-snackbar) {
   inset: auto;
   margin: 0;
@@ -48,8 +40,6 @@
   right: var(--iw-snackbar-gap);
 }
 
-/* Both insets and auto margins: the snackbar is as wide as its content, up
-   to the gutters, and centered within them. */
 .iw-snackbar-bottom-center,
 .iw-snackbar-top-center {
   inset-inline: var(--iw-snackbar-gap);

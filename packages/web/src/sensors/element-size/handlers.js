@@ -3,7 +3,6 @@
  * @typedef {import("../../../types/sensors/element-size.js").ElementSizeSize} ElementSizeSize
  */
 
-// Listeners aren't serializable, so they're kept here by id, not on the entity.
 const listeners = new Map()
 
 /**

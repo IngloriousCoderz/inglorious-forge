@@ -30,7 +30,6 @@ describe("router", () => {
       setType: vi.fn(),
     }
 
-    // Mock window.location and history
     vi.spyOn(window, "location", "get").mockReturnValue({
       pathname: "/",
       search: "",
@@ -70,7 +69,6 @@ describe("router", () => {
   })
 
   describe("link clicks", () => {
-    // The click listener is added once per module, so each test loads a fresh one.
     const initClickListener = async () => {
       vi.resetModules()
       const { Router, setRoutes } = await import(".")
@@ -267,7 +265,6 @@ describe("router", () => {
         path: "/failing",
       })
 
-      // Simulate calling the routeLoadError handler
       Router.routeLoadError(entity, { error, path: "/failing" })
 
       expect(entity.isLoading).toBe(false)

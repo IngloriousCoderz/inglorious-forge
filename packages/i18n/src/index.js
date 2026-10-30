@@ -65,24 +65,19 @@ export function createI18n({
   instance.init({
     ...i18nextOptions,
     resources,
-    // Until a loaded catalogue arrives, keys fall back rather than wait.
     partialBundledLanguages: true,
     lng: startLocale,
     fallbackLng: fallbackLocale,
     supportedLngs: locales,
-    // lit-html escapes every text binding already; escaping here too would
-    // print entities such as &amp; on screen.
     interpolation: { escapeValue: false, ...i18nextOptions.interpolation },
     initAsync: false,
   })
 
   const loader = createLoader(instance, resources, loadLocale)
 
-  // The fallback too: it fills in whatever the starting locale is missing.
   const ready = Promise.all(
     [...new Set([startLocale, fallbackLocale])].map((locale) =>
       loader.load(locale).catch((error) => {
-        // The app still starts, with whatever did load.
         console.warn(`[i18n] could not load "${locale}":`, error)
       }),
     ),
@@ -100,9 +95,6 @@ export function createI18n({
       applyDocumentLanguage(entity.locale, entity.dir)
     },
 
-    // The user's choice: a locale, or a picker's `{ value }`. With
-    // `saveUserLocale` it is saved for the signed-in user at once, and kept
-    // for whoever signs in next otherwise.
     localeChange(entity, payload, api) {
       const locale = payload?.value ?? payload
       if (!requestLocale(entity, locale, api)) return
@@ -112,8 +104,6 @@ export function createI18n({
       else entity.isUnsaved = true
     },
 
-    // Only the latest request switches: a slower load for a locale the user
-    // has since moved away from is kept for later, but not applied.
     localeLoadSuccess(entity, locale) {
       if (entity.loadingLocale !== locale) return
       entity.loadingLocale = null
@@ -126,10 +116,6 @@ export function createI18n({
       console.warn(`[i18n] could not load "${locale}":`, error)
     },
 
-    // The signed-in user and the locale saved for them, or none yet. A choice
-    // made before they signed in is the more recent, so it is saved instead
-    // of applying theirs; with nothing saved, the current one is. Once per
-    // user, so reloading their data does not undo a change still being saved.
     userLocaleLoad(entity, { userId, locale }, api) {
       if (entity.userId === userId) return
       entity.userId = userId
@@ -143,32 +129,22 @@ export function createI18n({
       requestLocale(entity, locale, api)
     },
 
-    // Signed out: later choices wait for the next user.
     userLocaleClear(entity) {
       entity.userId = null
       entity.isUnsaved = false
     },
   }
 
-  // Switches to `locale`, loading it first if needed, so `loadingLocale` names
-  // it until its catalogue is in: what a server render or a hydration waits for.
-  // Whether it is a change.
   function requestLocale(entity, locale, api) {
     if (!locales.includes(locale)) return false
     const isChange = locale !== entity.locale
-    // Choosing the current locale again also cancels a pending change.
     entity.loadingLocale = null
 
     if (loader.isLoaded(locale)) {
-      // The i18next instance is shared by every store, as on a server rendering
-      // pages in different languages, so it can be elsewhere when the entity is not.
       if (isChange || locale !== instance.language) switchLocale(entity, locale)
       return isChange
     }
 
-    // Also the current locale, while the catalogue it started with is loading.
-    // The id is taken now: the promise settles after this batch, when the
-    // entity here is no longer the live one.
     const id = entity.id
     entity.loadingLocale = locale
     loader.load(locale).then(
@@ -218,11 +194,7 @@ export function createI18n({
     languages,
     t,
     trans,
-    // The active locale, for `Intl` formatters.
     currentLocale: () => instance.language,
-    // A data item whose label follows the language: `label` reads through `t`
-    // every time, and `labelKey` survives being copied into store state,
-    // where the getter would freeze into the text of the moment.
     labelled: (labelKey, fields = {}) => ({
       ...fields,
       labelKey,
@@ -230,7 +202,6 @@ export function createI18n({
         return t(labelKey)
       },
     }),
-    // An option's label: translated when it carries a key, as is otherwise.
     translatedLabel: (option) =>
       option.labelKey ? t(option.labelKey) : option.label,
     i18next: instance,
@@ -261,8 +232,6 @@ export function detectLocale({ locales, defaultLocale, storageKey }) {
   return defaultLocale
 }
 
-// The supported locale for a language, exactly or by its base language, so
-// `it-CH` picks `it`; null when there is none.
 function matchLocale(language, locales) {
   if (!language) return null
   if (locales.includes(language)) return language
@@ -323,7 +292,6 @@ function createLoader(instance, resources, loadLocale) {
     if (isLoaded(locale)) return Promise.resolve()
     if (pending.has(locale)) return pending.get(locale)
 
-    // Called right away; a loader that throws rejects like one that fails.
     const promise = new Promise((resolve) => resolve(loadLocale(locale)))
       .then((bundles) => {
         for (const [namespace, catalogue] of Object.entries(bundles ?? {})) {
@@ -361,8 +329,6 @@ function readLocale(storageKey) {
   try {
     return globalThis.localStorage?.getItem(storageKey) ?? null
   } catch {
-    // Storage can be unavailable (private mode, server rendering): fall back
-    // to detection rather than failing.
     return null
   }
 }
@@ -380,10 +346,6 @@ function getDocumentLanguage() {
   return globalThis.document?.documentElement.lang
 }
 
-// Screen readers, hyphenation and the browser's own spell checking read the
-// document language, so it follows the app's. So does the direction: in
-// Arabic, Hebrew or Persian the whole page reads right to left, and CSS that
-// uses logical properties (`margin-inline-start`, `text-align: start`) follows.
 function applyDocumentLanguage(locale, dir) {
   if (typeof document === "undefined") return
   document.documentElement.lang = locale

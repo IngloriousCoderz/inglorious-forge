@@ -1,6 +1,3 @@
-// Type-level tests: `tsc -p type-tests` fails on any error, and on any
-// `@ts-expect-error` whose error does not happen.
-
 import {
   type BaseEntity,
   createStore,
@@ -58,7 +55,6 @@ const Counter = {
   },
 } satisfies EntityType<CounterEntity, AppApi>
 
-// A type declared with a type alias, as generated apps do
 type GreetingType = {
   shout: (entity: CounterEntity, times: number) => void
   render: (entity: CounterEntity, api: AppApi) => TemplateResult
@@ -82,7 +78,6 @@ export const greetingTypes = createStore<AppEntity, AppState>({
   types: { Counter: Greeting },
 })
 
-// Library types register under the app's names, with no cast
 export const store = createStore<AppEntity, AppState>({
   types: { Router, Login: Form, Wide: MediaQuery, Update: PwaUpdate, Counter },
   entities: {
@@ -91,7 +86,6 @@ export const store = createStore<AppEntity, AppState>({
   },
 })
 
-// The store is where a mid-session version is announced
 declare const registration: ServiceWorkerRegistration
 export const stopWatching: () => void = watchPwaUpdate(registration, store, {
   id: "update",
@@ -99,7 +93,6 @@ export const stopWatching: () => void = watchPwaUpdate(registration, store, {
 // @ts-expect-error: checkEveryMs is a number of milliseconds
 watchPwaUpdate(registration, store, { checkEveryMs: "1h" })
 
-// The api handlers receive renders: there is a single Api
 declare const api: AppApi
 export const rendered = api.render("counter")
 export const path: string | undefined = api.getEntity("router")?.path

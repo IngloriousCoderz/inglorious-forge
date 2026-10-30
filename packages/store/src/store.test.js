@@ -298,8 +298,6 @@ test("it should keep handling other events while halted", () => {
   store.notify("pause")
   store.update()
 
-  // This is the whole point of halting the update rather than every event: whatever
-  // takes the pause back off has to keep receiving its events.
   store.notify("press")
   store.update()
 
@@ -307,9 +305,6 @@ test("it should keep handling other events while halted", () => {
 })
 
 test("it should tell everything when an entity leaves, not just the thing itself", () => {
-  // create and destroy are a thing's own lifecycle and reach only the thing itself. A
-  // stage counting down the things it rolled needs to hear about the ones going, and there
-  // is no other way to be told.
   const heard = []
   const config = {
     types: {
@@ -353,21 +348,11 @@ test("it should say when an entity joins as well", () => {
   store.notify("add", { id: "brick1", type: "Thing" })
   store.update()
 
-  // A payload carries the least that can be had. A removal needs only the id, because
-  // everything else can still be looked up by it; an addition carries the entity itself,
-  // because there is nothing yet to look it up by.
   expect(heard).toStrictEqual([{ id: "brick1", type: "Thing" }])
 })
 
 test("it should tell a thing about its own destruction, with the thing still readable", () => {
-  // `destroy` is the counterpart to `create` and reaches only the thing it is about, so
-  // that a destructor reads like a destructor and not like a handler checking whether it
-  // is the one being talked about. The entity is still whole when it is called, which is
-  // the whole point of it being a destructor rather than a notification.
   const seen = []
-  // A destructor that holds something outside the world -- a listener, a timer, a cache
-  // key -- has to be able to let it go, which means reaching the type as well as the
-  // entity.
   const held = { on: "the document" }
   const Thing = {
     destroy(entity) {
@@ -406,9 +391,6 @@ test("it should not require a thing to have a destructor", () => {
 })
 
 test("it should merge a new configuration into a thing that is already standing", () => {
-  // The same thing throughout, so it is not made again -- and only what the new
-  // configuration names is touched, which is what leaves a actor where the world had
-  // slid it.
   let created = 0
   const config = {
     types: {
@@ -433,8 +415,6 @@ test("it should merge a new configuration into a thing that is already standing"
 })
 
 test("it should set a field named as nothing to nothing rather than leaving it", () => {
-  // Which is how a key is taken off a mapping: naming it and giving it nothing is not the
-  // same as saying nothing about it.
   const config = {
     types: { Keyboard: {} },
     entities: {
@@ -496,8 +476,6 @@ test("it should ignore a configuration for something that is not there", () => {
 })
 
 test("it should install a replacement on a standing thing, dropping what it does not mention", () => {
-  // `replace` is the whole of it, said to be different. What it is not told is gone -- which
-  // is the whole difference between the two, since a patch leaves the rest alone.
   const config = {
     types: { Thing: {} },
     entities: { brick1: { type: "Thing", hp: 2, note: "as it was", layer: 3 } },
@@ -511,13 +489,10 @@ test("it should install a replacement on a standing thing, dropping what it does
   expect(store.getState().brick1.hp).toBe(1)
   expect(Object.hasOwn(store.getState().brick1, "note")).toBe(false)
   expect(Object.hasOwn(store.getState().brick1, "layer")).toBe(false)
-  // Its place in the world and its name are not part of what is being replaced.
   expect(store.getState().brick1.id).toBe("brick1")
 })
 
 test("it should not run the lifecycle again when a thing is patched or replaced", () => {
-  // Neither takes the thing out of the world, so neither can make or unmake it: a thing
-  // that was never removed cannot have been destroyed.
   const seen = []
   const config = {
     types: {

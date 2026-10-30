@@ -64,7 +64,7 @@ test("it should prove that a circle touching the border of a rectangle intersect
     radius: 1,
   }
   const rectangle = {
-    position: v(-1, 1, 0), // Rectangle's right edge is at x=0, touching the circle's left edge.
+    position: v(-1, 1, 0),
     size: v(2, 2, 0),
   }
 

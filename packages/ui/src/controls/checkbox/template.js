@@ -34,8 +34,6 @@ export function render(props) {
     ...rest
   } = props
 
-  // The label wraps the input, which is what ties the two together: it needs no
-  // `for`, and an empty one would point at nothing and break the click-through.
   const inputId = id || name
 
   const classes = {

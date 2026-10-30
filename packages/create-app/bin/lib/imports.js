@@ -1,8 +1,3 @@
-// Import statements in the order eslint-plugin-simple-import-sort gives them,
-// so a generated project passes `eslint` as it is: side-effect imports first,
-// in the order given, then packages, then relative modules, a blank line
-// between groups.
-
 const collator = new Intl.Collator("en", { sensitivity: "base", numeric: true })
 
 /**
@@ -34,15 +29,12 @@ function sortImports(lines) {
       (a, b) =>
         compare(normalize(a.source), normalize(b.source)) ||
         compare(a.source, b.source) ||
-        // Type imports before regular ones from the same module.
         Number(b.line.startsWith("import type")) -
           Number(a.line.startsWith("import type")),
     )
     .map(({ line }) => line)
 }
 
-// The plugin's own normalization: by directory level, `.` and `/` before any
-// other punctuation.
 function normalize(source) {
   return source
     .replace(/^[./]*\.$/, "$&/")
@@ -57,7 +49,6 @@ function compare(a, b) {
   return collator.compare(a, b) || Number(a > b) - Number(a < b)
 }
 
-// The module an import statement imports from.
 function sourceOf(line) {
   const [, source] = line.match(/"([^"]+)"/)
   return source

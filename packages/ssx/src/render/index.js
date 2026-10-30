@@ -4,7 +4,6 @@ import { getTextDirection, selectLocale } from "../utils/i18n.js"
 import { createGetPageOption } from "../utils/page-options.js"
 import { toHTML } from "./html.js"
 
-// Empty, so the site options apply; the layout supplies the final defaults.
 const DEFAULT_OPTIONS = {
   lang: "",
   dir: "",

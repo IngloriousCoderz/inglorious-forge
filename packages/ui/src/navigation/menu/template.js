@@ -46,7 +46,6 @@ export const Menu = {
       commandfor: id,
       command: "toggle-popover",
       "aria-haspopup": "menu",
-      // Left to the browser when it alone keeps the open state.
       "aria-expanded": onToggle ? String(isOpen) : undefined,
       style: `anchor-name: ${anchorName(id)}`,
     })
@@ -96,7 +95,6 @@ export const Menu = {
       ${ref((element) => {
         if (!element) return
         applyElementProps(element, rest)
-        // Without onToggle the browser alone opens and closes it.
         if (trigger && onToggle) {
           syncPopover(element, {
             isOpen,
@@ -123,7 +121,6 @@ export const Menu = {
       return html`<div class="iw-menu-divider" role="separator"></div>`
     }
 
-    // In an anchored menu each item also hides the popover once picked.
     return html`<button
       type="button"
       class=${classMap({

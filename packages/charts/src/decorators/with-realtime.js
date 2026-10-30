@@ -41,8 +41,6 @@ export function withRealtime(chartType) {
     streamPush(entity, payload) {
       const { realtime } = entity
 
-      // A paused chart does not change; the point waits for play. Beyond
-      // maxHistory the oldest waiting points would be dropped on play anyway.
       if (realtime.isPaused) {
         realtime.pending.push(payload)
         if (realtime.pending.length > realtime.maxHistory) {
@@ -70,7 +68,6 @@ export function withRealtime(chartType) {
   }
 }
 
-// A number goes at the next index; anything else is a whole data point.
 function addPoint(entity, payload) {
   streamSlide(entity, {
     ...(typeof payload === "number" ? { value: payload } : { point: payload }),
@@ -78,8 +75,6 @@ function addPoint(entity, payload) {
   })
 }
 
-// Live, the brush is hidden and follows the newest points; paused, it shows
-// and stays where it is.
 function showWindow(entity) {
   entity.brush ??= { height: DEFAULT_BRUSH_HEIGHT }
   entity.brush.enabled = true

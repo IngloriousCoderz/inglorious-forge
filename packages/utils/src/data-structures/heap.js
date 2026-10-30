@@ -1,5 +1,3 @@
-// @see https://stackfull.dev/heaps-in-javascript
-
 /**
  * Default comparator for a max-heap.
  * @param {*} a - First element.
@@ -8,17 +6,16 @@
  */
 const DEFAULT_COMPARATOR = (a, b) => b - a
 
-// Constants for heap operations
-const ROOT_INDEX = 0 // Index of the root element in the heap.
-const SINGLE_ELEMENT = 1 // Heap size when it contains a single element.
-const LEFT_CHILD_MULTIPLIER = 2 // Multiplier to calculate the left child index.
-const RIGHT_CHILD_MULTIPLIER = 2 // Multiplier to calculate the right child index.
-const PARENT_DIVISOR = 2 // Divisor to calculate the parent index.
-const LEFT_CHILD_OFFSET = 1 // Offset to calculate the left child index.
-const RIGHT_CHILD_OFFSET = 2 // Offset to calculate the right child index.
-const LAST_ELEMENT_OFFSET = 1 // Offset to get the last element in the heap.
-const INDEX_ADJUSTMENT = 1 // Adjustment for zero-based indexing.
-const COMPARATOR_THRESHOLD = 0 // Threshold for comparator results.
+const ROOT_INDEX = 0
+const SINGLE_ELEMENT = 1
+const LEFT_CHILD_MULTIPLIER = 2
+const RIGHT_CHILD_MULTIPLIER = 2
+const PARENT_DIVISOR = 2
+const LEFT_CHILD_OFFSET = 1
+const RIGHT_CHILD_OFFSET = 2
+const LAST_ELEMENT_OFFSET = 1
+const INDEX_ADJUSTMENT = 1
+const COMPARATOR_THRESHOLD = 0
 
 /**
  * Checks if a heap contains a specific item.

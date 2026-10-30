@@ -4,12 +4,10 @@ import { DEFAULT_COLORS, DEFAULT_HEIGHT, DEFAULT_WIDTH } from "../defaults.js"
 
 export function createChartEntity(entity, requestedKeys) {
   const colors = resolveColors(entity.colors)
-  // A chart rendered without going through `create` may have no size.
   const width = entity.width || DEFAULT_WIDTH
   const height = entity.height || DEFAULT_HEIGHT
   const padding = createPadding(entity.padding, width, height)
 
-  // A radial chart, a ring per row, takes its data as a pie does.
   if (["pie", "donut", "radial"].includes(entity.type)) {
     const dataKey = entity.dataKey || "value"
     const nameKey = entity.nameKey || "label"
@@ -75,8 +73,6 @@ export function getDataKeys(primitives, configDataKeys) {
   return [...keys]
 }
 
-// Keeps each row whole, so a pie primitive can read its own `dataKey`, and
-// fills in the label and value under the chart's keys.
 function createPieData(rawData, dataKey, nameKey) {
   if (!Array.isArray(rawData)) return []
 
@@ -88,9 +84,6 @@ function createPieData(rawData, dataKey, nameKey) {
   }))
 }
 
-// A scatter chart's series each have points of their own, at any x: they are
-// kept as series, `{ name, points }`, rather than merged into rows. A series
-// may give its points as `points` or `values`, each `{ x, y, z? }`.
 function createScatterSeries(rawData) {
   if (!Array.isArray(rawData)) return []
 
@@ -224,8 +217,6 @@ function createPadding(padding, width, height) {
   }
 }
 
-// A missing value stays missing, so a line breaks there instead of dropping
-// to zero.
 function resolveNumericValue(point) {
   if (Number.isFinite(point?.value)) return point.value
   if (Number.isFinite(point?.y)) return point.y

@@ -173,14 +173,10 @@ describe("view-transitions", () => {
     store.subscribe((state) => states.push(state.counter1.value))
     navigateTo("/events", 1)
     store.notify("#counter1:increment")
-    /* Not a navigation, so it notifies straight away and reaches the listener
-       before the transition's own update ever runs. */
     store.notify("#counter1:increment")
 
     expect(states).toEqual([2])
     update()
-    /* The deferred update replays the value the store holds now, not the one it
-       held when the transition started. */
     expect(states).toEqual([2, 2])
   })
 
@@ -205,9 +201,6 @@ describe("view-transitions", () => {
   it("rebases when it tears down, so a later subscriber does not animate", () => {
     const store = withTransitions()(createTestStore())
 
-    /* The path moves while the store is subscribed but never renders, so the
-       last thing onStateChange saw is the old one. Re-subscribing has to rebase
-       onto the current route, or the next dispatch reads as a navigation. */
     const unsubscribe = store.subscribe(vi.fn())
     navigateTo("/events", 1)
     unsubscribe()
@@ -222,8 +215,6 @@ describe("view-transitions", () => {
     const store = createTestStore()
     withTransitions()(store)
 
-    /* Wrapping is not subscribing: anything that navigates in between belongs
-       to the baseline rather than to a transition of its own. */
     navigateTo("/events", 1)
 
     store.subscribe(vi.fn())
@@ -308,8 +299,6 @@ describe("view-transitions", () => {
       store.notify("#router:navigate", "/events")
       store.notify("#router:navigate", "/events/42")
 
-      /* A Router that stamps the index without advancing its own counter writes
-         the same one twice, and the second push reads as a replacement. */
       expect(startViewTransition).toHaveBeenCalledTimes(2)
       expect(lastType()).toEqual(["forward"])
     })
@@ -402,9 +391,6 @@ function navigateTo(path, idx) {
   window.history.pushState({ idx }, "", path)
 }
 
-/* Spying has to happen before wrapping: `withTransitions` replaces `subscribe`
- * with its own, so a spy installed afterwards would only count calls to the
- * wrapper and never reach the store. */
 function spyOnSubscribe(store) {
   return vi.spyOn(store, "subscribe")
 }

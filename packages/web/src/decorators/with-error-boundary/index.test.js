@@ -43,8 +43,6 @@ describe("withErrorBoundary", () => {
 
     const behavior = withErrorBoundary(() => "fallback")(type)
 
-    // The decorator only contributes `render`; other handlers stay on the
-    // base type and are merged by the store's type composition.
     expect(Object.keys(behavior)).toEqual(["render"])
   })
 

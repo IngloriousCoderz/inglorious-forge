@@ -63,7 +63,6 @@ describe("syncPageHead", () => {
     })
   }
 
-  // Navigates the way the router does: the history entry first, then the state change.
   const navigate = (store, route, path) => {
     window.history.pushState(null, "", path)
     store.notify("#router:navigate", { route, path })

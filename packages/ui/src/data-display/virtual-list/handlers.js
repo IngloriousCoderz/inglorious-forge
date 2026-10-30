@@ -45,8 +45,6 @@ export function scroll(entity, containerEl) {
  */
 export function mount(entity, containerEl) {
   const firstItem = containerEl.querySelector("[data-index]")
-  // A list not laid out yet, such as one rendered into a detached element,
-  // measures 0: keep the estimate, and measure again on a later render.
   if (!firstItem?.offsetHeight) return
 
   entity.itemHeight = firstItem.offsetHeight

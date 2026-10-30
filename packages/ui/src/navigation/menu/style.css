@@ -10,10 +10,6 @@
   box-shadow: var(--iw-shadow-lg);
 }
 
-/* Anchored to its trigger: below it and aligned with its start, flipping up
-   or across when there is no room. The browser's popover box is centred in
-   the viewport, so its insets and margins are reset; its hidden state has to
-   be restated, because the display above outranks it. */
 .iw-menu[popover] {
   inset: auto;
   margin: var(--iw-space-1) 0 0;

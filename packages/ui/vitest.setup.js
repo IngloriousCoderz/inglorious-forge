@@ -1,7 +1,3 @@
-/* jsdom implements neither `<dialog>`'s show methods nor the Popover API. These
-   stand-ins do just what the components rely on: track the open state and
-   fire the events the browser would, so the sync with `isOpen` can be tested. */
-
 const openPopovers = new WeakSet()
 
 if (!HTMLDialogElement.prototype.showModal) {

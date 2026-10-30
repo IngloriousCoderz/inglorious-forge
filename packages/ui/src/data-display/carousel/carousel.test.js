@@ -166,15 +166,12 @@ describe("carousel", () => {
   })
 
   it("can page back from the end when items are narrower than the viewport", () => {
-    // Matteo's "Many per view" bug: at max scroll the reported page is the last
-    // one, but its neighbours sit past the scroll range, so page arithmetic got
-    // stuck. Paging is relative to the scroll position instead.
     const { container } = setup({ page: 2 })
 
     const viewport = fakeLayout(
       container.querySelector(".iw-carousel-viewport"),
     )
-    viewport.scrollLeft = 150 // parked at the end, between items 1 and 2
+    viewport.scrollLeft = 150
     container.querySelector(".iw-carousel-arrow-previous").click()
 
     expect(viewport.scrollTo).toHaveBeenCalledWith({
@@ -217,8 +214,6 @@ describe("carousel", () => {
   it("applies the initial page without a layout engine (jsdom-safe)", async () => {
     const { container } = setup({ page: 2 })
 
-    // settleOnInitialPage schedules a scroll on the next frame; without the
-    // scrollTo guard this frame throws in jsdom.
     await new Promise((resolve) => requestAnimationFrame(() => resolve()))
     await new Promise((resolve) => setTimeout(resolve, 0))
 
@@ -280,11 +275,9 @@ describe("carousel", () => {
     Carousel.rotate(entity, 1)
     expect(entity.rotation).toBe(1)
 
-    // stepping back past zero wraps to the last item
     Carousel.rotate(entity, -2)
     expect(entity.rotation).toBe(2)
 
-    // stepping forward past the end wraps to the front
     Carousel.rotate(entity, 5)
     expect(entity.rotation).toBe(1)
   })
@@ -331,7 +324,6 @@ describe("carousel", () => {
   it("tracks the current dot by logical item when infinite", () => {
     const { container } = setup({ isInfinite: true, rotation: 1, page: 0 })
 
-    // page 0 of a carousel rotated by 1 shows the original item at index 1
     const dots = container.querySelectorAll(".iw-carousel-indicator")
     expect(dots[1].classList.contains("iw-carousel-indicator-current")).toBe(
       true,

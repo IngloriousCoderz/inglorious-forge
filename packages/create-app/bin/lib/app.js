@@ -40,7 +40,6 @@ const COMPONENTS = {
 export function addAppFeatures(targetDir, pkg, options) {
   const app = { ...options, ext: options.isTypeScript ? "ts" : "js" }
   app.i18n = Boolean(app.languages.length)
-  // On a phone the pages are tabs at the bottom; elsewhere, links on top.
   app.tabs = app.ui && app.routing && app.mobile
   app.links = app.routing && !app.tabs
   app.isVue = app.renderer === "vue"
@@ -93,7 +92,6 @@ function addDependencies(pkg, app) {
   }
 }
 
-// The theme is a class on <body>, which the theme's stylesheet is scoped to.
 function applyTheme(targetDir, app) {
   const htmlPath = path.join(targetDir, "index.html")
   if (!fs.existsSync(htmlPath)) return
@@ -113,8 +111,6 @@ function componentImport(app, names, from) {
     ? `// @ts-expect-error - Handled by @inglorious/vite-plugin-vue\n${line}`
     : line
 }
-
-// ---------------------------------------------------------------- main
 
 function mainSource(app) {
   const imports = []
@@ -158,7 +154,6 @@ ${body}
 `
 }
 
-// The Inglorious UI components the app uses, for their stylesheets.
 function uiComponents(app) {
   const names = ["app-bar", "container"]
   if (app.links) names.push("link")
@@ -193,8 +188,6 @@ main {
 }
 `
   if (app.ui) {
-    // In Vue the navigation is the app bar's content rather than its trailing
-    // slot, so it pushes itself to the end.
     return app.isVue
       ? `${layout}
 .iw-app-bar .app-nav {
@@ -217,8 +210,6 @@ main {
 }
 `
 }
-
-// ---------------------------------------------------------------- store
 
 function storeSource(app) {
   const imports = [
@@ -269,8 +260,6 @@ ${typesValue}
 `
 }
 
-// The entities the store creates on its own, as the comment in the store
-// lists them.
 function singletons(app) {
   const ids = ["home"]
   if (app.routing) ids.push("about", "router")
@@ -278,8 +267,6 @@ function singletons(app) {
   return ids
 }
 
-// Only the entities that need data, or come more than one to a type; the
-// store creates the rest.
 function entitiesSource(app) {
   const head = app.isTypeScript
     ? `import type { AppState } from "../../types"
@@ -309,8 +296,6 @@ export const routes = {`
 `
 }
 
-// ---------------------------------------------------------------- i18n
-
 function i18nSource(app) {
   const [defaultLocale] = app.languages
   return `import { createI18n } from "@inglorious/i18n"
@@ -324,8 +309,6 @@ export const { I18n, t, ready } = createI18n({
 })
 `
 }
-
-// ---------------------------------------------------------------- types
 
 function typesSource(app) {
   const imports = [

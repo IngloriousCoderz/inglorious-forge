@@ -15,7 +15,6 @@ import { middlewares } from "./middlewares.js"
 const FIRST = 0
 const LAST = -1
 const LAST_INDEX_OFFSET = 1
-// How many points the brush shows when new data arrives.
 const VISIBLE_WINDOW = 20
 
 export const Line = {

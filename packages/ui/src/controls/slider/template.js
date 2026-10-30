@@ -132,7 +132,6 @@ function renderRange({
   const span = max - min || DEFAULT_STEP
   const fill = `--iw-slider-low: ${((low - min) / span) * PERCENT}%; --iw-slider-high: ${((high - min) / span) * PERCENT}%`
   const endName = (end) => (name ? `${name}-${end}` : nothing)
-  // Each thumb is named for its end of the range, after the slider's label.
   const endLabel = (end) =>
     typeof label === "string" && label ? `${label} ${end}` : end
 

@@ -1,13 +1,7 @@
-// The brush charts start from random values between these two.
 const RANDOM_MIN = 100
 const RANDOM_RANGE = 1000
 
 export const entities = {
-  // ============================================
-  // LINE CHARTS
-  // ============================================
-
-  // Line Chart - Config Style
   salesLineChart: {
     type: "Line",
     data: [
@@ -26,7 +20,6 @@ export const entities = {
     hasTooltip: true,
   },
 
-  // Line Chart - Composition Style
   salesLineChartComposition: {
     type: "Line",
     data: [
@@ -40,7 +33,6 @@ export const entities = {
     ],
   },
 
-  // Line Chart - Padding - Composition Style
   salesLineChartCompositionPadding: {
     type: "Line",
     data: [
@@ -54,7 +46,6 @@ export const entities = {
     ],
   },
 
-  // Line Chart with Brush - Config Style
   lineChartWithBrushConfig: {
     type: "Line",
     data: Array.from({ length: 30 }, (_, i) => ({
@@ -71,7 +62,6 @@ export const entities = {
     },
   },
 
-  // Line Chart with Brush - Composition Style
   lineChartWithBrush: {
     type: "Line",
     data: Array.from({ length: 30 }, (_, i) => ({
@@ -80,7 +70,6 @@ export const entities = {
     })),
   },
 
-  // Line Chart with multiple series - Config Style
   multiSeriesLineChart: {
     type: "Line",
     data: [
@@ -128,7 +117,6 @@ export const entities = {
     hasLegend: true,
   },
 
-  // Line Chart with multiple series - Composition Style
   multiSeriesLineChartComposition: {
     type: "Line",
     data: [
@@ -139,7 +127,6 @@ export const entities = {
     ],
   },
 
-  // Smooth Line Chart with axis titles - Config Style
   smoothLineChart: {
     type: "Line",
     data: [
@@ -158,7 +145,6 @@ export const entities = {
     yAxisLabel: "Orders",
   },
 
-  // Step Line Chart - Composition Style
   stepLineChartComposition: {
     type: "Line",
     data: [
@@ -170,7 +156,6 @@ export const entities = {
     ],
   },
 
-  // Realtime Line Chart - Sliding Window (Config Style)
   realtimeLineChartConfig: {
     type: "Line-rt",
     width: 800,
@@ -180,16 +165,10 @@ export const entities = {
     hasTooltip: true,
   },
 
-  // Realtime Line Chart - Sliding Window (Composition Style)
   realtimeLineChart: {
     type: "Line-rt",
   },
 
-  // ============================================
-  // AREA CHARTS
-  // ============================================
-
-  // Area Chart - Config Style
   salesAreaChart: {
     type: "Area",
     data: [
@@ -208,7 +187,6 @@ export const entities = {
     hasTooltip: true,
   },
 
-  // Area Chart - Composition Style
   salesAreaChartComposition: {
     type: "Area",
     data: [
@@ -222,7 +200,6 @@ export const entities = {
     ],
   },
 
-  // Composed Area + Line + Bar - Config Style (same data as Composition below)
   composedSalesChart: {
     type: "Composed",
     data: [
@@ -262,7 +239,6 @@ export const entities = {
     ],
   },
 
-  // Area Chart with multiple series - Config Style
   multiSeriesAreaChart: {
     type: "Area",
     data: [
@@ -304,7 +280,6 @@ export const entities = {
     hasLegend: true,
   },
 
-  // Area Chart with multiple series - Composition Style
   multiSeriesAreaChartComposition: {
     type: "Area",
     data: [
@@ -316,7 +291,6 @@ export const entities = {
     ],
   },
 
-  // Area Chart with multiple series stacked - Config Style
   multiSeriesAreaChartStacked: {
     type: "Area",
     data: [
@@ -373,11 +347,6 @@ export const entities = {
     ],
   },
 
-  // ============================================
-  // BAR CHARTS
-  // ============================================
-
-  // Bar Chart - Config Style
   salesBarChart: {
     type: "Bar",
     data: [
@@ -394,7 +363,6 @@ export const entities = {
     hasTooltip: true,
   },
 
-  // Bar Chart - Composition Style
   salesBarChartComposition: {
     type: "Bar",
     data: [
@@ -407,7 +375,6 @@ export const entities = {
     ],
   },
 
-  // Bar Chart - Padding - Composition Style
   salesBarChartCompositionPadding: {
     type: "Bar",
     data: [
@@ -420,7 +387,6 @@ export const entities = {
     ],
   },
 
-  // Stacked Bar Chart with axis titles - Config Style
   stackedBarChart: {
     type: "Bar",
     data: [
@@ -439,7 +405,6 @@ export const entities = {
     yAxisLabel: "Sales",
   },
 
-  // Stacked Bar Chart - Composition Style
   stackedBarChartComposition: {
     type: "Bar",
     data: [
@@ -450,11 +415,6 @@ export const entities = {
     ],
   },
 
-  // ============================================
-  // PIE CHARTS
-  // ============================================
-
-  // Pie Chart with small slices - Config Style
   smallSlicesPieChart: {
     type: "Pie",
     data: [
@@ -470,7 +430,6 @@ export const entities = {
     hasTooltip: true,
   },
 
-  // Half Pie Chart - Config Style
   halfPieChart: {
     type: "Donut",
     data: [
@@ -489,7 +448,6 @@ export const entities = {
     hasLegend: true,
   },
 
-  // Pie Chart - Config Style
   categoryPieChart: {
     type: "Pie",
     data: [
@@ -505,7 +463,6 @@ export const entities = {
     hasTooltip: true,
   },
 
-  // Pie Chart - Composition Style
   categoryPieChartComposition: {
     type: "Pie",
     data: [
@@ -518,7 +475,6 @@ export const entities = {
     ],
   },
 
-  // Pie Chart with custom position - Config Style
   pieCustomPosition: {
     type: "Pie",
     data: [
@@ -529,12 +485,11 @@ export const entities = {
     ],
     width: 500,
     height: 400,
-    cx: "35%", // Custom X position
-    cy: "35%", // Custom Y position
+    cx: "35%",
+    cy: "35%",
     hasTooltip: true,
   },
 
-  // Pie Chart with custom position - Composition Style
   pieCustomPositionComposition: {
     type: "Pie",
     data: [
@@ -545,7 +500,6 @@ export const entities = {
     ],
   },
 
-  // Pie Chart with partial angle - Config Style
   piePartial: {
     type: "Pie",
     data: [
@@ -556,12 +510,11 @@ export const entities = {
     ],
     width: 500,
     height: 400,
-    startAngle: 180, // Start at 180° (left)
-    endAngle: 0, // End at 0° (right) - creates half circle
+    startAngle: 180,
+    endAngle: 0,
     hasTooltip: true,
   },
 
-  // Pie Chart with partial angle - Composition Style
   piePartialComposition: {
     type: "Pie",
     data: [
@@ -572,7 +525,6 @@ export const entities = {
     ],
   },
 
-  // Pie Chart with padding - Config Style
   pieWithPadding: {
     type: "Pie",
     data: [
@@ -583,11 +535,10 @@ export const entities = {
     ],
     width: 500,
     height: 400,
-    paddingAngle: 5, // 5 degrees gap between sectors
+    paddingAngle: 5,
     hasTooltip: true,
   },
 
-  // Pie Chart with padding - Composition Style
   pieWithPaddingComposition: {
     type: "Pie",
     data: [
@@ -598,23 +549,21 @@ export const entities = {
     ],
   },
 
-  // Pie Chart with minimum angle - Config Style
   pieMinAngle: {
     type: "Pie",
     data: [
       { label: "Large", value: 50 },
       { label: "Medium", value: 30 },
-      { label: "Small", value: 5 }, // Very small, but will be at least minAngle
-      { label: "Tiny", value: 3 }, // Very small, but will be at least minAngle
+      { label: "Small", value: 5 },
+      { label: "Tiny", value: 3 },
       { label: "Other", value: 12 },
     ],
     width: 500,
     height: 400,
-    minAngle: 10, // Each sector has at least 10 degrees
+    minAngle: 10,
     hasTooltip: true,
   },
 
-  // Pie Chart with minimum angle - Composition Style
   pieMinAngleComposition: {
     type: "Pie",
     data: [
@@ -626,7 +575,6 @@ export const entities = {
     ],
   },
 
-  // Pie Chart with rounded corners - Config Style
   pieRounded: {
     type: "Pie",
     data: [
@@ -637,11 +585,10 @@ export const entities = {
     ],
     width: 500,
     height: 400,
-    cornerRadius: 10, // Rounded edges
+    cornerRadius: 10,
     hasTooltip: true,
   },
 
-  // Pie Chart with rounded corners - Composition Style
   pieRoundedComposition: {
     type: "Pie",
     data: [
@@ -652,7 +599,6 @@ export const entities = {
     ],
   },
 
-  // Pie Chart with custom data structure - Config Style
   pieCustomData: {
     type: "Pie",
     data: [
@@ -663,12 +609,11 @@ export const entities = {
     ],
     width: 500,
     height: 400,
-    dataKey: (d) => d.sales, // Extract value from "sales"
-    nameKey: (d) => d.product, // Extract label from "product"
+    dataKey: (d) => d.sales,
+    nameKey: (d) => d.product,
     hasTooltip: true,
   },
 
-  // Pie Chart with custom data structure - Composition Style
   pieCustomDataComposition: {
     type: "Pie",
     data: [
@@ -679,7 +624,6 @@ export const entities = {
     ],
   },
 
-  // Pie Chart combining multiple features - Config Style
   pieAdvanced: {
     type: "Pie",
     data: [
@@ -690,13 +634,12 @@ export const entities = {
     ],
     width: 500,
     height: 400,
-    paddingAngle: 3, // Space between sectors
-    cornerRadius: 8, // Rounded edges
-    minAngle: 5, // Minimum angle per sector
+    paddingAngle: 3,
+    cornerRadius: 8,
+    minAngle: 5,
     hasTooltip: true,
   },
 
-  // Pie Chart combining multiple features - Composition Style
   pieAdvancedComposition: {
     type: "Pie",
     data: [
@@ -707,11 +650,6 @@ export const entities = {
     ],
   },
 
-  // ============================================
-  // DONUT CHARTS
-  // ============================================
-
-  // Donut Chart - Config Style
   categoryDonutChart: {
     type: "Donut",
     data: [
@@ -727,7 +665,6 @@ export const entities = {
     hasTooltip: true,
   },
 
-  // Donut Chart - Composition Style
   categoryDonutChartComposition: {
     type: "Pie",
     data: [
@@ -738,11 +675,6 @@ export const entities = {
     ],
   },
 
-  // ============================================
-  // HELPER ENTITIES (for Composition examples)
-  // ============================================
-
-  // Product Chart - for Line Chart Recharts-style composition
   productLineChart: {
     type: "Line",
     data: [
@@ -756,7 +688,6 @@ export const entities = {
     ],
   },
 
-  // Product Chart - for Area Chart Recharts-style composition
   productAreaChart: {
     type: "Area",
     data: [
@@ -770,7 +701,6 @@ export const entities = {
     ],
   },
 
-  // Product Chart - for Bar Chart Recharts-style composition
   productBarChart: {
     type: "Bar",
     data: [
@@ -783,11 +713,6 @@ export const entities = {
     ],
   },
 
-  // ============================================
-  // HORIZONTAL BAR, SCATTER, RADAR AND RADIAL CHARTS
-  // ============================================
-
-  // Horizontal Bar Chart - Config Style
   horizontalBarChart: {
     type: "Bar",
     orientation: "horizontal",
@@ -804,7 +729,6 @@ export const entities = {
     xAxisLabel: "Votes",
   },
 
-  // Horizontal Bar Chart - Composition Style
   horizontalBarChartComposition: {
     type: "Bar",
     data: [
@@ -814,7 +738,6 @@ export const entities = {
     ],
   },
 
-  // Scatter Chart - Config Style
   scatterChart: {
     type: "Scatter",
     data: [
@@ -845,7 +768,6 @@ export const entities = {
     yAxisLabel: "km per litre",
   },
 
-  // Scatter Chart sized by z - Composition Style
   scatterChartComposition: {
     type: "Scatter",
     data: [
@@ -861,7 +783,6 @@ export const entities = {
     ],
   },
 
-  // Radar Chart - Config Style
   radarChart: {
     type: "Radar",
     data: [
@@ -877,7 +798,6 @@ export const entities = {
     hasLegend: true,
   },
 
-  // Radar Chart - Composition Style
   radarChartComposition: {
     type: "Radar",
     data: [
@@ -889,7 +809,6 @@ export const entities = {
     ],
   },
 
-  // Radial Chart - Config Style
   radialChart: {
     type: "Radial",
     data: [
@@ -902,7 +821,6 @@ export const entities = {
     hasTooltip: true,
   },
 
-  // Radial Chart - Composition Style
   radialChartComposition: {
     type: "Radial",
     data: [

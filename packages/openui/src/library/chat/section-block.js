@@ -18,7 +18,6 @@ export const SectionItem = defineComponent({
     trigger: z.string(),
     content: z.array(z.any()),
   }),
-  // Rendered by its SectionBlock.
   component: () => null,
 })
 
@@ -58,9 +57,6 @@ export const SectionBlock = defineComponent({
       })
     }
 
-    // As the answer arrives every section opens, so it shows as it is
-    // written; once it is whole, only the first stays open. Whatever the user
-    // opens or closes from then on is theirs.
     const opened = viewState(`${statementId ?? "sections"}:open`, null)
     const open =
       opened.value ??

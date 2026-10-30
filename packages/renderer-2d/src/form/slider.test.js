@@ -6,8 +6,6 @@ import { renderSlider } from "./slider.js"
 const A_SIZE = [100, 20]
 
 test("it should draw a track as wide as it is", () => {
-  // The track is the full width, so a slider that is not dragged still shows how far
-  // along its range it has got.
   expect(trackWidth({ size: A_SIZE })).toBe(A_SIZE[0])
 })
 
@@ -18,7 +16,6 @@ test("the track should be drawn on its own position, whichever way round it is",
 })
 
 test("it should fill the track up to the value", () => {
-  // A value halfway along a track fills half of it, measured from the left
   expect(fillWidth({ size: A_SIZE, min: 0, max: 10, value: 5 })).toBe(
     A_SIZE[0] / 2,
   )
@@ -32,11 +29,8 @@ test("a value at either end should fill the whole track or none of it", () => {
 })
 
 test("it should draw the knob where the value is", () => {
-  // The knob is the last box drawn, which is how it is told apart from the two bars
-  // underneath it.
   const { box } = drawing({ size: A_SIZE, min: 0, max: 10, value: 5 })
 
-  // centred on the middle of the track
   expect(box.left + box.right).toBeCloseTo(0)
 })
 
@@ -70,8 +64,6 @@ test("it should draw the value to the right of the track", () => {
 })
 
 test("it should show as many decimals as the step has", () => {
-  // A slider that moves in hundredths and reads out fifteen of them is not showing its
-  // value but its arithmetic.
   const calls = drawing({
     size: A_SIZE,
     min: 0,
@@ -90,8 +82,6 @@ test("a whole-number step should show no decimals at all", () => {
 })
 
 test("a value with no room between the steps should not run past the track", () => {
-  // A value handed to a slider it was never configured for would otherwise put the knob
-  // somewhere off the end of its own track.
   expect(fillWidth({ size: A_SIZE, min: 0, max: 1, value: 99 })).toBe(A_SIZE[0])
 })
 

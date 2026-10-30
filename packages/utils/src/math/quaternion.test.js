@@ -43,7 +43,7 @@ test("it should combine a zero-angle quaternion with a nonzero-angle quaternion"
 test("it should combine two nonzero-angle quaternions", () => {
   const q1 = quaternion(pi() / 2)
   const q2 = quaternion(pi() / 2)
-  const expectedResult = [2.220446049250313e-16, 0, 1, 0] // close to [0, 0, 1, 0]
+  const expectedResult = [2.220446049250313e-16, 0, 1, 0]
 
   expect(combine(q1, q2)).toStrictEqual(expectedResult)
 })

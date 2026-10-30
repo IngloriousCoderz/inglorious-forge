@@ -52,7 +52,7 @@ it("should create a task on formSubmit and update the store on taskCreated", asy
   const state = store.getState()
 
   expect(state.list.tasks).toEqual([mockCreatedTask])
-  expect(state.form.value).toBe("") // Also check that the form was cleared
+  expect(state.form.value).toBe("")
 })
 
 it("should toggle a task on toggleClick and update the store on taskUpdated", async () => {

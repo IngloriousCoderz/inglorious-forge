@@ -23,8 +23,6 @@
     accent-color: var(--iw-slider-accent);
   }
 
-  /* A tick per step, under the track: their ends sit under the thumb's ends
-     of travel, half a thumb in from the track's. */
   .iw-slider-marks {
     display: flex;
     justify-content: space-between;
@@ -37,9 +35,6 @@
     }
   }
 
-  /* Two thumbs on one track. The inputs lie on top of each other with their
-     own tracks hidden, and only their thumbs take presses, so either can be
-     dragged; the track below is drawn here, filled between the two. */
   &.iw-slider-range {
     --iw-slider-thumb: 1rem;
 

@@ -34,7 +34,7 @@ describe("withThrottle", () => {
     const behavior = compose(baseType)
 
     expect(behavior.scroll).toBeTypeOf("function")
-    expect(behavior.untouched).toBeUndefined() // not re-wrapped, left to normal composition merge
+    expect(behavior.untouched).toBeUndefined()
   })
 
   it("skips handler names the base type doesn't define, without throwing", () => {
@@ -99,14 +99,12 @@ describe("withThrottle", () => {
     const api = createFakeApi({ e1: liveEntity })
 
     behavior.scroll(staleDraft, "a", api)
-    vi.advanceTimersByTime(100) // close leading window, no trailing queued yet
-    behavior.scroll(staleDraft, "b", api) // new leading call
-    behavior.scroll(staleDraft, "c", api) // queues trailing
+    vi.advanceTimersByTime(100)
+    behavior.scroll(staleDraft, "b", api)
+    behavior.scroll(staleDraft, "c", api)
 
     vi.advanceTimersByTime(100)
 
-    // the trailing invocation should receive the live entity from api.getEntity,
-    // not the stale draft object that was passed into the handler
     expect(original).toHaveBeenLastCalledWith(liveEntity, "c", api)
   })
 
@@ -117,13 +115,11 @@ describe("withThrottle", () => {
     const api = createFakeApi({ e1: { id: "e1" } })
 
     behavior.scroll({ id: "e1" }, "a", api)
-    behavior.scroll({ id: "e1" }, "b", api) // queues trailing call
+    behavior.scroll({ id: "e1" }, "b", api)
 
     api._destroy("e1")
     vi.advanceTimersByTime(100)
 
-    // leading call happened once; trailing call was skipped because the
-    // entity no longer exists
     expect(original).toHaveBeenCalledTimes(1)
   })
 
@@ -134,7 +130,7 @@ describe("withThrottle", () => {
     const api = createFakeApi({ e1: { id: "e1" }, e2: { id: "e2" } })
 
     behavior.scroll({ id: "e1" }, "a", api)
-    behavior.scroll({ id: "e2" }, "b", api) // different entity, own window
+    behavior.scroll({ id: "e2" }, "b", api)
 
     expect(original).toHaveBeenCalledTimes(2)
   })
@@ -146,12 +142,11 @@ describe("withThrottle", () => {
     const api = createFakeApi({ e1: { id: "e1" } })
 
     behavior.scroll({ id: "e1" }, "a", api)
-    behavior.scroll({ id: "e1" }, "b", api) // queues a trailing call
+    behavior.scroll({ id: "e1" }, "b", api)
 
     behavior.destroy({ id: "e1" }, undefined, api)
     vi.advanceTimersByTime(100)
 
-    // trailing call must not fire after destroy cancelled it
     expect(original).toHaveBeenCalledTimes(1)
   })
 

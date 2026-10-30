@@ -105,7 +105,7 @@ test("it should conjugate a vector", () => {
 test("it should create a 3D vector given its magnitude and angle", () => {
   const magnitude = sqrt(2)
   const angle = pi() / 4
-  const expectedResult = v(1, -0, 1.0000000000000002) // close to v(1, 0, 1)
+  const expectedResult = v(1, -0, 1.0000000000000002)
 
   expect(createVector(magnitude, angle)).toStrictEqual(expectedResult)
 })
@@ -135,7 +135,7 @@ test("it should build a 3D vector from a 2D one", () => {
 
 test("it should create a 3D unit vector from an angle", () => {
   const angle = pi() / 4
-  const expectedResult = v(0.7071067811865475, -0, 0.7071067811865476) // close to [cos(angle), 0, sin(angle)]
+  const expectedResult = v(0.7071067811865475, -0, 0.7071067811865476)
 
   expect(fromAngle(angle)).toStrictEqual(expectedResult)
 })
@@ -217,7 +217,7 @@ test("it should raise a scalar to the power of each component of a vector", () =
 test("it should rotate a 2D vector by a certain angle", () => {
   const vector = v(1, 0)
   const angle = pi() / 4
-  const expectedResult = v(0.7071067811865475, 0.7071067811865476) // close to [cos(pi/4), sin(pi/4)]
+  const expectedResult = v(0.7071067811865475, 0.7071067811865476)
 
   expect(rotate(vector, angle)).toStrictEqual(expectedResult)
 })
@@ -233,7 +233,7 @@ test("it should not rotate a vector when the angle is zero", () => {
 test("it should rotate a vector by a certain angle", () => {
   const vector = v(1, 0, 0)
   const angle = pi() / 4
-  const expectedResult = v(0.7071067811865475, -0, 0.7071067811865476) // close to [cos(pi/4), 0, sin(pi/4)]
+  const expectedResult = v(0.7071067811865475, -0, 0.7071067811865476)
 
   expect(rotate(vector, angle)).toStrictEqual(expectedResult)
 })
@@ -241,14 +241,14 @@ test("it should rotate a vector by a certain angle", () => {
 test("it should rotate a vector that faces left by a certain angle", () => {
   const vector = v(-1, 0, 0)
   const angle = pi() / 4
-  const expectedResult = v(-0.7071067811865475, -0, -0.7071067811865476) // close to [cos(-3/4pi), 0, sin(-3/4pi)]
+  const expectedResult = v(-0.7071067811865475, -0, -0.7071067811865476)
 
   expect(rotate(vector, angle)).toStrictEqual(expectedResult)
 })
 
 test("it should change the angle of a vector", () => {
   const vector = v(cos(pi() / 4), 0, sin(pi() / 4))
-  const expectedResult = v(6.123233995736766e-17, 0, 1) // close to v(0, 0, 1)
+  const expectedResult = v(6.123233995736766e-17, 0, 1)
 
   expect(setAngle(vector, 1.5707963267948966)).toStrictEqual(expectedResult)
 })
@@ -340,7 +340,7 @@ test("it should create a unit vector oriented on the X-axis", () => {
 })
 
 test("it should create a unit vector oriented on the Z-axis", () => {
-  expect(unit(pi() / 2)).toStrictEqual(v(6.123233995736766e-17, 0, 1)) // close to v(0, 0, 1)
+  expect(unit(pi() / 2)).toStrictEqual(v(6.123233995736766e-17, 0, 1))
 })
 
 test("it should create a vector from a list of coordinates", () => {
@@ -432,8 +432,6 @@ describe("negate", () => {
   })
 
   test("it should answer negative zero for zero", () => {
-    // Negating zero gives negative zero: equal to zero in any calculation, but not
-    // strictly equal, so it will not match a `toStrictEqual` on `[0, 0, 0]`.
     const negated = negate([0, 0, 0])
 
     expect(Object.is(negated[X], -0)).toBe(true)
@@ -483,8 +481,6 @@ describe("randomVector", () => {
   })
 
   test("it should give a fixed axis exactly that value", () => {
-    // A range that starts and ends on the same number can only answer it, which is
-    // how an axis is held still.
     sample([0, 7, 0], [0, 7, 0]).forEach((vector) => {
       expect(vector[Y]).toBe(7)
     })

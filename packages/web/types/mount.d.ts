@@ -7,9 +7,6 @@ import type {
   Api as StoreApi,
 } from "@inglorious/store"
 
-// `mount` gives the store's api a `render`, so loading these types gives the
-// store's `Api` one too. There is a single `Api`: the one handlers receive,
-// and the one components take.
 declare module "@inglorious/store" {
   interface Api<
     TEntity extends BaseEntity = BaseEntity,

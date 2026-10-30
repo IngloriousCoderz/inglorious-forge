@@ -13,8 +13,6 @@ const FONTS = [
 window.addEventListener("load", async () => {
   game.entities.game.isMobile = /Mobi/i.test(navigator.userAgent)
 
-  // The pixel fonts are drawn on the canvas, so they have to be ready before
-  // the first frame is painted.
   await Promise.all(FONTS.map((font) => document.fonts.load(font).catch(noop)))
 
   const canvas = document.getElementById("canvas")

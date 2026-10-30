@@ -10,7 +10,6 @@ function transform(code) {
   }).code
 }
 
-// Existing tests
 test("it should transform vector + vector addition", () => {
   const code = `const v1 = v(1, 2);
 const v2 = v(3, 4);
@@ -102,8 +101,6 @@ test("it should throw an error for scalar - vector", () => {
   )
 })
 
-// New tests for additional operations
-
 test("it should transform vector - vector subtraction", () => {
   const code = `const v1 = v(5, 6);
 const v2 = v(1, 2);
@@ -157,8 +154,6 @@ const result = +v1;`
 
   expect(transform(code)).toMatchSnapshot()
 })
-
-// Compound assignment tests
 
 test("it should transform vector += vector", () => {
   const code = `let v1 = v(1, 2);
@@ -224,8 +219,6 @@ v1 *= v2;`
   expect(transform(code)).toMatchSnapshot()
 })
 
-// Division and modulus operations
-
 test("it should transform scalar / vector", () => {
   const code = `const v1 = v(1, 2);
 const result = 5 / v1;`
@@ -262,8 +255,6 @@ const result = 2 ** v1;`
   expect(transform(code)).toMatchSnapshot()
 })
 
-// Complex chaining tests
-
 test("it should handle chaining with division", () => {
   const code = `const v1 = v(10, 20);
 const v2 = v(1, 2);
@@ -298,8 +289,6 @@ const newPosition = (position + velocity * dt) % worldSize;`
   expect(transform(code)).toMatchSnapshot()
 })
 
-// Edge cases
-
 test("it should handle nested expressions", () => {
   const code = `const v1 = v(1, 2);
 const v2 = v(3, 4);
@@ -324,8 +313,6 @@ positions[0] += velocity;`
 
   expect(transform(code)).toMatchSnapshot()
 })
-
-// Tests for ensuring regular number operations are NOT transformed
 
 test("it should not transform number + number addition", () => {
   const code = "const result = 5 + 3;"
@@ -387,8 +374,6 @@ const sum = numbers[0] + numbers[1];`
   expect(transform(code)).toMatchSnapshot()
 })
 
-// Additional runtime safety tests
-
 test("it should throw an error for mixed vector/scalar subtraction", () => {
   const code = `const a = v(1, 2);
 const b = 3;
@@ -415,9 +400,6 @@ const result = getVec() * getScalar() + v(3, 4);`
   expect(transform(code)).toMatchSnapshot()
 })
 
-// Array method tests
-
-// Basic method transformations
 test("it should transform vector.map() calls", () => {
   const code = `const velocity = v(1, 2);
 const doubled = velocity.map(x => x * 2);`
@@ -474,7 +456,6 @@ const reversed = velocity.reduceRight((acc, x) => [...acc, x], []);`
   expect(transform(code)).toMatchSnapshot()
 })
 
-// Chained operations
 test("it should transform chained array methods", () => {
   const code = `const velocity = v(1, 2, 3);
 const result = velocity.map(x => x * 2).filter(x => x > 3);`
@@ -490,7 +471,6 @@ const result = velocity.map(x => x * 2) + position;`
   expect(transform(code)).toMatchSnapshot()
 })
 
-// Methods on different types of vector expressions
 test("it should transform methods on vector variables", () => {
   const code = `const pos = v(1, 2);
 const doubled = pos.map(x => x * 2);`
@@ -533,7 +513,6 @@ const doubled = velocities[0].map(x => x * 2);`
   expect(transform(code)).toMatchSnapshot()
 })
 
-// Methods that shouldn't be transformed
 test("it should not transform array methods on non-vectors", () => {
   const code = `const numbers = [1, 2, 3];
 const doubled = numbers.map(x => x * 2);`
@@ -557,7 +536,6 @@ obj.map();`
   expect(transform(code)).toBe(code)
 })
 
-// Edge cases with reduce
 test("it should handle reduce returning scalars", () => {
   const code = `const velocity = v(1, 2);
 const sum = velocity.reduce((a, b) => a + b, 0);
@@ -580,7 +558,6 @@ const obj = velocity.reduce((acc, val, i) => ({ ...acc, [i]: val }), {});`
   expect(transform(code)).toMatchSnapshot()
 })
 
-// Complex combinations
 test("it should handle array methods in vector operations", () => {
   const code = `const velocity = v(1, 2);
 const acceleration = v(0.1, 0.2);
@@ -603,7 +580,6 @@ const result = matrix.map(row => row.map(x => x * 2));`
   expect(transform(code)).toMatchSnapshot()
 })
 
-// Performance/edge cases
 test("it should handle very long method chains", () => {
   const code = `const velocity = v(1, 2, 3, 4);
 const result = velocity
@@ -624,23 +600,18 @@ const filtered = velocity.filter((x, i) => i === 0 || x > 1);`
   expect(transform(code)).toMatchSnapshot()
 })
 
-// Methods that return single values (should still be wrapped for safety)
 test("it should handle find() method", () => {
   const code = `const velocity = v(1, 2, 3);
 const found = velocity.find(x => x > 1);`
 
-  // Note: find() returns a single value, but we might still want to wrap it
-  // in case someone does something weird like velocity.find(() => [1, 2])
   expect(transform(code)).toMatchSnapshot()
 })
 
-// Potential gotchas
 test("it should handle method calls with computed property names", () => {
   const code = `const velocity = v(1, 2);
 const method = 'map';
 const doubled = velocity[method](x => x * 2);`
 
-  // This should NOT be transformed because it's computed (velocity[method])
   expect(transform(code)).toMatchSnapshot()
 })
 

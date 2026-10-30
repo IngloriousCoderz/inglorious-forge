@@ -10,7 +10,6 @@ export const Chat = {
       ...entity,
       onDraftChange: (draft) => api.notify(`#${id}:draftChange`, draft),
       onSend: (text) => api.notify(`#${id}:messageSend`, text),
-      // A message naming an entity, such as a generated answer, shows it.
       renderEntity: (entityId) => api.render(entityId),
     }
 

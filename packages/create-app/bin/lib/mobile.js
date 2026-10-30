@@ -14,8 +14,6 @@ export function addMobileSupport(targetDir, pkg, projectName) {
   pkg.devDependencies["@capacitor/android"] = CAPACITOR_VERSION
   pkg.devDependencies["@capacitor/cli"] = CAPACITOR_VERSION
   pkg.devDependencies["@capacitor/ios"] = CAPACITOR_VERSION
-  // For capacitor.config.ts. A TypeScript template already has its own, which
-  // its code is written against.
   pkg.devDependencies["typescript"] ??= TYPESCRIPT_VERSION
 
   pkg.scripts.cap = "cap"
@@ -124,9 +122,6 @@ export default config
 `
 }
 
-// A TypeScript template type-checks and lints its config files through
-// tsconfig.node.json, so a new one has to be listed there. Edited as text, so
-// the `include` line keeps the one-line layout Prettier gives it.
 function includeInNodeProject(targetDir, file) {
   const tsconfigPath = path.join(targetDir, "tsconfig.node.json")
   if (!fs.existsSync(tsconfigPath)) return

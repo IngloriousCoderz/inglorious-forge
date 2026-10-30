@@ -21,7 +21,6 @@
 export function keyboard() {
   let handleKeyDown, handleKeyUp
 
-  // What each key that is currently down was pressed as.
   const pressedAs = {}
   let currentDocument = null
 
@@ -41,9 +40,6 @@ export function keyboard() {
       currentDocument.addEventListener("keyup", handleKeyUp)
     },
 
-    // What this device answers to is set on this device. Each one that reads a mapping
-    // takes the change itself rather than being handed it, because the one thing a
-    // handler can be trusted to change is the entity it was given.
     mappingChange(entity, mapping) {
       entity.mapping = mapping
     },
@@ -65,9 +61,6 @@ export function keyboard() {
         api.notify("inputPress", { action })
       }
 
-      // Remembered, because a key can still be down when the mapping it was pressed under
-      // is changed under it -- and the release then has to go back to the action that was
-      // pressed rather than looking it up in a mapping that no longer names it.
       pressedAs[keyCode] = action
     },
 
@@ -95,8 +88,6 @@ function createKeyDownHandler(api) {
     event.stopPropagation()
     api.notify("keyboardKeyDown", event.code)
 
-    // Holding a key down arrives as further keydowns, which is what typing
-    // should do.
     if (isCharacter(event.key)) {
       api.notify("keyboardChar", { character: event.key })
     }
@@ -110,8 +101,6 @@ function createKeyUpHandler(api) {
   }
 }
 
-// Anything that is not a single printable character carries a word instead:
-// modifiers, navigation and function keys among them.
 const SINGLE_CHARACTER = 1
 
 function isCharacter(key) {

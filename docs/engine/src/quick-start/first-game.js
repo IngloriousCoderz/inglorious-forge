@@ -43,10 +43,6 @@ export default {
   },
 
   entities: {
-    // By explicitely defining the game entity and enabling devMode, you can connect
-    // your game to the Redux DevTools browser extension. This allows you to inspect
-    // the game state, travel back in time through state changes, and dispatch events
-    // manually, which is incredibly useful for debugging.
     game: {
       type: "Game",
       devMode: true,

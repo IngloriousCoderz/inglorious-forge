@@ -91,7 +91,6 @@ describe("Sale", () => {
     store.notify("#sale1:pay", 5000)
     store.notify("#pricing:policyChange", "regular")
 
-    // $39.00 - 10% + $3.90 tax
     expect(store.getEntity("sale1")).toMatchObject({
       state: "complete",
       receipt: { total: 3900, payment: 5000, change: 1100 },

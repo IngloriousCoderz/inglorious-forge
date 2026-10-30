@@ -28,8 +28,6 @@ const NEXT_LEVEL = 2
  * @returns {T} A deep clone of the input value.
  */
 export function clone(value) {
-  // A vector holds numbers and nothing else, so it needs no copying below the top -- and
-  // building it in one go is noticeably cheaper than copying it and tagging the copy.
   if (value?.__isVector__) {
     return v(...value)
   }
@@ -244,9 +242,6 @@ export function get(obj, path, defaultValue = undefined) {
 export function isDeepEqual(left, right, seen = new WeakMap()) {
   if (Object.is(left, right)) return true
 
-  // `Object.is` has already said no to these two being the same object, and neither can be
-  // walked: a function is equal to itself and nothing else, and a key present in one and
-  // not the other is a difference even when both read as undefined.
   if (typeof left !== "object" || typeof right !== "object") return false
   if (left === null || right === null) return false
 
@@ -372,7 +367,6 @@ export function produce(baseState, recipe, ...args) {
  */
 export function serialize(obj) {
   function replacer(key, value) {
-    // Handle top-stage vector
     if (value?.__isVector__) {
       return {
         _type: "vector",
@@ -429,9 +423,7 @@ export function set(obj, path, value) {
     const key = keys[i]
     const nextKey = keys[i + NEXT_KEY_OFFSET]
 
-    // Create missing intermediate objects
     if (!(key in current) || typeof current[key] !== "object") {
-      // Create array if next key is a number, object otherwise
       current[key] = /^\d+$/.test(nextKey) ? [] : {}
     }
 

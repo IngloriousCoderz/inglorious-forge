@@ -102,7 +102,6 @@ export function renderBarSeries(primitive, frame) {
   const dataKey = primitive.props?.dataKey
   const fill = primitive.props?.fill || resolveSeriesColor(frame, dataKey)
   const { barWidth, groupStart } = getBarGeometry(primitive, frame)
-  // A stacked bar starts where the bars below it in its stack end.
   const stacked = primitive.props?.stackId
     ? createSeriesPoints(primitive, frame)
     : null
@@ -113,7 +112,6 @@ export function renderBarSeries(primitive, frame) {
         const value = Number.isFinite(row?.[dataKey]) ? row[dataKey] : 0
         const start = getCategoryX(scales, index) + groupStart
         const point = stacked?.[index]
-        // Where the bar ends and where it starts on the value axis.
         const end = point
           ? Number.isFinite(point.y)
             ? point.y
@@ -222,10 +220,6 @@ export function getCartesianTooltipAnchor(frame, { index, dataKey }) {
   return Number.isFinite(point?.y) ? { x: point.x, y: point.y } : null
 }
 
-// Bars of several series share each category, side by side, except that the
-// bars of one stack share a single place, one on top of the other. They
-// always fit within the category: with many categories they get thin rather
-// than overlapping.
 function getBarGeometry(primitive, frame) {
   const slots = []
   frame.primitives

@@ -65,8 +65,6 @@ export const Tabs = {
   renderTab(item, index, props) {
     const tabValue = item.value ?? index
     const selected = tabValue === props.value
-    // Only one tab is in the Tab order, and the arrow keys move between them:
-    // the selected tab, or the first one while none is.
     const hasSelection = props.items.some(
       (other, otherIndex) => (other.value ?? otherIndex) === props.value,
     )

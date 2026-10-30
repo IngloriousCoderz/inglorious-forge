@@ -35,8 +35,6 @@ describe("a button", () => {
   })
 
   test("pressing one button does not press them all", () => {
-    // A press is told to every entity that can hear about one, so a button has to read
-    // the id out of the report -- otherwise a game with any two buttons has none.
     game.notify("entityPress", "one")
     game.step()
 
@@ -57,8 +55,6 @@ describe("a button", () => {
   })
 
   test("a click on its own leaves it alone", () => {
-    // A browser says `click` once the pointer is already up. A button that took its cue
-    // from it would latch down here and have nothing left to lift it again.
     game.notify("entityClick", "one")
     game.step()
 

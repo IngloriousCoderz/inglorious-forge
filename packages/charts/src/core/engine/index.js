@@ -58,9 +58,6 @@ function getRenderPrimitives(frame) {
     return orderedPrimitives
   }
 
-  // Precompute area peaks once to avoid recalculating them inside sort
-  // comparator (which would otherwise call getAreaPeak many times).
-  // Keeps the same ordering logic: larger peaks first.
   const sortedAreas = areaPrimitives
     .map((primitive) => ({
       primitive,

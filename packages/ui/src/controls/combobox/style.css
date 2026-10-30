@@ -5,7 +5,6 @@
   flex-direction: column;
   gap: var(--iw-space-1);
   font-family: var(--iw-font-family-sans);
-  /* Each combobox anchors its own dropdown to its own frame. */
   anchor-scope: --iw-combobox;
 
   &.iw-combobox-full-width {
@@ -42,7 +41,6 @@
     anchor-name: --iw-combobox;
     display: flex;
     align-items: center;
-    /* The gap spaces the text from the arrow, as it does for Input's icons. */
     gap: var(--iw-space-2);
     padding: 0 var(--iw-space-3);
     border: 1px solid var(--iw-input-border);
@@ -82,7 +80,6 @@
       box-shadow: var(--iw-input-shadow-focus);
     }
 
-    /* The control is focusable so it can be opened from the keyboard. */
     &:focus-visible {
       outline: none;
       border-color: var(--iw-input-border-focus);
@@ -110,9 +107,6 @@
       }
     }
 
-    /* The text element, whatever it is showing. Same role as
-       .iw-input-control in Input, so the shared rules live here and the
-       variant classes only add what is specific to them. */
     .iw-combobox-control {
       flex: 1;
       min-width: 0;
@@ -168,11 +162,6 @@
       justify-content: center;
       font-size: var(--iw-font-size-sm);
       line-height: 1;
-      /* A flex child, like Input's icons and the Select arrow. Absolutely
-         positioning it anchored to .iw-combobox rather than the frame, so
-         the glyph drifted whenever a label sat above the control, and it
-         needed a reserved padding strip to stop text running under it. The
-         row's gap does both. */
       flex: none;
       pointer-events: none;
       color: var(--iw-color-text-muted);
@@ -184,9 +173,6 @@
     }
   }
 
-  /* A popover in the top layer, placed under the frame and as wide as it,
-     flipping above when there is no room below. The browser's popover box
-     is centred in the viewport, so its insets, margin and colours are reset. */
   .iw-combobox-dropdown {
     position-anchor: --iw-combobox;
     position-area: block-end span-inline-end;

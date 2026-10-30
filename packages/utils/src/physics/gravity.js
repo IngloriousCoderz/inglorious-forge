@@ -6,11 +6,11 @@
 
 import { zero } from "../math/vector.js"
 
-const DEFAULT_DT = 1 // Default delta time for the applyGravity function.
-const DEFAULT_JUMP = 0 // Default maximum jump height.
-const DEFAULT_LEAP = 0 // Default maximum leap distance.
-const DEFAULT_SPEED = 0 // Default maximum speed.
-const NO_VELOCITY = 0 // No initial velocity.
+const DEFAULT_DT = 1
+const DEFAULT_JUMP = 0
+const DEFAULT_LEAP = 0
+const DEFAULT_SPEED = 0
+const NO_VELOCITY = 0
 
 /**
  * Applies gravity to an object based on its current velocity and position.

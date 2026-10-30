@@ -5,8 +5,6 @@
 
 import { clamp } from "@inglorious/utils/math/number.js"
 
-// Every rect is in fractions of the image (0-1 on both axes), so it survives
-// any display size and maps onto source pixels only when the image is cropped.
 export const DEFAULT_MIN_SIZE = 0.1
 export const DEFAULT_STEP = 0.02
 export const FULL_RECT = { x: 0, y: 0, w: 1, h: 1 }

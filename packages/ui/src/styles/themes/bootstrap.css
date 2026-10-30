@@ -2,17 +2,10 @@
   --iw-font-family-sans:
     system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans",
     "Liberation Sans", Arial, sans-serif;
-  /* The theme on the page itself: the element with the theme class, usually
-     <body>, takes its background, text color and font. */
   background-color: var(--iw-color-bg);
   color: var(--iw-color-text);
   font-family: var(--iw-font-family-sans);
 
-  /* ========================================
-     BOOTSTRAP THEME - Bootstrap 5 defaults
-     ======================================== */
-
-  /* Semantic Colors */
   --iw-color-bg: var(--iw-color-white);
   --iw-color-bg-secondary: #f8f9fa;
   --iw-color-bg-tertiary: #e9ecef;
@@ -32,7 +25,6 @@
   --iw-color-primary-active: #0a58ca;
   --iw-color-primary-text: var(--iw-color-white);
 
-  /* Bootstrap's secondary color */
   --iw-color-accent: #6c757d;
   --iw-color-accent-hover: #5c636a;
   --iw-color-accent-active: #565e64;
@@ -51,17 +43,11 @@
   --iw-shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.175);
   --iw-shadow-xl: 0 1rem 3rem rgba(0, 0, 0, 0.175);
 
-  /* Bootstrap's border radii */
   --iw-radius-sm: 0.25rem;
   --iw-radius-md: 0.375rem;
   --iw-radius-lg: 0.5rem;
   --iw-radius-xl: 1rem;
 
-  /* ========================================
-     COMPONENT TOKENS
-     ======================================== */
-
-  /* Button */
   --iw-button-bg: var(--iw-color-primary);
   --iw-button-bg-hover: var(--iw-color-primary-hover);
   --iw-button-bg-active: var(--iw-color-primary-active);
@@ -72,7 +58,6 @@
   --iw-button-shadow-hover: none;
   --iw-button-shadow-active: none;
 
-  /* Input */
   --iw-input-bg: var(--iw-color-bg);
   --iw-input-bg-hover: var(--iw-color-bg);
   --iw-input-bg-focus: var(--iw-color-bg);
@@ -84,13 +69,10 @@
   --iw-input-radius: var(--iw-radius-md);
   --iw-input-shadow-focus: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 
-  /* App bar: a navbar on the tertiary background */
   --iw-app-bar-bg: var(--iw-color-bg-secondary);
 
-  /* Drawer */
   --iw-drawer-bg: var(--iw-color-surface);
 
-  /* Card */
   --iw-card-bg: var(--iw-color-surface);
   --iw-card-border: color-mix(
     in srgb,
@@ -101,13 +83,10 @@
   --iw-card-shadow: none;
   --iw-card-shadow-hover: var(--iw-shadow-sm);
 
-  /* Badge */
   --iw-badge-radius: var(--iw-radius-md);
 
-  /* Chip: a pill badge in a subtle tone */
   --iw-chip-bg: var(--iw-color-bg-tertiary);
 
-  /* List */
   --iw-list-item: transparent;
   --iw-list-item-selected: color-mix(
     in srgb,
@@ -115,13 +94,11 @@
     transparent
   );
 
-  /* Alert */
   --iw-alert-radius: var(--iw-radius-md);
   --iw-alert-shadow: none;
   color-scheme: light;
 }
 
-/* Dark variant: Bootstrap's dark color mode */
 .iw-theme-bootstrap.iw-theme-dark {
   color-scheme: dark;
 
@@ -136,15 +113,12 @@
   --iw-color-text-muted: rgba(222, 226, 230, 0.75);
   --iw-color-border: #495057;
 
-  /* Buttons keep their colors; text in the primary color is lightened */
   --iw-color-link: #6ea8fe;
 
   --iw-card-border: color-mix(in srgb, var(--iw-color-white) 15%, transparent);
 }
 
 .iw-theme-bootstrap {
-  /* Buttons: Bootstrap's sizes, a focus ring, and the text that reads on each
-     color */
   .iw-button {
     padding: 0.375rem 0.75rem;
     font-size: 1rem;
@@ -223,7 +197,6 @@
         );
     }
 
-    /* Outline buttons fill with their color on hover */
     &.iw-button-outline:hover:not(:disabled),
     &.iw-button-outline:active:not(:disabled),
     &.iw-button-outline.iw-button-pressed {
@@ -236,7 +209,6 @@
       background-color: var(--iw-button-bg-active);
     }
 
-    /* Ghost buttons are link buttons */
     &.iw-button-ghost {
       text-decoration: underline;
 
@@ -266,8 +238,6 @@
     }
   }
 
-  /* Form controls: labels and help text at Bootstrap's sizes, and a red focus
-     ring on invalid fields */
   .iw-input,
   .iw-select,
   .iw-textarea-field {
@@ -304,7 +274,6 @@
     height: calc(1.5em + 0.75rem);
   }
 
-  /* Switch: an outlined track whose thumb fills in when checked */
   .iw-switch {
     .iw-switch-track {
       width: 2rem;
@@ -373,7 +342,6 @@
     }
   }
 
-  /* Tabs: nav tabs, the selected one joined to the content below it */
   .iw-tabs-list {
     gap: 0;
   }
@@ -408,7 +376,6 @@
     color: var(--iw-color-link);
   }
 
-  /* Chips and badges: Bootstrap badges, bold and white on their color */
   .iw-chip {
     &.iw-chip-primary,
     &.iw-chip-success,
@@ -469,14 +436,12 @@
     }
   }
 
-  /* Cards: a header and a footer on a faint tint, ruled off from the body */
   .iw-card-header,
   .iw-card-footer {
     border-color: var(--iw-card-border);
     background-color: color-mix(in srgb, var(--iw-color-text) 3%, transparent);
   }
 
-  /* Unless given a padding of their own */
   .iw-card-header:not([class*="iw-card-header-padding-"]),
   .iw-card-footer:not([class*="iw-card-footer-padding-"]) {
     padding: 0.5rem 1rem;
@@ -488,8 +453,6 @@
     line-height: 1.2;
   }
 
-  /* Alerts: a subtle background, an emphasized text and a border, all in the
-     tone of the alert */
   .iw-alert {
     padding: 1rem;
   }
@@ -534,7 +497,6 @@
     --iw-alert-color: var(--iw-color-accent);
   }
 
-  /* Tables: no outer border, compact cells and bold headings */
   .iw-table {
     border: 0 none;
   }
@@ -552,7 +514,6 @@
     background: color-mix(in srgb, var(--iw-color-text) 5%, transparent);
   }
 
-  /* Dialogs: a modal with a ruled header and footer */
   .iw-dialog {
     border: 1px solid var(--iw-card-border);
     border-radius: var(--iw-radius-lg);
@@ -601,7 +562,6 @@
     border-top: 1px solid var(--iw-color-border);
   }
 
-  /* App bars: navbars, with no border */
   .iw-app-bar {
     border-bottom: 0 none;
   }

@@ -25,14 +25,7 @@ export function pressable() {
 export function buttonType() {
   return [
     {
-      // Before the state machine, because a behaviour's `create` replaces any that came
-      // before it rather than running alongside: put last, this would quietly take over
-      // the one that gives the button its starting state, and every event would then
-      // look for a state the button does not have.
       create(entity) {
-        // A button with a size is a button you can press. Saying so here means a game
-        // does not have to describe the same rectangle twice: once to draw it and once
-        // to be hit by it.
         entity.collisions ??= {}
         entity.collisions.hitbox ??= { shape: "rectangle" }
       },

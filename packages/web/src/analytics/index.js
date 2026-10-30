@@ -71,7 +71,6 @@ export function createAnalytics({ adapter, consentKey = DEFAULT_CONSENT_KEY }) {
       call(() => adapter.setConsent(isGranted))
       if (!isGranted) return
 
-      // The page the answer came from is the first one measured.
       const router = api.getEntity("router")
       if (router?.route) {
         call(() => adapter.pageView({ route: router.route, path: router.path }))

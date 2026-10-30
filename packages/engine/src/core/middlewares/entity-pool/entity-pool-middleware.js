@@ -12,8 +12,6 @@ export function entityPoolMiddleware() {
     store.extras ??= {}
     store.extras.getAllActivePoolEntities = () => pools.getAllActiveEntities()
 
-    // Pooled entities live outside of the store, so they are merged into the
-    // given entities to take part in collision detection just like the others.
     store.extras.findCollision = (
       entity,
       entities = store.getState(),
@@ -53,8 +51,6 @@ export function entityPoolMiddleware() {
           const entityIds = eventMap.getEntitiesForEvent(event.type)
           for (const id of entityIds) {
             const entity = pools.activeEntitiesById.get(id)
-            // An id can outlive its entity, if it was pooled away between the
-            // lookup and here. There is nothing to hand the event to.
             if (!entity) continue
 
             const type = store.getType(entity.type)

@@ -32,8 +32,6 @@ export function firebasePush({
   deleteToken,
   tokenKey = DEFAULT_TOKEN_KEY,
 }) {
-  // A browser's half of the plugin loads on its first call, and needs the
-  // app started by then.
   function messaging() {
     startFirebase(firebase)
     return FirebaseMessaging
@@ -52,15 +50,12 @@ export function firebasePush({
       return toPermission(receive)
     },
 
-    // A browser shows its dialog only within the tap that asked, so
-    // Notification.requestPermission runs before anything awaits.
     async request() {
       if (IS_WEB) return toPermission(await Notification.requestPermission())
       const { receive } = await messaging().requestPermissions()
       return toPermission(receive)
     },
 
-    // The same token again, unless FCM rotated it.
     async register() {
       const options = IS_WEB
         ? {

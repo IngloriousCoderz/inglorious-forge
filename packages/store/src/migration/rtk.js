@@ -76,8 +76,6 @@ export function convertAsyncThunk(name, payloadCreator, options = {}) {
         : undefined,
 
       run: async (payload, api) => {
-        // RTK payloadCreator signature: (arg, thunkAPI)
-        // Use dispatch for action compatibility, with notify fallback in tests/minimal APIs.
         const dispatch = api.dispatch
           ? api.dispatch.bind(api)
           : (action) => {
@@ -170,15 +168,12 @@ export function convertSlice(slice, options = {}) {
   const { asyncThunks = {}, extraHandlers = {}, extraActions = [] } = options
 
   const type = {
-    // Convert initialState to create handler.
-    // Preserve explicitly preloaded fields from entities (common in tests/SSR hydration).
     create(entity) {
       const initialState = slice.getInitialState()
       Object.assign(entity, extend(initialState, entity))
     },
   }
 
-  // Convert each reducer to an event handler
   for (const [actionName, reducer] of Object.entries(slice.caseReducers)) {
     const thunkConfig = asyncThunks[actionName]
     const isAsyncThunkReducer =
@@ -249,22 +244,15 @@ export function convertSlice(slice, options = {}) {
     }
 
     const handler = (entity, payload) => {
-      // Create a mock action object for the RTK reducer
       const action = { type: `${slice.name}/${actionName}`, payload }
 
-      // RTK reducers expect to mutate state directly (via Immer)
-      // Inglorious handlers do the same (via Mutative)
-      // So we can call the reducer directly on the entity
       reducer(entity, action)
     }
 
-    // Expose both Inglorious-style event names and RTK action-type aliases.
-    // This enables direct dispatch of RTK slice actions without extra bridge wiring.
     type[actionName] = handler
     type[`${slice.name}/${actionName}`] = handler
   }
 
-  // Convert explicitly configured async thunks that are not embedded in slice reducers.
   for (const [thunkName, thunkHandlers] of Object.entries(asyncThunks)) {
     if (thunkHandlers?.payloadCreator && !type[thunkName]) {
       const asyncHandlers = convertAsyncThunk(
@@ -283,9 +271,6 @@ export function convertSlice(slice, options = {}) {
     }
   }
 
-  // Register additional RTK action types (e.g. createAction + extraReducers).
-  // RTK does not expose extraReducers through slice.caseReducers, so callers can
-  // provide the action creators/types explicitly and we route them through slice.reducer.
   for (const action of extraActions) {
     const actionType = typeof action === "string" ? action : action?.type
     if (typeof actionType !== "string" || type[actionType]) continue
@@ -295,7 +280,6 @@ export function convertSlice(slice, options = {}) {
     }
   }
 
-  // Add any extra handlers
   Object.assign(type, extraHandlers)
 
   return type
@@ -330,7 +314,6 @@ export function createMigrationGuide(slice) {
   lines.push("=".repeat(SEP_LENGTH))
   lines.push("")
 
-  // Show state structure
   lines.push("STATE STRUCTURE:")
   lines.push("RTK:")
   lines.push(
@@ -350,7 +333,6 @@ export function createMigrationGuide(slice) {
   lines.push("=".repeat(SEP_LENGTH))
   lines.push("")
 
-  // Show each reducer conversion
   lines.push("ACTIONS / EVENTS:")
   for (const actionName of Object.keys(slice.caseReducers)) {
     lines.push("")
@@ -365,7 +347,6 @@ export function createMigrationGuide(slice) {
   lines.push("=".repeat(SEP_LENGTH))
   lines.push("")
 
-  // Show selector conversion
   lines.push("SELECTORS:")
   lines.push("RTK:")
   lines.push(
@@ -403,22 +384,17 @@ export function createMigrationGuide(slice) {
 export function createRTKCompatDispatch(api, entityId) {
   return (action) => {
     if (typeof action === "function") {
-      // Thunk - not supported in compat mode
       console.warn("Thunks are not supported in RTK compat mode")
       return
     }
 
-    // Extract action type and payload
     const { type, payload } = action
 
-    // Convert RTK action type to Inglorious event
-    // RTK: 'todos/addTodo' -> Inglorious: '#todos:addTodo'
     const parts = type.split("/")
     if (parts.length === SLICE_PLUS_ACTION) {
       const [, actionName] = parts
       api.notify(`#${entityId}:${actionName}`, payload)
     } else {
-      // Fallback for non-standard action types
       api.notify(`#${entityId}:${type}`, payload)
     }
   }

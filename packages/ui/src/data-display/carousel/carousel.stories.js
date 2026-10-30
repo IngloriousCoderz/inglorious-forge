@@ -149,8 +149,6 @@ export const ManyPerView = {}
 ManyPerView.args = {
   ...Default.args,
   id: "carousel-many",
-  // The infinite treadmill keeps one slide at its centre, so it is not a good
-  // fit when several slides are intentionally visible at once.
   isInfinite: false,
 }
 ManyPerView.decorators = [

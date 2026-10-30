@@ -17,14 +17,11 @@
     width: 100%;
   }
 
-  /* A column stage otherwise shrink-wraps to its arrows instead of the
-     available inline size. */
   &.iw-carousel-vertical {
     display: block;
     width: 100%;
   }
 
-  /* Snapping, swiping, momentum and RTL all come from the browser. */
   .iw-carousel-viewport {
     position: relative;
     display: flex;
@@ -45,19 +42,11 @@
     outline-offset: 2px;
   }
 
-  /* One item per view by default, so every item can reach the start of the
-     viewport and each one is exactly one page. Override
-     --iw-carousel-item-size to show several at once. */
   .iw-carousel-item {
     flex: 0 0 var(--iw-carousel-item-size, 100%);
     scroll-snap-align: start;
   }
 
-  /* Smooth scrolling would animate every drag step, so it is turned off while
-     dragging. Snapping stays on: the browser then lands on the nearest slide by
-     itself, and re-enabling it instead would snap back to the item it
-     remembered. Doubled up on the class so this outranks the reduced-motion
-     rule at the end of the file. */
   .iw-carousel-viewport.iw-carousel-viewport-dragging {
     scroll-behavior: auto;
     scroll-snap-type: none;
@@ -77,7 +66,6 @@
     overscroll-behavior-y: contain;
   }
 
-  /* Gap tokens mirror Flex. */
   &.iw-carousel-gap-sm .iw-carousel-viewport {
     gap: var(--iw-space-2);
   }
@@ -94,7 +82,6 @@
     gap: var(--iw-space-8);
   }
 
-  /* Off-axis alignment. */
   &.iw-carousel-align-start .iw-carousel-viewport {
     align-items: flex-start;
   }
@@ -107,7 +94,6 @@
     align-items: flex-end;
   }
 
-  /* The stage holds the viewport and its arrows, so centring ignores the dots. */
   .iw-carousel-stage {
     position: relative;
     display: flex;
@@ -125,7 +111,6 @@
     min-width: 0;
   }
 
-  /* Inside: float the arrows over the slides. */
   &.iw-carousel-arrows-inside .iw-carousel-stage {
     gap: 0;
   }
@@ -160,13 +145,11 @@
     bottom: var(--iw-carousel-arrow-inset);
   }
 
-  /* Outside: the arrows sit beside the scrolling area, flex handles centring. */
   &.iw-carousel-arrows-outside .iw-carousel-arrow {
     position: static;
     flex: 0 0 auto;
   }
 
-  /* Chevrons drawn with borders, no icon font needed. */
   .iw-carousel-chevron {
     display: block;
     width: 0;
@@ -225,7 +208,6 @@
   }
 }
 
-/* Respect reduced motion: only animate paging when the user allows it. */
 @media (prefers-reduced-motion: no-preference) {
   .iw-carousel .iw-carousel-viewport {
     scroll-behavior: smooth;

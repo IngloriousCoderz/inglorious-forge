@@ -77,9 +77,6 @@ export function render(props) {
 
   const progress = value == null ? null : clamp(value)
 
-  // An attribute, not a property: removing it is the only way back to
-  // indeterminate, which `:indeterminate` styles and assistive tech announces
-  // as busy.
   return html`<progress
     class=${classMap({
       "iw-progress": true,

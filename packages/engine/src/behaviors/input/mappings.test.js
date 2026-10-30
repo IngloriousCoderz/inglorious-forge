@@ -6,16 +6,12 @@ import { gamepad } from "./gamepad.js"
 import { keyboard } from "./keyboard.js"
 import { mappings } from "./mappings.js"
 
-// The keyboard reads the document when it is made. What is being tested is what it is
-// told, not what it listens to.
 beforeEach(() => {
   vi.stubGlobal("document", { body: {}, addEventListener: () => {} })
 
   return () => vi.unstubAllGlobals()
 })
 
-// A machine that moves, and the devices that answer to it. Written the way a game writes
-// it, so that what is tested is what a game would actually get.
 function world(keysByState) {
   const store = createStore({
     types: {
@@ -51,8 +47,6 @@ test("it should give each state the mapping that state answers to", () => {
     play: { ArrowLeft: "moveLeft" },
   })
 
-  // The opening state counts: a machine is already in it when it is made, and nothing
-  // announces that.
   store.update()
   expect(mapping(store, "keyboard")).toStrictEqual({
     ArrowUp: "moveItemUp",
@@ -66,8 +60,6 @@ test("it should give each state the mapping that state answers to", () => {
 })
 
 test("it should leave a state with nothing mapped deaf rather than carrying on", () => {
-  // The mistake this exists to prevent: a state nobody gave keys to going on answering
-  // whatever the state before it set.
   const store = world({
     menu: { Enter: "choose" },
     credits: {},
@@ -82,9 +74,6 @@ test("it should leave a state with nothing mapped deaf rather than carrying on",
 })
 
 test("it should reach every device that reads a mapping", () => {
-  // One key cannot mean two things depending on which of them was pressed, so this has to
-  // reach the gamepad as well as the keyboard -- and both are handed the same table,
-  // which is where keys and buttons live together.
   const table = {
     ArrowUp: "moveItemUp",
     Btn0: "moveItemUp",
@@ -99,9 +88,6 @@ test("it should reach every device that reads a mapping", () => {
 })
 
 test("it should not displace the behaviour it is composed with", () => {
-  // Behaviours compose by replacing, so a state machine would lose its own `create` -- and
-  // with it the scene it was supposed to put up. Found by a game whose screens stopped
-  // appearing, which is why this is worth a test of its own.
   const built = []
   const store = createStore({
     types: {

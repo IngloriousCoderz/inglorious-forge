@@ -6,7 +6,6 @@ import {
 
 import { IS_WEB, startFirebase } from "../app.js"
 
-// Only how the app is used: nothing for advertising.
 const AD_CONSENTS = [
   ConsentType.AdStorage,
   ConsentType.AdUserData,
@@ -41,8 +40,6 @@ export function firebaseAnalytics({ firebase }) {
 
   return {
     async setConsent(isGranted) {
-      // A refusal before anything started loads nothing: in a browser,
-      // switching Analytics off would first start it.
       if (!isGranted && !hasStarted) return
       hasStarted = true
       const status = isGranted ? ConsentStatus.Granted : ConsentStatus.Denied

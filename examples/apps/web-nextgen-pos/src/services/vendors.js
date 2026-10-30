@@ -11,7 +11,6 @@ const CENTS_PER_UNIT = 100
 const DECIMAL_PLACES = 2
 const ZERO = 0
 
-// TaxMaster: object in, object out, money in cents.
 const TAX_MASTER_RATES = { FOOD: 0.04, GENERAL: 0.1 }
 
 export const taxMaster = {
@@ -28,7 +27,6 @@ export const taxMaster = {
   },
 }
 
-// GoodAsGoldTaxPro: rows in, rows out, money as decimal strings.
 const GOOD_AS_GOLD_RATES = { F: 0.04, G: 0.1 }
 
 export const goodAsGoldTaxPro = {
@@ -46,7 +44,6 @@ export const goodAsGoldTaxPro = {
   },
 }
 
-// The remote accounting system, on the far side of a network that may not be there.
 export const accountingSystem = {
   async post(receipts, { isOnline }) {
     await wait(LATENCY)

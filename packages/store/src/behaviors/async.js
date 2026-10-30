@@ -162,7 +162,6 @@ export function handleAsync(type, handlers, options = {}) {
     }),
 
     async [`${type}Run`](entity, payload, api) {
-      // Snapshot routing keys before await — mutative revokes draft proxies after the patch.
       const scopedEntity = { id: entity.id, type: entity.type }
 
       try {

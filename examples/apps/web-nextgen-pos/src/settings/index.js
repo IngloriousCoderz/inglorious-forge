@@ -10,22 +10,18 @@ const TAX_CALCULATOR_OPTIONS = [
   { value: "goodAsGold", label: "GoodAsGold TaxPro" },
 ]
 
-// The pricing policy in force. Switching it swaps the Strategy every total is
-// worked out with, including the one on screen right now.
 export const Pricing = {
   policyChange(entity, policyId) {
     entity.policyId = policyId
   },
 }
 
-// Which adapter the tax Factory hands out.
 export const Services = {
   taxCalculatorChange(entity, taxCalculator) {
     entity.taxCalculator = taxCalculator
   },
 }
 
-// A stand-in for the network cable, so that the accounting failover can be tried out.
 export const Network = {
   change(entity, isOnline, api) {
     entity.isOnline = isOnline

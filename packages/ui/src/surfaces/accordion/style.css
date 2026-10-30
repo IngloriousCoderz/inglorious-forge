@@ -11,8 +11,6 @@
   border-top: 1px solid var(--iw-color-border);
 }
 
-/* A <summary>: flex drops the browser's disclosure marker, and the caret
-   stands in for it. */
 .iw-accordion-trigger {
   padding: var(--iw-space-3) var(--iw-space-4);
   display: flex;

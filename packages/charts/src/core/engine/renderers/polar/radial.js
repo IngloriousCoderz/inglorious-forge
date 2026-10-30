@@ -66,13 +66,9 @@ export function renderRadialBars(primitive, frame) {
   `
 }
 
-// A ring's name sits just before where the ring starts, in the space the
-// rings leave open, written along the ring so the names of adjacent rings
-// never collide; on the lower half it turns round, to read the right way up.
 function renderRingLabel({ radius, startAngle, label }) {
   const sin = Math.sin(startAngle)
   const cos = Math.cos(startAngle)
-  // Back from the start along the ring, the way it would come from.
   const x = radius * sin - cos * LABEL_GAP
   const y = -radius * cos - sin * LABEL_GAP
   const degrees = normalizeDegrees(toDegrees(startAngle))
@@ -129,7 +125,6 @@ function getRings(primitive, frame) {
   const nameKey = primitive.props?.nameKey || entity.nameKey
   const rows = entity.data
   const largest = max(rows, (row) => row?.[dataKey]) || 1
-  // Degrees clockwise from twelve o'clock, as a pie's.
   const startAngle = toRadians(primitive.props?.startAngle ?? 0)
   const endAngle = toRadians(
     primitive.props?.endAngle ??

@@ -40,8 +40,6 @@ export function hmr() {
 
     async transform(code, id) {
       if (!isServe) return null
-      // .vue files arrive here already compiled to JavaScript by
-      // @inglorious/vite-plugin-vue, which runs before this plugin.
       if (!/\.([jt]sx?|vue)$/.test(id)) return null
 
       if (typeFileMap.has(id)) {
@@ -69,9 +67,6 @@ export function hmr() {
         : new Map()
 
       if (!store) return null
-      // Registering happens before the statement that mounts. When mount()
-      // is nested, as in \`ready.then(() => mount(store, ...))\`, that is only
-      // safe for a store that exists at module scope: an imported one.
       if (mount.isNested && !findImportInfoForLocal(ast, store.name)) {
         return null
       }
@@ -154,8 +149,6 @@ function findStoreIdentifier(node) {
   return null
 }
 
-// The expression under TypeScript-only syntax: \`x as T\`, \`x satisfies T\`,
-// \`x!\`, \`<T>x\`.
 function unwrapTypeScript(node) {
   let expr = node
   while (

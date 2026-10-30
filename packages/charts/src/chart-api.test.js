@@ -19,7 +19,6 @@ import {
   YAxis,
 } from "./index.js"
 
-// The rendered markup, without lit's hydration comments.
 const toHtml = (template) =>
   collectResultSync(render(template))
     .replace(/<!--[^>]*-->/g, "")
@@ -293,7 +292,6 @@ describe("chart state", () => {
       { name: "Feb", online: 20, shop: 20 },
     ]
 
-    // Every bar's top and bottom edge, in drawing order.
     const barEdges = (html) =>
       [
         ...html.matchAll(
@@ -336,7 +334,6 @@ describe("chart state", () => {
     })
 
     it("draws a line along the curve it names", () => {
-      // A curve needs three points: through two, every curve is straight.
       const points = [
         { name: "Jan", value: 10 },
         { name: "Feb", value: 30 },
@@ -390,7 +387,6 @@ describe("chart state", () => {
       )
 
       expect(half).not.toBe(full)
-      // The first slice of the top half starts at nine o'clock.
       expect(half).toMatch(/<path d="M-[\d.]+,0A/)
     })
   })
@@ -566,7 +562,6 @@ describe("chart state", () => {
       },
       { name: "B", values: [{ x: 25, y: 15, z: 100 }] },
     ]
-    // The points, leaving out the legend's swatches.
     const circles = (html) =>
       [
         ...html
@@ -656,7 +651,6 @@ describe("chart state", () => {
           ],
         }),
       )
-      // The first spoke points up: its vertex' y is minus its distance out.
       const [first] = [
         ...html
           .split('class="iw-chart-radar"')[1]
@@ -742,7 +736,6 @@ describe("chart state", () => {
           ],
         }),
       )
-      // Each label's name line: where it is, and on which side.
       const labels = [
         ...html.matchAll(
           /<text x="([\d.-]+)" y="([\d.-]+)" style="fill: var\(--iw-chart-text, [^"]*" font-size="12" text-anchor="(start|end)" >\s*(\w+)/g,
@@ -755,7 +748,6 @@ describe("chart state", () => {
           .filter((label) => label.anchor === anchor)
           .sort((a, b) => a.y - b.y)
         side.slice(1).forEach((label, i) => {
-          // Two lines, name and share, and a little gap.
           expect(label.y - side[i].y).toBeGreaterThanOrEqual(30)
         })
       }

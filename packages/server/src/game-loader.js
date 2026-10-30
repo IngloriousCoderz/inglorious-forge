@@ -27,7 +27,6 @@ export async function loadGame(gameFilePath, logger) {
     logger.error(`Failed to load game module: ${gameFilePath}`)
     logger.error(error)
 
-    // Fallback to a basic initial state if loading fails.
     logger.warn("Using default game state as a fallback.")
     gameConfig = {}
     return gameConfig

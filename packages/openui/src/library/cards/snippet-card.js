@@ -18,7 +18,6 @@ export const SnippetCardItem = defineComponent({
     lhs: z.union([IconText.ref, ImageText.ref]),
     rhs: z.union([Text.ref, BoldText.ref]).optional(),
   }),
-  // Rendered by its block.
   component: () => null,
 })
 
@@ -38,7 +37,6 @@ export const SnippetCardBlock = defineComponent({
             gap: "sm",
             children: [
               renderNode(item.lhs),
-              // A value beside its label stays small, as in OpenUI.
               when(item.rhs, () =>
                 renderNode({
                   ...item.rhs,

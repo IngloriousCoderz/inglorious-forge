@@ -58,11 +58,6 @@ export function renderSlider(entity, ctx) {
 
   ctx.restore()
 
-  // The entity is said first in each, for the same reason a button says it that way: a
-  // slider's own `size` is its track, not the size of the lettering on it.
-  //
-  // The label is left out when there is nothing to say, because `renderText` draws an
-  // empty string as a real call.
   if (label) {
     write(
       { ...entity, value: label, size: labelSize, color: labelColor },

@@ -45,7 +45,6 @@ export async function mount(store, renderFn, element, options = {}) {
 
   const shouldHydrate = allowHydrate && element.hasChildNodes()
 
-  // If we need to hydrate, load the heavy lifting only now
   if (shouldHydrate) {
     const { hydrate } = await import("@lit-labs/ssr-client")
     const result = renderRoot(renderFn, api, onError, fallback)
@@ -66,7 +65,6 @@ export async function mount(store, renderFn, element, options = {}) {
   const unsubscribe = store.subscribe(() => {
     const result = renderRoot(renderFn, api, onError, fallback)
     if (result.ok) {
-      // Standard render is already in the main bundle (it's small)
       render(result.template, element)
     } else if (fallback) {
       render(result.fallback, element)

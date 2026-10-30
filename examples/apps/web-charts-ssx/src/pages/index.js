@@ -1,4 +1,3 @@
-// Chart theme (plain CSS) — applies on the server-rendered page and after hydration.
 import "@inglorious/charts/base.css"
 import "@inglorious/charts/theme.css"
 

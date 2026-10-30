@@ -151,7 +151,6 @@ function polygonPoints(count, radiusOf) {
   ).join(" ")
 }
 
-// Categories go clockwise from twelve o'clock.
 function angleOf(index, count) {
   return (index / Math.max(1, count)) * 2 * Math.PI
 }

@@ -19,8 +19,6 @@ describe("an entity with a rate of its own", () => {
   })
 
   test("it moves once its rate has been reached", () => {
-    // Six frames of a sixtieth of a second is a tenth of a second, which is one turn for
-    // something moving ten times a second.
     const { type, entity } = build()
 
     run(type, entity, 6)
@@ -29,7 +27,6 @@ describe("an entity with a rate of its own", () => {
   })
 
   test("it moves about as often as its rate says", () => {
-    // A second of frames is sixty of them, and a second of ten moves is ten.
     const { type, entity } = build()
 
     run(type, entity, 60)
@@ -38,8 +35,6 @@ describe("an entity with a rate of its own", () => {
   })
 
   test("it is told the time since its last move, not the frame's", () => {
-    // Six sixtieths of a second, which a game moving by velocity times dt has to move
-    // by in full or it runs six times too slowly for asking to move ten times a second.
     const { type, entity } = build()
 
     run(type, entity, 6)
@@ -56,8 +51,6 @@ describe("an entity with a rate of its own", () => {
   })
 
   test("a frame that leaves more time than the rate allows carries all of it", () => {
-    // The rate is a ceiling and not a floor: a slow frame is one move covering all of
-    // itself rather than a move that falls further and further behind.
     const { type, entity } = build()
 
     run(type, entity, 3, 0.2)
@@ -67,8 +60,6 @@ describe("an entity with a rate of its own", () => {
   })
 
   test("each entity keeps its own time", () => {
-    // Two animals of the same kind, one of them born a moment after the other: they are
-    // not a single clock the first of them would spend for both.
     const { type } = build()
     const early = { id: "early", type: "Thing", moved: 0, elapsed: 0 }
     const late = { id: "late", type: "Thing", moved: 0, elapsed: 0 }
@@ -103,9 +94,6 @@ describe("an entity with a rate of its own", () => {
   })
 
   test("a behavior put after it takes the gating away", () => {
-    // The reason it has to go last, written as a test because it is invisible
-    // otherwise: each behavior wraps the ones before it, so anything after this one is
-    // reached first and this one never gets to say.
     const ahead = vi.fn()
     const type = augmentType([atFps(TEN_FPS), { update: ahead }])
     const entity = { id: "thing", type: "Thing" }
@@ -117,8 +105,6 @@ describe("an entity with a rate of its own", () => {
   })
 
   test("it does not stop the frame from being drawn", () => {
-    // The whole point of keeping its own time: the loop, and what is drawn on it, are
-    // not this entity's to slow down.
     const frame = vi.fn()
     const game = createGame({
       types: {

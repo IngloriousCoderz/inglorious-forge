@@ -5,23 +5,14 @@ import { createGameOfLife } from "../src/game-of-life/index.js"
 
 const A_GENERATION = 1
 
-// A world in a test turns every frame: these tests are about the rules, and a
-// step is meant to be one of them rather than one tenth of a second's worth.
 const EVERY_FRAME = Infinity
 
-// The rate the board actually turns at, and how many steps of a test it takes to reach
-// one -- for the one test that is about the rate rather than the rules. A step is the
-// harness's sixteenth of a second, so seven of them is the first whole tenth.
 const FRAMES_SHORT_OF_A_TENTH = 6
 const FRAMES_A_TENTH = 7
 
-// A blinker turns over once every two generations, so it is back where it started after
-// two, and a glider walks one square across and one square down every four.
 const A_BLINKER_CYCLE = 2
 const A_GLIDER_JOURNEY = 4
 
-// Conway's board wraps around, so these are the two squares the other side of the board
-// that the board counts as being next door.
 const ACROSS_THE_EDGE = [
   [
     [0, 0],
@@ -31,20 +22,16 @@ const ACROSS_THE_EDGE = [
 
 describe("Conway's Game of Life", () => {
   test("a cell on its own dies, having nothing to keep it alive", () => {
-    // given one cell, alone on an empty board
     const game = createGame(
       createGameOfLife({ patterns: [[[10, 10]]], fps: EVERY_FRAME }),
     )
 
-    // when a generation passes
     game.step(A_GENERATION)
 
-    // then it is gone, because two neighbours is the fewest a cell survives on
     expect(living(game)).toEqual([])
   })
 
   test("a block of four stays exactly where it is", () => {
-    // given the stillest thing in Conway's
     const game = createGame(
       createGameOfLife({
         patterns: [
@@ -59,15 +46,12 @@ describe("Conway's Game of Life", () => {
       }),
     )
 
-    // when the world turns over and over
     game.step(8 * A_GENERATION)
 
-    // then none of it died and none of it moved
     expect(living(game)).toEqual(["10,10", "10,11", "11,10", "11,11"])
   })
 
   test("a blinker turns over and then back again", () => {
-    // given a row of three
     const game = createGame(
       createGameOfLife({
         patterns: [
@@ -81,22 +65,16 @@ describe("Conway's Game of Life", () => {
       }),
     )
 
-    // when a generation passes
     game.step(A_GENERATION)
 
-    // then it is standing on end instead, which is the same three cells the other way up
     expect(living(game)).toEqual(["19,21", "20,21", "21,21"])
 
-    // and when another generation passes
     game.step(A_GENERATION)
 
-    // then it is a row again
     expect(living(game)).toEqual(["20,20", "20,21", "20,22"])
   })
 
   test("a cell dies of crowding, and says nothing about its neighbours", () => {
-    // given a rectangle of six, whose four corners have three neighbours each and whose
-    // two middles have five
     const game = createGame(
       createGameOfLife({
         patterns: [
@@ -113,11 +91,8 @@ describe("Conway's Game of Life", () => {
       }),
     )
 
-    // when a generation passes
     game.step(A_GENERATION)
 
-    // then the four corners are still there and the two middles are not, and the two
-    // squares above and below the middle have filled up because three met in each
     expect(living(game)).toEqual([
       "10,10",
       "10,12",
@@ -129,7 +104,6 @@ describe("Conway's Game of Life", () => {
   })
 
   test("a cell is born where three cells meet", () => {
-    // given three cells in an L, which is the one shape that always makes another
     const game = createGame(
       createGameOfLife({
         patterns: [
@@ -143,15 +117,12 @@ describe("Conway's Game of Life", () => {
       }),
     )
 
-    // when a generation passes
     game.step(A_GENERATION)
 
-    // then the corner they leave empty fills up
     expect(living(game)).toEqual(["10,10", "10,11", "11,10", "11,11"])
   })
 
   test("a glider walks one square across and one square down", () => {
-    // given a glider
     const game = createGame(
       createGameOfLife({
         patterns: [
@@ -167,24 +138,19 @@ describe("Conway's Game of Life", () => {
       }),
     )
 
-    // when it has walked four generations
     game.step(A_GLIDER_JOURNEY * A_GENERATION)
 
-    // then it is one across and one down, and still made of five cells
     expect(living(game)).toHaveLength(5)
     expect(living(game)).not.toContain("30,51")
   })
 
   test("the world counts the far side of the board as next door", () => {
-    // given two cells in opposite corners, which are neighbours on a board that wraps
     const game = createGame(
       createGameOfLife({ patterns: ACROSS_THE_EDGE, fps: EVERY_FRAME }),
     )
 
-    // when a generation passes
     game.step(A_GENERATION)
 
-    // then they were each other's only neighbour, and two is not enough
     expect(living(game)).toEqual([])
   })
 
@@ -208,14 +174,10 @@ describe("Conway's Game of Life", () => {
   })
 
   test("the three patterns the game starts with do not fight each other", () => {
-    // given the world as it actually ships
     const game = createGame(createGameOfLife({ fps: EVERY_FRAME }))
 
-    // when the world turns for a good while
     game.step(20 * A_GENERATION)
 
-    // then the block is still exactly where it was and still whole, which it could only
-    // be if nothing else had wandered over and touched it
     expect(cellsAt(game, ["14,30", "14,31", "15,30", "15,31"])).toEqual([
       "14,30",
       "14,31",
@@ -233,18 +195,11 @@ function living(game) {
 }
 
 test("the board turns at its own rate rather than at the loop's", () => {
-  // Every other world in this file is asked to turn every frame, which is the point of
-  // them: a step is a generation. This one is built the way a browser would build it, so
-  // that the rate itself is what is under test.
   const game = createGame(createGameOfLife({ patterns: [[[10, 10]]] }))
 
-  // Six steps is under a tenth of a second, so the board has not turned yet -- which is
-  // the whole difference between a board that turns ten times a second and one that
-  // turns with whatever the browser manages.
   game.step(FRAMES_SHORT_OF_A_TENTH)
   expect(cells(game)).toHaveLength(1)
 
-  // And on the seventh the board turns, which is the lonely cell dying of it.
   game.step(FRAMES_A_TENTH - FRAMES_SHORT_OF_A_TENTH)
   expect(cells(game)).toHaveLength(0)
 })

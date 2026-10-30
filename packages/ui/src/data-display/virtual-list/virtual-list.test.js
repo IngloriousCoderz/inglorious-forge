@@ -215,7 +215,7 @@ describe("virtualList", () => {
       const container = document.createElement("div")
       render(VirtualList.render(entity, api), container)
 
-      VirtualList.scroll(entity, { scrollTop: 500 }) // ~item 10
+      VirtualList.scroll(entity, { scrollTop: 500 })
       render(VirtualList.render(entity, api), container)
 
       const indices = [...container.querySelectorAll("[data-index]")].map(

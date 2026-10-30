@@ -26,9 +26,7 @@ export function createViteConfig(options = {}) {
         // (`<circle/><text/>` becomes `<circle><text/></circle>`), and SVG
         // shapes don't render children — charts vanish. html-minifier-terser's
         // keepClosingSlash only covers void HTML elements, so it can't fix it.
-        ViteImageOptimizer({
-          // Options can be overridden by the user in site.config.js via the `vite` property
-        }),
+        ViteImageOptimizer({}),
         markdownPlugin(markdown),
       ],
       build: {

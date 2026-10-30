@@ -1,8 +1,6 @@
 import { BOARD_COLUMNS, BOARD_ROWS } from "../../constants.js"
 import { place } from "../../grid.js"
 
-// A cell that is already alive stays alive on two or three neighbours, and nothing else
-// comes alive except on exactly three. Those are the only two numbers in Conway's rules.
 const SURVIVES_ON = [2, 3]
 const IS_BORN_ON = 3
 

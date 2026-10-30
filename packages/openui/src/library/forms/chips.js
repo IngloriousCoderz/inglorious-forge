@@ -23,7 +23,6 @@ export const ChipItem = defineComponent({
     icon: Icon.ref.optional(),
     disabled: z.boolean().optional(),
   }),
-  // Rendered by its Chips.
   component: () => null,
 })
 

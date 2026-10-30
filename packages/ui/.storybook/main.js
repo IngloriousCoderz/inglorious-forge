@@ -12,7 +12,6 @@ export default defineMain({
   addons: [
     {
       name: getAbsolutePath("@storybook/addon-docs"),
-      // GitHub Flavored Markdown, for the tables in MDX docs.
       options: {
         mdxPluginOptions: { mdxCompileOptions: { remarkPlugins: [remarkGfm] } },
       },
@@ -20,19 +19,12 @@ export default defineMain({
   ],
   framework: {
     name: getAbsolutePath("@storybook/web-components-vite"),
-    options: {
-      // ...
-    },
+    options: {},
   },
   async viteFinal(config) {
     return mergeConfig(config, {
       plugins: [jsx(), vue()],
 
-      // Skip esbuild's automatic dependency pre-scan of story entries. The
-      // scanner does not apply Vite plugins, so it reads `.vue` SFCs before
-      // `@inglorious/vite-plugin-vue` compiles them and fails with
-      // "No matching export ... for import DashboardVue". Deps are still
-      // discovered lazily through the normal (plugin-aware) transform pipeline.
       optimizeDeps: {
         entries: [],
       },

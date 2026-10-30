@@ -12,7 +12,6 @@ import path from "node:path"
 export async function copyPublicDir(options = {}) {
   const { outDir = "dist", publicDir = "public" } = options
 
-  // Copy public directory to dist
   const publicPath = path.join(process.cwd(), publicDir)
   const publicExists = await fs
     .access(publicPath)

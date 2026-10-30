@@ -12,8 +12,6 @@ test("it should say nothing about a configuration that is in order", () => {
 })
 
 test("it should refuse a configuration whose entity names no type", () => {
-  // This is the case that went unnoticed for so long: the entity stands there with an
-  // empty type, and every event sent to it goes nowhere.
   expect(() =>
     assertTypesAreDeclared({
       types: { Game: [] },

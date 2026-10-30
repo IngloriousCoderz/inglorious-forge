@@ -17,7 +17,6 @@ export const Callout = defineComponent({
     visible: reactive(z.boolean().optional()),
   }),
   component: ({ props, stateField, statementId }) => {
-    // Bound to a $variable, as in Callout(..., $saved), it shows while true.
     const visible = stateField(
       `${statementId ?? "callout"}:visible`,
       props.visible,

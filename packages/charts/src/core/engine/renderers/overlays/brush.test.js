@@ -112,7 +112,6 @@ function createFrame(notify = () => {}) {
   }
 }
 
-// The pan, resize-left and resize-right handlers, in that order.
 function getDragHandlers(template) {
   return template.values.filter((value) => typeof value === "function")
 }

@@ -8,10 +8,6 @@ export function mouse() {
     create(entity) {
       entity.collisions ??= {}
 
-      // Two shapes, for two different jobs. `bounds` is what the pointer is kept inside,
-      // and `hitbox` is the point that is tested against everything else -- so a mouse
-      // with only the first of them is a cursor that never touches anything, and every
-      // press it makes lands on the scene rather than on the control under it.
       entity.collisions.bounds ??= { shape: "point" }
       entity.collisions.hitbox ??= { shape: "point" }
     },
@@ -100,7 +96,7 @@ export function trackMouse(parent, api, toGamePosition) {
 export function createMouseEntity(overrides = {}) {
   return {
     type: "Mouse",
-    layer: 999, // A high layer value to ensure it's always rendered on top
+    layer: 999,
     position: zero(),
     ...overrides,
   }

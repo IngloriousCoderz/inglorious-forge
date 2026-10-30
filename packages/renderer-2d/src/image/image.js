@@ -39,52 +39,29 @@ export function renderImage(entity, ctx, api) {
   const {
     id,
     src,
-    // Where in the sheet this frame starts, in pixels. A frame is a rectangle in the
-    // picture, and saying so in the picture's own units is the whole of it: it used to be
-    // a fraction of the grid, which the renderer multiplied straight back by the grid to
-    // get here again.
     x = DEFAULT_POSITION,
     y = DEFAULT_POSITION,
     imageSize,
     tileSize = imageSize,
     scale = NATIVE_SCALE,
   } = image
-  // The region to take out of the sheet. A tile is the natural grid, but artwork
-  // does not always come in one piece per cell: a sprite can be wider than the
-  // grid it is cut from, or sit inside its cell with the background around it.
-  // Without a `frameSize` the whole tile is both read and drawn, which is what
-  // every sprite sheet that is cut on its grid already relies on.
   const [tileWidth, tileHeight] = tileSize
   const [frameWidth = tileWidth, frameHeight = tileHeight] =
     image.frameSize ?? []
-  // The size the frame is drawn at. A cropped tile is drawn at the size of the
-  // tile, not of the sheet it came out of, so this follows the tile unless a
-  // partial frame gives both the region to read and the size to read it at.
   const [drawWidth, drawHeight] = image.frameSize ?? tileSize
-  // The same anchor the hitbox and the gizmos are placed by, so a sprite and the
-  // shape that goes with it cannot drift apart.
   const [anchorX, anchorY] = entityAnchor(entity)
 
-  // A negative scale maps a `[from, from + size]` rectangle onto
-  // `[-(from + size), -from]` around the translated origin, so drawing from
-  // `-size` puts the mirrored tile back in the box the anchor picked.
   const dx = flipX ? -drawWidth : DEFAULT_POSITION
   const dy = flipY ? -drawHeight : DEFAULT_POSITION
 
-  // Where in the sheet this frame is read from, and how much of it is read.
   const sourceParams = [x, y, frameWidth, frameHeight]
 
-  // Where it lands and how big it lands, kept apart from the source because a tinted
-  // frame is a canvas of its own with the frame already cut out of it.
   const destParams = [dx, dy, drawWidth, drawHeight]
 
   ctx.save()
 
   ctx.globalAlpha = opacity
 
-  // A pair scales each axis on its own, for artwork that is not the same shape as
-  // the screen it has to fill. Skipped at native size, which keeps the scale calls a
-  // transform list rather than a pair of no-ops.
   const [scaleX, scaleY] = Array.isArray(scale) ? scale : [scale, scale]
   if (scaleX !== NATIVE_SCALE || scaleY !== NATIVE_SCALE) {
     ctx.scale(scaleX, scaleY)
@@ -108,17 +85,7 @@ export function renderImage(entity, ctx, api) {
   const images = api.getType("Images")
 
   const img = images.get(id)
-  // Whichever it came from, it has to have finished arriving. Drawing from an image that
-  // has not decoded throws, and a tinted one would copy to a blank canvas and cache that
-  // blank against its id, so the blank would go on being drawn for the rest of the session.
   if (img && isReady(img)) {
-    // An image is drawn in its own colours unless it is given one.
-    //
-    // The two are not drawn the same way. A tinted frame is a canvas of its own with the
-    // frame already cut out of it, so it is drawn whole -- giving it the source
-    // parameters as well would read from wherever the frame sits in the sheet, which for
-    // anything past the first cell is off the edge of a canvas one cell wide, and the
-    // frame would simply not appear.
     if (tint) {
       ctx.drawImage(tinted(img, sourceParams, tint), ...destParams)
     } else {
@@ -184,8 +151,6 @@ function tintedFramesFor(img) {
 
 /** Whether an image has finished arriving, and so can be drawn from. */
 function isReady(img) {
-  // A canvas-backed or already-resolved image has no `complete` to read, and an image
-  // that has loaded always reports at least one pixel of width.
   return (
     img.complete === undefined || (img.complete && img.naturalWidth > NO_PIXELS)
   )

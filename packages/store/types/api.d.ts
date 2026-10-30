@@ -36,7 +36,7 @@ export interface Api<
   select: <TResult>(selector: (state: TState) => TResult) => TResult
   dispatch: (event: Event) => void
   notify: (type: string, payload?: any) => void
-  [key: string]: any // For middleware extras
+  [key: string]: any
 }
 
 /**

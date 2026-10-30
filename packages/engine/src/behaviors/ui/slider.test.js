@@ -3,7 +3,6 @@ import { beforeEach, describe, expect, test } from "vitest"
 import { createGame } from "../../test.js"
 import { slider } from "./slider.js"
 
-// A slider 100 wide, centred on x = 500, so its track runs from 450 to 550.
 const A_SLIDER = {
   type: "Slider",
   position: [500, 0, 300],
@@ -70,22 +69,17 @@ describe("a slider", () => {
   })
 
   test("it is somewhere you can press", () => {
-    // given a slider that was never told what shape it is
     game.step()
     const { hitbox } = game.entity("one").collisions
 
-    // then it is a rectangle anyway, because a slider with a size is draggable
     expect(hitbox.shape).toBe("rectangle")
   })
 
   test("the pointer alone does not move it", () => {
-    // given a slider nobody has touched
     game.step()
 
-    // when the pointer moves right across it
     game.notify("mouseMove", ON_THE_RIGHT_END).step()
 
-    // then it stays where it was, because only a slider being dragged follows a pointer
     expect(game.entity("one").value).toBe(0)
   })
 
@@ -125,10 +119,8 @@ describe("a slider", () => {
     game.notify("mouseMove", THE_MIDDLE).step()
     game.notify("entityRelease", "one").step()
 
-    // when the pointer carries on without it
     game.notify("mouseMove", ON_THE_RIGHT_END).step()
 
-    // then it is left where it was let go
     expect(game.entity("one").value).toBe(5)
   })
 
@@ -138,13 +130,10 @@ describe("a slider", () => {
     game.notify("mouseMove", THE_MIDDLE).step()
     game.notify("mouseMove", THE_MIDDLE).step()
 
-    // A drag crosses far more pixels than a slider has steps, so announcing every one of
-    // them would be a hundred reports of the same number.
     expect(changes()).toEqual([{ entityId: "one", value: 5 }])
   })
 
   test("it says which slider moved", () => {
-    // thirteen of them on one screen means every slider hears about every other
     game.notify("entityPress", "two").step()
     game.notify("mouseMove", ON_THE_RIGHT_END).step()
 
@@ -170,8 +159,6 @@ describe("a slider", () => {
     game.notify("entityPress", "one").step()
     game.notify("mouseMove", [501, 0, 300]).step()
 
-    // A step of a quarter of the way along a hundred pixels is six pixels and a bit, so
-    // a pixel past the middle is nearer the next step than the last one.
     expect(game.entity("one").value).toBe(0.5)
   })
 

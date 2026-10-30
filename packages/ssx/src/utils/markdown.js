@@ -8,7 +8,6 @@ import texmath from "markdown-it-texmath"
 
 export function renderMarkdown(markdown) {
   const md = createMarkdownRenderer()
-  // gray-matter gives an error on the client, so we are going to use a simpler way to extract content
   const content = markdown.replace(/^---[\s\S]*?---\n/, "")
   return md.render(content)
 }
@@ -23,7 +22,6 @@ export function markdownPlugin(options = {}) {
     async transform(code, id) {
       if (!id.endsWith(".md")) return
 
-      // prevents importing gray-matter on the client
       const matter = (await import("gray-matter")).default
       const { content, data } = matter(code)
       const htmlContent = md.render(content)
@@ -73,11 +71,10 @@ function createMarkdownRenderer() {
           console.error(err)
         }
       }
-      return "" // use external default escaping
+      return ""
     },
   })
 
-  // Add LaTeX support
   md.use(texmath, {
     engine: katex,
     delimiters: "dollars",
@@ -89,8 +86,6 @@ function createMarkdownRenderer() {
     ((tokens, idx, options, env, self) =>
       self.renderToken(tokens, idx, options, env, self))
 
-  // Render mermaid fences as standalone blocks (not nested in <pre><code>),
-  // avoiding invalid HTML that can cause hydration mismatches.
   md.renderer.rules.fence = (tokens, idx, options, env, self) => {
     const token = tokens[idx]
     const lang = token.info?.trim().split(/\s+/)[0]

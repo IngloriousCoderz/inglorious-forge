@@ -52,7 +52,6 @@ describe("firebaseAnalytics", () => {
     expect(plugin.setEnabled).toHaveBeenCalledWith({ enabled: true })
   })
 
-  // In a browser, switching Analytics off would first start it.
   it("loads nothing for a refusal before anything started", async () => {
     const { analytics, plugin } = await load("web")
     await analytics.setConsent(false)
@@ -75,7 +74,6 @@ describe("firebaseAnalytics", () => {
     })
   })
 
-  // The web SDK counts history changes as page views itself.
   it("leaves a browser's page views to the web SDK", async () => {
     const { analytics, plugin } = await load("web")
     await analytics.pageView({ route: "eventList", path: "/events" })

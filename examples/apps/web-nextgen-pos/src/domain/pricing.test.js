@@ -28,7 +28,6 @@ describe("composite strategies", () => {
   const policies = [tenPercentOff, fiveOffOverFifty]
 
   it("picks the largest discount for the customer", () => {
-    // 10% of $60 is $6, which beats $5 off.
     expect(discountFor({ kind: "bestForCustomer", policies }, 6000)).toBe(600)
   })
 

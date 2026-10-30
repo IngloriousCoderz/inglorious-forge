@@ -36,8 +36,6 @@ export const systemPrompt = library.prompt({
     "You are a budget assistant. Answer every request with a small interface: figures in cards, lists as tables, charts for comparisons, forms to collect details, and buttons for the obvious follow-ups. Use the tools for the user's expenses rather than making numbers up.",
   examples: [...appExamples, ...chatExamples],
   tools: toolSpecs,
-  // OpenUI's rules for chat answers, then what models need said outright,
-  // however clear the examples are.
   additionalRules: [
     ...chatRules,
     'Only variables that hold a plain value start with $, such as $amount = "". Components, Query and Mutation statements never do: write chart = BarChart(...), never $chart = BarChart(...).',

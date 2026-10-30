@@ -55,10 +55,6 @@ export function render(props) {
   const descriptionId = id && description ? `${id}-description` : ""
   const onBackdrop = onBackdropClick ?? onClose
 
-  // The surface fills the dialog box, so a click that lands on the dialog
-  // itself can only have come from the backdrop around it. The press has to
-  // start there too: a drag from inside the surface that ends on the backdrop
-  // also clicks the dialog, and must not close it.
   return html`<dialog
     id=${id || nothing}
     class=${classMap({
@@ -83,7 +79,6 @@ export function render(props) {
       }
     }}
     @cancel=${(event) => {
-      // Without onClose nothing would take isOpen down, so Esc is refused.
       if (!onClose) event.preventDefault()
     }}
     ${ref((element) => syncDialog(element, { isOpen, isModal, onClose }))}

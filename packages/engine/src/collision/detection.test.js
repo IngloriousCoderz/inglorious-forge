@@ -98,19 +98,15 @@ test("an anchored platform should only be stood on from above", () => {
 
   const standsOn = () => findCollision(jumper, entities)
 
-  // Well clear of the platform, which spans y [0, 16].
   jumper.position = v(100, 40, 0)
   expect(standsOn()).toBeUndefined()
 
-  // Resting on it: the jumper spans y [16, 26].
   jumper.position = v(100, 21, 0)
   expect(standsOn()?.id).toBe("platform")
 
-  // A pixel higher and it clears the platform again.
   jumper.position = v(100, 22, 0)
   expect(standsOn()).toBeUndefined()
 
-  // Beside the platform, but at the same height.
   jumper.position = v(200, 21, 0)
   expect(standsOn()).toBeUndefined()
 })
@@ -154,7 +150,6 @@ test("a solid entity collides with its own size", () => {
     solid: true,
   }
 
-  // Overlapping by four pixels on the x axis, which is all it takes.
   expect(findCollision(body, { thing })).toStrictEqual(thing)
   expect(collidesWith(body, thing)).toBe(true)
 })
@@ -166,8 +161,6 @@ test("an entity that only has a size is not in the way", () => {
     solid: true,
   }
 
-  // Plenty of things have a size and are not solid: a line of text, a frame counter,
-  // anything measured in pixels rather than in space.
   const label = { position: v(100, 100, 0), size: v(8, 8, 0) }
 
   expect(findCollision(body, { label })).toBeUndefined()
@@ -179,9 +172,6 @@ test("a declared collision still wins over being solid", () => {
     size: v(8, 8, 0),
     solid: true,
   }
-  // Solid, and wide enough that its box does overlap the body's: it spans 74 to 106
-  // across, and the body spans 96 to 104. Its hitbox is a point rather than that box
-  // though, and the point sits at 90, clear of the body, so they do not touch.
   const thin = {
     position: v(90, 100, 0),
     size: v(32, 16, 0),
@@ -193,9 +183,6 @@ test("a declared collision still wins over being solid", () => {
 })
 
 test("a collision offset moves the shape without moving the sprite", () => {
-  // A square sprite is easier to draw from a corner, while a circle is easier to place
-  // from its middle, so the two are pinned to the same corner and the collision is
-  // pushed to where its own shape wants to be measured from.
   const half = 8
   const corner = [0, 0]
 
@@ -217,7 +204,6 @@ test("a collision offset moves the shape without moving the sprite", () => {
 
   const ballCentre = [100 + half, 100 + half]
 
-  // The offset puts the circle's middle where the sprite's middle is.
   expect(collidesWith(body, fromCentre)).toBe(
     collidesWith(
       { ...body, position: v(ballCentre[X], ballCentre[Y], 0) },

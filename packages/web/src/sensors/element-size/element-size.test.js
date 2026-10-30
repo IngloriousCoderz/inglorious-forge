@@ -31,7 +31,6 @@ describe("element size", () => {
   })
 
   afterEach(() => {
-    // Clears the module-level observer registry between tests.
     ElementSize.destroy(entity)
   })
 

@@ -16,7 +16,7 @@ There are no signals, no component state and no compiler to learn. Types are pla
 **Web apps**
 
 - [`@inglorious/web`](https://inglorious.dev/web/): the web framework, with a router, forms, browser sensors and testing utilities.
-- [`@inglorious/ui`](https://inglorious.dev/ui/): the design system: controls, data grids, chats, dialogs and more, in three themes.
+- [`@inglorious/ui`](https://inglorious.dev/ui/): the design system: controls, data grids, chats, dialogs and more, in six themes.
 - [`@inglorious/charts`](https://inglorious.dev/charts/): SVG charts, from bars and lines to pies, scatter, radar and radial.
 - [`@inglorious/motion`](https://inglorious.dev/motion/): CSS-first animation, layout transitions and presence.
 - [`@inglorious/i18n`](packages/i18n): translations driven by a store entity.

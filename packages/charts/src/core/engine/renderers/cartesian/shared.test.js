@@ -108,7 +108,6 @@ describe("shared render helpers", () => {
       text,
     )
 
-    // The <title> markup lives in the unsafeSVG directive's values, not the template strings.
     const titleMarkup = enabled.title.values[0].values[0]
     expect(titleMarkup).toBe("<title>Jan: 10</title>")
     expect(enabled.onEnter).toBeUndefined()

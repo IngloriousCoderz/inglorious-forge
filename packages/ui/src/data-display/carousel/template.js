@@ -69,8 +69,6 @@ export const Carousel = {
       "iw-carousel-full-width": isFullWidth,
     }
 
-    // The arrows live in the stage, next to the viewport, so that centring them
-    // ignores the indicators underneath.
     return html`<div class=${classMap(classes)}>
       <div class="iw-carousel-stage">
         ${when(hasArrows, () => this.renderArrow?.(props, PREVIOUS))}
@@ -152,13 +150,10 @@ export const Carousel = {
     } = props
     const isPrevious = direction === PREVIOUS
 
-    // Infinite carousels wrap, so their arrows never run out.
     const isDisabled =
       !isInfinite &&
       (isPrevious ? page <= FIRST_PAGE : page >= getLastPage(items))
 
-    // The click is caught on the wrapper: Button's onClick carries no event, and
-    // a disabled button emits no click at all, so nothing can leak through.
     return html`<span
       class=${classMap({
         "iw-carousel-arrow": true,
@@ -238,7 +233,6 @@ export const Carousel = {
  */
 function handleScroll(props) {
   return (event) => {
-    // Infinite carousels re-centre on settle instead of tracking every scroll.
     if (props.isInfinite) return
 
     const page = pageFromScroll(event.currentTarget, props.axis)
@@ -257,7 +251,6 @@ function handleScrollEnd(props) {
   return (event) => {
     const viewport = event.currentTarget
 
-    // Mid-drag pauses fire scrollend too; leave the drag alone until it ends.
     if (drags.has(viewport)) return
 
     viewport.classList.remove("iw-carousel-viewport-dragging")
@@ -341,7 +334,6 @@ function handlePointerDown(props) {
       scroll: isVertical ? viewport.scrollTop : viewport.scrollLeft,
       isVertical,
     })
-    // Snapping would fight every move; it is restored on pointerup.
     viewport.classList.add("iw-carousel-viewport-dragging")
     viewport.setPointerCapture?.(event.pointerId)
   }
@@ -379,8 +371,6 @@ function handlePointerUp(props) {
     drags.delete(viewport)
     viewport.releasePointerCapture?.(event.pointerId)
 
-    // Land on the nearest slide; handleScrollEnd restores snapping and, when
-    // infinite, re-centres from there.
     goToPage(viewport, pageFromScroll(viewport, props.axis), props, "smooth")
   }
 }
@@ -415,9 +405,6 @@ function pageBy(props, step, from) {
     return
   }
 
-  // Several items can be visible at once, so their later offsets may extend
-  // past the physical scroll range. At the end, choosing the first such offset
-  // would make a right arrow jump backwards after the browser clamps it.
   const limit = maxScroll(viewport, isVertical)
   if (step > 0 && limit > SCROLL_EPSILON && scroll >= limit - SCROLL_EPSILON) {
     return
@@ -503,8 +490,6 @@ function goToPage(viewport, page, props, behavior = "auto") {
   const item = viewport.children[index]
   if (!item) return
 
-  // Guarded like setPointerCapture: real browsers always have scrollTo, but
-  // non-layout environments such as jsdom do not.
   viewport.scrollTo?.(
     (props.axis ?? DEFAULT_AXIS) === VERTICAL_AXIS
       ? { top: item.offsetTop, behavior }

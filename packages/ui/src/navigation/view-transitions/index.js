@@ -66,11 +66,6 @@ function wrapStore(store, routes) {
   let unsubscribeStore = null
 
   store.subscribe = (listener) => {
-    /* Taken here rather than when the store is wrapped, so that anything that
-       navigated in between — an initial redirect, a renderer mounting late — is
-       part of the baseline instead of a navigation in its own right. It also
-       keeps `window` untouched until something subscribes, so wrapping a store
-       during a server render is harmless. */
     if (!unsubscribeStore) {
       currentPath = getPath()
       currentIndex = getIndex()
@@ -115,20 +110,12 @@ function wrapStore(store, routes) {
     if (supportsTransitionTypes()) {
       document.startViewTransition({ update: notify, types })
     } else {
-      // Without `types` the browser falls back to its own cross-fade, which is
-      // a reasonable way to change page when the slide is unavailable.
       document.startViewTransition(notify)
     }
   }
 
-  /* The update callback of a view transition does not run synchronously: the
-   * browser captures the old state first and calls it on a later task. Reading
-   * the state here rather than in the subscription keeps a listener from
-   * replaying whatever the store held when the transition started. */
   function notify() {
     const state = store.getState()
-    // Copied, so that a listener subscribing during this pass waits for the
-    // next one instead of being notified by the pass that added it.
     ;[...listeners].forEach((listener) => listener(state))
   }
 

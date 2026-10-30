@@ -1,14 +1,3 @@
-// Measures each implementation on a production build, in Chrome.
-//
-// For each page it waits for a warm-up, then reads Chrome's own counters of
-// main-thread work (the DevTools Protocol's Performance.getMetrics) at the
-// start and end of a window, and divides the work by the updates made in it.
-// The counters are the browser's, so they measure every implementation the
-// same way. Each page runs RUNS times; the table shows the medians.
-//
-// Usage: pnpm bench (builds first). DURATION_MS, WARMUP_MS and RUNS can be set
-// in the environment.
-
 import { readFileSync } from "node:fs"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
@@ -23,8 +12,6 @@ const DURATION_MS = Number(process.env.DURATION_MS ?? 20000)
 const WARMUP_MS = Number(process.env.WARMUP_MS ?? 3000)
 const RUNS = Number(process.env.RUNS ?? 3)
 const PORT = 4321
-// Below this, Chrome was holding frames back (a sleeping display, a page it
-// took for hidden), and the run left part of the rendering out: it is redone.
 const MIN_FPS = Number(process.env.MIN_FPS ?? 50)
 const MAX_ATTEMPTS = 3
 
@@ -58,15 +45,11 @@ try {
 }
 
 async function launchChrome() {
-  // Chrome slows down pages it thinks are in the background, down to drawing
-  // no frames at all, which would leave rendering out of the measurement.
   const args = [
     "--disable-background-timer-throttling",
     "--disable-backgrounding-occluded-windows",
     "--disable-renderer-backgrounding",
   ]
-  // The installed Chrome if there is one, else Playwright's own Chromium
-  // (`npx playwright install chromium`).
   try {
     return await chromium.launch({ channel: "chrome", args })
   } catch {
@@ -96,8 +79,6 @@ async function measure(url) {
 
   await page.goto(url)
   await page.bringToFront()
-  // Polled on a timer: the default polls on animation frames, and would wait
-  // forever on a page that draws none.
   await page.waitForFunction(() => window.__benchmark?.updates > 0, null, {
     polling: 100,
   })
@@ -106,9 +87,6 @@ async function measure(url) {
   const before = await sample(page, cdp)
   await page.waitForTimeout(DURATION_MS)
   const after = await sample(page, cdp)
-  // The heap in use, without the garbage not collected yet, which would make
-  // it depend on when the reading happens. Read after the window, so the
-  // collection does not count as work.
   await cdp.send("HeapProfiler.collectGarbage")
   const heap = await sample(page, cdp)
   await page.close()
@@ -154,7 +132,6 @@ function medians(runs) {
   )
 }
 
-// The JavaScript a page loads, gzipped: its entry and the chunks it preloads.
 function getBundleKb(page) {
   const html = readFileSync(path.join(DIST, page), "utf8")
   const scripts = [...html.matchAll(/(?:src|href)="\/(assets\/[^"]+\.js)"/g)]

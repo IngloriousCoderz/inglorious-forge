@@ -50,8 +50,6 @@ export function injectPwaPluginConfig(targetDir, projectName) {
   let viteConfig = fs.readFileSync(viteConfigPath, "utf-8")
 
   if (!viteConfig.includes("vite-plugin-pwa")) {
-    // Right after the image optimizer, where the imports' alphabetical order
-    // puts it.
     viteConfig = injectAfterImport(
       viteConfig,
       viteConfig.includes("vite-plugin-image-optimizer")
@@ -62,7 +60,6 @@ export function injectPwaPluginConfig(targetDir, projectName) {
   }
 
   if (!viteConfig.includes("VitePWA(")) {
-    // One plugin per line, as Prettier prints a list this long.
     viteConfig = viteConfig.replace(
       /plugins: \[(.*)\],/,
       (_, plugins) =>
@@ -91,9 +88,6 @@ export function writePwaRegistration(targetDir) {
   fs.writeFileSync(pwaPath, createPwaRegistrationSource(extension))
 }
 
-// The worker waits for the SKIP_WAITING message `watchPwaUpdate` sends: on
-// its own, a new version would wait for every tab of the app to close, which
-// for a PWA installed on a phone is never.
 export function createPwaRegistrationSource(extension) {
   const registration = `import { isNative } from "@inglorious/web/mobile"
 import { watchPwaUpdate } from "@inglorious/web/pwa"
@@ -138,8 +132,6 @@ export function createVitePwaConfig(projectName) {
     })`
 }
 
-// The plugins of a one-line `plugins: [a(), b({ c: 1 })]`, split at the
-// top-level commas.
 function splitPlugins(source) {
   const plugins = []
   let depth = 0
@@ -158,8 +150,6 @@ function splitPlugins(source) {
   return plugins
 }
 
-// A side-effect import goes with the others at the top, in the order they
-// come, as eslint-plugin-simple-import-sort keeps them.
 function injectSideEffectImport(source, newImport) {
   const lastSideEffect = source
     .split(EOL)

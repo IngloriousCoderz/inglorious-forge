@@ -1,5 +1,4 @@
 export function isTouchDevice() {
-  // skip during SSX
   if (typeof window === "undefined") return false
 
   if (
@@ -9,8 +8,6 @@ export function isTouchDevice() {
     return true
   }
 
-  // include the 'heartz' as a way to have a non matching mediaQuery to help terminate the join
-  // https://git.io/vznFH
   const prefixes = " -webkit- -moz- -o- -ms- ".split(" ")
   var query = ["(", prefixes.join("touch-enabled),("), "heartz", ")"].join("")
   return window.matchMedia(query).matches

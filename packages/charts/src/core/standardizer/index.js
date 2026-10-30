@@ -11,10 +11,6 @@ import {
 } from "./resolve-input.js"
 import { createScales } from "./resolve-scales.js"
 
-// Rendering only reads: the source, and the store entity behind it, are never
-// written to. What the user does on a chart (dragging its brush, hovering it)
-// reaches its entity as events, so a chart that keeps such state needs one.
-
 export function createFrameFromEntity(entity, api = null) {
   return createFrame(entity, entity?.id ?? null, api)
 }
@@ -61,7 +57,6 @@ function createFrame(source, entityId, api) {
     isTooltipEnabled,
   )
 
-  // Events need an entity to reach, and an api to send them with.
   const isInteractive = Boolean(entityId && api?.notify)
   if (filteredEntity.brush?.enabled && !isInteractive) {
     throw new Error(

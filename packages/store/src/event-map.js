@@ -8,6 +8,10 @@ const SPLIT_LIMIT = 2
 /**
  * A class to manage the mapping of event names to the entity IDs that handle them.
  * This is used for optimized event handling with support for scoped events.
+ *
+ * Do not replace it with a scan of all entities: every event would then visit
+ * every entity, and a game dispatching dozens of events a frame over thousands
+ * of entities cannot afford that (see the comparison in event-map.test.js).
  */
 export class EventMap {
   /**
@@ -118,13 +122,11 @@ export class EventMap {
       return entitySet && entitySet.has(targetEntityId) ? [targetEntityId] : []
     }
 
-    // form:submit - all entities of this type
     if (targetType) {
       const entitySet = typeMap.get(targetType)
       return entitySet ? Array.from(entitySet) : []
     }
 
-    // submit - all entities with this handler (broadcast)
     const allEntities = []
     for (const entitySet of typeMap.values()) {
       allEntities.push(...entitySet)

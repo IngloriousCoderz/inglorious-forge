@@ -43,7 +43,7 @@ export function align(
   } else {
     targetAngularSpeed = (distance * maxAngularSpeed) / slowRadius
   }
-  targetAngularSpeed *= direction / distance // restore rotation sign
+  targetAngularSpeed *= direction / distance
 
   const angularSpeedDelta = targetAngularSpeed - angularSpeed
 

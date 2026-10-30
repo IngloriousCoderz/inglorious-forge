@@ -8,6 +8,5 @@ export const Series = defineComponent({
     category: z.string(),
     values: z.array(z.number()),
   }),
-  // Drawn by its chart.
   component: () => null,
 })

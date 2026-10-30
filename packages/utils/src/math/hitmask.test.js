@@ -21,7 +21,6 @@ test("it should prove that a rectangle touching a wall intersects with it", () =
     position: v(2, 0, 1.5),
     tileSize: [1, 1],
     columns: 4,
-    // The top row (indices 0, 1, 2, 3) now has the walls.
     heights: [0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   }
   const rectangle = {
@@ -53,7 +52,6 @@ test("it should prove that shifting operands does not change the outcome", () =>
     position: [2 + SHIFT, 0, 1.5 + SHIFT],
     tileSize: [1, 1],
     columns: 4,
-    // The top row (indices 0, 1, 2, 3) now has the walls.
     heights: [0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   }
   const rectangle = {
@@ -83,7 +81,6 @@ test("it should prove that a rectangle not touching a wall does not intersect wi
     position: v(2, 0, 1.5),
     tileSize: [1, 1],
     columns: 4,
-    // The top row (indices 0, 1, 2, 3) now has the walls.
     heights: [0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   }
   const rectangle = {
@@ -113,7 +110,6 @@ test("it should prove that a rectangle above the tile of a hitmask does not inte
     position: v(2, 0, 1.5),
     tileSize: [1, 1],
     columns: 4,
-    // The top row (indices 0, 1, 2, 3) now has the walls.
     heights: [0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   }
   const rectangle = {
@@ -143,7 +139,6 @@ test("it should prove that a rectangle outside of a hitmask does not intersect w
     position: v(2, 0, 1.5),
     tileSize: [1, 1],
     columns: 4,
-    // The top row (indices 0, 1, 2, 3) now has the walls.
     heights: [0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   }
   const rectangle = {

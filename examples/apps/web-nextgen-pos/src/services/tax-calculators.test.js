@@ -13,7 +13,6 @@ const lines = [
   },
 ]
 
-// 4% of $29.80 plus 10% of $39.00.
 const EXPECTED_TAX = 119 + 390
 
 beforeEach(() => {

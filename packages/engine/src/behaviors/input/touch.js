@@ -89,7 +89,7 @@ export function trackTouch(parent, api, toGamePosition) {
 export function createTouchEntity() {
   return {
     type: "Touch",
-    layer: 999, // A high layer value to ensure it's always rendered on top
+    layer: 999,
     positions: [],
     collisions: {
       bounds: { shape: "point" },
@@ -108,7 +108,6 @@ function createHandler(type, parent, api, toGamePosition) {
       return
     }
 
-    // touchend doesn't have touches anymore, but it has changedTouches
     const touches = event.touches.length ? event.touches : event.changedTouches
 
     Array.from(touches).forEach((touch, index) => {

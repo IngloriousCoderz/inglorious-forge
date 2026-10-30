@@ -114,7 +114,6 @@ export async function renderRequest(
     await registerApp(resolvedPages, options, loader, viteServer)
   }
 
-  // A page of its own path first, then one whose pattern matches the URL.
   const origPage =
     resolvedPages.find(
       (candidate) =>
@@ -140,7 +139,6 @@ export async function renderRequest(
   if (page.locale) {
     entity.locale = page.locale
   }
-  // Translations in the page's locale, for `load` and the render.
   await waitForLocale(store, page.locale)
 
   if (module.load) {

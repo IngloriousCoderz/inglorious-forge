@@ -2,9 +2,6 @@
   display: flex;
   align-items: center;
   min-height: var(--iw-space-16);
-  /* gap: var(--iw-space-3); */
-  /* Room either side of the title and controls, so they do not touch the
-     edges of the screen. */
   padding-inline: var(--iw-space-4);
   background: var(--iw-app-bar-bg, var(--iw-color-surface));
   color: var(--iw-color-text);

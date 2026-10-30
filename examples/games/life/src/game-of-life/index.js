@@ -10,21 +10,17 @@ import { createCell } from "./types/cell.js"
  * board forever.
  */
 const PATTERNS = [
-  // A blinker: three in a row, which flips between that and a column.
   [
     [10, 10],
     [10, 11],
     [10, 12],
   ],
-  // A block: four that hold still forever.
   [
     [14, 30],
     [14, 31],
     [15, 30],
     [15, 31],
   ],
-  // A glider: five that walk one square across and one square down every four
-  // generations, and come back round on the far side of the board.
   [
     [20, 50],
     [21, 51],
@@ -60,7 +56,6 @@ export function createGameOfLife({ patterns = PATTERNS, fps } = {}) {
     entities: seed(grid, patterns),
 
     readout: (entities) => {
-      // Nothing until the first generation has been counted.
       const { generation = 0 } = entities.board
       return `Generation ${generation} - ${countCells(entities)} cells`
     },

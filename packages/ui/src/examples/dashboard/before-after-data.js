@@ -9,9 +9,6 @@ export const beforeAfterImages = {
   },
 }
 
-// Self-contained demo images for the Before/After control, so the dashboard
-// renders the comparison without any network requests.
-
 function svg(label, from, to) {
   return (
     "data:image/svg+xml," +

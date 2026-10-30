@@ -13,7 +13,6 @@ test("it should say the frame rate the game is running at", () => {
 })
 
 test("it should say it as a rate and not as a time", () => {
-  // The value is the length of a frame, so a longer frame is a slower rate.
   const [, said] = callsTo(drawing({ value: THIRTY_FPS }), "fillText")[0]
 
   expect(said).toBe("FPS: 30")

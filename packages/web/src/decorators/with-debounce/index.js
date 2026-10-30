@@ -37,17 +37,16 @@ export function withDebounce(config, handlerNames) {
       : config
 
   return (type) => {
-    // one debounced-fn map per entity, so instances don't share timers
     const debouncedByEntity = new Map()
 
     const behavior = {}
 
     for (const handlerName of Object.keys(delays)) {
       const originalHandler = type[handlerName]
-      if (!originalHandler) continue // nothing to wrap if the base type doesn't define it
+      if (!originalHandler) continue
 
       behavior[handlerName] = (entity, payload, api) => {
-        const entityId = entity.id // capture the primitive now, while the draft is live
+        const entityId = entity.id
 
         let perEntity = debouncedByEntity.get(entityId)
         if (!perEntity) {
@@ -57,8 +56,8 @@ export function withDebounce(config, handlerNames) {
 
         if (!perEntity[handlerName]) {
           perEntity[handlerName] = debounce((entityId, payload, api) => {
-            const liveEntity = api.getEntity(entityId) // fresh, live reference
-            if (!liveEntity) return // entity was destroyed before the debounce fired
+            const liveEntity = api.getEntity(entityId)
+            if (!liveEntity) return
             originalHandler(liveEntity, payload, api)
           }, delays[handlerName])
         }
@@ -67,9 +66,8 @@ export function withDebounce(config, handlerNames) {
       }
     }
 
-    // clean up any pending timers when the entity is destroyed
     behavior.destroy = (entity, payload, api) => {
-      const entityId = entity.id // same rule applies here: capture before it's gone
+      const entityId = entity.id
 
       const perEntity = debouncedByEntity.get(entityId)
       if (perEntity) {

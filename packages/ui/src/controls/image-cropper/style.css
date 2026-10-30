@@ -1,11 +1,7 @@
 .iw-image-cropper {
-  /* Set from the image's natural size once it loads. */
   --iw-image-cropper-aspect: 16 / 9;
-  /* Caps the stage height; the width follows the image's proportions. */
   --iw-image-cropper-max-height: 70vh;
 
-  /* Neutral in every theme on purpose, like the before/after divider: the
-     frame must read on any photo without competing with it. */
   --iw-image-cropper-bg: var(--iw-color-gray-900);
   --iw-image-cropper-overlay: rgb(0 0 0 / 55%);
   --iw-image-cropper-frame-width: 2px;
@@ -57,8 +53,6 @@
     -webkit-user-drag: none;
   }
 
-  /* The events land on the stage either way; the frame and handles only take
-     pointer events so the cursor shows what a drag there would do. */
   .iw-image-cropper-frame {
     position: absolute;
     box-sizing: border-box;

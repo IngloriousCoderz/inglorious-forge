@@ -51,7 +51,6 @@
     transform: translateX(calc(1rem * var(--iw-dir-sign, 1)));
   }
 
-  /* With a description, the label and it stack beside the track. */
   .iw-switch-text {
     display: flex;
     flex-direction: column;

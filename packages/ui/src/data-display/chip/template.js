@@ -38,7 +38,6 @@ export function render(props) {
       () => html`<span class="iw-chip-icon" aria-hidden="true">${icon}</span>`,
     )} <span class="iw-chip-label">${children}</span>`
 
-  // A chip that can be picked is a toggle button, pressed while selected.
   if (isSelected !== undefined) {
     return html`<button
       type="button"

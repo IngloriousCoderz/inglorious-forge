@@ -23,8 +23,6 @@ export function renderSprite(entity, ctx, api) {
   tile &= ~FLIPPED_HORIZONTALLY_FLAG
   tile &= ~FLIPPED_VERTICALLY_FLAG
 
-  // A frame is a place on the sheet, so it is said in the sheet's own units: the column
-  // and the row of tiles, turned back into where that cell starts.
   const [, tileHeight] = tileSize
   const x = (tile % cols) * tileWidth
   const y = Math.floor(tile / cols) * tileHeight
@@ -33,10 +31,6 @@ export function renderSprite(entity, ctx, api) {
 
   ctx.scale(scale, scale)
 
-  // Flipping happens about the middle of the tile, and the image is what puts the
-  // tile's middle on the origin, so there is nothing left to translate back here.
-  // Doing it in both places is what used to draw a sprite a whole tile up and to the
-  // left, which also meant rotating an entity swung it around the wrong centre.
   ctx.scale(
     isFlippedHorizontally ? FLIP : NO_FLIP,
     isFlippedVertically ? FLIP : NO_FLIP,

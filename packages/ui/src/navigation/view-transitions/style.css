@@ -74,8 +74,6 @@
       var(--iw-easing-decelerate) both;
   }
 
-  /* A replacement navigates in place rather than arriving from a side, so it
-     cross-fades instead of sliding. */
   :root:active-view-transition-type(replace)::view-transition-old(root) {
     animation: iw-view-transition-fade-out var(--iw-duration-page)
       var(--iw-easing-standard) both;

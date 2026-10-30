@@ -39,7 +39,6 @@ export const EditableTable = defineComponent({
       }),
     ),
   }),
-  // Inglorious UI's DataGrid edits the cells; its state lives in the answer.
   component: ({
     props,
     isStreaming,
@@ -49,11 +48,8 @@ export const EditableTable = defineComponent({
     statementId,
   }) => {
     const columns = (props.columns ?? []).filter(Boolean)
-    // Saved rows are kept as OpenUI keeps them: a form named after the table,
-    // with the table as its one field.
     const saved = stateField(props.name)
     const baseline = saved.value?.[props.name] ?? props.data ?? []
-    // Edits not saved yet only matter to the screen, until they are.
     const draft = viewState(`${statementId ?? props.name}:edits`, NO_EDITS)
     const grid = {
       rowId: ROW_KEY,
@@ -69,11 +65,9 @@ export const EditableTable = defineComponent({
         type: CELL_TYPES[column.type] ?? "string",
         options: column.options,
         width: column.width ?? "auto",
-        // Until the answer is whole, its rows may still change under the user.
         isEditable: !isStreaming,
       })),
       saveLabel: "Save Changes",
-      // DataGrid's own handler works out the edits, on a copy of them.
       onCellChange: (payload) => {
         const copy = { ...grid, edits: structuredClone(grid.edits) }
         DataGrid.cellChange(copy, payload)

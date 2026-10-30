@@ -29,7 +29,6 @@ export const SwitchGroup = defineComponent({
     variant: z.enum(["clear", "card", "sunk"]).optional(),
     value: reactive(z.record(z.string(), z.boolean()).optional()),
   }),
-  // "card" and "sunk" set the switches on a surface of their own.
   component: (context) => {
     const toggles = renderToggles(context, Switch)
     const variant = context.props.variant ?? "clear"

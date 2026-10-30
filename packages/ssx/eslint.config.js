@@ -12,7 +12,6 @@ export default defineConfig([
     },
   },
 
-  // Runs in the browser, imported by the generated client entry.
   {
     files: ["src/utils/page-head.js", "src/utils/page-head.test.js"],
     languageOptions: { globals: { document: "readonly", window: "readonly" } },

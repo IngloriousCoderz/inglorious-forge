@@ -41,7 +41,6 @@ export default {
     game: {
       type: "Game",
       multiplayer: {
-        // serverUrl: "ws://localhost:3000",
         serverUrl: "wss://inglorious-server.onrender.com",
       },
       devMode: true,

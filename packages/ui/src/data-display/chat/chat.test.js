@@ -107,7 +107,6 @@ describe("Chat / template", () => {
     expect(
       container.querySelector(".iw-chat-message-user").textContent,
     ).toContain("Where did my money go?")
-    // A message naming an entity renders it.
     expect(
       container.querySelector(".iw-chat-message-assistant .answer").textContent,
     ).toBe("Rent is most of it.")

@@ -12,7 +12,6 @@ import {
 export const useDashboardState = () => {
   const initial = createInitialState()
 
-  // metrics signals
   const [fps, setFps] = createSignal(initial.metrics.fps)
   const [fpsNow, setFpsNow] = createSignal(initial.metrics.fpsNow)
   const [fpsSamples, setFpsSamples] = createSignal(initial.metrics.fpsSamples)

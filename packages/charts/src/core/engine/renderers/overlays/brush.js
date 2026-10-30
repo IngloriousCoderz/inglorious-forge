@@ -196,9 +196,6 @@ function getBrushLayout(primitive, frame) {
   }
 }
 
-// Dragging dispatches brushChange to the chart's entity, once per change of
-// range. The range is computed from where the drag started, so the frames
-// rendered while dragging do not affect it.
 function createBrushMouseDownHandler(frame, layout, action) {
   return (event) => {
     event.preventDefault()

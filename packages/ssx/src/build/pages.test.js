@@ -15,16 +15,13 @@ vi.mock("../store/index.js", () => ({
 vi.mock("./metadata.js")
 
 describe("generatePages", () => {
-  // Create a temporary page module for testing dynamic imports
   const tempDir = path.join(import.meta.dirname, "__temp_pages__")
   const pageFile = path.join(tempDir, "test-page.js")
 
-  // Mock console.log to keep test output clean
   vi.spyOn(console, "log").mockImplementation(() => {})
 
   beforeAll(async () => {
     await fs.mkdir(tempDir, { recursive: true })
-    // Create a dummy module that exports a load function
     await fs.writeFile(
       pageFile,
       `
@@ -57,7 +54,7 @@ describe("generatePages", () => {
 
     expect(pages[0].html).toBe("<html></html>")
     expect(pages[0].metadata).toEqual({ title: "Test" })
-    expect(pages[0].loaded).toBe(true) // Verify load() was called
+    expect(pages[0].loaded).toBe(true)
     expect(renderPage).toHaveBeenCalled()
     expect(extractPageMetadata).toHaveBeenCalled()
   })

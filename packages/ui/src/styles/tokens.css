@@ -1,7 +1,3 @@
-/* The writing direction as a number, for what moves sideways: a slide that
-   goes `translateX(calc(-100% * var(--iw-dir-sign)))` leaves to the left in
-   English and to the right in Arabic. Set again on any element with a `dir`,
-   so a subtree in the other direction gets its own. */
 :root,
 [dir="ltr"] {
   --iw-dir-sign: 1;
@@ -12,13 +8,9 @@
 }
 
 :root {
-  /* ========================================
-     COLOR PALETTE - Primitive Colors
-     ======================================== */
   --iw-color-white: #ffffff;
   --iw-color-black: #000000;
 
-  /* Brand Colors */
   --iw-color-primary-50: #e6fff0;
   --iw-color-primary-100: #b3ffd6;
   --iw-color-primary-200: #80ffbd;
@@ -30,7 +22,6 @@
   --iw-color-primary-800: #006637;
   --iw-color-primary-900: #00331c;
 
-  /* Neutral Colors */
   --iw-color-gray-50: #fafafa;
   --iw-color-gray-100: #f4f4f5;
   --iw-color-gray-200: #e4e4e7;
@@ -42,7 +33,6 @@
   --iw-color-gray-800: #27272a;
   --iw-color-gray-900: #18181b;
 
-  /* Semantic Colors */
   --iw-color-success-light: #d1fae5;
   --iw-color-success: #10b981;
   --iw-color-success-dark: #065f46;
@@ -59,9 +49,6 @@
   --iw-color-info: #3b82f6;
   --iw-color-info-dark: #1e40af;
 
-  /* ========================================
-     SPACING SCALE
-     ======================================== */
   --iw-space-0: 0;
   --iw-space-1: 0.25rem;
   --iw-space-2: 0.5rem;
@@ -77,18 +64,12 @@
   --iw-space-20: 5rem;
   --iw-space-24: 6rem;
 
-  /* ========================================
-     BREAKPOINTS
-     ======================================== */
   --iw-breakpoint-xs: 20rem;
   --iw-breakpoint-sm: 40rem;
   --iw-breakpoint-md: 48rem;
   --iw-breakpoint-lg: 64rem;
   --iw-breakpoint-xl: 80rem;
 
-  /* ========================================
-     BORDER RADIUS
-     ======================================== */
   --iw-radius-none: 0;
   --iw-radius-sm: 2px;
   --iw-radius-md: 4px;
@@ -97,9 +78,6 @@
   --iw-radius-2xl: 16px;
   --iw-radius-full: 9999px;
 
-  /* ========================================
-     TYPOGRAPHY
-     ======================================== */
   --iw-font-family-sans:
     system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;
@@ -125,14 +103,10 @@
   --iw-line-height-normal: 1.5;
   --iw-line-height-relaxed: 1.75;
 
-  /* Labels of buttons and tabs: a theme can set them in capitals. */
   --iw-label-text-transform: none;
   --iw-label-letter-spacing: normal;
   --iw-label-font-weight: var(--iw-font-weight-normal);
 
-  /* ========================================
-     SHADOWS
-     ======================================== */
   --iw-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --iw-shadow-md:
     0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
@@ -141,12 +115,6 @@
   --iw-shadow-xl:
     0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
 
-  /* ========================================
-     TRANSITIONS
-     ======================================== */
-  /* A duration and an easing, so that motion can pick one of each. Anything
-     that has to vary them separately — a page arriving is not eased the way a
-     page leaving is — composes them rather than reaching for the shorthands. */
   --iw-duration-fast: 150ms;
   --iw-duration-normal: 200ms;
   --iw-duration-page: 250ms;
@@ -155,19 +123,11 @@
   --iw-easing-accelerate: cubic-bezier(0.4, 0, 1, 1);
   --iw-easing-decelerate: cubic-bezier(0, 0, 0.2, 1);
 
-  /* Shorthands for a plain `ease` at one of the durations above. These keep
-     working as they always have; reach for the tokens above instead when the
-     easing has to be anything other than `ease`. The page transitions in
-     `view-transitions` compose the two on purpose — a page arriving decelerates
-     and a page leaving accelerates — so they are not a shorthand case. */
   --iw-transition-fast: var(--iw-duration-fast) ease;
   --iw-transition-normal: var(--iw-duration-normal) ease;
   --iw-transition-page: var(--iw-duration-page) ease;
   --iw-transition-slow: var(--iw-duration-slow) ease;
 
-  /* ========================================
-     Z-INDEX SCALE
-     ======================================== */
   --iw-z-dropdown: 1000;
   --iw-z-sticky: 1020;
   --iw-z-fixed: 1030;

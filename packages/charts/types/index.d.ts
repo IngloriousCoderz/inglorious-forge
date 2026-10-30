@@ -341,8 +341,6 @@ export interface BrushProps {
   height?: number
 }
 
-// A type alias rather than an interface, so `Chart` fits the store's `types`
-// without a cast.
 export type ChartType = {
   /** Fills in the defaults of a chart entity. */
   create(entity: ChartEntity): void

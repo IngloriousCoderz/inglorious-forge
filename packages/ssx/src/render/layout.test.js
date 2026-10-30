@@ -64,7 +64,6 @@ describe("layout", () => {
 
     expect(charset).toBeGreaterThan(-1)
     expect(headStart).toBeGreaterThan(charset)
-    // Browsers only prescan the first 1024 bytes to detect the encoding.
     expect(charset).toBeLessThan(1024)
   })
 

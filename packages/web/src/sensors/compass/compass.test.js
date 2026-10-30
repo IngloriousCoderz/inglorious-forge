@@ -32,10 +32,6 @@ describe("compass", () => {
     vi.useRealTimers()
   })
 
-  // ---------------------------------------------------------------------------
-  // create
-  // ---------------------------------------------------------------------------
-
   describe("create", () => {
     it("should initialize entity state", () => {
       Compass.create(entity)
@@ -74,10 +70,6 @@ describe("compass", () => {
       expect(entity.manualOffset).toBe(15)
     })
   })
-
-  // ---------------------------------------------------------------------------
-  // compassPermissionsRequest
-  // ---------------------------------------------------------------------------
 
   describe("compassPermissionsRequest", () => {
     beforeEach(() => Compass.create(entity))
@@ -139,10 +131,6 @@ describe("compass", () => {
     })
   })
 
-  // ---------------------------------------------------------------------------
-  // compassPermissionsGrant
-  // ---------------------------------------------------------------------------
-
   describe("compassPermissionsGrant", () => {
     beforeEach(() => Compass.create(entity))
 
@@ -161,10 +149,6 @@ describe("compass", () => {
       expect(windowMock.addEventListener).not.toHaveBeenCalled()
     })
   })
-
-  // ---------------------------------------------------------------------------
-  // compassWatch
-  // ---------------------------------------------------------------------------
 
   describe("compassWatch", () => {
     beforeEach(() => Compass.create(entity))
@@ -201,7 +185,6 @@ describe("compass", () => {
     it("should not notify compassActiveChange false when timeout was cancelled by a heading", () => {
       Compass.compassWatch(entity, undefined, api)
 
-      // Simulate a heading arriving before the timeout fires
       const [[, orientationListener]] =
         windowMock.addEventListener.mock.calls.filter(
           ([name]) => name === "deviceorientation",
@@ -214,10 +197,6 @@ describe("compass", () => {
       expect(api.notify).not.toHaveBeenCalledWith("compassActiveChange", false)
     })
   })
-
-  // ---------------------------------------------------------------------------
-  // orientation listener (via compassWatch)
-  // ---------------------------------------------------------------------------
 
   describe("orientation listener", () => {
     let orientationListener
@@ -255,13 +234,10 @@ describe("compass", () => {
     })
 
     it("should snapshot manualOffset at watch time", () => {
-      // manualOffset is snapshotted when compassWatch is called, so changes
-      // after the fact must have no effect
       entity.manualOffset = 10
 
       orientationListener({ alpha: 80 })
 
-      // manualOffset was 0 at watch time, so heading should be 80, not 90
       expect(api.notify).toHaveBeenCalledWith("compassHeadingChange", 80)
     })
 
@@ -319,15 +295,11 @@ describe("compass", () => {
     it("should wrap heading correctly past 360 degrees", () => {
       windowMock.screen.orientation.angle = 90
 
-      orientationListener({ alpha: 30 }) // 30 - 90 = -60 → wraps to 300
+      orientationListener({ alpha: 30 })
 
       expect(api.notify).toHaveBeenCalledWith("compassHeadingChange", 300)
     })
   })
-
-  // ---------------------------------------------------------------------------
-  // compassUnwatch
-  // ---------------------------------------------------------------------------
 
   describe("compassUnwatch", () => {
     beforeEach(() => {
@@ -376,10 +348,6 @@ describe("compass", () => {
     })
   })
 
-  // ---------------------------------------------------------------------------
-  // compassError
-  // ---------------------------------------------------------------------------
-
   describe("compassError", () => {
     beforeEach(() => Compass.create(entity))
 
@@ -398,10 +366,6 @@ describe("compass", () => {
       expect(entity.isPermissionGranted).toBe(false)
     })
   })
-
-  // ---------------------------------------------------------------------------
-  // compassActiveChange / compassHeadingChange
-  // ---------------------------------------------------------------------------
 
   describe("compassActiveChange", () => {
     it("should set isActive", () => {
@@ -423,10 +387,6 @@ describe("compass", () => {
       expect(entity.isLoading).toBe(false)
     })
   })
-
-  // ---------------------------------------------------------------------------
-  // destroy
-  // ---------------------------------------------------------------------------
 
   describe("destroy", () => {
     it("should call compassUnwatch", () => {

@@ -10,13 +10,20 @@
   <body>
     <div class="forge-root">
       <nav class="nav">
-        <a href="https://ingloriouscoderz.it" class="nav-logo">
-          <img src="/transparent.png" alt="logo" width="32" />
+        <a href="/" class="nav-logo">
+          <img src="/transparent.png" alt="Inglorious Forge" width="32" />
           <span class="nav-logo-text">inglorious.dev</span>
         </a>
-        <a href="https://ingloriouscoderz.it" class="nav-link"
-          >ingloriouscoderz.it ↗</a
-        >
+        <span class="nav-links">
+          <a
+            href="https://github.com/IngloriousCoderz/inglorious-forge"
+            class="nav-link"
+            >GitHub ↗</a
+          >
+          <a href="https://ingloriouscoderz.it" class="nav-link"
+            >ingloriouscoderz.it ↗</a
+          >
+        </span>
       </nav>
 
       <section class="hero">
@@ -27,18 +34,27 @@
             Build less.<br /><em>Ship more.</em><br />Own it.
           </h1>
           <p class="hero-desc">
-            A suite of modular JavaScript tools for frontend architects who
-            think before they code. No proxies, no signals, no magic. Pure
-            functions, plain JS, full control.
+            One entity-based model for web apps, pre-rendered sites, generative
+            UI and games. State is a store of plain entities, everything that
+            happens to them is an event, and the whole UI renders from it. No
+            proxies, no signals, no magic.
+          </p>
+          <p class="hero-desc">
+            Inglorious Forge is the
+            <a href="https://github.com/IngloriousCoderz/inglorious-forge"
+              >open-source monorepo</a
+            >
+            behind every <code>@inglorious</code> package. Inglorious Web is its
+            web framework. Inglorious Coderz is the company that makes them.
           </p>
           <div class="hero-stats">
             <div class="stat">
-              <span class="stat-num">6</span>
+              <span class="stat-num">27</span>
               <span class="stat-label">Packages</span>
             </div>
             <div class="stat">
-              <span class="stat-num">0</span>
-              <span class="stat-label">Peer deps</span>
+              <span class="stat-num">6</span>
+              <span class="stat-label">UI themes</span>
             </div>
             <div class="stat">
               <span class="stat-num">ECS</span>
@@ -275,14 +291,13 @@
             <h2 class="pkg-name">motion</h2>
             <p class="pkg-tagline">The Choreographer</p>
             <p class="pkg-desc">
-              Declarative animation primitives. Compose transitions and
-              keyframes as data, not imperative callbacks. Built for real-time
-              UIs.
+              CSS-first animation for entities: variants, enter and exit
+              presence, and layout transitions, composed onto types.
             </p>
             <div class="pkg-tags">
-              <span class="tag">Declarative</span>
-              <span class="tag">Composable</span>
-              <span class="tag">Real-time</span>
+              <span class="tag">CSS-first</span>
+              <span class="tag">Presence</span>
+              <span class="tag">FLIP</span>
             </div>
           </a>
 
@@ -447,8 +462,191 @@
             </p>
             <div class="pkg-tags">
               <span class="tag">Design system</span>
-              <span class="tag">3 themes</span>
+              <span class="tag">6 themes</span>
               <span class="tag">Dark/light</span>
+            </div>
+          </a>
+
+          <a
+            class="pkg-card"
+            href="https://github.com/IngloriousCoderz/inglorious-forge/tree/main/packages/openui#readme"
+            target="_blank"
+          >
+            <div class="pkg-header">
+              <svg
+                class="pkg-icon"
+                viewBox="0 0 36 36"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect
+                  x="4"
+                  y="6"
+                  width="28"
+                  height="20"
+                  rx="3"
+                  fill="rgba(127,127,255,0.1)"
+                  stroke="rgba(127,127,255,0.35)"
+                  stroke-width="0.5"
+                />
+                <path
+                  d="M9 13 H21 M9 18 H27 M9 23 H15"
+                  stroke="rgba(127,127,255,0.45)"
+                  stroke-width="0.75"
+                />
+                <circle
+                  cx="27"
+                  cy="12"
+                  r="2"
+                  fill="rgba(127,127,255,0.1)"
+                  stroke="rgba(127,127,255,0.35)"
+                  stroke-width="0.5"
+                />
+              </svg>
+              <span class="pkg-arrow">↗</span>
+            </div>
+            <p class="pkg-scope">@inglorious/</p>
+            <h2 class="pkg-name">openui</h2>
+            <p class="pkg-tagline">The Improviser</p>
+            <p class="pkg-desc">
+              Generative UI: a language model answers in OpenUI Lang, and the
+              answer renders with Inglorious UI components as it streams in.
+            </p>
+            <div class="pkg-tags">
+              <span class="tag">GenUI</span>
+              <span class="tag">Streaming</span>
+              <span class="tag">LLM</span>
+            </div>
+          </a>
+
+          <a
+            class="pkg-card"
+            href="https://github.com/IngloriousCoderz/inglorious-forge/tree/main/packages/supabase#readme"
+            target="_blank"
+          >
+            <div class="pkg-header">
+              <svg
+                class="pkg-icon"
+                viewBox="0 0 36 36"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle
+                  cx="18"
+                  cy="18"
+                  r="4"
+                  fill="rgba(127,127,255,0.1)"
+                  stroke="rgba(127,127,255,0.35)"
+                  stroke-width="0.5"
+                />
+                <path
+                  d="M18 4 V10 M18 26 V32 M4 18 H10 M26 18 H32"
+                  stroke="rgba(127,127,255,0.45)"
+                  stroke-width="0.75"
+                />
+                <circle
+                  cx="18"
+                  cy="18"
+                  r="11"
+                  stroke="rgba(127,127,255,0.25)"
+                  stroke-width="0.5"
+                />
+              </svg>
+              <span class="pkg-arrow">↗</span>
+            </div>
+            <p class="pkg-scope">@inglorious/</p>
+            <h2 class="pkg-name">supabase</h2>
+            <p class="pkg-tagline">The Messenger</p>
+            <p class="pkg-desc">
+              Live data: entities reload when a table they read changes, over
+              Supabase Realtime, with no per-row matching.
+            </p>
+            <div class="pkg-tags">
+              <span class="tag">Realtime</span>
+              <span class="tag">Live reload</span>
+              <span class="tag">Supabase</span>
+            </div>
+          </a>
+
+          <a
+            class="pkg-card"
+            href="https://github.com/IngloriousCoderz/inglorious-forge/tree/main/packages/firebase#readme"
+            target="_blank"
+          >
+            <div class="pkg-header">
+              <svg
+                class="pkg-icon"
+                viewBox="0 0 36 36"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M18 4 L28 10 V22 C28 27 23 31 18 32 C13 31 8 27 8 22 V10 Z"
+                  fill="rgba(127,127,255,0.1)"
+                  stroke="rgba(127,127,255,0.35)"
+                  stroke-width="0.5"
+                />
+                <path
+                  d="M13 18 L17 22 L24 14"
+                  stroke="rgba(127,127,255,0.45)"
+                  stroke-width="0.75"
+                />
+              </svg>
+              <span class="pkg-arrow">↗</span>
+            </div>
+            <p class="pkg-scope">@inglorious/</p>
+            <h2 class="pkg-name">firebase</h2>
+            <p class="pkg-tagline">The Herald</p>
+            <p class="pkg-desc">
+              Push notifications and consent-first analytics, through one API in
+              the browser and in Capacitor's Android and iOS apps.
+            </p>
+            <div class="pkg-tags">
+              <span class="tag">Push</span>
+              <span class="tag">Analytics</span>
+              <span class="tag">Capacitor</span>
+            </div>
+          </a>
+
+          <a
+            class="pkg-card"
+            href="https://github.com/IngloriousCoderz/inglorious-forge/tree/main/packages/i18n#readme"
+            target="_blank"
+          >
+            <div class="pkg-header">
+              <svg
+                class="pkg-icon"
+                viewBox="0 0 36 36"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle
+                  cx="18"
+                  cy="18"
+                  r="13"
+                  fill="rgba(127,127,255,0.1)"
+                  stroke="rgba(127,127,255,0.35)"
+                  stroke-width="0.5"
+                />
+                <path
+                  d="M5 18 H31 M18 5 C12 11 12 25 18 31 M18 5 C24 11 24 25 18 31"
+                  stroke="rgba(127,127,255,0.45)"
+                  stroke-width="0.75"
+                />
+              </svg>
+              <span class="pkg-arrow">↗</span>
+            </div>
+            <p class="pkg-scope">@inglorious/</p>
+            <h2 class="pkg-name">i18n</h2>
+            <p class="pkg-tagline">The Interpreter</p>
+            <p class="pkg-desc">
+              Translations driven by a store entity: the active language,
+              plurals, formatting and markup in translations, over i18next.
+            </p>
+            <div class="pkg-tags">
+              <span class="tag">i18next</span>
+              <span class="tag">Plurals</span>
+              <span class="tag">RTL</span>
             </div>
           </a>
 
@@ -530,6 +728,14 @@
             </div>
           </a>
         </div>
+        <p class="pkg-more">
+          Eleven of the 27 packages in the monorepo. The rest, from the Vite
+          plugins and create-app to AG Grid and the game renderers, are
+          <a
+            href="https://github.com/IngloriousCoderz/inglorious-forge#whats-in-it"
+            >listed on GitHub ↗</a
+          >
+        </p>
       </section>
 
       <footer class="footer">
@@ -537,7 +743,7 @@
           <!--Built with <a href="https://inglorious.dev/web/">@inglorious/web</a> +
           <a href="https://inglorious.dev/ssx/">SSX</a> — our
           own tools, in production.<br />-->
-          A product of
+          Open source under the MIT license. Made by
           <a href="https://ingloriouscoderz.it">Inglorious Coderz SRL</a>,
           Turin, Italy.
         </div>

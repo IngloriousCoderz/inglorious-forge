@@ -18,7 +18,6 @@ export const entities = {
     saleCount: 0,
   },
 
-  // ProductCatalog: Information Expert on descriptions, prices and tax categories.
   catalog: {
     type: "Catalog",
     products: {
@@ -61,7 +60,6 @@ export const entities = {
     },
   },
 
-  // Pricing policies are data. The functions that read them are in `domain/pricing.js`.
   pricing: {
     type: "Pricing",
     policyId: "bestForCustomer",

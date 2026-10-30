@@ -97,8 +97,6 @@ export const states = {
       entity.error = null
       entity.state = "complete"
 
-      // Broadcast: the sale does not know, and should not know, who keeps the books.
-      // The receipt travels with the event because it is the change being announced.
       api.notify("saleComplete", receipt)
     },
 
@@ -109,6 +107,5 @@ export const states = {
     },
   },
 
-  // A completed sale is a record. It answers nothing.
   complete: {},
 }

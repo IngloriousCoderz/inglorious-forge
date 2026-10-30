@@ -1,6 +1,6 @@
-const DEFAULT_PRECISION = 1 // Default precision used for snapping numbers.
-const DEFAULT_TOLERANCE = 0.1 // Default tolerance used for comparing numbers.
-const SQUARE_ROOT = 0.5 // Exponent used for calculating square roots.
+const DEFAULT_PRECISION = 1
+const DEFAULT_TOLERANCE = 0.1
+const SQUARE_ROOT = 0.5
 
 /**
  * Returns the absolute value of a number.

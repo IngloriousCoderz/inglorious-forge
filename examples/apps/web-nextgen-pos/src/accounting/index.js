@@ -21,8 +21,6 @@ export const Accounting = {
   networkChange(entity, { isOnline }, api) {
     if (!isOnline || !entity.queued.length) return
 
-    // The committed copy rather than the draft: the receipts are about to cross an
-    // `await`, and a draft does not survive the end of the update it belongs to.
     const { queued } = api.getEntity(entity.id)
 
     api.notify(`#${entity.id}:post`, { receipts: queued, isOnline })

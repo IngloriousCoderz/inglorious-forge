@@ -1,8 +1,3 @@
-// The app's components as Vue single-file components, compiled to lit-html by
-// @inglorious/vite-plugin-vue. Imported Inglorious UI components are tags with
-// props; imported .vue components with `v-bind="id"` render store entities;
-// script values that read `api` are computed on every render.
-
 import { importBlock } from "./imports.js"
 import { LINE_WIDTH } from "./source.js"
 
@@ -173,7 +168,6 @@ ${nav.join("\n")}
 
   if (!app.tabs) return header
 
-  // Each action on one line when it fits, one property per line otherwise.
   const actions = pages.map((page) => {
     const fields = [
       `value: '${page.path}'`,

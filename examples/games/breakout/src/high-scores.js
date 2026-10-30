@@ -1,7 +1,5 @@
 import { readJSON, writeJSON } from "@inglorious/engine/storage.js"
 
-// The original keeps the table in a text file in LÖVE's save directory, a name on one line
-// and a score on the next. The browser's own storage is the same idea here.
 const KEY = "breakout.high-scores"
 
 export const ENTRIES = 10
@@ -66,8 +64,6 @@ export function rankOf(scores, score) {
 
 /** Puts a name and its score in at the place it earned, moving the rest down. */
 export function recordScore(scores, rank, name, score) {
-  // Everything below the place earned moves down to make room and the last entry falls off
-  // the end, which is what keeps the table the length it is read back at.
   scores.splice(rank, 0, { name, score })
   scores.length = ENTRIES
 

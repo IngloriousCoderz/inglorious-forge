@@ -20,8 +20,6 @@ const COLUMNS = [
 
 const REMOVE_COLUMN = { id: "remove", label: "" }
 
-// Model-View Separation: everything here comes in as props, and everything that
-// happens goes out as a callback. The view has no idea a store exists.
 export function render(props) {
   const { state, error } = props
 

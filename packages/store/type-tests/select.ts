@@ -11,7 +11,6 @@ interface AppState {
 const tasks = (state: AppState) => state.list.tasks
 const filter = (state: AppState) => state.footer.filter
 
-// The result function's arguments are inferred from the input selectors
 export const visible = compute(
   (tasks, filter) => tasks.filter((task) => filter === "all" || task.done),
   [tasks, filter],
@@ -28,7 +27,6 @@ visible({ list: { tasks: [] } })
 // @ts-expect-error: tasks are Task[], not strings
 compute((tasks: string[]) => tasks.length, [tasks])
 
-// Explicit type arguments keep working
 export const explicit = compute<AppState, [Task[]], number>(
   (tasks) => tasks.length,
   [tasks],

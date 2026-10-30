@@ -29,7 +29,6 @@ function createContext() {
     },
     scale: (x, y) => multiply([x, 0, 0, y, 0, 0]),
     translate: (x, y) => multiply([1, 0, 0, 1, x, y]),
-    // Where the tile's crop starts on the sheet, and where the canvas had been moved.
     drawImage: (img, sx, sy) => drawn.push([sx, sy, m[4], m[5]]),
     get globalAlpha() {
       return 1
@@ -59,8 +58,6 @@ test("it should draw a sprite around the entity's own middle", () => {
 
   renderSprite(player(), ctx, api)
 
-  // A tile drawn around the origin starts half a tile before it, which is the top left
-  // corner of the tile. Anything further out means the position was counted twice.
   const [, , x, y] = ctx.drawn[0]
 
   expect([x, y]).toStrictEqual([-8, -8])
@@ -71,8 +68,5 @@ test("it should crop the tile its frame names, flipped or not", () => {
 
   renderSprite(player("left"), flipped, api)
 
-  // Both faces crop the same tile; only the mirroring differs. Where a mirrored sprite
-  // lands is a separate question this does not answer.
-  // Frame 17 on a seven column sheet is column 3, row 2.
   expect(flipped.drawn[0].slice(0, 2)).toStrictEqual([48, 32])
 })

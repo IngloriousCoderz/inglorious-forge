@@ -63,8 +63,6 @@ export interface I18nEntity {
   isUnsaved?: boolean
 }
 
-// A type alias rather than an interface, so it fits option types that allow
-// extra fields, such as Inglorious UI's `SelectOption`.
 export type LanguageOption = {
   value: string
   /** The language in itself: "Italiano", "Français". */

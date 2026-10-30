@@ -1,7 +1,3 @@
-/* While it overlays the page the drawer is a popover in the top layer. The
-   browser styles every popover as a centred, bordered box hidden until it
-   opens, so those defaults are reset here: the drawer stays displayed while
-   closed, off-screen or docked, and slides rather than appears. */
 .iw-drawer {
   display: flex;
   flex-direction: column;
@@ -24,8 +20,6 @@
   inset-block: 0;
   z-index: var(--iw-z-modal, 1050);
 
-  /* As tall as an app bar, so the line under a drawer and the app bar beside
-     it runs straight across. */
   .iw-drawer-header {
     min-height: var(--iw-space-16);
     border-bottom: 1px solid var(--iw-color-border);
@@ -52,8 +46,6 @@
     transition: transform var(--iw-transition-fast);
   }
 
-  /* The toggle points at the edge the drawer sits on, which a right-to-left
-     page mirrors. `scale`, so the collapsed state's rotation still applies. */
   .iw-drawer-toggler > span:dir(rtl) {
     scale: -1 1;
   }
@@ -84,15 +76,10 @@
       opacity: 0;
     }
 
-    /* The header keeps only what fits the rail, such as a brand mark, so
-       it centres it. */
     .iw-drawer-header {
       justify-content: center;
     }
 
-    /* Only the icon is left, centred in the rail. The label also has to
-       leave the row: faded out, it still took its width and pushed the
-       icon off centre, as did the icon's side margin. */
     .iw-list-item > .iw-flex {
       justify-content: center;
     }
@@ -112,8 +99,6 @@
   }
 }
 
-/* `left` and `right` are the start and end of the line: the left drawer
-   sits on the right in a right-to-left page, and slides off that way. */
 .iw-drawer-left {
   inset-inline: 0 auto;
   border-inline-end: 1px solid var(--iw-color-border);
@@ -136,9 +121,6 @@
   backdrop-filter: none;
 }
 
-/* Overlaying: a temporary drawer at every width, a responsive one below
-   64rem. Off-screen until open, raised, closed from its header. The collapse
-   toggle only makes sense for a rail, so the footer goes. */
 .iw-drawer {
   box-shadow: var(--iw-shadow-lg);
 
@@ -151,9 +133,6 @@
   }
 }
 
-/* Docked: a permanent drawer at every width, a responsive one from 64rem
-   (keep in step with DOCKED_QUERY in template.js). In place, flat, and
-   hidden only on request. */
 .iw-drawer-permanent {
   transform: none;
   box-shadow: none;

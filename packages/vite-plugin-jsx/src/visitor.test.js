@@ -123,7 +123,6 @@ describe("babel visitor", () => {
   })
 
   it("imports repeat only once with multiple map calls", async () => {
-    // TODO: doesn't work if arrow function is in concise form: const view = ({ xs, ys }) => <div />
     expect(
       await transform(`
     const view = ({ xs, ys }) => {

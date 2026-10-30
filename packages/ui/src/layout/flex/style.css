@@ -129,8 +129,6 @@
     padding: var(--iw-space-8);
   }
 
-  /* A flex item needs both minimum dimensions released before either axis can
-     overflow instead of expanding its parent. */
   &.iw-flex-overflow-auto,
   &.iw-flex-overflow-scroll,
   &.iw-flex-overflow-hidden,

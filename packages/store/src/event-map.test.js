@@ -13,14 +13,14 @@ test("constructor should initialize the event map from types and entities", () =
     Enemy: {
       update: () => {},
     },
-    Item: {}, // Type with no events
+    Item: {},
   }
   const entities = {
     player1: { type: "Player" },
     player2: { type: "Player" },
     enemy1: { type: "Enemy" },
     item1: { type: "Item" },
-    ghost1: { type: "Ghost" }, // Type that doesn't exist
+    ghost1: { type: "Ghost" },
   }
 
   const eventMap = new EventMap(types, entities)
@@ -35,9 +35,7 @@ test("constructor should initialize the event map from types and entities", () =
     "player2",
   ])
 
-  // 'item' type has no events, so it shouldn't be in the map
   expect(eventMap.getEntitiesForEvent("item")).toStrictEqual([])
-  // 'ghost' type doesn't exist, so it should be ignored
   expect(eventMap.getEntitiesForEvent("ghost")).toStrictEqual([])
 })
 
@@ -55,7 +53,6 @@ test("addEntity should add an entity to the correct event sets", () => {
   expect(eventMap.getEntitiesForEvent("update")).toStrictEqual(["player1"])
   expect(eventMap.getEntitiesForEvent("jump")).toStrictEqual(["player1"])
 
-  // Add another entity of the same type
   eventMap.addEntity("player2", types.Player, "Player")
   expect(eventMap.getEntitiesForEvent("update")).toStrictEqual([
     "player1",
@@ -85,7 +82,6 @@ test("removeEntity should remove an entity from its event sets", () => {
   expect(eventMap.getEntitiesForEvent("update")).toStrictEqual(["player2"])
   expect(eventMap.getEntitiesForEvent("fire")).toStrictEqual(["player2"])
 
-  // Removing a non-existent entity should not throw an error
   expect(() =>
     eventMap.removeEntity("player3", types.Player, "Player"),
   ).not.toThrow()
@@ -121,34 +117,27 @@ test("getEntitiesForEvent should handle scoped events correctly", () => {
   }
   const eventMap = new EventMap(types, entities)
 
-  // Scoped to a type: 'Form:submit' should only return form entities
   expect(eventMap.getEntitiesForEvent("Form:submit")).toStrictEqual([
     "loginForm",
     "signupForm",
   ])
 
-  // Scoped to a specific entity by ID: '#loginForm:submit'
   expect(eventMap.getEntitiesForEvent("#loginForm:submit")).toStrictEqual([
     "loginForm",
   ])
 
-  // Scoped to a specific entity by type and ID: 'Form#loginForm:submit'
   expect(eventMap.getEntitiesForEvent("Form#loginForm:submit")).toStrictEqual([
     "loginForm",
   ])
 
-  // Scoped to a non-existent entity ID
   expect(eventMap.getEntitiesForEvent("#nonExistent:submit")).toStrictEqual([])
 
-  // Scoped to an entity that exists but doesn't handle the event
   expect(eventMap.getEntitiesForEvent("#loginForm:click")).toStrictEqual([])
 
-  // Scoped to an entity ID, but with the wrong type specified
   expect(eventMap.getEntitiesForEvent("Button#loginForm:submit")).toStrictEqual(
     [],
   )
 
-  // Broadcast event should return all entities with the handler
   expect(eventMap.getEntitiesForEvent("submit")).toStrictEqual([
     "loginForm",
     "signupForm",
@@ -161,11 +150,9 @@ test("EventMap provides a significant performance benefit for event handling", a
   const { entities, types } = createTestEntities(ENTITY_COUNT)
   const eventMap = new EventMap(types, entities)
 
-  // We'll use a mock function to ensure the "work" is consistent
   const updateHandler = vi.fn()
   types.Updater.update = updateHandler
 
-  // --- Simulation A: The Old Way (iterating all entities) ---
   const oldWayStartTime = performance.now()
   for (const id in entities) {
     const entity = entities[id]
@@ -176,10 +163,8 @@ test("EventMap provides a significant performance benefit for event handling", a
   }
   const oldWayTime = performance.now() - oldWayStartTime
 
-  // Reset the mock for the next simulation
   updateHandler.mockClear()
 
-  // --- Simulation B: The New Way (using EventMap) ---
   const newWayStartTime = performance.now()
   const updaterIds = eventMap.getEntitiesForEvent("update")
   for (const id of updaterIds) {
@@ -189,16 +174,13 @@ test("EventMap provides a significant performance benefit for event handling", a
   }
   const newWayTime = performance.now() - newWayStartTime
 
-  // Assertions to verify correctness
   expect(oldWayTime).toBeGreaterThan(newWayTime)
   expect(updateHandler).toHaveBeenCalledTimes(updaterIds.length)
 })
 
-// Helper function to create a large set of test entities
 function createTestEntities(count) {
   const entities = {}
   const types = {}
-  // 10% of entities will have a mock 'update' handler
   const updaterType = { update: vi.fn() }
   const staticType = {}
 

@@ -60,7 +60,6 @@
     }
   }
 
-  /* Neutral, unless a theme gives the default color its own tokens */
   &.iw-button-default {
     --iw-button-color: var(--iw-button-default-color, var(--iw-color-text));
     --iw-button-bg: var(--iw-button-default-bg, var(--iw-color-surface));
@@ -144,7 +143,6 @@
   &.iw-button-pressed {
     background-color: var(--iw-button-bg-active);
     color: var(--iw-button-text);
-    /* box-shadow: var(--iw-button-shadow-active); */
   }
 
   &:disabled,

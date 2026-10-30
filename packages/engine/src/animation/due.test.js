@@ -7,7 +7,6 @@ const A_SIXTIETH = 1 / 60
 
 describe("something held to a rate", () => {
   test("it is not due before the interval has passed", () => {
-    // Five frames of a sixtieth of a second is under a tenth of one.
     expect(run(dueAt(A_TENTH), 5).turns).toEqual([
       undefined,
       undefined,
@@ -24,9 +23,6 @@ describe("something held to a rate", () => {
   })
 
   test("a shade short of the interval still counts as reaching it", () => {
-    // Frame times are added up one at a time, and six of a sixtieth of a second come to
-    // a hair under a tenth of one -- which would otherwise leave something moving ten
-    // times a second moving at nine.
     const clock = addedUp(6)
 
     expect(clock).toBeLessThan(A_TENTH)
@@ -40,16 +36,12 @@ describe("something held to a rate", () => {
   test("the time it is told should add up to the time that passed", () => {
     const { turns, clock } = run(dueAt(A_TENTH), 60)
 
-    // A second of frames at ten turns a second is ten turns covering a second between
-    // them: nothing lost, nothing invented, no drifting behind the clock.
     expect(turns.filter((turn) => turn !== undefined)).toHaveLength(10)
     expect(turns.reduce((sum, turn) => sum + (turn ?? 0), 0)).toBeCloseTo(1)
     expect(clock).toBeCloseTo(0)
   })
 
   test("a frame that leaves more time than the interval carries all of it", () => {
-    // The rate is a ceiling and not a floor: one slow frame is one turn covering all of
-    // itself rather than a turn that falls further and further behind.
     const { turns, clock } = run(dueAt(A_TENTH), 1, 0.25)
 
     expect(turns[0]).toBeCloseTo(0.25)
@@ -63,8 +55,6 @@ describe("something held to a rate", () => {
   })
 
   test("two things held to the same rate do not share one clock", () => {
-    // The time is handed back rather than kept, which is what lets an entity and a
-    // system ask the same question without sharing the answer.
     const isDue = dueAt(A_TENTH)
 
     expect(run(isDue, 6).turns[5]).toBeCloseTo(A_TENTH)

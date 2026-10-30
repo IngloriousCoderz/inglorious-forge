@@ -71,7 +71,6 @@ describe("axes renderers", () => {
   })
 
   describe("x ticks", () => {
-    // 100 points across 400 pixels, labelled "Point 0" to "Point 99".
     function createCrowdedFrame() {
       const data = Array.from({ length: 100 }, (_, index) => ({
         name: `Point ${index}`,

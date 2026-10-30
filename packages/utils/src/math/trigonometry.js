@@ -1,7 +1,7 @@
 import { mod } from "./number.js"
 
-const HALF_CIRCLE_IN_DEGRESS = 180 // Half-circle in degrees (180°)
-const FULL_CIRCLE = 2 // Full circle multiplier for radians (2π)
+const HALF_CIRCLE_IN_DEGRESS = 180
+const FULL_CIRCLE = 2
 
 /**
  * Calculates the arctangent of the quotient of its arguments.

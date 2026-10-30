@@ -31,7 +31,6 @@ export const Carousel = defineComponent({
       ),
       page: page.value,
       gap: "md",
-      // Inside, the arrows would cover the slides' own text.
       arrowPlacement: "outside",
       isFullWidth: true,
       onPageChange: page.setValue,

@@ -78,7 +78,6 @@ function createContext() {
   }
 }
 
-// Renders through `absolutePosition`, the way the renderer does.
 function draw(render, entity, position = [0, 0]) {
   const { calls, ctx } = createContext()
   ctx.save()

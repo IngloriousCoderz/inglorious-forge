@@ -155,7 +155,6 @@ describe("Markdown", () => {
     expect(container.querySelector(".iw-alert code").textContent).toBe(
       "npm test",
     )
-    // Inline: no paragraph inside the text's own paragraph.
     expect(container.querySelector("p p")).toBeNull()
   })
 

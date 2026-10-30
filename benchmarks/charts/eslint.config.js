@@ -30,7 +30,7 @@ export default [
       ...reactHooks.configs.recommended.rules,
       "react/prop-types": "off",
       "react/react-in-jsx-scope": "off",
-      "react-refresh/only-export-components": "off", // Benchmark files don't need fast refresh
+      "react-refresh/only-export-components": "off",
     },
   },
   {

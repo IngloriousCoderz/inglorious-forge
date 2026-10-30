@@ -1,6 +1,3 @@
-// Type-level tests for handleAsync and optimistic: `tsc -p type-tests` fails on
-// any error, and on any `@ts-expect-error` whose error does not happen.
-
 import {
   type Api,
   type BaseEntity,
@@ -39,8 +36,6 @@ type AppApi = Api<AppEntity, AppState>
 
 declare function fetchTodos(userId: string): Promise<Todo[]>
 
-// The shorthand: `satisfies` gives the handlers the entity and the app's api,
-// and `run` gives the payload and the result
 export const TodoList = {
   ...handleAsync("load", {
     start(entity) {
@@ -62,7 +57,6 @@ export const TodoList = {
   }),
 } satisfies EntityType<TodoListEntity, AppApi>
 
-// Each generated event is named and typed
 declare const todoList: TodoListEntity & { id: string }
 declare const api: AppApi
 TodoList.load(todoList, "user-1", api)
@@ -72,14 +66,12 @@ TodoList.loadSuccess(todoList, [{ id: 1, title: "a" }], api)
 TodoList.loadError(todoList, new Error("x"), api)
 TodoList.loadFinally(todoList, undefined, api)
 
-// Annotated parameters work too, the app's api included
 export const annotated = handleAsync("save", {
   run: (todo: Todo, api: AppApi) => api.getEntity("todoList")?.todos ?? [todo],
   success(entity: TodoListEntity, todos: Todo[], api: AppApi) {
     entity.todos = todos
     api.notify("#user:saved")
   },
-  // `error` is `any`, so an annotation narrows it
   error(entity: TodoListEntity, error: Error) {
     entity.error = error.message
   },
@@ -90,7 +82,6 @@ export const saveTrigger: (
   api: AppApi,
 ) => void = annotated.save
 
-// The recommended way: a type alias lists the generated events in one go
 type UserType = {
   rename: (entity: UserEntity, name: string) => void
 } & AsyncEvents<"fetch", UserEntity, string, string, AppApi>
@@ -107,7 +98,6 @@ export const User: UserType = {
   }),
 }
 
-// Explicit type arguments still work; the event names are then plain strings
 export const explicit = handleAsync<TodoListEntity, void, Todo[]>("refresh", {
   run: () => fetchTodos("me"),
   success(entity, todos) {
@@ -116,7 +106,6 @@ export const explicit = handleAsync<TodoListEntity, void, Todo[]>("refresh", {
 })
 explicit.anyName?.(todoList, undefined, api)
 
-// Wrapped in optimistic, the events keep their names and types
 export const Optimistic = {
   ...optimistic(
     handleAsync("add", {
@@ -128,7 +117,6 @@ export const Optimistic = {
     (entity, todo) => ({ todos: [...entity.todos, todo] }),
   ),
 } satisfies EntityType<TodoListEntity, AppApi>
-// optimistic always adds the start event
 Optimistic.addStart(todoList, { id: 1, title: "a" }, api)
 
 // ---- must fail ----

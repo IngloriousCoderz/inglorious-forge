@@ -18,7 +18,6 @@ export function multiplayerMiddleware(config = {}) {
   let ws = null
   const localQueue = []
 
-  // The middleware function that will be applied to the store.
   return (store) => {
     const next = store.dispatch
     store.dispatch = (event) => send(store, event, next)
@@ -38,7 +37,6 @@ export function multiplayerMiddleware(config = {}) {
       return next(event)
     }
 
-    // Establish the connection on the first event.
     if (!ws) {
       establishConnection(store)
     }
@@ -51,8 +49,6 @@ export function multiplayerMiddleware(config = {}) {
       }
     }
 
-    // Pass the event to the next middleware in the chain,
-    // which is eventually the store's original dispatch function.
     return next(event)
   }
 
@@ -60,18 +56,12 @@ export function multiplayerMiddleware(config = {}) {
    * Attempts to establish a WebSocket connection to the server.
    */
   function establishConnection(store) {
-    // If a connection already exists, close it first.
     if (ws) {
       ws.close()
     }
     ws = new WebSocket(serverUrl)
 
-    // =====================================================================
-    // WebSocket Event Handlers
-    // =====================================================================
-
     ws.onopen = () => {
-      // Send any queued events to the server.
       while (localQueue.length) {
         ws.send(serialize(localQueue.shift()))
       }
@@ -81,22 +71,19 @@ export function multiplayerMiddleware(config = {}) {
       const serverEvent = deserialize(event.data)
 
       if (serverEvent.type === "stateInit") {
-        // Merge the server's initial state with the client's local state.
         const nextState = extend(store.getState(), serverEvent.payload)
         store.setState(nextState)
       } else {
-        // Dispatch the event to the local store to update the client's state.
         store.dispatch({ ...serverEvent, fromServer: true })
       }
     }
 
     ws.onclose = () => {
-      // Attempt to reconnect after a short delay.
       setTimeout(() => establishConnection(store), reconnectionDelay)
     }
 
     ws.onerror = () => {
-      ws.close() // The 'onclose' handler will trigger the reconnect.
+      ws.close()
     }
   }
 }

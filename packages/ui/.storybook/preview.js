@@ -87,15 +87,11 @@ function applyTheme(theme, mode) {
   const themeClass = themeClasses[theme] || themeClasses.inglorious
   const modeClass = mode === "light" ? "iw-theme-light" : "iw-theme-dark"
 
-  // Only one theme and one mode at a time: the previous ones go first, or
-  // their rules would still apply wherever the new theme sets nothing.
   const { classList } = document.body
   const previous = [...classList].filter((name) => name.startsWith("iw-theme-"))
   classList.remove(...previous)
   classList.add(themeClass, modeClass)
 
-  // The theme paints the body itself; colors a story left inline, as the
-  // dashboard's theme switcher does, would outlast the switch.
   document.body.style.removeProperty("background-color")
   document.body.style.removeProperty("color")
   document.documentElement.style.removeProperty("color-scheme")

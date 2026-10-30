@@ -3,14 +3,12 @@ import { html } from "@inglorious/web"
 import { renderSectionCard } from "../components/section-card.js"
 
 export const ScreenerPage = {
-  // Headline: route lifecycle
   routeChange(entity, payload) {
     if (payload.route !== entity.id) return
     if (entity.initialized) return
     entity.initialized = true
   },
 
-  // Body: render
   render(entity, api) {
     return html`
       <div class="page-grid">

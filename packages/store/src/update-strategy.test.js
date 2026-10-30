@@ -129,14 +129,9 @@ describe("updateStrategy", () => {
   })
 
   test("an update with nothing queued leaves the state alone", () => {
-    // Nothing to apply means nothing to publish: skipping the draft entirely, rather
-    // than copying the world just to arrive back where it started. This is what keeps
-    // a loop that pumps every animation frame cheap on the frames where neither the
-    // game nor the player had anything to say.
     for (const updateStrategy of STRATEGIES) {
       const store = createCounterStore(updateStrategy)
 
-      // Once, to build the world: a fresh store still has the initial creates queued.
       store.update()
 
       const before = store.getState()
@@ -232,7 +227,6 @@ describe("updateStrategy", () => {
               entity.count += amount
             },
             observe(entity, payload, api) {
-              // Reads another entity from inside a handler.
               entity.observed = api.getEntity("other").count
             },
           },
@@ -253,7 +247,6 @@ describe("updateStrategy", () => {
         store.notify("increment", 5)
         store.update()
 
-        // The swap happened once, after `increment` was applied.
         expect(store.getState().counter.count).toBe(5)
       }
     })
@@ -266,7 +259,6 @@ describe("updateStrategy", () => {
         store.notify("observe")
         store.update()
 
-        // `observe` ran after `increment`, yet still read the pre-update value.
         expect(store.getState().counter.observed).toBe(0)
       }
     })

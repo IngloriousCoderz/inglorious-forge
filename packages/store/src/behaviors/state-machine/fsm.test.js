@@ -129,8 +129,6 @@ test("it should stay quiet when a handler does not move the machine", () => {
 })
 
 test("it should let a state answer for itself in place of the type", () => {
-  // The type's handler is the default every state would otherwise do; a state that names
-  // the same event takes it over rather than adding to it.
   const calls = []
 
   const config = {
@@ -144,7 +142,6 @@ test("it should let a state answer for itself in place of the type", () => {
         fsm({
           default: {},
           table: {
-            // The screen that keeps the way out for itself.
             leave(entity) {
               calls.push("back to the menu")
 

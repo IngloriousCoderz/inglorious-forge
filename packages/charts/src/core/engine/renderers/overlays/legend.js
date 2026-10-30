@@ -37,7 +37,6 @@ export function renderLegend(primitive, frame) {
   `
 }
 
-// A pie or radial chart names its rows; any other chart, its series.
 function getLegendItems(primitive, frame) {
   const types = new Set(frame.primitives?.map((item) => item.type))
   if (types.has("pie")) return getPieLegendItems(frame)

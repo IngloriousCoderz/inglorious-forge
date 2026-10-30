@@ -22,7 +22,6 @@ export async function generateApp(pages, options = {}, loader) {
   const entities = await getStoreStuff("entities", options, loader)
   const hasEntitiesFile = Object.keys(entities).length
 
-  // Build client route map, including localized patterns (e.g. /it/about).
   const routesByPattern = new Map()
   for (const page of pages) {
     const routePattern = getClientRoutePattern(page)

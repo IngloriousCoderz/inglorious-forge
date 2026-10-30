@@ -39,14 +39,11 @@ describe("a hovering pointer", () => {
   })
 
   test("it stays a hand while it is holding something", () => {
-    // given a press on the button
     game.notify("mouseDown", ON_THE_BUTTON).step()
     expect(game.entity("mouse").cursor).toBe("hand")
 
-    // when the pointer wanders off with the button still held down
     game.notify("mouseMove", OFF_THE_BUTTON).step()
 
-    // then it does not flicker back mid-drag
     expect(game.entity("mouse").cursor).toBe("hand")
   })
 
@@ -59,8 +56,6 @@ describe("a hovering pointer", () => {
   })
 
   test("it still moves the pointer about", () => {
-    // The decorator hands on to whatever it displaced: skipping that would leave a
-    // mouse that points at things without ever going to them.
     game.notify("mouseMove", ON_THE_BUTTON).step()
 
     expect(game.entity("mouse").position).toEqual(ON_THE_BUTTON)

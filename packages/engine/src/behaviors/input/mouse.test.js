@@ -11,9 +11,6 @@ describe("the mouse", () => {
   let said
 
   beforeEach(() => {
-    // What the mouse says is recorded by something that can hear it, rather than by
-    // standing in for the api: the events themselves are what a game acts on, so a test
-    // that watched the api would pass even if nothing ever received them.
     said = []
 
     const listening = () => ({
@@ -75,8 +72,6 @@ describe("the mouse", () => {
   })
 
   test("it is moved by a press as well as by a move", () => {
-    // A press carries a position like any other, so the cursor is drawn under the finger
-    // even on the very first touch of the page.
     game.notify("mouseDown", ON_THE_BUTTON).step()
 
     expect(game.entity("mouse").position).toEqual(ON_THE_BUTTON)
@@ -95,15 +90,10 @@ describe("the mouse", () => {
   })
 
   test("a release belongs to the press that started it", () => {
-    // given a press on the button, and then a drag off it -- which is what every slider
-    // in the game does the moment it is nudged
     game.notify("mouseDown", ON_THE_BUTTON).step()
 
-    // when the pointer is let go somewhere else entirely
     game.notify("mouseUp", OFF_THE_BUTTON).step()
 
-    // then the button is released rather than the empty scene under the pointer, which
-    // would otherwise leave it stuck pressed for the rest of the game
     expect(said.releases).toEqual(["button"])
     expect(said.sceneReleases).toEqual([])
   })

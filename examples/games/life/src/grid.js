@@ -81,9 +81,6 @@ export function createGrid({ wrap = NO_WRAP } = {}) {
     )
   }
 
-  // Whether there is anywhere left to put one. It says nothing about whether any
-  // particular square is free -- that is `occupy`'s business, and it answers that
-  // separately, so a caller that wants to know can ask both questions.
   function isFull() {
     return population >= MAX_POPULATION
   }

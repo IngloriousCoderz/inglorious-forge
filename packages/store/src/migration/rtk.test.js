@@ -34,7 +34,6 @@ describe("RTK Adapter", () => {
         },
       })
 
-      // Should have all the async handlers
       expect(handlers.fetchUser).toBeDefined()
       expect(handlers.fetchUserStart).toBeDefined()
       expect(handlers.fetchUserRun).toBeDefined()
@@ -66,7 +65,6 @@ describe("RTK Adapter", () => {
 
       const api = createMockApi({ profile1: entity })
 
-      // Start
       const { entity: entity1 } = trigger(
         entity,
         handlers.fetchUserStart,
@@ -75,10 +73,8 @@ describe("RTK Adapter", () => {
       )
       expect(entity1.loading).toBe(true)
 
-      // Run
       await handlers.fetchUserRun(entity1, 123, api)
 
-      // Success
       const { entity: entity2 } = trigger(
         entity1,
         handlers.fetchUserSuccess,
@@ -94,11 +90,9 @@ describe("RTK Adapter", () => {
 
       const handlers = convertAsyncThunk("fetch", payloadCreator)
 
-      // Should still have run handlers
       expect(handlers.fetch).toBeDefined()
       expect(handlers.fetchRun).toBeDefined()
 
-      // Should not have start since onPending not provided
       expect(handlers.fetchStart).toBeUndefined()
     })
 
@@ -152,10 +146,8 @@ describe("RTK Adapter", () => {
 
       const todoType = convertSlice(todosSlice)
 
-      // Should have create
       expect(todoType.create).toBeDefined()
 
-      // Should have all reducers as handlers
       expect(todoType.addTodo).toBeDefined()
       expect(todoType.toggleTodo).toBeDefined()
       expect(todoType.setFilter).toBeDefined()
@@ -240,11 +232,9 @@ describe("RTK Adapter", () => {
       let entity = { type: "Counter", id: "counter1", value: 5 }
       const api = createMockApi({ counter1: entity })
 
-      // Increment
       const { entity: entity1 } = trigger(entity, counterType.increment, 3, api)
       expect(entity1.value).toBe(8)
 
-      // Decrement
       const { entity: entity2 } = trigger(
         entity1,
         counterType.decrement,
@@ -359,10 +349,8 @@ describe("RTK Adapter", () => {
         },
       })
 
-      // Should have sync handlers
       expect(todoType.addTodo).toBeDefined()
 
-      // Should have async handlers
       expect(todoType.fetchTodos).toBeDefined()
       expect(todoType.fetchTodosStart).toBeDefined()
       expect(todoType.fetchTodosRun).toBeDefined()
@@ -503,7 +491,6 @@ describe("RTK Adapter", () => {
 
       const dispatch = createRTKCompatDispatch(api, "todos")
 
-      // Dispatch RTK-style action
       dispatch({
         type: "todos/addTodo",
         payload: "Buy milk",
@@ -538,7 +525,6 @@ describe("RTK Adapter", () => {
 
       const dispatch = createRTKCompatDispatch(api, "todos")
 
-      // Try to dispatch a thunk
       dispatch(() => {})
 
       expect(consoleWarn).toHaveBeenCalledWith(
@@ -578,12 +564,10 @@ describe("RTK Adapter", () => {
         },
       })
 
-      // Convert to Inglorious
       const todoList = convertSlice(todosSlice, {
         asyncThunks: {
           fetchTodos: {
             payloadCreator: async () => {
-              // Simulate API call
               return [
                 { id: 1, text: "Buy milk", completed: false },
                 { id: 2, text: "Walk dog", completed: true },
@@ -604,16 +588,13 @@ describe("RTK Adapter", () => {
         },
       })
 
-      // Initialize entity
       let entity = { type: "TodoList", id: "todos" }
       const api = createMockApi({ todos: entity })
 
-      // Create
       const { entity: entity1 } = trigger(entity, todoList.create, {}, api)
       expect(entity1.items).toEqual([])
       expect(entity1.status).toBe("idle")
 
-      // Add todo
       const { entity: entity2 } = trigger(
         entity1,
         todoList.addTodo,
@@ -623,7 +604,6 @@ describe("RTK Adapter", () => {
       expect(entity2.items).toHaveLength(1)
       expect(entity2.items[0].text).toBe("New todo")
 
-      // Fetch todos
       const { entity: entity3 } = trigger(
         entity2,
         todoList.fetchTodosStart,
@@ -648,11 +628,9 @@ describe("RTK Adapter", () => {
       expect(entity4.items).toHaveLength(2)
       expect(entity4.items[0].text).toBe("Buy milk")
 
-      // Toggle todo
       const { entity: entity5 } = trigger(entity4, todoList.toggleTodo, 1, api)
       expect(entity5.items[0].completed).toBe(true)
 
-      // Remove todo
       const { entity: entity6 } = trigger(entity5, todoList.removeTodo, 1, api)
       expect(entity6.items).toHaveLength(1)
       expect(entity6.items[0].id).toBe(2)

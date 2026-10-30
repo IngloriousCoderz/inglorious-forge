@@ -26,10 +26,6 @@ export function renderMouse(entity, ctx) {
 
   ctx.save()
 
-  // The crosshair is drawn in one colour throughout. The arrow and the hand are filled
-  // in one colour and outlined in another instead, which is what keeps a white pointer
-  // readable on a white background: without the outline its edges go soft grey and the
-  // whole of it washes out wherever the game is light.
   ctx.fillStyle = color
   ctx.strokeStyle = cursor === CROSSHAIR ? color : outlineColor
   ctx.lineWidth = thickness

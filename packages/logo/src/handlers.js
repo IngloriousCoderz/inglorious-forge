@@ -51,7 +51,6 @@ export const Logo = {
 }
 
 export function startInteraction(entity, api) {
-  // skip during SSX
   if (typeof document === "undefined") return
 
   moveListener = createMoveListener(entity.id, api)
@@ -61,7 +60,6 @@ export function startInteraction(entity, api) {
 }
 
 export function stopInteraction() {
-  // skip during SSX
   if (typeof document === "undefined") return
 
   document.removeEventListener(eventType, moveListener)

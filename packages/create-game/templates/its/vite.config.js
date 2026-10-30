@@ -2,7 +2,6 @@ import { defineConfig } from "vite"
 import babel from "vite-plugin-babel"
 
 export default defineConfig({
-  // @see https://github.com/vitejs/vite/issues/1973
   define: { "process.env": {} },
 
   plugins: [

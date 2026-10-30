@@ -7,7 +7,6 @@
  */
 const DEFAULT_COMPARATOR = (a, b) => b - a
 
-// Threshold constants for comparison results
 const LESS_THAN_ZERO = 0
 const GREATER_THAN_ZERO = 0
 

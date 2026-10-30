@@ -11,7 +11,6 @@ export const Icon = defineComponent({
     name: z.string(),
     category: z.string().optional(),
   }),
-  // Drawn from the icons the app gives createOpenUI; an unknown one is left out.
   component: ({ props, iconFor }) => {
     const icon = iconFor(props.name)
     return when(icon, () => UiIcon.render({ icon }))

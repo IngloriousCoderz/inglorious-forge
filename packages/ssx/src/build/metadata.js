@@ -17,12 +17,10 @@ export function extractPageMetadata(store, page, entity, options = {}) {
 
   const getPageOption = createGetPageOption(store, module, entity)
 
-  // common metadata
   const updatedAt = getPageOption("updatedAt", DEFAULT_OPTIONS)
   const changefreq = getPageOption("changefreq", DEFAULT_OPTIONS)
   const priority = getPageOption("priority", DEFAULT_OPTIONS)
 
-  // sitemap metadata
   const loc = `${hostname}${path}`
 
   let lastmod
@@ -35,7 +33,6 @@ export function extractPageMetadata(store, page, entity, options = {}) {
     lastmod = new Date().toISOString().split("T")[0]
   }
 
-  // rss metadata
   const title = getPageOption("title", DEFAULT_OPTIONS)
   const meta = getPageOption("meta", DEFAULT_OPTIONS)
   const description = meta.description

@@ -1,5 +1,3 @@
-// The defaults every part of the chart agrees on, in one place.
-
 export const DEFAULT_WIDTH = 800
 export const DEFAULT_HEIGHT = 400
 export const DEFAULT_BRUSH_HEIGHT = 30

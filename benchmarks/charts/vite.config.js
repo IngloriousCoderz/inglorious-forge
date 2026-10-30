@@ -1,7 +1,6 @@
 import react from "@vitejs/plugin-react"
 import { defineConfig } from "vite"
 
-// One page per implementation, so each bundle holds only its own library.
 export default defineConfig({
   plugins: [react()],
   build: {

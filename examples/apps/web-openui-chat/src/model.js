@@ -6,10 +6,7 @@
 const OLLAMA_URL = import.meta.env.VITE_OLLAMA_URL ?? "http://localhost:11434"
 const MODEL = import.meta.env.VITE_OLLAMA_MODEL ?? "qwen3:14b"
 
-// Enough for the library's prompt with its tools and examples (about 7k
-// tokens), a few turns of history and the answer.
 const CONTEXT_TOKENS = 16384
-// Low, so the model sticks to the syntax it was shown.
 const TEMPERATURE = 0.2
 
 /**
@@ -34,7 +31,6 @@ export async function* streamChat({ system, messages }) {
     )
   }
 
-  // One JSON object per line, each with the next piece of the answer.
   const reader = response.body.pipeThrough(new TextDecoderStream()).getReader()
   let buffer = ""
   for (;;) {

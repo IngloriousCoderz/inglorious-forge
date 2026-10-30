@@ -33,7 +33,6 @@ describe("rating", () => {
       max: 5,
       onChange: (value) => (newValue = value),
     }
-    // jsdom only fires change on an input in the document.
     const container = document.createElement("div")
     document.body.append(container)
 

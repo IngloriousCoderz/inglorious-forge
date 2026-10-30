@@ -6,9 +6,6 @@
   color: var(--iw-color-text);
 }
 
-/* The chrome sits outside the view transition. A page slide snapshots the whole
-   viewport, so anything pinned here would travel with the page unless it is
-   taken out of the snapshot by naming it separately. */
 .chrome {
   flex: 0 0 auto;
 }

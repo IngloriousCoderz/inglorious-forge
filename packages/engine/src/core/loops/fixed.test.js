@@ -21,9 +21,6 @@ describe("a fixed loop", () => {
     const loop = new FixedLoop()
 
     const run = loop.start(engine, A_HUNDRED_MILLISECONDS)
-    // Past the two updates on the boundary: the loop updates once to begin with and
-    // then once per interval, so measuring from the second one counts ten in a second
-    // rather than eleven with the starting one thrown in.
     await vi.advanceTimersByTimeAsync(A_HUNDRED_MILLISECONDS)
     engine.update.mockClear()
 
@@ -35,33 +32,26 @@ describe("a fixed loop", () => {
   })
 
   test("it should sleep what is left of the interval rather than the interval again", () => {
-    // given an update that takes half the interval
     const engine = {
       update: vi.fn(() => {
         vi.setSystemTime(Date.now() + A_HUNDRED_MILLISECONDS / 2)
       }),
     }
 
-    // when the loop runs once, up to its sleep
     const [slept] = firstSleep(engine, A_HUNDRED_MILLISECONDS)
 
-    // then it waits out the remaining half: sleeping the work on top of the wait would
-    // halve the rate, because every frame would wait out its own cost twice
     expect(slept).toBe(A_HUNDRED_MILLISECONDS / 2)
   })
 
   test("a frame that overran its budget should start the next one straight away", () => {
-    // given an update that takes twice the interval
     const engine = {
       update: vi.fn(() => {
         vi.setSystemTime(Date.now() + A_HUNDRED_MILLISECONDS * 2)
       }),
     }
 
-    // when the loop runs once, up to its sleep
     const [slept] = firstSleep(engine, A_HUNDRED_MILLISECONDS)
 
-    // then it does not wait at all rather than waiting out a debt as well as the work
     expect(slept).toBe(0)
   })
 

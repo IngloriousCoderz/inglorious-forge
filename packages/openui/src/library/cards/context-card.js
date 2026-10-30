@@ -35,7 +35,6 @@ export const ContextCardBlock = defineComponent({
       renderItem: (item, renderNode) => {
         const content = Flex.render({
           direction: "column",
-          // A Tag as the title stays as wide as its text.
           align: "start",
           gap: "sm",
           children: [

@@ -65,7 +65,6 @@ describe("tooltip", () => {
       tooltip: { index: 1, dataKey: "value" },
     })
 
-    // The template's first bindings: the translate's x and y, then the width.
     const [x, , width] = renderTooltip(frame).values
 
     expect(x).toBeGreaterThanOrEqual(0)

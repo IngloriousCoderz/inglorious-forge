@@ -73,7 +73,6 @@ function readPageHead(store, modules) {
       meta: getPageOption("meta", DEFAULT_OPTIONS),
     }
   } catch {
-    // Metadata computed from entity data throws until that data arrives.
     return null
   }
 }
@@ -91,8 +90,6 @@ function applyHead(head, previous) {
     root.dir = head.dir
   }
 
-  // Only tags named by this page or the previous one are touched, so those the
-  // layout writes on its own stay as they are.
   const names = new Set([
     ...Object.keys(previous?.meta ?? {}),
     ...Object.keys(head.meta),
@@ -103,7 +100,6 @@ function applyHead(head, previous) {
 }
 
 function applyMeta(name, content) {
-  // The server writes Open Graph style names, such as og:image, as `property`.
   const attribute = name.includes(":") ? "property" : "name"
   let tag = [...document.head.querySelectorAll("meta")].find(
     (meta) => meta.getAttribute(attribute) === name,

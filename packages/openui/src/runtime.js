@@ -44,7 +44,6 @@ export function createContext({ entity, result, functions, actions }) {
       if (Object.hasOwn(entity.queries, name)) return entity.queries[name].data
       if (Object.hasOwn(entity.mutations, name)) return entity.mutations[name]
 
-      // Not run yet: a query shows its defaults, a mutation is idle.
       const query = result.queryStatements.find(
         (node) => node.statementId === name,
       )
@@ -158,8 +157,6 @@ export function renderProgram({
   const setValue = (name, value) =>
     api.notify(`#${entity.id}:valueChange`, { name, value })
 
-  // lang-core's binding store, backed by the entity: reads come from it,
-  // writes become events on it.
   const store = {
     get: getValue,
     set: setValue,
@@ -220,8 +217,6 @@ export function renderProgram({
       const errors = entity.fieldErrors[formName ?? ""]
       if (!field.isReactive || !errors?.[name]) return field
 
-      // A bound field writes to its $variable, not to the form, so it clears
-      // its own message as it changes.
       return {
         ...field,
         setValue: (value) => {
@@ -239,10 +234,8 @@ export function renderProgram({
     return {
       ...shared,
       formName,
-      // Set by a FormControl for the field inside it.
       label: scope.label,
       hint: scope.hint,
-      // Set by a chat Card for the citations in its text.
       sources: scope.sources ?? [],
       stateField,
       fieldError: (name) => entity.fieldErrors[formName ?? ""]?.[name],
@@ -267,7 +260,6 @@ export function renderProgram({
           callTool,
           message,
           formName: actionFormName ?? formName,
-          // Only this scope's own form knows which fields are bound.
           fields:
             actionFormName && actionFormName !== formName ? [] : scope.fields,
           action,
@@ -295,7 +287,6 @@ export function renderProgram({
         statementId: value.statementId,
       })
     } catch (error) {
-      // One broken component should not take the rest of the answer down.
       console.error(`[openui] ${value.typeName} failed to render:`, error)
       return nothing
     }
@@ -365,8 +356,6 @@ async function runAction({
   }
 
   const announce = (event) => {
-    // The values as they are now, with what this click has written so far,
-    // such as an EditableTable's rows saved just before.
     const values = api.getEntity?.(entity.id)?.values ?? entity.values
     const valueOf = (name) =>
       Object.hasOwn(pendingValues, name)
@@ -374,8 +363,6 @@ async function runAction({
         : Object.hasOwn(values, name)
           ? values[name]
           : defaults[name]
-    // A field bound to a $variable keeps its value there, not in the form:
-    // the form's state has it too, under the field's name.
     const bound = Object.fromEntries(
       fields
         .filter((field) => field?.value?.__reactive === "assign")
@@ -386,7 +373,6 @@ async function runAction({
       humanFriendlyMessage: "",
       params: {},
       formName,
-      // A form sends its own fields; anything else, every value there is.
       formState: formName
         ? { [formName]: { ...bound, ...values[formName] } }
         : { ...defaults, ...values, ...pendingValues },
@@ -402,7 +388,6 @@ async function runAction({
     return
   }
 
-  // An action object from before action plans: `{ type, params, url }`.
   if (!("steps" in action)) {
     const params = { ...action.params }
     if (action.url) params.url = action.url

@@ -31,7 +31,6 @@ export const Default = {
   },
 }
 
-// A phone app keeps a bar at the bottom: the snackbar rises above it.
 export const AboveBottomNavigation = {
   args: {
     isOpen: true,

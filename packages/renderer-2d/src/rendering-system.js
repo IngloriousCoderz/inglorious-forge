@@ -21,31 +21,23 @@ export function renderingSystem(canvas) {
     update(entities, dt, api) {
       const { game, ...worldEntities } = entities
 
-      // 1. Clear canvas
       const [gameWidth, gameHeight] = game.size
       ctx.fillStyle = game.backgroundColor || "lightgrey"
       ctx.fillRect(ORIGIN, ORIGIN, gameWidth, gameHeight)
 
-      // 2. Find active camera
       const camera = Object.values(entities).find(
         (entity) => entity.type === "Camera" && entity.isActive,
       )
 
-      // 3. Render world entities with camera transform
       ctx.save()
 
       if (camera && !game.devMode) {
         const [cameraX, cameraZ] = to2D(camera.position)
         const zoom = camera.zoom ?? DEFAULT_ZOOM
 
-        // Center the view on the camera and apply zoom.
-        // The order of operations is crucial here.
         ctx.translate(gameWidth / HALF, gameHeight / HALF)
         ctx.scale(zoom, zoom)
-        // This vertical translation compensates for the coordinate system flip
-        // that happens inside the absolutePosition decorator.
         ctx.translate(ORIGIN, -gameHeight)
-        // This translation moves the world relative to the camera.
         ctx.translate(-cameraX, cameraZ)
       }
 

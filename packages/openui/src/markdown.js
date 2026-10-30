@@ -8,7 +8,6 @@ import MarkdownIt from "markdown-it"
  */
 const markdown = new MarkdownIt({ html: false, linkify: true })
 
-// Links lead away from the answer, so they open apart from it.
 const renderLink =
   markdown.renderer.rules.link_open ??
   ((tokens, index, options, _, self) =>

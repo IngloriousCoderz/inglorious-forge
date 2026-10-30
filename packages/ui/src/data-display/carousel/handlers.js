@@ -40,8 +40,6 @@ export function create(entity) {
   entity.hasIndicators ??= true
   entity.isFullWidth ??= false
 
-  // An infinite carousel keeps the current item in the middle slot, so the
-  // starting item is placed there by rotating the strip up front.
   if (entity.isInfinite && entity.items.length > ENOUGH_TO_WRAP) {
     const home = Math.floor(entity.items.length / 2)
     entity.rotation = normalizeRotation(entity.page - home, entity.items.length)

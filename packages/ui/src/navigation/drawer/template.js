@@ -77,8 +77,6 @@ export function render(props) {
     ...extraClasses,
   }
 
-  // Without onClose nothing would take isOpen down, so the browser is not
-  // allowed to dismiss it: a manual popover ignores Esc and outside presses.
   const popover =
     variant === "permanent" ? nothing : onClose ? "auto" : "manual"
 

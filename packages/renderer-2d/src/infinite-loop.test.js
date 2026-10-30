@@ -18,8 +18,6 @@ test("it should draw the thing twice when there is a loop", () => {
 })
 
 test("it should draw the second one shifted back by the loop", () => {
-  // The second copy is drawn a whole loop's distance along, so that a sprite scrolling off
-  // one side comes back in on the other without a seam.
   const { calls, ctx } = createContext()
 
   infiniteLoop(() => ctx.fillRect(0, 0, 10, 10))(entity, ctx)

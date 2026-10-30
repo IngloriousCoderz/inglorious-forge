@@ -266,7 +266,6 @@ function hasErrors(errors) {
   }
 
   if (typeof errors !== "object") {
-    // Leaf value - check if it's truthy (error string)
     return Boolean(errors)
   }
 
@@ -274,7 +273,6 @@ function hasErrors(errors) {
     return errors.some((item) => hasErrors(item))
   }
 
-  // Object - check all properties
   return Object.values(errors).some((value) => hasErrors(value))
 }
 
@@ -310,23 +308,16 @@ function setFieldValue(form, path, value) {
 
   form.isPristine = false
 
-  // By clearing the error for this path, the form might become valid.
-  // We delegate to setFieldError(..., null) to correctly run the check.
   setFieldError(form, path, null)
 }
 
 function setFieldError(form, path, error) {
-  // Ensure we set null if error is falsy, but not an empty string
   const newError = error || null
   set(form.errors, path, newError)
 
   if (newError) {
-    // If we are adding an error, the form is definitely invalid.
-    // No need for an expensive check.
     form.isValid = false
   } else {
-    // If we are removing an error, the form MIGHT become valid.
-    // This is when we must perform the check.
     form.isValid = !hasErrors(form.errors)
   }
 }

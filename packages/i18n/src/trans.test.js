@@ -22,7 +22,6 @@ const resources = {
   },
 }
 
-// Components return plain objects, so the tests can see what was built.
 const tag = (name) => (children) => ({ tag: name, children })
 const components = {
   strong: tag("strong"),

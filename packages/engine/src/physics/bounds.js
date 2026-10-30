@@ -41,8 +41,6 @@ const ClampToBoundsByShape = {
     const collision = entity.collisions[collisionGroup]
     const size = collision.size ?? entity.size
 
-    // An anchored box leaves uneven room on either side of its position, so the
-    // anchor itself decides how close to the bounds it may get.
     const { before: low, after: high } = anchorMargins(
       shapeAnchor(entity, collision),
       size,

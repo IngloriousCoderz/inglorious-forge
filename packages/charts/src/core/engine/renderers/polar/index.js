@@ -55,7 +55,6 @@ export function renderPieSeries(primitive, frame) {
         const [insideLabelX, insideLabelY] = innerLabelArc.centroid(slice.arc)
         const { startX, startY, elbowX, elbowY, labelX, labelY, anchor } =
           outsideLabels[index]
-        // The line stops short of its label's text.
         const lineEndX = labelX + (anchor === "start" ? -LABEL_GAP : LABEL_GAP)
 
         return svg`
@@ -180,7 +179,6 @@ function createPieSlices(primitive, frame) {
   const { entity } = frame
   const dataKey = primitive.props?.dataKey || entity.dataKey
   const nameKey = primitive.props?.nameKey || entity.nameKey
-  // Degrees clockwise from twelve o'clock: -90 to 90 draws the top half.
   const startAngle = primitive.props?.startAngle ?? FULL_CIRCLE_START
   const endAngle = primitive.props?.endAngle ?? startAngle + FULL_CIRCLE
   const arcs = createPieLayout()

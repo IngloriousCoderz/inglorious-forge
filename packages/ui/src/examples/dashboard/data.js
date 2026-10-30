@@ -94,7 +94,6 @@ export const trafficSummary = [
     progress: 80,
     color: "error",
   },
-  // { label: "Bounce Rate", value: "40.15%", progress: 40, color: "primary" },
 ]
 
 export const socialCards = [

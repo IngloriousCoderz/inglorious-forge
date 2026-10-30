@@ -99,7 +99,6 @@ function createHelper(t, isVectorId) {
     const statements = []
 
     if (type === "vec_op_vec") {
-      // For vec_op_vec operations (+ and -), both operands must be vectors
       statements.push(
         t.ifStatement(
           t.logicalExpression("&&", isAVector, isBVector),
@@ -107,7 +106,6 @@ function createHelper(t, isVectorId) {
         ),
       )
 
-      // If both are scalars, fall back to regular JavaScript operation
       statements.push(
         t.ifStatement(
           t.logicalExpression("&&", isAScalar, isBScalar),
@@ -115,7 +113,6 @@ function createHelper(t, isVectorId) {
         ),
       )
 
-      // If we get here, we have mixed vector/scalar types
       statements.push(
         t.throwStatement(
           t.newExpression(t.identifier("Error"), [
@@ -124,7 +121,6 @@ function createHelper(t, isVectorId) {
         ),
       )
     } else if (type === "vec_op_scalar") {
-      // For vec_op_scalar operations (/, %, **), first operand must be vector, second must be scalar
       statements.push(
         t.ifStatement(
           t.logicalExpression("&&", isAVector, isBScalar),
@@ -132,7 +128,6 @@ function createHelper(t, isVectorId) {
         ),
       )
 
-      // Check for invalid combinations and throw appropriate errors
       statements.push(
         t.ifStatement(
           t.logicalExpression("&&", isAVector, isBVector),
@@ -155,10 +150,8 @@ function createHelper(t, isVectorId) {
         ),
       )
 
-      // If both are scalars, fall through to regular operation
       statements.push(t.returnStatement(t.binaryExpression(operator, a, b)))
     } else if (type === "vec_op_scalar_commutative") {
-      // For commutative operations (*), we accept vec*scalar or scalar*vec
       statements.push(
         t.ifStatement(
           t.logicalExpression("&&", isAVector, isBScalar),
@@ -173,7 +166,6 @@ function createHelper(t, isVectorId) {
         ),
       )
 
-      // If both are vectors, throw error
       statements.push(
         t.ifStatement(
           t.logicalExpression("&&", isAVector, isBVector),
@@ -185,10 +177,8 @@ function createHelper(t, isVectorId) {
         ),
       )
 
-      // If both are scalars, fall through to regular operation
       statements.push(t.returnStatement(t.binaryExpression(operator, a, b)))
     } else if (type === "vec_op_mixed") {
-      // For mixed operations (%, **), we accept vec-vec and vec-scalar
       statements.push(
         t.ifStatement(
           t.logicalExpression("&&", isAVector, isBVector),
@@ -204,7 +194,6 @@ function createHelper(t, isVectorId) {
       )
 
       if (operator === "*") {
-        // Commutative scalar multiplication
         statements.push(
           t.ifStatement(
             t.logicalExpression("&&", isAScalar, isBVector),
@@ -222,7 +211,6 @@ function createHelper(t, isVectorId) {
           ),
         )
       }
-      // Throw error for scalar-vec
       statements.push(
         t.ifStatement(
           t.logicalExpression("&&", isAScalar, isBVector),
@@ -234,7 +222,6 @@ function createHelper(t, isVectorId) {
         ),
       )
 
-      // If both are scalars, fall through to regular operation
       statements.push(t.returnStatement(t.binaryExpression(operator, a, b)))
     }
 

@@ -1,5 +1,4 @@
 const NO_TIME_PASSED = 0
-// How far short of a rate still counts as reaching it.
 const WITHIN = 1e-9
 
 /**

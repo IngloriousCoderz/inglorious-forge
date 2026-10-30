@@ -1,8 +1,6 @@
 export const CAPACITOR_VERSION = "^8.5.3"
 export const VITE_PLUGIN_PWA_VERSION = "^2.0.0"
 export const VITE_PWA_ASSETS_GENERATOR_VERSION = "^2.0.0"
-// TypeScript 7 has no JavaScript API, which typescript-eslint and the
-// Capacitor CLI import, so `typescript` stays on 6.
 export const TYPESCRIPT_VERSION = "npm:@typescript/typescript6@^6.0.2"
 export const WORKBOX_WINDOW_VERSION = "^7.4.1"
 

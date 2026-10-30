@@ -48,7 +48,6 @@ export function brushChange(entity, payload) {
 
   entity.brush.startIndex = nextStart
   entity.brush.endIndex = nextEnd
-  // The hovered datum's index is within the window, which has moved.
   entity.tooltip = null
 }
 

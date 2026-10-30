@@ -6,7 +6,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { createAccessibleNavigation } from "./accessible-navigation"
 
 describe("createAccessibleNavigation", () => {
-  // Navigates the way the router does: the history entry first, then the render.
   const navigate = (afterRender, path, state = null) => {
     window.history.pushState(state, "", path)
     afterRender()
@@ -16,7 +15,6 @@ describe("createAccessibleNavigation", () => {
     document.getElementById("root").innerHTML = html
   }
 
-  // The announcement lands a moment after the render.
   const getAnnouncement = () => {
     vi.runAllTimers()
     return document.getElementById("iw-route-announcer").textContent

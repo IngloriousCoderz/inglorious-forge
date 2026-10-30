@@ -86,7 +86,6 @@ test("shared layout toggles both directions without runtime errors", async ({
 
   await page.goto("/")
 
-  // Extra interaction to reproduce previously flaky timing paths.
   await page
     .locator(".layout-card")
     .first()

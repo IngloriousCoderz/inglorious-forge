@@ -12,7 +12,6 @@ import {
 export const useDashboardState = () => {
   const initial = createInitialState()
 
-  // metrics signals
   const [fps, setFps] = createSignal(initial.metrics.fps)
   const [fpsNow, setFpsNow] = createSignal(initial.metrics.fpsNow)
   const [fpsSamples, setFpsSamples] = createSignal(initial.metrics.fpsSamples)
@@ -24,7 +23,6 @@ export const useDashboardState = () => {
   const [filter, setFilter] = createSignal(initial.metrics.filter)
   const [sortBy, setSortBy] = createSignal(initial.metrics.sortBy)
 
-  // table rows represented as objects with accessor properties that read signals
   const rowSetters = new Map()
   const rows = initial.table.data.map((r) => {
     const [valueSig, setValueSig] = createSignal(r.value)

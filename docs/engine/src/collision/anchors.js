@@ -14,9 +14,6 @@ export default {
       devMode: true,
     },
 
-    // Drawn from its top left corner, which is the corner a sprite sheet's own
-    // coordinates point at: so `image.x` and `image.y` say where it is without an
-    // offset of their own.
     ball: {
       type: "Box",
       position: v(120, 60, 0),
@@ -26,8 +23,6 @@ export default {
       collisions: { hitbox: { shape: "rectangle" } },
     },
 
-    // A floor is described by the corner it stands on, because that is the corner
-    // something lands on.
     floor: {
       type: "Ground",
       position: v(0, 0, 0),

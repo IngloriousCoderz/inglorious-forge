@@ -81,7 +81,6 @@
   --iw-alert-color: var(--iw-color-error, #d14343);
 }
 
-/* A plain note: no tone of its own, just the text colour. */
 .iw-alert-neutral {
   --iw-alert-color: var(--iw-color-text-secondary, var(--iw-color-text));
 }

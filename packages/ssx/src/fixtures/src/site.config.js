@@ -8,12 +8,10 @@ const env = process.env.NODE_ENV
  * @type {SiteConfig}
  */
 export default {
-  // Basic metadata
   lang: "en",
   charset: "UTF-8",
   title: "My Awesome Site",
 
-  // Meta tags (applied to all pages unless overridden)
   meta: {
     description: "A site built with SSX",
     "og:type": "website",
@@ -21,12 +19,10 @@ export default {
     "twitter:card": "summary_large_image",
   },
 
-  // Global assets
   styles: ["/styles/reset.css", "/styles/theme.css"],
 
   ...(env === "production" && { scripts: ["./scripts/analytics.js"] }),
 
-  // Custom layout wrapper
   layout: (body, options) => {
     const {
       lang = "en",
@@ -96,20 +92,10 @@ export default {
     `
   },
 
-  // Or simpler: just wrap the content
-  // wrapper: (body) => html`
-  //   <div class="site-wrapper">
-  //     <header>...</header>
-  //     ${body}
-  //     <footer>...</footer>
-  //   </div>
-  // `,
-
-  // Build options
-  basePath: "/", // Base URL for the site
+  basePath: "/",
   rootDir: "src",
   outDir: "dist",
-  publicDir: "public", // Static assets copied as-is
+  publicDir: "public",
   favicon: "/favicon.ico",
 
   sitemap: {
@@ -138,22 +124,19 @@ export default {
     { from: "/blog/*", to: "/posts/:splat", status: 301 },
   ],
 
-  // Router config (optional)
   router: {
-    trailingSlash: false, // /about vs /about/
-    scrollBehavior: "smooth", // smooth scroll on navigation
+    trailingSlash: false,
+    scrollBehavior: "smooth",
   },
 
-  // Vite config passthrough
   vite: {
-    // Dev server options
     server: {
       port: 3000,
-      open: true, // Open browser on start
+      open: true,
     },
 
     ssr: {
-      noExternal: ["@inglorious/logo"], // Force Vite to process this package
+      noExternal: ["@inglorious/logo"],
     },
   },
 

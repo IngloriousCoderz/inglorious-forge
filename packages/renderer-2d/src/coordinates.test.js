@@ -5,7 +5,6 @@ import { createCoordinateConverter } from "./coordinates.js"
 const GAME_WIDTH = 432
 const GAME_HEIGHT = 243
 
-// The middle of the game, which is where the canvas is centred whatever size it is.
 const MIDDLE_X = GAME_WIDTH / 2
 const MIDDLE_Y = GAME_HEIGHT / 2
 
@@ -17,8 +16,6 @@ const CORNERS = [
   [MIDDLE_X, MIDDLE_Y],
 ]
 
-// The game drawn at its own size, twice as big, letterboxed either way round, and tall
-// enough that there is room above and below it.
 const CANVASES = [
   [GAME_WIDTH, GAME_HEIGHT],
   [GAME_WIDTH * 2, GAME_HEIGHT * 2],
@@ -28,8 +25,6 @@ const CANVASES = [
 ]
 
 test("it should read a click back as the world position it was made on", () => {
-  // Scaled, letterboxed, and both: the game is drawn into a canvas of some size and centred
-  // in it, so where the game lands on the page changes and the world it describes does not.
   for (const [width, height] of CANVASES) {
     const { convert, clickAt } = onACanvas(width, height, DOWN_THE_PAGE)
 
@@ -60,7 +55,6 @@ test("it should count y up from the floor, as the world does", () => {
 })
 
 test("it should take the page position into account", () => {
-  // The same canvas, the same click, moved down the page: the world does not move with it.
   const here = onACanvas(GAME_WIDTH, GAME_HEIGHT)
   const there = onACanvas(GAME_WIDTH, GAME_HEIGHT, DOWN_THE_PAGE)
 

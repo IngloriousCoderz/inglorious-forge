@@ -30,10 +30,6 @@ import {
   STROKE_WIDTH,
 } from "../shared/workload.js"
 
-// Set up to draw what Inglorious Charts draws: straight segments without dots,
-// the same colors, widths and labels. Animations are off: Inglorious Charts
-// does not animate, so they would only make Recharts do more on each update.
-
 const workload = createWorkload()
 
 const size = { width: CHART_WIDTH, height: CHART_HEIGHT }

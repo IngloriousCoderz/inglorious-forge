@@ -14,7 +14,7 @@ export async function loadConfig(options) {
   const configFile = path.resolve(rootDir, "src", configPath)
 
   if (!existsSync(configFile)) {
-    return {} // Default config
+    return {}
   }
 
   const config = /\.[cm]?ts$/.test(configFile)

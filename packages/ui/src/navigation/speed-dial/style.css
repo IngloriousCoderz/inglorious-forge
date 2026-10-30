@@ -1,7 +1,3 @@
-/* The actions are a popover anchored to the trigger and placed on the side
-   `direction` names. The browser's popover box is centred in the viewport,
-   so its insets and box are reset; its hidden state has to be restated,
-   because the display below outranks it. */
 .iw-speed-dial {
   anchor-scope: --iw-speed-dial;
   display: inline-flex;

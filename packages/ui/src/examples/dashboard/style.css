@@ -57,7 +57,6 @@
     width: 100%;
   }
 
-  /* Outside the app bar, so it pads itself to line up with it. */
   .iw-dashboard-breadcrumbs {
     min-height: var(--iw-space-12);
     padding-inline: var(--iw-space-4);
@@ -261,8 +260,6 @@
   inset: 0;
 }
 
-/* Shown in place (isModal: false), so it can sit in the preview's flow
-   rather than where the browser positions a non-modal dialog. */
 .iw-primitive-preview .iw-dialog {
   position: static;
   min-width: 0;

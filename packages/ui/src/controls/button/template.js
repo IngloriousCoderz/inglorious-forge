@@ -102,6 +102,5 @@ export function render(props) {
 function handleFileChange(event, onFileSelect) {
   const { files } = event.target
   if (files?.length) onFileSelect(files)
-  // Clear the input so picking the same file again still fires `change`
   event.target.value = ""
 }

@@ -7,8 +7,6 @@ import { z } from "zod"
 
 import { BOLD, NUMBERS, SECONDARY, TEXT_SIZES } from "./helpers.js"
 
-// ── Building blocks ──
-
 const textProps = () =>
   z.object({
     variant: z.enum(["text", "number"]).optional(),

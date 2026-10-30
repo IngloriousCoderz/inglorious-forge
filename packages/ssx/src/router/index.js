@@ -32,8 +32,6 @@ export async function getPages(pagesDir = "pages", options, loader) {
       const moduleName = getModuleName(module)
 
       if (isDynamic(route.pattern) && module.ssr) {
-        // Rendered on request: any path the pattern matches is a page, its
-        // params read from the URL then. No staticPaths needed.
         addPages(pages, options, {
           pattern: route.pattern,
           path: route.pattern,
@@ -101,7 +99,6 @@ export async function getPages(pagesDir = "pages", options, loader) {
  * @returns {Promise<Array<Object>>} A list of route objects.
  */
 export async function getRoutes(pagesDir = "pages") {
-  // Find all .js and .ts files in pages directory
   const files = await glob("**/*.{js,ts,jsx,tsx,md}", {
     cwd: pagesDir,
     ignore: ["**/*.test.{js,ts}", "**/*.spec.{js,ts}"],
@@ -122,7 +119,6 @@ export async function getRoutes(pagesDir = "pages") {
     }
   })
 
-  // Sort routes by specificity (most specific first)
   routes.sort((a, b) => {
     const aScore = routeSpecificity(a.pattern)
     const bScore = routeSpecificity(b.pattern)
@@ -200,13 +196,12 @@ export function matchParams(pattern, url) {
 function filePathToPattern(file) {
   let pattern = file
     .replace(/\\/g, "/")
-    .replace(/\.(js|ts|jsx|tsx|md)$/, "") // Remove extension
-    .replace(/\/index$/, "") // index becomes root of directory
-    .replace(/^index$/, "") // Handle root index
-    .replace(/__(\w+)/g, "*") // __path becomes *
-    .replace(/_(\w+)/g, ":$1") // _id becomes :id
+    .replace(/\.(js|ts|jsx|tsx|md)$/, "")
+    .replace(/\/index$/, "")
+    .replace(/^index$/, "")
+    .replace(/__(\w+)/g, "*")
+    .replace(/_(\w+)/g, ":$1")
 
-  // Normalize to start with /
   return "/" + pattern.replace(/^\//, "")
 }
 
@@ -219,19 +214,16 @@ function filePathToPattern(file) {
 function patternToRegex(pattern) {
   const params = []
 
-  // Replace :param with capture groups
   let regexStr = pattern.replace(/:(\w+)/g, (_, param) => {
     params.push(param)
     return "([^/]+)"
   })
 
-  // Replace * with greedy capture
   regexStr = regexStr.replace(/\*/g, () => {
     params.push("path")
     return "(.*)"
   })
 
-  // Exact match
   regexStr = "^" + regexStr + "$"
 
   return {
@@ -250,7 +242,6 @@ function patternToRegex(pattern) {
 function routeSpecificity(pattern) {
   let score = 0
 
-  // Static segments add 3 points each
   const segments = pattern.split("/").filter(Boolean)
   segments.forEach((segment) => {
     if (!segment.startsWith(":") && segment !== "*") {
@@ -258,16 +249,13 @@ function routeSpecificity(pattern) {
     }
   })
 
-  // Dynamic segments add 1 point
   const dynamicCount = (pattern.match(/:/g) || []).length
   score += dynamicCount
 
-  // Catch-all routes have lowest priority (subtract points)
   if (pattern.includes("*")) {
     score += CATCH_ALL_ROUTE_WEIGHT
   }
 
-  // Longer paths are more specific
   score += segments.length * SCORE_MULTIPLIER
 
   return score
@@ -315,7 +303,6 @@ function addPages(pages, options = {}, pageData) {
     const prefix = isDefault ? "" : `/${locale}`
 
     let localizedPath = prefix + pageData.path
-    // Handle root path: / -> / (default), /fr (fr)
     if (pageData.path === "/" && !isDefault) {
       localizedPath = prefix
     }

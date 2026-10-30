@@ -55,7 +55,6 @@ vi.mock("./sitemap.js")
 vi.mock("./vite-config.js")
 
 describe("build", () => {
-  // Mock console to keep output clean
   vi.spyOn(console, "log").mockImplementation(() => {})
 
   beforeEach(() => {
@@ -71,9 +70,8 @@ describe("build", () => {
   })
 
   it("should run a full build sequence", async () => {
-    // Setup mocks
     loadConfig.mockResolvedValue({})
-    loadManifest.mockResolvedValue(null) // First build
+    loadManifest.mockResolvedValue(null)
     getPages.mockResolvedValue([{ path: "/" }])
     hashSharedSources.mockResolvedValue("hash")
     generateStore.mockResolvedValue({
@@ -91,13 +89,12 @@ describe("build", () => {
 
     const result = await build({ rootDir: "src", outDir: "dist" })
 
-    // Verify sequence
     expect(fs.rm).toHaveBeenCalledWith("dist", { recursive: true, force: true })
     expect(fs.mkdir).toHaveBeenCalledWith("dist", { recursive: true })
     expect(copyPublicDir).toHaveBeenCalled()
     expect(getPages).toHaveBeenCalled()
     expect(generateStore).toHaveBeenCalled()
-    expect(generatePages).toHaveBeenCalledTimes(2) // Changed + Skipped (empty)
+    expect(generatePages).toHaveBeenCalledTimes(2)
     expect(fs.writeFile).toHaveBeenCalledWith(
       path.normalize("dist/index.html"),
       "<html></html>",
@@ -124,14 +121,13 @@ describe("build", () => {
     })
 
     generatePages
-      .mockResolvedValueOnce([{ path: "/changed", html: "<html></html>" }]) // Changed
-      .mockResolvedValueOnce([{ path: "/skipped" }]) // Skipped
+      .mockResolvedValueOnce([{ path: "/changed", html: "<html></html>" }])
+      .mockResolvedValueOnce([{ path: "/skipped" }])
 
     const result = await build({ incremental: true })
 
     expect(determineRebuildPages).toHaveBeenCalled()
     expect(generatePages).toHaveBeenCalledTimes(2)
-    // Should only write changed pages
     expect(fs.writeFile).toHaveBeenCalledWith(
       expect.stringContaining("changed"),
       expect.any(String),

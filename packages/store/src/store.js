@@ -72,7 +72,7 @@ export function createStore({
     subscribe,
     update,
     notify,
-    dispatch, // needed for compatibility with Redux
+    dispatch,
     getTypes,
     getType,
     setType,
@@ -119,10 +119,6 @@ export function createStore({
       return []
     }
 
-    // Nothing queued means nothing to apply and nothing to publish: skipping the draft
-    // entirely, rather than copying the world just to arrive back where it started.
-    // This is what keeps a loop that pumps every animation frame cheap on the frames
-    // where neither the game nor the player had anything to say.
     if (!incomingEvents.length) {
       return []
     }
@@ -172,9 +168,6 @@ export function createStore({
         const event = incomingEvents.shift()
         processedEvents.push(event)
 
-        // Pausing and resuming are the store's own, and they keep dispatching like any
-        // other event, so the game behaviour still sees them and anything else that
-        // wants to react gets the same notification.
         if (event.type === "pause") {
           isHalted = true
         }
@@ -183,24 +176,6 @@ export function createStore({
           isHalted = false
         }
 
-        // Handle special system events
-        // `add` and `remove` change the world and are then dispatched like any
-        // other event, so that whatever is watching can hear about it. They are
-        // broadcast: the entity named by the payload is not the only one that wants
-        // to know, and something counting down what it put up needs to hear about
-        // each of them going.
-        //
-        // They are not the counterpart to `create` and `destroy`, which reach only
-        // the entity they are about so that those read as a constructor and a
-        // destructor without every handler beginning by checking whether it is the
-        // one being talked about.
-        //
-        // The two carry different payloads, and that is on purpose: a payload
-        // carries the least that can be had. A removal needs only the id, because
-        // everything else about the entity can still be looked up by it. An
-        // addition carries the entity itself, because there is nothing yet to look
-        // it up by -- the same asymmetry as removing a user by id but updating one
-        // by the patched user.
         if (event.type === "add") {
           addEntity(draft, event.payload)
         }
@@ -209,21 +184,6 @@ export function createStore({
           removeEntity(draft, event.payload)
         }
 
-        // A thing that stands through a change of state can still be told a different
-        // configuration, in either of the two ways the world offers.
-        //
-        // `patch` changes some of it and leaves the rest alone, which is how a screen
-        // takes over one field of something it shares with the screen before it. A field
-        // named as `undefined` is set to nothing rather than being left alone, which is
-        // how a key is taken off a mapping.
-        //
-        // `replace` installs what it is given and drops everything it does not mention,
-        // which is how the whole of something is said to be different.
-        //
-        // Neither takes the thing out of the world, so neither runs `create` or `destroy`:
-        // it never stopped standing, and a thing that was never removed cannot have been
-        // destroyed. This is the same pair the world has to hand for anything else --
-        // `add` and `remove` beside them, and post/delete/put/patch before that.
         if (event.type === "patch") {
           patchEntity(draft, event.payload)
         }
@@ -232,10 +192,8 @@ export function createStore({
           replaceEntity(draft, event.payload)
         }
 
-        // Parse the event to get handler name
         const { event: handlerName } = parseEvent(event.type)
 
-        // Get entities that should handle this event (filtered by EventMap)
         const entityIds = eventMap.getEntitiesForEvent(event.type)
 
         // A halted world stops handing out updates, because anything that moves by
@@ -248,8 +206,6 @@ export function createStore({
         const halted = isHalted && handlerName === "update"
 
         for (const id of entityIds) {
-          // Looked at before it is taken, because an entity the pause holds back is
-          // not going to be written to, and taking it would copy it for nothing.
           const entity = draft.entities[id]
           const type = types[entity.type]
 
@@ -273,7 +229,6 @@ export function createStore({
           }
         }
 
-        // Systems process events by handler name (not scoped)
         systems.forEach((system) => {
           const handle = system[handlerName]
           handle?.(draft.forSystems, event.payload, api)
@@ -516,9 +471,6 @@ export function createStore({
     // does not mention, and what it keeps must not be shared with the previous state.
     const existing = draft.take(id)
 
-    // Configuring something that is not there is not a thing that can be done. The world
-    // is built in one pass, so a scene naming a thing another scene is yet to put up is
-    // ordinary rather than a mistake, and is not worth failing over.
     if (!existing) return
 
     draft.put(id, augmentEntity(id, { ...existing, ...config }))

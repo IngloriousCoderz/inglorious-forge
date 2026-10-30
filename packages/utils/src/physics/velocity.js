@@ -4,8 +4,8 @@
 
 import { clamp, multiply, sum, zero } from "../math/vector.js"
 
-const DEFAULT_DT = 1 // Default time delta for the applyVelocity function.
-const DEFAULT_MAX_SPEED = 0 // Default maximum speed for velocity clamping.
+const DEFAULT_DT = 1
+const DEFAULT_MAX_SPEED = 0
 
 /**
  * Applies velocity to a position based on the given parameters and options.

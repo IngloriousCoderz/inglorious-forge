@@ -11,15 +11,12 @@
     transform var(--iw-transition-normal);
 }
 
-/* Set into the page rather than raised from it, for content grouped inside
-   another surface. */
 .iw-card-sunk {
   background-color: var(--iw-color-bg-secondary, var(--iw-card-bg));
   border-color: transparent;
   box-shadow: none;
 }
 
-/* Only the grouping: no surface at all. */
 .iw-card-clear {
   background-color: transparent;
   border-color: transparent;

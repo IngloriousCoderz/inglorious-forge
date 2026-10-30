@@ -6,17 +6,10 @@
 
 .iw-theme-inglorious {
   --iw-font-family-sans: var(--iw-font-family);
-  /* The theme on the page itself: the element with the theme class, usually
-     <body>, takes its background, text color and font. */
   background-color: var(--iw-color-bg);
   color: var(--iw-color-text);
   font-family: var(--iw-font-family-sans);
 
-  /* ========================================
-     INGLORIOUS THEME - Neon Videogame Aesthetic
-     ======================================== */
-
-  /* Semantic Colors */
   --iw-color-bg: var(--iw-color-gray-900);
   --iw-color-bg-secondary: var(--iw-color-gray-800);
   --iw-color-bg-tertiary: var(--iw-color-black);
@@ -40,17 +33,11 @@
   --iw-color-accent-hover: #ff33ff;
   --iw-color-accent-active: #ff66ff;
 
-  /* Geometry: keep Inglorious mostly squared */
   --iw-radius-sm: 0;
   --iw-radius-md: 0;
   --iw-radius-lg: 0;
   --iw-radius-xl: 0;
 
-  /* ========================================
-     COMPONENT TOKENS
-     ======================================== */
-
-  /* Button */
   --iw-button-bg: var(--iw-color-primary);
   --iw-button-bg-hover: var(--iw-color-primary-hover);
   --iw-button-bg-active: var(--iw-color-primary-active);
@@ -73,7 +60,6 @@
   --iw-button-ghost-text: var(--iw-color-primary);
   --iw-button-ghost-border: transparent;
 
-  /* Input */
   --iw-input-bg: var(--iw-color-bg-tertiary);
   --iw-input-bg-hover: var(--iw-color-bg-secondary);
   --iw-input-bg-focus: var(--iw-color-bg-tertiary);
@@ -86,23 +72,18 @@
   --iw-input-shadow-focus:
     0 0 0 1px var(--iw-color-primary), 0 0 10px rgba(0, 255, 136, 0.3);
 
-  /* App bar */
   --iw-app-bar-bg: var(--iw-color-surface);
 
-  /* Drawer */
   --iw-drawer-bg: var(--iw-color-surface);
 
-  /* Card */
   --iw-card-bg: var(--iw-color-surface);
   --iw-card-border: var(--iw-color-border);
   --iw-card-radius: var(--iw-radius-none);
   --iw-card-shadow: var(--iw-shadow-lg);
   --iw-card-shadow-hover: var(--iw-shadow-xl), 0 0 15px rgba(0, 255, 136, 0.1);
 
-  /* Badge */
   --iw-badge-radius: var(--iw-radius-none);
 
-  /* List */
   --iw-list-item: transparent;
   --iw-list-item-selected: color-mix(
     in srgb,
@@ -110,13 +91,11 @@
     transparent
   );
 
-  /* Alert */
   --iw-alert-radius: var(--iw-radius-none);
   --iw-alert-shadow: none;
   color-scheme: dark;
 }
 
-/* Light variant */
 .iw-theme-inglorious.iw-theme-light {
   --iw-color-bg: var(--iw-color-white);
   --iw-color-bg-secondary: var(--iw-color-gray-50);

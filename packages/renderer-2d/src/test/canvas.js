@@ -123,8 +123,6 @@ export function createContext() {
       },
       drawImage: (...args) => {
         record("drawImage")(...args)
-        // The last four of the nine are where it lands; the four before them are where it
-        // was cut from, which is a different box entirely.
         const [, , , , , dx, dy, dw, dh] = args
         calls.box = boxOf(dx, dy, dw, dh)
       },

@@ -43,7 +43,6 @@ export async function generatePages(store, pages, options = {}, loader) {
     if (page.locale) {
       entity.locale = page.locale
     }
-    // Translations in the page's locale, for `load` and the render.
     await waitForLocale(store, page.locale)
 
     if (module.load) {

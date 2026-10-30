@@ -102,7 +102,6 @@ describe("manifest", () => {
   describe("hashFile", () => {
     it("should return md5 hash of file content", async () => {
       fs.readFile.mockResolvedValue("content")
-      // md5("content") = 9a0364b9e99bb480dd25e1f0284c8555
       const hash = await hashFile("file.txt")
       expect(hash).toBe("9a0364b9e99bb480dd25e1f0284c8555")
     })
@@ -172,11 +171,10 @@ describe("manifest", () => {
         shared: "hash",
         pages: {
           "/changed": { hash: "old-hash" },
-          "/same": { hash: "9a0364b9e99bb480dd25e1f0284c8555" }, // md5("content")
+          "/same": { hash: "9a0364b9e99bb480dd25e1f0284c8555" },
         },
       }
 
-      // Mock hashFile behavior via fs.readFile
       fs.readFile.mockImplementation(async (path) => {
         if (path === "changed.js") return "new content"
         if (path === "same.js") return "content"

@@ -166,7 +166,6 @@ describe("createI18n", () => {
 describe("loadLocale", () => {
   const { en, it: italian } = resources
 
-  // A loader whose loads resolve or fail when the test says so.
   function controlledLoader() {
     const loads = {}
     const loadLocale = vi.fn(

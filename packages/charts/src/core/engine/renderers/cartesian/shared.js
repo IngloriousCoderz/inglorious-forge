@@ -3,7 +3,6 @@
 import { svg } from "@inglorious/web"
 import { unsafeSVG } from "@inglorious/web/directives/unsafe-svg"
 
-// Escapes text for safe inclusion in raw SVG markup.
 export function escapeXml(value) {
   return String(value)
     .replace(/&/g, "&amp;")
@@ -11,8 +10,6 @@ export function escapeXml(value) {
     .replace(/>/g, "&gt;")
 }
 
-// Invisible targets on a line's or area's points, so hovering near one shows
-// its tooltip.
 export function renderHoverTargets(primitive, frame) {
   if (!canShowTooltip(primitive, frame)) return ""
 
@@ -109,7 +106,6 @@ export function createSeriesPoints(primitive, frame) {
   const { entity, scales } = frame
   const dataKey = primitive.props?.dataKey
   const stackId = primitive.props?.stackId
-  // Bars stack with bars; areas, and the dots placed on them, with areas.
   const stackKind = primitive.type === "bar" ? "bar" : "area"
   const stackedKeys = stackId
     ? frame.primitives
@@ -121,8 +117,6 @@ export function createSeriesPoints(primitive, frame) {
   const currentStackIndex = stackedKeys.indexOf(dataKey)
 
   return entity.data.map((row, index) => {
-    // A missing value is a gap: no point, while a stack below still counts it
-    // as zero.
     const value = Number.isFinite(row?.[dataKey]) ? row[dataKey] : NaN
     const previousStackValue =
       currentStackIndex > 0
@@ -172,7 +166,6 @@ export function resolveLegendItems(primitive, frame) {
   }))
 }
 
-// The color a series primitive was given, so the legend matches what is drawn.
 export function getSeriesPrimitiveColor(frame, dataKey) {
   const series = frame.primitives.find(
     (item) =>

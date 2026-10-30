@@ -12,7 +12,6 @@ export const TabItem = defineComponent({
     trigger: z.string(),
     content: z.array(z.any()),
   }),
-  // Rendered by its Tabs.
   component: () => null,
 })
 
@@ -25,7 +24,6 @@ export const Tabs = defineComponent({
     const items = (props.items ?? []).filter(Boolean).map((item) => item.props)
     if (!items.length) return nothing
 
-    // Which tab is open is the screen's business, not the user's input.
     const [first] = items
     const tab = viewState(`${statementId ?? "tabs"}:tab`, first.value)
     return UiTabs.render({

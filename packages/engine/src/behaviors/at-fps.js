@@ -39,10 +39,6 @@ export function atFps(fps) {
 
       if (elapsed === undefined) return
 
-      // The whole of the time this entity's turn covers, rather than the length of the
-      // frame that happened to land on it: six frames of a sixtieth of a second are a
-      // tenth of a second, and a game moving by velocity times dt has to move by all of
-      // it or it runs six times too slowly for asking to move ten times a second.
       type.update?.(entity, elapsed, api)
     },
   })

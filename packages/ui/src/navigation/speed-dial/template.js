@@ -49,9 +49,7 @@ export const SpeedDial = {
         if (!element) return
         const trigger = element.querySelector(".iw-speed-dial-trigger")
         const popover = element.querySelector(".iw-speed-dial-actions")
-        // A property, not `commandfor`, so the link needs no id.
         trigger.commandForElement = popover
-        // Without onToggle the browser alone opens and closes it.
         if (onToggle) {
           syncPopover(popover, {
             isOpen,
@@ -92,9 +90,6 @@ export const SpeedDial = {
       class="iw-speed-dial-action"
       command="hide-popover"
       ${ref((element) => {
-        // Hides the popover once the action runs, like a menu item. Linked a
-        // microtask later: a new action is still outside the popover when its
-        // ref runs.
         if (element) {
           queueMicrotask(() => {
             element.commandForElement = element.parentElement

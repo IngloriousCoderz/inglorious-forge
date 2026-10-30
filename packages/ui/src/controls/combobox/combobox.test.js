@@ -122,8 +122,6 @@ describe("combobox", () => {
     render(Combobox.render(entity, api), container)
 
     const control = container.querySelector(".iw-combobox-frame")
-    // A plain div with no tabindex is skipped by tab entirely, which is how
-    // this went unnoticed: the field worked with a mouse and nowhere else.
     expect(control.getAttribute("tabindex")).toBe("0")
     expect(control.getAttribute("role")).toBe("combobox")
     expect(control.getAttribute("aria-expanded")).toBe("false")
@@ -178,9 +176,6 @@ describe("combobox", () => {
   })
 
   it("navigates instead of toggling once open", () => {
-    // A non-searchable combobox keeps focus on the control, so it has to drive
-    // the same navigation the search input does — toggling here would close the
-    // list on the first arrow press and leave no way to pick an option.
     const entity = {
       id: "sel",
       type: "Combobox",
@@ -244,14 +239,9 @@ describe("combobox", () => {
   })
 })
 
-// Exercises the real entity/event loop, because the outside-click listener is
-// registered from a ref callback during a re-render and torn down on unmount —
-// none of which the plain render() helper above can reproduce.
 describe("combobox outside click (store integration)", () => {
   const tick = () => new Promise((resolve) => setTimeout(resolve, 0))
 
-  // jsdom has no real input pipeline, so pointer input is simulated by
-  // dispatching the pointer events a browser would fire for a tap.
   const pointerdown = ({ pointerType = "mouse" } = {}) =>
     new PointerEvent("pointerdown", {
       bubbles: true,
@@ -261,8 +251,6 @@ describe("combobox outside click (store integration)", () => {
       isPrimary: true,
     })
 
-  // `entityId` is normally "favorite"; passing null renders a combobox with no
-  // id at all, which the store accepts.
   function mountCombobox(options, overrides = {}, entityId = "favorite") {
     const entity = {
       type: "Combobox",
@@ -300,8 +288,6 @@ describe("combobox outside click (store integration)", () => {
     { label: "Lombardia", value: "Lombardia" },
   ]
 
-  // A real tap delivers touch events and then a click the browser decides on;
-  // these tests dispatch the touch half only, so no click follows.
   const tap = (el) => {
     el.dispatchEvent(
       new TouchEvent("touchstart", { bubbles: true, cancelable: true }),
@@ -342,8 +328,6 @@ describe("combobox outside click (store integration)", () => {
   it("opens on a tap that the browser turns into a click", async () => {
     const ui = mountCombobox(regions)
 
-    // A real tap delivers touchstart/touchend and then a click. The control
-    // stays on click so a finger that starts scrolling never opens the dropdown.
     tap(ui.control())
     ui.control().click()
     await tick()
@@ -354,8 +338,6 @@ describe("combobox outside click (store integration)", () => {
   it("does not open when a touch turns into a scroll gesture", async () => {
     const ui = mountCombobox(regions)
 
-    // The browser suppresses click when the touch drifts into a pan, which is
-    // exactly what should stop the dropdown from opening mid-scroll.
     tap(ui.control())
     await tick()
 
@@ -386,7 +368,6 @@ describe("combobox outside click (store integration)", () => {
 
     expect(ui.entity().isOpen).toBe(false)
 
-    // The browser never delivers the click that would follow the tap.
     ui.control().dispatchEvent(pointerdown({ pointerType: "touch" }))
     await tick()
 
@@ -428,8 +409,6 @@ describe("combobox outside click (store integration)", () => {
   })
 
   it("closes an open dropdown when another combobox's clear button is pressed", async () => {
-    // Pressing inside one combobox must still reach the document, otherwise the
-    // other combobox stays open behind it.
     const first = mountCombobox(regions, { selectedValue: "Lazio" })
     first.open()
     await tick()
@@ -452,7 +431,6 @@ describe("combobox outside click (store integration)", () => {
 
     ui.open()
     await tick()
-    // The click that opened it also reaches the document listener.
     expect(ui.entity().isOpen).toBe(true)
   })
 
@@ -462,8 +440,6 @@ describe("combobox outside click (store integration)", () => {
     ui.open()
     await tick()
 
-    // vaitu-fe replaces the option list on selection, removing the picked node
-    // while that same click is still bubbling towards the document.
     ui.store._api.notify("#favorite:optionsSet", [regions[1]])
     ui.options()[0].click()
     await tick()
@@ -518,8 +494,6 @@ describe("combobox outside click (store integration)", () => {
     ui.store._api.notify("#favorite:close")
     await tick()
 
-    // A press now finds a listener whose dropdown has already left the DOM. It
-    // must retire itself rather than close whatever happens to be open.
     document.body.dispatchEvent(
       new PointerEvent("pointerdown", { bubbles: true, pointerType: "mouse" }),
     )
@@ -554,8 +528,6 @@ describe("combobox outside click (store integration)", () => {
       ui.open()
       await tick()
 
-      // The ref callback is handed a fresh arrow every render, and hovering an
-      // option re-renders the dropdown, so each pass must reuse its listener.
       for (let pass = 0; pass < 3; pass++) {
         for (const option of ui.options()) {
           option.dispatchEvent(new MouseEvent("mouseenter", { bubbles: true }))
@@ -580,7 +552,6 @@ describe("combobox outside click (store integration)", () => {
     expect(first.entity().isOpen).toBe(true)
     expect(second.entity().isOpen).toBe(true)
 
-    // One outside press closes both, each through its own listener.
     document.body.dispatchEvent(
       new PointerEvent("pointerdown", { bubbles: true, pointerType: "mouse" }),
     )
@@ -589,7 +560,6 @@ describe("combobox outside click (store integration)", () => {
     expect(first.entity().isOpen).toBe(false)
     expect(second.entity().isOpen).toBe(false)
 
-    // And reopening one does not inherit the other's state.
     first.open()
     await tick()
 
@@ -674,7 +644,6 @@ describe("combobox label, hint and error", () => {
     expect(
       container.querySelector(".iw-combobox-error-message").textContent,
     ).toBe("Pick a country")
-    // Showing both tells someone how to fix a field they already got wrong.
     expect(container.querySelector(".iw-combobox-hint")).toBeNull()
   })
 
@@ -684,8 +653,6 @@ describe("combobox label, hint and error", () => {
     render(Combobox.render({ id: "c", options: [] }), container)
 
     const control = container.querySelector(".iw-combobox-frame")
-    // A reference to an id that is not in the DOM is worse than none, and an
-    // empty reference is still a reference: the attribute is left off.
     expect(control.hasAttribute("aria-labelledby")).toBe(false)
     expect(control.hasAttribute("aria-describedby")).toBe(false)
   })
@@ -696,8 +663,6 @@ describe("combobox label, hint and error", () => {
     render(Combobox.render({ id: "c", options: [] }), container)
 
     const control = container.querySelector(".iw-combobox-frame")
-    // An absent aria-invalid reads as ambiguous, and aria-invalid="" is not a
-    // valid token. Both booleans state their value.
     expect(control.getAttribute("aria-required")).toBe("false")
     expect(control.getAttribute("aria-invalid")).toBe("false")
   })
@@ -722,11 +687,6 @@ describe("combobox arrow", () => {
       "",
     )
 
-    // The glyph is a text character, so an unpinned font-size lets each arrow
-    // inherit whatever context it was dropped into and the two stop matching.
-    // Captured per block rather than scanned whole-file: a bare
-    // `toMatch(/\.iw-combobox-arrow\s*\{[^}]*font-size:/)` can be satisfied by
-    // a *different* rule and silently stop checking this one.
     const block = css.match(/\.iw-combobox-arrow \{([^}]*)\}/)
     expect(block).toBeTruthy()
     expect(block[1]).toMatch(/font-size:/)

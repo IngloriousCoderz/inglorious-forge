@@ -1,6 +1,3 @@
-// Type-level tests for fsm and scenes: `tsc -p type-tests` fails on any error,
-// and on any `@ts-expect-error` whose error does not happen.
-
 import {
   type Api,
   type BaseEntity,
@@ -46,8 +43,6 @@ const Door = {
   },
 } satisfies EntityType<DoorEntity, AppApi>
 
-// In a typed store, the entity and the api come from where fsm is used, and
-// the state names from the entity's `state`
 export const store = createStore<AppEntity, AppState>({
   types: {
     Door: [
@@ -68,7 +63,6 @@ export const store = createStore<AppEntity, AppState>({
           },
         },
         locked: {
-          // Takes over the type's knock while locked
           knock(entity) {
             entity.knocks = 0
           },
@@ -88,7 +82,6 @@ export const store = createStore<AppEntity, AppState>({
         },
       }),
     ],
-    // An entity with no `state` can be in any, "default" included
     Cat: [
       fsm({
         default: {
@@ -107,7 +100,6 @@ export const store = createStore<AppEntity, AppState>({
   },
 })
 
-// Explicit type arguments work outside a store too
 export const DoorMachine = fsm<DoorEntity, AppApi>({
   open: {
     close(entity) {
@@ -116,7 +108,6 @@ export const DoorMachine = fsm<DoorEntity, AppApi>({
   },
 })
 
-// What listens for a move reads the payload
 export const Watcher = {
   stateChange(_entity, { entityId, from, to }: StateChangePayload) {
     console.warn(entityId, from, to)

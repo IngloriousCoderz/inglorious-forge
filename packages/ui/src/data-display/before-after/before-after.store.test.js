@@ -4,9 +4,6 @@ import { describe, expect, it } from "vitest"
 
 import { BeforeAfter } from "."
 
-// Exercises the real entity/event loop: a scoped `#<id>:positionChange` event
-// runs the handler, mutates the single piece of state (`position`), and the
-// mounted view re-renders from it.
 describe("before-after (store integration)", () => {
   function mountBeforeAfter(overrides = {}) {
     const store = createStore({

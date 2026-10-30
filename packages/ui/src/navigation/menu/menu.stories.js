@@ -40,8 +40,6 @@ export const Default = {
   },
 }
 
-// Anchored to its trigger. Without onToggle wired to a store, the browser
-// keeps the open state on its own.
 export const WithTrigger = {
   args: {
     id: "story-menu",

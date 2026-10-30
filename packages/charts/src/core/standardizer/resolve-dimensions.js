@@ -39,7 +39,6 @@ export function createDimensions(entity, primitives) {
       entity.brush?.height ||
       DEFAULT_BRUSH_HEIGHT
     : 0
-  // An axis title takes room of its own, on its side of the plot.
   const titled = (type) =>
     primitives.some(
       (primitive) => primitive.type === type && primitive.props?.label,

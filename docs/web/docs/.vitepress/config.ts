@@ -1,6 +1,5 @@
 import { defineConfig } from "vitepress"
 
-// https://vitepress.vuejs.org/config/app-configs
 export default defineConfig({
   title: "Inglorious Web",
   description:
@@ -41,6 +40,7 @@ export default defineConfig({
             { text: "Getting Started", link: "/guide/getting-started" },
             { text: "Core Concepts", link: "/guide/core-concepts" },
             { text: "Rendering Model", link: "/guide/rendering-model" },
+            { text: "Where State Lives", link: "/guide/where-state-lives" },
           ],
         },
         {
@@ -50,6 +50,7 @@ export default defineConfig({
             { text: "Quick Start", link: "/guide/quick-start" },
             { text: "Entity Render Methods", link: "/guide/entity-renders" },
             { text: "Event System", link: "/guide/event-system" },
+            { text: "TypeScript", link: "/guide/typescript" },
           ],
         },
       ],

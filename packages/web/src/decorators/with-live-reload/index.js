@@ -2,8 +2,6 @@ import { debounce } from "@inglorious/utils/functions"
 
 const DEFAULT_DELAY = 300
 
-// Every live entity's reload, across all the types that use the decorator, so
-// one listener can reload them all when the page comes back into view.
 const reloads = new Set()
 let isWatchingVisibility = false
 
@@ -63,7 +61,6 @@ export function withLiveReload({
   delay = DEFAULT_DELAY,
 }) {
   return (type) => {
-    // entity id -> what to cancel when it goes
     const subscriptions = new Map()
 
     function stop(id) {
@@ -79,10 +76,10 @@ export function withLiveReload({
       create(entity, createPayload, api) {
         type.create?.(entity, createPayload, api)
 
-        const id = entity.id // capture the primitive now, while the draft is live
+        const id = entity.id
         stop(id)
         const reload = debounce(() => {
-          const live = api.getEntity(id) // fresh, live reference
+          const live = api.getEntity(id)
           if (!live || !isLive(live, api)) return
           api.notify(`#${id}:${event}`, payload?.(live, api))
         }, delay)

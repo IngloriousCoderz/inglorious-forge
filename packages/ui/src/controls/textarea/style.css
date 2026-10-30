@@ -4,7 +4,6 @@
   gap: var(--iw-space-1);
   font-family: var(--iw-font-family-sans);
 
-  /* The field takes the width it is given, and the box inside fills it. */
   &.iw-textarea-full-width {
     width: 100%;
 
@@ -24,7 +23,6 @@
     margin-inline-start: var(--iw-space-1);
   }
 
-  /* Its height is its rows', or its content's with isAutoSize. */
   .iw-textarea {
     width: min(100%, 100%);
     resize: none;

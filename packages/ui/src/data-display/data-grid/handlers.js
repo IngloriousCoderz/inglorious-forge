@@ -37,16 +37,13 @@ export function sortChange(entity, columnId) {
   const existingIndex = entity.sorts.findIndex((s) => s.column === columnId)
 
   if (existingIndex !== -1) {
-    // Toggle direction
     const existing = entity.sorts[existingIndex]
     if (existing.direction === "asc") {
       existing.direction = "desc"
     } else {
-      // Remove from sort if going from desc back to nothing
       entity.sorts.splice(existingIndex, 1)
     }
   } else {
-    // Add new sort
     entity.sorts.push({ column: columnId, direction: "asc" })
   }
 
@@ -201,7 +198,7 @@ export function rowToggle(entity, rowId) {
 
   if (index === -1) {
     if (!entity.isMultiSelect) {
-      entity.selection = [rowId] // Replace entirely
+      entity.selection = [rowId]
     } else {
       entity.selection.push(rowId)
     }
@@ -251,14 +248,12 @@ export function rowsToggleAll(entity) {
   )
 
   if (allSelected) {
-    // Deselect all visible
     rows.forEach((row) => {
       const rowId = getRowKeyValue(entity, row)
       const index = entity.selection.indexOf(rowId)
       if (index !== -1) entity.selection.splice(index, 1)
     })
   } else {
-    // Select all visible
     rows.forEach((row) => {
       const rowId = getRowKeyValue(entity, row)
       if (!entity.selection.includes(rowId)) {
@@ -398,7 +393,6 @@ function initDataGrid(entity) {
   entity.rows ??= []
   entity.rowId ??= "id"
 
-  // Auto-generate columns from first data item if not provided
   if (!entity.columns && entity.rows.length) {
     const [firstRow] = entity.rows
 
@@ -427,7 +421,6 @@ function initDataGrid(entity) {
     })
   }
 
-  // State
   entity.sorts ??= []
   entity.filters ??= {}
   entity.search ??= null

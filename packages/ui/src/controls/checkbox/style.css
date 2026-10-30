@@ -14,7 +14,6 @@
     accent-color: var(--iw-checkbox-accent);
   }
 
-  /* With a description, the label and it stack beside the box. */
   .iw-checkbox-text {
     display: flex;
     flex-direction: column;

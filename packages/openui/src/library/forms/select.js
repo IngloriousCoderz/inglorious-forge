@@ -9,7 +9,6 @@ export const SelectItem = defineComponent({
   name: "SelectItem",
   description: "One option of a Select",
   props: z.object({ value: z.string(), label: z.string() }),
-  // Rendered by its Select.
   component: () => null,
 })
 
@@ -32,7 +31,6 @@ export const Select = defineComponent({
       label,
       hint,
       value: field.value ?? "",
-      // Nothing is picked until the user picks: the first option is a prompt.
       options: [
         { value: "", label: props.placeholder ?? "Choose…" },
         ...options,

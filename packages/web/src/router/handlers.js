@@ -6,10 +6,10 @@
 
 import { toCamelCase } from "@inglorious/utils/data-structures/string.js"
 
-const SKIP_FULL_MATCH_GROUP = 1 // .match() result at index 0 is the full string
+const SKIP_FULL_MATCH_GROUP = 1
 const REMOVE_COLON_PREFIX = 1
-const FIRST_HISTORY_INDEX = 0 // The entry an app starts on, and the fallback for an entry that carries no index.
-const PUSH_HISTORY_STEP = 1 // How far a push advances the index. A replacement leaves it where it is.
+const FIRST_HISTORY_INDEX = 0
+const PUSH_HISTORY_STEP = 1
 
 export function createHandlers(routeConfig) {
   /**
@@ -27,10 +27,6 @@ export function createHandlers(routeConfig) {
      * @param {Api} api - The application API.
      */
     init(entity, payload, api) {
-      /* Stamp the entry the app starts on, so that reloading keeps the app in
-         its place in the session history instead of restarting the count.
-         `withTransitions` reads this index back to tell a push from a traversal
-         and in which direction, so it has to be set before anything navigates. */
       if (window.history.state?.idx == null) {
         window.history.replaceState(
           { ...window.history.state, idx: FIRST_HISTORY_INDEX },
@@ -39,7 +35,6 @@ export function createHandlers(routeConfig) {
       }
       entity.idx = window.history.state?.idx ?? FIRST_HISTORY_INDEX
 
-      // Handle initial route
       const { pathname, search } = window.location
       const initialPath = pathname + search
       const route = findRoute(routeConfig, initialPath)
@@ -56,38 +51,29 @@ export function createHandlers(routeConfig) {
       if (areListenersInitialized) return
       areListenersInitialized = true
 
-      // Listen for browser back/forward
       window.addEventListener("popstate", () =>
         api.notify(`#${entityId}:popstate`, payload),
       )
 
-      // Intercept link clicks
       document.addEventListener("click", (event) => {
-        // Find the closest <a> tag (handles clicks on children)
         const link = event.target.closest("a")
 
         if (!link) return
 
-        // Skip external links
         if (link.target === "_blank") return
         if (link.rel === "external") return
         if (link.hasAttribute("data-external")) return
 
-        // Skip different origin links
         if (link.origin !== window.location.origin) return
 
-        // Skip links with download attribute
         if (link.hasAttribute("download")) return
 
-        // Skip mailto:, tel:, etc.
         if (!["http:", "https:"].includes(link.protocol)) return
 
-        // Prevent default and use router
         event.preventDefault()
 
         const path = link.pathname + link.search + link.hash
 
-        // Stored in the history entry, for whatever moves focus after navigating.
         if (link.hasAttribute("data-is-focus-kept")) {
           api.notify(`#${entityId}:navigate`, {
             to: path,
@@ -131,8 +117,6 @@ export function createHandlers(routeConfig) {
         }
 
         updateRouter(entity, route)
-        // Adopt the index of the entry just traversed, so the next push counts
-        // from where the history actually is rather than from where it was.
         entity.idx = window.history.state?.idx ?? FIRST_HISTORY_INDEX
 
         api.notify("routeChange", {
@@ -156,22 +140,16 @@ export function createHandlers(routeConfig) {
         : payload
       const { to, params, replace, force, state = {} } = options
 
-      // Numeric navigation (back/forward)
       if (typeof to === "number") {
         history.go(to)
         return
       }
 
-      // Build final path
       let path = to
 
-      // If params provided and "to" looks like a pattern, build the path
       if (params && to.includes(":")) {
         path = buildPath(to, params)
       }
-
-      // If "to" is already a final path (like "/users/1"), use it directly
-      // The router will match it against patterns in routeConfig
 
       const route = findRoute(routeConfig, path)
       const entityId = entity.id
@@ -182,7 +160,6 @@ export function createHandlers(routeConfig) {
       }
 
       if (!force) {
-        // Prevent navigation if the full path (including query/hash) is identical.
         const currentFullPath =
           entity.path + window.location.search + window.location.hash
         if (path === currentFullPath) {
@@ -190,7 +167,6 @@ export function createHandlers(routeConfig) {
         }
       }
 
-      // Asynchronous navigation
       if (typeof route.route === "function") {
         entity.isLoading = true
         entity.error = null
@@ -208,7 +184,6 @@ export function createHandlers(routeConfig) {
 
       updateRouter(entity, route)
 
-      // Prepare history state
       const historyState = {
         ...state,
         /* Written before the notification that triggers the render, so that
@@ -221,11 +196,8 @@ export function createHandlers(routeConfig) {
         path: entity.path,
       }
 
-      // Navigate
       const method = replace ? "replaceState" : "pushState"
       history[method](historyState, "", path)
-      // Advance the counter as well as stamping the entry, or the next push
-      // writes the same index and reads as a replacement.
       entity.idx = historyState.idx
 
       api.notify("routeChange", historyState)

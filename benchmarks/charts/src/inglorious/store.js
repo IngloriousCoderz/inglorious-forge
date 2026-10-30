@@ -8,8 +8,6 @@ import {
   SERIES_COLOR,
 } from "../shared/workload.js"
 
-// Every chart takes its dataset from the one event an update sends, so the page
-// renders once per update, as React renders once for its batched state updates.
 const BenchmarkData = {
   datasetsUpdate(entity, datasets) {
     Chart.dataUpdate(entity, datasets[entity.id])

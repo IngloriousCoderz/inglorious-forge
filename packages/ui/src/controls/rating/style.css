@@ -1,6 +1,3 @@
-/* A fieldset of native radios: the inputs stay in the page for the keyboard
-   and assistive tech but out of sight, and each star is the label that
-   checks its radio. */
 .iw-rating {
   display: inline-flex;
   align-items: center;

@@ -4,8 +4,6 @@ import { beforeEach, expect, test, vi } from "vitest"
 import { Engine } from "../../core/engine.js"
 import { controlTypes, createControlEntities } from "./controls.js"
 
-// The engine builds its AudioContext while loading, so the globals have to be in
-// place before any import is evaluated.
 vi.hoisted(() => {
   const noop = () => {}
 
@@ -50,9 +48,6 @@ test("it should define each control type as a bare behavior", () => {
     "Gamepad",
     "Input",
   ])
-  // The engine only appends to a type that is already a list, which is how a game
-  // keeps the built-in behaviors. Nothing composes onto these types, so a list
-  // here would be one behaviour wrapped for nothing.
   Object.values(types).forEach((behavior) =>
     expect(isList(behavior)).toBe(false),
   )
@@ -77,8 +72,6 @@ test("a game should still be able to add to a control type", () => {
   const engine = new Engine({
     types: {
       ...controlTypes(),
-      // Listing the behaviors is how you compose onto a type the engine does not
-      // already own, so the keyboard keeps its own handlers and gains yours.
       Keyboard: [controlTypes().Keyboard, { birdHit: () => {} }],
     },
     entities: {
@@ -101,7 +94,6 @@ test("a game should still be able to add to a control type", () => {
 test("it should name the control entities for what they are", () => {
   const entities = createControlEntities({ Space: "press" }, ["go"])
 
-  // One of each per game, named for its job rather than for whoever it reports to.
   expect(Object.keys(entities).sort()).toStrictEqual([
     "gamepad",
     "gamepads",

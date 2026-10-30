@@ -41,7 +41,6 @@ export function gamepadsPoller() {
 }
 
 export function gamepad() {
-  // What each button that is currently held was pressed as.
   const pressedAs = {}
 
   return {
@@ -66,8 +65,6 @@ export function gamepad() {
         api.notify("inputPress", { action })
       }
 
-      // Remembered for the same reason as on the keyboard: a button can still be held
-      // when the mapping it was pressed under is changed under it.
       pressedAs[button] = action
     },
 

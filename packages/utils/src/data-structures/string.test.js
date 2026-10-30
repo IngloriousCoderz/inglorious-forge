@@ -21,8 +21,6 @@ test("it should count how far one string is from another", () => {
 })
 
 test("it should ignore case when looking for the name that was meant", () => {
-  // The distance itself counts characters, so it sees a capital as a difference. It is
-  // `namesNear` that folds case, which is where a case can be the whole of a mistake.
   expect(editDistance("audio", "Audio")).toBe(1)
   expect(namesNear("audio", ["Audio"])).toStrictEqual(["Audio"])
 })

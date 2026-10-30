@@ -2,8 +2,6 @@ import { describe, expect, it, vi } from "vitest"
 
 import { realtimeSource } from "./index.js"
 
-// A client whose session restores when the test says, and whose channels the
-// test drives by hand.
 function fakeClient() {
   let restore
   const session = new Promise((resolve) => {
@@ -34,7 +32,6 @@ function fakeClient() {
   }
 }
 
-// Lets the session promise and its `then` run.
 const settle = () => new Promise((resolve) => setTimeout(resolve))
 
 describe("realtimeSource", () => {
@@ -60,7 +57,6 @@ describe("realtimeSource", () => {
     expect(second).toHaveBeenCalledTimes(1)
   })
 
-  // Joined while it is restored, a channel would stay anon for good.
   it("joins only once the saved session is restored", async () => {
     const client = fakeClient()
     realtimeSource(client).subscribe("applications", vi.fn())
@@ -99,12 +95,10 @@ describe("realtimeSource", () => {
     unsubscribeSecond()
     expect(client.removeChannel).toHaveBeenCalledTimes(1)
 
-    // Closed before the session came back: it never joins.
     client.restoreSession()
     await settle()
     expect(client.channels[0].subscribe).not.toHaveBeenCalled()
 
-    // A later subscriber gets a channel of its own.
     source.subscribe("applications", vi.fn())
     expect(client.channel).toHaveBeenCalledTimes(2)
   })

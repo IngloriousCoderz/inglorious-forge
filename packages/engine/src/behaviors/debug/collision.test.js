@@ -17,7 +17,6 @@ test("it should draw the collision a solid entity really uses", () => {
   const type = { render: vi.fn() }
   const gizmo = collisionGizmos({ shapes: { rectangle: render } })(type)
 
-  // An entity with no declared block at all, only `solid`.
   const body = { id: "body", size: [8, 8, 0], solid: true }
 
   gizmo.render(body, ctx, api)
@@ -38,7 +37,6 @@ test("it should draw nothing for an entity with no collision at all", () => {
     render: vi.fn(),
   })
 
-  // A line of text has a size and is not in the way, so it has nothing to draw.
   const label = { id: "paused", size: [32, 32, 0] }
 
   gizmo.render(label, ctx, api)

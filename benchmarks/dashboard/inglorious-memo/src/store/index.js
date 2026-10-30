@@ -16,7 +16,6 @@ export const store = createStore({
   autoCreateEntities: true,
 })
 
-// FPS Counter
 let frameCount = 0
 let lastTime = performance.now()
 
@@ -36,7 +35,6 @@ const countFPS = () => {
 
 requestAnimationFrame(countFPS)
 
-// Start live updates
 setInterval(() => {
   store.notify(`randomUpdate`)
 }, UPDATE_FREQUENCY)

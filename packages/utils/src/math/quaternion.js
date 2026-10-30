@@ -8,9 +8,9 @@ import { cos, sin } from "./trigonometry.js"
 import { cross, dot, multiply, sum } from "./vector.js"
 
 const DEFAULT_ANGLE = 0
-const HALF = 2 // Constant representing the divisor for halving an angle.
+const HALF = 2
 // eslint-disable-next-line no-magic-numbers
-const Y_AXIS = v(0, 1, 0) // Default axis of rotation (Y-axis).
+const Y_AXIS = v(0, 1, 0)
 
 /**
  * Combines two quaternions using the Hamilton product.

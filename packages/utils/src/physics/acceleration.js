@@ -5,9 +5,9 @@
 import { clamp, multiply, sum, zero } from "../math/vector.js"
 import { applyFriction } from "./friction.js"
 
-const DEFAULT_DT = 1 // Default time delta for the applyAcceleration function.
-const NO_FRICTION = 0 // No friction constant.
-const HALF_ACCELERATION = 0.5 // Half of the acceleration factor used in position calculation.
+const DEFAULT_DT = 1
+const NO_FRICTION = 0
+const HALF_ACCELERATION = 0.5
 
 /**
  * Applies acceleration to an object using Euler's integration method.
@@ -36,15 +36,12 @@ export function applyAcceleration(params, dt = DEFAULT_DT) {
     friction = NO_FRICTION,
   } = params
 
-  // Clamp acceleration to the maximum allowed range
   acceleration = clamp(acceleration, -maxAcceleration, maxAcceleration)
 
-  // Update velocity with acceleration and clamp to the maximum allowed speed
   velocity = sum(velocity, multiply(acceleration, dt))
   velocity = clamp(velocity, -maxSpeed, maxSpeed)
   velocity = applyFriction({ velocity, friction }, dt)
 
-  // Update position with velocity and acceleration
   position = sum(
     position,
     multiply(velocity, dt),

@@ -53,6 +53,11 @@ body {
   color: #7f77dd;
 }
 
+.nav-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
 .hero {
   padding: 5rem 3rem 4rem;
   border-bottom: 0.5px solid rgba(127, 127, 255, 0.15);
@@ -105,6 +110,19 @@ body {
   max-width: 560px;
   margin: 0 0 2.5rem;
   font-weight: 400;
+}
+
+.hero-desc:not(:last-of-type) {
+  margin-bottom: 1rem;
+}
+
+.hero-desc a {
+  color: rgba(127, 127, 255, 0.8);
+}
+
+.hero-desc code {
+  font-family: "Space Mono", monospace;
+  font-size: 0.9em;
 }
 
 .hero-stats {
@@ -272,8 +290,20 @@ body {
   color: rgba(200, 200, 220, 0.25);
 }
 
-/* Animated letter I SVG */
 .logo-svg {
   width: 24px;
   height: 24px;
+}
+
+.pkg-more {
+  margin: 1.5rem 0 0;
+  font-family: "Space Mono", monospace;
+  font-size: 12px;
+  line-height: 1.7;
+  color: rgba(200, 200, 220, 0.5);
+}
+
+.pkg-more a {
+  color: rgba(127, 127, 255, 0.8);
+  text-decoration: none;
 }

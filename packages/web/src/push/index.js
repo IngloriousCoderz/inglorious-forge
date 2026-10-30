@@ -84,8 +84,6 @@ export function createPushPrompt({
       entity.isOpen = false
     },
 
-    // Asking the device is async, so a stop can land before the answer: the
-    // prompt only opens while started.
     ...handleAsync("pushCheck", {
       async run() {
         if (!(await adapter.isSupported())) return null
@@ -102,8 +100,6 @@ export function createPushPrompt({
       error() {},
     }),
 
-    // The prompt goes down as the system's dialog comes up. Dismissing the
-    // dialog leaves the permission undecided, so the next start asks again.
     ...handleAsync("pushAsk", {
       start(entity) {
         entity.isOpen = false
@@ -126,8 +122,6 @@ export function createPushPrompt({
       entity.isOpen = false
     },
 
-    // Nothing on screen depends on it: a device that fails to register now
-    // tries again at the next start.
     ...handleAsync("pushRegister", {
       run() {
         return adapter.register()

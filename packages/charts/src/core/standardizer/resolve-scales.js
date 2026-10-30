@@ -17,7 +17,6 @@ export function createScales(entity, primitives, dimensions) {
   if (["pie", "donut", "radial"].includes(entity.type)) {
     const piePrimitive = getPolarPrimitive(primitives)
     const polarProps = piePrimitive?.props || {}
-    // The pie fits in the room under its legend, if it has one.
     const top = dimensions.legendHeight ? dimensions.plotTop : 0
     const height = dimensions.height - top
     const radiusBase = Math.min(dimensions.width, height) / 2
@@ -46,8 +45,6 @@ export function createScales(entity, primitives, dimensions) {
   }
 
   const rows = entity.data
-  // `xScale` places the categories and `yScale` the values. Horizontal bars
-  // turn them: categories run down the left, values along the bottom.
   const isHorizontal = entity.orientation === "horizontal"
   const categoryRange = isHorizontal
     ? [dimensions.plotTop, dimensions.plotBottom]
@@ -55,7 +52,6 @@ export function createScales(entity, primitives, dimensions) {
   const valueRange = isHorizontal
     ? [dimensions.plotLeft, dimensions.plotRight]
     : [dimensions.plotBottom, dimensions.plotTop]
-  // Positions go by row, not by label: two rows may share a label.
   const xDomain = rows.map((row, index) => index)
   const hasBars = primitives.some((primitive) => primitive.type === "bar")
   const xScale = hasBars
@@ -112,8 +108,6 @@ function getYDomain(rows, plottedKeys, primitives) {
   return [lowerBound, upperBound]
 }
 
-// Areas and bars stack, each with others of their kind sharing a `stackId`:
-// the axis has to reach the top of the tallest stack.
 function collectStackGroups(primitives) {
   const groups = new Map()
 
@@ -146,8 +140,6 @@ function resolveRadiusValue(value, base) {
   return Number.isFinite(value) ? value : base
 }
 
-// Both axes of a scatter chart are numbers, around the points rather than
-// from zero; a point's `z`, when the points have one, sets its size.
 function createScatterScales(entity, dimensions) {
   const points = entity.data.flatMap(({ points }) => points)
   const sizes = points.map(({ z }) => z).filter(Number.isFinite)
@@ -165,16 +157,12 @@ function createScatterScales(entity, dimensions) {
       .domain(spread(extent(points, ({ y }) => y)))
       .nice()
       .range([dimensions.plotBottom, dimensions.plotTop]),
-    // A point without a size, or a chart whose points have none, gets the
-    // default radius.
     zScale: (z) =>
       sizes.length && Number.isFinite(z) ? size(z) : POINT_RADIUS,
     plottedKeys: entity.seriesKeys,
   }
 }
 
-// A domain needs two ends: no points, or all at one value, still make one.
-// It reaches a little past the outermost points, so none sits on an edge.
 function spread([low, high]) {
   if (low === undefined) return [0, 1]
   if (low === high) return [low - 1, high + 1]
@@ -182,8 +170,6 @@ function spread([low, high]) {
   return [low - margin, high + margin]
 }
 
-// A radar chart is round, in the middle of the room below its legend, and
-// leaves space around it for the categories' names.
 function createRadarScales(entity, primitives, dimensions) {
   const plottedKeys = getPlottedKeys(entity, primitives)
   const values = entity.data.flatMap((row) =>

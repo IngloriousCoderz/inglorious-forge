@@ -116,7 +116,6 @@ function buildDefaultRadialPrimitives(entity) {
       dataKey: entity.dataKey,
       nameKey: entity.nameKey,
       innerRadius: entity.innerRadius ?? "25%",
-      // A legend names the rings already, so they go unlabelled by default.
       hasLabel: entity.hasLabel ?? !entity.hasLegend,
       startAngle: entity.startAngle,
       endAngle: entity.endAngle,
@@ -139,7 +138,6 @@ function buildDefaultPiePrimitives(entity) {
       cx: entity.cx || "50%",
       cy: entity.cy || "50%",
       outerRadius: entity.outerRadius || "70%",
-      // A legend names the slices already, so they go unlabelled by default.
       hasLabel: entity.hasLabel ?? !entity.hasLegend,
       startAngle: entity.startAngle,
       endAngle: entity.endAngle,
@@ -212,7 +210,6 @@ function buildCartesianScaffold(entity) {
     primitives.push(CartesianGrid())
   }
 
-  // Formatters are functions, so they come with the render, not the entity.
   primitives.push(
     XAxis({
       dataKey: entity.xKey,

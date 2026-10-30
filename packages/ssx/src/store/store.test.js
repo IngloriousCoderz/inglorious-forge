@@ -65,12 +65,10 @@ describe("generateStore", () => {
       filePath: path.join(PAGES_DIR, "index.js"),
     }
 
-    // Point to a directory that doesn't contain entities.js
     const store = await generateStore([page], {
       rootDir: path.join(ROOT_DIR, "pages"),
     })
 
-    // Should initialize with empty entities (or at least not the ones from fixtures)
     expect(store.getState()).not.toHaveProperty("about")
   })
 

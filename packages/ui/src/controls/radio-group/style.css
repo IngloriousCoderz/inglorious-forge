@@ -19,7 +19,6 @@
     cursor: pointer;
   }
 
-  /* With a description, the label and it stack beside the circle. */
   .iw-radio-text {
     display: flex;
     flex-direction: column;
@@ -71,7 +70,6 @@
     --iw-radio-accent: var(--iw-color-info);
   }
 
-  /* After the directions, which it overrides with a grid. */
   &.iw-radio-group-card {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));

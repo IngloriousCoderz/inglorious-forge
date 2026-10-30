@@ -14,8 +14,6 @@ const COLUMNS = [
   { id: "books", label: "Books" },
 ]
 
-// Larman's `Store` keeps a list of completed sales. Here the completed sales are the
-// list: there is nothing to copy them into, only a question to ask of the world.
 export const History = {
   render(_, api) {
     const accounting = api.getEntity("accounting")

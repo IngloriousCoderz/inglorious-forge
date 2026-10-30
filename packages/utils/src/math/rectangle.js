@@ -74,7 +74,6 @@ export function intersectsRectangle(rectangle1, rectangle2) {
   const back2 = z2 - halfD2
   const front2 = z2 + halfD2
 
-  // AABB intersection test
   return (
     left1 <= right2 &&
     right1 >= left2 &&

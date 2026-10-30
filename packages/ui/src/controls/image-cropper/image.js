@@ -50,7 +50,6 @@ export async function cropImage(file, rect, options = {}) {
     const context = canvas.getContext("2d")
     if (!context) throw new Error("Canvas is unavailable")
 
-    // Formats without alpha would turn transparent pixels black.
     if (OPAQUE_TYPES.includes(type) && background) {
       context.fillStyle = background
       context.fillRect(0, 0, output.width, output.height)
@@ -86,7 +85,6 @@ export async function decodeImage(file) {
     try {
       return await createImageBitmap(file, { imageOrientation: "from-image" })
     } catch {
-      // Some engines reject the options object; try the plain decoder.
       try {
         return await createImageBitmap(file)
       } catch {

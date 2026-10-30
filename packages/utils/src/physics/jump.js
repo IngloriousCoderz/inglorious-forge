@@ -1,8 +1,8 @@
 /* eslint-disable no-magic-numbers */
 
-const DEFAULT_MAX_JUMP = 0 // Default maximum jump height.
-const DEFAULT_MAX_LEAP = 0 // Default maximum leap distance.
-const DEFAULT_MAX_SPEED = 0 // Default maximum speed.
+const DEFAULT_MAX_JUMP = 0
+const DEFAULT_MAX_LEAP = 0
+const DEFAULT_MAX_SPEED = 0
 
 /**
  * Calculates the vertical velocity (vy) of a jump

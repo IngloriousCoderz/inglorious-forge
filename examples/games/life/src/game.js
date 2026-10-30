@@ -28,9 +28,6 @@ const Board = {}
 const BUTTON_WIDTH = 100
 const BUTTON_HEIGHT = 26
 
-// Everything the screen can be told, down the right-hand side: the line that says how
-// the world is getting on first, then a slider for every number it runs on, then the
-// two things it can be told to do.
 const PANEL_LEFT = 640
 const PANEL_WIDTH = 380
 const PANEL_CENTER = PANEL_LEFT + PANEL_WIDTH / 2
@@ -70,9 +67,6 @@ export function createLifeGame({
 }) {
   return {
     updateStrategy: "copy-on-dispatch",
-    // As fast as the screen will take it. The world turns at its own clock instead -- a
-    // fixed loop here would hold the pointer to the same rate as the world, which is the
-    // one thing a pointer should not be.
     loop: { type: "animationFrame" },
 
     systems: [
@@ -87,17 +81,12 @@ export function createLifeGame({
       Mouse: [{ render: renderMouse }, mouse(), hover()],
       Fps: [{ render: renderFps }, fps()],
       Button: buttonType(),
-      // Only a world with sliders needs a Slider type, and a world with sliders always
-      // brings the numbers they change along with them.
       ...(sliders.length > 0 ? { Slider: sliderType(parameters) } : {}),
       Readout: readoutType(),
       ...types,
     },
 
     entities: {
-      // Not pixelated, although the cells would suit it: the flag resamples the whole
-      // canvas with nearest neighbour, lettering included, and this game draws no
-      // images for smoothing to spoil -- only boxes, circles and text.
       game: {
         type: "Game",
         devMode: false,
@@ -114,8 +103,6 @@ export function createLifeGame({
 
       mouse: createMouseEntity({ cursor: "arrow", color: "white" }),
 
-      // Up in the margin over the board, where no cell will ever draw over it: how fast
-      // the loop is actually turning, which is what a slow cursor is usually accusing.
       fps: {
         type: "Fps",
         position: [30, 0, 575],

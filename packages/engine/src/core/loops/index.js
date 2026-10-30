@@ -4,8 +4,6 @@ import { FixedLoop } from "./fixed.js"
 import { FlashLoop } from "./flash.js"
 import { LagLoop } from "./lag.js"
 
-// @see https://gameprogrammingpatterns.com/game-loop.html
-
 /**
  * The loops a game can ask for, by name.
  *
@@ -16,16 +14,10 @@ import { LagLoop } from "./lag.js"
  * says so per entity with `atFps`, and leaves the loop as fast as the screen takes it.
  */
 export const Loop = {
-  // Every frame, as fast as the browser will take one. The default, and the one to keep
-  // when something in the game decides its own rate.
   animationFrame: AnimationFrameLoop,
-  // One frame every `fps`, measured from the end of the last.
   fixed: FixedLoop,
-  // One frame every `fps`, catching up however far behind it fell.
   lag: LagLoop,
-  // As fast as the machine allows, with no cap at all.
   elapsed: ElapsedLoop,
-  // As fast as the machine allows, with nothing drawing.
   flash: FlashLoop,
 }
 

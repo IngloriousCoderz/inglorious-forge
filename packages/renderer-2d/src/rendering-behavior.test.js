@@ -6,8 +6,6 @@ import { rendering } from "./rendering-behavior.js"
 function createCanvas() {
   const operations = []
 
-  // One context, handed out however many times it is asked for, so that what the
-  // behaviour set on it can be read back.
   const ctx = {
     fillStyle: undefined,
     fillRect() {
@@ -34,8 +32,6 @@ const api = (game) => ({
 })
 
 test("it should stop showing a game that has quit", () => {
-  // Stopping the loop is not enough on its own: nothing draws any more, so the canvas
-  // keeps the last frame of a finished game and it looks paused rather than over.
   const canvas = createCanvas()
   const behaviour = rendering(canvas)
 

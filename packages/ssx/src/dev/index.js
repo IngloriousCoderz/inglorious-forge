@@ -21,12 +21,10 @@ export async function dev(options = {}) {
 
   console.log("🚀 Starting dev server...\n")
 
-  // Create Vite dev server
   const viteConfig = createViteConfig(mergedOptions)
   const viteServer = await createServer(viteConfig)
   const loader = (p) => viteServer.ssrLoadModule(p)
 
-  // Use Vite's middleware first (handles HMR, static files, etc.)
   const connectServer = connect()
   connectServer.use(viteServer.middlewares)
 
@@ -35,19 +33,17 @@ export async function dev(options = {}) {
   )
   connectServer.use(apiMiddleware)
 
-  // Add SSR middleware
   connectServer.use(async (req, res, next) => {
     const [url] = req.url.split("?")
 
     try {
-      // Skip special routes, static files, AND public assets
       if (
         url.startsWith("/@") ||
         url.startsWith("/api/") ||
-        url.includes(".") || // Vite handles static files
+        url.includes(".") ||
         url === "/favicon.ico"
       ) {
-        return next() // Let Vite serve it
+        return next()
       }
 
       const result = await renderRequest(url, {
@@ -66,7 +62,7 @@ export async function dev(options = {}) {
       res.end(result.html)
     } catch (error) {
       viteServer.ssrFixStacktrace(error)
-      next(error) // Let Vite handle the error overlay
+      next(error)
     }
   })
 

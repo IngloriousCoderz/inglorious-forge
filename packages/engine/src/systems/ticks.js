@@ -52,9 +52,6 @@ export function ticks({ fps = Infinity, event = "tick" } = {}) {
 
       if (elapsed === undefined) return
 
-      // Notified rather than called, so that the turn reaches entities and systems alike,
-      // in the same pass: the store drains the queue before it publishes, and anything
-      // the turn notifies in its own right follows it in.
       api.notify(event, elapsed)
     },
   }

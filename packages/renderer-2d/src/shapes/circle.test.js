@@ -17,14 +17,11 @@ test("it should draw at the radius it was given", () => {
   const [, x, y, radius] = arcOf(drawing({ radius: A_RADIUS }))
 
   expect(radius).toBe(A_RADIUS)
-  // Close to rather than equal, because a world offset of nothing comes out as `-0`, which
-  // a canvas draws in the same place but which is not the same number.
   expect(x).toBeCloseTo(0, 9)
   expect(y).toBeCloseTo(0, 9)
 })
 
 test("it should turn the world over the way everything else does", () => {
-  // Up the world is a negative y on the canvas, and the depth axis comes off as well.
   const [, x, y] = arcOf(drawing({ offset: [5, 20, 3] }))
 
   expect([x, y]).toEqual([5, -23])

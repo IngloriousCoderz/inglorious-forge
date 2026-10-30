@@ -1,6 +1,5 @@
 export const requiresAuth = (type) => ({
   routeChange(entity, payload, api) {
-    // Does this event concern me?
     if (payload.route !== entity.id) return
 
     const user = localStorage.getItem("user")

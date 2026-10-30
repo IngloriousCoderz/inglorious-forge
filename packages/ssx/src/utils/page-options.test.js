@@ -39,7 +39,7 @@ describe("createGetPageOption", () => {
   })
 
   it("should use defaults when metadata is missing", () => {
-    const module = {} // No metadata export
+    const module = {}
 
     const getOption = createGetPageOption(mockStore, module, mockEntity)
     const defaults = { title: "Default Title" }

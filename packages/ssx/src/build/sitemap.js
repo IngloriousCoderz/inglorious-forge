@@ -21,7 +21,6 @@ export async function generateSitemap(pages = [], options = {}) {
 
   const items = pages.filter(filter).map(({ metadata }) => metadata)
 
-  // Build XML
   const urls = items.map(renderItem)
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>

@@ -30,16 +30,9 @@
  */
 export function mappings(mappingsByState) {
   function apply(state, api) {
-    // A state with no keys of its own is deaf. Falling back to the last mapping instead
-    // would make a forgotten state carry on answering, which is the mistake this is
-    // written to prevent.
     api.notify("mappingChange", mappingsByState[state] ?? {})
   }
 
-  // Written as a decorator rather than a bare behaviour because behaviours compose by
-  // replacing, not by running in order: a type has one `create` and one `stateChange`, and
-  // the last behaviour to name one wins. So each handler does its own part and then hands
-  // on to whatever it displaced, the way the dynamic behaviours in the recipes do.
   return (type) => ({
     // A machine is already in its first state when it is made, and nothing announces that:
     // it only announces moves. So the opening state would never be given its keys, and the

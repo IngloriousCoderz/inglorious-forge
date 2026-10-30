@@ -2,21 +2,10 @@ import { deserialize } from "@inglorious/utils/object.js"
 
 const LAST_STATE = 1
 
-// HMR-safe container to persist a single DevTools connection across Vite reloads.
-// Uses import.meta.hot.data when available (preferred), falls back to module scope.
 const globalContainer = import.meta.hot
   ? ((import.meta.hot.data ??= {}).__INGLORIOUS_DEVTOOLS__ ??= {})
   : {}
 
-// connection shape: {
-//   devToolsInstance,
-//   unsubscribe,
-//   store,
-//   updateMode,
-//   restoreSetState: () => void,
-// }
-
-// Unified API for cleaner integration across apps and engine
 export function createDevtools(config = {}) {
   return {
     connect(store) {
@@ -51,12 +40,10 @@ export function createDevtools(config = {}) {
 function connectDevTools(store, config = {}) {
   const updateMode = config.updateMode ?? "auto"
 
-  // Prevent duplicate connections; rewire if store or update mode changed
   const existing = getConnection()
   if (existing) {
     const sameMode = existing.updateMode === updateMode
     if (sameMode) {
-      // Hot-swap store without resetting DevTools history
       existing.restoreSetState?.()
       const baseSetState = store.setState
       const restoreSetState =
@@ -79,7 +66,6 @@ function connectDevTools(store, config = {}) {
       existing.restoreSetState = restoreSetState
     }
 
-    // Different update mode: fully disconnect previous and proceed
     try {
       existing.unsubscribe?.()
     } finally {
@@ -104,7 +90,6 @@ function connectDevTools(store, config = {}) {
       : () => {
           // noop; we didn't wrap setState
         }
-  // Only add setState side-effects in auto update mode; manual update mode logs explicitly from engine.
   if (updateMode === "auto") {
     store.setState = (newState) => {
       baseSetState(newState)
@@ -114,19 +99,17 @@ function connectDevTools(store, config = {}) {
 
   const devToolsInstance = window.__REDUX_DEVTOOLS_EXTENSION__.connect({
     name,
-    // predicate: // doesn't work
-    // @see https://github.com/reduxjs/redux-devtools/blob/main/extension/docs/API/Arguments.md#features
     features: {
-      pause: true, // start/pause recording of dispatched actions
-      lock: true, // lock/unlock dispatching actions and side effects
-      persist: true, // persist states on page reloading
-      export: true, // export history of actions in a file
-      import: "custom", // import history of actions from a file
-      jump: false, // jump back and forth (time travelling)
-      skip: false, // skip (cancel) actions
-      reorder: false, // drag and drop actions in the history list
-      dispatch: true, // dispatch custom actions or action creators
-      test: false, // generate tests for the selected actions
+      pause: true,
+      lock: true,
+      persist: true,
+      export: true,
+      import: "custom",
+      jump: false,
+      skip: false,
+      reorder: false,
+      dispatch: true,
+      test: false,
     },
   })
 
@@ -154,9 +137,6 @@ function connectDevTools(store, config = {}) {
 }
 
 function disconnectDevTools() {
-  // The `disconnect` method on the devToolsInstance is not available in all
-  // environments or versions of the extension.
-  // Safest is to unsubscribe and release our reference, and restore setState.
   const existing = getConnection()
   if (!existing) return
   try {
@@ -171,7 +151,6 @@ function handleDispatch(message) {
   const { store } = getConnection() ?? {}
   if (!store) return
   switch (message.payload.type) {
-    // reset button
     case "RESET": {
       store.reset()
       const existing = getConnection()
@@ -179,21 +158,18 @@ function handleDispatch(message) {
       break
     }
 
-    // revert button
     case "ROLLBACK": {
       const newState = deserialize(message.state)
       store.setState(newState)
       break
     }
 
-    // commit button
     case "COMMIT": {
       const existing = getConnection()
       existing?.devToolsInstance?.init(store.getState())
       break
     }
 
-    // import from file button
     case "IMPORT_STATE": {
       const { computedStates, actionsById } = message.payload.nextLiftedState
 

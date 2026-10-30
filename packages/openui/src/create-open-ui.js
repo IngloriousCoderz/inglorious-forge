@@ -99,7 +99,6 @@ export function createOpenUI({ library, toolProvider, icons }) {
   function syncCallouts(entity, api) {
     if (entity.isStreaming) return
 
-    // The entity is only readable while the handler runs; the timer is not.
     const { id } = entity
     const { dismissals } = runtimeOf(entity)
     const result = parse(entity)
@@ -165,7 +164,6 @@ export function createOpenUI({ library, toolProvider, icons }) {
       const previous = entity.queries[node.statementId]
 
       if (previous?.key !== key) {
-        // The last data stays on screen until the new arrives.
         entity.queries[node.statementId] = {
           key,
           tool,
@@ -346,7 +344,6 @@ export function createOpenUI({ library, toolProvider, icons }) {
 
     querySuccess(entity, { statementId, key, data }) {
       const query = entity.queries[statementId]
-      // A reply to arguments the query has since moved on from.
       if (query?.key !== key) return
       query.status = "success"
       query.data = data

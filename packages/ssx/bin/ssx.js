@@ -14,7 +14,6 @@ import { ssr } from "../src/ssr/index.js"
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-// Read package.json for version
 const packageJson = JSON.parse(
   await readFile(path.join(__dirname, "../package.json"), "utf-8"),
 )
@@ -31,7 +30,6 @@ program
   .description("Start development server with hot reload")
   .option("-c, --config <file>", "config file name", "site.config.js")
   .option("-r, --root <dir>", "root directory", ".")
-  // No default here: an explicit port overrides the config's, 3000 otherwise.
   .option("-p, --port <port>", "dev server port (default: 3000)")
   .action(async (options) => {
     const cwd = process.cwd()
@@ -78,12 +76,6 @@ program
         rootDir,
         outDir,
       })
-
-      // if (result.skipped) {
-      //   console.log(
-      //     `\n⚡ Incremental build saved time by skipping ${result.skipped} unchanged pages`,
-      //   )
-      // }
     } catch (error) {
       console.error("Build failed:", error)
       process.exit(1)
@@ -150,8 +142,6 @@ program
 
 program.parse()
 
-// The config lives in src/, where it is loaded from: site.config.ts is used
-// when there is no site.config.js.
 function resolveConfigFile(rootDir, configFile) {
   if (configFile === "site.config.js") {
     const jsPath = path.resolve(rootDir, "src", "site.config.js")

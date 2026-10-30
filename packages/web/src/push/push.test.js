@@ -31,7 +31,6 @@ function storeWith(type) {
   })
 }
 
-// Starts the prompt and lets the device answer whether it may show pushes.
 async function start(
   type = createPushPrompt({ adapter, declineKey: DECLINE_KEY }),
 ) {
@@ -59,8 +58,6 @@ describe("pushStart", () => {
     expect(adapter.register).toHaveBeenCalled()
   })
 
-  // The decline is about the prompt, not about pushes: allowing them later in
-  // the system's settings still registers the device.
   it("registers once allowed, even after a decline", async () => {
     stored.set(DECLINE_KEY, "true")
     adapter.permission.mockResolvedValueOnce("granted")

@@ -1,6 +1,3 @@
-// Type-level tests: `tsc -p type-tests` fails on any error, and on any
-// `@ts-expect-error` whose error does not happen.
-
 import {
   createStore,
   type EntitiesState,
@@ -39,7 +36,6 @@ interface AppState extends EntitiesState<AppEntity> {
 
 type AppApi = Api<AppEntity, AppState>
 
-// A type wrapping Chart passes the formatters, which entities never hold
 const Shares = {
   ...Chart,
   render(entity, api) {
@@ -56,13 +52,11 @@ const Shares = {
   },
 } satisfies EntityType<SharesEntity, AppApi>
 
-// Chart registers under the app's names, behaviors included, with no cast
 export const store = createStore<AppEntity, AppState>({
   types: { Shares, LiveLine: [Chart, withRealtime] },
   entities: { shares: { type: "Shares", data: [] } },
 })
 
-// Composition with the app's Api
 declare const api: AppApi
 export const composed = Chart.render(
   {
@@ -79,7 +73,6 @@ export const composed = Chart.render(
 // @ts-expect-error: tick formatters take numbers
 YAxis({ tickFormatter: (value: string) => value })
 
-// Horizontal bars, scatter, radar and radial
 export const sideways = Chart.render({
   type: "bar",
   orientation: "horizontal",

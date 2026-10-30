@@ -16,10 +16,6 @@ import {
   isSomeSelected,
 } from "."
 
-// ---------------------------------------------------------------------------
-// Fixtures
-// ---------------------------------------------------------------------------
-
 const sampleData = [
   { id: 1, name: "Charlie", age: 35, active: true, role: "Admin" },
   { id: 2, name: "Alice", age: 30, active: true, role: "User" },
@@ -46,10 +42,6 @@ const sampleColumns = [
 ]
 
 const GRID_ID = "test-DataGrid"
-
-// ---------------------------------------------------------------------------
-// Test helpers
-// ---------------------------------------------------------------------------
 
 /**
  * Creates a store, mounts it to a detached DOM element, and waits for the
@@ -91,10 +83,6 @@ async function setup(entityOverrides = {}) {
     getGrid: () => getEntity(GRID_ID),
   }
 }
-
-// ---------------------------------------------------------------------------
-// Handler tests — isolated, no store or DOM needed
-// ---------------------------------------------------------------------------
 
 describe("DataGrid / handlers", () => {
   let entity, api
@@ -338,9 +326,8 @@ describe("DataGrid / handlers", () => {
   describe("selectors", () => {
     it("getRows: applies sort, filter and pagination in order", () => {
       DataGrid.sortChange(entity, "age")
-      DataGrid.sortChange(entity, "age") // desc
+      DataGrid.sortChange(entity, "age")
       DataGrid.filterChange(entity, { columnId: "active", value: true })
-      // active: Charlie(35), Alice(30), David(40) -> desc: David, Charlie, Alice -> page 0 size 2
       expect(getRows(entity).map((r) => r.name)).toEqual(["David", "Charlie"])
     })
 
@@ -398,10 +385,6 @@ describe("DataGrid / handlers", () => {
     })
   })
 })
-
-// ---------------------------------------------------------------------------
-// Template + integration tests — full end-to-end via mount()
-// ---------------------------------------------------------------------------
 
 describe("DataGrid / template", () => {
   let store, container, unsubscribe, getGrid
@@ -567,10 +550,6 @@ describe("DataGrid / template", () => {
     })
   })
 })
-
-// ---------------------------------------------------------------------------
-// Editing
-// ---------------------------------------------------------------------------
 
 const editableColumns = [
   { id: "name", title: "Name", isEditable: true, isSortable: true },

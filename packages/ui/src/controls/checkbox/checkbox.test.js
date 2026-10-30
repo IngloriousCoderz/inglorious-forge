@@ -83,7 +83,6 @@ describe("checkbox without an id", () => {
     expect(container.querySelector("label").hasAttribute("for")).toBe(false)
     expect(container.querySelector("input").hasAttribute("id")).toBe(false)
 
-    // A label only clicks through to its control once it is in the document.
     document.body.append(container)
     container.querySelector(".iw-checkbox-label").click()
     container.remove()

@@ -24,8 +24,6 @@ import {
 } from "./primitives/factories.js"
 import { streamSlide } from "./realtime/index.js"
 
-// The chart type: its event handlers and render. The primitives are separate
-// exports, so the store does not take them for event handlers.
 export const Chart = {
   ...handlers,
   render(source, api) {

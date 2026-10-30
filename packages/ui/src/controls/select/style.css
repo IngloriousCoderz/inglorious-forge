@@ -37,8 +37,6 @@
   .iw-select-frame {
     display: flex;
     align-items: center;
-    /* The gap spaces the text from the arrow, the same way it spaces an
-       Input's text from its icons. */
     gap: var(--iw-space-2);
     padding: 0 var(--iw-space-3);
     border: 1px solid var(--iw-input-border);
@@ -77,7 +75,6 @@
       }
     }
 
-    /* The control is focusable so it can be opened from the keyboard. */
     &:focus-visible {
       outline: none;
       border-color: var(--iw-input-border-focus);
@@ -149,9 +146,6 @@
       justify-content: center;
       font-size: var(--iw-font-size-sm);
       line-height: 1;
-      /* A flex child, like Input's icons. Absolutely positioning it needed a
-         positioning context on the frame and a reserved padding strip so the
-         text would not run underneath it; the row's gap does both. */
       flex: none;
       /* Decorative. A popup only opens from a trusted gesture on the select
          itself, so the arrow cannot open it; leaving clicks to pass through

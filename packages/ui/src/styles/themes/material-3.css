@@ -2,17 +2,10 @@
 
 .iw-theme-material-3 {
   --iw-font-family-sans: "Roboto", "Helvetica", "Arial", sans-serif;
-  /* The theme on the page itself: the element with the theme class, usually
-     <body>, takes its background, text color and font. */
   background-color: var(--iw-color-bg);
   color: var(--iw-color-text);
   font-family: var(--iw-font-family-sans);
 
-  /* ========================================
-     MATERIAL 3 THEME - Material Design 3 baseline
-     ======================================== */
-
-  /* Material 3 color roles the shared tokens have no name for */
   --iw-m3-outline: #79747e;
   --iw-m3-surface-container-low: #f7f2fa;
   --iw-m3-surface-container: #f3edf7;
@@ -24,7 +17,6 @@
   --iw-m3-inverse-on-surface: #f5eff7;
   --iw-m3-inverse-primary: #d0bcff;
 
-  /* Semantic Colors */
   --iw-color-bg: #fef7ff;
   --iw-color-bg-secondary: var(--iw-m3-surface-container);
   --iw-color-bg-tertiary: var(--iw-m3-surface-container-highest);
@@ -52,19 +44,15 @@
   --iw-color-primary-active: color-mix(in srgb, #6750a4 90%, #ffffff);
   --iw-color-primary-text: var(--iw-color-white);
 
-  /* Material 3's secondary color */
   --iw-color-accent: #625b71;
   --iw-color-accent-hover: color-mix(in srgb, #625b71 92%, #ffffff);
   --iw-color-accent-active: color-mix(in srgb, #625b71 90%, #ffffff);
 
-  /* Material 3 defines only an error color: the others are custom colors at
-     the same tones as the primary */
   --iw-color-success: #386a20;
   --iw-color-warning: #7d5700;
   --iw-color-error: #b3261e;
   --iw-color-info: #00639a;
 
-  /* Elevation levels 1 to 4 */
   --iw-shadow-sm:
     0 1px 2px 0 rgba(0, 0, 0, 0.3), 0 1px 3px 1px rgba(0, 0, 0, 0.15);
   --iw-shadow-md:
@@ -74,23 +62,16 @@
   --iw-shadow-xl:
     0 2px 3px 0 rgba(0, 0, 0, 0.3), 0 6px 10px 4px rgba(0, 0, 0, 0.15);
 
-  /* Material 3's shape scale: extra small to extra large */
   --iw-radius-sm: 4px;
   --iw-radius-md: 8px;
   --iw-radius-lg: 12px;
   --iw-radius-xl: 16px;
   --iw-radius-2xl: 28px;
 
-  /* Labels in the label-large style: medium weight, as written */
   --iw-label-text-transform: none;
   --iw-label-letter-spacing: 0.00714em;
   --iw-label-font-weight: var(--iw-font-weight-medium);
 
-  /* ========================================
-     COMPONENT TOKENS
-     ======================================== */
-
-  /* Button: filled, in a pill */
   --iw-button-bg: var(--iw-color-primary);
   --iw-button-bg-hover: var(--iw-color-primary-hover);
   --iw-button-bg-active: var(--iw-color-primary-active);
@@ -101,8 +82,6 @@
   --iw-button-shadow-hover: var(--iw-shadow-sm);
   --iw-button-shadow-active: none;
 
-  /* A button's default color is a filled tonal button, whose outlined and
-     ghost forms take the primary color */
   --iw-button-default-color: var(--iw-color-primary);
   --iw-button-default-bg: var(--iw-m3-secondary-container);
   --iw-button-default-bg-hover: var(--iw-m3-secondary-container);
@@ -110,7 +89,6 @@
   --iw-button-default-border: var(--iw-m3-secondary-container);
   --iw-button-default-text: var(--iw-m3-on-secondary-container);
 
-  /* Input: a filled text field */
   --iw-input-bg: var(--iw-m3-surface-container-highest);
   --iw-input-bg-hover: color-mix(
     in srgb,
@@ -124,40 +102,31 @@
   --iw-input-border-hover: var(--iw-color-text);
   --iw-input-border-focus: var(--iw-color-primary);
   --iw-input-radius: var(--iw-radius-sm) var(--iw-radius-sm) 0 0;
-  /* With the bottom border, a 2px active indicator */
   --iw-input-shadow-focus: inset 0 -1px 0 var(--iw-input-border-focus);
 
-  /* App bar: a top app bar on the surface */
   --iw-app-bar-bg: var(--iw-color-bg);
 
-  /* Drawer: a navigation drawer */
   --iw-drawer-bg: var(--iw-m3-surface-container-low);
 
-  /* Card: an elevated card */
   --iw-card-bg: var(--iw-m3-surface-container-low);
   --iw-card-border: transparent;
   --iw-card-radius: var(--iw-radius-lg);
   --iw-card-shadow: var(--iw-shadow-sm);
   --iw-card-shadow-hover: var(--iw-shadow-md);
 
-  /* Badge */
   --iw-badge-radius: var(--iw-radius-full);
 
-  /* Chip: outlined, on no background of its own */
   --iw-chip-bg: transparent;
 
-  /* List */
   --iw-list-item: transparent;
   --iw-list-item-active: var(--iw-color-surface-hover);
   --iw-list-item-selected: var(--iw-m3-secondary-container);
 
-  /* Alert */
   --iw-alert-radius: var(--iw-radius-lg);
   --iw-alert-shadow: none;
   color-scheme: light;
 }
 
-/* Dark variant */
 .iw-theme-material-3.iw-theme-dark {
   color-scheme: dark;
 
@@ -196,8 +165,6 @@
 }
 
 .iw-theme-material-3 {
-  /* Buttons: pills 40px tall. Hovering and pressing lay the label's color
-     over the container, as Material 3's state layers */
   .iw-button {
     padding: 10px 24px;
     font-size: 0.875rem;
@@ -256,7 +223,6 @@
       );
     }
 
-    /* Outlined buttons have a neutral outline, whatever their color */
     &.iw-button-outline {
       border-color: var(--iw-m3-outline);
     }
@@ -309,7 +275,6 @@
     }
   }
 
-  /* On dark, labels on a color are a deep tone of it */
   &.iw-theme-dark .iw-button {
     &.iw-button-secondary,
     &.iw-button-success,
@@ -324,8 +289,6 @@
     }
   }
 
-  /* Filled text fields: a tinted box with an indicator along its bottom,
-     2px and in the primary color while it has focus */
   .iw-input .iw-input-frame,
   .iw-select .iw-select-frame,
   .iw-combobox .iw-combobox-frame,
@@ -388,8 +351,6 @@
     height: 1.125rem;
   }
 
-  /* Switch: a tall outlined track whose thumb grows and takes the track's
-     opposite color when on */
   .iw-switch {
     .iw-switch-track {
       width: 3.25rem;
@@ -481,7 +442,6 @@
     );
   }
 
-  /* Tabs: primary tabs, with a rounded indicator as wide as the label */
   .iw-tabs-list {
     gap: 0;
   }
@@ -514,8 +474,6 @@
     }
   }
 
-  /* Chips: outlined, with small rounded corners, and filled with the
-     secondary container when selected */
   .iw-chip {
     min-height: 2rem;
     padding-inline: 16px;
@@ -557,8 +515,6 @@
     font-weight: var(--iw-font-weight-medium);
   }
 
-  /* Cards: elevated, with no rules between their parts. A sunk card is a
-     filled one */
   .iw-card-header,
   .iw-card-footer {
     border: 0 none;
@@ -583,8 +539,6 @@
     color: var(--iw-color-text-secondary);
   }
 
-  /* Alerts: Material 3 has none, so they are tonal containers of their
-     color, with rounded corners and no border */
   .iw-alert {
     padding: 12px 16px;
     font-size: 0.875rem;
@@ -639,8 +593,6 @@
     }
   }
 
-  /* Tables: Material 3 has none either, so plain rows ruled by the outline
-     variant */
   .iw-table {
     border: 0 none;
     background: transparent;
@@ -662,7 +614,6 @@
     background: var(--iw-m3-surface-container);
   }
 
-  /* Dialogs: a container with extra large corners */
   .iw-dialog {
     border: 0 none;
     border-radius: var(--iw-radius-2xl);
@@ -697,7 +648,6 @@
     gap: 8px;
   }
 
-  /* Menus, tooltips and snackbars */
   .iw-menu {
     padding: 8px 0;
     border: 0 none;
@@ -726,8 +676,6 @@
     color: var(--iw-m3-inverse-primary);
   }
 
-  /* App bars: top app bars, flat on the surface, which take a container
-     color instead of a shadow when raised */
   .iw-app-bar {
     border-bottom: 0 none;
   }

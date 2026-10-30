@@ -44,8 +44,6 @@ export const app = {
   },
 }
 
-/* Curried rather than written inline, so the handler is built once per render
- * from the api instead of being a new closure on every notification. */
 function goBack(api) {
   return () => api.notify("#router:navigate", BACK)
 }

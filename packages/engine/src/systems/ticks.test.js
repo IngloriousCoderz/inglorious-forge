@@ -16,10 +16,6 @@ describe("a world that turns at a rate of its own", () => {
   })
 
   test("it turns on the frame its rate is reached", () => {
-    // Six frames of a sixtieth of a second is a tenth of a second, which is one turn for
-    // a world turning ten times a second. The turn is notified during the update and
-    // drained by the same pass, so it is not a frame late for having been told rather
-    // than called.
     const store = build()
 
     run(store, 6)

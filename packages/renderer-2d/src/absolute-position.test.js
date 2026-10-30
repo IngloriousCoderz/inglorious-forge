@@ -6,8 +6,6 @@ import { callsTo, createContext } from "./test/canvas.js"
 const GAME_HEIGHT = 243
 
 test("it should put the world on the canvas with its origin on the floor", () => {
-  // The world counts up from the floor and the canvas counts down from its top edge, so
-  // nothing is drawn until both are turned over.
   expect(whereItLands({ position: [0, 0, 0] })).toEqual([0, GAME_HEIGHT])
 })
 
@@ -19,7 +17,6 @@ test("it should turn y over", () => {
 })
 
 test("it should turn the depth axis over the same way as y", () => {
-  // Depth is what a top-down game reads as height, so it moves the same way.
   expect(whereItLands({ position: [0, 0, 30] })).toEqual([0, GAME_HEIGHT - 30])
 })
 

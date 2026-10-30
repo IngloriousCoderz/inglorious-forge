@@ -64,7 +64,6 @@ export const HorizontalBarChart = defineComponent({
     xLabel: z.string().optional(),
     yLabel: z.string().optional(),
   }),
-  // As tall as its categories need.
   component: ({ props }) =>
     renderCartesian("bar", props, {
       orientation: "horizontal",

@@ -8,7 +8,6 @@ export const FollowUpItem = defineComponent({
   description:
     "A follow-up question: pressed, it is sent as the user's message",
   props: z.object({ text: z.string() }),
-  // Rendered by its FollowUpBlock.
   component: () => null,
 })
 

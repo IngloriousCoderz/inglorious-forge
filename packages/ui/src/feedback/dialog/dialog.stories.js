@@ -19,7 +19,6 @@ export default {
   },
 }
 
-// In place, so the docs page that shows every story stays usable.
 export const Open = {
   args: {
     isOpen: true,
@@ -53,14 +52,11 @@ export const Large = {
   },
 }
 
-// Modal takes over the page, so it is left out of the docs page.
 export const Modal = {
   tags: ["!autodocs"],
   args: { ...Open.args, isModal: true },
 }
 
-// A bottom sheet below 48rem: shrink the viewport to see it rise from the
-// bottom edge. Modal, like Modal, so it stays off the docs page.
 export const Sheet = {
   tags: ["!autodocs"],
   args: { ...Open.args, isModal: true, variant: "sheet" },

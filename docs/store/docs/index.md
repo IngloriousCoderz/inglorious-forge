@@ -36,6 +36,6 @@ features:
     title: Built-in Lifecycle
     details: create and destroy events for entities. Perfect for cleanup and initialization.
   - icon: 🚀
-    title: 10x Faster
-    details: Mutative-powered immutability. 10x faster than Redux Toolkit. Same simplicity.
+    title: Fast Immutable Updates
+    details: Write plain mutations; Mutative turns them into immutable updates. Its authors benchmark it at up to 10x faster than Immer, the engine inside Redux Toolkit.
 ---

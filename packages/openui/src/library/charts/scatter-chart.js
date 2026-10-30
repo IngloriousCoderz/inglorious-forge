@@ -12,7 +12,6 @@ export const Point = defineComponent({
     y: z.number(),
     z: z.number().optional(),
   }),
-  // Drawn by its chart.
   component: () => null,
 })
 

@@ -62,7 +62,6 @@ describe("EditableTable", () => {
     expect(
       container.querySelectorAll('select[aria-label="Size"]'),
     ).toHaveLength(2)
-    // Nothing changed yet: no bar to save or reset.
     expect(container.textContent).not.toContain("Save Changes")
   })
 
@@ -75,7 +74,6 @@ describe("EditableTable", () => {
     await flush()
 
     expect(container.textContent).toContain("2 changes")
-    // Edits stay on screen, out of the values sent to the model.
     expect(store.getState().answer.values).toEqual({})
 
     buttonNamed(container, "Reset").click()

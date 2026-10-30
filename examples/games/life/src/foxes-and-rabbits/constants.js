@@ -17,7 +17,6 @@ export const RABBIT_COLOR = "rgb(220, 220, 220)"
  */
 export function createRules() {
   return {
-    // How thinly the animals are scattered over an empty board.
     start: {
       fox: 0.02,
       rabbit: 0.1,

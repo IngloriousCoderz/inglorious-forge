@@ -29,7 +29,7 @@ describe("compose", () => {
     const square = (x) => x * x
     const half = (x) => x / 2
 
-    const fn = compose(half, square, add) // half(square(add(2, 3)))
+    const fn = compose(half, square, add)
     expect(fn(2, 3)).toBe(12.5)
   })
 
@@ -55,7 +55,7 @@ describe("pipe", () => {
     const square = (x) => x * x
     const half = (x) => x / 2
 
-    const fn = pipe(add, square, half) // half(square(add(2, 3)))
+    const fn = pipe(add, square, half)
     expect(fn(2, 3)).toBe(12.5)
   })
 
@@ -171,7 +171,7 @@ describe("throttle", () => {
       const throttled = throttle(fn, 100)
 
       throttled("a")
-      throttled("b") // suppressed and discarded, not trailing by default
+      throttled("b")
 
       vi.advanceTimersByTime(100)
 
@@ -196,7 +196,7 @@ describe("throttle", () => {
       const throttled = throttle(fn, 100)
 
       const first = throttled(5)
-      const second = throttled(999) // suppressed, fn not called
+      const second = throttled(999)
 
       expect(first).toBe(10)
       expect(second).toBe(10)
@@ -265,7 +265,7 @@ describe("throttle", () => {
 
       vi.advanceTimersByTime(100)
 
-      expect(fn).toHaveBeenCalledTimes(1) // only the leading call
+      expect(fn).toHaveBeenCalledTimes(1)
     })
 
     it("allows an immediate leading call right after cancel", () => {
@@ -302,7 +302,7 @@ describe("throttle", () => {
     it("reflects a queued trailing call even after the window nominally closes", () => {
       const throttled = throttle(vi.fn(), 100, { hasTrailing: true })
       throttled("a")
-      throttled("b") // queues the trailing call
+      throttled("b")
       expect(throttled.pending()).toBe(true)
     })
   })

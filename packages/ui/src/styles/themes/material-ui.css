@@ -2,17 +2,10 @@
 
 .iw-theme-material-ui {
   --iw-font-family-sans: "Roboto", "Helvetica", "Arial", sans-serif;
-  /* The theme on the page itself: the element with the theme class, usually
-     <body>, takes its background, text color and font. */
   background-color: var(--iw-color-bg);
   color: var(--iw-color-text);
   font-family: var(--iw-font-family-sans);
 
-  /* ========================================
-     MATERIAL UI THEME - Material UI defaults
-     ======================================== */
-
-  /* Semantic Colors */
   --iw-color-bg: var(--iw-color-white);
   --iw-color-bg-secondary: #f5f5f5;
   --iw-color-bg-tertiary: #eeeeee;
@@ -32,7 +25,6 @@
   --iw-color-primary-active: #1565c0;
   --iw-color-primary-text: var(--iw-color-white);
 
-  /* Material UI's secondary color */
   --iw-color-accent: #9c27b0;
   --iw-color-accent-hover: #7b1fa2;
   --iw-color-accent-active: #7b1fa2;
@@ -46,7 +38,6 @@
   --iw-color-info: #0288d1;
   --iw-color-info-dark: #01579b;
 
-  /* Elevations 1, 2, 4, 8 and 24 */
   --iw-shadow-sm:
     0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14),
     0 1px 3px 0 rgba(0, 0, 0, 0.12);
@@ -63,21 +54,14 @@
     0 11px 15px -7px rgba(0, 0, 0, 0.2), 0 24px 38px 3px rgba(0, 0, 0, 0.14),
     0 9px 46px 8px rgba(0, 0, 0, 0.12);
 
-  /* One corner radius for everything, as Material UI's shape */
   --iw-radius-sm: 4px;
   --iw-radius-md: 4px;
   --iw-radius-lg: 4px;
 
-  /* Buttons and tabs carry their labels as Material UI does */
   --iw-label-text-transform: uppercase;
   --iw-label-letter-spacing: 0.02857em;
   --iw-label-font-weight: var(--iw-font-weight-medium);
 
-  /* ========================================
-     COMPONENT TOKENS
-     ======================================== */
-
-  /* Button */
   --iw-button-bg: var(--iw-color-primary);
   --iw-button-bg-hover: var(--iw-color-primary-hover);
   --iw-button-bg-active: var(--iw-color-primary-active);
@@ -88,7 +72,6 @@
   --iw-button-shadow-hover: var(--iw-shadow-lg);
   --iw-button-shadow-active: var(--iw-shadow-xl);
 
-  /* A button's default color is primary, as in Material UI */
   --iw-button-default-color: var(--iw-color-primary);
   --iw-button-default-bg: var(--iw-color-primary);
   --iw-button-default-bg-hover: var(--iw-color-primary-hover);
@@ -96,7 +79,6 @@
   --iw-button-default-border: var(--iw-color-primary);
   --iw-button-default-text: var(--iw-color-primary-text);
 
-  /* Input: an outlined text field */
   --iw-input-bg: transparent;
   --iw-input-bg-hover: transparent;
   --iw-input-bg-focus: transparent;
@@ -106,29 +88,22 @@
   --iw-input-border-hover: var(--iw-color-text);
   --iw-input-border-focus: var(--iw-color-primary);
   --iw-input-radius: var(--iw-radius-md);
-  /* With the border, a 2px outline */
   --iw-input-shadow-focus: inset 0 0 0 1px var(--iw-input-border-focus);
 
-  /* App bar */
   --iw-app-bar-bg: #f5f5f5;
 
-  /* Drawer */
   --iw-drawer-bg: var(--iw-color-surface);
 
-  /* Card: a Paper at elevation 1 */
   --iw-card-bg: var(--iw-color-surface);
   --iw-card-border: transparent;
   --iw-card-radius: var(--iw-radius-md);
   --iw-card-shadow: var(--iw-shadow-sm);
   --iw-card-shadow-hover: var(--iw-shadow-xl);
 
-  /* Badge */
   --iw-badge-radius: var(--iw-radius-full);
 
-  /* Chip */
   --iw-chip-bg: rgba(0, 0, 0, 0.08);
 
-  /* List */
   --iw-list-item: transparent;
   --iw-list-item-selected: color-mix(
     in srgb,
@@ -136,20 +111,17 @@
     transparent
   );
 
-  /* Alert */
   --iw-alert-radius: var(--iw-radius-md);
   --iw-alert-shadow: none;
   color-scheme: light;
 }
 
-/* Dark variant */
 .iw-theme-material-ui.iw-theme-dark {
   color-scheme: dark;
 
   --iw-color-bg: #121212;
   --iw-color-bg-secondary: #1e1e1e;
   --iw-color-bg-tertiary: #2c2c2c;
-  /* A raised surface is lightened, as Material UI's elevation overlay */
   --iw-color-surface: #1e1e1e;
   --iw-color-surface-hover: rgba(255, 255, 255, 0.08);
   --iw-color-surface-active: rgba(255, 255, 255, 0.16);
@@ -181,7 +153,6 @@
   --iw-input-text-placeholder: rgba(255, 255, 255, 0.5);
   --iw-input-border: rgba(255, 255, 255, 0.23);
 
-  /* Dark app bars are surfaces, as Material UI's enableColorOnDark is off */
   --iw-app-bar-bg: #272727;
 
   --iw-chip-bg: rgba(255, 255, 255, 0.16);
@@ -196,7 +167,6 @@
 }
 
 .iw-theme-material-ui {
-  /* Contained buttons: Material UI's sizes and colors, raised on hover */
   .iw-button {
     padding: 6px 16px;
     font-size: 0.875rem;
@@ -255,7 +225,6 @@
     &.iw-button-outline {
       border: 1px solid
         color-mix(in srgb, var(--iw-button-color) 50%, transparent);
-      /* One pixel less, for the border */
       padding: 5px 15px;
 
       &.iw-button-sm {
@@ -327,8 +296,6 @@
     }
   }
 
-  /* Outlined text fields: the label and helper text sit as Material UI's do,
-     and the label takes the primary color while the field has focus */
   .iw-input,
   .iw-select,
   .iw-textarea-field {
@@ -374,12 +341,10 @@
     }
   }
 
-  /* Switch: a thin track under a larger, raised thumb that takes the color */
   .iw-switch {
     .iw-switch-track {
       width: 2.125rem;
       height: 0.875rem;
-      /* Room for the thumb, which overhangs the track */
       margin-inline: 3px;
       padding: 0;
       overflow: visible;
@@ -450,7 +415,6 @@
     }
   }
 
-  /* Tabs */
   .iw-tabs-list {
     gap: 0;
   }
@@ -466,7 +430,6 @@
     color: var(--iw-color-primary);
   }
 
-  /* Chips: Material UI's height, and filled when they have a color */
   .iw-chip {
     min-height: 2rem;
     padding-inline: 12px;
@@ -530,7 +493,6 @@
     font-weight: var(--iw-font-weight-medium);
   }
 
-  /* Cards: a raised Paper, with no rules between its parts */
   .iw-card-header,
   .iw-card-footer {
     border: 0 none;
@@ -540,7 +502,6 @@
     background-color: transparent;
   }
 
-  /* Unless given a padding of its own */
   .iw-card-footer:not([class*="iw-card-footer-padding-"]) {
     padding: var(--iw-space-2);
   }
@@ -555,7 +516,6 @@
     margin: 0;
   }
 
-  /* Alerts: tinted with the color, the text a deep shade of it */
   .iw-alert {
     padding: 6px 16px;
     font-size: 0.875rem;
@@ -614,7 +574,6 @@
     }
   }
 
-  /* Tables sit on a Paper, which draws no border of its own */
   .iw-table {
     border: 0 none;
     font-size: 0.875rem;
@@ -630,7 +589,6 @@
     font-weight: var(--iw-font-weight-medium);
   }
 
-  /* Dialogs: a Paper at elevation 24 */
   .iw-dialog {
     border: 0 none;
     box-shadow: var(--iw-shadow-2xl);
@@ -664,7 +622,6 @@
     padding: 0;
   }
 
-  /* App bars: no border, and raised to elevation 4 */
   .iw-app-bar {
     border-bottom: 0 none;
   }

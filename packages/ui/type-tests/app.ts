@@ -1,6 +1,3 @@
-// Type-level tests: `tsc -p type-tests` fails on any error, and on any
-// `@ts-expect-error` whose error does not happen.
-
 import {
   type BaseEntity,
   createStore,
@@ -53,7 +50,6 @@ interface AppState extends EntitiesState<AppEntity> {
 
 type AppApi = Api<AppEntity, AppState>
 
-// A type wrapping a component passes it callbacks, which entities never hold
 const Counter = {
   increment(entity) {
     entity.value++
@@ -69,13 +65,11 @@ const Counter = {
   },
 } satisfies EntityType<CounterEntity, AppApi>
 
-// Stateful components register under the app's names, with no cast
 export const store = createStore<AppEntity, AppState>({
   types: { DataGrid, Cropper: ImageCropper, List: VirtualList, Counter },
   entities: { counter: { type: "Counter", value: 0 } },
 })
 
-// withTransitions is a middleware for the app's typed store
 export const transitioned = createStore<AppEntity, AppState>({
   types: { Counter },
   entities: { counter: { type: "Counter", value: 0 } },
@@ -84,7 +78,6 @@ export const transitioned = createStore<AppEntity, AppState>({
 // @ts-expect-error: routes are names or a predicate
 withTransitions({ routes: 42 })
 
-// An app's Api is the Api components take
 declare const api: AppApi
 declare const grid: GridEntity
 DataGrid.render(grid, api)
@@ -96,7 +89,6 @@ DataGrid.cellChange(grid, { rowId: "1", columnId: "name", value: "Ada" })
 DataGrid.cellChange(grid, { rowId: "1", value: "Ada" })
 export const tabs = Tabs.render({ value: null })
 
-// The crop rect the cropper reports is what cropImage takes
 declare const cropper: CropperEntity
 export const cropped: Promise<Blob> = cropImage(new Blob(), cropper.rect, {
   aspectRatio: 1,

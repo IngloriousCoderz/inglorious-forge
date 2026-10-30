@@ -10,7 +10,6 @@ import { store } from "./store/index.js"
 
 mount(store, app.render, document.getElementById("root"))
 
-// #board is rendered by the app, so it only exists once mount has run.
 store.notify("add", {
   id: "boardSize",
   type: "ElementSize",

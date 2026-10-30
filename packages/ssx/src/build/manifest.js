@@ -26,7 +26,6 @@ export async function loadManifest(outDir) {
     const content = await fs.readFile(manifestPath, "utf-8")
     return JSON.parse(content)
   } catch {
-    // No manifest exists (first build or clean build)
     return { pages: {}, shared: null, runtime: null, buildTime: null }
   }
 }
@@ -206,7 +205,6 @@ export async function determineRebuildPages(
   runtimeHash,
   getPageHash = hashPageAlone,
 ) {
-  // If shared sources changed, rebuild all pages
   if (manifest.shared !== sharedHash) {
     console.log("📦 Shared sources changed, rebuilding all pages\n")
     return { pagesToBuild: pages, pagesToSkip: [] }

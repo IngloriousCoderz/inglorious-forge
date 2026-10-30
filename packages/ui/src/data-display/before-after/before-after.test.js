@@ -117,7 +117,6 @@ describe("before-after", () => {
 
     expect(container.querySelector(".my-handle").textContent).toBe("drag")
     expect(container.querySelector(".iw-before-after-handle")).toBeNull()
-    // the divider still wraps whatever the handle renderer returns
     expect(
       container.querySelector(".iw-before-after-divider .my-handle"),
     ).not.toBeNull()

@@ -35,12 +35,10 @@ const LAST = -1
 const FIRST = 0
 const NO_PRICE = 0
 const HISTORY_LENGTH = 500
-// The mock market's bid/ask spread around the mid price.
 const ASK_SPREAD = 0.35
 const BID_SPREAD = 0.28
 
 export const DashboardPage = {
-  // Headline: page lifecycle
   routeChange(entity, payload, api) {
     if (payload.route !== entity.id) {
       dashboardInstrumentClear(entity, api)
@@ -59,7 +57,6 @@ export const DashboardPage = {
     entity.initialized = true
   },
 
-  // Headline: top cascade interactions
   marketSelect(entity, payload, api) {
     dashboardMarketApply(entity, payload?.rowId, api)
   },
@@ -72,7 +69,6 @@ export const DashboardPage = {
     dashboardIsinApply(entity, payload?.rowId, api)
   },
 
-  // Headline: async lifecycle (dashboard-first, low quota)
   ...handleAsync("dashboardFetchInstrument", {
     start(entity) {
       entity.loading = true
@@ -168,7 +164,6 @@ export const DashboardPage = {
     },
   }),
 
-  // Body: render
   render(entity, api) {
     const instrument = entity.instrument || EMPTY_INSTRUMENT
     const latest = entity.quote || EMPTY_QUOTE
@@ -319,8 +314,6 @@ export const DashboardPage = {
   },
 }
 
-// --- Orchestration (state transitions) --------------------------------------
-
 function dashboardBootstrap(entityId, api) {
   const markets = getMarkets()
   api.notify("#marketsTable:tableDataSet", markets)
@@ -390,8 +383,6 @@ function dashboardInstrumentClear(entity, api) {
   api.notify("#financeQuotationChart:dataUpdate", [])
   api.notify("#isinHistoryTable:tableDataSet", [])
 }
-
-// --- Formatting helpers -----------------------------------------------------
 
 function createInstrumentPayload(payload) {
   return {
@@ -466,8 +457,6 @@ function isValidDashboardHistoryPayload(payload) {
     Array.isArray(payload?.historical) && Boolean(payload.historical.length)
   )
 }
-
-// --- View helper ------------------------------------------------------------
 
 function renderPanel(
   title,

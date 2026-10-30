@@ -53,16 +53,15 @@ export default {
       layer: 1,
       isActive: true,
       targetId: "player",
-      maxSpeed: 350, // Should be faster than the player to allow it to catch up
-      maxAcceleration: 800, // A higher value makes it feel more responsive
-      slowRadius: 120, // Starts slowing down when it's 120 pixels away from the player
+      maxSpeed: 350,
+      maxAcceleration: 800,
+      slowRadius: 120,
       position: v(400, 0, 300),
       zoom: 1.5,
       minZoom: 0.5,
       zoomSpeed: 0.05,
       zoomSensitivity: 5,
-      size: v(400, 300), // Camera viewport size
-      // for dev mode rectangle
+      size: v(400, 300),
       color: "red",
       backgroundColor: "rgba(255, 0, 0, 0.1)",
     },

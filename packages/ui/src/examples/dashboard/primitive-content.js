@@ -1525,8 +1525,6 @@ function toTitleCase(slug) {
 function livePreview(types, entity) {
   if (!livePreviews.has(entity.id)) {
     const container = document.createElement("div")
-    // The mount needs an element, but it must not become a box of its own:
-    // as a flex item it would shrink and take the primitive down with it.
     container.style.display = "contents"
 
     const store = createStore({ types, entities: { [entity.id]: entity } })

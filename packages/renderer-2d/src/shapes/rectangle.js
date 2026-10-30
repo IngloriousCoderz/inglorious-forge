@@ -41,9 +41,6 @@ export function renderRectangle(entity, ctx) {
     v(width, height, depth),
   )
 
-  // The renderer has already moved the canvas onto the position, so the box is
-  // laid out from the origin. The canvas counts down while the world's `y` and
-  // `z` both count up, so the box reaches upwards by its far margins.
   const [offsetX, offsetY, offsetZ] = entity.offset ?? zero()
   const left = offsetX - before[X]
   const top = -(offsetY + after[Y]) - (offsetZ + after[Z])

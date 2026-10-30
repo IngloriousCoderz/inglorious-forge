@@ -4,8 +4,6 @@ import { describe, expect, it } from "vitest"
 
 import { ImageCropper } from "."
 
-// Exercises the real entity/event loop: scoped events run the handlers, which
-// mutate `rect` and the image size, and the mounted view re-renders from them.
 describe("image-cropper (store integration)", () => {
   function mountCropper(overrides = {}) {
     const store = createStore({

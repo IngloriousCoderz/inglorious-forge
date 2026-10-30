@@ -167,7 +167,6 @@ export const Chat = {
         isFullWidth: true,
         onChange: (value) => props.onDraftChange?.(value),
         onKeyDown: (event) => {
-          // Enter sends, unless it closes a character being composed.
           if (event.key !== "Enter" || event.shiftKey || event.isComposing) {
             return
           }

@@ -255,13 +255,11 @@ test("it should pass extra arguments to the recipe", () => {
     draft.value = (draft.value + increment) * multiplier
   }
 
-  // Test non-curried version
-  const nextStateUncurried = produce(baseState, recipe, 2, 3) // (1 + 2) * 3 = 9
+  const nextStateUncurried = produce(baseState, recipe, 2, 3)
   expect(nextStateUncurried.value).toBe(9)
 
-  // Test curried version
   const producer = produce(recipe)
-  const nextStateCurried = producer(baseState, 4, 5) // (1 + 4) * 5 = 25
+  const nextStateCurried = producer(baseState, 4, 5)
   expect(nextStateCurried.value).toBe(25)
 
   expect(baseState.value).toBe(1)
@@ -354,7 +352,7 @@ test("it should serialize an empty object", () => {
 
 test("it should serialize an object with null and undefined values (undefined should be omitted)", () => {
   const obj = { a: null, b: undefined, c: 1 }
-  const expected = `{"a":null,"c":1}` // JSON.stringify omits undefined properties
+  const expected = `{"a":null,"c":1}`
 
   expect(serialize(obj)).toBe(expected)
 })
@@ -420,7 +418,6 @@ test("it should correctly round-trip a complex object through serialize and dese
   expect(deserialized).toStrictEqual(original)
   expect(deserialized.player.position.__isVector__).toBe(true)
   expect(deserialized.enemies[0].pos.__isVector__).toBe(true)
-  // Ensure that non-vector objects are still distinct references if they were originally
   expect(deserialized.player).not.toBe(original.player)
 })
 
@@ -536,13 +533,13 @@ test("it should extend an object with a custom merger, producing a new object", 
     if (isArray(targetValue) && isArray(sourceValue)) {
       return targetValue.concat(sourceValue)
     }
-    return undefined // Use default logic for non-arrays
+    return undefined
   }
 
   const expectedResult = {
-    primitiveArrayMerged: [3, 4, 5], // Concatenated
-    nestedArrayMerged: [{ b: 2, c: 3 }, { d: 4 }], // Concatenated
-    nestedObjectMerged: { c: { d: 4, e: 5 } }, // Default deep merge
+    primitiveArrayMerged: [3, 4, 5],
+    nestedArrayMerged: [{ b: 2, c: 3 }, { d: 4 }],
+    nestedObjectMerged: { c: { d: 4, e: 5 } },
   }
 
   const result = extendWith(merger, obj1, obj2)
@@ -566,13 +563,13 @@ test("it should merge an object with a custom merger, changing the first object 
     if (isArray(targetValue) && isArray(sourceValue)) {
       return targetValue.concat(sourceValue)
     }
-    return undefined // Use default logic for non-arrays
+    return undefined
   }
 
   const expectedResult = {
-    primitiveArrayMerged: [3, 4, 5], // Concatenated
-    nestedArrayMerged: [{ b: 2, c: 3 }, { d: 4 }], // Concatenated
-    nestedObjectMerged: { c: { d: 4, e: 5 } }, // Default deep merge
+    primitiveArrayMerged: [3, 4, 5],
+    nestedArrayMerged: [{ b: 2, c: 3 }, { d: 4 }],
+    nestedObjectMerged: { c: { d: 4, e: 5 } },
   }
 
   const result = mergeWith(merger, obj1, obj2)
@@ -628,9 +625,6 @@ test("it should tell two values the same all the way down", () => {
 })
 
 test("it should tell a key left out from a key set to nothing", () => {
-  // The reason this is written rather than with `JSON.stringify`: the two stringify the
-  // same, and they are not the same. Setting a key to nothing is how a mapping is taken
-  // off, so the difference has to be the one it sees.
   expect(isDeepEqual({}, { ArrowUp: undefined })).toBe(false)
   expect(isDeepEqual({ ArrowUp: undefined }, {})).toBe(false)
   expect(isDeepEqual({ ArrowUp: undefined }, { ArrowUp: undefined })).toBe(true)
@@ -653,9 +647,6 @@ test("it should say the same object is the same without walking it", () => {
 })
 
 test("it should compare a thing that contains itself without walking it for ever", () => {
-  // Two loops that are the same all the way round are the same; two that come back to
-  // themselves differently are not. Before this was noticed, the first of those ran the
-  // stack out while the second quietly said no, which is the worst way round to fail.
   const looping = (name) => {
     const thing = { name }
 

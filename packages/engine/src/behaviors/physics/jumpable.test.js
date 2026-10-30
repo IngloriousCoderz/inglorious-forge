@@ -16,8 +16,6 @@ const setup = () => {
 test("it should jump when the action arrives", () => {
   const { entity, type } = setup()
 
-  // An action's name is its address, and the notification carries nothing to compare
-  // against, so a jump must not depend on an id being there.
   type.jump(entity)
 
   expect(entity.vy).toBeGreaterThan(0)

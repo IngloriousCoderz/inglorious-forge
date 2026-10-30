@@ -6,8 +6,6 @@ import { Api, BaseEntity } from "../store"
  */
 export interface ThunkAPI {
   dispatch: Api["notify"]
-  // Add other thunk API properties as needed
-  // getState, extra, requestId, signal, rejectWithValue, fulfillWithValue
 }
 
 /**

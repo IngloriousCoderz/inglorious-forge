@@ -81,7 +81,6 @@ export function apiCall(entity, payload) {
   callGridApi(entity.id, payload)
 }
 
-// Backward-compatible aliases.
 export const gridMounted = mounted
 export const setRowData = rowDataChange
 export const setColumnDefs = columnDefsChange

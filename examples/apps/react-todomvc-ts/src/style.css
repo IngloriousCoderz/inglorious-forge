@@ -10,7 +10,6 @@ body {
 
     & > * {
       width: 35rem;
-      /* text-align: center; */
     }
   }
 }

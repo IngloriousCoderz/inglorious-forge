@@ -9,11 +9,9 @@ import { streamChat } from "./model.js"
  */
 export const withAssistant = (type) => ({
   messageSend(entity, text, api) {
-    // The conversation so far, as the model reads it.
     const history = toModelMessages(entity.messages, api)
     const sent = entity.messages.length
     type.messageSend(entity, text, api)
-    // Nothing to send, or a reply still coming: the chat sent nothing.
     if (entity.messages.length === sent) return
 
     const { content } = entity.messages[sent]
@@ -38,7 +36,6 @@ export const withAssistant = (type) => ({
     }
     if (event.type !== "continue_conversation") return
 
-    // What the user filled in goes along, so the model can act on it.
     const values = Object.entries(event.formState ?? {}).filter(
       ([, value]) => value !== "" && value != null,
     )

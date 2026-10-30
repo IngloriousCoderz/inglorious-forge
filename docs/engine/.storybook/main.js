@@ -18,7 +18,6 @@ const config = {
     getAbsolutePath("@storybook/addon-a11y"),
     {
       name: getAbsolutePath("@storybook/addon-docs"),
-      // GitHub Flavored Markdown, for the tables in MDX docs.
       options: {
         mdxPluginOptions: { mdxCompileOptions: { remarkPlugins: [remarkGfm] } },
       },

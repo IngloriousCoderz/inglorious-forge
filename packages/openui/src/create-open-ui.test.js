@@ -109,7 +109,6 @@ root = Stack([Button("Upgrade", Action([@Set($plan, "team"), @ToAssistant("Upgra
         id: "answer",
         type: "continue_conversation",
         humanFriendlyMessage: "Upgrade me",
-        // The @Set before it is already in the state it sends.
         formState: { $plan: "team" },
       }),
     )

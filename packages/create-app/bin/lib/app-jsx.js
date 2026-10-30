@@ -1,9 +1,3 @@
-// The app's components in JSX: .jsx or .tsx files, compiled to lit-html by
-// @inglorious/vite-plugin-jsx. A capitalized tag with props renders a
-// component; `<Message entityId="message1" />` renders an entity. TypeScript
-// expects components to be functions, so in .tsx each capitalized tag is
-// preceded by a `@ts-expect-error`.
-
 import { renderLocals, selectChange } from "./app-lit.js"
 import { importBlock } from "./imports.js"
 
@@ -152,21 +146,16 @@ ${span}
 `
 }
 
-// The comment line before a capitalized tag in .tsx: `{/* */}` among JSX
-// children, `//` inside code.
 function expectError(app, indent, isChild = true) {
   if (!app.isTypeScript) return ""
   const comment = isChild ? `{/* ${EXPECT_ERROR} */}` : `// ${EXPECT_ERROR}`
   return `${indent}${comment}\n`
 }
 
-// A callback's parameter. The components' props are not typed in .tsx, so
-// TypeScript cannot infer it.
 function typed(app, name, type) {
   return app.isTypeScript ? `${name}: ${type}` : name
 }
 
-// A page's label: translated, or the English text.
 function labelText(app, page) {
   return app.i18n ? `{t("${page.key}")}` : page.text
 }

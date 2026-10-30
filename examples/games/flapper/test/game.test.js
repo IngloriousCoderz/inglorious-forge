@@ -31,13 +31,10 @@ describe("Flapper", () => {
   })
 
   test("waits on the title screen", () => {
-    // given
     game.step(4)
 
-    // when
     game.step()
 
-    // then
     game.check(
       game.entity("game").state === "title",
       "the game waits on the title screen",
@@ -53,13 +50,10 @@ describe("Flapper", () => {
   })
 
   test("begins the countdown on a press", () => {
-    // given
     game.step(4)
 
-    // when
     game.press("Enter")
 
-    // then
     game.check(
       game.entity("game").state === "countdown",
       "pressing begins the countdown",
@@ -68,27 +62,21 @@ describe("Flapper", () => {
   })
 
   test("counts down into the play", () => {
-    // given
     game.step(4)
     game.press("Enter")
 
-    // when
     const seen = states(game)
 
-    // then
     game.check(seen[0] === "countdown", "the countdown runs")
     game.check(seen.includes("play"), "and it runs into the play")
   })
 
   test("ends an unplayed bird", () => {
-    // given
     game.step(4)
     game.press("Enter")
 
-    // when
     const seen = states(game)
 
-    // then
     game.check(
       seen.includes("score"),
       "an unplayed bird reaches the end of the game",
@@ -96,15 +84,12 @@ describe("Flapper", () => {
   })
 
   test("says what happened when it is over", () => {
-    // given
     game.step(4)
     game.press("Enter")
     states(game)
 
-    // when
     game.step()
 
-    // then
     game.check(game.entity("game").state === "score", "the game is over")
     game.check(
       game.entity("gameOver").value === "Oof! You lost!",

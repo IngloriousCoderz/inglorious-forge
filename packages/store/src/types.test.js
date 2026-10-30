@@ -7,13 +7,12 @@ test("should handle a single behavior object (mixin)", () => {
   const result = augmentType(behavior)
 
   expect(result).toStrictEqual(behavior)
-  // Ensure it's a new object, not the same reference
   expect(result).not.toBe(behavior)
 })
 
 test("should compose an array of behavior objects (mixins)", () => {
   const behavior1 = { onFire: () => "bang", onMove: () => "vroom" }
-  const behavior2 = { onJump: () => "boing", onFire: () => "pow" } // onFire overwrites
+  const behavior2 = { onJump: () => "boing", onFire: () => "pow" }
   const result = augmentType([behavior1, behavior2])
 
   expect(result).toHaveProperty("onMove")
@@ -44,7 +43,7 @@ test("should compose an array of behavior functions (pipe)", () => {
 test("should compose a mixed array of objects and functions", () => {
   const mixin1 = { onFire: () => "bang" }
   const behavior1 = (type) => ({ ...type, onJump: () => "boing" })
-  const mixin2 = { onMove: () => "vroom", onFire: () => "pow" } // onFire overwrites
+  const mixin2 = { onMove: () => "vroom", onFire: () => "pow" }
 
   const result = augmentType([mixin1, behavior1, mixin2])
 

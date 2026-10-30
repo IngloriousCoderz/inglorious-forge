@@ -1,14 +1,8 @@
-// The workload every variant renders: four charts, all updated together every
-// UPDATE_INTERVAL_MS. The data comes from a seeded random generator, so every
-// variant draws the same numbers in the same order.
-
 export const DATA_POINTS = 100
 export const PIE_SLICES = 10
 export const UPDATE_INTERVAL_MS = 100
-// How many rows of each chart change in an update.
 export const ROWS_PER_UPDATE = 2
 
-// What every variant draws, so they draw the same charts.
 export const CHART_WIDTH = 400
 export const CHART_HEIGHT = 300
 export const SERIES_COLOR = "#8884d8"
@@ -17,7 +11,6 @@ export const AREA_OPACITY = 0.3
 export const GRID_COLOR = "#e5e7eb"
 export const GRID_DASHARRAY = "5 5"
 export const PIE_RADIUS = 80
-// Inglorious Charts' default palette.
 export const PIE_COLORS = [
   "#3b82f6",
   "#8b5cf6",
@@ -75,7 +68,6 @@ export function createWorkload(seed = DEFAULT_SEED) {
   }
 }
 
-// mulberry32: small, fast and good enough to make the same numbers twice.
 function createRandom(seed) {
   let state = seed
   return () => {

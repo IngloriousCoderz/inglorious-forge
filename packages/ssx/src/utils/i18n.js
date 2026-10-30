@@ -10,7 +10,6 @@ export function getLocaleFromPath(
   return defaultLocale
 }
 
-// Scripts written right to left, by their ISO 15924 code.
 const RTL_SCRIPTS = new Set([
   "Adlm",
   "Arab",
@@ -39,12 +38,10 @@ export function getTextDirection(locale) {
     const { script } = new Intl.Locale(locale).maximize()
     return RTL_SCRIPTS.has(script) ? "rtl" : "ltr"
   } catch {
-    // Not a valid language tag.
     return "ltr"
   }
 }
 
-// The entity of an app that translates with @inglorious/i18n, by that package's convention.
 const TRANSLATOR_ID = "i18n"
 
 /**

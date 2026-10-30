@@ -172,7 +172,6 @@ describe("select", () => {
 
     expect(container.querySelector(".iw-select-label")).toBeNull()
     expect(container.querySelector(".iw-select-error-message")).toBeNull()
-    // The wrapper always renders so the layout does not shift when one appears.
     expect(container.querySelector(".iw-select")).toBeTruthy()
   })
   it("shows a hint under the select", () => {
@@ -200,7 +199,6 @@ describe("select", () => {
       container,
     )
 
-    // Showing both tells someone how to fix a field they already got wrong.
     expect(container.querySelector(".iw-select-hint")).toBeNull()
     expect(
       container.querySelector(".iw-select-error-message").textContent,
@@ -217,9 +215,6 @@ describe("select", () => {
     )
   })
   it("styles the hint as muted and the error as danger", async () => {
-    // Asserted from the stylesheet itself rather than a computed style: jsdom
-    // resolves no custom properties, so this is the only check that would have
-    // caught the hint quietly rendering in the error colour.
     const css = await import("./style.css?raw")
 
     expect(css.default).toMatch(
@@ -238,8 +233,6 @@ describe("select arrow", () => {
     render(Select.render({ id: "s", options: [] }), container)
 
     const arrow = container.querySelector(".iw-select-arrow")
-    // A native select can only contain options, so the arrow is a sibling of
-    // the element, inside the frame that is the box — the shape Input has.
     expect(arrow.textContent).toBe("▼")
     expect(arrow.getAttribute("aria-hidden")).toBe("true")
     expect(arrow.closest(".iw-select-frame")).toBeTruthy()
@@ -249,9 +242,6 @@ describe("select arrow", () => {
   it("sits in the box, beside the element", () => {
     const container = document.createElement("div")
 
-    // A native select can only contain options, so the arrow is a sibling of
-    // the element. It must land inside the frame (the box) rather than the
-    // root, or a label above would drag it out of position.
     render(
       Select.render({
         id: "s",
@@ -271,22 +261,12 @@ describe("select arrow", () => {
 
   it("drops the gradient arrow and the background shorthand that killed it", async () => {
     const { default: raw } = await import("./style.css?raw")
-    // Comments name the things they replaced, so assertions run on rules only.
     const css = raw.replace(/\/\*[\s\S]*?\*\//g, "")
 
-    // The arrow was two linear-gradients on background-image, and the hover
-    // rule used the `background` shorthand, which resets background-image to
-    // none — so the arrow vanished the moment the field was hovered.
     expect(css).not.toMatch(/linear-gradient/)
-    // Matched anywhere in the file, not per rule. The stylesheet is nested, so
-    // a per-block regex cannot see past the first nested block — which is
-    // exactly where a shorthand can hide. `background-color:` does not match
-    // `\bbackground:`, because the colon has to follow immediately.
     expect(css).not.toMatch(/\bbackground:/)
     expect(css).toMatch(/background-color:/)
     expect(css).toMatch(/\.iw-select-arrow/)
-    // The glyph is a text character: unpinned it inherits whatever font-size
-    // the surrounding context happens to carry.
     const arrowBlock = css.match(/\.iw-select-arrow \{([^}]*)\}/)
     expect(arrowBlock).toBeTruthy()
     expect(arrowBlock[1]).toMatch(/font-size:/)

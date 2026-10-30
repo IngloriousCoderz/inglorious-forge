@@ -1,6 +1,3 @@
-/* The bubble is anchored to the trigger by CSS: the browser places it on the
-   requested side and flips it to the opposite one when it would leave the
-   viewport. Fixed, so a container that clips its overflow does not cut it. */
 .iw-tooltip {
   anchor-scope: --iw-tooltip;
   display: inline-flex;

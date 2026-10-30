@@ -20,8 +20,6 @@ const FIXED_COLUMNS = 2
 /** No fixed number of columns: as many as fit. */
 const AUTO_COLUMNS = 0
 
-// ── Card blocks ──
-
 export const blockProps = (item, layouts = ["grid", "carousel"]) =>
   z.object({
     items: z.array(item.ref),

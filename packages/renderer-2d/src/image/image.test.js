@@ -4,7 +4,6 @@ import { renderImage } from "./image.js"
 
 const image = { id: "pipe", imageSize: [70, 288] }
 
-// One image, however many times it is asked for, which is what a real source does.
 const loaded = {
   id: "pipe",
   complete: true,
@@ -29,7 +28,6 @@ function createContext() {
     (name) =>
     (...args) =>
       calls.push([name, ...args])
-  // Canvas composes as `current * next`, with column vectors.
   const multiply = (n) => {
     const [a, b, c, d, e, f] = m
     const [A, B, C, D, E, F] = n
@@ -86,8 +84,6 @@ function createContext() {
   }
 }
 
-// Renders the tile the way the renderer does, anchored at the entity position,
-// and returns the box it covers in canvas space.
 function tileBox(entity, position = [0, 0]) {
   const { calls, ctx } = createContext()
   const [x, y] = position
@@ -121,9 +117,6 @@ test("it should read the image from where the frame says", () => {
   expect(drawArgs(calls)).toStrictEqual([0, 128, 70, 32, 0, 0, 70, 32])
 })
 
-// Artwork is not always one piece per cell: a sprite can be wider than the grid it
-// is cut from, or sit inside its cell with background around it. `frameSize` is how
-// much of the sheet to read, and `imageSize` is still the size it is drawn at.
 test("it should read only a part of a tile", () => {
   const { calls, ctx } = createContext()
 
@@ -164,9 +157,6 @@ test("it should draw a partial frame at its image size, not the tile size", () =
     api,
   )
 
-  // Anchors count from the bottom, so a bottom-anchored box is drawn above the
-  // position, which is negative on the canvas. The offset is the height of the
-  // art rather than the height of the cell it was cut from.
   expect(calls.find(([name]) => name === "translate")).toStrictEqual([
     "translate",
     -0,
@@ -174,8 +164,6 @@ test("it should draw a partial frame at its image size, not the tile size", () =
   ])
 })
 
-// Anchors count from the bottom of the tile, so a bottom-anchored tile is drawn
-// above the position, which is the negative half of the canvas.
 const ANCHORS = [
   ["bottom-left", [0, 0], 0, 70, -288, 0],
   ["bottom-right", [1, 0], -70, 0, -288, 0],
@@ -237,7 +225,6 @@ test("it should scale the tile about the anchored point", () => {
 
   renderImage({ image: { ...image, scale: 4 } }, ctx, api)
 
-  // Scaling happens after the anchor translate, so the anchored point stays put.
   expect(calls.filter(([name]) => name === "scale")).toStrictEqual([
     ["scale", 4, 4],
   ])
@@ -296,8 +283,6 @@ test("an entity anchor should win over an image anchor", () => {
 })
 
 test("a scaled tile should keep its anchored point on the position", () => {
-  // Scaling has to come before the anchor translate, or the tile is placed against
-  // its unscaled size and then scaled out from under the anchor.
   const { calls, ctx } = createContext()
 
   renderImage({ image: { ...image, scale: [2, 3], anchor: [0, 0] } }, ctx, api)
@@ -306,7 +291,6 @@ test("a scaled tile should keep its anchored point on the position", () => {
   const translate = calls.find(([name]) => name === "translate")
 
   expect(scales).toStrictEqual([["scale", 2, 3]])
-  // Scaled: a 70x288 tile at [0, 0] reaches 140 across and 864 up from the origin.
   expect(calls.box).toMatchObject({ left: 0, right: 140, top: -864, bottom: 0 })
   expect(translate).toBeDefined()
 })
@@ -321,8 +305,6 @@ test("a scaled tile should scale each axis on its own", () => {
   ])
 })
 
-// A canvas just real enough for tinting: compositing one frame and reading a pixel back
-// out of the result.
 const tintedCanvas = () => {
   const composited = []
 
@@ -364,10 +346,6 @@ test("it should draw an image in the colour it is given", () => {
 })
 
 test("it should draw a tinted frame whole rather than cutting it out again", () => {
-  // A tinted frame is a canvas of its own with the frame already cut out of it. Giving it
-  // the source parameters as well makes the renderer read from wherever the frame sits in
-  // the sheet, which for anything past the first cell is off the edge of a canvas one
-  // cell wide -- so the frame silently does not appear at all.
   const { calls, ctx } = createContext()
   const restore = withDocument(() => tintedCanvas())
 
@@ -402,8 +380,6 @@ test("it should keep the shape of the image it tinted", () => {
 
   renderImage({ image, tint: "rgb(1, 2, 3)" }, ctx, api)
 
-  // The corner of a soft-edged sprite must stay empty, which is what `source-in` gives
-  // and what filling the whole frame would take away.
   expect(copy.getContext().getImageData(0, 0, 1, 1).data[3]).toBe(0)
   restore()
 })
@@ -413,12 +389,9 @@ test("it should draw the same tinted frame once", () => {
   const copy = tintedCanvas()
   const restore = withDocument(() => copy)
 
-  // Its own colour, because the tinted frames are kept for the life of the module and
-  // the earlier tests have already had this one.
   renderImage({ image, tint: "rgb(4, 5, 6)" }, ctx, api)
   renderImage({ image, tint: "rgb(4, 5, 6)" }, ctx, api)
 
-  // Compositing twice per frame for every particle would cost more than the particle.
   expect(copy.composited).toStrictEqual(["rgb(4, 5, 6)"])
   expect(calls.filter(([name]) => name === "drawImage")).toHaveLength(2)
   restore()
@@ -444,9 +417,6 @@ test("it should not take a number in color for a tint", () => {
   const { calls, ctx } = createContext()
   const restore = withDocument(() => tintedCanvas())
 
-  // A thing's `color` is its place in the palette, not a colour to draw it in. The canvas
-  // ignores an invalid fill style without complaint, so claiming the name `color` here
-  // meant every thing in the game drew black and said nothing about it.
   renderImage({ image, color: 4 }, ctx, api)
 
   expect(calls.find(([name]) => name === "drawImage")[1]).toStrictEqual({
@@ -466,8 +436,6 @@ test("it should share a tinted frame between engines", () => {
   const first = createContext()
   const second = createContext()
 
-  // An api stands for an engine, so two engines is two of them. They are drawing the same
-  // frame of the same picture, so they share one tinted copy rather than making one each.
   const oneEngine = { getType: () => ({ get: () => loaded }) }
   const anotherEngine = { getType: () => ({ get: () => loaded }) }
 
@@ -477,9 +445,6 @@ test("it should share a tinted frame between engines", () => {
 
   expect(made).toHaveLength(1)
 
-  // Sharing does not keep a frame for ever: the cache hangs off the image itself, so once
-  // the image is gone -- the document dropped it, or `Images` cleared on stop -- so is the
-  // tinted copy that was cut from it.
   restore()
 })
 
@@ -494,11 +459,6 @@ test("it should leave an untinted image alone", () => {
 })
 
 test("it should draw only an image that has finished loading", () => {
-  // An image in the document with the right id is not good enough. An `<img>` that has not
-  // finished decoding throws when it is drawn from, and a tinted one would cache a blank
-  // frame against its id and go on drawing that blank for the rest of the session. So the
-  // document is not consulted at all: `Images` says what is loaded, and nothing else is
-  // drawn until it does.
   const { calls, ctx } = createContext()
   const previous = globalThis.document
 
@@ -506,7 +466,6 @@ test("it should draw only an image that has finished loading", () => {
     getElementById: () => ({ id: "cat", complete: false, src: "cat.png" }),
   }
 
-  // `Images` knows of nothing, so there is nothing loaded to draw from.
   renderImage({ image: { ...image, id: "cat" } }, ctx, {
     getType: () => ({ get: () => undefined }),
   })

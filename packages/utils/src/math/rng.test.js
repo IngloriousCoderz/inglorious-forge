@@ -55,8 +55,6 @@ test("it should create a random number in the range (-1, 1)", () => {
 })
 
 test("it should create a random float when only one bound is a float", () => {
-  // The upper bound is a whole number, which used to send this down the integer
-  // path and answer only 0 or 1.
   for (let attempt = 0; attempt < 100; attempt++) {
     const randomNumber = random(0.5, 1)
 

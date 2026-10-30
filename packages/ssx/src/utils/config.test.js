@@ -9,8 +9,6 @@ describe("loadConfig", () => {
   let rootDir
 
   beforeEach(() => {
-    // Inside the package: Vitest's module loader only imports files under
-    // the project root.
     rootDir = mkdtempSync(path.join(import.meta.dirname, ".tmp-config-"))
     mkdirSync(path.join(rootDir, "src"))
   })

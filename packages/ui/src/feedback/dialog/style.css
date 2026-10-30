@@ -1,7 +1,3 @@
-/* A native <dialog>, so the browser's own box is reset: the surface inside
-   carries the padding, which leaves the dialog element itself reachable only
-   through the backdrop. Modal dialogs sit in the top layer, above any
-   z-index, and the browser centres them. */
 .iw-dialog {
   background: var(--iw-color-surface);
   color: var(--iw-color-text);
@@ -47,7 +43,6 @@
   font-size: 1.1rem;
 }
 
-/* The title takes the room, the close button only its own. */
 .iw-dialog-close {
   flex-shrink: 0;
 }
@@ -69,11 +64,6 @@
   gap: var(--iw-space-2);
 }
 
-/* A sheet on a narrow screen: anchored to the bottom edge at full width,
-   rising from below, clear of the home indicator. The browser centres a modal
-   dialog with auto margins in a full-screen inset, so the sheet resets both.
-   Only the bottom corners are squared, so a theme's radius stays on top. The
-   breakpoint is --iw-breakpoint-md, which a media query cannot read. */
 @media (width < 48rem) {
   dialog.iw-dialog.iw-dialog-sheet {
     inset: auto 0 0;

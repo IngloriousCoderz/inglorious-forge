@@ -61,7 +61,6 @@ goals = RadialChart(["Move", "Exercise"], [80, 45])
     )
     expect(container.querySelectorAll(".iw-chart-radar")).toHaveLength(2)
     expect(container.querySelector(".iw-chart-radial")).not.toBeNull()
-    // The single bar: its three parts and a legend naming them.
     const [, budget] = container.querySelectorAll("svg.iw-chart")
     expect(budget.querySelectorAll(".iw-chart-bar rect")).toHaveLength(3)
     expect(budget.querySelector(".iw-chart-legend").textContent).toContain(

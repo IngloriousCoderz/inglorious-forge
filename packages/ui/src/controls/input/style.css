@@ -60,7 +60,6 @@
     }
 
     .iw-input-control {
-      /* Fills the frame, which is now the box. */
       flex: 1;
       min-width: 0;
       font-family: inherit;

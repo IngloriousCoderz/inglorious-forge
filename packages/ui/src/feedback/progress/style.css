@@ -24,10 +24,6 @@
   }
 }
 
-/* A native <progress>, restyled. Browsers draw its value through their own
-   pseudo-elements, so the look is set once here: the bar takes `color`, like
-   the color variants above, and an app adjusts the rest through
-   --iw-progress-height, --iw-progress-radius and --iw-progress-track-color. */
 .iw-progress-linear {
   --iw-progress-bar: linear-gradient(
     90deg,
@@ -63,8 +59,6 @@
     border-radius: var(--iw-progress-radius, var(--iw-radius-sm));
   }
 
-  /* Indeterminate: no value to draw, so a sliver of the bar sweeps across
-     the track, painted on the element itself. */
   &:indeterminate {
     background:
       var(--iw-progress-bar) no-repeat 0 0 / 30% 100%,

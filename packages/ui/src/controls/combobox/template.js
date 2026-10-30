@@ -51,11 +51,6 @@ export const Combobox = {
       isFullWidth = false,
       isOpen = false,
     } = props
-    // The control is a div, not a labellable element, so a `for` binding is not
-    // available. It is referenced by id from the control's aria-labelledby
-    // instead, which is what a screen reader actually reads here.
-    // Only minted when there is something to point at. A reference to an id
-    // that is not in the DOM is worse than no reference at all.
     const labelId = label && id ? `${id}-label` : ""
     const messageId = (error || hint) && id ? `${id}-message` : ""
 
@@ -535,25 +530,17 @@ function trackOutsideClick(props, el) {
 
   const existing = outsideListeners.get(el)
   if (existing) {
-    // A re-render of the same dropdown: keep the one listener, but point it at
-    // the current props so onClose is not captured from the first render.
     existing.props = props
     return
   }
 
   const entry = { props }
   entry.listener = (event) => {
-    // The dropdown left the DOM: this press is the last one to hear from it.
-    // Retiring here is what keeps a torn-down dropdown from closing whatever
-    // opens next.
     if (!el.isConnected) {
       document.removeEventListener("pointerdown", entry.listener)
       return
     }
 
-    // The root, not the dropdown: the control is a sibling of the dropdown, and a
-    // press on it has to count as inside. Resolved per event rather than at mount
-    // because the dropdown is not connected yet when the ref first runs.
     const root = el.closest(".iw-combobox") ?? el
     if (!event.composedPath().includes(root)) entry.props.onClose?.()
   }

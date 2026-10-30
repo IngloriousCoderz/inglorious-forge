@@ -1,6 +1,4 @@
 // @vitest-environment node
-// The server runs on Node, whose Request keeps cookies; a browser-like one
-// drops them.
 import { describe, expect, it, vi } from "vitest"
 
 const { generateStore, renderPage } = vi.hoisted(() => ({

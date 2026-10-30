@@ -135,7 +135,6 @@ describe("@inglorious/vite-plugin-vue", () => {
       const result = await transform(code)
       expect(result).toContain('class="${entity.className}"')
       expect(result).toContain('id="${entity.divId}"')
-      // Should not use property binding syntax
       expect(result).not.toMatch(/\.class\s*=/)
       expect(result).not.toMatch(/\.id\s*=/)
     })
@@ -255,13 +254,10 @@ const methodWithCall = (entity) => {}
 </script>
 `
       const result = await transform(code)
-      // Simple method should use api.notify
       expect(result).toContain("api.notify")
       expect(result).toContain(":simpleMethod")
-      // Inline method call should also use api.notify
       expect(result).toContain(":methodWithCall")
       expect(result).toMatch(/api\.notify.*methodWithCall/s)
-      // Non-method inline handler should pass through
       expect(result).toContain("(e) => console.log(e)")
     })
 
@@ -281,7 +277,6 @@ const deleteItem = (entity, id) => {
       expect(result).toContain("api.notify")
       expect(result).toContain(":deleteItem")
       expect(result).toContain("item.id")
-      // Should transform to: api.notify(`#${entity.id}:deleteItem`, item.id)
       expect(result).toMatch(
         /api\.notify\([^, ]+:deleteItem[^, ]+, \s*item\.id\)/,
       )

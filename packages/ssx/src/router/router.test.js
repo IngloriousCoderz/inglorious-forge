@@ -16,13 +16,6 @@ describe("router", () => {
     it("should discover and sort routes correctly", async () => {
       const routes = await getRoutes(PAGES_DIR)
 
-      // Expected order based on specificity:
-      // 1. /posts/:id (static 'posts' + dynamic 'id') -> score ~4.2
-      // 2. /blog/:slug (static 'blog' + dynamic 'slug') -> score ~4.2
-      // 3. /about (static 'about') -> score ~3.1
-      // 4. / (root) -> score 0
-      // 5. /api/* (catch-all) -> score negative
-
       const patterns = routes.map((r) => r.pattern)
 
       expect(patterns).toContain("/posts/:slug")
@@ -31,14 +24,9 @@ describe("router", () => {
       expect(patterns).toContain("/")
       expect(patterns).toContain("/api/*")
 
-      // Check specific ordering constraints
-      // Specific routes before catch-all
       expect(patterns.indexOf("/about")).toBeLessThan(
         patterns.indexOf("/api/*"),
       )
-      // Root usually comes after specific paths but before catch-all if it was a catch-all root,
-      // but here / is static.
-      // Let's just check that we found them.
       expect(routes.length).toBeGreaterThanOrEqual(6)
     })
   })
@@ -48,10 +36,8 @@ describe("router", () => {
       const consoleSpy = vi.spyOn(console, "warn").mockImplementation(() => {})
       const pages = await getPages(PAGES_DIR)
 
-      // Verify that we got some pages
       expect(pages.length).toBeGreaterThan(0)
 
-      // Verify specific pages exist and have correct structure
       const rootPage = pages.find((p) => p.pattern === "/")
       expect(rootPage).toBeDefined()
       expect(rootPage.filePath).toMatch(/pages[/\\]index\.js$/)
@@ -60,7 +46,6 @@ describe("router", () => {
       expect(aboutPage).toBeDefined()
       expect(aboutPage.filePath).toMatch(/pages[/\\]about\.js$/)
 
-      // Dynamic route without staticPaths should be skipped (and warn)
       const blogPage = pages.find((p) => p.path.includes("/api/"))
       expect(blogPage).toBeUndefined()
 
@@ -122,7 +107,6 @@ describe("router", () => {
     })
 
     it("should handle trailing slashes implicitly via split", () => {
-      // split('/').filter(Boolean) removes empty strings, so trailing slashes are ignored
       expect(matchRoute("/about/", "/about")).toBe(true)
       expect(matchRoute("/about", "/about/")).toBe(true)
     })

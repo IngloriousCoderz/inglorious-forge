@@ -294,7 +294,6 @@ describe("optimistic", () => {
       api,
     )
 
-    // The entity argument is a draft, revoked by now: check the api only
     expect(handlers.finally.mock.calls[0][1]).toBe(api)
     expect(events).toEqual([{ type: "saveItemDone", payload: "items" }])
   })

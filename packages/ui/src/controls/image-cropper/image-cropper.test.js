@@ -102,7 +102,6 @@ describe("image-cropper", () => {
   })
 
   it("keeps the aspect ratio while resizing", () => {
-    // A square output from a 2:1 image: the frame is 0.5 wide per 1 tall.
     const { container, api } = setup({
       aspectRatio: 1,
       rect: { x: 0.2, y: 0.2, w: 0.2, h: 0.4 },

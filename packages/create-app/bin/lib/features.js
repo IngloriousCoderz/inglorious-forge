@@ -1,5 +1,3 @@
-// The choices create-app offers for lit-html apps, and what each one brings.
-
 export const TEMPLATES = {
   minimal: {
     title: "Minimal",
@@ -41,9 +39,6 @@ export const THEMES = {
   "ios-26": { title: "iOS 26", description: "Liquid Glass inspired" },
 }
 
-// Icon sets from Iconify: one module per icon, so only the icons an app
-// imports are bundled. `nav` names the icons for the two example pages,
-// `showcase` the one shown on the home page.
 export const ICON_PACKS = {
   material: {
     title: "Material Symbols",
@@ -93,7 +88,6 @@ export const ICON_PACKS = {
   },
 }
 
-// The languages offered for the example app, with its few texts in each.
 export const LANGUAGES = {
   en: language("English", {
     nav: { home: "Home", about: "About" },

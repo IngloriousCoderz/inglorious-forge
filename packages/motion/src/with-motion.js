@@ -109,7 +109,6 @@ export function withMotion({
 
       removeWithMotion: runRemoveWithMotion,
 
-      // Backward compatibility with earlier draft API.
       requestRemove: runRemoveWithMotion,
 
       render(entity, api) {

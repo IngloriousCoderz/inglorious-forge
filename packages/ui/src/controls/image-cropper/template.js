@@ -34,8 +34,6 @@ const ARROW_MOVES = {
   ArrowDown: [0, 1],
 }
 
-// Pointers and the drag in progress belong to one element and never reach the
-// store: they change on every move and are meaningless once the gesture ends.
 /** @type {WeakMap<Element, { pointers: Map<number, { x: number, y: number }>, drag: object | null, pinch: object | null }>} */
 const gestures = new WeakMap()
 

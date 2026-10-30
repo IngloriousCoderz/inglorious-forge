@@ -1,4 +1,3 @@
-/* The chat fills the page below the title, its messages scrolling between. */
 .app {
   display: flex;
   flex-direction: column;

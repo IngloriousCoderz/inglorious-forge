@@ -25,10 +25,8 @@ export async function toHTML(store, renderFn, options = {}) {
   const api = { ...store._api }
   api.render = createRender(api)
 
-  // Generate the template
   const template = renderFn(api)
 
-  // SSR render → HTML with hydration markers
   const result = ssrRender(template)
   const resultString = await collectResult(result)
 
@@ -59,12 +57,9 @@ export async function toHTML(store, renderFn, options = {}) {
  * @returns {string} Cleaned HTML string.
  */
 function stripLitMarkers(html) {
-  return html
-    .replace(/<!--\?[^>]*-->/g, "") // All lit-html markers
-    .replace(/<!--\s*-->/g, "") // Empty comments
+  return html.replace(/<!--\?[^>]*-->/g, "").replace(/<!--\s*-->/g, "")
 }
 
-// TODO: this was copied from @inglorious/web, maybe expose it?
 /**
  * Creates a render function for the mount API.
  * @param {Api} api - The mount API.

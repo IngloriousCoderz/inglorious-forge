@@ -28,14 +28,12 @@ export function readBooleanFlag(args, name) {
   return null
 }
 
-// `--name=value`, or null when the flag is not given.
 export function readValueFlag(args, name) {
   const prefix = `--${name}=`
   const arg = args.find((value) => value.startsWith(prefix))
   return arg ? arg.slice(prefix.length) : null
 }
 
-// `--name=a,b`, `--no-name` for an empty list, or null when neither is given.
 export function readListFlag(args, name) {
   if (args.includes(`--no-${name}`)) {
     return []

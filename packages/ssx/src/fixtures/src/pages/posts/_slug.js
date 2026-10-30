@@ -26,7 +26,6 @@ export const Post = {
   render(entity) {
     if (!entity.post) return
 
-    // Initialize mermaid if present
     if (typeof window !== "undefined") {
       setTimeout(() => {
         mermaid.run({ querySelector: ".mermaid" })
@@ -57,11 +56,9 @@ export const metadata = (entity) => ({
   meta: {
     description: "Blog Post",
   },
-  // Sitemap-specific metadata
   changefreq: "monthly",
   priority: 0.8,
   updatedAt: entity.post.date,
-  // RSS-specific metadata
   pubDate: entity.post.date,
   author: "Matteo Antony Mistretta",
   category: "Chronicle",

@@ -24,8 +24,6 @@ const config = (scenesByState = SCENES) => ({
             entity.state = "play"
           },
           vanish(entity) {
-            // A state the scene map knows nothing about, which is a state the machine can
-            // still be in.
             entity.state = "nowhere"
           },
         },
@@ -71,8 +69,6 @@ test("it should put the previous state back", () => {
 })
 
 test("it should leave what two states share standing", () => {
-  // The actor belongs to both states, and standing through the move is the whole point:
-  // it keeps its position, and anything it has done to itself.
   const shared = {
     title: () => [{ id: "actor", type: "Actor" }],
     play: () => [
@@ -92,9 +88,6 @@ test("it should leave what two states share standing", () => {
 })
 
 test("it should not re-add what is already standing", () => {
-  // Whether the actor standing is the one the title scene put up is a question about the
-  // actor being *made*, not about what its fields read: a thing that stays standing is
-  // not made again, though it may be told a different configuration afterwards.
   let made = 0
   const Actor = {
     create() {
@@ -122,9 +115,6 @@ test("it should not re-add what is already standing", () => {
 })
 
 test("it should patch what is standing when the next state wants it different", () => {
-  // A screen may bring its own keyboard, and the keys it answers to are part of what the
-  // screen is. The keyboard is the same keyboard -- one keyboard answers the key -- so it
-  // is told a different mapping rather than made again beside the old one.
   let made = 0
   const Keyboard = {
     create() {
@@ -155,8 +145,6 @@ test("it should patch what is standing when the next state wants it different", 
 })
 
 test("it should leave standing alone what the next state wants unchanged", () => {
-  // Nothing about the actor differs between these two states, so it is not told
-  // anything -- which is what keeps it where the world left it.
   const scenes = {
     title: () => [{ id: "actor", type: "Actor" }],
     play: () => [
@@ -175,8 +163,6 @@ test("it should leave standing alone what the next state wants unchanged", () =>
 })
 
 test("it should take a key off a mapping when a state maps it to nothing", () => {
-  // A key the screen does not answer to is a key with nothing mapped to it, which is not
-  // the same as leaving the last screen's answer to it standing.
   const scenes = {
     title: () => [
       {
@@ -241,8 +227,6 @@ test("it should ignore another entity's machine moving", () => {
 })
 
 test("it should let a state prepare what the next one stands", () => {
-  // Some of what a state stands is only worth making once, and it is asked for when the
-  // state that needs it is entered rather than listed anywhere.
   let made = 0
   const lazy = {
     title: () => [{ id: "title", type: "Text" }],
@@ -257,7 +241,6 @@ test("it should let a state prepare what the next one stands", () => {
   store.notify("start")
   store.update()
 
-  // Losing the stage is how a round ends; coming back for it must not make another.
   store.notify("stop")
   store.update()
   store.notify("start")

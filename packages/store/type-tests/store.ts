@@ -1,6 +1,3 @@
-// Type-level tests: `tsc -p type-tests` fails on any error, and on any
-// `@ts-expect-error` whose error does not happen.
-
 import {
   type Api,
   type BaseEntity,
@@ -31,8 +28,6 @@ interface AppState extends EntitiesState<AppEntity> {
 
 type AppApi = Api<AppEntity, AppState>
 
-// The recommended way: a type alias declares the type's events and payloads,
-// and the type is checked against it
 type LabelType = {
   rename: (entity: LabelEntity, text: string) => void
   render: (entity: LabelEntity, api: AppApi) => string
@@ -70,7 +65,6 @@ export const incomplete: LabelType = {
   },
 }
 
-// An interface does not fit the store's `types`: declare types with `type`
 interface LabelInterface {
   rename: (entity: LabelEntity, text: string) => void
 }
@@ -80,8 +74,6 @@ createStore<AppEntity, AppState>({
   types: { Label: LabelFromInterface },
 })
 
-// The shorthand: `satisfies` infers the handlers' parameters and keeps the
-// type's members, but neither lists the events nor types unannotated payloads
 const Counter = {
   increment(entity) {
     entity.value++
@@ -94,14 +86,12 @@ const Counter = {
   },
 } satisfies EntityType<CounterEntity, AppApi>
 
-// Its handlers can be called directly, as tests and wrapping types do
 declare const counter: CounterEntity & { id: string }
 Counter.increment(counter)
 Counter.add(counter, 2)
 // @ts-expect-error: add takes a number
 Counter.add(counter, "2")
 
-// The store gives every entity its id, so handlers receive it
 export const Labeled: EntityType<LabelEntity, AppApi> = {
   focus(entity, _payload, api) {
     const id: string = entity.id
@@ -109,7 +99,6 @@ export const Labeled: EntityType<LabelEntity, AppApi> = {
   },
 }
 
-// Behaviors: a function extending a type, and arrays of behaviors
 const logs = (type: EntityType<LabelEntity, AppApi>) => ({
   ...type,
   log(entity: LabelEntity) {
@@ -117,22 +106,18 @@ const logs = (type: EntityType<LabelEntity, AppApi>) => ({
   },
 })
 
-// `types` checks each type against its entity, with no cast
 export const store = createStore<AppEntity, AppState>({
   types: {
     Counter,
     Label: [Label, logs],
-    // A name no entity has takes any type
     App: { render: () => null },
   },
   entities: {
     counter: { type: "Counter", value: 0 },
-    // A store flag every entity can set
     label: { type: "Label", text: "hi", updatesWhilePaused: true },
   },
 })
 
-// Without type arguments, the entity type comes from the entities
 const middlewares: Middleware<AppEntity, AppState>[] = []
 export const inferred = createStore({
   types: { Counter },
@@ -140,7 +125,6 @@ export const inferred = createStore({
   middlewares,
 })
 
-// Middlewares take the store and return it, here with a wrapped dispatch
 const logEvents: Middleware<AppEntity, AppState> = (store) => {
   const next = store.dispatch
   store.dispatch = (event) => {
@@ -155,12 +139,10 @@ export const logged = createStore<AppEntity, AppState>({
   middlewares: [logEvents],
 })
 
-// An app's Api is an Api: a component typed with the plain one accepts it
 declare function renderComponent(props: { title: string }, api: Api): string
 declare const api: AppApi
 renderComponent({ title: "x" }, api)
 
-// A known id gives that entity's own type, with its id
 export const label: string | undefined = api.getEntity("label")?.text
 export const labelId: string | undefined = api.getEntity("label")?.id
 
@@ -173,7 +155,6 @@ export const typo: EntityType<CounterEntity, AppApi> = {
   },
 }
 
-// The api is typed in handlers and in render, where it comes second
 export const apiTyped = {
   copy(entity, _payload, api) {
     // @ts-expect-error: LabelEntity has no `nope`
@@ -208,8 +189,6 @@ createStore<AppEntity, AppState>({
   // @ts-expect-error: an entity of an unknown type
   entities: { counter: { type: "Countr", value: 0 } },
 })
-
-// ---- testing ----
 
 const { entity: after, events } = trigger(
   { id: "counter", type: "Counter", value: 1 } as CounterEntity,

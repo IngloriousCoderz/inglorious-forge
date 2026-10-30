@@ -15,9 +15,6 @@ export class FixedLoop {
 
       previousTime = currentTime
 
-      // The rest of the interval, not the interval on top of the work: sleeping what
-      // was already spent as well halves the rate, and a frame that overran its budget
-      // starts the next one straight away rather than falling further behind.
       await sleep(Math.max(NO_WAIT, msPerUpdate - (Date.now() - currentTime)))
     }
   }
