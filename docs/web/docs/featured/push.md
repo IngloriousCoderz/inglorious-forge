@@ -54,6 +54,8 @@ const entities = { pushPrompt: { type: "PushPrompt" } }
 
 ## The adapter
 
+`@inglorious/firebase/push` has one for Firebase Cloud Messaging, in the browser and in Capacitor apps. Writing your own takes five functions:
+
 ```javascript
 const fcm = {
   isSupported: async () => true,

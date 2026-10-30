@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 6.13.0
+
+### Minor Changes
+
+- New `createAnalytics({ adapter })` (`@inglorious/web/analytics`): the type that measures how an app is used, and only once the user agreed. Its entity's `consent` (`"granted"`, `"denied"` or `null`) is remembered on the device, and while `isAsking` the app renders its own consent prompt, answered with `analyticsConsent`. `analyticsAsk` brings the prompt back. Once granted, every `routeChange` from the router is a page view, and `analyticsTrack` logs the app's own events. Nothing reaches the adapter before consent, and a failing adapter never reaches the app.
+
 ## 6.12.0
 
 ### Minor Changes

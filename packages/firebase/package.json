@@ -1,0 +1,70 @@
+{
+  "name": "@inglorious/firebase",
+  "version": "0.1.0",
+  "description": "Firebase integration for Inglorious Web, in the browser and in Capacitor apps.",
+  "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IngloriousCoderz/inglorious-forge.git",
+    "directory": "packages/firebase"
+  },
+  "bugs": {
+    "url": "https://github.com/IngloriousCoderz/inglorious-forge/issues"
+  },
+  "keywords": [
+    "firebase",
+    "fcm",
+    "push",
+    "analytics",
+    "capacitor",
+    "inglorious-web"
+  ],
+  "type": "module",
+  "exports": {
+    "./analytics": {
+      "types": "./types/analytics.d.ts",
+      "import": "./src/analytics/index.js"
+    },
+    "./push": {
+      "types": "./types/push.d.ts",
+      "import": "./src/push/index.js"
+    }
+  },
+  "files": [
+    "src",
+    "types"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "format": "prettier --write .",
+    "lint": "eslint .",
+    "test:watch": "vitest",
+    "test": "vitest run"
+  },
+  "peerDependencies": {
+    "@capacitor-firebase/analytics": "^8.5.2",
+    "@capacitor-firebase/messaging": "^8.5.2",
+    "@capacitor/core": "^8.0.0",
+    "firebase": "^12.6.0"
+  },
+  "peerDependenciesMeta": {
+    "@capacitor-firebase/analytics": {
+      "optional": true
+    },
+    "@capacitor-firebase/messaging": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@inglorious/eslint-config": "workspace:*",
+    "prettier": "^3.9.6",
+    "vitest": "^5.0.0"
+  },
+  "packageManager": "pnpm@10.15.0",
+  "engines": {
+    "node": ">= 22"
+  }
+}

@@ -9,11 +9,13 @@ packages:
   - packages/*
 
 allowBuilds:
+  "@firebase/util": true
   # Its postinstall only sends installation telemetry.
   "@openuidev/lang-core": false
   "@parcel/watcher": true
   "@tailwindcss/oxide": true
   esbuild: true
+  protobufjs: true
   sharp: true
   vue-demi: true
 
@@ -31,9 +33,3 @@ minimumReleaseAgeExclude:
   - eslint-plugin-storybook@10.5.6
   - storybook@10.5.6
   - i18next@26.5.2
-
-onlyBuiltDependencies:
-  - "@parcel/watcher"
-  - "@tailwindcss/oxide"
-  - esbuild
-  - sharp

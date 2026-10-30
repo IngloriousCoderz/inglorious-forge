@@ -22,6 +22,7 @@ There are no signals, no component state and no compiler to learn. Types are pla
 - [`@inglorious/i18n`](packages/i18n): translations driven by a store entity.
 - [`@inglorious/ag-grid`](packages/ag-grid): AG Grid, with no adapter.
 - [`@inglorious/supabase`](packages/supabase): Supabase, starting with Realtime changes that keep entities live.
+- [`@inglorious/firebase`](packages/firebase): Firebase push notifications and analytics, in the browser and in Capacitor apps.
 
 **Sites**
 

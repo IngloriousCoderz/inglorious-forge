@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/web",
-  "version": "6.12.0",
+  "version": "6.13.0",
   "description": "A new web framework that leverages the power of the Inglorious Store combined with the performance and simplicity of lit-html.",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "contributors": [
@@ -32,6 +32,10 @@
     ".": {
       "types": "./types/index.d.ts",
       "import": "./src/index.js"
+    },
+    "./analytics": {
+      "types": "./types/analytics.d.ts",
+      "import": "./src/analytics/index.js"
     },
     "./decorators/with-debounce": {
       "types": "./types/decorators/with-debounce.d.ts",
