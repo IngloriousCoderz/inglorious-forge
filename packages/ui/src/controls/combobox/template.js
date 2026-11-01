@@ -14,11 +14,11 @@ import { Chip } from "../../data-display/chip/index.js"
 import { fallbackLabel } from "../../shared/fallback-label.js"
 import { syncPopover } from "../../shared/top-layer.js"
 import {
-  filterOptions,
   formatOption,
   getOptionLabel,
   getOptionValue,
   isOptionSelected,
+  visibleOptions,
 } from "./helpers.js"
 
 const NO_FOCUSED_INDEX = -1
@@ -234,18 +234,20 @@ export const Combobox = {
    */
   renderMultiValueTag(props, value) {
     const { id, options, size, onOptionSelect, onChange } = props
+    const option = options.find((opt) => getOptionValue(opt) === value) ?? value
 
-    const option = options.find((opt) => getOptionValue(opt) === value)
     const tagId = id ? `${id}-tag-${String(value)}` : undefined
     const chipSize = size === "lg" ? "md" : "sm"
 
     return html`<span
       class="iw-combobox-multi-value-tag"
-      @click=${(event) => event.stopPropagation()}
+      @click=${(event) => {
+        if (event.target.closest(".iw-chip-remove")) event.stopPropagation()
+      }}
     >
       ${Chip.render({
         id: tagId,
-        children: option ? getOptionLabel(option) : String(value),
+        children: getOptionLabel(option),
         isRemovable: true,
         size: chipSize,
         shape: "rounded",
@@ -269,9 +271,9 @@ export const Combobox = {
    * @returns {TemplateResult}
    */
   renderDropdown(props) {
-    const { id, options, searchTerm, isSearchable, isLoading } = props
+    const { id, isSearchable, isLoading } = props
 
-    const filteredOptions = filterOptions(options, searchTerm)
+    const filteredOptions = visibleOptions(props)
 
     return html`<div
       id=${id ? `${id}-control-listbox` : nothing}
@@ -328,9 +330,7 @@ export const Combobox = {
    * @returns {TemplateResult}
    */
   renderOptions(props) {
-    const { options, searchTerm } = props
-
-    const filteredOptions = filterOptions(options, searchTerm)
+    const filteredOptions = visibleOptions(props)
 
     return html`<div class="iw-combobox-dropdown-options">
       ${repeat(
@@ -380,7 +380,7 @@ export const Combobox = {
       @mouseenter=${() => onFocusSet?.(index)}
     >
       ${when(
-        isMulti,
+        isMulti && !normalized.isCreated,
         () =>
           html`<input
             type="checkbox"
@@ -428,7 +428,8 @@ export const Combobox = {
 function handleControlKeyDown(props, event) {
   const { isDisabled, isOpen, onToggle } = props
 
-  if (isDisabled) return
+  // The keys of a tag's remove button or the clear button are their own.
+  if (isDisabled || event.target.closest?.("button")) return
 
   if (isOpen) {
     handleKeyDown(props, event)
@@ -450,8 +451,6 @@ function handleControlKeyDown(props, event) {
  */
 function handleKeyDown(props, event) {
   const {
-    options,
-    searchTerm,
     focusedIndex,
     onFocusFirst,
     onFocusPrev,
@@ -462,7 +461,7 @@ function handleKeyDown(props, event) {
     onClose,
   } = props
 
-  const filteredOptions = filterOptions(options, searchTerm)
+  const filteredOptions = visibleOptions(props)
 
   switch (event.key) {
     case "ArrowDown":

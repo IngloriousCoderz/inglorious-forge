@@ -3,7 +3,7 @@ import { mount } from "@inglorious/web"
 import { createMockApi, render } from "@inglorious/web/test"
 import { afterEach, describe, expect, it } from "vitest"
 
-import { Combobox } from "."
+import { Combobox, visibleOptions } from "."
 
 describe("combobox", () => {
   it("renders control with selected value", () => {
@@ -98,6 +98,79 @@ describe("combobox", () => {
         payload: { label: "A", value: "a" },
       },
     ])
+  })
+
+  it("removes a tag whose value is not among the options", () => {
+    const entity = {
+      id: "sel",
+      type: "Combobox",
+      isMulti: true,
+      selectedValue: ["Atlantis"],
+      options: [],
+    }
+    const api = createMockApi({ [entity.id]: entity })
+    api.getType = () => Combobox
+    const container = document.createElement("div")
+
+    render(Combobox.render(entity, api), container)
+
+    expect(container.querySelector(".iw-chip-label").textContent).toBe(
+      "Atlantis",
+    )
+    container.querySelector(".iw-chip-remove").click()
+
+    expect(api.getEvents()).toEqual([
+      { type: "#sel:optionSelect", payload: "Atlantis" },
+    ])
+  })
+
+  it("toggles from a tap on a tag, but not from its remove button", () => {
+    const entity = {
+      id: "sel",
+      type: "Combobox",
+      isMulti: true,
+      selectedValue: ["a"],
+      options: [{ label: "A", value: "a" }],
+    }
+    const api = createMockApi({ [entity.id]: entity })
+    api.getType = () => Combobox
+    const container = document.createElement("div")
+
+    render(Combobox.render(entity, api), container)
+
+    container.querySelector(".iw-chip-label").click()
+    expect(api.getEvents()).toEqual([{ type: "#sel:toggle" }])
+
+    container.querySelector(".iw-chip-remove").click()
+    expect(api.getEvents().map(({ type }) => type)).toEqual([
+      "#sel:toggle",
+      "#sel:optionSelect",
+    ])
+  })
+
+  it("leaves the keys of a tag's remove button alone", () => {
+    const entity = {
+      id: "sel",
+      type: "Combobox",
+      isMulti: true,
+      selectedValue: ["a"],
+      options: [{ label: "A", value: "a" }],
+    }
+    const api = createMockApi({ [entity.id]: entity })
+    api.getType = () => Combobox
+    const container = document.createElement("div")
+
+    render(Combobox.render(entity, api), container)
+
+    const event = new KeyboardEvent("keydown", {
+      key: "Enter",
+      bubbles: true,
+      cancelable: true,
+    })
+    container.querySelector(".iw-chip-remove").dispatchEvent(event)
+
+    expect(event.defaultPrevented).toBe(false)
+    expect(api.getEvents()).toEqual([])
   })
 
   it("dispatches toggle event from control click", () => {
@@ -236,6 +309,135 @@ describe("combobox", () => {
 
     Combobox.optionSelect(entity, { label: "A", value: "a" })
     expect(entity.selectedValue).toEqual(["b"])
+  })
+})
+
+describe("creatable combobox", () => {
+  const options = [
+    { label: "Lazio", value: "lazio" },
+    { label: "Lombardia", value: "lombardia" },
+  ]
+  const added = (entity) =>
+    visibleOptions({ options, isCreatable: true, ...entity }).find(
+      (option) => option.isCreated,
+    )
+
+  it("offers the trimmed term after the options that match it", () => {
+    const listed = visibleOptions({
+      options,
+      isCreatable: true,
+      searchTerm: "  Lomb ",
+    })
+
+    expect(listed.map(({ value }) => value)).toEqual(["lombardia", "Lomb"])
+    expect(listed[1].label).toBe('Add "Lomb"')
+  })
+
+  it("offers nothing when not creatable or without a term", () => {
+    expect(added({ isCreatable: false, searchTerm: "Bavaria" })).toBeUndefined()
+    expect(added({ searchTerm: "  " })).toBeUndefined()
+  })
+
+  it("offers nothing for a known option or a selected value, in any case", () => {
+    expect(added({ searchTerm: "LAZIO" })).toBeUndefined()
+    expect(
+      added({ searchTerm: "bavaria", selectedValue: ["Bavaria"] }),
+    ).toBeUndefined()
+  })
+
+  it("ignores disabled headings when looking for a known option", () => {
+    const heading = { label: "Regions", value: "group", isDisabled: true }
+
+    expect(
+      visibleOptions({
+        options: [heading],
+        isCreatable: true,
+        searchTerm: "regions",
+      }).at(-1),
+    ).toMatchObject({ value: "regions", isCreated: true })
+  })
+
+  it("finds an option by its keywords, and offers nothing for an exact one", () => {
+    const listed = (searchTerm) =>
+      visibleOptions({
+        options: [
+          { label: "Tuscany", value: "Tuscany", keywords: ["Toscana"] },
+        ],
+        isCreatable: true,
+        searchTerm,
+      }).map(({ value }) => value)
+
+    expect(listed("toscana")).toEqual(["Tuscany"])
+    expect(listed("tosc")).toEqual(["Tuscany", "tosc"])
+  })
+
+  it("labels the option with formatCreateLabel", () => {
+    expect(
+      added({
+        searchTerm: "Bavaria",
+        formatCreateLabel: (term) => `Aggiungi ${term}`,
+      }).label,
+    ).toBe("Aggiungi Bavaria")
+  })
+
+  it("selects a created value and clears the search", () => {
+    const entity = {
+      id: "sel",
+      options,
+      isMulti: true,
+      isSearchable: true,
+      isCreatable: true,
+    }
+    Combobox.create(entity)
+
+    Combobox.searchChange(entity, "Bavaria")
+    expect(entity.focusedIndex).toBe(0)
+
+    Combobox.optionSelect(entity, visibleOptions(entity)[0])
+    expect(entity.selectedValue).toEqual(["Bavaria"])
+    expect(entity.searchTerm).toBe("")
+    expect(entity.focusedIndex).toBe(-1)
+  })
+
+  it("adds the term on Enter, without a no-options message", () => {
+    const entity = {
+      id: "sel",
+      type: "Combobox",
+      isOpen: true,
+      isSearchable: true,
+      isCreatable: true,
+      isMulti: true,
+      searchTerm: "Bavaria",
+      focusedIndex: 0,
+      selectedValue: [],
+      options,
+    }
+    const api = createMockApi({ [entity.id]: entity })
+    api.getType = () => Combobox
+    const container = document.createElement("div")
+
+    render(Combobox.render(entity, api), container)
+
+    expect(container.querySelector(".iw-combobox-no-options")).toBeNull()
+    const row = container.querySelector(".iw-combobox-dropdown-options-option")
+    expect(row.textContent.trim()).toBe('Add "Bavaria"')
+    expect(row.querySelector("input")).toBeNull()
+
+    container
+      .querySelector(".iw-combobox-dropdown-search")
+      .dispatchEvent(
+        new KeyboardEvent("keydown", { key: "Enter", bubbles: true }),
+      )
+
+    expect(api.getEvents()).toEqual([
+      {
+        type: "#sel:optionSelect",
+        payload: expect.objectContaining({
+          value: "Bavaria",
+          isCreated: true,
+        }),
+      },
+    ])
   })
 })
 

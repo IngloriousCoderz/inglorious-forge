@@ -10,6 +10,10 @@ export type ComboboxOption =
       error?: string
       isDisabled?: boolean
       isRequired?: boolean
+      /** Other names a search finds this option by. */
+      keywords?: string[]
+      /** Set on the option that adds a searched term. */
+      isCreated?: boolean
       [key: string]: unknown
     }
 
@@ -30,6 +34,10 @@ export interface ComboboxProps {
   isDisabled?: boolean
   isSearchable?: boolean
   isClearable?: boolean
+  /** Offers to add a searched term that matches no option. Needs `isSearchable`. */
+  isCreatable?: boolean
+  /** Text of the option that adds the term. Defaults to `Add "term"`. */
+  formatCreateLabel?: (term: string) => string
 
   placeholder?: string
   /** Placeholder of the search box in the panel. Defaults to "Search...". */
@@ -82,4 +90,14 @@ export declare function isOptionSelected(
 export declare function filterOptions(
   options: ComboboxOption[],
   searchTerm: string,
+): ComboboxOption[]
+export declare function visibleOptions(
+  props: Pick<
+    ComboboxProps,
+    | "options"
+    | "searchTerm"
+    | "selectedValue"
+    | "isCreatable"
+    | "formatCreateLabel"
+  >,
 ): ComboboxOption[]

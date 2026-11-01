@@ -29,6 +29,10 @@ export default {
     },
     isSearchable: { control: "boolean", description: "Show search input." },
     isClearable: { control: "boolean", description: "Show clear button." },
+    isCreatable: {
+      control: "boolean",
+      description: "Offer to add a searched term that matches no option.",
+    },
     isDisabled: { control: "boolean", description: "Disable the control." },
     isLoading: { control: "boolean", description: "Show loading state." },
     searchTerm: { control: "text", description: "Current search filter." },
@@ -92,6 +96,16 @@ MultiOpen.args = {
   ...Default.args,
   isMulti: true,
   selectedValue: ["it", "fr"],
+  isOpen: true,
+}
+
+export const Creatable = {}
+Creatable.args = {
+  ...Default.args,
+  isMulti: true,
+  isCreatable: true,
+  selectedValue: ["it", "Atlantis"],
+  searchTerm: "Narnia",
   isOpen: true,
 }
 

@@ -40,4 +40,5 @@ export const {
   getOptionLabel,
   getOptionValue,
   isOptionSelected,
+  visibleOptions,
 } = helpers

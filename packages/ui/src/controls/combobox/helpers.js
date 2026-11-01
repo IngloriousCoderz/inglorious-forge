@@ -45,10 +45,45 @@ export function filterOptions(options, searchTerm) {
 
   const searchLower = String(searchTerm).toLowerCase().trim()
 
-  return options.filter((option) => {
-    const label = getOptionLabel(option)
-    return label.toLowerCase().includes(searchLower)
-  })
+  return options.filter((option) =>
+    optionTexts(option).some((text) => text.includes(searchLower)),
+  )
+}
+
+/**
+ * The options the dropdown lists: those matching the search, then, on a
+ * creatable combobox, one to add the typed term unless it is already known.
+ * @param {{ options?: SelectOption[], searchTerm?: string, selectedValue?: string|number|(string|number)[]|null, isCreatable?: boolean, formatCreateLabel?: (term: string) => string }} props
+ * @returns {SelectOption[]}
+ */
+export function visibleOptions({
+  options = [],
+  searchTerm,
+  selectedValue,
+  isCreatable = false,
+  formatCreateLabel = (term) => `Add "${term}"`,
+}) {
+  const filtered = filterOptions(options, searchTerm)
+  const term = String(searchTerm ?? "").trim()
+  if (!isCreatable || !term) return filtered
+
+  const key = term.toLowerCase()
+  const isKnown =
+    [selectedValue]
+      .flat()
+      .some((value) => String(value).toLowerCase() === key) ||
+    options.some(
+      (option) =>
+        !formatOption(option).isDisabled &&
+        (optionTexts(option).includes(key) ||
+          String(getOptionValue(option)).toLowerCase() === key),
+    )
+  if (isKnown) return filtered
+
+  return [
+    ...filtered,
+    { value: term, label: formatCreateLabel(term), isCreated: true },
+  ]
 }
 
 /**
@@ -88,4 +123,15 @@ export function formatOption(option) {
   }
 
   return { value: String(option), label: String(option) }
+}
+
+/**
+ * What a search looks through: the label and the option's keywords, lowercased.
+ * @param {SelectOption} option
+ * @returns {string[]}
+ */
+function optionTexts(option) {
+  return [getOptionLabel(option), ...(option?.keywords ?? [])].map((text) =>
+    text.toLowerCase(),
+  )
 }

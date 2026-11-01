@@ -1,5 +1,11 @@
 # @inglorious/ui
 
+## 9.9.0
+
+### Minor Changes
+
+- Combobox: `isCreatable` offers to add a searched term that matches no option, labelled with `formatCreateLabel`, and `visibleOptions` returns the options the dropdown lists. An option's `keywords` are other names a search finds it by. Tapping a selected tag now opens the dropdown, a tag whose value is not among the options can be removed, and the remove and clear buttons respond to the keyboard.
+
 ## 9.8.2
 
 ### Patch Changes

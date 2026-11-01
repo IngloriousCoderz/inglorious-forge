@@ -3,7 +3,7 @@
  * @typedef {import('../../../types/controls/select.js').SelectOption} SelectOption
  */
 
-import { filterOptions, formatOption, getOptionValue } from "./helpers.js"
+import { formatOption, getOptionValue, visibleOptions } from "./helpers.js"
 
 /**
  * Initialize missing select state defaults.
@@ -39,7 +39,7 @@ export function open(entity) {
   if (entity.isDisabled) return
   entity.isOpen = true
 
-  const filtered = filterOptions(entity.options, entity.searchTerm)
+  const filtered = visibleOptions(entity)
   entity.focusedIndex = filtered.length ? 0 : -1
 }
 
@@ -65,6 +65,11 @@ export function optionSelect(entity, option) {
 
   const normalizedOption = formatOption(option)
   const optionValue = getOptionValue(normalizedOption)
+
+  if (normalizedOption.isCreated) {
+    entity.searchTerm = ""
+    entity.focusedIndex = -1
+  }
 
   if (entity.isMulti) {
     const values = Array.isArray(entity.selectedValue)
@@ -98,13 +103,13 @@ export function clear(entity) {
  */
 export function searchChange(entity, searchTerm) {
   entity.searchTerm = searchTerm
-  const filtered = filterOptions(entity.options, entity.searchTerm)
+  const filtered = visibleOptions(entity)
   entity.focusedIndex = filtered.length ? 0 : -1
 }
 
 /** @param {SelectEntity} entity */
 export function focusNext(entity) {
-  const filtered = filterOptions(entity.options, entity.searchTerm)
+  const filtered = visibleOptions(entity)
   if (!filtered.length) return
   entity.focusedIndex = Math.min(entity.focusedIndex + 1, filtered.length - 1)
 }
@@ -116,13 +121,13 @@ export function focusPrev(entity) {
 
 /** @param {SelectEntity} entity */
 export function focusFirst(entity) {
-  const filtered = filterOptions(entity.options, entity.searchTerm)
+  const filtered = visibleOptions(entity)
   if (filtered.length) entity.focusedIndex = 0
 }
 
 /** @param {SelectEntity} entity */
 export function focusLast(entity) {
-  const filtered = filterOptions(entity.options, entity.searchTerm)
+  const filtered = visibleOptions(entity)
   if (filtered.length) entity.focusedIndex = filtered.length - 1
 }
 
