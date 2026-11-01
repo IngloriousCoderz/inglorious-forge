@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.8.0
+
+### Minor Changes
+
+- Two new opt-in features for the JavaScript and TypeScript Vite templates, in every syntax, with their setup steps in the new project's README. `--analytics` adds Google Analytics for Firebase behind a consent prompt: nothing loads before a yes, and with `--mobile` a `capacitor:sync:after` hook keeps the native apps from measuring before consent. `--push` adds Firebase Cloud Messaging with a permission prompt, a service worker, and the Supabase side of sending: a token table, a `notifications` table whose rows are the pushes, and the `push-notify` edge function. It turns on PWA support, so `--push --no-pwa` is refused. Agent skills now include `firebase` and `supabase` when used.
+
 ## 1.7.1
 
 ### Patch Changes

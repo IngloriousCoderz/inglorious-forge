@@ -27,6 +27,8 @@ export async function askAppFeatures(flags) {
     transitions: false,
     icons: [],
     languages: [],
+    analytics: false,
+    push: false,
     pwa: false,
   }
 
@@ -115,13 +117,37 @@ export async function askAppFeatures(flags) {
     if (canceled || !features.languages) return null
   }
 
-  features.pwa =
-    flags.pwa ??
+  features.analytics =
+    flags.analytics ??
     (await ask({
       type: "confirm",
-      message: "Enable PWA support?",
+      message: "Add analytics with a consent prompt? (Firebase)",
       initial: false,
     }))
+  if (canceled) return null
+
+  features.push =
+    flags.push ??
+    (await ask({
+      type: "confirm",
+      message:
+        "Add push notifications? (Firebase and Supabase, turns on PWA support)",
+      initial: false,
+    }))
+  if (canceled) return null
+
+  if (features.push && flags.pwa === false) {
+    throw new Error("--push needs the service worker that --no-pwa turns off.")
+  }
+
+  features.pwa =
+    features.push ||
+    (flags.pwa ??
+      (await ask({
+        type: "confirm",
+        message: "Enable PWA support?",
+        initial: false,
+      })))
   if (canceled) return null
 
   return validate(features)

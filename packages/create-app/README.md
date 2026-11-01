@@ -34,9 +34,11 @@ For the JavaScript and TypeScript Vite templates, the CLI then asks about the ap
 | Animate page transitions? | `--transitions` / `--no-transitions`                                     | View transitions between pages (with routing and Inglorious UI)                                            |
 | Which icon packs?         | `--icons=material,fontawesome,lucide` / `--no-icons`                     | Iconify icon sets, drawn by Inglorious UI's `Icon` (with Inglorious UI)                                    |
 | Translate the app?        | `--i18n` / `--no-i18n`, `--languages=en,it`                              | `@inglorious/i18n`, a catalogue per language and a language picker; the first language is the default      |
+| Add analytics?            | `--analytics` / `--no-analytics`                                         | Google Analytics for Firebase behind a consent prompt, on the web and in the native apps                   |
+| Add push notifications?   | `--push` / `--no-push`                                                   | Firebase Cloud Messaging, a permission prompt and the Supabase side of sending; turns on PWA support       |
 | Enable PWA support?       | `--pwa` / `--no-pwa`                                                     | `vite-plugin-pwa`, a manifest, icons, and a service worker that keeps installed apps on the latest version |
 
-Every template except `minimal` then asks whether to add agent skills (`--skills` / `--no-skills`). Saying yes runs the [skills CLI](https://skills.sh) in the new project. It asks which coding agents to install for, and installs the [Inglorious Forge skills](https://github.com/IngloriousCoderz/forge-skills) that match your choices: `forge`, `forge-best-practices`, `store`, `web` and `web-best-practices` always, plus `ssx`, `vite-plugin-jsx` or `vite-plugin-vue`, `ui` and `ui-best-practices`, and `i18n` when the project uses them. If the install fails, the CLI prints the command to retry it.
+Every template except `minimal` then asks whether to add agent skills (`--skills` / `--no-skills`). Saying yes runs the [skills CLI](https://skills.sh) in the new project. It asks which coding agents to install for, and installs the [Inglorious Forge skills](https://github.com/IngloriousCoderz/forge-skills) that match your choices: `forge`, `forge-best-practices`, `store`, `web` and `web-best-practices` always, plus `ssx`, `vite-plugin-jsx` or `vite-plugin-vue`, `ui` and `ui-best-practices`, `i18n`, `firebase` and `supabase` when the project uses them. If the install fails, the CLI prints the command to retry it.
 
 The app is generated in the syntax you chose: lit-html, JSX or Vue. Every question answered on the command line is skipped, so a project can be created without any prompt:
 
@@ -47,8 +49,10 @@ The app is generated in the syntax you chose: lit-html, JSX or Vue. Every questi
 | Select a rendering syntax   | `--syntax=lit-html\|jsx\|vue`                |
 
 ```bash
-npm create @inglorious/app@latest -- my-app --template=ts --syntax=jsx --ui --theme=material-3 --routing --transitions --icons=material --languages=en,it --no-mobile --no-pwa --skills
+npm create @inglorious/app@latest -- my-app --template=ts --syntax=jsx --ui --theme=material-3 --routing --transitions --icons=material --languages=en,it --no-mobile --no-analytics --no-push --no-pwa --skills
 ```
+
+Analytics and push generate their setup steps into the new project's README, and a `.env.example`. Push also generates a Supabase migration, the `push-notify` edge function and a service worker: a push is sent by inserting a row in `notifications`. It needs a Firebase project, a Supabase project and a sign-in screen, since the permission prompt appears once someone is signed in with Supabase Auth.
 
 ## Templates
 

@@ -5,9 +5,16 @@ import path from "path"
 import * as jsxComponents from "./app-jsx.js"
 import * as litComponents from "./app-lit.js"
 import * as vueComponents from "./app-vue.js"
-import { INDENTATION } from "./constants.js"
-import { ICON_PACKS, LANGUAGES } from "./features.js"
+import {
+  CAPACITOR_FIREBASE_VERSION,
+  CAPACITOR_VERSION,
+  FIREBASE_VERSION,
+  INDENTATION,
+  SUPABASE_VERSION,
+} from "./constants.js"
+import { ICON_PACKS, LANGUAGES, PROMPT_TEXTS } from "./features.js"
 import { importBlock } from "./imports.js"
+import { envExample, promptFiles } from "./prompts.js"
 import { appModel, call, LINE_WIDTH, union } from "./source.js"
 
 const COMPONENTS = {
@@ -18,8 +25,8 @@ const COMPONENTS = {
 
 /**
  * Writes the source of an app with the features chosen: Inglorious UI,
- * routing, page transitions, icon packs, internationalization and a mobile
- * layout, in lit-html, JSX or Vue. It replaces the template's hello world,
+ * routing, page transitions, icon packs, internationalization, a mobile
+ * layout, analytics and push prompts, in lit-html, JSX or Vue. It replaces the template's hello world,
  * keeping its message type as the example on the home page. The files come
  * out as Prettier and the template's ESLint config would leave them.
  *
@@ -36,6 +43,8 @@ const COMPONENTS = {
  * @param {boolean} options.transitions
  * @param {string[]} options.icons - Keys of ICON_PACKS.
  * @param {string[]} options.languages - Keys of LANGUAGES, the default first.
+ * @param {boolean} options.analytics
+ * @param {boolean} options.push
  */
 export function addAppFeatures(targetDir, pkg, options) {
   const app = { ...options, ext: options.isTypeScript ? "ts" : "js" }
@@ -43,6 +52,7 @@ export function addAppFeatures(targetDir, pkg, options) {
   app.tabs = app.ui && app.routing && app.mobile
   app.links = app.routing && !app.tabs
   app.isVue = app.renderer === "vue"
+  app.hasPrompts = app.analytics || app.push
 
   const components = COMPONENTS[app.renderer]
   const componentExt = components.extension(app)
@@ -67,8 +77,12 @@ export function addAppFeatures(targetDir, pkg, options) {
     files[`src/i18n/index.${app.ext}`] = i18nSource(app)
     for (const language of app.languages) {
       files[`src/i18n/locales/${language}.json`] =
-        JSON.stringify(LANGUAGES[language].texts, null, INDENTATION) + EOL
+        JSON.stringify(catalogue(app, language), null, INDENTATION) + EOL
     }
+  }
+  if (app.hasPrompts) {
+    Object.assign(files, promptFiles(app))
+    files[".env.example"] = envExample(app)
   }
   if (app.isTypeScript) {
     files["types/index.d.ts"] = typesSource(app)
@@ -89,6 +103,29 @@ function addDependencies(pkg, app) {
   if (app.i18n) pkg.dependencies["@inglorious/i18n"] = "workspace:*"
   for (const key of app.icons) {
     Object.assign(pkg.dependencies, ICON_PACKS[key].packages)
+  }
+  if (app.hasPrompts) {
+    pkg.dependencies["@inglorious/firebase"] = "workspace:*"
+    pkg.dependencies["@capacitor/core"] = CAPACITOR_VERSION
+    pkg.dependencies.firebase = FIREBASE_VERSION
+  }
+  if (app.analytics) {
+    pkg.dependencies["@capacitor-firebase/analytics"] =
+      CAPACITOR_FIREBASE_VERSION
+  }
+  if (app.push) {
+    pkg.dependencies["@capacitor-firebase/messaging"] =
+      CAPACITOR_FIREBASE_VERSION
+    pkg.dependencies["@supabase/supabase-js"] = SUPABASE_VERSION
+  }
+}
+
+function catalogue(app, language) {
+  const { analytics, push } = PROMPT_TEXTS[language]
+  return {
+    ...LANGUAGES[language].texts,
+    ...(app.analytics && { analytics }),
+    ...(app.push && { push }),
   }
 }
 
@@ -126,15 +163,21 @@ function mainSource(app) {
   }
   imports.push('import "./app.css"')
   imports.push(
-    'import { mount } from "@inglorious/web"',
+    `import { ${app.hasPrompts ? "html, mount" : "mount"} } from "@inglorious/web"`,
     componentImport(app, "App", "./app"),
     'import { store } from "./store"',
   )
   if (app.i18n) imports.push('import { ready } from "./i18n"')
+  if (app.push) imports.push('import { supabase } from "./api/supabase"')
+  if (app.hasPrompts) {
+    imports.push('import { renderPrompts } from "./common/prompt"')
+  }
 
   const args = [
     "store",
-    "(api) => App.render(null, api)",
+    app.hasPrompts
+      ? "(api) => html`${App.render(null, api)} ${renderPrompts(api)}`"
+      : "(api) => App.render(null, api)",
     app.isTypeScript
       ? 'document.getElementById("root")!'
       : 'document.getElementById("root")',
@@ -148,9 +191,17 @@ ${call("mount", args, "  ", ",")}
 )`
     : call("mount", args, "", "")
 
+  const session = app.push
+    ? `
+
+supabase.auth.onAuthStateChange((_event, session) => {
+  store.notify(session ? "#pushPrompt:pushStart" : "#pushPrompt:pushStop")
+})`
+    : ""
+
   return `${importBlock(imports)}
 
-${body}
+${body}${session}
 `
 }
 
@@ -160,8 +211,35 @@ function uiComponents(app) {
   if (app.tabs) names.push("bottom-navigation")
   if (app.icons.length) names.push("icon")
   if (app.i18n) names.push("select")
+  if (app.hasPrompts) names.push("snackbar", "button", "flex")
   return names
 }
+
+const PROMPT_ABOVE_TABS = `
+body {
+  --iw-snackbar-offset-bottom: 5rem;
+}
+`
+
+const PLAIN_PROMPT = `
+.app-prompt {
+  position: fixed;
+  inset-block-end: 1rem;
+  inset-inline: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid #ddd;
+  background: #fff;
+}
+
+.app-prompt p {
+  flex: 1 1 100%;
+  margin: 0;
+}
+`
 
 function appStyles(app) {
   const layout = `body {
@@ -186,7 +264,7 @@ main {
   align-items: center;
   gap: 1rem;
 }
-`
+${app.tabs && app.hasPrompts ? PROMPT_ABOVE_TABS : ""}`
   if (app.ui) {
     return app.isVue
       ? `${layout}
@@ -196,7 +274,7 @@ main {
 `
       : layout
   }
-  return `${layout}
+  return `${layout}${app.hasPrompts ? PLAIN_PROMPT : ""}
 header {
   display: flex;
   align-items: center;
@@ -235,10 +313,18 @@ function storeSource(app) {
     imports.push('import type { AppEntity, AppState } from "../../types"')
   }
   if (app.i18n) imports.push('import { I18n } from "../i18n"')
+  if (app.analytics) {
+    imports.push('import { Analytics } from "../types/analytics"')
+  }
+  if (app.push) {
+    imports.push('import { PushPrompt } from "../types/push-prompt"')
+  }
 
   const types = ["Message", "Home"]
   if (app.routing) types.push("About", "Router")
   if (app.i18n) types.push("I18n")
+  if (app.analytics) types.push("Analytics")
+  if (app.push) types.push("PushPrompt")
   const oneLine = `  types: { ${types.join(", ")} },`
   const typesValue =
     oneLine.length <= LINE_WIDTH
@@ -264,6 +350,8 @@ function singletons(app) {
   const ids = ["home"]
   if (app.routing) ids.push("about", "router")
   if (app.i18n) ids.push("i18n")
+  if (app.analytics) ids.push("analytics")
+  if (app.push) ids.push("pushPrompt")
   return ids
 }
 
@@ -313,7 +401,7 @@ export const { I18n, t, ready } = createI18n({
 function typesSource(app) {
   const imports = [
     'import "./vite-end"',
-    'import type {\n  BaseEntity,\n  EntitiesState,\n  EntityType,\n} from "@inglorious/store"',
+    'import type { BaseEntity, EntitiesState, EntityType } from "@inglorious/store"',
     'import type { Api, TemplateResult } from "@inglorious/web"',
   ]
   const entities = ["MessageEntity", "HomeEntity"]
@@ -357,6 +445,28 @@ function typesSource(app) {
 }`,
     )
     state.unshift("  i18n: AppI18nEntity")
+  }
+  if (app.analytics) {
+    imports.push(
+      'import type { AnalyticsEntity } from "@inglorious/web/analytics"',
+    )
+    entities.push("AppAnalyticsEntity")
+    declarations.push(
+      `export interface AppAnalyticsEntity extends AnalyticsEntity {
+  type: "Analytics"
+}`,
+    )
+    state.push("  analytics: AppAnalyticsEntity")
+  }
+  if (app.push) {
+    imports.push('import type { PushPromptEntity } from "@inglorious/web/push"')
+    entities.push("AppPushPromptEntity")
+    declarations.push(
+      `export interface AppPushPromptEntity extends PushPromptEntity {
+  type: "PushPrompt"
+}`,
+    )
+    state.push("  pushPrompt: AppPushPromptEntity")
   }
 
   return `${importBlock(imports)}

@@ -9,7 +9,12 @@ import {
 } from "./constants.js"
 import { findMainPath, findViteConfigPath, injectAfterImport } from "./file.js"
 
-export function addPwaSupport(targetDir, pkg, projectName) {
+export function addPwaSupport(
+  targetDir,
+  pkg,
+  projectName,
+  { push = false } = {},
+) {
   pkg.devDependencies ??= {}
   pkg.devDependencies["vite-plugin-pwa"] = VITE_PLUGIN_PWA_VERSION
   pkg.devDependencies["@vite-pwa/assets-generator"] =
@@ -19,7 +24,7 @@ export function addPwaSupport(targetDir, pkg, projectName) {
   const publicDir = path.join(targetDir, "public")
   fs.mkdirSync(publicDir, { recursive: true })
 
-  injectPwaPluginConfig(targetDir, projectName)
+  injectPwaPluginConfig(targetDir, projectName, { push })
   writePwaRegistration(targetDir)
   injectServiceWorkerRegistration(targetDir)
 }
@@ -40,7 +45,11 @@ export function injectServiceWorkerRegistration(targetDir) {
   fs.writeFileSync(mainPath, main)
 }
 
-export function injectPwaPluginConfig(targetDir, projectName) {
+export function injectPwaPluginConfig(
+  targetDir,
+  projectName,
+  { push = false } = {},
+) {
   const viteConfigPath = findViteConfigPath(targetDir)
 
   if (!viteConfigPath) {
@@ -64,7 +73,7 @@ export function injectPwaPluginConfig(targetDir, projectName) {
       /plugins: \[(.*)\],/,
       (_, plugins) =>
         `plugins: [${EOL}${[
-          createVitePwaConfig(projectName),
+          createVitePwaConfig(projectName, { push }),
           ...splitPlugins(plugins),
         ]
           .map((plugin) => `    ${plugin},`)
@@ -112,7 +121,13 @@ ${registration}`
   return registration
 }
 
-export function createVitePwaConfig(projectName) {
+export function createVitePwaConfig(projectName, { push = false } = {}) {
+  const workbox = push
+    ? `
+      workbox: {
+        importScripts: ["sw-push.js"],
+      },`
+    : ""
   return `VitePWA({
       injectRegister: false,
       registerType: "prompt",
@@ -128,7 +143,7 @@ export function createVitePwaConfig(projectName) {
         background_color: "#ffffff",
         display: "standalone",
         start_url: "/",
-      },
+      },${workbox}
     })`
 }
 

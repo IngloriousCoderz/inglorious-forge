@@ -36,8 +36,10 @@ ${indent})${trailing}`
 export function union(name, members) {
   const line = `export type ${name} = ${members.join(" | ")}`
   if (line.length <= LINE_WIDTH) return line
-  return `export type ${name} =
-  ${members.join(" | ")}`
+  const secondLine = `  ${members.join(" | ")}`
+  if (secondLine.length <= LINE_WIDTH)
+    return `export type ${name} =\n${secondLine}`
+  return `export type ${name} =\n${members.map((member) => `  | ${member}`).join("\n")}`
 }
 
 export function indent(block, spaces) {

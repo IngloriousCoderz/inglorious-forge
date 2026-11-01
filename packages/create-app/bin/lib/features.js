@@ -162,6 +162,109 @@ export const LANGUAGES = {
   }),
 }
 
+export const PROMPT_TEXTS = {
+  en: {
+    analytics: {
+      prompt:
+        "May we measure how you use this app? It helps us make it better.",
+      accept: "Allow",
+      decline: "No thanks",
+    },
+    push: {
+      prompt: "Turn on push notifications?",
+      ask: "Notify me",
+      decline: "Not now",
+    },
+  },
+  it: {
+    analytics: {
+      prompt: "Possiamo misurare come usi questa app? Ci aiuta a migliorarla.",
+      accept: "Consenti",
+      decline: "No, grazie",
+    },
+    push: {
+      prompt: "Attivare le notifiche push?",
+      ask: "Avvisami",
+      decline: "Non ora",
+    },
+  },
+  fr: {
+    analytics: {
+      prompt:
+        "Pouvons-nous mesurer comment vous utilisez cette app\u00a0? Cela nous aide à l'améliorer.",
+      accept: "Autoriser",
+      decline: "Non merci",
+    },
+    push: {
+      prompt: "Activer les notifications push\u00a0?",
+      ask: "Me prévenir",
+      decline: "Plus tard",
+    },
+  },
+  de: {
+    analytics: {
+      prompt:
+        "Dürfen wir messen, wie du diese App nutzt? Das hilft uns, sie zu verbessern.",
+      accept: "Erlauben",
+      decline: "Nein, danke",
+    },
+    push: {
+      prompt: "Push-Benachrichtigungen aktivieren?",
+      ask: "Benachrichtigen",
+      decline: "Nicht jetzt",
+    },
+  },
+  es: {
+    analytics: {
+      prompt: "¿Podemos medir cómo usas esta app? Nos ayuda a mejorarla.",
+      accept: "Permitir",
+      decline: "No, gracias",
+    },
+    push: {
+      prompt: "¿Activar las notificaciones push?",
+      ask: "Avisarme",
+      decline: "Ahora no",
+    },
+  },
+  pt: {
+    analytics: {
+      prompt: "Podemos medir como usas esta app? Ajuda-nos a melhorá-la.",
+      accept: "Permitir",
+      decline: "Não, obrigado",
+    },
+    push: {
+      prompt: "Ativar as notificações push?",
+      ask: "Avisar-me",
+      decline: "Agora não",
+    },
+  },
+  ja: {
+    analytics: {
+      prompt: "このアプリの使われ方を計測してもよいですか？改善に役立てます。",
+      accept: "許可する",
+      decline: "許可しない",
+    },
+    push: {
+      prompt: "プッシュ通知をオンにしますか？",
+      ask: "通知する",
+      decline: "今はしない",
+    },
+  },
+  ar: {
+    analytics: {
+      prompt:
+        "هل تسمح لنا بقياس طريقة استخدامك لهذا التطبيق؟ يساعدنا ذلك على تحسينه.",
+      accept: "سماح",
+      decline: "لا، شكرًا",
+    },
+    push: {
+      prompt: "هل تريد تفعيل الإشعارات الفورية؟",
+      ask: "أعلمني",
+      decline: "ليس الآن",
+    },
+  },
+}
+
 function from(name, source) {
   return { name, from: source }
 }

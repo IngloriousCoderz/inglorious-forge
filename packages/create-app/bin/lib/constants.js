@@ -1,4 +1,7 @@
 export const CAPACITOR_VERSION = "^8.5.3"
+export const CAPACITOR_FIREBASE_VERSION = "^8.5.2"
+export const FIREBASE_VERSION = "^12.19.0"
+export const SUPABASE_VERSION = "^2.118.0"
 export const VITE_PLUGIN_PWA_VERSION = "^2.0.0"
 export const VITE_PWA_ASSETS_GENERATOR_VERSION = "^2.0.0"
 export const TYPESCRIPT_VERSION = "npm:@typescript/typescript6@^6.0.2"

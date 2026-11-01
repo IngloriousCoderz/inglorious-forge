@@ -18,6 +18,7 @@ import {
 } from "./lib/constants.js"
 import { SYNTAXES, TEMPLATES } from "./lib/features.js"
 import { copyDir } from "./lib/file.js"
+import { addFirebaseSupport } from "./lib/firebase.js"
 import { addMobileSupport } from "./lib/mobile.js"
 import { addPwaSupport } from "./lib/pwa.js"
 import { askAppFeatures } from "./lib/questions.js"
@@ -93,6 +94,8 @@ async function main() {
     languages: [],
     mobile: false,
     pwa: false,
+    analytics: false,
+    push: false,
   }
 
   if (VITE_APP_TEMPLATES.has(baseTemplate)) {
@@ -102,9 +105,14 @@ async function main() {
       console.log("Operation canceled.")
       return
     }
-  } else if (cliOptions.pwa || cliOptions.mobile) {
+  } else if (
+    cliOptions.pwa ||
+    cliOptions.mobile ||
+    cliOptions.analytics ||
+    cliOptions.push
+  ) {
     console.warn(
-      "PWA and mobile options are only available for JavaScript and TypeScript Vite app templates.",
+      "PWA, mobile, analytics and push options are only available for JavaScript and TypeScript Vite app templates.",
     )
   }
 
@@ -167,7 +175,9 @@ async function main() {
       features.ui ||
       features.routing ||
       Boolean(features.icons.length) ||
-      Boolean(features.languages.length)
+      Boolean(features.languages.length) ||
+      features.analytics ||
+      features.push
 
     if (hasAppFeatures) {
       spinner.text = "Adding app features..."
@@ -181,12 +191,17 @@ async function main() {
 
     if (features.pwa) {
       spinner.text = "Adding PWA support..."
-      addPwaSupport(targetDir, pkg, projectName)
+      addPwaSupport(targetDir, pkg, projectName, { push: features.push })
     }
 
     if (features.mobile) {
       spinner.text = "Adding Capacitor support..."
       addMobileSupport(targetDir, pkg, projectName)
+    }
+
+    if (features.analytics || features.push) {
+      spinner.text = "Adding Firebase support..."
+      addFirebaseSupport(targetDir, pkg, { ...features, templatesRoot })
     }
 
     for (const depType of ["dependencies", "devDependencies"]) {

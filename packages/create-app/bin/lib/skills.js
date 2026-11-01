@@ -5,9 +5,16 @@ const SKILLS_REPOSITORY = "IngloriousCoderz/forge-skills"
 /**
  * The agent skills for the packages a new project uses.
  *
- * @param {{ baseTemplate: string, renderer: string, ui: boolean, languages: string[] }} project
+ * @param {{ baseTemplate: string, renderer: string, ui: boolean, languages: string[], analytics: boolean, push: boolean }} project
  */
-export function skillsFor({ baseTemplate, renderer, ui, languages }) {
+export function skillsFor({
+  baseTemplate,
+  renderer,
+  ui,
+  languages,
+  analytics,
+  push,
+}) {
   const skills = [
     "forge",
     "forge-best-practices",
@@ -20,6 +27,8 @@ export function skillsFor({ baseTemplate, renderer, ui, languages }) {
   if (renderer === "vue") skills.push("vite-plugin-vue")
   if (ui) skills.push("ui", "ui-best-practices")
   if (languages.length) skills.push("i18n")
+  if (analytics || push) skills.push("firebase")
+  if (push) skills.push("supabase")
   return skills
 }
 
