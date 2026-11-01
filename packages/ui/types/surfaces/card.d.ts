@@ -1,5 +1,7 @@
 import type { TemplateResult } from "@inglorious/web"
 
+import type { Renderable } from "../shared/renderable"
+
 export interface CardProps {
   id?: string
   type?: string
@@ -21,7 +23,7 @@ export interface CardProps {
   subtitle?: TemplateResult | string | number
   header?: TemplateResult | string | number
   body?: TemplateResult | string | number
-  children?: TemplateResult | string | number
+  children?: Renderable
   footer?: TemplateResult | string | number
   headerPadding?: "none" | "sm" | "md" | "lg" | "xl"
   bodyPadding?: "none" | "sm" | "md" | "lg" | "xl"
@@ -30,7 +32,7 @@ export interface CardProps {
   isClickable?: boolean
   isFullWidth?: boolean
   className?: string
-  onClick?: () => void
+  onClick?: (event: MouseEvent) => void
   [key: string]: unknown
 }
 

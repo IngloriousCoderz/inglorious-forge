@@ -1,5 +1,15 @@
 # @inglorious/ui
 
+## 9.8.1
+
+### Patch Changes
+
+- Type declarations that now match what the code does. In UI: `Flex` takes `className` and any other property it sets on the element, and `element` is any HTML tag; `children` everywhere they are rendered as is is a new `Renderable` (arrays, `nothing` and `when()`'s results included); `icon` and `iconAfter` on `Input`, `IconButton`, `ButtonGroup` and `Chip` take a template; `IconButton` takes everything `Button` does; `onClick` receives the event; Combobox declares `filterOptions`, `formatOption`, `getOptionLabel`, `getOptionValue` and `isOptionSelected`. In Web: Form's payloads lose `entityId`, which was never read, `reset` takes only the entity, and `withLiveReload` now fits a type array in a typed store.
+- Renders nothing with lit's `nothing` rather than an empty string. `api.render` of a missing entity, `withErrorBoundary`'s default fallback, a `withMotion` or `withErrorBoundary` type with no `render`, and the charts' tooltip and hover targets return `nothing`. Attributes with no value are now left off instead of set empty: `src` and `accept`, a chart path's `d`, a virtual list's `class`, an icon's and an image cropper's `style`, and an OpenUI card's `aria-label`. `alt` stays empty on purpose: to a screen reader, that means a decorative image.
+- Updated dependencies
+- Updated dependencies
+  - @inglorious/web@6.13.1
+
 ## 9.8.0
 
 ### Minor Changes

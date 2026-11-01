@@ -1,3 +1,4 @@
+import { nothing } from "lit-html"
 import { afterEach, describe, expect, it, vi } from "vitest"
 
 import { withErrorBoundary } from "./index.js"
@@ -57,16 +58,16 @@ describe("withErrorBoundary", () => {
 
     const behavior = withErrorBoundary()(type)
 
-    expect(behavior.render({ id: "e3" }, {})).toBe("")
+    expect(behavior.render({ id: "e3" }, {})).toBe(nothing)
     expect(consoleError).toHaveBeenCalledWith(
       "[withErrorBoundary] render failed:",
       error,
     )
   })
 
-  it("returns an empty string when the base type has no render", () => {
+  it("renders nothing when the base type has no render", () => {
     const behavior = withErrorBoundary(() => "fallback")({})
 
-    expect(behavior.render({ id: "e4" }, {})).toBe("")
+    expect(behavior.render({ id: "e4" }, {})).toBe(nothing)
   })
 })

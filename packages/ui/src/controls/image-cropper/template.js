@@ -4,7 +4,7 @@
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
-import { html } from "@inglorious/web"
+import { html, nothing } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
 import { when } from "@inglorious/web/directives/when"
 
@@ -66,7 +66,7 @@ export const ImageCropper = {
     }
     const style = isLoaded
       ? `--iw-image-cropper-aspect: ${props.naturalWidth / props.naturalHeight};`
-      : ""
+      : nothing
 
     return html`<div
       class=${classMap(classes)}
@@ -129,7 +129,7 @@ export const ImageCropper = {
   renderImage(props) {
     return html`<img
       class="iw-image-cropper-image"
-      src=${props.src ?? ""}
+      src=${props.src ?? nothing}
       alt=${props.alt ?? ""}
       draggable="false"
       @load=${handleLoad(props)}

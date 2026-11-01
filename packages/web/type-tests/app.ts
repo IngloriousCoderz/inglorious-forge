@@ -6,6 +6,7 @@ import {
 } from "@inglorious/store"
 
 import { type Api, html, type TemplateResult } from "../types"
+import { withLiveReload } from "../types/decorators/with-live-reload"
 import { Form, type FormEntity } from "../types/form"
 import { PwaUpdate, type PwaUpdateEntity, watchPwaUpdate } from "../types/pwa"
 import { Router, type RouterEntity } from "../types/router"
@@ -103,3 +104,31 @@ export const typo: EntityType<CounterEntity, AppApi> = {
     return api.render(entity.valeu)
   },
 }
+
+declare const counterToReset: LoginEntity
+Form.reset(counterToReset)
+Form.fieldChange(counterToReset, { path: "email", value: "a@b.c" })
+// @ts-expect-error: a change names its field
+Form.fieldChange(counterToReset, { value: "a@b.c" })
+
+const source = { subscribe: () => () => {} }
+export const liveStore = createStore<AppEntity, AppState>({
+  types: {
+    Counter: [
+      Counter,
+      withLiveReload<CounterEntity>({
+        source,
+        tables: ["counters"],
+        payload: (entity) => entity.value,
+      }),
+    ],
+  },
+})
+withLiveReload<CounterEntity>({
+  source,
+  tables: ["counters"],
+  // @ts-expect-error: the entity is typed
+  payload: (entity) => entity.nope,
+})
+// @ts-expect-error: tables are required
+withLiveReload({ source })

@@ -3,7 +3,7 @@
 /** @typedef {import('@inglorious/store').EntityType} EntityType */
 /** @typedef {import('../types/mount').Api} Api */
 
-import { html, render } from "lit-html"
+import { html, nothing, render } from "lit-html"
 
 import { isNative } from "./mobile/index.js"
 import { createAccessibleNavigation } from "./router/accessible-navigation.js"
@@ -123,7 +123,7 @@ function createRender(api) {
     const entity = api.getEntity(id)
 
     if (!entity) {
-      return ""
+      return nothing
     }
 
     const entityType = api.getType(entity.type)

@@ -1,27 +1,13 @@
 import type { TemplateResult } from "@inglorious/web"
 
-export interface IconButtonProps {
-  id?: string
-  type?: string
-  icon?: string
-  label?: string
-  iconAfter?: string
+import type { ButtonProps } from "./button"
+
+/** A Button, with its content given as icons and a label. */
+export interface IconButtonProps extends ButtonProps {
+  icon?: TemplateResult | string
+  label?: TemplateResult | string | number
+  iconAfter?: TemplateResult | string
   direction?: "row" | "column"
-  ariaLabel?: string
-  variant?: "default" | "outline" | "ghost"
-  color?:
-    | "default"
-    | "primary"
-    | "secondary"
-    | "success"
-    | "warning"
-    | "error"
-    | "info"
-  size?: "sm" | "md" | "lg"
-  isDisabled?: boolean
-  isFullWidth?: boolean
-  buttonType?: "button" | "submit" | "reset" | "menu"
-  onClick?: () => void
 }
 
 export type IconButtonType = {

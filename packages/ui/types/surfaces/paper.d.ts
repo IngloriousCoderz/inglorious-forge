@@ -1,5 +1,7 @@
 import type { TemplateResult } from "@inglorious/web"
 
+import type { Renderable } from "../shared/renderable"
+
 export interface PaperProps {
   id?: string
   type?: string
@@ -12,7 +14,7 @@ export interface PaperProps {
     | "nav"
     | "aside"
     | "article"
-  children?: TemplateResult | string | number
+  children?: Renderable
   variant?: "elevated" | "outlined"
   elevation?: number
   padding?: "none" | "sm" | "md" | "lg"

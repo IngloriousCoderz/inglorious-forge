@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 
-import { svg } from "@inglorious/web"
+import { nothing, svg } from "@inglorious/web"
 import { unsafeSVG } from "@inglorious/web/directives/unsafe-svg"
 
 export function escapeXml(value) {
@@ -11,7 +11,7 @@ export function escapeXml(value) {
 }
 
 export function renderHoverTargets(primitive, frame) {
-  if (!canShowTooltip(primitive, frame)) return ""
+  if (!canShowTooltip(primitive, frame)) return nothing
 
   const dataKey = primitive.props?.dataKey
   const points = createSeriesPoints(primitive, frame).filter((point) =>

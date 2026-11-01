@@ -2,6 +2,8 @@
  * @typedef {import("../../../types/mount").Api} Api
  */
 
+import { nothing } from "lit-html"
+
 /**
  * Wraps a type's `render` in an error boundary. If the base render throws
  * synchronously, the caught error is handed to `fallback` and its template is
@@ -34,7 +36,7 @@ export function withErrorBoundary(fallback = defaultFallback) {
   return (type) => ({
     render(entity, api) {
       try {
-        return type.render?.(entity, api) ?? ""
+        return type.render?.(entity, api) ?? nothing
       } catch (error) {
         return fallback(error, entity, api)
       }
@@ -44,5 +46,5 @@ export function withErrorBoundary(fallback = defaultFallback) {
 
 function defaultFallback(error) {
   console.error("[withErrorBoundary] render failed:", error)
-  return ""
+  return nothing
 }

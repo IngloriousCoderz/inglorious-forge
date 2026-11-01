@@ -1,9 +1,11 @@
 import type { TemplateResult } from "@inglorious/web"
 
+import type { Renderable } from "../shared/renderable"
+
 export interface ButtonProps {
   id?: string
   type?: string
-  children?: TemplateResult | string | number
+  children?: Renderable
   variant?: "default" | "outline" | "ghost"
   color?:
     | "default"

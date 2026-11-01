@@ -4,7 +4,7 @@
  * @typedef {import('@inglorious/web').Api} Api
  */
 
-import { html } from "@inglorious/web"
+import { html, nothing } from "@inglorious/web"
 import { ref } from "@inglorious/web/directives/ref"
 import { repeat } from "@inglorious/web/directives/repeat"
 import { styleMap } from "@inglorious/web/directives/style-map"
@@ -47,7 +47,7 @@ export function render(entity, api) {
 
   return html`
     <div
-      class=${className ?? ""}
+      class=${className ?? nothing}
       style=${styleMap({ height: `${viewportHeight}px`, overflow: "auto" })}
       @scroll=${(e) => api.notify(`#${entity.id}:scroll`, e.currentTarget)}
       ${ref((el) => {

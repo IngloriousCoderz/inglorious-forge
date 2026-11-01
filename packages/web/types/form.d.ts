@@ -56,8 +56,6 @@ export interface FormEntity<T extends FormValues = FormValues> {
  * The payload for the `formFieldChange` event.
  */
 export interface FormFieldChangePayload<T extends FormValues = FormValues> {
-  /** The ID of the target form entity. */
-  entityId: string | number
   /** The dot-notation path to the field (e.g., 'user.name'). */
   path: string
   /** The new value of the field. */
@@ -70,8 +68,6 @@ export interface FormFieldChangePayload<T extends FormValues = FormValues> {
  * The payload for the `formFieldBlur` event.
  */
 export interface FormFieldBlurPayload {
-  /** The ID of the target form entity. */
-  entityId: string | number
   /** The dot-notation path to the field (e.g., 'user.name'). */
   path: string
   /** An optional function to validate the field's value on blur. */
@@ -82,8 +78,6 @@ export interface FormFieldBlurPayload {
  * The payload for the `fieldArrayAppend` event.
  */
 export interface FieldArrayAppendPayload {
-  /** The ID of the target form entity. */
-  entityId: string | number
   /** The dot-notation path to the array field. */
   path: string
   /** The value to append to the array. */
@@ -94,8 +88,6 @@ export interface FieldArrayAppendPayload {
  * The payload for the `fieldArrayRemove` event.
  */
 export interface FieldArrayRemovePayload {
-  /** The ID of the target form entity. */
-  entityId: string | number
   /** The dot-notation path to the array field. */
   path: string
   /** The index of the item to remove. */
@@ -106,8 +98,6 @@ export interface FieldArrayRemovePayload {
  * The payload for the `fieldArrayInsert` event.
  */
 export interface FieldArrayInsertPayload {
-  /** The ID of the target form entity. */
-  entityId: string | number
   /** The dot-notation path to the array field. */
   path: string
   /** The index at which to insert the new item. */
@@ -120,8 +110,6 @@ export interface FieldArrayInsertPayload {
  * The payload for the `fieldArrayMove` event.
  */
 export interface FieldArrayMovePayload {
-  /** The ID of the target form entity. */
-  entityId: string | number
   /** The dot-notation path to the array field. */
   path: string
   /** The source index of the item to move. */
@@ -131,19 +119,9 @@ export interface FieldArrayMovePayload {
 }
 
 /**
- * The payload for the `formReset` event.
- */
-export interface FormResetPayload {
-  /** The ID of the target form entity. */
-  entityId: string | number
-}
-
-/**
  * The payload for the `formValidate` event (synchronous validation).
  */
 export interface FormValidatePayload<T extends FormValues = FormValues> {
-  /** The ID of the target form entity. */
-  entityId: string | number
   /**
    * A function that validates the entire form's values and returns
    * a complete error object.
@@ -155,8 +133,6 @@ export interface FormValidatePayload<T extends FormValues = FormValues> {
  * The payload for the `formValidateAsync` event (asynchronous validation).
  */
 export interface FormValidateAsyncPayload<T extends FormValues = FormValues> {
-  /** The ID of the target form entity. */
-  entityId: string | number
   /**
    * An async function that validates the entire form's values and returns
    * a complete error object.
@@ -170,8 +146,6 @@ export interface FormValidateAsyncPayload<T extends FormValues = FormValues> {
 export interface FormValidationCompletePayload<
   T extends FormValues = FormValues,
 > {
-  /** The ID of the target form entity. */
-  entityId: string | number
   /** The validation errors returned from async validation. */
   errors: FormErrors<T>
   /** Whether the form is valid (no errors). */
@@ -182,8 +156,6 @@ export interface FormValidationCompletePayload<
  * The payload for the `formValidationError` event.
  */
 export interface FormValidationErrorPayload {
-  /** The ID of the target form entity. */
-  entityId: string | number
   /** The error message from the failed validation. */
   error: string
 }
@@ -261,12 +233,8 @@ export type FormType = {
   /**
    * Resets the form to its initial state.
    * @param entity The form entity.
-   * @param payload The reset event payload.
    */
-  reset<T extends FormValues>(
-    entity: FormEntity<T>,
-    payload: FormResetPayload,
-  ): void
+  reset<T extends FormValues>(entity: FormEntity<T>): void
 
   /**
    * Synchronously validates the entire form.

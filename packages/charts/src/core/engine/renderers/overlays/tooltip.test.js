@@ -1,3 +1,4 @@
+import { nothing } from "@inglorious/web"
 import { describe, expect, it, vi } from "vitest"
 
 import { createFrameFromEntity } from "../../../standardizer/index.js"
@@ -47,7 +48,7 @@ describe("tooltip", () => {
   })
 
   it("draws nothing until a datum is hovered", () => {
-    expect(renderTooltip(createFrame({ hasTooltip: true }))).toBe("")
+    expect(renderTooltip(createFrame({ hasTooltip: true }))).toBe(nothing)
   })
 
   it("draws nothing for a datum that is gone", () => {
@@ -56,7 +57,7 @@ describe("tooltip", () => {
       tooltip: { index: 5, dataKey: "value" },
     })
 
-    expect(renderTooltip(frame)).toBe("")
+    expect(renderTooltip(frame)).toBe(nothing)
   })
 
   it("stays inside the chart near its right edge", () => {

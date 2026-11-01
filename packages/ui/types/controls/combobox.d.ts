@@ -70,3 +70,16 @@ export type ComboboxType = {
 }
 
 export declare const Combobox: ComboboxType
+
+export declare function getOptionValue(option: ComboboxOption): string | number
+export declare function getOptionLabel(option: ComboboxOption): string
+export declare function formatOption(option: ComboboxOption): ComboboxOption
+export declare function isOptionSelected(
+  option: ComboboxOption,
+  selectedValue: ComboboxProps["selectedValue"],
+  isMulti?: boolean,
+): boolean
+export declare function filterOptions(
+  options: ComboboxOption[],
+  searchTerm: string,
+): ComboboxOption[]

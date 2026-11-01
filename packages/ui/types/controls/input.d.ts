@@ -29,8 +29,8 @@ export interface InputProps {
   isReadOnly?: boolean
   isRequired?: boolean
   isFullWidth?: boolean
-  icon?: string
-  iconAfter?: string
+  icon?: TemplateResult | string
+  iconAfter?: TemplateResult | string
   onChange?: (value: string) => void
   onBlur?: () => void
   onFocus?: () => void

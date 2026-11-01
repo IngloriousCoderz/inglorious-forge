@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 
-import { svg } from "@inglorious/web"
+import { nothing, svg } from "@inglorious/web"
 import { line as createLinePath } from "d3-shape"
 
 import { DEFAULT_BRUSH_HEIGHT } from "../../../defaults.js"
@@ -32,7 +32,7 @@ export function renderBrush(primitive, frame) {
         style="fill: ${themeColor("surface", "#f8fafc")}; stroke: ${themeColor("border", "#cbd5e1")}"
       />
       <path
-        d=${layout.previewPath(layout.previewPoints) || ""}
+        d=${layout.previewPath(layout.previewPoints) || nothing}
         fill="none"
         style="stroke: ${themeColor("text-muted", "#94a3b8")}"
         stroke-width="1.5"

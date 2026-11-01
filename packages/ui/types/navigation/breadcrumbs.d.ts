@@ -4,7 +4,7 @@ export interface BreadcrumbItem {
   id?: string | number
   label: TemplateResult | string | number
   href?: string
-  onClick?: () => void
+  onClick?: (event: MouseEvent) => void
   [key: string]: unknown
 }
 

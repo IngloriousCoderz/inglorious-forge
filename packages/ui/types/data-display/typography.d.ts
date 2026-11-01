@@ -1,11 +1,13 @@
 import type { TemplateResult } from "@inglorious/web"
 
+import type { Renderable } from "../shared/renderable"
+
 export type TypographyVariant =
   "body" | "h1" | "h2" | "h3" | "caption" | "overline"
 
 export interface TypographyProps {
   id?: string
-  children?: TemplateResult | string | number
+  children?: Renderable
   variant?: TypographyVariant
   align?: "left" | "center" | "right"
   weight?: string | number

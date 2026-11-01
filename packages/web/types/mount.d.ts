@@ -1,4 +1,4 @@
-import type { TemplateResult } from "lit-html"
+import type { nothing, TemplateResult } from "lit-html"
 import type {
   AnyTypeDefinition,
   BaseEntity,
@@ -18,15 +18,15 @@ declare module "@inglorious/store" {
      *   of an unmatched path, renders nothing.
      * @param typeName Optional type name to lazy-register.
      * @param type Optional type definition to register when typeName is provided.
-     * @returns The rendered template or an empty string if not found.
+     * @returns The rendered template, or `nothing` if not found.
      */
     render: {
-      (id: string | undefined): TemplateResult | string
+      (id: string | undefined): TemplateResult | string | typeof nothing
       (
         id: string,
         typeName: string,
         type: AnyTypeDefinition,
-      ): TemplateResult | string
+      ): TemplateResult | string | typeof nothing
     }
   }
 }

@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 
-import { svg } from "@inglorious/web"
+import { nothing, svg } from "@inglorious/web"
 
 import { CHAR_WIDTH } from "../../../defaults.js"
 import { themeColor } from "../../theme.js"
@@ -26,7 +26,7 @@ const MIN_WIDTH = 80
  */
 export function renderTooltip(frame) {
   const tooltip = frame.entityId ? resolveTooltip(frame) : null
-  if (!tooltip) return ""
+  if (!tooltip) return nothing
 
   const { anchor, color, text } = tooltip
   const { width: chartWidth, height: chartHeight } = frame.dimensions

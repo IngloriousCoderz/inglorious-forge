@@ -1,10 +1,12 @@
 import type { TemplateResult } from "@inglorious/web"
 
+import type { Renderable } from "../shared/renderable"
+
 export interface ChipProps {
   id?: string
-  children?: TemplateResult | string | number
+  children?: Renderable
   /** Shown before the label, such as an `Icon.render(...)`. Decorative. */
-  icon?: TemplateResult
+  icon?: TemplateResult | string
   isRemovable?: boolean
   color?:
     | "default"
@@ -23,7 +25,7 @@ export interface ChipProps {
   isSelected?: boolean
   /** Only for a chip with `isSelected`. */
   isDisabled?: boolean
-  onClick?: () => void
+  onClick?: (event: MouseEvent) => void
   [key: string]: unknown
 }
 

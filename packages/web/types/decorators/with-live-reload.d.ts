@@ -20,7 +20,7 @@ export interface LiveReloadConfig<TEntity = any> {
   delay?: number
 }
 
-export interface LiveReloadBehavior {
+export type LiveReloadBehavior = {
   create: (entity: any, payload?: any, api?: Api) => void
   destroy: (entity: any, payload?: any, api?: Api) => void
 }

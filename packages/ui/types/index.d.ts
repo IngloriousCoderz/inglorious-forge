@@ -80,6 +80,7 @@ export type { TextareaProps, TextareaType } from "./controls/textarea"
 export type { FileUploadProps, FileUploadType } from "./controls/file-upload"
 export type { ContainerProps, ContainerType } from "./layout/container"
 export type { FlexProps, FlexType } from "./layout/flex"
+export type { Renderable } from "./shared/renderable"
 export type { GridProps, GridType } from "./layout/grid"
 export type {
   BottomNavigationProps,

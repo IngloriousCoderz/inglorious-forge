@@ -79,7 +79,7 @@ export function render(props) {
           aria-describedby=${messageId || nothing}
           aria-invalid=${error ? "true" : "false"}
           type="file"
-          accept=${accept ?? ""}
+          accept=${accept ?? nothing}
           ?multiple=${isMultiple}
           ?disabled=${isDisabled}
           ?required=${isRequired}

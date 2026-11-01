@@ -1,5 +1,7 @@
 import type { TemplateResult } from "@inglorious/web"
 
+import type { Renderable } from "../shared/renderable"
+
 export interface AppBarProps {
   id?: string
   type?: string
@@ -7,7 +9,7 @@ export interface AppBarProps {
   subtitle?: TemplateResult | string | number
   leading?: TemplateResult | string | number
   trailing?: TemplateResult | string | number
-  children?: TemplateResult | string | number
+  children?: Renderable
   isDense?: boolean
   variant?: "regular" | "dense" | "prominent"
   color?: "default" | "primary" | "secondary" | "transparent" | "inherit"

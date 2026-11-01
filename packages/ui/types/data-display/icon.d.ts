@@ -1,5 +1,7 @@
 import type { TemplateResult } from "@inglorious/web"
 
+import type { Renderable } from "../shared/renderable"
+
 /**
  * An icon in the Iconify format, as every set on `@iconify-icons/*` exports
  * it: `import arrowBack from "@iconify-icons/material-symbols/arrow-back"`.
@@ -19,7 +21,7 @@ export interface IconProps {
   /** The icon to draw, as inline SVG at the size's font size. */
   icon?: IconData
   /** Shown when there is no `icon`: an emoji, a glyph, any markup. */
-  children?: TemplateResult | string | number
+  children?: Renderable
   size?: "sm" | "md" | "lg"
   color?: string
   /**
@@ -30,7 +32,7 @@ export interface IconProps {
   /** Names an icon that means something on its own. Without it the icon is decorative. */
   label?: string
   className?: string
-  onClick?: () => void
+  onClick?: (event: MouseEvent) => void
   [key: string]: unknown
 }
 

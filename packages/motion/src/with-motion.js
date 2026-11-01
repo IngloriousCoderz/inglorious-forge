@@ -1,4 +1,4 @@
-import { html } from "@inglorious/web"
+import { html, nothing } from "@inglorious/web"
 import { ref } from "@inglorious/web/directives/ref"
 
 import { DEFAULT_BUFFER_MS } from "./constants.js"
@@ -114,7 +114,7 @@ export function withMotion({
       render(entity, api) {
         const controller = runtime.ensureController(entity.id)
         const variant = entity.motionVariant || initial
-        const content = type.render?.(entity, api) ?? ""
+        const content = type.render?.(entity, api) ?? nothing
         runtime.captureLayoutBeforeRender(controller)
         runtime.ensureControllerMeta(controller, entity)
         controller.nextVariant = variant

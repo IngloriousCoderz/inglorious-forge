@@ -1,6 +1,6 @@
 import { Carousel as UiCarousel } from "@inglorious/ui/carousel"
 import { Grid } from "@inglorious/ui/grid"
-import { html } from "@inglorious/web"
+import { html, nothing } from "@inglorious/web"
 import { action, ACTION_STEPS } from "@openuidev/lang-core"
 import { z } from "zod"
 
@@ -33,7 +33,7 @@ export const blockProps = (item, layouts = ["grid", "carousel"]) =>
 export function renderPhotoCard(src, alt, content) {
   return html`<div
     role=${alt ? "img" : "presentation"}
-    aria-label=${alt ?? ""}
+    aria-label=${alt ?? nothing}
     style="display: flex; min-block-size: 12rem; padding: var(--iw-space-3); border-radius: var(--iw-radius-md); background: var(--iw-color-bg-secondary) center / cover no-repeat; background-image: ${src ? `url("${encodeURI(src)}")` : "none"};"
   >
     <div style="display: flex; flex: 1;">${content}</div>

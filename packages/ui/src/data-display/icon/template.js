@@ -4,7 +4,7 @@
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
-import { html } from "@inglorious/web"
+import { html, nothing } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
 import { ref } from "@inglorious/web/directives/ref"
 import { unsafeSVG } from "@inglorious/web/directives/unsafe-svg"
@@ -53,7 +53,7 @@ export function render({
       "iw-icon-rtl": direction === "rtl",
       ...extraClasses,
     })}
-    style=${color !== "current" ? `color: ${color};` : ""}
+    style=${color !== "current" ? `color: ${color};` : nothing}
     @click=${onClick}
     ${ref((el) =>
       applyElementProps(el, {

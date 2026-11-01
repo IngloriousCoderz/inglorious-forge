@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 
-import { svg } from "@inglorious/web"
+import { nothing, svg } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 import {
   area as createAreaPath,
@@ -47,7 +47,7 @@ export function renderLineSeries(primitive, frame) {
   return svg`
     <g class="iw-chart-line">
       <path
-        d=${linePath(series) || ""}
+        d=${linePath(series) || nothing}
         fill="none"
         stroke=${stroke}
         stroke-width=${primitive.props?.strokeWidth || 3}
@@ -81,9 +81,9 @@ export function renderAreaSeries(primitive, frame) {
 
   return svg`
     <g class="iw-chart-area">
-      <path d=${areaPath(series) || ""} fill=${fill} fill-opacity=${fillOpacity} />
+      <path d=${areaPath(series) || nothing} fill=${fill} fill-opacity=${fillOpacity} />
       <path
-        d=${linePath(series) || ""}
+        d=${linePath(series) || nothing}
         fill="none"
         stroke=${stroke}
         stroke-width=${primitive.props?.strokeWidth || 3}

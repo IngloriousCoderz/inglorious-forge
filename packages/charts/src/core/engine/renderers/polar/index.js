@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 
-import { svg } from "@inglorious/web"
+import { nothing, svg } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 import { arc, pie as createPieLayout } from "d3-shape"
 
@@ -60,7 +60,7 @@ export function renderPieSeries(primitive, frame) {
         return svg`
           <g>
             <path
-              d=${createArc(slice.arc) || ""}
+              d=${createArc(slice.arc) || nothing}
               fill=${fill}
               pointer-events="all"
               style=${

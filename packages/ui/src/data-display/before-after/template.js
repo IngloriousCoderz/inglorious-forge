@@ -4,7 +4,7 @@
  */
 
 import { clamp } from "@inglorious/utils/math/number.js"
-import { html } from "@inglorious/web"
+import { html, nothing } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
 
 import {
@@ -79,7 +79,7 @@ export const BeforeAfter = {
     return html`<div class="iw-before-after-item iw-before-after-before">
       <img
         class="iw-before-after-image"
-        src=${props.before?.src ?? ""}
+        src=${props.before?.src ?? nothing}
         alt=${props.before?.alt ?? ""}
         draggable="false"
       />
@@ -95,7 +95,7 @@ export const BeforeAfter = {
     return html`<div class="iw-before-after-item iw-before-after-after">
       <img
         class="iw-before-after-image"
-        src=${props.after?.src ?? ""}
+        src=${props.after?.src ?? nothing}
         alt=${props.after?.alt ?? ""}
         draggable="false"
       />

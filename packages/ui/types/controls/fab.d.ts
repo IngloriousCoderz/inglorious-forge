@@ -16,7 +16,7 @@ export interface FabProps {
   type?: "button" | "submit" | "reset" | "menu"
   isExtended?: boolean
   ariaLabel?: string
-  onClick?: () => void
+  onClick?: (event: MouseEvent) => void
   [key: string]: unknown
 }
 

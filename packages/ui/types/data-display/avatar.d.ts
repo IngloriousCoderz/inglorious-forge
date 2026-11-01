@@ -19,7 +19,7 @@ export interface AvatarProps {
   backgroundColor?: string
   textColor?: string
   children?: TemplateResult | string | number
-  onClick?: () => void
+  onClick?: (event: MouseEvent) => void
   [key: string]: unknown
 }
 

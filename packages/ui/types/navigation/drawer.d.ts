@@ -1,5 +1,7 @@
 import type { TemplateResult } from "@inglorious/web"
 
+import type { Renderable } from "../shared/renderable"
+
 export interface DrawerProps {
   id?: string
   type?: string
@@ -13,7 +15,7 @@ export interface DrawerProps {
   isHidden?: boolean
   isCollapsed?: boolean
   title?: TemplateResult | string | number
-  children?: TemplateResult | string | number
+  children?: Renderable
   hasBackdrop?: boolean
   className?: string
   /** The close button's accessible name, for the app's language. Defaults to `"Close"`. */

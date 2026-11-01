@@ -1,12 +1,14 @@
 import type { TemplateResult } from "@inglorious/web"
 
+import type { Renderable } from "../shared/renderable"
+
 export interface BackdropProps {
   id?: string
   type?: string
   isOpen?: boolean
   className?: string
-  children?: TemplateResult | string | number
-  onClick?: () => void
+  children?: Renderable
+  onClick?: (event: MouseEvent) => void
   [key: string]: unknown
 }
 

@@ -16,7 +16,7 @@ import { applyElementProps } from "../../shared/apply-element-props.js"
  * With `onFileSelect`, the button also opens a file picker on click.
  * @example
  * // Stateless usage
- * button.render({ children: 'Click me', variant: 'primary' })
+ * button.render({ children: 'Click me', color: 'primary' })
  *
  * // File picker
  * button.render({ children: 'Upload', accept: 'image/*', onFileSelect })
@@ -89,7 +89,7 @@ export function render(props) {
       () =>
         html`<input
           type="file"
-          accept=${accept ?? ""}
+          accept=${accept ?? nothing}
           ?multiple=${isMultiple}
           ?disabled=${isDisabled}
           hidden

@@ -6,7 +6,15 @@ import {
 } from "@inglorious/store"
 import type { Api } from "@inglorious/web"
 
-import { Button, Chip, type DataGridProps } from "../types"
+import {
+  Button,
+  Chip,
+  type DataGridProps,
+  Flex,
+  IconButton,
+  Input,
+} from "../types"
+import { filterOptions, getOptionValue } from "../types/controls/combobox"
 import {
   cropImage,
   ImageCropper,
@@ -96,3 +104,37 @@ export const cropped: Promise<Blob> = cropImage(new Blob(), cropper.rect, {
 })
 // @ts-expect-error: a rect has all four sides
 cropImage(new Blob(), { x: 0, y: 0 })
+
+const icon = Button.render({ children: "x" })
+
+export const flex = Flex.render({
+  element: "form",
+  className: "stack",
+  style: "gap: 1rem",
+  "data-tier": "gold",
+  children: [icon, "text", 1, null],
+  onClick: (event) => event.preventDefault(),
+})
+// @ts-expect-error: not a direction
+Flex.render({ direction: "sideways" })
+// @ts-expect-error: not an element
+Flex.render({ element: "nope" })
+
+export const iconButton = IconButton.render({
+  icon,
+  shape: "round",
+  className: "fab",
+  onClick: (event) => event.stopPropagation(),
+})
+// @ts-expect-error: primary is a color, not a variant
+IconButton.render({ variant: "primary" })
+// @ts-expect-error: primary is a color, not a variant
+Button.render({ variant: "primary" })
+
+export const input = Input.render({ icon, iconAfter: icon })
+// @ts-expect-error: an icon is not a number
+Input.render({ icon: 1 })
+
+export const filtered = filterOptions(["a"], "a").map(getOptionValue)
+// @ts-expect-error: the term is a string
+filterOptions(["a"], 1)

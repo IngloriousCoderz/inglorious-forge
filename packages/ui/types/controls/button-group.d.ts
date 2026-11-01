@@ -1,10 +1,12 @@
 import type { TemplateResult } from "@inglorious/web"
 
+import type { Renderable } from "../shared/renderable"
+
 export interface ButtonGroupItem {
   id?: string
   value?: string
   label: string
-  children?: TemplateResult | string | number
+  children?: Renderable
   isDisabled?: boolean
   variant?: "default" | "outline" | "ghost"
   color?:
@@ -16,8 +18,8 @@ export interface ButtonGroupItem {
     | "error"
     | "info"
   size?: "sm" | "md" | "lg"
-  icon?: string
-  iconAfter?: string
+  icon?: TemplateResult | string
+  iconAfter?: TemplateResult | string
   [key: string]: unknown
 }
 

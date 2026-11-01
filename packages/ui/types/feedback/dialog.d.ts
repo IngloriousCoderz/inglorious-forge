@@ -1,5 +1,7 @@
 import type { TemplateResult } from "@inglorious/web"
 
+import type { Renderable } from "../shared/renderable"
+
 export interface DialogProps {
   id?: string
   type?: string
@@ -16,7 +18,7 @@ export interface DialogProps {
   variant?: "dialog" | "sheet"
   title?: TemplateResult | string | number
   description?: TemplateResult | string | number
-  children?: TemplateResult | string | number
+  children?: Renderable
   actions?: TemplateResult | string | number
   className?: string
   /** The close button's accessible name, for the app's language. Defaults to `"Close"`. */

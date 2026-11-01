@@ -6,20 +6,16 @@ import { clone, get, set } from "@inglorious/utils/object.js"
  * @typedef {import('../../types/form.js').FormFieldBlurPayload} FormFieldBlurPayload
  *
  * @typedef {object} FormValidatePayload
- * @property {string|number} entityId - The ID of the target form entity.
  * @property {(values: object) => import('../../types/form.js').FormErrors<object>} validate - A function that validates the entire form's values and returns a complete error object.
  *
  * @typedef {object} FormValidateAsyncPayload
- * @property {string|number} entityId - The ID of the target form entity.
  * @property {(values: object) => Promise<import('../../types/form.js').FormErrors<object>>} validate - An async function that validates the entire form's values.
  *
  * @typedef {object} FormValidationCompletePayload
- * @property {string|number} entityId - The ID of the target form entity.
  * @property {import('../../types/form.js').FormErrors<object>} errors - The validation errors.
  * @property {boolean} isValid - Whether the form is valid.
  *
  * @typedef {object} FormValidationErrorPayload
- * @property {string|number} entityId - The ID of the target form entity.
  * @property {string} error - The error message.
  */
 
@@ -65,7 +61,6 @@ export function create(entity) {
  * Appends an item to a field array.
  * @param {FormEntity} entity - The form entity.
  * @param {Object} payload
- * @param {string|number} payload.entityId - The form entity ID.
  * @param {string} payload.path - Path to the array field (e.g., 'addresses').
  * @param {*} payload.value - The value to append.
  */
@@ -91,7 +86,6 @@ export function fieldArrayAppend(entity, { path, value }) {
  * Removes an item from a field array by index.
  * @param {FormEntity} entity - The form entity.
  * @param {Object} payload
- * @param {string|number} payload.entityId - The form entity ID.
  * @param {string} payload.path - Path to the array field.
  * @param {number} payload.index - The index to remove.
  */
@@ -117,7 +111,6 @@ export function fieldArrayRemove(entity, { path, index }) {
  * Inserts an item into a field array at a specific index.
  * @param {FormEntity} entity - The form entity.
  * @param {Object} payload
- * @param {string|number} payload.entityId - The form entity ID.
  * @param {string} payload.path - Path to the array field.
  * @param {number} payload.index - The index to insert at.
  * @param {*} payload.value - The value to insert.
@@ -144,7 +137,6 @@ export function fieldArrayInsert(entity, { path, index, value }) {
  * Moves an item in a field array from one index to another.
  * @param {FormEntity} entity - The form entity.
  * @param {Object} payload
- * @param {string|number} payload.entityId - The form entity ID.
  * @param {string} payload.path - Path to the array field.
  * @param {number} payload.fromIndex - The source index.
  * @param {number} payload.toIndex - The destination index.
@@ -201,7 +193,6 @@ export function fieldChange(entity, { path, value, validate }) {
 /**
  * Resets the form to its initial state.
  * @param {FormEntity} entity - The form entity.
- * @param {string|number} entityId - The ID of the target form entity.
  */
 export function reset(entity) {
   resetForm(entity)

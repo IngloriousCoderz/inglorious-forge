@@ -1,5 +1,7 @@
 import type { TemplateResult } from "@inglorious/web"
 
+import type { Renderable } from "../shared/renderable"
+
 export interface GridProps {
   id?: string
   type?: string
@@ -19,8 +21,8 @@ export interface GridProps {
   align?: "stretch" | "start" | "center" | "end"
   justify?: "stretch" | "start" | "center" | "end"
   isFullWidth?: boolean
-  children?: Array<TemplateResult | string | number>
-  onClick?: () => void
+  children?: Renderable
+  onClick?: (event: MouseEvent) => void
 }
 
 export type GridType = {
