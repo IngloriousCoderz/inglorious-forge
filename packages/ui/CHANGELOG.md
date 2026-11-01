@@ -1,5 +1,11 @@
 # @inglorious/ui
 
+## 9.8.2
+
+### Patch Changes
+
+- Animate Accordion items as they open and close
+
 ## 9.8.1
 
 ### Patch Changes

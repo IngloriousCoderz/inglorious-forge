@@ -60,8 +60,48 @@
 }
 
 .iw-accordion-panel {
-  padding: 0 var(--iw-space-4) var(--iw-space-4);
+  min-block-size: 0;
+  overflow: hidden;
+  padding: 0 var(--iw-space-4);
   color: var(--iw-color-text-secondary, var(--iw-color-text));
+}
+
+.iw-accordion-item[open] .iw-accordion-panel {
+  padding-block-end: var(--iw-space-4);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .iw-accordion-item::details-content {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition:
+      grid-template-rows var(--iw-transition-normal),
+      content-visibility var(--iw-transition-normal) allow-discrete;
+  }
+
+  .iw-accordion-item[open]::details-content {
+    grid-template-rows: 1fr;
+  }
+
+  .iw-accordion-panel {
+    transition: padding-block-end var(--iw-transition-normal);
+  }
+
+  /* WebKit hides content-visibility at once, which skips the closing animation.
+     Elsewhere keep content-visibility: find-in-page relies on it. */
+  @supports (font: -apple-system-body) {
+    .iw-accordion-item::details-content {
+      content-visibility: visible;
+      visibility: hidden;
+      transition:
+        grid-template-rows var(--iw-transition-normal),
+        visibility var(--iw-transition-normal);
+    }
+
+    .iw-accordion-item[open]::details-content {
+      visibility: visible;
+    }
+  }
 }
 
 .iw-accordion-item-disabled {
