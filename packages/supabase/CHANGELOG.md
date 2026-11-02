@@ -1,5 +1,11 @@
 # @inglorious/supabase
 
+## 0.2.0
+
+### Minor Changes
+
+- Add `@inglorious/supabase/edge`, helpers for Edge Functions: `serve`, `handle`, `json`, `env`, `currentUser`, `callerRole`, `bearerToken`, `upstreamError`, `isLocalStack`, and `sendEmail` and `sendEmails` through Resend.
+
 ## 0.1.0
 
 ### Minor Changes

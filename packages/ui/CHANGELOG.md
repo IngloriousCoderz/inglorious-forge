@@ -1,5 +1,16 @@
 # @inglorious/ui
 
+## 9.10.0
+
+### Minor Changes
+
+- Add ConfirmDialog, LoadStatus, ChipPicker, CropDialog and Lightbox. Combobox skips disabled options when moving the focus and refuses them when chosen, notifies `changeEvent` with `changePayload` and the new value when the user picks or clears, and takes `valueSet`, `optionsSet` and `errorSet` events.
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/web@6.14.0
+
 ## 9.9.0
 
 ### Minor Changes

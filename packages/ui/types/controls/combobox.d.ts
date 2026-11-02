@@ -45,6 +45,16 @@ export interface ComboboxProps {
   noOptionsMessage?: string
   loadingMessage?: string
 
+  /** A validation message, shown under the control. */
+  error?: string | null
+  /**
+   * An event to notify when the user picks or clears a value, such as
+   * `"#form:fieldChange"`. The payload is `changePayload` with the new `value`.
+   */
+  changeEvent?: string
+  /** Merged into `changeEvent`'s payload, such as `{ path: "country" }`. */
+  changePayload?: Record<string, unknown>
+
   isFullWidth?: boolean
   size?: "sm" | "md" | "lg"
   onToggle?: () => void
@@ -68,13 +78,21 @@ export type ComboboxType = {
   open(entity: ComboboxProps): void
   close(entity: ComboboxProps): void
   toggle(entity: ComboboxProps): void
-  optionSelect(entity: ComboboxProps, option: ComboboxOption): void
-  clear(entity: ComboboxProps): void
+  optionSelect(entity: ComboboxProps, option: ComboboxOption, api?: Api): void
+  clear(entity: ComboboxProps, payload?: unknown, api?: Api): void
   searchChange(entity: ComboboxProps, searchTerm: string): void
   focusNext(entity: ComboboxProps): void
   focusPrev(entity: ComboboxProps): void
   focusFirst(entity: ComboboxProps): void
   focusLast(entity: ComboboxProps): void
+  focusSet(entity: ComboboxProps, index: number): void
+  /** Sets the value from outside, without notifying `changeEvent`. An empty string is no value. */
+  valueSet(
+    entity: ComboboxProps,
+    value: string | number | (string | number)[] | null,
+  ): void
+  optionsSet(entity: ComboboxProps, options: ComboboxOption[]): void
+  errorSet(entity: ComboboxProps, error: string | null): void
 }
 
 export declare const Combobox: ComboboxType

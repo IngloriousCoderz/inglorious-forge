@@ -9,12 +9,21 @@ import type { Api } from "@inglorious/web"
 import {
   Button,
   Chip,
+  ChipPicker,
+  ConfirmDialog,
+  CropDialog,
   type DataGridProps,
   Flex,
   IconButton,
   Input,
+  Lightbox,
+  LoadStatus,
 } from "../types"
-import { filterOptions, getOptionValue } from "../types/controls/combobox"
+import {
+  Combobox,
+  filterOptions,
+  getOptionValue,
+} from "../types/controls/combobox"
 import {
   cropImage,
   ImageCropper,
@@ -138,3 +147,42 @@ Input.render({ icon: 1 })
 export const filtered = filterOptions(["a"], "a").map(getOptionValue)
 // @ts-expect-error: the term is a string
 filterOptions(["a"], 1)
+
+export const picker = ChipPicker.render({
+  options: ["a", { value: 1, label: "One" }],
+  value: [1],
+  onToggle: (value: string | number) => value,
+})
+// @ts-expect-error: the picked values are a list
+ChipPicker.render({ value: "a" })
+
+export const confirm = ConfirmDialog.render({
+  confirmLabel: "Delete",
+  tone: "primary",
+})
+// @ts-expect-error: the confirm button needs a label
+ConfirmDialog.render({ isOpen: true })
+
+export const crop = CropDialog.render(
+  { cropperId: "cropper", onApply: (rect) => rect.w },
+  api,
+)
+// @ts-expect-error: it names the cropper it shows
+CropDialog.render({}, api)
+
+export const lightbox = Lightbox.render({
+  images: ["/a.jpg", { src: "/b.jpg", alt: "B" }],
+  onStep: (step) => step,
+})
+// @ts-expect-error: an image has a src
+Lightbox.render({ images: [{ alt: "B" }] })
+
+export const status = LoadStatus.render({ isEmpty: true, emptyText: "None" })
+
+declare const combobox: Parameters<typeof Combobox.create>[0]
+Combobox.valueSet(combobox, ["a"])
+Combobox.optionSelect(combobox, "a", api)
+export const fieldCombobox = {
+  changeEvent: "#form:fieldChange",
+  changePayload: { path: "country" },
+} satisfies Parameters<typeof Combobox.create>[0]

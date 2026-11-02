@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/ui",
-  "version": "9.9.0",
+  "version": "9.10.0",
   "description": "A design system for Inglorious Web with render-function components and customizable themes",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -211,6 +211,31 @@
       "import": "./src/feedback/backdrop/index.js"
     },
     "./backdrop.css": "./src/feedback/backdrop/style.css",
+    "./chip-picker": {
+      "types": "./types/controls/chip-picker.d.ts",
+      "import": "./src/controls/chip-picker/index.js"
+    },
+    "./chip-picker.css": "./src/controls/chip-picker/style.css",
+    "./confirm-dialog": {
+      "types": "./types/feedback/confirm-dialog.d.ts",
+      "import": "./src/feedback/confirm-dialog/index.js"
+    },
+    "./confirm-dialog.css": "./src/feedback/confirm-dialog/style.css",
+    "./crop-dialog": {
+      "types": "./types/feedback/crop-dialog.d.ts",
+      "import": "./src/feedback/crop-dialog/index.js"
+    },
+    "./crop-dialog.css": "./src/feedback/crop-dialog/style.css",
+    "./lightbox": {
+      "types": "./types/data-display/lightbox.d.ts",
+      "import": "./src/data-display/lightbox/index.js"
+    },
+    "./lightbox.css": "./src/data-display/lightbox/style.css",
+    "./load-status": {
+      "types": "./types/feedback/load-status.d.ts",
+      "import": "./src/feedback/load-status/index.js"
+    },
+    "./load-status.css": "./src/feedback/load-status/style.css",
     "./dialog": {
       "types": "./types/feedback/dialog.d.ts",
       "import": "./src/feedback/dialog/index.js"

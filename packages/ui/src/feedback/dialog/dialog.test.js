@@ -133,6 +133,16 @@ describe("dialog", () => {
     expect(dialog.getAttribute("aria-describedby")).toBe("confirm-description")
   })
 
+  it("is named by its description when it has no title", () => {
+    const container = mount(
+      Dialog.render({ id: "confirm", description: "Delete it?" }),
+    )
+    const dialog = container.querySelector("dialog")
+
+    expect(dialog.getAttribute("aria-labelledby")).toBe("confirm-description")
+    expect(dialog.hasAttribute("aria-describedby")).toBe(false)
+  })
+
   it("takes a size", () => {
     const container = mount(Dialog.render({ size: "lg" }))
 

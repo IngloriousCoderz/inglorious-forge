@@ -1,6 +1,9 @@
 @import "./alert/style.css";
 @import "./backdrop/style.css";
+@import "./confirm-dialog/style.css";
+@import "./crop-dialog/style.css";
 @import "./dialog/style.css";
+@import "./load-status/style.css";
 @import "./progress/style.css";
 @import "./skeleton/style.css";
 @import "./snackbar/style.css";

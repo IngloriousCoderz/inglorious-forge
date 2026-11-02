@@ -35,6 +35,12 @@ export interface I18nOptions {
   /** Where to remember the user's choice in localStorage. Omit to not remember it. */
   storageKey?: string
   /**
+   * The query parameter a link names the language with, as in `?lang=it`. A
+   * supported locale there wins over the saved choice and the device, and is
+   * remembered with `storageKey`.
+   */
+  queryParam?: string
+  /**
    * Saves the user's locale wherever the app keeps their preferences, e.g.
    * `(locale, api) => api.notify("#profile:localeSave", locale)`. Called for a
    * change while a user is signed in, and when one signs in after choosing.
@@ -100,6 +106,9 @@ export type I18nType = {
   userLocaleClear(entity: I18nEntity): void
 }
 
+/** A message kept in state: a key, a key with values, or text shown as it is. */
+export type Message = string | { key: string; values?: TOptions }
+
 export interface TransOptions<Part = unknown> {
   /** Values for the `{{placeholders}}`. They are inserted as text, never as markup. */
   values?: TOptions
@@ -116,15 +125,12 @@ export interface I18n {
   languages: LanguageOption[]
   /** The active locale, for `Intl` formatters. */
   currentLocale: () => string
-  /** A data item whose `label` is `t(labelKey)` whenever it is read. */
-  labelled: <Fields extends object>(
-    labelKey: string,
-    fields?: Fields,
-  ) => Fields & { labelKey: string; readonly label: string }
-  /** An option's label: `t(labelKey)` when it has one, `label` otherwise. */
-  translatedLabel: (option: { labelKey?: string; label?: string }) => string
-  /** Translates `key` in the active locale. Same signature as i18next's `t`. */
-  t: (key: string | string[], options?: TOptions) => string
+  /**
+   * Translates `key` in the active locale, as i18next's `t`. It also takes a
+   * message kept in state as `{ key, values }`; text that is not a key comes
+   * back as it is.
+   */
+  t: (key: string | string[] | Message, options?: TOptions) => string
   /**
    * Translates `key` into template parts, rendering the tags in the translation
    * through `components`. Tags without a component show as written.
@@ -143,4 +149,5 @@ export function detectLocale(options: {
   locales: string[]
   defaultLocale: string
   storageKey?: string
+  queryParam?: string
 }): string

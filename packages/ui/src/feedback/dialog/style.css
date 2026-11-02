@@ -43,8 +43,9 @@
   font-size: 1.1rem;
 }
 
-.iw-dialog-close {
+.iw-dialog-header .iw-dialog-close {
   flex-shrink: 0;
+  margin-inline-start: auto;
 }
 
 .iw-dialog-description {

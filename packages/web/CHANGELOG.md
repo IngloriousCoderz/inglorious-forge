@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 6.14.0
+
+### Minor Changes
+
+- Add `pageRouteChange({ select, open, close })` to `@inglorious/web/router`, a `routeChange` handler that opens a page entity when the route resolves to it and closes it otherwise, and `safePath(value)`, which keeps a return path only if it stays on the site.
+
 ## 6.13.1
 
 ### Patch Changes

@@ -128,6 +128,26 @@ api.notify("navigate", {
 api.notify("navigate", -1)
 ```
 
+## Page Entities
+
+Every entity hears `routeChange` after each navigation, so a page can load its data when it opens and drop it when it closes. `pageRouteChange({ select, open, close })` writes that handler: `open` runs when the route resolved to the entity, with what `select` picks from the route, and `close` when it resolved to another one. Each is optional.
+
+```javascript
+import { pageRouteChange } from "@inglorious/web/router"
+
+export const EventPage = {
+  routeChange: pageRouteChange({
+    select: (payload) => payload.params.eventId,
+    open: (entity, eventId, api) => api.notify(`#${entity.id}:fetch`, eventId),
+    close: (entity) => {
+      entity.event = null
+    },
+  }),
+}
+```
+
+It reads the route from the payload rather than from the router entity, which during `routeChange` still names the route being left.
+
 ## Route Guards
 
 Use type composition for authentication and authorization:
@@ -164,6 +184,18 @@ const types = {
   AdminPage: [AdminPageBase, requireAuth, requireAdmin],
   ProfilePage: [ProfilePageBase, requireAuth],
 }
+```
+
+To bring the visitor back after signing in, pass where they were going in the login URL, and read it back with `safePath`. It returns the path only if it stays on the site, so a crafted link like `/login?from=//evil.com` cannot send a freshly signed-in user elsewhere:
+
+```javascript
+import { safePath } from "@inglorious/web/router"
+
+api.notify("navigate", `/login?from=${encodeURIComponent(payload.path)}`)
+
+// After signing in
+const { query } = api.getEntity("router")
+api.notify("navigate", safePath(query.from) ?? "/")
 ```
 
 ## Lazy Loading Routes

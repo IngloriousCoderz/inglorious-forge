@@ -1,7 +1,7 @@
 import { createStore } from "@inglorious/store"
 import { mount } from "@inglorious/web"
 import { createMockApi, render } from "@inglorious/web/test"
-import { afterEach, describe, expect, it } from "vitest"
+import { afterEach, describe, expect, it, vi } from "vitest"
 
 import { Combobox, visibleOptions } from "."
 
@@ -663,7 +663,6 @@ describe("combobox outside click (store integration)", () => {
       await tick()
       expect(ui.entity().isOpen).toBe(true)
 
-      ui.store._api.notify("#favorite:optionsSet", [])
       ui.options()[0].click()
       await tick()
       expect(ui.entity().isOpen).toBe(false)
@@ -892,5 +891,94 @@ describe("combobox arrow", () => {
     const block = css.match(/\.iw-combobox-arrow \{([^}]*)\}/)
     expect(block).toBeTruthy()
     expect(block[1]).toMatch(/font-size:/)
+  })
+})
+
+describe("combobox entity events", () => {
+  const options = [
+    { value: "north", label: "North", isDisabled: true },
+    { value: "lombardia", label: "Lombardia" },
+    { value: "south", label: "South", isDisabled: true },
+    { value: "sicilia", label: "Sicilia" },
+  ]
+
+  function entityWith(overrides = {}) {
+    const entity = { id: "region", options, ...overrides }
+    Combobox.create(entity)
+    return entity
+  }
+
+  it("skips disabled options when moving the focus", () => {
+    const entity = entityWith()
+
+    Combobox.open(entity)
+    expect(entity.focusedIndex).toBe(1)
+
+    Combobox.focusNext(entity)
+    expect(entity.focusedIndex).toBe(3)
+
+    Combobox.focusPrev(entity)
+    expect(entity.focusedIndex).toBe(1)
+
+    Combobox.focusPrev(entity)
+    expect(entity.focusedIndex).toBe(-1)
+
+    Combobox.focusLast(entity)
+    expect(entity.focusedIndex).toBe(3)
+  })
+
+  it("refuses a disabled option", () => {
+    const entity = entityWith()
+
+    Combobox.optionSelect(entity, options[0])
+
+    expect(entity.selectedValue).toBeNull()
+  })
+
+  it("notifies the change event with its payload and the value", () => {
+    const api = { notify: vi.fn() }
+    const entity = entityWith({
+      changeEvent: "#form:fieldChange",
+      changePayload: { path: "region" },
+    })
+
+    Combobox.optionSelect(entity, options[1], api)
+    expect(api.notify).toHaveBeenLastCalledWith("#form:fieldChange", {
+      path: "region",
+      value: "lombardia",
+    })
+
+    Combobox.clear(entity, undefined, api)
+    expect(api.notify).toHaveBeenLastCalledWith("#form:fieldChange", {
+      path: "region",
+      value: null,
+    })
+  })
+
+  it("notifies a copy of a multiple value", () => {
+    const api = { notify: vi.fn() }
+    const entity = entityWith({ isMulti: true, changeEvent: "#form:pick" })
+
+    Combobox.optionSelect(entity, options[1], api)
+
+    const [, payload] = api.notify.mock.lastCall
+    expect(payload.value).toEqual(["lombardia"])
+    expect(payload.value).not.toBe(entity.selectedValue)
+  })
+
+  it("sets the value, the options and the error from outside, silently", () => {
+    const api = { notify: vi.fn() }
+    const entity = entityWith({ changeEvent: "#form:pick" })
+
+    Combobox.valueSet(entity, "sicilia")
+    Combobox.optionsSet(entity, ["a", "b"])
+    Combobox.errorSet(entity, "Required")
+
+    expect(entity.selectedValue).toBe("sicilia")
+    Combobox.valueSet(entity, "")
+    expect(entity.selectedValue).toBeNull()
+    expect(entity.options.map((option) => option.value)).toEqual(["a", "b"])
+    expect(entity.error).toBe("Required")
+    expect(api.notify).not.toHaveBeenCalled()
   })
 })

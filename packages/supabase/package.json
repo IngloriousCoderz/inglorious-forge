@@ -1,7 +1,7 @@
 {
   "name": "@inglorious/supabase",
-  "version": "0.1.0",
-  "description": "Supabase integration for Inglorious Web.",
+  "version": "0.2.0",
+  "description": "Supabase integration for Inglorious Web, and helpers for Supabase Edge Functions.",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
   "repository": {
@@ -15,13 +15,19 @@
   "keywords": [
     "supabase",
     "realtime",
-    "inglorious-web"
+    "inglorious-web",
+    "edge-functions",
+    "deno"
   ],
   "type": "module",
   "exports": {
     ".": {
       "types": "./types/index.d.ts",
       "import": "./src/index.js"
+    },
+    "./edge": {
+      "types": "./types/edge.d.ts",
+      "import": "./src/edge/index.js"
     }
   },
   "files": [

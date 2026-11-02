@@ -183,3 +183,41 @@ export function addRoute(
  * @param path The route path or pattern to remove.
  */
 export function removeRoute(path: string): void
+
+/** The steps of a page entity's `routeChange`, all optional. */
+export interface PageRouteHandlers<Entity, Selected> {
+  /** Picks what `open` needs from the route, such as a param. */
+  select?: (payload: RouteChangePayload) => Selected
+  /** The route resolved to this entity. */
+  open?: (entity: Entity, selected: Selected, api: Api) => void
+  /** The route resolved to another entity. */
+  close?: (entity: Entity, api: Api) => void
+}
+
+/**
+ * A `routeChange` handler for a page entity: `open` when the route resolved to
+ * it, with what `select` picks from the route, and `close` when it resolved
+ * elsewhere. It reads the route from the payload: inside the router's own
+ * notify, the router entity still names the route being left.
+ */
+export function pageRouteChange<
+  Entity extends { id: string },
+  Selected = undefined,
+>(
+  handlers?: PageRouteHandlers<Entity, Selected>,
+): (entity: Entity, payload: RouteChangePayload, api: Api) => void
+
+/** What the router broadcasts as `routeChange`. */
+export interface RouteChangePayload {
+  route: string
+  params: RouteParams
+  query: QueryParams
+  path: string
+}
+
+/**
+ * A path taken from a URL, such as where to return after signing in, if it
+ * stays on this site: with its query and hash. `null` for anything a browser
+ * would read as another site, like `//evil.com` or `/\evil.com`.
+ */
+export function safePath(value: unknown): string | null

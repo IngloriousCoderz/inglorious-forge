@@ -1,6 +1,7 @@
 export { Button } from "./controls/button"
 export { ButtonGroup } from "./controls/button-group"
 export { Checkbox } from "./controls/checkbox"
+export { ChipPicker } from "./controls/chip-picker"
 export { Fab } from "./controls/fab"
 export { FileUpload } from "./controls/file-upload"
 export { IconButton } from "./controls/icon-button"
@@ -18,6 +19,7 @@ export { BeforeAfter } from "./data-display/before-after"
 export { Carousel } from "./data-display/carousel"
 export { Chat } from "./data-display/chat"
 export { Chip } from "./data-display/chip"
+export { Lightbox } from "./data-display/lightbox"
 export { DataGrid } from "./data-display/data-grid"
 export { Divider } from "./data-display/divider"
 export { Icon } from "./data-display/icon"
@@ -28,7 +30,10 @@ export { Typography } from "./data-display/typography"
 export { VirtualList } from "./data-display/virtual-list"
 export { Alert } from "./feedback/alert"
 export { Backdrop } from "./feedback/backdrop"
+export { ConfirmDialog } from "./feedback/confirm-dialog"
+export { CropDialog } from "./feedback/crop-dialog"
 export { Dialog } from "./feedback/dialog"
+export { LoadStatus } from "./feedback/load-status"
 export { Progress } from "./feedback/progress"
 export { Skeleton } from "./feedback/skeleton"
 export { Snackbar } from "./feedback/snackbar"
@@ -53,6 +58,7 @@ export { Paper } from "./surfaces/paper"
 export type { ButtonProps, ButtonType } from "./controls/button"
 export type { ButtonGroupProps, ButtonGroupType } from "./controls/button-group"
 export type { CheckboxProps, CheckboxType } from "./controls/checkbox"
+export type { ChipPickerProps, ChipPickerType } from "./controls/chip-picker"
 export type {
   ComboboxProps,
   ComboboxType,
@@ -120,6 +126,11 @@ export type { AvatarProps, AvatarType } from "./data-display/avatar"
 export type { BadgeProps, BadgeType } from "./data-display/badge"
 export type { ChipProps, ChipType } from "./data-display/chip"
 export type {
+  LightboxImage,
+  LightboxProps,
+  LightboxType,
+} from "./data-display/lightbox"
+export type {
   DataGridProps,
   DataGridType,
   Column,
@@ -148,7 +159,13 @@ export type {
 } from "./data-display/typography"
 export type { AlertProps, AlertType } from "./feedback/alert"
 export type { BackdropProps, BackdropType } from "./feedback/backdrop"
+export type {
+  ConfirmDialogProps,
+  ConfirmDialogType,
+} from "./feedback/confirm-dialog"
+export type { CropDialogProps, CropDialogType } from "./feedback/crop-dialog"
 export type { DialogProps, DialogType } from "./feedback/dialog"
+export type { LoadStatusProps, LoadStatusType } from "./feedback/load-status"
 export type { ProgressProps, ProgressType } from "./feedback/progress"
 export type { SkeletonProps, SkeletonType } from "./feedback/skeleton"
 export type { SnackbarProps, SnackbarType } from "./feedback/snackbar"

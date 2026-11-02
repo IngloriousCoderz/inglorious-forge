@@ -96,20 +96,30 @@ api.notify("#i18n:userLocaleClear")
 
 ## Labels in data
 
-Options defined in data would freeze in the language of the moment they were created. `labelled(key, fields)` gives an item whose `label` is translated every time it is read, and which keeps `labelKey` when it is copied into store state; `translatedLabel(option)` reads either kind:
+Options defined in data would freeze in the language of the moment they were created. Keep the key as the label, and translate it where it is rendered. A label that is not a key, such as a place name, comes back as it is:
 
 ```javascript
-const periods = [labelled("periods.week", { value: "week" })]
+const periods = [{ value: "week", label: "periods.week" }]
 
-translatedLabel(periods[0]) // "This week", or "Questa settimana"
-translatedLabel({ label: "Lombardy" }) // data, not copy: as is
+periods.map((period) => ({ ...period, label: t(period.label) }))
+t("Lombardy") // data, not copy: as is
+```
+
+## Messages in state
+
+For the same reason, state holds a message's key rather than its text: an error saved in Italian would stay Italian after a switch to English. `t` takes the message as it is kept: a key, `{ key, values }` for one that interpolates, or text that is not a key, such as an error from a server, which comes back as it is.
+
+```javascript
+entity.error = { key: "errors.tooLong", values: { max: 80 } }
+
+html`<p>${t(entity.error)}</p>`
 ```
 
 ## API
 
 ### `createI18n(options)`
 
-Returns `{ I18n, ready, languages, t, trans, currentLocale, labelled, translatedLabel, i18next }`.
+Returns `{ I18n, ready, languages, t, trans, currentLocale, i18next }`.
 
 - `catalogues`: the catalogues by file path, as `import.meta.glob("./locales/*.json")` returns them. A lazy glob loads each on demand; an eager one (`{ eager: true }`) bundles them all.
 - `resources`: catalogues bundled with the app, `{ [locale]: { translation: { … } } }`. The lower-level alternative to `catalogues`.
@@ -119,9 +129,10 @@ Returns `{ I18n, ready, languages, t, trans, currentLocale, labelled, translated
 - `isServerRendered`: whether the page comes rendered from a server, as with SSX. It then starts in the language of `<html lang>`, the one the server rendered, so hydration keeps it and only its catalogue loads. Leave it off for a page served as is, whose `<html lang>` says nothing about the visitor.
 - `defaultLocale`: the fallback, and the locale when nothing else matches. Defaults to the first locale.
 - `storageKey`: where to remember the user's choice in `localStorage`. Omit it to not remember the choice.
+- `queryParam`: the query parameter a link names the language with, such as `"lang"` for `?lang=it`, so a page linking to the app can open it in the page's language. That locale is remembered, as a choice would be.
 - `i18nextOptions`: any further i18next options.
 
-The starting locale is that of `<html lang>` on a server-rendered page, when supported, else the saved choice, else the first of the device's languages that is supported (`it-CH` picks `it`), else `defaultLocale`.
+The starting locale is that of `<html lang>` on a server-rendered page, when supported, else the one in `queryParam`, else the saved choice, else the first of the device's languages that is supported (`it-CH` picks `it`), else `defaultLocale`.
 
 `ready` resolves once the starting locale and the fallback are loaded: at once when they are bundled. With every catalogue bundled, i18next also switches synchronously, so there is no loading state to handle.
 
@@ -186,6 +197,6 @@ It is safe with user data:
 - A tag without a component (`<script>`, a typo, a stray `</b>`) shows as written instead of becoming markup.
 - Plurals and formatters work as in `t`: `trans("events", { values: { count } })`.
 
-### `detectLocale({ locales, defaultLocale, storageKey })`
+### `detectLocale({ locales, defaultLocale, storageKey, queryParam })`
 
 The detection `createI18n` uses, exported for apps that need it elsewhere.

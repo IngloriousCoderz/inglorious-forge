@@ -53,6 +53,9 @@ export function render(props) {
 
   const titleId = id && title ? `${id}-title` : ""
   const descriptionId = id && description ? `${id}-description` : ""
+  // Without a title, the description is what the dialog asks: its name.
+  const labelId = titleId || descriptionId
+  const describedById = titleId ? descriptionId : ""
   const onBackdrop = onBackdropClick ?? onClose
 
   return html`<dialog
@@ -63,8 +66,8 @@ export function render(props) {
       "iw-dialog-sheet": variant === "sheet",
       ...extraClasses,
     })}
-    aria-labelledby=${titleId || nothing}
-    aria-describedby=${descriptionId || nothing}
+    aria-labelledby=${labelId || nothing}
+    aria-describedby=${describedById || nothing}
     @pointerdown=${(event) => {
       backdropPresses.set(
         event.currentTarget,

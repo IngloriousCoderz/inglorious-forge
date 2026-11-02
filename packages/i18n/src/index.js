@@ -37,6 +37,7 @@ export function createI18n({
   isServerRendered = false,
   defaultLocale,
   storageKey,
+  queryParam,
   saveUserLocale,
   i18nextOptions = {},
 }) {
@@ -55,7 +56,15 @@ export function createI18n({
   // detected instead.
   const startLocale =
     (isServerRendered && matchLocale(getDocumentLanguage(), locales)) ||
-    detectLocale({ locales, defaultLocale: fallbackLocale, storageKey })
+    detectLocale({
+      locales,
+      defaultLocale: fallbackLocale,
+      storageKey,
+      queryParam,
+    })
+  if (startLocale === queryLocale(queryParam, locales)) {
+    saveLocale(storageKey, startLocale)
+  }
   const languages = locales.map((locale) => ({
     value: locale,
     label: languageName(locale),
@@ -184,7 +193,14 @@ export function createI18n({
     )
   }
 
+  /**
+   * Translates a key, or a message kept in state as `{ key, values }`. Text
+   * that is not a key, such as an error from a server, comes back as it is.
+   */
   function t(key, options) {
+    if (key && typeof key === "object" && !Array.isArray(key)) {
+      return instance.t(key.key, { ...key.values, ...options })
+    }
     return instance.t(key, options)
   }
 
@@ -195,28 +211,28 @@ export function createI18n({
     t,
     trans,
     currentLocale: () => instance.language,
-    labelled: (labelKey, fields = {}) => ({
-      ...fields,
-      labelKey,
-      get label() {
-        return t(labelKey)
-      },
-    }),
-    translatedLabel: (option) =>
-      option.labelKey ? t(option.labelKey) : option.label,
     i18next: instance,
   }
 }
 
 /**
- * The locale to start with: the one saved by a previous choice, else the
- * first of the device's languages that is supported (exactly, or by its base
- * language, so `it-CH` picks `it`), else the default.
+ * The locale to start with: the one a link names in `queryParam`, else the one
+ * saved by a previous choice, else the first of the device's languages that is
+ * supported (exactly, or by its base language, so `it-CH` picks `it`), else the
+ * default.
  *
- * @param {{ locales: string[], defaultLocale: string, storageKey?: string }} options
+ * @param {{ locales: string[], defaultLocale: string, storageKey?: string, queryParam?: string }} options
  * @returns {string}
  */
-export function detectLocale({ locales, defaultLocale, storageKey }) {
+export function detectLocale({
+  locales,
+  defaultLocale,
+  storageKey,
+  queryParam,
+}) {
+  const linked = queryLocale(queryParam, locales)
+  if (linked) return linked
+
   const saved = readLocale(storageKey)
   if (saved && locales.includes(saved)) return saved
 
@@ -230,6 +246,13 @@ export function detectLocale({ locales, defaultLocale, storageKey }) {
   }
 
   return defaultLocale
+}
+
+function queryLocale(queryParam, locales) {
+  if (!queryParam) return null
+  const search = globalThis.location?.search ?? ""
+  const locale = new URLSearchParams(search).get(queryParam)
+  return locales.includes(locale) ? locale : null
 }
 
 function matchLocale(language, locales) {

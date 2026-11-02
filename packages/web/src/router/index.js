@@ -1,6 +1,9 @@
 import { createHandlers } from "./handlers.js"
 import { createHelpers } from "./helpers.js"
 
+export { pageRouteChange } from "./page-route.js"
+export { safePath } from "./safe-path.js"
+
 /**
  * Route configuration map. Keys are route patterns (e.g. `/users/:id`) and
  * values are either a string type name or a loader function that returns a

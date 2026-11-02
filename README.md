@@ -21,7 +21,7 @@ There are no signals, no component state and no compiler to learn. Types are pla
 - [`@inglorious/motion`](https://inglorious.dev/motion/): CSS-first animation, layout transitions and presence.
 - [`@inglorious/i18n`](packages/i18n): translations driven by a store entity.
 - [`@inglorious/ag-grid`](packages/ag-grid): AG Grid, with no adapter.
-- [`@inglorious/supabase`](packages/supabase): Supabase, starting with Realtime changes that keep entities live.
+- [`@inglorious/supabase`](packages/supabase): Supabase: Realtime changes that keep entities live, and helpers for Edge Functions.
 - [`@inglorious/firebase`](packages/firebase): Firebase push notifications and analytics, in the browser and in Capacitor apps.
 
 **Sites**

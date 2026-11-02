@@ -1,0 +1,10 @@
+.iw-load-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  grid-column: 1 / -1;
+  padding: var(--iw-space-10) 0;
+  text-align: center;
+  font-size: var(--iw-font-size-sm);
+  color: var(--iw-color-text-muted, var(--iw-color-text));
+}

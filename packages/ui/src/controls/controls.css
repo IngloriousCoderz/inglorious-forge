@@ -1,8 +1,10 @@
-@import "./button/style.css";
 @import "./button-group/style.css";
+@import "./button/style.css";
 @import "./checkbox/style.css";
+@import "./chip-picker/style.css";
 @import "./combobox/style.css";
 @import "./fab/style.css";
+@import "./file-upload/style.css";
 @import "./icon-button/style.css";
 @import "./image-cropper/style.css";
 @import "./input/style.css";
@@ -12,4 +14,3 @@
 @import "./slider/style.css";
 @import "./switch/style.css";
 @import "./textarea/style.css";
-@import "./file-upload/style.css";

@@ -1,0 +1,43 @@
+.iw-dialog.iw-crop-dialog {
+  width: min(48rem, calc(100vw - 2 * var(--iw-space-4)));
+  min-width: 0;
+  max-width: none;
+  max-height: calc(
+    100dvh - 2 * var(--iw-space-4) - var(--safe-area-top, 0px) -
+      var(--safe-area-bottom, 0px)
+  );
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.iw-crop-dialog-viewport {
+  width: 100%;
+  --iw-image-cropper-max-height: 55dvh;
+}
+
+@media (max-height: 32rem) {
+  .iw-crop-dialog-viewport {
+    --iw-image-cropper-max-height: 35dvh;
+  }
+}
+
+.iw-crop-dialog-error {
+  margin: var(--iw-space-3) 0 0;
+}
+
+.iw-crop-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--iw-space-2);
+  width: 100%;
+
+  .iw-button {
+    flex: 0 1 auto;
+    min-width: 0;
+    padding-inline: var(--iw-space-3);
+    font-size: var(--iw-font-size-sm);
+    white-space: nowrap;
+  }
+}

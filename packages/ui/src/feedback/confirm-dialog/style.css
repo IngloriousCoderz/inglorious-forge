@@ -1,0 +1,16 @@
+.iw-confirm-dialog-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--iw-space-2);
+  width: 100%;
+
+  > * {
+    flex: 1;
+  }
+}
+
+@media (min-width: 48rem) {
+  .iw-confirm-dialog-actions {
+    flex-direction: row;
+  }
+}

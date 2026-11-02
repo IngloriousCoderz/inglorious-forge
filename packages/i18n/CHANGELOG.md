@@ -1,5 +1,11 @@
 # @inglorious/i18n
 
+## 2.0.0
+
+### Major Changes
+
+- Remove `labelled` and `translatedLabel`: keep the key as the label and render it with `t`. `t` also takes a message kept in state as `{ key, values }`, and returns text that is not a key as it is. Add the `queryParam` option, which starts in the locale a link names, such as `?lang=it`, and remembers it.
+
 ## 1.3.0
 
 ### Minor Changes

@@ -9,7 +9,12 @@ import { type Api, html, type TemplateResult } from "../types"
 import { withLiveReload } from "../types/decorators/with-live-reload"
 import { Form, type FormEntity } from "../types/form"
 import { PwaUpdate, type PwaUpdateEntity, watchPwaUpdate } from "../types/pwa"
-import { Router, type RouterEntity } from "../types/router"
+import {
+  pageRouteChange,
+  Router,
+  type RouterEntity,
+  safePath,
+} from "../types/router"
 import { MediaQuery, type MediaQueryEntity } from "../types/sensors/media-query"
 
 interface AppRouterEntity extends RouterEntity {
@@ -132,3 +137,25 @@ withLiveReload<CounterEntity>({
 })
 // @ts-expect-error: tables are required
 withLiveReload({ source })
+
+export const routeChange = pageRouteChange({
+  select: (payload) => payload.params.eventId,
+  open: (entity: { id: string; eventId?: string }, eventId) => {
+    entity.eventId = eventId
+  },
+  close: (entity) => {
+    entity.eventId = undefined
+  },
+})
+pageRouteChange({
+  // @ts-expect-error: a page entity has an id
+  open: (entity: { name: string }) => entity,
+})
+pageRouteChange({
+  // @ts-expect-error: select picks what open takes
+  select: (payload) => payload.params.eventId,
+  open: (entity: { id: string }, count: number) => count,
+})
+export const bare = pageRouteChange()
+
+export const back: string | null = safePath("/events")

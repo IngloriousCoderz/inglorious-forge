@@ -22,8 +22,9 @@ const resources = {
   },
 }
 
-function stubBrowser({ languages = [], saved = {} } = {}) {
+function stubBrowser({ languages = [], saved = {}, search = "" } = {}) {
   const store = { ...saved }
+  vi.stubGlobal("location", { search })
   vi.stubGlobal("navigator", { languages, language: languages[0] })
   vi.stubGlobal("localStorage", {
     getItem: (key) => store[key] ?? null,
@@ -59,6 +60,16 @@ describe("detectLocale", () => {
   it("falls back to the default when nothing matches", () => {
     stubBrowser({ languages: ["fr-FR"] })
     expect(detectLocale(options)).toBe("en")
+  })
+
+  it("prefers the locale a link names", () => {
+    stubBrowser({ saved: { lang: "en" }, search: "?lang=it" })
+    expect(detectLocale({ ...options, queryParam: "lang" })).toBe("it")
+  })
+
+  it("ignores a linked locale that is not supported", () => {
+    stubBrowser({ saved: { lang: "it" }, search: "?lang=de" })
+    expect(detectLocale({ ...options, queryParam: "lang" })).toBe("it")
   })
 
   it("ignores a saved locale that is no longer supported", () => {
@@ -500,22 +511,40 @@ describe("direction", () => {
 })
 
 describe("helpers", () => {
-  it("labels data in the active language, and keeps the key", () => {
-    stubBrowser({ languages: ["en"] })
-    const { I18n, labelled, translatedLabel, currentLocale } = createI18n({
+  it("remembers the locale a link names", () => {
+    const saved = stubBrowser({ languages: ["en"], search: "?lang=it" })
+    const { t } = createI18n({
       resources,
+      storageKey: "lang",
+      queryParam: "lang",
     })
+
+    expect(t("hello")).toBe("Ciao")
+    expect(saved.lang).toBe("it")
+  })
+
+  it("translates messages kept in state, and leaves other text as it is", () => {
+    stubBrowser({ languages: ["en"] })
+    const { t } = createI18n({ resources })
+
+    expect(t("hello")).toBe("Hello")
+    expect(t({ key: "greet", values: { name: "Ada" } })).toBe("Hello, Ada")
+    expect(t("Network down: retry later.")).toBe("Network down: retry later.")
+  })
+
+  it("translates a label kept as a key in the active language", () => {
+    stubBrowser({ languages: ["en"] })
+    const { I18n, t, currentLocale } = createI18n({ resources })
     const entity = {}
     I18n.create(entity)
-    const option = labelled("hello", { value: "greeting" })
+    const option = { value: "greeting", label: "hello" }
 
-    expect(option.label).toBe("Hello")
+    expect(t(option.label)).toBe("Hello")
 
     I18n.localeChange(entity, "it")
 
-    expect(option.label).toBe("Ciao")
+    expect(t(option.label)).toBe("Ciao")
     expect(currentLocale()).toBe("it")
-    expect(translatedLabel({ ...option })).toBe("Ciao")
-    expect(translatedLabel({ label: "Lombardy" })).toBe("Lombardy")
+    expect(t("Lombardy")).toBe("Lombardy")
   })
 })

@@ -1088,7 +1088,27 @@ export const AdminPage = {
 }
 ```
 
-### 5. Route Guards (Type Composition)
+### 5. Page Entities
+
+Every entity hears `routeChange`, so a page can load its data when it opens and drop it when it closes. `pageRouteChange({ select, open, close })` writes that handler: `open` runs when the route resolved to the entity, with what `select` picks from the route, `close` when it resolved elsewhere. Each is optional.
+
+```javascript
+import { pageRouteChange } from "@inglorious/web/router"
+
+export const EventPage = {
+  routeChange: pageRouteChange({
+    select: (payload) => payload.params.eventId,
+    open: (entity, eventId, api) => api.notify(`#${entity.id}:fetch`, eventId),
+    close: (entity) => {
+      entity.event = null
+    },
+  }),
+}
+```
+
+It reads the route from the payload: during `routeChange`, the router entity still names the route being left.
+
+### 6. Route Guards (Type Composition)
 
 Route guards are implemented using **type composition** — a powerful feature of `@inglorious/store` where types can be defined as arrays of behaviors that wrap and extend each other.
 
@@ -1101,15 +1121,14 @@ Guards are simply behaviors that intercept events (like `routeChange`) and can p
 export const requireAuth = (type) => ({
   routeChange(entity, payload, api) {
     // Only act when navigating to this specific route
-    if (payload.route !== entity.type) return
+    if (payload.route !== entity.id) return
 
     // Check authentication
     const user = localStorage.getItem("user")
     if (!user) {
       // Redirect to login, preserving the intended destination
       api.notify("navigate", {
-        to: "/login",
-        redirectTo: window.location.pathname,
+        to: `/login?from=${encodeURIComponent(payload.path)}`,
         replace: true,
       })
       return
@@ -1120,6 +1139,8 @@ export const requireAuth = (type) => ({
   },
 })
 ```
+
+After signing in, `safePath(query.from)` gives the destination back only if it stays on the site, so a crafted `/login?from=//evil.com` leads nowhere: `api.notify("navigate", safePath(query.from) ?? "/")`.
 
 #### Using Guards with Type Composition
 

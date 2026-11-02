@@ -1,0 +1,26 @@
+.iw-chip-picker {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.iw-chip-picker-legend {
+  padding: 0;
+  margin-bottom: var(--iw-space-2);
+  font-size: var(--iw-font-size-sm);
+  font-weight: var(--iw-font-weight-medium);
+  color: var(--iw-color-text);
+}
+
+.iw-chip-picker-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--iw-space-2);
+}
+
+.iw-chip-picker-hint {
+  margin: var(--iw-space-2) 0 0;
+  font-size: var(--iw-font-size-xs);
+  color: var(--iw-color-text-muted, var(--iw-color-text));
+}
