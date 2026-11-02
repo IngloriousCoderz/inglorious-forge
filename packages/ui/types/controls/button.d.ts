@@ -21,6 +21,8 @@ export interface ButtonProps {
   isPressed?: boolean
   isFullWidth?: boolean
   buttonType?: "button" | "submit" | "reset" | "menu"
+  /** Renders a link styled as a button instead of a `<button>` */
+  href?: string
   ariaLabel?: string
   isAriaPressed?: boolean
   className?: string

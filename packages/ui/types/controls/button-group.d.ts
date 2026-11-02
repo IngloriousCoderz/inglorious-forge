@@ -5,6 +5,7 @@ import type { Renderable } from "../shared/renderable"
 export interface ButtonGroupItem {
   id?: string
   value?: string
+  /** The button's text, or its accessible name when `children` are given */
   label: string
   children?: Renderable
   isDisabled?: boolean

@@ -14,12 +14,16 @@ import { applyElementProps } from "../../shared/apply-element-props.js"
  * Renders a themed button for actions and form submission.
  * Supports variants, sizes, shapes, pressed state, and full-width layout.
  * With `onFileSelect`, the button also opens a file picker on click.
+ * With `href`, it is a link that looks like a button.
  * @example
  * // Stateless usage
  * button.render({ children: 'Click me', color: 'primary' })
  *
  * // File picker
  * button.render({ children: 'Upload', accept: 'image/*', onFileSelect })
+ *
+ * // Link
+ * button.render({ children: 'Open', href: '/events' })
  *
  * @param {ButtonProps} props
  * @returns {TemplateResult}
@@ -36,6 +40,7 @@ export function render(props) {
     isPressed = false,
     isFullWidth = false,
     buttonType = "button",
+    href,
     ariaLabel,
     isAriaPressed,
     className = "",
@@ -71,6 +76,18 @@ export function render(props) {
         event.currentTarget.nextElementSibling.click()
       }
     : onClick
+
+  if (href != null) {
+    return html`<a
+      href=${isDisabled ? nothing : href}
+      aria-label=${ariaLabel || nothing}
+      aria-disabled=${isDisabled ? "true" : nothing}
+      class=${classMap(classes)}
+      @click=${isDisabled ? nothing : onClick}
+      ${ref((element) => applyElementProps(element, rest))}
+      >${children}</a
+    >`
+  }
 
   return html`
     <button

@@ -33,9 +33,11 @@ export function render(props) {
     ...rest
   } = props
 
+  const isSelection = value != null || isMultiple
+
   const groupClasses = {
     "iw-button-group": true,
-    "iw-button-group-selection": value != null || isMultiple,
+    "iw-button-group-selection": isSelection,
     [`iw-button-group-${direction}`]: true,
     "iw-button-group-attached": isAttached,
   }
@@ -86,7 +88,8 @@ export function render(props) {
           size: itemSize ?? size,
           isDisabled: isDisabled || !!itemDisabled,
           isPressed,
-          isAriaPressed: isPressed ? true : undefined,
+          isAriaPressed: isSelection ? isPressed : undefined,
+          ariaLabel: children != null ? label : undefined,
           onClick: () => {
             if (!onChange) return
 

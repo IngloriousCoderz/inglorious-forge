@@ -120,4 +120,46 @@ describe("buttonGroup", () => {
     const pressed = container.querySelector(".iw-button-pressed")
     expect(pressed).not.toBeNull()
   })
+
+  it("names a button by its label when it has children", () => {
+    const props = {
+      buttons: [{ label: "Grid view", value: "grid", children: "▦" }],
+    }
+    const container = document.createElement("div")
+
+    render(ButtonGroup.render(props), container)
+
+    expect(container.querySelector("button").getAttribute("aria-label")).toBe(
+      "Grid view",
+    )
+  })
+
+  it("marks every button of a selection group as pressed or not", () => {
+    const props = {
+      value: "a",
+      buttons: [
+        { label: "A", value: "a" },
+        { label: "B", value: "b" },
+      ],
+    }
+    const container = document.createElement("div")
+
+    render(ButtonGroup.render(props), container)
+
+    const pressed = [...container.querySelectorAll("button")].map((button) =>
+      button.getAttribute("aria-pressed"),
+    )
+    expect(pressed).toEqual(["true", "false"])
+  })
+
+  it("leaves plain action buttons without aria-pressed", () => {
+    const props = { buttons: [{ label: "A", value: "a" }] }
+    const container = document.createElement("div")
+
+    render(ButtonGroup.render(props), container)
+
+    expect(container.querySelector("button").hasAttribute("aria-pressed")).toBe(
+      false,
+    )
+  })
 })

@@ -1,5 +1,13 @@
 # @inglorious/ui
 
+## 9.12.0
+
+### Minor Changes
+
+- - Button takes an `href`, and then renders a link that looks like a button. A disabled one has no `href` and is marked `aria-disabled`.
+  - ButtonGroup keeps an item's `label` as the button's accessible name when the item has `children`.
+  - In a ButtonGroup with a `value` or `isMultiple`, unpressed buttons have `aria-pressed="false"`, so screen readers announce them as toggles.
+
 ## 9.11.1
 
 ### Patch Changes

@@ -57,6 +57,10 @@ export default {
       options: ["button", "submit", "reset", "menu"],
       description: "Native HTML button type attribute.",
     },
+    href: {
+      control: "text",
+      description: "Renders a link styled as a button.",
+    },
     accept: {
       control: "text",
       description: "File types the picker offers (with `onFileSelect`).",
@@ -176,6 +180,14 @@ FilePicker.args = {
   shape: "pill",
   accept: "image/jpeg,image/png,image/webp",
   onFileSelect: () => {},
+}
+
+export const Link = {}
+Link.args = {
+  ...Default.args,
+  children: "Open events",
+  color: "primary",
+  href: "#events",
 }
 
 export const CustomContent = {}

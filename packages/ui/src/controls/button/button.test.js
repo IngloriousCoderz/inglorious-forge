@@ -1,6 +1,6 @@
 import { html } from "@inglorious/web"
 import { render } from "@inglorious/web/test"
-import { describe, expect, it } from "vitest"
+import { describe, expect, it, vi } from "vitest"
 
 import { Button } from "."
 
@@ -268,5 +268,36 @@ describe("button", () => {
 
       expect(container.querySelector('input[type="file"]').disabled).toBe(true)
     })
+  })
+
+  it("renders a link styled as a button with href", () => {
+    const container = document.createElement("div")
+
+    render(Button.render({ children: "Events", href: "/events" }), container)
+
+    const link = container.querySelector("a.iw-button")
+    expect(link.getAttribute("href")).toBe("/events")
+    expect(container.querySelector("button")).toBeNull()
+  })
+
+  it("takes a disabled link out of navigation", () => {
+    const onClick = vi.fn()
+    const container = document.createElement("div")
+
+    render(
+      Button.render({
+        children: "Events",
+        href: "/events",
+        isDisabled: true,
+        onClick,
+      }),
+      container,
+    )
+
+    const link = container.querySelector("a.iw-button")
+    expect(link.hasAttribute("href")).toBe(false)
+    expect(link.getAttribute("aria-disabled")).toBe("true")
+    link.click()
+    expect(onClick).not.toHaveBeenCalled()
   })
 })
