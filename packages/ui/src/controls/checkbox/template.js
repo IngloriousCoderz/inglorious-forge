@@ -9,6 +9,7 @@ import { ref } from "@inglorious/web/directives/ref"
 import { when } from "@inglorious/web/directives/when"
 
 import { applyElementProps } from "../../shared/apply-element-props.js"
+import { liveBoolean } from "../../shared/live-boolean.js"
 
 /**
  * Renders a labeled checkbox for boolean input.
@@ -51,7 +52,8 @@ export function render(props) {
         class="iw-checkbox-input"
         type="checkbox"
         name=${name}
-        .checked=${isChecked}
+        ?checked=${isChecked}
+        ${liveBoolean("checked", isChecked)}
         ?disabled=${isDisabled}
         ?required=${isRequired}
         @change=${(event) => onChange?.(event.target.checked)}

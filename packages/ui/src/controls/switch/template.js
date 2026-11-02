@@ -9,6 +9,7 @@ import { ref } from "@inglorious/web/directives/ref"
 import { when } from "@inglorious/web/directives/when"
 
 import { applyElementProps } from "../../shared/apply-element-props.js"
+import { liveBoolean } from "../../shared/live-boolean.js"
 
 /**
  * Renders a toggle switch backed by a checkbox input, which `role="switch"`
@@ -49,7 +50,8 @@ export function render(props) {
         type="checkbox"
         role="switch"
         name=${name}
-        .checked=${isChecked}
+        ?checked=${isChecked}
+        ${liveBoolean("checked", isChecked)}
         ?disabled=${isDisabled}
         @change=${(event) => onChange?.(event.target.checked)}
         ${ref((element) => applyElementProps(element, rest))}

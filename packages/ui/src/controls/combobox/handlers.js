@@ -46,6 +46,7 @@ export function open(entity) {
 /** @param {SelectEntity} entity */
 export function close(entity) {
   entity.isOpen = false
+  entity.searchTerm = ""
   entity.focusedIndex = NONE
 }
 
@@ -67,7 +68,7 @@ export function optionSelect(entity, option, api) {
   if (normalizedOption.isDisabled) return
   const optionValue = getOptionValue(normalizedOption)
 
-  if (normalizedOption.isCreated) {
+  if (normalizedOption.isCreated || entity.searchTerm) {
     entity.searchTerm = ""
     entity.focusedIndex = NONE
   }

@@ -6,6 +6,8 @@
 import { html, nothing } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
 
+import { liveBoolean } from "../../shared/live-boolean.js"
+
 const DEFAULT_VALUE = 0
 const DEFAULT_MAX = 5
 const INDEX_TO_RATING = 1
@@ -62,7 +64,8 @@ export function render(props) {
               name=${groupName || nothing}
               value=${ratingValue}
               aria-label=${`${ratingValue} of ${max}`}
-              .checked=${ratingValue === value}
+              ?checked=${ratingValue === value}
+              ${liveBoolean("checked", ratingValue === value)}
               @change=${() => onChange?.(ratingValue)}
             />
             <span aria-hidden="true">${isActive ? symbol : emptySymbol}</span>

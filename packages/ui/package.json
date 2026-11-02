@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/ui",
-  "version": "9.10.0",
+  "version": "9.10.1",
   "description": "A design system for Inglorious Web with render-function components and customizable themes",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -366,6 +366,7 @@
     "@inglorious/vite-plugin-jsx": "workspace:*",
     "@inglorious/vite-plugin-vue": "workspace:*",
     "@inglorious/web": "workspace:*",
+    "@lit-labs/ssr": "^4.1.0",
     "@storybook/addon-docs": "^10.6.5",
     "@storybook/web-components-vite": "^10.6.5",
     "happy-dom": "^20.14.0",

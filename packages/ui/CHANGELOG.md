@@ -1,5 +1,14 @@
 # @inglorious/ui
 
+## 9.10.1
+
+### Patch Changes
+
+- - Select marks the chosen option when the options are plain strings or numbers, and every chosen option of a multiple select.
+  - Server-rendered Select, Checkbox, Switch, RadioGroup, Rating and Combobox options no longer come out checked or selected when they aren't: `checked="false"` counts as checked in HTML.
+  - Combobox clears its search after a pick and when it closes, so the full list is back instead of the one match typed.
+  - Badge text stays on one line.
+
 ## 9.10.0
 
 ### Minor Changes

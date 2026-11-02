@@ -10,6 +10,7 @@ import { when } from "@inglorious/web/directives/when"
 
 import { Icon } from "../../data-display/icon/index.js"
 import { fallbackLabel } from "../../shared/fallback-label.js"
+import { liveBoolean } from "../../shared/live-boolean.js"
 import { formatOption, getOptionValue, isOptionSelected } from "./helpers.js"
 
 /**
@@ -111,10 +112,6 @@ export const Select = {
       "iw-select-control-error": !!error,
     }
 
-    const selectedOption = options.find(
-      (option) => getOptionValue(option) === value,
-    )
-
     return html`<div class="iw-select-frame" @click=${openFromArrowStrip}>
       ${when(icon, () => Icon.render({ children: icon, size }))}
 
@@ -137,15 +134,11 @@ export const Select = {
           (option) => getOptionValue(option),
           (option) => {
             const {
-              value,
+              value: optionValue,
               label,
               isDisabled: isOptionDisabled,
             } = formatOption(option)
-            const isSelected = isOptionSelected(
-              option,
-              selectedOption?.value,
-              isMulti,
-            )
+            const isSelected = isOptionSelected(option, value, isMulti)
 
             const optionClasses = {
               "iw-select-option": true,
@@ -153,8 +146,9 @@ export const Select = {
             }
 
             return html`<option
-              value=${value}
-              .selected=${value === selectedOption?.value}
+              value=${optionValue}
+              ?selected=${isSelected}
+              ${liveBoolean("selected", isSelected)}
               ?disabled=${isOptionDisabled}
               class=${classMap(optionClasses)}
             >

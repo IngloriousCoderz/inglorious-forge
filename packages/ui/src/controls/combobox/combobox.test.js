@@ -399,6 +399,27 @@ describe("creatable combobox", () => {
     expect(entity.focusedIndex).toBe(-1)
   })
 
+  it("clears the search after a pick, so the whole list is back", () => {
+    const entity = { id: "sel", options, isMulti: true, isSearchable: true }
+    Combobox.create(entity)
+
+    Combobox.searchChange(entity, "Laz")
+    Combobox.optionSelect(entity, visibleOptions(entity)[0])
+    expect(entity.selectedValue).toEqual(["lazio"])
+    expect(entity.searchTerm).toBe("")
+    expect(visibleOptions(entity)).toHaveLength(options.length)
+  })
+
+  it("forgets the search when it closes", () => {
+    const entity = { id: "sel", options, isSearchable: true }
+    Combobox.create(entity)
+
+    Combobox.open(entity)
+    Combobox.searchChange(entity, "Laz")
+    Combobox.close(entity)
+    expect(entity.searchTerm).toBe("")
+  })
+
   it("adds the term on Enter, without a no-options message", () => {
     const entity = {
       id: "sel",

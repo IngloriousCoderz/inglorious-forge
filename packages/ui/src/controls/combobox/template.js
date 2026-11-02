@@ -12,6 +12,7 @@ import { when } from "@inglorious/web/directives/when"
 
 import { Chip } from "../../data-display/chip/index.js"
 import { fallbackLabel } from "../../shared/fallback-label.js"
+import { liveBoolean } from "../../shared/live-boolean.js"
 import { syncPopover } from "../../shared/top-layer.js"
 import {
   formatOption,
@@ -384,7 +385,8 @@ export const Combobox = {
         () =>
           html`<input
             type="checkbox"
-            .checked=${isSelected}
+            ?checked=${isSelected}
+            ${liveBoolean("checked", isSelected)}
             ?disabled=${!!normalized.isDisabled}
           />`,
       )}

@@ -9,6 +9,7 @@ import { ref } from "@inglorious/web/directives/ref"
 import { when } from "@inglorious/web/directives/when"
 
 import { applyElementProps } from "../../shared/apply-element-props.js"
+import { liveBoolean } from "../../shared/live-boolean.js"
 
 /**
  * Renders a group of radio options for single selection.
@@ -72,7 +73,8 @@ export function render(props) {
               type="radio"
               name=${groupName || nothing}
               value=${optionValue}
-              .checked=${value === optionValue}
+              ?checked=${value === optionValue}
+              ${liveBoolean("checked", value === optionValue)}
               ?disabled=${isDisabled || optionDisabled}
               @change=${(event) => onChange?.(event.target.value)}
               ${ref((element) => applyElementProps(element, optionRest))}

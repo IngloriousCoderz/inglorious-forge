@@ -13,6 +13,7 @@
   color: var(--iw-badge-on-accent);
   font-size: var(--iw-font-size-xs, 0.75rem);
   line-height: 1;
+  white-space: nowrap;
 
   &.iw-badge-sm {
     --iw-badge-shape-size: 0.5rem;
