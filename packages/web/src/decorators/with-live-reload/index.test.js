@@ -150,6 +150,28 @@ describe("withLiveReload", () => {
     }
   })
 
+  it("reloads when the browser comes back online", () => {
+    const connection = new EventTarget()
+    vi.stubGlobal("window", connection)
+    try {
+      const behavior = withLiveReload({
+        source: fakeSource(),
+        tables: ["records"],
+      })({})
+      const entity = { id: "list" }
+      const api = fakeApi({ list: entity })
+      behavior.create(entity, undefined, api)
+
+      connection.dispatchEvent(new Event("online"))
+      vi.advanceTimersByTime(300)
+      expect(api.notify).toHaveBeenCalledWith("#list:load", undefined)
+
+      behavior.destroy(entity, undefined, api)
+    } finally {
+      vi.unstubAllGlobals()
+    }
+  })
+
   it("subscribes once per entity, even if it is created again", () => {
     const source = fakeSource()
     const behavior = withLiveReload({ source, tables: ["records"] })({})

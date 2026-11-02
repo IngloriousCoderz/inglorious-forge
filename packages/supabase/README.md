@@ -51,6 +51,19 @@ It says that a table changed, not how. Under RLS, a delete carries only the row'
 
 `realtimeSource(client, { schema })`: `schema` defaults to `"public"`.
 
+## Network errors
+
+`isNetworkError(error)` tells a call that never reached the server from one the server refused. Each client reports it differently: PostgREST returns `{ message: "TypeError: Failed to fetch" }` (worded differently in every browser), Functions throws `FunctionsFetchError`, Auth `AuthRetryableFetchError`, and Storage wraps the failure in `originalError`.
+
+```js
+import { isNetworkError } from "@inglorious/supabase"
+
+const { data, error } = await supabase.from("messages").select()
+if (error) throw isNetworkError(error) ? new Error("errors.offline") : error
+```
+
+Pair it with the `NetworkStatus` sensor of `@inglorious/web` to tell people they are offline, and with `withLiveReload`, which reloads what is on screen when the connection comes back.
+
 ## Edge Functions
 
 `@inglorious/supabase/edge` is for functions running on Supabase's Deno runtime. It imports nothing, supabase-js included, so a function pays only for what it uses:

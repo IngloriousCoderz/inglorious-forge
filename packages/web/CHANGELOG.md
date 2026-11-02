@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 6.15.0
+
+### Minor Changes
+
+- `withLiveReload` also reloads every live entity when the browser comes back online.
+
 ## 6.14.1
 
 ### Patch Changes

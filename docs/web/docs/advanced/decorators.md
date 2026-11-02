@@ -104,7 +104,7 @@ const types = {
 - `payload(entity, api)` is what the reload event carries, such as the id of the record the entity shows. `event` names a different event than `load`.
 - `isLive(entity, api)` skips changes while the entity is off screen, since it loads when it opens anyway. It defaults to always.
 - A burst of changes becomes one reload, after `delay` (300 ms by default).
-- When the page comes back into view, every live entity reloads. A phone that put the app in the background may have dropped the connection, and the changes with it.
+- When the page comes back into view, or the browser comes back online, every live entity reloads. A phone that put the app in the background, or lost its signal, may have dropped the connection, and the changes with it.
 - The subscriptions end when the entity is destroyed.
 
 ### The source

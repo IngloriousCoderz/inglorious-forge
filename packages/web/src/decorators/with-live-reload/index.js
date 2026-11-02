@@ -4,6 +4,7 @@ const DEFAULT_DELAY = 300
 
 const reloads = new Set()
 let isWatchingVisibility = false
+let isWatchingConnection = false
 
 /**
  * Keeps an entity in step with a backend: whenever one of the `tables` it
@@ -23,9 +24,10 @@ let isWatchingVisibility = false
  *   always.
  * - `delay` (default 300 ms) gathers a burst of changes into one reload.
  *
- * It also reloads every live entity when the page comes back into view: a
- * phone that put the app in the background may have dropped the connection,
- * and the changes with it.
+ * It also reloads every live entity when the page comes back into view, and
+ * when the browser comes back online: a phone that put the app in the
+ * background, or lost its signal, may have dropped the connection, and the
+ * changes with it.
  *
  * IMPORTANT: changes arrive long after the handler that subscribed has
  * returned, when its `entity` draft is revoked. So only the entity's `id` is
@@ -90,6 +92,7 @@ export function withLiveReload({
         })
         reloads.add(reload)
         watchVisibility()
+        watchConnection()
       },
 
       destroy(entity, destroyPayload, api) {
@@ -105,6 +108,16 @@ function watchVisibility() {
   isWatchingVisibility = true
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState !== "visible") return
-    reloads.forEach((reload) => reload())
+    reloadAll()
   })
+}
+
+function watchConnection() {
+  if (isWatchingConnection || typeof window === "undefined") return
+  isWatchingConnection = true
+  window.addEventListener("online", reloadAll)
+}
+
+function reloadAll() {
+  reloads.forEach((reload) => reload())
 }

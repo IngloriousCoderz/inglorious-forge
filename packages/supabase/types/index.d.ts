@@ -20,3 +20,10 @@ export declare function realtimeSource(
   client: SupabaseClient,
   options?: RealtimeSourceOptions,
 ): LiveSource
+
+/**
+ * Whether a Supabase call failed because the server couldn't be reached, as
+ * opposed to the server refusing it, for every client: PostgREST, Functions,
+ * Auth and Storage.
+ */
+export declare function isNetworkError(error: unknown): boolean

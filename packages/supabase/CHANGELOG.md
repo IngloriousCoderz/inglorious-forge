@@ -1,5 +1,11 @@
 # @inglorious/supabase
 
+## 0.3.0
+
+### Minor Changes
+
+- `isNetworkError(error)` tells a call that never reached the server from one the server refused, for PostgREST, Functions, Auth and Storage alike.
+
 ## 0.2.0
 
 ### Minor Changes
