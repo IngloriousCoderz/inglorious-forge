@@ -71,7 +71,7 @@
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/server/SKILL.md",
-      "computedHash": "08ad1b9a8c3e4af5644a504c0b89087721cab5fd73de61c3d29a74c96859f0d3"
+      "computedHash": "baf222785c84255a9e1a4e0c06615cd06a697abf41e3884b675f06f88b3cb46d"
     },
     "ssx": {
       "source": "IngloriousCoderz/forge-skills",
@@ -95,7 +95,7 @@
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/ui/SKILL.md",
-      "computedHash": "f62f8ff0e5b1005ce74ac4a268fa0b74a4188898d94638645b2c7f5628fc2d56"
+      "computedHash": "69f93da0372790c31ac09ec75fb9722900175c4fa0ce9a2f476f30ebb223b0b6"
     },
     "ui-best-practices": {
       "source": "IngloriousCoderz/forge-skills",

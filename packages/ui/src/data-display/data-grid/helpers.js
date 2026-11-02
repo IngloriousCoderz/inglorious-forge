@@ -60,11 +60,15 @@ export function getEditedRows(entity) {
 }
 
 /**
- * Gets the processed rows (filtered, searched, sorted, paginated).
+ * Gets the processed rows (filtered, searched, sorted, paginated). A grid with
+ * `totalRows` holds the server's page already processed, so it gets the rows
+ * as they are.
  * @param {TableEntity} entity
  * @returns {any[]}
  */
 export function getRows(entity) {
+  if (entity.totalRows != null) return entity.rows
+
   let rows = entity.rows
   rows = applyFilters(entity, rows)
   rows = applySearch(entity, rows)
@@ -75,11 +79,14 @@ export function getRows(entity) {
 }
 
 /**
- * Gets the total number of rows after filtering and searching.
+ * Gets the total number of rows after filtering and searching, or the
+ * server's `totalRows` when the grid has it.
  * @param {TableEntity} entity
  * @returns {number}
  */
 export function getTotalRows(entity) {
+  if (entity.totalRows != null) return entity.totalRows
+
   let rows = entity.rows
   rows = applyFilters(entity, rows)
   rows = applySearch(entity, rows)

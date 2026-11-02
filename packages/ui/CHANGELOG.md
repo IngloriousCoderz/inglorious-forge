@@ -1,5 +1,11 @@
 # @inglorious/ui
 
+## 9.11.0
+
+### Minor Changes
+
+- DataGrid takes `totalRows` for server-loaded data: `rows` is then the server's page as it is, and the footer and page handlers go by `totalRows`
+
 ## 9.10.1
 
 ### Patch Changes

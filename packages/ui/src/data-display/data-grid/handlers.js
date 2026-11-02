@@ -433,6 +433,8 @@ function initDataGrid(entity) {
   entity.isMultiSelect ??= true
   entity.isVirtualized ??= false
 
+  entity.totalRows ??= null
+
   entity.pagination ??= null
   if (entity.pagination) {
     entity.pagination.page ??= 0

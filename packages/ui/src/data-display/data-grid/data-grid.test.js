@@ -386,6 +386,54 @@ describe("DataGrid / handlers", () => {
   })
 })
 
+describe("DataGrid / server-side", () => {
+  let entity
+
+  beforeEach(() => {
+    entity = {
+      id: GRID_ID,
+      type: "DataGrid",
+      rows: JSON.parse(JSON.stringify(sampleData)).slice(0, 2),
+      columns: JSON.parse(JSON.stringify(sampleColumns)),
+      pagination: { page: 1, pageSize: 2 },
+      search: { value: "Ali" },
+      totalRows: 10,
+    }
+    DataGrid.create(entity)
+  })
+
+  it("getRows: returns the server's page as it is", () => {
+    DataGrid.sortChange(entity, "name")
+    DataGrid.filterChange(entity, { columnId: "role", value: "Admin" })
+    entity.pagination.page = 3
+    expect(getRows(entity).map((r) => r.name)).toEqual(["Charlie", "Alice"])
+  })
+
+  it("getPaginationInfo: pages by totalRows", () => {
+    expect(getPaginationInfo(entity)).toMatchObject({
+      page: 1,
+      totalPages: 5,
+      totalRows: 10,
+      start: 2,
+      end: 4,
+      hasNextPage: true,
+    })
+  })
+
+  it("pageNext and pageChange: go past the loaded rows up to totalRows", () => {
+    DataGrid.pageNext(entity)
+    expect(entity.pagination.page).toBe(2)
+    DataGrid.pageChange(entity, 9)
+    expect(entity.pagination.page).toBe(4)
+  })
+
+  it("create: leaves a client-side grid without totalRows", () => {
+    const e = { rows: [], columns: [] }
+    DataGrid.create(e)
+    expect(e.totalRows).toBeNull()
+  })
+})
+
 describe("DataGrid / template", () => {
   let store, container, unsubscribe, getGrid
 

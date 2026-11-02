@@ -75,6 +75,13 @@ export interface DataGridProps<T extends Row = Row> {
   selectionAnchor?: string | number | null
   pagination?: { page: number; pageSize: number; pageSizes: number[] } | null
   rowId?: string
+  /**
+   * How many rows the server has for the current filters and search. When it
+   * is set, `rows` is the page the server already filtered, sorted and sliced,
+   * so the grid shows them as they are and pages by this total. Set it to `0`
+   * before the first load to start the grid server-side.
+   */
+  totalRows?: number | null
   isMultiSelect: boolean
   /**
    * The user's unsaved edits, by row key and column id, shown over the rows
