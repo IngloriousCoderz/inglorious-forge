@@ -522,7 +522,7 @@ const types = {
         const { name } = api.getEntity("user")
         const response = await fetch(`/api/todos/${name}`)
         const data = await response.json()
-        api.notify("todosLoaded", todos)
+        api.notify("todosLoaded", data)
       } catch (error) {
         api.notify("loadFailed", error.message)
       }
@@ -552,6 +552,11 @@ Notice: you don't need pending/fulfilled/rejected actions. You stay in control o
 - **`api.getType(typeName)`** - access type definition (mainly for overrides)
 
 All events triggered via `api.notify()` enter the queue and process together, maintaining predictability and testability.
+
+Two things to keep in mind:
+
+- **`entity` ends at the first `await`.** `entity`, and every object or array read from it, is a draft of the current update, revoked when the update ends, and the update does not wait for your `await`. After it, writing to `entity` or reading anything taken from it throws. Write before the first `await`, then notify an event that does the rest, as `todosLoaded` does above. The same goes for payloads: pass a copy (`{ ...entity.values }`), not the draft, to a handler that reads it after an `await`.
+- **`api.getEntity()` reads the state from before the update.** A handler cannot see what an earlier handler in the same chain of events changed: see [State swapping](#state-swapping).
 
 ### `handleAsync`
 

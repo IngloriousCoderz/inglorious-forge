@@ -36,6 +36,12 @@ export interface Column {
   filter?: {
     type: "text" | "number" | "range" | "select" | "date" | "time" | "datetime"
     options?: SelectOption[]
+    /** The filter field's accessible name. Defaults to "Filter <title>". */
+    ariaLabel?: string
+    /** A range filter's lower field's accessible name. */
+    minLabel?: string
+    /** A range filter's upper field's accessible name. */
+    maxLabel?: string
     [key: string]: any
   }
   /**
@@ -67,7 +73,12 @@ export interface DataGridProps<T extends Row = Row> {
   columns: Column[]
   sorts: { column: string; direction: "asc" | "desc" }[]
   filters: Record<string, any>
-  search: { value: string; placeholder?: string } | null
+  search: {
+    value: string
+    placeholder?: string
+    /** The search field's accessible name. Defaults to "Search". */
+    ariaLabel?: string
+  } | null
   isStriped?: boolean
   isVirtualized?: boolean
   virtualization?: DataGridVirtualization
@@ -166,36 +177,41 @@ export type DataGridType = {
   virtualMount(entity: DataGridProps, containerEl: HTMLElement): void
   virtualScroll(entity: DataGridProps, containerEl: HTMLElement): void
   render(entity: DataGridProps, api: Api): TemplateResult
-  renderDataGrid(entity: DataGridProps, api: Api): TemplateResult
-  renderHeader(entity: DataGridProps, api: Api): TemplateResult
-  renderToolbar(entity: DataGridProps, api: Api): TemplateResult
+  renderDataGrid(entity: DataGridProps): TemplateResult
+  renderHeader(entity: DataGridProps): TemplateResult
+  renderToolbar(entity: DataGridProps): TemplateResult
+  renderSearchbar(entity: DataGridProps): TemplateResult
   renderHeaderColumn(
     entity: DataGridProps,
     payload: { column: Column; index: number },
-    api: Api,
   ): TemplateResult
-  renderBody(entity: DataGridProps, api: Api): TemplateResult
+  renderBody(entity: DataGridProps): TemplateResult
   renderRow(
     entity: DataGridProps,
     payload: { row: Row; index: number },
-    api: Api,
   ): TemplateResult
   renderCell(
     entity: DataGridProps,
     payload: { cell: any; index: number; row?: Row },
-    api: Api,
   ): TemplateResult
   renderEditor(
     entity: DataGridProps,
     payload: { value: any; column: Column; row: Row; index: number },
-    api: Api,
   ): TemplateResult
-  renderEdits(entity: DataGridProps, editCount: number): TemplateResult
   renderValue(
     entity: DataGridProps,
     payload: { value: any; column: Column; index: number },
-    api: Api,
   ): any
+  renderFooter(entity: DataGridProps): TemplateResult
+  renderEdits(entity: DataGridProps, editCount: number): TemplateResult
+  renderPagination(
+    entity: DataGridProps,
+    pagination: DataGridPaginationInfo,
+  ): TemplateResult
+  renderPageSize(
+    entity: DataGridProps,
+    pagination: DataGridPaginationInfo,
+  ): TemplateResult
 }
 
 export declare const DataGrid: DataGridType

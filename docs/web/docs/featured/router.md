@@ -153,11 +153,26 @@ It reads the route from the payload rather than from the router entity, which du
 Use type composition for authentication and authorization:
 
 ```javascript
-const requireAuth = (type) => ({
-  routeChange(entity, payload, api) {
-    const user = api.getEntity("user")
+const Session = {
+  signIn(entity, user, api) {
+    entity.user = user
+    api.notify("sessionChange", user)
+  },
+  signOut(entity, _, api) {
+    entity.user = null
+    api.notify("sessionChange", null)
+  },
+}
 
-    if (!user.isLoggedIn) {
+const requireAuth = (type) => ({
+  sessionChange(entity, user, api) {
+    entity.user = user
+    type.sessionChange?.(entity, user, api)
+  },
+  routeChange(entity, payload, api) {
+    if (payload.route !== entity.id) return
+
+    if (!entity.user) {
       api.notify("navigate", "/login")
       return
     }
@@ -168,9 +183,9 @@ const requireAuth = (type) => ({
 
 const requireAdmin = (type) => ({
   routeChange(entity, payload, api) {
-    const user = api.getEntity("user")
+    if (payload.route !== entity.id) return
 
-    if (user.role !== "admin") {
+    if (entity.user?.role !== "admin") {
       api.notify("navigate", "/unauthorized")
       return
     }
@@ -185,6 +200,10 @@ const types = {
   ProfilePage: [ProfilePageBase, requireAuth],
 }
 ```
+
+::: warning Guards keep their own copy of the session
+A guard must not ask the session entity with `api.getEntity("session")`. During an update, `api.getEntity()` returns the state from before it, so a sign-in earlier in the same chain of events (sign in, then navigate) is not there yet, and the guard sends the user back to `/login`. Have the session announce each change with `sessionChange`, and let each guarded page keep its copy, as above.
+:::
 
 To bring the visitor back after signing in, pass where they were going in the login URL, and read it back with `safePath`. It returns the path only if it stays on the site, so a crafted link like `/login?from=//evil.com` cannot send a freshly signed-in user elsewhere:
 

@@ -519,6 +519,52 @@ describe("DataGrid / template", () => {
     })
   })
 
+  describe("accessibility", () => {
+    it("renders sortable headers as buttons and plain headers as text", () => {
+      const sortable = container.querySelector(".iw-data-grid-header-sort")
+      expect(sortable.tagName).toBe("BUTTON")
+      expect(sortable.type).toBe("button")
+      expect(
+        container.querySelectorAll(".iw-data-grid-header-sort"),
+      ).toHaveLength(2)
+    })
+
+    it("names the search and every filter field", () => {
+      expect(
+        container
+          .querySelector(".iw-data-grid-searchbar input")
+          .getAttribute("aria-label"),
+      ).toBe("Search")
+      const header = container.querySelector(".iw-data-grid-header-row")
+      const fields = header.querySelectorAll("input, select")
+      expect(
+        [...fields].map((field) => field.getAttribute("aria-label")),
+      ).toEqual([
+        "Filter Name",
+        "Filter Age: min",
+        "Filter Age: max",
+        "Filter Active",
+        "Filter Role",
+      ])
+    })
+
+    it("shows the filter values in their fields", () => {
+      store.notify(`#${GRID_ID}:filterChange`, {
+        columnId: "role",
+        value: "Admin",
+      })
+      store.notify(`#${GRID_ID}:filterChange`, {
+        columnId: "age",
+        value: { min: 30 },
+      })
+      expect(container.querySelector('select[name="role"]').value).toBe("Admin")
+      expect(container.querySelector('input[name="ageMin"]').value).toBe("30")
+
+      store.notify(`#${GRID_ID}:filtersClear`)
+      expect(container.querySelector('input[name="ageMin"]').value).toBe("")
+    })
+  })
+
   describe("row click modifiers", () => {
     it("ctrl click adds a row to the current selection", () => {
       const rows = container.querySelectorAll(
@@ -551,7 +597,9 @@ describe("DataGrid / template", () => {
     })
 
     it("disables prev buttons on the first page", () => {
-      const [first, prev] = container.querySelectorAll("button")
+      const [first, prev] = container.querySelectorAll(
+        ".iw-data-grid-footer button",
+      )
       expect(first.disabled).toBe(true)
       expect(prev.disabled).toBe(true)
     })
@@ -569,7 +617,9 @@ describe("DataGrid / template", () => {
 
     it("disables next buttons on the last page", () => {
       store.notify(`#${GRID_ID}:pageChange`, 1)
-      const buttons = [...container.querySelectorAll("button")]
+      const buttons = [
+        ...container.querySelectorAll(".iw-data-grid-footer button"),
+      ]
       const [next, last] = buttons.slice(-2)
       expect(next.disabled).toBe(true)
       expect(last.disabled).toBe(true)

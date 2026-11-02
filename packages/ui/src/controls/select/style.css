@@ -124,7 +124,7 @@
         user-select: none;
         padding: var(--iw-space-2) var(--iw-space-3);
 
-        &:focused {
+        &:focus-visible {
           background-color: var(--iw-color-bg-secondary);
         }
 

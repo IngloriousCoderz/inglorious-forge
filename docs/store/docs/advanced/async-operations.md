@@ -16,7 +16,7 @@ export const types = {
         const { name } = api.getEntity("user")
         const response = await fetch(`/api/todos/${name}`)
         const data = await response.json()
-        api.notify("todosLoaded", todos)
+        api.notify("todosLoaded", data)
       } catch (error) {
         api.notify("loadFailed", error.message)
       }
@@ -46,6 +46,20 @@ Notice: you don't need pending/fulfilled/rejected actions. You stay in control o
 - **`api.getType(typeName)`** - access type definition (mainly for overrides)
 
 All events triggered via `api.notify()` enter the queue and process together, maintaining predictability and testability.
+
+::: warning Drafts end at the first `await`
+`entity`, and every object or array read from it, is a draft that lives only until the update ends. The update does not wait for your `await`, so after it the draft is revoked: writing to `entity` throws, and so does reading anything taken from it, even in a payload you notify later. Write to `entity` only before the first `await`, and after it notify an event that does the writing, as `todosLoaded` does above. Take plain values for later before the first `await`:
+
+```javascript
+async save(entity, payload, api) {
+  const ids = entity.items.map((item) => item.id) // numbers: safe after await
+  const items = entity.items.filter((item) => item.isDone) // drafts: not safe
+  await fetch("/api/items", { method: "POST", body: JSON.stringify(ids) })
+  api.notify("saved", ids)
+}
+```
+
+:::
 
 ## `handleAsync`
 

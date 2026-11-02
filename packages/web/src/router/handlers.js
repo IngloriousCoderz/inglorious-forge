@@ -131,7 +131,7 @@ export function createHandlers(routeConfig) {
     /**
      * Handles navigation to a new route.
      * @param {RouterEntity} entity - The router entity.
-     * @param {string|number|{to: string, params?: object, replace?: boolean, state?: object}} payload - The navigation target or options.
+     * @param {string|number|{to: string, params?: object, replace?: boolean, force?: boolean, state?: object}} payload - The navigation target or options.
      * @param {Api} api - The application API.
      */
     async navigate(entity, payload, api) {

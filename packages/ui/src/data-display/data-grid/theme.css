@@ -29,6 +29,22 @@
     white-space: nowrap;
   }
 
+  .iw-data-grid-header-sort {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    font-weight: var(--iw-font-weight-bold);
+    text-align: start;
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 2px solid var(--iw-color-primary);
+      outline-offset: 2px;
+    }
+  }
+
   .iw-data-grid-column-resizer {
     &::after {
       content: "";

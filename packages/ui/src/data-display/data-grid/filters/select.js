@@ -5,6 +5,8 @@ export const SelectFilter = {
   render(entity, column) {
     return Select.render({
       name: column.id,
+      ariaLabel: column.filter.ariaLabel ?? `Filter ${column.title}`,
+      value: entity.filters[column.id] ?? "",
       size: "sm",
       isFullWidth: true,
       options: column.filter.options,

@@ -1,5 +1,13 @@
 # @inglorious/ui
 
+## 9.11.1
+
+### Patch Changes
+
+- DataGrid sorts from header buttons, so the keyboard can sort, and names its search and filter fields (`search.ariaLabel`, `filter.ariaLabel`, `filter.minLabel`, `filter.maxLabel`). Filter fields show their filter's value, so they clear with `filtersClear`. Select options get their focus style on `:focus-visible`. DataGrid's renderer types no longer take an `api`, and list `renderSearchbar`, `renderFooter`, `renderPagination` and `renderPageSize`.
+- Updated dependencies
+  - @inglorious/web@6.14.1
+
 ## 9.11.0
 
 ### Minor Changes

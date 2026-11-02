@@ -56,6 +56,8 @@ export interface NavigatePayload {
   params?: RouteParams
   /** If true, `history.replaceState` will be used instead of `history.pushState`. */
   replace?: boolean
+  /** If true, navigates even when the path is the current one, running the route again. */
+  force?: boolean
   /** Additional state to be stored in the browser's history. */
   state?: Record<string, any>
 }

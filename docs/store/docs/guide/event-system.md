@@ -279,6 +279,58 @@ api.notify("event2", p2) // Called from event1 handler
 // All three process, then subscribers notified once
 ```
 
+### What Handlers See
+
+All the events of one chain run in a single update, and the update becomes the state only once every one of them has run. Until then, `api.getEntity()` and `api.getEntities()` return the state from **before** the update. So a handler cannot see what an earlier handler in the same chain changed:
+
+```javascript
+const types = {
+  session: {
+    signIn(entity, user, api) {
+      entity.user = user
+      api.notify("navigate", "/account")
+    },
+  },
+  accountPage: {
+    routeChange(entity, payload, api) {
+      // ❌ Still the session from before `signIn`: no user yet
+      const { user } = api.getEntity("session")
+    },
+  },
+}
+```
+
+Be told the change instead of looking for it: the entity that changes announces it, and whoever cares keeps its own copy.
+
+```javascript
+const types = {
+  session: {
+    signIn(entity, user, api) {
+      entity.user = user
+      api.notify("sessionChange", user)
+      api.notify("navigate", "/account")
+    },
+  },
+  accountPage: {
+    sessionChange(entity, user) {
+      entity.user = user // ✅ Up to date when `routeChange` runs
+    },
+    routeChange(entity, payload, api) {
+      if (!entity.user) api.notify("navigate", "/login")
+    },
+  },
+}
+```
+
+The same goes for payloads: `entity` and everything read from it are drafts of that update, revoked once it ends. Pass a draft only to handlers of the same chain, and pass a copy to anything that reads it after an `await` (see [Async Operations](/advanced/async-operations)):
+
+```javascript
+api.notify("signIn", entity.values) // ❌ A draft: revoked when this update ends
+api.notify("signIn", { ...entity.values }) // ✅ A copy, if the values are flat
+```
+
+A spread copies one level only: copy any nested object or array as well.
+
 ---
 
 ## Async Events in the Queue
@@ -313,12 +365,12 @@ store.notify("fetchTodos", userId)
 // Flow:
 // 1. fetchTodos handler starts
 // 2. Sets entity.loading = true
-// 3. Awaits fetch (queued handlers pause)
+// 3. Awaits fetch: the update ends without waiting, and `entity` is revoked
 // 4. fetch completes
-// 5. api.notify("fetchSuccess") queues new event
+// 5. api.notify("fetchSuccess") starts a new update
 // 6. fetchSuccess handler runs
 // 7. Sets todos and loading = false
-// 8. All subscribers notified once
+// 8. Subscribers notified once for that update
 ```
 
 ---

@@ -117,16 +117,22 @@ export const DataGrid = {
       class="iw-data-grid-header-column"
       style=${getColumnStyle(column)}
     >
-      <div
-        @click=${() => column.isSortable && props.onSortChange?.(column.id)}
-        class="iw-data-grid-header-title"
-      >
-        ${column.title}
-        ${when(column.isSortable, () =>
-          getSortIcon(getSortDirection(props, column.id)),
-        )}
-      </div>
-
+      ${when(
+        column.isSortable,
+        () =>
+          html`<button
+            type="button"
+            class="iw-data-grid-header-title iw-data-grid-header-sort"
+            @click=${() => props.onSortChange?.(column.id)}
+          >
+            ${column.title}
+            <span aria-hidden="true"
+              >${getSortIcon(getSortDirection(props, column.id))}</span
+            >
+          </button>`,
+        () =>
+          html`<div class="iw-data-grid-header-title">${column.title}</div>`,
+      )}
       ${when(column.isFilterable, () => Filters.render(props, column))}
 
       <div
@@ -153,6 +159,7 @@ export const DataGrid = {
         size: "sm",
         isFullWidth: true,
         name: "search",
+        ariaLabel: props.search.ariaLabel ?? "Search",
         inputType: "text",
         placeholder: props.search.placeholder ?? "Fuzzy search...",
         value: props.search.value,

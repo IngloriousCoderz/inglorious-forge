@@ -1,7 +1,7 @@
 import { html } from "@inglorious/web"
 
 import { Input } from "../../../controls/input/index.js"
-import { format } from "./helpers.js"
+import { format, toField } from "./helpers.js"
 
 const RANGE_TYPE = {
   range: "number",
@@ -15,7 +15,12 @@ export const RangeFilter = {
     return html`<div class="iw-data-grid-filter-range">
       ${Input.render({
         name: `${column.id}Min`,
+        ariaLabel: column.filter.minLabel ?? `Filter ${column.title}: min`,
         inputType: RANGE_TYPE[column.filter.type],
+        value: toField(
+          entity.filters[column.id]?.min,
+          RANGE_TYPE[column.filter.type],
+        ),
         placeholder: column.filter.placeholder ?? "≥",
         size: "sm",
         isFullWidth: true,
@@ -29,7 +34,12 @@ export const RangeFilter = {
       })}
       ${Input.render({
         name: `${column.id}Max`,
+        ariaLabel: column.filter.maxLabel ?? `Filter ${column.title}: max`,
         inputType: RANGE_TYPE[column.filter.type],
+        value: toField(
+          entity.filters[column.id]?.max,
+          RANGE_TYPE[column.filter.type],
+        ),
         placeholder: column.filter.placeholder ?? "≤",
         size: "sm",
         isFullWidth: true,
