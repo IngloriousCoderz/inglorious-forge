@@ -1,5 +1,11 @@
 # @inglorious/firebase
 
+## 0.1.1
+
+### Patch Changes
+
+- Require Node 26 or later, like the rest of the suite
+
 ## 0.1.0
 
 ### Minor Changes

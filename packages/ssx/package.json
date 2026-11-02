@@ -84,7 +84,7 @@
     "prettier": "^3.9.6",
     "vitest": "^5.0.0"
   },
-  "packageManager": "pnpm@10.15.0",
+  "packageManager": "pnpm@12.15.0",
   "engines": {
     "node": ">= 26"
   }

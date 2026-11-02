@@ -30,7 +30,7 @@
     "prettier": "^3.9.10",
     "serve": "^14.2.6"
   },
-  "packageManager": "pnpm@10.15.0",
+  "packageManager": "pnpm@12.15.0",
   "engines": {
     "node": ">= 26"
   }

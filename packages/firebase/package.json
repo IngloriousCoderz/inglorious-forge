@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/firebase",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Firebase integration for Inglorious Web, in the browser and in Capacitor apps.",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -63,8 +63,8 @@
     "prettier": "^3.9.6",
     "vitest": "^5.0.0"
   },
-  "packageManager": "pnpm@10.15.0",
+  "packageManager": "pnpm@12.15.0",
   "engines": {
-    "node": ">= 22"
+    "node": ">= 26"
   }
 }

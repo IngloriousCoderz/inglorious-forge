@@ -270,7 +270,7 @@ This plugin requires:
 
 - `@inglorious/utils` package for vector operations and utilities
 - Babel 7.x or higher
-- Node.js 16 or higher
+- Node.js 26 or higher
 
 ## License
 

@@ -102,7 +102,7 @@ Forge is used in real projects, and is still evolving: until things settle, brea
 
 ## Contributing
 
-Contributions are welcome: see the [contributing guidelines](CONTRIBUTING.md). The monorepo uses pnpm workspaces and Turbo, with Node.js 22 or later:
+Contributions are welcome: see the [contributing guidelines](CONTRIBUTING.md). The monorepo uses pnpm workspaces and Turbo, with Node.js 26 or later:
 
 ```bash
 pnpm install

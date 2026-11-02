@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.1.1
+
+### Patch Changes
+
+- Scaffold projects with pnpm 12.15.0 as their package manager, and TypeScript projects with Node 26 types
+
 ## 1.1.0
 
 ### Minor Changes
