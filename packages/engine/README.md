@@ -11,10 +11,6 @@ The fastest way to start a new Inglorious Engine project is by using the officia
 Run the following command in your terminal and follow the prompts to create a new game from a variety of templates (including plain JavaScript, TypeScript, and IngloriousScript):
 
 ```bash
-# with npm
-npm create @inglorious/game@latest
-
-# with pnpm
 pnpm create @inglorious/game
 ```
 
@@ -280,7 +276,7 @@ FP has many advantages:
    - **Simplified Persistence**: Saving and loading a game is as simple as serializing and deserializing a single JSON object.
    - **Simplified Networking**: For multiplayer games, you don't need to synchronize complex objects. You just send small, serializable `event` objects over the network. Each client processes the same event with the same pure event handler, guaranteeing their game states stay in sync.
 
-7. **Leverage the Full JavaScript Ecosystem**: As a pure JavaScript engine, you have immediate access to the world's largest software repository: npm. Need advanced physics, complex AI, or a specific UI library? Integrate it with a simple `npm install`. You aren't limited to the built-in features or proprietary plugin ecosystem of a monolithic engine like Godot or Unity.
+7. **Leverage the Full JavaScript Ecosystem**: As a pure JavaScript engine, you have immediate access to the world's largest software repository: npm. Need advanced physics, complex AI, or a specific UI library? Integrate it with a simple `pnpm add`. You aren't limited to the built-in features or proprietary plugin ecosystem of a monolithic engine like Godot or Unity.
 
 ## Architecture: State Management
 

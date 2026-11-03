@@ -10,10 +10,6 @@ description: Install and set up Inglorious Store in your project.
 Install Inglorious Store using your favorite package manager:
 
 ```bash
-npm install @inglorious/store
-# or
-yarn add @inglorious/store
-# or
 pnpm add @inglorious/store
 ```
 

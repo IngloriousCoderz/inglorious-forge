@@ -49,15 +49,15 @@ SSX renders your entity-based web apps to HTML on the server, then hydrates them
 ### Installation
 
 ```bash
-npm install @inglorious/ssx @inglorious/web
+pnpm add @inglorious/ssx @inglorious/web
 ```
 
 ### Create Your First Site
 
 ```bash
-npx @inglorious/create-app my-site --template ssx-js
+pnpm create @inglorious/app my-site --template=ssx-js
 cd my-site
-npm run dev
+pnpm dev
 ```
 
 Or manually:
@@ -118,28 +118,28 @@ export const metadata = {
 ### Development
 
 ```bash
-npm run dev
+pnpm dev
 # → Dev server at http://localhost:3000
 ```
 
 ### Build
 
 ```bash
-npm run build
+pnpm build
 # → Static site in dist/
 ```
 
 ### Preview
 
 ```bash
-npm run preview
+pnpm preview
 # → Production server at http://localhost:3000 (serves static files + API routes)
 ```
 
 Or use the CLI directly:
 
 ```bash
-npx ssx serve
+pnpm exec ssx serve
 ```
 
 Deploy `dist/` to:

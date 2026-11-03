@@ -5,7 +5,7 @@ Transform Vue-like template syntax into lit-html templates for @inglorious/web.
 ## Installation
 
 ```bash
-npm install @inglorious/vite-plugin-vue
+pnpm add @inglorious/vite-plugin-vue
 ```
 
 ---

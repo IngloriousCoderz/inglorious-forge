@@ -21,7 +21,7 @@ Web Components are useful for:
 ### Basic Example: Shoelace Color Picker
 
 ```bash
-npm install @shoelace-style/shoelace
+pnpm add @shoelace-style/shoelace
 ```
 
 ```javascript
@@ -120,7 +120,7 @@ Most Web Component libraries (Shoelace, Material Web Components) require JavaScr
 Rich, accessible component library. Great for design systems.
 
 ```bash
-npm install @shoelace-style/shoelace
+pnpm add @shoelace-style/shoelace
 ```
 
 ### Material Web Components
@@ -128,7 +128,7 @@ npm install @shoelace-style/shoelace
 Google's Material Design components.
 
 ```bash
-npm install @material/web
+pnpm add @material/web
 ```
 
 ### Lion
@@ -136,7 +136,7 @@ npm install @material/web
 Open-source, accessible Web Components.
 
 ```bash
-npm install @lion/button @lion/form
+pnpm add @lion/button @lion/form
 ```
 
 ## Best Practices

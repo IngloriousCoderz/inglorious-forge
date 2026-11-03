@@ -158,7 +158,7 @@ positionFromEvent(event)
 
 ### Keep imports sorted
 
-Imports and re-exports are sorted, and [eslint-plugin-simple-import-sort](https://github.com/lydell/eslint-plugin-simple-import-sort) enforces it: run `npx eslint --fix` on the files you touched rather than ordering them by hand.
+Imports and re-exports are sorted, and [eslint-plugin-simple-import-sort](https://github.com/lydell/eslint-plugin-simple-import-sort) enforces it: run `pnpm exec eslint --fix` on the files you touched rather than ordering them by hand.
 
 ### Name files and folders in kebab-case
 

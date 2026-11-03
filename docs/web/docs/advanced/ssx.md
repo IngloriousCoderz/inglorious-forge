@@ -43,9 +43,9 @@ Both can live in one site, beside API routes in `src/api/`.
 ## Get started
 
 ```bash
-npm create @inglorious/app@latest -- my-site --template=ssx-js
+pnpm create @inglorious/app my-site --template=ssx-js
 cd my-site
-npm run dev
+pnpm dev
 ```
 
 Add `--syntax=jsx` or `--syntax=vue` to write the pages in JSX or Vue-like templates.

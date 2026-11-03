@@ -9,8 +9,8 @@ Get up and running with Inglorious Web in just a few commands.
 
 ## Prerequisites
 
-- **Node.js** 16+ or **Bun**
-- **npm**, **pnpm**, or **yarn**
+- **Node.js** 26 or later
+- **pnpm**
 
 ## Step 1: Choose Your Setup Path
 
@@ -19,16 +19,6 @@ Get up and running with Inglorious Web in just a few commands.
 Use the official scaffolding tool for the fastest setup:
 
 ```bash
-npm create @inglorious/app@latest
-```
-
-Or with your preferred package manager:
-
-```bash
-# with yarn
-yarn create @inglorious/app
-
-# with pnpm
 pnpm create @inglorious/app
 ```
 
@@ -41,8 +31,8 @@ Then install and start developing:
 
 ```bash
 cd my-app
-npm install
-npm run dev
+pnpm install
+pnpm dev
 ```
 
 **Best for:** Getting started quickly with a pre-configured project  
@@ -63,7 +53,7 @@ npm run dev
 If you prefer not to use a bundler:
 
 ```bash
-npm install @inglorious/web
+pnpm add @inglorious/web
 ```
 
 Create `index.html`:
@@ -109,14 +99,14 @@ mount(store, (api) => api.render("app"), document.getElementById("root"))
 Set up with Vite for a modern development experience:
 
 ```bash
-npm create vite@latest my-app -- --template vanilla
+pnpm create vite my-app --template vanilla
 cd my-app
-npm install @inglorious/web
+pnpm add @inglorious/web
 ```
 
 Then update `main.js` with your Inglorious Web code (see Option A above).
 
-Run `npm run dev` and visit `http://localhost:5173`.
+Run `pnpm dev` and visit `http://localhost:5173`.
 
 **Pros:** Fast HMR, TypeScript support, optimized builds  
 **Cons:** Slight build complexity
@@ -126,9 +116,9 @@ Run `npm run dev` and visit `http://localhost:5173`.
 For full TypeScript support:
 
 ```bash
-npm create vite@latest my-app -- --template vanilla-ts
+pnpm create vite my-app --template vanilla-ts
 cd my-app
-npm install @inglorious/web
+pnpm add @inglorious/web
 ```
 
 Create `src/types.ts`:

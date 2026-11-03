@@ -14,8 +14,8 @@ Create a new directory and initialize the project:
 ```bash
 mkdir todo-app
 cd todo-app
-npm init -y
-npm install @inglorious/web
+pnpm init
+pnpm add @inglorious/web
 ```
 
 Create `index.html`:
@@ -175,8 +175,8 @@ Start a simple HTTP server:
 # Using Python
 python -m http.server 8000
 
-# Using Node (with http-server package)
-npx http-server
+# Using Node (with the http-server package)
+pnpm dlx http-server
 
 # Using Deno
 deno run --allow-net https://deno.land/std/http/file_server.ts

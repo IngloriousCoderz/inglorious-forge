@@ -272,7 +272,7 @@ If you want a framework that **does not fight JavaScript**, this is the one.
 ## Installation
 
 ```bash
-npm install @inglorious/web
+pnpm add @inglorious/web
 ```
 
 ---
@@ -429,7 +429,7 @@ test("counter button has click handler", () => {
 **No special setup required:**
 
 ```bash
-npm install --save-dev vitest  # or jest, or node:test
+pnpm add -D vitest  # or jest, or node:test
 ```
 
 That's it. No `@testing-library/react`, no `renderHook`, no `act()` wrappers.
@@ -697,7 +697,7 @@ This Vite plugin transforms standard JSX/TSX into optimized `lit-html` templates
 
 To use it:
 
-1. Install the plugin: `npm install -D @inglorious/vite-plugin-jsx`
+1. Install the plugin: `pnpm add -D @inglorious/vite-plugin-jsx`
 2. Add it to your `vite.config.js`
 3. Write your render functions using JSX
 

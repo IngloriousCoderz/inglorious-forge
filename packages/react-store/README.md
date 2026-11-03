@@ -22,7 +22,7 @@ Connect your React app to Inglorious Store with a familiar API. Built on `react-
 ## Installation
 
 ```bash
-npm install @inglorious/store @inglorious/react-store react react-dom
+pnpm add @inglorious/store @inglorious/react-store react react-dom
 ```
 
 ---

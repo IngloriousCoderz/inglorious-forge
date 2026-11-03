@@ -12,6 +12,7 @@ There are no signals, no component state and no compiler to learn. Types are pla
 
 - [`@inglorious/store`](https://inglorious.dev/store/): the entity store every other package builds on, Redux-compatible, with async helpers and state machines.
 - [`@inglorious/react-store`](packages/react-store): hooks and a provider to use the store from React.
+- [`@inglorious/utils`](packages/utils): pure helpers for data structures, functions, math, vectors and physics, shared by the other packages.
 
 **Web apps**
 
@@ -23,6 +24,7 @@ There are no signals, no component state and no compiler to learn. Types are pla
 - [`@inglorious/ag-grid`](packages/ag-grid): AG Grid, with no adapter.
 - [`@inglorious/supabase`](packages/supabase): Supabase: Realtime changes that keep entities live, and helpers for Edge Functions.
 - [`@inglorious/firebase`](packages/firebase): Firebase push notifications and analytics, in the browser and in Capacitor apps.
+- [`@inglorious/logo`](packages/logo): the interactive 3D Inglorious Coderz logo, as an Inglorious Web type.
 
 **Sites**
 
@@ -34,7 +36,7 @@ There are no signals, no component state and no compiler to learn. Types are pla
 
 **Authoring**
 
-- [`@inglorious/vite-plugin-jsx`](packages/vite-plugin-jsx) and [`@inglorious/vite-plugin-vue`](packages/vite-plugin-vue): write templates in JSX or Vue-like syntax, compiled to lit-html.
+- [`@inglorious/vite-plugin-jsx`](packages/vite-plugin-jsx) and [`@inglorious/vite-plugin-vue`](packages/vite-plugin-vue): write templates in JSX or Vue-like syntax, compiled to lit-html, with [`@inglorious/jsx`](packages/jsx) providing the JSX types for TypeScript.
 - [`@inglorious/vite-plugin-hmr`](packages/vite-plugin-hmr): keeps the store's state across hot updates.
 
 **Games**
@@ -53,7 +55,7 @@ There are no signals, no component state and no compiler to learn. Types are pla
 Scaffold a project, picking a web app or a pre-rendered site, JavaScript or TypeScript, and the parts you want:
 
 ```bash
-npm create @inglorious/app@latest
+pnpm create @inglorious/app
 ```
 
 Or see the model in a few lines: a type handles events and renders its entities, and the app mounts the store.
@@ -98,7 +100,7 @@ The [examples](examples/) show the packages at work, from TodoMVC to a point-of-
 
 ## Status
 
-Forge is used in real projects, and is still evolving: until things settle, breaking changes may happen between minor versions, and each one is described in its package's changelog. If you find a sharp edge, please [open an issue](https://github.com/IngloriousCoderz/inglorious-forge/issues).
+Forge is used in production. Every package follows [semantic versioning](https://semver.org/): breaking changes only ever ship in a major release, and each one is described in its package's changelog. The high major numbers are a legacy of the packages' early years, when they were published while still in development; they don't reflect how often things break today. If you find a sharp edge, please [open an issue](https://github.com/IngloriousCoderz/inglorious-forge/issues).
 
 ## Contributing
 

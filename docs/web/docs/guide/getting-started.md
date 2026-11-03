@@ -12,7 +12,7 @@ Welcome to Inglorious Web! Let's build your first app in under 5 minutes.
 The fastest way to get started is with the official scaffolding tool:
 
 ```bash
-npm create @inglorious/app@latest my-first-app
+pnpm create @inglorious/app my-first-app
 ```
 
 Follow the prompts:
@@ -24,8 +24,8 @@ Then start developing:
 
 ```bash
 cd my-first-app
-npm install
-npm run dev
+pnpm install
+pnpm dev
 ```
 
 Open your browser to `http://localhost:5173` and you'll see "Hello world, Hello wide, Hello web!" (try clicking the words!)

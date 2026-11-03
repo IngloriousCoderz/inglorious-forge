@@ -16,7 +16,7 @@ This package provides a collection of pure, composable helper functions to strea
 ## Installation
 
 ```bash
-npm install @inglorious/utils
+pnpm add @inglorious/utils
 ```
 
 ---

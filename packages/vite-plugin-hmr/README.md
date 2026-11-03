@@ -9,7 +9,7 @@ application code therefore keeps the current UI state instead of resetting it.
 ## Installation
 
 ```bash
-npm install -D @inglorious/vite-plugin-hmr
+pnpm add -D @inglorious/vite-plugin-hmr
 ```
 
 The plugin supports Vite `7.1.3` and later.

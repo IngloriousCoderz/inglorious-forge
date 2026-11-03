@@ -62,7 +62,7 @@ pnpm install
 pnpm bench
 ```
 
-It uses the installed Chrome, or Playwright's Chromium (`npx playwright install chromium`). `DURATION_MS` (default 20000), `WARMUP_MS` (default 3000) and `RUNS` (default 3) set the length of the measurement:
+It uses the installed Chrome, or Playwright's Chromium (`pnpm exec playwright install chromium`). `DURATION_MS` (default 20000), `WARMUP_MS` (default 3000) and `RUNS` (default 3) set the length of the measurement:
 
 ```bash
 RUNS=5 DURATION_MS=30000 pnpm bench

@@ -10,7 +10,7 @@ Write Inglorious Web components using JSX syntax with the `@inglorious/vite-plug
 ## Installation
 
 ```bash
-npm install -D @inglorious/vite-plugin-jsx
+pnpm add -D @inglorious/vite-plugin-jsx
 ```
 
 ## Vite Configuration

@@ -8,16 +8,9 @@ This package allows you to generate a new project from a set of pre-configured t
 
 ## Usage
 
-To create a new game, run one of the following commands in your terminal. You will be prompted to choose a project name and select a template.
+To create a new game, run this command in your terminal. You will be prompted to choose a project name and select a template.
 
 ```bash
-# with npm
-npm create @inglorious/game@latest
-
-# with yarn
-yarn create @inglorious/game
-
-# with pnpm
 pnpm create @inglorious/game
 ```
 

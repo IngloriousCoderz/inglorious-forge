@@ -10,7 +10,7 @@ Write Inglorious Web components using Vue Single-File Component–style template
 ## Installation
 
 ```bash
-npm install -D @inglorious/vite-plugin-vue
+pnpm add -D @inglorious/vite-plugin-vue
 ```
 
 ## Vite Configuration

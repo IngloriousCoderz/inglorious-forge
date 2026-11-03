@@ -29,7 +29,7 @@ It gives you React-familiar syntax **without** React's runtime, hooks, lifecycle
 ## 📦 Installation
 
 ```bash
-npm install -D @inglorious/vite-plugin-jsx
+pnpm add -D @inglorious/vite-plugin-jsx
 ```
 
 ---

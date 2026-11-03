@@ -40,10 +40,6 @@ The plugin handles the transformation, giving you clean syntax with efficient ex
 First, install the plugin using your package manager:
 
 ```bash
-npm install -D @inglorious/babel-plugin-inglorious-script
-# or
-yarn add -D @inglorious/babel-plugin-inglorious-script
-# or
 pnpm add -D @inglorious/babel-plugin-inglorious-script
 ```
 

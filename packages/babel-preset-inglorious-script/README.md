@@ -11,10 +11,6 @@ It provides a convenient way to enable vector operator overloading by including 
 First, install the preset using your package manager:
 
 ```bash
-npm install -D @inglorious/babel-preset-inglorious-script
-# or
-yarn add -D @inglorious/babel-preset-inglorious-script
-# or
 pnpm add -D @inglorious/babel-preset-inglorious-script
 ```
 

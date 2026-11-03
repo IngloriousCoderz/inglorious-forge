@@ -8,16 +8,9 @@ This package allows you to generate a new project from a set of pre-configured t
 
 ## Usage
 
-To create a new app, run one of the following commands in your terminal. You will be prompted to choose a project name and select a template.
+To create a new app, run this command in your terminal. You will be prompted to choose a project name and select a template.
 
 ```bash
-# with npm
-npm create @inglorious/app@latest
-
-# with yarn
-yarn create @inglorious/app
-
-# with pnpm
 pnpm create @inglorious/app
 ```
 
@@ -49,7 +42,7 @@ The app is generated in the syntax you chose: lit-html, JSX or Vue. Every questi
 | Select a rendering syntax   | `--syntax=lit-html\|jsx\|vue`                |
 
 ```bash
-npm create @inglorious/app@latest -- my-app --template=ts --syntax=jsx --ui --theme=material-3 --routing --transitions --icons=material --languages=en,it --no-mobile --no-analytics --no-push --no-pwa --skills
+pnpm create @inglorious/app my-app --template=ts --syntax=jsx --ui --theme=material-3 --routing --transitions --icons=material --languages=en,it --no-mobile --no-analytics --no-push --no-pwa --skills
 ```
 
 Analytics and push generate their setup steps into the new project's README, and a `.env.example`. Push also generates a Supabase migration, the `push-notify` edge function and a service worker: a push is sent by inserting a row in `notifications`. It needs a Firebase project, a Supabase project and a sign-in screen, since the permission prompt appears once someone is signed in with Supabase Auth.
