@@ -5,7 +5,7 @@
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
-import { html } from "@inglorious/web"
+import { html, nothing } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
 import { repeat } from "@inglorious/web/directives/repeat"
 import { when } from "@inglorious/web/directives/when"
@@ -40,6 +40,10 @@ const DATE_PART_LENGTH = 2
 /** Date's months count from zero, people's from one. */
 const MONTH_OFFSET = 1
 const INPUT_TYPES = { number: "number", date: "date", url: "url" }
+const FIRST_ROW = 0
+const LAST_ROW = -1
+const ROW_STEPS = { ArrowDown: 1, ArrowUp: -1 }
+const ARIA_SORT = { asc: "ascending", desc: "descending" }
 
 export const DataGrid = {
   /**
@@ -67,21 +71,28 @@ export const DataGrid = {
     }
 
     return html`<div class=${classMap(classes)}>
-      ${this.renderHeader?.(props)} ${this.renderBody?.(props)}
+      ${when(props.search, () => this.renderToolbar?.(props))}
+      <div
+        class="iw-data-grid-table"
+        role="grid"
+        aria-label=${props.ariaLabel ?? nothing}
+        aria-multiselectable=${props.isMultiSelect ? "true" : nothing}
+      >
+        ${this.renderHeader?.(props)} ${this.renderBody?.(props)}
+      </div>
       ${this.renderFooter?.(props)}
     </div> `
   },
 
   /**
-   * Renders the grid header region, including optional toolbar and column headers.
+   * Renders the grid header region with the column headers.
    * Column rendering is delegated to `renderHeaderColumn`.
    * @param {DataGridProps} props The data grid props.
    * @returns {TemplateResult} The rendered header.
    */
   renderHeader(props) {
     return html`<div class="iw-data-grid-header">
-      ${when(props.search, () => this.renderToolbar?.(props))}
-      <div class="iw-data-grid-header-row">
+      <div class="iw-data-grid-header-row" role="row">
         ${repeat(
           props.columns,
           (column) => column.id,
@@ -113,8 +124,12 @@ export const DataGrid = {
    * @returns {TemplateResult} The rendered header column.
    */
   renderHeaderColumn(props, { column }) {
+    const direction = getSortDirection(props, column.id)
+
     return html`<div
       class="iw-data-grid-header-column"
+      role="columnheader"
+      aria-sort=${column.isSortable ? (ARIA_SORT[direction] ?? "none") : nothing}
       style=${getColumnStyle(column)}
     >
       ${when(
@@ -126,9 +141,7 @@ export const DataGrid = {
             @click=${() => props.onSortChange?.(column.id)}
           >
             ${column.title}
-            <span aria-hidden="true"
-              >${getSortIcon(getSortDirection(props, column.id))}</span
-            >
+            <span aria-hidden="true">${getSortIcon(direction)}</span>
           </button>`,
         () =>
           html`<div class="iw-data-grid-header-title">${column.title}</div>`,
@@ -176,14 +189,20 @@ export const DataGrid = {
    */
   renderBody(props) {
     const rows = getRows(props)
+    const rowIds = rows.map((row) => getRowKeyValue(props, row))
+    const tabStopId = rowIds.includes(props.selectionAnchor)
+      ? props.selectionAnchor
+      : rowIds[FIRST_ROW]
+    const renderRow = (row, index) =>
+      this.renderRow?.(props, {
+        row,
+        index,
+        isTabStop: getRowKeyValue(props, row) === tabStopId,
+      })
 
     if (!props.isVirtualized) {
       return html`<div class="iw-data-grid-body">
-        ${repeat(
-          rows,
-          (row) => getRowKeyValue(props, row),
-          (row, index) => this.renderRow?.(props, { row, index }),
-        )}
+        ${repeat(rows, (row) => getRowKeyValue(props, row), renderRow)}
       </div>`
     }
 
@@ -211,8 +230,7 @@ export const DataGrid = {
         }
       },
       getType: () => ({
-        renderItem: (_entity, { item, index }) =>
-          this.renderRow?.(props, { row: item, index }),
+        renderItem: (_entity, { item, index }) => renderRow(item, index),
       }),
     }
 
@@ -221,17 +239,25 @@ export const DataGrid = {
 
   /**
    * Renders a single data row and wires row click/selection handlers.
-   * Cells are delegated to `renderCell` for customization.
+   * The row is focusable: arrows, Home and End move between rows, Space
+   * toggles the row as Ctrl+click does, Enter selects it alone, and Shift
+   * with either extends the selection. Only the tab stop row is in the tab
+   * order. Cells are delegated to `renderCell` for customization.
    * @param {DataGridProps} props The data grid props.
    * @param {object} payload The payload.
    * @param {Row} payload.row The row data.
    * @param {number} payload.index The row index.
+   * @param {boolean} [payload.isTabStop] Whether Tab reaches this row.
    * @returns {TemplateResult} The rendered row.
    */
-  renderRow(props, { row, index }) {
+  renderRow(props, { row, index, isTabStop = false }) {
     const rowId = getRowKeyValue(props, row)
+    const isSelected = Boolean(props.selection?.includes(rowId))
 
     return html`<div
+      role="row"
+      aria-selected=${String(isSelected)}
+      tabindex=${isTabStop ? "0" : "-1"}
       @click=${(event) =>
         props.onRowClick?.({
           rowId,
@@ -239,9 +265,10 @@ export const DataGrid = {
           metaKey: event.metaKey,
           ctrlKey: event.ctrlKey,
         })}
+      @keydown=${(event) => handleRowKeydown(event, props, rowId)}
       class="iw-data-grid-row ${classMap({
         "iw-data-grid-row-even": index % DIVISOR,
-        "iw-data-grid-row-selected": props.selection?.includes(rowId),
+        "iw-data-grid-row-selected": isSelected,
       })}"
     >
       ${repeat(
@@ -272,6 +299,7 @@ export const DataGrid = {
     const isEditable = Boolean(column.isEditable && row)
 
     return html`<div
+      role="gridcell"
       class="iw-data-grid-cell ${classMap({
         "iw-data-grid-cell-number": column.type === "number",
         "iw-data-grid-cell-date": column.type === "date",
@@ -382,8 +410,11 @@ export const DataGrid = {
         () =>
           html`<div class="iw-data-grid-footer-row">
             <div>
-              ${pagination.start + PRETTY_PAGE} to ${pagination.end} of
-              ${pagination.totalRows} entries
+              ${(props.formatRange ?? formatRange)({
+                start: pagination.start + PRETTY_PAGE,
+                end: pagination.end,
+                total: pagination.totalRows,
+              })}
             </div>
 
             ${this.renderPagination?.(props, pagination)}
@@ -405,11 +436,11 @@ export const DataGrid = {
   renderEdits(props, editCount) {
     return html`<div class="iw-data-grid-footer-row iw-data-grid-edits">
       <div role="status">
-        ${editCount} ${editCount === ONE_EDIT ? "change" : "changes"}
+        ${(props.formatEditCount ?? formatEditCount)(editCount)}
       </div>
       <div class="iw-data-grid-edits-actions">
         ${Button.render({
-          children: "Reset",
+          children: props.resetLabel ?? "Reset",
           variant: "ghost",
           size: "sm",
           onClick: () => props.onEditsReset?.(),
@@ -438,6 +469,7 @@ export const DataGrid = {
           buttonSize: "sm",
           buttonVariant: "outline",
           itemClassName: "iw-data-grid-pagination-button",
+          formatPageLabel: props.formatPageLabel,
         },
         {
           label: "«",
@@ -451,6 +483,7 @@ export const DataGrid = {
           buttonSize: "sm",
           buttonVariant: "outline",
           itemClassName: "iw-data-grid-pagination-button",
+          formatPageLabel: props.formatPageLabel,
         },
         {
           label: "‹",
@@ -461,6 +494,7 @@ export const DataGrid = {
       )}
       ${Input.render({
         name: "page",
+        ariaLabel: props.pageLabel ?? "Page",
         size: "sm",
         inputType: "number",
         min: 1,
@@ -475,6 +509,7 @@ export const DataGrid = {
           buttonSize: "sm",
           buttonVariant: "outline",
           itemClassName: "iw-data-grid-pagination-button",
+          formatPageLabel: props.formatPageLabel,
         },
         {
           label: "›",
@@ -488,6 +523,7 @@ export const DataGrid = {
           buttonSize: "sm",
           buttonVariant: "outline",
           itemClassName: "iw-data-grid-pagination-button",
+          formatPageLabel: props.formatPageLabel,
         },
         {
           label: "»",
@@ -502,8 +538,9 @@ export const DataGrid = {
 
   renderPageSize(props, pagination) {
     return html`<div class="iw-data-grid-footer-row">
-      <div>Page size:</div>
+      <div>${props.pageSizeLabel ?? "Page size"}</div>
       ${Select.render({
+        ariaLabel: props.pageSizeLabel ?? "Page size",
         size: "sm",
         value: pagination.pageSize,
         options: pagination.pageSizes,
@@ -635,4 +672,73 @@ function fromField(text, type, saved) {
   const date = new Date(saved)
   date.setFullYear(year, month - MONTH_OFFSET, day)
   return saved instanceof Date ? date : date.getTime()
+}
+
+/**
+ * Selects or moves between rows from the keyboard. Keys pressed in a cell's
+ * field stay the field's.
+ * @param {KeyboardEvent} event
+ * @param {DataGridProps} props
+ * @param {string|number} rowId
+ */
+function handleRowKeydown(event, props, rowId) {
+  if (event.target !== event.currentTarget) return
+
+  if (event.key === " " || event.key === "Enter") {
+    event.preventDefault()
+    props.onRowClick?.({
+      rowId,
+      shiftKey: event.shiftKey,
+      metaKey: event.metaKey,
+      ctrlKey: event.ctrlKey || event.key === " ",
+    })
+    return
+  }
+
+  const rows = [
+    ...event.currentTarget
+      .closest(".iw-data-grid-body")
+      .querySelectorAll(".iw-data-grid-row"),
+  ]
+  const target = getRowToFocus(
+    rows,
+    rows.indexOf(event.currentTarget),
+    event.key,
+  )
+  if (!target) return
+
+  event.preventDefault()
+  target.focus()
+}
+
+/**
+ * The row a navigation key moves focus to, if any.
+ * @param {HTMLElement[]} rows
+ * @param {number} current
+ * @param {string} key
+ * @returns {HTMLElement|undefined}
+ */
+function getRowToFocus(rows, current, key) {
+  if (key === "Home") return rows[FIRST_ROW]
+  if (key === "End") return rows.at(LAST_ROW)
+  if (key in ROW_STEPS) return rows[current + ROW_STEPS[key]]
+}
+
+/**
+ * The footer's default count of the rows shown.
+ * @param {{ start: number, end: number, total: number }} range
+ * @returns {string}
+ */
+function formatRange({ start, end, total }) {
+  if (!total) return "0 entries"
+  return `${start} to ${end} of ${total} entries`
+}
+
+/**
+ * The edits bar's default count of the unsaved edits.
+ * @param {number} count
+ * @returns {string}
+ */
+function formatEditCount(count) {
+  return `${count} ${count === ONE_EDIT ? "change" : "changes"}`
 }

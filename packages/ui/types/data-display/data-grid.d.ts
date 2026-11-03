@@ -79,6 +79,8 @@ export interface DataGridProps<T extends Row = Row> {
     /** The search field's accessible name. Defaults to "Search". */
     ariaLabel?: string
   } | null
+  /** The grid's accessible name. */
+  ariaLabel?: string
   isStriped?: boolean
   isVirtualized?: boolean
   virtualization?: DataGridVirtualization
@@ -101,6 +103,18 @@ export interface DataGridProps<T extends Row = Row> {
   edits?: Record<string | number, Record<string, any>>
   /** The label of the button that saves the edits. Defaults to "Save changes". */
   saveLabel?: string
+  /** The label of the button that resets the edits. Defaults to "Reset". */
+  resetLabel?: string
+  /** The edits bar's count. Defaults to "{count} change(s)". */
+  formatEditCount?: (count: number) => string
+  /** The footer's count of the rows shown. Defaults to "{start} to {end} of {total} entries", or "0 entries". */
+  formatRange?: (range: { start: number; end: number; total: number }) => string
+  /** The page field's accessible name. Defaults to "Page". */
+  pageLabel?: string
+  /** The page size selector's label. Defaults to "Page size". */
+  pageSizeLabel?: string
+  /** A page control's accessible name. Defaults to "Go to page {page}". */
+  formatPageLabel?: (page: number) => string
   onCellChange?: (payload: {
     rowId: string | number
     columnId: string

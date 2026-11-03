@@ -329,4 +329,26 @@ describe("carousel", () => {
       true,
     )
   })
+
+  it("names the carousel, slides, arrows and dots with the given labels", () => {
+    const { container } = setup({
+      roleDescription: "carosello",
+      slideRoleDescription: "diapositiva",
+      formatSlideLabel: (index, total) => `${index} di ${total}`,
+      formatIndicatorLabel: (index) => `Vai alla diapositiva ${index}`,
+      previousLabel: "Precedente",
+      nextLabel: "Successiva",
+    })
+
+    const viewport = container.querySelector(".iw-carousel-viewport")
+    const slide = container.querySelector(".iw-carousel-item")
+    expect(viewport.getAttribute("aria-roledescription")).toBe("carosello")
+    expect(slide.getAttribute("aria-roledescription")).toBe("diapositiva")
+    expect(slide.getAttribute("aria-label")).toBe("1 di 3")
+    expect(
+      container.querySelector('[aria-label="Vai alla diapositiva 2"]'),
+    ).not.toBeNull()
+    expect(container.querySelector('[aria-label="Precedente"]')).not.toBeNull()
+    expect(container.querySelector('[aria-label="Successiva"]')).not.toBeNull()
+  })
 })

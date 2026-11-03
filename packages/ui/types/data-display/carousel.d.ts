@@ -13,6 +13,18 @@ export interface CarouselProps {
   id?: string
   type?: string
   label?: string
+  /** What screen readers call the carousel. Defaults to "carousel". */
+  roleDescription?: string
+  /** What screen readers call a slide. Defaults to "slide". */
+  slideRoleDescription?: string
+  /** A slide's accessible name. Defaults to "{index} of {total}", counted from 1. */
+  formatSlideLabel?: (index: number, total: number) => string
+  /** A dot's accessible name. Defaults to "Go to slide {index}", counted from 1. */
+  formatIndicatorLabel?: (index: number) => string
+  /** The previous arrow's accessible name. Defaults to "Previous slide". */
+  previousLabel?: string
+  /** The next arrow's accessible name. Defaults to "Next slide". */
+  nextLabel?: string
 
   items?: unknown[]
   /** Index of the item the viewport has settled on. */

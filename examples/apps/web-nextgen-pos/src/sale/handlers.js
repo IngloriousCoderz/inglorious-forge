@@ -71,12 +71,12 @@ export const states = {
   },
 
   totaling: {
-    taxCalculateSuccess(entity, tax) {
+    taxCalculateSuccess(entity, { result: tax }) {
       entity.tax = tax
       entity.state = "paying"
     },
 
-    taxCalculateError(entity, error) {
+    taxCalculateError(entity, { error }) {
       entity.error = error.message
       entity.state = "open"
     },

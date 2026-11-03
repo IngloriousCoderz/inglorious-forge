@@ -453,10 +453,10 @@ describe("DataGrid / template", () => {
       expect(container.querySelector(".iw-data-grid-footer")).not.toBeNull()
     })
 
-    it("renders the toolbar above the header row", () => {
-      const header = container.querySelector(".iw-data-grid-header")
+    it("renders the toolbar above the grid, outside it", () => {
+      const table = container.querySelector(".iw-data-grid-table")
       expect(
-        header.firstElementChild.classList.contains("iw-data-grid-toolbar"),
+        table.previousElementSibling.classList.contains("iw-data-grid-toolbar"),
       ).toBe(true)
     })
 
@@ -565,6 +565,108 @@ describe("DataGrid / template", () => {
     })
   })
 
+  describe("grid roles", () => {
+    it("exposes a multiselectable grid of rows, column headers and cells", () => {
+      const grid = container.querySelector('[role="grid"]')
+      expect(grid.getAttribute("aria-multiselectable")).toBe("true")
+      expect(grid.querySelectorAll('[role="row"]')).toHaveLength(
+        getRows(getGrid()).length + 1,
+      )
+      expect(grid.querySelectorAll('[role="columnheader"]')).toHaveLength(
+        getGrid().columns.length,
+      )
+      expect(grid.querySelector('[role="gridcell"]')).not.toBeNull()
+    })
+
+    it("marks the sort of sortable columns only", () => {
+      const sorts = () =>
+        [...container.querySelectorAll('[role="columnheader"]')].map((header) =>
+          header.getAttribute("aria-sort"),
+        )
+      expect(sorts().filter(Boolean)).toEqual(["none", "none"])
+
+      container.querySelector(".iw-data-grid-header-sort").click()
+      expect(sorts()).toContain("ascending")
+    })
+
+    it("marks rows selected or not", () => {
+      const rows = container.querySelectorAll(
+        ".iw-data-grid-body .iw-data-grid-row",
+      )
+      rows[1].click()
+      const selected = [
+        ...container.querySelectorAll(".iw-data-grid-body .iw-data-grid-row"),
+      ].map((row) => row.getAttribute("aria-selected"))
+      expect(selected.slice(0, 2)).toEqual(["false", "true"])
+    })
+  })
+
+  describe("row keyboard", () => {
+    const getBodyRows = () => [
+      ...container.querySelectorAll(".iw-data-grid-body .iw-data-grid-row"),
+    ]
+    const press = (row, key, options = {}) =>
+      row.dispatchEvent(
+        new KeyboardEvent("keydown", {
+          key,
+          bubbles: true,
+          cancelable: true,
+          ...options,
+        }),
+      )
+
+    it("puts only the first row in the tab order, then the anchor", () => {
+      const tabIndexes = () =>
+        getBodyRows().map((row) => row.getAttribute("tabindex"))
+      expect(tabIndexes().slice(0, 2)).toEqual(["0", "-1"])
+
+      getBodyRows()[1].click()
+      expect(tabIndexes().slice(0, 2)).toEqual(["-1", "0"])
+    })
+
+    it("moves focus between rows with the arrows, Home and End", () => {
+      const rows = getBodyRows()
+      rows[0].focus()
+
+      press(rows[0], "ArrowDown")
+      expect(document.activeElement).toBe(rows[1])
+
+      press(rows[1], "End")
+      expect(document.activeElement).toBe(rows.at(-1))
+
+      press(rows.at(-1), "Home")
+      expect(document.activeElement).toBe(rows[0])
+
+      press(rows[0], "ArrowUp")
+      expect(document.activeElement).toBe(rows[0])
+    })
+
+    it("selects with Enter, toggles with Space and extends with Shift", () => {
+      press(getBodyRows()[0], "Enter")
+      expect(getGrid().selection).toEqual([1])
+
+      press(getBodyRows()[1], " ")
+      expect(getGrid().selection).toEqual([1, 2])
+
+      press(getBodyRows()[1], " ")
+      expect(getGrid().selection).toEqual([1])
+
+      press(getBodyRows()[1], "Enter")
+      press(getBodyRows()[0], " ", { shiftKey: true })
+      expect(getGrid().selection.toSorted()).toEqual([1, 2])
+    })
+
+    it("leaves keys pressed in a cell's field to the field", () => {
+      const row = getBodyRows()[0]
+      const field = document.createElement("input")
+      row.firstElementChild.append(field)
+
+      press(field, " ")
+
+      expect(getGrid().selection).toEqual([])
+    })
+  })
+
   describe("row click modifiers", () => {
     it("ctrl click adds a row to the current selection", () => {
       const rows = container.querySelectorAll(
@@ -590,6 +692,13 @@ describe("DataGrid / template", () => {
   })
 
   describe("pagination controls", () => {
+    it("counts no entries when nothing matches", () => {
+      store.notify(`#${GRID_ID}:searchChange`, "no such row")
+      expect(
+        container.querySelector(".iw-data-grid-footer-row").textContent,
+      ).toMatch(/^\s*0 entries\s/)
+    })
+
     it("renders the page number input", () => {
       expect(
         container.querySelector('.iw-data-grid-footer input[name="page"]'),
@@ -663,6 +772,47 @@ const editableColumns = [
     ],
   },
 ]
+
+describe("DataGrid / labels", () => {
+  it("takes its footer text and control names from props", async () => {
+    const { container, unsubscribe } = await setup({
+      ariaLabel: "Clienti",
+      formatRange: ({ start, end, total }) => `${start}–${end} di ${total}`,
+      pageLabel: "Pagina",
+      pageSizeLabel: "Righe per pagina",
+      formatPageLabel: (page) => `Vai a pagina ${page}`,
+    })
+
+    expect(
+      container.querySelector('[role="grid"]').getAttribute("aria-label"),
+    ).toBe("Clienti")
+    const footer = container.querySelector(".iw-data-grid-footer")
+    expect(footer.textContent).toContain("1–2 di")
+    expect(footer.textContent).toContain("Righe per pagina")
+    expect(
+      footer.querySelector('input[name="page"]').getAttribute("aria-label"),
+    ).toBe("Pagina")
+    expect(footer.querySelector('[aria-label="Vai a pagina 2"]')).not.toBeNull()
+
+    unsubscribe()
+    container.remove()
+  })
+
+  it("takes the edits bar's text from props", async () => {
+    const { container, unsubscribe } = await setup({
+      edits: { 1: { name: "Changed" } },
+      resetLabel: "Annulla",
+      formatEditCount: (count) => `${count} modifica`,
+    })
+
+    const edits = container.querySelector(".iw-data-grid-edits")
+    expect(edits.textContent).toContain("1 modifica")
+    expect(edits.textContent).toContain("Annulla")
+
+    unsubscribe()
+    container.remove()
+  })
+})
 
 describe("DataGrid / editing handlers", () => {
   let entity

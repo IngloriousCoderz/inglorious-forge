@@ -18,6 +18,8 @@ export interface SpeedDialProps {
   ariaLabel?: string
   direction?: "up" | "down" | "left" | "right"
   actions?: SpeedDialAction[]
+  /** The name of an action with no label. Defaults to "Speed dial action {index}", counted from 1. */
+  formatActionLabel?: (index: number) => string
   /**
    * Called with the new state when the browser opens or closes the actions.
    * Without it, the browser alone keeps the open state and `isOpen` is not

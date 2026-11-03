@@ -195,3 +195,76 @@ function createRows(count) {
     role: index % 4 === 0 ? "Admin" : "User",
   }))
 }
+
+/** Rows are selected from the keyboard: Tab to the grid, then use the arrows, Home and End to move, Enter to select a row, Space to toggle it, and Shift to extend the selection. */
+export const KeyboardSelection = {
+  args: {
+    ...Default.args,
+    id: "dataGridKeyboard",
+    ariaLabel: "Users",
+    search: null,
+    selection: [],
+    isMultiSelect: true,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "An ARIA grid named by `ariaLabel`. One row is in the tab order: the selection anchor, or else the first row. Keys pressed in a cell's own field stay with the field.",
+      },
+    },
+  },
+}
+
+/** With no rows to show, the footer counts no entries. */
+export const Empty = {
+  args: {
+    ...Default.args,
+    id: "dataGridEmpty",
+    rows: [],
+    selection: [],
+    pagination: { page: 0, pageSize: 10, pageSizes: [10, 20, 50] },
+  },
+}
+
+const TITLES_IT = {
+  id: "Id",
+  name: "Nome",
+  age: "Età",
+  active: "Attivo",
+  role: "Ruolo",
+}
+
+/** Every text the grid shows or announces is a prop, with English as the default. */
+export const Localized = {
+  args: {
+    ...Default.args,
+    id: "dataGridLocalized",
+    ariaLabel: "Utenti",
+    rows: createRows(24),
+    selection: [],
+    columns: baseColumns.map((column) => ({
+      ...column,
+      title: TITLES_IT[column.id],
+      isEditable: column.id === "name",
+      filter: {
+        ...column.filter,
+        ariaLabel: `Filtra ${TITLES_IT[column.id]}`,
+        minLabel: `Filtra ${TITLES_IT[column.id]}: minimo`,
+        maxLabel: `Filtra ${TITLES_IT[column.id]}: massimo`,
+      },
+    })),
+    search: { value: "", ariaLabel: "Cerca", placeholder: "Cerca…" },
+    edits: { 1: { name: "Carlo" } },
+    saveLabel: "Salva le modifiche",
+    resetLabel: "Annulla",
+    formatEditCount: (count) =>
+      count === 1 ? "1 modifica" : `${count} modifiche`,
+    formatRange: ({ start, end, total }) =>
+      total ? `${start}–${end} di ${total} righe` : "Nessuna riga",
+    pageLabel: "Pagina",
+    pageSizeLabel: "Righe per pagina",
+    formatPageLabel: (page) => `Vai a pagina ${page}`,
+    pagination: { page: 0, pageSize: 10, pageSizes: [10, 20, 50] },
+  },
+}

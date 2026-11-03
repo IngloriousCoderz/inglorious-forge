@@ -73,6 +73,9 @@ export interface AsyncHandlers<
  * ```
  *
  * The `scope` option changes where the events are sent, not their names.
+ *
+ * Each call gets a `callId` that all its events carry, so that a wrapper such
+ * as `optimistic` can tell overlapping calls apart.
  */
 export type AsyncEvents<
   TType extends string,
@@ -85,26 +88,37 @@ export type AsyncEvents<
 } & {
   [K in `${TType}Start`]?: (
     entity: TEntity,
-    payload: TPayload,
+    event: AsyncCall<{ payload: TPayload }>,
     api: TApi,
   ) => void
 } & {
   [K in `${TType}Run`]: (
     entity: TEntity,
-    payload: TPayload,
+    event: AsyncCall<{ payload: TPayload }>,
     api: TApi,
   ) => Promise<void>
 } & {
   [K in `${TType}Success`]: (
     entity: TEntity,
-    result: TResult,
+    event: AsyncCall<{ result: TResult }>,
     api: TApi,
   ) => void
 } & {
-  [K in `${TType}Error`]: (entity: TEntity, error: any, api: TApi) => void
+  [K in `${TType}Error`]: (
+    entity: TEntity,
+    event: AsyncCall<{ error: any }>,
+    api: TApi,
+  ) => void
 } & {
-  [K in `${TType}Finally`]: (entity: TEntity, payload: void, api: TApi) => void
+  [K in `${TType}Finally`]: (
+    entity: TEntity,
+    event: AsyncCall,
+    api: TApi,
+  ) => void
 }
+
+/** What an event of one call of an async behavior carries: its `callId`. */
+export type AsyncCall<T = {}> = T & { callId: number }
 
 /**
  * Creates a set of event handlers for managing an asynchronous operation lifecycle.

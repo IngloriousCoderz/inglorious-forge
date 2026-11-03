@@ -60,11 +60,19 @@ export const TodoList = {
 declare const todoList: TodoListEntity & { id: string }
 declare const api: AppApi
 TodoList.load(todoList, "user-1", api)
-TodoList.loadStart?.(todoList, "user-1", api)
-export const running: Promise<void> = TodoList.loadRun(todoList, "user-1", api)
-TodoList.loadSuccess(todoList, [{ id: 1, title: "a" }], api)
-TodoList.loadError(todoList, new Error("x"), api)
-TodoList.loadFinally(todoList, undefined, api)
+TodoList.loadStart?.(todoList, { payload: "user-1", callId: 1 }, api)
+export const running: Promise<void> = TodoList.loadRun(
+  todoList,
+  { payload: "user-1", callId: 1 },
+  api,
+)
+TodoList.loadSuccess(
+  todoList,
+  { result: [{ id: 1, title: "a" }], callId: 1 },
+  api,
+)
+TodoList.loadError(todoList, { error: new Error("x"), callId: 1 }, api)
+TodoList.loadFinally(todoList, { callId: 1 }, api)
 
 export const annotated = handleAsync("save", {
   run: (todo: Todo, api: AppApi) => api.getEntity("todoList")?.todos ?? [todo],
@@ -115,9 +123,18 @@ export const Optimistic = {
       },
     }),
     (entity, todo) => ({ todos: [...entity.todos, todo] }),
+    {
+      rollback(entity, todo) {
+        entity.todos = entity.todos.filter(({ id }) => id !== todo.id)
+      },
+    },
   ),
 } satisfies EntityType<TodoListEntity, AppApi>
-Optimistic.addStart(todoList, { id: 1, title: "a" }, api)
+Optimistic.addStart(
+  todoList,
+  { payload: { id: 1, title: "a" }, callId: 1 },
+  api,
+)
 
 // ---- must fail ----
 
@@ -128,7 +145,10 @@ TodoList.loadSucess(todoList, [], api)
 TodoList.load(todoList, 1, api)
 
 // @ts-expect-error: loadSuccess takes the todos
-trigger(todoList, TodoList.loadSuccess, "todos")
+trigger(todoList, TodoList.loadSuccess, { result: "todos", callId: 1 })
+
+// @ts-expect-error: loadError carries the call's id
+TodoList.loadError(todoList, { error: new Error("x") }, api)
 
 export const wrongResult = {
   ...handleAsync("load", {

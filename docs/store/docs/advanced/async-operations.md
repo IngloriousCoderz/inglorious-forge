@@ -115,6 +115,8 @@ fetchTodosFinally
 
 Each step is an **event handler**, not an implicit callback.
 
+Each call gets a `callId`, and every event of that call carries it: `Start` and `Run` get `{ payload, callId }`, `Success` gets `{ result, callId }`, `Error` gets `{ error, callId }` and `Finally` gets `{ callId }`. The `start`, `run`, `success`, `error` and `finally` handlers still receive the payload, result or error alone; the `callId` matters to code that listens to the events directly, such as `optimistic`.
+
 ### Optional `start` handler
 
 Use `start` for synchronous setup (loading flags, resets, optimistic state):
@@ -185,6 +187,26 @@ const saveSettings = optimistic(
 ```
 
 The wrapper stores a shallow snapshot of the patched keys, applies the optimistic patch during `Start`, and restores the previous values if the request fails.
+
+Each call keeps its own snapshot, so saves on the same entity can overlap. A failed call restores the keys it patched, except those a later pending call patched too: those go back to what they were before both once that call fails as well, or stay as that call left them.
+
+A patch built on the current value, such as a list with a temporary item added, cannot be undone key by key when two calls change the same list. Give `rollback` to undo the call's own change in place of restoring the snapshot:
+
+```typescript
+const addTodo = optimistic(
+  handleAsync("addTodo", {
+    async run(todo) {
+      return api.add(todo)
+    },
+  }),
+  (entity, todo) => ({ todos: [...entity.todos, { ...todo, pending: true }] }),
+  {
+    rollback(entity, todo) {
+      entity.todos = entity.todos.filter(({ id }) => id !== todo.id)
+    },
+  },
+)
+```
 
 ### Event scoping
 

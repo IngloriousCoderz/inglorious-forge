@@ -29,6 +29,33 @@ describe("form", () => {
       expect(spy).toHaveBeenCalledWith("submit", expect.any(Function))
       spy.mockRestore()
     })
+
+    it("should cancel only presses that submit or reset a form implicitly", () => {
+      Form.init(entity)
+      document.body.innerHTML = `
+        <button type="button" id="outside"></button>
+        <form>
+          <button id="implicit"></button>
+          <button type="reset" id="reset"></button>
+          <button type="button" id="plain"></button>
+          <button type="submit" id="submit"></button>
+        </form>
+      `
+      const isCancelled = (id) => {
+        const event = new MouseEvent("click", {
+          bubbles: true,
+          cancelable: true,
+        })
+        document.getElementById(id).dispatchEvent(event)
+        return event.defaultPrevented
+      }
+
+      expect(isCancelled("outside")).toBe(false)
+      expect(isCancelled("plain")).toBe(false)
+      expect(isCancelled("implicit")).toBe(true)
+      expect(isCancelled("reset")).toBe(true)
+      document.body.innerHTML = ""
+    })
   })
 
   describe("create()", () => {

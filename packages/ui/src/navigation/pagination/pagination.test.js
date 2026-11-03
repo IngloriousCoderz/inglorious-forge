@@ -40,4 +40,25 @@ describe("pagination", () => {
     container.querySelectorAll(".iw-pagination-item")[1].click()
     expect(nextPage).not.toBeNull()
   })
+
+  it("names the navigation and its controls with the given labels", () => {
+    const container = document.createElement("div")
+
+    render(
+      Pagination.render({
+        page: 2,
+        count: 3,
+        ariaLabel: "Pagine",
+        formatPageLabel: (page) => `Vai a pagina ${page}`,
+      }),
+      container,
+    )
+
+    expect(container.querySelector("nav").getAttribute("aria-label")).toBe(
+      "Pagine",
+    )
+    expect(
+      container.querySelector('button[aria-label="Vai a pagina 1"]'),
+    ).not.toBeNull()
+  })
 })

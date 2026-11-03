@@ -92,7 +92,7 @@ export const Carousel = {
     return html`<div
       class="iw-carousel-viewport"
       role="group"
-      aria-roledescription="carousel"
+      aria-roledescription=${props.roleDescription ?? "carousel"}
       aria-label=${label || "Carousel"}
       tabindex="0"
       @scroll=${handleScroll(props)}
@@ -126,8 +126,11 @@ export const Carousel = {
     return html`<div
       class="iw-carousel-item"
       role="group"
-      aria-roledescription="slide"
-      aria-label=${`${index + HUMAN_OFFSET} of ${total}`}
+      aria-roledescription=${props.slideRoleDescription ?? "slide"}
+      aria-label=${(props.formatSlideLabel ?? formatSlideLabel)(
+        index + HUMAN_OFFSET,
+        total,
+      )}
     >
       ${item}
     </div>`
@@ -147,6 +150,8 @@ export const Carousel = {
       isInfinite = false,
       arrowVariant = DEFAULT_ARROW_VARIANT,
       arrowColor,
+      previousLabel = "Previous slide",
+      nextLabel = "Next slide",
     } = props
     const isPrevious = direction === PREVIOUS
 
@@ -168,7 +173,7 @@ export const Carousel = {
         shape: "round",
         isDisabled,
         children: html`<span class="iw-carousel-chevron"></span>`,
-        "aria-label": isPrevious ? "Previous slide" : "Next slide",
+        "aria-label": isPrevious ? previousLabel : nextLabel,
       })}
     </span>`
   },
@@ -217,7 +222,9 @@ export const Carousel = {
         "iw-carousel-indicator-current": isCurrent,
       })}
       type="button"
-      aria-label=${`Go to slide ${index + HUMAN_OFFSET}`}
+      aria-label=${(props.formatIndicatorLabel ?? formatIndicatorLabel)(
+        index + HUMAN_OFFSET,
+      )}
       aria-current=${isCurrent ? "page" : "false"}
       @click=${(event) =>
         this.indicatorSelect?.(props, index, viewportFrom(event.currentTarget))}
@@ -637,4 +644,12 @@ function viewportFrom(element) {
     element.closest(".iw-carousel-viewport") ??
     element.closest(".iw-carousel")?.querySelector(".iw-carousel-viewport")
   )
+}
+
+function formatSlideLabel(index, total) {
+  return `${index} of ${total}`
+}
+
+function formatIndicatorLabel(index) {
+  return `Go to slide ${index}`
 }

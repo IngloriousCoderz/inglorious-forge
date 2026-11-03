@@ -227,4 +227,6 @@ setRoutes({
 })
 ```
 
+The router registers every export of the module that an entity is of, such as a page's grid and form, and those entities get their `create` once their type arrives. The route goes to the default export, or else to the first export that renders. Navigating elsewhere while a route loads wins over the load.
+
 **[Full Router Documentation](https://github.com/IngloriousCoderz/inglorious-forge/tree/main/packages/web#client-side-router)**

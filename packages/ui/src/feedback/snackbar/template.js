@@ -26,6 +26,7 @@ export function render(props) {
     className = "",
     position = "bottom-left",
     onClose,
+    dismissLabel = "Dismiss",
   } = props
 
   if (!isOpen) return null
@@ -57,7 +58,7 @@ export function render(props) {
           html`<button
             type="button"
             class="iw-snackbar-close"
-            aria-label="Dismiss"
+            aria-label=${dismissLabel}
             @click=${onClose}
           >
             ×

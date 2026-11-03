@@ -29,4 +29,17 @@ describe("breadcrumbs", () => {
       container.querySelector(".iw-breadcrumbs-current").textContent.trim(),
     ).toBe("B")
   })
+
+  it("names the navigation with ariaLabel", () => {
+    const container = document.createElement("div")
+
+    render(
+      Breadcrumbs.render({ items: [{ label: "A" }], ariaLabel: "Percorso" }),
+      container,
+    )
+
+    expect(container.querySelector("nav").getAttribute("aria-label")).toBe(
+      "Percorso",
+    )
+  })
 })

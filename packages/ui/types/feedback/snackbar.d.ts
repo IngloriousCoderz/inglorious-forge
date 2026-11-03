@@ -15,6 +15,8 @@ export interface SnackbarProps {
     | "top-right"
   className?: string
   onClose?: () => void
+  /** The dismiss button's accessible name. Defaults to "Dismiss". */
+  dismissLabel?: string
   [key: string]: unknown
 }
 

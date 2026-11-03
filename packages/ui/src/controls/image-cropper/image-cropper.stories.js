@@ -83,3 +83,12 @@ Disabled.args = {
   rect: { x: 0.1, y: 0.1, w: 0.6, h: 0.6 },
   isDisabled: true,
 }
+
+/** Screen readers announce the crop area by `label` and `roleDescription`. */
+export const Localized = {}
+Localized.args = {
+  ...Default.args,
+  id: "image-cropper-localized",
+  label: "Ritaglia la foto",
+  roleDescription: "area di ritaglio",
+}

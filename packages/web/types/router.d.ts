@@ -42,8 +42,28 @@ export interface RouterEntity {
   idx?: number
   /** Whether a route is currently loading asynchronously. */
   isLoading?: boolean
+  /** The path whose route is loading; a navigation elsewhere clears it. */
+  loadingPath?: string | null
   /** An error that occurred during route loading. */
   error?: Error | null
+}
+
+/** The payload of `routeLoadSuccess`. */
+export interface RouteLoadSuccessPayload {
+  /** The loaded module. */
+  module: Record<string, unknown>
+  /** The matched route. */
+  route: { pattern: string }
+  /** The path that was loaded. */
+  path: string
+  /** The event to run again once loaded. */
+  resume?: { event: "navigate" | "popstate"; payload: unknown }
+}
+
+/** The payload of `routeLoadError`. */
+export interface RouteLoadErrorPayload {
+  error: Error
+  path: string
 }
 
 /**
@@ -135,15 +155,22 @@ export type RouterType = {
   popstate(entity: RouterEntity, payload: any, api: Api): void | Promise<void>
 
   /**
-   * Handles successful async route loading for a pattern.
-   * Registers the loaded type and updates runtime route config.
+   * Handles successful async route loading for a pattern. Registers the
+   * module's types that entities are of, routes the pattern to the default
+   * export (or else the first export that renders) and resumes the navigation,
+   * unless another one started while the module loaded.
    */
-  routeLoadSuccess(entity: RouterEntity, payload: any, api: Api): void
+  routeLoadSuccess(
+    entity: RouterEntity,
+    payload: RouteLoadSuccessPayload,
+    api: Api,
+  ): void
 
   /**
-   * Handles errors that occurred while loading a lazy route.
+   * Handles errors that occurred while loading a lazy route, unless another
+   * navigation started while it loaded.
    */
-  routeLoadError(entity: RouterEntity, payload: any): void
+  routeLoadError(entity: RouterEntity, payload: RouteLoadErrorPayload): void
 }
 
 export declare const Router: RouterType

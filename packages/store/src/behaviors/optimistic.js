@@ -1,12 +1,24 @@
-import { ASYNC_META } from "./async.js"
+import { ASYNC_META, nextCallId } from "./async.js"
 
 const START = 0
+const NOT_FOUND = -1
+const ONE_CALL = 1
 
 /**
  * Decorates an async behavior with optimistic update boilerplate.
  *
  * Pass either a static shallow patch object or a factory that returns one.
  * The wrapper applies the patch during `Start` and rolls it back during `Error`.
+ *
+ * Each call keeps its own snapshot, so calls on the same entity can overlap. A
+ * failed call restores the keys it patched, except those a later pending call
+ * patched too: that call's own rollback then restores them to what they were
+ * before both.
+ *
+ * A patch built on the current value, such as a list with a temporary item
+ * added, cannot be undone key by key when two calls change the same list. Give
+ * `rollback` instead: it undoes the call's own change in place of restoring
+ * the snapshot.
  *
  * @template {import('../store').BaseEntity} TEntity
  * @template TPayload
@@ -16,6 +28,9 @@ const START = 0
  * @param {import('./async').AsyncEvents<TType, TEntity, TPayload, TResult>} behavior
  * @param {Record<string, any> | ((entity: TEntity, payload: TPayload, api: import('../store').Api) => Record<string, any> | null | undefined)} optimistic
  *   Shallow patch applied optimistically on start, or a factory that returns it.
+ * @param {object} [options]
+ * @param {(entity: TEntity, payload: TPayload, api: import('../store').Api) => void} [options.rollback]
+ *   Undoes a failed call's change, in place of restoring the snapshot.
  *
  * @returns {import('./async').AsyncEvents<TType, TEntity, TPayload, TResult>}
  *
@@ -46,8 +61,23 @@ const START = 0
  *     data: { ...entity.data, ...payload },
  *   }),
  * )
+ *
+ * @example
+ * const addTodo = optimistic(
+ *   handleAsync("addTodo", {
+ *     async run(todo) {
+ *       return api.add(todo)
+ *     },
+ *   }),
+ *   (entity, todo) => ({ todos: [...entity.todos, todo] }),
+ *   {
+ *     rollback(entity, todo) {
+ *       entity.todos = entity.todos.filter(({ id }) => id !== todo.id)
+ *     },
+ *   },
+ * )
  */
-export function optimistic(behavior, optimistic) {
+export function optimistic(behavior, optimistic, { rollback } = {}) {
   const { type, scope } = resolveAsyncMeta(behavior)
 
   const startEvent = `${type}Start`
@@ -55,7 +85,8 @@ export function optimistic(behavior, optimistic) {
   const errorEvent = `${type}Error`
   const finallyEvent = `${type}Finally`
 
-  const snapshots = new Map()
+  /** The calls still pending, by entity id, in the order they started. */
+  const pending = new Map()
 
   function notify(api, entity, event, payload) {
     switch (scope) {
@@ -75,19 +106,16 @@ export function optimistic(behavior, optimistic) {
     ...behavior,
 
     [type](entity, payload, api) {
-      notify(api, entity, startEvent, payload)
-      notify(api, entity, runEvent, payload)
+      const callId = nextCallId()
+      notify(api, entity, startEvent, { payload, callId })
+      notify(api, entity, runEvent, { payload, callId })
     },
 
-    [startEvent](entity, payload, api) {
+    [startEvent](entity, event, api) {
+      const { payload, callId } = event
       const patch = toPatch(optimistic, entity, payload, api)
 
-      if (!patch) {
-        behavior[startEvent]?.(entity, payload, api)
-        return
-      }
-
-      if (typeof patch !== "object") {
+      if (patch && typeof patch !== "object") {
         throw new TypeError(
           "optimistic expects the patch to be an object or a factory that returns an object",
         )
@@ -95,25 +123,46 @@ export function optimistic(behavior, optimistic) {
 
       const key = getEntityKey(entity)
       const currentEntity = api.getEntity?.(key) ?? entity
-      snapshots.set(key, snapshotPatch(currentEntity, patch))
-      Object.assign(entity, patch)
+      const calls = pending.get(key) ?? []
+      calls.push({
+        callId,
+        payload,
+        snapshot: snapshotPatch(currentEntity, patch ?? {}),
+      })
+      pending.set(key, calls)
+      if (patch) Object.assign(entity, patch)
 
-      behavior[startEvent]?.(entity, payload, api)
+      behavior[startEvent]?.(entity, event, api)
     },
 
     [runEvent]: behavior[runEvent],
 
-    [errorEvent](entity, error, api) {
-      const key = getEntityKey(entity)
-      restorePatch(entity, snapshots.get(key))
-      behavior[errorEvent]?.(entity, error, api)
+    [errorEvent](entity, event, api) {
+      const calls = pending.get(getEntityKey(entity)) ?? []
+      const index = calls.findIndex(({ callId }) => callId === event.callId)
+
+      if (index !== NOT_FOUND) {
+        const [call] = calls.splice(index, ONE_CALL)
+        if (rollback) {
+          rollback(entity, call.payload, api)
+        } else {
+          restorePatch(entity, call.snapshot, calls.slice(index))
+        }
+      }
+
+      behavior[errorEvent]?.(entity, event, api)
     },
 
-    [finallyEvent](entity, payload, api) {
+    [finallyEvent](entity, event, api) {
       try {
-        behavior[finallyEvent]?.(entity, payload, api)
+        behavior[finallyEvent]?.(entity, event, api)
       } finally {
-        snapshots.delete(getEntityKey(entity))
+        const key = getEntityKey(entity)
+        const calls = (pending.get(key) ?? []).filter(
+          ({ callId }) => callId !== event?.callId,
+        )
+        if (calls.length) pending.set(key, calls)
+        else pending.delete(key)
       }
     },
   }
@@ -168,27 +217,21 @@ function toPatch(optimistic, entity, payload, api) {
 }
 
 function snapshotPatch(entity, patch) {
-  const entries = []
-
-  for (const key of Object.keys(patch)) {
-    entries.push([
+  return new Map(
+    Object.keys(patch).map((key) => [
       key,
-      Object.prototype.hasOwnProperty.call(entity, key),
-      entity[key],
-    ])
-  }
-
-  return entries
+      { existed: Object.hasOwn(entity, key), value: entity[key] },
+    ]),
+  )
 }
 
-function restorePatch(entity, entries) {
-  if (!entries) {
-    return
-  }
-
-  for (const [key, existed, value] of entries) {
-    if (existed) {
-      entity[key] = value
+function restorePatch(entity, snapshot, laterCalls) {
+  for (const [key, before] of snapshot) {
+    const later = laterCalls.find((call) => call.snapshot.has(key))
+    if (later) {
+      later.snapshot.set(key, before)
+    } else if (before.existed) {
+      entity[key] = before.value
     } else {
       delete entity[key]
     }

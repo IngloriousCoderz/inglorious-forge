@@ -65,4 +65,17 @@ describe("alert", () => {
 
     expect(container.querySelector(".iw-alert-neutral")).not.toBeNull()
   })
+
+  it("names the dismiss button with dismissLabel", () => {
+    const container = document.createElement("div")
+
+    render(
+      Alert.render({ title: "Hi", onClose: () => {}, dismissLabel: "Chiudi" }),
+      container,
+    )
+
+    expect(container.querySelector("button").getAttribute("aria-label")).toBe(
+      "Chiudi",
+    )
+  })
 })

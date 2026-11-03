@@ -54,4 +54,22 @@ describe("speedDial", () => {
 
     expect(container.querySelector(".iw-speed-dial-action")).not.toBeNull()
   })
+
+  it("names unlabelled actions with formatActionLabel", () => {
+    const container = document.createElement("div")
+
+    render(
+      SpeedDial.render({
+        actions: [{ icon: "✎" }],
+        formatActionLabel: (index) => `Azione ${index}`,
+      }),
+      container,
+    )
+
+    expect(
+      container
+        .querySelector(".iw-speed-dial-action")
+        .getAttribute("aria-label"),
+    ).toBe("Azione 1")
+  })
 })

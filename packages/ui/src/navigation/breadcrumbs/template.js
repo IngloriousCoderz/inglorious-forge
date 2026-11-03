@@ -33,6 +33,7 @@ export const Breadcrumbs = {
       type, // eslint-disable-line no-unused-vars
       items = [],
       separator = "/",
+      ariaLabel = "Breadcrumb",
       className = "",
       ...rest
     } = props
@@ -45,7 +46,7 @@ export const Breadcrumbs = {
     )
 
     return html`<nav
-      aria-label="Breadcrumb"
+      aria-label=${ariaLabel}
       class=${classMap({ "iw-breadcrumbs": true, ...extraClasses })}
       ${ref((el) => applyElementProps(el, rest))}
     >

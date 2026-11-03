@@ -1,3 +1,5 @@
+import { Form } from "@inglorious/web/form"
+
 import { createRender } from "../../stories/notify-story.js"
 import { Menu } from "."
 
@@ -46,4 +48,17 @@ export const WithTrigger = {
     trigger: "Actions",
     items: Default.args.items,
   },
+}
+
+/** A menu with a trigger inside a form opens as anywhere else: the Form type cancels only buttons that would submit or reset the form. */
+export const InsideAForm = {
+  args: WithTrigger.args,
+  decorators: [
+    (story) => {
+      Form.init()
+      const form = document.createElement("form")
+      form.append(story())
+      return form
+    },
+  ],
 }

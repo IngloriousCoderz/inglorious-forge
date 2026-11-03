@@ -14,6 +14,8 @@ export interface FileUploadProps {
   selectedFiles?: string[]
   title?: string
   description?: string
+  /** Shown while no file is selected. Defaults to "No file selected". */
+  emptyLabel?: string
   onChange?: (files: FileList | null) => void
   onBlur?: () => void
   onFocus?: () => void

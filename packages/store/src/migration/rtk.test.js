@@ -68,17 +68,17 @@ describe("RTK Adapter", () => {
       const { entity: entity1 } = trigger(
         entity,
         handlers.fetchUserStart,
-        123,
+        { payload: 123, callId: 1 },
         api,
       )
       expect(entity1.loading).toBe(true)
 
-      await handlers.fetchUserRun(entity1, 123, api)
+      await handlers.fetchUserRun(entity1, { payload: 123, callId: 1 }, api)
 
       const { entity: entity2 } = trigger(
         entity1,
         handlers.fetchUserSuccess,
-        { id: 123, name: "John Doe" },
+        { result: { id: 123, name: "John Doe" }, callId: 1 },
         api,
       )
       expect(entity2.loading).toBe(false)
@@ -106,7 +106,7 @@ describe("RTK Adapter", () => {
       const entity = { type: "Todos", id: "todos1" }
       const api = createMockApi({ todos1: entity })
 
-      await handlers.fetchTodosRun(entity, null, api)
+      await handlers.fetchTodosRun(entity, { payload: null, callId: 1 }, api)
 
       expect(payloadCreator).toHaveBeenCalled()
       expect(api.getEvents()).toContainEqual({
@@ -402,7 +402,7 @@ describe("RTK Adapter", () => {
       const { entity: e1 } = trigger(
         { type: "TodoList", id: "todos", loading: false, todos: [] },
         todoType.fetchTodoPending,
-        "1",
+        { payload: "1", callId: 1 },
         api,
       )
       expect(e1.loading).toBe(true)
@@ -467,17 +467,17 @@ describe("RTK Adapter", () => {
       const { entity: e1 } = trigger(
         { type: "TodoList", id: "todos", loading: false, todos: [] },
         todoType.fetchTodoStart,
-        "1",
+        { payload: "1", callId: 1 },
         api,
       )
       expect(e1.loading).toBe(true)
 
-      await todoType.fetchTodoRun(e1, "1", api)
+      await todoType.fetchTodoRun(e1, { payload: "1", callId: 1 }, api)
 
       const { entity: e2 } = trigger(
         e1,
         todoType.fetchTodoSuccess,
-        { id: "1", text: "todo-1" },
+        { result: { id: "1", text: "todo-1" }, callId: 1 },
         api,
       )
       expect(e2.loading).toBe(false)
@@ -607,20 +607,23 @@ describe("RTK Adapter", () => {
       const { entity: entity3 } = trigger(
         entity2,
         todoList.fetchTodosStart,
-        {},
+        { payload: {}, callId: 1 },
         api,
       )
       expect(entity3.status).toBe("loading")
 
-      await todoList.fetchTodosRun(entity3, {}, api)
+      await todoList.fetchTodosRun(entity3, { payload: {}, callId: 1 }, api)
 
       const { entity: entity4 } = trigger(
         entity3,
         todoList.fetchTodosSuccess,
-        [
-          { id: 1, text: "Buy milk", completed: false },
-          { id: 2, text: "Walk dog", completed: true },
-        ],
+        {
+          result: [
+            { id: 1, text: "Buy milk", completed: false },
+            { id: 2, text: "Walk dog", completed: true },
+          ],
+          callId: 1,
+        },
         api,
       )
 

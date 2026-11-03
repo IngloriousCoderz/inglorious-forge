@@ -1,5 +1,18 @@
 # @inglorious/react-store
 
+## 6.16.0
+
+### Minor Changes
+
+- Lazy routes register every export of the module that an entity is of, such as a page's grid and form, and route to the default export, or else to the first export that renders. The router entity has `loadingPath` while loading. Navigating again to a path that is loading no longer loads and opens it twice, and navigating elsewhere while a route loads no longer gets pulled back once it arrives.
+
+### Patch Changes
+
+- The Form type cancels only the clicks of buttons that would submit or reset a form without saying so. It used to cancel every non-submit button's click in the document, which stopped a `commandfor` button such as Menu's trigger from opening its popover.
+- Updated dependencies
+- Updated dependencies
+  - @inglorious/store@12.2.0
+
 ## 6.15.0
 
 ### Minor Changes

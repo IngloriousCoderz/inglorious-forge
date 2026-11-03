@@ -73,4 +73,15 @@ describe("file upload ids", () => {
     expect(input.hasAttribute("id")).toBe(false)
     expect(input.getAttribute("aria-label")).toBe("Photo")
   })
+
+  it("shows emptyLabel while no file is selected", () => {
+    const container = document.createElement("div")
+
+    render(
+      FileUpload.render({ name: "files", emptyLabel: "Nessun file" }),
+      container,
+    )
+
+    expect(container.textContent).toContain("Nessun file")
+  })
 })

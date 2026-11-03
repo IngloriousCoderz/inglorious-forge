@@ -192,6 +192,25 @@ test("it should notify subscribers when setType replaces a type, not when it add
   expect(listener).toHaveBeenCalledTimes(1)
 })
 
+test("it should create the entities of a type added after them, not of a replaced one", () => {
+  const create = vi.fn((entity) => {
+    entity.isCreated = true
+  })
+  const store = createStore({
+    types: { Bug: { create } },
+    entities: { page: { type: "Page" }, bug: { type: "Bug" } },
+  })
+  store.update()
+  expect(create).toHaveBeenCalledTimes(1)
+
+  store.setType("Page", { create })
+  store.setType("Bug", { create })
+  store.update()
+
+  expect(create).toHaveBeenCalledTimes(2)
+  expect(store.getState().page.isCreated).toBe(true)
+})
+
 test("it should auto-create entities when autoCreateEntities is enabled", () => {
   const config = {
     types: {

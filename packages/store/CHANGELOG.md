@@ -1,5 +1,15 @@
 # @inglorious/store
 
+## 12.2.0
+
+### Minor Changes
+
+- Every event of an async call carries its `callId`: `Start` and `Run` get `{ payload, callId }`, `Success` gets `{ result, callId }`, `Error` gets `{ error, callId }` and `Finally` gets `{ callId }`. The handlers given to `handleAsync` still receive the bare payload, result or error. A handler that answers these events directly, such as a state's `loadSuccess(entity, { result })`, now unwraps them. `optimistic` keeps one snapshot per call, so overlapping calls on the same entity no longer overwrite or delete each other's, and takes a `rollback(entity, payload, api)` option that undoes a failed call's own change in place of restoring the snapshot.
+
+### Patch Changes
+
+- `setType` sends `create` to the entities already of a type it registers for the first time. Entities declared before their type was loaded, such as a lazy page's, used to miss it.
+
 ## 12.1.1
 
 ### Patch Changes

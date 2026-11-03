@@ -12,6 +12,8 @@ export interface ImageCropperProps {
   id?: string
   type?: string
   label?: string
+  /** What screen readers call the crop area. Defaults to "crop area". */
+  roleDescription?: string
 
   src?: string
   alt?: string

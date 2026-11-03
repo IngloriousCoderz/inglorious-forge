@@ -242,4 +242,14 @@ describe("image-cropper handlers", () => {
     expect(entity.rect.w).toBeCloseTo(0.5)
     expect(entity.rect.x).toBeCloseTo(0.25)
   })
+
+  it("describes the crop area with roleDescription", () => {
+    const { container } = setup({ roleDescription: "area di ritaglio" })
+
+    expect(
+      container
+        .querySelector(".iw-image-cropper")
+        .getAttribute("aria-roledescription"),
+    ).toBe("area di ritaglio")
+  })
 })

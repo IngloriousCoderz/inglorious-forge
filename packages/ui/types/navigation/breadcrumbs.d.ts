@@ -13,6 +13,8 @@ export interface BreadcrumbsProps {
   type?: string
   items: BreadcrumbItem[]
   separator?: TemplateResult | string | number
+  /** The navigation's accessible name. Defaults to "Breadcrumb". */
+  ariaLabel?: string
   className?: string
   [key: string]: unknown
 }

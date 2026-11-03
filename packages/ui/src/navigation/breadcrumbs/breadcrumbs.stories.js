@@ -31,3 +31,15 @@ export const Default = {
     ],
   },
 }
+
+/** The navigation's accessible name follows the app's language through `ariaLabel`. */
+export const Localized = {
+  args: {
+    ariaLabel: "Percorso",
+    items: [
+      { label: "Home", href: "#" },
+      { label: "Libreria", href: "#" },
+      { label: "Dati" },
+    ],
+  },
+}

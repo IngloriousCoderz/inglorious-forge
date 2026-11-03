@@ -70,4 +70,22 @@ describe("snackbar", () => {
 
     expect(container.querySelector(".iw-snackbar-close")).toBeNull()
   })
+
+  it("names the dismiss button with dismissLabel", () => {
+    const container = document.createElement("div")
+
+    render(
+      Snackbar.render({
+        isOpen: true,
+        message: "Saved",
+        onClose: () => {},
+        dismissLabel: "Chiudi",
+      }),
+      container,
+    )
+
+    expect(container.querySelector("button").getAttribute("aria-label")).toBe(
+      "Chiudi",
+    )
+  })
 })

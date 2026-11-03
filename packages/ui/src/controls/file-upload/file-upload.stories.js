@@ -91,3 +91,14 @@ Error.args = {
   error: "Only PDF files under 5MB are allowed.",
   selectedFiles: ["invoice.png"],
 }
+
+/** Every text the field shows is a prop: `title`, `description` and `emptyLabel`. */
+export const Localized = {}
+Localized.args = {
+  ...Default.args,
+  label: "Curriculum",
+  hint: "Carica il curriculum in PDF o DOC.",
+  title: "Scegli un file",
+  description: "o trascinalo qui",
+  emptyLabel: "Nessun file selezionato",
+}

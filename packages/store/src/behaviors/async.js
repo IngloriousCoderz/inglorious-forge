@@ -36,6 +36,11 @@
  *   - "type": notify `typeName:event` (broadcasts to all entities of this type)
  *   - "global": notify `event` (global broadcast to any listener)
  *
+ * Each call gets a `callId`, and every event of that call carries it: `Start`
+ * and `Run` get `{ payload, callId }`, `Success` gets `{ result, callId }`,
+ * `Error` gets `{ error, callId }` and `Finally` gets `{ callId }`. The
+ * handlers above still receive the payload, result or error alone.
+ *
  * @returns {Object} An object containing the generated event handlers that can be spread into a type:
  *   - `[type]`: Main trigger - dispatches Start (if defined) and Run events
  *   - `[typeStart]`: (if start handler provided) Executes the start handler
@@ -148,37 +153,39 @@ export function handleAsync(type, handlers, options = {}) {
 
   const asyncHandlers = {
     [type](entity, payload, api) {
+      const callId = nextCallId()
+
       if (handlers.start) {
-        notify(api, entity, `${type}Start`, payload)
+        notify(api, entity, `${type}Start`, { payload, callId })
       }
 
-      notify(api, entity, `${type}Run`, payload)
+      notify(api, entity, `${type}Run`, { payload, callId })
     },
 
     ...(handlers.start && {
-      [`${type}Start`](entity, payload, api) {
+      [`${type}Start`](entity, { payload }, api) {
         handlers.start(entity, payload, api)
       },
     }),
 
-    async [`${type}Run`](entity, payload, api) {
+    async [`${type}Run`](entity, { payload, callId }, api) {
       const scopedEntity = { id: entity.id, type: entity.type }
 
       try {
         const result = await handlers.run(payload, api)
-        notify(api, scopedEntity, `${type}Success`, result)
+        notify(api, scopedEntity, `${type}Success`, { result, callId })
       } catch (error) {
-        notify(api, scopedEntity, `${type}Error`, error)
+        notify(api, scopedEntity, `${type}Error`, { error, callId })
       } finally {
-        notify(api, scopedEntity, `${type}Finally`)
+        notify(api, scopedEntity, `${type}Finally`, { callId })
       }
     },
 
-    [`${type}Success`](entity, result, api) {
+    [`${type}Success`](entity, { result }, api) {
       handlers.success?.(entity, result, api)
     },
 
-    [`${type}Error`](entity, error, api) {
+    [`${type}Error`](entity, { error }, api) {
       handlers.error?.(entity, error, api)
     },
 
@@ -193,6 +200,19 @@ export function handleAsync(type, handlers, options = {}) {
   })
 
   return asyncHandlers
+}
+
+const NEXT = 1
+
+let lastCallId = 0
+
+/**
+ * A new id for one call of an async behavior, which its events carry.
+ * @returns {number}
+ */
+export function nextCallId() {
+  lastCallId += NEXT
+  return lastCallId
 }
 
 export const ASYNC_META = Symbol.for("@inglorious/store/asyncMeta")

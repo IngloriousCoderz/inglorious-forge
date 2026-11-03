@@ -46,3 +46,14 @@ export const AboveBottomNavigation = {
     },
   ],
 }
+
+/** The dismiss button's accessible name comes from `dismissLabel`. */
+export const Localized = {
+  args: {
+    isOpen: true,
+    message: "Salvato",
+    position: "bottom-left",
+    dismissLabel: "Chiudi",
+    onClose: () => {},
+  },
+}

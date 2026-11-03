@@ -59,3 +59,12 @@ export const Default = {
     buttonSize: "sm",
   },
 }
+
+/** `ariaLabel` names the navigation and `formatPageLabel` each control, in the app's language. */
+export const Localized = {
+  args: {
+    ...Default.args,
+    ariaLabel: "Pagine",
+    formatPageLabel: (page) => `Vai a pagina ${page}`,
+  },
+}

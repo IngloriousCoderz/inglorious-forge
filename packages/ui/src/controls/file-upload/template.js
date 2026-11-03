@@ -32,6 +32,7 @@ export function render(props) {
     selectedFiles = [],
     title = "Choose files",
     description = "or drag and drop here",
+    emptyLabel = "No file selected",
     onChange,
     onBlur,
     onFocus,
@@ -54,7 +55,7 @@ export function render(props) {
   }
 
   const summaryText =
-    selectedFiles.length > 0 ? selectedFiles.join(", ") : "No file selected"
+    selectedFiles.length > 0 ? selectedFiles.join(", ") : emptyLabel
 
   return html`
     <div class=${classMap(wrapperClasses)}>

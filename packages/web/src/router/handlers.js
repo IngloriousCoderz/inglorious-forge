@@ -98,24 +98,20 @@ export function createHandlers(routeConfig) {
     async popstate(entity, payload, api) {
       const path = window.location.pathname + window.location.search
       const route = findRoute(routeConfig, path)
-      const entityId = entity.id
 
       if (route) {
         if (typeof route.route === "function") {
-          entity.isLoading = true
-          entity.error = null
-
-          try {
-            const module = await route.route()
-            api.notify(`#${entityId}:routeLoadSuccess`, { module, route })
-            api.notify(`#${entityId}:popstate`, payload)
-          } catch (error) {
-            api.notify(`#${entityId}:routeLoadError`, { error, path })
-          }
-
+          await loadRoute(
+            entity,
+            route,
+            path,
+            { event: "popstate", payload },
+            api,
+          )
           return
         }
 
+        stopLoading(entity)
         updateRouter(entity, route)
         entity.idx = window.history.state?.idx ?? FIRST_HISTORY_INDEX
 
@@ -152,7 +148,6 @@ export function createHandlers(routeConfig) {
       }
 
       const route = findRoute(routeConfig, path)
-      const entityId = entity.id
 
       if (!route) {
         console.warn(`No route matches path: ${path}`)
@@ -168,20 +163,17 @@ export function createHandlers(routeConfig) {
       }
 
       if (typeof route.route === "function") {
-        entity.isLoading = true
-        entity.error = null
-
-        try {
-          const module = await route.route()
-          api.notify(`#${entityId}:routeLoadSuccess`, { module, route })
-          api.notify(`#${entityId}:navigate`, payload)
-        } catch (error) {
-          api.notify(`#${entityId}:routeLoadError`, { error, path })
-        }
-
+        await loadRoute(
+          entity,
+          route,
+          path,
+          { event: "navigate", payload },
+          api,
+        )
         return
       }
 
+      stopLoading(entity)
       updateRouter(entity, route)
 
       const historyState = {
@@ -226,39 +218,92 @@ export function createHandlers(routeConfig) {
 
     /**
      * Handles successful loading of a lazily-loaded route module.
-     * Registers the loaded type in the runtime type registry via `api.setType`
-     * and updates the `routeConfig` entry for the pattern.
+     * Registers the module's types that are not registered yet: the routed
+     * one, which is the default export or else the first export that renders,
+     * and every other export that an entity is of, such as a page's grid or
+     * form. The pattern then routes to the routed type's entity, and the
+     * navigation resumes unless another one started while this module loaded.
      * @param {RouterEntity} entity
-     * @param {{module: object, route: {pattern: string, route: string}}} payload
+     * @param {{module: object, route: {pattern: string}, path: string, resume?: {event: string, payload: unknown}}} payload
      * @param {Api} api
      */
     routeLoadSuccess(entity, payload, api) {
-      const { module, route } = payload
+      const { module, route, path, resume } = payload
 
-      const [typeName, type] = Object.entries(module).find(
-        ([, type]) => type?.render,
+      const exports = Object.entries(module).filter(
+        ([name]) => name !== "default",
       )
+      const [routedName] =
+        exports.find(([, type]) => type === module.default) ??
+        exports.find(([, type]) => type?.render)
 
-      api.setType(typeName, type)
-      const [routeEntity] = api.getEntities(typeName)
-      routeConfig[route.pattern] = routeEntity?.id ?? toCamelCase(typeName)
+      for (const [typeName, type] of exports) {
+        if (api.getType(typeName)) continue
+        if (typeName !== routedName && !api.getEntities(typeName).length) {
+          continue
+        }
+        api.setType(typeName, type)
+      }
 
-      entity.isLoading = false
+      const [routeEntity] = api.getEntities(routedName)
+      routeConfig[route.pattern] = routeEntity?.id ?? toCamelCase(routedName)
+
+      if (entity.loadingPath !== path) return
+      stopLoading(entity)
+      if (resume) api.notify(`#${entity.id}:${resume.event}`, resume.payload)
     },
 
     /**
-     * Handles errors during lazy route loading.
+     * Handles errors during lazy route loading, unless another navigation
+     * started while the route loaded.
      * @param {RouterEntity} entity - The router entity.
      * @param {{error: Error, path: string}} payload - The error payload.
      */
     routeLoadError(entity, payload) {
       const { error, path } = payload
       console.error(`Failed to load route ${path}:`, error)
+      if (entity.loadingPath !== path) return
+      stopLoading(entity)
       entity.path = path
-      entity.isLoading = false
       entity.error = error
     },
   }
+}
+
+/**
+ * Loads a lazy route's module, unless the same path is loading already: a
+ * second load would register its types and open its page twice.
+ * @param {RouterEntity} entity - The router entity.
+ * @param {object} route - The matched route, whose `route` is the loader.
+ * @param {string} path - The path being loaded.
+ * @param {{event: string, payload: unknown}} resume - The event to run again once loaded.
+ * @param {Api} api - The application API.
+ */
+async function loadRoute(entity, route, path, resume, api) {
+  if (entity.isLoading && entity.loadingPath === path) return
+
+  const entityId = entity.id
+  entity.isLoading = true
+  entity.loadingPath = path
+  entity.error = null
+
+  try {
+    const module = await route.route()
+    api.notify(`#${entityId}:routeLoadSuccess`, { module, route, path, resume })
+  } catch (error) {
+    api.notify(`#${entityId}:routeLoadError`, { error, path })
+  }
+}
+
+/**
+ * Marks the router as no longer loading, so that a route still loading does
+ * not take over once it arrives.
+ * @param {RouterEntity} entity - The router entity.
+ */
+function stopLoading(entity) {
+  if (!entity.isLoading) return
+  entity.isLoading = false
+  entity.loadingPath = null
 }
 
 /**

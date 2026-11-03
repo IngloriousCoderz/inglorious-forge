@@ -38,6 +38,7 @@ export const Pagination = {
       isFirstButtonVisible = false,
       isLastButtonVisible = false,
       isDisabled = false,
+      ariaLabel = "Pagination",
       className = "",
     } = props
 
@@ -51,7 +52,7 @@ export const Pagination = {
 
     return html`<nav
       class=${classMap({ "iw-pagination": true, ...extraClasses })}
-      aria-label="Pagination"
+      aria-label=${ariaLabel}
     >
       ${when(isFirstButtonVisible, () =>
         this.renderControl(props, {
@@ -130,12 +131,16 @@ export const Pagination = {
       className: ["iw-pagination-item", props.itemClassName ?? ""]
         .filter(Boolean)
         .join(" "),
-      ariaLabel: `Go to page ${target}`,
+      ariaLabel: (props.formatPageLabel ?? formatPageLabel)(target),
       isDisabled,
       onClick: () => onChange?.(target),
       children: label,
     })
   },
+}
+
+function formatPageLabel(page) {
+  return `Go to page ${page}`
 }
 
 function getPageItems(page, count, siblingCount) {

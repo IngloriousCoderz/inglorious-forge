@@ -599,6 +599,8 @@ Generated events:
 - `fetchTodosError` - Error handler fires
 - `fetchTodosFinally` - Always fires (optional)
 
+Every event of one call carries its `callId`: `Start` and `Run` get `{ payload, callId }`, `Success` `{ result, callId }`, `Error` `{ error, callId }` and `Finally` `{ callId }`. The handlers you pass still receive the payload, result or error alone.
+
 ### TypeScript
 
 `handleAsync` names and types each generated event. With the `satisfies` shorthand, the handlers get the entity and the app's api from the type, and `success` gets the result of `run`:
@@ -668,6 +670,8 @@ const todoList = {
   ),
 }
 ```
+
+Each call keeps its own snapshot, so calls can overlap. Pass `{ rollback(entity, payload, api) }` as the third argument to undo a failed call's change yourself, such as removing the temporary item it added to a list, in place of restoring the snapshot.
 
 ### Options
 

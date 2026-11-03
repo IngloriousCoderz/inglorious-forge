@@ -3,7 +3,9 @@
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
-import { Router, setRoutes } from "."
+import { getRoute, Router, setRoutes } from "."
+
+const toId = (typeName) => typeName[0].toLowerCase() + typeName.slice(1)
 
 describe("router", () => {
   let entity
@@ -27,6 +29,7 @@ describe("router", () => {
       getEntities: vi.fn().mockReturnValue([entity]),
       getEntity: vi.fn().mockReturnValue(entity),
       notify: vi.fn(),
+      getType: vi.fn(),
       setType: vi.fn(),
     }
 
@@ -231,7 +234,7 @@ describe("router", () => {
   })
 
   describe("lazy route loading", () => {
-    it("should load a lazy route and dispatch routeLoadSuccess then navigate", async () => {
+    it("should load a lazy route and dispatch routeLoadSuccess with the navigation to resume", async () => {
       const mockModule = { lazyPage: { render: () => {} } }
       const lazyRoute = vi.fn().mockResolvedValue(mockModule)
 
@@ -242,11 +245,36 @@ describe("router", () => {
       await Router.navigate(entity, "/lazy", api)
 
       expect(entity.isLoading).toBe(true)
+      expect(entity.loadingPath).toBe("/lazy")
       expect(api.notify).toHaveBeenCalledWith("#router:routeLoadSuccess", {
         module: mockModule,
         route: expect.objectContaining({ pattern: "/lazy" }),
+        path: "/lazy",
+        resume: { event: "navigate", payload: "/lazy" },
       })
-      expect(api.notify).toHaveBeenCalledWith("#router:navigate", "/lazy")
+    })
+
+    it("should not load a path that is loading already", async () => {
+      const lazyRoute = vi.fn().mockResolvedValue({})
+      setRoutes({ "/lazy": lazyRoute })
+      entity.isLoading = true
+      entity.loadingPath = "/lazy"
+
+      await Router.navigate(entity, { to: "/lazy", force: true }, api)
+
+      expect(lazyRoute).not.toHaveBeenCalled()
+      expect(api.notify).not.toHaveBeenCalled()
+    })
+
+    it("should stop loading when another route is navigated to meanwhile", async () => {
+      entity.isLoading = true
+      entity.loadingPath = "/lazy"
+
+      await Router.navigate(entity, "/users", api)
+
+      expect(entity.isLoading).toBe(false)
+      expect(entity.loadingPath).toBeNull()
+      expect(entity.route).toBe("userListPage")
     })
 
     it("should handle lazy route loading errors", async () => {
@@ -268,6 +296,7 @@ describe("router", () => {
       Router.routeLoadError(entity, { error, path: "/failing" })
 
       expect(entity.isLoading).toBe(false)
+      expect(entity.loadingPath).toBeNull()
       expect(entity.error).toBe(error)
 
       consoleSpy.mockRestore()
@@ -275,15 +304,83 @@ describe("router", () => {
   })
 
   describe("routeLoadSuccess()", () => {
-    it("should register the loaded module type and update routeConfig", () => {
-      const module = { myPage: { render: () => {} } }
-      const route = { pattern: "/lazy", entityType: () => {} }
-      const payload = { module, route }
+    const route = { pattern: "/lazy" }
+    const resume = { event: "navigate", payload: "/lazy" }
 
-      Router.routeLoadSuccess(entity, payload, api)
+    beforeEach(() => {
+      entity.isLoading = true
+      entity.loadingPath = "/lazy"
+    })
+
+    it("should register the loaded module type, update routeConfig and resume the navigation", () => {
+      const module = { myPage: { render: () => {} } }
+
+      Router.routeLoadSuccess(
+        entity,
+        { module, route, path: "/lazy", resume },
+        api,
+      )
 
       expect(api.setType).toHaveBeenCalledWith("myPage", module.myPage)
+      expect(getRoute("/lazy")).toBe("router")
       expect(entity.isLoading).toBe(false)
+      expect(entity.loadingPath).toBeNull()
+      expect(api.notify).toHaveBeenCalledWith("#router:navigate", "/lazy")
+    })
+
+    it("should route to the default export and register the other types entities are of", () => {
+      const ClientsPage = { render: () => {} }
+      const module = {
+        ClientsForm: { render: () => {} },
+        ClientsGrid: { render: () => {} },
+        ClientsPage,
+        helper: () => {},
+        default: ClientsPage,
+      }
+      api.getEntities = vi.fn((typeName) =>
+        typeName === "helper" ? [] : [{ id: toId(typeName) }],
+      )
+
+      Router.routeLoadSuccess(
+        entity,
+        { module, route, path: "/lazy", resume },
+        api,
+      )
+
+      expect(api.setType.mock.calls.map(([name]) => name)).toEqual([
+        "ClientsForm",
+        "ClientsGrid",
+        "ClientsPage",
+      ])
+      expect(getRoute("/lazy")).toBe("clientsPage")
+    })
+
+    it("should not register a type again", () => {
+      const module = { myPage: { render: () => {} } }
+      api.getType = vi.fn().mockReturnValue({})
+
+      Router.routeLoadSuccess(
+        entity,
+        { module, route, path: "/lazy", resume },
+        api,
+      )
+
+      expect(api.setType).not.toHaveBeenCalled()
+    })
+
+    it("should not resume a navigation another one replaced", () => {
+      const module = { myPage: { render: () => {} } }
+      entity.loadingPath = "/other"
+
+      Router.routeLoadSuccess(
+        entity,
+        { module, route, path: "/lazy", resume },
+        api,
+      )
+
+      expect(api.setType).toHaveBeenCalled()
+      expect(entity.isLoading).toBe(true)
+      expect(api.notify).not.toHaveBeenCalled()
     })
   })
 
@@ -292,6 +389,8 @@ describe("router", () => {
       const error = new Error("Failed")
       const payload = { error, path: "/lazy" }
       const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {})
+      entity.isLoading = true
+      entity.loadingPath = "/lazy"
 
       Router.routeLoadError(entity, payload)
 

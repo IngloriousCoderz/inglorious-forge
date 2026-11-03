@@ -37,25 +37,32 @@ describe("handleAsync", () => {
       )
 
       expect(events1).toEqual([
-        { type: "#fetcher1:fetchDataRun", payload: { value: 10 } },
+        {
+          type: "#fetcher1:fetchDataRun",
+          payload: { payload: { value: 10 }, callId: expect.any(Number) },
+        },
       ])
 
-      await asyncHandlers.fetchDataRun(entity1, { value: 10 }, api)
+      await asyncHandlers.fetchDataRun(
+        entity1,
+        { payload: { value: 10 }, callId: 1 },
+        api,
+      )
 
       expect(handlers.run).toHaveBeenCalledWith({ value: 10 }, api)
       expect(api.getEvents()).toContainEqual({
         type: "#fetcher1:fetchDataSuccess",
-        payload: { data: 20 },
+        payload: { result: { data: 20 }, callId: 1 },
       })
       expect(api.getEvents()).toContainEqual({
         type: "#fetcher1:fetchDataFinally",
-        payload: undefined,
+        payload: { callId: 1 },
       })
 
       const { entity: entity2 } = trigger(
         entity1,
         asyncHandlers.fetchDataSuccess,
-        { data: 20 },
+        { result: { data: 20 }, callId: 1 },
         api,
       )
 
@@ -64,7 +71,7 @@ describe("handleAsync", () => {
       const { entity: entity3 } = trigger(
         entity2,
         asyncHandlers.fetchDataFinally,
-        undefined,
+        { callId: 1 },
         api,
       )
 
@@ -97,21 +104,21 @@ describe("handleAsync", () => {
 
       const api = createMockApi({ fetcher1: entity })
 
-      await asyncHandlers.fetchDataRun(entity, {}, api)
+      await asyncHandlers.fetchDataRun(entity, { payload: {}, callId: 1 }, api)
 
       expect(api.getEvents()).toContainEqual({
         type: "#fetcher1:fetchDataError",
-        payload: testError,
+        payload: { error: testError, callId: 1 },
       })
       expect(api.getEvents()).toContainEqual({
         type: "#fetcher1:fetchDataFinally",
-        payload: undefined,
+        payload: { callId: 1 },
       })
 
       const { entity: entity1 } = trigger(
         entity,
         asyncHandlers.fetchDataError,
-        testError,
+        { error: testError, callId: 1 },
         api,
       )
 
@@ -120,7 +127,7 @@ describe("handleAsync", () => {
       const { entity: entity2 } = trigger(
         entity1,
         asyncHandlers.fetchDataFinally,
-        undefined,
+        { callId: 1 },
         api,
       )
 
@@ -160,15 +167,21 @@ describe("handleAsync", () => {
       )
 
       expect(events).toEqual([
-        { type: "#fetcher1:fetchDataStart", payload: { id: 123 } },
-        { type: "#fetcher1:fetchDataRun", payload: { id: 123 } },
+        {
+          type: "#fetcher1:fetchDataStart",
+          payload: { payload: { id: 123 }, callId: expect.any(Number) },
+        },
+        {
+          type: "#fetcher1:fetchDataRun",
+          payload: { payload: { id: 123 }, callId: expect.any(Number) },
+        },
       ])
 
       const startApi = createMockApi({ fetcher1: entity })
       const { entity: entity1 } = trigger(
         entity,
         asyncHandlers.fetchDataStart,
-        { id: 123 },
+        { payload: { id: 123 }, callId: 1 },
         startApi,
       )
 
@@ -201,7 +214,7 @@ describe("handleAsync", () => {
 
       expect(api.getEvents()).toContainEqual({
         type: "#fetcher1:fetchDataRun",
-        payload: {},
+        payload: { payload: {}, callId: expect.any(Number) },
       })
     })
 
@@ -221,7 +234,7 @@ describe("handleAsync", () => {
 
       expect(api.getEvents()).toContainEqual({
         type: "DataFetcher:fetchDataRun",
-        payload: {},
+        payload: { payload: {}, callId: expect.any(Number) },
       })
     })
 
@@ -241,7 +254,7 @@ describe("handleAsync", () => {
 
       expect(api.getEvents()).toContainEqual({
         type: "fetchDataRun",
-        payload: {},
+        payload: { payload: {}, callId: expect.any(Number) },
       })
     })
   })
@@ -260,12 +273,12 @@ describe("handleAsync", () => {
       const entity = { type: "DataFetcher", id: "fetcher1", value: 0 }
       const api = createMockApi({ fetcher1: entity })
 
-      await asyncHandlers.fetchDataRun(entity, {}, api)
+      await asyncHandlers.fetchDataRun(entity, { payload: {}, callId: 1 }, api)
 
       expect(handlers.run).toHaveBeenCalled()
       expect(api.getEvents()).toContainEqual({
         type: "#fetcher1:fetchDataSuccess",
-        payload: { value: 42 },
+        payload: { result: { value: 42 }, callId: 1 },
       })
     })
 
@@ -279,7 +292,7 @@ describe("handleAsync", () => {
       const entity = { type: "DataFetcher", id: "fetcher1" }
       const api = createMockApi({ fetcher1: entity })
 
-      await asyncHandlers.fetchDataRun(entity, {}, api)
+      await asyncHandlers.fetchDataRun(entity, { payload: {}, callId: 1 }, api)
 
       expect(handlers.run).toHaveBeenCalled()
       expect(asyncHandlers.fetchDataSuccess).toBeDefined()
@@ -302,12 +315,12 @@ describe("handleAsync", () => {
       }
       const api = createMockApi({ fetcher1: entity })
 
-      await asyncHandlers.fetchDataRun(entity, {}, api)
+      await asyncHandlers.fetchDataRun(entity, { payload: {}, callId: 1 }, api)
 
       const { entity: finalEntity } = trigger(
         entity,
         asyncHandlers.fetchDataFinally,
-        undefined,
+        { callId: 1 },
         api,
       )
 
@@ -371,34 +384,38 @@ describe("handleAsync", () => {
 
       expect(events).toContainEqual({
         type: "#todos1:fetchTodosStart",
-        payload: {},
+        payload: { payload: {}, callId: expect.any(Number) },
       })
       expect(events).toContainEqual({
         type: "#todos1:fetchTodosRun",
-        payload: {},
+        payload: { payload: {}, callId: expect.any(Number) },
       })
 
       const { entity: entity2 } = trigger(
         entity1,
         asyncHandlers.fetchTodosStart,
-        {},
+        { payload: {}, callId: 1 },
         api,
       )
 
       expect(entity2.status).toBe("loading")
 
-      await asyncHandlers.fetchTodosRun(entity2, {}, api)
+      await asyncHandlers.fetchTodosRun(
+        entity2,
+        { payload: {}, callId: 1 },
+        api,
+      )
 
       expect(globalThis.fetch).toHaveBeenCalledWith("/api/todos")
       expect(api.getEvents()).toContainEqual({
         type: "#todos1:fetchTodosSuccess",
-        payload: mockTodos,
+        payload: { result: mockTodos, callId: 1 },
       })
 
       const { entity: entity3 } = trigger(
         entity2,
         asyncHandlers.fetchTodosSuccess,
-        mockTodos,
+        { result: mockTodos, callId: 1 },
         api,
       )
 
@@ -408,7 +425,7 @@ describe("handleAsync", () => {
       const { entity: entity4 } = trigger(
         entity3,
         asyncHandlers.fetchTodosFinally,
-        undefined,
+        { callId: 1 },
         api,
       )
 
@@ -447,17 +464,20 @@ describe("handleAsync", () => {
 
       const api = createMockApi({ todos1: entity })
 
-      await asyncHandlers.fetchTodosRun(entity, {}, api)
+      await asyncHandlers.fetchTodosRun(entity, { payload: {}, callId: 1 }, api)
 
       expect(api.getEvents()).toContainEqual({
         type: "#todos1:fetchTodosError",
-        payload: expect.objectContaining({ message: "Network error" }),
+        payload: {
+          error: expect.objectContaining({ message: "Network error" }),
+          callId: 1,
+        },
       })
 
       const { entity: errorEntity } = trigger(
         entity,
         asyncHandlers.fetchTodosError,
-        new Error("Network error"),
+        { error: new Error("Network error"), callId: 1 },
         api,
       )
 
@@ -540,10 +560,24 @@ describe("handleAsync", () => {
       const originalPayload = { value: 10, extra: "data" }
 
       trigger(entity, asyncHandlers.process, originalPayload, api)
-      trigger(entity, asyncHandlers.processStart, originalPayload, api)
-      await asyncHandlers.processRun(entity, originalPayload, api)
+      trigger(
+        entity,
+        asyncHandlers.processStart,
+        { payload: originalPayload, callId: 1 },
+        api,
+      )
+      await asyncHandlers.processRun(
+        entity,
+        { payload: originalPayload, callId: 1 },
+        api,
+      )
 
-      trigger(entity, asyncHandlers.processSuccess, { result: 20 }, api)
+      trigger(
+        entity,
+        asyncHandlers.processSuccess,
+        { result: { result: 20 }, callId: 1 },
+        api,
+      )
 
       expect(payloadLog).toEqual([
         { handler: "start", payload: originalPayload },
@@ -568,11 +602,11 @@ describe("handleAsync", () => {
       const entity = { type: "DataFetcher", id: "fetcher1" }
       const api = createMockApi({ fetcher1: entity })
 
-      await asyncHandlers.fetchDataRun(entity, {}, api)
+      await asyncHandlers.fetchDataRun(entity, { payload: {}, callId: 1 }, api)
 
       expect(api.getEvents()).toContainEqual({
         type: "#fetcher1:fetchDataFinally",
-        payload: undefined,
+        payload: { callId: 1 },
       })
     })
 

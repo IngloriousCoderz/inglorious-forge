@@ -13,6 +13,8 @@ export interface AlertProps {
   icon?: TemplateResult | string | number
   action?: TemplateResult | string | number
   onClose?: () => void
+  /** The dismiss button's accessible name. Defaults to "Dismiss". */
+  dismissLabel?: string
   className?: string
   [key: string]: unknown
 }

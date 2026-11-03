@@ -38,3 +38,16 @@ export const Default = {
     ],
   },
 }
+
+/** Actions with only an icon are named by `formatActionLabel`, counted from 1. */
+export const UnlabelledActions = {
+  args: {
+    isOpen: true,
+    ariaLabel: "Azioni rapide",
+    formatActionLabel: (index) => `Azione ${index}`,
+    actions: [
+      { value: "edit", icon: "✎" },
+      { value: "share", icon: "↗" },
+    ],
+  },
+}

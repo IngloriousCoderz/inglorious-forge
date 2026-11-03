@@ -247,4 +247,23 @@ describe("list", () => {
       path: [0],
     })
   })
+
+  it("names the expand toggle with toggleLabel", () => {
+    const container = document.createElement("div")
+
+    render(
+      List.render({
+        id: "list",
+        toggleLabel: "Espandi",
+        items: [{ id: "a", primary: "Parent", children: [{ id: "b" }] }],
+      }),
+      container,
+    )
+
+    expect(
+      container
+        .querySelector(".iw-list-item-toggle")
+        .getAttribute("aria-label"),
+    ).toBe("Espandi")
+  })
 })

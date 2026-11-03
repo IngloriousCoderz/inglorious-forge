@@ -1062,7 +1062,7 @@ api.notify("navigate", {
 
 You can improve performance by lazy-loading routes. Use a loader function that returns a dynamic import when registering the route via `setRoutes`.
 
-**Note:** The imported module must use a named export for the entity type (not `export default`), so the router can register it with a unique name in the store.
+**Note:** The imported module must use a named export for the entity type, so the router can register it with a unique name in the store.
 
 ```javascript
 // store.js
@@ -1087,6 +1087,18 @@ export const AdminPage = {
   render: () => html`<h1>Admin Area</h1>`,
 }
 ```
+
+A module can hold more types than the page, such as its grid and form. The router registers every export that an entity is of, and those entities get their `create` once their type arrives. The route goes to the default export's entity, or to the first export that renders when there is no default: name the page with `export default` when other exports render too.
+
+```javascript
+// pages/clients.js
+export const ClientsGrid = { render: (entity) => html`…` }
+export const ClientsForm = { render: (entity) => html`…` }
+export const ClientsPage = { render: (entity, api) => html`…` }
+export default ClientsPage
+```
+
+While a route loads, the router entity has `isLoading` and `loadingPath`. Navigating to the same path again doesn't load it twice. Navigating elsewhere meanwhile wins: the module still registers when it arrives, but the router stays where the user went.
 
 ### 5. Page Entities
 

@@ -15,6 +15,10 @@ export interface PaginationProps {
   buttonSize?: "sm" | "md" | "lg"
   itemClassName?: string
   className?: string
+  /** The navigation's accessible name. Defaults to "Pagination". */
+  ariaLabel?: string
+  /** A control's accessible name. Defaults to "Go to page {page}". */
+  formatPageLabel?: (page: number) => string
   onChange?: (page: number) => void
   [key: string]: unknown
 }

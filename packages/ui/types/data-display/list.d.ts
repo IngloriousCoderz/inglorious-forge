@@ -32,6 +32,8 @@ export interface ListProps {
   padding?: "none" | "sm" | "md" | "lg" | "xl"
   path?: number[]
   className?: string
+  /** The expand toggle's accessible name. Defaults to "Toggle section". */
+  toggleLabel?: string
   onItemClick?: (item: ListItem, path: number[]) => void
   onItemToggle?: (item: ListItem, path: number[]) => void
   [key: string]: unknown

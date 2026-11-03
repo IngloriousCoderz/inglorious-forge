@@ -225,7 +225,7 @@ export const List = {
                       shape: "square",
                       className: "iw-list-item-toggle",
                       isDisabled,
-                      ariaLabel: "Toggle section",
+                      ariaLabel: props.toggleLabel ?? "Toggle section",
                       "aria-expanded": isExpanded,
                       onClick: (event) => {
                         event.stopPropagation()

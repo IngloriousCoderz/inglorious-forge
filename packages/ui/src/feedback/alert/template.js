@@ -28,6 +28,7 @@ export function render(props) {
     icon,
     action,
     onClose,
+    dismissLabel = "Dismiss",
     className = "",
     ...rest
   } = props
@@ -73,7 +74,7 @@ export function render(props) {
               html`<button
                 type="button"
                 class="iw-alert-close"
-                aria-label="Dismiss"
+                aria-label=${dismissLabel}
                 @click=${onClose}
               >
                 ×

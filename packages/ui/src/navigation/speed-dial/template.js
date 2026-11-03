@@ -10,6 +10,8 @@ import { ref } from "@inglorious/web/directives/ref"
 
 import { syncPopover } from "../../shared/top-layer.js"
 
+const HUMAN_OFFSET = 1
+
 export const SpeedDial = {
   /**
    * Main entrypoint for the speed dial. Delegates to the base renderer for overrides.
@@ -96,7 +98,10 @@ export const SpeedDial = {
           })
         }
       })}
-      aria-label=${action.label ?? `Speed dial action ${index + 1}`}
+      aria-label=${
+        action.label ??
+        (props.formatActionLabel ?? formatActionLabel)(index + HUMAN_OFFSET)
+      }
       ?disabled=${action.isDisabled}
       @click=${() => {
         action.onClick?.(action.value ?? index)
@@ -106,4 +111,8 @@ export const SpeedDial = {
       ${action.icon ?? action.label}
     </button>`
   },
+}
+
+function formatActionLabel(index) {
+  return `Speed dial action ${index}`
 }

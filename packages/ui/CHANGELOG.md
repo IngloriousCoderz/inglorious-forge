@@ -1,5 +1,21 @@
 # @inglorious/ui
 
+## 9.13.0
+
+### Minor Changes
+
+- DataGrid is an ARIA grid that can be named with `ariaLabel`, with column headers that state their sort and rows that state whether they are selected. Rows can be selected from the keyboard: the arrows, Home and End move between rows, Enter selects a row alone, Space toggles it, and Shift with either extends the selection. The search toolbar now renders above the grid region instead of inside its header. An empty grid's footer reads "0 entries" instead of "1 to 0 of 0 entries". Breadcrumbs takes an `ariaLabel` for its navigation's name, which defaults to "Breadcrumb".
+- No component hard-codes English any more: every text it shows or announces is a prop with an English default. New props: Pagination `ariaLabel` and `formatPageLabel`; Alert and Snackbar `dismissLabel`; FileUpload `emptyLabel`; List `toggleLabel`; SpeedDial `formatActionLabel`; Carousel `roleDescription`, `slideRoleDescription`, `formatSlideLabel`, `formatIndicatorLabel`, `previousLabel` and `nextLabel`; ImageCropper `roleDescription`; DataGrid `resetLabel`, `formatEditCount`, `formatRange`, `pageLabel`, `pageSizeLabel` and `formatPageLabel`. DataGrid's page field and page size selector now have accessible names, and the page size label no longer ends in a colon.
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies
+- Updated dependencies
+- Updated dependencies
+  - @inglorious/store@12.2.0
+  - @inglorious/web@6.16.0
+
 ## 9.12.0
 
 ### Minor Changes

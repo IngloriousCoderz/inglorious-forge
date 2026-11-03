@@ -163,3 +163,17 @@ function slide(index) {
     ${index + 1}
   </div>`
 }
+
+/** The carousel, its slides, arrows and dots take their accessible names from props. */
+export const Localized = {}
+Localized.args = {
+  ...Default.args,
+  id: "carousel-localized",
+  label: "Carosello di esempio",
+  roleDescription: "carosello",
+  slideRoleDescription: "diapositiva",
+  formatSlideLabel: (index, total) => `${index} di ${total}`,
+  formatIndicatorLabel: (index) => `Vai alla diapositiva ${index}`,
+  previousLabel: "Diapositiva precedente",
+  nextLabel: "Diapositiva successiva",
+}

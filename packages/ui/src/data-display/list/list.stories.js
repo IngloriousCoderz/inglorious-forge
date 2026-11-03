@@ -185,3 +185,11 @@ export const Expandable = {
     ],
   },
 }
+
+/** The expand toggle's accessible name comes from `toggleLabel`. */
+export const Localized = {
+  args: {
+    ...Nested.args,
+    toggleLabel: "Espandi o comprimi",
+  },
+}

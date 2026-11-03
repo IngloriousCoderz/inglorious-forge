@@ -76,3 +76,14 @@ export const Actionable = {
     onClose: () => {},
   },
 }
+
+/** The dismiss button's accessible name comes from `dismissLabel`. */
+export const Localized = {
+  args: {
+    title: "Salvato",
+    description: "Le modifiche sono state salvate.",
+    severity: "success",
+    dismissLabel: "Chiudi",
+    onClose: () => {},
+  },
+}

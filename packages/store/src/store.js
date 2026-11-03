@@ -293,7 +293,8 @@ export function createStore({
    * Sets an augmented type configuration given its name. Replacing a type, as
    * hot module reloading does, notifies subscribers, since what its entities
    * render may have changed. Adding a type does not: the store is unchanged,
-   * and a type can be added while rendering.
+   * and a type can be added while rendering. Entities already of a type being
+   * added get their `create` now: when they were added, it reached no handler.
    * @param {string} typeName - The name of the type to set.
    * @param {Type} type - The type configuration.
    * @returns {void}
@@ -309,6 +310,7 @@ export function createStore({
       if (entity.type === typeName) {
         eventMap.removeEntity(id, oldType, typeName)
         eventMap.addEntity(id, newType, typeName)
+        if (!oldType) notify(`#${id}:create`)
       }
     }
 
