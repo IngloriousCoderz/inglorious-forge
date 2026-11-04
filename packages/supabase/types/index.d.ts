@@ -27,3 +27,35 @@ export declare function realtimeSource(
  * Auth and Storage.
  */
 export declare function isNetworkError(error: unknown): boolean
+
+/** The Turnstile widget failed, or its script could not load. */
+export declare class CaptchaError extends Error {
+  /** Turnstile's error code, or what went wrong, such as `"timeout"`. */
+  code: string
+  constructor(code: string)
+}
+
+/**
+ * Whether a call failed on the CAPTCHA: the widget's own `CaptchaError`, or
+ * Supabase Auth refusing the token with `captcha_failed`.
+ */
+export declare function isCaptchaError(error: unknown): boolean
+
+export interface CaptchaOptions {
+  /** The Turnstile site key. Without one, every token is `undefined`. */
+  siteKey?: string
+  /** Where the widget goes, or its id. It only shows when the person must act. */
+  element: string | (() => Element | null)
+  /** The widget's language, such as the app's locale. Defaults to `"auto"`. */
+  language?: string | (() => string)
+}
+
+export interface Captcha {
+  /** Starts solving the challenge, so that `token(action)` needn't wait. */
+  prepare(action: string): void
+  /** A single-use token for one Supabase Auth call, as `options.captchaToken`. */
+  token(action: string): Promise<string | undefined>
+}
+
+/** Turnstile tokens for Supabase Auth's CAPTCHA protection. */
+export declare function createCaptcha(options: CaptchaOptions): Captcha

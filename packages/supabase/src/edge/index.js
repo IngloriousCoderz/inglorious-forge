@@ -112,6 +112,21 @@ export async function currentUser(client, req) {
 }
 
 /**
+ * The caller's IP address, for limits per address, or `null`. Cloudflare,
+ * which fronts hosted Supabase, sets `cf-connecting-ip` itself; the first
+ * `x-forwarded-for` entry, used only without it, as on the local stack, is
+ * whatever the caller sent.
+ * @param {Request} req
+ * @returns {string | null}
+ */
+export function clientIp(req) {
+  const connecting = req.headers.get("cf-connecting-ip")
+  if (connecting) return connecting
+  const [first] = (req.headers.get("x-forwarded-for") ?? "").split(",")
+  return first.trim() || null
+}
+
+/**
  * The `role` claim of the request's JWT, such as `"service_role"`, read
  * without verifying it: the platform verifies the token before the function
  * runs, unless `verify_jwt` is off. Only legacy JWT keys carry a role;

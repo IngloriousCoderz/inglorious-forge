@@ -59,6 +59,12 @@ export function currentUser<User>(
   req: Request,
 ): Promise<User | null>
 
+/**
+ * The caller's IP address, or `null`: Cloudflare's `cf-connecting-ip`, which
+ * the caller cannot set, else the first `x-forwarded-for` entry, which it can.
+ */
+export function clientIp(req: Request): string | null
+
 /** The `role` claim of the request's JWT, unverified. `null` when there is none. */
 export function callerRole(req: Request): string | null
 

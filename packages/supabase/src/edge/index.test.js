@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest"
 import {
   bearerToken,
   callerRole,
+  clientIp,
   currentUser,
   EmailError,
   env,
@@ -104,6 +105,21 @@ describe("edge helpers", () => {
     ).toEqual({ id: "u1" })
     expect(getUser).toHaveBeenCalledWith("t")
     expect(await currentUser(client, request())).toBeNull()
+  })
+
+  it("takes the caller's IP from Cloudflare before what the caller sent", () => {
+    expect(
+      clientIp(
+        request({
+          "cf-connecting-ip": "203.0.113.7",
+          "x-forwarded-for": "1.2.3.4, 203.0.113.7",
+        }),
+      ),
+    ).toBe("203.0.113.7")
+    expect(
+      clientIp(request({ "x-forwarded-for": " 1.2.3.4 , 10.0.0.1" })),
+    ).toBe("1.2.3.4")
+    expect(clientIp(request())).toBeNull()
   })
 
   it("recognizes the local stack", () => {

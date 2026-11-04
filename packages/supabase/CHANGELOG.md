@@ -1,5 +1,11 @@
 # @inglorious/supabase
 
+## 0.4.0
+
+### Minor Changes
+
+- Add `createCaptcha` and `isCaptchaError`, which give Supabase Auth the Turnstile tokens its CAPTCHA protection asks for, and `clientIp` in `/edge`, which reads the caller's address from Cloudflare before anything the caller wrote.
+
 ## 0.3.0
 
 ### Minor Changes

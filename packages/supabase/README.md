@@ -3,6 +3,7 @@
 Supabase integration for Inglorious Web.
 
 - **Realtime**: `realtimeSource` tells entities that a table changed, so that [`withLiveReload`](https://inglorious.dev/web/advanced/decorators#withlivereload) reloads them.
+- **CAPTCHA**: `createCaptcha` gives Supabase Auth the [Turnstile](https://developers.cloudflare.com/turnstile/) tokens its CAPTCHA protection asks for. See [CAPTCHA](#captcha).
 - **Edge Functions**: `@inglorious/supabase/edge` has the helpers every function needs, from CORS to the caller's identity and sending email. See [Edge Functions](#edge-functions).
 
 ## Install
@@ -64,6 +65,49 @@ if (error) throw isNetworkError(error) ? new Error("errors.offline") : error
 
 Pair it with the `NetworkStatus` sensor of `@inglorious/web` to tell people they are offline, and with `withLiveReload`, which reloads what is on screen when the connection comes back.
 
+## CAPTCHA
+
+With CAPTCHA protection on (Authentication → Attack Protection, provider Turnstile, with the widget's secret key), Supabase Auth refuses a signup, password login, magic link or confirmation resend without a valid token. `createCaptcha` makes those tokens:
+
+```js
+import { createCaptcha, isCaptchaError } from "@inglorious/supabase"
+
+const captcha = createCaptcha({
+  siteKey: import.meta.env.VITE_TURNSTILE_SITE_KEY,
+  element: "captcha",
+  language: () => currentLocale(),
+})
+
+// Once the login form shows:
+captcha.prepare("login")
+
+// On submit:
+const { error } = await supabase.auth.signInWithPassword({
+  email,
+  password,
+  options: { captchaToken: await captcha.token("login") },
+})
+if (isCaptchaError(error)) showError("errors.captcha")
+```
+
+`element` is where the widget goes, or its id, such as `<div id="captcha"></div>` under the form. Keep it on the page across the form's steps. The widget only shows when Turnstile needs the person to act; otherwise it solves the challenge out of sight.
+
+### What it takes care of
+
+- **Single use.** A token works once, so each `token(action)` gets a new one, and each widget is removed once it answers.
+- **Waiting.** A challenge takes a moment. `prepare(action)` starts it while the person types; `token(action)` then uses that token if it is for the same action and younger than Turnstile's five minutes, and otherwise makes a new one.
+- **The script.** Cloudflare's script loads on the first token, once per page.
+- **No site key.** Without one, as on a local stack, it loads nothing and every token is `undefined`, which Supabase Auth accepts while CAPTCHA protection is off.
+
+`isCaptchaError(error)` is true for the widget's own `CaptchaError`, whose `code` is Turnstile's, and for Supabase Auth refusing the token with `captcha_failed`.
+
+### Turning it on
+
+Turn on CAPTCHA protection only once every client sends tokens: apps in the stores built without the site key can no longer sign in or sign up from then on, though sessions already open carry on.
+
+- The content security policy needs `https://challenges.cloudflare.com` in `script-src` and `frame-src`.
+- The widget's hostnames in Cloudflare need the site's domain, plus `localhost` for Capacitor apps, which run there.
+
 ## Edge Functions
 
 `@inglorious/supabase/edge` is for functions running on Supabase's Deno runtime. It imports nothing, supabase-js included, so a function pays only for what it uses:
@@ -96,6 +140,7 @@ serve(
 - `currentUser(client, req)`: the signed-in caller, from their access token and never from the body. Pass a client with the service role key.
 - `callerRole(req)` and `bearerToken(req)`: the token's `role` claim, such as `"service_role"` for a call from the database, and the token itself. The role is read without checking the signature, which the platform checks before the function runs unless `verify_jwt` is off. Only the legacy JWT keys carry a role; `sb_secret_` keys do not.
 - `upstreamError(service, res)`: an error for a failed call to another API, with the first 200 characters of its answer.
+- `clientIp(req)`: the caller's IP address, for limits per address, or `null`. It reads Cloudflare's `cf-connecting-ip`, which fronts hosted Supabase, before the first `x-forwarded-for` entry, which the caller writes: a limit keyed on that entry is one anyone can skip.
 - `isLocalStack(url)`: whether `SUPABASE_URL` is the local stack's, to skip outside services in development.
 
 ### Email
