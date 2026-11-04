@@ -3,7 +3,7 @@ import { mount } from "@inglorious/web"
 import { createMockApi, render } from "@inglorious/web/test"
 import { afterEach, describe, expect, it, vi } from "vitest"
 
-import { Combobox, visibleOptions } from "."
+import { Combobox, groupedVisibleOptions, visibleOptions } from "."
 
 describe("combobox", () => {
   it("renders control with selected value", () => {
@@ -459,6 +459,97 @@ describe("creatable combobox", () => {
         }),
       },
     ])
+  })
+})
+
+describe("grouped combobox", () => {
+  const options = [
+    { label: "Italy", options: ["Lazio", "Liguria"] },
+    { label: "Elsewhere", options: ["Bavaria"] },
+    "Unknown",
+  ]
+
+  function created(overrides = {}) {
+    const entity = { id: "sel", type: "Combobox", options, ...overrides }
+    Combobox.create(entity)
+    return entity
+  }
+
+  function rendered(entity) {
+    const api = createMockApi({ [entity.id]: entity })
+    api.getType = () => Combobox
+    const container = document.createElement("div")
+    render(Combobox.render(entity, api), container)
+    return container
+  }
+
+  it("lists the options of every group, in order", () => {
+    expect(visibleOptions(created()).map(({ value }) => value)).toEqual([
+      "Lazio",
+      "Liguria",
+      "Bavaria",
+      "Unknown",
+    ])
+  })
+
+  it("keeps only the groups with a match, holding only the matches", () => {
+    const listed = groupedVisibleOptions(created({ searchTerm: "li" }))
+
+    expect(listed).toEqual([
+      {
+        label: "Italy",
+        options: [{ value: "Liguria", label: "Liguria" }],
+      },
+    ])
+  })
+
+  it("renders each group under a heading that is not an option", () => {
+    const container = rendered(created({ isOpen: true, focusedIndex: 2 }))
+
+    const groups = container.querySelectorAll('[role="group"]')
+    expect(groups).toHaveLength(2)
+    const heading = groups[1].querySelector(
+      ".iw-combobox-dropdown-options-group-label",
+    )
+    expect(heading.textContent.trim()).toBe("Elsewhere")
+    expect(groups[1].getAttribute("aria-labelledby")).toBe(heading.id)
+    expect(container.querySelectorAll('[role="option"]')).toHaveLength(4)
+    expect(
+      container.querySelector(".iw-combobox-dropdown-options-option-focused")
+        .textContent,
+    ).toContain("Bavaria")
+  })
+
+  it("moves focus across groups", () => {
+    const entity = created()
+    Combobox.open(entity)
+    Combobox.focusNext(entity)
+    Combobox.focusNext(entity)
+
+    expect(visibleOptions(entity)[entity.focusedIndex].value).toBe("Bavaria")
+  })
+
+  it("shows the label of a value found in a group", () => {
+    const container = rendered(
+      created({
+        options: [
+          { label: "Sort", options: [{ value: "new", label: "Newest" }] },
+        ],
+        selectedValue: "new",
+      }),
+    )
+
+    expect(container.querySelector(".iw-combobox-value").textContent).toBe(
+      "Newest",
+    )
+  })
+
+  it("does not offer to add a term an option in a group already has", () => {
+    const listed = visibleOptions(
+      created({ isCreatable: true, searchTerm: "bavaria" }),
+    )
+
+    expect(listed.map(({ value }) => value)).toEqual(["Bavaria"])
   })
 })
 

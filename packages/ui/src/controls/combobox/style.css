@@ -186,7 +186,7 @@
     max-height: 16rem;
     overflow: hidden;
     border: 1px solid var(--iw-color-border);
-    border-radius: var(--iw-radius-md);
+    border-radius: var(--iw-input-radius);
     border-start-start-radius: 0;
     border-start-end-radius: 0;
     background: var(--iw-color-bg);
@@ -231,6 +231,17 @@
             var(--iw-color-bg) 84%
           );
         }
+      }
+
+      .iw-combobox-dropdown-options-group-label {
+        padding: var(--iw-space-3) var(--iw-space-3) var(--iw-space-1);
+        font-size: var(--iw-font-size-xs);
+        font-weight: var(--iw-font-weight-semibold);
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--iw-color-text-muted);
+        cursor: default;
+        user-select: none;
       }
     }
 

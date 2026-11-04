@@ -1,6 +1,7 @@
 /**
  * @typedef {import('../../../types/controls/combobox.js').ComboboxProps} ComboboxProps
  * @typedef {import('../../../types/controls/combobox.js').ComboboxOption} ComboboxOption
+ * @typedef {import('../../../types/controls/combobox.js').ComboboxOptionGroup} ComboboxOptionGroup
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
@@ -15,9 +16,12 @@ import { fallbackLabel } from "../../shared/fallback-label.js"
 import { liveBoolean } from "../../shared/live-boolean.js"
 import { syncPopover } from "../../shared/top-layer.js"
 import {
+  flattenOptions,
   formatOption,
   getOptionLabel,
   getOptionValue,
+  groupedVisibleOptions,
+  isOptionGroup,
   isOptionSelected,
   visibleOptions,
 } from "./helpers.js"
@@ -191,7 +195,7 @@ export const Combobox = {
       >`
     }
 
-    const selectedOption = options.find(
+    const selectedOption = flattenOptions(options).find(
       (option) => getOptionValue(option) === selectedValue,
     )
 
@@ -235,7 +239,9 @@ export const Combobox = {
    */
   renderMultiValueTag(props, value) {
     const { id, options, size, onOptionSelect, onChange } = props
-    const option = options.find((opt) => getOptionValue(opt) === value) ?? value
+    const option =
+      flattenOptions(options).find((opt) => getOptionValue(opt) === value) ??
+      value
 
     const tagId = id ? `${id}-tag-${String(value)}` : undefined
     const chipSize = size === "lg" ? "md" : "sm"
@@ -326,18 +332,61 @@ export const Combobox = {
 
   /**
    * Renders the list of available options in the dropdown.
-   * Delegates each option to `renderOption` for customization.
+   * Delegates each option to `renderOption` and each group to
+   * `renderOptionGroup` for customization.
    * @param {ComboboxProps} props
    * @returns {TemplateResult}
    */
   renderOptions(props) {
-    const filteredOptions = visibleOptions(props)
+    let index = 0
+    const entries = groupedVisibleOptions(props).map((entry) => {
+      const startIndex = index
+      index += isOptionGroup(entry) ? entry.options.length : 1
+      return { entry, startIndex }
+    })
 
     return html`<div class="iw-combobox-dropdown-options">
       ${repeat(
-        filteredOptions,
+        entries,
+        ({ entry }) =>
+          isOptionGroup(entry)
+            ? `group:${entry.label}`
+            : `option:${getOptionValue(entry)}`,
+        ({ entry, startIndex }) =>
+          isOptionGroup(entry)
+            ? this.renderOptionGroup?.(props, { group: entry, startIndex })
+            : this.renderOption?.(props, { option: entry, index: startIndex }),
+      )}
+    </div>`
+  },
+
+  /**
+   * Renders a group of options under its heading, which is not an option.
+   * @param {ComboboxProps} props
+   * @param {{ group: ComboboxOptionGroup, startIndex: number }} payload
+   * @returns {TemplateResult}
+   */
+  renderOptionGroup(props, { group, startIndex }) {
+    const headingId = props.id ? `${props.id}-group-${startIndex}` : undefined
+
+    return html`<div
+      class="iw-combobox-dropdown-options-group"
+      role="group"
+      aria-labelledby=${headingId ?? nothing}
+      aria-label=${headingId ? nothing : group.label}
+    >
+      <div
+        id=${headingId ?? nothing}
+        class="iw-combobox-dropdown-options-group-label"
+        role="presentation"
+      >
+        ${group.label}
+      </div>
+      ${repeat(
+        group.options,
         (option) => getOptionValue(option),
-        (option, index) => this.renderOption?.(props, { option, index }),
+        (option, offset) =>
+          this.renderOption?.(props, { option, index: startIndex + offset }),
       )}
     </div>`
   },

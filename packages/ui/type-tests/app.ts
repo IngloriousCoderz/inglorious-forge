@@ -22,6 +22,7 @@ import {
 import {
   Combobox,
   filterOptions,
+  flattenOptions,
   getOptionValue,
 } from "../types/controls/combobox"
 import {
@@ -149,7 +150,9 @@ export const input = Input.render({ icon, iconAfter: icon })
 // @ts-expect-error: an icon is not a number
 Input.render({ icon: 1 })
 
-export const filtered = filterOptions(["a"], "a").map(getOptionValue)
+export const filtered = flattenOptions(
+  filterOptions(["a", { label: "Group", options: ["b"] }], "a"),
+).map(getOptionValue)
 // @ts-expect-error: the term is a string
 filterOptions(["a"], 1)
 

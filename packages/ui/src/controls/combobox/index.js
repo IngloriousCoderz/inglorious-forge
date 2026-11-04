@@ -36,9 +36,13 @@ export const Combobox = {
 
 export const {
   filterOptions,
+  flattenOptions,
   formatOption,
+  formatOptions,
   getOptionLabel,
   getOptionValue,
+  groupedVisibleOptions,
+  isOptionGroup,
   isOptionSelected,
   visibleOptions,
 } = helpers

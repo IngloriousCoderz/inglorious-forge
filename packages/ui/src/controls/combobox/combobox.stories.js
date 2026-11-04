@@ -52,7 +52,11 @@ export default {
       options: ["sm", "md", "lg"],
       description: "Control size.",
     },
-    options: { control: "object", description: "Available options." },
+    options: {
+      control: "object",
+      description:
+        "Available options. An entry `{ label, options }` lists its options under a heading.",
+    },
   },
   parameters: {
     docs: {
@@ -145,6 +149,20 @@ DisabledOption.args = {
   options: Default.args.options.map((option, index) =>
     index % 2 ? { ...option, isDisabled: true } : option,
   ),
+}
+
+export const Grouped = {}
+Grouped.args = {
+  ...Default.args,
+  isOpen: true,
+  isSearchable: true,
+  options: [
+    {
+      label: "Southern Europe",
+      options: [options[0], options[2]],
+    },
+    { label: "Northern Europe", options: [options[1], options[3]] },
+  ],
 }
 
 export const Small = {}

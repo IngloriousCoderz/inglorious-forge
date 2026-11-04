@@ -3,7 +3,12 @@
  * @typedef {import('../../../types/controls/select.js').SelectOption} SelectOption
  */
 
-import { formatOption, getOptionValue, visibleOptions } from "./helpers.js"
+import {
+  formatOption,
+  formatOptions,
+  getOptionValue,
+  visibleOptions,
+} from "./helpers.js"
 
 const NONE = -1
 
@@ -23,8 +28,7 @@ export function create(entity) {
   entity.isMulti ??= false
   entity.selectedValue ??= entity.isMulti ? [] : null
 
-  entity.options ??= []
-  entity.options = entity.options.map(formatOption)
+  entity.options = formatOptions(entity.options ?? [])
 
   entity.isLoading ??= false
   entity.isDisabled ??= false
@@ -173,7 +177,7 @@ export function valueSet(entity, value) {
  * @param {SelectOption[]} options
  */
 export function optionsSet(entity, options) {
-  entity.options = (options ?? []).map(formatOption)
+  entity.options = formatOptions(options ?? [])
   entity.searchTerm = ""
   entity.focusedIndex = NONE
 }

@@ -17,11 +17,17 @@ export type ComboboxOption =
       [key: string]: unknown
     }
 
+/** Options listed under a heading. The heading is not an option. */
+export interface ComboboxOptionGroup {
+  label: string
+  options: ComboboxOption[]
+}
+
 export interface ComboboxProps {
   id?: string
   type?: string
   label?: string
-  options?: ComboboxOption[]
+  options?: (ComboboxOption | ComboboxOptionGroup)[]
 
   isOpen?: boolean
   searchTerm?: string
@@ -91,7 +97,10 @@ export type ComboboxType = {
     entity: ComboboxProps,
     value: string | number | (string | number)[] | null,
   ): void
-  optionsSet(entity: ComboboxProps, options: ComboboxOption[]): void
+  optionsSet(
+    entity: ComboboxProps,
+    options: (ComboboxOption | ComboboxOptionGroup)[],
+  ): void
   errorSet(entity: ComboboxProps, error: string | null): void
 }
 
@@ -105,17 +114,34 @@ export declare function isOptionSelected(
   selectedValue: ComboboxProps["selectedValue"],
   isMulti?: boolean,
 ): boolean
+export declare function isOptionGroup(
+  option: ComboboxOption | ComboboxOptionGroup,
+): option is ComboboxOptionGroup
+export declare function flattenOptions(
+  options: (ComboboxOption | ComboboxOptionGroup)[],
+): ComboboxOption[]
+export declare function formatOptions(
+  options: (ComboboxOption | ComboboxOptionGroup)[],
+): (ComboboxOption | ComboboxOptionGroup)[]
 export declare function filterOptions(
-  options: ComboboxOption[],
+  options: (ComboboxOption | ComboboxOptionGroup)[],
   searchTerm: string,
-): ComboboxOption[]
+): (ComboboxOption | ComboboxOptionGroup)[]
+
+type VisibleOptionsProps = Pick<
+  ComboboxProps,
+  | "options"
+  | "searchTerm"
+  | "selectedValue"
+  | "isCreatable"
+  | "formatCreateLabel"
+>
+
+/** The listed options, flat: focus indexes count through these. */
 export declare function visibleOptions(
-  props: Pick<
-    ComboboxProps,
-    | "options"
-    | "searchTerm"
-    | "selectedValue"
-    | "isCreatable"
-    | "formatCreateLabel"
-  >,
+  props: VisibleOptionsProps,
 ): ComboboxOption[]
+/** The listed options with their groups kept. */
+export declare function groupedVisibleOptions(
+  props: VisibleOptionsProps,
+): (ComboboxOption | ComboboxOptionGroup)[]

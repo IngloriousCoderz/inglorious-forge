@@ -1,5 +1,11 @@
 # @inglorious/ui
 
+## 9.15.0
+
+### Minor Changes
+
+- Combobox groups options under headings: an entry `{ label, options }` in `options` lists its options under a heading that is not an option, with `role="group"`. A search keeps only the groups with a match. New helpers `isOptionGroup`, `flattenOptions`, `formatOptions` and `groupedVisibleOptions`; `filterOptions` keeps the groups, while `visibleOptions` stays flat. The dropdown's corners now follow `--iw-input-radius`, like the control's.
+
 ## 9.14.1
 
 ### Patch Changes
