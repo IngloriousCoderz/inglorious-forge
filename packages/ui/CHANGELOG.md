@@ -1,5 +1,11 @@
 # @inglorious/ui
 
+## 9.14.1
+
+### Patch Changes
+
+- Platform themes (Material UI, Material 3, iOS 18, iOS 26) now size padding, margins, gaps and insets in rem, so spacing scales with the user's font size like the rest of the system.
+
 ## 9.14.0
 
 ### Minor Changes
