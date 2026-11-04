@@ -10,6 +10,18 @@
   flex: 0 0 auto;
 }
 
+/* Named, so the bars hold still while the page between them slides. */
+.app-bar {
+  view-transition-name: app-bar;
+}
+
+.tab-bar {
+  position: sticky;
+  bottom: 0;
+  background: var(--iw-color-bg);
+  view-transition-name: tab-bar;
+}
+
 .content {
   flex: 1 1 auto;
 }

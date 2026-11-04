@@ -39,15 +39,30 @@
  *   routes: ({ from, to }) => from.path.startsWith(to.path) || to.path.startsWith(from.path),
  * })
  *
+ * Pass `direction` to choose which way a navigation slides. It receives the
+ * same `{ type, from, to }` and returns `forward`, `back` or `replace`; without
+ * it the direction is the one read from the history.
+ *
+ * @example
+ * // Switching tabs slides towards the tab that was tapped, as on a phone.
+ * const tabs = ["home", "search", "profile"]
+ * withTransitions({
+ *   direction: ({ type, from, to }) => {
+ *     const [a, b] = [tabs.indexOf(from.route), tabs.indexOf(to.route)]
+ *     if (a < 0 || b < 0) return type
+ *     return b > a ? "forward" : "back"
+ *   },
+ * })
+ *
  * @param {TransitionsOptions} [options]
  * @returns {Middleware} The middleware, which returns the store it is given with a
  *   wrapped `subscribe`, and throws if the store has no `Router` type.
  */
-export function withTransitions({ routes } = {}) {
-  return (store) => wrapStore(store, routes)
+export function withTransitions({ routes, direction } = {}) {
+  return (store) => wrapStore(store, routes, direction)
 }
 
-function wrapStore(store, routes) {
+function wrapStore(store, routes, direction = ({ type }) => type) {
   if (!store.getType("Router")) {
     throw new Error(
       '[withTransitions] Requires the "Router" type from @inglorious/web. The ' +
@@ -102,10 +117,14 @@ function wrapStore(store, routes) {
 
     if (!hasNavigated || !supportsViewTransitions()) return notify()
 
-    const type = getTransitionType(to.index, from.index)
-    if (!shouldTransition({ type, from, to })) return notify()
+    const navigation = {
+      type: getTransitionType(to.index, from.index),
+      from,
+      to,
+    }
+    if (!shouldTransition(navigation)) return notify()
 
-    const types = [type]
+    const types = [direction(navigation)]
 
     if (supportsTransitionTypes()) {
       document.startViewTransition({ update: notify, types })

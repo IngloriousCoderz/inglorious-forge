@@ -5,6 +5,7 @@ import "@inglorious/ui/container.css"
 import "@inglorious/ui/app-bar.css"
 import "@inglorious/ui/card.css"
 import "@inglorious/ui/button.css"
+import "@inglorious/ui/bottom-navigation.css"
 import "@inglorious/ui/typography.css"
 import "@inglorious/ui/view-transitions.css"
 

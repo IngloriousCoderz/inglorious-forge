@@ -11,6 +11,8 @@ lets you watch each navigation slide in the direction it travelled:
 - **Back** — a traversal lowers the index, so the page arrives from the left.
 - **Replace** — replacing the current entry keeps the index, so there is no
   direction to slide towards and the page cross-fades instead.
+- **Tabs** — every tap on the bottom navigation is a push, but the page slides
+  towards the tab that was tapped, thanks to the `direction` option.
 - **Reduced motion** — every animation sits behind
   `prefers-reduced-motion: no-preference`, so switching the preference on makes
   the same navigations instant.
@@ -59,6 +61,28 @@ withTransitions({
     from.path.startsWith(to.path) || to.path.startsWith(from.path),
 })
 ```
+
+To choose which way a navigation slides, pass `direction`. It receives the same
+navigation and returns `forward`, `back` or `replace`. Switching tabs, for
+instance, reads better sliding towards the tab that was tapped than following
+the history, where every tap is a push and so always slides forward:
+
+```js
+const tabs = ["home", "search", "profile"]
+
+withTransitions({
+  direction: ({ type, from, to }) => {
+    const [a, b] = [tabs.indexOf(from.route), tabs.indexOf(to.route)]
+    if (a < 0 || b < 0) return type
+    return b > a ? "forward" : "back"
+  },
+})
+```
+
+This demo does exactly that in `src/store/middlewares.js`, with the tabs listed
+once in `src/tabs.js` for both the bottom navigation and the middleware. The app
+bar and the tab bar have their own `view-transition-name`, so they hold still
+while the page between them slides.
 
 Quick start:
 

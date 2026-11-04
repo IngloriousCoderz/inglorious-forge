@@ -369,6 +369,74 @@ describe("view-transitions", () => {
       expect(listener).toHaveBeenCalled()
     })
   })
+
+  describe("direction", () => {
+    const View = { render: () => "" }
+
+    function createTabbedStore() {
+      const store = createStore({
+        types: { Router, View },
+        entities: {
+          router: { type: "Router" },
+          home: { type: "View" },
+          search: { type: "View" },
+          profile: { type: "View" },
+        },
+      })
+      setRoutes({ "/": "home", "/search": "search", "/profile": "profile" })
+      return store
+    }
+
+    const tabs = ["home", "search", "profile"]
+    const byTab = ({ from, to }) =>
+      tabs.indexOf(to.route) > tabs.indexOf(from.route) ? "forward" : "back"
+
+    function lastType() {
+      return startViewTransition.mock.calls.at(-1)[0].types
+    }
+
+    it("slides the way the function says, whatever the history did", () => {
+      const store = createTabbedStore()
+
+      withTransitions({ direction: byTab })(store).subscribe(vi.fn())
+      store.notify("init")
+      store.notify("#router:navigate", "/profile")
+      expect(lastType()).toEqual(["forward"])
+
+      store.notify("#router:navigate", "/search")
+      expect(lastType()).toEqual(["back"])
+    })
+
+    it("receives the direction read from the history and both sides", () => {
+      const store = createTabbedStore()
+      const direction = vi.fn(() => "replace")
+
+      withTransitions({ direction })(store).subscribe(vi.fn())
+      store.notify("init")
+      store.notify("#router:navigate", "/search")
+
+      expect(direction).toHaveBeenLastCalledWith({
+        type: "forward",
+        from: { path: "/", index: 0, route: "home" },
+        to: { path: "/search", index: 1, route: "search" },
+      })
+      expect(lastType()).toEqual(["replace"])
+    })
+
+    it("is not asked about navigations that do not animate", () => {
+      const store = createTabbedStore()
+      const direction = vi.fn(() => "forward")
+
+      withTransitions({ routes: () => false, direction })(store).subscribe(
+        vi.fn(),
+      )
+      store.notify("init")
+      store.notify("#router:navigate", "/search")
+
+      expect(direction).not.toHaveBeenCalled()
+      expect(startViewTransition).not.toHaveBeenCalled()
+    })
+  })
 })
 
 const Counter = {

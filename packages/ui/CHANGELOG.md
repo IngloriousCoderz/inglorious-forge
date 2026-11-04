@@ -1,5 +1,11 @@
 # @inglorious/ui
 
+## 9.14.0
+
+### Minor Changes
+
+- `withTransitions` takes a `direction` option that chooses which way each navigation slides, so switching tabs can slide towards the tab that was tapped instead of following the history.
+
 ## 9.13.0
 
 ### Minor Changes

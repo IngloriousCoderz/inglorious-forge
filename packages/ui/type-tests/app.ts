@@ -94,6 +94,11 @@ export const transitioned = createStore<AppEntity, AppState>({
 })
 // @ts-expect-error: routes are names or a predicate
 withTransitions({ routes: 42 })
+withTransitions({
+  direction: ({ type, to }) => (to.route === "detail" ? "forward" : type),
+})
+// @ts-expect-error: a direction is forward, back or replace
+withTransitions({ direction: () => "sideways" })
 
 declare const api: AppApi
 declare const grid: GridEntity

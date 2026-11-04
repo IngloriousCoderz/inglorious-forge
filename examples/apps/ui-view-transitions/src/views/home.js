@@ -18,6 +18,10 @@ const STEPS = [
     body: "Mark an article as read on its page. That replaces the current entry rather than stacking a new one, so there is no direction to slide towards and the page cross-fades instead.",
   },
   {
+    title: "Tabs",
+    body: "Tap the tabs at the bottom. Every tap is a push, but the page slides towards the tab you tapped: from the right for a tab to the right, from the left for a tab to the left.",
+  },
+  {
     title: "Reduced motion",
     body: "Turn on your operating system's reduce motion setting and reload. The animations sit behind prefers-reduced-motion, so the same navigations become instant.",
   },

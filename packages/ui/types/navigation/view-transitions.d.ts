@@ -30,6 +30,9 @@ export interface TransitionsOptions {
   /** Which navigations animate: those into or out of the named routes, or
    * those the function accepts. Omit it to animate every navigation. */
   routes?: string[] | ((navigation: Navigation) => boolean)
+  /** Which way a navigation slides. Omit it to use the direction read from
+   * the history. */
+  direction?: (navigation: Navigation) => ViewTransitionType
 }
 
 export interface WithTransitions {
