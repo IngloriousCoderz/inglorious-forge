@@ -3,7 +3,7 @@ import { html } from "@inglorious/web"
 
 import { formatMoney } from "./utils"
 
-export function render({ rowCount, grandTotal }) {
+export function renderHeroSection({ rowCount, grandTotal }) {
   return Card.render({
     element: "header",
     className: "hero-card",

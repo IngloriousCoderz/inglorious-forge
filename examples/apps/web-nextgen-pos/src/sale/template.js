@@ -20,15 +20,21 @@ const COLUMNS = [
 
 const REMOVE_COLUMN = { id: "remove", label: "" }
 
-export function render(props) {
-  const { state, error } = props
+export const template = {
+  render(props) {
+    return this.renderSale(props)
+  },
 
-  return html`<div class="sale">
-    ${renderProductPad(props)}
-    ${when(error, () => Alert.render({ severity: "error", description: error }))}
-    ${renderLines(props)} ${renderTotals(props)} ${renderActions(props)}
-    ${when(state === "complete", () => renderChange(props))}
-  </div>`
+  renderSale(props) {
+    const { state, error } = props
+
+    return html`<div class="sale">
+      ${renderProductPad(props)}
+      ${when(error, () => Alert.render({ severity: "error", description: error }))}
+      ${renderLines(props)} ${renderTotals(props)} ${renderActions(props)}
+      ${when(state === "complete", () => renderChange(props))}
+    </div>`
+  },
 }
 
 function renderProductPad({ state, products, onItemEnter }) {

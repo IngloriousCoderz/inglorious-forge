@@ -32,7 +32,7 @@ const SCROLL_EPSILON = 1
 /** Transient drag bookkeeping, kept off the entity so it stays serializable. */
 const drags = new WeakMap()
 
-export const Carousel = {
+export const template = {
   /**
    * Main entrypoint for the carousel template. It delegates to the base renderer so overrides can still reuse it.
    * Carousels lay items out in a scroll-snapping viewport and page through them.

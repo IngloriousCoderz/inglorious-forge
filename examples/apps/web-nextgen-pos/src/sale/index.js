@@ -2,7 +2,7 @@ import { fsm } from "@inglorious/store/fsm"
 
 import { summarize } from "../domain/sale.js"
 import { base, states } from "./handlers.js"
-import * as template from "./template.js"
+import { template } from "./template.js"
 
 /**
  * A type is a list of behaviours composed left to right. `fsm` is a Decorator: a
@@ -12,6 +12,7 @@ export const Sale = [
   base,
   fsm(states),
   {
+    ...template,
     render(entity, api) {
       const { id } = entity
       const { products } = api.getEntity("catalog")
@@ -19,7 +20,7 @@ export const Sale = [
       const summary =
         entity.receipt ?? summarize(entity, products, policies[policyId])
 
-      return template.render({
+      return this.renderSale({
         ...entity,
         products,
         summary,

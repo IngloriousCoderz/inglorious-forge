@@ -1,4 +1,4 @@
 import * as handlers from "./handlers"
-import * as renderers from "./template.js"
+import { template } from "./template.js"
 
-export const Form = { ...handlers, ...renderers }
+export const Form = { ...handlers, ...template }

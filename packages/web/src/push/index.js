@@ -45,7 +45,7 @@ const tappedAdapters = new WeakSet()
  * const types = {
  *   PushPrompt: {
  *     ...prompt,
- *     ...renderers,
+ *     ...template,
  *     sessionStart: prompt.pushStart,
  *     sessionEnd: prompt.pushStop,
  *   },

@@ -28,7 +28,7 @@ import {
 
 const NO_FOCUSED_INDEX = -1
 
-export const Combobox = {
+export const template = {
   /**
    * Main entrypoint for the combobox control. It renders the frame, label, control, and dropdown when open.
    * Comboboxes support search, single or multi-select values, and clearable selection.

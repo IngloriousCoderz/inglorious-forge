@@ -22,7 +22,7 @@ import {
   validateVatPercentage,
 } from "./validation"
 
-export function render(entity, api) {
+export function renderLineItemsSection(entity, api) {
   return Card.render({
     element: "section",
     className: "panel-card",

@@ -12,27 +12,29 @@ import { warnOnce } from "./warnings.js"
  * }} AgGridRenderableEntity
  */
 
-/**
- * Renders the AG Grid host element and delegates lifecycle to runtime helpers.
- * @param {AgGridRenderableEntity} entity
- * @param {{ notify: (event: string, payload?: any) => void }} api
- * @returns {import("lit-html").TemplateResult}
- */
-export function render(entity, api) {
-  const height =
-    typeof entity.height === "number" ? `${entity.height}px` : entity.height
-  const themeClass = resolveThemeClass(entity.themeClass)
+export const template = {
+  /**
+   * Renders the AG Grid host element and delegates lifecycle to runtime helpers.
+   * @param {AgGridRenderableEntity} entity
+   * @param {{ notify: (event: string, payload?: any) => void }} api
+   * @returns {import("lit-html").TemplateResult}
+   */
+  render(entity, api) {
+    const height =
+      typeof entity.height === "number" ? `${entity.height}px` : entity.height
+    const themeClass = resolveThemeClass(entity.themeClass)
 
-  return html`
-    <div
-      class=${themeClass}
-      style="width: 100%; height: ${height};"
-      ${ref((el) => {
-        if (!el) return
-        mountOrUpdateGrid(entity, el, api)
-      })}
-    ></div>
-  `
+    return html`
+      <div
+        class=${themeClass}
+        style="width: 100%; height: ${height};"
+        ${ref((el) => {
+          if (!el) return
+          mountOrUpdateGrid(entity, el, api)
+        })}
+      ></div>
+    `
+  },
 }
 
 /**

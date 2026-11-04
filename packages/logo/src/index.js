@@ -1,6 +1,6 @@
-import { Logo as handlers } from "./handlers.js"
-import * as renderers from "./template.js"
+import { handlers } from "./handlers.js"
+import { template } from "./template.js"
 
-export const Logo = { ...handlers, ...renderers }
+export const Logo = { ...handlers, ...template }
 
 export { startInteraction, stopInteraction } from "./handlers.js"

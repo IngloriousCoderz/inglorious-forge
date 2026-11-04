@@ -1,11 +1,11 @@
 import * as handlers from "./handlers.js"
-import { ImageCropper as renderers } from "./template.js"
+import { template } from "./template.js"
 
 export { cropImage, decodeImage } from "./image.js"
 
 export const ImageCropper = {
   ...handlers,
-  ...renderers,
+  ...template,
   render(entity, api) {
     const id = entity.id
     const props = {

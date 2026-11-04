@@ -1,9 +1,9 @@
 import * as handlers from "./handlers.js"
-import { Carousel as renderers } from "./template.js"
+import { template } from "./template.js"
 
 export const Carousel = {
   ...handlers,
-  ...renderers,
+  ...template,
   render(entity, api) {
     const id = entity.id
     const props = {

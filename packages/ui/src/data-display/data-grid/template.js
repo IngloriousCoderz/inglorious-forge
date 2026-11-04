@@ -45,7 +45,7 @@ const LAST_ROW = -1
 const ROW_STEPS = { ArrowDown: 1, ArrowUp: -1 }
 const ARIA_SORT = { asc: "ascending", desc: "descending" }
 
-export const DataGrid = {
+export const template = {
   /**
    * Main entrypoint for the data grid template. It delegates to the base grid renderer so overrides can still reuse it.
    * Data grids support sorting, filtering, selection, pagination, and optional virtualization.

@@ -17,7 +17,7 @@ import { Alert } from "../../feedback/alert/index.js"
 const PINNED_DISTANCE = 40
 const TYPING_DOTS = 3
 
-export const Chat = {
+export const template = {
   /**
    * Main entrypoint for the chat template. It delegates to `renderChat` so overrides can still reuse it.
    * A chat shows a conversation, the assistant's replies as they come, and a box to write the next message.

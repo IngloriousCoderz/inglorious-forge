@@ -1,9 +1,9 @@
 import * as handlers from "./handlers.js"
-import { BeforeAfter as renderers } from "./template.js"
+import { template } from "./template.js"
 
 export const BeforeAfter = {
   ...handlers,
-  ...renderers,
+  ...template,
   render(entity, api) {
     const id = entity.id
     const props = {

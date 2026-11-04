@@ -2,7 +2,7 @@ import { Button } from "@inglorious/ui/button"
 import { Card } from "@inglorious/ui/card"
 import { html } from "@inglorious/web"
 
-export function render(entity, api) {
+export function renderActionsSection(entity, api) {
   return Card.render({
     element: "footer",
     className: "actions-card",

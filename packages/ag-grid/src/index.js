@@ -1,9 +1,9 @@
 import * as handlers from "./handlers.js"
 export { configureAgGrid } from "./runtime-config.js"
-import * as renderers from "./template.js"
+import { template } from "./template.js"
 
 /**
  * Thin AG Grid adapter type for Inglorious Web.
  * Compose app-specific behaviors on top of this base type.
  */
-export const AgGrid = { ...handlers, ...renderers }
+export const AgGrid = { ...handlers, ...template }

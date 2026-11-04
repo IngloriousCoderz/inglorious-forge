@@ -1,10 +1,10 @@
 import * as handlers from "./handlers.js"
 import * as helpers from "./helpers.js"
-import { Combobox as renderers } from "./template.js"
+import { template } from "./template.js"
 
 export const Combobox = {
   ...handlers,
-  ...renderers,
+  ...template,
   render(entity, api) {
     const id = entity.id
     const props = {
@@ -30,7 +30,7 @@ export const Combobox = {
       onOptionSelect: (option) => api.notify(`#${id}:optionSelect`, option),
     }
 
-    return renderers.render(props)
+    return this.renderCombobox(props)
   },
 }
 

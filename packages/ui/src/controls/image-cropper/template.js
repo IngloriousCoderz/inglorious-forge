@@ -37,7 +37,7 @@ const ARROW_MOVES = {
 /** @type {WeakMap<Element, { pointers: Map<number, { x: number, y: number }>, drag: object | null, pinch: object | null }>} */
 const gestures = new WeakMap()
 
-export const ImageCropper = {
+export const template = {
   /**
    * Main entrypoint for the image cropper template. It delegates to the base renderer so overrides can still reuse it.
    * The image cropper shows the whole image with a movable, resizable frame on top.

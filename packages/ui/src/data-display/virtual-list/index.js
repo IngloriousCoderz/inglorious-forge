@@ -1,4 +1,4 @@
 import * as handlers from "./handlers.js"
-import * as renderers from "./template.js"
+import { template } from "./template.js"
 
-export const VirtualList = { ...handlers, ...renderers }
+export const VirtualList = { ...handlers, ...template }

@@ -16,7 +16,7 @@ import {
 
 const PRIMARY_BUTTON = 1
 
-export const BeforeAfter = {
+export const template = {
   /**
    * Main entrypoint for the before/after template. It delegates to the base renderer so overrides can still reuse it.
    * Before/after overlays two images and reveals the top one with a draggable divider.

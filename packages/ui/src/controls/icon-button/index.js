@@ -1,3 +1,45 @@
-import * as renderers from "./template.js"
+/**
+ * @typedef {import('../../../types/controls/icon-button').IconButtonProps} IconButtonProps
+ * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
+ */
 
-export const IconButton = { ...renderers }
+import { html } from "@inglorious/web"
+import { when } from "@inglorious/web/directives/when"
+
+import { Button } from "../button/index.js"
+
+export const IconButton = {
+  /**
+   * Renders a button optimized for icons with optional label and icon placement.
+   * Built on top of the base button renderer for consistent theming.
+   * @param {IconButtonProps} props
+   * @returns {TemplateResult}
+   */
+  render(props) {
+    const {
+      type, // eslint-disable-line no-unused-vars
+      icon,
+      label,
+      iconAfter,
+      direction = "row",
+      onClick,
+    } = props
+
+    const children = html`
+      <span class="iw-icon-button-content iw-icon-button-content-${direction}">
+        ${when(icon, () => html`<span class="iw-button-icon">${icon}</span>`)}
+        ${label}
+        ${when(
+          iconAfter,
+          () => html`<span class="iw-button-icon">${iconAfter}</span>`,
+        )}
+      </span>
+    `
+
+    return Button.render({
+      ...props,
+      children,
+      onClick,
+    })
+  },
+}

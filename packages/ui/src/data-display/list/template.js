@@ -32,7 +32,7 @@ import { applyElementProps } from "../../shared/apply-element-props.js"
 
 const PRETTY_INDEX = 1
 
-export const List = {
+export const template = {
   /**
    * Main entrypoint for the list component. It delegates to the base list renderer so overrides can reuse it.
    * Lists support ordered/unordered modes, nested items, and optional dividers.

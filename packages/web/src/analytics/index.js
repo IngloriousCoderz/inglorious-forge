@@ -28,7 +28,7 @@ const DENIED = "denied"
  * @param {string} [config.consentKey] - The localStorage key of the choice.
  *
  * @example
- * const types = { Analytics: [createAnalytics({ adapter }), renderers] }
+ * const types = { Analytics: [createAnalytics({ adapter }), template] }
  * const entities = { analytics: { type: "Analytics" } }
  * // later, anywhere
  * api.notify("#analytics:analyticsTrack", { name: "sign_up" })

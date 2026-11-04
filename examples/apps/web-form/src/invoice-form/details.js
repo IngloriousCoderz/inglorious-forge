@@ -5,7 +5,7 @@ import { html } from "@inglorious/web"
 import { buildInputProps } from "./utils"
 import { validateCustomer, validateInvoiceNumber } from "./validation"
 
-export function render(entity, api) {
+export function renderDetailsSection(entity, api) {
   return Card.render({
     element: "section",
     className: "panel-card",

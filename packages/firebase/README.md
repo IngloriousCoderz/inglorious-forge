@@ -49,7 +49,7 @@ import { createAnalytics } from "@inglorious/web/analytics"
 
 const analytics = firebaseAnalytics({ firebase: firebaseConfig })
 const types = {
-  Analytics: [createAnalytics({ adapter: analytics }), renderers],
+  Analytics: [createAnalytics({ adapter: analytics }), template],
 }
 ```
 

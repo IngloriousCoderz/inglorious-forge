@@ -1,5 +1,11 @@
 # @inglorious/ui
 
+## 9.15.1
+
+### Patch Changes
+
+- Combobox renders through `this.renderCombobox()`, so a type that spreads it and overrides a sub-renderer such as `renderOption` gets its override.
+
 ## 9.15.0
 
 ### Minor Changes

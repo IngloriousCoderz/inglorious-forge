@@ -1,4 +1,4 @@
 import * as handlers from "./handlers"
-import * as renderers from "./template"
+import { template } from "./template"
 
-export const Footer = { ...handlers, ...renderers }
+export const Footer = { ...handlers, ...template }

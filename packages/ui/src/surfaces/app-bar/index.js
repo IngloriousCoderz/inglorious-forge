@@ -1,3 +1,85 @@
-import * as renderers from "./template.js"
+/**
+ * @typedef {import('../../../types/surfaces/app-bar').AppBarProps} AppBarProps
+ * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
+ */
 
-export const AppBar = { ...renderers }
+import { html } from "@inglorious/web"
+import { classMap } from "@inglorious/web/directives/class-map"
+import { ref } from "@inglorious/web/directives/ref"
+import { when } from "@inglorious/web/directives/when"
+
+import { applyElementProps } from "../../shared/apply-element-props.js"
+
+export const AppBar = {
+  /**
+   * Renders a top app bar with optional leading/trailing content and title metadata.
+   * Supports variants, density, color, and positioning modes.
+   * @param {AppBarProps} props
+   * @returns {TemplateResult}
+   */
+  render(props) {
+    const {
+      type, // eslint-disable-line no-unused-vars
+      title,
+      subtitle,
+      leading,
+      trailing,
+      children,
+      isDense = false,
+      variant = "regular",
+      color = "default",
+      isElevated = true,
+      position = "static",
+      placement = "top",
+      className = "",
+      ...rest
+    } = props
+
+    const extraClasses = Object.fromEntries(
+      className
+        .split(/\s+/)
+        .filter(Boolean)
+        .map((name) => [name, true]),
+    )
+
+    const hasMeta = title || subtitle
+    const effectiveVariant = isDense ? "dense" : variant
+
+    return html`<header
+      class=${classMap({
+        "iw-app-bar": true,
+        "iw-app-bar-elevated": isElevated,
+        [`iw-app-bar-${effectiveVariant}`]: true,
+        [`iw-app-bar-color-${color}`]: true,
+        [`iw-app-bar-${position}`]: true,
+        [`iw-app-bar-placement-${placement}`]: true,
+        ...extraClasses,
+      })}
+      ${ref((el) => applyElementProps(el, rest))}
+    >
+      ${when(
+        leading,
+        () => html`<div class="iw-app-bar-leading">${leading}</div>`,
+      )}
+      ${when(
+        hasMeta,
+        () =>
+          html`<div class="iw-app-bar-meta">
+            ${when(
+              title,
+              () => html`<div class="iw-app-bar-title">${title}</div>`,
+            )}
+            ${when(
+              subtitle,
+              () => html`<div class="iw-app-bar-subtitle">${subtitle}</div>`,
+            )}
+          </div>`,
+      )}
+      ${children}
+      ${when(
+        trailing,
+        () => html`<div class="iw-app-bar-trailing">${trailing}</div>`,
+      )}
+    </header>`
+  },
+}

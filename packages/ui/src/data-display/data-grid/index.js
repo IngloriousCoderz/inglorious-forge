@@ -1,10 +1,10 @@
 import * as handlers from "./handlers.js"
 import * as helpers from "./helpers.js"
-import { DataGrid as renderers } from "./template.js"
+import { template } from "./template.js"
 
 export const DataGrid = {
   ...handlers,
-  ...renderers,
+  ...template,
   render(entity, api) {
     const id = entity.id
     const props = {
