@@ -36,7 +36,7 @@ Open your browser to `http://localhost:5173` and you'll see "Hello world, Hello 
 
 The scaffolding created a simple app that demonstrates Inglorious Web's key strength: **multiple instances sharing the same behavior**.
 
-### The Entity Type (`src/message/message.js`)
+### The Entity Type (`src/app/message/index.js`)
 
 ```javascript
 import { html } from "@inglorious/web"
@@ -83,7 +83,7 @@ Here we create **three separate instances** of the `message` type, each with dif
 
 This is where Inglorious Web shines - creating multiple instances is just declaring more objects!
 
-### The App (`src/app.js`)
+### The App (`src/app/index.js`)
 
 ```javascript
 import { html } from "@inglorious/web"
@@ -220,7 +220,7 @@ api.notify("#message1:setText", "hello")
 
 Let's add a "reset all" feature.
 
-**1. Add a reset handler to the message type** (`src/message/message.js`):
+**1. Add a reset handler to the message type** (`src/app/message/index.js`):
 
 ```javascript
 export const Message = {
@@ -242,7 +242,7 @@ export const Message = {
 }
 ```
 
-**2. Add a button in the app** (`src/app.js`):
+**2. Add a button in the app** (`src/app/index.js`):
 
 ```javascript
 export const App = {

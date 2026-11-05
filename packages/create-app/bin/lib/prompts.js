@@ -1,5 +1,5 @@
 import { importBlock } from "./imports.js"
-import { LINE_WIDTH } from "./source.js"
+import { LINE_WIDTH, relative } from "./source.js"
 
 const FIREBASE_CONFIG_KEYS = {
   apiKey: "VITE_FIREBASE_API_KEY",
@@ -22,12 +22,12 @@ export function promptFiles(app) {
     [`src/common/prompt.${app.ext}`]: promptSource(app),
   }
   if (app.analytics) {
-    files[`src/types/analytics.${app.ext}`] = analyticsSource(app)
+    files[`${app.layout.analytics}/index.${app.ext}`] = analyticsSource(app)
   }
   if (app.push) {
     files[`src/api/supabase.${app.ext}`] = supabaseSource()
     files[`src/api/push.${app.ext}`] = pushSource(app)
-    files[`src/types/push-prompt.${app.ext}`] = pushPromptSource(app)
+    files[`${app.layout.pushPrompt}/index.${app.ext}`] = pushPromptSource(app)
   }
   return files
 }
@@ -172,13 +172,16 @@ function analyticsSource(app) {
     'import { firebaseAnalytics } from "@inglorious/firebase/analytics"',
     'import { createAnalytics } from "@inglorious/web/analytics"',
     'import { when } from "@inglorious/web/directives/when"',
-    'import { firebaseConfig } from "../api/firebase"',
-    'import { Prompt } from "../common/prompt"',
+    `import { firebaseConfig } from "${relative(app.layout.analytics, "src/api/firebase")}"`,
+    `import { Prompt } from "${relative(app.layout.analytics, "src/common/prompt")}"`,
   ]
-  if (app.i18n) imports.push('import { t } from "../i18n"')
+  if (app.i18n)
+    imports.push(
+      `import { t } from "${relative(app.layout.analytics, "src/i18n")}"`,
+    )
   if (app.isTypeScript) {
     imports.push(
-      'import type { AppAnalyticsEntity, AppApi } from "../../types"',
+      `import type { AppAnalyticsEntity, AppApi } from "${relative(app.layout.analytics, "types")}"`,
     )
   }
   const label = labelFor(app)
@@ -263,13 +266,16 @@ function pushPromptSource(app) {
   const imports = [
     'import { when } from "@inglorious/web/directives/when"',
     'import { createPushPrompt } from "@inglorious/web/push"',
-    'import { push } from "../api/push"',
-    'import { Prompt } from "../common/prompt"',
+    `import { push } from "${relative(app.layout.pushPrompt, "src/api/push")}"`,
+    `import { Prompt } from "${relative(app.layout.pushPrompt, "src/common/prompt")}"`,
   ]
-  if (app.i18n) imports.push('import { t } from "../i18n"')
+  if (app.i18n)
+    imports.push(
+      `import { t } from "${relative(app.layout.pushPrompt, "src/i18n")}"`,
+    )
   if (app.isTypeScript) {
     imports.push(
-      'import type { AppApi, AppPushPromptEntity } from "../../types"',
+      `import type { AppApi, AppPushPromptEntity } from "${relative(app.layout.pushPrompt, "types")}"`,
     )
   }
   const label = labelFor(app)

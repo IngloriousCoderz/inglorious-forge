@@ -1,3 +1,5 @@
+import path from "path"
+
 import { ICON_PACKS } from "./features.js"
 
 export const LINE_WIDTH = 80
@@ -23,6 +25,30 @@ export function appModel(app) {
     ],
     showcase: app.icons.map((key) => ICON_PACKS[key].showcase),
   }
+}
+
+/**
+ * Where each part of a generated app lives. The shell and its own pieces are
+ * in src/app; routed screens are in src/views, and without routing the one
+ * screen is a piece of the shell. A piece lives with what renders it, so the
+ * messages live in the home screen's folder.
+ */
+export function layout(app) {
+  const screens = app.routing ? "src/views" : "src/app"
+  return {
+    app: "src/app",
+    home: `${screens}/home`,
+    about: "src/views/about",
+    message: `${screens}/home/message`,
+    analytics: "src/app/analytics",
+    pushPrompt: "src/app/push-prompt",
+  }
+}
+
+/** The import specifier from a folder to a path, both relative to the project. */
+export function relative(fromDir, to) {
+  const specifier = path.posix.relative(fromDir, to)
+  return specifier.startsWith(".") ? specifier : `./${specifier}`
 }
 
 export function call(name, args, indent, trailing) {

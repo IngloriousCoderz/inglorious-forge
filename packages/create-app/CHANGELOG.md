@@ -1,5 +1,16 @@
 # @inglorious/create-game
 
+## 1.10.0
+
+### Minor Changes
+
+- Generated apps group their code by where it belongs, not by whether it talks to the store:
+
+  - The shell is `src/app/index` with its stylesheet in `src/app/style.css`, and the shell's own pieces live beside it: the analytics and push prompts in `src/app/analytics/` and `src/app/push-prompt/`.
+  - With routing, each screen is a folder in `src/views/`: `src/views/home/` and `src/views/about/`. Without routing, the home screen is a piece of the shell, in `src/app/home/`.
+  - A piece lives with what renders it: the messages are in the home screen's `message/` folder, or in `src/app/message/` in the hello world.
+  - Nothing is called `src/types/` anymore: in a TypeScript app, `types/` holds only type definitions. `types/vite-end.d.ts` is now `types/vite-env.d.ts`, the name Vite uses.
+
 ## 1.9.1
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 import { createStore } from "@inglorious/store"
 
-import { Message } from "../types/message.js"
+import { Message } from "../app/message/index.js"
 import { entities } from "./entities.js"
 import { middlewares } from "./middlewares.js"
 

@@ -1,4 +1,4 @@
-import "./vite-end"
+import "./vite-env"
 
 import type { BaseEntity, EntitiesState, EntityType } from "@inglorious/store"
 import type { Api, TemplateResult } from "@inglorious/web"

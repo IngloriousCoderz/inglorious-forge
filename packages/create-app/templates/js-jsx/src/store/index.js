@@ -1,6 +1,6 @@
 import { createStore } from "@inglorious/store"
 
-import { Message } from "../types/message"
+import { Message } from "../app/message"
 import { entities } from "./entities"
 import { middlewares } from "./middlewares"
 

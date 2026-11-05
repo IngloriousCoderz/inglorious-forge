@@ -15,7 +15,14 @@ import {
 import { ICON_PACKS, LANGUAGES, PROMPT_TEXTS } from "./features.js"
 import { importBlock } from "./imports.js"
 import { envExample, promptFiles } from "./prompts.js"
-import { appModel, call, LINE_WIDTH, union } from "./source.js"
+import {
+  appModel,
+  call,
+  layout,
+  LINE_WIDTH,
+  relative,
+  union,
+} from "./source.js"
 
 const COMPONENTS = {
   "lit-html": litComponents,
@@ -53,6 +60,7 @@ export function addAppFeatures(targetDir, pkg, options) {
   app.links = app.routing && !app.tabs
   app.isVue = app.renderer === "vue"
   app.hasPrompts = app.analytics || app.push
+  app.layout = layout(app)
 
   const components = COMPONENTS[app.renderer]
   const componentExt = components.extension(app)
@@ -60,17 +68,18 @@ export function addAppFeatures(targetDir, pkg, options) {
 
   addDependencies(pkg, app)
 
+  const { layout: at } = app
   const files = {
     [`src/main.${app.ext}`]: mainSource(app),
-    [`src/app.${componentExt}`]: components.appSource(app, model),
-    "src/app.css": appStyles(app),
-    [`src/pages/home.${componentExt}`]: components.homeSource(app, model),
-    [`src/types/message.${componentExt}`]: components.messageSource(app),
+    [`${at.app}/index.${componentExt}`]: components.appSource(app, model),
+    [`${at.app}/style.css`]: appStyles(app),
+    [`${at.home}/index.${componentExt}`]: components.homeSource(app, model),
+    [`${at.message}/index.${componentExt}`]: components.messageSource(app),
     [`src/store/index.${app.ext}`]: storeSource(app),
     [`src/store/entities.${app.ext}`]: entitiesSource(app),
   }
   if (app.routing) {
-    files[`src/pages/about.${componentExt}`] = components.aboutSource(app)
+    files[`${at.about}/index.${componentExt}`] = components.aboutSource(app)
     files[`src/store/routes.${app.ext}`] = routesSource(app)
   }
   if (app.i18n) {
@@ -88,6 +97,10 @@ export function addAppFeatures(targetDir, pkg, options) {
     files["types/index.d.ts"] = typesSource(app)
   }
 
+  // The template's hello world keeps its messages in the shell; here they move
+  // to the home screen that renders them.
+  removeTemplateMessages(targetDir, app)
+
   for (const [file, source] of Object.entries(files)) {
     const filePath = path.join(targetDir, file)
     fs.mkdirSync(path.dirname(filePath), { recursive: true })
@@ -95,6 +108,15 @@ export function addAppFeatures(targetDir, pkg, options) {
   }
 
   if (app.ui) applyTheme(targetDir, app)
+}
+
+function removeTemplateMessages(targetDir, app) {
+  const templateMessages = "src/app/message"
+  if (app.layout.message === templateMessages) return
+  fs.rmSync(path.join(targetDir, templateMessages), {
+    recursive: true,
+    force: true,
+  })
 }
 
 function addDependencies(pkg, app) {
@@ -141,9 +163,10 @@ function applyTheme(targetDir, app) {
 
 // An import of one of the app's components: Vue's name their file, and
 // TypeScript cannot read .vue files, so it is told to expect that.
+/** Imports a component from its folder: its index, which a .vue file names. */
 function componentImport(app, names, from) {
   if (!app.isVue) return `import { ${names} } from "${from}"`
-  const line = `import { ${names} } from "${from}.vue"`
+  const line = `import { ${names} } from "${from}/index.vue"`
   return app.isTypeScript
     ? `// @ts-expect-error - Handled by @inglorious/vite-plugin-vue\n${line}`
     : line
@@ -161,10 +184,10 @@ function mainSource(app) {
       imports.push('import "@inglorious/ui/view-transitions.css"')
     }
   }
-  imports.push('import "./app.css"')
+  imports.push(`import "${relative("src", app.layout.app)}/style.css"`)
   imports.push(
     `import { ${app.hasPrompts ? "html, mount" : "mount"} } from "@inglorious/web"`,
-    componentImport(app, "App", "./app"),
+    componentImport(app, "App", relative("src", app.layout.app)),
     'import { store } from "./store"',
   )
   if (app.i18n) imports.push('import { ready } from "./i18n"')
@@ -292,8 +315,8 @@ main {
 function storeSource(app) {
   const imports = [
     'import { createStore } from "@inglorious/store"',
-    componentImport(app, "Home", "../pages/home"),
-    componentImport(app, "Message", "../types/message"),
+    componentImport(app, "Home", relative("src/store", app.layout.home)),
+    componentImport(app, "Message", relative("src/store", app.layout.message)),
     'import { entities } from "./entities"',
     'import { middlewares } from "./middlewares"',
   ]
@@ -305,7 +328,7 @@ function storeSource(app) {
   if (app.routing) {
     imports.push(
       'import { Router, setRoutes } from "@inglorious/web/router"',
-      componentImport(app, "About", "../pages/about"),
+      componentImport(app, "About", relative("src/store", app.layout.about)),
       'import { routes } from "./routes"',
     )
   }
@@ -314,10 +337,14 @@ function storeSource(app) {
   }
   if (app.i18n) imports.push('import { I18n } from "../i18n"')
   if (app.analytics) {
-    imports.push('import { Analytics } from "../types/analytics"')
+    imports.push(
+      `import { Analytics } from "${relative("src/store", app.layout.analytics)}"`,
+    )
   }
   if (app.push) {
-    imports.push('import { PushPrompt } from "../types/push-prompt"')
+    imports.push(
+      `import { PushPrompt } from "${relative("src/store", app.layout.pushPrompt)}"`,
+    )
   }
 
   const types = ["Message", "Home"]
@@ -400,7 +427,7 @@ export const { I18n, t, ready } = createI18n({
 
 function typesSource(app) {
   const imports = [
-    'import "./vite-end"',
+    'import "./vite-env"',
     'import type { BaseEntity, EntitiesState, EntityType } from "@inglorious/store"',
     'import type { Api, TemplateResult } from "@inglorious/web"',
   ]

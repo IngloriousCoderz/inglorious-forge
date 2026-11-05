@@ -1,5 +1,5 @@
 <script>
-import { Message } from "./types/message.vue"
+import { Message } from "./message/index.vue"
 </script>
 
 <template>

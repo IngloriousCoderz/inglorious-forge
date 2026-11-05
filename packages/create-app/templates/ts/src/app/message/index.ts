@@ -1,6 +1,6 @@
 import { html } from "@inglorious/web"
 
-import type { MessageType } from "../../types"
+import type { MessageType } from "../../../types"
 
 export const Message: MessageType = {
   click(entity) {

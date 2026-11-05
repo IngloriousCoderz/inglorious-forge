@@ -1,4 +1,5 @@
 import { importBlock } from "./imports.js"
+import { relative } from "./source.js"
 
 export const extension = (app) => (app.isTypeScript ? "ts" : "js")
 
@@ -23,8 +24,12 @@ export function appSource(app, { pages, navIcons }) {
     if (app.links) imports.push('import { Link } from "@inglorious/ui/link"')
     if (app.i18n) imports.push('import { Select } from "@inglorious/ui/select"')
   }
-  if (app.isTypeScript) imports.push('import type { AppApi } from "../types"')
-  if (app.i18n) imports.push('import { t } from "./i18n"')
+  if (app.isTypeScript)
+    imports.push(
+      `import type { AppApi } from "${relative(app.layout.app, "types")}"`,
+    )
+  if (app.i18n)
+    imports.push(`import { t } from "${relative(app.layout.app, "src/i18n")}"`)
 
   const label = (key, text) => (app.i18n ? `t("${key}")` : `"${text}"`)
   const signature = app.isTypeScript
@@ -82,9 +87,12 @@ export function homeSource(app, { showcase }) {
     imports.push('import { Icon } from "@inglorious/ui/icon"')
   }
   if (app.isTypeScript) {
-    imports.push('import type { HomeType } from "../../types"')
+    imports.push(
+      `import type { HomeType } from "${relative(app.layout.home, "types")}"`,
+    )
   }
-  if (app.i18n) imports.push('import { t } from "../i18n"')
+  if (app.i18n)
+    imports.push(`import { t } from "${relative(app.layout.home, "src/i18n")}"`)
 
   const text = (key, fallback) => (app.i18n ? `\${t("${key}")}` : fallback)
   const icons = showcase.length
@@ -123,7 +131,10 @@ export const Home${annotation} = {
 
 export function aboutSource(app) {
   const imports = ['import { html } from "@inglorious/web"']
-  if (app.i18n) imports.push('import { t } from "../i18n"')
+  if (app.i18n)
+    imports.push(
+      `import { t } from "${relative(app.layout.about, "src/i18n")}"`,
+    )
   const text = (key, fallback) => (app.i18n ? `\${t("${key}")}` : fallback)
 
   return `${importBlock(imports)}
@@ -142,9 +153,14 @@ export const About = {
 export function messageSource(app) {
   const imports = ['import { html } from "@inglorious/web"']
   if (app.isTypeScript) {
-    imports.push('import type { MessageType } from "../../types"')
+    imports.push(
+      `import type { MessageType } from "${relative(app.layout.message, "types")}"`,
+    )
   }
-  if (app.i18n) imports.push('import { t } from "../i18n"')
+  if (app.i18n)
+    imports.push(
+      `import { t } from "${relative(app.layout.message, "src/i18n")}"`,
+    )
   const greeting = app.i18n ? '${t("message.hello", { who })}' : "Hello ${who}"
   const annotation = app.isTypeScript ? ": MessageType" : ""
 
