@@ -72,6 +72,15 @@
     display: flex;
     flex-wrap: wrap;
     gap: var(--iw-space-2);
+
+    /* A suggestion is a sentence, not a label: on a narrow screen it wraps like
+       text instead of keeping the button's single line. */
+    .iw-button {
+      max-inline-size: 100%;
+      white-space: normal;
+      text-align: start;
+      overflow-wrap: anywhere;
+    }
   }
 
   .iw-chat-composer {

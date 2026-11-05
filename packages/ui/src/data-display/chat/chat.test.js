@@ -3,6 +3,7 @@ import { html, mount } from "@inglorious/web"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 import { Chat } from "."
+import css from "./style.css?raw"
 
 describe("Chat / handlers", () => {
   let entity
@@ -193,5 +194,16 @@ describe("Chat / template", () => {
     expect(container.querySelector(".iw-alert-error").textContent).toContain(
       "The model is offline",
     )
+  })
+})
+
+describe("Chat / style", () => {
+  it("wraps long suggestions like text, rather than running off a narrow screen", () => {
+    const suggestions = css.match(
+      /\.iw-chat-suggestions\s*\{[\s\S]*?\n {2}\}/,
+    )?.[0]
+
+    expect(suggestions).toMatch(/\.iw-button\s*\{[^}]*white-space:\s*normal/)
+    expect(suggestions).toMatch(/\.iw-button\s*\{[^}]*max-inline-size:\s*100%/)
   })
 })

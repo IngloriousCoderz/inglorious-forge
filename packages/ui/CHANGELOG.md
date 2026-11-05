@@ -1,5 +1,11 @@
 # @inglorious/ui
 
+## 9.15.4
+
+### Patch Changes
+
+- Chat's suggestions wrap like text on a narrow screen, instead of keeping the button's single line and running off the side.
+
 ## 9.15.3
 
 ### Patch Changes
