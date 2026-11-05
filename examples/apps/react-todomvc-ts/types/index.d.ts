@@ -1,4 +1,4 @@
-import type { BaseEntity, EntitiesState } from "@inglorious/store"
+import type { BaseEntity, EntitiesState, EventsOf } from "@inglorious/store"
 
 export type Filter = "all" | "active" | "completed"
 
@@ -49,3 +49,6 @@ export type AppTypes = {
     clearClick: (entity: FooterEntity) => void
   }
 }
+
+/** Every event the types answer, so that `notify` checks each one's name and payload. */
+export type AppEvents = EventsOf<AppTypes[keyof AppTypes]>

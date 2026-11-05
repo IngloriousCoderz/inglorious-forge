@@ -115,7 +115,7 @@ Creates React bindings for an Inglorious Store.
 
 - `Provider`: React context provider component (pre-configured with your store)
 - `useSelector`: Hook to select state slices
-- `useNotify`: Hook to dispatch events
+- `useNotify`: Hook to dispatch events. With TypeScript, create the store with the app's events (`createStore<AppEntity, AppState, AppEvents>`, where `AppEvents = EventsOf<CounterType | ...>`) and `notify` checks each event's name and payload.
 - `useEntity`: Hook to select a single entity by ID
 
 **Examples:**

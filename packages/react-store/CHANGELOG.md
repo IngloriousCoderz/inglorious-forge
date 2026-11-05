@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 19.2.0
+
+### Minor Changes
+
+- `useNotify` checks events: a store created with the app's events, `createStore<AppEntity, AppState, AppEvents>`, gives a `notify` that rejects a misspelled event or a wrong payload.
+
 ## 19.1.5
 
 ### Patch Changes
