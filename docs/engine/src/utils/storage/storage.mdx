@@ -1,0 +1,39 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+
+import { toString as bToString } from '@inglorious/utils/data-structures/boolean'
+import { toString } from '@inglorious/utils/object'
+import { readJSON, writeJSON } from '@inglorious/utils/storage'
+
+<Meta title="Utils/Storage/Storage" />
+
+# Storage
+
+Saving and loading JSON from `localStorage`, for a game's high scores or an app's saved state. Unlike most utilities these have a side effect, since keeping something is the point; like all of them, they know nothing about entities or rendering, so games and apps alike can use them.
+
+Neither function throws. Storage that is absent (a server render, a test), blocked by the browser, or full, and a value that cannot be parsed, all read as the fallback; a write that did not happen answers `false`. A game that cannot remember a score can still be played.
+
+## Write JSON
+
+Writes a value down as JSON, and answers whether it took.
+
+<code>writeJSON("docs.high-scores", [1200, 900, 450]) == {bToString(writeJSON("docs.high-scores", [1200, 900, 450]))}</code>&nbsp;
+
+## Read JSON
+
+Reads a value back as JSON, or answers the fallback when there is nothing usable to read.
+
+<code>readJSON("docs.high-scores", []) == {toString((() => { writeJSON("docs.high-scores", [1200, 900, 450]); return readJSON("docs.high-scores", []) })())}</code>&nbsp;
+
+<code>readJSON("docs.nothing-here", []) == {toString(readJSON("docs.nothing-here", []))}</code>&nbsp;
+
+<code>localStorage.setItem("docs.broken", "\{not json")</code>&nbsp;
+
+<code>readJSON("docs.broken", 0) == {toString((() => { localStorage.setItem("docs.broken", "{not json"); return readJSON("docs.broken", 0) })())}</code>&nbsp;
+
+## Other Storage
+
+Both take the storage to use as their last argument, and default to `localStorage`. Pass `sessionStorage` to forget when the tab closes, or a fake in tests.
+
+<code>writeJSON("docs.draft", "Dear diary", sessionStorage) == {bToString(writeJSON("docs.draft", "Dear diary", sessionStorage))}</code>&nbsp;
+
+<code>readJSON("docs.draft", "", sessionStorage) == {toString((() => { writeJSON("docs.draft", "Dear diary", sessionStorage); return readJSON("docs.draft", "", sessionStorage) })())}</code>&nbsp;

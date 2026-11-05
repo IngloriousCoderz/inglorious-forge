@@ -1,4 +1,4 @@
-import { beforeEach, expect, test } from "vitest"
+import { afterEach, beforeEach, expect, test, vi } from "vitest"
 
 import { readJSON, writeJSON } from "./storage.js"
 
@@ -9,6 +9,10 @@ beforeEach(() => {
 
   storage.getItem = (key) => (storage.has(key) ? storage.get(key) : null)
   storage.setItem = (key, value) => storage.set(key, String(value))
+})
+
+afterEach(() => {
+  vi.unstubAllGlobals()
 })
 
 test("it should read back what it wrote", () => {
@@ -33,18 +37,29 @@ test("it should answer with the fallback when what is stored cannot be parsed", 
   expect(readJSON("broken", "fallback", storage)).toBe("fallback")
 })
 
-test("it should not throw where there is no storage at all", () => {
-  expect(readJSON("name", "fallback", null)).toBe("fallback")
-  expect(writeJSON("name", 1, null)).toBe(true)
+test("it should not throw, and say it wrote nothing, where there is no storage at all", () => {
+  vi.stubGlobal("localStorage", undefined)
+
+  expect(readJSON("name", "fallback")).toBe("fallback")
+  expect(writeJSON("name", 1)).toBe(false)
 })
 
-test("it should report a write that is refused", () => {
-  const refusing = {
-    getItem: () => null,
-    setItem: () => {
-      throw new Error("quota exceeded")
-    },
+test("it should not throw where storage refuses to be read or written", () => {
+  storage.getItem = () => {
+    throw new Error("SecurityError")
+  }
+  storage.setItem = () => {
+    throw new Error("QuotaExceededError")
   }
 
-  expect(writeJSON("name", 1, refusing)).toBe(false)
+  expect(readJSON("name", "fallback", storage)).toBe("fallback")
+  expect(writeJSON("name", 1, storage)).toBe(false)
+})
+
+test("it should use the browser's storage by default", () => {
+  vi.stubGlobal("localStorage", storage)
+
+  writeJSON("level", 3)
+
+  expect(readJSON("level", 0)).toBe(3)
 })

@@ -198,10 +198,10 @@ store.notify("increment") // You control what happens
 **Pinia** and some others blur the line between state and database. Inglorious Store is **purely in-memory state**. For persistence, use:
 
 ```javascript
+import { writeJSON } from "@inglorious/utils/storage.js"
+
 // You control persistence
-const saveState = () =>
-  localStorage.setItem("state", JSON.stringify(store.getState()))
-store.subscribe(saveState)
+store.subscribe(() => writeJSON("state", store.getState()))
 ```
 
 ### ❌ Not a Framework

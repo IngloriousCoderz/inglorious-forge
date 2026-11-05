@@ -1,5 +1,12 @@
 # @inglorious/utils
 
+## 5.2.0
+
+### Minor Changes
+
+- - `readJSON` and `writeJSON` move from `@inglorious/engine/storage.js` to `@inglorious/utils/storage.js`, so apps that are not games can save and load JSON from `localStorage` too. `@inglorious/engine/storage.js` is gone: import them from utils.
+  - `writeJSON` answers `false` where there is no storage at all, rather than claiming a write that never happened, and `readJSON` answers the fallback where reading throws, such as storage blocked by the browser.
+
 ## 5.1.0
 
 ### Minor Changes

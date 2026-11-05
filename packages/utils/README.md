@@ -118,6 +118,21 @@ Vectors are mutable arrays, so copy a shared vector rather than storing it where
 to one, such as an entity position. Copy it with `v(...ZERO_VECTOR)`: a plain spread
 (`[...ZERO_VECTOR]`) gives you a new array but drops the tag that `isVector` looks for.
 
+### Saving and loading JSON
+
+Keep a value in `localStorage` between visits, such as a game's high scores or an app's
+saved state. Neither function throws: absent or blocked storage, and a value that cannot be
+parsed, read as the fallback, and a write that did not happen answers `false`.
+
+```javascript
+import { readJSON, writeJSON } from "@inglorious/utils/storage.js"
+
+const scores = readJSON("high-scores", [])
+writeJSON("high-scores", [...scores, 1200]) // => true
+```
+
+Pass another `Storage` as the last argument, such as `sessionStorage` or a fake in tests.
+
 ---
 
 ## API
@@ -138,6 +153,10 @@ know whether a helper lives under `data-structures` or `math`:
 - **`@inglorious/utils/object`**: Single-object helpers (`clone`, `get`, `set`, `produce`, ...) alongside multi-object helpers (`merge`, `extend`, `defaults`, ...).
 - **`@inglorious/utils/quaternion`**: `quaternion` and `combine`.
 - **`@inglorious/utils/vector`**: Single-vector helpers (`magnitude`, `normalize`, `rotate`, ...) alongside multi-vector helpers (`cross`, `dot`, `sum`, ...).
+
+One module stands on its own:
+
+- **`@inglorious/utils/storage`**: `readJSON` and `writeJSON`, for keeping JSON in `localStorage`.
 
 `divide`, `mod`, `multiply` and `power` accept either a scalar or one or more vectors:
 a scalar is applied to every component, while vectors are combined component-wise.

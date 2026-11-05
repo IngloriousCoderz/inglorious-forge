@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/utils",
-  "version": "5.1.0",
+  "version": "5.2.0",
   "description": "A set of general-purpose utility functions designed with functional programming principles in mind.",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -117,6 +117,14 @@
     "./vector": {
       "types": "./types/math/vector.d.ts",
       "import": "./src/math/vector.js"
+    },
+    "./storage.js": {
+      "types": "./types/storage.d.ts",
+      "import": "./src/storage.js"
+    },
+    "./storage": {
+      "types": "./types/storage.d.ts",
+      "import": "./src/storage.js"
     },
     "./v.js": {
       "types": "./types/v.d.ts",

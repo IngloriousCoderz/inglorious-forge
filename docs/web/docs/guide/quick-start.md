@@ -283,21 +283,22 @@ const types = {
 
 ### Add Persistence
 
+`readJSON` and `writeJSON` from `@inglorious/utils` keep JSON in `localStorage`, and never throw: a private window or a corrupted value just reads as the fallback.
+
 ```javascript
+import { readJSON, writeJSON } from "@inglorious/utils/storage.js"
+
 const types = {
   TodoApp: {
     create(entity) {
       // Load from localStorage
-      const saved = localStorage.getItem("todos")
-      if (saved) {
-        entity.todos = JSON.parse(saved)
-      }
+      entity.todos = readJSON("todos", [])
     },
 
     addTodo(entity, title) {
       // ... existing code ...
       // Save after mutation
-      localStorage.setItem("todos", JSON.stringify(entity.todos))
+      writeJSON("todos", entity.todos)
     },
 
     // Other methods also save...

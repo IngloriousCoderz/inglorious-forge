@@ -15,11 +15,9 @@ const DEFAULT_STORAGE = () => globalThis.localStorage
  * @returns {*} The stored value, or the fallback.
  */
 export function readJSON(key, fallback, storage) {
-  const raw = store(storage)?.getItem(key)
-
-  if (raw === null || raw === undefined) return fallback
-
   try {
+    const raw = store(storage)?.getItem(key)
+    if (raw === null || raw === undefined) return fallback
     return JSON.parse(raw)
   } catch {
     return fallback
@@ -40,8 +38,9 @@ export function readJSON(key, fallback, storage) {
  */
 export function writeJSON(key, value, storage) {
   try {
-    store(storage)?.setItem(key, JSON.stringify(value))
-
+    const target = store(storage)
+    if (!target) return false
+    target.setItem(key, JSON.stringify(value))
     return true
   } catch {
     return false

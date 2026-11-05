@@ -1,4 +1,4 @@
-import { readJSON, writeJSON } from "@inglorious/engine/storage.js"
+import { readJSON, writeJSON } from "@inglorious/utils/storage.js"
 
 const KEY = "breakout.high-scores"
 
