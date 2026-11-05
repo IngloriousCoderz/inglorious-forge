@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.9.1
+
+### Patch Changes
+
+- New projects ignore the `skills` folder inside any root dot-folder (`.agents/skills/`, `.claude/skills/`, `.cursor/skills/` and so on), where the skills CLI installs agent skills. The rest of each agent folder, such as `.claude/settings.json`, can still be committed, and `skills-lock.json` stays tracked.
+
 ## 1.9.0
 
 ### Minor Changes

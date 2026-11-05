@@ -46,3 +46,6 @@ lerna-debug.log*
 *.sln
 *.sw?
 .qodo
+
+# Agent skills
+/.*/skills/
