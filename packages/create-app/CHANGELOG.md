@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.9.0
+
+### Minor Changes
+
+- Apps are versioned with Changesets, and the Vite config hands the version to the app as `import.meta.env.VITE_APP_VERSION`. Mobile apps also get `pnpm mobile:release`, which copies the version into the iOS and Android projects, raises the build number they share, and builds with `.env` taking precedence over `.env.local`.
+
 ## 1.8.1
 
 ### Patch Changes

@@ -3,9 +3,9 @@ import { EOL } from "os"
 import path from "path"
 
 import { CAPACITOR_VERSION, TYPESCRIPT_VERSION } from "./constants.js"
-import { toJavaIdentifier } from "./file.js"
+import { copyDir, toJavaIdentifier } from "./file.js"
 
-export function addMobileSupport(targetDir, pkg, projectName) {
+export function addMobileSupport(targetDir, pkg, projectName, templatesRoot) {
   pkg.dependencies ??= {}
   pkg.devDependencies ??= {}
   pkg.scripts ??= {}
@@ -22,6 +22,13 @@ export function addMobileSupport(targetDir, pkg, projectName) {
   pkg.scripts["mobile:sync"] = "pnpm build && cap sync"
   pkg.scripts["mobile:ios"] = "pnpm build && cap run ios"
   pkg.scripts["mobile:android"] = "pnpm build && cap run android"
+  // Vite never overrides a variable already set, so .env beats .env.local.
+  pkg.scripts["build:release"] =
+    "node --env-file-if-exists=.env node_modules/vite/bin/vite.js build"
+  pkg.scripts["mobile:release"] =
+    "node scripts/native-version.mjs && pnpm build:release && cap sync"
+
+  copyDir(path.join(templatesRoot, "features/mobile"), targetDir)
 
   fs.writeFileSync(
     path.join(targetDir, "capacitor.config.ts"),
@@ -99,6 +106,14 @@ pnpm mobile:android
 # or
 pnpm mobile:ios
 \`\`\`
+
+### Releasing
+
+The version users see comes from \`package.json\`, the same on the web, Android and iOS. The build number is shared by both native apps and must go up with every store upload.
+
+1. Describe each change as you make it with \`pnpm changeset\`. When a release is due, \`pnpm release:version\` raises the version and writes \`CHANGELOG.md\`. Skip this to upload another build of the same version, for example to TestFlight.
+2. Run \`pnpm mobile:release\`. It copies the version into both native projects, raises the build number, builds with the production values in \`.env\` (ignoring \`.env.local\`), and syncs. Commit what it changed.
+3. Upload. In Xcode, use **Product → Archive**, then **Distribute App → Custom → App Store Connect → Upload**, and untick **Manage Version and Build Number** so the store gets the project's build number. In Android Studio, use **Build → Generate Signed App Bundle**.
 `
 
   fs.writeFileSync(

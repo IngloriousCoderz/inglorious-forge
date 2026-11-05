@@ -1,4 +1,5 @@
 export const CAPACITOR_VERSION = "^8.5.3"
+export const CHANGESETS_VERSION = "^3.0.3"
 export const CAPACITOR_FIREBASE_VERSION = "^8.5.2"
 export const FIREBASE_VERSION = "^12.19.0"
 export const SUPABASE_VERSION = "^2.118.0"

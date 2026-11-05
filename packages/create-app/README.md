@@ -95,6 +95,12 @@ For Android and iOS builds, install Android Studio with the Android SDK and a Ja
 - iOS: https://capacitorjs.com/docs/ios
 - Android Studio: https://developer.android.com/studio
 
+### Versions and releases
+
+Every Vite app is versioned with [Changesets](https://github.com/changesets/changesets): describe each change with `pnpm changeset`, and `pnpm release:version` raises the version in `package.json` and writes `CHANGELOG.md`. The app reads that version as `import.meta.env.VITE_APP_VERSION`.
+
+Mobile apps also get `pnpm mobile:release`, which copies the version into the iOS and Android projects, raises the build number they share (every store upload needs a new one), builds with the values in `.env` rather than `.env.local`, and syncs. The generated README describes the whole release, upload included.
+
 ## License
 
 **MIT License - Free and open source**

@@ -22,6 +22,7 @@ import { addFirebaseSupport } from "./lib/firebase.js"
 import { addMobileSupport } from "./lib/mobile.js"
 import { addPwaSupport } from "./lib/pwa.js"
 import { askAppFeatures } from "./lib/questions.js"
+import { addReleaseSupport } from "./lib/release.js"
 import { installSkills, skillsCommand, skillsFor } from "./lib/skills.js"
 
 async function main() {
@@ -189,6 +190,8 @@ async function main() {
       })
     }
 
+    if (VITE_APP_TEMPLATES.has(baseTemplate)) addReleaseSupport(targetDir, pkg)
+
     if (features.pwa) {
       spinner.text = "Adding PWA support..."
       addPwaSupport(targetDir, pkg, projectName, { push: features.push })
@@ -196,7 +199,7 @@ async function main() {
 
     if (features.mobile) {
       spinner.text = "Adding Capacitor support..."
-      addMobileSupport(targetDir, pkg, projectName)
+      addMobileSupport(targetDir, pkg, projectName, templatesRoot)
     }
 
     if (features.analytics || features.push) {
