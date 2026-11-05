@@ -1,5 +1,11 @@
 # @inglorious/ui
 
+## 9.15.2
+
+### Patch Changes
+
+- The Combobox search field is now 1rem in the theme's font, so focusing it when the dropdown opens no longer makes iOS zoom in.
+
 ## 9.15.1
 
 ### Patch Changes

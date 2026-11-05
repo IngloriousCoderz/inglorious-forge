@@ -199,6 +199,8 @@
       border-bottom: 1px solid var(--iw-color-border);
       background: transparent;
       color: var(--iw-color-text);
+      font-family: inherit;
+      font-size: var(--iw-font-size-base);
       padding: var(--iw-space-2) var(--iw-space-3);
       outline: none;
     }
