@@ -48,7 +48,7 @@ export const template = {
         role="log"
         aria-live="polite"
         @scroll=${keepPinned}
-        ${ref(followLatest)}
+        ${ref((log) => followLatest(log))}
       >
         ${repeat(
           messages,
@@ -197,7 +197,9 @@ function keepPinned(event) {
 
 /**
  * After each render, scrolls to the latest message, unless the user has
- * scrolled up to read.
+ * scrolled up to read. lit calls a ref callback again only when it is a
+ * different function, so the template passes a fresh one on every render;
+ * the previous one is then called with `undefined`, which is ignored.
  * @param {Element | undefined} log
  */
 function followLatest(log) {

@@ -1,5 +1,11 @@
 # @inglorious/ui
 
+## 9.15.3
+
+### Patch Changes
+
+- Chat follows each new message again, not only the first render: it scrolls to the latest one unless the user has scrolled up to read.
+
 ## 9.15.2
 
 ### Patch Changes

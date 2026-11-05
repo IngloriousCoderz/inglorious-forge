@@ -1,6 +1,6 @@
 import { createStore } from "@inglorious/store"
 import { html, mount } from "@inglorious/web"
-import { afterEach, beforeEach, describe, expect, it } from "vitest"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 import { Chat } from "."
 
@@ -144,6 +144,47 @@ describe("Chat / template", () => {
       container.querySelector('[role="status"]').getAttribute("aria-label"),
     ).toBe("Assistant is replying")
     expect(container.querySelector('button[type="submit"]').disabled).toBe(true)
+  })
+
+  describe("scrolling", () => {
+    /* jsdom lays nothing out, so the log gets the sizes a browser would give it. */
+    function layOut({ scrollHeight, clientHeight = 200, scrollTop = 0 }) {
+      const log = container.querySelector('[role="log"]')
+      Object.defineProperty(log, "scrollHeight", {
+        configurable: true,
+        value: scrollHeight,
+      })
+      Object.defineProperty(log, "clientHeight", {
+        configurable: true,
+        value: clientHeight,
+      })
+      Object.defineProperty(log, "scrollTop", {
+        configurable: true,
+        writable: true,
+        value: scrollTop,
+      })
+      return log
+    }
+
+    it("follows each new message, not only the first render", async () => {
+      await setup({ messages: [{ id: "m1", role: "user", content: "Hi" }] })
+      const log = layOut({ scrollHeight: 500 })
+
+      store.notify("#chat:messageAdd", { content: "Hello! How can I help?" })
+
+      await vi.waitFor(() => expect(log.scrollTop).toBe(500))
+    })
+
+    it("stays where the user scrolled up to read", async () => {
+      await setup({ messages: [{ id: "m1", role: "user", content: "Hi" }] })
+      const log = layOut({ scrollHeight: 500, scrollTop: 100 })
+      log.dispatchEvent(new Event("scroll"))
+
+      store.notify("#chat:messageAdd", { content: "Hello! How can I help?" })
+      await new Promise((resolve) => setTimeout(resolve))
+
+      expect(log.scrollTop).toBe(100)
+    })
   })
 
   it("shows why a reply failed", async () => {
