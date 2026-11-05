@@ -10,16 +10,22 @@ import { maximumValue, minimumValue } from "../cartesian/shared.js"
 const ACCENT = themeColor("accent", "#3b82f6")
 const HANDLE_BORDER = themeColor("surface", "#ffffff")
 
-export function renderBrush(primitive, frame) {
+export function renderBrush(frame, primitive, api) {
   const layout = getBrushLayout(primitive, frame)
   if (!layout) return svg``
 
-  const onPan = createBrushMouseDownHandler(frame, layout, "pan")
-  const onResizeLeft = createBrushMouseDownHandler(frame, layout, "resize-left")
+  const onPan = createBrushMouseDownHandler(frame, layout, "pan", api)
+  const onResizeLeft = createBrushMouseDownHandler(
+    frame,
+    layout,
+    "resize-left",
+    api,
+  )
   const onResizeRight = createBrushMouseDownHandler(
     frame,
     layout,
     "resize-right",
+    api,
   )
 
   return svg`
@@ -196,7 +202,7 @@ function getBrushLayout(primitive, frame) {
   }
 }
 
-function createBrushMouseDownHandler(frame, layout, action) {
+function createBrushMouseDownHandler(frame, layout, action, api) {
   return (event) => {
     event.preventDefault()
     event.stopPropagation()
@@ -230,7 +236,7 @@ function createBrushMouseDownHandler(frame, layout, action) {
       }
 
       lastRange = nextRange
-      frame.api.notify(`#${frame.entityId}:brushChange`, nextRange)
+      api.notify(`#${frame.entityId}:brushChange`, nextRange)
     }
 
     const handleMouseUp = () => {

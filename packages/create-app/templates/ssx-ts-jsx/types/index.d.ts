@@ -1,6 +1,11 @@
 /// <reference types="@inglorious/jsx/jsx-runtime" />
 
-import type { BaseEntity, EntitiesState, EntityType } from "@inglorious/store"
+import type {
+  BaseEntity,
+  EntitiesState,
+  EntityType,
+  EventsOf,
+} from "@inglorious/store"
 import type { Api, TemplateResult } from "@inglorious/web"
 
 export interface AboutEntity extends BaseEntity {
@@ -14,7 +19,10 @@ export interface AppState extends EntitiesState<AppEntity> {
   about: AboutEntity
 }
 
-export type AppApi = Api<AppEntity, AppState>
+// The events the types below answer, so that `notify` checks them.
+export type AppEvents = EventsOf<AboutType>
+
+export type AppApi = Api<AppEntity, AppState, AppEvents>
 
 export type AboutType = {
   click: (entity: AboutEntity) => void

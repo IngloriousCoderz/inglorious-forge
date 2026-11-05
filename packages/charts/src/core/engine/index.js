@@ -26,7 +26,7 @@ import {
 } from "./renderers/polar/radar.js"
 import { renderRadialBars } from "./renderers/polar/radial.js"
 
-export function renderFrame(frame) {
+export function renderFrame(frame, api) {
   const { entity, dimensions } = frame
   const orderedPrimitives = getRenderPrimitives(frame)
 
@@ -39,7 +39,7 @@ export function renderFrame(frame) {
       role="img"
       aria-label=${entity.ariaLabel || `${entity.type} chart`}
     >
-      ${orderedPrimitives.map((primitive) => renderPrimitive(primitive, frame))}
+      ${orderedPrimitives.map((primitive) => renderPrimitive(frame, primitive, api))}
       ${when(entity.centerText && isPolarChart(entity.type), () =>
         renderCenterText(frame),
       )}
@@ -96,10 +96,10 @@ const RENDERERS = {
   brush: renderBrush,
 }
 
-function renderPrimitive(primitive, frame) {
+function renderPrimitive(frame, primitive, api) {
   const renderer = RENDERERS[primitive.type]
 
-  return when(renderer, () => renderer(primitive, frame))
+  return when(renderer, () => renderer(frame, primitive, api))
 }
 
 function isPolarChart(type) {

@@ -333,7 +333,9 @@ function storeSource(app) {
     )
   }
   if (app.isTypeScript) {
-    imports.push('import type { AppEntity, AppState } from "../../types"')
+    imports.push(
+      'import type { AppEntity, AppEvents, AppState } from "../../types"',
+    )
   }
   if (app.i18n) imports.push('import { I18n } from "../i18n"')
   if (app.analytics) {
@@ -359,7 +361,7 @@ function storeSource(app) {
       : `  types: {
 ${types.map((type) => `    ${type},`).join("\n")}
   },`
-  const generics = app.isTypeScript ? "<AppEntity, AppState>" : ""
+  const generics = app.isTypeScript ? "<AppEntity, AppState, AppEvents>" : ""
 
   return `${importBlock(imports)}
 ${app.routing ? "\nsetRoutes(routes)\n" : ""}
@@ -425,13 +427,35 @@ export const { I18n, t, ready } = createI18n({
 `
 }
 
+/**
+ * `export type AppEvents = EventsOf<...>`, wrapped as Prettier would: on one
+ * line if it fits, then with the types on a line of their own, then one per
+ * line.
+ */
+function eventsOf(types) {
+  const head = "export type AppEvents = EventsOf<"
+  const oneLine = `${head}${types.join(" | ")}>`
+  if (oneLine.length <= LINE_WIDTH) return oneLine
+  const inner = `  ${types.join(" | ")}`
+  if (inner.length <= LINE_WIDTH) return `${head}\n${inner}\n>`
+  return `${head}\n${types.map((type) => `  | ${type}`).join("\n")}\n>`
+}
+
 function typesSource(app) {
   const imports = [
     'import "./vite-env"',
-    'import type { BaseEntity, EntitiesState, EntityType } from "@inglorious/store"',
+    `import type {
+  BaseEntity,
+  EntitiesState,
+  EntityType,
+  EventsOf,
+} from "@inglorious/store"`,
     'import type { Api, TemplateResult } from "@inglorious/web"',
   ]
   const entities = ["MessageEntity", "HomeEntity"]
+  // The types whose events the app sends: its own, then the libraries'.
+  const eventTypes = ["MessageType"]
+  if (app.renderer === "lit-html") eventTypes.push("HomeType")
   const declarations = [
     `export interface MessageEntity extends BaseEntity {
   type: "Message"
@@ -450,7 +474,10 @@ function typesSource(app) {
   ]
 
   if (app.routing) {
-    imports.push('import type { RouterEntity } from "@inglorious/web/router"')
+    imports.push(
+      'import type { RouterEntity, RouterType } from "@inglorious/web/router"',
+    )
+    eventTypes.push("RouterType")
     entities.push("AboutEntity", "AppRouterEntity")
     declarations.push(
       `export interface AboutEntity extends BaseEntity {
@@ -464,7 +491,8 @@ function typesSource(app) {
     state.push("  about: AboutEntity")
   }
   if (app.i18n) {
-    imports.push('import type { I18nEntity } from "@inglorious/i18n"')
+    imports.push('import type { I18nEntity, I18nType } from "@inglorious/i18n"')
+    eventTypes.push("I18nType")
     entities.push("AppI18nEntity")
     declarations.push(
       `export interface AppI18nEntity extends I18nEntity {
@@ -475,8 +503,9 @@ function typesSource(app) {
   }
   if (app.analytics) {
     imports.push(
-      'import type { AnalyticsEntity } from "@inglorious/web/analytics"',
+      'import type { AnalyticsEntity, AnalyticsType } from "@inglorious/web/analytics"',
     )
+    eventTypes.push("AnalyticsType")
     entities.push("AppAnalyticsEntity")
     declarations.push(
       `export interface AppAnalyticsEntity extends AnalyticsEntity {
@@ -486,7 +515,10 @@ function typesSource(app) {
     state.push("  analytics: AppAnalyticsEntity")
   }
   if (app.push) {
-    imports.push('import type { PushPromptEntity } from "@inglorious/web/push"')
+    imports.push(
+      'import type { PushPromptEntity, PushPromptType } from "@inglorious/web/push"',
+    )
+    eventTypes.push("PushPromptType")
     entities.push("AppPushPromptEntity")
     declarations.push(
       `export interface AppPushPromptEntity extends PushPromptEntity {
@@ -508,7 +540,10 @@ export interface AppState extends EntitiesState<AppEntity> {
 ${state.join("\n")}
 }
 
-export type AppApi = Api<AppEntity, AppState>
+// The events the app's types answer, so that \`notify\` checks them.
+${eventsOf(eventTypes)}
+
+export type AppApi = Api<AppEntity, AppState, AppEvents>
 
 // Each type's events and their payloads. Declare types with \`type\`, not
 // \`interface\`: an interface does not fit the store's \`types\`.

@@ -67,7 +67,6 @@ function createFrame(source, entityId, api) {
   const dimensions = createDimensions(filteredEntity, primitives)
 
   return {
-    api,
     entity: filteredEntity,
     entityId: isInteractive ? entityId : null,
     primitives,

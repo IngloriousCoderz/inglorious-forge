@@ -1,5 +1,13 @@
 # @inglorious/store
 
+## 12.3.0
+
+### Minor Changes
+
+- - Typed events: `Api`, `Store` and `createStore` take the app's events as a third type argument, read from the types' own declarations with `EventsOf<CounterType | LabelType>`. `notify` then checks the event's name, after any target (`` `#${entity.id}:add` ``), and its payload. The store's own events are always allowed, and a typed api is still an `Api`. Without the argument nothing changes.
+  - `defineType<Entity, AppApi>()({ ... })` checks a behavior member by member, so a template's sub-renderers can take props: `render(props, api)` takes the entity as its props, a sub-renderer `renderX(props, ownProps, api)` keeps the types it declares, and every other member is a handler, whose entity and api are inferred.
+  - `@inglorious/web` re-exports the store's `Api` interface instead of aliasing it, so an app can tell its api the events of types whose handlers take that same api, and `mount` gives a typed store's events to the root render.
+
 ## 12.2.0
 
 ### Minor Changes

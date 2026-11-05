@@ -10,7 +10,7 @@ import {
 const POINT_OPACITY = 0.75
 
 /** One series of a scatter chart: a circle per point, sized by its `z`. */
-export function renderScatterSeries(primitive, frame) {
+export function renderScatterSeries(frame, primitive, api) {
   const dataKey = primitive.props?.dataKey
   const series = findSeries(frame, dataKey)
   if (!series) return svg``
@@ -26,6 +26,7 @@ export function renderScatterSeries(primitive, frame) {
           primitive,
           { index, dataKey },
           getScatterTooltipText(frame, series.name, point),
+          api,
         )
         return svg`
           <circle

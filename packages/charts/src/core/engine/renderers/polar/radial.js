@@ -31,7 +31,7 @@ const LABEL_COLOR = themeColor("text", "#0f172a")
  * A ring per row, innermost first, filled as far round as its value is of
  * the largest; a faint track shows how far a full one goes.
  */
-export function renderRadialBars(primitive, frame) {
+export function renderRadialBars(frame, primitive, api) {
   const { centerX, centerY } = frame.scales
   const rings = getRings(primitive, frame)
   const hasLabel = primitive.props?.hasLabel
@@ -44,6 +44,7 @@ export function renderRadialBars(primitive, frame) {
           primitive,
           { index: ring.index },
           getRadialTooltipText(frame, ring),
+          api,
         )
         return svg`
           <g>

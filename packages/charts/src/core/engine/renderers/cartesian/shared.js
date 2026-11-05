@@ -10,7 +10,7 @@ export function escapeXml(value) {
     .replace(/>/g, "&gt;")
 }
 
-export function renderHoverTargets(primitive, frame) {
+export function renderHoverTargets(frame, primitive, api) {
   if (!canShowTooltip(primitive, frame)) return nothing
 
   const dataKey = primitive.props?.dataKey
@@ -25,6 +25,7 @@ export function renderHoverTargets(primitive, frame) {
         primitive,
         { index: point.index, dataKey },
         getTooltipText(frame, point.row, dataKey),
+        api,
       )
       return svg`
         <circle
@@ -52,12 +53,13 @@ export function renderHoverTargets(primitive, frame) {
  * @param {object} target - The hovered datum: its row `index`, and the
  *   `dataKey` of its series (none for a pie slice).
  * @param {{ label: string, value: string }} text
+ * @param {object} api - The store's api, to send the tooltip's events.
  */
-export function getTooltipBindings(frame, primitive, target, text) {
+export function getTooltipBindings(frame, primitive, target, text, api) {
   if (!canShowTooltip(primitive, frame)) return NO_TOOLTIP
 
   if (frame.entityId) {
-    const { api, entityId } = frame
+    const { entityId } = frame
     return {
       onEnter: () => api.notify(`#${entityId}:tooltipShow`, target),
       onLeave: () => api.notify(`#${entityId}:tooltipHide`),

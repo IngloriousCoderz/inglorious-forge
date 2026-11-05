@@ -16,7 +16,7 @@ const TICK_FONT_SIZE = 12
 const DEFAULT_MIN_TICK_GAP = 5
 const VALUE_TICKS = 5
 
-export function renderCartesianGrid(primitive, frame) {
+export function renderCartesianGrid(frame, primitive) {
   const { scales, dimensions } = frame
   const categoryLines = getAxisTicks(frame, findCategoryAxis(frame), true).map(
     ({ position }) => position,
@@ -59,7 +59,7 @@ export function renderCartesianGrid(primitive, frame) {
   `
 }
 
-export function renderXAxis(primitive, frame) {
+export function renderXAxis(frame, primitive) {
   const { dimensions } = frame
 
   return svg`
@@ -103,7 +103,7 @@ export function renderXAxis(primitive, frame) {
   `
 }
 
-export function renderYAxis(primitive, frame) {
+export function renderYAxis(frame, primitive) {
   const { dimensions } = frame
 
   return svg`

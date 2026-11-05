@@ -516,6 +516,22 @@ export function createStore({
 }
 
 /**
+ * Defines a behavior for an entity. It does nothing at runtime: it hands back
+ * the behavior it is given, and JavaScript apps never need it.
+ *
+ * It is for TypeScript apps, like Vue's `defineComponent` or Vite's
+ * `defineConfig`: its declaration in `types/store.d.ts` checks each member of
+ * the behavior by its name, so that a template's sub-renderers can take props
+ * while the handlers still get the entity, which a plain annotation cannot
+ * express. See that declaration for why.
+ *
+ * @returns {(behavior: object) => object} A function that returns the behavior it is given.
+ */
+export function defineType() {
+  return (behavior) => behavior
+}
+
+/**
  * A draft that writes straight into the entities it is given.
  *
  * This is the whole of structural sharing's draft, because Mutative's proxy already copies

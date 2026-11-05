@@ -50,14 +50,11 @@ function createFrame() {
 
 describe("polar renderers", () => {
   it("renders pie slices and labels", () => {
-    const result = renderPieSeries(
-      {
-        props: {
-          hasLabel: true,
-        },
+    const result = renderPieSeries(createFrame(), {
+      props: {
+        hasLabel: true,
       },
-      createFrame(),
-    )
+    })
 
     const slices = result.values.find(Array.isArray)
 

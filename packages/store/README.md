@@ -1659,7 +1659,52 @@ interface SalesEntity extends ChartEntity {
 // types: { Router, Sales: Chart }
 ```
 
-**5. Test your handlers**
+**5. Check the events you send**
+
+The type declarations already list every event and its payload, so the api can check what `notify` sends. Read the events from them with `EventsOf`, and give them to the api as its third type argument:
+
+```typescript
+// types/index.d.ts
+import type { EventsOf } from "@inglorious/store"
+
+export type AppEvents = EventsOf<CounterType | LabelType>
+// { increment: void; add: number; copyLabel: void; ...the label's events }
+
+export type AppApi = Api<AppEntity, AppState, AppEvents>
+```
+
+Now every handler's `api.notify` checks the event's name, wherever it is sent (`"add"`, `"Counter:add"`, `` `#${entity.id}:add` ``), and its payload:
+
+```typescript
+api.notify(`#${entity.id}:add`, 2) // fine
+api.notify(`#${entity.id}:ad`, 2) // error: no type answers `ad`
+api.notify(`#${entity.id}:add`, "2") // error: `add` takes a number
+api.notify(`#${entity.id}:increment`, 1) // error: `increment` takes no payload
+```
+
+The store's own events (`add`, `remove`, `patch`, `replace`, `pause`, `resume`, `update`) are always there. Only the event's name is checked, not the target before it, because the target is usually built at runtime. Pass the events to `createStore<AppEntity, AppState, AppEvents>` too, so that `store.notify` checks them, and `mount` gives them to the root render. A typed api is still an `Api`: components that take any app's api accept it.
+
+Without the third type argument, `notify` takes any name and any payload, as before.
+
+**6. Give sub-renderers their props**
+
+Every render method takes props first: `render(props, api)`, where a type's props are its entity, and sub-renderers that draw one item, `renderX(props, ownProps, api)`, which get the component's props, then the item's own (`renderLine(props, line, api)`). `EntityType` reads every member as a handler, whose first parameter is the entity, so it rejects sub-renderers whose props are not the entity. `defineType` checks each member by its name instead: `render` takes the entity as its props, a sub-renderer keeps the types it declares, and every other member is a handler, whose entity and api are inferred:
+
+```typescript
+import { defineType } from "@inglorious/store"
+
+export const Scoreboard = defineType<ScoreboardEntity, AppApi>()({
+  ...template, // renderScoreboard(props, api), renderContender(props, speaker, api), ...
+  render(props, api) {
+    const debate = api.getEntity("debate")
+    return this.renderScoreboard({ ...props, memory: debate?.memory }, api)
+  },
+})
+```
+
+Inside its methods, `this` is the behavior, so `this.renderScoreboard` is checked too. It takes the entity and the api first, then the behavior, because TypeScript cannot infer one while being told the others. The result is an `EntityType`, so it goes in `types` or in a list of behaviors like any other: `[Chat, handlers, fsm(states), defineType<DebateEntity, AppApi>()({ ...template, render })]`.
+
+**7. Test your handlers**
 
 ```typescript
 import { trigger } from "@inglorious/store/test"

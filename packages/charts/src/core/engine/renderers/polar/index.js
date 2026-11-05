@@ -25,7 +25,7 @@ const LABEL_COLOR = themeColor("text", "#0f172a")
 const SECONDARY_COLOR = themeColor("text-muted", "#64748b")
 const CONNECTOR_COLOR = themeColor("axis", "#94a3b8")
 
-export function renderPieSeries(primitive, frame) {
+export function renderPieSeries(frame, primitive, api) {
   const { scales } = frame
   const { slices, dataKey, nameKey } = createPieSlices(primitive, frame)
   const hasLabel = primitive.props?.hasLabel
@@ -51,6 +51,7 @@ export function renderPieSeries(primitive, frame) {
           primitive,
           { index },
           getPieTooltipText(frame, slice, nameKey, dataKey),
+          api,
         )
         const [insideLabelX, insideLabelY] = innerLabelArc.centroid(slice.arc)
         const { startX, startY, elbowX, elbowY, labelX, labelY, anchor } =

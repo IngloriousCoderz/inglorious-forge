@@ -838,6 +838,8 @@ const store = createStore<TodoListEntity, TodoState>({
 - A name no entity has, such as a page, takes any type. A type can be an array of behaviors: `Live: [Chart, withRealtime]`.
 - An entity drawn by a library type extends its entity interface: `interface AppRouterEntity extends RouterEntity { type: "Router" }`.
 - `trigger(entity, TodoList.addTodo, "Write docs")` from `@inglorious/store/test` checks the payload and returns the updated entity.
+- `Api<TodoListEntity, TodoState, EventsOf<TodoListType>>` checks what `notify` sends: the event's name, after any target (`` `#${entity.id}:addTodo` ``), and its payload. The store's own events are always allowed. `createStore` takes the same third type argument.
+- `defineType<TodoListEntity, TodoApi>()({ ... })` checks each member by its name, so a template's sub-renderers can take props: `render(props, api)` takes the entity as its props, a sub-renderer `renderX(props, ownProps, api)` keeps the types it declares, and the rest are handlers.
 
 ## RTK Migration Utilities
 

@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.11.0
+
+### Minor Changes
+
+- Generated TypeScript apps check their events: `types/index.d.ts` reads `AppEvents` from the app's own type aliases and from the library types it uses (`RouterType`, `I18nType`, `AnalyticsType`, `PushPromptType`), and `AppApi` and the store take it, so a misspelled event or a wrong payload is a compile error.
+
 ## 1.10.0
 
 ### Minor Changes

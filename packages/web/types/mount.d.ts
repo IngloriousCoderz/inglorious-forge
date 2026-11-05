@@ -1,16 +1,19 @@
 import type { nothing, TemplateResult } from "lit-html"
 import type {
+  AnyEvents,
   AnyTypeDefinition,
+  Api,
   BaseEntity,
   EntitiesState,
   Store,
-  Api as StoreApi,
 } from "@inglorious/store"
 
 declare module "@inglorious/store" {
   interface Api<
     TEntity extends BaseEntity = BaseEntity,
     TState extends EntitiesState<TEntity> = EntitiesState<TEntity>,
+    // Unused here, but every declaration of `Api` must take the same parameters.
+    TEvents = AnyEvents,
   > {
     /**
      * Renders an entity or a type component by its ID.
@@ -31,10 +34,12 @@ declare module "@inglorious/store" {
   }
 }
 
-export type Api<
-  TEntity extends BaseEntity = BaseEntity,
-  TState extends EntitiesState<TEntity> = EntitiesState<TEntity>,
-> = StoreApi<TEntity, TState>
+/**
+ * The store's api, with `render` added above. It is the store's own interface,
+ * re-exported rather than aliased: an interface is resolved lazily, so an app
+ * can tell its api the events of types whose handlers take that same api.
+ */
+export type { Api }
 
 /**
  * Root error-boundary options for `mount`.
@@ -77,9 +82,10 @@ export interface MountOptions<
 export function mount<
   TEntity extends BaseEntity = BaseEntity,
   TState extends EntitiesState<TEntity> = EntitiesState<TEntity>,
+  TEvents = AnyEvents,
 >(
-  store: Store<TEntity, TState>,
-  renderFn: (api: Api<TEntity, TState>) => TemplateResult | null,
+  store: Store<TEntity, TState, TEvents>,
+  renderFn: (api: Api<TEntity, TState, TEvents>) => TemplateResult | null,
   element: HTMLElement | DocumentFragment,
   options?: MountOptions<TEntity, TState>,
 ): () => void

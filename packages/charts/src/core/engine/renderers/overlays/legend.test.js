@@ -7,12 +7,6 @@ describe("legend renderer", () => {
   it("renders legend items from explicit data keys and colors", () => {
     const result = renderLegend(
       {
-        props: {
-          dataKeys: ["revenue", "cost"],
-          colors: ["#2563eb", "#f97316"],
-        },
-      },
-      {
         entity: {
           colors: ["#111111", "#222222"],
         },
@@ -22,6 +16,12 @@ describe("legend renderer", () => {
         dimensions: {
           plotLeft: 40,
           padding: { top: 16 },
+        },
+      },
+      {
+        props: {
+          dataKeys: ["revenue", "cost"],
+          colors: ["#2563eb", "#f97316"],
         },
       },
     )
@@ -36,7 +36,6 @@ describe("legend renderer", () => {
 
   it("uses frame plotted keys when the primitive does not define them", () => {
     const result = renderLegend(
-      { props: {} },
       {
         entity: {
           colors: ["#8884d8", "#82ca9d"],
@@ -50,6 +49,7 @@ describe("legend renderer", () => {
           padding: { top: 20 },
         },
       },
+      { props: {} },
     )
 
     const items = result.values.find(Array.isArray)

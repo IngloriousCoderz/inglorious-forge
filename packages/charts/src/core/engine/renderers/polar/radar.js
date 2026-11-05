@@ -18,7 +18,7 @@ const DOT_RADIUS = 4
 const TICK_COLOR = themeColor("text-muted", "#64748b")
 
 /** The rings at the values the chart marks, and a spoke per category. */
-export function renderPolarGrid(primitive, frame) {
+export function renderPolarGrid(frame, primitive) {
   const { centerX, centerY, radiusScale } = frame.scales
   const count = frame.entity.data.length
   const stroke = primitive.props?.stroke || themeColor("grid", "#e5e7eb")
@@ -47,7 +47,7 @@ export function renderPolarGrid(primitive, frame) {
 }
 
 /** The categories' names, each at the end of its spoke. */
-export function renderPolarAngleAxis(primitive, frame) {
+export function renderPolarAngleAxis(frame, primitive) {
   const { centerX, centerY, radiusScale } = frame.scales
   const { data, xKey } = frame.entity
   const formatTick = primitive.props?.tickFormatter || String
@@ -75,7 +75,7 @@ export function renderPolarAngleAxis(primitive, frame) {
 }
 
 /** One series: a filled shape through its value on every spoke. */
-export function renderRadarSeries(primitive, frame) {
+export function renderRadarSeries(frame, primitive, api) {
   const { centerX, centerY } = frame.scales
   const dataKey = primitive.props?.dataKey
   const color =
@@ -99,6 +99,7 @@ export function renderRadarSeries(primitive, frame) {
           primitive,
           { index, dataKey },
           getTooltipText(frame, frame.entity.data[index], dataKey),
+          api,
         )
         return svg`
           <circle

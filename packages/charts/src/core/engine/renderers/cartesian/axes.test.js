@@ -41,7 +41,7 @@ describe("axes renderers", () => {
     const frame = createFrame()
     frame.scales.yScale.ticks = () => [0, 10, 20]
 
-    const result = renderCartesianGrid({ props: {} }, frame)
+    const result = renderCartesianGrid(frame, { props: {} })
     const items = result.values.filter(Array.isArray)
 
     expect(String(result.strings.join(""))).toContain("iw-chart-grid")
@@ -51,7 +51,7 @@ describe("axes renderers", () => {
   })
 
   it("renders x-axis labels from entity data", () => {
-    const result = renderXAxis({ props: { dataKey: "name" } }, createFrame())
+    const result = renderXAxis(createFrame(), { props: { dataKey: "name" } })
 
     const labels = result.values.find(Array.isArray)
 
@@ -63,7 +63,7 @@ describe("axes renderers", () => {
     const frame = createFrame()
     frame.scales.yScale.ticks = () => [0, 10, 20]
 
-    const result = renderYAxis({ props: {} }, frame)
+    const result = renderYAxis(frame, { props: {} })
     const labels = result.values.find(Array.isArray)
 
     expect(String(result.strings.join(""))).toContain("iw-chart-axis-y")
@@ -141,10 +141,9 @@ describe("axes renderers", () => {
       frame.scales.yScale = Object.assign(() => 0, { ticks: () => [] })
       frame.primitives = [{ type: "x-axis", props: { interval: 9 } }]
 
-      const [verticalLines] = renderCartesianGrid(
-        { props: {} },
-        frame,
-      ).values.filter(Array.isArray)
+      const [verticalLines] = renderCartesianGrid(frame, {
+        props: {},
+      }).values.filter(Array.isArray)
 
       expect(verticalLines).toHaveLength(10)
     })

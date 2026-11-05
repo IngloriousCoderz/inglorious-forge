@@ -34,7 +34,7 @@ function curveOf(primitive) {
   return CURVES[primitive.props?.curve] ?? curveLinear
 }
 
-export function renderLineSeries(primitive, frame) {
+export function renderLineSeries(frame, primitive, api) {
   const dataKey = primitive.props?.dataKey
   const stroke = primitive.props?.stroke || resolveSeriesColor(frame, dataKey)
   const series = createSeriesPoints(primitive, frame)
@@ -52,16 +52,16 @@ export function renderLineSeries(primitive, frame) {
         stroke=${stroke}
         stroke-width=${primitive.props?.strokeWidth || 3}
       />
-      ${when(primitive.props?.hasDots, () => renderDots(primitive, frame))}
+      ${when(primitive.props?.hasDots, () => renderDots(frame, primitive, api))}
       ${when(
         canShowTooltip(primitive, frame) && !primitive.props?.hasDots,
-        () => renderHoverTargets(primitive, frame),
+        () => renderHoverTargets(frame, primitive, api),
       )}
     </g>
   `
 }
 
-export function renderAreaSeries(primitive, frame) {
+export function renderAreaSeries(frame, primitive, api) {
   const dataKey = primitive.props?.dataKey
   const fill = primitive.props?.fill || resolveSeriesColor(frame, dataKey)
   const stroke = primitive.props?.stroke || fill
@@ -88,16 +88,16 @@ export function renderAreaSeries(primitive, frame) {
         stroke=${stroke}
         stroke-width=${primitive.props?.strokeWidth || 3}
       />
-      ${when(primitive.props?.hasDots, () => renderDots(primitive, frame))}
+      ${when(primitive.props?.hasDots, () => renderDots(frame, primitive, api))}
       ${when(
         canShowTooltip(primitive, frame) && !primitive.props?.hasDots,
-        () => renderHoverTargets(primitive, frame),
+        () => renderHoverTargets(frame, primitive, api),
       )}
     </g>
   `
 }
 
-export function renderBarSeries(primitive, frame) {
+export function renderBarSeries(frame, primitive, api) {
   const { entity, scales } = frame
   const dataKey = primitive.props?.dataKey
   const fill = primitive.props?.fill || resolveSeriesColor(frame, dataKey)
@@ -124,6 +124,7 @@ export function renderBarSeries(primitive, frame) {
           primitive,
           { index, dataKey },
           getTooltipText(frame, row, dataKey),
+          api,
         )
 
         return svg`
@@ -148,7 +149,7 @@ export function renderBarSeries(primitive, frame) {
   `
 }
 
-export function renderDots(primitive, frame) {
+export function renderDots(frame, primitive, api) {
   const dataKey = primitive.props?.dataKey
   const fill = primitive.props?.fill || resolveSeriesColor(frame, dataKey)
   const stroke = primitive.props?.stroke || resolveSeriesColor(frame, dataKey)
@@ -166,6 +167,7 @@ export function renderDots(primitive, frame) {
           primitive,
           { index: point.index, dataKey },
           getTooltipText(frame, point.row, dataKey),
+          api,
         )
 
         return svg`

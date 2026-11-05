@@ -1,4 +1,5 @@
 import type { Api } from "./api"
+import type { AnyEvents, Notify } from "./events"
 
 /**
  * What every entity has. Declare an entity's other fields on its own interface:
@@ -112,6 +113,68 @@ export type TypeDefinition<
 export type AnyTypeDefinition = TypeDefinition<never, never>
 
 /**
+ * What each member of a type must be, told by its name: `render(props, api)`
+ * draws the type, and a type's props are its entity; any other `render…` is
+ * a sub-renderer, `renderX(props, ownProps, api)`, which keeps the types it
+ * declares; every other member handles an event.
+ */
+export type CheckedType<
+  TType,
+  TEntity extends BaseEntity = BaseEntity,
+  TApi extends Api = Api,
+> = {
+  [K in keyof TType]: K extends "render"
+    ? Renderer<TEntity, TApi>
+    : K extends `render${string}`
+      ? TType[K]
+      : EventHandler<TEntity, TApi>
+}
+
+/**
+ * For TypeScript only. At runtime it hands back the behavior it is given, and
+ * JavaScript apps never need it: it exists so that TypeScript can check a
+ * behavior that a plain annotation cannot describe, the same trick as Vue's
+ * `defineComponent` or Vite's `defineConfig`.
+ *
+ * Why it is needed: an annotation such as `EntityType<ScoreboardEntity, AppApi>`
+ * checks every member as an event handler, `(entity, payload, api)`. That is
+ * wrong for a template's sub-renderers, `renderX(props, ownProps, api)`,
+ * whose first parameter is the component's props rather than the entity, so
+ * the annotation rejects them. TypeScript cannot exempt members by their name
+ * in an annotation; it can only check them one by one after inferring the
+ * object, which takes a generic function. This is that function.
+ *
+ * What it checks, member by member: `render(props, api)` takes the entity as
+ * its props; any other `render…` keeps the types it declares; every other
+ * member is an event handler, whose entity and api are inferred. Inside its
+ * methods, `this` is the behavior itself.
+ *
+ * Use it only for a behavior whose sub-renderers take props; otherwise an
+ * annotation is enough. It takes the entity and the api first, then the
+ * behavior, because TypeScript cannot infer the behavior while being told
+ * the rest:
+ *
+ * ```ts
+ * export const Scoreboard = defineType<ScoreboardEntity, AppApi>()({
+ *   ...template, // renderScoreboard(props, api), renderContender(props, speaker, api), ...
+ *   render(props, api) {
+ *     return this.renderScoreboard({ ...props, memory: readMemory(api) }, api)
+ *   },
+ * })
+ * ```
+ *
+ * The result is an `EntityType` for the entity, so it goes wherever a
+ * behavior goes: in the store's `types`, or in a list of behaviors such as
+ * `[Chat, handlers, fsm(states), defineType<DebateEntity, AppApi>()({ ... })]`.
+ */
+export function defineType<
+  TEntity extends BaseEntity,
+  TApi extends Api = Api,
+>(): <TType>(
+  behavior: CheckedType<TType, TEntity, TApi> & ThisType<TType>,
+) => EntityType<TEntity, TApi>
+
+/**
  * System definition with event handlers
  */
 export type System<TState extends EntitiesState = EntitiesState> = {
@@ -134,12 +197,13 @@ export type EntitiesState<TEntity extends BaseEntity = BaseEntity> = {
 export type TypesConfig<
   TEntity extends BaseEntity = BaseEntity,
   TState extends EntitiesState<TEntity> = EntitiesState<TEntity>,
+  TEvents = AnyEvents,
 > = string extends TEntity["type"]
   ? { [typeName: string]: AnyTypeDefinition }
   : {
       [TName in TEntity["type"]]?: TypeDefinition<
         Extract<TEntity, { type: TName }>,
-        Api<TEntity, TState>
+        Api<TEntity, TState, TEvents>
       >
     } & { [typeName: string]: unknown }
 
@@ -172,10 +236,11 @@ export type UpdateStrategy = "structural-sharing" | "copy-on-dispatch"
 export interface StoreConfig<
   TEntity extends BaseEntity = BaseEntity,
   TState extends EntitiesState<TEntity> = EntitiesState<TEntity>,
+  TEvents = AnyEvents,
 > {
   // The entity type comes from the type arguments, `entities` or
   // `middlewares`, never from `types`, which are checked against it.
-  types?: NoInfer<TypesConfig<TEntity, TState>>
+  types?: NoInfer<TypesConfig<TEntity, TState, TEvents>>
   /** The initial entities. With `autoCreateEntities`, those the store creates itself can be left out. */
   entities?: Partial<TState>
   systems?: System<TState>[]
@@ -201,10 +266,12 @@ export type Unsubscribe = () => void
 export interface Store<
   TEntity extends BaseEntity = BaseEntity,
   TState extends EntitiesState<TEntity> = EntitiesState<TEntity>,
+  TEvents = AnyEvents,
 > {
   subscribe: (listener: Listener) => Unsubscribe
   update: () => Event[]
-  notify: (type: string, payload?: any) => void
+  /** Sends an event; told the store's events, it checks them (see `Notify`). */
+  notify: Notify<TEvents, TEntity>
   dispatch: (event: Event) => void
   getTypes: () => Record<string, EntityType>
   getType: (typeName: string) => EntityType
@@ -218,7 +285,7 @@ export interface Store<
   }
   setState: (nextState: TState) => void
   reset: () => void
-  _api?: Api<TEntity, TState>
+  _api?: Api<TEntity, TState, TEvents>
   extras?: Record<string, any>
 }
 
@@ -248,9 +315,14 @@ export type AddEventPayload<TEntity extends BaseEntity = BaseEntity> =
 export type RemoveEventPayload = string
 
 /**
- * Creates a store to manage state and events
+ * Creates a store to manage state and events. Told the app's events as a
+ * third type argument, its `notify` and its handlers' api check them:
+ * `createStore<AppEntity, AppState, AppEvents>({ ... })`.
  */
 export function createStore<
   TEntity extends BaseEntity = BaseEntity,
   TState extends EntitiesState<TEntity> = EntitiesState<TEntity>,
->(config: StoreConfig<TEntity, TState>): Store<TEntity, TState>
+  TEvents = AnyEvents,
+>(
+  config: StoreConfig<TEntity, TState, TEvents>,
+): Store<TEntity, TState, TEvents>

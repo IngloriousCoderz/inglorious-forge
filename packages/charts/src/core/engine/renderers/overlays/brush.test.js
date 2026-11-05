@@ -52,15 +52,17 @@ describe("brush renderer", () => {
   })
 
   it("renders drag handlers when the brush is visible", () => {
-    const handlers = getDragHandlers(renderBrush({ props: {} }, createFrame()))
+    const handlers = getDragHandlers(renderBrush(createFrame(), { props: {} }))
 
     expect(handlers).toHaveLength(3)
   })
 
   it("dispatches brushChange to the entity while dragging, writing nothing", () => {
     const notify = vi.fn()
-    const frame = createFrame(notify)
-    const [onPan] = getDragHandlers(renderBrush({ props: {} }, frame))
+    const frame = createFrame()
+    const [onPan] = getDragHandlers(
+      renderBrush(frame, { props: {} }, { notify }),
+    )
     const brushBefore = { ...frame.entity.brush }
     const doc = startDrag(onPan, 100)
 
@@ -78,7 +80,7 @@ describe("brush renderer", () => {
   it("stops dispatching once the mouse is released", () => {
     const notify = vi.fn()
     const [onPan] = getDragHandlers(
-      renderBrush({ props: {} }, createFrame(notify)),
+      renderBrush(createFrame(), { props: {} }, { notify }),
     )
     const doc = startDrag(onPan, 100)
 
@@ -89,9 +91,8 @@ describe("brush renderer", () => {
   })
 })
 
-function createFrame(notify = () => {}) {
+function createFrame() {
   return {
-    api: { notify },
     entityId: "brush-chart",
     entity: {
       brush: {

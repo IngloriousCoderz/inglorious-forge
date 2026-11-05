@@ -3,9 +3,10 @@ import {
   createStore,
   type EntitiesState,
   type EntityType,
+  type EventsOf,
 } from "@inglorious/store"
 
-import { type Api, html, type TemplateResult } from "../types"
+import { type Api, html, mount, type TemplateResult } from "../types"
 import { withLiveReload } from "../types/decorators/with-live-reload"
 import { Form, type FormEntity } from "../types/form"
 import { PwaUpdate, type PwaUpdateEntity, watchPwaUpdate } from "../types/pwa"
@@ -159,3 +160,33 @@ pageRouteChange({
 export const bare = pageRouteChange()
 
 export const back: string | null = safePath("/events")
+
+// ---- typed events ----
+
+type TypedCounterType = {
+  increment: (entity: CounterEntity) => void
+  add: (entity: CounterEntity, amount: number) => void
+}
+
+type TypedEvents = EventsOf<TypedCounterType>
+
+export const typedStore = createStore<AppEntity, AppState, TypedEvents>({
+  entities: { counter: { type: "Counter", value: 0 } },
+})
+
+// The root render gets the store's events: its notify checks them.
+mount(
+  typedStore,
+  (api) => {
+    api.notify("#counter:add", 1)
+    // @ts-expect-error: no type answers `ad`
+    api.notify("#counter:ad", 1)
+    return html`${api.render("counter")}`
+  },
+  document.body,
+)
+
+// A typed api still renders components that take any app's api.
+declare function renderAny(api: Api): TemplateResult
+declare const typedApi: Api<AppEntity, AppState, TypedEvents>
+renderAny(typedApi)

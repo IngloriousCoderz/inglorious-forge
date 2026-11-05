@@ -1,6 +1,6 @@
 import { expect, test, vi } from "vitest"
 
-import { createStore } from "./store.js"
+import { createStore, defineType } from "./store.js"
 
 test("it should process events by mutating state inside handlers", () => {
   const config = {
@@ -685,4 +685,27 @@ test("middlewares can wrap any part of the store, and handlers notify through th
 
   expect(seen).toEqual(["increment", "incremented"])
   expect(renders).toBeGreaterThan(0)
+})
+
+test("defineType should hand back the behavior it is given, which the store then runs", () => {
+  const Counter = defineType()({
+    renderValue(props) {
+      return `${props.value}`
+    },
+    render(entity) {
+      return this.renderValue({ value: entity.value })
+    },
+    increment(entity) {
+      entity.value++
+    },
+  })
+
+  const store = createStore({
+    types: { Counter },
+    entities: { counter: { type: "Counter", value: 1 } },
+  })
+  store.notify("#counter:increment")
+
+  expect(store.getState().counter.value).toBe(2)
+  expect(Counter.render(store.getState().counter)).toBe("2")
 })

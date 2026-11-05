@@ -1,6 +1,11 @@
 import "./vite-env"
 
-import type { BaseEntity, EntitiesState, EntityType } from "@inglorious/store"
+import type {
+  BaseEntity,
+  EntitiesState,
+  EntityType,
+  EventsOf,
+} from "@inglorious/store"
 import type { Api, TemplateResult } from "@inglorious/web"
 
 export interface MessageEntity extends BaseEntity {
@@ -17,7 +22,10 @@ export interface AppState extends EntitiesState<AppEntity> {
   message3: MessageEntity
 }
 
-export type AppApi = Api<AppEntity, AppState>
+// The events the types below answer, so that `notify` checks them.
+export type AppEvents = EventsOf<MessageType>
+
+export type AppApi = Api<AppEntity, AppState, AppEvents>
 
 export type MessageType = {
   click: (entity: MessageEntity) => void

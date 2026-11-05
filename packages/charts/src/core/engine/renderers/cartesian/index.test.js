@@ -42,45 +42,36 @@ function createFrame() {
 
 describe("cartesian renderers", () => {
   it("renders a line path and optional dots", () => {
-    const result = renderLineSeries(
-      {
-        props: {
-          dataKey: "revenue",
-          hasDots: true,
-        },
+    const result = renderLineSeries(createFrame(), {
+      props: {
+        dataKey: "revenue",
+        hasDots: true,
       },
-      createFrame(),
-    )
+    })
 
     expect(String(result.strings.join(""))).toContain("iw-chart-line")
     expect(result.values.some((value) => typeof value === "string")).toBe(true)
   })
 
   it("renders an area fill and stroke", () => {
-    const result = renderAreaSeries(
-      {
-        props: {
-          dataKey: "revenue",
-          fill: "#2563eb",
-        },
+    const result = renderAreaSeries(createFrame(), {
+      props: {
+        dataKey: "revenue",
+        fill: "#2563eb",
       },
-      createFrame(),
-    )
+    })
 
     expect(String(result.strings.join(""))).toContain("iw-chart-area")
     expect(result.values).toContain("#2563eb")
   })
 
   it("renders bars for each row", () => {
-    const result = renderBarSeries(
-      {
-        type: "bar",
-        props: {
-          dataKey: "revenue",
-        },
+    const result = renderBarSeries(createFrame(), {
+      type: "bar",
+      props: {
+        dataKey: "revenue",
       },
-      createFrame(),
-    )
+    })
 
     const rects = result.values.find(Array.isArray)
 
@@ -90,13 +81,13 @@ describe("cartesian renderers", () => {
 
   it("wires tooltip events for bars that opt in, on a chart with an entity", () => {
     const result = renderBarSeries(
-      { type: "bar", props: { dataKey: "revenue", hasTooltip: true } },
       {
         ...createFrame(),
         entityId: "sales",
         api: { notify() {} },
         entity: { ...createFrame().entity, isTooltipEnabled: false },
       },
+      { type: "bar", props: { dataKey: "revenue", hasTooltip: true } },
     )
 
     const rects = result.values.find(Array.isArray)
@@ -111,15 +102,12 @@ describe("cartesian renderers", () => {
   })
 
   it("renders dots for each series point", () => {
-    const result = renderDots(
-      {
-        props: {
-          dataKey: "revenue",
-          fill: "#2563eb",
-        },
+    const result = renderDots(createFrame(), {
+      props: {
+        dataKey: "revenue",
+        fill: "#2563eb",
       },
-      createFrame(),
-    )
+    })
 
     const circles = result.values.find(Array.isArray)
 

@@ -57,8 +57,8 @@ function renderChart(source, api) {
     typeof source === "object" &&
     Object.hasOwn(source, "children")
   ) {
-    return renderFrame(createFrameFromRender(source, api))
+    return renderFrame(createFrameFromRender(source, api), api)
   }
 
-  return renderFrame(createFrameFromEntity(source, api))
+  return renderFrame(createFrameFromEntity(source, api), api)
 }

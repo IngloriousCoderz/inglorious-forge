@@ -12,7 +12,7 @@ import { resolveLegendItems } from "../cartesian/shared.js"
 import { getPieLegendItems } from "../polar/index.js"
 import { getRadialLegendItems } from "../polar/radial.js"
 
-export function renderLegend(primitive, frame) {
+export function renderLegend(frame, primitive) {
   const items = getLegendItems(primitive, frame)
   const startX = frame.dimensions.plotLeft
   const y = frame.dimensions.padding.top + 12

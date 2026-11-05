@@ -76,6 +76,44 @@ export const store = createStore<AppEntity, AppState>({
 
 Featured types such as `Form`, `Router` and the sensors export their entity interfaces (`FormEntity`, `RouterEntity`, `MediaQueryEntity`…): extend them as above.
 
+## Events
+
+Each type's events are its handlers, so their declarations can tell the api which events exist and what they carry. List them with `type` aliases, read them with `EventsOf`, and give them to the api:
+
+```typescript
+import { type EventsOf } from "@inglorious/store"
+import { type RouterType } from "@inglorious/web/router"
+
+type CounterType = {
+  increment: (entity: CounterEntity) => void
+  add: (entity: CounterEntity, amount: number) => void
+  render: (entity: CounterEntity, api: AppApi) => TemplateResult
+}
+
+type AppEvents = EventsOf<CounterType | RouterType>
+type AppApi = Api<AppEntity, AppState, AppEvents>
+```
+
+Now ``api.notify(`#${entity.id}:incremnet`)`` is an error, and so is `api.notify("#counter:add", "2")`. Renderers are not events, and the store's own (`add`, `remove`, `pause`…) are always allowed. Pass `AppEvents` to `createStore<AppEntity, AppState, AppEvents>` as well: `mount` then gives the root render the same checks.
+
+## Templates with props
+
+Every render method takes props first: `render(props, api)`, where a type's props are its entity, and sub-renderers `renderX(props, ownProps, api)`, which get the component's props, then the item they draw. `EntityType` reads every member as an event handler, which takes the entity, so it rejects sub-renderers whose props are not the entity; `defineType` checks each member by its name instead:
+
+```typescript
+import { defineType } from "@inglorious/store"
+
+export const Scoreboard = defineType<ScoreboardEntity, AppApi>()({
+  ...template, // renderScoreboard(props, api), renderContender(props, speaker, api), ...
+  render(props, api) {
+    const memory = api.getEntity("debate")?.memory
+    return this.renderScoreboard({ ...props, memory }, api)
+  },
+})
+```
+
+`render` still takes the entity as its props, sub-renderers keep the types they declare, every other member is a handler with its entity inferred, and `this` is the component itself.
+
 ## Checking your types
 
 The packages check their own declarations with type tests: small `.ts` files compiled with `tsc --noEmit` that must pass, plus `@ts-expect-error` lines that must fail. The same works for an app's own types: see `packages/web/type-tests/app.ts` in the [repository](https://github.com/IngloriousCoderz/inglorious-forge) for a complete example.

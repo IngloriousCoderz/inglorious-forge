@@ -28,6 +28,7 @@ describe("tooltip", () => {
       line,
       { index: 1, dataKey: "value" },
       { label: "Feb", value: "20" },
+      api,
     )
     tooltip.onEnter()
     tooltip.onLeave()

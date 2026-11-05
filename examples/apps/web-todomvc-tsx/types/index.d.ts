@@ -1,6 +1,6 @@
-import "./vite-end"
+import "./vite-env"
 
-import type { BaseEntity, EntitiesState } from "@inglorious/store"
+import type { BaseEntity, EntitiesState, EventsOf } from "@inglorious/store"
 import type { Api, TemplateResult } from "@inglorious/web"
 
 export type Filter = "all" | "active" | "completed"
@@ -34,7 +34,10 @@ export interface AppState extends EntitiesState<AppEntity> {
   footer: FooterEntity
 }
 
-export type AppApi = Api<AppEntity, AppState>
+/** Every event the types below answer, so that `notify` checks each one's name and payload. */
+export type AppEvents = EventsOf<FormType | ListType | FooterType>
+
+export type AppApi = Api<AppEntity, AppState, AppEvents>
 
 export type FormType = {
   create: (entity: FormEntity) => void
