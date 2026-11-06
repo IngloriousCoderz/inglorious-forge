@@ -1,5 +1,12 @@
 # @inglorious/utils
 
+## 5.3.0
+
+### Minor Changes
+
+- - `asSettled`, in the new `@inglorious/utils/promise.js`, yields the results of several promises in the order they settle. The first rejection is thrown, and the promises still pending never end up as unhandled rejections, even when several fail or the loop stops early.
+  - `keepLast` in `@inglorious/utils/array.js` keeps the last items of an array, such as the most recent entries of a log. A count of zero keeps nothing, where a bare `slice(-0)` would keep everything.
+
 ## 5.2.0
 
 ### Minor Changes

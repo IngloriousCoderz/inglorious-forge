@@ -21,6 +21,11 @@ export function ensureArray<T>(value: T): T extends readonly unknown[] ? T : T[]
 export function isArray(value: unknown): value is readonly unknown[]
 
 /**
+ * Keeps only the last `count` items of an array, immutably.
+ */
+export function keepLast<T>(arr: readonly T[], count: number): T[]
+
+/**
  * Finds the maximum item in an array using a comparator.
  */
 export function max<T extends number>(

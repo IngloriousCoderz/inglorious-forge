@@ -5,6 +5,7 @@ import {
   cycleIndex,
   ensureArray,
   isArray,
+  keepLast,
   max,
   min,
   pop,
@@ -219,4 +220,19 @@ test("it should cycle an index backwards, wrapping at the start", () => {
 test("it should cycle an index by more than its length", () => {
   expect(cycleIndex(0, 3, 5)).toBe(2)
   expect(cycleIndex(0, 3, -5)).toBe(1)
+})
+
+test("it should keep only the last items of an array", () => {
+  const arr = [1, 2, 3, 4, 5]
+
+  expect(keepLast(arr, 3)).toStrictEqual([3, 4, 5])
+  expect(arr).toStrictEqual([1, 2, 3, 4, 5])
+})
+
+test("it should keep the whole array when it is shorter than the count", () => {
+  expect(keepLast([1, 2], 5)).toStrictEqual([1, 2])
+})
+
+test("it should keep nothing when the count is zero", () => {
+  expect(keepLast([1, 2, 3], 0)).toStrictEqual([])
 })

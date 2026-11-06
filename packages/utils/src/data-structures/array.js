@@ -9,6 +9,7 @@ const DEFAULT_COMPARATOR = (a, b) => b - a
 
 const LESS_THAN_ZERO = 0
 const GREATER_THAN_ZERO = 0
+const NONE = 0
 
 /**
  * Checks if an array contains a specific item.
@@ -51,6 +52,17 @@ export function ensureArray(value) {
  */
 export function isArray(value) {
   return Array.isArray(value)
+}
+
+/**
+ * Keeps only the last items of an array, in an immutable way, such as the most recent entries of a log.
+ *
+ * @param {Array} arr - The array to trim.
+ * @param {number} count - How many items to keep from the end.
+ * @returns {Array} - A new array with at most `count` items, the last ones of `arr`.
+ */
+export function keepLast(arr, count) {
+  return count > NONE ? arr.slice(-count) : []
 }
 
 /**

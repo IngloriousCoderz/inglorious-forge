@@ -133,6 +133,20 @@ writeJSON("high-scores", [...scores, 1200]) // => true
 
 Pass another `Storage` as the last argument, such as `sessionStorage` or a fake in tests.
 
+### Using promises as they settle
+
+Start several requests at once and use each answer as soon as it arrives, such as
+streaming two model replies to a client. The first rejection is thrown, and the promises
+still pending never end up as unhandled rejections.
+
+```javascript
+import { asSettled } from "@inglorious/utils/promise.js"
+
+for await (const reply of asSettled([askSunny(), askCrowley()])) {
+  send(reply) // fastest first
+}
+```
+
 ---
 
 ## API
@@ -154,8 +168,9 @@ know whether a helper lives under `data-structures` or `math`:
 - **`@inglorious/utils/quaternion`**: `quaternion` and `combine`.
 - **`@inglorious/utils/vector`**: Single-vector helpers (`magnitude`, `normalize`, `rotate`, ...) alongside multi-vector helpers (`cross`, `dot`, `sum`, ...).
 
-One module stands on its own:
+Two modules stand on their own:
 
+- **`@inglorious/utils/promise`**: `asSettled`, for using promises in the order they settle.
 - **`@inglorious/utils/storage`**: `readJSON` and `writeJSON`, for keeping JSON in `localStorage`.
 
 `divide`, `mod`, `multiply` and `power` accept either a scalar or one or more vectors:
