@@ -24,7 +24,7 @@
     "@inglorious/eslint-config": "workspace:*",
     "eslint": "^10.11.0",
     "prettier": "^3.9.9",
-    "vite": "^8.3.1",
+    "vite": "^8.3.5",
     "vitest": "^5.0.0",
     "jsdom": "^30.0.1"
   },
