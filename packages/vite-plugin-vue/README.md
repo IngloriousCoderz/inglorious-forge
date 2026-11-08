@@ -46,7 +46,7 @@ const increment = (entity) => {
 </script>
 ```
 
-This compiles to a standard @inglorious/web component:
+Saved as `counter.vue`, or as `counter/index.vue`, it compiles to a standard @inglorious/web component named after the file, or after the folder for an `index.vue`:
 
 ```javascript
 import { html } from "@inglorious/web"

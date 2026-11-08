@@ -32,6 +32,12 @@ describe("@inglorious/vite-plugin-vue", () => {
       expect(result).toMatchSnapshot()
     })
 
+    it("names an index.vue after its folder", async () => {
+      const code = `<template><div>Test</div></template>`
+      const result = await transform(code, "/src/views/job-list/index.vue")
+      expect(result).toContain("export const JobList = {")
+    })
+
     it("generates correct component name from filename", async () => {
       const code = `<template><div>Test</div></template>`
       const result = await transform(code, "MyComponent.vue")

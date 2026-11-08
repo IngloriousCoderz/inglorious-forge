@@ -1,5 +1,11 @@
 # @inglorious/vite-plugin-vue
 
+## 1.0.8
+
+### Patch Changes
+
+- Name a component in an `index.vue` after its folder, so `app/index.vue` exports `App` rather than `Index`.
+
 ## 1.0.7
 
 ### Patch Changes

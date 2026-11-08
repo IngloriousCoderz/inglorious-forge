@@ -9,6 +9,8 @@ import { parseScript } from "./script.js"
 import { extractSections } from "./sections.js"
 import { parseTemplate, transformTemplate } from "./template.js"
 
+const INDEX_STEM = "index"
+
 /**
  * Create the Vite plugin that transforms Vue-like templates into lit-html components.
  *
@@ -28,7 +30,7 @@ export function vue() {
           throw new Error("No <template> tag found in Vue file")
         }
 
-        const componentName = toPascalCase(path.basename(id, path.extname(id)))
+        const componentName = toPascalCase(componentStem(id))
 
         const {
           stateVars,
@@ -179,6 +181,18 @@ export function vue() {
       }
     },
   }
+}
+
+/**
+ * The name a component is exported by: its file's, or its folder's for an
+ * `index.vue`.
+ *
+ * @param {string} id - The file path.
+ * @returns {string}
+ */
+function componentStem(id) {
+  const stem = path.basename(id, path.extname(id))
+  return stem === INDEX_STEM ? path.basename(path.dirname(id)) : stem
 }
 
 /**
