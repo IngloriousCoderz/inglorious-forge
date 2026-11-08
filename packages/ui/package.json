@@ -369,7 +369,7 @@
     "@lit-labs/ssr": "^4.1.0",
     "@storybook/addon-docs": "^10.6.5",
     "@storybook/web-components-vite": "^10.6.5",
-    "happy-dom": "^20.14.0",
+    "happy-dom": "^21.0.4",
     "jsdom": "^30.0.1",
     "prettier": "^3.9.6",
     "remark-gfm": "^4.0.1",
