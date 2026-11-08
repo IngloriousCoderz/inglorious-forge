@@ -1,5 +1,11 @@
 # @inglorious/ui
 
+## 9.18.2
+
+### Patch Changes
+
+- ChipPicker's and RadioGroup's legends and hints look like a field's label and hint, with the same weight, size, color and spacing as Input and Combobox.
+
 ## 9.18.1
 
 ### Patch Changes

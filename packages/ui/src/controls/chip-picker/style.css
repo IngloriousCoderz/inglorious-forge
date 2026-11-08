@@ -5,11 +5,13 @@
   border: none;
 }
 
+/* Like a field's label: the legend sits outside the flow, so a margin stands in for the gap. */
 .iw-chip-picker-legend {
   padding: 0;
-  margin-bottom: var(--iw-space-2);
+  margin-bottom: var(--iw-space-1);
   font-size: var(--iw-font-size-sm);
-  font-weight: var(--iw-font-weight-medium);
+  font-weight: var(--iw-font-weight-normal);
+  line-height: var(--iw-line-height-normal);
   color: var(--iw-color-text);
 }
 
@@ -20,7 +22,8 @@
 }
 
 .iw-chip-picker-hint {
-  margin: var(--iw-space-2) 0 0;
-  font-size: var(--iw-font-size-xs);
-  color: var(--iw-color-text-muted, var(--iw-color-text));
+  margin: var(--iw-space-1) 0 0;
+  font-size: var(--iw-font-size-sm);
+  line-height: var(--iw-line-height-normal);
+  color: var(--iw-color-text-muted);
 }

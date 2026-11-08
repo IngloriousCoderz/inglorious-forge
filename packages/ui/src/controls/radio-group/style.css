@@ -6,9 +6,11 @@
   font-family: var(--iw-font-family-sans);
 
   .iw-radio-group-label {
-    margin-bottom: var(--iw-space-2);
+    padding: 0;
+    margin-bottom: var(--iw-space-1);
     font-size: var(--iw-font-size-sm);
-    color: var(--iw-color-text-secondary);
+    line-height: var(--iw-line-height-normal);
+    color: var(--iw-color-text);
   }
 
   .iw-radio-option {
