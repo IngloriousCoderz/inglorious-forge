@@ -1544,6 +1544,23 @@ A failed check keeps the last answer, so nobody is blocked by being offline. Ren
 
 ---
 
+## App Links
+
+With Universal Links (iOS) and App Links (Android), a link to the app's domain opens the installed app instead of the browser. `@inglorious/web/app-links` sends the router to that link's path, both for the link that started the app and for links that arrive while it runs. It does nothing outside a native app.
+
+```javascript
+import { App } from "@capacitor/app"
+import { watchAppLinks } from "@inglorious/web/app-links"
+
+watchAppLinks(App, store)
+```
+
+`{ id }` as a third argument notifies a router with another id; it returns a function that stops listening.
+
+The operating system opens the app only when the domain vouches for it: iOS reads `/.well-known/apple-app-site-association` and Android `/.well-known/assetlinks.json`, and the app declares the domain (Associated Domains on iOS, an intent filter on Android). `@inglorious/create-app --mobile` generates the iOS file and documents the rest.
+
+---
+
 ## Forms
 
 `@inglorious/web` includes a small but powerful `form` type for managing form state inside your entity store. It offers:

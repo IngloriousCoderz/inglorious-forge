@@ -2,7 +2,11 @@ import fs from "fs"
 import { EOL } from "os"
 import path from "path"
 
-import { CAPACITOR_VERSION, TYPESCRIPT_VERSION } from "./constants.js"
+import {
+  CAPACITOR_VERSION,
+  INDENTATION,
+  TYPESCRIPT_VERSION,
+} from "./constants.js"
 import { copyDir, toJavaIdentifier } from "./file.js"
 
 export function addMobileSupport(targetDir, pkg, projectName, templatesRoot) {
@@ -34,6 +38,7 @@ export function addMobileSupport(targetDir, pkg, projectName, templatesRoot) {
     path.join(targetDir, "capacitor.config.ts"),
     createCapacitorConfigSource(projectName),
   )
+  writeAppSiteAssociation(targetDir, projectName)
   includeInNodeProject(targetDir, "capacitor.config.ts")
 
   appendMobileSetupToReadme(targetDir)
@@ -107,6 +112,27 @@ pnpm mobile:android
 pnpm mobile:ios
 \`\`\`
 
+### Opening links in the app
+
+With Universal Links, a link to the app's domain opens the installed app instead of the browser, and the router goes to the link's path. The app's side is done; three steps are yours:
+
+1. Replace \`TEAM_ID\` in \`public/.well-known/apple-app-site-association\` with your Apple Developer Team ID, and keep the bundle ID in step with \`appId\` in \`capacitor.config.ts\`. Add paths that must stay in the browser as \`{ "/": "/path*", "exclude": true }\` before the last entry.
+2. In Xcode, select the app target, open **Signing & Capabilities**, add **Associated Domains**, and enter \`applinks:your-domain.com\`.
+3. Serve the file as JSON, without a redirect. On Vercel, add this to \`vercel.json\`:
+
+\`\`\`json
+{
+  "headers": [
+    {
+      "source": "/.well-known/apple-app-site-association",
+      "headers": [{ "key": "Content-Type", "value": "application/json" }]
+    }
+  ]
+}
+\`\`\`
+
+Test on a device by tapping a link in Notes or Messages; typing it in Safari does not count. Apple caches the file, so a change can take a few hours to arrive. Android App Links need \`/.well-known/assetlinks.json\` with your signing certificate's SHA-256 fingerprint and an intent filter in \`AndroidManifest.xml\`; see https://developer.android.com/training/app-links.
+
 ### Releasing
 
 The version users see comes from \`package.json\`, the same on the web, Android and iOS. The build number is shared by both native apps and must go up with every store upload.
@@ -123,7 +149,7 @@ The version users see comes from \`package.json\`, the same on the web, Android 
 }
 
 export function createCapacitorConfigSource(projectName) {
-  const appId = `com.inglorious.${toJavaIdentifier(projectName)}`
+  const appId = appIdOf(projectName)
 
   return `import type { CapacitorConfig } from "@capacitor/cli"
 
@@ -135,6 +161,31 @@ const config: CapacitorConfig = {
 
 export default config
 `
+}
+
+function appIdOf(projectName) {
+  return `com.inglorious.${toJavaIdentifier(projectName)}`
+}
+
+// Links carrying a session token, from sign-up and password-reset emails,
+// stay in the browser, where the sign-in flow expects them.
+function writeAppSiteAssociation(targetDir, projectName) {
+  const association = {
+    applinks: {
+      details: [
+        {
+          appIDs: [`TEAM_ID.${appIdOf(projectName)}`],
+          components: [{ "#": "*access_token*", exclude: true }, { "/": "*" }],
+        },
+      ],
+    },
+  }
+  const dir = path.join(targetDir, "public", ".well-known")
+  fs.mkdirSync(dir, { recursive: true })
+  fs.writeFileSync(
+    path.join(dir, "apple-app-site-association"),
+    JSON.stringify(association, null, INDENTATION) + EOL,
+  )
 }
 
 function includeInNodeProject(targetDir, file) {

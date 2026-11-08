@@ -99,7 +99,7 @@ For Android and iOS builds, install Android Studio with the Android SDK and a Ja
 
 Every Vite app is versioned with [Changesets](https://github.com/changesets/changesets): describe each change with `pnpm changeset`, and `pnpm release:version` raises the version in `package.json` and writes `CHANGELOG.md`. The app reads that version as `import.meta.env.VITE_APP_VERSION`.
 
-Mobile apps also get `pnpm mobile:release`, which copies the version into the iOS and Android projects, raises the build number they share (every store upload needs a new one), builds with the values in `.env` rather than `.env.local`, and syncs. The generated README describes the whole release, upload included. With `--push` too, an `app_versions` table in Supabase holds each platform's minimum build: an older install shows nothing but an update page, so raising it makes a release mandatory.
+Mobile apps also get `pnpm mobile:release`, which copies the version into the iOS and Android projects, raises the build number they share (every store upload needs a new one), builds with the values in `.env` rather than `.env.local`, and syncs. The generated README describes the whole release, upload included. With `--push` too, an `app_versions` table in Supabase holds each platform's minimum build: an older install shows nothing but an update page, so raising it makes a release mandatory. Mobile apps also open links to their domain in the app: with routing, `watchAppLinks` from `@inglorious/web/app-links` sends the router to the link's path, and `public/.well-known/apple-app-site-association` is generated for iOS. The generated README lists the steps left: your Team ID, the Associated Domains capability, and serving that file as JSON.
 
 ## License
 

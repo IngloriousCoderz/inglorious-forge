@@ -14,6 +14,7 @@ import {
   type NativeApp,
   watchNativeUpdate,
 } from "../types/native-update"
+import { type AppLinksApp, watchAppLinks } from "../types/app-links"
 import { PwaUpdate, type PwaUpdateEntity, watchPwaUpdate } from "../types/pwa"
 import {
   pageRouteChange,
@@ -119,6 +120,17 @@ export const stopNativeWatch: () => Promise<void> = watchNativeUpdate(
 )
 // @ts-expect-error: the id is an entity id
 watchNativeUpdate(nativeApp, store, { id: 1 })
+
+declare const linksApp: AppLinksApp
+export const stopAppLinks: () => Promise<void> = watchAppLinks(
+  linksApp,
+  store,
+  {
+    id: "router",
+  },
+)
+// @ts-expect-error: the id is an entity id
+watchAppLinks(linksApp, store, { id: 1 })
 
 declare const api: AppApi
 export const rendered = api.render("counter")

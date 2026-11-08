@@ -69,6 +69,7 @@ export function addAppFeatures(targetDir, pkg, options) {
   app.isVue = app.renderer === "vue"
   app.hasPrompts = app.analytics || app.push
   app.nativeUpdate = app.mobile && app.push
+  app.appLinks = app.mobile && app.routing
   app.layout = layout(app)
 
   const components = COMPONENTS[app.renderer]
@@ -150,8 +151,10 @@ function addDependencies(pkg, app) {
       CAPACITOR_FIREBASE_VERSION
     pkg.dependencies["@supabase/supabase-js"] = SUPABASE_VERSION
   }
-  if (app.nativeUpdate) {
+  if (app.nativeUpdate || app.appLinks) {
     pkg.dependencies["@capacitor/app"] = CAPACITOR_APP_VERSION
+  }
+  if (app.nativeUpdate) {
     pkg.dependencies["@inglorious/supabase"] = "workspace:*"
   }
 }
@@ -210,9 +213,14 @@ function mainSource(app) {
   if (app.hasPrompts) {
     imports.push('import { renderPrompts } from "./common/prompt"')
   }
+  if (app.nativeUpdate || app.appLinks) {
+    imports.push('import { App as NativeApp } from "@capacitor/app"')
+  }
+  if (app.appLinks) {
+    imports.push('import { watchAppLinks } from "@inglorious/web/app-links"')
+  }
   if (app.nativeUpdate) {
     imports.push(
-      'import { App as NativeApp } from "@capacitor/app"',
       'import { when } from "@inglorious/web/directives/when"',
       'import { watchNativeUpdate } from "@inglorious/web/native-update"',
     )
@@ -245,6 +253,12 @@ supabase.auth.onAuthStateChange((_event, session) => {
 })`
     : ""
 
+  const appLinks = app.appLinks
+    ? `
+
+watchAppLinks(NativeApp, store)`
+    : ""
+
   const nativeUpdate = app.nativeUpdate
     ? `
 
@@ -262,7 +276,7 @@ function renderApp(api${app.isTypeScript ? ": AppApi" : ""}) {
 
   return `${importBlock(imports)}
 
-${body}${session}${nativeUpdate}
+${body}${session}${appLinks}${nativeUpdate}
 `
 }
 

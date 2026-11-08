@@ -1,5 +1,13 @@
 # @inglorious/create-game
 
+## 1.13.0
+
+### Minor Changes
+
+- `@inglorious/web/app-links` opens Universal Links and App Links in the router: `watchAppLinks(App, store)` sends the router to the link that started a native app, and to links that arrive while it runs.
+
+  `create-app --mobile` generates `public/.well-known/apple-app-site-association` and, with routing, calls `watchAppLinks`. The README lists the steps left to the developer: the Team ID, the Associated Domains capability, and serving the file as JSON.
+
 ## 1.12.0
 
 ### Minor Changes
