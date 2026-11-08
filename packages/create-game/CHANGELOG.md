@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.2.1
+
+### Patch Changes
+
+- The templates' `vercel.json` skips branches with a slash in their name too (`dependabot/...`): `"**": false` instead of `"*": false`.
+
 ## 1.2.0
 
 ### Minor Changes
