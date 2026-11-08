@@ -3,7 +3,7 @@
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
-import { html } from "@inglorious/web"
+import { html, nothing } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
 import { styleMap } from "@inglorious/web/directives/style-map"
 import { when } from "@inglorious/web/directives/when"
@@ -54,13 +54,20 @@ export const Avatar = {
       styles.color = textColor
     }
 
+    const isImage = Boolean(src)
+    const isHidden = !isImage && props.alt === ""
+    const label = !isImage && props.alt ? props.alt : null
+
     return html`<span
       class=${classMap(classes)}
       style=${styleMap(styles)}
+      role=${label ? "img" : nothing}
+      aria-label=${label ?? nothing}
+      aria-hidden=${isHidden ? "true" : nothing}
       @click=${onClick}
     >
       ${when(
-        src,
+        isImage,
         () => html`<img class="iw-avatar-img" src=${src} alt=${alt} />`,
         () => children ?? initials ?? "?",
       )}

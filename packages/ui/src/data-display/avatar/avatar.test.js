@@ -18,6 +18,20 @@ describe("avatar", () => {
     ).toBe(true)
   })
 
+  it("names the initials with alt, and hides them with an empty alt", () => {
+    const container = document.createElement("div")
+
+    render(Avatar.render({ initials: "AG", alt: "Ada Grace" }), container)
+    const named = container.querySelector(".iw-avatar")
+    expect(named.getAttribute("role")).toBe("img")
+    expect(named.getAttribute("aria-label")).toBe("Ada Grace")
+
+    render(Avatar.render({ initials: "AG", alt: "" }), container)
+    const hidden = container.querySelector(".iw-avatar")
+    expect(hidden.getAttribute("aria-hidden")).toBe("true")
+    expect(hidden.hasAttribute("role")).toBe(false)
+  })
+
   it("renders image with alt and applies size/shape classes", () => {
     let isClicked = false
     const props = {

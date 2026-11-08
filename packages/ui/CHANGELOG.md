@@ -1,5 +1,11 @@
 # @inglorious/ui
 
+## 9.18.1
+
+### Patch Changes
+
+- Avatar names its initials with `alt` (as an image), and an empty `alt` hides them from assistive tech.
+
 ## 9.18.0
 
 ### Minor Changes

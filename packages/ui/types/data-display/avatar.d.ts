@@ -3,6 +3,7 @@ import type { TemplateResult } from "@inglorious/web"
 export interface AvatarProps {
   id?: string
   src?: string
+  /** Names the picture, or the initials when there is none; `""` hides it from assistive tech. */
   alt?: string
   initials?: string
   size?: "sm" | "md" | "lg" | "xl" | "2xl"
