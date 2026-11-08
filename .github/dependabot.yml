@@ -1,0 +1,12 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    # The workspace's own packages, linked with workspace:*.
+    ignore:
+      - dependency-name: "@inglorious/*"
+    groups:
+      dependencies:
+        patterns: ["*"]

@@ -16,6 +16,7 @@ import {
   USER_ARG_START_INDEX,
   VITE_APP_TEMPLATES,
 } from "./lib/constants.js"
+import { addDependabot } from "./lib/dependabot.js"
 import { SYNTAXES, TEMPLATES } from "./lib/features.js"
 import { copyDir } from "./lib/file.js"
 import { addFirebaseSupport } from "./lib/firebase.js"
@@ -172,6 +173,8 @@ async function main() {
     const pkgPath = path.join(targetDir, "package.json")
     const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf-8"))
     pkg.name = projectName
+
+    addDependabot(targetDir)
 
     const hasAppFeatures =
       features.ui ||

@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.14.0
+
+### Minor Changes
+
+- Every generated project except `minimal` gets `.github/dependabot.yml`: weekly dependency updates, grouped into one pull request for `@inglorious/*` and one for everything else.
+
 ## 1.13.0
 
 ### Minor Changes
