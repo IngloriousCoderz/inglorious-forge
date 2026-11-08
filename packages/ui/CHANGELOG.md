@@ -1,5 +1,11 @@
 # @inglorious/ui
 
+## 9.17.0
+
+### Minor Changes
+
+- New `Toast` component: a stack of toasts in a corner of the screen that take a role colour (`primary`, `success`, `error` and so on) and close themselves after a duration, paused while hovered or focused. Toasts that arrive together slide in one after the other, and closing one, by its button or its timer, slides it out and lets the others close the gap before `onClose(id)` is called. `@inglorious/ui/toast` and `@inglorious/ui/toast.css`.
+
 ## 9.16.0
 
 ### Minor Changes

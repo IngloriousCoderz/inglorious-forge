@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/ui",
-  "version": "9.16.0",
+  "version": "9.17.0",
   "description": "A design system for Inglorious Web with render-function components and customizable themes",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -256,6 +256,11 @@
       "import": "./src/feedback/snackbar/index.js"
     },
     "./snackbar.css": "./src/feedback/snackbar/style.css",
+    "./toast": {
+      "types": "./types/feedback/toast.d.ts",
+      "import": "./src/feedback/toast/index.js"
+    },
+    "./toast.css": "./src/feedback/toast/style.css",
     "./accordion": {
       "types": "./types/surfaces/accordion.d.ts",
       "import": "./src/surfaces/accordion/index.js"

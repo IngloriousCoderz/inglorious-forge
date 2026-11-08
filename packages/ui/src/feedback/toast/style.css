@@ -1,0 +1,252 @@
+.iw-toaster {
+  --iw-toaster-gap: var(--iw-space-4);
+  --iw-toast-width: 22rem;
+  --iw-toast-shift: calc(100% + var(--iw-toaster-gap));
+  /* Room around each card, inside the part that collapses, for its shadow. */
+  --iw-toast-room-inline: var(--iw-space-3);
+  --iw-toast-room-start: var(--iw-space-1);
+  --iw-toast-room-end: var(--iw-space-2);
+  --iw-toast-stagger: 90ms;
+  position: fixed;
+  z-index: var(--iw-z-popover, 1060);
+  display: flex;
+  flex-direction: column;
+  width: calc(
+    min(var(--iw-toast-width), 100vw - 2 * var(--iw-toaster-gap)) + 2 *
+      var(--iw-toast-room-inline)
+  );
+}
+
+:where(.iw-toaster) {
+  inset: auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: visible;
+  color: inherit;
+  background: transparent;
+}
+
+.iw-toaster-top-left,
+.iw-toaster-top-center,
+.iw-toaster-top-right {
+  top: calc(
+    var(--iw-toaster-gap) + var(--safe-area-top, 0px) -
+      var(--iw-toast-room-start)
+  );
+}
+
+.iw-toaster-bottom-left,
+.iw-toaster-bottom-center,
+.iw-toaster-bottom-right {
+  bottom: calc(
+    var(--iw-toaster-gap) +
+      var(--iw-toaster-offset-bottom, var(--safe-area-bottom, 0px)) -
+      var(--iw-toast-room-end)
+  );
+  flex-direction: column-reverse;
+}
+
+.iw-toaster-top-left,
+.iw-toaster-bottom-left {
+  left: calc(var(--iw-toaster-gap) - var(--iw-toast-room-inline));
+  --iw-toast-from: translateX(calc(-1 * var(--iw-toast-shift)));
+}
+
+.iw-toaster-top-right,
+.iw-toaster-bottom-right {
+  right: calc(var(--iw-toaster-gap) - var(--iw-toast-room-inline));
+  --iw-toast-from: translateX(var(--iw-toast-shift));
+}
+
+.iw-toaster-top-center,
+.iw-toaster-bottom-center {
+  inset-inline: 0;
+  margin-inline: auto;
+}
+
+.iw-toaster-top-center {
+  --iw-toast-from: translateY(calc(-1 * var(--iw-toast-shift)));
+}
+
+.iw-toaster-bottom-center {
+  --iw-toast-from: translateY(var(--iw-toast-shift));
+}
+
+.iw-toast {
+  display: grid;
+  grid-template-rows: 1fr;
+  animation: iw-toast-in var(--iw-duration-slow, 300ms)
+    var(--iw-easing-decelerate, ease-out)
+    calc(var(--iw-toast-order, 0) * var(--iw-toast-stagger)) backwards;
+
+  &.iw-toast-leaving {
+    animation: iw-toast-out var(--iw-duration-normal, 200ms)
+      var(--iw-easing-accelerate, ease-in) forwards;
+  }
+
+  .iw-toast-slot {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .iw-toast-frame {
+    padding: var(--iw-toast-room-start) var(--iw-toast-room-inline)
+      var(--iw-toast-room-end);
+  }
+}
+
+.iw-toast-card {
+  --iw-toast-bg: color-mix(
+    in srgb,
+    var(--iw-color-surface, #222) 84%,
+    var(--iw-color-black)
+  );
+  --iw-toast-text: var(--iw-color-text, #fff);
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  overflow: hidden;
+  border-radius: var(--iw-radius-md);
+  background: var(--iw-toast-bg);
+  color: var(--iw-toast-text);
+  box-shadow: var(--iw-shadow-md, 0 4px 6px rgba(0, 0, 0, 0.2));
+
+  &.iw-toast-primary,
+  &.iw-toast-secondary,
+  &.iw-toast-success,
+  &.iw-toast-warning,
+  &.iw-toast-error,
+  &.iw-toast-info {
+    --iw-toast-bg: var(--iw-toast-role);
+    --iw-toast-text: var(--iw-toast-role-text);
+  }
+
+  &.iw-toast-primary {
+    --iw-toast-role: var(--iw-color-primary);
+    --iw-toast-role-text: var(--iw-color-primary-text);
+  }
+
+  &.iw-toast-secondary {
+    --iw-toast-role: var(--iw-color-secondary);
+    --iw-toast-role-text: var(--iw-color-secondary-text);
+  }
+
+  &.iw-toast-success {
+    --iw-toast-role: var(--iw-color-success);
+    --iw-toast-role-text: var(--iw-color-success-text);
+  }
+
+  &.iw-toast-warning {
+    --iw-toast-role: var(--iw-color-warning);
+    --iw-toast-role-text: var(--iw-color-warning-text);
+  }
+
+  &.iw-toast-error {
+    --iw-toast-role: var(--iw-color-error);
+    --iw-toast-role-text: var(--iw-color-error-text);
+  }
+
+  &.iw-toast-info {
+    --iw-toast-role: var(--iw-color-info);
+    --iw-toast-role-text: var(--iw-color-info-text);
+  }
+
+  .iw-toast-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: flex-start;
+    gap: var(--iw-space-3);
+    padding: var(--iw-space-3) var(--iw-space-2) var(--iw-space-3)
+      var(--iw-space-4);
+    border: 0 none;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+  }
+
+  button.iw-toast-main {
+    cursor: pointer;
+  }
+
+  .iw-toast-icon {
+    flex: none;
+  }
+
+  .iw-toast-text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--iw-space-1);
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .iw-toast-title {
+    font-weight: var(--iw-font-weight-semibold);
+  }
+
+  .iw-toast-close {
+    flex: none;
+    width: 1.75rem;
+    height: 1.75rem;
+    margin: var(--iw-space-2) var(--iw-space-2) 0 0;
+    border: 0 none;
+    border-radius: var(--iw-radius-sm);
+    background: transparent;
+    color: inherit;
+    font-size: var(--iw-font-size-lg);
+    line-height: 1;
+    cursor: pointer;
+
+    &:hover {
+      background-color: color-mix(in srgb, currentColor 14%, transparent);
+    }
+  }
+
+  .iw-toast-timer {
+    position: absolute;
+    inset: auto 0 0;
+    height: 3px;
+    background: color-mix(in srgb, currentColor 40%, transparent);
+    transform-origin: left;
+    animation: iw-toast-timer var(--iw-toast-duration) linear forwards;
+  }
+
+  &:hover .iw-toast-timer,
+  &:focus-within .iw-toast-timer {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes iw-toast-in {
+  from {
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transform: var(--iw-toast-from, none);
+  }
+}
+
+@keyframes iw-toast-out {
+  to {
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transform: var(--iw-toast-from, none);
+  }
+}
+
+@keyframes iw-toast-timer {
+  to {
+    transform: scaleX(0);
+  }
+}
+
+/* Still animated, for an instant: the exit's end is what calls onClose. */
+@media (prefers-reduced-motion: reduce) {
+  .iw-toast,
+  .iw-toast.iw-toast-leaving {
+    animation-duration: 1ms;
+    animation-delay: 0s;
+  }
+}
