@@ -16,14 +16,14 @@
     "@inglorious/ag-grid": "workspace:*",
     "@inglorious/store": "workspace:*",
     "@inglorious/web": "workspace:*",
-    "ag-grid-community": "^36.1.0"
+    "ag-grid-community": "^36.3.0"
   },
   "devDependencies": {
     "@inglorious/eslint-config": "workspace:*",
     "@inglorious/vite-plugin-hmr": "workspace:*",
-    "eslint": "^10.10.0",
-    "prettier": "^3.9.6",
+    "eslint": "^10.14.0",
+    "prettier": "^3.9.10",
     "rollup-plugin-minify-template-literals": "^2.2.0",
-    "vite": "^8.2.2"
+    "vite": "^8.3.6"
   }
 }

@@ -21,16 +21,16 @@
   "devDependencies": {
     "@inglorious/eslint-config": "workspace:*",
     "@inglorious/vite-plugin-hmr": "workspace:*",
-    "@types/node": "^26.4.1",
-    "eslint": "^10.10.0",
-    "prettier": "^3.9.6",
+    "@types/node": "^26.6.6",
+    "eslint": "^10.14.0",
+    "prettier": "^3.9.10",
     "rollup-plugin-minify-template-literals": "^2.2.0",
-    "sharp": "^0.35.4",
+    "sharp": "^0.35.5",
     "svgo": "^4.1.0",
     "typescript": "~7.0.2",
-    "vite": "^8.2.2",
+    "vite": "^8.3.6",
     "vite-plugin-image-optimizer": "^2.0.3",
-    "vitest": "^5.0.0"
+    "vitest": "^5.1.0"
   },
   "packageManager": "pnpm@12.15.0",
   "engines": {

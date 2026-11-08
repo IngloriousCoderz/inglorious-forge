@@ -10,10 +10,10 @@
   },
   "dependencies": {
     "@benchmarks/deep-tree-shared": "workspace:*",
-    "svelte": "^5.57.0"
+    "svelte": "^5.57.3"
   },
   "devDependencies": {
-    "@sveltejs/vite-plugin-svelte": "^7.3.0",
-    "vite": "^8.2.2"
+    "@sveltejs/vite-plugin-svelte": "^7.3.1",
+    "vite": "^8.3.6"
   }
 }

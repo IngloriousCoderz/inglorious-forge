@@ -39,11 +39,11 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "ora": "^9.4.1",
+    "ora": "^10.0.0",
     "prompts": "^2.4.2"
   },
   "devDependencies": {
     "@inglorious/eslint-config": "workspace:*",
-    "prettier": "^3.9.6"
+    "prettier": "^3.9.10"
   }
 }

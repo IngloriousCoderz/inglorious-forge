@@ -43,7 +43,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "react-redux": "^9.3.0"
+    "react-redux": "^9.3.1"
   },
   "peerDependencies": {
     "@inglorious/store": "workspace:^",
@@ -51,8 +51,8 @@
   },
   "devDependencies": {
     "@inglorious/eslint-config": "workspace:*",
-    "prettier": "^3.9.6",
-    "vite": "^8.2.2"
+    "prettier": "^3.9.10",
+    "vite": "^8.3.6"
   },
   "packageManager": "pnpm@12.15.0",
   "engines": {

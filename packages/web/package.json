@@ -145,9 +145,9 @@
   },
   "devDependencies": {
     "@inglorious/eslint-config": "workspace:*",
-    "prettier": "^3.9.6",
+    "prettier": "^3.9.10",
     "typescript": "~7.0.2",
-    "vitest": "^5.0.0"
+    "vitest": "^5.1.0"
   },
   "packageManager": "pnpm@12.15.0",
   "engines": {

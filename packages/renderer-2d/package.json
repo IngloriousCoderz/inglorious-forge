@@ -38,8 +38,8 @@
     "@inglorious/engine": "workspace:*",
     "@inglorious/eslint-config": "workspace:*",
     "@inglorious/utils": "workspace:*",
-    "eslint": "^10.10.0",
-    "prettier": "^3.9.6",
-    "vitest": "^5.0.0"
+    "eslint": "^10.14.0",
+    "prettier": "^3.9.10",
+    "vitest": "^5.1.0"
   }
 }

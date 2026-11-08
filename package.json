@@ -17,19 +17,19 @@
     "turbo:upgrade": "pnpm dlx @turbo/codemod migrate"
   },
   "devDependencies": {
-    "@changesets/cli": "^3.0.2",
+    "@changesets/cli": "^3.0.3",
     "@eslint/js": "^10.0.1",
     "@inglorious/eslint-config": "workspace:*",
-    "@rollup/rollup-darwin-arm64": "4.63.1",
-    "eslint": "^10.10.0",
+    "@rollup/rollup-darwin-arm64": "4.67.5",
+    "eslint": "^10.14.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-simple-import-sort": "^14.0.0",
-    "eslint-plugin-storybook": "^10.6.5",
-    "globals": "^17.12.0",
+    "eslint-plugin-storybook": "^10.6.6",
+    "globals": "^17.14.0",
     "husky": "^9.1.7",
     "lint-staged": "^17.6.0",
-    "prettier": "^3.9.6",
-    "turbo": "^2.10.12"
+    "prettier": "^3.9.10",
+    "turbo": "^2.11.10"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,mjs,cjs,ijs,its}": [

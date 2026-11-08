@@ -43,13 +43,13 @@
     "@inglorious/utils": "workspace:^"
   },
   "peerDependencies": {
-    "vitest": "^5.0.0"
+    "vitest": "^5.1.0"
   },
   "devDependencies": {
     "@inglorious/eslint-config": "workspace:*",
-    "prettier": "^3.9.6",
-    "vite": "^8.2.2",
-    "vitest": "^5.0.0"
+    "prettier": "^3.9.10",
+    "vite": "^8.3.6",
+    "vitest": "^5.1.0"
   },
   "packageManager": "pnpm@12.15.0",
   "engines": {

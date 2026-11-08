@@ -46,8 +46,8 @@
     "test:types": "tsc -p type-tests"
   },
   "dependencies": {
-    "@openuidev/lang-core": "^1.0.1",
-    "markdown-it": "^14.1.0",
+    "@openuidev/lang-core": "^1.1.0",
+    "markdown-it": "^15.0.3",
     "zod": "^4.6.7"
   },
   "peerDependencies": {
@@ -66,10 +66,10 @@
     "@inglorious/store": "workspace:*",
     "@inglorious/ui": "workspace:*",
     "@inglorious/web": "workspace:*",
-    "jsdom": "^30.0.1",
-    "prettier": "^3.9.9",
+    "jsdom": "^31.0.0",
+    "prettier": "^3.9.10",
     "typescript": "~7.0.2",
-    "vitest": "^5.0.0"
+    "vitest": "^5.1.0"
   },
   "packageManager": "pnpm@12.15.0",
   "engines": {
