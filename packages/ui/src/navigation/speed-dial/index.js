@@ -8,9 +8,11 @@ import { html, nothing } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
 import { ref } from "@inglorious/web/directives/ref"
 
+import { anchorFallback } from "../../shared/anchor.js"
 import { syncPopover } from "../../shared/top-layer.js"
 
 const HUMAN_OFFSET = 1
+const PLACEMENTS = { up: "top", down: "bottom", left: "left", right: "right" }
 
 export const SpeedDial = {
   /**
@@ -27,7 +29,7 @@ export const SpeedDial = {
    * Renders the speed dial container, trigger, and actions list.
    * Actions are delegated to `renderAction`.
    * The actions are a native popover anchored to the trigger, which toggles
-   * it as its invoker: Esc, a press outside or an action closes it.
+   * it as its `popovertarget` invoker: Esc, a press outside or an action closes it.
    * @param {SpeedDialProps} props
    * @returns {TemplateResult}
    */
@@ -51,7 +53,11 @@ export const SpeedDial = {
         if (!element) return
         const trigger = element.querySelector(".iw-speed-dial-trigger")
         const popover = element.querySelector(".iw-speed-dial-actions")
-        trigger.commandForElement = popover
+        trigger.popoverTargetElement = popover
+        anchorFallback(popover, {
+          getAnchor: () => trigger,
+          placement: PLACEMENTS[direction] ?? "top",
+        })
         if (onToggle) {
           syncPopover(popover, {
             isOpen,
@@ -66,7 +72,6 @@ export const SpeedDial = {
         class="iw-speed-dial-trigger"
         aria-label=${ariaLabel}
         aria-expanded=${onToggle ? String(isOpen) : nothing}
-        command="toggle-popover"
       >
         ${icon}
       </button>
@@ -90,11 +95,11 @@ export const SpeedDial = {
     return html`<button
       type="button"
       class="iw-speed-dial-action"
-      command="hide-popover"
+      popovertargetaction="hide"
       ${ref((element) => {
         if (element) {
           queueMicrotask(() => {
-            element.commandForElement = element.parentElement
+            element.popoverTargetElement = element.parentElement
           })
         }
       })}

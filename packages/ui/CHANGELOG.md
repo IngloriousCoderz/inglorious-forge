@@ -1,5 +1,11 @@
 # @inglorious/ui
 
+## 9.15.5
+
+### Patch Changes
+
+- Combobox, Menu, SpeedDial and Tooltip now open next to their trigger in browsers without CSS anchor positioning (Safari before 26), instead of at the bottom of the screen. Menu and SpeedDial triggers use `popovertarget` instead of `command`, so they also open in Safari before 26.2.
+
 ## 9.15.4
 
 ### Patch Changes

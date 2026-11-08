@@ -46,14 +46,14 @@ describe("menu", () => {
   })
 
   describe("with a trigger", () => {
-    it("renders a trigger that commands the menu popover", () => {
+    it("renders a trigger that targets the menu popover", () => {
       const container = document.createElement("div")
 
       render(Menu.render({ id: "actions", trigger: "More" }), container)
 
       const trigger = container.querySelector(".iw-button")
       const menu = container.querySelector(".iw-menu")
-      expect(trigger.getAttribute("commandfor")).toBe("actions")
+      expect(trigger.getAttribute("popovertarget")).toBe("actions")
       expect(trigger.getAttribute("aria-haspopup")).toBe("menu")
       expect(trigger.hasAttribute("aria-pressed")).toBe(false)
       expect(menu.id).toBe("actions")
@@ -126,8 +126,8 @@ describe("menu", () => {
       )
 
       const item = container.querySelector(".iw-menu-item")
-      expect(item.getAttribute("commandfor")).toBe("actions")
-      expect(item.getAttribute("command")).toBe("hide-popover")
+      expect(item.getAttribute("popovertarget")).toBe("actions")
+      expect(item.getAttribute("popovertargetaction")).toBe("hide")
     })
   })
 })

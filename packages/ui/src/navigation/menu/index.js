@@ -10,7 +10,7 @@ import { ref } from "@inglorious/web/directives/ref"
 import { when } from "@inglorious/web/directives/when"
 
 import { Button } from "../../controls/button/index.js"
-import { anchorName } from "../../shared/anchor.js"
+import { anchorFallback, anchorName } from "../../shared/anchor.js"
 import { applyElementProps } from "../../shared/apply-element-props.js"
 import { syncPopover } from "../../shared/top-layer.js"
 
@@ -31,7 +31,7 @@ export const Menu = {
 
   /**
    * Renders the button that opens an anchored menu. It is the popover's
-   * `commandfor` invoker, so the browser toggles the menu from it and does
+   * `popovertarget` invoker, so the browser toggles the menu from it and does
    * not count a press on it as a press outside.
    * @param {MenuProps} props
    * @returns {TemplateResult}
@@ -43,8 +43,7 @@ export const Menu = {
       variant: "ghost",
       ...triggerProps,
       children: trigger,
-      commandfor: id,
-      command: "toggle-popover",
+      popovertarget: id,
       "aria-haspopup": "menu",
       "aria-expanded": onToggle ? String(isOpen) : undefined,
       style: `anchor-name: ${anchorName(id)}`,
@@ -95,6 +94,12 @@ export const Menu = {
       ${ref((element) => {
         if (!element) return
         applyElementProps(element, rest)
+        if (trigger) {
+          anchorFallback(element, {
+            getAnchor: () => element.previousElementSibling,
+            placement: "bottom-start",
+          })
+        }
         if (trigger && onToggle) {
           syncPopover(element, {
             isOpen,
@@ -128,8 +133,8 @@ export const Menu = {
         "iw-menu-item-selected": item.isSelected,
       })}
       role="menuitem"
-      commandfor=${props.trigger ? props.id : nothing}
-      command=${props.trigger ? "hide-popover" : nothing}
+      popovertarget=${props.trigger ? props.id : nothing}
+      popovertargetaction=${props.trigger ? "hide" : nothing}
       ?disabled=${item.isDisabled}
       @click=${() => {
         item.onClick?.(item.value ?? index)

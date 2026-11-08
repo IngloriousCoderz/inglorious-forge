@@ -13,7 +13,7 @@ describe("speedDial", () => {
     expect(container.querySelector(".iw-speed-dial-trigger")).not.toBeNull()
   })
 
-  it("renders actions in a popover the trigger commands", async () => {
+  it("renders actions in a popover the trigger targets", async () => {
     const container = document.createElement("div")
 
     render(SpeedDial.render({ actions: [{ label: "A" }] }), container)
@@ -22,11 +22,10 @@ describe("speedDial", () => {
     const trigger = container.querySelector(".iw-speed-dial-trigger")
     const actions = container.querySelector(".iw-speed-dial-actions")
     expect(actions.getAttribute("popover")).toBe("auto")
-    expect(trigger.getAttribute("command")).toBe("toggle-popover")
-    expect(trigger.commandForElement).toBe(actions)
-    expect(
-      container.querySelector(".iw-speed-dial-action").commandForElement,
-    ).toBe(actions)
+    const action = container.querySelector(".iw-speed-dial-action")
+    expect(trigger.popoverTargetElement).toBe(actions)
+    expect(action.popoverTargetElement).toBe(actions)
+    expect(action.getAttribute("popovertargetaction")).toBe("hide")
   })
 
   it("follows isOpen and reports the browser's changes", async () => {

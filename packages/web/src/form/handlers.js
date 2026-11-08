@@ -32,7 +32,7 @@ export function init() {
   if (areListenersInitialized) return
 
   // Only a press that would submit or reset a form without saying so: any
-  // other button's default is its own, such as a `commandfor` opening a menu.
+  // other button's default is its own, such as a `popovertarget` opening a menu.
   document.addEventListener("click", (event) => {
     const button = event.target.closest("button")
 

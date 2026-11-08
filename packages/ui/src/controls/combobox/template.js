@@ -12,6 +12,7 @@ import { repeat } from "@inglorious/web/directives/repeat"
 import { when } from "@inglorious/web/directives/when"
 
 import { Chip } from "../../data-display/chip/index.js"
+import { anchorFallback } from "../../shared/anchor.js"
 import { fallbackLabel } from "../../shared/fallback-label.js"
 import { liveBoolean } from "../../shared/live-boolean.js"
 import { syncPopover } from "../../shared/top-layer.js"
@@ -288,6 +289,12 @@ export const template = {
       role="listbox"
       popover="manual"
       ${ref((el) => {
+        anchorFallback(el, {
+          getAnchor: () =>
+            el?.closest(".iw-combobox")?.querySelector(".iw-combobox-frame"),
+          placement: "bottom-start",
+          isWidthMatched: true,
+        })
         syncPopover(el, { isOpen: true })
         trackOutsideClick(props, el)
       })}

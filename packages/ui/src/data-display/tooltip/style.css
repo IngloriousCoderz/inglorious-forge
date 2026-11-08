@@ -60,3 +60,29 @@
     margin: 0 0 0 var(--iw-space-2);
   }
 }
+
+@supports not (anchor-name: --iw-tooltip) {
+  .iw-tooltip {
+    position: relative;
+
+    .iw-tooltip-bubble {
+      position: absolute;
+      inset: auto auto 100% 50%;
+      translate: -50% 0;
+    }
+
+    &.iw-tooltip-bottom .iw-tooltip-bubble {
+      inset: 100% auto auto 50%;
+    }
+
+    &.iw-tooltip-left .iw-tooltip-bubble {
+      inset: 50% 100% auto auto;
+      translate: 0 -50%;
+    }
+
+    &.iw-tooltip-right .iw-tooltip-bubble {
+      inset: 50% auto auto 100%;
+      translate: 0 -50%;
+    }
+  }
+}

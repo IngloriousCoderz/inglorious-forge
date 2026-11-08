@@ -3,7 +3,7 @@
  * components that use them are driven by an `isOpen` prop from the store. These
  * helpers run from a `ref` on every render and keep the two in step: the prop
  * opens and closes the element, and a change the browser makes on its own
- * (Esc, a light dismiss, a `method="dialog"` form, a `commandfor` invoker) is
+ * (Esc, a light dismiss, a `method="dialog"` form, a `popovertarget` invoker) is
  * reported through `onClose` or `onOpen` so the store can catch up.
  *
  * The browser fires `close` and `toggle` after the fact, so the handler tells
