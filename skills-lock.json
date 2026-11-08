@@ -17,13 +17,13 @@
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/create-app/SKILL.md",
-      "computedHash": "0c302440b5932893e531ae90e5f67117e5c8758e1e167e3a1477e3e668fcd691"
+      "computedHash": "ff55e4d4f0b01cf6fa1aa1efd1f46f7ce4f4138d89e3e4c5ab0afd30ff0e9711"
     },
     "create-game": {
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/create-game/SKILL.md",
-      "computedHash": "762265ae5e6daf1f0e9836174cd62f5bf8c3a6d39495329d3ba91d51123a34f4"
+      "computedHash": "62ffe7f8d9222a79dbc2539af8871a76869ff1e5398e23f4a9df322fb9019423"
     },
     "engine": {
       "source": "IngloriousCoderz/forge-skills",

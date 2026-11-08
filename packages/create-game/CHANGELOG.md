@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.2.0
+
+### Minor Changes
+
+- Every template ships a `vercel.json` that deploys only the `main` branch, so pull requests and other branches don't use up Vercel's deployment limit. Change `main` there if your production branch has another name.
+
 ## 1.1.2
 
 ### Patch Changes

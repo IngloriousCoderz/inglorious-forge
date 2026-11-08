@@ -31,7 +31,7 @@ For the JavaScript and TypeScript Vite templates, the CLI then asks about the ap
 | Add push notifications?   | `--push` / `--no-push`                                                   | Firebase Cloud Messaging, a permission prompt and the Supabase side of sending; turns on PWA support       |
 | Enable PWA support?       | `--pwa` / `--no-pwa`                                                     | `vite-plugin-pwa`, a manifest, icons, and a service worker that keeps installed apps on the latest version |
 
-Every template except `minimal` also gets `.github/dependabot.yml`, which opens weekly dependency updates on GitHub grouped into two pull requests: one for `@inglorious/*`, one for everything else.
+Every template has a `vercel.json` that deploys only the `main` branch on Vercel; change `main` there if your production branch has another name. Every template except `minimal` also gets `.github/dependabot.yml`, which opens weekly dependency updates on GitHub grouped into two pull requests: one for `@inglorious/*`, one for everything else.
 
 Every template except `minimal` then asks whether to add agent skills (`--skills` / `--no-skills`). Saying yes runs the [skills CLI](https://skills.sh) in the new project. It asks which coding agents to install for, and installs the [Inglorious Forge skills](https://github.com/IngloriousCoderz/forge-skills) that match your choices: `forge`, `forge-best-practices`, `app-recipe`, `store`, `web` and `web-best-practices` always, plus `ssx`, `vite-plugin-jsx` or `vite-plugin-vue`, `ui` and `ui-best-practices`, `i18n`, `firebase` and `supabase` when the project uses them. If the install fails, the CLI prints the command to retry it.
 

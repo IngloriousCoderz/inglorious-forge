@@ -32,6 +32,8 @@ The following templates are available to get you started:
 
 The tool will create a new directory with your chosen project name and copy the template files into it. It will also automatically update the `package.json` with your project's name.
 
+Every template includes a `vercel.json` that deploys only the `main` branch on Vercel; change `main` there if your production branch has another name.
+
 After the project is created, you can navigate into the directory and install the dependencies.
 
 ```bash
