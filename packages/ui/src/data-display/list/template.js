@@ -172,6 +172,7 @@ export const template = {
       padding: "sm",
       direction: "column",
       className: listItemClassName,
+      "aria-disabled": isDisabled ? "true" : null,
       onClick: (event) => {
         event.stopPropagation()
         if (isDisabled) return

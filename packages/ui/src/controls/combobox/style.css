@@ -19,7 +19,7 @@
   }
 
   .iw-combobox-required {
-    color: var(--iw-color-error);
+    color: var(--iw-color-error-emphasis);
     margin-inline-start: var(--iw-space-1);
   }
 
@@ -34,7 +34,7 @@
   }
 
   .iw-combobox-error-message {
-    color: var(--iw-color-error);
+    color: var(--iw-color-error-emphasis);
   }
 
   .iw-combobox-frame {

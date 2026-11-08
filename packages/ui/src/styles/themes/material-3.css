@@ -42,7 +42,6 @@
   --iw-color-primary: #6750a4;
   --iw-color-primary-hover: color-mix(in srgb, #6750a4 92%, #ffffff);
   --iw-color-primary-active: color-mix(in srgb, #6750a4 90%, #ffffff);
-  --iw-color-primary-text: var(--iw-color-white);
 
   --iw-color-accent: #625b71;
   --iw-color-accent-hover: color-mix(in srgb, #625b71 92%, #ffffff);
@@ -125,6 +124,35 @@
   --iw-alert-radius: var(--iw-radius-lg);
   --iw-alert-shadow: none;
   color-scheme: light;
+
+  --iw-color-primary-text: var(--iw-color-white);
+  --iw-color-primary-emphasis: #634ca0;
+
+  --iw-color-secondary: #625b71;
+  --iw-color-secondary-hover: #544d63;
+  --iw-color-secondary-active: #494257;
+  --iw-color-secondary-text: var(--iw-color-white);
+  --iw-color-secondary-emphasis: #5e576d;
+
+  --iw-color-success-hover: #2a5c0e;
+  --iw-color-success-active: #1f5000;
+  --iw-color-success-text: var(--iw-color-white);
+  --iw-color-success-emphasis: #34661b;
+
+  --iw-color-warning-hover: #6b4a03;
+  --iw-color-warning-active: #5d4002;
+  --iw-color-warning-text: var(--iw-color-white);
+  --iw-color-warning-emphasis: #785303;
+
+  --iw-color-error-hover: #a20d0b;
+  --iw-color-error-active: #900003;
+  --iw-color-error-text: var(--iw-color-white);
+  --iw-color-error-emphasis: #ab1c16;
+
+  --iw-color-info-hover: #005485;
+  --iw-color-info-active: #004974;
+  --iw-color-info-text: var(--iw-color-white);
+  --iw-color-info-emphasis: #005e93;
 }
 
 .iw-theme-material-3.iw-theme-dark {
@@ -150,7 +178,6 @@
   --iw-color-primary: #d0bcff;
   --iw-color-primary-hover: color-mix(in srgb, #d0bcff 92%, #381e72);
   --iw-color-primary-active: color-mix(in srgb, #d0bcff 90%, #381e72);
-  --iw-color-primary-text: #381e72;
 
   --iw-color-border-focus: #d0bcff;
 
@@ -162,6 +189,35 @@
   --iw-color-warning: #f8bd2a;
   --iw-color-error: #f2b8b5;
   --iw-color-info: #9ecaff;
+
+  --iw-color-primary-text: #381e72;
+  --iw-color-primary-emphasis: #d0bcff;
+
+  --iw-color-secondary: #ccc2dc;
+  --iw-color-secondary-hover: #dcd2ec;
+  --iw-color-secondary-active: #e9dffa;
+  --iw-color-secondary-text: #332d41;
+  --iw-color-secondary-emphasis: #ccc2dc;
+
+  --iw-color-success-hover: #ace78d;
+  --iw-color-success-active: #b9f499;
+  --iw-color-success-text: #0c3900;
+  --iw-color-success-emphasis: #9cd67d;
+
+  --iw-color-warning-hover: #ffd06d;
+  --iw-color-warning-active: #ffe1a4;
+  --iw-color-warning-text: #422c00;
+  --iw-color-warning-emphasis: #f8bd2a;
+
+  --iw-color-error-hover: #fecac7;
+  --iw-color-error-active: #ffdddb;
+  --iw-color-error-text: #601410;
+  --iw-color-error-emphasis: #f2b8b5;
+
+  --iw-color-info-hover: #badaff;
+  --iw-color-info-active: #d1e6ff;
+  --iw-color-info-text: #003258;
+  --iw-color-info-emphasis: #9ecaff;
 }
 
 .iw-theme-material-3 {
@@ -188,20 +244,6 @@
 
     &.iw-button-shape-square {
       border-radius: var(--iw-radius-lg);
-    }
-
-    &.iw-button-secondary {
-      --iw-button-color: var(--iw-color-accent);
-      --iw-button-bg: var(--iw-color-accent);
-      --iw-button-border: var(--iw-color-accent);
-    }
-
-    &.iw-button-secondary,
-    &.iw-button-success,
-    &.iw-button-warning,
-    &.iw-button-error,
-    &.iw-button-info {
-      --iw-button-text: var(--iw-color-white);
     }
 
     &.iw-button-default,
@@ -275,20 +317,6 @@
     }
   }
 
-  &.iw-theme-dark .iw-button {
-    &.iw-button-secondary,
-    &.iw-button-success,
-    &.iw-button-warning,
-    &.iw-button-error,
-    &.iw-button-info {
-      --iw-button-text: color-mix(
-        in srgb,
-        var(--iw-button-color) 25%,
-        var(--iw-color-black)
-      );
-    }
-  }
-
   .iw-input .iw-input-frame,
   .iw-select .iw-select-frame,
   .iw-combobox .iw-combobox-frame,
@@ -314,7 +342,7 @@
       .iw-input-label,
       .iw-select-label,
       .iw-textarea-label {
-        color: var(--iw-color-primary);
+        color: var(--iw-color-primary-emphasis);
       }
     }
 
@@ -342,7 +370,7 @@
   .iw-select:has(.iw-select-control-error) {
     .iw-input-label,
     .iw-select-label {
-      color: var(--iw-color-error);
+      color: var(--iw-color-error-emphasis);
     }
   }
 
@@ -461,7 +489,7 @@
   }
 
   .iw-tab.iw-tab-selected {
-    color: var(--iw-color-primary);
+    color: var(--iw-color-primary-emphasis);
 
     &::after {
       content: "";

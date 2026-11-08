@@ -151,6 +151,7 @@ export const template = {
       aria-describedby=${messageId || nothing}
       aria-required=${isRequired ? "true" : "false"}
       aria-invalid=${error ? "true" : "false"}
+      aria-disabled=${isDisabled ? "true" : nothing}
       tabindex=${isDisabled ? -1 : 0}
       @keydown=${(event) => handleControlKeyDown(props, event)}
       @click=${() => !isDisabled && onToggle?.()}

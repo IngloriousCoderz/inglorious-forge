@@ -20,7 +20,6 @@
 
   &.iw-typography-caption {
     font-size: var(--iw-font-size-sm);
-    opacity: 0.85;
   }
 
   &.iw-typography-overline {

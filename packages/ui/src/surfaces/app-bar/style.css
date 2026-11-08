@@ -56,15 +56,31 @@
 }
 
 .iw-app-bar-color-primary {
+  --iw-app-bar-subtitle-color: currentColor;
+
   background: var(--iw-color-primary);
-  color: var(--iw-color-primary-text, var(--iw-color-white));
+  color: var(--iw-color-primary-text);
   border-color: color-mix(in srgb, currentColor 18%, transparent);
+
+  .iw-button-outline,
+  .iw-button-ghost {
+    --iw-button-emphasis: currentColor;
+    --iw-button-border: currentColor;
+  }
 }
 
 .iw-app-bar-color-secondary {
-  background: var(--iw-color-accent, var(--iw-color-gray-700));
-  color: var(--iw-color-white);
+  --iw-app-bar-subtitle-color: currentColor;
+
+  background: var(--iw-color-secondary);
+  color: var(--iw-color-secondary-text);
   border-color: color-mix(in srgb, currentColor 18%, transparent);
+
+  .iw-button-outline,
+  .iw-button-ghost {
+    --iw-button-emphasis: currentColor;
+    --iw-button-border: currentColor;
+  }
 }
 
 .iw-app-bar-color-transparent {
@@ -100,7 +116,7 @@
 
 .iw-app-bar-subtitle {
   font-size: var(--iw-font-size-sm);
-  color: color-mix(in srgb, currentColor 72%, transparent);
+  color: var(--iw-app-bar-subtitle-color, var(--iw-color-text-secondary));
   line-height: var(--iw-line-height-tight);
 }
 

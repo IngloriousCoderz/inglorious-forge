@@ -64,6 +64,6 @@ describe("avatar", () => {
     render(Avatar.render(props), container)
 
     const root = container.querySelector(".iw-avatar")
-    expect(root.getAttribute("style")).toContain("background:hsl(")
+    expect(root.getAttribute("style")).toContain("background:oklch(")
   })
 })

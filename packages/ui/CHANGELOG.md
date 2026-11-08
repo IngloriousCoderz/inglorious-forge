@@ -1,5 +1,26 @@
 # @inglorious/ui
 
+## 9.16.0
+
+### Minor Changes
+
+- Every theme now meets WCAG AA contrast in light and dark mode.
+
+  Each role (`primary`, `secondary`, `success`, `warning`, `error`, `info`) has these tokens, set by every theme:
+
+  - `--iw-color-{role}`: the fill
+  - `--iw-color-{role}-hover` and `--iw-color-{role}-active`: the fill on hover and press
+  - `--iw-color-{role}-text`: text on the fill
+  - `--iw-color-{role}-emphasis`: the role colour as text or an outline on the page background
+
+  Solid Badges, Avatars, Chips, Buttons, App Bars and Pagination use `-text`. Outline and ghost Buttons, outline Badges, Alerts, Links, Breadcrumbs, Tabs, Bottom Navigation and form error messages use `-emphasis`. `secondary` is now a real role in every theme instead of a fixed gray.
+
+  Some theme colours changed to reach AA. iOS fills are darker under white text, and warning and info use black text. Material UI's warning and info fills are darker. Muted text is darker in Inglorious and iOS. Avatar's automatic colours now always keep their text readable, and an empty `textColor` no longer removes the text colour. Typography's caption no longer fades its text. Backdrop content is readable in light themes. Disabled List items and Combobox controls set `aria-disabled`.
+
+  A custom theme that sets a role colour must also set its `-text` and `-emphasis`.
+
+- Icon has two larger sizes, `xl` (2.25rem) and `2xl` (3rem), and tokens.css adds `--iw-font-size-5xl` (3rem). Avatar also gets `xl` (4rem) and `2xl` (6rem).
+
 ## 9.15.5
 
 ### Patch Changes

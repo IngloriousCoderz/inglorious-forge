@@ -34,7 +34,7 @@ export default {
     },
     size: {
       control: "select",
-      options: ["sm", "md", "lg"],
+      options: ["sm", "md", "lg", "xl", "2xl"],
       description: "Icon size scale.",
     },
     color: {

@@ -4,7 +4,9 @@ import ccMastercard from "@iconify-icons/fa7-brands/cc-mastercard"
 import ccPaypal from "@iconify-icons/fa7-brands/cc-paypal"
 import ccStripe from "@iconify-icons/fa7-brands/cc-stripe"
 import ccVisa from "@iconify-icons/fa7-brands/cc-visa"
-import alternateEmailOutline from "@iconify-icons/material-symbols/alternate-email-outline"
+import facebookF from "@iconify-icons/fa7-brands/facebook-f"
+import linkedinIn from "@iconify-icons/fa7-brands/linkedin-in"
+import youtube from "@iconify-icons/fa7-brands/youtube"
 import businessCenterOutline from "@iconify-icons/material-symbols/business-center-outline"
 import northOutline from "@iconify-icons/material-symbols/north-outline"
 import person2Outline from "@iconify-icons/material-symbols/person-2-outline"
@@ -12,9 +14,7 @@ import personOutline from "@iconify-icons/material-symbols/person-outline"
 import publicOutline from "@iconify-icons/material-symbols/public-outline"
 import southOutline from "@iconify-icons/material-symbols/south-outline"
 import tagOutline from "@iconify-icons/material-symbols/tag-outline"
-import thumbUpOutline from "@iconify-icons/material-symbols/thumb-up-outline"
 import travelExploreOutline from "@iconify-icons/material-symbols/travel-explore-outline"
-import workOutline from "@iconify-icons/material-symbols/work-outline"
 export const statCards = [
   {
     id: "users",
@@ -53,7 +53,7 @@ export const statCards = [
     value: "44K",
     change: "-23.6%",
     trendIcon: southOutline,
-    className: "iw-dashboard-stat-danger",
+    className: "iw-dashboard-stat-error",
     chartType: "bar",
     data: [78, 81, 80, 45, 34, 12, 40, 85, 65, 23, 12, 98, 34, 84, 67, 82],
   },
@@ -98,7 +98,7 @@ export const trafficSummary = [
 
 export const socialCards = [
   {
-    icon: thumbUpOutline,
+    icon: facebookF,
     capClass: "iw-dashboard-social-cap-facebook",
     top: "89k",
     bottom: "459",
@@ -107,16 +107,16 @@ export const socialCards = [
     data: [24, 28, 20, 30, 26, 34, 29],
   },
   {
-    icon: alternateEmailOutline,
-    capClass: "iw-dashboard-social-cap-twitter",
+    icon: youtube,
+    capClass: "iw-dashboard-social-cap-youtube",
     top: "973k",
     bottom: "1.792",
-    topLabel: "followers",
-    bottomLabel: "tweets",
+    topLabel: "subscribers",
+    bottomLabel: "new comments",
     data: [12, 19, 16, 22, 24, 28, 32],
   },
   {
-    icon: workOutline,
+    icon: linkedinIn,
     capClass: "iw-dashboard-social-cap-linkedin",
     top: "500+",
     bottom: "292",

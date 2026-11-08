@@ -43,12 +43,12 @@ export const Avatar = {
     const styles = {}
     if (backgroundColor) {
       styles.background = backgroundColor
-      styles.color = textColor ?? "var(--iw-color-white)"
+      styles.color = textColor || "var(--iw-color-white)"
     } else if (color === "auto") {
       const seed = getAutoSeed(initials, children)
       if (seed) {
         styles.background = hashToHsl(seed)
-        styles.color = textColor ?? "var(--iw-color-white)"
+        styles.color = textColor || "var(--iw-color-white)"
       }
     } else if (textColor) {
       styles.color = textColor
@@ -85,5 +85,5 @@ function hashToHsl(seed) {
   }
 
   const hue = Math.abs(hash) % 360
-  return `hsl(${hue} 65% 45%)`
+  return `oklch(50% 0.12 ${hue})`
 }

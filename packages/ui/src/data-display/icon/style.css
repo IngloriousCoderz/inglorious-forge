@@ -22,6 +22,18 @@
     font-size: var(--iw-font-size-2xl);
   }
 
+  &.iw-icon-xl {
+    min-width: var(--iw-space-10);
+    min-height: var(--iw-space-10);
+    font-size: var(--iw-font-size-4xl);
+  }
+
+  &.iw-icon-2xl {
+    min-width: var(--iw-space-12);
+    min-height: var(--iw-space-12);
+    font-size: var(--iw-font-size-5xl);
+  }
+
   &.iw-icon-rtl {
     scale: -1 1;
   }

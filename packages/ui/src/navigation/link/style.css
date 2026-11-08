@@ -1,14 +1,10 @@
 .iw-link {
-  color: var(--iw-color-primary);
+  color: var(--iw-color-primary-emphasis);
   text-decoration: none;
   text-underline-offset: 0.15em;
   transition:
     color var(--iw-transition-fast),
     text-decoration-color var(--iw-transition-fast);
-}
-
-.iw-link:hover {
-  color: var(--iw-color-primary-hover, var(--iw-color-primary));
 }
 
 .iw-link-underline-always {
@@ -24,7 +20,7 @@
 }
 
 .iw-link-color-primary {
-  color: var(--iw-color-primary);
+  color: var(--iw-color-primary-emphasis);
 }
 
 .iw-link-color-secondary {

@@ -1,3 +1,4 @@
+import groupOutline from "@iconify-icons/material-symbols/group-outline"
 import moreVertOutline from "@iconify-icons/material-symbols/more-vert-outline"
 import { html } from "@inglorious/web"
 
@@ -35,7 +36,7 @@ export const TrafficSalesCard = {
                       {
                         label: "New Clients",
                         value: "9.123",
-                        color: "#39a2f1",
+                        color: "var(--iw-color-info-emphasis)",
                       },
                       api,
                     ),
@@ -44,7 +45,7 @@ export const TrafficSalesCard = {
                       {
                         label: "Recurring Clients",
                         value: "22.643",
-                        color: "#e55353",
+                        color: "var(--iw-color-error-emphasis)",
                       },
                       api,
                     ),
@@ -95,13 +96,17 @@ export const TrafficSalesCard = {
                       {
                         label: "Pageviews",
                         value: "78.623",
-                        color: "#f5a524",
+                        color: "var(--iw-color-warning-emphasis)",
                       },
                       api,
                     ),
                     this.renderKpi(
                       entity,
-                      { label: "Organic", value: "49.123", color: "#2eb85c" },
+                      {
+                        label: "Organic",
+                        value: "49.123",
+                        color: "var(--iw-color-success-emphasis)",
+                      },
                       api,
                     ),
                   ],
@@ -170,6 +175,12 @@ export const TrafficSalesCard = {
 
         ${Table.render({
           columns: [
+            {
+              id: "avatar",
+              title: html`<div class="iw-dashboard-avatar-cell">
+                ${Icon.render({ icon: groupOutline, label: "Avatar" })}
+              </div>`,
+            },
             { id: "user", title: "User" },
             { id: "country", title: "Country" },
             { id: "usage", title: "Usage" },
@@ -178,34 +189,26 @@ export const TrafficSalesCard = {
             { id: "menu", title: "" },
           ],
           rows: userRows.map((row) => ({
-            user: html`
-              ${Flex.render({
-                align: "center",
-                gap: "lg",
-                children: [
-                  html`<span class="iw-dashboard-avatar">
-                    ${Avatar.render({
-                      size: "lg",
-                      color: "auto",
-                      initials: row.initials,
-                    })}
-                    ${Badge.render({
-                      shape: "circle",
-                      ringWidth: "1px",
-                      color: row.status,
-                      className: "iw-dashboard-avatar-badge",
-                      children: "",
-                    })}
-                  </span>`,
-                  html`<div class="iw-typography">
-                    <div>${row.name}</div>
-                    <div class="iw-dashboard-user-subtitle">
-                      ${row.subtitle}
-                    </div>
-                  </div>`,
-                ],
-              })}
-            `,
+            avatar: html`<div class="iw-dashboard-avatar-cell">
+              <span class="iw-dashboard-avatar">
+                ${Avatar.render({
+                  size: "lg",
+                  color: "auto",
+                  initials: row.initials,
+                })}
+                ${Badge.render({
+                  shape: "circle",
+                  ringWidth: "1px",
+                  color: row.status,
+                  className: "iw-dashboard-avatar-badge",
+                  children: "",
+                })}
+              </span>
+            </div>`,
+            user: html`<div class="iw-typography">
+              <div>${row.name}</div>
+              <div class="iw-dashboard-user-subtitle">${row.subtitle}</div>
+            </div>`,
             country: html`<div class="iw-dashboard-country">
               ${row.country}
             </div>`,

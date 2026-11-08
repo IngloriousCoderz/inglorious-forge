@@ -1,7 +1,7 @@
 .iw-backdrop {
   position: fixed;
   inset: 0;
-  background: color-mix(in srgb, var(--iw-color-black) 65%, transparent);
+  background: rgb(0 0 0 / 65%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -15,6 +15,7 @@
   max-width: min(28rem, 90vw);
   padding: var(--iw-space-4) var(--iw-space-5);
   border-radius: var(--iw-radius-md);
+  color: var(--iw-color-text);
   background: color-mix(
     in srgb,
     var(--iw-color-surface, #111) 88%,

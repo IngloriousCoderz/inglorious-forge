@@ -70,12 +70,16 @@ export const StatCard = {
     } else if (entity.chartType === "bar") {
       children.push(Bar({ dataKey: "value", fill: "rgba(255,255,255,0.3)" }))
     } else if (entity.chartType === "line") {
-      children.push(Line({ dataKey: "value", stroke: "white" }))
+      children.push(Line({ dataKey: "value", stroke: "currentColor" }))
     }
 
     if (entity.hasDots) {
       children.push(
-        Dots({ dataKey: "value", stroke: "white", fill: "#39a2f1" }),
+        Dots({
+          dataKey: "value",
+          stroke: "currentColor",
+          fill: "currentColor",
+        }),
       )
     }
 

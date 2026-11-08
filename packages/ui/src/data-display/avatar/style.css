@@ -33,37 +33,49 @@
     font-size: var(--iw-font-size-base);
   }
 
+  &.iw-avatar-xl {
+    width: 4rem;
+    height: 4rem;
+    font-size: var(--iw-font-size-xl);
+  }
+
+  &.iw-avatar-2xl {
+    width: 6rem;
+    height: 6rem;
+    font-size: var(--iw-font-size-3xl);
+  }
+
   &.iw-avatar-square {
     border-radius: var(--iw-radius-sm);
   }
 
   &.iw-avatar-color-primary {
     background: var(--iw-color-primary);
-    color: var(--iw-color-primary-text, var(--iw-color-white));
+    color: var(--iw-color-primary-text);
   }
 
   &.iw-avatar-color-secondary {
-    background: var(--iw-color-gray-400);
-    color: var(--iw-color-text);
+    background: var(--iw-color-secondary);
+    color: var(--iw-color-secondary-text);
   }
 
   &.iw-avatar-color-success {
     background: var(--iw-color-success);
-    color: var(--iw-color-white);
+    color: var(--iw-color-success-text);
   }
 
   &.iw-avatar-color-warning {
     background: var(--iw-color-warning);
-    color: var(--iw-color-white);
+    color: var(--iw-color-warning-text);
   }
 
   &.iw-avatar-color-error {
     background: var(--iw-color-error);
-    color: var(--iw-color-white);
+    color: var(--iw-color-error-text);
   }
 
   &.iw-avatar-color-info {
     background: var(--iw-color-info);
-    color: var(--iw-color-white);
+    color: var(--iw-color-info-text);
   }
 }

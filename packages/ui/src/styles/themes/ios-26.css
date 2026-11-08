@@ -28,24 +28,15 @@
   --iw-color-surface-active: #d1d1d6;
 
   --iw-color-text: var(--iw-color-black);
-  --iw-color-text-secondary: rgba(60, 60, 67, 0.6);
-  --iw-color-text-muted: rgba(60, 60, 67, 0.6);
 
   --iw-color-border: #c6c6c8;
   --iw-color-border-focus: #0088ff;
-
-  --iw-color-primary: #0088ff;
-  --iw-color-primary-hover: color-mix(in srgb, #0088ff 92%, #000000);
-  --iw-color-primary-active: color-mix(in srgb, #0088ff 85%, #000000);
-  --iw-color-primary-text: var(--iw-color-white);
 
   --iw-color-accent: #6155f5;
   --iw-color-accent-hover: color-mix(in srgb, #6155f5 92%, #000000);
   --iw-color-accent-active: color-mix(in srgb, #6155f5 85%, #000000);
 
-  --iw-color-success: #34c759;
   --iw-color-warning: #ff8d28;
-  --iw-color-error: #ff383c;
   --iw-color-info: #00c0e8;
 
   --iw-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -79,7 +70,7 @@
   --iw-button-shadow-hover: var(--iw-ios-sheen);
   --iw-button-shadow-active: var(--iw-ios-sheen);
 
-  --iw-button-default-color: var(--iw-color-primary);
+  --iw-button-default-color: var(--iw-color-primary-emphasis);
   --iw-button-default-bg: var(--iw-ios-glass-bg);
   --iw-button-default-bg-hover: var(--iw-ios-glass-bg);
   --iw-button-default-bg-active: var(--iw-ios-glass-bg);
@@ -127,6 +118,43 @@
   --iw-alert-radius: var(--iw-radius-lg);
   --iw-alert-shadow: none;
   color-scheme: light;
+
+  --iw-color-primary: #0276df;
+  --iw-color-primary-hover: #0268c5;
+  --iw-color-primary-active: #005cb2;
+  --iw-color-primary-text: var(--iw-color-white);
+  --iw-color-primary-emphasis: #014e97;
+
+  --iw-color-secondary: #76767b;
+  --iw-color-secondary-hover: #68686c;
+  --iw-color-secondary-active: #5c5c61;
+  --iw-color-secondary-text: var(--iw-color-white);
+  --iw-color-secondary-emphasis: #5c5c61;
+
+  --iw-color-success: #048933;
+  --iw-color-success-hover: #02782b;
+  --iw-color-success-active: #026b26;
+  --iw-color-success-text: var(--iw-color-white);
+  --iw-color-success-emphasis: #006a25;
+
+  --iw-color-warning-hover: #ffa767;
+  --iw-color-warning-active: #ffba8a;
+  --iw-color-warning-text: var(--iw-color-black);
+  --iw-color-warning-emphasis: #8f4902;
+
+  --iw-color-error: #e91829;
+  --iw-color-error-hover: #d2021f;
+  --iw-color-error-active: #be011a;
+  --iw-color-error-text: var(--iw-color-white);
+  --iw-color-error-emphasis: #b20118;
+
+  --iw-color-info-hover: #30d0f9;
+  --iw-color-info-active: #60dcff;
+  --iw-color-info-text: var(--iw-color-black);
+  --iw-color-info-emphasis: #04647a;
+
+  --iw-color-text-muted: #65656b;
+  --iw-color-text-secondary: #65656b;
 }
 
 .iw-theme-ios-26.iw-theme-dark {
@@ -148,27 +176,48 @@
   --iw-color-surface: #1c1c1e;
   --iw-color-surface-active: #3a3a3c;
   --iw-color-text: var(--iw-color-white);
-  --iw-color-text-secondary: rgba(235, 235, 245, 0.6);
-  --iw-color-text-muted: rgba(235, 235, 245, 0.6);
   --iw-color-border: #38383a;
 
-  --iw-color-primary: #0091ff;
-  --iw-color-primary-hover: color-mix(in srgb, #0091ff 88%, #ffffff);
-  --iw-color-primary-active: color-mix(in srgb, #0091ff 80%, #ffffff);
   --iw-color-border-focus: #0091ff;
 
   --iw-color-accent: #6d7cff;
   --iw-color-accent-hover: color-mix(in srgb, #6d7cff 88%, #ffffff);
   --iw-color-accent-active: color-mix(in srgb, #6d7cff 80%, #ffffff);
 
-  --iw-color-success: #30d158;
   --iw-color-warning: #ff9230;
-  --iw-color-error: #ff4245;
   --iw-color-info: #3cd3fe;
 
   --iw-input-text-placeholder: rgba(235, 235, 245, 0.3);
 
   --iw-drawer-bg: #1c1c1e;
+
+  --iw-color-primary: #0078d5;
+  --iw-color-primary-hover: #0369bc;
+  --iw-color-primary-active: #035ea8;
+  --iw-color-primary-emphasis: #5cacff;
+
+  --iw-color-secondary-emphasis: #9c9ca1;
+
+  --iw-color-success: #048930;
+  --iw-color-success-hover: #017829;
+  --iw-color-success-active: #016b23;
+  --iw-color-success-emphasis: #30d158;
+
+  --iw-color-warning-hover: #ffac6c;
+  --iw-color-warning-active: #ffbf8f;
+  --iw-color-warning-emphasis: #ff9230;
+
+  --iw-color-error: #e62330;
+  --iw-color-error-hover: #d20122;
+  --iw-color-error-active: #be001d;
+  --iw-color-error-emphasis: #ff847c;
+
+  --iw-color-info-hover: #82dfff;
+  --iw-color-info-active: #a9e9ff;
+  --iw-color-info-emphasis: #3cd3fe;
+
+  --iw-color-text-muted: #a5a5ab;
+  --iw-color-text-secondary: #a5a5ab;
 }
 
 .iw-theme-ios-26 {
@@ -204,21 +253,6 @@
       --iw-button-shadow-hover: var(--iw-ios-glass-shadow);
     }
 
-    &.iw-button-secondary {
-      --iw-button-color: var(--iw-ios-gray);
-      --iw-button-bg: var(--iw-ios-gray);
-      --iw-button-bg-hover: color-mix(in srgb, var(--iw-ios-gray) 90%, #000);
-      --iw-button-border: transparent;
-    }
-
-    &.iw-button-secondary,
-    &.iw-button-success,
-    &.iw-button-warning,
-    &.iw-button-error,
-    &.iw-button-info {
-      --iw-button-text: var(--iw-color-white);
-    }
-
     &.iw-button-primary,
     &.iw-button-secondary,
     &.iw-button-success,
@@ -226,12 +260,9 @@
     &.iw-button-error,
     &.iw-button-info {
       --iw-button-border: transparent;
-      --iw-button-bg-hover: color-mix(in srgb, var(--iw-button-bg) 90%, #000);
-      --iw-button-bg-active: var(--iw-button-bg);
     }
 
-    &:active:not(:disabled),
-    &.iw-button-pressed {
+    &:active:not(:disabled) {
       filter: brightness(1.12);
     }
 
@@ -248,13 +279,13 @@
         var(--iw-button-color) 15%,
         transparent
       );
-      color: var(--iw-button-color);
+      color: var(--iw-button-emphasis, var(--iw-button-color));
       backdrop-filter: none;
 
       &:hover:not(:disabled),
       &:active:not(:disabled),
       &.iw-button-pressed {
-        color: var(--iw-button-color);
+        color: var(--iw-button-emphasis, var(--iw-button-color));
         background-color: color-mix(
           in srgb,
           var(--iw-button-color) 22%,
@@ -269,7 +300,7 @@
       &:hover:not(:disabled),
       &:active:not(:disabled),
       &.iw-button-pressed {
-        color: var(--iw-button-color);
+        color: var(--iw-button-emphasis, var(--iw-button-color));
         background-color: var(--iw-ios-fill-quaternary);
       }
     }
@@ -670,7 +701,7 @@
   }
 
   .iw-bottom-navigation-action-selected {
-    color: var(--iw-color-primary);
+    color: var(--iw-color-primary-emphasis);
     background: var(--iw-ios-fill);
   }
 

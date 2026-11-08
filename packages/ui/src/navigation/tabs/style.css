@@ -29,8 +29,8 @@
 }
 
 .iw-tab-selected {
-  color: var(--iw-color-primary);
-  border-bottom-color: var(--iw-color-primary);
+  color: var(--iw-color-primary-emphasis);
+  border-bottom-color: var(--iw-color-primary-emphasis);
 }
 
 .iw-tab-panel {

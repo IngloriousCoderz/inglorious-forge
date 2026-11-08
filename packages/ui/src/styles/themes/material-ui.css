@@ -23,7 +23,6 @@
   --iw-color-primary: #1976d2;
   --iw-color-primary-hover: #1565c0;
   --iw-color-primary-active: #1565c0;
-  --iw-color-primary-text: var(--iw-color-white);
 
   --iw-color-accent: #9c27b0;
   --iw-color-accent-hover: #7b1fa2;
@@ -31,11 +30,9 @@
 
   --iw-color-success: #2e7d32;
   --iw-color-success-dark: #1b5e20;
-  --iw-color-warning: #ed6c02;
   --iw-color-warning-dark: #e65100;
   --iw-color-error: #d32f2f;
   --iw-color-error-dark: #c62828;
-  --iw-color-info: #0288d1;
   --iw-color-info-dark: #01579b;
 
   --iw-shadow-sm:
@@ -114,6 +111,37 @@
   --iw-alert-radius: var(--iw-radius-md);
   --iw-alert-shadow: none;
   color-scheme: light;
+
+  --iw-color-primary-text: var(--iw-color-white);
+  --iw-color-primary-emphasis: #035dad;
+
+  --iw-color-secondary: #9c27b0;
+  --iw-color-secondary-hover: #8c0da0;
+  --iw-color-secondary-active: #7d018f;
+  --iw-color-secondary-text: var(--iw-color-white);
+  --iw-color-secondary-emphasis: #9721ab;
+
+  --iw-color-success-hover: #1c6e23;
+  --iw-color-success-active: #096216;
+  --iw-color-success-text: var(--iw-color-white);
+  --iw-color-success-emphasis: #1a6c21;
+
+  --iw-color-warning: #c25703;
+  --iw-color-warning-hover: #ac4c04;
+  --iw-color-warning-active: #9b4401;
+  --iw-color-warning-text: var(--iw-color-white);
+  --iw-color-warning-emphasis: #994403;
+
+  --iw-color-error-hover: #c1161f;
+  --iw-color-error-active: #b10114;
+  --iw-color-error-text: var(--iw-color-white);
+  --iw-color-error-emphasis: #b40416;
+
+  --iw-color-info: #047cbf;
+  --iw-color-info-hover: #036da9;
+  --iw-color-info-active: #036197;
+  --iw-color-info-text: var(--iw-color-white);
+  --iw-color-info-emphasis: #036197;
 }
 
 .iw-theme-material-ui.iw-theme-dark {
@@ -133,7 +161,6 @@
   --iw-color-primary: #90caf9;
   --iw-color-primary-hover: #42a5f5;
   --iw-color-primary-active: #42a5f5;
-  --iw-color-primary-text: rgba(0, 0, 0, 0.87);
 
   --iw-color-border-focus: #90caf9;
 
@@ -164,6 +191,35 @@
     var(--iw-color-primary) 16%,
     transparent
   );
+
+  --iw-color-primary-text: #000000de;
+  --iw-color-primary-emphasis: #90caf9;
+
+  --iw-color-secondary: #ce93d8;
+  --iw-color-secondary-hover: #dea3e9;
+  --iw-color-secondary-active: #ecaff6;
+  --iw-color-secondary-text: #000000de;
+  --iw-color-secondary-emphasis: #ce93d8;
+
+  --iw-color-success-hover: #76cb79;
+  --iw-color-success-active: #83d886;
+  --iw-color-success-text: #000000de;
+  --iw-color-success-emphasis: #66bb6a;
+
+  --iw-color-warning-hover: #ffbf72;
+  --iw-color-warning-active: #ffd09c;
+  --iw-color-warning-text: #000000de;
+  --iw-color-warning-emphasis: #ffa726;
+
+  --iw-color-error-hover: #ff5f4f;
+  --iw-color-error-active: #ff7a6a;
+  --iw-color-error-text: #000000de;
+  --iw-color-error-emphasis: #ff7a6a;
+
+  --iw-color-info-hover: #57c5ff;
+  --iw-color-info-active: #7fd0fe;
+  --iw-color-info-text: #000000de;
+  --iw-color-info-emphasis: #29b6f6;
 }
 
 .iw-theme-material-ui {
@@ -190,21 +246,6 @@
     &.iw-button-xs {
       padding: 0.125rem 0.5rem;
       font-size: 0.75rem;
-    }
-
-    &.iw-button-secondary {
-      --iw-button-color: var(--iw-color-accent);
-      --iw-button-bg: var(--iw-color-accent);
-      --iw-button-bg-hover: var(--iw-color-accent-hover);
-      --iw-button-border: var(--iw-color-accent);
-    }
-
-    &.iw-button-secondary,
-    &.iw-button-success,
-    &.iw-button-warning,
-    &.iw-button-error,
-    &.iw-button-info {
-      --iw-button-text: var(--iw-color-primary-text);
     }
 
     &.iw-button-default,
@@ -264,7 +305,7 @@
 
       &:active:not(:disabled),
       &.iw-button-pressed {
-        color: var(--iw-button-color);
+        color: var(--iw-button-emphasis, var(--iw-button-color));
         background-color: color-mix(
           in srgb,
           var(--iw-button-color) 12%,
@@ -314,7 +355,7 @@
       .iw-input-label,
       .iw-select-label,
       .iw-textarea-label {
-        color: var(--iw-color-primary);
+        color: var(--iw-color-primary-emphasis);
       }
     }
 
@@ -337,7 +378,7 @@
   .iw-select:has(.iw-select-control-error) {
     .iw-input-label,
     .iw-select-label {
-      color: var(--iw-color-error);
+      color: var(--iw-color-error-emphasis);
     }
   }
 
@@ -427,7 +468,7 @@
   }
 
   .iw-tab-selected {
-    color: var(--iw-color-primary);
+    color: var(--iw-color-primary-emphasis);
   }
 
   .iw-chip {
@@ -441,37 +482,34 @@
       padding-inline: 0.5rem;
     }
 
-    &.iw-chip-primary,
-    &.iw-chip-secondary,
-    &.iw-chip-success,
-    &.iw-chip-warning,
-    &.iw-chip-error,
-    &.iw-chip-info {
+    &.iw-chip-primary {
+      background: var(--iw-color-primary);
       color: var(--iw-color-primary-text);
     }
 
-    &.iw-chip-primary {
-      background: var(--iw-color-primary);
-    }
-
     &.iw-chip-secondary {
-      background: var(--iw-color-accent);
+      background: var(--iw-color-secondary);
+      color: var(--iw-color-secondary-text);
     }
 
     &.iw-chip-success {
       background: var(--iw-color-success);
+      color: var(--iw-color-success-text);
     }
 
     &.iw-chip-warning {
       background: var(--iw-color-warning);
+      color: var(--iw-color-warning-text);
     }
 
     &.iw-chip-error {
       background: var(--iw-color-error);
+      color: var(--iw-color-error-text);
     }
 
     &.iw-chip-info {
       background: var(--iw-color-info);
+      color: var(--iw-color-info-text);
     }
 
     &.iw-chip-selected {

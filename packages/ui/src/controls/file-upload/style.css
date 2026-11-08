@@ -15,7 +15,7 @@
   }
 
   .iw-upload-required {
-    color: var(--iw-color-error);
+    color: var(--iw-color-error-emphasis);
     margin-left: var(--iw-space-1);
   }
 
@@ -98,6 +98,6 @@
   }
 
   .iw-upload-error-message {
-    color: var(--iw-color-error);
+    color: var(--iw-color-error-emphasis);
   }
 }

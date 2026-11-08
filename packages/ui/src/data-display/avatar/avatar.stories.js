@@ -18,7 +18,7 @@ export default {
     },
     size: {
       control: "select",
-      options: ["sm", "md", "lg"],
+      options: ["sm", "md", "lg", "xl", "2xl"],
       description: "Avatar size scale.",
     },
     shape: {

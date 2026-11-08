@@ -49,6 +49,32 @@
   --iw-color-info: #3b82f6;
   --iw-color-info-dark: #1e40af;
 
+  --iw-color-secondary: #52525b;
+  --iw-color-secondary-hover: #45454d;
+  --iw-color-secondary-active: #3a3a43;
+  --iw-color-secondary-text: var(--iw-color-white);
+  --iw-color-secondary-emphasis: #52525b;
+
+  --iw-color-success-hover: #32c990;
+  --iw-color-success-active: #45d69c;
+  --iw-color-success-text: var(--iw-color-black);
+  --iw-color-success-emphasis: #036e4b;
+
+  --iw-color-warning-hover: #ffb24e;
+  --iw-color-warning-active: #ffc47e;
+  --iw-color-warning-text: var(--iw-color-black);
+  --iw-color-warning-emphasis: #875501;
+
+  --iw-color-error-hover: #ff5956;
+  --iw-color-error-active: #ff766f;
+  --iw-color-error-text: var(--iw-color-black);
+  --iw-color-error-emphasis: #b9041c;
+
+  --iw-color-info-hover: #5193ff;
+  --iw-color-info-active: #68a2ff;
+  --iw-color-info-text: var(--iw-color-black);
+  --iw-color-info-emphasis: #0f59ca;
+
   --iw-space-0: 0;
   --iw-space-1: 0.25rem;
   --iw-space-2: 0.5rem;
@@ -93,6 +119,7 @@
   --iw-font-size-2xl: 1.5rem;
   --iw-font-size-3xl: 1.875rem;
   --iw-font-size-4xl: 2.25rem;
+  --iw-font-size-5xl: 3rem;
 
   --iw-font-weight-normal: 400;
   --iw-font-weight-medium: 500;

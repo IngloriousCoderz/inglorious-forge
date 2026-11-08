@@ -16,7 +16,7 @@
   }
 
   .iw-input-required {
-    color: var(--iw-color-error);
+    color: var(--iw-color-error-emphasis);
     margin-inline-start: var(--iw-space-1);
   }
 
@@ -105,6 +105,6 @@
   }
 
   .iw-input-error-message {
-    color: var(--iw-color-error);
+    color: var(--iw-color-error-emphasis);
   }
 }

@@ -5,7 +5,7 @@ export interface AvatarProps {
   src?: string
   alt?: string
   initials?: string
-  size?: "sm" | "md" | "lg"
+  size?: "sm" | "md" | "lg" | "xl" | "2xl"
   shape?: "circle" | "square"
   color?:
     | "default"

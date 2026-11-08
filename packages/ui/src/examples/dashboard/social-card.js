@@ -14,7 +14,7 @@ export const SocialCard = {
       headerPadding: "none",
       header: html`
         <div class="iw-dashboard-social-cap ${entity.capClass}">
-          ${Icon.render({ icon: entity.icon, size: "lg" })}
+          ${Icon.render({ icon: entity.icon, size: "2xl" })}
           <div class="iw-dashboard-social-chart">
             ${this.renderAreaSpark(entity, api)}
           </div>

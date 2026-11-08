@@ -9,7 +9,7 @@
 }
 
 .iw-breadcrumbs-link {
-  color: var(--iw-color-primary);
+  color: var(--iw-color-primary-emphasis);
   text-decoration: none;
 }
 

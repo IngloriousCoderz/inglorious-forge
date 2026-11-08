@@ -47,7 +47,7 @@
   top: 0;
   z-index: 10;
   background: var(--iw-color-surface);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--iw-color-border);
   backdrop-filter: blur(10px);
   transition:
     background-color var(--iw-transition-slow),
@@ -76,29 +76,31 @@
   transition: background-color var(--iw-transition-slow);
 }
 
-.iw-dashboard-stat {
+.iw-card.iw-dashboard-stat > .iw-card-body {
   overflow: hidden;
-  color: white;
+  background: var(--iw-dashboard-stat-bg);
+  color: var(--iw-color-white);
 
   .iw-typography,
-  .iw-icon,
-  .iw-button,
-  .iw-button .iw-icon {
-    color: white;
+  .iw-button {
+    color: inherit;
   }
 }
 
-.iw-card.iw-dashboard-stat-primary > .iw-card-body {
-  background: #5856d6;
+.iw-dashboard-stat-primary {
+  --iw-dashboard-stat-bg: #5856d6;
 }
-.iw-card.iw-dashboard-stat-info > .iw-card-body {
-  background: #39a2f1;
+
+.iw-dashboard-stat-info {
+  --iw-dashboard-stat-bg: #0076d6;
 }
-.iw-card.iw-dashboard-stat-warning > .iw-card-body {
-  background: #f5a524;
+
+.iw-dashboard-stat-warning {
+  --iw-dashboard-stat-bg: #f9b115;
 }
-.iw-card.iw-dashboard-stat-danger > .iw-card-body {
-  background: #e55353;
+
+.iw-dashboard-stat-error {
+  --iw-dashboard-stat-bg: #d14043;
 }
 
 .iw-dashboard-stat-top {
@@ -163,8 +165,8 @@
       background: #3b5998;
     }
 
-    &.iw-dashboard-social-cap-twitter {
-      background: #00aced;
+    &.iw-dashboard-social-cap-youtube {
+      background: #ff0000;
     }
 
     &.iw-dashboard-social-cap-linkedin {
@@ -191,6 +193,10 @@
 
 .iw-dashboard-social-stats {
   text-align: center;
+
+  .iw-typography-caption {
+    text-transform: uppercase;
+  }
 }
 
 .iw-dashboard-kpi {
@@ -201,7 +207,7 @@
 .iw-dashboard-divider {
   margin: var(--iw-space-4) 0;
   border: 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid var(--iw-color-border);
 }
 
 .iw-primitive-example {
@@ -296,6 +302,10 @@
   display: inline-flex;
 }
 
+.iw-dashboard-avatar-cell {
+  text-align: center;
+}
+
 .iw-dashboard-avatar-badge {
   position: absolute;
   right: 0;
@@ -317,7 +327,7 @@
 
 .iw-dashboard-footer {
   color: var(--iw-color-text-secondary);
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid var(--iw-color-border);
 }
 
 @media (max-width: 80rem) {

@@ -91,7 +91,7 @@
   }
 
   &.iw-chip-secondary {
-    background: color-mix(in srgb, var(--iw-color-gray-600) 20%, transparent);
+    background: color-mix(in srgb, var(--iw-color-secondary) 20%, transparent);
   }
 
   &.iw-chip-success {

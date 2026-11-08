@@ -24,7 +24,7 @@
 }
 
 .iw-bottom-navigation-action-selected {
-  color: var(--iw-color-primary);
+  color: var(--iw-color-primary-emphasis);
 }
 
 .iw-bottom-navigation-label {

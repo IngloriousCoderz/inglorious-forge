@@ -22,7 +22,7 @@ export interface IconProps {
   icon?: IconData
   /** Shown when there is no `icon`: an emoji, a glyph, any markup. */
   children?: Renderable
-  size?: "sm" | "md" | "lg"
+  size?: "sm" | "md" | "lg" | "xl" | "2xl"
   color?: string
   /**
    * The direction of the text the icon sits in. An icon that points along the
