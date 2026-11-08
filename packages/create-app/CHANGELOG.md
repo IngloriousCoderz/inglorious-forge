@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.16.0
+
+### Minor Changes
+
+- With Inglorious UI, generated apps register the `Toast` type and render its `toast` entity beside the app, so `api.notify("#toast:show", { message, color })` shows a toast from anywhere.
+
 ## 1.15.0
 
 ### Minor Changes

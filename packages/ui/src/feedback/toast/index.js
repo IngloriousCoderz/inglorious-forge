@@ -1,6 +1,7 @@
 /**
  * @typedef {import('../../../types/feedback/toast').ToastProps} ToastProps
  * @typedef {import('../../../types/feedback/toast').ToastItem} ToastItem
+ * @typedef {import('../../../types/feedback/toast').ToastEntity} ToastEntity
  * @typedef {import('@inglorious/web').TemplateResult} TemplateResult
  */
 
@@ -14,19 +15,83 @@ import { Icon } from "../../data-display/icon/index.js"
 import { syncPopover } from "../../shared/top-layer.js"
 
 const DEFAULT_DURATION_MS = 5000
+const DEFAULT_MAX = 3
+const FIRST_ID = 1
 const FIRST_INDEX = 0
 const LEAVING = "iw-toast-leaving"
 
 export const Toast = {
   /**
-   * Renders a stack of toasts in a corner of the screen. The app owns the
-   * list: the newest first, closest to the edge. Each toast closes itself
-   * after its duration through `onClose(id)`; hovering or focusing it pauses
-   * the countdown. A manual popover, so it shows above an open modal dialog.
+   * Initializes a toast stack entity.
+   * @param {ToastEntity} entity
+   */
+  create(entity) {
+    entity.toasts ??= []
+    entity.max ??= DEFAULT_MAX
+    entity.nextId ??= FIRST_ID
+  },
+
+  /**
+   * Shows a toast on top of the stack, dropping the oldest beyond `max`. A
+   * toast without an id gets one. Fields the toast does not use, such as
+   * where it leads, stay on it for the app's handlers.
+   * @param {ToastEntity} entity
+   * @param {import('../../../types/feedback/toast').NewToast} toast
+   */
+  show(entity, toast) {
+    const id = toast.id ?? entity.nextId
+    if (toast.id === undefined) entity.nextId += 1
+    entity.toasts = [
+      { ...toast, id },
+      ...entity.toasts.filter((item) => item.id !== id),
+    ].slice(FIRST_INDEX, entity.max)
+  },
+
+  /**
+   * Removes a toast: sent by the toast itself after its exit.
+   * @param {ToastEntity} entity
+   * @param {ToastItem["id"]} id
+   */
+  close(entity, id) {
+    entity.toasts = entity.toasts.filter((toast) => toast.id !== id)
+  },
+
+  /**
+   * Removes every toast at once.
+   * @param {ToastEntity} entity
+   */
+  clear(entity) {
+    entity.toasts = []
+  },
+
+  /**
+   * Renders the entity's stack. Closing a toast notifies `#id:close`; a type
+   * that defines an `open` handler also makes toasts buttons that notify
+   * `#id:open` with the toast's id.
+   * @param {ToastEntity} entity
+   * @param {import('@inglorious/web').Api} api
+   * @returns {TemplateResult | null}
+   */
+  render(entity, api) {
+    const id = entity.id
+    return this.renderToaster({
+      ...entity,
+      onClose: (toastId) => api.notify(`#${id}:close`, toastId),
+      onClick: this.open
+        ? (toastId) => api.notify(`#${id}:open`, toastId)
+        : undefined,
+    })
+  },
+
+  /**
+   * Renders a stack of toasts in a corner of the screen, from props: the
+   * newest first, closest to the edge. Each toast closes itself after its
+   * duration through `onClose(id)`; hovering or focusing it pauses the
+   * countdown. A manual popover, so it shows above an open modal dialog.
    * @param {ToastProps} props
    * @returns {TemplateResult | null}
    */
-  render(props) {
+  renderToaster(props) {
     const { toasts = [], position = "top-right", className = "" } = props
     if (!toasts.length) return null
 

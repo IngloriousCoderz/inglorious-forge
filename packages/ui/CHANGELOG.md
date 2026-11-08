@@ -1,5 +1,13 @@
 # @inglorious/ui
 
+## 9.18.0
+
+### Minor Changes
+
+- `Toast` is now also an entity type: register it, add an entity such as `toasts: { type: "Toast" }`, render it once, and show toasts from anywhere with `api.notify("#toasts:show", { message, color })`. The entity keeps at most `max` toasts (3 by default), and handles `close(id)` and `clear()`. A type extending it with an `open` handler makes toasts clickable.
+
+  The props renderer is now `Toast.renderToaster(props)`: `Toast.render` takes the entity.
+
 ## 9.17.0
 
 ### Minor Changes

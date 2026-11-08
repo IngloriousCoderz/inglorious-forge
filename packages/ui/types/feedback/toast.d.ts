@@ -1,9 +1,12 @@
 import type { IconData } from "../data-display/icon"
-import type { TemplateResult } from "@inglorious/web"
+import type { Api, TemplateResult } from "@inglorious/web"
 
-export interface ToastItem {
+/** A toast as `show` takes it: without an id, one is assigned. */
+export interface NewToast {
+  /** Other fields stay on the toast, for the app's own handlers. */
+  [key: string]: unknown
   /** Identifies the toast for `onClose` and `onClick`, and keeps its animation across renders. */
-  id: string | number
+  id?: string | number
   title?: TemplateResult | string
   message: TemplateResult | string | number
   color?:
@@ -17,6 +20,10 @@ export interface ToastItem {
   icon?: IconData
   /** Milliseconds before it closes itself; `null` keeps it until closed. Defaults to the stack's `duration`. */
   duration?: number | null
+}
+
+export interface ToastItem extends NewToast {
+  id: string | number
 }
 
 export interface ToastProps {
@@ -43,9 +50,25 @@ export interface ToastProps {
   [key: string]: unknown
 }
 
+export interface ToastEntity extends Omit<ToastProps, "onClose" | "onClick"> {
+  id: string
+  type: string
+  toasts: ToastItem[]
+  /** How many toasts show at once; the oldest go first. Defaults to 3. */
+  max: number
+  nextId: number
+}
+
 export type ToastType = {
-  render(props: ToastProps): TemplateResult | null
-  renderToast(toast: ToastItem, props: ToastProps): TemplateResult
+  create(entity: ToastEntity): void
+  /** Shows a toast on top, giving it an id when it has none. */
+  show(entity: ToastEntity, toast: NewToast): void
+  close(entity: ToastEntity, id: ToastItem["id"]): void
+  clear(entity: ToastEntity): void
+  /** Defined by an extending type, it makes toasts clickable. */
+  open?(entity: ToastEntity, id: ToastItem["id"], api: Api): void
+  render(entity: ToastEntity, api: Api): TemplateResult | null
+  renderToaster(props: ToastProps): TemplateResult | null
 }
 
 export declare const Toast: ToastType

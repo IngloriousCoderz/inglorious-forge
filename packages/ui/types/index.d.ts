@@ -170,4 +170,10 @@ export type { LoadStatusProps, LoadStatusType } from "./feedback/load-status"
 export type { ProgressProps, ProgressType } from "./feedback/progress"
 export type { SkeletonProps, SkeletonType } from "./feedback/skeleton"
 export type { SnackbarProps, SnackbarType } from "./feedback/snackbar"
-export type { ToastItem, ToastProps, ToastType } from "./feedback/toast"
+export type {
+  NewToast,
+  ToastEntity,
+  ToastItem,
+  ToastProps,
+  ToastType,
+} from "./feedback/toast"

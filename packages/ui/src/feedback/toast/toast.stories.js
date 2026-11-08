@@ -2,9 +2,10 @@ import checkCircleOutline from "@iconify-icons/material-symbols/check-circle-out
 import infoOutline from "@iconify-icons/material-symbols/info-outline"
 import warningOutline from "@iconify-icons/material-symbols/warning-outline"
 import { html } from "@inglorious/web"
+import { render } from "@inglorious/web/test"
 
 import { Button } from "../../controls/button/index.js"
-import { createEntityRender, createRender } from "../../stories/notify-story.js"
+import { createEntityRender } from "../../stories/notify-story.js"
 import { Toast } from "."
 
 const DEMO_COLORS = ["success", "info", "warning", "default", "error"]
@@ -16,31 +17,22 @@ const DEMO_MESSAGES = [
   "Couldn't upload the photo",
 ]
 
-// A store-backed stack, so toasts really leave it when they close.
+// The Toast entity with buttons that show demo toasts.
 const ToastDemo = {
-  create(entity) {
-    entity.toasts ??= []
-    entity.nextId ??= 1
-  },
+  ...Toast,
 
   add(entity, count) {
     for (let added = 0; added < count; added += 1) {
-      const id = entity.nextId
-      entity.nextId += 1
-      const pick = id % DEMO_COLORS.length
-      entity.toasts = [
-        { id, message: DEMO_MESSAGES[pick], color: DEMO_COLORS[pick] },
-        ...entity.toasts,
-      ]
+      const pick = entity.nextId % DEMO_COLORS.length
+      Toast.show(entity, {
+        message: DEMO_MESSAGES[pick],
+        color: DEMO_COLORS[pick],
+      })
     }
   },
 
-  remove(entity, id) {
-    entity.toasts = entity.toasts.filter((toast) => toast.id !== id)
-  },
-
   render(entity, api) {
-    const { id, toasts, duration, position } = entity
+    const id = entity.id
     return html`
       ${Button.render({
         children: "Add one",
@@ -51,12 +43,7 @@ const ToastDemo = {
         variant: "outline",
         onClick: () => api.notify(`#${id}:add`, 3),
       })}
-      ${Toast.render({
-        toasts,
-        duration,
-        position,
-        onClose: (toastId) => api.notify(`#${id}:remove`, toastId),
-      })}
+      ${Toast.render.call(this, entity, api)}
     `
   },
 }
@@ -64,7 +51,11 @@ const ToastDemo = {
 export default {
   title: "Feedback/Toast",
   tags: ["autodocs"],
-  render: createRender(Toast),
+  render: (args) => {
+    const container = document.createElement("div")
+    render(Toast.renderToaster(args), container)
+    return container
+  },
   argTypes: {
     position: {
       control: "select",
@@ -130,6 +121,7 @@ export const SelfClosing = {
     type: "ToastDemo",
     position: "top-right",
     duration: 4000,
+    max: 5,
     toasts: [],
   },
 }
@@ -142,6 +134,7 @@ export const Sticky = {
     type: "ToastDemo",
     position: "top-right",
     duration: null,
+    max: 5,
     nextId: 5,
     toasts: [4, 3, 2, 1].map((id) => ({
       id,

@@ -20,7 +20,7 @@ For the JavaScript and TypeScript Vite templates, the CLI then asks about the ap
 
 | Question                  | Flag                                                                     | Adds                                                                                                       |
 | ------------------------- | ------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
-| Use Inglorious UI?        | `--ui` / `--no-ui`                                                       | `@inglorious/ui`, its base styles and an app bar                                                           |
+| Use Inglorious UI?        | `--ui` / `--no-ui`                                                       | `@inglorious/ui`, its base styles, an app bar and toasts (`api.notify("#toast:show", { message })`)        |
 | Which theme?              | `--theme=inglorious\|material-ui\|material-3\|bootstrap\|ios-18\|ios-26` | The theme's stylesheet and class                                                                           |
 | Is it a mobile app?       | `--mobile` / `--no-mobile`                                               | Capacitor for Android and iOS; with Inglorious UI, a bottom tab bar and safe-area spacing                  |
 | Add routing?              | `--routing` / `--no-routing`                                             | The Router, a home and an about page, and navigation between them                                          |

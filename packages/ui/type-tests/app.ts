@@ -41,6 +41,7 @@ import {
   type VirtualListEntity,
 } from "../types/data-display/virtual-list"
 import { Tabs } from "../types/navigation/tabs"
+import { Toast, type ToastEntity } from "../types/feedback/toast"
 import { withTransitions } from "../types/navigation/view-transitions"
 
 interface GridEntity extends DataGridProps<{ name: string }> {
@@ -57,13 +58,19 @@ interface CounterEntity extends BaseEntity {
   value: number
 }
 
-type AppEntity = GridEntity | CropperEntity | ListEntity | CounterEntity
+interface AppToastEntity extends ToastEntity {
+  type: "Toast"
+}
+
+type AppEntity =
+  GridEntity | CropperEntity | ListEntity | CounterEntity | AppToastEntity
 
 interface AppState extends EntitiesState<AppEntity> {
   grid: GridEntity
   cropper: CropperEntity
   list: ListEntity
   counter: CounterEntity
+  toasts: AppToastEntity
 }
 
 type AppApi = Api<AppEntity, AppState>
@@ -84,9 +91,19 @@ const Counter = {
 } satisfies EntityType<CounterEntity, AppApi>
 
 export const store = createStore<AppEntity, AppState>({
-  types: { DataGrid, Cropper: ImageCropper, List: VirtualList, Counter },
+  types: {
+    DataGrid,
+    Cropper: ImageCropper,
+    List: VirtualList,
+    Counter,
+    Toast,
+  },
   entities: { counter: { type: "Counter", value: 0 } },
 })
+declare const toasts: AppToastEntity
+Toast.show(toasts, { message: "Saved", color: "success", path: "/jobs" })
+// @ts-expect-error: a toast has a message
+Toast.show(toasts, { color: "success" })
 
 export const transitioned = createStore<AppEntity, AppState>({
   types: { Counter },

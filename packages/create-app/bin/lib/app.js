@@ -204,7 +204,7 @@ function mainSource(app) {
   }
   imports.push(`import "${relative("src", app.layout.app)}/style.css"`)
   imports.push(
-    `import { ${app.hasPrompts ? "html, mount" : "mount"} } from "@inglorious/web"`,
+    `import { ${app.hasPrompts || app.ui ? "html, mount" : "mount"} } from "@inglorious/web"`,
     componentImport(app, "App", relative("src", app.layout.app)),
     'import { store } from "./store"',
   )
@@ -231,8 +231,8 @@ function mainSource(app) {
     "store",
     app.nativeUpdate
       ? "renderApp"
-      : app.hasPrompts
-        ? "(api) => html`${App.render(null, api)} ${renderPrompts(api)}`"
+      : app.hasPrompts || app.ui
+        ? `(api) => html\`${appParts(app)}\``
         : "(api) => App.render(null, api)",
     app.isTypeScript
       ? 'document.getElementById("root")!'
@@ -269,7 +269,7 @@ function renderApp(api${app.isTypeScript ? ": AppApi" : ""}) {
   return html\`\${when(
     api.getEntity("nativeUpdate")${app.isTypeScript ? "!" : ""}.isUpdateRequired,
     () => api.render("nativeUpdate"),
-    () => html\`\${App.render(null, api)} \${renderPrompts(api)}\`,
+    () => html\`${appParts(app)}\`,
   )}\`
 }`
     : ""
@@ -278,6 +278,15 @@ function renderApp(api${app.isTypeScript ? ": AppApi" : ""}) {
 
 ${body}${session}${appLinks}${nativeUpdate}
 `
+}
+
+// What renders beside the app: the consent and permission prompts, and the
+// toast stack.
+function appParts(app) {
+  const parts = ["${App.render(null, api)}"]
+  if (app.hasPrompts) parts.push("${renderPrompts(api)}")
+  if (app.ui) parts.push('${api.render("toast")}')
+  return parts.join(" ")
 }
 
 function afterReady(args) {
@@ -295,6 +304,7 @@ function uiComponents(app) {
   if (app.icons.length) names.push("icon")
   if (app.i18n) names.push("select")
   if (app.hasPrompts) names.push("snackbar", "button", "flex")
+  names.push("toast")
   return names
 }
 
@@ -425,6 +435,7 @@ function storeSource(app) {
       `import { NativeUpdate } from "${relative("src/store", app.layout.nativeUpdate)}"`,
     )
   }
+  if (app.ui) imports.push('import { Toast } from "@inglorious/ui/toast"')
 
   const types = ["Message", "Home"]
   if (app.routing) types.push("About", "Router")
@@ -432,6 +443,7 @@ function storeSource(app) {
   if (app.analytics) types.push("Analytics")
   if (app.push) types.push("PushPrompt")
   if (app.nativeUpdate) types.push("NativeUpdate")
+  if (app.ui) types.push("Toast")
   const oneLine = `  types: { ${types.join(", ")} },`
   const typesValue =
     oneLine.length <= LINE_WIDTH
@@ -460,6 +472,7 @@ function singletons(app) {
   if (app.analytics) ids.push("analytics")
   if (app.push) ids.push("pushPrompt")
   if (app.nativeUpdate) ids.push("nativeUpdate")
+  if (app.ui) ids.push("toast")
   return ids
 }
 
@@ -621,6 +634,20 @@ function typesSource(app) {
 }`,
     )
     state.push("  nativeUpdate: AppNativeUpdateEntity")
+  }
+
+  if (app.ui) {
+    imports.push(
+      'import type { ToastEntity, ToastType } from "@inglorious/ui/toast"',
+    )
+    eventTypes.push("ToastType")
+    entities.push("AppToastEntity")
+    declarations.push(
+      `export interface AppToastEntity extends ToastEntity {
+  type: "Toast"
+}`,
+    )
+    state.push("  toast: AppToastEntity")
   }
 
   return `${importBlock(imports)}
