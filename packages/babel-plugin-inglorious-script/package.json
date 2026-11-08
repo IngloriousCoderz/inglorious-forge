@@ -41,10 +41,10 @@
     "@babel/helper-module-imports": "^8.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^8.0.1",
+    "@babel/core": "^8.1.0",
     "@inglorious/eslint-config": "workspace:*",
     "@inglorious/utils": "workspace:*",
-    "vitest": "^5.0.0"
+    "vitest": "^5.1.0"
   },
   "engines": {
     "node": ">= 26"

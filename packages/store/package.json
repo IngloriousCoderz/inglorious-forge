@@ -82,7 +82,7 @@
     "test:types": "tsc -p type-tests"
   },
   "dependencies": {
-    "mutative": "^1.3.0"
+    "mutative": "^2.0.2"
   },
   "peerDependencies": {
     "@inglorious/utils": "workspace:^"
@@ -90,11 +90,11 @@
   "devDependencies": {
     "@inglorious/eslint-config": "workspace:*",
     "@inglorious/utils": "workspace:*",
-    "@reduxjs/toolkit": "^2.12.0",
-    "prettier": "^3.9.6",
+    "@reduxjs/toolkit": "^2.14.0",
+    "prettier": "^3.9.10",
     "typescript": "~7.0.2",
-    "vite": "^8.2.2",
-    "vitest": "^5.0.0"
+    "vite": "^8.3.6",
+    "vitest": "^5.1.0"
   },
   "packageManager": "pnpm@12.15.0",
   "engines": {

@@ -22,11 +22,11 @@
   },
   "devDependencies": {
     "@inglorious/eslint-config": "workspace:*",
-    "eslint": "^10.11.0",
-    "prettier": "^3.9.9",
-    "vite": "^8.3.1",
-    "vitest": "^5.0.0",
-    "jsdom": "^30.0.1"
+    "eslint": "^10.14.0",
+    "prettier": "^3.9.10",
+    "vite": "^8.3.6",
+    "vitest": "^5.1.0",
+    "jsdom": "^31.0.0"
   },
   "packageManager": "pnpm@12.15.0",
   "engines": {
