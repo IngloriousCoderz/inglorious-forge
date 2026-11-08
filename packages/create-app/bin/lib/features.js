@@ -272,3 +272,62 @@ function from(name, source) {
 function language(title, texts) {
   return { title, texts }
 }
+
+export const NATIVE_UPDATE_TEXTS = {
+  en: {
+    title: "Time to update",
+    body: "This version of the app is no longer supported. Update it to keep going.",
+    bodyNoLink:
+      "This version of the app is no longer supported. Update it from your app store to keep going.",
+    update: "Update",
+  },
+  it: {
+    title: "È ora di aggiornare",
+    body: "Questa versione dell'app non è più supportata. Aggiornala per continuare.",
+    bodyNoLink:
+      "Questa versione dell'app non è più supportata. Aggiornala dal tuo store per continuare.",
+    update: "Aggiorna",
+  },
+  fr: {
+    title: "Mise à jour nécessaire",
+    body: "Cette version de l'app n'est plus prise en charge. Mettez-la à jour pour continuer.",
+    bodyNoLink:
+      "Cette version de l'app n'est plus prise en charge. Mettez-la à jour depuis votre store pour continuer.",
+    update: "Mettre à jour",
+  },
+  de: {
+    title: "Zeit für ein Update",
+    body: "Diese Version der App wird nicht mehr unterstützt. Aktualisiere sie, um weiterzumachen.",
+    bodyNoLink:
+      "Diese Version der App wird nicht mehr unterstützt. Aktualisiere sie in deinem App Store, um weiterzumachen.",
+    update: "Aktualisieren",
+  },
+  es: {
+    title: "Hora de actualizar",
+    body: "Esta versión de la app ya no es compatible. Actualízala para continuar.",
+    bodyNoLink:
+      "Esta versión de la app ya no es compatible. Actualízala desde tu tienda de apps para continuar.",
+    update: "Actualizar",
+  },
+  pt: {
+    title: "Hora de atualizar",
+    body: "Esta versão da app já não é suportada. Atualiza-a para continuar.",
+    bodyNoLink:
+      "Esta versão da app já não é suportada. Atualiza-a na tua loja de apps para continuar.",
+    update: "Atualizar",
+  },
+  ja: {
+    title: "アップデートが必要です",
+    body: "このバージョンのアプリはサポートが終了しました。引き続き使うにはアップデートしてください。",
+    bodyNoLink:
+      "このバージョンのアプリはサポートが終了しました。引き続き使うにはアプリストアからアップデートしてください。",
+    update: "アップデート",
+  },
+  ar: {
+    title: "حان وقت التحديث",
+    body: "لم يعد هذا الإصدار من التطبيق مدعومًا. حدّثه للمتابعة.",
+    bodyNoLink:
+      "لم يعد هذا الإصدار من التطبيق مدعومًا. حدّثه من متجر التطبيقات للمتابعة.",
+    update: "تحديث",
+  },
+}

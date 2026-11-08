@@ -31,7 +31,7 @@ For the JavaScript and TypeScript Vite templates, the CLI then asks about the ap
 | Add push notifications?   | `--push` / `--no-push`                                                   | Firebase Cloud Messaging, a permission prompt and the Supabase side of sending; turns on PWA support       |
 | Enable PWA support?       | `--pwa` / `--no-pwa`                                                     | `vite-plugin-pwa`, a manifest, icons, and a service worker that keeps installed apps on the latest version |
 
-Every template except `minimal` then asks whether to add agent skills (`--skills` / `--no-skills`). Saying yes runs the [skills CLI](https://skills.sh) in the new project. It asks which coding agents to install for, and installs the [Inglorious Forge skills](https://github.com/IngloriousCoderz/forge-skills) that match your choices: `forge`, `forge-best-practices`, `store`, `web` and `web-best-practices` always, plus `ssx`, `vite-plugin-jsx` or `vite-plugin-vue`, `ui` and `ui-best-practices`, `i18n`, `firebase` and `supabase` when the project uses them. If the install fails, the CLI prints the command to retry it.
+Every template except `minimal` then asks whether to add agent skills (`--skills` / `--no-skills`). Saying yes runs the [skills CLI](https://skills.sh) in the new project. It asks which coding agents to install for, and installs the [Inglorious Forge skills](https://github.com/IngloriousCoderz/forge-skills) that match your choices: `forge`, `forge-best-practices`, `app-recipe`, `store`, `web` and `web-best-practices` always, plus `ssx`, `vite-plugin-jsx` or `vite-plugin-vue`, `ui` and `ui-best-practices`, `i18n`, `firebase` and `supabase` when the project uses them. If the install fails, the CLI prints the command to retry it.
 
 The app is generated in the syntax you chose: lit-html, JSX or Vue. Every question answered on the command line is skipped, so a project can be created without any prompt:
 
@@ -99,7 +99,7 @@ For Android and iOS builds, install Android Studio with the Android SDK and a Ja
 
 Every Vite app is versioned with [Changesets](https://github.com/changesets/changesets): describe each change with `pnpm changeset`, and `pnpm release:version` raises the version in `package.json` and writes `CHANGELOG.md`. The app reads that version as `import.meta.env.VITE_APP_VERSION`.
 
-Mobile apps also get `pnpm mobile:release`, which copies the version into the iOS and Android projects, raises the build number they share (every store upload needs a new one), builds with the values in `.env` rather than `.env.local`, and syncs. The generated README describes the whole release, upload included.
+Mobile apps also get `pnpm mobile:release`, which copies the version into the iOS and Android projects, raises the build number they share (every store upload needs a new one), builds with the values in `.env` rather than `.env.local`, and syncs. The generated README describes the whole release, upload included. With `--push` too, an `app_versions` table in Supabase holds each platform's minimum build: an older install shows nothing but an update page, so raising it makes a release mandatory.
 
 ## License
 

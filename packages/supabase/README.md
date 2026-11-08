@@ -65,6 +65,41 @@ if (error) throw isNetworkError(error) ? new Error("errors.offline") : error
 
 Pair it with the `NetworkStatus` sensor of `@inglorious/web` to tell people they are offline, and with `withLiveReload`, which reloads what is on screen when the connection comes back.
 
+## Native app updates
+
+`supabaseNativeUpdate(client)` is the adapter of `createNativeUpdate` from `@inglorious/web/native-update`: it reads each platform's minimum build from a table, so a release becomes mandatory with one update in the SQL editor, without a deploy.
+
+```sql
+create table public.app_versions (
+  platform text primary key check (platform in ('ios', 'android')),
+  min_build integer not null check (min_build >= 1),
+  store_url text
+);
+
+alter table public.app_versions enable row level security;
+
+create policy "Anyone reads the minimum app versions"
+  on public.app_versions for select to anon, authenticated
+  using (true);
+
+insert into public.app_versions (platform, min_build) values ('ios', 1), ('android', 1);
+```
+
+```js
+import { supabaseNativeUpdate } from "@inglorious/supabase"
+import { createNativeUpdate } from "@inglorious/web/native-update"
+
+const NativeUpdate = createNativeUpdate({
+  adapter: supabaseNativeUpdate(supabase),
+})
+```
+
+```sql
+update public.app_versions set min_build = 7 where platform = 'android';
+```
+
+Raise a platform's minimum only once its new build is live in that store. Options: `table` (default `"app_versions"`) and `timeoutMs` (default 10 seconds).
+
 ## CAPTCHA
 
 With CAPTCHA protection on (Authentication → Attack Protection, provider Turnstile, with the widget's secret key), Supabase Auth refuses a signup, password login, magic link or confirmation resend without a valid token. `createCaptcha` makes those tokens:

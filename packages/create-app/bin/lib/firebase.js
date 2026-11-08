@@ -2,10 +2,8 @@ import fs from "fs"
 import { EOL } from "os"
 import path from "path"
 
-import { FIRST_ITEM_INDEX } from "./constants.js"
-import { copyDir } from "./file.js"
+import { copyDir, stampMigration } from "./file.js"
 
-const MIGRATION_STAMP_LENGTH = 14
 const FIRST_NUMBER = 1
 
 /**
@@ -27,7 +25,7 @@ export function addFirebaseSupport(targetDir, pkg, options) {
 
   if (push) {
     copyDir(path.join(templatesRoot, "features/push"), targetDir)
-    stampMigration(targetDir)
+    stampMigration(targetDir, "push.sql")
     pkg.scripts["vault:push"] = "node scripts/push-vault-secrets.mjs"
     keepSupabaseOutOfTypeScript(targetDir)
   }
@@ -60,18 +58,6 @@ function replaceInFile(file, search, replacement) {
   fs.writeFileSync(
     file,
     fs.readFileSync(file, "utf-8").replace(search, replacement),
-  )
-}
-
-function stampMigration(targetDir) {
-  const migrations = path.join(targetDir, "supabase/migrations")
-  const stamp = new Date()
-    .toISOString()
-    .replace(/\D/g, "")
-    .slice(FIRST_ITEM_INDEX, MIGRATION_STAMP_LENGTH)
-  fs.renameSync(
-    path.join(migrations, "push.sql"),
-    path.join(migrations, `${stamp}_push.sql`),
   )
 }
 

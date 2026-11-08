@@ -18,6 +18,7 @@ export function skillsFor({
   const skills = [
     "forge",
     "forge-best-practices",
+    "app-recipe",
     "store",
     "web",
     "web-best-practices",

@@ -59,3 +59,24 @@ export interface Captcha {
 
 /** Turnstile tokens for Supabase Auth's CAPTCHA protection. */
 export declare function createCaptcha(options: CaptchaOptions): Captcha
+
+export interface SupabaseNativeUpdateOptions {
+  /** Defaults to `"app_versions"`. */
+  table?: string
+  /** Defaults to 10 seconds. */
+  timeoutMs?: number
+}
+
+/**
+ * The adapter of `createNativeUpdate` from `@inglorious/web/native-update`:
+ * each platform's minimum build from a table with `platform`, `min_build` and
+ * `store_url`, readable before sign-in.
+ */
+export declare function supabaseNativeUpdate(
+  client: SupabaseClient,
+  options?: SupabaseNativeUpdateOptions,
+): {
+  requirement(
+    platform: "android" | "ios",
+  ): Promise<{ minBuild: number; storeUrl: string | null } | null>
+}

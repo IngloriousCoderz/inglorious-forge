@@ -42,6 +42,7 @@ export function layout(app) {
     message: `${screens}/home/message`,
     analytics: "src/app/analytics",
     pushPrompt: "src/app/push-prompt",
+    nativeUpdate: "src/app/native-update",
   }
 }
 

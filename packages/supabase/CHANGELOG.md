@@ -1,5 +1,11 @@
 # @inglorious/supabase
 
+## 0.5.0
+
+### Minor Changes
+
+- Add `supabaseNativeUpdate(client)`, the adapter of `createNativeUpdate` that reads each platform's minimum build from the `app_versions` table.
+
 ## 0.4.0
 
 ### Minor Changes

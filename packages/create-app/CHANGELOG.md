@@ -1,5 +1,15 @@
 # @inglorious/create-game
 
+## 1.12.0
+
+### Minor Changes
+
+- With `--mobile` and `--push`, generate mandatory native updates: the `app_versions` table, a `NativeUpdate` page that blocks builds below its minimum, and the README steps to raise it.
+
+### Patch Changes
+
+- Install the `app-recipe` skill with the other agent skills.
+
 ## 1.11.0
 
 ### Minor Changes

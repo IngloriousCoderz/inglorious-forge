@@ -9,6 +9,11 @@ import {
 import { type Api, html, mount, type TemplateResult } from "../types"
 import { withLiveReload } from "../types/decorators/with-live-reload"
 import { Form, type FormEntity } from "../types/form"
+import {
+  createNativeUpdate,
+  type NativeApp,
+  watchNativeUpdate,
+} from "../types/native-update"
 import { PwaUpdate, type PwaUpdateEntity, watchPwaUpdate } from "../types/pwa"
 import {
   pageRouteChange,
@@ -99,6 +104,21 @@ export const stopWatching: () => void = watchPwaUpdate(registration, store, {
 })
 // @ts-expect-error: checkEveryMs is a number of milliseconds
 watchPwaUpdate(registration, store, { checkEveryMs: "1h" })
+
+export const NativeUpdate = createNativeUpdate({
+  adapter: { requirement: async () => ({ minBuild: 4, storeUrl: null }) },
+})
+const textBuild = { requirement: async () => ({ minBuild: "4" }) }
+// @ts-expect-error: minBuild is a build number
+createNativeUpdate({ adapter: textBuild })
+declare const nativeApp: NativeApp
+export const stopNativeWatch: () => Promise<void> = watchNativeUpdate(
+  nativeApp,
+  store,
+  { id: "gate" },
+)
+// @ts-expect-error: the id is an entity id
+watchNativeUpdate(nativeApp, store, { id: 1 })
 
 declare const api: AppApi
 export const rendered = api.render("counter")

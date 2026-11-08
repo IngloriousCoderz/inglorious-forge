@@ -1,137 +1,137 @@
 {
   "version": 1,
   "skills": {
+    "app-recipe": {
+      "source": "IngloriousCoderz/forge-skills",
+      "sourceType": "github",
+      "skillPath": "skills/app-recipe/SKILL.md",
+      "computedHash": "58db96c2d7a0a9f2f3fc399aa5d996be8a024adffae9bbc7396333d3d37d67a2"
+    },
     "charts": {
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/charts/SKILL.md",
-      "computedHash": "4ef19e4e383144173d37df63f854d0f8f10f388494dd030c03174a394a8fa056"
+      "computedHash": "3fb5a28d01a811a9e3037cd7a7276a4132bf17cb7b7a8eebad4a877993bce1ea"
     },
     "create-app": {
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/create-app/SKILL.md",
-      "computedHash": "972794e1633fa76bc3938df7d5081629e8da5291880b14dda7b417cce67af6b7"
+      "computedHash": "448fd179bb8f525426f51e4644501a0590de5420d355798a68836774f26abacd"
     },
     "create-game": {
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/create-game/SKILL.md",
-      "computedHash": "81b159c0f5d52534a3eb5653168ac959fccbd40fff791e4387d00ec776cbb3a9"
+      "computedHash": "762265ae5e6daf1f0e9836174cd62f5bf8c3a6d39495329d3ba91d51123a34f4"
     },
     "engine": {
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/engine/SKILL.md",
-      "computedHash": "bc267e87ddea70274434426a1cd2f9b9b30d2a9d348f1f20c311d1cc8c544dbd"
+      "computedHash": "fae464ec429f230fca9c0fac7f1607fe6851ebf03a3f8dac142ffa6ba4134c6d"
     },
     "engine-best-practices": {
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/engine-best-practices/SKILL.md",
-      "computedHash": "e9e966e6c3e35f5975e074a93941e63a3ef24b02acf0e1859fc280e10973100f"
+      "computedHash": "abde3b1b1544ebde0ca966d53a1dbfb0911f9ac14877783d566fee5c214ca31f"
     },
     "firebase": {
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/firebase/SKILL.md",
-      "computedHash": "8a8072dc18f582ef87c3ddcd43f92a05b5a94f835ed5af16253393cb3c233164"
+      "computedHash": "87d7ce28a67ede762c07af317c222e98f17633567b1aa596f3ef63dfdcc37d59"
     },
     "forge": {
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/forge/SKILL.md",
-      "computedHash": "91065e52d8c7c34228f91d90297f7bf243af2302d5ae4def277e4cd742e9c533"
+      "computedHash": "66702a0d28da89c67c7749b1bf887f48dfc2cf40276069cf78237f666774d92d"
     },
     "forge-best-practices": {
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/forge-best-practices/SKILL.md",
-      "computedHash": "f5598e0f8cec8bcca1ed3bd32c1d70bc218d87a030c8b75b90bff633fb69de53"
+      "computedHash": "38f1c9441f82feaef1a2ba6caa3cc4c29414059aa713aacb93a947838b02b687"
     },
     "i18n": {
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/i18n/SKILL.md",
-      "computedHash": "713984e2e24331297ab4c785b1c5d4ad6fd25aaaf93402ed8c73c7ee1230b760"
+      "computedHash": "cca2a1c1214edb19c99437e9aff0dba621520170d8893efad4ae8e6780e76c34"
     },
     "openui": {
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/openui/SKILL.md",
-      "computedHash": "68192dd316624f81586475b7b87057acdaa7d80421d07861db4fc8186909b951"
+      "computedHash": "b38ca77c020b68efa9acf0de1d2702c75decabb9186aabdb6f31a1a73c9a07eb"
     },
     "react-store": {
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/react-store/SKILL.md",
-      "computedHash": "67d750115accf7049e94e70a8b4fa54b82ac296a271b658a7a17787c987bbedd"
-    },
-    "server": {
-      "source": "IngloriousCoderz/forge-skills",
-      "sourceType": "github",
-      "skillPath": "skills/server/SKILL.md",
-      "computedHash": "baf222785c84255a9e1a4e0c06615cd06a697abf41e3884b675f06f88b3cb46d"
+      "computedHash": "d789857ffee6f61fd8ef22092da2a836585a46f25da6144f0bb73243b4294c72"
     },
     "ssx": {
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/ssx/SKILL.md",
-      "computedHash": "3e19b8a05e0a95aa89f0b5e719573e97267c1f71ddfd1e740127ebfb5dd63ac0"
+      "computedHash": "896fc80a82c46792a73255cad093702e9c6ca2e935cd5af82ab19b20365908d6"
     },
     "store": {
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/store/SKILL.md",
-      "computedHash": "67476a2bf2979b23134330a657bffbf90e73e96c8e52755b3c466854ff30d319"
+      "computedHash": "21ac8c9b3ab4ef25fae9d461e3ed7773c304d8b57aaa452673bcf52a990b89f9"
     },
     "supabase": {
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/supabase/SKILL.md",
-      "computedHash": "a513241db7d9d497e8c26cd31e86c4c20475cc89aae116212f4c8618bb9a1fc1"
+      "computedHash": "cbdacd5c69e2f664c60803a1a2e7be8798d949fd52b532c51aa6b12bb9ad9caf"
     },
     "ui": {
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/ui/SKILL.md",
-      "computedHash": "e106e93ae795db0bd26ff0d57a3eb2608e544a12623fb74794dbe56a881b7b0c"
+      "computedHash": "3c61a9aad634cf8ea6ffec700d0645b99fb4c2a1dc5ae210866e0911011abef4"
     },
     "ui-best-practices": {
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/ui-best-practices/SKILL.md",
-      "computedHash": "b86b4c614b461e9ef0f5defd910ad724c2337a25579ecf9b1419beb70d78d893"
+      "computedHash": "a497d954c2466e0ea968e2d6e97ecee3c86d0cc5150d5a6dbe66fc543cecae39"
     },
     "utils": {
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/utils/SKILL.md",
-      "computedHash": "d515af884f3f97d7e19cd6c1c60ba9022893f666cb35b7a2cb62992852de1887"
+      "computedHash": "51087f23f06d3b3833d729e4b7bf43904c380756e362730c16ea9607913e1bc1"
     },
     "vite-plugin-jsx": {
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/vite-plugin-jsx/SKILL.md",
-      "computedHash": "6a7a4d84293f048a4871fec6e449e3833289d6d047f4c232c29229c35037e088"
+      "computedHash": "6d36f975208e6b25a354d406b3266d07259d8dc10e1d7375373830541265fde6"
     },
     "vite-plugin-vue": {
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/vite-plugin-vue/SKILL.md",
-      "computedHash": "7041eea8d7c4f4c3d86e7aeadcb9c4d2c19d3a98c8a2071087a415cedd356845"
+      "computedHash": "d79a901a1cb7d877ec0b437486bd62cae0c5fa07601a4a2e2ddea514ea75b7c9"
     },
     "web": {
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/web/SKILL.md",
-      "computedHash": "d3e5df77a7c2fef8049722b9ceed601788a1b8bf8132735fba062709ebfef17e"
+      "computedHash": "a0417fa0f8e39f906470874d60ef4c329c19aae12cabfd4df223fcc78f72e191"
     },
     "web-best-practices": {
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/web-best-practices/SKILL.md",
-      "computedHash": "dab94bf4c3c7425a4d8cf5004e9260ba50d7fe7a36022dad932cf006e8123317"
+      "computedHash": "e6c7671ecf2245fffe60621d23f9fc73071af6f1e809293b8429fff441671ac2"
     }
   }
 }

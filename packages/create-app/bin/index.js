@@ -20,6 +20,7 @@ import { SYNTAXES, TEMPLATES } from "./lib/features.js"
 import { copyDir } from "./lib/file.js"
 import { addFirebaseSupport } from "./lib/firebase.js"
 import { addMobileSupport } from "./lib/mobile.js"
+import { addNativeUpdateSupport } from "./lib/native-update.js"
 import { addPwaSupport } from "./lib/pwa.js"
 import { askAppFeatures } from "./lib/questions.js"
 import { addReleaseSupport } from "./lib/release.js"
@@ -205,6 +206,10 @@ async function main() {
     if (features.analytics || features.push) {
       spinner.text = "Adding Firebase support..."
       addFirebaseSupport(targetDir, pkg, { ...features, templatesRoot })
+    }
+
+    if (features.mobile && features.push) {
+      addNativeUpdateSupport(targetDir, templatesRoot)
     }
 
     for (const depType of ["dependencies", "devDependencies"]) {

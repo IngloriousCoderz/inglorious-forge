@@ -6,14 +6,21 @@ import * as jsxComponents from "./app-jsx.js"
 import * as litComponents from "./app-lit.js"
 import * as vueComponents from "./app-vue.js"
 import {
+  CAPACITOR_APP_VERSION,
   CAPACITOR_FIREBASE_VERSION,
   CAPACITOR_VERSION,
   FIREBASE_VERSION,
   INDENTATION,
   SUPABASE_VERSION,
 } from "./constants.js"
-import { ICON_PACKS, LANGUAGES, PROMPT_TEXTS } from "./features.js"
+import {
+  ICON_PACKS,
+  LANGUAGES,
+  NATIVE_UPDATE_TEXTS,
+  PROMPT_TEXTS,
+} from "./features.js"
 import { importBlock } from "./imports.js"
+import { nativeUpdateFiles } from "./native-update.js"
 import { envExample, promptFiles } from "./prompts.js"
 import {
   appModel,
@@ -33,7 +40,8 @@ const COMPONENTS = {
 /**
  * Writes the source of an app with the features chosen: Inglorious UI,
  * routing, page transitions, icon packs, internationalization, a mobile
- * layout, analytics and push prompts, in lit-html, JSX or Vue. It replaces the template's hello world,
+ * layout, analytics and push prompts, and the page that blocks outdated native
+ * builds, in lit-html, JSX or Vue. It replaces the template's hello world,
  * keeping its message type as the example on the home page. The files come
  * out as Prettier and the template's ESLint config would leave them.
  *
@@ -60,6 +68,7 @@ export function addAppFeatures(targetDir, pkg, options) {
   app.links = app.routing && !app.tabs
   app.isVue = app.renderer === "vue"
   app.hasPrompts = app.analytics || app.push
+  app.nativeUpdate = app.mobile && app.push
   app.layout = layout(app)
 
   const components = COMPONENTS[app.renderer]
@@ -93,6 +102,7 @@ export function addAppFeatures(targetDir, pkg, options) {
     Object.assign(files, promptFiles(app))
     files[".env.example"] = envExample(app)
   }
+  if (app.nativeUpdate) Object.assign(files, nativeUpdateFiles(app))
   if (app.isTypeScript) {
     files["types/index.d.ts"] = typesSource(app)
   }
@@ -140,6 +150,10 @@ function addDependencies(pkg, app) {
       CAPACITOR_FIREBASE_VERSION
     pkg.dependencies["@supabase/supabase-js"] = SUPABASE_VERSION
   }
+  if (app.nativeUpdate) {
+    pkg.dependencies["@capacitor/app"] = CAPACITOR_APP_VERSION
+    pkg.dependencies["@inglorious/supabase"] = "workspace:*"
+  }
 }
 
 function catalogue(app, language) {
@@ -148,6 +162,7 @@ function catalogue(app, language) {
     ...LANGUAGES[language].texts,
     ...(app.analytics && { analytics }),
     ...(app.push && { push }),
+    ...(app.nativeUpdate && { nativeUpdate: NATIVE_UPDATE_TEXTS[language] }),
   }
 }
 
@@ -195,12 +210,22 @@ function mainSource(app) {
   if (app.hasPrompts) {
     imports.push('import { renderPrompts } from "./common/prompt"')
   }
+  if (app.nativeUpdate) {
+    imports.push(
+      'import { App as NativeApp } from "@capacitor/app"',
+      'import { when } from "@inglorious/web/directives/when"',
+      'import { watchNativeUpdate } from "@inglorious/web/native-update"',
+    )
+    if (app.isTypeScript) imports.push('import type { AppApi } from "../types"')
+  }
 
   const args = [
     "store",
-    app.hasPrompts
-      ? "(api) => html`${App.render(null, api)} ${renderPrompts(api)}`"
-      : "(api) => App.render(null, api)",
+    app.nativeUpdate
+      ? "renderApp"
+      : app.hasPrompts
+        ? "(api) => html`${App.render(null, api)} ${renderPrompts(api)}`"
+        : "(api) => App.render(null, api)",
     app.isTypeScript
       ? 'document.getElementById("root")!'
       : 'document.getElementById("root")',
@@ -209,9 +234,7 @@ function mainSource(app) {
   const body = app.i18n
     ? `// Mounts once the starting language has loaded, so the first render is
 // already translated.
-ready.then(() =>
-${call("mount", args, "  ", ",")}
-)`
+${afterReady(args)}`
     : call("mount", args, "", "")
 
   const session = app.push
@@ -222,10 +245,33 @@ supabase.auth.onAuthStateChange((_event, session) => {
 })`
     : ""
 
+  const nativeUpdate = app.nativeUpdate
+    ? `
+
+watchNativeUpdate(NativeApp, store)
+
+// An outdated native build shows nothing but the update page.
+function renderApp(api${app.isTypeScript ? ": AppApi" : ""}) {
+  return html\`\${when(
+    api.getEntity("nativeUpdate")${app.isTypeScript ? "!" : ""}.isUpdateRequired,
+    () => api.render("nativeUpdate"),
+    () => html\`\${App.render(null, api)} \${renderPrompts(api)}\`,
+  )}\`
+}`
+    : ""
+
   return `${importBlock(imports)}
 
-${body}${session}
+${body}${session}${nativeUpdate}
 `
+}
+
+function afterReady(args) {
+  const oneLine = `ready.then(() => ${call("mount", args, "", "")})`
+  if (!oneLine.includes("\n") && oneLine.length <= LINE_WIDTH) return oneLine
+  return `ready.then(() =>
+${call("mount", args, "  ", ",")}
+)`
 }
 
 function uiComponents(app) {
@@ -241,6 +287,18 @@ function uiComponents(app) {
 const PROMPT_ABOVE_TABS = `
 body {
   --iw-snackbar-offset-bottom: 5rem;
+}
+`
+
+const UPDATE_PAGE = `
+.app-update {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  text-align: center;
 }
 `
 
@@ -287,7 +345,7 @@ main {
   align-items: center;
   gap: 1rem;
 }
-${app.tabs && app.hasPrompts ? PROMPT_ABOVE_TABS : ""}`
+${app.tabs && app.hasPrompts ? PROMPT_ABOVE_TABS : ""}${app.nativeUpdate ? UPDATE_PAGE : ""}`
   if (app.ui) {
     return app.isVue
       ? `${layout}
@@ -348,12 +406,18 @@ function storeSource(app) {
       `import { PushPrompt } from "${relative("src/store", app.layout.pushPrompt)}"`,
     )
   }
+  if (app.nativeUpdate) {
+    imports.push(
+      `import { NativeUpdate } from "${relative("src/store", app.layout.nativeUpdate)}"`,
+    )
+  }
 
   const types = ["Message", "Home"]
   if (app.routing) types.push("About", "Router")
   if (app.i18n) types.push("I18n")
   if (app.analytics) types.push("Analytics")
   if (app.push) types.push("PushPrompt")
+  if (app.nativeUpdate) types.push("NativeUpdate")
   const oneLine = `  types: { ${types.join(", ")} },`
   const typesValue =
     oneLine.length <= LINE_WIDTH
@@ -381,6 +445,7 @@ function singletons(app) {
   if (app.i18n) ids.push("i18n")
   if (app.analytics) ids.push("analytics")
   if (app.push) ids.push("pushPrompt")
+  if (app.nativeUpdate) ids.push("nativeUpdate")
   return ids
 }
 
@@ -526,6 +591,22 @@ function typesSource(app) {
 }`,
     )
     state.push("  pushPrompt: AppPushPromptEntity")
+  }
+  if (app.nativeUpdate) {
+    imports.push(
+      `import type {
+  NativeUpdateEntity,
+  NativeUpdateType,
+} from "@inglorious/web/native-update"`,
+    )
+    eventTypes.push("NativeUpdateType")
+    entities.push("AppNativeUpdateEntity")
+    declarations.push(
+      `export interface AppNativeUpdateEntity extends NativeUpdateEntity {
+  type: "NativeUpdate"
+}`,
+    )
+    state.push("  nativeUpdate: AppNativeUpdateEntity")
   }
 
   return `${importBlock(imports)}

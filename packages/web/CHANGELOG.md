@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 6.18.0
+
+### Minor Changes
+
+- Add `@inglorious/web/native-update`: `createNativeUpdate({ adapter })` blocks a native build older than the platform's minimum, and `watchNativeUpdate(App, store)` checks the installed build at launch and on every resume.
+
 ## 6.17.0
 
 ### Minor Changes
