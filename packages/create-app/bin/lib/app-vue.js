@@ -198,7 +198,9 @@ ${fields.map((field) => `          ${field},`).join("\n")}
       :actions="[
 ${actions.join("\n")}
       ]"
-      :onChange="(path) => api.notify('#router:navigate', path)"
+      :onChange="
+        (path) => api.notify('#router:navigate', { to: path, replace: true })
+      "
     />
   </footer>`
 }

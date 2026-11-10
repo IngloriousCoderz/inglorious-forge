@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.18.0
+
+### Minor Changes
+
+- Mobile apps with routing call `watchBackButton`, so Android's back button and back gesture close the app from a top-level page, and the tab bar navigates with `replace: true` instead of piling up history.
+
 ## 1.17.0
 
 ### Minor Changes

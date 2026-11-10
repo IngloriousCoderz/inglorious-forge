@@ -239,7 +239,9 @@ ${expectError(app, "          ")}          <BottomNavigation
             actions={[
 ${actions.join("\n")}
             ]}
-            onChange={(${typed(app, "path", "string")}) => api.notify("#router:navigate", path)}
+            onChange={(${typed(app, "path", "string")}) =>
+              api.notify("#router:navigate", { to: path, replace: true })
+            }
           />
         </footer>`
 }

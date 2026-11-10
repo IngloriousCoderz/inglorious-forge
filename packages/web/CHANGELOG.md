@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 6.21.0
+
+### Minor Changes
+
+- Add `@inglorious/web/back-button`: `watchBackButton(App, { rootPaths })` makes Android's back button and back gesture close the app on a root path or with no history left, and go back in history everywhere else.
+
 ## 6.20.0
 
 ### Minor Changes

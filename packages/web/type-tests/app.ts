@@ -15,6 +15,7 @@ import {
   watchNativeUpdate,
 } from "../types/native-update"
 import { type AppLinksApp, watchAppLinks } from "../types/app-links"
+import { type BackButtonApp, watchBackButton } from "../types/back-button"
 import { PwaUpdate, type PwaUpdateEntity, watchPwaUpdate } from "../types/pwa"
 import {
   pageRouteChange,
@@ -131,6 +132,13 @@ export const stopAppLinks: () => Promise<void> = watchAppLinks(
 )
 // @ts-expect-error: the id is an entity id
 watchAppLinks(linksApp, store, { id: 1 })
+
+declare const backApp: BackButtonApp
+export const stopBackButton: () => Promise<void> = watchBackButton(backApp, {
+  rootPaths: ["/", "/profile"],
+})
+// @ts-expect-error: root paths are a list
+watchBackButton(backApp, { rootPaths: "/" })
 
 declare const api: AppApi
 export const rendered = api.render("counter")

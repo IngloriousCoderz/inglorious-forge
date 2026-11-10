@@ -71,6 +71,7 @@ export function addAppFeatures(targetDir, pkg, options) {
   app.hasPrompts = app.analytics || app.push
   app.nativeUpdate = app.mobile && app.push
   app.appLinks = app.mobile && app.routing
+  app.backButton = app.mobile && app.routing
   app.layout = layout(app)
 
   const components = COMPONENTS[app.renderer]
@@ -81,7 +82,7 @@ export function addAppFeatures(targetDir, pkg, options) {
 
   const { layout: at } = app
   const files = {
-    [`src/main.${app.ext}`]: mainSource(app),
+    [`src/main.${app.ext}`]: mainSource(app, model),
     [`${at.app}/index.${componentExt}`]: components.appSource(app, model),
     [`${at.app}/style.css`]: appStyles(app),
     [`${at.home}/index.${componentExt}`]: components.homeSource(app, model),
@@ -152,7 +153,7 @@ function addDependencies(pkg, app) {
       CAPACITOR_FIREBASE_VERSION
     pkg.dependencies["@supabase/supabase-js"] = SUPABASE_VERSION
   }
-  if (app.nativeUpdate || app.appLinks) {
+  if (app.nativeUpdate || app.appLinks || app.backButton) {
     pkg.dependencies["@capacitor/app"] = CAPACITOR_APP_VERSION
   }
   if (app.nativeUpdate) {
@@ -193,7 +194,7 @@ function componentImport(app, names, from) {
     : line
 }
 
-function mainSource(app) {
+function mainSource(app, { pages }) {
   const imports = []
   if (app.ui) {
     imports.push(
@@ -216,11 +217,16 @@ function mainSource(app) {
   if (app.hasPrompts) {
     imports.push('import { renderPrompts } from "./common/prompt"')
   }
-  if (app.nativeUpdate || app.appLinks) {
+  if (app.nativeUpdate || app.appLinks || app.backButton) {
     imports.push('import { App as NativeApp } from "@capacitor/app"')
   }
   if (app.appLinks) {
     imports.push('import { watchAppLinks } from "@inglorious/web/app-links"')
+  }
+  if (app.backButton) {
+    imports.push(
+      'import { watchBackButton } from "@inglorious/web/back-button"',
+    )
   }
   if (app.nativeUpdate) {
     imports.push(
@@ -265,6 +271,14 @@ supabase.auth.onAuthStateChange((_event, session) => {
 watchAppLinks(NativeApp, store)`
     : ""
 
+  const rootPaths = pages.map((page) => `"${page.path}"`).join(", ")
+  const backButton = app.backButton
+    ? `
+
+// Back from a top-level page closes the app, as on other Android apps.
+watchBackButton(NativeApp, { rootPaths: [${rootPaths}] })`
+    : ""
+
   const nativeUpdate = app.nativeUpdate
     ? `
 
@@ -293,7 +307,7 @@ function renderApp(api${app.isTypeScript ? ": AppApi" : ""}) {
 
   return `${importBlock(imports)}
 
-${body}${session}${appLinks}${nativeUpdate}
+${body}${session}${appLinks}${backButton}${nativeUpdate}
 `
 }
 
