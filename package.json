@@ -20,7 +20,7 @@
     "@changesets/cli": "^3.0.3",
     "@eslint/js": "^10.0.1",
     "@inglorious/eslint-config": "workspace:*",
-    "@rollup/rollup-darwin-arm64": "4.67.5",
+    "@rollup/rollup-darwin-arm64": "4.68.0",
     "eslint": "^10.14.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-simple-import-sort": "^14.0.0",

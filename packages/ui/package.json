@@ -364,7 +364,7 @@
     "@iconify-icons/fa7-brands": "^2.0.0",
     "@iconify-icons/fa7-regular": "^2.0.0",
     "@iconify-icons/fa7-solid": "^2.0.0",
-    "@iconify-icons/material-symbols": "^2.0.8",
+    "@iconify-icons/material-symbols": "^2.0.9",
     "@inglorious/charts": "workspace:*",
     "@inglorious/eslint-config": "workspace:*",
     "@inglorious/store": "workspace:*",

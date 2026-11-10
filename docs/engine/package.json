@@ -41,7 +41,7 @@
     "@storybook/react-vite": "^10.6.6",
     "@vitejs/plugin-react": "^6.2.1",
     "remark-gfm": "^4.0.1",
-    "sass": "^1.107.1",
+    "sass": "^1.108.1",
     "storybook": "^10.6.6",
     "vite": "^8.3.6"
   }
