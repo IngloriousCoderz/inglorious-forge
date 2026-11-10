@@ -63,19 +63,42 @@ describe("packLiveUpdate", () => {
 })
 
 describe("publishLiveUpdate", () => {
-  it("uploads the zip, then the manifest that points to it", async () => {
-    const fetch = vi.fn(async () => ({ ok: true }))
-    vi.stubGlobal("fetch", fetch)
-
-    const manifest = await publishLiveUpdate({
+  const publish = (options) =>
+    publishLiveUpdate({
       dist,
       release: 42,
       privateKey: keys.privateKey,
       projectUrl: PROJECT,
       serviceKey: "secret",
+      ...options,
     })
 
-    expect(fetch.mock.calls.map(([url]) => url)).toEqual([
+  function stubStorage(bundles, { listPages } = {}) {
+    const fetch = vi.fn(async (url, init) => {
+      if (url.includes("/object/list/")) {
+        const { offset } = JSON.parse(init.body)
+        const page = listPages
+          ? (listPages[offset] ?? [])
+          : bundles.map((name) => ({ name }))
+        return { ok: true, json: async () => page }
+      }
+      return { ok: true }
+    })
+    vi.stubGlobal("fetch", fetch)
+    return fetch
+  }
+
+  function deleted(fetch) {
+    const call = fetch.mock.calls.find(([, init]) => init.method === "DELETE")
+    return call ? JSON.parse(call[1].body).prefixes : []
+  }
+
+  it("uploads the zip, then the manifest that points to it", async () => {
+    const fetch = stubStorage(["42.zip"])
+
+    const manifest = await publish()
+
+    expect(fetch.mock.calls.map(([url]) => url).slice(0, 2)).toEqual([
       `${PROJECT}/storage/v1/object/live-updates/bundles/42.zip`,
       `${PROJECT}/storage/v1/object/live-updates/manifest.json`,
     ])
@@ -89,19 +112,75 @@ describe("publishLiveUpdate", () => {
     )
   })
 
+  it("then deletes all but the new bundle and the one before", async () => {
+    const fetch = stubStorage([
+      "39.zip",
+      "42.zip",
+      "41.zip",
+      "40.zip",
+      ".emptyFolderPlaceholder",
+    ])
+
+    await publish()
+
+    expect(deleted(fetch)).toEqual(["bundles/40.zip", "bundles/39.zip"])
+    const [url] = fetch.mock.calls.find(([, init]) => init.method === "DELETE")
+    expect(url).toBe(`${PROJECT}/storage/v1/object/live-updates`)
+  })
+
+  it("keeps as many bundles as asked", async () => {
+    const fetch = stubStorage(["40.zip", "41.zip", "42.zip"])
+
+    await publish({ keepBundles: 1 })
+
+    expect(deleted(fetch)).toEqual(["bundles/41.zip", "bundles/40.zip"])
+  })
+
+  it("deletes nothing when there is nothing old", async () => {
+    const fetch = stubStorage(["41.zip", "42.zip"])
+
+    await publish()
+
+    expect(deleted(fetch)).toEqual([])
+  })
+
+  it("reads every page of bundles", async () => {
+    const full = Array.from({ length: 1000 }, (_, index) => ({
+      name: `${index}.zip`,
+    }))
+    const fetch = stubStorage([], {
+      listPages: { 0: full, 1000: [{ name: "1000.zip" }] },
+    })
+
+    await publish({ release: 1001 })
+
+    expect(deleted(fetch)).toHaveLength(1000)
+    expect(deleted(fetch)).not.toContain("bundles/1000.zip")
+  })
+
+  it("only warns when the cleanup fails: the update is out", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {})
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url) =>
+        url.includes("/object/list/")
+          ? { ok: false, text: async () => "Forbidden" }
+          : { ok: true },
+      ),
+    )
+
+    await expect(publish()).resolves.toMatchObject({ release: 42 })
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining("Forbidden"))
+    warn.mockRestore()
+  })
+
   it("stops when an upload is refused", async () => {
     vi.stubGlobal(
       "fetch",
       vi.fn(async () => ({ ok: false, text: async () => "Unauthorized" })),
     )
-    await expect(
-      publishLiveUpdate({
-        dist,
-        release: 42,
-        privateKey: keys.privateKey,
-        projectUrl: PROJECT,
-        serviceKey: "wrong",
-      }),
-    ).rejects.toThrow("Unauthorized")
+    await expect(publish({ serviceKey: "wrong" })).rejects.toThrow(
+      "Unauthorized",
+    )
   })
 })

@@ -40,11 +40,14 @@ export interface PublishLiveUpdateOptions extends Omit<
   serviceKey: string
   /** A public bucket. Defaults to `live-updates`. */
   bucket?: string
+  /** How many bundles to keep, the new one included. Defaults to 2. */
+  keepBundles?: number
 }
 
 /**
  * Packs a built app and publishes the zip and `manifest.json` to a public
- * Supabase Storage bucket.
+ * Supabase Storage bucket, then deletes all but the newest `keepBundles`
+ * zips. A failed cleanup only warns.
  */
 export declare function publishLiveUpdate(
   options: PublishLiveUpdateOptions,

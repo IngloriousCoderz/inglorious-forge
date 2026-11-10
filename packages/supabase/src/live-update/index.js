@@ -10,6 +10,11 @@ const NO_MIN_BUILD = 0
 const KEY_BITS = 2048
 const MANIFEST_CACHE_SECONDS = 60
 const BUNDLE_CACHE_SECONDS = 31_536_000
+const BUNDLES_FOLDER = "bundles"
+const DEFAULT_KEEP_BUNDLES = 2
+const LIST_PAGE_SIZE = 1000
+const NONE = 0
+const THE_NEW_ONE = 1
 
 export { liveUpdateManifestUrl }
 
@@ -58,6 +63,12 @@ export function packLiveUpdate({
  * zip at `bundles/<release>.zip`, then `manifest.json`, which
  * `watchLiveUpdate` from `@inglorious/web/live-update` reads.
  *
+ * Then it deletes all but the newest `keepBundles` zips, 2 by default: the
+ * manifest points only to the latest, and a bundle that fails rolls back to
+ * the app's own code, never to an older one. The previous zip stays for a
+ * device that read the old manifest just before and is still downloading. A
+ * failed cleanup only warns, since the update is out by then.
+ *
  * @param {{
  *   dist: string,
  *   release: number,
@@ -66,6 +77,7 @@ export function packLiveUpdate({
  *   projectUrl: string,
  *   serviceKey: string,
  *   bucket?: string,
+ *   keepBundles?: number,
  * }} options
  * @returns {Promise<import("../../types/live-update.js").LiveUpdateManifest>}
  */
@@ -77,8 +89,9 @@ export async function publishLiveUpdate({
   projectUrl,
   serviceKey,
   bucket = DEFAULT_BUCKET,
+  keepBundles = DEFAULT_KEEP_BUNDLES,
 }) {
-  const bundlePath = `bundles/${release}.zip`
+  const bundlePath = `${BUNDLES_FOLDER}/${release}.zip`
   const { zip, manifest } = packLiveUpdate({
     dist,
     release,
@@ -99,7 +112,66 @@ export async function publishLiveUpdate({
     "application/json",
     MANIFEST_CACHE_SECONDS,
   )
+  try {
+    await pruneBundles({ projectUrl, serviceKey, bucket, release, keepBundles })
+  } catch (error) {
+    console.warn(`[live-update] old bundles stay: ${error.message}`)
+  }
   return manifest
+}
+
+async function pruneBundles({
+  projectUrl,
+  serviceKey,
+  bucket,
+  release,
+  keepBundles,
+}) {
+  const releases = (await listBundles({ projectUrl, serviceKey, bucket }))
+    .filter((other) => other !== release)
+    .sort((a, b) => b - a)
+  const stale = releases.slice(Math.max(keepBundles - THE_NEW_ONE, NONE))
+  if (!stale.length) return
+
+  const response = await fetch(`${projectUrl}/storage/v1/object/${bucket}`, {
+    method: "DELETE",
+    headers: {
+      authorization: `Bearer ${serviceKey}`,
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      prefixes: stale.map((stamp) => `${BUNDLES_FOLDER}/${stamp}.zip`),
+    }),
+  })
+  if (!response.ok) throw new Error(await response.text())
+}
+
+async function listBundles({ projectUrl, serviceKey, bucket }) {
+  const releases = []
+  for (let offset = 0; ; offset += LIST_PAGE_SIZE) {
+    const response = await fetch(
+      `${projectUrl}/storage/v1/object/list/${bucket}`,
+      {
+        method: "POST",
+        headers: {
+          authorization: `Bearer ${serviceKey}`,
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          prefix: BUNDLES_FOLDER,
+          limit: LIST_PAGE_SIZE,
+          offset,
+        }),
+      },
+    )
+    if (!response.ok) throw new Error(await response.text())
+    const page = await response.json()
+    for (const { name } of page) {
+      const stamp = Number(name.replace(/\.zip$/, ""))
+      if (Number.isFinite(stamp) && name.endsWith(".zip")) releases.push(stamp)
+    }
+    if (page.length < LIST_PAGE_SIZE) return releases
+  }
 }
 
 function filesOf(directory, prefix = "") {

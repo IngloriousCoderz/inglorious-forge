@@ -1,5 +1,11 @@
 # @inglorious/supabase
 
+## 0.8.0
+
+### Minor Changes
+
+- `publishLiveUpdate` deletes old bundles after publishing: it keeps the newest `keepBundles` zips, 2 by default, since the manifest points only to the latest and a failed bundle rolls back to the app's own code. A failed cleanup only warns.
+
 ## 0.7.0
 
 ### Minor Changes

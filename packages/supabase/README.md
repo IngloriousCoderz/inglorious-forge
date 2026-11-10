@@ -122,7 +122,7 @@ const manifest = await publishLiveUpdate({
 })
 ```
 
-`publishLiveUpdate` zips `dist`, signs the zip the way `@capawesome/capacitor-live-update` checks it (RSA with SHA-256, base64), and uploads it to `bundles/<release>.zip` in a public bucket, `live-updates` by default, then `manifest.json`. `packLiveUpdate` does the zipping and signing alone. Keep the private key off the build server: whoever holds it can change the installed apps. The public key goes in the plugin's Capacitor config as `publicKey`.
+`publishLiveUpdate` zips `dist`, signs the zip the way `@capawesome/capacitor-live-update` checks it (RSA with SHA-256, base64), and uploads it to `bundles/<release>.zip` in a public bucket, `live-updates` by default, then `manifest.json`. Then it deletes all but the newest two zips (`keepBundles` changes how many): the manifest points only to the latest, and a bundle that fails rolls back to the app's own code, never to an older one. The previous zip stays for a device still downloading it. A failed cleanup only warns, since the update is out by then. `packLiveUpdate` does the zipping and signing alone. Keep the private key off the build server: whoever holds it can change the installed apps. The public key goes in the plugin's Capacitor config as `publicKey`.
 
 `liveUpdateManifestUrl(projectUrl)`, from the main entry, is the manifest's URL for the app.
 
