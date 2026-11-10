@@ -89,7 +89,7 @@
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/supabase/SKILL.md",
-      "computedHash": "cbdacd5c69e2f664c60803a1a2e7be8798d949fd52b532c51aa6b12bb9ad9caf"
+      "computedHash": "7e4aad0460af2960154fe7ff0cd934a6c75683f60025e8da82da48af88035288"
     },
     "ui": {
       "source": "IngloriousCoderz/forge-skills",
@@ -125,7 +125,7 @@
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/web/SKILL.md",
-      "computedHash": "896d77d5b86ee1a170aaa647d4fc632ed956b9f7f0a3131b65edc4ce104fe067"
+      "computedHash": "c5d0a60ff60aa49a0148c28b737df1c92f6372bc307e92a7c4dcb0bd0955f480"
     },
     "web-best-practices": {
       "source": "IngloriousCoderz/forge-skills",

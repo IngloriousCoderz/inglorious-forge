@@ -80,3 +80,9 @@ export declare function supabaseNativeUpdate(
     platform: "android" | "ios",
   ): Promise<{ minBuild: number; storeUrl: string | null } | null>
 }
+
+/** Where `publishLiveUpdate` puts the manifest. Defaults to the `live-updates` bucket. */
+export declare function liveUpdateManifestUrl(
+  projectUrl: string,
+  options?: { bucket?: string },
+): string

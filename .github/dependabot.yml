@@ -7,6 +7,9 @@ updates:
     # The workspace's own packages, linked with workspace:*.
     ignore:
       - dependency-name: "@inglorious/*"
+      # vite-plugin-babel runs Babel 7, which Babel 8 presets don't work with.
+      - dependency-name: "@babel/preset-typescript"
+        update-types: ["version-update:semver-major"]
     groups:
       dependencies:
         patterns: ["*"]

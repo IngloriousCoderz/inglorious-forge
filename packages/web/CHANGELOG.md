@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 6.20.0
+
+### Minor Changes
+
+- b7d4136: Add `@inglorious/web/live-update`: `watchLiveUpdate` keeps a Capacitor app on its latest published web code with `@capawesome/capacitor-live-update`, downloading a newer bundle made for the installed build and applying it on the next trip to the background, and `createLiveUpdate` offers it meanwhile.
+
 ## 6.19.0
 
 ### Minor Changes

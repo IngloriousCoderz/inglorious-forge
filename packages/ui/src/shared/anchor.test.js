@@ -78,7 +78,7 @@ describe("anchorFallback", () => {
 
     expect(popover.style.bottom).toBe("200px")
     expect(popover.style.left).toBe("324px")
-    expect(popover.style.translate).toBe("-50% 0")
+    expect(popover.style.translate).toBe("-50%")
   })
 
   it("follows the anchor while open", () => {

@@ -1,5 +1,11 @@
 # @inglorious/supabase
 
+## 0.6.0
+
+### Minor Changes
+
+- b7d4136: Add `@inglorious/supabase/live-update`, for Node: `publishLiveUpdate` zips a built app, signs it for `@capawesome/capacitor-live-update` and uploads it with its manifest to a public Storage bucket; `generateLiveUpdateKeys` makes the signing keys. `liveUpdateManifestUrl` says where the manifest is.
+
 ## 0.5.0
 
 ### Minor Changes

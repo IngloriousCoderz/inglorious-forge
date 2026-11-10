@@ -100,6 +100,32 @@ update public.app_versions set min_build = 7 where platform = 'android';
 
 Raise a platform's minimum only once its new build is live in that store. Options: `table` (default `"app_versions"`) and `timeoutMs` (default 10 seconds).
 
+## Live updates
+
+`@inglorious/supabase/live-update` publishes the web code of a Capacitor app for `watchLiveUpdate` from `@inglorious/web/live-update`. It runs in Node, from a release script.
+
+```javascript
+import {
+  generateLiveUpdateKeys,
+  publishLiveUpdate,
+} from "@inglorious/supabase/live-update"
+
+const { privateKey, publicKey } = generateLiveUpdateKeys()
+
+const manifest = await publishLiveUpdate({
+  dist: "dist",
+  release: Math.floor(Date.now() / 1000),
+  minBuild: 3,
+  privateKey,
+  projectUrl: "https://<ref>.supabase.co",
+  serviceKey,
+})
+```
+
+`publishLiveUpdate` zips `dist`, signs the zip the way `@capawesome/capacitor-live-update` checks it (RSA with SHA-256, base64), and uploads it to `bundles/<release>.zip` in a public bucket, `live-updates` by default, then `manifest.json`. `packLiveUpdate` does the zipping and signing alone. Keep the private key off the build server: whoever holds it can change the installed apps. The public key goes in the plugin's Capacitor config as `publicKey`.
+
+`liveUpdateManifestUrl(projectUrl)`, from the main entry, is the manifest's URL for the app.
+
 ## CAPTCHA
 
 With CAPTCHA protection on (Authentication → Attack Protection, provider Turnstile, with the widget's secret key), Supabase Auth refuses a signup, password login, magic link or confirmation resend without a valid token. `createCaptcha` makes those tokens:
