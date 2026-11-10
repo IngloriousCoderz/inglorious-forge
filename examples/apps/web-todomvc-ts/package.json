@@ -28,7 +28,7 @@
     "sharp": "^0.35.5",
     "svgo": "^4.1.0",
     "typescript": "~7.0.2",
-    "vite": "^8.3.6",
+    "vite": "^8.3.7",
     "vite-plugin-image-optimizer": "^2.0.3",
     "vitest": "^5.1.0"
   },
