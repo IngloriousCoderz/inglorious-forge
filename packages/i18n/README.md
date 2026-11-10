@@ -105,6 +105,21 @@ periods.map((period) => ({ ...period, label: t(period.label) }))
 t("Lombardy") // data, not copy: as is
 ```
 
+## Content with its own translations
+
+Records that come from a database or a CMS can't have keys in the catalogues: they may not exist yet when the app ships. Each brings its own translations instead, and `localized` picks the one in the active locale, else the default locale's:
+
+```javascript
+const genre = {
+  value: "jazz",
+  labels: { en: "Jazz", it: "Jazz", ja: "ジャズ" },
+}
+
+localized(genre.labels) // "ジャズ" in Japanese, "Jazz" in French
+```
+
+Keep the record as it is in state and call `localized` where it is rendered, so it follows a switch.
+
 ## Messages in state
 
 For the same reason, state holds a message's key rather than its text: an error saved in Italian would stay Italian after a switch to English. `t` takes the message as it is kept: a key, `{ key, values }` for one that interpolates, or text that is not a key, such as an error from a server, which comes back as it is.
@@ -119,7 +134,7 @@ html`<p>${t(entity.error)}</p>`
 
 ### `createI18n(options)`
 
-Returns `{ I18n, ready, languages, t, trans, currentLocale, i18next }`.
+Returns `{ I18n, ready, languages, t, trans, localized, currentLocale, i18next }`.
 
 - `catalogues`: the catalogues by file path, as `import.meta.glob("./locales/*.json")` returns them. A lazy glob loads each on demand; an eager one (`{ eager: true }`) bundles them all.
 - `resources`: catalogues bundled with the app, `{ [locale]: { translation: { … } } }`. The lower-level alternative to `catalogues`.

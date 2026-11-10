@@ -204,12 +204,21 @@ export function createI18n({
     return instance.t(key, options)
   }
 
+  /**
+   * Content's own translation, such as a record's `{ en: "Jazz", it: "Jazz" }`
+   * from a database or a CMS: the active locale's, else the default locale's.
+   */
+  function localized(translations) {
+    return translations?.[instance.language] ?? translations?.[fallbackLocale]
+  }
+
   return {
     I18n,
     ready,
     languages,
     t,
     trans,
+    localized,
     currentLocale: () => instance.language,
     i18next: instance,
   }

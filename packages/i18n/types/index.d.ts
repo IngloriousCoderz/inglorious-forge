@@ -139,6 +139,13 @@ export interface I18n {
     key: string | string[],
     options?: TransOptions<Part>,
   ) => Array<string | Part>
+  /**
+   * Content's own translation, such as a record's `{ en: "Jazz", it: "Jazz" }`
+   * from a database or a CMS: the active locale's, else the default locale's.
+   */
+  localized: <Value = string>(
+    translations: Partial<Record<string, Value>> | null | undefined,
+  ) => Value | undefined
   /** The underlying i18next instance, for anything the adapter does not cover. */
   i18next: i18n
 }

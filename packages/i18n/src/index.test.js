@@ -396,6 +396,37 @@ describe("catalogues", () => {
   })
 })
 
+describe("localized", () => {
+  const jazz = { en: "Jazz", it: "Musica jazz" }
+
+  it("picks content's translation in the active locale", () => {
+    stubBrowser({ languages: ["it"] })
+    const { localized } = createI18n({ resources })
+
+    expect(localized(jazz)).toBe("Musica jazz")
+  })
+
+  it("falls back to the default locale, and to nothing", () => {
+    stubBrowser({ languages: ["it"] })
+    const { localized } = createI18n({ resources, defaultLocale: "en" })
+
+    expect(localized({ en: "Jazz" })).toBe("Jazz")
+    expect(localized({ fr: "Jazz" })).toBeUndefined()
+    expect(localized(undefined)).toBeUndefined()
+  })
+
+  it("follows a switch", () => {
+    stubBrowser({ languages: ["en"] })
+    const { I18n, localized } = createI18n({ resources })
+    const entity = {}
+    I18n.create(entity)
+
+    I18n.localeChange(entity, "it")
+
+    expect(localized(jazz)).toBe("Musica jazz")
+  })
+})
+
 describe("languages", () => {
   it("names each language in itself, for a picker", () => {
     stubBrowser({ languages: ["en"] })

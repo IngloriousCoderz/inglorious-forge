@@ -1,5 +1,11 @@
 # @inglorious/i18n
 
+## 2.1.0
+
+### Minor Changes
+
+- Add `localized` to what `createI18n` returns: it picks content's own translation, such as a record's `{ en, it }` from a database or a CMS, in the active locale, else the default locale.
+
 ## 2.0.0
 
 ### Major Changes
