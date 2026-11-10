@@ -63,7 +63,7 @@
     "@inglorious/utils": "workspace:^",
     "@inglorious/web": "workspace:^",
     "@lit-labs/ssr": "^4.1.0",
-    "commander": "^15.0.0",
+    "commander": "^15.1.0",
     "connect": "^3.7.0",
     "fast-xml-parser": "^5.12.0",
     "glob": "^14.0.4",
