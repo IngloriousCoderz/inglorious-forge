@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.17.0
+
+### Minor Changes
+
+- Mobile apps with push notifications now update their web code without the stores: `pnpm live:release` publishes a signed bundle to Supabase Storage, and the installed apps switch to it the next time they go to the background.
+
 ## 1.16.1
 
 ### Patch Changes

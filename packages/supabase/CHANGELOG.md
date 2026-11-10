@@ -1,5 +1,11 @@
 # @inglorious/supabase
 
+## 0.7.0
+
+### Minor Changes
+
+- Add the `inglorious-live-update` command: `keys` makes the signing keys, `build` stamps a Vite build as a release, and `release` builds the committed code from a clean checkout, signs it and publishes it, also from a pre-push hook with `--on-push`.
+
 ## 0.6.0
 
 ### Minor Changes

@@ -9,6 +9,7 @@ import {
   CAPACITOR_APP_VERSION,
   CAPACITOR_FIREBASE_VERSION,
   CAPACITOR_VERSION,
+  CAPAWESOME_LIVE_UPDATE_VERSION,
   FIREBASE_VERSION,
   INDENTATION,
   SUPABASE_VERSION,
@@ -156,6 +157,8 @@ function addDependencies(pkg, app) {
   }
   if (app.nativeUpdate) {
     pkg.dependencies["@inglorious/supabase"] = "workspace:*"
+    pkg.dependencies["@capawesome/capacitor-live-update"] =
+      CAPAWESOME_LIVE_UPDATE_VERSION
   }
 }
 
@@ -221,7 +224,10 @@ function mainSource(app) {
   }
   if (app.nativeUpdate) {
     imports.push(
+      'import { LiveUpdate } from "@capawesome/capacitor-live-update"',
+      'import { liveUpdateManifestUrl } from "@inglorious/supabase"',
       'import { when } from "@inglorious/web/directives/when"',
+      'import { watchLiveUpdate } from "@inglorious/web/live-update"',
       'import { watchNativeUpdate } from "@inglorious/web/native-update"',
     )
     if (app.isTypeScript) imports.push('import type { AppApi } from "../types"')
@@ -263,6 +269,17 @@ watchAppLinks(NativeApp, store)`
     ? `
 
 watchNativeUpdate(NativeApp, store)
+
+// Only release builds are stamped: a development build stays as it is.
+const release = Number(import.meta.env.VITE_LIVE_UPDATE_RELEASE)
+if (release) {
+  watchLiveUpdate({
+    plugin: LiveUpdate,
+    app: NativeApp,
+    manifestUrl: liveUpdateManifestUrl(import.meta.env.VITE_SUPABASE_URL),
+    release,
+  })
+}
 
 // An outdated native build shows nothing but the update page.
 function renderApp(api${app.isTypeScript ? ": AppApi" : ""}) {

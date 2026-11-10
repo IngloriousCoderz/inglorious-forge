@@ -126,6 +126,30 @@ const manifest = await publishLiveUpdate({
 
 `liveUpdateManifestUrl(projectUrl)`, from the main entry, is the manifest's URL for the app.
 
+### The `inglorious-live-update` command
+
+The same, ready to use from `package.json`:
+
+```json
+{
+  "scripts": {
+    "build:release": "inglorious-live-update build",
+    "live:keys": "inglorious-live-update keys",
+    "live:release": "inglorious-live-update release"
+  },
+  "liveUpdate": { "minBuild": 1 }
+}
+```
+
+- `keys` writes the private key to `~/.config/<package name>/live-update.pem`, or to `LIVE_UPDATE_PRIVATE_KEY`, and the public key to `live-update.pub.pem` in the project.
+- `build` runs `vite build` with the values in `.env` over `.env.local`, stamped as `VITE_LIVE_UPDATE_RELEASE`: the time, in seconds. Use it for store builds too, so a store build never goes back to an older bundle.
+- `release` builds `HEAD` from a clean git worktree, so uncommitted changes never ship, and publishes it for builds from `liveUpdate.minBuild` up. It takes the project and its service role key from the Supabase CLI after `supabase link`, or from `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`.
+- `release --on-push`, in a pre-push hook, reads the refs git pushes on stdin and publishes only when `main` gets commits that touch the app: not `docs/`, `landing/`, `supabase/`, `.changeset/`, `.github/` or Markdown alone. Without a key it says so and lets the push through.
+
+```sh
+printf '%s\n' "$(cat)" | pnpm exec inglorious-live-update release --on-push
+```
+
 ## CAPTCHA
 
 With CAPTCHA protection on (Authentication → Attack Protection, provider Turnstile, with the widget's secret key), Supabase Auth refuses a signup, password login, magic link or confirmation resend without a valid token. `createCaptcha` makes those tokens:

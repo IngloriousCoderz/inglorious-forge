@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/supabase",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Supabase integration for Inglorious Web, and helpers for Supabase Edge Functions.",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -20,6 +20,9 @@
     "deno"
   ],
   "type": "module",
+  "bin": {
+    "inglorious-live-update": "./bin/live-update.js"
+  },
   "exports": {
     ".": {
       "types": "./types/index.d.ts",
@@ -35,6 +38,7 @@
     }
   },
   "files": [
+    "bin",
     "src",
     "types"
   ],

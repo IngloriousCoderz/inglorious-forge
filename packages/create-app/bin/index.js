@@ -20,6 +20,7 @@ import { addDependabot } from "./lib/dependabot.js"
 import { SYNTAXES, TEMPLATES } from "./lib/features.js"
 import { copyDir } from "./lib/file.js"
 import { addFirebaseSupport } from "./lib/firebase.js"
+import { addLiveUpdateSupport } from "./lib/live-update.js"
 import { addMobileSupport } from "./lib/mobile.js"
 import { addNativeUpdateSupport } from "./lib/native-update.js"
 import { addPwaSupport } from "./lib/pwa.js"
@@ -213,6 +214,7 @@ async function main() {
 
     if (features.mobile && features.push) {
       addNativeUpdateSupport(targetDir, templatesRoot)
+      addLiveUpdateSupport(targetDir, pkg, projectName, templatesRoot)
     }
 
     for (const depType of ["dependencies", "devDependencies"]) {
