@@ -32,6 +32,12 @@ describe("watchKeyboard", () => {
   const root = () => document.documentElement
   const height = () => root().style.getPropertyValue("--iw-keyboard-height")
 
+  function shrinkPage(by) {
+    vi.stubGlobal("innerHeight", SCREEN - by)
+    viewport.height = SCREEN - by
+    window.dispatchEvent(new Event("resize"))
+  }
+
   function openKeyboard(id = "name") {
     document.getElementById(id).focus()
     viewport.height = SCREEN - KEYBOARD
@@ -85,6 +91,29 @@ describe("watchKeyboard", () => {
     document.getElementById("name").focus()
     viewport.height = SCREEN - 60
     viewport.dispatchEvent(new Event("resize"))
+
+    expect(root().classList.contains("iw-keyboard-open")).toBe(false)
+  })
+
+  it("knows the keyboard is up where the page shrinks for it", () => {
+    stop = watchKeyboard()
+    document.getElementById("name").focus()
+    shrinkPage(KEYBOARD)
+
+    expect(root().classList.contains("iw-keyboard-open")).toBe(true)
+    expect(height()).toBe("0px")
+
+    shrinkPage(0)
+    expect(root().classList.contains("iw-keyboard-open")).toBe(false)
+  })
+
+  it("starts over when the phone turns", () => {
+    stop = watchKeyboard()
+    vi.stubGlobal("innerWidth", SCREEN)
+    vi.stubGlobal("innerHeight", SCREEN - KEYBOARD)
+    viewport.height = SCREEN - KEYBOARD
+    document.getElementById("name").focus()
+    window.dispatchEvent(new Event("resize"))
 
     expect(root().classList.contains("iw-keyboard-open")).toBe(false)
   })

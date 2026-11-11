@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 6.23.1
+
+### Patch Changes
+
+- `watchKeyboard` sets `iw-keyboard-open` where the page shrinks for the keyboard too, as in an Android app, so bottom navigation steps aside there as well. `--iw-keyboard-height` stays `0px` in that case.
+
 ## 6.23.0
 
 ### Minor Changes

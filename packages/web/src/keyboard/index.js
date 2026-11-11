@@ -18,14 +18,16 @@ const TEXT_INPUTS = new Set([
 ])
 
 /**
- * Tells the page how much of it the on-screen keyboard covers, so what sits at
- * the bottom of the screen can move above it. Phones don't shrink the page for
- * the keyboard (iOS, and Chrome on Android): a bottom sheet or a snackbar ends
- * up behind it. This sets `--iw-keyboard-height` on `<html>`, and the
- * `iw-keyboard-open` class while the keyboard is up, from the visual viewport:
- * no plugin needed, in a browser or a native app. Where the page does shrink,
- * the height stays 0. Inglorious UI's sheets, snackbars and toasts follow it,
- * and its bottom navigation hides.
+ * Tells the page when the on-screen keyboard is up, and how much of it the
+ * keyboard covers, so what sits at the bottom of the screen can move above it
+ * or step aside. Most phones don't shrink the page for the keyboard (iOS, and
+ * Chrome on Android): a bottom sheet or a snackbar ends up behind it. This sets
+ * `--iw-keyboard-height` on `<html>` from the visual viewport, and the
+ * `iw-keyboard-open` class while the keyboard is up: no plugin needed, in a
+ * browser or a native app. Where the page does shrink, as in an Android app,
+ * the class is still set but the height stays 0, since nothing is covered.
+ * Inglorious UI's sheets, snackbars and toasts follow it, and its bottom
+ * navigation hides.
  *
  * @returns {() => void} Stops following.
  *
@@ -37,22 +39,33 @@ export function watchKeyboard() {
   if (!viewport) return () => {}
 
   const root = document.documentElement
-  let current = NONE
+  let isOpen = false
+  let height = NONE
+  let fullWidth = window.innerWidth
+  let fullHeight = window.innerHeight
 
   const update = () => {
+    if (window.innerWidth !== fullWidth) {
+      fullWidth = window.innerWidth
+      fullHeight = window.innerHeight
+    }
+    if (!isOpen) fullHeight = Math.max(fullHeight, window.innerHeight)
+
     const covered = Math.round(
       window.innerHeight - viewport.height - viewport.offsetTop,
     )
+    const shrunk = fullHeight - window.innerHeight
     const isKeyboard =
-      covered >= MIN_KEYBOARD_PX &&
-      (Boolean(current) || isEditable(document.activeElement))
-    const height = isKeyboard ? covered : NONE
-    if (height === current) return
+      (covered >= MIN_KEYBOARD_PX || shrunk >= MIN_KEYBOARD_PX) &&
+      (isOpen || isEditable(document.activeElement))
+    const nextHeight = isKeyboard && covered >= MIN_KEYBOARD_PX ? covered : NONE
+    if (isKeyboard === isOpen && nextHeight === height) return
 
-    const isOpening = !current && height
-    current = height
+    const isOpening = isKeyboard && !isOpen
+    isOpen = isKeyboard
+    height = nextHeight
     root.style.setProperty(HEIGHT, `${height}px`)
-    root.classList.toggle(OPEN, Boolean(height))
+    root.classList.toggle(OPEN, isOpen)
     if (isOpening) {
       requestAnimationFrame(() =>
         document.activeElement?.scrollIntoView?.({ block: "nearest" }),
@@ -63,10 +76,12 @@ export function watchKeyboard() {
   // Not on focus changes: a tap on a button would move it before its click.
   viewport.addEventListener("resize", update)
   viewport.addEventListener("scroll", update)
+  window.addEventListener("resize", update)
 
   return function stop() {
     viewport.removeEventListener("resize", update)
     viewport.removeEventListener("scroll", update)
+    window.removeEventListener("resize", update)
     root.style.removeProperty(HEIGHT)
     root.classList.remove(OPEN)
   }
