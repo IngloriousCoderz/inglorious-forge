@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/capacitor",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Configures Capacitor's native projects from package.json, and makes their icons and splash screens from one logo.",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",

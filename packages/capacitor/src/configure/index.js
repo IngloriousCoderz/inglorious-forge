@@ -81,8 +81,15 @@ function writeWellKnown(settings) {
 }
 
 function writeJson(file, value) {
-  const source = JSON.stringify(value, null, INDENTATION) + EOL
-  if (existsSync(file) && readFileSync(file, "utf8") === source) return
+  if (existsSync(file) && isSameJson(readFileSync(file, "utf8"), value)) return
   mkdirSync(path.dirname(file), { recursive: true })
-  writeFileSync(file, source)
+  writeFileSync(file, JSON.stringify(value, null, INDENTATION) + EOL)
+}
+
+function isSameJson(source, value) {
+  try {
+    return JSON.stringify(JSON.parse(source)) === JSON.stringify(value)
+  } catch {
+    return false
+  }
 }

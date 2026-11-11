@@ -1,5 +1,11 @@
 # @inglorious/capacitor
 
+## 0.1.1
+
+### Patch Changes
+
+- `configure` no longer rewrites `public/.well-known` files that only differ in formatting, so a formatter and `cap sync` don't undo each other.
+
 ## 0.1.0
 
 ### Minor Changes

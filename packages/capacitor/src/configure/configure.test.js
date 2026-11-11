@@ -128,6 +128,23 @@ describe("configure", () => {
     expect(entitlements).toContain("applinks:new.example.com")
   })
 
+  it("keeps the formatting of App Links files with the same content", async () => {
+    writePackage(root, {
+      native: {
+        appLinks: { domain: "app.example.com" },
+        android: { sha256: ["AA:BB"] },
+      },
+    })
+    await configure({ root, env: { CAPACITOR_CONFIG } })
+    const file = path.join(root, "public", ".well-known", "assetlinks.json")
+    const compact = JSON.stringify(JSON.parse(readFileSync(file, "utf8")))
+    writeFileSync(file, compact)
+
+    await configure({ root, env: { CAPACITOR_CONFIG } })
+
+    expect(readFileSync(file, "utf8")).toBe(compact)
+  })
+
   it("turns on iOS swipe back with a view controller of its own", async () => {
     writePackage(root, { native: { ios: { swipeBack: true } } })
 
