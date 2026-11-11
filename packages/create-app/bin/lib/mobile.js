@@ -9,7 +9,15 @@ import {
 } from "./constants.js"
 import { copyDir, toJavaIdentifier } from "./file.js"
 
-export function addMobileSupport(targetDir, pkg, projectName, templatesRoot) {
+const WELL_KNOWN_FILES = ["apple-app-site-association", "assetlinks.json"]
+
+export function addMobileSupport(
+  targetDir,
+  pkg,
+  projectName,
+  templatesRoot,
+  { routing = false } = {},
+) {
   pkg.dependencies ??= {}
   pkg.devDependencies ??= {}
   pkg.scripts ??= {}
@@ -18,11 +26,16 @@ export function addMobileSupport(targetDir, pkg, projectName, templatesRoot) {
   pkg.devDependencies["@capacitor/android"] = CAPACITOR_VERSION
   pkg.devDependencies["@capacitor/cli"] = CAPACITOR_VERSION
   pkg.devDependencies["@capacitor/ios"] = CAPACITOR_VERSION
+  pkg.devDependencies["@inglorious/capacitor"] = "workspace:*"
   pkg.devDependencies["typescript"] ??= TYPESCRIPT_VERSION
 
   pkg.scripts.cap = "cap"
-  pkg.scripts["mobile:init:ios"] = "cap add ios"
-  pkg.scripts["mobile:init:android"] = "cap add android"
+  pkg.scripts["mobile:init:ios"] =
+    "cap add ios && inglorious-capacitor assets --ios"
+  pkg.scripts["mobile:init:android"] =
+    "cap add android && inglorious-capacitor assets --android"
+  pkg.scripts["mobile:assets"] = "inglorious-capacitor assets"
+  pkg.scripts["capacitor:sync:after"] = "inglorious-capacitor configure"
   pkg.scripts["mobile:sync"] = "pnpm build && cap sync"
   pkg.scripts["mobile:ios"] = "pnpm build && cap run ios"
   pkg.scripts["mobile:android"] = "pnpm build && cap run android"
@@ -38,13 +51,14 @@ export function addMobileSupport(targetDir, pkg, projectName, templatesRoot) {
     path.join(targetDir, "capacitor.config.ts"),
     createCapacitorConfigSource(projectName),
   )
-  writeAppSiteAssociation(targetDir, projectName)
+  pkg.native = nativeSettings({ routing })
+  if (routing) serveWellKnownAsJson(targetDir)
   includeInNodeProject(targetDir, "capacitor.config.ts")
 
-  appendMobileSetupToReadme(targetDir)
+  appendMobileSetupToReadme(targetDir, { routing })
 }
 
-export function appendMobileSetupToReadme(targetDir) {
+export function appendMobileSetupToReadme(targetDir, { routing = false } = {}) {
   const readmePath = path.join(targetDir, "README.md")
   if (!fs.existsSync(readmePath)) {
     return
@@ -103,6 +117,13 @@ If you are using a physical device, you may also need to approve the developer c
 - Android Studio: https://developer.android.com/studio
 - Xcode: https://developer.apple.com/xcode/
 
+Then create the native projects you need, once. Each starts with your logo as its icon and splash screen:
+
+\`\`\`bash
+pnpm mobile:init:android
+pnpm mobile:init:ios
+\`\`\`
+
 Then sync and open the native project:
 
 \`\`\`bash
@@ -112,27 +133,14 @@ pnpm mobile:android
 pnpm mobile:ios
 \`\`\`
 
-### Opening links in the app
+### Native settings
 
-With Universal Links, a link to the app's domain opens the installed app instead of the browser, and the router goes to the link's path. The app's side is done; three steps are yours:
+Leave \`android/\` and \`ios/\` to the tools: what the app needs from them is in \`native\` in \`package.json\`, and \`inglorious-capacitor configure\` writes it into both projects after every \`cap sync\`. Set \`native.ios.teamId\` to your Apple Developer Team ID, so Xcode signs the app without asking. \`native.ios.infoPlist\` adds Info.plist entries, such as the text iOS shows when the app asks for the microphone (\`NSMicrophoneUsageDescription\`), and \`native.android.permissions\` adds Android permissions, such as \`android.permission.RECORD_AUDIO\`. With routing, \`native.ios.swipeBack\` lets a swipe from the left edge go back, as in other iOS apps. \`ITSAppUsesNonExemptEncryption: false\` tells App Store Connect that the app uses no encryption beyond HTTPS: remove it if that stops being true.
 
-1. Replace \`TEAM_ID\` in \`public/.well-known/apple-app-site-association\` with your Apple Developer Team ID, and keep the bundle ID in step with \`appId\` in \`capacitor.config.ts\`. Add paths that must stay in the browser as \`{ "/": "/path*", "exclude": true }\` before the last entry.
-2. In Xcode, select the app target, open **Signing & Capabilities**, add **Associated Domains**, and enter \`applinks:your-domain.com\`.
-3. Serve the file as JSON, without a redirect. On Vercel, add this to \`vercel.json\`:
+### Icons and splash screens
 
-\`\`\`json
-{
-  "headers": [
-    {
-      "source": "/.well-known/apple-app-site-association",
-      "headers": [{ "key": "Content-Type", "value": "application/json" }]
-    }
-  ]
-}
-\`\`\`
-
-Test on a device by tapping a link in Notes or Messages; typing it in Safari does not count. Apple caches the file, so a change can take a few hours to arrive. Android App Links need \`/.well-known/assetlinks.json\` with your signing certificate's SHA-256 fingerprint and an intent filter in \`AndroidManifest.xml\`; see https://developer.android.com/training/app-links.
-
+\`pnpm mobile:assets\` makes every icon and splash screen from \`public/logo.svg\` or \`public/logo.png\`, centred on \`native.assets.background\` (white by default) and, for the dark splash screen, \`native.assets.backgroundDark\`. \`iconScale\` and \`splashScale\` set the logo's width as a share of the icon (0.6) and of the splash screen (0.3). Run it again after changing the logo, and commit the result.
+${routing ? APP_LINKS_README : ""}
 ### Releasing
 
 The version users see comes from \`package.json\`, the same on the web, Android and iOS. The build number is shared by both native apps and must go up with every store upload.
@@ -147,6 +155,18 @@ The version users see comes from \`package.json\`, the same on the web, Android 
     `${readme.trimEnd()}${EOL}${EOL}${mobileReadme.trim()}${EOL}`,
   )
 }
+
+const APP_LINKS_README = `
+### Opening links in the app
+
+With Universal Links (iOS) and App Links (Android), a link to the app's domain opens the installed app instead of the browser, and the router goes to the link's path. Fill in \`native.appLinks.domain\`, then:
+
+1. For iOS, set \`native.ios.teamId\`. \`pnpm mobile:sync\` adds the domain to the app's Associated Domains and writes \`public/.well-known/apple-app-site-association\`. Links in \`native.appLinks.exclude\` stay in the browser: by default, the ones carrying a sign-in token.
+2. For Android, add the SHA-256 fingerprints of the keys that sign the app to \`native.android.sha256\`: Google's app signing key and your upload key, both under **Test and release → App integrity → App signing** in Play Console. \`pnpm mobile:sync\` writes \`public/.well-known/assetlinks.json\` and the intent filter. Android can't exclude a link: it opens the paths in \`native.appLinks.paths\`, \`["/*"]\` by default, so list the ones that should open the app instead, such as \`["/", "/jobs*"]\`.
+3. Deploy the site, so the domain serves both files. \`vercel.json\` already serves them as JSON.
+
+Test on a device by tapping a link in Notes or Messages; typing it in Safari does not count. Both files are cached, so a change can take a few hours to arrive, and Android checks the domain when the app is installed or updated: \`adb shell pm get-app-links <app id>\` should say \`verified\`.
+`
 
 export function createCapacitorConfigSource(
   projectName,
@@ -204,23 +224,34 @@ function appIdOf(projectName) {
 
 // Links carrying a session token, from sign-up and password-reset emails,
 // stay in the browser, where the sign-in flow expects them.
-function writeAppSiteAssociation(targetDir, projectName) {
-  const association = {
-    applinks: {
-      details: [
-        {
-          appIDs: [`TEAM_ID.${appIdOf(projectName)}`],
-          components: [{ "#": "*access_token*", exclude: true }, { "/": "*" }],
-        },
-      ],
+function nativeSettings({ routing }) {
+  return {
+    ...(routing
+      ? { appLinks: { domain: "", exclude: ["#*access_token*"] } }
+      : {}),
+    ios: {
+      teamId: "",
+      infoPlist: { ITSAppUsesNonExemptEncryption: false },
+      ...(routing ? { swipeBack: true } : {}),
     },
+    android: { sha256: [], permissions: [] },
+    assets: { background: "#ffffff", backgroundDark: "#121212" },
   }
-  const dir = path.join(targetDir, "public", ".well-known")
-  fs.mkdirSync(dir, { recursive: true })
-  fs.writeFileSync(
-    path.join(dir, "apple-app-site-association"),
-    JSON.stringify(association, null, INDENTATION) + EOL,
-  )
+}
+
+function serveWellKnownAsJson(targetDir) {
+  const vercelPath = path.join(targetDir, "vercel.json")
+  if (!fs.existsSync(vercelPath)) return
+
+  const vercel = JSON.parse(fs.readFileSync(vercelPath, "utf-8"))
+  vercel.headers = [
+    ...(vercel.headers ?? []),
+    ...WELL_KNOWN_FILES.map((file) => ({
+      source: `/.well-known/${file}`,
+      headers: [{ key: "Content-Type", value: "application/json" }],
+    })),
+  ]
+  fs.writeFileSync(vercelPath, JSON.stringify(vercel, null, INDENTATION) + EOL)
 }
 
 function includeInNodeProject(targetDir, file) {

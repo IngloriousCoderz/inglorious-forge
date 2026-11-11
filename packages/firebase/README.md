@@ -15,7 +15,7 @@ pnpm add @capacitor-firebase/messaging   # for push
 pnpm add @capacitor-firebase/analytics   # for analytics
 ```
 
-The native apps read the Firebase project from `android/app/google-services.json` and `ios/App/GoogleService-Info.plist`. A browser gets it from the `firebase` option: the web app's config from the Firebase console.
+The native apps read the Firebase project from `google-services.json` in `android/app/` and `GoogleService-Info.plist` in the iOS app target; with [`@inglorious/capacitor`](../capacitor), keep both in the project's root and `cap sync` puts them there. A browser gets it from the `firebase` option: the web app's config from the Firebase console.
 
 ## Push
 

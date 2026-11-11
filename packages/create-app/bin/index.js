@@ -179,6 +179,7 @@ async function main() {
 
     const hasAppFeatures =
       features.ui ||
+      features.mobile ||
       features.routing ||
       Boolean(features.icons.length) ||
       Boolean(features.languages.length) ||
@@ -204,7 +205,9 @@ async function main() {
 
     if (features.mobile) {
       spinner.text = "Adding Capacitor support..."
-      addMobileSupport(targetDir, pkg, projectName, templatesRoot)
+      addMobileSupport(targetDir, pkg, projectName, templatesRoot, {
+        routing: features.routing,
+      })
     }
 
     if (features.analytics || features.push) {

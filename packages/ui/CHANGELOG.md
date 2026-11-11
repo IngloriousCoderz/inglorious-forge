@@ -1,5 +1,16 @@
 # @inglorious/ui
 
+## 9.19.0
+
+### Minor Changes
+
+- Mobile gestures. A `sheet` dialog that can be closed now has a handle, and below 48rem follows the finger down from it or the header, closing when dragged past a third of its height or flicked. `ActionSheet` lists choices about one thing, with cancel set apart; picking one runs it and closes the sheet. `PullToRefresh` wraps scrolling content and calls `onRefresh` when pulled down from the top and let go, keeping its spinner while `isRefreshing`.
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/web@6.22.0
+
 ## 9.18.2
 
 ### Patch Changes

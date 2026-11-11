@@ -220,6 +220,12 @@ function mainSource(app, { pages }) {
   if (app.nativeUpdate || app.appLinks || app.backButton) {
     imports.push('import { App as NativeApp } from "@capacitor/app"')
   }
+  if (app.mobile) {
+    imports.push(
+      'import { SystemBars } from "@capacitor/core"',
+      'import { watchSystemBars } from "@inglorious/web/system-bars"',
+    )
+  }
   if (app.appLinks) {
     imports.push('import { watchAppLinks } from "@inglorious/web/app-links"')
   }
@@ -265,6 +271,12 @@ supabase.auth.onAuthStateChange((_event, session) => {
 })`
     : ""
 
+  const systemBars = app.mobile
+    ? `
+
+watchSystemBars(SystemBars)`
+    : ""
+
   const appLinks = app.appLinks
     ? `
 
@@ -307,7 +319,7 @@ function renderApp(api${app.isTypeScript ? ": AppApi" : ""}) {
 
   return `${importBlock(imports)}
 
-${body}${session}${appLinks}${backButton}${nativeUpdate}
+${body}${session}${systemBars}${appLinks}${backButton}${nativeUpdate}
 `
 }
 

@@ -10,6 +10,7 @@ import { when } from "@inglorious/web/directives/when"
 
 import { IconButton } from "../../controls/icon-button/index.js"
 import { Icon } from "../../data-display/icon/index.js"
+import { dragToDismiss } from "../../shared/drag-dismiss.js"
 import { close } from "../../shared/icons.js"
 import { syncDialog } from "../../shared/top-layer.js"
 
@@ -58,13 +59,16 @@ export const Dialog = {
     const labelId = titleId || descriptionId
     const describedById = titleId ? descriptionId : ""
     const onBackdrop = onBackdropClick ?? onClose
+    const isSheet = variant === "sheet"
+    const onDragStart =
+      isSheet && onClose ? (event) => dragToDismiss(event, onClose) : null
 
     return html`<dialog
       id=${id || nothing}
       class=${classMap({
         "iw-dialog": true,
         [`iw-dialog-${size}`]: true,
-        "iw-dialog-sheet": variant === "sheet",
+        "iw-dialog-sheet": isSheet,
         ...extraClasses,
       })}
       aria-labelledby=${labelId || nothing}
@@ -89,9 +93,21 @@ export const Dialog = {
     >
       <div class="iw-dialog-surface">
         ${when(
+          onDragStart,
+          () =>
+            html`<div
+              class="iw-dialog-handle"
+              aria-hidden="true"
+              @pointerdown=${onDragStart}
+            ></div>`,
+        )}
+        ${when(
           title || onClose,
           () =>
-            html`<div class="iw-dialog-header">
+            html`<div
+              class="iw-dialog-header"
+              @pointerdown=${onDragStart ?? nothing}
+            >
               ${when(
                 title,
                 () =>

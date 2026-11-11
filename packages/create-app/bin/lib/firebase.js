@@ -8,8 +8,7 @@ const FIRST_NUMBER = 1
 
 /**
  * Adds what analytics and push need outside src/: the service worker, the
- * Supabase side of push, the hook that keeps native apps from measuring before
- * consent, and the setup steps in the README.
+ * Supabase side of push, and the setup steps in the README.
  *
  * @param {string} targetDir
  * @param {object} pkg - The package.json being built; scripts are added.
@@ -20,7 +19,7 @@ const FIRST_NUMBER = 1
  * @param {boolean} options.mobile
  */
 export function addFirebaseSupport(targetDir, pkg, options) {
-  const { templatesRoot, analytics, push, mobile } = options
+  const { templatesRoot, push } = options
   pkg.scripts ??= {}
 
   if (push) {
@@ -28,12 +27,6 @@ export function addFirebaseSupport(targetDir, pkg, options) {
     stampMigration(targetDir, "push.sql")
     pkg.scripts["vault:push"] = "node scripts/push-vault-secrets.mjs"
     keepSupabaseOutOfTypeScript(targetDir)
-  }
-
-  if (analytics && mobile) {
-    copyDir(path.join(templatesRoot, "features/analytics"), targetDir)
-    pkg.scripts["capacitor:sync:after"] =
-      "node scripts/analytics-off-native.mjs"
   }
 
   appendSetupToReadme(targetDir, options)
@@ -93,7 +86,7 @@ function firebaseSection({ analytics, push, mobile }) {
   }
   if (mobile) {
     steps.push(
-      "Add an Android and an iOS app too, then put `google-services.json` in `android/app/` and add `GoogleService-Info.plist` to the App target in Xcode, once `pnpm mobile:init:android` and `pnpm mobile:init:ios` have created the native projects. iOS needs some more setup: see the [Capacitor Firebase plugins](https://github.com/capawesome-team/capacitor-firebase).",
+      "Add an Android and an iOS app too, and put their `google-services.json` and `GoogleService-Info.plist` in the project's root folder: `pnpm mobile:sync` copies them into the native projects, and sets up the rest.",
     )
   }
   return `## Firebase Setup
@@ -105,7 +98,7 @@ function analyticsSection(mobile) {
   const native = mobile
     ? `
 
-The native apps must start with collection off, or they measure from launch. \`scripts/analytics-off-native.mjs\` writes that setting into the native projects after every \`cap sync\`.`
+The native apps must start with collection off, or they measure from launch. \`inglorious-capacitor configure\` writes that setting into the native projects after every \`cap sync\`.`
     : ""
   return `## Analytics
 

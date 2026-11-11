@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 6.22.0
+
+### Minor Changes
+
+- `watchSystemBars` (`@inglorious/web/system-bars`) keeps the status and navigation bars of a Capacitor app readable: it sets their style from the app's own `color-scheme` and follows theme changes, so a light app on an Android phone in dark mode no longer gets white icons on a white page.
+
 ## 6.21.0
 
 ### Minor Changes

@@ -1,0 +1,64 @@
+.iw-pull-to-refresh {
+  --iw-pull-threshold: 64px;
+  position: relative;
+}
+
+.iw-pull-to-refresh-indicator {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  opacity: var(--iw-pull-progress, 0);
+  transform: translateY(calc(var(--iw-pull-distance, 0px) / 2 - 50%));
+  transition:
+    transform 0.25s ease,
+    opacity 0.25s ease;
+}
+
+.iw-pull-to-refresh-indicator .iw-progress {
+  animation-play-state: paused;
+  rotate: calc(var(--iw-pull-progress, 0) * 270deg);
+}
+
+.iw-pull-to-refresh-armed .iw-pull-to-refresh-indicator .iw-progress {
+  scale: 1.15;
+}
+
+.iw-pull-to-refresh-content {
+  transform: translateY(var(--iw-pull-distance, 0px));
+  transition: transform 0.25s ease;
+}
+
+.iw-pull-to-refresh-pulling .iw-pull-to-refresh-indicator,
+.iw-pull-to-refresh-pulling
+  .iw-pull-to-refresh-armed
+  .iw-pull-to-refresh-indicator
+  .iw-progress {
+  scale: 1.15;
+}
+
+.iw-pull-to-refresh-content {
+  transition: none;
+}
+
+.iw-pull-to-refresh-refreshing {
+  --iw-pull-distance: var(--iw-pull-threshold);
+  --iw-pull-progress: 1;
+}
+
+.iw-pull-to-refresh-refreshing .iw-pull-to-refresh-indicator .iw-progress {
+  animation-play-state: running;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .iw-pull-to-refresh-indicator,
+  .iw-pull-to-refresh-armed .iw-pull-to-refresh-indicator .iw-progress {
+    scale: 1.15;
+  }
+
+  .iw-pull-to-refresh-content {
+    transition: none;
+  }
+}

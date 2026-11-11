@@ -1,0 +1,21 @@
+.iw-action-sheet-actions {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--iw-radius-md);
+  overflow: hidden;
+}
+
+.iw-action-sheet-action {
+  justify-content: center;
+  gap: var(--iw-space-2);
+  border-radius: 0;
+}
+
+.iw-action-sheet-action + .iw-action-sheet-action {
+  border-top: 1px solid
+    color-mix(in srgb, var(--iw-color-border) 70%, transparent);
+}
+
+.iw-action-sheet .iw-dialog-actions {
+  margin-top: var(--iw-space-3);
+}

@@ -1586,7 +1586,7 @@ watchAppLinks(App, store)
 
 `{ id }` as a third argument notifies a router with another id; it returns a function that stops listening.
 
-The operating system opens the app only when the domain vouches for it: iOS reads `/.well-known/apple-app-site-association` and Android `/.well-known/assetlinks.json`, and the app declares the domain (Associated Domains on iOS, an intent filter on Android). `@inglorious/create-app --mobile` generates the iOS file and documents the rest.
+The operating system opens the app only when the domain vouches for it: iOS reads `/.well-known/apple-app-site-association` and Android `/.well-known/assetlinks.json`, and the app declares the domain (Associated Domains on iOS, an intent filter on Android). [`@inglorious/capacitor`](../capacitor) generates all of it from `native.appLinks` in `package.json`, and `@inglorious/create-app --mobile` sets it up.
 
 ---
 
@@ -1602,6 +1602,21 @@ watchBackButton(App, { rootPaths: ["/", "/search", "/profile"] })
 ```
 
 `rootPaths` defaults to `["/"]`; it returns a function that stops listening. Navigate between root paths with `{ to, replace: true }`, so switching tabs does not pile up history.
+
+---
+
+## System Bars
+
+The status bar and Android's navigation bar follow the device's light or dark mode, so a light app on a phone in dark mode gets white icons on a white page. `@inglorious/web/system-bars` sets them from the app's own `color-scheme`, which every Inglorious UI theme sets, and follows it when the theme class changes. An app whose `color-scheme` is `light dark` keeps the device's style. It does nothing outside a native app.
+
+```javascript
+import { SystemBars } from "@capacitor/core"
+import { watchSystemBars } from "@inglorious/web/system-bars"
+
+watchSystemBars(SystemBars)
+```
+
+It returns a function that stops following.
 
 ---
 

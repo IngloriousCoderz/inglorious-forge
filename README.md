@@ -24,6 +24,7 @@ There are no signals, no component state and no compiler to learn. Types are pla
 - [`@inglorious/ag-grid`](packages/ag-grid): AG Grid, with no adapter.
 - [`@inglorious/supabase`](packages/supabase): Supabase: Realtime changes that keep entities live, and helpers for Edge Functions.
 - [`@inglorious/firebase`](packages/firebase): Firebase push notifications and analytics, in the browser and in Capacitor apps.
+- [`@inglorious/capacitor`](packages/capacitor): native setup for Capacitor apps from `package.json`: App Links, signing, push, permissions, icons and splash screens.
 - [`@inglorious/logo`](packages/logo): the interactive 3D Inglorious Coderz logo, as an Inglorious Web type.
 
 **Sites**

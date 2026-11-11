@@ -80,7 +80,34 @@
 
   dialog.iw-dialog.iw-dialog-sheet[open] {
     animation: iw-dialog-sheet-in 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
   }
+
+  .iw-dialog-sheet .iw-dialog-handle {
+    display: block;
+    height: var(--iw-space-6, 1.5rem);
+    margin: calc(var(--iw-space-4) * -1) calc(var(--iw-space-4) * -1) 0;
+    touch-action: none;
+    cursor: grab;
+  }
+
+  .iw-dialog-sheet .iw-dialog-handle::before {
+    content: "";
+    display: block;
+    width: 2.25rem;
+    height: 0.3125rem;
+    margin: var(--iw-space-2) auto 0;
+    border-radius: var(--iw-radius-full);
+    background: color-mix(in srgb, var(--iw-color-text) 25%, transparent);
+  }
+
+  .iw-dialog-sheet .iw-dialog-handle + .iw-dialog-header {
+    touch-action: none;
+  }
+}
+
+.iw-dialog-handle {
+  display: none;
 }
 
 @keyframes iw-dialog-sheet-in {

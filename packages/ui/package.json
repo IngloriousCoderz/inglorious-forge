@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/ui",
-  "version": "9.18.2",
+  "version": "9.19.0",
   "description": "A design system for Inglorious Web with render-function components and customizable themes",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -241,6 +241,16 @@
       "import": "./src/feedback/dialog/index.js"
     },
     "./dialog.css": "./src/feedback/dialog/style.css",
+    "./action-sheet": {
+      "types": "./types/feedback/action-sheet.d.ts",
+      "import": "./src/feedback/action-sheet/index.js"
+    },
+    "./action-sheet.css": "./src/feedback/action-sheet/style.css",
+    "./pull-to-refresh": {
+      "types": "./types/feedback/pull-to-refresh.d.ts",
+      "import": "./src/feedback/pull-to-refresh/index.js"
+    },
+    "./pull-to-refresh.css": "./src/feedback/pull-to-refresh/style.css",
     "./progress": {
       "types": "./types/feedback/progress.d.ts",
       "import": "./src/feedback/progress/index.js"

@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.19.0
+
+### Minor Changes
+
+- Mobile apps set up their native projects from `native` in `package.json` through `@inglorious/capacitor`: `pnpm mobile:sync` applies App Links, the iOS signing team, iOS swipe back (on with routing), push, Analytics consent, permissions and the Firebase files, which no longer need Xcode or manual copies, and writes both `.well-known` files, which `vercel.json` serves as JSON. `mobile:init:*` start each native project with the app's logo as icon and splash screen, `pnpm mobile:assets` remakes them, and every mobile app keeps its status bar readable with `watchSystemBars`. `scripts/analytics-off-native.mjs` is gone.
+
 ## 1.18.0
 
 ### Minor Changes

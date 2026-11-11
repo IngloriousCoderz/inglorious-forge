@@ -1,5 +1,5 @@
 import { render } from "@inglorious/web/test"
-import { afterEach, describe, expect, it, vi } from "vitest"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 import { Dialog } from "."
 
@@ -169,6 +169,123 @@ describe("dialog", () => {
     expect(
       plain.querySelector("dialog").classList.contains("iw-dialog-sheet"),
     ).toBe(false)
+  })
+
+  describe("dragging a sheet", () => {
+    const SHEET_HEIGHT = 400
+
+    beforeEach(() => {
+      vi.useFakeTimers()
+      vi.stubGlobal("matchMedia", () => ({ matches: true }))
+    })
+
+    afterEach(() => {
+      vi.useRealTimers()
+      vi.unstubAllGlobals()
+    })
+
+    it("has a handle only when it can be dismissed", () => {
+      const dismissible = mount(
+        Dialog.render({ variant: "sheet", onClose: () => {} }),
+      )
+      const fixed = mount(Dialog.render({ variant: "sheet" }))
+      const dialog = mount(Dialog.render({ onClose: () => {} }))
+
+      expect(dismissible.querySelector(".iw-dialog-handle")).not.toBeNull()
+      expect(fixed.querySelector(".iw-dialog-handle")).toBeNull()
+      expect(dialog.querySelector(".iw-dialog-handle")).toBeNull()
+    })
+
+    it("follows the finger down and closes past a third of its height", () => {
+      const onClose = vi.fn()
+      const container = mount(Dialog.render({ variant: "sheet", onClose }))
+      const sheet = sized(container.querySelector("dialog"))
+      const handle = container.querySelector(".iw-dialog-handle")
+
+      pointer(handle, "pointerdown", 100, 0)
+      pointer(handle, "pointermove", 200, 1000)
+      expect(sheet.style.transform).toBe("translateY(100px)")
+
+      pointer(handle, "pointerup", 250, 1000)
+      vi.runAllTimers()
+
+      expect(onClose).toHaveBeenCalledTimes(1)
+    })
+
+    it("closes on a quick flick", () => {
+      const onClose = vi.fn()
+      const container = mount(Dialog.render({ variant: "sheet", onClose }))
+      sized(container.querySelector("dialog"))
+      const handle = container.querySelector(".iw-dialog-handle")
+
+      pointer(handle, "pointerdown", 100, 0)
+      pointer(handle, "pointerup", 160, 50)
+      vi.runAllTimers()
+
+      expect(onClose).toHaveBeenCalledTimes(1)
+    })
+
+    it("springs back from a short, slow drag", () => {
+      const onClose = vi.fn()
+      const container = mount(Dialog.render({ variant: "sheet", onClose }))
+      const sheet = sized(container.querySelector("dialog"))
+      const handle = container.querySelector(".iw-dialog-handle")
+
+      pointer(handle, "pointerdown", 100, 0)
+      pointer(handle, "pointermove", 140, 1000)
+      pointer(handle, "pointerup", 140, 1000)
+      vi.runAllTimers()
+
+      expect(onClose).not.toHaveBeenCalled()
+      expect(sheet.style.transform).toBe("")
+    })
+
+    it("leaves the close button to its click", () => {
+      const onClose = vi.fn()
+      const container = mount(
+        Dialog.render({ variant: "sheet", title: "Hi", onClose }),
+      )
+      sized(container.querySelector("dialog"))
+      const button = container.querySelector(".iw-dialog-close")
+
+      pointer(button, "pointerdown", 100, 0)
+      pointer(
+        container.querySelector(".iw-dialog-header"),
+        "pointerup",
+        300,
+        50,
+      )
+      vi.runAllTimers()
+
+      expect(onClose).not.toHaveBeenCalled()
+    })
+
+    it("stays put on a wide screen, where it is a dialog", () => {
+      vi.stubGlobal("matchMedia", () => ({ matches: false }))
+      const onClose = vi.fn()
+      const container = mount(Dialog.render({ variant: "sheet", onClose }))
+      const sheet = sized(container.querySelector("dialog"))
+      const handle = container.querySelector(".iw-dialog-handle")
+
+      pointer(handle, "pointerdown", 100, 0)
+      pointer(handle, "pointermove", 300, 1000)
+      pointer(handle, "pointerup", 300, 1000)
+      vi.runAllTimers()
+
+      expect(sheet.style.transform).toBe("")
+      expect(onClose).not.toHaveBeenCalled()
+    })
+
+    function sized(sheet) {
+      Object.defineProperty(sheet, "offsetHeight", { value: SHEET_HEIGHT })
+      return sheet
+    }
+
+    function pointer(target, type, clientY, timeStamp) {
+      const event = new MouseEvent(type, { bubbles: true, button: 0, clientY })
+      Object.defineProperty(event, "timeStamp", { value: timeStamp })
+      target.dispatchEvent(event)
+    }
   })
 })
 
