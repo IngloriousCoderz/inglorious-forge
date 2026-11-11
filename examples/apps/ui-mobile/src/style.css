@@ -1,0 +1,72 @@
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: var(--iw-color-bg);
+  color: var(--iw-color-text);
+}
+
+.chrome {
+  flex: 0 0 auto;
+}
+
+.app-bar {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding-top: var(--safe-area-top);
+  background: var(--iw-color-bg);
+  view-transition-name: app-bar;
+}
+
+.tab-bar {
+  position: sticky;
+  bottom: 0;
+  padding-bottom: var(--safe-area-bottom);
+  background: var(--iw-color-bg);
+  view-transition-name: tab-bar;
+}
+
+.content {
+  flex: 1 1 auto;
+}
+
+.unread {
+  font-weight: var(--iw-font-weight-semibold);
+}
+
+.fab {
+  position: fixed;
+  right: var(--iw-space-4);
+  bottom: calc(5rem + var(--safe-area-bottom));
+  view-transition-name: fab;
+}
+
+.group {
+  margin-top: var(--iw-space-5);
+}
+
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--iw-space-2);
+  margin-top: var(--iw-space-2);
+}
+
+.settings {
+  display: flex;
+  flex-direction: column;
+  gap: var(--iw-space-5);
+}
+
+.diagnostics {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--iw-space-1) var(--iw-space-3);
+  margin-top: var(--iw-space-6);
+  color: var(--iw-color-text-muted);
+}
+
+.diagnostics dd {
+  margin: 0;
+}

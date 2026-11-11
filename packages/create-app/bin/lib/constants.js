@@ -1,5 +1,6 @@
 export const CAPACITOR_APP_VERSION = "^8.1.2"
 export const CAPACITOR_VERSION = "^8.5.3"
+export const CAPACITOR_HAPTICS_VERSION = "^8.0.2"
 export const CHANGESETS_VERSION = "^3.0.3"
 export const CAPACITOR_FIREBASE_VERSION = "^8.5.2"
 export const CAPAWESOME_LIVE_UPDATE_VERSION = "^8.8.1"

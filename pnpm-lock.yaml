@@ -1217,6 +1217,37 @@ importers:
         specifier: ^8.3.7
         version: 8.3.7(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.5.1)(sass@1.108.1)(terser@5.51.2)(yaml@2.9.1)
 
+  examples/apps/ui-mobile:
+    dependencies:
+      "@inglorious/store":
+        specifier: workspace:*
+        version: link:../../../packages/store
+      "@inglorious/ui":
+        specifier: workspace:*
+        version: link:../../../packages/ui
+      "@inglorious/web":
+        specifier: workspace:*
+        version: link:../../../packages/web
+    devDependencies:
+      "@inglorious/eslint-config":
+        specifier: workspace:*
+        version: link:../../../packages/eslint-config
+      "@inglorious/vite-plugin-hmr":
+        specifier: workspace:*
+        version: link:../../../packages/vite-plugin-hmr
+      eslint:
+        specifier: ^10.14.0
+        version: 10.14.0(jiti@2.5.1)(supports-color@5.5.0)
+      prettier:
+        specifier: ^3.9.10
+        version: 3.9.10
+      rollup-plugin-minify-template-literals:
+        specifier: ^2.2.0
+        version: 2.2.0(rollup@4.68.0)
+      vite:
+        specifier: ^8.3.7
+        version: 8.3.7(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.5.1)(sass@1.108.1)(terser@5.51.2)(yaml@2.9.1)
+
   examples/apps/ui-view-transitions:
     dependencies:
       "@inglorious/store":

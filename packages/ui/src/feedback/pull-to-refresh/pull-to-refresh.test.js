@@ -1,3 +1,4 @@
+import { haptics } from "@inglorious/web/haptics"
 import { render } from "@inglorious/web/test"
 import { afterEach, describe, expect, it, vi } from "vitest"
 
@@ -22,6 +23,21 @@ describe("PullToRefresh", () => {
 
     expect(onRefresh).toHaveBeenCalledTimes(1)
     expect(element.style.getPropertyValue("--iw-pull-distance")).toBe("")
+  })
+
+  it("ticks once when letting go would refresh", () => {
+    const selection = vi
+      .spyOn(haptics, "selection")
+      .mockImplementation(() => {})
+    const element = mount(PullToRefresh.render({ onRefresh: () => {} }))
+
+    touch(element, "touchstart", 100)
+    touch(element, "touchmove", 200)
+    touch(element, "touchmove", 300)
+    touch(element, "touchmove", 320)
+
+    expect(selection).toHaveBeenCalledTimes(1)
+    selection.mockRestore()
   })
 
   it("lets a short pull go without refreshing", () => {

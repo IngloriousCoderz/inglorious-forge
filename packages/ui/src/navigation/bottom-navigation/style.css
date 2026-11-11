@@ -34,3 +34,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+:root.iw-keyboard-open .iw-bottom-navigation {
+  display: none;
+}

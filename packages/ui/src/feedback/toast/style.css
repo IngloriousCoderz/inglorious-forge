@@ -47,6 +47,14 @@
   flex-direction: column-reverse;
 }
 
+:root.iw-keyboard-open .iw-toaster-bottom-left,
+:root.iw-keyboard-open .iw-toaster-bottom-center,
+:root.iw-keyboard-open .iw-toaster-bottom-right {
+  bottom: calc(
+    var(--iw-toaster-gap) + var(--iw-keyboard-height) - var(--iw-toast-room-end)
+  );
+}
+
 .iw-toaster-top-left,
 .iw-toaster-bottom-left {
   left: calc(var(--iw-toaster-gap) - var(--iw-toast-room-inline));

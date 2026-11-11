@@ -24,6 +24,12 @@
   );
 }
 
+:root.iw-keyboard-open .iw-snackbar-bottom-left,
+:root.iw-keyboard-open .iw-snackbar-bottom-center,
+:root.iw-keyboard-open .iw-snackbar-bottom-right {
+  bottom: calc(var(--iw-snackbar-gap) + var(--iw-keyboard-height));
+}
+
 .iw-snackbar-top-left,
 .iw-snackbar-top-center,
 .iw-snackbar-top-right {

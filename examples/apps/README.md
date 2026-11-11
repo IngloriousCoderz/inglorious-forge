@@ -17,6 +17,7 @@ Available demos:
 - [web-router](./web-router/README.md) — router demo (entity based client-side routing)
 - [ui-combobox](./ui-combobox/README.md) — combobox demo (single selection, multi, remote options)
 - [ui-view-transitions](./ui-view-transitions/README.md) — directional page transitions with `withTransitions`
+- [ui-mobile](./ui-mobile/README.md) — mobile features to try on a phone: pull to refresh, sheets, keyboard, haptics, stacked pages
 - [web-todomvc](./web-todomvc/README.md) — TodoMVC client-only demo with `@inglorious/web` (start here!)
 - [web-todomvc](./web-todomvc-ace/README.md) — TodoMVC client-only demo with the `autoCreateEntities` flag on
 - [web-todomvc-cs](./web-todomvc-cs/README.md) — TodoMVC client-server demo with `@inglorious/web` and json-server

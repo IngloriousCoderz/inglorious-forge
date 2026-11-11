@@ -5,6 +5,7 @@
 
 import { html, nothing } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
+import { haptics } from "@inglorious/web/haptics"
 
 import { Progress } from "../progress/index.js"
 
@@ -24,14 +25,15 @@ const ARMED = "iw-pull-to-refresh-armed"
 /**
  * The pull in progress on each element: where the finger started and how far
  * the content has moved.
- * @type {WeakMap<HTMLElement, { startY: number, distance: number }>}
+ * @type {WeakMap<HTMLElement, { startY: number, distance: number, isArmed: boolean }>}
  */
 const pulls = new WeakMap()
 
 export const PullToRefresh = {
   /**
    * Wraps scrolling content that refreshes when pulled down from the top, as
-   * in mobile apps. Past the threshold, letting go calls `onRefresh`; the
+   * in mobile apps. Past the threshold, it ticks (see `haptics` in
+   * `@inglorious/web/haptics`) and letting go calls `onRefresh`; the
    * spinner stays while `isRefreshing`. Touch only: offer another way to
    * refresh on desktop, such as a button.
    * @param {PullToRefreshProps} props
@@ -91,7 +93,11 @@ function start(event) {
   const element = event.currentTarget
   if (scrollParent(element).scrollTop > TOP) return
 
-  pulls.set(element, { startY: event.touches[0].clientY, distance: 0 })
+  pulls.set(element, {
+    startY: event.touches[0].clientY,
+    distance: 0,
+    isArmed: false,
+  })
 }
 
 function move(event) {
@@ -107,8 +113,11 @@ function move(event) {
 
   if (event.cancelable) event.preventDefault()
   pull.distance = Math.min(Math.max(delta, TOP) * RESISTANCE, MAX_PULL_PX)
+  const isArmed = pull.distance >= THRESHOLD_PX
+  if (isArmed && !pull.isArmed) haptics.selection()
+  pull.isArmed = isArmed
   element.classList.add(PULLING)
-  element.classList.toggle(ARMED, pull.distance >= THRESHOLD_PX)
+  element.classList.toggle(ARMED, isArmed)
   element.style.setProperty(DISTANCE, `${pull.distance}px`)
   element.style.setProperty(
     PROGRESS,

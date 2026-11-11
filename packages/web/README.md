@@ -1620,6 +1620,48 @@ It returns a function that stops following.
 
 ---
 
+## Keyboard
+
+Phones don't shrink the page for the on-screen keyboard: iOS never does, nor does Chrome on Android. Whatever sits at the bottom of the screen, such as a bottom sheet with an input, ends up behind it. `@inglorious/web/keyboard` reads the height the keyboard covers from the visual viewport and sets it as `--iw-keyboard-height` on `<html>`, with the `iw-keyboard-open` class while the keyboard is up. It needs no plugin and works in browsers and native apps alike. Where the page does shrink, the height stays `0px`.
+
+```javascript
+import { watchKeyboard } from "@inglorious/web/keyboard"
+
+watchKeyboard()
+```
+
+Inglorious UI's bottom sheets, snackbars and toasts move above the keyboard, and its bottom navigation hides while the keyboard is up. Your own fixed elements can do the same:
+
+```css
+.composer {
+  position: fixed;
+  bottom: var(--iw-keyboard-height, 0px);
+}
+```
+
+It returns a function that stops following.
+
+---
+
+## Haptics
+
+`@inglorious/web/haptics` plays taps the user can feel. In a native app it uses the system's haptics through [`@capacitor/haptics`](https://capacitorjs.com/docs/apis/haptics), once you hand the plugin over. Elsewhere it vibrates where the browser can (Chrome on Android), once the user has tapped the page; iOS browsers stay silent. Every call returns whether it played.
+
+```javascript
+import { Haptics } from "@capacitor/haptics"
+import { haptics } from "@inglorious/web/haptics"
+
+haptics.use(Haptics)
+
+haptics.selection() // a toggle flipped, a threshold crossed
+haptics.impact("heavy") // "light", "medium" (default) or "heavy"
+haptics.notification("error") // "success" (default), "warning" or "error"
+```
+
+Inglorious UI plays them too: `PullToRefresh` gives a tick when letting go would refresh.
+
+---
+
 ## Forms
 
 `@inglorious/web` includes a small but powerful `form` type for managing form state inside your entity store. It offers:

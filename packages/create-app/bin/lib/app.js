@@ -223,8 +223,13 @@ function mainSource(app, { pages }) {
   if (app.mobile) {
     imports.push(
       'import { SystemBars } from "@capacitor/core"',
+      'import { Haptics } from "@capacitor/haptics"',
+      'import { haptics } from "@inglorious/web/haptics"',
       'import { watchSystemBars } from "@inglorious/web/system-bars"',
     )
+  }
+  if (app.ui || app.mobile) {
+    imports.push('import { watchKeyboard } from "@inglorious/web/keyboard"')
   }
   if (app.appLinks) {
     imports.push('import { watchAppLinks } from "@inglorious/web/app-links"')
@@ -271,10 +276,18 @@ supabase.auth.onAuthStateChange((_event, session) => {
 })`
     : ""
 
+  const keyboard =
+    app.ui || app.mobile
+      ? `
+
+watchKeyboard()`
+      : ""
+
   const systemBars = app.mobile
     ? `
 
-watchSystemBars(SystemBars)`
+watchSystemBars(SystemBars)
+haptics.use(Haptics)`
     : ""
 
   const appLinks = app.appLinks
@@ -319,7 +332,7 @@ function renderApp(api${app.isTypeScript ? ": AppApi" : ""}) {
 
   return `${importBlock(imports)}
 
-${body}${session}${systemBars}${appLinks}${backButton}${nativeUpdate}
+${body}${session}${keyboard}${systemBars}${appLinks}${backButton}${nativeUpdate}
 `
 }
 

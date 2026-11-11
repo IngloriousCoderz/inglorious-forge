@@ -3,6 +3,7 @@ import { EOL } from "os"
 import path from "path"
 
 import {
+  CAPACITOR_HAPTICS_VERSION,
   CAPACITOR_VERSION,
   INDENTATION,
   TYPESCRIPT_VERSION,
@@ -23,6 +24,7 @@ export function addMobileSupport(
   pkg.scripts ??= {}
 
   pkg.dependencies["@capacitor/core"] = CAPACITOR_VERSION
+  pkg.dependencies["@capacitor/haptics"] = CAPACITOR_HAPTICS_VERSION
   pkg.devDependencies["@capacitor/android"] = CAPACITOR_VERSION
   pkg.devDependencies["@capacitor/cli"] = CAPACITOR_VERSION
   pkg.devDependencies["@capacitor/ios"] = CAPACITOR_VERSION

@@ -1,5 +1,16 @@
 # @inglorious/ui
 
+## 9.20.0
+
+### Minor Changes
+
+- Bottom sheets, snackbars and toasts move above the on-screen keyboard and bottom navigation hides while it's up, with `watchKeyboard` from `@inglorious/web/keyboard`. `PullToRefresh` ticks with `haptics.selection()` from `@inglorious/web/haptics` when letting go would refresh.
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/web@6.23.0
+
 ## 9.19.0
 
 ### Minor Changes

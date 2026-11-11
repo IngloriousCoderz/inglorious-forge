@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 6.23.0
+
+### Minor Changes
+
+- Add `@inglorious/web/keyboard`: `watchKeyboard()` sets `--iw-keyboard-height` and the `iw-keyboard-open` class while the on-screen keyboard covers the page, from the visual viewport, in browsers and native apps. Add `@inglorious/web/haptics`: `haptics.selection()`, `impact()` and `notification()`, through `@capacitor/haptics` once handed over with `haptics.use(Haptics)`, otherwise vibrating where the browser can. Each call returns whether it played.
+
 ## 6.22.0
 
 ### Minor Changes

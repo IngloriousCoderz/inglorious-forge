@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.20.0
+
+### Minor Changes
+
+- Apps with Inglorious UI or mobile support call `watchKeyboard()`, so sheets and toasts stay above the on-screen keyboard. Mobile apps add `@capacitor/haptics` and hand it to `haptics` from `@inglorious/web/haptics`.
+
 ## 1.19.0
 
 ### Minor Changes
