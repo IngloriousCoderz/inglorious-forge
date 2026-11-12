@@ -1,20 +1,9 @@
+import { createStore } from "@inglorious/store"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 import { withThrottle } from "."
 
-/**
- * Builds a minimal fake `api` whose `getEntity` reads from a mutable store
- * object, so tests can simulate an entity being destroyed between calls.
- */
-function createFakeApi(initialEntities) {
-  const entities = { ...initialEntities }
-
-  return {
-    getEntity: (id) => entities[id],
-    _destroy: (id) => delete entities[id],
-    _entities: entities,
-  }
-}
+const DELAY = 100
 
 describe("withThrottle", () => {
   beforeEach(() => {
@@ -25,149 +14,117 @@ describe("withThrottle", () => {
     vi.useRealTimers()
   })
 
+  function storeWith(base, options, entities = { panel: { type: "Panel" } }) {
+    return createStore({
+      types: { Panel: [base, withThrottle(DELAY, ["resize"], options)] },
+      entities,
+    })
+  }
+
+  const resizes = {
+    resize(entity, width) {
+      entity.widths = [...(entity.widths ?? []), width]
+    },
+  }
+
   it("wraps only the named handlers, leaving others untouched", () => {
-    const scroll = vi.fn()
-    const untouched = vi.fn()
-    const baseType = { scroll, untouched }
+    const behavior = withThrottle(DELAY, ["resize"])({
+      resize: vi.fn(),
+      untouched: vi.fn(),
+    })
 
-    const compose = withThrottle(100, ["scroll"])
-    const behavior = compose(baseType)
-
-    expect(behavior.scroll).toBeTypeOf("function")
+    expect(behavior.resize).toBeTypeOf("function")
     expect(behavior.untouched).toBeUndefined()
   })
 
-  it("skips handler names the base type doesn't define, without throwing", () => {
-    const baseType = { scroll: vi.fn() }
-    const compose = withThrottle({ scroll: 100, resize: 100 })
+  it("skips handler names the base type doesn't define", () => {
+    const behavior = withThrottle({ resize: DELAY, scroll: DELAY })({
+      resize: vi.fn(),
+    })
 
-    expect(() => compose(baseType)).not.toThrow()
-    const behavior = compose(baseType)
-    expect(behavior.resize).toBeUndefined()
+    expect(behavior.scroll).toBeUndefined()
   })
 
-  it("invokes the original handler immediately on the leading call", () => {
-    const original = vi.fn()
-    const compose = withThrottle(100, ["scroll"])
-    const behavior = compose({ scroll: original })
+  it("runs the leading call at once, inside an update subscribers hear of", () => {
+    const store = storeWith(resizes)
+    const listener = vi.fn()
+    store.subscribe(listener)
 
-    const api = createFakeApi({ e1: { id: "e1" } })
-    behavior.scroll({ id: "e1" }, "payload-a", api)
+    store.notify("#panel:resize", 300)
 
-    expect(original).toHaveBeenCalledTimes(1)
-    expect(original).toHaveBeenCalledWith({ id: "e1" }, "payload-a", api)
+    expect(store.getEntity("panel").widths).toEqual([300])
+    expect(listener).toHaveBeenCalled()
   })
 
-  it("suppresses calls within the delay window by default (no trailing)", () => {
-    const original = vi.fn()
-    const compose = withThrottle(100, ["scroll"])
-    const behavior = compose({ scroll: original })
-    const api = createFakeApi({ e1: { id: "e1" } })
+  it("drops calls within the delay by default", async () => {
+    const store = storeWith(resizes)
 
-    behavior.scroll({ id: "e1" }, "a", api)
-    behavior.scroll({ id: "e1" }, "b", api)
-    vi.advanceTimersByTime(100)
+    store.notify("#panel:resize", 300)
+    store.notify("#panel:resize", 310)
+    await vi.advanceTimersByTimeAsync(DELAY)
 
-    expect(original).toHaveBeenCalledTimes(1)
-    expect(original).toHaveBeenCalledWith({ id: "e1" }, "a", api)
+    expect(store.getEntity("panel").widths).toEqual([300])
   })
 
-  it("fires a trailing call with the last payload when hasTrailing is true", () => {
-    const original = vi.fn()
-    const compose = withThrottle(100, ["scroll"], { hasTrailing: true })
-    const behavior = compose({ scroll: original })
-    const api = createFakeApi({ e1: { id: "e1" } })
+  it("runs a trailing call with the last payload, in an update of its own", async () => {
+    const store = storeWith(resizes, { hasTrailing: true })
+    const listener = vi.fn()
 
-    behavior.scroll({ id: "e1" }, "a", api)
-    behavior.scroll({ id: "e1" }, "b", api)
+    store.notify("#panel:resize", 300)
+    store.notify("#panel:resize", 310)
+    store.notify("#panel:resize", 320)
+    store.subscribe(listener)
+    await vi.advanceTimersByTimeAsync(DELAY)
 
-    expect(original).toHaveBeenCalledTimes(1)
-
-    vi.advanceTimersByTime(100)
-
-    expect(original).toHaveBeenCalledTimes(2)
-    expect(original).toHaveBeenNthCalledWith(2, { id: "e1" }, "b", api)
+    expect(store.getEntity("panel").widths).toEqual([300, 320])
+    expect(listener).toHaveBeenCalled()
   })
 
-  it("re-fetches a live entity for the trailing call rather than reusing the stale draft", () => {
-    const original = vi.fn()
-    const compose = withThrottle(100, ["scroll"], { hasTrailing: true })
-    const behavior = compose({ scroll: original })
+  it("does nothing for an entity removed before a trailing call", async () => {
+    const store = storeWith(resizes, { hasTrailing: true })
 
-    const staleDraft = { id: "e1", position: 0 }
-    const liveEntity = { id: "e1", position: 999 }
-    const api = createFakeApi({ e1: liveEntity })
+    store.notify("#panel:resize", 300)
+    store.notify("#panel:resize", 310)
+    store.notify("remove", "panel")
 
-    behavior.scroll(staleDraft, "a", api)
-    vi.advanceTimersByTime(100)
-    behavior.scroll(staleDraft, "b", api)
-    behavior.scroll(staleDraft, "c", api)
-
-    vi.advanceTimersByTime(100)
-
-    expect(original).toHaveBeenLastCalledWith(liveEntity, "c", api)
+    await expect(vi.advanceTimersByTimeAsync(DELAY)).resolves.not.toThrow()
+    expect(store.getEntity("panel")).toBeUndefined()
   })
 
-  it("does not invoke the original handler if the entity was destroyed before a trailing call fires", () => {
-    const original = vi.fn()
-    const compose = withThrottle(100, ["scroll"], { hasTrailing: true })
-    const behavior = compose({ scroll: original })
-    const api = createFakeApi({ e1: { id: "e1" } })
+  it("throttles each entity on its own", () => {
+    const store = storeWith(resizes, undefined, {
+      left: { type: "Panel" },
+      right: { type: "Panel" },
+    })
 
-    behavior.scroll({ id: "e1" }, "a", api)
-    behavior.scroll({ id: "e1" }, "b", api)
+    store.notify("#left:resize", 1)
+    store.notify("#right:resize", 2)
 
-    api._destroy("e1")
-    vi.advanceTimersByTime(100)
-
-    expect(original).toHaveBeenCalledTimes(1)
+    expect(store.getEntity("left").widths).toEqual([1])
+    expect(store.getEntity("right").widths).toEqual([2])
   })
 
-  it("scopes throttling independently per entity", () => {
-    const original = vi.fn()
-    const compose = withThrottle(100, ["scroll"])
-    const behavior = compose({ scroll: original })
-    const api = createFakeApi({ e1: { id: "e1" }, e2: { id: "e2" } })
+  it("cancels a pending trailing call on destroy, and calls the type's own destroy", async () => {
+    const destroy = vi.fn()
+    const behavior = withThrottle(DELAY, ["resize"], { hasTrailing: true })({
+      resize: vi.fn(),
+      destroy,
+    })
+    const api = { notify: vi.fn() }
+    const entity = { id: "panel" }
 
-    behavior.scroll({ id: "e1" }, "a", api)
-    behavior.scroll({ id: "e2" }, "b", api)
+    behavior.resize(entity, 1, api)
+    behavior.resize(entity, 2, api)
+    behavior.destroy(entity, undefined, api)
+    await vi.advanceTimersByTimeAsync(DELAY)
 
-    expect(original).toHaveBeenCalledTimes(2)
+    expect(api.notify).toHaveBeenCalledTimes(1)
+    expect(destroy).toHaveBeenCalled()
   })
 
-  it("cancels pending throttles for an entity on destroy", () => {
-    const original = vi.fn()
-    const compose = withThrottle(100, ["scroll"], { hasTrailing: true })
-    const behavior = compose({ scroll: original })
-    const api = createFakeApi({ e1: { id: "e1" } })
+  it("does not throw on destroy when nothing was throttled", () => {
+    const behavior = withThrottle(DELAY, ["resize"])({ resize: vi.fn() })
 
-    behavior.scroll({ id: "e1" }, "a", api)
-    behavior.scroll({ id: "e1" }, "b", api)
-
-    behavior.destroy({ id: "e1" }, undefined, api)
-    vi.advanceTimersByTime(100)
-
-    expect(original).toHaveBeenCalledTimes(1)
-  })
-
-  it("calls through to the base type's own destroy handler, if any", () => {
-    const baseDestroy = vi.fn()
-    const compose = withThrottle(100, ["scroll"])
-    const behavior = compose({ scroll: vi.fn(), destroy: baseDestroy })
-    const api = createFakeApi({ e1: { id: "e1" } })
-
-    const entity = { id: "e1" }
-    const payload = { reason: "unmount" }
-    behavior.destroy(entity, payload, api)
-
-    expect(baseDestroy).toHaveBeenCalledWith(entity, payload, api)
-  })
-
-  it("does not throw calling destroy when the entity was never throttled", () => {
-    const compose = withThrottle(100, ["scroll"])
-    const behavior = compose({ scroll: vi.fn() })
-    const api = createFakeApi({ e1: { id: "e1" } })
-
-    expect(() => behavior.destroy({ id: "e1" }, undefined, api)).not.toThrow()
+    expect(() => behavior.destroy({ id: "panel" }, undefined, {})).not.toThrow()
   })
 })

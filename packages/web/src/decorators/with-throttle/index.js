@@ -9,17 +9,10 @@ import { throttle } from "@inglorious/utils/functions"
  * the handler once more after `delay`, using the most recent suppressed
  * call's arguments, so the final state of a burst is never dropped.
  *
- * IMPORTANT: because state is managed with `mutative`, the `entity` object
- * passed into a handler is a draft proxy that gets revoked as soon as the
- * current update tick finishes. The leading call always runs synchronously
- * (same tick as the triggering event), so the draft is still live there —
- * but a trailing call (when `hasTrailing: true`) fires *later*, on its own
- * timer, after that draft is dead. To keep one code path safe for both
- * cases, we never close over `entity` itself across the throttle boundary —
- * only its primitive `id`. Every time the wrapped handler actually runs, we
- * re-fetch a live entity from the current state via `api.getEntity(entityId)`.
- * Primitives and `payload` are safe to hold onto as-is; only draft/entity
- * references are not.
+ * Every call that gets through notifies `#id:<handler>Throttled`, which runs
+ * the original handler inside an update with a live draft: a trailing call
+ * fires on its own timer, outside any update, after the event's draft is
+ * revoked. An entity destroyed in the meantime gets nothing.
  *
  * @param {number|Object} config - Either a single delay (ms) applied to all
  *   handlers listed in `handlerNames`, or a map of handlerName -> delay (ms).
@@ -63,6 +56,9 @@ export function withThrottle(
       const originalHandler = type[handlerName]
       if (!originalHandler) continue
 
+      const throttledEvent = `${handlerName}Throttled`
+      behavior[throttledEvent] = originalHandler
+
       behavior[handlerName] = (entity, payload, api) => {
         const entityId = entity.id
 
@@ -75,9 +71,7 @@ export function withThrottle(
         if (!perEntity[handlerName]) {
           perEntity[handlerName] = throttle(
             (entityId, payload, api) => {
-              const liveEntity = api.getEntity(entityId)
-              if (!liveEntity) return
-              originalHandler(liveEntity, payload, api)
+              api.notify(`#${entityId}:${throttledEvent}`, payload)
             },
             delays[handlerName],
             { hasTrailing },

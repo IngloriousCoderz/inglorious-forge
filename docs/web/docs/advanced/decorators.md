@@ -24,7 +24,9 @@ const types = {
 
 - A delay can be provided for all wrapped handlers or per handler.
 - Debouncing is scoped per entity so each entity keeps its own pending timer state.
+- When the delay ends, the handler runs in an update of its own, through the `<handler>Debounced` event: what it changes reaches the screen like any other event.
 - Pending work is cancelled when the entity is destroyed, avoiding stale callbacks.
+- To debounce a request, wrap the event that starts it: `[JobList, withDebounce(300, ["search"])]` with `handleRequest("search", ...)`. Debouncing starts fewer requests, and `handleRequest` drops the answers of those that still overlap.
 
 ### When to use it
 
@@ -59,6 +61,7 @@ const types = {
 - By default, the handler fires on the leading edge (first call immediately), and subsequent calls are throttled for the delay period.
 - With `hasTrailing: true`, the handler also fires once more after the delay with the most recent suppressed call's arguments.
 - Throttling is scoped per entity so each entity keeps its own throttle window.
+- Every call that gets through runs in an update of its own, through the `<handler>Throttled` event.
 - Pending work is cancelled when the entity is destroyed, avoiding stale callbacks.
 
 ### When to use it

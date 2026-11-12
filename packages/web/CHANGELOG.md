@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 6.24.1
+
+### Patch Changes
+
+- `withDebounce` and `withThrottle` run the handlers they let through in an update of their own, through the `<handler>Debounced` and `<handler>Throttled` events. A debounced or trailing call that changed its entity used to change the state in place, so the screen didn't update until the next event.
+
 ## 6.24.0
 
 ### Minor Changes

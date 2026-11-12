@@ -3,14 +3,11 @@ import { debounce } from "@inglorious/utils/functions"
 /**
  * Wraps selected event handlers of a type with debouncing, scoped per-entity.
  *
- * IMPORTANT: because state is managed with `mutative`, the `entity` object
- * passed into a handler is a draft proxy that gets revoked as soon as the
- * current update tick finishes. Debounced calls fire *later*, on their own
- * timer, well after that draft is dead. So we must never close over `entity`
- * itself across the debounce boundary — only its primitive `id`. When the
- * debounced callback actually runs, we re-fetch a live entity from the
- * current state via `api.getEntity(entityId)`. Primitives and `payload` are safe to
- * hold onto as-is; only draft/entity references are not.
+ * A debounced call fires later, on its own timer, outside any update: the
+ * entity the event brought is a draft revoked by then. So the timer notifies
+ * `#id:<handler>Debounced`, which runs the original handler inside an update
+ * of its own, with a live draft whose changes reach subscribers. An entity
+ * destroyed in the meantime gets nothing.
  *
  * @param {number|Object} config - Either a single delay (ms) applied to all
  *   handlers listed in `handlerNames`, or a map of handlerName -> delay (ms).
@@ -45,6 +42,9 @@ export function withDebounce(config, handlerNames) {
       const originalHandler = type[handlerName]
       if (!originalHandler) continue
 
+      const debouncedEvent = `${handlerName}Debounced`
+      behavior[debouncedEvent] = originalHandler
+
       behavior[handlerName] = (entity, payload, api) => {
         const entityId = entity.id
 
@@ -56,9 +56,7 @@ export function withDebounce(config, handlerNames) {
 
         if (!perEntity[handlerName]) {
           perEntity[handlerName] = debounce((entityId, payload, api) => {
-            const liveEntity = api.getEntity(entityId)
-            if (!liveEntity) return
-            originalHandler(liveEntity, payload, api)
+            api.notify(`#${entityId}:${debouncedEvent}`, payload)
           }, delays[handlerName])
         }
 
