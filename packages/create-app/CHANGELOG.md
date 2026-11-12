@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.23.1
+
+### Patch Changes
+
+- Mobile apps ignore `listing-assets/`, the generated store listing images
+
 ## 1.23.0
 
 ### Minor Changes

@@ -11,6 +11,7 @@ import {
 import { copyDir, toJavaIdentifier } from "./file.js"
 
 const WELL_KNOWN_FILES = ["apple-app-site-association", "assetlinks.json"]
+const LISTING_ASSETS = "/listing-assets/"
 
 export function addMobileSupport(
   targetDir,
@@ -58,6 +59,7 @@ export function addMobileSupport(
   if (routing) serveWellKnownAsJson(targetDir)
   includeInNodeProject(targetDir, "capacitor.config.ts")
   includeInNodeProject(targetDir, "listing.config.js")
+  ignoreListingAssets(targetDir)
 
   appendMobileSetupToReadme(targetDir, { routing })
 }
@@ -260,6 +262,18 @@ function serveWellKnownAsJson(targetDir) {
     })),
   ]
   fs.writeFileSync(vercelPath, JSON.stringify(vercel, null, INDENTATION) + EOL)
+}
+
+function ignoreListingAssets(targetDir) {
+  const gitignorePath = path.join(targetDir, ".gitignore")
+  if (!fs.existsSync(gitignorePath)) return
+
+  const gitignore = fs.readFileSync(gitignorePath, "utf-8")
+  if (gitignore.includes(LISTING_ASSETS)) return
+  fs.writeFileSync(
+    gitignorePath,
+    `${gitignore.trimEnd()}${EOL}${EOL}# Store listing images (pnpm mobile:listing-assets)${EOL}${LISTING_ASSETS}${EOL}`,
+  )
 }
 
 function includeInNodeProject(targetDir, file) {
