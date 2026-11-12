@@ -2154,6 +2154,9 @@ importers:
       "@trapezedev/project":
         specifier: ^7.1.11
         version: 7.1.11(supports-color@5.5.0)
+      playwright-core:
+        specifier: ^1.65.0
+        version: 1.65.0
       plist:
         specifier: ^3.1.1
         version: 3.1.1

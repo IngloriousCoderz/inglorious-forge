@@ -86,6 +86,15 @@ describe("configure", () => {
       '<meta-data android:name="firebase_analytics_collection_enabled" android:value="false" />',
     )
     expect(first.manifest).toContain(
+      'xmlns:tools="http://schemas.android.com/tools"',
+    )
+    expect(first.manifest).toMatch(
+      /android:name="com\.google\.android\.gms\.permission\.AD_ID"[^>]*tools:node="remove"/,
+    )
+    expect(first.manifest).toMatch(
+      /android:name="android\.permission\.ACCESS_ADSERVICES_AD_ID"[^>]*tools:node="remove"/,
+    )
+    expect(first.manifest).toContain(
       '<uses-permission android:name="android.permission.RECORD_AUDIO" />',
     )
     expect(first.googleServices).toBe("{}")

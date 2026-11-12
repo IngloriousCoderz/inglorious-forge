@@ -1,5 +1,15 @@
 # @inglorious/create-game
 
+## 1.23.0
+
+### Minor Changes
+
+- `inglorious-capacitor listing-assets` captures store screenshots of the running app for every store size and language from `listing.config.js`, and makes the promotional images (Google Play's feature graphic, a header and a search results card, in each language) and Google Play's 512px icon; `create-app --mobile` adds the `mobile:listing-assets` script and a starting `listing.config.js`
+
+### Patch Changes
+
+- `configure` removes the advertising ID permissions that Firebase Analytics merges into the Android app, so Play Console's advertising ID declaration can be "No"
+
 ## 1.22.0
 
 ### Minor Changes

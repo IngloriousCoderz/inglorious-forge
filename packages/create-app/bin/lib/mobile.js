@@ -37,6 +37,7 @@ export function addMobileSupport(
   pkg.scripts["mobile:init:android"] =
     "cap add android && inglorious-capacitor assets --android"
   pkg.scripts["mobile:assets"] = "inglorious-capacitor assets"
+  pkg.scripts["mobile:listing-assets"] = "inglorious-capacitor listing-assets"
   pkg.scripts["capacitor:sync:after"] = "inglorious-capacitor configure"
   pkg.scripts["mobile:sync"] = "pnpm build && cap sync"
   pkg.scripts["mobile:ios"] = "pnpm build && cap run ios"
@@ -56,6 +57,7 @@ export function addMobileSupport(
   pkg.native = nativeSettings({ routing })
   if (routing) serveWellKnownAsJson(targetDir)
   includeInNodeProject(targetDir, "capacitor.config.ts")
+  includeInNodeProject(targetDir, "listing.config.js")
 
   appendMobileSetupToReadme(targetDir, { routing })
 }
@@ -142,6 +144,10 @@ Leave \`android/\` and \`ios/\` to the tools: what the app needs from them is in
 ### Icons and splash screens
 
 \`pnpm mobile:assets\` makes every icon and splash screen from \`public/logo.svg\` or \`public/logo.png\`, centred on \`native.assets.background\` (white by default) and, for the dark splash screen, \`native.assets.backgroundDark\`. \`iconScale\` and \`splashScale\` set the logo's width as a share of the icon (0.6) and of the splash screen (0.3). Run it again after changing the logo, and commit the result.
+
+### Store listing images
+
+With the app running (\`pnpm dev\`), \`pnpm mobile:listing-assets\` captures the screens listed in \`listing.config.js\` at the sizes App Store Connect and Play Console ask for, and makes the promotional images (Google Play's feature graphic, a header and a search results card, from the logo, the app's name, \`promo.tagline\` and framed screenshots) and Google Play's 512px icon, all in \`listing-assets/\`. It drives your installed Chrome. Add \`locales\` (and \`localeParam\`, if the app reads the language from links) for one set per language, \`signIn\` to sign a demo account in first, \`storage\` to answer prompts such as analytics consent before the app starts, and \`prepare\` on a screen to bring it to the state worth showing. Seed the local backend with realistic demo data first: real users must never appear in store screenshots.
 ${routing ? APP_LINKS_README : ""}
 ### Releasing
 

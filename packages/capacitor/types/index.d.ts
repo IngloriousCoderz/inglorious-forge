@@ -81,6 +81,82 @@ export declare function configure(options?: {
   env?: NodeJS.ProcessEnv
 }): Promise<string[]>
 
+/** A device whose store screenshots `listingAssets` captures. */
+export type ListingDevice =
+  "iphone-6.9" | "iphone-6.3" | "ipad-13" | "android" | "tablet-7" | "tablet-10"
+
+/** The default export of `listing.config.js`. */
+export interface ListingConfig {
+  /** The running app. Defaults to `http://localhost:5173`. */
+  url?: string
+  /** One set of screenshots each. Defaults to one set, in the browser's locale. */
+  locales?: string[]
+  /** The query parameter the app reads the locale from, such as `lang`. */
+  localeParam?: string
+  /** Defaults to `["iphone-6.9", "android"]`. */
+  devices?: ListingDevice[]
+  /** Defaults to `listing-assets`. */
+  out?: string
+  /** The Playwright browser channel. Defaults to `chrome`. */
+  browser?: string
+  /** Milliseconds to wait after a screen loads. Defaults to `1000`. */
+  settle?: number
+  /**
+   * `localStorage` entries set before the app starts, such as answers to the
+   * consent and push prompts, so they stay out of the screenshots.
+   */
+  storage?:
+    | Record<string, unknown>
+    | ((locale: string | null) => Record<string, unknown>)
+  /** Signs the demo account in, once per locale: the other devices reuse the session. */
+  signIn?: (
+    page: import("playwright-core").Page,
+    context: { url: string; locale: string | null },
+  ) => Promise<void>
+  /** In the order the stores show them. */
+  screens: {
+    /** The file name, such as `01-feed`. */
+    name: string
+    path: string
+    /** Brings the screen to the state worth showing, such as a filled form. */
+    prepare?: (
+      page: import("playwright-core").Page,
+      context: { locale: string | null },
+    ) => Promise<void>
+  }[]
+  /** The feature graphic, header and search results images. */
+  promo?: {
+    /** One line, or one per locale. A newline breaks the line. */
+    tagline?: string | Record<string, string>
+    /** The search results card's smaller line under the tagline. */
+    subtitle?: string | Record<string, string>
+    /**
+     * The screenshots framed in the header (both) and search results card
+     * (the first). Defaults to the first two `screens`.
+     */
+    screens?: string[]
+    /** Whose screenshots to frame. Defaults to the first iPhone in `devices`. */
+    device?: ListingDevice
+    /** Defaults to `native.assets.background`. */
+    background?: string
+    /** Text and phone frames. Defaults to `#1f1f1f`. */
+    color?: string
+    /** A short bar under the text, in this colour. None by default. */
+    accent?: string
+    /** A CSS font-family. Defaults to the system font. */
+    font?: string
+  }
+}
+
+/**
+ * Captures store screenshots of the running app and makes the promotional
+ * images and Google Play's 512px icon, from `listing.config.js`.
+ * @returns The folder written to.
+ */
+export declare function listingAssets(options?: {
+  root?: string
+}): Promise<string>
+
 /** Makes the native icons and splash screens from one logo. */
 export declare function assets(options?: {
   root?: string

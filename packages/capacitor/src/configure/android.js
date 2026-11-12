@@ -11,12 +11,17 @@ const ANALYTICS_OFF = [
   "firebase_analytics_collection_enabled",
   "google_analytics_adid_collection_enabled",
 ]
+const AD_ID_PERMISSIONS = [
+  "com.google.android.gms.permission.AD_ID",
+  "android.permission.ACCESS_ADSERVICES_AD_ID",
+]
+const TOOLS_NAMESPACE = "http://schemas.android.com/tools"
 const GOOGLE_SERVICES = "google-services.json"
 const KEYSTORES = ["*.jks", "*.keystore"]
 
 /**
  * Applies the settings to the Android project: App Links, Analytics off until
- * consent, extra permissions, the Firebase file, and keystores kept out of git.
+ * consent and without the advertising ID, extra permissions, the Firebase file, and keystores kept out of git.
  *
  * @param {import("@trapezedev/project").MobileProject} project
  * @param {import("../../types/index.d.ts").ProjectSettings} settings
@@ -45,6 +50,7 @@ export function configureAndroid(project, settings) {
         `<meta-data android:name="${name}" android:value="false" />`,
       )
     }
+    removeAdIdPermissions(manifest)
   }
 
   for (const permission of settings.android.permissions) {
@@ -67,6 +73,23 @@ export function configureAndroid(project, settings) {
   }
 
   ignoreKeystores(path.join(androidRoot, ".gitignore"))
+}
+
+function removeAdIdPermissions(manifest) {
+  manifest.setAttrs(MANIFEST, { "xmlns:tools": TOOLS_NAMESPACE })
+  for (const permission of AD_ID_PERMISSIONS) {
+    if (
+      manifest.find(
+        `${MANIFEST}/uses-permission[@android:name='${permission}']`,
+      )?.length
+    ) {
+      continue
+    }
+    manifest.injectFragment(
+      MANIFEST,
+      `<uses-permission android:name="${permission}" tools:node="remove" />`,
+    )
+  }
 }
 
 function appLinksFilter(appLinks) {

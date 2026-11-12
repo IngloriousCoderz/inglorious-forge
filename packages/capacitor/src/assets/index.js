@@ -16,7 +16,7 @@ const SOURCES = path.join(
   "assets",
 )
 const PLATFORMS = ["ios", "android"]
-const DEFAULTS = {
+export const ASSET_DEFAULTS = {
   background: "#ffffff",
   backgroundDark: "#121212",
   iconScale: 0.6,
@@ -37,14 +37,8 @@ const TRANSPARENT = "#00000000"
  */
 export async function assets({ root = process.cwd(), platforms = [] } = {}) {
   const settings = await readSettings(root, {})
-  const options = { ...DEFAULTS, ...settings.assets }
-  const logo =
-    options.logo ?? LOGOS.find((file) => existsSync(path.join(root, file)))
-  if (!logo || !existsSync(path.join(root, logo))) {
-    throw new Error(
-      `No logo found: add ${LOGOS.join(" or ")}, or set native.assets.logo`,
-    )
-  }
+  const options = { ...ASSET_DEFAULTS, ...settings.assets }
+  const logo = findLogo(root, options)
 
   const targets = (platforms.length ? platforms : PLATFORMS).filter(
     (platform) =>
@@ -59,7 +53,7 @@ export async function assets({ root = process.cwd(), platforms = [] } = {}) {
   const sources = path.join(root, SOURCES)
   rmSync(sources, { recursive: true, force: true })
   mkdirSync(sources, { recursive: true })
-  await composeSources(readFileSync(path.join(root, logo)), sources, options)
+  await composeSources(readFileSync(logo), sources, options)
 
   execFileSync(
     process.execPath,
@@ -72,6 +66,22 @@ export async function assets({ root = process.cwd(), platforms = [] } = {}) {
     ],
     { cwd: root, stdio: "inherit" },
   )
+}
+
+/**
+ * @param {string} root
+ * @param {{ logo?: string }} options
+ * @returns {string} The logo's full path.
+ */
+export function findLogo(root, { logo } = {}) {
+  const file =
+    logo ?? LOGOS.find((candidate) => existsSync(path.join(root, candidate)))
+  if (!file || !existsSync(path.join(root, file))) {
+    throw new Error(
+      `No logo found: add ${LOGOS.join(" or ")}, or set native.assets.logo`,
+    )
+  }
+  return path.join(root, file)
 }
 
 /**

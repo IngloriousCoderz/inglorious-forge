@@ -68,6 +68,6 @@ const types = {
 <false/>
 ```
 
-Advertising consents stay denied: the adapter measures how the app is used, nothing more.
+Advertising consents stay denied: the adapter measures how the app is used, nothing more. On Android, `inglorious-capacitor configure` also removes the advertising ID permission Firebase adds, so the answer to Play Console's advertising ID question is "No".
 
 **Page views.** In a browser, Google Analytics counts history changes as page views by itself. In the native apps, the adapter logs a screen view on each route change, named after the route.

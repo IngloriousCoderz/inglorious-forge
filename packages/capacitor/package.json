@@ -1,7 +1,7 @@
 {
   "name": "@inglorious/capacitor",
-  "version": "0.1.1",
-  "description": "Configures Capacitor's native projects from package.json, and makes their icons and splash screens from one logo.",
+  "version": "0.2.0",
+  "description": "Configures Capacitor's native projects from package.json, makes their icons and splash screens from one logo, and the screenshots and graphics the stores ask for.",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
   "repository": {
@@ -19,7 +19,8 @@
     "app-links",
     "icons",
     "splash-screen",
-    "inglorious-web"
+    "inglorious-web",
+    "store-listing"
   ],
   "type": "module",
   "bin": {
@@ -48,6 +49,7 @@
   "dependencies": {
     "@capacitor/assets": "^4.0.0",
     "@trapezedev/project": "^7.1.11",
+    "playwright-core": "^1.65.0",
     "plist": "^3.1.1",
     "sharp": "^0.35.5"
   },

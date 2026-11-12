@@ -105,7 +105,7 @@ function analyticsSection(mobile) {
   const native = mobile
     ? `
 
-The native apps must start with collection off, or they measure from launch. \`inglorious-capacitor configure\` writes that setting into the native projects after every \`cap sync\`.`
+The native apps must start with collection off, or they measure from launch. \`inglorious-capacitor configure\` writes that setting into the native projects after every \`cap sync\`, and removes the advertising ID permission that Firebase adds to the Android app: in Play Console, answer "No" to the advertising ID question.`
     : ""
   return `## Analytics
 
