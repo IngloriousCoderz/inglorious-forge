@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 6.26.1
+
+### Patch Changes
+
+- `createShare`, `createAuth`, `createNativeUpdate` and `createPushPrompt` typecheck as a store type on their own: their declarations list the lifecycle events of their requests instead of accepting any handler, which a typed store refused.
+
 ## 6.26.0
 
 ### Minor Changes

@@ -1,3 +1,5 @@
+import type { AsyncEvents } from "@inglorious/store/async"
+
 /** What `createShare` needs of `Share` from `@capacitor/share`. */
 export interface SharePlugin {
   share(options: {
@@ -29,9 +31,7 @@ export interface ShareEntity {
 
 export type ShareType = {
   create(entity: ShareEntity): void
-  share(entity: ShareEntity, content: ShareContent): void
-  [handler: string]: unknown
-}
+} & AsyncEvents<"share", ShareEntity, ShareContent, ShareEntity["result"]>
 
 /**
  * The type behind a share button: the system's sheet in a native app, a

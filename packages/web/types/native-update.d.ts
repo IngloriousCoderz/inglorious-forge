@@ -1,3 +1,5 @@
+import type { AsyncEvents } from "@inglorious/store/async"
+
 import { Api } from "./mount"
 
 export interface NativeUpdateRequirement {
@@ -42,8 +44,12 @@ export type NativeUpdateType = {
   ): void
   /** Opens the store. */
   nativeUpdateApply(entity: NativeUpdateEntity): void
-  [handler: string]: unknown
-}
+} & AsyncEvents<
+  "nativeUpdateCheck",
+  NativeUpdateEntity,
+  NativeUpdateCheckPayload,
+  { build: number; requirement: NativeUpdateRequirement | null }
+>
 
 /** The type that blocks a native build older than the minimum allowed. */
 export declare function createNativeUpdate(

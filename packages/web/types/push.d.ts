@@ -1,3 +1,5 @@
+import type { AsyncEvents } from "@inglorious/store/async"
+
 import { Api } from "./mount"
 
 export type PushPermission = "granted" | "denied" | "prompt"
@@ -45,8 +47,9 @@ export type PushPromptType = {
   pushAsk(entity: PushPromptEntity, payload?: unknown, api?: Api): void
   /** The prompt's no, remembered on this device. */
   pushDecline(entity: PushPromptEntity): void
-  [handler: string]: unknown
-}
+} & AsyncEvents<"pushCheck", PushPromptEntity, void, PushPermission | null> &
+  AsyncEvents<"pushAsk", PushPromptEntity, void, PushPermission> &
+  AsyncEvents<"pushRegister", PushPromptEntity, void, void>
 
 /** The type that asks a device for pushes and keeps it registered. */
 export declare function createPushPrompt(

@@ -1,3 +1,5 @@
+import type { AsyncEvents } from "@inglorious/store/async"
+
 import { Api } from "./mount"
 
 /** The signed-in user, as the backend describes them. */
@@ -122,8 +124,47 @@ export type AuthType = {
   accountEraseAsk: Handler
   accountEraseCancel: Handler
   accountErase: Handler
-  [handler: string]: unknown
-}
+} & AsyncEvents<"emailCheck", AuthEntity, string, boolean> &
+  AsyncEvents<
+    "signIn",
+    AuthEntity,
+    { email: string; password: string },
+    AuthUser
+  > &
+  AsyncEvents<
+    "signUp",
+    AuthEntity,
+    { email: string; password: string; data?: Record<string, unknown> },
+    AuthUser | null
+  > &
+  AsyncEvents<"codeSend", AuthEntity, string, void> &
+  AsyncEvents<
+    "codeVerify",
+    AuthEntity,
+    { email: string; code: string; purpose: AuthCodePurpose },
+    AuthUser
+  > &
+  AsyncEvents<
+    "linkVerify",
+    AuthEntity,
+    { tokenHash: string; purpose: AuthCodePurpose },
+    AuthSignIn
+  > &
+  AsyncEvents<
+    "resend",
+    AuthEntity,
+    { email: string; purpose: AuthCodePurpose },
+    void
+  > &
+  AsyncEvents<"resetSend", AuthEntity, string, void> &
+  AsyncEvents<
+    "passwordReset",
+    AuthEntity,
+    { email: string; code: string; password: string },
+    AuthUser
+  > &
+  AsyncEvents<"signOut", AuthEntity, void, void> &
+  AsyncEvents<"accountErase", AuthEntity, void, void>
 
 /** The type behind a sign-in screen, holding the signed-in `user`. */
 export declare function createAuth(config: AuthConfig): AuthType
