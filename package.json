@@ -38,7 +38,7 @@
     ],
     "*.{json,md,css,scss,html,yml,yaml}": "prettier --write"
   },
-  "packageManager": "pnpm@12.15.0",
+  "packageManager": "pnpm@12.18.0",
   "engines": {
     "node": ">= 26"
   }
