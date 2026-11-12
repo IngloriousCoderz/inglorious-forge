@@ -21,10 +21,20 @@ const CODE = /^\d{6,10}$/
  * `"invalidCredentials"`, `"accountExists"`, `"rateLimited"`, `"captcha"`,
  * `"network"` or `"unknown"`.
  *
+ * Whoever signs in, by password, code, link or password reset, the entity
+ * gets `#id:signedIn` with `{ user, isNew }`, `isNew` for an account just
+ * created. Give the type a `signedIn` handler to move on, such as to an
+ * onboarding for new accounts.
+ *
+ * `linkSubmit({ tokenHash, purpose })` signs in with the link of an email
+ * instead of its code, for a page the link opens.
+ *
  * The `adapter` talks to the backend: `signIn`, `signUp`, `sendCode`,
- * `verifyCode`, `resendCode`, `sendResetCode`, `updatePassword`, `signOut`,
- * `eraseAccount`, `errorCode`, and optionally `accountExists`, which skips
- * straight to the password or the new account. `supabaseAuth` from
+ * `verifyCode`, `verifyLink`, `resendCode`, `sendResetCode`,
+ * `updatePassword`, `signOut`, `eraseAccount`, `errorCode`, and optionally
+ * `accountExists`, which skips straight to the password or the new account,
+ * and `prepare(action)`, called as soon as the next step is known, such as
+ * to solve a CAPTCHA before the person submits. `supabaseAuth` from
  * `@inglorious/supabase` is one.
  *
  * @param {Object} config
@@ -77,7 +87,11 @@ export function createAuth({
 
     ...request("emailCheck", {
       async run(email) {
-        return adapter.accountExists ? await adapter.accountExists(email) : true
+        const exists = adapter.accountExists
+          ? await adapter.accountExists(email)
+          : true
+        adapter.prepare?.(exists ? "signIn" : "signUp")
+        return exists
       },
       success(entity, exists) {
         entity.step = exists ? "password" : "signUp"
@@ -104,9 +118,8 @@ export function createAuth({
 
     ...request("signIn", {
       run: ({ email, password }) => adapter.signIn(email, password),
-      success(entity, user) {
-        entity.user = user
-        reset(entity)
+      success(entity, user, api) {
+        signedIn(entity, { user, isNew: false }, api)
       },
       error(entity, code) {
         if (code !== "emailNotConfirmed") return
@@ -129,10 +142,9 @@ export function createAuth({
 
     ...request("signUp", {
       run: ({ email, password, data }) => adapter.signUp(email, password, data),
-      success(entity, user) {
+      success(entity, user, api) {
         if (user) {
-          entity.user = user
-          reset(entity)
+          signedIn(entity, { user, isNew: true }, api)
           return
         }
         showCode(entity, "signUp")
@@ -167,9 +179,22 @@ export function createAuth({
     ...request("codeVerify", {
       run: ({ email, code, purpose }) =>
         adapter.verifyCode(email, code, purpose),
-      success(entity, user) {
-        entity.user = user
-        reset(entity)
+      success(entity, user, api) {
+        signedIn(entity, { user, isNew: entity.codeFor === "signUp" }, api)
+      },
+    }),
+
+    linkSubmit(entity, { tokenHash, purpose = "signUp" } = {}, api) {
+      api.notify(`#${entity.id}:linkVerify`, { tokenHash, purpose })
+    },
+
+    ...request("linkVerify", {
+      async run({ tokenHash, purpose }) {
+        const user = await adapter.verifyLink(tokenHash, purpose)
+        return { user, isNew: purpose === "signUp" }
+      },
+      success(entity, signIn, api) {
+        signedIn(entity, signIn, api)
       },
     }),
 
@@ -223,9 +248,8 @@ export function createAuth({
         await adapter.verifyCode(email, code, "reset")
         return adapter.updatePassword(password)
       },
-      success(entity, user) {
-        entity.user = user
-        reset(entity)
+      success(entity, user, api) {
+        signedIn(entity, { user, isNew: false }, api)
       },
     }),
 
@@ -275,6 +299,12 @@ export function watchAuth(adapter, store, { id = DEFAULT_ID } = {}) {
   return adapter.onSessionChange((user) =>
     store.notify(`#${id}:sessionChange`, user),
   )
+}
+
+function signedIn(entity, { user, isNew }, api) {
+  entity.user = user
+  reset(entity)
+  api.notify(`#${entity.id}:signedIn`, { user, isNew })
 }
 
 function reset(entity, email = "") {

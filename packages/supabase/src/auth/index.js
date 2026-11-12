@@ -128,6 +128,20 @@ export function supabaseAuth(
       return data.user
     },
 
+    async verifyLink(tokenHash, purpose) {
+      const { data } = await check(
+        auth.verifyOtp({
+          token_hash: tokenHash,
+          type: purpose === "reset" ? "recovery" : "email",
+        }),
+      )
+      return data.user
+    },
+
+    prepare(action) {
+      captcha?.prepare(action)
+    },
+
     async resendCode(email, purpose) {
       if (purpose === "signIn") return sendCode(email)
       if (purpose === "reset") return sendResetCode(email)

@@ -1,5 +1,11 @@
 # @inglorious/supabase
 
+## 0.10.0
+
+### Minor Changes
+
+- `supabaseAuth` signs in with an email's link (`verifyLink`) and starts the CAPTCHA of the next step early (`prepare`).
+
 ## 0.9.0
 
 ### Minor Changes

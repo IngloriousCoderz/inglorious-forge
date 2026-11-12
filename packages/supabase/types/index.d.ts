@@ -136,10 +136,13 @@ export declare function supabaseAuth(
     code: string,
     purpose: AuthCodePurpose,
   ): Promise<AuthUser>
+  verifyLink(tokenHash: string, purpose: AuthCodePurpose): Promise<AuthUser>
   resendCode(email: string, purpose: AuthCodePurpose): Promise<void>
   sendResetCode(email: string): Promise<void>
   updatePassword(password: string): Promise<AuthUser>
   signOut(): Promise<void>
   eraseAccount(): Promise<void>
   errorCode(error: unknown): AuthError
+  /** Starts the CAPTCHA of the next step, so its token is ready on submit. */
+  prepare(action: "signIn" | "signUp"): void
 }

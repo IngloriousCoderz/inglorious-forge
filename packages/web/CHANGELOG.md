@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 6.25.0
+
+### Minor Changes
+
+- `createAuth` notifies `#id:signedIn` with `{ user, isNew }` after every sign-in, signs in with an email's link through `linkSubmit({ tokenHash, purpose })` and the adapter's `verifyLink`, and calls the adapter's optional `prepare(action)` as soon as the email check knows the next step.
+
 ## 6.24.1
 
 ### Patch Changes

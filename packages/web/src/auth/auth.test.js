@@ -16,6 +16,7 @@ beforeEach(() => {
     signUp: vi.fn(async () => null),
     sendCode: vi.fn(async () => {}),
     verifyCode: vi.fn(async () => USER),
+    verifyLink: vi.fn(async () => USER),
     resendCode: vi.fn(async () => {}),
     sendResetCode: vi.fn(async () => {}),
     updatePassword: vi.fn(async () => USER),
@@ -25,9 +26,16 @@ beforeEach(() => {
   }
 })
 
+// Records each sign-in, as an app's own `signedIn` handler would.
+const recordSignIns = {
+  signedIn(entity, { user, isNew }) {
+    entity.signIns = [...(entity.signIns ?? []), { id: user.id, isNew }]
+  },
+}
+
 function storeWith(options = {}) {
   return createStore({
-    types: { Auth: createAuth({ adapter, ...options }) },
+    types: { Auth: [createAuth({ adapter, ...options }), recordSignIns] },
     entities: { auth: { type: "Auth" } },
   })
 }
@@ -240,6 +248,45 @@ describe("createAuth", () => {
     await send(store, "accountErase")
 
     expect(auth(store)).toMatchObject({ user: USER, error: "network" })
+  })
+})
+
+describe("createAuth signing in", () => {
+  it("tells the app who signed in, and whether the account is new", async () => {
+    const store = storeWith({ methods: ["password", "code"] })
+    await send(store, "emailSubmit", EMAIL)
+    await send(store, "signInSubmit", PASSWORD)
+    await send(store, "emailSubmit", EMAIL)
+    await send(store, "signUpShow")
+    await send(store, "signUpSubmit", { password: PASSWORD })
+    await send(store, "codeSubmit", CODE)
+
+    expect(auth(store).signIns).toEqual([
+      { id: USER.id, isNew: false },
+      { id: USER.id, isNew: true },
+    ])
+  })
+
+  it("signs in with the link of a confirmation email", async () => {
+    const store = storeWith()
+
+    await send(store, "linkSubmit", { tokenHash: "hash" })
+
+    expect(adapter.verifyLink).toHaveBeenCalledWith("hash", "signUp")
+    expect(auth(store)).toMatchObject({
+      user: USER,
+      signIns: [{ id: USER.id, isNew: true }],
+    })
+  })
+
+  it("prepares the next step as soon as it is known", async () => {
+    adapter.prepare = vi.fn()
+    adapter.accountExists = vi.fn(async () => false)
+    const store = storeWith()
+
+    await send(store, "emailSubmit", EMAIL)
+
+    expect(adapter.prepare).toHaveBeenCalledWith("signUp")
   })
 })
 

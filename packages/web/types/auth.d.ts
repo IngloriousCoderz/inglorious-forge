@@ -46,6 +46,8 @@ export interface AuthAdapter {
     code: string,
     purpose: AuthCodePurpose,
   ): Promise<AuthUser>
+  /** Signs in with the token of an email's link instead of its code. */
+  verifyLink(tokenHash: string, purpose: AuthCodePurpose): Promise<AuthUser>
   resendCode(email: string, purpose: AuthCodePurpose): Promise<void>
   sendResetCode(email: string): Promise<void>
   /** Sets the signed-in user's new password. */
@@ -55,6 +57,15 @@ export interface AuthAdapter {
   eraseAccount(): Promise<void>
   /** The key for a failure. */
   errorCode?(error: unknown): AuthError
+  /** Called as soon as the next step is known, such as to solve a CAPTCHA early. */
+  prepare?(action: "signIn" | "signUp"): void
+}
+
+/** What `#id:signedIn` carries, whoever signed in and however. */
+export interface AuthSignIn {
+  user: AuthUser
+  /** The account was just created. */
+  isNew: boolean
 }
 
 export interface AuthConfig {
@@ -103,6 +114,7 @@ export type AuthType = {
   codeRequest: Handler
   codeSubmit: Handler<string>
   codeResend: Handler
+  linkSubmit: Handler<{ tokenHash: string; purpose?: AuthCodePurpose }>
   resetRequest: Handler
   resetSubmit: Handler<{ code: string; password: string }>
   back: Handler

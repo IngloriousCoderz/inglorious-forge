@@ -175,4 +175,25 @@ describe("supabaseAuth", () => {
     expect(auth.errorCode({ name: "AuthRetryableFetchError" })).toBe("network")
     expect(auth.errorCode({ code: "mystery" })).toBe("unknown")
   })
+
+  it("signs in with the link of an email", async () => {
+    const client = fakeClient()
+
+    expect(await supabaseAuth(client).verifyLink("hash", "signUp")).toEqual(
+      USER,
+    )
+    expect(client.auth.verifyOtp).toHaveBeenCalledWith({
+      token_hash: "hash",
+      type: "email",
+    })
+  })
+
+  it("starts the CAPTCHA of the next step early", () => {
+    const captcha = { prepare: vi.fn(), token: vi.fn() }
+
+    supabaseAuth(fakeClient(), { captcha }).prepare("signUp")
+    supabaseAuth(fakeClient()).prepare("signIn")
+
+    expect(captcha.prepare).toHaveBeenCalledWith("signUp")
+  })
 })
