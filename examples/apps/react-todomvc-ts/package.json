@@ -10,7 +10,7 @@
     "lint": "eslint .",
     "test:watch": "vitest",
     "test": "vitest run",
-    "build": "tsc -b && vite build",
+    "build": "tsc6 -b && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
