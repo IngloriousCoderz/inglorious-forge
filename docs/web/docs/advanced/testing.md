@@ -248,7 +248,7 @@ test("logging behavior logs events", () => {
 test("auth guard blocks unauthenticated access", () => {
   const requireAuth = (type) => ({
     navigate(entity, route, api) {
-      if (!window.localStorage.getItem("user")) {
+      if (!api.getEntity("session")?.user) {
         api.notify("navigate", "/login")
         return
       }
@@ -256,15 +256,14 @@ test("auth guard blocks unauthenticated access", () => {
     },
   })
 
-  const mockApi = { notify: jest.fn() }
+  // Signed out: the session entity has no user.
+  const mockApi = { notify: jest.fn(), getEntity: () => ({ user: null }) }
   const BaseType = {
     navigate(e, r) {
       e.route = r
     },
   }
   const GuardedType = [BaseType, requireAuth]
-
-  localStorage.removeItem("user")
 
   trigger(
     { route: "" },

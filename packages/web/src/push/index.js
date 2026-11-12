@@ -1,7 +1,5 @@
 import { handleAsync } from "@inglorious/store/async"
 
-const DEFAULT_DECLINE_KEY = "inglorious-push-declined"
-
 // The adapters whose taps are already wired: an entity created again (a hot
 // update, a second store) must not open each push twice.
 const tappedAdapters = new WeakSet()
@@ -12,9 +10,10 @@ const tappedAdapters = new WeakSet()
  * A device shows its permission dialog only so many times, and a refusal
  * there may be for good. So the type asks in the app's own words first: an
  * entity with `isOpen` the app renders as a prompt, whose yes brings up the
- * system's dialog (`pushAsk`) and whose no (`pushDecline`) is remembered on
- * the device, so it never asks again. Allowed later from the system's
- * settings, pushes still register.
+ * system's dialog (`pushAsk`) and whose no (`pushDecline`) sets
+ * `isDeclined`, so it never asks again. Keep it between visits with
+ * `withStorage(["isDeclined"])` from `@inglorious/store/storage`. Allowed
+ * later from the system's settings, pushes still register.
  *
  * The app tells it when there is someone to register for: `pushStart` (at
  * sign-in) checks the permission, registers the device if it is granted, and
@@ -37,7 +36,6 @@ const tappedAdapters = new WeakSet()
  *
  * @param {Object} config
  * @param {Object} config.adapter
- * @param {string} [config.declineKey] - The localStorage key of a decline.
  * @param {(url: string, api: Object) => void} [config.onTap]
  *
  * @example
@@ -51,21 +49,10 @@ const tappedAdapters = new WeakSet()
  *   },
  * }
  */
-export function createPushPrompt({
-  adapter,
-  declineKey = DEFAULT_DECLINE_KEY,
-  onTap = navigate,
-}) {
-  function isDeclined() {
-    try {
-      return window.localStorage.getItem(declineKey) !== null
-    } catch {
-      return false
-    }
-  }
-
+export function createPushPrompt({ adapter, onTap = navigate }) {
   return {
     create(entity, _, api) {
+      entity.isDeclined ??= false
       entity.isOpen ??= false
       entity.isActive ??= false
       if (adapter.onTap && !tappedAdapters.has(adapter)) {
@@ -95,7 +82,7 @@ export function createPushPrompt({
           api.notify(`#${entity.id}:pushRegister`)
           return
         }
-        entity.isOpen = permission === "prompt" && !isDeclined()
+        entity.isOpen = permission === "prompt" && !entity.isDeclined
       },
       error() {},
     }),
@@ -114,11 +101,7 @@ export function createPushPrompt({
     }),
 
     pushDecline(entity) {
-      try {
-        window.localStorage.setItem(declineKey, "true")
-      } catch {
-        // Without storage the prompt comes back next start, nothing worse.
-      }
+      entity.isDeclined = true
       entity.isOpen = false
     },
 

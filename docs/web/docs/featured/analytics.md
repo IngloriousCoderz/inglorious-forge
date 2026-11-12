@@ -11,11 +11,12 @@ description: Measuring how an app is used, once the user agreed
 
 In the EU, and in a growing number of other places, analytics needs the user's consent before it starts. In a browser, the first call to an analytics library is what sets its cookies and sends its first hit. So the type tells the adapter nothing until the user said yes.
 
-Its entity's `consent` is `"granted"`, `"denied"`, or `null` when the user hasn't answered yet. The answer is remembered on the device. While `isAsking` is true, the app renders its own consent prompt.
+Its entity's `consent` is `"granted"`, `"denied"`, or `null` when the user hasn't answered yet. The entity is the one place the answer lives: to keep it between visits, add `withStorage(["consent"])` from `@inglorious/store/storage`, which saves a copy whenever it changes. While `isAsking` is true, the app renders its own consent prompt.
 
 ## Setup
 
 ```javascript
+import { withStorage } from "@inglorious/store/storage"
 import { createAnalytics } from "@inglorious/web/analytics"
 
 const types = {
@@ -39,6 +40,7 @@ const types = {
         </p>`
       },
     },
+    withStorage(["consent"]),
   ],
 }
 

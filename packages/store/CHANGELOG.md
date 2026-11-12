@@ -1,5 +1,11 @@
 # @inglorious/store
 
+## 12.5.0
+
+### Minor Changes
+
+- Add `withStorage(fields, { key, storage })` in `@inglorious/store/storage`: an entity's fields come back from storage when it is created and are written back when a handler changes them, so the entity stays the one source of truth and storage is a byproduct.
+
 ## 12.4.0
 
 ### Minor Changes

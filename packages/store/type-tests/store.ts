@@ -7,6 +7,8 @@ import {
   type Middleware,
   type Store,
 } from "../types"
+import { withStorage } from "../types/behaviors/storage"
+import type { TypeDefinition } from "../types/store"
 import { trigger } from "../types/test"
 
 interface CounterEntity extends BaseEntity {
@@ -205,3 +207,19 @@ createStore<AppEntity, AppState>({
   // @ts-expect-error: a middleware returns the store, not a function of next
   middlewares: [(store: Store<AppEntity, AppState>) => () => store],
 })
+
+// withStorage composes with any type, typed by the entity it keeps.
+
+interface SettingsEntity extends BaseEntity {
+  type: "Settings"
+  theme: string
+}
+
+export const settingsType: TypeDefinition<SettingsEntity> = [
+  {
+    themeSet(entity: SettingsEntity, theme: string) {
+      entity.theme = theme
+    },
+  },
+  withStorage(["theme"], { key: "settings" }),
+]

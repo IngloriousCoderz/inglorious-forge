@@ -609,9 +609,10 @@ test("requireAuth blocks unauthenticated access", () => {
   // Compose the guard with the page type
   const GuardedPage = requireAuth(AdminPage)
 
-  // Mock localStorage.getItem to return null (not logged in)
+  // Signed out: the session entity has no user
   const mockApi = {
     notify: jest.fn(),
+    getEntity: () => ({ user: null }),
   }
 
   const { events } = trigger(
@@ -631,11 +632,12 @@ test("requireAuth blocks unauthenticated access", () => {
 })
 
 test("requireAuth allows authenticated access", () => {
-  // Mock localStorage.getItem to return user data
-  localStorage.setItem("user", JSON.stringify({ id: 1 }))
-
+  // Signed in: the session entity has a user
   const GuardedPage = requireAuth(AdminPage)
-  const mockApi = { notify: jest.fn() }
+  const mockApi = {
+    notify: jest.fn(),
+    getEntity: () => ({ user: { id: 1 } }),
+  }
 
   const { events } = trigger(
     { type: "GuardedPage", id: "admin" },
@@ -646,9 +648,6 @@ test("requireAuth allows authenticated access", () => {
 
   // Should NOT redirect
   expect(events).toEqual([])
-
-  // Cleanup
-  localStorage.removeItem("user")
 })
 ```
 
@@ -1135,8 +1134,9 @@ export const requireAuth = (type) => ({
     // Only act when navigating to this specific route
     if (payload.route !== entity.id) return
 
-    // Check authentication
-    const user = localStorage.getItem("user")
+    // Check authentication: the session entity is the one place the user
+    // lives (kept between visits with withStorage, if at all)
+    const { user } = api.getEntity("session") ?? {}
     if (!user) {
       // Redirect to login, preserving the intended destination
       api.notify("navigate", {
@@ -1686,6 +1686,35 @@ Inglorious UI's bottom sheets, snackbars and toasts move above the keyboard, and
 ```
 
 It returns a function that stops following.
+
+---
+
+## Share
+
+`@inglorious/web/share` is the type behind a share button. `share` hands a title, a text, a link or a file to whatever the device does best, and the entity says what happened:
+
+- in a native app, the system's share sheet, through [`@capacitor/share`](https://capacitorjs.com/docs/apis/share) when you hand it over;
+- in a browser, a file (a `url` with a `fileName`) downloads, since a browser has nowhere better to put it;
+- otherwise the browser's share sheet where there is one (Web Share API), else the link is copied.
+
+```javascript
+import { Share } from "@capacitor/share"
+import { createShare } from "@inglorious/web/share"
+
+const types = { Share: createShare({ plugin: Share }) }
+
+api.notify("#share:share", {
+  title: "My job",
+  url: "https://example.com/jobs/1",
+})
+api.notify("#share:share", {
+  title: "Wedding",
+  url: icsUrl,
+  fileName: "wedding.ics",
+})
+```
+
+`result` is `"shared"`, `"downloaded"`, `"copied"` or `"cancelled"`: closing the sheet is not an error. `status` and `error` (`"unsupported"` or `"failed"`) come from `handleRequest`. `canShare` says whether a link can be shared at all, to hide the button where it can't.
 
 ---
 

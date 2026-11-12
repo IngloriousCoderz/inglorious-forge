@@ -1,4 +1,3 @@
-const DEFAULT_CONSENT_KEY = "inglorious-analytics-consent"
 const GRANTED = "granted"
 const DENIED = "denied"
 
@@ -8,7 +7,8 @@ const DENIED = "denied"
  * to an analytics library is what sets its cookies and sends its first hit.
  *
  * Its entity's `consent` is `"granted"`, `"denied"` or `null` (not asked
- * yet), remembered on the device. While `isAsking`, the app renders its own
+ * yet). Keep it between visits with `withStorage(["consent"])` from
+ * `@inglorious/store/storage`. While `isAsking`, the app renders its own
  * consent prompt, whose answer is `analyticsConsent` with `true` or `false`.
  * `analyticsAsk` brings the prompt back, for a settings page where the
  * choice can be changed as easily as it was made.
@@ -25,35 +25,19 @@ const DENIED = "denied"
  *
  * @param {Object} config
  * @param {Object} config.adapter
- * @param {string} [config.consentKey] - The localStorage key of the choice.
  *
  * @example
- * const types = { Analytics: [createAnalytics({ adapter }), template] }
+ * const types = {
+ *   Analytics: [createAnalytics({ adapter }), template, withStorage(["consent"])],
+ * }
  * const entities = { analytics: { type: "Analytics" } }
  * // later, anywhere
  * api.notify("#analytics:analyticsTrack", { name: "sign_up" })
  */
-export function createAnalytics({ adapter, consentKey = DEFAULT_CONSENT_KEY }) {
-  function readConsent() {
-    try {
-      const stored = window.localStorage.getItem(consentKey)
-      return stored === GRANTED || stored === DENIED ? stored : null
-    } catch {
-      return null
-    }
-  }
-
-  function writeConsent(consent) {
-    try {
-      window.localStorage.setItem(consentKey, consent)
-    } catch {
-      // Without storage the prompt comes back next visit, nothing worse.
-    }
-  }
-
+export function createAnalytics({ adapter }) {
   return {
     create(entity) {
-      entity.consent ??= readConsent()
+      entity.consent ??= null
       entity.isAsking ??= entity.consent === null
       if (entity.consent === GRANTED) call(() => adapter.setConsent(true))
     },
@@ -65,7 +49,6 @@ export function createAnalytics({ adapter, consentKey = DEFAULT_CONSENT_KEY }) {
 
     analyticsConsent(entity, isGranted, api) {
       const consent = isGranted ? GRANTED : DENIED
-      writeConsent(consent)
       entity.consent = consent
       entity.isAsking = false
       call(() => adapter.setConsent(isGranted))

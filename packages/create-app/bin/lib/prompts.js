@@ -1,6 +1,7 @@
 import { importBlock } from "./imports.js"
-import { LINE_WIDTH, relative } from "./source.js"
+import { indent, LINE_WIDTH, relative } from "./source.js"
 
+const ARRAY_INDENT = 2
 const FIREBASE_CONFIG_KEYS = {
   apiKey: "VITE_FIREBASE_API_KEY",
   projectId: "VITE_FIREBASE_PROJECT_ID",
@@ -165,6 +166,7 @@ export function renderPrompts(api${annotation}) {
 function analyticsSource(app) {
   const imports = [
     'import { firebaseAnalytics } from "@inglorious/firebase/analytics"',
+    'import { withStorage } from "@inglorious/store/storage"',
     'import { createAnalytics } from "@inglorious/web/analytics"',
     'import { when } from "@inglorious/web/directives/when"',
     `import { firebaseConfig } from "${relative(app.layout.analytics, "src/api/firebase")}"`,
@@ -184,12 +186,9 @@ function analyticsSource(app) {
     ? "entity: AppAnalyticsEntity, api: AppApi"
     : "entity, api"
 
-  return `${importBlock(imports)}
-
-export const Analytics = {
+  const type = `{
   ...createAnalytics({
     adapter: firebaseAnalytics({ firebase: firebaseConfig }),
-    consentKey: "${app.projectName}-analytics-consent",
   }),
 
   render(${params}) {
@@ -203,7 +202,15 @@ ${prop("declineLabel", label("analytics.decline", "No thanks"), "        ")}
       }),
     )
   },
-}
+}`
+
+  return `${importBlock(imports)}
+
+// The answer outlives the visit: storage keeps a copy of the entity's consent.
+export const Analytics = [
+${indent(type, ARRAY_INDENT)},
+  withStorage(["consent"], { key: "${app.projectName}-analytics" }),
+]
 `
 }
 
@@ -259,6 +266,7 @@ export async function signOut() {
 
 function pushPromptSource(app) {
   const imports = [
+    'import { withStorage } from "@inglorious/store/storage"',
     'import { when } from "@inglorious/web/directives/when"',
     'import { createPushPrompt } from "@inglorious/web/push"',
     `import { push } from "${relative(app.layout.pushPrompt, "src/api/push")}"`,
@@ -284,13 +292,8 @@ function pushPromptSource(app) {
     ? "    // One question at a time, the consent first.\n"
     : ""
 
-  return `${importBlock(imports)}
-
-export const PushPrompt = {
-  ...createPushPrompt({
-    adapter: push,
-    declineKey: "${app.projectName}-push-declined",
-  }),
+  const type = `{
+  ...createPushPrompt({ adapter: push }),
 
   render(${params}) {
 ${open}    return when(${isShown}, () =>
@@ -303,7 +306,15 @@ ${open}    return when(${isShown}, () =>
       }),
     )
   },
-}
+}`
+
+  return `${importBlock(imports)}
+
+// A decline outlives the visit: storage keeps a copy of the entity's answer.
+export const PushPrompt = [
+${indent(type, ARRAY_INDENT)},
+  withStorage(["isDeclined"], { key: "${app.projectName}-push" }),
+]
 `
 }
 

@@ -1,21 +1,28 @@
 import { createStore } from "@inglorious/store"
+import { withStorage } from "@inglorious/store/storage"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
 import { createAnalytics } from "./index.js"
 
-const CONSENT_KEY = "test-analytics-consent"
-
 let stored
 let adapter
 
+const memory = {
+  getItem: (key) => stored.get(key) ?? null,
+  setItem: (key, value) => stored.set(key, value),
+}
+
+// A choice made on an earlier visit, as withStorage keeps it.
+function keepConsent(consent) {
+  stored.set("analytics", JSON.stringify({ consent }))
+}
+
+function keptConsent() {
+  return JSON.parse(stored.get("analytics")).consent
+}
+
 beforeEach(() => {
   stored = new Map()
-  vi.stubGlobal("window", {
-    localStorage: {
-      getItem: (key) => stored.get(key) ?? null,
-      setItem: (key, value) => stored.set(key, value),
-    },
-  })
   adapter = {
     setConsent: vi.fn(),
     pageView: vi.fn(),
@@ -26,7 +33,10 @@ beforeEach(() => {
 function storeWithAnalytics(router = { route: "home", path: "/" }) {
   return createStore({
     types: {
-      Analytics: createAnalytics({ adapter, consentKey: CONSENT_KEY }),
+      Analytics: [
+        createAnalytics({ adapter }),
+        withStorage(["consent"], { storage: () => memory }),
+      ],
       Router: {},
     },
     entities: {
@@ -59,7 +69,7 @@ describe("analyticsConsent", () => {
 
     expect(analytics(store).consent).toBe("granted")
     expect(analytics(store).isAsking).toBe(false)
-    expect(stored.get(CONSENT_KEY)).toBe("granted")
+    expect(keptConsent()).toBe("granted")
     expect(adapter.setConsent).toHaveBeenCalledWith(true)
     expect(adapter.pageView).toHaveBeenCalledWith({
       route: "events",
@@ -83,7 +93,7 @@ describe("analyticsConsent", () => {
     store.notify("#analytics:analyticsConsent", false)
     store.notify("routeChange", { route: "about", path: "/about" })
 
-    expect(stored.get(CONSENT_KEY)).toBe("denied")
+    expect(keptConsent()).toBe("denied")
     expect(adapter.setConsent).toHaveBeenCalledWith(false)
     expect(adapter.pageView).not.toHaveBeenCalled()
   })
@@ -91,7 +101,7 @@ describe("analyticsConsent", () => {
 
 describe("a choice made on an earlier visit", () => {
   it("granted, measures from the start without asking", () => {
-    stored.set(CONSENT_KEY, "granted")
+    keepConsent("granted")
     const store = storeWithAnalytics()
 
     expect(analytics(store).isAsking).toBe(false)
@@ -99,7 +109,7 @@ describe("a choice made on an earlier visit", () => {
   })
 
   it("denied, stays quiet without asking", () => {
-    stored.set(CONSENT_KEY, "denied")
+    keepConsent("denied")
     const store = storeWithAnalytics()
 
     expect(analytics(store).isAsking).toBe(false)
@@ -109,7 +119,7 @@ describe("a choice made on an earlier visit", () => {
 
 describe("analyticsAsk", () => {
   it("brings the prompt back, to change the choice", () => {
-    stored.set(CONSENT_KEY, "granted")
+    keepConsent("granted")
     const store = storeWithAnalytics()
     store.notify("#analytics:analyticsAsk")
     expect(analytics(store).isAsking).toBe(true)
@@ -118,7 +128,7 @@ describe("analyticsAsk", () => {
 
 describe("a failing adapter", () => {
   it("never reaches the app", async () => {
-    stored.set(CONSENT_KEY, "granted")
+    keepConsent("granted")
     adapter.pageView = vi.fn(() => {
       throw new Error("blocked")
     })

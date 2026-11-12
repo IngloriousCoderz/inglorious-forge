@@ -1,5 +1,17 @@
 # @inglorious/react-store
 
+## 6.26.0
+
+### Minor Changes
+
+- `createAnalytics` and `createPushPrompt` no longer touch storage: the consent and the new `isDeclined` live on the entity alone, and an app keeps them between visits with `withStorage` from `@inglorious/store/storage`. The `consentKey` and `declineKey` options are gone.
+- Add `@inglorious/web/share`: `createShare({ plugin })` shares a link, a text or a file through the system's sheet in a native app (`@capacitor/share`), downloads files in a browser, else uses the browser's share sheet, else copies the link. The entity keeps the outcome, `"cancelled"` included.
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/store@12.5.0
+
 ## 6.25.0
 
 ### Minor Changes

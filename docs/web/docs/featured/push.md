@@ -9,32 +9,36 @@ description: Asking a device for push notifications and keeping it registered
 
 ## Why a prompt of your own
 
-A device shows its permission dialog only so many times, and a refusal there may be for good. So the type asks in the app's own words first. Its entity's `isOpen` is a prompt for the app to render. A yes brings up the system's dialog. A no is remembered on the device, so the prompt never comes back; allowing pushes later in the system's settings still registers the device.
+A device shows its permission dialog only so many times, and a refusal there may be for good. So the type asks in the app's own words first. Its entity's `isOpen` is a prompt for the app to render. A yes brings up the system's dialog. A no sets the entity's `isDeclined`, so the prompt never comes back (keep it between visits with `withStorage(["isDeclined"])` from `@inglorious/store/storage`); allowing pushes later in the system's settings still registers the device.
 
 ## Setup
 
 ```javascript
+import { withStorage } from "@inglorious/store/storage"
 import { createPushPrompt } from "@inglorious/web/push"
 
 const prompt = createPushPrompt({ adapter: fcm })
 
 const types = {
-  PushPrompt: {
-    ...prompt,
-    // The app says when there is someone to register for.
-    sessionStart: prompt.pushStart,
-    sessionEnd: prompt.pushStop,
-    render(entity, api) {
-      if (!entity.isOpen) return ""
-      return html`<p>
-        Turn on notifications?
-        <button @click=${() => api.notify("#pushPrompt:pushAsk")}>Yes</button>
-        <button @click=${() => api.notify("#pushPrompt:pushDecline")}>
-          Not now
-        </button>
-      </p>`
+  PushPrompt: [
+    {
+      ...prompt,
+      // The app says when there is someone to register for.
+      sessionStart: prompt.pushStart,
+      sessionEnd: prompt.pushStop,
+      render(entity, api) {
+        if (!entity.isOpen) return ""
+        return html`<p>
+          Turn on notifications?
+          <button @click=${() => api.notify("#pushPrompt:pushAsk")}>Yes</button>
+          <button @click=${() => api.notify("#pushPrompt:pushDecline")}>
+            Not now
+          </button>
+        </p>`
+      },
     },
-  },
+    withStorage(["isDeclined"]),
+  ],
 }
 
 const entities = { pushPrompt: { type: "PushPrompt" } }
@@ -45,12 +49,13 @@ const entities = { pushPrompt: { type: "PushPrompt" } }
 - `pushStart`: checks the permission. Granted, it registers the device; not yet answered, it opens the prompt. Send it at sign-in.
 - `pushStop`: closes the prompt. Send it at sign-out.
 - `pushAsk`: the prompt's yes. Notify it from the tap itself: a browser shows its dialog only within one.
-- `pushDecline`: the prompt's no, remembered under `declineKey` in localStorage.
+- `pushDecline`: the prompt's no: sets `isDeclined`.
 
 ## Entity state
 
 - `isOpen`: the prompt is showing.
 - `isActive`: between `pushStart` and `pushStop`.
+- `isDeclined`: the prompt was declined, and never opens again.
 
 ## The adapter
 

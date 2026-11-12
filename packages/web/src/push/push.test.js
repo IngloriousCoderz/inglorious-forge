@@ -1,21 +1,24 @@
 import { createStore } from "@inglorious/store"
+import { withStorage } from "@inglorious/store/storage"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
 import { createPushPrompt } from "./index.js"
 
-const DECLINE_KEY = "test-push-declined"
-
 let stored
 let adapter
 
+const memory = {
+  getItem: (key) => stored.get(key) ?? null,
+  setItem: (key, value) => stored.set(key, value),
+}
+
+// A decline on an earlier visit, as withStorage keeps it.
+function keepDecline() {
+  stored.set("pushPrompt", JSON.stringify({ isDeclined: true }))
+}
+
 beforeEach(() => {
   stored = new Map()
-  vi.stubGlobal("window", {
-    localStorage: {
-      getItem: (key) => stored.get(key) ?? null,
-      setItem: (key, value) => stored.set(key, value),
-    },
-  })
   adapter = {
     isSupported: vi.fn(async () => true),
     permission: vi.fn(async () => "prompt"),
@@ -26,14 +29,17 @@ beforeEach(() => {
 
 function storeWith(type) {
   return createStore({
-    types: { PushPrompt: type },
+    types: {
+      PushPrompt: [
+        type,
+        withStorage(["isDeclined"], { storage: () => memory }),
+      ],
+    },
     entities: { pushPrompt: { type: "PushPrompt" } },
   })
 }
 
-async function start(
-  type = createPushPrompt({ adapter, declineKey: DECLINE_KEY }),
-) {
+async function start(type = createPushPrompt({ adapter })) {
   const store = storeWith(type)
   store.notify("#pushPrompt:pushStart")
   await settle()
@@ -59,14 +65,14 @@ describe("pushStart", () => {
   })
 
   it("registers once allowed, even after a decline", async () => {
-    stored.set(DECLINE_KEY, "true")
+    keepDecline()
     adapter.permission.mockResolvedValueOnce("granted")
     await start()
     expect(adapter.register).toHaveBeenCalled()
   })
 
   it("stays quiet after a decline, or a refusal on the device", async () => {
-    stored.set(DECLINE_KEY, "true")
+    keepDecline()
     expect(isOpen(await start())).toBe(false)
 
     stored.clear()
@@ -113,7 +119,7 @@ describe("pushDecline", () => {
     const store = await start()
     store.notify("#pushPrompt:pushDecline")
     expect(isOpen(store)).toBe(false)
-    expect(stored.get(DECLINE_KEY)).toBe("true")
+    expect(JSON.parse(stored.get("pushPrompt")).isDeclined).toBe(true)
     expect(isOpen(await start())).toBe(false)
   })
 })

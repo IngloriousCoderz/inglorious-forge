@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.22.0
+
+### Minor Changes
+
+- The generated analytics consent and push prompt keep their answers with `withStorage`, as a copy of the entity.
+
 ## 1.21.0
 
 ### Minor Changes

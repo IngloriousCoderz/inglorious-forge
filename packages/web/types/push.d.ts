@@ -20,8 +20,6 @@ export interface PushAdapter {
 
 export interface PushPromptConfig {
   adapter: PushAdapter
-  /** The localStorage key of a decline. Defaults to `"inglorious-push-declined"`. */
-  declineKey?: string
   /** Opens a tapped push's `url`. Defaults to `#router:navigate`. */
   onTap?: (url: string, api: Api) => void
 }
@@ -31,6 +29,8 @@ export interface PushPromptEntity {
   type: string
   /** The app's own prompt is showing. */
   isOpen: boolean
+  /** The prompt was declined: it never opens again. Keep it with `withStorage`. */
+  isDeclined: boolean
   /** Between `pushStart` and `pushStop`: someone to register for. */
   isActive: boolean
 }

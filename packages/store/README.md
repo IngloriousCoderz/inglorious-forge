@@ -805,6 +805,38 @@ Available scopes:
 
 ---
 
+### `withStorage`
+
+The entity is the one source of truth; keeping some of it between visits is a byproduct. `withStorage` brings the fields back when the entity is created, before the type's own `create`, and writes them back after any handler that changes them:
+
+```ts
+import { withStorage } from "@inglorious/store/storage"
+
+const Settings = {
+  create(entity) {
+    entity.theme ??= "light" // kept from last time, else light
+  },
+  themeSet(entity, theme) {
+    entity.theme = theme // saved along the way
+  },
+}
+
+const types = {
+  Settings: [Settings, withStorage(["theme"])],
+  Draft: [
+    Draft,
+    withStorage(["text"], { key: "draft", storage: () => sessionStorage }),
+  ],
+}
+```
+
+- Nothing reads storage but `withStorage`: the app reads the entity, and the rest follows.
+- Put it last in the type's array: it saves after the handlers before it.
+- `key` names where the fields go (the entity's id by default), or derives it from the entity. `storage` is any Web Storage, `localStorage` by default.
+- Storage that is missing, full or refusing, as in a private window, only means nothing is kept.
+
+---
+
 ## 🧩 Migrating from Redux Toolkit (RTK)
 
 Inglorious Store now provides utilities to **gradually migrate from RTK slices and thunks**, leveraging `handleAsync` to simplify async logic.

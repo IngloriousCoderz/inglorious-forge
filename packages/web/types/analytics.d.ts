@@ -12,8 +12,6 @@ export interface AnalyticsAdapter {
 
 export interface AnalyticsConfig {
   adapter: AnalyticsAdapter
-  /** The localStorage key of the choice. Defaults to `"inglorious-analytics-consent"`. */
-  consentKey?: string
 }
 
 export interface AnalyticsEntity {
