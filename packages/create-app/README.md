@@ -18,18 +18,19 @@ The CLI will guide you through the setup process, asking for a project name and 
 
 For the JavaScript and TypeScript Vite templates, the CLI then asks about the app's features:
 
-| Question                  | Flag                                                                     | Adds                                                                                                                 |
-| ------------------------- | ------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
-| Use Inglorious UI?        | `--ui` / `--no-ui`                                                       | `@inglorious/ui`, its base styles, an app bar, toasts (`api.notify("#toast:show", { message })`) and `watchKeyboard` |
-| Which theme?              | `--theme=inglorious\|material-ui\|material-3\|bootstrap\|ios-18\|ios-26` | The theme's stylesheet and class                                                                                     |
-| Is it a mobile app?       | `--mobile` / `--no-mobile`                                               | Capacitor for Android and iOS; with Inglorious UI, a bottom tab bar and safe-area spacing                            |
-| Add routing?              | `--routing` / `--no-routing`                                             | The Router, a home and an about page, and navigation between them                                                    |
-| Animate page transitions? | `--transitions` / `--no-transitions`                                     | View transitions between pages (with routing and Inglorious UI)                                                      |
-| Which icon packs?         | `--icons=material,fontawesome,lucide` / `--no-icons`                     | Iconify icon sets, drawn by Inglorious UI's `Icon` (with Inglorious UI)                                              |
-| Translate the app?        | `--i18n` / `--no-i18n`, `--languages=en,it`                              | `@inglorious/i18n`, a catalogue per language and a language picker; the first language is the default                |
-| Add analytics?            | `--analytics` / `--no-analytics`                                         | Google Analytics for Firebase behind a consent prompt, on the web and in the native apps                             |
-| Add push notifications?   | `--push` / `--no-push`                                                   | Firebase Cloud Messaging, a permission prompt and the Supabase side of sending; turns on PWA support                 |
-| Enable PWA support?       | `--pwa` / `--no-pwa`                                                     | `vite-plugin-pwa`, a manifest, icons, and a service worker that keeps installed apps on the latest version           |
+| Question                  | Flag                                                                     | Adds                                                                                                                    |
+| ------------------------- | ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------- |
+| Use Inglorious UI?        | `--ui` / `--no-ui`                                                       | `@inglorious/ui`, its base styles, an app bar, toasts (`api.notify("#toast:show", { message })`) and `watchKeyboard`    |
+| Which theme?              | `--theme=inglorious\|material-ui\|material-3\|bootstrap\|ios-18\|ios-26` | The theme's stylesheet and class                                                                                        |
+| Is it a mobile app?       | `--mobile` / `--no-mobile`                                               | Capacitor for Android and iOS; with Inglorious UI, a bottom tab bar and safe-area spacing                               |
+| Add routing?              | `--routing` / `--no-routing`                                             | The Router, a home and an about page, and navigation between them                                                       |
+| Animate page transitions? | `--transitions` / `--no-transitions`                                     | View transitions between pages (with routing and Inglorious UI)                                                         |
+| Which icon packs?         | `--icons=material,fontawesome,lucide` / `--no-icons`                     | Iconify icon sets, drawn by Inglorious UI's `Icon` (with Inglorious UI)                                                 |
+| Translate the app?        | `--i18n` / `--no-i18n`, `--languages=en,it`                              | `@inglorious/i18n`, a catalogue per language and a language picker; the first language is the default                   |
+| Add analytics?            | `--analytics` / `--no-analytics`                                         | Google Analytics for Firebase behind a consent prompt, on the web and in the native apps                                |
+| Add sign-in?              | `--auth` / `--no-auth`, `--auth-methods=password,code`                   | Supabase Auth: a sign-in screen with a password, a code by email or both, password reset, sign-out and account deletion |
+| Add push notifications?   | `--push` / `--no-push`                                                   | Firebase Cloud Messaging, a permission prompt and the Supabase side of sending; turns on PWA support                    |
+| Enable PWA support?       | `--pwa` / `--no-pwa`                                                     | `vite-plugin-pwa`, a manifest, icons, and a service worker that keeps installed apps on the latest version              |
 
 Every template has a `vercel.json` that deploys only the `main` branch on Vercel; change `main` there if your production branch has another name. Every template except `minimal` also gets `.github/dependabot.yml`, which opens weekly dependency updates on GitHub grouped into two pull requests: one for `@inglorious/*`, one for everything else.
 
@@ -47,7 +48,9 @@ The app is generated in the syntax you chose: lit-html, JSX or Vue. Every questi
 pnpm create @inglorious/app my-app --template=ts --syntax=jsx --ui --theme=material-3 --routing --transitions --icons=material --languages=en,it --no-mobile --no-analytics --no-push --no-pwa --skills
 ```
 
-Analytics and push generate their setup steps into the new project's README, and a `.env.example`. Push also generates a Supabase migration, the `push-notify` edge function and a service worker: a push is sent by inserting a row in `notifications`. It needs a Firebase project, a Supabase project and a sign-in screen, since the permission prompt appears once someone is signed in with Supabase Auth.
+Analytics and push generate their setup steps into the new project's README, and a `.env.example`. Push also generates a Supabase migration, the `push-notify` edge function and a service worker: a push is sent by inserting a row in `notifications`. It needs a Firebase project, a Supabase project and a sign-in screen, since the permission prompt appears once someone is signed in with Supabase Auth: `--auth` generates one.
+
+Sign-in (`--auth`) shows a sign-in screen instead of the app until someone signs in, with `createAuth` from `@inglorious/web/auth` and `supabaseAuth` from `@inglorious/supabase`. `--auth-methods` picks how: `password` (with password reset, and a code to confirm a new account), `code` (a code sent by email, no password) or both. Codes rather than links work in the native app too. With routing, a **Profile** page (a link, or a tab on mobile) shows who is signed in, with **Sign out** and **Delete account**; without routing, the app bar has both. Deleting the account, which the App Store and Google Play require of apps that create accounts, goes through the generated `erase-account` Edge Function. The project also gets the email templates with the codes, and the README explains the Supabase setup and, for mobile apps, the privacy declarations the stores ask for.
 
 ## Templates
 

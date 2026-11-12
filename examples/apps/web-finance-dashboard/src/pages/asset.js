@@ -7,7 +7,7 @@ import {
   XAxis,
   YAxis,
 } from "@inglorious/charts"
-import { handleAsync } from "@inglorious/store/async"
+import { handleRequest } from "@inglorious/store/async"
 import { html } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 
@@ -38,11 +38,9 @@ export const AssetPage = {
     api.notify(`#${entity.id}:assetFetch`, { symbol })
   },
 
-  ...handleAsync("assetFetch", {
+  ...handleRequest("assetFetch", {
     start(entity, payload) {
       entity.symbol = payload?.symbol || DEFAULT_ASSET_SYMBOL
-      entity.loading = true
-      entity.error = null
     },
 
     async run(payload) {
@@ -61,12 +59,9 @@ export const AssetPage = {
       entity.fallbackSymbols = payload.fallbackSymbols
       entity.warning = payload.warning
       entity.loaded = true
-      entity.error = null
-      entity.loading = false
     },
 
-    error(entity, error) {
-      entity.error = error instanceof Error ? error.message : String(error)
+    error(entity) {
       entity.quote = null
       entity.profile = null
       entity.fundamentals = null
@@ -75,11 +70,6 @@ export const AssetPage = {
       entity.fallbackSymbols = getFallbackSymbols()
       entity.warning = "Falling back to mock data"
       entity.loaded = false
-      entity.loading = false
-    },
-
-    finally(entity) {
-      entity.loading = false
     },
   }),
 
@@ -109,7 +99,7 @@ export const AssetPage = {
           "Price History",
           html`
             <div class="chart-wrap">
-              ${when(entity.loading, () =>
+              ${when(entity.status === "loading", () =>
                 renderInlineLoader("Switching asset..."),
               )}
               ${Chart.render(
@@ -207,6 +197,6 @@ function getTrendColor(priceSeries) {
 }
 
 function assetTransientClear(entity) {
-  entity.loading = false
+  entity.status = "idle"
   entity.error = null
 }

@@ -5,7 +5,7 @@ const SKILLS_REPOSITORY = "IngloriousCoderz/forge-skills"
 /**
  * The agent skills for the packages a new project uses.
  *
- * @param {{ baseTemplate: string, renderer: string, ui: boolean, languages: string[], analytics: boolean, push: boolean }} project
+ * @param {{ baseTemplate: string, renderer: string, ui: boolean, languages: string[], analytics: boolean, auth: boolean, push: boolean }} project
  */
 export function skillsFor({
   baseTemplate,
@@ -13,6 +13,7 @@ export function skillsFor({
   ui,
   languages,
   analytics,
+  auth,
   push,
 }) {
   const skills = [
@@ -29,7 +30,7 @@ export function skillsFor({
   if (ui) skills.push("ui", "ui-best-practices")
   if (languages.length) skills.push("i18n")
   if (analytics || push) skills.push("firebase")
-  if (push) skills.push("supabase")
+  if (push || auth) skills.push("supabase")
   return skills
 }
 

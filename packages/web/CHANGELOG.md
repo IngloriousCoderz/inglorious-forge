@@ -1,5 +1,17 @@
 # @inglorious/react-store
 
+## 6.24.0
+
+### Minor Changes
+
+- Add `@inglorious/web/auth`: `createAuth({ adapter, methods })` is the type behind a sign-in screen, with a password, a code sent by email or both, password reset, sign-out and account erasure, and `watchAuth` keeps its `user` in step with the session.
+
+### Patch Changes
+
+- `haptics.use(Haptics)` typechecks with `Haptics` from `@capacitor/haptics`, whose options take its own enums.
+- Updated dependencies
+  - @inglorious/store@12.4.0
+
 ## 6.23.1
 
 ### Patch Changes

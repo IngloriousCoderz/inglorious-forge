@@ -1,9 +1,122 @@
 /**
+ * The handlers of a request: a call whose progress the entity shows. The
+ * entity's `status` is `"loading"` from the start, then `"success"` or
+ * `"error"`, and its `error` holds what went wrong. Only the latest call
+ * counts: the answer of a call that a newer one replaced is dropped, so a slow
+ * search never overwrites a quicker, later one. Prefer it to `handleAsync`
+ * whenever the entity shows that something is happening.
+ *
+ * @template {import('../store').BaseEntity} TEntity
+ * @template TPayload
+ * @template TResult
+ *
+ * @param {string} type The event that starts the request, which `withDebounce`
+ *   can wrap. Its lifecycle events are those of `handleAsync`.
+ * @param {Object} handlers As `handleAsync`'s. `error` receives the error as
+ *   `toError` turns it, after `error` is set: it can change what the entity
+ *   shows, such as moving to another step for an error it expects.
+ * @param {Object} [options]
+ * @param {string} [options.status="status"] The field for the status, when
+ *   the entity has several requests, such as `"saveStatus"`.
+ * @param {string} [options.error="error"] The field for the error.
+ * @param {(error: unknown) => unknown} [options.toError] What to store as the
+ *   error, such as a translation key. Defaults to the error's message.
+ * @param {boolean} [options.isLatestOnly=true] Whether a call replaced by a
+ *   newer one is ignored. Turn it off for calls that all count, such as saving
+ *   several items at once.
+ * @param {"entity" | "type" | "global"} [options.scope="entity"] Where the
+ *   lifecycle events go, as in `handleAsync`.
+ *
+ * @example
+ * const JobList = {
+ *   ...handleRequest("search", {
+ *     run: (query) => api.searchJobs(query),
+ *     success(entity, jobs) {
+ *       entity.jobs = jobs
+ *     },
+ *   }),
+ * }
+ *
+ * const types = { JobList: [JobList, withDebounce(300, ["search"])] }
+ */
+export function handleRequest(type, handlers, options = {}) {
+  const {
+    status = "status",
+    error: errorField = "error",
+    toError = messageOf,
+    isLatestOnly = true,
+    scope = "entity",
+  } = options
+
+  const base = handleAsync(
+    type,
+    {
+      start(entity, payload, api) {
+        entity[status] = "loading"
+        entity[errorField] = null
+        handlers.start?.(entity, payload, api)
+      },
+      run: handlers.run,
+      success(entity, result, api) {
+        entity[status] = "success"
+        handlers.success?.(entity, result, api)
+      },
+      error(entity, error, api) {
+        const value = toError(error)
+        entity[status] = "error"
+        entity[errorField] = value
+        handlers.error?.(entity, value, api)
+      },
+      finally: handlers.finally,
+    },
+    { scope },
+  )
+  if (!isLatestOnly) return base
+
+  /** The latest call of each entity. */
+  const latest = new Map()
+  const startEvent = `${type}Start`
+  const isCurrent = (entity, { callId }) => latest.get(entity.id) === callId
+  const unlessStale = (event) => (entity, payload, api) => {
+    if (isCurrent(entity, payload)) base[event](entity, payload, api)
+  }
+  const finallyEvent = `${type}Finally`
+
+  const request = {
+    ...base,
+
+    [startEvent](entity, event, api) {
+      latest.set(entity.id, event.callId)
+      base[startEvent](entity, event, api)
+    },
+
+    [`${type}Success`]: unlessStale(`${type}Success`),
+    [`${type}Error`]: unlessStale(`${type}Error`),
+
+    [finallyEvent](entity, event, api) {
+      if (!isCurrent(entity, event)) return
+      latest.delete(entity.id)
+      base[finallyEvent](entity, event, api)
+    },
+  }
+
+  Object.defineProperty(request, ASYNC_META, {
+    value: { type, scope },
+    enumerable: false,
+  })
+
+  return request
+}
+
+/**
  * Creates a set of event handlers for managing an asynchronous operation lifecycle.
  *
  * This helper generates handlers for all stages of an async operation: start, run,
  * success, error, and finally. The lifecycle events are automatically scoped based
- * on the provided options.
+ * on the provided options. For a call whose progress the entity shows, use
+ * `handleRequest`, which keeps the status and error and drops outdated answers;
+ * `handleAsync` is for the rest, such as saving in the background or calls whose
+ * failure only gets logged.
  *
  * @template {import('../store').BaseEntity} TEntity - The entity type
  * @template TPayload - The payload type passed to the operation
@@ -14,8 +127,7 @@
  *
  * @param {Object} handlers - The handler functions for each lifecycle stage.
  * @param {(entity: TEntity, payload: TPayload, api: import('../store').Api) => void} [handlers.start]
- *   Called synchronously before the async operation starts.
- *   Use for setting loading states. Receives: (entity, payload, api)
+ *   Called synchronously before the async operation starts. Receives: (entity, payload, api)
  * @param {(payload: TPayload, api: import('../store').Api) => Promise<TResult> | TResult} handlers.run
  *   The async operation to perform. Must return a Promise or value.
  *   **Note:** Receives (payload, api) - NOT entity. Entity state should be modified in other handlers.
@@ -26,15 +138,14 @@
  *   Called when the operation fails.
  *   Receives: (entity, error, api) where error is the caught exception
  * @param {(entity: TEntity, api: import('../store').Api) => void} [handlers.finally]
- *   Called after the operation completes (success or failure).
- *   Use for cleanup, resetting loading states. Receives: (entity, api)
+ *   Called after the operation completes (success or failure). Receives: (entity, api)
  *
  * @param {Object} [options] - Configuration options.
  * @param {"entity" | "type" | "global"} [options.scope="entity"]
  *   Controls how lifecycle events are routed:
  *   - "entity": notify `#entityId:event` (default, safest - events only affect the triggering entity)
  *   - "type": notify `typeName:event` (broadcasts to all entities of this type)
- *   - "global": notify `event` (global broadcast to any listener)
+ *   - "global": notify `event` (global broadcast to any listener, as games often want)
  *
  * Each call gets a `callId`, and every event of that call carries it: `Start`
  * and `Run` get `{ payload, callId }`, `Success` gets `{ result, callId }`,
@@ -50,37 +161,20 @@
  *   - `[typeFinally]`: Executes the finally handler
  *
  * @example
- * // Basic usage - fetch todos with loading state
- * const todoList = {
- *   init(entity) {
- *     entity.todos = []
- *     entity.status = 'idle'
- *   },
- *
- *   ...handleAsync('fetchTodos', {
- *     start(entity) {
- *       entity.status = 'loading'
+ * // Saves in the background: a failure is only logged
+ * const preferences = {
+ *   ...handleAsync('localeSave', {
+ *     run(locale) {
+ *       return api.savePreferences({ locale })
  *     },
- *     async run(payload, api) {
- *       const response = await fetch('/api/todos')
- *       return response.json()
+ *     error(_, error) {
+ *       console.warn('Language not saved:', error)
  *     },
- *     success(entity, todos) {
- *       entity.status = 'success'
- *       entity.todos = todos
- *     },
- *     error(entity, error) {
- *       entity.status = 'error'
- *       entity.error = error.message
- *     },
- *     finally(entity) {
- *       entity.lastFetched = Date.now()
- *     }
- *   })
+ *   }),
  * }
  *
  * // Trigger from UI
- * api.notify('#todoList:fetchTodos')
+ * api.notify('#preferences:localeSave', 'it')
  *
  * @example
  * // With type scope - affects all entities of this type
@@ -99,40 +193,6 @@
  *
  * // Triggers sync for ALL counter entities
  * api.notify('counter:sync')
- *
- * @example
- * // Minimal - just run and success
- * const user = {
- *   ...handleAsync('login', {
- *     async run({ username, password }, api) {
- *       const response = await fetch('/api/login', {
- *         method: 'POST',
- *         body: JSON.stringify({ username, password })
- *       })
- *       return response.json()
- *     },
- *     success(entity, user) {
- *       entity.currentUser = user
- *       entity.isAuthenticated = true
- *     }
- *   })
- * }
- *
- * @example
- * // Without start handler
- * const data = {
- *   ...handleAsync('fetch', {
- *     async run(payload, api) {
- *       return fetch(`/api/data/${payload.id}`).then(r => r.json())
- *     },
- *     success(entity, result) {
- *       entity.data = result
- *     },
- *     error(entity, error) {
- *       console.error('Fetch failed:', error)
- *     }
- *   })
- * }
  */
 export function handleAsync(type, handlers, options = {}) {
   const { scope = "entity" } = options
@@ -216,3 +276,7 @@ export function nextCallId() {
 }
 
 export const ASYNC_META = Symbol.for("@inglorious/store/asyncMeta")
+
+function messageOf(error) {
+  return error instanceof Error ? error.message : String(error)
+}

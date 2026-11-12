@@ -9,6 +9,7 @@ import prompts from "prompts"
 import { fileURLToPath } from "url"
 
 import { addAppFeatures } from "./lib/app.js"
+import { addAuthSupport } from "./lib/auth.js"
 import { parseCliOptions } from "./lib/cli.js"
 import {
   INDENTATION,
@@ -19,7 +20,10 @@ import {
 import { addDependabot } from "./lib/dependabot.js"
 import { SYNTAXES, TEMPLATES } from "./lib/features.js"
 import { copyDir } from "./lib/file.js"
-import { addFirebaseSupport } from "./lib/firebase.js"
+import {
+  addFirebaseSupport,
+  keepSupabaseOutOfTypeScript,
+} from "./lib/firebase.js"
 import { addLiveUpdateSupport } from "./lib/live-update.js"
 import { addMobileSupport } from "./lib/mobile.js"
 import { addNativeUpdateSupport } from "./lib/native-update.js"
@@ -99,6 +103,8 @@ async function main() {
     mobile: false,
     pwa: false,
     analytics: false,
+    auth: false,
+    authMethods: [],
     push: false,
   }
 
@@ -113,10 +119,11 @@ async function main() {
     cliOptions.pwa ||
     cliOptions.mobile ||
     cliOptions.analytics ||
+    cliOptions.auth ||
     cliOptions.push
   ) {
     console.warn(
-      "PWA, mobile, analytics and push options are only available for JavaScript and TypeScript Vite app templates.",
+      "PWA, mobile, analytics, sign-in and push options are only available for JavaScript and TypeScript Vite app templates.",
     )
   }
 
@@ -184,6 +191,7 @@ async function main() {
       Boolean(features.icons.length) ||
       Boolean(features.languages.length) ||
       features.analytics ||
+      features.auth ||
       features.push
 
     if (hasAppFeatures) {
@@ -213,6 +221,12 @@ async function main() {
     if (features.analytics || features.push) {
       spinner.text = "Adding Firebase support..."
       addFirebaseSupport(targetDir, pkg, { ...features, templatesRoot })
+    }
+
+    if (features.auth) {
+      spinner.text = "Adding sign-in..."
+      addAuthSupport(targetDir, templatesRoot, { mobile: features.mobile })
+      keepSupabaseOutOfTypeScript(targetDir)
     }
 
     if (features.mobile && features.push) {

@@ -1,9 +1,11 @@
-/** What `haptics` needs of `Haptics` from `@capacitor/haptics`. */
+/**
+ * What `haptics` needs of `Haptics` from `@capacitor/haptics`, whose options
+ * take its `ImpactStyle` and `NotificationType` enums: `"LIGHT"`, `"MEDIUM"`,
+ * `"HEAVY"` and `"SUCCESS"`, `"WARNING"`, `"ERROR"`.
+ */
 export interface HapticsPlugin {
-  impact(options: { style: "LIGHT" | "MEDIUM" | "HEAVY" }): Promise<void>
-  notification(options: {
-    type: "SUCCESS" | "WARNING" | "ERROR"
-  }): Promise<void>
+  impact(options?: { style?: string }): Promise<void>
+  notification(options?: { type?: string }): Promise<void>
 }
 
 /**

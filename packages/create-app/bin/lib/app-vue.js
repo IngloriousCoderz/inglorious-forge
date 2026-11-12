@@ -156,6 +156,7 @@ function uiShell(app, { label, quotedLabel, pages, content }) {
           :onChange="(locale) => api.notify('#i18n:localeChange', locale)"
         />`)
   }
+  if (app.auth && !app.routing) nav.push('        {{ api.render("auth") }}')
   const navBlock = nav.length
     ? `
       <nav class="app-nav">
@@ -229,6 +230,7 @@ function plainShell(app, { label, pages, content }) {
         </option>
       </select>`)
   }
+  if (app.auth && !app.routing) nav.push('      {{ api.render("auth") }}')
   const navBlock = nav.length
     ? `
     <nav class="app-nav">

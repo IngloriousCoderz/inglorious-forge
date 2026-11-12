@@ -1,3 +1,5 @@
+import { createStore } from "@inglorious/store"
+import { handleRequest } from "@inglorious/store/async"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 import { withDebounce } from "./index.js"
@@ -64,5 +66,38 @@ describe("withDebounce", () => {
     expect(saveData).not.toHaveBeenCalled()
     expect(loadOptions).not.toHaveBeenCalled()
     expect(destroy).toHaveBeenCalledWith(entity, {}, api)
+  })
+
+  it("debounces the event that starts a request", async () => {
+    const run = vi.fn(async (query) => [`${query} result`])
+    const store = createStore({
+      types: {
+        Search: [
+          handleRequest("search", {
+            run,
+            success(entity, results) {
+              entity.results = results
+            },
+          }),
+          withDebounce(300, ["search"]),
+        ],
+      },
+      entities: { search: { type: "Search" } },
+    })
+
+    store.notify("#search:search", "p")
+    store.notify("#search:search", "ph")
+    store.notify("#search:search", "photo")
+    await vi.advanceTimersByTimeAsync(299)
+    expect(run).not.toHaveBeenCalled()
+
+    await vi.advanceTimersByTimeAsync(1)
+
+    expect(run).toHaveBeenCalledTimes(1)
+    expect(run).toHaveBeenCalledWith("photo", expect.anything())
+    expect(store.getEntity("search")).toMatchObject({
+      status: "success",
+      results: ["photo result"],
+    })
   })
 })

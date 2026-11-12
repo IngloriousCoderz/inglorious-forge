@@ -1,5 +1,11 @@
 # @inglorious/store
 
+## 12.4.0
+
+### Minor Changes
+
+- Add `handleRequest` to `@inglorious/store/async`, the helper to prefer for async work the entity shows: it keeps `status` (`"loading"`, then `"success"` or `"error"`) and `error` (through `toError`), and drops the answer of a call that a newer one replaced. It takes `handleAsync`'s `scope` too. `handleAsync` stays as the lower level.
+
 ## 12.3.0
 
 ### Minor Changes

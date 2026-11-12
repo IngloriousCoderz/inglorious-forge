@@ -7,6 +7,7 @@ import {
   currentUser,
   EmailError,
   env,
+  eraseUser,
   handle,
   isLocalStack,
   json,
@@ -175,5 +176,66 @@ describe("sendEmails", () => {
 
     expect(error).toBeInstanceOf(EmailError)
     expect(error.status).toBe(429)
+  })
+})
+
+describe("eraseUser", () => {
+  function fakeStorage(files) {
+    const removed = []
+    const bucket = (name) => ({
+      async list(folder) {
+        const prefix = `${name}/${folder}/`
+        const entries = new Map()
+        for (const path of files) {
+          if (!path.startsWith(prefix)) continue
+          const [head, ...rest] = path.slice(prefix.length).split("/")
+          entries.set(head, { name: head, id: rest.length ? null : head })
+        }
+        return { data: [...entries.values()], error: null }
+      },
+      async remove(paths) {
+        for (const path of paths) {
+          const full = `${name}/${path}`
+          files.splice(files.indexOf(full), 1)
+          removed.push(full)
+        }
+        return { error: null }
+      },
+    })
+    return { from: bucket, removed }
+  }
+
+  it("deletes the user's folders in each bucket, then the user", async () => {
+    const files = [
+      "avatars/u1/me.png",
+      "photos/u1/2025/a.jpg",
+      "photos/u1/b.jpg",
+      "photos/u2/c.jpg",
+    ]
+    const storage = fakeStorage(files)
+    const deleteUser = vi.fn(async () => ({ error: null }))
+
+    await eraseUser({ storage, auth: { admin: { deleteUser } } }, "u1", {
+      buckets: ["avatars", "photos"],
+    })
+
+    expect(files).toEqual(["photos/u2/c.jpg"])
+    expect(deleteUser).toHaveBeenCalledWith("u1")
+  })
+
+  it("keeps the user when their files can't be removed", async () => {
+    const deleteUser = vi.fn()
+    const storage = {
+      from: () => ({
+        list: async () => ({ data: null, error: new Error("denied") }),
+      }),
+    }
+
+    await expect(
+      eraseUser({ storage, auth: { admin: { deleteUser } } }, "u1", {
+        buckets: ["avatars"],
+      }),
+    ).rejects.toThrow("denied")
+    expect(deleteUser).not.toHaveBeenCalled()
   })
 })

@@ -9,7 +9,7 @@ import {
   XAxis,
   YAxis,
 } from "@inglorious/charts"
-import { handleAsync } from "@inglorious/store/async"
+import { handleRequest } from "@inglorious/store/async"
 import { html } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 
@@ -69,12 +69,7 @@ export const DashboardPage = {
     dashboardIsinApply(entity, payload?.rowId, api)
   },
 
-  ...handleAsync("dashboardFetchInstrument", {
-    start(entity) {
-      entity.loading = true
-      entity.error = null
-    },
-
+  ...handleRequest("dashboardFetchInstrument", {
     async run(payload) {
       const isin = payload?.isin
       const mockData = getInstrumentData(isin)
@@ -148,19 +143,12 @@ export const DashboardPage = {
         "#isinHistoryTable:tableDataSet",
         buildHistoryTableRows(payload.isin, payload.history),
       )
-      entity.loading = false
     },
 
-    error(entity, error) {
-      entity.error = error instanceof Error ? error.message : String(error)
+    error(entity) {
       entity.instrument = EMPTY_INSTRUMENT
       entity.quote = EMPTY_QUOTE
       entity.dataSource = "mock"
-      entity.loading = false
-    },
-
-    finally(entity) {
-      entity.loading = false
     },
   }),
 
@@ -179,7 +167,7 @@ export const DashboardPage = {
             ${Number.isFinite(latest.mid) ? latest.mid.toFixed(CENTS) : "-"}</span
           >
           <span>Source: ${entity.dataSource || "mock"}</span>
-          ${when(entity.loading, () => html`<span>Loading...</span>`)}
+          ${when(entity.status === "loading", () => html`<span>Loading...</span>`)}
           ${when(entity.error, () => html`<span>Error: ${entity.error}</span>`)}
         </div>
 
@@ -206,7 +194,7 @@ export const DashboardPage = {
             "Quotations",
             html`
               <div class="chart-wrap">
-                ${when(entity.loading, () =>
+                ${when(entity.status === "loading", () =>
                   renderInlineLoader("Loading instrument..."),
                 )}
                 ${Chart.render(
@@ -272,7 +260,7 @@ export const DashboardPage = {
             "Price Comparison",
             html`
               <div class="chart-wrap">
-                ${when(entity.loading, () =>
+                ${when(entity.status === "loading", () =>
                   renderInlineLoader("Refreshing bars..."),
                 )}
                 ${Chart.render(
@@ -378,7 +366,7 @@ function dashboardInstrumentClear(entity, api) {
   entity.instrument = null
   entity.quote = EMPTY_QUOTE
   entity.error = null
-  entity.loading = false
+  entity.status = "idle"
   entity.dataSource = "mock"
   api.notify("#financeQuotationChart:dataUpdate", [])
   api.notify("#isinHistoryTable:tableDataSet", [])

@@ -46,9 +46,7 @@ export function appSource(app, { pages, navIcons }) {
     ? uiShell(app, { pages, content })
     : plainShell(app, { pages, content })
 
-  return `${importBlock(imports)}
-
-export const App = {
+  return `${imports.length ? `${importBlock(imports)}\n\n` : ""}export const App = {
   ${signature} {
 ${renderLocals(app)}    return (
       <>
@@ -200,6 +198,7 @@ function uiShell(app, { pages, content }) {
                   }
                 />`)
   }
+  if (app.auth && !app.routing) nav.push('                {api.render("auth")}')
 
   const appBar = nav.length
     ? `${expectError(app, "          ")}          <AppBar
@@ -270,12 +269,18 @@ function plainShell(app, { pages, content }) {
               ))}
             </select>`)
   }
-  const navBlock = nav.length
-    ? `
+  if (app.auth && !app.routing) nav.push('            {api.render("auth")}')
+  const [onlyItem, ...otherItems] = nav
+  const navBlock =
+    onlyItem && !otherItems.length && app.auth && !app.routing
+      ? `
+          <nav className="app-nav">{api.render("auth")}</nav>`
+      : nav.length
+        ? `
           <nav className="app-nav">
 ${nav.join("\n")}
           </nav>`
-    : ""
+        : ""
 
   return `        <header>
           <strong>${app.projectName}</strong>${navBlock}

@@ -65,6 +65,59 @@ if (error) throw isNetworkError(error) ? new Error("errors.offline") : error
 
 Pair it with the `NetworkStatus` sensor of `@inglorious/web` to tell people they are offline, and with `withLiveReload`, which reloads what is on screen when the connection comes back.
 
+## Sign-in
+
+`supabaseAuth` is the adapter of `createAuth` from `@inglorious/web/auth`, over Supabase Auth: passwords, codes sent by email, password resets, and erasing the account through an Edge Function.
+
+```javascript
+import { createCaptcha, supabaseAuth } from "@inglorious/supabase"
+
+const captcha = createCaptcha({
+  siteKey: import.meta.env.VITE_TURNSTILE_SITE_KEY,
+  element: "captcha",
+})
+
+export const authAdapter = supabaseAuth(supabase, { captcha })
+```
+
+### What it takes care of
+
+- **Codes**: sign-up confirmations, sign-in codes and password resets all take the 6-digit `{{ .Token }}` of Supabase's email templates. Put it in the Confirm signup, Magic Link and Reset Password templates.
+- **CAPTCHA**: with `captcha`, every call that signs in or sends an email carries a Turnstile token. Without a site key, no CAPTCHA is asked.
+- **The session**: `onSessionChange` reads the session after every Auth event, so a late event never brings back a session that is gone.
+- **Errors**: `errorCode` turns Supabase's error codes into the keys `createAuth` expects, network failures and CAPTCHA refusals included.
+
+### Options
+
+- `captcha`: from `createCaptcha`.
+- `accountExistsFunction`: an Edge Function answering `{ exists }` for `{ email }`, so the screen skips straight to the password or to the new account. Rate-limit it: it tells anyone whether an email has an account.
+- `eraseFunction`: the Edge Function that erases the caller's account. Defaults to `"erase-account"`.
+
+### Erasing accounts
+
+`eraseUser` from `@inglorious/supabase/edge` deletes a user and their files, with a client holding the service role key:
+
+```typescript
+import {
+  currentUser,
+  env,
+  eraseUser,
+  json,
+  serve,
+} from "npm:@inglorious/supabase/edge"
+import { createClient } from "npm:@supabase/supabase-js@2"
+
+serve(async (req) => {
+  const db = createClient(env("SUPABASE_URL"), env("SUPABASE_SERVICE_ROLE_KEY"))
+  const user = await currentUser(db, req)
+  if (!user) return json({ error: "Not signed in" }, 401)
+  await eraseUser(db, user.id, { buckets: ["avatars"] })
+  return json({ erased: true })
+})
+```
+
+It empties the folder named after the user's id in each bucket, subfolders included, then deletes the user. Their rows go with them through `on delete cascade` foreign keys to `auth.users`.
+
 ## Native app updates
 
 `supabaseNativeUpdate(client)` is the adapter of `createNativeUpdate` from `@inglorious/web/native-update`: it reads each platform's minimum build from a table, so a release becomes mandatory with one update in the SQL editor, without a deploy.

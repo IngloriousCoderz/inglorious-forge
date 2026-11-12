@@ -49,6 +49,10 @@ export const ICON_PACKS = {
         "infoOutline",
         "@iconify-icons/material-symbols/info-outline",
       ),
+      profile: from(
+        "personOutline",
+        "@iconify-icons/material-symbols/person-outline",
+      ),
     },
     showcase: {
       ...from(
@@ -68,6 +72,7 @@ export const ICON_PACKS = {
     nav: {
       home: from("house", "@iconify-icons/fa7-solid/house"),
       about: from("circleInfo", "@iconify-icons/fa7-solid/circle-info"),
+      profile: from("user", "@iconify-icons/fa7-solid/user"),
     },
     showcase: {
       ...from("fontAwesome", "@iconify-icons/fa7-brands/font-awesome"),
@@ -80,6 +85,7 @@ export const ICON_PACKS = {
     nav: {
       home: from("house", "@iconify-icons/lucide/house"),
       about: from("info", "@iconify-icons/lucide/info"),
+      profile: from("user", "@iconify-icons/lucide/user"),
     },
     showcase: {
       ...from("sparkles", "@iconify-icons/lucide/sparkles"),

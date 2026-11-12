@@ -200,6 +200,7 @@ function uiShell(app, { label, pages, content }) {
                 onChange: (locale) => api.notify("#i18n:localeChange", locale),
               })`)
   }
+  if (app.auth && !app.routing) nav.push('api.render("auth")')
 
   const trailing = nav.length
     ? `
@@ -269,6 +270,7 @@ function plainShell(app, { label, pages, content }) {
             )}
           </select>`)
   }
+  if (app.auth && !app.routing) nav.push('          ${api.render("auth")}')
   const navBlock = nav.length
     ? `
         <nav class="app-nav">

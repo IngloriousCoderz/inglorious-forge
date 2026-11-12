@@ -61,9 +61,38 @@ async save(entity, payload, api) {
 
 :::
 
+## `handleRequest`
+
+Most async work is a request whose progress the entity shows: loading, then the result or what went wrong. `handleRequest` keeps that state for you, and it's the helper to reach for first:
+
+```javascript
+import { handleRequest } from "@inglorious/store/async"
+
+export const types = {
+  todoList: {
+    ...handleRequest("loadTodos", {
+      run: (name) => fetch(`/api/todos/${name}`).then((r) => r.json()),
+      success(entity, todos) {
+        entity.todos = todos
+      },
+    }),
+  },
+}
+```
+
+This is the example above without its bookkeeping:
+
+- **Status**: `entity.status` is `"loading"` from the start, then `"success"` or `"error"`. Give it a first value, such as `"idle"`, in `create`.
+- **Error**: `entity.error` is cleared when a call starts and set when it fails, to the error's message. `toError` turns it into what the screen needs, such as a translation key. The `error` handler receives that value once it is set, and can change what the entity shows, such as moving to another step for an error it expects.
+- **Only the latest call counts**: the answer of a call that a newer one replaced is dropped, success and failure alike, so a slow search never overwrites a quicker, later one. With `isLatestOnly: false` every call counts, as when saving several items at once.
+- **Several requests on one entity**: `status` and `error` options name their fields, such as `{ status: "saveStatus", error: "saveError" }`.
+- **Scope**: `scope` routes the lifecycle events as in `handleAsync`, below.
+
+To wait until someone stops typing, debounce the event that starts the request with `withDebounce` from `@inglorious/web`, as in `[JobList, withDebounce(300, ["search"])]`. Debouncing starts fewer calls, and dropping outdated answers covers those that still overlap.
+
 ## `handleAsync`
 
-The `handleAsync` helper generates a set of event handlers representing the lifecycle of an async operation.
+`handleAsync` is the lower level that `handleRequest` is built on: the same lifecycle events, with no status or error kept and every call's answer let through. Use it for async work the entity doesn't show, such as saving a preference in the background, a call whose failure is only logged, or a check that must keep its last answer when it fails.
 
 ```typescript
 handleAsync(type, handlers, options?)

@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.21.0
+
+### Minor Changes
+
+- Add `--auth` and `--auth-methods=password,code`: a sign-in screen with Supabase Auth, password reset, a profile page with sign-out and account deletion (in the app bar without routing), the `erase-account` Edge Function and email templates with codes. A JSX app without imports no longer starts with blank lines.
+
 ## 1.20.0
 
 ### Minor Changes

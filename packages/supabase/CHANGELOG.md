@@ -1,5 +1,11 @@
 # @inglorious/supabase
 
+## 0.9.0
+
+### Minor Changes
+
+- Add `supabaseAuth`, the adapter of `createAuth` from `@inglorious/web/auth` over Supabase Auth, with CAPTCHA tokens and email codes. Add `eraseUser` to `@inglorious/supabase/edge`, which deletes a user and their files in the given Storage buckets.
+
 ## 0.8.0
 
 ### Minor Changes

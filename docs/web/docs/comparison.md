@@ -11,7 +11,7 @@ How Inglorious Web stacks up against popular alternatives, and when each is the 
 
 Inglorious Web is not the fastest framework: Solid is. It sits in the same "fast enough" tier as Vue and Svelte, and full-tree rendering costs about 4 ms per update even in a deliberately adversarial benchmark. Its case is somewhere else:
 
-- **State is the hard part of most apps, and it handles it best.** All state lives in one store of entities and changes only through named events. State machines (`fsm()`) and async requests (`handleAsync`) are built in, so an answer that arrives after the user has moved on finds no handler and is dropped, instead of corrupting the screen. Saving the app is saving its entities.
+- **State is the hard part of most apps, and it handles it best.** All state lives in one store of entities and changes only through named events. State machines (`fsm()`) and async requests (`handleRequest`) are built in, so an answer that arrives after the user has moved on, or after a newer request, is dropped instead of corrupting the screen. Saving the app is saving its entities.
 - **Testing needs no rendering.** A handler is a function of the entity and the event: `trigger(entity, Counter.add, 2)` runs it and returns the result, with no DOM, no `act()` and no runtime.
 - **One coherent stack.** Store, web, a component library with a data grid and charts, SSX for static and server rendering, and `create-app` with routing, i18n, PWA and Capacitor, all following one convention, with skills that teach coding agents to follow it too.
 
@@ -29,7 +29,7 @@ Something else is the better choice when:
 | **Concept**     | Component-based               | Entity-based                            |
 | **Rendering**   | Virtual DOM                   | Full-tree re-render, diffed by lit-html |
 | **State**       | Component state + a library   | One store of entities                   |
-| **Async state** | Effects, or a library         | `handleAsync`, in the store             |
+| **Async state** | Effects, or a library         | `handleRequest`, in the store           |
 | **Bundle**      | 62–79 kB (same dashboard app) | ~16 kB (same dashboard app)             |
 | **Performance** | Fast enough                   | Fast enough: same tier                  |
 | **Testing**     | Render, `act()`, the runtime  | `trigger` on a handler, no rendering    |
@@ -375,7 +375,7 @@ All frameworks side by side. Bundle sizes are for the same dashboard app in each
 
 - Move component state and context into entities
 - Replace `setState` and dispatches with `api.notify()`
-- Replace effects that fetch data with `handleAsync`
+- Replace effects that fetch data with `handleRequest`
 - Or keep React and start with `@inglorious/react-store`
 
 ### From Vue
@@ -394,7 +394,7 @@ All frameworks side by side. Bundle sizes are for the same dashboard app in each
 
 ✅ **Explicit state** — Every change is a named event, visible in the DevTools
 
-✅ **State machines and async, built in** — `fsm()` and `handleAsync` in the store
+✅ **State machines and async, built in** — `fsm()` and `handleRequest` in the store
 
 ✅ **Fast testing** — Trigger an event and assert the entity, no rendering
 

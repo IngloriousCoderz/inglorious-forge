@@ -4,7 +4,12 @@ import {
   type EntitiesState,
   type EntityType,
 } from "../types"
-import { type AsyncEvents, handleAsync } from "../types/behaviors/async"
+import {
+  type AsyncEvents,
+  handleAsync,
+  handleRequest,
+  type RequestStatus,
+} from "../types/behaviors/async"
 import { optimistic } from "../types/behaviors/optimistic"
 import { trigger } from "../types/test"
 
@@ -18,6 +23,14 @@ interface TodoListEntity extends BaseEntity {
   todos: Todo[]
   isLoading?: boolean
   error?: string
+}
+
+interface SearchEntity extends BaseEntity {
+  type: "Search"
+  todos: Todo[]
+  status?: RequestStatus
+  error?: string | null
+  errorKey?: number
 }
 
 interface UserEntity extends BaseEntity {
@@ -204,3 +217,19 @@ optimistic(
 handleAsync<TodoListEntity, void, Todo[], { notify: () => void }>("bad", {
   run: () => [],
 })
+
+export const Search = {
+  ...handleRequest(
+    "find",
+    {
+      run: (query: string) => fetchTodos(query),
+      success(entity, todos) {
+        entity.todos = todos
+      },
+      error(entity, code) {
+        entity.errorKey = code
+      },
+    },
+    { toError: (): number => 404 },
+  ),
+} satisfies EntityType<SearchEntity, AppApi>

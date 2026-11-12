@@ -5,24 +5,34 @@ import { ICON_PACKS } from "./features.js"
 export const LINE_WIDTH = 80
 
 /**
- * The parts of the app the components draw: the two pages, the icons on the
- * tabs (from the first icon pack) and one icon from each pack for the home
- * page.
+ * The parts of the app the components draw: the pages (with sign-in, a
+ * profile page too), the icons on the tabs (from the first icon pack) and one
+ * icon from each pack for the home page.
  */
 export function appModel(app) {
   const [navPack] = app.icons
-  const navIcons = app.tabs && navPack ? ICON_PACKS[navPack].nav : null
+  const hasProfile = app.auth && app.routing
+  const pages = [
+    { path: "/", key: "nav.home", text: "Home", id: "home" },
+    { path: "/about", key: "nav.about", text: "About", id: "about" },
+    ...(hasProfile
+      ? [
+          {
+            path: "/profile",
+            key: "auth.profile",
+            text: "Profile",
+            id: "profile",
+          },
+        ]
+      : []),
+  ]
+  const packIcons = app.tabs && navPack ? ICON_PACKS[navPack].nav : null
+  const navIcons = packIcons
+    ? Object.fromEntries(pages.map((page) => [page.id, packIcons[page.id]]))
+    : null
   return {
     navIcons,
-    pages: [
-      { path: "/", key: "nav.home", text: "Home", icon: navIcons?.home },
-      {
-        path: "/about",
-        key: "nav.about",
-        text: "About",
-        icon: navIcons?.about,
-      },
-    ],
+    pages: pages.map(({ id, ...page }) => ({ ...page, icon: navIcons?.[id] })),
     showcase: app.icons.map((key) => ICON_PACKS[key].showcase),
   }
 }
@@ -43,6 +53,7 @@ export function layout(app) {
     analytics: "src/app/analytics",
     pushPrompt: "src/app/push-prompt",
     nativeUpdate: "src/app/native-update",
+    auth: "src/app/auth",
   }
 }
 

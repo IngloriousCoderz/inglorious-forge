@@ -85,3 +85,14 @@ export function sendEmails(
   emails: Email[],
   options: ResendOptions,
 ): Promise<void>
+
+/**
+ * Deletes a user and their files: everything under the folder named after
+ * their id in each bucket. Rows go with `on delete cascade` foreign keys to
+ * `auth.users`. Needs a client with the service role key.
+ */
+export declare function eraseUser(
+  client: unknown,
+  userId: string,
+  options?: { buckets?: string[] },
+): Promise<void>

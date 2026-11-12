@@ -1,3 +1,4 @@
+export { supabaseAuth } from "./auth/index.js"
 export { CaptchaError, createCaptcha, isCaptchaError } from "./captcha/index.js"
 export { isNetworkError } from "./errors/index.js"
 export { liveUpdateManifestUrl } from "./live-update/url.js"

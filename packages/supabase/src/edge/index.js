@@ -18,6 +18,7 @@ const LOCAL_STACK = /kong|localhost|127\.0\.0\.1/
 const RESEND_URL = "https://api.resend.com/emails"
 const SEND_TIMEOUT_MS = 5000
 const BATCH_TIMEOUT_MS = 30000
+const LIST_PAGE = 100
 
 /**
  * An environment variable that must be set.
@@ -195,6 +196,26 @@ export async function sendEmails(emails, { apiKey, from }) {
   )
 }
 
+/**
+ * Deletes a user and the files that are theirs: everything under the folder
+ * named after their id in each of `buckets`, the convention Storage policies
+ * use (`(storage.foldername(name))[1] = auth.uid()::text`). The database
+ * removes their rows through `on delete cascade` foreign keys to
+ * `auth.users`. Apple and Google require apps that create accounts to delete
+ * them from inside the app.
+ *
+ * @param {Object} client A client with the service role key.
+ * @param {string} userId
+ * @param {{ buckets?: string[] }} [options]
+ */
+export async function eraseUser(client, userId, { buckets = [] } = {}) {
+  for (const bucket of buckets) {
+    await removeFolder(client.storage.from(bucket), userId)
+  }
+  const { error } = await client.auth.admin.deleteUser(userId)
+  if (error) throw error
+}
+
 async function postToResend(url, body, apiKey, timeoutMs) {
   const res = await fetch(url, {
     method: "POST",
@@ -206,4 +227,22 @@ async function postToResend(url, body, apiKey, timeoutMs) {
     signal: AbortSignal.timeout(timeoutMs),
   })
   if (!res.ok) throw new EmailError(res.status, await res.text())
+}
+
+// Storage lists a folder's subfolders as entries without an id.
+async function removeFolder(bucket, folder) {
+  while (true) {
+    const { data, error } = await bucket.list(folder, { limit: LIST_PAGE })
+    if (error) throw error
+    if (!data.length) return
+    for (const subfolder of data.filter((entry) => entry.id === null)) {
+      await removeFolder(bucket, `${folder}/${subfolder.name}`)
+    }
+    const files = data.filter((entry) => entry.id !== null)
+    if (!files.length) continue
+    const { error: removeError } = await bucket.remove(
+      files.map((file) => `${folder}/${file.name}`),
+    )
+    if (removeError) throw removeError
+  }
 }

@@ -33,9 +33,16 @@ export function addFirebaseSupport(targetDir, pkg, options) {
 }
 
 // The Deno function is in no TS project, and Supabase's typings do not compile.
-function keepSupabaseOutOfTypeScript(targetDir) {
+export function keepSupabaseOutOfTypeScript(targetDir) {
+  const eslintConfig = path.join(targetDir, "eslint.config.ts")
+  if (
+    fs.existsSync(eslintConfig) &&
+    fs.readFileSync(eslintConfig, "utf-8").includes('"supabase/"')
+  ) {
+    return
+  }
   replaceInFile(
-    path.join(targetDir, "eslint.config.ts"),
+    eslintConfig,
     "defineConfig([\n",
     'defineConfig([\n  { ignores: ["supabase/"] },\n',
   )

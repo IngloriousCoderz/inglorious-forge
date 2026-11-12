@@ -25,7 +25,6 @@ export function promptFiles(app) {
     files[`${app.layout.analytics}/index.${app.ext}`] = analyticsSource(app)
   }
   if (app.push) {
-    files[`src/api/supabase.${app.ext}`] = supabaseSource()
     files[`src/api/push.${app.ext}`] = pushSource(app)
     files[`${app.layout.pushPrompt}/index.${app.ext}`] = pushPromptSource(app)
   }
@@ -33,15 +32,11 @@ export function promptFiles(app) {
 }
 
 export function envExample(app) {
-  const keys = Object.values(FIREBASE_CONFIG_KEYS)
+  const keys = app.hasPrompts ? Object.values(FIREBASE_CONFIG_KEYS) : []
   if (app.analytics) keys.push("VITE_FIREBASE_MEASUREMENT_ID")
-  if (app.push) {
-    keys.push(
-      "VITE_FIREBASE_VAPID_KEY",
-      "VITE_SUPABASE_URL",
-      "VITE_SUPABASE_ANON_KEY",
-    )
-  }
+  if (app.push) keys.push("VITE_FIREBASE_VAPID_KEY")
+  if (app.hasSupabase) keys.push("VITE_SUPABASE_URL", "VITE_SUPABASE_ANON_KEY")
+  if (app.auth) keys.push("VITE_TURNSTILE_SITE_KEY")
   return keys.map((key) => `${key}=`).join("\n") + "\n"
 }
 
@@ -212,7 +207,7 @@ ${prop("declineLabel", label("analytics.decline", "No thanks"), "        ")}
 `
 }
 
-function supabaseSource() {
+export function supabaseSource() {
   return `import { createClient } from "@supabase/supabase-js"
 
 export const supabase = createClient(

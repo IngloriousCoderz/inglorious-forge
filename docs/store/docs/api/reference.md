@@ -549,9 +549,47 @@ scenes({
 - Entities only the new state has are added, entities only the old one had are removed, and entities both have are patched with whatever changed.
 - Handles `create` and the entity's own `stateChange`, so pair it with `fsm()`.
 
+## `handleRequest(eventName, handlers, options?)`
+
+The helper for async work whose progress the entity shows. Prefer it to `handleAsync`, which it is built on:
+
+```typescript
+import { handleRequest } from "@inglorious/store/async"
+
+const types = {
+  JobList: {
+    ...handleRequest("search", {
+      run: (query) => searchJobs(query),
+      success(entity, jobs) {
+        entity.jobs = jobs
+      },
+    }),
+  },
+}
+```
+
+- `entity.status` is `"loading"` from the start, then `"success"` or `"error"`.
+- `entity.error` is cleared when a call starts and set when it fails, to the error's message, or to what `toError` makes of it.
+- `error` receives that value after it is set, and can change what the entity shows.
+- Only the latest call counts: the answer of a call a newer one replaced is dropped, success or failure.
+
+Options:
+
+```typescript
+handleRequest("save", handlers, {
+  status: "saveStatus", // the status field, default "status"
+  error: "saveError", // the error field, default "error"
+  toError: (error) => errorKey(error), // what to store, default the message
+  isLatestOnly: false, // let every call count, default true
+  scope: "entity", // where the events go, as in handleAsync
+})
+```
+
+`withDebounce(300, ["search"])` from `@inglorious/web` debounces the event that starts a request. The generated events, their `callId`s, the TypeScript inference and `optimistic` are those of `handleAsync`, below. `RequestStatus` types the status field.
+
 ## `handleAsync(eventName, handlers, options?)`
 
-Helper to generate lifecycle events for async operations:
+The lower level of `handleRequest`: lifecycle events with no status or error kept, and every call's answer let through. Use it for async work the entity doesn't show, such as saving in the background or a call whose failure is only logged:
 
 ```typescript
 import { handleAsync } from "@inglorious/store/async"
@@ -565,15 +603,15 @@ const types = {
         return response.json()
       },
       start(entity) {
-        entity.loading = true
+        entity.isLoading = true
       },
       success(entity, todos) {
         entity.todos = todos
-        entity.loading = false
+        entity.isLoading = false
       },
       error(entity, error) {
         entity.error = error
-        entity.loading = false
+        entity.isLoading = false
       },
     }),
   },

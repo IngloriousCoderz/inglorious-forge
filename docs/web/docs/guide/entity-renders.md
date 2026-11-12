@@ -356,51 +356,37 @@ async fetchData(entity, api) {
 }
 ```
 
-### Using handleAsync (Recommended)
+### Using handleRequest (Recommended)
 
-The `handleAsync` helper makes async operations safe and easy:
+The `handleRequest` helper makes async operations safe and keeps their state for you:
 
 ```javascript
-import { handleAsync } from "@inglorious/store/async"
+import { handleRequest } from "@inglorious/store/async"
 
 const MyType = {
-  ...handleAsync("fetch", {
-    // All lifecycle hooks are optional except 'run'
+  create(entity) {
+    entity.status = "idle"
+  },
 
-    start(entity) {
-      // Called before the async operation
-      entity.isLoading = true
-      entity.error = null
-    },
-
+  ...handleRequest("fetch", {
+    // The actual async work: receives the payload, returns the result
     async run(payload, api) {
-      // The actual async work - returns the result
       const response = await fetch(`/api/data/${payload.id}`)
       return response.json()
     },
 
+    // Called with the resolved value
     success(entity, result) {
-      // Called with the resolved value
       entity.data = result
-    },
-
-    error(entity, error) {
-      // Called if run() throws or rejects
-      entity.error = error.message
-    },
-
-    finally(entity) {
-      // Always called after success or error
-      entity.isLoading = false
     },
   }),
 
   render(entity, api) {
-    if (entity.isLoading) {
+    if (entity.status === "loading") {
       return html`<p>Loading...</p>`
     }
 
-    if (entity.error) {
+    if (entity.status === "error") {
       return html`<p>Error: ${entity.error}</p>`
     }
 
@@ -423,16 +409,17 @@ const MyType = {
 **How it works:**
 
 1. Trigger with `api.notify("#myEntity:fetch", payload)`
-2. `start(entity)` runs synchronously (entity proxy available)
+2. `entity.status` becomes `"loading"` and `entity.error` is cleared, then the optional `start(entity, payload)` runs
 3. `run(payload, api)` executes the async operation
-4. `success(entity, result)` or `error(entity, error)` runs (entity proxy available again)
-5. `finally(entity)` runs regardless of success/error
+4. `entity.status` becomes `"success"` and `success(entity, result)` runs, or it becomes `"error"`, `entity.error` gets the error's message and `error(entity, message)` runs
+5. `finally(entity)` runs either way
+6. If `fetch` is triggered again before the first answer arrives, only the latest answer counts
 
-This pattern ensures you never touch the entity after an `await`.
+This pattern ensures you never touch the entity after an `await`. For async work the entity doesn't show, such as saving in the background, `handleAsync` gives the same events without the status: see the store's [Async Operations](https://inglorious.dev/store/advanced/async-operations).
 
 ### Manual Async Pattern (Alternative)
 
-If you prefer not to use `handleAsync`, follow this pattern:
+If you prefer not to use `handleRequest`, follow this pattern:
 
 ```javascript
 const DataFetcher = {
@@ -616,7 +603,7 @@ Each entity is independent but composed together through the `app` entity. Chang
 - Use `repeat()` for lists with keys
 - Use `classMap` and `styleMap` for complex bindings
 - Break large renders into multiple entities
-- Use `handleAsync` for async operations
+- Use `handleRequest` for async operations
 - Use `compute()` for expensive computations
 - Use property binding (`.prop`) for properties, attribute binding for attributes
 - Store entity ID in a variable before `await` if you need it after

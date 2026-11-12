@@ -1,5 +1,6 @@
 import prompts from "prompts"
 
+import { AUTH_METHODS } from "./auth.js"
 import { ICON_PACKS, LANGUAGES, THEMES } from "./features.js"
 
 /**
@@ -28,6 +29,8 @@ export async function askAppFeatures(flags) {
     icons: [],
     languages: [],
     analytics: false,
+    auth: false,
+    authMethods: [],
     push: false,
     pwa: false,
   }
@@ -126,6 +129,35 @@ export async function askAppFeatures(flags) {
     }))
   if (canceled) return null
 
+  features.auth =
+    flags.auth ??
+    (flags.authMethods ? Boolean(flags.authMethods.length) : null) ??
+    (await ask({
+      type: "confirm",
+      message: "Add sign-in? (Supabase Auth)",
+      initial: false,
+    }))
+  if (canceled) return null
+
+  if (features.auth) {
+    features.authMethods =
+      flags.authMethods ??
+      (await ask({
+        type: "multiselect",
+        message: "How do people sign in?",
+        hint: "Space to select, Enter to confirm.",
+        instructions: false,
+        min: 1,
+        choices: Object.entries(AUTH_METHODS).map(([value, method]) => ({
+          value,
+          title: method.title,
+          description: method.description,
+          selected: value === "password",
+        })),
+      }))
+    if (canceled) return null
+  }
+
   features.push =
     flags.push ??
     (await ask({
@@ -199,6 +231,17 @@ function validate(features) {
     throw new Error(
       `Unknown languages: ${unknownLanguages.join(", ")}. Choose from: ${Object.keys(LANGUAGES).join(", ")}.`,
     )
+  }
+  const unknownMethods = features.authMethods.filter(
+    (key) => !AUTH_METHODS[key],
+  )
+  if (unknownMethods.length) {
+    throw new Error(
+      `Unknown sign-in methods: ${unknownMethods.join(", ")}. Choose from: ${Object.keys(AUTH_METHODS).join(", ")}.`,
+    )
+  }
+  if (features.auth && !features.authMethods.length) {
+    throw new Error("--auth needs at least one of --auth-methods.")
   }
   if (!features.routing || !features.ui) features.transitions = false
   if (!features.ui) features.icons = []

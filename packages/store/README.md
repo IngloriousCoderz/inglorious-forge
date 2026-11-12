@@ -558,7 +558,59 @@ Two things to keep in mind:
 - **`entity` ends at the first `await`.** `entity`, and every object or array read from it, is a draft of the current update, revoked when the update ends, and the update does not wait for your `await`. After it, writing to `entity` or reading anything taken from it throws. Write before the first `await`, then notify an event that does the rest, as `todosLoaded` does above. The same goes for payloads: pass a copy (`{ ...entity.values }`), not the draft, to a handler that reads it after an `await`.
 - **`api.getEntity()` reads the state from before the update.** A handler cannot see what an earlier handler in the same chain of events changed: see [State swapping](#state-swapping).
 
+### `handleRequest`
+
+Most async work is a request whose progress the entity shows: loading, then the result or what went wrong. `handleRequest` does that bookkeeping, and it's the one to reach for first:
+
+```ts
+import { handleRequest } from "@inglorious/store/async"
+
+const JobList = {
+  ...handleRequest("search", {
+    run: (query) => api.searchJobs(query),
+    success(entity, jobs) {
+      entity.jobs = jobs
+    },
+  }),
+}
+
+api.notify("#jobList:search", "photographer")
+```
+
+- **Status**: `entity.status` is `"loading"` from the start, then `"success"` or `"error"`. Set its first value, such as `"idle"`, in `create`.
+- **Error**: `entity.error` is cleared when a call starts and set when it fails, to the error's message by default. `toError` turns it into what the screen needs, such as a translation key. The `error` handler receives that value after it is set, and can change what the entity shows, such as moving to another step for an error it expects.
+- **Only the latest call counts**: the answer of a call that a newer one replaced is dropped, success and failure alike, so a slow search never overwrites a quicker, later one. `isLatestOnly: false` lets every call count, as when saving several items at once.
+- **Several requests on one entity**: give each its own fields.
+- **Scope**: `scope` sends the lifecycle events to the entity (the default), its type or everyone, as in `handleAsync` (see [Event scoping](#event-scoping)).
+
+```ts
+const Profile = {
+  ...handleRequest(
+    "save",
+    {
+      run: (profile) => api.saveProfile(profile),
+    },
+    { status: "saveStatus", error: "saveError", toError: errorKey },
+  ),
+  ...handleRequest(
+    "avatarUpload",
+    { run: uploadAvatar },
+    { status: "avatarStatus", error: "avatarError" },
+  ),
+}
+```
+
+To wait until someone stops typing, debounce the event that starts the request with `withDebounce` from `@inglorious/web`. Debouncing starts fewer calls; dropping outdated answers covers the ones that still overlap:
+
+```ts
+const types = { JobList: [JobList, withDebounce(300, ["search"])] }
+```
+
+The handlers and events are those of `handleAsync`, below, so `optimistic` wraps a request too.
+
 ### `handleAsync`
+
+`handleAsync` is the lower level `handleRequest` is built on: it keeps no status and no error, and lets every call's answer through. Use it for async work the entity doesn't show, such as saving a preference in the background, a call whose failure is only logged, or a check that must keep its last answer when it fails.
 
 The `handleAsync` helper generates a set of event handlers representing the lifecycle of an async operation.
 

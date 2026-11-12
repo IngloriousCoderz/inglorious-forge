@@ -1573,6 +1573,35 @@ Set `publicKey` in the plugin's Capacitor config so it refuses unsigned bundles,
 
 ---
 
+## Sign-in
+
+`@inglorious/web/auth` is the type behind a sign-in screen. It walks from the email to a password, a new account or a code sent by email, holds the signed-in `user`, and erases the account on request, as the App Store and Google Play require of apps that create accounts. Codes rather than links work in a native app too, since nobody has to open anything.
+
+```javascript
+import { supabaseAuth } from "@inglorious/supabase"
+import { createAuth, watchAuth } from "@inglorious/web/auth"
+
+const adapter = supabaseAuth(supabase)
+
+const types = {
+  Auth: { ...createAuth({ adapter, methods: ["password", "code"] }), render },
+}
+
+watchAuth(adapter, store) // keeps `user` in step with the session
+```
+
+`methods` lists what the screen offers: `"password"` (sign in, create an account confirmed with a code, reset a forgotten password with a code) and `"code"` (sign in with a code alone, creating the account on first use).
+
+The entity's `step` says what to ask for: `"email"`, `"password"`, `"signUp"`, `"code"` or `"reset"`. Its events take what the person typed: `emailSubmit(email)`, `signInSubmit(password)`, `signUpSubmit({ password, data })`, `codeSubmit(code)`, `resetSubmit({ code, password })`, and move between steps: `signUpShow`, `signInShow`, `codeRequest`, `codeResend`, `resetRequest`, `back`. Signed in, `signOut` and `accountEraseAsk`, then `accountErase` or `accountEraseCancel`. `isReady` turns true once the saved session is read: until then, render nothing rather than the sign-in screen.
+
+`status` is `"loading"` while waiting, and `error` is a key to put into words: `"invalidEmail"`, `"invalidCode"`, `"weakPassword"`, `"invalidCredentials"`, `"accountExists"`, `"rateLimited"`, `"captcha"`, `"network"` or `"unknown"`. An account not confirmed yet goes straight to the code.
+
+The adapter talks to the backend. `supabaseAuth` from `@inglorious/supabase` is one; another backend needs `onSessionChange`, `signIn`, `signUp`, `sendCode`, `verifyCode`, `resendCode`, `sendResetCode`, `updatePassword`, `signOut`, `eraseAccount` and `errorCode`, plus `accountExists` to skip straight to the password or the new account.
+
+`create-app --auth` generates the screen, the account actions in the app bar, the Edge Function that erases accounts and the email templates.
+
+---
+
 ## App Links
 
 With Universal Links (iOS) and App Links (Android), a link to the app's domain opens the installed app instead of the browser. `@inglorious/web/app-links` sends the router to that link's path, both for the link that started the app and for links that arrive while it runs. It does nothing outside a native app.
@@ -1992,7 +2021,7 @@ Import everything else from the package that owns it, or from an explicit `@ingl
 
 ```javascript
 import { createStore } from "@inglorious/store"
-import { handleAsync } from "@inglorious/store/async"
+import { handleAsync, handleRequest } from "@inglorious/store/async"
 import { optimistic } from "@inglorious/store/optimistic"
 import { compute, createSelector } from "@inglorious/store/select"
 import { createDevtools } from "@inglorious/store/client/devtools"

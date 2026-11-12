@@ -5,6 +5,7 @@ import path from "path"
 import * as jsxComponents from "./app-jsx.js"
 import * as litComponents from "./app-lit.js"
 import * as vueComponents from "./app-vue.js"
+import { authCatalogue, authFiles } from "./auth.js"
 import {
   CAPACITOR_APP_VERSION,
   CAPACITOR_FIREBASE_VERSION,
@@ -22,7 +23,7 @@ import {
 } from "./features.js"
 import { importBlock } from "./imports.js"
 import { nativeUpdateFiles } from "./native-update.js"
-import { envExample, promptFiles } from "./prompts.js"
+import { envExample, promptFiles, supabaseSource } from "./prompts.js"
 import {
   appModel,
   call,
@@ -60,6 +61,8 @@ const COMPONENTS = {
  * @param {string[]} options.icons - Keys of ICON_PACKS.
  * @param {string[]} options.languages - Keys of LANGUAGES, the default first.
  * @param {boolean} options.analytics
+ * @param {boolean} options.auth
+ * @param {string[]} options.authMethods - Keys of AUTH_METHODS.
  * @param {boolean} options.push
  */
 export function addAppFeatures(targetDir, pkg, options) {
@@ -70,6 +73,8 @@ export function addAppFeatures(targetDir, pkg, options) {
   app.isVue = app.renderer === "vue"
   app.hasPrompts = app.analytics || app.push
   app.nativeUpdate = app.mobile && app.push
+  app.hasSupabase = app.push || app.auth
+  app.gate = app.nativeUpdate || app.auth
   app.appLinks = app.mobile && app.routing
   app.backButton = app.mobile && app.routing
   app.layout = layout(app)
@@ -101,10 +106,10 @@ export function addAppFeatures(targetDir, pkg, options) {
         JSON.stringify(catalogue(app, language), null, INDENTATION) + EOL
     }
   }
-  if (app.hasPrompts) {
-    Object.assign(files, promptFiles(app))
-    files[".env.example"] = envExample(app)
-  }
+  if (app.hasPrompts) Object.assign(files, promptFiles(app))
+  if (app.auth) Object.assign(files, authFiles(app))
+  if (app.hasSupabase) files[`src/api/supabase.${app.ext}`] = supabaseSource()
+  if (app.hasPrompts || app.auth) files[".env.example"] = envExample(app)
   if (app.nativeUpdate) Object.assign(files, nativeUpdateFiles(app))
   if (app.isTypeScript) {
     files["types/index.d.ts"] = typesSource(app)
@@ -151,8 +156,11 @@ function addDependencies(pkg, app) {
   if (app.push) {
     pkg.dependencies["@capacitor-firebase/messaging"] =
       CAPACITOR_FIREBASE_VERSION
+  }
+  if (app.hasSupabase) {
     pkg.dependencies["@supabase/supabase-js"] = SUPABASE_VERSION
   }
+  if (app.auth) pkg.dependencies["@inglorious/supabase"] = "workspace:*"
   if (app.nativeUpdate || app.appLinks || app.backButton) {
     pkg.dependencies["@capacitor/app"] = CAPACITOR_APP_VERSION
   }
@@ -170,6 +178,7 @@ function catalogue(app, language) {
     ...(app.analytics && { analytics }),
     ...(app.push && { push }),
     ...(app.nativeUpdate && { nativeUpdate: NATIVE_UPDATE_TEXTS[language] }),
+    ...(app.auth && { auth: authCatalogue(language) }),
   }
 }
 
@@ -208,12 +217,18 @@ function mainSource(app, { pages }) {
   }
   imports.push(`import "${relative("src", app.layout.app)}/style.css"`)
   imports.push(
-    `import { ${app.hasPrompts || app.ui ? "html, mount" : "mount"} } from "@inglorious/web"`,
+    `import { ${app.hasPrompts || app.ui || app.gate ? "html, mount" : "mount"} } from "@inglorious/web"`,
     componentImport(app, "App", relative("src", app.layout.app)),
     'import { store } from "./store"',
   )
   if (app.i18n) imports.push('import { ready } from "./i18n"')
   if (app.push) imports.push('import { supabase } from "./api/supabase"')
+  if (app.auth) {
+    imports.push(
+      'import { authAdapter } from "./api/auth"',
+      'import { watchAuth } from "@inglorious/web/auth"',
+    )
+  }
   if (app.hasPrompts) {
     imports.push('import { renderPrompts } from "./common/prompt"')
   }
@@ -243,16 +258,17 @@ function mainSource(app, { pages }) {
     imports.push(
       'import { LiveUpdate } from "@capawesome/capacitor-live-update"',
       'import { liveUpdateManifestUrl } from "@inglorious/supabase"',
-      'import { when } from "@inglorious/web/directives/when"',
       'import { watchLiveUpdate } from "@inglorious/web/live-update"',
       'import { watchNativeUpdate } from "@inglorious/web/native-update"',
     )
-    if (app.isTypeScript) imports.push('import type { AppApi } from "../types"')
+  }
+  if (app.gate && app.isTypeScript) {
+    imports.push('import type { AppApi } from "../types"')
   }
 
   const args = [
     "store",
-    app.nativeUpdate
+    app.gate
       ? "renderApp"
       : app.hasPrompts || app.ui
         ? `(api) => html\`${appParts(app)}\``
@@ -274,6 +290,12 @@ ${afterReady(args)}`
 supabase.auth.onAuthStateChange((_event, session) => {
   store.notify(session ? "#pushPrompt:pushStart" : "#pushPrompt:pushStop")
 })`
+    : ""
+
+  const auth = app.auth
+    ? `
+
+watchAuth(authAdapter, store)`
     : ""
 
   const keyboard =
@@ -319,27 +341,44 @@ if (release) {
     release,
   })
 }
-
-// An outdated native build shows nothing but the update page.
-function renderApp(api${app.isTypeScript ? ": AppApi" : ""}) {
-  return html\`\${when(
-    api.getEntity("nativeUpdate")${app.isTypeScript ? "!" : ""}.isUpdateRequired,
-    () => api.render("nativeUpdate"),
-    () => html\`${appParts(app)}\`,
-  )}\`
-}`
+`
     : ""
 
   return `${importBlock(imports)}
 
-${body}${session}${keyboard}${systemBars}${appLinks}${backButton}${nativeUpdate}
+${body}${session}${auth}${keyboard}${systemBars}${appLinks}${backButton}${nativeUpdate}${app.gate ? renderAppSource(app) : ""}
 `
+}
+
+function renderAppSource(app) {
+  const always = app.isTypeScript ? "!" : ""
+  const update = app.nativeUpdate
+    ? `
+  // An outdated native build shows nothing but the update page.
+  if (api.getEntity("nativeUpdate")${always}.isUpdateRequired) {
+    return api.render("nativeUpdate")
+  }`
+    : ""
+  const page = app.auth
+    ? `
+  // Nothing until the saved session is read, then the sign-in screen until
+  // someone signs in.
+  const auth = api.getEntity("auth")${always}
+  if (!auth.isReady) return html\`\`
+  const page = auth.user ? App.render(null, api) : api.render("auth")`
+    : `
+  const page = App.render(null, api)`
+  return `
+
+function renderApp(api${app.isTypeScript ? ": AppApi" : ""}) {${update}${page}
+  return html\`${appParts(app, "${page}")}\`
+}`
 }
 
 // What renders beside the app: the consent and permission prompts, and the
 // toast stack.
-function appParts(app) {
-  const parts = ["${App.render(null, api)}"]
+function appParts(app, main = "${App.render(null, api)}") {
+  const parts = [main]
   if (app.hasPrompts) parts.push("${renderPrompts(api)}")
   if (app.ui) parts.push('${api.render("toast")}')
   return parts.join(" ")
@@ -360,8 +399,11 @@ function uiComponents(app) {
   if (app.icons.length) names.push("icon")
   if (app.i18n) names.push("select")
   if (app.hasPrompts) names.push("snackbar", "button", "flex")
+  if (app.auth) {
+    names.push("input", "button", "alert", "dialog", "confirm-dialog")
+  }
   names.push("toast")
-  return names
+  return [...new Set(names)]
 }
 
 const PROMPT_ABOVE_TABS = `
@@ -379,6 +421,45 @@ const UPDATE_PAGE = `
   gap: 1rem;
   padding: 1.5rem;
   text-align: center;
+}
+`
+
+const AUTH_SCREEN = `
+.app-auth {
+  width: min(100% - 3rem, 24rem);
+  margin: 3rem auto;
+}
+
+.app-auth form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.app-profile {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.app-account {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+`
+
+const PLAIN_AUTH = `
+.app-auth label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.app-auth-error {
+  color: #b00020;
 }
 `
 
@@ -425,7 +506,7 @@ main {
   align-items: center;
   gap: 1rem;
 }
-${app.tabs && app.hasPrompts ? PROMPT_ABOVE_TABS : ""}${app.nativeUpdate ? UPDATE_PAGE : ""}`
+${app.tabs && app.hasPrompts ? PROMPT_ABOVE_TABS : ""}${app.nativeUpdate ? UPDATE_PAGE : ""}${app.auth ? AUTH_SCREEN : ""}`
   if (app.ui) {
     return app.isVue
       ? `${layout}
@@ -435,7 +516,7 @@ ${app.tabs && app.hasPrompts ? PROMPT_ABOVE_TABS : ""}${app.nativeUpdate ? UPDAT
 `
       : layout
   }
-  return `${layout}${app.hasPrompts ? PLAIN_PROMPT : ""}
+  return `${layout}${app.hasPrompts ? PLAIN_PROMPT : ""}${app.auth ? PLAIN_AUTH : ""}
 header {
   display: flex;
   align-items: center;
@@ -491,6 +572,11 @@ function storeSource(app) {
       `import { NativeUpdate } from "${relative("src/store", app.layout.nativeUpdate)}"`,
     )
   }
+  if (app.auth) {
+    imports.push(
+      `import { Auth } from "${relative("src/store", app.layout.auth)}"`,
+    )
+  }
   if (app.ui) imports.push('import { Toast } from "@inglorious/ui/toast"')
 
   const types = ["Message", "Home"]
@@ -499,6 +585,7 @@ function storeSource(app) {
   if (app.analytics) types.push("Analytics")
   if (app.push) types.push("PushPrompt")
   if (app.nativeUpdate) types.push("NativeUpdate")
+  if (app.auth) types.push("Auth")
   if (app.ui) types.push("Toast")
   const oneLine = `  types: { ${types.join(", ")} },`
   const typesValue =
@@ -528,6 +615,7 @@ function singletons(app) {
   if (app.analytics) ids.push("analytics")
   if (app.push) ids.push("pushPrompt")
   if (app.nativeUpdate) ids.push("nativeUpdate")
+  if (app.auth) ids.push("auth")
   if (app.ui) ids.push("toast")
   return ids
 }
@@ -546,6 +634,10 @@ export const entities: Partial<AppState> = {`
 `
 }
 
+const PROFILE_ROUTE = `
+  // The signed-in account, which the Auth entity renders.
+  "/profile": "auth",`
+
 function routesSource(app) {
   const head = app.isTypeScript
     ? `import type { RoutesConfig } from "@inglorious/web/router"
@@ -556,7 +648,7 @@ export const routes: RoutesConfig = {`
 export const routes = {`
   return `${head}
   "/": "home",
-  "/about": "about",
+  "/about": "about",${app.auth ? PROFILE_ROUTE : ""}
 }
 `
 }
@@ -690,6 +782,19 @@ function typesSource(app) {
 }`,
     )
     state.push("  nativeUpdate: AppNativeUpdateEntity")
+  }
+  if (app.auth) {
+    imports.push(
+      'import type { AuthEntity, AuthType } from "@inglorious/web/auth"',
+    )
+    eventTypes.push("AuthType")
+    entities.push("AppAuthEntity")
+    declarations.push(
+      `export interface AppAuthEntity extends AuthEntity {
+  type: "Auth"
+}`,
+    )
+    state.push("  auth: AppAuthEntity")
   }
 
   if (app.ui) {

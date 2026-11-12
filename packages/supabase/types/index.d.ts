@@ -86,3 +86,60 @@ export declare function liveUpdateManifestUrl(
   projectUrl: string,
   options?: { bucket?: string },
 ): string
+
+export interface SupabaseAuthOptions {
+  /** For Supabase Auth's CAPTCHA protection, from `createCaptcha`. */
+  captcha?: Captcha
+  /**
+   * An Edge Function answering `{ exists }` for `{ email }`, to skip straight
+   * to the password or the new account.
+   */
+  accountExistsFunction?: string
+  /** The Edge Function that erases the caller's account. Defaults to `"erase-account"`. */
+  eraseFunction?: string
+}
+
+type AuthUser = { id: string; email?: string; [key: string]: unknown }
+type AuthCodePurpose = "signIn" | "signUp" | "reset"
+type AuthError =
+  | "invalidEmail"
+  | "invalidCode"
+  | "weakPassword"
+  | "invalidCredentials"
+  | "emailNotConfirmed"
+  | "accountExists"
+  | "rateLimited"
+  | "captcha"
+  | "network"
+  | "unknown"
+
+/**
+ * The adapter of `createAuth` from `@inglorious/web/auth`, over Supabase
+ * Auth: passwords, codes sent by email (the templates' `{{ .Token }}`),
+ * password resets and account erasure through an Edge Function.
+ */
+export declare function supabaseAuth(
+  client: SupabaseClient,
+  options?: SupabaseAuthOptions,
+): {
+  onSessionChange(listener: (user: AuthUser | null) => void): () => void
+  accountExists?(email: string): Promise<boolean>
+  signIn(email: string, password: string): Promise<AuthUser>
+  signUp(
+    email: string,
+    password: string,
+    data?: Record<string, unknown>,
+  ): Promise<AuthUser | null>
+  sendCode(email: string): Promise<void>
+  verifyCode(
+    email: string,
+    code: string,
+    purpose: AuthCodePurpose,
+  ): Promise<AuthUser>
+  resendCode(email: string, purpose: AuthCodePurpose): Promise<void>
+  sendResetCode(email: string): Promise<void>
+  updatePassword(password: string): Promise<AuthUser>
+  signOut(): Promise<void>
+  eraseAccount(): Promise<void>
+  errorCode(error: unknown): AuthError
+}

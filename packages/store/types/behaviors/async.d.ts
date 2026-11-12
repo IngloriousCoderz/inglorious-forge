@@ -194,3 +194,66 @@ export function handleAsync<
   handlers: AsyncHandlers<TEntity, TPayload, TResult, TApi>,
   options?: AsyncOptions,
 ): AsyncEvents<TType, TEntity, TPayload, TResult, TApi>
+
+/** Where a request is: `"loading"`, then `"success"` or `"error"`. */
+export type RequestStatus = "loading" | "success" | "error"
+
+export interface RequestOptions<TError = string> extends AsyncOptions {
+  /** The field for the status, when the entity has several requests. @default "status" */
+  status?: string
+  /** The field for the error. @default "error" */
+  error?: string
+  /** What to store as the error, such as a translation key. Defaults to its message. */
+  toError?: (error: unknown) => TError
+  /** Whether a call replaced by a newer one is ignored. @default true */
+  isLatestOnly?: boolean
+}
+
+/**
+ * Handler functions for a request: those of `handleAsync`, whose `error`
+ * receives the error as `toError` turned it, after the entity's error field is
+ * set.
+ */
+export interface RequestHandlers<
+  TEntity extends BaseEntity = BaseEntity,
+  TPayload = any,
+  TResult = any,
+  TApi extends Api = Api,
+  TError = string,
+> extends Omit<AsyncHandlers<TEntity, TPayload, TResult, TApi>, "error"> {
+  error?: (entity: TEntity, error: TError, api: TApi) => void
+}
+
+/**
+ * The handlers of a request: a call whose progress the entity shows. The
+ * entity's `status` is `"loading"` from the start, then `"success"` or
+ * `"error"`, and its `error` holds what went wrong. Only the latest call
+ * counts: the answer of a call that a newer one replaced is dropped. Prefer it
+ * to `handleAsync` whenever the entity shows that something is happening.
+ *
+ * @example
+ * ```typescript
+ * const JobList = {
+ *   ...handleRequest("search", {
+ *     run: (query: string) => searchJobs(query),
+ *     success(entity, jobs) {
+ *       entity.jobs = jobs
+ *     },
+ *   }),
+ * } satisfies EntityType<JobListEntity, AppApi>
+ *
+ * const types = { JobList: [JobList, withDebounce(300, ["search"])] }
+ * ```
+ */
+export function handleRequest<
+  TEntity extends BaseEntity = BaseEntity,
+  TPayload = any,
+  TResult = any,
+  TApi extends Api = Api,
+  TType extends string = string,
+  TError = string,
+>(
+  type: TType,
+  handlers: RequestHandlers<TEntity, TPayload, TResult, TApi, TError>,
+  options?: RequestOptions<TError>,
+): AsyncEvents<TType, TEntity, TPayload, TResult, TApi>

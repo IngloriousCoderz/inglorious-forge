@@ -375,29 +375,21 @@ store.notify("fetchTodos", userId)
 
 ---
 
-## Event Scoping with handleAsync
+## Async events with handleRequest
 
-The `handleAsync` helper generates multiple events with different scopes:
+`handleRequest` turns one async call into a few events, all sent to the entity that started it:
 
 ```javascript
-import { handleAsync } from "@inglorious/store/async"
+import { handleRequest } from "@inglorious/store/async"
 
 const types = {
   todoList: {
-    ...handleAsync(
-      "fetchTodos",
-      {
-        async run(entity, userId, api) {
-          return fetch(`/api/${userId}/todos`).then((r) => r.json())
-        },
-        success(entity, data) {
-          entity.todos = data
-        },
+    ...handleRequest("fetchTodos", {
+      run: (userId) => fetch(`/api/${userId}/todos`).then((r) => r.json()),
+      success(entity, todos) {
+        entity.todos = todos
       },
-      {
-        scope: "entity", // Default: only affects this entity
-      },
-    ),
+    }),
   },
 }
 ```
@@ -410,16 +402,18 @@ Think of the flow like a newspaper article:
 - `error` prints the correction
 - `finally` archives the notes
 
-Generated events by scope:
-
-**Entity scope (default):**
+The events, for an entity `todoList`:
 
 ```
-#entityId:fetchTodos        (initial event)
-#entityId:fetchTodosRun     (when running)
-#entityId:fetchTodosSuccess (on success)
-#entityId:fetchTodosError   (on error)
+#todoList:fetchTodos        (initial event)
+#todoList:fetchTodosStart   (status "loading", error cleared)
+#todoList:fetchTodosRun     (when running)
+#todoList:fetchTodosSuccess (on success, status "success")
+#todoList:fetchTodosError   (on error, status "error")
+#todoList:fetchTodosFinally (either way)
 ```
+
+The `scope` option sends them elsewhere: to every entity of the type, or to everyone, which games often want.
 
 **Type scope:**
 
@@ -438,6 +432,8 @@ fetchTodosRun               (when running)
 fetchTodosSuccess           (on success)
 fetchTodosError             (on error)
 ```
+
+An answer from a call that a newer one replaced finds its events ignored. `handleAsync`, which `handleRequest` is built on, sends the same events without keeping the status: see [Async Operations](../advanced/async-operations.md).
 
 ---
 
