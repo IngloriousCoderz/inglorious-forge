@@ -20,7 +20,7 @@
     "@inglorious/eslint-config": "workspace:*",
     "@inglorious/utils": "workspace:*",
     "typescript": "^7.0.2",
-    "vite": "^8.3.7",
+    "vite": "^8.3.8",
     "vite-plugin-babel": "^1.7.3"
   },
   "packageManager": "pnpm@12.15.0",
