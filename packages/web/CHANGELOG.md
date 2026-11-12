@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 6.26.2
+
+### Patch Changes
+
+- The README's route guard keeps the user it is told of by `sessionChange`, so a sign-in followed by navigation in the same update is not sent back to `/login`; its test example now exercises the guard.
+
 ## 6.26.1
 
 ### Patch Changes

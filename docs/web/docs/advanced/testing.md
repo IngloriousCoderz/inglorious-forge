@@ -247,32 +247,29 @@ test("logging behavior logs events", () => {
 ```javascript
 test("auth guard blocks unauthenticated access", () => {
   const requireAuth = (type) => ({
-    navigate(entity, route, api) {
-      if (!api.getEntity("session")?.user) {
+    sessionChange(entity, user) {
+      entity.user = user
+    },
+    routeChange(entity, payload, api) {
+      if (payload.route !== entity.id) return
+      if (!entity.user) {
         api.notify("navigate", "/login")
         return
       }
-      type.navigate(entity, route, api)
+      type.routeChange?.(entity, payload, api)
     },
   })
 
-  // Signed out: the session entity has no user.
-  const mockApi = { notify: jest.fn(), getEntity: () => ({ user: null }) }
-  const BaseType = {
-    navigate(e, r) {
-      e.route = r
-    },
-  }
-  const GuardedType = [BaseType, requireAuth]
+  const GuardedPage = requireAuth({ routeChange() {} })
 
-  trigger(
-    { route: "" },
-    GuardedType.find((t) => t.navigate).navigate,
-    "/admin",
-    mockApi,
+  // Signed out: the guard was told of no user.
+  const { events } = trigger(
+    { id: "admin", user: null },
+    GuardedPage.routeChange,
+    { route: "admin" },
   )
 
-  expect(mockApi.notify).toHaveBeenCalledWith("navigate", "/login")
+  expect(events).toContainEqual({ type: "navigate", payload: "/login" })
 })
 ```
 

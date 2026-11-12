@@ -609,45 +609,36 @@ test("requireAuth blocks unauthenticated access", () => {
   // Compose the guard with the page type
   const GuardedPage = requireAuth(AdminPage)
 
-  // Signed out: the session entity has no user
-  const mockApi = {
-    notify: jest.fn(),
-    getEntity: () => ({ user: null }),
-  }
-
+  // Signed out: the guard was told of no user
   const { events } = trigger(
-    { type: "GuardedPage", id: "admin" },
+    { type: "GuardedPage", id: "admin", user: null },
     GuardedPage.routeChange,
-    { route: "adminPage" },
-    mockApi,
+    { route: "admin", path: "/admin" },
   )
 
   // Should redirect to login
   expect(events).toContainEqual(
     expect.objectContaining({
       type: "navigate",
-      payload: expect.objectContaining({ to: "/login" }),
+      payload: expect.objectContaining({ to: "/login?from=%2Fadmin" }),
     }),
   )
 })
 
 test("requireAuth allows authenticated access", () => {
-  // Signed in: the session entity has a user
+  // Signed in: the guard was told of a user
   const GuardedPage = requireAuth(AdminPage)
-  const mockApi = {
-    notify: jest.fn(),
-    getEntity: () => ({ user: { id: 1 } }),
-  }
 
   const { events } = trigger(
-    { type: "GuardedPage", id: "admin" },
+    { type: "GuardedPage", id: "admin", user: { id: 1 } },
     GuardedPage.routeChange,
-    { route: "adminPage" },
-    mockApi,
+    { route: "admin", path: "/admin" },
   )
 
   // Should NOT redirect
-  expect(events).toEqual([])
+  expect(events).not.toContainEqual(
+    expect.objectContaining({ type: "navigate" }),
+  )
 })
 ```
 
@@ -1128,16 +1119,30 @@ Guards are simply behaviors that intercept events (like `routeChange`) and can p
 #### Example: Authentication Guard
 
 ```javascript
+// session.js: the one place the user lives (kept between visits with
+// withStorage, if at all), announcing each change
+export const Session = {
+  signIn(entity, user, api) {
+    entity.user = user
+    api.notify("sessionChange", user)
+  },
+  signOut(entity, payload, api) {
+    entity.user = null
+    api.notify("sessionChange", null)
+  },
+}
+
 // guards/require-auth.js
 export const requireAuth = (type) => ({
+  sessionChange(entity, user, api) {
+    entity.user = user
+    type.sessionChange?.(entity, user, api)
+  },
   routeChange(entity, payload, api) {
     // Only act when navigating to this specific route
     if (payload.route !== entity.id) return
 
-    // Check authentication: the session entity is the one place the user
-    // lives (kept between visits with withStorage, if at all)
-    const { user } = api.getEntity("session") ?? {}
-    if (!user) {
+    if (!entity.user) {
       // Redirect to login, preserving the intended destination
       api.notify("navigate", {
         to: `/login?from=${encodeURIComponent(payload.path)}`,
@@ -1151,6 +1156,8 @@ export const requireAuth = (type) => ({
   },
 })
 ```
+
+The guard keeps what `sessionChange` told it rather than asking `api.getEntity("session")`, which during an update returns the state from before it: after a sign-in followed by navigation in the same chain of events, it would still have no user.
 
 After signing in, `safePath(query.from)` gives the destination back only if it stays on the site, so a crafted `/login?from=//evil.com` leads nowhere: `api.notify("navigate", safePath(query.from) ?? "/")`.
 
