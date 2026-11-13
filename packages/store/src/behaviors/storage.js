@@ -19,9 +19,9 @@ let decorators = 0
  *
  * A storage whose `getItem` returns a promise, such as Capacitor Preferences,
  * restores the fields once it answers: the entity starts with the type's
- * defaults, and `storageRestore` then brings back the fields no handler has
- * changed in the meantime. Nothing is written until then. A type's own
- * `storageRestore(entity, restored, api)` runs after.
+ * defaults, and `storageRestore` then brings the stored fields back. Nothing is
+ * written until then. A type's own `storageRestore(entity, restored, api)`
+ * runs after.
  *
  * @param {string[]} fields The entity's fields to keep.
  * @param {Object} [options]
@@ -46,15 +46,12 @@ export function withStorage(
     typeof key === "function" ? key(entity) : (key ?? entity.id)
 
   return (type) => {
-    // Tells this decorator's restores from those of others on the same type.
     const source = `withStorage:${++decorators}`
-    /** What is kept for each entity, as written. */
     const kept = new Map()
-    /** For entities still waiting on storage, their fields as created. */
-    const pending = new Map()
+    const waiting = new Set()
 
     function save(entity) {
-      if (!isEntity(entity) || pending.has(entity.id)) return
+      if (!isEntity(entity) || waiting.has(entity.id)) return
       const value = JSON.stringify(pick(entity, fields))
       if (kept.get(entity.id) === value) return
       kept.set(entity.id, value)
@@ -77,13 +74,12 @@ export function withStorage(
       const stored = readItem(keyOf(entity), storage)
 
       if (isPromiseLike(stored)) {
-        const result = type.create?.call(this, entity, payload, api)
-        pending.set(entity.id, snapshot(entity, fields))
         const { id } = entity
+        waiting.add(id)
         const restore = (value) =>
-          api.notify(`#${id}:storageRestore`, { source, value: value ?? null })
+          api.notify(`#${id}:storageRestore`, { source, value })
         stored.then(restore, () => restore(null))
-        return result
+        return type.create?.call(this, entity, payload, api)
       }
 
       kept.set(entity.id, stored)
@@ -94,33 +90,21 @@ export function withStorage(
     }
 
     behavior.storageRestore = function (entity, payload, api) {
-      const created = pending.get(entity.id)
-      if (payload?.source !== source || !created) {
+      if (payload?.source !== source) {
         type.storageRestore?.call(this, entity, payload, api)
         save(entity)
         return
       }
-      pending.delete(entity.id)
+      waiting.delete(entity.id)
       kept.set(entity.id, payload.value)
-
       const restored = pick(parseJSON(payload.value), fields)
-      for (const [field, value] of Object.entries(restored)) {
-        if (JSON.stringify(entity[field]) === created[field]) {
-          entity[field] = value
-        }
-      }
+      Object.assign(entity, restored)
       type.storageRestore?.call(this, entity, restored, api)
       save(entity)
     }
 
     return behavior
   }
-}
-
-function snapshot(entity, fields) {
-  return Object.fromEntries(
-    fields.map((field) => [field, JSON.stringify(entity[field])]),
-  )
 }
 
 function isEntity(value) {

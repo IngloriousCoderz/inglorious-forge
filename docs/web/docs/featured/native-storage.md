@@ -25,7 +25,7 @@ const types = {
 
 ## Waiting for Preferences
 
-Preferences answers with promises. So in the native app the entity starts with its type's defaults, and a moment later `storageRestore` brings back the stored fields, except the ones a handler changed in the meantime. Nothing is written before that.
+Preferences answers with promises. So in the native app the entity starts with its type's defaults, and a moment later `storageRestore` brings back the stored fields. Nothing is written before that.
 
 A type that has to tell others what came back defines its own `storageRestore`:
 

@@ -22,7 +22,7 @@ export interface StorageOptions {
  * before the type's own `create`, and are written back after any handler that
  * changes them. Put it last in the type's array. With a storage answering
  * with promises, the entity starts with the defaults and `storageRestore`
- * brings back the fields no handler changed while waiting.
+ * brings the stored fields back.
  */
 export declare function withStorage(
   fields: string[],

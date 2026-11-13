@@ -145,7 +145,7 @@ describe("withStorage", () => {
       expect(storage.setItem).not.toHaveBeenCalled()
     })
 
-    it("keeps a change made while waiting, and saves it", async () => {
+    it("writes nothing while waiting, then what changed after", async () => {
       const storage = asyncStorage({ settings: '{"theme":"dark"}' })
       const store = storeWith(storage)
 
@@ -154,9 +154,10 @@ describe("withStorage", () => {
 
       storage.answer()
       await vi.waitFor(() =>
-        expect(storage.items.get("settings")).toBe('{"theme":"blue"}'),
+        expect(store.getEntity("settings").theme).toBe("dark"),
       )
-      expect(store.getEntity("settings").theme).toBe("blue")
+      store.notify("#settings:themeSet", "blue")
+      expect(storage.items.get("settings")).toBe('{"theme":"blue"}')
     })
 
     it("tells the type what came back", async () => {

@@ -1,5 +1,11 @@
 # @inglorious/store
 
+## 12.6.2
+
+### Patch Changes
+
+- A `withStorage` restore from a storage answering with promises brings the stored fields back as they were, rather than only the ones no handler had changed while waiting.
+
 ## 12.6.1
 
 ### Patch Changes
