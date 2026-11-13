@@ -1,6 +1,6 @@
 import { handleAsync } from "@inglorious/store/async"
 
-import { isNative } from "../mobile/index.js"
+import { isNative } from "../index.js"
 
 const DEFAULT_ID = "nativeUpdate"
 const RESUME_EVENT = "resume"

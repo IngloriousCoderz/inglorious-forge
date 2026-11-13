@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 6.28.0
+
+### Minor Changes
+
+- The modules that act in a native app, or use a Capacitor plugin there, move under `native`: `@inglorious/web/native` (was `mobile`), `native/app-links`, `native/back-button`, `native/system-bars`, `native/live-update`, `native/update` (was `native-update`), `native/haptics` and `native/share`. Update the imports; nothing else changes.
+
 ## 6.27.1
 
 ### Patch Changes

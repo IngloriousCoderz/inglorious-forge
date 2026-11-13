@@ -1,4 +1,4 @@
-import { isNative } from "../mobile/index.js"
+import { isNative } from "../index.js"
 
 const LIGHT_CONTENT = "DARK"
 const DARK_CONTENT = "LIGHT"

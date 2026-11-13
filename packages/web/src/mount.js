@@ -5,7 +5,7 @@
 
 import { html, nothing, render } from "lit-html"
 
-import { isNative } from "./mobile/index.js"
+import { isNative } from "./native/index.js"
 import { createAccessibleNavigation } from "./router/accessible-navigation.js"
 
 /**

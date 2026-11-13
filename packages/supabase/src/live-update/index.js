@@ -61,7 +61,7 @@ export function packLiveUpdate({
 /**
  * Packs a built app and publishes it to a public Supabase Storage bucket: the
  * zip at `bundles/<release>.zip`, then `manifest.json`, which
- * `watchLiveUpdate` from `@inglorious/web/live-update` reads.
+ * `watchLiveUpdate` from `@inglorious/web/native/live-update` reads.
  *
  * Then it deletes all but the newest `keepBundles` zips, 2 by default: the
  * manifest points only to the latest, and a bundle that fails rolls back to

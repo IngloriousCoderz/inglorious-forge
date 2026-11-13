@@ -1,6 +1,6 @@
 import type { AsyncEvents } from "@inglorious/store/async"
 
-import { Api } from "./mount"
+import { Api } from "../mount"
 
 export interface NativeUpdateRequirement {
   /** The oldest build allowed to run. */

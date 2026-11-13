@@ -2,7 +2,7 @@ const DEFAULT_TABLE = "app_versions"
 const DEFAULT_TIMEOUT_MS = 10_000
 
 /**
- * The adapter of `createNativeUpdate` from `@inglorious/web/native-update`,
+ * The adapter of `createNativeUpdate` from `@inglorious/web/native/update`,
  * reading each platform's minimum build from a table with the columns
  * `platform` (`"android"` or `"ios"`), `min_build` and `store_url`, readable
  * before sign-in.

@@ -5,7 +5,7 @@
 
 import { html, nothing } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
-import { haptics } from "@inglorious/web/haptics"
+import { haptics } from "@inglorious/web/native/haptics"
 
 import { Progress } from "../progress/index.js"
 
@@ -33,7 +33,7 @@ export const PullToRefresh = {
   /**
    * Wraps scrolling content that refreshes when pulled down from the top, as
    * in mobile apps. Past the threshold, it ticks (see `haptics` in
-   * `@inglorious/web/haptics`) and letting go calls `onRefresh`; the
+   * `@inglorious/web/native/haptics`) and letting go calls `onRefresh`; the
    * spinner stays while `isRefreshing`. Touch only: offer another way to
    * refresh on desktop, such as a button.
    * @param {PullToRefreshProps} props

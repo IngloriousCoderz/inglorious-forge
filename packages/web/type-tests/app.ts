@@ -13,9 +13,12 @@ import {
   createNativeUpdate,
   type NativeApp,
   watchNativeUpdate,
-} from "../types/native-update"
-import { type AppLinksApp, watchAppLinks } from "../types/app-links"
-import { type BackButtonApp, watchBackButton } from "../types/back-button"
+} from "../types/native/update"
+import { type AppLinksApp, watchAppLinks } from "../types/native/app-links"
+import {
+  type BackButtonApp,
+  watchBackButton,
+} from "../types/native/back-button"
 import { PwaUpdate, type PwaUpdateEntity, watchPwaUpdate } from "../types/pwa"
 import {
   pageRouteChange,

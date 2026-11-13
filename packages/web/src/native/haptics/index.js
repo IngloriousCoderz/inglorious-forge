@@ -26,7 +26,7 @@ let plugin = null
  *
  * @example
  * import { Haptics } from "@capacitor/haptics"
- * import { haptics } from "@inglorious/web/haptics"
+ * import { haptics } from "@inglorious/web/native/haptics"
  *
  * haptics.use(Haptics)
  * haptics.notification("success")

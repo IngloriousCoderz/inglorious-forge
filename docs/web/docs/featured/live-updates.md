@@ -5,12 +5,15 @@ description: "Replacing the web code inside a Capacitor app with a newer signed 
 
 # Live Updates
 
-A store release is only needed for native changes. `@inglorious/web/live-update` replaces the web code inside a Capacitor app with a newer published bundle, through [`@capawesome/capacitor-live-update`](https://capawesome.io/plugins/live-update/), whose open source plugin downloads from any URL. `publishLiveUpdate` from `@inglorious/supabase/live-update` publishes one.
+A store release is only needed for native changes. `@inglorious/web/native/live-update` replaces the web code inside a Capacitor app with a newer published bundle, through [`@capawesome/capacitor-live-update`](https://capawesome.io/plugins/live-update/), whose open source plugin downloads from any URL. `publishLiveUpdate` from `@inglorious/supabase/live-update` publishes one.
 
 ```javascript
 import { App } from "@capacitor/app"
 import { LiveUpdate } from "@capawesome/capacitor-live-update"
-import { createLiveUpdate, watchLiveUpdate } from "@inglorious/web/live-update"
+import {
+  createLiveUpdate,
+  watchLiveUpdate,
+} from "@inglorious/web/native/live-update"
 
 const types = { LiveUpdate: createLiveUpdate({ plugin: LiveUpdate }) }
 const entities = { liveUpdate: { type: "LiveUpdate" } }

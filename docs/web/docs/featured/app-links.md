@@ -5,11 +5,11 @@ description: "Opening the installed app from links to its domain"
 
 # App Links
 
-With Universal Links (iOS) and App Links (Android), a link to the app's domain opens the installed app instead of the browser. `@inglorious/web/app-links` sends the router to that link's path, both for the link that started the app and for links that arrive while it runs. It does nothing outside a native app.
+With Universal Links (iOS) and App Links (Android), a link to the app's domain opens the installed app instead of the browser. `@inglorious/web/native/app-links` sends the router to that link's path, both for the link that started the app and for links that arrive while it runs. It does nothing outside a native app.
 
 ```javascript
 import { App } from "@capacitor/app"
-import { watchAppLinks } from "@inglorious/web/app-links"
+import { watchAppLinks } from "@inglorious/web/native/app-links"
 
 watchAppLinks(App, store)
 ```

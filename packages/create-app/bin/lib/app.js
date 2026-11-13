@@ -239,27 +239,29 @@ function mainSource(app, { pages }) {
     imports.push(
       'import { SystemBars } from "@capacitor/core"',
       'import { Haptics } from "@capacitor/haptics"',
-      'import { haptics } from "@inglorious/web/haptics"',
-      'import { watchSystemBars } from "@inglorious/web/system-bars"',
+      'import { haptics } from "@inglorious/web/native/haptics"',
+      'import { watchSystemBars } from "@inglorious/web/native/system-bars"',
     )
   }
   if (app.ui || app.mobile) {
     imports.push('import { watchKeyboard } from "@inglorious/web/keyboard"')
   }
   if (app.appLinks) {
-    imports.push('import { watchAppLinks } from "@inglorious/web/app-links"')
+    imports.push(
+      'import { watchAppLinks } from "@inglorious/web/native/app-links"',
+    )
   }
   if (app.backButton) {
     imports.push(
-      'import { watchBackButton } from "@inglorious/web/back-button"',
+      'import { watchBackButton } from "@inglorious/web/native/back-button"',
     )
   }
   if (app.nativeUpdate) {
     imports.push(
       'import { LiveUpdate } from "@capawesome/capacitor-live-update"',
       'import { liveUpdateManifestUrl } from "@inglorious/supabase"',
-      'import { watchLiveUpdate } from "@inglorious/web/live-update"',
-      'import { watchNativeUpdate } from "@inglorious/web/native-update"',
+      'import { watchLiveUpdate } from "@inglorious/web/native/live-update"',
+      'import { watchNativeUpdate } from "@inglorious/web/native/update"',
     )
   }
   if (app.gate && app.isTypeScript) {
@@ -772,7 +774,7 @@ function typesSource(app) {
       `import type {
   NativeUpdateEntity,
   NativeUpdateType,
-} from "@inglorious/web/native-update"`,
+} from "@inglorious/web/native/update"`,
     )
     eventTypes.push("NativeUpdateType")
     entities.push("AppNativeUpdateEntity")

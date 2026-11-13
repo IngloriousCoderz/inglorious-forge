@@ -5,14 +5,14 @@ description: "Blocking a native build below the minimum until the user updates f
 
 # Native App Updates
 
-A Capacitor app carries its web code inside the binary, so only the stores update it. `@inglorious/web/native-update` makes an update mandatory: the app reads a minimum build per platform, and a build below it is blocked until the user updates. `@inglorious/create-app --mobile --push` sets it up with Supabase.
+A Capacitor app carries its web code inside the binary, so only the stores update it. `@inglorious/web/native/update` makes an update mandatory: the app reads a minimum build per platform, and a build below it is blocked until the user updates. `@inglorious/create-app --mobile --push` sets it up with Supabase.
 
 ```javascript
 import { App } from "@capacitor/app"
 import {
   createNativeUpdate,
   watchNativeUpdate,
-} from "@inglorious/web/native-update"
+} from "@inglorious/web/native/update"
 
 const types = { NativeUpdate: [createNativeUpdate({ adapter }), template] }
 const entities = { nativeUpdate: { type: "NativeUpdate" } }

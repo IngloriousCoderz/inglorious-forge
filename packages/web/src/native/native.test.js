@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest"
 
 import { createNativeStorage, isNative } from "."
 
-describe("mobile", () => {
+describe("native", () => {
   afterEach(() => {
     delete globalThis.Capacitor
     delete globalThis.window

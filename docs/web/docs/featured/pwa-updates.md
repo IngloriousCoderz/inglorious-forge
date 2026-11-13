@@ -15,7 +15,7 @@ Updates are not optional. A new version downloads in the background, and is appl
 It also checks for a new version every hour and on every return to the foreground: a phone suspends an installed PWA rather than closing it, so the browser's own check may never come.
 
 ```javascript
-import { isNative } from "@inglorious/web/mobile"
+import { isNative } from "@inglorious/web/native"
 import { watchPwaUpdate } from "@inglorious/web/pwa"
 import { registerSW } from "virtual:pwa-register"
 

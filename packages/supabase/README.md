@@ -121,7 +121,7 @@ It empties the folder named after the user's id in each bucket, subfolders inclu
 
 ## Native app updates
 
-`supabaseNativeUpdate(client)` is the adapter of `createNativeUpdate` from `@inglorious/web/native-update`: it reads each platform's minimum build from a table, so a release becomes mandatory with one update in the SQL editor, without a deploy.
+`supabaseNativeUpdate(client)` is the adapter of `createNativeUpdate` from `@inglorious/web/native/update`: it reads each platform's minimum build from a table, so a release becomes mandatory with one update in the SQL editor, without a deploy.
 
 ```sql
 create table public.app_versions (
@@ -141,7 +141,7 @@ insert into public.app_versions (platform, min_build) values ('ios', 1), ('andro
 
 ```js
 import { supabaseNativeUpdate } from "@inglorious/supabase"
-import { createNativeUpdate } from "@inglorious/web/native-update"
+import { createNativeUpdate } from "@inglorious/web/native/update"
 
 const NativeUpdate = createNativeUpdate({
   adapter: supabaseNativeUpdate(supabase),
@@ -156,7 +156,7 @@ Raise a platform's minimum only once its new build is live in that store. Option
 
 ## Live updates
 
-`@inglorious/supabase/live-update` publishes the web code of a Capacitor app for `watchLiveUpdate` from `@inglorious/web/live-update`. It runs in Node, from a release script.
+`@inglorious/supabase/live-update` publishes the web code of a Capacitor app for `watchLiveUpdate` from `@inglorious/web/native/live-update`. It runs in Node, from a release script.
 
 ```javascript
 import {

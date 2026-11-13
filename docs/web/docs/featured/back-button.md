@@ -5,11 +5,11 @@ description: "Android's back button and gesture, closing the app on top-level pa
 
 # Back Button
 
-On Android, the back button and the back gesture go back in history. `@inglorious/web/back-button` closes the app instead on a root path, a top-level page like a tab bar's, and when there is no history left, as other Android apps do. It does nothing outside a native app, and iOS has no back button.
+On Android, the back button and the back gesture go back in history. `@inglorious/web/native/back-button` closes the app instead on a root path, a top-level page like a tab bar's, and when there is no history left, as other Android apps do. It does nothing outside a native app, and iOS has no back button.
 
 ```javascript
 import { App } from "@capacitor/app"
-import { watchBackButton } from "@inglorious/web/back-button"
+import { watchBackButton } from "@inglorious/web/native/back-button"
 
 watchBackButton(App, { rootPaths: ["/", "/search", "/profile"] })
 ```

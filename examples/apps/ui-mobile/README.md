@@ -29,13 +29,13 @@ sets `--iw-keyboard-height` on `<html>` while the keyboard is up. The sheets,
 snackbars and toasts of `@inglorious/ui` follow it, and its bottom navigation
 hides.
 
-Haptics come from `haptics` in `@inglorious/web/haptics`. In a Capacitor app,
+Haptics come from `haptics` in `@inglorious/web/native/haptics`. In a Capacitor app,
 hand it the native plugin once and every call plays the system's haptics,
 including the tick of `PullToRefresh`:
 
 ```js
 import { Haptics } from "@capacitor/haptics"
-import { haptics } from "@inglorious/web/haptics"
+import { haptics } from "@inglorious/web/native/haptics"
 
 haptics.use(Haptics)
 ```

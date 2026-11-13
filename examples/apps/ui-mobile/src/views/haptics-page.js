@@ -2,7 +2,7 @@ import { Button } from "@inglorious/ui/button"
 import { Container } from "@inglorious/ui/container"
 import { Typography } from "@inglorious/ui/typography"
 import { html } from "@inglorious/web"
-import { haptics } from "@inglorious/web/haptics"
+import { haptics } from "@inglorious/web/native/haptics"
 
 const GROUPS = [
   {

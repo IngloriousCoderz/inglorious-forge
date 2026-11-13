@@ -5,7 +5,7 @@ description: Keeping entity fields in Capacitor Preferences, which survives the 
 
 # Native Storage
 
-iOS and Android can clear a WebView's `localStorage` when the device runs low on space, taking with it whatever an app kept there: consent, settings, even the sign-in. `createNativeStorage` from `@inglorious/web/mobile` keeps values in [Capacitor Preferences](https://capacitorjs.com/docs/apis/preferences) in the native app instead. In a browser, it uses `localStorage`.
+iOS and Android can clear a WebView's `localStorage` when the device runs low on space, taking with it whatever an app kept there: consent, settings, even the sign-in. `createNativeStorage` from `@inglorious/web/native` keeps values in [Capacitor Preferences](https://capacitorjs.com/docs/apis/preferences) in the native app instead. In a browser, it uses `localStorage`.
 
 ## With `withStorage`
 
@@ -14,7 +14,7 @@ The entity stays the one source of truth: [`withStorage`](https://inglorious.dev
 ```javascript
 import { Preferences } from "@capacitor/preferences"
 import { withStorage } from "@inglorious/store/storage"
-import { createNativeStorage } from "@inglorious/web/mobile"
+import { createNativeStorage } from "@inglorious/web/native"
 
 const preferences = createNativeStorage({ plugin: Preferences })
 

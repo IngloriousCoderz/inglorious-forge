@@ -7,7 +7,7 @@ import { List } from "@inglorious/ui/list"
 import { PullToRefresh } from "@inglorious/ui/pull-to-refresh"
 import { Textarea } from "@inglorious/ui/textarea"
 import { html } from "@inglorious/web"
-import { haptics } from "@inglorious/web/haptics"
+import { haptics } from "@inglorious/web/native/haptics"
 
 import { replies } from "../store/replies.js"
 

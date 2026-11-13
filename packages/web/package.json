@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/web",
-  "version": "6.27.1",
+  "version": "6.28.0",
   "description": "A new web framework that leverages the power of the Inglorious Store combined with the performance and simplicity of lit-html.",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "contributors": [
@@ -37,33 +37,33 @@
       "types": "./types/analytics.d.ts",
       "import": "./src/analytics/index.js"
     },
-    "./app-links": {
-      "types": "./types/app-links.d.ts",
-      "import": "./src/app-links/index.js"
+    "./native/app-links": {
+      "types": "./types/native/app-links.d.ts",
+      "import": "./src/native/app-links/index.js"
     },
     "./auth": {
       "types": "./types/auth.d.ts",
       "import": "./src/auth/index.js"
     },
-    "./back-button": {
-      "types": "./types/back-button.d.ts",
-      "import": "./src/back-button/index.js"
+    "./native/back-button": {
+      "types": "./types/native/back-button.d.ts",
+      "import": "./src/native/back-button/index.js"
     },
-    "./system-bars": {
-      "types": "./types/system-bars.d.ts",
-      "import": "./src/system-bars/index.js"
+    "./native/system-bars": {
+      "types": "./types/native/system-bars.d.ts",
+      "import": "./src/native/system-bars/index.js"
     },
     "./keyboard": {
       "types": "./types/keyboard.d.ts",
       "import": "./src/keyboard/index.js"
     },
-    "./haptics": {
-      "types": "./types/haptics.d.ts",
-      "import": "./src/haptics/index.js"
+    "./native/haptics": {
+      "types": "./types/native/haptics.d.ts",
+      "import": "./src/native/haptics/index.js"
     },
-    "./share": {
-      "types": "./types/share.d.ts",
-      "import": "./src/share/index.js"
+    "./native/share": {
+      "types": "./types/native/share.d.ts",
+      "import": "./src/native/share/index.js"
     },
     "./decorators/with-debounce": {
       "types": "./types/decorators/with-debounce.d.ts",
@@ -90,17 +90,17 @@
       "import": "./src/form/index.js"
     },
     "./hydrate": "./src/hydrate.js",
-    "./live-update": {
-      "types": "./types/live-update.d.ts",
-      "import": "./src/live-update/index.js"
+    "./native/live-update": {
+      "types": "./types/native/live-update.d.ts",
+      "import": "./src/native/live-update/index.js"
     },
-    "./mobile": {
-      "types": "./types/mobile.d.ts",
-      "import": "./src/mobile/index.js"
+    "./native": {
+      "types": "./types/native/index.d.ts",
+      "import": "./src/native/index.js"
     },
-    "./native-update": {
-      "types": "./types/native-update.d.ts",
-      "import": "./src/native-update/index.js"
+    "./native/update": {
+      "types": "./types/native/update.d.ts",
+      "import": "./src/native/update/index.js"
     },
     "./pwa": {
       "types": "./types/pwa.d.ts",

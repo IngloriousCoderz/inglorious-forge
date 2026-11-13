@@ -2,7 +2,7 @@ export const DEFAULT_BUCKET = "live-updates"
 
 /**
  * Where `publishLiveUpdate` from `@inglorious/supabase/live-update` puts the
- * manifest, for `watchLiveUpdate` from `@inglorious/web/live-update`.
+ * manifest, for `watchLiveUpdate` from `@inglorious/web/native/live-update`.
  *
  * @param {string} projectUrl
  * @param {{ bucket?: string }} [options]

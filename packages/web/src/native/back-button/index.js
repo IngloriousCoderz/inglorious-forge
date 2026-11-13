@@ -1,4 +1,4 @@
-import { isNative } from "../mobile/index.js"
+import { isNative } from "../index.js"
 
 const DEFAULT_ROOT_PATHS = ["/"]
 const BACK_BUTTON_EVENT = "backButton"

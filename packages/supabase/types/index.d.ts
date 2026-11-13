@@ -68,7 +68,7 @@ export interface SupabaseNativeUpdateOptions {
 }
 
 /**
- * The adapter of `createNativeUpdate` from `@inglorious/web/native-update`:
+ * The adapter of `createNativeUpdate` from `@inglorious/web/native/update`:
  * each platform's minimum build from a table with `platform`, `min_build` and
  * `store_url`, readable before sign-in.
  */

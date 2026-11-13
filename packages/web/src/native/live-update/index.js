@@ -1,4 +1,4 @@
-import { isNative } from "../mobile/index.js"
+import { isNative } from "../index.js"
 
 const DEFAULT_ID = "liveUpdate"
 const ONE_HOUR_MS = 3_600_000

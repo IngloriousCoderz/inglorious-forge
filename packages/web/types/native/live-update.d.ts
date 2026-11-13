@@ -1,4 +1,4 @@
-import { Api } from "./mount"
+import { Api } from "../mount"
 
 /** What a publisher puts at the manifest URL. */
 export interface LiveUpdateManifest {

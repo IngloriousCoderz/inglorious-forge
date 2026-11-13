@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.23.2
+
+### Patch Changes
+
+- Imports and docs follow `@inglorious/web` moving its native modules under `@inglorious/web/native`.
+
 ## 1.23.1
 
 ### Patch Changes

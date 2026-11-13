@@ -1,5 +1,11 @@
 # @inglorious/supabase
 
+## 0.10.1
+
+### Patch Changes
+
+- Imports and docs follow `@inglorious/web` moving its native modules under `@inglorious/web/native`.
+
 ## 0.10.0
 
 ### Minor Changes

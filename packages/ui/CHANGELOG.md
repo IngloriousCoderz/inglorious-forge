@@ -1,5 +1,13 @@
 # @inglorious/ui
 
+## 9.20.1
+
+### Patch Changes
+
+- Imports and docs follow `@inglorious/web` moving its native modules under `@inglorious/web/native`.
+- Updated dependencies
+  - @inglorious/web@6.28.0
+
 ## 9.20.0
 
 ### Minor Changes

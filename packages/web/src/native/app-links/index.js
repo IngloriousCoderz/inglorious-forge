@@ -1,4 +1,4 @@
-import { isNative } from "../mobile/index.js"
+import { isNative } from "../index.js"
 
 const DEFAULT_ID = "router"
 const URL_OPEN_EVENT = "appUrlOpen"

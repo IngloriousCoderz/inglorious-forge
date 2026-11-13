@@ -1465,7 +1465,7 @@ Updates are not optional. A new version downloads in the background, and is appl
 It also checks for a new version every hour and on every return to the foreground: a phone suspends an installed PWA rather than closing it, so the browser's own check may never come.
 
 ```javascript
-import { isNative } from "@inglorious/web/mobile"
+import { isNative } from "@inglorious/web/native"
 import { watchPwaUpdate } from "@inglorious/web/pwa"
 import { registerSW } from "virtual:pwa-register"
 
@@ -1518,14 +1518,14 @@ Inglorious UI's `Snackbar` is the usual place for it. `watchPwaUpdate` takes `{ 
 
 ## Native App Updates
 
-A Capacitor app carries its web code inside the binary, so only the stores update it. `@inglorious/web/native-update` makes an update mandatory: the app reads a minimum build per platform, and a build below it is blocked until the user updates. `@inglorious/create-app --mobile --push` sets it up with Supabase.
+A Capacitor app carries its web code inside the binary, so only the stores update it. `@inglorious/web/native/update` makes an update mandatory: the app reads a minimum build per platform, and a build below it is blocked until the user updates. `@inglorious/create-app --mobile --push` sets it up with Supabase.
 
 ```javascript
 import { App } from "@capacitor/app"
 import {
   createNativeUpdate,
   watchNativeUpdate,
-} from "@inglorious/web/native-update"
+} from "@inglorious/web/native/update"
 
 const types = { NativeUpdate: [createNativeUpdate({ adapter }), template] }
 const entities = { nativeUpdate: { type: "NativeUpdate" } }
@@ -1553,12 +1553,15 @@ A failed check keeps the last answer, so nobody is blocked by being offline. Ren
 
 ## Live Updates
 
-A store release is only needed for native changes. `@inglorious/web/live-update` replaces the web code inside a Capacitor app with a newer published bundle, through [`@capawesome/capacitor-live-update`](https://capawesome.io/plugins/live-update/), whose open source plugin downloads from any URL. `publishLiveUpdate` from `@inglorious/supabase/live-update` publishes one.
+A store release is only needed for native changes. `@inglorious/web/native/live-update` replaces the web code inside a Capacitor app with a newer published bundle, through [`@capawesome/capacitor-live-update`](https://capawesome.io/plugins/live-update/), whose open source plugin downloads from any URL. `publishLiveUpdate` from `@inglorious/supabase/live-update` publishes one.
 
 ```javascript
 import { App } from "@capacitor/app"
 import { LiveUpdate } from "@capawesome/capacitor-live-update"
-import { createLiveUpdate, watchLiveUpdate } from "@inglorious/web/live-update"
+import {
+  createLiveUpdate,
+  watchLiveUpdate,
+} from "@inglorious/web/native/live-update"
 
 const types = { LiveUpdate: createLiveUpdate({ plugin: LiveUpdate }) }
 const entities = { liveUpdate: { type: "LiveUpdate" } }
@@ -1628,11 +1631,11 @@ The adapter talks to the backend. `supabaseAuth` from `@inglorious/supabase` is 
 
 ## App Links
 
-With Universal Links (iOS) and App Links (Android), a link to the app's domain opens the installed app instead of the browser. `@inglorious/web/app-links` sends the router to that link's path, both for the link that started the app and for links that arrive while it runs. It does nothing outside a native app.
+With Universal Links (iOS) and App Links (Android), a link to the app's domain opens the installed app instead of the browser. `@inglorious/web/native/app-links` sends the router to that link's path, both for the link that started the app and for links that arrive while it runs. It does nothing outside a native app.
 
 ```javascript
 import { App } from "@capacitor/app"
-import { watchAppLinks } from "@inglorious/web/app-links"
+import { watchAppLinks } from "@inglorious/web/native/app-links"
 
 watchAppLinks(App, store)
 ```
@@ -1645,11 +1648,11 @@ The operating system opens the app only when the domain vouches for it: iOS read
 
 ## Back Button
 
-On Android, the back button and the back gesture go back in history. `@inglorious/web/back-button` closes the app instead on a root path, a top-level page like a tab bar's, and when there is no history left, as other Android apps do. It does nothing outside a native app, and iOS has no back button.
+On Android, the back button and the back gesture go back in history. `@inglorious/web/native/back-button` closes the app instead on a root path, a top-level page like a tab bar's, and when there is no history left, as other Android apps do. It does nothing outside a native app, and iOS has no back button.
 
 ```javascript
 import { App } from "@capacitor/app"
-import { watchBackButton } from "@inglorious/web/back-button"
+import { watchBackButton } from "@inglorious/web/native/back-button"
 
 watchBackButton(App, { rootPaths: ["/", "/search", "/profile"] })
 ```
@@ -1660,11 +1663,11 @@ watchBackButton(App, { rootPaths: ["/", "/search", "/profile"] })
 
 ## System Bars
 
-The status bar and Android's navigation bar follow the device's light or dark mode, so a light app on a phone in dark mode gets white icons on a white page. `@inglorious/web/system-bars` sets them from the app's own `color-scheme`, which every Inglorious UI theme sets, and follows it when the theme class changes. An app whose `color-scheme` is `light dark` keeps the device's style. It does nothing outside a native app.
+The status bar and Android's navigation bar follow the device's light or dark mode, so a light app on a phone in dark mode gets white icons on a white page. `@inglorious/web/native/system-bars` sets them from the app's own `color-scheme`, which every Inglorious UI theme sets, and follows it when the theme class changes. An app whose `color-scheme` is `light dark` keeps the device's style. It does nothing outside a native app.
 
 ```javascript
 import { SystemBars } from "@capacitor/core"
-import { watchSystemBars } from "@inglorious/web/system-bars"
+import { watchSystemBars } from "@inglorious/web/native/system-bars"
 
 watchSystemBars(SystemBars)
 ```
@@ -1698,7 +1701,7 @@ It returns a function that stops following.
 
 ## Share
 
-`@inglorious/web/share` is the type behind a share button. `share` hands a title, a text, a link or a file to whatever the device does best, and the entity says what happened:
+`@inglorious/web/native/share` is the type behind a share button. `share` hands a title, a text, a link or a file to whatever the device does best, and the entity says what happened:
 
 - in a native app, the system's share sheet, through [`@capacitor/share`](https://capacitorjs.com/docs/apis/share) when you hand it over;
 - in a browser, a file (a `url` with a `fileName`) downloads, since a browser has nowhere better to put it;
@@ -1706,7 +1709,7 @@ It returns a function that stops following.
 
 ```javascript
 import { Share } from "@capacitor/share"
-import { createShare } from "@inglorious/web/share"
+import { createShare } from "@inglorious/web/native/share"
 
 const types = { Share: createShare({ plugin: Share }) }
 
@@ -1732,7 +1735,7 @@ iOS and Android can clear a WebView's `localStorage` when the device runs low on
 ```javascript
 import { Preferences } from "@capacitor/preferences"
 import { withStorage } from "@inglorious/store/storage"
-import { createNativeStorage } from "@inglorious/web/mobile"
+import { createNativeStorage } from "@inglorious/web/native"
 
 const preferences = createNativeStorage({ plugin: Preferences })
 
@@ -1751,11 +1754,11 @@ createClient(url, key, { auth: { storage: preferences } })
 
 ## Haptics
 
-`@inglorious/web/haptics` plays taps the user can feel. In a native app it uses the system's haptics through [`@capacitor/haptics`](https://capacitorjs.com/docs/apis/haptics), once you hand the plugin over. Elsewhere it vibrates where the browser can (Chrome on Android), once the user has tapped the page; iOS browsers stay silent. Every call returns whether it played.
+`@inglorious/web/native/haptics` plays taps the user can feel. In a native app it uses the system's haptics through [`@capacitor/haptics`](https://capacitorjs.com/docs/apis/haptics), once you hand the plugin over. Elsewhere it vibrates where the browser can (Chrome on Android), once the user has tapped the page; iOS browsers stay silent. Every call returns whether it played.
 
 ```javascript
 import { Haptics } from "@capacitor/haptics"
-import { haptics } from "@inglorious/web/haptics"
+import { haptics } from "@inglorious/web/native/haptics"
 
 haptics.use(Haptics)
 

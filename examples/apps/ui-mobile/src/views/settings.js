@@ -3,7 +3,7 @@ import { Input } from "@inglorious/ui/input"
 import { Select } from "@inglorious/ui/select"
 import { Switch } from "@inglorious/ui/switch"
 import { html } from "@inglorious/web"
-import { haptics } from "@inglorious/web/haptics"
+import { haptics } from "@inglorious/web/native/haptics"
 
 import { themes } from "../themes.js"
 

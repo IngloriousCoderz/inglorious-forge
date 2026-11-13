@@ -1,4 +1,4 @@
-import { Api } from "./mount"
+import { Api } from "../mount"
 
 /** What `watchAppLinks` needs of `App` from `@capacitor/app`. */
 export interface AppLinksApp {

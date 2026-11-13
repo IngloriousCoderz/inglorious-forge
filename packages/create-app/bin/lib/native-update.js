@@ -53,7 +53,7 @@ function nativeUpdateSource(app) {
     'import { supabaseNativeUpdate } from "@inglorious/supabase"',
     'import { html } from "@inglorious/web"',
     'import { when } from "@inglorious/web/directives/when"',
-    'import { createNativeUpdate } from "@inglorious/web/native-update"',
+    'import { createNativeUpdate } from "@inglorious/web/native/update"',
     `import { supabase } from "${relative(at, "src/api/supabase")}"`,
   ]
   if (app.ui) imports.push('import { Button } from "@inglorious/ui/button"')
