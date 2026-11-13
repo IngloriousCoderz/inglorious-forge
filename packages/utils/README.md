@@ -131,7 +131,9 @@ const scores = readJSON("high-scores", [])
 writeJSON("high-scores", [...scores, 1200]) // => true
 ```
 
-Pass another `Storage` as the last argument, such as `sessionStorage` or a fake in tests.
+Pass another `Storage` as the last argument, such as `sessionStorage` or a fake in tests, or a function giving one: a function giving nothing means no storage.
+
+`readItem` and `writeItem` do the same for plain strings, and also take a storage answering with promises, such as Capacitor Preferences: `readItem` then gives its promise back. `parseJSON(raw, fallback)` parses what was read.
 
 ### Using promises as they settle
 
@@ -164,14 +166,14 @@ The four largest modules are also available as top-level subpaths, so you don't 
 know whether a helper lives under `data-structures` or `math`:
 
 - **`@inglorious/utils/functions`**: `compose`, `debounce`, `isFunction`, `pipe`, `throttle`.
-- **`@inglorious/utils/object`**: Single-object helpers (`clone`, `get`, `set`, `produce`, ...) alongside multi-object helpers (`merge`, `extend`, `defaults`, ...).
+- **`@inglorious/utils/object`**: Single-object helpers (`clone`, `get`, `pick`, `set`, `produce`, ...) alongside multi-object helpers (`merge`, `extend`, `defaults`, ...).
 - **`@inglorious/utils/quaternion`**: `quaternion` and `combine`.
 - **`@inglorious/utils/vector`**: Single-vector helpers (`magnitude`, `normalize`, `rotate`, ...) alongside multi-vector helpers (`cross`, `dot`, `sum`, ...).
 
 Two modules stand on their own:
 
-- **`@inglorious/utils/promise`**: `asSettled`, for using promises in the order they settle.
-- **`@inglorious/utils/storage`**: `readJSON` and `writeJSON`, for keeping JSON in `localStorage`.
+- **`@inglorious/utils/promise`**: `asSettled`, for using promises in the order they settle, and `isPromiseLike`.
+- **`@inglorious/utils/storage`**: `readJSON` and `writeJSON`, for keeping JSON in `localStorage`, and `readItem`, `writeItem` and `parseJSON` underneath them.
 
 `divide`, `mod`, `multiply` and `power` accept either a scalar or one or more vectors:
 a scalar is applied to every component, while vectors are combined component-wise.

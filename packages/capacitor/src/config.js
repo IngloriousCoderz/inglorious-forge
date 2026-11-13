@@ -10,6 +10,15 @@ const CAPACITOR_CONFIG_FILES = [
 ]
 const PUSH_PLUGIN = "@capacitor-firebase/messaging"
 const ANALYTICS_PLUGIN = "@capacitor-firebase/analytics"
+const USER_DEFAULTS = {
+  NSPrivacyAccessedAPIType: "NSPrivacyAccessedAPICategoryUserDefaults",
+  NSPrivacyAccessedAPITypeReasons: ["CA92.1"],
+}
+// Plugins that call Apple's required-reason APIs without a privacy manifest of
+// their own, so the app has to declare them.
+const PLUGIN_API_TYPES = {
+  "@capawesome/capacitor-live-update": [USER_DEFAULTS],
+}
 
 /**
  * Everything `configure` and `assets` act on: the app's id and name from the
@@ -35,11 +44,14 @@ export async function readSettings(root, env = process.env) {
     appLinks: native.appLinks?.domain
       ? normalizeAppLinks(native.appLinks)
       : null,
-    ios: { teamId: null, infoPlist: {}, ...native.ios },
+    ios: { teamId: null, infoPlist: {}, privacyManifest: null, ...native.ios },
     android: { sha256: [], permissions: [], ...native.android },
     assets: native.assets ?? {},
     hasPush: PUSH_PLUGIN in dependencies,
     hasAnalytics: ANALYTICS_PLUGIN in dependencies,
+    accessedApiTypes: Object.entries(PLUGIN_API_TYPES)
+      .filter(([plugin]) => plugin in dependencies)
+      .flatMap(([, types]) => types),
   }
 }
 

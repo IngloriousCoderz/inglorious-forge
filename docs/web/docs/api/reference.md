@@ -122,6 +122,34 @@ Render raw HTML.
 html`<div>${unsafeHTML(entity.content)}</div>`
 ```
 
+## Entry points
+
+The root entry point is kept small: `import { mount, html, svg } from "@inglorious/web"`. Everything else has its own subpath, so it can be tree-shaken:
+
+| Subpath                         | What it holds                                                                                                     |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `@inglorious/web/directives/*`  | lit-html directives: `class-map`, `ref`, `repeat`, `style-map`, `unsafe-html`, `when`, ...                        |
+| `@inglorious/web/static`        | `staticHtml`, `unsafeStatic`                                                                                      |
+| `@inglorious/web/hydrate`       | Hydrating server-rendered pages                                                                                   |
+| `@inglorious/web/test`          | `render`, `trigger`                                                                                               |
+| `@inglorious/web/form`          | [`Form`](/featured/form)                                                                                          |
+| `@inglorious/web/router`        | [`Router`, `setRoutes`, `pageRouteChange`, `safePath`](/featured/router)                                          |
+| `@inglorious/web/decorators/*`  | [`with-debounce`, `with-throttle`, `with-error-boundary`, `with-live-reload`](/advanced/decorators)               |
+| `@inglorious/web/sensors/*`     | [`compass`, `element-size`, `geolocation`, `media-query`, `network-status`, `page-visibility`](/featured/sensors) |
+| `@inglorious/web/auth`          | [`createAuth`, `watchAuth`](/featured/sign-in)                                                                    |
+| `@inglorious/web/analytics`     | [`createAnalytics`](/featured/analytics)                                                                          |
+| `@inglorious/web/push`          | [`createPushPrompt`](/featured/push)                                                                              |
+| `@inglorious/web/share`         | [`createShare`](/featured/share)                                                                                  |
+| `@inglorious/web/mobile`        | `isNative`, [`createNativeStorage`](/featured/native-storage)                                                     |
+| `@inglorious/web/haptics`       | [`haptics`](/featured/haptics)                                                                                    |
+| `@inglorious/web/keyboard`      | [`watchKeyboard`](/featured/keyboard)                                                                             |
+| `@inglorious/web/back-button`   | [`watchBackButton`](/featured/back-button)                                                                        |
+| `@inglorious/web/system-bars`   | [`watchSystemBars`](/featured/system-bars)                                                                        |
+| `@inglorious/web/app-links`     | [`watchAppLinks`](/featured/app-links)                                                                            |
+| `@inglorious/web/pwa`           | [`watchPwaUpdate`, `PwaUpdate`](/featured/pwa-updates)                                                            |
+| `@inglorious/web/native-update` | [`createNativeUpdate`, `watchNativeUpdate`](/featured/native-updates)                                             |
+| `@inglorious/web/live-update`   | [`createLiveUpdate`, `watchLiveUpdate`](/featured/live-updates)                                                   |
+
 ## Middleware
 
 Middleware can intercept and modify events before they reach handlers.

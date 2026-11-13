@@ -223,3 +223,14 @@ export const settingsType: TypeDefinition<SettingsEntity> = [
   },
   withStorage(["theme"], { key: "settings" }),
 ]
+
+// A storage answering with promises, such as Capacitor Preferences, fits too.
+export const asyncSettingsType: TypeDefinition<SettingsEntity> = [
+  {},
+  withStorage(["theme"], {
+    storage: () => ({
+      getItem: async (key: string) => key,
+      setItem: async () => {},
+    }),
+  }),
+]

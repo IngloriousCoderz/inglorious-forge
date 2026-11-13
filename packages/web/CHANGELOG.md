@@ -1,5 +1,19 @@
 # @inglorious/react-store
 
+## 6.27.0
+
+### Minor Changes
+
+- `createNativeStorage({ plugin })` in `@inglorious/web/mobile`: a storage for `withStorage` backed by Capacitor Preferences in the native app, and `localStorage` itself in a browser. It also serves as Supabase's `auth.storage`.
+
+### Patch Changes
+
+- The README's entry points name `@inglorious/web/sensors/geolocation` and `@inglorious/web/sensors/compass`, which exist, instead of paths that don't.
+- Updated dependencies
+- Updated dependencies
+  - @inglorious/store@12.6.0
+  - @inglorious/utils@5.4.0
+
 ## 6.26.2
 
 ### Patch Changes

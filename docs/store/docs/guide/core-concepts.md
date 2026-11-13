@@ -141,7 +141,7 @@ const types = {
 
       // Trigger other events (queued together)
       api.notify("analytics:log", { type: "showNotification" })
-      api.notify("remove", { id: entity.id }) // Remove after 3s? Use setTimeout
+      api.notify("remove", entity.id) // Take this entity out of the world
 
       // Access type definitions (advanced)
       const typeDef = api.getType("todoList")
@@ -325,7 +325,7 @@ const types = {
   },
 }
 
-store.notify("remove", { id: "tempFile" })
+store.notify("remove", "tempFile")
 // destroy handler fires for 'tempFile'
 ```
 

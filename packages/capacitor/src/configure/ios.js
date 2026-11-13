@@ -14,6 +14,8 @@ const ANALYTICS_OFF = {
   GOOGLE_ANALYTICS_IDFV_COLLECTION_ENABLED: false,
 }
 const GOOGLE_SERVICE_INFO = "GoogleService-Info.plist"
+const PRIVACY_MANIFEST = "PrivacyInfo.xcprivacy"
+const APP_GROUP = "App"
 const APP_DELEGATE = "AppDelegate.swift"
 const MAIN_VIEW_CONTROLLER = "MainViewController.swift"
 const MAIN_STORYBOARD = path.join("Base.lproj", "Main.storyboard")
@@ -113,9 +115,94 @@ export async function configureIos(project, settings) {
     addPushMethods(path.join(appRoot, APP_DELEGATE))
   }
 
+  if (settings.ios.privacyManifest || settings.accessedApiTypes.length) {
+    writePrivacyManifest(path.join(appRoot, PRIVACY_MANIFEST), settings)
+    if (
+      !readFileSync(pbxprojPath(settings.root), "utf8").includes(
+        PRIVACY_MANIFEST,
+      )
+    ) {
+      addResource(ios, PRIVACY_MANIFEST)
+    }
+  }
+
   if (settings.ios.swipeBack) {
     await enableSwipeBack(ios, settings.root, appRoot)
   }
+}
+
+/**
+ * Writes the app's privacy manifest: what is already in it, what the app
+ * declares in `ios.privacyManifest`, and the required-reason APIs its plugins
+ * use without declaring them.
+ */
+function writePrivacyManifest(file, settings) {
+  const current = existsSync(file)
+    ? plist.parse(readFileSync(file, "utf8"))
+    : {}
+  const declared = settings.ios.privacyManifest ?? {}
+  const next = {
+    ...current,
+    ...declared,
+    NSPrivacyTracking:
+      declared.NSPrivacyTracking ?? current.NSPrivacyTracking ?? false,
+    NSPrivacyTrackingDomains: union(
+      current.NSPrivacyTrackingDomains,
+      declared.NSPrivacyTrackingDomains,
+    ),
+    NSPrivacyCollectedDataTypes:
+      declared.NSPrivacyCollectedDataTypes ??
+      current.NSPrivacyCollectedDataTypes ??
+      [],
+    NSPrivacyAccessedAPITypes: mergeApiTypes([
+      ...(current.NSPrivacyAccessedAPITypes ?? []),
+      ...(declared.NSPrivacyAccessedAPITypes ?? []),
+      ...settings.accessedApiTypes,
+    ]),
+  }
+  if (JSON.stringify(next) === JSON.stringify(current)) return
+  writeFileSync(file, plist.build(next))
+}
+
+function mergeApiTypes(types) {
+  const byType = new Map()
+  for (const type of types) {
+    const name = type.NSPrivacyAccessedAPIType
+    byType.set(name, {
+      NSPrivacyAccessedAPIType: name,
+      NSPrivacyAccessedAPITypeReasons: union(
+        byType.get(name)?.NSPrivacyAccessedAPITypeReasons,
+        type.NSPrivacyAccessedAPITypeReasons,
+      ),
+    })
+  }
+  return [...byType.values()]
+}
+
+function union(first = [], second = []) {
+  return [...new Set([...first, ...second])]
+}
+
+// Trapeze's addFile compiles any file that is not a .plist or .strings, and a
+// privacy manifest has to be copied into the bundle instead.
+function addResource(ios, fileName) {
+  const groups = ios.pbxProject?.hash.project.objects.PBXGroup ?? {}
+  const appGroup = Object.entries(groups).find(
+    ([, group]) =>
+      group.isa === "PBXGroup" &&
+      (group.name === APP_GROUP || group.path === APP_GROUP),
+  )
+  const [appGroupId] = appGroup ?? []
+  ios.addResourceFile(fileName, appGroupId)
+  const references = ios.pbxProject?.hash.project.objects.PBXFileReference ?? {}
+  for (const reference of Object.values(references)) {
+    if (reference?.path !== `"${fileName}"`) continue
+    reference.lastKnownFileType = "text.xml"
+    for (const [key, value] of Object.entries(reference)) {
+      if (value === undefined) delete reference[key]
+    }
+  }
+  ios.markPbxModified()
 }
 
 async function enableSwipeBack(ios, root, appRoot) {

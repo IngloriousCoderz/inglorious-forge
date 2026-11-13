@@ -227,9 +227,17 @@ const unsubscribe = store.subscribe(() => {
 unsubscribe()
 ```
 
+### `getEntity(id)`
+
+One entity, or `undefined`, for code outside a handler: a test driving the store, or anything holding the store rather than an event's `api`. Handlers use `api.getEntity`, which asks the store the same thing:
+
+```javascript
+store.getEntity("workTodos").todos
+```
+
 ### `getState()`
 
-Get the current state object:
+Every entity by id, the Redux-compatible way:
 
 ```javascript
 const state = store.getState()
@@ -247,6 +255,22 @@ store.notify("event1", payload1)
 store.notify("event2", payload2)
 store.update() // Subscribers notified once
 ```
+
+### `setState(entities)`
+
+Replaces every entity at once, such as state coming from a server: entities that are new get `create`, entities that are gone get `destroy`.
+
+```javascript
+store.setState({ workTodos: { type: "TodoList", todos: [] } })
+```
+
+### `reset()`
+
+Puts back the entities the store was created with, and clears a [pause](#pause-and-resume).
+
+### `getType(typeName)` and `setType(typeName, type)`
+
+Read a type as the store composed it, or replace one at runtime, as hot module reloading does. Entities of a type added later get their `create` then.
 
 ### `replaceReducer(nextReducer)`
 
@@ -464,7 +488,7 @@ const types = {
   },
 }
 
-store.notify("remove", { id: "tempFile" })
+store.notify("remove", "tempFile")
 // destroy handler fires only for "tempFile" entity
 ```
 
@@ -486,14 +510,43 @@ store.notify("add", {
 
 ### `remove`
 
-Built-in event to remove an entity:
+Built-in event to remove an entity, given its id:
 
 ```javascript
-store.notify("remove", { id: "workTodos" })
+store.notify("remove", "workTodos")
 
 // Triggers: destroy event for workTodos
 // Result: workTodos entity removed from state
 ```
+
+### `patch` and `replace`
+
+Change an entity that is already standing, without `create` or `destroy`: it never stopped standing. `patch` touches only what it names; `replace` installs the whole entity, so anything it doesn't name is gone:
+
+```javascript
+store.notify("patch", { id: "counter1", value: 10 })
+store.notify("replace", { id: "counter1", type: "Counter", value: 10 })
+```
+
+A field set to `undefined` is set to nothing in either, rather than left alone. Naming a different `type` moves the entity onto that type's handlers.
+
+### `update`
+
+The frame tick, which the engine sends with the elapsed time. Not sent to entities while the world is paused.
+
+### `pause` and `resume`
+
+`pause` stops the store handing out `update` events, and `resume` starts it again. Input, custom events and rendering keep flowing, which is what lets a pause menu resume the game:
+
+```javascript
+store.notify("pause")
+store.notify("update") // reaches no one
+
+store.notify("resume")
+store.notify("update") // updates as usual
+```
+
+Entities that move by integrating a delta time need to know nothing about pausing: their `update` is simply not called. An entity with `updatesWhilePaused: true`, such as an overlay, keeps updating. `reset()` clears the pause. Types that handle `pause` and `resume` still hear them, so one event can halt the world and record why.
 
 ### `stateChange`
 
@@ -724,6 +777,42 @@ handleAsync(
     // "global": fetchTodosSuccess
   },
 )
+```
+
+## `withStorage(fields, options?)`
+
+Keeps some of an entity's fields in storage, as a byproduct: the entity stays the one source of truth, and nothing else reads storage. The fields come back when the entity is created, before the type's own `create` (whose `??=` defaults then keep them), and are written back after any handler that changes them.
+
+```javascript
+import { withStorage } from "@inglorious/store/storage"
+
+const types = {
+  Settings: [Settings, withStorage(["theme", "volume"], { key: "my-app" })],
+  Draft: [Draft, withStorage(["text"], { storage: () => sessionStorage })],
+}
+```
+
+- Put it last in the type's array: it saves after the handlers before it.
+- `key`: where the fields go, a string or a function of the entity. Defaults to the entity's id.
+- `storage`: a function giving the storage, `localStorage` by default. Any Web Storage works, or anything with the same `getItem` and `setItem`. A function giving nothing means nothing is kept.
+- Storage that is missing, full or refusing, as in a private window, only means nothing is kept.
+
+### Storages that answer later
+
+A storage whose `getItem` returns a promise works too, such as Capacitor Preferences through [`createNativeStorage`](https://inglorious.dev/web/featured/native-storage). The entity then starts with its defaults. When the storage answers, `#<id>:storageRestore` brings back the fields no handler has changed in the meantime, and nothing is written before that. A type's own `storageRestore(entity, restored, api)` runs after, to announce what came back:
+
+```javascript
+const Session = [
+  {
+    create(entity) {
+      entity.user ??= null
+    },
+    storageRestore(entity, restored, api) {
+      api.notify("sessionChange", { user: entity.user })
+    },
+  },
+  withStorage(["user"], { storage: () => preferences }),
+]
 ```
 
 ## `compute(fn, selectors)`

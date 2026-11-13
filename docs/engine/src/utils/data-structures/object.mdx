@@ -15,6 +15,7 @@ import {
   map,
   merge,
   mergeWith,
+  pick,
   produce,
   serialize,
   set,
@@ -233,6 +234,12 @@ Like `merge`, but with a custom `merger` function.
 <code>const obj2 = \{ b: [4, 5], c: 6 \}</code>&nbsp;
 
 <code>mergeWith(merger, obj1, obj2) == {toString(mergeWith((targetValue, sourceValue) => isArray(targetValue) && isArray(sourceValue) ? targetValue.concat(sourceValue) : undefined, { a: 1, b: [2, 3] }, { b: [4, 5], c: 6 }))}</code>&nbsp;
+
+## Pick
+
+A new object with only the given keys that the source has, such as the fields of an entity worth keeping.
+
+<code>pick(\{ theme: "dark", isMenuOpen: true \}, ["theme", "volume"]) == {toString(pick({ theme: "dark", isMenuOpen: true }, ["theme", "volume"]))}</code>&nbsp;
 
 ## Produce
 

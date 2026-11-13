@@ -2,7 +2,13 @@ import { Meta } from '@storybook/addon-docs/blocks'
 
 import { toString as bToString } from '@inglorious/utils/data-structures/boolean'
 import { toString } from '@inglorious/utils/object'
-import { readJSON, writeJSON } from '@inglorious/utils/storage'
+import {
+  parseJSON,
+  readItem,
+  readJSON,
+  writeItem,
+  writeJSON,
+} from '@inglorious/utils/storage'
 
 <Meta title="Utils/Storage/Storage" />
 
@@ -32,8 +38,32 @@ Reads a value back as JSON, or answers the fallback when there is nothing usable
 
 ## Other Storage
 
-Both take the storage to use as their last argument, and default to `localStorage`. Pass `sessionStorage` to forget when the tab closes, or a fake in tests.
+Both take the storage to use as their last argument, and default to `localStorage`. Pass `sessionStorage` to forget when the tab closes, or a fake in tests. A function giving the storage works too, and one giving nothing means there is no storage, rather than falling back to `localStorage`.
 
 <code>writeJSON("docs.draft", "Dear diary", sessionStorage) == {bToString(writeJSON("docs.draft", "Dear diary", sessionStorage))}</code>&nbsp;
 
 <code>readJSON("docs.draft", "", sessionStorage) == {toString((() => { writeJSON("docs.draft", "Dear diary", sessionStorage); return readJSON("docs.draft", "", sessionStorage) })())}</code>&nbsp;
+
+<code>writeJSON("docs.draft", "Dear diary", () => undefined) == {bToString(writeJSON("docs.draft", "Dear diary", () => undefined))}</code>&nbsp;
+
+## Read and Write Items
+
+`readItem` and `writeItem` do the same for plain strings, without JSON, and never throw either.
+
+<code>writeItem("docs.theme", "dark") == {bToString(writeItem("docs.theme", "dark"))}</code>&nbsp;
+
+<code>readItem("docs.theme") == {toString((() => { writeItem("docs.theme", "dark"); return readItem("docs.theme") })())}</code>&nbsp;
+
+They also take a storage that answers with promises, such as Capacitor Preferences in a native app: `readItem` then gives back its promise, to await, and a failed write is swallowed like any other.
+
+```javascript
+const theme = await readItem("theme", preferences)
+```
+
+## Parse JSON
+
+Parses what was read, or answers the fallback (`null` by default) when nothing was read or it does not parse: `readJSON` is `parseJSON(readItem(key))`.
+
+<code>parseJSON('\{"score":1200\}') == {toString(parseJSON('{"score":1200}'))}</code>&nbsp;
+
+<code>parseJSON("\{not json", 0) == {toString(parseJSON("{not json", 0))}</code>&nbsp;

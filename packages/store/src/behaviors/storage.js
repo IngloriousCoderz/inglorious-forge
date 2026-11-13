@@ -1,3 +1,7 @@
+import { pick } from "@inglorious/utils/data-structures/object.js"
+import { isPromiseLike } from "@inglorious/utils/data-structures/promise.js"
+import { parseJSON, readItem, writeItem } from "@inglorious/utils/storage.js"
+
 const RENDER = /^render/
 
 /**
@@ -11,12 +15,20 @@ const RENDER = /^render/
  * Storage that is missing, full or refusing, as in a private window, only
  * means nothing is kept.
  *
+ * A storage whose `getItem` returns a promise, such as Capacitor Preferences,
+ * restores the fields once it answers: the entity starts with the type's
+ * defaults, and `storageRestore` then brings back the fields no handler has
+ * changed in the meantime. Nothing is written until then. A type's own
+ * `storageRestore(entity, restored, api)` runs after.
+ *
  * @param {string[]} fields The entity's fields to keep.
  * @param {Object} [options]
  * @param {string | ((entity: Object) => string)} [options.key] Where the
  *   fields are kept. Defaults to the entity's id.
  * @param {() => Storage | undefined} [options.storage] A Web Storage, such as
- *   `() => sessionStorage` for the tab only. Defaults to `localStorage`.
+ *   `() => sessionStorage` for the tab only, or anything with the same
+ *   `getItem` and `setItem`, answering now or with a promise. Defaults to
+ *   `localStorage`.
  *
  * @example
  * const types = {
@@ -34,13 +46,15 @@ export function withStorage(
   return (type) => {
     /** What is kept for each entity, as written. */
     const kept = new Map()
+    /** For entities still waiting on storage, their fields as created. */
+    const pending = new Map()
 
     function save(entity) {
-      if (!isEntity(entity)) return
+      if (!isEntity(entity) || pending.has(entity.id)) return
       const value = JSON.stringify(pick(entity, fields))
       if (kept.get(entity.id) === value) return
       kept.set(entity.id, value)
-      write(storage, keyOf(entity), value)
+      writeItem(keyOf(entity), value, storage)
     }
 
     const behavior = {}
@@ -56,50 +70,51 @@ export function withStorage(
     }
 
     behavior.create = function (entity, payload, api) {
-      const stored = read(storage, keyOf(entity))
+      const stored = readItem(keyOf(entity), storage)
+
+      if (isPromiseLike(stored)) {
+        const result = type.create?.call(this, entity, payload, api)
+        pending.set(entity.id, snapshot(entity, fields))
+        const { id } = entity
+        const restore = (value) =>
+          api.notify(`#${id}:storageRestore`, value ?? null)
+        stored.then(restore, () => restore(null))
+        return result
+      }
+
       kept.set(entity.id, stored)
-      Object.assign(entity, pick(parse(stored), fields))
+      Object.assign(entity, pick(parseJSON(stored), fields))
       const result = type.create?.call(this, entity, payload, api)
       save(entity)
       return result
+    }
+
+    behavior.storageRestore = function (entity, stored, api) {
+      const created = pending.get(entity.id)
+      if (!created) return
+      pending.delete(entity.id)
+      kept.set(entity.id, stored)
+
+      const restored = pick(parseJSON(stored), fields)
+      for (const [field, value] of Object.entries(restored)) {
+        if (JSON.stringify(entity[field]) === created[field]) {
+          entity[field] = value
+        }
+      }
+      type.storageRestore?.call(this, entity, restored, api)
+      save(entity)
     }
 
     return behavior
   }
 }
 
-function pick(source, fields) {
-  const picked = {}
-  for (const field of fields) {
-    if (source && field in source) picked[field] = source[field]
-  }
-  return picked
+function snapshot(entity, fields) {
+  return Object.fromEntries(
+    fields.map((field) => [field, JSON.stringify(entity[field])]),
+  )
 }
 
 function isEntity(value) {
   return Boolean(value) && typeof value === "object" && "id" in value
-}
-
-function parse(stored) {
-  try {
-    return stored ? JSON.parse(stored) : null
-  } catch {
-    return null
-  }
-}
-
-function read(storage, key) {
-  try {
-    return storage()?.getItem(key) ?? null
-  } catch {
-    return null
-  }
-}
-
-function write(storage, key, value) {
-  try {
-    storage()?.setItem(key, value)
-  } catch {
-    // Nothing is kept: the entity still has the value.
-  }
 }

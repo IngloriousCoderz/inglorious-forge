@@ -168,6 +168,16 @@ export function map<T extends object, R>(
   callback: (key: string, value: ObjectValue<T>, obj: T) => R,
 ): Record<string, R>
 
+/** A new object with only the given keys that the source has. */
+export function pick<T extends object, K extends keyof T & string>(
+  source: T | null | undefined,
+  keys: readonly K[],
+): Partial<Pick<T, K>>
+export function pick(
+  source: object | null | undefined,
+  keys: readonly string[],
+): Record<string, unknown>
+
 /**
  * Merges source objects into a target in place.
  */

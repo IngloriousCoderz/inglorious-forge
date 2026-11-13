@@ -1,5 +1,13 @@
 # @inglorious/utils
 
+## 5.4.0
+
+### Minor Changes
+
+- `pick` in `object`, `isPromiseLike` in `promise`, and `parseJSON`, `readItem` and `writeItem` in `storage`: reading and writing strings without throwing, with a storage, a function giving one, or one answering with promises. `readJSON` and `writeJSON` also take a function giving the storage.
+
+  `@inglorious/utils/promise` (without `.js`) resolves: it pointed to files that don't exist.
+
 ## 5.3.0
 
 ### Minor Changes

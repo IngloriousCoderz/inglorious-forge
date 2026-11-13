@@ -53,6 +53,24 @@ Browser sensors are exposed as entity types so state stays inside your store and
 
 **[Learn more →](./sensors.md)**
 
+### Sign-in
+
+The type behind a sign-in screen, for any backend through an adapter.
+
+- Passwords, codes by email, password reset
+- Account erasure, as the app stores require
+- `signedIn` after every sign-in, with whether the account is new
+
+**[Learn more →](./sign-in.md)**
+
+### Mobile and PWA
+
+What a Capacitor app or an installed PWA needs, each doing nothing where it doesn't apply.
+
+- [Share](./share.md), [Native Storage](./native-storage.md) and [Haptics](./haptics.md)
+- [PWA Updates](./pwa-updates.md), [Native App Updates](./native-updates.md) and [Live Updates](./live-updates.md)
+- [App Links](./app-links.md), [Back Button](./back-button.md), [System Bars](./system-bars.md) and [Keyboard](./keyboard.md)
+
 ## UI Primitives
 
 For ready-made UI primitives (controls, data display, navigation, feedback, layout, surfaces), use the **[Inglorious UI](https://inglorious.dev/ui)** design system. It follows the same entity/type pattern, so you can still override `render()` and `renderItem()` when you need custom behavior.

@@ -1,6 +1,12 @@
 import { afterEach, beforeEach, expect, test, vi } from "vitest"
 
-import { readJSON, writeJSON } from "./storage.js"
+import {
+  parseJSON,
+  readItem,
+  readJSON,
+  writeItem,
+  writeJSON,
+} from "./storage.js"
 
 let storage
 
@@ -62,4 +68,34 @@ test("it should use the browser's storage by default", () => {
   writeJSON("level", 3)
 
   expect(readJSON("level", 0)).toBe(3)
+})
+
+test("it should read and write strings as they are", () => {
+  expect(writeItem("theme", "dark", storage)).toBe(true)
+
+  expect(readItem("theme", storage)).toBe("dark")
+})
+
+test("it should treat a function giving nothing as no storage", () => {
+  vi.stubGlobal("localStorage", storage)
+
+  expect(writeItem("theme", "dark", () => undefined)).toBe(false)
+  expect(readItem("theme", () => undefined)).toBe(null)
+  expect(storage.has("theme")).toBe(false)
+})
+
+test("it should give back the promise of a storage answering later", async () => {
+  const later = {
+    getItem: async () => "dark",
+    setItem: () => Promise.reject(new Error("full")),
+  }
+
+  await expect(readItem("theme", later)).resolves.toBe("dark")
+  expect(writeItem("theme", "dark", later)).toBe(true)
+})
+
+test("it should parse JSON, or answer the fallback", () => {
+  expect(parseJSON('{"a":1}')).toEqual({ a: 1 })
+  expect(parseJSON("{nope", [])).toEqual([])
+  expect(parseJSON(null)).toBe(null)
 })

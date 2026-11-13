@@ -1,5 +1,16 @@
 # @inglorious/store
 
+## 12.6.0
+
+### Minor Changes
+
+- `withStorage` takes a storage whose `getItem` answers with a promise, such as Capacitor Preferences: the entity starts with its defaults, and `storageRestore` brings back the fields no handler changed meanwhile. A type's own `storageRestore` hears what came back.
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/utils@5.4.0
+
 ## 12.5.0
 
 ### Minor Changes

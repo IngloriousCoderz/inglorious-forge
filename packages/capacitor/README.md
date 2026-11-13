@@ -65,20 +65,37 @@ The `native` key of `package.json` holds them all. Every key is optional; the ap
 
 ### What `configure` does
 
-| Setting                                   | iOS                                                                                                        | Android                                                        |
-| ----------------------------------------- | ---------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| `appLinks`                                | Associated Domains entitlement                                                                             | Verified intent filter for `paths`                             |
-| `appLinks` + `teamId`                     | `public/.well-known/apple-app-site-association`                                                            |                                                                |
-| `appLinks` + `sha256`                     |                                                                                                            | `public/.well-known/assetlinks.json`                           |
-| `ios.teamId`                              | `DEVELOPMENT_TEAM`, so Xcode signs without asking                                                          |                                                                |
-| `ios.swipeBack`                           | A swipe from the left edge goes back: WebKit's back gesture, turned on in a generated `MainViewController` |                                                                |
-| `ios.infoPlist`                           | Info.plist entries                                                                                         |                                                                |
-| `android.permissions`                     |                                                                                                            | `<uses-permission>` entries                                    |
-| `@capacitor-firebase/messaging` installed | Push entitlement, background mode, AppDelegate methods                                                     |                                                                |
-| `@capacitor-firebase/analytics` installed | Collection off until consent                                                                               | Collection off until consent, and no advertising ID permission |
-| `GoogleService-Info.plist` in the root    | Copied into the app target                                                                                 |                                                                |
-| `google-services.json` in the root        |                                                                                                            | Copied to `android/app/`                                       |
-| always                                    |                                                                                                            | Keystores kept out of git                                      |
+| Setting                                       | iOS                                                                                                        | Android                                                        |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| `appLinks`                                    | Associated Domains entitlement                                                                             | Verified intent filter for `paths`                             |
+| `appLinks` + `teamId`                         | `public/.well-known/apple-app-site-association`                                                            |                                                                |
+| `appLinks` + `sha256`                         |                                                                                                            | `public/.well-known/assetlinks.json`                           |
+| `ios.teamId`                                  | `DEVELOPMENT_TEAM`, so Xcode signs without asking                                                          |                                                                |
+| `ios.swipeBack`                               | A swipe from the left edge goes back: WebKit's back gesture, turned on in a generated `MainViewController` |                                                                |
+| `ios.infoPlist`                               | Info.plist entries                                                                                         |                                                                |
+| `ios.privacyManifest`                         | `PrivacyInfo.xcprivacy` entries, with Apple's keys                                                         |                                                                |
+| `@capawesome/capacitor-live-update` installed | `PrivacyInfo.xcprivacy` declaring its use of `UserDefaults`, which it doesn't declare itself               |                                                                |
+| `android.permissions`                         |                                                                                                            | `<uses-permission>` entries                                    |
+| `@capacitor-firebase/messaging` installed     | Push entitlement, background mode, AppDelegate methods                                                     |                                                                |
+| `@capacitor-firebase/analytics` installed     | Collection off until consent                                                                               | Collection off until consent, and no advertising ID permission |
+| `GoogleService-Info.plist` in the root        | Copied into the app target                                                                                 |                                                                |
+| `google-services.json` in the root            |                                                                                                            | Copied to `android/app/`                                       |
+| always                                        |                                                                                                            | Keystores kept out of git                                      |
+
+The privacy manifest is merged with the one already in the project, so entries added by hand stay. Apple refuses a build that calls a required-reason API without a declared reason; `configure` declares the ones of known plugins that ship no manifest of their own, and `ios.privacyManifest` adds the app's:
+
+```json
+"privacyManifest": {
+  "NSPrivacyAccessedAPITypes": [
+    {
+      "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
+      "NSPrivacyAccessedAPITypeReasons": ["CA92.1"]
+    }
+  ]
+}
+```
+
+A file input that takes images (a `Button` with `accept="image/*"`) offers the camera on iOS, which closes the app unless `ios.infoPlist` has an `NSCameraUsageDescription`.
 
 Path patterns end in `*` to match a prefix: `/jobs*` is every path that starts with `/jobs`. `exclude` takes paths and, starting with `#`, fragments; only iOS can exclude, so on Android list in `paths` only what opens the app. Serve both `.well-known` files as `application/json`.
 

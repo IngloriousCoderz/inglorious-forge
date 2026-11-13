@@ -317,6 +317,22 @@ export function mergeWith(merger, target, ...sources) {
 }
 
 /**
+ * A new object with only the given keys that the source has.
+ *
+ * @param {Object | null | undefined} source - The object to pick from.
+ * @param {string[]} keys - The keys to keep.
+ * @returns {Object} The picked properties.
+ */
+export function pick(source, keys) {
+  const picked = {}
+  if (source == null) return picked
+  for (const key of keys) {
+    if (key in source) picked[key] = source[key]
+  }
+  return picked
+}
+
+/**
  * A utility function inspired by Immer's `produce` API. It provides a convenient
  * way to work with immutable data structures by allowing "mutations" on a
  * temporary draft.

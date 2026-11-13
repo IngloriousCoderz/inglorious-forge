@@ -10,6 +10,7 @@ import { tmpdir } from "node:os"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
 
+import plist from "plist"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
 
 import { configure } from "./index.js"
@@ -43,6 +44,7 @@ describe("configure", () => {
     expect(after.manifest).not.toContain("autoVerify")
     expect(after.plist).not.toContain("UIBackgroundModes")
     expect(after.appDelegate).toBe(before.appDelegate)
+    expect(after.privacyManifest).toBeNull()
     expect(after.gitignore).toMatch(/^\*\.jks$/m)
     expect(existsSync(path.join(root, "public"))).toBe(false)
   })
@@ -186,6 +188,90 @@ function writePackage(root, pkg) {
   writeFileSync(path.join(root, "package.json"), JSON.stringify(pkg))
 }
 
+describe("configure, privacy manifest", () => {
+  let root
+
+  beforeEach(() => {
+    root = mkdtempSync(path.join(tmpdir(), "inglorious-capacitor-"))
+    cpSync(FIXTURES, root, { recursive: true })
+  })
+
+  afterEach(() => {
+    rmSync(root, { recursive: true, force: true })
+  })
+
+  it("declares what plugins use without saying so, once, as a resource", async () => {
+    writePackage(root, {
+      dependencies: { "@capawesome/capacitor-live-update": "^8.0.0" },
+    })
+
+    await configure({ root, env: { CAPACITOR_CONFIG } })
+    const first = snapshot(root)
+    await configure({ root, env: { CAPACITOR_CONFIG } })
+
+    expect(snapshot(root)).toEqual(first)
+    expect(plist.parse(first.privacyManifest)).toEqual({
+      NSPrivacyTracking: false,
+      NSPrivacyTrackingDomains: [],
+      NSPrivacyCollectedDataTypes: [],
+      NSPrivacyAccessedAPITypes: [
+        {
+          NSPrivacyAccessedAPIType: "NSPrivacyAccessedAPICategoryUserDefaults",
+          NSPrivacyAccessedAPITypeReasons: ["CA92.1"],
+        },
+      ],
+    })
+    expect(first.pbxproj).toContain("PrivacyInfo.xcprivacy in Resources")
+    expect(first.pbxproj).not.toContain("PrivacyInfo.xcprivacy in Sources")
+  })
+
+  it("merges the declared entries with the manifest already there", async () => {
+    writeFileSync(
+      path.join(root, "ios", "App", "App", "PrivacyInfo.xcprivacy"),
+      plist.build({
+        NSPrivacyAccessedAPITypes: [
+          {
+            NSPrivacyAccessedAPIType:
+              "NSPrivacyAccessedAPICategoryUserDefaults",
+            NSPrivacyAccessedAPITypeReasons: ["1C8F.1"],
+          },
+        ],
+      }),
+    )
+    writePackage(root, {
+      dependencies: { "@capawesome/capacitor-live-update": "^8.0.0" },
+      native: {
+        ios: {
+          privacyManifest: {
+            NSPrivacyAccessedAPITypes: [
+              {
+                NSPrivacyAccessedAPIType:
+                  "NSPrivacyAccessedAPICategoryFileTimestamp",
+                NSPrivacyAccessedAPITypeReasons: ["C617.1"],
+              },
+            ],
+          },
+        },
+      },
+    })
+
+    await configure({ root, env: { CAPACITOR_CONFIG } })
+
+    expect(
+      plist.parse(snapshot(root).privacyManifest).NSPrivacyAccessedAPITypes,
+    ).toEqual([
+      {
+        NSPrivacyAccessedAPIType: "NSPrivacyAccessedAPICategoryUserDefaults",
+        NSPrivacyAccessedAPITypeReasons: ["1C8F.1", "CA92.1"],
+      },
+      {
+        NSPrivacyAccessedAPIType: "NSPrivacyAccessedAPICategoryFileTimestamp",
+        NSPrivacyAccessedAPITypeReasons: ["C617.1"],
+      },
+    ])
+  })
+})
+
 function snapshot(root) {
   const read = (...segments) => {
     const file = path.join(root, ...segments)
@@ -201,6 +287,7 @@ function snapshot(root) {
     entitlements: read("ios", "App", "App", "App.entitlements"),
     appDelegate: read("ios", "App", "App", "AppDelegate.swift"),
     viewController: read("ios", "App", "App", "MainViewController.swift"),
+    privacyManifest: read("ios", "App", "App", "PrivacyInfo.xcprivacy"),
     storyboard: read("ios", "App", "App", "Base.lproj", "Main.storyboard"),
     association: read("public", ".well-known", "apple-app-site-association"),
     assetLinks: read("public", ".well-known", "assetlinks.json"),

@@ -110,4 +110,89 @@ describe("withStorage", () => {
 
     expect(store.getEntity("settings").theme).toBe("dark")
   })
+
+  describe("with a storage that answers later", () => {
+    function asyncStorage(initial = {}) {
+      const storage = memoryStorage(initial)
+      const answers = []
+      return {
+        ...storage,
+        getItem: vi.fn(
+          (key) =>
+            new Promise((resolve) =>
+              answers.push(() => resolve(storage.getItem(key))),
+            ),
+        ),
+        setItem: vi.fn((key, value) => {
+          storage.items.set(key, value)
+          return Promise.resolve()
+        }),
+        answer: () => answers.splice(0).forEach((answer) => answer()),
+      }
+    }
+
+    it("starts with the defaults and restores the fields when it answers", async () => {
+      const storage = asyncStorage({ settings: '{"theme":"dark"}' })
+      const store = storeWith(storage)
+
+      expect(store.getEntity("settings").theme).toBe("light")
+      expect(storage.setItem).not.toHaveBeenCalled()
+
+      storage.answer()
+      await vi.waitFor(() =>
+        expect(store.getEntity("settings").theme).toBe("dark"),
+      )
+      expect(storage.setItem).not.toHaveBeenCalled()
+    })
+
+    it("keeps a change made while waiting, and saves it", async () => {
+      const storage = asyncStorage({ settings: '{"theme":"dark"}' })
+      const store = storeWith(storage)
+
+      store.notify("#settings:themeSet", "blue")
+      expect(storage.setItem).not.toHaveBeenCalled()
+
+      storage.answer()
+      await vi.waitFor(() =>
+        expect(storage.items.get("settings")).toBe('{"theme":"blue"}'),
+      )
+      expect(store.getEntity("settings").theme).toBe("blue")
+    })
+
+    it("tells the type what came back", async () => {
+      const storage = asyncStorage({ settings: '{"theme":"dark"}' })
+      const storageRestore = vi.fn()
+      const store = createStore({
+        types: {
+          Settings: [
+            { ...Settings, storageRestore },
+            withStorage(["theme"], { storage: () => storage }),
+          ],
+        },
+        entities: { settings: { type: "Settings" } },
+      })
+
+      storage.answer()
+      await vi.waitFor(() => expect(storageRestore).toHaveBeenCalled())
+      expect(storageRestore.mock.calls[0][1]).toEqual({ theme: "dark" })
+      expect(store.getEntity("settings").theme).toBe("dark")
+    })
+
+    it("starts over when the storage fails", async () => {
+      const storage = {
+        getItem: () => Promise.reject(new Error("unavailable")),
+        setItem: vi.fn(() => Promise.reject(new Error("unavailable"))),
+      }
+      const store = storeWith(storage)
+
+      await vi.waitFor(() =>
+        expect(storage.setItem).toHaveBeenCalledWith(
+          "settings",
+          '{"theme":"light"}',
+        ),
+      )
+      store.notify("#settings:themeSet", "dark")
+      expect(store.getEntity("settings").theme).toBe("dark")
+    })
+  })
 })

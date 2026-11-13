@@ -1,5 +1,11 @@
 # @inglorious/capacitor
 
+## 0.3.0
+
+### Minor Changes
+
+- `configure` writes the iOS privacy manifest (`PrivacyInfo.xcprivacy`) as a bundle resource: the required-reason APIs of known plugins that declare none of their own (`@capawesome/capacitor-live-update` and its `UserDefaults`), plus `native.ios.privacyManifest`, merged with the manifest already there.
+
 ## 0.2.0
 
 ### Minor Changes

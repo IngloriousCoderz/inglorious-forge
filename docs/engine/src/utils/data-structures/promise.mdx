@@ -1,0 +1,30 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+
+import { toString as bToString } from '@inglorious/utils/data-structures/boolean'
+import { isPromiseLike } from '@inglorious/utils/promise'
+
+<Meta title="Utils/Data Structures/Promise" />
+
+# Promises
+
+Helpers for code that may or may not have to wait.
+
+## As Settled
+
+Yields the results of some promises in the order they settle, not the order given, so each can be used as soon as it is ready. The first rejection is thrown, and the promises still pending never end up as unhandled rejections.
+
+```javascript
+import { asSettled } from '@inglorious/utils/promise'
+
+for await (const reply of asSettled([askSunny(), askCrowley()])) {
+  send(reply) // fastest first
+}
+```
+
+## Is Promise Like
+
+Whether a value can be awaited: anything with a `then` method. Useful when a storage or an adapter may answer now or later.
+
+<code>isPromiseLike(Promise.resolve(1)) == {bToString(isPromiseLike(Promise.resolve(1)))}</code>&nbsp;
+
+<code>isPromiseLike("then") == {bToString(isPromiseLike("then"))}</code>&nbsp;

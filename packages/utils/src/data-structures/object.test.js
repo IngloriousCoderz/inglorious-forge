@@ -15,6 +15,7 @@ import {
   map,
   merge,
   mergeWith,
+  pick,
   produce,
   serialize,
   set,
@@ -664,4 +665,12 @@ test("it should compare a thing that contains itself without walking it for ever
   other.back = other
 
   expect(isDeepEqual(together, other)).toBe(true)
+})
+
+test("it should pick only the given keys the source has", () => {
+  expect(pick({ a: 1, b: 2, c: undefined }, ["a", "c", "d"])).toEqual({
+    a: 1,
+    c: undefined,
+  })
+  expect(pick(null, ["a"])).toEqual({})
 })

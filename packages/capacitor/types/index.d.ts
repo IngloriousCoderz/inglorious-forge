@@ -24,6 +24,12 @@ export interface NativeConfig {
      * WebKit's back gesture in a generated `MainViewController`.
      */
     swipeBack?: boolean
+    /**
+     * Entries of the app's `PrivacyInfo.xcprivacy`, with Apple's keys. Merged
+     * with the manifest already there and with the required-reason APIs of
+     * known plugins that do not declare their own.
+     */
+    privacyManifest?: PrivacyManifest
   }
   android?: {
     /** SHA-256 fingerprints of the keys that sign the app, for App Links. */
@@ -45,6 +51,20 @@ export interface NativeConfig {
   }
 }
 
+/** An app's privacy manifest, with Apple's keys. */
+export interface PrivacyManifest {
+  NSPrivacyTracking?: boolean
+  NSPrivacyTrackingDomains?: string[]
+  NSPrivacyCollectedDataTypes?: Record<string, unknown>[]
+  NSPrivacyAccessedAPITypes?: AccessedApiType[]
+}
+
+/** A required-reason API and why the app calls it. */
+export interface AccessedApiType {
+  NSPrivacyAccessedAPIType: string
+  NSPrivacyAccessedAPITypeReasons: string[]
+}
+
 export interface ProjectSettings {
   root: string
   appId: string
@@ -54,11 +74,14 @@ export interface ProjectSettings {
     teamId: string | null
     infoPlist: Record<string, unknown>
     swipeBack?: boolean
+    privacyManifest: PrivacyManifest | null
   }
   android: { sha256: string[]; permissions: string[] }
   assets: NonNullable<NativeConfig["assets"]>
   hasPush: boolean
   hasAnalytics: boolean
+  /** Required-reason APIs the app's plugins use without declaring them. */
+  accessedApiTypes: AccessedApiType[]
 }
 
 /**

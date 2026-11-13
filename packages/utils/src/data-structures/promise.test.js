@@ -1,6 +1,6 @@
 import { expect, test } from "vitest"
 
-import { asSettled } from "./promise.js"
+import { asSettled, isPromiseLike } from "./promise.js"
 
 const SLOW = 20
 const FAST = 5
@@ -75,3 +75,10 @@ function failAfter(ms, message) {
     setTimeout(() => reject(new Error(message)), ms),
   )
 }
+
+test("it should tell what can be awaited", () => {
+  expect(isPromiseLike(Promise.resolve())).toBe(true)
+  expect(isPromiseLike({ then() {} })).toBe(true)
+  expect(isPromiseLike("then")).toBe(false)
+  expect(isPromiseLike(null)).toBe(false)
+})

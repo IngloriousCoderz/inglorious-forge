@@ -269,7 +269,7 @@ const types = {
 
 // These handlers fire automatically
 store.notify("add", { id: "myList", type: "TodoList", todos: [] })
-store.notify("remove", { id: "myList" }) // destroy handler fires
+store.notify("remove", "myList") // destroy handler fires
 ```
 
 ## Step 6: Embrace the `api` Object
@@ -417,9 +417,11 @@ const types = {
 ```javascript
 const types = {
   notification: {
-    create(entity) {
-      // Auto-dismiss after 3 seconds
-      setTimeout(() => api.notify("remove", { id: entity.id }), 3000)
+    create(entity, payload, api) {
+      // Auto-dismiss after 3 seconds. Take the id now: the entity is a draft
+      // that is gone by the time the timer fires.
+      const { id } = entity
+      setTimeout(() => api.notify("remove", id), 3000)
     },
   },
 }

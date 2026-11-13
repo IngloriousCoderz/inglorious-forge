@@ -63,6 +63,7 @@ export default defineConfig({
             { text: "Form", link: "/featured/form" },
             { text: "Push", link: "/featured/push" },
             { text: "Router", link: "/featured/router" },
+            { text: "Sign-in", link: "/featured/sign-in" },
             {
               text: "Sensors",
               items: [
@@ -76,6 +77,21 @@ export default defineConfig({
               ],
             },
             { text: "UI Primitives", link: "/featured/ui" },
+          ],
+        },
+        {
+          text: "Mobile and PWA",
+          items: [
+            { text: "App Links", link: "/featured/app-links" },
+            { text: "Back Button", link: "/featured/back-button" },
+            { text: "Haptics", link: "/featured/haptics" },
+            { text: "Keyboard", link: "/featured/keyboard" },
+            { text: "Live Updates", link: "/featured/live-updates" },
+            { text: "Native App Updates", link: "/featured/native-updates" },
+            { text: "Native Storage", link: "/featured/native-storage" },
+            { text: "PWA Updates", link: "/featured/pwa-updates" },
+            { text: "Share", link: "/featured/share" },
+            { text: "System Bars", link: "/featured/system-bars" },
           ],
         },
         {

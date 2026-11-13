@@ -1,4 +1,14 @@
 /**
+ * Whether a value can be awaited like a promise: anything with a `then` method.
+ *
+ * @param {*} value - The value to check.
+ * @returns {boolean} `true` for a promise or thenable.
+ */
+export function isPromiseLike(value) {
+  return typeof value?.then === "function"
+}
+
+/**
  * Yields the results of some promises in the order they settle, not the order given,
  * so each can be used as soon as it is ready.
  *

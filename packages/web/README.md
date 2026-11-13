@@ -1725,6 +1725,30 @@ api.notify("#share:share", {
 
 ---
 
+## Native Storage
+
+iOS and Android can clear a WebView's `localStorage` when the device runs low on space. `createNativeStorage` keeps values in Capacitor Preferences instead, in the native app, and in `localStorage` in a browser. Give it to [`withStorage`](https://www.npmjs.com/package/@inglorious/store#withstorage):
+
+```javascript
+import { Preferences } from "@capacitor/preferences"
+import { withStorage } from "@inglorious/store/storage"
+import { createNativeStorage } from "@inglorious/web/mobile"
+
+const preferences = createNativeStorage({ plugin: Preferences })
+
+const types = {
+  Settings: [Settings, withStorage(["theme"], { storage: () => preferences })],
+}
+```
+
+Preferences answers with promises, so in the native app the entity starts with its defaults and gets the stored fields back a moment later, through `storageRestore`. In a browser it is `localStorage` itself.
+
+It works as Supabase's session storage too, so signing in survives the same clean-ups:
+
+```javascript
+createClient(url, key, { auth: { storage: preferences } })
+```
+
 ## Haptics
 
 `@inglorious/web/haptics` plays taps the user can feel. In a native app it uses the system's haptics through [`@capacitor/haptics`](https://capacitorjs.com/docs/apis/haptics), once you hand the plugin over. Elsewhere it vibrates where the browser can (Chrome on Android), once the user has tapped the page; iOS browsers stay silent. Every call returns whether it played.
@@ -2090,8 +2114,8 @@ import { render, trigger } from "@inglorious/web/test"
 
 import { Form } from "@inglorious/web/form"
 import { Router, setRoutes } from "@inglorious/web/router"
-import { Geolocation } from "@inglorious/web/geolocation"
-import { Compass } from "@inglorious/web/compass"
+import { Geolocation } from "@inglorious/web/sensors/geolocation"
+import { Compass } from "@inglorious/web/sensors/compass"
 ```
 
 This keeps `lit-html` as an internal implementation detail while still giving applications stable, tree-shakeable import paths.

@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/utils",
-  "version": "5.3.0",
+  "version": "5.4.0",
   "description": "A set of general-purpose utility functions designed with functional programming principles in mind.",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -107,8 +107,8 @@
       "import": "./src/data-structures/promise.js"
     },
     "./promise": {
-      "types": "./types/promise.d.ts",
-      "import": "./src/promise.js"
+      "types": "./types/data-structures/promise.d.ts",
+      "import": "./src/data-structures/promise.js"
     },
     "./quaternion.js": {
       "types": "./types/math/quaternion.d.ts",
