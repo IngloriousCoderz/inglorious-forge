@@ -67,12 +67,22 @@ describe("createNativeStorage", () => {
     delete globalThis.localStorage
   })
 
-  it("is localStorage in a browser", () => {
-    globalThis.localStorage = { getItem: () => null, setItem: () => {} }
+  it("uses localStorage in a browser, whichever it is at the time", () => {
+    const plugin = preferences()
+    const storage = createNativeStorage({ plugin })
+    const items = new Map()
+    globalThis.localStorage = {
+      getItem: (key) => items.get(key) ?? null,
+      setItem: (key, value) => items.set(key, value),
+      removeItem: (key) => items.delete(key),
+    }
 
-    expect(createNativeStorage({ plugin: preferences() })).toBe(
-      globalThis.localStorage,
-    )
+    storage.setItem("theme", "dark")
+    expect(storage.getItem("theme")).toBe("dark")
+    storage.removeItem("theme")
+
+    expect(items.has("theme")).toBe(false)
+    expect(plugin.get).not.toHaveBeenCalled()
   })
 
   it("uses Preferences in a native app", async () => {

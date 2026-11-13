@@ -194,5 +194,38 @@ describe("withStorage", () => {
       store.notify("#settings:themeSet", "dark")
       expect(store.getEntity("settings").theme).toBe("dark")
     })
+
+    it("restores each of several decorators on one type", async () => {
+      const preferences = asyncStorage({ settings: '{"theme":"dark"}' })
+      const tab = asyncStorage({ settings: '{"draft":"Dear diary"}' })
+      const session = memoryStorage({ settings: '{"isMenuOpen":true}' })
+      const storageRestore = vi.fn()
+      const store = createStore({
+        types: {
+          Settings: [
+            { ...Settings, storageRestore },
+            withStorage(["theme"], { storage: () => preferences }),
+            withStorage(["draft"], { storage: () => tab }),
+            withStorage(["isMenuOpen"], { storage: () => session }),
+          ],
+        },
+        entities: { settings: { type: "Settings" } },
+      })
+
+      tab.answer()
+      preferences.answer()
+      await vi.waitFor(() => expect(storageRestore).toHaveBeenCalledTimes(2))
+
+      expect(store.getEntity("settings")).toMatchObject({
+        theme: "dark",
+        draft: "Dear diary",
+        isMenuOpen: true,
+      })
+      expect(storageRestore.mock.calls.map(([, restored]) => restored)).toEqual(
+        [{ draft: "Dear diary" }, { theme: "dark" }],
+      )
+      expect(preferences.items.get("settings")).toBe('{"theme":"dark"}')
+      expect(tab.items.get("settings")).toBe('{"draft":"Dear diary"}')
+    })
   })
 })

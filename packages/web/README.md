@@ -1741,7 +1741,7 @@ const types = {
 }
 ```
 
-Preferences answers with promises, so in the native app the entity starts with its defaults and gets the stored fields back a moment later, through `storageRestore`. In a browser it is `localStorage` itself.
+Preferences answers with promises, so in the native app the entity starts with its defaults and gets the stored fields back a moment later, through `storageRestore`. In a browser it uses `localStorage`.
 
 It works as Supabase's session storage too, so signing in survives the same clean-ups:
 

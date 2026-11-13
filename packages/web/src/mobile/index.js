@@ -20,7 +20,7 @@ export function isNative() {
  * A storage for `withStorage` that survives the operating system clearing the
  * WebView's data: in a native app, Capacitor Preferences (`Preferences` from
  * `@capacitor/preferences`, given as `plugin`), answering with promises; in a
- * browser, `localStorage` itself. It also serves as Supabase's `auth.storage`,
+ * browser, `localStorage`, looked up at each call. It also serves as Supabase's `auth.storage`,
  * keeping the session there too.
  *
  * @param {{ plugin?: { get(options: { key: string }): Promise<{ value: string | null }>, set(options: { key: string, value: string }): Promise<void>, remove(options: { key: string }): Promise<void> } }} [config]
@@ -33,7 +33,13 @@ export function isNative() {
  * }
  */
 export function createNativeStorage({ plugin } = {}) {
-  if (!plugin || !isNative()) return globalThis.localStorage
+  if (!plugin || !isNative()) {
+    return {
+      getItem: (key) => globalThis.localStorage?.getItem(key) ?? null,
+      setItem: (key, value) => globalThis.localStorage?.setItem(key, value),
+      removeItem: (key) => globalThis.localStorage?.removeItem(key),
+    }
+  }
 
   return {
     getItem: async (key) => (await plugin.get({ key })).value,

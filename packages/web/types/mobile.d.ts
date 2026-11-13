@@ -14,7 +14,7 @@ export interface NativeStorage {
   removeItem(key: string): void | Promise<void>
 }
 
-/** Capacitor Preferences in a native app, `localStorage` itself in a browser. */
+/** Capacitor Preferences in a native app, `localStorage` in a browser. */
 export declare function createNativeStorage(config?: {
   plugin?: PreferencesPlugin
-}): NativeStorage | Storage | undefined
+}): NativeStorage

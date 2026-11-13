@@ -4,6 +4,8 @@ import { parseJSON, readItem, writeItem } from "@inglorious/utils/storage.js"
 
 const RENDER = /^render/
 
+let decorators = 0
+
 /**
  * Keeps some of an entity's fields in storage, as a byproduct of the entity:
  * the entity stays the one source of truth. When the entity is created, the
@@ -44,6 +46,8 @@ export function withStorage(
     typeof key === "function" ? key(entity) : (key ?? entity.id)
 
   return (type) => {
+    // Tells this decorator's restores from those of others on the same type.
+    const source = `withStorage:${++decorators}`
     /** What is kept for each entity, as written. */
     const kept = new Map()
     /** For entities still waiting on storage, their fields as created. */
@@ -77,7 +81,7 @@ export function withStorage(
         pending.set(entity.id, snapshot(entity, fields))
         const { id } = entity
         const restore = (value) =>
-          api.notify(`#${id}:storageRestore`, value ?? null)
+          api.notify(`#${id}:storageRestore`, { source, value: value ?? null })
         stored.then(restore, () => restore(null))
         return result
       }
@@ -89,13 +93,17 @@ export function withStorage(
       return result
     }
 
-    behavior.storageRestore = function (entity, stored, api) {
+    behavior.storageRestore = function (entity, payload, api) {
       const created = pending.get(entity.id)
-      if (!created) return
+      if (payload?.source !== source || !created) {
+        type.storageRestore?.call(this, entity, payload, api)
+        save(entity)
+        return
+      }
       pending.delete(entity.id)
-      kept.set(entity.id, stored)
+      kept.set(entity.id, payload.value)
 
-      const restored = pick(parseJSON(stored), fields)
+      const restored = pick(parseJSON(payload.value), fields)
       for (const [field, value] of Object.entries(restored)) {
         if (JSON.stringify(entity[field]) === created[field]) {
           entity[field] = value

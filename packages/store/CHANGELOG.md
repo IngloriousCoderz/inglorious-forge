@@ -1,5 +1,11 @@
 # @inglorious/store
 
+## 12.6.1
+
+### Patch Changes
+
+- Several `withStorage` on one type each restore their own fields from a storage answering with promises: an outer one no longer swallows the restore of an inner one.
+
 ## 12.6.0
 
 ### Minor Changes

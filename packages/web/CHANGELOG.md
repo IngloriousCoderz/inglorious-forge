@@ -1,5 +1,13 @@
 # @inglorious/react-store
 
+## 6.27.1
+
+### Patch Changes
+
+- In a browser, `createNativeStorage` looks `localStorage` up at each call rather than once when created, so storage set up later, as in tests, is the one used.
+- Updated dependencies
+  - @inglorious/store@12.6.1
+
 ## 6.27.0
 
 ### Minor Changes

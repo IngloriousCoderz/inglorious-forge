@@ -799,7 +799,7 @@ const types = {
 
 ### Storages that answer later
 
-A storage whose `getItem` returns a promise works too, such as Capacitor Preferences through [`createNativeStorage`](https://inglorious.dev/web/featured/native-storage). The entity then starts with its defaults. When the storage answers, `#<id>:storageRestore` brings back the fields no handler has changed in the meantime, and nothing is written before that. A type's own `storageRestore(entity, restored, api)` runs after, to announce what came back:
+A storage whose `getItem` returns a promise works too, such as Capacitor Preferences through [`createNativeStorage`](https://inglorious.dev/web/featured/native-storage). The entity then starts with its defaults. When the storage answers, `#<id>:storageRestore` brings back the fields no handler has changed in the meantime, and nothing is written before that. A type's own `storageRestore(entity, restored, api)` runs after, to announce what came back. Several `withStorage` on one type, such as one for Preferences and one for `sessionStorage`, each restore their own fields, and the type hears each:
 
 ```javascript
 const Session = [
