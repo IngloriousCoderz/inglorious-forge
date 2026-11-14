@@ -27,6 +27,7 @@ import {
 import { addLiveUpdateSupport } from "./lib/live-update.js"
 import { addMobileSupport } from "./lib/mobile.js"
 import { addNativeUpdateSupport } from "./lib/native-update.js"
+import { addPnpmSettings } from "./lib/pnpm.js"
 import { addPwaSupport } from "./lib/pwa.js"
 import { askAppFeatures } from "./lib/questions.js"
 import { addReleaseSupport } from "./lib/release.js"
@@ -183,6 +184,9 @@ async function main() {
     pkg.name = projectName
 
     addDependabot(targetDir)
+    addPnpmSettings(targetDir, {
+      firebase: features.analytics || features.push,
+    })
 
     const hasAppFeatures =
       features.ui ||

@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/web",
-  "version": "6.28.0",
+  "version": "6.29.0",
   "description": "A new web framework that leverages the power of the Inglorious Store combined with the performance and simplicity of lit-html.",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "contributors": [
@@ -53,18 +53,6 @@
       "types": "./types/native/system-bars.d.ts",
       "import": "./src/native/system-bars/index.js"
     },
-    "./keyboard": {
-      "types": "./types/keyboard.d.ts",
-      "import": "./src/keyboard/index.js"
-    },
-    "./native/haptics": {
-      "types": "./types/native/haptics.d.ts",
-      "import": "./src/native/haptics/index.js"
-    },
-    "./native/share": {
-      "types": "./types/native/share.d.ts",
-      "import": "./src/native/share/index.js"
-    },
     "./decorators/with-debounce": {
       "types": "./types/decorators/with-debounce.d.ts",
       "import": "./src/decorators/with-debounce/index.js"
@@ -80,6 +68,54 @@
     "./decorators/with-throttle": {
       "types": "./types/decorators/with-throttle.d.ts",
       "import": "./src/decorators/with-throttle/index.js"
+    },
+    "./device/biometrics": {
+      "types": "./types/device/biometrics.d.ts",
+      "import": "./src/device/biometrics/index.js"
+    },
+    "./device/compass": {
+      "types": "./types/device/compass.d.ts",
+      "import": "./src/device/compass/index.js"
+    },
+    "./device/element-size": {
+      "types": "./types/device/element-size.d.ts",
+      "import": "./src/device/element-size/index.js"
+    },
+    "./device/geolocation": {
+      "types": "./types/device/geolocation.d.ts",
+      "import": "./src/device/geolocation/index.js"
+    },
+    "./device/haptics": {
+      "types": "./types/device/haptics.d.ts",
+      "import": "./src/device/haptics/index.js"
+    },
+    "./device/keyboard": {
+      "types": "./types/device/keyboard.d.ts",
+      "import": "./src/device/keyboard/index.js"
+    },
+    "./device/local-notifications": {
+      "types": "./types/device/local-notifications.d.ts",
+      "import": "./src/device/local-notifications/index.js"
+    },
+    "./device/media-query": {
+      "types": "./types/device/media-query.d.ts",
+      "import": "./src/device/media-query/index.js"
+    },
+    "./device/network-status": {
+      "types": "./types/device/network-status.d.ts",
+      "import": "./src/device/network-status/index.js"
+    },
+    "./device/page-visibility": {
+      "types": "./types/device/page-visibility.d.ts",
+      "import": "./src/device/page-visibility/index.js"
+    },
+    "./device/share": {
+      "types": "./types/device/share.d.ts",
+      "import": "./src/device/share/index.js"
+    },
+    "./device/storage": {
+      "types": "./types/device/storage.d.ts",
+      "import": "./src/device/storage/index.js"
     },
     "./directives/*": {
       "types": "./types/directives/*.d.ts",
@@ -113,30 +149,6 @@
     "./router": {
       "types": "./types/router.d.ts",
       "import": "./src/router/index.js"
-    },
-    "./sensors/compass": {
-      "types": "./types/sensors/compass.d.ts",
-      "import": "./src/sensors/compass/index.js"
-    },
-    "./sensors/element-size": {
-      "types": "./types/sensors/element-size.d.ts",
-      "import": "./src/sensors/element-size/index.js"
-    },
-    "./sensors/geolocation": {
-      "types": "./types/sensors/geolocation.d.ts",
-      "import": "./src/sensors/geolocation/index.js"
-    },
-    "./sensors/media-query": {
-      "types": "./types/sensors/media-query.d.ts",
-      "import": "./src/sensors/media-query/index.js"
-    },
-    "./sensors/network-status": {
-      "types": "./types/sensors/network-status.d.ts",
-      "import": "./src/sensors/network-status/index.js"
-    },
-    "./sensors/page-visibility": {
-      "types": "./types/sensors/page-visibility.d.ts",
-      "import": "./src/sensors/page-visibility/index.js"
     },
     "./static": {
       "types": "./types/static.d.ts",

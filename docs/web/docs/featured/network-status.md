@@ -19,7 +19,7 @@ The `networkStatus` entity keeps:
 
 ```javascript
 import { createStore } from "@inglorious/store"
-import { NetworkStatus } from "@inglorious/web/sensors/network-status"
+import { NetworkStatus } from "@inglorious/web/device/network-status"
 
 const store = createStore({
   types: { NetworkStatus },
@@ -40,5 +40,5 @@ if (!online) {
 
 ## Learn more
 
-- [Sensors overview](./sensors.md)
+- [Device overview](./device.md)
 - [Inglorious Web overview](./overview.md)

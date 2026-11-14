@@ -19,7 +19,7 @@ The `pageVisibility` entity keeps:
 
 ```javascript
 import { createStore } from "@inglorious/store"
-import { PageVisibility } from "@inglorious/web/sensors/page-visibility"
+import { PageVisibility } from "@inglorious/web/device/page-visibility"
 
 const store = createStore({
   types: { PageVisibility },
@@ -39,5 +39,5 @@ if (!pageVisibility.isVisible) {
 
 ## Learn more
 
-- [Sensors overview](./sensors.md)
+- [Device overview](./device.md)
 - [Inglorious Web overview](./overview.md)

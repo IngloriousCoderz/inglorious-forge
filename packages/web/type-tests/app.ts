@@ -26,7 +26,7 @@ import {
   type RouterEntity,
   safePath,
 } from "../types/router"
-import { MediaQuery, type MediaQueryEntity } from "../types/sensors/media-query"
+import { MediaQuery, type MediaQueryEntity } from "../types/device/media-query"
 
 interface AppRouterEntity extends RouterEntity {
   type: "Router"
@@ -233,3 +233,21 @@ mount(
 declare function renderAny(api: Api): TemplateResult
 declare const typedApi: Api<AppEntity, AppState, TypedEvents>
 renderAny(typedApi)
+
+// Local notifications and geolocation are types of their own.
+import { createLocalNotifications } from "../types/device/local-notifications"
+import { createGeolocation } from "../types/device/geolocation"
+
+export const reminders = createLocalNotifications()
+reminders.localNotificationSchedule(
+  { type: "Reminders", permission: "granted" },
+  { id: 1, title: "Soon", at: new Date() },
+)
+// @ts-expect-error: an id is a whole number
+reminders.localNotificationCancel({ type: "Reminders", permission: null }, "1")
+
+export const geolocation = createGeolocation()
+
+import { createBiometrics } from "../types/device/biometrics"
+
+export const biometrics = createBiometrics()

@@ -29,6 +29,7 @@ describe("compass", () => {
   })
 
   afterEach(() => {
+    Compass.compassUnwatch({ id: "compass" })
     vi.useRealTimers()
   })
 
@@ -46,9 +47,6 @@ describe("compass", () => {
         isLoading: false,
         isSupported: true,
         manualOffset: 0,
-        _absoluteListener: null,
-        _cancelTimeout: null,
-        _orientationListener: null,
       })
     })
 
@@ -77,7 +75,9 @@ describe("compass", () => {
     it("should notify compassPermissionsGrant when no requestPermission API exists", async () => {
       await Compass.compassPermissionsRequest(entity, undefined, api)
 
-      expect(api.notify).toHaveBeenCalledWith("compassPermissionsGrant")
+      expect(api.notify).toHaveBeenCalledWith(
+        "#compass:compassPermissionsGrant",
+      )
     })
 
     it("should notify compassError when compass is not supported", async () => {
@@ -85,7 +85,7 @@ describe("compass", () => {
 
       await Compass.compassPermissionsRequest(entity, undefined, api)
 
-      expect(api.notify).toHaveBeenCalledWith("compassError", {
+      expect(api.notify).toHaveBeenCalledWith("#compass:compassError", {
         code: 0,
         message: "Compass is not supported by this environment.",
       })
@@ -99,7 +99,9 @@ describe("compass", () => {
 
       await Compass.compassPermissionsRequest(entity, undefined, api)
 
-      expect(api.notify).toHaveBeenCalledWith("compassPermissionsGrant")
+      expect(api.notify).toHaveBeenCalledWith(
+        "#compass:compassPermissionsGrant",
+      )
     })
 
     it("should notify compassError when requestPermission resolves denied", async () => {
@@ -109,11 +111,10 @@ describe("compass", () => {
 
       await Compass.compassPermissionsRequest(entity, undefined, api)
 
-      expect(api.notify).toHaveBeenCalledWith("compassError", {
+      expect(api.notify).toHaveBeenCalledWith("#compass:compassError", {
         code: 1,
         message: "Compass permission denied.",
       })
-      expect(entity.isLoading).toBe(false)
     })
 
     it("should notify compassError when requestPermission throws", async () => {
@@ -123,11 +124,10 @@ describe("compass", () => {
 
       await Compass.compassPermissionsRequest(entity, undefined, api)
 
-      expect(api.notify).toHaveBeenCalledWith("compassError", {
+      expect(api.notify).toHaveBeenCalledWith("#compass:compassError", {
         code: 99,
         message: "Something went wrong",
       })
-      expect(entity.isLoading).toBe(false)
     })
   })
 
@@ -166,12 +166,19 @@ describe("compass", () => {
       )
     })
 
-    it("should store listeners and a cancel function on the entity", () => {
+    it("keeps its listeners off the entity", () => {
       Compass.compassWatch(entity, undefined, api)
 
-      expect(entity._orientationListener).toBeTypeOf("function")
-      expect(entity._absoluteListener).toBeTypeOf("function")
-      expect(entity._cancelTimeout).toBeTypeOf("function")
+      expect(Object.values(entity).some((v) => typeof v === "function")).toBe(
+        false,
+      )
+    })
+
+    it("should not watch twice", () => {
+      Compass.compassWatch(entity, undefined, api)
+      Compass.compassWatch(entity, undefined, api)
+
+      expect(windowMock.addEventListener).toHaveBeenCalledTimes(2)
     })
 
     it("should notify compassActiveChange false after timeout", () => {
@@ -179,7 +186,10 @@ describe("compass", () => {
 
       vi.runAllTimers()
 
-      expect(api.notify).toHaveBeenCalledWith("compassActiveChange", false)
+      expect(api.notify).toHaveBeenCalledWith(
+        "#compass:compassActiveChange",
+        false,
+      )
     })
 
     it("should not notify compassActiveChange false when timeout was cancelled by a heading", () => {
@@ -194,7 +204,10 @@ describe("compass", () => {
       api.notify.mockClear()
       vi.runAllTimers()
 
-      expect(api.notify).not.toHaveBeenCalledWith("compassActiveChange", false)
+      expect(api.notify).not.toHaveBeenCalledWith(
+        "#compass:compassActiveChange",
+        false,
+      )
     })
   })
 
@@ -218,13 +231,19 @@ describe("compass", () => {
     it("should notify compassHeadingChange with the adjusted heading", () => {
       orientationListener({ alpha: 90 })
 
-      expect(api.notify).toHaveBeenCalledWith("compassHeadingChange", 90)
+      expect(api.notify).toHaveBeenCalledWith(
+        "#compass:compassHeadingChange",
+        90,
+      )
     })
 
     it("should notify compassActiveChange true when a valid heading arrives", () => {
       orientationListener({ alpha: 45 })
 
-      expect(api.notify).toHaveBeenCalledWith("compassActiveChange", true)
+      expect(api.notify).toHaveBeenCalledWith(
+        "#compass:compassActiveChange",
+        true,
+      )
     })
 
     it("should ignore events where alpha is not a number", () => {
@@ -238,10 +257,14 @@ describe("compass", () => {
 
       orientationListener({ alpha: 80 })
 
-      expect(api.notify).toHaveBeenCalledWith("compassHeadingChange", 80)
+      expect(api.notify).toHaveBeenCalledWith(
+        "#compass:compassHeadingChange",
+        80,
+      )
     })
 
     it("should use manualOffset when set before compassWatch", () => {
+      Compass.compassUnwatch(entity)
       entity.manualOffset = 10
       Compass.compassWatch(entity, undefined, api)
 
@@ -252,7 +275,10 @@ describe("compass", () => {
 
       listenerWithOffset({ alpha: 80 })
 
-      expect(api.notify).toHaveBeenCalledWith("compassHeadingChange", 90)
+      expect(api.notify).toHaveBeenCalledWith(
+        "#compass:compassHeadingChange",
+        90,
+      )
     })
 
     it("should cancel the timeout when a heading arrives", () => {
@@ -269,7 +295,10 @@ describe("compass", () => {
       api.notify.mockClear()
       vi.runAllTimers()
 
-      expect(api.notify).not.toHaveBeenCalledWith("compassActiveChange", false)
+      expect(api.notify).not.toHaveBeenCalledWith(
+        "#compass:compassActiveChange",
+        false,
+      )
     })
 
     it("should upgrade to absolute listener and drop orientation listener", () => {
@@ -297,7 +326,10 @@ describe("compass", () => {
 
       orientationListener({ alpha: 30 })
 
-      expect(api.notify).toHaveBeenCalledWith("compassHeadingChange", 300)
+      expect(api.notify).toHaveBeenCalledWith(
+        "#compass:compassHeadingChange",
+        300,
+      )
     })
   })
 
@@ -308,17 +340,18 @@ describe("compass", () => {
     })
 
     it("should remove both event listeners", () => {
-      const { _orientationListener, _absoluteListener } = entity
+      const listener = (name) =>
+        windowMock.addEventListener.mock.calls.find(([n]) => n === name)[1]
 
       Compass.compassUnwatch(entity)
 
       expect(windowMock.removeEventListener).toHaveBeenCalledWith(
         "deviceorientation",
-        _orientationListener,
+        listener("deviceorientation"),
       )
       expect(windowMock.removeEventListener).toHaveBeenCalledWith(
         "deviceorientationabsolute",
-        _absoluteListener,
+        listener("deviceorientationabsolute"),
       )
     })
 
@@ -327,9 +360,6 @@ describe("compass", () => {
 
       expect(entity.isLoading).toBe(false)
       expect(entity.isActive).toBe(false)
-      expect(entity._orientationListener).toBeNull()
-      expect(entity._absoluteListener).toBeNull()
-      expect(entity._cancelTimeout).toBeNull()
     })
 
     it("should cancel a pending timeout", () => {
@@ -395,9 +425,10 @@ describe("compass", () => {
 
       Compass.destroy(entity)
 
-      expect(entity._orientationListener).toBeNull()
-      expect(entity._absoluteListener).toBeNull()
-      expect(entity._cancelTimeout).toBeNull()
+      expect(windowMock.removeEventListener).toHaveBeenCalledWith(
+        "deviceorientation",
+        expect.any(Function),
+      )
     })
   })
 })

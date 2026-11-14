@@ -1,5 +1,5 @@
 /**
- * @typedef {import("../../../types/sensors/network-status.js").NetworkStatusEntity} NetworkStatusEntity
+ * @typedef {import("../../../types/device/network-status.js").NetworkStatusEntity} NetworkStatusEntity
  */
 
 const ONLINE_EVENT = "online"

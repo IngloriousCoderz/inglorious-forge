@@ -834,7 +834,7 @@ const types = {
 - Put it last in the type's array: it saves after the handlers before it.
 - `key` names where the fields go (the entity's id by default), or derives it from the entity. `storage` is any Web Storage, `localStorage` by default.
 - Storage that is missing, full or refusing, as in a private window, only means nothing is kept.
-- A storage whose `getItem` returns a promise works too, such as Capacitor Preferences through `createNativeStorage` from `@inglorious/web/native`. The entity then starts with the type's defaults, and once the storage answers, a `storageRestore` event brings the stored fields back. Nothing is written before that. A type with its own `storageRestore(entity, restored, api)` hears what came back, to announce it. Several `withStorage` on one type each restore their own fields:
+- A storage whose `getItem` returns a promise works too, such as Capacitor Preferences through `createNativeStorage` from `@inglorious/web/device/storage`. The entity then starts with the type's defaults, and once the storage answers, a `storageRestore` event brings the stored fields back. Nothing is written before that. A type with its own `storageRestore(entity, restored, api)` hears what came back, to announce it. Several `withStorage` on one type each restore their own fields:
 
 ```javascript
 const Session = [
@@ -1812,10 +1812,6 @@ const { entity, events } = trigger(counter, Counter.add, 2)
 ```
 
 `trigger` checks the payload against the handler, and returns the updated entity, typed.
-
-**Upgrading from casts**
-
-Older apps passed `types` as `types as unknown as TypesConfig<AppEntity>` and described each type with an interface. Drop the cast, turn each `interface CounterType {` into `type CounterType = {`, and declare every entity field, which `BaseEntity` no longer allows by default. An entity that extended `BaseEntity, Omit<RouterEntity, "id">` now just extends `RouterEntity`.
 
 ---
 

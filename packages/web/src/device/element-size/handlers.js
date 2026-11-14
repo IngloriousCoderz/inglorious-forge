@@ -1,6 +1,6 @@
 /**
- * @typedef {import("../../../types/sensors/element-size.js").ElementSizeEntity} ElementSizeEntity
- * @typedef {import("../../../types/sensors/element-size.js").ElementSizeSize} ElementSizeSize
+ * @typedef {import("../../../types/device/element-size.js").ElementSizeEntity} ElementSizeEntity
+ * @typedef {import("../../../types/device/element-size.js").ElementSizeSize} ElementSizeSize
  */
 
 const listeners = new Map()

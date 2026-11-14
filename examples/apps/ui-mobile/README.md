@@ -24,18 +24,18 @@ Android.
 
 ## How it is wired
 
-`src/main.js` calls `watchKeyboard()` from `@inglorious/web/keyboard`, which
+`src/main.js` calls `watchKeyboard()` from `@inglorious/web/device/keyboard`, which
 sets `--iw-keyboard-height` on `<html>` while the keyboard is up. The sheets,
 snackbars and toasts of `@inglorious/ui` follow it, and its bottom navigation
 hides.
 
-Haptics come from `haptics` in `@inglorious/web/native/haptics`. In a Capacitor app,
+Haptics come from `haptics` in `@inglorious/web/device/haptics`. In a Capacitor app,
 hand it the native plugin once and every call plays the system's haptics,
 including the tick of `PullToRefresh`:
 
 ```js
 import { Haptics } from "@capacitor/haptics"
-import { haptics } from "@inglorious/web/native/haptics"
+import { haptics } from "@inglorious/web/device/haptics"
 
 haptics.use(Haptics)
 ```

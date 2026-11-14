@@ -5,7 +5,7 @@ description: A share button that does what the device does best, from the system
 
 # Share
 
-`createShare` from `@inglorious/web/native/share` returns the type behind a share button. Its `share` event hands a title, a text, a link or a file to whatever the device does best, and the entity says what happened:
+`createShare` from `@inglorious/web/device/share` returns the type behind a share button. Its `share` event hands a title, a text, a link or a file to whatever the device does best, and the entity says what happened:
 
 - in a native app, the system's share sheet, through [`@capacitor/share`](https://capacitorjs.com/docs/apis/share) when you hand it over as `plugin`;
 - in a browser, a file (a `url` with a `fileName`) downloads, since a browser has nowhere better to put it;
@@ -15,7 +15,7 @@ description: A share button that does what the device does best, from the system
 
 ```javascript
 import { Share } from "@capacitor/share"
-import { createShare } from "@inglorious/web/native/share"
+import { createShare } from "@inglorious/web/device/share"
 
 const types = { Share: createShare({ plugin: Share }) }
 const entities = { share: { type: "Share" } }

@@ -18,7 +18,6 @@ export interface GeolocationEntity {
   isWatching: boolean
   position: GeolocationPosition | null
   type: string
-  watchId: number | null
 }
 
 export interface GeolocationError {
@@ -38,21 +37,40 @@ export interface GeolocationPosition {
 }
 
 export type GeolocationType = {
-  unwatch(entity: GeolocationEntity): void
   create(entity: GeolocationEntity): void
   destroy(entity: GeolocationEntity): void
-  error(entity: GeolocationEntity, error: GeolocationError): void
-  request(
+  geolocationRequest(
     entity: GeolocationEntity,
     options: GeolocationOptions | undefined,
     api: Api,
   ): void
-  success(entity: GeolocationEntity, position: GeolocationPosition): void
-  watch(
+  geolocationWatch(
     entity: GeolocationEntity,
     options: GeolocationOptions | undefined,
     api: Api,
   ): void
+  geolocationUnwatch(entity: GeolocationEntity): void
+  geolocationSuccess(
+    entity: GeolocationEntity,
+    position: GeolocationPosition,
+  ): void
+  geolocationError(entity: GeolocationEntity, error: GeolocationError): void
 }
 
-export declare const Geolocation: GeolocationType
+/** What `createGeolocation` needs of `Geolocation` from `@capacitor/geolocation`. */
+export interface GeolocationPlugin {
+  getCurrentPosition(options?: GeolocationOptions): Promise<GeolocationPosition>
+  watchPosition(
+    options: GeolocationOptions,
+    callback: (position: GeolocationPosition | null, error?: unknown) => void,
+  ): Promise<string>
+  clearWatch(options: { id: string }): Promise<void>
+}
+
+/**
+ * The type behind a position: `navigator.geolocation`, or the Capacitor
+ * plugin in a native app.
+ */
+export declare function createGeolocation(config?: {
+  plugin?: GeolocationPlugin
+}): GeolocationType

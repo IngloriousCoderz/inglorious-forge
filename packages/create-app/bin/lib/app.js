@@ -239,12 +239,14 @@ function mainSource(app, { pages }) {
     imports.push(
       'import { SystemBars } from "@capacitor/core"',
       'import { Haptics } from "@capacitor/haptics"',
-      'import { haptics } from "@inglorious/web/native/haptics"',
+      'import { haptics } from "@inglorious/web/device/haptics"',
       'import { watchSystemBars } from "@inglorious/web/native/system-bars"',
     )
   }
   if (app.ui || app.mobile) {
-    imports.push('import { watchKeyboard } from "@inglorious/web/keyboard"')
+    imports.push(
+      'import { watchKeyboard } from "@inglorious/web/device/keyboard"',
+    )
   }
   if (app.appLinks) {
     imports.push(

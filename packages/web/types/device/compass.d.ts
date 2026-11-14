@@ -10,8 +10,6 @@ export interface CompassEntity {
   isLoading: boolean
   isSupported: boolean
   manualOffset: number | null
-  _absoluteListener: ((event: DeviceOrientationEvent) => void) | null
-  _orientationListener: ((event: DeviceOrientationEvent) => void) | null
   _isUsingAbsolute: boolean
   compassTimeout: number | null
 }

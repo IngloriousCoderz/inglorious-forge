@@ -1,4 +1,4 @@
-import { haptics } from "@inglorious/web/native/haptics"
+import { haptics } from "@inglorious/web/device/haptics"
 import { render } from "@inglorious/web/test"
 import { afterEach, describe, expect, it, vi } from "vitest"
 

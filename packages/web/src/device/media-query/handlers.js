@@ -1,6 +1,6 @@
 /**
- * @typedef {import("../../../types/sensors/media-query.js").MediaQueryEntity} MediaQueryEntity
- * @typedef {import("../../../types/sensors/media-query.js").MediaQueryMatchEvent} MediaQueryMatchEvent
+ * @typedef {import("../../../types/device/media-query.js").MediaQueryEntity} MediaQueryEntity
+ * @typedef {import("../../../types/device/media-query.js").MediaQueryMatchEvent} MediaQueryMatchEvent
  */
 
 const listeners = new Map()

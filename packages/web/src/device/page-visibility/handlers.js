@@ -1,5 +1,5 @@
 /**
- * @typedef {import("../../../types/sensors/page-visibility.js").PageVisibilityEntity} PageVisibilityEntity
+ * @typedef {import("../../../types/device/page-visibility.js").PageVisibilityEntity} PageVisibilityEntity
  */
 
 const VISIBILITY_EVENT = "visibilitychange"

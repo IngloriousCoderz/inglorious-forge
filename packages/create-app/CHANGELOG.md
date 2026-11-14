@@ -1,5 +1,12 @@
 # @inglorious/create-game
 
+## 1.23.3
+
+### Patch Changes
+
+- New apps get a `pnpm-workspace.yaml`, so they install with pnpm's defaults: `@inglorious/*` packages are taken the day they are published, and Firebase's install scripts are allowed when the app uses Firebase.
+- Imports follow `@inglorious/web` grouping its device features under `@inglorious/web/device`.
+
 ## 1.23.2
 
 ### Patch Changes

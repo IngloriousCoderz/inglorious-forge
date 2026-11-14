@@ -40,9 +40,9 @@ The `compass` entity tracks:
 Drive compass behavior with these events:
 
 ```javascript
-api.notify("compassPermissionsRequest")
-api.notify("compassWatch")
-api.notify("compassUnwatch")
+api.notify("#compass:compassPermissionsRequest")
+api.notify("#compass:compassWatch")
+api.notify("#compass:compassUnwatch")
 ```
 
 ### What each event does
@@ -75,11 +75,15 @@ const renderApp = (api) => {
         }
       </p>
       <p>Error: ${compass.error ? compass.error.message : "none"}</p>
-      <button @click=${() => api.notify("compassPermissionsRequest")}>
+      <button @click=${() => api.notify("#compass:compassPermissionsRequest")}>
         Request Permission
       </button>
-      <button @click=${() => api.notify("compassWatch")}>Start Compass</button>
-      <button @click=${() => api.notify("compassUnwatch")}>Stop Compass</button>
+      <button @click=${() => api.notify("#compass:compassWatch")}>
+        Start Compass
+      </button>
+      <button @click=${() => api.notify("#compass:compassUnwatch")}>
+        Stop Compass
+      </button>
     </section>
   `
 }

@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 19.2.1
+
+### Patch Changes
+
+- The package includes its type declarations.
+
 ## 19.2.0
 
 ### Minor Changes

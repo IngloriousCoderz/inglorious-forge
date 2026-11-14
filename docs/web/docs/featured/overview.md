@@ -42,16 +42,15 @@ Client-side routing that integrates directly with your store.
 
 **[Learn more →](./router.md)**
 
-### Sensors
+### Device
 
-Browser sensors are exposed as entity types so state stays inside your store and sensor behavior remains testable.
+What the phone or browser can sense or do, through web APIs, and Capacitor plugins in a native app.
 
-- Serializable state with runtime listeners kept outside entities
-- Sensor lifecycle and normalization live in one place
-- Standard store bindings can drive UI updates
-- Includes Compass, Geolocation, ElementSize, MediaQuery, NetworkStatus, and PageVisibility
+- Sensors: Compass, Geolocation, ElementSize, MediaQuery, NetworkStatus and PageVisibility
+- [Share](./share.md), [Haptics](./haptics.md), [Local Notifications](./local-notifications.md), [Biometrics](./biometrics.md), [Keyboard](./keyboard.md) and [Storage](./storage.md)
+- Serializable state, with listeners kept outside entities
 
-**[Learn more →](./sensors.md)**
+**[Learn more →](./device.md)**
 
 ### Sign-in
 
@@ -63,13 +62,12 @@ The type behind a sign-in screen, for any backend through an adapter.
 
 **[Learn more →](./sign-in.md)**
 
-### Mobile and PWA
+### Native App and PWA
 
 What a Capacitor app or an installed PWA needs, each doing nothing where it doesn't apply.
 
-- [Share](./share.md), [Native Storage](./native-storage.md) and [Haptics](./haptics.md)
 - [PWA Updates](./pwa-updates.md), [Native App Updates](./native-updates.md) and [Live Updates](./live-updates.md)
-- [App Links](./app-links.md), [Back Button](./back-button.md), [System Bars](./system-bars.md) and [Keyboard](./keyboard.md)
+- [App Links](./app-links.md), [Back Button](./back-button.md) and [System Bars](./system-bars.md)
 
 ## UI Primitives
 

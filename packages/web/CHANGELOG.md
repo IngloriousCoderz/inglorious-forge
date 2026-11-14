@@ -1,5 +1,14 @@
 # @inglorious/react-store
 
+## 6.29.0
+
+### Minor Changes
+
+- `createBiometrics({ plugin })` in `@inglorious/web/device/biometrics`, the type behind "unlock with Face ID" (`isAvailable`, `biometryType`, and `verify` resulting in `"verified"` or `"cancelled"`), and `createSecureStorage({ plugin })` in `@inglorious/web/device/storage`, a storage in the Keychain or Keystore: both through `@capgo/capacitor-native-biometric`, with `localStorage` for secrets in a browser.
+- `@inglorious/web/device/*` holds what the phone or browser can sense or do: the sensors (`compass`, `element-size`, `geolocation`, `media-query`, `network-status`, `page-visibility`, previously under `sensors`), `haptics`, `share`, `local-notifications`, `biometrics`, `keyboard`, and `storage` with `createNativeStorage` and `createSecureStorage`. `@inglorious/web/native/*` keeps what exists because the app is native: `isNative`, `app-links`, `back-button`, `system-bars`, `update` and `live-update`. Update the imports; nothing else changes.
+- `createLocalNotifications({ plugin, onTap })` in `@inglorious/web/device/local-notifications`: reminders scheduled for a given time, through `@capacitor/local-notifications` in a native app (shown even when it's closed) and the Notification API in a browser (while the page is open), with `permission`, `localNotificationsAsk`, `localNotificationSchedule`, `localNotificationCancel`, and taps that navigate to the reminder's `url`.
+- Geolocation and compass answer to their own entity (`#id:geolocationSuccess`, `#id:compassHeadingChange`, ...) instead of broadcasting to every entity, and keep their watches and listeners outside the entity. `Geolocation` becomes `createGeolocation({ plugin })`, using `@capacitor/geolocation` in a native app so iOS asks once; `watchId` is gone. Compass no longer writes to the entity after its permission request resolves.
+
 ## 6.28.0
 
 ### Minor Changes

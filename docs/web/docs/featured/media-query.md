@@ -20,7 +20,7 @@ The `mediaQuery` entity keeps:
 
 ```javascript
 import { createStore } from "@inglorious/store"
-import { MediaQuery } from "@inglorious/web/sensors/media-query"
+import { MediaQuery } from "@inglorious/web/device/media-query"
 
 const store = createStore({
   types: { MediaQuery },
@@ -40,5 +40,5 @@ if (mediaQuery.matches) {
 
 ## Learn more
 
-- [Sensors overview](./sensors.md)
+- [Device overview](./device.md)
 - [Inglorious Web overview](./overview.md)

@@ -1276,16 +1276,21 @@ For ready-made UI primitives (controls, data display, navigation, feedback, layo
 
 ---
 
-## Geolocation
+## Device
 
-`@inglorious/web` includes a `Geolocation` type for keeping browser geolocation state inside the store.
+`@inglorious/web/device/*` holds what the phone or browser can sense or do. Each works in a browser through its web API. In a native app, the ones with a Capacitor plugin use it, once you hand it over as `plugin`. Entity types answer to their own entity (`#id:event`) and keep listeners, observers and watches outside it. Besides the ones below, `ElementSize`, `MediaQuery`, `NetworkStatus` and `PageVisibility` follow an element's size, a media query, the connection and the page's visibility.
+
+### Geolocation
+
+`createGeolocation` from `@inglorious/web/device/geolocation` returns the type that keeps the device's position in the store. In a native app it uses [`@capacitor/geolocation`](https://capacitorjs.com/docs/apis/geolocation) when given as `plugin`, so iOS asks for the location once, for the app; elsewhere it uses `navigator.geolocation`.
 
 ```javascript
 import { createStore } from "@inglorious/store"
-import { Geolocation } from "@inglorious/web/geolocation"
+import { Geolocation as GeolocationPlugin } from "@capacitor/geolocation"
+import { createGeolocation } from "@inglorious/web/device/geolocation"
 
 const store = createStore({
-  types: { Geolocation },
+  types: { Geolocation: createGeolocation({ plugin: GeolocationPlugin }) },
   autoCreateEntities: true,
 })
 
@@ -1295,12 +1300,11 @@ store.getState().geolocation
 
 The entity state contains:
 
-- `isSupported` — whether `navigator.geolocation` is available
+- `isSupported` — whether the position can be read here
 - `isLoading` — whether a current-position request or first watch result is pending
 - `isWatching` — whether a geolocation watch is active
 - `position` — the latest normalized `{ coords, timestamp }` value
 - `error` — the latest normalized `{ code, message }` error
-- `watchId` — the active browser watch id, or `null`
 
 Events:
 
@@ -1309,16 +1313,16 @@ Events:
 - `geolocationUnwatch` — stop the active watch
 
 ```javascript
-api.notify("geolocationRequest", {
+api.notify("#geolocation:geolocationRequest", {
   enableHighAccuracy: true,
   timeout: 5000,
 })
 
-api.notify("geolocationWatch")
-api.notify("geolocationUnwatch")
+api.notify("#geolocation:geolocationWatch")
+api.notify("#geolocation:geolocationUnwatch")
 ```
 
-### Example: Show current location
+#### Example: Show current location
 
 ```javascript
 import { mount, html } from "@inglorious/web"
@@ -1347,17 +1351,17 @@ const renderApp = (api) => {
       <p>Error: ${geolocation.error ? geolocation.error.message : "none"}</p>
       <button
         @click=${() =>
-          api.notify("geolocationRequest", {
+          api.notify("#geolocation:geolocationRequest", {
             enableHighAccuracy: true,
             timeout: 5000,
           })}
       >
         Request Current Position
       </button>
-      <button @click=${() => api.notify("geolocationWatch")}>
+      <button @click=${() => api.notify("#geolocation:geolocationWatch")}>
         Start Watch
       </button>
-      <button @click=${() => api.notify("geolocationUnwatch")}>
+      <button @click=${() => api.notify("#geolocation:geolocationUnwatch")}>
         Stop Watch
       </button>
     </section>
@@ -1367,9 +1371,7 @@ const renderApp = (api) => {
 mount(store, renderApp, document.getElementById("root"))
 ```
 
----
-
-## Compass
+### Compass
 
 `@inglorious/web` also includes a `Compass` type for managing device orientation and heading state inside the store.
 
@@ -1407,12 +1409,12 @@ Events:
 - `compassError` — store a normalized compass error
 
 ```javascript
-api.notify("compassPermissionsRequest")
-api.notify("compassWatch")
-api.notify("compassUnwatch")
+api.notify("#compass:compassPermissionsRequest")
+api.notify("#compass:compassWatch")
+api.notify("#compass:compassUnwatch")
 ```
 
-### Example: Show heading and request permission
+#### Example: Show heading and request permission
 
 ```javascript
 import { mount, html } from "@inglorious/web"
@@ -1439,17 +1441,281 @@ const renderApp = (api) => {
         }
       </p>
       <p>Error: ${compass.error ? compass.error.message : "none"}</p>
-      <button @click=${() => api.notify("compassPermissionsRequest")}>
+      <button @click=${() => api.notify("#compass:compassPermissionsRequest")}>
         Request Permission
       </button>
-      <button @click=${() => api.notify("compassWatch")}>Start Compass</button>
-      <button @click=${() => api.notify("compassUnwatch")}>Stop Compass</button>
+      <button @click=${() => api.notify("#compass:compassWatch")}>
+        Start Compass
+      </button>
+      <button @click=${() => api.notify("#compass:compassUnwatch")}>
+        Stop Compass
+      </button>
     </section>
   `
 }
 
 mount(store, renderApp, document.getElementById("root"))
 ```
+
+### Share
+
+`@inglorious/web/device/share` is the type behind a share button. `share` hands a title, a text, a link or a file to whatever the device does best, and the entity says what happened:
+
+- in a native app, the system's share sheet, through [`@capacitor/share`](https://capacitorjs.com/docs/apis/share) when you hand it over;
+- in a browser, a file (a `url` with a `fileName`) downloads, since a browser has nowhere better to put it;
+- otherwise the browser's share sheet where there is one (Web Share API), else the link is copied.
+
+```javascript
+import { Share } from "@capacitor/share"
+import { createShare } from "@inglorious/web/device/share"
+
+const types = { Share: createShare({ plugin: Share }) }
+
+api.notify("#share:share", {
+  title: "My job",
+  url: "https://example.com/jobs/1",
+})
+api.notify("#share:share", {
+  title: "Wedding",
+  url: icsUrl,
+  fileName: "wedding.ics",
+})
+```
+
+`result` is `"shared"`, `"downloaded"`, `"copied"` or `"cancelled"`: closing the sheet is not an error. `status` and `error` (`"unsupported"` or `"failed"`) come from `handleRequest`. `canShare` says whether a link can be shared at all, to hide the button where it can't.
+
+### Haptics
+
+`@inglorious/web/device/haptics` plays taps the user can feel. In a native app it uses the system's haptics through [`@capacitor/haptics`](https://capacitorjs.com/docs/apis/haptics), once you hand the plugin over. Elsewhere it vibrates where the browser can (Chrome on Android), once the user has tapped the page; iOS browsers stay silent. Every call returns whether it played.
+
+```javascript
+import { Haptics } from "@capacitor/haptics"
+import { haptics } from "@inglorious/web/device/haptics"
+
+haptics.use(Haptics)
+
+haptics.selection() // a toggle flipped, a threshold crossed
+haptics.impact("heavy") // "light", "medium" (default) or "heavy"
+haptics.notification("error") // "success" (default), "warning" or "error"
+```
+
+Inglorious UI plays them too: `PullToRefresh` gives a tick when letting go would refresh.
+
+### Local Notifications
+
+`createLocalNotifications` from `@inglorious/web/device/local-notifications` is the type behind reminders the device shows on its own, such as "your job starts in an hour". In a native app they go through [`@capacitor/local-notifications`](https://capacitorjs.com/docs/apis/local-notifications), once you hand the plugin over, and show even with the app closed. In a browser they show only while the page is open, through the Notification API.
+
+```javascript
+import { LocalNotifications } from "@capacitor/local-notifications"
+import { createLocalNotifications } from "@inglorious/web/device/local-notifications"
+
+const types = {
+  Reminders: createLocalNotifications({ plugin: LocalNotifications }),
+}
+const entities = { reminders: { type: "Reminders" } }
+
+api.notify("#reminders:localNotificationSchedule", {
+  id: 1,
+  title: "Wedding in an hour",
+  body: "Villa Erba, Cernobbio",
+  at: new Date(start - HOUR),
+  url: "/jobs/1",
+})
+api.notify("#reminders:localNotificationCancel", 1)
+```
+
+The entity's `permission` is `"granted"`, `"denied"`, `"prompt"` or `"unsupported"`, and `null` until the device says. `localNotificationsAsk` brings up the system's dialog: send it from a tap, which a browser requires.
+
+An `id` is a whole number, which the app chooses so it can cancel the reminder later. A tap on a reminder with a `url` navigates there, through `onTap(url, api)` in the config, by default `#router:navigate`.
+
+#### Secrets
+
+`createSecureStorage` keeps what must stay private, such as a session's tokens, in the Keychain (iOS) or Keystore (Android), through the same [`@capgo/capacitor-native-biometric`](https://github.com/Cap-go/capacitor-native-biometric) plugin. A browser has nothing safer, so there it uses `localStorage`. It works wherever `createNativeStorage` does:
+
+```javascript
+import { NativeBiometric } from "@capgo/capacitor-native-biometric"
+import { createSecureStorage } from "@inglorious/web/device/storage"
+
+const secrets = createSecureStorage({ plugin: NativeBiometric })
+
+createClient(url, key, { auth: { storage: secrets } })
+```
+
+### Biometrics
+
+`createBiometrics` from `@inglorious/web/device/biometrics` is the type behind "unlock with Face ID". In a native app, `verify` shows the system's biometric prompt through [`@capgo/capacitor-native-biometric`](https://github.com/Cap-go/capacitor-native-biometric), once you hand the plugin over. A browser has no equivalent, so there it is never available.
+
+```javascript
+import { NativeBiometric } from "@capgo/capacitor-native-biometric"
+import { createBiometrics } from "@inglorious/web/device/biometrics"
+
+const types = { Biometrics: createBiometrics({ plugin: NativeBiometric }) }
+const entities = { biometrics: { type: "Biometrics" } }
+
+api.notify("#biometrics:verify", { reason: "Unlock your account" })
+```
+
+- `isAvailable`: whether the device can verify, to hide the button otherwise.
+- `biometryType`: `"face"`, `"fingerprint"`, `"iris"`, `"multiple"` or `"passcode"`, to name it.
+- `result`: `"verified"` or `"cancelled"`. Closing the prompt is not an error.
+- `status` and `error`: those of `handleRequest`, with `error` `"unavailable"` or `"failed"`.
+
+On iOS, Face ID needs an `NSFaceIDUsageDescription` in `Info.plist`.
+
+### Keyboard
+
+Phones don't shrink the page for the on-screen keyboard: iOS never does, nor does Chrome on Android. Whatever sits at the bottom of the screen, such as a bottom sheet with an input, ends up behind it. `@inglorious/web/device/keyboard` reads the height the keyboard covers from the visual viewport and sets it as `--iw-keyboard-height` on `<html>`, with the `iw-keyboard-open` class while the keyboard is up. It needs no plugin and works in browsers and native apps alike. Where the page does shrink for the keyboard, as in an Android app, the class is still set but the height stays `0px`, since nothing is covered.
+
+```javascript
+import { watchKeyboard } from "@inglorious/web/device/keyboard"
+
+watchKeyboard()
+```
+
+Inglorious UI's bottom sheets, snackbars and toasts move above the keyboard, and its bottom navigation hides while the keyboard is up. Your own fixed elements can do the same:
+
+```css
+.composer {
+  position: fixed;
+  bottom: var(--iw-keyboard-height, 0px);
+}
+```
+
+It returns a function that stops following.
+
+### Storage
+
+iOS and Android can clear a WebView's `localStorage` when the device runs low on space. `createNativeStorage` keeps values in Capacitor Preferences instead, in the native app, and in `localStorage` in a browser. Give it to [`withStorage`](https://www.npmjs.com/package/@inglorious/store#withstorage):
+
+```javascript
+import { Preferences } from "@capacitor/preferences"
+import { withStorage } from "@inglorious/store/storage"
+import { createNativeStorage } from "@inglorious/web/device/storage"
+
+const preferences = createNativeStorage({ plugin: Preferences })
+
+const types = {
+  Settings: [Settings, withStorage(["theme"], { storage: () => preferences })],
+}
+```
+
+Preferences answers with promises, so in the native app the entity starts with its defaults and gets the stored fields back a moment later, through `storageRestore`. In a browser it uses `localStorage`.
+
+It works as Supabase's session storage too, so signing in survives the same clean-ups:
+
+```javascript
+createClient(url, key, { auth: { storage: preferences } })
+```
+
+---
+
+## Native App
+
+`@inglorious/web/native/*` holds what exists because the app is native. Each does nothing outside a native app, and `isNative()` from `@inglorious/web/native` says whether it is one.
+
+### App Links
+
+With Universal Links (iOS) and App Links (Android), a link to the app's domain opens the installed app instead of the browser. `@inglorious/web/native/app-links` sends the router to that link's path, both for the link that started the app and for links that arrive while it runs. It does nothing outside a native app.
+
+```javascript
+import { App } from "@capacitor/app"
+import { watchAppLinks } from "@inglorious/web/native/app-links"
+
+watchAppLinks(App, store)
+```
+
+`{ id }` as a third argument notifies a router with another id; it returns a function that stops listening.
+
+The operating system opens the app only when the domain vouches for it: iOS reads `/.well-known/apple-app-site-association` and Android `/.well-known/assetlinks.json`, and the app declares the domain (Associated Domains on iOS, an intent filter on Android). [`@inglorious/capacitor`](../capacitor) generates all of it from `native.appLinks` in `package.json`, and `@inglorious/create-app --mobile` sets it up.
+
+### Back Button
+
+On Android, the back button and the back gesture go back in history. `@inglorious/web/native/back-button` closes the app instead on a root path, a top-level page like a tab bar's, and when there is no history left, as other Android apps do. It does nothing outside a native app, and iOS has no back button.
+
+```javascript
+import { App } from "@capacitor/app"
+import { watchBackButton } from "@inglorious/web/native/back-button"
+
+watchBackButton(App, { rootPaths: ["/", "/search", "/profile"] })
+```
+
+`rootPaths` defaults to `["/"]`; it returns a function that stops listening. Navigate between root paths with `{ to, replace: true }`, so switching tabs does not pile up history.
+
+### System Bars
+
+The status bar and Android's navigation bar follow the device's light or dark mode, so a light app on a phone in dark mode gets white icons on a white page. `@inglorious/web/native/system-bars` sets them from the app's own `color-scheme`, which every Inglorious UI theme sets, and follows it when the theme class changes. An app whose `color-scheme` is `light dark` keeps the device's style. It does nothing outside a native app.
+
+```javascript
+import { SystemBars } from "@capacitor/core"
+import { watchSystemBars } from "@inglorious/web/native/system-bars"
+
+watchSystemBars(SystemBars)
+```
+
+It returns a function that stops following.
+
+### Native App Updates
+
+A Capacitor app carries its web code inside the binary, so only the stores update it. `@inglorious/web/native/update` makes an update mandatory: the app reads a minimum build per platform, and a build below it is blocked until the user updates. `@inglorious/create-app --mobile --push` sets it up with Supabase.
+
+```javascript
+import { App } from "@capacitor/app"
+import {
+  createNativeUpdate,
+  watchNativeUpdate,
+} from "@inglorious/web/native/update"
+
+const types = { NativeUpdate: [createNativeUpdate({ adapter }), template] }
+const entities = { nativeUpdate: { type: "NativeUpdate" } }
+
+watchNativeUpdate(App, store)
+```
+
+`watchNativeUpdate` reads the installed build at launch and on every resume, and does nothing outside a native app. `{ id }` as a third argument notifies another entity; it returns a function that stops watching.
+
+The adapter says where the minimum lives: `requirement(platform)` resolves to `{ minBuild, storeUrl }`, or `null` for no minimum. `supabaseNativeUpdate` from `@inglorious/supabase` reads it from a table.
+
+The `nativeUpdate` entity contains:
+
+- `isUpdateRequired` — the installed build is below the minimum
+- `storeUrl` — where the update button goes, or `null`
+
+Events:
+
+- `nativeUpdateCheck` — `{ platform, build }`, sent by `watchNativeUpdate`
+- `nativeUpdateApply` — opens the store
+
+A failed check keeps the last answer, so nobody is blocked by being offline. Render the whole app as the update page while `isUpdateRequired`, and raise the minimum only once the new build is live in that store.
+
+### Live Updates
+
+A store release is only needed for native changes. `@inglorious/web/native/live-update` replaces the web code inside a Capacitor app with a newer published bundle, through [`@capawesome/capacitor-live-update`](https://capawesome.io/plugins/live-update/), whose open source plugin downloads from any URL. `publishLiveUpdate` from `@inglorious/supabase/live-update` publishes one.
+
+```javascript
+import { App } from "@capacitor/app"
+import { LiveUpdate } from "@capawesome/capacitor-live-update"
+import {
+  createLiveUpdate,
+  watchLiveUpdate,
+} from "@inglorious/web/native/live-update"
+
+const types = { LiveUpdate: createLiveUpdate({ plugin: LiveUpdate }) }
+const entities = { liveUpdate: { type: "LiveUpdate" } }
+
+watchLiveUpdate({
+  plugin: LiveUpdate,
+  app: App,
+  store,
+  manifestUrl,
+  release: Number(import.meta.env.VITE_LIVE_UPDATE_RELEASE),
+})
+```
+
+`watchLiveUpdate` tells the plugin the running bundle works, then reads the manifest at launch, every hour (`checkEveryMs`) and on each resume. The manifest is `{ release, minBuild, url, checksum, signature }`. A bundle is wanted when its `release` is newer than the running one and the installed build is at least `minBuild` (`isLiveUpdateWanted`). It downloads in the background, is applied on the next pause, and is announced as `#liveUpdate:liveUpdateReady` meanwhile; `liveUpdateApply` moves over at once. It does nothing outside a native app, and returns a function that stops watching.
+
+`release` must grow with every build, like the build's timestamp, and only release builds should have one: a development build without it must not watch, or it would turn into the published code.
+
+Set `publicKey` in the plugin's Capacitor config so it refuses unsigned bundles, and `readyTimeout` so a bundle that doesn't start is rolled back; with `autoBlockRolledBackBundles`, `watchLiveUpdate` never downloads it again.
 
 ---
 
@@ -1516,73 +1782,6 @@ Inglorious UI's `Snackbar` is the usual place for it. `watchPwaUpdate` takes `{ 
 
 ---
 
-## Native App Updates
-
-A Capacitor app carries its web code inside the binary, so only the stores update it. `@inglorious/web/native/update` makes an update mandatory: the app reads a minimum build per platform, and a build below it is blocked until the user updates. `@inglorious/create-app --mobile --push` sets it up with Supabase.
-
-```javascript
-import { App } from "@capacitor/app"
-import {
-  createNativeUpdate,
-  watchNativeUpdate,
-} from "@inglorious/web/native/update"
-
-const types = { NativeUpdate: [createNativeUpdate({ adapter }), template] }
-const entities = { nativeUpdate: { type: "NativeUpdate" } }
-
-watchNativeUpdate(App, store)
-```
-
-`watchNativeUpdate` reads the installed build at launch and on every resume, and does nothing outside a native app. `{ id }` as a third argument notifies another entity; it returns a function that stops watching.
-
-The adapter says where the minimum lives: `requirement(platform)` resolves to `{ minBuild, storeUrl }`, or `null` for no minimum. `supabaseNativeUpdate` from `@inglorious/supabase` reads it from a table.
-
-The `nativeUpdate` entity contains:
-
-- `isUpdateRequired` — the installed build is below the minimum
-- `storeUrl` — where the update button goes, or `null`
-
-Events:
-
-- `nativeUpdateCheck` — `{ platform, build }`, sent by `watchNativeUpdate`
-- `nativeUpdateApply` — opens the store
-
-A failed check keeps the last answer, so nobody is blocked by being offline. Render the whole app as the update page while `isUpdateRequired`, and raise the minimum only once the new build is live in that store.
-
----
-
-## Live Updates
-
-A store release is only needed for native changes. `@inglorious/web/native/live-update` replaces the web code inside a Capacitor app with a newer published bundle, through [`@capawesome/capacitor-live-update`](https://capawesome.io/plugins/live-update/), whose open source plugin downloads from any URL. `publishLiveUpdate` from `@inglorious/supabase/live-update` publishes one.
-
-```javascript
-import { App } from "@capacitor/app"
-import { LiveUpdate } from "@capawesome/capacitor-live-update"
-import {
-  createLiveUpdate,
-  watchLiveUpdate,
-} from "@inglorious/web/native/live-update"
-
-const types = { LiveUpdate: createLiveUpdate({ plugin: LiveUpdate }) }
-const entities = { liveUpdate: { type: "LiveUpdate" } }
-
-watchLiveUpdate({
-  plugin: LiveUpdate,
-  app: App,
-  store,
-  manifestUrl,
-  release: Number(import.meta.env.VITE_LIVE_UPDATE_RELEASE),
-})
-```
-
-`watchLiveUpdate` tells the plugin the running bundle works, then reads the manifest at launch, every hour (`checkEveryMs`) and on each resume. The manifest is `{ release, minBuild, url, checksum, signature }`. A bundle is wanted when its `release` is newer than the running one and the installed build is at least `minBuild` (`isLiveUpdateWanted`). It downloads in the background, is applied on the next pause, and is announced as `#liveUpdate:liveUpdateReady` meanwhile; `liveUpdateApply` moves over at once. It does nothing outside a native app, and returns a function that stops watching.
-
-`release` must grow with every build, like the build's timestamp, and only release builds should have one: a development build without it must not watch, or it would turn into the published code.
-
-Set `publicKey` in the plugin's Capacitor config so it refuses unsigned bundles, and `readyTimeout` so a bundle that doesn't start is rolled back; with `autoBlockRolledBackBundles`, `watchLiveUpdate` never downloads it again.
-
----
-
 ## Sign-in
 
 `@inglorious/web/auth` is the type behind a sign-in screen. It walks from the email to a password, a new account or a code sent by email, holds the signed-in `user`, and erases the account on request, as the App Store and Google Play require of apps that create accounts. Codes rather than links work in a native app too, since nobody has to open anything.
@@ -1626,148 +1825,6 @@ For a page that a confirmation email's link opens, `linkSubmit({ tokenHash })` s
 The adapter talks to the backend. `supabaseAuth` from `@inglorious/supabase` is one; another backend needs `onSessionChange`, `signIn`, `signUp`, `sendCode`, `verifyCode`, `verifyLink`, `resendCode`, `sendResetCode`, `updatePassword`, `signOut`, `eraseAccount` and `errorCode`, plus `accountExists` to skip straight to the password or the new account, and `prepare(action)`, called once the next step is known (`"signIn"` or `"signUp"`), such as to solve a CAPTCHA before the person submits.
 
 `create-app --auth` generates the screen, the account actions in the app bar, the Edge Function that erases accounts and the email templates.
-
----
-
-## App Links
-
-With Universal Links (iOS) and App Links (Android), a link to the app's domain opens the installed app instead of the browser. `@inglorious/web/native/app-links` sends the router to that link's path, both for the link that started the app and for links that arrive while it runs. It does nothing outside a native app.
-
-```javascript
-import { App } from "@capacitor/app"
-import { watchAppLinks } from "@inglorious/web/native/app-links"
-
-watchAppLinks(App, store)
-```
-
-`{ id }` as a third argument notifies a router with another id; it returns a function that stops listening.
-
-The operating system opens the app only when the domain vouches for it: iOS reads `/.well-known/apple-app-site-association` and Android `/.well-known/assetlinks.json`, and the app declares the domain (Associated Domains on iOS, an intent filter on Android). [`@inglorious/capacitor`](../capacitor) generates all of it from `native.appLinks` in `package.json`, and `@inglorious/create-app --mobile` sets it up.
-
----
-
-## Back Button
-
-On Android, the back button and the back gesture go back in history. `@inglorious/web/native/back-button` closes the app instead on a root path, a top-level page like a tab bar's, and when there is no history left, as other Android apps do. It does nothing outside a native app, and iOS has no back button.
-
-```javascript
-import { App } from "@capacitor/app"
-import { watchBackButton } from "@inglorious/web/native/back-button"
-
-watchBackButton(App, { rootPaths: ["/", "/search", "/profile"] })
-```
-
-`rootPaths` defaults to `["/"]`; it returns a function that stops listening. Navigate between root paths with `{ to, replace: true }`, so switching tabs does not pile up history.
-
----
-
-## System Bars
-
-The status bar and Android's navigation bar follow the device's light or dark mode, so a light app on a phone in dark mode gets white icons on a white page. `@inglorious/web/native/system-bars` sets them from the app's own `color-scheme`, which every Inglorious UI theme sets, and follows it when the theme class changes. An app whose `color-scheme` is `light dark` keeps the device's style. It does nothing outside a native app.
-
-```javascript
-import { SystemBars } from "@capacitor/core"
-import { watchSystemBars } from "@inglorious/web/native/system-bars"
-
-watchSystemBars(SystemBars)
-```
-
-It returns a function that stops following.
-
----
-
-## Keyboard
-
-Phones don't shrink the page for the on-screen keyboard: iOS never does, nor does Chrome on Android. Whatever sits at the bottom of the screen, such as a bottom sheet with an input, ends up behind it. `@inglorious/web/keyboard` reads the height the keyboard covers from the visual viewport and sets it as `--iw-keyboard-height` on `<html>`, with the `iw-keyboard-open` class while the keyboard is up. It needs no plugin and works in browsers and native apps alike. Where the page does shrink for the keyboard, as in an Android app, the class is still set but the height stays `0px`, since nothing is covered.
-
-```javascript
-import { watchKeyboard } from "@inglorious/web/keyboard"
-
-watchKeyboard()
-```
-
-Inglorious UI's bottom sheets, snackbars and toasts move above the keyboard, and its bottom navigation hides while the keyboard is up. Your own fixed elements can do the same:
-
-```css
-.composer {
-  position: fixed;
-  bottom: var(--iw-keyboard-height, 0px);
-}
-```
-
-It returns a function that stops following.
-
----
-
-## Share
-
-`@inglorious/web/native/share` is the type behind a share button. `share` hands a title, a text, a link or a file to whatever the device does best, and the entity says what happened:
-
-- in a native app, the system's share sheet, through [`@capacitor/share`](https://capacitorjs.com/docs/apis/share) when you hand it over;
-- in a browser, a file (a `url` with a `fileName`) downloads, since a browser has nowhere better to put it;
-- otherwise the browser's share sheet where there is one (Web Share API), else the link is copied.
-
-```javascript
-import { Share } from "@capacitor/share"
-import { createShare } from "@inglorious/web/native/share"
-
-const types = { Share: createShare({ plugin: Share }) }
-
-api.notify("#share:share", {
-  title: "My job",
-  url: "https://example.com/jobs/1",
-})
-api.notify("#share:share", {
-  title: "Wedding",
-  url: icsUrl,
-  fileName: "wedding.ics",
-})
-```
-
-`result` is `"shared"`, `"downloaded"`, `"copied"` or `"cancelled"`: closing the sheet is not an error. `status` and `error` (`"unsupported"` or `"failed"`) come from `handleRequest`. `canShare` says whether a link can be shared at all, to hide the button where it can't.
-
----
-
-## Native Storage
-
-iOS and Android can clear a WebView's `localStorage` when the device runs low on space. `createNativeStorage` keeps values in Capacitor Preferences instead, in the native app, and in `localStorage` in a browser. Give it to [`withStorage`](https://www.npmjs.com/package/@inglorious/store#withstorage):
-
-```javascript
-import { Preferences } from "@capacitor/preferences"
-import { withStorage } from "@inglorious/store/storage"
-import { createNativeStorage } from "@inglorious/web/native"
-
-const preferences = createNativeStorage({ plugin: Preferences })
-
-const types = {
-  Settings: [Settings, withStorage(["theme"], { storage: () => preferences })],
-}
-```
-
-Preferences answers with promises, so in the native app the entity starts with its defaults and gets the stored fields back a moment later, through `storageRestore`. In a browser it uses `localStorage`.
-
-It works as Supabase's session storage too, so signing in survives the same clean-ups:
-
-```javascript
-createClient(url, key, { auth: { storage: preferences } })
-```
-
-## Haptics
-
-`@inglorious/web/native/haptics` plays taps the user can feel. In a native app it uses the system's haptics through [`@capacitor/haptics`](https://capacitorjs.com/docs/apis/haptics), once you hand the plugin over. Elsewhere it vibrates where the browser can (Chrome on Android), once the user has tapped the page; iOS browsers stay silent. Every call returns whether it played.
-
-```javascript
-import { Haptics } from "@capacitor/haptics"
-import { haptics } from "@inglorious/web/native/haptics"
-
-haptics.use(Haptics)
-
-haptics.selection() // a toggle flipped, a threshold crossed
-haptics.impact("heavy") // "light", "medium" (default) or "heavy"
-haptics.notification("error") // "success" (default), "warning" or "error"
-```
-
-Inglorious UI plays them too: `PullToRefresh` gives a tick when letting go would refresh.
 
 ---
 
@@ -2117,8 +2174,8 @@ import { render, trigger } from "@inglorious/web/test"
 
 import { Form } from "@inglorious/web/form"
 import { Router, setRoutes } from "@inglorious/web/router"
-import { Geolocation } from "@inglorious/web/sensors/geolocation"
-import { Compass } from "@inglorious/web/sensors/compass"
+import { createGeolocation } from "@inglorious/web/device/geolocation"
+import { Compass } from "@inglorious/web/device/compass"
 ```
 
 This keeps `lit-html` as an internal implementation detail while still giving applications stable, tree-shakeable import paths.

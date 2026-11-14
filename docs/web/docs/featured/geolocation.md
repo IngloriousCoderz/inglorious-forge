@@ -5,16 +5,17 @@ description: Browser geolocation support with current position and watch state i
 
 # Geolocation
 
-Keep browser geolocation state inside your store with the `Geolocation` type.
+`createGeolocation` returns the type that keeps the device's position in your store. In a native app it uses [`@capacitor/geolocation`](https://capacitorjs.com/docs/apis/geolocation) when given as `plugin`, so iOS asks for the location once, for the app; elsewhere it uses `navigator.geolocation`.
 
 ## Usage
 
 ```javascript
 import { createStore } from "@inglorious/store"
-import { Geolocation } from "@inglorious/web/geolocation"
+import { Geolocation as GeolocationPlugin } from "@capacitor/geolocation"
+import { createGeolocation } from "@inglorious/web/device/geolocation"
 
 const store = createStore({
-  types: { Geolocation },
+  types: { Geolocation: createGeolocation({ plugin: GeolocationPlugin }) },
   autoCreateEntities: true,
 })
 
@@ -27,25 +28,24 @@ With `autoCreateEntities`, the store automatically creates a `geolocation` entit
 
 The `geolocation` entity tracks:
 
-- `isSupported` — whether `navigator.geolocation` is available
+- `isSupported` — whether the position can be read here
 - `isLoading` — whether a current position request or the first watch result is pending
 - `isWatching` — whether a geolocation watch is active
 - `position` — the latest normalized `{ coords, timestamp }` value
 - `error` — the latest normalized `{ code, message }` error
-- `watchId` — the browser watch ID, or `null`
 
 ## Events
 
 Use `api.notify()` to drive the geolocation flow.
 
 ```javascript
-api.notify("geolocationRequest", {
+api.notify("#geolocation:geolocationRequest", {
   enableHighAccuracy: true,
   timeout: 5000,
 })
 
-api.notify("geolocationWatch")
-api.notify("geolocationUnwatch")
+api.notify("#geolocation:geolocationWatch")
+api.notify("#geolocation:geolocationUnwatch")
 ```
 
 ### What each event does
@@ -81,17 +81,17 @@ const renderApp = (api) => {
       <p>Error: ${geolocation.error ? geolocation.error.message : "none"}</p>
       <button
         @click=${() =>
-          api.notify("geolocationRequest", {
+          api.notify("#geolocation:geolocationRequest", {
             enableHighAccuracy: true,
             timeout: 5000,
           })}
       >
         Request Current Position
       </button>
-      <button @click=${() => api.notify("geolocationWatch")}>
+      <button @click=${() => api.notify("#geolocation:geolocationWatch")}>
         Start Watch
       </button>
-      <button @click=${() => api.notify("geolocationUnwatch")}>
+      <button @click=${() => api.notify("#geolocation:geolocationUnwatch")}>
         Stop Watch
       </button>
     </section>

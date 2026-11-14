@@ -20,7 +20,7 @@ The `elementSize` entity keeps:
 
 ```javascript
 import { createStore } from "@inglorious/store"
-import { ElementSize } from "@inglorious/web/sensors/element-size"
+import { ElementSize } from "@inglorious/web/device/element-size"
 
 const store = createStore({
   types: { ElementSize },
@@ -36,7 +36,7 @@ If you want to observe a specific element, pass a `selector` option in the `enti
 
 ```javascript
 import { createStore } from "@inglorious/store"
-import { ElementSize } from "@inglorious/web/sensors/element-size"
+import { ElementSize } from "@inglorious/web/device/element-size"
 
 const store = createStore({
   types: { ElementSize },
@@ -55,5 +55,5 @@ When `autoCreateEntities` is enabled, the store can create a default `elementSiz
 
 ## Learn more
 
-- [Sensors overview](./sensors.md)
+- [Device overview](./device.md)
 - [Inglorious Web overview](./overview.md)

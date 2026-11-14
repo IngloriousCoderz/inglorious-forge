@@ -1,6 +1,6 @@
 import { handleRequest } from "@inglorious/store/async"
 
-import { isNative } from "../index.js"
+import { isNative } from "../../native/index.js"
 
 const UNSUPPORTED = "unsupported"
 const FAILED = "failed"

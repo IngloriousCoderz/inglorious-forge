@@ -1,5 +1,16 @@
 # @inglorious/ui
 
+## 9.20.2
+
+### Patch Changes
+
+- Imports follow `@inglorious/web` grouping its device features under `@inglorious/web/device`.
+- Updated dependencies
+- Updated dependencies
+- Updated dependencies
+- Updated dependencies
+  - @inglorious/web@6.29.0
+
 ## 9.20.1
 
 ### Patch Changes
