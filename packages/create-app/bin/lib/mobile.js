@@ -43,6 +43,8 @@ export function addMobileSupport(
   pkg.scripts["mobile:sync"] = "pnpm build && cap sync"
   pkg.scripts["mobile:ios"] = "pnpm build && cap run ios"
   pkg.scripts["mobile:android"] = "pnpm build && cap run android"
+  pkg.scripts["mobile:dev:ios"] = "inglorious-capacitor dev ios"
+  pkg.scripts["mobile:dev:android"] = "inglorious-capacitor dev android"
   // Vite never overrides a variable already set, so .env beats .env.local.
   pkg.scripts["build:release"] =
     "node --env-file-if-exists=.env node_modules/vite/bin/vite.js build"
@@ -138,6 +140,10 @@ pnpm mobile:android
 # or
 pnpm mobile:ios
 \`\`\`
+
+### Live reload on a device
+
+\`pnpm mobile:dev:ios\` or \`pnpm mobile:dev:android\` runs the app on a phone or emulator against the dev server on this computer: every file you save reloads on the device, as \`pnpm dev\` does in the browser. The phone must be on the same Wi-Fi network. Pick a device with \`--target <id>\` (\`pnpm cap run ios --list\` lists them). Ctrl+C stops both, and the next \`pnpm mobile:sync\` or \`pnpm mobile:ios\` runs the built app again.
 
 ### Native settings
 

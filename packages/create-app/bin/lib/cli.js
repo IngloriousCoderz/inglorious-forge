@@ -4,6 +4,7 @@ export function parseCliOptions(args) {
     template: readValueFlag(args, "template"),
     syntax: readValueFlag(args, "syntax"),
     mobile: readBooleanFlag(args, "mobile"),
+    ci: readBooleanFlag(args, "ci"),
     pwa: readBooleanFlag(args, "pwa"),
     analytics: readBooleanFlag(args, "analytics"),
     auth: readBooleanFlag(args, "auth"),

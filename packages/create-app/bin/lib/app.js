@@ -344,8 +344,7 @@ if (release) {
     manifestUrl: liveUpdateManifestUrl(import.meta.env.VITE_SUPABASE_URL),
     release,
   })
-}
-`
+}`
     : ""
 
   return `${importBlock(imports)}

@@ -5,6 +5,9 @@ const USAGE = `Usage: inglorious-capacitor <command>
 
   configure            Apply the "native" settings in package.json to the
                        native projects (runs after every cap sync)
+  dev <ios|android> [--port=5173] [cap run options]
+                       Run the app on a device or emulator with live reload
+                       from the Vite dev server
   assets [--ios] [--android]
                        Make the app icons and splash screens from the logo
   listing-assets       Capture store screenshots of the running app, and make
@@ -21,6 +24,15 @@ try {
     const { configure } = await import("../src/configure/index.js")
     const platforms = await configure()
     if (platforms.length) console.log(`Configured ${platforms.join(" and ")}`)
+  } else if (command === "dev") {
+    const { dev } = await import("../src/dev/index.js")
+    const [platform, ...rest] = flags
+    const portFlag = rest.find((flag) => flag.startsWith("--port="))
+    process.exitCode = await dev({
+      platform,
+      port: portFlag ? Number(portFlag.slice("--port=".length)) : undefined,
+      args: rest.filter((flag) => flag !== portFlag),
+    })
   } else if (command === "assets") {
     const { assets } = await import("../src/assets/index.js")
     await assets({ platforms: flags.map((flag) => flag.replace(/^--/, "")) })

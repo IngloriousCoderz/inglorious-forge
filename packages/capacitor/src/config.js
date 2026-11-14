@@ -41,6 +41,7 @@ export async function readSettings(root, env = process.env) {
     root,
     appId: capacitor.appId,
     appName: capacitor.appName,
+    webDir: capacitor.webDir ?? "www",
     appLinks: native.appLinks?.domain
       ? normalizeAppLinks(native.appLinks)
       : null,

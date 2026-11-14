@@ -22,12 +22,7 @@ Use the official scaffolding tool for the fastest setup:
 pnpm create @inglorious/app
 ```
 
-The CLI will guide you to choose:
-
-- **Project name**
-- **Template** (minimal, js, ts, ssx-js, ssx-ts)
-
-Then install and start developing:
+It asks for a template (`minimal`, `js`, `ts`, `ssx-js`, `ssx-ts`), a syntax (lit-html, JSX or Vue) and the app's features, from UI themes and routing to sign-in, push and native Android and iOS apps. Then:
 
 ```bash
 cd my-app
@@ -35,14 +30,7 @@ pnpm install
 pnpm dev
 ```
 
-**Best for:** Getting started quickly with a pre-configured project  
-**Templates:**
-
-- **minimal** — No bundling, just HTML/CSS/JS
-- **js** — JavaScript + Vite
-- **ts** — TypeScript + Vite
-- **ssx-js** — Pre-rendered site with SSX, static or server-rendered (JavaScript)
-- **ssx-ts** — Pre-rendered site with SSX, static or server-rendered (TypeScript)
+Every option, the mobile workflow and the services it uses are in the [Create App documentation](https://inglorious.dev/create-app/).
 
 ---
 
@@ -200,7 +188,7 @@ If you see a counter that increments when clicked, you're all set! 🎉
 - **[lit-html](https://npmjs.com/lit-html)** — DOM templating library (required)
 - **[@inglorious/vite-plugin-jsx](https://npmjs.com/@inglorious/vite-plugin-jsx)** — JSX support
 - **[@inglorious/vite-plugin-vue](https://npmjs.com/@inglorious/vite-plugin-vue)** — Vue template support
-- **[@inglorious/create-app](https://npmjs.com/@inglorious/create-app)** — Project scaffolding
+- **[@inglorious/create-app](https://inglorious.dev/create-app/)** — Project scaffolding
 
 ## Next Steps
 

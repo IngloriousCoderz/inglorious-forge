@@ -1,5 +1,11 @@
 # @inglorious/capacitor
 
+## 0.4.0
+
+### Minor Changes
+
+- `inglorious-capacitor dev <ios|android>` runs the app on a device or emulator with live reload from the Vite dev server
+
 ## 0.3.0
 
 ### Minor Changes

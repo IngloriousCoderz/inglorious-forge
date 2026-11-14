@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.24.0
+
+### Minor Changes
+
+- Mobile apps get `mobile:dev:ios` and `mobile:dev:android` for live reload on a device, and `--ci` generates a GitHub Actions workflow that builds and uploads both apps to TestFlight and Google Play's internal track
+
 ## 1.23.3
 
 ### Patch Changes

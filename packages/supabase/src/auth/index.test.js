@@ -72,6 +72,20 @@ describe("supabaseAuth", () => {
     })
   })
 
+  it("sends sign-in codes that create no account when told", async () => {
+    const client = fakeClient()
+    const auth = supabaseAuth(client, { codeCreatesAccount: false })
+
+    await auth.sendCode(EMAIL)
+    await auth.resendCode(EMAIL, "signIn")
+
+    expect(client.auth.signInWithOtp).toHaveBeenCalledTimes(2)
+    expect(client.auth.signInWithOtp).toHaveBeenLastCalledWith({
+      email: EMAIL,
+      options: { shouldCreateUser: false, captchaToken: undefined },
+    })
+  })
+
   it("signs up, signed in only when no confirmation is needed", async () => {
     const client = fakeClient()
     const auth = supabaseAuth(client)

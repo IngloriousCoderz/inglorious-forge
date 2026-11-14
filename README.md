@@ -48,7 +48,7 @@ There are no signals, no component state and no compiler to learn. Types are pla
 
 **Tooling**
 
-- [`@inglorious/create-app`](packages/create-app) and [`@inglorious/create-game`](packages/create-game): project scaffolders.
+- [`@inglorious/create-app`](https://inglorious.dev/create-app/): web apps, PWAs and native Android and iOS apps from one command, with sign-in, push, updates and store releases wired. [`@inglorious/create-game`](packages/create-game) does the same for games.
 - [`@inglorious/eslint-config`](packages/eslint-config): shared lint presets.
 
 ## Getting started
@@ -92,10 +92,11 @@ mount(store, (api) => api.render("counter"), document.getElementById("root"))
 2. [Web](https://inglorious.dev/web/): rendering, routing, forms and the rest of the framework.
 3. [UI](https://inglorious.dev/ui/): every component, live, with its options.
 4. [SSX](https://inglorious.dev/ssx/): static and server-rendered sites.
-5. [Charts](https://inglorious.dev/charts/) and [Motion](https://inglorious.dev/motion/).
-6. [OpenUI](packages/openui#documentation): generative UI with a language model.
-7. [Engine](https://inglorious.dev/engine/): the game engine, with interactive examples.
-8. [Philosophy](docs/philosophy.md): where Forge comes from, and whether it suits you.
+5. [Create App](https://inglorious.dev/create-app/): scaffolding, mobile apps and store releases.
+6. [Charts](https://inglorious.dev/charts/) and [Motion](https://inglorious.dev/motion/).
+7. [OpenUI](packages/openui#documentation): generative UI with a language model.
+8. [Engine](https://inglorious.dev/engine/): the game engine, with interactive examples.
+9. [Philosophy](docs/philosophy.md): where Forge comes from, and whether it suits you.
 
 The [examples](examples/) show the packages at work, from TodoMVC to a point-of-sale system, a generative-UI chat and games. The [benchmarks](benchmarks/) compare Inglorious Web with React, Vue and Svelte; the results are discussed in [You probably don't need to think about UI optimization](https://dev.to/iceonfire/you-probably-dont-need-to-think-about-ui-optimization-honest-benchmarks-2m5g).
 

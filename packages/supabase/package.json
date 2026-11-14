@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/supabase",
-  "version": "0.10.1",
+  "version": "0.11.0",
   "description": "Supabase integration for Inglorious Web, and helpers for Supabase Edge Functions.",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",

@@ -5,6 +5,7 @@
 Native project setup for [Capacitor](https://capacitorjs.com) apps, written once in `package.json` instead of clicked through Xcode and Android Studio. `@inglorious/create-app --mobile` sets it up for you.
 
 - `inglorious-capacitor configure` writes the app's native settings into `android/` and `ios/` after every `cap sync`: App Links and Universal Links, the signing team, push, Analytics off until consent and without the advertising ID, permissions and Info.plist entries, and the Firebase files.
+- `inglorious-capacitor dev <ios|android>` runs the app on a device or emulator with live reload from the Vite dev server.
 - `inglorious-capacitor assets` makes every icon and splash screen, light and dark, from one logo.
 - `inglorious-capacitor listing-assets` captures store screenshots of the running app in every size and language, and makes the promotional images (Google Play's feature graphic, a header and a search results card) and Google Play's 512px icon.
 
@@ -22,6 +23,8 @@ Run `configure` as Capacitor's `sync` hook, so `cap add` and `cap sync` both app
     "capacitor:sync:after": "inglorious-capacitor configure",
     "mobile:init:ios": "cap add ios && inglorious-capacitor assets --ios",
     "mobile:init:android": "cap add android && inglorious-capacitor assets --android",
+    "mobile:dev:ios": "inglorious-capacitor dev ios",
+    "mobile:dev:android": "inglorious-capacitor dev android",
     "mobile:assets": "inglorious-capacitor assets",
     "mobile:listing-assets": "inglorious-capacitor listing-assets"
   }
@@ -104,6 +107,10 @@ It runs for the platform Capacitor is syncing, and changes nothing when the sett
 ### What `assets` does
 
 It centres the logo (`public/logo.svg` or `public/logo.png` by default) on `background` for the icons and the splash screen, and on `backgroundDark` for the dark splash screen, then hands the result to [`@capacitor/assets`](https://github.com/ionic-team/capacitor-assets) for every size and density. `iconScale` and `splashScale` are the logo's width as a share of the icon and of the splash screen. Pass `--ios` or `--android` for one platform.
+
+## Live reload on a device
+
+`inglorious-capacitor dev ios` (or `android`) starts Vite on the local network (`vite --host`) and runs `cap run ios --live-reload`, which points the installed app at it: every saved file reloads on the phone. The phone must be on the same network as the computer. It builds the web app first if `webDir` has none, since `cap run` syncs it. Further options go to `cap run`, such as `--target <id>`; `--port=<port>` changes Vite's port (5173 by default). Ctrl+C stops both, and Capacitor puts the native config back.
 
 ## Store listing images
 

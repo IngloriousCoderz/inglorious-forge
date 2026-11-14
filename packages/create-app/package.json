@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/create-app",
-  "version": "1.23.3",
+  "version": "1.24.0",
   "description": "A scaffolding tool to quickly create a new app with Inglorious Web.",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -9,7 +9,7 @@
     "url": "git+https://github.com/IngloriousCoderz/inglorious-forge.git",
     "directory": "packages/create-app"
   },
-  "homepage": "https://inglorious-engine.vercel.app/",
+  "homepage": "https://inglorious.dev/create-app/",
   "bugs": {
     "url": "https://github.com/IngloriousCoderz/inglorious-forge/issues"
   },

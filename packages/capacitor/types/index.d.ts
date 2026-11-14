@@ -69,6 +69,8 @@ export interface ProjectSettings {
   root: string
   appId: string
   appName: string
+  /** The built web app, from the Capacitor config. */
+  webDir: string
   appLinks: Required<NonNullable<NativeConfig["appLinks"]>> | null
   ios: {
     teamId: string | null
@@ -185,3 +187,18 @@ export declare function assets(options?: {
   root?: string
   platforms?: ("ios" | "android")[]
 }): Promise<void>
+
+/**
+ * Runs the app on a device or emulator with live reload: Vite listens on the
+ * local network and `cap run --live-reload` points the app at it. Builds the
+ * web app first if it was never built.
+ * @returns The exit code of `cap run`.
+ */
+export declare function dev(options: {
+  root?: string
+  platform: "ios" | "android"
+  /** Defaults to 5173. */
+  port?: number
+  /** More options for `cap run`, such as `["--target", "<id>"]`. */
+  args?: string[]
+}): Promise<number>

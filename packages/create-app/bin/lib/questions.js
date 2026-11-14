@@ -24,6 +24,7 @@ export async function askAppFeatures(flags) {
     ui: false,
     theme: "inglorious",
     mobile: false,
+    ci: false,
     routing: false,
     transitions: false,
     icons: [],
@@ -66,6 +67,18 @@ export async function askAppFeatures(flags) {
       initial: false,
     }))
   if (canceled) return null
+
+  if (features.mobile) {
+    features.ci =
+      flags.ci ??
+      (await ask({
+        type: "confirm",
+        message:
+          "Build and upload store releases on GitHub Actions? (no Mac needed)",
+        initial: false,
+      }))
+    if (canceled) return null
+  }
 
   features.routing =
     flags.routing ??
@@ -245,5 +258,6 @@ function validate(features) {
   }
   if (!features.routing || !features.ui) features.transitions = false
   if (!features.ui) features.icons = []
+  if (!features.mobile) features.ci = false
   return features
 }

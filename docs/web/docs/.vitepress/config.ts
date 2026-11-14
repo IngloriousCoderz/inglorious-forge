@@ -29,6 +29,7 @@ export default defineConfig({
       },
       { text: "API Reference", link: "/api/reference" },
       { text: "Comparison", link: "/comparison" },
+      { text: "Create App", link: "https://inglorious.dev/create-app/" },
     ],
 
     sidebar: {

@@ -30,6 +30,9 @@ const ERROR_CODES = {
  *   answers `{ exists }` for `{ email }`, to skip straight to the password or
  *   the new account. Without it, the screen asks for the password and offers
  *   to create an account.
+ * @param {boolean} [options.codeCreatesAccount] Defaults to `true`: a sign-in
+ *   code sent to an unknown email creates the account. `false` leaves that to
+ *   sign-up.
  * @param {string} [options.eraseFunction] Defaults to `"erase-account"`.
  */
 export function supabaseAuth(
@@ -37,6 +40,7 @@ export function supabaseAuth(
   {
     captcha,
     accountExistsFunction,
+    codeCreatesAccount = true,
     eraseFunction = DEFAULT_ERASE_FUNCTION,
   } = {},
 ) {
@@ -48,7 +52,7 @@ export function supabaseAuth(
       auth.signInWithOtp({
         email,
         options: {
-          shouldCreateUser: true,
+          shouldCreateUser: codeCreatesAccount,
           captchaToken: await captchaToken("sendCode"),
         },
       }),

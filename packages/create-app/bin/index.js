@@ -10,6 +10,7 @@ import { fileURLToPath } from "url"
 
 import { addAppFeatures } from "./lib/app.js"
 import { addAuthSupport } from "./lib/auth.js"
+import { addCiSupport } from "./lib/ci.js"
 import { parseCliOptions } from "./lib/cli.js"
 import {
   INDENTATION,
@@ -102,6 +103,7 @@ async function main() {
     icons: [],
     languages: [],
     mobile: false,
+    ci: false,
     pwa: false,
     analytics: false,
     auth: false,
@@ -119,12 +121,13 @@ async function main() {
   } else if (
     cliOptions.pwa ||
     cliOptions.mobile ||
+    cliOptions.ci ||
     cliOptions.analytics ||
     cliOptions.auth ||
     cliOptions.push
   ) {
     console.warn(
-      "PWA, mobile, analytics, sign-in and push options are only available for JavaScript and TypeScript Vite app templates.",
+      "PWA, mobile, CI, analytics, sign-in and push options are only available for JavaScript and TypeScript Vite app templates.",
     )
   }
 
@@ -220,6 +223,7 @@ async function main() {
       addMobileSupport(targetDir, pkg, projectName, templatesRoot, {
         routing: features.routing,
       })
+      if (features.ci) addCiSupport(targetDir)
     }
 
     if (features.analytics || features.push) {

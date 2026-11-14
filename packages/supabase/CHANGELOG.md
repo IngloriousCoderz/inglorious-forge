@@ -1,5 +1,11 @@
 # @inglorious/supabase
 
+## 0.11.0
+
+### Minor Changes
+
+- `supabaseAuth` takes `codeCreatesAccount`: `false` keeps sign-in codes from creating accounts, leaving them to sign-up
+
 ## 0.10.1
 
 ### Patch Changes

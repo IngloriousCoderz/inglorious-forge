@@ -92,6 +92,7 @@ export const authAdapter = supabaseAuth(supabase, { captcha })
 
 - `captcha`: from `createCaptcha`.
 - `accountExistsFunction`: an Edge Function answering `{ exists }` for `{ email }`, so the screen skips straight to the password or to the new account. Rate-limit it: it tells anyone whether an email has an account.
+- `codeCreatesAccount`: whether a sign-in code sent to an unknown email creates the account. Defaults to `true`; `false` leaves new accounts to sign-up, such as when it asks for a name or for the terms to be accepted.
 - `eraseFunction`: the Edge Function that erases the caller's account. Defaults to `"erase-account"`.
 
 ### Erasing accounts

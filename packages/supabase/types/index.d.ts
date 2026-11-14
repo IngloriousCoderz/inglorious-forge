@@ -95,6 +95,11 @@ export interface SupabaseAuthOptions {
    * to the password or the new account.
    */
   accountExistsFunction?: string
+  /**
+   * Whether a sign-in code sent to an unknown email creates the account.
+   * Defaults to `true`; `false` leaves that to sign-up.
+   */
+  codeCreatesAccount?: boolean
   /** The Edge Function that erases the caller's account. Defaults to `"erase-account"`. */
   eraseFunction?: string
 }
