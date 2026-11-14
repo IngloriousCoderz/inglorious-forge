@@ -24,11 +24,14 @@ jobs:
       sha: \${{ steps.commit.outputs.sha }}
     steps:
       - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v5
         with:
           node-version-file: package.json
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
       - name: Raise the build number
-        run: node scripts/native-version.mjs | tee "$RUNNER_TEMP/build.txt"
+        run: pnpm --silent exec inglorious-capacitor version | tee "$RUNNER_TEMP/build.txt"
       - id: commit
         name: Commit it
         run: |

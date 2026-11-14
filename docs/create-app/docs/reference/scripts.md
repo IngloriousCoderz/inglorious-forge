@@ -19,26 +19,27 @@ description: The package.json scripts a generated app has
 
 ## With `--mobile`
 
-| Script                       | What it does                                                                                                       |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| `pnpm mobile:init:android`   | Creates `android/`, with icons and splash screens                                                                  |
-| `pnpm mobile:init:ios`       | Creates `ios/`, with icons and splash screens                                                                      |
-| `pnpm mobile:sync`           | Builds and copies the app into both native projects, applying the [native settings](../mobile/native-settings.md)  |
-| `pnpm mobile:android`        | Builds, syncs and runs on Android                                                                                  |
-| `pnpm mobile:ios`            | Builds, syncs and runs on iOS                                                                                      |
-| `pnpm mobile:dev:android`    | Runs on Android with [live reload](../mobile/live-reload.md)                                                       |
-| `pnpm mobile:dev:ios`        | Runs on iOS with live reload                                                                                       |
-| `pnpm mobile:assets`         | Makes [icons and splash screens](../mobile/assets.md) from the logo                                                |
-| `pnpm mobile:listing-assets` | Makes [store screenshots and promotional images](../mobile/listing-assets.md)                                      |
-| `pnpm mobile:release`        | Copies the version, raises the build number, builds for production and syncs ([Releasing](../mobile/releasing.md)) |
-| `pnpm build:release`         | Builds with `.env`, ignoring `.env.local`                                                                          |
-| `pnpm cap`                   | The Capacitor CLI                                                                                                  |
+| Script                       | What it does                                                                                                                                        |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm mobile:init:android`   | Creates `android/`, with icons and splash screens                                                                                                   |
+| `pnpm mobile:init:ios`       | Creates `ios/`, with icons and splash screens                                                                                                       |
+| `pnpm mobile:sync`           | Builds and copies the app into both native projects, applying the [native settings](../mobile/native-settings.md)                                   |
+| `pnpm mobile:android`        | Builds, syncs and runs on Android                                                                                                                   |
+| `pnpm mobile:ios`            | Builds, syncs and runs on iOS                                                                                                                       |
+| `pnpm mobile:dev:android`    | Runs on Android with [live reload](../mobile/live-reload.md)                                                                                        |
+| `pnpm mobile:dev:ios`        | Runs on iOS with live reload                                                                                                                        |
+| `pnpm mobile:assets`         | Makes [icons and splash screens](../mobile/assets.md) from the logo                                                                                 |
+| `pnpm mobile:listing-assets` | Makes [store screenshots and promotional images](../mobile/listing-assets.md)                                                                       |
+| `pnpm mobile:release`        | Copies the version, raises the build number (`inglorious-capacitor version`), builds for production and syncs ([Releasing](../mobile/releasing.md)) |
+| `pnpm build:release`         | Builds with `.env`, ignoring `.env.local`                                                                                                           |
+| `pnpm cap`                   | The Capacitor CLI                                                                                                                                   |
 
 ## With `--push`
 
-| Script            | What it does                                               |
-| ----------------- | ---------------------------------------------------------- |
-| `pnpm vault:push` | Tells the database how to reach the `push-notify` function |
+| Script              | What it does                                                                                  |
+| ------------------- | --------------------------------------------------------------------------------------------- |
+| `pnpm secrets:push` | Sets the function secrets in `supabase/functions/.env` on the hosted project, and checks them |
+| `pnpm vault:push`   | Tells the database how to reach the `push-notify` function                                    |
 
 ## With `--mobile --push`
 

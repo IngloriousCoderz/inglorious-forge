@@ -202,3 +202,13 @@ export declare function dev(options: {
   /** More options for `cap run`, such as `["--target", "<id>"]`. */
   args?: string[]
 }): Promise<number>
+
+/**
+ * Copies the version in `package.json` into the native projects and raises
+ * the build number they share, for a store upload.
+ */
+export declare function nativeVersion(options?: { root?: string }): {
+  name: string
+  version: string
+  build: number
+}

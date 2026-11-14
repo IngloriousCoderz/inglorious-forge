@@ -1,5 +1,11 @@
 # @inglorious/capacitor
 
+## 0.5.0
+
+### Minor Changes
+
+- `inglorious-capacitor version` copies the version in `package.json` into both native projects and raises their shared build number
+
 ## 0.4.0
 
 ### Minor Changes

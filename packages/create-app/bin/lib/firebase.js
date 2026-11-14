@@ -25,7 +25,10 @@ export function addFirebaseSupport(targetDir, pkg, options) {
   if (push) {
     copyDir(path.join(templatesRoot, "features/push"), targetDir)
     stampMigration(targetDir, "push.sql")
-    pkg.scripts["vault:push"] = "node scripts/push-vault-secrets.mjs"
+    pkg.dependencies ??= {}
+    pkg.dependencies["@inglorious/supabase"] ??= "workspace:*"
+    pkg.scripts["secrets:push"] = "inglorious-supabase secrets"
+    pkg.scripts["vault:push"] = "inglorious-supabase vault"
     keepSupabaseOutOfTypeScript(targetDir)
   }
 
@@ -146,12 +149,12 @@ To deploy:
 \`\`\`bash
 supabase link --project-ref <your project ref>
 supabase db push
-supabase secrets set FCM_SERVICE_ACCOUNT="$(cat path/to/service-account.json)"
+pnpm secrets:push
 supabase functions deploy push-notify
 pnpm vault:push
 \`\`\`
 
-\`pnpm vault:push\` tells the database how to reach the function. It stores the project's legacy \`service_role\` key in Vault, which is the key \`push-notify\` can read a role from.
+\`pnpm secrets:push\` sets the function secrets in \`supabase/functions/.env\`, such as \`FCM_SERVICE_ACCOUNT\`, on the linked project, and checks that each arrived as it is locally; \`pnpm secrets:push FCM_SERVICE_ACCOUNT\` sets just that one. \`pnpm vault:push\` tells the database how to reach the function. It stores the project's legacy \`service_role\` key in Vault, which is the key \`push-notify\` can read a role from. It asks the Supabase CLI for the key, so it is never written down.
 
 A browser's service worker only exists in a build, so try web pushes with \`pnpm build && pnpm preview\`.`
 }

@@ -13,6 +13,7 @@ import path from "node:path"
 import process from "node:process"
 import { parseEnv } from "node:util"
 
+import { linkedProject, serviceRoleKey } from "../project/index.js"
 import { generateLiveUpdateKeys, publishLiveUpdate } from "./index.js"
 
 export const PUBLIC_KEY_FILE = "live-update.pub.pem"
@@ -173,22 +174,8 @@ function supabaseProject(cwd, env = process.env) {
       serviceKey: env.SUPABASE_SERVICE_ROLE_KEY,
     }
   }
-  const ref = readFileSync(
-    path.join(cwd, "supabase", ".temp", "project-ref"),
-    "utf8",
-  ).trim()
-  const apiKeys = JSON.parse(
-    execFileSync(
-      "supabase",
-      ["projects", "api-keys", "--project-ref", ref, "-o", "json"],
-      { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] },
-    ),
-  )
-  const serviceKey = apiKeys.find(
-    ({ name, type }) => name === "service_role" && type === "legacy",
-  )?.api_key
-  if (!serviceKey) throw new Error("No legacy service_role key found")
-  return { projectUrl: `https://${ref}.supabase.co`, serviceKey }
+  const { ref, projectUrl } = linkedProject(cwd)
+  return { projectUrl, serviceKey: serviceRoleKey(ref) }
 }
 
 function nowRelease() {

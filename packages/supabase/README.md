@@ -5,6 +5,7 @@ Supabase integration for Inglorious Web.
 - **Realtime**: `realtimeSource` tells entities that a table changed, so that [`withLiveReload`](https://inglorious.dev/web/advanced/decorators#withlivereload) reloads them.
 - **CAPTCHA**: `createCaptcha` gives Supabase Auth the [Turnstile](https://developers.cloudflare.com/turnstile/) tokens its CAPTCHA protection asks for. See [CAPTCHA](#captcha).
 - **Edge Functions**: `@inglorious/supabase/edge` has the helpers every function needs, from CORS to the caller's identity and sending email. See [Edge Functions](#edge-functions).
+- **Secrets**: `inglorious-supabase` sets the linked project's function secrets from `supabase/functions/.env`, and its Vault secrets. See [Secrets](#secrets).
 
 ## Install
 
@@ -247,6 +248,24 @@ Turn on CAPTCHA protection only once every client sends tokens: apps in the stor
 
 - The content security policy needs `https://challenges.cloudflare.com` in `script-src` and `frame-src`.
 - The widget's hostnames in Cloudflare need the site's domain, plus `localhost` for Capacitor apps, which run there.
+
+## Secrets
+
+The `inglorious-supabase` command sets a linked project's secrets (after `supabase link`), with the Supabase CLI:
+
+```json
+{
+  "scripts": {
+    "secrets:push": "inglorious-supabase secrets",
+    "vault:push": "inglorious-supabase vault"
+  }
+}
+```
+
+- `inglorious-supabase secrets` sets the Edge Function secrets in `supabase/functions/.env`, then reads back the fingerprints Supabase keeps of them and prints `ok` or `DIFF` for each, failing on a difference. Name some to set only those: `inglorious-supabase secrets FCM_SERVICE_ACCOUNT`.
+- `inglorious-supabase vault` stores `project_url` and the legacy `service_role_key` in Vault, for SQL that calls Edge Functions with `pg_net`, such as a trigger that sends a push. The key comes from the Supabase CLI's login, so it is never written down.
+
+Both write the values to a private temporary file for the Supabase CLI, never to its arguments, and delete it afterwards.
 
 ## Edge Functions
 

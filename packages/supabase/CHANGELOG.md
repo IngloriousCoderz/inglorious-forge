@@ -1,5 +1,11 @@
 # @inglorious/supabase
 
+## 0.12.0
+
+### Minor Changes
+
+- `inglorious-supabase secrets` sets Edge Function secrets from `supabase/functions/.env` and checks them, and `inglorious-supabase vault` stores the project's URL and service role key in Vault
+
 ## 0.11.0
 
 ### Minor Changes

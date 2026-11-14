@@ -49,7 +49,7 @@ export function addMobileSupport(
   pkg.scripts["build:release"] =
     "node --env-file-if-exists=.env node_modules/vite/bin/vite.js build"
   pkg.scripts["mobile:release"] =
-    "node scripts/native-version.mjs && pnpm build:release && cap sync"
+    "inglorious-capacitor version && pnpm build:release && cap sync"
 
   copyDir(path.join(templatesRoot, "features/mobile"), targetDir)
 

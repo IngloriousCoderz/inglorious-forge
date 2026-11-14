@@ -17,7 +17,6 @@ my-app/
 ├── public/
 │   ├── logo.png             # the icon, splash screen and PWA icons start here
 │   └── sw-push.js           # with --push
-├── scripts/                 # build number, Vault secrets
 ├── src/
 │   ├── main.ts              # mounts the app and starts the watchers
 │   ├── app/                 # the shell and its pieces
@@ -44,7 +43,7 @@ my-app/
 └── package.json             # scripts, and "native" settings with --mobile
 ```
 
-Without routing, the single page is `src/app/home/`. `android/` and `ios/` appear once you create them with `pnpm mobile:init:android` and `pnpm mobile:init:ios`; commit them.
+Without routing, the single page is `src/app/home/`. There is no `scripts/` folder: tasks such as raising the build number or pushing secrets are commands of the Forge packages (`inglorious-capacitor`, `inglorious-supabase`), so they get fixes with the dependencies. `android/` and `ios/` appear once you create them with `pnpm mobile:init:android` and `pnpm mobile:init:ios`; commit them.
 
 ## How the app starts
 

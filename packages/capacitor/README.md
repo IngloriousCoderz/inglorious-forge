@@ -5,6 +5,7 @@
 Native project setup for [Capacitor](https://capacitorjs.com) apps, written once in `package.json` instead of clicked through Xcode and Android Studio. `@inglorious/create-app --mobile` sets it up for you.
 
 - `inglorious-capacitor configure` writes the app's native settings into `android/` and `ios/` after every `cap sync`: App Links and Universal Links, the signing team, push, Analytics off until consent and without the advertising ID, permissions and Info.plist entries, and the Firebase files.
+- `inglorious-capacitor version` copies the version in `package.json` into both native projects and raises the build number they share, before a store upload.
 - `inglorious-capacitor dev <ios|android>` runs the app on a device or emulator with live reload from the Vite dev server.
 - `inglorious-capacitor assets` makes every icon and splash screen, light and dark, from one logo.
 - `inglorious-capacitor listing-assets` captures store screenshots of the running app in every size and language, and makes the promotional images (Google Play's feature graphic, a header and a search results card) and Google Play's 512px icon.
@@ -23,6 +24,7 @@ Run `configure` as Capacitor's `sync` hook, so `cap add` and `cap sync` both app
     "capacitor:sync:after": "inglorious-capacitor configure",
     "mobile:init:ios": "cap add ios && inglorious-capacitor assets --ios",
     "mobile:init:android": "cap add android && inglorious-capacitor assets --android",
+    "mobile:release": "inglorious-capacitor version && pnpm build && cap sync",
     "mobile:dev:ios": "inglorious-capacitor dev ios",
     "mobile:dev:android": "inglorious-capacitor dev android",
     "mobile:assets": "inglorious-capacitor assets",
@@ -107,6 +109,10 @@ It runs for the platform Capacitor is syncing, and changes nothing when the sett
 ### What `assets` does
 
 It centres the logo (`public/logo.svg` or `public/logo.png` by default) on `background` for the icons and the splash screen, and on `backgroundDark` for the dark splash screen, then hands the result to [`@capacitor/assets`](https://github.com/ionic-team/capacitor-assets) for every size and density. `iconScale` and `splashScale` are the logo's width as a share of the icon and of the splash screen. Pass `--ios` or `--android` for one platform.
+
+## Versions for the stores
+
+`inglorious-capacitor version` reads `version` from `package.json`, which must be `MAJOR.MINOR.PATCH` as the App Store requires, and writes it into `ios/` (`MARKETING_VERSION`) and `android/` (`versionName`). It then raises the build number (`CURRENT_PROJECT_VERSION`, `versionCode`) to one past the highest of the two, so both stores get the same, new build number. Commit what it changed.
 
 ## Live reload on a device
 

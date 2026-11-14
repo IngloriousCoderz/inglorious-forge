@@ -34,11 +34,11 @@ To deploy:
 ```bash
 supabase link --project-ref <your project ref>
 supabase db push
-supabase secrets set FCM_SERVICE_ACCOUNT="$(cat path/to/service-account.json)"
+pnpm secrets:push
 supabase functions deploy push-notify
 pnpm vault:push
 ```
 
-`pnpm vault:push` tells the database how to reach the function, storing the project's `service_role` key in Vault.
+`pnpm secrets:push` sets the secrets in `supabase/functions/.env`, such as `FCM_SERVICE_ACCOUNT`, on the hosted project and checks that each arrived as it is locally; `pnpm secrets:push FCM_SERVICE_ACCOUNT` sets just that one. `pnpm vault:push` tells the database how to reach the function, storing the project's `service_role` key in Vault. Both come from [`@inglorious/supabase`](https://www.npmjs.com/package/@inglorious/supabase).
 
 A browser's service worker only exists in a build, so try web pushes with `pnpm build && pnpm preview`. The API behind it is [`createPushPrompt`](https://inglorious.dev/web/featured/push).

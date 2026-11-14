@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.25.0
+
+### Minor Changes
+
+- Generated apps call `inglorious-capacitor version` and `inglorious-supabase vault` instead of copying scripts into `scripts/`, and push apps get `secrets:push` for the function secrets
+
 ## 1.24.0
 
 ### Minor Changes

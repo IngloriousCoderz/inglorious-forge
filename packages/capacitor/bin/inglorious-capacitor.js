@@ -5,6 +5,8 @@ const USAGE = `Usage: inglorious-capacitor <command>
 
   configure            Apply the "native" settings in package.json to the
                        native projects (runs after every cap sync)
+  version              Copy the version in package.json into the native
+                       projects and raise their shared build number
   dev <ios|android> [--port=5173] [cap run options]
                        Run the app on a device or emulator with live reload
                        from the Vite dev server
@@ -24,6 +26,10 @@ try {
     const { configure } = await import("../src/configure/index.js")
     const platforms = await configure()
     if (platforms.length) console.log(`Configured ${platforms.join(" and ")}`)
+  } else if (command === "version") {
+    const { nativeVersion } = await import("../src/version/index.js")
+    const { name, version, build } = nativeVersion()
+    console.log(`${name} ${version}, build ${build}`)
   } else if (command === "dev") {
     const { dev } = await import("../src/dev/index.js")
     const [platform, ...rest] = flags
