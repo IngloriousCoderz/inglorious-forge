@@ -80,3 +80,6 @@ lerna-debug.log*
 .windsurf/
 .zencoder/
 skills/
+
+# VitePress
+**/.vitepress/.temp/

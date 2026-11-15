@@ -10,7 +10,7 @@ import { tmpdir } from "node:os"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
 
-import plist from "plist"
+import * as plist from "plist"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
 
 import { configure } from "./index.js"

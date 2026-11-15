@@ -1,7 +1,7 @@
 import { copyFileSync, existsSync, readFileSync, writeFileSync } from "node:fs"
 import path from "node:path"
 
-import plist from "plist"
+import * as plist from "plist"
 
 const BUILDS = ["Debug", "Release"]
 const ASSOCIATED_DOMAINS = "com.apple.developer.associated-domains"
