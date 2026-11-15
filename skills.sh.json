@@ -1,0 +1,57 @@
+{
+  "$schema": "https://skills.sh/schemas/skills.sh.schema.json",
+  "notGrouped": "bottom",
+  "groupings": [
+    {
+      "title": "Web UI",
+      "description": "Frontend architecture, rendering patterns, and UI toolkit guidance.",
+      "skills": [
+        "web",
+        "web-best-practices",
+        "vite-plugin-jsx",
+        "vite-plugin-vue",
+        "ui",
+        "ui-best-practices",
+        "i18n",
+        "openui"
+      ]
+    },
+    {
+      "title": "Data & State",
+      "description": "Entity-based application state, stores, and server integration.",
+      "skills": [
+        "store",
+        "react-store",
+        "server",
+        "utils",
+        "supabase",
+        "firebase"
+      ]
+    },
+    {
+      "title": "Static Sites",
+      "description": "Static site generation, hydration, and content-driven workflows.",
+      "skills": ["ssx"]
+    },
+    {
+      "title": "UI & Charts",
+      "description": "Visual components, theming, and charting patterns.",
+      "skills": ["charts"]
+    },
+    {
+      "title": "Game Engine",
+      "description": "2D game loop architecture and game project scaffolding.",
+      "skills": ["engine", "engine-best-practices", "create-game"]
+    },
+    {
+      "title": "Scaffolding",
+      "description": "Create new Inglorious Web and game projects quickly.",
+      "skills": ["create-app"]
+    },
+    {
+      "title": "Getting Started",
+      "description": "Entry point that routes a goal to the smallest relevant set of skills, the code style every project follows, and the recipe for building and shipping an app.",
+      "skills": ["forge", "forge-best-practices", "app-recipe"]
+    }
+  ]
+}

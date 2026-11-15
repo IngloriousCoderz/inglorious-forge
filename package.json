@@ -1,20 +1,21 @@
 {
   "name": "inglorious-forge",
   "private": true,
-  "description": "A collection of small, focused JavaScript tools — forged one piece at a time.",
+  "description": "A collection of small, focused JavaScript tools \u2014 forged one piece at a time.",
   "author": "IceOnFire <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
   "scripts": {
     "format": "prettier --write .",
     "lint-staged": "lint-staged",
-    "lint": "turbo lint",
+    "lint": "turbo lint && node scripts/verify-docs.mjs",
     "test": "turbo test",
     "build": "turbo build",
     "dev": "turbo dev",
     "prepare": "husky",
     "ci:version": "pnpm run build && pnpm run lint && pnpm run test && changeset version",
     "ci:publish": "changeset publish",
-    "turbo:upgrade": "pnpm dlx @turbo/codemod migrate"
+    "turbo:upgrade": "pnpm dlx @turbo/codemod migrate",
+    "verify:docs": "node scripts/verify-docs.mjs"
   },
   "devDependencies": {
     "@changesets/cli": "^3.0.3",

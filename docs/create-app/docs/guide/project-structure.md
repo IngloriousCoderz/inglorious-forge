@@ -57,4 +57,4 @@ Without routing, the single page is `src/app/home/`. There is no `scripts/` fold
 
 The project keeps two TypeScripts side by side: `typescript` (version 6) for the tools that need its API, such as ESLint, and `@typescript/native` (version 7) for fast type checks. Keep both.
 
-The code follows the conventions of the [`web-best-practices`](https://github.com/IngloriousCoderz/forge-skills) skill: kebab-case paths, one folder per component, types in `types/`.
+The code follows the conventions of the [`web-best-practices`](https://github.com/IngloriousCoderz/inglorious-forge/tree/main/skills/web-best-practices) skill: kebab-case paths, one folder per component, types in `types/`.

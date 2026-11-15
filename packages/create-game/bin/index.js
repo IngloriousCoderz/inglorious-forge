@@ -9,7 +9,7 @@ import prompts from "prompts"
 import { fileURLToPath } from "url"
 
 const INDENTATION = 2
-const SKILLS_REPOSITORY = "IngloriousCoderz/forge-skills"
+const SKILLS_REPOSITORY = "IngloriousCoderz/inglorious-forge"
 const SKILLS = [
   "forge",
   "forge-best-practices",

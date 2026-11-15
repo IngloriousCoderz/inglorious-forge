@@ -1,6 +1,6 @@
 import { execSync } from "child_process"
 
-const SKILLS_REPOSITORY = "IngloriousCoderz/forge-skills"
+const SKILLS_REPOSITORY = "IngloriousCoderz/inglorious-forge"
 
 /**
  * The agent skills for the packages a new project uses.
