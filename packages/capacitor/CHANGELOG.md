@@ -1,5 +1,11 @@
 # @inglorious/capacitor
 
+## 0.5.1
+
+### Patch Changes
+
+- f53569a: Imports `plist` by its named exports, which plist 5 requires: iOS configuration no longer fails on `plist.build`.
+
 ## 0.5.0
 
 ### Minor Changes
