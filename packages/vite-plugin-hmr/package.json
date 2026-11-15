@@ -35,7 +35,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@babel/parser": "^8.1.0",
+    "@babel/parser": "^8.1.2",
     "magic-string": "^1.4.5"
   },
   "devDependencies": {

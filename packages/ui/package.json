@@ -386,7 +386,7 @@
     "@storybook/web-components-vite": "^10.6.6",
     "happy-dom": "^21.0.4",
     "jsdom": "^31.0.0",
-    "prettier": "^3.9.10",
+    "prettier": "^3.10.0",
     "remark-gfm": "^4.0.1",
     "storybook": "^10.6.6",
     "typescript": "~7.0.2",
