@@ -12,8 +12,8 @@ So instead of starting from a large framework and cutting it down, Forge went th
 - **One model everywhere.** An entity holds data, a type holds behavior, and every change is an event. The same store drives a form, a server-rendered page, a chart, a generated answer and a game loop.
 - **State in the store, never in components.** Nothing renders from hidden local state, so there is nothing to subscribe to and nothing to clean up.
 - **Re-render everything, update only what changed.** The whole template tree reruns on each change and lit-html patches the DOM, so there is no reactivity graph to reason about.
-- **Composition over hierarchy.** Behaviors are composed onto types as arrays, so cross-cutting concerns, such as a route guard or realtime streaming, are reusable pieces rather than inheritance.
-- **Predictable over clever.** What happens under the hood should be readable: events are queued and applied in order, renders are pure functions of the state, and tests need no setup.
+- **Composition over hierarchy.** Behaviors are composed onto types as arrays, applied in order like a pipe, so cross-cutting concerns, such as a route guard or realtime streaming, are reusable pieces rather than inheritance. Logic that needs every entity at once is a system; what sits around the store is a middleware.
+- **Predictable over clever.** What happens under the hood should be readable: events are queued and applied in order, one transaction each, renders are pure functions of the state, and tests need no setup. Handlers are not pure, they talk to the outside world, but every change they make goes through an event.
 - **Opt into complexity.** Every package beyond the store is optional, and each adds only what it is for.
 
 ## Is it for you?

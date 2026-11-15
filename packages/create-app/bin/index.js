@@ -193,6 +193,7 @@ async function main() {
 
     const hasAppFeatures =
       features.ui ||
+      features.pwa ||
       features.mobile ||
       features.routing ||
       Boolean(features.icons.length) ||

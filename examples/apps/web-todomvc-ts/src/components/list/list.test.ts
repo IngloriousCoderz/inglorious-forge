@@ -19,52 +19,52 @@ it("should add a new task on formSubmit", () => {
   expect(entity).toEqual(entityAfter)
 })
 
-it("should toggle a task as completed on toggleClick", () => {
+it("should toggle a task as completed on taskToggle", () => {
   const entityBefore: ListEntity = {
     id: "list",
     type: "List",
     tasks: [{ id: 1, text: "Hello world!", completed: false }],
   }
-  const event: Event = { type: "toggleClick", payload: 1 }
+  const event: Event = { type: "taskToggle", payload: 1 }
   const entityAfter: ListEntity = {
     id: "list",
     type: "List",
     tasks: [{ id: 1, text: "Hello world!", completed: true }],
   }
 
-  const { entity } = trigger(entityBefore, List.toggleClick, event.payload)
+  const { entity } = trigger(entityBefore, List.taskToggle, event.payload)
 
   expect(entity).toEqual(entityAfter)
 })
 
-it("should delete a task on deleteClick", () => {
+it("should delete a task on taskDelete", () => {
   const entityBefore: ListEntity = {
     id: "list",
     type: "List",
     tasks: [{ id: 1, text: "Hello world!", completed: false }],
   }
-  const event: Event = { type: "deleteClick", payload: 1 }
+  const event: Event = { type: "taskDelete", payload: 1 }
   const entityAfter: ListEntity = { id: "list", type: "List", tasks: [] }
 
-  const { entity } = trigger(entityBefore, List.deleteClick, event.payload)
+  const { entity } = trigger(entityBefore, List.taskDelete, event.payload)
 
   expect(entity).toEqual(entityAfter)
 })
 
-it("should clear all completed tasks on clearClick", () => {
+it("should clear all completed tasks on completedClear", () => {
   const entityBefore: ListEntity = {
     id: "list",
     type: "List",
     tasks: [{ id: 1, text: "Hello world!", completed: true }],
   }
-  const event: Event = { type: "clearClick" }
+  const event: Event = { type: "completedClear" }
   const entityAfter: ListEntity = {
     id: "list",
     type: "List",
     tasks: [],
   }
 
-  const { entity } = trigger(entityBefore, List.clearClick, event.payload)
+  const { entity } = trigger(entityBefore, List.completedClear, event.payload)
 
   expect(entity).toEqual(entityAfter)
 })

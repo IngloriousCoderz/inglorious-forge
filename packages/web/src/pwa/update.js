@@ -1,32 +1,22 @@
 const ONE_HOUR_MS = 3_600_000
 const TAKEOVER_TIMEOUT_MS = 3_000
-const DEFAULT_ID = "pwaUpdate"
 const VISIBILITY_EVENT = "visibilitychange"
 
 /**
- * Keeps an installed PWA on its latest version. Updates are not optional: a
- * downloaded version is applied on its own wherever nobody is mid-task — at
- * boot, before anything is touched, and each time the app leaves or comes
- * back to the foreground. A version that lands while someone is using the
- * app is only announced, as `#${id}:pwaUpdateReady`, so the app can offer to
- * move over at once; the next trip to the background moves over regardless.
+ * Keeps an installed PWA on its latest version: applies a waiting version at
+ * boot and on each trip to or from the background, checks for a new one every
+ * `checkEveryMs` and on each return to the foreground, and calls `onReady`
+ * when a version lands mid-session.
  *
- * Checks for a new version every `checkEveryMs` and on each return to the
- * foreground: a phone suspends an installed PWA rather than closing it, so
- * the browser's own check on navigation may never come.
- *
- * @param {ServiceWorkerRegistration} registration What `registerSW` from
- *   `virtual:pwa-register` hands to `onRegisteredSW`.
- * @param {{ notify: (type: string, payload?: unknown) => void }} [store]
- *   Where to announce a mid-session version. Without one, updates are applied
- *   silently.
- * @param {{ id?: string, checkEveryMs?: number }} [options]
+ * @param {ServiceWorkerRegistration} registration
+ * @param {() => void} [onReady]
+ * @param {{ checkEveryMs?: number }} [options]
  * @returns {() => void} Stops watching.
  */
 export function watchPwaUpdate(
   registration,
-  store,
-  { id = DEFAULT_ID, checkEveryMs = ONE_HOUR_MS } = {},
+  onReady,
+  { checkEveryMs = ONE_HOUR_MS } = {},
 ) {
   const hadController = Boolean(navigator.serviceWorker?.controller)
   let announced = null
@@ -65,7 +55,7 @@ export function watchPwaUpdate(
   function announce(worker) {
     if (!hadController || isApplying || announced === worker) return
     announced = worker
-    store?.notify(`#${id}:pwaUpdateReady`)
+    onReady?.()
   }
 
   function watchInstalls() {

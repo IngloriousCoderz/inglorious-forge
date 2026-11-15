@@ -199,10 +199,10 @@ describe("updateStrategy", () => {
         },
       },
       entities: {
-        game: { type: "Game", devMode: true },
         counter: { type: "Counter", count: 0 },
       },
       updateMode: "manual",
+      devMode: true,
     })
 
     store.notify("increment")
@@ -251,7 +251,7 @@ describe("updateStrategy", () => {
       }
     })
 
-    test("api reads see the previous state during an update", () => {
+    test("api reads see the state as the previous event left it", () => {
       for (const updateStrategy of STRATEGIES) {
         const store = createObserverStore(updateStrategy)
 
@@ -259,7 +259,127 @@ describe("updateStrategy", () => {
         store.notify("observe")
         store.update()
 
-        expect(store.getState().counter.observed).toBe(0)
+        expect(store.getState().counter.observed).toBe(5)
+      }
+    })
+
+    test("the handlers of one event all see the state from before it", () => {
+      for (const updateStrategy of STRATEGIES) {
+        const store = createStore({
+          types: {
+            Writer: {
+              tick(entity) {
+                entity.count += 1
+              },
+            },
+            Reader: {
+              tick(entity, _, api) {
+                entity.seen = api.getEntity("writer").count
+                entity.own = api.getEntity("reader").seen
+              },
+            },
+          },
+          entities: {
+            writer: { type: "Writer", count: 0 },
+            reader: { type: "Reader", seen: null, own: null },
+          },
+          updateMode: "manual",
+          updateStrategy,
+        })
+
+        store.notify("tick")
+        store.notify("tick")
+        store.update()
+
+        expect(store.getState().reader).toMatchObject({ seen: 1, own: 0 })
+      }
+    })
+
+    test("a chain of events sees each change as it happens", () => {
+      for (const updateStrategy of STRATEGIES) {
+        const store = createStore({
+          types: {
+            Session: {
+              signIn(entity, user, api) {
+                entity.user = user
+                api.notify("#page:open")
+              },
+            },
+            Page: {
+              open(entity, _, api) {
+                entity.user = api.getEntity("session").user
+              },
+            },
+          },
+          entities: {
+            session: { type: "Session", user: null },
+            page: { type: "Page", user: null },
+          },
+          updateStrategy,
+        })
+
+        store.notify("#session:signIn", "ada")
+
+        expect(store.getState().page.user).toBe("ada")
+      }
+    })
+
+    test("an entity removed by an earlier event is gone from later reads", () => {
+      for (const updateStrategy of STRATEGIES) {
+        const store = createStore({
+          types: {
+            Brick: {
+              hit(entity, _, api) {
+                api.notify("remove", entity.id)
+                api.notify("#ball:look")
+              },
+            },
+            Ball: {
+              look(entity, _, api) {
+                entity.seen = Object.values(api.getEntities()).map((e) => e.id)
+                entity.brick = api.getEntity("brick") ?? null
+              },
+            },
+          },
+          entities: { brick: { type: "Brick" }, ball: { type: "Ball" } },
+          updateStrategy,
+        })
+
+        store.notify("#brick:hit")
+
+        expect(store.getState().ball).toMatchObject({
+          seen: ["ball"],
+          brick: null,
+        })
+      }
+    })
+
+    test("a draft notified as a payload is still readable by the same update", () => {
+      for (const updateStrategy of STRATEGIES) {
+        const store = createStore({
+          types: {
+            List: {
+              add(entity, item, api) {
+                entity.items.push(item)
+                api.notify("#log:record", entity.items)
+              },
+            },
+            Log: {
+              record(entity, items) {
+                entity.count = items.length
+              },
+            },
+          },
+          entities: {
+            list: { type: "List", items: [] },
+            log: { type: "Log", count: 0 },
+          },
+          updateStrategy,
+        })
+
+        store.notify("#list:add", "a")
+
+        expect(store.getState().log.count).toBe(1)
       }
     })
 

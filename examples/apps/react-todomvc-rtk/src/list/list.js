@@ -1,7 +1,7 @@
 import { convertSlice } from "@inglorious/store/migration/rtk"
 import { createSlice } from "@reduxjs/toolkit"
 
-import { clearClick, formSubmit } from "../store/actions"
+import { completedClear, formSubmit } from "../store/actions"
 
 const TASKS_TO_REMOVE = 1
 const DEFAULT_ID = 1
@@ -14,12 +14,12 @@ const slice = createSlice({
   initialState: { tasks: [] },
 
   reducers: {
-    toggleClick(state, action) {
+    taskToggle(state, action) {
       const task = state.tasks.find((task) => task.id === action.payload)
       task.completed = !task.completed
     },
 
-    deleteClick(state, action) {
+    taskDelete(state, action) {
       const index = state.tasks.findIndex((task) => task.id === action.payload)
       state.tasks.splice(index, TASKS_TO_REMOVE)
     },
@@ -32,18 +32,18 @@ const slice = createSlice({
         if (!text.length) return
         state.tasks.push({ id: nextId(state.tasks), text })
       })
-      .addCase(clearClick, (state) => {
+      .addCase(completedClear, (state) => {
         state.tasks = state.tasks.filter((task) => !task.completed)
       })
   },
 })
 
-export const { toggleClick, deleteClick } = slice.actions
+export const { taskToggle, taskDelete } = slice.actions
 
 export default slice.reducer
 
 export const List = convertSlice(slice, {
-  extraActions: [formSubmit, clearClick],
+  extraActions: [formSubmit, completedClear],
 })
 
 function nextId(tasks) {

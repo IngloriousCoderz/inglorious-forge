@@ -67,13 +67,6 @@ const validateEmail = (value) => {
   return null
 }
 
-// Async validation
-const validateUsername = async (value) => {
-  const exists = await checkUsername(value)
-  if (exists) return "Username taken"
-  return null
-}
-
 // Form-level validation
 const validateForm = (values) => {
   const errors = {}
@@ -82,6 +75,8 @@ const validateForm = (values) => {
   return errors
 }
 ```
+
+A field validator, given to `fieldChange` or `fieldBlur`, is synchronous and returns the error or `null`. `validate` runs a form-level validator over all values; `validateAsync` does the same with an async one, setting `isValidating` meanwhile and `errors` and `isValid` when it answers.
 
 ## Array Fields
 
@@ -101,8 +96,8 @@ api.notify("#form:fieldArrayRemove", {
 // Move item
 api.notify("#form:fieldArrayMove", {
   path: "addresses",
-  from: 0,
-  to: 1,
+  fromIndex: 0,
+  toIndex: 1,
 })
 ```
 
@@ -203,4 +198,4 @@ const AsyncForm = {
 }
 ```
 
-**[Full Form Documentation](https://github.com/IngloriousCoderz/inglorious-forge/tree/main/packages/web#forms)**
+`submit`, `submitSuccess` and `submitError` are the app's own handlers: the type provides the field state, and the app says what submitting means.

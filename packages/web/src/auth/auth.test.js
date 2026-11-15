@@ -1,7 +1,7 @@
 import { createStore } from "@inglorious/store"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
-import { createAuth, watchAuth } from "./index.js"
+import { createAuth } from "./index.js"
 
 const USER = { id: "u1", email: "ada@example.com" }
 const EMAIL = "ada@example.com"
@@ -12,6 +12,7 @@ let adapter
 
 beforeEach(() => {
   adapter = {
+    onSessionChange: vi.fn(() => () => {}),
     signIn: vi.fn(async () => USER),
     signUp: vi.fn(async () => null),
     sendCode: vi.fn(async () => {}),
@@ -290,25 +291,23 @@ describe("createAuth signing in", () => {
   })
 })
 
-describe("watchAuth", () => {
-  it("follows the backend's session", () => {
+describe("the session", () => {
+  it("follows the backend's from creation to destruction", () => {
     let listener
     const stop = vi.fn()
-    const store = { notify: vi.fn() }
+    adapter.onSessionChange = (callback) => {
+      listener = callback
+      return stop
+    }
+    const store = createStore({
+      types: { Auth: createAuth({ adapter }) },
+      entities: { auth: { type: "Auth" } },
+    })
 
-    const unwatch = watchAuth(
-      {
-        onSessionChange: (callback) => {
-          listener = callback
-          return stop
-        },
-      },
-      store,
-    )
     listener(USER)
-    unwatch()
+    expect(store.getEntity("auth")).toMatchObject({ user: USER, isReady: true })
 
-    expect(store.notify).toHaveBeenCalledWith("#auth:sessionChange", USER)
+    store.notify("remove", "auth")
     expect(stop).toHaveBeenCalled()
   })
 })

@@ -1,443 +1,85 @@
 ---
 title: Event System
-description: Complete guide to event dispatch, targeting, handlers, and patterns
+description: Notifying events from templates and handlers, targeting, and the queue
 ---
 
 # The Event System
 
-Events are how Inglorious Web state changes happen. Understanding the event system is key to building apps.
+Everything that changes state is an event. A template notifies one from a DOM event; a handler notifies one to tell the rest of the app what happened.
 
-## Event Dispatch
-
-### Broadcast Events
-
-Send an event to all entities:
+## From a template
 
 ```javascript
-api.notify("refresh") // All entities listen for 'refresh'
+html`<input
+  .value=${entity.name}
+  @input=${(event) => api.notify(`#${entity.id}:nameChange`, event.target.value)}
+/>`
 ```
 
-### Targeted Events
+A template addresses its own entity by id, so several instances of a type do not answer each other's events. The payload is the least the handler needs, as plain data: a `FormData` or an element would not survive the DevTools, a server or a test.
 
-Send an event to a specific entity:
+## Targeting
 
-```javascript
-api.notify("#counter:increment") // Only 'counter' entity listens
-```
+| Event                  | Reaches                            |
+| ---------------------- | ---------------------------------- |
+| `"refresh"`            | every entity whose type handles it |
+| `"Todo:toggle"`        | every entity of type `Todo`        |
+| `"#counter:increment"` | the entity `counter`               |
+| `"Todo#todo1:toggle"`  | `todo1`, if it is a `Todo`         |
 
-### With Payload
+Type names are case-sensitive: `"todo:toggle"` reaches no `Todo`, and the store warns about it. Broadcast news, named after the subject (`cartChange`, `sessionChange`); address instructions to one entity (`#router:navigate`).
 
-Pass data with your event:
+## The queue
 
-```javascript
-api.notify("#user:setName", "Alice")
-api.notify("#todo:update", { title: "Buy milk", completed: true })
-api.dispatch({
-  type: "#cart:addItem",
-  payload: { itemId: 123, quantity: 5 },
-})
-```
-
-## Event Targeting
-
-Inglorious Web supports four levels of event targeting:
-
-### 1. Global Broadcast
-
-All entities can listen:
+Events are applied in order, one transaction each. The handlers of one event read, through `api.getEntity()`, the state as the previous event left it, and the next event reads what they changed. Subscribers hear once the queue is empty, so a chain of events renders once.
 
 ```javascript
-// Dispatch
-api.notify("appInitialized")
+const Session = {
+  signIn(entity, user, api) {
+    entity.user = user
+    api.notify("#router:navigate", "/account")
+  },
+}
 
-// Any type can handle it
-const MyType = {
-  appInitialized(entity) {
-    console.log("App is ready!")
+const AccountPage = {
+  routeChange(entity, payload, api) {
+    if (payload.route !== entity.id) return
+    // `signIn` was an earlier event: its user is there
+    entity.name = api.getEntity("session").user.name
   },
 }
 ```
 
-### 2. By Type
+Two rules follow from the entity being a draft that lives until the update ends:
 
-Target all entities of a specific type:
+- write to it before the first `await`, and notify an event for what comes after; [`handleRequest`](https://inglorious.dev/store/advanced/async-operations) does that for a request;
+- a draft in a payload is fine within the same update; anything read later, after an `await` or in a timer, gets a copy.
 
-```javascript
-// Dispatch
-api.notify("Todo:toggle")
+## Lifecycle
 
-// All todo entities listen
-const Todo = {
-  toggle(entity) {
-    entity.completed = !entity.completed
-  },
-}
-```
-
-### 3. By ID
-
-Target a specific entity:
+`create` runs when an entity is added, `destroy` when it is removed. A type opens what it needs in one and closes it in the other, keeping the handle outside the entity:
 
 ```javascript
-// Dispatch
-api.notify("#counter:increment")
+const timers = new Map()
 
-// Only the counter entity with that ID listens
-const Counter = {
-  increment(entity) {
-    entity.value++
-  },
-}
-```
-
-### 4. Type#ID (Specific)
-
-Most specific targeting:
-
-```javascript
-// Dispatch
-api.notify("ListItem#item1:itemSelected", { highlighted: true })
-
-// Only that entity with that handler listens
-const ListItem = {
-  itemSelected(entity, payload) {
-    entity.highlighted = payload.highlighted
-  },
-}
-```
-
-## Event Handlers
-
-### Handler Signature
-
-```javascript
-const MyType = {
-  someEvent(entity, payload, api) {
-    // entity: The entity being updated
-    // payload: Data passed with the event
-    // api: Store API (for triggering more events)
-  },
-}
-```
-
-### Optional Parameters
-
-You can omit unused parameters:
-
-```javascript
-const MyType = {
-  // Just entity
-  doSomething(entity) {
-    entity.count++
+const Clock = {
+  create(entity, _, api) {
+    const { id } = entity
+    timers.set(
+      id,
+      setInterval(() => api.notify(`#${id}:tick`), 1000),
+    )
   },
 
-  // Entity and payload
-  updateValue(entity, newValue) {
-    entity.value = newValue
-  },
-
-  // All three
-  complexEvent(entity, payload, api) {
-    entity.data = payload
-    api.notify("dataUpdated")
-  },
-}
-```
-
-## Event Patterns
-
-### Pattern 1: Toggle State
-
-```javascript
-const Toggle = {
-  toggle(entity) {
-    entity.isOpen = !entity.isOpen
-  },
-
-  render(entity, api) {
-    return html`
-      <button @click=${() => api.notify("#toggle:toggle")}>
-        ${entity.isOpen ? "Close" : "Open"}
-      </button>
-      ${entity.isOpen ? html`<p>Content is visible</p>` : ""}
-    `
-  },
-}
-```
-
-### Pattern 2: Form Input
-
-```javascript
-const Form = {
-  setField(entity, { field, value }) {
-    entity[field] = value
-  },
-
-  render(entity, api) {
-    return html`
-      <input
-        type="text"
-        value="${entity.name}"
-        @input=${(e) =>
-          api.notify("#form:setField", {
-            field: "name",
-            value: e.target.value,
-          })}
-      />
-    `
-  },
-}
-```
-
-### Pattern 3: Async Operations
-
-```javascript
-const DataLoader = {
-  async load(entity, api) {
-    // Set loading BEFORE await
-    entity.isLoading = true
-
-    try {
-      const response = await fetch("/api/data")
-      const data = await response.json()
-      // After await, dispatch new event with result
-      api.notify("#dataLoader:loadSuccess", data)
-    } catch (error) {
-      // Dispatch error event
-      api.notify("#dataLoader:loadError", error.message)
-    }
-  },
-
-  // Handle success result
-  loadSuccess(entity, data) {
-    entity.isLoading = false
-    entity.data = data
-    entity.error = null
-  },
-
-  // Handle error result
-  loadError(entity, error) {
-    entity.isLoading = false
-    entity.error = error
-    entity.data = null
-  },
-
-  render(entity, api) {
-    if (entity.isLoading) return html`<p>Loading...</p>`
-    if (entity.error) return html`<p>Error: ${entity.error}</p>`
-    return html`<pre>${JSON.stringify(entity.data)}</pre>`
-  },
-}
-```
-
-### Pattern 4: Cross-Entity Communication
-
-Entities communicate through events:
-
-```javascript
-const Cart = {
-  addClick(entity, itemId, api) {
-    entity.items.push(itemId)
-    // Tell the store something happened
-    api.notify("itemAdd", { itemId })
-  },
-
-  render(entity, api) {
-    return html`
-      <button @click=${() => api.notify("#cart:addClick", "item-123")}>
-        Add to Cart
-      </button>
-    `
-  },
-}
-
-const Notification = {
-  itemAdd(entity, payload) {
-    entity.message = `Added ${payload.itemId} to cart`
-  },
-
-  render(entity, api) {
-    return html`<p>${entity.message}</p>`
-  },
-}
-```
-
-## Lifecycle Events
-
-### Create
-
-Runs when an entity is first created:
-
-```javascript
-const User = {
-  create(entity) {
-    entity.createdAt = new Date()
-    console.log(`User ${entity.id} created`)
-  },
-
-  render(entity, api) {
-    return html`<p>Created at: ${entity.createdAt}</p>`
-  },
-}
-```
-
-### Destroy
-
-Runs when an entity is removed:
-
-```javascript
-const Modal = {
   destroy(entity) {
-    console.log(`Modal ${entity.id} destroyed`)
-    // Cleanup if needed
+    clearInterval(timers.get(entity.id))
+    timers.delete(entity.id)
+  },
+
+  tick(entity) {
+    entity.now = Date.now()
   },
 }
 ```
 
-## Event Queue
-
-By default, Inglorious Web batches events into a queue for predictable, atomic updates. This means multiple events in quick succession are processed together.
-
-### How It Works
-
-```javascript
-// These events are queued together
-api.notify("#item:select", 1)
-api.notify("#item:highlight", 1)
-api.notify("#list:updateCount")
-
-// All handlers execute, then re-render once
-```
-
-### Manual Update Control
-
-For advanced use cases (like game loops or animations), you can control when updates happen:
-
-```javascript
-import { createStore } from "@inglorious/store"
-
-const store = createStore({
-  types: {/* ... */},
-  entities: {/* ... */},
-  updateMode: "manual", // Don't update automatically
-})
-
-// Now you call store.update() when you want
-function gameLoop() {
-  api.notify("#player:move", { x: 10, y: 20 })
-  api.notify("#enemy:update")
-
-  // Update happens here, re-renders once
-  store.update()
-
-  requestAnimationFrame(gameLoop)
-}
-
-gameLoop()
-```
-
-**Use cases for manual mode:**
-
-- Game loops running at 60 FPS
-- Animation loops
-- Batching multiple operations
-- Performance-critical scenarios
-
-## Advanced: Custom Event Handling
-
-### With Full Event Object
-
-```javascript
-const MyType = {
-  someEvent(entity, payload, api, meta) {
-    // meta contains: { type, timestamp, source, ... }
-    console.log(`Event at ${meta.timestamp}`)
-  },
-}
-```
-
-### Conditional Handling
-
-```javascript
-const Form = {
-  fieldChange(entity, { field, value }) {
-    // Only update if valid
-    if (value.length > 0) {
-      entity[field] = value
-    }
-  },
-}
-```
-
-### Event Delegation
-
-```javascript
-const List = {
-  itemEvent(entity, { itemId, action }, api) {
-    // Handle different actions for list items
-    switch (action) {
-      case "select":
-        entity.selectedId = itemId
-        break
-      case "delete":
-        delete entity.items[itemId]
-        break
-    }
-  },
-}
-```
-
-## Type Composition with Events
-
-Type composition allows you to intercept and modify events:
-
-```javascript
-// Base type
-const Page = {
-  navigate(entity, route) {
-    entity.currentRoute = route
-  },
-}
-
-// Guard behavior
-const requireAuth = (type) => ({
-  navigate(entity, route, api) {
-    if (!isAuthenticated()) {
-      api.notify("navigate", "/login")
-      return // Don't call original handler
-    }
-    type.navigate(entity, route, api)
-  },
-})
-
-// Compose
-const types = {
-  ProtectedPage: [Page, requireAuth],
-}
-```
-
-## Best Practices
-
-✅ **Do:**
-
-- Use targeted events (`#id:action`) for specific entities
-- Pass payload as a single object for clarity
-- Keep handlers pure (mutations only, no side effects)
-- Use broadcast events for global concerns
-- Queue related events together for atomic updates
-
-❌ **Don't:**
-
-- Create multiple event types for the same action
-- Pass complex objects as payload without structure
-- Make API calls in event handlers (use async handlers instead)
-- Trigger events from render methods (except user interactions)
-- Rely on event order for correctness
-
-## Next Steps
-
-- **[Entity Render Methods](./entity-renders.md)** — How to trigger events from templates
-- **[Type Composition](../advanced/type-composition.md)** — Advanced event interception
-- **[Performance](../advanced/performance.md)** — Event queuing and performance tips
-
-Happy eventing! ⚡
+`mount` notifies `init` once the app is mounted, which the router and forms use to attach their document listeners.

@@ -1,6 +1,5 @@
 import { handleRequest } from "@inglorious/store/async"
 
-const DEFAULT_ID = "auth"
 const DEFAULT_METHODS = ["password"]
 const DEFAULT_MIN_PASSWORD_LENGTH = 8
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -29,8 +28,12 @@ const CODE = /^\d{6,10}$/
  * `linkSubmit({ tokenHash, purpose })` signs in with the link of an email
  * instead of its code, for a page the link opens.
  *
- * The `adapter` talks to the backend: `signIn`, `signUp`, `sendCode`,
- * `verifyCode`, `verifyLink`, `resendCode`, `sendResetCode`,
+ * The entity's `user` follows the backend's session from the moment the entity
+ * is created: signed in or out, from this tab or another, and when a saved
+ * session is restored at launch, which sets `isReady`.
+ *
+ * The `adapter` talks to the backend: `onSessionChange`, `signIn`, `signUp`,
+ * `sendCode`, `verifyCode`, `verifyLink`, `resendCode`, `sendResetCode`,
  * `updatePassword`, `signOut`, `eraseAccount`, `errorCode`, and optionally
  * `accountExists`, which skips straight to the password or the new account,
  * and `prepare(action)`, called as soon as the next step is known, such as
@@ -44,7 +47,6 @@ const CODE = /^\d{6,10}$/
  *
  * @example
  * const types = { Auth: [createAuth({ adapter: supabaseAuth(supabase) }), screen] }
- * watchAuth(supabaseAuth(supabase), store)
  */
 export function createAuth({
   adapter,
@@ -53,13 +55,29 @@ export function createAuth({
 }) {
   const hasPassword = methods.includes("password")
   const hasCode = methods.includes("code")
+  const sessions = new Map()
 
   return {
-    create(entity) {
+    create(entity, _, api) {
       entity.user ??= null
       entity.isReady ??= false
       entity.methods = methods
       reset(entity)
+
+      if (!adapter.onSessionChange) return
+      const { id } = entity
+      sessions.get(id)?.()
+      sessions.set(
+        id,
+        adapter.onSessionChange((user) =>
+          api.notify(`#${id}:sessionChange`, user),
+        ),
+      )
+    },
+
+    destroy(entity) {
+      sessions.get(entity.id)?.()
+      sessions.delete(entity.id)
     },
 
     sessionChange(entity, user) {
@@ -283,22 +301,6 @@ export function createAuth({
       toError: (error) => adapter.errorCode?.(error) ?? "unknown",
     })
   }
-}
-
-/**
- * Keeps the entity's `user` in step with the backend's session: signed in or
- * out, from this tab or another, and when a saved session is restored at
- * launch, which sets `isReady`.
- *
- * @param {{ onSessionChange: (listener: (user: object | null) => void) => () => void }} adapter
- * @param {{ notify: (type: string, payload?: unknown) => void }} store
- * @param {{ id?: string }} [options]
- * @returns {() => void} Stops watching.
- */
-export function watchAuth(adapter, store, { id = DEFAULT_ID } = {}) {
-  return adapter.onSessionChange((user) =>
-    store.notify(`#${id}:sessionChange`, user),
-  )
 }
 
 function signedIn(entity, { user, isNew }, api) {

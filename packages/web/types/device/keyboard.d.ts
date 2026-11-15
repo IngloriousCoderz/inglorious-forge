@@ -1,8 +1,28 @@
+export interface KeyboardEntity {
+  id?: string
+  type: string
+  /** The page has a visual viewport to read the keyboard from. */
+  isSupported: boolean
+  /** The on-screen keyboard is up. */
+  isOpen: boolean
+  /** How much of the page the keyboard covers, in pixels: 0 where the page shrinks for it. */
+  height: number
+}
+
+export interface KeyboardChange {
+  isOpen: boolean
+  height: number
+}
+
+export type KeyboardType = {
+  create(entity: KeyboardEntity): void
+  destroy(entity: KeyboardEntity): void
+  keyboardChange(entity: KeyboardEntity, change: KeyboardChange): void
+}
+
 /**
- * Sets `--iw-keyboard-height` on `<html>` to the height the on-screen keyboard
- * covers, and the `iw-keyboard-open` class while it is up, so what sits at the
- * bottom of the screen can move above it or step aside. Where the page shrinks
- * for the keyboard, the class is set and the height stays 0.
- * @returns A function that stops following.
+ * The type that knows when the on-screen keyboard is up and how much of the
+ * page it covers, setting `--iw-keyboard-height` on `<html>` and the
+ * `iw-keyboard-open` class so fixed elements can move above it.
  */
-export declare function watchKeyboard(): () => void
+export declare const Keyboard: KeyboardType

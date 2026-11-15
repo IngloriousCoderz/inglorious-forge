@@ -8,17 +8,17 @@ export const List = {
     entity.tasks.push({ id: nextId(entity.tasks), text: value })
   },
 
-  toggleClick(entity, id) {
+  taskToggle(entity, id) {
     const task = entity.tasks.find((task) => task.id === id)
     task.completed = !task.completed
   },
 
-  deleteClick(entity, id) {
+  taskDelete(entity, id) {
     const index = entity.tasks.findIndex((task) => task.id === id)
     entity.tasks.splice(index, TASKS_TO_REMOVE)
   },
 
-  clearClick(entity) {
+  completedClear(entity) {
     entity.tasks = entity.tasks.filter((task) => !task.completed)
   },
 }

@@ -42,7 +42,7 @@ declare module "@inglorious/store" {
 export type { Api }
 
 /**
- * Root error-boundary options for `mount`.
+ * Options for `mount`.
  */
 export interface MountOptions<
   TEntity extends BaseEntity = BaseEntity,
@@ -60,6 +60,11 @@ export interface MountOptions<
     api: Api<TEntity, TState>,
   ) => TemplateResult | null
   /**
+   * Whether markup already in the element, as a server-rendered page has, is hydrated
+   * rather than replaced. Defaults to `true`.
+   */
+  hydrate?: boolean
+  /**
    * Whether navigations are announced to screen readers and move focus to the top of the
    * new page. Only apps with the `Router` type navigate. Defaults to `true`.
    */
@@ -72,12 +77,13 @@ export interface MountOptions<
 }
 
 /**
- * Mounts a lit-html template to the DOM and subscribes to a store for re-rendering.
+ * Mounts a lit-html template to the DOM and subscribes to a store for re-rendering,
+ * hydrating markup already in the element. Once mounted, it notifies `init`.
  * @param store The application state store.
  * @param renderFn The root render function that receives the API and returns a template.
  * @param element The DOM element to mount the template to.
- * @param options Root error-boundary options (`onError`, `fallback`).
- * @returns An unsubscribe function.
+ * @param options Error-boundary, hydration and navigation options.
+ * @returns An unsubscribe function, once mounted.
  */
 export function mount<
   TEntity extends BaseEntity = BaseEntity,
@@ -88,4 +94,4 @@ export function mount<
   renderFn: (api: Api<TEntity, TState, TEvents>) => TemplateResult | null,
   element: HTMLElement | DocumentFragment,
   options?: MountOptions<TEntity, TState>,
-): () => void
+): Promise<() => void>

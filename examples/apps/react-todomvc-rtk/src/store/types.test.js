@@ -3,8 +3,8 @@ import { expect, it } from "vitest"
 
 import { Footer, setFilter } from "../footer/footer"
 import { Form, inputChange } from "../form/form"
-import { deleteClick, List, toggleClick } from "../list/list"
-import { clearClick, formSubmit } from "./actions"
+import { List, taskDelete, taskToggle } from "../list/list"
+import { completedClear, formSubmit } from "./actions"
 
 const baseState = {
   form: { id: "form", type: "Form", value: "" },
@@ -38,7 +38,7 @@ it("should add a new task and a clear the form value at the same time on formSub
   doTest(baseState, event, stateAfter)
 })
 
-it("should toggle a task as completed on toggleClick", () => {
+it("should toggle a task as completed on taskToggle", () => {
   const stateBefore = {
     form: { id: "form", type: "Form", value: "" },
     list: {
@@ -48,7 +48,7 @@ it("should toggle a task as completed on toggleClick", () => {
     },
     footer: { id: "footer", type: "Footer", activeFilter: "all" },
   }
-  const event = toggleClick(1)
+  const event = taskToggle(1)
   const stateAfter = {
     form: { id: "form", type: "Form", value: "" },
     list: {
@@ -62,7 +62,7 @@ it("should toggle a task as completed on toggleClick", () => {
   doTest(stateBefore, event, stateAfter)
 })
 
-it("should delete a task on deleteClick", () => {
+it("should delete a task on taskDelete", () => {
   const stateBefore = {
     form: { id: "form", type: "Form", value: "" },
     list: {
@@ -72,7 +72,7 @@ it("should delete a task on deleteClick", () => {
     },
     footer: { id: "footer", type: "Footer", activeFilter: "all" },
   }
-  const event = deleteClick(1)
+  const event = taskDelete(1)
   const stateAfter = {
     form: { id: "form", type: "Form", value: "" },
     list: { id: "list", type: "List", tasks: [] },
@@ -82,7 +82,7 @@ it("should delete a task on deleteClick", () => {
   doTest(stateBefore, event, stateAfter)
 })
 
-it("should clear all completed tasks on clearClick", () => {
+it("should clear all completed tasks on completedClear", () => {
   const stateBefore = {
     form: { id: "form", type: "Form", value: "" },
     list: {
@@ -92,7 +92,7 @@ it("should clear all completed tasks on clearClick", () => {
     },
     footer: { id: "footer", type: "Footer", activeFilter: "all" },
   }
-  const event = clearClick()
+  const event = completedClear()
   const stateAfter = {
     form: { id: "form", type: "Form", value: "" },
     list: { id: "list", type: "List", tasks: [] },
@@ -102,7 +102,7 @@ it("should clear all completed tasks on clearClick", () => {
   doTest(stateBefore, event, stateAfter)
 })
 
-it("should update the filter on filterClick", () => {
+it("should update the filter on filterChange", () => {
   const event = setFilter("completed")
   const stateAfter = {
     form: { id: "form", type: "Form", value: "" },

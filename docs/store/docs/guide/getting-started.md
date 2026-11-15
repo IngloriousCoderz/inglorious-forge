@@ -15,7 +15,7 @@ pnpm add @inglorious/store
 
 ## Basic Usage
 
-Inglorious Store is a **drop-in replacement for Redux** in terms of the external API. You can use `createStore`, `dispatch`, `subscribe`, and other familiar methods. However, the way you define state, logic, and actions is fundamentally different from Redux.
+Inglorious Store exposes the store methods Redux tooling expects, `dispatch`, `subscribe` and `getState`, so `react-redux` and the Redux DevTools work with it unchanged. The way you define state and logic is different from Redux.
 
 ### **Key Differences from Redux**
 
@@ -32,8 +32,8 @@ import { createStore } from "@inglorious/store"
 
 // Define entity types
 const types = {
-  todoList: {
-    addTodo(entity, text) {
+  TodoList: {
+    todoAdd(entity, text) {
       entity.todos.push({ id: Date.now(), text })
     },
   },
@@ -49,7 +49,7 @@ const entities = {
 const store = createStore({ types, entities })
 
 // Use the store
-store.notify("addTodo", "Buy groceries")
+store.notify("todoAdd", "Buy groceries")
 ```
 
 ## Migrating from Redux
@@ -72,30 +72,30 @@ Inglorious Store uses a **pub/sub event system** instead of Redux's single-dispa
 
 ```javascript
 const types = {
-  todoList: {
-    taskAdded(entity, task) {
+  TodoList: {
+    taskAdd(entity, task) {
       entity.tasks.push(task)
     },
   },
-  stats: {
-    taskAdded(entity, task) {
+  Stats: {
+    taskAdd(entity, task) {
       entity.totalTasks++
     },
   },
 }
 
 // Both handlers fire when you notify
-store.notify("taskAdded", { text: "Buy milk" })
+store.notify("taskAdd", { text: "Buy milk" })
 ```
 
 You can also **target specific entities**:
 
 ```javascript
 // Only notify the work list
-store.notify("#work:taskAdded", { text: "Meeting at 3pm" })
+store.notify("#work:taskAdd", { text: "Meeting at 3pm" })
 
-// Only notify todoList types
-store.notify("todoList:taskAdded", { text: "Review PR" })
+// Only notify TodoList entities
+store.notify("TodoList:taskAdd", { text: "Review PR" })
 ```
 
 Learn more: [Event System →](/guide/event-system)

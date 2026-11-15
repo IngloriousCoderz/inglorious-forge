@@ -17,8 +17,9 @@ Entity types keep their state serializable: listeners, observers and watches sta
 - [MediaQuery](./media-query.md): whether a media query matches
 - [NetworkStatus](./network-status.md): online or offline
 - [PageVisibility](./page-visibility.md): whether the page is visible
+- [Keyboard](./keyboard.md): whether the on-screen keyboard is up, and how much it covers
 
-Most sensors have `isSupported`, and the ones that follow changes have `isWatching` with watch and unwatch events, scoped to the entity.
+Most sensors have `isSupported`, and the ones that follow changes have `isWatching` with watch and unwatch events, scoped to the entity. A type that needs nothing from outside is a plain object (`Keyboard`, `Compass`); one that needs a plugin or an adapter is made by a `createX({ plugin })` factory. Each starts in `create`, stops in `destroy`, and keeps its handles in a closure, never in the entity.
 
 ## Actions and features
 
@@ -26,7 +27,6 @@ Most sensors have `isSupported`, and the ones that follow changes have `isWatchi
 - [Haptics](./haptics.md): taps the user can feel
 - [Local Notifications](./local-notifications.md): reminders at a given time
 - [Biometrics](./biometrics.md): unlocking with Face ID or a fingerprint
-- [Keyboard](./keyboard.md): keeping fixed elements above the on-screen keyboard
 - [Storage](./storage.md): Preferences and the Keychain, for `withStorage` and Supabase
 
 ## Example

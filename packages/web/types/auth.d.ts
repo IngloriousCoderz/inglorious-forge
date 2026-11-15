@@ -104,6 +104,7 @@ type Handler<TPayload = void> = (
 
 export type AuthType = {
   create(entity: AuthEntity): void
+  destroy(entity: AuthEntity): void
   sessionChange: Handler<AuthUser | null>
   emailSubmit: Handler<string>
   signInSubmit: Handler<string>
@@ -168,13 +169,3 @@ export type AuthType = {
 
 /** The type behind a sign-in screen, holding the signed-in `user`. */
 export declare function createAuth(config: AuthConfig): AuthType
-
-/**
- * Keeps the entity's `user` in step with the backend's session.
- * @returns A function that stops watching.
- */
-export declare function watchAuth(
-  adapter: Pick<AuthAdapter, "onSessionChange">,
-  store: { notify(type: string, payload?: unknown): void },
-  options?: { id?: string },
-): () => void

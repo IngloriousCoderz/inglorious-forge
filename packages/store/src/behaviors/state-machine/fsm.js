@@ -33,13 +33,7 @@ export function fsm(states) {
   }
 }
 
-/**
- * A machine announces where it has landed, but only when it has actually moved: a
- * handler that reads the state without changing it should not wake anything up.
- *
- * The announcement is broadcast and carries the id, rather than being addressed to
- * this entity, because what wants to hear it is usually something else.
- */
+/** Broadcasts `stateChange` when the handler actually moved the entity. */
 function announce(entity, from, api) {
   const to = entity.state
 

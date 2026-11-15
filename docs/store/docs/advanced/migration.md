@@ -49,11 +49,11 @@ export const store = configureStore({
 import { createStore } from "@inglorious/store"
 
 const types = {
-  todoList: {
-    addTodo(entity, text) {
+  TodoList: {
+    todoAdd(entity, text) {
       entity.todos.push({ id: Date.now(), text, done: false })
     },
-    toggleTodo(entity, id) {
+    todoToggle(entity, id) {
       const todo = entity.todos.find((t) => t.id === id)
       if (todo) todo.done = !todo.done
     },
@@ -84,7 +84,7 @@ export function TodoList() {
           key={todo.id}
           type="checkbox"
           checked={todo.done}
-          onChange={() => dispatch({ type: "toggleTodo", payload: todo.id })}
+          onChange={() => dispatch({ type: "todoToggle", payload: todo.id })}
         />
       ))}
     </div>
@@ -101,15 +101,15 @@ Once you're comfortable, replace `dispatch` with `notify()` for a cleaner API:
 ### Before (dispatch)
 
 ```javascript
-dispatch({ type: "addTodo", payload: "Buy groceries" })
-dispatch({ type: "toggleTodo", payload: 123 })
+dispatch({ type: "todoAdd", payload: "Buy groceries" })
+dispatch({ type: "todoToggle", payload: 123 })
 ```
 
 ### After (notify)
 
 ```javascript
-store.notify("addTodo", "Buy groceries")
-store.notify("toggleTodo", 123)
+store.notify("todoAdd", "Buy groceries")
+store.notify("todoToggle", 123)
 ```
 
 **Or in React components, use `@inglorious/react-store`:**
@@ -120,7 +120,7 @@ import { useNotify } from "@inglorious/react-store"
 export function TodoList() {
   const notify = useNotify()
 
-  return <button onClick={() => notify("addTodo", "New task")}>Add Task</button>
+  return <button onClick={() => notify("todoAdd", "New task")}>Add Task</button>
 }
 ```
 
@@ -167,7 +167,7 @@ const todosSlice = createSlice({
 
 ```javascript
 const types = {
-  todoList: {
+  TodoList: {
     async fetchTodos(entity, userId, api) {
       try {
         entity.loading = true
@@ -250,7 +250,7 @@ Inglorious Store has built-in lifecycle events (`create`, `destroy`) that Redux 
 
 ```javascript
 const types = {
-  todoList: {
+  TodoList: {
     create(entity) {
       // Initialize when entity is added
       console.log(`Created todo list: ${entity.id}`)
@@ -261,7 +261,7 @@ const types = {
       console.log(`Destroyed todo list: ${entity.id}`)
     },
 
-    addTodo(entity, text) {
+    todoAdd(entity, text) {
       entity.todos.push({ id: Date.now(), text, done: false })
     },
   },
@@ -278,7 +278,7 @@ The `api` parameter in handlers gives you access to the entire state and event s
 
 ```javascript
 const types = {
-  todoList: {
+  TodoList: {
     async loadUserTodos(entity, userId, api) {
       // Read from other entities
       const user = api.getEntity("user")
@@ -325,7 +325,7 @@ const handlers = convertAsyncThunk("fetchTodos", fetchTodos, {
 })
 
 const types = {
-  todoList: {
+  TodoList: {
     ...handlers,
   },
 }
@@ -346,7 +346,7 @@ const todoListType = convertSlice(todosSlice, {
 })
 
 const types = {
-  todoList: todoListType,
+  TodoList,
 }
 ```
 
@@ -362,7 +362,7 @@ const dispatch = createRTKCompatDispatch(api, "todos")
 
 // Still works with Redux-style dispatch
 dispatch({ type: "todos/addTodo", payload: "Buy milk" })
-// becomes: api.notify("#todos:addTodo", "Buy milk")
+// becomes: api.notify("#todos:todoAdd", "Buy milk")
 ```
 
 ## Migration Checklist
@@ -394,7 +394,7 @@ const todosSlice = createSlice({
 
 ```javascript
 const types = {
-  todoList: {
+  TodoList: {
     async fetchTodos(entity, id, api) {
       entity.loading = true
       const data = await fetchApi(id)

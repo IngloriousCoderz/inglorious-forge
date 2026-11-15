@@ -33,7 +33,7 @@ export interface VirtualListEntity<
   /** The number of items to render outside the viewport (above and below). */
   bufferSize: number
 
-  /** The measured height of a single item in pixels. Null until measured on mount. */
+  /** The measured height of a single item in pixels. Null until the first item is laid out. */
   itemHeight: number | null
 
   /** An estimated height for items used for calculations before they are measured. */
@@ -66,7 +66,7 @@ export type VirtualListType = {
    * @param entity The list entity.
    * @param containerEl The scrolling container element.
    */
-  mount(entity: VirtualListEntity, containerEl: HTMLElement): void
+  itemMeasure(entity: VirtualListEntity, payload: { itemHeight: number }): void
 
   /**
    * Renders the virtualized list component.

@@ -1,4 +1,5 @@
 import { createStore } from "@inglorious/store"
+import { Keyboard } from "@inglorious/web/device/keyboard"
 import { Router, setRoutes } from "@inglorious/web/router"
 
 import { HapticsPage } from "../views/haptics-page.js"
@@ -14,7 +15,16 @@ import { routes } from "./routes.js"
 setRoutes(routes)
 
 export const store = createStore({
-  types: { Router, Inbox, Message, HapticsPage, Settings, Notice, NotFound },
+  types: {
+    Router,
+    Keyboard,
+    Inbox,
+    Message,
+    HapticsPage,
+    Settings,
+    Notice,
+    NotFound,
+  },
   entities,
   middlewares,
 })

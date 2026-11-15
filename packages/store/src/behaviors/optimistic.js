@@ -187,7 +187,7 @@ function resolveAsyncMeta(behavior) {
 
   const [runHandler, ...rest] = runHandlers
 
-  if (!runHandler && rest.length) {
+  if (!runHandler || rest.length) {
     throw new Error(
       "optimistic expects a single handleAsync result or one '*Run' handler",
     )

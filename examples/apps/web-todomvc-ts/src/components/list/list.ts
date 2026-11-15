@@ -19,18 +19,18 @@ export const List: ListType = {
     entity.tasks.push({ id: nextId(entity.tasks), text: value })
   },
 
-  toggleClick(entity, id) {
+  taskToggle(entity, id) {
     const task = entity.tasks.find((task) => task.id === id)
     if (!task) return
     task.completed = !task.completed
   },
 
-  deleteClick(entity, id) {
+  taskDelete(entity, id) {
     const index = entity.tasks.findIndex((task) => task.id === id)
     entity.tasks.splice(index, TASKS_TO_REMOVE)
   },
 
-  clearClick(entity) {
+  completedClear(entity) {
     entity.tasks = entity.tasks.filter((task) => !task.completed)
   },
 
@@ -43,12 +43,10 @@ export const List: ListType = {
           html`<li>
             <span
               class=${classMap({ [classes.completed]: Boolean(task.completed) })}
-              @click=${() => api.notify("toggleClick", task.id)}
+              @click=${() => api.notify("taskToggle", task.id)}
               >${task.text}</span
             >
-            <button @click=${() => api.notify("deleteClick", task.id)}>
-              x
-            </button>
+            <button @click=${() => api.notify("taskDelete", task.id)}>x</button>
           </li>`,
       )}
     </ul>`

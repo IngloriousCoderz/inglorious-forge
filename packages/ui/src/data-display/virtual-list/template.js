@@ -16,7 +16,8 @@ const measured = new WeakSet()
 export const template = {
   /**
    * Renders a virtualized list that only mounts visible items for performance.
-   * Uses item height estimates to compute scroll ranges and notifies on mount/scroll.
+   * Uses item height estimates to compute scroll ranges, and notifies `scroll`
+   * and, once the first item is laid out, `itemMeasure`.
    * @param {VirtualListEntity} entity The list entity state.
    * @param {Api} api The API object.
    * @returns {TemplateResult} The rendered list.
@@ -50,7 +51,10 @@ export const template = {
       <div
         class=${className ?? nothing}
         style=${styleMap({ height: `${viewportHeight}px`, overflow: "auto" })}
-        @scroll=${(e) => api.notify(`#${entity.id}:scroll`, e.currentTarget)}
+        @scroll=${(e) =>
+          api.notify(`#${entity.id}:scroll`, {
+            scrollTop: e.currentTarget.scrollTop,
+          })}
         ${ref((el) => {
           if (el && !itemHeight) measureOnce(el, entity, api)
         })}
@@ -106,8 +110,8 @@ export const template = {
 }
 
 /**
- * Notifies `mount` once per list element, after a frame and once it is in the
- * document: before that it has no layout to measure.
+ * Measures the first item once per list element, after a frame and once it is
+ * in the document: before that it has no layout to measure.
  * @param {HTMLElement} el
  * @param {VirtualListEntity} entity
  * @param {Api} api
@@ -121,7 +125,8 @@ function measureOnce(el, entity, api) {
       requestAnimationFrame(measure)
       return
     }
-    api.notify(`#${entity.id}:mount`, el)
+    const itemHeight = el.querySelector("[data-index]")?.offsetHeight
+    if (itemHeight) api.notify(`#${entity.id}:itemMeasure`, { itemHeight })
   }
   requestAnimationFrame(measure)
 }

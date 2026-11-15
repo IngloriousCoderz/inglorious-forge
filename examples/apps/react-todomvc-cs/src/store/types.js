@@ -32,7 +32,7 @@ export const types = {
       entity.tasks.push(createdTask)
     },
 
-    async toggleClick(entity, id, api) {
+    async taskToggle(entity, id, api) {
       const task = entity.tasks.find((task) => task.id === id)
       const updatedTask = await client.updateTask(id, {
         completed: !task.completed,
@@ -45,7 +45,7 @@ export const types = {
       entity.tasks[index] = updatedTask
     },
 
-    async deleteClick(entity, id, api) {
+    async taskDelete(entity, id, api) {
       await client.deleteTask(id)
       api.notify("taskDeleted", id)
     },
@@ -55,7 +55,7 @@ export const types = {
       entity.tasks.splice(index, TASKS_TO_REMOVE)
     },
 
-    async clearClick(entity, _, api) {
+    async completedClear(entity, _, api) {
       await client.clearCompleted(entity.tasks)
       api.notify("tasksCleared")
     },
@@ -66,11 +66,11 @@ export const types = {
   },
 
   Footer: {
-    filterClick(entity, id) {
+    filterChange(entity, id) {
       entity.activeFilter = id
     },
 
-    clearClick(entity) {
+    completedClear(entity) {
       entity.activeFilter = "all"
     },
   },

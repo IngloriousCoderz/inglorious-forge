@@ -166,7 +166,7 @@ If Web Components aren't updating correctly:
 4. **Ref binding** — Use `ref()` directive if you need direct access
 
 ```javascript
-import { ref } from "lit-html"
+import { ref } from "@inglorious/web/directives/ref"
 
 const ColorPicker = {
   render(entity, api) {
@@ -189,5 +189,3 @@ const ColorPicker = {
 
 - **[Components Overview](./overview.md)** — Inglorious Web's built-in components
 - **[Advanced](../advanced/type-composition.md)** — Type composition and other patterns
-
-Happy integrating! 🎉

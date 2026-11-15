@@ -1,400 +1,52 @@
 ---
 title: Rendering Model
-description: Understanding full-tree rendering, lit-html diffing, and performance characteristics
+description: Full-tree rendering, lit-html diffing, and what it costs
 ---
 
-# The Rendering Model
+# Rendering Model
 
-Inglorious Web's rendering model is unique: **full-tree re-render with DOM diffing**. Understanding this is key to using the framework effectively.
+Every store update runs the whole root render function, and lit-html updates only the DOM nodes whose values changed.
 
-## The Basic Loop
+## The loop
 
-Every state change follows this cycle:
+1. An event is notified, from a click or from a handler.
+2. The store applies it, and the events it leads to, then notifies its subscribers once.
+3. `mount` runs the root render function, which calls `api.render(id)` for each entity it shows.
+4. lit-html compares each template expression with its previous value and patches the DOM where they differ.
 
-```
-Event Dispatched
-    ↓
-Handler Executes
-    ↓
-Entity State Mutates
-    ↓
-Store Notifies Subscribers
-    ↓
-renderApp(api) Runs Completely
-    ↓
-lit-html Diffs Templates
-    ↓
-DOM Updates (Only Changed Parts)
-    ↓
-Browser Renders
-```
+A render function has no state and no lifecycle: it runs when the store updates and only then. Nothing in a render can cause another render except notifying an event, which is a store update like any other.
 
-Let's walk through an example:
+## What it costs
+
+The [benchmarks](https://dev.to/iceonfire/you-probably-dont-need-to-think-about-ui-optimization-honest-benchmarks-2m5g) measure it against React, Vue, Svelte and Solid on the same apps, with the code public: the same tier as Vue and Svelte, and about 4 ms per update on a deliberately adversarial deep tree. Solid is faster under sustained sparse updates; nothing else is.
+
+What does cost is work done inside a render that does not belong there: filtering a thousand rows, sorting, building lookups. Do it in a handler, when the data changes, or memoize it with `compute`, defined once outside the render:
 
 ```javascript
-// 1. User clicks button
-<button @click=${() => api.notify("#counter:increment")}>+</button>
-
-// 2. Handler executes
-Counter.increment(entity) {
-  entity.value++ // State mutates
-}
-
-// 3. Store notifies subscribers
-
-// 4. renderApp(api) runs COMPLETELY
-const renderApp = (api) => html`
-  <div>
-    <h1>Count: ${api.getEntity("counter").value}</h1>
-    <button @click=${...}>+</button>
-  </div>
-`
-
-// 5. lit-html diffs: "Oh, the h1 text changed. Update it."
-
-// 6. DOM updates: Only the h1's text node is modified
-
-// 7. Browser repaint of just that node
-```
-
-## Key Insight: Separation of Concerns
-
-This model separates **template execution** from **DOM updates**:
-
-| Phase              | Cost                       | Example                               |
-| ------------------ | -------------------------- | ------------------------------------- |
-| Template execution | Cheap (CPU)                | Run JavaScript, build template string |
-| lit-html diffing   | Cheap (CPU)                | Compare old and new templates         |
-| DOM updates        | Expensive (Reflow/Repaint) | Only changed nodes                    |
-| Browser render     | Expensive                  | Pixel layout and paint                |
-
-**Inglorious Web optimizes what matters:** It trusts lit-html to minimize DOM updates (the expensive part) while keeping templates simple and predictable (the cheap part).
-
-## Why Full-Tree Re-render?
-
-### ✅ Advantages
-
-1. **Simplicity** — No dependency graph to maintain
-2. **Predictability** — No surprise re-renders, no missing dependencies
-3. **Debuggability** — Every state change is visible; Redux DevTools shows everything
-4. **No memory leaks** — No subscriptions to clean up
-5. **No missed updates** — Template always reflects current state
-
-### ⚠️ Trade-offs
-
-1. **Template execution runs fully** — Not as optimized as fine-grained frameworks
-2. **Requires efficient template diffing** — That's why we use lit-html
-3. **Overkill for tiny changes** — But still pretty fast in practice
-
-## How lit-html Makes It Fast
-
-### Template Caching
-
-lit-html compiles templates once and caches them:
-
-```javascript
-// This template string is compiled ONCE
-const template = html`<h1>${title}</h1>`
-
-// Changes to `title` don't recompile, just update the expression
-```
-
-### Smart Diffing
-
-lit-html is optimized for template strings, not VDOM:
-
-```javascript
-// Old
-html`<h1>Count: 5</h1>
-  <button>+</button>`
-
-// New
-html`<h1>Count: 6</h1>
-  <button>+</button>`
-
-// lit-html diffs: "h1 text changed, button unchanged"
-// DOM updates: Only the h1 text node
-```
-
-### No Virtual DOM Overhead
-
-Unlike React, there's no VDOM diff step:
-
-| Framework  | Steps                                          | Overhead          |
-| ---------- | ---------------------------------------------- | ----------------- |
-| React      | 1. Template → VDOM 2. VDOM diff 3. DOM updates | High (full VDOM)  |
-| Inglorious | 1. Template diff 2. DOM updates                | Low (string diff) |
-
-## Performance in Practice
-
-For typical UIs, full-tree re-renders are **fast enough**:
-
-### Benchmarks
-
-| Operation                           | Time                                     |
-| ----------------------------------- | ---------------------------------------- |
-| 100 entity type definitions         | ~1ms                                     |
-| Full-tree render with 50 entities   | ~5ms                                     |
-| lit-html diff of 100 template nodes | ~2ms                                     |
-| DOM update (if changed)             | 1-10ms (depends on what changed)         |
-| Total cycle                         | ~10-20ms (still under 16ms frame budget) |
-
-Most of the time is spent in **DOM updates**, not template execution. So rendering the full template is negligible.
-
-### Real-World Example
-
-A typical app with:
-
-- 50 entities (cards, rows, buttons, etc.)
-- 200 DOM nodes
-- Complex templating (loops, conditions)
-
-Still renders in ~15ms, leaving 1ms for the frame budget. Good performance!
-
-## When Full-Tree Re-render Might Be Slow
-
-1. **Rendering 1000+ DOM nodes** — Use the [Inglorious UI](https://inglorious.dev/ui) virtualized list
-2. **Extremely complex templates** — Simplify or break into smaller entities
-3. **Expensive computations in render** — Move to event handlers or use `compute()` memoization
-
-## Comparison with Other Frameworks
-
-### React: Selective Re-render
-
-React tries to re-render only what changed:
-
-```javascript
-// Only <Counter /> re-renders when count changes
-<App>
-  <Header /> {/* Skipped */}
-  <Counter /> {/* Re-renders */}
-  <Footer /> {/* Skipped */}
-</App>
-```
-
-**Cost:** Complex reconciliation logic, Fiber scheduling, hooks dependency tracking
-
-### Vue: Proxy-based Tracking
-
-Vue tracks which properties changed via proxies:
-
-```javascript
-const state = reactive({ count: 0 })
-// Change count → Vue tracks which components use it → re-render them
-state.count++
-```
-
-**Cost:** Proxy overhead, dependency tracking complexity, edge cases with object mutation
-
-### Solid: Fine-grained Signals
-
-Solid only re-renders the exact expression that changed:
-
-```javascript
-// Only the <span> re-renders when count changes
-<div>
-  <h1>Always visible</h1> {/* Never re-renders */}
-  <span>{count()}</span> {/* Re-renders */}
-</div>
-```
-
-**Cost:** Steep learning curve, reactive graph complexity, fine-grained model is unintuitive
-
-### Inglorious Web: Full-tree Diff
-
-Inglorious renders everything but diffs at the template level:
-
-```javascript
-// Whole app re-renders
-const renderApp = (api) => html`
-  <div>
-    <h1>Always visible</h1>
-    <span>${api.getEntity("counter").value}</span>
-  </div>
-`
-
-// lit-html diffs and updates only changed span
-```
-
-**Trade-off:** Simple model, predictable, negligible performance cost for typical UIs
-
-## DOM Diffing Details
-
-### What lit-html Tracks
-
-lit-html is optimized for **template strings** (not VDOM):
-
-```javascript
-// Template 1
-html`<button>${count}</button>`
-
-// Template 2
-html`<button>${count + 1}</button>`
-
-// lit-html diffs:
-// "static part: <button>, dynamic part: 5, static part: </button>"
-// vs
-// "static part: <button>, dynamic part: 6, static part: </button>"
-// → Update the dynamic part in the DOM
-```
-
-### Unchanged Templates
-
-If the template structure doesn't change, lit-html is extremely efficient:
-
-```javascript
-// This template is compiled once, cached
-const static = html`<div class="card"><h2>${title}</h2></div>`
-
-// Each render, only ${title} is checked
-// If it's the same, nothing updates
-```
-
-### Directives for Advanced Cases
-
-lit-html provides directives for tricky patterns:
-
-```javascript
-import { repeat, when, choose } from "lit-html"
-
-// repeat: Preserves element identity by key
-const list = repeat(
-  items,
-  (item) => item.id,
-  (item) => html`<li>${item.name}</li>`,
+import { compute } from "@inglorious/store"
+
+const selectVisibleTodos = compute(
+  (todos, filter) => todos.filter((todo) => filter === "all" || !todo.isDone),
+  [(state) => state.list.todos, (state) => state.footer.filter],
 )
 
-// when: Conditional rendering
-const conditional = when(
-  isLoading,
-  () => html`<p>Loading...</p>`,
-  () => html`<p>Done!</p>`,
-)
-
-// choose: Switch-like rendering
-const switcher = choose(status, [
-  ["loading", () => html`<p>Loading...</p>`],
-  ["done", () => html`<p>Done!</p>`],
-  [() => true, () => html`<p>Unknown</p>`],
-])
-```
-
-## Best Practices for Rendering
-
-### 1. Keep Render Pure
-
-```javascript
-// ✅ Good: Pure function
-render(entity, api) {
-  return html`<div>${entity.title}</div>`
-}
-
-// ❌ Bad: Side effects
-render(entity, api) {
-  fetch('/api/data') // Avoid!
-  return html`<div>${entity.title}</div>`
-}
-```
-
-### 2. Use entity Composition for Complex UIs
-
-```javascript
-// ✅ Good: Multiple entities
-const types = {
-  App: {
-    render(entity, api) {
-      return html`
-        <div>
-          ${api.render("header")} ${api.render("content")}
-          ${api.render("footer")}
-        </div>
-      `
-    },
-  },
-  Header: {/* ... */},
-  Content: {/* ... */},
-  Footer: {/* ... */},
-}
-
-// ❌ Avoid: Massive single entity
-const types = {
-  App: {
-    render(entity, api) {
-      return html`
-        <header><!-- 100 lines --></header>
-        <content><!-- 200 lines --></content>
-        <footer><!-- 100 lines --></footer>
-      `
-    },
+const List = {
+  render(entity, api) {
+    const todos = api.select(selectVisibleTodos)
+    return html`<ul>
+      ${todos.map((todo) => html`<li>${todo.text}</li>`)}
+    </ul>`
   },
 }
 ```
 
-### 3. Avoid Creating New Objects in Render
+`compute` reruns only when an input changes by reference, which structural sharing makes cheap to tell.
 
-```javascript
-// ✅ Good: Data on entity
-const myEntity = { items: [1, 2, 3] }
-render(entity, api) {
-  return html`${entity.items.map(i => html`<li>${i}</li>`)}`
-}
+## Lists
 
-// ❌ Bad: Create new array in render
-render(entity, api) {
-  const items = api.getEntity("list").data.filter(x => x > 0) // New array!
-  return html`${items.map(i => html`<li>${i}</li>`)}`
-}
-```
+`repeat` from `@inglorious/web/directives/repeat` keys list items, so reordering moves nodes instead of rewriting them. Thousands of rows render only what is on screen with Inglorious UI's `VirtualList`.
 
-### 4. Use repeat() for Lists
+## Next
 
-```javascript
-// ✅ Good: Help lit-html track identity
-import { repeat } from 'lit-html'
-
-render(entity, api) {
-  return html`
-    <ul>
-      ${repeat(entity.items, item => item.id, (item) => html`<li>${item.name}</li>`)}
-    </ul>
-  `
-}
-
-// ❌ Less efficient: Let lit-html guess
-render(entity, api) {
-  return html`
-    <ul>
-      ${entity.items.map(item => html`<li>${item.name}</li>`)}
-    </ul>
-  `
-}
-```
-
-## Memoization with compute()
-
-For expensive derived state, use `compute()`:
-
-```javascript
-import { compute } from "@inglorious/store/select"
-
-// Memoize: Only recalculate if dependencies change
-const getExpensiveValue = compute(
-  (items) => {
-    console.log("Expensive calculation!")
-    return items.filter((x) => x > 0).map((x) => x * 2)
-  },
-  [() => api.getEntity("list").items],
-)
-
-const result = getExpensiveValue()
-// Next call uses cache if dependency unchanged
-const resultAgain = getExpensiveValue()
-```
-
-## Next Steps
-
-- **[Event System](./event-system.md)** — Understand events and the event queue
-- **[Testing](../advanced/testing.md)** — How to test rendering logic
-- **[Performance](../advanced/performance.md)** — Optimization techniques
-
-Happy rendering! 🚀
+- [Performance](../advanced/performance.md): measuring, and the few things worth optimizing.
+- [Entity Render Methods](./entity-renders.md): how a type renders its entity.

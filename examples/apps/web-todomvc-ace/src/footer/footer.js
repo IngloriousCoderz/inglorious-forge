@@ -11,11 +11,11 @@ export const Footer = {
     entity.activeFilter = "all"
   },
 
-  filterClick(entity, id) {
+  filterChange(entity, id) {
     entity.activeFilter = id
   },
 
-  clearClick(entity) {
+  completedClear(entity) {
     entity.activeFilter = "all"
   },
 
@@ -35,19 +35,19 @@ export const Footer = {
       <span class="filters">
         <a
           class=${classMap({ selected: entity.activeFilter === "all" })}
-          @click=${() => api.notify("filterClick", "all")}
+          @click=${() => api.notify("filterChange", "all")}
         >
           All
         </a>
         <a
           class=${classMap({ selected: entity.activeFilter === "active" })}
-          @click=${() => api.notify("filterClick", "active")}
+          @click=${() => api.notify("filterChange", "active")}
         >
           Active
         </a>
         <a
           class=${classMap({ selected: entity.activeFilter === "completed" })}
-          @click=${() => api.notify("filterClick", "completed")}
+          @click=${() => api.notify("filterChange", "completed")}
         >
           Completed
         </a>
@@ -55,7 +55,7 @@ export const Footer = {
 
       <a
         class=${classMap({ hidden: !completedTasksCount })}
-        @click=${() => api.notify("clearClick")}
+        @click=${() => api.notify("completedClear")}
       >
         Clear Completed
       </a>

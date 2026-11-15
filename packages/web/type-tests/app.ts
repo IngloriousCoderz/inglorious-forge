@@ -11,15 +11,14 @@ import { withLiveReload } from "../types/decorators/with-live-reload"
 import { Form, type FormEntity } from "../types/form"
 import {
   createNativeUpdate,
-  type NativeApp,
-  watchNativeUpdate,
+  type NativeUpdatePlugin,
 } from "../types/native/update"
-import { type AppLinksApp, watchAppLinks } from "../types/native/app-links"
+import { type AppLinksPlugin, createAppLinks } from "../types/native/app-links"
 import {
-  type BackButtonApp,
-  watchBackButton,
+  type BackButtonPlugin,
+  createBackButton,
 } from "../types/native/back-button"
-import { PwaUpdate, type PwaUpdateEntity, watchPwaUpdate } from "../types/pwa"
+import { createPwaUpdate, type PwaUpdateEntity } from "../types/pwa"
 import {
   pageRouteChange,
   Router,
@@ -96,52 +95,46 @@ export const greetingTypes = createStore<AppEntity, AppState>({
 })
 
 export const store = createStore<AppEntity, AppState>({
-  types: { Router, Login: Form, Wide: MediaQuery, Update: PwaUpdate, Counter },
+  types: {
+    Router,
+    Login: Form,
+    Wide: MediaQuery,
+    Update: createPwaUpdate({ checkEveryMs: 1000 }),
+    Counter,
+  },
   entities: {
     router: { type: "Router" },
     counter: { type: "Counter", value: 0 },
   },
 })
 
-declare const registration: ServiceWorkerRegistration
-export const stopWatching: () => void = watchPwaUpdate(registration, store, {
-  id: "update",
-})
 // @ts-expect-error: checkEveryMs is a number of milliseconds
-watchPwaUpdate(registration, store, { checkEveryMs: "1h" })
+createPwaUpdate({ checkEveryMs: "1h" })
 
+declare const nativeApp: NativeUpdatePlugin
 export const NativeUpdate = createNativeUpdate({
   adapter: { requirement: async () => ({ minBuild: 4, storeUrl: null }) },
+  plugin: nativeApp,
 })
 const textBuild = { requirement: async () => ({ minBuild: "4" }) }
 // @ts-expect-error: minBuild is a build number
 createNativeUpdate({ adapter: textBuild })
-declare const nativeApp: NativeApp
-export const stopNativeWatch: () => Promise<void> = watchNativeUpdate(
-  nativeApp,
-  store,
-  { id: "gate" },
-)
-// @ts-expect-error: the id is an entity id
-watchNativeUpdate(nativeApp, store, { id: 1 })
 
-declare const linksApp: AppLinksApp
-export const stopAppLinks: () => Promise<void> = watchAppLinks(
-  linksApp,
-  store,
-  {
-    id: "router",
-  },
-)
-// @ts-expect-error: the id is an entity id
-watchAppLinks(linksApp, store, { id: 1 })
+declare const linksApp: AppLinksPlugin
+export const AppLinks = createAppLinks({ plugin: linksApp, router: "router" })
+// @ts-expect-error: the router is an entity id
+createAppLinks({ plugin: linksApp, router: 1 })
 
-declare const backApp: BackButtonApp
-export const stopBackButton: () => Promise<void> = watchBackButton(backApp, {
-  rootPaths: ["/", "/profile"],
-})
-// @ts-expect-error: root paths are a list
-watchBackButton(backApp, { rootPaths: "/" })
+declare const backApp: BackButtonPlugin
+export const BackButton = createBackButton({ plugin: backApp })
+declare const backButton: {
+  id: string
+  type: "BackButton"
+  rootPaths: string[]
+}
+BackButton.backButtonPress(backButton, { canGoBack: true })
+// @ts-expect-error: the event says whether there is history to go back to
+BackButton.backButtonPress(backButton, {})
 
 declare const api: AppApi
 export const rendered = api.render("counter")

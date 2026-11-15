@@ -1,4 +1,7 @@
-import { Api } from "./mount"
+export interface PwaUpdateConfig {
+  /** How often to check for a new version. Defaults to one hour. */
+  checkEveryMs?: number
+}
 
 export interface PwaUpdateEntity {
   id?: string
@@ -9,31 +12,19 @@ export interface PwaUpdateEntity {
 
 export type PwaUpdateType = {
   create(entity: PwaUpdateEntity): void
+  destroy(entity: PwaUpdateEntity): void
+  pwaUpdateReady(entity: PwaUpdateEntity): void
   /** Moves over to the waiting version now, reloading the page. */
   pwaUpdateApply(): void
-  pwaUpdateReady(entity: PwaUpdateEntity): void
-}
-
-export declare const PwaUpdate: PwaUpdateType
-
-export interface WatchPwaUpdateOptions {
-  /** The PwaUpdate entity to announce to. Defaults to `pwaUpdate`. */
-  id?: string
-  /** How often to check for a new version. Defaults to one hour. */
-  checkEveryMs?: number
 }
 
 /**
- * Keeps an installed PWA on its latest version, applying a downloaded one at
- * boot and on each trip to or from the background. A version that lands
- * mid-session is announced to `store` as `#${id}:pwaUpdateReady`.
- * @returns A function that stops watching.
+ * The type that keeps an installed PWA on its latest version, applying a
+ * downloaded one at boot and on each trip to or from the background, and
+ * setting `isUpdateReady` when a version lands mid-session. Does nothing in a
+ * native app or without a service worker.
  */
-export declare function watchPwaUpdate(
-  registration: ServiceWorkerRegistration,
-  store?: Pick<Api, "notify">,
-  options?: WatchPwaUpdateOptions,
-): () => void
+export declare function createPwaUpdate(config?: PwaUpdateConfig): PwaUpdateType
 
 /** Moves the page over to the waiting version and reloads. */
 export declare function applyPwaUpdate(

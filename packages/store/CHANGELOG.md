@@ -1,5 +1,15 @@
 # @inglorious/store
 
+## 12.7.0
+
+### Minor Changes
+
+- Each event is now its own transaction: the handlers of one event read, through `api.getEntity()` and `api.getEntities()`, the state as the previous event left it, and the next event in the queue reads what they changed. Guards no longer need their own copy of the session. The store warns about an entity whose type looks misspelled and about a targeted event that nothing answers, takes a `devMode` option in place of reading `game.devMode`, and queues an event notified by a subscriber until the subscribers have run.
+
+### Patch Changes
+
+- `optimistic` now throws when given a behavior with no `*Run` handler or with several, instead of crashing on the first case and silently picking the first handler on the second.
+
 ## 12.6.2
 
 ### Patch Changes

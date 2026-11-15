@@ -25,19 +25,19 @@ export default function Footer() {
       <span className="filters">
         <a
           className={clsx({ selected: activeFilter === "all" })}
-          onClick={() => notify("filterClick", "all")}
+          onClick={() => notify("filterChange", "all")}
         >
           All
         </a>
         <a
           className={clsx({ selected: activeFilter === "active" })}
-          onClick={() => notify("filterClick", "active")}
+          onClick={() => notify("filterChange", "active")}
         >
           Active
         </a>
         <a
           className={clsx({ selected: activeFilter === "completed" })}
-          onClick={() => notify("filterClick", "completed")}
+          onClick={() => notify("filterChange", "completed")}
         >
           Completed
         </a>
@@ -45,7 +45,7 @@ export default function Footer() {
 
       <a
         className={clsx({ hidden: !completedTasksCount })}
-        onClick={() => notify("clearClick")}
+        onClick={() => notify("completedClear")}
       >
         Clear Completed
       </a>

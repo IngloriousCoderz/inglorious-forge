@@ -14,13 +14,11 @@ export const template = {
           <li key={task.id}>
             <span
               className={classMap({ [classes.completed]: task.completed })}
-              onClick={() => api.notify("toggleClick", task.id)}
+              onClick={() => api.notify("taskToggle", task.id)}
             >
               {task.text}
             </span>
-            <button onClick={() => api.notify("deleteClick", task.id)}>
-              x
-            </button>
+            <button onClick={() => api.notify("taskDelete", task.id)}>x</button>
           </li>
         ))}
       </ul>

@@ -3,24 +3,13 @@ import { dueAt } from "../animation/due.js"
 const ONE_SECOND = 1
 
 /**
- * An entity that moves at its own rate rather than at the loop's.
+ * Updates an entity at its own rate rather than the loop's: the loop stays as
+ * fast as the screen, and the entity's `update` runs only when its interval
+ * has passed, with all the time since its last one. Put it last in the type's
+ * behaviors, so it wraps the `update` it holds back.
  *
- * This is how a game says "this one moves every frame, that one moves ten times a
- * second": the loop stays as fast as the browser will take it -- which is what keeps
- * input and the screen smooth -- and each entity that wants to be slower keeps its own
- * time and is only updated when that time has run out.
- *
- * The rate is a ceiling and not a floor: a frame that leaves more time than the rate
- * allows carries all of it into the next update, so the entity still accounts for every
- * second that really went by.
- *
- * Put it **last** in a type's behaviors. Each one wraps the ones before it and calls on
- * to them, so the last one is the one the store reaches first; anywhere else it is
- * wrapped in turn and never gets a say.
- *
- * @param {number} fps - How many times a second this entity is updated. `Infinity` for
- *   every frame, which is also what the engine's default is.
- * @returns {Function} A behavior wrapping whatever it is put in front of.
+ * @param {number} fps - Updates a second. `Infinity` for every frame.
+ * @returns {Function} The behavior.
  */
 export function atFps(fps) {
   const isDue = dueAt(ONE_SECOND / fps)

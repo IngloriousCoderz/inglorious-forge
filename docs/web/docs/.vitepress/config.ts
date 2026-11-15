@@ -48,7 +48,6 @@ export default defineConfig({
           text: "Fundamentals",
           items: [
             { text: "Installation", link: "/guide/installation" },
-            { text: "Quick Start", link: "/guide/quick-start" },
             { text: "Entity Render Methods", link: "/guide/entity-renders" },
             { text: "Event System", link: "/guide/event-system" },
             { text: "TypeScript", link: "/guide/typescript" },

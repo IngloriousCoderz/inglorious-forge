@@ -25,20 +25,20 @@ export default function Footer() {
       <span className="filters">
         <a
           className={clsx({ selected: activeFilter === "all" })}
-          onClick={() => dispatch({ type: "filterClick", payload: "all" })}
+          onClick={() => dispatch({ type: "filterChange", payload: "all" })}
         >
           All
         </a>
         <a
           className={clsx({ selected: activeFilter === "active" })}
-          onClick={() => dispatch({ type: "filterClick", payload: "active" })}
+          onClick={() => dispatch({ type: "filterChange", payload: "active" })}
         >
           Active
         </a>
         <a
           className={clsx({ selected: activeFilter === "completed" })}
           onClick={() =>
-            dispatch({ type: "filterClick", payload: "completed" })
+            dispatch({ type: "filterChange", payload: "completed" })
           }
         >
           Completed
@@ -47,7 +47,7 @@ export default function Footer() {
 
       <a
         className={clsx({ hidden: !completedTasksCount })}
-        onClick={() => dispatch({ type: "clearClick" })}
+        onClick={() => dispatch({ type: "completedClear" })}
       >
         Clear Completed
       </a>

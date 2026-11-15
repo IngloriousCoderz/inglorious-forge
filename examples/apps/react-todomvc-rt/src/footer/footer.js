@@ -1,9 +1,9 @@
 export const Footer = {
-  filterClick(entity, id) {
+  filterChange(entity, id) {
     entity.activeFilter = id
   },
 
-  clearClick(entity) {
+  completedClear(entity) {
     entity.activeFilter = "all"
   },
 }

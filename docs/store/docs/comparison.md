@@ -94,8 +94,8 @@ const todosSlice = createSlice({
 
 ```javascript
 const types = {
-  todoList: {
-    addTodo(entity, text) {
+  TodoList: {
+    todoAdd(entity, text) {
       entity.todos.push({ text, done: false })
     },
   },
@@ -134,7 +134,7 @@ extraReducers: (builder) => {
 
 ```javascript
 const types = {
-  todoList: {
+  TodoList: {
     async fetchTodos(entity, userId, api) {
       entity.loading = true
       const data = await fetch(`/api/users/${userId}/todos`).then((r) =>
@@ -239,7 +239,7 @@ import { trigger } from "@inglorious/store/test"
 
 const { entity } = trigger(
   { type: "TodoList", todos: [] },
-  todoListType.addTodo,
+  TodoList.todoAdd,
   "New todo",
 )
 expect(entity.todos[0].text).toBe("New todo")

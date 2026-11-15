@@ -49,15 +49,15 @@ export type FormType = {
 export type ListType = {
   create: (entity: ListEntity) => void
   formSubmit: (entity: ListEntity, value: string) => void
-  toggleClick: (entity: ListEntity, id: number) => void
-  deleteClick: (entity: ListEntity, id: number) => void
-  clearClick: (entity: ListEntity) => void
+  taskToggle: (entity: ListEntity, id: number) => void
+  taskDelete: (entity: ListEntity, id: number) => void
+  completedClear: (entity: ListEntity) => void
   render: (entity: ListEntity, api: AppApi) => TemplateResult | null
 }
 
 export type FooterType = {
   create: (entity: FooterEntity) => void
-  filterClick: (entity: FooterEntity, id: Filter) => void
-  clearClick: (entity: FooterEntity) => void
+  filterChange: (entity: FooterEntity, id: Filter) => void
+  completedClear: (entity: FooterEntity) => void
   render: (entity: FooterEntity, api: AppApi) => TemplateResult | null
 }

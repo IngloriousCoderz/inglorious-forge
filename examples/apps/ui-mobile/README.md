@@ -24,7 +24,7 @@ Android.
 
 ## How it is wired
 
-`src/main.js` calls `watchKeyboard()` from `@inglorious/web/device/keyboard`, which
+The store has a `Keyboard` entity, from `@inglorious/web/device/keyboard`, whose type
 sets `--iw-keyboard-height` on `<html>` while the keyboard is up. The sheets,
 snackbars and toasts of `@inglorious/ui` follow it, and its bottom navigation
 hides.

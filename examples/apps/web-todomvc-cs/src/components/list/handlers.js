@@ -20,7 +20,7 @@ export function taskCreated(entity, createdTask) {
   entity.tasks.push(createdTask)
 }
 
-export async function toggleClick(entity, id, api) {
+export async function taskToggle(entity, id, api) {
   const task = entity.tasks.find((task) => task.id === id)
   const updatedTask = await client.updateTask(id, {
     completed: !task.completed,
@@ -33,7 +33,7 @@ export function taskUpdated(entity, { id, updatedTask }) {
   entity.tasks[index] = updatedTask
 }
 
-export async function deleteClick(entity, id, api) {
+export async function taskDelete(entity, id, api) {
   await client.deleteTask(id)
   api.notify("taskDeleted", id)
 }
@@ -43,7 +43,7 @@ export function taskDeleted(entity, id) {
   entity.tasks.splice(index, TASKS_TO_REMOVE)
 }
 
-export async function clearClick(entity, _, api) {
+export async function completedClear(entity, _, api) {
   await client.clearCompleted(entity.tasks)
   api.notify("tasksCleared")
 }

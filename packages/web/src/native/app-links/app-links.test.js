@@ -1,12 +1,13 @@
+import { createStore } from "@inglorious/store"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
-import { watchAppLinks } from "./index.js"
+import { createAppLinks } from "./index.js"
 
-describe("watchAppLinks", () => {
+describe("createAppLinks", () => {
   let app
-  let store
   let urlOpen
   let remove
+  let navigate
 
   beforeEach(() => {
     remove = vi.fn()
@@ -17,7 +18,7 @@ describe("watchAppLinks", () => {
         return { remove }
       }),
     }
-    store = { notify: vi.fn() }
+    navigate = vi.fn()
     vi.stubGlobal("Capacitor", { isNativePlatform: () => true })
   })
 
@@ -25,8 +26,22 @@ describe("watchAppLinks", () => {
     vi.unstubAllGlobals()
   })
 
+  function storeWith(config = {}) {
+    return createStore({
+      types: {
+        AppLinks: createAppLinks({ plugin: app, ...config }),
+        Router: { navigate: (entity, path) => navigate(path) },
+      },
+      entities: {
+        appLinks: { type: "AppLinks" },
+        router: { type: "Router" },
+        nav: { type: "Router" },
+      },
+    })
+  }
+
   it("routes a link that arrives while the app runs", async () => {
-    watchAppLinks(app, store)
+    const store = storeWith()
     await settle()
 
     urlOpen({ url: "https://app.example.com/jobs/42?tab=info#top" })
@@ -35,9 +50,9 @@ describe("watchAppLinks", () => {
       "appUrlOpen",
       expect.any(Function),
     )
-    expect(store.notify).toHaveBeenCalledWith(
-      "#router:navigate",
-      "/jobs/42?tab=info#top",
+    expect(navigate).toHaveBeenCalledWith("/jobs/42?tab=info#top")
+    expect(store.getEntity("appLinks").url).toBe(
+      "https://app.example.com/jobs/42?tab=info#top",
     )
   })
 
@@ -46,46 +61,51 @@ describe("watchAppLinks", () => {
       url: "https://app.example.com/profile",
     })
 
-    watchAppLinks(app, store)
+    storeWith()
     await settle()
 
-    expect(store.notify).toHaveBeenCalledWith("#router:navigate", "/profile")
+    expect(navigate).toHaveBeenCalledWith("/profile")
   })
 
   it("notifies the router it is given", async () => {
-    watchAppLinks(app, store, { id: "nav" })
+    const store = storeWith({ router: "nav" })
     await settle()
+    const spy = vi.spyOn(store, "dispatch")
 
     urlOpen({ url: "https://app.example.com/about" })
 
-    expect(store.notify).toHaveBeenCalledWith("#nav:navigate", "/about")
+    expect(spy).toHaveBeenCalledWith({
+      type: "#nav:navigate",
+      payload: "/about",
+    })
   })
 
   it("ignores what is not a URL", async () => {
     app.getLaunchUrl.mockRejectedValueOnce(new Error("unavailable"))
 
-    watchAppLinks(app, store)
+    storeWith()
     await settle()
     urlOpen({ url: "not a url" })
 
-    expect(store.notify).not.toHaveBeenCalled()
+    expect(navigate).not.toHaveBeenCalled()
   })
 
   it("does nothing outside a native app", async () => {
     vi.stubGlobal("Capacitor", undefined)
 
-    watchAppLinks(app, store)
+    storeWith()
     await settle()
 
     expect(app.getLaunchUrl).not.toHaveBeenCalled()
     expect(app.addListener).not.toHaveBeenCalled()
   })
 
-  it("stops listening", async () => {
-    const stop = watchAppLinks(app, store)
+  it("stops listening when the entity goes", async () => {
+    const store = storeWith()
     await settle()
 
-    await stop()
+    store.notify("remove", "appLinks")
+    await settle()
 
     expect(remove).toHaveBeenCalled()
   })

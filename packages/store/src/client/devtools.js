@@ -1,5 +1,7 @@
 import { deserialize } from "@inglorious/utils/object.js"
 
+import { createEventFilter } from "./event-filter.js"
+
 const LAST_STATE = 1
 
 const globalContainer = import.meta.hot
@@ -7,6 +9,11 @@ const globalContainer = import.meta.hot
   : {}
 
 export function createDevtools(config = {}) {
+  const shouldLog =
+    (config.updateMode ?? "auto") === "auto"
+      ? createEventFilter(config)
+      : () => false
+
   return {
     connect(store) {
       connectDevTools(store, config)
@@ -26,7 +33,7 @@ export function createDevtools(config = {}) {
       const next = store.dispatch
       store.dispatch = (event) => {
         const result = next(event)
-        if (shouldLogEvent(event, config)) {
+        if (shouldLog(event)) {
           sendAction(event, store.getState())
         }
         return result
@@ -42,34 +49,16 @@ function connectDevTools(store, config = {}) {
 
   const existing = getConnection()
   if (existing) {
-    const sameMode = existing.updateMode === updateMode
-    if (sameMode) {
-      existing.restoreSetState?.()
-      const baseSetState = store.setState
-      const restoreSetState =
-        updateMode === "auto"
-          ? () => {
-              if (store.setState !== baseSetState) {
-                store.setState = baseSetState
-              }
-            }
-          : () => {
-              // no-op when not wrapping setState
-            }
-      if (updateMode === "auto") {
-        store.setState = (newState) => {
-          baseSetState(newState)
-          sendAction({ type: "stateInit", payload: newState }, store.getState())
-        }
-      }
+    if (existing.updateMode === updateMode) {
+      existing.restoreSetState()
       existing.store = store
-      existing.restoreSetState = restoreSetState
+      existing.restoreSetState = wrapSetState(store, updateMode)
     }
 
     try {
       existing.unsubscribe?.()
     } finally {
-      existing.restoreSetState?.()
+      existing.restoreSetState()
       clearConnection()
     }
   }
@@ -79,23 +68,7 @@ function connectDevTools(store, config = {}) {
   }
 
   const name = config.name ?? document.title
-  const baseSetState = store.setState
-  const restoreSetState =
-    updateMode === "auto"
-      ? () => {
-          if (store.setState !== baseSetState) {
-            store.setState = baseSetState
-          }
-        }
-      : () => {
-          // noop; we didn't wrap setState
-        }
-  if (updateMode === "auto") {
-    store.setState = (newState) => {
-      baseSetState(newState)
-      sendAction({ type: "stateInit", payload: newState }, store.getState())
-    }
-  }
+  const restoreSetState = wrapSetState(store, updateMode)
 
   const devToolsInstance = window.__REDUX_DEVTOOLS_EXTENSION__.connect({
     name,
@@ -134,6 +107,26 @@ function connectDevTools(store, config = {}) {
     updateMode,
     restoreSetState,
   })
+}
+
+/**
+ * In auto mode, reports each `setState` to the devtools as a `stateInit` action.
+ * @returns {() => void} Puts the store's own `setState` back.
+ */
+function wrapSetState(store, updateMode) {
+  if (updateMode !== "auto") return () => {}
+
+  const baseSetState = store.setState
+  store.setState = (newState) => {
+    baseSetState(newState)
+    sendAction({ type: "stateInit", payload: newState }, store.getState())
+  }
+
+  return () => {
+    if (store.setState !== baseSetState) {
+      store.setState = baseSetState
+    }
+  }
 }
 
 function disconnectDevTools() {
@@ -216,18 +209,4 @@ function handleAction(message) {
   if (!store) return
   const action = deserialize(message.payload)
   store.dispatch(action)
-}
-
-function shouldLogEvent(event, config) {
-  const {
-    updateMode = "auto",
-    blacklist = [],
-    whitelist = [],
-    filter = null,
-  } = config
-  if (updateMode !== "auto") return false
-  const passesBlacklist = !blacklist.length || !blacklist.includes(event.type)
-  const passesWhitelist = !whitelist.length || whitelist.includes(event.type)
-  const passesFilter = !filter || filter(event)
-  return passesBlacklist && passesWhitelist && passesFilter
 }

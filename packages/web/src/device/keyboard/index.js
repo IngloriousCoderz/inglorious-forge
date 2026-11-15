@@ -17,28 +17,68 @@ const TEXT_INPUTS = new Set([
   "week",
 ])
 
+const watches = new Map()
+
 /**
- * Tells the page when the on-screen keyboard is up, and how much of it the
- * keyboard covers, so what sits at the bottom of the screen can move above it
- * or step aside. Most phones don't shrink the page for the keyboard (iOS, and
- * Chrome on Android): a bottom sheet or a snackbar ends up behind it. This sets
- * `--iw-keyboard-height` on `<html>` from the visual viewport, and the
- * `iw-keyboard-open` class while the keyboard is up: no plugin needed, in a
- * browser or a native app. Where the page does shrink, as in an Android app,
- * the class is still set but the height stays 0, since nothing is covered.
- * Inglorious UI's sheets, snackbars and toasts follow it, and its bottom
- * navigation hides.
- *
- * @returns {() => void} Stops following.
+ * The type that knows when the on-screen keyboard is up, and how much of the
+ * page it covers. Most phones don't shrink the page for the keyboard (iOS, and
+ * Chrome on Android): a bottom sheet or a snackbar ends up behind it. The entity
+ * holds `isOpen` and `height`, read from the visual viewport, and the type sets
+ * `--iw-keyboard-height` on `<html>` and the `iw-keyboard-open` class while the
+ * keyboard is up, which Inglorious UI's sheets, snackbars, toasts and bottom
+ * navigation follow. Where the page does shrink, as in an Android app, `isOpen`
+ * is still set but `height` stays 0, since nothing is covered. No plugin is
+ * needed, in a browser or a native app.
  *
  * @example
- * watchKeyboard()
+ * const types = { Keyboard }
+ * const entities = { keyboard: { type: "Keyboard" } }
  */
-export function watchKeyboard() {
-  const viewport = window.visualViewport
-  if (!viewport) return () => {}
+export const Keyboard = {
+  create(entity, _, api) {
+    entity.isSupported = Boolean(globalThis.visualViewport)
+    entity.isOpen ??= false
+    entity.height ??= NONE
+    if (!entity.isSupported) return
 
-  const root = document.documentElement
+    const { id } = entity
+    watches.get(id)?.()
+    watches.set(
+      id,
+      watch((change) => api.notify(`#${id}:keyboardChange`, change)),
+    )
+  },
+
+  destroy(entity) {
+    watches.get(entity.id)?.()
+    watches.delete(entity.id)
+    const root = globalThis.document?.documentElement
+    root?.style.removeProperty(HEIGHT)
+    root?.classList.remove(OPEN)
+  },
+
+  keyboardChange(entity, { isOpen, height }) {
+    entity.isOpen = isOpen
+    entity.height = height
+    apply({ isOpen, height })
+  },
+}
+
+function apply({ isOpen, height }) {
+  const root = globalThis.document?.documentElement
+  if (!root) return
+  root.style.setProperty(HEIGHT, `${height}px`)
+  root.classList.toggle(OPEN, isOpen)
+}
+
+/**
+ * Follows the visual viewport, calling `onChange` when the keyboard opens,
+ * closes or covers a different height.
+ * @param {(change: { isOpen: boolean, height: number }) => void} onChange
+ * @returns {() => void} Stops following.
+ */
+function watch(onChange) {
+  const viewport = window.visualViewport
   let isOpen = false
   let height = NONE
   let fullWidth = window.innerWidth
@@ -64,8 +104,7 @@ export function watchKeyboard() {
     const isOpening = isKeyboard && !isOpen
     isOpen = isKeyboard
     height = nextHeight
-    root.style.setProperty(HEIGHT, `${height}px`)
-    root.classList.toggle(OPEN, isOpen)
+    onChange({ isOpen, height })
     if (isOpening) {
       requestAnimationFrame(() =>
         document.activeElement?.scrollIntoView?.({ block: "nearest" }),
@@ -82,8 +121,6 @@ export function watchKeyboard() {
     viewport.removeEventListener("resize", update)
     viewport.removeEventListener("scroll", update)
     window.removeEventListener("resize", update)
-    root.style.removeProperty(HEIGHT)
-    root.classList.remove(OPEN)
   }
 }
 

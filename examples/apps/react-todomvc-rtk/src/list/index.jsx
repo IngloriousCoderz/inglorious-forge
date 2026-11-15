@@ -2,7 +2,7 @@ import { clsx } from "clsx"
 import { useDispatch, useSelector } from "react-redux"
 
 import { selectFilteredTasks } from "../store/selectors"
-import { deleteClick, toggleClick } from "./list"
+import { taskDelete, taskToggle } from "./list"
 
 export default function List() {
   const dispatch = useDispatch()
@@ -15,11 +15,11 @@ export default function List() {
         <li key={task.id}>
           <span
             className={clsx({ completed: task.completed })}
-            onClick={() => dispatch(toggleClick(task.id))}
+            onClick={() => dispatch(taskToggle(task.id))}
           >
             {task.text}
           </span>{" "}
-          <button onClick={() => dispatch(deleteClick(task.id))}>x</button>
+          <button onClick={() => dispatch(taskDelete(task.id))}>x</button>
         </li>
       ))}
     </ul>

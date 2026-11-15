@@ -33,7 +33,7 @@ printf '%s\n' "$(cat)" | pnpm exec inglorious-live-update release --on-push
 
 Every release build is stamped with the time it was built, and an app only takes a newer bundle, so a store build never goes back. `liveUpdate.minBuild` in `package.json` is the oldest build a bundle runs on: raise it to the new build number whenever a release changes something native, such as a plugin, a permission or `capacitor.config.ts`. Development builds aren't stamped, so they never update themselves.
 
-The API behind it is [`watchLiveUpdate`](https://inglorious.dev/web/featured/live-updates).
+The type behind it is [`createLiveUpdate`](https://inglorious.dev/web/featured/live-updates).
 
 ## Mandatory native updates
 

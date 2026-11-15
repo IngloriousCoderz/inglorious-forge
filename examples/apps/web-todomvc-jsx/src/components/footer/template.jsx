@@ -26,7 +26,7 @@ export const template = {
             className={classMap({
               [classes.selected]: entity.activeFilter === "all",
             })}
-            onClick={() => api.notify("filterClick", "all")}
+            onClick={() => api.notify("filterChange", "all")}
           >
             All
           </a>
@@ -34,7 +34,7 @@ export const template = {
             className={classMap({
               [classes.selected]: entity.activeFilter === "active",
             })}
-            onClick={() => api.notify("filterClick", "active")}
+            onClick={() => api.notify("filterChange", "active")}
           >
             Active
           </a>
@@ -42,7 +42,7 @@ export const template = {
             className={classMap({
               [classes.selected]: entity.activeFilter === "completed",
             })}
-            onClick={() => api.notify("filterClick", "completed")}
+            onClick={() => api.notify("filterChange", "completed")}
           >
             Completed
           </a>
@@ -50,7 +50,7 @@ export const template = {
 
         <a
           className={classMap({ [classes.hidden]: !completedTasksCount })}
-          onClick={() => api.notify("clearClick")}
+          onClick={() => api.notify("completedClear")}
         >
           Clear Completed
         </a>

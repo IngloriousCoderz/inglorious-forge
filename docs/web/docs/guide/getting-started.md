@@ -184,10 +184,9 @@ html`${api.render("message1")} ${api.render("message2")}`
 
 Benefits:
 
-- ✅ All state visible in one place (the store)
-- ✅ Easy to serialize/persist entire app state
-- ✅ Time-travel debugging works perfectly
-- ✅ Can add/remove instances dynamically
+- All state is visible in one place, the store, and serializes as a whole
+- Time travel in the DevTools works
+- Instances are added and removed at runtime
 
 > **Most components are singletons:** In real apps, you typically only need one instance of most entities (header, footer, nav, etc.). For these cases, you can use the `autoCreateEntities` flag to automatically create singleton entities without explicitly declaring them. See [Auto-Create Entities](../advanced/auto-create.md) for details. The explicit approach shown here is useful when you genuinely need multiple instances with different data.
 
@@ -363,5 +362,3 @@ Now that you have a working app, explore these topics:
 - **[Featured Types Overview](../featured/overview.md)** — Built-in router, forms, tables, and more
 - **[Type Composition](../advanced/type-composition.md)** — Compose behaviors for guards and middleware
 - **[Testing](../advanced/testing.md)** — How to test your app (spoiler: it's trivial)
-
-Happy building! 🚀

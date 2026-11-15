@@ -1,498 +1,79 @@
 ---
 title: Event System
-description: Understanding Inglorious Store's pub/sub event system with targeted notifications and event scoping.
+description: How events reach entities, how the queue applies them, and what a handler sees.
 ---
 
 # Event System
 
-Inglorious Store's event system is the core mechanism for state updates. It uses a **pub/sub architecture** with **targeted notifications** and an **event queue** for predictable, batch-able updates.
+Every change to the state is an event, notified by the app or by a handler, and applied by the store in order.
 
----
+## Targeting
 
-## Event Broadcasting (Pub/Sub)
+```javascript
+store.notify("taskComplete", "task123") // every entity with the handler
+store.notify("TodoList:taskComplete", "task123") // every TodoList
+store.notify("#work:taskComplete", "task123") // only `work`
+store.notify("TodoList#work:taskComplete", "task123") // `work`, as a TodoList
+```
 
-By default, events are **broadcast** to all entities with a handler for that event:
+Broadcast when the event is news that several types may care about: `sessionChange`, `routeChange`, `taskComplete`. Target an entity when the event is an instruction to it: `#work:todoAdd`, `#router:navigate`. A type name or an entity id that nothing answers is a warning in the console, since it is usually a typo; a broadcast nobody handles is not.
+
+## The queue
+
+Events are queued and applied one at a time. In the default `auto` update mode every `notify` from outside the store starts an update, which drains the queue, including the events the handlers notify meanwhile, and then notifies subscribers once. In `manual` mode events wait until `store.update()`, which is how a game applies a frame's worth of input at once.
+
+```javascript
+const store = createStore({ types, entities, updateMode: "manual" })
+
+store.notify("playerMove", { x: 100, y: 50 })
+store.notify("enemySpot", { enemyId: "e1" })
+store.update() // both applied, one render
+```
+
+An event notified by a subscriber, such as a render that registers a type lazily, is queued and applied after the subscribers have run.
+
+## What handlers see
+
+Each event is a transaction. The handlers of one event all read, through `api.getEntity()` and `api.getEntities()`, the state as the previous event left it: whatever order they run in, they see the same world, and they cannot see each other's writes. The next event in the queue sees what they changed.
 
 ```javascript
 const types = {
-  todoList: {
-    taskCompleted(entity, taskId) {
-      // This runs for every todoList entity
-      const task = entity.tasks.find((t) => t.id === taskId)
-      if (task) task.completed = true
-    },
-  },
-  stats: {
-    taskCompleted(entity, taskId) {
-      // This also runs (if defined on stats)
-      entity.completedCount++
-    },
-  },
-  notifications: {
-    taskCompleted(entity, taskId) {
-      // And this runs too
-      entity.messages.push("Task completed!")
-    },
-  },
-}
-
-// One event, three handlers fire
-store.notify("taskCompleted", "task123")
-```
-
-**Key benefit:** New entity types can react to existing events without changing other code.
-
----
-
-## Targeted Notifications
-
-Sometimes you want to limit which entities receive an event. Inglorious Store supports three levels of targeting:
-
-### 1. Broadcast to All (Default)
-
-```javascript
-store.notify("eventName", payload)
-```
-
-All entities with an `eventName` handler receive it.
-
-```javascript
-const types = {
-  counter: {
-    increment(e) {
-      e.value++
-    },
-  },
-  timer: {
-    increment(e) {
-      e.elapsed++
-    },
-  },
-}
-
-store.notify("increment", null)
-// Both counter and timer increment handlers fire
-```
-
-### 2. Target by Type
-
-```javascript
-store.notify("typeName:eventName", payload)
-```
-
-Only entities of `typeName` receive the event.
-
-```javascript
-store.notify("counter:increment", null)
-// Only counter entities increment
-// timer does NOT receive it
-```
-
-### 3. Target by Entity ID
-
-```javascript
-store.notify("#entityId:eventName", payload)
-```
-
-Only the entity with that ID receives the event.
-
-```javascript
-store.notify("#counter1:increment", null)
-// Only counter1 increments
-// counter2 does NOT receive it
-```
-
-### 4. Target by Type and ID (Explicit)
-
-```javascript
-store.notify("typeName#entityId:eventName", payload)
-```
-
-Only the specific entity of that type receives it. Useful if multiple types might share entity IDs.
-
-```javascript
-store.notify("counter#counter1:increment", null)
-// Explicitly targets counter1 of type counter
-```
-
----
-
-## Common Patterns
-
-### Pattern 1: Broadcast with Self-Check
-
-Use broadcasting with a guard clause when you want multiple types to react but need selective behavior:
-
-```javascript
-const types = {
-  todoList: {
-    toggle(entity, todoId) {
-      // Run for ALL todoList entities
-      // But only update if this list owns the todo
-      if (!entity.todos.find((t) => t.id === todoId)) {
-        return // Skip if not in this list
-      }
-
-      const todo = entity.todos.find((t) => t.id === todoId)
-      if (todo) todo.completed = !todo.completed
-    },
-  },
-  stats: {
-    toggle(entity) {
-      // Stats always reacts
-      entity.totalToggled++
-    },
-  },
-}
-
-store.notify("toggle", "todo123")
-// todoList handlers check internally
-// stats always increments
-```
-
-### Pattern 2: Targeted Notification
-
-Use targeted notifications when you want to avoid broadcasting entirely:
-
-```javascript
-const types = {
-  todoList: {
-    toggle(entity, todoId) {
-      const todo = entity.todos.find((t) => t.id === todoId)
-      if (todo) todo.completed = !todo.completed
-    },
-  },
-}
-
-// Target only the list that owns this todo
-store.notify("#workTodos:toggle", "todo123")
-// Only workTodos list handles it
-```
-
-### Pattern 3: Cross-Entity Communication
-
-Use targeted notifications for one entity to trigger another:
-
-```javascript
-const types = {
-  form: {
-    submit(entity, data, api) {
-      // Form submits
-      api.notify("formSubmitted", data)
-      // Notify a specific list to update
-      api.notify("#workTodos:refreshAfterSubmit", data)
-    },
-  },
-  todoList: {
-    refreshAfterSubmit(entity, data) {
-      // Only called when form targets this list
-      entity.refresh()
-    },
-  },
-}
-```
-
----
-
-## Event Queue
-
-Inglorious Store queues events before processing them. This ensures:
-
-1. **Predictable order** - Events process in the order they were notified
-2. **Atomic updates** - All events in a batch process together before subscribers are notified
-3. **No interleaving** - Sync and async handlers don't race
-
-### Auto Update Mode (Default)
-
-```javascript
-const store = createStore({
-  types,
-  entities,
-  updateMode: "auto", // Events trigger immediately
-})
-
-store.notify("event1", payload1) // Re-render after this
-store.notify("event2", payload2) // Re-render after this
-// Result: 2 re-renders
-```
-
-### Manual Update Mode
-
-```javascript
-const store = createStore({
-  types,
-  entities,
-  updateMode: "manual", // You control when events process
-})
-
-// Queue multiple events
-store.notify("playerMoved", { x: 100, y: 50 })
-store.notify("enemySpotted", { enemyId: "e1" })
-store.notify("sound:play", { type: "footstep" })
-
-// Process all at once
-store.update() // Single re-render
-```
-
-**Why this matters:** In games or complex UIs, batching updates prevents intermediate states from rendering.
-
----
-
-## Event Lifecycle
-
-When you dispatch an event, here's what happens:
-
-```
-1. notify(eventType, payload)
-   ↓
-2. Event queued
-   ↓
-3. In updateMode: "auto" → immediately execute next step
-   In updateMode: "manual" → wait for update() call
-   ↓
-4. Find all entities that handle this event
-   ↓
-5. Execute each handler synchronously
-   ↓
-6. If handler calls api.notify(), queue those events
-   ↓
-7. Continue with next queued event
-   ↓
-8. All events processed
-   ↓
-9. Notify React/Vue subscribers (one batched notification)
-```
-
-### Example with Multiple Events
-
-```javascript
-store.notify("event1", p1)
-// Queued: [event1]
-
-api.notify("event2", p2) // Called from event1 handler
-// Queued: [event2]
-
-// event1 finishes, event2 starts
-// When event2 handler calls api.notify("event3", p3)
-// Queued: [event3]
-
-// All three process, then subscribers notified once
-```
-
-### What Handlers See
-
-All the events of one chain run in a single update, and the update becomes the state only once every one of them has run. Until then, `api.getEntity()` and `api.getEntities()` return the state from **before** the update. So a handler cannot see what an earlier handler in the same chain changed:
-
-```javascript
-const types = {
-  session: {
+  Session: {
     signIn(entity, user, api) {
       entity.user = user
-      api.notify("navigate", "/account")
+      api.notify("#router:navigate", "/account")
     },
   },
-  accountPage: {
+  AccountPage: {
     routeChange(entity, payload, api) {
-      // ❌ Still the session from before `signIn`: no user yet
-      const { user } = api.getEntity("session")
+      if (payload.route !== entity.id) return
+      // `signIn` ran in an earlier event: the user is there
+      if (!api.getEntity("session").user)
+        api.notify("#router:navigate", "/login")
     },
   },
 }
 ```
 
-Be told the change instead of looking for it: the entity that changes announces it, and whoever cares keeps its own copy.
+Handlers of the same broadcast event, then, should not depend on each other's writes: if `Stats` needs the todo that `TodoList` just added, `TodoList` notifies it, and `Stats` handles that event next.
 
-```javascript
-const types = {
-  session: {
-    signIn(entity, user, api) {
-      entity.user = user
-      api.notify("sessionChange", user)
-      api.notify("navigate", "/account")
-    },
-  },
-  accountPage: {
-    sessionChange(entity, user) {
-      entity.user = user // ✅ Up to date when `routeChange` runs
-    },
-    routeChange(entity, payload, api) {
-      if (!entity.user) api.notify("navigate", "/login")
-    },
-  },
-}
-```
+The entity a handler is given is a draft of the current update, and so is everything read from it. The draft is revoked when the update ends, so:
 
-The same goes for payloads: `entity` and everything read from it are drafts of that update, revoked once it ends. Pass a draft only to handlers of the same chain, and pass a copy to anything that reads it after an `await` (see [Async Operations](/advanced/async-operations)):
+- write to the entity before the first `await`, and notify an event for what comes after;
+- pass a draft in a payload only to handlers of the same update, which is what a chain of events is; anything read later, after an `await` or in a timer, gets a copy: `{ ...entity.values }` for flat values, deeper for nested ones.
 
-```javascript
-api.notify("signIn", entity.values) // ❌ A draft: revoked when this update ends
-api.notify("signIn", { ...entity.values }) // ✅ A copy, if the values are flat
-```
+[`handleRequest`](../advanced/async-operations.md) keeps both rules for a request.
 
-A spread copies one level only: copy any nested object or array as well.
+## Lifecycle events
 
----
+- `add(entity)` puts the entity in the state and runs its `create`, which reaches only that entity. A type registered later, with `api.setType`, sends `create` to the entities already waiting for it.
+- `remove(id)` runs the entity's `destroy`, then takes it out.
+- `patch(entity)` merges the named fields into an existing entity; `replace(entity)` installs the whole entity. Neither runs `create` or `destroy`.
+- `pause` stops `update` events, and `resume` starts them again; an entity with `updatesWhilePaused` keeps updating.
+- `stateChange`, broadcast by [`fsm`](../advanced/state-machines.md), says that an entity moved to another state.
 
-## Async Events in the Queue
+## Next
 
-Async handlers work seamlessly with the queue:
-
-```javascript
-const types = {
-  todoList: {
-    async fetchTodos(entity, userId, api) {
-      entity.loading = true
-
-      // Await outside the queue
-      const data = await fetch(`/api/users/${userId}/todos`).then((r) =>
-        r.json(),
-      )
-
-      // Back into queue: notify other handlers
-      api.notify("fetchSuccess", data)
-    },
-
-    fetchSuccess(entity, data) {
-      entity.todos = data
-      entity.loading = false
-    },
-  },
-}
-
-// Dispatch
-store.notify("fetchTodos", userId)
-
-// Flow:
-// 1. fetchTodos handler starts
-// 2. Sets entity.loading = true
-// 3. Awaits fetch: the update ends without waiting, and `entity` is revoked
-// 4. fetch completes
-// 5. api.notify("fetchSuccess") starts a new update
-// 6. fetchSuccess handler runs
-// 7. Sets todos and loading = false
-// 8. Subscribers notified once for that update
-```
-
----
-
-## Async events with handleRequest
-
-`handleRequest` turns one async call into a few events, all sent to the entity that started it:
-
-```javascript
-import { handleRequest } from "@inglorious/store/async"
-
-const types = {
-  todoList: {
-    ...handleRequest("fetchTodos", {
-      run: (userId) => fetch(`/api/${userId}/todos`).then((r) => r.json()),
-      success(entity, todos) {
-        entity.todos = todos
-      },
-    }),
-  },
-}
-```
-
-Think of the flow like a newspaper article:
-
-- `start` writes the headline and sets the scene
-- `run` gathers the reporting
-- `success` publishes the story
-- `error` prints the correction
-- `finally` archives the notes
-
-The events, for an entity `todoList`:
-
-```
-#todoList:fetchTodos        (initial event)
-#todoList:fetchTodosStart   (status "loading", error cleared)
-#todoList:fetchTodosRun     (when running)
-#todoList:fetchTodosSuccess (on success, status "success")
-#todoList:fetchTodosError   (on error, status "error")
-#todoList:fetchTodosFinally (either way)
-```
-
-The `scope` option sends them elsewhere: to every entity of the type, or to everyone, which games often want.
-
-**Type scope:**
-
-```
-todoList:fetchTodos         (initial event)
-todoList:fetchTodosRun      (when running)
-todoList:fetchTodosSuccess  (on success)
-todoList:fetchTodosError    (on error)
-```
-
-**Global scope:**
-
-```
-fetchTodos                  (initial event)
-fetchTodosRun               (when running)
-fetchTodosSuccess           (on success)
-fetchTodosError             (on error)
-```
-
-An answer from a call that a newer one replaced finds its events ignored. `handleAsync`, which `handleRequest` is built on, sends the same events without keeping the status: see [Async Operations](../advanced/async-operations.md).
-
----
-
-## Best Practices
-
-### ✅ Do
-
-- **Use broadcast** for cross-cutting concerns (logging, analytics, UI updates)
-- **Use targeted** for specific entity updates (loading a particular list)
-- **Use manual update** for game loops or high-frequency updates
-- **Keep handlers pure** - no side effects except state mutation
-- **Use api.notify()** for event chaining - it maintains queue order
-
-### ❌ Don't
-
-- **Don't mutate state outside handlers** - always use events
-- **Don't call notify() without awaiting in async** - queue won't wait
-- **Don't directly access other entities** in handlers - use api.getEntity()
-- **Don't assume handler order** - broadcast order is undefined
-- **Don't create circular event chains** - can cause infinite loops
-
----
-
-## Advanced: Custom Event Routing
-
-You can implement custom event routing by extending the store behavior:
-
-```javascript
-const store = createStore({
-  types,
-  entities,
-  systems: [
-    {
-      myCustomEvent(state, prevState, event) {
-        // Run custom logic after all handlers
-        console.log(`Event ${event.type} processed`)
-        console.log(`State changed:`, state !== prevState)
-      },
-    },
-  ],
-})
-```
-
----
-
-## Comparison with Redux
-
-| Aspect           | Redux                        | Inglorious             |
-| ---------------- | ---------------------------- | ---------------------- |
-| **Broadcasting** | All reducers see all actions | Selective handlers     |
-| **Targeting**    | ❌ Not supported             | ✅ By type/ID/both     |
-| **Queue**        | Implicit                     | Explicit, controllable |
-| **Batching**     | Automatic                    | Auto or manual         |
-| **Async**        | Thunks + middleware          | Native, queue-aware    |
-
----
-
-## Next Steps
-
-- **[Core Concepts](/guide/core-concepts)** - Entities and types
-- **[Async Operations](/advanced/async-operations)** - Deep dive into async handlers
-- **[Testing](/advanced/testing)** - Test event handlers
+- [Async Operations](../advanced/async-operations.md): a request as events.
+- [Systems](../advanced/systems.md): handlers that see every entity at once.
+- [Testing](../advanced/testing.md): events a handler notifies, asserted.

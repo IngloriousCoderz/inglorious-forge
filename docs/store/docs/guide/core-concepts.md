@@ -1,428 +1,150 @@
 ---
 title: Core Concepts
-description: Learn about entities, types, and event handlers in Inglorious Store.
+description: Entities, types, events, the api, lifecycle and composition in Inglorious Store.
 ---
 
 # Core Concepts
 
-## 🎮 Entities and Types
+## Entities and types
 
-State consists of **entities** (instances) that have a **type** (behavior definition). Think of a type as a class and entities as instances:
+State is a map of **entities**, plain objects with an `id` and a `type`. A **type** holds the behavior of every entity that names it: an object of event handlers.
 
 ```javascript
 const types = {
-  todoList: {
-    addTodo(entity, text) {
-      entity.todos.push({ id: Date.now(), text, completed: false })
+  TodoList: {
+    todoAdd(entity, text) {
+      entity.todos.push({ id: Date.now(), text, isDone: false })
     },
-    toggle(entity, id) {
-      const todo = entity.todos.find((t) => t.id === id)
-      if (todo) todo.completed = !todo.completed
+    todoToggle(entity, id) {
+      const todo = entity.todos.find((todo) => todo.id === id)
+      if (todo) todo.isDone = !todo.isDone
     },
   },
 }
 
 const entities = {
-  workTodos: { type: "TodoList", todos: [] },
-  personalTodos: { type: "TodoList", todos: [] },
-}
-```
-
-**Why this matters:**
-
-- Same behavior applies to all instances of that type.
-- No need to write separate code for each instance.
-- Your mental model matches your code structure.
-
-### Entities vs. Redux State
-
-**Redux:** State is typically a single flat or nested object. To manage multiple instances, you manually reshape state:
-
-```javascript
-// Redux approach
-const initialState = {
-  work: { todos: [] },
-  personal: { todos: [] },
-}
-```
-
-**Inglorious:** Entities are first-class citizens. Add instances without code changes:
-
-```javascript
-// Inglorious approach
-const entities = {
   work: { type: "TodoList", todos: [] },
   personal: { type: "TodoList", todos: [] },
 }
+```
 
-// Add a new list at runtime
+The type's name is the string the entity's `type` holds, case included: an entity of type `"todoList"` has no handlers when the type is declared as `TodoList`. The store warns about a type that looks like a misspelling of a declared one.
+
+Another instance is another entity, at creation or later:
+
+```javascript
 store.notify("add", { id: "project", type: "TodoList", todos: [] })
-// It's already part of the state with its own behavior!
 ```
 
----
+## Handlers
 
-## 🔄 Event Handlers
-
-Event handlers are similar to Redux reducers but with key differences:
-
-### 1. Direct Entity Mutation
-
-Inglorious Store uses **Mutative** (10x faster than Immer) under the hood for immutability. You can mutate entities directly:
+A handler receives the entity, the event's payload and the `api`:
 
 ```javascript
-const types = {
-  counter: {
-    increment(counter) {
-      counter.value++ // Looks like mutation, immutable in reality
-    },
-    add(counter, amount) {
-      counter.value += amount
-    },
+const TodoList = {
+  refresh(entity) {
+    entity.refreshedAt = Date.now()
   },
-}
 
-// vs Redux approach
-const counterReducer = (state = 0, action) => {
-  switch (action.type) {
-    case "INCREMENT":
-      return state + 1
-    // ...
-  }
-}
-```
+  todoAdd(entity, text) {
+    entity.todos.push({ id: Date.now(), text, isDone: false })
+  },
 
-### 2. Handler Signature
-
-Event handlers receive up to three arguments:
-
-```javascript
-const types = {
-  todoList: {
-    // 1. Just the entity
-    refresh(entity) {
-      entity.lastUpdated = Date.now()
-    },
-
-    // 2. Entity + payload
-    addTodo(entity, text) {
-      entity.todos.push({ id: Date.now(), text, done: false })
-    },
-
-    // 3. Entity + payload + API
-    async fetchTodos(entity, userId, api) {
-      entity.loading = true
-      const todos = await fetch(`/api/users/${userId}/todos`).then((r) =>
-        r.json(),
-      )
-      api.notify("todosLoaded", todos)
-    },
+  todoAddAndCount(entity, text, api) {
+    entity.todos.push({ id: Date.now(), text, isDone: false })
+    api.notify("#stats:todoCount", entity.todos.length)
   },
 }
 ```
 
-### 3. The API Object
+A handler mutates the entity it is given. [Mutative](https://github.com/unadlib/mutative) records the mutation into a new state, so the previous state stays as it was: time travel, selectors that compare by reference and the DevTools all work.
 
-The third argument (`api`) gives you powerful store operations:
+The `api` is how a handler reaches the rest of the world:
+
+- `api.getEntity(id)` and `api.getEntities(typeName?)` read other entities, as the previous event left them. See [what handlers see](./event-system.md#what-handlers-see).
+- `api.select(selector)` runs a selector against the state.
+- `api.notify(type, payload)` queues another event. `api.dispatch({ type, payload })` is the Redux spelling of the same.
+- `api.getType`, `api.getTypes` and `api.setType` read and replace types at runtime, as a lazily loaded page does.
+
+Handlers are not pure: one can call `fetch`, subscribe to a browser API or write to storage. They are deterministic, because every change to the state goes through an event, and the queue applies events in order. A handler can be `async`, but the entity it was given is a draft that lives only until the update ends: write to it before the first `await`, and notify an event for what comes after. [`handleRequest`](../advanced/async-operations.md) does that for a request.
+
+## Events
+
+An event reaches every entity whose type handles it, or fewer:
 
 ```javascript
-const types = {
-  notification: {
-    show(entity, message, api) {
-      entity.message = message
-      entity.visible = true
+store.notify("todoAdd", "Buy milk") // every entity with a todoAdd handler
+store.notify("TodoList:todoAdd", "Buy milk") // every TodoList
+store.notify("#work:todoAdd", "Buy milk") // only `work`
+store.notify("TodoList#work:todoAdd", "Buy milk") // `work`, if it is a TodoList
+```
 
-      // Read entire state
-      const allEntities = api.getEntities()
-      const allNotifications = api.getEntities("notification")
+A targeted event that nothing answers, such as `#work:todoAd`, is a warning in the console; a broadcast that nobody handles is not, since broadcasting is how a type learns of things it may not care about.
 
-      // Read specific entity
-      const user = api.getEntity("user")
+Name a handler after what happened, with the subject first when the event is broadcast: `todoAdd`, `sessionChange`, `playerShoot`. An event addressed to one entity stays bare: `#loginForm:submit`.
 
-      // Trigger other events (queued together)
-      api.notify("analytics:log", { type: "showNotification" })
-      api.notify("remove", entity.id) // Take this entity out of the world
+## Lifecycle
 
-      // Access type definitions (advanced)
-      const typeDef = api.getType("todoList")
+`add` puts an entity into the state and runs its `create`; `remove` runs its `destroy` and takes it out. Both reach only that entity.
 
-      // For edge cases, use Redux-style dispatch
-      api.dispatch({ type: "custom", payload: {} })
-    },
+```javascript
+const Clock = {
+  create(entity, _, api) {
+    const { id } = entity
+    timers.set(
+      id,
+      setInterval(() => api.notify(`#${id}:tick`), 1000),
+    )
+  },
+
+  destroy(entity) {
+    clearInterval(timers.get(entity.id))
+    timers.delete(entity.id)
+  },
+
+  tick(entity) {
+    entity.now = Date.now()
   },
 }
 ```
 
----
+`create` is where a type opens what it needs from the outside world, and `destroy` where it closes it. The handles themselves, a timer, a listener, a socket, are not state: they stay in the module or in a factory's closure, keyed by the entity's id, and the entity holds only what can be serialized. The entities that stand in each state of an app, a page's form, a wizard's step, come and go with [`scenes`](../advanced/state-machines.md#scenes).
 
-## 🔊 Event Broadcasting
+`patch` and `replace` change an entity that is already there, without `create` or `destroy`: `patch` merges the fields it names, `replace` installs the whole entity. A field set to `undefined` is cleared, and a different `type` moves the entity onto that type's handlers.
 
-Events are broadcast to all entities via **pub/sub**. Every entity handler receives every event of that type.
+## Composition
+
+A type can be a list of behaviors, applied in order like a pipe: each one is added to the type built so far, and a later handler of the same name replaces the earlier one.
 
 ```javascript
-const types = {
-  todoList: {
-    taskCompleted(entity, taskId) {
-      const task = entity.tasks.find((t) => t.id === taskId)
-      if (task) task.completed = true
-    },
-  },
-  stats: {
-    taskCompleted(entity, taskId) {
-      // This also runs when taskCompleted is triggered!
-      entity.completedCount++
-    },
+const Counter = {
+  increment(entity) {
+    entity.value++
   },
 }
 
-// One notify call, both handlers run
-store.notify("taskCompleted", "task123")
-// Result: task marked as complete + stats updated
-```
-
-### Targeted Notifications
-
-You can narrow down which entities receive an event:
-
-```javascript
-// Notify only the entity with ID 'work'
-store.notify("#work:taskCompleted", "task123")
-
-// Notify only entities of type 'stats'
-store.notify("stats:taskCompleted", "task123")
-
-// Notify a specific entity of a specific type
-store.notify("todoList#work:taskCompleted", "task123")
-```
-
-**Use case:** When only one instance should react to an event.
-
-```javascript
-const types = {
-  todoList: {
-    taskCompleted(entity, taskId) {
-      // Only process if this is our task
-      if (!entity.tasks.find((t) => t.id === taskId)) return
-
-      const task = entity.tasks.find((t) => t.id === taskId)
-      if (task) task.completed = true
-    },
-  },
-}
-
-// Only the list containing this task will update
-store.notify("taskCompleted", "task123")
-
-// Or target it more explicitly
-store.notify("#workTodos:taskCompleted", "task123")
-```
-
----
-
-## 🔗 Behavior Composition
-
-Types can combine multiple behaviors (like mixins or traits):
-
-```javascript
-// Single behavior
-const counter = {
-  increment(counter) {
-    counter.value++
-  },
-}
-
-// Compose behaviors
-const resettableCounter = [
-  counter, // Include all counter handlers
-  {
-    reset(counter) {
-      counter.value = 0
-    },
-  },
-]
-
-const types = {
-  myCounter: resettableCounter, // Works!
-}
-```
-
-### Decorator Pattern
-
-Wrap and enhance behaviors:
-
-```javascript
-// Base behavior
-const resettable = {
-  submit(entity, value) {
-    entity.value = value
-  },
-}
-
-// Wrapping function (decorator)
-const validated = (behavior) => ({
-  submit(entity, value, api) {
-    if (value < 0) {
-      api.notify("validationError", "Value must be positive")
-      return
-    }
-    // Call original behavior
-    behavior.submit(entity, value)
+const withLogging = (type) => ({
+  increment(entity, payload, api) {
+    console.log(`incrementing ${entity.id}`)
+    type.increment?.(entity, payload, api)
   },
 })
 
-// Apply decorator
-const form = [validated(resettable)]
-
-// Or stack multiple decorators
-const robustForm = [validated, withLogging, withAnalytics(resettable)]
-```
-
----
-
-## 🔄 Lifecycle Events
-
-Inglorious Store provides built-in events for entity lifecycle:
-
-### `create` Event
-
-Triggered when a new entity is added via the `add` event. Only visible to the created entity (not broadcast):
-
-```javascript
 const types = {
-  todoList: {
-    create(entity) {
-      // Initialize when created
-      console.log(`Created list: ${entity.id}`)
-      entity.createdAt = Date.now()
-    },
-
-    addTodo(entity, text) {
-      entity.todos.push({ id: Date.now(), text, done: false })
-    },
-  },
+  Counter: [Counter, withLogging],
 }
-
-store.notify("add", {
-  id: "work",
-  type: "TodoList",
-  todos: [],
-})
-// create handler fires for entity 'work'
 ```
 
-### `destroy` Event
+A behavior is an object of handlers, or a function of the type built so far that returns handlers: a decorator. `withLogging` receives `Counter` and wraps its `increment`, calling it with every argument. Since each behavior wraps what came before it, **the last behavior is the outermost**: it runs first and decides whether the earlier ones run. `fsm`, `withStorage` and `withDebounce` go last for that reason.
 
-Triggered when an entity is removed. Also only visible to the destroyed entity:
+Three mechanisms cut across types, each for one job:
 
-```javascript
-const types = {
-  file: {
-    destroy(entity, payload, api) {
-      // Cleanup when removed
-      console.log(`Destroying file: ${entity.id}`)
-      // Save to database, close connections, etc
-    },
-  },
-}
+- **A behavior** wraps one type: guards, logging, storage, state machines.
+- **A system** receives every entity at once, after the entities' own handlers for the same event: `systems: [{ tick(entities, dt, api) {...} }]`. It is for logic that needs all entities together, such as the engine's clock or collision detection, and a system that only reads should go through `api.getEntities()`.
+- **A middleware** takes the store and returns it, changed or wrapped: `(store) => store`. It is for what sits around the store rather than inside it, such as the DevTools wrapping `dispatch`, multiplayer sending events to a server, or view transitions wrapping `subscribe`. The first middleware wraps all the others.
 
-store.notify("remove", "tempFile")
-// destroy handler fires for 'tempFile'
-```
+## Next
 
----
-
-## 🎮 Pub/Sub vs. Targeted Events
-
-**Pub/Sub (Broadcast):**
-
-```javascript
-store.notify("taskCompleted", taskId)
-// All entities with taskCompleted handler receive it
-// Good for: Cross-cutting concerns, global reactions
-```
-
-**Targeted (Direct):**
-
-```javascript
-store.notify("#work:taskCompleted", taskId)
-// Only entity 'work' receives it
-// Good for: Specific instance updates, scoped logic
-```
-
-**Choice:** Depends on your intent. Pub/Sub is simpler; targeted is more explicit.
-
----
-
-## Putting It Together
-
-Here's a complete example combining concepts:
-
-```javascript
-const types = {
-  todoList: {
-    create(entity) {
-      entity.createdAt = Date.now()
-      entity.todos = entity.todos || []
-    },
-
-    addTodo(entity, text) {
-      entity.todos.push({
-        id: Date.now(),
-        text,
-        completed: false,
-      })
-    },
-
-    toggle(entity, id) {
-      const todo = entity.todos.find((t) => t.id === id)
-      if (todo) todo.completed = !todo.completed
-    },
-
-    async sync(entity, api) {
-      entity.syncing = true
-      const saved = await fetch("/api/todos", {
-        method: "POST",
-        body: JSON.stringify(entity.todos),
-      }).then((r) => r.json())
-
-      api.notify("syncComplete", saved)
-    },
-
-    syncComplete(entity, data) {
-      entity.todos = data
-      entity.syncing = false
-      entity.lastSync = Date.now()
-    },
-  },
-
-  stats: {
-    addTodo(entity) {
-      // Reacts to every addTodo event
-      entity.totalAdded++
-    },
-
-    toggle(entity) {
-      // Reacts to every toggle event
-      entity.totalToggled++
-    },
-  },
-}
-
-const entities = {
-  work: { type: "TodoList", todos: [] },
-  personal: { type: "TodoList", todos: [] },
-  stats: { type: "Stats", totalAdded: 0, totalToggled: 0 },
-}
-
-const store = createStore({ types, entities })
-
-// Usage
-store.notify("addTodo", "Buy groceries") // Fires in both lists!
-store.notify("#work:addTodo", "Finish report") // Only work list
-```
-
----
-
-[Explore Async Operations →](/advanced/async-operations)
-
-[Learn About Testing →](/advanced/testing)
+- [Event System](./event-system.md): targeting, the queue, and what handlers see.
+- [Async Operations](../advanced/async-operations.md): `handleRequest`, `handleAsync` and `optimistic`.
+- [Testing](../advanced/testing.md): `trigger` and `createMockApi`.

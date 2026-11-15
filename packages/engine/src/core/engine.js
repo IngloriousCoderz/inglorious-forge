@@ -57,9 +57,6 @@ export class Engine {
   constructor(...gameConfigs) {
     this._config = extendWith(merger, DEFAULT_GAME_CONFIG, ...gameConfigs)
 
-    // Said before anything is made, because a type that was never declared is not an error
-    // anywhere after this point -- it augments into an empty type, and everything sent to
-    // the entity quietly goes nowhere.
     assertTypesAreDeclared(this._config)
 
     const devMode = this._config.entities.game?.devMode
@@ -80,6 +77,7 @@ export class Engine {
       ...this._config,
       middlewares,
       updateMode: "manual",
+      devMode: Boolean(devMode),
     })
     this._loop = new Loop[this._config.loop.type]()
 
@@ -112,10 +110,8 @@ export class Engine {
   }
 
   /**
-   * Stops the game engine, halting the loop and notifying the store.
-   *
-   * A game does this by notifying `quit`, which the `game` behaviour turns into a flag
-   * the engine reads after the frame.
+   * Stops the game engine, halting the loop and notifying the store. A game does
+   * this by notifying `quit`, which sets the flag the engine reads after each frame.
    */
   stop() {
     this._store.notify("stop")
@@ -137,6 +133,7 @@ export class Engine {
    * @param {number} dt - Delta time since the last update in milliseconds.
    */
   update(dt) {
+    // A frame already scheduled when the game quit still fires once.
     if (this._store.getState().game?.quit) {
       this.stop()
       return

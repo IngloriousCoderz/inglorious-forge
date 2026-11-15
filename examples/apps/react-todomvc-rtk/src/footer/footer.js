@@ -1,7 +1,7 @@
 import { convertSlice } from "@inglorious/store/migration/rtk"
 import { createSlice } from "@reduxjs/toolkit"
 
-import { clearClick } from "../store/actions"
+import { completedClear } from "../store/actions"
 
 const slice = createSlice({
   name: "footer",
@@ -15,7 +15,7 @@ const slice = createSlice({
   },
 
   extraReducers: (builder) => {
-    builder.addCase(clearClick, (state) => {
+    builder.addCase(completedClear, (state) => {
       state.activeFilter = "all"
     })
   },
@@ -26,5 +26,5 @@ export const { setFilter } = slice.actions
 export default slice.reducer
 
 export const Footer = convertSlice(slice, {
-  extraActions: [clearClick],
+  extraActions: [completedClear],
 })

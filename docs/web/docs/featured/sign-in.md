@@ -9,20 +9,18 @@ description: "The type behind a sign-in screen: passwords, codes by email, passw
 
 ```javascript
 import { supabaseAuth } from "@inglorious/supabase"
-import { createAuth, watchAuth } from "@inglorious/web/auth"
+import { createAuth } from "@inglorious/web/auth"
 
 const adapter = supabaseAuth(supabase)
 
 const types = {
   Auth: { ...createAuth({ adapter, methods: ["password", "code"] }), render },
 }
-
-watchAuth(adapter, store) // keeps `user` in step with the session
 ```
 
 `methods` lists what the screen offers: `"password"` (sign in, create an account confirmed with a code, reset a forgotten password with a code) and `"code"` (sign in with a code alone, creating the account on first use).
 
-The entity's `step` says what to ask for: `"email"`, `"password"`, `"signUp"`, `"code"` or `"reset"`. Its events take what the person typed: `emailSubmit(email)`, `signInSubmit(password)`, `signUpSubmit({ password, data })`, `codeSubmit(code)`, `resetSubmit({ code, password })`, and move between steps: `signUpShow`, `signInShow`, `codeRequest`, `codeResend`, `resetRequest`, `back`. Signed in, `signOut` and `accountEraseAsk`, then `accountErase` or `accountEraseCancel`. `isReady` turns true once the saved session is read: until then, render nothing rather than the sign-in screen.
+The entity's `step` says what to ask for: `"email"`, `"password"`, `"signUp"`, `"code"` or `"reset"`. Its events take what the person typed: `emailSubmit(email)`, `signInSubmit(password)`, `signUpSubmit({ password, data })`, `codeSubmit(code)`, `resetSubmit({ code, password })`, and move between steps: `signUpShow`, `signInShow`, `codeRequest`, `codeResend`, `resetRequest`, `back`. Signed in, `signOut` and `accountEraseAsk`, then `accountErase` or `accountEraseCancel`. From the moment the entity is created, `user` follows the backend's session, signed in or out, from this tab or another. `isReady` turns true once the saved session is read: until then, render nothing rather than the sign-in screen.
 
 Whoever signs in, by password, code, link or password reset, the entity gets `signedIn` with `{ user, isNew }`, `isNew` for an account just created. Add a handler to move on:
 

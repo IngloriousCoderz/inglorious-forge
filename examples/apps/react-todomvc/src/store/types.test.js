@@ -30,7 +30,7 @@ it("should add a new task and a clear the form value at the same time on formSub
   doTest(entities, event, stateAfter)
 })
 
-it("should toggle a task as completed on toggleClick", () => {
+it("should toggle a task as completed on taskToggle", () => {
   const stateBefore = {
     form: { id: "form", type: "Form", value: "" },
     list: {
@@ -40,7 +40,7 @@ it("should toggle a task as completed on toggleClick", () => {
     },
     footer: { id: "footer", type: "Footer", activeFilter: "all" },
   }
-  const event = { type: "toggleClick", payload: 1 }
+  const event = { type: "taskToggle", payload: 1 }
   const stateAfter = {
     form: { id: "form", type: "Form", value: "" },
     list: {
@@ -54,7 +54,7 @@ it("should toggle a task as completed on toggleClick", () => {
   doTest(stateBefore, event, stateAfter)
 })
 
-it("should delete a task on deleteClick", () => {
+it("should delete a task on taskDelete", () => {
   const stateBefore = {
     form: { id: "form", type: "Form", value: "" },
     list: {
@@ -64,7 +64,7 @@ it("should delete a task on deleteClick", () => {
     },
     footer: { id: "footer", type: "Footer", activeFilter: "all" },
   }
-  const event = { type: "deleteClick", payload: 1 }
+  const event = { type: "taskDelete", payload: 1 }
   const stateAfter = {
     form: { id: "form", type: "Form", value: "" },
     list: { id: "list", type: "List", tasks: [] },
@@ -74,7 +74,7 @@ it("should delete a task on deleteClick", () => {
   doTest(stateBefore, event, stateAfter)
 })
 
-it("should clear all completed tasks on clearClick", () => {
+it("should clear all completed tasks on completedClear", () => {
   const stateBefore = {
     form: { id: "form", type: "Form", value: "" },
     list: {
@@ -84,7 +84,7 @@ it("should clear all completed tasks on clearClick", () => {
     },
     footer: { id: "footer", type: "Footer", activeFilter: "all" },
   }
-  const event = { type: "clearClick" }
+  const event = { type: "completedClear" }
   const stateAfter = {
     form: { id: "form", type: "Form", value: "" },
     list: { id: "list", type: "List", tasks: [] },
@@ -94,8 +94,8 @@ it("should clear all completed tasks on clearClick", () => {
   doTest(stateBefore, event, stateAfter)
 })
 
-it("should update the filter on filterClick", () => {
-  const event = { type: "filterClick", payload: "completed" }
+it("should update the filter on filterChange", () => {
+  const event = { type: "filterChange", payload: "completed" }
   const stateAfter = {
     form: { id: "form", type: "Form", value: "" },
     list: { id: "list", type: "List", tasks: [] },

@@ -13,7 +13,7 @@ The generated types don't call Supabase or Firebase themselves: each takes an `a
 | Analytics                     | `createAnalytics`    | `firebaseAnalytics(...)`         | `src/app/analytics`     |
 | Push                          | `createPushPrompt`   | `firebasePush(...)`              | `src/api/push`          |
 | Mandatory native updates      | `createNativeUpdate` | `supabaseNativeUpdate(supabase)` | `src/app/native-update` |
-| Live updates                  | `watchLiveUpdate`    | `liveUpdateManifestUrl(url)`     | `src/main`              |
+| Live updates                  | `createLiveUpdate`   | `liveUpdateManifestUrl(url)`     | `src/store`             |
 | Entities reloading on changes | `withLiveReload`     | `realtimeSource(supabase)`       | your types              |
 
 ## Sign-in
@@ -78,7 +78,7 @@ A JSON file on any host is enough. See [Native App Updates](https://inglorious.d
 
 ## Live updates
 
-`watchLiveUpdate` reads a JSON manifest at `manifestUrl`, `{ release, minBuild, url, checksum, signature }`, and downloads the signed bundle at `url`. Any static host or CDN can serve both: `inglorious-live-update build` makes the bundle, and `publishLiveUpdate` from `@inglorious/supabase` shows how one is signed and published. See [Live Updates](https://inglorious.dev/web/featured/live-updates).
+`createLiveUpdate` reads a JSON manifest at `manifestUrl`, `{ release, minBuild, url, checksum, signature }`, and downloads the signed bundle at `url`. Any static host or CDN can serve both: `inglorious-live-update build` makes the bundle, and `publishLiveUpdate` from `@inglorious/supabase` shows how one is signed and published. See [Live Updates](https://inglorious.dev/web/featured/live-updates).
 
 ## Realtime
 

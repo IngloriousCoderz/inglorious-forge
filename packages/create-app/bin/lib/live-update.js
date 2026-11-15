@@ -38,7 +38,7 @@ Every release build is stamped with the time it was built, and an app only takes
 /**
  * Lets the native apps update their web code without the stores: the
  * plugin's config, the release scripts, the bucket and the README section.
- * The watcher itself is in src/main.
+ * The LiveUpdate type is registered in src/store.
  *
  * @param {string} targetDir
  * @param {object} pkg - The package.json being built.

@@ -2,10 +2,10 @@ export function create(entity) {
   entity.activeFilter = "all"
 }
 
-export function filterClick(entity, id) {
+export function filterChange(entity, id) {
   entity.activeFilter = id
 }
 
-export function clearClick(entity) {
+export function completedClear(entity) {
   entity.activeFilter = "all"
 }

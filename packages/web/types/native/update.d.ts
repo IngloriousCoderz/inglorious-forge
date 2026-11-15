@@ -17,8 +17,19 @@ export interface NativeUpdateAdapter {
   ): Promise<NativeUpdateRequirement | null>
 }
 
+/** What `createNativeUpdate` needs of `App` from `@capacitor/app`. */
+export interface NativeUpdatePlugin {
+  getInfo(): Promise<{ build: string }>
+  addListener(
+    event: "resume",
+    listener: () => void,
+  ): Promise<{ remove(): Promise<void> }>
+}
+
 export interface NativeUpdateConfig {
   adapter: NativeUpdateAdapter
+  /** Checks the installed build at launch and on every resume, in a native app. */
+  plugin?: NativeUpdatePlugin
 }
 
 export interface NativeUpdateEntity {
@@ -36,6 +47,7 @@ export interface NativeUpdateCheckPayload {
 
 export type NativeUpdateType = {
   create(entity: NativeUpdateEntity): void
+  destroy(entity: NativeUpdateEntity): void
   /** Compares the installed build with the platform's minimum. */
   nativeUpdateCheck(
     entity: NativeUpdateEntity,
@@ -55,28 +67,3 @@ export type NativeUpdateType = {
 export declare function createNativeUpdate(
   config: NativeUpdateConfig,
 ): NativeUpdateType
-
-/** What `watchNativeUpdate` needs of `App` from `@capacitor/app`. */
-export interface NativeApp {
-  getInfo(): Promise<{ build: string }>
-  addListener(
-    event: "resume",
-    listener: () => void,
-  ): Promise<{ remove(): Promise<void> }>
-}
-
-export interface WatchNativeUpdateOptions {
-  /** The NativeUpdate entity to notify. Defaults to `nativeUpdate`. */
-  id?: string
-}
-
-/**
- * Checks the installed build at launch and on every resume, notifying
- * `#${id}:nativeUpdateCheck`. Does nothing outside a native app.
- * @returns A function that stops watching.
- */
-export declare function watchNativeUpdate(
-  app: NativeApp,
-  store: Pick<Api, "notify">,
-  options?: WatchNativeUpdateOptions,
-): () => Promise<void>

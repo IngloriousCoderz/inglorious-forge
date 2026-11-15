@@ -164,8 +164,8 @@ export const types = {
         completed: false,
       })
     },
-    // Event handler - runs when 'toggleClick' event is broadcast
-    toggleClick(entity, id) {
+    // Event handler - runs when 'taskToggle' event is broadcast
+    taskToggle(entity, id) {
       const task = entity.tasks.find((t) => t.id === id)
       if (task) task.completed = !task.completed
     },

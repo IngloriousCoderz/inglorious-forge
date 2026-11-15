@@ -15,11 +15,11 @@ export default function List() {
         <li key={task.id}>
           <span
             className={clsx({ completed: task.completed })}
-            onClick={() => notify("toggleClick", task.id)}
+            onClick={() => notify("taskToggle", task.id)}
           >
             {task.text}
           </span>{" "}
-          <button onClick={() => notify("deleteClick", task.id)}>x</button>
+          <button onClick={() => notify("taskDelete", task.id)}>x</button>
         </li>
       ))}
     </ul>

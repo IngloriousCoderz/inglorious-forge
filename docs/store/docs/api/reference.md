@@ -11,33 +11,34 @@ Creates a new Inglorious Store instance. Returns a Redux-compatible store.
 
 ```javascript
 const store = createStore({
-  types, // Object: entity type definitions (required)
-  entities, // Object: initial entities (required)
-  systems, // Array: global state handlers (optional)
+  types, // Object: entity type definitions
+  entities, // Object: initial entities
+  systems, // Array: handlers that see every entity at once (optional)
   middlewares, // Array: functions that wrap the store (optional)
-  autoCreateEntities, // Boolean: auto-create singleton entities (optional)
+  autoCreateEntities, // Boolean: an entity for each type that has none (optional)
   updateMode, // String: 'auto' | 'manual' (optional)
   updateStrategy, // String: 'structural-sharing' | 'copy-on-dispatch' (optional)
+  devMode, // Boolean: freeze the state after each event (optional)
 })
 ```
 
 ### Options
 
-#### `types` (required)
+#### `types`
 
-Object defining entity type behaviors. Each type is a behavior object or array of behaviors:
+Object defining entity type behaviors, by the name the entities' `type` holds. Each type is a behavior object or array of behaviors:
 
 ```javascript
 const types = {
-  todoList: {
-    addTodo(entity, text) {
+  TodoList: {
+    todoAdd(entity, text) {
       entity.todos.push({ id: Date.now(), text, done: false })
     },
-    removeTodo(entity, id) {
+    todoRemove(entity, id) {
       entity.todos = entity.todos.filter((t) => t.id !== id)
     },
   },
-  counter: {
+  Counter: {
     increment(entity) {
       entity.value++
     },
@@ -45,9 +46,9 @@ const types = {
 }
 ```
 
-#### `entities` (required)
+#### `entities`
 
-Object containing initial entity instances:
+Object containing initial entity instances. With `autoCreateEntities`, the ones the store creates itself can be left out:
 
 ```javascript
 const entities = {
@@ -59,20 +60,21 @@ const entities = {
 
 #### `systems` (optional)
 
-Array of global state handlers that run after all entity handlers:
+Array of handlers that receive every entity at once, `(entities, payload, api)`, after the entities' own handlers for the same event:
 
 ```javascript
 const systems = [
   {
-    taskCompleted(state, prevState) {
-      // Calculate derived state, validate consistency, etc.
-      console.log("All handlers finished, state updated")
+    taskCompleted(entities, taskId, api) {
+      entities.stats.completed++
     },
   },
 ]
 
 const store = createStore({ types, entities, systems })
 ```
+
+See [Systems](/advanced/systems).
 
 #### `middlewares` (optional)
 
@@ -104,12 +106,12 @@ Boolean flag to automatically create singleton entities for types not defined in
 ```javascript
 const store = createStore({
   types: {
-    settings: {
-      setTheme(e, t) {
+    Settings: {
+      themeChange(e, t) {
         e.theme = t
       },
     },
-    analytics: {
+    Analytics: {
       track(e, ev) {
         e.events.push(ev)
       },
@@ -124,6 +126,8 @@ const store = createStore({
 // analytics: { type: "Analytics" }
 ```
 
+The entity's id is the type's name in camel case. A type added later with `setType` gets its entity then, unless one of that type exists.
+
 **Use when:**
 
 - ✅ Building web apps with singleton services
@@ -135,7 +139,7 @@ const store = createStore({
 Controls when the store notifies subscribers:
 
 - **`'auto'`** (default) - Subscribers notified after each event
-- **`'manual'`** - Call `api.update()` to batch updates
+- **`'manual'`** - Call `store.update()` to batch updates
 
 ```javascript
 const store = createStore({
@@ -170,10 +174,10 @@ const store = createStore({
 })
 ```
 
-Under both strategies the current state is left intact while the queued events are applied to a
-separate draft, and the two are swapped only once every event has been processed. Subscribers are
-notified only after the swap. As a result, `api.getEntity()` and `api.getEntities()` read the
-**previous** state during an update, under either strategy.
+Under both strategies each event is a transaction: its handlers read, through `api.getEntity()`
+and `api.getEntities()`, the state as the previous event left it, and the next event reads what
+they changed. Subscribers are notified once the queue is empty. An entity that two events of the
+same update write to is copied once more for the second, under either strategy.
 
 **Caveats for `'copy-on-dispatch'`:**
 
@@ -184,10 +188,16 @@ notified only after the swap. As a result, `api.getEntity()` and `api.getEntitie
 - Each entity a system reads through its first argument is copied, in case it is written to. A
   system that only needs to look should read from `api.getEntities()`.
 - The state is not frozen, even in `devMode`.
-- Writing to an entity obtained from `api.getEntity()` during an update mutates the previous
-  state. Mutate the entity passed to your handler instead.
 
-An unsupported strategy throws a `TypeError` when the store is created.
+Never write to an entity obtained from `api.getEntity()`: mutate the entity passed to your
+handler, or notify the other entity. An unsupported strategy throws a `TypeError` when the
+store is created.
+
+#### `devMode` (optional)
+
+With `true`, under structural sharing, the state is frozen after each event, so a write outside a
+handler, such as to an entity read with `api.getEntity()` or in a render, throws instead of
+corrupting the state. Keep it on in development.
 
 ## Store Methods
 
@@ -272,17 +282,13 @@ Puts back the entities the store was created with, and clears a [pause](#pause-a
 
 Read a type as the store composed it, or replace one at runtime, as hot module reloading does. Entities of a type added later get their `create` then.
 
-### `replaceReducer(nextReducer)`
-
-Redux-compatible method. Not typically used with Inglorious Store. For advanced use cases only.
-
 ## Event Handler API
 
 Event handlers receive three arguments:
 
 ```javascript
 const types = {
-  todoList: {
+  TodoList: {
     // Handler with all three arguments
     addTodo(entity, payload, api) {
       // entity: the entity being updated (mutate freely)
@@ -329,27 +335,19 @@ addTodo(entity, payload) {
 Access to store operations:
 
 ```javascript
-async fetchData(entity, userId, api) {
-  entity.loading = true
-
-  const data = await fetch(`/api/${userId}`).then((r) => r.json())
-
-  // Trigger another event
-  api.notify("dataLoaded", data)
-
-  // Read other entities
+dataLoad(entity, userId, api) {
+  // Read other entities, as the previous event left them
   const user = api.getEntity("user")
   const allEntities = api.getEntities()
+  const todoLists = api.getEntities("TodoList")
 
-  // Access type definitions (advanced)
-  const typeDef = api.getType("todoList")
+  // Queue another event
+  api.notify(`#${entity.id}:dataFetch`, { userId, name: user.name })
+
+  // Read and replace types at runtime (advanced)
+  const typeDef = api.getType("TodoList")
   const allTypes = api.getTypes()
-
-  // Change type behavior at runtime (advanced)
-  api.setType("counter", { /* new behavior */ })
-
-  // Manual batch control (if updateMode: "manual")
-  api.update()
+  api.setType("Counter", { /* new behavior */ })
 }
 ```
 
@@ -365,7 +363,7 @@ const allEntities = api.getEntities()
 const workTodos = allEntities.workTodos
 
 // Filter by entity type (array)
-const todos = api.getEntities("todo")
+const todoLists = api.getEntities("TodoList")
 ```
 
 #### `api.getEntity(id)`
@@ -391,15 +389,10 @@ const filter = api.select(activeFilter)
 Trigger another event (queued with current event):
 
 ```javascript
-async login(entity, credentials, api) {
-  const user = await authenticateUser(credentials)
-  api.notify("loginSuccess", user)
-  api.notify("analytics:logLogin", user)
-}
-
-loginSuccess(entity, user) {
+signIn(entity, user, api) {
   entity.user = user
-  entity.loggedIn = true
+  api.notify("sessionChange", user)
+  api.notify("#analytics:analyticsTrack", { name: "sign_in" })
 }
 ```
 
@@ -417,7 +410,7 @@ Get all type definitions (read-only):
 
 ```javascript
 const types = api.getTypes()
-const todoListType = types.todoList
+const todoListType = types.TodoList
 ```
 
 #### `api.getType(typeName)`
@@ -425,7 +418,7 @@ const todoListType = types.todoList
 Get a specific type definition:
 
 ```javascript
-const type = api.getType("todoList")
+const type = api.getType("TodoList")
 ```
 
 #### `api.setType(typeName, newType)`
@@ -433,24 +426,12 @@ const type = api.getType("todoList")
 Change a type's behavior at runtime (advanced):
 
 ```javascript
-store.notify("upgradeType", {
-  typeName: "counter",
-  behavior: { increment: () => {}, doubleIncrement: () => {} }
-})
-
-upgradeType(entity, { typeName, behavior }, api) {
-  api.setType(typeName, behavior)
+routeLoadSuccess(entity, { module }, api) {
+  api.setType("AdminPage", module.AdminPage)
 }
 ```
 
-#### `api.update()`
-
-For `manual` update mode: process events and notify subscribers:
-
-```javascript
-// This only exists/works if updateMode: "manual"
-api.update()
-```
+Entities already of a type being added get their `create` then; replacing a type notifies subscribers.
 
 ## Built-in Events
 
@@ -460,11 +441,11 @@ Triggered when an entity is added via the `add` event. **Visible only to the cre
 
 ```javascript
 const types = {
-  todoList: {
+  TodoList: {
     create(entity) {
       // Initialize new list
       entity.createdAt = Date.now()
-      entity.todos = entity.todos || []
+      entity.todos ??= []
     },
   },
 }
@@ -479,7 +460,7 @@ Triggered when an entity is removed via the `remove` event. **Visible only to th
 
 ```javascript
 const types = {
-  file: {
+  File: {
     destroy(entity, payload, api) {
       // Cleanup
       console.log(`Destroying file: ${entity.id}`)
@@ -554,7 +535,7 @@ Broadcast by [`fsm()`](#fsm-states) when a handler has moved an entity to anothe
 
 ```javascript
 const types = {
-  logger: {
+  Logger: {
     stateChange(entity, { entityId, from, to }) {
       console.log(`${entityId}: ${from} → ${to}`)
     },
@@ -570,7 +551,7 @@ Turns a type into a finite state machine. See [State Machines](/advanced/state-m
 import { fsm } from "@inglorious/store/fsm"
 
 const types = {
-  door: [
+  Door: [
     { knock: (entity) => entity.knocks++ },
     fsm({
       closed: { open: (entity) => (entity.state = "open") },
@@ -648,7 +629,7 @@ The lower level of `handleRequest`: lifecycle events with no status or error kep
 import { handleAsync } from "@inglorious/store/async"
 
 const types = {
-  todoList: {
+  TodoList: {
     ...handleAsync("fetchTodos", {
       // run receives the payload, not the entity; what it returns goes to success
       async run(userId) {
@@ -730,7 +711,7 @@ This helper lives at `@inglorious/store/optimistic`, so only users who need it i
 import { handleAsync } from "@inglorious/store/async"
 import { optimistic } from "@inglorious/store/optimistic"
 
-const todoList = {
+const TodoList = {
   ...optimistic(
     handleAsync("saveTodo", {
       async run(payload) {
@@ -773,7 +754,7 @@ handleAsync(
   {
     scope: "entity", // "entity" | "type" | "global"
     // "entity": #entityId:fetchTodosSuccess
-    // "type": todoList:fetchTodosSuccess
+    // "type": TodoList:fetchTodosSuccess
     // "global": fetchTodosSuccess
   },
 )
@@ -979,12 +960,12 @@ import { convertAsyncThunk } from "@inglorious/store/migration/rtk"
 
 const handlers = convertAsyncThunk("fetchTodos", fetchTodosAsync, {
   onPending: (entity) => (entity.loading = true),
-  onError: (entity, error) => (entity.error = error),
-  onSuccess: (entity, data) => (entity.todos = data),
+  onRejected: (entity, error) => (entity.error = error),
+  onFulfilled: (entity, data) => (entity.todos = data),
 })
 
 const types = {
-  todoList: { ...handlers },
+  TodoList: { ...handlers },
 }
 ```
 
@@ -993,16 +974,19 @@ const types = {
 ```typescript
 import { convertSlice } from "@inglorious/store/migration/rtk"
 
-const todoListType = convertSlice(todosSlice, {
+const TodoList = convertSlice(todosSlice, {
   asyncThunks: {
-    fetchTodos: fetchTodosAsync,
+    fetchTodos: {
+      payloadCreator: fetchTodos.payloadCreator,
+      onFulfilled: (entity, todos) => (entity.items = todos),
+    },
   },
 })
 
-const types = {
-  todoList: todoListType,
-}
+const types = { TodoList }
 ```
+
+The slice's initial state is applied in `create`, and its reducers become handlers under their own names.
 
 ### `createRTKCompatDispatch(api, entityId)`
 

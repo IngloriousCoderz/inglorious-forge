@@ -3,13 +3,13 @@ import { expect, it } from "vitest"
 
 import { Footer } from "."
 
-it("should update the filter on filterClick", () => {
+it("should update the filter on filterChange", () => {
   const entityBefore = {
     id: "footer",
     type: "Footer",
     activeFilter: "all",
   }
-  const event = { type: "filterClick", payload: "completed" }
+  const event = { type: "filterChange", payload: "completed" }
   const entityAfter = {
     id: "footer",
     type: "Footer",

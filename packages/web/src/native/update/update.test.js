@@ -1,7 +1,7 @@
 import { createStore } from "@inglorious/store"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
-import { createNativeUpdate, watchNativeUpdate } from "./index.js"
+import { createNativeUpdate } from "./index.js"
 
 const STORE_URL = "https://play.google.com/store/apps/details?id=app"
 
@@ -106,9 +106,8 @@ describe("createNativeUpdate", () => {
   })
 })
 
-describe("watchNativeUpdate", () => {
+describe("with the App plugin", () => {
   let app
-  let store
   let resume
   let remove
 
@@ -121,7 +120,6 @@ describe("watchNativeUpdate", () => {
         return { remove }
       }),
     }
-    store = { notify: vi.fn() }
     vi.stubGlobal("Capacitor", {
       isNativePlatform: () => true,
       getPlatform: () => "ios",
@@ -129,55 +127,45 @@ describe("watchNativeUpdate", () => {
   })
 
   it("checks at launch and on every resume", async () => {
-    watchNativeUpdate(app, store)
+    const store = storeWith(createNativeUpdate({ adapter, plugin: app }))
     await settle()
 
     expect(app.addListener).toHaveBeenCalledWith("resume", expect.any(Function))
-    expect(store.notify).toHaveBeenCalledWith(
-      "#nativeUpdate:nativeUpdateCheck",
-      { platform: "ios", build: 7 },
-    )
+    expect(adapter.requirement).toHaveBeenCalledWith("ios")
+    expect(entityOf(store).isUpdateRequired).toBe(false)
 
+    adapter.requirement.mockResolvedValueOnce({ minBuild: 8, storeUrl: null })
     resume()
     await settle()
 
-    expect(store.notify).toHaveBeenCalledTimes(2)
-  })
-
-  it("notifies the entity it is given", async () => {
-    watchNativeUpdate(app, store, { id: "gate" })
-    await settle()
-
-    expect(store.notify).toHaveBeenCalledWith(
-      "#gate:nativeUpdateCheck",
-      expect.anything(),
-    )
+    expect(entityOf(store).isUpdateRequired).toBe(true)
   })
 
   it("does nothing outside a native app", async () => {
     vi.stubGlobal("Capacitor", undefined)
 
-    watchNativeUpdate(app, store)
+    storeWith(createNativeUpdate({ adapter, plugin: app }))
     await settle()
 
     expect(app.getInfo).not.toHaveBeenCalled()
-    expect(store.notify).not.toHaveBeenCalled()
+    expect(adapter.requirement).not.toHaveBeenCalled()
   })
 
   it("stays quiet when the build cannot be read", async () => {
     app.getInfo.mockRejectedValueOnce(new Error("unavailable"))
 
-    watchNativeUpdate(app, store)
+    storeWith(createNativeUpdate({ adapter, plugin: app }))
     await settle()
 
-    expect(store.notify).not.toHaveBeenCalled()
+    expect(adapter.requirement).not.toHaveBeenCalled()
   })
 
-  it("stops listening", async () => {
-    const stop = watchNativeUpdate(app, store)
+  it("stops listening when the entity goes", async () => {
+    const store = storeWith(createNativeUpdate({ adapter, plugin: app }))
     await settle()
 
-    await stop()
+    store.notify("remove", "nativeUpdate")
+    await settle()
 
     expect(remove).toHaveBeenCalled()
   })

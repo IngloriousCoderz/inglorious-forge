@@ -35,8 +35,8 @@ Declarative form state management with validation.
 
 Client-side routing that integrates directly with your store.
 
-- Hash-based or path-based routing
-- URL sync with entity state
+- Path-based routing, with params and query
+- The URL in the router entity
 - Lazy-loadable routes
 - Type composition for route guards (auth, permissions)
 
@@ -46,9 +46,9 @@ Client-side routing that integrates directly with your store.
 
 What the phone or browser can sense or do, through web APIs, and Capacitor plugins in a native app.
 
-- Sensors: Compass, Geolocation, ElementSize, MediaQuery, NetworkStatus and PageVisibility
-- [Share](./share.md), [Haptics](./haptics.md), [Local Notifications](./local-notifications.md), [Biometrics](./biometrics.md), [Keyboard](./keyboard.md) and [Storage](./storage.md)
-- Serializable state, with listeners kept outside entities
+- Sensors: Compass, Geolocation, ElementSize, MediaQuery, NetworkStatus, PageVisibility and [Keyboard](./keyboard.md)
+- [Share](./share.md), [Haptics](./haptics.md), [Local Notifications](./local-notifications.md), [Biometrics](./biometrics.md) and [Storage](./storage.md)
+- Entity types, with serializable state and listeners kept outside entities
 
 **[Learn more →](./device.md)**
 
@@ -83,17 +83,12 @@ import { Form } from "@inglorious/web/form"
 const CustomForm = {
   ...Form,
 
-  // Override validation
-  validate(entity, schema) {
-    // Custom validation logic
+  // The app's own submission
+  submit(entity, payload, api) {
+    api.notify(`#${entity.id}:save`, { ...entity.values })
   },
 
-  // Override submission
-  submit(entity, api) {
-    // Custom submit logic
-  },
-
-  // Override rendering
+  // Its own rendering
   render(entity, api) {
     // Custom form layout
   },
@@ -161,25 +156,6 @@ All built-in components use type composition. This means you can:
 2. **Compose them** — Mix with guard behaviors
 3. **Override them** — Replace any method completely
 4. **Test them** — With simple `trigger()` calls
-
-Example: Form with custom validation:
-
-```javascript
-const CustomForm = {
-  ...Form,
-
-  validate(entity, schema) {
-    // Custom validation logic
-    const errors = {}
-
-    if (entity.values.email && !entity.values.email.includes("@")) {
-      errors.email = "Invalid email"
-    }
-
-    return errors
-  },
-}
-```
 
 ## Testing Components
 

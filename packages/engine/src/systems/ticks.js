@@ -3,27 +3,14 @@ import { dueAt } from "../animation/due.js"
 const ONE_SECOND = 1
 
 /**
- * A clock for a whole world that turns at a rate of its own.
+ * A clock for a whole world that turns at its own rate: `atFps` for a world
+ * rather than an entity. It notifies `tick` (or `event`) with the elapsed time
+ * whenever a turn is due, so whatever turns with the world handles `tick`
+ * instead of `update`, and is left alone between turns while the loop keeps
+ * the pointer and controls at screen rate. It hears `pause` and `resume`
+ * itself, since the store still asks systems for `update` while halted.
  *
- * This is `atFps` for a world rather than for an entity. A board where everything moves
- * together -- a generation of Life, a day for foxes and rabbits -- has one clock, kept
- * here, and notifies `tick` whenever a turn is due. Whatever turns with the world handles
- * `tick` instead of `update`, and the loop stays as fast as the screen takes it, so the
- * pointer and the controls never wait on the world.
- *
- * It is also what lets a large world be cheap between turns. An entity with `atFps` is
- * still handed every `update` to keep its own time, so every one of them is written to on
- * every frame; an entity that only handles `tick` is left alone until the world turns.
- *
- * The event carries the time the turn covers, as `atFps` does: six frames of a sixtieth
- * of a second are a tenth of a second, and a world moving by velocity times dt has to
- * move by all of it.
- *
- * Halting the store stops the entities updating, but systems are still asked, so the
- * clock hears the pause for itself. Without that the world would carry on turning
- * underneath a pause that everything else is honouring.
- *
- * @param {Object} [options] - How the world turns.
+ * @param {Object} [options]
  * @param {number} [options.fps=Infinity] - Turns a second. `Infinity` for one a frame.
  * @param {string} [options.event="tick"] - What a turn is called.
  * @returns {Object} The system.

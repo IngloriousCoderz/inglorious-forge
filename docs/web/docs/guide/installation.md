@@ -192,6 +192,6 @@ If you see a counter that increments when clicked, you're all set! 🎉
 
 ## Next Steps
 
-- **[Quick Start](./quick-start.md)** — Build your first app
+- **[Quick Start](./getting-started.md)** — Build your first app
 - **[Core Concepts](./core-concepts.md)** — Understand entities and types
 - **[Getting Started](./getting-started.md)** — Comprehensive introduction

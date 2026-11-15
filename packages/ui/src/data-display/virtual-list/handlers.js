@@ -13,12 +13,11 @@ export function create(entity) {
 }
 
 /**
- * Handles the scroll event to update the visible range.
+ * Updates the visible range for a scroll position.
  * @param {VirtualListEntity} entity
- * @param {HTMLElement} containerEl
+ * @param {{ scrollTop: number }} payload
  */
-export function scroll(entity, containerEl) {
-  const scrollTop = containerEl.scrollTop
+export function scroll(entity, { scrollTop }) {
   const { items, bufferSize, itemHeight, estimatedHeight, viewportHeight } =
     entity
   const height = itemHeight || estimatedHeight
@@ -39,15 +38,14 @@ export function scroll(entity, containerEl) {
 }
 
 /**
- * Mounts the list, measuring the first item to determine item height.
+ * Takes the height of an item, as measured on the first one laid out.
  * @param {VirtualListEntity} entity
- * @param {HTMLElement} containerEl
+ * @param {{ itemHeight: number }} payload
  */
-export function mount(entity, containerEl) {
-  const firstItem = containerEl.querySelector("[data-index]")
-  if (!firstItem?.offsetHeight) return
+export function itemMeasure(entity, { itemHeight }) {
+  if (!itemHeight) return
 
-  entity.itemHeight = firstItem.offsetHeight
+  entity.itemHeight = itemHeight
   entity.visibleRange = {
     start: 0,
     end: Math.min(

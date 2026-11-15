@@ -9,13 +9,10 @@ import "@inglorious/ui/view-transitions.css"
 import "./style.css"
 
 import { mount } from "@inglorious/web"
-import { watchKeyboard } from "@inglorious/web/device/keyboard"
 
 import { app } from "./app.js"
 import { store } from "./store/index.js"
 import { themeClasses } from "./themes.js"
-
-watchKeyboard()
 
 mount(store, app.render, document.getElementById("root"))
 

@@ -1,5 +1,16 @@
 # @inglorious/ui
 
+## 9.20.3
+
+### Patch Changes
+
+- `VirtualList` notifies `scroll` with `{ scrollTop }` and `itemMeasure` with `{ itemHeight }`, plain data in place of DOM elements.
+- Updated dependencies
+- Updated dependencies
+- Updated dependencies
+  - @inglorious/store@12.7.0
+  - @inglorious/web@6.30.0
+
 ## 9.20.2
 
 ### Patch Changes

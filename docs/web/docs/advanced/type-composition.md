@@ -1,368 +1,92 @@
 ---
 title: Type Composition
-description: Extend behavior with composition patterns, guards, middleware, and interception
+description: Types as a pipe of behaviors, and the patterns it gives
 ---
 
 # Type Composition
 
-Type composition is one of Inglorious Web's most powerful features. It enables elegant solutions to cross-cutting concerns without wrapper hell or HOCs.
-
-## What is Type Composition?
-
-Types can be defined as **arrays of behaviors** that wrap and extend each other:
+A type can be a list of behaviors. The store builds the type by applying them in order, like a pipe: each behavior is added to the type built so far, and a later handler of the same name replaces the earlier one. A behavior is an object of handlers, or a decorator: a function of the type built so far, returning the handlers it adds or replaces.
 
 ```javascript
-const types = {
-  // Simple type
-  Counter: {
-    increment(entity) {
-      entity.count++
-    },
-    render(entity, api) {
-      /* ... */
-    },
-  },
-
-  // Composed type (array of behaviors)
-  LoggedCounter: [BaseCounter, loggingBehavior, analyticsBehavior],
-}
-```
-
-Each behavior in the array can:
-
-1. **Intercept** events before they reach the next behavior
-2. **Modify** entity state or payload
-3. **Redirect** to different logic
-4. **Pass through** to the wrapped behavior
-
-## Basic Example: Logging
-
-```javascript
-// Base type
-const Counter = {
-  increment(entity) {
-    entity.count++
-  },
-  render(entity, api) {
-    return html`<button>${entity.count}</button>`
-  },
-}
-
-// Logging behavior
 const withLogging = (type) => ({
   increment(entity, payload, api) {
-    console.log(`Incrementing counter ${entity.id}`)
-    // Call the wrapped type's handler
-    type.increment(entity, payload, api)
-    console.log(`New value: ${entity.count}`)
-  },
-})
-
-// Compose
-const types = {
-  Counter: [Counter, withLogging],
-}
-```
-
-When you dispatch `#counter:increment`:
-
-1. Logging intercepts it, logs start
-2. Calls `counter.increment`
-3. Logs end
-
-## Advanced Example: Route Guard
-
-```javascript
-// Base page type
-const AdminPage = {
-  navigate(entity, route) {
-    entity.currentRoute = route
-  },
-  render(entity, api) {
-    return html`<h1>Admin Page</h1>`
-  },
-}
-
-// Authentication guard
-const requireAuth = (type) => ({
-  navigate(entity, route, api) {
-    const user = api.getEntity("user")
-
-    if (!user.isLoggedIn) {
-      // Prevent navigation, redirect instead
-      api.notify("navigate", "/login", {
-        redirectTo: route,
-      })
-      return // Don't call wrapped type
-    }
-
-    // User authenticated, allow navigation
-    type.navigate(entity, route, api)
-  },
-})
-
-// Authorization guard
-const requireAdmin = (type) => ({
-  navigate(entity, route, api) {
-    const user = api.getEntity("user")
-
-    if (user.role !== "admin") {
-      api.notify("navigate", "/unauthorized")
-      return
-    }
-
-    type.navigate(entity, route, api)
-  },
-})
-
-// Compose guards
-const types = {
-  // Public page, no guards
-  PublicPage: Page,
-
-  // Authenticated page
-  UserProfile: [Page, requireAuth],
-
-  // Admin-only page
-  AdminPanel: [Page, requireAuth, requireAdmin],
-}
-```
-
-Guards execute in order:
-
-1. `adminPanel` dispatch triggers `requireAuth` first
-2. `requireAuth` checks login, passes to `requireAdmin`
-3. `requireAdmin` checks role, passes to `page`
-4. `page` actually handles navigation
-
-## Pattern: Analytics
-
-```javascript
-const withAnalytics = (type) => ({
-  // Intercept event
-  increment(entity, payload, api) {
-    // Track event
-    track({
-      entity: entity.type,
-      event: this.constructor.name, // Event name
-      timestamp: Date.now(),
-    })
-
-    // Call original handler
+    console.log(`incrementing ${entity.id}`)
     type.increment?.(entity, payload, api)
   },
 })
 
 const types = {
-  TrackedCounter: [Counter, withAnalytics],
+  Counter: [Counter, withLogging],
 }
 ```
 
-## Pattern: Validation
+`withLogging` receives `Counter` as `type`; its `increment` replaces `Counter.increment` while calling it, with every argument. Handlers it does not name, such as `render`, stay as they were.
+
+## Order
+
+Each behavior wraps what came before it, so **the last behavior is the outermost**: it runs first, and decides whether the earlier ones run.
 
 ```javascript
-const withValidation = (type) => ({
-  setEmail(entity, email, api) {
-    // Validate before calling handler
-    if (!email.includes("@")) {
-      api.notify("validation:error", { field: "email" })
+const types = {
+  AdminPanel: [Page, requireAuth, requireAdmin],
+}
+```
+
+On `routeChange`, `requireAdmin` runs first; if it calls `type.routeChange`, `requireAuth` runs; if that calls on, `Page` runs. Put the behavior that should have the last word last: a guard after the page, `fsm` after the behaviors it falls back to, `withStorage` after the handlers whose changes it saves, `withDebounce` after the handler it delays.
+
+## Guards
+
+```javascript
+const requireAuth = (type) => ({
+  routeChange(entity, payload, api) {
+    if (payload.route !== entity.id) return
+    if (!api.getEntity("session").user) {
+      api.notify("#router:navigate", { to: "/login", replace: true })
       return
     }
-
-    type.setEmail(entity, email, api)
-  },
-})
-
-const types = {
-  Form: [BaseForm, withValidation],
-}
-```
-
-## Pattern: State Snapshots
-
-```javascript
-const withSnapshots = (type) => ({
-  // Before any event, save state
-  snapshot(entity, payload, api) {
-    if (!entity._history) entity._history = []
-    entity._history.push(JSON.parse(JSON.stringify(entity)))
-
-    // Call wrapped handler
-    const handlerName = arguments.callee.name
-    type[handlerName]?.(entity, payload, api)
-  },
-
-  undo(entity) {
-    if (entity._history?.length > 0) {
-      const previous = entity._history.pop()
-      Object.assign(entity, previous)
-    }
-  },
-})
-
-const types = {
-  UndoableCounter: [Counter, withSnapshots],
-}
-```
-
-## Pattern: Debouncing
-
-```javascript
-const debounced = (type) => {
-  const pending = {}
-
-  return {
-    saveData(entity, data, api) {
-      // Cancel previous save
-      if (pending[entity.id]) {
-        clearTimeout(pending[entity.id])
-      }
-
-      // Debounce: wait 500ms before actually saving
-      pending[entity.id] = setTimeout(() => {
-        type.saveData(entity, data, api)
-        delete pending[entity.id]
-      }, 500)
-    },
-  }
-}
-
-const types = {
-  AutosaveForm: [Form, debounced],
-}
-```
-
-## Decorators
-
-For common concerns such as debouncing and throttling, Inglorious Web also provides ready-made decorator helpers that plug directly into the same array-based composition model. Built-in decorators include `withDebounce` (for deferred, deduplicated calls) and `withThrottle` (for rate-limited calls with optional trailing), both with per-entity scoping and automatic cancellation support.
-
-For a dedicated overview and usage examples, see [Decorators](./decorators.md).
-
-## Multiple Behaviors
-
-Chain multiple behaviors:
-
-```javascript
-const types = {
-  AdvancedForm: [Form, withLogging, withValidation, withAnalytics, debounced],
-}
-```
-
-Execution order (for a `fieldChange` event):
-
-1. `withLogging` logs start
-2. `withValidation` validates
-3. `withAnalytics` tracks
-4. `debounced` debounces
-5. `Form` (base type) executes
-6. `debounced` finishes timeout setup
-7. `withAnalytics` completes tracking
-8. `withValidation` logs result
-9. `withLogging` logs end
-
-## Partial Behavior
-
-A behavior doesn't need to intercept all events:
-
-```javascript
-const withLogging = (type) => ({
-  // Only intercept increment
-  increment(entity, payload, api) {
-    console.log("Incrementing")
-    type.increment(entity, payload, api)
-  },
-  // All other events pass through unchanged
-})
-```
-
-## Conditional Interception
-
-```javascript
-const requireMode = (type) => ({
-  editTitle(entity, newTitle, api) {
-    if (entity.mode !== "edit") {
-      console.warn("Not in edit mode")
-      return
-    }
-
-    type.editTitle(entity, newTitle, api)
+    type.routeChange?.(entity, payload, api)
   },
 })
 ```
 
-## Modifying Payload
+A guard reads the session with `api.getEntity`: a sign-in earlier in the same chain of events is already there, since each event reads what the previous one changed.
+
+## Wrapping a render
 
 ```javascript
-const sanitizer = (type) => ({
-  setTitle(entity, title, api) {
-    // Clean the payload before passing
-    const clean = title.trim().replace(/[<>]/g, "")
-    type.setTitle(entity, clean, api)
+const withTitle = (type) => ({
+  render(entity, api) {
+    return html`<h2>${entity.title}</h2>
+      ${type.render?.(entity, api)}`
   },
 })
 ```
 
-## Benefits
+[`withErrorBoundary`](./decorators.md#witherrorboundary) is one: it catches what the wrapped render throws. The other built-in decorators are `withDebounce`, `withThrottle` and `withLiveReload` here, and `fsm`, `scenes`, `withStorage` and `optimistic` in the store.
 
-✅ **No Wrapper Hell** — Array composition instead of nested HOCs  
-✅ **Explicit Order** — Clear which behavior runs first  
-✅ **Easy to Test** — Test each behavior independently  
-✅ **Reusable** — Share behaviors across types  
-✅ **Composable** — Mix and match as needed
+## When to use it
 
-## When to Use
+A behavior wraps one type: guards, logging, validation, persistence, state machines. Logic that needs every entity at once is a [system](https://inglorious.dev/store/advanced/systems); what sits around the store, such as the DevTools, is a [middleware](https://inglorious.dev/store/api/reference#middlewares-optional).
 
-- **Cross-cutting concerns** — Logging, analytics, validation
-- **Route guards** — Auth, permissions, redirects
-- **State patterns** — Snapshots, undo/redo, debouncing
-- **Middleware** — Transform data, check preconditions
+## Testing
 
-## When Not to Use
-
-- **Simple modifications** — Just put in the base type
-- **Type-specific logic** — Belongs in the type itself
-- **One-off concerns** — Not worth abstracting
-
-## Testing Composed Types
-
-Test behaviors independently:
+A decorator is a function: apply it to a type and trigger the result.
 
 ```javascript
-import { trigger } from "@inglorious/web/test"
+import { createMockApi, trigger } from "@inglorious/web/test"
 
-test("logging logs events", () => {
-  const loggedEvents = []
+const Guarded = requireAuth({ routeChange() {} })
+const api = createMockApi({ session: { type: "Session", user: null } })
 
-  const withLogging = (type) => ({
-    increment(entity, payload, api) {
-      loggedEvents.push("increment")
-      type.increment(entity, payload, api)
-    },
-  })
+const { events } = trigger(
+  { id: "admin" },
+  Guarded.routeChange,
+  { route: "admin" },
+  api,
+)
 
-  const TestType = [
-    {
-      increment(e) {
-        e.count++
-      },
-    },
-    withLogging,
-  ]
-
-  const { entity } = trigger(
-    { count: 0 },
-    TestType.find((t) => t.increment).increment,
-  )
-
-  expect(loggedEvents).toContain("increment")
-  expect(entity.count).toBe(1)
+expect(events).toContainEqual({
+  type: "#router:navigate",
+  payload: { to: "/login", replace: true },
 })
 ```
-
-## Next Steps
-
-- **[Testing](./testing.md)** — Comprehensive testing strategies
-- **[Route Guards](../featured/router.md)** — Use type composition for advanced routing
-- **[Type Composition in Store](https://docs.inglorious.dev/store/advanced/type-composition)** — Full documentation in Store docs
-
-Happy composing! 🎯

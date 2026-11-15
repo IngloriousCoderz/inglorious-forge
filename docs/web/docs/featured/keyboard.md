@@ -1,17 +1,20 @@
 ---
 title: Keyboard
-description: "Keeping fixed elements above the on-screen keyboard"
+description: "Knowing when the on-screen keyboard is up, and keeping fixed elements above it"
 ---
 
 # Keyboard
 
-Phones don't shrink the page for the on-screen keyboard: iOS never does, nor does Chrome on Android. Whatever sits at the bottom of the screen, such as a bottom sheet with an input, ends up behind it. `@inglorious/web/device/keyboard` reads the height the keyboard covers from the visual viewport and sets it as `--iw-keyboard-height` on `<html>`, with the `iw-keyboard-open` class while the keyboard is up. It needs no plugin and works in browsers and native apps alike. Where the page does shrink for the keyboard, as in an Android app, the class is still set but the height stays `0px`, since nothing is covered.
+Phones don't shrink the page for the on-screen keyboard: iOS never does, nor does Chrome on Android. Whatever sits at the bottom of the screen ends up behind it. The `Keyboard` type reads the height the keyboard covers from the visual viewport into its entity, and sets it as `--iw-keyboard-height` on `<html>`, with the `iw-keyboard-open` class while the keyboard is up. It needs no plugin and works in browsers and native apps alike.
 
 ```javascript
-import { watchKeyboard } from "@inglorious/web/device/keyboard"
+import { Keyboard } from "@inglorious/web/device/keyboard"
 
-watchKeyboard()
+const types = { Keyboard }
+const entities = { keyboard: { type: "Keyboard" } }
 ```
+
+The entity holds `isSupported`, `isOpen` and `height`. Where the page does shrink for the keyboard, as in an Android app, `isOpen` is still set but `height` stays `0`, since nothing is covered.
 
 Inglorious UI's bottom sheets, snackbars and toasts move above the keyboard, and its bottom navigation hides while the keyboard is up. Your own fixed elements can do the same:
 
@@ -21,5 +24,3 @@ Inglorious UI's bottom sheets, snackbars and toasts move above the keyboard, and
   bottom: var(--iw-keyboard-height, 0px);
 }
 ```
-
-It returns a function that stops following.

@@ -55,7 +55,7 @@ it("should create a task on formSubmit and update the store on taskCreated", asy
   expect(state.form.value).toBe("")
 })
 
-it("should toggle a task on toggleClick and update the store on taskUpdated", async () => {
+it("should toggle a task on taskToggle and update the store on taskUpdated", async () => {
   const initialTask = { id: 1, text: "Initial Task", completed: false }
   const mockUpdatedTask = { ...initialTask, completed: true }
   client.updateTask.mockResolvedValue(mockUpdatedTask)
@@ -66,14 +66,14 @@ it("should toggle a task on toggleClick and update the store on taskUpdated", as
   }
   const store = createStore({ types, entities: stateBefore })
 
-  await store.dispatch({ type: "toggleClick", payload: 1 })
+  await store.dispatch({ type: "taskToggle", payload: 1 })
 
   const state = store.getState()
 
   expect(state.list.tasks).toEqual([mockUpdatedTask])
 })
 
-it("should delete a task on deleteClick and update the store on taskDeleted", async () => {
+it("should delete a task on taskDelete and update the store on taskDeleted", async () => {
   const initialTask = { id: 1, text: "Initial Task", completed: false }
   client.deleteTask.mockResolvedValue()
 
@@ -83,14 +83,14 @@ it("should delete a task on deleteClick and update the store on taskDeleted", as
   }
   const store = createStore({ types, entities: stateBefore })
 
-  await store.dispatch({ type: "deleteClick", payload: 1 })
+  await store.dispatch({ type: "taskDelete", payload: 1 })
 
   const state = store.getState()
 
   expect(state.list.tasks).toEqual([])
 })
 
-it("should clear completed tasks on clearClick and update the store on tasksCleared", async () => {
+it("should clear completed tasks on completedClear and update the store on tasksCleared", async () => {
   const initialTasks = [
     { id: 1, text: "Active Task", completed: false },
     { id: 2, text: "Completed Task", completed: true },
@@ -103,7 +103,7 @@ it("should clear completed tasks on clearClick and update the store on tasksClea
   }
   const store = createStore({ types, entities: stateBefore })
 
-  await store.dispatch({ type: "clearClick" })
+  await store.dispatch({ type: "completedClear" })
 
   const state = store.getState()
 

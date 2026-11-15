@@ -1,274 +1,38 @@
 ---
-title: Redux DevTools Integration
-description: Debugging with Redux DevTools, time travel, and event inspection
+title: Redux DevTools
+description: Every event and every state in the Redux DevTools extension
 ---
 
-# Redux DevTools Integration
+# Redux DevTools
 
-Inglorious Web includes first-class support for the Redux DevTools Extension, giving you powerful debugging capabilities.
+Inglorious Store speaks the Redux DevTools protocol: every event appears in the extension's timeline with the state it led to, and the state can be inspected, exported and jumped back to.
 
 ## Setup
 
-### 1. Install Redux DevTools Extension
-
-Browser extensions:
-
-- [Chrome](https://chrome.google.com/webstore/detail/redux-devtools/lmjabgkhjhnbefga30thljilipkdlnad)
-- [Firefox](https://addons.mozilla.org/en-US/firefox/addon/reduxdevtools/)
-- [Edge](https://microsoftedge.microsoft.com/addons/detail/redux-devtools/nnkgneoiohoecpdi40ohlemmapaheknm)
-
-### 2. Create Middleware
-
-```javascript
-import { createDevtools } from "@inglorious/store/client/devtools"
-
-export const devtools = createDevtools()
-```
-
-### 3. Pass to Store
+Install the extension for [Chrome](https://chrome.google.com/webstore/detail/redux-devtools/lmjabgkhjhnbefga30thljilipkdlnad), [Firefox](https://addons.mozilla.org/en-US/firefox/addon/reduxdevtools/) or [Edge](https://microsoftedge.microsoft.com/addons/detail/redux-devtools/nnkgneoiohoecpdi40ohlemmapaheknm), and add the middleware in development:
 
 ```javascript
 import { createStore } from "@inglorious/store"
-import { devtools } from "./devtools"
-
-const store = createStore({
-  types,
-  entities,
-  middlewares: [devtools.middleware],
-})
-```
-
-## Features
-
-### Event Timeline
-
-Every event you dispatch appears in the DevTools timeline:
-
-```javascript
-// Dispatch event
-api.notify("#counter:increment", 5)
-
-// Shows up in DevTools as:
-// Action: #counter:increment
-// Payload: { value: 5 }
-// Previous State: { count: 0 }
-// New State: { count: 5 }
-```
-
-### Time Travel
-
-Rewind and replay events:
-
-1. Click any event in the timeline
-2. App jumps to that state
-3. Make changes, step back/forward
-
-Perfect for debugging complex state flows!
-
-### Action Filtering
-
-You can filter which events appear in the DevTools in three independent ways; these can be combined:
-
-- `blacklist` / `whitelist` — simple lists of event types to exclude or include.
-- `filter` — a custom predicate function that receives the event and config and returns `true` to log.
-
-Examples:
-
-1. Use a blacklist to hide noisy internal events:
-
-```javascript
-const devtools = createDevtools({
-  filters: {
-    updateMode: "auto",
-    blacklist: ["#internal:heartbeat", "#metrics:tick"],
-  },
-})
-```
-
-2. Use a whitelist to show only specific event types:
-
-```javascript
-const devtools = createDevtools({
-  filters: {
-    whitelist: ["#user:login", "#user:logout", "#router:navigate"],
-  },
-})
-```
-
-3. Use a custom `filter` predicate for arbitrary logic (for example, only log events for the current user):
-
-```javascript
-const devtools = createDevtools({
-  filters: {
-    filter: (event) => event.payload && event.payload.userId === currentUserId,
-  },
-})
-```
-
-4. Combine all three rules — blacklist, whitelist and predicate — they are ANDed together (and `updateMode` must be `"auto"`):
-
-```javascript
-const devtools = createDevtools({
-  filters: {
-    updateMode: "auto", // this is the default, you can omit it
-    blacklist: ["#internal:heartbeat"],
-    whitelist: ["#user:login", "#user:logout", "#router:navigate"],
-    filter: (event) => event.payload && event.payload.userId === currentUserId,
-  },
-})
-```
-
-Notes:
-
-- If both `blacklist` and `whitelist` are empty, all events pass that stage. If `whitelist` is non-empty only listed events pass.
-- A `filter` predicate gives you full flexibility to inspect payloads or timestamps, and runs after blacklist/whitelist checks.
-- Because the filter pipeline checks `updateMode` first, setting `updateMode: "manual"` is an efficient way to disable DevTools logging entirely.
-
-### State Inspection
-
-View entire store state at any point:
-
-- Expand/collapse entities
-- Search for properties
-- Copy state as JSON
-
-### Dispatch Custom Events
-
-Manually trigger events for testing:
-
-1. Open DevTools console
-2. Type: `$r.store.notify('#counter:increment')`
-3. See state update instantly
-
-## Advanced Configuration
-
-### Custom Middleware Name
-
-```javascript
-const devtools = createDevtools({
-  name: "My App",
-  features: {
-    pause: true, // Pause between events
-    lock: true, // Lock state to prevent changes
-    persist: true, // Remember history
-    export: true, // Export state
-    import: "custom", // Custom import behavior
-    jump: true, // Time travel
-    skip: true, // Skip events
-    reorder: true, // Reorder events
-    dispatch: true, // Dispatch events
-    test: true, // Testing support
-  },
-})
-```
-
-### Action Sanitizer
-
-Hide sensitive data:
-
-```javascript
-const devtools = createDevtools({
-  actionSanitizer: (action) => ({
-    ...action,
-    payload: action.payload.type === "login" ? "***" : action.payload,
-  }),
-})
-```
-
-### State Sanitizer
-
-Hide sensitive state:
-
-```javascript
-const devtools = createDevtools({
-  stateSanitizer: (state) => ({
-    ...state,
-    user: {
-      ...state.user,
-      password: "***",
-    },
-  }),
-})
-```
-
-## Debugging Workflows
-
-### Debug Event Sequence
-
-1. **Open DevTools**
-2. **Perform user actions** in your app
-3. **See event timeline** in DevTools
-4. **Click events** to see state at each step
-5. **Identify the problematic event**
-
-### Debug State Mutations
-
-1. **Find the event** that caused wrong state
-2. **Click it in timeline**
-3. **See previous and new state**
-4. **Compare to find what changed**
-
-### Replay Issues
-
-1. **Export problematic event sequence**
-2. **Import in another browser/device**
-3. **App replays same actions**
-4. **Exact same bug occurs** (reproducible!)
-
-### Step Through Logic
-
-1. **Dispatch event from console**
-2. **Watch state update in DevTools**
-3. **Check entity state**
-4. **Verify render updated**
-
-## In Production
-
-For production builds, disable DevTools:
-
-```javascript
 import { createDevtools } from "@inglorious/store/client/devtools"
 
-const middlewares = []
+const middlewares = import.meta.env.DEV ? [createDevtools().middleware] : []
 
-if (import.meta.env.DEV) {
-  middlewares.push(createDevtools().middleware)
-}
+const store = createStore({ types, entities, middlewares })
+```
 
-const store = createStore({
-  types,
-  entities,
-  middlewares,
+## What you see
+
+Each event, with its type and payload, and the whole state after it. Clicking an earlier event puts the app back in that state; `Reset` puts the initial entities back, `Commit` makes the current state the new start, and an exported history can be imported elsewhere to replay a session. Events can also be dispatched from the extension, as `{ type, payload }`.
+
+## Options
+
+```javascript
+createDevtools({
+  name: "My App", // the instance's name, by default the document title
+  blacklist: ["update", "mouseMove"], // events never shown
+  whitelist: ["#user:signIn"], // the only events shown, when given
+  filter: (event) => event.payload?.userId === currentUserId, // a last say
 })
 ```
 
-Or use a feature flag:
-
-```javascript
-const middlewares = window.__ENABLE_DEVTOOLS__
-  ? [createDevtools().middleware]
-  : []
-```
-
-## Tips
-
-✅ **Use DevTools for:**
-
-- Debugging complex state flows
-- Understanding event sequences
-- Testing edge cases
-- Reproducing user-reported issues
-- Learning how your app works
-
-❌ **Don't use DevTools to:**
-
-- Store/retrieve state permanently
-- Bypass normal event flow
-- Skip event handlers
-
-## Next Steps
-
-- **[Testing](./testing.md)** — Complement DevTools with automated tests
-- **[Error Handling](./error-handling.md)** — Debug errors with DevTools
-
-Happy debugging! 🐛
+The three filters combine. A store in `updateMode: "manual"`, such as a game's, sends nothing per event; [Inglorious Engine](https://inglorious.dev/engine/) sends one action per frame instead.

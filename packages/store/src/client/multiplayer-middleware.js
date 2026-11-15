@@ -1,5 +1,7 @@
 import { deserialize, extend, serialize } from "@inglorious/utils/object.js"
 
+import { createEventFilter } from "./event-filter.js"
+
 const DEFAULT_RECONNECTION_DELAY = 1000
 
 /**
@@ -11,9 +13,7 @@ export function multiplayerMiddleware(config = {}) {
   const reconnectionDelay =
     config.reconnectionDelay ?? DEFAULT_RECONNECTION_DELAY
 
-  const blacklist = config.blacklist ?? []
-  const whitelist = config.whitelist ?? []
-  const filter = config.filter ?? null
+  const shouldSend = createEventFilter(config)
 
   let ws = null
   const localQueue = []
@@ -29,11 +29,7 @@ export function multiplayerMiddleware(config = {}) {
    * passes it on to the next middleware, and eventually to the store.
    */
   function send(store, event, next) {
-    const shouldBeSent =
-      (!blacklist.length || !blacklist.includes(event.type)) &&
-      (!whitelist.length || whitelist.includes(event.type)) &&
-      (!filter || filter(event))
-    if (!shouldBeSent) {
+    if (!shouldSend(event)) {
       return next(event)
     }
 

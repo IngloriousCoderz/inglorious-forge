@@ -99,16 +99,11 @@ export function writePwaRegistration(targetDir) {
 
 export function createPwaRegistrationSource(extension) {
   const registration = `import { isNative } from "@inglorious/web/native"
-import { watchPwaUpdate } from "@inglorious/web/pwa"
 import { registerSW } from "virtual:pwa-register"
 
-if (!isNative()) {
-  registerSW({
-    onRegisteredSW(url, registration) {
-      if (registration) watchPwaUpdate(registration)
-    },
-  })
-}
+// The PwaUpdate type in the store keeps the installed app on this worker's
+// latest version.
+if (!isNative()) registerSW()
 `
 
   if (extension === ".ts") {

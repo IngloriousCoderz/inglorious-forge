@@ -1,150 +1,63 @@
 ---
 title: API Reference
-description: Runtime API documentation for Inglorious Web
+description: The runtime API of Inglorious Web
 ---
 
 # API Reference
 
-This page documents the runtime API for Inglorious Web and the underlying Inglorious Store.
+Inglorious Web's runtime is `mount`, lit-html's `html`, `svg` and `nothing`, and the subpaths listed below. The store's own API, `createStore`, the `api` handlers receive, `handleRequest`, `fsm` and the rest, is in the [store reference](https://inglorious.dev/store/api/reference).
 
-## `createStore(config)`
+## `mount(store, renderFn, element, options?)`
 
-Creates a store instance to manage entities, event dispatch, and reactive rendering.
-
-### Parameters
-
-- `types?: Record<string, object>` — type definitions for entities.
-- `entities?: Record<string, object>` — initial entity state.
-- `systems?: object[]` — systems that handle events outside entity-specific handlers.
-- `middlewares?: Function[]` — middleware functions to intercept or transform events.
-- `autoCreateEntities?: boolean` — automatically create a default entity for each registered type.
-- `updateMode?: "auto" | "manual"` — whether events are processed immediately or manually.
-- `updateStrategy?: "structural-sharing" | "copy-on-dispatch"` — how the state is copied before
-  queued events are applied. The default, `"structural-sharing"`, copies the entities that change
-  through a proxy. Use `"copy-on-dispatch"` for simulations where thousands of entities change every
-  frame: it hands each handler a plain copy of its entity, made the first time an event reaches it.
-  Under both strategies the current state is swapped only after every queued event has been
-  processed.
-
-### Example
+Renders `renderFn(api)` into `element`, subscribes to the store so every update renders again, and resolves to a function that unsubscribes.
 
 ```javascript
-const store = createStore({
-  types: {
-    Counter: {
-      create(entity) {
-        entity.count = 0
-      },
-      increment(entity) {
-        entity.count += 1
-      },
-      render(entity) {
-        return html`<span>${entity.count}</span>`
-      },
-    },
+import { html, mount } from "@inglorious/web"
+
+const unmount = await mount(
+  store,
+  (api) => api.render("app"),
+  document.getElementById("root"),
+  {
+    onError: (error, api) => console.error(error),
+    fallback: (error, api) => html`<p>Something went wrong</p>`,
   },
-  entities: {
-    counter: { type: "Counter" },
-  },
-})
+)
 ```
 
-## Store methods
+- Markup already in the element, as a server-rendered page has, is hydrated rather than replaced; `hydrate: false` turns that off.
+- `onError` is called when the root render throws, `console.error` by default, and `fallback` is rendered in its place. See [Error Handling](../advanced/error-handling.md).
+- With the `Router` type, each navigation is announced to screen readers and moves focus to the top of the new page; `hasAccessibleNavigation: false` turns it off, and `getPageName` chooses what is announced. See [Router](../featured/router.md#accessible-navigation).
+- Once mounted, it notifies `init`.
 
-The object returned by `createStore()` exposes the core store API.
+## `api.render(id, typeName?, type?)`
 
-### `store.subscribe(listener)`
-
-Subscribe to state updates.
-
-```javascript
-const unsubscribe = store.subscribe(() => {
-  console.log("store updated")
-})
-```
-
-## Related
-
-### Example
-
-```javascript
-import { mount } from "@inglorious/web"
-
-mount(store, (api) => api.render("app"), document.getElementById("root"), {
-  onError(error) {
-    console.error("render failed", error)
-  },
-})
-```
-
-### What mount does
-
-- Creates an `api` object from the store
-- Adds `api.render()` for entity rendering
-- Hydrates existing markup if the container already has child nodes
-- Subscribes to store updates and re-renders automatically
-- With the `Router` type, announces each navigation to screen readers and moves focus to the top of the new page ([accessible navigation](../featured/router.md#accessible-navigation)); `hasAccessibleNavigation: false` turns it off, and `getPageName` chooses what is announced
-- Emits the `init` event once mounted
-
-## Rendering helpers
-
-The docs use `lit-html` helpers like `html`, `when`, `repeat`, and `unsafeHTML`.
-
-### `when(condition, content)`
-
-Render content conditionally.
-
-```javascript
-html` ${when(entity.isOpen, () => html`<div>Open</div>`)} `
-```
-
-### `repeat(items, fn)`
-
-Render a list with keyed diffing.
-
-```javascript
-html`
-  <ul>
-    ${repeat(
-      items,
-      (item) => item.id,
-      (item) => html`<li>${item.label}</li>`,
-    )}
-  </ul>
-`
-```
-
-### `unsafeHTML(htmlString)`
-
-Render raw HTML.
-
-```javascript
-html`<div>${unsafeHTML(entity.content)}</div>`
-```
+Added to the store's api: renders the entity `id` through its type's `render`, or `nothing` when there is no such entity. Given a type name and a type, it registers the type first if it is missing, which is how the Vue plugin renders components lazily.
 
 ## Entry points
 
-The root entry point is kept small: `import { mount, html, svg } from "@inglorious/web"`. Everything else has its own subpath, so it can be tree-shaken:
+The root entry is small on purpose: everything else has its own subpath, so it can be tree-shaken.
 
 | Subpath                                      | What it holds                                                                                       |
 | -------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `@inglorious/web`                            | `mount`, `html`, `svg`, `nothing`                                                                   |
 | `@inglorious/web/directives/*`               | lit-html directives: `class-map`, `ref`, `repeat`, `style-map`, `unsafe-html`, `when`, ...          |
 | `@inglorious/web/static`                     | `staticHtml`, `unsafeStatic`                                                                        |
-| `@inglorious/web/hydrate`                    | Hydrating server-rendered pages                                                                     |
-| `@inglorious/web/test`                       | `render`, `trigger`                                                                                 |
+| `@inglorious/web/hydrate`                    | Hydration support for server-rendered pages                                                         |
+| `@inglorious/web/test`                       | `render`, `trigger`, `createMockApi`                                                                |
 | `@inglorious/web/form`                       | [`Form`](/featured/form)                                                                            |
 | `@inglorious/web/router`                     | [`Router`, `setRoutes`, `pageRouteChange`, `safePath`](/featured/router)                            |
 | `@inglorious/web/decorators/*`               | [`with-debounce`, `with-throttle`, `with-error-boundary`, `with-live-reload`](/advanced/decorators) |
-| `@inglorious/web/auth`                       | [`createAuth`, `watchAuth`](/featured/sign-in)                                                      |
+| `@inglorious/web/auth`                       | [`createAuth`](/featured/sign-in)                                                                   |
 | `@inglorious/web/analytics`                  | [`createAnalytics`](/featured/analytics)                                                            |
 | `@inglorious/web/push`                       | [`createPushPrompt`](/featured/push)                                                                |
-| `@inglorious/web/pwa`                        | [`watchPwaUpdate`, `PwaUpdate`](/featured/pwa-updates)                                              |
+| `@inglorious/web/pwa`                        | [`createPwaUpdate`, `applyPwaUpdate`](/featured/pwa-updates)                                        |
 | `@inglorious/web/device/biometrics`          | [`createBiometrics`](/featured/biometrics)                                                          |
 | `@inglorious/web/device/compass`             | [`Compass`](/featured/compass)                                                                      |
 | `@inglorious/web/device/element-size`        | [`ElementSize`](/featured/element-size)                                                             |
 | `@inglorious/web/device/geolocation`         | [`createGeolocation`](/featured/geolocation)                                                        |
 | `@inglorious/web/device/haptics`             | [`haptics`](/featured/haptics)                                                                      |
-| `@inglorious/web/device/keyboard`            | [`watchKeyboard`](/featured/keyboard)                                                               |
+| `@inglorious/web/device/keyboard`            | [`Keyboard`](/featured/keyboard)                                                                    |
 | `@inglorious/web/device/local-notifications` | [`createLocalNotifications`](/featured/local-notifications)                                         |
 | `@inglorious/web/device/media-query`         | [`MediaQuery`](/featured/media-query)                                                               |
 | `@inglorious/web/device/network-status`      | [`NetworkStatus`](/featured/network-status)                                                         |
@@ -152,91 +65,14 @@ The root entry point is kept small: `import { mount, html, svg } from "@inglorio
 | `@inglorious/web/device/share`               | [`createShare`](/featured/share)                                                                    |
 | `@inglorious/web/device/storage`             | [`createNativeStorage`, `createSecureStorage`](/featured/storage)                                   |
 | `@inglorious/web/native`                     | `isNative`                                                                                          |
-| `@inglorious/web/native/app-links`           | [`watchAppLinks`](/featured/app-links)                                                              |
-| `@inglorious/web/native/back-button`         | [`watchBackButton`](/featured/back-button)                                                          |
-| `@inglorious/web/native/live-update`         | [`createLiveUpdate`, `watchLiveUpdate`](/featured/live-updates)                                     |
-| `@inglorious/web/native/system-bars`         | [`watchSystemBars`](/featured/system-bars)                                                          |
-| `@inglorious/web/native/update`              | [`createNativeUpdate`, `watchNativeUpdate`](/featured/native-updates)                               |
+| `@inglorious/web/native/app-links`           | [`createAppLinks`](/featured/app-links)                                                             |
+| `@inglorious/web/native/back-button`         | [`createBackButton`](/featured/back-button)                                                         |
+| `@inglorious/web/native/live-update`         | [`createLiveUpdate`, `isLiveUpdateWanted`](/featured/live-updates)                                  |
+| `@inglorious/web/native/system-bars`         | [`createSystemBars`, `styleFor`](/featured/system-bars)                                             |
+| `@inglorious/web/native/update`              | [`createNativeUpdate`](/featured/native-updates)                                                    |
 
-## Middleware
-
-Middleware can intercept and modify events before they reach handlers.
-
-```javascript
-function logger(store, event) {
-  console.log("event", event)
-  return event
-}
-```
-
-Middleware receives:
-
-- `store` — the store object
-- `event` — the event object with `type` and optional `payload`
-
-If a middleware returns `null`, the event is dropped.
-
-```javascript
-const loggingMiddleware = (store, event) => {
-  console.log("Event:", event.type, event.payload)
-  return event // Always return event
-}
-
-const store = createStore({
-  types,
-  middlewares: [loggingMiddleware],
-})
-```
-
-## Environment Variables
-
-### `import.meta.env.DEV`
-
-Is development mode.
-
-```javascript
-if (import.meta.env.DEV) {
-  console.log("Debug info")
-}
-```
-
-### `import.meta.env.PROD`
-
-Is production mode.
-
-```javascript
-if (import.meta.env.PROD) {
-  // Enable analytics
-}
-```
+A type that needs nothing from outside is a plain object (`Keyboard`, `Compass`); one that needs a Capacitor plugin or an adapter is made by a `createX({ plugin, adapter })` factory. Each starts what it needs in `create` and stops it in `destroy`.
 
 ## TypeScript
 
-### Entity Type
-
-```typescript
-interface Entity {
-  type: string
-  [key: string]: any
-}
-```
-
-### Template Result
-
-```typescript
-type TemplateResult = import("lit-html").TemplateResult
-```
-
-### Update Function
-
-```typescript
-type UpdateFn<T extends Entity = Entity> = (draft: Draft<T>) => void
-```
-
-## Related
-
-- **[Guide](../guide/getting-started.md)** — Getting started guide
-- **[Featured Types](../featured/overview.md)** — Built-in types documentation
-- **[Advanced](../advanced/type-composition.md)** — Advanced patterns
-
-Need help? [Report an issue](https://github.com/IngloriousCoderz/inglorious-forge/issues) or [ask on discussions](https://github.com/IngloriousCoderz/inglorious-forge/discussions).
+Every subpath ships its declarations: an `XEntity` interface to extend and an `XType` for the events. See [TypeScript](../guide/typescript.md).

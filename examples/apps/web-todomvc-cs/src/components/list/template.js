@@ -15,12 +15,10 @@ export const template = {
           html`<li>
             <span
               class=${classMap({ [classes.completed]: task.completed })}
-              @click=${() => api.notify("toggleClick", task.id)}
+              @click=${() => api.notify("taskToggle", task.id)}
               >${task.text}</span
             >
-            <button @click=${() => api.notify("deleteClick", task.id)}>
-              x
-            </button>
+            <button @click=${() => api.notify("taskDelete", task.id)}>x</button>
           </li>`,
       )}
     </ul>`

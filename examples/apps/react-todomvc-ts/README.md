@@ -140,13 +140,13 @@ export interface TodoListTypes {
 
   List: {
     formSubmit: (entity: ListEntity, value: string) => void
-    toggleClick: (entity: ListEntity, id: number) => void
-    deleteClick: (entity: ListEntity, id: number) => void
-    clearClick: (entity: ListEntity, _payload: void) => void
+    taskToggle: (entity: ListEntity, id: number) => void
+    taskDelete: (entity: ListEntity, id: number) => void
+    completedClear: (entity: ListEntity, _payload: void) => void
   }
 
   Footer: {
-    filterClick: (entity: FooterEntity, filter: Filter) => void
+    filterChange: (entity: FooterEntity, filter: Filter) => void
   }
 }
 ```
@@ -201,23 +201,23 @@ export const types: TodoListTypes = {
         completed: false,
       })
     },
-    toggleClick(entity, id) {
+    taskToggle(entity, id) {
       const task = entity.tasks.find((t) => t.id === id)
       if (task) task.completed = !task.completed
     },
-    deleteClick(entity, id) {
+    taskDelete(entity, id) {
       const index = entity.tasks.findIndex((t) => t.id === id)
       if (index !== -1) {
         entity.tasks.splice(index, 1)
       }
     },
-    clearClick(entity) {
+    completedClear(entity) {
       entity.tasks = entity.tasks.filter((task) => !task.completed)
     },
   },
 
   Footer: {
-    filterClick(entity, filter) {
+    filterChange(entity, filter) {
       entity.activeFilter = filter
     },
   },
@@ -364,12 +364,12 @@ interface TodoListTypes {
   }
   List: {
     formSubmit: (entity: ListEntity, value: string) => void
-    toggleClick: (entity: ListEntity, id: number) => void
-    deleteClick: (entity: ListEntity, id: number) => void
-    clearClick: (entity: ListEntity) => void
+    taskToggle: (entity: ListEntity, id: number) => void
+    taskDelete: (entity: ListEntity, id: number) => void
+    completedClear: (entity: ListEntity) => void
   }
   Footer: {
-    filterClick: (entity: FooterEntity, filter: Filter) => void
+    filterChange: (entity: FooterEntity, filter: Filter) => void
   }
 }
 
@@ -387,22 +387,22 @@ const types: TodoListTypes = {
     formSubmit(entity, value) {
       entity.tasks.push({ id: Date.now(), text: value, completed: false })
     },
-    toggleClick(entity, id) {
+    taskToggle(entity, id) {
       const task = entity.tasks.find((t) => t.id === id)
       if (task) task.completed = !task.completed
     },
-    deleteClick(entity, id) {
+    taskDelete(entity, id) {
       const index = entity.tasks.findIndex((t) => t.id === id)
       if (index !== -1) {
         entity.tasks.splice(index, 1)
       }
     },
-    clearClick(entity) {
+    completedClear(entity) {
       entity.tasks = entity.tasks.filter((task) => !task.completed)
     },
   },
   Footer: {
-    filterClick(entity, filter) {
+    filterChange(entity, filter) {
       entity.activeFilter = filter
     },
   },

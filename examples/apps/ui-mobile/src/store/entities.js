@@ -1,5 +1,6 @@
 export const entities = {
   router: { type: "Router" },
+  keyboard: { type: "Keyboard" },
 
   inbox: {
     type: "Inbox",

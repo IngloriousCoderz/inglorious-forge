@@ -10,7 +10,7 @@ There are no signals, no component state and no compiler to learn. Types are pla
 
 **Foundation**
 
-- [`@inglorious/store`](https://inglorious.dev/store/): the entity store every other package builds on, Redux-compatible, with async helpers and state machines.
+- [`@inglorious/store`](https://inglorious.dev/store/): the entity store every other package builds on, with async helpers and state machines. It works with `react-redux` and the Redux DevTools, so a React app can adopt it as its store first.
 - [`@inglorious/react-store`](packages/react-store): hooks and a provider to use the store from React.
 - [`@inglorious/utils`](packages/utils): pure helpers for data structures, functions, math, vectors and physics, shared by the other packages.
 
@@ -102,7 +102,7 @@ The [examples](examples/) show the packages at work, from TodoMVC to a point-of-
 
 ## Status
 
-Forge is used in production. Every package follows [semantic versioning](https://semver.org/): breaking changes only ever ship in a major release, and each one is described in its package's changelog. The high major numbers are a legacy of the packages' early years, when they were published while still in development; they don't reflect how often things break today. If you find a sharp edge, please [open an issue](https://github.com/IngloriousCoderz/inglorious-forge/issues).
+Forge is used in production. Every package has a changelog, and every change to its public API is described there, breaking ones first. The high major numbers are a legacy of the packages' early years, when they were published while still in development. If you find a sharp edge, please [open an issue](https://github.com/IngloriousCoderz/inglorious-forge/issues).
 
 ## Contributing
 

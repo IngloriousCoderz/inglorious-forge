@@ -17,13 +17,13 @@ it("should add a new task on formSubmit", () => {
   expect(entity).toEqual(entityAfter)
 })
 
-it("should toggle a task as completed on toggleClick", () => {
+it("should toggle a task as completed on taskToggle", () => {
   const entityBefore = {
     id: "list",
     type: "List",
     tasks: [{ id: 1, text: "Hello world!", completed: false }],
   }
-  const event = { type: "toggleClick", payload: 1 }
+  const event = { type: "taskToggle", payload: 1 }
   const entityAfter = {
     id: "list",
     type: "List",
@@ -35,13 +35,13 @@ it("should toggle a task as completed on toggleClick", () => {
   expect(entity).toEqual(entityAfter)
 })
 
-it("should delete a task on deleteClick", () => {
+it("should delete a task on taskDelete", () => {
   const entityBefore = {
     id: "list",
     type: "List",
     tasks: [{ id: 1, text: "Hello world!", completed: false }],
   }
-  const event = { type: "deleteClick", payload: 1 }
+  const event = { type: "taskDelete", payload: 1 }
   const entityAfter = { id: "list", type: "List", tasks: [] }
 
   const { entity } = trigger(entityBefore, List[event.type], event.payload)
@@ -49,13 +49,13 @@ it("should delete a task on deleteClick", () => {
   expect(entity).toEqual(entityAfter)
 })
 
-it("should clear all completed tasks on clearClick", () => {
+it("should clear all completed tasks on completedClear", () => {
   const entityBefore = {
     id: "list",
     type: "List",
     tasks: [{ id: 1, text: "Hello world!", completed: true }],
   }
-  const event = { type: "clearClick" }
+  const event = { type: "completedClear" }
   const entityAfter = {
     id: "list",
     type: "List",

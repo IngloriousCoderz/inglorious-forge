@@ -213,20 +213,18 @@ export type TypesConfig<
 export type UpdateMode = "auto" | "manual"
 
 /**
- * How the state is copied before queued events are applied.
+ * How an event's changes are copied.
  *
- * - `"structural-sharing"` (default) applies events to a draft proxy, so only the entities that
- *   actually changed are copied. Unchanged entities keep their previous reference, which keeps
+ * - `"structural-sharing"` (default) applies each event to a draft proxy, so only the entities
+ *   that actually changed are copied. Unchanged entities keep their previous reference, which keeps
  *   reference-equality change detection cheap. Best for UI stores.
- * - `"copy-on-dispatch"` deep-copies each entity the first time it is handed to a handler or read by a
- *   system, and applies events to the copy without a proxy. Entities nothing touches are not
+ * - `"copy-on-dispatch"` deep-copies each entity the first time an event hands it to a handler or a
+ *   system, and applies the event to the copy without a proxy. Entities nothing touches are not
  *   copied, and there is no per-entity proxy overhead, so it scales better when thousands of
  *   entities change every frame, as in a game simulation.
  *
- * Under both strategies the current state is left intact while the queued events are applied to
- * a separate draft, and the two are swapped only once every event has been processed. This means
- * that during an update `api.getEntity()` and `api.getEntities()` read the previous state rather
- * than the in-flight changes.
+ * Under both strategies each event is a transaction: its handlers read, through the api, the state
+ * as the previous event left it, and the next event reads what they changed.
  */
 export type UpdateStrategy = "structural-sharing" | "copy-on-dispatch"
 
@@ -248,6 +246,8 @@ export interface StoreConfig<
   autoCreateEntities?: boolean
   updateMode?: UpdateMode
   updateStrategy?: UpdateStrategy
+  /** Freezes the state after each event under structural sharing, so a write outside a handler throws. */
+  devMode?: boolean
 }
 
 /**

@@ -50,6 +50,7 @@ export function addNativeUpdateSupport(targetDir, templatesRoot) {
 function nativeUpdateSource(app) {
   const at = app.layout.nativeUpdate
   const imports = [
+    'import { App } from "@capacitor/app"',
     'import { supabaseNativeUpdate } from "@inglorious/supabase"',
     'import { html } from "@inglorious/web"',
     'import { when } from "@inglorious/web/directives/when"',
@@ -91,7 +92,10 @@ function nativeUpdateSource(app) {
   return `${importBlock(imports)}
 
 export const NativeUpdate = {
-  ...createNativeUpdate({ adapter: supabaseNativeUpdate(supabase) }),
+  ...createNativeUpdate({
+    adapter: supabaseNativeUpdate(supabase),
+    plugin: App,
+  }),
 
   render(${params}) {
     const body = entity.storeUrl

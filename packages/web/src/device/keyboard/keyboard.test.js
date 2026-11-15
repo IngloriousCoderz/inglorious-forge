@@ -1,16 +1,17 @@
 /**
  * @vitest-environment jsdom
  */
+import { createStore } from "@inglorious/store"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
-import { watchKeyboard } from "./index.js"
+import { Keyboard } from "./index.js"
 
 const SCREEN = 800
 const KEYBOARD = 300
 
-describe("watchKeyboard", () => {
+describe("Keyboard", () => {
   let viewport
-  let stop
+  let store
 
   beforeEach(() => {
     viewport = Object.assign(new EventTarget(), {
@@ -21,16 +22,21 @@ describe("watchKeyboard", () => {
     vi.stubGlobal("innerHeight", SCREEN)
     vi.stubGlobal("requestAnimationFrame", (callback) => callback())
     document.body.innerHTML = '<input id="name" /><button id="go"></button>'
+    store = createStore({
+      types: { Keyboard },
+      entities: { keyboard: { type: "Keyboard" } },
+    })
   })
 
   afterEach(() => {
-    stop?.()
+    store.notify("remove", "keyboard")
     document.body.innerHTML = ""
     vi.unstubAllGlobals()
   })
 
   const root = () => document.documentElement
   const height = () => root().style.getPropertyValue("--iw-keyboard-height")
+  const entity = () => store.getEntity("keyboard")
 
   function shrinkPage(by) {
     vi.stubGlobal("innerHeight", SCREEN - by)
@@ -44,88 +50,97 @@ describe("watchKeyboard", () => {
     viewport.dispatchEvent(new Event("resize"))
   }
 
-  it("publishes the height the keyboard covers while an input has focus", () => {
-    stop = watchKeyboard()
+  it("starts closed and supported", () => {
+    expect(entity()).toMatchObject({
+      isSupported: true,
+      isOpen: false,
+      height: 0,
+    })
+  })
+
+  it("holds the height the keyboard covers while an input has focus", () => {
     const input = document.getElementById("name")
     input.scrollIntoView = vi.fn()
 
     openKeyboard()
 
+    expect(entity()).toMatchObject({ isOpen: true, height: KEYBOARD })
     expect(height()).toBe(`${KEYBOARD}px`)
     expect(root().classList.contains("iw-keyboard-open")).toBe(true)
     expect(input.scrollIntoView).toHaveBeenCalledWith({ block: "nearest" })
   })
 
   it("subtracts how far the page scrolled to show the input", () => {
-    stop = watchKeyboard()
     document.getElementById("name").focus()
     viewport.height = SCREEN - KEYBOARD
     viewport.offsetTop = 100
     viewport.dispatchEvent(new Event("scroll"))
 
-    expect(height()).toBe("200px")
+    expect(entity().height).toBe(200)
   })
 
   it("closes when the keyboard goes, not when the input loses focus", () => {
-    stop = watchKeyboard()
     openKeyboard()
 
     document.getElementById("go").focus()
-    expect(height()).toBe(`${KEYBOARD}px`)
+    expect(entity().isOpen).toBe(true)
 
     viewport.height = SCREEN
     viewport.dispatchEvent(new Event("resize"))
-    expect(height()).toBe("0px")
+    expect(entity()).toMatchObject({ isOpen: false, height: 0 })
     expect(root().classList.contains("iw-keyboard-open")).toBe(false)
   })
 
   it("ignores a smaller viewport when nothing takes typing", () => {
-    stop = watchKeyboard()
     openKeyboard("go")
 
-    expect(height()).toBe("")
+    expect(entity().isOpen).toBe(false)
   })
 
   it("ignores the browser's toolbars", () => {
-    stop = watchKeyboard()
     document.getElementById("name").focus()
     viewport.height = SCREEN - 60
     viewport.dispatchEvent(new Event("resize"))
 
-    expect(root().classList.contains("iw-keyboard-open")).toBe(false)
+    expect(entity().isOpen).toBe(false)
   })
 
   it("knows the keyboard is up where the page shrinks for it", () => {
-    stop = watchKeyboard()
     document.getElementById("name").focus()
     shrinkPage(KEYBOARD)
 
-    expect(root().classList.contains("iw-keyboard-open")).toBe(true)
-    expect(height()).toBe("0px")
+    expect(entity()).toMatchObject({ isOpen: true, height: 0 })
 
     shrinkPage(0)
-    expect(root().classList.contains("iw-keyboard-open")).toBe(false)
+    expect(entity().isOpen).toBe(false)
   })
 
   it("starts over when the phone turns", () => {
-    stop = watchKeyboard()
     vi.stubGlobal("innerWidth", SCREEN)
     vi.stubGlobal("innerHeight", SCREEN - KEYBOARD)
     viewport.height = SCREEN - KEYBOARD
     document.getElementById("name").focus()
     window.dispatchEvent(new Event("resize"))
 
-    expect(root().classList.contains("iw-keyboard-open")).toBe(false)
+    expect(entity().isOpen).toBe(false)
   })
 
-  it("cleans up when stopped", () => {
-    stop = watchKeyboard()
+  it("cleans up when the entity goes", () => {
     openKeyboard()
 
-    stop()
-    stop = null
+    store.notify("remove", "keyboard")
 
     expect(height()).toBe("")
     expect(root().classList.contains("iw-keyboard-open")).toBe(false)
+  })
+
+  it("is unsupported without a visual viewport", () => {
+    vi.stubGlobal("visualViewport", undefined)
+    const other = createStore({
+      types: { Keyboard },
+      entities: { keyboard: { type: "Keyboard" } },
+    })
+
+    expect(other.getEntity("keyboard").isSupported).toBe(false)
   })
 })

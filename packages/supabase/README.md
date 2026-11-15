@@ -158,7 +158,7 @@ Raise a platform's minimum only once its new build is live in that store. Option
 
 ## Live updates
 
-`@inglorious/supabase/live-update` publishes the web code of a Capacitor app for `watchLiveUpdate` from `@inglorious/web/native/live-update`. It runs in Node, from a release script.
+`@inglorious/supabase/live-update` publishes the web code of a Capacitor app for `createLiveUpdate` from `@inglorious/web/native/live-update`. It runs in Node, from a release script.
 
 ```javascript
 import {

@@ -1,10 +1,11 @@
+import { createStore } from "@inglorious/store"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
-import { applyPwaUpdate, PwaUpdate, watchPwaUpdate } from "."
+import { applyPwaUpdate, createPwaUpdate } from "."
 
 describe("pwa update", () => {
   let doc
-  let store
+  let registration
 
   beforeEach(() => {
     vi.useFakeTimers()
@@ -18,10 +19,12 @@ describe("pwa update", () => {
         this.listeners = this.listeners.filter((h) => h !== handler)
       },
     }
+    registration = createRegistration()
     vi.stubGlobal("document", doc)
     vi.stubGlobal("location", { reload: vi.fn() })
-    vi.stubGlobal("navigator", { serviceWorker: { controller: {} } })
-    store = { notify: vi.fn() }
+    vi.stubGlobal("navigator", {
+      serviceWorker: { controller: {}, ready: Promise.resolve(registration) },
+    })
   })
 
   afterEach(() => {
@@ -29,12 +32,22 @@ describe("pwa update", () => {
     vi.unstubAllGlobals()
   })
 
-  describe("watchPwaUpdate", () => {
-    it("checks every interval and on coming back to the foreground, not while hidden", () => {
-      const registration = createRegistration()
-      watchPwaUpdate(registration, store, { checkEveryMs: 1000 })
+  async function storeWith(config) {
+    const store = createStore({
+      types: { PwaUpdate: createPwaUpdate(config) },
+      entities: { pwaUpdate: { type: "PwaUpdate" } },
+    })
+    await vi.advanceTimersByTimeAsync(0)
+    return store
+  }
 
-      vi.advanceTimersByTime(2000)
+  const entityOf = (store) => store.getEntity("pwaUpdate")
+
+  describe("createPwaUpdate", () => {
+    it("checks every interval and on coming back to the foreground, not while hidden", async () => {
+      await storeWith({ checkEveryMs: 1000 })
+
+      await vi.advanceTimersByTimeAsync(2000)
       expect(registration.update).toHaveBeenCalledTimes(2)
 
       setHidden(false)
@@ -44,47 +57,40 @@ describe("pwa update", () => {
       expect(registration.update).toHaveBeenCalledTimes(3)
     })
 
-    it("applies a version already waiting at boot, without announcing it", () => {
+    it("applies a version already waiting at boot, without announcing it", async () => {
       const worker = createWorker()
-      watchPwaUpdate(createRegistration(worker), store)
+      registration.waiting = worker
+      const store = await storeWith()
 
       expect(worker.postMessage).toHaveBeenCalledWith({ type: "SKIP_WAITING" })
-      expect(store.notify).not.toHaveBeenCalled()
+      expect(entityOf(store).isUpdateReady).toBe(false)
     })
 
-    it("announces a version that lands mid-session, once per worker", () => {
-      const registration = createRegistration()
-      watchPwaUpdate(registration, store)
+    it("announces a version that lands mid-session", async () => {
+      const store = await storeWith()
 
       const worker = installWorker(registration)
       worker.emit("statechange")
 
-      expect(store.notify).toHaveBeenCalledOnce()
-      expect(store.notify).toHaveBeenCalledWith("#pwaUpdate:pwaUpdateReady")
+      expect(entityOf(store).isUpdateReady).toBe(true)
     })
 
-    it("announces to the entity it is given", () => {
-      const registration = createRegistration()
-      watchPwaUpdate(registration, store, { id: "update" })
+    it("stays silent on a first-ever install: no old version to move from", async () => {
+      vi.stubGlobal("navigator", {
+        serviceWorker: {
+          controller: null,
+          ready: Promise.resolve(registration),
+        },
+      })
+      const store = await storeWith()
 
       installWorker(registration)
 
-      expect(store.notify).toHaveBeenCalledWith("#update:pwaUpdateReady")
+      expect(entityOf(store).isUpdateReady).toBe(false)
     })
 
-    it("stays silent on a first-ever install: no old version to move from", () => {
-      vi.stubGlobal("navigator", { serviceWorker: { controller: null } })
-      const registration = createRegistration()
-      watchPwaUpdate(registration, store)
-
-      installWorker(registration)
-
-      expect(store.notify).not.toHaveBeenCalled()
-    })
-
-    it("applies a waiting version on the way to the background", () => {
-      const registration = createRegistration()
-      watchPwaUpdate(registration, store)
+    it("applies a waiting version on the way to the background", async () => {
+      await storeWith()
       const worker = installWorker(registration)
 
       setHidden(true)
@@ -92,9 +98,8 @@ describe("pwa update", () => {
       expect(worker.postMessage).toHaveBeenCalledWith({ type: "SKIP_WAITING" })
     })
 
-    it("applies once per trip, and does not check while the reload is on its way", () => {
-      const registration = createRegistration()
-      watchPwaUpdate(registration, store)
+    it("applies once per trip, and does not check while the reload is on its way", async () => {
+      await storeWith()
       const worker = installWorker(registration)
 
       setHidden(true)
@@ -104,36 +109,38 @@ describe("pwa update", () => {
       expect(registration.update).not.toHaveBeenCalled()
     })
 
-    it("applies silently without a store", () => {
-      const registration = createRegistration()
-      watchPwaUpdate(registration)
+    it("moves over at once on pwaUpdateApply", async () => {
+      const store = await storeWith()
       const worker = installWorker(registration)
+      worker.postMessage.mockImplementation(() => {
+        worker.state = "activated"
+        worker.emit("statechange")
+      })
+      vi.stubGlobal("navigator", {
+        serviceWorker: { getRegistration: async () => registration },
+      })
 
-      setHidden(true)
+      store.notify("#pwaUpdate:pwaUpdateApply")
+      await vi.advanceTimersByTimeAsync(0)
 
-      expect(worker.postMessage).toHaveBeenCalledOnce()
+      expect(location.reload).toHaveBeenCalledOnce()
     })
 
-    it("announces again after the previous version took over", () => {
-      const registration = createRegistration()
-      watchPwaUpdate(registration, store)
-      const first = installWorker(registration)
-      first.state = "activated"
-      first.emit("statechange")
-      registration.waiting = null
+    it("stops checking when the entity goes", async () => {
+      const store = await storeWith({ checkEveryMs: 1000 })
 
-      installWorker(registration)
-
-      expect(store.notify).toHaveBeenCalledTimes(2)
-    })
-
-    it("stops checking once stopped", () => {
-      const registration = createRegistration()
-      const stop = watchPwaUpdate(registration, store, { checkEveryMs: 1000 })
-
-      stop()
-      vi.advanceTimersByTime(5000)
+      store.notify("remove", "pwaUpdate")
+      await vi.advanceTimersByTimeAsync(5000)
       setHidden(false)
+
+      expect(registration.update).not.toHaveBeenCalled()
+    })
+
+    it("does nothing in a native app", async () => {
+      vi.stubGlobal("Capacitor", { isNativePlatform: () => true })
+
+      await storeWith({ checkEveryMs: 1000 })
+      await vi.advanceTimersByTimeAsync(2000)
 
       expect(registration.update).not.toHaveBeenCalled()
     })
@@ -170,18 +177,6 @@ describe("pwa update", () => {
       await applyPwaUpdate()
 
       expect(location.reload).toHaveBeenCalledOnce()
-    })
-  })
-
-  describe("PwaUpdate", () => {
-    it("starts with no update ready, and raises the flag when one lands", () => {
-      const entity = { id: "pwaUpdate", type: "PwaUpdate" }
-
-      PwaUpdate.create(entity)
-      expect(entity.isUpdateReady).toBe(false)
-
-      PwaUpdate.pwaUpdateReady(entity)
-      expect(entity.isUpdateReady).toBe(true)
     })
   })
 

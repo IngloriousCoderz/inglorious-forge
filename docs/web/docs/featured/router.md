@@ -165,15 +165,11 @@ const Session = {
 }
 
 const requireAuth = (type) => ({
-  sessionChange(entity, user, api) {
-    entity.user = user
-    type.sessionChange?.(entity, user, api)
-  },
   routeChange(entity, payload, api) {
     if (payload.route !== entity.id) return
 
-    if (!entity.user) {
-      api.notify("navigate", "/login")
+    if (!api.getEntity("session").user) {
+      api.notify("navigate", { to: "/login", replace: true })
       return
     }
 
@@ -185,8 +181,8 @@ const requireAdmin = (type) => ({
   routeChange(entity, payload, api) {
     if (payload.route !== entity.id) return
 
-    if (entity.user?.role !== "admin") {
-      api.notify("navigate", "/unauthorized")
+    if (api.getEntity("session").user?.role !== "admin") {
+      api.notify("navigate", { to: "/unauthorized", replace: true })
       return
     }
 
@@ -201,9 +197,7 @@ const types = {
 }
 ```
 
-::: warning Guards keep their own copy of the session
-A guard must not ask the session entity with `api.getEntity("session")`. During an update, `api.getEntity()` returns the state from before it, so a sign-in earlier in the same chain of events (sign in, then navigate) is not there yet, and the guard sends the user back to `/login`. Have the session announce each change with `sessionChange`, and let each guarded page keep its copy, as above.
-:::
+A guard reads the session with `api.getEntity`: a sign-in earlier in the same chain of events (sign in, then navigate) is already there, since each event reads what the previous one changed. The last behavior in the list runs first, so `requireAdmin` checks before `requireAuth`, and the page's own `routeChange` runs only when both let it through.
 
 To bring the visitor back after signing in, pass where they were going in the login URL, and read it back with `safePath`. It returns the path only if it stays on the site, so a crafted link like `/login?from=//evil.com` cannot send a freshly signed-in user elsewhere:
 
@@ -229,4 +223,4 @@ setRoutes({
 
 The router registers every export of the module that an entity is of, such as a page's grid and form, and those entities get their `create` once their type arrives. The route goes to the default export, or else to the first export that renders. Navigating elsewhere while a route loads wins over the load.
 
-**[Full Router Documentation](https://github.com/IngloriousCoderz/inglorious-forge/tree/main/packages/web#client-side-router)**
+The router keeps its route table in the module, shared by every store on the page, and its entity holds `route`, `path`, `params`, `query`, `hash` and `isLoading`.

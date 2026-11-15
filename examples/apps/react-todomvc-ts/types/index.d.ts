@@ -39,14 +39,14 @@ export type AppTypes = {
 
   List: {
     formSubmit: (entity: ListEntity, value: string) => void
-    toggleClick: (entity: ListEntity, id: number) => void
-    deleteClick: (entity: ListEntity, id: number) => void
-    clearClick: (entity: ListEntity) => void
+    taskToggle: (entity: ListEntity, id: number) => void
+    taskDelete: (entity: ListEntity, id: number) => void
+    completedClear: (entity: ListEntity) => void
   }
 
   Footer: {
-    filterClick: (entity: FooterEntity, id: Filter) => void
-    clearClick: (entity: FooterEntity) => void
+    filterChange: (entity: FooterEntity, id: Filter) => void
+    completedClear: (entity: FooterEntity) => void
   }
 }
 

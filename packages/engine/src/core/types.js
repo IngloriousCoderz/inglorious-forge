@@ -1,20 +1,8 @@
 import { namesNear } from "@inglorious/utils/data-structures/string.js"
 
 /**
- * Checks that every entity in a configuration has a type that was declared.
- *
- * A type that was never declared is not an error anywhere downstream: it augments into an
- * empty type, so the entity stands there with none of the handlers, rendering or collision
- * its type was meant to give it, and every event sent to it goes nowhere. Nothing about
- * that looks wrong where it happens, which is why it is worth saying so before the game
- * starts rather than after.
- *
- * @example
- * ```js
- * import { assertTypesAreDeclared } from "@inglorious/engine/core/types.js"
- *
- * assertTypesAreDeclared(config)
- * ```
+ * Throws when an entity names a type the configuration does not declare, with
+ * the nearest declared names: such an entity would silently get no handlers.
  *
  * @param {object} config - A game configuration.
  * @throws {Error} If an entity names a type the configuration does not declare.

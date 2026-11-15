@@ -1,5 +1,17 @@
 # @inglorious/react-store
 
+## 6.30.0
+
+### Minor Changes
+
+- The `watch*` functions are entity types: `Keyboard`, `createAppLinks`, `createBackButton`, `createSystemBars` and `createPwaUpdate` replace `watchKeyboard`, `watchAppLinks`, `watchBackButton`, `watchSystemBars` and `watchPwaUpdate`; `createNativeUpdate` and `createLiveUpdate` take the Capacitor plugins and watch from `create`; `createAuth` follows the session from `create`, replacing `watchAuth`. `mount` resolves to the unsubscribe function and documents `hydrate`. `create-app` registers the types in the store it generates.
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies
+  - @inglorious/store@12.7.0
+
 ## 6.29.0
 
 ### Minor Changes

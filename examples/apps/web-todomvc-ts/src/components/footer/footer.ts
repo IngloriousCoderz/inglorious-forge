@@ -12,11 +12,11 @@ export const Footer: FooterType = {
     entity.activeFilter = "all"
   },
 
-  filterClick(entity, id) {
+  filterChange(entity, id) {
     entity.activeFilter = id
   },
 
-  clearClick(entity) {
+  completedClear(entity) {
     entity.activeFilter = "all"
   },
 
@@ -38,7 +38,7 @@ export const Footer: FooterType = {
           class=${classMap({
             [classes.selected]: entity.activeFilter === "all",
           })}
-          @click=${() => api.notify("filterClick", "all")}
+          @click=${() => api.notify("filterChange", "all")}
         >
           All
         </a>
@@ -46,7 +46,7 @@ export const Footer: FooterType = {
           class=${classMap({
             [classes.selected]: entity.activeFilter === "active",
           })}
-          @click=${() => api.notify("filterClick", "active")}
+          @click=${() => api.notify("filterChange", "active")}
         >
           Active
         </a>
@@ -54,7 +54,7 @@ export const Footer: FooterType = {
           class=${classMap({
             [classes.selected]: entity.activeFilter === "completed",
           })}
-          @click=${() => api.notify("filterClick", "completed")}
+          @click=${() => api.notify("filterChange", "completed")}
         >
           Completed
         </a>
@@ -62,7 +62,7 @@ export const Footer: FooterType = {
 
       <a
         class=${classMap({ [classes.hidden]: !completedTasksCount })}
-        @click=${() => api.notify("clearClick")}
+        @click=${() => api.notify("completedClear")}
       >
         Clear Completed
       </a>

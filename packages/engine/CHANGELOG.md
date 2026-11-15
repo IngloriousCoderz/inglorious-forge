@@ -1,5 +1,14 @@
 # @inglorious/engine
 
+## 24.1.5
+
+### Patch Changes
+
+- Removes the busy-wait `elapsed`, `lag` and `flash` loops and passes the game's `devMode` to the store.
+- Updated dependencies
+- Updated dependencies
+  - @inglorious/store@12.7.0
+
 ## 24.1.4
 
 ### Patch Changes

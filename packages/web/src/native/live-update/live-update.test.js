@@ -1,11 +1,7 @@
 import { createStore } from "@inglorious/store"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
-import {
-  createLiveUpdate,
-  isLiveUpdateWanted,
-  watchLiveUpdate,
-} from "./index.js"
+import { createLiveUpdate, isLiveUpdateWanted } from "./index.js"
 
 const MANIFEST_URL = "https://cdn.test/live-update/manifest.json"
 const MANIFEST = {
@@ -19,7 +15,6 @@ const MANIFEST = {
 let plugin
 let app
 let listeners
-let store
 
 beforeEach(() => {
   listeners = {}
@@ -38,7 +33,6 @@ beforeEach(() => {
       return { remove: vi.fn(async () => {}) }
     }),
   }
-  store = { notify: vi.fn() }
   vi.stubGlobal("Capacitor", { isNativePlatform: () => true })
   serve(MANIFEST)
 })
@@ -58,19 +52,26 @@ function serve(manifest, ok = true) {
   )
 }
 
-function watch(release = 100) {
-  return watchLiveUpdate({
-    plugin,
-    app,
-    store,
-    manifestUrl: MANIFEST_URL,
-    release,
+function storeWith(release = 100, config = {}) {
+  return createStore({
+    types: {
+      LiveUpdate: createLiveUpdate({
+        plugin,
+        app,
+        manifestUrl: MANIFEST_URL,
+        release,
+        ...config,
+      }),
+    },
+    entities: { liveUpdate: { type: "LiveUpdate" } },
   })
 }
 
 function settle() {
   return new Promise((resolve) => setTimeout(resolve))
 }
+
+const entityOf = (store) => store.getEntity("liveUpdate")
 
 describe("isLiveUpdateWanted", () => {
   it("takes a newer release the installed build can run", () => {
@@ -85,9 +86,13 @@ describe("isLiveUpdateWanted", () => {
   })
 })
 
-describe("watchLiveUpdate", () => {
+describe("createLiveUpdate", () => {
   it("confirms the running bundle, then downloads a wanted one", async () => {
-    watch()
+    const store = storeWith()
+    expect(entityOf(store)).toMatchObject({
+      isUpdateReady: false,
+      pendingRelease: null,
+    })
     await settle()
 
     expect(plugin.ready).toHaveBeenCalled()
@@ -99,74 +104,87 @@ describe("watchLiveUpdate", () => {
       signature: "c2ln",
     })
     expect(plugin.setNextBundle).toHaveBeenCalledWith({ bundleId: "200" })
-    expect(store.notify).toHaveBeenCalledWith("#liveUpdate:liveUpdateReady")
+    expect(entityOf(store)).toMatchObject({
+      isUpdateReady: true,
+      pendingRelease: 200,
+    })
   })
 
   it("applies the bundle when the app goes to the background", async () => {
-    watch()
+    storeWith()
     await settle()
     listeners.pause()
+    expect(plugin.reload).toHaveBeenCalled()
+  })
+
+  it("moves over at once on liveUpdateApply", async () => {
+    const store = storeWith()
+    await settle()
+    store.notify("#liveUpdate:liveUpdateApply")
     expect(plugin.reload).toHaveBeenCalled()
   })
 
   it("reuses a bundle already downloaded, and announces it once", async () => {
     plugin.getDownloadedBundles.mockResolvedValue({ bundleIds: ["200"] })
-    watch()
+    const store = storeWith()
+    const seen = []
+    store.subscribe(() => seen.push(entityOf(store).pendingRelease))
     await settle()
     listeners.resume()
     await settle()
 
     expect(plugin.downloadBundle).not.toHaveBeenCalled()
-    expect(store.notify).toHaveBeenCalledTimes(1)
+    expect(seen).toStrictEqual([200])
   })
 
   it("skips what is not wanted, rolled back, or unreachable", async () => {
-    watch(200)
+    storeWith(200)
     await settle()
     expect(plugin.downloadBundle).not.toHaveBeenCalled()
 
     plugin.getBlockedBundles.mockResolvedValue({ bundleIds: ["200"] })
-    watch()
+    storeWith()
     await settle()
     expect(plugin.downloadBundle).not.toHaveBeenCalled()
 
     serve(null, false)
     plugin.getBlockedBundles.mockResolvedValue({ bundleIds: [] })
-    watch()
+    const store = storeWith()
     await settle()
     expect(plugin.downloadBundle).not.toHaveBeenCalled()
-    expect(store.notify).not.toHaveBeenCalled()
+    expect(entityOf(store).isUpdateReady).toBe(false)
   })
 
   it("reloads nothing on pause while nothing is downloaded", async () => {
     plugin.downloadBundle.mockRejectedValue(new Error("Signature mismatch"))
-    watch()
+    storeWith()
     await settle()
     listeners.pause()
     expect(plugin.reload).not.toHaveBeenCalled()
   })
 
-  it("does nothing outside a native app", async () => {
+  it("does nothing outside a native app, or without a release", async () => {
     vi.stubGlobal("Capacitor", undefined)
-    const stop = watch()
+    storeWith()
     await settle()
     expect(plugin.ready).not.toHaveBeenCalled()
-    await stop()
+
+    vi.stubGlobal("Capacitor", { isNativePlatform: () => true })
+    storeWith(0)
+    await settle()
+    expect(plugin.ready).not.toHaveBeenCalled()
   })
-})
 
-describe("createLiveUpdate", () => {
-  it("shows a ready bundle and moves over to it", () => {
-    const live = createStore({
-      types: { LiveUpdate: createLiveUpdate({ plugin }) },
-      entities: { liveUpdate: { type: "LiveUpdate" } },
-    })
-    expect(live.getState().liveUpdate.isUpdateReady).toBe(false)
+  it("stops watching when the entity goes", async () => {
+    const store = storeWith()
+    await settle()
+    const [, pause] = await Promise.all(
+      app.addListener.mock.results.map((r) => r.value),
+    )
 
-    live.notify("#liveUpdate:liveUpdateReady")
-    expect(live.getState().liveUpdate.isUpdateReady).toBe(true)
+    store.notify("remove", "liveUpdate")
+    await settle()
 
-    live.notify("#liveUpdate:liveUpdateApply")
-    expect(plugin.reload).toHaveBeenCalled()
+    expect(pause.remove).toHaveBeenCalled()
   })
 })

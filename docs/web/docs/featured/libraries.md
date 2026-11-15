@@ -1,308 +1,69 @@
 ---
 title: Building Component Libraries
-description: Create, publish, and customize component libraries
+description: Publishing types and behaviors others can adapt
 ---
 
 # Building Component Libraries
 
-Inglorious Web types are uniquely suited for building component libraries because they're fully customizable through JavaScript.
+A library of Inglorious Web types is a library of plain objects. Users adapt them by overriding a render, adding a handler or composing a behavior, with no prop interface to extend.
 
-## The Advantage
-
-Unlike React components (restricted by props), Inglorious types can be customized completely:
+## Export types and behaviors
 
 ```javascript
-// React: Limited to exposed props
-<MyDataGrid columns={cols} data={data} onSort={...} />
-// Can't customize rendering beyond what component author exposed
-
-// Inglorious Web: Complete customization
-const MyDataGrid = {
-  ...DataGrid,
-
-  render(entity, api) {
-    // Override entire rendering
-  },
-  sortRows(entity, field) {
-    // Override sorting logic
-  },
-}
-```
-
-## Publishing a Component Library
-
-### 1. Export Your Types
-
-```javascript
-// @mycompany/design-system/components/card.js
+// @mycompany/design-system
 export const Card = {
   render(entity, api) {
-    return html`
-      <div class="card">
-        <div class="card-header">${entity.title}</div>
-        <div class="card-body">${entity.content}</div>
-      </div>
-    `
+    return html`<div class="card">
+      <h2>${entity.title}</h2>
+      ${entity.content}
+    </div>`
   },
 }
 
-// @mycompany/design-system/components/button.js
-export const Button = {
-  onClick(entity, handler) {
-    handler()
-  },
-
-  render(entity, api) {
-    return html`
-      <button
-        class=${"btn btn-" + entity.variant}
-        @click=${() => api.notify(`#${entity.id}:onClick`)}
-      >
-        ${entity.label}
-      </button>
-    `
-  },
-}
-```
-
-### 2. Export Behaviors
-
-Behaviors are reusable mixins:
-
-```javascript
-// @mycompany/design-system/behaviors/sortable.js
 export const sortable = (type) => ({
   sortBy(entity, field) {
     entity.sortField = field
-    entity.sortDirection = entity.sortDirection === "asc" ? "desc" : "asc"
   },
-
   render(entity, api) {
-    const render = type.render(entity, api)
-    // Wrap original render with sort UI
-    return html` ${renderSortControls(entity, api)} ${render} `
+    return html`${renderSortControls(entity, api)} ${type.render?.(entity, api)}`
   },
 })
-
-// @mycompany/design-system/behaviors/exportable.js
-export const exportable = (type) => ({
-  exportData(entity, format) {
-    const data = formatData(entity.data, format)
-    downloadFile(data, `export.${format}`)
-  },
-
-  render(entity, api) {
-    const render = type.render(entity, api)
-    return html` ${render} ${renderExportButton(entity, api)} `
-  },
-})
-```
-
-### 3. Create Preset Combinations
-
-```javascript
-// @mycompany/design-system/presets/basicGrid.js
-import { DataGrid } from "../components/data-grid"
-import { sortable, exportable } from "./behaviors"
-
-export const BasicGrid = DataGrid
 
 export const SortableGrid = [DataGrid, sortable]
-
-export const AdvancedGrid = [
-  DataGrid,
-  sortable,
-  exportable,
-  {
-    // Additional custom logic
-  },
-]
 ```
 
-## Users Customize Freely
+A behavior is a decorator: it receives the type built so far, wraps what it needs and keeps the rest. Ship presets for common combinations.
 
-Your library users can customize exactly what they need:
+## Users customize freely
 
 ```javascript
-import { DataGrid, sortable, exportable } from "@mycompany/design-system"
+import { DataGrid, sortable } from "@mycompany/design-system"
 
-// Use as-is
-const SimpleGrid = { ...DataGrid }
-
-// Override specific method
 const CustomGrid = {
   ...DataGrid,
   render(entity, api) {
-    return html`
-      <div class="my-custom-style">
-        <!-- Custom rendering -->
-      </div>
-    `
+    return html`<div class="my-grid">${DataGrid.render(entity, api)}</div>`
   },
 }
-
-// Compose multiple behaviors
-const AdvancedGrid = [
-  DataGrid,
-  sortable,
-  exportable,
-  {
-    // Add custom behavior
-    onRowClick(entity, rowId) {
-      entity.selectedRow = rowId
-    },
-  },
-]
-
-// Mix and match
-const CustomAdvanced = [
-  {
-    ...DataGrid,
-    render(entity, api) {
-      // Custom render
-    },
-  },
-  sortable,
-  {
-    // Only export, not sortable
-    exportData(entity, format) {
-      // Custom export
-    },
-  },
-]
-```
-
-## Documentation Example
-
-```markdown
-# Card Component
-
-A flexible card component for displaying grouped content.
-
-## Basic Usage
-
-\`\`\`javascript
-import { Card } from '@mycompany/design-system'
 
 const types = {
-Card,
+  Grid: [
+    CustomGrid,
+    sortable,
+    {
+      rowClick(entity, rowId) {
+        entity.selectedRow = rowId
+      },
+    },
+  ],
 }
-
-const entities = {
-myCard: {
-type: 'Card',
-title: 'Hello',
-content: 'World',
-},
-}
-\`\`\`
-
-## Customization
-
-Override the render method:
-
-\`\`\`javascript
-const CustomCard = {
-...Card,
-render(entity, api) {
-return html\`
-
-<div class="my-card">
-<header style="background: ${entity.headerColor}">
-${entity.title}
-        </header>
-        <main>${entity.content}</main>
-</div>
-\`
-},
-}
-\`\`\`
-
-## Composition
-
-Compose with behaviors:
-
-\`\`\`javascript
-import { Card } from '@mycompany/design-system'
-import { draggable, closeable } from '@mycompany/design-system/behaviors'
-
-const types = {
-ModalCard: [Card, draggable, closeable],
-}
-\`\`\`
-
-## Testing
-
-Test with \`trigger()\`:
-
-\`\`\`javascript
-import { Card } from '@mycompany/design-system'
-import { trigger } from '@inglorious/web/test'
-
-test('card renders title', () => {
-const { entity } = trigger(
-{ type: 'card', title: 'Test', content: 'Content' },
-() => {},
-Card.render
-)
-expect(entity.title).toBe('Test')
-})
-\`\`\`
 ```
 
-## Benefits for Library Authors
+## Guidelines
 
-✅ **Users get complete control** without forking  
-✅ **No prop interface to maintain** — Just plain JavaScript  
-✅ **Composition is clean** — Arrays instead of wrapper hell  
-✅ **Testing is trivial** — No special setup needed  
-✅ **Documentation is simple** — Just show the code
+- Take plugins and adapters as parameters of a factory (`createShare({ plugin })`), so users and tests supply their own.
+- Keep handles out of entities: listeners, timers and elements live in the factory's closure, keyed by entity id, and go in `destroy`.
+- Name events after what happened, with the subject first for broadcasts (`rowSelect`, `cartChange`).
+- Changing a handler's signature breaks users' overrides: add handlers rather than change them, and say so in the changelog.
 
-## Best Practices
-
-1. **Export both components and behaviors**
-
-   ```javascript
-   export { Card, Button, DataGrid }
-   export { sortable, draggable, closeable }
-   ```
-
-2. **Provide presets for common combinations**
-
-   ```javascript
-   export { AdvancedGrid, SortableGrid }
-   ```
-
-3. **Document customization patterns**
-   - Show how to override render
-   - Show how to add behaviors
-   - Provide examples
-
-4. **Keep components flexible**
-   - Don't hide internals
-   - Allow full customization
-   - Avoid excessive logic in render
-
-5. **Version carefully**
-   - Changing method signatures breaks user customizations
-   - Prefer adding new methods over changing existing ones
-   - Document breaking changes clearly
-
-## Examples
-
-The Inglorious ecosystem includes libraries built this way:
-
-- **[@inglorious/web](https://npmjs.com/@inglorious/web)** — Form, Table, Router, etc.
-- **[Inglorious Motion](https://npmjs.com/@inglorious/motion)** — Motion behaviors for variants, presence, and layout transitions in Inglorious Web apps
-- **[Inglorious Charts](https://npmjs.com/@inglorious/charts)** — Declarative chart types and composition helpers for Inglorious Web
-- **[Inglorious i18n](https://npmjs.com/@inglorious/i18n)** — Translations, plurals and formatting, with the active locale held in a store entity
-- **[Inglorious Engine](https://npmjs.com/@inglorious/engine)** — Game entity types
-
-Check them out for inspiration!
-
-## Next Steps
-
-- **[Type Composition](../advanced/type-composition.md)** — Master composition patterns
-- **[Testing](../advanced/testing.md)** — Ensure your library works correctly
-
-Happy building! 📦
+[Inglorious UI](https://inglorious.dev/ui), [charts](https://inglorious.dev/charts/), [motion](https://inglorious.dev/motion/) and [i18n](https://www.npmjs.com/package/@inglorious/i18n) are built this way.

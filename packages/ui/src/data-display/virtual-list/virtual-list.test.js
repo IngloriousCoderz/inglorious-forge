@@ -105,50 +105,30 @@ describe("virtualList", () => {
     })
   })
 
-  describe("mount()", () => {
-    it("should measure first item and update itemHeight and visibleRange", () => {
+  describe("itemMeasure()", () => {
+    it("should take the measured height and update visibleRange", () => {
       VirtualList.create(entity)
 
-      const itemEl = document.createElement("div")
-      vi.spyOn(itemEl, "offsetHeight", "get").mockReturnValue(40)
-
-      const containerEl = {
-        querySelector: vi.fn().mockReturnValue(itemEl),
-      }
-
-      VirtualList.mount(entity, containerEl)
+      VirtualList.itemMeasure(entity, { itemHeight: 40 })
 
       expect(entity.itemHeight).toBe(40)
       expect(entity.visibleRange).toEqual({ start: 0, end: 15 })
     })
 
-    it("should do nothing if no item is found", () => {
+    it("should keep the estimate without a height", () => {
       VirtualList.create(entity)
       const snapshot = { ...entity }
 
-      VirtualList.mount(entity, { querySelector: () => null })
+      VirtualList.itemMeasure(entity, { itemHeight: 0 })
 
       expect(entity).toEqual(snapshot)
     })
 
-    it("should keep the estimate if the list is not laid out yet", () => {
-      VirtualList.create(entity)
-      const snapshot = { ...entity }
-
-      VirtualList.mount(entity, {
-        querySelector: () => ({ offsetHeight: 0 }),
-      })
-
-      expect(entity).toEqual(snapshot)
-    })
-
-    it("should overwrite itemHeight when mounting", () => {
+    it("should overwrite itemHeight", () => {
       VirtualList.create(entity)
       entity.itemHeight = 42
 
-      VirtualList.mount(entity, {
-        querySelector: () => ({ offsetHeight: 100 }),
-      })
+      VirtualList.itemMeasure(entity, { itemHeight: 100 })
 
       expect(entity.itemHeight).toBe(100)
     })

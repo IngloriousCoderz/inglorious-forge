@@ -1,11 +1,12 @@
 /**
  * @vitest-environment jsdom
  */
+import { createStore } from "@inglorious/store"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
-import { watchBackButton } from "./index.js"
+import { createBackButton } from "./index.js"
 
-describe("watchBackButton", () => {
+describe("createBackButton", () => {
   let app
   let backButton
   let remove
@@ -29,9 +30,16 @@ describe("watchBackButton", () => {
     window.history.replaceState(null, "", "/")
   })
 
+  function storeWith(entity = {}) {
+    return createStore({
+      types: { BackButton: createBackButton({ plugin: app }) },
+      entities: { backButton: { type: "BackButton", ...entity } },
+    })
+  }
+
   it("goes back from a page that is not a root", () => {
     window.history.replaceState(null, "", "/jobs/42")
-    watchBackButton(app)
+    storeWith()
 
     backButton({ canGoBack: true })
 
@@ -45,7 +53,7 @@ describe("watchBackButton", () => {
 
   it("closes the app from a root path, history or not", () => {
     window.history.replaceState(null, "", "/profile")
-    watchBackButton(app, { rootPaths: ["/jobs", "/profile"] })
+    storeWith({ rootPaths: ["/jobs", "/profile"] })
 
     backButton({ canGoBack: true })
 
@@ -55,7 +63,7 @@ describe("watchBackButton", () => {
 
   it("closes the app when there is no history", () => {
     window.history.replaceState(null, "", "/jobs/42")
-    watchBackButton(app)
+    storeWith()
 
     backButton({ canGoBack: false })
 
@@ -63,25 +71,27 @@ describe("watchBackButton", () => {
   })
 
   it("roots at / by default", () => {
-    watchBackButton(app)
+    const store = storeWith()
 
     backButton({ canGoBack: true })
 
+    expect(store.getEntity("backButton").rootPaths).toStrictEqual(["/"])
     expect(app.exitApp).toHaveBeenCalled()
   })
 
   it("does nothing outside a native app", () => {
     vi.stubGlobal("Capacitor", undefined)
 
-    watchBackButton(app)
+    storeWith()
 
     expect(app.addListener).not.toHaveBeenCalled()
   })
 
-  it("stops listening", async () => {
-    const stop = watchBackButton(app)
+  it("stops listening when the entity goes", async () => {
+    const store = storeWith()
 
-    await stop()
+    store.notify("remove", "backButton")
+    await new Promise((resolve) => setTimeout(resolve))
 
     expect(remove).toHaveBeenCalled()
   })

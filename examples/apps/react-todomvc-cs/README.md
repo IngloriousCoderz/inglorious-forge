@@ -200,7 +200,7 @@ export const types = {
     },
 
     // Update todo
-    async toggleClick(entity, id, api) {
+    async taskToggle(entity, id, api) {
       const task = entity.tasks.find((t) => t.id === id)
       const updatedTask = await client.updateTask(id, {
         completed: !task.completed,
@@ -216,7 +216,7 @@ export const types = {
     },
 
     // Delete todo
-    async deleteClick(entity, id, api) {
+    async taskDelete(entity, id, api) {
       await client.deleteTask(id)
       api.notify("taskDeleted", id)
     },

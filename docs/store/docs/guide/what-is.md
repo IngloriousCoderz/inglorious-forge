@@ -18,13 +18,13 @@ A **Redux-compatible, entity-based state library** that brings game engine desig
 Inglorious Store manages application state, much like Redux, Zustand, or Pinia. It provides:
 
 - **Centralized state** - Single source of truth for your app
-- **Predictable updates** - Pure functions transform state
-- **Reactive** - Components re-render when state changes
+- **Predictable updates** - Every change is an event, applied in order
+- **Observable** - Subscribers are notified after each update
 - **Debuggable** - Full Redux DevTools support with time-travel
 
 ### ✅ Redux-Compatible
 
-It's a **drop-in replacement for Redux**:
+It works where a Redux store does: `react-redux`, the Redux DevTools, `dispatch({ type, payload })`. A React app can adopt it as its store first, keep its components, and move them to Inglorious Web later.
 
 ```javascript
 // Works with react-redux
@@ -50,7 +50,7 @@ Unlike traditional state trees, entities are **first-class citizens**:
 ```javascript
 // Define behavior once
 const types = {
-  counter: {
+  Counter: {
     increment(e) {
       e.value++
     },
@@ -80,7 +80,7 @@ store.notify("taskCompleted", "task123")
 store.notify("#work:taskCompleted", "task123")
 
 // Target specific type
-store.notify("stats:taskCompleted", "task123")
+store.notify("Stats:taskCompleted", "task123")
 
 // All updates are queued and predictable
 ```
@@ -120,8 +120,8 @@ const slice = createSlice({
 **Inglorious Store:**
 
 ```javascript
-const todoList = {
-  addTodo(entity, text) {
+const TodoList = {
+  todoAdd(entity, text) {
     entity.todos.push({ text })
   },
 }
@@ -132,7 +132,7 @@ const todoList = {
 Entities have automatic lifecycle events:
 
 ```javascript
-const user = {
+const User = {
   create(entity) {
     // Runs when entity is added
     entity.createdAt = Date.now()
@@ -174,7 +174,7 @@ const useStore = create((set) => ({
 
 // Inglorious: Scales better with many entities
 const types = {
-  counter: { increment(e) { e.value++ } }
+  Counter: { increment(e) { e.value++ } }
 }
 const entities = {
   counter1, counter2, counter3, ... // 100 instances, same code
@@ -239,19 +239,7 @@ System = Global logic (cleanup, analytics, validation)
 
 ### 2. Event Queue
 
-Game engines queue events to maintain predictability:
-
-```javascript
-// All events process together in one frame
-frame
-  .start()
-  .notify("playerMoved", { x: 100 })
-  .notify("enemyAttacked", { damage: 10 })
-  .notify("particleCreated", { type: "explosion" })
-frame.update() // Single re-render
-```
-
-All events in Inglorious Store are appended to an event queue as well.
+Game engines queue the events of a frame and apply them together. Inglorious Store does the same: events wait in a queue, each is applied as a transaction, and subscribers hear once the queue is empty.
 
 ### 3. Batch Updates
 
@@ -323,12 +311,12 @@ Think of it as **"ECS philosophy for web development"** rather than a true ECS i
 | **Action Creators**    | Required                         | Not needed              |
 | **Reducers**           | Required                         | Event handlers          |
 | **Multiple Instances** | Manual reshaping                 | Built-in                |
-| **Async Logic**        | Thunks + middleware              | Native async handlers   |
+| **Async Logic**        | Thunks + middleware              | `handleRequest` events  |
 | **Lifecycle**          | Manual setup/teardown            | Built-in create/destroy |
 | **Event Broadcasting** | All reducers receive all actions | Selective handlers      |
 | **Batch Updates**      | Automatic                        | Optional manual control |
 | **DevTools**           | Full support                     | Full support            |
-| **Migration**          | Drop-in replacement              | Same API                |
+| **Migration**          | -                                | Same store methods      |
 
 ---
 
@@ -358,10 +346,10 @@ Think of it as **"ECS philosophy for web development"** rather than a true ECS i
 State management should be:
 
 1. **Simple** - No action creators or reducer boilerplate
-2. **Predictable** - Pure functions and event queues
+2. **Predictable** - Events applied in order, one transaction each
 3. **Scalable** - Multiple instances without code duplication
 4. **Debuggable** - Full Redux DevTools support
-5. **Testable** - Pure functions are easy to test
+5. **Testable** - A handler is a function of the entity and the event
 
 That's Inglorious Store.
 

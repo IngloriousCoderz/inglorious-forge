@@ -1,5 +1,3 @@
-import { Api } from "../mount"
-
 /** What a publisher puts at the manifest URL. */
 export interface LiveUpdateManifest {
   /** Grows with every bundle: newer than the running release means wanted. */
@@ -14,7 +12,7 @@ export interface LiveUpdateManifest {
   signature?: string
 }
 
-/** What the live update types need of `LiveUpdate` from `@capawesome/capacitor-live-update`. */
+/** What `createLiveUpdate` needs of `LiveUpdate` from `@capawesome/capacitor-live-update`. */
 export interface LiveUpdatePlugin {
   ready(): Promise<unknown>
   reload(): Promise<void>
@@ -29,7 +27,7 @@ export interface LiveUpdatePlugin {
   setNextBundle(options: { bundleId: string | null }): Promise<void>
 }
 
-/** What `watchLiveUpdate` needs of `App` from `@capacitor/app`. */
+/** What `createLiveUpdate` needs of `App` from `@capacitor/app`. */
 export interface LiveUpdateApp {
   getInfo(): Promise<{ build: string }>
   addListener(
@@ -38,50 +36,45 @@ export interface LiveUpdateApp {
   ): Promise<{ remove(): Promise<void> }>
 }
 
+export interface LiveUpdateConfig {
+  plugin: LiveUpdatePlugin
+  /** Needed to check for bundles; without it the type only offers `liveUpdateApply`. */
+  app?: LiveUpdateApp
+  manifestUrl?: string
+  /** The release of the running web code. None for a development build. */
+  release?: number
+  /** How often to check for a new bundle. Defaults to one hour. */
+  checkEveryMs?: number
+}
+
 export interface LiveUpdateEntity {
   id?: string
   type: string
   /** A bundle is downloaded and waits for the next trip to the background. */
   isUpdateReady: boolean
+  /** The release of the downloaded bundle, or `null`. */
+  pendingRelease: number | null
 }
 
 export type LiveUpdateType = {
   create(entity: LiveUpdateEntity): void
-  liveUpdateReady(entity: LiveUpdateEntity): void
+  destroy(entity: LiveUpdateEntity): void
+  liveUpdateReady(entity: LiveUpdateEntity, release: number): void
   /** Moves over to the downloaded bundle now, reloading the app. */
   liveUpdateApply(): void
 }
 
-/** The type that offers a downloaded live update. */
-export declare function createLiveUpdate(config: {
-  plugin: Pick<LiveUpdatePlugin, "reload">
-}): LiveUpdateType
+/**
+ * The type that keeps a native app on its latest published web code, applying
+ * a downloaded bundle on the next trip to the background. Does nothing outside
+ * a native app.
+ */
+export declare function createLiveUpdate(
+  config: LiveUpdateConfig,
+): LiveUpdateType
 
 /** Whether a published bundle should replace the running one. */
 export declare function isLiveUpdateWanted(
   manifest: Pick<LiveUpdateManifest, "release" | "minBuild"> | null,
   installed: { release: number; build: number },
 ): boolean
-
-export interface WatchLiveUpdateOptions {
-  plugin: LiveUpdatePlugin
-  app: LiveUpdateApp
-  /** Where to announce a downloaded bundle. */
-  store?: Pick<Api, "notify">
-  manifestUrl: string
-  /** The release of the running web code. */
-  release: number
-  /** The LiveUpdate entity to announce to. Defaults to `liveUpdate`. */
-  id?: string
-  /** How often to check for a new bundle. Defaults to one hour. */
-  checkEveryMs?: number
-}
-
-/**
- * Keeps a native app on its latest published web code, applying a downloaded
- * bundle on the next trip to the background. Does nothing outside a native app.
- * @returns A function that stops watching.
- */
-export declare function watchLiveUpdate(
-  options: WatchLiveUpdateOptions,
-): () => Promise<void>

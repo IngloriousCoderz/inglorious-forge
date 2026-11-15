@@ -709,3 +709,52 @@ test("defineType should hand back the behavior it is given, which the store then
   expect(store.getState().counter.value).toBe(2)
   expect(Counter.render(store.getState().counter)).toBe("2")
 })
+
+test("it should queue an event notified by a subscriber until the subscribers have run", () => {
+  const Header = {
+    create(entity) {
+      entity.title = "hi"
+    },
+  }
+  const store = createStore({ types: {}, autoCreateEntities: true })
+  const renders = []
+
+  store.subscribe(() => {
+    if (!store.getType("Header")) store.setType("Header", Header)
+    renders.push(store.getEntity("header")?.title ?? null)
+  })
+  store.notify("init")
+
+  expect(renders).toStrictEqual([null, "hi"])
+})
+
+test("it should warn about a type that looks misspelled, and about an event nothing answers", () => {
+  const warn = vi.spyOn(console, "warn").mockImplementation(() => {})
+
+  const store = createStore({
+    types: {
+      TodoList: {
+        todoAdd(entity, text) {
+          entity.todos.push(text)
+        },
+      },
+    },
+    entities: {
+      work: { type: "todoList", todos: [] },
+      home: { type: "TodoList", todos: [] },
+    },
+  })
+  store.notify("#home:todoAdd", "a")
+  store.notify("#home:todoAd", "a")
+  store.notify("#home:todoAd", "b")
+  store.notify("todoList:todoAdd", "a")
+  store.notify("nobodyListens")
+  store.notify("#gone:todoAdd")
+
+  expect(warn.mock.calls.map(([message]) => message)).toStrictEqual([
+    '[store] Entity "work" has type "todoList", which is not declared: did you mean "TodoList"?',
+    '[store] "todoAd" reached "home", whose type "TodoList" has no such handler.',
+    '[store] "todoList:todoAdd" names a type that is not declared: did you mean "TodoList"?',
+  ])
+  warn.mockRestore()
+})

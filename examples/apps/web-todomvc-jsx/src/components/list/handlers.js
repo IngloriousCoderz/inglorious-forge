@@ -11,17 +11,17 @@ export function formSubmit(entity, value) {
   entity.tasks.push({ id: nextId(entity.tasks), text: value })
 }
 
-export function toggleClick(entity, id) {
+export function taskToggle(entity, id) {
   const task = entity.tasks.find((task) => task.id === id)
   task.completed = !task.completed
 }
 
-export function deleteClick(entity, id) {
+export function taskDelete(entity, id) {
   const index = entity.tasks.findIndex((task) => task.id === id)
   entity.tasks.splice(index, TASKS_TO_REMOVE)
 }
 
-export function clearClick(entity) {
+export function completedClear(entity) {
   entity.tasks = entity.tasks.filter((task) => !task.completed)
 }
 

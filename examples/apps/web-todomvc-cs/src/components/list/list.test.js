@@ -46,8 +46,8 @@ it("should create a task on formSubmit and update the store on taskCreated", asy
   })
 })
 
-it("should toggle a task on toggleClick and update the store on taskUpdated", async () => {
-  await store.notify("toggleClick", 2)
+it("should toggle a task on taskToggle and update the store on taskUpdated", async () => {
+  await store.notify("taskToggle", 2)
 
   expect(store.getState()).toEqual({
     list: {
@@ -60,8 +60,8 @@ it("should toggle a task on toggleClick and update the store on taskUpdated", as
   })
 })
 
-it("should delete a task on deleteClick and update the store on taskDeleted", async () => {
-  await store.notify("deleteClick", 2)
+it("should delete a task on taskDelete and update the store on taskDeleted", async () => {
+  await store.notify("taskDelete", 2)
 
   expect(store.getState()).toEqual({
     list: {
@@ -72,10 +72,10 @@ it("should delete a task on deleteClick and update the store on taskDeleted", as
   })
 })
 
-it("should clear completed tasks on clearClick and update the store on tasksCleared", async () => {
+it("should clear completed tasks on completedClear and update the store on tasksCleared", async () => {
   const store = createStore({ types, autoCreateEntities: true })
 
-  await store.notify("clearClick")
+  await store.notify("completedClear")
 
   expect(store.getState()).toEqual({
     list: {

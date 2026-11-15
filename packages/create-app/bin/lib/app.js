@@ -93,7 +93,7 @@ export function addAppFeatures(targetDir, pkg, options) {
     [`${at.home}/index.${componentExt}`]: components.homeSource(app, model),
     [`${at.message}/index.${componentExt}`]: components.messageSource(app),
     [`src/store/index.${app.ext}`]: storeSource(app),
-    [`src/store/entities.${app.ext}`]: entitiesSource(app),
+    [`src/store/entities.${app.ext}`]: entitiesSource(app, model),
   }
   if (app.routing) {
     files[`${at.about}/index.${componentExt}`] = components.aboutSource(app)
@@ -203,7 +203,7 @@ function componentImport(app, names, from) {
     : line
 }
 
-function mainSource(app, { pages }) {
+function mainSource(app) {
   const imports = []
   if (app.ui) {
     imports.push(
@@ -223,47 +223,13 @@ function mainSource(app, { pages }) {
   )
   if (app.i18n) imports.push('import { ready } from "./i18n"')
   if (app.push) imports.push('import { supabase } from "./api/supabase"')
-  if (app.auth) {
-    imports.push(
-      'import { authAdapter } from "./api/auth"',
-      'import { watchAuth } from "@inglorious/web/auth"',
-    )
-  }
   if (app.hasPrompts) {
     imports.push('import { renderPrompts } from "./common/prompt"')
   }
-  if (app.nativeUpdate || app.appLinks || app.backButton) {
-    imports.push('import { App as NativeApp } from "@capacitor/app"')
-  }
   if (app.mobile) {
     imports.push(
-      'import { SystemBars } from "@capacitor/core"',
       'import { Haptics } from "@capacitor/haptics"',
       'import { haptics } from "@inglorious/web/device/haptics"',
-      'import { watchSystemBars } from "@inglorious/web/native/system-bars"',
-    )
-  }
-  if (app.ui || app.mobile) {
-    imports.push(
-      'import { watchKeyboard } from "@inglorious/web/device/keyboard"',
-    )
-  }
-  if (app.appLinks) {
-    imports.push(
-      'import { watchAppLinks } from "@inglorious/web/native/app-links"',
-    )
-  }
-  if (app.backButton) {
-    imports.push(
-      'import { watchBackButton } from "@inglorious/web/native/back-button"',
-    )
-  }
-  if (app.nativeUpdate) {
-    imports.push(
-      'import { LiveUpdate } from "@capawesome/capacitor-live-update"',
-      'import { liveUpdateManifestUrl } from "@inglorious/supabase"',
-      'import { watchLiveUpdate } from "@inglorious/web/native/live-update"',
-      'import { watchNativeUpdate } from "@inglorious/web/native/update"',
     )
   }
   if (app.gate && app.isTypeScript) {
@@ -296,60 +262,15 @@ supabase.auth.onAuthStateChange((_event, session) => {
 })`
     : ""
 
-  const auth = app.auth
+  const hapticsSetup = app.mobile
     ? `
 
-watchAuth(authAdapter, store)`
-    : ""
-
-  const keyboard =
-    app.ui || app.mobile
-      ? `
-
-watchKeyboard()`
-      : ""
-
-  const systemBars = app.mobile
-    ? `
-
-watchSystemBars(SystemBars)
 haptics.use(Haptics)`
-    : ""
-
-  const appLinks = app.appLinks
-    ? `
-
-watchAppLinks(NativeApp, store)`
-    : ""
-
-  const rootPaths = pages.map((page) => `"${page.path}"`).join(", ")
-  const backButton = app.backButton
-    ? `
-
-// Back from a top-level page closes the app, as on other Android apps.
-watchBackButton(NativeApp, { rootPaths: [${rootPaths}] })`
-    : ""
-
-  const nativeUpdate = app.nativeUpdate
-    ? `
-
-watchNativeUpdate(NativeApp, store)
-
-// Only release builds are stamped: a development build stays as it is.
-const release = Number(import.meta.env.VITE_LIVE_UPDATE_RELEASE)
-if (release) {
-  watchLiveUpdate({
-    plugin: LiveUpdate,
-    app: NativeApp,
-    manifestUrl: liveUpdateManifestUrl(import.meta.env.VITE_SUPABASE_URL),
-    release,
-  })
-}`
     : ""
 
   return `${importBlock(imports)}
 
-${body}${session}${auth}${keyboard}${systemBars}${appLinks}${backButton}${nativeUpdate}${app.gate ? renderAppSource(app) : ""}
+${body}${session}${hapticsSetup}${app.gate ? renderAppSource(app) : ""}
 `
 }
 
@@ -560,6 +481,38 @@ function storeSource(app) {
     )
   }
   if (app.i18n) imports.push('import { I18n } from "../i18n"')
+  if (app.ui || app.mobile) {
+    imports.push('import { Keyboard } from "@inglorious/web/device/keyboard"')
+  }
+  if (app.mobile) {
+    imports.push(
+      'import { SystemBars } from "@capacitor/core"',
+      'import { createSystemBars } from "@inglorious/web/native/system-bars"',
+    )
+  }
+  if (app.appLinks || app.backButton || app.nativeUpdate) {
+    imports.push('import { App as NativeApp } from "@capacitor/app"')
+  }
+  if (app.appLinks) {
+    imports.push(
+      'import { createAppLinks } from "@inglorious/web/native/app-links"',
+    )
+  }
+  if (app.backButton) {
+    imports.push(
+      'import { createBackButton } from "@inglorious/web/native/back-button"',
+    )
+  }
+  if (app.pwa) {
+    imports.push('import { createPwaUpdate } from "@inglorious/web/pwa"')
+  }
+  if (app.nativeUpdate) {
+    imports.push(
+      'import { LiveUpdate } from "@capawesome/capacitor-live-update"',
+      'import { liveUpdateManifestUrl } from "@inglorious/supabase"',
+      'import { createLiveUpdate } from "@inglorious/web/native/live-update"',
+    )
+  }
   if (app.analytics) {
     imports.push(
       `import { Analytics } from "${relative("src/store", app.layout.analytics)}"`,
@@ -590,6 +543,16 @@ function storeSource(app) {
   if (app.nativeUpdate) types.push("NativeUpdate")
   if (app.auth) types.push("Auth")
   if (app.ui) types.push("Toast")
+  if (app.ui || app.mobile) types.push("Keyboard")
+  if (app.mobile)
+    types.push("SystemBars: createSystemBars({ plugin: SystemBars })")
+  if (app.appLinks)
+    types.push("AppLinks: createAppLinks({ plugin: NativeApp })")
+  if (app.backButton) {
+    types.push("BackButton: createBackButton({ plugin: NativeApp })")
+  }
+  if (app.pwa) types.push("PwaUpdate: createPwaUpdate()")
+  if (app.nativeUpdate) types.push("LiveUpdate: LiveUpdateType")
   const oneLine = `  types: { ${types.join(", ")} },`
   const typesValue =
     oneLine.length <= LINE_WIDTH
@@ -598,13 +561,24 @@ function storeSource(app) {
 ${types.map((type) => `    ${type},`).join("\n")}
   },`
   const generics = app.isTypeScript ? "<AppEntity, AppState, AppEvents>" : ""
+  const liveUpdate = app.nativeUpdate
+    ? `
+// Only release builds are stamped: a development build must not update itself.
+const LiveUpdateType = createLiveUpdate({
+  plugin: LiveUpdate,
+  app: NativeApp,
+  manifestUrl: liveUpdateManifestUrl(import.meta.env.VITE_SUPABASE_URL),
+  release: Number(import.meta.env.VITE_LIVE_UPDATE_RELEASE),
+})
+`
+    : ""
 
   return `${importBlock(imports)}
-${app.routing ? "\nsetRoutes(routes)\n" : ""}
+${app.routing ? "\nsetRoutes(routes)\n" : ""}${liveUpdate}
 export const store = createStore${generics}({
 ${typesValue}
   entities,
-  middlewares: ${app.transitions ? "[withTransitions(), ...middlewares]" : "middlewares"},
+  middlewares,
   // Creates an entity for each type that has none: ${singletons(app).join(", ")}.
   autoCreateEntities: true,
 })
@@ -617,22 +591,32 @@ function singletons(app) {
   if (app.i18n) ids.push("i18n")
   if (app.analytics) ids.push("analytics")
   if (app.push) ids.push("pushPrompt")
-  if (app.nativeUpdate) ids.push("nativeUpdate")
+  if (app.nativeUpdate) ids.push("nativeUpdate", "liveUpdate")
   if (app.auth) ids.push("auth")
   if (app.ui) ids.push("toast")
+  if (app.ui || app.mobile) ids.push("keyboard")
+  if (app.mobile) ids.push("systemBars")
+  if (app.appLinks) ids.push("appLinks")
+  if (app.pwa) ids.push("pwaUpdate")
   return ids
 }
 
-function entitiesSource(app) {
+function entitiesSource(app, { pages }) {
   const head = app.isTypeScript
     ? `import type { AppState } from "../../types"
 
 export const entities: Partial<AppState> = {`
     : "export const entities = {"
+  const rootPaths = pages.map((page) => `"${page.path}"`).join(", ")
+  const backButton = app.backButton
+    ? `
+  // Back from a top-level page closes the app, as on other Android apps.
+  backButton: { type: "BackButton", rootPaths: [${rootPaths}] },`
+    : ""
   return `${head}
   message1: { type: "Message", who: "world" },
   message2: { type: "Message", who: "wide" },
-  message3: { type: "Message", who: "web" },
+  message3: { type: "Message", who: "web" },${backButton}
 }
 `
 }
@@ -812,6 +796,43 @@ function typesSource(app) {
 }`,
     )
     state.push("  toast: AppToastEntity")
+  }
+  const libraryTypes = [
+    app.ui || app.mobile
+      ? ["Keyboard", "@inglorious/web/device/keyboard", "keyboard"]
+      : null,
+    app.mobile
+      ? ["SystemBars", "@inglorious/web/native/system-bars", "systemBars"]
+      : null,
+    app.appLinks
+      ? ["AppLinks", "@inglorious/web/native/app-links", "appLinks"]
+      : null,
+    app.backButton
+      ? ["BackButton", "@inglorious/web/native/back-button", "backButton"]
+      : null,
+    app.pwa ? ["PwaUpdate", "@inglorious/web/pwa", "pwaUpdate"] : null,
+    app.nativeUpdate
+      ? ["LiveUpdate", "@inglorious/web/native/live-update", "liveUpdate"]
+      : null,
+  ].filter(Boolean)
+  for (const [name, from, id] of libraryTypes) {
+    const oneLine = `import type { ${name}Entity, ${name}Type } from "${from}"`
+    imports.push(
+      oneLine.length <= LINE_WIDTH
+        ? oneLine
+        : `import type {
+  ${name}Entity,
+  ${name}Type,
+} from "${from}"`,
+    )
+    eventTypes.push(`${name}Type`)
+    entities.push(`App${name}Entity`)
+    declarations.push(
+      `export interface App${name}Entity extends ${name}Entity {
+  type: "${name}"
+}`,
+    )
+    state.push(`  ${id}: App${name}Entity`)
   }
 
   return `${importBlock(imports)}

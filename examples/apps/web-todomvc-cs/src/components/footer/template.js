@@ -25,7 +25,7 @@ export const template = {
       <span class=${classes.filters}>
         <a
           class=${classMap({ [classes.selected]: entity.activeFilter === "all" })}
-          @click=${() => api.notify("filterClick", "all")}
+          @click=${() => api.notify("filterChange", "all")}
         >
           All
         </a>
@@ -33,7 +33,7 @@ export const template = {
           class=${classMap({
             [classes.selected]: entity.activeFilter === "active",
           })}
-          @click=${() => api.notify("filterClick", "active")}
+          @click=${() => api.notify("filterChange", "active")}
         >
           Active
         </a>
@@ -41,7 +41,7 @@ export const template = {
           class=${classMap({
             [classes.selected]: entity.activeFilter === "completed",
           })}
-          @click=${() => api.notify("filterClick", "completed")}
+          @click=${() => api.notify("filterChange", "completed")}
         >
           Completed
         </a>
@@ -49,7 +49,7 @@ export const template = {
 
       <a
         class=${classMap({ [classes.hidden]: !completedTasksCount })}
-        @click=${() => api.notify("clearClick")}
+        @click=${() => api.notify("completedClear")}
       >
         Clear Completed
       </a>

@@ -1,5 +1,5 @@
-/** What `watchBackButton` needs of `App` from `@capacitor/app`. */
-export interface BackButtonApp {
+/** What `createBackButton` needs of `App` from `@capacitor/app`. */
+export interface BackButtonPlugin {
   exitApp(): Promise<void>
   addListener(
     event: "backButton",
@@ -7,18 +7,28 @@ export interface BackButtonApp {
   ): Promise<{ remove(): Promise<void> }>
 }
 
-export interface WatchBackButtonOptions {
+export interface BackButtonConfig {
+  plugin: BackButtonPlugin
+}
+
+export interface BackButtonEntity {
+  id?: string
+  type: string
   /** The top-level paths, where back closes the app. Defaults to `["/"]`. */
-  rootPaths?: string[]
+  rootPaths: string[]
+}
+
+export type BackButtonType = {
+  create(entity: BackButtonEntity): void
+  destroy(entity: BackButtonEntity): void
+  /** Back in history, or closes the app on a root path or with no history left. */
+  backButtonPress(entity: BackButtonEntity, event: { canGoBack: boolean }): void
 }
 
 /**
- * Android's back button and back gesture: back in history, or closes the app
- * on a root path or when there is no history left. Does nothing outside a
- * native app.
- * @returns A function that stops listening.
+ * The type behind Android's back button and back gesture. Does nothing outside
+ * a native app.
  */
-export declare function watchBackButton(
-  app: BackButtonApp,
-  options?: WatchBackButtonOptions,
-): () => Promise<void>
+export declare function createBackButton(
+  config: BackButtonConfig,
+): BackButtonType

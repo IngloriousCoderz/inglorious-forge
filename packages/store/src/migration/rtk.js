@@ -356,7 +356,7 @@ export function createMigrationGuide(slice) {
   lines.push(`  const { someField } = api.getEntity('${slice.name}')`)
   lines.push("  // or")
   lines.push(
-    `  const data = useSelector(state => state.entities.${slice.name}.someField)`,
+    `  const data = useSelector(state => state.${slice.name}.someField)`,
   )
 
   return lines.join("\n")
