@@ -15,7 +15,8 @@
     "ci:version": "pnpm run build && pnpm run lint && pnpm run test && changeset version",
     "ci:publish": "changeset publish",
     "turbo:upgrade": "pnpm dlx @turbo/codemod migrate",
-    "verify:docs": "node scripts/verify-docs.mjs"
+    "verify:docs": "node scripts/verify-docs.mjs",
+    "skills:index": "node scripts/skills-index.mjs"
   },
   "devDependencies": {
     "@changesets/cli": "^3.0.3",

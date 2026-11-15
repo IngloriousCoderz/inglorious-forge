@@ -9,7 +9,7 @@ import prompts from "prompts"
 import { fileURLToPath } from "url"
 
 const INDENTATION = 2
-const SKILLS_REPOSITORY = "IngloriousCoderz/inglorious-forge"
+const SKILLS_SOURCE = "https://inglorious.dev"
 const SKILLS = [
   "forge",
   "forge-best-practices",
@@ -18,7 +18,7 @@ const SKILLS = [
   "engine",
   "engine-best-practices",
 ]
-const SKILLS_COMMAND = `pnpm dlx skills add ${SKILLS_REPOSITORY} --skill ${SKILLS.join(" ")}`
+const SKILLS_COMMAND = `pnpm dlx skills add ${SKILLS_SOURCE} --skill ${SKILLS.join(" ")}`
 
 async function main() {
   const __dirname = path.dirname(fileURLToPath(import.meta.url))

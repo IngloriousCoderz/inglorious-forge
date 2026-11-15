@@ -1,0 +1,165 @@
+{
+  "skills": [
+    {
+      "name": "app-recipe",
+      "description": "The recipe for building and shipping an Inglorious Forge app on Supabase - accounts, scaffolding choices, build order, local-first backend, database rules, deploy, store releases and docs. Load when starting a new app, or when deploying or releasing one.",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "charts",
+      "description": "@inglorious/charts: SVG charts driven by entity config or composed primitives, with realtime streaming.",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "create-app",
+      "description": "Scaffolding new Inglorious Web and SSX projects with create-app and its flags.",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "create-game",
+      "description": "Scaffolding new Inglorious Engine game projects with create-game.",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "engine",
+      "description": "@inglorious/engine: 2D game loop on @inglorious/store - y-up coordinates, anchors, update/deltaTime, pause/quit, scenes and mappings, images, sprites, audio, particles, collision, pooling, IngloriousScript.",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "engine-best-practices",
+      "description": "Testing Inglorious Engine games and renderers. Load when writing or fixing tests, or deciding what a game should do.",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "firebase",
+      "description": "@inglorious/firebase: firebasePush (FCM) for createPushPrompt and firebaseAnalytics for createAnalytics, in browser and Capacitor apps, consent first.",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "forge",
+      "description": "Entry point for the Inglorious Forge skills - routes a goal to the right skills, and when to choose Forge over other frameworks.",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "forge-best-practices",
+      "description": "Code style for Inglorious Forge and projects in its style - kebab-case paths, named numbers, exports before support functions, types in types/. Load when writing, moving, or reviewing such code.",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "i18n",
+      "description": "@inglorious/i18n: i18next for Inglorious Web with the locale in a store entity - translations, plurals, Intl formatting, markup via trans, content's own translations via localized.",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "openui",
+      "description": "@inglorious/openui: generative UI - a model answers in OpenUI Lang, rendered with Inglorious UI as it streams, held in a store entity, with forms, charts and Query/Mutation tools.",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "react-store",
+      "description": "React bindings for @inglorious/store (createReactStore, useNotify, useEntity, useSelector).",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "server",
+      "description": "@inglorious/server, a WebSocket multiplayer server with an authoritative store, and the client multiplayer middleware.",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "ssx",
+      "description": "@inglorious/ssx: file-based static generation, on-request SSR and hydration for Inglorious Web.",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "store",
+      "description": "@inglorious/store: entity-based, Redux-compatible state - types, events, handleRequest, handleAsync, optimistic, withStorage, fsm, scenes, systems, middlewares, testing, TypeScript, RTK migration.",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "supabase",
+      "description": "@inglorious/supabase: supabaseAuth for createAuth (passwords, email codes, reset, account erasure), realtimeSource for withLiveReload (entities reload when their tables change), createCaptcha for Auth's Turnstile, isNetworkError, supabaseNativeUpdate for mandatory native updates, publishLiveUpdate for signed live updates, and Edge Function helpers in /edge (CORS, errors, caller, IP, Resend, eraseUser).",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "ui",
+      "description": "@inglorious/ui: props-first components, Iconify icons, themes (Inglorious, Material UI, Material 3, Bootstrap, iOS 18/26) with light/dark, CSS tokens, page transitions.",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "ui-best-practices",
+      "description": "Prop naming and semantics for @inglorious/ui primitives.",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "utils",
+      "description": "@inglorious/utils: vectors, math, objects, arrays, functions, storage, algorithms and physics helpers.",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "vite-plugin-jsx",
+      "description": "Writing Inglorious Web templates in JSX/TSX with @inglorious/vite-plugin-jsx.",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "vite-plugin-vue",
+      "description": "Writing Inglorious Web types as Vue-like single-file templates with @inglorious/vite-plugin-vue.",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "web",
+      "description": "@inglorious/web: lit-html rendering over @inglorious/store - mount, api, directives, router, forms, device (sensors, geolocation, share, haptics, local notifications, biometrics, keyboard, storage), native app (app links, back button, system bars, store and live updates), PWA updates, sign-in, analytics, push, testing.",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "name": "web-best-practices",
+      "description": "Folder layout, component shape, styling and typing conventions for Inglorious Web apps and libraries.",
+      "files": [
+        "SKILL.md"
+      ]
+    }
+  ]
+}

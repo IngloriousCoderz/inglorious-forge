@@ -5,10 +5,10 @@ Agent skills for the Inglorious Forge packages: focused references that teach a 
 Install them in a project with the [skills CLI](https://skills.sh), or let `pnpm create @inglorious/app --skills` and `pnpm create @inglorious/game` do it:
 
 ```bash
-pnpm dlx skills add IngloriousCoderz/inglorious-forge
+pnpm dlx skills add https://inglorious.dev
 ```
 
-Start from [`forge`](forge/SKILL.md), which routes a goal to the smallest set of skills that covers it.
+That fetches only the skill files, which live in this folder and deploy with the rest of `inglorious.dev`. Installing from the repository, `IngloriousCoderz/inglorious-forge`, works too, but clones all of it.
 
 ## Skills
 
@@ -35,6 +35,10 @@ Start from [`forge`](forge/SKILL.md), which routes a goal to the smallest set of
 - [`vite-plugin-vue`](vite-plugin-vue/SKILL.md): Vue-like templates for Inglorious Web
 - [`create-app`](create-app/SKILL.md): app scaffolding
 - [`create-game`](create-game/SKILL.md): game scaffolding
+
+## Publishing
+
+A skill is published when it is pushed: the site serves this folder. `pnpm skills:index` rewrites the `index.json` the skills CLI reads, from each skill's frontmatter and files; run it after adding a skill or changing a description, since the verifier fails while the index is behind.
 
 ## Verifying
 

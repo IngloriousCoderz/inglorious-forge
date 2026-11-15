@@ -11,8 +11,9 @@ import { dirname, join, relative, resolve } from "node:path"
 import process from "node:process"
 import { fileURLToPath } from "node:url"
 
+import { SKILLS, SKILLS_INDEX, skillsIndex } from "./skills-index.mjs"
+
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..")
-const SKILLS = join(ROOT, "skills")
 const SKILLS_README = join(SKILLS, "README.md")
 
 const EXIT_PROBLEMS = 1
@@ -75,6 +76,12 @@ function checkSkills() {
     if (name !== skill) {
       fail(skill, `frontmatter name is "${name}", expected "${skill}"`)
     }
+    for (const field of unquotedSpecials(read(file))) {
+      fail(
+        skill,
+        `frontmatter "${field}" starts with a character YAML reserves: quote it`,
+      )
+    }
     if (/^<{7} |^>{7} /m.test(read(file))) {
       fail(skill, "contains a merge conflict marker")
     }
@@ -107,12 +114,19 @@ function checkSkills() {
     )
     for (const skill of skills) {
       if (!listed.has(skill)) {
-        fail("skills/README.md", `${skill}/SKILL.md is not listed`)
+        fail("agent-skills/README.md", `${skill}/SKILL.md is not listed`)
       }
     }
   }
 
-  const pages = [...files, { skill: "skills/README.md", file: SKILLS_README }]
+  if (!existsSync(SKILLS_INDEX) || read(SKILLS_INDEX) !== skillsIndex()) {
+    fail("index.json", "out of date: run pnpm skills:index")
+  }
+
+  const pages = [
+    ...files,
+    { skill: "agent-skills/README.md", file: SKILLS_README },
+  ]
   for (const { skill, file } of pages) {
     if (existsSync(file)) checkLinks(skill, file)
   }
@@ -138,6 +152,18 @@ function checkLinks(where, file) {
       fail(where, `anchor has no matching heading -> #${groups.anchor}`)
     }
   }
+}
+
+/**
+ * The frontmatter fields whose plain value starts with a character YAML
+ * reserves, which the skills CLI fails to parse and skips the skill for.
+ */
+function unquotedSpecials(text) {
+  const frontmatter = text.match(/^---\n(?<body>[\s\S]*?)\n---/)?.groups.body
+  if (!frontmatter) return []
+  return [...frontmatter.matchAll(/^(?<field>\w+):\s*(?<value>.+)$/gm)]
+    .filter(({ groups }) => /^[@`%&*!|>]/.test(groups.value))
+    .map(({ groups }) => groups.field)
 }
 
 /** A heading's id, as GitHub's slugger produces it. */

@@ -1,6 +1,6 @@
 import { execSync } from "child_process"
 
-const SKILLS_REPOSITORY = "IngloriousCoderz/inglorious-forge"
+const SKILLS_SOURCE = "https://inglorious.dev"
 
 /**
  * The agent skills for the packages a new project uses.
@@ -51,5 +51,5 @@ export function installSkills(targetDir, skills) {
 }
 
 export function skillsCommand(skills) {
-  return `pnpm dlx skills add ${SKILLS_REPOSITORY} --skill ${skills.join(" ")}`
+  return `pnpm dlx skills add ${SKILLS_SOURCE} --skill ${skills.join(" ")}`
 }

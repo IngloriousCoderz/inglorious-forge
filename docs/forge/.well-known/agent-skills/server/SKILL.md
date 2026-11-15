@@ -1,6 +1,6 @@
 ---
 name: server
-description: @inglorious/server, a WebSocket multiplayer server with an authoritative store, and the client multiplayer middleware.
+description: "@inglorious/server, a WebSocket multiplayer server with an authoritative store, and the client multiplayer middleware."
 ---
 
 # @inglorious/server

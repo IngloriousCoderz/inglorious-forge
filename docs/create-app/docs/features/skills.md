@@ -9,7 +9,7 @@ description: Skills that teach coding agents the framework's conventions
 | ----------------------------------- | -------------------------- |
 | Add agent skills for coding agents? | `--skills` / `--no-skills` |
 
-Saying yes runs the [skills CLI](https://skills.sh) in the new project. It asks which coding agents to install for (Claude Code, Codex and others), and installs the [Inglorious Forge skills](https://github.com/IngloriousCoderz/inglorious-forge/tree/main/skills) that match the project:
+Saying yes runs the [skills CLI](https://skills.sh) in the new project. It asks which coding agents to install for (Claude Code, Codex and others), and installs the [Inglorious Forge skills](https://github.com/IngloriousCoderz/inglorious-forge/tree/main/docs/forge/.well-known/agent-skills) that match the project:
 
 - always: `forge`, `forge-best-practices`, `app-recipe`, `store`, `web`, `web-best-practices`;
 - with SSX: `ssx`;

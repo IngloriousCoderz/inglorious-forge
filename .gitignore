@@ -80,8 +80,8 @@ lerna-debug.log*
 .windsurf/
 .zencoder/
 skills/
-# The repository's own skills, which the line above would hide.
-!/skills/
+# The skills published at inglorious.dev, which the line above would hide.
+!/docs/forge/.well-known/agent-skills/
 
 # VitePress
 **/.vitepress/.temp/

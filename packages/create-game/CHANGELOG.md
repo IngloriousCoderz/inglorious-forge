@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.2.2
+
+### Patch Changes
+
+- 81d8e6f: Install the agent skills from `https://inglorious.dev`, which serves only the skill files, published from the monorepo where they now live beside the packages they describe.
+
 ## 1.2.1
 
 ### Patch Changes
