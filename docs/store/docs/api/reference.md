@@ -187,7 +187,7 @@ same update write to is copied once more for the second, under either strategy.
   values in module scope or in a behavior factory closure instead of in the state.
 - Each entity a system reads through its first argument is copied, in case it is written to. A
   system that only needs to look should read from `api.getEntities()`.
-- The state is not frozen, even in `devMode`.
+- There is no proxy, so a write after an `await` lands on the state without an event. In `devMode` the entities each update copied are frozen, so it throws instead, at the cost of one extra pass over them.
 
 Never write to an entity obtained from `api.getEntity()`: mutate the entity passed to your
 handler, or notify the other entity. An unsupported strategy throws a `TypeError` when the
@@ -195,9 +195,9 @@ store is created.
 
 #### `devMode` (optional)
 
-With `true`, under structural sharing, the state is frozen, so a write to an entity a handler was not
-given, such as one read with `api.getEntity()`, throws an error that names the handler and says to
-notify that entity instead. A write in a render throws too. Keep it on in development:
+With `true`, the state is frozen, so a write to an entity a handler was not given, such as one read
+with `api.getEntity()`, throws an error that names the handler and says to notify that entity
+instead, and so does a write after an `await` under either strategy. A write in a render throws too. Keep it on in development:
 `devMode: import.meta.env.DEV`, as apps made with `create-app` do.
 
 A handler that throws, with this error or any other, rolls back the whole update, and the store keeps

@@ -56,7 +56,7 @@ const LIFECYCLE_EVENTS = ["create", "destroy"]
  * @param {boolean} [config.autoCreateEntities=false] - Creates an entity for each type that has none.
  * @param {"auto" | "manual"} [config.updateMode="auto"] - Whether each event triggers an update, or updates are batched until `update()` is called.
  * @param {UpdateStrategy} [config.updateStrategy="structural-sharing"] - How an event's changes are copied.
- * @param {boolean} [config.devMode=false] - Under structural sharing, freezes the state, so a write to an entity a handler was not given throws an error that says so.
+ * @param {boolean} [config.devMode=false] - Freezes the state, so a write to an entity a handler was not given, or one after an await, throws an error that says so.
  * @returns {Store} The store with methods to interact with state and events.
  * @throws {TypeError} If `updateStrategy` is not a supported strategy.
  */
@@ -146,6 +146,8 @@ export function createStore({
         const draft = copyOnDispatch(state)
         drain(draft)
         state = draft.entities
+        // Without a proxy, a late write would land on the state unseen.
+        if (devMode) draft.copied.forEach((id) => deepFreeze(state[id]))
       }
     } catch (error) {
       // The update is rolled back whole, and the events still queued with it.
@@ -426,7 +428,7 @@ export function createStore({
       }
     }
 
-    if (devMode && updateStrategy === STRUCTURAL_SHARING) deepFreeze(state)
+    if (devMode) deepFreeze(state)
   }
 
   /**
@@ -681,6 +683,7 @@ function writeThrough(entities) {
 function copyOnDispatch(state) {
   const entities = { ...state }
   const before = new Map()
+  const copied = new Set()
   let all = null
 
   function remember(id) {
@@ -691,6 +694,7 @@ function copyOnDispatch(state) {
     if (!before.has(id) && Object.hasOwn(entities, id)) {
       before.set(id, entities[id])
       entities[id] = clone(entities[id])
+      copied.add(id)
     }
 
     return entities[id]
@@ -699,6 +703,7 @@ function copyOnDispatch(state) {
   function put(id, entity) {
     remember(id)
     entities[id] = entity
+    copied.add(id)
   }
 
   function remove(id) {
@@ -727,6 +732,7 @@ function copyOnDispatch(state) {
   return {
     entities,
     forSystems,
+    copied,
     take,
     put,
     remove,
@@ -794,9 +800,10 @@ function explainLateAccess(result, typeName, handlerName) {
   if (typeof result?.then !== "function") return
 
   result.then(undefined, (error) => {
-    if (!(error instanceof TypeError) || !REVOKED.test(error.message)) {
-      throw error
-    }
+    const isLate =
+      error instanceof TypeError &&
+      (REVOKED.test(error.message) || FROZEN.test(error.message))
+    if (!isLate) throw error
 
     throw new TypeError(
       `${typeName}.${handlerName} accessed its entity after an async operation, when the update it belonged to had ended. Read what you need from the entity into a variable before the first await, or notify a new event after it and let that event's handler change the entity.`,

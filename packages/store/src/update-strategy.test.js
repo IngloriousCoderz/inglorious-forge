@@ -1,3 +1,5 @@
+import process from "node:process"
+
 import { describe, expect, test } from "vitest"
 
 import { createStore } from "./store.js"
@@ -209,6 +211,35 @@ describe("updateStrategy", () => {
     store.update()
 
     expect(Object.isFrozen(store.getState().counter)).toBe(true)
+  })
+
+  test("copy on dispatch freezes the copied entities in devMode", async () => {
+    const rejections = []
+    const onRejection = (error) => rejections.push(error)
+    process.on("unhandledRejection", onRejection)
+
+    const store = createStore({
+      types: {
+        Counter: {
+          async increment(entity) {
+            entity.count += 1
+            await Promise.resolve()
+            entity.count += 1
+          },
+        },
+      },
+      entities: { counter: { type: "Counter", count: 0 } },
+      updateStrategy: "copy-on-dispatch",
+      devMode: true,
+    })
+
+    store.notify("increment")
+    await new Promise((resolve) => setTimeout(resolve))
+    process.off("unhandledRejection", onRejection)
+
+    expect(store.getEntity("counter").count).toBe(1)
+    expect(Object.isFrozen(store.getEntity("counter"))).toBe(true)
+    expect(rejections[0].message).toMatch(/after an async operation/)
   })
 
   test("rejects an unsupported update strategy", () => {

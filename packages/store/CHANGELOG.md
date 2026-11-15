@@ -1,5 +1,11 @@
 # @inglorious/store
 
+## 12.9.0
+
+### Minor Changes
+
+- In `devMode`, `copy-on-dispatch` freezes the entities each update copied, so a write after an `await`, or to an entity read through the api, throws a clear error instead of changing the state without an event. Production pays nothing.
+
 ## 12.8.0
 
 ### Minor Changes
