@@ -22,9 +22,11 @@ export function fsm(states) {
 
             const handler = states[entity.state]?.[eventName] ?? type[eventName]
 
-            handler?.(entity, event, api)
+            const result = handler?.(entity, event, api)
 
             announce(entity, from, api)
+
+            return result
           },
         }),
         {},

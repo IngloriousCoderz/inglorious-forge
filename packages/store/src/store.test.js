@@ -1,3 +1,5 @@
+import process from "node:process"
+
 import { expect, test, vi } from "vitest"
 
 import { createStore, defineType } from "./store.js"
@@ -757,4 +759,79 @@ test("it should warn about a type that looks misspelled, and about an event noth
     '[store] "todoList:todoAdd" names a type that is not declared: did you mean "TodoList"?',
   ])
   warn.mockRestore()
+})
+
+test("it should explain an entity touched after an await", async () => {
+  const rejections = []
+  const onRejection = (error) => rejections.push(error)
+  process.on("unhandledRejection", onRejection)
+
+  const store = createStore({
+    types: {
+      Profile: {
+        async load(entity) {
+          await Promise.resolve()
+          entity.name = "Ada"
+        },
+      },
+    },
+    entities: { profile: { type: "Profile" } },
+  })
+  store.notify("#profile:load")
+  await new Promise((resolve) => setTimeout(resolve))
+  process.off("unhandledRejection", onRejection)
+
+  expect(rejections).toHaveLength(1)
+  expect(rejections[0].message).toMatch(
+    /^Profile\.load accessed its entity after an async operation/,
+  )
+  expect(rejections[0].cause.message).toMatch(/revoked/)
+})
+
+test("it should explain a write to another entity in dev mode", () => {
+  const types = {
+    Thief: {
+      steal(entity, _, api) {
+        api.getEntity("victim").gold = 0
+      },
+    },
+    Victim: {},
+  }
+  const entities = {
+    thief: { type: "Thief" },
+    victim: { type: "Victim", gold: 10 },
+  }
+
+  const store = createStore({ types, entities, devMode: true })
+  expect(() => store.notify("#thief:steal")).toThrow(
+    /^Thief\.steal wrote to an entity it was not given/,
+  )
+
+  expect(store.getEntity("victim").gold).toBe(10)
+
+  store.setState(entities)
+  expect(() => store.notify("#thief:steal")).toThrow(/not given/)
+})
+
+test("it should roll back an update whose handler throws, and keep working", () => {
+  const store = createStore({
+    types: {
+      Counter: {
+        increment(entity) {
+          entity.value++
+        },
+        explode(entity) {
+          entity.value = 100
+          throw new Error("boom")
+        },
+      },
+    },
+    entities: { counter: { type: "Counter", value: 0 } },
+  })
+
+  expect(() => store.notify("#counter:explode")).toThrow("boom")
+  expect(store.getEntity("counter").value).toBe(0)
+
+  store.notify("#counter:increment")
+  expect(store.getEntity("counter").value).toBe(1)
 })

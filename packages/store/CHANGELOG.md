@@ -1,5 +1,15 @@
 # @inglorious/store
 
+## 12.8.0
+
+### Minor Changes
+
+- In `devMode`, a handler that writes to an entity it was not given, such as one read with `api.getEntity()`, throws an error that names it and says to notify that entity instead; the initial state is frozen too. `compute` and `createSelector` are exported from `@inglorious/store`, as its types declared. A handler that throws rolls back its whole update and no longer leaves the store unable to process events. Apps made with `create-app` turn `devMode` on in development.
+
+### Patch Changes
+
+- An `async` handler that touches its entity after an `await` now fails with an error that names the handler and says what to do, with the browser's revoked-proxy error as its `cause`. `fsm` returns its handlers' results, so this works under state machines too.
+
 ## 12.7.0
 
 ### Minor Changes

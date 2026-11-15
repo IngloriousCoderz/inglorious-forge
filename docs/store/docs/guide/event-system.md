@@ -59,7 +59,7 @@ Handlers of the same broadcast event, then, should not depend on each other's wr
 
 The entity a handler is given is a draft of the current update, and so is everything read from it. The draft is revoked when the update ends, so:
 
-- write to the entity before the first `await`, and notify an event for what comes after;
+- write to the entity before the first `await`, and notify an event for what comes after; an `async` handler that touches its entity after one fails with an error that says so;
 - pass a draft in a payload only to handlers of the same update, which is what a chain of events is; anything read later, after an `await` or in a timer, gets a copy: `{ ...entity.values }` for flat values, deeper for nested ones.
 
 [`handleRequest`](../advanced/async-operations.md) keeps both rules for a request.

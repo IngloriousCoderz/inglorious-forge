@@ -22,7 +22,7 @@ Then, register the `logo` type in your store, create an entity of that type, and
 
 ```js
 import { createStore } from "@inglorious/store"
-import { logo } from "@inglorious/logo"
+import { Logo } from "@inglorious/logo"
 import "@inglorious/logo/style.css"
 
 const entities = {
@@ -39,7 +39,7 @@ const entities = {
 }
 
 const store = createStore({
-  types: { logo },
+  types: { Logo },
   entities,
 })
 

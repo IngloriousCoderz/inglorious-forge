@@ -195,9 +195,13 @@ store is created.
 
 #### `devMode` (optional)
 
-With `true`, under structural sharing, the state is frozen after each event, so a write outside a
-handler, such as to an entity read with `api.getEntity()` or in a render, throws instead of
-corrupting the state. Keep it on in development.
+With `true`, under structural sharing, the state is frozen, so a write to an entity a handler was not
+given, such as one read with `api.getEntity()`, throws an error that names the handler and says to
+notify that entity instead. A write in a render throws too. Keep it on in development:
+`devMode: import.meta.env.DEV`, as apps made with `create-app` do.
+
+A handler that throws, with this error or any other, rolls back the whole update, and the store keeps
+working.
 
 ## Store Methods
 

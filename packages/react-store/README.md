@@ -335,7 +335,7 @@ Full TypeScript support is available! The library includes complete type definit
 
 ```typescript
 // Define your types
-import { BaseEntity } from "@inglorious/store"
+import type { BaseEntity } from "@inglorious/store"
 
 interface CounterEntity extends BaseEntity {
   type: "Counter"

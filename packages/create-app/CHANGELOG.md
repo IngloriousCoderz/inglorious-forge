@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.26.1
+
+### Patch Changes
+
+- In `devMode`, a handler that writes to an entity it was not given, such as one read with `api.getEntity()`, throws an error that names it and says to notify that entity instead; the initial state is frozen too. `compute` and `createSelector` are exported from `@inglorious/store`, as its types declared. A handler that throws rolls back its whole update and no longer leaves the store unable to process events. Apps made with `create-app` turn `devMode` on in development.
+
 ## 1.26.0
 
 ### Minor Changes

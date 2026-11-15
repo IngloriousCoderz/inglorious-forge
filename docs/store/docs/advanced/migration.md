@@ -115,7 +115,9 @@ store.notify("todoToggle", 123)
 **Or in React components, use `@inglorious/react-store`:**
 
 ```javascript
-import { useNotify } from "@inglorious/react-store"
+import { createReactStore } from "@inglorious/react-store"
+
+export const { Provider, useNotify, useEntity } = createReactStore(store)
 
 export function TodoList() {
   const notify = useNotify()

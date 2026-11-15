@@ -11,7 +11,7 @@ The `Compass` type keeps device orientation and heading state in the store.
 
 ```javascript
 import { createStore } from "@inglorious/store"
-import { Compass } from "@inglorious/web/compass"
+import { Compass } from "@inglorious/web/device/compass"
 
 const store = createStore({
   types: { Compass },

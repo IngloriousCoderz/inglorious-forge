@@ -112,7 +112,7 @@ pnpm add @inglorious/web
 Create `src/types.ts`:
 
 ```typescript
-import { html, type API } from "@inglorious/web"
+import { html, type Api } from "@inglorious/web"
 
 export interface AppEntity {
   type: "App"
@@ -120,7 +120,7 @@ export interface AppEntity {
 }
 
 export const App = {
-  render(entity: AppEntity, api: API) {
+  render(entity: AppEntity, api: Api) {
     return html`<h1>${entity.message}</h1>`
   },
 }

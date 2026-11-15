@@ -9,6 +9,7 @@ import { createApi } from "./api.js"
 import { augmentEntities, augmentEntity } from "./entities.js"
 import { EventMap, parseEvent } from "./event-map.js"
 import { applyMiddlewares } from "./middlewares.js"
+import { compute, createSelector } from "./select.js"
 import { augmentType, augmentTypes } from "./types.js"
 
 /** Copies only the entities that change, through a draft proxy. */
@@ -18,6 +19,12 @@ const STRUCTURAL_SHARING = "structural-sharing"
 const COPY_ON_DISPATCH = "copy-on-dispatch"
 
 const UPDATE_STRATEGIES = [STRUCTURAL_SHARING, COPY_ON_DISPATCH]
+
+/** Every engine's message for touching a revoked proxy says "revoked". */
+const REVOKED = /revoked/i
+
+/** What engines say when code writes to a frozen object. */
+const FROZEN = /read[- ]only|not extensible|cannot (assign|delete|define)/i
 
 /** Events every entity gets, whether or not its type answers them. */
 const LIFECYCLE_EVENTS = ["create", "destroy"]
@@ -49,10 +56,12 @@ const LIFECYCLE_EVENTS = ["create", "destroy"]
  * @param {boolean} [config.autoCreateEntities=false] - Creates an entity for each type that has none.
  * @param {"auto" | "manual"} [config.updateMode="auto"] - Whether each event triggers an update, or updates are batched until `update()` is called.
  * @param {UpdateStrategy} [config.updateStrategy="structural-sharing"] - How an event's changes are copied.
- * @param {boolean} [config.devMode=false] - Freezes the state after each event under structural sharing, so a write outside a handler throws.
+ * @param {boolean} [config.devMode=false] - Under structural sharing, freezes the state, so a write to an entity a handler was not given throws an error that says so.
  * @returns {Store} The store with methods to interact with state and events.
  * @throws {TypeError} If `updateStrategy` is not a supported strategy.
  */
+export { compute, createSelector }
+
 export function createStore({
   types: originalTypes = {},
   entities: originalEntities = {},
@@ -128,18 +137,24 @@ export function createStore({
     isProcessing = true
     const processedEvents = []
 
-    if (updateStrategy === STRUCTURAL_SHARING) {
-      state = create(state, (root) => drain(writeThrough(root)), {
-        enableAutoFreeze: devMode,
-      })
-    } else {
-      const draft = copyOnDispatch(state)
-      drain(draft)
-      state = draft.entities
+    try {
+      if (updateStrategy === STRUCTURAL_SHARING) {
+        state = create(state, (root) => drain(writeThrough(root)), {
+          enableAutoFreeze: devMode,
+        })
+      } else {
+        const draft = copyOnDispatch(state)
+        drain(draft)
+        state = draft.entities
+      }
+    } catch (error) {
+      // The update is rolled back whole, and the events still queued with it.
+      incomingEvents = []
+      throw error
+    } finally {
+      activeDraft = null
+      isProcessing = false
     }
-
-    activeDraft = null
-    isProcessing = false
 
     isNotifying = true
     listeners.forEach((onUpdate) => onUpdate())
@@ -197,7 +212,14 @@ export function createStore({
       const entity = draft.entities[id]
       if (halted && !entity.updatesWhilePaused) continue
 
-      types[entity.type][handlerName]?.(draft.take(id), event.payload, api)
+      const handler = types[entity.type][handlerName]
+      if (!handler) continue
+
+      const result = callHandler(
+        () => handler(draft.take(id), event.payload, api),
+        `${entity.type}.${handlerName}`,
+      )
+      explainLateAccess(result, entity.type, handlerName)
     }
 
     if (handlerName === "destroy" && targetId) {
@@ -209,7 +231,11 @@ export function createStore({
     }
 
     systems.forEach((system) => {
-      system[handlerName]?.(draft.forSystems, event.payload, api)
+      if (!system[handlerName]) return
+      callHandler(
+        () => system[handlerName](draft.forSystems, event.payload, api),
+        `A system's ${handlerName}`,
+      )
     })
   }
 
@@ -227,6 +253,30 @@ export function createStore({
    * @param {any} payload - The event payload. Carries the least that can be had
    *   about what happened.
    */
+  /**
+   * Calls a handler. In dev mode, where the state is frozen, a write to a
+   * frozen object can only be a write to an entity the handler was not given,
+   * such as one read through the api: say so.
+   * @param {() => unknown} call - The handler, called.
+   * @param {string} name - Who the handler is, for the message.
+   * @returns {unknown} What the handler returned.
+   */
+  function callHandler(call, name) {
+    if (!devMode) return call()
+
+    try {
+      return call()
+    } catch (error) {
+      if (!(error instanceof TypeError) || !FROZEN.test(error.message)) {
+        throw error
+      }
+      throw new TypeError(
+        `${name} wrote to an entity it was not given, such as one read with api.getEntity() or api.getEntities(). Those are the state as the previous event left it, and are read-only: notify an event to that entity instead.`,
+        { cause: error },
+      )
+    }
+  }
+
   function notify(type, payload) {
     // Through store.dispatch rather than dispatch, so that middlewares see it.
     store.dispatch({ type, payload })
@@ -338,7 +388,7 @@ export function createStore({
       oldEntityIds.has(id),
     )
 
-    state = oldEntities
+    state = { ...oldEntities }
     eventMap = new EventMap(types, oldEntities)
     activeDraft = null
     incomingEvents = []
@@ -375,6 +425,8 @@ export function createStore({
         }
       }
     }
+
+    if (devMode && updateStrategy === STRUCTURAL_SHARING) deepFreeze(state)
   }
 
   /**
@@ -714,6 +766,43 @@ function overlay(entities, before) {
     else all[id] = entity
   }
   return all
+}
+
+/**
+ * Freezes an object and everything it holds.
+ * @param {unknown} value
+ * @returns {unknown} The value.
+ */
+function deepFreeze(value) {
+  if (value === null || typeof value !== "object" || Object.isFrozen(value)) {
+    return value
+  }
+  Object.freeze(value)
+  for (const child of Object.values(value)) deepFreeze(child)
+  return value
+}
+
+/**
+ * Gives a clearer error when an async handler touches its entity after an
+ * `await`: the entity is a draft of the update, revoked once the update ends.
+ * @param {unknown} result - What the handler returned.
+ * @param {string} typeName - The handler's type.
+ * @param {string} handlerName - The handler.
+ * @returns {void}
+ */
+function explainLateAccess(result, typeName, handlerName) {
+  if (typeof result?.then !== "function") return
+
+  result.then(undefined, (error) => {
+    if (!(error instanceof TypeError) || !REVOKED.test(error.message)) {
+      throw error
+    }
+
+    throw new TypeError(
+      `${typeName}.${handlerName} accessed its entity after an async operation, when the update it belonged to had ended. Read what you need from the entity into a variable before the first await, or notify a new event after it and let that event's handler change the entity.`,
+      { cause: error },
+    )
+  })
 }
 
 /**

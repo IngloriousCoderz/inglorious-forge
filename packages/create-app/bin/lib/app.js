@@ -581,6 +581,8 @@ ${typesValue}
   middlewares,
   // Creates an entity for each type that has none: ${singletons(app).join(", ")}.
   autoCreateEntities: true,
+  // Freezes the state in development, so a write outside a handler throws.
+  devMode: import.meta.env.DEV,
 })
 `
 }

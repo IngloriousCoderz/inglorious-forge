@@ -52,7 +52,7 @@ const AccountPage = {
 
 Two rules follow from the entity being a draft that lives until the update ends:
 
-- write to it before the first `await`, and notify an event for what comes after; [`handleRequest`](https://inglorious.dev/store/advanced/async-operations) does that for a request;
+- write to it before the first `await`, and notify an event for what comes after (an `async` handler that touches it later fails with an error that says so); [`handleRequest`](https://inglorious.dev/store/advanced/async-operations) does that for a request;
 - a draft in a payload is fine within the same update; anything read later, after an `await` or in a timer, gets a copy.
 
 ## Lifecycle
