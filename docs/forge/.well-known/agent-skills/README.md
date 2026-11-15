@@ -42,4 +42,4 @@ A skill is published when it is pushed: the site serves this folder. `pnpm skill
 
 ## Verifying
 
-`node scripts/verify-docs.mjs`, run by `pnpm lint`, checks the skills' frontmatter, links and anchors, that every skill is listed here and in `skills.sh.json`, and that every `@inglorious/*` import in the skills, the docs sites and the package READMEs resolves and exports the names it uses. A change to a package's API and its skill land in the same commit.
+`node scripts/verify-docs.mjs`, run by `pnpm lint`, checks the skills' frontmatter, links and anchors, that every skill is listed here and the index is current, and that every `@inglorious/*` import in the skills, the docs sites and the package READMEs resolves and exports the names it uses. A change to a package's API and its skill land in the same commit.

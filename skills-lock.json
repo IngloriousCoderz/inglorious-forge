@@ -2,136 +2,165 @@
   "version": 2,
   "skills": {
     "app-recipe": {
-      "source": "IngloriousCoderz/forge-skills",
-      "sourceType": "github",
-      "skillPath": "skills/app-recipe/SKILL.md",
-      "computedHash": "f0e9ca70455a1451d30cb053d06b9022ee285cf91d5502b067240ea2df4fc4ca"
+      "source": "inglorious.dev",
+      "sourceUrl": "https://inglorious.dev",
+      "sourceType": "well-known",
+      "computedHash": "f0e9ca70455a1451d30cb053d06b9022ee285cf91d5502b067240ea2df4fc4ca",
+      "wellKnownDigest": "sha256:28f8aa28522e7bef221d2a0ddbbb871d57de516a64e464e7813cf85de72d34cc"
     },
     "charts": {
-      "source": "IngloriousCoderz/forge-skills",
-      "sourceType": "github",
-      "skillPath": "skills/charts/SKILL.md",
-      "computedHash": "afd08402155c9050859ed6232fb74498ca97aced6856981d6f8dc6067e577b24"
+      "source": "inglorious.dev",
+      "sourceUrl": "https://inglorious.dev",
+      "sourceType": "well-known",
+      "computedHash": "afd08402155c9050859ed6232fb74498ca97aced6856981d6f8dc6067e577b24",
+      "wellKnownDigest": "sha256:58e812746187588362ea2eff0ce8c952e8d45592b4c73a38eb2017827ff87695"
     },
     "create-app": {
-      "source": "IngloriousCoderz/forge-skills",
-      "sourceType": "github",
-      "skillPath": "skills/create-app/SKILL.md",
-      "computedHash": "0acfd1b52d8641b9cc5abe68b162f18c744a3dd06be925ba82658285a237b73b"
+      "source": "inglorious.dev",
+      "sourceUrl": "https://inglorious.dev",
+      "sourceType": "well-known",
+      "computedHash": "0acfd1b52d8641b9cc5abe68b162f18c744a3dd06be925ba82658285a237b73b",
+      "wellKnownDigest": "sha256:b1fe25c0d1586e5e7bd66208d4b66406c4dca34df7f28b917bca985dbae80361"
     },
     "create-game": {
-      "source": "IngloriousCoderz/forge-skills",
-      "sourceType": "github",
-      "skillPath": "skills/create-game/SKILL.md",
-      "computedHash": "ff8afdcb50ee252737226c55a868e42efc3c81ed95b9a5f02e4858e2d4d0e1ca"
+      "source": "inglorious.dev",
+      "sourceUrl": "https://inglorious.dev",
+      "sourceType": "well-known",
+      "computedHash": "ff8afdcb50ee252737226c55a868e42efc3c81ed95b9a5f02e4858e2d4d0e1ca",
+      "wellKnownDigest": "sha256:b47c183e5857e3af3a0131166e1f8be445ba6b6fb748daa760281215e6679bd2"
     },
     "engine": {
-      "source": "IngloriousCoderz/forge-skills",
-      "sourceType": "github",
-      "skillPath": "skills/engine/SKILL.md",
-      "computedHash": "b5ddbea2a2e505b97921dbb56b2eb869ca0abd1e13e0540ebb6d793ed30a8255"
+      "source": "inglorious.dev",
+      "sourceUrl": "https://inglorious.dev",
+      "sourceType": "well-known",
+      "computedHash": "b5ddbea2a2e505b97921dbb56b2eb869ca0abd1e13e0540ebb6d793ed30a8255",
+      "wellKnownDigest": "sha256:53d0b64c4e2f9589fb30813307ee43ece763ca902e7975ebcd3c6ad3af6d772a"
     },
     "engine-best-practices": {
-      "source": "IngloriousCoderz/forge-skills",
-      "sourceType": "github",
-      "skillPath": "skills/engine-best-practices/SKILL.md",
-      "computedHash": "1aa23c2b4094f277d71c978dd824ac34c9867f0d85c8bc0eff7a880da0ea65ed"
+      "source": "inglorious.dev",
+      "sourceUrl": "https://inglorious.dev",
+      "sourceType": "well-known",
+      "computedHash": "1aa23c2b4094f277d71c978dd824ac34c9867f0d85c8bc0eff7a880da0ea65ed",
+      "wellKnownDigest": "sha256:85578d233e77fd4b8887f682c537fa0c6e336ca729f1e560c7a357b21683d284"
     },
     "firebase": {
-      "source": "IngloriousCoderz/forge-skills",
-      "sourceType": "github",
-      "skillPath": "skills/firebase/SKILL.md",
-      "computedHash": "1bfc44ca22be450c882ce79d9a641cd0cef2b8034ab9877d977af16ee85d61b8"
+      "source": "inglorious.dev",
+      "sourceUrl": "https://inglorious.dev",
+      "sourceType": "well-known",
+      "computedHash": "1bfc44ca22be450c882ce79d9a641cd0cef2b8034ab9877d977af16ee85d61b8",
+      "wellKnownDigest": "sha256:b7f2b39def51a91abdccbbdda68b50075f0108d6cdbc7127cb50f8155639ed60"
     },
     "forge": {
-      "source": "IngloriousCoderz/forge-skills",
-      "sourceType": "github",
-      "skillPath": "skills/forge/SKILL.md",
-      "computedHash": "b69e3fd2dbcd2e7faaab572426c1d61c38c201dfe0f725eb085672fef54f1a9e"
+      "source": "inglorious.dev",
+      "sourceUrl": "https://inglorious.dev",
+      "sourceType": "well-known",
+      "computedHash": "b69e3fd2dbcd2e7faaab572426c1d61c38c201dfe0f725eb085672fef54f1a9e",
+      "wellKnownDigest": "sha256:20dbced8522ad06f97718f362093cd342456828f491b65ea6ba404c1554a1212"
     },
     "forge-best-practices": {
-      "source": "IngloriousCoderz/forge-skills",
-      "sourceType": "github",
-      "skillPath": "skills/forge-best-practices/SKILL.md",
-      "computedHash": "2d371e1f16adb142944db4f758e2b8a871978d1c5e3ebc7c65ceaaa53d6a9ae8"
+      "source": "inglorious.dev",
+      "sourceUrl": "https://inglorious.dev",
+      "sourceType": "well-known",
+      "computedHash": "2d371e1f16adb142944db4f758e2b8a871978d1c5e3ebc7c65ceaaa53d6a9ae8",
+      "wellKnownDigest": "sha256:23aa891e8c9dc2bc921159f4f958efa29fe516a2db10483e02454d19f16b4e65"
     },
     "i18n": {
-      "source": "IngloriousCoderz/forge-skills",
-      "sourceType": "github",
-      "skillPath": "skills/i18n/SKILL.md",
-      "computedHash": "ef0a6f653bce2f812d0b5701b33b8a9a2ff8a27101ea9444318cc50ef86a345a"
+      "source": "inglorious.dev",
+      "sourceUrl": "https://inglorious.dev",
+      "sourceType": "well-known",
+      "computedHash": "ef0a6f653bce2f812d0b5701b33b8a9a2ff8a27101ea9444318cc50ef86a345a",
+      "wellKnownDigest": "sha256:7ced80fda82fa2098f43f8667c08efab2e1e307a8051eee27667e7923189ecfe"
     },
     "openui": {
-      "source": "IngloriousCoderz/forge-skills",
-      "sourceType": "github",
-      "skillPath": "skills/openui/SKILL.md",
-      "computedHash": "85eab6e5274ccf9661d790191dca70f5e995685e92d0ab15e148f9384058c197"
+      "source": "inglorious.dev",
+      "sourceUrl": "https://inglorious.dev",
+      "sourceType": "well-known",
+      "computedHash": "85eab6e5274ccf9661d790191dca70f5e995685e92d0ab15e148f9384058c197",
+      "wellKnownDigest": "sha256:355b373f6c7036b0eb80b748b644be8a5dfebaacb5285acccf6a570912d0df7b"
     },
     "react-store": {
-      "source": "IngloriousCoderz/forge-skills",
-      "sourceType": "github",
-      "skillPath": "skills/react-store/SKILL.md",
-      "computedHash": "b1b4c45974b64a4f846a197fab33cfe60e37db984d1b298851b35dd95902ce37"
+      "source": "inglorious.dev",
+      "sourceUrl": "https://inglorious.dev",
+      "sourceType": "well-known",
+      "computedHash": "b1b4c45974b64a4f846a197fab33cfe60e37db984d1b298851b35dd95902ce37",
+      "wellKnownDigest": "sha256:229b6bf8db3a208d9df234b82eb791a08bc837643958ae8ccaa152902361963c"
+    },
+    "server": {
+      "source": "inglorious.dev",
+      "sourceUrl": "https://inglorious.dev",
+      "sourceType": "well-known",
+      "computedHash": "098825ab81c244448fd22bb6e431760a1ed68de5409583bc3620c0ee912915cd",
+      "wellKnownDigest": "sha256:afeaa46f7895a72fb5c2b19f8c3ec1d2f3a6d36ccb651995e59b84512c619fa9"
     },
     "ssx": {
-      "source": "IngloriousCoderz/forge-skills",
-      "sourceType": "github",
-      "skillPath": "skills/ssx/SKILL.md",
-      "computedHash": "2bde1ca57d13bbffcc2f2d840dc9bfc0b2dd22de69923bbce0d16bec7461c01c"
+      "source": "inglorious.dev",
+      "sourceUrl": "https://inglorious.dev",
+      "sourceType": "well-known",
+      "computedHash": "2bde1ca57d13bbffcc2f2d840dc9bfc0b2dd22de69923bbce0d16bec7461c01c",
+      "wellKnownDigest": "sha256:be85e80ab2b2c56668fdce162338b4a0ca2d807f83ad9844c19f463fa5fe878c"
     },
     "store": {
-      "source": "IngloriousCoderz/forge-skills",
-      "sourceType": "github",
-      "skillPath": "skills/store/SKILL.md",
-      "computedHash": "dad1de3cc063c8de9126f67994f3f843102ddc325fcbd542941c36a38c66b6d1"
+      "source": "inglorious.dev",
+      "sourceUrl": "https://inglorious.dev",
+      "sourceType": "well-known",
+      "computedHash": "dad1de3cc063c8de9126f67994f3f843102ddc325fcbd542941c36a38c66b6d1",
+      "wellKnownDigest": "sha256:63cb5711d4d177cb226c8b107742e0514f9872edbacfc966ff5ae72d8946c898"
     },
     "supabase": {
-      "source": "IngloriousCoderz/forge-skills",
-      "sourceType": "github",
-      "skillPath": "skills/supabase/SKILL.md",
-      "computedHash": "3a6e204f192a65e8ce84a1197140e8d5af76d3002cc22180925d12f0bdc2e800"
+      "source": "inglorious.dev",
+      "sourceUrl": "https://inglorious.dev",
+      "sourceType": "well-known",
+      "computedHash": "3a6e204f192a65e8ce84a1197140e8d5af76d3002cc22180925d12f0bdc2e800",
+      "wellKnownDigest": "sha256:78b63f85ce3cfb44e14059a62fd6a5ba10efcdbac448a40b04e0689c2e4bde89"
     },
     "ui": {
-      "source": "IngloriousCoderz/forge-skills",
-      "sourceType": "github",
-      "skillPath": "skills/ui/SKILL.md",
-      "computedHash": "41d8b294636200b014cba6f9033b02457885a5892e550ad6a5400a40a8583a0a"
+      "source": "inglorious.dev",
+      "sourceUrl": "https://inglorious.dev",
+      "sourceType": "well-known",
+      "computedHash": "41d8b294636200b014cba6f9033b02457885a5892e550ad6a5400a40a8583a0a",
+      "wellKnownDigest": "sha256:9b4fc3107b47c3f751a7975cfeba370ade9354c62b06a72109198b4c38846462"
     },
     "ui-best-practices": {
-      "source": "IngloriousCoderz/forge-skills",
-      "sourceType": "github",
-      "skillPath": "skills/ui-best-practices/SKILL.md",
-      "computedHash": "57b55ccefa5d059a0322c9a452ef2a1894bc8a6ca8556c3070714c95de5ba42b"
+      "source": "inglorious.dev",
+      "sourceUrl": "https://inglorious.dev",
+      "sourceType": "well-known",
+      "computedHash": "57b55ccefa5d059a0322c9a452ef2a1894bc8a6ca8556c3070714c95de5ba42b",
+      "wellKnownDigest": "sha256:cc8d963f289fa43292905691efa284eebb373bd34767e30bf18b2b427cbb489d"
     },
     "utils": {
-      "source": "IngloriousCoderz/forge-skills",
-      "sourceType": "github",
-      "skillPath": "skills/utils/SKILL.md",
-      "computedHash": "6d865c960ce594a59ffcadd843593727a7f6bca23a83acc303477620757ae271"
+      "source": "inglorious.dev",
+      "sourceUrl": "https://inglorious.dev",
+      "sourceType": "well-known",
+      "computedHash": "6d865c960ce594a59ffcadd843593727a7f6bca23a83acc303477620757ae271",
+      "wellKnownDigest": "sha256:50f136c7e7f8b0d29b438a02421408b8f4b50dba1f47f2d09f5fd589c8c1252b"
     },
     "vite-plugin-jsx": {
-      "source": "IngloriousCoderz/forge-skills",
-      "sourceType": "github",
-      "skillPath": "skills/vite-plugin-jsx/SKILL.md",
-      "computedHash": "5c124335d3848ca98b7017f3149d0ad8860bec0f3d9cb02689d632a3264d1cdd"
+      "source": "inglorious.dev",
+      "sourceUrl": "https://inglorious.dev",
+      "sourceType": "well-known",
+      "computedHash": "5c124335d3848ca98b7017f3149d0ad8860bec0f3d9cb02689d632a3264d1cdd",
+      "wellKnownDigest": "sha256:d744f68185e7ee512cead52b09a9aef8163b1f78a33e8d64552c4364eb0a586d"
     },
     "vite-plugin-vue": {
-      "source": "IngloriousCoderz/forge-skills",
-      "sourceType": "github",
-      "skillPath": "skills/vite-plugin-vue/SKILL.md",
-      "computedHash": "a1001352ee6a66afd883dcc44613a24104869d473783e1f39b46ca37943c26a9"
+      "source": "inglorious.dev",
+      "sourceUrl": "https://inglorious.dev",
+      "sourceType": "well-known",
+      "computedHash": "a1001352ee6a66afd883dcc44613a24104869d473783e1f39b46ca37943c26a9",
+      "wellKnownDigest": "sha256:06929d4179358e2812653534277b62df8ab0ce602b274a3d52513bf66d478f72"
     },
     "web": {
-      "source": "IngloriousCoderz/forge-skills",
-      "sourceType": "github",
-      "skillPath": "skills/web/SKILL.md",
-      "computedHash": "13aa613926da662207dabef2163065a568abb828da65b5ed82049745894800d3"
+      "source": "inglorious.dev",
+      "sourceUrl": "https://inglorious.dev",
+      "sourceType": "well-known",
+      "computedHash": "13aa613926da662207dabef2163065a568abb828da65b5ed82049745894800d3",
+      "wellKnownDigest": "sha256:7582b78fc8399296467cf4c4898c324087afc8bdd74a5321bb5f208bbb00f61f"
     },
     "web-best-practices": {
-      "source": "IngloriousCoderz/forge-skills",
-      "sourceType": "github",
-      "skillPath": "skills/web-best-practices/SKILL.md",
-      "computedHash": "4e9a79cc259f95463c35824d2318d5dc004dd429aea64c19a4e788e4817c2c53"
+      "source": "inglorious.dev",
+      "sourceUrl": "https://inglorious.dev",
+      "sourceType": "well-known",
+      "computedHash": "4e9a79cc259f95463c35824d2318d5dc004dd429aea64c19a4e788e4817c2c53",
+      "wellKnownDigest": "sha256:6a96b54b4bfa48d42323537703ae788c92fb10c39e0ce4d4469cbbcac824f815"
     }
   }
 }

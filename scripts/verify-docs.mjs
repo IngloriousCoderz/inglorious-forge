@@ -87,25 +87,6 @@ function checkSkills() {
     }
   }
 
-  const groupings = join(ROOT, "skills.sh.json")
-  if (existsSync(groupings)) {
-    const grouped = new Set(
-      JSON.parse(read(groupings)).groupings?.flatMap(
-        (grouping) => grouping.skills ?? [],
-      ) ?? [],
-    )
-    for (const skill of skills) {
-      if (!grouped.has(skill)) {
-        fail("skills.sh.json", `"${skill}" is not listed in any grouping`)
-      }
-    }
-    for (const skill of grouped) {
-      if (!skills.includes(skill)) {
-        fail("skills.sh.json", `"${skill}" is listed but has no SKILL.md`)
-      }
-    }
-  }
-
   if (existsSync(SKILLS_README)) {
     const listed = new Set(
       [
