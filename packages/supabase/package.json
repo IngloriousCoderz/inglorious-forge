@@ -58,7 +58,7 @@
   "devDependencies": {
     "@inglorious/eslint-config": "workspace:*",
     "@supabase/supabase-js": "^2.119.0",
-    "prettier": "^3.9.10",
+    "prettier": "^3.10.0",
     "vitest": "^5.1.0"
   },
   "packageManager": "pnpm@12.15.0",

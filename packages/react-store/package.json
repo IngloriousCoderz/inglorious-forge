@@ -52,7 +52,7 @@
   },
   "devDependencies": {
     "@inglorious/eslint-config": "workspace:*",
-    "prettier": "^3.9.10",
+    "prettier": "^3.10.0",
     "vite": "^8.3.8"
   },
   "packageManager": "pnpm@12.15.0",
