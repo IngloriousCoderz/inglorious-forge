@@ -1,2 +1,2 @@
 #!/bin/sh
-pnpm test
+pnpm test && node scripts/verify-docs.mjs
