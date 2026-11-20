@@ -102,7 +102,7 @@ export const authAdapter = supabaseAuth(supabase, { captcha })
 - **Codes**: sign-up confirmations, sign-in codes and password resets all take the 6-digit `{{ .Token }}` of Supabase's email templates. Put it in the Confirm signup, Magic Link and Reset Password templates.
 - **CAPTCHA**: with `captcha`, every call that signs in or sends an email carries a Turnstile token, and the challenge of the next step starts as soon as the email check knows it. Without a site key, no CAPTCHA is asked.
 - **Links**: `verifyLink` signs in with an email's `{{ .TokenHash }}`, for templates that offer a link next to the code.
-- **The session**: `onSessionChange` reads the session after every Auth event, so a late event never brings back a session that is gone.
+- **The session**: `onSessionChange` reads the session after every Auth event, so a late event never brings back a session that is gone. A session restored from storage is checked with the server before its user is reported: if the account was erased since, on another device or by resetting a local backend, the app signs out instead of sending requests nobody can answer. Offline, the session stays.
 - **Errors**: `errorCode` turns Supabase's error codes into the keys `createAuth` expects, network failures and CAPTCHA refusals included.
 
 ### Options

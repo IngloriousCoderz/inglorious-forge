@@ -1,5 +1,11 @@
 # @inglorious/supabase
 
+## 0.13.2
+
+### Patch Changes
+
+- `supabaseAuth` checks a restored session with the server before reporting its user: a session whose account was erased since, on another device or by resetting a local backend, is signed out locally instead of failing every request. A network failure keeps the session.
+
 ## 0.13.1
 
 ### Patch Changes

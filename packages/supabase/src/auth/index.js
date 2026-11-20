@@ -2,6 +2,9 @@ import { isCaptchaError } from "../captcha/index.js"
 import { isNetworkError } from "../errors/index.js"
 
 const DEFAULT_ERASE_FUNCTION = "erase-account"
+// What Supabase Auth answers for a session whose account or session no
+// longer exists, as opposed to a network failure.
+const GONE_CODES = new Set(["user_not_found", "session_not_found"])
 const ERROR_CODES = {
   invalid_credentials: "invalidCredentials",
   email_not_confirmed: "emailNotConfirmed",
@@ -73,11 +76,28 @@ export function supabaseAuth(
     // Deferred, since Supabase locks up on auth calls inside the callback.
     onSessionChange(listener) {
       let isStopped = false
+      // A session restored at launch is only read from storage: its account
+      // may have been erased since, from another device or by a reset
+      // backend. Before a session's user is first reported, the server is
+      // asked, once per access token (so about once an hour); offline, the
+      // session stays.
+      let check
       const { data } = auth.onAuthStateChange(() => {
         setTimeout(async () => {
           if (isStopped) return
           const { data: current } = await auth.getSession()
-          if (!isStopped) listener(current.session?.user ?? null)
+          let user = current.session?.user ?? null
+          if (user) {
+            const token = current.session.access_token
+            if (!check || check.token !== token) {
+              check = { token, isGone: isGone(auth) }
+            }
+            if (await check.isGone) {
+              await auth.signOut({ scope: "local" })
+              user = null
+            }
+          }
+          if (!isStopped) listener(user)
         })
       })
       return () => {
@@ -189,4 +209,9 @@ async function check(call) {
   const result = await call
   if (result.error) throw result.error
   return result
+}
+
+async function isGone(auth) {
+  const { error } = await auth.getUser()
+  return GONE_CODES.has(error?.code)
 }

@@ -19,6 +19,7 @@ function fakeClient() {
       resetPasswordForEmail: ok(),
       updateUser: ok({ user: USER }),
       signOut: ok(),
+      getUser: ok({ user: USER }),
     },
     functions: { invoke: ok({ exists: true }) },
   }
@@ -51,6 +52,63 @@ describe("supabaseAuth", () => {
 
     expect(listener.mock.calls).toEqual([[USER], [null]])
     expect(unsubscribe).toHaveBeenCalled()
+  })
+
+  describe("a session restored at launch", () => {
+    async function restore(getUserAnswer) {
+      const client = fakeClient()
+      let emit
+      client.auth.onAuthStateChange.mockImplementation((callback) => {
+        emit = callback
+        return { data: { subscription: { unsubscribe: vi.fn() } } }
+      })
+      client.auth.getSession = vi.fn(async () => ({
+        data: { session: { user: USER } },
+      }))
+      client.auth.getUser = vi.fn(async () => getUserAnswer)
+      const listener = vi.fn()
+
+      supabaseAuth(client).onSessionChange(listener)
+      // supabase-js announces a restored session as SIGNED_IN, then
+      // INITIAL_SESSION: neither may report a user that is gone.
+      emit("SIGNED_IN", { user: USER })
+      emit("INITIAL_SESSION", { user: USER })
+      await new Promise((resolve) => setTimeout(resolve))
+      await new Promise((resolve) => setTimeout(resolve))
+      return { client, listener }
+    }
+
+    it("signs out when its account no longer exists", async () => {
+      const { client, listener } = await restore({
+        data: { user: null },
+        error: { code: "user_not_found", status: 403 },
+      })
+
+      expect(client.auth.signOut).toHaveBeenCalledWith({ scope: "local" })
+      expect(client.auth.getUser).toHaveBeenCalledTimes(1)
+      expect(listener).not.toHaveBeenCalledWith(USER)
+      expect(listener).toHaveBeenCalledWith(null)
+    })
+
+    it("keeps a valid one", async () => {
+      const { client, listener } = await restore({
+        data: { user: USER },
+        error: null,
+      })
+
+      expect(client.auth.signOut).not.toHaveBeenCalled()
+      expect(listener).toHaveBeenCalledWith(USER)
+    })
+
+    it("keeps it offline, when the server can't answer", async () => {
+      const { client, listener } = await restore({
+        data: { user: null },
+        error: { name: "AuthRetryableFetchError", status: 0 },
+      })
+
+      expect(client.auth.signOut).not.toHaveBeenCalled()
+      expect(listener).toHaveBeenCalledWith(USER)
+    })
   })
 
   it("passes a CAPTCHA token with every call that sends email or signs in", async () => {
