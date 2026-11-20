@@ -53,6 +53,22 @@ It says that a table changed, not how. Under RLS, a delete carries only the row'
 
 `realtimeSource(client, { schema })`: `schema` defaults to `"public"`.
 
+## Reaching a local backend from a phone
+
+On a phone, `127.0.0.1` is the phone itself. `backendUrl` gives the backend's address as the page can reach it: when the app comes from a computer's dev server over the network, as with `cap run --live-reload` or `vite --host`, a local Supabase is reached at that computer's address. A hosted backend is left alone.
+
+```js
+import { backendUrl } from "@inglorious/supabase"
+import { createClient } from "@supabase/supabase-js"
+
+export const supabase = createClient(
+  backendUrl(import.meta.env.VITE_SUPABASE_URL),
+  import.meta.env.VITE_SUPABASE_ANON_KEY,
+)
+```
+
+`backendUrl(url, pageHost)`: `pageHost` defaults to `location.hostname`.
+
 ## Network errors
 
 `isNetworkError(error)` tells a call that never reached the server from one the server refused. Each client reports it differently: PostgREST returns `{ message: "TypeError: Failed to fetch" }` (worded differently in every browser), Functions throws `FunctionsFetchError`, Auth `AuthRetryableFetchError`, and Storage wraps the failure in `originalError`.

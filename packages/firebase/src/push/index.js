@@ -1,6 +1,6 @@
 import { FirebaseMessaging } from "@capacitor-firebase/messaging"
 
-import { IS_WEB, PLATFORM, startFirebase } from "../app.js"
+import { IS_WEB, isConfigured, PLATFORM, startFirebase } from "../app.js"
 
 const DEFAULT_TOKEN_KEY = "inglorious-push-token"
 
@@ -14,6 +14,9 @@ const DEFAULT_TOKEN_KEY = "inglorious-push-token"
  * `navigator.serviceWorker.ready` gives), as Web Push carrying FCM's JSON;
  * showing them and their taps is that worker's. In the native apps the
  * system shows them, and `onTap` hears the tap.
+ *
+ * In a browser without the web app's config or the VAPID key, pushes are
+ * unsupported: the prompt never shows, and Firebase never starts.
  *
  * @param {Object} config
  * @param {import("firebase/app").FirebaseOptions} config.firebase - The web
@@ -39,6 +42,7 @@ export function firebasePush({
 
   return {
     async isSupported() {
+      if (!isConfigured(firebase) || (IS_WEB && !vapidKey)) return false
       const { isSupported } = await messaging().isSupported()
       return isSupported
     },

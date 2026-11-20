@@ -81,3 +81,5 @@ const adapter = {
 ```
 
 An adapter whose library already counts history changes as page views, as Google Analytics does in a browser, can leave `pageView` empty. A failing adapter never reaches the app.
+
+An adapter can also have `isSupported()`: when it returns `false`, as Firebase's does until the web app's config is filled in, the prompt never shows and nothing reaches the adapter. Nobody is asked for a consent the app couldn't use.

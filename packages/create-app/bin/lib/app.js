@@ -160,13 +160,12 @@ function addDependencies(pkg, app) {
   }
   if (app.hasSupabase) {
     pkg.dependencies["@supabase/supabase-js"] = SUPABASE_VERSION
+    pkg.dependencies["@inglorious/supabase"] = "workspace:*"
   }
-  if (app.auth) pkg.dependencies["@inglorious/supabase"] = "workspace:*"
   if (app.nativeUpdate || app.appLinks || app.backButton) {
     pkg.dependencies["@capacitor/app"] = CAPACITOR_APP_VERSION
   }
   if (app.nativeUpdate) {
-    pkg.dependencies["@inglorious/supabase"] = "workspace:*"
     pkg.dependencies["@capawesome/capacitor-live-update"] =
       CAPAWESOME_LIVE_UPDATE_VERSION
   }

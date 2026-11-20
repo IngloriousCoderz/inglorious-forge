@@ -53,7 +53,12 @@ Without routing, the single page is `src/app/home/`. There is no `scripts/` fold
 
 ## Tests
 
-Every `js` and `ts` project has Vitest: `pnpm test` runs once, `pnpm test:watch` on every save. Vitest reads `vite.config`, so tests see the app as Vite builds it. The first test, beside the example Message type, runs its `click` handler with `trigger` from `@inglorious/web/test`: handlers are plain functions from an entity to a changed entity, so most tests need no browser.
+Every `js` and `ts` project has Vitest. `vitest.config` builds on `vite.config`, so tests see the app as Vite builds it, and splits them in two:
+
+- **Unit tests**, `*.test.*`: `pnpm test` runs them once, `pnpm test:watch` on every save. They need nothing running; with Supabase, they get a placeholder address, so a fresh clone or CI needs no `.env.local`.
+- **Integration tests**, `*.integration.test.*`: `pnpm test:integration`, against a real backend such as the local Supabase stack.
+
+With translations, `src/testing/setup` waits for them before the tests run. The first test, beside the example Message type, runs its `click` handler with `trigger` from `@inglorious/web/test`: handlers are plain functions from an entity to a changed entity, so most tests need no browser.
 
 ## Types
 

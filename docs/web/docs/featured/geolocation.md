@@ -24,6 +24,8 @@ const geolocation = store.getEntity("geolocation")
 
 With `autoCreateEntities`, the store automatically creates a `geolocation` entity.
 
+A plugin may leave the optional readings out (`altitude`, `altitudeAccuracy`, `heading`, `speed`), as `@capacitor/geolocation` does: the entity stores them as `null`.
+
 ## Entity State
 
 The `geolocation` entity tracks:

@@ -79,6 +79,16 @@ describe("createGeolocation", () => {
     expect(entity).toMatchObject({ isLoading: false, position: POSITION })
   })
 
+  it("says null for readings a plugin left out", () => {
+    const Geolocation = createGeolocation()
+    Geolocation.geolocationSuccess(entity, {
+      coords: { accuracy: 10, latitude: 45.4642, longitude: 9.19 },
+      timestamp: 123,
+    })
+
+    expect(entity.position).toEqual(POSITION)
+  })
+
   it("keeps an error as data", () => {
     const Geolocation = createGeolocation()
     Geolocation.geolocationError(entity, { code: 1, message: "Denied" })

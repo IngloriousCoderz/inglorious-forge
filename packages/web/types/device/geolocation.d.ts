@@ -52,17 +52,35 @@ export type GeolocationType = {
   geolocationUnwatch(entity: GeolocationEntity): void
   geolocationSuccess(
     entity: GeolocationEntity,
-    position: GeolocationPosition,
+    position: GeolocationPosition | PluginPosition,
   ): void
   geolocationError(entity: GeolocationEntity, error: GeolocationError): void
 }
 
+/**
+ * A position as a plugin may report it: the optional readings can be missing
+ * altogether, as `@capacitor/geolocation` leaves them. The entity stores them
+ * as `null`.
+ */
+export interface PluginPosition {
+  coords: {
+    accuracy: number
+    altitude?: number | null
+    altitudeAccuracy?: number | null
+    heading?: number | null
+    latitude: number
+    longitude: number
+    speed?: number | null
+  }
+  timestamp: number
+}
+
 /** What `createGeolocation` needs of `Geolocation` from `@capacitor/geolocation`. */
 export interface GeolocationPlugin {
-  getCurrentPosition(options?: GeolocationOptions): Promise<GeolocationPosition>
+  getCurrentPosition(options?: GeolocationOptions): Promise<PluginPosition>
   watchPosition(
     options: GeolocationOptions,
-    callback: (position: GeolocationPosition | null, error?: unknown) => void,
+    callback: (position: PluginPosition | null, error?: unknown) => void,
   ): Promise<string>
   clearWatch(options: { id: string }): Promise<void>
 }

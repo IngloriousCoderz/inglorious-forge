@@ -50,6 +50,7 @@ const types = {
 ```
 
 - `firebaseConfig` needs `measurementId`. No gtag snippet in `index.html`.
+- In a browser both adapters stand aside until configured (`apiKey`, `projectId`, `appId`; `measurementId` for analytics, `vapidKey` for push): `isSupported()` is `false`, no prompt shows, Firebase never starts.
 - Nothing loads before consent.
 - Native collection starts off: `<meta-data android:name="firebase_analytics_collection_enabled" android:value="false" />` in `AndroidManifest.xml`, `FIREBASE_ANALYTICS_COLLECTION_ENABLED` = `false` in `Info.plist`.
 - Advertising consents stay denied. `inglorious-capacitor configure` removes the `AD_ID` permissions Firebase merges into the Android app, so Play Console's advertising ID declaration is "No".

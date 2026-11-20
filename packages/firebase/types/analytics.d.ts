@@ -7,6 +7,8 @@ export interface FirebaseAnalyticsConfig {
 
 /** An analytics adapter for `createAnalytics` from `@inglorious/web/analytics`. */
 export interface FirebaseAnalyticsAdapter {
+  /** `false` in a browser until the web app's config and `measurementId` are set. */
+  isSupported(): boolean
   setConsent(isGranted: boolean): Promise<void>
   pageView(page: { route?: string; path?: string }): Promise<void>
   event(name: string, params?: Record<string, unknown>): Promise<void>

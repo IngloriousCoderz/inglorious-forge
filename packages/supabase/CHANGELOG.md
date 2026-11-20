@@ -1,5 +1,11 @@
 # @inglorious/supabase
 
+## 0.13.0
+
+### Minor Changes
+
+- `backendUrl` gives the backend's address as the page can reach it: on a phone running the app from a computer's dev server, a local Supabase is reached at that computer's address instead of `127.0.0.1`.
+
 ## 0.12.0
 
 ### Minor Changes

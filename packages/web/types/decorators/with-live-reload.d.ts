@@ -6,16 +6,20 @@ export interface LiveSource {
   subscribe(table: string, onChange: () => void): () => void
 }
 
-export interface LiveReloadConfig<TEntity = any> {
+/**
+ * `TApi` is the app's own api, such as `AppApi`, so `payload` and `isLive`
+ * can read its entities with their types.
+ */
+export interface LiveReloadConfig<TEntity = any, TApi extends Api = Api> {
   source: LiveSource
   /** The tables the entity reads. */
   tables: string[]
   /** The event that reloads the entity. Defaults to `"load"`. */
   event?: string
   /** What the event carries, such as the id of the record the entity shows. */
-  payload?: (entity: TEntity, api: Api) => unknown
+  payload?: (entity: TEntity, api: TApi) => unknown
   /** Whether the entity is on screen. Defaults to always. */
-  isLive?: (entity: TEntity, api: Api) => boolean
+  isLive?: (entity: TEntity, api: TApi) => boolean
   /** Gathers a burst of changes into one reload. Defaults to 300 ms. */
   delay?: number
 }
@@ -25,6 +29,6 @@ export type LiveReloadBehavior = {
   destroy: (entity: any, payload?: any, api?: Api) => void
 }
 
-export declare function withLiveReload<TEntity = any>(
-  config: LiveReloadConfig<TEntity>,
+export declare function withLiveReload<TEntity = any, TApi extends Api = Api>(
+  config: LiveReloadConfig<TEntity, TApi>,
 ): <T extends Record<string, any>>(type: T) => LiveReloadBehavior

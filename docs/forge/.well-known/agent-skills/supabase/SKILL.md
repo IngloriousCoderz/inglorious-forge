@@ -5,6 +5,15 @@ description: "@inglorious/supabase: supabaseAuth for createAuth (passwords, emai
 
 # @inglorious/supabase
 
+## Client
+
+```javascript
+import { backendUrl } from "@inglorious/supabase";
+export const supabase = createClient(backendUrl(import.meta.env.VITE_SUPABASE_URL), key);
+```
+
+`backendUrl(url, pageHost = location.hostname)`: a local backend (`localhost`, `127.0.0.1`) is reached at the page's host when that is a network address, as on a phone running the app from the dev server; anything else is unchanged.
+
 ## Live entities
 
 ```javascript
@@ -27,7 +36,7 @@ const types = {
 };
 ```
 
-`withLiveReload` options: `source`, `tables`, `event` (`"load"`), `payload`, `isLive`, `delay` (300 ms). Also reloads on visibility/online; unsubscribes on destroy. `realtimeSource(client, { schema })`: one channel per table, joined after `getSession()`, notifies on rejoin.
+`withLiveReload` options: `source`, `tables`, `event` (`"load"`), `payload`, `isLive`, `delay` (300 ms). TS: `withLiveReload<MyEntity, AppApi>(...)` types `api` in `payload` and `isLive`. Also reloads on visibility/online; unsubscribes on destroy. `realtimeSource(client, { schema })`: one channel per table, joined after `getSession()`, notifies on rejoin.
 
 - Reload what the entity shows; don't match changes to rows (RLS deletes carry only the key).
 - Never open channels by hand at boot: they join as anonymous.

@@ -1,5 +1,12 @@
 # @inglorious/react-store
 
+## 6.31.0
+
+### Minor Changes
+
+- An app runs before its Firebase project exists. In a browser, `firebasePush` and `firebaseAnalytics` are unsupported until the web app's config is filled in, so Firebase never starts and fails no more on its first call. Analytics adapters can now have `isSupported()`: when it says `false`, `createAnalytics` never shows the consent prompt and never calls the adapter.
+- `createGeolocation` accepts `Geolocation` from `@capacitor/geolocation` without a cast: a plugin may leave the optional readings out, and the entity stores them as `null`. `withLiveReload<TEntity, TApi>` takes the app's api type, so `payload` and `isLive` read its entities with their types.
+
 ## 6.30.0
 
 ### Minor Changes

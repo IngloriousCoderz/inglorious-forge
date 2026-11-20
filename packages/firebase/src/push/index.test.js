@@ -21,6 +21,8 @@ import { FirebaseMessaging } from "@capacitor-firebase/messaging"
 
 import { firebasePush } from "./index.js"
 
+const CONFIG = { apiKey: "key", projectId: "p", appId: "app" }
+
 let stored
 
 beforeEach(() => {
@@ -104,6 +106,20 @@ describe("firebasePush in a browser", () => {
       }),
     }
   }
+
+  it("stands aside until the web app is configured", async () => {
+    platform.name = "web"
+    vi.resetModules()
+    const { firebasePush: webPush } = await import("./index.js")
+    const { initializeApp } = await import("firebase/app")
+    const unconfigured = (firebase, vapidKey) =>
+      webPush({ firebase, vapidKey, saveToken: vi.fn(), deleteToken: vi.fn() })
+
+    expect(await unconfigured({}, "vapid").isSupported()).toBe(false)
+    expect(await unconfigured(CONFIG, "").isSupported()).toBe(false)
+    expect(initializeApp).not.toHaveBeenCalled()
+    expect(await unconfigured(CONFIG, "vapid").isSupported()).toBe(true)
+  })
 
   it("asks with the browser's own dialog, before anything awaits", async () => {
     const requestPermission = vi.fn(async () => "default")

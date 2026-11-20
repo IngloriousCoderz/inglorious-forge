@@ -105,7 +105,7 @@ const types = {
 
 - It never decides which rows changed. A change to a table the entity reads is enough to reload it. That costs a reload now and then, and it leaves out the per-type rules about which changes count, which is where live data tends to go wrong.
 - `payload(entity, api)` is what the reload event carries, such as the id of the record the entity shows. `event` names a different event than `load`.
-- `isLive(entity, api)` skips changes while the entity is off screen, since it loads when it opens anyway. It defaults to always.
+- `isLive(entity, api)` skips changes while the entity is off screen, since it loads when it opens anyway. It defaults to always. In TypeScript, `withLiveReload<MyEntity, AppApi>(...)` types both callbacks' `api` as the app's, so they read its entities with their types.
 - A burst of changes becomes one reload, after `delay` (300 ms by default).
 - When the page comes back into view, or the browser comes back online, every live entity reloads. A phone that put the app in the background, or lost its signal, may have dropped the connection, and the changes with it.
 - The subscriptions end when the entity is destroyed.

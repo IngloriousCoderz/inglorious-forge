@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.28.0
+
+### Minor Changes
+
+- Tests come in two Vitest projects, built on the app's Vite config: `pnpm test` for unit tests, which need no `.env.local`, and `pnpm test:integration` for tests against a real backend. With translations, tests wait for them. The generated Supabase client goes through `backendUrl`, so a phone running the app from the dev server reaches the local stack.
+
 ## 1.27.0
 
 ### Minor Changes

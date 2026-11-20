@@ -84,7 +84,7 @@ Events: `fieldChange` `{ path, value, validate? }`, `fieldBlur` `{ path, validat
 Entity types; most watch on `create`, with `isSupported`, `isWatching` and `<name>Watch`/`<name>Unwatch` events.
 
 - `Compass` (`device/compass`): `heading`, `isActive`, `isPermissionGranted`, `isLoading`, `error`, `manualOffset`; events `compassPermissionsRequest` (iOS asks), `compassWatch`, `compassUnwatch`.
-- `createGeolocation({ plugin })` (`device/geolocation`; `Geolocation` from `@capacitor/geolocation`): `position` `{ coords, timestamp }`, `isLoading`, `error`; events `geolocationRequest(options)`, `geolocationWatch(options)`, `geolocationUnwatch`.
+- `createGeolocation({ plugin })` (`device/geolocation`; `Geolocation` from `@capacitor/geolocation`): `position` `{ coords, timestamp }`, `isLoading`, `error`; events `geolocationRequest(options)`, `geolocationWatch(options)`, `geolocationUnwatch`. Readings a plugin leaves out are stored as `null`.
 - `ElementSize` (`device/element-size`): `width`, `height` of the element matching `selector`.
 - `MediaQuery` (`device/media-query`): `matches` for the entity's `media`.
 - `NetworkStatus` (`device/network-status`): `isOnline`.
@@ -257,7 +257,7 @@ const types = { Analytics: [createAnalytics({ adapter }), template, withStorage(
 api.notify("#analytics:analyticsTrack", { name: "sign_up", params: { method: "email" } });
 ```
 
-Adapter: `setConsent(isGranted)`, `pageView({ route, path })`, `event(name, params)`. Nothing before consent; `routeChange` is a page view. Entity `consent` (`granted|denied|null`; kept between visits only by `withStorage`), `isAsking`. Events `analyticsConsent` (boolean), `analyticsAsk`, `analyticsTrack`.
+Adapter: `setConsent(isGranted)`, `pageView({ route, path })`, `event(name, params)`, optional `isSupported()` (`false`: never asks, never calls). Nothing before consent; `routeChange` is a page view. Entity `consent` (`granted|denied|null`; kept between visits only by `withStorage`), `isAsking`. Events `analyticsConsent` (boolean), `analyticsAsk`, `analyticsTrack`.
 
 ## Push
 

@@ -35,6 +35,26 @@ async function load(name) {
 }
 
 describe("firebaseAnalytics", () => {
+  it("is unsupported in a browser until the web app is configured", async () => {
+    platform.name = "web"
+    vi.resetModules()
+    const { firebaseAnalytics } = await import("./index.js")
+    const config = { apiKey: "key", projectId: "p", appId: "app" }
+
+    expect(firebaseAnalytics({ firebase: {} }).isSupported()).toBe(false)
+    expect(firebaseAnalytics({ firebase: config }).isSupported()).toBe(false)
+    expect(
+      firebaseAnalytics({
+        firebase: { ...config, measurementId: "G-1" },
+      }).isSupported(),
+    ).toBe(true)
+  })
+
+  it("is always supported in the native apps, which read their own files", async () => {
+    const { analytics } = await load("android")
+    expect(analytics.isSupported()).toBe(true)
+  })
+
   it("grants usage measuring, never advertising", async () => {
     const { analytics, plugin } = await load("android")
     await analytics.setConsent(true)

@@ -4,7 +4,7 @@ import {
   FirebaseAnalytics,
 } from "@capacitor-firebase/analytics"
 
-import { IS_WEB, startFirebase } from "../app.js"
+import { IS_WEB, isConfigured, startFirebase } from "../app.js"
 
 const AD_CONSENTS = [
   ConsentType.AdStorage,
@@ -26,6 +26,9 @@ const AD_CONSENTS = [
  * A browser counts history changes as page views by itself, so `pageView`
  * logs screens in the native apps only, named after the route.
  *
+ * In a browser without the web app's config and its `measurementId`, it is
+ * unsupported: the app asks nobody for a consent it couldn't use.
+ *
  * @param {Object} config
  * @param {import("firebase/app").FirebaseOptions} config.firebase - The web
  *   app's config, with its `measurementId`.
@@ -39,6 +42,10 @@ export function firebaseAnalytics({ firebase }) {
   }
 
   return {
+    isSupported() {
+      return isConfigured(firebase, ["measurementId"])
+    },
+
     async setConsent(isGranted) {
       if (!isGranted && !hasStarted) return
       hasStarted = true

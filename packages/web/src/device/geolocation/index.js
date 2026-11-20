@@ -62,14 +62,15 @@ export function createGeolocation({ plugin } = {}) {
       entity.error = null
       entity.isLoading = false
       entity.position = {
+        // A plugin may leave the optional readings out: the entity says null.
         coords: {
           accuracy: position.coords.accuracy,
-          altitude: position.coords.altitude,
-          altitudeAccuracy: position.coords.altitudeAccuracy,
-          heading: position.coords.heading,
+          altitude: position.coords.altitude ?? null,
+          altitudeAccuracy: position.coords.altitudeAccuracy ?? null,
+          heading: position.coords.heading ?? null,
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
-          speed: position.coords.speed,
+          speed: position.coords.speed ?? null,
         },
         timestamp: position.timestamp,
       }

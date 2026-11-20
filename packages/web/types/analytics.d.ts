@@ -2,6 +2,8 @@ import { Api } from "./mount"
 
 /** Everything vendor-specific about measuring an app. */
 export interface AnalyticsAdapter {
+  /** `false` when there is nothing to measure with: the prompt never shows. */
+  isSupported?(): boolean
   /** Starts or stops measuring. Not called before the user answered. */
   setConsent(isGranted: boolean): void | Promise<void>
   /** One page or screen, on every route change once granted. */

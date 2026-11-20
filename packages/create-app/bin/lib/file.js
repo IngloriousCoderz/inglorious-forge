@@ -118,3 +118,16 @@ function migrationStamp(time) {
     .replace(/\D/g, "")
     .slice(FIRST_ITEM_INDEX, MIGRATION_STAMP_LENGTH)
 }
+
+/** Adds a config file to the TypeScript project that checks Node files. */
+export function includeInNodeProject(targetDir, file) {
+  const tsconfigPath = path.join(targetDir, "tsconfig.node.json")
+  if (!fs.existsSync(tsconfigPath)) return
+
+  const tsconfig = fs.readFileSync(tsconfigPath, "utf-8")
+  if (tsconfig.includes(`"${file}"`)) return
+  fs.writeFileSync(
+    tsconfigPath,
+    tsconfig.replace(/("include": \[[^\]]*)\]/, `$1, "${file}"]`),
+  )
+}

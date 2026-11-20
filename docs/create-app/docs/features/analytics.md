@@ -9,7 +9,7 @@ description: Google Analytics for Firebase behind a consent prompt
 | ------------------------------------ | -------------------------------- |
 | Add analytics with a consent prompt? | `--analytics` / `--no-analytics` |
 
-`--analytics` measures usage with Google Analytics for Firebase, on the web and in the native apps, and only for people who said yes: until then, no analytics code loads. The answer is kept on the `analytics` entity and saved with `withStorage`, so the prompt appears once.
+`--analytics` measures usage with Google Analytics for Firebase, on the web and in the native apps, and only for people who said yes: until then, no analytics code loads. The answer is kept on the `analytics` entity and saved with `withStorage`, so the prompt appears once. Until the Firebase values below are filled in, the prompt doesn't appear at all: there is nothing to measure with yet.
 
 Page views follow the router by themselves. The app's own events go through the entity, and are dropped without consent:
 

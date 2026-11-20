@@ -126,6 +126,22 @@ describe("analyticsAsk", () => {
   })
 })
 
+describe("an unsupported adapter", () => {
+  it("never asks, and tells the adapter nothing", () => {
+    adapter.isSupported = () => false
+    keepConsent("granted")
+    const store = storeWithAnalytics()
+    store.notify("routeChange", { route: "about", path: "/about" })
+    store.notify("#analytics:analyticsTrack", { name: "sign_up" })
+    store.notify("#analytics:analyticsAsk")
+
+    expect(analytics(store).isAsking).toBe(false)
+    expect(adapter.setConsent).not.toHaveBeenCalled()
+    expect(adapter.pageView).not.toHaveBeenCalled()
+    expect(adapter.event).not.toHaveBeenCalled()
+  })
+})
+
 describe("a failing adapter", () => {
   it("never reaches the app", async () => {
     keepConsent("granted")

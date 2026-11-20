@@ -1,5 +1,11 @@
 # @inglorious/firebase
 
+## 0.2.0
+
+### Minor Changes
+
+- An app runs before its Firebase project exists. In a browser, `firebasePush` and `firebaseAnalytics` are unsupported until the web app's config is filled in, so Firebase never starts and fails no more on its first call. Analytics adapters can now have `isSupported()`: when it says `false`, `createAnalytics` never shows the consent prompt and never calls the adapter.
+
 ## 0.1.1
 
 ### Patch Changes

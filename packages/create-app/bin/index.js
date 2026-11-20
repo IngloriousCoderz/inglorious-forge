@@ -267,6 +267,8 @@ async function main() {
         renderer,
         routing: features.routing,
         hasAppFeatures,
+        i18n: Boolean(features.languages.length),
+        supabase: features.push || features.auth,
       })
     }
 

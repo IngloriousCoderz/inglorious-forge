@@ -18,6 +18,9 @@ const DENIED = "denied"
  *
  * Everything vendor-specific is the `adapter`'s:
  *
+ * - `isSupported()`, optional: `false` when there is nothing to measure with,
+ *   such as an analytics project not set up yet. Then the prompt never shows
+ *   and nothing reaches the adapter.
  * - `setConsent(isGranted)`: starts or stops measuring.
  * - `pageView({ route, path })`: one page or screen. An adapter whose
  *   library already counts history changes as page views can do nothing.
@@ -35,15 +38,20 @@ const DENIED = "denied"
  * api.notify("#analytics:analyticsTrack", { name: "sign_up" })
  */
 export function createAnalytics({ adapter }) {
+  const isSupported = () => adapter.isSupported?.() !== false
+
   return {
     create(entity) {
       entity.consent ??= null
-      entity.isAsking ??= entity.consent === null
-      if (entity.consent === GRANTED) call(() => adapter.setConsent(true))
+      entity.isAsking =
+        isSupported() && (entity.isAsking ?? entity.consent === null)
+      if (entity.consent === GRANTED && isSupported()) {
+        call(() => adapter.setConsent(true))
+      }
     },
 
     routeChange(entity, { route, path } = {}) {
-      if (entity.consent !== GRANTED) return
+      if (entity.consent !== GRANTED || !isSupported()) return
       call(() => adapter.pageView({ route, path }))
     },
 
@@ -51,6 +59,7 @@ export function createAnalytics({ adapter }) {
       const consent = isGranted ? GRANTED : DENIED
       entity.consent = consent
       entity.isAsking = false
+      if (!isSupported()) return
       call(() => adapter.setConsent(isGranted))
       if (!isGranted) return
 
@@ -61,11 +70,11 @@ export function createAnalytics({ adapter }) {
     },
 
     analyticsAsk(entity) {
-      entity.isAsking = true
+      entity.isAsking = isSupported()
     },
 
     analyticsTrack(entity, { name, params } = {}) {
-      if (entity.consent !== GRANTED || !name) return
+      if (entity.consent !== GRANTED || !name || !isSupported()) return
       call(() => adapter.event(name, params))
     },
   }

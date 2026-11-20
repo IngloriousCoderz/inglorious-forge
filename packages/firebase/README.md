@@ -55,6 +55,8 @@ const types = {
 
 `firebaseConfig` needs its `measurementId`. The PWA reports to the project's web stream, and the native apps to theirs.
 
+**Not set up yet.** In a browser, both adapters stand aside until the web app's config is filled in (`apiKey`, `projectId`, `appId`, plus `measurementId` for analytics and the VAPID key for push): `isSupported()` is `false`, so neither prompt shows and Firebase never starts. An app can run before its Firebase project exists.
+
 **Consent.** Nothing loads in a browser before the user agrees, and refusing loads nothing either. The native apps must start with collection off, or they measure from launch:
 
 ```xml

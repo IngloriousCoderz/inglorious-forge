@@ -174,6 +174,12 @@ withLiveReload<CounterEntity>({
 })
 // @ts-expect-error: tables are required
 withLiveReload({ source })
+// With the app's api, isLive reads its entities with their types.
+withLiveReload<CounterEntity, AppApi>({
+  source,
+  tables: ["counters"],
+  isLive: (entity, api) => api.getEntity("router")?.route === entity.type,
+})
 
 export const routeChange = pageRouteChange({
   select: (payload) => payload.params.eventId,
@@ -240,6 +246,22 @@ reminders.localNotificationSchedule(
 reminders.localNotificationCancel({ type: "Reminders", permission: null }, "1")
 
 export const geolocation = createGeolocation()
+// A plugin may leave the optional readings out, as @capacitor/geolocation does.
+createGeolocation({
+  plugin: {
+    getCurrentPosition: async () => ({
+      coords: {
+        accuracy: 5,
+        latitude: 1,
+        longitude: 2,
+        altitudeAccuracy: undefined,
+      },
+      timestamp: 0,
+    }),
+    watchPosition: async () => "watch",
+    clearWatch: async () => {},
+  },
+})
 
 import { createBiometrics } from "../types/device/biometrics"
 

@@ -1,5 +1,14 @@
 import type { SupabaseClient } from "@supabase/supabase-js"
 
+/**
+ * The backend's address as this page can reach it: a local backend
+ * (`localhost`, `127.0.0.1`) is reached by the address the page came from
+ * when that is a network address, as on a phone running the app from a
+ * computer's dev server. Anything else is returned as it is.
+ * @param pageHost Defaults to `location.hostname`.
+ */
+export declare function backendUrl(url: string, pageHost?: string): string
+
 /** Delivers a backend's changes, one table at a time, as `withLiveReload` expects. */
 export interface LiveSource {
   /** Calls `onChange` on every change to `table`; returns the unsubscribe. */

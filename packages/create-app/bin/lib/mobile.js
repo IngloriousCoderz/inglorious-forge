@@ -8,7 +8,7 @@ import {
   INDENTATION,
   TYPESCRIPT_VERSION,
 } from "./constants.js"
-import { copyDir } from "./file.js"
+import { copyDir, includeInNodeProject } from "./file.js"
 
 const WELL_KNOWN_FILES = ["apple-app-site-association", "assetlinks.json"]
 const LISTING_ASSETS = "/listing-assets/"
@@ -278,17 +278,5 @@ function ignoreListingAssets(targetDir) {
   fs.writeFileSync(
     gitignorePath,
     `${gitignore.trimEnd()}${EOL}${EOL}# Store listing images (pnpm mobile:listing-assets)${EOL}${LISTING_ASSETS}${EOL}`,
-  )
-}
-
-function includeInNodeProject(targetDir, file) {
-  const tsconfigPath = path.join(targetDir, "tsconfig.node.json")
-  if (!fs.existsSync(tsconfigPath)) return
-
-  const tsconfig = fs.readFileSync(tsconfigPath, "utf-8")
-  if (tsconfig.includes(`"${file}"`)) return
-  fs.writeFileSync(
-    tsconfigPath,
-    tsconfig.replace(/("include": \[[^\]]*)\]/, `$1, "${file}"]`),
   )
 }
