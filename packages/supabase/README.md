@@ -123,7 +123,7 @@ import {
   eraseUser,
   json,
   serve,
-} from "npm:@inglorious/supabase/edge"
+} from "npm:@inglorious/supabase@^0.13.0/edge"
 import { createClient } from "npm:@supabase/supabase-js@2"
 
 serve(async (req) => {
@@ -293,7 +293,7 @@ import {
   env,
   json,
   serve,
-} from "npm:@inglorious/supabase@^0.2.0/edge"
+} from "npm:@inglorious/supabase@^0.13.0/edge"
 import { createClient } from "npm:@supabase/supabase-js@2"
 
 const admin = () =>
@@ -327,7 +327,7 @@ import {
   env,
   isLocalStack,
   sendEmail,
-} from "npm:@inglorious/supabase@^0.2.0/edge"
+} from "npm:@inglorious/supabase@^0.13.0/edge"
 
 if (!isLocalStack(env("SUPABASE_URL"))) {
   await sendEmail(

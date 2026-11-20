@@ -1,5 +1,11 @@
 # @inglorious/supabase
 
+## 0.13.1
+
+### Patch Changes
+
+- The Edge Function examples import a current version of `@inglorious/supabase/edge`.
+
 ## 0.13.0
 
 ### Minor Changes

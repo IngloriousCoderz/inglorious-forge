@@ -1,5 +1,9 @@
 {
   "nodeModulesDir": "none",
+  "minimumDependencyAge": {
+    "age": "P1D",
+    "exclude": ["npm:@inglorious/supabase"]
+  },
   "lint": {
     "rules": { "exclude": ["no-import-prefix"] }
   }

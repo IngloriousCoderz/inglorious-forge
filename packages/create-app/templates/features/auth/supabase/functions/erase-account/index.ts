@@ -7,7 +7,7 @@ import {
   eraseUser,
   json,
   serve,
-} from "npm:@inglorious/supabase@^0.9.0/edge"
+} from "npm:@inglorious/supabase@^0.13.0/edge"
 import { createClient } from "npm:@supabase/supabase-js@2"
 
 // The Storage buckets where each user's files sit in a folder named after

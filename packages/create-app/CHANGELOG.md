@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.29.1
+
+### Patch Changes
+
+- The Edge Functions import the same `@inglorious/supabase` as the app, stamped when scaffolding, instead of a range stuck at 0.9; `supabase/functions/deno.json` exempts it from Deno's minimum dependency age, as `pnpm-workspace.yaml` already does for pnpm.
+
 ## 1.29.0
 
 ### Minor Changes

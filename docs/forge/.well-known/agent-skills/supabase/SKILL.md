@@ -91,7 +91,7 @@ if (isCaptchaError(error)) showError("errors.captcha");
 ```ts
 import "jsr:@supabase/functions-js@2/edge-runtime.d.ts";
 import { STATUS_CODE } from "jsr:@std/http@1/status";
-import { currentUser, env, json, serve } from "npm:@inglorious/supabase@^0.2.0/edge";
+import { currentUser, env, json, serve } from "npm:@inglorious/supabase@^0.13.0/edge";
 import { createClient } from "npm:@supabase/supabase-js@2";
 
 const admin = () => createClient(env("SUPABASE_URL"), env("SUPABASE_SERVICE_ROLE_KEY"));

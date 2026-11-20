@@ -19,7 +19,7 @@ import {
   VITE_APP_TEMPLATES,
 } from "./lib/constants.js"
 import { addDependabot } from "./lib/dependabot.js"
-import { addEdgeSupport } from "./lib/edge.js"
+import { addEdgeSupport, pinEdgeImports } from "./lib/edge.js"
 import { SYNTAXES, TEMPLATES } from "./lib/features.js"
 import { copyDir } from "./lib/file.js"
 import {
@@ -287,6 +287,7 @@ async function main() {
     }
 
     fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, INDENTATION) + EOL)
+    pinEdgeImports(targetDir, pkg.dependencies?.["@inglorious/supabase"])
 
     spinner.succeed(`Created ${projectName} at ${targetDir}`)
 
