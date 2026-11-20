@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.29.0
+
+### Minor Changes
+
+- Apps with sign-in or push, which both add Edge Functions, get `pnpm edge` to serve them with their logs while editing one, and `pnpm edge:check` to type-check and lint them with Deno. The README asks to commit the `deno.lock` the first check writes.
+
 ## 1.28.0
 
 ### Minor Changes

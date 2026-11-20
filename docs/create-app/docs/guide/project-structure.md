@@ -51,6 +51,10 @@ Without routing, the single page is `src/app/home/`. There is no `scripts/` fold
 
 `src/store` registers every type and creates an entity for each type that has none (`autoCreateEntities`), so a page, the router or the sign-in screen each have their entity without listing it.
 
+## Edge Functions
+
+Sign-in and push add Edge Functions in `supabase/functions/`. `supabase start` already serves them. While editing one, `pnpm edge` serves them with their logs in the terminal, reloading on every save, and `pnpm edge:check` type-checks and lints them with Deno. Its first run writes `supabase/functions/deno.lock`: commit it, so every machine and deploy uses the same dependency versions.
+
 ## Tests
 
 Every `js` and `ts` project has Vitest. `vitest.config` builds on `vite.config`, so tests see the app as Vite builds it, and splits them in two:

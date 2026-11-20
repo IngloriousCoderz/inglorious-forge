@@ -19,6 +19,7 @@ import {
   VITE_APP_TEMPLATES,
 } from "./lib/constants.js"
 import { addDependabot } from "./lib/dependabot.js"
+import { addEdgeSupport } from "./lib/edge.js"
 import { SYNTAXES, TEMPLATES } from "./lib/features.js"
 import { copyDir } from "./lib/file.js"
 import {
@@ -250,6 +251,8 @@ async function main() {
       addAuthSupport(targetDir, templatesRoot, { mobile: features.mobile })
       keepSupabaseOutOfTypeScript(targetDir)
     }
+
+    if (features.auth || features.push) addEdgeSupport(targetDir, pkg)
 
     if (features.mobile && features.push) {
       addNativeUpdateSupport(targetDir, templatesRoot)
