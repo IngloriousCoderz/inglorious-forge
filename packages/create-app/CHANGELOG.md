@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.30.0
+
+### Minor Changes
+
+- Mobile apps get an app shell: the app bar and the tab bar stay put while only the page scrolls, and from 48rem wide a drawer beside the page lists the same pages instead of the tab bar.
+
 ## 1.29.1
 
 ### Patch Changes

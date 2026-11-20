@@ -19,6 +19,8 @@ export function appSource(app, { pages, navIcons }) {
     if (app.tabs) {
       imports.push(
         'import { BottomNavigation } from "@inglorious/ui/bottom-navigation"',
+        'import { Drawer } from "@inglorious/ui/drawer"',
+        'import { List } from "@inglorious/ui/list"',
       )
     }
     if (app.links) imports.push('import { Link } from "@inglorious/ui/link"')
@@ -48,7 +50,7 @@ export function appSource(app, { pages, navIcons }) {
 
 export const App = {
   ${signature} {
-${renderLocals(app)}    return html\`
+${renderLocals(app)}${app.tabs ? tabLocals(app, { label, pages }) : ""}    return html\`
 ${template}
     \`
   },
@@ -222,29 +224,57 @@ function uiShell(app, { label, pages, content }) {
 
   if (!app.tabs) return header
 
-  const actions = pages.map(
-    (page) => `            {
-              value: "${page.path}",
-              label: ${label(page.key, page.text)},${
-                page.icon
-                  ? `
-              icon: Icon.render({ icon: ${page.icon.name}, size: "lg" }),`
-                  : ""
-              }
-            },`,
-  )
+  const icon = (indent) =>
+    pages.some((page) => page.icon)
+      ? `\n${indent}icon: Icon.render({ icon: tab.icon, size: "lg" }),`
+      : ""
 
-  return `${header}
+  return `      \${Drawer.render({
+        variant: "permanent",
+        title: "${app.appName}",
+        className: "app-drawer pt-safe",
+        children: List.render({
+          isInset: true,
+          padding: "sm",
+          items: tabs.map((tab) => ({
+            id: tab.path,
+            primary: tab.label,${icon("            ")}
+            isSelected: tab.path === router.path,
+            onClick: () => navigate(tab.path),
+          })),
+        }),
+      })}
+${header}
       <footer class="pb-safe">
         \${BottomNavigation.render({
           value: router.path,
-          actions: [
-${actions.join("\n")}
-          ],
-          onChange: (path) =>
-            api.notify("#router:navigate", { to: path, replace: true }),
+          actions: tabs.map((tab) => ({
+            value: tab.path,
+            label: tab.label,${icon("            ")}
+          })),
+          onChange: navigate,
         })}
       </footer>`
+}
+
+export function tabLocals(app, { label, pages }) {
+  const tabs = pages.map((page) => {
+    const fields = [
+      `path: "${page.path}"`,
+      `label: ${label(page.key, page.text)}`,
+    ]
+    if (page.icon) fields.push(`icon: ${page.icon.name}`)
+    return `      { ${fields.join(", ")} },`
+  })
+  const path = app.isTypeScript ? "path: string" : "path"
+  return `    // The same pages twice: a tab bar on phones, a drawer on wider screens.
+    const tabs = [
+${tabs.join("\n")}
+    ]
+    const navigate = (${path}) =>
+      api.notify("#router:navigate", { to: path, replace: true })
+
+`
 }
 
 function plainShell(app, { label, pages, content }) {

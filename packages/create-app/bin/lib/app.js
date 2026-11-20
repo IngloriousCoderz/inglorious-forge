@@ -319,7 +319,7 @@ ${call("mount", args, "  ", ",")}
 function uiComponents(app) {
   const names = ["app-bar", "container"]
   if (app.links) names.push("link")
-  if (app.tabs) names.push("bottom-navigation")
+  if (app.tabs) names.push("bottom-navigation", "drawer", "list", "flex")
   if (app.icons.length) names.push("icon")
   if (app.i18n) names.push("select")
   if (app.hasPrompts) names.push("snackbar", "button", "flex")
@@ -331,8 +331,79 @@ function uiComponents(app) {
 }
 
 const PROMPT_ABOVE_TABS = `
+@media (max-width: 47.99rem) {
+  body {
+    --iw-snackbar-offset-bottom: 5rem;
+  }
+}
+`
+
+const APP_SHELL = `/* An app shell: the bars stay put and only the page scrolls. The root
+   scrolls the screens without bars, such as sign-in. */
 body {
-  --iw-snackbar-offset-bottom: 5rem;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+#root {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+header,
+footer {
+  flex: none;
+}
+
+main {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-block: 1.5rem;
+}
+`
+
+const PAGE_LAYOUT = `body {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+#root {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+  padding-block: 1.5rem;
+}
+`
+
+const TABS_OR_DRAWER = `
+/* Tabs on phones; on wider screens, a drawer beside the page instead. */
+.iw-drawer.app-drawer {
+  display: none;
+}
+
+@media (min-width: 48rem) {
+  #root:has(> .app-drawer) {
+    padding-inline-start: 16rem;
+  }
+
+  .iw-drawer.app-drawer {
+    display: flex;
+  }
+
+  header .iw-app-bar-title,
+  footer {
+    display: none;
+  }
 }
 `
 
@@ -408,23 +479,7 @@ const PLAIN_PROMPT = `
 `
 
 function appStyles(app) {
-  const layout = `body {
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-}
-
-#root {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-main {
-  flex: 1;
-  padding-block: 1.5rem;
-}
-
+  const layout = `${app.mobile ? APP_SHELL : PAGE_LAYOUT}${app.tabs ? TABS_OR_DRAWER : ""}
 .app-nav {
   display: flex;
   align-items: center;

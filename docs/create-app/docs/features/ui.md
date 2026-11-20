@@ -34,7 +34,7 @@ Every theme has a light and a dark mode that follow the system. Themes are CSS: 
 
 ## Mobile layout
 
-With `--mobile`, the app gets a bottom tab bar instead of links in the app bar, and spacing that keeps clear of the notch and the home indicator. See [Native Features](../mobile/native-features.md) for swipe back, the back button, system bars and haptics.
+With `--mobile`, the app gets an app shell: the app bar and the tab bar stay put while only the page scrolls. The tabs replace the links in the app bar; from 48rem wide, a drawer beside the page lists the same pages instead (`.app-drawer` in `src/app/style.css`). Spacing keeps clear of the notch and the home indicator. See [Native Features](../mobile/native-features.md) for swipe back, the back button, system bars and haptics.
 
 ## Icons
 

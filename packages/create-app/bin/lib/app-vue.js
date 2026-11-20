@@ -19,6 +19,8 @@ export function appSource(app, { pages, navIcons }) {
     if (app.tabs) {
       imports.push(
         'import { BottomNavigation } from "@inglorious/ui/bottom-navigation"',
+        'import { Drawer } from "@inglorious/ui/drawer"',
+        'import { List } from "@inglorious/ui/list"',
       )
     }
     if (app.links) imports.push('import { Link } from "@inglorious/ui/link"')
@@ -177,22 +179,56 @@ ${nav.join("\n")}
 
   if (!app.tabs) return header
 
-  const actions = pages.map((page) => {
-    const fields = [
-      `value: '${page.path}'`,
-      `label: ${quotedLabel(page.key, page.text)}`,
-    ]
-    if (page.icon) {
-      fields.push(`icon: Icon.render({ icon: ${page.icon.name}, size: 'lg' })`)
-    }
-    const line = `        { ${fields.join(", ")} },`
-    if (line.length <= LINE_WIDTH) return line
-    return `        {
+  // A script's top-level constants are entity state here, not render
+  // locals, so each list spells out its pages.
+  const entries = (fieldsOf) =>
+    pages.map((page) => {
+      const fields = fieldsOf(page)
+      const line = `        { ${fields.join(", ")} },`
+      if (line.length <= LINE_WIDTH) return line
+      return `        {
 ${fields.map((field) => `          ${field},`).join("\n")}
         },`
-  })
+    })
+  const icon = (page) =>
+    page.icon
+      ? [`icon: Icon.render({ icon: ${page.icon.name}, size: 'lg' })`]
+      : []
+  const items = entries((page) => [
+    `id: '${page.path}'`,
+    `primary: ${quotedLabel(page.key, page.text)}`,
+    ...icon(page),
+    `isSelected: router.path === '${page.path}'`,
+    `onClick: () =>
+            api.notify('#router:navigate', { to: '${page.path}', replace: true })`,
+  ])
+  const actions = entries((page) => [
+    `value: '${page.path}'`,
+    `label: ${quotedLabel(page.key, page.text)}`,
+    ...icon(page),
+  ])
 
-  return `${header}
+  const drawerProps = [
+    'variant="permanent"',
+    `title="${app.appName}"`,
+    'className="app-drawer pt-safe"',
+  ]
+  const drawerLine = `  <Drawer ${drawerProps.join(" ")}>`
+  const drawer =
+    drawerLine.length <= LINE_WIDTH
+      ? drawerLine
+      : `  <Drawer\n${drawerProps.map((prop) => `    ${prop}`).join("\n")}\n  >`
+
+  return `${drawer}
+    <List
+      :isInset="true"
+      padding="sm"
+      :items="[
+${items.join("\n")}
+      ]"
+    />
+  </Drawer>
+${header}
   <footer class="pb-safe">
     <BottomNavigation
       :value="router.path"

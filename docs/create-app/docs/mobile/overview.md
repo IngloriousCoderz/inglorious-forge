@@ -10,7 +10,7 @@ description: Native Android and iOS apps from the same project, with Capacitor
 | Is it a mobile app?                                | `--mobile` / `--no-mobile` |
 | Build and upload store releases on GitHub Actions? | `--ci` / `--no-ci`         |
 
-`--mobile` adds [Capacitor](https://capacitorjs.com): the web app, packaged as native Android and iOS apps. The project gets `capacitor.config.ts`, the `mobile:*` scripts, [`@inglorious/capacitor`](https://www.npmjs.com/package/@inglorious/capacitor), a `native` key in `package.json` and, with Inglorious UI, a bottom tab bar and safe-area spacing.
+`--mobile` adds [Capacitor](https://capacitorjs.com): the web app, packaged as native Android and iOS apps. The project gets `capacitor.config.ts`, the `mobile:*` scripts, [`@inglorious/capacitor`](https://www.npmjs.com/package/@inglorious/capacitor), a `native` key in `package.json` and, with Inglorious UI, an app shell where only the page scrolls, a bottom tab bar that becomes a drawer on wider screens, and safe-area spacing.
 
 ## Prerequisites
 

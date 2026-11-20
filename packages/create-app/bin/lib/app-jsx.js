@@ -1,4 +1,4 @@
-import { renderLocals, selectChange } from "./app-lit.js"
+import { renderLocals, selectChange, tabLocals } from "./app-lit.js"
 import { importBlock } from "./imports.js"
 import { relative } from "./source.js"
 
@@ -23,6 +23,8 @@ export function appSource(app, { pages, navIcons }) {
     if (app.tabs) {
       imports.push(
         'import { BottomNavigation } from "@inglorious/ui/bottom-navigation"',
+        'import { Drawer } from "@inglorious/ui/drawer"',
+        'import { List } from "@inglorious/ui/list"',
       )
     }
     if (app.links) imports.push('import { Link } from "@inglorious/ui/link"')
@@ -48,7 +50,7 @@ export function appSource(app, { pages, navIcons }) {
 
   return `${imports.length ? `${importBlock(imports)}\n\n` : ""}export const App = {
   ${signature} {
-${renderLocals(app)}    return (
+${renderLocals(app)}${app.tabs ? tabLocals(app, { label: (key, text) => labelValue(app, { key, text }), pages }) : ""}    return (
       <>
 ${shell}
       </>
@@ -220,27 +222,37 @@ ${expectError(app, "          ")}          <Container maxWidth="md">{${content}}
 
   if (!app.tabs) return header
 
-  const actions = pages.map((page) => {
-    const icon = page.icon
+  const icon = (indent) =>
+    pages.some((page) => page.icon)
       ? `
-${expectError(app, "                ", false)}                icon: <Icon icon={${page.icon.name}} size="lg" />,`
+${expectError(app, indent, false)}${indent}icon: <Icon icon={tab.icon} size="lg" />,`
       : ""
-    return `              {
-                value: "${page.path}",
-                label: ${labelValue(app, page)},${icon}
-              },`
-  })
 
-  return `${header}
+  return `${expectError(app, "        ")}        <Drawer
+          variant="permanent"
+          title="${app.appName}"
+          className="app-drawer pt-safe"
+        >
+${expectError(app, "          ")}          <List
+            isInset
+            padding="sm"
+            items={tabs.map((tab) => ({
+              id: tab.path,
+              primary: tab.label,${icon("              ")}
+              isSelected: tab.path === router.path,
+              onClick: () => navigate(tab.path),
+            }))}
+          />
+        </Drawer>
+${header}
         <footer className="pb-safe">
 ${expectError(app, "          ")}          <BottomNavigation
             value={router.path}
-            actions={[
-${actions.join("\n")}
-            ]}
-            onChange={(${typed(app, "path", "string")}) =>
-              api.notify("#router:navigate", { to: path, replace: true })
-            }
+            actions={tabs.map((tab) => ({
+              value: tab.path,
+              label: tab.label,${icon("              ")}
+            }))}
+            onChange={navigate}
           />
         </footer>`
 }
