@@ -50,7 +50,7 @@ A mobile app with sign-in, push and cloud builds:
 
 ```bash
 pnpm create @inglorious/app my-app --template=ts --syntax=lit-html \
-  --ui --theme=ios-26 --mobile --ci --routing --transitions --icons=material \
+  --ui --theme=ios-26 --mobile --app-id=com.example.myapp --ci --routing --transitions --icons=material \
   --no-i18n --no-analytics --auth --auth-methods=password,code --push \
   --skills
 ```

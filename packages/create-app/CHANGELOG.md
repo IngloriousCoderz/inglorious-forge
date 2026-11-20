@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.27.0
+
+### Minor Changes
+
+- Ask mobile apps for their app id (`--app-id`) instead of making up `com.inglorious.*`, and show the project name in words (`walka-walka` is `Walka Walka`, or `--app-name`) in the app bar, page title, PWA manifest and under the icon. Every `js` and `ts` project gets Vitest and a first test. Page transitions work again: `--transitions` registers `withTransitions()` in the store, which a refactor had dropped. An outdated native build's update page now type-checks in TypeScript apps.
+
 ## 1.26.2
 
 ### Patch Changes

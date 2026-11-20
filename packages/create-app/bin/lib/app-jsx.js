@@ -202,14 +202,14 @@ function uiShell(app, { pages, content }) {
 
   const appBar = nav.length
     ? `${expectError(app, "          ")}          <AppBar
-            title="${app.projectName}"
+            title="${app.appName}"
             trailing={
               <nav className="app-nav">
 ${nav.join("\n")}
               </nav>
             }
           />`
-    : `${expectError(app, "          ")}          <AppBar title="${app.projectName}" />`
+    : `${expectError(app, "          ")}          <AppBar title="${app.appName}" />`
 
   const header = `        <header${app.mobile ? ' className="pt-safe"' : ""}>
 ${appBar}
@@ -283,7 +283,7 @@ ${nav.join("\n")}
         : ""
 
   return `        <header>
-          <strong>${app.projectName}</strong>${navBlock}
+          <strong>${app.appName}</strong>${navBlock}
         </header>
         <main>{${content}}</main>`
 }

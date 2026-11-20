@@ -25,6 +25,7 @@ import {
   addFirebaseSupport,
   keepSupabaseOutOfTypeScript,
 } from "./lib/firebase.js"
+import { displayNameOf, validateAppName } from "./lib/identity.js"
 import { addLiveUpdateSupport } from "./lib/live-update.js"
 import { addMobileSupport } from "./lib/mobile.js"
 import { addNativeUpdateSupport } from "./lib/native-update.js"
@@ -33,6 +34,7 @@ import { addPwaSupport } from "./lib/pwa.js"
 import { askAppFeatures } from "./lib/questions.js"
 import { addReleaseSupport } from "./lib/release.js"
 import { installSkills, skillsCommand, skillsFor } from "./lib/skills.js"
+import { addTestSupport } from "./lib/testing.js"
 
 async function main() {
   const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -73,6 +75,9 @@ async function main() {
 
   const projectName = cliOptions.projectName ?? answers.projectName
   const baseTemplate = cliOptions.template ?? answers.baseTemplate
+  const appName = cliOptions.appName ?? displayNameOf(projectName)
+  const appNameError = validateAppName(appName)
+  if (appNameError !== true) throw new Error(`--app-name: ${appNameError}`)
 
   let renderer = "lit-html"
 
@@ -103,6 +108,7 @@ async function main() {
     icons: [],
     languages: [],
     mobile: false,
+    appId: null,
     ci: false,
     pwa: false,
     analytics: false,
@@ -112,7 +118,7 @@ async function main() {
   }
 
   if (VITE_APP_TEMPLATES.has(baseTemplate)) {
-    features = await askAppFeatures(cliOptions)
+    features = await askAppFeatures(cliOptions, projectName)
 
     if (!features) {
       console.log("Operation canceled.")
@@ -174,6 +180,8 @@ async function main() {
       fs.writeFileSync(readmePath, readme)
     }
 
+    if (VITE_APP_TEMPLATES.has(baseTemplate)) setPageTitle(targetDir, appName)
+
     if (baseTemplate === "minimal") {
       spinner.succeed(`Created ${projectName} at ${targetDir}`)
       console.log(`\nNext steps:`)
@@ -207,6 +215,7 @@ async function main() {
       addAppFeatures(targetDir, pkg, {
         ...features,
         projectName,
+        appName,
         isTypeScript: baseTemplate === "ts",
         renderer,
       })
@@ -216,14 +225,18 @@ async function main() {
 
     if (features.pwa) {
       spinner.text = "Adding PWA support..."
-      addPwaSupport(targetDir, pkg, projectName, { push: features.push })
+      addPwaSupport(targetDir, pkg, appName, { push: features.push })
     }
 
     if (features.mobile) {
       spinner.text = "Adding Capacitor support..."
-      addMobileSupport(targetDir, pkg, projectName, templatesRoot, {
-        routing: features.routing,
-      })
+      addMobileSupport(
+        targetDir,
+        pkg,
+        { appId: features.appId, appName },
+        templatesRoot,
+        { routing: features.routing },
+      )
       if (features.ci) addCiSupport(targetDir)
     }
 
@@ -240,7 +253,21 @@ async function main() {
 
     if (features.mobile && features.push) {
       addNativeUpdateSupport(targetDir, templatesRoot)
-      addLiveUpdateSupport(targetDir, pkg, projectName, templatesRoot)
+      addLiveUpdateSupport(
+        targetDir,
+        pkg,
+        { appId: features.appId, appName },
+        templatesRoot,
+      )
+    }
+
+    if (VITE_APP_TEMPLATES.has(baseTemplate)) {
+      addTestSupport(targetDir, pkg, {
+        isTypeScript: baseTemplate === "ts",
+        renderer,
+        routing: features.routing,
+        hasAppFeatures,
+      })
     }
 
     for (const depType of ["dependencies", "devDependencies"]) {
@@ -275,6 +302,16 @@ async function main() {
     spinner.fail("Operation failed.")
     console.error(error)
   }
+}
+
+function setPageTitle(targetDir, appName) {
+  const htmlPath = path.join(targetDir, "index.html")
+  if (!fs.existsSync(htmlPath)) return
+  const page = fs.readFileSync(htmlPath, "utf-8")
+  fs.writeFileSync(
+    htmlPath,
+    page.replace(/<title>.*<\/title>/, `<title>${appName}</title>`),
+  )
 }
 
 function toChoices(options) {

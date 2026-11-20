@@ -15,7 +15,7 @@ pnpm create @inglorious/app
 The CLI asks for a project name, a template, a syntax (lit-html, JSX or Vue) and, for the `js` and `ts` templates, the app's features. Every question has a flag, so a project can be created without any prompt:
 
 ```bash
-pnpm create @inglorious/app my-app --template=ts --syntax=lit-html --ui --theme=ios-26 --mobile --ci --routing --transitions --icons=material --no-i18n --no-analytics --auth --auth-methods=password,code --push --skills
+pnpm create @inglorious/app my-app --template=ts --syntax=lit-html --ui --theme=ios-26 --mobile --app-id=com.example.myapp --ci --routing --transitions --icons=material --no-i18n --no-analytics --auth --auth-methods=password,code --push --skills
 ```
 
 | Question                  | Flag                                                                     | Adds                                                                                                            |
@@ -25,6 +25,7 @@ pnpm create @inglorious/app my-app --template=ts --syntax=lit-html --ui --theme=
 | Use Inglorious UI?        | `--ui`                                                                   | `@inglorious/ui`, an app bar, toasts and `watchKeyboard`                                                        |
 | Which theme?              | `--theme=inglorious\|material-ui\|material-3\|bootstrap\|ios-18\|ios-26` | The theme, light and dark                                                                                       |
 | Is it a mobile app?       | `--mobile`                                                               | Capacitor, native settings from `package.json`, live reload on a device, icons, listing images, release scripts |
+| What is the app id?       | `--app-id=com.example.myapp`                                             | The reverse-domain id the stores know the app by (with `--mobile`)                                              |
 | Cloud builds?             | `--ci`                                                                   | A GitHub Actions workflow that uploads to TestFlight and Google Play's internal track                           |
 | Add routing?              | `--routing`                                                              | The router, pages, App Links, back button and swipe back                                                        |
 | Animate page transitions? | `--transitions`                                                          | View transitions between pages                                                                                  |
@@ -36,7 +37,7 @@ pnpm create @inglorious/app my-app --template=ts --syntax=lit-html --ui --theme=
 | Enable PWA support?       | `--pwa`                                                                  | An installable app that keeps itself up to date                                                                 |
 | Add agent skills?         | `--skills`                                                               | The Inglorious Forge skills for coding agents                                                                   |
 
-Each boolean flag has a `--no-` form. Sign-in, analytics, push and updates use Supabase and Firebase, each through an adapter you can replace: see [Services It Uses](https://inglorious.dev/create-app/backend/services) and [Bring Your Own Backend](https://inglorious.dev/create-app/backend/bring-your-own).
+Each boolean flag has a `--no-` form. `--app-name="My App"` sets the name people see (app bar, page title, PWA manifest, under the icon); without it, the project name in words: `my-app` is `My App`. Every `js` and `ts` project gets Vitest and a first test (`pnpm test`). Sign-in, analytics, push and updates use Supabase and Firebase, each through an adapter you can replace: see [Services It Uses](https://inglorious.dev/create-app/backend/services) and [Bring Your Own Backend](https://inglorious.dev/create-app/backend/bring-your-own).
 
 Then:
 

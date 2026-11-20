@@ -42,15 +42,10 @@ Every release build is stamped with the time it was built, and an app only takes
  *
  * @param {string} targetDir
  * @param {object} pkg - The package.json being built.
- * @param {string} projectName
+ * @param {{ appId: string, appName: string }} identity
  * @param {string} templatesRoot
  */
-export function addLiveUpdateSupport(
-  targetDir,
-  pkg,
-  projectName,
-  templatesRoot,
-) {
+export function addLiveUpdateSupport(targetDir, pkg, identity, templatesRoot) {
   pkg.scripts ??= {}
   pkg.scripts["build:release"] = "inglorious-live-update build"
   pkg.scripts["live:keys"] = "inglorious-live-update keys"
@@ -59,7 +54,7 @@ export function addLiveUpdateSupport(
 
   fs.writeFileSync(
     path.join(targetDir, "capacitor.config.ts"),
-    createCapacitorConfigSource(projectName, { liveUpdate: true }),
+    createCapacitorConfigSource(identity, { liveUpdate: true }),
   )
   copyDir(path.join(templatesRoot, "features/live-update"), targetDir)
   stampMigration(targetDir, "live_updates.sql")

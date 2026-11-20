@@ -29,10 +29,11 @@ Open each one when its step needs it, not up front:
 ## 3. Scaffold
 
 ```bash
-pnpm create @inglorious/app -- my-app --template=js --ui --theme=material-3 --routing --transitions --icons=material --languages=en,it --mobile --pwa --push --skills
+pnpm create @inglorious/app -- my-app --template=js --ui --theme=material-3 --routing --transitions --icons=material --languages=en,it --mobile --app-id=com.example.myapp --pwa --push --skills
 ```
 
 - `--template=js` or `ts`: whichever the team prefers.
+- `--app-id`: the reverse domain the stores know the app by, on a domain you own. It can't change after the first release.
 - Choose `--push` and `--mobile` now if the app may need them: they add a migration, an edge function, a service worker, native projects and app wiring, which later means copying from a fresh scaffold. `--analytics` is light enough to decide later.
 - Then `supabase init` in the project root.
 

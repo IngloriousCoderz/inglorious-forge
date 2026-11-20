@@ -213,7 +213,7 @@ function uiShell(app, { label, pages, content }) {
 
   const header = `      <header${app.mobile ? ' class="pt-safe"' : ""}>
         \${AppBar.render({
-          title: "${app.projectName}",${trailing}
+          title: "${app.appName}",${trailing}
         })}
       </header>
       <main>
@@ -279,7 +279,7 @@ ${nav.join("\n")}
     : ""
 
   return `      <header>
-        <strong>${app.projectName}</strong>${navBlock}
+        <strong>${app.appName}</strong>${navBlock}
       </header>
       <main>\${${content}}</main>`
 }

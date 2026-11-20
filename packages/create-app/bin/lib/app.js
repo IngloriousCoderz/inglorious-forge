@@ -51,6 +51,7 @@ const COMPONENTS = {
  * @param {object} pkg - The package.json being built; dependencies are added.
  * @param {object} options
  * @param {string} options.projectName
+ * @param {string} options.appName - The name people see, in the app bar.
  * @param {boolean} options.isTypeScript
  * @param {"lit-html" | "jsx" | "vue"} options.renderer
  * @param {boolean} options.ui
@@ -280,7 +281,7 @@ function renderAppSource(app) {
     ? `
   // An outdated native build shows nothing but the update page.
   if (api.getEntity("nativeUpdate")${always}.isUpdateRequired) {
-    return api.render("nativeUpdate")
+    return html\`\${api.render("nativeUpdate")}\`
   }`
     : ""
   const page = app.auth
@@ -578,7 +579,7 @@ ${app.routing ? "\nsetRoutes(routes)\n" : ""}${liveUpdate}
 export const store = createStore${generics}({
 ${typesValue}
   entities,
-  middlewares,
+  ${app.transitions ? "middlewares: [withTransitions(), ...middlewares]," : "middlewares,"}
   // Creates an entity for each type that has none: ${singletons(app).join(", ")}.
   autoCreateEntities: true,
   // Freezes the state in development, so a write outside a handler throws.

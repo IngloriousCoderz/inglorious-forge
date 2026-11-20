@@ -165,8 +165,8 @@ ${nav.join("\n")}
     `
     : ""
   const appBar = nav.length
-    ? `<AppBar title="${app.projectName}">${navBlock}</AppBar>`
-    : `<AppBar title="${app.projectName}" />`
+    ? `<AppBar title="${app.appName}">${navBlock}</AppBar>`
+    : `<AppBar title="${app.appName}" />`
 
   const header = `  <header${app.mobile ? ' class="pt-safe"' : ""}>
     ${appBar}
@@ -239,7 +239,7 @@ ${nav.join("\n")}
     : ""
 
   return `  <header>
-    <strong>${app.projectName}</strong>${navBlock}
+    <strong>${app.appName}</strong>${navBlock}
   </header>
   <main>{{ ${content} }}</main>`
 }

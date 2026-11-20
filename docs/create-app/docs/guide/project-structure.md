@@ -26,7 +26,7 @@ my-app/
 │   │   ├── push-prompt/
 │   │   └── native-update/   # the page an outdated build shows
 │   ├── views/               # one folder per page, with routing
-│   │   ├── home/
+│   │   ├── home/            # message/index.test.ts: the first test
 │   │   └── about/
 │   ├── api/                 # Supabase, Firebase, auth and push clients
 │   ├── common/              # shared code
@@ -50,6 +50,10 @@ Without routing, the single page is `src/app/home/`. There is no `scripts/` fold
 `src/main` mounts the store and decides what to render: the update page if the native build is too old, nothing until the saved session is read, the sign-in screen until someone signs in, then the app. It also starts the watchers each feature needs: the keyboard, the system bars, App Links, the back button, live updates.
 
 `src/store` registers every type and creates an entity for each type that has none (`autoCreateEntities`), so a page, the router or the sign-in screen each have their entity without listing it.
+
+## Tests
+
+Every `js` and `ts` project has Vitest: `pnpm test` runs once, `pnpm test:watch` on every save. Vitest reads `vite.config`, so tests see the app as Vite builds it. The first test, beside the example Message type, runs its `click` handler with `trigger` from `@inglorious/web/test`: handlers are plain functions from an entity to a changed entity, so most tests need no browser.
 
 ## Types
 

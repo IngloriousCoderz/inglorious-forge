@@ -2,14 +2,16 @@ import prompts from "prompts"
 
 import { AUTH_METHODS } from "./auth.js"
 import { ICON_PACKS, LANGUAGES, THEMES } from "./features.js"
+import { defaultAppIdOf, validateAppId } from "./identity.js"
 
 /**
  * Asks about the app's features, skipping any a command-line flag answered.
  * Resolves to null when the user cancels.
  *
  * @param {ReturnType<import("./cli.js").parseCliOptions>} flags
+ * @param {string} projectName
  */
-export async function askAppFeatures(flags) {
+export async function askAppFeatures(flags, projectName) {
   let canceled = false
   const onCancel = () => {
     canceled = true
@@ -24,6 +26,7 @@ export async function askAppFeatures(flags) {
     ui: false,
     theme: "inglorious",
     mobile: false,
+    appId: null,
     ci: false,
     routing: false,
     transitions: false,
@@ -69,6 +72,19 @@ export async function askAppFeatures(flags) {
   if (canceled) return null
 
   if (features.mobile) {
+    // Stores tie everything to this id: it can't change after the first
+    // release, so it's asked rather than made up.
+    features.appId =
+      flags.appId ??
+      (await ask({
+        type: "text",
+        message:
+          "What is the app id? (reverse domain, fixed after the first store release)",
+        initial: defaultAppIdOf(projectName),
+        validate: validateAppId,
+      }))
+    if (canceled) return null
+
     features.ci =
       flags.ci ??
       (await ask({
@@ -258,6 +274,13 @@ function validate(features) {
   }
   if (!features.routing || !features.ui) features.transitions = false
   if (!features.ui) features.icons = []
-  if (!features.mobile) features.ci = false
+  if (features.appId) {
+    const appIdError = validateAppId(features.appId)
+    if (appIdError !== true) throw new Error(`--app-id: ${appIdError}`)
+  }
+  if (!features.mobile) {
+    features.ci = false
+    features.appId = null
+  }
   return features
 }

@@ -9,12 +9,7 @@ import {
 } from "./constants.js"
 import { findMainPath, findViteConfigPath, injectAfterImport } from "./file.js"
 
-export function addPwaSupport(
-  targetDir,
-  pkg,
-  projectName,
-  { push = false } = {},
-) {
+export function addPwaSupport(targetDir, pkg, appName, { push = false } = {}) {
   pkg.devDependencies ??= {}
   pkg.devDependencies["vite-plugin-pwa"] = VITE_PLUGIN_PWA_VERSION
   pkg.devDependencies["@vite-pwa/assets-generator"] =
@@ -24,7 +19,7 @@ export function addPwaSupport(
   const publicDir = path.join(targetDir, "public")
   fs.mkdirSync(publicDir, { recursive: true })
 
-  injectPwaPluginConfig(targetDir, projectName, { push })
+  injectPwaPluginConfig(targetDir, appName, { push })
   writePwaRegistration(targetDir)
   injectServiceWorkerRegistration(targetDir)
 }
@@ -47,7 +42,7 @@ export function injectServiceWorkerRegistration(targetDir) {
 
 export function injectPwaPluginConfig(
   targetDir,
-  projectName,
+  appName,
   { push = false } = {},
 ) {
   const viteConfigPath = findViteConfigPath(targetDir)
@@ -73,7 +68,7 @@ export function injectPwaPluginConfig(
       /plugins: \[(.*)\],/,
       (_, plugins) =>
         `plugins: [${EOL}${[
-          createVitePwaConfig(projectName, { push }),
+          createVitePwaConfig(appName, { push }),
           ...splitPlugins(plugins),
         ]
           .map((plugin) => `    ${plugin},`)
@@ -116,7 +111,7 @@ ${registration}`
   return registration
 }
 
-export function createVitePwaConfig(projectName, { push = false } = {}) {
+export function createVitePwaConfig(appName, { push = false } = {}) {
   const workbox = push
     ? `
       workbox: {
@@ -131,8 +126,8 @@ export function createVitePwaConfig(projectName, { push = false } = {}) {
         preset: "minimal-2023",
       },
       manifest: {
-        name: "${projectName}",
-        short_name: "${projectName}",
+        name: "${appName}",
+        short_name: "${appName}",
         description: "An Inglorious Web app.",
         theme_color: "#ffffff",
         background_color: "#ffffff",

@@ -8,7 +8,7 @@ import {
   INDENTATION,
   TYPESCRIPT_VERSION,
 } from "./constants.js"
-import { copyDir, toJavaIdentifier } from "./file.js"
+import { copyDir } from "./file.js"
 
 const WELL_KNOWN_FILES = ["apple-app-site-association", "assetlinks.json"]
 const LISTING_ASSETS = "/listing-assets/"
@@ -16,7 +16,7 @@ const LISTING_ASSETS = "/listing-assets/"
 export function addMobileSupport(
   targetDir,
   pkg,
-  projectName,
+  identity,
   templatesRoot,
   { routing = false } = {},
 ) {
@@ -55,7 +55,7 @@ export function addMobileSupport(
 
   fs.writeFileSync(
     path.join(targetDir, "capacitor.config.ts"),
-    createCapacitorConfigSource(projectName),
+    createCapacitorConfigSource(identity),
   )
   pkg.native = nativeSettings({ routing })
   if (routing) serveWellKnownAsJson(targetDir)
@@ -184,18 +184,21 @@ With Universal Links (iOS) and App Links (Android), a link to the app's domain o
 Test on a device by tapping a link in Notes or Messages; typing it in Safari does not count. Both files are cached, so a change can take a few hours to arrive, and Android checks the domain when the app is installed or updated: \`adb shell pm get-app-links <app id>\` should say \`verified\`.
 `
 
+/**
+ * @param {{ appId: string, appName: string }} identity - The store id and the
+ *   name under the icon.
+ * @param {{ liveUpdate?: boolean }} [options]
+ */
 export function createCapacitorConfigSource(
-  projectName,
+  { appId, appName },
   { liveUpdate = false } = {},
 ) {
-  const appId = appIdOf(projectName)
-
   if (!liveUpdate) {
     return `import type { CapacitorConfig } from "@capacitor/cli"
 
 const config: CapacitorConfig = {
   appId: "${appId}",
-  appName: "${projectName}",
+  appName: "${appName}",
   webDir: "dist",
 }
 
@@ -218,7 +221,7 @@ const publicKey = existsSync(LIVE_UPDATE_PUBLIC_KEY)
 
 const config: CapacitorConfig = {
   appId: "${appId}",
-  appName: "${projectName}",
+  appName: "${appName}",
   webDir: "dist",
   plugins: {
     LiveUpdate: {
@@ -232,10 +235,6 @@ const config: CapacitorConfig = {
 
 export default config
 `
-}
-
-function appIdOf(projectName) {
-  return `com.inglorious.${toJavaIdentifier(projectName)}`
 }
 
 // Links carrying a session token, from sign-up and password-reset emails,
