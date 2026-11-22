@@ -44,7 +44,7 @@
     "@babel/core": "^8.1.2",
     "@inglorious/eslint-config": "workspace:*",
     "@inglorious/utils": "workspace:*",
-    "vitest": "^5.1.0"
+    "vitest": "^5.1.1"
   },
   "engines": {
     "node": ">= 26"
