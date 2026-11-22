@@ -24,12 +24,12 @@
     "@inglorious/vite-plugin-hmr": "workspace:*",
     "@inglorious/vite-plugin-jsx": "workspace:*",
     "@types/node": "^26.6.6",
-    "eslint": "^10.14.0",
-    "prettier": "^3.10.0",
+    "eslint": "^10.15.0",
+    "prettier": "^3.10.1",
     "rollup-plugin-minify-template-literals": "^2.2.0",
     "typescript": "~7.0.2",
     "vite": "^8.3.8",
     "vite-plugin-image-optimizer": "^2.0.3",
-    "vitest": "^5.1.0"
+    "vitest": "^5.1.1"
   }
 }

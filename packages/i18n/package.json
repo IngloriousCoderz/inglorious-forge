@@ -40,13 +40,13 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "i18next": "^27.0.0"
+    "i18next": "^27.2.1"
   },
   "devDependencies": {
     "@inglorious/eslint-config": "workspace:*",
     "@inglorious/store": "workspace:*",
-    "prettier": "^3.10.0",
-    "vitest": "^5.1.0"
+    "prettier": "^3.10.1",
+    "vitest": "^5.1.1"
   },
   "packageManager": "pnpm@12.15.0",
   "engines": {

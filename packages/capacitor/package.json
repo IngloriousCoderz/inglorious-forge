@@ -48,15 +48,15 @@
   },
   "dependencies": {
     "@capacitor/assets": "^4.0.0",
-    "@trapezedev/project": "^7.1.11",
-    "playwright-core": "^1.65.0",
+    "@trapezedev/project": "^7.1.13",
+    "playwright-core": "^1.65.1",
     "plist": "^5.1.1",
     "sharp": "^0.35.5"
   },
   "devDependencies": {
     "@inglorious/eslint-config": "workspace:*",
-    "prettier": "^3.10.0",
-    "vitest": "^5.1.0"
+    "prettier": "^3.10.1",
+    "vitest": "^5.1.1"
   },
   "packageManager": "pnpm@12.15.0",
   "engines": {
