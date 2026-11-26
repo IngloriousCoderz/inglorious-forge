@@ -160,7 +160,7 @@ const types = { Settings: [Settings, withStorage(["theme"], { storage: () => pre
 
 The OS can clear a WebView's localStorage; Preferences survives. Native reads are async: defaults first, then `storageRestore`. Also fits Supabase's `auth.storage`.
 
-`createSecureStorage({ plugin: NativeBiometric })` (same module): the Keychain or Keystore for secrets such as Supabase's session; localStorage in a browser.
+`createSecureStorage({ plugin: NativeBiometric })` (same module): the Keychain or Keystore for secrets such as Supabase's session; localStorage in a browser. A saved secret that fails to read rejects rather than reading `null`, so a flaky read never signs the user out.
 
 ## Native app
 

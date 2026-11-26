@@ -65,3 +65,5 @@ const secrets = createSecureStorage({ plugin: NativeBiometric })
 
 createClient(url, key, { auth: { storage: secrets } })
 ```
+
+Only a key that isn't saved reads as `null`. When the Keychain or Keystore holds a secret but fails to read it, as can happen while the app is starting or locked, `getItem` rejects instead: Supabase takes `null` as signed out, but a rejection leaves the session where it is for the next read.

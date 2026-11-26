@@ -22,9 +22,13 @@ export interface SecureStoragePlugin {
   getData(options: { key: string }): Promise<{ value: string }>
   setData(options: { key: string; value: string }): Promise<void>
   deleteData(options: { key: string }): Promise<void>
+  isDataSaved(options: { key: string }): Promise<{ isSaved: boolean }>
 }
 
-/** The Keychain or Keystore in a native app, `localStorage` in a browser. */
+/**
+ * The Keychain or Keystore in a native app, `localStorage` in a browser. A
+ * missing key reads as `null`; a saved one that can't be read rejects.
+ */
 export declare function createSecureStorage(config?: {
   plugin?: SecureStoragePlugin
 }): NativeStorage

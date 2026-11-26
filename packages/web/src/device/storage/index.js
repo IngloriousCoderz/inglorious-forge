@@ -39,7 +39,13 @@ export function createNativeStorage({ plugin } = {}) {
  * has nothing safer, `localStorage`. Use it as `withStorage`'s storage or
  * Supabase's `auth.storage`.
  *
- * @param {{ plugin?: { getData(options: { key: string }): Promise<{ value: string }>, setData(options: { key: string, value: string }): Promise<void>, deleteData(options: { key: string }): Promise<void> } }} [config]
+ * Only a key that isn't there reads as `null`. The plugin rejects for a
+ * missing key and for a failed read alike, so a rejection is checked with
+ * `isDataSaved`: a secret that is saved but couldn't be read rejects instead.
+ * To Supabase, `null` means signed out, and a failed read must not sign
+ * anyone out.
+ *
+ * @param {{ plugin?: { getData(options: { key: string }): Promise<{ value: string }>, setData(options: { key: string, value: string }): Promise<void>, deleteData(options: { key: string }): Promise<void>, isDataSaved(options: { key: string }): Promise<{ isSaved: boolean }> } }} [config]
  *
  * @example
  * import { NativeBiometric } from "@capgo/capacitor-native-biometric"
@@ -50,11 +56,18 @@ export function createSecureStorage({ plugin } = {}) {
   if (!plugin || !isNative()) return createNativeStorage()
 
   return {
-    getItem: (key) =>
-      plugin.getData({ key }).then(
-        ({ value }) => value,
-        () => null,
-      ),
+    async getItem(key) {
+      try {
+        return (await plugin.getData({ key })).value
+      } catch (error) {
+        // Unsure whether it's saved: a failure, not an absence.
+        const { isSaved } = await plugin
+          .isDataSaved({ key })
+          .catch(() => ({ isSaved: true }))
+        if (isSaved) throw error
+        return null
+      }
+    },
     setItem: (key, value) => plugin.setData({ key, value }),
     removeItem: (key) => plugin.deleteData({ key }),
   }

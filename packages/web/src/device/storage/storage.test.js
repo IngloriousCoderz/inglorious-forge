@@ -61,10 +61,8 @@ describe("createSecureStorage", () => {
     delete globalThis.Capacitor
   })
 
-  it("keeps secrets in the Keychain in a native app", async () => {
-    globalThis.Capacitor = { isNativePlatform: () => true }
-    const items = new Map()
-    const plugin = {
+  function keychain(items = new Map()) {
+    return {
       getData: vi.fn(async ({ key }) => {
         if (!items.has(key)) throw new Error("No data found")
         return { value: items.get(key) }
@@ -75,7 +73,14 @@ describe("createSecureStorage", () => {
       deleteData: vi.fn(async ({ key }) => {
         items.delete(key)
       }),
+      isDataSaved: vi.fn(async ({ key }) => ({ isSaved: items.has(key) })),
     }
+  }
+
+  it("keeps secrets in the Keychain in a native app", async () => {
+    globalThis.Capacitor = { isNativePlatform: () => true }
+    const items = new Map()
+    const plugin = keychain(items)
     const storage = createSecureStorage({ plugin })
 
     await expect(storage.getItem("token")).resolves.toBe(null)
@@ -83,6 +88,28 @@ describe("createSecureStorage", () => {
     await expect(storage.getItem("token")).resolves.toBe("secret")
     await storage.removeItem("token")
     expect(items.has("token")).toBe(false)
+  })
+
+  it("rejects when a saved secret can't be read, rather than reading null", async () => {
+    globalThis.Capacitor = { isNativePlatform: () => true }
+    const plugin = keychain(new Map([["token", "secret"]]))
+    const failure = new Error("Failed to get data")
+    plugin.getData.mockRejectedValueOnce(failure)
+    const storage = createSecureStorage({ plugin })
+
+    await expect(storage.getItem("token")).rejects.toBe(failure)
+    await expect(storage.getItem("token")).resolves.toBe("secret")
+  })
+
+  it("rejects when it can't tell whether a secret is saved", async () => {
+    globalThis.Capacitor = { isNativePlatform: () => true }
+    const plugin = keychain()
+    const failure = new Error("Interaction not allowed")
+    plugin.getData.mockRejectedValueOnce(failure)
+    plugin.isDataSaved.mockRejectedValueOnce(new Error("Bridge not ready"))
+    const storage = createSecureStorage({ plugin })
+
+    await expect(storage.getItem("token")).rejects.toBe(failure)
   })
 
   it("uses localStorage in a browser", () => {

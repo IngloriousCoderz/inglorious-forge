@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 6.31.3
+
+### Patch Changes
+
+- `createSecureStorage` reads `null` only for a key that isn't saved. A saved secret that the Keychain or Keystore fails to read now rejects instead of reading as `null`, which Supabase took as signed out, ending a valid session.
+
 ## 6.31.2
 
 ### Patch Changes
