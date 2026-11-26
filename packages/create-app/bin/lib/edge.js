@@ -8,7 +8,7 @@ const EDGE_IMPORT = /npm:@inglorious\/supabase@[^/"]+\/edge/g
 
 const README_SECTION = `## Edge Functions
 
-\`supabase start\` already serves every function in \`supabase/functions/\`. While editing one, \`pnpm edge\` serves them with their logs in this terminal, reloading on every save; \`pnpm edge:check\` type-checks and lints them with Deno, which must be installed. Functions read the secrets in \`supabase/functions/.env\` when they start: after changing one, restart the stack (\`supabase stop && supabase start\`) or \`pnpm edge\`.
+\`supabase start\` already serves every function in \`supabase/functions/\`. While editing one, \`pnpm edge\` serves them with their logs in this terminal, reloading on every save. It takes the functions over from the stack, and stopping it takes them away: every call to \`/functions/v1/\` then answers 503 until you start \`pnpm edge\` again or restart the stack. \`pnpm edge:check\` type-checks and lints them with Deno, which must be installed. Functions read the secrets in \`supabase/functions/.env\` when they start: after changing one, restart the stack (\`supabase stop && supabase start\`) or \`pnpm edge\`.
 
 The first \`pnpm edge:check\` writes \`supabase/functions/deno.lock\`: commit it, so every machine and every deploy runs the functions with the same versions of their dependencies.`
 

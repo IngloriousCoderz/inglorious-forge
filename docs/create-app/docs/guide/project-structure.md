@@ -53,7 +53,7 @@ Without routing, the single page is `src/app/home/`. There is no `scripts/` fold
 
 ## Edge Functions
 
-Sign-in and push add Edge Functions in `supabase/functions/`. `supabase start` already serves them. While editing one, `pnpm edge` serves them with their logs in the terminal, reloading on every save, and `pnpm edge:check` type-checks and lints them with Deno. Its first run writes `supabase/functions/deno.lock`: commit it, so every machine and deploy uses the same dependency versions.
+Sign-in and push add Edge Functions in `supabase/functions/`. `supabase start` already serves them. While editing one, `pnpm edge` serves them with their logs in the terminal, reloading on every save. It takes the functions over from the stack, and stopping it takes them away: every call to `/functions/v1/` then answers 503 until you start `pnpm edge` again or restart the stack (`supabase stop && supabase start`). `pnpm edge:check` type-checks and lints them with Deno. Its first run writes `supabase/functions/deno.lock`: commit it, so every machine and deploy uses the same dependency versions.
 
 ## Tests
 

@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.30.1
+
+### Patch Changes
+
+- The README of apps with Edge Functions warns that stopping `pnpm edge` leaves the local stack without functions, answering 503, until `pnpm edge` runs again or the stack restarts.
+
 ## 1.30.0
 
 ### Minor Changes
