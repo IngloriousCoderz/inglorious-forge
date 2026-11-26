@@ -32,11 +32,19 @@ The two main ways to implement game logic are with **Behaviors** and **Systems**
 
 ## Your First Game
 
-Let's start with a "Hello World" example and then build a simple game.
+The quickest start is a scaffolded project, which is already a small playable game with tests:
+
+```bash
+pnpm create @inglorious/game
+```
+
+It asks for a template (JavaScript, TypeScript or IngloriousScript, or a single HTML file), whether to make the game an installable PWA, whether to ship it to the app stores with Capacitor, and whether to add agent skills for coding agents. See [@inglorious/create-game](https://www.npmjs.com/package/@inglorious/create-game) for the flags that skip the questions.
+
+To see the pieces one at a time instead, start from a "Hello World" example and build up a simple game.
 
 ### Step 1: Basic Setup
 
-Create an HTML file with this structure:
+Create an HTML file with this structure, and serve its folder over HTTP (for example with `npx serve`): browsers don't load modules from files opened directly.
 
 ```html
 <!DOCTYPE html>
@@ -44,18 +52,21 @@ Create an HTML file with this structure:
   <body>
     <canvas id="canvas" width="800" height="600"></canvas>
 
-    <script type="text/javascript">
-      window.process = { env: "development" }
+    <script>
+      window.process = { env: { NODE_ENV: "development" } }
     </script>
 
     <script type="importmap">
       {
         "imports": {
-          "mutative": "https://unpkg.com/mutative@latest/dist/mutative.esm.mjs",
-          "@inglorious/utils/": "https://unpkg.com/@inglorious%2Futils@latest/src/",
-          "@inglorious/store/": "https://unpkg.com/@inglorious%2Fstore@latest/src/",
-          "@inglorious/engine/": "https://unpkg.com/@inglorious%2Fengine@latest/src/",
-          "@inglorious/renderer-2d/": "https://unpkg.com/@inglorious%2Frenderer-2d@latest/src/",
+          "mutative": "https://cdn.jsdelivr.net/npm/mutative@2/dist/mutative.esm.mjs",
+          "@inglorious/utils/": "https://cdn.jsdelivr.net/npm/@inglorious/utils@5/src/",
+          "@inglorious/utils/functions": "https://cdn.jsdelivr.net/npm/@inglorious/utils@5/src/functions/index.js",
+          "@inglorious/utils/object.js": "https://cdn.jsdelivr.net/npm/@inglorious/utils@5/src/data-structures/object.js",
+          "@inglorious/utils/vector.js": "https://cdn.jsdelivr.net/npm/@inglorious/utils@5/src/math/vector.js",
+          "@inglorious/store/": "https://cdn.jsdelivr.net/npm/@inglorious/store@12/src/",
+          "@inglorious/engine/": "https://cdn.jsdelivr.net/npm/@inglorious/engine@24/src/",
+          "@inglorious/renderer-2d/": "https://cdn.jsdelivr.net/npm/@inglorious/renderer-2d@22/src/",
           "game": "/game.js"
         }
       }
@@ -63,7 +74,7 @@ Create an HTML file with this structure:
 
     <script
       type="module"
-      src="https://unpkg.com/@inglorious%2Fengine@latest/src/main.js"
+      src="https://cdn.jsdelivr.net/npm/@inglorious/engine@24/src/main.js"
     ></script>
   </body>
 </html>

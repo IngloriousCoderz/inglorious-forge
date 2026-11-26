@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-import { execSync } from "child_process"
 import fs from "fs"
 import ora from "ora"
 import { EOL } from "os"
@@ -10,11 +9,11 @@ import { fileURLToPath } from "url"
 
 import { addAppFeatures } from "./lib/app.js"
 import { addAuthSupport } from "./lib/auth.js"
+import { pinCdnVersions } from "./lib/cdn.js"
 import { addCiSupport } from "./lib/ci.js"
 import { parseCliOptions } from "./lib/cli.js"
 import {
   INDENTATION,
-  NPM_VIEW_TIMEOUT_MS,
   USER_ARG_START_INDEX,
   VITE_APP_TEMPLATES,
 } from "./lib/constants.js"
@@ -37,6 +36,13 @@ import { addReleaseSupport } from "./lib/release.js"
 import { installSkills, skillsCommand, skillsFor } from "./lib/skills.js"
 import { addSupabaseConfig } from "./lib/supabase.js"
 import { addTestSupport } from "./lib/testing.js"
+import { pinWorkspaceVersions } from "./lib/versions.js"
+
+const CDN_PACKAGES = [
+  "@inglorious/utils",
+  "@inglorious/store",
+  "@inglorious/web",
+]
 
 async function main() {
   const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -185,10 +191,13 @@ async function main() {
     if (VITE_APP_TEMPLATES.has(baseTemplate)) setPageTitle(targetDir, appName)
 
     if (baseTemplate === "minimal") {
+      pinCdnVersions(targetDir, CDN_PACKAGES, (name) => {
+        spinner.text = `Fetching latest version of ${name}...`
+      })
       spinner.succeed(`Created ${projectName} at ${targetDir}`)
       console.log(`\nNext steps:`)
       console.log(`  cd ${projectName}`)
-      console.log(`  Open index.html in your browser`)
+      console.log(`  npx serve`)
       return
     }
 
@@ -279,16 +288,9 @@ async function main() {
       })
     }
 
-    for (const depType of ["dependencies", "devDependencies"]) {
-      if (pkg[depType]) {
-        for (const [name, version] of Object.entries(pkg[depType])) {
-          if (version.startsWith("workspace:")) {
-            spinner.text = `Fetching latest version of ${name}...`
-            pkg[depType][name] = getLatestVersion(name)
-          }
-        }
-      }
-    }
+    pinWorkspaceVersions(pkg, (name) => {
+      spinner.text = `Fetching latest version of ${name}...`
+    })
 
     fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, INDENTATION) + EOL)
     pinEdgeImports(targetDir, pkg.dependencies?.["@inglorious/supabase"])
@@ -336,19 +338,6 @@ function validateChoice(flag, value, options) {
     throw new Error(
       `Unknown ${flag} "${value}". Choose one of: ${Object.keys(options).join(", ")}.`,
     )
-  }
-}
-
-function getLatestVersion(packageName) {
-  try {
-    const version = execSync(`npm view ${packageName} version`, {
-      encoding: "utf-8",
-      stdio: "pipe",
-      timeout: NPM_VIEW_TIMEOUT_MS,
-    }).trim()
-    return `^${version}`
-  } catch {
-    return "latest"
   }
 }
 

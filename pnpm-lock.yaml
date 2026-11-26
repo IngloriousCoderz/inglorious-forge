@@ -2248,6 +2248,9 @@ importers:
 
   packages/create-game:
     dependencies:
+      '@inglorious/create-app':
+        specifier: workspace:^
+        version: link:../create-app
       ora:
         specifier: ^10.0.0
         version: 10.0.0

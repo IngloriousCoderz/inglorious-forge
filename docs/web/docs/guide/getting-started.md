@@ -279,13 +279,16 @@ Want to skip the build step? Create a single HTML file:
     <script type="importmap">
       {
         "imports": {
-          "mutative": "https://unpkg.com/mutative@latest/dist/mutative.esm.mjs",
-          "lit-html": "https://unpkg.com/lit-html@latest/lit-html.js",
-          "lit-html/": "https://unpkg.com/lit-html@latest/",
-          "@inglorious/utils/": "https://unpkg.com/@inglorious%2Futils@latest/src/",
-          "@inglorious/store": "https://unpkg.com/@inglorious%2Fstore@latest/src/store.js",
-          "@inglorious/store/": "https://unpkg.com/@inglorious%2Fstore@latest/src/",
-          "@inglorious/web": "https://unpkg.com/@inglorious%2Fweb@latest/src/index.js"
+          "mutative": "https://cdn.jsdelivr.net/npm/mutative@2/dist/mutative.esm.mjs",
+          "lit-html": "https://cdn.jsdelivr.net/npm/lit-html@3/lit-html.js",
+          "lit-html/": "https://cdn.jsdelivr.net/npm/lit-html@3/",
+          "@inglorious/utils/": "https://cdn.jsdelivr.net/npm/@inglorious/utils@5/src/",
+          "@inglorious/utils/functions": "https://cdn.jsdelivr.net/npm/@inglorious/utils@5/src/functions/index.js",
+          "@inglorious/utils/object.js": "https://cdn.jsdelivr.net/npm/@inglorious/utils@5/src/data-structures/object.js",
+          "@inglorious/store": "https://cdn.jsdelivr.net/npm/@inglorious/store@12/src/store.js",
+          "@inglorious/store/client/devtools": "https://cdn.jsdelivr.net/npm/@inglorious/store@12/src/client/devtools.js",
+          "@inglorious/store/": "https://cdn.jsdelivr.net/npm/@inglorious/store@12/src/",
+          "@inglorious/web": "https://cdn.jsdelivr.net/npm/@inglorious/web@6/src/index.js"
         }
       }
     </script>

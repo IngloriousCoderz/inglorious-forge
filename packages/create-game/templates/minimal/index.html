@@ -2,35 +2,42 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/public/logo.png" />
-    <link rel="stylesheet" href="/public/style.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="./public/logo.png" />
+    <link rel="stylesheet" href="./public/style.css" />
     <title>Inglorious Game</title>
   </head>
 
   <body>
-    <canvas id="canvas"></canvas>
+    <canvas id="canvas" width="800" height="600"></canvas>
 
-    <script type="text/javascript">
-      window.process = { env: "development" }
+    <script>
+      window.process = { env: { NODE_ENV: "development" } }
     </script>
 
     <script type="importmap">
       {
         "imports": {
-          "mutative": "https://unpkg.com/mutative@latest/dist/mutative.esm.mjs",
-          "@inglorious/utils/": "https://unpkg.com/@inglorious%2Futils@latest/src/",
-          "@inglorious/store/": "https://unpkg.com/@inglorious%2Fstore@latest/src/",
-          "@inglorious/engine/": "https://unpkg.com/@inglorious%2Fengine@latest/src/",
-          "@inglorious/renderer-2d/": "https://unpkg.com/@inglorious%2Frenderer-2d@latest/src/",
-          "game": "/src/game.js"
+          "mutative": "https://cdn.jsdelivr.net/npm/mutative@2/dist/mutative.esm.mjs",
+          "@inglorious/utils/": "https://cdn.jsdelivr.net/npm/@inglorious/utils@5/src/",
+          "@inglorious/utils/array.js": "https://cdn.jsdelivr.net/npm/@inglorious/utils@5/src/data-structures/array.js",
+          "@inglorious/utils/function.js": "https://cdn.jsdelivr.net/npm/@inglorious/utils@5/src/functions/function.js",
+          "@inglorious/utils/functions": "https://cdn.jsdelivr.net/npm/@inglorious/utils@5/src/functions/index.js",
+          "@inglorious/utils/object.js": "https://cdn.jsdelivr.net/npm/@inglorious/utils@5/src/data-structures/object.js",
+          "@inglorious/utils/promise.js": "https://cdn.jsdelivr.net/npm/@inglorious/utils@5/src/data-structures/promise.js",
+          "@inglorious/utils/quaternion.js": "https://cdn.jsdelivr.net/npm/@inglorious/utils@5/src/math/quaternion.js",
+          "@inglorious/utils/vector.js": "https://cdn.jsdelivr.net/npm/@inglorious/utils@5/src/math/vector.js",
+          "@inglorious/store/": "https://cdn.jsdelivr.net/npm/@inglorious/store@12/src/",
+          "@inglorious/engine/": "https://cdn.jsdelivr.net/npm/@inglorious/engine@24/src/",
+          "@inglorious/renderer-2d/": "https://cdn.jsdelivr.net/npm/@inglorious/renderer-2d@22/src/",
+          "game": "./src/game.js"
         }
       }
     </script>
 
     <script
       type="module"
-      src="https://unpkg.com/@inglorious%2Fengine@latest/src/main.js"
+      src="https://cdn.jsdelivr.net/npm/@inglorious/engine@24/src/main.js"
     ></script>
   </body>
 </html>

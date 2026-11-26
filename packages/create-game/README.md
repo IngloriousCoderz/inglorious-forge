@@ -4,48 +4,80 @@
 
 The official scaffolding tool to quickly create a new game with the [Inglorious Engine](https://www.npmjs.com/package/@inglorious/engine).
 
-This package allows you to generate a new project from a set of pre-configured templates, so you can start developing your game right away.
+Every template starts as a small, complete game: move with the arrow keys, WASD, a gamepad or a finger, and collect coins before the time runs out. It shows types, entities, composed behaviors, events, collisions and text, so there is something to change from the first minute.
 
 ## Usage
-
-To create a new game, run this command in your terminal. You will be prompted to choose a project name and select a template.
 
 ```bash
 pnpm create @inglorious/game
 ```
 
-The CLI will guide you through the setup process, asking for a project name and which template you'd like to use.
+The CLI asks for:
 
-Every template except `minimal` then asks whether to add agent skills. Saying yes runs the [skills CLI](https://skills.sh) in the new project. It asks which coding agents to install for, and installs the [Inglorious Forge skills](https://github.com/IngloriousCoderz/inglorious-forge/tree/main/docs/forge/.well-known/agent-skills) for games: `forge`, `forge-best-practices`, `store`, `utils`, `engine` and `engine-best-practices`. If the install fails, the CLI prints the command to retry it.
+1. The project name.
+2. A template.
+3. Whether to make the game an installable, offline-ready PWA.
+4. Whether to ship it to the app stores, which adds Capacitor for Android and iOS, and then the app id.
+5. Whether to add agent skills for coding agents.
+
+The `minimal` template asks only the first two.
+
+Flags answer the questions up front, so the CLI can run without prompts:
+
+```bash
+pnpm create @inglorious/game my-game --template=js --pwa --mobile --app-id=com.example.mygame --skills
+```
+
+| Flag                      | Answers                                                                            |
+| ------------------------- | ---------------------------------------------------------------------------------- |
+| `<name>`                  | The project name, and the folder it is created in                                  |
+| `--template=<template>`   | `js`, `ts`, `ijs`, `its` or `minimal`                                              |
+| `--app-name=<name>`       | The name players see; by default the project name in words (`my-game` → `My Game`) |
+| `--pwa`, `--no-pwa`       | PWA support                                                                        |
+| `--mobile`, `--no-mobile` | Capacitor for Android and iOS                                                      |
+| `--app-id=<id>`           | The store id, a reverse domain such as `com.example.mygame`                        |
+| `--skills`, `--no-skills` | Agent skills                                                                       |
 
 ## Templates
 
-The following templates are available to get you started:
-
-- **minimal**: A minimal starter template that requires no bundling: just HTML, CSS, and JS.
-- **js**: A starter template for a plain JavaScript project, bundled with Vite.
-- **ts**: A starter template for a plain TypeScript project, bundled with Vite.
-- **ijs** (IngloriousScript): A starter template for a JavaScript project using IngloriousScript, bundled with Vite.
-- **its** (IngloriousScript w/ TypeScript): A starter template for a TypeScript project that uses IngloriousScript, bundled with Vite.
+- **js**: JavaScript, bundled with Vite and tested with Vitest.
+- **ts**: TypeScript, bundled with Vite and tested with Vitest. `pnpm typecheck` checks the types.
+- **ijs** (IngloriousScript): JavaScript with vector math (`position += velocity * dt`), bundled with Vite and tested with Vitest.
+- **its** (IngloriousScript with TypeScript): the same, in TypeScript.
+- **minimal**: a single HTML file that loads the engine from a CDN through an import map, with no build step. Serve the folder (for example with `npx serve`), since browsers don't load modules from files opened directly.
 
 ## What it does
 
-The tool will create a new directory with your chosen project name and copy the template files into it. It will also automatically update the `package.json` with your project's name.
+The CLI copies the template into a new folder, names the project and the page title, and sets every `@inglorious/*` dependency to its latest version. In the `minimal` template it pins the CDN URLs instead.
 
-Every template includes a `vercel.json` that deploys only the `main` branch on Vercel; change `main` there if your production branch has another name.
+Every template but `minimal` also gets:
 
-After the project is created, you can navigate into the directory and install the dependencies.
+- `vite.config.js`, which Vitest reads too, with tests running in jsdom.
+- `pnpm-workspace.yaml`, so pnpm installs Inglorious packages on the day they are published.
+- `.github/dependabot.yml`, for weekly dependency updates grouped into two pull requests.
+- A `vercel.json` that deploys only the `main` branch on Vercel; change `main` there if your production branch has another name.
+
+### PWA
+
+The game gets [vite-plugin-pwa](https://vite-pwa-org.netlify.app/): the build makes the icons from `public/logo.png`, a manifest that opens the game fullscreen, and a service worker that caches it for offline play and updates it in the background.
+
+### Mobile
+
+The game gets [Capacitor](https://capacitorjs.com/) and [@inglorious/capacitor](https://www.npmjs.com/package/@inglorious/capacitor), set up as in [create-app](https://inglorious.dev/create-app/): `pnpm mobile:init:android` and `pnpm mobile:init:ios` create the native projects, `pnpm mobile:dev:android` and `pnpm mobile:dev:ios` run the game on a device with live reload, and `pnpm mobile:release` prepares a store build. The project's README lists the native tools each platform needs. With PWA support too, the service worker stays off inside the native app.
+
+### Agent skills
+
+Saying yes runs the [skills CLI](https://skills.sh) in the new project. It asks which coding agents to install for, and installs the [Inglorious Forge skills](https://github.com/IngloriousCoderz/inglorious-forge/tree/main/docs/forge/.well-known/agent-skills) for games: `forge`, `forge-best-practices`, `store`, `utils`, `engine` and `engine-best-practices`. If the install fails, the CLI prints the command to retry it.
+
+## After scaffolding
 
 ```bash
-# 1. Change into your new project directory
-cd my-awesome-game
-
-# 2. Install dependencies
+cd my-game
 pnpm install
-
-# 3. Start the development server
 pnpm dev
 ```
+
+`pnpm test` runs the game's tests, `pnpm build` builds it into `dist/`.
 
 ## License
 

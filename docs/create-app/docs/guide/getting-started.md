@@ -60,6 +60,7 @@ Every flag is listed in [Options](../reference/options.md).
 ## What every project gets
 
 - A `vercel.json` that deploys only the `main` branch on Vercel; change `main` there if your production branch has another name.
+- In `minimal`, an import map pointing at the latest published versions on jsDelivr.
 - Except `minimal`:
   - `.github/dependabot.yml`, which opens weekly dependency updates grouped into two pull requests: one for `@inglorious/*`, one for everything else.
   - A `pnpm-workspace.yaml` that takes `@inglorious/*` packages the day they are published, past pnpm's minimum release age, and allows Firebase's install scripts when the app uses Firebase.

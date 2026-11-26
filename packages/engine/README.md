@@ -14,7 +14,7 @@ Run the following command in your terminal and follow the prompts to create a ne
 pnpm create @inglorious/game
 ```
 
-This will set up a complete project with a development server ready to go.
+This sets up a small playable game with a development server and tests, and can make it an installable PWA or an Android and iOS app with Capacitor.
 
 ## Features
 
@@ -406,7 +406,7 @@ The core engine relies on a few key, lightweight packages:
 
 If you prefer to avoid a build step, you can run the engine directly in the browser. The example below demonstrates how to set up a minimal game using ES modules, an `importmap`, and the 2D canvas renderer.
 
-An import map knows nothing of a package's `exports`, so without a bundler import files by their real path: `@inglorious/store/behaviors/state-machine/fsm.js` rather than `@inglorious/store/fsm`.
+An import map knows nothing of a package's `exports`, so it lists the shortcuts the engine itself imports; in your own code, import other files by their real path: `@inglorious/store/behaviors/state-machine/fsm.js` rather than `@inglorious/store/fsm`. Serve the folder over HTTP (for example with `npx serve`): browsers don't load modules from files opened directly.
 
 ```html
 <!DOCTYPE html>
@@ -414,18 +414,21 @@ An import map knows nothing of a package's `exports`, so without a bundler impor
   <body>
     <canvas id="canvas" width="800" height="600"></canvas>
 
-    <script type="text/javascript">
-      window.process = { env: "development" }
+    <script>
+      window.process = { env: { NODE_ENV: "development" } }
     </script>
 
     <script type="importmap">
       {
         "imports": {
-          "mutative": "https://unpkg.com/mutative@latest/dist/mutative.esm.mjs",
-          "@inglorious/utils/": "https://unpkg.com/@inglorious%2Futils@latest/src/",
-          "@inglorious/store/": "https://unpkg.com/@inglorious%2Fstore@latest/src/",
-          "@inglorious/engine/": "https://unpkg.com/@inglorious%2Fengine@latest/src/",
-          "@inglorious/renderer-2d/": "https://unpkg.com/@inglorious%2Frenderer-2d@latest/src/",
+          "mutative": "https://cdn.jsdelivr.net/npm/mutative@2/dist/mutative.esm.mjs",
+          "@inglorious/utils/": "https://cdn.jsdelivr.net/npm/@inglorious/utils@5/src/",
+          "@inglorious/utils/functions": "https://cdn.jsdelivr.net/npm/@inglorious/utils@5/src/functions/index.js",
+          "@inglorious/utils/object.js": "https://cdn.jsdelivr.net/npm/@inglorious/utils@5/src/data-structures/object.js",
+          "@inglorious/utils/vector.js": "https://cdn.jsdelivr.net/npm/@inglorious/utils@5/src/math/vector.js",
+          "@inglorious/store/": "https://cdn.jsdelivr.net/npm/@inglorious/store@12/src/",
+          "@inglorious/engine/": "https://cdn.jsdelivr.net/npm/@inglorious/engine@24/src/",
+          "@inglorious/renderer-2d/": "https://cdn.jsdelivr.net/npm/@inglorious/renderer-2d@22/src/",
           "game": "/game.js"
         }
       }
@@ -433,7 +436,7 @@ An import map knows nothing of a package's `exports`, so without a bundler impor
 
     <script
       type="module"
-      src="https://unpkg.com/@inglorious%2Fengine@latest/src/main.js"
+      src="https://cdn.jsdelivr.net/npm/@inglorious/engine@24/src/main.js"
     ></script>
   </body>
 </html>

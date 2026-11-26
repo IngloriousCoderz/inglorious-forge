@@ -111,7 +111,21 @@ ${registration}`
   return registration
 }
 
-export function createVitePwaConfig(appName, { push = false } = {}) {
+/**
+ * @param {string} appName
+ * @param {{ push?: boolean, description?: string, registerType?: "prompt" | "autoUpdate", color?: string, display?: string, orientation?: string }} [options]
+ */
+export function createVitePwaConfig(
+  appName,
+  {
+    push = false,
+    description = "An Inglorious Web app.",
+    registerType = "prompt",
+    color = "#ffffff",
+    display = "standalone",
+    orientation,
+  } = {},
+) {
   const workbox = push
     ? `
       workbox: {
@@ -120,7 +134,7 @@ export function createVitePwaConfig(appName, { push = false } = {}) {
     : ""
   return `VitePWA({
       injectRegister: false,
-      registerType: "prompt",
+      registerType: "${registerType}",
       pwaAssets: {
         image: "public/logo.png",
         preset: "minimal-2023",
@@ -128,10 +142,15 @@ export function createVitePwaConfig(appName, { push = false } = {}) {
       manifest: {
         name: "${appName}",
         short_name: "${appName}",
-        description: "An Inglorious Web app.",
-        theme_color: "#ffffff",
-        background_color: "#ffffff",
-        display: "standalone",
+        description: "${description}",
+        theme_color: "${color}",
+        background_color: "${color}",
+        display: "${display}",${
+          orientation
+            ? `
+        orientation: "${orientation}",`
+            : ""
+        }
         start_url: "/",
       },${workbox}
     })`

@@ -1,6 +1,30 @@
 #!/usr/bin/env node
 
-import { execSync } from "child_process"
+import { pinCdnVersions } from "@inglorious/create-app/bin/lib/cdn.js"
+import {
+  readBooleanFlag,
+  readValueFlag,
+} from "@inglorious/create-app/bin/lib/cli.js"
+import {
+  INDENTATION,
+  USER_ARG_START_INDEX,
+} from "@inglorious/create-app/bin/lib/constants.js"
+import { addDependabot } from "@inglorious/create-app/bin/lib/dependabot.js"
+import { copyDir } from "@inglorious/create-app/bin/lib/file.js"
+import {
+  defaultAppIdOf,
+  displayNameOf,
+  validateAppId,
+  validateAppName,
+} from "@inglorious/create-app/bin/lib/identity.js"
+import { addMobileSupport } from "@inglorious/create-app/bin/lib/mobile.js"
+import { addPnpmSettings } from "@inglorious/create-app/bin/lib/pnpm.js"
+import { addReleaseSupport } from "@inglorious/create-app/bin/lib/release.js"
+import {
+  installSkills,
+  skillsCommand,
+} from "@inglorious/create-app/bin/lib/skills.js"
+import { pinWorkspaceVersions } from "@inglorious/create-app/bin/lib/versions.js"
 import fs from "fs"
 import ora from "ora"
 import { EOL } from "os"
@@ -8,8 +32,8 @@ import path from "path"
 import prompts from "prompts"
 import { fileURLToPath } from "url"
 
-const INDENTATION = 2
-const SKILLS_SOURCE = "https://inglorious.dev"
+import { addPwaSupport, writeViteConfig } from "./lib/vite.js"
+
 const SKILLS = [
   "forge",
   "forge-best-practices",
@@ -18,176 +42,248 @@ const SKILLS = [
   "engine",
   "engine-best-practices",
 ]
-const SKILLS_COMMAND = `pnpm dlx skills add ${SKILLS_SOURCE} --skill ${SKILLS.join(" ")}`
+
+const TEMPLATES = {
+  js: {
+    title: "JavaScript",
+    description: "A vanilla JavaScript setup with Vite and Vitest",
+  },
+  ts: {
+    title: "TypeScript",
+    description: "A TypeScript setup with Vite and Vitest",
+  },
+  ijs: {
+    title: "IngloriousScript (JS)",
+    description: "A JS superset with built-in vector math",
+  },
+  its: {
+    title: "IngloriousScript (TS)",
+    description: "A TS superset with built-in vector math",
+  },
+  minimal: {
+    title: "Minimal",
+    description: "A single HTML file and no build step",
+  },
+}
+
+const CDN_PACKAGES = [
+  "@inglorious/utils",
+  "@inglorious/store",
+  "@inglorious/engine",
+  "@inglorious/renderer-2d",
+]
+
+const TYPESCRIPT_TEMPLATES = new Set(["ts", "its"])
 
 async function main() {
   const __dirname = path.dirname(fileURLToPath(import.meta.url))
   const templatesRoot = path.join(__dirname, "../templates")
+  const appTemplatesRoot = fileURLToPath(
+    new URL(
+      "../templates",
+      import.meta.resolve("@inglorious/create-app/bin/index.js"),
+    ),
+  )
+  const flags = parseFlags(process.argv.slice(USER_ARG_START_INDEX))
+
+  if (flags.template && !TEMPLATES[flags.template]) {
+    throw new Error(
+      `Unknown template "${flags.template}". Choose one of: ${Object.keys(TEMPLATES).join(", ")}.`,
+    )
+  }
 
   let canceled = false
-
   const onCancel = () => {
     canceled = true
     return false
   }
+  const ask = async (question) => {
+    const { value } = await prompts(
+      { ...question, name: "value" },
+      { onCancel },
+    )
+    return value
+  }
 
-  const { projectName, template, addSkills } = await prompts(
-    [
-      {
-        type: "text",
-        name: "projectName",
-        message: "What is your project named?",
-        initial: "my-game",
-      },
-      {
-        type: "select",
-        name: "template",
-        message: "Select a template",
-        choices: [
-          {
-            title: "Minimal",
-            description: "A single HTML file for a zero-build setup",
-            value: "minimal",
-          },
-          {
-            title: "JavaScript",
-            description: "A vanilla JavaScript setup with Vite",
-            value: "js",
-          },
-          {
-            title: "TypeScript",
-            description: "A TypeScript setup with Vite",
-            value: "ts",
-          },
-          {
-            title: "IngloriousScript (JS)",
-            description:
-              "A JS superset with built-in vector math, powered by Vite",
-            value: "ijs",
-          },
-          {
-            title: "IngloriousScript (TS)",
-            description:
-              "A TS superset with built-in vector math, powered by Vite",
-            value: "its",
-          },
-        ],
-      },
-      {
-        type: (template) => (template === "minimal" ? null : "confirm"),
-        name: "addSkills",
+  const projectName =
+    flags.projectName ??
+    (await ask({
+      type: "text",
+      message: "What is your project named?",
+      initial: "my-game",
+    }))
+  if (canceled) return cancel()
+
+  const template =
+    flags.template ??
+    (await ask({
+      type: "select",
+      message: "Select a template",
+      choices: Object.entries(TEMPLATES).map(([value, option]) => ({
+        value,
+        ...option,
+      })),
+    }))
+  if (canceled) return cancel()
+
+  const appName = flags.appName ?? displayNameOf(projectName)
+  const appNameError = validateAppName(appName)
+  if (appNameError !== true) throw new Error(`--app-name: ${appNameError}`)
+
+  const isMinimal = template === "minimal"
+  if (isMinimal && (flags.pwa || flags.mobile || flags.skills)) {
+    console.warn(
+      "PWA, mobile and agent skills options are not available for the minimal template.",
+    )
+  }
+
+  let pwa = false
+  let mobile = false
+  let appId = null
+  let withSkills = false
+
+  if (!isMinimal) {
+    pwa =
+      flags.pwa ??
+      (await ask({
+        type: "confirm",
+        message: "Make it installable and playable offline? (PWA)",
+        initial: false,
+      }))
+    if (canceled) return cancel()
+
+    mobile =
+      flags.mobile ??
+      (await ask({
+        type: "confirm",
+        message: "Ship it to app stores? (adds Capacitor for Android and iOS)",
+        initial: false,
+      }))
+    if (canceled) return cancel()
+
+    if (mobile) {
+      appId =
+        flags.appId ??
+        (await ask({
+          type: "text",
+          message:
+            "What is the app id? (reverse domain, fixed after the first store release)",
+          initial: defaultAppIdOf(projectName),
+          validate: validateAppId,
+        }))
+      if (canceled) return cancel()
+
+      const appIdError = validateAppId(appId)
+      if (appIdError !== true) throw new Error(`--app-id: ${appIdError}`)
+    }
+
+    withSkills =
+      flags.skills ??
+      (await ask({
+        type: "confirm",
         message: "Add agent skills for coding agents? (Claude Code, Codex...)",
         initial: true,
-      },
-    ],
-    { onCancel },
-  )
-
-  if (canceled) {
-    console.log("Operation canceled.")
-    return
+      }))
+    if (canceled) return cancel()
   }
 
   const spinner = ora(`Creating project "${projectName}"...`).start()
 
   try {
     const targetDir = path.join(process.cwd(), projectName)
-    const templateDir = path.join(templatesRoot, template)
+    copyDir(path.join(templatesRoot, template), targetDir)
 
-    copyDir(templateDir, targetDir)
+    replaceInFile(
+      path.join(targetDir, "README.md"),
+      /# my-game/,
+      `# ${appName}`,
+    )
+    replaceInFile(
+      path.join(targetDir, "index.html"),
+      /<title>.*<\/title>/,
+      `<title>${appName}</title>`,
+    )
 
-    const readmePath = path.join(targetDir, "README.md")
-    if (fs.existsSync(readmePath)) {
-      let readme = fs.readFileSync(readmePath, "utf-8")
-      readme = readme.replace(/# my-game/, `# ${projectName}`)
-      fs.writeFileSync(readmePath, readme)
-    }
-
-    if (template === "minimal") {
+    if (isMinimal) {
+      pinCdnVersions(targetDir, CDN_PACKAGES, (name) => {
+        spinner.text = `Fetching latest version of ${name}...`
+      })
       spinner.succeed(`Created ${projectName} at ${targetDir}`)
       console.log(`\nNext steps:`)
       console.log(`  cd ${projectName}`)
-      console.log(`  Open index.html in your browser`)
-    } else {
-      const pkgPath = path.join(targetDir, "package.json")
-      const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf-8"))
-      pkg.name = projectName
-
-      for (const depType of ["dependencies", "devDependencies"]) {
-        if (pkg[depType]) {
-          for (const [name, version] of Object.entries(pkg[depType])) {
-            if (version.startsWith("workspace:")) {
-              spinner.text = `Fetching latest version of ${name}...`
-              pkg[depType][name] = getLatestVersion(name)
-            }
-          }
-        }
-      }
-
-      fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, INDENTATION) + EOL)
-
-      spinner.succeed(`Created ${projectName} at ${targetDir}`)
-
-      if (addSkills && !installSkills(targetDir)) {
-        console.warn(`\nCould not add the agent skills. To retry, run:`)
-        console.warn(`  cd ${projectName}`)
-        console.warn(`  ${SKILLS_COMMAND}`)
-      }
-
-      console.log(`\nNext steps:`)
-      console.log(`  cd ${projectName}`)
-      console.log(`  pnpm install`)
-      console.log(`  pnpm dev`)
+      console.log(`  npx serve`)
+      return
     }
+
+    const pkgPath = path.join(targetDir, "package.json")
+    const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf-8"))
+    pkg.name = projectName
+
+    addPnpmSettings(targetDir)
+    addDependabot(targetDir)
+    writeViteConfig(targetDir, { template, appName, pwa })
+
+    if (pwa) {
+      spinner.text = "Adding PWA support..."
+      addPwaSupport(targetDir, pkg, {
+        isTypeScript: TYPESCRIPT_TEMPLATES.has(template),
+        mobile,
+      })
+    }
+
+    if (mobile) {
+      spinner.text = "Adding Capacitor support..."
+      addReleaseSupport(targetDir, pkg)
+      addMobileSupport(targetDir, pkg, { appId, appName }, appTemplatesRoot)
+      pkg.native.assets = { background: "#1d1f33", backgroundDark: "#1d1f33" }
+    }
+
+    pinWorkspaceVersions(pkg, (name) => {
+      spinner.text = `Fetching latest version of ${name}...`
+    })
+    fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, INDENTATION) + EOL)
+
+    spinner.succeed(`Created ${projectName} at ${targetDir}`)
+
+    if (withSkills && !installSkills(targetDir, SKILLS)) {
+      console.warn(`\nCould not add the agent skills. To retry, run:`)
+      console.warn(`  cd ${projectName}`)
+      console.warn(`  ${skillsCommand(SKILLS)}`)
+    }
+
+    console.log(`\nNext steps:`)
+    console.log(`  cd ${projectName}`)
+    console.log(`  pnpm install`)
+    console.log(`  pnpm dev`)
   } catch (error) {
     spinner.fail("Operation failed.")
     console.error(error)
   }
+}
 
-  function copyDir(src, dest) {
-    fs.mkdirSync(dest, { recursive: true })
-
-    const entries = fs.readdirSync(src, { withFileTypes: true })
-
-    for (const entry of entries) {
-      const srcPath = path.join(src, entry.name)
-      const destPath = path.join(dest, entry.name)
-
-      if (entry.name === "gitignore") {
-        fs.copyFileSync(srcPath, path.join(dest, ".gitignore"))
-        continue
-      }
-
-      if (entry.isDirectory()) {
-        copyDir(srcPath, destPath)
-      } else {
-        fs.copyFileSync(srcPath, destPath)
-      }
-    }
+function parseFlags(args) {
+  return {
+    projectName: args.find((arg) => !arg.startsWith("-")) ?? null,
+    appName: readValueFlag(args, "app-name"),
+    appId: readValueFlag(args, "app-id"),
+    template: readValueFlag(args, "template"),
+    pwa: readBooleanFlag(args, "pwa"),
+    mobile: readBooleanFlag(args, "mobile"),
+    skills: readBooleanFlag(args, "skills"),
   }
+}
 
-  function installSkills(targetDir) {
-    try {
-      execSync(SKILLS_COMMAND, { cwd: targetDir, stdio: "inherit" })
-      return true
-    } catch {
-      return false
-    }
-  }
+function replaceInFile(filePath, pattern, replacement) {
+  if (!fs.existsSync(filePath)) return
+  const source = fs.readFileSync(filePath, "utf-8")
+  fs.writeFileSync(filePath, source.replace(pattern, replacement))
+}
 
-  function getLatestVersion(packageName) {
-    try {
-      const version = execSync(`npm view ${packageName} version`, {
-        encoding: "utf-8",
-        stdio: "pipe",
-      }).trim()
-      return `^${version}`
-    } catch {
-      return "latest"
-    }
-  }
+function cancel() {
+  console.log("Operation canceled.")
 }
 
 main().catch((e) => {
   console.error(e)
+  process.exitCode = 1
 })

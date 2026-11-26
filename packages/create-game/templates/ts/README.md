@@ -1,30 +1,40 @@
 # my-game
 
-This project is a minimal starter template for creating a game with the Inglorious Engine using TypeScript and Vite.
+A game made with the [Inglorious Engine](https://inglorious-engine.vercel.app/), scaffolded by [@inglorious/create-game](https://www.npmjs.com/package/@inglorious/create-game).
 
-## Getting Started
+It starts as a small, complete game: collect coins before the time runs out. Every coin is worth as many points as your level, and every 5 points takes you up a level. Move with the arrow keys, WASD, a gamepad or a finger; press Space, the gamepad's A button or tap to play again.
 
-This project was scaffolded with `@inglorious/create-game`.
+## Getting started
 
-To get started, follow these steps:
+```sh
+pnpm install
+pnpm dev
+```
 
-1.  **Install dependencies**:
-    Navigate to your project directory and install the required packages.
-    ```sh
-    pnpm install
-    ```
-2.  **Start the development server**:
-    Run the following command to start the Vite development server.
-    ```sh
-    pnpm dev
-    ```
+| Command           | What it does                                  |
+| ----------------- | --------------------------------------------- |
+| `pnpm dev`        | Runs the game, reloading on every save        |
+| `pnpm test`       | Runs the tests in `test/` once                |
+| `pnpm test:watch` | Runs the tests again on every save            |
+| `pnpm build`      | Builds the game into `dist/`, ready to deploy |
+| `pnpm preview`    | Serves the build                              |
+| `pnpm typecheck`  | Checks the types                              |
+| `pnpm lint`       | Checks the code                               |
+| `pnpm format`     | Formats the code                              |
 
-This will start a Vite development server. Open your browser to the local URL provided to see it in action.
+With `devMode: true` on the `game` entity, the [Redux DevTools](https://github.com/reduxjs/redux-devtools) show every event and entity.
 
-## Project Setup
+## How it works
 
-- `index.html`: The main entry point for your game.
-- `src/`: Contains your game's TypeScript source code.
-- `vite.config.js`: Vite configuration file.
-- `tsconfig.json`: TypeScript configuration for the project.
-- `package.json`: Project metadata and dependencies.
+- `src/game.ts` is the whole game: `types` say how each kind of thing behaves, `entities` are the things in the game.
+- A type is a set of event handlers. `update` runs every frame with the seconds since the last one; any other name answers an event sent with `api.notify(name, payload)`, like `coinCollect`.
+- Types compose: the player is its own handlers plus `modernControls()` (moves with the input) and `clamped()` (stays on screen).
+- `createControlEntities` maps keys, gamepad buttons and taps to the event names the types listen for.
+- `test/game.test.ts` drives the game frame by frame with `createGame`: press keys, advance time, check entities.
+
+Ideas to make it yours: add an enemy that chases the player, a power-up that slows time, achievements for streaks, a leaderboard.
+
+## Learn more
+
+- [Engine documentation](https://inglorious-engine.vercel.app/)
+- [Example games](https://github.com/IngloriousCoderz/inglorious-forge/tree/main/examples/games)

@@ -1,5 +1,11 @@
 # @inglorious/babel-plugin-inglorious-script
 
+## 1.4.3
+
+### Patch Changes
+
+- Import vector operators from `@inglorious/utils/vector.js`, so IngloriousScript compiles against the current `@inglorious/utils`.
+
 ## 1.4.2
 
 ### Patch Changes

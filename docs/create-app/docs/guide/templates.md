@@ -9,7 +9,7 @@ description: The project templates and the three template syntaxes
 
 | Template  | What it is                                                                                            | App features |
 | --------- | ----------------------------------------------------------------------------------------------------- | ------------ |
-| `minimal` | A single HTML file with no build step: open `index.html` in a browser                                 | No           |
+| `minimal` | A single HTML file with no build step, loading Inglorious Web from a CDN: serve it with `npx serve`   | No           |
 | `js`      | A JavaScript app bundled with Vite                                                                    | Yes          |
 | `ts`      | A TypeScript app bundled with Vite                                                                    | Yes          |
 | `ssx-js`  | A site pre-rendered with [SSX](https://inglorious.dev/ssx/), static or server-rendered, in JavaScript | No           |

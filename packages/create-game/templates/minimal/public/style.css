@@ -3,6 +3,7 @@
 }
 
 body {
+  font-family: "Press Start 2P", system-ui;
   width: 100vw;
   height: 100vh;
   margin: 0;
@@ -10,20 +11,22 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  background-color: #000;
+  color: #fff;
 }
 
 canvas {
-  max-width: 800px;
-  max-height: 600px;
+  max-width: 1280px;
+  max-height: 720px;
   width: 100vw;
   height: auto;
   cursor: none;
+}
 
-  @media (orientation: landscape) and (pointer: coarse) {
-    canvas {
-      width: auto;
-      height: 100vh;
-    }
+@media (orientation: landscape) and (pointer: coarse) {
+  canvas {
+    width: auto;
+    height: 100vh;
   }
 }
 

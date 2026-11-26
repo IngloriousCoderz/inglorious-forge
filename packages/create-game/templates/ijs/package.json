@@ -7,23 +7,28 @@
   "author": "",
   "license": "MIT",
   "scripts": {
-    "format": "prettier --write .",
-    "lint": "eslint .",
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint .",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@inglorious/engine": "workspace:*",
-    "@inglorious/renderer-2d": "workspace:*"
+    "@inglorious/renderer-2d": "workspace:*",
+    "@inglorious/utils": "workspace:*"
   },
   "devDependencies": {
     "@inglorious/babel-preset-inglorious-script": "workspace:*",
     "@inglorious/eslint-config": "workspace:*",
-    "eslint": "^10.11.0",
-    "prettier": "^3.9.9",
-    "vite": "^8.3.1",
-    "vite-plugin-babel": "^1.7.3"
+    "eslint": "^10.15.0",
+    "jsdom": "^31.0.1",
+    "prettier": "^3.10.1",
+    "vite": "^8.3.8",
+    "vite-plugin-babel": "^1.7.3",
+    "vitest": "^5.1.1"
   },
   "packageManager": "pnpm@12.15.0",
   "engines": {

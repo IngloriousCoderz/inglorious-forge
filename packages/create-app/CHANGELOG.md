@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.31.1
+
+### Patch Changes
+
+- Load the `minimal` template from jsDelivr, pinned to the latest versions, since unpkg's redirects drop the CORS headers browsers need for modules. Share the scaffolding helpers with create-game.
+
 ## 1.31.0
 
 ### Minor Changes

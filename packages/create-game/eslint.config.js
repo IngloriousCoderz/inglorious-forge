@@ -13,4 +13,7 @@ export default defineConfig([
       "no-console": "off",
     },
   },
+  {
+    ignores: ["templates/**"],
+  },
 ])

@@ -1,5 +1,16 @@
 # @inglorious/create-game
 
+## 1.3.0
+
+### Minor Changes
+
+- Scaffold a playable starter game with tests in every template, and offer PWA support, Capacitor for Android and iOS, and flags that answer every question (`--template`, `--app-name`, `--pwa`, `--mobile`, `--app-id`, `--skills`). The `minimal` template loads the engine from jsDelivr, pinned to the latest versions, and the `ts` template type-checks with `pnpm typecheck`.
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/create-app@1.31.1
+
 ## 1.2.2
 
 ### Patch Changes

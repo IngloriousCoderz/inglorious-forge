@@ -2,8 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/public/logo.png" />
-    <link rel="stylesheet" href="/public/style.css" />
+    <link rel="icon" type="image/png" href="./public/logo.png" />
+    <link rel="stylesheet" href="./public/style.css" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, viewport-fit=cover"
@@ -14,21 +14,23 @@
   <body>
     <div id="root"></div>
 
-    <script type="text/javascript">
-      window.process = { env: "development" }
+    <script>
+      window.process = { env: { NODE_ENV: "development" } }
     </script>
 
     <script type="importmap">
       {
         "imports": {
-          "mutative": "https://unpkg.com/mutative@latest/dist/mutative.esm.mjs",
-          "lit-html": "https://unpkg.com/lit-html@latest/lit-html.js",
-          "lit-html/": "https://unpkg.com/lit-html@latest/",
-          "@inglorious/utils/": "https://unpkg.com/@inglorious%2Futils@latest/src/",
-          "@inglorious/store": "https://unpkg.com/@inglorious%2Fstore@latest/src/store.js",
-          "@inglorious/store/": "https://unpkg.com/@inglorious%2Fstore@latest/src/",
-          "@inglorious/web": "https://unpkg.com/@inglorious%2Fweb@latest/src/index.js",
-          "@inglorious/web/": "https://unpkg.com/@inglorious%2Fweb@latest/src/"
+          "mutative": "https://cdn.jsdelivr.net/npm/mutative@2/dist/mutative.esm.mjs",
+          "lit-html": "https://cdn.jsdelivr.net/npm/lit-html@3/lit-html.js",
+          "lit-html/": "https://cdn.jsdelivr.net/npm/lit-html@3/",
+          "@inglorious/utils/": "https://cdn.jsdelivr.net/npm/@inglorious/utils@5/src/",
+          "@inglorious/utils/functions": "https://cdn.jsdelivr.net/npm/@inglorious/utils@5/src/functions/index.js",
+          "@inglorious/utils/object.js": "https://cdn.jsdelivr.net/npm/@inglorious/utils@5/src/data-structures/object.js",
+          "@inglorious/store": "https://cdn.jsdelivr.net/npm/@inglorious/store@12/src/store.js",
+          "@inglorious/store/client/devtools": "https://cdn.jsdelivr.net/npm/@inglorious/store@12/src/client/devtools.js",
+          "@inglorious/store/": "https://cdn.jsdelivr.net/npm/@inglorious/store@12/src/",
+          "@inglorious/web": "https://cdn.jsdelivr.net/npm/@inglorious/web@6/src/index.js"
         }
       }
     </script>

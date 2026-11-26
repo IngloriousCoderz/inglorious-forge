@@ -1,53 +1,43 @@
 # my-game
 
-This project is a starter template for creating a game with the Inglorious Engine using **IngloriousScript**.
+A game made with the [Inglorious Engine](https://inglorious-engine.vercel.app/), scaffolded by [@inglorious/create-game](https://www.npmjs.com/package/@inglorious/create-game).
 
-## What is IngloriousScript?
+It starts as a small, complete game: collect coins before the time runs out. Every coin is worth as many points as your level, and every 5 points takes you up a level. Move with the arrow keys, WASD, a gamepad or a finger; press Space, the gamepad's A button or tap to play again.
 
-IngloriousScript is a superset of JavaScript that enables intuitive vector math using standard operators, transformed by Babel.
+## Getting started
 
-```javascript
-// Instead of this:
-const newPosition = mod(add(position, scale(velocity, dt)), worldSize)
-
-// You can write this:
-const newPosition = (position + velocity * dt) % worldSize
+```sh
+pnpm install
+pnpm dev
 ```
 
-## Getting Started
+| Command           | What it does                                  |
+| ----------------- | --------------------------------------------- |
+| `pnpm dev`        | Runs the game, reloading on every save        |
+| `pnpm test`       | Runs the tests in `test/` once                |
+| `pnpm test:watch` | Runs the tests again on every save            |
+| `pnpm build`      | Builds the game into `dist/`, ready to deploy |
+| `pnpm preview`    | Serves the build                              |
+| `pnpm lint`       | Checks the code                               |
+| `pnpm format`     | Formats the code                              |
 
-This project was scaffolded with `@inglorious/create-game`.
+With `devMode: true` on the `game` entity, the [Redux DevTools](https://github.com/reduxjs/redux-devtools) show every event and entity.
 
-To get started, follow these steps:
+## How it works
 
-1.  **Install dependencies**:
-    Navigate to your project directory and install the required packages.
-    ```sh
-    pnpm install
-    ```
-2.  **Start the development server**:
-    Run the following command to start the Vite development server.
-    ```sh
-    pnpm dev
-    ```
+- `src/game.ijs` is the whole game: `types` say how each kind of thing behaves, `entities` are the things in the game.
+- A type is a set of event handlers. `update` runs every frame with the seconds since the last one; any other name answers an event sent with `api.notify(name, payload)`, like `coinCollect`.
+- Types compose: the player is its own handlers plus `modernControls()` (moves with the input) and `clamped()` (stays on screen).
+- `createControlEntities` maps keys, gamepad buttons and taps to the event names the types listen for.
+- `test/game.test.js` drives the game frame by frame with `createGame`: press keys, advance time, check entities.
 
-This will start a Vite development server. Open your browser to the local URL provided to see it in action.
+Ideas to make it yours: add an enemy that chases the player, a power-up that slows time, achievements for streaks, a leaderboard.
 
-## Project Setup
+## Learn more
 
-- `index.html`: The main entry point for your game.
-- `src/`: Contains your game's source code. Files ending in `.ijs` use IngloriousScript.
-- `vite.config.js`: Vite configuration with the Babel plugin for IngloriousScript.
-- `package.json`: Project metadata and dependencies.
+- [Engine documentation](https://inglorious-engine.vercel.app/)
+- [Example games](https://github.com/IngloriousCoderz/inglorious-forge/tree/main/examples/games)
 
-## Editor Configuration (VS Code)
+## IngloriousScript
 
-This template includes a `.vscode/settings.json` file that tells Visual Studio Code to treat `.ijs` files as JavaScript, enabling full syntax highlighting and IntelliSense.
-
-```json
-{
-  "files.associations": {
-    "*.ijs": "javascript"
-  }
-}
-```
+`.ijs` files are JavaScript with vector math: `entity.position += entity.velocity * dt` adds and scales vectors made with `v(x, y, z)`, which needs no import. See [@inglorious/babel-plugin-inglorious-script](https://www.npmjs.com/package/@inglorious/babel-plugin-inglorious-script).
