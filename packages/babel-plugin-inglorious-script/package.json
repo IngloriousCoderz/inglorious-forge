@@ -41,7 +41,7 @@
     "@babel/helper-module-imports": "^8.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^8.1.2",
+    "@babel/core": "^8.1.3",
     "@inglorious/eslint-config": "workspace:*",
     "@inglorious/utils": "workspace:*",
     "vitest": "^5.1.1"

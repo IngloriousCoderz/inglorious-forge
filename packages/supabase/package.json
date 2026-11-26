@@ -53,11 +53,11 @@
     "test": "vitest run"
   },
   "peerDependencies": {
-    "@supabase/supabase-js": "^2.119.1"
+    "@supabase/supabase-js": "^2.119.2"
   },
   "devDependencies": {
     "@inglorious/eslint-config": "workspace:*",
-    "@supabase/supabase-js": "^2.119.1",
+    "@supabase/supabase-js": "^2.119.2",
     "prettier": "^3.10.1",
     "vitest": "^5.1.1"
   },
