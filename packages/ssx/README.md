@@ -522,7 +522,7 @@ export const About = {
 }
 ```
 
-`ssx dev` and `ssx ssr` link them too, straight from the sources, so pages don't flash unstyled in development either. Once the page has hydrated, Vite's client takes over and keeps the styles current as you edit them.
+`ssx dev` and `ssx ssr` link them too, straight from the sources, so pages don't flash unstyled in development either. Vite's client keeps those links current as you edit, without injecting the same styles a second time.
 
 For stylesheets in `public/`, list them in `site.config.js` as `styles`: every page links them.
 

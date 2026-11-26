@@ -81,7 +81,11 @@ describe("renderRequest for server-rendered pages", () => {
     const pageModule = {
       url: "/new.js",
       importedModules: new Set([
-        { url: "/new.module.css", importedModules: new Set() },
+        {
+          url: "/new.module.css",
+          id: "/app/new.module.css",
+          importedModules: new Set(),
+        },
       ]),
     }
     const viteServer = {
@@ -102,7 +106,7 @@ describe("renderRequest for server-rendered pages", () => {
     })
 
     expect(result.html).toBe(
-      '<html><head><link rel="stylesheet" href="/new.module.css" data-ssx-dev-style>\n</head></html>',
+      '<html><head>\n<link rel="stylesheet" href="/new.module.css" data-ssx-dev-style data-vite-dev-id="/app/new.module.css"></head></html>',
     )
   })
 

@@ -15,6 +15,11 @@ const STORE_FILES = ["types.js", "types.ts", "entities.js", "entities.ts"]
  * import order. Read from the module graph of the server render, so call it
  * after rendering the page.
  *
+ * Each link carries the module's `data-vite-dev-id`: Vite's client then
+ * leaves that stylesheet to the link instead of injecting a `<style>` with
+ * the same rules (fonts declared twice load twice), and hot-updates the link
+ * when the file changes.
+ *
  * Stylesheets that other stylesheets `@import` are left out: Vite inlines
  * them when it serves the one importing them.
  *
@@ -22,7 +27,7 @@ const STORE_FILES = ["types.js", "types.ts", "entities.js", "entities.ts"]
  * @param {Object} options
  * @param {string} [options.rootDir="."]
  * @param {string} options.filePath - The page module.
- * @returns {string[]} The stylesheets' URLs.
+ * @returns {Array<{ href: string, attributes: { "data-vite-dev-id": string } }>}
  */
 export function collectDevStyles(viteServer, { rootDir = ".", filePath }) {
   const graph =
@@ -35,26 +40,31 @@ export function collectDevStyles(viteServer, { rootDir = ".", filePath }) {
     filePath,
   ]
 
-  const urls = []
+  const stylesheets = new Map()
   const seen = new Set()
   for (const file of files) {
     for (const module of graph.getModulesByFile(path.resolve(file)) ?? []) {
-      collectStylesheets(module, urls, seen)
+      collectStylesheets(module, stylesheets, seen)
     }
   }
-  return [...new Set(urls)]
+  return [...stylesheets].map(([href, id]) => ({
+    href,
+    attributes: { "data-vite-dev-id": id },
+  }))
 }
 
-function collectStylesheets(module, urls, seen) {
+function collectStylesheets(module, stylesheets, seen) {
   if (seen.has(module)) return
   seen.add(module)
 
   if (STYLESHEET.test(module.url)) {
-    if (!NOT_LINKED.test(module.url)) urls.push(module.url)
+    if (!NOT_LINKED.test(module.url) && !stylesheets.has(module.url)) {
+      stylesheets.set(module.url, module.id)
+    }
     return
   }
 
   for (const imported of module.importedModules) {
-    collectStylesheets(imported, urls, seen)
+    collectStylesheets(imported, stylesheets, seen)
   }
 }

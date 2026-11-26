@@ -1,5 +1,11 @@
 # @inglorious/ssx
 
+## 2.5.1
+
+### Patch Changes
+
+- The stylesheets `ssx dev` and `ssx ssr` link stay in the page, tagged with their Vite module id, instead of being removed after hydration. Vite's client no longer injects the same styles a second time, so fonts aren't declared twice (which made text flicker once more after hydration), and edits still update the page through Vite's link hot update.
+
 ## 2.5.0
 
 ### Minor Changes

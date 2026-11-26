@@ -9,7 +9,7 @@ describe("insertStyleLinks", () => {
     const html = insertStyleLinks(PAGE, ["/a.css", "/b.css"], "data-test")
 
     expect(html).toContain(
-      '<link rel="stylesheet" href="/a.css" data-test>\n<link rel="stylesheet" href="/b.css" data-test>\n</head>',
+      '<link rel="stylesheet" href="/a.css" data-test>\n<link rel="stylesheet" href="/b.css" data-test></head>',
     )
   })
 
@@ -27,6 +27,28 @@ describe("insertStyleLinks", () => {
 
     expect(both).toContain("/a.css")
     expect(both).toContain("/b.css")
+  })
+
+  it("adds the attributes a stylesheet comes with", () => {
+    const html = insertStyleLinks(
+      PAGE,
+      [{ href: "/a.css", attributes: { "data-vite-dev-id": "/app/a.css" } }],
+      "data-test",
+    )
+
+    expect(html).toContain(
+      '<link rel="stylesheet" href="/a.css" data-test data-vite-dev-id="/app/a.css">',
+    )
+  })
+
+  it("replaces links with attributes of their own too", () => {
+    const once = insertStyleLinks(
+      PAGE,
+      [{ href: "/a.css", attributes: { "data-vite-dev-id": "/app/a.css" } }],
+      "data-test",
+    )
+
+    expect(insertStyleLinks(once, [], "data-test")).toBe(PAGE)
   })
 
   it("returns the page as it was when there is nothing to link", () => {

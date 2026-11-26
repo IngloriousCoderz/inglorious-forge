@@ -5,6 +5,10 @@ import { describe, expect, it } from "vitest"
 
 import { collectDevStyles } from "./styles.js"
 
+function hrefs(stylesheets) {
+  return stylesheets.map(({ href }) => href)
+}
+
 describe("collectDevStyles", () => {
   it("collects the stylesheets a page imports, in import order", () => {
     const layoutCss = module("/src/app/layout/style.module.css")
@@ -14,7 +18,7 @@ describe("collectDevStyles", () => {
     const server = viteServer({ "src/pages/about/index.js": page })
 
     expect(
-      collectDevStyles(server, { filePath: "src/pages/about/index.js" }),
+      hrefs(collectDevStyles(server, { filePath: "src/pages/about/index.js" })),
     ).toEqual([
       "/src/app/layout/style.module.css",
       "/src/pages/about/style.module.css",
@@ -28,7 +32,7 @@ describe("collectDevStyles", () => {
     const server = viteServer({ "src/pages/index.js": page })
 
     expect(
-      collectDevStyles(server, { filePath: "src/pages/index.js" }),
+      hrefs(collectDevStyles(server, { filePath: "src/pages/index.js" })),
     ).toEqual(["/src/styles/global.css"])
   })
 
@@ -42,7 +46,7 @@ describe("collectDevStyles", () => {
     const server = viteServer({ "src/pages/index.js": page })
 
     expect(
-      collectDevStyles(server, { filePath: "src/pages/index.js" }),
+      hrefs(collectDevStyles(server, { filePath: "src/pages/index.js" })),
     ).toEqual(["/src/d.scss"])
   })
 
@@ -53,7 +57,7 @@ describe("collectDevStyles", () => {
     const server = viteServer({ "src/pages/index.js": page })
 
     expect(
-      collectDevStyles(server, { filePath: "src/pages/index.js" }),
+      hrefs(collectDevStyles(server, { filePath: "src/pages/index.js" })),
     ).toEqual(["/src/styles/page.module.css"])
   })
 
@@ -68,19 +72,42 @@ describe("collectDevStyles", () => {
     })
 
     expect(
-      collectDevStyles(server, { rootDir, filePath: "src/pages/index.js" }),
+      hrefs(
+        collectDevStyles(server, { rootDir, filePath: "src/pages/index.js" }),
+      ),
     ).toEqual(["/src/banner.module.css", "/src/page.css"])
+  })
+
+  it("hands each stylesheet over to Vite's client by its module id", () => {
+    const css = module("/src/pages/about/style.module.css")
+    const page = module("/src/pages/about/index.js", [css])
+    const server = viteServer({ "src/pages/about/index.js": page })
+
+    expect(
+      collectDevStyles(server, { filePath: "src/pages/about/index.js" }),
+    ).toEqual([
+      {
+        href: "/src/pages/about/style.module.css",
+        attributes: {
+          "data-vite-dev-id": "/project/src/pages/about/style.module.css",
+        },
+      },
+    ])
   })
 
   it("collects nothing without a module graph", () => {
     expect(
-      collectDevStyles(undefined, { filePath: "src/pages/index.js" }),
+      hrefs(collectDevStyles(undefined, { filePath: "src/pages/index.js" })),
     ).toEqual([])
   })
 })
 
 function module(url, importedModules = []) {
-  return { url, importedModules: new Set(importedModules) }
+  return {
+    url,
+    id: `/project${url}`,
+    importedModules: new Set(importedModules),
+  }
 }
 
 function viteServer(modulesByFile) {
