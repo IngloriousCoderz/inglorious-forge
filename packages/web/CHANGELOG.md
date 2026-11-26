@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 6.31.2
+
+### Patch Changes
+
+- createAnalytics stops asking for consent once a storage that answers later, such as Capacitor Preferences, brings back a kept answer, and measures again after a kept yes.
+
 ## 6.31.1
 
 ### Patch Changes

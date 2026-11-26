@@ -160,3 +160,51 @@ describe("a failing adapter", () => {
     await new Promise((resolve) => setTimeout(resolve))
   })
 })
+
+describe("a storage that answers later", () => {
+  const later = {
+    getItem: (key) => Promise.resolve(stored.get(key) ?? null),
+    setItem: (key, value) => stored.set(key, value),
+  }
+
+  function storeWithLaterStorage() {
+    return createStore({
+      types: {
+        Analytics: [
+          createAnalytics({ adapter }),
+          withStorage(["consent"], { storage: () => later }),
+        ],
+      },
+      entities: { analytics: { type: "Analytics" } },
+    })
+  }
+
+  it("stops asking once a kept answer comes back", async () => {
+    keepConsent("denied")
+    const store = storeWithLaterStorage()
+    await new Promise((resolve) => setTimeout(resolve))
+    store.update()
+
+    expect(analytics(store).consent).toBe("denied")
+    expect(analytics(store).isAsking).toBe(false)
+    expect(adapter.setConsent).not.toHaveBeenCalled()
+  })
+
+  it("measures again once a kept yes comes back", async () => {
+    keepConsent("granted")
+    const store = storeWithLaterStorage()
+    await new Promise((resolve) => setTimeout(resolve))
+    store.update()
+
+    expect(analytics(store).isAsking).toBe(false)
+    expect(adapter.setConsent).toHaveBeenCalledWith(true)
+  })
+
+  it("keeps asking when nothing was kept", async () => {
+    const store = storeWithLaterStorage()
+    await new Promise((resolve) => setTimeout(resolve))
+    store.update()
+
+    expect(analytics(store).isAsking).toBe(true)
+  })
+})

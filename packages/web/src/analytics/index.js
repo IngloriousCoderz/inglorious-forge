@@ -50,6 +50,15 @@ export function createAnalytics({ adapter }) {
       }
     },
 
+    // A storage that answers later, such as Capacitor Preferences, brings the
+    // consent back after `create` already decided to ask.
+    storageRestore(entity) {
+      entity.isAsking = isSupported() && entity.consent === null
+      if (entity.consent === GRANTED && isSupported()) {
+        call(() => adapter.setConsent(true))
+      }
+    },
+
     routeChange(entity, { route, path } = {}) {
       if (entity.consent !== GRANTED || !isSupported()) return
       call(() => adapter.pageView({ route, path }))

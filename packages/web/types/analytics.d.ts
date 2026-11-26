@@ -27,6 +27,8 @@ export interface AnalyticsEntity {
 
 export type AnalyticsType = {
   create(entity: AnalyticsEntity): void
+  /** The consent, once a storage that answers later brought it back. */
+  storageRestore(entity: AnalyticsEntity): void
   /** A page view, from the router's broadcast, once granted. */
   routeChange(
     entity: AnalyticsEntity,
