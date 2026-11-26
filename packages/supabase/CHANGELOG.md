@@ -1,5 +1,11 @@
 # @inglorious/supabase
 
+## 0.13.3
+
+### Patch Changes
+
+- `onSessionChange` survives a session that can't be read. When `getSession()` rejects, as `createSecureStorage` from `@inglorious/web` now does when the Keychain or Keystore fails, nothing is reported and the read is tried again with backoff, instead of the listener never being called and `createAuth` never becoming ready. A server check that fails before the server answers keeps the session, as it does offline.
+
 ## 0.13.2
 
 ### Patch Changes

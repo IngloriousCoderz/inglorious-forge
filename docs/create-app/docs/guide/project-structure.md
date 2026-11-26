@@ -33,6 +33,7 @@ my-app/
 │   ├── i18n/                # translations, one JSON file per language
 │   └── store/               # types, entities, routes, middlewares
 ├── supabase/
+│   ├── config.toml          # the local stack, with sign-in or push
 │   ├── functions/           # erase-account, push-notify
 │   ├── migrations/
 │   └── templates/           # sign-in emails with codes

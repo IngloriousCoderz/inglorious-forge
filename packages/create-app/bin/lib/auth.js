@@ -504,26 +504,7 @@ function authSection(mobile) {
 
 People sign in with Supabase Auth: \`src/app/auth\` asks for the email, then a password, a new account or a code sent by email. Until someone is signed in, \`src/main\` shows that screen instead of the app. Codes, rather than links, work in the native app too, since nobody has to open anything.
 
-With the [Supabase CLI](https://supabase.com/docs/guides/cli) installed, run \`supabase init\` here if you haven't, then add the email templates with the codes to \`supabase/config.toml\`:
-
-\`\`\`toml
-[auth.email]
-enable_confirmations = true
-
-[auth.email.template.confirmation]
-subject = "Your confirmation code"
-content_path = "./supabase/templates/confirmation.html"
-
-[auth.email.template.magic_link]
-subject = "Your sign-in code"
-content_path = "./supabase/templates/magic_link.html"
-
-[auth.email.template.recovery]
-subject = "Your password reset code"
-content_path = "./supabase/templates/recovery.html"
-\`\`\`
-
-\`supabase start\` runs it locally: the emails arrive in Mailpit, which \`supabase status\` lists. Copy \`.env.example\` to \`.env.local\` and fill in \`VITE_SUPABASE_URL\` and \`VITE_SUPABASE_ANON_KEY\` from \`supabase status\`.
+\`supabase/config.toml\` turns on email confirmation and sends the emails in \`supabase/templates\`, which carry the codes. With the [Supabase CLI](https://supabase.com/docs/guides/cli) and Docker installed, \`supabase start\` runs it locally: the emails arrive in Mailpit, which \`supabase status\` lists. Copy \`.env.example\` to \`.env.local\` and fill in \`VITE_SUPABASE_URL\` and \`VITE_SUPABASE_ANON_KEY\` from \`supabase status\`.
 
 For the hosted project, paste the three templates under Authentication → Emails, then:
 
@@ -539,6 +520,10 @@ To stop bots from creating accounts, turn on CAPTCHA protection with Cloudflare 
 Apple and Google require apps that create accounts to delete them from inside the app. **Delete account**, on the profile page (or in the app bar without routing), calls the \`erase-account\` Edge Function, which deletes the user with \`eraseUser\` from \`@inglorious/supabase/edge\`. Tables whose rows belong to a user should reference \`auth.users\` with \`on delete cascade\`, and files under a folder named after the user's id go too, in the buckets listed in \`USER_BUCKETS\`.${
     mobile
       ? `
+
+### Where the session is kept
+
+In the native app, \`src/api/supabase\` keeps the session's tokens in the Keychain (iOS) or Keystore (Android) with \`createSecureStorage\` from \`@inglorious/web/device/storage\`, through \`@capgo/capacitor-native-biometric\`: the OS can clear a WebView's localStorage, which would sign people out. In a browser it uses localStorage.
 
 ### Before the stores
 

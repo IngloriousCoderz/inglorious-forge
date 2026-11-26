@@ -21,11 +21,10 @@ With routing, a **Profile** page (a link, or a tab on mobile) shows who is signe
 
 ## Setup
 
-With the [Supabase CLI](https://supabase.com/docs/guides/cli):
+The generated `supabase/config.toml` turns on email confirmation and sends the emails in `supabase/templates/`, which carry the codes. With the [Supabase CLI](https://supabase.com/docs/guides/cli) and Docker:
 
-1. `supabase init` in the project, and add the generated email templates (`supabase/templates/`) to `supabase/config.toml`. The generated README has the exact lines.
-2. `supabase start` runs it locally: the emails arrive in Mailpit, which `supabase status` lists.
-3. Copy `.env.example` to `.env.local` and fill in `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` from `supabase status`.
+1. `supabase start` runs it locally: the emails arrive in Mailpit, which `supabase status` lists.
+2. Copy `.env.example` to `.env.local` and fill in `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` from `supabase status`.
 
 For the hosted project, paste the three templates under **Authentication → Emails**, then deploy the function that erases accounts:
 

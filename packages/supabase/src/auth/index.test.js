@@ -109,6 +109,116 @@ describe("supabaseAuth", () => {
       expect(client.auth.signOut).not.toHaveBeenCalled()
       expect(listener).toHaveBeenCalledWith(USER)
     })
+
+    it("keeps it when the check fails before the server answers", async () => {
+      const client = fakeClient()
+      let emit
+      client.auth.onAuthStateChange.mockImplementation((callback) => {
+        emit = callback
+        return { data: { subscription: { unsubscribe: vi.fn() } } }
+      })
+      client.auth.getSession = vi.fn(async () => ({
+        data: { session: { user: USER, access_token: "t1" } },
+      }))
+      client.auth.getUser = vi.fn(async () => {
+        throw new Error("Failed to get data")
+      })
+      const listener = vi.fn()
+
+      supabaseAuth(client).onSessionChange(listener)
+      emit("INITIAL_SESSION", { user: USER })
+      await new Promise((resolve) => setTimeout(resolve))
+      await new Promise((resolve) => setTimeout(resolve))
+
+      expect(client.auth.signOut).not.toHaveBeenCalled()
+      expect(listener).toHaveBeenCalledWith(USER)
+    })
+  })
+
+  describe("a session that can't be read", () => {
+    function unreadable() {
+      const client = fakeClient()
+      let emit
+      client.auth.onAuthStateChange.mockImplementation((callback) => {
+        emit = callback
+        return { data: { subscription: { unsubscribe: vi.fn() } } }
+      })
+      client.auth.getSession = vi
+        .fn(async () => ({
+          data: { session: { user: USER, access_token: "t1" } },
+          error: null,
+        }))
+        .mockRejectedValueOnce(new Error("Failed to get data"))
+        .mockRejectedValueOnce(new Error("Failed to get data"))
+      const listener = vi.fn()
+      const stop = supabaseAuth(client).onSessionChange(listener)
+      return { client, emit, listener, stop }
+    }
+
+    it("reports nothing until a later read succeeds", async () => {
+      vi.useFakeTimers()
+      try {
+        const { client, emit, listener } = unreadable()
+
+        emit("INITIAL_SESSION", null)
+        await vi.advanceTimersByTimeAsync(0)
+        expect(listener).not.toHaveBeenCalled()
+
+        await vi.advanceTimersByTimeAsync(500)
+        expect(listener).not.toHaveBeenCalled()
+
+        await vi.advanceTimersByTimeAsync(1000)
+        expect(client.auth.getSession).toHaveBeenCalledTimes(3)
+        expect(client.auth.signOut).not.toHaveBeenCalled()
+        expect(listener.mock.calls).toEqual([[USER]])
+      } finally {
+        vi.useRealTimers()
+      }
+    })
+
+    it("reports no one, without retrying, for a session it answers with an error", async () => {
+      vi.useFakeTimers()
+      try {
+        const client = fakeClient()
+        let emit
+        client.auth.onAuthStateChange.mockImplementation((callback) => {
+          emit = callback
+          return { data: { subscription: { unsubscribe: vi.fn() } } }
+        })
+        client.auth.getSession = vi.fn(async () => ({
+          data: { session: null },
+          error: { name: "AuthRetryableFetchError", status: 0 },
+        }))
+        const listener = vi.fn()
+        supabaseAuth(client).onSessionChange(listener)
+
+        emit("INITIAL_SESSION", null)
+        await vi.advanceTimersByTimeAsync(60_000)
+
+        expect(client.auth.getSession).toHaveBeenCalledTimes(1)
+        expect(client.auth.signOut).not.toHaveBeenCalled()
+        expect(listener.mock.calls).toEqual([[null]])
+      } finally {
+        vi.useRealTimers()
+      }
+    })
+
+    it("stops retrying once stopped", async () => {
+      vi.useFakeTimers()
+      try {
+        const { client, emit, listener, stop } = unreadable()
+
+        emit("INITIAL_SESSION", null)
+        await vi.advanceTimersByTimeAsync(0)
+        stop()
+        await vi.advanceTimersByTimeAsync(60_000)
+
+        expect(client.auth.getSession).toHaveBeenCalledTimes(1)
+        expect(listener).not.toHaveBeenCalled()
+      } finally {
+        vi.useRealTimers()
+      }
+    })
   })
 
   it("passes a CAPTCHA token with every call that sends email or signs in", async () => {

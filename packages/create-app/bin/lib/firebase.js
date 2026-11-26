@@ -141,7 +141,7 @@ To set it up, with the [Supabase CLI](https://supabase.com/docs/guides/cli) inst
 ${numbered([
   "In the Firebase console, go to Project settings → Service accounts → Generate new private key. The file is a real secret: never commit it.",
   "In the Google Cloud console, give that service account the **Firebase Cloud Messaging API Admin** role. The similarly named Firebase Cloud Messaging Admin cannot send.",
-  "Run `supabase init` here, then `supabase start` to try it locally, with the file's JSON on one line as `FCM_SERVICE_ACCOUNT` in `supabase/functions/.env`. `supabase status` gives the values of `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`.",
+  "Run `supabase start` to try it locally, with the file's JSON on one line as `FCM_SERVICE_ACCOUNT` in `supabase/functions/.env`. `supabase status` gives the values of `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`.",
 ])}
 
 To deploy:

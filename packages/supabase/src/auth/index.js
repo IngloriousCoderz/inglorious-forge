@@ -2,6 +2,10 @@ import { isCaptchaError } from "../captcha/index.js"
 import { isNetworkError } from "../errors/index.js"
 
 const DEFAULT_ERASE_FUNCTION = "erase-account"
+const FIRST_RETRY_MS = 500
+const MAX_RETRY_MS = 30_000
+const RETRY_BACKOFF = 2
+const NOW = 0
 // What Supabase Auth answers for a session whose account or session no
 // longer exists, as opposed to a network failure.
 const GONE_CODES = new Set(["user_not_found", "session_not_found"])
@@ -81,27 +85,54 @@ export function supabaseAuth(
       // backend. Before a session's user is first reported, the server is
       // asked, once per access token (so about once an hour); offline, the
       // session stays.
-      let check
-      const { data } = auth.onAuthStateChange(() => {
-        setTimeout(async () => {
+      let verified
+      // A session that can't be read, as when the Keychain or Keystore fails
+      // while the app starts, is neither signed in nor out: nothing is
+      // reported, and the read is tried again, later each time. A newer
+      // event takes over from a pending retry.
+      let timer
+      let retryMs = FIRST_RETRY_MS
+
+      function schedule(delayMs) {
+        clearTimeout(timer)
+        timer = setTimeout(report, delayMs)
+      }
+
+      async function report() {
+        if (isStopped) return
+        let user
+        try {
+          user = await currentUser()
+        } catch {
           if (isStopped) return
-          const { data: current } = await auth.getSession()
-          let user = current.session?.user ?? null
-          if (user) {
-            const token = current.session.access_token
-            if (!check || check.token !== token) {
-              check = { token, isGone: isGone(auth) }
-            }
-            if (await check.isGone) {
-              await auth.signOut({ scope: "local" })
-              user = null
-            }
-          }
-          if (!isStopped) listener(user)
-        })
-      })
+          schedule(retryMs)
+          retryMs = Math.min(retryMs * RETRY_BACKOFF, MAX_RETRY_MS)
+          return
+        }
+        retryMs = FIRST_RETRY_MS
+        if (!isStopped) listener(user)
+      }
+
+      async function currentUser() {
+        // Only a read that throws is retried. An error answered, as for an
+        // expired token offline, has no session to report: the next refresh
+        // brings it back with its own event.
+        const { data: current } = await auth.getSession()
+        const user = current.session?.user ?? null
+        if (!user) return null
+        const token = current.session.access_token
+        if (!verified || verified.token !== token) {
+          verified = { token, isGone: isGone(auth) }
+        }
+        if (!(await verified.isGone)) return user
+        await auth.signOut({ scope: "local" })
+        return null
+      }
+
+      const { data } = auth.onAuthStateChange(() => schedule(NOW))
       return () => {
         isStopped = true
+        clearTimeout(timer)
         data.subscription.unsubscribe()
       }
     },
@@ -211,7 +242,13 @@ async function check(call) {
   return result
 }
 
+// Only the server's word counts: a check that fails before it answers, like
+// one offline, leaves the session be.
 async function isGone(auth) {
-  const { error } = await auth.getUser()
-  return GONE_CODES.has(error?.code)
+  try {
+    const { error } = await auth.getUser()
+    return GONE_CODES.has(error?.code)
+  } catch {
+    return false
+  }
 }

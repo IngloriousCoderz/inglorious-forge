@@ -27,7 +27,7 @@ With a Firebase project as in [Analytics](./analytics.md) and the [Supabase CLI]
 1. `VITE_FIREBASE_VAPID_KEY` is the public half of a Web Push key pair, from **Project settings → Cloud Messaging → Web configuration**.
 2. In the Firebase console, go to **Project settings → Service accounts → Generate new private key**. The file is a real secret: never commit it.
 3. In the Google Cloud console, give that service account the **Firebase Cloud Messaging API Admin** role. The similarly named Firebase Cloud Messaging Admin cannot send.
-4. `supabase init`, then `supabase start` to try it locally, with the file's JSON on one line as `FCM_SERVICE_ACCOUNT` in `supabase/functions/.env`.
+4. `supabase start` to try it locally, with the file's JSON on one line as `FCM_SERVICE_ACCOUNT` in `supabase/functions/.env`.
 
 To deploy:
 

@@ -35,6 +35,7 @@ import { addPwaSupport } from "./lib/pwa.js"
 import { askAppFeatures } from "./lib/questions.js"
 import { addReleaseSupport } from "./lib/release.js"
 import { installSkills, skillsCommand, skillsFor } from "./lib/skills.js"
+import { addSupabaseConfig } from "./lib/supabase.js"
 import { addTestSupport } from "./lib/testing.js"
 
 async function main() {
@@ -252,7 +253,10 @@ async function main() {
       keepSupabaseOutOfTypeScript(targetDir)
     }
 
-    if (features.auth || features.push) addEdgeSupport(targetDir, pkg)
+    if (features.auth || features.push) {
+      addSupabaseConfig(targetDir, { auth: features.auth })
+      addEdgeSupport(targetDir, pkg)
+    }
 
     if (features.mobile && features.push) {
       addNativeUpdateSupport(targetDir, templatesRoot)

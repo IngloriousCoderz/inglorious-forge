@@ -1,5 +1,15 @@
 # @inglorious/create-game
 
+## 1.31.0
+
+### Minor Changes
+
+- Apps with sign-in or push get `supabase/config.toml` and `supabase/.gitignore`, so `supabase start` works without `supabase init`. The config holds only the project id and, with sign-in, email confirmation and the email templates with the codes, which no longer have to be pasted in by hand.
+
+### Patch Changes
+
+- Mobile apps with sign-in keep the Supabase session in the Keychain or Keystore with `createSecureStorage` from `@inglorious/web/device/storage`, adding `@capgo/capacitor-native-biometric`, instead of the WebView's localStorage, which the OS can clear. Web apps keep localStorage.
+
 ## 1.30.1
 
 ### Patch Changes

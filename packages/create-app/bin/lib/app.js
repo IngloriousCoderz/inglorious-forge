@@ -13,6 +13,7 @@ import {
   CAPAWESOME_LIVE_UPDATE_VERSION,
   FIREBASE_VERSION,
   INDENTATION,
+  NATIVE_BIOMETRIC_VERSION,
   SUPABASE_VERSION,
 } from "./constants.js"
 import {
@@ -75,6 +76,9 @@ export function addAppFeatures(targetDir, pkg, options) {
   app.hasPrompts = app.analytics || app.push
   app.nativeUpdate = app.mobile && app.push
   app.hasSupabase = app.push || app.auth
+  // The OS can clear a WebView's localStorage: the session goes in the
+  // Keychain or Keystore instead.
+  app.secureSession = app.mobile && app.auth
   app.gate = app.nativeUpdate || app.auth
   app.appLinks = app.mobile && app.routing
   app.backButton = app.mobile && app.routing
@@ -109,7 +113,9 @@ export function addAppFeatures(targetDir, pkg, options) {
   }
   if (app.hasPrompts) Object.assign(files, promptFiles(app))
   if (app.auth) Object.assign(files, authFiles(app))
-  if (app.hasSupabase) files[`src/api/supabase.${app.ext}`] = supabaseSource()
+  if (app.hasSupabase) {
+    files[`src/api/supabase.${app.ext}`] = supabaseSource(app)
+  }
   if (app.hasPrompts || app.auth) files[".env.example"] = envExample(app)
   if (app.nativeUpdate) Object.assign(files, nativeUpdateFiles(app))
   if (app.isTypeScript) {
@@ -161,6 +167,10 @@ function addDependencies(pkg, app) {
   if (app.hasSupabase) {
     pkg.dependencies["@supabase/supabase-js"] = SUPABASE_VERSION
     pkg.dependencies["@inglorious/supabase"] = "workspace:*"
+  }
+  if (app.secureSession) {
+    pkg.dependencies["@capgo/capacitor-native-biometric"] =
+      NATIVE_BIOMETRIC_VERSION
   }
   if (app.nativeUpdate || app.appLinks || app.backButton) {
     pkg.dependencies["@capacitor/app"] = CAPACITOR_APP_VERSION

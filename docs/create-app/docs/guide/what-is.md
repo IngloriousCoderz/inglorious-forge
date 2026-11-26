@@ -15,7 +15,7 @@ The same project runs as a website, an installable PWA and, through [Capacitor](
 
 - **Inglorious UI** with six themes (Inglorious, Material UI, Material 3, Bootstrap, iOS 18, iOS 26), light and dark, icons and page transitions.
 - **Routing**, **translations** and a language picker.
-- **Sign-in** with Supabase Auth: passwords, codes by email, password reset and account deletion.
+- **Sign-in** with Supabase Auth: passwords, codes by email, password reset and account deletion. In the native app the session is kept in the Keychain or Keystore, which the OS never clears with the WebView's data.
 - **Analytics** behind a consent prompt, and **push notifications** on the web and in the native apps.
 - **Mobile**: native settings written into the projects for you, live reload on a device, icons and splash screens from one logo, App Links, store listing images, release scripts, cloud builds, live updates and mandatory native updates.
 - **Agent skills**, so coding agents write code the way the framework expects.
