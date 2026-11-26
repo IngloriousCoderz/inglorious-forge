@@ -1,93 +1,102 @@
 /**
- * @typedef {import("./template.js").LogoEntity} LogoEntity
- *
- * @typedef {Object} Api
- * @property {(id: string) => LogoEntity} getEntity
- * @property {(topic: string, payload: any) => void} notify
+ * @typedef {import("../types/index.d.ts").LogoEntity} LogoEntity
+ * @typedef {import("@inglorious/web").Api} Api
  */
-import { closestAncestor, isTouchDevice, saturate } from "./utils.js"
+import { saturate } from "./utils.js"
 
 const MAX_HEAD_TILT_X = 400
 const MAX_HEAD_TILT_Y = 400
 const HALF = 0.5
-const FIRST_ITEM = 0
+const FIRST_TOUCH = 0
 
-const eventType = isTouchDevice() ? "touchmove" : "mousemove"
-let moveListener = null
+// Both, not one picked by sniffing the device: laptops with a touch screen
+// have a mouse too.
+const MOVE_EVENTS = ["mousemove", "touchmove"]
+const listeners = new Map()
 
 export const handlers = {
   /**
-   * Initialize interactivity for the given entity.
+   * Starts following the pointer when the entity is interactive.
    * @param {LogoEntity} entity
-   * @param {string} id
+   * @param {unknown} payload
    * @param {Api} api
    */
   create(entity, payload, api) {
-    if (!entity.isInteractive) {
-      return
-    }
+    if (!entity.isInteractive) return
 
     startInteraction(entity, api)
   },
 
   /**
-   * Update the entity head tilt coordinates.
+   * Tilts the head towards the pointer.
    * @param {LogoEntity} entity
-   * @param {{x:number,y:number}} payload
+   * @param {{ x: number, y: number }} payload - Pointer offset from the logo's center, in pixels.
    */
   coordsChange(entity, { x, y }) {
-    entity.x = x
-    entity.y = y
+    entity.position = [x, y]
   },
 
   /**
-   * Cleanup listeners when the entity is destroyed.
    * @param {LogoEntity} entity
-   * @param {string} id
    */
-  destroy() {
-    stopInteraction()
+  destroy(entity) {
+    stopInteraction(entity)
   },
 }
 
+/**
+ * Makes the entity's logo follow the pointer. Each logo has its own listener,
+ * so several can follow it at once.
+ *
+ * @param {LogoEntity} entity
+ * @param {Api} api
+ */
 export function startInteraction(entity, api) {
   if (typeof document === "undefined") return
 
-  moveListener = createMoveListener(entity.id, api)
-  document.addEventListener(eventType, moveListener, {
-    passive: !entity.isScrollPrevented,
-  })
-}
-
-export function stopInteraction() {
-  if (typeof document === "undefined") return
-
-  document.removeEventListener(eventType, moveListener)
+  stopInteraction(entity)
+  const listener = createMoveListener(entity.id, api)
+  listeners.set(entity.id, listener)
+  for (const eventType of MOVE_EVENTS) {
+    document.addEventListener(eventType, listener, {
+      passive: !entity.isScrollPrevented,
+    })
+  }
 }
 
 /**
- * Create the move listener used by `create` / `fieldChange`.
- * The listener calculates the position of the pointer relative to
- * the element center and notifies the entity's `coordsChange`.
+ * Stops the entity's logo from following the pointer, or every logo when
+ * called without one.
  *
- * @param {string} entityId
- * @param {Api} api
- * @returns {(event:MouseEvent|Touch) => void}
+ * @param {LogoEntity} [entity]
  */
+export function stopInteraction(entity) {
+  if (typeof document === "undefined") return
+
+  const ids = entity ? [entity.id] : [...listeners.keys()]
+  for (const id of ids) {
+    for (const eventType of MOVE_EVENTS) {
+      document.removeEventListener(eventType, listeners.get(id))
+    }
+    listeners.delete(id)
+  }
+}
+
 function createMoveListener(entityId, api) {
   return (event) => {
-    const { left, top, width, height } = event.target.getBoundingClientRect()
+    const logo = findLogo(entityId)
+    if (!logo) return
 
+    const { left, top, width, height } = logo.getBoundingClientRect()
     const center = {
       x: window.scrollX + left + width * HALF,
       y: window.scrollY + top + height * HALF,
     }
 
-    const { target, pageX, pageY } =
-      eventType === "touchmove" ? event.touches[FIRST_ITEM] : event
+    const { pageX, pageY } = event.touches?.[FIRST_TOUCH] ?? event
 
     const entity = api.getEntity(entityId)
-    if (entity.isScrollPrevented && closestAncestor(target, "logo")) {
+    if (entity.isScrollPrevented && logo.contains(event.target)) {
       event.preventDefault()
     }
 
@@ -96,4 +105,10 @@ function createMoveListener(entityId, api) {
       y: saturate(pageY - center.y, MAX_HEAD_TILT_Y),
     })
   }
+}
+
+function findLogo(entityId) {
+  return [...document.querySelectorAll(".iw-logo")].find(
+    (element) => element.dataset.entityId === entityId,
+  )
 }

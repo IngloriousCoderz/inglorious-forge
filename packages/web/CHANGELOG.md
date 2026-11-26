@@ -1,5 +1,14 @@
 # @inglorious/react-store
 
+## 6.31.1
+
+### Patch Changes
+
+- Storage defaults to the browser's `localStorage` only (`window.localStorage`), never Node's: during an SSX build or a server render, `withStorage`, the i18n locale, `createNativeStorage`'s browser fallback and the `readJSON`/`writeJSON` helpers keep nothing instead of sharing Node's process-wide store between requests, and Node 26 no longer warns that `--localstorage-file` was not provided.
+- Updated dependencies
+  - @inglorious/utils@5.4.1
+  - @inglorious/store@12.9.1
+
 ## 6.31.0
 
 ### Minor Changes

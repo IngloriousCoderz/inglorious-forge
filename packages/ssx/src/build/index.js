@@ -20,6 +20,7 @@ import { generatePages } from "./pages.js"
 import { copyPublicDir } from "./public.js"
 import { generateRSS } from "./rss.js"
 import { generateSitemap } from "./sitemap.js"
+import { linkPageStyles, pageFilePath } from "./styles.js"
 import { createViteConfig } from "./vite-config.js"
 
 /**
@@ -158,6 +159,7 @@ export async function build(options = {}) {
     mode: "production",
   }
   await viteBuild(viteConfig)
+  await linkPageStyles(allGeneratedPages, { outDir, viteConfig })
 
   await vite.close()
 
@@ -196,8 +198,7 @@ export async function build(options = {}) {
  * @returns {Promise<string>} The absolute path of the written file.
  */
 async function writePageToDisk(pagePath, html, outDir = "dist") {
-  const cleanPath = pagePath.replace(/^\//, "")
-  const filePath = path.join(outDir, cleanPath, "index.html")
+  const filePath = pageFilePath(pagePath, outDir)
 
   await fs.mkdir(path.dirname(filePath), { recursive: true })
 

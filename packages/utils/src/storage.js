@@ -1,6 +1,8 @@
 import { isPromiseLike } from "./data-structures/promise.js"
 
-const DEFAULT_STORAGE = () => globalThis.localStorage
+// The browser's, never Node's: on a server it would be shared by every request,
+// and Node 26 warns when it is read without --localstorage-file.
+const DEFAULT_STORAGE = () => globalThis.window?.localStorage
 
 /**
  * Reads a value back as JSON.

@@ -19,17 +19,19 @@ describe("createNativeStorage", () => {
 
   afterEach(() => {
     delete globalThis.Capacitor
-    delete globalThis.localStorage
+    delete globalThis.window
   })
 
   it("uses localStorage in a browser, whichever it is at the time", () => {
     const plugin = preferences()
     const storage = createNativeStorage({ plugin })
     const items = new Map()
-    globalThis.localStorage = {
-      getItem: (key) => items.get(key) ?? null,
-      setItem: (key, value) => items.set(key, value),
-      removeItem: (key) => items.delete(key),
+    globalThis.window = {
+      localStorage: {
+        getItem: (key) => items.get(key) ?? null,
+        setItem: (key, value) => items.set(key, value),
+        removeItem: (key) => items.delete(key),
+      },
     }
 
     storage.setItem("theme", "dark")
@@ -85,14 +87,16 @@ describe("createSecureStorage", () => {
 
   it("uses localStorage in a browser", () => {
     const items = new Map()
-    globalThis.localStorage = {
-      getItem: (key) => items.get(key) ?? null,
-      setItem: (key, value) => items.set(key, value),
+    globalThis.window = {
+      localStorage: {
+        getItem: (key) => items.get(key) ?? null,
+        setItem: (key, value) => items.set(key, value),
+      },
     }
 
     createSecureStorage({ plugin: {} }).setItem("token", "secret")
 
     expect(items.get("token")).toBe("secret")
-    delete globalThis.localStorage
+    delete globalThis.window
   })
 })

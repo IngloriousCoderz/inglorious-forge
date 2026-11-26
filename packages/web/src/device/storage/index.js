@@ -19,9 +19,9 @@ import { isNative } from "../../native/index.js"
 export function createNativeStorage({ plugin } = {}) {
   if (!plugin || !isNative()) {
     return {
-      getItem: (key) => globalThis.localStorage?.getItem(key) ?? null,
-      setItem: (key, value) => globalThis.localStorage?.setItem(key, value),
-      removeItem: (key) => globalThis.localStorage?.removeItem(key),
+      getItem: (key) => browserStorage()?.getItem(key) ?? null,
+      setItem: (key, value) => browserStorage()?.setItem(key, value),
+      removeItem: (key) => browserStorage()?.removeItem(key),
     }
   }
 
@@ -58,4 +58,9 @@ export function createSecureStorage({ plugin } = {}) {
     setItem: (key, value) => plugin.setData({ key, value }),
     removeItem: (key) => plugin.deleteData({ key }),
   }
+}
+
+// Never Node's own localStorage: on a server it would be shared by every request.
+function browserStorage() {
+  return globalThis.window?.localStorage
 }

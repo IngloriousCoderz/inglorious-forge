@@ -1,5 +1,3 @@
-import { performance } from "node:perf_hooks"
-
 import { expect, test, vi } from "vitest"
 
 import { EventMap } from "./event-map.js"
@@ -145,52 +143,47 @@ test("getEntitiesForEvent should handle scoped events correctly", () => {
   ])
 })
 
-test("EventMap provides a significant performance benefit for event handling", async () => {
+// Counts entity visits rather than timing loops: a wall-clock comparison of
+// two runs flips under load (GC pauses, parallel test workers).
+test("EventMap visits only the entities that handle an event", () => {
   const ENTITY_COUNT = 100000
-  const { entities, types } = createTestEntities(ENTITY_COUNT)
+  const UPDATER_EVERY = 10
+  const { entities, types } = createTestEntities(ENTITY_COUNT, UPDATER_EVERY)
   const eventMap = new EventMap(types, entities)
 
-  const updateHandler = vi.fn()
-  types.Updater.update = updateHandler
-
-  const oldWayStartTime = performance.now()
-  for (const id in entities) {
-    const entity = entities[id]
-    const type = types[entity.type]
-    if (type.update) {
-      type.update()
-    }
+  let visits = 0
+  const visit = (id) => {
+    visits++
+    return entities[id]
   }
-  const oldWayTime = performance.now() - oldWayStartTime
 
-  updateHandler.mockClear()
+  for (const id in entities) {
+    const entity = visit(id)
+    types[entity.type].update?.()
+  }
+  const scanVisits = visits
 
-  const newWayStartTime = performance.now()
+  visits = 0
   const updaterIds = eventMap.getEntitiesForEvent("update")
   for (const id of updaterIds) {
-    const entity = entities[id]
-    const type = types[entity.type]
-    type.update()
+    const entity = visit(id)
+    types[entity.type].update()
   }
-  const newWayTime = performance.now() - newWayStartTime
+  const mappedVisits = visits
 
-  expect(oldWayTime).toBeGreaterThan(newWayTime)
-  expect(updateHandler).toHaveBeenCalledTimes(updaterIds.length)
+  expect(scanVisits).toBe(ENTITY_COUNT)
+  expect(mappedVisits).toBe(ENTITY_COUNT / UPDATER_EVERY)
+  expect(types.Updater.update).toHaveBeenCalledTimes(mappedVisits * 2)
 })
 
-function createTestEntities(count) {
+function createTestEntities(count, updaterEvery) {
   const entities = {}
-  const types = {}
-  const updaterType = { update: vi.fn() }
-  const staticType = {}
+  const types = { Updater: { update: vi.fn() }, Static: {} }
 
   for (let i = 0; i < count; i++) {
-    const isUpdater = Math.random() < 0.1
-    const typeId = isUpdater ? "Updater" : "Static"
-    entities[`entity-${i}`] = { id: `entity-${i}`, type: typeId }
+    const type = i % updaterEvery === 0 ? "Updater" : "Static"
+    entities[`entity-${i}`] = { id: `entity-${i}`, type }
   }
-  types.Updater = updaterType
-  types.Static = staticType
 
   return { entities, types }
 }

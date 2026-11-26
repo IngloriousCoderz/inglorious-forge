@@ -4,6 +4,7 @@ import { mergeConfig } from "vite"
 import { ViteImageOptimizer } from "vite-plugin-image-optimizer"
 
 import { markdownPlugin } from "../utils/markdown.js"
+import { STYLES_MANIFEST } from "./styles.js"
 
 /**
  * Generate Vite config for building the client bundle
@@ -32,6 +33,8 @@ export function createViteConfig(options = {}) {
       build: {
         outDir,
         emptyOutDir: false, // Don't delete HTML files we already generated
+        // Tells which CSS each page needs, to link it in the page's HTML.
+        manifest: STYLES_MANIFEST,
         rollupOptions: {
           input: {
             main: path.resolve(outDir, "main.js"),

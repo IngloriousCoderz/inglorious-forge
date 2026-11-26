@@ -12,7 +12,7 @@ export const LiveLogo = {
     if (value) {
       startInteraction(entity, api)
     } else {
-      stopInteraction()
+      stopInteraction(entity)
     }
   },
 }

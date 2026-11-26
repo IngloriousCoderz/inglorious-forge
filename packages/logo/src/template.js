@@ -1,20 +1,8 @@
 /**
- * @typedef {Object} FaceSpec
- * @property {string} image - svg key (A..Z)
- * @property {boolean} [reverse] - whether the face image should be flipped horizontally
- * @property {boolean} [eye] - whether to render the small eye asset on the face
- *
- * @typedef {Object} LogoEntity
- * @property {string} id
- * @property {number} size
- * @property {number} x
- * @property {number} y
- * @property {[FaceSpec,FaceSpec]} faces - tuple: [leftFace, rightFace]
- * @property {boolean} [isInteractive]
- * @property {boolean} [isScrollPrevented]
+ * @typedef {import("../types/index.d.ts").LogoEntity} LogoEntity
  */
 
-import { html } from "@inglorious/web"
+import { html, nothing } from "@inglorious/web"
 import { styleMap } from "@inglorious/web/directives/style-map"
 import { when } from "@inglorious/web/directives/when"
 
@@ -25,7 +13,8 @@ const DEFAULT_POSITION = [0, 0] // eslint-disable-line no-magic-numbers
 const DEFAULT_ROTATION = [-45, -40] // eslint-disable-line no-magic-numbers
 const DEFAULT_SIZE = 256
 const DEFAULT_SKEW = 12
-const STEP = 0.001
+// 0.001 radians, the tilt the head has always had per pixel of pointer offset.
+const TILT_DEGREES_PER_PIXEL = 0.0573
 const HALF = 0.5
 
 export const template = {
@@ -49,12 +38,13 @@ export const template = {
 
     return html`<div
       class="iw-logo"
+      data-entity-id=${entity.id ?? nothing}
       style=${styleMap({
         "--size": `${size}px`,
         "--transform": `scaleY(1.2) translateZ(-${size}px) rotateX(${
-          vRotation - STEP * y
+          vRotation - TILT_DEGREES_PER_PIXEL * y
         }deg)
-            rotateY(${hRotation + STEP * x}deg)`,
+            rotateY(${hRotation + TILT_DEGREES_PER_PIXEL * x}deg)`,
         "--z-translation": `${size * HALF}px`,
         "--left-face-flip": left.reverse ? "rotateY(180deg)" : "none",
         "--right-face-flip": right.reverse ? "rotateY(180deg)" : "none",

@@ -359,7 +359,7 @@ function languageName(locale) {
 function readLocale(storageKey) {
   if (!storageKey) return null
   try {
-    return globalThis.localStorage?.getItem(storageKey) ?? null
+    return globalThis.window?.localStorage?.getItem(storageKey) ?? null
   } catch {
     return null
   }
@@ -368,7 +368,7 @@ function readLocale(storageKey) {
 function saveLocale(storageKey, locale) {
   if (!storageKey) return
   try {
-    globalThis.localStorage?.setItem(storageKey, locale)
+    globalThis.window?.localStorage?.setItem(storageKey, locale)
   } catch {
     // Not persisting the choice is better than breaking the switch.
   }

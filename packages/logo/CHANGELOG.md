@@ -1,5 +1,13 @@
 # @inglorious/logo
 
+## 3.0.28
+
+### Patch Changes
+
+- The head follows the pointer again: `coordsChange` writes the `position` the template reads, tilting it as far as before the switch to degrees. The tilt is measured from the logo's own center, mouse and touch both work on devices that have both, and every interactive logo has its own listener, so `stopInteraction(entity)` stops just that one (without an entity, all of them).
+- Updated dependencies
+  - @inglorious/web@6.31.1
+
 ## 3.0.27
 
 ### Patch Changes

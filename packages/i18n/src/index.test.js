@@ -26,10 +26,12 @@ function stubBrowser({ languages = [], saved = {}, search = "" } = {}) {
   const store = { ...saved }
   vi.stubGlobal("location", { search })
   vi.stubGlobal("navigator", { languages, language: languages[0] })
-  vi.stubGlobal("localStorage", {
-    getItem: (key) => store[key] ?? null,
-    setItem: (key, value) => {
-      store[key] = value
+  vi.stubGlobal("window", {
+    localStorage: {
+      getItem: (key) => store[key] ?? null,
+      setItem: (key, value) => {
+        store[key] = value
+      },
     },
   })
   vi.stubGlobal("document", { documentElement: { lang: "", dir: "" } })

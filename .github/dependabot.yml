@@ -10,6 +10,10 @@ updates:
       # vite-plugin-babel runs Babel 7, which Babel 8 presets don't work with.
       - dependency-name: "@babel/preset-typescript"
         update-types: ["version-update:semver-major"]
+      # Solid 2 needs vite-plugin-solid 3, still a prerelease; the stable
+      # plugin only supports Solid 1.
+      - dependency-name: "solid-js"
+        update-types: ["version-update:semver-major"]
     groups:
       dependencies:
         patterns: ["*"]

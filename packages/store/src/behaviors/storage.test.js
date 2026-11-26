@@ -111,6 +111,34 @@ describe("withStorage", () => {
     expect(store.getEntity("settings").theme).toBe("dark")
   })
 
+  it("keeps nothing on a server by default, leaving Node's localStorage alone", () => {
+    const nodeStorage = memoryStorage({ settings: '{"theme":"dark"}' })
+    vi.stubGlobal("localStorage", nodeStorage)
+    const store = createStore({
+      types: { Settings: [Settings, withStorage(["theme"])] },
+      entities: { settings: { type: "Settings" } },
+    })
+
+    store.notify("#settings:themeSet", "blue")
+
+    expect(store.getEntity("settings").theme).toBe("blue")
+    expect(nodeStorage.getItem).not.toHaveBeenCalled()
+    expect(nodeStorage.setItem).not.toHaveBeenCalled()
+    vi.unstubAllGlobals()
+  })
+
+  it("uses the browser's localStorage by default", () => {
+    const browserStorage = memoryStorage({ settings: '{"theme":"dark"}' })
+    vi.stubGlobal("window", { localStorage: browserStorage })
+    const store = createStore({
+      types: { Settings: [Settings, withStorage(["theme"])] },
+      entities: { settings: { type: "Settings" } },
+    })
+
+    expect(store.getEntity("settings").theme).toBe("dark")
+    vi.unstubAllGlobals()
+  })
+
   describe("with a storage that answers later", () => {
     function asyncStorage(initial = {}) {
       const storage = memoryStorage(initial)

@@ -1,5 +1,11 @@
 # @inglorious/i18n
 
+## 2.1.1
+
+### Patch Changes
+
+- Storage defaults to the browser's `localStorage` only (`window.localStorage`), never Node's: during an SSX build or a server render, `withStorage`, the i18n locale, `createNativeStorage`'s browser fallback and the `readJSON`/`writeJSON` helpers keep nothing instead of sharing Node's process-wide store between requests, and Node 26 no longer warns that `--localstorage-file` was not provided.
+
 ## 2.1.0
 
 ### Minor Changes

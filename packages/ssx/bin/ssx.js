@@ -88,13 +88,13 @@ program
   .option("-c, --config <file>", "config file name", "site.config.js")
   .option("-r, --root <dir>", "root directory", ".")
   .option("-o, --out <dir>", "output directory", "dist")
-  .option("-p, --port <port>", "server port", 3000)
+  .option("-p, --port <port>", "server port (default: 3000)")
   .action(async (options) => {
     const cwd = process.cwd()
     const rootDir = path.resolve(cwd, options.root)
     const configPath = resolveConfigFile(rootDir, options.config)
     const outDir = path.resolve(cwd, options.out)
-    const port = Number(options.port)
+    const port = options.port ? Number(options.port) : undefined
 
     try {
       await serve({
@@ -118,12 +118,12 @@ program
   .description("Start an SSR runtime server that renders pages on demand")
   .option("-c, --config <file>", "config file name", "site.config.js")
   .option("-r, --root <dir>", "root directory", ".")
-  .option("-p, --port <port>", "server port", 3000)
+  .option("-p, --port <port>", "server port (default: 3000)")
   .action(async (options) => {
     const cwd = process.cwd()
     const rootDir = path.resolve(cwd, options.root)
     const configPath = resolveConfigFile(rootDir, options.config)
-    const port = Number(options.port)
+    const port = options.port ? Number(options.port) : undefined
 
     try {
       await ssr({

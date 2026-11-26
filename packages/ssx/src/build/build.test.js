@@ -21,6 +21,7 @@ import { generatePages } from "./pages.js"
 import { copyPublicDir } from "./public.js"
 import { generateRSS } from "./rss.js"
 import { generateSitemap } from "./sitemap.js"
+import { linkPageStyles } from "./styles.js"
 import { createViteConfig } from "./vite-config.js"
 
 const mockRm = vi.hoisted(() => vi.fn())
@@ -52,6 +53,10 @@ vi.mock("./pages.js")
 vi.mock("./public.js")
 vi.mock("./rss.js")
 vi.mock("./sitemap.js")
+vi.mock("./styles.js", async (importOriginal) => ({
+  ...(await importOriginal()),
+  linkPageStyles: vi.fn(),
+}))
 vi.mock("./vite-config.js")
 
 describe("build", () => {
@@ -102,6 +107,10 @@ describe("build", () => {
     )
     expect(generateApp).toHaveBeenCalled()
     expect(viteBuild).toHaveBeenCalled()
+    expect(linkPageStyles).toHaveBeenCalledWith(
+      [{ path: "/", html: "<html></html>" }],
+      { outDir: "dist", viteConfig: { mode: "production" } },
+    )
     expect(saveManifest).toHaveBeenCalled()
 
     expect(result).toEqual({ changed: 1, skipped: 0 })

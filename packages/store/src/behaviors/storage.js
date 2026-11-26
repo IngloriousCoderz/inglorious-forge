@@ -30,7 +30,8 @@ let decorators = 0
  * @param {() => Storage | undefined} [options.storage] A Web Storage, such as
  *   `() => sessionStorage` for the tab only, or anything with the same
  *   `getItem` and `setItem`, answering now or with a promise. Defaults to
- *   `localStorage`.
+ *   the browser's `localStorage`; on a server, where Node's own would be
+ *   shared by every request, nothing is kept.
  *
  * @example
  * const types = {
@@ -40,7 +41,7 @@ let decorators = 0
  */
 export function withStorage(
   fields,
-  { key, storage = () => globalThis.localStorage } = {},
+  { key, storage = () => globalThis.window?.localStorage } = {},
 ) {
   const keyOf = (entity) =>
     typeof key === "function" ? key(entity) : (key ?? entity.id)

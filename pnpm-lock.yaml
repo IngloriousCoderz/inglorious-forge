@@ -543,15 +543,15 @@ importers:
         specifier: workspace:*
         version: link:../shared
       solid-js:
-        specifier: ^2.0.1
-        version: 2.0.1
+        specifier: ^1.9.20
+        version: 1.9.20
     devDependencies:
       vite:
         specifier: ^8.3.8
         version: 8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.108.2)(terser@5.51.2)(yaml@2.9.1)
       vite-plugin-solid:
         specifier: ^2.11.17
-        version: 2.11.17(@testing-library/jest-dom@6.9.1)(solid-js@2.0.1)(supports-color@5.5.0)(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.108.2)(terser@5.51.2)(yaml@2.9.1))
+        version: 2.11.17(@testing-library/jest-dom@6.9.1)(solid-js@1.9.20)(supports-color@5.5.0)(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.108.2)(terser@5.51.2)(yaml@2.9.1))
 
   benchmarks/dashboard/solid-memo:
     dependencies:
@@ -559,15 +559,15 @@ importers:
         specifier: workspace:*
         version: link:../shared
       solid-js:
-        specifier: ^2.0.1
-        version: 2.0.1
+        specifier: ^1.9.20
+        version: 1.9.20
     devDependencies:
       vite:
         specifier: ^8.3.8
         version: 8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.108.2)(terser@5.51.2)(yaml@2.9.1)
       vite-plugin-solid:
         specifier: ^2.11.17
-        version: 2.11.17(@testing-library/jest-dom@6.9.1)(solid-js@2.0.1)(supports-color@5.5.0)(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.108.2)(terser@5.51.2)(yaml@2.9.1))
+        version: 2.11.17(@testing-library/jest-dom@6.9.1)(solid-js@1.9.20)(supports-color@5.5.0)(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.108.2)(terser@5.51.2)(yaml@2.9.1))
 
   benchmarks/dashboard/solid-store:
     dependencies:
@@ -575,15 +575,15 @@ importers:
         specifier: workspace:*
         version: link:../shared
       solid-js:
-        specifier: ^2.0.1
-        version: 2.0.1
+        specifier: ^1.9.20
+        version: 1.9.20
     devDependencies:
       vite:
         specifier: ^8.3.8
         version: 8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.108.2)(terser@5.51.2)(yaml@2.9.1)
       vite-plugin-solid:
         specifier: ^2.11.17
-        version: 2.11.17(@testing-library/jest-dom@6.9.1)(solid-js@2.0.1)(supports-color@5.5.0)(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.108.2)(terser@5.51.2)(yaml@2.9.1))
+        version: 2.11.17(@testing-library/jest-dom@6.9.1)(solid-js@1.9.20)(supports-color@5.5.0)(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.108.2)(terser@5.51.2)(yaml@2.9.1))
 
   benchmarks/dashboard/solid-store-memo:
     dependencies:
@@ -591,15 +591,15 @@ importers:
         specifier: workspace:*
         version: link:../shared
       solid-js:
-        specifier: ^2.0.1
-        version: 2.0.1
+        specifier: ^1.9.20
+        version: 1.9.20
     devDependencies:
       vite:
         specifier: ^8.3.8
         version: 8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.108.2)(terser@5.51.2)(yaml@2.9.1)
       vite-plugin-solid:
         specifier: ^2.11.17
-        version: 2.11.17(@testing-library/jest-dom@6.9.1)(solid-js@2.0.1)(supports-color@5.5.0)(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.108.2)(terser@5.51.2)(yaml@2.9.1))
+        version: 2.11.17(@testing-library/jest-dom@6.9.1)(solid-js@1.9.20)(supports-color@5.5.0)(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.108.2)(terser@5.51.2)(yaml@2.9.1))
 
   benchmarks/dashboard/svelte:
     dependencies:
@@ -730,15 +730,15 @@ importers:
         specifier: workspace:*
         version: link:../shared
       solid-js:
-        specifier: ^2.0.1
-        version: 2.0.1
+        specifier: ^1.9.20
+        version: 1.9.20
     devDependencies:
       vite:
         specifier: ^8.3.8
         version: 8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.108.2)(terser@5.51.2)(yaml@2.9.1)
       vite-plugin-solid:
         specifier: ^2.11.17
-        version: 2.11.17(@testing-library/jest-dom@6.9.1)(solid-js@2.0.1)(supports-color@5.5.0)(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.108.2)(terser@5.51.2)(yaml@2.9.1))
+        version: 2.11.17(@testing-library/jest-dom@6.9.1)(solid-js@1.9.20)(supports-color@5.5.0)(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.108.2)(terser@5.51.2)(yaml@2.9.1))
 
   benchmarks/deep-tree/svelte:
     dependencies:
@@ -4975,10 +4975,6 @@ packages:
     resolution: {integrity: sha512-FSghU95jZPGbwr/mybVvk66qRZYpx5FkXL+vLNpy1Vp8UsdwSxXjIHE3fsvMbKWTKi9UFfewHTkc5e7jAqRYoQ==}
     engines: {node: '>=14.17.0'}
 
-  '@solidjs/signals@2.0.1':
-    resolution: {integrity: sha512-nTdIk7UgGLwATg0wCT/wH/G62aWYjGol2AnqdrN4qVyV7snYTnYoesgJ/G7xRkO34mAr3tayt0cu1+k/dt0lmA==}
-    engines: {node: '>=22.12.0'}
-
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
 
@@ -8469,15 +8465,15 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
-  seroval-plugins@1.8.0:
-    resolution: {integrity: sha512-96vBb12rDvPPwdKUgWw1op3fGq8AVBFOr0IllbnM72yR5J9WWXF18cQ4g1XfDO7HCyh2dt70P3XdtyRayP8FWg==}
-    engines: {node: '>=20'}
+  seroval-plugins@1.6.12:
+    resolution: {integrity: sha512-+reiwp/lYxiyctSrdvX7OQ1YLrcbWYgBiZrhSFL+V43b0/DGRLNVSDyZINbQe+tWplPOI2fw2dPrdv6hcc09kQ==}
+    engines: {node: '>=10'}
     peerDependencies:
-      seroval: ^1.8.0
+      seroval: ^1.0
 
-  seroval@1.8.2:
-    resolution: {integrity: sha512-zmMxi/9MdLK1MKazLmIP6Rk39RuK0Xydd+QHeOYntS37olJeTjB3+nwVj4ce/ZWiZJeRhcO5htfxt0mUzQBscQ==}
-    engines: {node: '>=20'}
+  seroval@1.6.12:
+    resolution: {integrity: sha512-CqbIVfk/7GL3ITwZI55lcPbpQbjHZ2DD5cUj4iH7E9YsCfHNJV1mx7yNp86Z84w5IpmkZZS/2s5vPOWmVWSdQg==}
+    engines: {node: '>=10'}
 
   set-function-length@1.2.2:
     resolution: {integrity: sha512-pgRc4hJ4/sNjWCSS9AmnS40x3bNMDTknHgL5UaMBTMyJnU90EgWh1Rz+MC9eFu4BuN/UwZjKQuY/1v3rM7HMfg==}
@@ -8578,9 +8574,8 @@ packages:
     resolution: {integrity: sha512-qMCMfhY040cVHT43K9BFygqYbUPFZKHOg7K73mtTWJRb8pyP3fzf4Ixd5SzdEJQ6MRUg/WBnOLxghZtKKurENQ==}
     engines: {node: '>=10'}
 
-  solid-js@2.0.1:
-    resolution: {integrity: sha512-5bBwRCblIZ672y2H2aB5KIOfeP/N+acx1YoCjNCWYFc4ZI/Y7y7n/6N1kei8AgWmcJJQ1m5SV90rs3V8CPAnYQ==}
-    engines: {node: '>=22.12.0'}
+  solid-js@1.9.20:
+    resolution: {integrity: sha512-7zEbPxRU5/hHX8O/rYtQ34p/wq44w09gv0u4+myOW5Ode8unKhoG5FbcGlqRXKqqDuDW9yOJ1OXoHgUUl/1f3Q==}
 
   solid-refresh@0.6.3:
     resolution: {integrity: sha512-F3aPsX6hVw9ttm5LYlth8Q15x6MlI/J3Dn+o3EQyRTtTxidepSTwAYdozt01/YA+7ObcciagGEyXIopGZzQtbA==}
@@ -11385,8 +11380,6 @@ snapshots:
       - '@floating-ui/utils'
       - '@types/react'
 
-  '@solidjs/signals@2.0.1': {}
-
   '@standard-schema/spec@1.1.0': {}
 
   '@standard-schema/utils@0.3.0': {}
@@ -12548,12 +12541,12 @@ snapshots:
       html-entities: 2.3.3
       parse5: 7.3.0
 
-  babel-preset-solid@1.9.19(@babel/core@7.29.13(supports-color@5.5.0))(solid-js@2.0.1):
+  babel-preset-solid@1.9.19(@babel/core@7.29.13(supports-color@5.5.0))(solid-js@1.9.20):
     dependencies:
       '@babel/core': 7.29.13(supports-color@5.5.0)
       babel-plugin-jsx-dom-expressions: 0.40.14(@babel/core@7.29.13(supports-color@5.5.0))
     optionalDependencies:
-      solid-js: 2.0.1
+      solid-js: 1.9.20
 
   bail@2.0.2: {}
 
@@ -15528,11 +15521,11 @@ snapshots:
 
   semver@7.8.6: {}
 
-  seroval-plugins@1.8.0(seroval@1.8.2):
+  seroval-plugins@1.6.12(seroval@1.6.12):
     dependencies:
-      seroval: 1.8.2
+      seroval: 1.6.12
 
-  seroval@1.8.2: {}
+  seroval@1.6.12: {}
 
   set-function-length@1.2.2:
     dependencies:
@@ -15684,18 +15677,18 @@ snapshots:
       astral-regex: 2.0.0
       is-fullwidth-code-point: 3.0.0
 
-  solid-js@2.0.1:
+  solid-js@1.9.20:
     dependencies:
-      '@solidjs/signals': 2.0.1
-      seroval: 1.8.2
-      seroval-plugins: 1.8.0(seroval@1.8.2)
+      csstype: 3.2.3
+      seroval: 1.6.12
+      seroval-plugins: 1.6.12(seroval@1.6.12)
 
-  solid-refresh@0.6.3(solid-js@2.0.1)(supports-color@5.5.0):
+  solid-refresh@0.6.3(solid-js@1.9.20)(supports-color@5.5.0):
     dependencies:
       '@babel/generator': 7.29.13
       '@babel/helper-module-imports': 7.29.7(supports-color@5.5.0)
       '@babel/types': 7.29.11
-      solid-js: 2.0.1
+      solid-js: 1.9.20
     transitivePeerDependencies:
       - supports-color
 
@@ -16200,14 +16193,14 @@ snapshots:
       sharp: 0.35.5(@types/node@26.6.6)
       svgo: 4.1.0
 
-  vite-plugin-solid@2.11.17(@testing-library/jest-dom@6.9.1)(solid-js@2.0.1)(supports-color@5.5.0)(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.108.2)(terser@5.51.2)(yaml@2.9.1)):
+  vite-plugin-solid@2.11.17(@testing-library/jest-dom@6.9.1)(solid-js@1.9.20)(supports-color@5.5.0)(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.108.2)(terser@5.51.2)(yaml@2.9.1)):
     dependencies:
       '@babel/core': 7.29.13(supports-color@5.5.0)
       '@types/babel__core': 7.20.5
-      babel-preset-solid: 1.9.19(@babel/core@7.29.13(supports-color@5.5.0))(solid-js@2.0.1)
+      babel-preset-solid: 1.9.19(@babel/core@7.29.13(supports-color@5.5.0))(solid-js@1.9.20)
       merge-anything: 5.1.7
-      solid-js: 2.0.1
-      solid-refresh: 0.6.3(solid-js@2.0.1)(supports-color@5.5.0)
+      solid-js: 1.9.20
+      solid-refresh: 0.6.3(solid-js@1.9.20)(supports-color@5.5.0)
       vite: 8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.108.2)(terser@5.51.2)(yaml@2.9.1)
       vitefu: 1.1.3(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.108.2)(terser@5.51.2)(yaml@2.9.1))
     optionalDependencies:

@@ -12,10 +12,13 @@ import { loadConfig } from "../utils/config.js"
 
 const require = createRequire(import.meta.url)
 
+const DEFAULT_PORT = 3000
+
 /**
  * Starts a production server that serves static files and API routes.
  *
  * @param {Object} options - Configuration options.
+ * @param {number} [options.port] - The port from the command line, which overrides the config's `vite.server.port`.
  * @returns {Promise<{close: Function}>} A promise that resolves to a server control object.
  */
 export async function serve(options = {}) {
@@ -24,7 +27,7 @@ export async function serve(options = {}) {
   const mergedOptions = { ...config, ...options }
   const { rootDir = ".", outDir = "dist" } = mergedOptions
 
-  const { port = 3000 } = mergedOptions.vite?.server ?? {}
+  const port = options.port ?? mergedOptions.vite?.server?.port ?? DEFAULT_PORT
 
   console.log("🚀 Starting production server...\n")
 

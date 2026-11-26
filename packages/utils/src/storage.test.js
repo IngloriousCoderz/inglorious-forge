@@ -44,7 +44,7 @@ test("it should answer with the fallback when what is stored cannot be parsed", 
 })
 
 test("it should not throw, and say it wrote nothing, where there is no storage at all", () => {
-  vi.stubGlobal("localStorage", undefined)
+  vi.stubGlobal("window", undefined)
 
   expect(readJSON("name", "fallback")).toBe("fallback")
   expect(writeJSON("name", 1)).toBe(false)
@@ -62,8 +62,16 @@ test("it should not throw where storage refuses to be read or written", () => {
   expect(writeJSON("name", 1, storage)).toBe(false)
 })
 
-test("it should use the browser's storage by default", () => {
+test("it should leave Node's own localStorage alone", () => {
+  vi.stubGlobal("window", undefined)
   vi.stubGlobal("localStorage", storage)
+
+  expect(writeJSON("level", 3)).toBe(false)
+  expect(storage.has("level")).toBe(false)
+})
+
+test("it should use the browser's storage by default", () => {
+  vi.stubGlobal("window", { localStorage: storage })
 
   writeJSON("level", 3)
 
@@ -77,7 +85,7 @@ test("it should read and write strings as they are", () => {
 })
 
 test("it should treat a function giving nothing as no storage", () => {
-  vi.stubGlobal("localStorage", storage)
+  vi.stubGlobal("window", { localStorage: storage })
 
   expect(writeItem("theme", "dark", () => undefined)).toBe(false)
   expect(readItem("theme", () => undefined)).toBe(null)

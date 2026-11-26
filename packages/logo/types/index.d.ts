@@ -39,9 +39,13 @@ export interface LogoEntity {
   id?: string
   type: string
   size: number
-  x: number
-  y: number
   faces: [Face, Face]
+  /** pointer offset from the center in pixels, set while interactive */
+  position?: [number, number]
+  /** horizontal and vertical rotation in degrees, default [-45, -40] */
+  rotation?: [number, number]
+  /** skew of the faces in degrees, default 12 */
+  skew?: number
   isInteractive?: boolean
   isScrollPrevented?: boolean
 }
@@ -52,5 +56,8 @@ export type LogoType = {
   coordsChange(entity: LogoEntity, payload: { x: number; y: number }): void
   destroy(entity: LogoEntity, payload: unknown, api: Api): void
 }
+
+export declare function startInteraction(entity: LogoEntity, api: Api): void
+export declare function stopInteraction(entity?: LogoEntity): void
 
 export declare const Logo: LogoType

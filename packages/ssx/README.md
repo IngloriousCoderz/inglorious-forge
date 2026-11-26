@@ -505,6 +505,25 @@ api.notify("navigate", {
 
 Routes are lazy-loaded on demand, keeping initial bundle size small.
 
+### 🎨 Styles
+
+Import CSS where it's used, as in any Vite app: CSS modules, a component's `style.css`, a package's stylesheet. `ssx build` links what each page needs in that page's HTML, so it is styled before any JavaScript runs:
+
+```javascript
+// src/pages/about.js
+import { html } from "@inglorious/web"
+
+import styles from "./about.module.css"
+
+export const About = {
+  render() {
+    return html`<h1 class=${styles.title}>About</h1>`
+  },
+}
+```
+
+For stylesheets in `public/`, list them in `site.config.js` as `styles`: every page links them.
+
 ### 🖼️ Image Optimization
 
 SSX includes built-in image optimization using `vite-plugin-image-optimizer`.

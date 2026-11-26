@@ -28,6 +28,25 @@ describe("layout", () => {
     )
   })
 
+  it("should escape the title, which is plain text", () => {
+    const html = layout("", { title: "Tom & Jerry <3" })
+    expect(html).toContain("<title>Tom &amp; Jerry &lt;3</title>")
+  })
+
+  it("should escape meta contents, so quotes can't break the tag", () => {
+    const html = layout("", {
+      meta: { description: 'Say "hi" & <wave>' },
+    })
+    expect(html).toContain(
+      '<meta name="description" content="Say &quot;hi&quot; &amp; &lt;wave&gt;">',
+    )
+  })
+
+  it("should leave additional head content as HTML", () => {
+    const html = layout("", { head: '<link rel="canonical" href="/a?b&c">' })
+    expect(html).toContain('<link rel="canonical" href="/a?b&c">')
+  })
+
   it("should render styles", () => {
     const html = layout("", { styles: ["/style.css", "/theme.css"] })
     expect(html).toContain('<link rel="stylesheet" href="/style.css">')

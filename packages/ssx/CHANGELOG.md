@@ -1,5 +1,20 @@
 # @inglorious/ssx
 
+## 2.4.0
+
+### Minor Changes
+
+- `ssx build` links the CSS each page imports in that page's HTML: CSS modules, a component's `style.css`, a package's stylesheet. Pages are styled before any JavaScript runs, and CSS imported by the store's types (which nothing loaded before) arrives too.
+
+### Patch Changes
+
+- The page title, meta contents and other attributes in the generated `<head>` are escaped, so a `&`, `<` or quote in a page's metadata no longer breaks the HTML. Metadata is plain text, as the client already treated it on navigation: sites that escaped it themselves should stop, or titles show `&amp;` after a client-side navigation. `head` stays raw HTML.
+- `ssx serve -p <port>` listens on that port, and `ssx ssr` without `-p` uses the config's `vite.server.port` instead of always 3000. The port comes from the command line, then `vite.server.port`, then 3000, for `dev`, `serve` and `ssr` alike.
+- Updated dependencies
+  - @inglorious/utils@5.4.1
+  - @inglorious/store@12.9.1
+  - @inglorious/web@6.31.1
+
 ## 2.3.2
 
 ### Patch Changes

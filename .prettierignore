@@ -1,3 +1,5 @@
 *.mdx
 packages/editor/src-tauri/target/
 docs/forge/.well-known/
+# Written by pnpm, in its own format
+pnpm-lock.yaml

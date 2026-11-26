@@ -35,6 +35,8 @@ export async function staticPaths() {
 ```
 
 - Pages are static: `load` runs at build time. Dynamic routes need `staticPaths()`.
+- `metadata` is plain text: SSX escapes titles and meta contents, so don't escape them yourself; `head` is raw HTML.
+- CSS a page imports (CSS modules, a component's `style.css`, a package's stylesheet) is linked in its built HTML; `site.config.js` `styles` are for files in `public/`.
 - `export const ssr = true` renders on every request (own store per request, no `staticPaths`); `page` has `params`, `locale`, `request` (Fetch `Request`).
 - Entities go in `src/store/entities.js` as in Inglorious Web. Navigate with `api.notify("#router:navigate", "/posts")` or `{ to, replace: true }`.
 
