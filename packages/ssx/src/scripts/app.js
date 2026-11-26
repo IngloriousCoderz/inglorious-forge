@@ -1,3 +1,4 @@
+import { DEV_LINK_MARKER } from "../dev/styles.js"
 import { getStoreStuff } from "../store/stuff.js"
 
 /**
@@ -171,6 +172,13 @@ mount(store, (api) => {
   const { route } = api.getEntity("router")
   return api.render(route)
 }, root, { getPageName })
+
+// Linked by the server for the first paint of a page served from the sources.
+// Vite's client injects the same styles by now and keeps them current on
+// edits, which the links would not follow.
+for (const link of document.querySelectorAll("link[${DEV_LINK_MARKER}]")) {
+  link.remove()
+}
 `
 }
 

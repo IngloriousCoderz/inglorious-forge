@@ -75,6 +75,37 @@ describe("renderRequest for server-rendered pages", () => {
     expect(page.request.headers.get("cookie")).toBe("session=abc")
   })
 
+  it("links the stylesheets the page imports, from Vite's module graph", async () => {
+    generateStore.mockResolvedValue({ _api: { getEntities: () => [{}] } })
+    renderPage.mockResolvedValueOnce("<html><head></head></html>")
+    const pageModule = {
+      url: "/new.js",
+      importedModules: new Set([
+        { url: "/new.module.css", importedModules: new Set() },
+      ]),
+    }
+    const viteServer = {
+      environments: {
+        ssr: {
+          moduleGraph: {
+            getModulesByFile: (file) =>
+              file.endsWith("new.js") ? new Set([pageModule]) : undefined,
+          },
+        },
+      },
+    }
+
+    const result = await renderRequest("/posts/new", {
+      pages,
+      viteServer,
+      loader: async () => ({}),
+    })
+
+    expect(result.html).toBe(
+      '<html><head><link rel="stylesheet" href="/new.module.css" data-ssx-dev-style>\n</head></html>',
+    )
+  })
+
   it("matches nothing for a path no page has", async () => {
     const { result } = await render("/about")
 

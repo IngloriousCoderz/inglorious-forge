@@ -1,14 +1,12 @@
 import fs from "node:fs/promises"
 import path from "node:path"
 
+import { insertStyleLinks } from "../render/style-links.js"
+
 export const STYLES_MANIFEST = ".vite/ssx-styles.json"
 
 const VITE_DEFAULT_MANIFEST = ".vite/manifest.json"
 const LINK_MARKER = "data-ssx-style"
-const LINK_PATTERN = new RegExp(
-  `\\s*<link rel="stylesheet" href="[^"]*" ${LINK_MARKER}>`,
-  "g",
-)
 
 /**
  * Links the CSS that page modules import into each pre-rendered page, so a
@@ -98,13 +96,6 @@ async function linkStyles(htmlPath, hrefs) {
   const html = await fs.readFile(htmlPath, "utf-8").catch(() => null)
   if (html === null) return
 
-  const links = hrefs
-    .map((href) => `<link rel="stylesheet" href="${href}" ${LINK_MARKER}>`)
-    .join("\n")
-  const unlinked = html.replace(LINK_PATTERN, "")
-  const linked = links
-    ? unlinked.replace("</head>", `${links}\n</head>`)
-    : unlinked
-
+  const linked = insertStyleLinks(html, hrefs, LINK_MARKER)
   if (linked !== html) await fs.writeFile(htmlPath, linked, "utf-8")
 }

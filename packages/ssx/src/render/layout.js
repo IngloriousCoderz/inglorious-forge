@@ -1,3 +1,5 @@
+import { escapeHTML } from "../utils/escape-html.js"
+
 /**
  * Default layout function for wrapping content in a full HTML document.
  *
@@ -66,12 +68,4 @@ export function layout(body, options) {
           .join("\n")}
       </body>
     </html>`
-}
-
-function escapeHTML(value) {
-  return String(value)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
 }

@@ -4,8 +4,10 @@ import connect from "connect"
 import { createServer } from "vite"
 
 import { createApiMiddleware, createRequest } from "../dev/api.js"
+import { collectDevStyles, DEV_LINK_MARKER } from "../dev/styles.js"
 import { createViteConfig, virtualFiles } from "../dev/vite-config.js"
 import { renderPage } from "../render/index.js"
+import { insertStyleLinks } from "../render/style-links.js"
 import { getPages, matchParams, matchRoute } from "../router/index.js"
 import { generateApp } from "../scripts/app.js"
 import { generateStore } from "../store/index.js"
@@ -145,11 +147,16 @@ export async function renderRequest(
     await module.load(entity, page)
   }
 
-  const html = await renderPage(store, page, entity, {
+  const rendered = await renderPage(store, page, entity, {
     ...options,
     wrap: true,
     isDev: Boolean(options.isDev),
   })
+  const html = insertStyleLinks(
+    rendered,
+    collectDevStyles(viteServer, { rootDir, filePath: origPage.filePath }),
+    DEV_LINK_MARKER,
+  )
 
   return { html, page, entity, store }
 }

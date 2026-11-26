@@ -1,5 +1,11 @@
 # @inglorious/ssx
 
+## 2.5.0
+
+### Minor Changes
+
+- `ssx dev` and `ssx ssr` link the CSS each page imports in the HTML they serve, as `ssx build` does, so pages are styled before their JavaScript runs in development too. The links come from Vite's module graph and are removed once the page hydrates, leaving Vite's client to keep the styles current as they are edited.
+
 ## 2.4.0
 
 ### Minor Changes
