@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // Writes the projects in stackblitz/ from the create-app and create-game
 // templates, with published versions in place of workspace ones, so StackBlitz
-// can open them straight from GitHub.
+// can open them straight from GitHub, and the short addresses on inglorious.dev
+// that redirect to them (inglorious.dev/new/<project>).
 //
 //   node scripts/stackblitz.mjs           writes them
 //   node scripts/stackblitz.mjs --check   exits 1 if they are out of date
@@ -27,6 +28,9 @@ import { writeViteConfig } from "../packages/create-game/bin/lib/vite.js"
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..")
 const OUTPUT = join(ROOT, "stackblitz")
+const REDIRECTS = join(ROOT, "docs", "forge", "new")
+const STACKBLITZ =
+  "https://stackblitz.com/github/IngloriousCoderz/inglorious-forge/tree/main/stackblitz"
 const INDENTATION = 2
 const EXIT_OUTDATED = 1
 
@@ -72,6 +76,7 @@ export default defineConfig({${define}
 
 const PROJECTS = {
   app: {
+    file: "src/app/message/index.js",
     template: "packages/create-app/templates/js",
     title: "Inglorious App",
     description: "An Inglorious Web app, ready to run on StackBlitz",
@@ -79,6 +84,7 @@ const PROJECTS = {
     overrides: { "vite.config.js": appViteConfig() },
   },
   "app-ts": {
+    file: "src/app/message/index.ts",
     template: "packages/create-app/templates/ts",
     title: "Inglorious App (TypeScript)",
     description:
@@ -93,6 +99,7 @@ const PROJECTS = {
     },
   },
   game: {
+    file: "src/game.js",
     template: "packages/create-game/templates/js",
     title: "Inglorious Game",
     description: "An Inglorious Engine game, ready to run on StackBlitz",
@@ -100,6 +107,7 @@ const PROJECTS = {
     overrides: { "vite.config.js": gameViteConfig("js") },
   },
   "game-ts": {
+    file: "src/game.ts",
     template: "packages/create-game/templates/ts",
     title: "Inglorious Game (TypeScript)",
     description:
@@ -112,10 +120,15 @@ const PROJECTS = {
 const check = process.argv.includes("--check")
 const outdated = []
 
+const outputs = [{ dir: REDIRECTS, files: await redirectFiles() }]
 for (const [name, project] of Object.entries(PROJECTS)) {
-  const dir = join(OUTPUT, name)
-  const files = await projectFiles(name, project)
+  outputs.push({
+    dir: join(OUTPUT, name),
+    files: await projectFiles(name, project),
+  })
+}
 
+for (const { dir, files } of outputs) {
   if (check) {
     outdated.push(...compare(dir, files))
   } else {
@@ -129,8 +142,36 @@ for (const [name, project] of Object.entries(PROJECTS)) {
 
 if (outdated.length) {
   for (const path of outdated) console.error(`  ${path} is out of date`)
-  console.error("\nRun `node scripts/stackblitz.mjs` to update stackblitz/.")
+  console.error("\nRun `node scripts/stackblitz.mjs` to update them.")
   process.exit(EXIT_OUTDATED)
+}
+
+async function redirectFiles() {
+  const files = {}
+
+  for (const [name, project] of Object.entries(PROJECTS)) {
+    const url = `${STACKBLITZ}/${name}?file=${project.file}`
+    const page = `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="robots" content="noindex" />
+    <meta http-equiv="refresh" content="0; url=${url}" />
+    <link rel="canonical" href="${url}" />
+    <title>${project.title} on StackBlitz</title>
+    <script>
+      location.replace("${url}")
+    </script>
+  </head>
+  <body>
+    <p>Opening <a href="${url}">${project.title} on StackBlitz</a>…</p>
+  </body>
+</html>
+`
+    files[`${name}/index.html`] = await format("index.html", page)
+  }
+
+  return files
 }
 
 function gameViteConfig(template) {
