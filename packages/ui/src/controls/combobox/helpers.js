@@ -96,7 +96,7 @@ export function filterOptions(options, searchTerm) {
 /**
  * The options the dropdown lists, flat, in the order they are shown. Focus
  * indexes count through this list.
- * @param {{ options?: (SelectOption | ComboboxOptionGroup)[], searchTerm?: string, selectedValue?: string|number|(string|number)[]|null, isCreatable?: boolean, formatCreateLabel?: (term: string) => string }} props
+ * @param {{ options?: (SelectOption | ComboboxOptionGroup)[], searchTerm?: string, selectedValue?: string|number|(string|number)[]|null, isCreatable?: boolean, isRemote?: boolean, formatCreateLabel?: (term: string) => string }} props
  * @returns {SelectOption[]}
  */
 export function visibleOptions(props) {
@@ -104,9 +104,10 @@ export function visibleOptions(props) {
 }
 
 /**
- * The options the dropdown lists, groups kept: those matching the search, then,
- * on a creatable combobox, one to add the typed term unless it is already known.
- * @param {{ options?: (SelectOption | ComboboxOptionGroup)[], searchTerm?: string, selectedValue?: string|number|(string|number)[]|null, isCreatable?: boolean, formatCreateLabel?: (term: string) => string }} props
+ * The options the dropdown lists, groups kept: those matching the search (on a
+ * remote combobox, all of them: they are already its results), then, on a
+ * creatable combobox, one to add the typed term unless it is already known.
+ * @param {{ options?: (SelectOption | ComboboxOptionGroup)[], searchTerm?: string, selectedValue?: string|number|(string|number)[]|null, isCreatable?: boolean, isRemote?: boolean, formatCreateLabel?: (term: string) => string }} props
  * @returns {(SelectOption | ComboboxOptionGroup)[]}
  */
 export function groupedVisibleOptions({
@@ -114,9 +115,10 @@ export function groupedVisibleOptions({
   searchTerm,
   selectedValue,
   isCreatable = false,
+  isRemote = false,
   formatCreateLabel = (term) => `Add "${term}"`,
 }) {
-  const filtered = filterOptions(options, searchTerm)
+  const filtered = isRemote ? options : filterOptions(options, searchTerm)
   const term = String(searchTerm ?? "").trim()
   if (!isCreatable || !term) return filtered
 

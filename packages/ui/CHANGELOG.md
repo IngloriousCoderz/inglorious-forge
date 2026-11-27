@@ -1,5 +1,18 @@
 # @inglorious/ui
 
+## 9.21.0
+
+### Minor Changes
+
+- `Combobox` takes `isRemote` for options that come from outside one search at a time, such as a geocoder's: they are listed as given, `optionsSet` keeps the search, the chosen options stay in `selectedOptions` so their labels show, and closing empties the results.
+
+  On a remote `Combobox`, `changeEvent`'s payload also carries the chosen `options` whole.
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/web@6.32.0
+
 ## 9.20.5
 
 ### Patch Changes

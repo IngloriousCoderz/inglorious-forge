@@ -51,6 +51,7 @@ The root entry is small on purpose: everything else has its own subpath, so it c
 | `@inglorious/web/auth`                       | [`createAuth`](/featured/sign-in)                                                                   |
 | `@inglorious/web/analytics`                  | [`createAnalytics`](/featured/analytics)                                                            |
 | `@inglorious/web/push`                       | [`createPushPrompt`](/featured/push)                                                                |
+| `@inglorious/web/places`                     | [`createPlaceSearch`, `photonPlaces`](/featured/places)                                             |
 | `@inglorious/web/pwa`                        | [`createPwaUpdate`, `applyPwaUpdate`](/featured/pwa-updates)                                        |
 | `@inglorious/web/device/biometrics`          | [`createBiometrics`](/featured/biometrics)                                                          |
 | `@inglorious/web/device/compass`             | [`Compass`](/featured/compass)                                                                      |

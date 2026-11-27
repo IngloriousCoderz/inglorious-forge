@@ -189,7 +189,7 @@ export const template = {
    * @returns {TemplateResult}
    */
   renderSingleValue(props) {
-    const { options, selectedValue, placeholder } = props
+    const { selectedValue, placeholder } = props
 
     if (selectedValue === null) {
       return html`<span class="iw-combobox-control iw-combobox-placeholder"
@@ -197,7 +197,7 @@ export const template = {
       >`
     }
 
-    const selectedOption = flattenOptions(options).find(
+    const selectedOption = knownOptions(props).find(
       (option) => getOptionValue(option) === selectedValue,
     )
 
@@ -240,10 +240,9 @@ export const template = {
    * @returns {TemplateResult}
    */
   renderMultiValueTag(props, value) {
-    const { id, options, size, onOptionSelect, onChange } = props
+    const { id, size, onOptionSelect, onChange } = props
     const option =
-      flattenOptions(options).find((opt) => getOptionValue(opt) === value) ??
-      value
+      knownOptions(props).find((opt) => getOptionValue(opt) === value) ?? value
 
     const tagId = id ? `${id}-tag-${String(value)}` : undefined
     const chipSize = size === "lg" ? "md" : "sm"
@@ -280,7 +279,7 @@ export const template = {
    * @returns {TemplateResult}
    */
   renderDropdown(props) {
-    const { id, isSearchable, isLoading } = props
+    const { id, isSearchable, isRemote, isLoading } = props
 
     const filteredOptions = visibleOptions(props)
 
@@ -300,7 +299,7 @@ export const template = {
         trackOutsideClick(props, el)
       })}
     >
-      ${when(isSearchable, () => this.renderSearchInput?.(props))}
+      ${when(isSearchable || isRemote, () => this.renderSearchInput?.(props))}
       ${when(isLoading, () => this.renderLoading?.(props))}
       ${when(!isLoading && !filteredOptions.length, () =>
         this.renderNoOptions?.(props),
@@ -473,6 +472,16 @@ export const template = {
     const { noOptionsMessage } = props
     return html`<div class="iw-combobox-no-options">${noOptionsMessage}</div>`
   },
+}
+
+/**
+ * The listed options, then the chosen ones a remote combobox keeps once its
+ * results are gone, so a value still shows its label.
+ * @param {ComboboxProps} props
+ * @returns {ComboboxOption[]}
+ */
+function knownOptions({ options = [], selectedOptions = [] }) {
+  return [...flattenOptions(options), ...selectedOptions]
 }
 
 /**

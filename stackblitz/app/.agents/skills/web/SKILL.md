@@ -1,6 +1,6 @@
 ---
 name: web
-description: "@inglorious/web: lit-html rendering over @inglorious/store - mount, api, directives, router, forms, device (sensors, geolocation, share, haptics, local notifications, biometrics, keyboard, storage), native app (app links, back button, system bars, store and live updates), PWA updates, sign-in, analytics, push, testing."
+description: "@inglorious/web: lit-html rendering over @inglorious/store - mount, api, directives, router, forms, device (sensors, geolocation, share, haptics, local notifications, biometrics, keyboard, storage), native app (app links, back button, system bars, store and live updates), PWA updates, sign-in, analytics, place search, push, testing."
 ---
 
 # @inglorious/web
@@ -258,6 +258,17 @@ api.notify("#analytics:analyticsTrack", { name: "sign_up", params: { method: "em
 ```
 
 Adapter: `setConsent(isGranted)`, `pageView({ route, path })`, `event(name, params)`, optional `isSupported()` (`false`: never asks, never calls). Nothing before consent; `routeChange` is a page view. Entity `consent` (`granted|denied|null`; kept between visits only by `withStorage`), `isAsking`. Events `analyticsConsent` (boolean), `analyticsAsk`, `analyticsTrack`.
+
+## Place search
+
+```javascript
+import { Combobox } from "@inglorious/ui/combobox";
+import { createPlaceSearch, photonPlaces } from "@inglorious/web/places";
+const types = { PlaceSearch: [Combobox, createPlaceSearch({ adapter: photonPlaces() })] };
+const entities = { venue: { type: "PlaceSearch", noOptionsMessage: "Type a place", changeEvent: "#jobForm:placeChange" } }; // payload { value, options: [place] }
+```
+
+Makes the Combobox `isRemote`; searches after `delay` (300 ms) of pause, none under `minLength` (3), only the latest answer counts. Config/entity `near` `{ lat, lng }` and `language`. Place: `value`, `label`, `kind`, `name`, `street`, `houseNumber`, `postcode`, `city`, `region`, `country`, `countryCode`, `lat`, `lng`. Entity `placesStatus`, `placesError` (the Combobox's `error` stays validation). Adapter: `search({ text, near, language })` → places; `photonPlaces({ url, limit, languages, fetch })` is OpenStreetMap, free, no key, fair use.
 
 ## Push
 

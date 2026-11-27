@@ -149,7 +149,7 @@
     },
     {
       "name": "web",
-      "description": "@inglorious/web: lit-html rendering over @inglorious/store - mount, api, directives, router, forms, device (sensors, geolocation, share, haptics, local notifications, biometrics, keyboard, storage), native app (app links, back button, system bars, store and live updates), PWA updates, sign-in, analytics, push, testing.",
+      "description": "@inglorious/web: lit-html rendering over @inglorious/store - mount, api, directives, router, forms, device (sensors, geolocation, share, haptics, local notifications, biometrics, keyboard, storage), native app (app links, back button, system bars, store and live updates), PWA updates, sign-in, analytics, place search, push, testing.",
       "files": [
         "SKILL.md"
       ]

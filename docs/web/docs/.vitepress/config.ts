@@ -61,6 +61,7 @@ export default defineConfig({
             { text: "Overview", link: "/featured/overview" },
             { text: "Analytics", link: "/featured/analytics" },
             { text: "Form", link: "/featured/form" },
+            { text: "Place Search", link: "/featured/places" },
             { text: "Push", link: "/featured/push" },
             { text: "Router", link: "/featured/router" },
             { text: "Sign-in", link: "/featured/sign-in" },

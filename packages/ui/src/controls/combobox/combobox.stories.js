@@ -33,6 +33,11 @@ export default {
       control: "boolean",
       description: "Offer to add a searched term that matches no option.",
     },
+    isRemote: {
+      control: "boolean",
+      description:
+        "Options come from outside, one search at a time: none is filtered out.",
+    },
     isDisabled: { control: "boolean", description: "Disable the control." },
     isLoading: { control: "boolean", description: "Show loading state." },
     searchTerm: { control: "text", description: "Current search filter." },
@@ -111,6 +116,21 @@ Creatable.args = {
   selectedValue: ["it", "Atlantis"],
   searchTerm: "Narnia",
   isOpen: true,
+}
+
+export const Remote = {}
+Remote.args = {
+  ...Default.args,
+  label: "Place",
+  isRemote: true,
+  isOpen: true,
+  selectedValue: null,
+  searchTerm: "artimino villa",
+  noOptionsMessage: "Type to search",
+  options: [
+    { value: "ferdinanda", label: "Villa Medicea La Ferdinanda, Carmignano" },
+    { value: "artimino", label: "Artimino, Carmignano" },
+  ],
 }
 
 export const WithHint = {}

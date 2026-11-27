@@ -6,7 +6,7 @@ This example demonstrates three common use cases for a combobox/dropdown compone
 
 - A simple, searchable single-combobox box.
 - A multi-combobox box allowing for multiple comboboxions.
-- A single-combobox box that fetches its options from a remote source asynchronously.
+- A remote combobox (`isRemote`) that fetches its options asynchronously, debounced, listing them as the server sends them: the server finds matches the labels don't show, such as "feline" for the cat.
 
 Quick start:
 

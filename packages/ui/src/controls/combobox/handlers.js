@@ -34,6 +34,11 @@ export function create(entity) {
   entity.isDisabled ??= false
   entity.isSearchable ??= false
   entity.isClearable ??= false
+  entity.isRemote ??= false
+  if (entity.isRemote) {
+    entity.isSearchable = true
+    entity.selectedOptions ??= []
+  }
 
   entity.placeholder ??= "Select..."
   entity.noOptionsMessage ??= "No options"
@@ -52,6 +57,8 @@ export function close(entity) {
   entity.isOpen = false
   entity.searchTerm = ""
   entity.focusedIndex = NONE
+  // Remote options answer a search that is now gone.
+  if (entity.isRemote) entity.options = []
 }
 
 /** @param {SelectEntity} entity */
@@ -90,11 +97,18 @@ export function optionSelect(entity, option, api) {
     }
 
     entity.selectedValue = values
+    if (entity.isRemote) {
+      entity.selectedOptions = (entity.selectedOptions ?? []).filter(
+        (selected) => values.includes(getOptionValue(selected)),
+      )
+      if (index === -1) entity.selectedOptions.push(normalizedOption)
+    }
     notifyChange(entity, api)
     return
   }
 
   entity.selectedValue = optionValue
+  if (entity.isRemote) entity.selectedOptions = [normalizedOption]
   close(entity)
   notifyChange(entity, api)
 }
@@ -107,6 +121,7 @@ export function optionSelect(entity, option, api) {
 export function clear(entity, _payload, api) {
   if (entity.isDisabled) return
   entity.selectedValue = entity.isMulti ? [] : null
+  if (entity.isRemote) entity.selectedOptions = []
   notifyChange(entity, api)
 }
 
@@ -172,12 +187,17 @@ export function valueSet(entity, value) {
 }
 
 /**
- * Replaces the options, such as when they depend on another field.
+ * Replaces the options, such as when they depend on another field. On a
+ * remote combobox they are the answer to the current search, which stays.
  * @param {SelectEntity} entity
  * @param {SelectOption[]} options
  */
 export function optionsSet(entity, options) {
   entity.options = formatOptions(options ?? [])
+  if (entity.isRemote) {
+    entity.focusedIndex = enabledIndex(visibleOptions(entity), 0, 1)
+    return
+  }
   entity.searchTerm = ""
   entity.focusedIndex = NONE
 }
@@ -197,7 +217,9 @@ function notifyChange(entity, api) {
   const value = entity.isMulti
     ? [...entity.selectedValue]
     : entity.selectedValue
-  api.notify(entity.changeEvent, { ...entity.changePayload, value })
+  const payload = { ...entity.changePayload, value }
+  if (entity.isRemote) payload.options = [...entity.selectedOptions]
+  api.notify(entity.changeEvent, payload)
 }
 
 function enabledIndex(options, start, step) {

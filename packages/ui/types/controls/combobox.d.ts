@@ -44,6 +44,15 @@ export interface ComboboxProps {
   isCreatable?: boolean
   /** Text of the option that adds the term. Defaults to `Add "term"`. */
   formatCreateLabel?: (term: string) => string
+  /**
+   * The options come from outside, one search at a time, such as addresses
+   * from a geocoder: none is filtered out, `optionsSet` keeps the search, and
+   * closing empties them. Implies `isSearchable`. Wrap `searchChange` to fetch
+   * after calling `Combobox.searchChange`, then answer with `optionsSet`.
+   */
+  isRemote?: boolean
+  /** On a remote combobox, the chosen options, kept so their labels show. */
+  selectedOptions?: ComboboxOption[]
 
   placeholder?: string
   /** Placeholder of the search box in the panel. Defaults to "Search...". */
@@ -55,7 +64,8 @@ export interface ComboboxProps {
   error?: string | null
   /**
    * An event to notify when the user picks or clears a value, such as
-   * `"#form:fieldChange"`. The payload is `changePayload` with the new `value`.
+   * `"#form:fieldChange"`. The payload is `changePayload` with the new `value`
+   * and, on a remote combobox, the chosen `options` whole.
    */
   changeEvent?: string
   /** Merged into `changeEvent`'s payload, such as `{ path: "country" }`. */
@@ -134,6 +144,7 @@ type VisibleOptionsProps = Pick<
   | "searchTerm"
   | "selectedValue"
   | "isCreatable"
+  | "isRemote"
   | "formatCreateLabel"
 >
 

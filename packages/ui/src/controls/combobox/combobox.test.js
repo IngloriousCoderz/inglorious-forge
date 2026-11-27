@@ -1094,3 +1094,90 @@ describe("combobox entity events", () => {
     expect(api.notify).not.toHaveBeenCalled()
   })
 })
+
+describe("remote combobox", () => {
+  const places = [
+    { value: "ferdinanda", label: "Villa Medicea La Ferdinanda, Carmignano" },
+    { value: "artimino", label: "Artimino, Carmignano" },
+  ]
+
+  function remote(overrides = {}) {
+    const entity = { id: "place", isRemote: true, ...overrides }
+    Combobox.create(entity)
+    return entity
+  }
+
+  function label(entity) {
+    const container = document.createElement("div")
+    const api = createMockApi({ [entity.id]: entity })
+    render(Combobox.render(entity, api), container)
+    return container.querySelector(".iw-combobox-control").textContent.trim()
+  }
+
+  it("is searchable and lists every result, matching the term or not", () => {
+    const entity = remote()
+
+    Combobox.open(entity)
+    Combobox.searchChange(entity, "artimino villa")
+    Combobox.optionsSet(entity, places)
+
+    expect(entity.isSearchable).toBe(true)
+    expect(entity.searchTerm).toBe("artimino villa")
+    expect(visibleOptions(entity)).toHaveLength(2)
+    expect(entity.focusedIndex).toBe(0)
+  })
+
+  it("keeps the label of a chosen result once the results are gone", () => {
+    const entity = remote()
+
+    Combobox.open(entity)
+    Combobox.optionsSet(entity, places)
+    Combobox.optionSelect(entity, places[0])
+
+    expect(entity.isOpen).toBe(false)
+    expect(entity.options).toEqual([])
+    expect(entity.selectedValue).toBe("ferdinanda")
+    expect(label(entity)).toBe("Villa Medicea La Ferdinanda, Carmignano")
+
+    Combobox.clear(entity)
+    expect(entity.selectedOptions).toEqual([])
+  })
+
+  it("keeps the chosen options of a multiple value in step with it", () => {
+    const entity = remote({ isMulti: true })
+
+    Combobox.optionsSet(entity, places)
+    Combobox.optionSelect(entity, places[0])
+    Combobox.optionSelect(entity, places[1])
+    Combobox.optionSelect(entity, places[0])
+
+    expect(entity.selectedValue).toEqual(["artimino"])
+    expect(entity.selectedOptions.map(({ value }) => value)).toEqual([
+      "artimino",
+    ])
+  })
+
+  it("notifies the chosen options whole with the value", () => {
+    const api = { notify: vi.fn() }
+    const entity = remote({ changeEvent: "#form:pick" })
+
+    Combobox.optionsSet(entity, places)
+    Combobox.optionSelect(entity, places[1], api)
+    expect(api.notify).toHaveBeenLastCalledWith("#form:pick", {
+      value: "artimino",
+      options: [expect.objectContaining(places[1])],
+    })
+
+    Combobox.clear(entity, undefined, api)
+    expect(api.notify).toHaveBeenLastCalledWith("#form:pick", {
+      value: null,
+      options: [],
+    })
+  })
+
+  it("still filters a combobox that is not remote", () => {
+    expect(
+      visibleOptions({ options: places, searchTerm: "artimino villa" }),
+    ).toEqual([])
+  })
+})

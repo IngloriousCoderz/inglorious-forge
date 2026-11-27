@@ -1,5 +1,11 @@
 # @inglorious/react-store
 
+## 6.32.0
+
+### Minor Changes
+
+- `@inglorious/web/places`: `createPlaceSearch({ adapter })` turns a `Combobox` from `@inglorious/ui` into a place search, debounced, with only the latest answer shown, and `photonPlaces()` is its adapter over Photon (OpenStreetMap, free, no key).
+
 ## 6.31.6
 
 ### Patch Changes
