@@ -6,6 +6,10 @@ One command to a web app, a PWA and native Android and iOS apps on [Inglorious W
 
 **[Documentation](https://inglorious.dev/create-app/)**
 
+## Try it online
+
+The `js` and `ts` templates run on StackBlitz, with nothing to install: open the [JavaScript](https://stackblitz.com/github/IngloriousCoderz/inglorious-forge/tree/main/stackblitz/app?file=src/app/message/index.js) or the [TypeScript](https://stackblitz.com/github/IngloriousCoderz/inglorious-forge/tree/main/stackblitz/app-ts?file=src/app/message/index.ts) one.
+
 ## Usage
 
 ```bash

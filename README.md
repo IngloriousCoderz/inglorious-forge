@@ -53,6 +53,8 @@ There are no signals, no component state and no compiler to learn. Types are pla
 
 ## Getting started
 
+Try it in the browser, with nothing to install: open the app in [JavaScript](https://stackblitz.com/github/IngloriousCoderz/inglorious-forge/tree/main/stackblitz/app?file=src/app/message/index.js) or [TypeScript](https://stackblitz.com/github/IngloriousCoderz/inglorious-forge/tree/main/stackblitz/app-ts?file=src/app/message/index.ts), or the game in [JavaScript](https://stackblitz.com/github/IngloriousCoderz/inglorious-forge/tree/main/stackblitz/game?file=src/game.js) or [TypeScript](https://stackblitz.com/github/IngloriousCoderz/inglorious-forge/tree/main/stackblitz/game-ts?file=src/game.ts), on StackBlitz.
+
 Scaffold a project, picking a web app or a pre-rendered site, JavaScript or TypeScript, and the parts you want:
 
 ```bash

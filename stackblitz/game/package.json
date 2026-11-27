@@ -1,0 +1,29 @@
+{
+  "name": "inglorious-game",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "description": "An Inglorious Engine game, ready to run on StackBlitz",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@inglorious/engine": "latest",
+    "@inglorious/renderer-2d": "latest",
+    "@inglorious/utils": "latest"
+  },
+  "devDependencies": {
+    "jsdom": "^31.0.1",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.1"
+  },
+  "stackblitz": {
+    "installDependencies": true,
+    "startCommand": "npm run dev"
+  }
+}

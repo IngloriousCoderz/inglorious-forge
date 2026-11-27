@@ -1,0 +1,32 @@
+{
+  "name": "inglorious-game-ts",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "description": "An Inglorious Engine game in TypeScript, ready to run on StackBlitz",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@inglorious/engine": "latest",
+    "@inglorious/renderer-2d": "latest",
+    "@inglorious/store": "latest",
+    "@inglorious/utils": "latest"
+  },
+  "devDependencies": {
+    "jsdom": "^31.0.1",
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.1"
+  },
+  "stackblitz": {
+    "installDependencies": true,
+    "startCommand": "npm run dev"
+  }
+}

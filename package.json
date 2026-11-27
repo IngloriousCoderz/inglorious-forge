@@ -7,7 +7,7 @@
   "scripts": {
     "format": "prettier --write .",
     "lint-staged": "lint-staged",
-    "lint": "turbo lint && node scripts/verify-docs.mjs",
+    "lint": "turbo lint && node scripts/verify-docs.mjs && node scripts/stackblitz.mjs --check",
     "test": "turbo test",
     "build": "turbo build",
     "dev": "turbo dev",
@@ -16,7 +16,8 @@
     "ci:publish": "changeset publish",
     "turbo:upgrade": "pnpm dlx @turbo/codemod migrate",
     "verify:docs": "node scripts/verify-docs.mjs",
-    "skills:index": "node scripts/skills-index.mjs"
+    "skills:index": "node scripts/skills-index.mjs",
+    "stackblitz": "node scripts/stackblitz.mjs"
   },
   "devDependencies": {
     "@changesets/cli": "^3.0.3",

@@ -6,6 +6,10 @@ The official scaffolding tool to quickly create a new game with the [Inglorious 
 
 Every template starts as a small, complete game: move with the arrow keys, WASD, a gamepad or a finger, and collect coins before the time runs out. It shows types, entities, composed behaviors, events, collisions and text, so there is something to change from the first minute.
 
+## Try it online
+
+The `js` and `ts` templates run on StackBlitz, with nothing to install: open the [JavaScript](https://stackblitz.com/github/IngloriousCoderz/inglorious-forge/tree/main/stackblitz/game?file=src/game.js) or the [TypeScript](https://stackblitz.com/github/IngloriousCoderz/inglorious-forge/tree/main/stackblitz/game-ts?file=src/game.ts) one.
+
 ## Usage
 
 ```bash

@@ -7,6 +7,10 @@ description: Build your first Inglorious Web app in under 5 minutes
 
 Welcome to Inglorious Web! Let's build your first app in under 5 minutes.
 
+## Try It Online
+
+The starter app runs on StackBlitz, with nothing to install: open it in [JavaScript](https://stackblitz.com/github/IngloriousCoderz/inglorious-forge/tree/main/stackblitz/app?file=src/app/message/index.js) or [TypeScript](https://stackblitz.com/github/IngloriousCoderz/inglorious-forge/tree/main/stackblitz/app-ts?file=src/app/message/index.ts). It is the same app the scaffolding below creates.
+
 ## Quick Start with Scaffolding
 
 The fastest way to get started is with the official scaffolding tool:

@@ -1,0 +1,27 @@
+{
+  "name": "inglorious-app-ts",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "description": "An Inglorious Web app in TypeScript, ready to run on StackBlitz",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@inglorious/store": "latest",
+    "@inglorious/web": "latest"
+  },
+  "devDependencies": {
+    "@inglorious/vite-plugin-hmr": "latest",
+    "@types/node": "^26.4.1",
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
+    "vite": "^8.3.4"
+  },
+  "stackblitz": {
+    "installDependencies": true,
+    "startCommand": "npm run dev"
+  }
+}

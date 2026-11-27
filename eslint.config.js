@@ -7,4 +7,7 @@ import { defineConfig, globalIgnores } from "eslint/config"
 //
 // The benchmarks are React, Solid, Svelte and Vue apps written the way each of those
 // ecosystems writes them, so they are left out rather than held to this repo's rules.
-export default defineConfig([globalIgnores(["benchmarks/**"]), ...nodeConfig])
+export default defineConfig([
+  globalIgnores(["benchmarks/**", "stackblitz/**"]),
+  ...nodeConfig,
+])
