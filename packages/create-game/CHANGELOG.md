@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.4.1
+
+### Patch Changes
+
+- Give each entity type its own file in `src/types/` in the `ts` and `its` templates, with its TypeScript types in `types/` imported from `#types`, so the `its` template type-checks in the editor
+
 ## 1.4.0
 
 ### Minor Changes

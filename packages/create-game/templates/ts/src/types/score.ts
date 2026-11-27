@@ -1,0 +1,34 @@
+import { renderText } from "@inglorious/renderer-2d/text.js"
+
+import { POINTS_PER_LEVEL } from "@/constants.ts"
+import type { GameEntity, ScoreType } from "#types"
+
+const Score: ScoreType = {
+  render: renderText,
+
+  coinCollect(entity) {
+    entity.points += entity.level
+    entity.level = Math.floor(entity.points / POINTS_PER_LEVEL) + 1
+  },
+
+  roundStart(entity) {
+    entity.points = 0
+    entity.level = 1
+  },
+
+  roundOver(entity) {
+    entity.best = Math.max(entity.best, entity.points)
+  },
+
+  update(entity, _, api) {
+    const { state, timeLeft } = api.getEntity("game") as GameEntity
+    const { points, level, best } = entity
+
+    entity.value =
+      state === "play"
+        ? `Points: ${points}   Level: ${level}   Time: ${Math.ceil(timeLeft)}`
+        : `Time's up! You scored ${points} (best: ${best})\nPress Space or tap to play again`
+  },
+}
+
+export default Score

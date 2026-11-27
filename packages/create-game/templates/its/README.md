@@ -25,7 +25,8 @@ With `devMode: true` on the `game` entity, the [Redux DevTools](https://github.c
 
 ## How it works
 
-- `src/game.its` is the whole game: `types` say how each kind of thing behaves, `entities` are the things in the game.
+- `src/game.its` puts the game together: `types` say how each kind of thing behaves, `entities` are the things in the game.
+- Each type has its own file in `src/types/`, and its TypeScript types (the entity's fields and the handlers' signatures) in `types/`, imported from `#types`. The numbers they share are in `src/constants.ts`.
 - A type is a set of event handlers. `update` runs every frame with the seconds since the last one; any other name answers an event sent with `api.notify(name, payload)`, like `coinCollect`.
 - Types compose: the player is its own handlers plus `modernControls()` (moves with the input) and `clamped()` (stays on screen).
 - `createControlEntities` maps keys, gamepad buttons and taps to the event names the types listen for.
@@ -40,4 +41,4 @@ Ideas to make it yours: add an enemy that chases the player, a power-up that slo
 
 ## IngloriousScript
 
-`.its` files are TypeScript with vector math: `entity.position += entity.velocity * dt` adds and scales vectors made with `v(x, y, z)`, which needs no import. Babel strips the types without checking them, so `pnpm build` runs even with type errors. See [@inglorious/babel-plugin-inglorious-script](https://www.npmjs.com/package/@inglorious/babel-plugin-inglorious-script).
+`.its` files are TypeScript with vector math: `entity.position += entity.velocity * dt` adds and scales vectors made with `v(x, y, z)`, which needs no import. TypeScript doesn't know these operators, so a line that uses them starts with `// @ts-expect-error`. Babel strips the types without checking them, so `pnpm build` runs even with type errors. See [@inglorious/babel-plugin-inglorious-script](https://www.npmjs.com/package/@inglorious/babel-plugin-inglorious-script).

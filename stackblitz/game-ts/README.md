@@ -26,7 +26,8 @@ With `devMode: true` on the `game` entity, the [Redux DevTools](https://github.c
 
 ## How it works
 
-- `src/game.ts` is the whole game: `types` say how each kind of thing behaves, `entities` are the things in the game.
+- `src/game.ts` puts the game together: `types` say how each kind of thing behaves, `entities` are the things in the game.
+- Each type has its own file in `src/types/`, and its TypeScript types (the entity's fields and the handlers' signatures) in `types/`, imported from `#types`. The numbers they share are in `src/constants.ts`.
 - A type is a set of event handlers. `update` runs every frame with the seconds since the last one; any other name answers an event sent with `api.notify(name, payload)`, like `coinCollect`.
 - Types compose: the player is its own handlers plus `modernControls()` (moves with the input) and `clamped()` (stays on screen).
 - `createControlEntities` maps keys, gamepad buttons and taps to the event names the types listen for.

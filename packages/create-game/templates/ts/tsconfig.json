@@ -14,5 +14,5 @@
     "noImplicitReturns": true,
     "skipLibCheck": true
   },
-  "include": ["src", "test", "*.ts", "vite.config.js"]
+  "include": ["src", "test", "types", "*.ts", "vite.config.js"]
 }

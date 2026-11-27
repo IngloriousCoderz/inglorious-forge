@@ -1,0 +1,24 @@
+import { ROUND_SECONDS } from "@/constants"
+import type { GameType } from "#types"
+
+const Game: GameType = {
+  update(entity, dt, api) {
+    if (entity.state !== "play") return
+
+    entity.timeLeft = Math.max(entity.timeLeft - dt, 0)
+    if (!entity.timeLeft) {
+      entity.state = "over"
+      api.notify("roundOver")
+    }
+  },
+
+  restart(entity, _, api) {
+    if (entity.state !== "over") return
+
+    entity.state = "play"
+    entity.timeLeft = ROUND_SECONDS
+    api.notify("roundStart")
+  },
+}
+
+export default Game

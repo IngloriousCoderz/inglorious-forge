@@ -11,7 +11,7 @@ pnpm create @inglorious/game my-game --template=js --pwa --mobile --app-id=com.e
 
 Without flags it prompts. Flags: `--template=js|ts|ijs|its|minimal`, `--app-name=`, `--pwa`/`--no-pwa`, `--mobile`/`--no-mobile`, `--app-id=` (reverse domain), `--skills`/`--no-skills`. `minimal` takes none but the template.
 
-Every template is a playable coin-collecting game in `src/game.*` (types, entities, `modernControls()`, `clamped()`, `findCollision`, `renderText`, keyboard, gamepad and touch input) with tests in `test/` using `createGame` from `@inglorious/engine/test.js`.
+Every template is a playable coin-collecting game in `src/game.*` (in `ts` and `its`, each type has its own file in `src/types/` and its TypeScript types in `types/`, imported from `#types`; types, entities, `modernControls()`, `clamped()`, `findCollision`, `renderText`, keyboard, gamepad and touch input) with tests in `test/` using `createGame` from `@inglorious/engine/test.js`.
 
 - `js`, `ts`, `ijs`, `its`: Vite and Vitest (jsdom); generated `vite.config.js`, which points `@/` to `src/` for imports across folders (the tests import `@/game.js`); `pnpm dev|test|build|lint`, `pnpm typecheck` in `ts`. `ijs`/`its` are IngloriousScript (see [engine](../engine/SKILL.md)).
 - `minimal`: one `index.html` with a jsDelivr import map pinned to the latest versions; serve it, don't open it as a file.

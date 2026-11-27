@@ -2,6 +2,9 @@
   "name": "its-template",
   "version": "0.1.0",
   "type": "module",
+  "imports": {
+    "#types": "./types/index.d.ts"
+  },
   "private": true,
   "description": "A new game created with @inglorious/create-game",
   "author": "",

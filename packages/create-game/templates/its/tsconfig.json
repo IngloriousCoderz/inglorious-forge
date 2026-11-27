@@ -17,5 +17,5 @@
     "allowArbitraryExtensions": true,
     "skipLibCheck": true
   },
-  "include": ["src", "*.ts"]
+  "include": ["src", "types", "*.ts"]
 }

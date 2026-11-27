@@ -1,0 +1,35 @@
+import { renderCircle } from "@inglorious/renderer-2d/shapes/circle.js"
+import { random } from "@inglorious/utils/math/rng.js"
+
+import { HEIGHT, MARGIN, WIDTH } from "@/constants"
+import type { CoinType } from "#types"
+
+const Coin: CoinType = {
+  render: renderCircle,
+
+  coinCollect(entity, coinId) {
+    if (coinId === entity.id) entity.position = randomPosition()
+  },
+}
+
+export default Coin
+
+export function createCoin(id: string) {
+  return {
+    id,
+    type: "Coin",
+    position: randomPosition(),
+    radius: 10,
+    color: "#b8860b",
+    backgroundColor: "gold",
+    collisions: { hitbox: { shape: "circle" } },
+  }
+}
+
+function randomPosition() {
+  return v(
+    random(MARGIN, WIDTH - MARGIN),
+    0,
+    random(MARGIN, HEIGHT - MARGIN * 2),
+  )
+}

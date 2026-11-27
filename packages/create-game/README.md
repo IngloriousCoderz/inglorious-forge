@@ -45,9 +45,9 @@ pnpm create @inglorious/game my-game --template=js --pwa --mobile --app-id=com.e
 ## Templates
 
 - **js**: JavaScript, bundled with Vite and tested with Vitest.
-- **ts**: TypeScript, bundled with Vite and tested with Vitest. `pnpm typecheck` checks the types.
+- **ts**: TypeScript, bundled with Vite and tested with Vitest. Each entity type has its own file in `src/types/`, and its TypeScript types in `types/` (imported from `#types`). `pnpm typecheck` checks the types.
 - **ijs** (IngloriousScript): JavaScript with vector math (`position += velocity * dt`), bundled with Vite and tested with Vitest.
-- **its** (IngloriousScript with TypeScript): the same, in TypeScript.
+- **its** (IngloriousScript with TypeScript): the same, in TypeScript, with each entity type in its own file in `src/types/` and its TypeScript types in `types/` (imported from `#types`).
 - **minimal**: a single HTML file that loads the engine from a CDN through an import map, with no build step. Serve the folder (for example with `npx serve`), since browsers don't load modules from files opened directly.
 
 ## What it does
