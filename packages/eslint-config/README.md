@@ -27,4 +27,4 @@ The plugins are peer dependencies. The ones every config uses are installed for 
 | `tailwind`   | `eslint-plugin-react`, `eslint-plugin-tailwindcss`              |
 | `typescript` | `@typescript-eslint/parser`, `@typescript-eslint/eslint-plugin` |
 
-`no-magic-numbers` is off in tests (`*.test.*`, `*.spec.*`) and stories.
+`no-magic-numbers` is off in tests (`*.test.*`, `*.spec.*`, `test/`, `type-tests/`) and stories. The `typescript` config needs no `tsconfig.json` and lints `.its` files too. In `.d.ts` files it allows `any`, and in TypeScript files it leaves numeric literal types, type indexes and enums alone. In `type-tests/`, which are compiled but never run, it also allows `console`, unused expressions and unused variables, which is how a `@ts-expect-error` check is written.

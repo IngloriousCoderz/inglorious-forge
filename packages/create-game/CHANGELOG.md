@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.5.1
+
+### Patch Changes
+
+- The `ts` and `its` templates lint `.its` files, and their games' magic numbers stay allowed under `@typescript-eslint/no-magic-numbers`.
+
 ## 1.5.0
 
 ### Minor Changes

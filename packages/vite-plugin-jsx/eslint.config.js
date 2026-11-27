@@ -1,1 +1,1 @@
-export { default } from "@inglorious/eslint-config/base"
+export { default } from "@inglorious/eslint-config/typescript"

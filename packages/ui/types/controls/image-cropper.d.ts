@@ -1,4 +1,4 @@
-import type { TemplateResult, Api } from "@inglorious/web"
+import type { Api, TemplateResult } from "@inglorious/web"
 
 /** A crop frame in fractions of the image: 0-1 on both axes. */
 export interface CropRect {

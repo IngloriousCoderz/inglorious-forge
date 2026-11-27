@@ -118,7 +118,7 @@ export type AsyncEvents<
 }
 
 /** What an event of one call of an async behavior carries: its `callId`. */
-export type AsyncCall<T = {}> = T & { callId: number }
+export type AsyncCall<T = unknown> = T & { callId: number }
 
 /**
  * Creates a set of event handlers for managing an asynchronous operation lifecycle.

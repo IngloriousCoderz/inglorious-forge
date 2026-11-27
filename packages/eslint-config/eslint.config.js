@@ -1,1 +1,1 @@
-export { default } from "./base.js"
+export { default } from "./typescript.js"

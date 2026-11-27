@@ -1,5 +1,13 @@
 # @inglorious/store
 
+## 12.9.4
+
+### Patch Changes
+
+- `AsyncCall` defaults its parameter to `unknown` instead of `{}`, and the dispatch from `createRTKCompatDispatch` types the thunks it ignores as functions instead of `Function`.
+- Updated dependencies
+  - @inglorious/utils@5.4.4
+
 ## 12.9.3
 
 ### Patch Changes

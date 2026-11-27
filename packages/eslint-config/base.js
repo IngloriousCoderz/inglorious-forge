@@ -29,7 +29,11 @@ export default defineConfig([
   },
 
   {
-    files: ["**/*.{test,spec}.{js,mjs,cjs,jsx,ts,mts,cts,tsx}", "**/test/**"],
+    files: [
+      "**/*.{test,spec}.{js,mjs,cjs,jsx,ts,mts,cts,tsx}",
+      "**/test/**",
+      "**/type-tests/**",
+    ],
     rules: {
       "no-magic-numbers": "off",
     },

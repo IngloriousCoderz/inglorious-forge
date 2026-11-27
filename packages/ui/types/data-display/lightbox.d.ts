@@ -1,10 +1,12 @@
-import type { TemplateResult, nothing } from "@inglorious/web"
+import type { nothing, TemplateResult } from "@inglorious/web"
 
 export interface LightboxImage {
   src: string
   /** Defaults to empty, for images the page describes already. */
   alt?: string
 }
+
+export type LightboxStep = 1 | -1
 
 export interface LightboxProps {
   id?: string
@@ -23,7 +25,7 @@ export interface LightboxProps {
   nextLabel?: string
   className?: string
   /** `1` for the next image, `-1` for the previous. Without it there is no navigation. */
-  onStep?: (step: 1 | -1) => void
+  onStep?: (step: LightboxStep) => void
   /** Called by the close button, Esc and a press outside the image. */
   onClose?: () => void
 }

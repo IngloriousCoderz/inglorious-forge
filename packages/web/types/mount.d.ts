@@ -1,4 +1,3 @@
-import type { nothing, TemplateResult } from "lit-html"
 import type {
   AnyEvents,
   AnyTypeDefinition,
@@ -7,12 +6,14 @@ import type {
   EntitiesState,
   Store,
 } from "@inglorious/store"
+import type { nothing, TemplateResult } from "lit-html"
 
 declare module "@inglorious/store" {
   interface Api<
     TEntity extends BaseEntity = BaseEntity,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- every declaration of `Api` must take the same parameters
     TState extends EntitiesState<TEntity> = EntitiesState<TEntity>,
-    // Unused here, but every declaration of `Api` must take the same parameters.
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     TEvents = AnyEvents,
   > {
     /**

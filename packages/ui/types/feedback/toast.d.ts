@@ -1,5 +1,6 @@
-import type { IconData } from "../data-display/icon"
 import type { Api, TemplateResult } from "@inglorious/web"
+
+import type { IconData } from "../data-display/icon"
 
 /** A toast as `show` takes it: without an id, one is assigned. */
 export interface NewToast {

@@ -229,9 +229,6 @@ importers:
       eslint-plugin-simple-import-sort:
         specifier: ^14.0.0
         version: 14.0.0(eslint@10.15.0(jiti@2.7.0)(supports-color@5.5.0))
-      eslint-plugin-storybook:
-        specifier: ^10.6.8
-        version: 10.6.8(eslint@10.15.0(jiti@2.7.0)(supports-color@5.5.0))(supports-color@5.5.0)(typescript@6.0.3)
       globals:
         specifier: ^17.14.0
         version: 17.14.0
@@ -6752,11 +6749,6 @@ packages:
     resolution: {integrity: sha512-NUJO0+XFCkk+o5EsAJruTgnfMEpeWrPWeJS15UVF60GgXmqz1BJ9/3hzlvG7lkL8Bubzos5cCLptThbFfPnSMQ==}
     peerDependencies:
       eslint: '>=5.0.0'
-
-  eslint-plugin-storybook@10.6.8:
-    resolution: {integrity: sha512-H+v2hkMdYCDfxV/cp54PSUkLZCq/AWfzBZFFdgK3J7FVV11kxTtsnuI4sLxjMTIwVZCYjCw/GwzH4VQmKSE/Vw==}
-    peerDependencies:
-      eslint: '>=8'
 
   eslint-plugin-tailwindcss@4.0.0-beta.0:
     resolution: {integrity: sha512-WWCajZgQu38Sd67ZCl2W6i3MRzqB0d+H8s4qV9iB6lBJbsDOIpIlj6R1Fj2FXkoWErbo05pZnZYbCGIU9o/DsA==}
@@ -13403,16 +13395,6 @@ snapshots:
   eslint-plugin-simple-import-sort@14.0.0(eslint@10.15.0(jiti@2.7.0)(supports-color@5.5.0)):
     dependencies:
       eslint: 10.15.0(jiti@2.7.0)(supports-color@5.5.0)
-
-  eslint-plugin-storybook@10.6.8(eslint@10.15.0(jiti@2.7.0)(supports-color@5.5.0))(supports-color@5.5.0)(typescript@6.0.3):
-    dependencies:
-      '@typescript-eslint/types': 8.73.0
-      '@typescript-eslint/utils': 8.73.0(eslint@10.15.0(jiti@2.7.0)(supports-color@5.5.0))(supports-color@5.5.0)(typescript@6.0.3)
-      eslint: 10.15.0(jiti@2.7.0)(supports-color@5.5.0)
-    transitivePeerDependencies:
-      - '@typescript/native'
-      - supports-color
-      - typescript
 
   eslint-plugin-tailwindcss@4.0.0-beta.0(tailwindcss@4.3.5):
     dependencies:

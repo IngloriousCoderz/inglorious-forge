@@ -9,13 +9,9 @@ export default defineConfig([
   ...baseConfig,
 
   {
-    files: ["**/*.ts", "**/*.tsx"],
+    files: ["**/*.{ts,mts,cts,tsx,its}"],
     languageOptions: {
       parser: tsParser,
-      parserOptions: {
-        project: "./tsconfig.json",
-        sourceType: "module",
-      },
       globals: {
         ...globals.node,
       },
@@ -27,6 +23,39 @@ export default defineConfig([
       ...tsEslint.configs.recommended.rules,
       "@typescript-eslint/no-explicit-any": "warn",
       "@typescript-eslint/no-unused-vars": "warn",
+      "no-magic-numbers": "off",
+      "@typescript-eslint/no-magic-numbers": [
+        "warn",
+        {
+          ignoreNumericLiteralTypes: true,
+          ignoreTypeIndexes: true,
+          ignoreEnums: true,
+        },
+      ],
+    },
+  },
+
+  {
+    files: ["**/*.d.ts"],
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
+    },
+  },
+
+  {
+    files: ["**/type-tests/**"],
+    rules: {
+      "no-console": "off",
+      "@typescript-eslint/no-magic-numbers": "off",
+      "@typescript-eslint/no-unused-expressions": "off",
+      "@typescript-eslint/no-unused-vars": "off",
+    },
+  },
+
+  {
+    files: ["**/*.{test,spec}.{ts,mts,cts,tsx,its}", "**/test/**"],
+    rules: {
+      "@typescript-eslint/no-magic-numbers": "off",
     },
   },
 ])

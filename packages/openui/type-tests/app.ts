@@ -3,13 +3,13 @@ import { z } from "zod"
 
 import { chartComponents } from "../types/charts.js"
 import {
+  chatExamples,
+  chatLibrary,
+  chatRules,
   createLibrary,
   createOpenUI,
   defineComponent,
   type OpenUIActionEvent,
-  chatExamples,
-  chatLibrary,
-  chatRules,
   uiLibrary,
 } from "../types/index.js"
 

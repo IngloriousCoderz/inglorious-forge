@@ -36,7 +36,7 @@ export type Recipe<T, Args extends unknown[] = []> = (
   ...args: Args
 ) => T | void
 
-export type ToStringResult<T> = T extends Function
+export type ToStringResult<T> = T extends (...args: never[]) => unknown
   ? T
   : T extends string | readonly unknown[] | object
     ? string

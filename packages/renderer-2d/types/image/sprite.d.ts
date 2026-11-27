@@ -1,5 +1,5 @@
-import type { SpriteState } from "@inglorious/engine/animation/sprite.js"
 import type { Entity, GameApi } from "@inglorious/engine"
+import type { SpriteState } from "@inglorious/engine/animation/sprite.js"
 
 import type { ImageParams } from "./image"
 

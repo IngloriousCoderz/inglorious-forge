@@ -6,10 +6,9 @@ export default [
   ...browserConfig,
   ...typescriptConfig,
   {
-    files: ["**/*.ts"],
-    languageOptions: {
-      parserOptions: { tsconfigRootDir: import.meta.dirname },
+    rules: {
+      "no-magic-numbers": "off",
+      "@typescript-eslint/no-magic-numbers": "off",
     },
   },
-  { rules: { "no-magic-numbers": "off" } },
 ]

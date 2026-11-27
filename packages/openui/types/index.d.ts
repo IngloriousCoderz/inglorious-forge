@@ -9,6 +9,20 @@ import type {
   ValidationError,
 } from "@openuidev/lang-core"
 
+export type {
+  ActionEvent,
+  ActionPlan,
+  ComponentGroup,
+  DefinedComponent,
+  ElementNode,
+  Library,
+  LibraryDefinition,
+  McpClientLike,
+  ParseResult,
+  PromptOptions,
+  ToolSpec,
+  ValidationError,
+} from "@openuidev/lang-core"
 export {
   action,
   buildMessage,
@@ -21,20 +35,6 @@ export {
   generateSystemPrompt,
   mergeStatements,
   parseMessage,
-} from "@openuidev/lang-core"
-export type {
-  ActionEvent,
-  ActionPlan,
-  ComponentGroup,
-  DefinedComponent,
-  ElementNode,
-  Library,
-  LibraryDefinition,
-  ParseResult,
-  McpClientLike,
-  PromptOptions,
-  ToolSpec,
-  ValidationError,
 } from "@openuidev/lang-core"
 
 /** What a component renders: a template, or nothing. */

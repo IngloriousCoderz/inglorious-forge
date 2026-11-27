@@ -1,4 +1,4 @@
-import type { GamepadEntity, gamepad, gamepadsPoller } from "./gamepad"
+import type { gamepad, GamepadEntity, gamepadsPoller } from "./gamepad"
 import type { input, InputEntity } from "./input"
 import type { InputMapping, keyboard, KeyboardEntity } from "./keyboard"
 import type { pointer, PointerEntity } from "./pointer"

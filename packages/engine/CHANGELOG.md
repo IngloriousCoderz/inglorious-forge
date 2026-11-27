@@ -1,5 +1,15 @@
 # @inglorious/engine
 
+## 24.2.2
+
+### Patch Changes
+
+- `createGame` from the test helpers defaults its extra moves to `Record<never, never>` instead of `{}`.
+- Updated dependencies
+- Updated dependencies
+  - @inglorious/store@12.9.4
+  - @inglorious/utils@5.4.4
+
 ## 24.2.1
 
 ### Patch Changes

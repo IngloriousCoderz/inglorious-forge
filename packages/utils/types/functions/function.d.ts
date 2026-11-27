@@ -36,6 +36,7 @@ export function debounce<T extends AnyFunction>(
 /**
  * Checks whether a value is a function.
  */
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 export function isFunction(func: unknown): func is Function
 
 /**

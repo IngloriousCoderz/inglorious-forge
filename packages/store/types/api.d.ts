@@ -1,3 +1,4 @@
+import type { AnyEvents, Notify } from "./events"
 import type {
   AnyTypeDefinition,
   BaseEntity,
@@ -7,7 +8,6 @@ import type {
   Store,
   Stored,
 } from "./store"
-import type { AnyEvents, Notify } from "./events"
 
 /**
  * API object exposed to handlers.

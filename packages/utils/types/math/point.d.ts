@@ -1,7 +1,7 @@
-import type { Vector3 } from "./vector"
 import type { Circle } from "./circle"
 import type { Line } from "./line"
 import type { Rectangle } from "./rectangle"
+import type { Vector3 } from "./vector"
 
 /**
  * A point in the Inglorious coordinate system: `[x, y, z]`.

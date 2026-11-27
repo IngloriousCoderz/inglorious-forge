@@ -1,4 +1,5 @@
-import type { TemplateResult, Api } from "@inglorious/web"
+import type { Api, TemplateResult } from "@inglorious/web"
+
 import type { SelectOption } from "../controls/select"
 
 export type Row = Record<string, any>

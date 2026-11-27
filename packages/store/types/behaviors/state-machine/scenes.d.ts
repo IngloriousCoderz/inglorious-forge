@@ -1,6 +1,6 @@
 import type { Api } from "../../api"
-import type { StateOf } from "./fsm"
 import type { BaseEntity, EntityType, Stored } from "../../store"
+import type { StateOf } from "./fsm"
 
 /**
  * An entity a scene puts up. It needs its `id`, which is how two scenes tell

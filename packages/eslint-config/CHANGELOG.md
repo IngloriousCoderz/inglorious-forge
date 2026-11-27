@@ -1,5 +1,11 @@
 # @inglorious/eslint-config
 
+## 1.2.2
+
+### Patch Changes
+
+- The `typescript` config lints `.its` files as well as `.ts`, `.mts`, `.cts` and `.tsx`, and no longer needs a `tsconfig.json`: none of its rules use type information, so it stops setting `parserOptions.project`. In TypeScript files, `no-magic-numbers` gives way to `@typescript-eslint/no-magic-numbers`, which leaves numeric literal types, type indexes and enums alone. In `type-tests/` folders, which are compiled but never run, `no-console`, `no-magic-numbers`, `no-unused-expressions` and `no-unused-vars` are off. `no-explicit-any` is off in `.d.ts` files, which describe JavaScript code, where a handler's `payload: any` is what lets each type annotate its own payload.
+
 ## 1.2.1
 
 ### Patch Changes

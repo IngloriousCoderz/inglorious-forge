@@ -40,8 +40,8 @@ import {
   VirtualList,
   type VirtualListEntity,
 } from "../types/data-display/virtual-list"
-import { Tabs } from "../types/navigation/tabs"
 import { Toast, type ToastEntity } from "../types/feedback/toast"
+import { Tabs } from "../types/navigation/tabs"
 import { withTransitions } from "../types/navigation/view-transitions"
 
 interface GridEntity extends DataGridProps<{ name: string }> {

@@ -1,4 +1,4 @@
-import type { TemplateResult, Api } from "@inglorious/web"
+import type { Api, TemplateResult } from "@inglorious/web"
 
 export type ComboboxOption =
   | string

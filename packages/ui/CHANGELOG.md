@@ -1,5 +1,17 @@
 # @inglorious/ui
 
+## 9.20.5
+
+### Patch Changes
+
+- `LightboxStep` (`1 | -1`) is exported and types `onStep`.
+- Updated dependencies
+- Updated dependencies
+- Updated dependencies
+  - @inglorious/store@12.9.4
+  - @inglorious/utils@5.4.4
+  - @inglorious/web@6.31.6
+
 ## 9.20.4
 
 ### Patch Changes

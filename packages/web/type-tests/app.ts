@@ -8,16 +8,17 @@ import {
 
 import { type Api, html, mount, type TemplateResult } from "../types"
 import { withLiveReload } from "../types/decorators/with-live-reload"
+import { MediaQuery, type MediaQueryEntity } from "../types/device/media-query"
 import { Form, type FormEntity } from "../types/form"
-import {
-  createNativeUpdate,
-  type NativeUpdatePlugin,
-} from "../types/native/update"
 import { type AppLinksPlugin, createAppLinks } from "../types/native/app-links"
 import {
   type BackButtonPlugin,
   createBackButton,
 } from "../types/native/back-button"
+import {
+  createNativeUpdate,
+  type NativeUpdatePlugin,
+} from "../types/native/update"
 import { createPwaUpdate, type PwaUpdateEntity } from "../types/pwa"
 import {
   pageRouteChange,
@@ -25,7 +26,6 @@ import {
   type RouterEntity,
   safePath,
 } from "../types/router"
-import { MediaQuery, type MediaQueryEntity } from "../types/device/media-query"
 
 interface AppRouterEntity extends RouterEntity {
   type: "Router"
@@ -234,8 +234,8 @@ declare const typedApi: Api<AppEntity, AppState, TypedEvents>
 renderAny(typedApi)
 
 // Local notifications and geolocation are types of their own.
-import { createLocalNotifications } from "../types/device/local-notifications"
 import { createGeolocation } from "../types/device/geolocation"
+import { createLocalNotifications } from "../types/device/local-notifications"
 
 export const reminders = createLocalNotifications()
 reminders.localNotificationSchedule(

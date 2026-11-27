@@ -1,4 +1,4 @@
-import type { TemplateResult, Api } from "@inglorious/web"
+import type { Api, TemplateResult } from "@inglorious/web"
 
 /**
  * Represents a single item in the virtual list's data array.

@@ -30,7 +30,9 @@ export interface TestGame {
  * Makes a game to drive in a test, with its sounds watched. `extendWith` adds
  * the game's own moves, which can call the rest with `this`.
  */
-export function createGame<TExtra extends Record<string, unknown> = {}>(
+export function createGame<
+  TExtra extends Record<string, unknown> = Record<never, never>,
+>(
   gameConfig: GameConfig & { entities: { game: BaseEntity | EntityConfig } },
   extendWith?: TExtra & ThisType<TestGame & TExtra>,
 ): TestGame & TExtra

@@ -358,7 +358,9 @@ export function createMigrationGuide(slice: RTKSlice): string
 export function createRTKCompatDispatch(
   api: Api,
   entityId: string,
-): (action: { type: string; payload?: any } | Function) => void
+): (
+  action: { type: string; payload?: any } | ((...args: never[]) => unknown),
+) => void
 
 /**
  * RTK Action type for type safety

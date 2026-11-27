@@ -55,7 +55,7 @@ export interface FormEntity<T extends FormValues = FormValues> {
 /**
  * The payload for the `formFieldChange` event.
  */
-export interface FormFieldChangePayload<T extends FormValues = FormValues> {
+export interface FormFieldChangePayload {
   /** The dot-notation path to the field (e.g., 'user.name'). */
   path: string
   /** The new value of the field. */
@@ -217,7 +217,7 @@ export type FormType = {
    */
   fieldChange<T extends FormValues>(
     entity: FormEntity<T>,
-    payload: FormFieldChangePayload<T>,
+    payload: FormFieldChangePayload,
   ): void
 
   /**

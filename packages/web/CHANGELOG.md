@@ -1,5 +1,15 @@
 # @inglorious/react-store
 
+## 6.31.6
+
+### Patch Changes
+
+- `FormFieldChangePayload` takes no type parameter: it never used the one it had.
+- Updated dependencies
+- Updated dependencies
+  - @inglorious/store@12.9.4
+  - @inglorious/utils@5.4.4
+
 ## 6.31.5
 
 ### Patch Changes

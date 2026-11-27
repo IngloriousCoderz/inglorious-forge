@@ -1,5 +1,11 @@
 # @inglorious/utils
 
+## 5.4.4
+
+### Patch Changes
+
+- `ToStringResult` matches functions by their signature instead of the `Function` type.
+
 ## 5.4.3
 
 ### Patch Changes
