@@ -47,6 +47,7 @@ Then:
 
 ```bash
 cd my-app
+git init
 pnpm install
 pnpm dev
 ```

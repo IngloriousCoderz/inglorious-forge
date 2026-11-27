@@ -27,7 +27,7 @@ We love pull requests! If you're ready to contribute code, here's how to do it:
 
 ### Releases
 
-Maintainers run `pnpm ci:version`, commit the result, and push to `main`. When a package version changes, the [Release workflow](.github/workflows/release.yml) publishes every package whose version isn't on npm yet, through npm trusted publishing, with provenance. No npm token or OTP is involved.
+Maintainers run `pnpm release:version`, commit the result, and push to `main`. When a package version changes, the [Release workflow](.github/workflows/release.yml) publishes every package whose version isn't on npm yet, through npm trusted publishing, with provenance. No npm token or OTP is involved.
 
 ## Development Setup
 

@@ -1,5 +1,16 @@
 # @inglorious/create-game
 
+## 1.5.0
+
+### Minor Changes
+
+- Projects get Husky and lint-staged hooks: ESLint and Prettier on staged files before every commit, `pnpm test` (and `pnpm typecheck` where it exists) before every push. With `--ci`, the Store release workflow also runs by itself when a push to `main` raises the version in `package.json`
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/create-app@1.33.0
+
 ## 1.4.3
 
 ### Patch Changes

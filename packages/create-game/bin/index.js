@@ -11,6 +11,7 @@ import {
 } from "@inglorious/create-app/bin/lib/constants.js"
 import { addDependabot } from "@inglorious/create-app/bin/lib/dependabot.js"
 import { copyDir } from "@inglorious/create-app/bin/lib/file.js"
+import { addGitHooks } from "@inglorious/create-app/bin/lib/hooks.js"
 import {
   defaultAppIdOf,
   displayNameOf,
@@ -230,6 +231,8 @@ async function main() {
       pkg.native.assets = { background: "#1d1f33", backgroundDark: "#1d1f33" }
     }
 
+    addGitHooks(targetDir, pkg)
+
     pinWorkspaceVersions(pkg, (name) => {
       spinner.text = `Fetching latest version of ${name}...`
     })
@@ -245,6 +248,7 @@ async function main() {
 
     console.log(`\nNext steps:`)
     console.log(`  cd ${projectName}`)
+    console.log(`  git init`)
     console.log(`  pnpm install`)
     console.log(`  pnpm dev`)
   } catch (error) {

@@ -27,5 +27,5 @@ jobs:
       - run: npm install -g npm@latest
       - run: pnpm install --frozen-lockfile
       - run: pnpm run build
-      - run: pnpm ci:publish
+      - run: pnpm release:publish
       - run: git push --tags

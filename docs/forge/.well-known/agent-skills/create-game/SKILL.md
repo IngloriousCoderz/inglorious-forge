@@ -19,4 +19,4 @@ Every template is a playable coin-collecting game in `src/game.*` (in `ts` and `
 - `--mobile`: Capacitor and `@inglorious/capacitor` as in [create-app](../create-app/SKILL.md) (`mobile:*` scripts, `native` in `package.json`), plus Changesets for releases.
 - Skills: `forge`, `forge-best-practices`, `store`, `utils`, `engine`, `engine-best-practices`.
 
-Shares its helpers with create-app (`@inglorious/create-app/bin/lib/*`). Every template has a `vercel.json` deploying only `main`.
+Shares its helpers with create-app (`@inglorious/create-app/bin/lib/*`). Every template has a `vercel.json` deploying only `main`. Every non-minimal one gets Husky hooks (`.husky/pre-commit`: `lint-staged`, ESLint `--max-warnings=0` and Prettier on staged files; `.husky/pre-push`: `pnpm typecheck` when present, then `pnpm test`).

@@ -25,6 +25,7 @@ import {
   addFirebaseSupport,
   keepSupabaseOutOfTypeScript,
 } from "./lib/firebase.js"
+import { addGitHooks } from "./lib/hooks.js"
 import { displayNameOf, validateAppName } from "./lib/identity.js"
 import { addLiveUpdateSupport } from "./lib/live-update.js"
 import { addMobileSupport } from "./lib/mobile.js"
@@ -288,6 +289,8 @@ async function main() {
       })
     }
 
+    addGitHooks(targetDir, pkg)
+
     pinWorkspaceVersions(pkg, (name) => {
       spinner.text = `Fetching latest version of ${name}...`
     })
@@ -308,6 +311,7 @@ async function main() {
 
     console.log(`\nNext steps:`)
     console.log(`  cd ${projectName}`)
+    console.log(`  git init`)
     console.log(`  pnpm install`)
     console.log(`  pnpm dev`)
   } catch (error) {

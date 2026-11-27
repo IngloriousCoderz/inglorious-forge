@@ -9,13 +9,13 @@ description: Build and upload both apps on GitHub Actions, without a Mac
 | -------------------------------------------------- | ------------------ |
 | Build and upload store releases on GitHub Actions? | `--ci` / `--no-ci` |
 
-`--ci` adds `.github/workflows/store-release.yml`. Run **Store release** from the repository's **Actions** tab, choosing both stores or one. It:
+`--ci` adds `.github/workflows/store-release.yml`. It runs by itself when a push to `main` raises the version in `package.json`, so releasing is `pnpm release:version`, a commit and a push. To upload another build of the same version, run **Store release** from the repository's **Actions** tab, choosing both stores or one. It:
 
 1. Raises the build number and commits it to the branch.
 2. Builds the iOS app on a macOS runner, signs it with certificates Apple manages in the cloud, and uploads it to TestFlight.
 3. Builds the Android app bundle, signs it with your upload key, and uploads it to Google Play's internal testing track.
 
-Raise the version first with `pnpm release:version` if the release is a new one.
+Pushes that change `package.json` without raising the version, such as dependency updates, don't start a release.
 
 ## Secrets
 

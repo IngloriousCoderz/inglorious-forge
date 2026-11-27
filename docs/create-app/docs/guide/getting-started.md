@@ -33,6 +33,7 @@ Then:
 
 ```bash
 cd my-app
+git init
 pnpm install
 pnpm dev
 ```
@@ -67,5 +68,6 @@ Every flag is listed in [Options](../reference/options.md).
 - In `minimal`, an import map pointing at the latest published versions on jsDelivr.
 - Except `minimal`:
   - `.github/dependabot.yml`, which opens weekly dependency updates grouped into two pull requests: one for `@inglorious/*`, one for everything else.
+  - Git hooks with Husky and lint-staged: before every commit, Prettier and ESLint fix the staged files and the commit stops while a warning is left; before every push, `pnpm test` must pass in the `js` and `ts` templates. `git init` before `pnpm install` installs them.
   - A `pnpm-workspace.yaml` that takes `@inglorious/*` packages the day they are published, past pnpm's minimum release age, and allows Firebase's install scripts when the app uses Firebase.
 - In the `js` and `ts` templates, [versions and a changelog](./releases.md) with Changesets.

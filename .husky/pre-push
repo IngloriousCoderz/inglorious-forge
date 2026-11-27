@@ -1,2 +1,2 @@
 #!/bin/sh
-pnpm test && node scripts/verify-docs.mjs
+pnpm test && node scripts/verify-docs.mjs && node scripts/stackblitz.mjs --check

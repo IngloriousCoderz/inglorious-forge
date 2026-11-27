@@ -14,6 +14,7 @@ my-app/
 │   ├── dependabot.yml       # weekly, grouped dependency updates
 │   └── workflows/
 │       └── store-release.yml   # with --ci
+├── .husky/                  # pre-commit lint, pre-push tests
 ├── public/
 │   ├── logo.png             # the icon, splash screen and PWA icons start here
 │   └── sw-push.js           # with --push

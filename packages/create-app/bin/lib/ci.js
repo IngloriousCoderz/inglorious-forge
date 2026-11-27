@@ -5,6 +5,9 @@ import path from "path"
 const WORKFLOW = `name: Store release
 
 on:
+  push:
+    branches: [main]
+    paths: [package.json]
   workflow_dispatch:
     inputs:
       platforms:
@@ -16,7 +19,29 @@ on:
 concurrency: store-release
 
 jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      release: \${{ steps.version.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v5
+      - id: version
+        name: Check whether the version changed
+        env:
+          BEFORE: \${{ github.event.before }}
+        run: |
+          if [ "$GITHUB_EVENT_NAME" != push ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git fetch --depth=1 origin "$BEFORE"
+          OLD=$(git show "$BEFORE:package.json" | node -p "JSON.parse(require('fs').readFileSync(0)).version")
+          NEW=$(node -p "require('./package.json').version")
+          echo "changed=$([ "$OLD" != "$NEW" ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+
   version:
+    needs: check
+    if: needs.check.outputs.release == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -142,7 +167,7 @@ jobs:
 
 const README_SECTION = `### Releasing from GitHub Actions
 
-\`.github/workflows/store-release.yml\` builds and uploads both apps without a Mac or Android Studio: run **Store release** from the repository's **Actions** tab. It raises the build number and commits it, then builds the iOS app on a macOS runner and uploads it to TestFlight, and builds the Android app bundle and uploads it to Google Play's internal testing track. Raise the version first, as above, if the release is a new one.
+\`.github/workflows/store-release.yml\` builds and uploads both apps without a Mac or Android Studio. It runs by itself when a push to \`main\` raises the version in \`package.json\`, so a release is \`pnpm release:version\`, a commit and a push. To upload another build of the same version, run **Store release** from the repository's **Actions** tab. It raises the build number and commits it, then builds the iOS app on a macOS runner and uploads it to TestFlight, and builds the Android app bundle and uploads it to Google Play's internal testing track.
 
 It needs \`native.ios.teamId\`, \`android/\` and \`ios/\` committed, and these repository secrets (**Settings → Secrets and variables → Actions**):
 
@@ -161,8 +186,8 @@ It needs \`native.ios.teamId\`, \`android/\` and \`ios/\` committed, and these r
 The app must already exist in App Store Connect and in Play Console, and Google Play takes the first app bundle only by hand: upload one from Play Console before the workflow's first run. If the default branch is protected, let \`github-actions[bot]\` push to it, so the workflow can commit the build number.`
 
 /**
- * Builds and uploads the native apps on GitHub Actions: a manual workflow
- * that raises the build number, then uploads to TestFlight and to Google
+ * Builds and uploads the native apps on GitHub Actions: a workflow that runs
+ * when a push raises the version, or by hand, and raises the build number, then uploads to TestFlight and to Google
  * Play's internal track. Call after `addMobileSupport`, whose README section
  * this one follows.
  *

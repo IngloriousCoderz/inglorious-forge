@@ -59,6 +59,7 @@ Every template but `minimal` also gets:
 - `vite.config.js`, which Vitest reads too, with tests running in jsdom. It points `@/` to `src/`, so a file imports from outside its folder with `@/` (the tests import `@/game.js`) and from its own folder with `./`. `tsconfig.json` (or `jsconfig.json`) tells the editor the same.
 - `pnpm-workspace.yaml`, so pnpm installs Inglorious packages on the day they are published.
 - `.github/dependabot.yml`, for weekly dependency updates grouped into two pull requests.
+- Git hooks with Husky and lint-staged: before every commit, Prettier and ESLint fix the staged files and the commit stops while a warning is left; before every push, `pnpm test` must pass (in `ts`, `pnpm typecheck` too). `git init` before `pnpm install` installs them.
 - A `vercel.json` that deploys only the `main` branch on Vercel; change `main` there if your production branch has another name.
 
 ### PWA
@@ -77,6 +78,7 @@ Saying yes runs the [skills CLI](https://skills.sh) in the new project. It asks 
 
 ```bash
 cd my-game
+git init
 pnpm install
 pnpm dev
 ```
