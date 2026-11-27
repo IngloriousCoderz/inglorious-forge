@@ -22,7 +22,12 @@ We love pull requests! If you're ready to contribute code, here's how to do it:
 2.  Make your changes and add tests for any new functionality.
 3.  Ensure the test suite passes (`pnpm test`).
 4.  Run `pnpm format` and `pnpm lint` before every commit, and fix what they report in the files you touched -- warnings included, not only errors. The project uses Prettier for formatting and ESLint for linting. The pre-commit hook formats and lints the files you stage, fixing what it can and refusing the commit while any warning is left, so never commit with `--no-verify`. A new workspace needs an `eslint.config.js` and a `"lint": "eslint ."` script, or `pnpm lint` skips it.
-5.  Issue that pull request!
+5.  Run `pnpm changeset` to describe your change for each package it touches. Don't bump versions or edit changelogs yourself.
+6.  Issue that pull request!
+
+### Releases
+
+Maintainers run `pnpm ci:version`, commit the result, and push to `main`. When a package version changes, the [Release workflow](.github/workflows/release.yml) publishes every package whose version isn't on npm yet, through npm trusted publishing, with provenance. No npm token or OTP is involved.
 
 ## Development Setup
 

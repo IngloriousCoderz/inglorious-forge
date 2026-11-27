@@ -1,5 +1,13 @@
 # @inglorious/react-store
 
+## 19.2.2
+
+### Patch Changes
+
+- f864aa1: Fix repository metadata and enable trusted publishing with provenance
+- Updated dependencies [f864aa1]
+  - @inglorious/store@12.9.3
+
 ## 19.2.1
 
 ### Patch Changes

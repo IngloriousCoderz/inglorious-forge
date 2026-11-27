@@ -1,5 +1,11 @@
 # @inglorious/i18n
 
+## 2.1.2
+
+### Patch Changes
+
+- f864aa1: Fix repository metadata and enable trusted publishing with provenance
+
 ## 2.1.1
 
 ### Patch Changes

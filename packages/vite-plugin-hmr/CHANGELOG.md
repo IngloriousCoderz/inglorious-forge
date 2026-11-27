@@ -1,5 +1,11 @@
 # @inglorious/vite-plugin-hmr
 
+## 1.1.1
+
+### Patch Changes
+
+- f864aa1: Fix repository metadata and enable trusted publishing with provenance
+
 ## 1.1.0
 
 ### Minor Changes

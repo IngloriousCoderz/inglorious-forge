@@ -1,5 +1,14 @@
 # @inglorious/renderer-react-dom
 
+## 22.0.13
+
+### Patch Changes
+
+- f864aa1: Fix repository metadata and enable trusted publishing with provenance
+- Updated dependencies [f864aa1]
+  - @inglorious/engine@24.2.1
+  - @inglorious/utils@5.4.3
+
 ## 22.0.12
 
 ### Patch Changes

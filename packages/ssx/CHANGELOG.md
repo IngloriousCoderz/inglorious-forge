@@ -1,5 +1,15 @@
 # @inglorious/ssx
 
+## 2.5.3
+
+### Patch Changes
+
+- f864aa1: Fix repository metadata and enable trusted publishing with provenance
+- Updated dependencies [f864aa1]
+  - @inglorious/store@12.9.3
+  - @inglorious/utils@5.4.3
+  - @inglorious/web@6.31.5
+
 ## 2.5.2
 
 ### Patch Changes

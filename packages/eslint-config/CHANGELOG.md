@@ -1,5 +1,11 @@
 # @inglorious/eslint-config
 
+## 1.2.1
+
+### Patch Changes
+
+- f864aa1: Fix repository metadata and enable trusted publishing with provenance
+
 ## 1.2.0
 
 ### Minor Changes

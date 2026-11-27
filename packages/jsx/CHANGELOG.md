@@ -1,5 +1,11 @@
 # @inglorious/jsx
 
+## 0.1.5
+
+### Patch Changes
+
+- f864aa1: Fix repository metadata and enable trusted publishing with provenance
+
 ## 0.1.4
 
 ### Patch Changes

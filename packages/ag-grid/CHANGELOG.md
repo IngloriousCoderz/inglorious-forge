@@ -1,5 +1,14 @@
 # @inglorious/ag-grid
 
+## 9.1.1
+
+### Patch Changes
+
+- f864aa1: Fix repository metadata and enable trusted publishing with provenance
+- Updated dependencies [f864aa1]
+  - @inglorious/store@12.9.3
+  - @inglorious/web@6.31.5
+
 ## 9.1.0
 
 ### Minor Changes

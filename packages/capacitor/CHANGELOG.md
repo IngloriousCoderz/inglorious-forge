@@ -1,5 +1,11 @@
 # @inglorious/capacitor
 
+## 0.5.2
+
+### Patch Changes
+
+- f864aa1: Fix repository metadata and enable trusted publishing with provenance
+
 ## 0.5.1
 
 ### Patch Changes

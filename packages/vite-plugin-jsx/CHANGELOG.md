@@ -1,5 +1,13 @@
 # @inglorious/vite-plugin-jsx
 
+## 2.0.7
+
+### Patch Changes
+
+- f864aa1: Fix repository metadata and enable trusted publishing with provenance
+- Updated dependencies [f864aa1]
+  - @inglorious/utils@5.4.3
+
 ## 2.0.6
 
 ### Patch Changes

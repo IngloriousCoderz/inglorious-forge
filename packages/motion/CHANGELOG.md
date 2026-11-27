@@ -1,5 +1,13 @@
 # @inglorious/motion
 
+## 9.0.20
+
+### Patch Changes
+
+- f864aa1: Fix repository metadata and enable trusted publishing with provenance
+- Updated dependencies [f864aa1]
+  - @inglorious/web@6.31.5
+
 ## 9.0.19
 
 ### Patch Changes

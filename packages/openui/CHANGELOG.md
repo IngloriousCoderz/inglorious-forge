@@ -1,5 +1,15 @@
 # @inglorious/openui
 
+## 0.5.10
+
+### Patch Changes
+
+- f864aa1: Fix repository metadata and enable trusted publishing with provenance
+- Updated dependencies [f864aa1]
+  - @inglorious/charts@12.2.8
+  - @inglorious/ui@9.20.4
+  - @inglorious/web@6.31.5
+
 ## 0.5.9
 
 ### Patch Changes

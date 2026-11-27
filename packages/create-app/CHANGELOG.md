@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.32.2
+
+### Patch Changes
+
+- f864aa1: Fix repository metadata and enable trusted publishing with provenance
+
 ## 1.32.1
 
 ### Patch Changes

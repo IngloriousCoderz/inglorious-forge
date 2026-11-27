@@ -1,5 +1,13 @@
 # @inglorious/store
 
+## 12.9.3
+
+### Patch Changes
+
+- f864aa1: Fix repository metadata and enable trusted publishing with provenance
+- Updated dependencies [f864aa1]
+  - @inglorious/utils@5.4.3
+
 ## 12.9.2
 
 ### Patch Changes

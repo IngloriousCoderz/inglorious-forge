@@ -1,5 +1,11 @@
 # @inglorious/babel-plugin-inglorious-script
 
+## 1.4.4
+
+### Patch Changes
+
+- f864aa1: Fix repository metadata and enable trusted publishing with provenance
+
 ## 1.4.3
 
 ### Patch Changes

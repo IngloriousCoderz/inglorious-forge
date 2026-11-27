@@ -1,7 +1,12 @@
 {
   "name": "@inglorious/eslint-config",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IngloriousCoderz/inglorious-forge.git",
+    "directory": "packages/eslint-config"
+  },
   "files": [
     "base.js",
     "browser.js",

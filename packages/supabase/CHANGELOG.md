@@ -1,5 +1,11 @@
 # @inglorious/supabase
 
+## 0.13.4
+
+### Patch Changes
+
+- f864aa1: Fix repository metadata and enable trusted publishing with provenance
+
 ## 0.13.3
 
 ### Patch Changes

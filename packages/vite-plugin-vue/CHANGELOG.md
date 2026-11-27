@@ -1,5 +1,13 @@
 # @inglorious/vite-plugin-vue
 
+## 1.0.9
+
+### Patch Changes
+
+- f864aa1: Fix repository metadata and enable trusted publishing with provenance
+- Updated dependencies [f864aa1]
+  - @inglorious/utils@5.4.3
+
 ## 1.0.8
 
 ### Patch Changes
