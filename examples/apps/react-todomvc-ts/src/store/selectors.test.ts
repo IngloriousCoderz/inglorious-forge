@@ -7,7 +7,7 @@ import {
   selectActiveFilter,
   selectFilteredTasks,
 } from "./selectors"
-import type { AppState } from "../../types"
+import type { AppState } from "#types"
 
 it("should select the form value", () => {
   const state = {

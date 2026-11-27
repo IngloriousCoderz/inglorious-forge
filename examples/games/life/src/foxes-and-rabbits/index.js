@@ -1,9 +1,10 @@
 import { neighbors } from "@inglorious/utils/data-structures/board"
 import { random } from "@inglorious/utils/math/rng"
 
-import { BOARD_COLUMNS, BOARD_ROWS, EMPTY } from "../constants.js"
-import { createLifeGame } from "../game.js"
-import { createGrid, place } from "../grid.js"
+import { BOARD_COLUMNS, BOARD_ROWS, EMPTY } from "@/constants.js"
+import { createLifeGame } from "@/game.js"
+import { createGrid, place } from "@/grid.js"
+
 import { createRules } from "./constants.js"
 import { describeSliders } from "./parameters.js"
 import { createFox } from "./types/fox.js"

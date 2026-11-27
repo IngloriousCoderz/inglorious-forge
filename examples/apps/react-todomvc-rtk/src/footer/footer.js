@@ -1,7 +1,7 @@
 import { convertSlice } from "@inglorious/store/migration/rtk"
 import { createSlice } from "@reduxjs/toolkit"
 
-import { completedClear } from "../store/actions"
+import { completedClear } from "@/store/actions"
 
 const slice = createSlice({
   name: "footer",

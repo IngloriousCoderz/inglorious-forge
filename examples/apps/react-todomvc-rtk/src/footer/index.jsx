@@ -1,8 +1,9 @@
 import clsx from "clsx"
 import { useDispatch, useSelector } from "react-redux"
 
-import { completedClear } from "../store/actions"
-import { selectActiveFilter, selectTasksCount } from "../store/selectors"
+import { completedClear } from "@/store/actions"
+import { selectActiveFilter, selectTasksCount } from "@/store/selectors"
+
 import { setFilter } from "./footer"
 
 const SINGLE_TASK = 1

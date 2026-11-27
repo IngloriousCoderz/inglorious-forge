@@ -1,7 +1,7 @@
 import { handleAsync } from "@inglorious/store/async"
 
-import { lineItems, receiptFor } from "../domain/sale.js"
-import { taxCalculators } from "../services/tax-calculators.js"
+import { lineItems, receiptFor } from "@/domain/sale.js"
+import { taxCalculators } from "@/services/tax-calculators.js"
 
 const QUANTITY_STEP = 1
 const NOT_FOUND = -1

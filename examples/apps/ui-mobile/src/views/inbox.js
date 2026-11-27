@@ -9,7 +9,7 @@ import { Textarea } from "@inglorious/ui/textarea"
 import { html } from "@inglorious/web"
 import { haptics } from "@inglorious/web/device/haptics"
 
-import { replies } from "../store/replies.js"
+import { replies } from "@/store/replies.js"
 
 const REFRESH_MS = 1200
 const DRAFT_ROWS = 4

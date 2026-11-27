@@ -28,9 +28,9 @@ import { envExample, promptFiles, supabaseSource } from "./prompts.js"
 import {
   appModel,
   call,
+  importPath,
   layout,
   LINE_WIDTH,
-  relative,
   union,
 } from "./source.js"
 
@@ -225,10 +225,10 @@ function mainSource(app) {
       imports.push('import "@inglorious/ui/view-transitions.css"')
     }
   }
-  imports.push(`import "${relative("src", app.layout.app)}/style.css"`)
+  imports.push(`import "${importPath("src", app.layout.app)}/style.css"`)
   imports.push(
     `import { ${app.hasPrompts || app.ui || app.gate ? "html, mount" : "mount"} } from "@inglorious/web"`,
-    componentImport(app, "App", relative("src", app.layout.app)),
+    componentImport(app, "App", importPath("src", app.layout.app)),
     'import { store } from "./store"',
   )
   if (app.i18n) imports.push('import { ready } from "./i18n"')
@@ -243,7 +243,7 @@ function mainSource(app) {
     )
   }
   if (app.gate && app.isTypeScript) {
-    imports.push('import type { AppApi } from "../types"')
+    imports.push('import type { AppApi } from "#types"')
   }
 
   const args = [
@@ -523,8 +523,12 @@ main {
 function storeSource(app) {
   const imports = [
     'import { createStore } from "@inglorious/store"',
-    componentImport(app, "Home", relative("src/store", app.layout.home)),
-    componentImport(app, "Message", relative("src/store", app.layout.message)),
+    componentImport(app, "Home", importPath("src/store", app.layout.home)),
+    componentImport(
+      app,
+      "Message",
+      importPath("src/store", app.layout.message),
+    ),
     'import { entities } from "./entities"',
     'import { middlewares } from "./middlewares"',
   ]
@@ -536,16 +540,14 @@ function storeSource(app) {
   if (app.routing) {
     imports.push(
       'import { Router, setRoutes } from "@inglorious/web/router"',
-      componentImport(app, "About", relative("src/store", app.layout.about)),
+      componentImport(app, "About", importPath("src/store", app.layout.about)),
       'import { routes } from "./routes"',
     )
   }
   if (app.isTypeScript) {
-    imports.push(
-      'import type { AppEntity, AppEvents, AppState } from "../../types"',
-    )
+    imports.push('import type { AppEntity, AppEvents, AppState } from "#types"')
   }
-  if (app.i18n) imports.push('import { I18n } from "../i18n"')
+  if (app.i18n) imports.push('import { I18n } from "@/i18n"')
   if (app.ui || app.mobile) {
     imports.push('import { Keyboard } from "@inglorious/web/device/keyboard"')
   }
@@ -580,22 +582,22 @@ function storeSource(app) {
   }
   if (app.analytics) {
     imports.push(
-      `import { Analytics } from "${relative("src/store", app.layout.analytics)}"`,
+      `import { Analytics } from "${importPath("src/store", app.layout.analytics)}"`,
     )
   }
   if (app.push) {
     imports.push(
-      `import { PushPrompt } from "${relative("src/store", app.layout.pushPrompt)}"`,
+      `import { PushPrompt } from "${importPath("src/store", app.layout.pushPrompt)}"`,
     )
   }
   if (app.nativeUpdate) {
     imports.push(
-      `import { NativeUpdate } from "${relative("src/store", app.layout.nativeUpdate)}"`,
+      `import { NativeUpdate } from "${importPath("src/store", app.layout.nativeUpdate)}"`,
     )
   }
   if (app.auth) {
     imports.push(
-      `import { Auth } from "${relative("src/store", app.layout.auth)}"`,
+      `import { Auth } from "${importPath("src/store", app.layout.auth)}"`,
     )
   }
   if (app.ui) imports.push('import { Toast } from "@inglorious/ui/toast"')
@@ -670,7 +672,7 @@ function singletons(app) {
 
 function entitiesSource(app, { pages }) {
   const head = app.isTypeScript
-    ? `import type { AppState } from "../../types"
+    ? `import type { AppState } from "#types"
 
 export const entities: Partial<AppState> = {`
     : "export const entities = {"

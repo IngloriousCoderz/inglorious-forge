@@ -56,7 +56,7 @@ The CLI copies the template into a new folder, names the project and the page ti
 
 Every template but `minimal` also gets:
 
-- `vite.config.js`, which Vitest reads too, with tests running in jsdom.
+- `vite.config.js`, which Vitest reads too, with tests running in jsdom. It points `@/` to `src/`, so a file imports from outside its folder with `@/` (the tests import `@/game.js`) and from its own folder with `./`. `tsconfig.json` (or `jsconfig.json`) tells the editor the same.
 - `pnpm-workspace.yaml`, so pnpm installs Inglorious packages on the day they are published.
 - `.github/dependabot.yml`, for weekly dependency updates grouped into two pull requests.
 - A `vercel.json` that deploys only the `main` branch on Vercel; change `main` there if your production branch has another name.

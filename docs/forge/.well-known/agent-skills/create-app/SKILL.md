@@ -49,7 +49,8 @@ Never hand-edit `android/` or `ios/` for something `native` in `package.json` co
 - `src/app/`: shell (`index`, `style.css`) and its pieces (analytics, push prompts).
 - `src/views/<screen>/` with routing; otherwise `src/app/home/`.
 - `src/common/`, `src/api/`, `src/store/`, `src/i18n/`: shared code.
-- `types/`: type definitions only (`index.d.ts`, `vite-env.d.ts`).
+- `types/`: type definitions only (`index.d.ts`, `vite-env.d.ts`), imported as `#types` (`imports` in `package.json`).
+- `@/` points to `src/` (`vite.config`, SSX itself, `tsconfig.json`/`jsconfig.json`, the import map in `minimal`). Imports across folders use it (`@/i18n`, `@/views/home`), imports within a folder stay relative (`./message`).
 
 ## TypeScript
 

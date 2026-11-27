@@ -10,7 +10,7 @@ import {
   MAX_HEALTH,
   PADDLE_HEIGHT,
   PADDLE_WIDTH,
-} from "../constants.js"
+} from "@/constants.js"
 
 const CEILING = HEIGHT - 5
 

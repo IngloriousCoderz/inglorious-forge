@@ -1,7 +1,7 @@
 import clsx from "clsx"
 
-import { useEntity, useNotify, useSelector } from "../store"
-import { selectTasksCount } from "../store/selectors"
+import { useEntity, useNotify, useSelector } from "@/store"
+import { selectTasksCount } from "@/store/selectors"
 
 const SINGLE_TASK = 1
 

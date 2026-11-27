@@ -1,7 +1,7 @@
 import { convertSlice } from "@inglorious/store/migration/rtk"
 import { createSlice } from "@reduxjs/toolkit"
 
-import { formSubmit } from "../store/actions"
+import { formSubmit } from "@/store/actions"
 
 const slice = createSlice({
   name: "form",

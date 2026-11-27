@@ -57,18 +57,31 @@ export function layout(app) {
   }
 }
 
-/** The import specifier from a folder to a path, both relative to the project. */
-export function relative(fromDir, to) {
+/**
+ * The import specifier from a folder to a path in src, both relative to the
+ * project: relative within the folder, from `@/` (src) outside it.
+ */
+export function importPath(fromDir, to) {
   const specifier = path.posix.relative(fromDir, to)
-  return specifier.startsWith(".") ? specifier : `./${specifier}`
+  if (specifier.startsWith("..")) return `@/${path.posix.relative("src", to)}`
+  return `./${specifier}`
 }
 
 export function call(name, args, indent, trailing) {
   const line = `${indent}${name}(${args.join(", ")})${trailing}`
   if (line.length <= LINE_WIDTH) return line
   return `${indent}${name}(
-${args.map((arg) => `${indent}  ${arg},`).join("\n")}
+${args.map((arg) => argument(arg, `${indent}  `)).join("\n")}
 ${indent})${trailing}`
+}
+
+// Prettier moves an arrow function's body to its own line when it would not fit.
+function argument(arg, indent) {
+  const line = `${indent}${arg},`
+  const arrow = arg.match(/^(\([^)]*\) =>) (.*)$/s)
+  if (line.length <= LINE_WIDTH || !arrow) return line
+  const [, head, body] = arrow
+  return `${indent}${head}\n${indent}  ${body},`
 }
 
 export function union(name, members) {

@@ -1,7 +1,7 @@
 import { createGame } from "@inglorious/engine/test"
 import { beforeEach, describe, test } from "vitest"
 
-import gameConfig from "../src/game.ijs"
+import gameConfig from "@/game.ijs"
 
 /**
  * Every state the game passes through, in order.

@@ -5,8 +5,8 @@ import { Table } from "@inglorious/ui/table"
 import { html } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 
-import { formatMoney } from "../domain/money.js"
-import { renderPatterns } from "../patterns/index.js"
+import { formatMoney } from "@/domain/money.js"
+import { renderPatterns } from "@/patterns/index.js"
 
 const COLUMNS = [
   { id: "sale", label: "Sale" },

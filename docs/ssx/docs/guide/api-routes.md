@@ -94,7 +94,7 @@ export const Post = {
 
 // Build-time: import directly (no HTTP overhead)
 export async function load(entity, page) {
-  const { data } = await import("../../api/posts.js")
+  const { data } = await import("@/api/posts.js")
   entity.post = data.find((p) => p.id === page.params.slug)
 }
 ```

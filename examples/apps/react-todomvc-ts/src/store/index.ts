@@ -4,7 +4,7 @@ import { createReactStore } from "@inglorious/react-store"
 import { entities } from "./entities"
 import { middlewares } from "./middlewares"
 import { types } from "./types"
-import type { AppEntity, AppEvents, AppState } from "../../types"
+import type { AppEntity, AppEvents, AppState } from "#types"
 
 export const store = createStore<AppEntity, AppState, AppEvents>({
   types,

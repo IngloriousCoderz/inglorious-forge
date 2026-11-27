@@ -1,5 +1,5 @@
-import { BOARD_COLUMNS, BOARD_ROWS } from "../../constants.js"
-import { place } from "../../grid.js"
+import { BOARD_COLUMNS, BOARD_ROWS } from "@/constants.js"
+import { place } from "@/grid.js"
 
 const SURVIVES_ON = [2, 3]
 const IS_BORN_ON = 3

@@ -1,6 +1,7 @@
 import { mount } from "@inglorious/web"
 
-import type { AppApi } from "../types"
+import type { AppApi } from "#types"
+
 import { App } from "./app"
 import { store } from "./store"
 

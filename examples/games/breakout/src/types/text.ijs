@@ -1,7 +1,7 @@
 import { renderImage } from "@inglorious/renderer-2d/image/image.js"
 import { text } from "@inglorious/renderer-2d/text.js"
 
-import { paddleFrame } from "../atlas.js"
+import { paddleFrame } from "@/atlas.js"
 import {
   ARROW_SIZE,
   ARROWS_SHEET,
@@ -12,8 +12,8 @@ import {
   HEIGHT,
   LAST_PADDLE_SKIN,
   LEFT_ARROW,
-} from "../constants.js"
-import { entryOf } from "../high-scores.js"
+} from "@/constants.js"
+import { entryOf } from "@/high-scores.js"
 
 const TOP_BASELINE = "top"
 const MIDDLE_BASELINE = "middle"

@@ -11,7 +11,8 @@
  * module system already hands everyone the same instance.
  */
 
-import { sum } from "../domain/money.js"
+import { sum } from "@/domain/money.js"
+
 import { goodAsGoldTaxPro, taxMaster, toDecimal } from "./vendors.js"
 
 const CENTS_PER_UNIT = 100

@@ -2,7 +2,7 @@ import { Button } from "@inglorious/ui/button"
 import { Table } from "@inglorious/ui/table"
 import { html } from "@inglorious/web"
 
-import { formatMoney } from "../domain/money.js"
+import { formatMoney } from "@/domain/money.js"
 
 /**
  * Template Method: `Table.render` fixes the skeleton of a table and leaves the

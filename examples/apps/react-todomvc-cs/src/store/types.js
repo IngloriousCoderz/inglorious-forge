@@ -1,4 +1,4 @@
-import * as client from "../services/client"
+import * as client from "@/services/client"
 
 const TASKS_TO_REMOVE = 1
 

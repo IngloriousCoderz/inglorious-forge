@@ -264,6 +264,7 @@ function toPackageJson(pkg, name, project) {
     name: `inglorious-${name}`,
     version: pkg.version,
     type: pkg.type,
+    imports: pkg.imports,
     private: true,
     description: project.description,
     license: pkg.license,

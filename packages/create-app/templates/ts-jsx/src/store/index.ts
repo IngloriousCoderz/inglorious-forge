@@ -1,7 +1,8 @@
 import { createStore } from "@inglorious/store"
 
-import type { AppEntity, AppEvents, AppState } from "../../types"
-import { Message } from "../app/message"
+import { Message } from "@/app/message"
+import type { AppEntity, AppEvents, AppState } from "#types"
+
 import { entities } from "./entities"
 import { middlewares } from "./middlewares"
 

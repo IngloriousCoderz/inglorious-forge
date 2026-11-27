@@ -2,6 +2,9 @@
   "name": "inglorious-app-ts",
   "version": "0.1.0",
   "type": "module",
+  "imports": {
+    "#types": "./types/index.d.ts"
+  },
   "private": true,
   "description": "An Inglorious Web app in TypeScript, ready to run on StackBlitz",
   "license": "MIT",

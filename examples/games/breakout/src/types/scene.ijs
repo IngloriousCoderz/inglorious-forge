@@ -1,6 +1,7 @@
-import { FIRST_PADDLE_SKIN, LAYER_BRICK } from "../constants.js"
-import { initialName, loadHighScores } from "../high-scores.js"
-import { createLevel } from "../levelmaker.ijs"
+import { FIRST_PADDLE_SKIN, LAYER_BRICK } from "@/constants.js"
+import { initialName, loadHighScores } from "@/high-scores.js"
+import { createLevel } from "@/levelmaker.ijs"
+
 import { createPlayScene } from "./entities.ijs"
 import {
   createEnterHighScoreEntities,

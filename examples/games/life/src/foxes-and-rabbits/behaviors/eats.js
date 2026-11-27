@@ -1,4 +1,4 @@
-import { findAdjacentRabbit } from "../index.js"
+import { findAdjacentRabbit } from "@/foxes-and-rabbits/index.js"
 
 /**
  * A fox eats a rabbit standing beside it, and grows stronger for the meal.

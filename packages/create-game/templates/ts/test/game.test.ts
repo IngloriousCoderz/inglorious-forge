@@ -2,7 +2,7 @@ import { createGame } from "@inglorious/engine/test.js"
 import { v } from "@inglorious/utils/v.js"
 import { beforeEach, describe, test } from "vitest"
 
-import gameConfig from "../src/game.ts"
+import gameConfig from "@/game.ts"
 
 describe("game", () => {
   let game: ReturnType<typeof createGame>

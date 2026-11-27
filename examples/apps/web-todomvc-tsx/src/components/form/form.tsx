@@ -1,4 +1,4 @@
-import type { FormType } from "../../../types"
+import type { FormType } from "#types"
 
 export const Form: FormType = {
   create(entity) {

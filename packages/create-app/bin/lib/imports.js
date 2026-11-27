@@ -7,16 +7,23 @@ const collator = new Intl.Collator("en", { sensitivity: "base", numeric: true })
 export function importBlock(lines) {
   const sideEffects = []
   const packages = []
+  const aliased = []
   const relative = []
 
   for (const line of lines) {
     const source = sourceOf(line)
     if (!line.includes(" from ")) sideEffects.push(line)
     else if (source.startsWith(".")) relative.push(line)
+    else if (/^(@\/|#)/.test(source)) aliased.push(line)
     else packages.push(line)
   }
 
-  return [sideEffects, sortImports(packages), sortImports(relative)]
+  return [
+    sideEffects,
+    sortImports(packages),
+    sortImports(aliased),
+    sortImports(relative),
+  ]
     .filter((group) => group.length)
     .map((group) => group.join("\n"))
     .join("\n\n")

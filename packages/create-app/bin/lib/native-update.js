@@ -4,7 +4,7 @@ import path from "path"
 
 import { copyDir, stampMigration } from "./file.js"
 import { importBlock } from "./imports.js"
-import { relative } from "./source.js"
+import { importPath } from "./source.js"
 
 const README_SECTION = `## Mandatory Native Updates
 
@@ -55,14 +55,13 @@ function nativeUpdateSource(app) {
     'import { html } from "@inglorious/web"',
     'import { when } from "@inglorious/web/directives/when"',
     'import { createNativeUpdate } from "@inglorious/web/native/update"',
-    `import { supabase } from "${relative(at, "src/api/supabase")}"`,
+    `import { supabase } from "${importPath(at, "src/api/supabase")}"`,
   ]
   if (app.ui) imports.push('import { Button } from "@inglorious/ui/button"')
-  if (app.i18n) imports.push(`import { t } from "${relative(at, "src/i18n")}"`)
+  if (app.i18n)
+    imports.push(`import { t } from "${importPath(at, "src/i18n")}"`)
   if (app.isTypeScript) {
-    imports.push(
-      `import type { AppApi, AppNativeUpdateEntity } from "${relative(at, "types")}"`,
-    )
+    imports.push('import type { AppApi, AppNativeUpdateEntity } from "#types"')
   }
   const label = (key, text) =>
     app.i18n ? `t("nativeUpdate.${key}")` : JSON.stringify(text)

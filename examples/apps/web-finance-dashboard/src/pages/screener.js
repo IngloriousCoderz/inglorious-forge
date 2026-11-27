@@ -1,6 +1,6 @@
 import { html } from "@inglorious/web"
 
-import { renderSectionCard } from "../components/section-card.js"
+import { renderSectionCard } from "@/components/section-card.js"
 
 export const ScreenerPage = {
   routeChange(entity, payload) {

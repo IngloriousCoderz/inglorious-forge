@@ -1,8 +1,8 @@
 import { useEffect } from "react"
 import { clsx } from "clsx"
 
-import { useNotify, useSelector } from "../store"
-import { selectFilteredTasks } from "../store/selectors"
+import { useNotify, useSelector } from "@/store"
+import { selectFilteredTasks } from "@/store/selectors"
 
 export default function List() {
   const notify = useNotify()

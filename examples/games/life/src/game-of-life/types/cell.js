@@ -1,7 +1,7 @@
 import { renderRectangle } from "@inglorious/renderer-2d/shapes/rectangle"
 
-import { CELL_SIZE } from "../../constants.js"
-import { CELL_COLOR } from "../constants.js"
+import { CELL_SIZE } from "@/constants.js"
+import { CELL_COLOR } from "@/game-of-life/constants.js"
 
 /**
  * A cell is only a thing that can be drawn: what a cell does is decided by the board

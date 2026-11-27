@@ -1,5 +1,5 @@
 import { importBlock } from "./imports.js"
-import { indent, LINE_WIDTH, relative } from "./source.js"
+import { importPath, indent, LINE_WIDTH } from "./source.js"
 
 const ARRAY_INDENT = 2
 const FIREBASE_CONFIG_KEYS = {
@@ -139,7 +139,7 @@ function promptImports(app, imports) {
   return [
     ...imports,
     'import { html } from "@inglorious/web"',
-    ...(app.isTypeScript ? ['import type { AppApi } from "../../types"'] : []),
+    ...(app.isTypeScript ? ['import type { AppApi } from "#types"'] : []),
   ]
 }
 
@@ -169,17 +169,15 @@ function analyticsSource(app) {
     'import { withStorage } from "@inglorious/store/storage"',
     'import { createAnalytics } from "@inglorious/web/analytics"',
     'import { when } from "@inglorious/web/directives/when"',
-    `import { firebaseConfig } from "${relative(app.layout.analytics, "src/api/firebase")}"`,
-    `import { Prompt } from "${relative(app.layout.analytics, "src/common/prompt")}"`,
+    `import { firebaseConfig } from "${importPath(app.layout.analytics, "src/api/firebase")}"`,
+    `import { Prompt } from "${importPath(app.layout.analytics, "src/common/prompt")}"`,
   ]
   if (app.i18n)
     imports.push(
-      `import { t } from "${relative(app.layout.analytics, "src/i18n")}"`,
+      `import { t } from "${importPath(app.layout.analytics, "src/i18n")}"`,
     )
   if (app.isTypeScript) {
-    imports.push(
-      `import type { AppAnalyticsEntity, AppApi } from "${relative(app.layout.analytics, "types")}"`,
-    )
+    imports.push('import type { AppAnalyticsEntity, AppApi } from "#types"')
   }
   const label = labelFor(app)
   const params = app.isTypeScript
@@ -289,17 +287,15 @@ function pushPromptSource(app) {
     'import { withStorage } from "@inglorious/store/storage"',
     'import { when } from "@inglorious/web/directives/when"',
     'import { createPushPrompt } from "@inglorious/web/push"',
-    `import { push } from "${relative(app.layout.pushPrompt, "src/api/push")}"`,
-    `import { Prompt } from "${relative(app.layout.pushPrompt, "src/common/prompt")}"`,
+    `import { push } from "${importPath(app.layout.pushPrompt, "src/api/push")}"`,
+    `import { Prompt } from "${importPath(app.layout.pushPrompt, "src/common/prompt")}"`,
   ]
   if (app.i18n)
     imports.push(
-      `import { t } from "${relative(app.layout.pushPrompt, "src/i18n")}"`,
+      `import { t } from "${importPath(app.layout.pushPrompt, "src/i18n")}"`,
     )
   if (app.isTypeScript) {
-    imports.push(
-      `import type { AppApi, AppPushPromptEntity } from "${relative(app.layout.pushPrompt, "types")}"`,
-    )
+    imports.push('import type { AppApi, AppPushPromptEntity } from "#types"')
   }
   const label = labelFor(app)
   const params = app.isTypeScript

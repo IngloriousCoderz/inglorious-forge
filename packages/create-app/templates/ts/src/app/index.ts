@@ -1,6 +1,6 @@
 import { html } from "@inglorious/web"
 
-import type { AppApi } from "../../types"
+import type { AppApi } from "#types"
 
 export const App = {
   render(_props: Record<string, unknown> | null, api: AppApi) {

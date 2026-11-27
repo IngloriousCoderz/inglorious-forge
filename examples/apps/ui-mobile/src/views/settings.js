@@ -5,7 +5,7 @@ import { Switch } from "@inglorious/ui/switch"
 import { html } from "@inglorious/web"
 import { haptics } from "@inglorious/web/device/haptics"
 
-import { themes } from "../themes.js"
+import { themes } from "@/themes.js"
 
 export const Settings = {
   themeChange(entity, theme) {

@@ -1,4 +1,4 @@
-import { screenerRows } from "../mocks/screener.js"
+import { screenerRows } from "@/mocks/screener.js"
 
 export const entities = {
   router: {

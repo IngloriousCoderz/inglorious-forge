@@ -1,4 +1,4 @@
-import { AppState } from "../../types"
+import type { AppState } from "#types"
 
 export const entities: AppState = {
   about: {

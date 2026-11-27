@@ -1,19 +1,19 @@
 import { fsm } from "@inglorious/store/fsm"
 import { cycleIndex } from "@inglorious/utils/array.js"
 
-import { brickColourOf, brickTierOf } from "../atlas.js"
+import { brickColourOf, brickTierOf } from "@/atlas.js"
 import {
   FIRST_PADDLE_SKIN,
   LAST_PADDLE_SKIN,
   MAX_HEALTH,
   MENU_ITEMS,
-} from "../constants.js"
+} from "@/constants.js"
 import {
   rankOf,
   recordScore,
   saveHighScores,
   scrollName,
-} from "../high-scores.js"
+} from "@/high-scores.js"
 
 /**
  * Five states now: the start screen, the wait before each serve, the play itself, the end

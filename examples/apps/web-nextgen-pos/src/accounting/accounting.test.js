@@ -1,8 +1,8 @@
 import { createStore } from "@inglorious/store"
 import { afterEach, beforeEach, expect, it, vi } from "vitest"
 
-import { entities } from "../store/entities.js"
-import { types } from "../store/types.js"
+import { entities } from "@/store/entities.js"
+import { types } from "@/store/types.js"
 
 beforeEach(() => {
   vi.useFakeTimers()

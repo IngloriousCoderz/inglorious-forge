@@ -1,6 +1,7 @@
 import { createStore } from "@inglorious/store"
 
-import { Message } from "../app/message/index.vue"
+import { Message } from "@/app/message/index.vue"
+
 import { entities } from "./entities"
 import { middlewares } from "./middlewares"
 

@@ -126,10 +126,12 @@ my-site/
 │   │       └── _id.js      # /posts/:id
 │   ├── api/            # Serverless functions
 │   │   └── posts.js    # /api/posts
-│   ├── store/          # Store configuration
-│   │   └── entities.js     # Entity definitions
-│   └── types/          # Custom entity types (optional)
+│   └── store/          # Store configuration
+│       ├── entities.js     # Entity definitions
+│       └── types.js        # Custom entity types (optional)
 ├── dist/               # Build output
 ├── package.json
 └── site.config.js      # Site configuration
 ```
+
+`@/` points to `src/`: import from outside a file's folder with `@/` (`@/store/entities.js`), and from its own folder or below with `./`.

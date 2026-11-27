@@ -1,6 +1,7 @@
 import { createStore } from "@inglorious/store"
 
-import { ProductList } from "../product-list/product-list"
+import { ProductList } from "@/product-list/product-list"
+
 import { entities } from "./entities"
 import { middlewares } from "./middlewares"
 

@@ -3,7 +3,7 @@ import { Select } from "@inglorious/ui/select"
 import { Switch } from "@inglorious/ui/switch"
 import { html } from "@inglorious/web"
 
-import { renderPatterns } from "../patterns/index.js"
+import { renderPatterns } from "@/patterns/index.js"
 
 const TAX_CALCULATOR_OPTIONS = [
   { value: "taxMaster", label: "TaxMaster" },

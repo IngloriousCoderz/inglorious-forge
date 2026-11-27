@@ -1,6 +1,7 @@
 import { createStore } from "@inglorious/store"
 
-import { InvoiceForm } from "../invoice-form"
+import { InvoiceForm } from "@/invoice-form"
+
 import { entities } from "./entities"
 import { middlewares } from "./middlewares"
 

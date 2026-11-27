@@ -1,12 +1,12 @@
 import { renderCircle } from "@inglorious/renderer-2d/shapes/circle"
 
-import { CELL_SIZE } from "../../constants.js"
-import { aged } from "../behaviors/aged.js"
-import { breeds } from "../behaviors/breeds.js"
-import { dies } from "../behaviors/dies.js"
-import { eats } from "../behaviors/eats.js"
-import { movesOnGrid } from "../behaviors/moves-on-grid.js"
-import { FOX_COLOR } from "../constants.js"
+import { CELL_SIZE } from "@/constants.js"
+import { aged } from "@/foxes-and-rabbits/behaviors/aged.js"
+import { breeds } from "@/foxes-and-rabbits/behaviors/breeds.js"
+import { dies } from "@/foxes-and-rabbits/behaviors/dies.js"
+import { eats } from "@/foxes-and-rabbits/behaviors/eats.js"
+import { movesOnGrid } from "@/foxes-and-rabbits/behaviors/moves-on-grid.js"
+import { FOX_COLOR } from "@/foxes-and-rabbits/constants.js"
 
 /**
  * @param {Object} grid - The board the animals stand on.

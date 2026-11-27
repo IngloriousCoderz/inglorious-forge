@@ -2,7 +2,7 @@ import { html } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
 import { when } from "@inglorious/web/directives/when"
 
-import { tasksCount } from "../store/select"
+import { tasksCount } from "@/store/select"
 
 const SINGLE_TASK = 1
 

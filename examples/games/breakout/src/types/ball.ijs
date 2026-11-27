@@ -7,8 +7,8 @@ import { random } from "@inglorious/utils/math/rng.js"
 import { filter } from "@inglorious/utils/object.js"
 import { v } from "@inglorious/utils/v.js"
 
-import { ballFrame } from "../atlas.js"
-import { BALL_SIZE, PADDLE_WIDTH } from "../constants.js"
+import { ballFrame } from "@/atlas.js"
+import { BALL_SIZE, PADDLE_WIDTH } from "@/constants.js"
 
 // The states a ball waits on the paddle in rather than playing on its own.
 const RIDING = ["serve", "victory"]

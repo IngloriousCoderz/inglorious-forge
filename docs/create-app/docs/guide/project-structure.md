@@ -37,7 +37,7 @@ my-app/
 │   ├── functions/           # erase-account, push-notify
 │   ├── migrations/
 │   └── templates/           # sign-in emails with codes
-├── types/                   # type definitions only
+├── types/                   # type definitions only, imported as #types
 ├── capacitor.config.ts      # with --mobile
 ├── listing.config.js        # store screenshots, with --mobile
 ├── vercel.json
@@ -45,6 +45,21 @@ my-app/
 ```
 
 Without routing, the single page is `src/app/home/`. There is no `scripts/` folder: tasks such as raising the build number or pushing secrets are commands of the Forge packages (`inglorious-capacitor`, `inglorious-supabase`), so they get fixes with the dependencies. `android/` and `ios/` appear once you create them with `pnpm mobile:init:android` and `pnpm mobile:init:ios`; commit them.
+
+## Imports
+
+`@/` points to `src/`. A file imports from its own folder or below with a relative path, from anywhere else in `src/` with `@/`, and type declarations from `#types`, which the `imports` field of `package.json` points to `types/index.d.ts`:
+
+```ts
+// src/store/index.ts
+import { I18n } from "@/i18n"
+import { Home } from "@/views/home"
+import type { AppEntity, AppEvents, AppState } from "#types"
+
+import { entities } from "./entities"
+```
+
+Moving a file leaves its `@/` imports as they are, and there is no `../../../` to count. `vite.config` sets up the alias (SSX sets it up itself), `tsconfig.json` or `jsconfig.json` tells the editor, and in the `minimal` template the import map does both. `#types` needs no setup: TypeScript reads `imports` from `package.json`, and Vite never sees it, since type imports are gone before it bundles. `types/` stays at the project root, apart from the code.
 
 ## How the app starts
 
@@ -71,4 +86,4 @@ With translations, `src/testing/setup` waits for them before the tests run. The 
 
 The project keeps two TypeScripts side by side: `typescript` (version 6) for the tools that need its API, such as ESLint, and `@typescript/native` (version 7) for fast type checks. Keep both.
 
-The code follows the conventions of the [`web-best-practices`](https://github.com/IngloriousCoderz/inglorious-forge/tree/main/docs/forge/.well-known/agent-skills/web-best-practices) skill: kebab-case paths, one folder per component, types in `types/`.
+The code follows the conventions of the [`web-best-practices`](https://github.com/IngloriousCoderz/inglorious-forge/tree/main/docs/forge/.well-known/agent-skills/web-best-practices) skill: kebab-case paths, one folder per component, types in `types/`, `@/` and `#types` for imports across folders.

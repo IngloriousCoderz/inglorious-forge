@@ -1,6 +1,6 @@
 import { compute } from "@inglorious/store/select"
 
-import type { Filter, Task, AppState } from "../../types"
+import type { Filter, Task, AppState } from "#types"
 
 export const selectValue = (entities: AppState) => entities.form.value
 export const selectTasks = (entities: AppState) => entities.list.tasks

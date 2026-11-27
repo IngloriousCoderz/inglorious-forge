@@ -13,14 +13,14 @@ import { handleRequest } from "@inglorious/store/async"
 import { html } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 
-import { renderInlineLoader } from "../components/loading.js"
+import { renderInlineLoader } from "@/components/loading.js"
 import {
   getCurrenciesForMarket,
   getInstrumentData,
   getIsinsForSelection,
   getMarkets,
-} from "../mocks/cascade.js"
-import { fmpGet, hasFmpConfig } from "../services/fmp.js"
+} from "@/mocks/cascade.js"
+import { fmpGet, hasFmpConfig } from "@/services/fmp.js"
 
 const EMPTY_INSTRUMENT = {
   isin: "-",

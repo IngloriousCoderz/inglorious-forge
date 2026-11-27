@@ -1,7 +1,8 @@
 import { classMap } from "@inglorious/web/directives/class-map"
 
-import type { FooterType } from "../../../types"
-import { tasksCount } from "../../store/select"
+import { tasksCount } from "@/store/select"
+import type { FooterType } from "#types"
+
 import classes from "./footer.module.css"
 
 const SINGLE_TASK = 1

@@ -3,8 +3,8 @@ import { renderImage } from "@inglorious/renderer-2d/image/image.js"
 import { clamp } from "@inglorious/utils/math/number.js"
 import { v } from "@inglorious/utils/v.js"
 
-import { paddleFrame } from "../atlas.js"
-import { PADDLE_WIDTH, WIDTH } from "../constants.js"
+import { paddleFrame } from "@/atlas.js"
+import { PADDLE_WIDTH, WIDTH } from "@/constants.js"
 
 const X = 0
 

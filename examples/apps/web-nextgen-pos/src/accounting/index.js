@@ -1,6 +1,6 @@
 import { handleAsync } from "@inglorious/store/async"
 
-import { accountingSystem } from "../services/vendors.js"
+import { accountingSystem } from "@/services/vendors.js"
 
 /**
  * Larman's failover design: a Redirection Proxy that tries the remote accounting

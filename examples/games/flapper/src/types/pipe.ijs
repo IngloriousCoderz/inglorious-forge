@@ -2,7 +2,7 @@ import { BOTTOM_CENTER, TOP_CENTER } from "@inglorious/engine/physics/anchor.js"
 import { renderImage } from "@inglorious/renderer-2d/image/image.js"
 import { v } from "@inglorious/utils/v.js"
 
-import { BIRD_WIDTH, HEIGHT } from "../constants"
+import { BIRD_WIDTH, HEIGHT } from "@/constants"
 
 const X = 0
 const Y = 1

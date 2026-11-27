@@ -1,6 +1,6 @@
 import { renderImage } from "@inglorious/renderer-2d/image/image.js"
 
-import { heartFrame } from "../atlas.js"
+import { heartFrame } from "@/atlas.js"
 
 /**
  * One heart of the health readout.

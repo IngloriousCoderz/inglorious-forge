@@ -40,7 +40,7 @@ The quickest start is a scaffolded project, which is already a small playable ga
 pnpm create @inglorious/game
 ```
 
-It asks for a template (JavaScript, TypeScript or IngloriousScript, or a single HTML file), whether to make the game an installable PWA, whether to ship it to the app stores with Capacitor, and whether to add agent skills for coding agents. See [@inglorious/create-game](https://www.npmjs.com/package/@inglorious/create-game) for the flags that skip the questions.
+It asks for a template (JavaScript, TypeScript or IngloriousScript, or a single HTML file), whether to make the game an installable PWA, whether to ship it to the app stores with Capacitor, and whether to add agent skills for coding agents. See [@inglorious/create-game](https://www.npmjs.com/package/@inglorious/create-game) for the flags that skip the questions. In the project, `@/` points to `src/`: a file imports from outside its folder with `@/` (the tests import `@/game.js`) and from its own folder with `./`.
 
 To see the pieces one at a time instead, start from a "Hello World" example and build up a simple game.
 

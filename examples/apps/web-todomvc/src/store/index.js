@@ -1,8 +1,9 @@
 import { createStore } from "@inglorious/store"
 
-import { Footer } from "../footer/footer"
-import { Form } from "../form/form"
-import { List } from "../list/list"
+import { Footer } from "@/footer/footer"
+import { Form } from "@/form/form"
+import { List } from "@/list/list"
+
 import { entities } from "./entities"
 import { middlewares } from "./middlewares"
 

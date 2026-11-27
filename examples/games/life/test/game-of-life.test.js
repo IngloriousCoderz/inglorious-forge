@@ -1,7 +1,7 @@
 import { createGame } from "@inglorious/engine/test"
 import { describe, expect, test } from "vitest"
 
-import { createGameOfLife } from "../src/game-of-life/index.js"
+import { createGameOfLife } from "@/game-of-life/index.js"
 
 const A_GENERATION = 1
 

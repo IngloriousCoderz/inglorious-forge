@@ -2,6 +2,9 @@
   "name": "ssx-ts-jsx-template",
   "version": "0.1.0",
   "type": "module",
+  "imports": {
+    "#types": "./types/index.d.ts"
+  },
   "private": true,
   "description": "A new SSX app created with @inglorious/create-app",
   "author": "",

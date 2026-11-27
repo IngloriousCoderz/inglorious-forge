@@ -9,7 +9,7 @@ description: Testing Inglorious Engine games and renderers. Load when writing or
 
 ```javascript
 import { createGame } from "@inglorious/engine/test";
-import gameConfig from "../src/game.ijs";
+import gameConfig from "@/game.ijs";
 
 let game;
 beforeEach(() => {

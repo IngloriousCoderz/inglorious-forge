@@ -11,15 +11,15 @@ import { handleRequest } from "@inglorious/store/async"
 import { html } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 
-import { renderKpiCard } from "../components/kpi-card.js"
-import { renderInlineLoader } from "../components/loading.js"
-import { renderSectionCard } from "../components/section-card.js"
+import { renderKpiCard } from "@/components/kpi-card.js"
+import { renderInlineLoader } from "@/components/loading.js"
+import { renderSectionCard } from "@/components/section-card.js"
 import {
   DEFAULT_ASSET_SYMBOL,
   fetchAssetData,
   getFallbackSymbols,
-} from "../services/asset-service.js"
-import { formatMoney, toNumber } from "../services/fmp.js"
+} from "@/services/asset-service.js"
+import { formatMoney, toNumber } from "@/services/fmp.js"
 
 const CENTS = 2
 const LAST = -1

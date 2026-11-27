@@ -1,9 +1,10 @@
 import { createStore } from "@inglorious/store"
 import { expect, it } from "vitest"
 
-import { Footer, setFilter } from "../footer/footer"
-import { Form, inputChange } from "../form/form"
-import { List, taskDelete, taskToggle } from "../list/list"
+import { Footer, setFilter } from "@/footer/footer"
+import { Form, inputChange } from "@/form/form"
+import { List, taskDelete, taskToggle } from "@/list/list"
+
 import { completedClear, formSubmit } from "./actions"
 
 const baseState = {

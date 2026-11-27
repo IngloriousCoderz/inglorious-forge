@@ -7,6 +7,7 @@ import {
   FIRST_CHARACTER_INDEX,
   FIRST_ITEM_INDEX,
 } from "./constants.js"
+import { LINE_WIDTH } from "./source.js"
 
 const MIGRATION_STAMP_LENGTH = 14
 const ONE_SECOND = 1
@@ -128,6 +129,12 @@ export function includeInNodeProject(targetDir, file) {
   if (tsconfig.includes(`"${file}"`)) return
   fs.writeFileSync(
     tsconfigPath,
-    tsconfig.replace(/("include": \[[^\]]*)\]/, `$1, "${file}"]`),
+    tsconfig.replace(/"include": \[([^\]]*)\]/, (_, list) => {
+      const files = [...list.matchAll(/"[^"]+"/g)].map(([name]) => name)
+      files.push(`"${file}"`)
+      const oneLine = `  "include": [${files.join(", ")}]`
+      if (oneLine.length <= LINE_WIDTH) return oneLine.trimStart()
+      return `"include": [\n${files.map((name) => `    ${name}`).join(",\n")}\n  ]`
+    }),
   )
 }

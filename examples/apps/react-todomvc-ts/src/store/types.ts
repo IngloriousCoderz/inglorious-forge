@@ -1,4 +1,4 @@
-import type { AppTypes, Task } from "../../types"
+import type { AppTypes, Task } from "#types"
 
 const TASKS_TO_REMOVE = 1
 const DEFAULT_ID = 1

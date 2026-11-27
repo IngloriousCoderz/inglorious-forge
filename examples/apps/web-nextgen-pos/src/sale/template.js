@@ -3,8 +3,8 @@ import { Button } from "@inglorious/ui/button"
 import { html } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 
-import { formatMoney } from "../domain/money.js"
-import { ReceiptTable } from "../receipt-table/index.js"
+import { formatMoney } from "@/domain/money.js"
+import { ReceiptTable } from "@/receipt-table/index.js"
 
 const TWENTY = 2000
 const FIFTY = 5000

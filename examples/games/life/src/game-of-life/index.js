@@ -1,5 +1,6 @@
-import { createLifeGame } from "../game.js"
-import { createGrid, place } from "../grid.js"
+import { createLifeGame } from "@/game.js"
+import { createGrid, place } from "@/grid.js"
+
 import { WRAPS } from "./constants.js"
 import { generations } from "./systems/generations.js"
 import { createCell } from "./types/cell.js"

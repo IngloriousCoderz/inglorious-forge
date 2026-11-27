@@ -1,7 +1,7 @@
 import { html } from "@inglorious/web"
 import { classMap } from "@inglorious/web/directives/class-map"
 
-import { filteredTasks } from "../store/select"
+import { filteredTasks } from "@/store/select"
 
 const TASKS_TO_REMOVE = 1
 const DEFAULT_ID = 1

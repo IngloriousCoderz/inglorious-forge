@@ -1,7 +1,7 @@
 import { createDevtools } from "@inglorious/store/client/devtools"
 import { withTransitions } from "@inglorious/ui/view-transitions"
 
-import { NO_TAB, tabOf } from "../tabs.js"
+import { NO_TAB, tabOf } from "@/tabs.js"
 
 export const middlewares = [
   withTransitions({

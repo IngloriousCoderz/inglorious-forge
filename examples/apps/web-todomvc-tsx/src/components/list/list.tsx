@@ -1,7 +1,8 @@
 import { classMap } from "@inglorious/web/directives/class-map"
 
-import type { ListType, Task } from "../../../types"
-import { filteredTasks } from "../../store/select"
+import { filteredTasks } from "@/store/select"
+import type { ListType, Task } from "#types"
+
 import classes from "./list.module.css"
 
 const TASKS_TO_REMOVE = 1

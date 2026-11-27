@@ -1,8 +1,13 @@
+import { fileURLToPath } from "node:url"
+
 import { defineConfig } from "vite"
 import babel from "vite-plugin-babel"
 
 export default defineConfig({
-  resolve: { extensions: [".js", ".jsx", ".ts", ".tsx", ".ijs"] },
+  resolve: {
+    alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) },
+    extensions: [".js", ".jsx", ".ts", ".tsx", ".ijs"],
+  },
 
   plugins: [
     babel({

@@ -1,6 +1,6 @@
 ---
 name: forge-best-practices
-description: Code style for Inglorious Forge and projects in its style - kebab-case paths, named numbers, exports before support functions, types in types/. Load when writing, moving, or reviewing such code.
+description: Code style for Inglorious Forge and projects in its style - kebab-case paths, named numbers, exports before support functions, `@/` and `#types` imports instead of `../`, types in types/. Load when writing, moving, or reviewing such code.
 ---
 
 # Forge Best Practices
@@ -27,9 +27,13 @@ Name every number as a constant below the imports, after its meaning (`ONE_SECON
 
 Don't reorder existing exports. Move a function's doc comment with it.
 
+## Imports
+
+In apps and games, import from the same folder or below with a relative path (`./message`, `./store/entities`), from anywhere else in `src/` with `@/` (`@/store`, not `../../store`), and type declarations from `#types` (`import type { AppState } from "#types"`, not `../../../types`). Never `../`. `@/` is an alias for `src/` set up in `vite.config` (SSX does it itself), in `tsconfig.json`/`jsconfig.json` for editors, and in the import map of `minimal`. `#types` is the `imports` field of `package.json`, pointing to `types/index.d.ts`; it reads as nothing in `src/`, so there is no `@/types`. Published packages keep relative imports: their consumers resolve neither.
+
 ## Types
 
-Type definitions live in `types/*.d.ts`, one per subject, never in `.js`/`.ts` code. Import with `import type` or JSDoc `@typedef {import(...)}`. Keep `skipLibCheck` off unless a library's typings break. No code in `types/`.
+Type definitions live in `types/*.d.ts` at the project root, one per subject, never in `.js`/`.ts` code. Import with `import type` or JSDoc `@typedef {import(...)}`. Keep `skipLibCheck` off unless a library's typings break. No code in `types/`.
 
 ## Comments
 

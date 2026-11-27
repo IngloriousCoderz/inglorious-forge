@@ -1,5 +1,20 @@
 # @inglorious/create-game
 
+## 1.4.0
+
+### Minor Changes
+
+- Point `@/` to `src/` in every scaffolded project, and use it for imports from outside a file's folder (`@/store` instead of `../store`). Imports from the same folder or below stay relative. TypeScript projects import their declarations from `#types`, which the `imports` field of `package.json` points to `types/index.d.ts`. JavaScript projects get a `jsconfig.json` so editors resolve `@/`, and `minimal` maps `@/` in its import map
+
+### Patch Changes
+
+- 45e960b: Mention in the README that the StackBlitz templates come with the agent skills installed
+- 318f846: Link the StackBlitz versions of the `js` and `ts` templates from the README
+- Updated dependencies
+- Updated dependencies [45e960b]
+- Updated dependencies [318f846]
+  - @inglorious/create-app@1.32.0
+
 ## 1.3.0
 
 ### Minor Changes

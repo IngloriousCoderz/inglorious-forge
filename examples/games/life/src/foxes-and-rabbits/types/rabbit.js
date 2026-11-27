@@ -1,11 +1,11 @@
 import { renderRectangle } from "@inglorious/renderer-2d/shapes/rectangle"
 
-import { CELL_SIZE } from "../../constants.js"
-import { aged } from "../behaviors/aged.js"
-import { breeds } from "../behaviors/breeds.js"
-import { dies } from "../behaviors/dies.js"
-import { movesOnGrid } from "../behaviors/moves-on-grid.js"
-import { RABBIT_COLOR } from "../constants.js"
+import { CELL_SIZE } from "@/constants.js"
+import { aged } from "@/foxes-and-rabbits/behaviors/aged.js"
+import { breeds } from "@/foxes-and-rabbits/behaviors/breeds.js"
+import { dies } from "@/foxes-and-rabbits/behaviors/dies.js"
+import { movesOnGrid } from "@/foxes-and-rabbits/behaviors/moves-on-grid.js"
+import { RABBIT_COLOR } from "@/foxes-and-rabbits/constants.js"
 
 /**
  * @param {Object} grid - The board the animals stand on.

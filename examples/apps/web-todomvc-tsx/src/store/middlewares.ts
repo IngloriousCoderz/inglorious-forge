@@ -1,7 +1,7 @@
 import type { Middleware } from "@inglorious/store"
 import { createDevtools } from "@inglorious/store/client/devtools"
 
-import type { AppEntity, AppState } from "../../types"
+import type { AppEntity, AppState } from "#types"
 
 export const middlewares: Middleware<AppEntity, AppState>[] = []
 

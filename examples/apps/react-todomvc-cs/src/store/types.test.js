@@ -4,7 +4,7 @@ import { createStore } from "@inglorious/store"
 import { types } from "./types"
 import { entities } from "./entities"
 
-vi.mock("../services/client", () => ({
+vi.mock("@/services/client", () => ({
   fetchTasks: vi.fn(),
   createTask: vi.fn(),
   updateTask: vi.fn(),
@@ -12,7 +12,7 @@ vi.mock("../services/client", () => ({
   clearCompleted: vi.fn(),
 }))
 
-import * as client from "../services/client"
+import * as client from "@/services/client"
 
 beforeEach(() => {
   client.fetchTasks.mockReset()

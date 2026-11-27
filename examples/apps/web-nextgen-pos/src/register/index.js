@@ -4,7 +4,7 @@ import { Card } from "@inglorious/ui/card"
 import { html } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 
-import { renderPatterns } from "../patterns/index.js"
+import { renderPatterns } from "@/patterns/index.js"
 
 const STATE_LABELS = {
   open: "Entering items",

@@ -1,7 +1,8 @@
 import { createStore } from "@inglorious/store"
 
-import { LiveLogo } from "../components/live-logo"
-import { LogoForm } from "../components/logo-form"
+import { LiveLogo } from "@/components/live-logo"
+import { LogoForm } from "@/components/logo-form"
+
 import { entities } from "./entities"
 import { middlewares } from "./middlewares"
 

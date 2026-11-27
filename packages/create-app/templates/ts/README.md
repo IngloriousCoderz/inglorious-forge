@@ -29,3 +29,5 @@ This will start a Vite development server. Open your browser to the local URL pr
 - `vite.config.ts`: Vite configuration file.
 - `tsconfig.json`: TypeScript configuration for the project.
 - `package.json`: Project metadata and dependencies.
+
+Imports from outside a file's folder start with `@/`, which points to `src/` (`@/store`); imports from the same folder or below stay relative (`./message`). Type declarations come from `#types` (`import type { AppState } from "#types"`), which the `imports` field of `package.json` points to `types/index.d.ts`.

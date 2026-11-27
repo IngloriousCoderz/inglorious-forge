@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest"
 
-import { BOARD_COLUMNS, BOARD_ROWS } from "../src/constants.js"
-import { createGrid, place, toPosition } from "../src/grid.js"
+import { BOARD_COLUMNS, BOARD_ROWS } from "@/constants.js"
+import { createGrid, place, toPosition } from "@/grid.js"
 
 const A_ROW = 10
 const A_COLUMN = 10

@@ -10,4 +10,4 @@ Browsers only load modules over HTTP, so serve the folder rather than opening `i
 npx serve
 ```
 
-Then edit the files in `src/` and reload the page.
+Then edit the files in `src/` and reload the page. The import map points `@/` at `src/`, so a file imports from outside its folder with `@/store/index.js` rather than `../store/index.js`.

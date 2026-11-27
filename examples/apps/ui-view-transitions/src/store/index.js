@@ -1,11 +1,12 @@
 import { createStore } from "@inglorious/store"
 import { Router, setRoutes } from "@inglorious/web/router"
 
-import { About } from "../views/about.js"
-import { ArticleDetail } from "../views/article-detail.js"
-import { ArticleList } from "../views/article-list.js"
-import { Home } from "../views/home.js"
-import { NotFound } from "../views/not-found.js"
+import { About } from "@/views/about.js"
+import { ArticleDetail } from "@/views/article-detail.js"
+import { ArticleList } from "@/views/article-list.js"
+import { Home } from "@/views/home.js"
+import { NotFound } from "@/views/not-found.js"
+
 import { entities } from "./entities.js"
 import { middlewares } from "./middlewares.js"
 import { routes } from "./routes.js"

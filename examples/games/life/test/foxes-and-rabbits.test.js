@@ -1,7 +1,7 @@
 import { createGame } from "@inglorious/engine/test"
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest"
 
-import { createFoxesAndRabbits } from "../src/foxes-and-rabbits/index.js"
+import { createFoxesAndRabbits } from "@/foxes-and-rabbits/index.js"
 
 const A_FRAME = 1
 

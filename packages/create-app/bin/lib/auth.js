@@ -5,7 +5,7 @@ import path from "path"
 import { AUTH_TEXTS } from "./auth-texts.js"
 import { copyDir } from "./file.js"
 import { importBlock } from "./imports.js"
-import { LINE_WIDTH, relative } from "./source.js"
+import { importPath, LINE_WIDTH } from "./source.js"
 
 export const AUTH_METHODS = {
   password: {
@@ -273,14 +273,16 @@ ${changeEmail}`,
   imports.push(
     'import { html, nothing } from "@inglorious/web"',
     'import { createAuth } from "@inglorious/web/auth"',
-    `import { authAdapter } from "${relative(app.layout.auth, "src/api/auth")}"`,
+    `import { authAdapter } from "${importPath(app.layout.auth, "src/api/auth")}"`,
   )
   if (app.i18n) {
-    imports.push(`import { t } from "${relative(app.layout.auth, "src/i18n")}"`)
+    imports.push(
+      `import { t } from "${importPath(app.layout.auth, "src/i18n")}"`,
+    )
   }
   if (ts) {
     imports.push(
-      `import type { AppApi, AppAuthEntity } from "${relative(app.layout.auth, "types")}"`,
+      'import type { AppApi, AppAuthEntity } from "#types"',
       'import type { TemplateResult } from "@inglorious/web"',
     )
   }

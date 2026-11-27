@@ -1,6 +1,6 @@
 import { html } from "@inglorious/web"
 
-import type { AboutType } from "../../types"
+import type { AboutType } from "#types"
 
 export const About: AboutType = {
   click(entity) {

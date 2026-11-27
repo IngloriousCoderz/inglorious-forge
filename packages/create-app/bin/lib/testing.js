@@ -5,7 +5,7 @@ import path from "path"
 import { VITEST_VERSION } from "./constants.js"
 import { includeInNodeProject } from "./file.js"
 import { importBlock } from "./imports.js"
-import { layout, relative } from "./source.js"
+import { layout } from "./source.js"
 
 const TEMPLATE_MESSAGE_DIR = "src/app/message"
 
@@ -56,12 +56,12 @@ export function addTestSupport(targetDir, pkg, options) {
     : TEMPLATE_MESSAGE_DIR
   const filePath = path.join(targetDir, dir, `index.test.${ext}`)
   fs.mkdirSync(path.dirname(filePath), { recursive: true })
-  fs.writeFileSync(filePath, messageTestSource(options, dir))
+  fs.writeFileSync(filePath, messageTestSource(options))
 
   appendToReadme(targetDir)
 }
 
-const SETUP_SOURCE = `import { ready } from "../i18n"
+const SETUP_SOURCE = `import { ready } from "@/i18n"
 
 // Tests compare translated text: wait for the catalogue first.
 await ready
@@ -118,15 +118,13 @@ export default mergeConfig(
 `
 }
 
-function messageTestSource({ isTypeScript, renderer }, dir) {
+function messageTestSource({ isTypeScript, renderer }) {
   const imports = [
     'import { trigger } from "@inglorious/web/test"',
     'import { describe, expect, it } from "vitest"',
   ]
   if (isTypeScript) {
-    imports.push(
-      `import type { MessageEntity } from "${relative(dir, "types")}"`,
-    )
+    imports.push('import type { MessageEntity } from "#types"')
   }
   if (renderer === "vue") {
     const line = 'import { Message } from "./index.vue"'

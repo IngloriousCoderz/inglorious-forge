@@ -2,7 +2,7 @@ import { clsx } from "clsx"
 
 import { useNotify, useSelector } from "./store"
 import { selectFilteredTasks } from "./store/selectors"
-import type { Task } from "../types"
+import type { Task } from "#types"
 
 export default function List() {
   const notify = useNotify()

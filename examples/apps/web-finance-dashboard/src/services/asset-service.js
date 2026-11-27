@@ -1,7 +1,8 @@
 import {
   getInstrumentDataBySymbol,
   getMockAssetUniverse,
-} from "../mocks/cascade.js"
+} from "@/mocks/cascade.js"
+
 import {
   fmpGet,
   hasFmpConfig,

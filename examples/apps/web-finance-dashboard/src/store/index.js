@@ -5,10 +5,11 @@ import { createStore } from "@inglorious/store"
 import { DataGrid } from "@inglorious/ui/data-grid"
 import { Router } from "@inglorious/web/router"
 
-import { AssetPage } from "../pages/asset.js"
-import { DashboardPage } from "../pages/dashboard.js"
-import { NotFoundPage } from "../pages/not-found.js"
-import { ScreenerPage } from "../pages/screener.js"
+import { AssetPage } from "@/pages/asset.js"
+import { DashboardPage } from "@/pages/dashboard.js"
+import { NotFoundPage } from "@/pages/not-found.js"
+import { ScreenerPage } from "@/pages/screener.js"
+
 import { entities } from "./entities.js"
 import { middlewares } from "./middlewares.js"
 

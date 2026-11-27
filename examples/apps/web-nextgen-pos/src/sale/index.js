@@ -1,6 +1,7 @@
 import { fsm } from "@inglorious/store/fsm"
 
-import { summarize } from "../domain/sale.js"
+import { summarize } from "@/domain/sale.js"
+
 import { base, states } from "./handlers.js"
 import { template } from "./template.js"
 

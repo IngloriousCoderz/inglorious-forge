@@ -1,11 +1,11 @@
 import { createGame } from "@inglorious/engine/test"
 import { beforeEach, describe, test } from "vitest"
 
-import { brickColourOf, brickTierOf } from "../src/atlas.js"
-import { LAYER_BRICK } from "../src/constants.js"
-import gameConfig from "../src/game.ijs"
-import { createLevel } from "../src/levelmaker.ijs"
-import { BRICK_COLORS } from "../src/types/brick.ijs"
+import { brickColourOf, brickTierOf } from "@/atlas.js"
+import { LAYER_BRICK } from "@/constants.js"
+import gameConfig from "@/game.ijs"
+import { createLevel } from "@/levelmaker.ijs"
+import { BRICK_COLORS } from "@/types/brick.ijs"
 
 const TEN = 10
 const ARROW_SIZE = 24

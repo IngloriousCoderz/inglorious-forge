@@ -1,6 +1,6 @@
 import { renderLocals, selectChange, tabLocals } from "./app-lit.js"
 import { importBlock } from "./imports.js"
-import { relative } from "./source.js"
+import { importPath } from "./source.js"
 
 export const extension = (app) => (app.isTypeScript ? "tsx" : "jsx")
 
@@ -30,12 +30,11 @@ export function appSource(app, { pages, navIcons }) {
     if (app.links) imports.push('import { Link } from "@inglorious/ui/link"')
     if (app.i18n) imports.push('import { Select } from "@inglorious/ui/select"')
   }
-  if (app.isTypeScript)
-    imports.push(
-      `import type { AppApi } from "${relative(app.layout.app, "types")}"`,
-    )
+  if (app.isTypeScript) imports.push('import type { AppApi } from "#types"')
   if (app.i18n)
-    imports.push(`import { t } from "${relative(app.layout.app, "src/i18n")}"`)
+    imports.push(
+      `import { t } from "${importPath(app.layout.app, "src/i18n")}"`,
+    )
 
   const signature = app.isTypeScript
     ? "render(props: Record<string, unknown> | null, api: AppApi)"
@@ -62,7 +61,7 @@ ${shell}
 
 export function homeSource(app, { showcase }) {
   const imports = [
-    `import { Message } from "${relative(app.layout.home, app.layout.message)}"`,
+    `import { Message } from "${importPath(app.layout.home, app.layout.message)}"`,
   ]
   for (const icon of showcase) {
     imports.push(`import ${icon.name} from "${icon.from}"`)
@@ -71,7 +70,9 @@ export function homeSource(app, { showcase }) {
     imports.push('import { Icon } from "@inglorious/ui/icon"')
   }
   if (app.i18n)
-    imports.push(`import { t } from "${relative(app.layout.home, "src/i18n")}"`)
+    imports.push(
+      `import { t } from "${importPath(app.layout.home, "src/i18n")}"`,
+    )
 
   const text = (key, fallback) => (app.i18n ? `{t("${key}")}` : fallback)
   const icons = showcase.length
@@ -107,7 +108,7 @@ ${expectError(app, "          ")}          <Message entityId="message3" />!
 
 export function aboutSource(app) {
   const head = app.i18n
-    ? `import { t } from "${relative(app.layout.about, "src/i18n")}"\n\n`
+    ? `import { t } from "${importPath(app.layout.about, "src/i18n")}"\n\n`
     : ""
   const text = (key, fallback) => (app.i18n ? `{t("${key}")}` : fallback)
 
@@ -127,13 +128,11 @@ export function aboutSource(app) {
 export function messageSource(app) {
   const imports = []
   if (app.isTypeScript) {
-    imports.push(
-      `import type { MessageType } from "${relative(app.layout.message, "types")}"`,
-    )
+    imports.push('import type { MessageType } from "#types"')
   }
   if (app.i18n)
     imports.push(
-      `import { t } from "${relative(app.layout.message, "src/i18n")}"`,
+      `import { t } from "${importPath(app.layout.message, "src/i18n")}"`,
     )
   const greeting = app.i18n ? '{t("message.hello", { who })}' : "Hello {who}"
   const annotation = app.isTypeScript ? ": MessageType" : ""

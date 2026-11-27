@@ -1,7 +1,8 @@
 import { useDispatch, useSelector } from "react-redux"
 
-import { formSubmit } from "../store/actions"
-import { selectValue } from "../store/selectors"
+import { formSubmit } from "@/store/actions"
+import { selectValue } from "@/store/selectors"
+
 import { inputChange } from "./form"
 
 export default function Form() {

@@ -1,4 +1,4 @@
-import { useEntity, useNotify } from "../store"
+import { useEntity, useNotify } from "@/store"
 
 export default function Form() {
   const notify = useNotify()

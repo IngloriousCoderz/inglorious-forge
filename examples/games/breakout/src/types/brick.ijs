@@ -2,7 +2,7 @@ import { emitBurst } from "@inglorious/engine/behaviors/particles.js"
 import { renderImage } from "@inglorious/renderer-2d/image/image.js"
 import { v } from "@inglorious/utils/v.js"
 
-import { brickColourOf, brickFrame, brickTierOf } from "../atlas.js"
+import { brickColourOf, brickFrame, brickTierOf } from "@/atlas.js"
 
 // The colours of the five bricks on the sheet, which the debris of a knocked brick is
 // coloured to match. These are the original's own values rather than anything read off

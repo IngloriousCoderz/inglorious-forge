@@ -10,6 +10,10 @@ import path from "path"
 
 const BACKGROUND_COLOR = "#1d1f33"
 
+const ALIAS = `  resolve: {
+    alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) },
+  },`
+
 const BABEL_PLUGINS = {
   ijs: `babel({
       include: "src/**",
@@ -64,6 +68,7 @@ export function writeViteConfig(targetDir, { template, appName, pwa }) {
     )
   }
 
+  imports.unshift(`import { fileURLToPath } from "node:url"${EOL}`)
   imports.push(`import { defineConfig } from "vitest/config"`)
 
   const pluginsSource = plugins.length
@@ -72,7 +77,7 @@ export function writeViteConfig(targetDir, { template, appName, pwa }) {
 
   fs.writeFileSync(
     path.join(targetDir, "vite.config.js"),
-    `${imports.join(EOL)}${EOL}${EOL}export default defineConfig({${EOL}${pluginsSource}  test: { environment: "jsdom" },${EOL}})${EOL}`,
+    `${imports.join(EOL)}${EOL}${EOL}export default defineConfig({${EOL}${pluginsSource}${ALIAS}${EOL}${EOL}  test: { environment: "jsdom" },${EOL}})${EOL}`,
   )
 }
 

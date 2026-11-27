@@ -58,7 +58,7 @@
     },
     {
       "name": "forge-best-practices",
-      "description": "Code style for Inglorious Forge and projects in its style - kebab-case paths, named numbers, exports before support functions, types in types/. Load when writing, moving, or reviewing such code.",
+      "description": "Code style for Inglorious Forge and projects in its style - kebab-case paths, named numbers, exports before support functions, `@/` and `#types` imports instead of `../`, types in types/. Load when writing, moving, or reviewing such code.",
       "files": [
         "SKILL.md"
       ]

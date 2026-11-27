@@ -1,5 +1,5 @@
-import { toPosition } from "../../grid.js"
-import { getRandomNeighbor } from "../index.js"
+import { getRandomNeighbor } from "@/foxes-and-rabbits/index.js"
+import { toPosition } from "@/grid.js"
 
 export function movesOnGrid(grid) {
   return (type) => ({

@@ -29,3 +29,5 @@ This will start a Vite development server. Open your browser to the local URL pr
 - `src/`: Contains your app's JavaScript source code.
 - `vite.config.js`: Vite configuration file.
 - `package.json`: Project metadata and dependencies.
+
+Imports from outside a file's folder start with `@/`, which points to `src/` (`@/store`); imports from the same folder or below stay relative (`./message`).

@@ -11,8 +11,9 @@ import {
   PADDLE_HEIGHT,
   PADDLE_WIDTH,
   WIDTH,
-} from "../constants.js"
-import { ENTRIES as HIGH_SCORE_ROWS } from "../high-scores.js"
+} from "@/constants.js"
+import { ENTRIES as HIGH_SCORE_ROWS } from "@/high-scores.js"
+
 import {
   ENTER_SCORE_PROMPT_PLACEMENT,
   ENTERED_LETTER_PLACEMENT,

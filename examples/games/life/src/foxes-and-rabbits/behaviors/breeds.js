@@ -1,7 +1,7 @@
 import { random } from "@inglorious/utils/math/rng"
 
-import { getAvailableNeighbors } from "../index.js"
-import { createAnimal } from "../index.js"
+import { getAvailableNeighbors } from "@/foxes-and-rabbits/index.js"
+import { createAnimal } from "@/foxes-and-rabbits/index.js"
 
 /**
  * Breeds an animal once it is old enough, if the dice agree and there is room.

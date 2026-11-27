@@ -1,6 +1,7 @@
 import { mount } from "@inglorious/web"
 
-import type { AppApi } from "../types"
+import type { AppApi } from "#types"
+
 // @ts-expect-error - Handled by @inglorious/vite-plugin-vue
 import { App } from "./app/index.vue"
 import { store } from "./store"

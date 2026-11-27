@@ -6,7 +6,8 @@
     "moduleResolution": "bundler",
     "target": "ES2020",
     "noEmit": true,
-    "verbatimModuleSyntax": true
+    "verbatimModuleSyntax": true,
+    "paths": { "@/*": ["./src/*"] }
   },
   "include": ["src"]
 }

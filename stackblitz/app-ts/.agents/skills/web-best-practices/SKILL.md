@@ -18,12 +18,13 @@ src/
 ├── api/
 ├── store/        # entities, middlewares, routes
 └── styles/
-types/            # TS type definitions only
+types/            # TS type definitions only, imported as #types
 ```
 
 - Group by where code belongs, not by store wiring. One screen: no `views/`, it lives in `app/`.
 - Move a piece to `common/` once a second place renders it.
 - No code folder named `types/` or `components/`.
+- Import across folders with `@/` (`@/common/prompt`), within a folder relatively (`./message`), type declarations from `#types`; see [forge-best-practices](../forge-best-practices/SKILL.md).
 - Libraries group by intent once large: `controls/`, `layout/`, `content/`, `widgets/`.
 
 ## Component folder

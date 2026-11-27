@@ -1,7 +1,8 @@
 import { html } from "@inglorious/web"
 import { Form } from "@inglorious/web/form"
 
-import { createInvoiceLineItem } from "../store/entities"
+import { createInvoiceLineItem } from "@/store/entities"
+
 import { renderActionsSection } from "./actions"
 import { renderDetailsSection } from "./details"
 import { renderHeroSection } from "./hero"

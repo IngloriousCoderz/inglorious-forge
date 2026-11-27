@@ -4,7 +4,7 @@ import type { Event } from "@inglorious/store"
 
 import { types } from "./types"
 import { entities } from "./entities"
-import type { AppEntity, AppState } from "../../types"
+import type { AppEntity, AppState } from "#types"
 
 it("should update the form value on inputChange", () => {
   const event: Event = { type: "inputChange", payload: "Hello world!" }

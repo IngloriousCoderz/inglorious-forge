@@ -2,7 +2,7 @@ import { createGame } from "@inglorious/engine/test.js"
 import { v } from "@inglorious/utils/v.js"
 import { beforeEach, describe, test } from "vitest"
 
-import gameConfig from "../src/game.its"
+import gameConfig from "@/game.its"
 
 describe("game", () => {
   let game

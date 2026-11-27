@@ -1,7 +1,7 @@
 import { convertSlice } from "@inglorious/store/migration/rtk"
 import { createSlice } from "@reduxjs/toolkit"
 
-import { completedClear, formSubmit } from "../store/actions"
+import { completedClear, formSubmit } from "@/store/actions"
 
 const TASKS_TO_REMOVE = 1
 const DEFAULT_ID = 1

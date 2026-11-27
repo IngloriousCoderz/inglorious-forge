@@ -2,7 +2,8 @@ import type { Event } from "@inglorious/store"
 import { trigger } from "@inglorious/web/test"
 import { expect, it } from "vitest"
 
-import type { FooterEntity } from "../../../types"
+import type { FooterEntity } from "#types"
+
 import { Footer } from "./footer"
 
 it("should update the filter on filterChange", () => {
