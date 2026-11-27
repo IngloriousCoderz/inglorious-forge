@@ -234,3 +234,28 @@ export const asyncSettingsType: TypeDefinition<SettingsEntity> = [
     }),
   }),
 ]
+
+// ---- untyped stores take behaviors of any kind ----
+
+const counting = (
+  type: EntityType<CounterEntity>,
+): EntityType<CounterEntity> => ({
+  increment(entity, payload, api) {
+    type.increment?.(entity, payload, api)
+  },
+})
+const passing = (type: EntityType) => ({ ...type })
+
+export const untyped = createStore({
+  types: {
+    Counter: [
+      {
+        increment(entity: CounterEntity) {
+          entity.value++
+        },
+      },
+      counting,
+      passing,
+    ],
+  },
+})

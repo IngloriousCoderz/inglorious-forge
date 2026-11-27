@@ -44,6 +44,7 @@ import {
   toSpherical,
   toString,
   unit,
+  UNIT_VECTOR,
   zero,
 } from "./vector.js"
 
@@ -212,6 +213,14 @@ test("it should raise a scalar to the power of each component of a vector", () =
   const expectedResult = v(2, 4, 8)
 
   expect(powerOf(scalar, vector)).toStrictEqual(expectedResult)
+})
+
+test("a vector from no angle should be a fresh one", () => {
+  const direction = fromAngle(0)
+  direction[0] = -1
+
+  expect(fromAngle(0)).toStrictEqual(v(1, 0, 0))
+  expect(UNIT_VECTOR).toStrictEqual(v(1, 0, 0))
 })
 
 test("it should rotate a 2D vector by a certain angle", () => {

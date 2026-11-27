@@ -84,3 +84,25 @@ api.notify("#agGrid:apiCall", {
 ```
 
 Backward-compatible aliases still exist (`gridMounted`, `setRowData`, `setColumnDefs`, `setGridOptions`).
+
+## TypeScript
+
+`AgGridEntity<TData>` types an entity for rows of `TData`, with AG Grid's own `ColDef` and `GridOptions`, so a column's `field` must be one of the row's. `apiCall` checks the method name and its arguments against AG Grid's `GridApi`:
+
+```ts
+import { AgGrid, type AgGridEntity } from "@inglorious/ag-grid"
+
+interface Car {
+  id: string
+  make: string
+  price: number
+}
+
+interface CarGridEntity extends AgGridEntity<Car> {
+  type: "CarGrid"
+}
+
+const types = { CarGrid: AgGrid }
+
+api.notify("#cars:apiCall", { method: "ensureIndexVisible", args: [3] })
+```

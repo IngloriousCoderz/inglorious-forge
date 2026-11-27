@@ -1,17 +1,16 @@
-import { Api } from "../mount"
+import type { LimitedBehavior } from "./limit"
 
-export interface DebounceBehavior {
-  destroy?: (entity: any, payload?: any, api?: Api) => void
-  [handlerName: string]:
-    ((entity: any, payload?: any, api?: Api) => void) | undefined
-}
+/** Debounces the named handlers, each by `delay` milliseconds. */
+export declare function withDebounce<TName extends string>(
+  delay: number,
+  handlerNames: TName[],
+): <TType extends object>(
+  type: TType,
+) => LimitedBehavior<TType, TName, "Debounced">
 
-export declare function withDebounce(
-  config: number,
-  handlerNames: string[],
-): <T extends Record<string, any>>(type: T) => DebounceBehavior
-
-export declare function withDebounce(
-  config: Record<string, number>,
-  handlerNames?: undefined,
-): <T extends Record<string, any>>(type: T) => DebounceBehavior
+/** Debounces each handler by its own delay in milliseconds. */
+export declare function withDebounce<TDelays extends Record<string, number>>(
+  delays: TDelays,
+): <TType extends object>(
+  type: TType,
+) => LimitedBehavior<TType, keyof TDelays & string, "Debounced">

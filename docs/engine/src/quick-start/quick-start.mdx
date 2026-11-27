@@ -137,7 +137,7 @@ To make things move and interact, use event handlers in your types:
 types: {
   Character: {
     // Drawing logic here
-    render(entity, payload, api) { /* ... */ },
+    render(entity, ctx, api) { /* ... */ },
 
     // Event handlers here
     update(entity, payload, api) {
@@ -147,6 +147,36 @@ types: {
   }
 }
 ```
+
+### 4. TypeScript
+
+The engine and the 2D renderer ship their types. Each module's types sit next to it, as in `@inglorious/engine/behaviors/physics/clamped.js`, and what they share is in `@inglorious/engine`: `GameConfig`, `GameEntity` for the `game` entity, `Entity` for anything in the world, `GameApi`, and `GameType`, `Handler` and `Render` to write types with:
+
+```ts
+import type { Entity, GameConfig, GameType } from "@inglorious/engine"
+import { clamped } from "@inglorious/engine/behaviors/physics/clamped.js"
+import { renderCircle } from "@inglorious/renderer-2d/shapes/circle.js"
+import { add, scale, type Vector3 } from "@inglorious/utils/vector.js"
+
+interface BallEntity extends Entity {
+  position: Vector3
+  velocity: Vector3
+}
+
+const Ball: GameType<BallEntity> = {
+  render: renderCircle,
+  update(entity, dt: number) {
+    entity.position = add(entity.position, scale(entity.velocity, dt))
+  },
+}
+
+export default {
+  types: { Ball: [Ball, clamped()] },
+  entities: {},
+} satisfies GameConfig
+```
+
+A renderer checks the entity it draws: `renderText` wants a font size, so a type whose entity has a `Vector3` size cannot use it. In tests, `game.entity<BallEntity>("ball")` reads an entity with its type.
 
 ## Next Steps
 

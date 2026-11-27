@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/ssx",
-  "version": "2.5.1",
+  "version": "2.5.2",
   "description": "Server-Side-X. Xecution? Xperience? Who knows.",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -53,6 +53,7 @@
     "lint": "eslint .",
     "test:watch": "vitest",
     "test": "vitest run",
+    "test:types": "tsc -p type-tests",
     "dev": "node ./bin/ssx.js dev -r ./src/fixtures",
     "build": "node ./bin/ssx.js build -r ./src/fixtures",
     "preview": "node ./bin/ssx.js serve -r ./src/fixtures",
@@ -82,6 +83,7 @@
     "@inglorious/eslint-config": "workspace:*",
     "@inglorious/logo": "workspace:*",
     "prettier": "^3.10.1",
+    "typescript": "~7.0.2",
     "vitest": "^5.1.1"
   },
   "packageManager": "pnpm@12.15.0",

@@ -175,6 +175,10 @@ Like React and Svelte error boundaries, this only catches errors thrown **during
 
 Those belong to the store phase — handle them as `entity.error` state inside your handlers (see [Error Handling](./error-handling.md)). For a last-resort net around the _root_ render, see the [root-level guard](./error-handling.md#error-boundaries).
 
+## In TypeScript
+
+The decorators keep the types of what they wrap. `withDebounce(300, ["search"])` and `withThrottle` give back each named handler with its own payload, and the original under `searchDebounced` or `searchThrottled`. `withErrorBoundary` keeps the type's `render`; told the entity and the api, `withErrorBoundary<ChartEntity, AppApi>(fallback)` types them in the fallback too. The fallback's `error` is `unknown`, because anything can be thrown: check it with `error instanceof Error` before reading `error.message`. `withLiveReload<ChartEntity, AppApi>(config)` types the entity and the api in `payload` and `isLive`.
+
 ## Adding more decorators
 
 As the collection grows, additional decorators can be added in the same style. Keep each decorator focused on a single concern, return a behavior object that mirrors the wrapped type's handlers, and let the composed type decide how to use it.

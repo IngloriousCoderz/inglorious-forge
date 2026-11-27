@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.32.1
+
+### Patch Changes
+
+- Type the `ts` template's root `App.render` props as the `null` it is mounted with
+
 ## 1.32.0
 
 ### Minor Changes

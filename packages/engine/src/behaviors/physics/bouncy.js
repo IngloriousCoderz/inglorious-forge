@@ -15,7 +15,7 @@ export function bouncy(params) {
       defaults(entity, params)
     },
 
-    land(entity, entityId) {
+    land(entity, { entityId }) {
       if (entity.id === entityId) {
         entity.vy = jump(entity) * entity.bounciness
         entity.groundObject = undefined

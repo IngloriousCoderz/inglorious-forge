@@ -107,10 +107,15 @@ export type TypeDefinition<
 > = Behavior<TEntity, TApi> | Behavior<TEntity, TApi>[]
 
 /**
- * A type definition for any entity. A handler that accepts some entity also
- * accepts `never`, so every type fits here, whatever entity it is for.
+ * A behavior for any entity. A handler that accepts some entity also accepts
+ * `never`, and a function that extends some type can be handed `never`, so
+ * every behavior fits here, whatever entity it is for.
  */
-export type AnyTypeDefinition = TypeDefinition<never, never>
+export type AnyBehavior =
+  EntityType<never, never> | ((type: never) => EntityType<never, never>)
+
+/** A type definition for any entity: a behavior, or several. */
+export type AnyTypeDefinition = AnyBehavior | AnyBehavior[]
 
 /**
  * What each member of a type must be, told by its name: `render(props, api)`

@@ -2117,12 +2117,18 @@ importers:
       '@inglorious/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
+      '@inglorious/store':
+        specifier: workspace:*
+        version: link:../store
       '@inglorious/web':
         specifier: workspace:*
         version: link:../web
       prettier:
         specifier: ^3.10.1
         version: 3.10.1
+      typescript:
+        specifier: ~7.0.2
+        version: 7.0.2
       vitest:
         specifier: ^5.1.1
         version: 5.1.1(@types/node@26.6.6)(happy-dom@21.0.4)(jsdom@31.0.1)(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.108.2)(terser@5.51.2)(yaml@2.9.1))
@@ -2280,6 +2286,9 @@ importers:
       prettier:
         specifier: ^3.10.1
         version: 3.10.1
+      typescript:
+        specifier: ~7.0.2
+        version: 7.0.2
       vite:
         specifier: ^8.3.8
         version: 8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.108.2)(terser@5.51.2)(yaml@2.9.1)
@@ -2484,6 +2493,9 @@ importers:
       prettier:
         specifier: ^3.10.1
         version: 3.10.1
+      typescript:
+        specifier: ~7.0.2
+        version: 7.0.2
       vitest:
         specifier: ^5.1.1
         version: 5.1.1(@types/node@26.6.6)(happy-dom@21.0.4)(jsdom@31.0.1)(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.108.2)(terser@5.51.2)(yaml@2.9.1))
@@ -2609,6 +2621,9 @@ importers:
       prettier:
         specifier: ^3.10.1
         version: 3.10.1
+      typescript:
+        specifier: ~7.0.2
+        version: 7.0.2
       vitest:
         specifier: ^5.1.1
         version: 5.1.1(@types/node@26.6.6)(happy-dom@21.0.4)(jsdom@31.0.1)(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.108.2)(terser@5.51.2)(yaml@2.9.1))

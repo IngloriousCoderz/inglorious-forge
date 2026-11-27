@@ -1,11 +1,15 @@
-import type { Api, BaseEntity } from "@inglorious/store"
+import type {
+  GameEntity as EngineGameEntity,
+  Handler,
+  UpdateHandler,
+} from "@inglorious/engine"
 
-export interface GameEntity extends BaseEntity {
+export interface GameEntity extends EngineGameEntity {
   state: "play" | "over"
   timeLeft: number
 }
 
 export type GameType = {
-  update: (entity: GameEntity, dt: number, api: Api) => void
-  restart: (entity: GameEntity, payload: unknown, api: Api) => void
+  update: UpdateHandler<GameEntity>
+  restart: Handler<GameEntity>
 }

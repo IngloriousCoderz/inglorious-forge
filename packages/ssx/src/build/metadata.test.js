@@ -16,4 +16,28 @@ describe("extractPageMetadata", () => {
     expect(metadata.lastmod).toBeDefined()
     expect(consoleSpy).toHaveBeenCalled()
   })
+
+  it("should fall back on the sitemap's defaults", () => {
+    const store = { _api: {} }
+    const options = {
+      sitemap: { hostname: "https://example.com", defaults: { priority: 0.8 } },
+    }
+
+    const fallback = extractPageMetadata(
+      store,
+      { path: "/a", module: {} },
+      {},
+      options,
+    )
+    const own = extractPageMetadata(
+      store,
+      { path: "/b", module: { metadata: { priority: 0.2 } } },
+      {},
+      options,
+    )
+
+    expect(fallback.priority).toBe(0.8)
+    expect(fallback.changefreq).toBe("weekly")
+    expect(own.priority).toBe(0.2)
+  })
 })

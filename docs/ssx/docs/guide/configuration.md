@@ -28,17 +28,10 @@ export default {
   scripts: ["./scripts/analytics.js"],
 
   // Build options
-  basePath: "/",
   rootDir: "src",
   outDir: "dist",
   publicDir: "public",
   favicon: "/favicon.ico",
-
-  // Router config
-  router: {
-    trailingSlash: false,
-    scrollBehavior: "smooth",
-  },
 
   // i18n routing
   i18n: {
@@ -57,7 +50,7 @@ export default {
   // Build hooks
   hooks: {
     beforeBuild: async (config) => console.log("Starting build..."),
-    afterBuild: async (result) => console.log(`Built ${result.pages} pages`),
+    afterBuild: async (result) => console.log(`Built ${result.changed} pages`),
   },
 }
 ```

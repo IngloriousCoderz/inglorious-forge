@@ -1,11 +1,28 @@
-import type { TemplateResult } from "lit-html"
+import type { BaseEntity, Stored } from "@inglorious/store"
+import type { nothing, TemplateResult } from "lit-html"
 
-import { Api } from "../mount"
+import type { Api } from "../mount"
 
-export interface ErrorBoundaryBehavior {
-  render: (entity: any, api: Api) => TemplateResult | string
+/** What a type's `render` is, or a `render` of any entity when it has none. */
+type RenderOf<TType> = TType extends {
+  render?: infer TRender
 }
+  ? unknown extends TRender
+    ? (entity: Stored<BaseEntity>, api: Api) => unknown
+    : NonNullable<TRender>
+  : never
 
-export declare function withErrorBoundary(
-  fallback?: (error: Error, entity: any, api: Api) => TemplateResult | string,
-): <T extends Record<string, any>>(type: T) => ErrorBoundaryBehavior
+/**
+ * Renders the type as it does, and `fallback`'s template when that throws.
+ * The fallback receives what was thrown, which need not be an `Error`.
+ */
+export declare function withErrorBoundary<
+  TEntity extends BaseEntity = BaseEntity,
+  TApi extends Api = Api,
+>(
+  fallback?: (
+    error: unknown,
+    entity: Stored<TEntity>,
+    api: TApi,
+  ) => TemplateResult | string | typeof nothing,
+): <TType extends object>(type: TType) => { render: RenderOf<TType> }

@@ -3,7 +3,7 @@ import { random } from "@inglorious/utils/math/rng.js"
 import { v } from "@inglorious/utils/v.js"
 
 import { HEIGHT, MARGIN, WIDTH } from "@/constants.ts"
-import type { CoinType } from "#types"
+import type { CoinEntity, CoinType } from "#types"
 
 const Coin: CoinType = {
   render: renderCircle,
@@ -15,7 +15,7 @@ const Coin: CoinType = {
 
 export default Coin
 
-export function createCoin(id: string) {
+export function createCoin(id: string): CoinEntity {
   return {
     id,
     type: "Coin",

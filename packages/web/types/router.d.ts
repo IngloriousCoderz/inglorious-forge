@@ -106,10 +106,10 @@ export type RouterType = {
    * Initializes the router, sets up a popstate listener to handle browser navigation,
    * and intercepts clicks on local links.
    * @param entity The router state entity.
-   * @param payload The initialization payload (currently unused).
+   * @param payload Unused.
    * @param api The store API for interacting with the system.
    */
-  init(entity: RouterEntity, payload: any, api: Api): void
+  init(entity: RouterEntity, payload: void, api: Api): void
 
   /**
    * Navigates to a new route, updating the browser's history and the router entity state.
@@ -152,7 +152,7 @@ export type RouterType = {
   /**
    * Handles browser `popstate` events. May perform async loading for lazy routes.
    */
-  popstate(entity: RouterEntity, payload: any, api: Api): void | Promise<void>
+  popstate(entity: RouterEntity, payload: void, api: Api): void | Promise<void>
 
   /**
    * Handles successful async route loading for a pattern. Registers the

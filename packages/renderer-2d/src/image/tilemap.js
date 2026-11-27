@@ -55,7 +55,11 @@ export function renderTilemap(entity, ctx, api) {
         isFlippedVertically ? FLIP : NO_FLIP,
       )
 
-      renderImage({ image, sx, sy }, ctx, api)
+      renderImage(
+        { image: { ...image, x: sx * tileWidth, y: sy * tileHeight } },
+        ctx,
+        api,
+      )
 
       ctx.restore()
     })

@@ -1,3 +1,4 @@
+import type { GameConfig } from "@inglorious/engine"
 import {
   controlTypes,
   createControlEntities,
@@ -74,4 +75,4 @@ export default {
       best: 0,
     },
   },
-}
+} satisfies GameConfig

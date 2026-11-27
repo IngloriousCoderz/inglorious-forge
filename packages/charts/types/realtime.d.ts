@@ -1,3 +1,5 @@
+import type { Api } from "@inglorious/web"
+
 import type { StreamEntity } from "./index"
 
 /** How a realtime chart streams, on its entity's `realtime` field. */
@@ -18,7 +20,7 @@ export interface RealtimeEntity extends StreamEntity {
 
 /** The events `withRealtime` adds to a chart type. */
 export type RealtimeHandlers = {
-  create(entity: RealtimeEntity, payload?: unknown, api?: unknown): void
+  create(entity: RealtimeEntity, payload: unknown, api: Api): void
   /**
    * Adds a point: a number, put at the next index under `streamYKey`, or a
    * whole data point.

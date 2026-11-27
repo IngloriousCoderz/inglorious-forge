@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/renderer-2d",
-  "version": "22.0.13",
+  "version": "22.1.0",
   "description": "A renderer for the Inglorious Engine, using the Context2D of the Canvas API.",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -15,11 +15,19 @@
   },
   "type": "module",
   "exports": {
-    ".": "./src/index.js",
+    ".": {
+      "types": "./types/index.d.ts",
+      "import": "./src/index.js"
+    },
+    "./*.js": {
+      "types": "./types/*.d.ts",
+      "import": "./src/*.js"
+    },
     "./*": "./src/*"
   },
   "files": [
-    "src"
+    "src",
+    "types"
   ],
   "publishConfig": {
     "access": "public"
@@ -28,7 +36,8 @@
     "format": "prettier --write .",
     "lint": "eslint .",
     "test:watch": "vitest",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:types": "tsc -p type-tests"
   },
   "peerDependencies": {
     "@inglorious/engine": "workspace:^",
@@ -40,6 +49,7 @@
     "@inglorious/utils": "workspace:*",
     "eslint": "^10.15.0",
     "prettier": "^3.10.1",
+    "typescript": "~7.0.2",
     "vitest": "^5.1.1"
   }
 }

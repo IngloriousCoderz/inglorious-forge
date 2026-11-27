@@ -111,6 +111,12 @@ Acceleration corners are y-up (negative falls). The particle type needs a render
 
 `systems: [{ update(state, deltaTime, api) {...} }]` run after entity handlers.
 
+## TypeScript
+
+- Engine and renderer-2d ship types per module (`@inglorious/engine/behaviors/physics/clamped.js`); shared ones from `@inglorious/engine`: `GameConfig`, `GameEntity` (the `game` entity), `Entity`, `GameApi`, `GameType<E>`, `Handler<E, Payload>`, `UpdateHandler<E>`, `Render<E>`. Never `declare module "@inglorious/engine/*"`.
+- Entities extend the renderer's: `CircleEntity`, `RectangleEntity`, `TextEntity` (font `size: number`), `ImageEntity`. Config: `export default { ... } satisfies GameConfig`. Tests: `game.entity<PlayerEntity>("player")`.
+- IngloriousScript operators need `// @ts-expect-error` on the line.
+
 ## IngloriousScript
 
 With `babel-plugin-inglorious-script` only: `(position + velocity * dt) % worldSize` instead of `mod(add(position, scale(velocity, dt)), worldSize)` from `@inglorious/utils/math/vector.js`.

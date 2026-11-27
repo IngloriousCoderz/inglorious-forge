@@ -1,5 +1,16 @@
 # @inglorious/ssx
 
+## 2.5.2
+
+### Patch Changes
+
+- Run `hooks.beforeBuild` and `hooks.afterBuild`, and give pages without a `changefreq` or `priority` the sitemap's `defaults`. `SiteConfig` types the options SSX reads (`dir`, `head`, `prescripts`, `layout`, `i18n`, `incremental`), the pages `sitemap.filter` and `rss.filter` receive, and the build's result, and drops `basePath` and `router`, which nothing read
+- Updated dependencies
+- Updated dependencies
+  - @inglorious/utils@5.4.2
+  - @inglorious/store@12.9.2
+  - @inglorious/web@6.31.4
+
 ## 2.5.1
 
 ### Patch Changes

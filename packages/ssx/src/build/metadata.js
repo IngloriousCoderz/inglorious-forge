@@ -13,13 +13,14 @@ const DEFAULT_OPTIONS = {
 
 export function extractPageMetadata(store, page, entity, options = {}) {
   const { path, module } = page
-  const { hostname = "" } = options.sitemap ?? {}
+  const { hostname = "", defaults } = options.sitemap ?? {}
+  const sitemapDefaults = { ...DEFAULT_OPTIONS, ...defaults }
 
   const getPageOption = createGetPageOption(store, module, entity)
 
   const updatedAt = getPageOption("updatedAt", DEFAULT_OPTIONS)
-  const changefreq = getPageOption("changefreq", DEFAULT_OPTIONS)
-  const priority = getPageOption("priority", DEFAULT_OPTIONS)
+  const changefreq = getPageOption("changefreq", sitemapDefaults)
+  const priority = getPageOption("priority", sitemapDefaults)
 
   const loc = `${hostname}${path}`
 

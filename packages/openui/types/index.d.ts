@@ -1,4 +1,4 @@
-import type { TemplateResult } from "@inglorious/web"
+import type { Api, TemplateResult } from "@inglorious/web"
 import type {
   ActionEvent,
   ActionPlan,
@@ -275,7 +275,7 @@ export type OpenUIType = {
     entity: OpenUIEntity,
     payload: { statementId: string; error: string },
   ): void
-  render(entity: OpenUIEntity, api: unknown): TemplateResult | symbol
+  render(entity: OpenUIEntity, api: Api): TemplateResult | symbol
 }
 
 /** Creates the type that renders OpenUI Lang answers with `library`. */

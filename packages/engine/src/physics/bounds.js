@@ -88,7 +88,7 @@ export function clampToBounds(
 }
 
 export function flip(entity, [maxX, maxZ]) {
-  const { x, z } = entity.position
+  const [x, , z] = entity.position
 
   entity.collisions ??= {}
   entity.collisions.bounds ??= {}

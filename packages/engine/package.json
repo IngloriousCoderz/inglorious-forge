@@ -1,6 +1,6 @@
 {
   "name": "@inglorious/engine",
-  "version": "24.1.5",
+  "version": "24.2.0",
   "description": "A JavaScript game engine written with global state, immutability, and pure functions in mind. Have fun(ctional programming) with it!",
   "author": "Matteo Antony Mistretta <antony.mistretta@gmail.com> (https://ingloriouscoderz.it)",
   "license": "MIT",
@@ -22,10 +22,18 @@
   ],
   "type": "module",
   "exports": {
+    ".": {
+      "types": "./types/index.d.ts"
+    },
+    "./*.js": {
+      "types": "./types/*.d.ts",
+      "import": "./src/*.js"
+    },
     "./*": "./src/*"
   },
   "files": [
     "src",
+    "types",
     "!src/**/*.test.js"
   ],
   "publishConfig": {
@@ -36,7 +44,8 @@
     "format": "prettier --write .",
     "lint": "eslint .",
     "test:watch": "vitest",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:types": "tsc -p type-tests"
   },
   "dependencies": {
     "@inglorious/store": "workspace:^",
@@ -48,6 +57,7 @@
   "devDependencies": {
     "@inglorious/eslint-config": "workspace:*",
     "prettier": "^3.10.1",
+    "typescript": "~7.0.2",
     "vite": "^8.3.8",
     "vitest": "^5.1.1"
   },

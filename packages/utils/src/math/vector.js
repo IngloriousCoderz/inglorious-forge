@@ -661,7 +661,7 @@ function sumCoordinates(vector1, vector2) {
  */
 function rotateWithQuaternion(vector, angle) {
   if (!angle) {
-    return vector
+    return v(...vector)
   }
 
   const [w, ...r] = quaternion(angle)

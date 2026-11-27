@@ -67,3 +67,23 @@ import { BOTTOM_LEFT, TOP_LEFT } from "@inglorious/engine/physics/anchor.js"
 `renderRectangle`, `renderCircle`, `renderLine`, `renderText` and friends. Each takes its
 geometry from the entity (`position`, `size`, `rotation`, `color`, `opacity`) so that a
 shape and the sprite standing in for it cannot drift apart.
+
+## TypeScript
+
+Every renderer is typed with the entity it draws, such as `CircleEntity`, `RectangleEntity`, `TextEntity`, `ImageEntity`, `SpriteEntity` or `TilemapEntity`, each next to its renderer. Extend one for an entity a type draws with it:
+
+```ts
+import type { GameType } from "@inglorious/engine"
+import { renderText, type TextEntity } from "@inglorious/renderer-2d/text.js"
+
+interface ScoreEntity extends TextEntity {
+  points: number
+}
+
+const Score: GameType<ScoreEntity> = {
+  render: renderText,
+  coinCollect(entity) {
+    entity.points++
+  },
+}
+```

@@ -1,23 +1,24 @@
-import { Api } from "../mount"
+import type { LimitedBehavior } from "./limit"
 
 export interface ThrottleOptions {
+  /** Also runs the last call of a burst once the delay ends. Defaults to `false`. */
   hasTrailing?: boolean
 }
 
-export interface ThrottleBehavior {
-  destroy?: (entity: any, payload?: any, api?: Api) => void
-  [handlerName: string]:
-    ((entity: any, payload?: any, api?: Api) => void) | undefined
-}
-
-export declare function withThrottle(
-  config: number,
-  handlerNames: string[],
+/** Throttles the named handlers, each to once every `delay` milliseconds. */
+export declare function withThrottle<TName extends string>(
+  delay: number,
+  handlerNames: TName[],
   options?: ThrottleOptions,
-): <T extends Record<string, any>>(type: T) => ThrottleBehavior
+): <TType extends object>(
+  type: TType,
+) => LimitedBehavior<TType, TName, "Throttled">
 
-export declare function withThrottle(
-  config: Record<string, number>,
+/** Throttles each handler to once per its own delay in milliseconds. */
+export declare function withThrottle<TDelays extends Record<string, number>>(
+  delays: TDelays,
   handlerNames?: undefined,
   options?: ThrottleOptions,
-): <T extends Record<string, any>>(type: T) => ThrottleBehavior
+): <TType extends object>(
+  type: TType,
+) => LimitedBehavior<TType, keyof TDelays & string, "Throttled">

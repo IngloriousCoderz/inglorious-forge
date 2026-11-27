@@ -78,3 +78,18 @@ test("it should draw every tile in its own cell", () => {
 
   expect([second[2] - first[2], second[3] - first[3]]).toStrictEqual([16, 0])
 })
+
+test("it should crop each tile from its own place on the sheet", () => {
+  const ctx = createContext()
+
+  renderTilemap({ tilemap: tilemap([0, 1, 4, 5]) }, ctx, api)
+
+  const crops = drawnAt(ctx).map(([sx, sy]) => [sx, sy])
+
+  expect(crops).toStrictEqual([
+    [0, 0],
+    [16, 0],
+    [0, 16],
+    [16, 16],
+  ])
+})

@@ -247,6 +247,36 @@ which is private, and whose `extras` are the engine's own.
 **Dev mode freezes what the store publishes**, which is right for a game in a browser and
 wrong for a test that has to put a ball where a brick is. `createGame` turns it off.
 
+## TypeScript
+
+The engine and the 2D renderer ship their types. Each module's types sit next to it, as in `@inglorious/engine/behaviors/physics/clamped.js`, and what they share is in `@inglorious/engine`: `GameConfig`, `GameEntity` for the `game` entity, `Entity` for anything in the world, `GameApi`, and `GameType`, `Handler` and `Render` to write types with:
+
+```ts
+import type { Entity, GameConfig, GameType } from "@inglorious/engine"
+import { clamped } from "@inglorious/engine/behaviors/physics/clamped.js"
+import { renderCircle } from "@inglorious/renderer-2d/shapes/circle.js"
+import { add, scale, type Vector3 } from "@inglorious/utils/vector.js"
+
+interface BallEntity extends Entity {
+  position: Vector3
+  velocity: Vector3
+}
+
+const Ball: GameType<BallEntity> = {
+  render: renderCircle,
+  update(entity, dt: number) {
+    entity.position = add(entity.position, scale(entity.velocity, dt))
+  },
+}
+
+export default {
+  types: { Ball: [Ball, clamped()] },
+  entities: {},
+} satisfies GameConfig
+```
+
+A renderer checks the entity it draws: `renderText` wants a font size, so a type whose entity has a `Vector3` size cannot use it. In tests, `game.entity<BallEntity>("ball")` reads an entity with its type.
+
 ## Documentation
 
 The best way to get started is with the official documentation, which includes a **[Quick Start Guide](https://inglorious-engine.vercel.app/?path=/docs/quick-start--docs)**.

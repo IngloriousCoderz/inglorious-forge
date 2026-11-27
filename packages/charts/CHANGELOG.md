@@ -1,5 +1,13 @@
 # @inglorious/charts
 
+## 12.2.7
+
+### Patch Changes
+
+- Type `createDevtools`'s options and the `connect`, `disconnect` and `send` it returns, the `api` of OpenUI's `render` and of `withRealtime`'s `create`, and the router's unused `init` and `popstate` payloads as `void`. An untyped store's `types` take behavior functions, through the new `AnyBehavior`. `withDebounce`, `withThrottle`, `withErrorBoundary` and `withLiveReload` keep the types of what they wrap; the error boundary's `error` is `unknown`
+- Updated dependencies
+  - @inglorious/web@6.31.4
+
 ## 12.2.6
 
 ### Patch Changes

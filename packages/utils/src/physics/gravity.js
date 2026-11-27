@@ -5,6 +5,7 @@
 /* eslint-disable no-magic-numbers */
 
 import { zero } from "../math/vector.js"
+import { v } from "../v.js"
 
 const DEFAULT_DT = 1
 const DEFAULT_JUMP = 0
@@ -65,5 +66,5 @@ export function applyGravity(params, dt = DEFAULT_DT) {
   const [x, y, z] = position
   const py = y + vy * dt + 0.5 * ay * dt * dt
 
-  return { ay, vy, position: [x, py, z] }
+  return { ay, vy, position: v(x, py, z) }
 }

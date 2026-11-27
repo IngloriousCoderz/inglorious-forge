@@ -2,6 +2,7 @@ import {
   controlTypes,
   createControlEntities,
 } from "@inglorious/engine/behaviors/input/controls.js"
+import type { GameConfig } from "@inglorious/engine"
 import { v } from "@inglorious/utils/v.js"
 
 import { HEIGHT, MARGIN, ROUND_SECONDS, WIDTH } from "./constants.ts"
@@ -74,4 +75,4 @@ export default {
       best: 0,
     },
   },
-}
+} satisfies GameConfig

@@ -83,4 +83,4 @@ export default {
 }
 ```
 
-Pages with a `published` date in metadata are included in RSS feeds.
+The feed lists the pages `rss.filter` lets through, newest `pubDate` first. Pages without a `changefreq` or `priority` get the sitemap's `defaults`.

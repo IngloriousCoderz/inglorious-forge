@@ -1,6 +1,7 @@
-import type { Api, BaseEntity } from "@inglorious/store"
+import type { Handler, Render, UpdateHandler } from "@inglorious/engine"
+import type { TextEntity } from "@inglorious/renderer-2d/text.js"
 
-export interface ScoreEntity extends BaseEntity {
+export interface ScoreEntity extends TextEntity {
   points: number
   level: number
   best: number
@@ -8,9 +9,9 @@ export interface ScoreEntity extends BaseEntity {
 }
 
 export type ScoreType = {
-  render: (...args: unknown[]) => void
-  coinCollect: (entity: ScoreEntity) => void
-  roundStart: (entity: ScoreEntity) => void
-  roundOver: (entity: ScoreEntity) => void
-  update: (entity: ScoreEntity, dt: number, api: Api) => void
+  render: Render<ScoreEntity>
+  coinCollect: Handler<ScoreEntity>
+  roundStart: Handler<ScoreEntity>
+  roundOver: Handler<ScoreEntity>
+  update: UpdateHandler<ScoreEntity>
 }

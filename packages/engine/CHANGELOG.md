@@ -1,5 +1,19 @@
 # @inglorious/engine
 
+## 24.2.0
+
+### Minor Changes
+
+- Ship TypeScript types for every module of the engine and the 2D renderer, with the shared ones (`GameConfig`, `GameEntity`, `Entity`, `GameApi`, `GameType`, `Handler`, `Render`) in `@inglorious/engine`. The `ts` and `its` game templates use them in place of declaring the packages as untyped
+
+### Patch Changes
+
+- Fix a stick's axis moving at full speed one way whichever way it was pushed, `bouncy` never bouncing on `land`, `flip` never turning at the bounds, and `renderTilemap` drawing every tile from the top-left of the sheet. `rotate` by no angle, and so `fromAngle(0)`, returns a new vector rather than `UNIT_VECTOR` itself, and `applyGravity` returns its position as a vector
+- Updated dependencies
+- Updated dependencies
+  - @inglorious/utils@5.4.2
+  - @inglorious/store@12.9.2
+
 ## 24.1.5
 
 ### Patch Changes

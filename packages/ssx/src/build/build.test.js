@@ -158,4 +158,24 @@ describe("build", () => {
     expect(generateSitemap).toHaveBeenCalled()
     expect(generateRSS).toHaveBeenCalled()
   })
+
+  it("should run the build hooks", async () => {
+    const calls = []
+    const beforeBuild = vi.fn(() => calls.push("before"))
+    const afterBuild = vi.fn(() => calls.push("after"))
+    loadConfig.mockResolvedValue({ hooks: { beforeBuild, afterBuild } })
+    getPages.mockImplementation(async () => {
+      calls.push("pages")
+      return []
+    })
+    generatePages.mockResolvedValue([{ path: "/", html: "<html></html>" }])
+
+    const result = await build({ outDir: "dist" })
+
+    expect(beforeBuild).toHaveBeenCalledWith(
+      expect.objectContaining({ outDir: "dist" }),
+    )
+    expect(afterBuild).toHaveBeenCalledWith(result)
+    expect(calls).toEqual(["before", "pages", "after"])
+  })
 })

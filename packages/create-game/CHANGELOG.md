@@ -1,5 +1,13 @@
 # @inglorious/create-game
 
+## 1.4.2
+
+### Patch Changes
+
+- Ship TypeScript types for every module of the engine and the 2D renderer, with the shared ones (`GameConfig`, `GameEntity`, `Entity`, `GameApi`, `GameType`, `Handler`, `Render`) in `@inglorious/engine`. The `ts` and `its` game templates use them in place of declaring the packages as untyped
+- Updated dependencies
+  - @inglorious/create-app@1.32.1
+
 ## 1.4.1
 
 ### Patch Changes

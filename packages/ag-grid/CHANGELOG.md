@@ -1,5 +1,17 @@
 # @inglorious/ag-grid
 
+## 9.1.0
+
+### Minor Changes
+
+- Type the grid with AG Grid's own `ColDef`, `GridOptions` and `GridApi`: `AgGridEntity<TData>` checks columns against the rows, and `apiCall` checks the method and its arguments. `@inglorious/store` is a peer dependency, for the entity types
+
+### Patch Changes
+
+- Updated dependencies
+  - @inglorious/store@12.9.2
+  - @inglorious/web@6.31.4
+
 ## 9.0.18
 
 ### Patch Changes

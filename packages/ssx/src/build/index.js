@@ -33,6 +33,7 @@ import { createViteConfig } from "./vite-config.js"
  * @param {boolean} [options.force=false] - Whether to force a clean output directory before building.
  * @param {Object} [options.sitemap] - Sitemap configuration.
  * @param {Object} [options.rss] - RSS configuration.
+ * @param {Object} [options.hooks] - `beforeBuild(config)` and `afterBuild(result)`.
  * @returns {Promise<{changed: number, skipped: number}>} Build statistics.
  */
 export async function build(options = {}) {
@@ -49,7 +50,10 @@ export async function build(options = {}) {
     force = false,
     sitemap,
     rss,
+    hooks,
   } = mergedOptions
+
+  await hooks?.beforeBuild?.(mergedOptions)
 
   const pagesDir = path.join(rootDir, "src", "pages")
 
@@ -179,6 +183,8 @@ export async function build(options = {}) {
     changed: staticChangedPages.length,
     skipped: staticSkippedPages.length,
   }
+
+  await hooks?.afterBuild?.(result)
 
   if (previousNodeEnv == null) {
     delete process.env.NODE_ENV

@@ -92,7 +92,6 @@ export default {
     `
   },
 
-  basePath: "/",
   rootDir: "src",
   outDir: "dist",
   publicDir: "public",
@@ -124,11 +123,6 @@ export default {
     { from: "/blog/*", to: "/posts/:splat", status: 301 },
   ],
 
-  router: {
-    trailingSlash: false,
-    scrollBehavior: "smooth",
-  },
-
   vite: {
     server: {
       port: 3000,
@@ -149,10 +143,7 @@ export default {
       console.log(`Starting build on ${config.rootDir}...`)
     },
     afterBuild: async (result) => {
-      console.log(`Built ${result.pages} pages`)
-    },
-    onPageBuild: async (page) => {
-      console.log(`Built ${page.path}`)
+      console.log(`Built ${result.changed} pages`)
     },
   },
 
