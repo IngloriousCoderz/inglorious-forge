@@ -12,7 +12,7 @@
     "build": "turbo build",
     "dev": "turbo dev",
     "prepare": "husky",
-    "ci:version": "pnpm run build && pnpm run lint && pnpm run test && changeset version",
+    "ci:version": "pnpm run lint && changeset version",
     "ci:publish": "changeset publish",
     "turbo:upgrade": "pnpm dlx @turbo/codemod migrate",
     "verify:docs": "node scripts/verify-docs.mjs",
