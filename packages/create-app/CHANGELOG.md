@@ -1,5 +1,11 @@
 # @inglorious/create-game
 
+## 1.33.1
+
+### Patch Changes
+
+- The Store release workflow no longer runs the Git hooks on the build number commit and its push
+
 ## 1.33.0
 
 ### Minor Changes

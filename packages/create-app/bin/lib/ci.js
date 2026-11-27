@@ -18,6 +18,11 @@ on:
 
 concurrency: store-release
 
+# \`pnpm install\` would install the Git hooks, which would run again on the
+# build number commit and its push.
+env:
+  HUSKY: 0
+
 jobs:
   check:
     runs-on: ubuntu-latest
