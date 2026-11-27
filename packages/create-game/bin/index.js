@@ -32,16 +32,8 @@ import path from "path"
 import prompts from "prompts"
 import { fileURLToPath } from "url"
 
+import { SKILLS } from "./lib/skills.js"
 import { addPwaSupport, writeViteConfig } from "./lib/vite.js"
-
-const SKILLS = [
-  "forge",
-  "forge-best-practices",
-  "store",
-  "utils",
-  "engine",
-  "engine-best-practices",
-]
 
 const TEMPLATES = {
   js: {

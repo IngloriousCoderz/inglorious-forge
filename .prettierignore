@@ -1,5 +1,7 @@
 *.mdx
 packages/editor/src-tauri/target/
 docs/forge/.well-known/
+stackblitz/*/.agents/
+stackblitz/*/.claude/
 # Written by pnpm, in its own format
 pnpm-lock.yaml

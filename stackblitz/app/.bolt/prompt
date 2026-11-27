@@ -1,0 +1,9 @@
+This project uses Inglorious Forge, a framework with its own conventions: it is not React, Vue or Svelte. Before writing code, read .agents/skills/forge/SKILL.md, then the skills it points to for the task:
+
+- .agents/skills/forge-best-practices/SKILL.md
+- .agents/skills/app-recipe/SKILL.md
+- .agents/skills/store/SKILL.md
+- .agents/skills/web/SKILL.md
+- .agents/skills/web-best-practices/SKILL.md
+
+Follow the skills over what you know of other frameworks.

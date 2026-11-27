@@ -1,6 +1,6 @@
 # Inglorious Game (TypeScript)
 
-> Running on StackBlitz with the latest published packages. To start a project of your own, run `pnpm create @inglorious/game --template=ts`.
+> Running on StackBlitz with the latest published packages, and the Inglorious agent skills installed for coding agents. To start a project of your own, run `pnpm create @inglorious/game --template=ts`.
 
 A game made with the [Inglorious Engine](https://inglorious-engine.vercel.app/), scaffolded by [@inglorious/create-game](https://www.npmjs.com/package/@inglorious/create-game).
 

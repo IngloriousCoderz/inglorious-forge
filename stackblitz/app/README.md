@@ -1,6 +1,6 @@
 # Inglorious App
 
-> Running on StackBlitz with the latest published packages. To start a project of your own, run `pnpm create @inglorious/app`.
+> Running on StackBlitz with the latest published packages, and the Inglorious agent skills installed for coding agents. To start a project of your own, run `pnpm create @inglorious/app`.
 
 This project is a minimal starter template for creating an app with the Inglorious Web framework using JavaScript, bundled with Vite.
 

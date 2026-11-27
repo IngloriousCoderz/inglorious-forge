@@ -8,7 +8,7 @@ Every template starts as a small, complete game: move with the arrow keys, WASD,
 
 ## Try it online
 
-The `js` and `ts` templates run on StackBlitz, with nothing to install: open the [JavaScript](https://stackblitz.com/github/IngloriousCoderz/inglorious-forge/tree/main/stackblitz/game?file=src/game.js) or the [TypeScript](https://stackblitz.com/github/IngloriousCoderz/inglorious-forge/tree/main/stackblitz/game-ts?file=src/game.ts) one.
+The `js` and `ts` templates run on StackBlitz, with nothing to install: open the [JavaScript](https://stackblitz.com/github/IngloriousCoderz/inglorious-forge/tree/main/stackblitz/game?file=src/game.js) or the [TypeScript](https://stackblitz.com/github/IngloriousCoderz/inglorious-forge/tree/main/stackblitz/game-ts?file=src/game.ts) one. Both come with the agent skills installed.
 
 ## Usage
 
@@ -71,7 +71,7 @@ The game gets [Capacitor](https://capacitorjs.com/) and [@inglorious/capacitor](
 
 ### Agent skills
 
-Saying yes runs the [skills CLI](https://skills.sh) in the new project. It asks which coding agents to install for, and installs the [Inglorious Forge skills](https://github.com/IngloriousCoderz/inglorious-forge/tree/main/docs/forge/.well-known/agent-skills) for games: `forge`, `forge-best-practices`, `store`, `utils`, `engine` and `engine-best-practices`. If the install fails, the CLI prints the command to retry it.
+Saying yes runs the [skills CLI](https://skills.sh) in the new project. It asks which coding agents to install for, and installs the [Inglorious Forge skills](https://github.com/IngloriousCoderz/inglorious-forge/tree/main/docs/forge/.well-known/agent-skills) for games: `forge`, `forge-best-practices`, `store`, `utils`, `engine` and `engine-best-practices`. If the install fails, the CLI prints the command to retry it. The StackBlitz versions of the `js` and `ts` templates come with the same skills installed: in `.agents/skills` and `.claude/skills`, and listed in `.bolt/prompt` for Bolt.
 
 ## After scaffolding
 

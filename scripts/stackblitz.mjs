@@ -2,7 +2,9 @@
 // Writes the projects in stackblitz/ from the create-app and create-game
 // templates, with published versions in place of workspace ones, so StackBlitz
 // can open them straight from GitHub, and the short addresses on inglorious.dev
-// that redirect to them (inglorious.dev/new/<project>).
+// that redirect to them (inglorious.dev/new/<project>). Each project comes with
+// the agent skills the scaffolders install, for Claude Code, for the agents that
+// read .agents/skills, and for Bolt.
 //
 //   node scripts/stackblitz.mjs           writes them
 //   node scripts/stackblitz.mjs --check   exits 1 if they are out of date
@@ -24,11 +26,15 @@ import { fileURLToPath } from "node:url"
 
 import * as prettier from "prettier"
 
+import { skillsFor } from "../packages/create-app/bin/lib/skills.js"
+import { SKILLS as GAME_SKILLS } from "../packages/create-game/bin/lib/skills.js"
 import { writeViteConfig } from "../packages/create-game/bin/lib/vite.js"
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..")
 const OUTPUT = join(ROOT, "stackblitz")
 const REDIRECTS = join(ROOT, "docs", "forge", "new")
+const SKILLS_SOURCE = join(ROOT, "docs", "forge", ".well-known", "agent-skills")
+const SKILLS_DIRS = [".agents/skills", ".claude/skills"]
 const STACKBLITZ =
   "https://stackblitz.com/github/IngloriousCoderz/inglorious-forge/tree/main/stackblitz"
 const INDENTATION = 2
@@ -74,8 +80,18 @@ export default defineConfig({${define}
 })
 `
 
+const APP_FEATURES = {
+  renderer: "lit-html",
+  ui: false,
+  languages: [],
+  analytics: false,
+  auth: false,
+  push: false,
+}
+
 const PROJECTS = {
   app: {
+    skills: skillsFor({ baseTemplate: "js", ...APP_FEATURES }),
     file: "src/app/message/index.js",
     template: "packages/create-app/templates/js",
     title: "Inglorious App",
@@ -84,6 +100,7 @@ const PROJECTS = {
     overrides: { "vite.config.js": appViteConfig() },
   },
   "app-ts": {
+    skills: skillsFor({ baseTemplate: "ts", ...APP_FEATURES }),
     file: "src/app/message/index.ts",
     template: "packages/create-app/templates/ts",
     title: "Inglorious App (TypeScript)",
@@ -99,6 +116,7 @@ const PROJECTS = {
     },
   },
   game: {
+    skills: GAME_SKILLS,
     file: "src/game.js",
     template: "packages/create-game/templates/js",
     title: "Inglorious Game",
@@ -107,6 +125,7 @@ const PROJECTS = {
     overrides: { "vite.config.js": gameViteConfig("js") },
   },
   "game-ts": {
+    skills: GAME_SKILLS,
     file: "src/game.ts",
     template: "packages/create-game/templates/ts",
     title: "Inglorious Game (TypeScript)",
@@ -200,13 +219,44 @@ async function projectFiles(name, project) {
     project,
   )
   files["README.md"] = toReadme(files["README.md"].toString(), name, project)
+  files[".gitignore"] = files[".gitignore"]
+    .toString()
+    .replace(/\n# Agent skills\n\/\.\*\/skills\/\n/, "")
+  files[".bolt/prompt"] = boltPrompt(project)
   Object.assign(files, project.overrides)
 
   for (const [path, content] of Object.entries(files)) {
     if (typeof content === "string") files[path] = await format(path, content)
   }
 
+  return { ...files, ...skillFiles(project.skills) }
+}
+
+function skillFiles(skills) {
+  const files = {}
+
+  for (const skill of skills) {
+    const dir = join(SKILLS_SOURCE, skill)
+    for (const file of listFiles(dir)) {
+      for (const skillsDir of SKILLS_DIRS) {
+        files[`${skillsDir}/${skill}/${file}`] = readFileSync(join(dir, file))
+      }
+    }
+  }
+
   return files
+}
+
+function boltPrompt(project) {
+  const [entry, ...rest] = project.skills
+  const skills = rest.map((skill) => `.agents/skills/${skill}/SKILL.md`)
+
+  return `This project uses Inglorious Forge, a framework with its own conventions: it is not React, Vue or Svelte. Before writing code, read .agents/skills/${entry}/SKILL.md, then the skills it points to for the task:
+
+${skills.map((skill) => `- ${skill}`).join("\n")}
+
+Follow the skills over what you know of other frameworks.
+`
 }
 
 function toPackageJson(pkg, name, project) {
@@ -240,7 +290,7 @@ function toPublished(dependencies = {}) {
 }
 
 function toReadme(readme, name, project) {
-  const intro = `> Running on StackBlitz with the latest published packages. To start a project of your own, run \`${project.create}\`.`
+  const intro = `> Running on StackBlitz with the latest published packages, and the Inglorious agent skills installed for coding agents. To start a project of your own, run \`${project.create}\`.`
 
   return readme
     .split("\n")

@@ -7,7 +7,7 @@ description: Create, install and run a new Inglorious Web project
 
 ## Try it online
 
-The `js` and `ts` templates run on StackBlitz, with nothing to install: open the [JavaScript](https://stackblitz.com/github/IngloriousCoderz/inglorious-forge/tree/main/stackblitz/app?file=src/app/message/index.js) or the [TypeScript](https://stackblitz.com/github/IngloriousCoderz/inglorious-forge/tree/main/stackblitz/app-ts?file=src/app/message/index.ts) one.
+The `js` and `ts` templates run on StackBlitz, with nothing to install: open the [JavaScript](https://stackblitz.com/github/IngloriousCoderz/inglorious-forge/tree/main/stackblitz/app?file=src/app/message/index.js) or the [TypeScript](https://stackblitz.com/github/IngloriousCoderz/inglorious-forge/tree/main/stackblitz/app-ts?file=src/app/message/index.ts) one. Both come with the agent skills installed.
 
 ## Prerequisites
 

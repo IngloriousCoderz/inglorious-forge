@@ -82,6 +82,11 @@ lerna-debug.log*
 skills/
 # The skills published at inglorious.dev, which the line above would hide.
 !/docs/forge/.well-known/agent-skills/
+# The skills installed in the StackBlitz projects.
+!/stackblitz/*/.agents/
+!/stackblitz/*/.agents/skills/
+!/stackblitz/*/.claude/
+!/stackblitz/*/.claude/skills/
 
 # VitePress
 **/.vitepress/.temp/
